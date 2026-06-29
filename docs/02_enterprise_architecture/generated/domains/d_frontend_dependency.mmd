@@ -1,5 +1,5 @@
-%% D-FRONTEND 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:30
+%% D_FRONTEND 域全景依赖图
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 23, 依赖边数: 29
 
@@ -17,17 +17,17 @@ graph TD
         src_zephyr_frontend_dashboard_components___init___py["...tend/dashboard/components/__init__.py [prototype]"]
         src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [prototype]"]
         src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [production]"]
-        src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [production]"]
         src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [prototype]"]
+        src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [production]"]
         src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [production]"]
         src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [prototype]"]
-        src_zephyr_frontend_dashboard_components_olap_trend_py["...nd/dashboard/components/olap_trend.py [prototype]"]
         src_zephyr_frontend_dashboard_components_olap_trend_py["...nd/dashboard/components/olap_trend.py [production]"]
-        src_zephyr_frontend_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [prototype]"]
+        src_zephyr_frontend_dashboard_components_olap_trend_py["...nd/dashboard/components/olap_trend.py [prototype]"]
         src_zephyr_frontend_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [production]"]
+        src_zephyr_frontend_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [prototype]"]
         src_zephyr_frontend_infrastructure___init___py["...r/frontend/infrastructure/__init__.py [prototype]"]
-        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [prototype]"]
         src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [production]"]
+        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [prototype]"]
         src_zephyr_frontend_models___init___py["src/zephyr/frontend/models/__init__.py [prototype]"]
         src_zephyr_frontend_services___init___py["src/zephyr/frontend/services/__init__.py [prototype]"]
     end
@@ -48,7 +48,7 @@ graph TD
     src_zephyr_frontend_dashboard_components_task_progress_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-FRONTEND (8 条)
+    %% D-GOVERNANCE -> D_FRONTEND (8 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
@@ -59,18 +59,18 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-FRONTEND -> D-GOVERNANCE (4 条)
+    %% D_FRONTEND -> D-GOVERNANCE (4 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-FRONTEND -> D-OPS (2 条)
-    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
-    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
-    %% D-FRONTEND -> D-SHARED (1 条)
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
-    %% D-FRONTEND -> D_INFRA_OPS (1 条)
+    %% D_FRONTEND -> D_INFRA_OPS (1 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D_INFRA_OPS]
+    %% D_FRONTEND -> D_OPS (2 条)
+    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D_OPS]
+    %% D_FRONTEND -> D_SHARED (1 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 13 条

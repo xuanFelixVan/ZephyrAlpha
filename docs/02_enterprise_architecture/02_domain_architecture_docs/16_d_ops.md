@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -972,12 +972,12 @@ graph TD
 | D_FRONTEND | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
-| D_INFRA_TELEMETRY | 1 | import_depends |
-| D_DATA_SEC | 1 | import_depends |
-| D_INTEGRATION | 1 | import_depends |
+| D-AUDITTEST | 1 | test_depends |
 | D_INFRA_OPS | 1 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
-| D-AUDITTEST | 1 | test_depends |
+| D_INFRA_TELEMETRY | 1 | import_depends |
+| D_INTEGRATION | 1 | import_depends |
+| D_DATA_SEC | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

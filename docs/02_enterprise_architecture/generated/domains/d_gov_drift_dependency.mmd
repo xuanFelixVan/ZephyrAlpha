@@ -1,5 +1,5 @@
 %% D-GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:30
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 24, 依赖边数: 76
 
@@ -83,25 +83,16 @@ graph TD
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
-    %% D-OPS -> D-GOV_DRIFT (1 条)
-    D_OPS[D-OPS] -->|import_depends| src_zephyr_governance_integrity_py
     %% D-TRADING -> D-GOV_DRIFT (3 条)
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_integrity_py
     D_TRADING[D-TRADING] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
+    %% D_OPS -> D-GOV_DRIFT (1 条)
+    D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_integrity_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-GOV_DRIFT -> D-AUTONOMY_PERM (1 条)
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
-    %% D-GOV_DRIFT -> D-BEHAVIORAL_AUDIT (8 条)
-    tests_test_baseline_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_test_ba_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_test_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_test_contract_drift_detector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
     %% D-GOV_DRIFT -> D-GOVERNANCE (10 条)
     src_zephyr_governance_audit_trail_drift_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_drift_detection_chaos_injector_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -125,8 +116,17 @@ graph TD
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     %% D-GOV_DRIFT -> D-GOV_SCRIPTS (1 条)
     scripts_governance_d5_architec___validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS[D-GOV_SCRIPTS]
-    %% D-GOV_DRIFT -> D-SECURITY (1 条)
-    tests_test_context_drift_detector_py -->|test_depends| D_SECURITY[D-SECURITY]
+    %% D-GOV_DRIFT -> D_BEHAVIORAL_AUDIT (8 条)
+    tests_test_baseline_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_test_ba_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_test_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_test_contract_drift_detector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
+    %% D-GOV_DRIFT -> D_SECURITY (1 条)
+    tests_test_context_drift_detector_py -->|test_depends| D_SECURITY[D_SECURITY]
 
     %% 统计
     %% 域内依赖: 2 条

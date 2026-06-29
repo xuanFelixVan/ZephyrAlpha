@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -95,8 +95,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 2 | import_depends |
 | D-TRADING | 2 | import_depends |
+| D_SHARED | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

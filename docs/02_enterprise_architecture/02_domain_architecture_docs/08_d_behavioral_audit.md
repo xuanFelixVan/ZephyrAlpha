@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 78 | Production Modules | 78 |
 | 容量 | 79/150 (正常) | Capacity | 79/150 (正常) |
-| 描述 | 行为审计域(从D_SECURITY拆出,behavioral_auditor) | Description | 行为审计域(从D_SECURITY拆出,behavioral_auditor) |
+| 描述 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) | Description | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

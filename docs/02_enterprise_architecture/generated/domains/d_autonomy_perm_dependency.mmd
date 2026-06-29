@@ -1,5 +1,5 @@
 %% D-AUTONOMY_PERM 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:29
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 70, 依赖边数: 157
 
@@ -98,50 +98,50 @@ graph TD
     D_GOV_DRIFT[D-GOV_DRIFT] -->|runtime| docs_03_modules__domain_autono___ore_agent_rbac_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-AUTONOMY_PERM -> D-AUTONOMY_CORE (1 条)
-    tests_test_skill_kill_switch_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
     %% D-AUTONOMY_PERM -> D-GOVERNANCE (3 条)
     tests_test_ce_kill_switch_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
     tests_test_trading_kill_switch_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_agent_signer_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
     %% D-AUTONOMY_PERM -> D-GOV_AUDIT (1 条)
     tests_test_agent_signer_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-AUTONOMY_PERM -> D-INTEGRATION (2 条)
-    tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D-INTEGRATION]
-    tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-AUTONOMY_PERM -> D-SECURITY (137 条)
-    src_zephyr_autonomy_perm_red_b___alidator_attack_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_b___validator_defense_runner_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_b___dator_constitution_guard_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_b___alidator_bypass_recorder_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_b___alidator_game_day_runner_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D-SECURITY]
-    tests_test_kill_switch_root_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_test_kill_switch_root_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_blind_spot_coverage_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D-SECURITY]
+    %% D-AUTONOMY_PERM -> D_AUTONOMY_CORE (1 条)
+    tests_test_skill_kill_switch_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D-AUTONOMY_PERM -> D_INFRA_RUNTIME (1 条)
     tests_test_kill_switch_sim_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D-AUTONOMY_PERM -> D_INTEGRATION (2 条)
+    tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    %% D-AUTONOMY_PERM -> D_SECURITY (137 条)
+    src_zephyr_autonomy_perm_red_b___alidator_attack_registry_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___validator_defense_runner_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___dator_constitution_guard_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___alidator_bypass_recorder_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_b___alidator_game_day_runner_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_autonomy_perm_red_blue_validator___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    tests_test_kill_switch_root_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_test_kill_switch_root_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_blind_spot_coverage_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
 
     %% 统计
     %% 域内依赖: 7 条

@@ -1,5 +1,5 @@
 %% D-AUDITTEST 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:29
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 151, 依赖边数: 15
 
@@ -128,14 +128,14 @@ graph TD
     %% D-AUDITTEST -> D-GOV_ENFORCEMENT (2 条)
     tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-AUDITTEST -> D-OPS (1 条)
-    tests_test_self_health_monitor_py -->|test_depends| D_OPS[D-OPS]
-    %% D-AUDITTEST -> D-SECURITY (3 条)
-    tests_test_legal_audit_chain_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D-SECURITY]
-    tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D-SECURITY]
-    %% D-AUDITTEST -> D-SHARED (1 条)
-    tests_unit_resource_optimization_test_self_healing_py -->|test_depends| D_SHARED[D-SHARED]
+    %% D-AUDITTEST -> D_OPS (1 条)
+    tests_test_self_health_monitor_py -->|test_depends| D_OPS[D_OPS]
+    %% D-AUDITTEST -> D_SECURITY (3 条)
+    tests_test_legal_audit_chain_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D_SECURITY]
+    %% D-AUDITTEST -> D_SHARED (1 条)
+    tests_unit_resource_optimization_test_self_healing_py -->|test_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 0 条

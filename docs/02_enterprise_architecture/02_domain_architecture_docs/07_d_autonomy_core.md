@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -432,10 +432,10 @@ graph TD
 |--------|:---:|---------|
 | D_INTEGRATION | 24 | import_depends |
 | D_SHARED | 6 | import_depends |
-| D-GOV_AUDIT | 3 | import_depends |
 | D_SECURITY | 3 | import_depends |
-| D-GOVERNANCE | 2 | import_depends |
+| D-GOV_AUDIT | 3 | import_depends |
 | D-INTELLIGENCE | 2 | import_depends |
+| D-GOVERNANCE | 2 | import_depends |
 | D-GOV_ENFORCEMENT | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -446,9 +446,9 @@ graph TD
 | D_OPS | 8 | import_depends,runtime,test_depends |
 | D-TRADING | 3 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
+| D-KNOWLEDGE | 1 | test_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
-| D-KNOWLEDGE | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

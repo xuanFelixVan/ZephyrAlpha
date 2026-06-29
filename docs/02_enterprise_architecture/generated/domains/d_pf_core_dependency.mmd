@@ -1,5 +1,5 @@
 %% D-PF_CORE 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:30
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 44, 依赖边数: 20
 
@@ -78,10 +78,10 @@ graph TD
     src_zephyr_pf_core_strategy_engine___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_pf_core_strategies___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
      -->|contract| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-PF_CORE -> D-REPORTING (1 条)
-    src_zephyr_pf_core_analytics_base_py -->|import_depends| D_REPORTING[D-REPORTING]
     %% D-PF_CORE -> D-TRADING (1 条)
     src_zephyr_pf_core_strategies_default_equity_strategy_py -->|import_depends| D_TRADING[D-TRADING]
+    %% D-PF_CORE -> D_REPORTING (1 条)
+    src_zephyr_pf_core_analytics_base_py -->|import_depends| D_REPORTING[D_REPORTING]
 
     %% 统计
     %% 域内依赖: 0 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 脚本治理（D-GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -934,16 +934,16 @@ graph TD
 | D_INTEGRATION | 13 | import_depends |
 | D_INFRA_RUNTIME | 11 | import_depends |
 | D-GOV_ENFORCEMENT | 10 | import_depends |
-| D-RISK | 3 | import_depends |
 | D_SHARED | 3 | import_depends |
+| D-RISK | 3 | import_depends |
 | D_SECURITY | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
 | D_OPS | 2 | import_depends |
-| D_MKT_DATA | 1 | import_depends |
+| D-GOV_AUDIT | 2 | import_depends |
+| D-SIMULATION | 1 | import_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 | D-EX_CORE | 1 | import_depends |
-| D-SIMULATION | 1 | import_depends |
+| D_MKT_DATA | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

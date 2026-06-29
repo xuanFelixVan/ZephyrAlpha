@@ -1,5 +1,5 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:30
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 35, 依赖边数: 29
 
@@ -60,16 +60,10 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_INFRA_TELEMETRY -> D-BEHAVIORAL_AUDIT (1 条)
-    src_zephyr_infrastructure_syst___lemetry_contract_metrics_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
     %% D_INFRA_TELEMETRY -> D-GOVERNANCE (1 条)
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D_INFRA_TELEMETRY -> D-OPS (1 条)
-    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_OPS[D-OPS]
-    %% D_INFRA_TELEMETRY -> D-SHARED (3 条)
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED[D-SHARED]
-    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_SHARED[D-SHARED]
-    src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D_INFRA_TELEMETRY -> D_BEHAVIORAL_AUDIT (1 条)
+    src_zephyr_infrastructure_syst___lemetry_contract_metrics_py -->|import_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
     %% D_INFRA_TELEMETRY -> D_INFRA_RUNTIME (12 条)
     src_zephyr_infrastructure_session___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -83,6 +77,12 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_logs___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_syst___elemetry_traces___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_infrastructure_syst___lemetry_traces_span_stub_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_INFRA_TELEMETRY -> D_OPS (1 条)
+    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_OPS[D_OPS]
+    %% D_INFRA_TELEMETRY -> D_SHARED (3 条)
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 11 条

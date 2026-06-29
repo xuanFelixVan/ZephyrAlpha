@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D-GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -6264,22 +6264,22 @@ graph TD
 | D-GOV_DRIFT | 25 | config_depends,contract,import_depends,runtime,test_depends |
 | D_MKT_DATA | 16 | test_depends |
 | D-RISK | 14 | test_depends |
-| D-GOV_SCRIPTS | 12 | test_depends |
 | D-SIMULATION | 12 | test_depends |
-| D-FUNDAMENTAL_SIGNAL | 8 | test_depends |
+| D-GOV_SCRIPTS | 12 | test_depends |
 | D_FRONTEND | 8 | test_depends |
+| D-FUNDAMENTAL_SIGNAL | 8 | test_depends |
 | D-GOV_RULE | 7 | import_depends,test_depends |
 | D-PF_CORE | 6 | test_depends |
-| D_INFRA_A2A | 6 | import_depends |
 | D-EX_CORE | 6 | test_depends |
-| D-AUTONOMY_PERM | 4 | contract,runtime |
+| D_INFRA_A2A | 6 | import_depends |
 | D-FACTOR | 4 | test_depends |
-| D_REPORTING | 2 | import_depends |
+| D-AUTONOMY_PERM | 4 | contract,runtime |
 | D-CROSS_ASSET | 2 | test_depends |
+| D_REPORTING | 2 | import_depends |
+| D-GOV_DOCS | 1 | runtime |
 | D-PF_ALLOC | 1 | import_depends |
 | D-ML_TRAIN | 1 | data |
 | D-KNOWLEDGE | 1 | contract |
-| D-GOV_DOCS | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -6295,28 +6295,28 @@ graph TD
 | D-GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
 | D-COMPLIANCE | 10 | import_depends |
 | D_INFRA_RUNTIME | 9 | import_depends |
-| D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
 | D-EX_CORE | 8 | config_depends,import_depends |
+| D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
 | D-INTELLIGENCE | 6 | config_depends,import_depends |
 | D_REPORTING | 5 | import_depends |
+| D_INFRA_RECOVERY | 4 | import_depends |
 | D_SECURITY | 4 | import_depends |
 | D_FRONTEND | 4 | import_depends |
-| D_INFRA_RECOVERY | 4 | import_depends |
-| D-AUTONOMY_PERM | 3 | config_depends,test_depends |
+| D_SHARED | 3 | import_depends |
 | D-FACTOR | 3 | config_depends,import_depends |
 | D-GOV_ENFORCEMENT | 3 | import_depends |
-| D_SHARED | 3 | import_depends |
-| D_AUTONOMY_CORE | 2 | import_depends |
-| D_BEHAVIORAL_AUDIT | 2 | import_depends |
-| D-KNOWLEDGE | 2 | runtime,test_depends |
+| D-AUTONOMY_PERM | 3 | config_depends,test_depends |
 | D_MKT_DATA | 2 | config_depends |
 | D-PF_ALLOC | 2 | config_depends,import_depends |
+| D-KNOWLEDGE | 2 | runtime,test_depends |
+| D_AUTONOMY_CORE | 2 | import_depends |
 | D_INFRA_A2A | 2 | import_depends |
+| D_BEHAVIORAL_AUDIT | 2 | import_depends |
+| D_DATA_SEC | 1 | import_depends |
+| D-RISK | 1 | config_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
 | D-POSITION | 1 | config_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
-| D_DATA_SEC | 1 | import_depends |
-| D-RISK | 1 | config_depends |
 
 ## 架构全景图 / Architecture Overview
 

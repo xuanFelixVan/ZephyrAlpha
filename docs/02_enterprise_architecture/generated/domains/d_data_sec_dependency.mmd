@@ -1,5 +1,5 @@
-%% D-DATA_SEC 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:29
+%% D_DATA_SEC 域全景依赖图
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 10, 依赖边数: 3
 
@@ -25,10 +25,10 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-DATA_SEC -> D-GOVERNANCE (1 条)
+    %% D_DATA_SEC -> D-GOVERNANCE (1 条)
     src_zephyr_data_persistence_sqlite_schema_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-DATA_SEC -> D-OPS (1 条)
-    src_zephyr_data_persistence_circuit_breaker_types_py -->|import_depends| D_OPS[D-OPS]
+    %% D_DATA_SEC -> D_OPS (1 条)
+    src_zephyr_data_persistence_circuit_breaker_types_py -->|import_depends| D_OPS[D_OPS]
 
     %% 统计
     %% 域内依赖: 1 条

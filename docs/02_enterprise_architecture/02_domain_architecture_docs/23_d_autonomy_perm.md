@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D-AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -211,9 +211,8 @@ graph TD
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
-    D_INTEGRATION["D_INTEGRATION production"]
-    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
-    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
+    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
+    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
@@ -222,7 +221,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_agent_rbac_test_vibe_coding_py,tests_test_agent_signer_py,tests_test_ce_kill_switch_py,tests_test_kill_switch_root_py,tests_test_kill_switch_sim_py,tests_test_skill_kill_switch_py,tests_test_trading_kill_switch_py,tests_unit_agent_rbac_init_py,tests_unit_agent_rbac_conftest_py,tests_unit_agent_rbac_test_rbac_core_py design
-    class D_GOV_AUDIT,D_GOVERNANCE,D_SECURITY,D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_INTEGRATION external_prod
+    class D_GOV_AUDIT,D_GOVERNANCE,D_SECURITY,D_INFRA_RUNTIME,D_AUTONOMY_CORE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -234,8 +233,8 @@ graph TD
 | D_SECURITY | 137 | import_depends,test_depends |
 | D-GOVERNANCE | 3 | config_depends,test_depends |
 | D_INTEGRATION | 2 | test_depends |
-| D_AUTONOMY_CORE | 1 | test_depends |
 | D-GOV_AUDIT | 1 | test_depends |
+| D_AUTONOMY_CORE | 1 | test_depends |
 | D_INFRA_RUNTIME | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

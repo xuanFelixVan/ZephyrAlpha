@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -88,14 +88,11 @@ graph TD
     src_zephyr_infra_ops_dashboard_components_olap_trend_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
     src_zephyr_infrastructure_rollback_governance_budget_tracker_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_drift_fix_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS production"]
     src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
@@ -103,6 +100,9 @@ graph TD
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
     D_FRONTEND["D_FRONTEND production"]
     D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -145,9 +145,9 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 8 | config_depends,import_depends,test_depends |
 | D-GOV_AUDIT | 2 | import_depends |
+| D_INFRA_RUNTIME | 1 | import_depends |
 | D_OPS | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
-| D_INFRA_RUNTIME | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

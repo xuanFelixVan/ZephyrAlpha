@@ -1,5 +1,5 @@
 %% D-INTELLIGENCE 域全景依赖图
-%% 生成时间: 2026-06-29 16:06:30
+%% 生成时间: 2026-06-29 16:21:52
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 42, 依赖边数: 116
 
@@ -83,9 +83,6 @@ graph TD
     src_zephyr_intelligence_model____routing_deepseek_v4_chat_py -->|config_depends| src_zephyr_intelligence_model____ipeline_routing___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-AUTONOMY_CORE -> D-INTELLIGENCE (2 条)
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|import_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     %% D-GOVERNANCE -> D-INTELLIGENCE (49 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
@@ -122,22 +119,23 @@ graph TD
     D_GOV_DOCS[D-GOV_DOCS] -->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
     %% D-GOV_SCRIPTS -> D-INTELLIGENCE (1 条)
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_intelligence_model____default_inference_engine_py
-    %% D-INTEGRATION -> D-INTELLIGENCE (3 条)
-    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
-    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_intelligence_model____e_routing_results_writer_py
-    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    %% D-SECURITY -> D-INTELLIGENCE (1 条)
-    D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
     %% D-TRADING -> D-INTELLIGENCE (5 条)
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_intelligence_model____iling_task_model_learner_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_intelligence_model_profiling___init___py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_intelligence_model____ling_capability_passport_py
+    %% D_AUTONOMY_CORE -> D-INTELLIGENCE (2 条)
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    %% D_INTEGRATION -> D-INTELLIGENCE (3 条)
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_intelligence_model____ipeline_routing_profiler_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_intelligence_model____e_routing_results_writer_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    %% D_SECURITY -> D-INTELLIGENCE (1 条)
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_intelligence_model____ation_unified_memory_api_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-INTELLIGENCE -> D-AUTONOMY_CORE (1 条)
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
     %% D-INTELLIGENCE -> D-GOVERNANCE (6 条)
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -148,26 +146,28 @@ graph TD
     %% D-INTELLIGENCE -> D-GOV_ENFORCEMENT (2 条)
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_intelligence_infrastructure___init___py -->|contract| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-INTELLIGENCE -> D-INTEGRATION (6 条)
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_intelligence_model____ation_unified_memory_api_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_intelligence_model____uting_task_model_learner_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     %% D-INTELLIGENCE -> D-ML_TRAIN (4 条)
     src_zephyr_intelligence_model_evaluation_inference_base_py -->|import_depends| D_ML_TRAIN[D-ML_TRAIN]
     src_zephyr_intelligence_model_evaluation_inference_base_py -->|import_depends| D_ML_TRAIN[D-ML_TRAIN]
     src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_ML_TRAIN[D-ML_TRAIN]
     src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_ML_TRAIN[D-ML_TRAIN]
-    %% D-INTELLIGENCE -> D-SHARED (1 条)
-    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D-SHARED]
     %% D-INTELLIGENCE -> D-SIMULATION (3 条)
     src_zephyr_intelligence_model____eriment_tracker___init___py -->|import_depends| D_SIMULATION[D-SIMULATION]
     src_zephyr_intelligence_model_____default_backtest_engine_py -->|import_depends| D_SIMULATION[D-SIMULATION]
     src_zephyr_intelligence_model____ook_integration___init___py -->|import_depends| D_SIMULATION[D-SIMULATION]
     %% D-INTELLIGENCE -> D-TRADING (1 条)
     src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_TRADING[D-TRADING]
+    %% D-INTELLIGENCE -> D_AUTONOMY_CORE (1 条)
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D-INTELLIGENCE -> D_INTEGRATION (6 条)
+    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_intelligence_model____ation_unified_memory_api_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_intelligence_model____uting_task_model_learner_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    %% D-INTELLIGENCE -> D_SHARED (1 条)
+    src_zephyr_intelligence_model____default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 29 条

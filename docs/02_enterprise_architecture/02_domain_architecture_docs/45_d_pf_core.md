@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:06:28
+> 最后更新: 2026-06-29 16:21:50
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -114,17 +114,17 @@ graph TD
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
     end
     D_GOVERNANCE["D-GOVERNANCE prototype"]
+    src_zephyr_pf_core_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_performance_attribution_report_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_performance_attribution_engine_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
+    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategies_init_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
@@ -149,8 +149,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 12 | contract,import_depends |
-| D_REPORTING | 1 | import_depends |
 | D-TRADING | 1 | import_depends |
+| D_REPORTING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
