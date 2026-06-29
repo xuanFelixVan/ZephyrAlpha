@@ -47,19 +47,19 @@ depends_on:
 values:
   - value: permanent
     definition: "永久保留——核心治理文件、元标准、宪章、蓝图、真源数据。不可删除"
-    applies_to: [policy, standard, protocol, blueprint, catalog, knowledge]
+    applies_to: dynamic_from_ssot  # 真源：doc_type_vocabulary.yaml values[].ttl_default == permanent
     ai_keywords: ["永久", "permanent", "永不删除", "宪章", "真源"]
 
   - value: task_bound
     definition: "任务绑定——文件与特定任务关联，任务完成后可清理。所有过程性文档（方案/评估/提案/调研报告/临时笔记）默认用此值。默认落点 docs/_working/"
-    applies_to: [plan, assessment, proposal, report, note, doc]
+    applies_to: dynamic_from_ssot  # 真源：doc_type_vocabulary.yaml values[].ttl_default == task_bound
     ai_keywords: ["任务", "task", "完成即删", "过程", "临时", "task_bound"]
 
 # ── 内容判定树（AI 创建文档时 MUST 按此树判定 ttl）──
 # 设计原则：
 #   1. 优先用内容信号判定，路径作为辅助兜底（治本：changes/等过程文件不再误判 permanent）
 #   2. 过程性子目录（changes/delivery/reports/_working/_archive/decomposition）→ task_bound
-#   3. 过程性 doc_type（log/audit_report/operational_rule）→ task_bound
+#   3. 过程性 doc_type（audit_report/operational_rule）→ task_bound
 #   4. 永久区路径 → permanent（准入受控，必为永久文件）
 #   5. 其他 → task_bound（默认落 docs/_working/）
 #   6. AI 创建文件默认落 docs/_working/，除非用户明确要求创建永久文件
@@ -93,10 +93,10 @@ decision_tree:
       no: Q2
     Q2:
       question: "文档 doc_type 是否为过程性类型？"
+      # 真源：doc_type_vocabulary.yaml values[].ttl_default == task_bound
+      # 治本（2026-06-30）：log 已废弃（v3.0.0 合并到 audit_report），移除
+      # 完整动态加载需扩展 load_decision_tree 支持 criteria_source（待实现）
       criteria:
-        - signal: frontmatter.doc_type
-          value: "log"
-          operator: equals
         - signal: frontmatter.doc_type
           value: "audit_report"
           operator: equals

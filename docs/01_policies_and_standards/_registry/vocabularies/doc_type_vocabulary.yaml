@@ -44,8 +44,14 @@ depends_on:
     at: "_registry/vocabularies/rule_form_vocabulary.yaml"
     why: "每个 doc_type 值的 rule_form 字段值由 rule_form_vocabulary.yaml 唯一定义（单向引用，非派生——doc_type 值独立定义）"
 
+# ttl_default 字段（v3.1.0 新增）：声明该 doc_type 的默认 ttl（permanent/task_bound）。
+# 本字段是 doc_type→ttl 映射的唯一真源。
+# 消费者：classify_ttl_by_content.py 从本字段动态加载 PROCESS_DOC_TYPES / PERMANENT_DOC_TYPES。
+# 对标：ttl_vocabulary.yaml 的 decision_tree Q2 引用本字段（via criteria_source，待迁移）。
+
 values:
   - value: policy
+    ttl_default: permanent
     definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
     rule_form: declarative
     allowed_directories: ["docs/01_policies_and_standards/policies/", "scripts/governance/"]
@@ -57,6 +63,7 @@ values:
 
 
   - value: operational_rule
+    ttl_default: task_bound
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
     rule_form: procedural
     allowed_directories: ["docs/01_policies_and_standards/operational/"]
@@ -67,6 +74,7 @@ values:
     filename_suffixes: ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"]
 
   - value: register
+    ttl_default: permanent
     definition: "注册表/配置——结构化数据清单或运行时配置定义，用于发现、索引和参数设置"
     rule_form: data
     allowed_directories: ["docs/01_policies_and_standards/_registry/", "docs/03_modules/_manifests/", "docs/registry_of_registries.yaml", "src/zephyr/", "scripts/", "docs/02_enterprise_architecture/"]
@@ -78,6 +86,7 @@ values:
     registry_category: governance_rule
 
   - value: index
+    ttl_default: permanent
     definition: "目录级导航/概况文件——声明子域的职责边界、文件清单和依赖关系，或项目/目录概况说明。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
     rule_form: declarative
     allowed_directories: ["docs/", "scripts/governance/"]
@@ -89,6 +98,7 @@ values:
     filename_suffixes: ["index.md"]
 
   - value: template
+    ttl_default: permanent
     definition: "模板——可复用的文档结构骨架"
     rule_form: structural
     allowed_directories: ["docs/01_policies_and_standards/templates/"]
@@ -108,6 +118,7 @@ values:
 
 
   - value: vocabulary
+    ttl_default: permanent
     definition: "受控参考数据——定义枚举值域、术语定义或知识内容的机器可读清单，供 AI 和 CI 消费"
     rule_form: data
     allowed_directories: ["docs/01_policies_and_standards/_registry/vocabularies/"]
@@ -119,6 +130,7 @@ values:
 
 
   - value: blueprint
+    ttl_default: permanent
     definition: "蓝图——模块/子系统的完整设计文档和施工指导，包含架构决策、数据模型、接口定义、任务分解"
     rule_form: declarative
     allowed_directories: ["docs/03_modules/", "docs/02_enterprise_architecture/"]
@@ -132,6 +144,7 @@ values:
 
 
   - value: audit_report
+    ttl_default: task_bound
     definition: "审计/记录——时间戳驱动的记录、session log 或结构化审计产出物"
     rule_form: data
     allowed_directories: ["session_logs/", "docs/02_enterprise_architecture/"]
@@ -143,6 +156,7 @@ values:
 
 
   - value: architecture_view
+    ttl_default: permanent
     definition: "架构视图——4+1 架构视角文档或服务/模块的外部接口规格"
     rule_form: declarative
     allowed_directories: ["docs/02_enterprise_architecture/", "docs/03_modules/specs/", "docs/03_modules/_b_track_interfaces/"]
@@ -152,6 +166,7 @@ values:
     examples: []
 
   - value: gate
+    ttl_default: permanent
     definition: "门禁/验证定义——定义质量门禁的触发条件、检查项、阻断规则或 VR 验证标准"
     rule_form: declarative
     allowed_directories: ["src/zephyr/governance/rule_enforcement/", "docs/01_policies_and_standards/_registry/contracts/", "docs/01_policies_and_standards/_registry/schemas/", "docs/02_enterprise_architecture/"]

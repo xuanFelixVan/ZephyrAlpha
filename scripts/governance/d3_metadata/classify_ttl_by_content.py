@@ -63,7 +63,7 @@ from _shared.frontmatter import parse_frontmatter  # noqa: E402
 
 # ── permanent 强信号词：标题中出现 → 倾向永久 ──
 # 依据：ttl_vocabulary.yaml values.permanent.applies_to + 文档类型语义
-PERMANENT_SIGNALS: list[str] = [
+PERMANENT_SIGNALS: list[str] = [  # noqa: gate-vocab  # 关键词信号列表（非词表合法值副本；含 doc_type 值作信号词，语义关联非复制）
     # 治理核心
     "蓝图", "blueprint",
     "规则", "rule",
@@ -147,16 +147,38 @@ AMBIGUOUS_SIGNALS: list[str] = [
     "图谱", "graph",       # 知识图谱=永久，临时图谱=临时
 ]
 
-# ── 过程性 doc_type（辅助判定 → task_bound）──
-PROCESS_DOC_TYPES = {"audit_report", "operational_rule"}
+# ── doc_type→ttl 映射（从 doc_type_vocabulary.yaml 动态加载）──
+# 真源：doc_type_vocabulary.yaml values[].ttl_default
+# 治本（2026-06-30）：消除原硬编码 PROCESS_DOC_TYPES / PERMANENT_DOC_TYPES 副本——词表变更只需改一处。
+_DOC_TYPE_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+)
 
-# ── 永久性 doc_type（辅助判定 → permanent）──
-# v3.0.0: 已移除废弃值（standard/terminology/contract/config/knowledge_entry/service_spec/readme/log/construction_plan）
-PERMANENT_DOC_TYPES = {
-    "policy", "blueprint",
-    "vocabulary", "register", "template", "index",
-    "gate", "architecture_view",
-}
+
+def _load_doc_type_ttl_sets() -> tuple[set[str], set[str]]:
+    """从 doc_type_vocabulary.yaml 动态构建 doc_type→ttl_default 映射。
+
+    真源：doc_type_vocabulary.yaml values[].ttl_default
+    消除原硬编码 PROCESS_DOC_TYPES / PERMANENT_DOC_TYPES 副本——词表变更只需改一处。
+    """
+    try:
+        vocab = _yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8")) or {}
+    except FileNotFoundError:
+        return set(), set()
+    process_types: set[str] = set()
+    permanent_types: set[str] = set()
+    for entry in vocab.get("values", []):
+        value = entry.get("value", "")
+        ttl_default = entry.get("ttl_default", "")
+        if ttl_default == "task_bound":
+            process_types.add(value)
+        elif ttl_default == "permanent":
+            permanent_types.add(value)
+    return process_types, permanent_types
+
+
+PROCESS_DOC_TYPES, PERMANENT_DOC_TYPES = _load_doc_type_ttl_sets()
 
 # ── 模糊 doc_type（不加入任何集合 → 标题无信号时进 pending）──
 # log 等需结合标题内容判定，不单独靠 doc_type 判定

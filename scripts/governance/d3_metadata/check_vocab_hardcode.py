@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码 + load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -23,6 +23,7 @@
   2. 赋值为字面量集合（list/set/frozenset/tuple）→ 疑似硬编码
   3. 赋值为函数调用（如 _load_xxx_values()）→ 动态加载 → 合规
   4. load_vocabulary_values("xxx.yaml") 调用 → 校验 xxx.yaml 是否存在
+  5. 值匹配（v1.3.0）：不限变量名，字面量集合含 3+ 词表值 → 疑似硬编码
 
 模式:
   --warn-only（默认）: print 违规清单，exit 0
@@ -188,13 +189,77 @@ def _is_literal_collection(value: ast.expr) -> bool:
     return False
 
 
-def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None = None) -> list[tuple[int, str]]:
+def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:
+    """加载所有 *_vocabulary.yaml 的合法值，构建 vocab_name → set[value] 映射。
+
+    用于值匹配检测（检测4）：不限变量名，扫描字面量集合的字符串值，
+    若命中数 ≥ min(3, 词表总值) 且 ≥ 2，标记为疑似硬编码。
+    覆盖检测1（变量名匹配）漏检的 DOC_TYPES/CODE_TYPES/TYPE_PRIORITY 等命名。
+
+    Returns:
+        {vocab_name: {value, ...}}；vocab_name 不含 _vocabulary.yaml 后缀。
+        过滤单字符值与纯数字值（避免误报）。文件异常时跳过（warn-only，不崩溃）。
+    """
+    result: dict[str, set[str]] = {}
+    for p in sorted(vocab_dir.glob("*_vocabulary.yaml")):
+        vocab_name = p.name.removesuffix("_vocabulary.yaml")
+        try:
+            data = yaml.safe_load(p.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(data, dict):
+            continue
+        values: set[str] = set()
+        for v in data.get("values", []) or []:
+            if isinstance(v, dict) and "value" in v:
+                val = v["value"]
+                if isinstance(val, str) and len(val) >= 2 and not val.isdigit():
+                    values.add(val)
+        if values:
+            result[vocab_name] = values
+    return result
+
+
+def _extract_str_literals(node: ast.expr) -> set[str]:
+    """从字面量集合 AST 节点提取所有字符串常量值。
+
+    覆盖 _is_literal_collection 判定为 True 的所有形态：
+      - list/set/tuple 字面量：[a, b], {a, b}, (a, b)
+      - set/frozenset/list/tuple([...]) 调用
+      - "a,b,c".split(",") 字符串方法
+    """
+    values: set[str] = set()
+    if isinstance(node, (ast.List, ast.Set, ast.Tuple)):
+        for elt in node.elts:
+            if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                values.add(elt.value)
+    elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+        if node.func.id in ("set", "frozenset", "list", "tuple") and node.args:
+            inner = node.args[0]
+            if isinstance(inner, (ast.List, ast.Set, ast.Tuple)):
+                for elt in inner.elts:
+                    if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                        values.add(elt.value)
+    elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+        if (node.func.attr in ("split", "rsplit")
+                and isinstance(node.func.value, ast.Constant)
+                and isinstance(node.func.value.value, str)):
+            sep = ","
+            if (node.args and isinstance(node.args[0], ast.Constant)
+                    and isinstance(node.args[0].value, str)):
+                sep = node.args[0].value
+            values.update(s for s in node.func.value.value.split(sep) if s)
+    return values
+
+
+def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None = None, vocab_values: dict[str, set[str]] | None = None) -> list[tuple[int, str]]:
     """检查单个 Python 文件的词表硬编码与 yaml 引用存在性 + [STARTUP] 标记值校验。
 
     Args:
         filepath: Python 文件绝对路径。
         vocab_dir: 词表 YAML 所在目录（用于校验 load_vocabulary_values 引用存在性）。
         startup_values: startup_vocabulary.yaml 的合法值集合（None 表示跳过 [STARTUP] 校验）。
+        vocab_values: 所有词表的 {vocab_name: set[value]} 映射（None 表示跳过值匹配检测）。
 
     Returns:
         (行号, 违规描述) 列表（空列表 = 通过）。
@@ -230,9 +295,14 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     for node in ast.walk(tree):
         # 检测1：词表硬编码（VALID_* 赋值为字面量集合）
         # v1.1.0 增强：同时检测 ast.NamedExpr（walrus 操作符，覆盖红队绕过 A11）
-        if isinstance(node, (ast.Assign, ast.NamedExpr)):
-            # Assign.targets 是列表；NamedExpr.target 是单个 Name
+        # v1.3.1 增强：同时检测 ast.AnnAssign（带类型注解赋值 VAR: list[str] = [...]，覆盖红队绕过 A12）
+        if isinstance(node, (ast.Assign, ast.NamedExpr, ast.AnnAssign)):
+            # Assign.targets 是列表；NamedExpr/AnnAssign.target 是单个 Name
             targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            # AnnAssign 可能无赋值（如 x: int），跳过
+            if node.value is None:
+                continue
+            name_match_reported = False
             for target in targets:
                 if not isinstance(target, ast.Name):
                     continue
@@ -265,6 +335,27 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                     node.lineno,
                     f"{var_name} 硬编码词表合法值(应从 {vocab_file} 动态加载)",
                 ))
+                name_match_reported = True
+
+            # 检测4：值匹配（v1.3.0 新增——不限变量名，覆盖 DOC_TYPES/CODE_TYPES/TYPE_PRIORITY 等漏检命名）
+            # 仅当检测1未报且值是字面量集合时进行，避免与检测1重复。
+            # 阈值：命中数 ≥ min(3, 词表总值) 且 ≥ 2（避免单值巧合误报）。
+            if (not name_match_reported and vocab_values
+                    and _is_literal_collection(node.value)
+                    and not _has_noqa_exempt(source, node.lineno)):
+                str_values = _extract_str_literals(node.value)
+                if len(str_values) >= 2:
+                    for vocab_name, vocab_set in vocab_values.items():
+                        hit_count = len(str_values & vocab_set)
+                        total = len(vocab_set)
+                        threshold = min(3, total)
+                        if hit_count >= threshold and hit_count >= 2:
+                            issues.append((
+                                node.lineno,
+                                f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                                f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                            ))
+                            break  # 一个词表命中即可，避免重复报
         # 检测2：load_vocabulary_values("xxx.yaml") 引用的词表文件存在性
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
             if node.func.id != "load_vocabulary_values":
@@ -344,6 +435,9 @@ def main() -> int:
     # 加载 [STARTUP] 合法值（红蓝发现3 治本：兑现 startup_vocabulary.yaml "校验器动态加载"声明）
     startup_values = _load_startup_values(vocab_dir)
 
+    # 加载所有词表合法值（v1.3.0 新增——检测4 值匹配，覆盖变量名漏检）
+    vocab_values = _load_all_vocab_values(vocab_dir)
+
     # 排除 _archive 目录
     exclude = EXCLUDE_DIRS | {"_archive", "tests"}
 
@@ -360,7 +454,7 @@ def main() -> int:
         )
         for filepath in py_files:
             checked += 1
-            issues = _check_file(filepath, vocab_dir, startup_values)
+            issues = _check_file(filepath, vocab_dir, startup_values, vocab_values)
             for lineno, issue in issues:
                 all_issues.append((filepath, lineno, issue))
 
