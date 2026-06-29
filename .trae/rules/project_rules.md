@@ -288,7 +288,7 @@ except PermissionError:
 | ❌ | 新增 gate 只写名字不写实现 | 假门禁 |
 | ❌ | 完成任务卡后不检查"下游有没有人用" | 孤儿功能 |
 | ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理。判定方法见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` 二元判定树 |
-| ❌ | 过程性文档直接放永久区或根目录 | 永久区污染 / 根目录孤儿。**默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/index.md)**（ttl=task_bound）；仅永久区路径（`01_policies_and_standards/`、`02_enterprise_architecture/`、`03_modules/`、`08_knowledge/`）经用户批准方可晋升（ttl=permanent） |
+| ❌ | 过程性文档直接放永久区或根目录 | 永久区污染 / 根目录孤儿。**默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/)**（ttl=task_bound）；仅永久区路径（`01_policies_and_standards/`、`02_enterprise_architecture/`、`03_modules/`、`08_knowledge/`）经用户批准方可晋升（ttl=permanent） |
 
 ---
 
