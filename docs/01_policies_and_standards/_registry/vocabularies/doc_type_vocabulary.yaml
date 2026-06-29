@@ -13,9 +13,12 @@
 # 版本：2.0.0
 # 创建日期：2026-04-30
 #
-# 本词表定义 doc_type 字段的全项目合法值（19 种）——v2.0.0 精简：
-# 移除 design/plan/schema/reference/protocol/declaration 6 值（语义合并到
+# 本词表定义 doc_type 字段的全项目合法值（10 种）——v3.0.0 精简：
+# v2.0.0: 移除 design/plan/schema/reference/protocol/declaration 6 值（语义合并到
 # blueprint/construction_plan/contract/register/architecture_view/audit_report/config/policy）。
+# v3.0.0: 再精简 9 值——terminology→vocabulary, readme→index, contract→gate,
+# service_spec→architecture_view, standard→policy, construction_plan→blueprint,
+# log→audit_report, config→register, knowledge_entry→vocabulary（AI 视角语义同构合并）。
 # 任何文件 frontmatter 中的 doc_type 必须是以下值之一。
 # 新增 doc_type 必须先在此词表中注册，再在 PS-STD-001 中更新。
 #
@@ -25,14 +28,14 @@
 #   - Cursor Rules：glob 自动触发 + 决策辅助
 #   - OpenAPI 3.1：enum + description + deprecated flag
 
-schema_version: "2.0.0"
+schema_version: "3.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-001
-version: "2.0.0"
+version: "3.0.0"
 title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
-total_values: 19
+total_values: 10
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1 + §3.2"
@@ -43,24 +46,15 @@ depends_on:
 
 values:
   - value: policy
-    definition: "声明式规则——定义'必须/禁止/条件'，不定义'如何做'"
-    rule_form: declarative
-    allowed_directories: ["governance/"]
-    forbidden_directories: ["operational/"]
-    required_fields: ["valid_from"]
-    ai_keywords: ["必须", "禁止", "红线", "不得", "强制"]
-    examples: ["secret-management-policy.md", "access-control-policy.md"]
-    filename_suffixes: ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"]
-
-  - value: standard
-    definition: "技术标准——定义度量、格式、接口等可量化规范"
+    definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
     rule_form: declarative
     allowed_directories: ["governance/", "meta/"]
     forbidden_directories: ["operational/"]
-    required_fields: ["valid_from", "verifiability"]
-    ai_keywords: ["推荐", "方案", "做法", "best practice", "应该"]
-    examples: ["metadata_registry.yaml", "trae_028_doc_structure_naming.yaml doc_001"]
-    filename_suffixes: ["_standard.md", "_standard.yaml", "_standard.yml"]
+    required_fields: ["valid_from"]
+    ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该"]
+    examples: ["secret-management-policy.md", "access-control-policy.md"]
+    filename_suffixes: ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"]
+
 
   - value: operational_rule
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
@@ -73,18 +67,18 @@ values:
     filename_suffixes: ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"]
 
   - value: register
-    definition: "注册表——结构化数据清单，用于发现和索引"
+    definition: "注册表/配置——结构化数据清单或运行时配置定义，用于发现、索引和参数设置"
     rule_form: data
-    allowed_directories: ["_registry/", "meta/"]
+    allowed_directories: ["_registry/", "meta/", "config/", "src/zephyr/config/"]
     forbidden_directories: ["operational/"]
     required_fields: ["summary"]
-    ai_keywords: ["注册表", "登记表", "清单", "索引", "registry"]
+    ai_keywords: ["注册表", "登记表", "清单", "索引", "registry", "配置", "config", "参数", "settings"]
     examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
     filename_suffixes: ["_registry.md", "_register.md", "_registry.yaml", "_registry.yml", "_register.yaml", "_register.yml"]
     registry_category: governance_rule
 
   - value: index
-    definition: "索引入口——目录级导航文件，声明子域的职责边界、文件清单和依赖关系。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
+    definition: "目录级导航/概况文件——声明子域的职责边界、文件清单和依赖关系，或项目/目录概况说明。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
     rule_form: declarative
     allowed_directories: ["governance/", "meta/"]
     forbidden_directories: ["operational/"]
@@ -112,133 +106,61 @@ values:
     examples: ["blueprint-construction-template.md", "dependency-graph-template.md"]
     filename_suffixes: ["_template.md"]
 
-  - value: terminology
-    definition: "术语表——核心术语的统一定义和仲裁源，用于消除跨文件语义歧义"
-    rule_form: data
-    allowed_directories: ["meta/"]
-    forbidden_directories: ["operational/", "governance/"]
-    required_fields: []
-    ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
-    registry_category: terminology
-    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/terminology_mapping.yaml。术语的大白话翻译/映射表使用 doc_type: register（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），register 是数据清单（对照表）。"
-    examples: ["_registry/vocabularies/terminology_mapping.yaml"]
-    filename_suffixes: ["_terminology_mapping.yaml", "_terminology.md"]
 
   - value: vocabulary
-    definition: "受控词表——定义枚举值、合法值域的机器可读清单，供 AI 和 CI 消费"
+    definition: "受控参考数据——定义枚举值域、术语定义或知识内容的机器可读清单，供 AI 和 CI 消费"
     rule_form: data
-    allowed_directories: ["_registry/vocabularies/"]
+    allowed_directories: ["_registry/vocabularies/", "meta/", "08_knowledge/"]
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
-    ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled"]
+    ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled", "术语", "定义", "glossary", "terminology", "知识", "knowledge"]
     examples: ["doc_type_vocabulary.yaml", "status_vocabulary.yaml"]
     registry_category: vocabulary
 
-  - value: contract
-    definition: "验证契约——定义 VR 规则的结构化验证标准，供 pre-commit/CI 消费"
-    rule_form: data
-    allowed_directories: ["_registry/contracts/"]
-    forbidden_directories: ["operational/", "governance/"]
-    required_fields: ["contract_version", "total_vr_rules"]
-    ai_keywords: ["契约", "验证", "VR", "contract", "rule"]
-    examples: ["architecture_contract.yaml"]
-    registry_category: contract
 
   - value: blueprint
-    definition: "蓝图——模块/子系统的完整设计文档，包含架构决策、数据模型、接口定义、部署视图"
+    definition: "蓝图——模块/子系统的完整设计文档和施工指导，包含架构决策、数据模型、接口定义、任务分解"
     rule_form: declarative
-    allowed_directories: ["03_blueprints/"]
+    allowed_directories: ["03_blueprints/", "03_modules/"]
     forbidden_directories: ["operational/", "governance/"]
     required_fields: ["valid_from", "architecture_layers", "last_verified"]
-    ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块"]
+    ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块", "施工", "任务", "checklist", "construction", "plan"]
     examples: ["script-system-blueprint.md"]
     filename_suffixes: ["blueprint.md"]
 
-  - value: construction_plan
-    definition: "施工计划——由蓝图派生的可执行施工方案，包含任务分解、Checklist 状态追踪"
-    rule_form: declarative
-    allowed_directories: ["03_blueprints/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["blueprint_refs"]
-    ai_keywords: ["施工", "任务", "checklist", "construction", "plan"]
-    examples: ["script-system-construction.md"]
 
-  - value: readme
-    definition: "自述文件——项目/目录级概况说明，面向人类阅读者"
-    rule_form: declarative
-    allowed_directories: ["（项目根或任意目录）"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: []
-    ai_keywords: ["README", "自述", "概况", "介绍"]
-    examples: ["README.md"]
 
-  - value: log
-    definition: "日志——session log、变更日志等时间戳驱动的记录"
-    rule_form: data
-    allowed_directories: ["_working/audit/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["session_id"]
-    ai_keywords: ["日志", "session", "记录", "log", "timestamp"]
-    examples: ["session-20260502-001.md"]
-    filename_suffixes: ["_log.md"]
-
-  - value: knowledge_entry
-    definition: "知识条目——结构化知识库条目，供 AI 自动检索消费"
-    rule_form: data
-    allowed_directories: ["08_knowledge/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["knowledge_domain"]
-    ai_keywords: ["知识", "knowledge", "条目", "FAQ"]
-    examples: []
 
   - value: audit_report
-    definition: "审计报告——自动或手动生成的审计产出物"
+    definition: "审计/记录——时间戳驱动的记录、session log 或结构化审计产出物"
     rule_form: data
-    allowed_directories: ["_working/audit/"]
+    allowed_directories: ["_working/audit/", "session_logs/"]
     forbidden_directories: ["03_blueprints/"]
-    required_fields: ["generated_at"]
-    ai_keywords: ["审计", "报告", "audit", "report"]
+    required_fields: []
+    ai_keywords: ["审计", "报告", "audit", "report", "日志", "session", "记录", "log", "timestamp"]
     examples: []
     filename_suffixes: ["_report.md"]
 
-  - value: service_spec
-    definition: "服务规格——定义微服务/模块的外部接口契约"
-    rule_form: declarative
-    allowed_directories: ["02_enterprise_architecture/", "03_blueprints/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["api_version"]
-    ai_keywords: ["服务", "接口", "API", "spec", "服务规格"]
-    examples: []
-    filename_suffixes: ["_interface.md"]
 
   - value: architecture_view
-    definition: "架构视图——4+1 架构视图模型的特定视角文档"
+    definition: "架构视图——4+1 架构视角文档或服务/模块的外部接口规格"
     rule_form: declarative
-    allowed_directories: ["02_enterprise_architecture/"]
+    allowed_directories: ["02_enterprise_architecture/", "03_blueprints/", "03_modules/specs/"]
     forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: []  # v2.0.0: view_type 声明已移除（无对应 vocabulary，向内收不创造）
-    ai_keywords: ["架构视图", "4+1", "view", "architecture_view"]
+    required_fields: []  # v3.0.0: service_spec 已并入（api_version 降为可选 via tags）
+    ai_keywords: ["架构视图", "4+1", "view", "architecture_view", "服务", "接口", "API", "spec", "服务规格"]
     examples: []
 
   - value: gate
-    definition: "门禁文件——定义质量门禁的触发条件、检查项和阻断规则"
+    definition: "门禁/验证定义——定义质量门禁的触发条件、检查项、阻断规则或 VR 验证标准"
     rule_form: declarative
-    allowed_directories: ["governance/architecture/"]
+    allowed_directories: ["governance/architecture/", "_registry/contracts/"]
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from"]
-    ai_keywords: ["门禁", "gate", "阻断", "检查", "准入"]
+    ai_keywords: ["门禁", "gate", "阻断", "检查", "准入", "契约", "验证", "VR", "contract", "rule"]
     usage_note: "门禁文件的 doc_type。Gate YAML 登记表（_registry/catalogs/gate_registry.yaml）使用 register 而非 gate——gate 用于规则文档"
     examples: []
 
-  - value: config
-    definition: "配置文件——YAML/TOML 格式的运行时配置定义"
-    rule_form: data
-    allowed_directories: ["config/", "src/zephyr/config/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["config_version"]
-    ai_keywords: ["配置", "config", "参数", "settings"]
-    usage_note: "用于 config/ 目录下的配置文件。01_policies_and_standards/ 下不使用此类型"
-    examples: []
 
 # ============================================================
 # 字段语义正交说明：doc_type vs allowed_directories vs forbidden_directories
@@ -305,7 +227,7 @@ values:
 # 【原则】文件名后缀必须反映 doc_type。不允许文件名误导文档类型。
 # 做到"看名字就知道这个文件是什么类型的规则"——这是零记忆重启标准的基础。
 #
-# doc_type → 文件名后缀映射：
+# doc_type → 文件名后缀映射（v3.0.0，10 值）：
 #   policy           → {subject}-policy.md
 #   standard         → {subject}-standard.md
 #   operational_rule → {subject}-runbook.md / -playbook.md / -procedure.md / -checklist.md
@@ -424,3 +346,49 @@ deprecated_values:
     reason: "与 policy 语义重叠（声明文件是声明式规则的一种），0 使用率，合并到 policy"
     migrated_to: ["policy"]
     date: "2026-06-27"
+
+  # ── v3.0.0 精简：9 值语义合并（2026-06-29）──
+  - value: standard
+    reason: "与 policy 语义重叠（技术标准是声明式规则的一种），AI 分类困扰，合并到 policy"
+    migrated_to: ["policy"]
+    date: "2026-06-29"
+
+  - value: terminology
+    reason: "与 vocabulary 语义重叠（术语表是受控参考数据的一种），合并到 vocabulary"
+    migrated_to: ["vocabulary"]
+    date: "2026-06-29"
+
+  - value: readme
+    reason: "与 index 语义重叠（自述文件是目录导航的一种），合并到 index"
+    migrated_to: ["index"]
+    date: "2026-06-29"
+
+  - value: contract
+    reason: "与 gate 语义重叠（验证契约是门禁定义的一种），合并到 gate"
+    migrated_to: ["gate"]
+    date: "2026-06-29"
+
+  - value: construction_plan
+    reason: "功能已被蓝图(施工指导)+任务卡(具体步骤)分担，construction_plan 为冗余中间层，合并到 blueprint"
+    migrated_to: ["blueprint"]
+    date: "2026-06-29"
+
+  - value: service_spec
+    reason: "与 architecture_view 语义重叠（服务规格是 4+1 进程视图的一种），合并到 architecture_view"
+    migrated_to: ["architecture_view"]
+    date: "2026-06-29"
+
+  - value: log
+    reason: "与 audit_report 语义重叠（日志是时间驱动记录的一种），AI 消费方式相同，合并到 audit_report"
+    migrated_to: ["audit_report"]
+    date: "2026-06-29"
+
+  - value: config
+    reason: "与 register 语义重叠（运行时配置是结构化数据清单的一种），同目录已混用，合并到 register"
+    migrated_to: ["register"]
+    date: "2026-06-29"
+
+  - value: knowledge_entry
+    reason: "与 vocabulary 语义重叠（知识条目是受控参考数据的一种），合并到 vocabulary"
+    migrated_to: ["vocabulary"]
+    date: "2026-06-29"

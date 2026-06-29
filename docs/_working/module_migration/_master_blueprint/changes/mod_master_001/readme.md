@@ -1,7 +1,7 @@
 ---
 blueprint_id: MOD-GOVERNANCE
 ttl: task_bound
-doc_type: readme
+doc_type: index
 completes_when: "对应模块变更/交付流程合入正式蓝图或发布记录后归档删除（2026-06-29 迁自 docs/03_modules/ 永久区）"
 ---
 

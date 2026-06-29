@@ -13,7 +13,7 @@
 
 schema_version: "2.2.0"
 module_id: GOV-AI-007
-doc_type: contract
+doc_type: gate
 title: "Session Log 标准 Schema"
 status: active
 version: "2.2.0"

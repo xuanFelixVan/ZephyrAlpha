@@ -3,7 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: architecture_model README
 module_id: GOV-046
 ttl: permanent
-doc_type: readme
+doc_type: index
 ---
 
 # 企业架构树中的 architecture_model（双树职责分离说明）

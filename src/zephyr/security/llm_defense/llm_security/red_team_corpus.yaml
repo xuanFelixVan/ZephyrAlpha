@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 module_id: MOD-INF-014
 schema_version: "1.0"
-doc_type: config
+doc_type: register
 last_updated: "2026-05-06"
 status: seed
 description: |

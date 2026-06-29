@@ -44,7 +44,7 @@ values:
     definition: "声明式规则——定义'是什么/必须/禁止'，不定义'如何做'"
     ai_consumption: "AI 读取并遵守，不执行步骤"
     examples: ["ABS-001: 所有数据源连接必须认证", "COND-001: P0 模块额外条件"]
-    doc_types: ["policy", "standard", "index", "gate", "readme", "service_spec", "architecture_view", "blueprint", "construction_plan"]
+    doc_types: ["policy", "index", "gate", "architecture_view", "blueprint"]
 
   - value: procedural
     definition: "过程式规则——定义'如何做'的步骤、检查清单、回滚方案"
@@ -56,7 +56,7 @@ values:
     definition: "数据类规则——结构化数据清单，用于发现和索引"
     ai_consumption: "AI 查询和引用，不执行"
     examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
-    doc_types: ["register", "vocabulary", "contract", "terminology", "log", "knowledge_entry", "audit_report", "config"]
+    doc_types: ["register", "vocabulary", "audit_report"]
 
   - value: structural
     definition: "结构类规则——定义文档/文件的结构骨架"
@@ -71,9 +71,9 @@ values:
 # 规则：每种 doc_type 强制绑定一种 rule_form（PS-STD-001 §2.6）。
 #
 # | 如果你的文件 doc_type 是... | rule_form 自动等于... |
-# | policy / standard / index / gate / readme / service_spec / architecture_view / blueprint / construction_plan | declarative |
+# | policy / index / gate / architecture_view / blueprint | declarative |
 # | operational_rule               | procedural            |
-# | register / vocabulary / contract / terminology / log / knowledge_entry / audit_report / config | data                  |
+# | register / vocabulary / audit_report | data                  |
 # | template                        | structural            |
 # ============================================================
 
@@ -83,8 +83,6 @@ deprecated_values: []
 mapping_rules:
   - rule: "doc_type: policy → rule_form: declarative"
     exceptions: []
-  - rule: "doc_type: standard → rule_form: declarative"
-    exceptions: []
   - rule: "doc_type: index → rule_form: declarative"
     exceptions: []
   - rule: "doc_type: operational_rule → rule_form: procedural"
@@ -93,29 +91,13 @@ mapping_rules:
     exceptions: []
   - rule: "doc_type: vocabulary → rule_form: data"
     exceptions: []
-  - rule: "doc_type: contract → rule_form: data"
-    exceptions: []
-  - rule: "doc_type: terminology → rule_form: data"
-    exceptions: []
   - rule: "doc_type: template → rule_form: structural"
     exceptions: []
   - rule: "doc_type: gate → rule_form: declarative"
     exceptions: []
   - rule: "doc_type: blueprint → rule_form: declarative"
     exceptions: []
-  - rule: "doc_type: construction_plan → rule_form: declarative"
-    exceptions: []
-  - rule: "doc_type: readme → rule_form: declarative"
-    exceptions: []
-  - rule: "doc_type: log → rule_form: data"
-    exceptions: []
-  - rule: "doc_type: knowledge_entry → rule_form: data"
-    exceptions: []
   - rule: "doc_type: audit_report → rule_form: data"
     exceptions: []
-  - rule: "doc_type: service_spec → rule_form: declarative"
-    exceptions: []
   - rule: "doc_type: architecture_view → rule_form: declarative"
-    exceptions: []
-  - rule: "doc_type: config → rule_form: data"
     exceptions: []

@@ -22,7 +22,7 @@
 # YAML canonical 字段（AI 零歧义消费——对标 §6.12 AI-First）
 schema_version: "1.1.0"
 module_id: PS-REG-016
-doc_type: contract
+doc_type: gate
 title: "登记表的登记表 — 跨登记表一致性契约"
 status: active
 version: "1.2.0"

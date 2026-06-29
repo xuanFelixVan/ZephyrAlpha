@@ -49,7 +49,7 @@ fields:
   stage: null
   enum_values: dynamic_from_ssot
   applicable_docs: []
-  description: "文档品种——01_policies_and_standards/ 目录下 19 种（v2.0.0，canonical SSoT: doc_type_vocabulary.yaml）"
+  description: 文档品种——01_policies_and_standards/ 目录下 10 种（v3.0.0，canonical SSoT: doc_type_vocabulary.yaml）
   source: PS-STD-001 §3.2.1 + doc_type_vocabulary.yaml
   derived_from: _registry/vocabularies/doc_type_vocabulary.yaml
   note: ''
@@ -57,7 +57,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 文档状态——DocStatus 仅 3 值
   source: PS-STD-001 §4.1 + status_vocabulary.yaml
@@ -107,7 +107,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 机密等级——三分法
   source: PS-STD-001 §4.6
@@ -117,7 +117,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 主语言
   source: PS-STD-001 §4.3
@@ -127,7 +127,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 创建者类型
   source: PS-STD-001 §4.4
@@ -148,7 +148,7 @@ fields:
   required: always
   stage: null
   derived_from: _registry/vocabularies/ttl_vocabulary.yaml
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 文档保留期
   source: PS-STD-001 §6
@@ -169,7 +169,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - template
   description: 完整性声明——模板自身的完整程度。对标 CycloneDX Compositions
@@ -190,13 +190,11 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
   - register
-  - protocol
   - template
   description: 规则表达形式——4 值
   source: PS-STD-001 §2.5 + rule_form_vocabulary.yaml
@@ -206,12 +204,10 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
-  - protocol
   description: 规则作用范围——4 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/scope_vocabulary.yaml
@@ -220,12 +216,10 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
-  - protocol
   description: 规则稳定性——4 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/stability_vocabulary.yaml
@@ -234,12 +228,10 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
-  - protocol
   description: 规则可验证性——3 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/verifiability_vocabulary.yaml
@@ -248,7 +240,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - template
   description: 模板用于创建什么类型的文档——AI 按目标 doc_type 搜索模板时的路由键。枚举值复用 doc_type 受控词表（去掉 template
@@ -287,7 +279,7 @@ fields:
   type: array
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 横向知识来源——[{path, relationship, sections}]
   source: PS-STD-001 §10.17
@@ -306,13 +298,11 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
   - register
-  - protocol
   description: AI 自治权限——3 值（全小写）
   source: PS-STD-001 §4.5
   derived_from: _registry/vocabularies/ai_autonomy_vocabulary.yaml
@@ -321,7 +311,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 安全风险等级
   source: PS-STD-001 §10.10
@@ -340,10 +330,9 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - standard
   - operational_rule
   - template
   description: 治理系统家族
@@ -354,7 +343,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: AI 能力槽位状态
   source: PS-STD-001 §10.7
@@ -364,7 +353,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 规划的 AI 自治等级
   source: PS-STD-001 §10.7
@@ -385,7 +374,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 审核状态
   source: PS-STD-001 §10.16
@@ -404,7 +393,7 @@ fields:
   type: array
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 施工图引用的蓝图列表——[{path, status, decisions_used}]
   source: PS-STD-001 §10.12
@@ -414,7 +403,7 @@ fields:
   type: array
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 合规标签——金融监管法规映射（6 值）
   source: PS-STD-001 §10.13
@@ -424,7 +413,7 @@ fields:
   type: object
   required: optional
   stage: planned
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 溯源信息——{origin_drafts[], audit_chain[], arbitration}
   source: PS-STD-001 §10.3
@@ -434,7 +423,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 文件演进策略
   source: PS-STD-001 §10.11
@@ -478,7 +467,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 蓝图层级——PS-STD-005 三级金字塔中的位置
   source: PS-STD-005 §8.1
@@ -549,7 +538,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - code_file
   description: 代码文件头部——文件稳定性。枚举值与 frontmatter stability 字段完全一致
@@ -560,7 +549,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - code_file
   description: 代码文件头部——安全风险等级。枚举值与 frontmatter safety_level 字段完全一致
@@ -571,7 +560,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - code_file
   description: 代码文件头部——AI 自治权限。枚举值与 frontmatter ai_autonomy 字段完全一致
@@ -602,12 +591,11 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - code_file
   - register
   - gate
-  - contract
   - schema
   description: 文件表头格式——7 值。GOV-ENG-002 §9.4 定义。用于 validate_file_headers.py 路由校验逻辑
   source: GOV-ENG-002 §9.4
@@ -616,12 +604,11 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - code_file
   - register
   - gate
-  - contract
   - schema
   description: 文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format
   source: GOV-ENG-002 §9.5
@@ -630,7 +617,7 @@ fields:
   type: enum
   required: conditional
   stage: phase2
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 知识条目内容类型——10 值
   source: PS-STD-001 §9.1
@@ -640,7 +627,7 @@ fields:
   type: enum
   required: conditional
   stage: phase2
-  enum_values: dynamic_from_ssot
+  enum_values: DYNAMIC_FROM_SSOT
   applicable_docs: []
   description: 知识条目业务领域——10 值
   source: PS-STD-001 §9.2

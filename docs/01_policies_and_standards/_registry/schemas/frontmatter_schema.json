@@ -23,9 +23,6 @@
           "const": "policy"
         },
         {
-          "const": "standard"
-        },
-        {
           "const": "operational_rule"
         },
         {
@@ -38,43 +35,19 @@
           "const": "template"
         },
         {
-          "const": "terminology"
-        },
-        {
           "const": "vocabulary"
-        },
-        {
-          "const": "contract"
         },
         {
           "const": "blueprint"
         },
         {
-          "const": "construction_plan"
-        },
-        {
-          "const": "readme"
-        },
-        {
-          "const": "log"
-        },
-        {
-          "const": "knowledge_entry"
-        },
-        {
           "const": "audit_report"
-        },
-        {
-          "const": "service_spec"
         },
         {
           "const": "architecture_view"
         },
         {
           "const": "gate"
-        },
-        {
-          "const": "config"
         }
       ]
     },

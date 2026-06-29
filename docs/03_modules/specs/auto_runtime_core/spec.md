@@ -1,7 +1,7 @@
 ---
 module_id: MOD-SPEC-002
 title: "AutoRuntime Core — 三层运行时运营中心（系统大脑）"
-doc_type: service_spec
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

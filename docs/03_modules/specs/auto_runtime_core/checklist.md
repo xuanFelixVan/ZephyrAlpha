@@ -1,7 +1,7 @@
 ---
 module_id: MOD-SPEC-001
 title: "AutoRuntime Core — 验收清单"
-doc_type: service_spec
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

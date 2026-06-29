@@ -1,6 +1,6 @@
 ---
 ttl: task_bound
-doc_type: log
+doc_type: audit_report
 completes_when: llm_security 15 个失败测试修复任务结案
 ---
 

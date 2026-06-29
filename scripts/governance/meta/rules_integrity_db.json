@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "bfb84c25cf3daa05",
+      "hash": "4f9935d77948bb6b",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "20f8bed1ee83f327",
+      "hash": "7e55ae3ac59c2632",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,6 +46,6 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     }
   },
-  "registered_at": "2026-06-29T11:29:24.981726+00:00",
-  "last_check_at": "2026-06-29T11:29:24.981726+00:00"
+  "registered_at": "2026-06-29T12:01:40.637678+00:00",
+  "last_check_at": "2026-06-29T12:01:40.637678+00:00"
 }

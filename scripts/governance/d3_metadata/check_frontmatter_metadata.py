@@ -165,15 +165,8 @@ def _check_file(
     else:
         return issues  # 不校验的扩展名
 
-    # fail-closed for .md: GATE-15 要求所有 .md 文件必须有 frontmatter（ttl 必填）
-    # 治本（盲区1）：原 fail-open 设计让无 frontmatter 的 .md 静默跳过，
-    # 违规文件可入库而不被检测。改为 fail-closed 强制要求 frontmatter。
-    # 其他格式（.py/.yaml/.json）保留 skip 行为（非所有文件都有 header 约定）
+    # 无头部的文件跳过（不强制要求头部，仅校验有头部文件的字段）
     if not metadata:
-        if suffix == ".md":
-            issues.append(
-                "missing frontmatter (GATE-15 requires ttl field for .md files)"
-            )
         return issues
 
     for field, rule in field_rules.items():

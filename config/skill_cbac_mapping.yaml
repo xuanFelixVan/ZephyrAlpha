@@ -29,7 +29,7 @@
 module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
-doc_type: config
+doc_type: register
 title: "Skill to CBAC Mapping"
 status: active
 ttl: permanent

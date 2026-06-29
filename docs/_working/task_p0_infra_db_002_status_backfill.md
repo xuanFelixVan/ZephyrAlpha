@@ -1,7 +1,7 @@
 ---
 module_id: DM-P0-INFRA-DB-002-BACKFILL
 title: "P0-2: INFRA-DB-002 ChromaDB 状态回填（planned→provisioned，消除 52 万文件级状态漂移）"
-doc_type: construction_plan
+doc_type: blueprint
 status: completed
 version: 1.0.1
 date: 2026-06-29

@@ -1,5 +1,5 @@
 ---
-doc_type: log
+doc_type: audit_report
 title: "target_architecture/ 完整修订历史"
 version: "2.2.0"
 status: Active

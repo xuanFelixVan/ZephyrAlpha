@@ -1,7 +1,7 @@
 ---
 module_id: GOV-077
 title: ZephyrAlpha 审计脚本质量标准
-doc_type: standard
+doc_type: policy
 status: active
 version: "1.3.0"
 layer: cross_layer

@@ -33,11 +33,9 @@ from typing import Any
 
 import yaml
 
-# ── REPO_ROOT 从 SSoT 真源 _shared.constants 导入（消除 parents[N] 推算）──
-# yaml_utils 属 _shared 包，import _shared.constants 无需额外 bootstrap（governance/ 已在 sys.path）。
-from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
-
-# src/ 加入 sys.path 以 re-export 真源函数（zephyr 已 editable 安装，此为防御性兜底）
+# ── 一次性 bootstrap：加 src/ 到 sys.path，re-export 真源函数 ──
+# 约束：N 值对本文件固定（scripts/governance/_shared/ → repo root = parents[3]），仅此一次
+_REPO_ROOT = Path(__file__).resolve().parents[3]
 _SRC = str(_REPO_ROOT / "src")
 if _SRC not in _sys.path:
     _sys.path.insert(0, _SRC)

@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-ENT-001
 title: "AI 团队模式完整配置 v3.5"
-doc_type: construction_plan
+doc_type: blueprint
 status: active
 version: 1.0.0
 date: 2026-06-27

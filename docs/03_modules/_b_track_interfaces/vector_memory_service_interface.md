@@ -1,7 +1,7 @@
 ---
 module_id: GOV-AI-ENG-VMS-001
 title: Vector Memory Service Interface / 向量记忆服务接口规范
-doc_type: service_spec
+doc_type: architecture_view
 status: Active
 version: "1.2.0"
 layer: cross_layer

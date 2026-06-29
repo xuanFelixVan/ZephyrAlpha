@@ -1,7 +1,7 @@
 ---
 module_id: MOD-004
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
-doc_type: service_spec
+doc_type: architecture_view
 status: Active
 version: "1.0.0"
 layer: cross_layer

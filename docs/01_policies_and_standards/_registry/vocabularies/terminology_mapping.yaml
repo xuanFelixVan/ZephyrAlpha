@@ -1,6 +1,6 @@
 module_id: META-TERM-001
 title: 术语映射表（大白话 ↔ 行业术语）
-doc_type: terminology
+doc_type: vocabulary
 status: active
 version: 1.0.1
 layer: cross_layer

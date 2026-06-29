@@ -38,7 +38,7 @@ contract_scope: "ZephyrAlpha 全项目所有目录下的 .md 和 .yaml 文件（
 scope_note: "目录 Schema（§1）当前仅定义 01_policies_and_standards/ 的结构规则。其他目录的目录级约束留待后续版本补充。VR 规则通过 tier 字段区分生效范围"
 
 schema_version: "1.2.0"
-doc_type: contract
+doc_type: gate
 module_id: PS-CTR-001
 version: "1.2.0"
 title: "Architecture Compliance Contract"
@@ -60,14 +60,14 @@ directory_schema:
   allowed_directories:
     governance:
       allowed_subdirs: [document, ai, task, security, compliance, architecture, data, module]
-      allowed_doc_types: [policy, standard, register, index]
+      allowed_doc_types: [policy, register, index]
       forbidden_doc_types: [operational_rule]
       description: "声明式规则——定义'必须/禁止/条件'"
 
     operational:
       allowed_subdirs: [vibe_coding, devops, migration]
       allowed_doc_types: [operational_rule]
-      forbidden_doc_types: [policy, standard]
+      forbidden_doc_types: [policy]
       description: "过程式规则——定义'如何做'的步骤（architecture 子目录已于 2026-05-01 删除）"
 
     domains:
@@ -77,7 +77,7 @@ directory_schema:
       description: "层域特定规则——每个层域有 governance/ + operational/ 子目录"
 
     meta:
-      allowed_doc_types: [standard, register, index]
+      allowed_doc_types: [register, index]
       description: "元标准——定义规则的规则"
 
     templates:
@@ -86,7 +86,7 @@ directory_schema:
 
     _registry:
       allowed_subdirs: [contracts, catalogs, vocabularies, schemas]
-      allowed_doc_types: [register, vocabulary, contract]
+      allowed_doc_types: [register, vocabulary, gate]
       description: "注册表——结构化数据清单 + Schema 定义"
 
 # ============================================================
@@ -272,8 +272,8 @@ validation_rules:
 
   - id: VR-009
     tier: directory_scoped
-    name: "operational/ 下无 policy/standard"
-    check: "files under operational/ must not have doc_type in [policy, standard]"
+    name: "operational/ 下无 policy"
+    check: "files under operational/ must not have doc_type in [policy]"
     severity: error
     source: "PS-STD-001 §3.2.1"
 

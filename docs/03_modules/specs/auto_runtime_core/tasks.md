@@ -1,7 +1,7 @@
 ---
 module_id: MOD-SPEC-003
 title: "AutoRuntime Core — 实施任务"
-doc_type: service_spec
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

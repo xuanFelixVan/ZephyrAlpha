@@ -36,7 +36,7 @@
 module_id: GOV-DOC-011
 version: "1.0.1"
 schema_version: "1.0.0"
-doc_type: config
+doc_type: register
 title: "Compression Policy"
 status: active
 ttl: permanent

@@ -1,7 +1,7 @@
 ---
 module_id: MOD-007
 title: Task Pipeline Service Interface / 任务双管线服务接口规范
-doc_type: service_spec
+doc_type: architecture_view
 status: Active
 version: "1.0.0"
 layer: cross_layer

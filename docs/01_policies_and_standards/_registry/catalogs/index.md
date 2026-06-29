@@ -49,7 +49,7 @@ ttl: permanent
 | `frontier_llm_benchmark_ranking.yaml` | 登记表 | 前沿 LLM 基准排名——模型能力/价格/延迟对比 | manual |
 | `registry_consistency_contract.yaml` | 契约 | 登记表的登记表——跨登记表共享字段一致性契约 | manual |
 | `ai_autonomy_authority_registry.yaml` | 登记表 | AI 自治权限登记表——全模块权限终表 | manual |
-| `rule_catalog_registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | manual |
+| `rule_catalog_registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | auto |
 | `functional_domain_registry.yaml` | 登记表 | 功能域登记表——按功能域组织的模块注册 | manual |
 | `master_document_inventory_registry.yaml` | 注册表 | 主文档清单——全项目文档的集中索引 | manual |
 | `business_streams_registry.yaml` | 登记表 | 业务流定义 | manual |

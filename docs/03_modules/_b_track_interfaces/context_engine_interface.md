@@ -1,7 +1,7 @@
 ---
 module_id: MOD-003
 title: Context Engine Interface / 上下文引擎接口规范
-doc_type: service_spec
+doc_type: architecture_view
 status: Active
 version: "1.0.2"
 layer: cross_layer
