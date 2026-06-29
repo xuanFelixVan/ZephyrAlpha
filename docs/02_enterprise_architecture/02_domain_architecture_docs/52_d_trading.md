@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 19:11:03
+> 最后更新: 2026-06-29 19:34:31
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 153 | Module Count | 153 |
 | 域内依赖 | 138 | Internal Dependencies | 138 |
-| 跨域入边 | 273 | Cross-domain Incoming | 273 |
-| 跨域出边 | 146 | Cross-domain Outgoing | 146 |
+| 跨域入边 | 272 | Cross-domain Incoming | 272 |
+| 跨域出边 | 118 | Cross-domain Outgoing | 118 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 133 | Prototype Modules | 133 |
 | 生产态模块 | 20 | Production Modules | 20 |
@@ -127,11 +127,11 @@ graph TD
     D_GOV_AUDIT -.->|import_depends| src_zephyr_trading_init_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_trading_init_py
     D_INTEGRATION -->|import_depends| src_zephyr_trading_init_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_trading_init_py
     D_OPS -.->|import_depends| src_zephyr_trading_init_py
     D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_trading_init_py
     D_SECURITY -->|import_depends| src_zephyr_trading_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
@@ -206,7 +206,7 @@ graph TD
     src_zephyr_trading_orchestrator_chaos_hooks_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_trading_orchestrator_core_trigger_router_py -.->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_trading_orchestrator_core_wave_generator_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_trading_orchestrator_core_agent_orchestrator_py -.->|import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -256,30 +256,26 @@ graph TD
     src_zephyr_trading_orchestrator_resilience_init_py -.->|import_depends| src_zephyr_trading_orchestrator_resilience_failure_matcher_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_orchestrator_failure_matcher_py -.->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_trading_orchestrator_file_task_mapper_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_orchestrator_file_task_mapper_py -.->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED production"]
     src_zephyr_trading_orchestrator_file_task_mapper_py -.->|import_depends| D_SHARED
-    src_zephyr_trading_orchestrator_file_task_mapper_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_orchestrator_hallucination_detector_py -.->|import_depends| D_INTEGRATION
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_orchestrator_hallucination_detector_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_orchestrator_finding_bridge_py -.->|import_depends| D_SHARED
     src_zephyr_trading_orchestrator_finding_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_orchestrator_memory_writer_py -.->|import_depends| D_GOVERNANCE
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_trading_orchestrator_memory_writer_py -.->|import_depends| D_AUTONOMY_CORE
-    src_zephyr_trading_orchestrator_rollback_manager_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_orchestrator_rollback_manager_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_orchestrator_schema_migration_py -.->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_trading_orchestrator_script_runner_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_trading_orchestrator_resilience_failure_matcher_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_trading_orchestrator_resilience_hallucination_detector_py -.->|import_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_orchestrator_dlq_manager_py,src_zephyr_trading_orchestrator_failure_matcher_py,src_zephyr_trading_orchestrator_fault_types_py,src_zephyr_trading_orchestrator_feature_flag_py,src_zephyr_trading_orchestrator_file_task_mapper_py,src_zephyr_trading_orchestrator_finding_bridge_py,src_zephyr_trading_orchestrator_hallucination_detector_py,src_zephyr_trading_orchestrator_housekeeping_py,src_zephyr_trading_orchestrator_incident_postmortem_py,src_zephyr_trading_orchestrator_ke_quality_py,src_zephyr_trading_orchestrator_knowledge_freshness_py,src_zephyr_trading_orchestrator_lean_scanner_py,src_zephyr_trading_orchestrator_memory_writer_py,src_zephyr_trading_orchestrator_model_registry_py,src_zephyr_trading_orchestrator_network_partition_py,src_zephyr_trading_orchestrator_path_index_py,src_zephyr_trading_orchestrator_phase_executor_py,src_zephyr_trading_orchestrator_prompt_version_py,src_zephyr_trading_orchestrator_reconciliation_loop_py,src_zephyr_trading_orchestrator_resilience_init_py,src_zephyr_trading_orchestrator_resilience_deferred_queue_py,src_zephyr_trading_orchestrator_resilience_failure_matcher_py,src_zephyr_trading_orchestrator_resilience_hallucination_detector_py,src_zephyr_trading_orchestrator_resilience_rollback_manager_py,src_zephyr_trading_orchestrator_risk_registry_py,src_zephyr_trading_orchestrator_rollback_manager_py,src_zephyr_trading_orchestrator_rolling_upgrade_py,src_zephyr_trading_orchestrator_schema_migration_py,src_zephyr_trading_orchestrator_script_runner_py,src_zephyr_trading_orchestrator_session_conflict_py design
-    class D_GOVERNANCE,D_INTEGRATION,D_SHARED,D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
+    class D_GOVERNANCE,D_SHARED,D_INTEGRATION,D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 4 页 / 共 6 页 / Page 4 of 6
@@ -319,11 +315,6 @@ graph TD
         src_zephyr_trading_trading_contracts_execution_init_py["src/zephyr/trading/trading_contracts/execution/... prototype"]
     end
     src_zephyr_trading_orchestrator_state_init_py -.->|import_depends| src_zephyr_trading_orchestrator_state_session_manager_py
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED production"]
@@ -336,10 +327,17 @@ graph TD
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_GOV_AUDIT
-    src_zephyr_trading_runtime_config_py -.->|import_depends| D_INTEGRATION
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_trading_task_gate_py -.->|import_depends| D_INTELLIGENCE
-    src_zephyr_trading_orchestrator_state_synchronizer_py -.->|import_depends| D_INTEGRATION
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    src_zephyr_trading_orchestrator_trigger_router_py -.->|import_depends| D_GOV_ENFORCEMENT
+    D_OPS["D_OPS production"]
+    src_zephyr_trading_orchestrator_trigger_router_py -.->|import_depends| D_OPS
+    D_INTEGRATION["D_INTEGRATION production"]
+    src_zephyr_trading_orchestrator_state_agent_health_monitor_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_trading_orchestrator_state_file_task_mapper_py -.->|import_depends| D_SHARED
+    src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_init_py
     D_CROSS_ASSET["D_CROSS_ASSET design"]
     D_CROSS_ASSET -.->|contract| src_zephyr_trading_trading_contracts_init_py
@@ -349,8 +347,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_runtime_init_py,src_zephyr_trading_runtime_async_runtime_py production
     class src_zephyr_trading_orchestrator_session_manager_py,src_zephyr_trading_orchestrator_stability_guard_py,src_zephyr_trading_orchestrator_startup_sequencer_py,src_zephyr_trading_orchestrator_state_init_py,src_zephyr_trading_orchestrator_state_agent_health_monitor_py,src_zephyr_trading_orchestrator_state_file_task_mapper_py,src_zephyr_trading_orchestrator_state_session_manager_py,src_zephyr_trading_orchestrator_state_propagation_py,src_zephyr_trading_orchestrator_state_synchronizer_py,src_zephyr_trading_orchestrator_system_transfer_py,src_zephyr_trading_orchestrator_task_queue_py,src_zephyr_trading_orchestrator_teardown_manager_py,src_zephyr_trading_orchestrator_trigger_router_py,src_zephyr_trading_orchestrator_version_manifest_py,src_zephyr_trading_orchestrator_wave_generator_py,src_zephyr_trading_orphan_detector_py,src_zephyr_trading_ports_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_resource_optimization_py,src_zephyr_trading_runtime_config_py,src_zephyr_trading_session_lifecycle_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_staging_area_py,src_zephyr_trading_status_dashboard_py,src_zephyr_trading_stop_gate_py,src_zephyr_trading_task_gate_py,src_zephyr_trading_trading_contracts_init_py,src_zephyr_trading_trading_contracts_execution_init_py design
-    class D_INFRA_RUNTIME,D_SHARED,D_GOVERNANCE,D_GOV_AUDIT,D_INTELLIGENCE external_prod
-    class D_INTEGRATION,D_CROSS_ASSET external_design
+    class D_INFRA_RUNTIME,D_SHARED,D_GOVERNANCE,D_GOV_AUDIT,D_INTELLIGENCE,D_OPS,D_INTEGRATION external_prod
+    class D_GOV_ENFORCEMENT,D_CROSS_ASSET external_design
 ```
 
 ### 第 5 页 / 共 6 页 / Page 5 of 6
@@ -473,9 +471,9 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_INTEGRATION | 49 | event,import_depends |
 | D_SHARED | 31 | contract,import_depends |
 | D_GOVERNANCE | 27 | contract,import_depends,runtime |
+| D_INTEGRATION | 21 | event,import_depends |
 | D_GOV_AUDIT | 8 | contract,import_depends |
 | D_SECURITY | 7 | import_depends |
 | D_GOV_ENFORCEMENT | 6 | contract,import_depends |
@@ -499,11 +497,11 @@ graph TD
 | D_EX_CORE | 3 | import_depends |
 | D_SECURITY | 2 | import_depends |
 | D_GOV_AUDIT | 2 | import_depends |
-| D_INTEGRATION | 2 | import_depends |
 | D_ML_TRAIN | 2 | import_depends |
 | D_PF_CORE | 1 | import_depends |
 | D_PF_ALLOC | 1 | import_depends |
 | D_INTELLIGENCE | 1 | import_depends |
+| D_INTEGRATION | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

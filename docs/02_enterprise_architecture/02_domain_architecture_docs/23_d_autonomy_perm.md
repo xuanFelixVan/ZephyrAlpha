@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 19:11:03
+> 最后更新: 2026-06-29 19:34:30
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 62 | Module Count | 62 |
 | 域内依赖 | 7 | Internal Dependencies | 7 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
-| 跨域出边 | 145 | Cross-domain Outgoing | 145 |
+| 跨域出边 | 143 | Cross-domain Outgoing | 143 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 60 | Prototype Modules | 60 |
 | 生产态模块 | 1 | Production Modules | 1 |
@@ -190,9 +190,6 @@ graph TD
         tests_unit_agent_rbac_conftest_py["tests/unit/agent_rbac/conftest.py prototype"]
         tests_unit_agent_rbac_test_rbac_core_py["tests/unit/agent_rbac/test_rbac_core.py prototype"]
     end
-    D_INTEGRATION["D_INTEGRATION production"]
-    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
-    tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
     D_SECURITY["D_SECURITY production"]
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
@@ -208,7 +205,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_unit_agent_rbac_conftest_py,tests_unit_agent_rbac_test_rbac_core_py design
-    class D_INTEGRATION,D_SECURITY external_prod
+    class D_SECURITY external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -219,7 +216,6 @@ graph TD
 |--------|:---:|---------|
 | D_SECURITY | 137 | import_depends,test_depends |
 | D_GOVERNANCE | 3 | config_depends,test_depends |
-| D_INTEGRATION | 2 | test_depends |
 | D_AUTONOMY_CORE | 1 | test_depends |
 | D_GOV_AUDIT | 1 | test_depends |
 | D_INFRA_RUNTIME | 1 | test_depends |

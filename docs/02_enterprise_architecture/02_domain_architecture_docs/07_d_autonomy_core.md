@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 19:11:03
+> 最后更新: 2026-06-29 19:34:30
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 169 | Module Count | 169 |
 | 域内依赖 | 151 | Internal Dependencies | 151 |
 | 跨域入边 | 230 | Cross-domain Incoming | 230 |
-| 跨域出边 | 38 | Cross-domain Outgoing | 38 |
+| 跨域出边 | 31 | Cross-domain Outgoing | 31 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 167 | Prototype Modules | 167 |
 | 生产态模块 | 2 | Production Modules | 2 |
@@ -190,8 +190,6 @@ graph TD
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_INTEGRATION
     D_SECURITY["D_SECURITY production"]
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_SECURITY
-    src_zephyr_autonomy_core_doc_compressor_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_autonomy_core_engine_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_autonomy_core_engine_py -.->|import_depends| D_GOV_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -251,7 +249,6 @@ graph TD
     D_SHARED["D_SHARED prototype"]
     src_zephyr_autonomy_core_llm_gateway_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pattern_library_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_autonomy_core_pattern_library_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_prompt_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_management_context_evictor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_parsing_intent_parser_py -.->|import_depends| D_INTEGRATION
@@ -303,8 +300,6 @@ graph TD
     end
     D_SECURITY["D_SECURITY prototype"]
     src_zephyr_autonomy_core_security_filter_py -.->|import_depends| D_SECURITY
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_GOV_AUDIT
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
@@ -320,7 +315,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_security_filter_py,src_zephyr_autonomy_core_self_diagnosis_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_sensitivity_classifier_py,src_zephyr_autonomy_core_session_learner_py,src_zephyr_autonomy_core_shadow_canary_py,src_zephyr_autonomy_core_skill_attention_py,src_zephyr_autonomy_core_skill_breakage_checker_py,src_zephyr_autonomy_core_skill_cache_provider_py,src_zephyr_autonomy_core_skill_calibration_py,src_zephyr_autonomy_core_skill_canary_py,src_zephyr_autonomy_core_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skill_compliance_py,src_zephyr_autonomy_core_skill_consensus_py,src_zephyr_autonomy_core_skill_constructor_py,src_zephyr_autonomy_core_skill_context_isolation_py,src_zephyr_autonomy_core_skill_contract_py,src_zephyr_autonomy_core_skill_cross_model_py,src_zephyr_autonomy_core_skill_di_py,src_zephyr_autonomy_core_skill_discovery_py,src_zephyr_autonomy_core_skill_durable_py,src_zephyr_autonomy_core_skill_economics_py,src_zephyr_autonomy_core_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skill_evaluator_py,src_zephyr_autonomy_core_skill_executor_py,src_zephyr_autonomy_core_skill_explain_py,src_zephyr_autonomy_core_skill_factory_py,src_zephyr_autonomy_core_skill_feature_flags_py,src_zephyr_autonomy_core_skill_feedback_py,src_zephyr_autonomy_core_skill_freshness_py design
     class D_GOV_AUDIT,D_GOV_ENFORCEMENT external_prod
-    class D_SECURITY,D_INTEGRATION,D_OPS,D_GOVERNANCE external_design
+    class D_SECURITY,D_OPS,D_GOVERNANCE external_design
 ```
 
 ### 第 5 页 / 共 6 页 / Page 5 of 6
@@ -401,21 +396,17 @@ graph TD
         src_zephyr_autonomy_core_vibe_coding_quality_gate_py["src/zephyr/autonomy_core/vibe_coding_quality_ga... prototype"]
     end
     src_zephyr_autonomy_core_support_architecture_context_loader_py -.->|config_depends| src_zephyr_autonomy_core_support_init_py
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    src_zephyr_autonomy_core_system_snapshot_py -.->|import_depends| D_INTEGRATION
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_task_context_builder_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_autonomy_core_vector_writer_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_autonomy_core_support_doc_compressor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_support_prompt_registry_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_autonomy_core_support_system_snapshot_py -.->|import_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_skill_temperature_py,src_zephyr_autonomy_core_skill_tokenomics_py,src_zephyr_autonomy_core_skill_translator_py,src_zephyr_autonomy_core_skill_workflow_py,src_zephyr_autonomy_core_solo_dev_safety_net_py,src_zephyr_autonomy_core_staleness_manager_py,src_zephyr_autonomy_core_support_init_py,src_zephyr_autonomy_core_support_architecture_context_loader_py,src_zephyr_autonomy_core_support_doc_compressor_py,src_zephyr_autonomy_core_support_prompt_registry_py,src_zephyr_autonomy_core_support_system_snapshot_py,src_zephyr_autonomy_core_system_snapshot_py,src_zephyr_autonomy_core_task_context_builder_py,src_zephyr_autonomy_core_token_budget_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vector_bridge_py,src_zephyr_autonomy_core_vector_writer_py,src_zephyr_autonomy_core_verify_paths_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py design
-    class D_GOVERNANCE external_prod
-    class D_INTEGRATION external_design
+    class D_INTEGRATION,D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -424,7 +415,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_INTEGRATION | 24 | import_depends |
+| D_INTEGRATION | 17 | import_depends |
 | D_GOV_AUDIT | 3 | import_depends |
 | D_SECURITY | 3 | import_depends |
 | D_SHARED | 3 | import_depends |
