@@ -278,7 +278,7 @@ adjacency_lists:
 functional_domains:
   - domain: ""                           # 顶级功能域（如 governance, security, data）
     subdomain: ""                        # 子域（如 rule_enforcement, access_control）
-    domain_id: ""                        # depgraph 中的域ID（如 D-ALT-DATA, D-AUTONOMY）
+    domain_id: ""                        # depgraph 中的域ID（如 D-ALT-DATA, D_AUTONOMY）
     ssot_module: ""                      # 域的 SSoT 模块ID（如 MOD-GATE_ENGINE）
     ssot_path: ""                        # 域的代码根路径（如 src/zephyr/gates/）
     covers: []                           # 域覆盖的功能列表

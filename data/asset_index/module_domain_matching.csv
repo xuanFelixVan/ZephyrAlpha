@@ -1415,7 +1415,7 @@ src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py,,MOD-
 src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py,,MOD-INF-009,D-ORCH,D-ORCH-PIPELINE_ROUTING,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py,,MOD-INF-009,D-ORCH,D-ORCH-PIPELINE_ROUTING,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/pydantic_v2_migrator.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high
-src/zephyr/infrastructure/runtime_integration/registry_governance.py,,MOD-INF-037,D-GOV,D-GOV-REGISTRY_MANAGEMENT,depgraph_blueprint,high
+src/zephyr/infrastructure/runtime_integration/registry_governance.py,,MOD-INF-037,D-GOV,D_GOV_REGISTRY_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/rollback/__init__.py,,MOD-INF-021,D-RES,D-RES-ROLLBACK,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/rollback/_manifest_.py,,MOD-INF-021,D-RES,D-RES-ROLLBACK,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/rollback/agent_cooldown.py,,MOD-INF-021,D-RES,D-RES-ROLLBACK,depgraph_blueprint,high

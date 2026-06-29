@@ -695,7 +695,7 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── 04_d_infra_runtime.md  — D-INFRA_RUNTIME  
 │   │   ├── 05_d_infra_telemetry.md  — D-INFRA_TELEMETRY  
 │   │   ├── 06_d_alt_data.md  — D-ALT_DATA  
-│   │   ├── 07_d_autonomy_core.md  — D-AUTONOMY_CORE  
+│   │   ├── 07_d_autonomy_core.md  — D_AUTONOMY_CORE  
 │   │   ├── 08_d_behavioral_audit.md  — D-BEHAVIORAL_AUDIT  
 │   │   ├── 09_d_data_eng.md  — D-DATA_ENG  
 │   │   ├── 10_d_data_gov.md  — D-DATA_GOV  
@@ -711,7 +711,7 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── 20_d_shared.md  — D-SHARED  
 │   │   ├── 21_d_ashare_signal.md  — D-ASHARE_SIGNAL  
 │   │   ├── 22_d_audittest.md  — D-AUDITTEST  
-│   │   ├── 23_d_autonomy_perm.md  — D-AUTONOMY_PERM  
+│   │   ├── 23_d_autonomy_perm.md  — D_AUTONOMY_PERM  
 │   │   ├── 24_d_backtest.md  — D-BACKTEST  
 │   │   ├── 25_d_compliance.md  — D-COMPLIANCE  
 │   │   ├── 26_d_cross_asset.md  — D-CROSS_ASSET  
@@ -2715,7 +2715,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   └── ai_self_diagnosis.py  — ai_self_diagnosis脚本  
 │   ├── registry_management/  (包含1个文件: .py(1))  
 │   │   ├── __pycache__/  (包含1个文件: .pyc(1))  
-│   │   └── __init__.py  — registry_management subdomain package — D-GOV-REGISTRY_MANAGEMENT.  
+│   │   └── __init__.py  — registry_management subdomain package — D_GOV_REGISTRY_MANAGEMENT.  
 │   ├── resilience_governance/  (包含9个文件: .py(9))  
 │   │   ├── __pycache__/  (包含9个文件: .pyc(9))  
 │   │   ├── __init__.py  — __init__脚本  

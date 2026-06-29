@@ -9359,61 +9359,61 @@ entries:
   old_path: src/zephyr/ex_core/adapters/simulation_broker.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/value_factor.py
   old_path: src/zephyr/factor/value_factor.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/alpha_signal_pipeline.py
   old_path: src/zephyr/factor/alpha_signal_pipeline.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factor_base.py
   old_path: src/zephyr/factor/factor_base.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/base.py
   old_path: src/zephyr/factor/base.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/momentum_factor.py
   old_path: src/zephyr/factor/momentum_factor.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/__init__.py
   old_path: src/zephyr/factor/__init__.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/CTR-001_Consumer/__init__.py
   old_path: src/zephyr/factor/CTR-001_Consumer/__init__.py
   status: skipped
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/engine/__init__.py
   old_path: src/zephyr/factor/engine/__init__.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/__init__.py
   old_path: src/zephyr/factor/factors/__init__.py
   status: pending
   subdomain_id: factor
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/momentum_factor.py
   old_path: src/zephyr/factor/factors/momentum_factor.py
@@ -9425,7 +9425,7 @@ entries:
   old_path: src/zephyr/frontend/dashboard/__init__.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/value_factor.py
   old_path: src/zephyr/factor/factors/value_factor.py
@@ -12869,115 +12869,115 @@ entries:
   old_path: src/zephyr/research/__init__.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/strategy_lifecycle_event.py
   old_path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
   status: pending
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/multi_strategy_capital_allocator/capital_allocation_result.py
   old_path: src/zephyr/pf_alloc/multi_strategy_capital_allocator/capital_allocation_result.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/signal_synthesis_combiner/signal_synthesis_combiner_impl/__init__.py
   old_path: src/zephyr/pf_alloc/signal_synthesis_combiner/signal_synthesis_combiner_impl/__init__.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/multi_strategy_capital_allocator/default_capital_allocator.py
   old_path: src/zephyr/pf_alloc/multi_strategy_capital_allocator/default_capital_allocator.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/multi_strategy_capital_allocator/capital_allocator.py
   old_path: src/zephyr/pf_alloc/multi_strategy_capital_allocator/capital_allocator.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/compliance_rule.py
   old_path: src/zephyr/pf_core/compliance_rule.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/signal_synthesis_combiner/synthesized_signal.py
   old_path: src/zephyr/pf_alloc/signal_synthesis_combiner/synthesized_signal.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/default_equity_strategy.py
   old_path: src/zephyr/pf_core/default_equity_strategy.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/default_attribution_engine.py
   old_path: src/zephyr/pf_core/default_attribution_engine.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/analytics_base.py
   old_path: src/zephyr/pf_core/analytics_base.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/allocation/signal_synthesis_combiner/__init__.py
   old_path: src/zephyr/pf_alloc/signal_synthesis_combiner/__init__.py
   status: skipped
   subdomain_id: allocation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/default_tca_engine.py
   old_path: src/zephyr/pf_core/default_tca_engine.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/performance_attribution_engine/__init__.py
   old_path: src/zephyr/pf_core/performance_attribution_engine/__init__.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_base.py
   old_path: src/zephyr/pf_core/strategy_base.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/performance_attribution_report.py
   old_path: src/zephyr/pf_core/performance_attribution_report.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_registry.py
   old_path: src/zephyr/pf_core/strategy_registry.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/risk_limits.py
   old_path: src/zephyr/pf_core/risk_limits.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/__init__.py
   old_path: src/zephyr/pf_core/__init__.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategies/default_equity_strategy.py
   old_path: src/zephyr/pf_core/strategies/default_equity_strategy.py
@@ -12989,13 +12989,13 @@ entries:
   old_path: src/zephyr/reporting/analytics_base.py
   status: pending
   subdomain_id: observability
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategies/__init__.py
   old_path: src/zephyr/pf_core/strategies/__init__.py
   status: pending
   subdomain_id: core
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_engine/__init__.py
   old_path: src/zephyr/pf_core/strategy_engine/__init__.py
@@ -13025,61 +13025,61 @@ entries:
   old_path: src/zephyr/reporting/implementations/__init__.py
   status: pending
   subdomain_id: implementations
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_ashare/__init__.py
   old_path: src/zephyr/signal_ashare/__init__.py
   status: pending
   subdomain_id: signal_ashare
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_gen/implementations/default_signal_aggregator.py
   old_path: src/zephyr/signal_gen/implementations/default_signal_aggregator.py
   status: skipped
   subdomain_id: signal_gen
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_strategy/capital_allocator.py
   old_path: src/zephyr/signal_strategy/capital_allocator.py
   status: skipped
   subdomain_id: signal_strategy
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_gen/aggregator_base.py
   old_path: src/zephyr/signal_gen/aggregator_base.py
   status: skipped
   subdomain_id: signal_gen
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_gen/implementations/__init__.py
   old_path: src/zephyr/signal_gen/implementations/__init__.py
   status: skipped
   subdomain_id: signal_gen
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_gen/__init__.py
   old_path: src/zephyr/signal_gen/__init__.py
   status: skipped
   subdomain_id: signal_gen
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_quality/__init__.py
   old_path: src/zephyr/signal_quality/__init__.py
   status: pending
   subdomain_id: signal_quality
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_strategy/implementations/default_capital_allocator.py
   old_path: src/zephyr/signal_strategy/implementations/default_capital_allocator.py
   status: skipped
   subdomain_id: signal_strategy
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_strategy/__init__.py
   old_path: src/zephyr/signal_strategy/__init__.py
   status: skipped
   subdomain_id: signal_strategy
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_synth/__init__.py
   old_path: src/zephyr/signal_synth/__init__.py
@@ -13091,7 +13091,7 @@ entries:
   old_path: src/zephyr/simulation/backtest_base.py
   status: pending
   subdomain_id: simulation
-- domain_id: D-PORTFOLIO
+- domain_id: D_PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_synth/signal_synthesizer.py
   old_path: src/zephyr/signal_synth/signal_synthesizer.py

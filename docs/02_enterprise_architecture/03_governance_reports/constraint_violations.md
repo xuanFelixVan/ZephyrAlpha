@@ -50,7 +50,7 @@ ttl: task_bound
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：vector_storage |
 | CONSTRAINT_D_GOV_DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：drift_detection |
 | CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：orphan_judgment |
-| CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：registry_management |
+| CONSTRAINT_D_GOV_REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：registry_management |
 | CONSTRAINT_D_GOV_RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：rule_enforcement |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：script_governance |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：semantic_audit |
@@ -114,7 +114,7 @@ ttl: task_bound
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | open |
 | CONSTRAINT_D_GOV_DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
-| CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
+| CONSTRAINT_D_GOV_REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D_GOV_RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D_GOVERNANCE |  | hard | open |

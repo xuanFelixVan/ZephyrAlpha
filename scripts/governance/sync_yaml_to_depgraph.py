@@ -572,7 +572,7 @@ def sync_frontmatter_field_registry(cur):
         field_name = field.get("field_name", "")
         enum_values = field.get("enum_values", [])
 
-        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，不写入 DB
+        # dynamic_from_ssot 标志：值集由词表单一维护，不写入 DB
         if isinstance(enum_values, str):
             continue
 
