@@ -88,14 +88,22 @@ def is_pure_reexport_shim(filepath: Path, content: str) -> tuple[bool, str]:
     has_cross_pkg_reexport = False
     has_substantial_code = False
 
+    # 白名单方式：只允许特定的非实质节点，其他都算实质代码（防绕过）
+    # 红蓝对抗发现：原黑名单方式漏检 ast.Pass（pass 语句）导致绕过
     for node in ast.iter_child_nodes(tree):
-        # 实质代码节点 → 非 shim
-        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
-            has_substantial_code = True
-            break
+        if isinstance(node, ast.ImportFrom):
+            module = node.module or ""
+            # 跨包 re-export：from zephyr.shared.* import
+            if module.startswith("zephyr.shared."):
+                has_cross_pkg_reexport = True
+            # ImportFrom 本身不算实质代码（无论是否跨包）
 
-        if isinstance(node, ast.Assign):
-            # 检查是否为 __all__ / __version__ 赋值
+        elif isinstance(node, ast.Import):
+            # 普通 import 不算实质代码，也不算跨包 re-export
+            pass
+
+        elif isinstance(node, ast.Assign):
+            # 仅 __all__ / __version__ 赋值不算实质代码
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id in ("__all__", "__version__"):
                     continue
@@ -104,24 +112,27 @@ def is_pure_reexport_shim(filepath: Path, content: str) -> tuple[bool, str]:
             if has_substantial_code:
                 break
 
-        elif isinstance(node, ast.ImportFrom):
-            module = node.module or ""
-            # 跨包 re-export：from zephyr.shared.* import
-            if module.startswith("zephyr.shared."):
-                has_cross_pkg_reexport = True
+        elif isinstance(node, ast.AugAssign):
+            # 增强赋值（+=, |= 等）算实质代码（如 __all__ += [...] 是动态构造）
+            has_substantial_code = True
+            break
 
-        elif isinstance(node, ast.Import):
-            # 普通 import 不算实质代码，也不算跨包 re-export
+        elif isinstance(node, ast.AnnAssign):
+            # 带注解赋值算实质代码
+            has_substantial_code = True
+            break
+
+        elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
+            # docstring / 模块级字符串常量 / Ellipsis(...)，不算实质代码
             pass
 
-        elif isinstance(node, ast.Expr) and isinstance(
-            node.value, ast.Constant
-        ):
-            # docstring / 模块级字符串常量，不算实质代码
+        elif isinstance(node, ast.Pass):
+            # pass 语句不算实质代码（无操作）
             pass
 
         else:
-            # 其他节点类型（If/For/While/Try/With/Raise 等）算实质代码
+            # 其他节点类型（ClassDef/FunctionDef/AsyncFunctionDef/If/For/While/
+            # Try/With/Raise/Assert/Delete/Global/Nonlocal 等）算实质代码
             has_substantial_code = True
             break
 
