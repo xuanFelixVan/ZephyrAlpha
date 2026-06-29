@@ -8,7 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败=发现事件触发链路漏洞
 # [TESTS] self
-# [DOMAIN] D-ORC
+# [DOMAIN] D_AUTONOMY_CORE
 # [TTL] task_bound
 
 """F1 事件触发启动测试
