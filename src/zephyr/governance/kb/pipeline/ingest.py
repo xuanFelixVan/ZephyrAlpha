@@ -47,7 +47,6 @@ from typing import Any
 import yaml
 
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.kb.kb_repo import KbRepo
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
@@ -96,13 +95,11 @@ class IngestGate:
         self,
         kb_root: Path,
         gate_engine: GateEngine | None = None,
-        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._raw_intake_dir = kb_root / _RAW_INTAKE_DIR_NAME
         self._raw_intake_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
-        self._kb_repo = kb_repo
 
     def ingest(self, source_path: Path, content: str | None = None) -> Self:
         violations: list[str] = []
@@ -176,18 +173,6 @@ class IngestGate:
 
         target_path = self._write_to_raw_intake(source_path, text, fm)
 
-        if self._kb_repo is not None and ke_id:
-            try:
-                self._kb_repo.create(
-                    ke_id=ke_id,
-                    title=title,
-                    category=category,
-                    source_file=str(source_path),
-                    content=text,
-                )
-            except Exception:
-                pass
-
         return IngestResult(
             passed=True,
             ke_id=ke_id,
@@ -247,12 +232,6 @@ class IngestGate:
         return None
 
     def _check_title_dedup(self, title: str) -> str | None:
-        if not title or self._kb_repo is None:
-            return None
-        records = self._kb_repo.list_by_status()
-        for rec in records:
-            if rec.title == title:
-                return f"Title 去重失败：'{title}' 已存在于 {rec.ke_id}"
         return None
 
     def _run_gate(self, source_path: Path) -> GateResult | None:

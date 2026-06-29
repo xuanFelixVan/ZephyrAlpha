@@ -44,7 +44,6 @@ from typing import Any
 import yaml
 
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
@@ -126,13 +125,11 @@ class AnalyzeGate:
         self,
         kb_root: Path,
         gate_engine: GateEngine | None = None,
-        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._analyzed_dir = kb_root / _ANALYZED_DIR_NAME
         self._analyzed_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
-        self._kb_repo = kb_repo
 
     def analyze(self, source_path: Path) -> AnalyzeResult:
         violations: list[str] = []
@@ -181,14 +178,6 @@ class AnalyzeGate:
         target_path = self._write_to_analyzed(
             source_path, text, fm, ai_value_score, scores, activation_conditions, complexity
         )
-
-        if self._kb_repo is not None and ke_id:
-            try:
-                rec = self._kb_repo.get(ke_id)
-                if rec and rec.status == KeStatus.REVIEWED:
-                    self._kb_repo.transition(ke_id, KeStatus.ACCEPTED)
-            except Exception:
-                pass
 
         return AnalyzeResult(
             passed=True,

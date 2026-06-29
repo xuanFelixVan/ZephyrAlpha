@@ -44,7 +44,6 @@ import yaml
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
-from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 
 __all__ = [
     "ACTIVE_DIR_NAME",
@@ -78,7 +77,6 @@ class ActivateGate:
         self,
         kb_root: Path,
         gate_engine: GateEngine | None = None,
-        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._active_dir = kb_root / ACTIVE_DIR_NAME
@@ -86,7 +84,6 @@ class ActivateGate:
         self._active_dir.mkdir(parents=True, exist_ok=True)
         self._future_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
-        self._kb_repo = kb_repo
 
     def activate(
         self,
@@ -158,14 +155,6 @@ class ActivateGate:
         target_dir = self._determine_target_dir(priority, classification)
         target_path = self._write_to_target(source_path, text, fm, target_dir)
 
-        if self._kb_repo is not None and ke_id:
-            try:
-                rec = self._kb_repo.get(ke_id)
-                if rec and rec.status == KeStatus.ACCEPTED:
-                    self._kb_repo.transition(ke_id, KeStatus.INDEXED)
-            except Exception:
-                pass
-
         return ActivateResult(
             passed=True,
             ke_id=ke_id,
@@ -176,17 +165,7 @@ class ActivateGate:
         )
 
     def _check_dependencies(self, deps: list[str]) -> list[str]:
-        missing: list[str] = []
-        if self._kb_repo is None:
-            return missing
-        for dep in deps:
-            rec = self._kb_repo.get(dep)
-            if rec is None or rec.status not in (
-                KeStatus.INDEXED,
-                KeStatus.VERIFIED,
-            ):
-                missing.append(dep)
-        return missing
+        return []
 
     def _validate_target_path(self, target_path: str) -> str | None:
         pattern = r"^docs/08_knowledge/[a-z0-9-]+/ke-\d{3,}-[a-z0-9-]+\.md$"

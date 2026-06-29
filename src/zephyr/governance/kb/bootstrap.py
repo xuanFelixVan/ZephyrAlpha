@@ -48,7 +48,6 @@ from pathlib import Path
 
 from zephyr.governance.ingest import IngestGate
 
-_INTELLIGENCE_KB_REPO_NAMES = {"KbRepo"}
 _INTELLIGENCE_UMA_NAMES = {
     "InMemoryMemoryBackend",
     "UnifiedMemoryAPI",
@@ -58,11 +57,6 @@ _INTELLIGENCE_UMA_NAMES = {
 
 
 def __getattr__(name):
-    if name in _INTELLIGENCE_KB_REPO_NAMES:
-        _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
-        _val = getattr(_mod, name)
-        globals()[name] = _val
-        return _val
     if name in _INTELLIGENCE_UMA_NAMES:
         _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
         _val = getattr(_mod, name)
@@ -176,12 +170,10 @@ class Bootstrap:
         *,
         config: BootstrapConfig | None = None,
         kb_api: UnifiedMemoryAPI | None = None,
-        kb_repo: KbRepo | None = None,
     ) -> None:
         self._root = project_root or Path.cwd()
         self._config = config or BootstrapConfig()
         self._kb_api = kb_api
-        self._kb_repo = kb_repo
 
     def run(self) -> BootstrapResult:
         t0 = datetime.now(_UTC)
@@ -201,15 +193,13 @@ class Bootstrap:
             backend=InMemoryMemoryBackend(),
             enforce_capability=False,
         )
-        repo = self._kb_repo
 
         ingest_gate: IngestGate | None = None
         kb_root = self._root / "docs" / "08_knowledge"
-        if repo is not None:
-            try:
-                ingest_gate = IngestGate(kb_root=kb_root, kb_repo=repo)
-            except Exception:
-                pass
+        try:
+            ingest_gate = IngestGate(kb_root=kb_root)
+        except Exception:
+            pass
 
         passed_g1 = 0
         activated = 0
@@ -221,18 +211,6 @@ class Bootstrap:
                 continue
             ke_id = self._generate_ke_id(chunk)
             chunk.module_id = ke_id
-
-            if repo is not None:
-                try:
-                    repo.create(
-                        ke_id=ke_id,
-                        title=chunk.heading.strip() or ke_id,
-                        category=chunk.category,
-                        source_file=str(chunk.source_path),
-                        content=chunk.content,
-                    )
-                except Exception:
-                    pass
 
             if ingest_gate is not None:
                 try:
@@ -473,13 +451,6 @@ def run_bootstrap(
     config = BootstrapConfig(min_ke_count=min_ke_count, min_categories=min_categories)
 
     kb_api = UnifiedMemoryAPI(backend=InMemoryMemoryBackend(), enforce_capability=False)
-    repo: KbRepo | None = None
-    if use_repo:
-        try:
-            db_path = root / "data" / "databases" / "governance.db"
-            repo = KbRepo(str(db_path))
-        except Exception:
-            _log.warning("KbRepo init failed, bootstrapping without SQLite persistence")
 
-    engine = Bootstrap(project_root=root, config=config, kb_api=kb_api, kb_repo=repo)
+    engine = Bootstrap(project_root=root, config=config, kb_api=kb_api)
     return engine.run()

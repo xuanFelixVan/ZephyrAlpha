@@ -136,47 +136,6 @@ Document B with standard content for collision boundary testing.
             mod_path.unlink(missing_ok=True)
 
 
-class TestRedTeamStateMachine:
-    # === R5: 状态机非法跳转 ===
-
-    def test_R5_invalid_state_transition(self):
-        """攻击: 尝试将KE从 draft 直接跳到 verified 跳过 reviewed。"""
-        try:
-            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
-
-            repo = KbRepo()
-
-            allowed = repo.validate_state_transition(KeStatus.DRAFT, KeStatus.VERIFIED)
-            assert not allowed, "R5 FAIL: DRAFT->VERIFIED should be rejected. Must go through SUBMITTED and REVIEWED."
-        except (ImportError, AttributeError) as e:
-            pytest.skip(f"KbRepo not available: {e}")
-
-    def test_R5_self_to_self_transition(self):
-        """攻击: 尝试标记 KE 状态为自身（无意义操作）。"""
-        try:
-            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
-
-            repo = KbRepo()
-
-            for status in KeStatus:
-                allowed = repo.validate_state_transition(status, status)
-                assert not allowed, f"R5 FAIL: {status.value}->{status.value} should be rejected (no-op)"
-        except (ImportError, AttributeError) as e:
-            pytest.skip(f"KbRepo not available: {e}")
-
-    def test_R5_backwards_transition_rejected(self):
-        """攻击: 尝试将KE从 reviewed 回退到 draft。"""
-        try:
-            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
-
-            repo = KbRepo()
-
-            allowed = repo.validate_state_transition(KeStatus.REVIEWED, KeStatus.DRAFT)
-            assert not allowed, "R5 FAIL: REVIEWED->DRAFT should be rejected (backwards transition)."
-        except (ImportError, AttributeError) as e:
-            pytest.skip(f"KbRepo not available: {e}")
-
-
 class TestRedTeamChromaDBBypass:
     # === R6: ChromaDB直接篡改 ===
 

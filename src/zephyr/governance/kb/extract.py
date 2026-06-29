@@ -44,7 +44,6 @@ from typing import Any
 import yaml
 
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
@@ -98,7 +97,6 @@ class ExtractGate:
         self,
         kb_root: Path,
         gate_engine: GateEngine | None = None,
-        kb_repo: KbRepo | None = None,
         adr_dir: Path | None = None,
     ) -> None:
         self._kb_root = kb_root
@@ -107,7 +105,6 @@ class ExtractGate:
         self._lessons_dir.mkdir(parents=True, exist_ok=True)
         self._best_practices_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
-        self._kb_repo = kb_repo
         self._adr_dir = adr_dir
 
     def extract(self, source_path: Path) -> ExtractResult:
@@ -164,14 +161,6 @@ class ExtractGate:
         else:
             target_path = self._write_to_best_practices(ke_id, fm, extracted_content, text)
 
-        if self._kb_repo is not None and ke_id:
-            try:
-                rec = self._kb_repo.get(ke_id)
-                if rec and rec.status == KeStatus.INDEXED:
-                    self._kb_repo.transition(ke_id, KeStatus.VERIFIED)
-            except Exception:
-                pass
-
         return ExtractResult(
             passed=True,
             ke_id=ke_id,
@@ -224,17 +213,6 @@ class ExtractGate:
                 if m:
                     num = int(m.group(1))
                     max_num = max(max_num, num)
-
-        if self._kb_repo is not None:
-            try:
-                records = self._kb_repo.list_by_status()
-                for rec in records:
-                    m = _KE_PATTERN.match(rec.ke_id)
-                    if m:
-                        num = int(m.group(1))
-                        max_num = max(max_num, num)
-            except Exception:
-                pass
 
         return max_num + 1
 

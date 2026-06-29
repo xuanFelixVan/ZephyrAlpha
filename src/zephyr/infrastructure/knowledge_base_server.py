@@ -111,7 +111,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         self._entries: dict[str, dict[str, Any]] = {}
         self._vms: InProcessVectorMemory | None = None
         self._vms_lock = threading.Lock()
-        self._kb_repo: KbRepo | None = None
+        self._kb_repo: Any = None
         self._kb_api: UnifiedMemoryAPI | None = None
         self._backend_mode: str = "unknown"
 
@@ -219,13 +219,7 @@ class KnowledgeBaseServer(BaseMCPServer):
     # ------------------------------------------------------------------
 
     def _init_backends(self) -> None:
-        try:
-            _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
-            KbRepo = _mod.KbRepo
-            self._kb_repo = KbRepo()
-            self._backend_mode = "kb_repo"
-        except Exception as exc:
-            self._backend_mode = f"memory_fallback(kb_repo_unavailable: {exc})"
+        self._backend_mode = "memory_fallback(kb_repo removed)"
 
         try:
             _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
@@ -340,33 +334,6 @@ class KnowledgeBaseServer(BaseMCPServer):
         }
         self._entries[ke_id] = record
 
-        if self._kb_repo is not None:
-            try:
-                existing = self._kb_repo.get(ke_id)
-                if existing is None:
-                    self._kb_repo.create(
-                        ke_id=ke_id,
-                        title=title,
-                        category=category,
-                        source_file=source_file,
-                        content=content,
-                        source_git_deleted=source_git_deleted,
-                    )
-                else:
-                    _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
-                    KeStatus = _mod.KeStatus
-                    if existing.status in (KeStatus.DRAFT, KeStatus.REJECTED):
-                        self._kb_repo.create(
-                            ke_id=ke_id,
-                            title=title,
-                            category=category,
-                            source_file=source_file,
-                            content=content,
-                            source_git_deleted=source_git_deleted,
-                        )
-            except Exception:
-                pass
-
         if self._kb_api is not None:
             try:
                 _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
@@ -392,24 +359,6 @@ class KnowledgeBaseServer(BaseMCPServer):
 
     def _get_ke(self, ke_id: str) -> dict[str, Any]:
         """按 ke_id 返回条目（ZA-KB-0005 on not found）。"""
-        if self._kb_repo is not None:
-            try:
-                rec = self._kb_repo.get(ke_id)
-                if rec is not None:
-                    return {
-                        "ke_id": rec.ke_id,
-                        "title": rec.title,
-                        "category": rec.category,
-                        "source_file": rec.source_file,
-                        "fingerprint_sha256": rec.fingerprint_sha256,
-                        "status": rec.status.value,
-                        "tags": rec.tags,
-                        "summary": rec.summary,
-                        "backend": "kb_repo",
-                    }
-            except Exception:
-                pass
-
         entry = self._entries.get(ke_id)
         if entry is not None:
             return {
@@ -440,29 +389,6 @@ class KnowledgeBaseServer(BaseMCPServer):
         limit: int = 20,
     ) -> dict[str, Any]:
         """按 category 筛选并分页列出知识条目。"""
-        if self._kb_repo is not None:
-            try:
-                _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
-                KeStatus = _mod.KeStatus
-                records = self._kb_repo.list_by_status()
-                if category:
-                    records = [r for r in records if r.category == category]
-                total = len(records)
-                page = records[offset : offset + limit]
-                items = [
-                    {
-                        "ke_id": r.ke_id,
-                        "title": r.title,
-                        "category": r.category,
-                        "status": r.status.value,
-                        "fingerprint_sha256": r.fingerprint_sha256 or "",
-                    }
-                    for r in page
-                ]
-                return {"items": items, "total": total, "offset": offset, "limit": limit, "backend": "kb_repo"}
-            except Exception:
-                pass
-
         entries = list(self._entries.values())
         if category:
             entries = [e for e in entries if e.get("category") == category]
@@ -483,16 +409,8 @@ class KnowledgeBaseServer(BaseMCPServer):
         sqlite_ok = False
         chromadb_ok = False
         vms_status = "unavailable"
-        kb_repo_status = "unavailable"
+        kb_repo_status = "disabled(kb_repo removed)"
         kb_api_count = -1
-
-        if self._kb_repo is not None:
-            try:
-                records = self._kb_repo.list_by_status()
-                kb_repo_status = f"available({len(records)} kes)"
-                sqlite_ok = True
-            except Exception as exc:
-                kb_repo_status = f"error({exc})"
 
         try:
             from zephyr.shared.registry import ServiceRegistry

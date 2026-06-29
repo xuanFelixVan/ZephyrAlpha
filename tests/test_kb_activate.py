@@ -25,7 +25,6 @@ from zephyr.intelligence.model_evaluation.activate import (
     ActivateGate,
     ActivateResult,
 )
-from zephyr.governance.kb.kb_repo import KeStatus
 
 
 def _make_frontmatter(**kwargs: object) -> str:
@@ -54,14 +53,6 @@ def _mock_gate_engine(passed: bool = True) -> MagicMock:
             violations=[GateViolation(check_id="C1", check_name="c", severity="P0", message="fail")],
         )
     return engine
-
-
-def _mock_kb_repo(status: KeStatus = KeStatus.ACCEPTED) -> MagicMock:
-    repo = MagicMock()
-    rec = MagicMock()
-    rec.status = status
-    repo.get.return_value = rec
-    return repo
 
 
 class TestActivateResult:
@@ -158,9 +149,7 @@ class TestActivateGate:
 
     def test_activate_with_missing_dependencies(self, tmp_path: Path):
         kb_root = tmp_path / "kb"
-        repo = MagicMock()
-        repo.get.return_value = None
-        gate = ActivateGate(kb_root=kb_root, gate_engine=_mock_gate_engine(), kb_repo=repo)
+        gate = ActivateGate(kb_root=kb_root, gate_engine=_mock_gate_engine())
         src = tmp_path / "source.md"
         src.write_text(
             _make_frontmatter(ai_value_score=9.5, depends_on=["KE-999"]),

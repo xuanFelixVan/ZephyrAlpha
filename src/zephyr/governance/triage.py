@@ -46,7 +46,6 @@ from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
-from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [
@@ -191,13 +190,11 @@ class TriageGate:
         self,
         kb_root: Path,
         gate_engine: GateEngine | None = None,
-        kb_repo: KbRepo | None = None,
     ) -> None:
         self._kb_root = kb_root
         self._triaged_dir = kb_root / _TRIAGED_DIR_NAME
         self._triaged_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
-        self._kb_repo = kb_repo
 
     def triage(self, source_path: Path) -> TriageResult:
         violations: list[str] = []
@@ -254,14 +251,6 @@ class TriageGate:
 
         ke_id = fm.get("module_id", "")
         target_path = self._write_to_triaged(source_path, text, fm, classification, score, priority)
-
-        if self._kb_repo is not None and ke_id:
-            try:
-                rec = self._kb_repo.get(ke_id)
-                if rec and rec.status == KeStatus.DRAFT:
-                    self._kb_repo.transition(ke_id, KeStatus.SUBMITTED)
-            except Exception:
-                pass
 
         return TriageResult(
             passed=True,
