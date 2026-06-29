@@ -1649,6 +1649,8 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
         消灭"只告警不消除"——无论脚本如何 mkdir，下一次 commit 后自动清理。
         """
         import shutil  # 局部导入（避免模块级依赖膨胀）
+        import os
+        from pathlib import Path
 
         # 合规目标目录：docs/09_audit/ → docs/_working/audit/
         _COMPLIANT_MAP: dict[str, str] = {
