@@ -3,9 +3,9 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-29T09:10:45Z'
+generated_at: '2026-06-29T09:57:38Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
-total_files: 138
+total_files: 139
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -934,7 +934,7 @@ files:
   - STD-004
   - STD-005
   - GOV-024
-  section_count: 44
+  section_count: 45
 - path: docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml
   module_id: TRAE-044
   title: 合规治理-审计与监管
@@ -2260,6 +2260,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/scope_vocabulary.yaml
   module_id: PS-VOC-009
   title: scope 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/section_type_vocabulary.yaml
+  module_id: PS-VOC-032
+  title: section_type 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
