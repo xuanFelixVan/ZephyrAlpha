@@ -1886,6 +1886,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/auto_generate_index.py
+  path: governance/d3_metadata/auto_generate_index.py
+  description: Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/backfill_doctype_metadata.py
   path: governance/d3_metadata/backfill_doctype_metadata.py
   description: 对有 frontmatter 但缺 doc_type 字段的 .md 文件，按无歧义路径规则注入 doc_type。
@@ -2353,14 +2361,6 @@ scripts:
 - name: governance/d5_architecture/generators/_common.py
   path: governance/d5_architecture/generators/_common.py
   description: 当前提供 cleanup_stale_files()——治本修复"生成器只增不删"问题。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/generators/auto_generate_index.py
-  path: governance/d5_architecture/generators/auto_generate_index.py
-  description: Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.
   domain: governance
   execution_plane: warm-path
   status: registered
