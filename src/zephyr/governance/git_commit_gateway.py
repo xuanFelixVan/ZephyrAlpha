@@ -535,17 +535,19 @@ class GitCommitGateway:
         abs_files = [os.path.abspath(f) for f in files]
         # 过滤不存在且未 git 跟踪的文件：
         # - 存在的文件 → 保留
-        # - 不存在但 git 跟踪 → 保留（deletion commit 场景）
+        # - 不存在但 git 跟踪 → 保留（deletion commit 场景，含 staged delete）
         # - 不存在且未跟踪 → 丢弃（避免 git add 失败返回 COMMIT_FAILED）
-        # 对标 git_commit.py CLI 的 _check_missing 逻辑（line 101-117）
+        # 对标 git_commit.py CLI 的 _check_missing 逻辑（line 101-143）
+        # 注意：staged delete 文件（git rm）仍在 index 中（标记为 D 状态），
+        # _is_git_tracked 用 git ls-files --error-unmatch 返回 True。
         existing: list[str] = []
         for f in abs_files:
             if os.path.isfile(f):
                 existing.append(f)
             else:
                 rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                if self._is_git_tracked(rel):
-                    existing.append(f)  # git 跟踪的已删除文件
+                if self._is_git_tracked(rel) or self._is_staged_delete(rel):
+                    existing.append(f)  # git 跟踪的已删除文件 或 staged delete 文件
         if not existing:
             return CommitResult(
                 status=CommitStatus.NOTHING_TO_COMMIT,
