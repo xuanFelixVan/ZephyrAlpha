@@ -528,19 +528,18 @@ sections:
     section_type: rule
     original_rules:
     - PS-STD-001 §6
-    summary: 5种合法ttl canonical SSoT=ttl_vocabulary.yaml
+    summary: ttl 受控词表（v2.0.0 二元：permanent/task_bound）—真源 ttl_vocabulary.yaml
     conditions:
     - type: trigger
       check: 设置文件保留期限时
-      pass: 从5种合法ttl值中选择
+      pass: 从 ttl_vocabulary.yaml 定义的合法值中选择
       fail: 使用未定义的ttl值
-    ttl_values:
-    - permanent(永久)
-    - 30d(保留30天)
-    - 7d(保留7天)
-    - session(仅当次会话有效)
-    - periodic_review_90d(定期审查90天周期)
-    default_rule: AI生成文件必须标注ttl未标注默认ttl 7d
+    ssot_pointer:
+      target: ttl_vocabulary.yaml
+      path: docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
+      module_id: PS-VOC-004
+      sections: [values, decision_tree, deprecated_values]
+      migration_note: ttl 合法值与判定树真源已归一为 ttl_vocabulary.yaml（v2.0.0 二元：permanent/task_bound）。原内联 ttl_values 列表（5 值含 7d/30d/session/periodic_review_90d）已删除——这些值在 v2.0.0 已 deprecated。default_rule 原文"未标注默认 7d"已失效（7d 已废弃），现规则为"未标注默认 task_bound"（见 ttl_vocabulary.yaml decision_tree 默认分支）。
     prohibitions:
     - AI生成文件不标注ttl字段
     - 使用未在词表中定义的ttl值

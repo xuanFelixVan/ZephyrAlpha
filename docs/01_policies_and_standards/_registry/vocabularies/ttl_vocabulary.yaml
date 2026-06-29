@@ -109,19 +109,16 @@ decision_tree:
       no: Q3
     Q3:
       question: "文档是否在永久区路径？"
-      criteria:
-        - signal: path
-          value: "docs/01_policies_and_standards/"
-          operator: startswith
-        - signal: path
-          value: "docs/02_enterprise_architecture/"
-          operator: startswith
-        - signal: path
-          value: "docs/03_modules/"
-          operator: startswith
-        - signal: path
-          value: "docs/08_knowledge/"
-          operator: startswith
+      # 真源：路径列表从 directory_contract.yaml directory_zones.permanent.paths 动态加载
+      # 治本（2026-06-29）：消除与 directory_contract.yaml 的路径列表副本，路径变更只需改契约一处
+      # load_decision_tree 加载时自动展开 criteria_source 为 criteria 列表（对 evaluate_ttl 透明）
+      criteria_source:
+        target: directory_contract.yaml
+        path: docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
+        module_id: PS-CTR-002
+        section: directory_zones.permanent.paths
+        signal: path
+        operator: startswith
       match: any
       yes: permanent
       no: task_bound  # 默认落 docs/_working/ 临时区

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/classify_ttl_by_content.py | §gate-15
 # [MODULE] governance.d3_metadata.classify_ttl_by_content
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] _shared.frontmatter; _shared.constants
 # [CONSUMERS] manual ttl audit; pre-rejudge content scan
 # [STARTUP] manual
@@ -45,6 +45,8 @@ import csv
 import re
 import sys
 from pathlib import Path
+
+import yaml as _yaml
 
 # ── 路径设置 ──
 _SCRIPT_DIR = Path(__file__).resolve()
@@ -166,22 +168,57 @@ PERMANENT_DOC_TYPES = {
 # ════════════════════════════════════════════════════════════════════════════
 # 按优先级排序：最具体的模式在前（如 */changes/ 优先于 docs/03_modules/）
 # 匹配方式：contains（路径含子串即命中）
-DIR_TTL_MAP: list[tuple[str, str, str]] = [
-    # ── task_bound 目录（过程性子目录，无论在哪个永久区下）──
-    # 顺序：最具体的模式在前；contains 子串匹配
-    ("docs/_working/",            "task_bound", "临时工作区（唯一过程文档区：治理报告/研究笔记/分解任务/ttl审计）"),
-    ("/changes/",                 "task_bound", "变更记录子目录（过程性）"),
-    ("/delivery/",                "task_bound", "交付记录子目录（过程性）"),
-    ("/reports/",                 "task_bound", "报告子目录（过程性）"),
-    ("/_archive/",                "task_bound", "归档子目录（过程性历史，如 02/_archive/）"),
-    # 02_enterprise_architecture 下的治理报告（过程性，即使路径在永久区——目录实际存在）
-    ("docs/02_enterprise_architecture/03_governance_reports/", "task_bound", "治理报告目录（过程性：容量/调研/清理审查）"),
-    # ── permanent 目录（永久区核心内容）──
-    ("docs/01_policies_and_standards/", "permanent", "政策与标准永久区（规则/注册表/模板）"),
-    ("docs/02_enterprise_architecture/", "permanent", "企业架构永久区（TOGAF 视图+架构模型）"),
-    ("docs/03_modules/",          "permanent", "模块文档永久区（蓝图/索引/清单）"),
-    ("docs/08_knowledge/",        "permanent", "知识库永久区（KE 条目）"),
-]
+#
+# 治本（2026-06-29）：路径列表从 directory_contract.yaml 动态加载，消除硬编码副本。
+# 真源：directory_contract.yaml directory_zones.permanent.paths / temporary.paths / temporary.process_subdirs
+# 仅保留 03_governance_reports/ 特殊规则硬编码（exempt_subdirs 中的过程性目录，契约未明确其 ttl）
+
+_CONTRACT_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "contracts" / "directory_contract.yaml"
+)
+
+
+def _load_dir_ttl_map() -> list[tuple[str, str, str]]:
+    """从 directory_contract.yaml 动态构建目录→ttl 映射。
+
+    真源：directory_contract.yaml directory_zones
+    消除原硬编码 DIR_TTL_MAP 副本——路径变更只需改契约一处。
+
+    特殊规则（硬编码，契约未明确）：
+        03_governance_reports/ 是 permanent.exempt_subdirs 中的过程性目录，ttl=task_bound。
+        其他 exempt_subdirs（00_overview_entry/ 等）是生成器专用，ttl=permanent（不列入此 map）。
+    """
+    try:
+        contract = _yaml.safe_load(_CONTRACT_PATH.read_text(encoding="utf-8")) or {}
+    except FileNotFoundError:
+        return []
+    zones = contract.get("directory_zones", {})
+    permanent_paths = zones.get("permanent", {}).get("paths", []) or []
+    temporary_paths = zones.get("temporary", {}).get("paths", []) or []
+    process_subdirs = zones.get("temporary", {}).get("process_subdirs", []) or []
+
+    items: list[tuple[str, str, str]] = []
+    # task_bound: temporary.paths（临时工作区）
+    for p in temporary_paths:
+        items.append((p, "task_bound", f"临时工作区（{p}）"))
+    # task_bound: process_subdirs（过程性子目录，contains 模式带前导/）
+    for sub in process_subdirs:
+        sub_clean = sub.strip("/")
+        items.append((f"/{sub_clean}/", "task_bound", f"过程性子目录（{sub_clean}/）"))
+    # task_bound: 03_governance_reports/（特殊规则——permanent.exempt_subdirs 中的过程性目录）
+    items.append((
+        "docs/02_enterprise_architecture/03_governance_reports/",
+        "task_bound",
+        "治理报告目录（过程性：容量/调研/清理审查，permanent.exempt_subdirs 特殊规则）",
+    ))
+    # permanent: permanent.paths（永久区核心内容）
+    for p in permanent_paths:
+        items.append((p, "permanent", f"永久区路径（{p}）"))
+    return items
+
+
+DIR_TTL_MAP: list[tuple[str, str, str]] = _load_dir_ttl_map()
 
 
 def classify_by_dir(rel_path: str) -> tuple[str, str] | None:

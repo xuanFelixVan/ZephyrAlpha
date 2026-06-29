@@ -162,6 +162,11 @@ def load_decision_tree(
     用于 ttl 等 vocabulary 的机器可读判定树。
     criteria 结构：{signal, value, operator}，供 evaluate_ttl 消费。
 
+    支持 criteria_source 引用（治本 2026-06-29）：
+        节点可声明 criteria_source 引用外部 YAML 的 section（如 directory_contract.yaml
+        的 directory_zones.permanent.paths），本函数加载时自动展开为 criteria 列表，
+        对 evaluate_ttl 透明。消除路径列表副本，路径变更只需改契约一处。
+
     对标 trae_060 §2（词表唯一真源，直接消费不复制）。
     替换 backfill_ttl_metadata._PERMANENT_ZONE_PREFIXES / git_commit_gateway._PERMANENT_ZONE_DIRS 等硬编码。
 
@@ -188,7 +193,67 @@ def load_decision_tree(
             )
         return {}
     data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-    return data.get("decision_tree") or {}
+    tree = data.get("decision_tree") or {}
+    _expand_criteria_sources(tree, strict=strict)
+    return tree
+
+
+def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
+    """展开 decision_tree 节点中的 criteria_source 引用为 criteria 列表（原地修改）。
+
+    criteria_source 结构::
+
+        criteria_source:
+          target: directory_contract.yaml
+          path: docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml  # 相对 REPO_ROOT
+          section: directory_zones.permanent.paths  # 点分隔的 YAML 路径
+          signal: path
+          operator: startswith
+
+    展开后：node["criteria"] = [{"signal": ..., "value": <每个 path>, "operator": ...}, ...]
+
+    约束：向内收——路径列表真源在外部 YAML，本函数加载时展开，evaluate_ttl 零感知。
+    """
+    nodes = tree.get("nodes") or {}
+    for node in nodes.values():
+        if not isinstance(node, dict):
+            continue
+        cs = node.get("criteria_source")
+        if not cs or not isinstance(cs, dict):
+            continue
+        ext_path = cs.get("path")
+        section = cs.get("section")
+        signal = cs.get("signal", "path")
+        operator = cs.get("operator", "startswith")
+        if not ext_path or not section:
+            continue
+        ext_file = REPO_ROOT / ext_path
+        if not ext_file.exists():
+            if strict:
+                raise FileNotFoundError(
+                    f"criteria_source 引用的 YAML 不存在: {ext_file}"
+                )
+            node["criteria"] = []
+            continue
+        ext_data = yaml.safe_load(ext_file.read_text(encoding="utf-8")) or {}
+        # 按 section 点分隔路径取值
+        value = ext_data
+        for key in section.split("."):
+            if not isinstance(value, dict):
+                value = None
+                break
+            value = value.get(key)
+        if not isinstance(value, list):
+            if strict:
+                raise ValueError(
+                    f"criteria_source section '{section}' 不是列表: {ext_path}"
+                )
+            node["criteria"] = []
+            continue
+        node["criteria"] = [
+            {"signal": signal, "value": str(v), "operator": operator}
+            for v in value
+        ]
 
 
 def evaluate_ttl(
