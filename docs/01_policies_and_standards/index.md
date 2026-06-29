@@ -173,7 +173,7 @@ verifiability: manual
 ```
 1. 本文件（index.md）                              ← 3 分钟了解全貌
 2. rules/trae_060_inward_consolidation.yaml        ← 向内收三原则（顶层统辖，必读真源）
-3. rules/_index.yaml                               ← 规则索引全貌
+3. _registry/catalogs/rule_catalog_registry.yaml   ← 规则索引全貌（自动生成）
 4. _registry/vocabularies/glossary.yaml            ← 术语对齐
 5. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
 ```

@@ -182,11 +182,11 @@ entries:
 - issue_id: '#ARCH-024'
   title: rules/_index.yaml 无自动生成器导致手工维护漂移
   severity: P2中
-  adjudication: 为 rules/_index.yaml 创建自动生成机制——当前 60 条规则 + tier_distribution 头部 + version 全靠手工维护，任何规则增删都需手工同步，违反向内收原则②（自动维护）。治本：扩展 GATE-RULE-CATALOG reconciler（当前仅同步 rule_catalog_registry.yaml）或新建 reconciler，post-commit 自动从规则文件 frontmatter 派生 _index.yaml（含 tier/layer/severity/rule_id）。
-  fix_phase: 待立项（扩展现有 reconciler，不新建生成器）
-  status: open
+  adjudication: 已治本（2026-06-29）。三层病根诊断——(1)执行层：_index.yaml 无生成器/校验器/消费者；(2)设计层：与 rule_catalog_registry.yaml 职责重叠 70% 但无人裁定取舍；(3)战略层：_index.yaml 是"前自动生成时代"的手工索引遗物。治本方案：(a)删除 rules/_index.yaml（60 条规则数据 100% 可从 frontmatter 派生）；(b)扩展 generate_rule_catalog.py 增加 severity/tier/aliases/section_count 4 字段 + tier_distribution + total_rules 头部派生，catalog 成为唯一规则索引；(c)修复 sync_yaml_to_depgraph.py L706 键名 bug（rules→files），catalog→arch_directory_tree 同步链路打通；(d)section_type 15 个合法值清单归位到 trae_043_meta_rule_metadata.yaml 的 section_type_vocabulary section；(e)修复 index.md 4 处引用（目录树/表格/合计/冷启动路径）。符合向内收四原则：唯一真源（catalog 替代 _index.yaml）、事件驱动（GATE-RULE-CATALOG post-commit 自动重生成）、第一性原理（_index.yaml 是手工遗物，元问题本身不应存在）、新 AI 可发现性（index.md 冷启动路径指向 catalog）。
+  fix_phase: 已完成（2026-06-29，commit 07a808a9b9 + 后续补充提交）
+  status: resolved
   created: '2026-06-27'
-  last_updated: '2026-06-27'
+  last_updated: '2026-06-29'
 - issue_id: '#ARCH-025'
   title: d2_links/validate_depends_on_format.py 死代码
   severity: P3低
