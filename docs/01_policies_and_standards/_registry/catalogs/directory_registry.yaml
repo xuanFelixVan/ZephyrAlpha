@@ -425,6 +425,26 @@ directories:
 
 
 
+  - path: "docs/_working/archive/"
+
+    responsibility: "统一归档区——所有永久区(01/02/03/08)deprecated文件归此;ttl=task_bound"
+
+    parent: "docs/"
+
+    has_index: false
+
+    module_id: null
+
+    kb_ref: null
+
+    track: B
+
+    status: active
+
+    note: "2026-06-29 added — 治本归档区规范化;废除02_enterprise_architecture/_archive/子目录,跨域归档统一此处的_working子区"
+
+
+
   # ========================================
 
   # docs/01_policies_and_standards/ 子目录（二级?

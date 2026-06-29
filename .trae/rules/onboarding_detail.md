@@ -352,7 +352,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |
 | 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
 | 任何文件变更后 | `python scripts/governance/audit_registration.py` | 有孤儿 → 禁止关闭任务 |
-| 写入文件后 | `git add <具体文件>` + `git commit`（RULE-TWENTY） | 未提交 = 代码丢失 → 禁止关闭任务 |
+| 写入文件后 | `python scripts/git_guard.py add <具体文件>` + `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（RULE-TWENTY） | 未提交 = 代码丢失 → 禁止关闭任务 |
 | 涉及安全敏感的变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 创建依赖图 | 先读 `TPL-DEPGRAPH-001` 模板 → 按模板格式创建 → 验证蓝图双向链接 | 不符合模板 → 禁止提交 |
 | Session 结束 | 见 L0 "Session 开关门 → 关门" | 不可关闭 |
