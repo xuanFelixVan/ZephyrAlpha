@@ -277,9 +277,31 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     - 全部成功 → 一次commit
     - 任一失败 → 全部rollback（消除P2-002部分提交风险）
 
-    支持的 op 类型：
+    支持的 op 类型（共 12 种：4 节点级 + 8 域级）：
     - 节点级（经 dep dict + _atomic_write）：update, add_physical_file, remove_physical_file, set_physical_files
-    - 域级（直接 SQL，ARCH-CAP-005）：insert_domain, update_domain_id, update_path, migrate_dependencies
+    - 域级（直接 SQL，ARCH-CAP-005）：
+      * insert_domain            — 新增域（domain_id/domain_name/domain_group/layer_id/ssot_path/max_modules/description）
+      * update_domain_id          — 改域 ID（module_id/new_domain_id）
+      * update_path               — 改节点路径（module_id/new_path）
+      * migrate_dependencies      — 迁移依赖（from_domain/to_domain/new_from_domain/new_to_domain）
+      * update_domain_layer       — 改域层级（domain_id/layer_id）
+      * migrate_nodes             — 迁移节点（node_ids/new_domain_id）
+      * update_domain_ssot_path    — 改域 SSOT 路径（domain_id/ssot_path）
+      * rename_domain             — 重命名域 ID（old_id/new_id，17步 UPDATE 覆盖 11 张表）
+
+    用法示例::
+
+        python scripts/governance/apply_depgraph.py --batch changes.json --dry-run
+        python scripts/governance/apply_depgraph.py --batch changes.json
+
+    changes.json 示例::
+
+        [
+          {"op": "rename_domain", "old_id": "D-SIGNAL_ASHARE", "new_id": "D_ASHARE_SIGNAL"},
+          {"op": "rename_domain", "old_id": "D-SIGNAL", "new_id": "D_SIGLEGACY"}
+        ]
+
+    注意：rename_domain 必须最后执行（LIKE 模式匹配会误伤同前缀子域名，见裁定#204）。
     """
     if isinstance(changes, str):
         changes = json.loads(changes)

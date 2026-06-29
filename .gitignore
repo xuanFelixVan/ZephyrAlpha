@@ -179,10 +179,10 @@ logs/
 _journals/
 _prompts/
 
-# Root-level temporary scripts
-/_fix_*.py
-/_debug_*.py
-/_final_*.py
+# Root-level temporary scripts (无前导/，匹配所有目录，治本 2026-06-29)
+_fix_*.py
+_debug_*.py
+_final_*.py
 _tmp_*.py
 /_temp*.txt
 /_temp*.md
