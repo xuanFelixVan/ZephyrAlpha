@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance.governance.rbac_bridge
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.identity.agent_identity; zephyr.integration.shared_08.contracts.identity.permission; zephyr.security.access_control.permission_guard; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

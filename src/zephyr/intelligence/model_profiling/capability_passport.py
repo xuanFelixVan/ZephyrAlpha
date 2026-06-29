@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.capability_passport
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STARTUP] imported

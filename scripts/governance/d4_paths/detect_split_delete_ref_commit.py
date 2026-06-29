@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_split_delete_ref_commit.py | §
 # [MODULE] scripts.governance.d4_paths.detect_split_delete_ref_commit
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d4_paths.__init__
 # [CONSUMERS]
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer3_coordination._governance_integration
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_dashboard; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_governance_adapter; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_tracing; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_frame_negotiation; zephyr.infrastructure.a2a_protocol.layer3_coordination.spec_sync; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_formal_verification
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/fix_shared_bypass.py | §
 # [MODULE] scripts.governance.d11_compliance.fix_shared_bypass
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

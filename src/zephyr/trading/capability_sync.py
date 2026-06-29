@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.capability_sync
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported

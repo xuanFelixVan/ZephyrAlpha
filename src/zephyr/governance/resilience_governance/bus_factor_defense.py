@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-068 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.bus_factor_defense
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

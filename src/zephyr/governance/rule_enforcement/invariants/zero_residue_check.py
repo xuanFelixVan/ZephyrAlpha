@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.invariants.zero_residue_check
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.knowledge_management.kb.embedding_migrate
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

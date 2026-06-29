@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-057 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.decision_fatigue_cli
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.decision_fatigue
 # [CONSUMERS]
 # [STARTUP] manual

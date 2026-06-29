@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/build_ocp_manifest.py | §
 # [MODULE] scripts.arch_guard._tools.build_ocp_manifest
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

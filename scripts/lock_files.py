@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/lock_files.py | §
 # [MODULE] scripts.lock_files
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__
 # [CONSUMERS]
 # [STARTUP] manual

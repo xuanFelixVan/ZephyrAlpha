@@ -24,7 +24,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] DB不存在→exit 1; 查询失败→exit 2; 无表→exit 3
 [TESTS] python scripts/governance/perf_depgraph_baseline.py --runs 3
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 
 depgraph.db 查询性能基线测试（RULE-SIXTEEN 配套）
 

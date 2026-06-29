@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_script_system_health.py | §
 # [MODULE] scripts.governance.meta.validate_script_system_health
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual

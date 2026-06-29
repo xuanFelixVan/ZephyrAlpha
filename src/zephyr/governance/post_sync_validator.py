@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.post_sync_validator
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] (none — stdlib only: shlex/subprocess/sys/re/pathlib)
 # [CONSUMERS] zephyr.governance.task_repo (L1 预防); scripts.governance.audit_post_sync_commands (L3 监控)
 # [STARTUP] imported

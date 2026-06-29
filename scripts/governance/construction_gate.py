@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/construction_gate.py | §
 # [MODULE] scripts.governance.construction_gate
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.path_resolver
 # [CONSUMERS]
 # [STARTUP] manual

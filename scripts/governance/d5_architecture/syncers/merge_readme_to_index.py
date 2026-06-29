@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/merge_readme_to_index.py | §
 # [MODULE] scripts.governance.d5_architecture.syncers.merge_readme_to_index
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

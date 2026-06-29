@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.finding_model
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.integration.shared.schema.base_config
 # [CONSUMERS] finding_ingest.py; pipeline_runner.py; audit-trail.writer; _finding_lifecycle.py; create_task_from_finding.py
 # [STARTUP] imported

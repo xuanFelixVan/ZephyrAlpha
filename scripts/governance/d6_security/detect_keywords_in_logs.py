@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_keywords_in_logs.py | §
 # [MODULE] scripts.governance.d6_security.detect_keywords_in_logs
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d6_security.__init__
 # [CONSUMERS]
 # [STARTUP] manual

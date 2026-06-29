@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

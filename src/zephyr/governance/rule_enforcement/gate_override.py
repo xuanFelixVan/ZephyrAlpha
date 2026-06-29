@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.gate_override
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.governance.audit_trail.bridge
 # [CONSUMERS]
 # [STARTUP] manual

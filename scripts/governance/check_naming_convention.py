@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.check_naming_convention
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

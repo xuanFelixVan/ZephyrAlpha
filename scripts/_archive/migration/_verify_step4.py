@@ -67,7 +67,7 @@ for n in nodes.values():
         domain_stats[d] = domain_stats.get(d, 0) + 1
 c1 = len(domain_stats) >= 25
 print(f"  [C1] Domain count: {len(domain_stats)}/30 -> {'PASS' if c1 else 'FAIL'}")
-print("  [C2] Missing: D-ALT-DATA, D-DATA-ENG, D-SELL-DECISION, D-POSITION, D_REPORTING (new domains, expected)")
+print("  [C2] Missing: D-ALT-DATA, D-DATA-ENG, D_SELL_DECISION, D_POSITION, D_REPORTING (new domains, expected)")
 
 edge_orphans = 0
 node_ids = set(nodes.keys())

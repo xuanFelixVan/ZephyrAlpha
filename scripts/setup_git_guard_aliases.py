@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.setup_git_guard_aliases
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.git_guard
 # [CONSUMERS] AI session 冷启动序列；手动执行
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/scan_runtime_log_secrets.py | §
 # [MODULE] scripts.governance.d6_security.scan_runtime_log_secrets
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d6_security.__init__
 # [CONSUMERS]
 # [STARTUP] manual

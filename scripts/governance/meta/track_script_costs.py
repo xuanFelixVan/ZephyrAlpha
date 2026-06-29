@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/track_script_costs.py | §
 # [MODULE] scripts.governance.meta.track_script_costs
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual

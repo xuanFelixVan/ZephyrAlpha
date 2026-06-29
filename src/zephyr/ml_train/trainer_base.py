@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain-ml_train/ml-core/blueprint.md
 # [MODULE] zephyr.ml_train.trainer_base
-# [DOMAIN] D-ML_TRAIN
+# [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

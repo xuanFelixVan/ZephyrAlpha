@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.governance.check_module_singlesource
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS] pre-commit GATE-SSOT-SINGLESOURCE hook; CI pipeline; AI session 冷启动
 # [STARTUP] manual

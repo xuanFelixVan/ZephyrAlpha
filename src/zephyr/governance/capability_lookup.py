@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §registry
 # [MODULE] zephyr.governance.capability_lookup
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts, check_capability_duplicates); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts, check_capability_duplicates)
 # [STARTUP] manual

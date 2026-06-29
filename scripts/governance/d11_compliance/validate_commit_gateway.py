@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_commit_gateway.py | §gate-commit-gw
 # [MODULE] scripts.governance.d11_compliance.validate_commit_gateway
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__; zephyr.governance.git_commit_gateway
 # [CONSUMERS] .pre-commit-config.yaml (GATE-COMMIT-GW hook)
 # [STARTUP] manual

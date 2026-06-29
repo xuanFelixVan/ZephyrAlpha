@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.list_phase0_tasks
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

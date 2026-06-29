@@ -67,7 +67,7 @@ step_summaries:
   step_6_migration_registry_sync: 2574条目,46条更新
   step_7_empty_init_marking: 546个__init__.py,220个空文件标记为scaffold_placeholder
   step_8_full_verification: 11/11项通过
-  step_8_orphan_path_fix: 61个孤儿模块路径修复(60个D_BEHAVIORAL_AUDIT+1个D-CROSS_ASSET)
+  step_8_orphan_path_fix: 61个孤儿模块路径修复(60个D_BEHAVIORAL_AUDIT+1个D_CROSS_ASSET)
   step_8_trae030_fix: trae_030第587行'39域'→'43域'(Python直接I/O修复)
 domain_architecture:
   before: 55
@@ -75,6 +75,6 @@ domain_architecture:
   operations:
   - 删除11个连字符空壳域
   - D-INFRASTRUCTURE+D-INFRA-RUNTIME→D_INFRA_RUNTIME
-  - D-GOV_DRIFT保留(22节点)
+  - D_GOV_DRIFT保留(22节点)
   - D-TEST不创建(D77已废止)
   - 61个孤儿模块DB路径修复

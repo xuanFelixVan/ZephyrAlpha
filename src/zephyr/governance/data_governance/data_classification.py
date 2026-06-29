@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-030 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.data_classification
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.data_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

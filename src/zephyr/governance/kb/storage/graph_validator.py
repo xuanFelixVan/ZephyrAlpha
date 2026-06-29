@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.storage.graph_validator
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
@@ -126,7 +126,7 @@ class GraphValidator:
 
         vector_ke_ids: set[str] = set()
         try:
-            from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+            from zephyr.governance.kb.chromadb_init import get_chroma_client
 
             client = get_chroma_client(self._vector_dir)
             col = client.get_collection(name="ke_entries")
@@ -261,7 +261,7 @@ class GraphValidator:
         records = {row["ke_id"]: row["status"] for row in cursor.fetchall()}
 
         try:
-            from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+            from zephyr.governance.kb.chromadb_init import get_chroma_client
 
             client = get_chroma_client(self._vector_dir)
             col = client.get_collection(name="ke_entries")

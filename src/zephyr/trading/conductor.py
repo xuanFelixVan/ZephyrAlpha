@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-194 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
 # [MODULE] zephyr.trading.conductor
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
 # [STARTUP] imported

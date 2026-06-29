@@ -1,11 +1,11 @@
 {
-  "D-INTELLIGENCE": {
+  "D_INTELLIGENCE": {
     "domain_name": "context_management",
-    "domain_short": "D-INTELLIGENCE",
+    "domain_short": "D_INTELLIGENCE",
     "module_count": 55,
     "items": [
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/infrastructure/__init__.py",
         "physical_files": [
@@ -15,7 +15,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/api/__init__.py",
         "physical_files": [
@@ -25,7 +25,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/core/__init__.py",
         "physical_files": [
@@ -35,7 +35,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/__init__.py",
         "physical_files": [
@@ -45,7 +45,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/models/__init__.py",
         "physical_files": [
@@ -55,7 +55,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "backtest_base.py",
         "path": "src/zephyr/intelligence/model_evaluation/backtest_base.py",
         "physical_files": [
@@ -65,7 +65,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "activate.py",
         "path": "src/zephyr/intelligence/model_evaluation/activate.py",
         "physical_files": [
@@ -75,7 +75,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "kb_repo.py",
         "path": "src/zephyr/intelligence/model_evaluation/kb_repo.py",
         "physical_files": [
@@ -85,7 +85,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "inference_base.py",
         "path": "src/zephyr/intelligence/model_evaluation/inference_base.py",
         "physical_files": [
@@ -95,7 +95,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "unified_memory_api.py",
         "path": "src/zephyr/intelligence/model_evaluation/unified_memory_api.py",
         "physical_files": [
@@ -105,7 +105,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_evaluation/__init__.py",
         "physical_files": [
@@ -115,7 +115,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "sync_engine.py",
         "path": "src/zephyr/intelligence/model_evaluation/sync_engine.py",
         "physical_files": [
@@ -125,7 +125,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "reranker.py",
         "path": "src/zephyr/intelligence/model_evaluation/reranker.py",
         "physical_files": [
@@ -135,7 +135,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_evaluation/experiment_tracker/__init__.py",
         "physical_files": [
@@ -145,7 +145,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "default_backtest_engine.py",
         "path": "src/zephyr/intelligence/model_evaluation/implementations/default_backtest_engine.py",
         "physical_files": [
@@ -155,7 +155,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_evaluation/implementations/__init__.py",
         "physical_files": [
@@ -165,7 +165,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "default_inference_engine.py",
         "path": "src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py",
         "physical_files": [
@@ -175,7 +175,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_evaluation/notebook_integration/__init__.py",
         "physical_files": [
@@ -185,7 +185,7 @@
         "blueprint_status": "MOD-INF-036"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "capability_passport.py",
         "path": "src/zephyr/intelligence/model_profiling/capability_passport.py",
         "physical_files": [
@@ -195,7 +195,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_evaluation/target_lib/__init__.py",
         "physical_files": [
@@ -205,7 +205,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "deepseek_v4_chat.py",
         "path": "src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py",
         "physical_files": [
@@ -215,7 +215,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "benchmark_suite.py",
         "path": "src/zephyr/intelligence/model_profiling/benchmark_suite.py",
         "physical_files": [
@@ -225,7 +225,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_orchestrator.py",
         "path": "src/zephyr/intelligence/model_profiling/exam_orchestrator.py",
         "physical_files": [
@@ -235,7 +235,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "cli.py",
         "path": "src/zephyr/intelligence/model_profiling/cli.py",
         "physical_files": [
@@ -245,7 +245,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "results_writer.py",
         "path": "src/zephyr/intelligence/model_profiling/results_writer.py",
         "physical_files": [
@@ -255,7 +255,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_test_cases.py",
         "path": "src/zephyr/intelligence/model_profiling/exam_test_cases.py",
         "physical_files": [
@@ -265,7 +265,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "profiler.py",
         "path": "src/zephyr/intelligence/model_profiling/profiler.py",
         "physical_files": [
@@ -275,7 +275,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "benchmark_suite.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/benchmark_suite.py",
         "physical_files": [
@@ -285,7 +285,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "model_discovery.py",
         "path": "src/zephyr/intelligence/model_profiling/model_discovery.py",
         "physical_files": [
@@ -295,7 +295,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "task_model_learner.py",
         "path": "src/zephyr/intelligence/model_profiling/task_model_learner.py",
         "physical_files": [
@@ -305,7 +305,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_profiling/__init__.py",
         "physical_files": [
@@ -315,7 +315,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "provider_data.py",
         "path": "src/zephyr/intelligence/model_profiling/provider_data.py",
         "physical_files": [
@@ -325,7 +325,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "capability_passport.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/capability_passport.py",
         "physical_files": [
@@ -335,7 +335,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "cli.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/cli.py",
         "physical_files": [
@@ -345,7 +345,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "model_discovery.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/model_discovery.py",
         "physical_files": [
@@ -355,7 +355,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_orchestrator.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/exam_orchestrator.py",
         "physical_files": [
@@ -365,7 +365,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "deepseek_v4_chat.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/deepseek_v4_chat.py",
         "physical_files": [
@@ -375,7 +375,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "results_writer.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/results_writer.py",
         "physical_files": [
@@ -385,7 +385,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "profiler.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/profiler.py",
         "physical_files": [
@@ -395,7 +395,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_test_cases.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/exam_test_cases.py",
         "physical_files": [
@@ -405,7 +405,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/__init__.py",
         "physical_files": [
@@ -415,7 +415,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "cli.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/cli.py",
         "physical_files": [
@@ -425,7 +425,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "benchmark_suite.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/benchmark_suite.py",
         "physical_files": [
@@ -435,7 +435,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "capability_passport.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/capability_passport.py",
         "physical_files": [
@@ -445,7 +445,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "deepseek_v4_chat.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/deepseek_v4_chat.py",
         "physical_files": [
@@ -455,7 +455,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "profiler.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/profiler.py",
         "physical_files": [
@@ -465,7 +465,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_test_cases.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/exam_test_cases.py",
         "physical_files": [
@@ -475,7 +475,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/__init__.py",
         "physical_files": [
@@ -485,7 +485,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "exam_orchestrator.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/exam_orchestrator.py",
         "physical_files": [
@@ -495,7 +495,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "task_model_learner.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline/task_model_learner.py",
         "physical_files": [
@@ -505,7 +505,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/services/__init__.py",
         "physical_files": [
@@ -515,7 +515,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "__init__.py",
         "path": "src/zephyr/intelligence/_extensions/__init__.py",
         "physical_files": [
@@ -525,7 +525,7 @@
         "blueprint_status": "MOD-INTELLIGENCE"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "model_discovery.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/model_discovery.py",
         "physical_files": [
@@ -535,7 +535,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "task_model_learner.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/task_model_learner.py",
         "physical_files": [
@@ -545,7 +545,7 @@
         "blueprint_status": "MOD-INF-034"
       },
       {
-        "module_id": "D-INTELLIGENCE",
+        "module_id": "D_INTELLIGENCE",
         "name": "results_writer.py",
         "path": "src/zephyr/intelligence/model_profiling/pipeline_routing/results_writer.py",
         "physical_files": [

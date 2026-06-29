@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-AUTONOMY_PERM
 # [MODULE] zephyr.autonomy_perm.red_blue_validator.constitution_guard
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] zephyr.security.adversarial_validation.constitution_guard
 # [CONSUMERS]
 # [STARTUP] imported

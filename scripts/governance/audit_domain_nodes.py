@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.audit_domain_nodes
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -310,18 +310,18 @@ def load_arch_constraints(project_root: str) -> list[dict]:
 
 
 domains_13 = [
-    "D-PF_CORE",
+    "D_PF_CORE",
     "D_MKT_DATA",
-    "D-RISK",
+    "D_RISK",
     "D_INTEGRATION",
     "D_OPS",
     "D_SECURITY",
     "D_AUTONOMY_CORE",
-    "D-ML_TRAIN",
-    "D-GOVERNANCE",
-    "D-COMPLIANCE",
-    "D-FACTOR",
-    "D-SIGLEGACY",
+    "D_ML_TRAIN",
+    "D_GOVERNANCE",
+    "D_COMPLIANCE",
+    "D_FACTOR",
+    "D_SIGLEGACY",
     "D_INFRA_RUNTIME",
 ]
 
@@ -368,8 +368,8 @@ def main():
             print(f"  {d}: total_fri={step3[d]['total']}, has_parent={step3[d]['has_parent']}")
 
         # STEP 4
-        print("STEP 4: D-SIGLEGACY / D-SIMULATION details")
-        for dom in ["D-SIGLEGACY", "D-SIMULATION"]:
+        print("STEP 4: D_SIGLEGACY / D_SIMULATION details")
+        for dom in ["D_SIGLEGACY", "D_SIMULATION"]:
             cur.execute(
                 "SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=%s AND design_maturity='design' ORDER BY node_id",
                 (dom,),

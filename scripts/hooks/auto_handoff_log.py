@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/hooks/auto_handoff_log.py | §
 # [MODULE] scripts.hooks.auto_handoff_log
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.hooks.git_secrets_setup.sh
 # [CONSUMERS]
 # [STARTUP] manual

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.git_guard
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
 # [CONSUMERS] AI session 执行 git reset/checkout/stash/revert 前调用
 # [STARTUP] manual

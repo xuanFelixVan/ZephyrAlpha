@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/validate_read_before_write.py | §
 # [MODULE] scripts.governance.d1_structure.validate_read_before_write
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d1_structure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

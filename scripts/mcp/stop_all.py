@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/mcp/stop_all.py | §
 # [MODULE] scripts.mcp.stop_all
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.mcp.status_all
 # [CONSUMERS]
 # [STARTUP] manual

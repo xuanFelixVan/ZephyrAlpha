@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.rebuild_progress
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

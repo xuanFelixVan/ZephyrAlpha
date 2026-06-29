@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.stop_loss
-# [DOMAIN] D-RISK
+# [DOMAIN] D_RISK
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

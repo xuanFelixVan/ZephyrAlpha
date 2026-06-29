@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_write_gate.py | §
 # [MODULE] scripts.governance.pre_write_gate
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.__init__
 # [CONSUMERS]
 # [STARTUP] manual

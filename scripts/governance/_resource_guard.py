@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-069 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._resource_guard
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] run_all.py;_concurrency.py
 # [STARTUP] manual

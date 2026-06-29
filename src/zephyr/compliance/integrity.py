@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.integrity
-# [DOMAIN] D-COMPLIANCE
+# [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.integrity
 # [CONSUMERS]
 # [STARTUP] imported

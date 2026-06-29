@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.trigger_router
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.governance.rule_enforcement.drift_detector
 # [CONSUMERS]
 # [STARTUP] imported

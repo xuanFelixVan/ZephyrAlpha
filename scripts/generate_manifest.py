@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_manifest.py | §
 # [MODULE] scripts.generate_manifest
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__
 # [CONSUMERS]
 # [STARTUP] imported

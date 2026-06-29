@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.security.access_control.governance_bridges.capability_check
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] zephyr.security.access_control.governance_bridges.__init__
 # [CONSUMERS]
 # [STARTUP] imported

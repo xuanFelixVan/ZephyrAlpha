@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/validate_rule_freshness.py | §
 # [MODULE] scripts.governance.meta.validate_rule_freshness
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual

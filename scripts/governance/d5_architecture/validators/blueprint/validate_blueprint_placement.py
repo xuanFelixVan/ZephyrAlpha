@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.blueprint.validate_blueprint_placement
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.blueprint.__init__
 # [CONSUMERS]
 # [STARTUP] manual

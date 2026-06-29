@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.execution.capital_allocation_result
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] signal
 # [STARTUP] imported

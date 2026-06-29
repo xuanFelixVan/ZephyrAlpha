@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-SCRIPT-001
 # [MODULE] zephyr.trading.orchestrator.script_runner
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.agent_orchestrator; AutoRuntime Core
 # [STARTUP] imported

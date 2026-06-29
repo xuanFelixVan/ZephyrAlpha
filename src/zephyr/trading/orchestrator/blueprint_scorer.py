@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.blueprint_scorer
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.orchestrator.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.trigger_router; zephyr.trading.orchestrator.core.trigger_router; zephyr.integration.shared_08.utils.blueprint_scorer (re-export); zephyr.integration.shared_08.blueprint_scorer (re-export)
 # [STARTUP] imported

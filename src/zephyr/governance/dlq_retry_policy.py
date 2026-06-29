@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.dlq_retry_policy
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.data.persistence.dead_letter_queue; AutoRuntime Core retry phase
 # [STARTUP] imported

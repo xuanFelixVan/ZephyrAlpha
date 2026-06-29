@@ -18,11 +18,11 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 |---|---|---|---|---|---|
 | 1 | 01-跨域交叉点与因果链.md | B-XXX | B-020 | module_name | 记录到待人工补全清单 |
 | 2 | 24-D-INFRA-RUNTIME-运行时基础设施域.md | E-XXX-NN | E-IF-06 | module_name | 记录到待人工补全清单 |
-| 3 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-001 | module_name | 记录到待人工补全清单 |
-| 4 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-002 | module_name | 记录到待人工补全清单 |
-| 5 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-003 | module_name | 记录到待人工补全清单 |
-| 6 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-004 | module_name | 记录到待人工补全清单 |
-| 7 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-005 | module_name | 记录到待人工补全清单 |
+| 3 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-001 | module_name | 记录到待人工补全清单 |
+| 4 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-002 | module_name | 记录到待人工补全清单 |
+| 5 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-003 | module_name | 记录到待人工补全清单 |
+| 6 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-004 | module_name | 记录到待人工补全清单 |
+| 7 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-005 | module_name | 记录到待人工补全清单 |
 
 ## 缺失项（源MD有声明，depgraph.db无匹配）
 
@@ -73,35 +73,35 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 43 | 01-跨域交叉点与因果链.md | E-XXX-NN | E-RK-03 | DrawdownAlerted | path和功能名均未命中 |
 | 44 | 02-D-DATA-数据域.md | E-XXX-NN | E-DT-02 | DataGapDetected / E-DT-03 DataSchemaChanged | path和功能名均未命中 |
 | 45 | 02-D-DATA-数据域.md | E-XXX-NN | E-DT-03 | DataSchemaChanged | path和功能名均未命中 |
-| 46 | 03-D-FACTOR-因子域.md | DD-XXX-NN | DD-P3-02 | 因子IC入池阈值分级 | path和功能名均未命中 |
-| 47 | 03-D-FACTOR-因子域.md | DD-XXX-NN | DD-P3-03 | 盘中快照仅保留3个月 | path和功能名均未命中 |
+| 46 | 03-D_FACTOR-因子域.md | DD-XXX-NN | DD-P3-02 | 因子IC入池阈值分级 | path和功能名均未命中 |
+| 47 | 03-D_FACTOR-因子域.md | DD-XXX-NN | DD-P3-03 | 盘中快照仅保留3个月 | path和功能名均未命中 |
 | 48 | 04-D-SIGNAL-信号域.md | D-XXX-NN | D-SIGNAL-115 | 策略模板库 | path和功能名均未命中 |
 | 49 | 04-D-SIGNAL-信号域.md | D-XXX-NN | D-SIGNAL-154 | 信号去重模块 | path和功能名均未命中 |
 | 50 | 04-D-SIGNAL-信号域.md | D-XXX-NN | D-SIGNAL-155 | 信号冲突解决 | path和功能名均未命中 |
-| 51 | 05-D-PF-CORE-组合核心域.md | E-XXX-NN | E-CA-04 | / CTR-P1-014 | path和功能名均未命中 |
-| 52 | 07-D-POSITION-仓位管理域.md | E-XXX-NN | E-POS-02 | DriftDetected / E-POS-03 RebalanceTriggered / E-PO | path和功能名均未命中 |
-| 53 | 07-D-POSITION-仓位管理域.md | E-XXX-NN | E-POS-04 | CapitalCurveUpdated / E-POS-05 StateChanged | path和功能名均未命中 |
-| 54 | 08-D-EX-CORE-执行核心域.md | E-XXX-NN | E-EX-08 | IdempotencyBlocked | path和功能名均未命中 |
+| 51 | 05-D_PF_CORE-组合核心域.md | E-XXX-NN | E-CA-04 | / CTR-P1-014 | path和功能名均未命中 |
+| 52 | 07-D_POSITION-仓位管理域.md | E-XXX-NN | E-POS-02 | DriftDetected / E-POS-03 RebalanceTriggered / E-PO | path和功能名均未命中 |
+| 53 | 07-D_POSITION-仓位管理域.md | E-XXX-NN | E-POS-04 | CapitalCurveUpdated / E-POS-05 StateChanged | path和功能名均未命中 |
+| 54 | 08-D_EX_CORE-执行核心域.md | E-XXX-NN | E-EX-08 | IdempotencyBlocked | path和功能名均未命中 |
 | 55 | 10-D_REPORTING-报告域.md | L-XXX | L-007 | ；EU AI Act Art.12+MiFID II RTS 6 | path和功能名均未命中 |
-| 56 | 11-D-RISK-风控域.md | C-XXX | C-020 | 渐进式全球扩展 | path和功能名均未命中 |
-| 57 | 12-D-ML-TRAIN-训练域.md | E-XXX-NN | E-ML-02 | NewFactorDiscovered | path和功能名均未命中 |
-| 58 | 12-D-ML-TRAIN-训练域.md | E-XXX-NN | E-ML-03 | RetrainTriggered | path和功能名均未命中 |
-| 59 | 13-D-ML-SERVE-推理域.md | E-XXX-NN | E-ML-04 | ModelActivated | path和功能名均未命中 |
-| 60 | 13-D-ML-SERVE-推理域.md | E-XXX-NN | E-ML-06 | InferenceDegraded | path和功能名均未命中 |
+| 56 | 11-D_RISK-风控域.md | C-XXX | C-020 | 渐进式全球扩展 | path和功能名均未命中 |
+| 57 | 12-D_ML_TRAIN-训练域.md | E-XXX-NN | E-ML-02 | NewFactorDiscovered | path和功能名均未命中 |
+| 58 | 12-D_ML_TRAIN-训练域.md | E-XXX-NN | E-ML-03 | RetrainTriggered | path和功能名均未命中 |
+| 59 | 13-D_ML_SERVE-推理域.md | E-XXX-NN | E-ML-04 | ModelActivated | path和功能名均未命中 |
+| 60 | 13-D_ML_SERVE-推理域.md | E-XXX-NN | E-ML-06 | InferenceDegraded | path和功能名均未命中 |
 | 61 | 14-D-ALT-DATA-另类数据域.md | E-XXX-NN | E-AD-02 | AltDataQualityDegraded / E-AD-03 SentimentSignalRe | path和功能名均未命中 |
 | 62 | 14-D-ALT-DATA-另类数据域.md | E-XXX-NN | E-AD-04 | FilingEventDetected / E-AD-05 SupplyChainDisruptio | path和功能名均未命中 |
 | 63 | 15-D-DATA-ENG-数据工程域.md | E-XXX-NN | E-DE-02 | PipelineFailed / E-DE-03 DataQualityAlert / E-DE-0 | path和功能名均未命中 |
 | 64 | 15-D-DATA-ENG-数据工程域.md | E-XXX-NN | E-DE-04 | FeatureStoreUpdated / E-DE-05 LineageGapDetected | path和功能名均未命中 |
 | 65 | 15-D-DATA-ENG-数据工程域.md | E-XXX-NN | E-DE-06 | DriftDetected | path和功能名均未命中 |
-| 66 | 16-D-CROSS-ASSET-跨资产跨市场域.md | E-XXX-NN | E-CA-02 | CorrelationRegimeShifted / E-CA-03 CrossMarketProp | path和功能名均未命中 |
-| 67 | 17-D-COMPLIANCE-合规监管域.md | E-XXX-NN | E-CM-02 | RegulatoryReportGenerated / E-CM-03 ComplianceGate | path和功能名均未命中 |
-| 68 | 17-D-COMPLIANCE-合规监管域.md | E-XXX-NN | E-CM-03 | ComplianceGatePassed | path和功能名均未命中 |
-| 69 | 17-D-COMPLIANCE-合规监管域.md | L-XXX | L-008 | )，但2025-2026年EU AI Act的实施细则和ESMA监管指引已大幅细化，对AI自治交易系 | path和功能名均未命中 |
-| 70 | 18-D-TRADING-交易运营域.md | E-XXX-NN | E-TR-02 | ReconciliationCompleted / E-TR-03 CorporateActionA | path和功能名均未命中 |
-| 71 | 18-D-TRADING-交易运营域.md | E-XXX-NN | E-TR-03 | CorporateActionAdjusted / E-TR-04 MarginWarning / | path和功能名均未命中 |
-| 72 | 18-D-TRADING-交易运营域.md | E-XXX-NN | E-TR-04 | MarginWarning / E-TR-05 MarginUnavailable / E-TR-0 | path和功能名均未命中 |
-| 73 | 18-D-TRADING-交易运营域.md | E-XXX-NN | E-TR-05 | MarginUnavailable / E-TR-06 MultiAccountAllocated | path和功能名均未命中 |
-| 74 | 18-D-TRADING-交易运营域.md | E-XXX-NN | E-TR-06 | MultiAccountAllocated | path和功能名均未命中 |
+| 66 | 16-D_CROSS_ASSET-跨资产跨市场域.md | E-XXX-NN | E-CA-02 | CorrelationRegimeShifted / E-CA-03 CrossMarketProp | path和功能名均未命中 |
+| 67 | 17-D_COMPLIANCE-合规监管域.md | E-XXX-NN | E-CM-02 | RegulatoryReportGenerated / E-CM-03 ComplianceGate | path和功能名均未命中 |
+| 68 | 17-D_COMPLIANCE-合规监管域.md | E-XXX-NN | E-CM-03 | ComplianceGatePassed | path和功能名均未命中 |
+| 69 | 17-D_COMPLIANCE-合规监管域.md | L-XXX | L-008 | )，但2025-2026年EU AI Act的实施细则和ESMA监管指引已大幅细化，对AI自治交易系 | path和功能名均未命中 |
+| 70 | 18-D_TRADING-交易运营域.md | E-XXX-NN | E-TR-02 | ReconciliationCompleted / E-TR-03 CorporateActionA | path和功能名均未命中 |
+| 71 | 18-D_TRADING-交易运营域.md | E-XXX-NN | E-TR-03 | CorporateActionAdjusted / E-TR-04 MarginWarning / | path和功能名均未命中 |
+| 72 | 18-D_TRADING-交易运营域.md | E-XXX-NN | E-TR-04 | MarginWarning / E-TR-05 MarginUnavailable / E-TR-0 | path和功能名均未命中 |
+| 73 | 18-D_TRADING-交易运营域.md | E-XXX-NN | E-TR-05 | MarginUnavailable / E-TR-06 MultiAccountAllocated | path和功能名均未命中 |
+| 74 | 18-D_TRADING-交易运营域.md | E-XXX-NN | E-TR-06 | MultiAccountAllocated | path和功能名均未命中 |
 | 75 | 20-D-RESEARCH-研究基础设施域.md | E-XXX-NN | E-RH-02 | ExperimentReproduced | path和功能名均未命中 |
 | 76 | 20-D-RESEARCH-研究基础设施域.md | D-XXX-NN | D-RESEARCH-09 | 合规审计 | path和功能名均未命中 |
 | 77 | 23-D-AUT-PERM-自治保护域.md | D-XXX-NN | D-SECURITY-03 | 密钥管理器 | path和功能名均未命中 |
@@ -137,23 +137,23 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 107 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-06 | IdempotencyKeyMissing | path和功能名均未命中 |
 | 108 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-07 | APIGatewayRequestRouted | path和功能名均未命中 |
 | 109 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-08 | SchemaValidationFailed | path和功能名均未命中 |
-| 110 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-04 | AuditAnomalyDetected | path和功能名均未命中 |
-| 111 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-05 | DDDViolationDetected | path和功能名均未命中 |
-| 112 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-06 | DecisionArchived | path和功能名均未命中 |
-| 113 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-07 | ComplianceAuditCompleted | path和功能名均未命中 |
-| 114 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-08 | IncidentEscalated | path和功能名均未命中 |
-| 115 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-09 | TopologyDriftDetected | path和功能名均未命中 |
+| 110 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-04 | AuditAnomalyDetected | path和功能名均未命中 |
+| 111 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-05 | DDDViolationDetected | path和功能名均未命中 |
+| 112 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-06 | DecisionArchived | path和功能名均未命中 |
+| 113 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-07 | ComplianceAuditCompleted | path和功能名均未命中 |
+| 114 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-08 | IncidentEscalated | path和功能名均未命中 |
+| 115 | 27-D_GOVERNANCE-治理域.md | E-XXX-NN | E-GV-09 | TopologyDriftDetected | path和功能名均未命中 |
 | 116 | 28-D_FRONTEND-前端域.md | E-XXX-NN | E-AU-05 | HealthDegraded | path和功能名均未命中 |
 | 117 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-04 | RemediationExecuted | path和功能名均未命中 |
 | 118 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-06 | SLOBreached | path和功能名均未命中 |
 | 119 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-07 | SurvivalRuleTriggered | path和功能名均未命中 |
-| 120 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-02 | SellArbitrated / E-SELL-03 SellExecuted / E-SELL-0 | path和功能名均未命中 |
-| 121 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-04 | SellLoopFeedback | path和功能名均未命中 |
-| 122 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-001 |  | path和功能名均未命中 |
-| 123 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-002 |  | path和功能名均未命中 |
-| 124 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-003 |  | path和功能名均未命中 |
-| 125 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-004 |  | path和功能名均未命中 |
-| 126 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-005 |  | path和功能名均未命中 |
+| 120 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-02 | SellArbitrated / E-SELL-03 SellExecuted / E-SELL-0 | path和功能名均未命中 |
+| 121 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-04 | SellLoopFeedback | path和功能名均未命中 |
+| 122 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-001 |  | path和功能名均未命中 |
+| 123 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-002 |  | path和功能名均未命中 |
+| 124 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-003 |  | path和功能名均未命中 |
+| 125 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-004 |  | path和功能名均未命中 |
+| 126 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-005 |  | path和功能名均未命中 |
 | 127 | 交易决策架构.md | C-XXX | C-041 | )                       │   ║ | path和功能名均未命中 |
 | 128 | 交易决策架构.md | L-XXX | L-002 | B-017 不做HFT | path和功能名均未命中 |
 | 129 | 交易决策架构.md | L-XXX | L-003 | B-004 非交易时段禁下单 | path和功能名均未命中 |

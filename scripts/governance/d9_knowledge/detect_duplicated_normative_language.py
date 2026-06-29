@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_duplicated_normative_language.py | §
 # [MODULE] scripts.governance.d9_knowledge.detect_duplicated_normative_language
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d9_knowledge.__init__
 # [CONSUMERS]
 # [STARTUP] manual

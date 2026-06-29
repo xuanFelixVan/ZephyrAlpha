@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_aisg_gateway.py | §
 # [MODULE] scripts.arch_guard.fitness_functions.check_aisg_gateway
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
 # [CONSUMERS]
 # [STARTUP] manual

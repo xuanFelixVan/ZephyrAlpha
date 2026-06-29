@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-009 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.portfolio.strategy_lifecycle_event
 # [CONSUMERS]
 # [STARTUP] imported

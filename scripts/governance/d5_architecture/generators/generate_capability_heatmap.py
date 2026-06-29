@@ -25,7 +25,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph.db不存在→exit 1
 [TESTS] tests/test_dm200910_generators.py
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 """
 
 from __future__ import annotations
@@ -60,42 +60,42 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name": "因子研究",
         "name_en": "Factor & Signal",
         "type": "业务",
-        "domains": ["D-FACTOR", "D-SIGLEGACY", "D-FUNDAMENTAL_SIGNAL", "D-ASHARE_SIGNAL", "D-SIGQC"],
+        "domains": ["D_FACTOR", "D_SIGLEGACY", "D_FUNDAMENTAL_SIGNAL", "D_ASHARE_SIGNAL", "D_SIGQC"],
     },
     {
         "id": "C3",
         "name": "风险控制",
         "name_en": "Risk Control",
         "type": "业务",
-        "domains": ["D-RISK", "D-COMPLIANCE"],
+        "domains": ["D_RISK", "D_COMPLIANCE"],
     },
     {
         "id": "C4",
         "name": "策略决策",
         "name_en": "Strategy Decision",
         "type": "业务",
-        "domains": ["D-PF_CORE", "D-PF_ALLOC", "D-SELL_DECISION", "D-CROSS_ASSET"],
+        "domains": ["D_PF_CORE", "D_PF_ALLOC", "D_SELL_DECISION", "D_CROSS_ASSET"],
     },
     {
         "id": "C5",
         "name": "执行交易",
         "name_en": "Execution & Trading",
         "type": "业务",
-        "domains": ["D-EX_CORE", "D-EX_SOR", "D-TRADING", "D-POSITION"],
+        "domains": ["D_EX_CORE", "D_EX_SOR", "D_TRADING", "D_POSITION"],
     },
     {
         "id": "C6",
         "name": "ML平台",
         "name_en": "ML Platform",
         "type": "业务",
-        "domains": ["D-ML_TRAIN", "D-ML_SERVE"],
+        "domains": ["D_ML_TRAIN", "D_ML_SERVE"],
     },
     {
         "id": "C7",
         "name": "回测仿真",
         "name_en": "Backtest & Simulation",
         "type": "业务",
-        "domains": ["D-BACKTEST", "D-SIMULATION", "D-EXEC_SIM", "D-DIGITAL_TWIN"],
+        "domains": ["D_BACKTEST", "D_SIMULATION", "D_EXEC_SIM", "D_DIGITAL_TWIN"],
     },
     {
         "id": "CC1",
@@ -103,13 +103,13 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name_en": "Governance & Compliance",
         "type": "横切",
         "domains": [
-            "D-GOVERNANCE",
-            "D-GOV_RULE",
-            "D-GOV_AUDIT",
-            "D-GOV_DRIFT",
-            "D-GOV_ENFORCEMENT",
-            "D-GOV_REPAIR",
-            "D-GOV_SCRIPTS",
+            "D_GOVERNANCE",
+            "D_GOV_RULE",
+            "D_GOV_AUDIT",
+            "D_GOV_DRIFT",
+            "D_GOV_ENFORCEMENT",
+            "D_GOV_REPAIR",
+            "D_GOV_SCRIPTS",
         ],
     },
     {
@@ -117,7 +117,7 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name": "安全防护",
         "name_en": "Security",
         "type": "横切",
-        "domains": ["D_SECURITY", "D_SECURITY_LLM", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D-AUTONOMY_PERM"],
+        "domains": ["D_SECURITY", "D_SECURITY_LLM", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D_AUTONOMY_PERM"],
     },
     {
         "id": "CC3",
@@ -132,8 +132,8 @@ CAPABILITY_DOMAINS: list[dict] = [
             "D_SHARED",
             "D_FRONTEND",
             "D_REPORTING",
-            "D-KNOWLEDGE",
-            "D-INTELLIGENCE",
+            "D_KNOWLEDGE",
+            "D_INTELLIGENCE",
             "D_AUTONOMY_CORE",
             "D_OPS",
         ],

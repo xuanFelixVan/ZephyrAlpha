@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-047 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.api_lifecycle
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

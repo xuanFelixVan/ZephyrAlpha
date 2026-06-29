@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-072 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.offline_autonomy
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

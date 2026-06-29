@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.query_metrics
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.query_metrics
 # [CONSUMERS] zephyr.governance.database_manager; tests.unit.test_query_metrics_unit; tests.unit.db.test_query_metrics_db
 # [STARTUP] imported

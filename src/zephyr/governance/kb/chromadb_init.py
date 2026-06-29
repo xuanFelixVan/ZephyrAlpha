@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.knowledge_management.kb.chromadb_init
-# [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.io.paths; zephyr.integration.shared.schema.schemas
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -54,8 +54,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
-from zephyr.integration.shared_08.io.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
+from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import MODELS_CACHE_DIR, VECTOR_INDEX_DIR
 
 COLLECTION_NAMES = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")
 

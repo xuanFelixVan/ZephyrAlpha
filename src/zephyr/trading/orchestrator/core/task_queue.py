@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.task_queue
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
 # [CONSUMERS]
 # [STARTUP] imported

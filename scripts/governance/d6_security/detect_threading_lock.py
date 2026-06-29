@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/detect_threading_lock.py | §
 # [MODULE] scripts.governance.d6_security.detect_threading_lock
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d6_security.__init__
 # [CONSUMERS]
 # [STARTUP] manual

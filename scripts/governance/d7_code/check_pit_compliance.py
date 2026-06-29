@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/check_pit_compliance.py | §
 # [MODULE] scripts.governance.d7_code.check_pit_compliance
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS]
 # [STARTUP] manual

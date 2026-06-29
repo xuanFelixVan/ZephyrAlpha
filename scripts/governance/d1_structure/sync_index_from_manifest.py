@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/sync_index_from_manifest.py | §
 # [MODULE] scripts.governance.d1_structure.sync_index_from_manifest
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d1_structure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

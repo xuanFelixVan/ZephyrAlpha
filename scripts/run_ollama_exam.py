@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/run_ollama_exam.py | §
 # [MODULE] scripts.run_ollama_exam
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] manual

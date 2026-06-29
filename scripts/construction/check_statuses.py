@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/check_statuses.py | §
 # [MODULE] scripts.construction.check_statuses
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported

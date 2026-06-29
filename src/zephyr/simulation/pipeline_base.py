@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
 # [MODULE] zephyr.research.simulation.pipeline_base
-# [DOMAIN] D-SIMULATION
+# [DOMAIN] D_SIMULATION
 # [DEPENDENCIES] zephyr.integration.contracts.experiment_result
 # [CONSUMERS]
 # [STARTUP] imported

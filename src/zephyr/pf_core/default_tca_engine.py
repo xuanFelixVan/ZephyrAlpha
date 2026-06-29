@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.default_tca_engine
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.default_tca_engine
 # [CONSUMERS] tests.integration.test_e2e_pipeline; tests.integration.test_phase_g_perf; tests.integration.test_phase_e_main_flow
 # [STARTUP] imported

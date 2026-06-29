@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_fle_action_metadata.py | §
 # [MODULE] scripts.governance.d7_code.validate_fle_action_metadata
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS]
 # [STARTUP] manual

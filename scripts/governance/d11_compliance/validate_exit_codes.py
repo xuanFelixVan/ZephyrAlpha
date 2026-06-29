@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_exit_codes.py | §
 # [MODULE] scripts.governance.d11_compliance.validate_exit_codes
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

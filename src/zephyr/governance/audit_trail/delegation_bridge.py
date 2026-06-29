@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.delegation_bridge
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] audit-orchestrator.delegation_auditor(委托审计时上报)
 # [STARTUP] imported

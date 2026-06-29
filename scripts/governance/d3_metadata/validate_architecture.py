@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_architecture.py | §
 # [MODULE] scripts.governance.d3_metadata.validate_architecture
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.__init__
 # [CONSUMERS]
 # [STARTUP] manual

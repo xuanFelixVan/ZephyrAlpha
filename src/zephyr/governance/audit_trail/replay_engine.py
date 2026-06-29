@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §9
 # [MODULE] zephyr.governance.audit_trail.replay_engine
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.io.streaming_reader
 # [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
 # [STARTUP] imported

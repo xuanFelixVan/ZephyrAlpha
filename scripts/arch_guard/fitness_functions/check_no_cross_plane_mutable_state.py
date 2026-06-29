@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_no_cross_plane_mutable_state.py | §
 # [MODULE] scripts.arch_guard.fitness_functions.check_no_cross_plane_mutable_state
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
 # [CONSUMERS]
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-015 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.local_first_arch
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

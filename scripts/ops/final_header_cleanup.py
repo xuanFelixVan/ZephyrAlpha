@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/final_header_cleanup.py | §
 # [MODULE] scripts.ops.final_header_cleanup
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops.fill_blueprint_ids
 # [CONSUMERS]
 # [STARTUP] manual

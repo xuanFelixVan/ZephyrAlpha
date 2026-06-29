@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_vocabulary_coverage.py | §
 # [MODULE] scripts.governance.d11_compliance.validate_vocabulary_coverage
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.context_bridge
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security_01.context_scanner
 # [CONSUMERS] zephyr.trading.orchestrator.agent_orchestrator; zephyr.trading.orchestrator.work_orchestrator
 # [STARTUP] imported

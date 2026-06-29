@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_task_repo_gateway_e2e.py | §ghost-commit-e2e
 # [MODULE] tests.test_task_repo_gateway_e2e
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] tests.__init__; zephyr.governance.task_repo; zephyr.governance.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

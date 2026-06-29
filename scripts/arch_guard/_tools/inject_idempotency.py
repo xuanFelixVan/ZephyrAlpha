@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/inject_idempotency.py | §
 # [MODULE] scripts.arch_guard._tools.inject_idempotency
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard._tools.build_ocp_manifest
 # [CONSUMERS]
 # [STARTUP] manual

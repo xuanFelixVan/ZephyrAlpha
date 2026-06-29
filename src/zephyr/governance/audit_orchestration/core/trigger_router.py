@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.core.trigger_router
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_orchestration.blueprint_scorer; zephyr.governance.rule_enforcement.drift_detector
 # [CONSUMERS]
 # [STARTUP] imported

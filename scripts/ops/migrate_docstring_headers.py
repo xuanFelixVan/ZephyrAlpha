@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/migrate_docstring_headers.py | §
 # [MODULE] scripts.ops.migrate_docstring_headers
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

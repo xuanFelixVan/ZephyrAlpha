@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.implementations.default_backtest_engine
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.simulation.__init__
 # [CONSUMERS]
 # [STARTUP] imported

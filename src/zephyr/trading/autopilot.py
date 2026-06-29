@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-193 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] zephyr.trading.autopilot
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
 # [STARTUP] imported

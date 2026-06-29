@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.registry_governance
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] scripts/scaffold.py;scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
 # [STARTUP] imported

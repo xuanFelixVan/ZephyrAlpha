@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/cleanup_p0_ops_pending.py | §
 # [MODULE] scripts.governance._sync.cleanup_p0_ops_pending
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance._sync.check_p0_status
 # [CONSUMERS]
 # [STARTUP] imported

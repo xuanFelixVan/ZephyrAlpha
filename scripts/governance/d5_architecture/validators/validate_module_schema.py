@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_module_schema.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.validate_module_schema
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

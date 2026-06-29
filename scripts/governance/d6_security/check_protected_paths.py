@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/check_protected_paths.py | §
 # [MODULE] scripts.governance.d6_security.check_protected_paths
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d6_security.__init__
 # [CONSUMERS]
 # [STARTUP] manual

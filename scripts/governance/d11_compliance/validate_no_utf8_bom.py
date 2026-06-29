@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_no_utf8_bom.py | §
 # [MODULE] scripts.governance.d11_compliance.validate_no_utf8_bom
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

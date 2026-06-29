@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/run_deepseek_v4_exam.py | §
 # [MODULE] scripts.run_deepseek_v4_exam
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] manual

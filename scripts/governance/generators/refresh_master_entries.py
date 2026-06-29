@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/refresh_master_entries.py | §
 # [MODULE] scripts.governance.generators.refresh_master_entries
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

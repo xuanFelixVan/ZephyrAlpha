@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/detect_pydantic_any_fields.py | §
 # [MODULE] scripts.governance.d7_code.detect_pydantic_any_fields
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS]
 # [STARTUP] manual

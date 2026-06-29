@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] zephyr.governance.drift_detection.chaos_injector
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine
 # [CONSUMERS]
 # [STARTUP] imported

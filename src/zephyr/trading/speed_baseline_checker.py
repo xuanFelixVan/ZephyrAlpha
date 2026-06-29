@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.speed_baseline_checker
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] scripts/ide_health_service.py
 # [STARTUP] imported

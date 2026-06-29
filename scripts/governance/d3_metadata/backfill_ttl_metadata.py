@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/backfill_ttl_metadata.py | §gate-15
 # [MODULE] governance.d3_metadata.backfill_ttl_metadata
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
 # [CONSUMERS] manual batch backfill; stage-2 of ttl root-cause fix
 # [STARTUP] imported

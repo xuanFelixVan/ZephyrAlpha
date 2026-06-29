@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.merkle_hourly
-# [DOMAIN] D-COMPLIANCE
+# [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.merkle_hourly
 # [CONSUMERS]
 # [STARTUP] imported

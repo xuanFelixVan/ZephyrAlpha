@@ -60,10 +60,10 @@ class TestBlueTeam:
 
     def test_b1_post_rename_check_triggers(self, test_db, capsys):
         """B1: 改名后后置校验钩子触发，0 残留。"""
-        n = cmd_rename_domain("D-GOV_DOCS", "D-TEST_B1", dry_run=False, db_path=test_db)
+        n = cmd_rename_domain("D_GOV_DOCS", "D-TEST_B1", dry_run=False, db_path=test_db)
         assert n >= 0, f"改名失败: affected={n}"
         # 后置校验钩子（不抛异常即通过）
-        _post_rename_residual_check("D-GOV_DOCS", test_db)
+        _post_rename_residual_check("D_GOV_DOCS", test_db)
         captured = capsys.readouterr()
         assert "[POST-RENAME-CHECK] OK" in captured.out, f"后置校验未输出 OK: {captured.out}"
         # new_id 存在，old_id 消失
@@ -73,7 +73,7 @@ class TestBlueTeam:
                 "SELECT COUNT(*) FROM domains WHERE domain_id='D-TEST_B1'"
             ).fetchone()[0] == 1
             assert conn.execute(
-                "SELECT COUNT(*) FROM domains WHERE domain_id='D-GOV_DOCS'"
+                "SELECT COUNT(*) FROM domains WHERE domain_id='D_GOV_DOCS'"
             ).fetchone()[0] == 0
         finally:
             conn.close()
@@ -81,10 +81,10 @@ class TestBlueTeam:
     def test_b2_exclude_blueprint_id_no_false_positive(self, test_db):
         """B2: EXCLUDE_COLUMNS 含 blueprint_id，改名后 blueprint_id 列 0 误报。"""
         assert "blueprint_id" in EXCLUDE_COLUMNS, f"EXCLUDE_COLUMNS 缺 blueprint_id: {EXCLUDE_COLUMNS}"
-        cmd_rename_domain("D-GOV_DOCS", "D-TEST_B2", dry_run=False, db_path=test_db)
+        cmd_rename_domain("D_GOV_DOCS", "D-TEST_B2", dry_run=False, db_path=test_db)
         conn = sqlite3.connect(test_db)
         try:
-            residuals = scan_residual(conn, ["D-GOV_DOCS"], check_all_text_columns=True)
+            residuals = scan_residual(conn, ["D_GOV_DOCS"], check_all_text_columns=True)
         finally:
             conn.close()
         blueprint_res = [r for r in residuals if r["column"] == "blueprint_id"]
@@ -98,7 +98,7 @@ class TestRedTeam:
     def test_r1_rename_to_existing_blocked(self, test_db):
         """R1: 改名到已存在 new_id 应失败（禁止覆盖）。"""
         n = cmd_rename_domain(
-            "D_SECURITY_LLM", "D-GOV_ENFORCEMENT", dry_run=False, db_path=test_db
+            "D_SECURITY_LLM", "D_GOV_ENFORCEMENT", dry_run=False, db_path=test_db
         )
         assert n == -1, f"应禁止覆盖已存在 new_id，但 return={n}"
 
@@ -122,23 +122,23 @@ class TestRedTeam:
         monkeypatch.setattr(builtins, "__import__", fail_import)
         monkeypatch.delitem(sys.modules, "audit_rename_completeness", raising=False)
         # 不抛异常即通过
-        _post_rename_residual_check("D-GOV_DOCS", test_db)
+        _post_rename_residual_check("D_GOV_DOCS", test_db)
         captured = capsys.readouterr()
         assert "[POST-RENAME-CHECK] SKIP" in captured.err, f"未降级输出 SKIP: {captured.err}"
 
     def test_r5_check_files_excludes_mod_prefix(self, tmp_path):
         """R5: --check-files 负向先行断言排除 MOD- 前缀误匹配。
 
-        MOD-GOV-DOCS 中的 D-GOV-DOCS 子串不应匹配（MODULE ID），
-        但独立的 D-GOV-DOCS 应匹配（DOMAIN ID 残留）。
+        MOD-GOV-DOCS 中的 D_GOV_DOCS 子串不应匹配（MODULE ID），
+        但独立的 D_GOV_DOCS 应匹配（DOMAIN ID 残留）。
         """
         f = tmp_path / "test_residual.py"
         f.write_text(
-            "# [BLUEPRINT] MOD-GOV-DOCS | test file\n# D-GOV-DOCS domain reference\n",
+            "# [BLUEPRINT] MOD-GOV-DOCS | test file\n# D_GOV_DOCS domain reference\n",
             encoding="utf-8",
         )
-        res = scan_files_residual([str(f)], ["D-GOV-DOCS"])
-        real = [r for r in res if r["old_id"] == "D-GOV-DOCS"]
+        res = scan_files_residual([str(f)], ["D_GOV_DOCS"])
+        real = [r for r in res if r["old_id"] == "D_GOV_DOCS"]
         # 仅第二行真实残留应匹配（第一行 MOD 前缀被负向先行断言排除）
         assert len(real) == 1, f"应仅匹配第二行真实残留，实际匹配 {len(real)} 处: {real}"
         assert real[0]["line"] == 2, f"残留应在第 2 行，实际在第 {real[0]['line']} 行"

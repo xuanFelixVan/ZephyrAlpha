@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.validate_nested_flat_dirs
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

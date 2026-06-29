@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/sync_audit_protocol_numbers.py | §
 # [MODULE] scripts.governance.generators.sync_audit_protocol_numbers
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

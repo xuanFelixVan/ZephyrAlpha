@@ -49,7 +49,7 @@ DOMAIN_NAME_ZH = {
     "D_DATA_GOV": "数据治理",
     "D_DATA_SEC": "数据安全与契约",
     "D_FRONTEND": "前端",
-    "D-GOVERNANCE": "生命周期管理",
+    "D_GOVERNANCE": "生命周期管理",
     "D_INTEGRATION": "管线路由",
     "D_INTEGRATION_GATEWAY": "集成网关",
     "D_MKT_DATA": "行情数据",
@@ -60,55 +60,55 @@ DOMAIN_NAME_ZH = {
     "D_SHARED": "共享服务",
 
     # L1 智能层
-    "D-INTELLIGENCE": "上下文管理",
-    "D-KNOWLEDGE": "知识管理",
+    "D_INTELLIGENCE": "上下文管理",
+    "D_KNOWLEDGE": "知识管理",
     "D_AUTONOMY_CORE": "自治核心",
 
     # L2 业务域层 - 数据
-    "D-DIGITAL_TWIN": "数字孪生",
+    "D_DIGITAL_TWIN": "数字孪生",
 
     # L2 业务域层 - 因子信号
-    "D-FACTOR": "因子",
-    "D-SIGLEGACY": "信号遗留设计态",
-    "D-ASHARE_SIGNAL": "A股特色信号",
-    "D-FUNDAMENTAL_SIGNAL": "基本面信号",
-    "D-SIGQC": "信号质量控制",
+    "D_FACTOR": "因子",
+    "D_SIGLEGACY": "信号遗留设计态",
+    "D_ASHARE_SIGNAL": "A股特色信号",
+    "D_FUNDAMENTAL_SIGNAL": "基本面信号",
+    "D_SIGQC": "信号质量控制",
 
     # L2 业务域层 - 风险合规
-    "D-RISK": "风控",
-    "D-COMPLIANCE": "合规",
-    "D-AUTONOMY_PERM": "自治保护",
+    "D_RISK": "风控",
+    "D_COMPLIANCE": "合规",
+    "D_AUTONOMY_PERM": "自治保护",
 
     # L2 业务域层 - 组合决策
-    "D-PF_CORE": "组合核心",
-    "D-PF_ALLOC": "组合分配",
-    "D-SELL_DECISION": "卖出决策",
-    "D-CROSS_ASSET": "跨资产",
+    "D_PF_CORE": "组合核心",
+    "D_PF_ALLOC": "组合分配",
+    "D_SELL_DECISION": "卖出决策",
+    "D_CROSS_ASSET": "跨资产",
 
     # L2 业务域层 - 执行交易
-    "D-EX_CORE": "执行核心",
-    "D-EX_SOR": "执行路由",
-    "D-TRADING": "交易运营",
-    "D-POSITION": "仓位管理",
+    "D_EX_CORE": "执行核心",
+    "D_EX_SOR": "执行路由",
+    "D_TRADING": "交易运营",
+    "D_POSITION": "仓位管理",
 
     # L2 业务域层 - ML平台
-    "D-ML_TRAIN": "训练",
-    "D-ML_SERVE": "推理",
+    "D_ML_TRAIN": "训练",
+    "D_ML_SERVE": "推理",
 
     # L2 业务域层 - 回测仿真
-    "D-BACKTEST": "回测",
-    "D-SIMULATION": "仿真",
-    "D-EXEC_SIM": "执行仿真",
+    "D_BACKTEST": "回测",
+    "D_SIMULATION": "仿真",
+    "D_EXEC_SIM": "执行仿真",
 
     # L2 治理域层
-    "D-AUDITTEST": "审计测试套件",
-    "D-GOV-REPAIR": "治理修复",
-    "D-GOV_AUDIT": "审计追踪",
-    "D-GOV_DOCS": "架构文档治理",
-    "D-GOV_DRIFT": "漂移检测",
-    "D-GOV_ENFORCEMENT": "规则执行",
-    "D-GOV_RULE": "规则治理",
-    "D-GOV_SCRIPTS": "脚本治理",
+    "D_AUDITTEST": "审计测试套件",
+    "D_GOV_REPAIR": "治理修复",
+    "D_GOV_AUDIT": "审计追踪",
+    "D_GOV_DOCS": "架构文档治理",
+    "D_GOV_DRIFT": "漂移检测",
+    "D_GOV_ENFORCEMENT": "规则执行",
+    "D_GOV_RULE": "规则治理",
+    "D_GOV_SCRIPTS": "脚本治理",
 
     # 测试域（测试域不插入生产 depgraph.db，仅硬编码 fallback 维护）
     "D-T3-W0": "测试域T3-0",
@@ -176,7 +176,7 @@ def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     3. fallback 参数或 domain_id 本身
 
     Args:
-        domain_id: 域ID，如 "D-TRADING"
+        domain_id: 域ID，如 "D_TRADING"
         fallback: db 和硬编码都没有时的回退值（通常已无意义，保留向后兼容）
 
     Returns:

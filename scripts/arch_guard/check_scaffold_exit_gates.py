@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_scaffold_exit_gates.py | §
 # [MODULE] scripts.arch_guard.check_scaffold_exit_gates
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.__init__
 # [CONSUMERS]
 # [STARTUP] manual

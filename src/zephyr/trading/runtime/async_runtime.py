@@ -1,6 +1,6 @@
 # [BLUEPRINT] R1-1 | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
 # [MODULE] zephyr.trading.runtime.async_runtime
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] R1-2 AsyncEventBus；R1-3 PipelineOrchestrator；R1-4 Conductor；__main__.py（未来迁移）
 # [STARTUP] imported

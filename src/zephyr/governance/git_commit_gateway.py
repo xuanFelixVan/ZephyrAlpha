@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ghost-commit-gateway
 # [MODULE] zephyr.governance.git_commit_gateway
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
@@ -95,6 +95,9 @@ from zephyr.governance.reconciliation_registry import (
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
+from zephyr.shared.io.paths import REPO_ROOT
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -112,24 +115,37 @@ _SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 sess
 
 
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
-# 真源：ttl_vocabulary.yaml decision_tree + project_rules.md RULE-TWO
+# 真源（治本 2026-06-29）：directory_contract.yaml directory_zones.permanent.paths
+# 原硬编码副本已删除——路径变更只需改契约一处，本模块自动同步
 # 非永久区路径（如 docs/_working/）的文件不触发门禁
-_PERMANENT_ZONE_DIRS: tuple[str, ...] = (
-    "docs/01_policies_and_standards/",
-    "docs/02_enterprise_architecture/",
-    "docs/03_modules/",
-    "docs/08_knowledge/",
+_DIRECTORY_CONTRACT_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "contracts" / "directory_contract.yaml"
+)
+
+
+def _load_directory_contract() -> dict:
+    """加载 directory_contract.yaml（目录维度约束唯一真源）。
+
+    fail-closed：契约文件不存在时抛异常——directory_contract.yaml 是项目核心文件，
+    不应不存在；若缺失说明项目结构被破坏，应 fail-fast 而非回退硬编码。
+    """
+    return yaml.safe_load(_DIRECTORY_CONTRACT_PATH.read_text(encoding="utf-8")) or {}
+
+
+_CONTRACT_CACHE: dict = _load_directory_contract()
+
+_PERMANENT_ZONE_DIRS: tuple[str, ...] = tuple(
+    _CONTRACT_CACHE.get("directory_zones", {})
+    .get("permanent", {})
+    .get("paths", []) or []
 )
 
 # 生成器豁免子目录——落在此清单内的新文件跳过永久区晋升门禁（PROMOTION_BLOCKED）
-# 真源：capability_canonical_file_registry.yaml outputs 字段 + AGENTS.md §generator-exempt-zones
+# 真源（治本 2026-06-29）：directory_contract.yaml generator_exempt_paths
 # 约束：这些目录是生成器专用路径，生成器是唯一合法修改源（约定，非技术强制）
-# 不含 taskcards/ 子目录（手工任务卡）和 04_architecture_principles_decisions/（手工架构决策）
-_GENERATOR_EXEMPT_SUBDIRS: tuple[str, ...] = (
-    "docs/02_enterprise_architecture/00_overview_entry/",
-    "docs/02_enterprise_architecture/01_global_architecture_diagram/",
-    "docs/02_enterprise_architecture/02_domain_architecture_docs/",
-    "docs/02_enterprise_architecture/03_governance_reports/",
+_GENERATOR_EXEMPT_SUBDIRS: tuple[str, ...] = tuple(
+    _CONTRACT_CACHE.get("generator_exempt_paths", []) or []
 )
 
 
@@ -429,6 +445,11 @@ class GitCommitGateway:
         result: list[str] = []
         for line in status_result.stdout.splitlines():
             if not line.strip() or line.startswith("??"):
+                continue
+            # 跳过 staged 修改（X≠空格）——stash 只隔离工作区未暂存修改
+            # staged 修改已在 index 中，stash 会影响 staged 区
+            # 特别是 staged delete（X=D），工作区无此文件，stash push 会失败
+            if line[0] != " ":
                 continue
             path = line[3:].strip().strip('"')
             # rename 格式 "R  old -> new"：提取新路径（rename 目标）
@@ -893,8 +914,12 @@ class GitCommitGateway:
             (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
         """
         # 校验 docs/ 下的 .md + src/scripts/tests/ 下的 .py
+        # 跳过不存在文件（deletion commit 场景）——已删除文件无法校验 frontmatter，
+        # 且文件首次提交时已通过 TTL 校验，删除不改变其 frontmatter
         ttl_files: list[str] = []
         for f in files:
+            if not os.path.isfile(f):
+                continue  # 删除提交：文件不存在，跳过 frontmatter 校验
             rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
             if f.endswith(".md") and rel.startswith("docs/"):
                 ttl_files.append(f)

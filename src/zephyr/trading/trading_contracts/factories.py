@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-TRADING-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.factories
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
 # [CONSUMERS] shared/contracts/core/factories.py(已迁移)
 # [STARTUP] imported

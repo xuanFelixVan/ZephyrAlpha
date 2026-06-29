@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.data._service_registration
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
 # [STARTUP] imported

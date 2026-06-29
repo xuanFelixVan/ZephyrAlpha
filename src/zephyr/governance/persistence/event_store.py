@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.event_store
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.event_store
 # [CONSUMERS] zephyr.governance.gate_event_adapter; zephyr.governance.projection_engine; zephyr.governance.snapshot_manager; tests.test_event_store_stress
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/check_transition_code.py | §
 # [MODULE] scripts.construction.check_transition_code
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported

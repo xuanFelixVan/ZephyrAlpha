@@ -5,7 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [TTL] task_bound
 """
 红蓝对抗极端测试 — git_guard + concurrency_guard 端到端防护能力验证。

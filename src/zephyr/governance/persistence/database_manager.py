@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.database_manager
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.database_manager
 # [CONSUMERS] tests.unit.test_database_manager_unit; tests.unit.db.test_database_manager_db
 # [STARTUP] imported

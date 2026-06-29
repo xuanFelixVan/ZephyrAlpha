@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
 # [MODULE] zephyr.governance.memory_provider
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.provider_base
 # [CONSUMERS]
 # [STARTUP] imported

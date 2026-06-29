@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance.auditor
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

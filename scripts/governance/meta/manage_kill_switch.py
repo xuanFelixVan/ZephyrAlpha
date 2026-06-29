@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/manage_kill_switch.py | §
 # [MODULE] scripts.governance.meta.manage_kill_switch
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual

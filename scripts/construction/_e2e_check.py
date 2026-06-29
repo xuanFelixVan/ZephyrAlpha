@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.construction._e2e_check
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.construction.check_statuses
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.deepseek_v4_chat
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.__init__
 # [CONSUMERS]
 # [STARTUP] imported

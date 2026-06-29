@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/benchmark/test_fixtures/bad_imports.py | §
 # [MODULE] scripts.governance.meta.benchmark.test_fixtures.bad_imports
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

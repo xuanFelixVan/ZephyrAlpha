@@ -25,7 +25,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph.db不存在→exit 1;查询失败→exit 2
 [TESTS] tests/test_dm200910_generators.py
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 """
 
 from __future__ import annotations
@@ -50,6 +50,16 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 PROJECT_ROOT = REPO_ROOT
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"
 TARGET_SUBTREE = "docs/02_enterprise_architecture"
+
+# 生成文件的 frontmatter（GATE-15 TTL 校验要求：.md 文件必须有 ttl 字段）
+# doc_type=architecture_view 真源：doc_type_vocabulary.yaml
+_FRONTMATTER = (
+    "---\n"
+    "doc_type: architecture_view\n"
+    "ttl: permanent\n"
+    "module_id: MOD-GOV-generate_path_tree\n"
+    "---\n\n"
+)
 
 # 全项目顶级目录及中文描述
 TOP_LEVEL_DIRS_ZH = {
@@ -835,13 +845,13 @@ def main() -> None:
     conn = get_depgraph_pg_connection(autocommit=True)
     try:
         if args.lang in ("zh", "both"):
-            content = generate_path_tree("zh", conn, "full")
+            content = _FRONTMATTER + generate_path_tree("zh", conn, "full")
             out_path = output_dir / zh_name
             out_path.write_text(content, encoding="utf-8")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
 
         if args.lang in ("en", "both"):
-            content = generate_path_tree("en", conn, "full")
+            content = _FRONTMATTER + generate_path_tree("en", conn, "full")
             out_path = output_dir / en_name
             out_path.write_text(content, encoding="utf-8")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/validate_test_assertion_depth.py | §
 # [MODULE] scripts.governance.d7_code.validate_test_assertion_depth
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS]
 # [STARTUP] manual

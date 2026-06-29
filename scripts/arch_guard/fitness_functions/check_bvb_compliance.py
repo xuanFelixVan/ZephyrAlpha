@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_bvb_compliance.py | §
 # [MODULE] scripts.arch_guard.fitness_functions.check_bvb_compliance
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
 # [CONSUMERS]
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.atomic_transaction_manager
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.atomic_transaction_manager
 # [CONSUMERS] tests.unit.test_atomic_transaction_manager_unit; tests.unit.db.test_atomic_transaction_manager_db
 # [STARTUP] imported

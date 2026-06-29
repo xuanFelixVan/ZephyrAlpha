@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/fix_freeze_manifest.py | §
 # [MODULE] scripts.fix_freeze_manifest
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__
 # [CONSUMERS]
 # [STARTUP] imported

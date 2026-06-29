@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-AUTONOMY_PERM
 # [MODULE] zephyr.autonomy_perm.red_blue_validator.attack_registry
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] zephyr.security.adversarial_validation.attack_registry
 # [CONSUMERS]
 # [STARTUP] imported

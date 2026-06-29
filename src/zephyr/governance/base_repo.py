@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.base_repo
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
 # [CONSUMERS] task_repo;query;transition
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.strategy_registry
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.strategy_registry
 # [CONSUMERS]
 # [STARTUP] imported

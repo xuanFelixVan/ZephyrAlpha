@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-019 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] zephyr.integration.behavioral_admission.admission_response
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.behavioral_admission.admission_controller
 # [CONSUMERS] GovernanceServer;run_all.py
 # [STARTUP] imported

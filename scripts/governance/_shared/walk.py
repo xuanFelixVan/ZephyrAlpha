@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_shared/walk.py | §
 # [MODULE] scripts.governance._shared.walk
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance._shared.__init__
 # [CONSUMERS]
 # [STARTUP] imported

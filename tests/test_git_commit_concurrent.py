@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_git_commit_concurrent.py | §ghost-commit-red-blue
 # [MODULE] tests.test_git_commit_concurrent
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

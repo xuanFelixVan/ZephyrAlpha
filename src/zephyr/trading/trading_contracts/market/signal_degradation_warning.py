@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.market.signal_degradation_warning
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] signal; risk; pf_core
 # [STARTUP] imported

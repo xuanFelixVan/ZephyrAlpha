@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_limit_violation_error
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] risk; pf_core
 # [STARTUP] imported

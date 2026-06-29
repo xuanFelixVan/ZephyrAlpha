@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-018 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.incremental_review
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

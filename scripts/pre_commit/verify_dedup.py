@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/pre_commit/verify_dedup.py | §
 # [MODULE] scripts.pre_commit.verify_dedup
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

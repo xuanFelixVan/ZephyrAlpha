@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d2_links/detect_relative_references.py | §
 # [MODULE] scripts.governance.d2_links.detect_relative_references
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d2_links.__init__
 # [CONSUMERS]
 # [STARTUP] manual

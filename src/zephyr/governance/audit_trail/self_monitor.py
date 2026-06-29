@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.self_monitor
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.audit_trail.drift_bridge
 # [CONSUMERS] audit-orchestrator.cli; MCP governance_server
 # [STARTUP] imported

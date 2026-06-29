@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_derived_files.py | §
 # [MODULE] scripts.governance.d3_metadata.generate_derived_files
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.__init__
 # [CONSUMERS]
 # [STARTUP] manual

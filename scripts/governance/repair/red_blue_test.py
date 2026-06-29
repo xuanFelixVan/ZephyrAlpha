@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-REPAIR
 # [MODULE] scripts.governance.repair.red_blue_test
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] scripts.governance.repair.backup_depgraph
 # [CONSUMERS]
 # [STARTUP] manual
@@ -388,7 +388,7 @@ def run_special_tests():
     try:
         # 1. 创建临时节点（unbuilt状态，path必须以/结尾，domain_id必须存在）
         r_add = subprocess.run(
-            ["python", apply_script, "--add-design-node", test_node_path, "RB-TEST", "D-COMPLIANCE", "unbuilt"],
+            ["python", apply_script, "--add-design-node", test_node_path, "RB-TEST", "D_COMPLIANCE", "unbuilt"],
             capture_output=True,
             text=True,
             timeout=30,

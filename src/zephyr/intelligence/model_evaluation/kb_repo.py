@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.kb_repo
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils; zephyr.integration.shared_08.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

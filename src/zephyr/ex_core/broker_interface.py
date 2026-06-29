@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-EX_CORE
 # [MODULE] zephyr.ex_core.broker_interface
-# [DOMAIN] D-EX_CORE
+# [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.broker_interface
 # [CONSUMERS]
 # [STARTUP] imported

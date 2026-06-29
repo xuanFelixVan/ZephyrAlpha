@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.d11_compliance.validate_truth_source_cascade
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] tests.unit.test_validate_truth_source_cascade_unit; tests.unit.governance.test_validate_truth_source_cascade_governance
 # [STARTUP] imported

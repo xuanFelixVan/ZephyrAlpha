@@ -41,7 +41,7 @@
       {
         "node_id": 60437,
         "node_type": "module",
-        "path": "D-GOVERNANCE/Behavioral Auditor 行为审计器",
+        "path": "D_GOVERNANCE/Behavioral Auditor 行为审计器",
         "design_maturity": "design",
         "architecture_layer": null,
         "change_policy": null,
@@ -2109,7 +2109,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/audit_trail/__init__.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2117,7 +2117,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/audit_trail/finding_model.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2125,7 +2125,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/gate_persistence.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/persistence/sqlite_schema.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2133,7 +2133,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/trend_analyzer.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/persistence/sqlite_schema.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       }
@@ -2143,7 +2143,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/cold_start.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2151,7 +2151,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/correlation_engine.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2159,7 +2159,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/credibility_engine.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2167,7 +2167,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/drift_engine.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2175,7 +2175,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/forensics_engine.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2183,7 +2183,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/orphan_scanner.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2191,7 +2191,7 @@
         "source_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "source_domain": "D_SECURITY",
         "target_path": "src/zephyr/governance/behavioral_auditor/self_check.py",
-        "target_domain": "D-GOVERNANCE",
+        "target_domain": "D_GOVERNANCE",
         "dep_type": "import_depends",
         "cross_domain": 1
       },
@@ -2333,7 +2333,7 @@
     "跨域(governance)": [
       {
         "source_path": "src/zephyr/governance/audit_orchestrator/cli.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2341,7 +2341,7 @@
       },
       {
         "source_path": "src/zephyr/governance/audit_trail/cli.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2349,7 +2349,7 @@
       },
       {
         "source_path": "src/zephyr/governance/budget_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2357,7 +2357,7 @@
       },
       {
         "source_path": "src/zephyr/governance/phase_check_registry.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2365,7 +2365,7 @@
       },
       {
         "source_path": "src/zephyr/governance/rule_enforcement/check_types/ct_drift_budget.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2373,7 +2373,7 @@
       },
       {
         "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2381,7 +2381,7 @@
       },
       {
         "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2389,7 +2389,7 @@
       },
       {
         "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2397,7 +2397,7 @@
       },
       {
         "source_path": "src/zephyr/governance/rule_enforcement/gate_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2407,7 +2407,7 @@
     "簇内(behavioral_auditor)": [
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/absence_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2415,7 +2415,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2423,7 +2423,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_context_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2431,7 +2431,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_poisoning_guard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2439,7 +2439,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2447,7 +2447,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/backcompat_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2455,7 +2455,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2463,7 +2463,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2471,7 +2471,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/config_consistency.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2479,7 +2479,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2487,7 +2487,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/correlation_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2495,7 +2495,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/dashboard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2503,7 +2503,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/contract_drift_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2511,7 +2511,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/credibility_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2519,7 +2519,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_module_score.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2527,7 +2527,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/detector_dispatcher.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2535,7 +2535,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2543,7 +2543,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2551,7 +2551,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2559,7 +2559,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2567,7 +2567,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_training.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2575,7 +2575,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/forensics_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2583,7 +2583,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2591,7 +2591,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/git_bisector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2599,7 +2599,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/file_attr_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2607,7 +2607,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/gate_persistence.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2615,7 +2615,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2623,7 +2623,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/headless_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2631,7 +2631,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/gitignore_auditor.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2639,7 +2639,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/naming_magic_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2647,7 +2647,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/incremental_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2655,7 +2655,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/orphan_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2663,7 +2663,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/python_compat.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2671,7 +2671,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/roi_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2679,7 +2679,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/rollback_bridge.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2687,7 +2687,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/scan_mutex.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2695,7 +2695,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/resource_guard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2703,7 +2703,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/suppression_learner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2711,7 +2711,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_check.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2719,7 +2719,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/test_fixture_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2727,7 +2727,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/symlink_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2735,7 +2735,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/tamper_proof_audit.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -2743,7 +2743,7 @@
       },
       {
         "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/trend_analyzer.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -3257,7 +3257,7 @@
     "跨域(infrastructure)": [
       {
         "source_path": "src/zephyr/infrastructure/governance_server.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -3265,7 +3265,7 @@
       },
       {
         "source_path": "src/zephyr/infrastructure/governance_server.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -3273,7 +3273,7 @@
       },
       {
         "source_path": "src/zephyr/infrastructure/governance_server.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -3301,7 +3301,7 @@
     "跨域(trading)": [
       {
         "source_path": "src/zephyr/trading/circadian_scheduler.py",
-        "source_domain": "D-TRADING",
+        "source_domain": "D_TRADING",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "import_depends",
@@ -3311,7 +3311,7 @@
     "其他": [
       {
         "source_path": "tests/adversarial/test_audit_integration_fracture.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3319,7 +3319,7 @@
       },
       {
         "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3327,7 +3327,7 @@
       },
       {
         "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3335,7 +3335,7 @@
       },
       {
         "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3343,7 +3343,7 @@
       },
       {
         "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3351,7 +3351,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3359,7 +3359,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3367,7 +3367,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3375,7 +3375,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3383,7 +3383,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3391,7 +3391,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3399,7 +3399,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3407,7 +3407,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3415,7 +3415,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3423,7 +3423,7 @@
       },
       {
         "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3431,7 +3431,7 @@
       },
       {
         "source_path": "tests/test_absence_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/absence_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3439,7 +3439,7 @@
       },
       {
         "source_path": "tests/test_ai_construction_detectors.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3447,7 +3447,7 @@
       },
       {
         "source_path": "tests/test_ai_construction_detectors.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3455,7 +3455,7 @@
       },
       {
         "source_path": "tests/test_ai_context_injector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_context_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3463,7 +3463,7 @@
       },
       {
         "source_path": "tests/test_architecture_contracts.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_contracts.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3471,7 +3471,7 @@
       },
       {
         "source_path": "tests/test_architecture_principles.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_principles.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3479,7 +3479,7 @@
       },
       {
         "source_path": "tests/test_ba_canary_controller.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3487,7 +3487,7 @@
       },
       {
         "source_path": "tests/test_ba_chaos_injector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3495,7 +3495,7 @@
       },
       {
         "source_path": "tests/test_ba_dashboard.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/dashboard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3503,7 +3503,7 @@
       },
       {
         "source_path": "tests/test_ba_data_lifecycle.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_lifecycle.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3511,7 +3511,7 @@
       },
       {
         "source_path": "tests/test_ba_dependency_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/dependency_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3519,7 +3519,7 @@
       },
       {
         "source_path": "tests/test_ba_handoff_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3527,7 +3527,7 @@
       },
       {
         "source_path": "tests/test_ba_state_machine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3535,7 +3535,7 @@
       },
       {
         "source_path": "tests/test_backcompat_checker.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/backcompat_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3543,7 +3543,7 @@
       },
       {
         "source_path": "tests/test_baseline_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3551,7 +3551,7 @@
       },
       {
         "source_path": "tests/test_baseline_poisoning_guard.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_poisoning_guard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3559,7 +3559,7 @@
       },
       {
         "source_path": "tests/test_benchmark_integrity.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/benchmark_integrity.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3567,7 +3567,7 @@
       },
       {
         "source_path": "tests/test_brain_integration_root.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3575,7 +3575,7 @@
       },
       {
         "source_path": "tests/test_canary_controller.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3583,7 +3583,7 @@
       },
       {
         "source_path": "tests/test_cascade_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3591,7 +3591,7 @@
       },
       {
         "source_path": "tests/test_chaos_injector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3599,7 +3599,7 @@
       },
       {
         "source_path": "tests/test_code_review_ai.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/code_review_ai.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3607,7 +3607,7 @@
       },
       {
         "source_path": "tests/test_config_consistency.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/config_consistency.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3615,7 +3615,7 @@
       },
       {
         "source_path": "tests/test_contract_drift_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/contract_drift_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3623,7 +3623,7 @@
       },
       {
         "source_path": "tests/test_correlation_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/correlation_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3631,7 +3631,7 @@
       },
       {
         "source_path": "tests/test_credibility_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/credibility_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3639,7 +3639,7 @@
       },
       {
         "source_path": "tests/test_cross_env_consistency.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_env_consistency.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3647,7 +3647,7 @@
       },
       {
         "source_path": "tests/test_cross_module_score.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_module_score.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3655,7 +3655,7 @@
       },
       {
         "source_path": "tests/test_data_classification.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_classification.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3663,7 +3663,7 @@
       },
       {
         "source_path": "tests/test_data_lifecycle.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_lifecycle.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3671,7 +3671,7 @@
       },
       {
         "source_path": "tests/test_data_source_reliability.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_source_reliability.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3679,7 +3679,7 @@
       },
       {
         "source_path": "tests/test_dependency_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/dependency_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3687,7 +3687,7 @@
       },
       {
         "source_path": "tests/test_detector_dispatcher.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/detector_dispatcher.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3695,7 +3695,7 @@
       },
       {
         "source_path": "tests/test_detector_dispatcher.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3703,7 +3703,7 @@
       },
       {
         "source_path": "tests/test_drift_cron_scheduler.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_cron_scheduler.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3711,7 +3711,7 @@
       },
       {
         "source_path": "tests/test_drift_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3719,7 +3719,7 @@
       },
       {
         "source_path": "tests/test_drift_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3727,7 +3727,7 @@
       },
       {
         "source_path": "tests/test_drift_hotfix_bypass.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3735,7 +3735,7 @@
       },
       {
         "source_path": "tests/test_drift_infrastructure.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3743,7 +3743,7 @@
       },
       {
         "source_path": "tests/test_drift_infrastructure.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3751,7 +3751,7 @@
       },
       {
         "source_path": "tests/test_drift_models.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3759,7 +3759,7 @@
       },
       {
         "source_path": "tests/test_drift_result_types.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3767,7 +3767,7 @@
       },
       {
         "source_path": "tests/test_drift_training.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_training.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3775,7 +3775,7 @@
       },
       {
         "source_path": "tests/test_file_attr_checker.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/file_attr_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3783,7 +3783,7 @@
       },
       {
         "source_path": "tests/test_forensics_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/forensics_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3791,7 +3791,7 @@
       },
       {
         "source_path": "tests/test_gate_persistence.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/gate_persistence.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3799,7 +3799,7 @@
       },
       {
         "source_path": "tests/test_git_bisector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/git_bisector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3807,7 +3807,7 @@
       },
       {
         "source_path": "tests/test_gitignore_auditor.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/gitignore_auditor.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3815,7 +3815,7 @@
       },
       {
         "source_path": "tests/test_handoff_manager.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3823,7 +3823,7 @@
       },
       {
         "source_path": "tests/test_headless_scanner.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3831,7 +3831,7 @@
       },
       {
         "source_path": "tests/test_headless_scanner.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/headless_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3839,7 +3839,7 @@
       },
       {
         "source_path": "tests/test_incremental_scanner.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/incremental_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3847,7 +3847,7 @@
       },
       {
         "source_path": "tests/test_ml_engineering.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/ml_engineering.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3855,7 +3855,7 @@
       },
       {
         "source_path": "tests/test_model_drift_monitor.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/model_drift_monitor.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3863,7 +3863,7 @@
       },
       {
         "source_path": "tests/test_naming_magic_checker.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/naming_magic_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3871,7 +3871,7 @@
       },
       {
         "source_path": "tests/test_orphan_scanner.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/orphan_scanner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3879,7 +3879,7 @@
       },
       {
         "source_path": "tests/test_performance_baseline.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/performance_baseline.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3887,7 +3887,7 @@
       },
       {
         "source_path": "tests/test_python_compat.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/python_compat.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3895,7 +3895,7 @@
       },
       {
         "source_path": "tests/test_regime_detector.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/regime_detector.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3903,7 +3903,7 @@
       },
       {
         "source_path": "tests/test_resource_guard.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/resource_guard.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3911,7 +3911,7 @@
       },
       {
         "source_path": "tests/test_roi_engine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/roi_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3919,7 +3919,7 @@
       },
       {
         "source_path": "tests/test_rollback_bridge.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/rollback_bridge.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3927,7 +3927,7 @@
       },
       {
         "source_path": "tests/test_scan_mutex.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3935,7 +3935,7 @@
       },
       {
         "source_path": "tests/test_scan_mutex.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/scan_mutex.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3943,7 +3943,7 @@
       },
       {
         "source_path": "tests/test_self_check.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_check.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3951,7 +3951,7 @@
       },
       {
         "source_path": "tests/test_self_test_verifier.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3959,7 +3959,7 @@
       },
       {
         "source_path": "tests/test_state_machine.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3967,7 +3967,7 @@
       },
       {
         "source_path": "tests/test_suppression_learner.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/suppression_learner.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3975,7 +3975,7 @@
       },
       {
         "source_path": "tests/test_symlink_checker.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/symlink_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3983,7 +3983,7 @@
       },
       {
         "source_path": "tests/test_system_topology.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/system_topology.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3991,7 +3991,7 @@
       },
       {
         "source_path": "tests/test_tamper_proof_audit.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/tamper_proof_audit.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -3999,7 +3999,7 @@
       },
       {
         "source_path": "tests/test_test_fixture_checker.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/test_fixture_checker.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4007,7 +4007,7 @@
       },
       {
         "source_path": "tests/test_trend_analyzer.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/trend_analyzer.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4015,7 +4015,7 @@
       },
       {
         "source_path": "tests/unit/drift_detector/test_drift_core.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4023,7 +4023,7 @@
       },
       {
         "source_path": "tests/unit/drift_detector/test_drift_core.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4031,7 +4031,7 @@
       },
       {
         "source_path": "tests/unit/drift_detector/test_drift_core.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4039,7 +4039,7 @@
       },
       {
         "source_path": "tests/unit/drift_detector/test_drift_core.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4047,7 +4047,7 @@
       },
       {
         "source_path": "tests/unit/governance/test_governance_core.py",
-        "source_domain": "D-GOVERNANCE",
+        "source_domain": "D_GOVERNANCE",
         "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_contracts.py",
         "target_domain": "D_SECURITY",
         "dep_type": "test_depends",
@@ -4058,7 +4058,7 @@
   "external_consumers": [
     {
       "source_path": "src/zephyr/governance/audit_orchestrator/cli.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4066,7 +4066,7 @@
     },
     {
       "source_path": "src/zephyr/governance/audit_trail/cli.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4074,7 +4074,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/absence_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4082,7 +4082,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4090,7 +4090,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_context_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4098,7 +4098,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_poisoning_guard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4106,7 +4106,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4114,7 +4114,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/backcompat_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4122,7 +4122,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4130,7 +4130,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4138,7 +4138,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/config_consistency.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4146,7 +4146,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4154,7 +4154,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/correlation_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4162,7 +4162,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/dashboard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4170,7 +4170,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/contract_drift_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4178,7 +4178,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/credibility_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4186,7 +4186,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_module_score.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4194,7 +4194,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/detector_dispatcher.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4202,7 +4202,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4210,7 +4210,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4218,7 +4218,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4226,7 +4226,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4234,7 +4234,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_training.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4242,7 +4242,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/forensics_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4250,7 +4250,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4258,7 +4258,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/git_bisector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4266,7 +4266,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/file_attr_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4274,7 +4274,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/gate_persistence.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4282,7 +4282,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4290,7 +4290,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/headless_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4298,7 +4298,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/gitignore_auditor.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4306,7 +4306,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/naming_magic_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4314,7 +4314,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/incremental_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4322,7 +4322,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/orphan_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4330,7 +4330,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/python_compat.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4338,7 +4338,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/roi_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4346,7 +4346,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/rollback_bridge.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4354,7 +4354,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/scan_mutex.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4362,7 +4362,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/resource_guard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4370,7 +4370,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/suppression_learner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4378,7 +4378,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_check.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4386,7 +4386,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/test_fixture_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4394,7 +4394,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/symlink_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4402,7 +4402,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/tamper_proof_audit.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4410,7 +4410,7 @@
     },
     {
       "source_path": "src/zephyr/governance/behavioral_auditor/__init__.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/trend_analyzer.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4418,7 +4418,7 @@
     },
     {
       "source_path": "src/zephyr/governance/budget_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4426,7 +4426,7 @@
     },
     {
       "source_path": "src/zephyr/governance/phase_check_registry.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4434,7 +4434,7 @@
     },
     {
       "source_path": "src/zephyr/governance/rule_enforcement/check_types/ct_drift_budget.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4442,7 +4442,7 @@
     },
     {
       "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4450,7 +4450,7 @@
     },
     {
       "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4458,7 +4458,7 @@
     },
     {
       "source_path": "src/zephyr/governance/rule_enforcement/drift_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4466,7 +4466,7 @@
     },
     {
       "source_path": "src/zephyr/governance/rule_enforcement/gate_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4474,7 +4474,7 @@
     },
     {
       "source_path": "src/zephyr/infrastructure/governance_server.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4482,7 +4482,7 @@
     },
     {
       "source_path": "src/zephyr/infrastructure/governance_server.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4490,7 +4490,7 @@
     },
     {
       "source_path": "src/zephyr/infrastructure/governance_server.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4514,7 +4514,7 @@
     },
     {
       "source_path": "src/zephyr/trading/circadian_scheduler.py",
-      "source_domain": "D-TRADING",
+      "source_domain": "D_TRADING",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "import_depends",
@@ -4522,7 +4522,7 @@
     },
     {
       "source_path": "tests/adversarial/test_audit_integration_fracture.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4530,7 +4530,7 @@
     },
     {
       "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4538,7 +4538,7 @@
     },
     {
       "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4546,7 +4546,7 @@
     },
     {
       "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4554,7 +4554,7 @@
     },
     {
       "source_path": "tests/infrastructure/drift_red_blue_adversarial.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4562,7 +4562,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4570,7 +4570,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4578,7 +4578,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4586,7 +4586,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_e2e_pipeline.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4594,7 +4594,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4602,7 +4602,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4610,7 +4610,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4618,7 +4618,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4626,7 +4626,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4634,7 +4634,7 @@
     },
     {
       "source_path": "tests/infrastructure/test_drift_extended_e2e.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4642,7 +4642,7 @@
     },
     {
       "source_path": "tests/test_absence_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/absence_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4650,7 +4650,7 @@
     },
     {
       "source_path": "tests/test_ai_construction_detectors.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_construction_detectors.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4658,7 +4658,7 @@
     },
     {
       "source_path": "tests/test_ai_construction_detectors.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4666,7 +4666,7 @@
     },
     {
       "source_path": "tests/test_ai_context_injector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ai_context_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4674,7 +4674,7 @@
     },
     {
       "source_path": "tests/test_architecture_contracts.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_contracts.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4682,7 +4682,7 @@
     },
     {
       "source_path": "tests/test_architecture_principles.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_principles.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4690,7 +4690,7 @@
     },
     {
       "source_path": "tests/test_ba_canary_controller.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4698,7 +4698,7 @@
     },
     {
       "source_path": "tests/test_ba_chaos_injector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4706,7 +4706,7 @@
     },
     {
       "source_path": "tests/test_ba_dashboard.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/dashboard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4714,7 +4714,7 @@
     },
     {
       "source_path": "tests/test_ba_data_lifecycle.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_lifecycle.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4722,7 +4722,7 @@
     },
     {
       "source_path": "tests/test_ba_dependency_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/dependency_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4730,7 +4730,7 @@
     },
     {
       "source_path": "tests/test_ba_handoff_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4738,7 +4738,7 @@
     },
     {
       "source_path": "tests/test_ba_state_machine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4746,7 +4746,7 @@
     },
     {
       "source_path": "tests/test_backcompat_checker.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/backcompat_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4754,7 +4754,7 @@
     },
     {
       "source_path": "tests/test_baseline_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4762,7 +4762,7 @@
     },
     {
       "source_path": "tests/test_baseline_poisoning_guard.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_poisoning_guard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4770,7 +4770,7 @@
     },
     {
       "source_path": "tests/test_benchmark_integrity.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/benchmark_integrity.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4778,7 +4778,7 @@
     },
     {
       "source_path": "tests/test_brain_integration_root.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/brain_integration.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4786,7 +4786,7 @@
     },
     {
       "source_path": "tests/test_canary_controller.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/canary_controller.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4794,7 +4794,7 @@
     },
     {
       "source_path": "tests/test_cascade_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cascade_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4802,7 +4802,7 @@
     },
     {
       "source_path": "tests/test_chaos_injector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/chaos_injector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4810,7 +4810,7 @@
     },
     {
       "source_path": "tests/test_code_review_ai.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/code_review_ai.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4818,7 +4818,7 @@
     },
     {
       "source_path": "tests/test_config_consistency.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/config_consistency.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4826,7 +4826,7 @@
     },
     {
       "source_path": "tests/test_contract_drift_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/contract_drift_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4834,7 +4834,7 @@
     },
     {
       "source_path": "tests/test_correlation_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/correlation_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4842,7 +4842,7 @@
     },
     {
       "source_path": "tests/test_credibility_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/credibility_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4850,7 +4850,7 @@
     },
     {
       "source_path": "tests/test_cross_env_consistency.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_env_consistency.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4858,7 +4858,7 @@
     },
     {
       "source_path": "tests/test_cross_module_score.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/cross_module_score.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4866,7 +4866,7 @@
     },
     {
       "source_path": "tests/test_data_classification.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_classification.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4874,7 +4874,7 @@
     },
     {
       "source_path": "tests/test_data_lifecycle.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_lifecycle.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4882,7 +4882,7 @@
     },
     {
       "source_path": "tests/test_data_source_reliability.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/data_source_reliability.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4890,7 +4890,7 @@
     },
     {
       "source_path": "tests/test_dependency_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/dependency_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4898,7 +4898,7 @@
     },
     {
       "source_path": "tests/test_detector_dispatcher.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/detector_dispatcher.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4906,7 +4906,7 @@
     },
     {
       "source_path": "tests/test_detector_dispatcher.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4914,7 +4914,7 @@
     },
     {
       "source_path": "tests/test_drift_cron_scheduler.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_cron_scheduler.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4922,7 +4922,7 @@
     },
     {
       "source_path": "tests/test_drift_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4930,7 +4930,7 @@
     },
     {
       "source_path": "tests/test_drift_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4938,7 +4938,7 @@
     },
     {
       "source_path": "tests/test_drift_hotfix_bypass.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_hotfix_bypass.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4946,7 +4946,7 @@
     },
     {
       "source_path": "tests/test_drift_infrastructure.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4954,7 +4954,7 @@
     },
     {
       "source_path": "tests/test_drift_infrastructure.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4962,7 +4962,7 @@
     },
     {
       "source_path": "tests/test_drift_models.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4970,7 +4970,7 @@
     },
     {
       "source_path": "tests/test_drift_result_types.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_result_types.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4978,7 +4978,7 @@
     },
     {
       "source_path": "tests/test_drift_training.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_training.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4986,7 +4986,7 @@
     },
     {
       "source_path": "tests/test_file_attr_checker.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/file_attr_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -4994,7 +4994,7 @@
     },
     {
       "source_path": "tests/test_forensics_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/forensics_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5002,7 +5002,7 @@
     },
     {
       "source_path": "tests/test_gate_persistence.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/gate_persistence.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5010,7 +5010,7 @@
     },
     {
       "source_path": "tests/test_git_bisector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/git_bisector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5018,7 +5018,7 @@
     },
     {
       "source_path": "tests/test_gitignore_auditor.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/gitignore_auditor.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5026,7 +5026,7 @@
     },
     {
       "source_path": "tests/test_handoff_manager.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/handoff_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5034,7 +5034,7 @@
     },
     {
       "source_path": "tests/test_headless_scanner.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5042,7 +5042,7 @@
     },
     {
       "source_path": "tests/test_headless_scanner.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/headless_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5050,7 +5050,7 @@
     },
     {
       "source_path": "tests/test_incremental_scanner.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/incremental_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5058,7 +5058,7 @@
     },
     {
       "source_path": "tests/test_ml_engineering.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/ml_engineering.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5066,7 +5066,7 @@
     },
     {
       "source_path": "tests/test_model_drift_monitor.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/model_drift_monitor.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5074,7 +5074,7 @@
     },
     {
       "source_path": "tests/test_naming_magic_checker.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/naming_magic_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5082,7 +5082,7 @@
     },
     {
       "source_path": "tests/test_orphan_scanner.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/orphan_scanner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5090,7 +5090,7 @@
     },
     {
       "source_path": "tests/test_performance_baseline.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/performance_baseline.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5098,7 +5098,7 @@
     },
     {
       "source_path": "tests/test_python_compat.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/python_compat.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5106,7 +5106,7 @@
     },
     {
       "source_path": "tests/test_regime_detector.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/regime_detector.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5114,7 +5114,7 @@
     },
     {
       "source_path": "tests/test_resource_guard.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/resource_guard.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5122,7 +5122,7 @@
     },
     {
       "source_path": "tests/test_roi_engine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/roi_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5130,7 +5130,7 @@
     },
     {
       "source_path": "tests/test_rollback_bridge.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/rollback_bridge.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5138,7 +5138,7 @@
     },
     {
       "source_path": "tests/test_scan_mutex.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5146,7 +5146,7 @@
     },
     {
       "source_path": "tests/test_scan_mutex.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/scan_mutex.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5154,7 +5154,7 @@
     },
     {
       "source_path": "tests/test_self_check.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_check.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5162,7 +5162,7 @@
     },
     {
       "source_path": "tests/test_self_test_verifier.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/self_test_verifier.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5170,7 +5170,7 @@
     },
     {
       "source_path": "tests/test_state_machine.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5178,7 +5178,7 @@
     },
     {
       "source_path": "tests/test_suppression_learner.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/suppression_learner.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5186,7 +5186,7 @@
     },
     {
       "source_path": "tests/test_symlink_checker.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/symlink_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5194,7 +5194,7 @@
     },
     {
       "source_path": "tests/test_system_topology.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/system_topology.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5202,7 +5202,7 @@
     },
     {
       "source_path": "tests/test_tamper_proof_audit.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/tamper_proof_audit.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5210,7 +5210,7 @@
     },
     {
       "source_path": "tests/test_test_fixture_checker.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/test_fixture_checker.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5218,7 +5218,7 @@
     },
     {
       "source_path": "tests/test_trend_analyzer.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/trend_analyzer.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5226,7 +5226,7 @@
     },
     {
       "source_path": "tests/unit/drift_detector/test_drift_core.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/baseline_manager.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5234,7 +5234,7 @@
     },
     {
       "source_path": "tests/unit/drift_detector/test_drift_core.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_engine.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5242,7 +5242,7 @@
     },
     {
       "source_path": "tests/unit/drift_detector/test_drift_core.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_models.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5250,7 +5250,7 @@
     },
     {
       "source_path": "tests/unit/drift_detector/test_drift_core.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/drift_infrastructure.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",
@@ -5258,7 +5258,7 @@
     },
     {
       "source_path": "tests/unit/governance/test_governance_core.py",
-      "source_domain": "D-GOVERNANCE",
+      "source_domain": "D_GOVERNANCE",
       "target_path": "src/zephyr/security/access_control/behavioral_auditor/architecture_contracts.py",
       "target_domain": "D_SECURITY",
       "dep_type": "test_depends",

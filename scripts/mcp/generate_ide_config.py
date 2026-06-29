@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/mcp/generate_ide_config.py | §
 # [MODULE] scripts.mcp.generate_ide_config
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.mcp.status_all
 # [CONSUMERS]
 # [STARTUP] manual

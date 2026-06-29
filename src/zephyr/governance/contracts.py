@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance.contracts
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.rollback_types; zephyr.shared.contracts.escalation.budget_alert
 # [CONSUMERS] zephyr.infrastructure.rollback;zephyr.governance.adapter
 # [STARTUP] imported

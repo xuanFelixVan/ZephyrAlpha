@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/analyzers/audit_depends_on_chain_depth.py | §
 # [MODULE] scripts.governance.d5_architecture.analyzers.audit_depends_on_chain_depth
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.analyzers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

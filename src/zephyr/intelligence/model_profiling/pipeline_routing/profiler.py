@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.profiler
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite; zephyr.intelligence.model_profiling.pipeline_routing.model_discovery
 # [CONSUMERS]
 # [STARTUP] imported

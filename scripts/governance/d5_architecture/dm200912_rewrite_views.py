@@ -27,7 +27,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph.db不存在→exit 1;域数据缺失→exit 2
 [TESTS] 无(一次性脚本)
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 """
 
 from __future__ import annotations
@@ -819,20 +819,20 @@ def write_capability_heatmap(data: dict) -> None:
     # 能力域定义（7业务+3横切=10能力域）
     capability_domains = [
         ("数据接入", "D_MKT_DATA, D_ALT_DATA, D_DATA_ENG"),
-        ("因子研究", "D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC"),
-        ("策略决策", "D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET"),
-        ("执行交易", "D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION"),
-        ("风险控制", "D-RISK, D-COMPLIANCE"),
-        ("回测仿真", "D-BACKTEST, D-SIMULATION, D-EXEC_SIM, D-DIGITAL_TWIN"),
-        ("ML平台", "D-ML_TRAIN, D-ML_SERVE"),
+        ("因子研究", "D_FACTOR, D_SIGLEGACY, D_FUNDAMENTAL_SIGNAL, D_ASHARE_SIGNAL, D_SIGQC"),
+        ("策略决策", "D_PF_CORE, D_PF_ALLOC, D_SELL_DECISION, D_CROSS_ASSET"),
+        ("执行交易", "D_EX_CORE, D_EX_SOR, D_TRADING, D_POSITION"),
+        ("风险控制", "D_RISK, D_COMPLIANCE"),
+        ("回测仿真", "D_BACKTEST, D_SIMULATION, D_EXEC_SIM, D_DIGITAL_TWIN"),
+        ("ML平台", "D_ML_TRAIN, D_ML_SERVE"),
         (
             "治理（横切）",
-            "D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS",
+            "D_GOVERNANCE, D_GOV_RULE, D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D-GOV_REPAIR, D_GOV_SCRIPTS",
         ),
-        ("安全（横切）", "D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D-AUTONOMY_PERM"),
+        ("安全（横切）", "D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D_AUTONOMY_PERM"),
         (
             "基础设施（横切）",
-            "D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D_AUTONOMY_CORE, D_OPS",
+            "D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D_KNOWLEDGE, D_INTELLIGENCE, D_AUTONOMY_CORE, D_OPS",
         ),
     ]
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.check_type_registry
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
 # [STARTUP] imported

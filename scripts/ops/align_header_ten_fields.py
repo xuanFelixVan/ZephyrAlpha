@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/align_header_ten_fields.py | §
 # [MODULE] scripts.ops.align_header_ten_fields
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops.fill_blueprint_ids
 # [CONSUMERS]
 # [STARTUP] manual
@@ -30,7 +30,7 @@ from _shared.frontmatter import PY_HEADER_PATTERN  # noqa: E402
 REQUIRED_FIELDS = {
     "BLUEPRINT": None,
     "MODULE": None,
-    "DOMAIN": "D-GOVERNANCE",
+    "DOMAIN": "D_GOVERNANCE",
     "DEPENDENCIES": None,
     "CONSUMERS": None,
     "STARTUP": "imported",
@@ -197,7 +197,7 @@ def main():
     print()
     if files_fixed > 0:
         print("Defaults applied for missing required fields:")
-        print("  [DOMAIN]        D-GOVERNANCE")
+        print("  [DOMAIN]        D_GOVERNANCE")
         print("  [STARTUP]       imported")
         print("  [MATURITY]      production")
         print("  [STABILITY]     evolving")

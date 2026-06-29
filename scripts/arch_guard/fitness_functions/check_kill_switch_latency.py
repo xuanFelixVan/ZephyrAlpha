@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_kill_switch_latency.py | §
 # [MODULE] scripts.arch_guard.fitness_functions.check_kill_switch_latency
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
 # [CONSUMERS]
 # [STARTUP] manual

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.check_schema_version_writes
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] G_TRAE_059 gate
 # [STARTUP] manual

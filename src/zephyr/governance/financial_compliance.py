@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-034 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.financial_compliance
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

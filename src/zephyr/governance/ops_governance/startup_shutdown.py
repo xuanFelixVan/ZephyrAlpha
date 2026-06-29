@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-064 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.startup_shutdown
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

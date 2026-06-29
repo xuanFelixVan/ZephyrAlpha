@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.integration.governance.governance_adapter
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_protocol
 # [CONSUMERS] zephyr.integration.governance
 # [STARTUP] imported

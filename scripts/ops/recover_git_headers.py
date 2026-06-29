@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/recover_git_headers.py | §
 # [MODULE] scripts.ops.recover_git_headers
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops.fill_blueprint_ids
 # [CONSUMERS]
 # [STARTUP] manual

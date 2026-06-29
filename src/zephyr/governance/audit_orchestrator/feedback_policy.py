@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §5.1
 # [MODULE] zephyr.governance.audit_trail.feedback_policy
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.feedback_bridge
 # [CONSUMERS] audit-orchestrator.integrity(完整性校验后触发策略评估)
 # [STARTUP] imported

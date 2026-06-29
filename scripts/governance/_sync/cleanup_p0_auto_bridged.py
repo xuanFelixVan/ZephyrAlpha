@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/cleanup_p0_auto_bridged.py | §
 # [MODULE] scripts.governance._sync.cleanup_p0_auto_bridged
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

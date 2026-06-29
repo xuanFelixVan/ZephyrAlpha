@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/cleanup_duplicate_headers.py | §
 # [MODULE] scripts.ops.cleanup_duplicate_headers
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops.fill_blueprint_ids
 # [CONSUMERS]
 # [STARTUP] manual

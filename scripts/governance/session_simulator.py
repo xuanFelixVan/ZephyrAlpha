@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/session_simulator.py | §
 # [MODULE] scripts.governance.session_simulator
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.ops.__init__
 # [CONSUMERS]
 # [STARTUP] manual

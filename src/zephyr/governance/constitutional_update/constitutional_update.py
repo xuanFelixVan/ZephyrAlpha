@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-025 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.constitutional_update
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.integration.shared_08.file_utils; zephyr.shared.session_audit
 # [CONSUMERS]
 # [STARTUP] imported
@@ -127,7 +127,7 @@ class ConstitutionalAutoUpdate:
                         seen_patterns.add(l.pattern_id)
 
             for decision in record.get("decisions", []):
-                if decision.get("id", "").startswith("D-RISK"):
+                if decision.get("id", "").startswith("D_RISK"):
                     pattern_id = f"L-DEC-{session_id}-{len(learnings):03d}"
                     l = Learning(
                         pattern_id=pattern_id,

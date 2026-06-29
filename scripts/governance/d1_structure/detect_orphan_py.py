@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/detect_orphan_py.py | §
 # [MODULE] scripts.governance.d1_structure.detect_orphan_py
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d1_structure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

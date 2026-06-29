@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.compliance_rule
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.compliance_rule
 # [CONSUMERS] tests.integration.test_phase_f_layers
 # [STARTUP] imported

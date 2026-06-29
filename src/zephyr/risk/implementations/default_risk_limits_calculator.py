@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.implementations.default_risk_limits_calculator
-# [DOMAIN] D-RISK
+# [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limits; zephyr.risk.risk_manager
 # [CONSUMERS]
 # [STARTUP] imported

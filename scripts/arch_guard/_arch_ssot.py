@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_arch_ssot.py | §
 # [MODULE] scripts.arch_guard._arch_ssot
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.__init__
 # [CONSUMERS]
 # [STARTUP] imported

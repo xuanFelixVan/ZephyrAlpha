@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.gate_event_adapter
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
 # [STARTUP] imported

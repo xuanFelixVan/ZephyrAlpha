@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §8
 # [MODULE] zephyr.governance.drift_detector
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported

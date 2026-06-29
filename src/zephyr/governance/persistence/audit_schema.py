@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.audit_schema
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_schema
 # [CONSUMERS] zephyr.governance.database_manager; tests.unit.test_audit_schema_unit; tests.unit.db.test_audit_schema_db
 # [STARTUP] imported

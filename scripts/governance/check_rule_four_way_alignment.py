@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_domain_governance/blueprint.md | §rule_engine
 # [MODULE] scripts.governance.check_rule_four_way_alignment
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] CI pipeline; governance audit; Phase Manager
 # [STARTUP] manual

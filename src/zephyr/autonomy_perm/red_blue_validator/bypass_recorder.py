@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-AUTONOMY_PERM
 # [MODULE] zephyr.autonomy_perm.red_blue_validator.bypass_recorder
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] zephyr.security.adversarial_validation.bypass_recorder
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/a2a_full_verification.py | §
 # [MODULE] scripts.a2a_full_verification
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.integration.__init__; zephyr.governance.audit_trail.__init__; zephyr.security.access_control.a2a_check
 # [CONSUMERS]
 # [STARTUP] imported

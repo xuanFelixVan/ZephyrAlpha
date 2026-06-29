@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py | §
 # [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_automation_sync
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

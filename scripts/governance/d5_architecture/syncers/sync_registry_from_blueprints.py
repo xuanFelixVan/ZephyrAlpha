@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py | §
 # [MODULE] scripts.governance.d5_architecture.syncers.sync_registry_from_blueprints
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

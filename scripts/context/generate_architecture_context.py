@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/context/generate_architecture_context.py | §
 # [MODULE] scripts.context.generate_architecture_context
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

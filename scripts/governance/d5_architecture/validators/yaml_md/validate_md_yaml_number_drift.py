@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.yaml_md.validate_md_yaml_number_drift
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.yaml_md.__init__
 # [CONSUMERS]
 # [STARTUP] manual

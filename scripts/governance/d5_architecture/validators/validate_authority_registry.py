@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
 # [MODULE] scripts.governance.d5_architecture.validators.validate_authority_registry
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS] tests.unit.test_validate_authority_registry_unit; tests.unit.governance.test_validate_authority_registry_governance
 # [STARTUP] imported

@@ -1,5 +1,5 @@
 # [MODULE] scripts.diagnose_breadth_failed
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [STARTUP] manual
 # [STABILITY] evolving
 # [SAFETY] M

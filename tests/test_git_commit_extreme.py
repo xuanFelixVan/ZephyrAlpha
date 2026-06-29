@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_git_commit_extreme.py | §ghost-commit-extreme-test
 # [MODULE] tests.test_git_commit_extreme
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] tests.__init__; zephyr.governance.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

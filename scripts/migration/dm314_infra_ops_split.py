@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §DM-314
 # [MODULE] scripts.migration.dm314_infra_ops_split
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] DM-314任务卡
 # [STARTUP] manual

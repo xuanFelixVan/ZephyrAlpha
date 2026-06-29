@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/rollback.py | §
 # [MODULE] scripts.rollback
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

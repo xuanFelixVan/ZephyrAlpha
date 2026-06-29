@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_b_track_packages.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.validate_b_track_packages
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

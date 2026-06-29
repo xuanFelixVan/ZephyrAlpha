@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/gate_engine_selfcheck.py | §
 # [MODULE] scripts.governance.gate_engine_selfcheck
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.circuit_breaker
 # [CONSUMERS]
 # [STARTUP] manual

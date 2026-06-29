@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.combiner.synthesized_signal
-# [DOMAIN] D-FUNDAMENTAL_SIGNAL
+# [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_fundamental.combiner.__init__
 # [CONSUMERS] signal; _cross_layer
 # [STARTUP] imported

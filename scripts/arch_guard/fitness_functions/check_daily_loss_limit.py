@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_daily_loss_limit.py | §
 # [MODULE] scripts.arch_guard.fitness_functions.check_daily_loss_limit
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.fitness_functions.__init__
 # [CONSUMERS]
 # [STARTUP] manual

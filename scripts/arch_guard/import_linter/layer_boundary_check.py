@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/import_linter/layer_boundary_check.py | §
 # [MODULE] scripts.arch_guard.import_linter.layer_boundary_check
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.import_linter.__init__
 # [CONSUMERS]
 # [STARTUP] manual

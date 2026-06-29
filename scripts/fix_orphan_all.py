@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.fix_orphan_all
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__
 # [CONSUMERS]
 # [STARTUP] manual

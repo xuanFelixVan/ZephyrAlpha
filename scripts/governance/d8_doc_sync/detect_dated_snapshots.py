@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/detect_dated_snapshots.py | §
 # [MODULE] scripts.governance.d8_doc_sync.detect_dated_snapshots
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.__init__
 # [CONSUMERS]
 # [STARTUP] manual

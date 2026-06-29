@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.security_gateway_base
-# [DOMAIN] D-COMPLIANCE
+# [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.security_gateway_base
 # [CONSUMERS]
 # [STARTUP] imported

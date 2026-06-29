@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-REPAIR
 # [MODULE] scripts.governance.repair.backup_db
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] scripts.governance.repair.backup_depgraph
 # [CONSUMERS]
 # [STARTUP] manual

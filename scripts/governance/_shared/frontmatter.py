@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance._shared.frontmatter
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; scripts.ops.verify_header_completeness; scripts.governance.d3_metadata.check_frontmatter_metadata; scripts.governance.d3_metadata.backfill_ttl_metadata; scripts.ops.upgrade_headers_to_14fields; scripts.ops.align_header_ten_fields
 # [STARTUP] imported

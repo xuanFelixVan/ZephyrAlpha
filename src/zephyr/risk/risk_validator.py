@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.risk_validator
-# [DOMAIN] D-RISK
+# [DOMAIN] D_RISK
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

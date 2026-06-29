@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.sync_yaml_to_depgraph
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -343,7 +343,7 @@ def validate_domain_id_consistency(cur, entries):
         if normalized != yaml_id and normalized in existing_ids:
             issues.append((yaml_id, normalized))
         # DB 已有连字符版本但 YAML 改为下划线 → 需要清理 DB 旧连字符行
-        # 仅当 yaml_id 中间有下划线时才检查(单词域如 D-GOVERNANCE 无连字符变体)
+        # 仅当 yaml_id 中间有下划线时才检查(单词域如 D_GOVERNANCE 无连字符变体)
         if normalized == yaml_id and "_" in yaml_id[2:]:
             hyphen_variant = "D-" + yaml_id[2:].replace("_", "-")
             if hyphen_variant != yaml_id and hyphen_variant in existing_ids:
@@ -714,7 +714,7 @@ def sync_rule_catalog_registry(cur):
             """
         INSERT INTO arch_directory_tree
         (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (%s, %s, 'file', 'D-GOV_DOCS', %s, 'design')
+        VALUES (%s, %s, 'file', 'D_GOV_DOCS', %s, 'design')
         ON CONFLICT(path) DO UPDATE SET
             parent_path=excluded.parent_path,
             domain_id=excluded.domain_id,

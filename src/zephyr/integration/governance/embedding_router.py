@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.embedding_router
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
 # [CONSUMERS]
 # [STARTUP] imported

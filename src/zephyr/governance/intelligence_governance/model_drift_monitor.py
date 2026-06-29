@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-045 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.model_drift_monitor
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] GOV-068 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._finding_lifecycle
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] run_all.py;phase_manager.py
 # [STARTUP] manual

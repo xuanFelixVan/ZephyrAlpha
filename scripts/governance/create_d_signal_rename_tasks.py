@@ -51,10 +51,10 @@ COMMON_POST_SYNC = [
 
 # 改名映射（裁定#204）
 RENAME_MAP = [
-    ("D-SIGNAL_ASHARE", "D-ASHARE_SIGNAL", "A股特色信号"),
-    ("D-SIGNAL_FUNDAMENTAL", "D-FUNDAMENTAL_SIGNAL", "基本面信号"),
-    ("D-SIGNAL_QUALITY", "D-SIGQC", "信号质量控制"),
-    ("D-SIGNAL", "D-SIGLEGACY", "信号遗留设计态"),
+    ("D-SIGNAL_ASHARE", "D_ASHARE_SIGNAL", "A股特色信号"),
+    ("D-SIGNAL_FUNDAMENTAL", "D_FUNDAMENTAL_SIGNAL", "基本面信号"),
+    ("D-SIGNAL_QUALITY", "D_SIGQC", "信号质量控制"),
+    ("D-SIGNAL", "D_SIGLEGACY", "信号遗留设计态"),
 ]
 
 
@@ -193,16 +193,16 @@ def _build_main_03_execute_rename() -> Task:
     description = (
         "根因：4个旧域名(D-SIGNAL_ASHARE/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_QUALITY/D-SIGNAL)的D-前缀"
         "暗示父子关系违反所有域平级硬约束，需通过cmd_rename_domain执行4域改名到新ID"
-        "(D-ASHARE_SIGNAL/D-FUNDAMENTAL_SIGNAL/D-SIGQC/D-SIGLEGACY)，同时更新domain_name。\n"
+        "(D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC/D_SIGLEGACY)，同时更新domain_name。\n"
         "治根：执行4次--rename-domain命令（顺序无依赖）+4次--update-domain-name命令更新中文名。\n"
         "施工步骤：\n"
         "【dry_run先行】对4个改名各执行一次dry_run，确认影响行数=488（D-SIGNAL=235/ASHARE=84/FUND=105/QUAL=64）。\n"
-        "【执行改名1】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_ASHARE D-ASHARE_SIGNAL。\n"
-        "【执行改名2】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_FUNDAMENTAL D-FUNDAMENTAL_SIGNAL。\n"
-        "【执行改名3】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_QUALITY D-SIGQC。\n"
-        "【执行改名4】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D-SIGLEGACY。\n"
-        "【更新中文名】执行4次--update-domain-name更新D-ASHARE_SIGNAL=A股特色信号/"
-        "D-FUNDAMENTAL_SIGNAL=基本面信号/D-SIGQC=信号质量控制/D-SIGLEGACY=信号遗留设计态。\n"
+        "【执行改名1】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_ASHARE D_ASHARE_SIGNAL。\n"
+        "【执行改名2】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_FUNDAMENTAL D_FUNDAMENTAL_SIGNAL。\n"
+        "【执行改名3】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_QUALITY D_SIGQC。\n"
+        "【执行改名4】python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D_SIGLEGACY。\n"
+        "【更新中文名】执行4次--update-domain-name更新D_ASHARE_SIGNAL=A股特色信号/"
+        "D_FUNDAMENTAL_SIGNAL=基本面信号/D_SIGQC=信号质量控制/D_SIGLEGACY=信号遗留设计态。\n"
         "【验证无残留】查询11表确认无旧domain_id残留，4个新domain_id均存在。\n"
         "验收标准：4域改名成功，11表无旧domain_id残留，4个新domain_id均存在且domain_name已更新。"
     )
@@ -266,26 +266,26 @@ def _build_main_04_code_headers() -> Task:
     ]
     description = (
         "根因：10个代码文件L3的[DOMAIN]头部标注旧域名（D-SIGNAL或D-SIGNAL_FUNDAMENTAL），"
-        "DB改名后代码头部必须同步更新为新域名D-FUNDAMENTAL_SIGNAL，否则代码头部与全景图不一致导致漂移。"
+        "DB改名后代码头部必须同步更新为新域名D_FUNDAMENTAL_SIGNAL，否则代码头部与全景图不一致导致漂移。"
         "其中pipeline.py L3误标为D-SIGNAL（应为D-SIGNAL_FUNDAMENTAL，文件在fundamental/目录下），是预存bug需一并修复。\n"
-        "治根：逐个修改10个文件L3的[DOMAIN]头部，D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL（9个文件），"
-        "D-SIGNAL→D-FUNDAMENTAL_SIGNAL（pipeline.py，预存bug修复）。\n"
+        "治根：逐个修改10个文件L3的[DOMAIN]头部，D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL（9个文件），"
+        "D-SIGNAL→D_FUNDAMENTAL_SIGNAL（pipeline.py，预存bug修复）。\n"
         "施工步骤：\n"
         "【读取确认】逐个读取10个文件L3确认当前[DOMAIN]值，与方案§3.3表格对照。\n"
-        "【修改pipeline.py】L3: # [DOMAIN] D-SIGNAL → # [DOMAIN] D-FUNDAMENTAL_SIGNAL（预存bug修复）。\n"
-        "【修改9个文件】L3: # [DOMAIN] D-SIGNAL_FUNDAMENTAL → # [DOMAIN] D-FUNDAMENTAL_SIGNAL"
+        "【修改pipeline.py】L3: # [DOMAIN] D-SIGNAL → # [DOMAIN] D_FUNDAMENTAL_SIGNAL（预存bug修复）。\n"
+        "【修改9个文件】L3: # [DOMAIN] D-SIGNAL_FUNDAMENTAL → # [DOMAIN] D_FUNDAMENTAL_SIGNAL"
         "（signal_synthesizer.py/default_capital_allocator.py/capital_allocator.py/"
         "default_signal_aggregator.py/aggregator_base.py/synthesized_signal.py/"
         "capital/default_capital_allocator.py/capital/capital_allocator.py/capital_allocation_result.py）。\n"
         "【验证】grep搜索src/zephyr/signal_fundamental/下无D-SIGNAL_FUNDAMENTAL和D-SIGNAL残留（L4依赖引用除外）。\n"
-        "【确认不需改】alpha_signal_pipeline.py [DOMAIN]=D-FACTOR不需改，D-SIGNAL_ASHARE/D-SIGNAL_QUALITY在src下0匹配。\n"
-        "验收标准：10个文件L3[DOMAIN]头部已更新为D-FUNDAMENTAL_SIGNAL，grep确认无旧域名残留。"
+        "【确认不需改】alpha_signal_pipeline.py [DOMAIN]=D_FACTOR不需改，D-SIGNAL_ASHARE/D-SIGNAL_QUALITY在src下0匹配。\n"
+        "验收标准：10个文件L3[DOMAIN]头部已更新为D_FUNDAMENTAL_SIGNAL，grep确认无旧域名残留。"
     )
     return Task(
         task_id="OPS-2026062604",
         namespace=TaskNamespace.OPS,
         seq=2026062604,
-        title="阶段2：代码[DOMAIN]头部修改（10文件，D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL）",
+        title="阶段2：代码[DOMAIN]头部修改（10文件，D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL）",
         status=TaskStatus.PENDING,
         priority=Priority.P1,
         phase=2,
@@ -300,7 +300,7 @@ def _build_main_04_code_headers() -> Task:
         estimate_hours=1.0,
         files_in_scope=[PLAN_DOC],
         deliverables=["D:/ZephyrAlpha/src/zephyr/signal_fundamental/（10文件[DOMAIN]头部已更新）"],
-        acceptance=["10个文件L3[DOMAIN]头部已更新为D-FUNDAMENTAL_SIGNAL，grep无旧域名残留"],
+        acceptance=["10个文件L3[DOMAIN]头部已更新为D_FUNDAMENTAL_SIGNAL，grep无旧域名残留"],
         depends_on=["OPS-2026062603"],
         tags=["d-signal-rename", "code-header", "#204", "phase-2", "10-files"],
         source_blueprint="D-SIGNAL-RENAME-001",
@@ -333,15 +333,15 @@ def _build_main_05_yaml_registry() -> Task:
         "当前L939/L953/L971标注旧域名D-SIGNAL_ASHARE/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_QUALITY，"
         "L11注释引用裁定#201，DB改名后YAML真源必须同步更新为新域名，否则违反YAML是唯一真源硬约束。\n"
         "治根：修改functional_domain_registry.yaml 4行+新增1条：L11注释#裁定#201→#裁定#204（推翻#ARCH-002/#ARCH-004），"
-        "L939 D-SIGNAL_ASHARE→D-ASHARE_SIGNAL，L953 D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL，"
-        "L971 D-SIGNAL_QUALITY→D-SIGQC，新增D-SIGLEGACY条目（ssot_path留空，covers含45个设计态规划节点）。\n"
+        "L939 D-SIGNAL_ASHARE→D_ASHARE_SIGNAL，L953 D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL，"
+        "L971 D-SIGNAL_QUALITY→D_SIGQC，新增D_SIGLEGACY条目（ssot_path留空，covers含45个设计态规划节点）。\n"
         "施工步骤：\n"
         "【读取确认】读取functional_domain_registry.yaml L939/L953/L971确认当前domain值。\n"
         "【修改L11注释】#裁定#201 → #裁定#204（推翻#ARCH-002/#ARCH-004）。\n"
-        "【修改L939】- domain: D-SIGNAL_ASHARE → - domain: D-ASHARE_SIGNAL。\n"
-        "【修改L953】- domain: D-SIGNAL_FUNDAMENTAL → - domain: D-FUNDAMENTAL_SIGNAL。\n"
-        "【修改L971】- domain: D-SIGNAL_QUALITY → - domain: D-SIGQC。\n"
-        "【新增D-SIGLEGACY】新增条目，ssot_path留空，covers含\"45个设计态规划节点\"。\n"
+        "【修改L939】- domain: D-SIGNAL_ASHARE → - domain: D_ASHARE_SIGNAL。\n"
+        "【修改L953】- domain: D-SIGNAL_FUNDAMENTAL → - domain: D_FUNDAMENTAL_SIGNAL。\n"
+        "【修改L971】- domain: D-SIGNAL_QUALITY → - domain: D_SIGQC。\n"
+        "【新增D_SIGLEGACY】新增条目，ssot_path留空，covers含\"45个设计态规划节点\"。\n"
         "【验证】grep确认无旧域名残留，4个新域名+1个新增条目存在。\n"
         "验收标准：YAML 4行改名+1条新增完成，grep无旧域名残留，裁定注释已更新为#204。"
     )
@@ -379,7 +379,7 @@ def _build_main_05_yaml_registry() -> Task:
         estimated_tokens=5000,
         timeout_minutes=20,
         ai_autonomy_level="supervised",
-        autonomy_checklist=["4行改名正确", "D-SIGLEGACY新增条目", "裁定注释#204"],
+        autonomy_checklist=["4行改名正确", "D_SIGLEGACY新增条目", "裁定注释#204"],
         construction_status="pending",
         verification_status="unverified",
         created_at=NOW,
@@ -406,13 +406,13 @@ def _build_main_06_generators() -> Task:
         "治根：逐个修改6个生成器脚本中的硬编码domain_id为新域名，优先改domain_name_mapping.py（域名映射中心）。\n"
         "施工步骤：\n"
         "【优先改domain_name_mapping.py】L44-47字典映射4个旧域名→4个新域名"
-        "（D-SIGNAL→D-SIGLEGACY信号遗留设计态/D-SIGNAL_ASHARE→D-ASHARE_SIGNAL/"
-        "D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL/D-SIGNAL_QUALITY→D-SIGQC信号质量控制）。\n"
+        "（D-SIGNAL→D_SIGLEGACY信号遗留设计态/D-SIGNAL_ASHARE→D_ASHARE_SIGNAL/"
+        "D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL/D-SIGNAL_QUALITY→D_SIGQC信号质量控制）。\n"
         "【改dm200912】L819域列表(逗号串)4个旧域名→4个新域名。\n"
         "【改dm200913】L508域列表(list)+L78/107/108/156/157/190/199/294/295/464/585/615/828共13处展示型文本批量替换。\n"
-        "【改dm200916】L314-317 YAML primary_domains 4行+L425 name D-SIGNAL×C2→D-SIGLEGACY×C2+L426 domain D-SIGNAL→D-SIGLEGACY。\n"
+        "【改dm200916】L314-317 YAML primary_domains 4行+L425 name D-SIGNAL×C2→D_SIGLEGACY×C2+L426 domain D-SIGNAL→D_SIGLEGACY。\n"
         "【改generate_capability_heatmap】L59域列表4个旧域名→4个新域名。\n"
-        "【改audit_domain_nodes】L316 domains_13 D-SIGNAL→D-SIGLEGACY+L363 print标签+L364 SQL迭代。\n"
+        "【改audit_domain_nodes】L316 domains_13 D-SIGNAL→D_SIGLEGACY+L363 print标签+L364 SQL迭代。\n"
         "【验证】grep搜索6个脚本无旧域名残留，确认无动态拼接domain_id。\n"
         "验收标准：6个生成器脚本~23处硬编码已更新，grep无旧域名残留。"
     )
@@ -491,13 +491,13 @@ def _build_main_07_active_docs() -> Task:
         "DB改名后活文档必须直接替换为新域名，否则文档与DB不一致导致AI读取文档时产生幻觉。"
         "活文档与历史记录文档区分：活文档直接替换域名（~82行），历史记录文档追加推翻说明（见主卡8）。\n"
         "治根：逐个修改22个活文档，将4个旧域名直接替换为4个新域名"
-        "（D-SIGNAL_ASHARE→D-ASHARE_SIGNAL/D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL/"
-        "D-SIGNAL_QUALITY→D-SIGQC/D-SIGNAL→D-SIGLEGACY）。\n"
+        "（D-SIGNAL_ASHARE→D_ASHARE_SIGNAL/D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL/"
+        "D-SIGNAL_QUALITY→D_SIGQC/D-SIGNAL→D_SIGLEGACY）。\n"
         "施工步骤：\n"
         "【读取确认】逐个读取22个活文档，确认含旧域名的行号和上下文。\n"
         "【批量替换】对每个文件执行4个旧域名→4个新域名的替换（注意D-SIGNAL最后替换避免误伤D-SIGNAL_ASHARE等）。\n"
-        "【顺序注意】先替换D-SIGNAL_ASHARE→D-ASHARE_SIGNAL/D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL/"
-        "D-SIGNAL_QUALITY→D-SIGQC，最后替换D-SIGNAL→D-SIGLEGACY（避免短串误匹配长串）。\n"
+        "【顺序注意】先替换D-SIGNAL_ASHARE→D_ASHARE_SIGNAL/D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL/"
+        "D-SIGNAL_QUALITY→D_SIGQC，最后替换D-SIGNAL→D_SIGLEGACY（避免短串误匹配长串）。\n"
         "【验证】grep搜索22个活文档无旧域名残留，确认新域名已写入。\n"
         "【确认生成制品】确认7个生成制品（cross_domain_matrix.md等）不在活文档列表中（它们在阶段6重新生成）。\n"
         "验收标准：22个活文档旧域名已替换为新域名，grep无旧域名残留（排除生成制品和历史记录文档）。"

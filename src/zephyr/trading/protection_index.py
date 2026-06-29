@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §17
 # [MODULE] zephyr.trading.protection_index
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STARTUP] imported

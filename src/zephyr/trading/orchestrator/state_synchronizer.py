@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.state_synchronizer
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.io.paths; zephyr.integration.shared_08.utils.time_utils; zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported

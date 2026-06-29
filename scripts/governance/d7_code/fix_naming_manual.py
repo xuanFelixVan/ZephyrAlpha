@@ -11,7 +11,7 @@ Usage:
 
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_naming_manual.py | §
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062109 任务卡
 # [STARTUP] manual

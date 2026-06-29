@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.pipeline_runner
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.governance.audit_orchestrator.text_to_finding_adapter
 # [CONSUMERS] audit-orchestrator.cli; audit_admission_controller
 # [STARTUP] imported

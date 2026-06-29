@@ -2,7 +2,7 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/add_file_headers.py | §7
 # [MODULE] scripts.governance.add_file_headers
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] CI pipeline; governance automation
 # [STARTUP] manual

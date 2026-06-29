@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.audit_trail.trust_engine
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_orchestrator.__init__
 # [CONSUMERS] audit-orchestrator.integrity; pipeline_runner
 # [STARTUP] imported

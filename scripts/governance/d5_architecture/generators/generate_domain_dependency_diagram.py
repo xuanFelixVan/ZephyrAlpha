@@ -25,7 +25,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph.db不存在→exit 1;域不存在→exit 2
 [TESTS] tests/test_dm200910_generators.py
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 """
 
 from __future__ import annotations
@@ -223,7 +223,7 @@ def generate_dependency_diagram(domain_id: str, conn: PgConnExecuteWrapper) -> s
 def main() -> None:
     """入口：生成域全景依赖图。"""
     parser = argparse.ArgumentParser(description="G3: 生成域全景依赖图(.mmd)")
-    parser.add_argument("domain_id", type=str, nargs="?", default=None, help="域ID (如 D-TRADING)。--all 模式下可省略")
+    parser.add_argument("domain_id", type=str, nargs="?", default=None, help="域ID (如 D_TRADING)。--all 模式下可省略")
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     parser.add_argument("--all", action="store_true", help="生成所有域的依赖图")
     args = parser.parse_args()

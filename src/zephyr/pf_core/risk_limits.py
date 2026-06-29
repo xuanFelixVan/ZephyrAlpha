@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.risk_limits
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.risk_limits
 # [CONSUMERS]
 # [STARTUP] imported

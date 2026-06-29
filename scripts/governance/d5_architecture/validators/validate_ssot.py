@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
 # [MODULE] scripts.governance.d5_architecture.validators.validate_ssot
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter
 # [CONSUMERS] tests.unit.test_validate_ssot_unit; tests.unit.governance.test_validate_ssot_governance
 # [STARTUP] imported

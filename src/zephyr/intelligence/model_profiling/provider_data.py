@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.provider_data
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES]
 # [CONSUMERS] src.zephyr.infrastructure.budget_enforcement.model_router;src.zephyr.intelligence.model_profiling.model_discovery;src.zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.capital.capital_allocation_result
-# [DOMAIN] D-FUNDAMENTAL_SIGNAL
+# [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES]
 # [CONSUMERS] signal
 # [STARTUP] imported

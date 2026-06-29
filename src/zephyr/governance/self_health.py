@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.semantic_audit.self_health
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] run_semantic_audit.py; blueprint.md §3.1 Stage 11
 # [STARTUP] imported

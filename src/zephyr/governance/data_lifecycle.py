@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-002 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.data_lifecycle
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

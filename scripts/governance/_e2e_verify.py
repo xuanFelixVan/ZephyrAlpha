@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_e2e_verify.py | §
 # [MODULE] scripts.governance._e2e_verify
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared._cross_layer.__init__; zephyr.infrastructure.__init__; zephyr.ops.__init__; zephyr.governance.rule_enforcement.gate_engine
 # [CONSUMERS]
 # [STARTUP] imported

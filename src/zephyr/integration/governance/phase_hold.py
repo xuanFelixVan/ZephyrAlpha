@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.integration.governance.phase_hold
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_protocol
 # [CONSUMERS] zephyr.integration.governance
 # [STARTUP] imported

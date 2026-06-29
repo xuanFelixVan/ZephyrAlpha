@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n14_init_all.py | §
 # [MODULE] scripts.governance.d7_code.fix_n14_init_all
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062105
 # [STARTUP] manual

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_git_commit_gateway.py | §ghost-commit-gateway-tests
 # [MODULE] tests.test_git_commit_gateway
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

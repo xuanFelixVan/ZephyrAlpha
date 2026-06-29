@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py | §
 # [MODULE] scripts.governance.meta.benchmark.test_fixtures.orphan_file_without_module_registration
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta.benchmark.test_fixtures.incomplete_module
 # [CONSUMERS]
 # [STARTUP] imported

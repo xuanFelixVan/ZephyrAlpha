@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_hot_path_purity.py | §
 # [MODULE] scripts.arch_guard.check_hot_path_purity
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.__init__
 # [CONSUMERS]
 # [STARTUP] manual

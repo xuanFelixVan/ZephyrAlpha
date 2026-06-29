@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.vector_storage.kb.graph_validator
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

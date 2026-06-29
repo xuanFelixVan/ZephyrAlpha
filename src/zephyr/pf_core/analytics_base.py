@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.analytics_base
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.reporting.analytics_base
 # [CONSUMERS] tests.test_post_trade_analytics; tests.unit.test_analytics_base_contract
 # [STARTUP] imported

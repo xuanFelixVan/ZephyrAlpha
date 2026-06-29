@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_registry_master_index.py | §
 # [MODULE] scripts.governance.generators.generate_registry_master_index
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

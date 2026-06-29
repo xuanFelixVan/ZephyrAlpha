@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 # [MODULE] zephyr.governance.rule_enforcement.triple_alignment
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] GateEngine;phase_manager;session_gate_checklist
 # [STARTUP] manual

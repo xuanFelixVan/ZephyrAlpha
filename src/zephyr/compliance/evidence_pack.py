@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.evidence_pack
-# [DOMAIN] D-COMPLIANCE
+# [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.evidence_pack
 # [CONSUMERS]
 # [STARTUP] imported

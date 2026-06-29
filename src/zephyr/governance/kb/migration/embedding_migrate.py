@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.migration.embedding_migrate
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
@@ -44,7 +44,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.governance.kb.storage.chromadb_init import COLLECTION_NAMES
+from zephyr.governance.kb.chromadb_init import COLLECTION_NAMES
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [

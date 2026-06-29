@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_vocab_hardcode.py | §gate-vocab
 # [MODULE] governance.d3_metadata.check_vocab_hardcode
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance._shared.constants; _shared.walk
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual

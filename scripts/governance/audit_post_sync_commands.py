@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_post_sync_commands.py | §post_sync-validation
 # [MODULE] scripts.governance.audit_post_sync_commands
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual

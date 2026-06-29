@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.gates._governance_gates
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.ops.gates.__init__
 # [CONSUMERS] zephyr.observability.feedback_loop.gates.__init__
 # [STARTUP] imported

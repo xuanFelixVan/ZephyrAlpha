@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/dedup_header_fields.py | §
 # [MODULE] scripts.ops.dedup_header_fields
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops.fill_blueprint_ids
 # [CONSUMERS]
 # [STARTUP] manual

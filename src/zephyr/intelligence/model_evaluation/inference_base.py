@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.inference_base
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.ml_train.trainer_base; zephyr.ml_train.inference_base
 # [CONSUMERS]
 # [STARTUP] imported

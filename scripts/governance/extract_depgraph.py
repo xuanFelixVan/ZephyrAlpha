@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.extract_depgraph
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -32,7 +32,7 @@ depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
 
 用法:
   python scripts/governance/extract_depgraph.py --summary          # 域摘要（域数+模块数+production_nodes）
-  python scripts/governance/extract_depgraph.py --domains D-FACTOR,D-RISK  # 指定域
+  python scripts/governance/extract_depgraph.py --domains D_FACTOR,D_RISK  # 指定域
   python scripts/governance/extract_depgraph.py --modules D-FACTOR-01,D-RISK-03  # 指定模块
   python scripts/governance/extract_depgraph.py --top               # 顶级元数据（不含modules/nodes/edges）
   python scripts/governance/extract_depgraph.py --paths             # 所有physical_files按域分组
@@ -351,7 +351,7 @@ See .trae/rules/project_rules.md RULE-SIXTEEN for the full protocol.""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--summary", action="store_true", help="域摘要（域数+模块数+production_nodes+路径前缀）")
-    parser.add_argument("--domains", type=str, help="指定域（逗号分隔），如 D-FACTOR,D-RISK")
+    parser.add_argument("--domains", type=str, help="指定域（逗号分隔），如 D_FACTOR,D_RISK")
     parser.add_argument("--modules", type=str, help="指定 module_id（逗号分隔），如 D-FACTOR-01")
     parser.add_argument("--top", action="store_true", help="顶级元数据（不含 modules/nodes/edges）")
     parser.add_argument("--paths", action="store_true", help="所有 physical_files 按域分组")

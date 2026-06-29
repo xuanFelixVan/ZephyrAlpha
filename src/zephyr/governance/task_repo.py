@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.task_repo
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared_08.utils.time_utils; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.infrastructure.task_manager_server; zephyr.trading.boot_hooks; scripts/governance/*; scripts/lock_files.py (cleanup_terminal_tasks)
 # [STARTUP] imported

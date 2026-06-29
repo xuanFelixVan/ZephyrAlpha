@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/finalize_tasks.py | §
 # [MODULE] scripts.construction.finalize_tasks
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported

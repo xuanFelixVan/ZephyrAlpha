@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/rename_whitelist_cleanup.py | §
 # [MODULE] scripts.governance.rename_whitelist_cleanup
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] naming_whitelist_cleanup_plan.md Phase 3
 # [STARTUP] manual

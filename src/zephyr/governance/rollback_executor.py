@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.rollback_executor
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.security.llm_defense.llm_security.gateway; zephyr.infrastructure.rollback.concurrency_guard
 # [CONSUMERS]
 # [STARTUP] imported

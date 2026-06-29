@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-199 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.portfolio.core.performance_attribution_report
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.portfolio.contracts.__init__
 # [CONSUMERS]
 # [STARTUP] imported

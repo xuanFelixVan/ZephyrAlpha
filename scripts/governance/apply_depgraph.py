@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.apply_depgraph
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -42,13 +42,13 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --migrate-dependencies D-OLD D-TARGET --new-from-domain D-NEW --dry-run
 
   # domain_mapping 表管理（schema 盲区修复）
-  python scripts/governance/apply_depgraph.py --insert-domain-mapping scripts/new_tool/ D-GOVERNANCE non_src --mapped-by session-xxx
+  python scripts/governance/apply_depgraph.py --insert-domain-mapping scripts/new_tool/ D_GOVERNANCE non_src --mapped-by session-xxx
   python scripts/governance/apply_depgraph.py --insert-domain-mapping src/zephyr/new/ D-NEW unregistered_src D-NEW-SUB --dry-run
 
   # 裁定#204：D-SIGNAL* 4 域改名（D-SIGNAL 必须最后替换，避免 LIKE 误伤 D-SIGNAL_* 子域名）
-  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_ASHARE D-ASHARE_SIGNAL --dry-run
-  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D-SIGLEGACY  # 必须最后执行
-  python scripts/governance/apply_depgraph.py --update-domain-name D-SIGLEGACY "信号遗留设计态"
+  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_ASHARE D_ASHARE_SIGNAL --dry-run
+  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D_SIGLEGACY  # 必须最后执行
+  python scripts/governance/apply_depgraph.py --update-domain-name D_SIGLEGACY "信号遗留设计态"
 
 GIT 备份门禁（P2 迁移后治本 2026-06-27）：
   PG 模式下 depgraph 已迁至 PostgreSQL，无文件路径概念。
@@ -1476,10 +1476,10 @@ _RENAME_SCAN_EXCLUDE_TABLES = {"domain_naming_rules", "_schema_version", "govern
 # 裁定#204 改名的 4 个域映射（old_id → new_id）
 # D-SIGNAL 必须最后处理（它是其他3个旧ID的前缀）
 _RENAME_MAP_204 = {
-    "D-SIGNAL_ASHARE": "D-ASHARE_SIGNAL",
-    "D-SIGNAL_FUNDAMENTAL": "D-FUNDAMENTAL_SIGNAL",
-    "D-SIGNAL_QUALITY": "D-SIGQC",
-    "D-SIGNAL": "D-SIGLEGACY",
+    "D-SIGNAL_ASHARE": "D_ASHARE_SIGNAL",
+    "D-SIGNAL_FUNDAMENTAL": "D_FUNDAMENTAL_SIGNAL",
+    "D-SIGNAL_QUALITY": "D_SIGQC",
+    "D-SIGNAL": "D_SIGLEGACY",
 }
 
 # 值扫描兜底排除列（裁定#207 R1）：由专门步骤处理的列不参与子串REPLACE
@@ -1574,7 +1574,7 @@ def cmd_rename_domain(
     if not ok:
         print(
             f"ERROR: new_id '{new_id}' 格式不合规：{reason}\n"
-            f"domain_id 必须为 D-{{DOMAIN}} 格式（如 D-GOVERNANCE），DOMAIN 为大写+下划线，无序号",
+            f"domain_id 必须为 D-{{DOMAIN}} 格式（如 D_GOVERNANCE），DOMAIN 为大写+下划线，无序号",
             file=sys.stderr,
         )
         return -1

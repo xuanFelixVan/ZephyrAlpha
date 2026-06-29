@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-043 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.ai_self_diagnosis
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

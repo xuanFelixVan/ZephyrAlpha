@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.dm105_depgraph_triage
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -226,7 +226,7 @@ PATH_PREFIX_HINTS = {
     "src/zephyr/orchestration/agent_lifecycle/": ("MOD-INF-019", "D-ORCH", "D-ORCH-AGENT_LIFECYCLE"),
     "src/zephyr/orchestration/context_management/": ("MOD-CONTEXT_ENGINE", "D-ORCH", "D-ORCH-CONTEXT_MANAGEMENT"),
     "src/zephyr/orchestration/agent_communication/": ("MOD-INF-025", "D-ORCH", "D-ORCH-AGENT_COMMUNICATION"),
-    "src/zephyr/governance/rule_enforcement/": ("MOD-GATE_ENGINE", "D-GOV", "D-GOV-RULE_ENFORCEMENT"),
+    "src/zephyr/governance/rule_enforcement/": ("MOD-GATE_ENGINE", "D-GOV", "D_GOV_RULE_ENFORCEMENT"),
     "data/asset_index/archive/": ("DEPRECATE", "", ""),
     "docs/03_modules/": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
     "docs/01_policies_and_standards/": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),

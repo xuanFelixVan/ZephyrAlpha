@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/generate_script_manifest.py | §
 # [MODULE] scripts.governance.generators.generate_script_manifest
-# [DOMAIN] D-GOV_RULE
+# [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] scripts.governance.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

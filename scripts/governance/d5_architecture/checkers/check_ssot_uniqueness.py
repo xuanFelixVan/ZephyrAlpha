@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py | §
 # [MODULE] scripts.governance.d5_architecture.checkers.check_ssot_uniqueness
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.__init__
 # [CONSUMERS]
 # [STARTUP] manual

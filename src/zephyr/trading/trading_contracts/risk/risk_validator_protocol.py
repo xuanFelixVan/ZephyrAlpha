@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_validator_protocol
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] ex_core.execution_engine; risk.risk_validator
 # [STARTUP] imported

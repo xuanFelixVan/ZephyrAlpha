@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/generators/generate_contracts.py | §
 # [MODULE] scripts.governance.d5_architecture.generators.generate_contracts
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

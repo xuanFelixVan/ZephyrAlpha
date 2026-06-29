@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/validate_session_gate_check.py | §
 # [MODULE] scripts.governance.d12_ai_hallucination.validate_session_gate_check
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d12_ai_hallucination.__init__
 # [CONSUMERS]
 # [STARTUP] manual

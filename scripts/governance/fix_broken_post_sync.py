@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/fix_broken_post_sync.py | §post_sync-repair
 # [MODULE] scripts.governance.fix_broken_post_sync
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.task_repo
 # [CONSUMERS]
 # [STARTUP] manual

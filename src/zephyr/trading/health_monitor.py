@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.health_monitor
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.contracts.core.telemetry_emitter; zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-071 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.build_script_dep_graph
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] run_all.py;run_incremental.py
 # [STARTUP] manual

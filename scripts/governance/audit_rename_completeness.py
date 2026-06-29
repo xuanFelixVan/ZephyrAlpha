@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH | scripts/governance/audit_rename_completeness.py | §rename-completeness-audit
 # [MODULE] scripts.governance.audit_rename_completeness
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance._shared.constants
 # [CONSUMERS] .pre_commit-config.yaml; scripts/governance/apply_depgraph.py
 # [STARTUP] manual
@@ -41,7 +41,7 @@
     python scripts/governance/audit_rename_completeness.py --rounds 2
 
     # 检查手动修改文件中的旧标识符残留（活文档+脚本，排除历史文档和生成制品）
-    python scripts/governance/audit_rename_completeness.py --old-id D-GOV-DOCS \
+    python scripts/governance/audit_rename_completeness.py --old-id D_GOV_DOCS \
         --check-files "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml,scripts/governance/sync_yaml_to_depgraph.py"
 
     # apply_depgraph.py --rename-domain 完成后会自动调用本工具的 scan_residual 做后置校验
@@ -70,10 +70,10 @@ from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 # 裁定#204 改名的 4 个域（旧ID → 新ID）
 # D-SIGNAL 必须最后检查（它是其他3个旧ID的前缀，避免子串误匹配）
 RENAME_MAP_204 = {
-    "D-SIGNAL_ASHARE": "D-ASHARE_SIGNAL",
-    "D-SIGNAL_FUNDAMENTAL": "D-FUNDAMENTAL_SIGNAL",
-    "D-SIGNAL_QUALITY": "D-SIGQC",
-    "D-SIGNAL": "D-SIGLEGACY",
+    "D-SIGNAL_ASHARE": "D_ASHARE_SIGNAL",
+    "D-SIGNAL_FUNDAMENTAL": "D_FUNDAMENTAL_SIGNAL",
+    "D-SIGNAL_QUALITY": "D_SIGQC",
+    "D-SIGNAL": "D_SIGLEGACY",
 }
 
 # 排除表：这些表的 D-SIGNAL* 残留是有意保留的（规则示例/系统表/审计日志）
@@ -86,7 +86,7 @@ EXCLUDE_TABLES = {"domain_naming_rules", "_schema_version", "governance_audit_lo
 NODE_PATH_OLD_PREFIXES = ["D-SIGNAL-"]
 
 # 排除列：由专门步骤处理的列不参与残留扫描（与 apply_depgraph.py _RENAME_SCAN_EXCLUDE_COLUMNS 保持一致）
-# - blueprint_id: 含 MODULE ID（MOD-GOV-DOCS），LIKE '%D-GOV-DOCS%' 会子串误匹配 MOD-GOV-DOCS
+# - blueprint_id: 含 MODULE ID（MOD-GOV-DOCS），LIKE '%D_GOV_DOCS%' 会子串误匹配 MOD-GOV-DOCS
 #   由 cmd_propagate_rename 精确值映射处理（裁定#207 R1 B6，禁止子串REPLACE）
 # - path / blueprint_path: 阶段D 节点路径改名传播（重新编号，需保留原序号信息）
 # 不一致会导致误报：audit 漏排除 blueprint_id 时，MODULE ID 子串会被误判为 DOMAIN ID 残留
@@ -196,7 +196,7 @@ def scan_files_residual(
     """扫描指定文件中包含旧标识符的残留行（消除手工写 _tmp_find_residual.py 的必要性）。
 
     用负向先行断言排除 MOD- 前缀误匹配：
-      - D-GOV-DOCS 在 MOD-GOV-DOCS 中是 MODULE ID 子串，不应判为 DOMAIN ID 残留
+      - D_GOV_DOCS 在 MOD-GOV-DOCS 中是 MODULE ID 子串，不应判为 DOMAIN ID 残留
       - (?<![A-Z]) 确保 old_id 前不是大写字母
     排除 [BLUEPRINT] 行的模块 ID 声明（头部元数据，非业务内容）。
 

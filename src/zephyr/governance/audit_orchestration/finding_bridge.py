@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.finding_bridge
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported

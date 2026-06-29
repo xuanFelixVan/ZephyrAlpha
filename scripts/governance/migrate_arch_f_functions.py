@@ -1,6 +1,6 @@
 # [BLUEPRINT] ARCH-FUNC-DEP-001 | docs/02_enterprise_architecture/core_function_dependency_design.md | §十一
 # [MODULE] scripts.governance.migrate_arch_f_functions
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.apply_depgraph
 # [CONSUMERS] 架构升级AI session
 # [STABILITY] evolving
@@ -55,21 +55,21 @@ F_FUNCTIONS = [
     # L0 基础设施层（出度0）
     ("F22", "事件总线+共享核心", "F22-event-bus/", "", "D_SHARED", "stable", "L0"),
     ("F25", "数据库集成层", "F25-db-integration/", "", "D_INFRA_OPS", "stable", "L0"),
-    ("F26", "运行时集成", "F26-runtime-integration/", "", "D-TRADING", "stable", "L0"),
+    ("F26", "运行时集成", "F26-runtime-integration/", "", "D_TRADING", "stable", "L0"),
     # L1 守护层
     ("F21", "IDE健康守护", "F21-ide-health/", "", "D_INFRA_OPS", "stable", "L1"),
     # L2 调度层
-    ("F1", "自动驾驶/大脑", "F1-autopilot/", "", "D-TRADING", "stable", "L2"),
+    ("F1", "自动驾驶/大脑", "F1-autopilot/", "", "D_TRADING", "stable", "L2"),
     ("F23", "Agent编排器", "F23-agent-orchestrator/", "", "D_AUTONOMY_CORE", "stable", "L2"),
     # L3 控制层
-    ("F2", "门禁引擎", "F2-gate-engine/", "", "D-GOV_RULE", "stable", "L3"),
+    ("F2", "门禁引擎", "F2-gate-engine/", "", "D_GOV_RULE", "stable", "L3"),
     ("F4", "预算执行器", "F4-budget-engine/", "", "D_OPS", "stable", "L3"),
     ("F7", "LLM安全网关", "F7-llm-gateway/", "", "D_SECURITY", "stable", "L3"),
     ("F8", "RBAC权限", "F8-rbac/", "", "D_SECURITY", "stable", "L3"),
     ("F27", "容量保障", "F27-capacity/", "", "D_INFRA_OPS", "stable", "L3"),
     ("F32", "状态机引擎", "F32-state-machine/", "", "D_AUTONOMY_CORE", "stable", "L3"),
     # L4 执行层
-    ("F3", "任务系统", "F3-task-system/", "", "D-GOVERNANCE", "stable", "L4"),
+    ("F3", "任务系统", "F3-task-system/", "", "D_GOVERNANCE", "stable", "L4"),
     ("F11", "上下文引擎", "F11-context-engine/", "", "D_SHARED", "stable", "L4"),
     ("F12", "知识库", "F12-knowledge-base/", "", "D_INTEGRATION", "stable", "L4"),
     ("F13", "MCP集群", "F13-mcp-cluster/", "", "D_INTEGRATION", "stable", "L4"),
@@ -77,26 +77,26 @@ F_FUNCTIONS = [
     ("F24", "Agent Spec/Skill", "F24-agent-spec/", "", "D_AUTONOMY_CORE", "stable", "L4"),
     ("F33", "本地模型", "F33-local-model/", "", "D_INFRA_OPS", "stable", "L4"),
     # L5 治理层
-    ("F6", "漂移检测", "F6-drift-detector/", "", "D-GOV_DRIFT", "stable", "L5"),
+    ("F6", "漂移检测", "F6-drift-detector/", "", "D_GOV_DRIFT", "stable", "L5"),
     ("F15", "自动修复", "F15-auto-fix/", "", "D_INFRA_OPS", "stable", "L5"),
     ("F16", "孤儿审判", "F16-orphan-judge/", "", "D_SECURITY", "stable", "L5"),
-    ("F18", "治理脚本", "F18-governance-scripts/", "", "D-GOVERNANCE", "stable", "L5"),
+    ("F18", "治理脚本", "F18-governance-scripts/", "", "D_GOVERNANCE", "stable", "L5"),
     ("F19", "系统遥测", "F19-telemetry/", "", "D_INFRA_OPS", "stable", "L5"),
     ("F20", "监控统一", "F20-unified-monitor/", "", "D_OPS", "planned", "L5"),
-    ("F28", "资产盘点", "F28-asset-inventory/", "", "D-GOVERNANCE", "stable", "L5"),
-    ("F29", "语义审计", "F29-semantic-audit/", "", "D-GOVERNANCE", "stable", "L5"),
+    ("F28", "资产盘点", "F28-asset-inventory/", "", "D_GOVERNANCE", "stable", "L5"),
+    ("F29", "语义审计", "F29-semantic-audit/", "", "D_GOVERNANCE", "stable", "L5"),
     ("F30", "红蓝对抗", "F30-red-blue/", "", "D_SECURITY", "stable", "L5"),
-    ("F31", "注册表治理", "F31-registry-gov/", "", "D-GOVERNANCE", "stable", "L5"),
-    ("F34", "代码去重", "F34-code-dedup/", "", "D-GOVERNANCE", "planned", "L5"),
-    ("F35", "文件结构治理", "F35-file-structure/", "", "D-GOVERNANCE", "planned", "L5"),
-    ("F36", "审计追踪链", "F36-audit-trail/", "", "D-GOV_AUDIT", "stable", "L5"),
+    ("F31", "注册表治理", "F31-registry-gov/", "", "D_GOVERNANCE", "stable", "L5"),
+    ("F34", "代码去重", "F34-code-dedup/", "", "D_GOVERNANCE", "planned", "L5"),
+    ("F35", "文件结构治理", "F35-file-structure/", "", "D_GOVERNANCE", "planned", "L5"),
+    ("F36", "审计追踪链", "F36-audit-trail/", "", "D_GOV_AUDIT", "stable", "L5"),
     ("F37", "资源优化", "F37-resource-opt/", "", "D_INFRA_OPS", "stable", "L5"),
     # L6 应急层（入度0）
-    ("F5", "升级/A2A", "F5-escalation/", "", "D-GOVERNANCE", "stable", "L6"),
+    ("F5", "升级/A2A", "F5-escalation/", "", "D_GOVERNANCE", "stable", "L6"),
     ("F9", "回滚系统", "F9-rollback/", "", "D_INFRA_OPS", "stable", "L6"),
-    ("F10", "模型考试", "F10-model-exam/", "", "D-INTELLIGENCE", "stable", "L6"),
+    ("F10", "模型考试", "F10-model-exam/", "", "D_INTELLIGENCE", "stable", "L6"),
     # 已归档
-    ("F17", "交易骨架清理(归档)", "F17-archived/", "", "D-TRADING", "deprecated", "ARCHIVED"),
+    ("F17", "交易骨架清理(归档)", "F17-archived/", "", "D_TRADING", "deprecated", "ARCHIVED"),
 ]
 
 

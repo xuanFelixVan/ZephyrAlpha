@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generators/fix_module_manifest_layout.py | §
 # [MODULE] scripts.governance.generators.fix_module_manifest_layout
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.generators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

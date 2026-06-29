@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-EX_CORE
 # [MODULE] zephyr.ex_core.adapters.broker_interface
-# [DOMAIN] D-EX_CORE
+# [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.broker_interface
 # [CONSUMERS] tests.test_trade_execution; tests.integration.test_e2e_pipeline
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_naming_convention.py | §
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/unit/test_gate11_naming_convention.py
 # [STARTUP] manual
@@ -1379,7 +1379,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     if not (bp_tokens & dom_tokens):
         return []
 
-    # 校验域片段一致性（检测改名残留，如 MOD-SIGNAL_ASHARE vs D-ASHARE_SIGNAL）
+    # 校验域片段一致性（检测改名残留，如 MOD-SIGNAL_ASHARE vs D_ASHARE_SIGNAL）
     if bp_domain_fragment != dom_domain_fragment:
         return [
             NamingViolation(

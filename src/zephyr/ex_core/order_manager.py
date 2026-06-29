@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
 # [MODULE] zephyr.ex_core.order_manager
-# [DOMAIN] D-EX_CORE
+# [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order
 # [CONSUMERS]
 # [STARTUP] imported

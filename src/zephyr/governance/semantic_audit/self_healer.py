@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 7
 # [MODULE] zephyr.governance.semantic_audit.self_healer
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] FixPrioritizer; AuditOrchestrator (MOD-INF-027)
 # [STARTUP] imported

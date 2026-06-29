@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-REPAIR
 # [MODULE] scripts.governance.repair.audit_design_completeness
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] scripts.governance.repair.backup_depgraph
 # [STARTUP] manual

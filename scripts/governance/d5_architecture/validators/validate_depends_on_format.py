@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_depends_on_format.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.validate_depends_on_format
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
 # [CONSUMERS]
 # [STARTUP] manual

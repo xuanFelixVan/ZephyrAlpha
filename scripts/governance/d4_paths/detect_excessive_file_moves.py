@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d4_paths/detect_excessive_file_moves.py | §
 # [MODULE] scripts.governance.d4_paths.detect_excessive_file_moves
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d4_paths.__init__
 # [CONSUMERS]
 # [STARTUP] manual

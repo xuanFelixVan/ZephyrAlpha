@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
 # [MODULE] zephyr.portfolio.factor.base
-# [DOMAIN] D-FACTOR
+# [DOMAIN] D_FACTOR
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

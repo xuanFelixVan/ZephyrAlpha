@@ -25,7 +25,7 @@
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] depgraph.db不存在→exit 1
 [TESTS] 无(一次性脚本)
-[DOMAIN] D-GOVERNANCE
+[DOMAIN] D_GOVERNANCE
 """
 
 from __future__ import annotations

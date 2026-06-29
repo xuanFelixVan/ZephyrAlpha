@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.projection_engine
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.snapshot_manager
 # [STARTUP] imported

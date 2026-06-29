@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §bootstrap_superadmin
 # [MODULE] zephyr.security.access_control.governance_bridges.bootstrap_superadmin
-# [DOMAIN] D-AUTONOMY_PERM
+# [DOMAIN] D_AUTONOMY_PERM
 # [DEPENDENCIES] zephyr.security.access_control.governance_bridges.__init__
 # [CONSUMERS] genesis_bootstrap._bootstrap_superadmin(); auto_runtime_core.boot()
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen.implementations.default_signal_aggregator
-# [DOMAIN] D-FUNDAMENTAL_SIGNAL
+# [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] imported

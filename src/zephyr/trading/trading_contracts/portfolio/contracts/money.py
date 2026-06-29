@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-198 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.portfolio.contracts.money
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.governance.instrument
 # [CONSUMERS]
 # [STARTUP] imported

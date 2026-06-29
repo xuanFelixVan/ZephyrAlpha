@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/adversarial_sys_master_test.py | §
 # [MODULE] scripts.governance.adversarial_sys_master_test
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.sys_master_compliance
 # [CONSUMERS]
 # [STARTUP] manual

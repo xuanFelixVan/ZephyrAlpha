@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.default_attribution_engine
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.default_attribution_engine
 # [CONSUMERS] tests.integration.test_e2e_pipeline
 # [STARTUP] imported

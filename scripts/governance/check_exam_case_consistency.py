@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md | §17.5
 # [MODULE] scripts.governance.check_exam_case_consistency
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__;zephyr.intelligence.model_profiling.exam_test_cases
 # [CONSUMERS]
 # [STARTUP] manual

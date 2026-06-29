@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_cross_plane_communication.py | §
 # [MODULE] scripts.arch_guard.check_cross_plane_communication
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard.__init__
 # [CONSUMERS]
 # [STARTUP] manual

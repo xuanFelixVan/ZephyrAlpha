@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md
 # [MODULE] zephyr.governance.orphan_judgment.orphan_detector
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.orphan_judgment.__init__
 # [STARTUP] imported

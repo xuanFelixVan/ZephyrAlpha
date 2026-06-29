@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-GPU
 # [MODULE] zephyr.trading.gpu_monitor
-# [DOMAIN] D-TRADING
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.resource_optimization; zephyr.integration.shared_08.lifecycle.daemon_registry
 # [STARTUP] imported

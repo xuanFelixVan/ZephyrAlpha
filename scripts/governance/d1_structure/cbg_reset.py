@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/cbg_reset.py | §
 # [MODULE] scripts.governance.d1_structure.cbg_reset
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.circuit_breaker
 # [CONSUMERS]
 # [STARTUP] manual

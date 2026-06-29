@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-EX_CORE
 # [MODULE] zephyr.ex_core.adapters.risk_validation_bridge
-# [DOMAIN] D-EX_CORE
+# [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.risk_validation_bridge
 # [CONSUMERS]
 # [STARTUP] imported

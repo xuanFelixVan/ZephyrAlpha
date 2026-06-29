@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.risk.oms_risk_engine
-# [DOMAIN] D-RISK
+# [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported

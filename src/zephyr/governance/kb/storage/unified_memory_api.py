@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.storage.unified_memory_api
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.security.capability
 # [CONSUMERS]
 # [STARTUP] imported
@@ -192,7 +192,7 @@ class ChromaMemoryBackend:
             if self._collection is not None:
                 return self._collection
             try:
-                from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+                from zephyr.governance.kb.chromadb_init import get_chroma_client
             except Exception as exc:
                 raise MemoryBackendError(f"chromadb_init import failed: {exc}") from exc
 

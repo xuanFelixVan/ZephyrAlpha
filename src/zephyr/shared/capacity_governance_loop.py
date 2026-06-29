@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.shared.capacity_governance_loop
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading.resource_optimization; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

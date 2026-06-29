@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/upgrade_headers_to_14fields.py | §
 # [MODULE] scripts.ops.upgrade_headers_to_14fields
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] depgraph_schema; lock_files; concurrent.futures
 # [CONSUMERS] governance automation; CI pipeline
 # [STARTUP] manual

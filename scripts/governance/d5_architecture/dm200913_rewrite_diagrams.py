@@ -75,22 +75,22 @@ graph LR
 
     subgraph ACL_Layer["反腐层 Anti-Corruption Layer"]
         CONN["D_MKT_DATA connectors/<br/>(ACL for market data)"]
-        BROKER_A["D-EX_CORE adapters/<br/>(ACL for broker)"]
+        BROKER_A["D_EX_CORE adapters/<br/>(ACL for broker)"]
         LLM_A["D_FRONTEND/<br/>(ACL for LLM)"]
     end
 
     subgraph Core["ZephyrAlpha Core Domains (depgraph.db派生)"]
         D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
         D_ALT_DATA["D_ALT_DATA<br/>另类数据"]
-        D_FACTOR["D-FACTOR<br/>因子"]
-        D_SIGNAL["D-SIGLEGACY<br/>信号"]
-        D_RISK["D-RISK<br/>风控"]
-        D_PF_CORE["D-PF_CORE<br/>组合核心"]
-        D_EX_CORE["D-EX_CORE<br/>执行核心"]
-        D_TRADING["D-TRADING<br/>交易运营"]
+        D_FACTOR["D_FACTOR<br/>因子"]
+        D_SIGNAL["D_SIGLEGACY<br/>信号"]
+        D_RISK["D_RISK<br/>风控"]
+        D_PF_CORE["D_PF_CORE<br/>组合核心"]
+        D_EX_CORE["D_EX_CORE<br/>执行核心"]
+        D_TRADING["D_TRADING<br/>交易运营"]
         D_REPORTING["D_REPORTING<br/>报告"]
         D_FRONTEND["D_FRONTEND<br/>前端"]
-        D_ML_TRAIN["D-ML_TRAIN<br/>训练"]
+        D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
         D_OPS["D_OPS<br/>反馈循环"]
     end
 
@@ -109,26 +109,26 @@ graph LR
 
     %% P0 Cross-Layer Contracts / 跨层数据契约承重墙
     %% 契约真源: cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D-FACTOR
-    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D_MKT_DATA → D-FACTOR" --> D_FACTOR
+    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D_FACTOR
+    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D_MKT_DATA → D_FACTOR" --> D_FACTOR
 
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGLEGACY" --> D_SIGNAL
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-RISK" --> D_RISK
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-PF_CORE" --> D_PF_CORE
+    %% CTR-002: FactorSignal (frozen) — D_FACTOR → D_SIGLEGACY/D_RISK/D_PF_CORE
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D_FACTOR → D_SIGLEGACY" --> D_SIGNAL
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D_FACTOR → D_RISK" --> D_RISK
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D_FACTOR → D_PF_CORE" --> D_PF_CORE
 
-    %% CTR-003: RiskLimits (frozen) — D-RISK → D-PF_CORE
-    D_RISK -- "🔒 CTR-003<br/>RiskLimits<br/>D-RISK → D-PF_CORE" --> D_PF_CORE
+    %% CTR-003: RiskLimits (frozen) — D_RISK → D_PF_CORE
+    D_RISK -- "🔒 CTR-003<br/>RiskLimits<br/>D_RISK → D_PF_CORE" --> D_PF_CORE
 
-    %% CTR-004: Order (mutable) — D-PF_CORE → D-EX_CORE
-    D_PF_CORE -- "🔓 CTR-004<br/>Order<br/>D-PF_CORE → D-EX_CORE" --> D_EX_CORE
+    %% CTR-004: Order (mutable) — D_PF_CORE → D_EX_CORE
+    D_PF_CORE -- "🔓 CTR-004<br/>Order<br/>D_PF_CORE → D_EX_CORE" --> D_EX_CORE
 
-    %% CTR-005: Fill (frozen) — D-EX_CORE → D-TRADING
-    D_EX_CORE -- "🔒 CTR-005<br/>Fill<br/>D-EX_CORE → D-TRADING" --> D_TRADING
+    %% CTR-005: Fill (frozen) — D_EX_CORE → D_TRADING
+    D_EX_CORE -- "🔒 CTR-005<br/>Fill<br/>D_EX_CORE → D_TRADING" --> D_TRADING
 
-    %% CTR-006: PositionSnapshot (frozen) — D-EX_CORE/D-TRADING → D-RISK/D-ML_TRAIN
-    D_EX_CORE -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-EX_CORE → D-RISK" --> D_RISK
-    D_TRADING -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-TRADING → D-ML_TRAIN" --> D_ML_TRAIN
+    %% CTR-006: PositionSnapshot (frozen) — D_EX_CORE/D_TRADING → D_RISK/D_ML_TRAIN
+    D_EX_CORE -- "🔒 CTR-006<br/>PositionSnapshot<br/>D_EX_CORE → D_RISK" --> D_RISK
+    D_TRADING -- "🔒 CTR-006<br/>PositionSnapshot<br/>D_TRADING → D_ML_TRAIN" --> D_ML_TRAIN
 
     D_TRADING -- "PnL/Risk Metrics" --> D_OPS
     D_ML_TRAIN -- "ModelPrediction" --> D_FACTOR
@@ -157,32 +157,32 @@ flowchart TD
         D_MKT_DATA["D_MKT_DATA<br/>Ingestion · Standardization · Quality Gating<br/>接入 · 标准化 · 质量门禁"]
     end
 
-    subgraph D_FACTOR_Grp["D-FACTOR · 因子 / Alpha Factor"]
-        D_FACTOR["D-FACTOR<br/>Factor Calculation · Evaluation · Engineering<br/>因子计算 · 评估 · 工程"]
+    subgraph D_FACTOR_Grp["D_FACTOR · 因子 / Alpha Factor"]
+        D_FACTOR["D_FACTOR<br/>Factor Calculation · Evaluation · Engineering<br/>因子计算 · 评估 · 工程"]
     end
 
-    subgraph D_SIGNAL_Grp["D-SIGLEGACY · 信号 / Signal Generation"]
-        D_SIGNAL["D-SIGLEGACY<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
+    subgraph D_SIGNAL_Grp["D_SIGLEGACY · 信号 / Signal Generation"]
+        D_SIGNAL["D_SIGLEGACY<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
     end
 
-    subgraph D_RISK_Grp["D-RISK · 风控 / Risk Management"]
-        D_RISK["D-RISK<br/>Risk Measurement · Limits · Stop-loss<br/>风险度量 · 限额 · 止损"]
+    subgraph D_RISK_Grp["D_RISK · 风控 / Risk Management"]
+        D_RISK["D_RISK<br/>Risk Measurement · Limits · Stop-loss<br/>风险度量 · 限额 · 止损"]
     end
 
-    subgraph D_PF_CORE_Grp["D-PF_CORE · 组合核心 / Portfolio Construction"]
-        D_PF_CORE["D-PF_CORE<br/>Weight Allocation · Optimization · Backtest<br/>权重分配 · 优化 · 回测"]
+    subgraph D_PF_CORE_Grp["D_PF_CORE · 组合核心 / Portfolio Construction"]
+        D_PF_CORE["D_PF_CORE<br/>Weight Allocation · Optimization · Backtest<br/>权重分配 · 优化 · 回测"]
     end
 
-    subgraph D_EX_CORE_Grp["D-EX_CORE · 执行核心 / Trade Execution"]
-        D_EX_CORE["D-EX_CORE<br/>OMS · SOR · Order Execution · Pre-trade Risk<br/>OMS · SOR · 委托执行 · 执行前风控"]
+    subgraph D_EX_CORE_Grp["D_EX_CORE · 执行核心 / Trade Execution"]
+        D_EX_CORE["D_EX_CORE<br/>OMS · SOR · Order Execution · Pre-trade Risk<br/>OMS · SOR · 委托执行 · 执行前风控"]
     end
 
-    subgraph D_TRADING_Grp["D-TRADING · 交易运营 / Post-Trade Analytics"]
-        D_TRADING["D-TRADING<br/>Performance Attribution · Review · Reporting<br/>绩效归因 · 复盘 · 报告"]
+    subgraph D_TRADING_Grp["D_TRADING · 交易运营 / Post-Trade Analytics"]
+        D_TRADING["D_TRADING<br/>Performance Attribution · Review · Reporting<br/>绩效归因 · 复盘 · 报告"]
     end
 
-    subgraph D_ML_TRAIN_Grp["D-ML_TRAIN · 训练 / ML Platform"]
-        D_ML_TRAIN["D-ML_TRAIN<br/>Model Training · Registry · Inference<br/>模型训练 · 注册 · 推理"]
+    subgraph D_ML_TRAIN_Grp["D_ML_TRAIN · 训练 / ML Platform"]
+        D_ML_TRAIN["D_ML_TRAIN<br/>Model Training · Registry · Inference<br/>模型训练 · 注册 · 推理"]
     end
 
     subgraph D_OPS_Grp["D_OPS · 反馈循环 / System Telemetry"]
@@ -192,53 +192,53 @@ flowchart TD
     %% External → D_MKT_DATA
     MD -->|"REST/WebSocket<br/>原始行情数据"| D_MKT_DATA
 
-    %% D_MKT_DATA → D-FACTOR: CTR-001 NormalizedMarketData (frozen)
+    %% D_MKT_DATA → D_FACTOR: CTR-001 NormalizedMarketData (frozen)
     D_MKT_DATA -->|"🔒 CTR-001<br/>NormalizedMarketData<br/>[frozen]"| D_FACTOR
 
-    %% D-FACTOR → D-SIGLEGACY: CTR-002 FactorSignal (frozen)
+    %% D_FACTOR → D_SIGLEGACY: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_SIGNAL
 
-    %% D-FACTOR → D-RISK: CTR-002 FactorSignal (frozen)
+    %% D_FACTOR → D_RISK: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_RISK
 
-    %% D-FACTOR → D-PF_CORE: CTR-002 FactorSignal (frozen)
+    %% D_FACTOR → D_PF_CORE: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_PF_CORE
 
-    %% D-SIGLEGACY → D-PF_CORE: 信号输入（非 P0 契约，内部调用）
+    %% D_SIGLEGACY → D_PF_CORE: 信号输入（非 P0 契约，内部调用）
     D_SIGNAL -->|"Signal<br/>预测信号"| D_PF_CORE
 
-    %% D-RISK → D-PF_CORE: CTR-003 RiskLimits (frozen)
+    %% D_RISK → D_PF_CORE: CTR-003 RiskLimits (frozen)
     D_RISK -->|"🔒 CTR-003<br/>RiskLimits<br/>[frozen]"| D_PF_CORE
 
-    %% D-PF_CORE → D-EX_CORE: CTR-004 Order (mutable)
+    %% D_PF_CORE → D_EX_CORE: CTR-004 Order (mutable)
     D_PF_CORE -->|"🔓 CTR-004<br/>Order<br/>[mutable / 状态机]"| D_EX_CORE
 
-    %% D-EX_CORE → BK: 委托发送
+    %% D_EX_CORE → BK: 委托发送
     D_EX_CORE -->|"REST/FIX<br/>委托发送"| BK
     BK -->|"成交回报"| D_EX_CORE
 
-    %% D-EX_CORE → D-TRADING: CTR-005 Fill (frozen)
+    %% D_EX_CORE → D_TRADING: CTR-005 Fill (frozen)
     D_EX_CORE -->|"🔒 CTR-005<br/>Fill<br/>[frozen]"| D_TRADING
 
-    %% D-EX_CORE → D-RISK: CTR-006 PositionSnapshot (frozen) — 风控监控
+    %% D_EX_CORE → D_RISK: CTR-006 PositionSnapshot (frozen) — 风控监控
     D_EX_CORE -->|"🔒 CTR-006<br/>PositionSnapshot<br/>[frozen]"| D_RISK
 
-    %% D-TRADING → D-RISK: CTR-006 PositionSnapshot (frozen) — 复盘后风险更新
+    %% D_TRADING → D_RISK: CTR-006 PositionSnapshot (frozen) — 复盘后风险更新
     D_TRADING -->|"🔒 CTR-006<br/>PositionSnapshot<br/>[frozen]"| D_RISK
 
-    %% D-TRADING → D-ML_TRAIN: CTR-006 PositionSnapshot (frozen) — 战略决策
+    %% D_TRADING → D_ML_TRAIN: CTR-006 PositionSnapshot (frozen) — 战略决策
     D_TRADING -->|"🔒 CTR-006<br/>PositionSnapshot<br/>[frozen]"| D_ML_TRAIN
 
-    %% D-TRADING → D_OPS: 绩效指标上报
+    %% D_TRADING → D_OPS: 绩效指标上报
     D_TRADING -->|"PnL / Risk Metrics<br/>绩效与风险指标"| D_OPS
 
-    %% D-ML_TRAIN → D-FACTOR: 模型预测反馈
+    %% D_ML_TRAIN → D_FACTOR: 模型预测反馈
     D_ML_TRAIN -->|"ModelPrediction<br/>模型预测"| D_FACTOR
 
-    %% D-ML_TRAIN → D-PF_CORE: 模型预测反馈
+    %% D_ML_TRAIN → D_PF_CORE: 模型预测反馈
     D_ML_TRAIN -->|"ModelPrediction<br/>模型预测"| D_PF_CORE
 
-    %% D-RISK → D_OPS: 风险指标上报
+    %% D_RISK → D_OPS: 风险指标上报
     D_RISK -->|"Risk Metrics<br/>风险指标"| D_OPS
 
     %% 样式定义
@@ -290,8 +290,8 @@ flowchart TD
     %% ── D_SHARED 基础设施 (cross-cutting) ────────────────────────
     D_SHARED["D_SHARED · 基础设施 / Infrastructure<br/>config · logging · exceptions · runtime<br/>配置 · 日志 · 异常 · 运行时<br/>⟵ 所有域依赖，省略连线"]
 
-    %% ── D-FACTOR 因子 ─────────────────────────────────────────────
-    subgraph D_FACTOR["D-FACTOR · 因子 / Alpha Factor"]
+    %% ── D_FACTOR 因子 ─────────────────────────────────────────────
+    subgraph D_FACTOR["D_FACTOR · 因子 / Alpha Factor"]
         FAC_BASE["FactorBase<br/>因子基类契约 🔒"]
         FAC_REG["FactorRegistry<br/>因子注册表 🔒"]
         FAC_FACTORS["factors/<br/>具体因子实现<br/>(可扩展 ∞)"]
@@ -299,23 +299,23 @@ flowchart TD
         FAC_PIPE["pipeline/<br/>因子计算流水线"]
     end
 
-    %% ── D-SIGLEGACY 信号 ─────────────────────────────────────────────
-    subgraph D_SIGNAL["D-SIGLEGACY · 信号 / Signal Generation"]
+    %% ── D_SIGLEGACY 信号 ─────────────────────────────────────────────
+    subgraph D_SIGNAL["D_SIGLEGACY · 信号 / Signal Generation"]
         SIG_SENT["sentiment/<br/>舆情分析"]
         SIG_SIG["signals/<br/>复合信号构建"]
         SIG_PRED["predictions/<br/>预测模型推理"]
     end
 
-    %% ── D-RISK 风控 ───────────────────────────────────────────────
-    subgraph D_RISK["D-RISK · 风控 / Risk Management"]
+    %% ── D_RISK 风控 ───────────────────────────────────────────────
+    subgraph D_RISK["D_RISK · 风控 / Risk Management"]
         RISK_METRICS["metrics/<br/>VaR · CVaR · 回撤 · Beta"]
         RISK_LIMITS["limits/<br/>持仓限额执行"]
         RISK_SL["stop_loss/<br/>止损触发"]
         RISK_MON["monitor/<br/>实时风险监控"]
     end
 
-    %% ── D-PF_CORE 组合核心 ────────────────────────────────────────
-    subgraph D_PF_CORE["D-PF_CORE · 组合核心 / Portfolio Construction"]
+    %% ── D_PF_CORE 组合核心 ────────────────────────────────────────
+    subgraph D_PF_CORE["D_PF_CORE · 组合核心 / Portfolio Construction"]
         PF_BASE["StrategyBase<br/>策略基类契约 🔒"]
         PF_REG["StrategyRegistry<br/>策略注册表 🔒"]
         PF_STRATS["strategies/<br/>具体策略实现<br/>(可扩展 ∞)"]
@@ -324,8 +324,8 @@ flowchart TD
         PF_BT["backtest/<br/>事件驱动回测引擎"]
     end
 
-    %% ── D-EX_CORE 执行核心 ───────────────────────────────────────
-    subgraph D_EX_CORE["D-EX_CORE · 执行核心 / Trade Execution"]
+    %% ── D_EX_CORE 执行核心 ───────────────────────────────────────
+    subgraph D_EX_CORE["D_EX_CORE · 执行核心 / Trade Execution"]
         EX_PT["pre_trade/<br/>执行前风控"]
         EX_OMS["oms/<br/>委托生命周期 OMS"]
         EX_SOR["sor/<br/>智能路由 SOR"]
@@ -333,8 +333,8 @@ flowchart TD
         EX_ADP["adapters/<br/>具体券商适配器<br/>(可扩展 ∞)"]
     end
 
-    %% ── D-TRADING 交易运营 ────────────────────────────────────────
-    subgraph D_TRADING["D-TRADING · 交易运营 / Post-Trade Analytics"]
+    %% ── D_TRADING 交易运营 ────────────────────────────────────────
+    subgraph D_TRADING["D_TRADING · 交易运营 / Post-Trade Analytics"]
         TRD_ATTR["attribution/<br/>绩效归因"]
         TRD_REV["review/<br/>执行质量 TCA · 滑点"]
         TRD_RPT["reports/<br/>报告生成"]
@@ -347,14 +347,14 @@ flowchart TD
         FE_NOTIF["notifications/<br/>飞书 · 告警分发"]
     end
 
-    %% ── D-COMPLIANCE 合规 (横切) ─────────────────────────────────
-    D_COMPLIANCE["D-COMPLIANCE · 合规 / Governance & Compliance<br/>合规校验 · 审计痕迹 · 规则引擎<br/>⟵ 横向贯穿所有业务域"]
+    %% ── D_COMPLIANCE 合规 (横切) ─────────────────────────────────
+    D_COMPLIANCE["D_COMPLIANCE · 合规 / Governance & Compliance<br/>合规校验 · 审计痕迹 · 规则引擎<br/>⟵ 横向贯穿所有业务域"]
 
-    %% ── D-INTELLIGENCE 战略决策 ───────────────────────────────────
-    D_INTELLIGENCE["D-INTELLIGENCE · 战略决策 / Strategic Decision<br/>长期配置 · 决策支持 · 战略报告<br/>⟵ 消费所有域输出"]
+    %% ── D_INTELLIGENCE 战略决策 ───────────────────────────────────
+    D_INTELLIGENCE["D_INTELLIGENCE · 战略决策 / Strategic Decision<br/>长期配置 · 决策支持 · 战略报告<br/>⟵ 消费所有域输出"]
 
-    %% ── AI Agent Ops (D-INTELLIGENCE + D_AUTONOMY_CORE) ──────────
-    AI_OPS["AI Agent Ops<br/>D-INTELLIGENCE + D_AUTONOMY_CORE<br/>LLM 调用 · 记忆 · 实验研究"]
+    %% ── AI Agent Ops (D_INTELLIGENCE + D_AUTONOMY_CORE) ──────────
+    AI_OPS["AI Agent Ops<br/>D_INTELLIGENCE + D_AUTONOMY_CORE<br/>LLM 调用 · 记忆 · 实验研究"]
 
     %% ══════════════════════════════════════════════════════════════
     %% DATA FLOW EDGES — 主流数据流（含 P0 跨域数据契约标注）
@@ -468,13 +468,13 @@ graph TD
     subgraph HOST["Host Machine（当前：Windows / 计划：Linux）"]
         subgraph MAIN["ZephyrAlpha Main Process (Python)"]
             direction TB
-            D_MKT_DATA["D_MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D-FACTOR<br/>因子"]
-            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGLEGACY<br/>信号"]
-            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_RISK["D-RISK<br/>风控"]
-            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_PF_CORE["D-PF_CORE<br/>组合"]
+            D_MKT_DATA["D_MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D_FACTOR<br/>因子"]
+            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D_SIGLEGACY<br/>信号"]
+            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_RISK["D_RISK<br/>风控"]
+            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_PF_CORE["D_PF_CORE<br/>组合"]
             D_RISK -->|"🔒 CTR-003<br/>RiskLimits"| D_PF_CORE
-            D_PF_CORE -->|"🔓 CTR-004<br/>Order"| D_EX_CORE["D-EX_CORE<br/>执行"]
-            D_EX_CORE -->|"🔒 CTR-005<br/>Fill + 🔒 CTR-006<br/>PositionSnapshot"| D_TRADING["D-TRADING<br/>交易运营"]
+            D_PF_CORE -->|"🔓 CTR-004<br/>Order"| D_EX_CORE["D_EX_CORE<br/>执行"]
+            D_EX_CORE -->|"🔒 CTR-005<br/>Fill + 🔒 CTR-006<br/>PositionSnapshot"| D_TRADING["D_TRADING<br/>交易运营"]
             D_TRADING -->|"Report"| D_FRONTEND["D_FRONTEND<br/>前端"]
         end
         subgraph STORAGE["Local Storage"]
@@ -513,15 +513,15 @@ def write_capability_heatmap_visual(stats):
     # 10能力域定义
     capability_domains = [
         ("数据接入", ["D_MKT_DATA", "D_ALT_DATA", "D_DATA_ENG"]),
-        ("因子研究", ["D-FACTOR", "D-SIGLEGACY", "D-FUNDAMENTAL_SIGNAL", "D-ASHARE_SIGNAL", "D-SIGQC"]),
-        ("策略决策", ["D-PF_CORE", "D-PF_ALLOC", "D-SELL_DECISION", "D-CROSS_ASSET"]),
-        ("执行交易", ["D-EX_CORE", "D-EX_SOR", "D-TRADING", "D-POSITION"]),
-        ("风险控制", ["D-RISK", "D-COMPLIANCE"]),
-        ("回测仿真", ["D-BACKTEST", "D-SIMULATION", "D-EXEC_SIM", "D-DIGITAL_TWIN"]),
-        ("ML平台", ["D-ML_TRAIN", "D-ML_SERVE"]),
-        ("治理(横切)", ["D-GOVERNANCE", "D-GOV_RULE", "D-GOV_AUDIT", "D-GOV_DRIFT"]),
-        ("安全(横切)", ["D_SECURITY", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D-AUTONOMY_PERM"]),
-        ("基础设施(横切)", ["D_INFRA_OPS", "D_INFRA_RUNTIME", "D_INTEGRATION", "D_SHARED", "D_FRONTEND", "D_REPORTING", "D-KNOWLEDGE", "D-INTELLIGENCE", "D_AUTONOMY_CORE", "D_OPS"]),
+        ("因子研究", ["D_FACTOR", "D_SIGLEGACY", "D_FUNDAMENTAL_SIGNAL", "D_ASHARE_SIGNAL", "D_SIGQC"]),
+        ("策略决策", ["D_PF_CORE", "D_PF_ALLOC", "D_SELL_DECISION", "D_CROSS_ASSET"]),
+        ("执行交易", ["D_EX_CORE", "D_EX_SOR", "D_TRADING", "D_POSITION"]),
+        ("风险控制", ["D_RISK", "D_COMPLIANCE"]),
+        ("回测仿真", ["D_BACKTEST", "D_SIMULATION", "D_EXEC_SIM", "D_DIGITAL_TWIN"]),
+        ("ML平台", ["D_ML_TRAIN", "D_ML_SERVE"]),
+        ("治理(横切)", ["D_GOVERNANCE", "D_GOV_RULE", "D_GOV_AUDIT", "D_GOV_DRIFT"]),
+        ("安全(横切)", ["D_SECURITY", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D_AUTONOMY_PERM"]),
+        ("基础设施(横切)", ["D_INFRA_OPS", "D_INFRA_RUNTIME", "D_INTEGRATION", "D_SHARED", "D_FRONTEND", "D_REPORTING", "D_KNOWLEDGE", "D_INTELLIGENCE", "D_AUTONOMY_CORE", "D_OPS"]),
     ]
 
     def maturity_label(did):
@@ -590,15 +590,15 @@ C4Container
     System_Boundary(zephyr, "ZephyrAlpha 2.0") {
         Container(data_pipeline, "Data Pipeline", "Python / D_MKT_DATA", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
 
-        Container(factor_engine, "Factor Engine", "Python / D-FACTOR+D-SIGLEGACY", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
+        Container(factor_engine, "Factor Engine", "Python / D_FACTOR+D_SIGLEGACY", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
 
-        Container(risk_engine, "Risk Engine", "Python / D-RISK", "Risk measurement,<br/>limits enforcement<br/>风险度量、限额执行")
+        Container(risk_engine, "Risk Engine", "Python / D_RISK", "Risk measurement,<br/>limits enforcement<br/>风险度量、限额执行")
 
-        Container(portfolio_engine, "Portfolio Engine", "Python / D-PF_CORE", "Portfolio optimization,<br/>backtesting<br/>组合优化、回测")
+        Container(portfolio_engine, "Portfolio Engine", "Python / D_PF_CORE", "Portfolio optimization,<br/>backtesting<br/>组合优化、回测")
 
-        Container(execution_engine, "Execution Engine", "Python / D-EX_CORE", "OMS, SOR,<br/>order routing<br/>OMS、SOR、委托路由")
+        Container(execution_engine, "Execution Engine", "Python / D_EX_CORE", "OMS, SOR,<br/>order routing<br/>OMS、SOR、委托路由")
 
-        Container(analytics, "Post-Trade Analytics", "Python / D-TRADING", "Performance attribution,<br/>reporting<br/>绩效归因、报告")
+        Container(analytics, "Post-Trade Analytics", "Python / D_TRADING", "Performance attribution,<br/>reporting<br/>绩效归因、报告")
 
         Container(ai_ops, "AI Agent Ops", "Python / D_FRONTEND + D_AUTONOMY_CORE", "Agent rules, memory,<br/>context management<br/>Agent 规则、记忆、上下文")
 
@@ -617,23 +617,23 @@ C4Container
 
     %% P0 Cross-Domain Contracts / 跨域数据契约承重墙
     %% 契约真源: cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D-FACTOR
+    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D_FACTOR
     Rel(data_pipeline, factor_engine, "CTR-001<br/>NormalizedMarketData<br/>[frozen]", "标准化行情数据")
 
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
+    %% CTR-002: FactorSignal (frozen) — D_FACTOR → D_SIGLEGACY/D_RISK/D_PF_CORE
     Rel(factor_engine, risk_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
     Rel(factor_engine, portfolio_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
 
-    %% CTR-003: RiskLimits (frozen) — D-RISK → D-PF_CORE
+    %% CTR-003: RiskLimits (frozen) — D_RISK → D_PF_CORE
     Rel(risk_engine, portfolio_engine, "CTR-003<br/>RiskLimits<br/>[frozen]", "风险限额")
 
-    %% CTR-004: Order (mutable) — D-PF_CORE → D-EX_CORE
+    %% CTR-004: Order (mutable) — D_PF_CORE → D_EX_CORE
     Rel(portfolio_engine, execution_engine, "CTR-004<br/>Order<br/>[mutable]", "委托指令")
 
-    %% CTR-005: Fill (frozen) — D-EX_CORE → D-TRADING
+    %% CTR-005: Fill (frozen) — D_EX_CORE → D_TRADING
     Rel(execution_engine, analytics, "CTR-005<br/>Fill<br/>[frozen]", "成交回报")
 
-    %% CTR-006: PositionSnapshot (frozen) — D-EX_CORE/D-TRADING → D-RISK/D-ML_TRAIN
+    %% CTR-006: PositionSnapshot (frozen) — D_EX_CORE/D_TRADING → D_RISK/D_ML_TRAIN
     Rel(execution_engine, risk_engine, "CTR-006<br/>PositionSnapshot<br/>[frozen]", "持仓快照")
 
     Rel(execution_engine, broker, "Routes orders", "发送委托")
@@ -685,7 +685,7 @@ C4Component
 
     Container_Ext(shared_contracts, "D_SHARED/contracts/", "Python / canonical schema", "Instrument / Bar / Tick / CorporateAction / FundamentalSnapshot")
 
-    Container_Ext(d_factor, "D-FACTOR 因子", "Python / D-FACTOR/", "因子消费侧（通过 IDataSource）")
+    Container_Ext(d_factor, "D_FACTOR 因子", "Python / D_FACTOR/", "因子消费侧（通过 IDataSource）")
 
     System_Ext(vendor_ext, "External Vendors", "iFinD / Tushare / AKShare / Polygon / ...")
 
@@ -719,14 +719,14 @@ C4Component
 def write_c4_l3_trade_execution():
     content = HEADER + """
 %%{init: {'theme': 'default'}}%%
-%% v2.0.0: L06 Trade Execution → D-EX_CORE 执行核心域组件
+%% v2.0.0: L06 Trade Execution → D_EX_CORE 执行核心域组件
 %% 文件名保留l06前缀以兼容现有引用
 
 C4Component
-    title C4 Level 3 — D-EX_CORE 执行核心域组件
-    title (D-EX_CORE 执行域组件分解 / H5)
+    title C4 Level 3 — D_EX_CORE 执行核心域组件
+    title (D_EX_CORE 执行域组件分解 / H5)
 
-    Container_Boundary(d_ex_core, "D-EX_CORE 执行核心 / Trade Execution (depgraph.db派生)") {
+    Container_Boundary(d_ex_core, "D_EX_CORE 执行核心 / Trade Execution (depgraph.db派生)") {
 
         Component(broker_interface, "IBroker Interface", "Python / broker_interface.py", "🔒 BrokerInterface 抽象契约（锁死）：submit / cancel / query_status / stream_fills / get_positions")
 
@@ -736,7 +736,7 @@ C4Component
 
         Component(sor, "SOR — Smart Order Router", "Python / sor.py", "多 broker 路由决策：按 fee / 流动性 / 接入状态选 broker；接入 §8 failover")
 
-        Component(pre_trade_risk_proxy, "Pre-Trade Risk Proxy", "Python / pre_trade_proxy.py", "风控代理（调用 D-RISK）：单订单阈值 + 组合级校验 ≤1s 延迟（SLO-3）")
+        Component(pre_trade_risk_proxy, "Pre-Trade Risk Proxy", "Python / pre_trade_proxy.py", "风控代理（调用 D_RISK）：单订单阈值 + 组合级校验 ≤1s 延迟（SLO-3）")
 
         Boundary(adapters, "adapters/ Broker 扩展区") {
             Component(sim_adapter, "Simulation Adapter", "Python / adapters/simulation_adapter.py", "当前阶段默认：本地撮合模拟，实现 IBroker")
@@ -744,18 +744,18 @@ C4Component
             Component(broker_xxx, "Real Broker Adapter", "Python / adapters/broker_{vendor}.py", "Post-Activation 激活：各家券商 SDK 实现 IBroker（Interactive Brokers / 华泰 / 中信 / ...）")
         }
 
-        Component(fill_handler, "Fill Handler", "Python / fill_handler.py", "成交回报消费：写 audit journal（RPO=0）+ 更新 positions + 触发 D-TRADING")
+        Component(fill_handler, "Fill Handler", "Python / fill_handler.py", "成交回报消费：写 audit journal（RPO=0）+ 更新 positions + 触发 D_TRADING")
 
         Component(position_tracker, "Position Tracker", "Python / positions.py", "实时持仓跟踪：内存缓存 + 定期持久化 + T+1 对账")
     }
 
-    Container_Ext(d_pf_core, "D-PF_CORE 组合核心", "Python / D-PF_CORE/", "订单源：optimizer 输出目标仓位")
+    Container_Ext(d_pf_core, "D_PF_CORE 组合核心", "Python / D_PF_CORE/", "订单源：optimizer 输出目标仓位")
 
-    Container_Ext(d_risk, "D-RISK 风控", "Python / D-RISK/", "pre-trade 实时风控决策")
+    Container_Ext(d_risk, "D_RISK 风控", "Python / D_RISK/", "pre-trade 实时风控决策")
 
-    Container_Ext(d_trading, "D-TRADING 交易运营", "Python / D-TRADING/", "成交后归因 + 对账")
+    Container_Ext(d_trading, "D_TRADING 交易运营", "Python / D_TRADING/", "成交后归因 + 对账")
 
-    Container_Ext(d_compliance, "D-COMPLIANCE 合规", "Python / D-COMPLIANCE/", "合规检查（辖区规则 / 自成交 / 洗售）")
+    Container_Ext(d_compliance, "D_COMPLIANCE 合规", "Python / D_COMPLIANCE/", "合规检查（辖区规则 / 自成交 / 洗售）")
 
     ContainerDb_Ext(audit_journal, "Audit Journal (L2 Log)", "JSONL append-only + Loki", "**零丢失约束**：每笔订单/成交/幂等 key 持久化（DR RPO=0）")
 
@@ -801,14 +801,14 @@ C4Component
 def write_c4_l3_ml_platform():
     content = HEADER + """
 %%{init: {'theme': 'default'}}%%
-%% v2.0.0: L11 ML Platform → D-ML_TRAIN 训练域组件
+%% v2.0.0: L11 ML Platform → D_ML_TRAIN 训练域组件
 %% 文件名保留l11前缀以兼容现有引用
 
 C4Component
-    title C4 Level 3 — D-ML_TRAIN 训练域组件
-    title (D-ML_TRAIN ML平台域组件分解 / H5)
+    title C4 Level 3 — D_ML_TRAIN 训练域组件
+    title (D_ML_TRAIN ML平台域组件分解 / H5)
 
-    Container_Boundary(d_ml_train, "D-ML_TRAIN 训练 / ML Platform (depgraph.db派生)") {
+    Container_Boundary(d_ml_train, "D_ML_TRAIN 训练 / ML Platform (depgraph.db派生)") {
 
         Component(feature_store, "Feature Store", "Python / feature_store/", "特征物化层：按 entity_id × asof_date PIT 对齐；写入供训练、读取供 inference")
 
@@ -825,17 +825,17 @@ C4Component
         Component(shadow_mode, "Shadow / Canary Mode", "Python / deployment/shadow.py", "新模型对比生产模型：影子跑不写下游 / 金丝雀 5-10% 流量")
 
         Boundary(ai_operator_slot, "ai_operator/ 预留口子（OQ-063 C-1）") {
-            Component(ai_op_reserved, "AI Operator Slot", "Python / D-ML_TRAIN/_ai_operator/ (reserved)", "AI Operator 激活口子：OQ-063 P4 未来态，当前为空 skeleton")
+            Component(ai_op_reserved, "AI Operator Slot", "Python / D_ML_TRAIN/_ai_operator/ (reserved)", "AI Operator 激活口子：OQ-063 P4 未来态，当前为空 skeleton")
         }
     }
 
-    Container_Ext(d_factor, "D-FACTOR 因子", "Python / D-FACTOR/", "因子供 feature 来源")
+    Container_Ext(d_factor, "D_FACTOR 因子", "Python / D_FACTOR/", "因子供 feature 来源")
 
     Container_Ext(d_mkt_data, "D_MKT_DATA 行情数据", "Python / D_MKT_DATA/", "原始数据 via IDataSource")
 
-    Container_Ext(d_signal_pf, "D-SIGLEGACY/D-PF_CORE 信号&组合", "Python / D-SIGLEGACY + D-PF_CORE/", "下游推理消费者")
+    Container_Ext(d_signal_pf, "D_SIGLEGACY/D_PF_CORE 信号&组合", "Python / D_SIGLEGACY + D_PF_CORE/", "下游推理消费者")
 
-    Container_Ext(d_intelligence, "D-INTELLIGENCE 战略决策", "Python / D-INTELLIGENCE/", "A/B 实验与批跑研究")
+    Container_Ext(d_intelligence, "D_INTELLIGENCE 战略决策", "Python / D_INTELLIGENCE/", "A/B 实验与批跑研究")
 
     ContainerDb_Ext(artifact_storage, "Model Artifact Storage", "MLflow / 本地 + S3", "模型文件 + training dataset snapshot hash")
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §5
 # [MODULE] scripts.quick_profile
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES]
 # [CONSUMERS] 模型快速画像;岗位匹配
 # [STARTUP] manual

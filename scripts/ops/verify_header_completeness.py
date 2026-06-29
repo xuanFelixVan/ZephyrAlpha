@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/ops/verify_header_completeness.py | §
 # [MODULE] scripts.ops.verify_header_completeness
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance._shared.frontmatter; zephyr.shared.io.paths
 # [CONSUMERS] trae_047 verification flow; manual audit
 # [STARTUP] manual

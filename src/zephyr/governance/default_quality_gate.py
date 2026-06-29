@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
 # [MODULE] zephyr.governance.default_quality_gate
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.quality_gate; zephyr.shared.contracts.errors.data_quality_error
 # [CONSUMERS]
 # [STARTUP] imported

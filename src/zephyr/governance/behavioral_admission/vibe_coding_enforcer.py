@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-024 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.vibe_coding_enforcer
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

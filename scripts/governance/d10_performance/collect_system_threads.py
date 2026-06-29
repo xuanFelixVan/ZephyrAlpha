@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d10_performance/collect_system_threads.py | §
 # [MODULE] scripts.governance.d10_performance.collect_system_threads
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d10_performance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

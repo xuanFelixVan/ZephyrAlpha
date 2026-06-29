@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/kb/self_test.py | §
 # [MODULE] scripts.kb.self_test
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

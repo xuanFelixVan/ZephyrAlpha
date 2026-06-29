@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/patch_p1_paths.py | §
 # [MODULE] scripts.arch_guard._tools.patch_p1_paths
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.arch_guard._tools.inject_idempotency
 # [CONSUMERS]
 # [STARTUP] manual

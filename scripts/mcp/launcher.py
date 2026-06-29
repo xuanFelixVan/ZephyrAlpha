@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
 # [MODULE] scripts.mcp.launcher
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS] zephyr.trading.boot_hooks (MCP 自动启动); zephyr.trading.boot_cron_jobs (_mcp_health_check); scripts.governance.* (健康检查)
 # [STARTUP] manual

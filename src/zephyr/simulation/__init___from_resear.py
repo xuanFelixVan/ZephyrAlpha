@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SIMULATION
 # [MODULE] zephyr.simulation.__init___from_resear
-# [DOMAIN] D-SIMULATION
+# [DOMAIN] D_SIMULATION
 # [DEPENDENCIES] zephyr.simulation.backtest_base; zephyr.simulation.pipeline_base; zephyr.simulation.default_backtest_engine
 # [CONSUMERS]
 # [STARTUP] imported

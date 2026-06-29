@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/d_init_task_system.py | §
 # [MODULE] scripts.construction.d_init_task_system
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo; zephyr.shared.models; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported

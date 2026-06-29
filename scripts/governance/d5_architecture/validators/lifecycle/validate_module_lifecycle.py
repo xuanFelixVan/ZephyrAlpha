@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py | §
 # [MODULE] scripts.governance.d5_architecture.validators.lifecycle.validate_module_lifecycle
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.lifecycle.__init__
 # [CONSUMERS]
 # [STARTUP] manual

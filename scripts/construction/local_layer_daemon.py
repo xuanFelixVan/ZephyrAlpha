@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.construction.local_layer_daemon
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

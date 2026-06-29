@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-028 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.context_recycling
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.context_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

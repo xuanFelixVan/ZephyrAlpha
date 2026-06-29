@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/_sync/fix_orphan_deps.py | §
 # [MODULE] scripts.governance._sync.fix_orphan_deps
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance._sync.check_p0_status
 # [CONSUMERS]
 # [STARTUP] imported

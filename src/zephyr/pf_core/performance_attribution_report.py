@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.performance_attribution_report
-# [DOMAIN] D-PF_CORE
+# [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.performance_attribution_report
 # [CONSUMERS] tests.test_post_trade_analytics
 # [STARTUP] imported

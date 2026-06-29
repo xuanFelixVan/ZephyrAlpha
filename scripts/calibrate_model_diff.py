@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §5
 # [MODULE] scripts.calibrate_model_diff
-# [DOMAIN] D-INTELLIGENCE
+# [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES]
 # [CONSUMERS] CI回归校准;人工模型对比
 # [STARTUP] manual

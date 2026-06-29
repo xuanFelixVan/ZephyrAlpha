@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.drift_bridge
-# [DOMAIN] D-GOV_DRIFT
+# [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] audit-orchestrator.self_monitor(自监控漂移检测)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-EX_CORE
 # [MODULE] zephyr.ex_core.adapters.simulation_broker
-# [DOMAIN] D-EX_CORE
+# [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.simulation_broker
 # [CONSUMERS] tests.integration.test_e2e_pipeline; tests.integration.test_phase_g_perf; tests.integration.test_phase_e_main_flow; tests.unit.test_execution_engine_unit
 # [STARTUP] imported

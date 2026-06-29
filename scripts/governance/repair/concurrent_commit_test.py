@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/repair/concurrent_commit_test.py | §ghost-commit-red-blue
 # [MODULE] scripts.governance.repair.concurrent_commit_test
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual

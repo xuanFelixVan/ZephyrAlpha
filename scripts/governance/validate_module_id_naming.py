@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] scripts.governance.validate_module_id_naming
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] check_naming_convention.py (GATE-11 N-06); apply_depgraph.py (cmd_rename_domain/cmd_insert_domain/NR-002)
 # [STARTUP] imported
@@ -26,12 +26,12 @@ module_id / domain_id 格式校验真源（裁定#208 三轨制）
   - MODULE_ID_DOMAIN_DERIVED_RE: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
   - MODULE_ID_D_PREFIX_RE: D-{DOMAIN}-NNN（如 D-GOVERNANCE-001）
   - MODULE_ID_SHARED_RE: SH-{ABBR}-{NNN}（如 SH-DB-001）
-  - DOMAIN_ID_RE: D-{DOMAIN}（如 D-GOVERNANCE，无序号）
+  - DOMAIN_ID_RE: D-{DOMAIN}（如 D_GOVERNANCE，无序号）
 
 程序化校验（供其他脚本 import）:
   from validate_module_id_naming import is_valid_module_id, is_valid_domain_id
   ok, reason = is_valid_module_id("MOD-INF-005")  # (True, "")
-  ok, reason = is_valid_domain_id("D-GOVERNANCE")  # (True, "")
+  ok, reason = is_valid_domain_id("D_GOVERNANCE")  # (True, "")
 
 注：CLI 手工模式已删除（GATE-11 pre-commit 已自动覆盖同等校验，消除冗余 + 真源分裂）。
     旧式单轨正则 VALID_MODULE_ID_PATTERN / NESTED_ID_PATTERN 一并删除（与三轨正则语义冲突）。
@@ -100,7 +100,7 @@ def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
     真源：本函数是 domain_id 格式校验的唯一责任点，被 apply_depgraph.py 复用。
 
     与 is_valid_module_id 的 D- 轨区别：
-    - domain_id: D-{DOMAIN}（无序号，如 D-GOVERNANCE）
+    - domain_id: D-{DOMAIN}（无序号，如 D_GOVERNANCE）
     - blueprint_id D- 轨: D-{DOMAIN}-NNN（有序号，如 D-GOVERNANCE-001）
 
     Args:
@@ -111,4 +111,4 @@ def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
     """
     if DOMAIN_ID_RE.match(domain_id):
         return True, ""
-    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D-GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"
+    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D_GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"

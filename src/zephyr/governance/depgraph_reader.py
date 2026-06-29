@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.depgraph_reader
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
@@ -33,7 +33,7 @@ depgraph_reader.py — 依赖图数据库查询工具模块
 使用方式：
     from zephyr.governance.depgraph_reader import DepgraphReader
     reader = DepgraphReader()
-    nodes = reader.get_nodes_by_domain('D-FACTOR')
+    nodes = reader.get_nodes_by_domain('D_FACTOR')
     edges = reader.get_edges_from_node('some_node_id')
 """
 

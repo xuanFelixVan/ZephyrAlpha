@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain-ml_train/ml-core/blueprint.md
 # [MODULE] zephyr.ml_train.implementations.default_inference_engine
-# [DOMAIN] D-ML_TRAIN
+# [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES] zephyr.ml_train.inference_base; zephyr.ml_train.trainer_base; zephyr.trading.trading_contracts.execution.model_serving_request; zephyr.shared.contracts.experiment.model_serving_response
 # [CONSUMERS]
 # [STARTUP] imported

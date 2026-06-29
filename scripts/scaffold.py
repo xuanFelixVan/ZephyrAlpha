@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/scaffold.py | §
 # [MODULE] scripts.scaffold
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.check_naming_convention; zephyr.infrastructure.__init__; zephyr.integration.mcp.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual

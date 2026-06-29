@@ -38,7 +38,7 @@ FUNC_DOMAIN_MAP = {
     "portfolio": ("orchestration", "D-ORCH", "D-ORCH-PIPELINE_ROUTING"),
     "analytics": ("observability", "D-OBS", "D-OBS-TELEMETRY"),
     "interface": ("infrastructure", "D-INFRA", "D-INFRA-SHARED_SERVICES"),
-    "compliance": ("governance", "D-GOV", "D-GOV-RULE_ENFORCEMENT"),
+    "compliance": ("governance", "D-GOV", "D_GOV_RULE_ENFORCEMENT"),
 }
 
 # 业务层蓝图专用子域映射（MOD-L00 ~ MOD-L13）
@@ -52,7 +52,7 @@ BUSINESS_LAYER_SUBDOMAINS = {
     "MOD-L07-001": ("observability", "D-OBS", "D-OBS-TELEMETRY", "src/zephyr/analytics/"),
     "MOD-L08-001": ("infrastructure", "D-INFRA", "D-INFRA-SHARED_SERVICES", "src/zephyr/frontend/"),
     "MOD-L09-001": ("intelligence", "D-INTEL", "D-INTEL-MODEL_EVALUATION", "src/zephyr/research/"),
-    "MOD-L10-001": ("governance", "D-GOV", "D-GOV-RULE_ENFORCEMENT", "src/zephyr/governance/"),
+    "MOD-L10-001": ("governance", "D-GOV", "D_GOV_RULE_ENFORCEMENT", "src/zephyr/governance/"),
     "MOD-L11-001": ("intelligence", "D-INTEL", "D-INTEL-MODEL_EVALUATION", "src/zephyr/ml_train/"),
     "MOD-L13-001": ("intelligence", "D-INTEL", "D-INTEL-MODEL_EVALUATION", "src/zephyr/simulation/"),
 }
@@ -257,7 +257,7 @@ def match_file_to_domain(rel_path, bp_index, domain_index, bp_domain_map, panora
             "escalation-engine": ("D-RES", "D-RES-ESCALATION"),
             "core": ("D-INFRA", "D-INFRA-TASK_MANAGEMENT"),
             "pipeline": ("D-ORCH", "D-ORCH-PIPELINE_ROUTING"),
-            "gates": ("D-GOV", "D-GOV-RULE_ENFORCEMENT"),
+            "gates": ("D-GOV", "D_GOV_RULE_ENFORCEMENT"),
             "runtime": ("D-INFRA", "D-INFRA-RUNTIME_INTEGRATION"),
             "mcp": ("D-INFRA", "D-INFRA-MCP_SERVERS"),
             "knowledge_base": ("D-DATA", "D-DATA-KNOWLEDGE_MANAGEMENT"),
@@ -269,7 +269,7 @@ def match_file_to_domain(rel_path, bp_index, domain_index, bp_domain_map, panora
             "execution": ("D-ORCH", "D-ORCH-PIPELINE_ROUTING"),
             "analytics": ("D-OBS", "D-OBS-TELEMETRY"),
             "frontend": ("D-INFRA", "D-INFRA-SHARED_SERVICES"),
-            "compliance": ("D-GOV", "D-GOV-RULE_ENFORCEMENT"),
+            "compliance": ("D-GOV", "D_GOV_RULE_ENFORCEMENT"),
             "ml_train": ("D-INTEL", "D-INTEL-MODEL_EVALUATION"),
             "simulation": ("D-INTEL", "D-INTEL-MODEL_EVALUATION"),
             "datasource": ("D-DATA", "D-DATA-CAPACITY_ASSURANCE"),

@@ -5,7 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [TTL] task_bound
 """
 并发红蓝极限对抗测试 — 多 AI 并发执行 git mv 时的防护能力验证。

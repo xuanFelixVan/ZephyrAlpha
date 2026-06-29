@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.circuit_breaker_types
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.ops.circuit_breaker_types
 # [CONSUMERS] zephyr.ops.circuit_breaker_repo
 # [STARTUP] imported

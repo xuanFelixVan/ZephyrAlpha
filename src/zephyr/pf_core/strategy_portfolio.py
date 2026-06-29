@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.pf_core.strategy_portfolio
-# [DOMAIN] D-PF_ALLOC
+# [DOMAIN] D_PF_ALLOC
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported

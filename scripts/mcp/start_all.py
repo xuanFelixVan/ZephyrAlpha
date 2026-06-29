@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/mcp/start_all.py | §
 # [MODULE] scripts.mcp.start_all
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

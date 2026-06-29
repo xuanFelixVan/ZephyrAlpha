@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_pathway_registry.py | §
 # [MODULE] scripts.generate_pathway_registry
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__
 # [CONSUMERS]
 # [STARTUP] manual

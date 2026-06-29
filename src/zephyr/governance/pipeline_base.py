@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/experiment_core/blueprint.md | §
 # [MODULE] zephyr.data.vector_storage.pipeline_base
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.experiment.experiment_result
 # [CONSUMERS]
 # [STARTUP] imported

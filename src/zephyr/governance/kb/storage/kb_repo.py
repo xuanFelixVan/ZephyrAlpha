@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.storage.kb_repo
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.shared.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
@@ -296,7 +296,7 @@ class KbRepo:
         n_results: int = 5,
         score_threshold: float = 0.6,
     ) -> list[RetrievalHit]:
-        from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+        from zephyr.governance.kb.chromadb_init import get_chroma_client
 
         client = get_chroma_client(self._vector_dir)
         try:
@@ -397,7 +397,7 @@ class KbRepo:
         return ""
 
     def _upsert_vector(self, ke_id: str, content: str, rec: KeRecord) -> None:
-        from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+        from zephyr.governance.kb.chromadb_init import get_chroma_client
 
         client = get_chroma_client(self._vector_dir)
         try:
@@ -420,7 +420,7 @@ class KbRepo:
         )
 
     def _delete_vector(self, ke_id: str) -> None:
-        from zephyr.governance.kb.storage.chromadb_init import get_chroma_client
+        from zephyr.governance.kb.chromadb_init import get_chroma_client
 
         client = get_chroma_client(self._vector_dir)
         try:

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance.rate_limiter
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

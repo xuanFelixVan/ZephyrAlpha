@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.transition
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported

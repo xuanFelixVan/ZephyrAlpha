@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.database_manager
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.integration.shared_08.io.paths; zephyr.governance.persistence.audit_schema; zephyr.governance.persistence.query_metrics
 # [CONSUMERS]
 # [STARTUP] imported

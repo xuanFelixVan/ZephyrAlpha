@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.implementations.default_risk_manager_orchestrator
-# [DOMAIN] D-RISK
+# [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager; zephyr.risk.risk_manager_base; zephyr.risk.implementations.default_risk_limits_calculator; zephyr.risk.implementations.default_risk_validator; zephyr.risk.implementations.default_position_limit_checker; zephyr.risk.implementations.default_stop_loss_engine
 # [CONSUMERS]
 # [STARTUP] imported

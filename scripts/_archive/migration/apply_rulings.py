@@ -6,17 +6,17 @@ import yaml
 REGISTRY = "data/asset_index/migration-registry.yaml"
 
 RULINGS = {
-    "src/zephyr/trading-contracts/": ("D-TRADING", "trading_contracts是交易域的合约定义，归D-TRADING"),
+    "src/zephyr/trading-contracts/": ("D_TRADING", "trading_contracts是交易域的合约定义，归D_TRADING"),
     "src/zephyr/health-monitor/": ("D_OPS", "健康监控是运维可观测性的一部分，归D_OPS"),
     "src/zephyr/context-engine/": ("D-AUTONOMY-CORE", "上下文引擎是AI自治核心的子模块，归D-AUTONOMY-CORE"),
     "src/zephyr/agent-spec/": ("D-AUTONOMY-CORE", "Agent规格定义是自治核心的一部分，归D-AUTONOMY-CORE"),
-    "src/zephyr/semantic-auditor/": ("D-GOVERNANCE", "语义审计是治理域的一部分，归D-GOVERNANCE"),
+    "src/zephyr/semantic-auditor/": ("D_GOVERNANCE", "语义审计是治理域的一部分，归D_GOVERNANCE"),
     "src/zephyr/mcp/": ("D_INTEGRATION", "MCP工具集成属于集成域，归D_INTEGRATION"),
     "tests/": ("D-AUTONOMY-CORE", "tests/下无域子目录的测试文件，默认归自治核心（测试框架归属）"),
-    "scripts/temp_audit/": ("D-GOVERNANCE", "临时审计报告归治理域"),
+    "scripts/temp_audit/": ("D_GOVERNANCE", "临时审计报告归治理域"),
     "scripts/reports/": ("D_OPS", "运维报告归运维域"),
-    "scripts/hooks/": ("D-GOVERNANCE", "Git hooks是治理流程的一部分，归D-GOVERNANCE"),
-    "scripts/script_manifest.yaml": ("D-GOVERNANCE", "脚本清单是治理注册表的一部分，归D-GOVERNANCE"),
+    "scripts/hooks/": ("D_GOVERNANCE", "Git hooks是治理流程的一部分，归D_GOVERNANCE"),
+    "scripts/script_manifest.yaml": ("D_GOVERNANCE", "脚本清单是治理注册表的一部分，归D_GOVERNANCE"),
 }
 
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.feedback_bridge
-# [DOMAIN] D-GOV_AUDIT
+# [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.resilience.fallback; zephyr.trading.__init__
 # [CONSUMERS] audit-orchestrator.feedback_policy(策略引擎消费反馈)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.governance.persistence.base_repo
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.base_repo
 # [CONSUMERS] zephyr.governance.query; zephyr.governance.transition; tests.test_db_query
 # [STARTUP] imported
