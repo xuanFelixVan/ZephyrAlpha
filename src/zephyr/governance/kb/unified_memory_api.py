@@ -26,10 +26,8 @@ SRC-0042: Re-export shim → 真源在 kb/storage/unified_memory_api.py
 """
 
 from zephyr.governance.kb.storage.unified_memory_api import (
-    DEFAULT_EMBEDDING_MODELS,
     # 常量
     UNIFIED_COLLECTION,
-    ChromaMemoryBackend,
     InMemoryMemoryBackend,
     # 后端协议与实现
     MemoryBackend,
@@ -47,9 +45,7 @@ from zephyr.governance.kb.storage.unified_memory_api import (
 )
 
 __all__ = [
-    "DEFAULT_EMBEDDING_MODELS",
     "UNIFIED_COLLECTION",
-    "ChromaMemoryBackend",
     "InMemoryMemoryBackend",
     "MemoryBackend",
     "MemoryBackendError",

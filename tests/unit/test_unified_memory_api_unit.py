@@ -32,10 +32,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.integration.shared_08.security.capability import CapabilityDenied, CapabilityRegistry
+from zephyr.shared.security.capability import CapabilityDenied, CapabilityRegistry
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
-    UNIFIED_COLLECTION,
-    ChromaMemoryBackend,
     InMemoryMemoryBackend,
     MemoryBackendError,
     MemoryRecord,
@@ -373,7 +371,7 @@ class TestSearch:
 
 class TestCbacIntegration:
     def test_cbac_allow_passes(self, memory_backend, cbac_yaml, sample_provenance):
-        with patch("zephyr.integration.shared_08.security.capability.CAPABILITIES_YAML_PATH", cbac_yaml):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", cbac_yaml):
             CapabilityRegistry.reset()
             api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=True)
             chunk_id = api.write(topic="kb_topic", content="x", provenance=sample_provenance)
@@ -394,7 +392,7 @@ class TestCbacIntegration:
             ),
             encoding="utf-8",
         )
-        with patch("zephyr.integration.shared_08.capability.CAPABILITIES_YAML_PATH", deny_yaml):
+        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", deny_yaml):
             CapabilityRegistry.reset()
             api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=True)
             with pytest.raises(CapabilityDenied):
@@ -427,101 +425,3 @@ class TestSingleton:
         a = get_unified_memory_api(backend=memory_backend, enforce_capability=False)
         b = get_unified_memory_api(backend=memory_backend, enforce_capability=False, reset=True)
         assert a is not b
-
-
-# ---------------------------------------------------------------------------
-# 8. ChromaMemoryBackend mock
-# ---------------------------------------------------------------------------
-
-
-class TestChromaBackendMock:
-    """通过 mock chroma client 验证 ChromaMemoryBackend 调用契约。"""
-
-    def _make_backend_with_mock(self):
-        backend = ChromaMemoryBackend()
-        # 直接注入 mock collection 跳过真正的 chromadb 初始化
-        mock_col = MagicMock()
-        mock_col.upsert = MagicMock(return_value=None)
-        mock_col.get = MagicMock(
-            return_value={
-                "ids": ["id1"],
-                "documents": ["hello"],
-                "metadatas": [{"topic": "t", "written_at": "2026-04-27", "origin": "M1"}],
-            }
-        )
-        mock_col.query = MagicMock(
-            return_value={
-                "ids": [["id1"]],
-                "distances": [[0.1]],
-                "documents": [["hello"]],
-                "metadatas": [[{"topic": "t", "written_at": "2026-04-27"}]],
-            }
-        )
-        mock_col.count = MagicMock(return_value=1)
-        backend._collection = mock_col  # type: ignore[attr-defined]
-        return backend, mock_col
-
-    def test_write_calls_upsert(self):
-        backend, mock_col = self._make_backend_with_mock()
-        rec = MemoryRecord(
-            chunk_id="id1",
-            topic="t",
-            content="hello",
-            written_at="2026-04-27",
-            metadata={"origin": "M1"},
-        )
-        backend.write(rec)
-        assert mock_col.upsert.call_count == 1
-        args, kwargs = mock_col.upsert.call_args
-        assert kwargs["ids"] == ["id1"]
-        assert kwargs["documents"] == ["hello"]
-        assert kwargs["metadatas"][0]["topic"] == "t"
-
-    def test_list_by_topic_returns_records(self):
-        backend, _ = self._make_backend_with_mock()
-        records = backend.list_by_topic("t", k=5)
-        assert len(records) == 1
-        assert records[0].chunk_id == "id1"
-        assert records[0].topic == "t"
-
-    def test_query_returns_records_with_scores(self):
-        backend, _ = self._make_backend_with_mock()
-        results = backend.query("hello", k=3)
-        assert len(results) == 1
-        # cosine distance 0.1 → score 0.9
-        assert results[0].score == pytest.approx(0.9, rel=1e-3)
-
-    def test_query_below_threshold_filtered(self):
-        backend = ChromaMemoryBackend(score_threshold=0.95)
-        mock_col = MagicMock()
-        mock_col.query = MagicMock(
-            return_value={
-                "ids": [["id1"]],
-                "distances": [[0.1]],  # score = 0.9 < 0.95
-                "documents": [["hello"]],
-                "metadatas": [[{"topic": "t", "written_at": "2026-04-27"}]],
-            }
-        )
-        backend._collection = mock_col  # type: ignore[attr-defined]
-        results = backend.query("hello", k=5)
-        assert results == []
-
-    def test_write_wraps_exception(self):
-        backend, mock_col = self._make_backend_with_mock()
-        mock_col.upsert.side_effect = RuntimeError("disk full")
-        rec = MemoryRecord(chunk_id="id1", topic="t", content="x", written_at="2026-04-27")
-        with pytest.raises(MemoryBackendError):
-            backend.write(rec)
-
-    def test_collection_name_default(self):
-        backend = ChromaMemoryBackend()
-        assert backend._collection_name == UNIFIED_COLLECTION  # type: ignore[attr-defined]
-
-    def test_count_returns_negative_one_on_failure(self):
-        backend = ChromaMemoryBackend()
-        # _collection 未初始化且无 chromadb → ensure 抛出 → count 返回 -1
-        with patch(
-            "zephyr.knowledge.kb.chromadb_init.get_chroma_client",
-            side_effect=RuntimeError("no chromadb"),
-        ):
-            assert backend.count() == -1

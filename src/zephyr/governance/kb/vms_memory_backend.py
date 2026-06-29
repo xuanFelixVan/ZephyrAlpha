@@ -34,7 +34,7 @@ MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE (kb) 统一桥接
 
 降级链
 ------
-VMSMemoryBackend → ChromaMemoryBackend → InMemoryMemoryBackend
+VMSMemoryBackend → InMemoryMemoryBackend
 """
 
 from __future__ import annotations
@@ -123,7 +123,7 @@ class VMSMemoryBackend:
                 return self._fallback.list_by_topic(topic, k)
             collection = self._resolve_collection(topic)
             try:
-                # 先按 topic where 过滤再取 k（与 ChromaMemoryBackend 一致）。
+                # 先按 topic where 过滤再取 k。
                 # 旧实现调 vms.recall(k=k) 取 collection 最近 k 条再过滤，
                 # topic 不在最近 k 条时返回空，导致 recall(topic, 小k) 误报数据丢失。
                 col = self._vms.get_collection(collection)

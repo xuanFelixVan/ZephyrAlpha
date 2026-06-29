@@ -126,29 +126,12 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
 
 
 def _check_chromadb_health(root: Path) -> CheckResult:
-    try:
-        chroma_dir = root / "data" / "chroma"
-        if not chroma_dir.exists():
-            return CheckResult(
-                2,
-                "ChromaDB Health",
-                CheckStatus.WARN,
-                f"ChromaDB directory not found: {chroma_dir}",
-                "运行 bootstrap 自动创建 ChromaDB 持久化目录",
-            )
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client()
-            collections = client.list_collections()
-            count = len(collections)
-            return CheckResult(2, "ChromaDB Health", CheckStatus.PASS, f"{count} collection(s) alive")
-        except ImportError:
-            return CheckResult(
-                2, "ChromaDB Health", CheckStatus.WARN, "chromadb 未安装或不可用", "pip install chromadb"
-            )
-    except Exception as e:
-        return CheckResult(2, "ChromaDB Health", CheckStatus.FAIL, str(e), "检查 ChromaDB 是否正确初始化")
+    return CheckResult(
+        2,
+        "ChromaDB Health",
+        CheckStatus.WARN,
+        "ChromaDB legacy layer removed, using VMS",
+    )
 
 
 def _check_ke_count(root: Path) -> CheckResult:
@@ -257,52 +240,12 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
 
 
 def _check_ghost_scan(root: Path) -> CheckResult:
-    try:
-        know_dir = root / "docs" / "08_knowledge" / "01_raw_intake"
-        if not know_dir.exists():
-            return CheckResult(6, "Ghost Scan", CheckStatus.SKIP, "KE目录不存在")
-        md_ids: set[str] = set()
-        for ke_file in know_dir.glob("ke-*.md"):
-            md_ids.add(ke_file.stem)
-        md_count = len(md_ids)
-        chroma_count = 0
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client()
-            coll = client.get_collection("ke_entries")
-            chroma_count = coll.count()
-        except Exception:
-            pass
-        if chroma_count == 0:
-            return CheckResult(
-                6,
-                "Ghost Scan",
-                CheckStatus.WARN,
-                f"MD: {md_count} KEs, ChromaDB: 0 (未索引)",
-                "运行 bootstrap 触发 ChromaDB 索引",
-            )
-        delta = md_count - chroma_count
-        if delta == 0:
-            return CheckResult(6, "Ghost Scan", CheckStatus.PASS, f"MD={md_count} == ChromaDB={chroma_count}")
-        elif abs(delta) <= 5:
-            return CheckResult(
-                6,
-                "Ghost Scan",
-                CheckStatus.WARN,
-                f"MD={md_count}, ChromaDB={chroma_count} (delta={delta})",
-                "少量差异正常（G1-G5管道在途KE），若持续一周请检查管道健康",
-            )
-        else:
-            return CheckResult(
-                6,
-                "Ghost Scan",
-                CheckStatus.FAIL,
-                f"MD={md_count}, ChromaDB={chroma_count} (delta={delta})",
-                "大幅差异——可能存在管道堵塞或ChromaDB孤向量，运行 reindex",
-            )
-    except Exception as e:
-        return CheckResult(6, "Ghost Scan", CheckStatus.FAIL, str(e))
+    return CheckResult(
+        6,
+        "Ghost Scan",
+        CheckStatus.WARN,
+        "ChromaDB legacy layer removed, using VMS",
+    )
 
 
 def _check_wal_health(root: Path) -> CheckResult:
@@ -330,39 +273,12 @@ def _check_wal_health(root: Path) -> CheckResult:
 
 
 def _check_hnsw_fragmentation(root: Path) -> CheckResult:
-    try:
-        chroma_dir = root / "data" / "chroma"
-        if not chroma_dir.exists():
-            return CheckResult(8, "HNSW Fragmentation", CheckStatus.SKIP, "ChromaDB directory not found")
-        sqlite_files = list(chroma_dir.rglob("*.sqlite3"))
-        if not sqlite_files:
-            return CheckResult(8, "HNSW Fragmentation", CheckStatus.SKIP, "No ChromaDB SQLite files found")
-        total_size = sum(f.stat().st_size for f in sqlite_files)
-        size_mb = total_size / (1024 * 1024)
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client()
-            coll = client.get_collection("ke_entries")
-            entry_count = coll.count()
-        except Exception:
-            entry_count = 0
-        if entry_count == 0:
-            return CheckResult(8, "HNSW Fragmentation", CheckStatus.PASS, "No entries to fragment")
-        bytes_per_entry = total_size / entry_count if entry_count else 0
-        if bytes_per_entry > 4096:
-            return CheckResult(
-                8,
-                "HNSW Fragmentation",
-                CheckStatus.WARN,
-                f"{bytes_per_entry:.0f}B/entry (>{4096} threshold), {entry_count} entries, {size_mb:.1f}MB",
-                "建议运行 reindex 重建HNSW图: python -m zephyr.knowledge.kb.embedding_migrate reindex",
-            )
-        return CheckResult(
-            8, "HNSW Fragmentation", CheckStatus.PASS, f"{bytes_per_entry:.0f}B/entry, {entry_count} entries"
-        )
-    except Exception as e:
-        return CheckResult(8, "HNSW Fragmentation", CheckStatus.FAIL, str(e))
+    return CheckResult(
+        8,
+        "HNSW Fragmentation",
+        CheckStatus.WARN,
+        "ChromaDB legacy layer removed, using VMS",
+    )
 
 
 def _check_freeze_state(root: Path) -> CheckResult:

@@ -36,7 +36,7 @@ UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）
 
 设计原则
 --------
-- **底层切换可替换**：默认 ``ChromaMemoryBackend``；ChromaDB 不可用时降级 ``InMemoryMemoryBackend``
+- **底层切换可替换**：默认 ``InMemoryMemoryBackend``（VMS 不可用时使用）
 - **provenance 强制**：``write()`` 必传 ``WriteTrace``（origin / audit_chain[≥1] / arbitration）
 - **CBAC 集成**：``write()`` 调用 ``capability_check("write_kb", f"unified_memory/{topic}")``
 - **Pydantic v2 frozen**：``WriteTrace`` 一旦构建即不可变（防回填污染）
@@ -74,9 +74,7 @@ from zephyr.governance.kb.storage._backend_protocol import (
 from zephyr.shared.security.capability import capability_check
 
 __all__ = [
-    "DEFAULT_EMBEDDING_MODELS",
     "UNIFIED_COLLECTION",
-    "ChromaMemoryBackend",
     "InMemoryMemoryBackend",
     "MemoryBackend",
     "MemoryBackendError",
@@ -97,12 +95,6 @@ _UTC = UTC
 
 UNIFIED_COLLECTION: str = "unified_memory"
 """ChromaDB 中承载 RI-02 跨模块记忆的集合名（不可变 schema）。"""
-
-DEFAULT_EMBEDDING_MODELS: tuple[str, ...] = (
-    "BAAI/bge-small-zh-v1.5",
-    "sentence-transformers/all-MiniLM-L6-v2",
-)
-"""嵌入模型尝试顺序：中文优先（bge）→ 通用回退（MiniLM）→ Mock（InMemoryBackend）。"""
 
 # ---------------------------------------------------------------------------
 # 异常
@@ -153,204 +145,6 @@ class WriteTrace(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# ChromaMemoryBackend — 默认生产后端
-# ---------------------------------------------------------------------------
-
-
-class ChromaMemoryBackend:
-    """ChromaDB 持久化后端（生产默认）。
-
-    参数
-    ----
-    collection_name
-        ChromaDB collection 名称；默认 ``UNIFIED_COLLECTION``。
-    persist_dir
-        ChromaDB 存储根目录；None 时使用 ``chromadb_init`` 默认值。
-    embedding_models
-        嵌入模型尝试顺序；首个成功加载者生效。
-    score_threshold
-        ``query()`` 的最低相似度阈值（0-1），低于该值不返回。
-    """
-
-    def __init__(
-        self,
-        collection_name: str = UNIFIED_COLLECTION,
-        persist_dir: Any | None = None,
-        embedding_models: tuple[str, ...] = DEFAULT_EMBEDDING_MODELS,
-        score_threshold: float = 0.0,
-    ) -> None:
-        self._collection_name = collection_name
-        self._persist_dir = persist_dir
-        self._embedding_models = embedding_models
-        self._score_threshold = score_threshold
-        self._collection: Any | None = None
-        self._lock = threading.RLock()
-
-    def _ensure_collection(self) -> Any:
-        """惰性初始化 collection；失败时抛 MemoryBackendError。"""
-        with self._lock:
-            if self._collection is not None:
-                return self._collection
-            try:
-                from zephyr.governance.kb.chromadb_init import get_chroma_client
-            except Exception as exc:
-                raise MemoryBackendError(f"chromadb_init import failed: {exc}") from exc
-
-            try:
-                client = get_chroma_client(self._persist_dir)
-            except Exception as exc:
-                raise MemoryBackendError(f"ChromaDB client init failed: {exc}") from exc
-
-            embedding_fn = self._build_embedding_function()
-
-            try:
-                kwargs: dict[str, Any] = {
-                    "name": self._collection_name,
-                    "metadata": {"hnsw:space": "cosine", "schema_version": "1.0.0"},
-                }
-                if embedding_fn is not None:
-                    kwargs["embedding_function"] = embedding_fn
-                if hasattr(client, "get_or_create_collection"):
-                    self._collection = client.get_or_create_collection(**kwargs)
-                else:
-                    try:
-                        self._collection = client.get_collection(name=self._collection_name)
-                    except Exception:
-                        self._collection = client.create_collection(**kwargs)
-            except Exception as exc:
-                raise MemoryBackendError(f"ChromaDB collection init failed: {exc}") from exc
-
-            return self._collection
-
-    def _build_embedding_function(self) -> Any | None:
-        """按 ``DEFAULT_EMBEDDING_MODELS`` 顺序尝试，全部失败时返回 None（使用 ChromaDB 默认）。"""
-        try:
-            from chromadb.utils import embedding_functions  # type: ignore[import-not-found]
-        except Exception:
-            return None
-
-        for model_name in self._embedding_models:
-            try:
-                fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-                    model_name=model_name,
-                )
-                _logger.info("ChromaMemoryBackend embedding model loaded: %s", model_name)
-                return fn
-            except Exception as exc:
-                _logger.warning(
-                    "ChromaMemoryBackend embedding model load failed: %s (%s)",
-                    model_name,
-                    exc,
-                )
-                continue
-        return None
-
-    def write(self, record: MemoryRecord) -> str:
-        col = self._ensure_collection()
-        try:
-            col.upsert(
-                ids=[record.chunk_id],
-                documents=[record.content],
-                metadatas=[
-                    _flatten_metadata({"topic": record.topic, "written_at": record.written_at, **record.metadata})
-                ],
-            )
-        except Exception as exc:
-            raise MemoryBackendError(f"ChromaDB upsert failed: {exc}") from exc
-        return record.chunk_id
-
-    def list_by_topic(self, topic: str, k: int) -> list[MemoryRecord]:
-        col = self._ensure_collection()
-        try:
-            raw = col.get(where={"topic": topic})
-        except Exception as exc:
-            raise MemoryBackendError(f"ChromaDB get failed: {exc}") from exc
-
-        ids = raw.get("ids") or []
-        docs = raw.get("documents") or []
-        metas = raw.get("metadatas") or []
-        records: list[MemoryRecord] = []
-        for chunk_id, doc, meta in zip(ids, docs, metas, strict=False):
-            meta = meta or {}
-            records.append(
-                MemoryRecord(
-                    chunk_id=chunk_id,
-                    topic=str(meta.get("topic", topic)),
-                    content=doc or "",
-                    score=1.0,
-                    written_at=str(meta.get("written_at", "")),
-                    metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
-                )
-            )
-        records.sort(key=lambda r: r.written_at, reverse=True)
-        return records[: max(0, k)]
-
-    def query(
-        self,
-        query_text: str,
-        k: int,
-        topic: str | None = None,
-    ) -> list[MemoryRecord]:
-        col = self._ensure_collection()
-        where = {"topic": topic} if topic is not None else None
-        try:
-            raw = col.query(
-                query_texts=[query_text],
-                n_results=max(1, k),
-                where=where,
-            )
-        except Exception as exc:
-            raise MemoryBackendError(f"ChromaDB query failed: {exc}") from exc
-
-        if not raw.get("ids") or not raw["ids"][0]:
-            return []
-        ids = raw["ids"][0]
-        distances = raw["distances"][0] if raw.get("distances") else [0.0] * len(ids)
-        docs = raw["documents"][0] if raw.get("documents") else [""] * len(ids)
-        metas = raw["metadatas"][0] if raw.get("metadatas") else [{}] * len(ids)
-
-        records: list[MemoryRecord] = []
-        for chunk_id, dist, doc, meta in zip(ids, distances, docs, metas, strict=False):
-            meta = meta or {}
-            score = max(0.0, min(1.0, 1.0 - float(dist)))
-            if score < self._score_threshold:
-                continue
-            records.append(
-                MemoryRecord(
-                    chunk_id=chunk_id,
-                    topic=str(meta.get("topic", topic or "")),
-                    content=doc or "",
-                    score=round(score, 4),
-                    written_at=str(meta.get("written_at", "")),
-                    metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
-                )
-            )
-        return records
-
-    def count(self) -> int:
-        try:
-            col = self._ensure_collection()
-            return int(col.count())
-        except Exception:
-            return -1
-
-
-def _flatten_metadata(meta: dict[str, Any]) -> dict[str, Any]:
-    """ChromaDB metadata 仅接受 str/int/float/bool；将 list/dict 序列化为 CSV/JSON。"""
-    flat: dict[str, Any] = {}
-    for key, val in meta.items():
-        if val is None:
-            continue
-        if isinstance(val, (str, int, float, bool)):
-            flat[key] = val
-        elif isinstance(val, (list, tuple)):
-            flat[key] = ",".join(str(x) for x in val)
-        else:
-            flat[key] = str(val)
-    return flat
-
-
-# ---------------------------------------------------------------------------
 # UnifiedMemoryAPI — 三件套公开接口
 # ---------------------------------------------------------------------------
 
@@ -371,8 +165,7 @@ class UnifiedMemoryAPI:
     参数
     ----
     backend
-        ``MemoryBackend`` 实例；默认惰性构建 ``ChromaMemoryBackend``；
-        ChromaDB 不可用时调用方可传入 ``InMemoryMemoryBackend``。
+        ``MemoryBackend`` 实例；默认惰性构建 ``InMemoryMemoryBackend``。
     enforce_capability
         是否启用 CBAC 校验；默认 True。
         测试可传 False 避免依赖 ``capabilities.yaml`` 中的 ``write_kb`` 规则。
@@ -384,7 +177,7 @@ class UnifiedMemoryAPI:
         *,
         enforce_capability: bool = True,
     ) -> None:
-        self._backend: MemoryBackend = backend or ChromaMemoryBackend()
+        self._backend: MemoryBackend = backend or InMemoryMemoryBackend()
         self._enforce_cbac = enforce_capability
 
     @property
@@ -555,7 +348,7 @@ def get_unified_memory_api(
         强制重建单例（仅测试使用）。
     prefer_vms
         当 backend=None 时是否优先使用 VMS 后端；默认 True。
-        VMS 不可用时自动降级到 ChromaMemoryBackend。
+        VMS 不可用时自动降级到 InMemoryMemoryBackend。
     """
     global _singleton_api
     with _singleton_lock:

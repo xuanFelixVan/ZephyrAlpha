@@ -415,16 +415,6 @@ class KnowledgeBaseServer(BaseMCPServer):
         try:
             from zephyr.shared.registry import ServiceRegistry
 
-            if ServiceRegistry.is_registered("chromadb_client"):
-                client = ServiceRegistry.get("chromadb_client")
-                client.list_collections()
-                chromadb_ok = True
-        except Exception:
-            pass
-
-        try:
-            from zephyr.shared.registry import ServiceRegistry
-
             if ServiceRegistry.is_registered("vector-memory"):
                 vms_status = "available"
         except Exception:

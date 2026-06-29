@@ -409,15 +409,6 @@ class KnowledgeBaseServer(BaseMCPServer):
         kb_api_count = -1
 
         try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client()
-            client.list_collections()
-            chromadb_ok = True
-        except Exception:
-            pass
-
-        try:
             vms_status = "available"
         except Exception:
             pass

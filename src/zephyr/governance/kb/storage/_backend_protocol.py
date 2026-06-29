@@ -63,7 +63,7 @@ class MemoryRecord(BaseModel):
 
 @runtime_checkable
 class MemoryBackend(Protocol):
-    """Memory backend protocol; ChromaMemoryBackend / InMemoryMemoryBackend / VMSMemoryBackend implement this."""
+    """Memory backend protocol; InMemoryMemoryBackend / VMSMemoryBackend implement this."""
 
     def write(self, record: MemoryRecord) -> str: ...  # pragma: no cover - Protocol
 

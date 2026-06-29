@@ -73,14 +73,6 @@ def register_services() -> None:
 
     ServiceRegistry.register("vector-memory", _make_vector_memory)
 
-    # chromadb_client — ChromaDB client
-    def _make_chromadb_client() -> Any:
-        from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-        return get_chroma_client()
-
-    ServiceRegistry.register("chromadb_client", _make_chromadb_client)
-
     # reranker — Reranker instance
     def _make_reranker() -> Any:
         from zephyr.governance.kb.reranker import Reranker

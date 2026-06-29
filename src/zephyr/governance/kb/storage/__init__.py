@@ -5,6 +5,5 @@
 
 __all__ = [
     "_backend_protocol",
-    "graph_validator",
     "unified_memory_api",
 ]

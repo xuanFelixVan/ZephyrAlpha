@@ -3,4 +3,4 @@
 # [TTL] task_bound
 """kb.migration — auto-generated package init."""
 
-__all__ = ["embedding_migrate", "kb_gate_task"]
+__all__ = ["kb_gate_task"]

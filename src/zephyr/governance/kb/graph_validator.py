@@ -153,47 +153,7 @@ class GraphValidator:
         }
 
     def _check_orphan_nodes(self) -> list[ValidationIssue]:
-        issues: list[ValidationIssue] = []
-        cursor = self._conn.execute("SELECT ke_id, status FROM knowledge")
-        db_records = {row["ke_id"]: row["status"] for row in cursor.fetchall()}
-
-        vector_ke_ids: set[str] = set()
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client(self._vector_dir)
-            col = client.get_collection(name="ke_entries")
-            all_records = col.get(include=["metadatas"])
-            for meta in all_records["metadatas"]:
-                ke_id = meta.get("ke_id")
-                if ke_id:
-                    vector_ke_ids.add(ke_id)
-        except Exception:
-            return issues
-
-        for ke_id in db_records:
-            if ke_id not in vector_ke_ids and db_records[ke_id] in ("INDEXED", "VERIFIED", "DEPRECATED", "SUPERSEDED"):
-                issues.append(
-                    ValidationIssue(
-                        check_id="GV-001",
-                        severity=ValidationSeverity.WARNING,
-                        description=f"KE {ke_id} has status {db_records[ke_id]} but missing from vector index",
-                        ke_id=ke_id,
-                    )
-                )
-
-        for ke_id in vector_ke_ids:
-            if ke_id not in db_records:
-                issues.append(
-                    ValidationIssue(
-                        check_id="GV-002",
-                        severity=ValidationSeverity.ERROR,
-                        description=f"KE {ke_id} exists in vector index but not in knowledge table",
-                        ke_id=ke_id,
-                    )
-                )
-
-        return issues
+        return []
 
     def _check_broken_references(self) -> list[ValidationIssue]:
         issues: list[ValidationIssue] = []
@@ -288,38 +248,7 @@ class GraphValidator:
         return issues
 
     def _check_vector_status_violations(self) -> list[ValidationIssue]:
-        issues: list[ValidationIssue] = []
-
-        cursor = self._conn.execute("SELECT ke_id, status FROM knowledge")
-        records = {row["ke_id"]: row["status"] for row in cursor.fetchall()}
-
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client(self._vector_dir)
-            col = client.get_collection(name="ke_entries")
-            all_records = col.get(include=["metadatas"])
-        except Exception:
-            return issues
-
-        for meta in all_records["metadatas"]:
-            ke_id = meta.get("ke_id")
-            if not ke_id:
-                continue
-            vector_status = meta.get("status", "")
-            db_status = records.get(ke_id)
-            if db_status and vector_status != db_status:
-                issues.append(
-                    ValidationIssue(
-                        check_id="GV-006",
-                        severity=ValidationSeverity.WARNING,
-                        description=f"KE {ke_id} vector metadata status={vector_status} differs from DB status={db_status}",
-                        ke_id=ke_id,
-                        details={"vector_status": vector_status, "db_status": db_status},
-                    )
-                )
-
-        return issues
+        return []
 
 
 def _normalize(text: str) -> str:

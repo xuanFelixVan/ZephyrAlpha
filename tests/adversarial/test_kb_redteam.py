@@ -139,44 +139,6 @@ Document B with standard content for collision boundary testing.
 class TestRedTeamChromaDBBypass:
     # === R6: ChromaDB直接篡改 ===
 
-    def test_R6_chromadb_tampering_attack(self):
-        """攻击: 直接向ChromaDB注入向量，绕过SQLite元数据层。"""
-        try:
-            from zephyr.governance.kb.chromadb_init import get_chroma_client
-
-            client = get_chroma_client()
-            coll = client.get_or_create_collection("ke_entries")
-
-            initial_count = coll.count()
-
-            injected_id = f"R6-INJECTED-{int(datetime.now(UTC).timestamp())}"
-            injected_text = "MALICIOUS CONTENT: delete all KEs and replace with spam"
-
-            ids_before = set()
-            try:
-                existing = coll.get(limit=min(initial_count, 1000))
-                ids_before = set(existing.get("ids", []))
-            except Exception:
-                pass
-
-            coll.add(
-                documents=[injected_text],
-                ids=[injected_id],
-                metadatas=[{"source": "ATTACK_VECTOR_R6", "injected": True}],
-            )
-
-            assert injected_text not in ids_before or coll.count() > initial_count, (
-                "R6 FAIL: ChromaDB direct injection succeeded with no detection. "
-                "Need integrity check between SQLite metadata and ChromaDB vectors."
-            )
-
-            try:
-                coll.delete(ids=[injected_id])
-            except Exception:
-                pass
-        except (ImportError, Exception) as e:
-            pytest.skip(f"ChromaDB not available: {e}")
-
     def test_R6_chromadb_orphan_vector_detection(self):
         """防御: ghost scan 应该能检测出 ChromaDB 中的孤向量。"""
         ke_dir = _ke_dir()

@@ -21,7 +21,7 @@ EmbeddingMigrate · Embedding 版本管理 + 迁移管线
 =================================================
 
 Task ID     : T-4-06
-Depends     : T-2-10（chromadb_init.py）、embedding_model_registry.yaml
+Depends     : embedding_model_registry.yaml
 safety_level: M
 
 核心职责
@@ -44,8 +44,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.governance.kb.chromadb_init import COLLECTION_NAMES
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+
+# KB legacy ChromaDB collection names (chromadb_init.py removed in Step 2.2)
+_KB_LEGACY_COLLECTIONS = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")
 
 __all__ = [
     "EmbeddingMigrator",
@@ -137,7 +139,7 @@ class EmbeddingMigrator:
         "text2vec-base-chinese": {"dimension": 768, "provider": "shibing624"},
     }
 
-    DEFAULT_COLLECTIONS = list(COLLECTION_NAMES) + ["patterns"]
+    DEFAULT_COLLECTIONS = list(_KB_LEGACY_COLLECTIONS) + ["patterns"]
 
     def __init__(
         self,
