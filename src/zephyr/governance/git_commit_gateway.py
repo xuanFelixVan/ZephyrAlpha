@@ -93,9 +93,11 @@ from zephyr.governance.reconciliation_registry import (
     make_vocab_change_reconciler,
     make_commit_gateway_audit_reconciler,
     make_deprecated_directory_reconciler,
+    make_rule_file_audit_reconciler,
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-commit 门禁注册表（架构债务 #AD-001 治本）
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate  # 搭便车防护门禁
+from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate  # 新建 .py CapabilityLookup 提示（warn-only）
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
@@ -334,6 +336,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：声明式 gate 框架，新门禁 register 而非硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
+        self._gate_registry.register(make_capability_overlap_gate())  # 缺口4：新建 .py CapabilityLookup 提示（warn-only）
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
         """为 session 声明持有本次 commit 的文件（激活 session 隔离 stash）。
@@ -506,6 +509,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_arch_model_reconciler(self))  # GATE-ARCH-MODEL: post-commit 重生 EA 树 index.yaml（dm200916 从 PG depgraph 派生 domains 列表，治 EA树域漂移缺口）
         self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))  # GATE-COMMIT-GW-AUDIT 缺口4接线：裸commit post-compensation 审计
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))  # GATE-DEPRECATED-DIR 09_audit 治本加固：post-commit 检测废弃目录重建
+        self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))  # GATE-RULE-FILE-AUDIT 缺口3+2：规则文件变更审计 + 豁免区 frontmatter 告警（warn-only）
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -1500,6 +1504,8 @@ class GitCommitGateway:
     # ------------------------------------------------------------------
     _REPO_SYSPATH_LINE = re.compile(r"sys\.path\.(?:insert|append)\s*\(")
     _REPO_ASSIGN_VAR = re.compile(r"^(\s*)([A-Za-z_][A-Za-z0-9_]*)\s*[:=]")
+    # importlib bootstrap 检测：conftest.py 用 spec_from_file_location 直接加载模块（测试隔离）
+    _REPO_IMPORTLIB_BOOTSTRAP = re.compile(r"importlib\.util\.spec_from_file_location")
 
     @staticmethod
     def _is_bootstrap_var(text: str, var_name: str) -> bool:
@@ -1513,11 +1519,14 @@ class GitCommitGateway:
 
     @classmethod
     def _match_is_bootstrap(cls, text: str, m: "re.Match[str]") -> bool:
-        """判断 parents[N] 匹配是否在 sys.path bootstrap 上下文（合法豁免）。
+        """判断 parents[N] 匹配是否在 bootstrap 上下文（合法豁免）。
 
         规则：
-          (a) 匹配所在行含 sys.path.insert/append → True（bootstrap）
-          (b) 匹配前缀是赋值 VAR = ...，且 VAR 用于 sys.path → True（bootstrap）
+          (a) 匹配所在行含 sys.path.insert/append → True（sys.path bootstrap）
+          (b) 匹配前缀是赋值 VAR = ...，且 VAR 用于 sys.path → True（sys.path bootstrap）
+          (c) 文件使用 importlib.util.spec_from_file_location → True（importlib bootstrap）
+              conftest.py 测试隔离模式：用 importlib 直接加载模块，不经 sys.path，
+              属于鸡生蛋 bootstrap（无法先 import REPO_ROOT）
           其他 → False（路径常量，违规）
         """
         start = text.rfind("\n", 0, m.start()) + 1
@@ -1526,6 +1535,9 @@ class GitCommitGateway:
             end = len(text)
         line = text[start:end]
         if cls._REPO_SYSPATH_LINE.search(line):
+            return True
+        # (c) importlib bootstrap：文件用 spec_from_file_location 直接加载模块
+        if cls._REPO_IMPORTLIB_BOOTSTRAP.search(text):
             return True
         prefix = text[start:m.start()]
         am = cls._REPO_ASSIGN_VAR.match(prefix)

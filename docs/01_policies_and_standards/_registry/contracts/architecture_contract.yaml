@@ -57,7 +57,10 @@ depends_on:
 directory_schema:
   root: "docs/01_policies_and_standards/"
 
-  allowed_directories:
+  # subdir_schemas（原 allowed_directories，2026-06-30 重命名——消除与 doc_type_vocabulary.yaml
+  # 的 allowed_directories 同名异义认知陷阱：此处是"docs/01_policies_and_standards/ 下允许的
+  # 子目录结构 schema"，doc_type_vocabulary 的是"doc_type 允许存放的目录路径列表"）
+  subdir_schemas:
     governance:
       allowed_subdirs: [document, ai, task, security, compliance, architecture, data, module]
       allowed_doc_types: [policy, register, index]

@@ -1,0 +1,146 @@
+# [BLUEPRINT] MOD-GOV-capability_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §capability-overlap-gate
+# [MODULE] zephyr.governance.commit_gates.capability_overlap_gate
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
+# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] warn-only——永不阻断 commit（passed=True）；YAML 不可达时静默跳过（fail-open）；token 匹配 ≥4 字符才告警（减少短词误报）
+# [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] check 永不抛异常——YAML 读取/解析异常降级为静默跳过（不阻断 commit，不误报警）
+# [TESTS] tests/test_capability_overlap_gate.py
+# [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
+
+检测 commit 中新建的 .py 文件名是否与 capability_canonical_file_registry.yaml 已注册能力
+的 aliases 重叠——命中则 logger.info 告警（**不阻断 commit**），提示 AI 应扩展现有
+canonical 文件而非新建。
+
+病根（缺口4：CapabilityLookup 被动反查）
+-----------------------------------------
+AGENTS.md §7 已把"查 CapabilityLookup 确认能力是否已存在"列为 step 0，但仅靠文档约定——
+新 AI 若跳过 AGENTS.md 或未读 §7，可在 commit 时直接新建 .py 脚本导致重复造轮子。
+GATE-NO-PURE-SHIM 只拦 pure re-export shim，拦不住完整实现（新 AI 写了个完整的重复实现，
+不是 shim，GATE-NO-PURE-SHIM 放行）。本 gate 在 commit 时自动反查 capability registry，
+补上文档约定的代码层兜底。
+
+warn-only 裁定
+---------------
+文件名 token 匹配是启发式（可能误报：新建 ``data_loader.py`` 可能命中 ``data_loader``
+capability 但实际是不同域的合法新脚本）。阻断会阻碍合法开发，故仅 logger.info 告警——
+AI 看到 warning 后自行判断是扩展还是新建。
+
+Usage::
+
+    from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
+
+    registry.register(make_capability_overlap_gate())
+    # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import re
+
+from zephyr.governance.commit_gate_registry import GateSpec
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["make_capability_overlap_gate"]
+
+
+def _tokenize(name: str) -> set[str]:
+    """文件名/alias 分词：按 ``_`` / ``-`` / ``.`` 拆分，过滤 <4 字符的 token。"""
+    parts = re.split(r"[_\-\.]", name.lower())
+    return {p for p in parts if len(p) >= 4}
+
+
+def make_capability_overlap_gate() -> GateSpec:
+    """构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。
+
+    Returns:
+        GateSpec(gate_id="CAPABILITY-OVERLAP", priority=200)。
+        priority=200——在 HELD-OVERLAP(50) 之后、其他阻断 gate 之前执行
+        （warn-only 不阻断，早执行晚执行无差异，但早执行可早 log）。
+    """
+
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 1. 仅关心 staged 新增 .py 文件
+        try:
+            diff_result = gateway._run_git(
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+            )
+            if diff_result.returncode != 0:
+                return True, ""  # fail-open：git diff 失败不阻断
+            staged_new = diff_result.stdout.strip().splitlines()
+        except Exception:
+            return True, ""  # fail-open
+
+        new_py_files = [
+            f.replace("\\", "/") for f in staged_new
+            if f.endswith(".py") and not f.startswith("tests/")
+        ]
+        if not new_py_files:
+            return True, ""
+
+        # 2. 加载 capability registry YAML（真源：capability_lookup.REGISTRY_YAML）
+        try:
+            from zephyr.governance.capability_lookup import REGISTRY_YAML
+            if not REGISTRY_YAML.exists():
+                return True, ""  # fail-open：registry 不存在不阻断
+            import yaml
+            data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
+        except Exception:
+            return True, ""  # fail-open：YAML 解析失败不阻断
+
+        if not isinstance(data, dict):
+            return True, ""
+
+        # 3. 构建 capability token 索引（capability_id + aliases 分词）
+        cap_tokens: dict[str, set[str]] = {}  # capability_id → token set
+        for cap in data.get("capabilities", []) or []:
+            if not isinstance(cap, dict):
+                continue
+            cap_id = cap.get("capability_id", "")
+            if not cap_id:
+                continue
+            tokens = _tokenize(cap_id)
+            for alias in cap.get("aliases", []) or []:
+                if isinstance(alias, str):
+                    tokens |= _tokenize(alias)
+            if tokens:
+                cap_tokens[cap_id] = tokens
+
+        if not cap_tokens:
+            return True, ""  # registry 空，无意义
+
+        # 4. 检测新建 .py 文件名 token 与 capability token 交集
+        warnings: list[str] = []
+        for py_file in new_py_files:
+            stem = os.path.basename(py_file)[:-3]  # 去 .py 后缀
+            file_tokens = _tokenize(stem)
+            if not file_tokens:
+                continue
+            for cap_id, tokens in cap_tokens.items():
+                overlap = file_tokens & tokens
+                if overlap:
+                    warnings.append(
+                        f"new .py '{py_file}' tokens {sorted(overlap)} "
+                        f"overlap with capability '{cap_id}'——"
+                        f"扩展该 capability 的 canonical 文件，勿新建（见 AGENTS.md §7 step 0）"
+                    )
+                    break  # 每文件只报第一个命中
+
+        if warnings:
+            logger.info(
+                "CAPABILITY-OVERLAP gate warn-only: %s", " | ".join(warnings)
+            )
+        return True, ""  # warn-only：永远 passed=True
+
+    return GateSpec(gate_id="CAPABILITY-OVERLAP", check=_check, priority=200)
