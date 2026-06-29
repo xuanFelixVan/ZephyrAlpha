@@ -332,6 +332,7 @@ result = await gateway.full_scan(user_text, llm_response)
 - **DB 变更后重生域文档** → 自动完成（GitCommitGateway post-commit GATE-DOMAIN-DOC reconciler，无需手动）
 - **改了 YAML 规则文件** → `python scripts/governance/sync_yaml_to_depgraph.py`（覆盖 readonly 表）
 - **改了 rules/ 下规则文件后同步 catalog** → 自动完成（GitCommitGateway post-commit GATE-RULE-CATALOG reconciler，无需手动）
+- **改了 infrastructure_registry.yaml 后同步 registry_master_index** → 自动完成（GitCommitGateway post-commit GATE-REGISTRY-INDEX reconciler，无需手动）
 - **查 PG 运行时健康** → `python scripts/governance/verify_schema_health.py --warn-only`（校验4：死锁/连接饱和/长事务，pre-commit 自动跑；`--skip-runtime` 可跳过）
 
 > 改 depgraph 前必须通过 `pg_dump` 或 apply_depgraph.py 内置物理备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。

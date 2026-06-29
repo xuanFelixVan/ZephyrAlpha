@@ -759,6 +759,99 @@ def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+def make_registry_index_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 registry_master_index post-commit 自动同步 reconciler。
+
+    commit ``infrastructure_registry.yaml`` 后，``registry_master_index.yaml``
+    可能过时（新增/修改/删除基础设施条目但总索引未重新生成）。本 reconciler
+    在 post-commit 跑 ``generate_registry_master_index.py`` 重新生成，如有
+    变更自动提交。
+
+    对标 ``make_rule_catalog_reconciler`` 的"检测变更→自动提交"模式。
+    治 P2 审查发现的 registry_master_index stale 问题：当前仅有 pre-commit
+    GATE-19 校验（阻断漂移），无 post-commit 自动重新生成，违反"永久性系统
+    必须自动维护"铁律（逻辑2.2）。补建后形成"校验+自动修复"双闭环。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-REGISTRY-INDEX", priority=155)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _INDEX_REL = "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml"
+    _INFRA_REL = "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == _INFRA_REL:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重新生成 registry_master_index（generate_registry_master_index.py 幂等）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/governance/generators/generate_registry_master_index.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"registry_master_index generation failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 index 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _INDEX_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="registry_master_index up to date")
+
+        # 3. 变更 → 自动提交（精确路径，禁 git add -A 防捡拾其他 session WIP）
+        add_result = gateway._run_git(["git", "add", "--", _INDEX_REL])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add registry_master_index failed: {add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(registry): auto-sync registry_master_index by GitCommitGateway post-commit "
+            f"[GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg,
+             "--", _INDEX_REL]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail="registry_master_index drift detected and auto-reconciled",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"registry_master_index drift detected, auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-REGISTRY-INDEX",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=155,
+    )
+
+
 def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False) -> dict:
     """递归扫描 docs/_working/ 下工作文档的幽灵引用并归档有幽灵引用的文档。
 

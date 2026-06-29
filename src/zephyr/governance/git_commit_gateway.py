@@ -84,6 +84,7 @@ from zephyr.governance.reconciliation_registry import (
     make_ghost_reconciler,
     make_path_tree_reconciler,
     make_rule_catalog_reconciler,
+    make_registry_index_reconciler,
     make_working_docs_reconciler,
     make_domain_doc_reconciler,
     make_precommit_id_uniqueness_reconciler,
@@ -486,6 +487,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_rule_catalog_reconciler(self))
+        self._reconciliation_registry.register(make_registry_index_reconciler(self))  # GATE-REGISTRY-INDEX: commit infrastructure_registry.yaml 后自动重新生成 registry_master_index.yaml（治 P2 stale，逻辑2.2 自动维护）
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
         self._reconciliation_registry.register(make_rules_integrity_reconciler(self))
@@ -1552,6 +1554,44 @@ class GitCommitGateway:
                         f"{rel}:{line_no} — Path(__file__).resolve(){'.parent' * parent_count} "
                         f"等于 REPO_ROOT，应改用 `from zephyr.shared.io.paths import REPO_ROOT`"
                     )
+
+            # 模式3: AST 检测 REPO_ROOT/DB_PATH 使用但未 import (治本: 防止 missing import 复发)
+            # 真源: zephyr.shared.io.paths.REPO_ROOT/DB_PATH
+            # 覆盖: 完全缺失 import + import 顺序错误(import 在使用之后)
+            # 背景: P2 遗留 4 个 src 文件 missing import 导致 9 个 collection error
+            import ast as _ast
+
+            try:
+                _tree = _ast.parse(text, filename=f)
+            except SyntaxError:
+                pass  # 语法错误跳过(其他门禁会报)
+            else:
+                _TARGET_SSOT = {"REPO_ROOT", "DB_PATH"}
+                _imported: dict[str, int] = {}  # symbol -> import 行号
+                _has_star = False
+                for _node in _ast.walk(_tree):
+                    if isinstance(_node, _ast.ImportFrom):
+                        _mod = _node.module or ""
+                        if _mod == "zephyr.shared.io.paths":
+                            if any(_a.name == "*" for _a in _node.names):
+                                _has_star = True
+                            for _a in _node.names:
+                                if _a.name != "*":
+                                    _imported[_a.asname or _a.name] = _node.lineno
+                for _node in _ast.walk(_tree):
+                    if isinstance(_node, _ast.Name) and _node.id in _TARGET_SSOT:
+                        if _has_star:
+                            continue  # import * 覆盖
+                        if _node.id not in _imported:
+                            violations.append(
+                                f"{rel}:{_node.lineno} — 使用 {_node.id} 但未 "
+                                f"from zephyr.shared.io.paths import {_node.id}"
+                            )
+                        elif _imported[_node.id] > _node.lineno:
+                            violations.append(
+                                f"{rel}:{_node.lineno} — 使用 {_node.id}(行{_node.lineno}) "
+                                f"在 import(行{_imported[_node.id]}) 之前"
+                            )
 
         if violations:
             return False, "\n  ".join(violations)
