@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-29T16:10:16Z'
+generated_at: '2026-06-29T16:41:15Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 137
@@ -1663,7 +1663,7 @@ files:
   title: 运行时基础设施登记表
   doc_type: register
   status: active
-  version: 1.0.5
+  version: 1.0.6
   rule_form: ''
   scope: ''
   stability: ''
