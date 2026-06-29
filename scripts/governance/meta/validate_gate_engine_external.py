@@ -76,8 +76,8 @@ from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
-_DB_PATH = _PROJECT_ROOT / "data" / "zephyr.infrastructure.db"
+_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+_DB_PATH = _PROJECT_ROOT / "data" / "databases" / "governance.db"
 _SNAPSHOT_PATH = _PROJECT_ROOT / "scripts" / "governance" / "meta" / "gate_engine_hashes.json"
 _SRC = _PROJECT_ROOT / "src"
 
