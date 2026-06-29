@@ -51,7 +51,6 @@ if str(_PROJECT_ROOT) not in sys.path:
 from zephyr.governance.git_commit_gateway import (  # noqa: E402
     CommitStatus,
     GitCommitGateway,
-    _MAX_INLINE_PATHS,
 )
 from zephyr.security.access_control.session_concurrency import (  # noqa: E402
     SessionRegistry,
@@ -386,7 +385,7 @@ class TestLargeFileBranchIsolation:
     def test_large_commit_isolates_other_session_file(self, tmp_path: Path) -> None:
         """session-A commit 51 个文件（触发大文件分支），session-B 的 b.py 不被 stash。"""
         _init_repo(tmp_path)
-        n = _MAX_INLINE_PATHS + 1  # 51 个，触发大文件分支
+        n = 51  # _MAX_INLINE_MD_FILES=50 阈值，51 触发大文件分支
         target_files: list[Path] = []
         for i in range(n):
             f = _commit_file(tmp_path, f"t{i:03d}.py", f"v = {i}\n")

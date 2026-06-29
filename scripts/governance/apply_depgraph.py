@@ -348,6 +348,14 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                 )
                 if ok:
                     domain_op_count += 1
+            elif op == "rename_domain":
+                count = cmd_rename_domain(
+                    old_id=change.get("old_id", ""),
+                    new_id=change.get("new_id", ""),
+                    dry_run=True,
+                )
+                if count >= 0:
+                    domain_op_count += 1
             elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
                 _apply_node_op(dep, change, i)
             else:
@@ -437,6 +445,16 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
                     )
                     if ok:
                         domain_op_count += 1
+                elif op == "rename_domain":
+                    count = cmd_rename_domain(
+                        old_id=change.get("old_id", ""),
+                        new_id=change.get("new_id", ""),
+                        dry_run=False,
+                        conn=conn,
+                    )
+                    if count < 0:
+                        raise RuntimeError(f"change #{i}: rename_domain failed")
+                    domain_op_count += 1
                 elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
                     _apply_node_op(dep, change, i)
                 else:

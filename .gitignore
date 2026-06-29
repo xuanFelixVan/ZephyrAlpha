@@ -183,7 +183,7 @@ _prompts/
 /_fix_*.py
 /_debug_*.py
 /_final_*.py
-/_tmp_*.py
+_tmp_*.py
 /_temp*.txt
 /_temp*.md
 
@@ -195,6 +195,9 @@ memory_graph.json
 
 # Vector DB data (runtime)
 data/vector_db/
+
+# FAISS semantic test vector index binaries (regenerable runtime artifacts)
+data/semantic_test/
 
 # Governance watchdog snapshots
 scripts/governance/meta/_backups/
@@ -221,6 +224,9 @@ data/code_dedup_benchmark_history.json
 # v2.3.0: 4.57MB, previously 150MB+ excluded — now small enough for git
 data/asset_index/archive/
 
+# Depgraph migration process backups (transient, pre-migration safety dumps)
+data/backups/depgraph_pre_variant_patch_*.sql
+
 # ML model files (4GB+, Trae indexing OOM risk)
 models/
 
@@ -232,9 +238,6 @@ data/red_blue/
 
 # E2E test vector index binaries (regenerable, large)
 data/e2e_test/
-
-# Scripts temporary files (logs/xml/db/tmp)
-scripts/_tmp_*
 
 # PostgreSQL secrets (P2 migration — MOD-DB_DEPGRAPH_PG)
 # Contains connection credentials; never commit to repository
