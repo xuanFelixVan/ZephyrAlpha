@@ -9,9 +9,15 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 
+import sys
 from pathlib import Path
 
-OUT = Path(r"D:\ZephyrAlpha\tests")
+_SRC_DIR = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(_SRC_DIR))
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+
+OUT = REPO_ROOT / "tests"
 
 HEADER = """# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §
 # [MODULE] tests.test_{basename}

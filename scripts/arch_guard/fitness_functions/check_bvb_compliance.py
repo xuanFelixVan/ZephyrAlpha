@@ -25,7 +25,11 @@ exit: 0=合规或 stub 模式, 1=不合规, 2=基础设施错误
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
 
 
 def main() -> int:

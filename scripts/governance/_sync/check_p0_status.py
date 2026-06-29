@@ -23,8 +23,16 @@ warn_only: false
 """
 
 import sqlite3
+import sys
+from pathlib import Path
 
-conn = sqlite3.connect(r"D:\ZephyrAlpha\data\databases\governance.db")
+_GOV_DIR = str(Path(__file__).resolve().parents[1])
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import DB_PATH  # noqa: E402
+
+conn = sqlite3.connect(str(DB_PATH))
 cur = conn.execute(
     "SELECT status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND priority='P0' AND is_deleted=0 GROUP BY status"
 )

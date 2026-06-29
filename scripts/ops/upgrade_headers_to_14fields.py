@@ -51,10 +51,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-# 一次性 bootstrap：算 sys.path（N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
+# 一次性 bootstrap：定位 scripts/governance/ 以 import _shared.constants（SSoT 真源）。
 # 先例：scripts/governance/_shared/constants.py、scripts/git_commit.py 均已 bootstrap。
-_PROJECT_ROOT_BOOTSTRAP = Path(__file__).resolve().parents[2]  # scripts/ops/ -> root
-_GOV_DIR = str(_PROJECT_ROOT_BOOTSTRAP / "scripts" / "governance")
+_GOV_DIR = str(Path(__file__).resolve().parent.parent / "governance")  # scripts/ops/ -> scripts/governance/
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 

@@ -38,10 +38,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
-
-DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
-GOV_DB = r"D:\ZephyrAlpha\data\databases\governance.db"
+from _shared.constants import DB_PATH, get_depgraph_pg_connection  # noqa: E402
 
 
 def main():
@@ -126,17 +123,22 @@ def main():
 
     # 5. 交付物验证
     print("\n[5] 交付物验证")
-    deliverables = [
-        (r"D:\ZephyrAlpha\data\databases\depgraph.db", "depgraph.db"),
-        (r"D:\ZephyrAlpha\data\databases\governance.db", "governance.db"),
-    ]
-    for path, desc in deliverables:
-        if os.path.exists(path):
-            size = os.path.getsize(path)
-            print(f"  ✅ PASS: {desc} ({size} bytes)")
-        else:
-            print(f"  ❌ FAIL: {desc} 不存在")
-            all_pass = False
+    # depgraph 已迁移至 PostgreSQL，验证 PG 连接可用性
+    try:
+        _pg_conn = get_depgraph_pg_connection(autocommit=True)
+        _pg_conn.execute("SELECT 1").fetchone()
+        _pg_conn.close()
+        print("  ✅ PASS: depgraph PostgreSQL 连接可用")
+    except Exception as e:
+        print(f"  ❌ FAIL: depgraph PostgreSQL 连接失败: {e}")
+        all_pass = False
+    # governance.db 仍为 SQLite，验证文件存在
+    if DB_PATH.exists():
+        _gov_size = os.path.getsize(DB_PATH)
+        print(f"  ✅ PASS: governance.db ({_gov_size} bytes)")
+    else:
+        print(f"  ❌ FAIL: governance.db 不存在")
+        all_pass = False
 
     # 总结
     print("\n" + "=" * 60)

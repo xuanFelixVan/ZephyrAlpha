@@ -38,7 +38,12 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
+
 L02_DIR = REPO_ROOT / "src" / "zephyr" / "factor"
 
 PIT_SUSPECT_PATTERNS = [

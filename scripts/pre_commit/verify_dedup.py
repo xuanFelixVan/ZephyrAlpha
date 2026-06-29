@@ -32,7 +32,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-SRC_DIR = Path(__file__).resolve().parents[2] / "src"
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parent.parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+SRC_DIR = REPO_ROOT / "src"
 
 
 def main() -> int:

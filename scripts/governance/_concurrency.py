@@ -69,10 +69,15 @@ from typing import Any
 
 import yaml
 
-# 一次性 sys.path bootstrap（REPO_ROOT 规则允许 scripts/ 一次性极简 bootstrap）
+# 一次性 sys.path bootstrap：定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT）
 # _concurrency 被 run_all.py 以 bare module 导入（from _concurrency import ...），
 # 需自行确保 src/ 在 sys.path 以便 import zephyr.shared.infra.process_pool
-_SRC_ROOT = str(Path(__file__).resolve().parents[2] / "src")
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+_SRC_ROOT = str(REPO_ROOT / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
 from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）

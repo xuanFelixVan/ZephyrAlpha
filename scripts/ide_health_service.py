@@ -35,9 +35,13 @@ import sys
 import time
 from pathlib import Path
 
-# 确保项目根目录与 src/ 在 sys.path 中（src/ 用于 import zephyr.*）
-# 一次性 bootstrap（REPO_ROOT 规则允许 scripts/ 一次性 sys.path bootstrap）
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT as _PROJECT_ROOT  # noqa: E402
+
+# src/ 加入 sys.path 以便 import zephyr.*（zephyr 已 editable 安装，此为防御性兜底）
 _SRC_ROOT = _PROJECT_ROOT / "src"
 for _p in (str(_PROJECT_ROOT), str(_SRC_ROOT)):
     if _p not in sys.path:

@@ -20,7 +20,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-SRC_DIR = Path(__file__).resolve().parents[2] / "src"
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+SRC_DIR = REPO_ROOT / "src"
 sys.path.insert(0, str(SRC_DIR))
 
 EXPECTED_MODULES: dict[str, str] = {

@@ -14,8 +14,9 @@
 # [TESTS]
 # [TTL] task_bound
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"d:\ZephyrAlpha\src")
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from zephyr.integration.schema.schemas import TaskStatus
 
 from zephyr.governance.persistence.sqlite_schema import init_db

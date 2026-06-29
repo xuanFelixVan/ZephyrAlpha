@@ -1240,7 +1240,7 @@ def main() -> None:
             )
         bridge_result = bridge_findings_to_tasks(
             audit_findings,
-            db_path=REPO_ROOT / "data" / "databases" / "governance.db",
+            db_path=DB_PATH,
             dry_run=args.dry_run,
         )
         print(

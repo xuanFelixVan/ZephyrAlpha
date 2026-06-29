@@ -28,7 +28,12 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
+
 FE_EXTS = {".tsx", ".ts", ".jsx", ".js", ".vue"}
 _SKIP_DIRS = {"node_modules", ".git", "dist", "build", "coverage", "__pycache__"}
 

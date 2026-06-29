@@ -41,8 +41,6 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
-
 
 def main() -> None:
     conn = get_depgraph_pg_connection(autocommit=True)

@@ -38,7 +38,12 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
+
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 L06_ROOT = SRC_ROOT / "ex_core"
 # INV-005：仅 adapters/ 可直接触达券商 SDK；OCP 接口定义文件不含 SDK 调用，免检

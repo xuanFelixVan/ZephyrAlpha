@@ -54,17 +54,21 @@ from pathlib import Path
 
 import yaml
 
-# 确保项目根目录在 sys.path 中，以便 from scripts.governance... 导入生效
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT as PROJECT_ROOT  # noqa: E402
+
+# repo root 加入 sys.path 以便 from scripts.governance.d3_metadata... 生效
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.governance.d3_metadata.check_naming_convention import check_dir, check_file
 
 # ---------------------------------------------------------------------------
 # 路径常量
 # ---------------------------------------------------------------------------
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 GATES_DIR = SRC_ZEPHYR / "gates"

@@ -35,7 +35,7 @@ Usage:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT as _PROJECT_ROOT
 
 __manifest__ = """
 args: []
@@ -53,7 +53,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)

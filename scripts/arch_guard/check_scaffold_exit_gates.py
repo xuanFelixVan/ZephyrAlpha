@@ -32,7 +32,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
+
 GIT_SECRETS_HOOK = REPO_ROOT / ".git" / "hooks" / "pre_commit"
 AUDIT_DB_PATH = REPO_ROOT / "data" / "audit.db"
 DETECT_SECRETS_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" / "detect_secrets.py"

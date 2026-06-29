@@ -54,7 +54,12 @@ from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-PROD_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
 TEST_DB = REPO_ROOT / "data" / "databases" / "_test_rb_depgraph.db"
 
 # 测试结果收集
@@ -69,7 +74,9 @@ def setup():
         f = TEST_DB.with_suffix(TEST_DB.suffix + suffix)
         if f.exists():
             f.unlink()
-    shutil.copy2(PROD_DB, TEST_DB)
+    # P2迁移后：depgraph.db 已迁至 PostgreSQL，原 PROD_DB 文件不再存在。
+    # 本函数整体为弃用死代码（main() 已提前 return），保留结构供历史参考。
+    # shutil.copy2(PROD_DB, TEST_DB)  # 已移除：源文件不存在
     # 清理测试残留数据（防止上次测试残留干扰）
     conn = sqlite3.connect(str(TEST_DB))
     conn.execute(
@@ -110,7 +117,7 @@ def verify_prod_db_clean() -> bool:
     测试域前缀：D-T2-/D-T3-/D-T4-/D-T5-/D-T9-/D-TEST-RB-
     如果生产库包含任何测试域，说明测试隔离失败，立即报错。
     """
-    conn = sqlite3.connect(str(PROD_DB))
+    conn = get_depgraph_pg_connection()
     try:
         rows = conn.execute(
             "SELECT domain_id FROM domains WHERE "
@@ -121,7 +128,7 @@ def verify_prod_db_clean() -> bool:
     finally:
         conn.close()
     if rows:
-        polluted = [r[0] for r in rows]
+        polluted = [r["domain_id"] for r in rows]
         print(f"\n[FATAL] 生产库被测试域污染！发现 {len(polluted)} 个测试域: {polluted}", file=sys.stderr)
         print("[FATAL] 测试隔离失败，请检查 db_path 参数传递和 monkey-patch 逻辑", file=sys.stderr)
         return False

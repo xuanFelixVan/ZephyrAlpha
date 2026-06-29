@@ -36,19 +36,17 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _STATE_DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "finding_state_db.json"
 
 _src = _REPO_ROOT / "src"
 if str(_src) not in sys.path:
     sys.path.insert(0, str(_src))
-
-try:
-    from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-except ImportError:
-    EXIT_PASS = 0
-    EXIT_FINDINGS = 1
-    EXIT_ERROR = 2
 
 ARCHIVE_STATUSES = frozenset({"CLOSED", "FALSE_POSITIVE", "WONTFIX", "ACCEPTED_RISK"})
 DEGRADE_STATUSES = frozenset({"OVERDUE"})

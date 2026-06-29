@@ -27,7 +27,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from _arch_ssot import REPO_ROOT  # noqa: E402
+
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 HOT_MODULES = {"risk", "ex_core"}

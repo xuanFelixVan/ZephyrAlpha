@@ -28,9 +28,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_ROOOT = Path(__file__).resolve().parents[1]
-if str(_ROOOT) not in sys.path:
-    sys.path.insert(0, str(_ROOOT))
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 from _arch_ssot import REPO_ROOT, RISK_PARAMS_PATH, load_yaml  # noqa: E402
 
