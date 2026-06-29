@@ -49,7 +49,7 @@ values:
     definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
     rule_form: declarative
     allowed_directories: ["docs/01_policies_and_standards/policies/", "scripts/governance/"]
-    forbidden_directories: ["operational/"]
+    forbidden_directories: []
     required_fields: ["valid_from"]
     ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该"]
     examples: ["secret-management-policy.md", "access-control-policy.md"]
@@ -59,8 +59,8 @@ values:
   - value: operational_rule
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
     rule_form: procedural
-    allowed_directories: ["operational/"]
-    forbidden_directories: ["governance/"]
+    allowed_directories: ["docs/01_policies_and_standards/operational/"]
+    forbidden_directories: []
     required_fields: ["verifiability"]
     ai_keywords: ["步骤", "流程", "操作规程", "runbook", "Step 1"]
     examples: ["connector-onboarding-runbook.md", "factor-onboarding-runbook.md"]
@@ -70,7 +70,7 @@ values:
     definition: "注册表/配置——结构化数据清单或运行时配置定义，用于发现、索引和参数设置"
     rule_form: data
     allowed_directories: ["docs/01_policies_and_standards/_registry/", "docs/03_modules/_manifests/", "docs/registry_of_registries.yaml", "src/zephyr/", "scripts/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: ["operational/"]
+    forbidden_directories: []
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry", "配置", "config", "参数", "settings"]
     examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
@@ -81,7 +81,7 @@ values:
     definition: "目录级导航/概况文件——声明子域的职责边界、文件清单和依赖关系，或项目/目录概况说明。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
     rule_form: declarative
     allowed_directories: ["docs/", "scripts/governance/"]
-    forbidden_directories: ["operational/"]
+    forbidden_directories: []
     required_fields: []
     ai_keywords: ["索引", "导航", "入口", "index", "README"]
     usage_note: "index.md 的 doc_type 是 index，不是 register。register 是结构化数据清单（机器解析为主的 YAML/JSON），index 是目录级导航（人+AI 读写为主的 Markdown）。对标 Linux FHS：/usr/share/doc/*/index.html vs /etc/apt/sources.list ——前者是索引入口，后者是注册表。"
@@ -92,7 +92,7 @@ values:
     definition: "模板——可复用的文档结构骨架"
     rule_form: structural
     allowed_directories: ["docs/01_policies_and_standards/templates/"]
-    forbidden_directories: ["operational/", "governance/"]
+    forbidden_directories: []
     required_fields: ["completeness"]
     ai_keywords: ["模板", "骨架", "template", "boilerplate"]
     usage_note: "本文档类型的 doc_type 约束主要用于'模板的模板'（如 templates/ 目录自身结构规范）。cookbook template（用于生成目标文档的预填骨架）的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint 而非 template）——这是对 PS-STD-001 §3.4 的语义澄清。对标 K8s Helm：模板文件的 kind 不改 'Template'，仍是 Deployment/Service。**注意**：templates/ 下的文件不受其 doc_type 的 allowed_directories 约束——模板是 Class Definition 而非 CI 实例，详见 §模板豁免规则。"
@@ -111,7 +111,7 @@ values:
     definition: "受控参考数据——定义枚举值域、术语定义或知识内容的机器可读清单，供 AI 和 CI 消费"
     rule_form: data
     allowed_directories: ["docs/01_policies_and_standards/_registry/vocabularies/"]
-    forbidden_directories: ["operational/", "governance/"]
+    forbidden_directories: []
     required_fields: []
     ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled", "术语", "定义", "glossary", "terminology", "知识", "knowledge"]
     examples: ["doc_type_vocabulary.yaml", "status_vocabulary.yaml"]
@@ -122,7 +122,7 @@ values:
     definition: "蓝图——模块/子系统的完整设计文档和施工指导，包含架构决策、数据模型、接口定义、任务分解"
     rule_form: declarative
     allowed_directories: ["docs/03_modules/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: ["operational/", "governance/"]
+    forbidden_directories: []
     required_fields: ["valid_from", "architecture_layers", "last_verified"]
     ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块", "施工", "任务", "checklist", "construction", "plan"]
     examples: ["script-system-blueprint.md"]
@@ -135,7 +135,7 @@ values:
     definition: "审计/记录——时间戳驱动的记录、session log 或结构化审计产出物"
     rule_form: data
     allowed_directories: ["session_logs/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: ["03_blueprints/"]
+    forbidden_directories: []
     required_fields: []
     ai_keywords: ["审计", "报告", "audit", "report", "日志", "session", "记录", "log", "timestamp"]
     examples: []
@@ -146,7 +146,7 @@ values:
     definition: "架构视图——4+1 架构视角文档或服务/模块的外部接口规格"
     rule_form: declarative
     allowed_directories: ["docs/02_enterprise_architecture/", "docs/03_modules/specs/", "docs/03_modules/_b_track_interfaces/"]
-    forbidden_directories: ["01_policies_and_standards/"]
+    forbidden_directories: []
     required_fields: []  # v3.0.0: service_spec 已并入（api_version 降为可选 via tags）
     ai_keywords: ["架构视图", "4+1", "view", "architecture_view", "服务", "接口", "API", "spec", "服务规格"]
     examples: []
@@ -155,7 +155,7 @@ values:
     definition: "门禁/验证定义——定义质量门禁的触发条件、检查项、阻断规则或 VR 验证标准"
     rule_form: declarative
     allowed_directories: ["src/zephyr/governance/rule_enforcement/", "docs/01_policies_and_standards/_registry/contracts/", "docs/01_policies_and_standards/_registry/schemas/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: ["operational/"]
+    forbidden_directories: []
     required_fields: ["valid_from"]
     ai_keywords: ["门禁", "gate", "阻断", "检查", "准入", "契约", "验证", "VR", "contract", "rule"]
     usage_note: "门禁文件的 doc_type。Gate YAML 登记表（_registry/catalogs/gate_registry.yaml）使用 register 而非 gate——gate 用于规则文档"
