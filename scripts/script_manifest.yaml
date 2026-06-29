@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-29'
-total_scripts: 570
+total_scripts: 571
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1121,6 +1121,14 @@ scripts:
 - name: governance/migrate_clean_build_status.py
   path: governance/migrate_clean_build_status.py
   description: 3类清洗（裁定#178-193）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/migrate_domain_id_hyphen_to_underscore.py
+  path: governance/migrate_domain_id_hyphen_to_underscore.py
+  description: 'python migrate_domain_id_hyphen_to_underscore.py --dry-run  # 预览'
   domain: governance
   execution_plane: warm-path
   status: registered
