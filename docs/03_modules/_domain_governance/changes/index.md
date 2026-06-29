@@ -19,7 +19,6 @@ ttl: task_bound
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [dom_gov_001/](dom_gov_001/index.md) | 目录 | MOD-GOVERNANCE — 目录索引 |
 | [index.md](index.md) | Markdown | changes — 目录索引 |
 
 ## 导航

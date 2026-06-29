@@ -2109,9 +2109,7 @@ ttl: permanent
 | [ke-2806-detector_registry_yaml.md](ke-2806-detector_registry_yaml.md) | Markdown | ke-2806-detector_registry_yaml.md |
 | [ke-2807-dispatch.md](ke-2807-dispatch.md) | Markdown | dispatch 过程中记录每个模块的副作用 |
 | [ke-2808-dom_gov.md](ke-2808-dom_gov.md) | Markdown | MOD-GOVERNANCE 集成契约锚点 |
-| [ke-2809-dom_gov_001_dependency_crossch.md](ke-2809-dom_gov_001_dependency_crossch.md) | Markdown | MOD-GOVERNANCE Dependency Crosscheck |
 | [ke-281-documentat.md](ke-281-documentat.md) | Markdown | ke-281-documentat.md |
-| [ke-2810-dom_gov_001_downstream_anchor.md](ke-2810-dom_gov_001_downstream_anchor.md) | Markdown | MOD-GOVERNANCE Downstream Anchor Report |
 | [ke-2811-domain_governance.md](ke-2811-domain_governance.md) | Markdown | _domain-governance |
 | [ke-2812-domain_skill.md](ke-2812-domain_skill.md) | Markdown | 每个 Domain Skill 的标准目录结构 |
 | [ke-2813-drift_into_failure.md](ke-2813-drift_into_failure.md) | Markdown | === 故障正常化漂移 Drift Into Failure === |
