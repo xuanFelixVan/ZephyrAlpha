@@ -20,8 +20,8 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 约束总数 | 59 |
-| Open（未解决） | 59 |
+| 约束总数 | 58 |
+| Open（未解决） | 58 |
 | Resolved（已解决） | 0 |
 | 其他状态 | 0 |
 
@@ -30,7 +30,7 @@ ttl: permanent
 | 严重程度 / Severity | 数量 / Count |
 |---------|:---:|
 | error | 1 |
-| hard | 58 |
+| hard | 57 |
 
 ## 按约束类型分组
 
@@ -38,7 +38,7 @@ ttl: permanent
 |---------|:---:|
 | architecture_contract | 1 |
 | capacity_limit | 33 |
-| stability | 25 |
+| stability | 24 |
 
 ## Open 违规清单（需处理）
 
@@ -49,7 +49,6 @@ ttl: permanent
 | CONSTRAINT_D-DATA-PERSISTENCE | persistence稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：persistence |
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：vector_storage |
 | CONSTRAINT_D-GOV-DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：drift_detection |
-| CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：orphan_judgment |
 | CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：registry_management |
 | CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：rule_enforcement |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：script_governance |
@@ -113,7 +112,6 @@ ttl: permanent
 | CONSTRAINT_D-DATA-PERSISTENCE | persistence稳定性约束 | stability | D_DATA_ENG |  | hard | open |
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | open |
 | CONSTRAINT_D-GOV-DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
-| CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
