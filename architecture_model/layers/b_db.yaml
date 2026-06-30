@@ -5,7 +5,7 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
-  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001（数据库清单真源，禁止同步）"
+  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001/003/005（3个关系数据库清单真源，禁止同步）"
   backup_dir: data/backups/
   warehouse_dir: data/warehouse/
   blueprint_ref: docs/03_modules/_cross_layer/database/blueprint.md
@@ -86,10 +86,32 @@ modules:
       untested_p1: []
       untested_p2: []
 
+  - id: db-market-duckdb
+    module_id: MOD-INF-012
+    name: Market Data DuckDB Layer
+    submodule_path: src/zephyr/governance/
+    status: implemented
+    priority: P1
+    runtime_plane: warm
+    description: market.duckdb 业务时序库——8表(tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades)，DuckDB列式压缩+Parquet零拷贝+AS OF JOIN时序PIT查询。read_only=True安全约束真源在代码层(database_service.py get_market_conn)。数据库清单真源：infrastructure_registry.yaml INFRA-DB-005。三层冷热架构定位见blueprint.md§三层冷热架构定位。
+    db_engine: duckdb
+    db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-005（数据库清单真源，禁止同步）"
+    files:
+      - database_service.py
+    interfaces:
+      - contract_id: CT-DB-MARKET-001
+        role: producer
+        description: market.duckdb 连接契约——DatabaseService.get_market_conn(read_only=True代码层强制，安全约束真源不在YAML)
+    test_coverage:
+      tested: []
+      untested_p1:
+        - database_service.py (market.duckdb方法，与db-depgraph-pg共享文件)
+      untested_p2: []
+
 summary:
-  total: 2
+  total: 3
   by_status:
-    implemented: 2
+    implemented: 3
   total_files: 12
   tested_files: 8
   untested_files: 4

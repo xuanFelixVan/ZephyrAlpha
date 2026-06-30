@@ -66,7 +66,8 @@ class DatabaseService:
 
         self._governance_conn: sqlite3.Connection | None = None
         self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
-        self._market_conn: duckdb.DuckDBPyConnection | None = None
+        self._market_conn: duckdb.DuckDBPyConnection | None = None  # 读写连接（仅写入）
+        self._market_read_conn: duckdb.DuckDBPyConnection | None = None  # 只读连接（查询用，read_only=True安全约束真源在代码层）
 
         self._market_write_lock = threading.Lock()
         self.WRITE_LOCK_TIMEOUT = 5.0
@@ -90,16 +91,24 @@ class DatabaseService:
         return self._depgraph_conn
 
     def get_market_conn(self) -> duckdb.DuckDBPyConnection:
-        """获取 market.duckdb 连接"""
+        """获取 market.duckdb 读写连接（仅用于写入操作，如insert_tick_data/flush_tick_batch/create_order）
+
+        安全约束：查询操作必须用 get_market_read_conn()（read_only=True）。
+        read_only=True 安全约束真源在代码层，不在 YAML 配置。
+        """
         if self._market_conn is None:
             self._market_conn = duckdb.connect(self.market_db)
         return self._market_conn
 
     @contextmanager
     def get_market_read_conn(self):
-        """获取只读连接上下文管理器（读操作不需要写锁）"""
-        conn = self.get_market_conn()
-        yield conn
+        """获取只读连接上下文管理器（read_only=True 代码层强制，安全约束真源在此）
+
+        所有查询操作必须通过此方法获取连接，防止意外写入。
+        """
+        if self._market_read_conn is None:
+            self._market_read_conn = duckdb.connect(self.market_db, read_only=True)
+        yield self._market_read_conn
 
     @contextmanager
     def market_write_lock(self):
@@ -133,8 +142,8 @@ class DatabaseService:
             result["depgraph"] = False
 
         try:
-            conn = self.get_market_conn()
-            conn.execute("SELECT 1").fetchone()
+            with self.get_market_read_conn() as conn:
+                conn.execute("SELECT 1").fetchone()
             result["market"] = True
         except Exception:
             result["market"] = False
@@ -154,6 +163,10 @@ class DatabaseService:
         if self._market_conn:
             self._market_conn.close()
             self._market_conn = None
+
+        if self._market_read_conn:
+            self._market_read_conn.close()
+            self._market_read_conn = None
 
     # ========== governance.db 方法 ==========
 
@@ -293,14 +306,14 @@ class DatabaseService:
         return len(batch)
 
     def query_kline(self, symbol: str, start_ts: str, end_ts: str) -> list:
-        """查询K线数据"""
-        conn = self.get_market_conn()
-        rows = conn.execute(
-            """SELECT * FROM kline_3s
-            WHERE symbol=? AND ts BETWEEN ? AND ?
-            ORDER BY ts""",
-            (symbol, start_ts, end_ts),
-        ).fetchall()
+        """查询K线数据（使用read_only=True只读连接）"""
+        with self.get_market_read_conn() as conn:
+            rows = conn.execute(
+                """SELECT * FROM kline_3s
+                WHERE symbol=? AND ts BETWEEN ? AND ?
+                ORDER BY ts""",
+                (symbol, start_ts, end_ts),
+            ).fetchall()
         return [
             dict(zip(["symbol", "open", "high", "low", "close", "volume", "amount", "ts"], r, strict=False))
             for r in rows
