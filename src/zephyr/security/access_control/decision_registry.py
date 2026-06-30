@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_decision_registry; tests.agent_rbac.test_decisions
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

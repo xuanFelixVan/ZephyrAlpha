@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_defense_depth
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

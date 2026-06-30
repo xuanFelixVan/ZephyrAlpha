@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_anomaly_detector; tests.agent_rbac.test_crosscut_d
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

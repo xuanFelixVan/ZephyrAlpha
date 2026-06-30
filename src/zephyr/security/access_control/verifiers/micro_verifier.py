@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_micro_verifier
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

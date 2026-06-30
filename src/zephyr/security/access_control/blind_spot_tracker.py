@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_blind_spot_tracker; tests.agent_rbac.test_blind_spot_coverage
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_approver_check; tests.test_governance_approver_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_004_escalation_to_rbac; tests.governance.test_p0_u1_contract_smoke
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

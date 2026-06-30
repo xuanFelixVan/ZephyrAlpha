@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_decision_explainer_root; tests.agent_rbac.test_decision_explainer_agent_rbac; tests.unit.agent_rbac.test_rbac_core
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

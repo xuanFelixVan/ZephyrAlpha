@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] scripts.a2a_full_verification; tests.test_a2a_check; tests.test_governance_a2a_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_008_a2a_to_rbac_escalation; tests.governance.test_gct_integration; tests.governance.test_p0_u1_contract_smoke
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

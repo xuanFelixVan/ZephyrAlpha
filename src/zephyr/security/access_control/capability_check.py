@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_capability_check; tests.test_governance_capability_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_integration; tests.governance.test_p0_u1_contract_smoke; tests.governance.test_p0_u2_input_validation
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

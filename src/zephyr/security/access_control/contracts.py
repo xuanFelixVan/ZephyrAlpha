@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_contracts; tests.test_governance_contracts; tests.test_rbac_audit_bridge; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_001_rbac_to_audit; tests.governance.test_p0_i2_construction_order; tests.governance.test_p0_u1_contract_smoke
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] stub
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving
