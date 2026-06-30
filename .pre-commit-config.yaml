@@ -675,6 +675,7 @@ repos:
         exclude: |
           (?x)^(
               _archive/.*|
+              scripts/_archive/.*|
               scripts/.*/_archive/.*|
               session_logs/.*|
               data/.*|
