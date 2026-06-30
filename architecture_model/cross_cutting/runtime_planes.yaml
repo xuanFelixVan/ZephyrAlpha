@@ -1,0 +1,423 @@
+# [A_config] module_id=CFG-runtime-planes | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+module_id: MOD-GOVERNANCE
+schema_version: "3.0"
+partition:
+  id: cross-cutting-runtime-planes
+  name: Runtime Planes
+  description: Hot/Warm/Cold 运行平面标注（来源：runtime_planes.md v1.0.0，KBG-0011 accepted）
+  source_view: runtime_planes.md
+  related_kb_ref: [KBG-0011]
+  activation_note: >
+    当前（2026-04-21）处于 Warm-only 阶段（T0）。
+    Hot Path 未激活（T1 真实资金接入后首激活）。
+    Cold Path 部分激活（L02 回测 / L07 归因 / L11 训练）。
+
+planes:
+  hot:
+    latency_target: "< 10ms (P99)"
+    latency_p50: "< 1ms"
+    description: >
+      交易执行核心路径。不可中断（kernel-bypass + 预分配内存）。
+      事件驱动 / 固定轮询。语言：C++20 / Rust / DPDK / RDMA。
+      部署：裸金属 / 物理机 / 机架同城，无 GC / 无虚拟化 / 无容器。
+    activation_trigger: T1 真实资金接入
+    current_status: inactive
+    modules:
+      - id: l04-limits
+        domain: D_RISK
+        submodule: limits/
+        note: pre-trade hard check（T1 激活）
+      - id: l04-stop-loss
+        domain: D_RISK
+        submodule: stop_loss/
+        note: 毫秒级 kill switch 触发（T1 激活）
+      - id: l04-monitor-hot
+        domain: D_RISK
+        submodule: monitor/
+        note: real-time hard monitor（T1 激活）
+      - id: l06-sor
+        domain: D_EX_CORE
+        submodule: sor/
+        note: smart order routing（T1 激活）
+      - id: l06-adapters-hot
+        domain: D_EX_CORE
+        submodule: adapters/*_hot.py
+        note: 券商直连（T1 激活）
+      - id: l10-security-gateway  # hot_adjacent
+        domain: D_COMPLIANCE
+        submodule: ai_security/security_gateway
+        note: AISG security_gateway，< 50ms 目标（Hot-adjacent）
+      - id: shared-runtime-plane-tag
+        domain: D_SHARED
+        submodule: contracts/runtime_plane_tag.py
+        note: 枚举定义，所有平面共用契约
+    t3_additional_modules:
+      - l00-connectors-hot
+      - l03-signals-hot
+      - l11-serving-hot
+      - l12-metrics-hot
+    sla:
+      latency_p50_ms: 1
+      latency_p99_ms: 10
+      throughput_min: "100k msg/s"
+      availability_percent: 99.99
+      failure_impact: 资金直接损失（订单错过 / 风控失守）
+    tech_stack:
+      languages: [C++20, Rust, C]
+      runtime: 裸金属 / 物理机
+      ipc: [Aeron, LMAX Disruptor, ZeroMQ, RDMA]
+      storage: Shared Memory Ring Buffer / mmap files
+      concurrency: lock-free ring buffers / SPSC queue
+      gc: 禁止（预分配 / arena allocator）
+      scheduling: CPU亲和 / NUMA感知 / 大页内存
+
+  warm:
+    latency_target: "10ms - 1s (P95)"
+    latency_p50: "< 50ms"
+    description: >
+      策略计算 + 因子引擎 + AI 决策 + OMS 状态机。
+      可抢占（asyncio / 协程）。Async event loop / Task queue。
+      语言：Python >=3.11 / asyncio。
+      部署：Linux VM / 容器（K8s Pod）。
+    activation_trigger: T0（当前已激活，全量）
+    current_status: active
+    modules:
+      - id: l00-connectors-default
+        domain: D_MKT_DATA
+        submodule: connectors/*.py（akshare/tushare/wind 默认）
+        note: 当前默认数据接入
+      - id: l00-normalizers
+        domain: D_MKT_DATA
+        submodule: normalizers/
+        note: 数据标准化
+      - id: l00-cache
+        domain: D_MKT_DATA
+        submodule: cache/
+        note: 数据缓存
+      - id: l01-config
+        domain: D_INFRA_OPS
+        submodule: config/
+        note: 配置管理（跨平面共享，自身属 Warm）
+      - id: l01-logging
+        domain: D_INFRA_OPS
+        submodule: logging/
+        note: 日志基础设施
+      - id: l01-exceptions
+        domain: D_INFRA_OPS
+        submodule: exceptions/
+        note: 异常框架
+      - id: l01-runtime
+        domain: D_INFRA_OPS
+        submodule: runtime/
+        note: 基础运行时
+      - id: l02-factors-online
+        domain: D_FACTOR
+        submodule: factors/（online increment 增量计算）
+        note: 因子在线增量模式
+      - id: l02-evaluation-realtime
+        domain: D_FACTOR
+        submodule: evaluation/（real-time IC）
+        note: 实时信息系数计算
+      - id: l03-signals-default
+        domain: D_SIGLEGACY
+        submodule: signals/（default）
+        note: 默认信号输出
+      - id: l03-sentiment
+        domain: D_SIGLEGACY
+        submodule: sentiment/
+        note: 情绪分析
+      - id: l03-predictions
+        domain: D_SIGLEGACY
+        submodule: predictions/（AI推理）
+        note: AI 推理信号
+      - id: l04-metrics-warm
+        domain: D_RISK
+        submodule: metrics/（VaR/CVaR 计算）
+        note: 风险指标 Warm 计算
+      - id: l04-monitor-warm
+        domain: D_RISK
+        submodule: monitor/（default）
+        note: 默认监控
+      - id: l05-optimization
+        domain: D_PF_CORE
+        submodule: optimization/
+        note: 组合优化
+      - id: l05-rebalancing
+        domain: D_PF_CORE
+        submodule: rebalancing/
+        note: 再平衡
+      - id: l05-meta-router
+        domain: D_PF_CORE
+        submodule: meta_router/
+        note: 策略元路由
+      - id: l05-strategic
+        domain: D_PF_CORE
+        submodule: strategic/（决策部分）
+        note: 战略决策
+      - id: l06-oms
+        domain: D_EX_CORE
+        submodule: oms/
+        note: 订单状态机
+      - id: l06-pre-trade
+        domain: D_EX_CORE
+        submodule: pre_trade/
+        note: 交易前检查
+      - id: l06-adapters-default
+        domain: D_EX_CORE
+        submodule: adapters/（default）
+        note: 默认券商适配器
+      - id: l07-review-realtime
+        domain: D_TRADING
+        submodule: review/（实时 TCA）
+        note: 实时交易成本分析
+      - id: l08-cli
+        domain: D_FRONTEND
+        submodule: cli/
+        note: 命令行接口
+      - id: l08-orchestration
+        domain: D_FRONTEND
+        submodule: orchestration/
+        note: AI 编排
+      - id: l08-notifications
+        domain: D_FRONTEND
+        submodule: notifications/
+        note: 消息通知
+      - id: l09-notebooks
+        domain: D_SIMULATION
+        submodule: notebooks/（交互式）
+        note: 研究笔记本
+      - id: l09-prototypes
+        domain: D_SIMULATION
+        submodule: prototypes/
+        note: 原型实验
+      - id: l10-validators
+        domain: D_COMPLIANCE
+        submodule: validators/
+        note: 合规校验器
+      - id: l10-ai-security-others
+        domain: D_COMPLIANCE
+        submodule: ai_security/（security_gateway 之外的 5 模块）
+        note: AISG 其余模块
+      - id: l10-rules
+        domain: D_COMPLIANCE
+        submodule: rules/
+        note: 规则引擎
+      - id: l10-policy-engine
+        domain: D_COMPLIANCE
+        submodule: policy_engine/
+        note: 策略执行引擎
+      - id: l11-serving-default
+        domain: D_ML_TRAIN
+        submodule: serving/（default Python）
+        note: 模型推理默认（Warm）
+      - id: l11-model-registry-read
+        domain: D_ML_TRAIN
+        submodule: model_registry/（读）
+        note: 模型注册表只读
+      - id: l12-metrics-warm
+        domain: D_OPS
+        submodule: metrics/（标准采集）
+        note: 指标采集
+      - id: l12-logs
+        domain: D_OPS
+        submodule: logs/
+        note: 日志管道
+      - id: l12-traces
+        domain: D_OPS
+        submodule: traces/
+        note: 分布式追踪
+      - id: l12-ai-behavior
+        domain: D_OPS
+        submodule: ai_behavior/
+        note: AI 行为监控
+      - id: l13-shadow
+        domain: D_INTELLIGENCE
+        submodule: shadow/（影子交易运行时）
+        note: 影子测试
+      - id: l13-champion-challenger
+        domain: D_INTELLIGENCE
+        submodule: champion_challenger/（评分）
+        note: 冠军挑战者评分
+      - id: l13-promotion-gate
+        domain: D_INTELLIGENCE
+        submodule: promotion_gate/
+        note: 晋级门禁
+      - id: shared-contracts
+        domain: D_SHARED
+        submodule: contracts/*.py（余下契约）
+        note: 跨层公共契约（除 runtime_plane_tag.py 外）
+    sla:
+      latency_p50_ms: 50
+      latency_p99_ms: 1000
+      throughput_min: "1k req/s"
+      availability_percent: 99.9
+      failure_impact: 决策质量下降（信号延迟 / AI 响应慢）
+    tech_stack:
+      languages: ["Python >=3.11", "Rust CPython extensions（热点函数，Assess）"]
+      runtime: Linux VM / 容器（K8s Pod）
+      ipc: [Redis Streams, Kafka, FastAPI HTTP, WebSocket]
+      storage: Redis / PostgreSQL / Parquet（hot/warm border）
+      concurrency: asyncio event loop / actor model
+      gc: Python 默认 GC（acceptable）
+      scheduling: Gunicorn workers + asyncio event loop
+
+  cold:
+    latency_target: "> 1s（秒级到小时级）"
+    description: >
+      回测 + 训练 + 报表 + 治理批任务。
+      完全可中断（checkpointing）。批调度 / 定时任务 / DAG。
+      语言：Python / Scala（Spark）/ SQL。
+      部署：Spark cluster / Dask cluster / 批调度工作节点。
+    activation_trigger: T0 部分激活（T2 全量激活）
+    current_status: partial
+    modules:
+      - id: l00-storage
+        domain: D_MKT_DATA
+        submodule: storage/（落盘）
+        note: 数据持久化存储
+      - id: l00-quality
+        domain: D_MKT_DATA
+        submodule: quality/（批量校验）
+        note: 数据质量批量检查
+      - id: l02-pipeline
+        domain: D_FACTOR
+        submodule: pipeline/（全量计算）
+        note: 因子批量全量计算
+      - id: l02-factors-batch
+        domain: D_FACTOR
+        submodule: factors/（批量回算）
+        note: 因子批量回算
+      - id: l02-registry
+        domain: D_FACTOR
+        submodule: registry/
+        note: 因子注册表持久化
+      - id: l03-sentiment-batch
+        domain: D_SIGLEGACY
+        submodule: sentiment/（历史批量分析）
+        note: 情绪历史批量
+      - id: l04-metrics-cold
+        domain: D_RISK
+        submodule: metrics/（日终 + 月度回测）
+        note: 风险指标批量计算
+      - id: l05-backtest
+        domain: D_PF_CORE
+        submodule: backtest/
+        note: 策略回测
+      - id: l05-performance
+        domain: D_PF_CORE
+        submodule: performance/
+        note: 绩效分析
+      - id: l05-strategic-history
+        domain: D_PF_CORE
+        submodule: strategic/（历史回溯）
+        note: 战略历史分析
+      - id: l07-attribution
+        domain: D_TRADING
+        submodule: attribution/（日终归因）
+        note: 绩效归因
+      - id: l07-reports
+        domain: D_TRADING
+        submodule: reports/（月度报表）
+        note: 月度报表生成
+      - id: l09-experiments
+        domain: D_SIMULATION
+        submodule: experiments/（批量实验沙盒）
+        note: 实验沙盒
+      - id: l10-audit-trail
+        domain: D_COMPLIANCE
+        submodule: audit-trail/（归档）
+        note: 审计追踪归档
+      - id: l10-policies-sbom
+        domain: D_COMPLIANCE
+        submodule: policies/（SBOM 扫描）
+        note: 供应链 SBOM 扫描
+      - id: l11-training
+        domain: D_ML_TRAIN
+        submodule: training/
+        note: 模型训练
+      - id: l11-evaluation
+        domain: D_ML_TRAIN
+        submodule: evaluation/
+        note: 模型评估
+      - id: l11-scout
+        domain: D_ML_TRAIN
+        submodule: scout/（批量分析）
+        note: Scout Agent 批量任务
+      - id: l11-model-registry-write
+        domain: D_ML_TRAIN
+        submodule: model_registry/（写）
+        note: 模型注册表写入
+      - id: l12-archive
+        domain: D_OPS
+        submodule: traces/（长期归档）
+        note: 追踪数据归档
+      - id: l12-archive
+        domain: D_OPS
+        submodule: ai_behavior/（回溯分析）
+        note: AI 行为历史回溯
+      - id: l13-ab-testing
+        domain: D_INTELLIGENCE
+        submodule: ab_testing/（结果聚合）
+        note: A/B 测试结果聚合
+      - id: gov-factory
+        domain: D_GOVERNANCE
+        submodule: scripts/governance/（Factory 层所有脚本）
+        note: 治理 Factory 层（构建期 / 定时批调度）
+      - id: gov-scout-d02
+        domain: D_GOVERNANCE
+        submodule: src/zephyr/ml_train/scout/ + cron
+        note: D-02 Scout Agent（每日抓取批任务）
+      - id: fe-ssr-reports
+        domain: D_FRONTEND
+        submodule: apps/reports-center/（SSR 报表）
+        note: 前端服务端渲染报表（Cold）
+      - id: fe-codegen
+        domain: D_FRONTEND
+        submodule: tools/codegen/
+        note: 构建期代码生成工具（Cold）
+    sla:
+      latency_p50_ms: null
+      latency_p99_ms: null
+      job_completion_note: 完成时间 < SLA 窗口（按业务定义）
+      availability_percent: 95.0
+      failure_impact: 分析报表延迟（次日补救即可）
+    tech_stack:
+      languages: [Python, Scala, SQL]
+      runtime: Spark cluster / Dask cluster / Airflow workers
+      ipc: [Parquet + S3/MinIO, Airflow XCom, Redis Streams（long TTL）]
+      storage: Parquet columnar / DuckDB / S3 object storage
+      concurrency: Spark DataFrame / Dask delayed / Ray
+      gc: 无所谓
+      scheduling: Airflow DAG / Prefect Flow / cron
+
+cross_plane_rules:
+  - rule: HOT_WARM_IPC_ONLY
+    statement: Hot ⇄ Warm 必须过 shared/contracts/runtime_plane_tag.py 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），禁止直接函数调用
+  - rule: WARM_COLD_ASYNC_ONLY
+    statement: Warm → Cold 通过 Parquet / Redis Streams 异步推送，永远非阻塞
+  - rule: COLD_TO_WARM_SHADOW_REQUIRED
+    statement: Cold → Warm 模型/参数更新必须过影子验证（Champion-Challenger，L13 子模块负责）
+  - rule: NO_COLD_TO_HOT_DIRECT
+    statement: 禁止 Cold → Hot 直接通信。所有 Cold 输出必须先落 Warm 再经 Warm 验证后进 Hot
+  - rule: NO_HOT_SYNC_PYTHON
+    statement: Hot 禁止同步调用 Warm Python（Python GIL + asyncio 延迟不可预测）
+  - rule: NO_SHARED_MUTABLE_STATE
+    statement: 禁止跨平面共享可变全局状态
+
+summary:
+  total_modules_hot: 7
+  total_modules_warm: 39
+  total_modules_cold: 24
+  activation_status:
+    hot: inactive
+    warm: active
+    cold: partial
+  last_updated: "2026-04-21"

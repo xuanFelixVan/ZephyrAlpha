@@ -1,0 +1,487 @@
+# [A_config] module_id=CFG-module-id-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# Module ID Registry v2.0
+# 权威来源：此文件是模块 ID 分配的唯一真源
+# 新增模块 ID 必须先在此注册，再写入 layers/*.yaml
+#
+# v2.0 更新说明（2026-04-30）：
+# - 新增 GOV-/DOM-/OPS-/PS- 前缀编号体系
+# - 注册 experimental~3 产出的 54 个 module_id
+# - 保留 MOD-{LAYER_CODE}-{SEQ} 作为代码模块编号（architecture_model 层面）
+# - 文档规则模块使用 GOV-/DOM-/OPS-/PS- 前缀
+#
+# === ID 体系分工（v2.1.1，2026-05-03）===
+# 本项目存在两套 ID 体系，分工明确：
+# 1. 架构模型实体 ID（契约、事件、聚合、技术条目）→ canonical SSoT = _index.yaml → id_conventions
+# 2. 文档规则模块 ID（治理/域/操作/元标准）→ canonical SSoT = 本文件（module_id_registry.yaml）
+# 两套体系不重叠——本文件的 allocation_rules 仅管辖第 2 类（文档规则模块），
+# 架构模型 ID（CTR-/E-/AGG-/ENT-/VO-/T-/DS/LLM/CORE-/INFRA-）由 _index.yaml id_conventions 管辖。
+# 新增 ID 时先判断属于哪套体系，再到对应 canonical 源登记。
+
+module_id: MOD-GOVERNANCE
+registry_version: "2.2.0"
+last_updated: "2026-05-08"
+total_registered: 141
+
+# ID 分配规则
+allocation_rules:
+  format: "MOD-{LAYER_CODE}-{SEQ}"
+  doc_rule_format: "{DOMAIN}-{TYPE}-{NNN}"
+  numbering_gaps: |
+    以下编号已跳过（从未分配或已合并/废弃）：
+    - PS-STD-005: 从未分配（Stage F 归一化时跳过）
+    - PS-STD-007/008: 从未分配（Stage F 归一化时跳过）
+    - GOV-AI-002: 从未分配（B-e 批次跳号）
+    - GOV-TASK-002/003: 从未分配（B-e 批次跳号）
+    如需使用这些编号，应先确认无历史冲突再分配。
+  domain_prefixes:
+    GOV: "治理层规则（governance/）"
+    DOM: "层域规则（domains/）"
+    OPS: "操作规程（operational/）"
+    PS: "元标准（meta/）"
+  type_codes:
+    DOC: "文档治理"
+    AI: "AI 治理"
+    TASK: "任务治理"
+    SEC: "安全"
+    CMP: "合规"
+    ARCH: "架构"
+    DATA: "数据"
+    MOD: "模块"
+    STD: "元标准"
+    REG: "注册表"
+    VC: "Vibe Coding"
+    DEV: "DevOps"
+    MIG: "迁移"
+    L00: "数据源层"
+    L02: "因子层"
+    L04: "风控层"
+    L07: "盘后分析层"
+  seq_format: "三位数字，从 001 开始"
+  sub_blueprint_rules: |
+    子蓝图（从父蓝图拆分出的独立文件）命名规则：
+    1. 子蓝图使用独立编号，禁止嵌套编号（如 MOD-MASTER_BLUEPRINT-BASELINE 是违规的）
+    2. 正确做法：MOD-MASTER-002（基线）、MOD-MASTER-003（容量）、MOD-MASTER_BLUEPRINT（Agent Spec）
+    3. 父子关系通过 frontmatter 的 parent_module / belongs_to 字段表达，不通过编号后缀
+    4. 规则来源：PS-STD-001 §5.4 铁律 #7 "禁止嵌套编号"
+    5. 校验正则：module_id 不得包含父编号+后缀模式（如 XXX-001-SUFFIX）
+
+# 已注册的文档规则模块 ID
+registered_ids:
+  # === PS 元标准层 ===
+  - module_id: PS-STD-000
+    title: "元标准宪法"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-001
+    title: "元数据注册表"
+    path: "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-002
+    title: "标准文档模板"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-003
+    title: "行为边界标准"
+    path: "docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-004
+    title: "规则分类与冲突裁决标准"
+    path: "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-006
+    title: "治理度量标准"
+    path: "docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-009
+    title: "规则治理标准"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
+    doc_type: policy
+    status: active
+  - module_id: PS-STD-010
+    title: "规则生命周期标准（已合并至 PS-STD-009）"
+    path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
+    doc_type: policy
+    status: merged
+  - module_id: PS-REG-001
+    title: "规则登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/_index.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-002
+    title: "规则文档主注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-003
+    title: "完整文档清单（SSoT: document-metadata-index-registry.yaml）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
+    doc_type: register
+    status: active
+    note: "2026-05-03 R5 审计：governance-rules-master-registry.yaml 同样已废弃（AGENTS.md §1），更新为 document-metadata-index-registry.yaml（当前唯一 SSoT）"
+  - module_id: PS-REG-004
+    title: "Architecture Compliance Contract"
+    path: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-005
+    title: "登记表总索引（Registry Master Index）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-006
+    title: "运行时基础设施登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-007
+    title: "跨模块依赖登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-008
+    title: "脚本健康与清单登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-009
+    title: "AI 风险登记册"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-010
+    title: "知识条目登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"
+    doc_type: register
+    status: planned
+  - module_id: PS-REG-011
+    title: "AI Session/Agent 登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.md"
+    doc_type: register
+    status: planned
+  - module_id: PS-REG-012
+    title: "Frontmatter 字段定义登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-013
+    title: "项目目录登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-014
+    title: "GATE 门禁登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-015
+    title: "KB 决策记录登记表（原 KB 决策记录 状态登记表已删除，真源迁移至 KB）"
+    path: "DELETED"
+    doc_type: register
+    status: deleted
+  - module_id: PS-REG-016
+    title: "登记表的登记表（跨登记表一致性契约）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"
+    doc_type: gate
+    status: active
+  - module_id: PS-REG-017
+    title: "任务卡元层登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-018
+    title: "规则路径目录"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog-registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-019
+    title: "声明式契约跟踪登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
+    doc_type: register
+    status: active
+  - module_id: PS-REG-021
+    title: "能力→真源文件反查注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+    doc_type: gate
+    status: active
+
+  # === GOV 文档治理层 ===
+  - module_id: GOV-DOC-001
+    title: "全系统统一编号规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-002
+    title: "目录结构规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-003
+    title: "文件命名规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-004
+    title: "文件路径规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-005
+    title: "编码安全规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-006
+    title: "文档生命周期管理规范"
+    path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
+    doc_type: policy
+    status: active
+  - module_id: GOV-DOC-007
+    title: "文件操作安全门控"
+    path: "docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml"
+    doc_type: policy
+    status: draft
+    note: "2026-05-03 R5 审计：原路径 file-safety-gate.md 不存在，更正为磁盘实际文件名 trae_029_doc_operation_security.yaml（与 AGENTS.md §6.8 引用一致）"
+
+  # === GOV AI 治理层 ===
+  - module_id: GOV-AI-001
+    title: "AI 自治权限注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml"
+    doc_type: register
+    status: active
+  - module_id: GOV-AI-003
+    title: "AI 幻觉自检清单"
+    path: "docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-AI-004
+    title: "双编辑器协作规则"
+    path: "docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-AI-006
+    title: "AI 模型能力矩阵契约"
+    path: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
+    doc_type: gate
+    status: active
+  - module_id: GOV-AI-007
+    title: "Session Log 标准 Schema"
+    path: "docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml"
+    doc_type: gate
+    status: active
+
+  # === GOV 任务治理层 ===
+  - module_id: GOV-TASK-001
+    title: "任务卡规范标准"
+    path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-TASK-004
+    title: "任务生命周期治理标准"
+    path: "docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md"
+    doc_type: policy
+    status: active
+  - module_id: GOV-TASK-005
+    title: "任务关闭标准"
+    path: "docs/01_policies_and_standards/governance/task/task-closure-standard.md"
+    doc_type: policy
+    status: active
+
+  # === GOV 安全层 ===
+  - module_id: GOV-SEC-001
+    title: "密钥管理策略"
+    path: "docs/01_policies_and_standards/governance/security/secret-management-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-SEC-002
+    title: "访问控制策略"
+    path: "docs/01_policies_and_standards/governance/security/access-control-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-SEC-003
+    title: "安全事件响应策略"
+    path: "docs/01_policies_and_standards/governance/security/security-incident-response-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 合规层 ===
+  - module_id: GOV-CMP-001
+    title: "监管分类法"
+    path: "docs/01_policies_and_standards/governance/compliance/regulatory-taxonomy-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-CMP-002
+    title: "审计追踪策略"
+    path: "docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 架构层 ===
+  - module_id: GOV-ARCH-001
+    title: "架构决策记录（已迁入 KB decisions namespace）"
+    path: "KB:namespace=decisions"
+    doc_type: kb_namespace
+    status: migrated_to_kb
+  - module_id: GOV-ARCH-002
+    title: "架构评审门控"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-ARCH-003
+    title: "架构版本化策略"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-FSTR-001
+    title: "系统重组总蓝图"
+    path: "docs/03_modules/_cross_layer/restructuring/blueprint.md"
+    doc_type: blueprint
+    status: active
+
+  # === GOV 数据层 ===
+  - module_id: GOV-DATA-001
+    title: "数据质量策略"
+    path: "docs/01_policies_and_standards/governance/data/data-quality-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-DATA-002
+    title: "数据血缘策略"
+    path: "docs/01_policies_and_standards/governance/data/data-lineage-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-DATA-003
+    title: "数据保留策略"
+    path: "docs/01_policies_and_standards/governance/data/data-retention-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === GOV 模块层 ===
+  - module_id: GOV-MOD-ALPHA_SIGNAL_DOMAIN
+    title: "模块准入门控策略"
+    path: "docs/01_policies_and_standards/governance/module/module-admission-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-002
+    title: "AI模型行为铁律"
+    path: "docs/01_policies_and_standards/governance/module/ai-behavior-iron-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-003
+    title: "模块生命周期策略"
+    path: "docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-004
+    title: "模块接口契约策略"
+    path: "docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: GOV-MOD-005
+    title: "模块注入6铁律规范"
+    path: "docs/01_policies_and_standards/governance/module/module-injection-rules-policy.md"
+    doc_type: policy
+    status: draft
+
+  # === OPS 操作规程层 ===
+  - module_id: OPS-VC-002
+    title: "Vibe Coding Session 状态机规则"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-machine.md"
+    doc_type: operational_rule
+    status: deprecated
+    deprecated_reason: "文件从未创建（幽灵条目）——2026-05-02 审计发现。Session 状态机操作已合并到 vibe-coding-session-state-runbook.md（OPS-VC-004）"
+  - module_id: OPS-VC-004
+    title: "AI 与系统事故响应手册"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md"
+    doc_type: operational_rule
+    status: draft
+    note: "合并 OPS-VC-004（emergency-playbook）+ OPS-VC-006（incident-playbook）"
+  - module_id: OPS-VC-005
+    title: "Vibe Coding 会话门禁检查清单"
+    path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: OPS-DEV-002
+    title: "架构变更操作手册"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture-change-playbook.md"
+    doc_type: operational_rule
+    status: deprecated
+    note: "原 operational/architecture/ 于 2026-05-01 删除，内容待归入 governance/architecture/"
+  - module_id: MOD-INF-003
+    title: "任务卡系统 + 知识库（KMS）蓝图与施工"
+    path: "docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md"
+    doc_type: blueprint
+    status: retired
+    note: "已废弃——内容已被 MOD-TASK_SYSTEM (任务系统) 和 MOD-KB-001 (知识库) 吸收。物理文件已于2026-05-06标记删除。"
+  - module_id: MOD-INF-009
+    title: "Task Pipeline — M1-M11 双管线路由"
+    path: "docs/03_modules/_cross_layer/pipeline/blueprint.md"
+    doc_type: blueprint
+    status: draft
+
+  # === DOM 层域规则层 ===
+  - module_id: DOM-L00-001
+    title: "数据源连接策略"
+    path: "docs/01_policies_and_standards/domains/L00_data_source/governance/data-source-connection-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L00-002
+    title: "连接器入职操作手册"
+    path: "docs/01_policies_and_standards/domains/L00_data_source/operational/connector-onboarding-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L02-001
+    title: "因子质量门控"
+    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor-quality-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L02-002
+    title: "因子入职操作手册"
+    path: "docs/01_policies_and_standards/domains/L02_alpha_factor/operational/factor-onboarding-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L04-001
+    title: "风控限额策略"
+    path: "docs/01_policies_and_standards/domains/L04_risk_management/governance/risk-limits-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L04-002
+    title: "止损配置操作手册"
+    path: "docs/01_policies_and_standards/domains/L04_risk_management/operational/stop-loss-config-runbook.md"
+    doc_type: operational_rule
+    status: draft
+  - module_id: DOM-L07-001
+    title: "盘后报告策略"
+    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/governance/post-trade-reporting-policy.md"
+    doc_type: policy
+    status: draft
+  - module_id: DOM-L07-002
+    title: "分析管线操作手册"
+    path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md"
+    doc_type: operational_rule
+    status: draft
+
+# 代码模块 ID 注册表
+# population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
+# planned_count: ~110（估算：14 层 ~90 + shared ~5 + frontend ~7 + scripts ~8）
+registered_modules: []  # 代码模块在各分区 YAML 中定义——AUDIT-04 填充后 total_registered=138 含 72 文档规则 + 66 代码模块
+# TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
+
+# 保留 ID 段（预留给特殊用途）
+reserved_ranges:
+  - range: "MOD-SYS-001 ~ MOD-SYS-099"
+    purpose: "系统级跨层模块"
+  - range: "MOD-EXT-001 ~ MOD-EXT-099"
+    purpose: "外部集成模块"
