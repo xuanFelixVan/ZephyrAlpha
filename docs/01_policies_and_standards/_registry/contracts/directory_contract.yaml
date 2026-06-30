@@ -398,8 +398,8 @@ global_forbidden:
 # 显式禁止的目录前缀——与 global_forbidden 互补：
 #   - global_forbidden 是"规则化禁止"（如"src/ 下禁止 .bak"，按扩展名/模式）
 #   - deprecated_directories 是"目录级显式废弃"（整个目录已迁移他处，禁止新建任何文件）
-# 双层防御（对标 GATE-DEPRECATED-DIR 设计）：
-#   ① GitCommitGateway._check_deprecated_directories（已在 AD-001 阶段3 删除，未迁移到 directory_contract_gate——① 层阻断缺口待补全，在 check_directory_contract.py::scan_files 添加 deprecated_directories 检测）
+# 双层防御（对标 GATE-DEPRECATED-DIR 设计，①② 层均已于 2026-06-30 修复）：
+#   ① check_directory_contract.py::check_deprecated_directory（2026-06-30 补全：原 _check_deprecated_directories 在 AD-001 阶段3 删除后 scan_files 漏检 deprecated_directories，新增 check_deprecated_directory 函数 + scan_files 调用修复，directory_contract_gate 通过 subprocess 复用）
 #   ② make_deprecated_directory_reconciler（post-commit 自动迁移+清理，2026-06-30 修复为直接读本契约 §7，消灭"只告警不消除"）
 
 deprecated_directories:
@@ -409,4 +409,5 @@ deprecated_directories:
     severity: error
     history_lesson: "09_audit/ 历史为独立审计目录，trae_047 裁定合并入 _working/audit/（临时区），原目录废弃"
     consumers:
+      - "check_directory_contract.py::check_deprecated_directory（commit 时阻断，2026-06-30 补全，directory_contract_gate 通过 subprocess 复用）"
       - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理，2026-06-30 修复为直接读本契约 §7 deprecated_directories，原 getattr(gateway, '_DEPRECATED_DIRS') 已废弃）"

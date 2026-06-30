@@ -381,6 +381,27 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict) -> list
     return findings
 
 
+def check_deprecated_directory(rel_path: str, contract: dict) -> list[dict]:
+    """检测文件是否位于废弃目录（directory_contract.yaml §7 deprecated_directories）。"""
+    findings: list[dict] = []
+    for entry in (contract.get("deprecated_directories") or []):
+        dep_path = entry.get("path", "").replace("\\", "/").rstrip("/")
+        if not dep_path:
+            continue
+        rel_norm = rel_path.replace("\\", "/")
+        if rel_norm == dep_path or rel_norm.startswith(dep_path + "/"):
+            findings.append({
+                "rule": "DCR-DEPRECATED",
+                "severity": entry.get("severity", "error"),
+                "file": rel_path,
+                "detail": (
+                    f"文件位于废弃目录 {dep_path}（{entry.get('reason', '已迁移')}），"
+                    f"请迁移到 {entry.get('migrated_to', '合规目录')}"
+                ),
+            })
+    return findings
+
+
 def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> list[dict]:
     """对给定文件列表执行所有已实现的 DCR 校验。"""
     if vocab is None:
@@ -391,6 +412,7 @@ def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> l
         findings.extend(check_extension(rel_path, contract))
         findings.extend(check_root_whitelist(rel_path, contract))
         findings.extend(check_ttl_zone(rel_path, contract))
+        findings.extend(check_deprecated_directory(rel_path, contract))
     return findings
 
 

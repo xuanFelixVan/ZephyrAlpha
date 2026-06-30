@@ -282,7 +282,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | WeakRef兼容性（第22轮） | 1 | 0 | 0 | 1 | __slots__类未包含__weakref__，未来若用weakref将抛TypeError |
 | **合计** | **1313** | **578** | **529** | **206** | |
 
-所有1301个问题归因于**5个病根**：
+所有1313个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -581,7 +581,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、1301个问题详细清单
+## 五、1313个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -7325,6 +7325,203 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：优先改用ONNX Runtime/`torch.jit.load(weights_only=True)`加载模型权重；若必须保留joblib，需(1)路径白名单+`Path.resolve()`前缀校验(2)SHA256+签名校验(3)`RestrictedUnpickler`重写`find_class`。两份实现为重复代码，修复时统一到单一实现。
 
 **严重度汇总**：HIGH=1, MEDIUM=0, LOW=0, 合计=1
+
+---
+
+### 5.118 __exit__异常抑制（0个，第22轮新增）
+
+> **审计结论**：本维度**未发现违规**。全项目所有`__exit__`/`__aexit__`方法均正确返回`False`或`None`（表示不抑制异常，让异常正常传播）；无`contextlib.suppress`误用；所有`@contextmanager`装饰的生成器函数均在`yield`后正确重新抛出异常。这是Python上下文管理协议的正确实现，无需修复。
+
+**审计范围**：
+- 全项目所有`__exit__`方法实现（返回值检查）
+- 全项目所有`__aexit__`方法实现（异步上下文管理器）
+- `contextlib.suppress`使用情况
+- `@contextmanager`装饰函数的异常传播行为
+- `contextlib.ExitStack`/`AsyncExitStack`使用模式
+- `try/finally`中`return`抑制异常的反模式
+
+**关键证据**：所有`__exit__`/`__aexit__`返回`False`或`None`（语义等价），无任何方法返回`True`来抑制异常。`@contextmanager`函数均未在`yield`后吞没异常。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=0, 合计=0
+
+---
+
+### 5.119 contextvars传播（4个，第22轮新增）
+
+#### 5.119.1 [HIGH] run_in_executor不传播_ctx_allowance致LLM调用在线程池中被阻塞
+
+- **文件**：
+  - `src/zephyr/trading/runtime/async_runtime.py:205,235`
+  - `src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py:412,457`
+- **问题**：`asyncio`的`run_in_executor`将协程调度到线程池执行，但**线程不继承当前任务的`contextvars`上下文**。项目使用`_ctx_allowance`（上下文变量）控制LLM调用的配额/许可，当LLM调用通过`run_in_executor`在线程池中执行时，线程看不到`_ctx_allowance`的值，导致配额检查失败、LLM调用被阻塞或拒绝。这是跨线程上下文传播的经典陷阱——`contextvars`是线程局部的，`run_in_executor`默认不复制当前上下文。
+- **证据**：
+  ```python
+  # async_runtime.py:205
+  loop.run_in_executor(None, blocking_func)  # 线程不继承contextvars
+  # gpu_consensus_scheduler.py:412,457 同模式
+  ```
+- **修复**：使用`contextvars.copy_context()`显式复制上下文，并在executor中用`ctx.run()`执行：
+  ```python
+  ctx = contextvars.copy_context()
+  future = loop.run_in_executor(None, lambda: ctx.run(blocking_func))
+  ```
+  或封装为统一的`run_in_executor_with_context`工具函数，强制所有跨线程调用都传播上下文。
+
+#### 5.119.2 [MEDIUM] run_in_executor不传播trace_id/session_id致日志上下文断裂
+
+- **文件**：
+  - `src/zephyr/trading/runtime/async_runtime.py:205,235`
+  - `src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py:412,457`
+- **问题**：与5.119.1同源问题，但影响面是**日志追踪**。`trace_id`/`session_id`通过`contextvars`在协程间传播，用于全链路日志关联。当`run_in_executor`将任务调度到线程池时，线程内的日志输出丢失`trace_id`，导致线程池中的日志无法与原始请求关联，排障困难。
+- **证据**：同5.119.1，`run_in_executor(None, func)`不传递上下文。
+- **修复**：同5.119.1，统一使用`contextvars.copy_context()` + `ctx.run()`封装。
+
+#### 5.119.3 [MEDIUM] create_task后台轮询持有启动期上下文快照致trace_id冻结
+
+- **文件**：
+  - `src/zephyr/shared/infra/outbox.py:194`
+  - `src/zephyr/shared/infra_06/outbox.py:194`（重复实现）
+- **问题**：`asyncio.create_task`在创建任务时会**捕获当前`contextvars`上下文的快照**，此后任务内部读取的`contextvars`值永远是创建时刻的快照，不会随原始协程的上下文更新而变化。outbox的后台轮询任务在服务启动时`create_task`，此后整个服务生命周期内，该任务的`trace_id`永远停留在启动时刻的值（通常为空或启动trace），所有后台轮询日志的`trace_id`都是错的。
+- **证据**：
+  ```python
+  # outbox.py:194
+  self._poll_task = asyncio.create_task(self._poll_loop())
+  # _poll_loop内读取trace_id永远是启动时刻快照
+  ```
+- **修复**：在每次轮询迭代开始时，用`contextvars.copy_context()`或显式重置`trace_id`，确保每轮日志携带独立trace_id。两份outbox为重复实现，应统一。
+
+#### 5.119.4 [LOW] fire_and_forget经ThreadPoolExecutor.submit不传播上下文
+
+- **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:105-120`
+- **问题**：`fire_and_forget`模式使用`ThreadPoolExecutor.submit`将风险缓解动作调度到线程池，与`run_in_executor`同理，线程不继承`contextvars`。`risk_mitigation`的日志丢失`trace_id`/`session_id`。
+- **证据**：`executor.submit(func)`不传递上下文。
+- **修复**：同5.119.1，使用`ctx.run()`封装。
+
+**严重度汇总**：HIGH=1, MEDIUM=2, LOW=1, 合计=4
+
+---
+
+### 5.120 cached_property/lru_cache（0个，第22轮新增）
+
+> **审计结论**：本维度**未发现违规**。全项目**未使用**`@cached_property`或`@functools.lru_cache`装饰器。虽然这意味着不存在缓存失效/缓存泄漏问题，但也意味着存在大量可优化的重复计算（如5.21节已记录的词表重复加载、配置重复解析等），属性能债务而非正确性债务。本维度6个检查点均N/A：
+> 1. `@cached_property`缓存失效问题 — N/A（未使用）
+> 2. `@lru_cache`无`maxsize`导致无界缓存 — N/A（未使用）
+> 3. `@lru_cache`缓存可变对象返回值 — N/A（未使用）
+> 4. `@lru_cache`在`__init__`前调用致缓存命中未初始化属性 — N/A（未使用）
+> 5. `@cached_property`与`__slots__`冲突 — N/A（未使用）
+> 6. 缓存键不可哈希（如dict/list）— N/A（未使用）
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=0, 合计=0
+
+---
+
+### 5.121 singledispatch（3个，第22轮新增）
+
+#### 5.121.1 [LOW] verdict_engine.evaluate的if-elif链可重构为singledispatchmethod
+
+- **文件**：`src/zephyr/trading/verdict_engine.py:169-237`
+- **问题**：`evaluate`方法使用长`if-elif-else`链根据输入类型分派到不同处理逻辑（约68行）。这是`functools.singledispatchmethod`的经典应用场景——用类型注册替代if-elif链，新增类型只需`@evaluate.register`而无需修改方法体，符合开闭原则。当前实现每新增一种verdict类型都要修改evaluate方法体，违反开闭原则。
+- **证据**：
+  ```python
+  def evaluate(self, request):
+      if isinstance(request, OrderRequest):
+          ...  # 20行
+      elif isinstance(request, RiskCheckRequest):
+          ...  # 15行
+      elif isinstance(request, ...):
+          ...  # 33行
+  ```
+- **修复**：重构为`@functools.singledispatchmethod`，每种类型注册独立处理函数。属代码可维护性优化，非正确性问题，故LOW。
+
+#### 5.121.2 [LOW] vector_bridge._parse_raw_results可使用singledispatch
+
+- **文件**：`src/zephyr/integration/vector_bridge.py`（_parse_raw_results方法）
+- **问题**：`_parse_raw_results`根据输入类型（list/dict/np.ndarray等）分派到不同解析逻辑，可用`@singledispatch`替代if-elif链。
+- **修复**：同5.121.1，重构为`@singledispatch`。
+
+#### 5.121.3 [LOW] feedback_self_audit._normalize_nodes三处重复可使用singledispatch
+
+- **文件**：`src/zephyr/behavioral_audit/feedback_self_audit.py`（_normalize_nodes方法）
+- **问题**：`_normalize_nodes`方法对3种输入类型（dict/list/对象）有3份几乎相同的normalize逻辑，可用`@singledispatch`消除重复。当前重复逻辑违反DRY。
+- **修复**：重构为`@singledispatch`，每种类型注册独立normalize函数。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=3, 合计=3
+
+---
+
+### 5.122 描述符协议（0个，第22轮新增）
+
+> **审计结论**：本维度**未发现违规**。全项目**无自定义描述符**（即未实现`__get__`/`__set__`/`__delete__`协议的类）。所有属性访问均通过普通实例属性或`@property`装饰器（`@property`是描述符的特例，但由Python内置实现，无自定义风险）。本维度7个检查点均N/A：
+> 1. `__set__`未抛`AttributeError`致`@property.setter`只读失效 — N/A
+> 2. `__get__`返回`self`而非`instance.__dict__`值 — N/A
+> 3. `__set_name__`未记录`owner`/`name` — N/A
+> 4. 描述符作为类属性但`__get__`依赖实例状态 — N/A
+> 5. `__delete__`与`__set__`不一致 — N/A
+> 6. 数据描述符与非数据描述符优先级混淆 — N/A
+> 7. `__get__`返回新对象致链式调用副作用 — N/A
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=0, 合计=0
+
+---
+
+### 5.123 __contains__/__iter__（2个，第22轮新增）
+
+#### 5.123.1 [LOW] FindingCollection缺__contains__致`in`回退O(n)线性扫描
+
+- **文件**：`src/zephyr/infrastructure/script_system/finding.py:284-343`
+- **问题**：`FindingCollection`类实现了`__iter__`但**未实现`__contains__`**。Python的`in`运算符在没有`__contains__`时会回退到`__iter__`线性扫描（O(n)），而非哈希查找（O(1)）。当集合频繁执行`finding in collection`检查时（如去重逻辑），性能退化为O(n²)。类内已有`_by_id: dict`字段可用于O(1)查找，但`__contains__`缺失导致该优化无法生效。
+- **证据**：
+  ```python
+  class FindingCollection:
+      def __iter__(self): ...  # 有
+      # 缺 __contains__
+      # 内部有 self._by_id: dict 可用于O(1)查找
+  ```
+- **修复**：添加`def __contains__(self, item): return item.id in self._by_id`。
+
+#### 5.123.2 [LOW] FindingCollection缺__reversed__致reversed()抛TypeError
+
+- **文件**：`src/zephyr/infrastructure/script_system/finding.py:284-343`
+- **问题**：`FindingCollection`实现了`__iter__`但**未实现`__reversed__`**。Python的`reversed()`函数在没有`__reversed__`且没有`__len__`+`__getitem__`序列协议时会抛`TypeError`。若调用方需要逆序遍历findings（如按时间倒序展示），将直接报错。
+- **修复**：添加`def __reversed__(self): return reversed(list(self._findings))`或维护逆序索引。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=2, 合计=2
+
+---
+
+### 5.124 __bool__/__len__冲突（2个，第22轮新增）
+
+#### 5.124.1 [LOW] GatePipeline在非容器上定义__len__缺__bool__致隐式bool歧义
+
+- **文件**：`src/zephyr/governance/rule_enforcement/gate_pipeline.py:150`
+- **问题**：`GatePipeline`类定义了`__len__`（返回gate数量）但**未定义`__bool__`**。Python在`if pipeline:`等布尔上下文中会回退到`__len__`——当pipeline没有任何gate时`__len__`返回0，`if pipeline:`为`False`。这可能导致"空pipeline"被误判为"假值"而跳过处理，与"pipeline对象本身是否存在"的语义混淆。`GatePipeline`不是容器，`__len__`语义是"gate数量"而非"容器大小"，在非容器上定义`__len__`本身就是反模式。
+- **修复**：要么删除`__len__`改用`gate_count`属性，要么显式定义`def __bool__(self): return True`消除歧义。
+
+#### 5.124.2 [LOW] VerifyResult.__bool__返回非bool值
+
+- **文件**：`src/zephyr/security/access_control/non_repudiation.py:37`
+- **问题**：`VerifyResult.__bool__`方法返回了非bool值（如`self.status`字符串或`self.score`数值）。Python的`__bool__`协议要求返回`True`或`False`，返回其他类型虽不报错（Python会再次调用`bool()`转换），但违反协议契约，且可能导致意外真值判断（如`status="failed"`被判定为`True`）。注意：本问题与5.108.3记录的`VerifyResult.__bool__`与`dict.__len__`冲突是**不同方面**——5.108.3关注的是`__bool__`与`__len__`的优先级冲突，此处关注的是`__bool__`返回值类型违规。
+- **修复**：确保`__bool__`显式返回`True`/`False`，如`return self.status == "verified"`。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=2, 合计=2
+
+---
+
+### 5.125 WeakRef兼容性（1个，第22轮新增）
+
+#### 5.125.1 [LOW] __slots__类未包含__weakref__致未来weakref使用将抛TypeError
+
+- **文件**：全项目所有声明`__slots__`的类（如`risk_limit_violation_error.py:21`的`RiskLimitViolationError`等）
+- **问题**：声明`__slots__`的类默认**不支持弱引用**（`weakref.ref(instance)`会抛`TypeError: cannot create weak reference to ...`），除非在`__slots__`中显式加入`'__weakref__'`。当前所有`__slots__`类均未包含`'__weakref__'`。虽然项目当前未使用`weakref`，但若未来引入缓存/观察者模式（如`weakref.WeakValueDictionary`缓存实例、`weakref.finalize`管理资源生命周期），将直接报错。这是"提前关上扩展门"的潜在风险。
+- **证据**：
+  ```python
+  class RiskLimitViolationError(Exception):
+      __slots__ = ("limit_type", "current_value", "threshold")
+      # 缺 '__weakref__'
+  ```
+- **修复**：对于可能被弱引用的类（如异常类、数据类），在`__slots__`中加入`'__weakref__'`。鉴于项目当前未用weakref，优先级LOW，但应在编码规范中明确：声明`__slots__`时默认包含`'__weakref__'`。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=1, 合计=1
 
 ---
 

@@ -64,6 +64,7 @@ Usage::
 from __future__ import annotations
 
 import logging
+import os
 
 from zephyr.governance.commit_gate_registry import GateSpec
 
@@ -97,6 +98,19 @@ def make_create_guard() -> GateSpec:
             f.replace("\\", "/") for f in staged_new
             if f.endswith(".py") and not f.replace("\\", "/").startswith("tests/")
         ]
+        if not new_py_files:
+            return True, ""
+
+        # 治本 2026-06-30：gateway 选择性提交（只提交 files_in_scope，其他 staged 文件 stash），
+        # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP
+        commit_files_rel: set[str] = set()
+        for f in files:
+            try:
+                rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
+                commit_files_rel.add(rel)
+            except (ValueError, OSError):
+                continue
+        new_py_files = [f for f in new_py_files if f in commit_files_rel]
         if not new_py_files:
             return True, ""
 
