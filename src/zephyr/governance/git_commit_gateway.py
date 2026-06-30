@@ -1699,8 +1699,11 @@ class GitCommitGateway:
                 pass  # 语法错误跳过(其他门禁会报)
             else:
                 _TARGET_SSOT = {"REPO_ROOT", "DB_PATH", "find_repo_root"}  # SSoT 治本 D2 收敛（2026-06-30）：find_repo_root 从 D2 reconciler 合并进 pre-commit gate，消除冗余 post-commit warn-only 层
-                _imported: dict[str, int] = {}  # symbol -> import 行号
+                _imported: dict[str, int] = {}  # symbol -> import 行号 (from X import Y)
                 _has_star = False
+                # R1 修复（2026-06-30）：记录 sanctioned 模块的 import 绑定（import X [as Y]）
+                # 用于检测 `import zephyr.shared.io.paths as paths; paths.REPO_ROOT` 属性访问
+                _sanctioned_module_bindings: dict[str, int] = {}  # 绑定名 -> import 行号
                 # Bug1 修复（2026-06-30）：_shared.constants 是 scripts/ 侧合法导入源
                 # （AGENTS.md §7：scripts/ 包外消费者可用 from _shared.constants import REPO_ROOT）
                 # Bug2 修复（2026-06-30）：真源定义文件 paths.py 自身使用 REPO_ROOT/DB_PATH 是合法的
@@ -1714,6 +1717,12 @@ class GitCommitGateway:
                             for _a in _node.names:
                                 if _a.name != "*":
                                     _imported[_a.asname or _a.name] = _node.lineno
+                    elif isinstance(_node, _ast.Import):
+                        # R1 修复（2026-06-30）：记录 sanctioned 模块的 import 绑定
+                        # 覆盖 `import zephyr.shared.io.paths` / `import _shared.constants as _const`
+                        for _a in _node.names:
+                            if _a.name in ("zephyr.shared.io.paths", "_shared.constants"):
+                                _sanctioned_module_bindings[_a.asname or _a.name] = _node.lineno
                 if not _is_ssot_definition:
                     for _node in _ast.walk(_tree):
                         if isinstance(_node, _ast.Name) and _node.id in _TARGET_SSOT:
@@ -1729,6 +1738,41 @@ class GitCommitGateway:
                                     f"{rel}:{_node.lineno} — 使用 {_node.id}(行{_node.lineno}) "
                                     f"在 import(行{_imported[_node.id]}) 之前"
                                 )
+                        elif isinstance(_node, _ast.Attribute) and _node.attr in _TARGET_SSOT:
+                            # R1 修复（2026-06-30）：检测 `import X; X.REPO_ROOT` 属性访问绕过
+                            # 解析属性链: zephyr.shared.io.paths.REPO_ROOT → ['zephyr','shared','io','paths','REPO_ROOT']
+                            _attr_chain: list[str] = []
+                            _cur = _node
+                            while isinstance(_cur, _ast.Attribute):
+                                _attr_chain.append(_cur.attr)
+                                _cur = _cur.value
+                            if not isinstance(_cur, _ast.Name):
+                                continue  # 链头非 Name（如 foo().REPO_ROOT），跳过
+                            _attr_chain.append(_cur.id)
+                            _attr_chain.reverse()
+                            _head = _cur.id
+                            # 跳过 self.X / cls.X（类属性，非 SSoT 符号）
+                            if _head in ("self", "cls"):
+                                continue
+                            _prefix = ".".join(_attr_chain[:-1])
+                            # 检查1：完整模块路径 sanctioned（如 zephyr.shared.io.paths.REPO_ROOT）
+                            if _prefix in ("zephyr.shared.io.paths", "_shared.constants"):
+                                continue
+                            # 检查2：链头别名绑定了 sanctioned 模块（如 paths.REPO_ROOT）
+                            if _head in _sanctioned_module_bindings:
+                                # 顺序检查：使用在 import 之后
+                                if _sanctioned_module_bindings[_head] > _node.lineno:
+                                    violations.append(
+                                        f"{rel}:{_node.lineno} — 使用 {_head}.{_node.attr}(行{_node.lineno}) "
+                                        f"在 import(行{_sanctioned_module_bindings[_head]}) 之前"
+                                    )
+                                continue  # 合法（或已报顺序错误）
+                            # 违规：属性访问 SSoT 符号但未从 sanctioned 源 import
+                            _chain_str = ".".join(_attr_chain)
+                            violations.append(
+                                f"{rel}:{_node.lineno} — 使用 {_chain_str} 但未从 sanctioned 源 import "
+                                f"(zephyr.shared.io.paths / _shared.constants)"
+                            )
 
                 # 模式5: sqlite3.connect("绝对路径.db") 硬编码数据库连接（阶段C 治本）
                 # 真源: _shared.constants.DB_PATH / get_depgraph_pg_connection()
