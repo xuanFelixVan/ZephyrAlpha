@@ -30,7 +30,7 @@ except Exception as exc:
     _IMPORT_REASON = str(exc)
 
 try:
-    from zephyr.autonomy_core.registry import AgentCapability
+    from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
 
     _CAPABILITY_OK = True
     _CAPABILITY_REASON = ""

@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.registry import AgentCapability
+    from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
     from zephyr.security.access_control.capability_check import (
         MAX_CAPABILITIES,
         verify_capability_scope,

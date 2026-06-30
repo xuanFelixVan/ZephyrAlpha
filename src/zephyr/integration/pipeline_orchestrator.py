@@ -1457,7 +1457,7 @@ class PipelineOrchestrator:
         # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
         #   Model → API ID: DeepSeek-V4-Pro/deepseek → deepseek-chat, GLM-5.1/glm → glm-4-flash
         #   Provider config (base_url, api_key_env, default_model) defined in
-        #   zephyr.autonomy_core.llm_gateway._PROVIDERS.
+        #   zephyr.infrastructure.pipeline.llm_gateway._PROVIDERS.
         try:
             from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
             from zephyr.shared.contracts.llm_gateway_protocol import LLMResponse

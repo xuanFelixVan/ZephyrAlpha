@@ -2,11 +2,11 @@
 # [MODULE] zephyr.security.llm_defense.llm_security_01.context_scanner
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
-# [CONSUMERS] zephyr.autonomy_core.security_filter
+# [CONSUMERS] zephyr.trading.orchestrator.context_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 九层纵深扫描; fail-closed: 任一层DENY→整体DENY; 不可用时返回pass+degraded_marker
-# [MODIFY-GUARD] CT-CE-LSG-001 协议变更必须同步更新context_engine/security_filter
+# [MODIFY-GUARD] CT-CE-LSG-001 协议变更必须同步更新context_engine/context_bridge
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

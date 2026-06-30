@@ -30,7 +30,6 @@ class AllSkillModules:
         "skill_model",
         "skill_loader",
         "skill_executor",
-        "trigger_router",
         "skill_factory",
         "skill_freshness",
         "skill_evaluator",
@@ -86,7 +85,6 @@ class AllSkillModules:
         "skill_router",
         "skill_schema_registry",
         "skill_tokenomics",
-        "phase_planner",
     ]
 
     @classmethod

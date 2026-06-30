@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from zephyr.autonomy_core.registry import (
+from zephyr.autonomy_core.skill_rbac_registry import (
     AgentCapability,
     SpecRegistry,
 )

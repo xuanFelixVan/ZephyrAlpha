@@ -42,7 +42,7 @@ class TestAllModules:
         result = AllSkillModules.all_modules()
         assert "skill_model" in result
         assert "skill_loader" in result
-        assert "phase_planner" in result
+        assert "skill_router" in result
 
     def test_all_modules_no_duplicates(self):
         result = AllSkillModules.all_modules()

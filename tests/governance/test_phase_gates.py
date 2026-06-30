@@ -96,7 +96,7 @@ class TestP0ContractSmoke:
         assert comm.a2a_id == "SMOKE"
 
     def test_registry_smoke(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
 
         cap = AgentCapability(agent_id="test", claimed_capabilities=["read"])
         assert cap.agent_id == "test"

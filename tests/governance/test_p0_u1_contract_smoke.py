@@ -73,7 +73,7 @@ class TestP0U1ContractSmoke:
         assert result is not None
 
     def test_gct_007_agent_spec_to_audit(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="test_agent", capabilities=["cap_1"])
@@ -95,7 +95,7 @@ class TestP0U2InputValidation:
     """P0-U2: 输入校验"""
 
     def test_invalid_module_id_rejected(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.security.access_control.capability_check import verify_capability_scope
 
         cap = AgentCapability(agent_id="NON_EXISTENT_MODULE", capabilities=["any_cap"])

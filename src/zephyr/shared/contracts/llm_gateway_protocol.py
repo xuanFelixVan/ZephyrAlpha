@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.llm_gateway_protocol
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.autonomy_core.llm_gateway
+# [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
@@ -18,10 +18,10 @@
 """
 LLMGatewayProtocol — LLM 网关抽象接口
 =====================================
-从 zephyr.autonomy_core.llm_gateway.LLMGateway 提取的 Protocol 接口。
+从 zephyr.infrastructure.pipeline.llm_gateway.LLMGateway 提取的 Protocol 接口。
 D-INFRA 和 D-ORCH 均依赖此接口，消除跨域直接依赖。
 
-实现方: zephyr.autonomy_core.llm_gateway.LLMGateway
+实现方: zephyr.infrastructure.pipeline.llm_gateway.LLMGateway
 消费者: zephyr.infrastructure.pipeline.llm_gateway
         zephyr.infrastructure.auto_fix_engine.llm_fix_adapter
         zephyr.integration.pipeline_orchestrator

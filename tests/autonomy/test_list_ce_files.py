@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1228 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
-# [MODULE] zephyr.autonomy_core.list_ce_files
+# [MODULE] zephyr.autonomy_core.ce_file_lister
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.list_ce_files import CATEGORIES, collect_files, generate_manifest
+    from zephyr.autonomy_core.ce_file_lister import CATEGORIES, collect_files, generate_manifest
 except Exception as _exc:
     pytest.skip(f"cannot import list_ce_files: {_exc}", allow_module_level=True)
 

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §3
-# [MODULE] zephyr.autonomy_core.registry
+# [MODULE] zephyr.autonomy_core.skill_rbac_registry
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration

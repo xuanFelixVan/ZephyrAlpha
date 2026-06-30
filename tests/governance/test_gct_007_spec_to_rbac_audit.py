@@ -15,13 +15,13 @@ class TestGCT007SpecToAudit:
     """验证 agent-spec/registry.py 的 AgentCapability 可被 audit-trail/spec_auditor.py 记录."""
 
     def test_capability_creatable(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
 
         cap = AgentCapability(agent_id="test", capabilities=["read:docs", "write:tests"])
         assert cap.agent_id == "test"
 
     def test_spec_auditor_records_capability(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="test", capabilities=["read:docs"])
@@ -30,7 +30,7 @@ class TestGCT007SpecToAudit:
         assert result["event_type"] == "AGENT_SPEC_REGISTERED"
 
     def test_spec_registry_register(self):
-        from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability, SpecRegistry
 
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="test", capabilities=["cap"])

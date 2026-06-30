@@ -27,7 +27,7 @@ import importlib
 from datetime import UTC, datetime
 from typing import Any
 
-_mod = importlib.import_module("zephyr.autonomy_core.registry")
+_mod = importlib.import_module("zephyr.autonomy_core.skill_rbac_registry")
 AgentCapability = _mod.AgentCapability
 
 

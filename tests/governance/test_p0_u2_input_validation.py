@@ -15,7 +15,7 @@ class TestP0U2InputValidation:
     """输入校验: 非法 module_id 拒绝, 循环依赖检测, 空值保护."""
 
     def test_non_existent_module_rejected_by_registry(self):
-        from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability, SpecRegistry
 
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="NON_EXISTENT_MODULE", capabilities=["any_cap"])
@@ -23,7 +23,7 @@ class TestP0U2InputValidation:
         assert cap.agent_id == "NON_EXISTENT_MODULE"
 
     def test_capability_check_rejects_unregistered(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.security.access_control.capability_check import verify_capability_scope
 
         cap = AgentCapability(agent_id="UNREGISTERED_AGENT", capabilities=["admin:all"])
@@ -31,14 +31,14 @@ class TestP0U2InputValidation:
         assert result is not None
 
     def test_empty_capability_list_handled(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
 
         cap = AgentCapability(agent_id="empty_agent", capabilities=[])
         assert cap.agent_id == "empty_agent"
         assert len(cap.capabilities) == 0
 
     def test_audit_rejects_empty_agent_id(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
 
         cap = AgentCapability(agent_id="", capabilities=["cap"])

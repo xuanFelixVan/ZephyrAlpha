@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.engine import SpecEngine, UpgradePhase, UpgradeResult
+from zephyr.autonomy_core.spec_engine import SpecEngine, UpgradePhase, UpgradeResult
 from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
 
 

@@ -15,7 +15,7 @@
 import pytest
 import yaml
 
-from zephyr.autonomy_core.registry import GOVERNANCE_SKILL_TYPES, AgentCapability, SpecRegistry
+from zephyr.autonomy_core.skill_rbac_registry import GOVERNANCE_SKILL_TYPES, AgentCapability, SpecRegistry
 
 
 class TestAgentCapabilityModel:

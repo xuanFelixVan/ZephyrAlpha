@@ -95,7 +95,7 @@ class TestGCT006BudgetToEscalation:
 
 class TestGCT007SpecToRBACAudit:
     def test_agent_spec_registry(self):
-        from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability, SpecRegistry
 
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="agent_007", capabilities=["read", "write"])
@@ -103,7 +103,7 @@ class TestGCT007SpecToRBACAudit:
         assert cap.agent_id == "agent_007"
 
     def test_capability_scope_restricted(self):
-        from zephyr.autonomy_core.registry import AgentCapability
+        from zephyr.autonomy_core.skill_rbac_registry import AgentCapability
         from zephyr.security.access_control.capability_check import verify_capability_scope
 
         cap = AgentCapability(agent_id="rogue", capabilities=["destroy"])

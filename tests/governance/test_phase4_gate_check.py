@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_gct_007_spec_to_rbac():
-    from zephyr.autonomy_core.registry import AgentCapability, SpecRegistry
+    from zephyr.autonomy_core.skill_rbac_registry import AgentCapability, SpecRegistry
 
     registry = SpecRegistry()
     cap = AgentCapability(
@@ -48,7 +48,7 @@ def test_phase4_gate_all_contracts_exist():
     import importlib
 
     modules = [
-        "zephyr.autonomy_core.registry",
+        "zephyr.autonomy_core.skill_rbac_registry",
         "zephyr.infrastructure.a2a_protocol.legacy_auditor",
         "zephyr.infrastructure.rollback.auditor",
         "zephyr.infrastructure.rollback.budget_tracker",
