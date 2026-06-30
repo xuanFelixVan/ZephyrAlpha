@@ -131,7 +131,7 @@ def _load_vocab_values(vocab_name: str) -> list[str]:
     )
 
 
-def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
+def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:  # noqa: gate-vocab  # 派生文件同步器：用 vocab_values 比对 field_registry，非复制词表加载
     """同步 frontmatter_field_registry.yaml 中的 allowed_values/enum_values
 
     field_registry 有两种枚举表示：
@@ -220,7 +220,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
     return changed
 
 
-def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -> bool:
+def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -> bool:  # noqa: gate-vocab  # 派生文件同步器：用 vocab_values 比对 arch_contract，非复制词表加载
     """同步 architecture_contract.yaml 中的 allowed_values（仅同步 vocabulary 的子集）"""
     if not ARCH_CONTRACT_PATH.exists():
         return False

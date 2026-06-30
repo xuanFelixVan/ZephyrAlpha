@@ -4,7 +4,7 @@
 > **审核日期**：2026-06-30
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
-> **问题总数**：**940个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮新增，去重后），归因于5个病根
+> **问题总数**：**956个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档由架构健康度仪表盘（第0期交付物）自动派生，禁止手工编辑违规清单部分
 
@@ -16,7 +16,7 @@
 - [二、问题总数确定](#二问题总数确定)
 - [三、病根分析（5个根因）](#三病根分析5个根因)
 - [四、战略层裁定（针对100%AI开发）](#四战略层裁定针对100ai开发)
-- [五、940个问题详细清单](#五940个问题详细清单)
+- [五、956个问题详细清单](#五956个问题详细清单)
   - [5.1 SSoT真源唯一性违规（211个）](#51-ssot真源唯一性违规211个)
   - [5.2 永久系统全自动触发违规（32个）](#52-永久系统全自动触发违规32个)
   - [5.3 新AI可发现性违规（55个）](#53-新ai可发现性违规55个)
@@ -97,6 +97,12 @@
   - [5.78 装饰器正确性（3个，第16轮新增）](#578-装饰器正确性3个第16轮新增)
   - [5.79 导入副作用（4个，第16轮新增）](#579-导入副作用4个第16轮新增)
   - [5.80 线程局部与ContextVar清理（5个，第16轮新增）](#580-线程局部与contextvar清理5个第16轮新增)
+  - [5.81 全局状态与单例模式（4个，第17轮新增）](#581-全局状态与单例模式4个第17轮新增)
+  - [5.82 迭代器与生成器正确性（1个，第17轮新增）](#582-迭代器与生成器正确性1个第17轮新增)
+  - [5.83 Hash/Equality契约（1个，第17轮新增）](#583-hashequality契约1个第17轮新增)
+  - [5.84 错误路径资源清理（2个，第17轮新增）](#584-错误路径资源清理2个第17轮新增)
+  - [5.85 浅拷贝与可变返回值（4个，第17轮新增）](#585-浅拷贝与可变返回值4个第17轮新增)
+  - [5.86 字符串与路径边界情况（4个，第17轮新增）](#586-字符串与路径边界情况4个第17轮新增)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -106,7 +112,7 @@
 
 ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有限。项目治理体系设计严谨（trae_060三原则 + 17个reconciler + 52个gate + 34个词表 + CapabilityLookup反查机制），但**执行覆盖存在系统性断层**。
 
-经16轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 940个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮新增），分布在80个维度：
+经17轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 956个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮新增），分布在86个维度：
 
 | 维度 | 违规数 | 高危 | 中危 | 低危 | 核心问题 |
 |---|:---:|:---:|:---:|:---:|---|
@@ -190,9 +196,15 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 装饰器正确性（第16轮） | 3 | 0 | 1 | 2 | async_limited缺@wraps+princpled_check mutate原函数+must/should mutate原函数 |
 | 导入副作用（第16轮） | 4 | 2 | 1 | 1 | 模块级os.makedirs(injection_engine)+模块级makedirs(game_day_scheduler)+find_repo_root模块级I/O+dos_launcher模块级.resolve() |
 | 线程局部与ContextVar清理（第16轮） | 5 | 3 | 2 | 0 | set_request_id丢弃Token+get_logger不保存token+grant_allowance用set非reset+SQLiteMetadataStore仅关当前线程连接+_tls令牌线程池泄漏 |
-| **合计** | **940** | **471** | **391** | **62** | |
+| 全局状态与单例模式（第17轮） | 4 | 1 | 3 | 0 | telemetry ring buffer无锁并发修改+3处Singleton无双重检查锁 |
+| 迭代器与生成器正确性（第17轮） | 1 | 0 | 1 | 0 | 生成器跨yield持有文件句柄 |
+| Hash/Equality契约（第17轮） | 1 | 0 | 1 | 0 | TriggerResult定义__eq__未定义__hash__变unhashable |
+| 错误路径资源清理（第17轮） | 2 | 0 | 1 | 1 | ordered_lock_acquisition list.index重复锁bug+get_market_read_conn无try/finally |
+| 浅拷贝与可变返回值（第17轮） | 4 | 2 | 2 | 0 | cache_layer读写非对称+skill_context_isolation返回内部引用+doc_guard_server返回carryover引用+work_orchestrator返回内部引用 |
+| 字符串与路径边界情况（第17轮） | 4 | 1 | 2 | 1 | capability_passport漏\净化+runbook_generator漏\null+staging_area未净化+Windows MAX_PATH未处理 |
+| **合计** | **956** | **475** | **401** | **64** | |
 
-所有940个问题归因于**5个病根**：
+所有956个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -271,7 +283,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ## 三、病根分析（5个根因）
 
-所有940个问题归因于5个根因。每个根因配证据链，所有问题都能溯源到这5个根因之一。
+所有956个问题归因于5个根因。每个根因配证据链，所有问题都能溯源到这5个根因之一。
 
 ### 根因1：trae_060的"违规清单"是静态快照，未随项目演进动态更新
 
@@ -491,7 +503,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、940个问题详细清单
+## 五、956个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -5979,6 +5991,185 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | HIGH | 3 | 5.80.1/5.80.2/5.80.3 |
 | MEDIUM | 2 | 5.80.4/5.80.5 |
 | **合计** | **5** | |
+
+---
+
+### 5.81 全局状态与单例模式（4个，第17轮新增）
+
+> 维度U：模块级可变全局状态无锁并发访问、Singleton模式无双重检查锁（DCL）
+
+#### 5.81.1 [HIGH] telemetry ring buffer模块级list无锁，后台线程并发修改
+
+- **文件**：`src/zephyr/infrastructure/system_telemetry/facade.py:77-104,180,433`
+- **证据**：模块级 `_in_memory_ring`（list）和 `_ring_write_cursor`（int）被后台采集线程写入、被API请求线程读取，无任何锁保护。`_ring_write_cursor` 的 `+= 1` 非原子操作，并发写入导致游标跳跃或回退；`_in_memory_ring[_cursor] = event` 与 `list(_in_memory_ring)` 并发执行时，迭代器可能看到部分写入的元素。CPython GIL不保证复合操作的原子性。
+- **修复**：用 `threading.Lock` 保护ring buffer的读写，或改用 `collections.deque(maxlen=...)` 自带线程安全。
+
+#### 5.81.2 [MEDIUM] metrics_bridge Singleton无双重检查锁
+
+- **文件**：`src/zephyr/infrastructure/system_telemetry/metrics_bridge.py:162,168-171`
+- **证据**：`instance()` 类方法在多线程同时首次调用时，`if cls._instance is None` 检查后无锁，两个线程可能同时通过检查并各自创建实例。创建后 `_instance` 被后创建的覆盖，先创建的实例泄漏（其内部资源如连接池/线程不会被清理）。非DCL（Double-Checked Locking）模式。
+- **修复**：加类级锁 + 双重检查：`if cls._instance is None: with cls._lock: if cls._instance is None: cls._instance = cls()`。
+
+#### 5.81.3 [MEDIUM] context_evictor Singleton无DCL
+
+- **文件**：`src/zephyr/autonomy_core/context_evictor.py:89,96-99`
+- **证据**：与5.81.2相同的反模式。`ContextEvictor` 的 `instance()` 无锁保护，多线程并发首次调用时可能创建多个实例。Evictor持有内部状态（如淘汰策略配置、LRU队列），多实例导致淘汰行为不一致。
+- **修复**：同5.81.2，加DCL。
+
+#### 5.81.4 [MEDIUM] layer_router get_layer_router()无锁
+
+- **文件**：`src/zephyr/infrastructure/pipeline/layer_router.py:402,405-414`
+- **证据**：`get_layer_router()` 全局工厂函数，`global _router; if _router is None: _router = LayerRouter()`，无锁。LayerRouter内部维护路由表（dict），多实例时路由表不一致，请求被分发到错误的层。与5.81.2/5.81.3属同类问题，但此处是模块级函数而非类方法。
+- **修复**：加模块级锁 + DCL。
+
+#### 5.81 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.81.1 |
+| MEDIUM | 3 | 5.81.2/5.81.3/5.81.4 |
+| **合计** | **4** | |
+
+---
+
+### 5.82 迭代器与生成器正确性（1个，第17轮新增）
+
+> 维度V：生成器跨yield持有资源、生成器耗尽后复用
+
+#### 5.82.1 [MEDIUM] behavior_audit_logger生成器跨yield持有文件句柄
+
+- **文件**：`src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py:341-364`
+- **证据**：生成器函数在 `with open(path) as f:` 块内使用 `yield`，当生成器未被完全耗尽（如消费者提前break或发生异常未触发GC），文件句柄不会立即关闭，导致文件描述符泄漏。`f` 的生命周期绑定到生成器的frame，而非with块。若该生成器被传入 `list()` 或 `for` 循环中途break，句柄残留直到GC触发（CPython下可能延迟到下一次循环）。
+- **修复**：将文件读取移出生成器，先读完再yield；或使用 `contextlib.closing` + `try/finally` 确保句柄释放。
+
+#### 5.82 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 1 | 5.82.1 |
+| **合计** | **1** | |
+
+---
+
+### 5.83 Hash/Equality契约（1个，第17轮新增）
+
+> 维度W：定义__eq__未定义__hash__，对象变unhashable
+
+#### 5.83.1 [MEDIUM] TriggerResult定义__eq__未定义__hash__，变unhashable
+
+- **文件**：`src/zephyr/security/access_control/kill_switch.py:80-100`
+- **证据**：`TriggerResult` dataclass定义了 `__eq__` 方法（比较trigger_id和fired_at），但未定义 `__hash__`。Python 3中定义 `__eq__` 会自动将 `__hash__` 设为 `None`，使实例变为unhashable。若 `TriggerResult` 被放入set或用作dict key（如在去重逻辑中），将抛出 `TypeError: unhashable type`。当前代码可能未触发此bug，但契约已破坏，后续使用set/dict时必定出错。
+- **修复**：定义 `__hash__`（如 `return hash((self.trigger_id, self.fired_at))`），或用 `@dataclass(frozen=True)` 自动生成。
+
+#### 5.83 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 1 | 5.83.1 |
+| **合计** | **1** | |
+
+---
+
+### 5.84 错误路径资源清理（2个，第17轮新增）
+
+> 维度X：异常路径下资源（锁/连接/句柄）未正确释放
+
+#### 5.84.1 [MEDIUM] ordered_lock_acquisition用list.index(lock)清理，重复锁致bug
+
+- **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:88-95`
+- **证据**：`ordered_lock_acquisition` 上下文管理器在 `__exit__` 中用 `self._locks.index(lock)` 找到锁并释放。若 `_locks` 列表中有重复的锁对象（同一Lock实例被add多次），`index()` 返回第一个匹配位置，后续重复锁永远不会被释放，造成死锁。`list.index` 返回的是第一个匹配，而非"当前应该释放的那个"。
+- **修复**：用计数器或栈结构追踪获取顺序，而非用 `list.index` 查找。
+
+#### 5.84.2 [LOW] get_market_read_conn contextmanager无try/finally
+
+- **文件**：`src/zephyr/governance/database_service.py:98-102`
+- **证据**：`@contextmanager` 装饰的 `get_market_read_conn` 在 `yield conn` 后无 `try/finally`。若消费者在 `with` 块内抛出异常，`yield` 之后的 `conn.close()` 不会执行（`@contextmanager` 在异常时不自动执行yield后的代码，除非有try/finally）。连接泄漏。但该函数可能被 `@contextmanager` 的默认行为部分保护（`@contextmanager` 会在GeneratorExit时执行finally），风险较低。
+- **修复**：包裹 `try: yield conn finally: conn.close()`。
+
+#### 5.84 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 1 | 5.84.1 |
+| LOW | 1 | 5.84.2 |
+| **合计** | **2** | |
+
+---
+
+### 5.85 浅拷贝与可变返回值（4个，第17轮新增）
+
+> 维度Z：方法返回内部可变对象的直接引用，外部可篡改内部状态
+
+#### 5.85.1 [HIGH] cache_layer读返回直接引用，写拷贝，非对称
+
+- **文件**：`src/zephyr/integration/local_model/cache_layer.py:71,84`
+- **证据**：`get(key)` 返回 `self._store[key]`（直接引用），`put(key, value)` 存储 `copy.deepcopy(value)`。读写不对称：调用方拿到get返回的对象后修改它，直接篡改了cache内部状态，而cache以为存储的是不可变副本。后续get返回被污染的数据。非对称拷贝是隐蔽的数据完整性bug。
+- **修复**：get也返回 `copy.deepcopy(self._store[key])`，或put不拷贝（调用方负责不可变）。
+
+#### 5.85.2 [HIGH] skill_context_isolation restore()返回内部namespace dict引用
+
+- **文件**：`src/zephyr/autonomy_core/skill_context_isolation.py:124`
+- **证据**：`restore()` 返回 `self._namespace`（内部dict的直接引用）。调用方可修改返回的dict，直接篡改isolator的内部状态，使后续restore()返回被污染的namespace。隔离机制本身被绕过——"isolation"的语义被破坏。
+- **修复**：返回 `dict(self._namespace)` 或 `copy.deepcopy(self._namespace)`。
+
+#### 5.85.3 [MEDIUM] doc_guard_server返回内部carryover dict引用
+
+- **文件**：`src/zephyr/infrastructure/doc_guard_server.py:265,269`
+- **证据**：返回 `self._carryover`（内部dict引用）。调用方可修改返回值，篡改server内部carryover状态。carryover用于跨请求传递上下文，被篡改后后续请求可能拿到错误的上下文。
+- **修复**：返回 `dict(self._carryover)` 或 `copy.deepcopy(self._carryover)`。
+
+#### 5.85.4 [MEDIUM] work_orchestrator返回内部WorkItem/WorkDAG引用
+
+- **文件**：`src/zephyr/trading/work_orchestrator.py:123-130,63`
+- **证据**：`schedule_next()` 返回 `self._items` 中的WorkItem对象引用（非拷贝），`get_dag()` 返回 `self._dag`（内部WorkDAG引用）。调用方修改返回的WorkItem（如改status），直接修改了orchestrator的内部调度状态，可能导致重复调度或跳过。DAG被外部修改后，拓扑排序结果不可预测。
+- **修复**：返回拷贝或只读视图（如 `MappingProxyType`）。
+
+#### 5.85 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 2 | 5.85.1/5.85.2 |
+| MEDIUM | 2 | 5.85.3/5.85.4 |
+| **合计** | **4** | |
+
+---
+
+### 5.86 字符串与路径边界情况（4个，第17轮新增）
+
+> 维度AB：路径净化遗漏反斜杠、null byte、Windows MAX_PATH限制
+
+#### 5.86.1 [HIGH] capability_passport路径净化漏\，Windows路径穿越
+
+- **文件**：`src/zephyr/intelligence/model_profiling/capability_passport.py:255,268,476,488`
+- **证据**：路径净化逻辑 `path.replace(":", "_").replace("/", "_")` 将 `:` 和 `/` 替换为下划线，但遗漏了 `\`（反斜杠）。Windows路径分隔符是 `\`，攻击者可构造 `..\..\..\windows\system32` 绕过净化。`capability_passport` 用净化的路径写文件（如passport缓存），路径穿越可覆盖任意文件。
+- **修复**：`path.replace(":", "_").replace("/", "_").replace("\\", "_")`，或用 `pathlib.PurePath` 做跨平台净化。
+
+#### 5.86.2 [MEDIUM] runbook_generator文件名净化漏\和null byte
+
+- **文件**：`src/zephyr/behavioral_audit/runbook_generator.py:347`
+- **证据**：文件名净化仅替换 `:` 和 `/`，遗漏 `\` 和 `\x00`（null byte）。null byte在Python 3中会导致 `ValueError: embedded null byte`，在C扩展中可能被截断为空字符串（C字符串以null终止）。Windows下 `\` 是路径分隔符，可造成路径穿越。
+- **修复**：增加 `.replace("\\", "_").replace("\x00", "")`，或用白名单方式只允许字母数字和 `-_.`。
+
+#### 5.86.3 [MEDIUM] staging_area file_path参数完全未净化
+
+- **文件**：`src/zephyr/trading/staging_area.py:276-277`
+- **证据**：`file_path` 参数直接用于文件操作，无任何净化。与5.86.1/5.86.2不同，这里不是"净化不完整"，而是"完全未净化"。`staging_area` 暴露给外部调用方（可能是LLM生成的路径），路径穿越风险最高。
+- **修复**：至少做 `os.path.basename(file_path)` 限制为文件名，或用白名单验证。
+
+#### 5.86.4 [LOW] Windows MAX_PATH=260未处理
+
+- **文件**：`src/zephyr/behavioral_audit/drift_infrastructure.py:179,210` + `behavioral_audit/cold_start.py:165,180`
+- **证据**：生成的文件路径（如drift报告、冷启动日志）未检查Windows MAX_PATH=260限制。当项目路径较深（如 `D:\ZephyrAlpha\docs\02_enterprise_architecture\...\drift_report_<timestamp>.json`）时，路径长度可能超过260字符，Windows下 `open()` 抛出 `FileNotFoundError`（错误信息误导，实际是路径过长）。非Windows平台无此限制。
+- **修复**：检查 `len(path) > 260` 时截断或用 `\\?\` 前缀（Windows长路径支持）。
+
+#### 5.86 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.86.1 |
+| MEDIUM | 2 | 5.86.2/5.86.3 |
+| LOW | 1 | 5.86.4 |
+| **合计** | **4** | |
 
 ---
 

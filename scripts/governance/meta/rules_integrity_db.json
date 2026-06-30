@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "d2f243b9364bbf60",
+      "hash": "68ee1e196d165b34",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -61,6 +61,6 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T08:01:07.003130+00:00",
+  "registered_at": "2026-06-30T08:02:50.757397+00:00",
   "last_check_at": "2026-06-30T08:01:38.875706+00:00"
 }

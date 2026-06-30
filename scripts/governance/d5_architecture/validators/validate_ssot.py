@@ -13,6 +13,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
+# P0-P3 任务优先级——业务常量（非治理词表），无 priority_vocabulary.yaml。
+# 治本说明（2026-06-30）：若未来纳入词表管理，改用 load_vocabulary_values("priority_vocabulary.yaml")。
+# 当前 GATE-VOCAB 检测1 漏检（PRIORITIES 不在后缀正则），检测4 值匹配漏检（无 priority 词表）。
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 
 
@@ -77,23 +80,15 @@ class SsotValidator:
 
 
 def _get_valid_layers() -> list[str]:
-    """从 layer_vocabulary.yaml 加载合法 layer 值（SSoT 唯一真源）。"""
-    from pathlib import Path
+    """从 layer_vocabulary.yaml 加载合法 layer 值（SSoT 唯一真源）。
 
-    import yaml
+    治本（2026-06-30 红蓝对抗）：收敛到 SSoT ``load_vocabulary_values``，
+    消除复制的 yaml.safe_load 词表加载逻辑（原实现被 GATE-VOCAB 检测5 漏检，
+    因函数名 _get_valid_layers 不匹配 _load_* 正则；行为检测 v2 已捕获）。
+    """
+    from _shared.yaml_utils import load_vocabulary_values
 
-    vocab = (
-        REPO_ROOT
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "vocabularies"
-        / "layer_vocabulary.yaml"
-    )
-    if not vocab.exists():
-        return []
-    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
-    return [str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)]
+    return sorted(load_vocabulary_values("layer_vocabulary.yaml", strict=False))
 
 
 def check_p0_duplicate_active_module_id(files):
