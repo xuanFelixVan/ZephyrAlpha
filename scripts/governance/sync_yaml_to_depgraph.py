@@ -84,6 +84,106 @@ def load_yaml(rel_path: str) -> dict:
         return yaml.safe_load(f) or {}
 
 
+# ========== 契约 domain_id 归一化映射（防止FK违规）==========
+# YAML 中的 layer名/domain_key/文件路径 → 有效 domain_id
+# 映射真源：cross_layer_contracts.yaml + contract_mapping_table.yaml + domains表
+
+# contract_mapping_table.yaml layer_contracts 的 layer 字段 → domain_id
+_LAYER_NAME_TO_DOMAIN = {
+    "data": "D_MKT_DATA",
+    "signal": "D_SIGLEGACY",
+    "pf_core": "D_PF_CORE",
+    "ex_core": "D_EX_CORE",
+    "reporting": "D_REPORTING",
+    "ml_train": "D_ML_TRAIN",
+    "compliance": "D_COMPLIANCE",
+    "simulation": "D_SIMULATION",
+    "frontend": "D_FRONTEND",
+}
+
+# contract_mapping_table.yaml domain_contracts 的 YAML key → domain_id
+_DOMAIN_KEY_TO_DOMAIN_ID = {
+    "alpha_signal_domain": "D_ASHARE_SIGNAL",
+    "ml_experiment_domain": "D_ML_TRAIN",
+}
+
+# AS-CT-*/ME-CT-* 域契约的 consumer_domain 映射（基于 direction 字段语义）
+_DOMAIN_CONTRACT_CONSUMER = {
+    "AS-CT-DATA-001": "D_FACTOR",
+    "AS-CT-FACTOR-001": "D_SIGLEGACY",
+    "AS-CT-FACTOR-002": "D_FACTOR",
+    "AS-CT-SIGNAL-001": "D_RISK",
+    "AS-CT-VMS-001": "D_KNOWLEDGE",
+    "ME-CT-FEATURE-001": "D_KNOWLEDGE",
+    "ME-CT-TRAIN-001": "D_ML_TRAIN",
+    "ME-CT-CHECKPOINT-001": "D_INTELLIGENCE",
+    "ME-CT-AB-001": "D_INTELLIGENCE",
+    "ME-CT-BACKTEST-001": "D_INTELLIGENCE",
+    "ME-CT-SHADOW-001": "D_INTELLIGENCE",
+}
+
+# CTR-* 层契约 domain_mapping 为 null 时的 consumer_domain 回退
+_CTR_CONSUMER_FALLBACK = {
+    "CTR-001": "D_FACTOR", "CTR-TRACE-001": "D_FACTOR",
+    "CTR-004": "D_EX_CORE", "CTR-005": "D_TRADING", "CTR-006": "D_RISK",
+    "CTR-008": "D_RISK", "CTR-009": "D_INTELLIGENCE", "CTR-010": "D_INTELLIGENCE",
+    "CTR-011": "D_ML_TRAIN", "CTR-012": "D_SHARED",
+    "CTR-ERR-003": "D_RISK",
+    "CTR-P1-003": "D_PF_CORE", "CTR-P1-004": "D_SIGLEGACY", "CTR-P1-005": "D_SIGLEGACY",
+    "CTR-P1-006": "D_TRADING", "CTR-P1-009": "D_FRONTEND", "CTR-P1-012": "D_RISK",
+    "CTR-P1-014": "D_SIMULATION", "CTR-P1-015": "D_RISK",
+    "EXT-DASHBOARD-FLE-001": "D_SHARED",
+}
+
+
+def _normalize_provider(contract_id, raw_provider):
+    """归一化 provider_domain：layer名/domain_key → 有效 domain_id"""
+    if not raw_provider:
+        return "D_SHARED"
+    if raw_provider in _DOMAIN_KEY_TO_DOMAIN_ID:
+        return _DOMAIN_KEY_TO_DOMAIN_ID[raw_provider]
+    if raw_provider in _LAYER_NAME_TO_DOMAIN:
+        return _LAYER_NAME_TO_DOMAIN[raw_provider]
+    return raw_provider  # 已是有效 domain_id 或旧 layer_id（由 cleanup 处理）
+
+
+def _normalize_consumer(contract_id, raw_consumer):
+    """归一化 consumer_domain：contract_id引用/direction/null → 有效 domain_id"""
+    # AS-CT-*/ME-CT-* 域契约：direction 字段不是 domain_id，用 contract_id 查映射
+    if contract_id in _DOMAIN_CONTRACT_CONSUMER:
+        return _DOMAIN_CONTRACT_CONSUMER[contract_id]
+    if not raw_consumer:
+        # layer_contracts 的 domain_mapping 为 null 时，用 CTR 回退映射
+        if contract_id in _CTR_CONSUMER_FALLBACK:
+            return _CTR_CONSUMER_FALLBACK[contract_id]
+        return "D_SHARED"
+    # domain_mapping 是另一个 contract_id（如 AS-CT-DATA-001）
+    if raw_consumer in _DOMAIN_CONTRACT_CONSUMER:
+        return _DOMAIN_CONTRACT_CONSUMER[raw_consumer]
+    return raw_consumer  # 已是有效 domain_id（由 cleanup 处理无效值）
+
+
+def _path_to_domain(path_str):
+    """文件路径 → 归属 domain_id（declarative contract CT-* 专用）"""
+    if not path_str:
+        return "D_SHARED"
+    if path_str.startswith("config/"):
+        return "D_DATA_SEC"
+    if "MOD-INF-005" in path_str:
+        return "D_GOV_SCRIPTS"
+    if "orchestrator" in path_str or "context-engine" in path_str:
+        return "D_INTELLIGENCE"
+    if "kb/" in path_str:
+        return "D_KNOWLEDGE"
+    if "scripts/governance" in path_str:
+        return "D_GOV_SCRIPTS"
+    if "infra_ops" in path_str:
+        return "D_INFRA_OPS"
+    if "capability.py" in path_str:
+        return "D_DATA_SEC"
+    return "D_SHARED"
+
+
 def disable_readonly_triggers(cur):
     """临时禁用只读触发器（sync 脚本的通行证）
 
@@ -208,6 +308,7 @@ def sync_contract_mapping_table(cur):
     synced = 0
     # 域契约（UPSERT 只更新基础字段）
     # YAML 结构：domain_contracts[domain_key] = {domain_id, blueprint, contracts: [...]}
+    # FIX: domain_key/direction 不是 domain_id，必须归一化防止FK违规
     for domain_key, domain_data in data.get("domain_contracts", {}).items():
         if not isinstance(domain_data, dict):
             continue
@@ -215,10 +316,12 @@ def sync_contract_mapping_table(cur):
         for contract in contracts:
             if not isinstance(contract, dict):
                 continue
-            # YAML 用 domain_contract_id，DB 用 contract_id
             contract_id = contract.get("domain_contract_id", contract.get("contract_id", ""))
             if not contract_id:
                 continue
+            raw_consumer = contract.get("domain_mapping", contract.get("direction", ""))
+            provider_domain = _normalize_provider(contract_id, domain_key)
+            consumer_domain = _normalize_consumer(contract_id, raw_consumer)
             cur.execute(
                 """
             INSERT INTO contracts
@@ -233,19 +336,24 @@ def sync_contract_mapping_table(cur):
                 (
                     contract_id,
                     contract.get("description", ""),
-                    domain_key,
-                    contract.get("domain_mapping", contract.get("direction", "")),
+                    provider_domain,
+                    consumer_domain,
                 ),
             )
             synced += 1
 
     # 层契约
+    # FIX: layer/domain_mapping 不是 domain_id，必须归一化防止FK违规
     for contract in data.get("layer_contracts", []):
         if not isinstance(contract, dict):
             continue
         contract_id = contract.get("contract_id", "")
         if not contract_id:
             continue
+        raw_layer = contract.get("layer", "")
+        raw_mapping = contract.get("domain_mapping", "") or ""
+        provider_domain = _normalize_provider(contract_id, raw_layer)
+        consumer_domain = _normalize_consumer(contract_id, raw_mapping)
         cur.execute(
             """
         INSERT INTO contracts
@@ -260,8 +368,8 @@ def sync_contract_mapping_table(cur):
             (
                 contract_id,
                 contract.get("description", ""),
-                contract.get("layer", ""),
-                contract.get("domain_mapping", "") or "",
+                provider_domain,
+                consumer_domain,
             ),
         )
         synced += 1
@@ -526,7 +634,12 @@ def sync_declarative_contract_tracker(cur):
     contracts = data.get("contracts", [])
     synced = 0
     for contract in contracts:
-        # provider_domain/consumer_domain 是 NOT NULL，declarative 契约用 source 作为 provider_domain
+        # FIX: source/actual_consumer 是文件路径，不是 domain_id，必须归一化防止FK违规
+        contract_id = contract.get("contract_id", "")
+        source = contract.get("source", "")
+        actual_consumer = contract.get("actual_consumer", "")
+        provider_domain = _path_to_domain(source)
+        consumer_domain = _path_to_domain(actual_consumer)
         cur.execute(
             """
         INSERT INTO contracts
@@ -534,6 +647,9 @@ def sync_declarative_contract_tracker(cur):
          promise, actual_consumer, fulfillment_status, gap, target_phase, last_reviewed)
         VALUES (%s, %s, %s, %s, 'declarative', %s, %s, %s, %s, %s, %s)
         ON CONFLICT(contract_id) DO UPDATE SET
+            name=excluded.name,
+            provider_domain=excluded.provider_domain,
+            consumer_domain=excluded.consumer_domain,
             promise=excluded.promise,
             actual_consumer=excluded.actual_consumer,
             fulfillment_status=excluded.fulfillment_status,
@@ -542,12 +658,12 @@ def sync_declarative_contract_tracker(cur):
             last_reviewed=excluded.last_reviewed
         """,
             (
-                contract.get("contract_id", ""),
-                contract.get("source", ""),
-                contract.get("source", "declarative"),
-                contract.get("actual_consumer", "declarative"),
+                contract_id,
+                source,
+                provider_domain,
+                consumer_domain,
                 contract.get("promise", ""),
-                contract.get("actual_consumer", ""),
+                actual_consumer,
                 contract.get("status", "unresolved"),
                 contract.get("gap", ""),
                 contract.get("target_phase", ""),
@@ -1014,6 +1130,37 @@ def sync_derived_identifier_registry(cur):
     print(f"  同步 {synced} 条派生标识符关系")
 
 
+# ========== 历史遗留清理 ==========
+
+
+def cleanup_legacy_fk_violations(cur):
+    """清理 sync 后仍残留的 FK 违规 contracts 记录。
+
+    这些记录不在任何 YAML 真源中（手动录入的 C-* 规则描述、旧 CTR-TRD-* 变体等），
+    consumer_domain 为旧 '-CONTRACTS' 后缀变体（D_TRADING-CONTRACTS / D_SHARED-CONTRACTS），
+    从未是有效 domain_id。sync 无法触及（不在 YAML 中），需一次性清理。
+    """
+    print("清理: 历史遗留 FK 违规 contracts 记录...")
+    # 先统计
+    cur.execute(
+        """SELECT count(*) AS cnt FROM contracts
+           WHERE consumer_domain LIKE %s
+              OR consumer_domain LIKE %s""",
+        ('%-CONTRACTS', '%-contracts'),
+    )
+    pre_count = cur.fetchone()['cnt']
+    if pre_count == 0:
+        print("  无残留违规记录，跳过")
+        return
+    # 删除 consumer_domain 为旧 -CONTRACTS 后缀变体的孤立记录
+    cur.execute(
+        "DELETE FROM contracts WHERE consumer_domain LIKE %s",
+        ('%-CONTRACTS',),
+    )
+    deleted = cur.rowcount
+    print(f"  删除 {deleted} 条 '-CONTRACTS' 后缀孤立记录")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1074,6 +1221,9 @@ def sync_all() -> bool:
         # P5 优先级同步（裁定#204 预防根因 + 裁定#206/#207 派生标识符）
         sync_domain_naming_rules(cur)  # #173
         sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
+
+        # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
+        cleanup_legacy_fk_violations(cur)
 
         conn.commit()
         print("\n[PASS] 19 项 YAML→DB 同步完成")
