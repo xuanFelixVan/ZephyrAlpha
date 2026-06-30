@@ -114,7 +114,7 @@ repos:
     hooks:
       # ── GATE-ARCH: 架构门禁合并簇（原 GATE-01/02/03/06/07 五合一）──
       # 合并说明：5 个架构子门禁共用 check_architecture_gates.py，合并为单 hook。
-      #           无 --gate 参数时脚本运行全量 19 项架构检查（GATE-01~08/A/B/D/E/SC/SUM/BS/EXTRA-01~04），
+      #           无 --gate 参数时脚本运行全量 17 项架构检查（GATE-01~08/A/D/E/SC/SUM/BS/EXTRA-01~04），
       #           原 5 项（01/02/03/06/07）为子集，检测能力不丢失（实际增强）。
       #           stages: [manual] 保持不变——手动诊断工具，不卡常规 commit。
       - id: gate-arch

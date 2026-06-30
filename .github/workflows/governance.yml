@@ -135,7 +135,7 @@ jobs:
       # ============================================================
       # Tier 3: 架构层 — SSoT + Gate + Contract + Manifest Drift
       # ============================================================
-      - name: Architecture Gates (GATE-01~08+A+B+SC)
+      - name: Architecture Gates (GATE-01~08+A+SC)
         run: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
 
       - name: SSoT Validator (KBG-0001/0021 enforced)

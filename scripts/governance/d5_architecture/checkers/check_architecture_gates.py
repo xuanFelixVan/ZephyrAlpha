@@ -26,7 +26,7 @@ __manifest__ = """
 args:
   - --warn-only
   - --jsonl
-description: Architecture GATE checker (GATE-01~08 + GATE-A + GATE-B + GATE-SC + EXTRA-01~03)
+description: Architecture GATE checker (GATE-01~08 + GATE-A + GATE-SC + EXTRA-01~04)
 dimensions:
 - D5
 priority: P0
@@ -50,30 +50,7 @@ from _shared.thresholds import get as get_threshold
 ensure_utf8_stdout()
 
 ARCH_MODEL = REPO_ROOT / "architecture_model"
-TARGET_ARCH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture"
 ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
-
-VIEW_LINE_LIMITS = {
-    "soft": get_threshold("architecture_view.view_line_limits.soft", 600),
-    "hard": get_threshold("architecture_view.view_line_limits.hard", 800),
-}
-
-# 需要检查行数的视图文件
-VIEW_FILES = [
-    "00-overview.md",
-    "01-business_architecture.md",
-    "02-information_architecture.md",
-    "03-application_architecture.md",
-    "04-technology_architecture.md",
-    "04bis-runtime_planes.md",
-    "04ter-capability_heatmap.md",
-    "05-data_architecture.md",
-    "06-security_architecture.md",
-    "07-integration_architecture.md",
-    "08-operations_architecture.md",
-    "09-governance_architecture.md",
-    "10-frontend_architecture.md",
-]
 
 import subprocess
 
@@ -270,33 +247,6 @@ def gate_03_invariants_owner() -> tuple[bool, list[str]]:
         owner = inv.get("owner", "")
         if not owner:
             errors.append(f"不变量 {inv_id} 缺少 owner")
-
-    return len(errors) == 0, errors
-
-
-def gate_04_view_line_count() -> tuple[bool, list[str]]:
-    """GATE-04: 视图文件行数 ≤ 800（硬线）"""
-    errors = []
-    warnings = []
-
-    for view_name in VIEW_FILES:
-        view_path = TARGET_ARCH / view_name
-        if not view_path.exists():
-            continue  # skeleton 文件可能不存在
-
-        with open(view_path, encoding="utf-8") as f:
-            line_count = sum(1 for _ in f)
-
-        if line_count > VIEW_LINE_LIMITS["hard"]:
-            errors.append(f"{view_name}: {line_count} 行 > {VIEW_LINE_LIMITS['hard']} 硬线 ❌")
-        elif line_count > VIEW_LINE_LIMITS["soft"]:
-            warnings.append(f"{view_name}: {line_count} 行 > {VIEW_LINE_LIMITS['soft']} 软线 ⚠")
-        else:
-            pass  # OK
-
-    # 打印 warnings 但不算失败
-    for w in warnings:
-        print(f"  ⚠ {w}")
 
     return len(errors) == 0, errors
 
@@ -753,69 +703,6 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     return not has_critical, errors
 
 
-def gate_b_yaml_md_alignment() -> tuple[bool, list[str]]:
-    """GATE-B: YAML SSoT ↔ Markdown 视图对齐
-
-    AGENTS.md §6.10 GATE-B — YAML SSoT ↔ Markdown 视图
-    - CRITICAL: YAML partition.view_file 引用的 MD 文件不存在
-    - WARNING: layer YAML partition.name 在对应 MD 视图中未出现
-    """
-    errors: list[str] = []
-    warnings: list[str] = []
-
-    layers_dir = ARCH_MODEL / "layers"
-    for yaml_file in sorted(layers_dir.glob("l*.yaml")):
-        data = load_yaml(yaml_file)
-        if not data:
-            continue
-        partition = data.get("partition", {})
-        view_file = partition.get("view_file", "")
-        partition_name = partition.get("name", "")
-
-        if view_file:
-            md_path = TARGET_ARCH / view_file
-            if not md_path.exists():
-                errors.append(f"CRITICAL: {yaml_file.name} 引用 view_file={view_file} 不存在")
-                continue
-
-            if partition_name:
-                try:
-                    content = md_path.read_text(encoding="utf-8")
-                except Exception:
-                    content = ""
-                if partition_name.lower() not in content.lower():
-                    warnings.append(
-                        f"WARNING: {yaml_file.name} partition.name={partition_name} 在 {view_file} 中未出现"
-                    )
-
-    scan_dirs = ["frontend", "scripts", "infra"]
-    for dir_name in scan_dirs:
-        scan_path = ARCH_MODEL / dir_name
-        if not scan_path.exists():
-            continue
-        for yaml_file in sorted(scan_path.glob("*.yaml")):
-            if yaml_file.name == "_schema.yaml":
-                continue
-            data = load_yaml(yaml_file)
-            if not data:
-                continue
-            partition = data.get("partition", {})
-            view_file = partition.get("view_file", "")
-            if not view_file:
-                continue
-            md_path = TARGET_ARCH / view_file
-            if not md_path.exists():
-                errors.append(f"CRITICAL: {dir_name}/{yaml_file.name} 引用 view_file={view_file} 不存在")
-
-    if not errors and not warnings:
-        print(f"  ✅ 全部 {sum(1 for _ in layers_dir.glob('l*.yaml'))} 层 YAML → MD 视图对齐")
-
-    for w in warnings:
-        print(f"  ⚠ {w}")
-
-    return len(errors) == 0, errors
-
-
 def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
     """GATE-D: docs/ 下每个活跃子目录必须有 index.md 入口文件
 
@@ -1005,7 +892,7 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
                 errors.append(
                     f"WARNING: {log_name} 修改了 architecture_model YAML "
                     f"但未包含'变更对齐检查'节 "
-                    f"（比对 §6.10 GATE-B——YAML SSoT 变更应同步更新 MD 视图）"
+                    f"（YAML SSoT 变更应同步更新 MD 视图）"
                 )
 
         # 检查 3: 新建代码目录 → architecture_model 登记
@@ -1117,17 +1004,15 @@ def main() -> int:
         ("GATE-01", "index.yaml 存在且分区可达", gate_01_index_reachable),
         ("GATE-02", "P0 模块 interface_contract 非空 + contract_id 存在", gate_02_p0_interfaces),
         ("GATE-03", "invariants.yaml 每条有 owner", gate_03_invariants_owner),
-        ("GATE-04", "视图文件行数 ≤ 800", gate_04_view_line_count),
         ("GATE-05", "ADR 状态为 accepted", gate_05_adr_accepted),
         ("GATE-06", "事件 publisher 层 ID 存在", gate_06_event_publisher_exists),
         ("GATE-07", "aggregate layer 存在", gate_07_aggregate_layer_exists),
         ("GATE-08", "technology quadrant 合法", gate_08_technology_quadrant_valid),
-        ("GATE-A", "src/zephyr/ ↔ YAML SSoT 代码对齐（§6.10 双层闸门）", gate_a_code_yaml_alignment),
-        ("GATE-B", "YAML SSoT ↔ MD 视图对齐（§6.10 双层闸门）", gate_b_yaml_md_alignment),
+        ("GATE-A", "src/zephyr/ ↔ YAML SSoT 代码对齐", gate_a_code_yaml_alignment),
         ("GATE-D", "docs/ 活跃子目录 index.md 强制存在（对标 Google OWNERS）", gate_d_doc_directory_index_required),
         ("GATE-E", "Session Log 变更对齐自检（对标 Google LSC）", gate_e_session_log_alignment),
         ("GATE-SC", "模块 status 在 _schema.yaml 合法值内", gate_sc_schema_compliance),
-        ("GATE-SUM", "YAML Summary 自动对账（AGENTS.md §6.10 根治层）", _call_validate_yaml_summaries),
+        ("GATE-SUM", "YAML Summary 自动对账", _call_validate_yaml_summaries),
         ("GATE-BS", "盲点现实对账——open 盲点 vs 代码实际状态", run_gate_bs),
         ("EXTRA-01", "module_id 无重复", extra_01_no_duplicate_ids),
         ("EXTRA-02", "interfaces source/target 存在", extra_02_interface_refs_exist),

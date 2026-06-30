@@ -12,7 +12,7 @@ gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
   entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 19 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强
+  description: 架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 17 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强
   files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
   always_run: false
   category: unknown
