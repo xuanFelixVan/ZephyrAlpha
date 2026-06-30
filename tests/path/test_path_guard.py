@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1359 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.path_guard
+# [MODULE] zephyr.security.access_control.guards.path_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.security.access_control.path_guard import ALLOWED_ROOTS, FORBIDDEN_PATHS, PathGuard
+    from zephyr.security.access_control.guards.path_guard import ALLOWED_ROOTS, FORBIDDEN_PATHS, PathGuard
 except Exception as _exc:
     pytest.skip(f"无法导入 path_guard: {_exc}", allow_module_level=True)
 

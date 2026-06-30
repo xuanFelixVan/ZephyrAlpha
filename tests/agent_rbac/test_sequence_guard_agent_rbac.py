@@ -12,7 +12,7 @@
 
 import time
 
-from zephyr.security.access_control.sequence_guard import (
+from zephyr.security.access_control.guards.sequence_guard import (
     FORBIDDEN_SEQUENCES,
     SequenceEvent,
     SequenceGuard,

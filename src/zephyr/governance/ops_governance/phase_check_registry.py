@@ -427,7 +427,7 @@ def check_agent_rbac() -> GateResult:
         MaturityLevel = _identity_mod.MaturityLevel
         _immutable_core_mod = importlib.import_module("zephyr.security.access_control.immutable_core")
         get_immutable_core = _immutable_core_mod.get_immutable_core
-        _perm_guard_mod = importlib.import_module("zephyr.security.access_control.permission_guard")
+        _perm_guard_mod = importlib.import_module("zephyr.security.access_control.guards.permission_guard")
         PermissionGuard = _perm_guard_mod.PermissionGuard
 
         ic = get_immutable_core()
@@ -782,9 +782,9 @@ def check_pipeline_e2e() -> GateResult:
 
 def check_skill_canary() -> GateResult:
     try:
-        _skill_loader_mod = importlib.import_module("zephyr.autonomy_core.skill_loader")
+        _skill_loader_mod = importlib.import_module("zephyr.autonomy_core.skills.skill_loader")
         SkillLoader = _skill_loader_mod.SkillLoader
-        _skill_model_mod = importlib.import_module("zephyr.autonomy_core.skill_model")
+        _skill_model_mod = importlib.import_module("zephyr.autonomy_core.skills.skill_model")
         SkillSpec = _skill_model_mod.SkillSpec
 
         loader = SkillLoader()

@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0258 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.abac_guard
+# [MODULE] zephyr.security.access_control.guards.abac_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -23,7 +23,7 @@ from zephyr.shared.contracts.identity.agent_identity import (
     IDESource,
     MaturityLevel,
 )
-from zephyr.security.access_control.abac_guard import (
+from zephyr.security.access_control.guards.abac_guard import (
     SENSITIVITY_MIN_MATURITY,
     ABACContext,
     ABACGuard,

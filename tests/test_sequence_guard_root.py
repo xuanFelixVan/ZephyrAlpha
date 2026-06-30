@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1578 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.sequence_guard
+# [MODULE] zephyr.security.access_control.guards.sequence_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -17,7 +17,7 @@ sys.path.insert(0, "src")
 
 import time
 
-from zephyr.security.access_control.sequence_guard import (
+from zephyr.security.access_control.guards.sequence_guard import (
     FORBIDDEN_SEQUENCES,
     SEQUENCE_TIMEOUT,
     SequenceEvent,

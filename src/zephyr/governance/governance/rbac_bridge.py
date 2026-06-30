@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance.governance.rbac_bridge
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.identity.permission; zephyr.security.access_control.permission_guard; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.identity.permission; zephyr.security.access_control.guards.permission_guard; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,7 +32,7 @@ try:
         MaturityLevel,
     )
     from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
-    from zephyr.security.access_control.permission_guard import PermissionGuard
+    from zephyr.security.access_control.guards.permission_guard import PermissionGuard
 
     _AGENT_RBAC_AVAILABLE = True
 except ImportError:

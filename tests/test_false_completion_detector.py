@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0893 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.false_completion_detector
+# [MODULE] zephyr.security.access_control.detectors.false_completion_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.security.access_control.false_completion_detector import CompletionClaim, FalseCompletionDetector
+    from zephyr.security.access_control.detectors.false_completion_detector import CompletionClaim, FalseCompletionDetector
 except Exception as exc:
     pytest.skip(f"Cannot import false_completion_detector: {exc}", allow_module_level=True)
 

@@ -10,10 +10,10 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.anomaly_detector import AnomalyDetector
+from zephyr.security.access_control.detectors.anomaly_detector import AnomalyDetector
 from zephyr.security.access_control.blueprint_fidelity import BlueprintFidelity
-from zephyr.security.access_control.memory_guard import MemoryGuard
-from zephyr.security.access_control.native_api_guard import NativeApiGuard
+from zephyr.security.access_control.guards.memory_guard import MemoryGuard
+from zephyr.security.access_control.guards.native_api_guard import NativeApiGuard
 
 
 class TestCrossCutD:

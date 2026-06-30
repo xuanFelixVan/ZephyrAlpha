@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.identity.permission
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.security.access_control.permission_guard;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
+# [CONSUMERS] zephyr.security.access_control.guards.permission_guard;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 权限判定枚举不可扩展

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOVERNANCE
 # [MODULE] zephyr.integration.mcp.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
 # [CONSUMERS] zephyr.integration.mcp.gateway_server; zephyr.integration.mcp.__init__
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -633,7 +633,7 @@ class GovernanceServer(BaseMCPServer):
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
     ) -> dict[str, Any]:
         try:
-            from zephyr.security.access_control.permission_guard import PermissionGuard
+            from zephyr.security.access_control.guards.permission_guard import PermissionGuard
             from zephyr.shared.contracts.identity.agent_identity import (
                 AgentIdentity,
                 AgentRole,

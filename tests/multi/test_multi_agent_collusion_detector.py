@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1297 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.multi_agent_collusion_detector
+# [MODULE] zephyr.security.access_control.detectors.multi_agent_collusion_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.security.access_control.multi_agent_collusion_detector import (
+    from zephyr.security.access_control.detectors.multi_agent_collusion_detector import (
         CollusionResult,
         CollusionSignal,
         MultiAgentCollusionDetector,

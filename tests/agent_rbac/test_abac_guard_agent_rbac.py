@@ -12,7 +12,7 @@
 
 import time
 
-from zephyr.security.access_control.abac_guard import (
+from zephyr.security.access_control.guards.abac_guard import (
     SENSITIVITY_MIN_MATURITY,
     ABACContext,
     ABACGuard,

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 class TestAdversarial:
     def test_session_token_verified(self):
-        from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+        from zephyr.security.access_control.detectors.cross_session_detector import CrossSessionDetector
 
         detector = CrossSessionDetector()
         token = detector.sign_token("agent_a", "session_1")
@@ -23,7 +23,7 @@ class TestAdversarial:
     def test_replay_attack_blocked(self):
         import time
 
-        from zephyr.security.access_control.replay_attack_guard import ReplayAttackGuard
+        from zephyr.security.access_control.guards.replay_attack_guard import ReplayAttackGuard
 
         guard = ReplayAttackGuard()
         nonce = "test_nonce_12345"

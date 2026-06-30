@@ -14,7 +14,7 @@ from __future__ import annotations
 class TestDeriveRBAC:
     def test_rbac_guard_derives_permissions(self):
         from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
-        from zephyr.security.access_control.rbac_guard import RBACGuard
+        from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 
         guard = RBACGuard()
         agent = AgentIdentity(session_id="test", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.WRITER)

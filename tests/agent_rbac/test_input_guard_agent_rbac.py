@@ -10,7 +10,7 @@
 测试 L3 InputGuard — 参数级护栏
 """
 
-from zephyr.security.access_control.input_guard import (
+from zephyr.security.access_control.guards.input_guard import (
     InputDecision,
     InputGuard,
 )

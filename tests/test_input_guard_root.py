@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1129 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.input_guard
+# [MODULE] zephyr.security.access_control.guards.input_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -17,7 +17,7 @@ sys.path.insert(0, "src")
 
 
 from zephyr.security.access_control.immutable_core import ImmutableCore
-from zephyr.security.access_control.input_guard import (
+from zephyr.security.access_control.guards.input_guard import (
     DANGEROUS_PATTERNS,
     PROJECT_SAFE_DIRS,
     TRUSTED_PACKAGES,

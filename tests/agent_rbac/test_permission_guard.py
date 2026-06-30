@@ -14,7 +14,7 @@ import pytest
 import yaml
 
 from zephyr.security.access_control.identity import AgentIdentity
-from zephyr.security.access_control.permission_guard import (
+from zephyr.security.access_control.guards.permission_guard import (
     GuardDecision,
     GuardResult,
     PermissionGuard,

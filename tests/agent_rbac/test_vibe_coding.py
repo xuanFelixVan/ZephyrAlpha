@@ -10,9 +10,9 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
-from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
-from zephyr.security.access_control.vibe_coding_guard import VibeCodingGuard
+from zephyr.security.access_control.guards.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.guards.novel_attack_guard import NovelAttackGuard
+from zephyr.security.access_control.guards.vibe_coding_guard import VibeCodingGuard
 
 
 class TestAttackSurface:

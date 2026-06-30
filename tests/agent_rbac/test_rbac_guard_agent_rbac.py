@@ -11,7 +11,7 @@
 """
 
 from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
-from zephyr.security.access_control.rbac_guard import (
+from zephyr.security.access_control.guards.rbac_guard import (
     ALWAYS_ALLOW_OPERATIONS,
     PermissionDecision,
     PermissionResult,

@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.guards.cybersec_2026_guard import Cybersec2026Guard
 
 
 class TestCybersec2026:

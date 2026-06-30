@@ -13,7 +13,7 @@ from __future__ import annotations
 from zephyr.security.access_control.agent_creation_policy import AgentCreationPolicy, CreationPolicy
 from zephyr.security.access_control.auto_maintenance import AutoMaintenance
 from zephyr.security.access_control.cache_invalidation import CacheInvalidation
-from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+from zephyr.security.access_control.detectors.cross_session_detector import CrossSessionDetector
 from zephyr.security.access_control.emergency_override import EmergencyOverride
 from zephyr.security.access_control.permission_hooks import PermissionHooks
 

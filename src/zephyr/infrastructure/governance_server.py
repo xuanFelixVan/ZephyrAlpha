@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.drift_infrastructure; zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_orchestrator.writer; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.drift_infrastructure; zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -642,7 +642,7 @@ class GovernanceServer(BaseMCPServer):
                 MaturityLevel,
             )
 
-            _perm_guard_mod = importlib.import_module("zephyr.security.access_control.permission_guard")
+            _perm_guard_mod = importlib.import_module("zephyr.security.access_control.guards.permission_guard")
             PermissionGuard = _perm_guard_mod.PermissionGuard
 
             ml = MaturityLevel(maturity)
@@ -713,7 +713,7 @@ class GovernanceServer(BaseMCPServer):
         self, event_type: str, description: str, agent_id: str | None = None, target_path: str | None = None
     ) -> dict[str, Any]:
         try:
-            from zephyr.governance.audit_orchestrator.writer import AuditWriter
+            from zephyr.governance.audit_trail.writer import AuditWriter
 
             writer = AuditWriter()
             entry_id = writer.write(

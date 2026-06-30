@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.guards.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_trail.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -359,7 +359,7 @@ def check_agent_rbac() -> GateResult:
             MaturityLevel,
         )
         from zephyr.security.access_control.immutable_core import get_immutable_core
-        from zephyr.security.access_control.permission_guard import PermissionGuard
+        from zephyr.security.access_control.guards.permission_guard import PermissionGuard
 
         ic = get_immutable_core()
         if ic.should_cold_start_lock():
@@ -411,7 +411,7 @@ def check_audit_trail() -> GateResult:
 
 def check_audit_trail_context() -> GateResult:
     try:
-        from zephyr.governance.audit_orchestrator.query import AuditQuery
+        from zephyr.governance.audit_trail.query import AuditQuery
 
         query = AuditQuery()
         context = query.trail_for_ai_context(max_entries=50)
@@ -699,8 +699,8 @@ def check_pipeline_e2e() -> GateResult:
 
 def check_skill_canary() -> GateResult:
     try:
-        from zephyr.autonomy_core.skill_loader import SkillLoader
-        from zephyr.autonomy_core.skill_model import SkillSpec
+        from zephyr.autonomy_core.skills.skill_loader import SkillLoader
+        from zephyr.autonomy_core.skills.skill_model import SkillSpec
 
         loader = SkillLoader()
         skills = loader.list_skills()

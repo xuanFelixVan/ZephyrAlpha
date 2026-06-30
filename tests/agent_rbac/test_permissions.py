@@ -16,7 +16,7 @@ import pytest
 import yaml
 
 from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel
-from zephyr.security.access_control.permission_guard import GuardDecision, PermissionGuard
+from zephyr.security.access_control.guards.permission_guard import GuardDecision, PermissionGuard
 
 
 @pytest.fixture
@@ -110,7 +110,7 @@ class TestPermissionAutomation:
         assert hasattr(result, "would_be_decision")
 
     def test_abac_intent_boundary(self):
-        from zephyr.security.access_control.abac_guard import ABACContext, ABACGuard
+        from zephyr.security.access_control.guards.abac_guard import ABACContext, ABACGuard
 
         agent = AgentIdentity(session_id="worker", maturity=MaturityLevel.L1_JUNIOR, role=AgentRole.EXECUTOR)
         guard = ABACGuard()
@@ -119,21 +119,21 @@ class TestPermissionAutomation:
         assert isinstance(ok, bool)
 
     def test_input_guard_sanitization(self):
-        from zephyr.security.access_control.input_guard import InputGuard
+        from zephyr.security.access_control.guards.input_guard import InputGuard
 
         guard = InputGuard()
         result = guard.check_params("execute", {"command": "rm -rf /"})
         assert result is not None
 
     def test_output_guard_pii(self):
-        from zephyr.security.access_control.output_guard import OutputGuard
+        from zephyr.security.access_control.guards.output_guard import OutputGuard
 
         guard = OutputGuard()
         result = guard.check("身份证号110101199001011234")
         assert result is not None
 
     def test_sequence_guard(self):
-        from zephyr.security.access_control.sequence_guard import SequenceGuard
+        from zephyr.security.access_control.guards.sequence_guard import SequenceGuard
 
         guard = SequenceGuard()
         assert guard is not None
@@ -152,7 +152,7 @@ class TestPermissionAutomation:
         assert lock._locked is True
 
     def test_toctou_guard(self):
-        from zephyr.security.access_control.toctou_guard import TOCTOUGuard
+        from zephyr.security.access_control.guards.toctou_guard import TOCTOUGuard
 
         guard = TOCTOUGuard()
         guard.snapshot("tests/conftest.py")
@@ -160,21 +160,21 @@ class TestPermissionAutomation:
         assert ok is True or "TOCTOU" in msg or "OK" in msg
 
     def test_false_completion(self):
-        from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector
+        from zephyr.security.access_control.detectors.false_completion_detector import FalseCompletionDetector
 
         detector = FalseCompletionDetector()
         result = detector.record_claim("agent_x", "build_pass", "build_pass")
         assert result is True
 
     def test_collusion_detection(self):
-        from zephyr.security.access_control.multi_agent_collusion_detector import MultiAgentCollusionDetector
+        from zephyr.security.access_control.detectors.multi_agent_collusion_detector import MultiAgentCollusionDetector
 
         detector = MultiAgentCollusionDetector()
         result = detector.record_interaction("agent_a", "agent_b", "shared_access", "evidence_1")
         assert result is not None
 
     def test_memory_provenance(self):
-        from zephyr.security.access_control.memory_provenance_guard import MemoryProvenanceGuard
+        from zephyr.security.access_control.guards.memory_provenance_guard import MemoryProvenanceGuard
 
         guard = MemoryProvenanceGuard()
         mp = guard.record_provenance("agent_x", "session_1", "abcdef1234567890")

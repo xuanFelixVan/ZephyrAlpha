@@ -105,6 +105,39 @@ __all__ = [
 
 import importlib as _importlib
 
+# ARCH-035: 29 modules moved to suffix-based subdirectories (guards/verifiers/detectors)
+_MOVED_MODULES = {
+    "abac_guard": "guards",
+    "anti_pattern_guard": "guards",
+    "audit_log_guard": "guards",
+    "cybersec_2026_guard": "guards",
+    "input_guard": "guards",
+    "memory_guard": "guards",
+    "memory_provenance_guard": "guards",
+    "native_api_guard": "guards",
+    "novel_attack_guard": "guards",
+    "output_guard": "guards",
+    "path_guard": "guards",
+    "permission_guard": "guards",
+    "rbac_guard": "guards",
+    "replay_attack_guard": "guards",
+    "rule_injection_guard": "guards",
+    "sequence_guard": "guards",
+    "toctou_guard": "guards",
+    "vibe_coding_guard": "guards",
+    "bootstrap_verifier": "verifiers",
+    "continuous_verifier": "verifiers",
+    "contract_verifier": "verifiers",
+    "micro_verifier": "verifiers",
+    "post_action_verifier": "verifiers",
+    "anomaly_detector": "detectors",
+    "context_drift_detector": "detectors",
+    "cross_session_detector": "detectors",
+    "false_completion_detector": "detectors",
+    "multi_agent_collusion_detector": "detectors",
+    "shell_dialect_detector": "detectors",
+}
+
 
 def __getattr__(name: str):
     _SUBMODULES = {
@@ -191,5 +224,8 @@ def __getattr__(name: str):
         "vibe_coding_guard",
     }
     if name in _SUBMODULES:
+        subdir = _MOVED_MODULES.get(name)
+        if subdir:
+            return _importlib.import_module(f"zephyr.security.access_control.{subdir}.{name}")
         return _importlib.import_module(f"zephyr.security.access_control.{name}")
     raise AttributeError(f"module 'zephyr.security.access_control' has no attribute '{name}'")

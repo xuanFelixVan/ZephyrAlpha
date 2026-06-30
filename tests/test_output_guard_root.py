@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1349 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.output_guard
+# [MODULE] zephyr.security.access_control.guards.output_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -16,7 +16,7 @@ import sys
 sys.path.insert(0, "src")
 
 
-from zephyr.security.access_control.output_guard import (
+from zephyr.security.access_control.guards.output_guard import (
     CREDENTIAL_PATTERNS,
     MAX_OUTPUT_SIZE,
     PII_PATTERNS,

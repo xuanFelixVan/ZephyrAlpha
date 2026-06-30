@@ -21,7 +21,7 @@ class TestDryRun:
         assert result.operation == "write:src"
 
     def test_with_guard(self):
-        from zephyr.security.access_control.rbac_guard import RBACGuard
+        from zephyr.security.access_control.guards.rbac_guard import RBACGuard
 
         sim = DryRunSimulator()
         sim.set_guard(RBACGuard())

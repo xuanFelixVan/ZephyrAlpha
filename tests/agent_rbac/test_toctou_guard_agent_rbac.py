@@ -10,7 +10,7 @@
 
 from pathlib import Path
 
-from zephyr.security.access_control.toctou_guard import TOCTOUGuard
+from zephyr.security.access_control.guards.toctou_guard import TOCTOUGuard
 
 
 class TestTOCTOUGuard:

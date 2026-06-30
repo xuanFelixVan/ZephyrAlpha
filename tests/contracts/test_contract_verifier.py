@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0624 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
-# [MODULE] zephyr.security.access_control.contract_verifier
+# [MODULE] zephyr.security.access_control.verifiers.contract_verifier
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.security.access_control.contract_verifier import ContractStatus, ContractVerifier
+    from zephyr.security.access_control.verifiers.contract_verifier import ContractStatus, ContractVerifier
 
     _IMPORT_OK = True
     _IMPORT_REASON = ""

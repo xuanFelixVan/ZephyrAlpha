@@ -1,0 +1,258 @@
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
+# [MODULE] zephyr.security.access_control.guards.rbac_guard
+# [DOMAIN] D_SECURITY
+# [DEPENDENCIES]
+# [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] READER never allowed write; L0_INTERN never allowed modify:blueprint
+# [MODIFY-GUARD] blueprint.md §3
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] check() never raises; returns PermissionResult with decision
+# [TESTS] tests/agent_rbac/test_redteam_adversarial.py
+# [A_module] module_id=MOD-SEC_rbac_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+"""RBACGuard — 基于角色的权限守卫.
+
+依据蓝图 MOD-INF-018 §3:
+- 基于角色判断操作权限
+- READER 不能写
+- L0_INTERN 不能修改蓝图
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
+
+from zephyr.security.access_control.identity import (
+    ROLE_DEFAULT_PERMISSIONS,
+    AgentRole,
+    MaturityLevel,
+)
+
+
+ALWAYS_ALLOW_OPERATIONS = [
+    "read:docs",
+    "read:src",
+    "read:tests",
+    "read:config",
+]
+
+ALWAYS_BLOCKED_OPERATIONS = [
+    "modify:rbac_roles",
+    "delete:audit_logs",
+    "modify:immutable_core",
+    "delete:governance_db",
+]
+
+AUTO_GUARD_OPERATIONS = [
+    "write:src",
+    "write:tests",
+    "execute:scripts",
+    "execute:tests",
+]
+
+RBAC_BLOCKED_OPS = {
+    "modify:rbac_roles",
+    "delete:audit_logs",
+    "modify:immutable_core",
+    "delete:governance_db",
+}
+
+PROTECTED_PATHS = [
+    ".git",
+    ".ailocks",
+]
+
+
+class PermissionDecision(str, Enum):
+    """权限决策枚举."""
+
+    ALLOW = "ALLOW"
+    BLOCKED = "BLOCKED"
+    AUTO_GUARD = "AUTO_GUARD"
+
+
+@dataclass
+class PermissionResult:
+    """权限检查结果.
+
+    Attributes:
+        decision: 决策（ALLOW/BLOCKED/AUTO_GUARD）
+        reason: 决策原因
+        layer: 检查层
+        auto_guard_timeout: auto-guard 超时时间（秒）
+    """
+
+    decision: PermissionDecision
+    reason: str = ""
+    layer: str = "L1_rbac"
+    auto_guard_timeout: int = 0
+
+
+class RBACGuard:
+    """基于角色的权限守卫.
+
+    根据角色和成熟度判断操作权限。
+    """
+
+    def __init__(self, immutable_core: Any = None) -> None:
+        self._immutable_core = immutable_core
+
+    def check(
+        self,
+        agent: Any,
+        operation: str,
+        target_path: str | None = None,
+    ) -> PermissionResult:
+        """检查操作权限.
+
+        Args:
+            agent: AgentIdentity 实例
+            operation: 操作名称
+            target_path: 操作目标路径（可选，用于受保护路径检查）
+
+        Returns:
+            PermissionResult 包含决策和原因
+        """
+        # L0 immutable_core 修改阻断
+        if "immutable_core" in operation:
+            return PermissionResult(
+                decision=PermissionDecision.BLOCKED,
+                reason="L0 immutable_core cannot be modified",
+                layer="L0",
+            )
+
+        # 永远阻止的操作
+        if operation in ALWAYS_BLOCKED_OPERATIONS:
+            return PermissionResult(
+                decision=PermissionDecision.BLOCKED,
+                reason=f"always blocked: {operation}",
+                layer="L1_rbac",
+            )
+
+        # 受保护路径检查
+        if target_path:
+            for protected in PROTECTED_PATHS:
+                if target_path.startswith(protected) or protected in target_path:
+                    return PermissionResult(
+                        decision=PermissionDecision.BLOCKED,
+                        reason=f"protected path: {target_path}",
+                        layer="L1_rbac",
+                    )
+
+        # READER 不能写
+        role = getattr(agent, "role", None)
+        if role == AgentRole.READER and operation.startswith("write:"):
+            return PermissionResult(
+                decision=PermissionDecision.BLOCKED,
+                reason="READER cannot write",
+                layer="L1_rbac",
+            )
+
+        # L0_INTERN 不能修改蓝图
+        maturity = getattr(agent, "maturity", None)
+        if maturity == MaturityLevel.L0_INTERN and operation.startswith("modify:"):
+            return PermissionResult(
+                decision=PermissionDecision.BLOCKED,
+                reason=f"INTERN cannot modify: {operation}",
+                layer="L1_rbac",
+            )
+
+        # 永远允许的操作
+        if operation in ALWAYS_ALLOW_OPERATIONS:
+            return PermissionResult(
+                decision=PermissionDecision.ALLOW,
+                reason=f"always allowed: {operation}",
+                layer="L1_rbac",
+            )
+
+        # AUTO_GUARD 操作 — 在角色权限检查之前判定
+        if operation in AUTO_GUARD_OPERATIONS:
+            if getattr(agent, "auto_guard_eligible", False):
+                timeout = 0
+                if hasattr(agent, "get_auto_guard_timeout"):
+                    timeout = agent.get_auto_guard_timeout()
+                return PermissionResult(
+                    decision=PermissionDecision.AUTO_GUARD,
+                    reason="auto-guard eligible",
+                    layer="L1_rbac",
+                    auto_guard_timeout=timeout,
+                )
+            if getattr(agent, "owner_approved", False):
+                return PermissionResult(
+                    decision=PermissionDecision.ALLOW,
+                    reason="owner approved",
+                    layer="L1_rbac",
+                )
+            return PermissionResult(
+                decision=PermissionDecision.BLOCKED,
+                reason="auto-guard not eligible and not owner approved",
+                layer="L1_rbac",
+            )
+
+        # 角色权限检查 — 精确匹配
+        role_perms = ROLE_DEFAULT_PERMISSIONS.get(role, [])
+        if operation in role_perms:
+            return PermissionResult(
+                decision=PermissionDecision.ALLOW,
+                reason=f"allowed by role {role.value if role else 'unknown'}",
+                layer="L1_rbac",
+            )
+
+        # 通配符匹配（如 admin:*）
+        for perm in role_perms:
+            if perm.endswith(":*") and operation.startswith(perm[:-1]):
+                return PermissionResult(
+                    decision=PermissionDecision.ALLOW,
+                    reason=f"allowed by wildcard {perm}",
+                    layer="L1_rbac",
+                )
+
+        # 显式权限检查
+        explicit_perms = getattr(agent, "permissions", None) or []
+        if operation in explicit_perms:
+            return PermissionResult(
+                decision=PermissionDecision.ALLOW,
+                reason="allowed by explicit permission",
+                layer="L1_rbac",
+            )
+
+        # owner_approved 允许未知操作
+        if getattr(agent, "owner_approved", False):
+            return PermissionResult(
+                decision=PermissionDecision.ALLOW,
+                reason="owner approved",
+                layer="L1_rbac",
+            )
+
+        # 默认阻止
+        return PermissionResult(
+            decision=PermissionDecision.BLOCKED,
+            reason="no permission granted",
+            layer="L1_rbac",
+        )
+
+    def is_blocked(self, result: PermissionResult) -> bool:
+        """判断结果是否为 BLOCKED."""
+        return result.decision == PermissionDecision.BLOCKED
+
+    def is_auto_guard(self, result: PermissionResult) -> bool:
+        """判断结果是否为 AUTO_GUARD."""
+        return result.decision == PermissionDecision.AUTO_GUARD
+
+
+__all__ = [
+    "ALWAYS_ALLOW_OPERATIONS",
+    "ALWAYS_BLOCKED_OPERATIONS",
+    "AUTO_GUARD_OPERATIONS",
+    "PROTECTED_PATHS",
+    "RBAC_BLOCKED_OPS",
+    "PermissionDecision",
+    "PermissionResult",
+    "RBACGuard",
+]

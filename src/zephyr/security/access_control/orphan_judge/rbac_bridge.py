@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.3
 # [MODULE] zephyr.security.access_control.orphan_judge.rbac_bridge
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.access_control.permission_guard
+# [DEPENDENCIES] zephyr.security.access_control.guards.permission_guard
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(DELETE动作前)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -27,7 +27,7 @@ class RbacBridge:
         self._guard = None
         self._available = False
         try:
-            from zephyr.security.access_control.permission_guard import PermissionGuard
+            from zephyr.security.access_control.guards.permission_guard import PermissionGuard
 
             self._guard = PermissionGuard()
             self._available = True
