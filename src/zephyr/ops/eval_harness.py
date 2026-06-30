@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.eval_harness
+# [MODULE] zephyr.trading.feedback_loop.eval_harness
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
 # [CONSUMERS]

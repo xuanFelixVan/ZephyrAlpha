@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.gates.merkle_audit_root
+# [MODULE] zephyr.trading.feedback_loop.gates.merkle_audit_root
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.gates.__init__
 # [CONSUMERS]

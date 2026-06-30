@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.gates._operational_gates
+# [MODULE] zephyr.trading.feedback_loop.gates._operational_gates
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.gates.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.__init__
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from feedback-loop.gates
-# [MODIFY-GUARD] zephyr.observability.feedback_loop.gates.__init__
+# [MODIFY-GUARD] zephyr.trading.feedback_loop.gates.__init__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core

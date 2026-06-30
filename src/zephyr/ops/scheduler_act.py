@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.scheduler_act
+# [MODULE] zephyr.trading.feedback_loop.scheduler_act
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.__init__; zephyr.shared.event_bus
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] ActPhaseHandler.run_act returns ActResult; run_verify returns verification
@@ -21,22 +21,22 @@ import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from zephyr.ops.actors.action_selector import ActionSelector
-from zephyr.ops.detectors.action_efficacy_decay_detector import ActionEfficacyDecayDetector
-from zephyr.ops.detectors.action_interaction_detector import ActionInteractionDetector
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.detectors.placebo_action_detector import PlaceboActionDetector
-from zephyr.ops.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
-from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
-from zephyr.ops.diagnosers.toil_quantification import ToilQuantification
-from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
-from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-from zephyr.ops.resilience.oscillation_damping import OscillationDamping
-from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-from zephyr.ops.verifiers.cascading_rollback_analyzer import CascadingRollbackAnalyzer
-from zephyr.ops.verifiers.stochastic_diagnosis_verifier import StochasticDiagnosisVerifier
-from zephyr.ops.verifiers.verification_engine import VerificationEngine
+from zephyr.trading.feedback_loop.actors.action_selector import ActionSelector
+from zephyr.trading.feedback_loop.detectors.action_efficacy_decay_detector import ActionEfficacyDecayDetector
+from zephyr.trading.feedback_loop.detectors.action_interaction_detector import ActionInteractionDetector
+from zephyr.trading.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.trading.feedback_loop.detectors.placebo_action_detector import PlaceboActionDetector
+from zephyr.trading.feedback_loop.diagnosers.action_composition_health_monitor import ActionCompositionHealthMonitor
+from zephyr.trading.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
+from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
+from zephyr.trading.feedback_loop.diagnosers.toil_quantification import ToilQuantification
+from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+from zephyr.trading.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+from zephyr.trading.feedback_loop.resilience.oscillation_damping import OscillationDamping
+from zephyr.trading.feedback_loop.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
+from zephyr.trading.feedback_loop.verifiers.cascading_rollback_analyzer import CascadingRollbackAnalyzer
+from zephyr.trading.feedback_loop.verifiers.stochastic_diagnosis_verifier import StochasticDiagnosisVerifier
+from zephyr.trading.feedback_loop.verifiers.verification_engine import VerificationEngine
 
 if TYPE_CHECKING:
     from zephyr.ops.protocols import ActionType

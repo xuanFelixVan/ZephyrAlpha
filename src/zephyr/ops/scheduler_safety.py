@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.scheduler_safety
+# [MODULE] zephyr.trading.feedback_loop.scheduler_safety
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] SafetyGateManager.run_safety_gates returns dict[str, bool]
@@ -19,12 +19,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.ops.diagnosers.temporal_integrity_guard import TemporalIntegrityGuard
-from zephyr.ops.forensic.boot_integrity_attestation import BootIntegrityAttestation
+from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.trading.feedback_loop.diagnosers.temporal_integrity_guard import TemporalIntegrityGuard
+from zephyr.trading.feedback_loop.forensic.boot_integrity_attestation import BootIntegrityAttestation
 from zephyr.ops.gates.deployment_suppression import DeploymentSuppression
-from zephyr.ops.resilience.config_hot_reload_guard import ConfigHotReloadGuard
-from zephyr.ops.security.wireheading_prevention import WireheadingPrevention
+from zephyr.trading.feedback_loop.resilience.config_hot_reload_guard import ConfigHotReloadGuard
+from zephyr.trading.feedback_loop.security.wireheading_prevention import WireheadingPrevention
 from zephyr.shared.io.paths import GATES_DIR
 
 

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
-# [MODULE] zephyr.observability.feedback_loop.generator
+# [MODULE] zephyr.trading.feedback_loop.generator
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.trading.feedback_loop 内部模块; zephyr.trading

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.exceptions
+# [MODULE] zephyr.trading.feedback_loop.exceptions
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
 # [CONSUMERS]

@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.scheduler_collect_detect
+# [MODULE] zephyr.trading.feedback_loop.scheduler_collect_detect
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] CollectDetectHandler.run_collect/detect/diagnose return bool (should_early_return)
@@ -19,25 +19,25 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.ops.collectors.feedback_collector import FeedbackCollector
-from zephyr.ops.collectors.metrics_collector import MetricsCollector, MetricSnapshot
-from zephyr.ops.detectors.agent_trajectory_anomaly_detector import (
+from zephyr.trading.feedback_loop.collectors.feedback_collector import FeedbackCollector
+from zephyr.trading.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
+from zephyr.trading.feedback_loop.detectors.agent_trajectory_anomaly_detector import (
     AgentTrajectoryAnomalyDetector,
     TrajectoryEvent,
 )
-from zephyr.ops.detectors.anomaly_detector import AnomalyDetector
-from zephyr.ops.detectors.flapping_detector import AlertState, FlappingDetector
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.detectors.heisenbug_detector import HeisenbugDetector
-from zephyr.ops.detectors.intermittent_failure_pattern import IntermittentFailurePattern
-from zephyr.ops.detectors.metric_cardinality_guard import MetricCardinalityGuard
-from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
-from zephyr.ops.diagnosers.diagnosis_engine import DiagnosisEngine
-from zephyr.ops.diagnosers.feedback_delay_compensator import FeedbackDelayCompensator
-from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.ops.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
-from zephyr.ops.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
+from zephyr.trading.feedback_loop.detectors.anomaly_detector import AnomalyDetector
+from zephyr.trading.feedback_loop.detectors.flapping_detector import AlertState, FlappingDetector
+from zephyr.trading.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.trading.feedback_loop.detectors.heisenbug_detector import HeisenbugDetector
+from zephyr.trading.feedback_loop.detectors.intermittent_failure_pattern import IntermittentFailurePattern
+from zephyr.trading.feedback_loop.detectors.metric_cardinality_guard import MetricCardinalityGuard
+from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.trading.feedback_loop.diagnosers.diagnosis_engine import DiagnosisEngine
+from zephyr.trading.feedback_loop.diagnosers.feedback_delay_compensator import FeedbackDelayCompensator
+from zephyr.trading.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import PipelineStage, SelfBottleneckDetector
+from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
 
 logger = logging.getLogger(__name__)
 

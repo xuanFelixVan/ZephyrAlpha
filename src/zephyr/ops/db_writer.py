@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-DB-001
-# [MODULE] zephyr.observability.feedback_loop.db_writer
+# [MODULE] zephyr.trading.feedback_loop.db_writer
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.ops.__init__; zephyr.infrastructure.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.observability.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
+# [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; zephyr.trading.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] fle_metrics/fle_alerts/fle_dispatch_log三张表幂等写入; 每次批量返回写入行数; 异常只抛日志不抛异常

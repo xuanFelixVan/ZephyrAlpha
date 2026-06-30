@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
-# [MODULE] zephyr.observability.feedback_loop.alert_dispatcher
+# [MODULE] zephyr.trading.feedback_loop.alert_dispatcher
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.alert_handler

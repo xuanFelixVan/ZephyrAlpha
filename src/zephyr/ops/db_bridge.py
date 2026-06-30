@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ops.db_bridge
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.sqlite_schema
-# [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
+# [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] fle_metrics表DDL与sqlite_schema.py规范DDL一致; INSERT列名匹配规范schema

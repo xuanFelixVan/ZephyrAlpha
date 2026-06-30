@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.backpressure_bridge
+# [MODULE] zephyr.trading.feedback_loop.backpressure_bridge
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.integration.__init__; zephyr.ops.__init__
 # [CONSUMERS]
@@ -58,7 +58,7 @@ def sync_evolution_proposals_to_backpressure(
         return {"skipped": True, "throttled": False, "critical_count": 0}
 
     try:
-        from zephyr.ops.evolution_engine import Severity
+        from zephyr.trading.feedback_loop.evolution_engine import Severity
     except Exception:
         return {"skipped": True, "throttled": False, "critical_count": 0}
 

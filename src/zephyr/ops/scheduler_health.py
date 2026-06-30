@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.scheduler_health
+# [MODULE] zephyr.trading.feedback_loop.scheduler_health
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] HealthReporter.report() returns dict with all 20 health keys
@@ -17,26 +17,26 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.ops.detectors.diminishing_returns_detector import DiminishingReturnsDetector
-from zephyr.ops.detectors.guard_cascade_detector import GuardCascadeDetector
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
-from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.ops.diagnosers.cross_guard_conflict_detector import CrossGuardConflictDetector
-from zephyr.ops.diagnosers.cross_session_consistency_validator import CrossSessionConsistencyValidator
-from zephyr.ops.diagnosers.data_volume_growth_monitor import DataVolumeGrowthMonitor
-from zephyr.ops.diagnosers.e2e_integration_health import E2EIntegrationHealth
-from zephyr.ops.diagnosers.fle_dogfood_monitor import FLEDogfoodMonitor
-from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.ops.diagnosers.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor
-from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
-from zephyr.ops.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.ops.diagnosers.system_entropy_monitor import SystemEntropyMonitor
-from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
-from zephyr.ops.forensic.guard_complexity_budget import GuardComplexityBudget
-from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
+from zephyr.trading.feedback_loop.detectors.diminishing_returns_detector import DiminishingReturnsDetector
+from zephyr.trading.feedback_loop.detectors.guard_cascade_detector import GuardCascadeDetector
+from zephyr.trading.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.trading.feedback_loop.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
+from zephyr.trading.feedback_loop.diagnosers.cross_guard_conflict_detector import CrossGuardConflictDetector
+from zephyr.trading.feedback_loop.diagnosers.cross_session_consistency_validator import CrossSessionConsistencyValidator
+from zephyr.trading.feedback_loop.diagnosers.data_volume_growth_monitor import DataVolumeGrowthMonitor
+from zephyr.trading.feedback_loop.diagnosers.e2e_integration_health import E2EIntegrationHealth
+from zephyr.trading.feedback_loop.diagnosers.fle_dogfood_monitor import FLEDogfoodMonitor
+from zephyr.trading.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.trading.feedback_loop.diagnosers.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor
+from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
+from zephyr.trading.feedback_loop.diagnosers.system_entropy_monitor import SystemEntropyMonitor
+from zephyr.trading.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+from zephyr.trading.feedback_loop.forensic.guard_complexity_budget import GuardComplexityBudget
+from zephyr.trading.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+from zephyr.trading.feedback_loop.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
 
 
 @dataclass

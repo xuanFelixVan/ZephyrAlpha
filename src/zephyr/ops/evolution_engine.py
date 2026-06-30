@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.evolution_engine
+# [MODULE] zephyr.trading.feedback_loop.evolution_engine
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]

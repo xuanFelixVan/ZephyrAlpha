@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_validation
-# [MODULE] zephyr.observability.feedback_loop.gates.adversarial_validation
+# [MODULE] zephyr.trading.feedback_loop.gates.adversarial_validation
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.security.adversarial_validation.__init__
 # [CONSUMERS] feedback-loop.gates.__init__; _registry.yaml FLE-ADVERSARIAL-VALIDATION; RED-BLUE-GATE

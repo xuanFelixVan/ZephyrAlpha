@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.observability.feedback_loop.gates.safety_gate_L62_L63
+# [MODULE] zephyr.trading.feedback_loop.gates.safety_gate_L62_L63
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]
