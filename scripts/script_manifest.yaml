@@ -248,7 +248,7 @@ scripts:
   dimensions: []
 - name: arch_guard/check_scaffold_exit_gates.py
   path: arch_guard/check_scaffold_exit_gates.py
-  description: 对标 security_architecture.md §10.2。
+  description: 对标 architecture_model/cross_cutting/invariants.yaml 安全不变量。
   domain: governance
   execution_plane: hot-path
   status: registered
