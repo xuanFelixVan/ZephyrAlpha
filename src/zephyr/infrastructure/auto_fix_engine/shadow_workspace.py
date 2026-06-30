@@ -27,6 +27,8 @@ from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, ShadowResult
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,7 +48,7 @@ class ShadowWorkspace:
             target_path = Path(action.target)
             if not target_path.exists():
                 return ShadowResult(safe_to_apply=False, error="Target not found", shadow_dir=shadow_dir)
-            rel_path = target_path.relative_to(project_root or os.getcwd()) if project_root else target_path.name
+            rel_path = target_path.relative_to(project_root or str(REPO_ROOT)) if project_root else target_path.name  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             shadow_file = os.path.join(shadow_dir, str(rel_path))
             os.makedirs(os.path.dirname(shadow_file), exist_ok=True)
             with open(shadow_file, "w", encoding="utf-8") as f:
@@ -90,7 +92,7 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=self._pytest_timeout,
-                cwd=project_root or os.getcwd(),
+                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,
@@ -110,7 +112,7 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=60,
-                cwd=project_root or os.getcwd(),
+                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,
@@ -127,7 +129,7 @@ class ShadowWorkspace:
                 capture_output=True,
                 text=True,
                 timeout=30,
-                cwd=project_root or os.getcwd(),
+                cwd=project_root or str(REPO_ROOT),  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             )
             return {
                 "passed": result.returncode == 0,

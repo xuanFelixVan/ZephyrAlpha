@@ -32,6 +32,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     ValidationResult,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +51,7 @@ class AlignmentSyncer(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         for blueprint in (repo_root / "docs" / "03_modules").rglob("blueprint.md"):
             try:
                 content = blueprint.read_text(encoding="utf-8")
@@ -97,7 +99,7 @@ class AlignmentSyncer(BaseFixer):
             if len(parts) >= 2:
                 blueprint_path = parts[0].strip()
                 section = parts[1].strip() if len(parts) > 1 else ""
-                repo_root = Path(os.getcwd())
+                repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
                 full_bp = repo_root / blueprint_path
                 if full_bp.exists():
                     bp_content = full_bp.read_text(encoding="utf-8")

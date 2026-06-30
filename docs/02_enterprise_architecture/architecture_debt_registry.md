@@ -1812,6 +1812,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（硬假设cwd）
 **修复方向**：统一用`project_root or Path.cwd()`模式
 
+[✓ FIXED: 2026-07-01 auto_fix_engine/ 下最危险12处全部修复（10文件19处）：9个fixer文件 `Path(os.getcwd())` → `REPO_ROOT`（SSoT真源）；shadow_workspace.py `os.getcwd()` → `str(REPO_ROOT)`（保留 project_root or 模式）。所有文件添加 `from zephyr.shared.io.paths import REPO_ROOT` 导入。py_compile 全部通过。代码库其余~15处 os.getcwd() 分散在其他模块，需后续批量处理]
+
 #### 5.12.6 stale TODO DM-201247条件已满足但未清理（HIGH）
 
 **证据**：

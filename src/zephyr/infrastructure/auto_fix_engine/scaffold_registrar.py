@@ -32,6 +32,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     ValidationResult,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +51,7 @@ class ScaffoldRegistrar(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         manifest_path = repo_root / "scripts" / "script-manifest.yaml"
         registered_scripts: set[str] = set()
         if manifest_path.exists():
@@ -119,7 +121,7 @@ class ScaffoldRegistrar(BaseFixer):
         return action
 
     def _register_script(self, target: str) -> None:
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         manifest_path = repo_root / "scripts" / "script-manifest.yaml"
         try:
             import yaml
@@ -185,7 +187,7 @@ class ScaffoldRegistrar(BaseFixer):
                 valid=False, check_name="scaffold_registration", evidence="", error="Target not found"
             )
         if target.startswith("scripts"):
-            repo_root = Path(os.getcwd())
+            repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             manifest_path = repo_root / "scripts" / "script-manifest.yaml"
             if not manifest_path.exists():
                 return ValidationResult(

@@ -33,6 +33,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     ValidationResult,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,7 +52,7 @@ class ImportFixer(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         src_root = repo_root / "src"
         for py_file in repo_root.rglob("*.py"):
             if "site-packages" in str(py_file) or ".venv" in str(py_file):
@@ -108,7 +110,7 @@ class ImportFixer(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             original = content
-            repo_root = Path(os.getcwd())
+            repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             src_root = repo_root / "src"
             fixes: list[str] = []
             lines = content.split("\n")

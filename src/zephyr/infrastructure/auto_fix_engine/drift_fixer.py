@@ -32,6 +32,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     ValidationResult,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +51,7 @@ class DriftFixer(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         for config_file in repo_root.rglob("*.yaml"):
             if ".ailocks" in str(config_file) or "node_modules" in str(config_file):
                 continue

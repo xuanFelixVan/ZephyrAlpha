@@ -32,6 +32,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     ValidationResult,
 )
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +51,7 @@ class ZombieCleaner(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = Path(os.getcwd())
+        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         for yaml_file in repo_root.rglob("*.yaml"):
             try:
                 content = yaml_file.read_text(encoding="utf-8")
@@ -89,7 +91,7 @@ class ZombieCleaner(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             original = content
-            repo_root = Path(os.getcwd())
+            repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             if target.endswith(".yaml"):
                 path_refs = re.findall(
                     r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
@@ -139,7 +141,7 @@ class ZombieCleaner(BaseFixer):
             return ValidationResult(valid=False, check_name="zombie_clean", evidence="", error="Target not found")
         try:
             content = target_path.read_text(encoding="utf-8")
-            repo_root = Path(os.getcwd())
+            repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
             remaining_zombies: list[str] = []
             path_refs = re.findall(r'["\']([A-Za-z0-9_/\\]+\.(?:py|yaml|json))["\']', content)
             for ref in path_refs:
