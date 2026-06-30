@@ -17,7 +17,7 @@
       "minLength": 1
     },
     "doc_type": {
-      "description": "文档品种——01_policies_and_standards/ 目录下 13 种。PS-STD-001 §3.2.1",
+      "description": "文档品种——01_policies_and_standards/ 目录下 9 种。PS-STD-001 §3.2.1",
       "oneOf": [
         {
           "const": "policy"

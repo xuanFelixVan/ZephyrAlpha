@@ -2195,8 +2195,11 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 # 导致 AI 误判为冲突并反复"修复"。不能删除（检测需求真实），不能合并（现有 reconciler 无 module_id 三轨校验逻辑）。
 # 治本：S0-3 已在 PS-STD-001 定义三轨语义，本 reconciler 自动校验一致性（非阻断，仅告警）。
 # 向内收：扩展已有 reconciliation_registry.py 框架（第12个 reconciler），不新建独立系统。
+# P8-FIX-S1 扩展：增加 count 派生校验（total_registered/total_templates/total_dependencies）。
+#   元问题审查：count 不一致是真实漂移源（template_registry 声明 14 但实际 13）。
+#   能否合并：是——扩展本 reconciler 职责，不新建 count_reconciler（向内收）。
 def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-MODULE-ID-CONSISTENCY post-commit 三轨一致性校验 reconciler（P8-FIX-S0）。
+    """构造 GATE-MODULE-ID-CONSISTENCY post-commit 注册表一致性校验 reconciler（P8-FIX-S0 + S1）。
 
     病根：单个治理文件中同时出现三种 module_id 声明（头部 CFG-* + 锚定 MOD-* +
     body PS-*/GOV-*），语义未定义导致 AI 误判为冲突并反复"修复"。
@@ -2207,12 +2210,18 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     - 本 reconciler 在 post-commit 自动校验三轨一致性——检查三者是否在
       module_id_registry.yaml 中归属同一模块。不一致→warn（非阻断）。
 
+    P8-FIX-S1 扩展（2026-06-30）：count 派生校验
+    - 注册表的 count 字段（total_registered/total_templates/total_dependencies）是派生数据，
+      手工维护导致漂移（如 template_registry 声明 14 但实际 13）。
+    - 扩展本 reconciler 增加 count 校验：统计列表条目数，与声明的 count 比对，不一致→warn。
+    - 向内收：不新建 count_reconciler，扩展已有 module_id_consistency_reconciler 职责。
+
     设计裁定（非阻断）：
-    post-commit 无法回滚 commit；三轨不一致已入 git 历史，仅告警记录到
+    post-commit 无法回滚 commit；不一致已入 git 历史，仅告警记录到
     .runtime/reconcile_reports/module_id_consistency_<ts>.json，供人工修正。
 
-    trigger 裁定：committed_files 含 module_id_registry.yaml 或 _registry/contracts/
-    下的 .yaml 文件即命中（这些文件是三轨声明的主要载体）。
+    trigger 裁定：committed_files 含 module_id_registry.yaml / template_registry.yaml /
+    cross_module_dependency_registry.yaml 或 _registry/contracts/ 下的 .yaml 文件即命中。
 
     向内收设计：
     - 责任唯一：三轨语义定义在 PS-STD-001 §5，校验逻辑在本 reconciler 单点
@@ -2230,6 +2239,8 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
     project_root = gateway.project_root
     _REGISTRY_REL = "architecture_model/module_id_registry.yaml"
+    _TEMPLATE_REGISTRY_REL = "docs/03_modules/template_registry.yaml"
+    _DEP_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
     _CONTRACTS_DIR = "docs/01_policies_and_standards/_registry/contracts/"
 
     # 三轨正则
@@ -2237,10 +2248,21 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     _RE_ANCHOR_MOD = re.compile(r"^#\s*module_id:\s*(MOD-\S+)", re.MULTILINE)
     _RE_BODY_RULE = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*$", re.MULTILINE)
 
+    # P8-FIX-S1: count 派生校验——统计列表条目数正则
+    _RE_MODULE_ID_ENTRY = re.compile(r"^  - module_id:\s*\S+", re.MULTILINE)
+    _RE_TEMPLATE_ENTRY = re.compile(r"^  - template_id:", re.MULTILINE)
+    _RE_DEP_ENTRY = re.compile(r"^- dep_id:\s*DEP-", re.MULTILINE)
+
+    # P8-FIX-S1: count 声明读取正则
+    _RE_TOTAL_REGISTERED = re.compile(r"^total_registered:\s*(\d+)", re.MULTILINE)
+    _RE_TOTAL_TEMPLATES = re.compile(r"^\s*total_templates:\s*(\d+)", re.MULTILINE)
+    _RE_TOTAL_DEPS = re.compile(r"^\s*total_dependencies:\s*(\d+)", re.MULTILINE)
+
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel == _REGISTRY_REL or rel.startswith(_CONTRACTS_DIR):
+            if (rel == _REGISTRY_REL or rel == _TEMPLATE_REGISTRY_REL
+                    or rel == _DEP_REGISTRY_REL or rel.startswith(_CONTRACTS_DIR)):
                 return True
         return False
 
@@ -2250,7 +2272,8 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel != _REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR):
+            if (rel != _REGISTRY_REL and rel != _TEMPLATE_REGISTRY_REL
+                    and rel != _DEP_REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR)):
                 continue
 
             abs_path = project_root / rel
@@ -2264,7 +2287,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
             checked += 1
 
-            # 解析三轨
+            # === 三轨一致性校验（P8-FIX-S0） ===
             cfg_match = _RE_HEADER_CFG.search(content)
             mod_match = _RE_ANCHOR_MOD.search(content)
             rule_match = _RE_BODY_RULE.search(content)
@@ -2273,14 +2296,8 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
             mod_id = mod_match.group(1) if mod_match else None
             rule_id = rule_match.group(1) if rule_match else None
 
-            # 校验：如果三轨都存在，检查是否语义一致（同属一个治理领域）
-            # 语义一致性检查：三轨的 DOMAIN 前缀应属于同一治理领域
-            # CFG-* 是配置实体，MOD-* 是模块归属，PS-*/GOV-* 是规则身份
-            # 这里只检查"三轨是否同时存在"——存在即合法（语义已在 PS-STD-001 §5 定义）
-            # 不一致的情况：某轨缺失（如缺少 body rule_id）或格式错误
             tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
             if tracks_found < 2 and cfg_id:
-                # 文件有 CFG 头部但缺少其他轨——可能是配置文件未登记
                 violations.append({
                     "file": rel,
                     "issue": "incomplete_tracks",
@@ -2289,6 +2306,47 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
                     "rule_id": rule_id,
                     "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 轨声明",
                 })
+
+            # === count 派生校验（P8-FIX-S1） ===
+            if rel == _REGISTRY_REL:
+                actual_count = len(_RE_MODULE_ID_ENTRY.findall(content))
+                declared = _RE_TOTAL_REGISTERED.search(content)
+                declared_count = int(declared.group(1)) if declared else None
+                if declared_count is not None and declared_count != actual_count:
+                    violations.append({
+                        "file": rel,
+                        "issue": "count_mismatch",
+                        "field": "total_registered",
+                        "declared": declared_count,
+                        "actual": actual_count,
+                        "detail": f"total_registered={declared_count} 但实际 registered_ids 有 {actual_count} 条",
+                    })
+            elif rel == _TEMPLATE_REGISTRY_REL:
+                actual_count = len(_RE_TEMPLATE_ENTRY.findall(content))
+                declared = _RE_TOTAL_TEMPLATES.search(content)
+                declared_count = int(declared.group(1)) if declared else None
+                if declared_count is not None and declared_count != actual_count:
+                    violations.append({
+                        "file": rel,
+                        "issue": "count_mismatch",
+                        "field": "total_templates",
+                        "declared": declared_count,
+                        "actual": actual_count,
+                        "detail": f"total_templates={declared_count} 但实际 templates 有 {actual_count} 条",
+                    })
+            elif rel == _DEP_REGISTRY_REL:
+                actual_count = len(_RE_DEP_ENTRY.findall(content))
+                declared = _RE_TOTAL_DEPS.search(content)
+                declared_count = int(declared.group(1)) if declared else None
+                if declared_count is not None and declared_count != actual_count:
+                    violations.append({
+                        "file": rel,
+                        "issue": "count_mismatch",
+                        "field": "total_dependencies",
+                        "declared": declared_count,
+                        "actual": actual_count,
+                        "detail": f"total_dependencies={declared_count} 但实际 dependencies 有 {actual_count} 条",
+                    })
 
         report = {
             "gate_id": "GATE-MODULE-ID-CONSISTENCY",

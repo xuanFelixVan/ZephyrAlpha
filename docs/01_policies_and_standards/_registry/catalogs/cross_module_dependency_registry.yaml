@@ -18,7 +18,7 @@ created: '2026-05-02'
 last_updated: '2026-05-08'
 ai_autonomy: human_gated
 ttl: permanent
-total_dependencies: 111
+# P8-FIX-S1: total_dependencies 已移到 summary 节(派生),删除此处的双写声明
 depends_on:
 - target: PS-STD-001
   at: §3.2.1

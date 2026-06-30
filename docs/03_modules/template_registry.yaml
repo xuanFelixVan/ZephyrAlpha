@@ -38,7 +38,7 @@ registry:
   version: "1.0.0"
   created: "2026-05-04"
   last_updated: "2026-05-13"
-  total_templates: 14
+  total_templates: 13  # P8-FIX-S1: 从 14 修正为 13(实际 template 条目数)。由 reconciler 自动派生,勿手工修改。
   note: "全部路径已改为项目根相对路径（docs/...）。新 AI 从 project_rules.md 入口读此文件，可直连每个模板。"
 
 templates:
@@ -101,7 +101,7 @@ templates:
     path: "docs/01_policies_and_standards/templates/playbook-template.md"
     version: "0.2.0"
     for: "Playbook 的创建——应急响应流程，事件驱动 + 概述段"
-    template_for: "policy"
+    template_for: "operational_rule"
     status: "active"
     last_updated: "2026-05-13"
 
@@ -110,7 +110,7 @@ templates:
     path: "docs/01_policies_and_standards/templates/runbook-runbook.md"
     version: "0.2.0"
     for: "Runbook 的创建——例行操作流程，日历驱动 + 概述段"
-    template_for: "policy"
+    template_for: "operational_rule"
     status: "active"
     last_updated: "2026-05-13"
 

@@ -21,10 +21,10 @@
 #   - PS-STD-001 §2.6 + §2.8：全量 frontmatter 一致性约束
 #
 # 依赖（本契约引用的真源文件）：
-#   - vocabularies/doc_type_vocabulary.yaml   → doc_type 10 值（v3.0.0，canonical SSoT，全项目唯一真源）
+#   - vocabularies/doc_type_vocabulary.yaml   → doc_type 9 值（v3.1.0，canonical SSoT，全项目唯一真源）
 #   - vocabularies/rule_form_vocabulary.yaml  → rule_form 4 值
 #   - vocabularies/status_vocabulary.yaml    → status 3 值
-#   - PS-STD-001 §3.2                      → doc_type 10 值（v3.0.0，引用 doc_type_vocabulary.yaml 真源）
+#   - PS-STD-001 §3.2                      → doc_type 9 值（v3.1.0，引用 doc_type_vocabulary.yaml 真源）
 #   - PS-STD-001 trae_043_meta_rule_metadata.yaml  → 全量字段定义 + 约束真源
 # ============================================================
 
