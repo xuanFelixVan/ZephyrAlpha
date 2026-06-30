@@ -847,7 +847,7 @@ sections:
     - standard: encoding-safety-standard.md
       relation: 独立无冲突
       detail: 无
-    - standard: ai-autonomy-authority-registry.md
+    - standard: ai_autonomy_authority_registry.yaml
       relation: 上游
       detail: §7 ai_autonomy字段值与该注册表对齐
     - standard: task-card-standard.md
