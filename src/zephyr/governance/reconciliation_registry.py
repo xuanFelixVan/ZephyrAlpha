@@ -1573,6 +1573,9 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     - 旧 GATE-RULE-FILE-AUDIT (priority=700)：commit 治理真源规则文件
       （directory_contract/doc_type_vocabulary/ttl_vocabulary/architecture_contract/
       gate_registry）后落盘审计记录，提示人工审查（约束可能被悄悄放宽）。
+      P5 改造（2026-06-30）：当 directory_contract.yaml 或 doc_type_vocabulary.yaml
+      变更时，额外跑 check_directory_contract.py 全量扫描，确认契约变更未引入
+      DCR-001 违规（目录→doc_type 对应），违规列表写入审计报告。
     - 新增 GATE-ARCH-REFS (priority=710，元问题2治本 2026-06-30)：扫描 committed_files
       中所有 #ARCH-XXX 引用，检查是否在 architecture_issue_registry.yaml 的 entries 中
       有对应条目。病根：注册表铁律#6"任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止
@@ -1681,12 +1684,52 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         os.makedirs(reports_dir, exist_ok=True)
         ts_iso = datetime.now().isoformat(timespec="seconds")
         ts_file = ts_iso.replace(":", "")
+
+        # P5 改造（2026-06-30）：契约文件变更时触发 DCR-001 全量扫描
+        # 当 directory_contract.yaml 或 doc_type_vocabulary.yaml 变更时，
+        # 跑 check_directory_contract.py 全量扫描，确认契约变更未引入 DCR-001 违规
+        _CONTRACT_FILES = {
+            "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml",
+            "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml",
+        }
+        contract_changed = [f for f in rule_files_changed if f in _CONTRACT_FILES]
+        dcr_scan_summary = None
+        dcr001_violations: list[str] = []
+
+        if contract_changed:
+            scan_result = subprocess.run(
+                [sys.executable, "scripts/governance/d1_structure/check_directory_contract.py"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=120,
+            )
+            # 解析 stderr 中的 DCR-001 违规行（格式: "  [error] DCR-001 <file>"）
+            stderr_lines = scan_result.stderr.splitlines() if scan_result.stderr else []
+            dcr001_violations = [
+                line.strip() for line in stderr_lines
+                if "DCR-001" in line and "error" in line
+            ]
+            if scan_result.returncode == 0:
+                dcr_scan_summary = f"clean (exit=0, {len(dcr001_violations)} DCR-001 violations)"
+            else:
+                dcr_scan_summary = f"findings (exit={scan_result.returncode}, {len(dcr001_violations)} DCR-001 violations)"
+
         report = {
             "timestamp": ts_iso,
             "session_id": session_id,
             "rule_files_changed": rule_files_changed,
             "note": "规则文件变更需人工审查（约束可能被放宽）",
         }
+        if contract_changed:
+            report["contract_dcr_scan"] = {
+                "contract_files_changed": contract_changed,
+                "scan_summary": dcr_scan_summary,
+                "dcr001_violations": dcr001_violations,
+                "violation_count": len(dcr001_violations),
+            }
         report_path = os.path.join(reports_dir, f"rule_file_audit_{ts_file}.json")
         try:
             with open(report_path, "w", encoding="utf-8") as fh:
@@ -1697,12 +1740,21 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"rule-file audit done ({len(rule_files_changed)} file(s)) but report write failed: {e}",
             )
 
+        detail_parts = [
+            f"{len(rule_files_changed)} rule file(s) changed "
+            f"(manual review recommended), report={os.path.basename(report_path)}"
+        ]
+        if contract_changed:
+            if dcr001_violations:
+                detail_parts.append(
+                    f"DCR-001 全量扫描发现 {len(dcr001_violations)} 个违规（契约变更可能引入漂移，需人工排查）"
+                )
+            else:
+                detail_parts.append("DCR-001 全量扫描通过（契约变更后全量合规）")
+
         return ReconcileResult(
             action="warn",
-            detail=(
-                f"{len(rule_files_changed)} rule file(s) changed "
-                f"(manual review recommended), report={os.path.basename(report_path)}"
-            ),
+            detail="; ".join(detail_parts),
         )
 
     spec_rule_file_audit = ReconcilerSpec(
