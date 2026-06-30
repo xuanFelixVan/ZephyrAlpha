@@ -158,7 +158,7 @@ entries:
 - issue_id: '#ARCH-021'
   title: scaffold.py layer 默认值违反 SSoT 并持续生成非合规规则文件
   severity: P1高
-  adjudication: 修复 scripts/scaffold.py line 425 `layer: str = "L1"`（默认值是 layer_vocabulary.yaml 标记的废弃值）+ line 443 `valid_layers = {"L0", "L1", "L2", "L3"}`（与 layer_vocabulary.yaml 的16个架构层名矛盾）。治本：layer 默认值改为合法架构层名（如 compliance）；valid_layers 改为从 layer_vocabulary.yaml 动态加载（dynamic_from_ssot）。
+  adjudication: '修复 scripts/scaffold.py line 425 `layer: str = "L1"`（默认值是 layer_vocabulary.yaml 标记的废弃值）+ line 443 `valid_layers = {"L0", "L1", "L2", "L3"}`（与 layer_vocabulary.yaml 的16个架构层名矛盾）。治本：layer 默认值改为合法架构层名（如 compliance）；valid_layers 改为从 layer_vocabulary.yaml 动态加载（dynamic_from_ssot）。'
   fix_phase: 待立项（超范围：scripts/）
   status: open
   created: '2026-06-27'
@@ -174,7 +174,7 @@ entries:
 - issue_id: '#ARCH-023'
   title: contract_mapping_table.yaml dual-header 真源分裂
   severity: P1高
-  adjudication: 统一 _registry/contracts/contract_mapping_table.yaml 的 dual-header——line 1 A_config 头 `stability=stable, ai_autonomy=human_gated` vs lines 2-8 治理锚定块 `stability: evolving, ai_autonomy: ai_modifiable`，两套头值不一致违反真源唯一。治本：统一为一套头（保留治理锚定块为 SSoT，A_config 头改为指针或删除）；系统性问题，需审查所有 dual-header 文件。
+  adjudication: '统一 _registry/contracts/contract_mapping_table.yaml 的 dual-header——line 1 A_config 头 `stability=stable, ai_autonomy=human_gated` vs lines 2-8 治理锚定块 `stability: evolving, ai_autonomy: ai_modifiable`，两套头值不一致违反真源唯一。治本：统一为一套头（保留治理锚定块为 SSoT，A_config 头改为指针或删除）；系统性问题，需审查所有 dual-header 文件。'
   fix_phase: 待立项（需专门审查周期覆盖所有 dual-header 文件）
   status: open
   created: '2026-06-27'

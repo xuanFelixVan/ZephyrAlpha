@@ -49,7 +49,7 @@ fields:
   stage: null
   enum_values: dynamic_from_ssot
   applicable_docs: []
-  description: 文档品种——01_policies_and_standards/ 目录下 10 种（v3.0.0，canonical SSoT: doc_type_vocabulary.yaml）
+  description: "文档品种——01_policies_and_standards/ 目录下 10 种（v3.0.0，canonical SSoT: doc_type_vocabulary.yaml）"
   source: PS-STD-001 §3.2.1 + doc_type_vocabulary.yaml
   derived_from: _registry/vocabularies/doc_type_vocabulary.yaml
   note: ''

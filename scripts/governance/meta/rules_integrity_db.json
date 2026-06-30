@@ -91,7 +91,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: create_guard.py）"
     },
     "src/zephyr/governance/commit_gates/directory_contract_gate.py": {
-      "hash": "c7231bb204390511",
+      "hash": "23ce485bbcd3c095",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: directory_contract_gate.py）"
     },
@@ -101,6 +101,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
     }
   },
-  "registered_at": "2026-06-30T12:10:01.241066+00:00",
+  "registered_at": "2026-06-30T12:19:13.838623+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }
