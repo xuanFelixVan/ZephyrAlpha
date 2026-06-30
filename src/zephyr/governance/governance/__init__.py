@@ -16,28 +16,22 @@ Escalation — MOD-INF-022
 升级协议：异常事件阶梯升级 L0-L4 + Owner通知.
 """
 
-from zephyr.governance.approval import ApprovalRequest
-from zephyr.governance.contracts import EscalationContracts
-from zephyr.governance.rbac_bridge import EscalationRBACBridge, RBACCheckResult
+from zephyr.governance.approval import ApprovalRequest  # noqa: E402
+from zephyr.governance.contracts import EscalationContracts  # noqa: E402
+from zephyr.governance.rbac_bridge import EscalationRBACBridge, RBACCheckResult  # noqa: E402
 
-from . import a2a_failure, budget_handler
-
-__all__ = [
+# ARCH-031: 8 stale duplicates removed (approval/contracts/a2a_failure/budget_handler/
+# budget_tracker/drift_fix/auditor/result_types) — canonicals exist in access_control/,
+# integration/, budget/, drift/, audit/, shared/, infrastructure/rollback/governance/.
+# Remaining: rbac_bridge.py (imported by access_control/rbac_bridge.py) +
+# data_quality.py (imported by tests/data/test_data_quality.py).
+__all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "ApprovalRequest",
     "EscalationContracts",
     "EscalationRBACBridge",
     "RBACCheckResult",
-    "a2a_failure",
-    "approval",
-    "auditor",
-    "budget_handler",
-    "budget_tracker",
-    "contracts",
     "data_quality",
-    "drift_fix",
-    "on_budget_alert",
     "rbac_bridge",
-    "result_types",
 ]
 
 __version__ = "0.1.0"
