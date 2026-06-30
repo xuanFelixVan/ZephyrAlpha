@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """v1.0.0 -- 2026-05-03
 
-AGENTS.md §6.10 双层对齐闸门的根治层：
+GATE-A 代码↔YAML 对齐的根治层：
   根因：所有 YAML summary 字段（by_status / by_priority / by_maturity /
         by_quadrant / total_registered / global_stats）均为手动维护，
         无自动化交叉校验。每次数据变更后 summary 漂移不可避免。

@@ -19,7 +19,7 @@
 paths.py — 项目路径常量 SSoT（Single Source of Truth）
 
 对标 AGENTS.md §6.4（最有利于 AI 施工的选择）
-         AGENTS.md §6.9（架构数据 Canonical SSoT 铁律）
+         YAML canonical SSoT 铁律
 
 根因修复：此前 7 个文件各自通过 Path(__file__).parents[N] 独立计算
 REPO_ROOT，导致：

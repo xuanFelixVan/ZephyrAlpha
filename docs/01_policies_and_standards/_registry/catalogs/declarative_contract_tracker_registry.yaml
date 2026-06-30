@@ -17,7 +17,7 @@ owner: system
 date: '2026-05-03'
 ttl: permanent
 description: "跟踪所有 config/ 目录下 YAML 文件中声明但尚未被代码兑现的承诺。 每一条契约都有一个明确的实现状态 + 目标 Phase，让 AI 新 session 来了一看就知道\"哪些 YAML 是说的比做的多\"。\n对标: ITIL SACM CMDB（所有 CI 的承诺与实现状态集中登记）\n      AGENTS.md §6.2 原子事务模式（YAML 承诺变更\
-  \ → 本登记表同步更新）\n      AGENTS.md §6.9 Architecture Data Canonical SSoT（契约状态以本 YAML 为准）\n"
+  \ → 本登记表同步更新）\n      YAML canonical SSoT（契约状态以本 YAML 为准）\n"
 discovery_rule: '任何修改 config/ 下 YAML 的 implementation_status 字段时，必须在同一 atomic batch 内同步更新本登记表对应条目的 status / gap / last_reviewed。
 
   '

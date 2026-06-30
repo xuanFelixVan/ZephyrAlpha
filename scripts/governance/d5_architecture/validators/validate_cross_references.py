@@ -18,7 +18,7 @@
 v2.0.0 — 2026-05-03
 
 
-AGENTS.md §6.10 双层对齐闸门 + §6.14 漂移免疫架构原则 Level 2 门禁 3/4：
+GATE-A 代码↔YAML 对齐 + 漂移免疫架构原则 Level 2 门禁 3/4：
   根因：架构模型由 20+ YAML 文件组成，治理文档由 50+ 文件组成，
         引用链（contract_id / invariant_id / kb_ref / owner / source_layer /
         events_published / 文件路径 / depends_on）均为手动维护，

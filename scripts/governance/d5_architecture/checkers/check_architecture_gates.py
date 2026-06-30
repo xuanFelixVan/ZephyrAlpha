@@ -17,7 +17,7 @@
 """v2.4.0 — 2026-05-03
 
 用途：验证架构终局完成度，作为进入 beta 施工阶段的门禁。
-来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §1.3 + AGENTS.md §6.10 双层对齐闸门 + 2026-05-03 审计反漂移升级
+来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §1.3 + GATE-A 代码↔YAML 对齐 + 2026-05-03 审计反漂移升级
 """
 
 from __future__ import annotations
@@ -585,7 +585,7 @@ def extra_03_summary_total_consistent() -> tuple[bool, list[str]]:
 def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     """GATE-A: src/zephyr/ ↔ architecture_model/ 代码与YAML双层对账
 
-    AGENTS.md §6.10 GATE-A — 实际代码 ↔ YAML SSoT
+    GATE-A — 实际代码 ↔ YAML SSoT
     - CRITICAL: src/zephyr/lNN_* 目录存在但 _index.yaml 无对应分区（硬阻断）
     - CRITICAL: 分区有 implemented/active 模块但 src/zephyr/ 下无对应目录（硬阻断）
     - WARNING: src/zephyr/ 根层级目录未在 infra/ YAML 中登记
@@ -900,7 +900,7 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
             errors.append(
                 f"WARNING: {log_name} 新建了 src/zephyr/ 目录 "
                 f"但未包含'变更对齐检查'节 "
-                f"（比对 §6.10 GATE-A——新建代码目录应同步更新 architecture_model YAML）"
+                f"（比对 GATE-A——新建代码目录应同步更新 architecture_model YAML）"
             )
 
         # 检查 4: 文件变更 → path-tree 刷新

@@ -34,7 +34,7 @@ __manifest__ = """
 args: []
 description: >
   契约变更影响分析器——当跨层契约 YAML 变更时，递归分析所有下游 depends_on 引用链，
-  输出受影响模块清单 + 变更范围评估。对标 §6.9 YAML canonical + §6.2 原子事务。
+  输出受影响模块清单 + 变更范围评估。对标 YAML canonical SSoT + §6.2 原子事务。
 dimensions:
 - D5
 priority: P2

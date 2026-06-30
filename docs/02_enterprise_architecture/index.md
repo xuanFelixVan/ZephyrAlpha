@@ -9,7 +9,7 @@ depends_on:
   at: §子目录
   why: 根目录索引——02抽屉为根 docs/ 子目录，引用其抽屉一览
 - target: AGENTS.md
-  at: §6.9~§6.10
+  at: architecture_model/ YAML SSoT + GATE-A
   why: 双轨制+双层对齐 canonical 规则——本文件仅引用，不重复定义
 title: 02 Enterprise Architecture
 ttl: permanent
@@ -21,16 +21,16 @@ ttl: permanent
 
 ---
 
-## 0. 双轨制 + 双层对齐（规则引用）
+## 0. YAML SSoT + 代码对齐（规则引用）
 
 本目录遵循 AGENTS.md 定义的架构治理铁律，**不在此重复定义**：
 
 | 规则 | Canonical SSoT | 本文角色 |
 |------|---------------|---------|
-| 双轨制（YAML 机器 SSoT + MD 人类视图） | [AGENTS.md §6.9](file:///D:/ZephyrAlpha/AGENTS.md) | 导航到对应位置 |
-| 冲突裁决（YAML vs MD → 以 YAML 为准） | [AGENTS.md §6.9](file:///D:/ZephyrAlpha/AGENTS.md) | 同上 |
-| 双层对齐闸门（GATE-A/B） | [AGENTS.md §6.10](file:///D:/ZephyrAlpha/AGENTS.md) | 同上 |
-| AI 施工即时约束 | [AGENTS.md §6.10](file:///D:/ZephyrAlpha/AGENTS.md) | 同上 |
+| 双轨制（YAML 机器 SSoT + MD 人类视图） | architecture_model/ YAML SSoT | 导航到对应位置 |
+| 冲突裁决（YAML vs MD → 以 YAML 为准） | YAML canonical SSoT 铁律 | 同上 |
+| 代码对齐闸门（GATE-A） | GATE-A 代码↔YAML 对齐 | 同上 |
+| AI 施工即时约束 | GATE-A 代码↔YAML 对齐 | 同上 |
 
 > **原则**：同一规则不在两处定义。AGENTS.md 是全局宪法，本索引只做导航——不重新声明、不复述、不独立维护副本。
 
@@ -56,7 +56,7 @@ ttl: permanent
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
 | architecture_debt_registry.md | 架构债务注册表（全项目架构债务单一真源，337个违规点+6个根因） | 人类视图 |
-| 04_architecture_principles_decisions/dependency_architecture_panorama.md | 依赖与架构全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
+| 04_architecture_principles_decisions/dependency_architecture_panorama.md | 依赖与路径全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
 | _archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
 | _archive/ssot_authority_map.md | 已归档：SSoT权威映射（权威角色已被专门YAML取代，validate_ssot.py不消费） | 人类视图 |
 | _archive/t18_implementation_plan.md | 已归档：T18实施计划（暂缓，重启条件未满足） | 人类视图 |

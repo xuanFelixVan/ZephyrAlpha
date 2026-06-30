@@ -64,7 +64,7 @@ seven_stages:
     actions: "将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 KB 决策记录（GOV-ARCH-001）"
     check_items:
       - "蓝图是否自包含（AI读完蓝图≈读完整个项目）？"
-      - "§6.9 YAML优先——架构事实是否先在 architecture_model/layers/ YAML 中登记？"
+      - "YAML canonical SSoT 优先——架构事实是否先在 architecture_model/layers/ YAML 中登记？"
       - "§6.14 蓝图§16路径索引是否与磁盘一致？"
       - "provenance三件套是否完整（origin_drafts + audit_chain≥3 + arbitration）？"
       - "若涉及新增/删除模块、修改接口、换技术栈、改数据流 → 是否已触发 GOV-ARCH-002 架构评审？"
@@ -157,7 +157,7 @@ audit_dimensions:
       - "d5_architecture/validators/validate_field_ownership.py"
       - "d5_architecture/detectors/detect_duplicate_module_names.py"
       - "d5_architecture/validators/validate_directory_structure.py"
-    linked_rules: "§5.1原则2、§6.4、§6.9"
+    linked_rules: "§5.1原则2、§6.4、YAML canonical SSoT"
 
   - id: "B"
     name: "真源清晰"
@@ -171,7 +171,7 @@ audit_dimensions:
       - "d3_metadata/validate_enum_consistency.py"
       - "d3_metadata/validate_derived_from.py"
       - "d5_architecture/validators/validate_code_yaml_alignment.py"
-    linked_rules: "§6.9、§6.13、§6.15"
+    linked_rules: "YAML canonical SSoT、§6.13、§6.15"
 
   - id: "C"
     name: "内容无冲突"
@@ -187,7 +187,7 @@ audit_dimensions:
       - "d11_compliance/validate_truth_source_cascade.py"
       - "d5_architecture/validators/yaml_md/validate_yaml_summaries.py"
       - "check_registry_consistency.py"
-    linked_rules: "§6.10、§6.15"
+    linked_rules: "GATE-A、§6.15"
 
   - id: "D"
     name: "文件夹职责清晰"
@@ -201,7 +201,7 @@ audit_dimensions:
       - "d5_architecture/validators/validate_directory_structure.py"
       - "d1_structure/audit_directory_integrity.py"
       - "d5_architecture/validators/validate_code_yaml_alignment.py"
-    linked_rules: "GOV-DOC-002, §6.10"
+    linked_rules: "GOV-DOC-002, GATE-A"
 
   - id: "E"
     name: "无废话"

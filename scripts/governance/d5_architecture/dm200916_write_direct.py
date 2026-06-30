@@ -78,9 +78,9 @@ system:
 
 governance:
   canonical: true
-  derives_from: "AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律"
+  derives_from: "YAML canonical SSoT 铁律"
   conflict_rule: "YAML 为准，Markdown 视图同步更新"
-  gate_alignment: "AGENTS.md §6.10 — GATE-A (代码↔YAML)"
+  gate_alignment: "GATE-A 代码↔YAML 对齐"
   domains_source: >
     domains 列表由 dm200916_write_direct.py 从 depgraph domains 表派生，禁止手编。
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。

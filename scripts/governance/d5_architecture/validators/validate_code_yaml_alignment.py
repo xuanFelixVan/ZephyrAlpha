@@ -17,8 +17,8 @@
 
 
 
-对标：AGENTS.md §6.10 — 双层对齐闸门 GATE-A (代码↔YAML)
-      AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律
+对标：GATE-A 代码↔YAML 对齐
+      YAML canonical SSoT 铁律
 
 检测内容：
 - CRITICAL: 实际存在的代码目录未在 architecture_model/ YAML 中登记
@@ -32,7 +32,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: GATE-A — 实际代码目录↔architecture_model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
+description: GATE-A — 实际代码目录↔architecture_model/YAML SSoT 对账，检测未登记目录/YAML漂移/文件数不一致
 dimensions:
 - D5
 priority: P0
@@ -139,7 +139,7 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
         if dir_name not in yaml_expected_dirs:
             criticals.append(
                 f"目录存在但 YAML 未登记: src/zephyr/{dir_name}/ "
-                f"— AGENTS.md §6.10 GATE-A 违规，请在 architecture_model/index.yaml 添加"
+                f"— GATE-A 违规，请在 architecture_model/index.yaml 添加"
             )
 
     # HIGH/MEDIUM: YAML ↔ 实际文件对账

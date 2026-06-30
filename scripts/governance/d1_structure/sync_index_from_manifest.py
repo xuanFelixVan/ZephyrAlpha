@@ -17,7 +17,7 @@
 
 
 
-对标：AGENTS.md §6.9（YAML canonical SSoT）+ §6.10 双层对齐闸门 stable
+对标：YAML canonical SSoT + GATE-A 代码↔YAML 对齐
       index.md 的数字不再手动维护——本脚本从 manifest 读取真源并写入。
 
 每次新脚本入库后运行一次，保证 index.md 树形图中的数字与 manifest 一致。
@@ -32,7 +32,7 @@ from __future__ import annotations
 __manifest__ = """
 args:
 - --check
-description: 从 manifest SSoT 自动同步 index.md 脚本数量（AGENTS.md §6.10 stable — index.md
+description: 从 manifest SSoT 自动同步 index.md 脚本数量（GATE-A — index.md
   数字不再手动维护）
 dimensions:
 - D1

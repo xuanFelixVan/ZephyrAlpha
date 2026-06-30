@@ -717,7 +717,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 |:--|------|------|
 | 1 | 三级金字塔不可扁平化——Level 0/1/2 职责分明 | PS-STD-005 |
 | 2 | belongs_to 必填——每个模块蓝图必须声明归属 | PS-STD-005 §5 |
-| 3 | 蓝图与代码双向对齐——GATE-A (代码↔YAML) + GATE-B (YAML↔MD) | AGENTS.md §6.10 |
+| 3 | 蓝图与代码对齐——GATE-A (代码↔YAML) | GATE-A 代码↔YAML 对齐 |
 | 4 | G6 硬合规——AI 未读蓝图则代码变更 REJECT | g6-blueprint-compliance.yaml |
 | 5 | blueprint_routing.yaml 是路由 SSoT——新模块必须登记 | MOD-INF-009 §8 |
 
