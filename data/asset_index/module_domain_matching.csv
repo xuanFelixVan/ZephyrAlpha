@@ -42,12 +42,6 @@ src/zephyr/autonomy_perm/agent_rbac/escalation_handler.py,,MOD-INF-018,D-SEC,D-S
 src/zephyr/autonomy_perm/agent_rbac/exceptions.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
 src/zephyr/autonomy_perm/agent_rbac/false_completion_detector.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
 src/zephyr/autonomy_perm/agent_rbac/genesis_bootstrap.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/__init__.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/a2a_check.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/approver_check.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/bootstrap_superadmin.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/capability_check.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
-src/zephyr/autonomy_perm/agent_rbac/governance_bridges/contracts.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
 src/zephyr/autonomy_perm/agent_rbac/guard_layers.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
 src/zephyr/autonomy_perm/agent_rbac/identity.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
 src/zephyr/autonomy_perm/agent_rbac/immutable_core.py,,MOD-INF-018,D-SEC,D-SEC-ACCESS_CONTROL,depgraph_blueprint,high
