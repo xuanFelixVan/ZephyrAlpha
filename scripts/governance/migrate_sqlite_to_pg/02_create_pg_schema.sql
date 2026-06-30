@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS derived_identifier_registry (
 CREATE TABLE IF NOT EXISTS domain_mapping (
     mapping_id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     path_prefix   TEXT NOT NULL,
-    domain_id     TEXT NOT NULL,
+    domain_id     TEXT NOT NULL REFERENCES domains(domain_id),
     subdomain_id  TEXT,
     mapping_type  TEXT NOT NULL,
     mapped_at     TEXT NOT NULL,
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     node_type               TEXT,
     path                    TEXT,
     granularity             TEXT,
-    domain_id               TEXT,
+    domain_id               TEXT REFERENCES domains(domain_id),
     subdomain_id            TEXT,
     blueprint_id            TEXT,
     belongs_to              TEXT,
@@ -331,8 +331,8 @@ CREATE TABLE IF NOT EXISTS domain_events (
 -- edges: 依赖边（核心表）
 CREATE TABLE IF NOT EXISTS edges (
     edge_id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    from_node_id               BIGINT NOT NULL REFERENCES nodes(node_id),
-    to_node_id                 BIGINT NOT NULL REFERENCES nodes(node_id),
+    from_node_id               BIGINT NOT NULL REFERENCES nodes(node_id) ON DELETE CASCADE,
+    to_node_id                 BIGINT NOT NULL REFERENCES nodes(node_id) ON DELETE CASCADE,
     dep_type                   TEXT,
     architecture_direction     TEXT,
     coupling_strength          TEXT,
@@ -447,13 +447,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 4.2 节点删除时清理关联边（对应 SQLite trg_nodes_delete_cleanup_edges）
-CREATE OR REPLACE FUNCTION cleanup_edges_on_node_delete()
-RETURNS TRIGGER AS $$
-BEGIN
-    DELETE FROM edges WHERE from_node_id = OLD.node_id OR to_node_id = OLD.node_id;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
+-- 5.18.8 修复：edges 表 FK 已加 ON DELETE CASCADE，此函数被 CASCADE 取代，保留仅供历史参考。
+-- CREATE OR REPLACE FUNCTION cleanup_edges_on_node_delete()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     DELETE FROM edges WHERE from_node_id = OLD.node_id OR to_node_id = OLD.node_id;
+--     RETURN OLD;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 -- ========== 5. 只读表触发器（27个，复用 raise_readonly_exception） ==========
 
@@ -532,9 +533,10 @@ CREATE TRIGGER readonly_registries_update
 -- ========== 6. 功能性触发器 ==========
 
 -- 6.1 节点删除时清理关联边（对应 SQLite trg_nodes_delete_cleanup_edges）
-CREATE TRIGGER trg_nodes_delete_cleanup_edges
-    AFTER DELETE ON nodes
-    FOR EACH ROW EXECUTE FUNCTION cleanup_edges_on_node_delete();
+-- 5.18.8 修复：edges FK 已加 ON DELETE CASCADE，此 trigger 被 CASCADE 取代，不再创建。
+-- CREATE TRIGGER trg_nodes_delete_cleanup_edges
+--     AFTER DELETE ON nodes
+--     FOR EACH ROW EXECUTE FUNCTION cleanup_edges_on_node_delete();
 
 -- 6.2 blueprint_id 三轨制检查（对应 SQLite chk_nodes_blueprint_id_insert/update）
 -- 裁定#208：blueprint_id 必须匹配 MOD-*/D-*/SH-*/PLACEHOLDER*（除非 blueprint_id_invalid=1）

@@ -227,6 +227,9 @@ directory_extensions:
         extensions: [".txt"]
       - subdir: "governance/meta/baselines/"
         extensions: [".jsonl"]
+      # PG schema 迁移真源目录——SQL 文件是该目录的核心产物（02_create_pg_schema.sql 等）
+      - subdir: "governance/migrate_sqlite_to_pg/"
+        extensions: [".sql"]
 
   - path: "config/"
     allowed: [".yaml", ".yml", ".json"]
