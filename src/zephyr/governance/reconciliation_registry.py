@@ -85,6 +85,7 @@ __all__ = [
     "make_deprecated_directory_reconciler",
     "make_rule_file_audit_reconciler",
     "make_exempt_zone_frontmatter_reconciler",
+    "make_import_drift_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -512,7 +513,7 @@ def make_ttl_reconciler(gateway: "object") -> ReconcilerSpec:
 def make_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 depgraph ghost post-commit 对账 reconciler（P2-T5）。
 
-    commit 删除文件后，depgraph.db 可能残留 ghost node（磁盘已删除但 depgraph
+    commit 删除文件后，depgraph 可能残留 ghost node（磁盘已删除但 depgraph
     仍保留——对称漂移）。本 reconciler 在 post-commit 跑 diagnose_depgraph.py
     检测 ghost_count，记录报告供 ide_health_daemon + 人工追责。
 
@@ -603,12 +604,12 @@ def make_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
 def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 arch_directory_tree post-commit 自动同步 reconciler。
 
-    commit .py/.yaml 文件后，depgraph.db 的 arch_directory_tree 表可能过时
+    commit .py/.yaml 文件后，depgraph 的 arch_directory_tree 表可能过时
     （磁盘文件结构变了但 DB 未同步）。本 reconciler 在 post-commit 跑
     generate_project_path_tree.py --write 同步磁盘→DB，如有变更自动提交。
 
     对标 make_manifest_reconciler 的"检测变更→自动提交"模式。
-    替代原 pre-commit GATE-SYNC-PATH-TREE hook（该 hook 有 depgraph.db
+    替代原 pre-commit GATE-SYNC-PATH-TREE hook（该 hook 有原 depgraph.db（SQLite）
     unstaged 死循环副作用，reconciler 在 post-commit 自动提交修复此问题）。
 
     Args:
@@ -673,7 +674,7 @@ def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
     对标 ``make_path_tree_reconciler`` 的"检测变更→自动提交"模式。
     治 P3 审查发现的 catalog stale 问题（2026-05-07 至 2026-06-26 stale
     1个月+，153条目74%死链）。catalog 是 ``sync_yaml_to_depgraph.py`` 的
-    数据源（同步到 depgraph.db 的 arch_directory_tree 表），stale 会导致
+    数据源（同步到 depgraph 的 arch_directory_tree 表），stale 会导致
     全景图数据污染。
 
     Args:
@@ -2221,4 +2222,117 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
         trigger=_trigger,
         reconcile=_reconcile,
         priority=710,
+    )
+
+
+def make_import_drift_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-SSOT-IMPORT-DRIFT post-commit 对账 reconciler（SSoT 治本 D2，2026-06-30）。
+
+    治本动机：AGENTS.md §7 D1 条款禁止附带性 re-export——模块 import REPO_ROOT/DB_PATH 等
+    SSoT 符号仅供自身使用，禁止成为下游再导出点。本 reconciler 是 D1 条款的执行层：
+    post-commit AST 扫描 committed .py 文件，检测从非 sanctioned 源 import SSoT 符号，
+    落盘报告供人工追责（非阻断——commit 已入历史）。
+
+    sanctioned SSoT 源（唯一合法 import 路径）：
+      - ``zephyr.shared.io.paths``（真源）
+      - ``_shared.constants``（scripts/ 域 sanctioned re-exporter）
+
+    追踪符号：REPO_ROOT / DB_PATH / find_repo_root
+
+    非阻断设计理由：post-commit 对账无法回滚已提交 commit；记录违规到
+    ``.runtime/reconcile_reports/import_drift_*.json``，供人工追责。
+
+    priority=300（post-compensation 层，非阻断）。
+
+    Args:
+        gateway: GitCommitGateway 实例（仅用 project_root，类型注解 object
+            保持本模块纯 stdlib 不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-SSOT-IMPORT-DRIFT", priority=300)。
+    """
+    import ast
+    from pathlib import Path
+
+    project_root = gateway.project_root
+    _project_root_str = str(project_root)
+
+    _SANCTIONED_SOURCES = frozenset({"zephyr.shared.io.paths", "_shared.constants"})
+    _TRACKED_SYMBOLS = frozenset({"REPO_ROOT", "DB_PATH", "find_repo_root"})
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return any(f.endswith(".py") for f in committed_files)
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        violations: list[dict] = []
+        py_scanned = 0
+        for f in committed_files:
+            if not f.endswith(".py"):
+                continue
+            py_scanned += 1
+            rel = _rel_path(f, _project_root_str)
+            abs_path = Path(_project_root_str) / rel
+            try:
+                source = abs_path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            try:
+                tree = ast.parse(source, filename=rel)
+            except SyntaxError:
+                continue
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.ImportFrom):
+                    continue
+                if node.level != 0:
+                    continue  # 仅扫描绝对 import，相对 import 难以判定真源
+                module = node.module or ""
+                if module in _SANCTIONED_SOURCES:
+                    continue  # 合法 sanctioned 源
+                for alias in node.names:
+                    if alias.name in _TRACKED_SYMBOLS:
+                        violations.append({
+                            "file": rel,
+                            "line": node.lineno,
+                            "source": module,
+                            "symbol": alias.name,
+                            "detail": f"from {module} import {alias.name} — 非 sanctioned SSoT 源",
+                        })
+
+        report = {
+            "session_id": session_id,
+            "py_files_scanned": py_scanned,
+            "violations": violations,
+            "violation_count": len(violations),
+            "sanctioned_sources": sorted(_SANCTIONED_SOURCES),
+            "tracked_symbols": sorted(_TRACKED_SYMBOLS),
+            "note": "SSoT 治本 D2：检测从非 sanctioned 源 import REPO_ROOT/DB_PATH/find_repo_root",
+        }
+        report_path, err = _write_reconcile_report(
+            project_root, "import_drift", report
+        )
+        if err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"import-drift scan done ({len(violations)} violation(s)) but report write failed: {err}",
+            )
+
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=f"no SSoT import drift ({py_scanned} .py scanned)",
+            )
+
+        return ReconcileResult(
+            action="warn",
+            detail=(
+                f"{len(violations)} SSoT import drift violation(s) "
+                f"(manual review recommended), report={report_path.name}"
+            ),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-SSOT-IMPORT-DRIFT",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=300,
     )
