@@ -681,7 +681,8 @@ repos:
               data/.*|
               reports/.*|
               docs/01_policies_and_standards/rules/trae_0(28|34)_.*|
-              \.pre-commit-config\.yaml
+              \.pre-commit-config\.yaml|
+              AGENTS\.md
           )$
         description: "ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免"
 
