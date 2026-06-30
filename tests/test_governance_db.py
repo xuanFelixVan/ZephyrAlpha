@@ -197,7 +197,7 @@ def test_all():
 
     c.execute(
         "INSERT INTO slow_queries (query_text, duration_ms, executed_at, database_name) VALUES (?, ?, ?, ?)",
-        ("SELECT * FROM nodes", 1500.0, now, "depgraph.db"),
+        ("SELECT * FROM nodes", 1500.0, now, "depgraph"),
     )
     conn.commit()
     check("slow_queries INSERT", c.execute("SELECT COUNT(*) FROM slow_queries").fetchone()[0] > 0)
