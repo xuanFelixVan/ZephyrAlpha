@@ -47,7 +47,7 @@ SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 # ── 各格式必填字段集（小写键名，与解析器返回一致）──
 # A_full：.py code/script（src/scripts 下非 tests）
-A_FULL_REQUIRED = [
+A_FULL_REQUIRED = [  # noqa: gate-vocab  # frontmatter 字段名（非 node_type 词表值；"blueprint"/"module"/"domain" 碰巧与 node_type 同名，语义无关）
     "blueprint", "module", "domain", "dependencies",
     "consumers", "startup", "maturity",
     "invariants", "modify-guard",

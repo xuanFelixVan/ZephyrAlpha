@@ -79,22 +79,22 @@ ID_PATTERNS = [
     ("C-XXX", re.compile(r"\b(C-\d{3})\b"), "contract"),
     # 门禁ID：GATE-POS-05
     ("GATE-XX-NN", re.compile(r"\b(GATE-[A-Z]+-\d+)\b"), "gate"),
-    # 硬边界ID：HB-SEC-01
-    ("HB-XXX-NN", re.compile(r"\b(HB-[A-Z]+-\d+)\b"), "boundary"),
-    # 事件ID：E-POS-01
-    ("E-XXX-NN", re.compile(r"\b(E-[A-Z]+-\d+)\b"), "event"),
+    # 硬边界ID：HB-SEC-01（boundary 已废弃，迁移到 domain，见 node_type_vocabulary.yaml）
+    ("HB-XXX-NN", re.compile(r"\b(HB-[A-Z]+-\d+)\b"), "domain"),
+    # 事件ID：E-POS-01（event 已废弃，迁移到 module）
+    ("E-XXX-NN", re.compile(r"\b(E-[A-Z]+-\d+)\b"), "module"),
     # 聚合根ID：AGG-001
     ("AGG-XXX", re.compile(r"\b(AGG-\d+)\b"), "aggregate"),
     # 契约ID：CTR-SELL-001, CTR-ERR-001, CTR-TRACE-001
     ("CTR-XXX", re.compile(r"\b(CTR-[A-Z]+-\d+)\b"), "contract"),
-    # 值对象ID：VO-001
-    ("VO-XXX", re.compile(r"\b(VO-\d+)\b"), "value_object"),
-    # 决策ID：DD-P2-01, DD-P3-01
-    ("DD-XXX-NN", re.compile(r"\b(DD-[A-Z]+\d+-\d+)\b"), "decision"),
-    # 行为边界ID：B-001, B-013.5
-    ("B-XXX", re.compile(r"\b(B-\d{3}(?:\.\d+)?)\b"), "boundary"),
-    # 法规映射ID：L-001
-    ("L-XXX", re.compile(r"\b(L-\d{3})\b"), "decision"),
+    # 值对象ID：VO-001（value_object 已废弃，迁移到 module）
+    ("VO-XXX", re.compile(r"\b(VO-\d+)\b"), "module"),
+    # 决策ID：DD-P2-01, DD-P3-01（decision 已废弃，迁移到 doc）
+    ("DD-XXX-NN", re.compile(r"\b(DD-[A-Z]+\d+-\d+)\b"), "doc"),
+    # 行为边界ID：B-001, B-013.5（boundary 已废弃，迁移到 domain）
+    ("B-XXX", re.compile(r"\b(B-\d{3}(?:\.\d+)?)\b"), "domain"),
+    # 法规映射ID：L-001（decision 已废弃，迁移到 doc）
+    ("L-XXX", re.compile(r"\b(L-\d{3})\b"), "doc"),
 ]
 
 # 域ID正则：D-XXX（不带数字），用于提取域名称

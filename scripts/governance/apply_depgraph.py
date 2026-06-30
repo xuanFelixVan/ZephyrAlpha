@@ -522,13 +522,13 @@ def add_design_node(
                 conn.commit()
                 return existing["node_id"]
 
-            # 插入新节点
+            # 插入新节点（design_node 已废弃，迁移到 blueprint，见 node_type_vocabulary.yaml）
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
                    build_status, design_maturity, blueprint_path, can_build)
                    VALUES (%s, %s, 'directory', %s, %s, %s, 'design', %s, 1)
                    RETURNING node_id""",
-                ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
+                ("blueprint", path, domain_id, blueprint_id, build_status, blueprint_path),
             )
             node_id = cur.fetchone()["node_id"]
             conn.commit()

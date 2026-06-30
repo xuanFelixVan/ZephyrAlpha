@@ -360,7 +360,8 @@ def main():
         step3 = {}
         for d in domains_13:
             cur.execute(
-                "SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=%s AND design_maturity='design' AND node_type IN ('feature','reference','implementation')",
+                # feature/reference/implementation 已废弃，迁移到 module/service/doc/script（见 node_type_vocabulary.yaml）
+                "SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=%s AND design_maturity='design' AND node_type IN ('module','service','doc','script')",
                 (d,),
             )
             row = cur.fetchone()

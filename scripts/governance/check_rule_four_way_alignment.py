@@ -69,7 +69,8 @@ def _get_db_rule_ids() -> set[str]:
     # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常（不静默吞数据）。
     try:
         conn = get_depgraph_pg_connection(autocommit=True)
-        cursor = conn.execute("SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule'")
+        # rule 已废弃，迁移到 policy/gate（见 node_type_vocabulary.yaml）
+        cursor = conn.execute("SELECT DISTINCT node_id FROM nodes WHERE node_type IN ('policy', 'gate')")
         ids = {row["node_id"] for row in cursor.fetchall()}
         conn.close()
         return ids
