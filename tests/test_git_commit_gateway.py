@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 测试隔离——使用 tmp_path 临时 git 仓库，禁止污染生产 depgraph.db/governance.db
+# [INVARIANTS] 测试隔离——使用 tmp_path 临时 git 仓库，禁止污染生产 depgraph/governance.db
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
