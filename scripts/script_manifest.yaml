@@ -2040,7 +2040,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_code_yaml_alignment.py
   path: governance/d5_architecture/validators/validate_code_yaml_alignment.py
-  description: 对标：AGENTS.md §6.10 — 双层对齐闸门 GATE-A (代码↔YAML)
+  description: 对标：GATE-A 代码↔YAML 对齐
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2336,7 +2336,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/yaml_md/validate_yaml_summaries.py
   path: governance/d5_architecture/validators/yaml_md/validate_yaml_summaries.py
-  description: AGENTS.md §6.10 双层对齐闸门的根治层：
+  description: GATE-A 代码↔YAML 对齐的根治层：
   domain: governance
   execution_plane: warm-path
   status: registered
