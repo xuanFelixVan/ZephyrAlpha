@@ -116,6 +116,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询指定域的所有节点（排除 deprecated 已废弃节点）。"""
     cur = conn.execute(
         "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
+        "n.node_type, "
         "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
         "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
         "n.architecture_layer, n.file_path "
@@ -124,7 +125,11 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     rows = []
     for r in cur.fetchall():
-        if _is_ghost(r["path"] or ""):
+        # node_type='database' 是手工维护的持久基础设施节点（裁定#2026-0701），
+        # path 是 SSoT 指针（→ infrastructure_registry.yaml INFRA-DB-xxx），不是 ghost
+        if r.get("node_type") == "database":
+            pass
+        elif _is_ghost(r["path"] or ""):
             continue
         rows.append(
             {
@@ -137,6 +142,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
                 "in_degree": r["in_degree"] or 0,
                 "out_degree": r["out_degree"] or 0,
                 "architecture_layer": r["architecture_layer"] or "",
+                "node_type": r["node_type"] or "",
                 "file_path": r["file_path"] or "",
             }
         )
