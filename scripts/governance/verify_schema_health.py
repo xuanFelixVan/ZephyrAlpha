@@ -188,7 +188,7 @@ def check_schema_version(conn, issues: list) -> None:
 # 在 pre-commit 事件驱动时检查 PG 运行时指标，替代常驻监控。
 # 阈值设计：连接>80%（接近耗尽，当前状态可阻断）/ 长事务>300s（真正卡死，当前状态可阻断）
 # 死锁计数为累计值（无法区分历史/当前），仅信息性输出不阻断
-_LONG_TX_THRESHOLD_SECONDS = 300
+_LONG_TX_THRESHOLD_SECONDS = 300  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 长事务检测阈值，脚本专用
 _CONN_SATURATION_PCT = 80
 
 

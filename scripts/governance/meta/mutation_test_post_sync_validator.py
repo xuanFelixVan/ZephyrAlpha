@@ -64,7 +64,7 @@ _SSoT_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "post_sync_validator
 _TEST_PATH = _REPO_ROOT / "tests" / "unit" / "test_post_sync_validation.py"
 _SEAM_ENV = "PSV_UNDER_TEST"  # 与 test_post_sync_validation.py 约定的 seam 名
 
-DEFAULT_THRESHOLD = 0.80
+DEFAULT_THRESHOLD = 0.80  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 变异测试相似度判断阈值，测试工具专用非系统阈值
 
 
 # ---- 变异目录 -----------------------------------------------------------

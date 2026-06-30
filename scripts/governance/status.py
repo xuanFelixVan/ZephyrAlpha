@@ -70,6 +70,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 from _shared.constants import MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
+from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P3-A5): 全局硬超时读SSoT
 
 FINDINGS_FILE = REPO_ROOT / "scripts" / "governance" / "reports" / "findings.jsonl"
 
@@ -306,7 +307,7 @@ CAPACITY_LIMITS = {
     "per_dimension_max": 50,
     "global_max": 300,
     "scan_duration_warning_s": 300,
-    "global_hard_timeout_s": 600,
+    "global_hard_timeout_s": _get_threshold("scanning.global_hard_timeout_seconds", 3600),  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
 }
 
 

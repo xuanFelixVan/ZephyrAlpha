@@ -73,6 +73,7 @@ import yaml
 # _concurrency 被 run_all.py 以 bare module 导入（from _concurrency import ...），
 # 需自行确保 src/ 在 sys.path 以便 import zephyr.shared.infra.process_pool
 from _shared.constants import REPO_ROOT
+from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P3-A5): 锁超时读SSoT
 _SRC_ROOT = str(REPO_ROOT / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
@@ -158,21 +159,19 @@ TAG_TIER_MAP: dict[str, TimeoutTier] = {
 }
 
 # 分级超时上限（蓝图 §5.8）
-TIER_TIMEOUT_SECONDS: dict[TimeoutTier, int] = {
+TIER_TIMEOUT_SECONDS: dict[TimeoutTier, int] = {  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 分级超时为并发架构专用配置，TIER 路由由 TAG_TIER_MAP 决定，非脚本阈值
     TimeoutTier.S0: 10,
     TimeoutTier.S1: 60,
     TimeoutTier.S2: 180,
     TimeoutTier.S3: 120,
 }
 
-TIER_DIMENSION_TOTAL_TIMEOUT: dict[TimeoutTier, int] = {
+TIER_DIMENSION_TOTAL_TIMEOUT: dict[TimeoutTier, int] = {  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 分级超时为并发架构专用配置，TIER 路由由 TAG_TIER_MAP 决定，非脚本阈值
     TimeoutTier.S0: 120,
     TimeoutTier.S1: 300,
     TimeoutTier.S2: 600,
     TimeoutTier.S3: 240,
 }
-
-GLOBAL_HARD_TIMEOUT_SECONDS = 900
 
 # ---------------------------------------------------------------------------
 # ProcessLock — L0 全局进程锁
@@ -717,7 +716,7 @@ class DimensionLock:
     锁文件：meta/locks/dim_{D1}.lock (JSON: {pid, agent_id, dimension, acquired_at})
     """
 
-    _LOCK_TIMEOUT_S = 10
+    _LOCK_TIMEOUT_S = _get_threshold("concurrency.lock.l1_dimension_timeout_seconds", 60)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码10与SSoT 60漂移)
     _POLL_INTERVAL_S = 0.2
     _STALE_S = 60
 
@@ -789,7 +788,7 @@ class FileLock:
     锁文件：meta/locks/file_{hash}.lock
     """
 
-    _LOCK_TIMEOUT_S = 5
+    _LOCK_TIMEOUT_S = _get_threshold("concurrency.lock.l2_file_timeout_seconds", 30)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码5与SSoT 30漂移)
     _POLL_INTERVAL_S = 0.1
     _STALE_S = 30
 

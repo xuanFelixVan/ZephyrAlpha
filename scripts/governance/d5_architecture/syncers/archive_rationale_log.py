@@ -54,7 +54,7 @@ ensure_utf8_stdout()
 RATIONALE_LOG = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 ARCHIVE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "archive" / "rationale-log"
 MAX_STAGES_IN_MAIN = 3
-LINE_THRESHOLD = 300
+LINE_THRESHOLD = 300  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 归档日志行数阈值，脚本专用
 
 
 def parse_stages(content: str) -> list[tuple[str, int, int]]:

@@ -59,7 +59,7 @@ TECH_LANDSCAPE = (
 
 BVB_DIMENSIONS = {"license", "security", "maintenance", "community", "ecosystem"}
 BVB_WEIGHTS = {"license": 0.25, "security": 0.30, "maintenance": 0.20, "community": 0.15, "ecosystem": 0.10}
-BVB_PASS_THRESHOLD = 3.0
+BVB_PASS_THRESHOLD = 3.0  # noqa: gate-vocab  治本(ARCH-036 P3-A5): BVB合规通过阈值，脚本专用
 REQUIRES_BVB = {"adopt", "trial", "build", "Adopt", "Trial", "Build"}
 
 

@@ -55,7 +55,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-MOVE_THRESHOLD = 2
+MOVE_THRESHOLD = 2  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 文件移动检测阈值，脚本专用
 
 
 def get_staged_renames() -> list[str]:

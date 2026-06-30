@@ -56,7 +56,7 @@ ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS, SCRIPTS_DIR
 
 DEFAULT_FINDINGS = SCRIPTS_DIR / "reports" / "findings.jsonl"
-OSCILLATION_THRESHOLD = 3
+OSCILLATION_THRESHOLD = 3  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 修复震荡检测阈值，脚本专用
 
 
 def detect_oscillations(findings_path: Path) -> dict[str, list[dict]]:

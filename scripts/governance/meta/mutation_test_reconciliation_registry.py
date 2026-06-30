@@ -73,7 +73,7 @@ _SSOT_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "reconciliation_regi
 _ORACLE_PATH = _SCRIPT_DIR.parent / "verify_reconciliation_registry.py"
 _SEAM_ENV = "RR_UNDER_TEST"  # 与 verify_reconciliation_registry.py 约定的 seam 名
 
-DEFAULT_THRESHOLD = 0.80
+DEFAULT_THRESHOLD = 0.80  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 变异测试相似度判断阈值，测试工具专用非系统阈值
 
 
 # ---- 变异目录 -----------------------------------------------------------

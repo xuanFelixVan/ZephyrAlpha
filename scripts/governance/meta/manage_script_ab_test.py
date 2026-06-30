@@ -67,8 +67,8 @@ from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _AB_LOG_DIR = _SCRIPTS_DIR / "meta" / "ab_test_results"
-_KAYENTA_THRESHOLD_PASS = 0.95
-_KAYENTA_THRESHOLD_MARGINAL = 0.75
+_KAYENTA_THRESHOLD_PASS = 0.95  # noqa: gate-vocab  治本(ARCH-036 P3-A5): Kayenta AB测试通过阈值，脚本专用
+_KAYENTA_THRESHOLD_MARGINAL = 0.75  # noqa: gate-vocab  治本(ARCH-036 P3-A5): Kayenta AB测试边际阈值，脚本专用
 _DEGRADATION_SENSITIVITY = 0.15
 
 if sys.stdout.encoding != "utf-8":

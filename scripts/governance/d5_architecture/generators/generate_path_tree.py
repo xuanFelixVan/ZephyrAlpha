@@ -311,7 +311,7 @@ def _limit_files(files: list[str], lang: str) -> list[str]:
 
 
 # 文件折叠阈值：超过此数量的目录只显示统计，不逐个列出文件名
-COLLAPSE_THRESHOLD = 200
+COLLAPSE_THRESHOLD = 200  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 路径树折叠阈值，脚本专用
 # 同类文件折叠的最小数量（低于此数即使同类也不折叠，保留明细）
 SAME_PATTERN_MIN = 15
 # 临时文件扩展名（无独立查看价值）

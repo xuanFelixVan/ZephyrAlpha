@@ -56,7 +56,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 import argparse
 
-BUDGET_LIMITS = {
+BUDGET_LIMITS = {  # noqa: gate-vocab  治本(ARCH-036 P3-A5): 会话预算限额，业务逻辑非系统阈值
     "new_files": 5,
     "processed_files": 20,
     "blueprints": 10,
