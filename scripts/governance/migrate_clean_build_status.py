@@ -1,4 +1,4 @@
-"""OPS-2026062504: 数据清洗depgraph (PostgreSQL)历史脏值
+"""OPS-2026062504: 数据清洗depgraph历史脏值
 
 3类清洗（裁定#178-193）：
 A. build_status脏值归一化 → 5态枚举
@@ -196,7 +196,7 @@ def clean_depgraph():
     except Exception as e:
         conn.rollback()
         print(f"\n[ROLLBACK] Error: {e}", file=sys.stderr)
-        print("All changes rolled back. depgraph (PostgreSQL) is unchanged.", file=sys.stderr)
+        print("All changes rolled back. depgraph is unchanged.", file=sys.stderr)
         sys.exit(1)
     finally:
         conn.close()

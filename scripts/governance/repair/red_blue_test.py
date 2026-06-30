@@ -33,7 +33,7 @@ import sqlite3
 import subprocess
 import sys
 
-DST_DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
+DST_DB = "PostgreSQL depgraph"
 
 results = []
 
@@ -351,7 +351,7 @@ def run_special_tests():
     if backup_exists:
         try:
             db_files = [
-                f for f in os.listdir(backup_dir) if f.endswith(".db") and f != "depgraph.db" and f != "governance.db"
+                f for f in os.listdir(backup_dir) if f.endswith(".db") and f != "depgraph" and f != "governance.db"
             ]
             # 至少有1个备份文件（排除当前使用的db）
             has_backups = len(db_files) > 0
@@ -430,7 +430,7 @@ def run_special_tests():
 
 def main():
     # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（sqlite3.connect(
-    # depgraph.db)/IntegrityError/?占位符/row[0]数值索引）不再适用。需PG重写或参考
+    # depgraph)/IntegrityError/?占位符/row[0]数值索引）不再适用。需PG重写或参考
     # repair/p2_pg_concurrent_test.py 模式。
     print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
     print("[DEPRECATED] 需PG重写；并发测试替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")

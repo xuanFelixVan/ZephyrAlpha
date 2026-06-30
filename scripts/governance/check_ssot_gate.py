@@ -70,9 +70,15 @@ def main() -> int:
         print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
         return 2
 
+    # 治本（2026-06-30 第1波任务3）：扩展 SSoT 校验范围到 scripts/。
+    # 原硬编码 startswith("src/zephyr/") 漏检 scripts/ 下新增 .py——
+    # AI 可在 scripts/ 下新建 [MODULE] 冲突文件绕过 SSoT（病根：P2 PG 迁移后
+    # scripts/ 成为治理脚本主目录，但 SSoT gate 范围未同步扩展）。
+    # 扩展为 startswith(("src/zephyr/", "scripts/"))，覆盖两大 .py 主目录。
+    # 非新增门禁——扩展现有 GATE-SSOT 的 staged 文件过滤范围，符合 AD-GOV-001。
     new_files = [
         f.strip() for f in result.stdout.strip().split("\n")
-        if f.strip().startswith("src/zephyr/") and f.strip().endswith(".py")
+        if f.strip().startswith(("src/zephyr/", "scripts/")) and f.strip().endswith(".py")
     ]
 
     if not new_files:

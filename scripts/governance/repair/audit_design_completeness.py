@@ -39,7 +39,7 @@ MIG-4: 完整性审计（v2.0 全面提取版）
   * DD-XXX-NN     决策ID（如 DD-P2-01）
   * B-XXX         行为边界ID（如 B-001）
   * L-XXX         法规映射ID（如 L-001）
-- 按path精确匹配 + 按功能名模糊匹配对照depgraph.db设计态节点
+- 按path精确匹配 + 按功能名模糊匹配对照depgraph设计态节点
 - 输出差距报告到 D:\临时工作区\design_migration_gap_report.md
 """
 
@@ -56,7 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
-DST_DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
+DST_DB = "PostgreSQL depgraph"
 REPORT_PATH = r"D:\临时工作区\design_migration_gap_report.md"
 
 # 源MD文件目录/文件
@@ -71,7 +71,7 @@ SOURCE_FILES = [
 
 # === 所有ID格式的正则表达式 ===
 # 每个元组：(格式名, 正则, ID类型)
-# ID类型用于匹配depgraph.db中的node_type
+# ID类型用于匹配depgraph中的node_type
 ID_PATTERNS = [
     # 模块ID：D-XXX-NN 或 D-XXX-NN-XXX 格式
     ("D-XXX-NN", re.compile(r"\b(D-[A-Z][A-Z_]+-\d+(?:-[A-Z]+)?)\b"), "module"),
@@ -178,7 +178,7 @@ def extract_declarations(md_path):
 
 
 def match_in_db(conn, declaration):
-    """在depgraph.db中匹配设计态节点（针对不同ID格式使用不同匹配策略）"""
+    """在depgraph中匹配设计态节点（针对不同ID格式使用不同匹配策略）"""
     cur = conn.cursor()
     mod_id = declaration["module_id"]
     mod_name = declaration["module_name"]
@@ -252,7 +252,7 @@ def match_in_db(conn, declaration):
 
 
 def check_duplicates(conn):
-    """检查depgraph.db中是否有重复path的设计态节点"""
+    """检查depgraph中是否有重复path的设计态节点"""
     cur = conn.cursor()
     cur.execute("""
         SELECT path, COUNT(*) as cnt, STRING_AGG(node_id, ',') as ids
@@ -361,7 +361,7 @@ def main():
         report.append("")
 
         # 缺失项
-        report.append(f"【缺失项】（源MD有声明，depgraph.db无记录）共{len(missing)}项")
+        report.append(f"【缺失项】（源MD有声明，depgraph无记录）共{len(missing)}项")
         report.append("| # | 源MD文件 | ID格式 | 模块ID | 模块名称 | 缺失原因 |")
         report.append("|---|---|---|---|---|---|")
         for i, m in enumerate(missing, 1):
@@ -371,7 +371,7 @@ def main():
         report.append("")
 
         # 重复项
-        report.append(f"【重复项】（depgraph.db有多个同path节点）共{len(duplicates)}项")
+        report.append(f"【重复项】（depgraph有多个同path节点）共{len(duplicates)}项")
         report.append("| # | path | 节点数 | 节点ID列表 | 处置建议 |")
         report.append("|---|---|---|---|---|")
         for i, d in enumerate(duplicates, 1):

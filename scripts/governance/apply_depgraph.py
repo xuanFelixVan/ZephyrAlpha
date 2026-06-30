@@ -433,6 +433,22 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
         return
 
     # 非dry-run: 统一事务（所有操作共享一个连接，全部成功才commit）
+    # 治本（2026-06-30 第1波任务1）：运行时 DB 写入在 pre-commit 框架外，
+    # --dry-run 可选导致 AI 可跳过预览直接写 DB。加环境变量门禁强制两阶段：
+    # AI 必须先跑 --dry-run 确认变更，再设置 ZEPHYR_DEPGRAPH_BATCH_APPLY=1 才能写入。
+    # 模仿 validate_rules_integrity --register 的 ZEPHYR_RECONCILER_MODE 门禁模式
+    # （非新增门禁——扩展现有 cmd_batch 自身的写入前置校验，符合 AD-GOV-001 收敛期约束）。
+    if os.environ.get("ZEPHYR_DEPGRAPH_BATCH_APPLY") != "1":
+        print(
+            "[DEPGRAPH] 🔴 --batch 写入被门禁阻断：未设置 ZEPHYR_DEPGRAPH_BATCH_APPLY=1。\n"
+            "运行时 DB 写入在 pre-commit 框架外，强制两阶段执行防止误写：\n"
+            "  1. 先跑 dry-run 预览: python apply_depgraph.py --batch changes.json --dry-run\n"
+            "  2. 确认无误后写入（PowerShell）: $env:ZEPHYR_DEPGRAPH_BATCH_APPLY=1; python apply_depgraph.py --batch changes.json\n"
+            "  2. 确认无误后写入（bash）: ZEPHYR_DEPGRAPH_BATCH_APPLY=1 python apply_depgraph.py --batch changes.json\n"
+            "合法写入入口：GitCommitGateway（pre-commit 覆盖）或本显式门禁。",
+            file=sys.stderr,
+        )
+        sys.exit(3)
     with _db_write_lock(task="cmd_batch"):
         conn = get_depgraph_pg_connection(autocommit=False)
         domain_op_count = 0

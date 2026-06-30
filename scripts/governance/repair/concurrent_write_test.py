@@ -74,7 +74,7 @@ def setup():
         f = TEST_DB.with_suffix(TEST_DB.suffix + suffix)
         if f.exists():
             f.unlink()
-    # P2迁移后：depgraph.db 已迁至 PostgreSQL，原 PROD_DB 文件不再存在。
+    # P2迁移后：depgraph 已迁至 PostgreSQL，原 PROD_DB 文件不再存在。
     # 本函数整体为弃用死代码（main() 已提前 return），保留结构供历史参考。
     # shutil.copy2(PROD_DB, TEST_DB)  # 已移除：源文件不存在
     # 清理测试残留数据（防止上次测试残留干扰）
@@ -112,7 +112,7 @@ def teardown():
 
 
 def verify_prod_db_clean() -> bool:
-    """防再犯断言：验证生产库 depgraph.db 未被测试域污染（OPS-2026062401）。
+    """防再犯断言：验证生产库 depgraph 未被测试域污染（OPS-2026062401）。
 
     测试域前缀：D-T2-/D-T3-/D-T4-/D-T5-/D-T9-/D-TEST-RB-
     如果生产库包含任何测试域，说明测试隔离失败，立即报错。
@@ -635,7 +635,7 @@ def test_t10():
 # ========== 主函数 ==========
 def main():
     # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（WAL/文件锁/
-    # IntegrityError/sqlite3.connect(depgraph.db)）不再适用。PG并发写入测试替代品：
+    # IntegrityError/sqlite3.connect(depgraph)）不再适用。PG并发写入测试替代品：
     # repair/p2_pg_concurrent_test.py（使用get_db_connection+psycopg2）。
     print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
     print("[DEPRECATED] PG替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")

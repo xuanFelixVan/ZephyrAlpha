@@ -16,11 +16,11 @@ doc_type: architecture_view
 > 写法：大白话为主。这是我的私人项目，我写了给我自己看，也是给接手的 AI 看。
 > 变更历史见 git log。本文档只保留当前有效的设计规格和裁定结论。
 
-> **文档责任范围**：本文档定义**依赖与架构全景图**（depgraph.db + 生成器）的能力定位、设计决策和裁定记录。
+> **文档责任范围**：本文档定义**依赖与架构全景图**（depgraph + 生成器）的能力定位、设计决策和裁定记录。
 > 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 架构全景图（arch_ 表组，管"放在哪"）+ 共享表（domains/contracts 等）。
 > 不包含：施工步骤和问题清单（见 archive/depgraph_issue_registry.md）、架构升级项目导航（见 architecture_upgrade_discussion.md）、生成器技术问题清单（见 generator_issues.md）。
 
-> **⚠️ 数据源迁移说明（P2 迁移完成 2026-06-27）**：`depgraph.db` 已从 SQLite 迁移至 **PostgreSQL 16**。数据库名称 `depgraph.db` 保持不变（指代逻辑数据库，而非物理文件）。本次迁移带来的引擎差异：
+> **⚠️ 数据源迁移说明（P2 迁移完成 2026-06-27）**：全景图数据库已从 SQLite 迁移至 **PostgreSQL 16**，数据库名统一为 `depgraph (PostgreSQL)`（一眼可知全景图所在引擎，避免与 SQLite 物理文件 `depgraph.db` 混淆）。本次迁移带来的引擎差异：
 > - 自增主键：SQLite 的 `INTEGER PK AUTOINCREMENT` → PostgreSQL 的 `GENERATED ALWAYS AS IDENTITY`（不再需要 `sqlite_sequence` 序列跟踪表）
 > - 并发控制：SQLite 的文件级写锁 → PostgreSQL 的 MVCC 行级锁（多版本并发控制，读写互不阻塞）
 > - 约束校验：SQLite 的 `ALTER TABLE ADD CHECK` 不回溯限制 → PostgreSQL 支持 `NOT VALID` 延迟校验 + `VALIDATE CONSTRAINT`
@@ -33,7 +33,7 @@ doc_type: architecture_view
 
 **依赖与架构全景图是整个项目的最大蓝图，记录"规划中应该依赖什么、放在哪"和"代码里实际依赖什么、放在哪"。**
 
-它存在数据库里（`depgraph.db`），不是一张图片，不是一份文档。里面写清楚了：这个项目有多少个功能域、每个功能域有多少个模块、模块和模块之间怎么依赖、每个文件放在哪个目录属于哪个域、哪些模块造好了、哪些还没造。
+它存在数据库里（`depgraph`），不是一张图片，不是一份文档。里面写清楚了：这个项目有多少个功能域、每个功能域有多少个模块、模块和模块之间怎么依赖、每个文件放在哪个目录属于哪个域、哪些模块造好了、哪些还没造。
 
 **两个职责合一**：
 - **依赖全景图**（dep_ 表组）：管"谁依赖谁"——模块间的 import 关系
@@ -76,7 +76,7 @@ doc_type: architecture_view
 
 ## 四、它由哪几部分组成？
 
-依赖与架构全景图由三部分组成，共同存在 `depgraph.db` 里：
+依赖与架构全景图由三部分组成，共同存在 `depgraph` 里：
 
 ### 4.1 依赖全景（nodes + edges）
 
@@ -646,7 +646,7 @@ python scripts/governance/apply_depgraph.py --remove-design-node --node-id 1001
   ├─ 代码文件数变化 > 0？ → 是 → 触发生成器
   ├─ 蓝图 §4 文件清单变化？ → 是 → 触发生成器
   ├─ 路径树变化？ → 是 → 触发生成器
-  └─ 以上全否（只改了 depgraph.db 数据）→ 禁止触发（会覆盖手动修复）
+  └─ 以上全否（只改了 depgraph 数据）→ 禁止触发（会覆盖手动修复）
   ↓
 第七步：验证通过 → 完事
 ```
@@ -752,7 +752,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 ### 14.1 它是什么
 
-生成器是"照相机"——扫描真实代码世界，拍一张照片，存进 depgraph.db 的运营态部分。
+生成器是"照相机"——扫描真实代码世界，拍一张照片，存进 depgraph 的运营态部分。
 
 ### 14.2 它什么时候跑
 
@@ -763,7 +763,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 | **手动触发** | 我主动跑 `python scripts/governance/generate_project_depgraph.py` |
 | **代码变更后触发** | 批量新建/修改/删除模块后，跑一次让全景图和代码对齐 |
 
-**禁止触发的情况**：本次只修改了depgraph.db数据（手动修数据），没有改代码。此时重跑生成器会覆盖手动修复，是纯损失操作。
+**禁止触发的情况**：本次只修改了depgraph数据（手动修数据），没有改代码。此时重跑生成器会覆盖手动修复，是纯损失操作。
 
 ### 14.3 生成器覆盖矩阵
 
@@ -1237,14 +1237,14 @@ blueprint_id 校验：
 
 SSoT = Single Source of Truth = 唯一真源。
 
-**V3.3 E9 修正**：设计态 SSoT = **数据库中的设计态数据**（depgraph.db 中 `design_maturity='design'` 的行）。用户输入必须通过 `apply_depgraph.py` 写入数据库才生效——未写入数据库的用户讨论不构成 SSoT。
+**V3.3 E9 修正**：设计态 SSoT = **数据库中的设计态数据**（depgraph 中 `design_maturity='design'` 的行）。用户输入必须通过 `apply_depgraph.py` 写入数据库才生效——未写入数据库的用户讨论不构成 SSoT。
 
 不同状态下的真源优先级不同：
 
 | 状态 | 真源优先级 | 理由 |
 |------|-----------|------|
-| 设计态 | depgraph.db（设计态数据）> 代码 > 文档 > AI记忆 | 蓝图定义的依赖关系是权威，代码必须服从 |
-| 运营态 | 代码 > depgraph.db（运营态数据）> 文档 > AI记忆 | 生成器从代码扫描，运营态全景图是代码的"照片" |
+| 设计态 | depgraph（设计态数据）> 代码 > 文档 > AI记忆 | 蓝图定义的依赖关系是权威，代码必须服从 |
+| 运营态 | 代码 > depgraph（运营态数据）> 文档 > AI记忆 | 生成器从代码扫描，运营态全景图是代码的"照片" |
 
 **例子**：
 - 设计态：数据库说"订单中心依赖风控引擎" → 代码里必须import风控引擎 → 对齐，没问题
@@ -1258,11 +1258,11 @@ SSoT = Single Source of Truth = 唯一真源。
 
 | 业界方案 | 真源形态 | 项目做法 | 差异定位 |
 |---------|---------|---------|---------|
-| Backstage（Spotify/CNCF） | catalog-info.yaml（文本真源），DB 为派生索引 | depgraph.db 为真源 | 项目反向：DB 为真源，YAML 为派生 |
-| Structurizr / C4 model | models-as-code（DSL 文本真源） | depgraph.db 为真源 | 项目用 DB 替代 DSL 文本 |
-| CocoIndex + VeloDB | 一表三索引（PG + 向量 + 全文） | depgraph.db（PostgreSQL 单库） | 项目用 PostgreSQL 单库，轻量但够用 |
-| Google Bazel / BUILD 文件 | BUILD 文件文本真源 | depgraph.db 为真源 | 项目用 DB 替代 BUILD 文件 |
-| Terraform state | tfstate 文件（JSON 真源） | depgraph.db 为真源 | 项目用 DB 替代 tfstate 文件 |
+| Backstage（Spotify/CNCF） | catalog-info.yaml（文本真源），DB 为派生索引 | depgraph 为真源 | 项目反向：DB 为真源，YAML 为派生 |
+| Structurizr / C4 model | models-as-code（DSL 文本真源） | depgraph 为真源 | 项目用 DB 替代 DSL 文本 |
+| CocoIndex + VeloDB | 一表三索引（PG + 向量 + 全文） | depgraph（PostgreSQL 单库） | 项目用 PostgreSQL 单库，轻量但够用 |
+| Google Bazel / BUILD 文件 | BUILD 文件文本真源 | depgraph 为真源 | 项目用 DB 替代 BUILD 文件 |
+| Terraform state | tfstate 文件（JSON 真源） | depgraph 为真源 | 项目用 DB 替代 tfstate 文件 |
 
 **风险与缓解**：
 
@@ -1488,7 +1488,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 149 | 两表覆盖范围 | **nodes 7,590 节点 vs arch_directory_tree 9,204 行**（差 1,614 个文档/数据/模板节点） | ✅ |
 | 173 | nodes 表节点准入边界 | **只收录有 import 依赖的代码节点（.py+.yaml），文档/规则/模板不进 nodes 表**（业界对标 dependency-cruiser/ArchUnit） | ✅ |
 | 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D_GOV_DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D_GOV_RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
-| 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph.db（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
+| 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
 | 176 | 设计态域处理 | **保留 5 个设计态域**（D_GOV_ENFORCEMENT/D-GOV_REPAIR/D_GOV_SCRIPTS/D_INTEGRATION_GATEWAY/D_SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D_GOVERNANCE 3860 模块超容 1930%、D_SECURITY 849、D_INTEGRATION 705、D_OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
 | 177 | 域命名统一 | **统一为下划线风格**（D-XXX_YYY），符合 trae_028 GOV-DOC-003 §SSoT 规定。当前 15 个域违规（25.9%）：5 个功能域（D_GOV_ENFORCEMENT→D_GOV_ENFORCEMENT 等）+ 10 个测试域（如保留则 D-T3-W0→D-T3_W0）。连字符已导致域重复 bug（project_memory 记录），sync 脚本已打 normalize_domain_id 补丁。业界对标 PEP8/K8s 社区均用 snake_case | ✅ |
 
@@ -1517,9 +1517,9 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 > **核心原则**：项目只能有一个真源、一个责任，这是不可逾越的规则。
 > **业界对标**：Google Bazel（BUILD 文件是唯一真源，内存是只读派生物）、Kubernetes（YAML 是唯一真源，etcd 是只读派生物）。
-> **裁定结论**：YAML 文件是**唯一真源**（唯一责任），depgraph.db 中的规则表是**只读缓存**（派生物，不是真源）。生成器单向同步（YAML → DB），DB 规则表通过触发器标记为只读，禁止任何直接修改。
+> **裁定结论**：YAML 文件是**唯一真源**（唯一责任），depgraph 中的规则表是**只读缓存**（派生物，不是真源）。生成器单向同步（YAML → DB），DB 规则表通过触发器标记为只读，禁止任何直接修改。
 
-| 维度 | YAML 文件（唯一真源） | depgraph.db 规则表（只读缓存） |
+| 维度 | YAML 文件（唯一真源） | depgraph 规则表（只读缓存） |
 |------|---------------------|---------------------------|
 | 角色 | **唯一真源**（唯一责任） | **只读缓存**（派生物，不是真源） |
 | 能否修改 | ✅ 唯一可修改处 | ❌ 触发器拦截，禁止任何直接修改 |
@@ -1590,7 +1590,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 价值 | 说明 |
 |------|------|
-| 消除双源漂移 | YAML 注册表与 depgraph.db 各自维护同类数据 → 合并为 SSoT（YAML）+ 派生物（DB） |
+| 消除双源漂移 | YAML 注册表与 depgraph 各自维护同类数据 → 合并为 SSoT（YAML）+ 派生物（DB） |
 | 消除枚举幻觉 | 无 CHECK 约束 → 数据库层强制枚举校验 |
 | 消除跨文件关联幻觉 | AI 需跨 YAML+DB 人工匹配 → SQL JOIN 自动化 |
 | 消除契约锚点幻觉 | 字符串引用无法验证 → 外键关联自动检测断链 |
@@ -1598,7 +1598,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ### 20.8 V4.2 模板字段对齐裁定（#165-172）
 
-> **背景**：扫描 `docs/01_policies_and_standards/templates` 目录下 11 个模板文件，特别是依赖图模板（TPL-DEPGRAPH-001 v6.0.0），找出 depgraph.db 缺失的字段。
+> **背景**：扫描 `docs/01_policies_and_standards/templates` 目录下 11 个模板文件，特别是依赖图模板（TPL-DEPGRAPH-001 v6.0.0），找出 depgraph 缺失的字段。
 > **对齐情况**：nodes 核心字段 100% 对齐（20/20），edges 字段 100% 对齐（16/16），但 5 个域级节点字段缺失，7 个模板顶层段无对应表。
 
 #### 模板字段对齐总览
@@ -1794,13 +1794,13 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | P0-4 | audit_domain_nodes.py 升级：4 类检测 + 写入 arch_constraints | ✅ 已完成 |
 | P0-5 | dep_cycles 视图创建 + 数据修复 | ✅ 已完成 |
 | P0-6 | Schema v5 迁移：新建 9 表 + 扩展 4 表 + CHECK 约束 + 只读触发器 | ✅ 已完成 |
-| P0-7 | YAML→DB 同步：17 项规则/契约/门禁从 YAML 同步到 depgraph.db | ✅ 已完成 |
+| P0-7 | YAML→DB 同步：17 项规则/契约/门禁从 YAML 同步到 depgraph | ✅ 已完成 |
 
 ### 22.2 因果链原则
 
 - **先核心架构后规则合并**：P0-1~P0-5（核心架构）→ P0-6/P0-7（规则合并）
 - **原因**：规则表是"约束"，nodes/edges 是"被约束的对象"。必须先有被约束的对象，约束才有意义
-- **回滚**：施工前已备份 depgraph.db.backup.V5.7，脚本可通过 git checkout 回滚
+- **回滚**：施工前已备份 depgraph.backup.V5.7，脚本可通过 git checkout 回滚
 
 ### 22.3 裁定备注
 
@@ -2114,7 +2114,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 **#206-A 详情（8 个 Bug 修复）**:
 
 修复链路分 6 个阶段（任务卡 OPS-2026062621~2626）：
-1. 阶段0：depgraph.db 备份 + field_vocabularies 主键验证（2621）
+1. 阶段0：depgraph 备份 + field_vocabularies 主键验证（2621）
 2. 阶段1：修复 generate_derived_files.py Bug A/C/D/E/F（2622）
 3. 阶段2：修复 sync_yaml_to_depgraph.py Bug B + field_vocabularies 134 条脏值清理（2623, commit 5326a7038）
 4. 阶段3：重生成 3 个派生文件 + 重跑 sync（2624, commit 764d42591）
