@@ -774,7 +774,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 36 | gate-path-naming | [.pre-commit-config.yaml:871](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L871) |
 | 37 | gate-bom-utf8-check | [.pre-commit-config.yaml:879](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L879) |
 | 38 | gate-encoding-safety | [.pre-commit-config.yaml:894](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L894) |
-| 39 | gate-stash-count | [.pre-commit-config.yaml:909](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L909) |
 | 40 | gate-drift-light-scan | [.pre-commit-config.yaml:939](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L939) |
 
 > **共同后果**：新AI通过`CapabilityLookup.find("gate-xxx关键词")`反查不到canonical脚本，无法判断该门禁是否已存在；当需要扩展同类检测时，可能重建重复脚本（违反向内收原则①）。
@@ -3658,7 +3657,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：所有环境运行相同行为；无"prod禁止DROP TABLE"等安全守卫
 - **修复**：在关键路径引入环境检查，如apply_depgraph.py写入前if is_prod(): require_approval()
 
-#### 5.34.7 [HIGH] 生产代码硬编码SQLite governance.db路径，与PG depgraph形成双库无隔离
+#### 5.34.7 [HIGH] 生产代码硬编码SQLite governance.db路径，与 depgraph (PostgreSQL) 形成双库无隔离
 - **文件**：[dashboard.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/dashboard.py#L60)、[dlq.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/dlq.py#L30)
 - **证据**：6个生产模块硬编码`data/databases/governance.db`路径；depgraph已迁PG但governance.db仍为SQLite
 - **问题**：生产同时运行两套数据库系统（SQLite governance.db + depgraph (PostgreSQL)）；两库无跨库事务一致性

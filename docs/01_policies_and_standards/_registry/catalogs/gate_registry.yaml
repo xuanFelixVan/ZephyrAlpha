@@ -406,14 +406,6 @@ gates:
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-STASH
-  name: 'GATE-STASH: stash 堆积治理（OPS-2026062501）'
-  entry: python scripts/governance/cleanup_stash.py
-  description: stash 堆积治理——检查 stash 数量，超过5个WARNING，超过10个建议清理。对标GitHub/Linux实践：stash是临时栈非备份
-  files_trigger: ''
-  always_run: true
-  category: unknown
-  status: active
 - gate_id: GATE-COMMIT-GW
   name: 'GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）'
   entry: python scripts/governance/d11_compliance/validate_commit_gateway.py

@@ -905,20 +905,6 @@ repos:
         files: "\\.(py|md|yaml|yml|json|toml)$"
         description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）"
 
-      # ── GATE-STASH: stash 堆积治理（OPS-2026062501 病根3 治本）──
-      # 权威依据：OPS-2026062501 调研报告——81天堆积41个stash无清理机制
-      # 检测范围：每次提交时触发
-      # 检测内容：stash 数量，超过 MAX_STASHES(5) 时 WARNING，超过 CRITICAL_STASHES(10) 时建议清理
-      # 模式：WARNING 不阻断（exit=0），仅提示 AI 清理 stash
-      - id: gate-stash-count
-        name: "GATE-STASH: stash 堆积治理（OPS-2026062501）"
-        entry: python scripts/governance/cleanup_stash.py
-        args: ["--check"]
-        language: system
-        pass_filenames: false
-        always_run: true
-        description: "stash 堆积治理——检查 stash 数量，超过5个WARNING，超过10个建议清理。对标GitHub/Linux实践：stash是临时栈非备份"
-
       # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本，RB-6 修复 2026-06-29）──
       # 权威依据：OPS-2026062513——多 AI session 共享 git index 导致幽灵提交
       # 检测范围：每次提交时触发（always_run=true）
