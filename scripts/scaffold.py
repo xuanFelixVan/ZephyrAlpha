@@ -71,7 +71,7 @@ from scripts.governance.d3_metadata.check_naming_convention import check_dir, ch
 # ---------------------------------------------------------------------------
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-GATES_DIR = SRC_ZEPHYR / "gates"
+GATES_DIR = SRC_ZEPHYR / "governance" / "rule_enforcement"
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"

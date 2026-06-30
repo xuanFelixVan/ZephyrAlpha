@@ -46,7 +46,7 @@ from zephyr.shared.models import TaskCard
 # Fixtures
 # ---------------------------------------------------------------------------
 
-GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
+GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 EXPECTED_GATE_IDS = frozenset(
     {

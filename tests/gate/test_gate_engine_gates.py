@@ -28,9 +28,9 @@ from pathlib import Path
 
 import pytest
 
+from _shared.constants import REPO_ROOT
 from zephyr.governance.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine import (
-from _shared.constants import REPO_ROOT
     GateEngine,
     GateEngineError,
     GateResult,
@@ -48,7 +48,7 @@ from zephyr.shared.models import TaskCard
 # Fixtures
 # ---------------------------------------------------------------------------
 
-GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gates"
+GATES_DIR = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 EXPECTED_GATE_IDS = frozenset(
     {
