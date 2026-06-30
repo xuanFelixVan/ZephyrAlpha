@@ -10,7 +10,8 @@ Rollback — MOD-INF-021
 from zephyr.infrastructure.rollback.governance.auditor import RollbackAuditor
 from zephyr.infrastructure.rollback.governance.budget_tracker import RollbackBudgetTracker
 from zephyr.infrastructure.rollback.governance.contracts import RollbackHandler
-from zephyr.infrastructure.rollback.governance.drift_fix import DriftFixHandler
+# ARCH-034 P3 / SRC-038 合并：drift_fix 冗余副本已删除，改为从 canonical 真源 re-export
+from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
 from zephyr.infrastructure.rollback.governance.result_types import RollbackResult, RollbackStatus, ValidationResult
 
 __all__ = [

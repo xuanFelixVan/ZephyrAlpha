@@ -39,6 +39,7 @@ from . import (
     confidence_quantifier,
     cross_platform_shell,
     down_migration_generator,
+    drift_fix,
     env_watcher,
     external_merkle_proof,
     fault_tolerance,
