@@ -411,10 +411,19 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             if filepath.name in _SSOT_EXEMPT_FILES:
                 continue
             func_name = node.name
+            # 识别 docstring 节点（函数体第一个 Expr 的 Constant），遍历时跳过——
+            # 避免 docstring 中提到 "vocabulary" 字样触发误报（如 load_contract 的 docstring）
+            docstring_const = None
+            if (node.body and isinstance(node.body[0], ast.Expr)
+                    and isinstance(node.body[0].value, ast.Constant)
+                    and isinstance(node.body[0].value.value, str)):
+                docstring_const = node.body[0].value
             # 行为检测：函数体内是否含 yaml.safe_load 调用
             has_yaml_load = False
             has_vocab_ref = False
             for child in ast.walk(node):
+                if child is docstring_const:
+                    continue  # 跳过 docstring
                 if (isinstance(child, ast.Call)
                         and isinstance(child.func, ast.Attribute)
                         and child.func.attr == "safe_load"
