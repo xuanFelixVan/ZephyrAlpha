@@ -1,6 +1,6 @@
 ---
 module_id: MOD-GATE_ENGINE
-submodule_path: src/zephyr/ops/gates
+submodule_path: src/zephyr/trading/feedback_loop/gates
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"
 doc_type: blueprint
 template_for: blueprint
@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/ops/gates/"
+actual_disk_path: "src/zephyr/trading/feedback_loop/gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
 last_updated: "2026-05-18"
