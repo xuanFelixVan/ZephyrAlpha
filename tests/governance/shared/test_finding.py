@@ -39,12 +39,6 @@ class TestSeverity:
         for s in ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]:
             assert fmod.Severity(s).value == s
 
-    def test_fix_deadline_hours(self):
-        assert fmod.Severity.CRITICAL.fix_deadline_hours == 24
-        assert fmod.Severity.HIGH.fix_deadline_hours == 168
-        assert fmod.Severity.LOW.fix_deadline_hours is None
-        assert fmod.Severity.INFO.fix_deadline_hours is None
-
 
 class TestBlastRadius:
     def test_values(self):

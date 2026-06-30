@@ -96,22 +96,13 @@ class Dimension(str, Enum):
 
 
 class Severity(str, Enum):
+    # SLA 期限（fix_deadline_hours）由 finding_state_machine.py 的 SLA_DEADLINES
+    # 从 thresholds.yaml 通过 _get_threshold() 读取，不在 Enum 中硬编码（ARCH-036 P3-A5）。
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
     INFO = "INFO"
-
-    @property
-    def fix_deadline_hours(self) -> int | None:
-        _deadlines = {
-            "CRITICAL": 24,
-            "HIGH": 168,
-            "MEDIUM": 720,
-            "LOW": None,
-            "INFO": None,
-        }
-        return _deadlines[self.value]
 
 
 class BlastRadius(str, Enum):
