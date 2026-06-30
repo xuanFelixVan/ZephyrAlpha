@@ -80,7 +80,7 @@ def _create_readonly_triggers(conn: sqlite3.Connection) -> None:
 
 @pytest.fixture
 def healthy_db_path(tmp_path):
-    """创建一个 schema 健康的临时 depgraph.db（init_db 全量迁移 + 只读触发器齐全）。"""
+    """创建一个 schema 健康的临时 depgraph（init_db 全量迁移 + 只读触发器齐全）。"""
     db = tmp_path / "test_health.db"
     init_db(db)
     conn = sqlite3.connect(str(db))
