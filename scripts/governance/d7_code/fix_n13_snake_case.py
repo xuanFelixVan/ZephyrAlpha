@@ -50,14 +50,10 @@ RENAMES: list[tuple[str, str]] = [
     ("docs/08_knowledge/index.md", "docs/08_knowledge/index.md"),
     ("docs/_working/audit/index.md", "docs/_working/audit/index.md"),
     ("docs/_working/audit/state/index.md", "docs/_working/audit/state/index.md"),
-    # Chinese filenames → English snake_case (5 files)
+    # Chinese filenames → English snake_case (4 files, ai_team_mode_full_config.md 已删除)
     (
-        "docs/02_enterprise_architecture/ai_team_mode_full_config.md",
-        "docs/02_enterprise_architecture/ai_team_mode_full_config.md",
-    ),
-    (
-        "docs/02_enterprise_architecture/dependency_path_panorama.md",
-        "docs/02_enterprise_architecture/dependency_path_panorama.md",
+        "docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md",
+        "docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md",
     ),
     (
         "docs/02_enterprise_architecture/sample/00_overview_entry_sample.md",
@@ -71,14 +67,10 @@ RENAMES: list[tuple[str, str]] = [
         "docs/02_enterprise_architecture/sample/05_manual_architecture_views_sample.md",
         "docs/02_enterprise_architecture/sample/05_manual_architecture_views_sample.md",
     ),
-    # kebab-case → snake_case (2 files)
+    # kebab-case → snake_case (1 file, schedule_state.json 已删除)
     (
         "src/zephyr/infrastructure/auto_fix_engine/auto_fix_config.yaml",
         "src/zephyr/infrastructure/auto_fix_engine/auto_fix_config.yaml",
-    ),
-    (
-        "src/zephyr/data/circadian_tasks/schedule_state.json",
-        "src/zephyr/data/circadian_tasks/schedule_state.json",
     ),
 ]
 
@@ -100,16 +92,14 @@ DELETIONS: list[tuple[str, str]] = [
 REPLACEMENTS: list[tuple[str, str, str]] = [
     # index.md → index.md (全局替换，所有index.md都应改为index.md)
     ("index.md", "index.md", "index.md → index.md"),
-    # Chinese filenames → English
-    ("ai_team_mode_full_config.md", "ai_team_mode_full_config.md", "中文→英文"),
+    # Chinese filenames → English (ai_team_mode_full_config.md 已删除)
     ("dependency_path_panorama.md", "dependency_path_panorama.md", "中文→英文"),
     ("00_overview_entry_sample.md", "00_overview_entry_sample.md", "中文→英文"),
     ("04_architecture_principles_decisions_sample.md", "04_architecture_principles_decisions_sample.md", "中文→英文"),
     ("05_manual_architecture_views_sample.md", "05_manual_architecture_views_sample.md", "中文→英文"),
-    # kebab-case → snake_case
+    # kebab-case → snake_case (schedule_state.json 已删除)
     ("blueprint_registry.yaml", "blueprint_registry.yaml", "kebab→snake"),
     ("auto_fix_config.yaml", "auto_fix_config.yaml", "kebab→snake"),
-    ("schedule_state.json", "schedule_state.json", "kebab→snake"),
 ]
 
 # 跳过的目录
