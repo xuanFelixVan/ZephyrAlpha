@@ -323,8 +323,8 @@ tiers:
         name: 项目架构全景图
         description: "域定义(设计态真源) + 目录结构(运营态+设计态) + 蓝图/测试/脚本/知识库/数据/门禁/前端路径设计(设计态)。v2.0.0: 增加capacity声明+7个区域路径设计，支撑1500模块/1000蓝图容量。因果链：架构全景图(ssot_path) → depgraph(设计态节点) → 迁移登记表。"
         owner: MOD-INF-037
-        physical_path: data/databases/depgraph.db
-        format: sqlite
+        physical_path: postgresql://localhost:5432/depgraph
+        format: postgresql
         tier: tier_1_governance
         maintenance: semi-auto（运营态=生成器扫描，设计态=手动/设计工具）
         version: 2.0.0
@@ -345,10 +345,10 @@ tiers:
 
       - registry_id: REG-DEPGRAPH-001
         name: 依赖全景图
-        description: "文件级依赖关系唯一真源(运营态+设计态)。只包含代码依赖节点(module/script/test/config/registry/contract/blueprint/schema)，排除非代码节点(doc/policy/standard/template/diagram/data)。排除原因：0条import_depends边，只产生doc→blueprint噪声边。非代码文件在架构全景图(tree段)中查看。DM-310: lifecycle字段统一(原state→lifecycle)，双态保护统一为设计态优先。"
+        description: "文件级依赖关系唯一真源(运营态+设计态)。只包含代码依赖节点(module/script/test/config/registry/contract/blueprint/schema)，排除非代码节点(doc/policy/standard/template/diagram/data)。排除原因：0条import_depends边，只产生doc→blueprint噪声边。DM-310: lifecycle字段统一(原state→lifecycle)，双态保护统一为设计态优先。"
         owner: MOD-INF-037
-        physical_path: data/databases/depgraph.db
-        format: sqlite
+        physical_path: postgresql://localhost:5432/depgraph
+        format: postgresql
         tier: tier_1_governance
         maintenance: auto（generate_project_depgraph.py --max-workers 8）
         entry_count: 9122
@@ -446,7 +446,7 @@ tiers:
 
       - registry_id: REG-MOD-ID-001
         name: 模块 ID 注册表（EA 级）
-        physical_path: docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml
+        physical_path: architecture_model/module_id_registry.yaml
         format: yaml
         maintenance: manual
         entry_count: 138
