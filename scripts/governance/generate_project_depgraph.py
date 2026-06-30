@@ -3239,8 +3239,21 @@ def load_production_state_from_db(db_path: str) -> dict:
         # P2 PG 迁移：sqlite3.connect → get_depgraph_pg_connection(autocommit=False)
         conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
-        # 裁定#207 R2 C3：使用 PRODUCTION_PROTECTED_FIELDS 动态构建查询（原硬编码6列）
-        cols = PRODUCTION_PROTECTED_FIELDS
+        # 治本：从 information_schema 动态获取 nodes 真实列名，过滤掉不存在的列。
+        # 防止 PRODUCTION_PROTECTED_FIELDS 误含不存在列（如 business_stream）导致
+        # SELECT 报 UndefinedColumn 被 except 静默吞掉 → 保护机制整体失效（P0数据丢失）。
+        cur.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'nodes'"
+        )
+        real_cols = {row["column_name"] for row in cur.fetchall()}
+        cols = [c for c in PRODUCTION_PROTECTED_FIELDS if c in real_cols]
+        skipped = set(PRODUCTION_PROTECTED_FIELDS) - set(cols)
+        if skipped:
+            print(f"[DEPGRAPH] WARNING: PRODUCTION_PROTECTED_FIELDS 含不存在列 {skipped}，已自动过滤")
+        if not cols:
+            print("[DEPGRAPH] WARNING: PRODUCTION_PROTECTED_FIELDS 过滤后无有效列，保护机制跳过")
+            conn.close()
+            return production_meta
         col_list = ", ".join(cols)
         rows = cur.execute(
             f"SELECT path, {col_list} "
@@ -3326,7 +3339,20 @@ def load_edge_production_state_from_db(db_path: str) -> dict:
     try:
         conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
-        cols = EDGES_PROTECTED_FIELDS
+        # 治本：从 information_schema 动态获取 edges 真实列名，过滤掉不存在的列。
+        # 防止 EDGES_PROTECTED_FIELDS 误含不存在列导致 SELECT 报错被 except 静默吞掉。
+        cur.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'edges'"
+        )
+        real_cols = {row["column_name"] for row in cur.fetchall()}
+        cols = [c for c in EDGES_PROTECTED_FIELDS if c in real_cols]
+        skipped = set(EDGES_PROTECTED_FIELDS) - set(cols)
+        if skipped:
+            print(f"[DEPGRAPH] WARNING: EDGES_PROTECTED_FIELDS 含不存在列 {skipped}，已自动过滤")
+        if not cols:
+            print("[DEPGRAPH] WARNING: EDGES_PROTECTED_FIELDS 过滤后无有效列，保护机制跳过")
+            conn.close()
+            return edge_meta
         col_list = ", ".join(cols)
         rows = cur.execute(
             f"""SELECT n1.path AS from_path, n2.path AS to_path,
