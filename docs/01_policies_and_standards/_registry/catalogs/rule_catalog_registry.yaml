@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T17:27:41Z'
+generated_at: '2026-06-30T17:30:58Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 141
@@ -630,7 +630,7 @@ files:
   title: 文档治理-结构与命名
   doc_type: ''
   status: ''
-  version: 1.5.0
+  version: 1.7.1
   rule_form: ''
   scope: doc_structure_naming
   stability: stable
