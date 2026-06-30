@@ -344,6 +344,10 @@ class GitCommitGateway:
         self._gate_registry.register(make_claim_required_gate())  # claim_files 前置检查（priority=40，先于 HELD-OVERLAP 检查 claim）
         self._gate_registry.register(make_capability_overlap_gate())  # 缺口4：新建 .py CapabilityLookup 提示（warn-only）
         self._gate_registry.register(make_directory_contract_gate())  # DCR-001~007 等效校验（--no-verify 补偿，fail-closed，priority=30）
+        # commit 流程标志（红蓝对抗红攻1治本）：_commit_with_file_message 设 True，
+        # _run_git 检测裸 git commit 且此标志为 False 时拒绝——技术强制禁止 reconciler
+        # 闭包绕过 _commit_auto 裸调 _run_git(["git","commit",...])。
+        self._in_commit_flow = False
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
         """为 session 声明持有本次 commit 的文件（激活 session 隔离 stash）。
@@ -2468,6 +2472,7 @@ class GitCommitGateway:
             prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
         )
         try:
+            self._in_commit_flow = True  # 放行 _run_git 的 commit 守卫（红攻1治本）
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
             if use_pathspec:
@@ -2485,6 +2490,7 @@ class GitCommitGateway:
                 return rev_result.stdout.strip(), ""
             return "", ""
         finally:
+            self._in_commit_flow = False  # 重置守卫标志
             try:
                 os.remove(msg_path)
             except OSError:
@@ -2695,7 +2701,31 @@ class GitCommitGateway:
             "reconciler auto-commit 统一入口"）。本方法仅用于 git add/diff/log/show
             等非 commit 命令；commit 命令请用 ``commit()``（用户/AI 入口）或
             ``_commit_auto()``（reconciler 入口）。
+
+        .. note::
+            **运行时守卫**（红蓝对抗红攻1治本，技术强制）：检测到 ``git commit``
+            且 ``_in_commit_flow`` 为 False 时拒绝。``_commit_with_file_message``
+            （commit 真源）在 try 块设 True，finally 重置。reconciler 闭包裸调
+            ``_run_git(["git","commit",...])`` 会被此守卫拦截——约定禁止升级为技术强制。
         """
+        # commit 守卫：只有 _commit_with_file_message（commit 真源）设了 _in_commit_flow
+        # 才放行 git commit。reconciler 闭包裸调会被拦截（returncode=1 + stderr 提示）。
+        if (
+            len(cmd) >= 2
+            and cmd[0] == "git"
+            and cmd[1] == "commit"
+            and not getattr(self, "_in_commit_flow", False)
+        ):
+            return subprocess.CompletedProcess(
+                args=cmd,
+                returncode=1,
+                stdout="",
+                stderr=(
+                    "_run_git: git commit 禁止裸调——必须经 commit()/_commit_auto()/"
+                    "_commit_with_file_message 统一入口（五重 gate 覆盖）。"
+                    "见 AGENTS.md §8 L281。"
+                ),
+            )
         env = os.environ.copy()
         env[_GATEWAY_ENV] = "1"  # 标记经 gateway
         return subprocess.run(
