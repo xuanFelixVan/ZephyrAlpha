@@ -12,9 +12,9 @@ ttl: permanent
 
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
-> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-30 11:59:59
-> 数据源: depgraph.db nodes表 + edges表
+> 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
+> 最后更新: 2026-06-30 12:28:25
+> 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
 
@@ -242,7 +242,7 @@ graph TD
 
 ## 说明 / Notes
 
-- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
+- **数据源 / Data Source**: `depgraph (PostgreSQL)` 的 `nodes`、`edges`、`domains` 表
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
