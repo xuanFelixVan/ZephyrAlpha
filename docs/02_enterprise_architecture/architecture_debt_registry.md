@@ -5045,6 +5045,46 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：依赖不可用时readiness仍返回True，流量被路由到不可用实例
 - **修复**：探针内部自行检查依赖（DB连接/ping等），不接受外部传入的deps_ok
 
+> **[✓ RECOVERED: 2026-07-01]** 5.55.2-5.55.6 正文从 git 历史（commit 104f514986）恢复。第32轮验证中5项均标记为DRIFTED（因正文丢失无法验证），恢复后经源码核验5项均为STILL_VALID。
+
+#### 5.55.2 [HIGH] HealthAggregator.poll_all调用readiness不传依赖状态
+- **文件**：[health_aggregator.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/health_aggregator.py#L56)
+- **证据**：`readiness = self._probes.readiness(system)`——未传deps_ok，恒为True，12个系统readiness永远全绿
+- **问题**：健康面板readiness数据完全失真
+- **修复**：为每个system查询真实依赖状态后传入
+
+#### 5.55.3 [HIGH] 健康探针注册中"假"探针——永远返回alive=True
+- **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L117)
+- **证据**：`_longevity_probe`的try块内只有`return ProbeResult(alive=True, ready=True)`，无任何实际活探；except分支因try内无可抛异常代码而永远不可达
+- **问题**：reconcile()基于"假alive=True"判定组件active，从不触发auto_restart
+
+#### 5.55.4 [HIGH] VerdictEngine.health_check永远返回"healthy"
+- **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L403)
+- **证据**：`return {"status": "healthy", ...}`——status硬编码，无基于red_rate的降级判定
+- **问题**：裁决引擎大量拒绝操作时健康检查仍报healthy
+- **修复**：根据red_rate阈值返回degraded/unhealthy
+
+#### 5.55.5 [MEDIUM] Liveness探针返回硬编码pid=0
+- **文件**：[health_probes.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/health_probes.py#L84)
+- **证据**：`"pid": 0`——硬编码，非os.getpid()；status永远"alive"，无存活检测逻辑
+- **问题**：进程假死时liveness仍返回alive
+
+#### 5.55.6 [MEDIUM] BlueprintHealthChecker是空壳，永远返回healthy
+- **文件**：[blueprint_health.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/blueprint_health.py#L21)
+- **证据**：`def check_consistency(self, blueprint_file): return {"status": "healthy", "errors": []}`——空壳不做任何检查
+- **问题**：蓝图字段缺失或引用断裂时不会被发现
+- **修复**：实现真实检查逻辑
+
+#### 5.55.7 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| CRITICAL/HIGH | 4 | 5.55.1/5.55.2/5.55.3/5.55.4 |
+| MEDIUM | 2 | 5.55.5/5.55.6 |
+| **合计** | **6** | |
+
+---
+
 > **正文完整性说明**：5.56-5.171的正文因文件损坏丢失（第14轮后元数据持续更新但正文未持久化）。以下5.172-5.177为第30-31轮新发现问题的完整记录。5.56-5.171的详细清单见各轮子代理调研记录，汇总数据已包含在执行摘要汇总表中。
 
 ---
