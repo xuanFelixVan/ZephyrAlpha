@@ -165,6 +165,34 @@ class CapabilityDuplicate:
 
 
 @dataclass
+class ModuleIdConflict:
+    """module_id 全局冲突条目（check_module_id_conflicts 返回，P0-2 防再生门禁）。
+
+    同一个 module_id 出现在多个文件 = 跨域复刻信号（病根1：AI 跨域复制时
+    连 module_id 一起抄过去，但忘记改）。与 check_ssot_conflicts（同 module_path）
+    互补：module_path 是导入路径，module_id 是逻辑标识——两者不同维度。
+    一个 module_id 只能对应一个真源文件（责任唯一，真源唯一）。
+    """
+    rel_path: str                # 新增文件相对路径（正斜杠）
+    module_id: str               # 冲突的 module_id
+    conflicts: list[str]         # 已声明同 module_id 的已有文件列表（已排除新文件自己）
+
+
+@dataclass
+class DomainMismatch:
+    """MODULE 声明域与物理路径域不一致条目（check_module_domain_consistency 返回，P0-3 防再生门禁）。
+
+    文件物理在 src/zephyr/governance/ 但 [MODULE] 声明 zephyr.infrastructure.xxx
+    = 跨域复刻后忘记改 module_path（病根1 的典型症状：连导入路径一起抄）。
+    Python 导入路径必须与物理目录一致（否则 import 不到），声明不符 = 谎报归属。
+    """
+    rel_path: str                # 新增文件相对路径（正斜杠）
+    module_path: str             # 新增文件声明的 module_path
+    declared_domain: str         # module_path 第2段（如 "infrastructure"）
+    physical_domain: str         # 物理路径第3段（如 "governance"）
+
+
+@dataclass
 class CapabilityEntry:
     """能力条目。
 
@@ -1034,6 +1062,73 @@ class CapabilityLookup:
                 detail=detail,
             ))
         return results
+
+    def check_module_id_conflicts(
+        self, new_py_files: list[tuple[str, str]]
+    ) -> list[ModuleIdConflict]:
+        """检测新增 .py 文件的 module_id 全局冲突（P0-2 防再生门禁）。
+
+        同一个 module_id 出现在多个文件 = 跨域复刻后忘记改 ID。
+        与 check_ssot_conflicts（同 module_path 硬碰撞）互补：
+          - module_path 是 Python 导入路径（物理位置），同 module_path = 同一文件重复
+          - module_id 是逻辑标识（[A_module] module_id=MOD-XXX），同 module_id = 逻辑重复
+        两者维度不同，需分别检测。
+
+        治本（向内收）：检测逻辑唯一真源收拢到本方法，L2/L3 共用。
+        """
+        if not new_py_files:
+            return []
+        violations: list[ModuleIdConflict] = []
+        for abs_path, rel_path in new_py_files:
+            header = self._parse_header(Path(abs_path), rel_path)
+            if not header.module_id:
+                continue
+            matched = [
+                p for p, h in self._disk_headers.items()
+                if h.module_id == header.module_id and p != rel_path
+            ]
+            if matched:
+                violations.append(ModuleIdConflict(
+                    rel_path=rel_path,
+                    module_id=header.module_id,
+                    conflicts=sorted(matched),
+                ))
+        return violations
+
+    def check_module_domain_consistency(
+        self, new_py_files: list[tuple[str, str]]
+    ) -> list[DomainMismatch]:
+        """检测新增 .py 文件的 MODULE 声明域与物理路径域一致性（P0-3 防再生门禁）。
+
+        文件物理在 src/zephyr/{domain_A}/ 但 [MODULE] 声明 zephyr.{domain_B}.xxx
+        = 跨域复刻后忘记改 module_path（病根1 典型症状）。
+        Python 导入路径必须与物理目录一致（否则 import 不到），声明不符 = 谎报归属。
+
+        治本（向内收）：检测逻辑唯一真源收拢到本方法，L2/L3 共用。
+        """
+        if not new_py_files:
+            return []
+        violations: list[DomainMismatch] = []
+        for abs_path, rel_path in new_py_files:
+            header = self._parse_header(Path(abs_path), rel_path)
+            if not header.module_path:
+                continue
+            mp_parts = header.module_path.split(".")
+            if len(mp_parts) < 2:
+                continue
+            declared_domain = mp_parts[1]
+            path_parts = rel_path.split("/")
+            if len(path_parts) < 4:
+                continue  # 直接在 src/zephyr/ 下的文件（如 __init__.py），无域段
+            physical_domain = path_parts[2]
+            if declared_domain != physical_domain:
+                violations.append(DomainMismatch(
+                    rel_path=rel_path,
+                    module_path=header.module_path,
+                    declared_domain=declared_domain,
+                    physical_domain=physical_domain,
+                ))
+        return violations
 
     def list_all(self) -> list[dict]:
         return [self._entry_to_dict(cap) for cap in self._capabilities]

@@ -75,6 +75,7 @@ GATES_DIR = SRC_ZEPHYR / "governance" / "rule_enforcement"
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
+CAPABILITY_REGISTRY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
 
 # ---------------------------------------------------------------------------
 # 规则主题前缀（ARCH-037，按文件名定位的命名约定）
@@ -313,6 +314,9 @@ class ScaffoldEngine:
         # ── 通知资产盘点系统（MOD-INF-026）──
         _notify_asset_inventory(str(file_path), "module", self.dry_run)
 
+        # ── P0-5: 自动登记 creation_token（create_guard 闭环）──
+        _register_creation_token(str(file_path), name, self.dry_run)
+
         # ── 同步蓝图 §0.1 文件清单（防漂移）──
         _sync_blueprint_file_list(package, name, self.dry_run)
 
@@ -365,6 +369,9 @@ class ScaffoldEngine:
 
         # ── 通知资产盘点系统（MOD-INF-026）──
         _notify_asset_inventory(str(file_path), "script", self.dry_run)
+
+        # ── P0-5: 自动登记 creation_token（create_guard 闭环）──
+        _register_creation_token(str(file_path), rel_path.replace("/", "_"), self.dry_run)
 
         print(f"\n  CREATED  {file_path}")
         print(f"  REGISTERED  {SCRIPT_MANIFEST}  (entry '{rel_path}')")
@@ -810,13 +817,15 @@ def _check_duplicate_functionality(
     三个检测维度：
       维度1: 功能域注册表重叠（force_override 不跳过——防止真重复）
       维度2: 蓝图关键词匹配（force_override 跳过）
-      维度3: module_path 冲突（force_override 不跳过——同 module_path = 同文件身份 = 确凿重复）
-             方案 E：零新真源，复用 [MODULE] 头，通过 capability_lookup 实时扫描磁盘
+      维度3: module_path 冲突 + basename 跨域查重（force_override 不跳过——确凿重复信号）
+             维度3a: 同 module_path = 同文件身份（方案 E：复用 [MODULE] 头）
+             维度3b: 同 basename 跨域 = 复刻信号（P0-4 防再生：阻断 AI 跨域复刻同名模块）
+                     豁免: __init__.py / conftest.py / __main__.py（Python 包/约定标识）
 
     force_override=True 时跳过维度2（蓝图关键词匹配），维度1和维度3仍执行。
     用于确认 SSoT 误报后强制创建。
     """
-    # ── 维度3: SSoT module_path 冲突检测（方案 E：零新真源，复用 [MODULE] 头）──
+    # ── 维度3a: SSoT module_path 冲突检测（方案 E：零新真源，复用 [MODULE] 头）──
     # force_override 不跳过——同 module_path = 同文件身份 = 确凿重复信号。
     # 真源是文件头部 [MODULE] 字段（已存在），反查通过 capability_lookup 实时扫描磁盘。
     # L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线，
@@ -845,6 +854,35 @@ def _check_duplicate_functionality(
             print("  WARNING: capability_lookup 不可用，跳过 module_path 冲突检测（L2 兜底门禁补防线）")
         except Exception as exc:
             print(f"  WARNING: module_path 冲突检测失败: {exc}（L2 兜底门禁补防线）")
+
+        # ── 维度3b: basename 跨域查重（P0-4 防再生门禁）──
+        # 同 basename 跨域 = AI 跨域复刻信号（病根1）。与 P0-1 N-16 src/ 门禁一致——
+        # scaffold 是前门（创建时拦截），N-16 是后门（commit 时拦截），两者豁免清单一致。
+        # 仅对 src/zephyr/ 模块创建生效（expected_module_path 以 zephyr. 开头）。
+        if expected_module_path.startswith("zephyr."):
+            basename = f"{Path(name).name}.py"
+            # 豁免清单与 P0-1 _N16_SRC_EXEMPT_NAMES 一致（Python 包标识/pytest 约定/python -m 入口）
+            _BASENAME_EXEMPT = frozenset({"__init__.py", "conftest.py", "__main__.py"})
+            if basename not in _BASENAME_EXEMPT:
+                existing = [
+                    p for p in SRC_ZEPHYR.rglob(basename)
+                    if "__pycache__" not in str(p) and "._archive" not in str(p)
+                ]
+                if existing:
+                    exist_list = "\n".join(
+                        f"    - {p.relative_to(PROJECT_ROOT)}" for p in sorted(existing)
+                    )
+                    raise ScaffoldError(
+                        f"SSoT门禁阻断：basename 跨域重复\n"
+                        f"  新文件 basename: {basename}\n"
+                        f"  已有同 basename 文件:\n{exist_list}\n"
+                        f"  → 同 basename 跨域 = 复刻信号（责任唯一，真源唯一）\n"
+                        f"  复用决策（RULE-EIGHT）：\n"
+                        f"    完全覆盖 → 直接用已有文件\n"
+                        f"    80%覆盖 → 扩展已有文件\n"
+                        f"    50%覆盖 → 重构已有+扩展\n"
+                        f"    0%覆盖 → 改名（basename 必须项目内唯一，见 N-16 src/ 规则）"
+                    )
 
     if force_override:
         # 仅跳过蓝图关键词匹配；功能域注册表检查仍执行（防止真重复）
@@ -983,6 +1021,64 @@ def _notify_asset_inventory(file_path: str, asset_type: str, dry_run: bool) -> N
         telemetry.inc(f"scaffold_{asset_type}_created")
     except Exception:
         pass
+
+
+def _register_creation_token(file_path: str, capability: str, dry_run: bool) -> None:
+    """P0-5 防再生门禁：scaffold 创建 .py 文件时自动登记 creation_token。
+
+    create_guard（GitCommitGateway 注册 gate）硬阻断无 creation_token 的新 .py 文件。
+    scaffold 是唯一创建入口（RULE-TWO），通过自动登记 token 实现"走 scaffold → 放行，
+    绕 scaffold → 阻断"的闭环。AI 绕过 scaffold 直接 Write .py → 无 token → commit 阻断。
+
+    失败不阻塞 scaffold —— token 登记失败时打印警告（commit 时 create_guard 会兜底阻断，
+    AI 需手动补登记或用 --amend 重跑 scaffold）。
+    """
+    if dry_run:
+        return
+    if not CAPABILITY_REGISTRY.exists():
+        print(f"  WARNING: capability registry 不存在，跳过 creation_token 登记: {CAPABILITY_REGISTRY}")
+        return
+
+    try:
+        rel_path = str(Path(file_path).relative_to(PROJECT_ROOT)).replace("\\", "/")
+    except ValueError:
+        return
+
+    import yaml as _yaml
+    try:
+        data = _yaml.safe_load(CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"  WARNING: capability registry 解析失败，跳过 creation_token 登记: {exc}")
+        return
+
+    if not isinstance(data, dict):
+        return
+
+    tokens = data.get("creation_tokens", []) or []
+    if not isinstance(tokens, list):
+        tokens = []
+
+    # 幂等：已有同 file 条目则跳过
+    for entry in tokens:
+        if isinstance(entry, dict) and entry.get("file", "").replace("\\", "/") == rel_path:
+            return  # 已登记，跳过
+
+    token_value = f"auto-scaffold-{capability}-{datetime.now().strftime('%Y%m%d')}"
+    new_entry = {
+        "file": rel_path,
+        "token": token_value,
+        "created_by": "scaffold.py",
+        "capability": capability,
+    }
+    tokens.append(new_entry)
+    data["creation_tokens"] = tokens
+
+    try:
+        _atomic_write(CAPABILITY_REGISTRY, _yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False), False, [])
+        print(f"  REGISTERED  creation_token for {rel_path} (token={token_value})")
+    except Exception as exc:
+        print(f"  WARNING: creation_token 登记失败: {exc}")
+        print(f"  → commit 时 create_guard 会阻断，需手动在 {CAPABILITY_REGISTRY} 补登记")
 
 
 def _remind_path_tree_refresh() -> None:
