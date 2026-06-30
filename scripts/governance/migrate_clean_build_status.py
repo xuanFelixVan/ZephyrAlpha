@@ -191,12 +191,12 @@ def clean_depgraph():
 
         print("\n[PASS] All verification checks passed!")
         conn.commit()
-        print("[COMMITTED] Changes saved to depgraph (PostgreSQL)")
+        print(f"[COMMITTED] Changes saved to {DB_DISPLAY_NAME}")
 
     except Exception as e:
         conn.rollback()
         print(f"\n[ROLLBACK] Error: {e}", file=sys.stderr)
-        print("All changes rolled back. depgraph (PostgreSQL) is unchanged.", file=sys.stderr)
+        print(f"All changes rolled back. {DB_DISPLAY_NAME} is unchanged.", file=sys.stderr)
         sys.exit(1)
     finally:
         conn.close()

@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -445,6 +445,40 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 node.lineno,
                 f"def {func_name}() 函数体含 yaml.safe_load 读取词表逻辑"
                 f"(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
+            ))
+
+    # 检测6：生成器数据库名硬编码（治本 2026-06-30，红攻1治本）
+    # 生成器产物里的数据库名必须从 _common.DB_DISPLAY_NAME 引用，禁止硬编码字面量。
+    # 范围：仅 scripts/governance/d5_architecture/generators/*.py（排除 _common.py 真源定义）
+    # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
+    # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
+    generators_dir = REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators"
+    try:
+        is_generator = filepath.is_relative_to(generators_dir)
+    except (ValueError, AttributeError):
+        is_generator = str(filepath).startswith(str(generators_dir))
+    if is_generator and filepath.name != "_common.py":
+        # 收集 docstring 节点 id（排除检测，避免误报模块/函数/类说明文本）
+        docstring_ids: set[int] = set()
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if n.body and isinstance(n.body[0], ast.Expr):
+                    v = n.body[0].value
+                    if isinstance(v, ast.Constant) and isinstance(v.value, str):
+                        docstring_ids.add(id(v))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+                continue
+            if "depgraph (PostgreSQL)" not in node.value:
+                continue
+            if id(node) in docstring_ids:
+                continue  # docstring 豁免
+            if _has_noqa_exempt(source, node.lineno):
+                continue
+            issues.append((
+                node.lineno,
+                "硬编码数据库名 'depgraph (PostgreSQL)'"
+                "（应 from _common import DB_DISPLAY_NAME 引用常量）",
             ))
 
     return issues
