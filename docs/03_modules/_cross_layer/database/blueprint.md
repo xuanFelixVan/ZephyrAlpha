@@ -4,14 +4,14 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.1.0"
+version: "4.2.0"
 layer: cross_layer
 blueprint_level: module
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: AI-session-20260519-001
-date: "2026-06-27"
+date: "2026-07-01"
 valid_from: "2026-05-19"
 ttl: permanent
 rule_form: structural
@@ -20,7 +20,7 @@ parent_module: ""
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: partially_implemented
+construction_progress: completed
 actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
 codification_level: L2
 generation: 3
@@ -31,8 +31,7 @@ priority: P1
 runtime_plane: hot
 child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub_blueprints/（012A 无独立蓝图文件，代码清单见本文档 §1.1）"}
-  - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
-  - {module_id: "MOD-DB_DEPGRAPH_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
+  - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "completed", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
 depends_on:
   - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
   - {target: "MOD-GATE_ENGINE", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
@@ -48,8 +47,8 @@ references:
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.0.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
-> actual_disk_path: `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | generation: 3 | construction_progress: partially_implemented
+> module_id: SH-DB-001 | version: 4.2.0 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> actual_disk_path: `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
 ## 概述
@@ -64,7 +63,7 @@ references:
 
 本蓝图是 Database 模块的集成入口——聚合两个子蓝图：
 - **MOD-INF-012A Database Core**：SQLite+DuckDB 双引擎核心运营（13 个 .py 全部已实现，物理代码主位置 `src/zephyr/infrastructure/db/`）
-- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移主体已完成 2026-06-28，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收通过，整体待 24 任务卡全面验证故 partially_implemented）
+- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移已完成 2026-06-27，P2-T1~T6 全过，16/16 综合验证通过，5/5 红蓝测试 40并发写入验证通过，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收）
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
 
@@ -115,7 +114,7 @@ references:
 | module_id | 标题 | 状态 | 施工进度 | 文件路径 |
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
-| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | partially_implemented | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
+| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | completed | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
 
 > **P3 PostgreSQL优化方案已归档删除**（2026-06-30）：原P3的4任务中T2/T3裁定删除（伪需求/过度工程），T1 pgvector改造待VMS自然演进，T4监控告警已实现（扩展verify_schema_health.py，实现记录见AGENTS.md §11.2）。P3历史文档已删除，避免Draft状态误导AI实现已裁定的伪需求。
 
@@ -212,7 +211,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 |----------|---------------|------|
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` | 本文件 |
 | 子蓝图 P2 迁移 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` | P2 迁移方案 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | Python 源码（012A 13 个 .py 已实现；012B 待施工） |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | Python 源码（012A 13 个 .py 已实现；012B P2 已完成） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\db\` | 单元测试 |
 | 数据文件 | `D:\ZephyrAlpha\data/databases/governance.db` | 012A SQLite 主数据库（任务卡库，保持 SQLite 不迁移） |
 | 数据文件 | `localhost:5432/depgraph`（PostgreSQL 16，连接配置 `config/.env.postgres`） | 012B 迁移目标库（SQLite→PostgreSQL，depgraph 全景图，28 表） |
@@ -303,12 +302,10 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 2 | `dual_db_router.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\dual_db_router.py` | ~~v3.0 双库路由~~ | ❌ 不新建（P2 完成，由 get_depgraph_pg_connection() + get_db_connection() 双入口覆盖） |
 | 3 | `write_batcher.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\write_batcher.py` | v3.0 批量写入 | ⏸ 暂缓（待 L 级 5000+脚本） |
 | 4 | `script_scheduler.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\script_scheduler.py` | ~~v3.0 Worker Pool~~ | ❌ 不新建（由 BulkheadExecutorV2 覆盖） |
-| 5 | `pg_lock.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\pg_lock.py` | v3.0 PG Advisory Lock | 待施工 (012B 阶段3 SQL方言) |
-| 6 | `fts5_index.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\fts5_index.py` | v3.0 FTS5 | 待施工 (012B 阶段3 SQL方言) |
-| 7 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
-| 8 | `depgraph (PostgreSQL)` | `localhost:5432/depgraph` | 012B 迁移目标库（SQLite→PostgreSQL） | 运行时生成 |
-| 9 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
-| 10 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
+| 5 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
+| 6 | `depgraph (PostgreSQL)` | `localhost:5432/depgraph` | 012B 迁移结果库（SQLite→PostgreSQL，depgraph 全景图，28 表） | 运行时生成 |
+| 7 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
+| 8 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
 
 ---
 
@@ -340,24 +337,24 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_task_repo_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_sqlite_schema_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_atomic_transaction_manager_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_olap_engine_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_database_manager_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_audit_schema_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_query_metrics_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/unit/test_circuit_breaker_unit.py` | ✅ 已实现 | 单元测试（含 circuit_breaker_repo） |
-| `tests/unit/db/test_task_repo_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_sqlite_schema_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_atomic_transaction_manager_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_olap_engine_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_audit_schema_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_database_manager_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_query_metrics_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_circuit_breaker_repo_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_gate_repo.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/unit/db/test_dm400_stale_task_fix.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/test_task_repo_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_sqlite_schema_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_atomic_transaction_manager_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_olap_engine_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_database_manager_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_audit_schema_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_query_metrics_unit.py` | ✅ 已实现 | 单元测试 |
+| `tests/test_circuit_breaker_unit.py` | ✅ 已实现 | 单元测试（含 circuit_breaker_repo） |
+| `tests/db/test_task_repo_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_sqlite_schema_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_atomic_transaction_manager_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_olap_engine_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_audit_schema_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_database_manager_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_query_metrics_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_circuit_breaker_repo_db.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_gate_repo.py` | ✅ 已实现 | DB 集成测试 |
+| `tests/db/test_dm400_stale_task_fix.py` | ✅ 已实现 | DB 集成测试 |
 
 ### 1.5 路径索引使用指南
 

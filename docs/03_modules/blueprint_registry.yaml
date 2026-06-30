@@ -321,19 +321,18 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: SH-DB-001
   name: database
-  title: Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
-  summary: 'Database 集成蓝图——聚合 MOD-INF-012A（Core: SQLite+DuckDB已实现）和 MOD-INF-012B（v3.0:
-    PostgreSQL迁移已完成+5组件第一性原理裁定：2删除+2暂缓+1已覆盖）。DW-045拆分完成，详细内容见子蓝图。'
+  title: Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位
+  summary: 'Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除。'
   layer: cross_layer
   functional_domain: data
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 4.0.1
+  version: 4.2.0
   generation: 3
-  last_updated: '2026-05-19'
+  last_updated: '2026-07-01'
   file_path: 03_modules/_cross_layer/database/blueprint.md
-  construction_progress: partially_implemented
+  construction_progress: completed
 - module_id: MOD-INF-013
   name: mcp_servers
   title: MCP Servers 蓝图 — MCP 服务器管理与调度
