@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-# [MODULE] zephyr.governance.behavioral_auditor.brain_integration
+# [MODULE] zephyr.governance.drift_detection.brain_integration
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router

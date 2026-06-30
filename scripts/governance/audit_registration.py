@@ -60,6 +60,7 @@ from pathlib import Path
 
 import yaml
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
@@ -111,6 +112,8 @@ class AuditResult:
     # 消费者地图：{full_module: [consumer_rel_paths]}，供下游消费者（如
     # analyze_orphan_consumers.py）复用，避免重复构建（向内收：单一真源）
     import_map: dict[str, list[str]] = field(default_factory=dict)
+    # [MODULE] 头部路径不一致（ARCH-034 P4）
+    module_path_mismatches: list[ModulePathMismatch] = field(default_factory=list)
 
     @property
     def is_clean(self) -> bool:
@@ -122,6 +125,7 @@ class AuditResult:
                 self.orphan_gates,
                 self.zombie_references,
                 self.missing_all,
+                self.module_path_mismatches,
             ]
         )
 
@@ -134,6 +138,7 @@ class AuditResult:
             + len(self.orphan_gates)
             + len(self.zombie_references)
             + len(self.missing_all)
+            + len(self.module_path_mismatches)
         )
 
 
@@ -150,6 +155,15 @@ class ZombieEntry:
     reference: str
     registry: str
     detail: str = ""
+
+
+@dataclass
+class ModulePathMismatch:
+    """[MODULE] 头部声明的路径与实际磁盘路径不一致（ARCH-034 P4 防复发）。"""
+    path: Path
+    relative: str
+    declared_module: str
+    expected_module: str
 
 
 # ---------------------------------------------------------------------------
@@ -202,6 +216,13 @@ def _to_findings(ar: AuditResult) -> list[dict]:
             "dimension": "D5_missing_all",
             "target": {"file_path": rel},
             "description": f"__init__.py 缺 __all__: {rel}",
+            "severity": "P2",
+        })
+    for mpm in ar.module_path_mismatches:
+        findings.append({
+            "dimension": "D6_module_path_mismatch",
+            "target": {"file_path": mpm.relative},
+            "description": f"[MODULE] 路径不一致: 声明={mpm.declared_module}, 期望={mpm.expected_module}",
             "severity": "P2",
         })
     return findings
@@ -301,6 +322,9 @@ def audit(changed_files: set[Path] | None = None) -> AuditResult:
 
     # ── 6. 检测缺 __all__ 的 __init__.py ──
     _detect_missing_all(result, changed_files)
+
+    # ── 7. 校验 [MODULE] 头部路径一致性（ARCH-034 P4 防复发）──
+    _check_module_path_consistency(result, changed_files)
 
     return result
 
@@ -705,6 +729,69 @@ def _detect_missing_all(result: AuditResult, changed_files: set[Path] | None = N
 
 
 # ===================================================================
+# [MODULE] 头部路径一致性校验（ARCH-034 P4）
+# ===================================================================
+
+
+# [MODULE] 头部解析正则（与 check_ssot_gate.py GATE-SSOT 第1层一致）
+_RE_MODULE_HEADER = re.compile(r"^#\s*\[MODULE\]\s*(.+)$", re.MULTILINE)
+
+
+def _check_module_path_consistency(
+    result: AuditResult,
+    changed_files: set[Path] | None = None,
+) -> None:
+    """校验 .py 文件头部 [MODULE] 声明的路径与实际磁盘路径一致。
+
+    防止迁移后 [MODULE] 头部残留旧路径（如 ARCH-034 BA→GDD 迁移后
+    brain_integration.py 仍声明 behavioral_auditor 路径）。
+
+    Args:
+        changed_files: 增量模式下仅扫描此集合。None 表示全量扫描。
+    """
+    for py_file in SRC_ZEPHYR.rglob("*.py"):
+        if any(ex in py_file.parts for ex in EXCLUDE_PATTERNS):
+            continue
+        # 增量模式：跳过未变更文件
+        if changed_files is not None and py_file not in changed_files:
+            continue
+
+        try:
+            content = py_file.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+
+        match = _RE_MODULE_HEADER.search(content)
+        if not match:
+            continue  # 无 [MODULE] 头部，跳过
+
+        declared_module = match.group(1).strip()
+
+        # 从实际磁盘路径推导 expected module path
+        rel = py_file.relative_to(SRC_ZEPHYR)
+        parts = rel.parts
+        if py_file.name == "__init__.py":
+            expected = "zephyr." + ".".join(parts[:-1]) if len(parts) > 1 else "zephyr"
+        else:
+            stem = py_file.stem
+            expected = (
+                "zephyr." + ".".join(parts[:-1] + (stem,))
+                if len(parts) > 1
+                else f"zephyr.{stem}"
+            )
+
+        if declared_module != expected:
+            result.module_path_mismatches.append(
+                ModulePathMismatch(
+                    path=py_file,
+                    relative=py_file.relative_to(PROJECT_ROOT).as_posix(),
+                    declared_module=declared_module,
+                    expected_module=expected,
+                )
+            )
+
+
+# ===================================================================
 # 格式化输出
 # ===================================================================
 
@@ -754,6 +841,14 @@ def print_report(ar: AuditResult, compact: bool = False) -> str:
         lines.append(f"\n  ZOMBIE REFERENCES ({len(ar.zombie_references)}):")
         for ze in ar.zombie_references:
             lines.append(f"    {ze.reference} → [{ze.registry}] {ze.detail}")
+
+    if ar.module_path_mismatches:
+        lines.append(f"\n  MODULE PATH MISMATCH ({len(ar.module_path_mismatches)}):")
+        for mpm in ar.module_path_mismatches:
+            lines.append(f"    {mpm.relative}")
+            if not compact:
+                lines.append(f"      → declared: {mpm.declared_module}")
+                lines.append(f"      → expected: {mpm.expected_module}")
 
     lines.append(f"\n  TOTAL: {total} issues")
     return "\n".join(lines)
@@ -1028,6 +1123,10 @@ def main() -> None:
             "zombie_references": [
                 {"reference": ze.reference, "registry": ze.registry, "detail": ze.detail} for ze in ar.zombie_references
             ],
+            "module_path_mismatches": [
+                {"relative": mpm.relative, "declared": mpm.declared_module, "expected": mpm.expected_module}
+                for mpm in ar.module_path_mismatches
+            ],
             "total_issues": ar.total_issues,
             # 消费者地图：供下游复用，避免重复构建（analyze_orphan_consumers.py 等）
             "import_map": ar.import_map,
@@ -1128,11 +1227,7 @@ def _auto_register_module(oe: OrphanEntry) -> None:
         print(f"    SKIP {module_name}（已注册于 {init_py}）")
         return
 
-    import os
-
-    tmp_path = Path(str(init_py) + f".{os.getpid()}.tmp")
-    tmp_path.write_text(content, encoding="utf-8")
-    os.replace(str(tmp_path), str(init_py))
+    atomic_write(init_py, content)
     print(f"    REGISTERED {module_name} → {init_py}")
 
 
