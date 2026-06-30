@@ -80,6 +80,17 @@ def get(key_path: str, default: Any = None) -> Any:
     return node
 
 
+def get_thresholds_safe() -> dict[str, Any]:
+    """graceful 变体：thresholds.yaml 缺失时返回 {} 而非 raise FileNotFoundError。
+
+    供防御性调用方使用（如 manage_error_budget 用 .get() 链式取值 + fallback 默认值）。
+    文件存在时委托 get_thresholds()（享受缓存）；缺失时返回空 dict。
+    """
+    if not _THRESHOLDS_PATH.exists():
+        return {}
+    return get_thresholds()
+
+
 def invalidate_cache() -> None:
     """清除缓存——阈值文件被修改后调用，确保下次读取最新值。"""
     global _CACHE

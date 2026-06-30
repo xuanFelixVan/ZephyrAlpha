@@ -62,23 +62,13 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.thresholds import get_thresholds_safe  # noqa: E402  治本(ARCH-036 P1-4): 收敛本地 _load_thresholds 重复实现→共享 graceful 变体
 
 _EB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "error_budget_state.yaml"
 _KILL_SWITCH_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "kill_switch_state.yaml"
 
-# 从 thresholds.yaml 读取阈值
-_THRESHOLDS_PATH = _REPO_ROOT / "scripts" / "governance" / "_shared" / "thresholds.yaml"
-
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
-
-
-def _load_thresholds() -> dict:
-    """_load_thresholds implementation."""
-    if not _THRESHOLDS_PATH.exists():
-        return {}
-    with open(_THRESHOLDS_PATH, encoding="utf-8") as f:
-        return yaml.safe_load(f)
 
 
 def _load_eb() -> dict:
@@ -108,7 +98,7 @@ def _save_eb(data: dict) -> None:
 
 def _init_eb() -> dict:
     """_init_eb implementation."""
-    t = _load_thresholds()
+    t = get_thresholds_safe()
     now = datetime.now(UTC)
     window_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     window_end = window_start + timedelta(days=30)
@@ -178,7 +168,7 @@ def _update_burn_rate(data: dict) -> dict:
         if ts >= six_hours_ago:
             h6_consumed += entry.get("consumed_percent", 0)
 
-    t = _load_thresholds()
+    t = get_thresholds_safe()
     eb = t.get("error_budget", {}).get("burn_rate", {})
     critical_th = eb.get("critical_1h_percent", 0.02) * 100
 
@@ -193,7 +183,7 @@ def _update_burn_rate(data: dict) -> dict:
 
 def _activate_feature_freeze(data: dict, reason: str) -> dict:
     """_activate_feature_freeze implementation."""
-    t = _load_thresholds()
+    t = get_thresholds_safe()
     freeze_hours = t.get("error_budget", {}).get("freeze_auto_lift_after_hours", 72)
     now = datetime.now(UTC)
 
