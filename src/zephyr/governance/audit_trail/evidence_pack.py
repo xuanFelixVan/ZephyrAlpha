@@ -37,6 +37,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zephyr.governance.evidence_pack import EvidencePack  # re-export: audit_trail 模块依赖 EvidencePack
+
 _logger = logging.getLogger(__name__)
 
 DEFAULT_AUDIT_DATA_DIR: Path = Path("data/audit-trail")

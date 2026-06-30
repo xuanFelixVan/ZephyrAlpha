@@ -81,11 +81,11 @@ def __getattr__(name):
 
         return _mod
     if name == "rollback_mod":
-        import zephyr.governance.rollback as _mod
+        import zephyr.infrastructure.rollback as _mod
 
         return _mod
     if name == "a2a_protocol":
-        import zephyr.l01_infrastructure.a2a_protocol.governance as _mod
+        import zephyr.infrastructure.a2a_protocol as _mod
 
         return _mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
@@ -118,7 +118,7 @@ try:
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
     from zephyr.governance.gate_event_adapter import GateEventAdapter
     from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
-    from zephyr.governance.index_generator import IndexGenerator
+    from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
     from zephyr.governance.lifecycle import Lifecycle
     from zephyr.governance.llm_impact_analyzer import RiskLevel
