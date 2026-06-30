@@ -368,7 +368,7 @@ references:
 | 3 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | L97 | 将"sqlite_sequence由SQLite自动管理"改为PG系统表说明 | D50-PG裁定 |
 | | | L1241 | 将"depgraph.db（SQLite单库）"改为"PostgreSQL单库" | D50-PG裁定 |
 | 4 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | L289,807,1038,1039,1084,1298,1301,1335,1338 | 更新D50裁定为D50-PG；将"SQLite"改为"PostgreSQL" | D50-PG裁定 |
-| 5 | `docs/02_enterprise_architecture/core_function_dependency_design.md` | L114,732 | 将"PostgreSQL容量升级"更新为"已迁移" | D50-PG裁定 |
+| 5 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30，F1-F37虚假声明） | L114,732 | 将"PostgreSQL容量升级"更新为"已迁移" | D50-PG裁定 |
 | 6 | `docs/_working/domain_split_plan_4_oversized_domains.md` | L1245,1254,1270,1277,1303,1332,1338 | 将`sqlite3.connect`命令改为PG连接方式 | D50-PG裁定 |
 | 7 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | L203,274,391,773,859 | 将"SQLite锁"改为"PostgreSQL MVCC" | D50-PG裁定 |
 | 8 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md` | L1445,1473 | 将"从SQLite数据库加载"改为"从PostgreSQL加载" | D50-PG裁定 |
@@ -403,7 +403,7 @@ references:
 | # | 文件路径 | 位置（行号） | 更新内容 | 更新原因 |
 |---|---------|:---------:|---------|---------|
 | 19 | `architecture_model/layers/b_db.yaml` | L8,21 | 补充depgraph.db(PostgreSQL)条目；更新描述 | D50-PG裁定 |
-| 20 | `docs/02_enterprise_architecture/target_architecture/architecture_model/technology/technology_landscape.yaml` | L322 | 确认PostgreSQL条目关联depgraph.db用途 | D50-PG裁定 |
+| 20 | `architecture_model/technology/technology_landscape.yaml` | L322 | 确认PostgreSQL条目关联depgraph.db用途 | D50-PG裁定 |
 
 ### 4.7 注册表（2个）
 
@@ -534,9 +534,9 @@ references:
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
 | 99 | `docs/02_enterprise_architecture/migration_registry.yaml` | 引用depgraph.db | 检查是否需要更新 |
-| 100 | `docs/02_enterprise_architecture/target_architecture/architecture_model/cross_cutting/capability_heatmap.yaml` | 引用depgraph.db | 同上 |
+| 100 | `architecture_model/cross_cutting/capability_heatmap.yaml` | 引用depgraph.db | 同上 |
 | 101 | `docs/registry_of_registries.yaml` | 引用depgraph.db | 同上 |
-| 102 | `docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` | 引用depgraph.db | 同上 |
+| 102 | `architecture_model/index.yaml` | 引用depgraph.db | 同上 |
 
 #### 第2轮新增：data/数据文件（3个）
 
@@ -617,7 +617,7 @@ references:
 | 130 | `docs/02_enterprise_architecture/target_architecture/overview.md` | 技术栈描述SQLite WAL（L48）+depgraph.db引用（L44,179,181） | 更新技术栈为PostgreSQL |
 | 131 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50决策记录depgraph.db为SQLite（L807,855,1084,1089,1298,1301,1334-1338,1386-1388） | 更新D50决策为PostgreSQL |
 | 132 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 业界对标表描述depgraph.db为SQLite单库（L1241） | 更新为PostgreSQL |
-| 133 | `docs/02_enterprise_architecture/core_function_dependency_design.md` | F25职责描述（L114,732） | 更新为反映depgraph.db已迁移PG |
+| 133 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30） | F25职责描述（L114,732） | 更新为反映depgraph.db已迁移PG |
 | 134 | `docs/02_enterprise_architecture/phase_d_ai_prompts.md` | 三库架构描述（L1255,1265） | 更新三库架构描述 |
 | 135 | `docs/02_enterprise_architecture/ssot_authority_map.md` | knowledge表引用（L176） | 确认knowledge表归属后更新 |
 
@@ -708,7 +708,7 @@ references:
 | # | 文件路径 | 遗漏位置 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|---------|
 | - | `docs/registry_of_registries.yaml` | L336,360 | `format: sqlite`声明 | 改为`format: postgresql` |
-| - | `docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` | L26,35,38,41,59,62 | partition路径指向SQLite文件 | 改为PG连接配置引用 |
+| - | `architecture_model/index.yaml` | L26,35,38,41,59,62 | partition路径指向SQLite文件 | 改为PG连接配置引用 |
 | - | 同上 | L240,242,244 | SQL查询使用双引号 | 改单引号（PG字符串语义） |
 | - | `docs/02_enterprise_architecture/migration_registry.yaml` | L15522 | source字段引用SQLite路径 | 改为PG连接字符串 |
 | - | `data/asset_index/target_path_tree.yaml` | L5,6 | source_depgraph/source_panorama引用SQLite路径 | 改为PG连接配置引用 |

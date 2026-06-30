@@ -197,7 +197,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ PG（depg
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 012B-P2/P3 条目（版本 4.0.1 已于 2026-06-27 更新） | DW-045 拆分 + P2/P3 细化 |
 | 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
-| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target_architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B-P2/P3 | 新模块 ID 注册 |
+| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B-P2/P3 | 新模块 ID 注册 |
 
 ---
 
@@ -248,7 +248,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ PG（depg
 | 1 | 元数据注册表 | PS-STD-001 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter模板 |
 | 2 | 目录结构标准 | GOV-DOC-002 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 蓝图体系架构标准 | PS-STD-005 | 1.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` | 三级金字塔 + belongs_to |
-| 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target_architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | DB YAML真源 |
 | 6 | 子蓝图 P2 迁移 | MOD-DB_DEPGRAPH_PG | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` | P2 迁移方案真源 |
 | 7 | 子蓝图 P3 优化 | MOD-DB_DEPGRAPH_OPT | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p3_postgresql_optimization.md` | P3 优化方案真源 |

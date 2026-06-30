@@ -276,9 +276,8 @@ AutoRuntime Core 是 ZephyrAlpha 的**系统大脑**——不是某个功能的�
 | 业务层 | `l11_ml_platform.yaml` | ML 平台 |
 | 业务层 | `l12_system_telemetry.yaml` | 系统遥测 |
 | 业务层 | `l13_experimentation.yaml` | 实验平台 |
-| 元数据 | `index.yaml` | 蓝图索引 |
+| 元数据 | `index.yaml` | 蓝图索引（v3.0.2 融合版，dm200916 派生 domains） |
 | 元数据 | `_schema.yaml` | 蓝图 Schema |
-| 元数据 | `scope.yaml` | 项目范围 |
 | 元数据 | `technology_landscape.yaml` | 技术全景 |
 
 ### 2.3 根目录入口脚本
