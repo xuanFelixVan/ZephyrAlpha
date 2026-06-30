@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G3: 从 depgraph.db edges 表生成指定域的全景依赖图(.mmd Mermaid格式)
+"""G3: 从 depgraph (PostgreSQL) edges 表生成指定域的全景依赖图(.mmd Mermaid格式)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_domain_dependency_diagram
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/domains/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/domains/
 [MODIFY-GUARD] 修改需通过DM-200910任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/domains/{domain}_dependency.mmd
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1;域不存在→exit 2
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1;域不存在→exit 2
 [TESTS] tests/test_dm200910_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -41,6 +41,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+from _common import cleanup_stale_files  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -123,7 +124,7 @@ def generate_dependency_diagram(domain_id: str, conn: PgConnExecuteWrapper) -> s
     lines = []
     lines.append(f"%% {domain_id} 域全景依赖图")
     lines.append(f"%% 生成时间: {now}")
-    lines.append("%% 数据源: depgraph.db nodes表 + edges表")
+    lines.append("%% 数据源: depgraph (PostgreSQL) nodes表 + edges表")
     lines.append(f"%% 模块数: {len(nodes)}, 依赖边数: {len(edges)}")
     lines.append("")
     lines.append("graph TD")
@@ -249,6 +250,13 @@ def main() -> None:
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域依赖图")
+            # 清理孤儿 .mmd 文件（治本：解决只增不删，参考 generate_domain_doc.py）
+            expected_basenames = {f"{did.replace('-', '_').lower()}_dependency.mmd" for did in domain_ids}
+            deleted_mmd = cleanup_stale_files(
+                output_dir, expected_basenames, r'^[a-z0-9_]+_dependency\.mmd$'
+            )
+            if deleted_mmd:
+                print(f"[CLEANUP] 删除 {len(deleted_mmd)} 个残留 .mmd: {deleted_mmd}")
         else:
             content = generate_dependency_diagram(args.domain_id, conn)
             if not content:

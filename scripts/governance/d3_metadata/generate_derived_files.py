@@ -72,7 +72,7 @@ ensure_utf8_stdout()
 import argparse
 
 import yaml
-from _shared.yaml_utils import load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+from _shared.yaml_utils import load_vocabulary_entries, load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
 
 VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
@@ -129,39 +129,6 @@ def _load_vocab_values(vocab_name: str) -> list[str]:
     return list(
         load_vocabulary_values(vocab_file, fallback_key="id", strict=False)
     )
-
-
-def _load_vocab_entries(vocab_name: str) -> list[dict]:
-    """加载 vocabulary YAML 的有效值+定义列表（用于 missing 检测时获取 description）。
-
-    治本（2026-06-30）：双向同步需要词表的 definition 字段来填充 schema.json
-    新增 oneOf+const 项的 description。本函数直接读 YAML 获取 value+definition，
-    不走 ``load_vocabulary_values``（后者只返回 set[str]）。
-
-    Returns:
-        ``[{"value": "frozen", "definition": "冻结——不可修改"}, ...]``
-    """
-    vocab_file = VOCAB_FIELD_MAP.get(vocab_name)
-    if not vocab_file:
-        return []
-    vocab_path = VOCAB_DIR / vocab_file
-    if not vocab_path.exists():
-        return []
-    try:
-        data = yaml.safe_load(vocab_path.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError:
-        return []
-    entries: list[dict] = []
-    for entry in data.get("values", []) or []:
-        if not isinstance(entry, dict):
-            continue
-        val = entry.get("value") or entry.get("id")
-        if val:
-            entries.append({
-                "value": str(val),
-                "definition": str(entry.get("definition", "")),
-            })
-    return entries
 
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
@@ -409,6 +376,46 @@ def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -
     return changed
 
 
+def _check_unregistered_enum_fields() -> bool:
+    """检测 schema.json 中有枚举字段未注册到 VOCAB_FIELD_MAP（治本 2026-06-30）。
+
+    红方攻击防御：AI 新增 frontmatter 字段时直接手写 enum，不建词表，
+    GATE-GENERATE 只校验 VOCAB_FIELD_MAP 中的字段，新字段漏检→多真源。
+    本函数扫描 schema.json 所有枚举字段，发现未注册的就报告 drift，
+    强制新增枚举字段必须在 VOCAB_FIELD_MAP 注册对应词表。
+
+    空的 oneOf/enum（如 depends_on 占位符）不触发——只检测有实际值的字段。
+    """
+    if not SCHEMA_JSON_PATH.exists():
+        return False
+    try:
+        data = json.loads(SCHEMA_JSON_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    properties = data.get("properties", {})
+    unregistered: list[str] = []
+    for name, prop in properties.items():
+        if not isinstance(prop, dict):
+            continue
+        has_enum_values = False
+        if "oneOf" in prop:
+            for item in prop["oneOf"]:
+                if isinstance(item, dict) and "const" in item:
+                    has_enum_values = True
+                    break
+        elif "enum" in prop and prop["enum"]:
+            has_enum_values = True
+        if has_enum_values and name not in VOCAB_FIELD_MAP:
+            unregistered.append(name)
+    if unregistered:
+        _drift(
+            f"schema_json: {len(unregistered)} 个枚举字段未注册到 VOCAB_FIELD_MAP: "
+            f"{unregistered}——新增枚举字段必须在 VOCAB_FIELD_MAP 注册对应词表，"
+            f"否则 GATE-GENERATE 不会校验该字段（漏检多真源）"
+        )
+    return bool(unregistered)
+
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(
@@ -459,7 +466,9 @@ def main() -> None:
         c1 = _sync_field_registry(vocab_name, valid_values, apply)
         c2 = _sync_arch_contract(vocab_name, valid_values, apply)
         # _sync_schema_json 需要 vocab_entries（含 definition）用于 missing 检测
-        vocab_entries = _load_vocab_entries(vocab_name)
+        # 治本（2026-06-30）：收敛到 SSoT load_vocabulary_entries（公共函数，非局部副本）
+        vocab_file = VOCAB_FIELD_MAP.get(vocab_name, "")
+        vocab_entries = load_vocabulary_entries(vocab_file, fallback_key="id", strict=False)
         c3 = _sync_schema_json(vocab_name, vocab_entries, apply)
 
         changes = sum(1 for c in [c1, c2, c3] if c)
@@ -472,6 +481,9 @@ def main() -> None:
             )
         else:
             print("    → ✅ 一致")
+
+    # 治本（2026-06-30）：检测未注册枚举字段（防漏检多真源）
+    _check_unregistered_enum_fields()
 
     print()
 
@@ -486,7 +498,9 @@ def main() -> None:
         return EXIT_PASS
 
     if _drifts:
-        print(f"🔴 发现 {len(_drifts)} 处漂移（使用 --apply 同步）")
+        print(f"🔴 发现 {len(_drifts)} 处漂移")
+        print("   修复方式：python scripts/governance/d3_metadata/generate_derived_files.py --apply")
+        print("   （--apply 会自动同步 extra+missing，sentinel 字段需人工裁定）")
         if args.warn_only:
             print("   (--warn-only 模式，exit 0)")
             return EXIT_PASS

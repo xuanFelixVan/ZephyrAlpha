@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G4: 从 depgraph.db edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)
+"""G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_integration_topology
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/
 [MODIFY-GUARD] 修改需通过DM-200910任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/integration_topology.mmd
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200910_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -103,7 +103,7 @@ def generate_integration_topology(conn: PgConnExecuteWrapper) -> str:
     lines.append("> **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。")
     lines.append("")
     lines.append(f"> 自动生成时间: {now}")
-    lines.append("> 数据源: depgraph.db edges表（跨域依赖）")
+    lines.append("> 数据源: depgraph (PostgreSQL) edges表（跨域依赖）")
     lines.append(f"> 跨域依赖对数: {len(deps)}")
     lines.append("")
     lines.append("```mermaid")
@@ -111,7 +111,7 @@ def generate_integration_topology(conn: PgConnExecuteWrapper) -> str:
 
     lines.append("%% 所有功能域集成依赖关系图")
     lines.append(f"%% 生成时间: {now}")
-    lines.append("%% 数据源: depgraph.db edges表（跨域依赖）")
+    lines.append("%% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）")
     lines.append(f"%% 跨域依赖对数: {len(deps)}")
     lines.append("")
     lines.append("graph LR")

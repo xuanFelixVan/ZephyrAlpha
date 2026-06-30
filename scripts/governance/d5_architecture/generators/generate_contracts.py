@@ -53,7 +53,7 @@ import re
 import yaml
 
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
+    "architecture_model/contracts/cross_layer_contracts.yaml"
 )
 
 _TYPE_IMPORTS: dict[str, str] = {

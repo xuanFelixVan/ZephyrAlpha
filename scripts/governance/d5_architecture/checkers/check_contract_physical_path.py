@@ -74,7 +74,7 @@ warn_only: false
 """
 
 CONTRACTS_YAML: Path = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
+    "architecture_model/contracts/cross_layer_contracts.yaml"
 )
 
 # Python 标识符正则: [a-zA-Z_][a-zA-Z0-9_]*

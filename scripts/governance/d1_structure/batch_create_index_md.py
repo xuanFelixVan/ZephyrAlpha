@@ -213,65 +213,10 @@ RESPONSIBILITY_MAP = {
             (".md 文档", "01_policies_and_standards/governance/"),
         ],
     ),
-    "02_enterprise_architecture/target_architecture/architecture_model": (
-        "架构模型 YAML — layers/（14 层层定义）、contracts/（跨层契约）、events/（领域事件）、cross-cutting/（横切）、domain/（DDD）、frontend/（前端）、scripts/（脚本）、technology/（技术栈）",
-        [
-            (".md 架构视图文档", "02_enterprise_architecture/target_architecture/（上层）"),
-        ],
-    ),
     "02_enterprise_architecture/target_architecture/diagrams": (
         "架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图",
         [
             ("架构文档 .md", "02_enterprise_architecture/target_architecture/（上层）"),
-        ],
-    ),
-    # === Level 4 ===
-    "02_enterprise_architecture/target_architecture/architecture_model/contracts": (
-        "跨层契约 YAML",
-        [
-            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/cross-cutting": (
-        "横切关注点 YAML — 能力热力图、运行时不变量、运行时平面",
-        [
-            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/domain": (
-        "DDD 领域模型 YAML",
-        [
-            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/events": (
-        "领域事件 YAML",
-        [
-            ("DDD 领域模型", "02_enterprise_architecture/target_architecture/architecture_model/domain/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/frontend": (
-        "前端模型 YAML",
-        [
-            ("技术栈定义", "02_enterprise_architecture/target_architecture/architecture_model/technology/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/layers": (
-        "14 层层定义 YAML（l00-data-source ~ l13-experiment-pipeline + shared + _schema）",
-        [
-            ("跨层契约", "02_enterprise_architecture/target_architecture/architecture_model/contracts/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/scripts": (
-        "脚本模型 YAML + 架构门禁检查脚本",
-        [
-            ("治理脚本", "01_policies_and_standards/scripts/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/architecture_model/technology": (
-        "技术栈 YAML — 技术全景图 + Vibe Coding 基础设施技术栈",
-        [
-            ("前端技术栈", "02_enterprise_architecture/target_architecture/architecture_model/frontend/"),
         ],
     ),
 }

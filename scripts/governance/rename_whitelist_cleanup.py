@@ -220,7 +220,7 @@ def verify_residual(file_path: Path) -> list[str]:
 
 
 def update_depgraph(dry_run: bool = False) -> int:
-    """更新 depgraph.db 中的路径记录（Phase 5）。
+    """更新 depgraph 中的路径记录（Phase 5）。
 
     执行 4 条 SQL UPDATE，将 nodes 表中的旧路径替换为新路径。
     依据施工方案 §3.4。
@@ -293,7 +293,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="命名规范白名单清理替换脚本")
     parser.add_argument("--dry-run", action="store_true", help="预览替换结果，不修改文件")
     parser.add_argument("--verify", action="store_true", help="验证残留检查")
-    parser.add_argument("--update-depgraph", action="store_true", help="更新 depgraph.db 路径记录 (Phase 5)")
+    parser.add_argument("--update-depgraph", action="store_true", help="更新 depgraph 路径记录 (Phase 5)")
     args = parser.parse_args()
 
     if args.update_depgraph:

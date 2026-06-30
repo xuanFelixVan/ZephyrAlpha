@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G5: 从 depgraph.db domains+nodes 表生成域总览索引MD文档
+"""G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_domain_index
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/domain_index.md
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/domain_index.md
 [MODIFY-GUARD] 修改需通过DM-200911任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/domain_index.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200911_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -99,9 +99,9 @@ def generate_domain_index() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。")
     lines.append("")
-    lines.append("> 本文档由 generate_domain_index.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_domain_index.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph.db domains表 + nodes表")
+    lines.append("> 数据源: depgraph (PostgreSQL) domains表 + nodes表")
     lines.append("")
 
     # 统计概览

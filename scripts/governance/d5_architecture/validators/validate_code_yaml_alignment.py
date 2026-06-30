@@ -86,21 +86,28 @@ def _collect_actual_files(dir_path: Path) -> frozenset[str]:
 
 
 def _parse_index(index_path: Path) -> dict:
-    """_parse_index implementation."""
+    """_parse_index implementation.
+
+    v3.0.2 单树结构：partitions 是列表，b_track partition 的 modules 子列表
+    每个模块的 path 指向 layers/b_*.yaml。c_track 已删除（14层降级为域属性）。
+    """
     index = _load_yaml(index_path)
     yaml_dir = index_path.parent
 
     partitions: dict[str, dict] = {}
-    for track_key in ("c_track", "b_track"):
-        for part in index.get("partitions", {}).get(track_key, []):
-            pid = part["id"]
-            layer_rel = part.get("path", "")
-            layer_path = yaml_dir / layer_rel
-            partitions[pid] = {
-                "track": "c" if track_key == "c_track" else "b",
-                "layer_path": layer_path,
-                "index_status": part.get("status", "unknown"),
-            }
+    for part in index.get("partitions", []):
+        pid = part.get("id", "")
+        # b_track partition: 从 modules 列表提取每个模块的 layer_path
+        if pid == "b_track" and "modules" in part:
+            for mod in part["modules"]:
+                mod_id = mod["id"]
+                layer_rel = mod.get("path", "")
+                layer_path = yaml_dir / layer_rel
+                partitions[mod_id] = {
+                    "track": "b",
+                    "layer_path": layer_path,
+                    "index_status": mod.get("status", "unknown"),
+                }
     return partitions
 
 
@@ -125,19 +132,8 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
     # CRITICAL: 实际存在但 YAML 未登记的目录
     yaml_expected_dirs: set[str] = set()
     for pid, info in yaml_partitions.items():
-        lp = info["layer_path"]
-        if lp.exists():
-            ly = _load_yaml(lp)
-            name = (ly.get("partition") or {}).get("name", "")
-            if name and info["track"] == "c":
-                snake = name.lower().replace(" ", "_").replace("-", "_")
-                snake = "".join(c for c in snake if c.isalpha() or c == "_")
-                while "__" in snake:
-                    snake = snake.replace("__", "_")
-                snake = snake.strip("_")
-                yaml_expected_dirs.add(f"{pid}_{snake}")
-            else:
-                yaml_expected_dirs.add(pid)
+        # b_track: pid 即模块名，目录名与 pid 一致（c_track 已删除）
+        yaml_expected_dirs.add(pid)
 
     for dir_name in sorted(actual_dirs):
         if dir_name not in yaml_expected_dirs:
@@ -155,16 +151,8 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
             continue
 
         ly = _load_yaml(lp)
-        name = (ly.get("partition") or {}).get("name", "")
-        if info["track"] == "c" and name:
-            snake = name.lower().replace(" ", "_").replace("-", "_")
-            snake = "".join(c for c in snake if c.isalpha() or c == "_")
-            while "__" in snake:
-                snake = snake.replace("__", "_")
-            snake = snake.strip("_")
-            expected_dir = f"{pid}_{snake}"
-        else:
-            expected_dir = pid
+        # b_track: expected_dir 与 pid 一致（c_track 已删除）
+        expected_dir = pid
 
         if expected_dir not in actual_dirs:
             if ly.get("partition", {}).get("status") == "skeleton":

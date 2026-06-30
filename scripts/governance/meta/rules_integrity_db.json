@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "1748267566098e79",
+      "hash": "18eecf225d109e72",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/git_commit_gateway.py": {
-      "hash": "996ddb48f6e85fef",
+      "hash": "8a668ff4edb34f33",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/reconciliation_registry.py": {
-      "hash": "a5a3e1b7adfbfe9d",
+      "hash": "071127d8845b51c1",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,6 +61,6 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T07:18:33.560286+00:00",
-  "last_check_at": "2026-06-30T07:18:45.859486+00:00"
+  "registered_at": "2026-06-30T07:31:19.039114+00:00",
+  "last_check_at": "2026-06-30T07:19:31.313382+00:00"
 }

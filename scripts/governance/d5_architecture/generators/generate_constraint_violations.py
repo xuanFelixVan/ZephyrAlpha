@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G9: 从 depgraph.db arch_constraints 表生成架构约束违规报告MD文档
+"""G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_constraint_violations
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/constraint_violations.md
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/constraint_violations.md
 [MODIFY-GUARD] 修改需通过DM-200911任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/constraint_violations.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200911_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -97,9 +97,9 @@ def generate_constraint_violations() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。")
     lines.append("")
-    lines.append("> 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_constraint_violations.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph.db arch_constraints表")
+    lines.append("> 数据源: depgraph (PostgreSQL) arch_constraints表")
     lines.append("")
 
     # 统计概览

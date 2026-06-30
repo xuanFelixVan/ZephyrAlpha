@@ -63,18 +63,12 @@ AUDIT_MATRIX_PATH = (
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "manifest.yaml"
 INVARIANTS_PATH = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
-    / "cross-cutting"
+    / "cross_cutting"
     / "invariants.yaml"
 )
 CONTRACTS_PATH = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"
@@ -155,9 +149,7 @@ def score_d5_architecture() -> float:
     active_ffs = [f for f in ffs if f.get("status") == "active"]
     if len(active_ffs) >= 15:
         score += 1.5
-    dual_tree_sync = REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "check_dual_tree_sync.py"
-    if dual_tree_sync.exists():
-        score += 1.0
+    # check_dual_tree_sync 已删除（双树合并为单树，2026-06-30）
     return min(score, 10.0)
 
 

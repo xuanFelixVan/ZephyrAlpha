@@ -62,7 +62,7 @@ def main():
         all_pass = False
     conn.close()
 
-    # 2. 规则表数据验证（各表 > 0）- 规则表在depgraph.db中
+    # 2. 规则表数据验证（各表 > 0）- 规则表在depgraph中
     print("\n[2] 规则表数据验证（各表 > 0）")
     conn = get_depgraph_pg_connection(autocommit=True)
     tables = ["gates", "field_vocabularies", "registries", "hard_boundaries", "business_streams", "blueprint_links"]
@@ -89,8 +89,8 @@ def main():
             all_pass = False
     conn.close()
 
-    # 3. depgraph.db基本验证
-    print("\n[3] depgraph.db基本验证")
+    # 3. depgraph基本验证
+    print("\n[3] depgraph基本验证")
     conn = get_depgraph_pg_connection(autocommit=True)
     r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes").fetchone()
     print(f"  总节点数: {r['cnt']}")

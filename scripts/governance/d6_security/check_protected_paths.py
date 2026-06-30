@@ -57,7 +57,7 @@ PROTECTED_PATTERNS = [
     (".git/", "只读——禁止任何操作"),
     ("AGENTS.md", "重大修改须 Owner 审批"),
     ("docs/01_policies_and_standards/rules/", "重大修改须 Owner 审批（rules/ 下所有 .yaml）"),
-    ("docs/02_enterprise_architecture/target_architecture/architecture_model/", "重大修改须 Owner 审批"),
+    ("architecture_model/", "重大修改须 Owner 审批"),
 ]
 
 

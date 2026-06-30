@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G11: 从 depgraph.db 生成能力热力图
+"""G11: 从 depgraph (PostgreSQL) 生成能力热力图
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.11
 [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到01_global_architecture_diagram/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到01_global_architecture_diagram/
 [MODIFY-GUARD] 修改需通过任务卡
 [CONSUMERS] CI自动触发;人工查看01_global_architecture_diagram/global_capability_heatmap.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200910_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -253,14 +253,14 @@ def generate_heatmap() -> str:
     try:
         use_arch_table = table_exists(conn, "arch_domain_capacity")
         if use_arch_table:
-            data_source = "depgraph.db arch_domain_capacity表"
+            data_source = "depgraph (PostgreSQL) arch_domain_capacity表"
             # Primary data source: arch_domain_capacity table
             # When this table exists, query it for capability data
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
         else:
             # Fallback: arch_domain_capacity merged into domains table in v6
-            data_source = "depgraph.db domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
+            data_source = "depgraph (PostgreSQL) domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
     finally:
@@ -311,7 +311,7 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
     lines.append("")
-    lines.append("> 本文档由 generate_capability_heatmap.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_capability_heatmap.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append("> 最后更新以 git log 为准")
     lines.append(f"> 数据源: {data_source}")
     lines.append("")

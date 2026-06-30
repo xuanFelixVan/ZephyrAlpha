@@ -15,17 +15,17 @@
 # [TTL] task_bound
 """DM-200912 Phase4-A: 重写4个核心架构视图(overview/index/application_architecture/capability_heatmap)
 
-将14层主框架改为52域+全景图(depgraph.db)派生。
+将14层主框架改为52域+全景图(depgraph)派生。
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.5
 [MODULE] scripts.governance.d5_architecture.dm200912_rewrite_views
-[INVARIANTS] 只读depgraph.db;输出4个MD文件;保留原frontmatter结构但更新内容
+[INVARIANTS] 只读depgraph;输出4个MD文件;保留原frontmatter结构但更新内容
 [MODIFY-GUARD] 修改需通过DM-200912任务卡
 [CONSUMERS] 架构视图读者;CI门禁
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1;域数据缺失→exit 2
+[ERROR_CONTRACT] depgraph不存在→exit 1;域数据缺失→exit 2
 [TESTS] 无(一次性脚本)
 [DOMAIN] D_GOVERNANCE
 """
@@ -48,7 +48,7 @@ TARGET_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_archite
 
 
 def load_domain_data() -> dict:
-    """从depgraph.db加载域+模块统计数据。"""
+    """从depgraph加载域+模块统计数据。"""
     conn = get_depgraph_pg_connection(autocommit=True)
     try:
         cur = conn.execute(
@@ -145,7 +145,7 @@ tags:
 - 6-core-services
 - domain-driven
 - depgraph-derived
-summary: 架构文档组的总览视图。v2.0.0：基于§2.1裁定，14层降级为域属性，{total}域成为唯一物理分类体系。结构化数据由depgraph.db全景图派生。
+summary: 架构文档组的总览视图。v2.0.0：基于§2.1裁定，14层降级为域属性，{total}域成为唯一物理分类体系。结构化数据由depgraph全景图派生。
 date: '{now}'
 ttl: permanent
 ---
@@ -157,18 +157,18 @@ ttl: permanent
 
 ## 0. Executive Summary / 高管摘要
 
-**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用**{total}域唯一物理分类体系**（基于depgraph.db全景图），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
+**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用**{total}域唯一物理分类体系**（基于depgraph全景图），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
 
 **核心架构决策**（v2.0.0 基于§2.1裁定）：
 - **{total}域唯一分类**：原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。两个并行分类=AI每次判断用哪个=幻觉温床，故14层信息保留方式改为域属性。
-- **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）由`data/databases/depgraph.db`派生，禁止在MD中硬编码。
+- **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）由`PostgreSQL depgraph`派生，禁止在MD中硬编码。
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 正交划分开发态和运行态关注点
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
 - **安全红线**：4 条不可撤销（详见 [architecture_principles.md](architecture_principles.md) §1）
 - **技术栈**：Python >=3.11 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
 - **当前阶段**：experimental 启动，{total}域已定义，模块边界待定，6 大 Vibe Coding 2.0 核心服务施工中
 
-**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. {total}-domain unique physical classification (derived from depgraph.db panorama). Python full-stack, Vibe Coding driven. The legacy 14-layer (L00-L13) has been demoted to a domain attribute (`layer_id`) per §2.1 ruling — single classification eliminates AI hallucination from dual-taxonomy ambiguity.
+**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. {total}-domain unique physical classification (derived from depgraph panorama). Python full-stack, Vibe Coding driven. The legacy 14-layer (L00-L13) has been demoted to a domain attribute (`layer_id`) per §2.1 ruling — single classification eliminates AI hallucination from dual-taxonomy ambiguity.
 
 ---
 
@@ -192,9 +192,9 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 |--------|------|------|
 | 14层 vs {total}域 | **{total}域唯一** | 两个并行分类=AI每次判断用哪个=幻觉温床 |
 | 14层信息保留方式 | 作为域的`layer_id`属性 | 属性不是分类，不产生二元性 |
-| L00-L13层YAML文件 | 废弃，信息合并入depgraph.db域定义 | 避免SSoT分裂 |
+| L00-L13层YAML文件 | 废弃，信息合并入depgraph域定义 | 避免SSoT分裂 |
 
-**当前域层级分布**（数据源：depgraph.db `domains` 表）：
+**当前域层级分布**（数据源：depgraph `domains` 表）：
 
 | layer_id | 域数量 | 说明 |
 |----------|:---:|------|
@@ -209,7 +209,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 ### 1.3 全景图派生机制
 
-所有架构视图的结构化数据均由`depgraph.db`全景图派生，禁止在MD中硬编码会变化的数字。
+所有架构视图的结构化数据均由`depgraph`全景图派生，禁止在MD中硬编码会变化的数字。
 
 **派生工具链**：
 - `scripts/governance/d5_architecture/generators/generate_domain_doc.py` — 单域/全域文档生成
@@ -226,7 +226,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| **{total}域物理分类** | ✅ **已定义** | depgraph.db `domains` 表为SSoT |
+| **{total}域物理分类** | ✅ **已定义** | depgraph `domains` 表为SSoT |
 | **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | ✅ **已定稿** | 2026-04-24 产出；接口规范 6 份齐备 |
 | **17 项技术选型** | ✅ **已定稿** | 见 `technology_landscape.yaml`（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
@@ -283,7 +283,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | `application_architecture.md` |
 | `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | `application_architecture.md §4` |
 
-> **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_dependency_diagram.py`从depgraph.db派生。
+> **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_dependency_diagram.py`从depgraph派生。
 
 ---
 
@@ -318,7 +318,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 ### 5A.2 与域架构的关系
 
-6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph.db `domains`表。
+6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph `domains`表。
 
 ### 5A.3 详细架构
 
@@ -342,7 +342,7 @@ Directory: `target_architecture/` (TOGAF term). File names: `NN-kebab-case.md`. 
 
 ### 6.4 数据派生原则（v2.0.0新增）
 
-- 所有域/模块/依赖数字MUST来自depgraph.db，禁止硬编码
+- 所有域/模块/依赖数字MUST来自depgraph，禁止硬编码
 - 派生工具位于`scripts/governance/d5_architecture/generators/`
 - 派生产出位于`docs/02_enterprise_architecture/generated/`
 - MD文档引用派生数据时MUST标注数据源
@@ -369,7 +369,7 @@ Directory: `target_architecture/` (TOGAF term). File names: `NN-kebab-case.md`. 
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| {now} | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——14层降级为域属性，{total}域成为唯一物理分类体系；结构化数据由depgraph.db全景图派生；新增§1.2唯一分类体系裁定、§1.3全景图派生机制、§6.4数据派生原则。 |
+| {now} | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——14层降级为域属性，{total}域成为唯一物理分类体系；结构化数据由depgraph全景图派生；新增§1.2唯一分类体系裁定、§1.3全景图派生机制、§6.4数据派生原则。 |
 | 2026-05-02 | v1.4.1：§0 英文部分从中英完全重复精简为关键信息摘要。 |
 | 2026-04-24 | v1.2.0：追加§1.3当前阶段定位+§5A Vibe Coding 2.0基础设施。 |
 | 2026-04-17 | v1.0.0：从 DW-IA-DESIGN-001 拆分升格建立。 |
@@ -428,11 +428,11 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）
 
-> **v3.0.0变更**：物理代码组织以{total}域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
+> **v3.0.0变更**：物理代码组织以{total}域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph派生。
 
 ---
 
-## 2. 域索引（{total}域，数据源：depgraph.db）
+## 2. 域索引（{total}域，数据源：depgraph）
 
 > 本索引由`scripts/governance/d5_architecture/generators/generate_domain_index.py`派生。
 > 完整域清单见`generated/domain_index.md`。
@@ -475,7 +475,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 4. 派生视图（generated/目录）
 
-> 所有派生视图由`scripts/governance/d5_architecture/generators/`下的生成器从depgraph.db派生。
+> 所有派生视图由`scripts/governance/d5_architecture/generators/`下的生成器从depgraph派生。
 
 | 派生视图 | 生成器 | 数据源 | 说明 |
 |---------|--------|--------|------|
@@ -541,7 +541,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------------|-------------|---------------|
 | **View** (00–10) | Narrative: explains **why** | For humans, conveys architectural intent |
 | **YAML SSoT** (architecture_model/) | Structured: lists **what** | For machines, AI, and CI gates |
-| **派生视图** (generated/) | 派生: 从depgraph.db生成 | 结构化数据可视化，禁止手编 |
+| **派生视图** (generated/) | 派生: 从depgraph生成 | 结构化数据可视化，禁止手编 |
 
 ---
 
@@ -629,7 +629,7 @@ tags:
 - orthogonal-view
 - vibe-coding-2.0
 - 6-core-services
-summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为{total}域派生，数据源depgraph.db。原14层模块清单废弃。
+summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为{total}域派生，数据源depgraph。原14层模块清单废弃。
 date: '{now}'
 ttl: permanent
 ---
@@ -640,7 +640,7 @@ The Application Architecture answers:
 
 - What applications / modules / services exist? (C4 views)
 - How do they interact? (Interfaces and protocols)
-- How is `src/zephyr/` structured? ({total}域物理分类，数据源depgraph.db)
+- How is `src/zephyr/` structured? ({total}域物理分类，数据源depgraph)
 - How is `scripts/` organized? (Governance code topology)
 - Where do future platform modules belong? (Module placement)
 
@@ -678,7 +678,7 @@ The Application Architecture answers:
 
 ---
 
-## 4. 域架构（{total}域，数据源：depgraph.db）
+## 4. 域架构（{total}域，数据源：depgraph）
 
 > 本节为v3.0.0重写。模块清单由`generated/domains/*.md`派生，禁止在本文硬编码。
 > 完整域索引见`generated/domain_index.md`。
@@ -687,12 +687,12 @@ The Application Architecture answers:
 
 | 指标 | 值 | 数据源 |
 |------|:---:|--------|
-| 域总数 | {total} | depgraph.db `domains` 表 |
-| 节点总数 | {total_nodes} | depgraph.db `nodes` 表 |
-| 依赖边总数 | {total_edges} | depgraph.db `edges` 表 |
-| production 节点 | {maturity.get("production", 0)} | depgraph.db `nodes.design_maturity` |
-| design 节点 | {maturity.get("design", 0)} | depgraph.db `nodes.design_maturity` |
-| prototype 节点 | {maturity.get("prototype", 0)} | depgraph.db `nodes.design_maturity` |
+| 域总数 | {total} | depgraph `domains` 表 |
+| 节点总数 | {total_nodes} | depgraph `nodes` 表 |
+| 依赖边总数 | {total_edges} | depgraph `edges` 表 |
+| production 节点 | {maturity.get("production", 0)} | depgraph `nodes.design_maturity` |
+| design 节点 | {maturity.get("design", 0)} | depgraph `nodes.design_maturity` |
+| prototype 节点 | {maturity.get("prototype", 0)} | depgraph `nodes.design_maturity` |
 
 ### 4.2 域层级分布
 
@@ -724,15 +724,15 @@ The Application Architecture answers:
 
 | 缩写 | 服务全称 | 一句话定位 | 域归属 |
 |------|---------|-----------|--------|
-| **LSG** | LLM Security Gateway | LLM 交互的"安全闸"，四层防御，fail-closed | 见depgraph.db |
-| **CE** | Context Engine | AI 编码的"中枢神经" | 见depgraph.db |
-| **Orc** | Agent Orchestrator | Vibe Coding 2.0 的"任务引擎" | 见depgraph.db |
-| **VMS** | Vector Memory Service | 知识与决策的"向量记忆库" | 见depgraph.db |
-| **FLE** | Feedback Loop Engine | 系统自调节的"闭环大脑" | 见depgraph.db |
+| **LSG** | LLM Security Gateway | LLM 交互的"安全闸"，四层防御，fail-closed | 见depgraph |
+| **CE** | Context Engine | AI 编码的"中枢神经" | 见depgraph |
+| **Orc** | Agent Orchestrator | Vibe Coding 2.0 的"任务引擎" | 见depgraph |
+| **VMS** | Vector Memory Service | 知识与决策的"向量记忆库" | 见depgraph |
+| **FLE** | Feedback Loop Engine | 系统自调节的"闭环大脑" | 见depgraph |
 
 ### 4A.2 与域架构的关系
 
-6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph.db `domains`表。
+6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph `domains`表。
 
 ---
 
@@ -748,11 +748,11 @@ The Application Architecture answers:
 
 ### 6.1 域归属判定
 
-新模块归属哪个域？查询depgraph.db `domains`表，按功能职责匹配`description`字段。无法匹配时，评估是否需要新增域（需Owner批准）。
+新模块归属哪个域？查询depgraph `domains`表，按功能职责匹配`description`字段。无法匹配时，评估是否需要新增域（需Owner批准）。
 
 ### 6.2 跨域依赖规则
 
-- 跨域依赖MUST在depgraph.db `edges`表登记
+- 跨域依赖MUST在depgraph `edges`表登记
 - 禁止循环依赖（由`arch_constraints`表约束）
 - 跨域依赖强度由`coupling_strength`字段标注
 
@@ -799,7 +799,7 @@ The Application Architecture answers:
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| {now} | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为{total}域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
+| {now} | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为{total}域派生（数据源depgraph）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-04-22 | v2.0.0：模块属性详情迁移至 architecture_model/ 联邦 YAML 模型。 |
 """
@@ -866,7 +866,7 @@ tags:
 - orthogonal-view
 - domain-driven
 - depgraph-derived
-summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为{total}域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph.db派生。
+summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为{total}域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph派生。
 date: '{now}'
 ttl: permanent
 ---
@@ -909,7 +909,7 @@ ttl: permanent
 基于§2.1裁定：
 - 原14层×7能力域矩阵 → 改为{total}域×10能力域矩阵
 - 14层降级为域属性，不再作为热力图维度
-- 成熟度数据由depgraph.db `nodes.design_maturity`派生
+- 成熟度数据由depgraph `nodes.design_maturity`派生
 
 ---
 
@@ -917,7 +917,7 @@ ttl: permanent
 
 ### 2.1 五档成熟度定义
 
-| 档位 | 名称 | 定义 | depgraph.db映射 |
+| 档位 | 名称 | 定义 | depgraph映射 |
 |:---:|------|------|----------------|
 | **L0** | 缺失 | 能力完全不存在，无设计无代码 | 域无节点 |
 | **L1** | 设计 | 仅有设计文档/蓝图，无代码 | `design_maturity='design'` |
@@ -935,7 +935,7 @@ ttl: permanent
 
 ## 3. {total}域×10能力域热力图
 
-> 数据源：depgraph.db `domains` + `nodes` 表
+> 数据源：depgraph `domains` + `nodes` 表
 > 派生工具：`scripts/governance/d5_architecture/generators/generate_design_vs_production.py`
 
 ### 3.1 能力域定义（10能力域=7业务+3横切）
@@ -1054,7 +1054,7 @@ ttl: permanent
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| {now} | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为{total}域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph.db派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph.db映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
+| {now} | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为{total}域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
 | 2026-04-22 | v1.0.0：建立能力热力图正交视图。 |
 """
     out_path = TARGET_DIR / "capability_heatmap.md"

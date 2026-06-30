@@ -46,6 +46,7 @@ from zephyr.shared.io.yaml_utils import (  # noqa: E402,F401
     evaluate_ttl,
     load_decision_tree,
     load_vocabulary_deprecated_map,
+    load_vocabulary_entries,
     load_vocabulary_values,
 )
 

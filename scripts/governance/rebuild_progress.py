@@ -89,7 +89,7 @@ def main():
             "SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design'"
         ).fetchone()["cnt"]
         dconn.close()
-        print("\n[depgraph.db 状态]")
+        print("\n[depgraph 状态]")
         print(f"  节点总数: {node_count}")
         print(f"  边总数: {edge_count}")
         print(f"  设计态节点: {design_nodes}")

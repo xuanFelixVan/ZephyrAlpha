@@ -66,7 +66,7 @@ for name, info in scripts.items():
 print()
 print("=== CTR contracts ===")
 with open(
-    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml",
+    "architecture_model/contracts/cross_layer_contracts.yaml",
     encoding="utf-8",
 ) as f:
     contracts = yaml.safe_load(f)

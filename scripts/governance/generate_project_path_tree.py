@@ -16,7 +16,7 @@
 """从磁盘扫描生成架构全景图的tree段（运营态目录结构）。
 
 核心变更（DM-283/DM-310）:
-  - 输出写入 depgraph.db 的 tree 段（而非独立文件）
+  - 输出写入 depgraph 的 tree 段（而非独立文件）
   - 每个目录节点输出 lifecycle/__domain_id__/__subdomain_id__/__target_path__
   - 双态保护：生成运营态时不覆盖设计态节点（lifecycle: design 优先于 operational）
   - DM-310: __state__ 统一为 lifecycle 字段（与 depgraph 一致）

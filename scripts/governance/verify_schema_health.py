@@ -15,7 +15,7 @@
 # [TESTS] tests/test_verify_schema_health.py
 # [TTL] task_bound
 """
-verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016 治本）
+verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
 
 校验内容：
   1. DDL 列一致性：DB 实际列 vs _DDL_* 声明列（仅保留表）
@@ -39,7 +39,7 @@ __manifest__ = {
         {"flag": "--warn-only", "type": "bool", "description": "软警告模式（漂移仍 exit 0，观察期用）"},
         {"flag": "--skip-runtime", "type": "bool", "description": "跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验"},
     ],
-    "description": "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py 方案",
+    "description": "depgraph (PostgreSQL) Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py 方案",
     "dimensions": ["D5"],
     "priority": "P1",
     "timeout_seconds": 30,
@@ -241,14 +241,14 @@ def check_pg_runtime_health(conn, issues: list) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="depgraph.db Schema 健康度校验")
+    parser = argparse.ArgumentParser(description="depgraph (PostgreSQL) Schema 健康度校验")
     parser.add_argument("--db", default="", help="（已废弃）P2迁移后连接由 get_depgraph_pg_connection 统一管理")
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（默认行为，显式传入便于阅读）")
     parser.add_argument("--warn-only", action="store_true", help="软警告模式（发现漂移仍 exit 0）")
     parser.add_argument("--skip-runtime", action="store_true", help="跳过校验4（PG 运行时健康），仅做 Schema 静态校验")
     args = parser.parse_args()
 
-    # P2迁移后：depgraph.db 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理
+    # P2迁移后：depgraph 已从 SQLite 迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理
     # （--db 参数保留以兼容既有 pre-commit 调用，但不再用于连接）
     conn = get_depgraph_pg_connection(autocommit=True)
     issues: list[str] = []
@@ -271,7 +271,7 @@ def main() -> int:
         # --warn-only 优先；默认（无 flag 或 --ci）硬阻断
         return EXIT_PASS if args.warn_only else EXIT_FINDINGS
 
-    print("[PASS] depgraph.db Schema 健康度校验通过")
+    print("[PASS] depgraph (PostgreSQL) Schema 健康度校验通过")
     return EXIT_PASS
 
 

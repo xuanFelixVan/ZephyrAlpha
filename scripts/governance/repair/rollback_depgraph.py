@@ -16,39 +16,39 @@
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/rollback_depgraph.py | §8.2
 [MODULE] 无（独立脚本）
-[INVARIANTS] 仅接受depgraph.db.backup.*路径; 回滚前自动备份当前depgraph.db
+[INVARIANTS] 仅接受depgraph.backup.*路径; 回滚前自动备份当前depgraph
 [MODIFY-GUARD] 本脚本由autopilot执行
 [CONSUMERS] autopilot session-20260618-001; §8.2回滚脚本
 [STABILITY] stable
 [SAFETY] H
 [AI_AUTONOMY] human_gated
 [ERROR_CONTRACT] 参数缺失→exit 1; 备份路径不存在→exit 1; 回滚前备份失败→exit 1; 成功→exit 0
-[TESTS] 执行后验证depgraph.db大小==备份文件大小
+[TESTS] 执行后验证depgraph大小==备份文件大小
 
-P1-2 从备份回滚depgraph.db
+P1-2 从备份回滚depgraph
 根因：§8.2要求回滚脚本，原脚本缺失
 治根：落盘回滚脚本确保可从任意备份恢复
 
 用法:
     python rollback_depgraph.py <备份路径>
-    python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration
+    python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.backup.pre_migration
 """
 
 import os
 import shutil
 import sys
 
-DST = r"D:\ZephyrAlpha\data\databases\depgraph.db"
-PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.db.backup.pre_rollback"
+DST = r"D:\ZephyrAlpha\data\databases\depgraph"
+PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.backup.pre_rollback"
 
 
 def main():
-    # P2迁移后警告：depgraph.db 已迁移到 PostgreSQL，本脚本的文件复制式回滚
+    # P2迁移后警告：depgraph 已迁移到 PostgreSQL，本脚本的文件复制式回滚
     #（shutil.copy2）与 PG 服务器模式不兼容。如需回滚 PG 数据，应使用
     # pg_dump/pg_restore 或 SQL 级时间点恢复（PITR），而非复制 .db 文件。
     # 本脚本保留仅供 SQLite 备份文件的历史回滚参考，在 PG 模式下不应使用。
     print(
-        "[WARNING] depgraph.db 已迁移到 PostgreSQL（P2迁移）。"
+        "[WARNING] depgraph 已迁移到 PostgreSQL（P2迁移）。"
         "本脚本的文件复制式回滚与 PG 不兼容，"
         "如需回滚请使用 pg_dump/pg_restore 或 PITR。",
         file=sys.stderr,
@@ -56,7 +56,7 @@ def main():
 
     if len(sys.argv) < 2:
         print("[ERROR] 用法: python rollback_depgraph.py <备份路径>")
-        print("示例: python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration")
+        print("示例: python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.backup.pre_migration")
         return 1
 
     src_backup = sys.argv[1]
@@ -75,7 +75,7 @@ def main():
     print(f"[INFO] 回滚目标: {DST}")
 
     if os.path.exists(DST):
-        print(f"[INFO] 回滚前备份当前depgraph.db到: {PRE_ROLLBACK_BACKUP}")
+        print(f"[INFO] 回滚前备份当前depgraph到: {PRE_ROLLBACK_BACKUP}")
         shutil.copy2(DST, PRE_ROLLBACK_BACKUP)
         pre_size = os.path.getsize(PRE_ROLLBACK_BACKUP)
         print(f"[OK] 回滚前备份完成: {pre_size} bytes")
@@ -84,7 +84,7 @@ def main():
     shutil.copy2(src_backup, DST)
 
     dst_size = os.path.getsize(DST)
-    print(f"[OK] 回滚后depgraph.db大小: {dst_size} bytes")
+    print(f"[OK] 回滚后depgraph大小: {dst_size} bytes")
 
     if dst_size != src_size:
         print(f"[FAIL] 回滚后大小({dst_size})与备份({src_size})不一致")

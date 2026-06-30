@@ -4,7 +4,7 @@
 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
 
 真源优先级（治本 v2.0，2026-06-29）：
-1. depgraph.db domains.domain_name（动态加载，真源唯一）
+1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一）
 2. DOMAIN_NAME_ZH 硬编码映射表（fallback，db 不可用时使用）
 
 治本历史：
@@ -110,7 +110,7 @@ DOMAIN_NAME_ZH = {
     "D_GOV_RULE": "规则治理",
     "D_GOV_SCRIPTS": "脚本治理",
 
-    # 测试域（测试域不插入生产 depgraph.db，仅硬编码 fallback 维护）
+    # 测试域（测试域不插入生产 depgraph (PostgreSQL)，仅硬编码 fallback 维护）
     "D-T3-W0": "测试域T3-0",
     "D-T3-W1": "测试域T3-1",
     "D-T3-W2": "测试域T3-2",
@@ -128,7 +128,7 @@ _DOMAIN_NAME_CACHE: dict[str, str] | None = None
 
 
 def _load_domain_names_from_db() -> dict[str, str]:
-    """从 depgraph.db domains 表动态加载 domain_id → domain_name 映射。
+    """从 depgraph (PostgreSQL) domains 表动态加载 domain_id → domain_name 映射。
 
     延迟 import _shared.constants（避免模块加载时依赖 db 配置）。
     失败时返回空 dict（调用方回退到硬编码 DOMAIN_NAME_ZH）。
@@ -171,7 +171,7 @@ def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     """获取域的中文名称（动态加载 + 硬编码 fallback 双层）。
 
     真源优先级：
-    1. depgraph.db domains.domain_name（动态加载，真源唯一）
+    1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一）
     2. DOMAIN_NAME_ZH 硬编码映射表（fallback）
     3. fallback 参数或 domain_id 本身
 

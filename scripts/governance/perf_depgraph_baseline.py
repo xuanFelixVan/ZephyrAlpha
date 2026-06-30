@@ -16,7 +16,7 @@
 """
 [BLUEPRINT] | scripts/governance/perf_depgraph_baseline.py | §1
 [MODULE] scripts.governance.perf_depgraph_baseline
-[INVARIANTS] 只读访问 depgraph.db（mode=ro）；禁止任何写操作；测试结果可重复
+[INVARIANTS] 只读访问 depgraph（mode=ro）；禁止任何写操作；测试结果可重复
 [MODIFY-GUARD] project_rules.md(RULE-SIXTEEN); scripts/governance/extract_depgraph.py
 [CONSUMERS] 架构治理；性能回归监控；AI session 判断 depgraph 查询时效
 [STABILITY] stable
@@ -26,9 +26,9 @@
 [TESTS] python scripts/governance/perf_depgraph_baseline.py --runs 3
 [DOMAIN] D_GOVERNANCE
 
-depgraph.db 查询性能基线测试（RULE-SIXTEEN 配套）
+depgraph 查询性能基线测试（RULE-SIXTEEN 配套）
 
-测试 depgraph.db 在万级节点规模下的查询延迟，建立性能基线供未来回归对比。
+测试 depgraph 在万级节点规模下的查询延迟，建立性能基线供未来回归对比。
 只读访问，不获取文件锁（只读连接不触发写锁）。
 
 用法:
@@ -264,7 +264,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="depgraph.db 查询性能基线测试（只读，万级节点跨域JOIN延迟）")
+    parser = argparse.ArgumentParser(description="depgraph 查询性能基线测试（只读，万级节点跨域JOIN延迟）")
     parser.add_argument("--runs", type=int, default=5, help="每个场景运行次数（默认5）")
     parser.add_argument("--output", type=str, help="输出到 JSON 文件（默认 stdout）")
     args = parser.parse_args()

@@ -41,7 +41,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT as _REPO_ROOT  # noqa: E402  治本(2026-06-30): SSoT
-# Whitelist: depgraph_schema.py (depgraph.db migrations) + sqlite_schema.py (governance.db migrations)
+# Whitelist: depgraph_schema.py (depgraph migrations) + sqlite_schema.py (governance.db migrations)
 WHITELIST = {
     "src/zephyr/governance/depgraph_schema.py",
     "src/zephyr/governance/sqlite_schema.py",

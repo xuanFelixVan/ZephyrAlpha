@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""DM-200912 Phase4-A: 查询 depgraph.db 域+模块统计，输出 JSON 供视图重写使用
+"""DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.5
 [MODULE] scripts.governance.d5_architecture.dm200912_query_domains
-[INVARIANTS] 只读depgraph.db;输出JSON到stdout
+[INVARIANTS] 只读depgraph (PostgreSQL);输出JSON到stdout
 [MODIFY-GUARD] 修改需通过DM-200912任务卡
 [CONSUMERS] dm200912_rewrite_views.py
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] 无(一次性脚本)
 [DOMAIN] D_GOVERNANCE
 """

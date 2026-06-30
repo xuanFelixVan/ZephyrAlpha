@@ -17,13 +17,13 @@
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.10
 [MODULE] scripts.governance.d5_architecture.generators.generate_navigation_index
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;扫描实际文件
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);扫描实际文件
 [MODIFY-GUARD] 修改需通过任务卡
 [CONSUMERS] 人工查看 00_overview_entry/架构文档库总览.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200910_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -65,7 +65,7 @@ def scan_directory(dir_path: Path) -> list[str]:
 
 
 def get_db_stats(conn: PgConnExecuteWrapper) -> dict:
-    """从 depgraph.db 获取统计数据。"""
+    """从 depgraph (PostgreSQL) 获取统计数据。"""
     stats = {}
 
     # 域总数
@@ -123,7 +123,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("> 这是你查看 ZephyrAlpha 架构的入口。从这里出发，你能找到所有架构相关的文档和图。")
     lines.append(">")
     lines.append(
-        "> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph.db），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。"
+        "> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph (PostgreSQL)），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。"
     )
     lines.append(">")
     lines.append(
@@ -189,7 +189,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("## 数据从哪来")
     lines.append("")
     lines.append("**所有文档都是自动生成的**：")
-    lines.append("- 数据源：`data/databases/depgraph.db`（全景图数据库）")
+    lines.append("- 数据源：depgraph (PostgreSQL) 数据库（全景图数据库）")
     lines.append("- 全景图是唯一真源")
     lines.append("- 架构图是全景图的派生物")
     lines.append("- 禁止手工修改自动生成的文档")

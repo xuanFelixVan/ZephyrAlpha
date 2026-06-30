@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G2+G10 合并：从 depgraph.db nodes+edges 表生成指定域的 MD 文档
+"""G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
 
 包含：
 - 模块清单（按 architecture_layer 分组）
@@ -24,17 +24,17 @@
 
 治本合并：消除 generate_domain_architecture_diagram.py 的 4 个 DB 查询函数逐字重复 +
 修复 arch_diagram 孤儿状态（原 reconciler 不调用它，53 个 _architecture.md 已过时）。
-合并后由 GATE-DOMAIN-DOC reconciler 统一维护，ASCII art 也会随 depgraph.db 变更自动刷新。
+合并后由 GATE-DOMAIN-DOC reconciler 统一维护，ASCII art 也会随 depgraph (PostgreSQL) 变更自动刷新。
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/_working/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到02_domain_architecture_docs/
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到02_domain_architecture_docs/
 [MODIFY-GUARD] 修改需通过DM200910任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看02_domain_architecture_docs/{编号}_{domain}.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1;域不存在→exit 2
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1;域不存在→exit 2
 [TESTS] tests/test_dm200910_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -839,9 +839,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("")
     lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。")
     lines.append("")
-    lines.append("> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append(f"> 最后更新: {now}")
-    lines.append("> 数据源: depgraph.db nodes表 + edges表")
+    lines.append("> 数据源: depgraph (PostgreSQL) nodes表 + edges表")
     lines.append("")
 
     # 域基本信息（中英文对照）
@@ -964,7 +964,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 说明
     lines.append("## 说明 / Notes")
     lines.append("")
-    lines.append("- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表")
+    lines.append("- **数据源 / Data Source**: `depgraph (PostgreSQL)` 的 `nodes`、`edges`、`domains` 表")
     lines.append("- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）")
     lines.append("- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新")
     lines.append("- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`")

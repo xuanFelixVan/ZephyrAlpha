@@ -10,7 +10,6 @@ __all__ = [
     "check_code_duplication",
     "check_contract_code_drift",
     "check_dependency_direction",
-    "check_dual_tree_sync",
     "check_g6_ctr_compliance",
     "check_orphan_outputs",
     "check_ssot_uniqueness",

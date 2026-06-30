@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G8: 从 depgraph.db nodes 表生成设计态vs运营态统计报告MD文档
+"""G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_design_vs_production
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/design_vs_production.md
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/design_vs_production.md
 [MODIFY-GUARD] 修改需通过DM-200911任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/design_vs_production.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200911_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -108,9 +108,9 @@ def generate_design_vs_production() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。")
     lines.append("")
-    lines.append("> 本文档由 generate_design_vs_production.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_design_vs_production.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph.db nodes表")
+    lines.append("> 数据源: depgraph (PostgreSQL) nodes表")
     lines.append("")
 
     # 全局统计

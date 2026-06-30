@@ -57,7 +57,7 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.governance.task_repo import TaskRepository
 
 _CHECK_ICON = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌", "FIXED": "🔧"}

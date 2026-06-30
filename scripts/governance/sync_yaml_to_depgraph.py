@@ -26,7 +26,7 @@
 [ERROR_CONTRACT] 同步失败→回滚+恢复触发器→exit 1; 成功→exit 0
 [TESTS] 无
 
-P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db
+P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
 - 同步方向：YAML → DB 单向（禁止反向）
 - 17项同步：cross_module_dependencies/architecture_contract/contract_mapping/gate_registry/
   functional_domain/vocabularies/architecture_rules/declarative_contract/frontmatter_field/
@@ -1101,7 +1101,7 @@ def sync_all() -> bool:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db"
+        description="P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph"
     )
     parser.add_argument(
         "--list-readonly-tables", action="store_true",

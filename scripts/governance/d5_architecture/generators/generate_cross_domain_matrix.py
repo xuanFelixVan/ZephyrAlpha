@@ -13,17 +13,17 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G6: 从 depgraph.db edges 表生成域间依赖矩阵MD文档
+"""G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_cross_domain_matrix
-[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到generated/cross_domain_matrix.md
+[INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph (PostgreSQL);输出到generated/cross_domain_matrix.md
 [MODIFY-GUARD] 修改需通过DM-200911任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看generated/cross_domain_matrix.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] depgraph.db不存在→exit 1
+[ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 [TESTS] tests/test_dm200911_generators.py
 [DOMAIN] D_GOVERNANCE
 """
@@ -107,9 +107,9 @@ def generate_cross_domain_matrix() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。")
     lines.append("")
-    lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成")
+    lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph (PostgreSQL) 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph.db edges表 + nodes表")
+    lines.append("> 数据源: depgraph (PostgreSQL) edges表 + nodes表")
     lines.append("")
 
     # 统计概览
