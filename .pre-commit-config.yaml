@@ -485,7 +485,10 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^src/zephyr/.*\\.py$"
+        # 治本（2026-06-30 第1波任务3）：扩展触发范围到 scripts/——
+        # 原仅 ^src/zephyr/.*\.py$ 漏检 scripts/ 下新增 .py，与 check_ssot_gate.py
+        # 内 startswith(("src/zephyr/", "scripts/")) 同步，覆盖两大 .py 主目录
+        files: "^(src/zephyr/|scripts/).*\\.py$"
         stages: [commit]
         description: "SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过 capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险"
 

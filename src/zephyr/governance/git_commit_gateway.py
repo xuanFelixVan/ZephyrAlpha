@@ -1756,6 +1756,47 @@ class GitCommitGateway:
                             f"或 `get_depgraph_pg_connection()`"
                         )
 
+                # 模式5b: psycopg2.connect 直连 depgraph DB（2026-06-30 第1波任务2 治本）
+                # 真源: get_depgraph_pg_connection() (src/zephyr/governance/depgraph_schema.py)
+                # 检测: psycopg2.connect 的参数含字面量字符串 "depgraph"（如 dbname=depgraph）
+                # 豁免: F1 真源用 psycopg2.connect(**_build_pg_dsn()) 非字面量，不会误报
+                # 病根: AI 可 psycopg2.connect("dbname=depgraph") 绕过连接真源，
+                #       detect_direct_llm_calls.py 不检测 psycopg2（语义不同），原仅 sqlite3 覆盖
+                # 非新增门禁——扩展模式5 DB 直连检测的覆盖范围，符合 AD-GOV-001 收敛期约束
+                for _node in _ast.walk(_tree):
+                    if not isinstance(_node, _ast.Call):
+                        continue
+                    _func = _node.func
+                    _is_psycopg_connect = (
+                        isinstance(_func, _ast.Attribute)
+                        and _func.attr == "connect"
+                        and isinstance(_func.value, _ast.Name)
+                        and _func.value.id == "psycopg2"
+                    )
+                    if not _is_psycopg_connect:
+                        continue
+                    # 检查所有参数（位置 + 关键字）是否有字面量字符串含 "depgraph"
+                    _found_depgraph = False
+                    for _arg in _node.args:
+                        if (isinstance(_arg, _ast.Constant)
+                                and isinstance(_arg.value, str)
+                                and "depgraph" in _arg.value.lower()):
+                            _found_depgraph = True
+                            break
+                    if not _found_depgraph:
+                        for _kw in _node.keywords:
+                            if (isinstance(_kw.value, _ast.Constant)
+                                    and isinstance(_kw.value.value, str)
+                                    and "depgraph" in _kw.value.value.lower()):
+                                _found_depgraph = True
+                                break
+                    if _found_depgraph:
+                        violations.append(
+                            f"{rel}:{_node.lineno} — psycopg2.connect 直连 depgraph DB，"
+                            f"应改用 `from _shared.constants import get_depgraph_pg_connection` "
+                            f"或 `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`"
+                        )
+
                 # 模式6: DB 写入脚本中 import lock_files（P3 门禁防复发，2026-06-29）
                 # 真源: trae_001 §db_write_protocol prohibition + trae_054 §mandatory
                 # 检测: 同一文件内同时有 DB 写入信号 + lock_files import 信号 → 违规
