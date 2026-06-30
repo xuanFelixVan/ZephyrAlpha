@@ -201,7 +201,7 @@ def main() -> None:
     print("  1. 更新 cross_layer_contracts.yaml 并 bump schema_version")
     print("  2. 运行 python scripts/context/generate_architecture_context.py 重新生成上下文包")
     print("  3. 运行 pytest tests/architecture/ 确认架构适应度函数仍然通过")
-    print("  4. 运行 python -m pytest tests/unit/test_enforcer.py 确认 enforcer 测试通过")
+    print("  4. 运行 python -m pytest tests/test_enforcer.py 确认 enforcer 测试通过")
 
 
 if __name__ == "__main__":
