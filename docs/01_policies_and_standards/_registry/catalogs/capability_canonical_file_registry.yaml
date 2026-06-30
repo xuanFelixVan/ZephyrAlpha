@@ -56,6 +56,20 @@
 #   5. reg.check_file_canonical("src/...py")   # 反查某文件是哪个能力的 canonical
 #   6. reg.list_ssot_conflicts()              # 列出同蓝图多实现冲突
 #
+# 设计边界（ARCH-031 局限2 文档化，2026-07-01）:
+#   CapabilityLookup 是"能力→真源文件反查"（声明式能力索引），不是"符号发现"。
+#   - 能力发现（CapabilityLookup）：查"某个能力是否存在 + canonical 在哪"，
+#     覆盖范围 = 本文件已声明的 capability 条目（~45 条）。
+#     适用场景：新 AI 想做"X 功能"前，反查是否已有该能力的 canonical 实现。
+#   - 符号发现（Grep）：查"某个符号（函数名/类名/常量）定义在哪"，
+#     覆盖范围 = src/zephyr/**/*.py 全部文件（含未声明能力的子目录文件）。
+#     适用场景：新 AI 知道符号名（如 AgentSigner），想定位 canonical 位置。
+#     用法：Grep "class AgentSigner" 或 Grep "def agent_signer" 即可唯一命中。
+#   - 不在本文件声明所有子目录文件的原因：维护成本高且无必要——Grep 已能可靠发现
+#     符号，CapabilityLookup 重复实现符号发现会破坏职责边界（向内收原则①）。
+#   - 何时声明新 capability：当某个功能有明确能力边界、可被复用、且新 AI 可能
+#     不知道已存在时（如 agent_signer、self_healer），才声明 capability 条目。
+#
 # 维护规则:
 #   - 新增能力：加 capability_id + aliases + description（3 个必填字段）
 #   - 派生选错 canonical：加 canonical_override（人工裁定真源路径）

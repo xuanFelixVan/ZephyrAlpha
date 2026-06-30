@@ -129,6 +129,25 @@ result = await gateway.full_scan(user_text, llm_response)
   - `current_baseline.jsonl` + `baseline_meta.json` — `manage_baseline.py` 的独立系统（追踪 `phase_e_full` 等全量基线）
   - 两者独立，`baseline_meta.json` 的 `finding_count` 与 `audit_registration_baseline.jsonl` 行数**无关**，勿误判为漂移
 
+### 4.4 能力反查与符号发现（ARCH-031 局限2 文档化，2026-07-01）
+
+新 AI 进入项目后，发现已有功能/符号有两个互补手段，职责边界明确：
+
+- **能力发现（CapabilityLookup）**：查"某个能力是否存在 + canonical 真源在哪"。
+  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（~45 条已声明能力）
+  - 用法：`from zephyr.governance.capability_lookup import CapabilityLookup; CapabilityLookup().find("handoff")`
+  - 覆盖范围：仅已声明 capability_id 的功能。子目录文件（如 `audit_trail/agent_signer.py`）默认未声明，查不到。
+  - 何时用：新 AI 想做"X 功能"前，反查是否已有该能力的 canonical 实现。
+
+- **符号发现（Grep）**：查"某个符号（函数名/类名/常量）定义在哪"。
+  - 用法：`Grep "class AgentSigner"` 或 `Grep "def agent_signer"`
+  - 覆盖范围：`src/zephyr/**/*.py` 全部文件（含未声明能力的子目录文件）。
+  - 何时用：新 AI 知道符号名时，直接 Grep 即可唯一命中 canonical 位置。
+  - 已验证：`agent_signer`、`changelog_manager`、`self_healer` 等 7 个子目录符号 Grep 均唯一命中 canonical。
+
+- **为什么不在 YAML 声明所有子目录文件**：维护成本高（governance/ 子目录有 200+ 文件）且无必要——Grep 已能可靠发现符号，CapabilityLookup 重复实现符号发现会破坏职责边界（向内收原则①：能现成不创造）。
+- **何时声明新 capability**：当某个功能有明确能力边界、可被复用、且新 AI 可能不知道已存在时（如 `agent_signer`、`self_healer`），才在 YAML 声明 capability 条目。
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环

@@ -49,11 +49,20 @@ CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/
 用法：
     from zephyr.governance.capability_lookup import CapabilityLookup
 
-    reg = CapabilityLookup()                  # 自动加载 YAML + 扫描磁盘 + 派生
+    reg = CapabilityLookup()                  # 自动加载 YAML + 扫盘 + 派生
     reg.find("session handoff")               # 关键词搜索
     reg.get("rollback_executor")              # 按 capability_id 精确查
     reg.list_ssot_conflicts()                 # 列出同蓝图多实现冲突
     reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
+
+设计边界（ARCH-031 局限2 文档化，2026-07-01）：
+  本模块是"能力→真源文件反查"（声明式能力索引），不是"符号发现"。
+  - 能力发现（本模块）：查"某个能力是否存在 + canonical 在哪"，
+    覆盖范围 = YAML 已声明的 capability 条目。
+  - 符号发现（Grep）：查"某个符号（函数名/类名）定义在哪"，
+    覆盖范围 = src/zephyr/**/*.py 全部文件（含未声明能力的子目录文件）。
+  新 AI 知道符号名时，直接用 Grep 搜索符号名即可唯一命中 canonical 位置，
+  不需要在本模块声明所有子目录文件（维护成本高且无必要，违反向内收原则①）。
 
 CLI:
     python -m zephyr.governance.capability_lookup --find "handoff"
