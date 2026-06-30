@@ -1,5 +1,5 @@
 """
-DM-100017: depgraph.db端到端功能测试（P2迁移后：PostgreSQL）
+DM-100017: depgraph端到端功能测试（P2迁移后：PostgreSQL）
 覆盖：dep_表组7表CRUD、arch_表组7表CRUD、rule_bindings表、nodes 23列、edges 18列
 """
 
