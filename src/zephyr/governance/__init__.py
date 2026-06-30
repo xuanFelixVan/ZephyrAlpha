@@ -101,7 +101,7 @@ try:
     from zephyr.governance.capability_lookup import CapabilityLookup
     from zephyr.governance.canary_manager import CanaryFile
     from zephyr.governance.audit_trail.changelog_manager import ChangeImpact
-    from zephyr.governance.classifier import Classifier
+    from zephyr.infrastructure.asset_inventory.classifier import Classifier
     from zephyr.governance.cli import main
     from zephyr.governance.audit_trail.code_archaeology import BlameRecord
     from zephyr.governance.complexity_budget import ComplexityReport
@@ -110,7 +110,7 @@ try:
     from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
     from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
     from zephyr.governance.database_service import DatabaseService
-    from zephyr.governance.dependency import DependencyNode
+    from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
     from zephyr.governance.dlq_retry_policy import RetryResult
     from zephyr.governance.audit_trail.dora_metrics import DORATargets
     from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
@@ -120,15 +120,15 @@ try:
     from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
-    from zephyr.governance.lifecycle import Lifecycle
+    from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
     from zephyr.governance.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
-    from zephyr.governance.models import AssetType
+    from zephyr.infrastructure.asset_inventory.models import AssetType
     from zephyr.governance.phase_executor import PhaseStatus
     from zephyr.governance.pipeline_base import ExperimentConfig
     from zephyr.governance.audit_trail.privacy import PIICategory
-    from zephyr.governance.reconciler import Reconciler
-    from zephyr.governance.registry_adapter import RegistryParseError
+    from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
+    from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryParseError
     from zephyr.governance.audit_trail.sbom_generator import LicenseType
     from zephyr.governance.semantic_audit.self_healer import SelfHealError
     from zephyr.governance.semantic_audit.self_health import SLIResult
