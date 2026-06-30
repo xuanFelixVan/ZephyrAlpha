@@ -56,7 +56,15 @@ from typing import Any
 
 import yaml
 
-_REPO_ROOT = REPO_ROOT
+# 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants, 消除 parents[N] 硬编码
+# 修复: 原 line 144 的 import 被错误放在 subprocess.run() 中间导致 SyntaxError
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _MANIFEST_PATH = _SCRIPTS_DIR / "script_manifest.yaml"
 _KILL_SWITCH_PATH = _SCRIPTS_DIR / "meta" / "kill_switch_state.yaml"
@@ -140,8 +148,6 @@ def _check_import_integrity() -> dict:
         ],
         capture_output=True,
         text=True,
-
-from _shared.constants import REPO_ROOT
         timeout=30,
         cwd=str(_REPO_ROOT),
         encoding="utf-8",

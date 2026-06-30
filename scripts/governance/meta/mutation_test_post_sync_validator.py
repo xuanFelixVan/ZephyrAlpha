@@ -52,9 +52,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # ---- 路径 ---------------------------------------------------------------
+# 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants, 消除 parents[N] 硬编码
 _SCRIPT_DIR = Path(__file__).resolve()
-_REPO_ROOT = _SCRIPT_DIR.parents[3]
-_SSOt_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "post_sync_validator.py"
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
+_SSoT_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "post_sync_validator.py"
 _TEST_PATH = _REPO_ROOT / "tests" / "unit" / "test_post_sync_validation.py"
 _SEAM_ENV = "PSV_UNDER_TEST"  # 与 test_post_sync_validation.py 约定的 seam 名
 

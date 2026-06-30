@@ -57,7 +57,14 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+# 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants, 消除 parents[N] 硬编码
+# 原 parents[2] 实为 scripts 目录而非 repo root, 变量名误导且路径计算有 bug
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _PROVENANCE_DB = _SCRIPTS_DIR / "meta" / "script_provenance_db.json"
 
