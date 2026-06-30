@@ -49,6 +49,7 @@ from typing import Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = ["GovernanceServer", "create_server"]
 
@@ -570,7 +571,7 @@ class GovernanceServer(BaseMCPServer):
                 if module_dir
                 else str(REPO_ROOT / "src" / "zephyr" / "behavioral-auditor")
             )
-            result = asyncio.run(scan(level=scan_level, scope=[target_dir] if module_dir else None))
+            result = run_sync(scan(level=scan_level, scope=[target_dir] if module_dir else None))
             return {
                 "scan_id": str(result.scan_id),
                 "detectors_run": result.detectors_run,

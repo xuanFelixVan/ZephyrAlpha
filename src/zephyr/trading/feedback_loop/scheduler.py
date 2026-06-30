@@ -38,6 +38,7 @@ from typing import Any, ClassVar
 
 from zephyr.trading.feedback_loop.actors.action_selector import ActionSelector
 from zephyr.trading.feedback_loop.collectors.feedback_collector import FeedbackCollector
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.trading.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
@@ -295,7 +296,7 @@ class FeedbackLoopScheduler:
 
             from zephyr.governance.drift_detection.drift_engine import scheduled_light
 
-            result = asyncio.run(scheduled_light())
+            result = run_sync(scheduled_light())
             high_drifts = [
                 d
                 for d in result.drifts

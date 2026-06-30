@@ -40,6 +40,7 @@ import logging
 import threading
 import time
 from typing import Any
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from zephyr.integration.mcp._base_server import (
     BaseMCPServer,
@@ -92,7 +93,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
 
         from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 
-        result = asyncio.run(
+        result = run_sync(
             gw.scan_agent_action(
                 text=text,
                 tool_name=tool_name,

@@ -39,6 +39,7 @@ from typing import Any, ClassVar
 from uuid import uuid4
 
 from zephyr.governance.aisg_sandbox import AISGSandbox
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.governance.security_gateway_base import (
     AuditAction,
     AuditDecision,
@@ -270,7 +271,7 @@ class DefaultSecurityGateway(SecurityGateway):
 
             from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
-            result = asyncio.run(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
+            result = run_sync(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
         except RuntimeError:

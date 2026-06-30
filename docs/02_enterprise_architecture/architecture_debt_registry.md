@@ -1848,6 +1848,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因4（async/sync混用陷阱）
 **修复方向**：统一async/sync边界
 
+[✓ FIXED: 2026-07-01 5.12.8 async/sync 边界已统一：新建 canonical 真源 `shared/utils/async_utils.py` 提供 `run_sync(coro, *, timeout=None)` —— 无运行循环时走 asyncio.run 快速路径（与原行为一致），有运行循环时在新线程中创建独立循环运行（避免 "cannot be called from a running event loop" RuntimeError）。批量迁移 30 个文件 37 处 `asyncio.run(X)` → `run_sync(X)`（覆盖 security-gateway 扫描/llm_gateway/rollback_executor/escalation/delegation 等全部高频调用点）。py_compile 30/30 通过，冒烟测试 4 项全通过（快速路径/线程隔离/超时/异常传播）。注：`governance/rollback_executor.py` 文件已不存在（前期重构删除），实际迁移 37/38]
+
 #### 5.12.9 safe_open返回未托管文件句柄（HIGH）
 
 **证据**：

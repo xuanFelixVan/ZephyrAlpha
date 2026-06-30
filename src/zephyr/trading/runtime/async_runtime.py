@@ -16,6 +16,7 @@
 # [TTL] task_bound
 
 from __future__ import annotations
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 """AsyncRuntime — 事件循环引导 + run_in_executor 桥接（R1-1）
 
 渐进式 async 化的入口：提供事件循环生命周期管理 + 同步→异步桥接，
@@ -162,13 +163,13 @@ class AsyncRuntime:
         try:
             loop = asyncio.get_running_loop()
         except RuntimeError:
-            return asyncio.run(coro)  # type: ignore[arg-type]
+            return run_sync(coro)  # type: ignore[arg-type]
 
         if loop.is_running():
             raise RuntimeError(
                 "run_coroutine 不能在已运行的事件循环中调用——请用 await 代替，或用 run_in_executor 桥接同步代码"
             )
-        return asyncio.run(coro)  # type: ignore[arg-type]
+        return run_sync(coro)  # type: ignore[arg-type]
 
     def run_in_executor(
         self,

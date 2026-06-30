@@ -36,6 +36,7 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ def _lsg_scan_input_sync(text: str, metadata: dict[str, Any] | None = None) -> s
     try:
         from zephyr.shared.contracts.security import SecurityDecision
 
-        result = asyncio.run(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
+        result = run_sync(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
     except RuntimeError:
@@ -93,7 +94,7 @@ def _lsg_scan_output_sync(text: str, metadata: dict[str, Any] | None = None) -> 
     try:
         from zephyr.shared.contracts.security import SecurityDecision
 
-        result = asyncio.run(gw.scan_output(text, source="llm_gateway", metadata=metadata or {}))
+        result = run_sync(gw.scan_output(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
         if result.sanitized_output:

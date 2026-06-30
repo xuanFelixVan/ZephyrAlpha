@@ -78,6 +78,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from typing import (
     Any,
     Literal,
@@ -896,7 +897,7 @@ class AgentOrchestrator:
             from zephyr.shared.contracts.security import SecurityDecision
 
             text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
-            result = asyncio.run(
+            result = run_sync(
                 gw.scan_agent_action(
                     text=text,
                     tool_name=tool_name,

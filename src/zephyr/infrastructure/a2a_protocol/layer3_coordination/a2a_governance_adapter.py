@@ -31,6 +31,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 _log = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
     try:
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
-        result = asyncio.run(
+        result = run_sync(
             gw.scan_agent_action(
                 text=content,
                 tool_name="a2a_communication",

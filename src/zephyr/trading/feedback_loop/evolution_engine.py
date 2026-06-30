@@ -22,6 +22,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class Severity(Enum):
@@ -348,7 +349,7 @@ class EvolutionEngine:
             flagged = []
             for p in report.proposals:
                 content = f"{p.title} {p.rationale} {p.recommended_action}"
-                result = asyncio.run(gateway.scan_output(content))
+                result = run_sync(gateway.scan_output(content))
                 if result.decision.value not in ("allow", "ALLOW"):
                     flagged.append(p.proposal_id)
             if flagged:

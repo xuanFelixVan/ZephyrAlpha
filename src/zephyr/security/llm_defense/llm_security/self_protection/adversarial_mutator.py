@@ -23,6 +23,7 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class MutationTechnique(str, Enum):
@@ -220,9 +221,9 @@ class AdversarialMutator:
 
         if has_loop:
             with concurrent.futures.ThreadPoolExecutor() as pool:
-                self._results = pool.submit(lambda: asyncio.run(_scan_all())).result()
+                self._results = pool.submit(lambda: run_sync(_scan_all())).result()
         else:
-            self._results = asyncio.run(_scan_all())
+            self._results = run_sync(_scan_all())
 
         return self._build_report(total_originals)
 

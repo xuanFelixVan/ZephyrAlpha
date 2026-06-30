@@ -5,4 +5,4 @@
 
 from . import context
 
-__all__ = ["context", "db_utils", "diff_utils", "migration", "pagination", "testing", "time_utils"]
+__all__ = ["async_utils", "context", "db_utils", "diff_utils", "migration", "pagination", "testing", "time_utils"]

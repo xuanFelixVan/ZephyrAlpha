@@ -29,6 +29,7 @@ from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 from zephyr.security.llm_defense.llm_security.gateway import ScanMode as GWScanMode
 from zephyr.security.llm_defense.llm_security.payloads import load_red_team_payloads
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class ScanMode(str, Enum):
@@ -151,10 +152,10 @@ class RedTeamScanner:
             import concurrent.futures
 
             with concurrent.futures.ThreadPoolExecutor() as pool:
-                future = pool.submit(lambda: asyncio.run(_run_all()))
+                future = pool.submit(lambda: run_sync(_run_all()))
                 input_results, output_results = future.result()
         else:
-            input_results, output_results = asyncio.run(_run_all())
+            input_results, output_results = run_sync(_run_all())
 
         with self._lock:
             self._results.extend(input_results)

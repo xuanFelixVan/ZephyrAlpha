@@ -53,6 +53,7 @@ from typing import Any
 
 from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
 from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ __all__ = [
     "PreviewResult",
     "RollbackExecutor",
     "RollbackOp",
-    "RollbackResult",
+    "RollbackExecutionResult",
 ]
 
 
@@ -109,7 +110,7 @@ class PreviewResult:
 
 
 @dataclass
-class RollbackResult:
+class RollbackExecutionResult:
     success: bool
     operation: RollbackOp
     commit_sha: str
@@ -469,20 +470,20 @@ class RollbackExecutor:
             audit_record=audit_record,
         )
 
-    def full_revert(self, commit_sha: str, dry_run: bool = False, audit_session: str = "") -> RollbackResult:
+    def full_revert(self, commit_sha: str, dry_run: bool = False, audit_session: str = "") -> RollbackExecutionResult:
         return self._execute(RollbackOp.FULL_REVERT, commit_sha, dry_run=dry_run, audit_session=audit_session)
 
     def partial_revert(
         self, commit_sha: str, file_globs: list[str], dry_run: bool = False, audit_session: str = ""
-    ) -> RollbackResult:
+    ) -> RollbackExecutionResult:
         return self._execute(
             RollbackOp.PARTIAL_REVERT, commit_sha, file_globs=file_globs, dry_run=dry_run, audit_session=audit_session
         )
 
-    def discard(self, files: list[str], audit_session: str = "") -> RollbackResult:
+    def discard(self, files: list[str], audit_session: str = "") -> RollbackExecutionResult:
         return self._execute(RollbackOp.DISCARD, "", file_list=files, audit_session=audit_session)
 
-    def hard_reset(self, commit_sha: str, token: str = "", audit_session: str = "") -> RollbackResult:
+    def hard_reset(self, commit_sha: str, token: str = "", audit_session: str = "") -> RollbackExecutionResult:
         if not token:
             raise ValueError("hard_reset requires a valid BREAK_GLASS token")
         self._lsg_verify_critical_operation("hard_reset", commit_sha)
@@ -496,7 +497,7 @@ class RollbackExecutor:
 
             gateway = LSGSecurityGateway()
             content = f"rollback:{operation} target:{target}"
-            result = asyncio.run(gateway.scan_agent_action(content, tool_name=f"rollback_{operation}"))
+            result = run_sync(gateway.scan_agent_action(content, tool_name=f"rollback_{operation}"))
             if result.decision.value not in ("allow", "ALLOW"):
                 raise PermissionError(f"LSG blocked rollback operation: {operation} on {target}")
         except ImportError:
@@ -604,7 +605,7 @@ class RollbackExecutor:
         token: str = "",
         dry_run: bool = False,
         audit_session: str = "",
-    ) -> RollbackResult:
+    ) -> RollbackExecutionResult:
         errors: list[str] = []
         files_reverted = 0
         db_tables_restored = 0
@@ -630,7 +631,7 @@ class RollbackExecutor:
                     details={"error": "concurrency_conflict", "blocked_files": conflict.blocked_files, "execution_id": execution_id},
                     audit_session=audit_session,
                 )
-                return RollbackResult(
+                return RollbackExecutionResult(
                     success=False,
                     operation=operation,
                     commit_sha=commit_sha,
@@ -662,7 +663,7 @@ class RollbackExecutor:
                         details={"error": "other_session_uncommitted", "other_files": stash_plan.other_files, "execution_id": execution_id},
                         audit_session=audit_session,
                     )
-                    return RollbackResult(
+                    return RollbackExecutionResult(
                         success=False,
                         operation=operation,
                         commit_sha=commit_sha,
@@ -684,7 +685,7 @@ class RollbackExecutor:
                     details={"error": str(preflight.errors), "execution_id": execution_id},
                     audit_session=audit_session,
                 )
-                return RollbackResult(
+                return RollbackExecutionResult(
                     success=False,
                     operation=operation,
                     commit_sha=commit_sha,
@@ -705,7 +706,7 @@ class RollbackExecutor:
 
         if not lock_result.acquired:
             self._write_in_flight(execution_id, "acquire_lock", "FAILED", {"reason": lock_result.reason})
-            return RollbackResult(
+            return RollbackExecutionResult(
                 success=False,
                 operation=operation,
                 commit_sha=commit_sha,
@@ -721,7 +722,7 @@ class RollbackExecutor:
         try:
             if dry_run:
                 preview = self.preview(commit_sha)
-                result = RollbackResult(
+                result = RollbackExecutionResult(
                     success=True,
                     operation=operation,
                     commit_sha=commit_sha,
@@ -779,7 +780,7 @@ class RollbackExecutor:
                     execution_id, "db_restore", "SUCCESS", {"tables": db_tables_restored, "rows": db_rows_restored}
                 )
 
-            result = RollbackResult(
+            result = RollbackExecutionResult(
                 success=True,
                 operation=operation,
                 commit_sha=commit_sha,
@@ -824,7 +825,7 @@ class RollbackExecutor:
                 details={"error": str(e), "execution_id": execution_id},
                 audit_session=audit_session,
             )
-            return RollbackResult(
+            return RollbackExecutionResult(
                 success=False,
                 operation=operation,
                 commit_sha=commit_sha,

@@ -30,6 +30,7 @@ import logging
 import threading
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 
@@ -461,7 +462,7 @@ class EscalationEngine:
             from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
             gateway = LSGSecurityGateway()
-            result = asyncio.run(gateway.scan_input(description))
+            result = run_sync(gateway.scan_input(description))
             if result.decision.value not in ("allow", "ALLOW"):
                 raise ValueError(f"LSG blocked escalation input: {result.decision.value}")
         except ImportError:

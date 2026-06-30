@@ -33,6 +33,7 @@ import logging
 import re
 import uuid
 from typing import Any
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from zephyr.governance.security_gateway_base import (
     AuditAction,
@@ -68,7 +69,7 @@ def _lsg_scan_content_sync(content: str) -> str | None:
     try:
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
-        result = asyncio.run(gw.scan_input(content, source="l10_implementations_gateway", metadata={}))
+        result = run_sync(gw.scan_input(content, source="l10_implementations_gateway", metadata={}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
     except RuntimeError:

@@ -46,6 +46,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class ChaosInjectionType(str, Enum):
@@ -395,7 +396,7 @@ def _detect_phase(
         inject_time = ci.created_at
 
         try:
-            result = asyncio.run(
+            result = run_sync(
                 scan(
                     level=ScanLevel.DEEP,
                 )

@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field
 
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = [
     "ContextInjector",
@@ -258,7 +259,7 @@ def _lsg_scan_context(context: ValidatedContext) -> bool:
         content = "\n".join(content_parts)
         if not content.strip():
             return True
-        result = asyncio.run(gateway.scan_input(content))
+        result = run_sync(gateway.scan_input(content))
         return result.decision.value in ("allow", "ALLOW")
     except ImportError:
         return False

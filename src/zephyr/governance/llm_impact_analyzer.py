@@ -31,6 +31,7 @@ import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 
 class RiskLevel(str, Enum):
@@ -164,7 +165,7 @@ class LLMImpactAnalyzer:
 
             gateway = LSGSecurityGateway()
             content = f"{analysis.recommendation} {' '.join(analysis.key_changes)}"
-            result = asyncio.run(gateway.scan_output(content))
+            result = run_sync(gateway.scan_output(content))
             if result.decision.value not in ("allow", "ALLOW"):
                 analysis.recommendation = "requires_manual_review"
                 analysis.details.append("LSG output scan flagged content")

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
 # [MODULE] zephyr.integration.pipeline_orchestrator
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra_06.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -51,6 +51,7 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
     from zephyr.shared.models import TaskCard
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.integration.models import PipelineOrchestratorConfig
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
     config = PipelineOrchestratorConfig(max_retries=3, claude_rescue_threshold=3)
     orchestrator = PipelineOrchestrator(config, task_repo=repo)
@@ -421,7 +422,7 @@ class PipelineOrchestrator:
             exit_code_tag = [t for t in tags if t.startswith("rollback_exit:")]
             exit_code = int(exit_code_tag[0].split(":")[1]) if exit_code_tag else -1
             try:
-                from zephyr.governance.contract import get_gate_action, get_pipeline_action
+                from zephyr.infrastructure.rollback.contract import get_gate_action, get_pipeline_action
 
                 gate_action, desc = get_gate_action(exit_code)
                 pipeline_action = get_pipeline_action(gate_action)
@@ -1537,7 +1538,7 @@ class PipelineOrchestrator:
         """LifecycleManager 回调：初始化后注册 Pipeline 组件。"""
         self._lifecycle_mgr = lifecycle_mgr
         try:
-            from zephyr.shared.infra_06.observer import Observer
+            from zephyr.shared.infra.observer import Observer
 
             self._observer = lifecycle_mgr.resolve("observer", Observer)
         except Exception:
@@ -1761,7 +1762,7 @@ class PipelineOrchestrator:
                 future = asyncio.run_coroutine_threadsafe(gw.scan_input(text, source="PipelineOrchestrator"), loop)
                 result = future.result()
             except RuntimeError:
-                result = asyncio.run(gw.scan_input(text, source="PipelineOrchestrator"))
+                result = run_sync(gw.scan_input(text, source="PipelineOrchestrator"))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return f"[LSG-BLOCKED] {text[:200]}"
             return text
@@ -1803,7 +1804,7 @@ class PipelineOrchestrator:
                         )
                         result = future.result()
                     except RuntimeError:
-                        result = asyncio.run(
+                        result = run_sync(
                             gw.scan_output(
                                 output[key],
                                 source=f"Pipeline.{module_id}",
@@ -1862,7 +1863,7 @@ class PipelineOrchestrator:
                 )
                 result = future.result()
             except RuntimeError:
-                result = asyncio.run(
+                result = run_sync(
                     gw.scan_agent_action(
                         text=text,
                         tool_name=tool_name,

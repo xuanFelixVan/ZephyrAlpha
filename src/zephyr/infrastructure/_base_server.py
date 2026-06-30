@@ -69,6 +69,7 @@ from dataclasses import dataclass
 from typing import Any, TextIO
 
 import structlog
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = [
     "ERR_GATE_FAILED",
@@ -524,7 +525,7 @@ class BaseMCPServer:
         用法::
 
             import asyncio
-            asyncio.run(server.run_async())
+            run_sync(server.run_async())
 
         Parameters
         ----------

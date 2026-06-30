@@ -50,6 +50,7 @@ import yaml
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = [
     "ALLOWED_EXTENSIONS",
@@ -231,7 +232,7 @@ class IngestGate:
             import asyncio
 
             gateway = _LSGSecurityGateway()
-            result = asyncio.run(gateway.scan_input(text))
+            result = run_sync(gateway.scan_input(text))
             if result.decision.value not in ("allow", "ALLOW"):
                 reasons = ", ".join(r.reason for r in result.details if hasattr(r, "reason"))
                 return f"LSG 安全扫描拦截：{reasons or result.decision.value}"

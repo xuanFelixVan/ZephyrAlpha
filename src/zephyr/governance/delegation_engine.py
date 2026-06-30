@@ -28,6 +28,7 @@ from __future__ import annotations
 import threading
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
+from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from .escalation_models import (
     DelegationRecord,
@@ -243,7 +244,7 @@ class DelegationEngine:
 
             gateway = LSGSecurityGateway()
             content = f"delegation:{event.description} from:{event.owner_id}"
-            result = asyncio.run(gateway.scan_agent_action(content, tool_name="escalation_delegation"))
+            result = run_sync(gateway.scan_agent_action(content, tool_name="escalation_delegation"))
             if result.decision.value not in ("allow", "ALLOW"):
                 raise PermissionError(f"LSG blocked delegation: {result.decision.value}")
         except ImportError:
