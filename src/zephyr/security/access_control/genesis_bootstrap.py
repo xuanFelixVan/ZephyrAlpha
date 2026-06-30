@@ -244,7 +244,7 @@ class GenesisBootstrap:
     def _phase_bootstrap_superadmin(self, config: dict[str, Any]) -> None:
         """阶段5: superadmin账户创建."""
         self._state.phase = GenesisPhase.BOOTSTRAP_SUPERADMIN
-        from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+        from zephyr.security.access_control.bootstrap_superadmin import (
             BootstrapSuperadminBridge,
         )
 
@@ -259,7 +259,7 @@ class GenesisBootstrap:
     def shutdown(self) -> GenesisState:
         """关闭RBAC系统 — 清理资源."""
         try:
-            from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+            from zephyr.security.access_control.bootstrap_superadmin import (
                 BootstrapSuperadminBridge,
             )
 

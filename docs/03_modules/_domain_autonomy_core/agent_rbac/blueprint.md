@@ -1,6 +1,6 @@
 ---
 module_id: "MOD-INF-018"
-submodule_path: src/zephyr/autonomy_perm/agent_rbac
+submodule_path: src/zephyr/security/access_control
 title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
@@ -15,7 +15,7 @@ date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: src/zephyr/autonomy_perm/agent_rbac/
+actual_disk_path: src/zephyr/security/access_control/
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3
@@ -58,7 +58,7 @@ references:
 > **自动化宿主**: FLE `_periodic_checks()` → `_rbac_policy_check()` + CircadianScheduler `hour=4` → `_rbac_audit()`
 
 > module_id: MOD-INF-018 | version: 1.0.0 | status: Active | domain: infra_ops
-> actual_disk_path: src/zephyr/agent-rbac/ | generation: 2 | construction_progress: completed
+> actual_disk_path: src/zephyr/security/access_control/ | generation: 3 | construction_progress: design_only
 
 ## 概述
 
@@ -103,76 +103,76 @@ references:
 | 14 | `test_permissions.py` | §9 L7 | 权限自动化测试 | 已实现 | |
 | 15 | `non_repudiation.py` | §3 横切面F | 不可抵赖操作绑定(Ed25519+Merkle Tree+TSA) | 已实现 | |
 | 25 | `native_api_guard.py` | §3 横切面F | C扩展原生API绕过防护(ctypes封禁) | 已实现 | |
-| `a2a_check.py` | § — | — | 已实现 | | 本模块 |
+| `a2a_check.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `adversarial_resilience.py` | § — | — | 已实现 | | 本模块 |
 | `agent_creation_policy.py` | § — | — | 已实现 | | 本模块 |
-| `anomaly_detector.py` | § — | — | 已实现 | | 本模块 |
-| `anti_pattern_guard.py` | § — | — | 已实现 | | 本模块 |
-| `approver_check.py` | § — | — | 已实现 | | 本模块 |
-| `asymmetric_audit.py` | § — | — | 已实现 | | 本模块 |
-| `audit_log_guard.py` | § — | — | 已实现 | | 本模块 |
+| `anomaly_detector.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `anti_pattern_guard.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `approver_check.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `asymmetric_audit.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `audit_log_guard.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `auto_maintenance.py` | § — | — | 已实现 | | 本模块 |
-| `blind_spot_tracker.py` | § — | — | 已实现 | | 本模块 |
+| `blind_spot_tracker.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `blueprint_fidelity.py` | § — | — | 已实现 | | 本模块 |
 | `bootstrap_superadmin.py` | § — | — | 已实现 | | 本模块 |
-| `bootstrap_verifier.py` | § — | — | 已实现 | | 本模块 |
-| `build_sanitizer.py` | § — | — | 已实现 | | 本模块 |
+| `bootstrap_verifier.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `build_sanitizer.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `cache_invalidation.py` | § — | — | 已实现 | | 本模块 |
 | `canary_rollout_manager.py` | § — | — | 已实现 | | 本模块 |
-| `capability_check.py` | § — | — | 已实现 | | 本模块 |
-| `cascading_failure_isolator.py` | § — | — | 已实现 | | 本模块 |
+| `capability_check.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `cascading_failure_isolator.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `cold_start_lock.py` | § — | — | 已实现 | | 本模块 |
-| `compliance_matrix.py` | § — | — | 已实现 | | 本模块 |
+| `compliance_matrix.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `context_drift_detector.py` | § — | — | 已实现 | | 本模块 |
-| `continuous_verifier.py` | § — | — | 已实现 | | 本模块 |
+| `continuous_verifier.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `contract_verifier.py` | § — | — | 已实现 | | 本模块 |
-| `contracts.py` | § — | — | 已实现 | | 本模块 |
+| `contracts.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `cross_cutting.py` | § — | — | 已实现 | | 本模块 |
 | `cross_session_detector.py` | § — | — | 已实现 | | 本模块 |
 | `cybersec_2026_guard.py` | § — | — | 已实现 | | 本模块 |
-| `decision_explainer.py` | § — | — | 已实现 | | 本模块 |
-| `decision_registry.py` | § — | — | 已实现 | | 本模块 |
-| `defense_depth.py` | § — | — | 已实现 | | 本模块 |
-| `dependency_auditor.py` | § — | — | 已实现 | | 本模块 |
+| `decision_explainer.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `decision_registry.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `defense_depth.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `dependency_auditor.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `emergency_override.py` | § — | — | 已实现 | | 本模块 |
 | `engine_degradation.py` | § — | — | 已实现 | | 本模块 |
-| `environment_manager.py` | § — | — | 已实现 | | 本模块 |
-| `escalation_handler.py` | § — | — | 已实现 | | 本模块 |
+| `environment_manager.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `escalation_handler.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `exceptions.py` | § — | — | 已实现 | | 本模块 |
 | `false_completion_detector.py` | § — | — | 已实现 | | 本模块 |
 | `genesis_bootstrap.py` | § — | — | 已实现 | | 本模块 |
-| `governance_bridges/a2a_check.py` | § — | — | 已实现 | | 本模块 |
-| `governance_bridges/approver_check.py` | § — | — | 已实现 | | 本模块 |
-| `governance_bridges/bootstrap_superadmin.py` | § — | — | 已实现 | | 本模块 |
-| `governance_bridges/capability_check.py` | § — | — | 已实现 | | 本模块 |
-| `governance_bridges/contracts.py` | § — | — | 已实现 | | 本模块 |
+| `governance_bridges/a2a_check.py` | § — | — | 已废弃 (ARCH-035 删除) | | 本模块 |
+| `governance_bridges/approver_check.py` | § — | — | 已废弃 (ARCH-035 删除) | | 本模块 |
+| `governance_bridges/bootstrap_superadmin.py` | § — | — | 已废弃 (ARCH-035 合并到 root) | | 本模块 |
+| `governance_bridges/capability_check.py` | § — | — | 已废弃 (ARCH-035 删除) | | 本模块 |
+| `governance_bridges/contracts.py` | § — | — | 已废弃 (ARCH-035 删除) | | 本模块 |
 | `guard_layers.py` | § — | — | 已实现 | | 本模块 |
 | `integration.py` | § — | — | 已实现 | | 本模块 |
 | `integrity_self_check.py` | § — | — | 已实现 | | 本模块 |
 | `intent_binder.py` | § — | — | 已实现 | | 本模块 |
-| `key_hierarchy.py` | § — | — | 已实现 | | 本模块 |
+| `key_hierarchy.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `kill_switch.py` | § — | — | 已实现 | | 本模块 |
-| `legal_audit_chain.py` | § — | — | 已实现 | | 本模块 |
+| `legal_audit_chain.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `memory_guard.py` | § — | — | 已实现 | | 本模块 |
 | `memory_provenance_guard.py` | § — | — | 已实现 | | 本模块 |
-| `micro_verifier.py` | § — | — | 已实现 | | 本模块 |
-| `microstructure_defense.py` | § — | — | 已实现 | | 本模块 |
+| `micro_verifier.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `microstructure_defense.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `monotonic_clock.py` | § — | — | 已实现 | | 本模块 |
 | `multi_agent_collusion_detector.py` | § — | — | 已实现 | | 本模块 |
 | `novel_attack_guard.py` | § — | — | 已实现 | | 本模块 |
 | `path_guard.py` | § — | — | 已实现 | | 本模块 |
 | `permission_hooks.py` | § — | — | 已实现 | | 本模块 |
-| `permission_mode_manager.py` | § — | — | 已实现 | | 本模块 |
-| `phase_executor.py` | § — | — | 已实现 | | 本模块 |
-| `post_action_verifier.py` | § — | — | 已实现 | | 本模块 |
+| `permission_mode_manager.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `phase_executor.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `post_action_verifier.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `replay_attack_guard.py` | § — | — | 已实现 | | 本模块 |
 | `risk_mitigation.py` | § — | — | 已实现 | | 本模块 |
-| `rollback_sandbox.py` | § — | — | 已实现 | | 本模块 |
+| `rollback_sandbox.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `rule_injection_guard.py` | § — | — | 已实现 | | 本模块 |
-| `secrets_lifecycle.py` | § — | — | 已实现 | | 本模块 |
+| `secrets_lifecycle.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `session_concurrency.py` | § — | — | 已实现 | | 本模块 |
-| `session_lifecycle.py` | § — | — | 已实现 | | 本模块 |
-| `shell_dialect_detector.py` | § — | — | 已实现 | | 本模块 |
+| `session_lifecycle.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
+| `shell_dialect_detector.py` | § — | — | stub (pending ARCH-036) | | 本模块 |
 | `toctou_guard.py` | § — | — | 已实现 | | 本模块 |
 | `vibe_coding_guard.py` | § — | — | 已实现 | | 本模块 |
 
