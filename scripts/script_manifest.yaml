@@ -1094,14 +1094,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/migrate_arch_f_functions.py
-  path: governance/migrate_arch_f_functions.py
-  description: 阶段1迁移脚本：创建37个F功能设计态节点 + 56条依赖边 + 5个域迁移 + 12个事件注册。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/migrate_clean_build_status.py
   path: governance/migrate_clean_build_status.py
   description: 3类清洗（裁定#178-193）：
@@ -4153,6 +4145,14 @@ scripts:
 - name: _archive/governance/merge_domain_nodes.py
   path: _archive/governance/merge_domain_nodes.py
   description: import json
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/governance/migrate_arch_f_functions.py
+  path: _archive/governance/migrate_arch_f_functions.py
+  description: 阶段1迁移脚本：创建37个F功能设计态节点 + 56条依赖边 + 5个域迁移 + 12个事件注册。
   domain: governance
   execution_plane: warm-path
   status: registered
