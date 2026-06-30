@@ -1,7 +1,7 @@
 %% D_REPORTING 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 11, 依赖边数: 14
+%% 模块数: 5, 依赖边数: 14
 
 graph TD
 
@@ -9,15 +9,9 @@ graph TD
     subgraph D_REPORTING[报告]
         scripts_demos_demo_e2e_pipeline_py["scripts/demos/demo_e2e_pipeline.py [production]"]
         src_zephyr_reporting___init___py["src/zephyr/reporting/__init__.py [prototype]"]
-        src_zephyr_reporting__extensions___init___py["...hyr/reporting/_extensions/__init__.py [prototype]"]
         src_zephyr_reporting_analytics_base_py["src/zephyr/reporting/analytics_base.py [prototype]"]
-        src_zephyr_reporting_api___init___py["src/zephyr/reporting/api/__init__.py [prototype]"]
-        src_zephyr_reporting_core___init___py["src/zephyr/reporting/core/__init__.py [prototype]"]
         src_zephyr_reporting_default_attribution_engine_py["...porting/default_attribution_engine.py [prototype]"]
         src_zephyr_reporting_default_tca_engine_py["...ephyr/reporting/default_tca_engine.py [prototype]"]
-        src_zephyr_reporting_infrastructure___init___py[".../reporting/infrastructure/__init__.py [prototype]"]
-        src_zephyr_reporting_models___init___py["src/zephyr/reporting/models/__init__.py [prototype]"]
-        src_zephyr_reporting_services___init___py["...zephyr/reporting/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）

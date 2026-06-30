@@ -1,53 +1,12 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 2783, 依赖边数: 3152
+%% 模块数: 2585, 依赖边数: 3107
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_GOVERNANCE[生命周期管理]
-        architecture_model_architecture_lock_yaml["...itecture_model/architecture_lock.yaml [production]"]
-        architecture_model_index_yaml["architecture_model/index.yaml [production]"]
-        architecture_model_layers_b_context_engine_yaml["...re_model/layers/b_context_engine.yaml [production]"]
-        architecture_model_layers_b_core_yaml["architecture_model/layers/b_core.yaml [production]"]
-        architecture_model_layers_b_db_yaml["architecture_model/layers/b_db.yaml [production]"]
-        architecture_model_layers_b_execution_model_yaml["...e_model/layers/b_execution_model.yaml [production]"]
-        architecture_model_layers_b_feedback_loop_yaml["...ure_model/layers/b_feedback_loop.yaml [production]"]
-        architecture_model_layers_b_gates_yaml["architecture_model/layers/b_gates.yaml [production]"]
-        architecture_model_layers_b_kb_yaml["architecture_model/layers/b_kb.yaml [production]"]
-        architecture_model_layers_b_llm_security_yaml["...ture_model/layers/b_llm_security.yaml [production]"]
-        architecture_model_layers_b_mcp_yaml["architecture_model/layers/b_mcp.yaml [production]"]
-        architecture_model_layers_b_orchestrator_yaml["...ture_model/layers/b_orchestrator.yaml [production]"]
-        architecture_model_layers_b_pipeline_yaml["...itecture_model/layers/b_pipeline.yaml [production]"]
-        architecture_model_layers_b_shared_yaml["architecture_model/layers/b_shared.yaml [production]"]
-        architecture_model_layers_schema_yaml["architecture_model/layers/schema.yaml [production]"]
-        config_ai_capability_matrix_yaml["config/ai_capability_matrix.yaml [production]"]
-        config_blueprint_routing_yaml["config/blueprint_routing.yaml [production]"]
-        config_capabilities_yaml["config/capabilities.yaml [production]"]
-        config_capacity_asset_inventory_yaml["config/capacity/asset_inventory.yaml [production]"]
-        config_capacity_capacity_slo_yaml["config/capacity/capacity_slo.yaml [production]"]
-        config_capacity_degradation_chain_yaml["config/capacity/degradation_chain.yaml [production]"]
-        config_capacity_error_budget_config_yaml["config/capacity/error_budget_config.yaml [production]"]
-        config_capacity_external_watchdog_yaml["config/capacity/external_watchdog.yaml [production]"]
-        config_capacity_owner_offline_protocol_yaml[".../capacity/owner_offline_protocol.yaml [production]"]
-        config_capacity_risk_register_yaml["config/capacity/risk_register.yaml [production]"]
-        config_capacity_params_yaml["config/capacity_params.yaml [production]"]
-        config_flags_yaml["config/flags.yaml [production]"]
-        config_kb_parameters_yaml["config/kb_parameters.yaml [production]"]
-        config_metrics_schema_yaml["config/metrics_schema.yaml [production]"]
-        config_model_pricing_yaml["config/model_pricing.yaml [production]"]
-        config_nav_table_mapping_yaml["config/nav_table_mapping.yaml [production]"]
-        config_rbac_roles_yaml["config/rbac_roles.yaml [production]"]
-        config_resource_optimization_yaml["config/resource_optimization.yaml [production]"]
-        config_risk_params_yaml["config/risk_params.yaml [production]"]
-        config_runtime_burn_rate_acceleration_yaml["...g/runtime/burn_rate_acceleration.yaml [production]"]
-        config_runtime_error_budget_state_yaml["config/runtime/error_budget_state.yaml [production]"]
-        config_runtime_script_retirement_state_yaml[".../runtime/script_retirement_state.yaml [production]"]
-        config_runtime_shadow_mode_state_yaml["config/runtime/shadow_mode_state.yaml [production]"]
-        config_session_state_machine_yaml["config/session_state_machine.yaml [production]"]
-        config_skill_cbac_mapping_yaml["config/skill_cbac_mapping.yaml [production]"]
-        config_trigger_router_yaml["config/trigger_router.yaml [production]"]
         data_asset_index_archive_migra___cripts__migration_shared_py["...igration_scripts/_migration_shared.py [prototype]"]
         data_asset_index_archive_migra___scripts__verify_manifest_py["...migration_scripts/_verify_manifest.py [prototype]"]
         data_asset_index_archive_migration_scripts__verify_step4_py["...ve/migration_scripts/_verify_step4.py [prototype]"]
@@ -107,7 +66,48 @@ graph TD
         docs_03_modules__domain_infra_ops_a2a_protocol_blueprint_md["...n_infra_ops/a2a_protocol/blueprint.md [design]"]
         docs_03_modules__domain_infra____sset_inventory_blueprint_md["...nfra_ops/asset_inventory/blueprint.md [design]"]
         docs_03_modules__domain_infra____city_assurance_blueprint_md["...a_ops/capacity_assurance/blueprint.md [design]"]
-        %% ... 还有 2683 个模块未显示
+        docs_03_modules__domain_infra____me_integration_blueprint_md["...time/runtime_integration/blueprint.md [design]"]
+        docs_03_modules__domain_infra____machine_engine_blueprint_md["...ime/state_machine_engine/blueprint.md [design]"]
+        docs_03_modules__domain_infra____me_task_system_blueprint_md["...nfra_runtime/task_system/blueprint.md [design]"]
+        docs_03_modules__domain_integration_local_model_blueprint_md["..._integration/local_model/blueprint.md [design]"]
+        docs_03_modules__domain_ml_train_ml_core_blueprint_md["..._domain_ml_train/ml_core/blueprint.md [design]"]
+        docs_03_modules__domain_report___analytics_core_blueprint_md["...reporting/analytics_core/blueprint.md [design]"]
+        docs_03_modules__domain_research_research_core_blueprint_md["...n_research/research_core/blueprint.md [design]"]
+        docs_03_modules__domain_risk_r___anagement_core_blueprint_md["...isk/risk_management_core/blueprint.md [design]"]
+        docs_03_modules__domain_signal___eneration_core_blueprint_md["...l/signal_generation_core/blueprint.md [design]"]
+        docs_03_modules__domain_simula___xperiment_core_blueprint_md["...mulation/experiment_core/blueprint.md [design]"]
+        docs_03_modules__master_blueprint_blueprint_md["...odules/_master_blueprint/blueprint.md [design]"]
+        docs_03_modules__master_blueprint_blueprint_agent_spec_md["...ter_blueprint/blueprint_agent_spec.md [design]"]
+        docs_03_modules__ml_experiment_domain_blueprint_md["...es/_ml_experiment_domain/blueprint.md [design]"]
+        docs_03_modules__sys_master_blueprint_md["docs/03_modules/_sys_master/blueprint.md [design]"]
+        scripts_governance__audit_gate_registry_py["...ts/governance/_audit_gate_registry.py [production]"]
+        scripts_governance__check_all_status_py["scripts/governance/_check_all_status.py [production]"]
+        scripts_governance__check_task_py["scripts/governance/_check_task.py [production]"]
+        scripts_governance__check_vs_py["scripts/governance/_check_vs.py [production]"]
+        scripts_governance__list_gate_ids_py["scripts/governance/_list_gate_ids.py [production]"]
+        scripts_governance__verify_gate_loading_py["...ts/governance/_verify_gate_loading.py [production]"]
+        scripts_governance_analyze_orphan_consumers_py["...overnance/analyze_orphan_consumers.py [production]"]
+        scripts_governance_check_rule_coverage_py["...pts/governance/check_rule_coverage.py [production]"]
+        scripts_governance_d3_metadata_validate_rule_frontmatter_py["...metadata/validate_rule_frontmatter.py [production]"]
+        scripts_governance_d5_architecture___init___py["...overnance/d5_architecture/__init__.py [prototype]"]
+        scripts_governance_d5_architecture_analyzers___init___py["...d5_architecture/analyzers/__init__.py [prototype]"]
+        scripts_governance_d5_architec____analyze_contract_impact_py[".../analyzers/analyze_contract_impact.py [prototype]"]
+        scripts_governance_d5_architec___t_depends_on_chain_depth_py["...yzers/audit_depends_on_chain_depth.py [prototype]"]
+        scripts_governance_d5_architec___sure_deprecation_cascade_py["...lyzers/measure_deprecation_cascade.py [prototype]"]
+        scripts_governance_d5_architecture_audit_agent_spec_py["...e/d5_architecture/audit_agent_spec.py [prototype]"]
+        scripts_governance_d5_architec___blueprint_code_alignment_py["...ure/check_blueprint_code_alignment.py [prototype]"]
+        scripts_governance_d5_architecture_check_budget_health_py["...5_architecture/check_budget_health.py [prototype]"]
+        scripts_governance_d5_architecture_check_drift_e2e_py["...ce/d5_architecture/check_drift_e2e.py [prototype]"]
+        scripts_governance_d5_architecture_checkers___init___py[".../d5_architecture/checkers/__init__.py [prototype]"]
+        scripts_governance_d5_architec___check_architecture_gates_py[".../checkers/check_architecture_gates.py [prototype]"]
+        scripts_governance_d5_architec___lueprint_automation_sync_py["...rs/check_blueprint_automation_sync.py [prototype]"]
+        scripts_governance_d5_architec___blueprint_code_alignment_py["...ers/check_blueprint_code_alignment.py [prototype]"]
+        scripts_governance_d5_architec___rint_template_compliance_py["...heck_blueprint_template_compliance.py [prototype]"]
+        scripts_governance_d5_architec___ers_check_bvb_compliance_py["...ture/checkers/check_bvb_compliance.py [prototype]"]
+        scripts_governance_d5_architec___s_check_code_duplication_py["...re/checkers/check_code_duplication.py [prototype]"]
+        scripts_governance_d5_architec___heck_contract_code_drift_py["...checkers/check_contract_code_drift.py [prototype]"]
+        scripts_governance_d5_architec___eck_dependency_direction_py["...heckers/check_dependency_direction.py [prototype]"]
+        %% ... 还有 2485 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_governance_drift_detection_drift_engine_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_de___ion_drift_infrastructure_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_drift_result_types_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    %% ... 还有 982 条域内依赖未显示
+    %% ... 还有 981 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_GOVERNANCE (15 条)
@@ -401,8 +401,7 @@ graph TD
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     %% D_RISK -> D_GOVERNANCE (1 条)
     D_RISK[D_RISK] -->|config_depends| src_zephyr_governance___init___py
-    %% D_SECURITY -> D_GOVERNANCE (3 条)
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance___init___py
+    %% D_SECURITY -> D_GOVERNANCE (2 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance___init___py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance___init___py
     %% D_SHARED -> D_GOVERNANCE (3 条)
@@ -820,7 +819,7 @@ graph TD
     tests_integration_test_phase_e_main_flow_py -->|test_depends| D_RISK[D_RISK]
     tests_unit_test_execution_engine_unit_py -->|test_depends| D_RISK[D_RISK]
     tests_unit_test_stop_loss_py -->|test_depends| D_RISK[D_RISK]
-    %% D_GOVERNANCE -> D_SECURITY (202 条)
+    %% D_GOVERNANCE -> D_SECURITY (160 条)
     src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_delegation_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
@@ -895,7 +894,7 @@ graph TD
     tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D_SIMULATION]
     tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D_SIMULATION]
     tests_integration_test_phase_f_layers_py -->|test_depends| D_SIMULATION[D_SIMULATION]
-    %% D_GOVERNANCE -> D_TRADING (216 条)
+    %% D_GOVERNANCE -> D_TRADING (215 条)
     src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_analytics_base_py -->|import_depends| D_TRADING[D_TRADING]
@@ -928,6 +927,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 1062 条
-    %% 跨域入边: 199 条
-    %% 跨域出边: 1891 条
+    %% 域内依赖: 1061 条
+    %% 跨域入边: 198 条
+    %% 跨域出边: 1848 条

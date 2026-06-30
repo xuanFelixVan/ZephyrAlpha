@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 126, 依赖边数: 366
+%% 模块数: 117, 依赖边数: 366
 
 graph TD
 
@@ -11,9 +11,7 @@ graph TD
         src_zephyr_autonomy_core_pipeline_orchestrator_py["...utonomy_core/pipeline_orchestrator.py [production]"]
         src_zephyr_infrastructure___init___py["src/zephyr/infrastructure/__init__.py [production]"]
         src_zephyr_infrastructure__base_server_py["...zephyr/infrastructure/_base_server.py [production]"]
-        src_zephyr_infrastructure__extensions___init___py["...nfrastructure/_extensions/__init__.py [prototype]"]
         src_zephyr_infrastructure_adaptation___init___py["...infrastructure/adaptation/__init__.py [production]"]
-        src_zephyr_infrastructure_api___init___py["...zephyr/infrastructure/api/__init__.py [prototype]"]
         src_zephyr_infrastructure_asset_inventory___init___py["...structure/asset_inventory/__init__.py [production]"]
         src_zephyr_infrastructure_asset_inventory___main___py["...structure/asset_inventory/__main__.py [production]"]
         src_zephyr_infrastructure_asset_inventory_classifier_py["...ructure/asset_inventory/classifier.py [production]"]
@@ -67,13 +65,9 @@ graph TD
         src_zephyr_infrastructure_compensation___init___py["...frastructure/compensation/__init__.py [production]"]
         src_zephyr_infrastructure_config___init___py["...hyr/infrastructure/config/__init__.py [production]"]
         src_zephyr_infrastructure_config_shared_config___init___py["...ture/config/shared/config/__init__.py [production]"]
-        src_zephyr_infrastructure_config_shared_config_loader_py["...ucture/config/shared/config/loader.py [production]"]
         src_zephyr_infrastructure_config_validator_py["...yr/infrastructure/config_validator.py [production]"]
         src_zephyr_infrastructure_contract_tester_py["...hyr/infrastructure/contract_tester.py [production]"]
-        src_zephyr_infrastructure_core___init___py["...ephyr/infrastructure/core/__init__.py [prototype]"]
         src_zephyr_infrastructure_cost_tracker_py["...zephyr/infrastructure/cost_tracker.py [production]"]
-        src_zephyr_infrastructure_dashboard___init___py[".../infrastructure/dashboard/__init__.py [production]"]
-        src_zephyr_infrastructure_dashboard_components___init___py["...ture/dashboard/components/__init__.py [production]"]
         src_zephyr_infrastructure_dependency___init___py["...infrastructure/dependency/__init__.py [production]"]
         src_zephyr_infrastructure_doc_guard_server_py["...yr/infrastructure/doc_guard_server.py [production]"]
         src_zephyr_infrastructure_draft___init___py["...phyr/infrastructure/draft/__init__.py [production]"]
@@ -96,7 +90,6 @@ graph TD
         src_zephyr_infrastructure_infra_06___init___py["...r/infrastructure/infra_06/__init__.py [production]"]
         src_zephyr_infrastructure_infra_06_cache_py["...phyr/infrastructure/infra_06/cache.py [production]"]
         src_zephyr_infrastructure_infr___rocess_lifecycle_gateway_py["...infra_06/process_lifecycle_gateway.py [production]"]
-        src_zephyr_infrastructure_infrastructure___init___py["...astructure/infrastructure/__init__.py [prototype]"]
         src_zephyr_infrastructure_infrastructure_base_py["...infrastructure/infrastructure_base.py [production]"]
         src_zephyr_infrastructure_kill_switch_sim_py["...hyr/infrastructure/kill_switch_sim.py [production]"]
         src_zephyr_infrastructure_knowledge___init___py[".../infrastructure/knowledge/__init__.py [production]"]
@@ -107,7 +100,14 @@ graph TD
         src_zephyr_infrastructure_lifecycle_scope_guard_py["...frastructure/lifecycle/scope_guard.py [production]"]
         src_zephyr_infrastructure_life___e_task_lifecycle_manager_py["...e/lifecycle/task_lifecycle_manager.py [production]"]
         src_zephyr_infrastructure_maintenance___init___py["...nfrastructure/maintenance/__init__.py [production]"]
-        %% ... 还有 26 个模块未显示
+        src_zephyr_infrastructure_observability_02___init___py["...tructure/observability_02/__init__.py [production]"]
+        src_zephyr_infrastructure_observability_02_session_audit_py["...ure/observability_02/session_audit.py [production]"]
+        src_zephyr_infrastructure_prompt_provider_py["...hyr/infrastructure/prompt_provider.py [production]"]
+        src_zephyr_infrastructure_pydantic_v2_migrator_py["...nfrastructure/pydantic_v2_migrator.py [production]"]
+        src_zephyr_infrastructure_rate_limiter_py["...zephyr/infrastructure/rate_limiter.py [production]"]
+        src_zephyr_infrastructure_resource_provider_py["...r/infrastructure/resource_provider.py [production]"]
+        src_zephyr_infrastructure_runtime___init___py["...yr/infrastructure/runtime/__init__.py [production]"]
+        %% ... 还有 17 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）

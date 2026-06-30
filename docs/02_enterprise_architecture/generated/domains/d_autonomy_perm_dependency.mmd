@@ -1,20 +1,13 @@
 %% D_AUTONOMY_PERM 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 70, 依赖边数: 151
+%% 模块数: 62, 依赖边数: 151
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_AUTONOMY_PERM[自治保护]
-        config_runtime_kill_switch_state_yaml["config/runtime/kill_switch_state.yaml [production]"]
         docs_03_modules__domain_autono___ore_agent_rbac_blueprint_md["...autonomy_core/agent_rbac/blueprint.md [design]"]
-        src_zephyr_autonomy_perm___init___py["src/zephyr/autonomy_perm/__init__.py [prototype]"]
-        src_zephyr_autonomy_perm__extensions___init___py["...autonomy_perm/_extensions/__init__.py [prototype]"]
-        src_zephyr_autonomy_perm_api___init___py["src/zephyr/autonomy_perm/api/__init__.py [prototype]"]
-        src_zephyr_autonomy_perm_core___init___py["...zephyr/autonomy_perm/core/__init__.py [prototype]"]
-        src_zephyr_autonomy_perm_infrastructure___init___py["...onomy_perm/infrastructure/__init__.py [prototype]"]
-        src_zephyr_autonomy_perm_models___init___py["...phyr/autonomy_perm/models/__init__.py [prototype]"]
         src_zephyr_autonomy_perm_red_blue_validator___init___py["...y_perm/red_blue_validator/__init__.py [prototype]"]
         src_zephyr_autonomy_perm_red_b___alidator_attack_registry_py["...red_blue_validator/attack_registry.py [prototype]"]
         src_zephyr_autonomy_perm_red_b___alidator_bypass_recorder_py["...red_blue_validator/bypass_recorder.py [prototype]"]
@@ -22,7 +15,6 @@ graph TD
         src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py["...blue_validator/convergence_checker.py [prototype]"]
         src_zephyr_autonomy_perm_red_b___validator_defense_runner_py[".../red_blue_validator/defense_runner.py [prototype]"]
         src_zephyr_autonomy_perm_red_b___alidator_game_day_runner_py["...red_blue_validator/game_day_runner.py [prototype]"]
-        src_zephyr_autonomy_perm_services___init___py["...yr/autonomy_perm/services/__init__.py [prototype]"]
         src_zephyr_governance_agent_signer_py["src/zephyr/governance/agent_signer.py [prototype]"]
         src_zephyr_security_access_con___ernance_bridges___init___py["...ontrol/governance_bridges/__init__.py [prototype]"]
         src_zephyr_security_access_con___rnance_bridges_a2a_check_py["...ntrol/governance_bridges/a2a_check.py [prototype]"]

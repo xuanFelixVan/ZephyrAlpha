@@ -1,7 +1,7 @@
 %% D_CROSS_ASSET 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 11, 依赖边数: 9
+%% 模块数: 5, 依赖边数: 9
 
 graph TD
 
@@ -9,12 +9,6 @@ graph TD
     subgraph D_CROSS_ASSET[跨资产]
         src_zephyr_cross_asset_["src/zephyr/cross_asset/ [design]"]
         src_zephyr_cross_asset___init___py["src/zephyr/cross_asset/__init__.py [prototype]"]
-        src_zephyr_cross_asset__extensions___init___py["...r/cross_asset/_extensions/__init__.py [prototype]"]
-        src_zephyr_cross_asset_api___init___py["src/zephyr/cross_asset/api/__init__.py [prototype]"]
-        src_zephyr_cross_asset_core___init___py["src/zephyr/cross_asset/core/__init__.py [prototype]"]
-        src_zephyr_cross_asset_infrastructure___init___py["...ross_asset/infrastructure/__init__.py [prototype]"]
-        src_zephyr_cross_asset_models___init___py["...zephyr/cross_asset/models/__init__.py [prototype]"]
-        src_zephyr_cross_asset_services___init___py["...phyr/cross_asset/services/__init__.py [prototype]"]
         src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py [prototype]"]
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py [prototype]"]

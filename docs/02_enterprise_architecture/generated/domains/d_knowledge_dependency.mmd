@@ -1,25 +1,15 @@
 %% D_KNOWLEDGE 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 14, 依赖边数: 4
+%% 模块数: 4, 依赖边数: 4
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_KNOWLEDGE[知识管理]
-        architecture_model_layers_b_vector_memory_yaml["...ure_model/layers/b_vector_memory.yaml [production]"]
         docs_03_modules__domain_knowle___knowledge_base_blueprint_md["...knowledge/knowledge_base/blueprint.md [design]"]
         docs_03_modules__domain_knowledge_vector_memory_blueprint_md["..._knowledge/vector_memory/blueprint.md [design]"]
-        src_zephyr_knowledge___init___py["src/zephyr/knowledge/__init__.py [prototype]"]
-        src_zephyr_knowledge__extensions___init___py["...hyr/knowledge/_extensions/__init__.py [prototype]"]
-        src_zephyr_knowledge_api___init___py["src/zephyr/knowledge/api/__init__.py [prototype]"]
-        src_zephyr_knowledge_core___init___py["src/zephyr/knowledge/core/__init__.py [prototype]"]
-        src_zephyr_knowledge_infrastructure___init___py[".../knowledge/infrastructure/__init__.py [prototype]"]
-        src_zephyr_knowledge_models___init___py["src/zephyr/knowledge/models/__init__.py [prototype]"]
-        src_zephyr_knowledge_services___init___py["...zephyr/knowledge/services/__init__.py [prototype]"]
         tests_test_skill_knowledge_base_py["tests/test_skill_knowledge_base.py [prototype]"]
-        tests_test_vector_memory_root_py["tests/test_vector_memory_root.py [prototype]"]
-        tests_unit_vector_memory___init___py["tests/unit/vector_memory/__init__.py [prototype]"]
         tests_unit_vector_memory_test_vector_memory_py["...t/vector_memory/test_vector_memory.py [prototype]"]
     end
 

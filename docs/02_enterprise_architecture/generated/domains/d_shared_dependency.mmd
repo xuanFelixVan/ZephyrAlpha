@@ -1,7 +1,7 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 261, 依赖边数: 432
+%% 模块数: 255, 依赖边数: 431
 
 graph TD
 
@@ -25,7 +25,6 @@ graph TD
         src_zephyr_shared_api_api_client_py["src/zephyr/shared/api/api_client.py [prototype]"]
         src_zephyr_shared_api_api_index_py["src/zephyr/shared/api/api_index.py [prototype]"]
         src_zephyr_shared_api_dos_launcher_py["src/zephyr/shared/api/dos_launcher.py [prototype]"]
-        src_zephyr_shared_api_shared_quickref_yaml["...ephyr/shared/api/shared_quickref.yaml [production]"]
         src_zephyr_shared_api_client_py["src/zephyr/shared/api_client.py [prototype]"]
         src_zephyr_shared_blueprint_code_auditor_py["...phyr/shared/blueprint_code_auditor.py [production]"]
         src_zephyr_shared_blueprint_decomposer_py["...zephyr/shared/blueprint_decomposer.py [prototype]"]
@@ -40,7 +39,6 @@ graph TD
         src_zephyr_shared_code_economy_analyzer_py["...ephyr/shared/code_economy_analyzer.py [production]"]
         src_zephyr_shared_combinatorial_gate_py["src/zephyr/shared/combinatorial_gate.py [production]"]
         src_zephyr_shared_compensation___init___py["...ephyr/shared/compensation/__init__.py [production]"]
-        src_zephyr_shared_compensation_saga_compensator_py["...ared/compensation/saga_compensator.py [prototype]"]
         src_zephyr_shared_config___init___py["src/zephyr/shared/config/__init__.py [prototype]"]
         src_zephyr_shared_config_loader_py["src/zephyr/shared/config/loader.py [prototype]"]
         src_zephyr_shared_constants_py["src/zephyr/shared/constants.py [prototype]"]
@@ -107,7 +105,9 @@ graph TD
         src_zephyr_shared_contracts_po___strategy_lifecycle_event_py["...portfolio/strategy_lifecycle_event.py [prototype]"]
         src_zephyr_shared_contracts_risk___init___py["...hyr/shared/contracts/risk/__init__.py [prototype]"]
         src_zephyr_shared_contracts_risk_compliance_rule_py["...red/contracts/risk/compliance_rule.py [prototype]"]
-        %% ... 还有 161 个模块未显示
+        src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["...racts/risk/risk_dashboard_snapshot.py [production]"]
+        src_zephyr_shared_contracts_risk_risk_limits_py[".../shared/contracts/risk/risk_limits.py [prototype]"]
+        %% ... 还有 155 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -381,8 +381,7 @@ graph TD
     D_PF_ALLOC[D_PF_ALLOC] -->|contract| src_zephyr_shared_contracts_skill_protocol_py
     %% D_RISK -> D_SHARED (1 条)
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared__cross_layer_ml_experiment_pipeline_py
-    %% D_SECURITY -> D_SHARED (5 条)
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    %% D_SECURITY -> D_SHARED (4 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_alert_manager_py
@@ -448,5 +447,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 165 条
-    %% 跨域入边: 249 条
+    %% 跨域入边: 248 条
     %% 跨域出边: 18 条

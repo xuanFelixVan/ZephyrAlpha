@@ -1,15 +1,13 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 115, 依赖边数: 373
+%% 模块数: 108, 依赖边数: 373
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_INTEGRATION[管线路由]
         src_zephyr_integration___init___py["src/zephyr/integration/__init__.py [production]"]
-        src_zephyr_integration__extensions___init___py["...r/integration/_extensions/__init__.py [prototype]"]
-        src_zephyr_integration_api___init___py["src/zephyr/integration/api/__init__.py [prototype]"]
         src_zephyr_integration_backpressure_manager_py["...r/integration/backpressure_manager.py [prototype]"]
         src_zephyr_integration_backpressure_types_py["...hyr/integration/backpressure_types.py [prototype]"]
         src_zephyr_integration_behavioral_admission___init___py["...tion/behavioral_admission/__init__.py [prototype]"]
@@ -17,11 +15,9 @@ graph TD
         src_zephyr_integration_budget_enforcer___init___py["...tegration/budget_enforcer/__init__.py [prototype]"]
         src_zephyr_integration_budget____radation_spiral_detector_py["...forcer/degradation_spiral_detector.py [prototype]"]
         src_zephyr_integration_circuit_breaker_manager_py["...ntegration/circuit_breaker_manager.py [prototype]"]
-        src_zephyr_integration_core___init___py["src/zephyr/integration/core/__init__.py [prototype]"]
         src_zephyr_integration_cost_tracker_py["src/zephyr/integration/cost_tracker.py [prototype]"]
         src_zephyr_integration_ct_pipe_routing_py["...zephyr/integration/ct_pipe_routing.py [prototype]"]
         src_zephyr_integration_dead_letter_queue_py["...phyr/integration/dead_letter_queue.py [prototype]"]
-        src_zephyr_integration_infrastructure___init___py["...ntegration/infrastructure/__init__.py [prototype]"]
         src_zephyr_integration_layer1_discovery___init___py["...egration/layer1_discovery/__init__.py [prototype]"]
         src_zephyr_integration_layer2_communication___init___py["...tion/layer2_communication/__init__.py [prototype]"]
         src_zephyr_integration_layer3_coordination___init___py["...ation/layer3_coordination/__init__.py [prototype]"]
@@ -53,7 +49,6 @@ graph TD
         src_zephyr_integration_mcp_sentinel_server_py["...yr/integration/mcp/sentinel_server.py [prototype]"]
         src_zephyr_integration_mcp_task_manager_server_py["...ntegration/mcp/task_manager_server.py [prototype]"]
         src_zephyr_integration_mcp_telemetry_server_py["...r/integration/mcp/telemetry_server.py [prototype]"]
-        src_zephyr_integration_mcp_tool_contracts_yaml["...r/integration/mcp/tool_contracts.yaml [production]"]
         src_zephyr_integration_mcp_vector_memory_server_py["...tegration/mcp/vector_memory_server.py [prototype]"]
         src_zephyr_integration_mcp_server_py["src/zephyr/integration/mcp_server.py [prototype]"]
         src_zephyr_integration_model_router_py["src/zephyr/integration/model_router.py [prototype]"]
@@ -65,7 +60,6 @@ graph TD
         src_zephyr_integration_ports_py["src/zephyr/integration/ports.py [prototype]"]
         src_zephyr_integration_preemption_manager_py["...hyr/integration/preemption_manager.py [prototype]"]
         src_zephyr_integration_routing_plugins_py["...zephyr/integration/routing_plugins.py [prototype]"]
-        src_zephyr_integration_services___init___py["...phyr/integration/services/__init__.py [prototype]"]
         src_zephyr_integration_shared_api_03___init___py["...integration/shared/api_03/__init__.py [prototype]"]
         src_zephyr_integration_shared_api_03_api_client_py["...tegration/shared/api_03/api_client.py [prototype]"]
         src_zephyr_integration_shared_api_03_api_index_py["...ntegration/shared/api_03/api_index.py [prototype]"]
@@ -107,7 +101,13 @@ graph TD
         src_zephyr_integration_vector____in_process_vector_memory_py["...or_memory/in_process_vector_memory.py [prototype]"]
         src_zephyr_integration_vector_memory_index_health_monitor_py["...vector_memory/index_health_monitor.py [prototype]"]
         src_zephyr_integration_vector_memory_interface_py["...ntegration/vector_memory/interface.py [prototype]"]
-        %% ... 还有 15 个模块未显示
+        src_zephyr_integration_vector_____migrate_chroma_to_faiss_py["...tor_memory/migrate_chroma_to_faiss.py [prototype]"]
+        src_zephyr_integration_vector_memory_ollama_chat_py["...egration/vector_memory/ollama_chat.py [prototype]"]
+        src_zephyr_integration_vector_memory_ollama_embedding_py["...ion/vector_memory/ollama_embedding.py [prototype]"]
+        src_zephyr_integration_vector_memory_provenance_enforcer_py[".../vector_memory/provenance_enforcer.py [prototype]"]
+        src_zephyr_integration_vector_memory_retrieval_feedback_py["...n/vector_memory/retrieval_feedback.py [prototype]"]
+        src_zephyr_integration_vector____ry_sqlite_metadata_store_py["...ector_memory/sqlite_metadata_store.py [prototype]"]
+        %% ... 还有 8 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）

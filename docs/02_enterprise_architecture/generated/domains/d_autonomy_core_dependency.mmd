@@ -1,7 +1,7 @@
 %% D_AUTONOMY_CORE 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 175, 依赖边数: 421
+%% 模块数: 169, 依赖边数: 421
 
 graph TD
 
@@ -9,7 +9,6 @@ graph TD
     subgraph D_AUTONOMY_CORE[自治核心]
         src_zephyr_autonomy_core___init___py["src/zephyr/autonomy_core/__init__.py [production]"]
         src_zephyr_autonomy_core___main___py["src/zephyr/autonomy_core/__main__.py [prototype]"]
-        src_zephyr_autonomy_core__extensions___init___py["...autonomy_core/_extensions/__init__.py [prototype]"]
         src_zephyr_autonomy_core__infrastructure_py["...phyr/autonomy_core/_infrastructure.py [prototype]"]
         src_zephyr_autonomy_core__injection_py["src/zephyr/autonomy_core/_injection.py [prototype]"]
         src_zephyr_autonomy_core__pipeline_py["src/zephyr/autonomy_core/_pipeline.py [prototype]"]
@@ -18,7 +17,6 @@ graph TD
         src_zephyr_autonomy_core_agent_observability_py[".../autonomy_core/agent_observability.py [prototype]"]
         src_zephyr_autonomy_core_alignment_scorer_py["...hyr/autonomy_core/alignment_scorer.py [prototype]"]
         src_zephyr_autonomy_core_all_skill_modules_py["...yr/autonomy_core/all_skill_modules.py [prototype]"]
-        src_zephyr_autonomy_core_api___init___py["src/zephyr/autonomy_core/api/__init__.py [prototype]"]
         src_zephyr_autonomy_core_architecture_context_loader_py["...y_core/architecture_context_loader.py [prototype]"]
         src_zephyr_autonomy_core_assembly___init___py["...yr/autonomy_core/assembly/__init__.py [prototype]"]
         src_zephyr_autonomy_core_assembly_context_assembler_py["...my_core/assembly/context_assembler.py [prototype]"]
@@ -54,7 +52,6 @@ graph TD
         src_zephyr_autonomy_core_context_rule_registry_py["...utonomy_core/context_rule_registry.py [prototype]"]
         src_zephyr_autonomy_core_context_value_attribution_py["...omy_core/context_value_attribution.py [prototype]"]
         src_zephyr_autonomy_core_contextual_fetch_api_py["...autonomy_core/contextual_fetch_api.py [prototype]"]
-        src_zephyr_autonomy_core_core___init___py["...zephyr/autonomy_core/core/__init__.py [prototype]"]
         src_zephyr_autonomy_core_curation_loop_py["...zephyr/autonomy_core/curation_loop.py [prototype]"]
         src_zephyr_autonomy_core_dependency_tracker_py["...r/autonomy_core/dependency_tracker.py [prototype]"]
         src_zephyr_autonomy_core_diff_injector_py["...zephyr/autonomy_core/diff_injector.py [prototype]"]
@@ -70,7 +67,6 @@ graph TD
         src_zephyr_autonomy_core_fragmentation_index_py[".../autonomy_core/fragmentation_index.py [prototype]"]
         src_zephyr_autonomy_core_host_resource_governor_py["...tonomy_core/host_resource_governor.py [prototype]"]
         src_zephyr_autonomy_core_ide_watcher_py["src/zephyr/autonomy_core/ide_watcher.py [prototype]"]
-        src_zephyr_autonomy_core_infrastructure___init___py["...onomy_core/infrastructure/__init__.py [prototype]"]
         src_zephyr_autonomy_core_integration___init___py["...autonomy_core/integration/__init__.py [prototype]"]
         src_zephyr_autonomy_core_integration_pipeline_bridge_py["...y_core/integration/pipeline_bridge.py [prototype]"]
         src_zephyr_autonomy_core_integrity_check_py["...phyr/autonomy_core/integrity_check.py [prototype]"]
@@ -88,7 +84,6 @@ graph TD
         src_zephyr_autonomy_core_mcp_adapter_py["src/zephyr/autonomy_core/mcp_adapter.py [prototype]"]
         src_zephyr_autonomy_core_memory_bank_py["src/zephyr/autonomy_core/memory_bank.py [prototype]"]
         src_zephyr_autonomy_core_mode_manager_py["src/zephyr/autonomy_core/mode_manager.py [prototype]"]
-        src_zephyr_autonomy_core_models___init___py["...phyr/autonomy_core/models/__init__.py [prototype]"]
         src_zephyr_autonomy_core_otel_instrumentation_py["...autonomy_core/otel_instrumentation.py [prototype]"]
         src_zephyr_autonomy_core_parsing___init___py["...hyr/autonomy_core/parsing/__init__.py [prototype]"]
         src_zephyr_autonomy_core_parsing_intent_keyword_mapper_py["...core/parsing/intent_keyword_mapper.py [prototype]"]
@@ -106,8 +101,13 @@ graph TD
         src_zephyr_autonomy_core_self_diagnosis_py["...ephyr/autonomy_core/self_diagnosis.py [prototype]"]
         src_zephyr_autonomy_core_self_evolution_fidelity_gate_py["..._core/self_evolution_fidelity_gate.py [prototype]"]
         src_zephyr_autonomy_core_sensitivity_classifier_py["...tonomy_core/sensitivity_classifier.py [prototype]"]
-        src_zephyr_autonomy_core_services___init___py["...yr/autonomy_core/services/__init__.py [prototype]"]
-        %% ... 还有 75 个模块未显示
+        src_zephyr_autonomy_core_session_learner_py["...phyr/autonomy_core/session_learner.py [prototype]"]
+        src_zephyr_autonomy_core_shadow_canary_py["...zephyr/autonomy_core/shadow_canary.py [prototype]"]
+        src_zephyr_autonomy_core_skill_attention_py["...phyr/autonomy_core/skill_attention.py [prototype]"]
+        src_zephyr_autonomy_core_skill_breakage_checker_py["...tonomy_core/skill_breakage_checker.py [prototype]"]
+        src_zephyr_autonomy_core_skill_cache_provider_py["...autonomy_core/skill_cache_provider.py [prototype]"]
+        src_zephyr_autonomy_core_skill_calibration_py["...yr/autonomy_core/skill_calibration.py [prototype]"]
+        %% ... 还有 69 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）

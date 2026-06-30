@@ -1,35 +1,29 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 23, 依赖边数: 25
+%% 模块数: 17, 依赖边数: 25
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_FRONTEND[前端]
         src_zephyr_frontend___init___py["src/zephyr/frontend/__init__.py [prototype]"]
-        src_zephyr_frontend__extensions___init___py["...phyr/frontend/_extensions/__init__.py [prototype]"]
-        src_zephyr_frontend_api___init___py["src/zephyr/frontend/api/__init__.py [prototype]"]
-        src_zephyr_frontend_core___init___py["src/zephyr/frontend/core/__init__.py [prototype]"]
         src_zephyr_frontend_dashboard___init___py["...zephyr/frontend/dashboard/__init__.py [prototype]"]
         src_zephyr_frontend_dashboard_app_py["src/zephyr/frontend/dashboard/app.py [production]"]
         src_zephyr_frontend_dashboard_app_py["src/zephyr/frontend/dashboard/app.py [prototype]"]
         src_zephyr_frontend_dashboard_components___init___py["...tend/dashboard/components/__init__.py [prototype]"]
-        src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [prototype]"]
         src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [production]"]
-        src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [prototype]"]
+        src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [prototype]"]
         src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [production]"]
-        src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [production]"]
+        src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [prototype]"]
         src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [prototype]"]
+        src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [production]"]
         src_zephyr_frontend_dashboard_components_olap_trend_py["...nd/dashboard/components/olap_trend.py [production]"]
         src_zephyr_frontend_dashboard_components_olap_trend_py["...nd/dashboard/components/olap_trend.py [prototype]"]
         src_zephyr_frontend_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [production]"]
         src_zephyr_frontend_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [prototype]"]
-        src_zephyr_frontend_infrastructure___init___py["...r/frontend/infrastructure/__init__.py [prototype]"]
-        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [production]"]
         src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [prototype]"]
-        src_zephyr_frontend_models___init___py["src/zephyr/frontend/models/__init__.py [prototype]"]
-        src_zephyr_frontend_services___init___py["src/zephyr/frontend/services/__init__.py [prototype]"]
+        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）

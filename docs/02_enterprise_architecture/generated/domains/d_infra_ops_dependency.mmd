@@ -1,15 +1,12 @@
 %% D_INFRA_OPS 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 34, 依赖边数: 21
+%% 模块数: 25, 依赖边数: 21
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_INFRA_OPS[基础设施运维]
-        config_infra_grafana_dashboards_provider_yml["...infra/grafana/dashboards/provider.yml [production]"]
-        config_infra_grafana_datasources_prometheus_yml["...ra/grafana/datasources/prometheus.yml [production]"]
-        config_infra_prometheus_prometheus_yml["config/infra/prometheus/prometheus.yml [production]"]
         scripts_construction_test_deepseek_api_py["...pts/construction/test_deepseek_api.py [production]"]
         scripts_ide_health_service_py["scripts/ide_health_service.py [production]"]
         src_zephyr_governance_auto_rollback_trigger_py["...r/governance/auto_rollback_trigger.py [prototype]"]
@@ -17,9 +14,6 @@ graph TD
         src_zephyr_governance_rollback_wal_py["src/zephyr/governance/rollback_wal.py [prototype]"]
         src_zephyr_infra_ops_["src/zephyr/infra_ops/ [design]"]
         src_zephyr_infra_ops___init___py["src/zephyr/infra_ops/__init__.py [prototype]"]
-        src_zephyr_infra_ops__extensions___init___py["...hyr/infra_ops/_extensions/__init__.py [prototype]"]
-        src_zephyr_infra_ops_api___init___py["src/zephyr/infra_ops/api/__init__.py [prototype]"]
-        src_zephyr_infra_ops_core___init___py["src/zephyr/infra_ops/core/__init__.py [prototype]"]
         src_zephyr_infra_ops_dashboard___init___py["...ephyr/infra_ops/dashboard/__init__.py [production]"]
         src_zephyr_infra_ops_dashboard_app_py["src/zephyr/infra_ops/dashboard/app.py [prototype]"]
         src_zephyr_infra_ops_dashboard_components___init___py["..._ops/dashboard/components/__init__.py [production]"]
@@ -28,10 +22,7 @@ graph TD
         src_zephyr_infra_ops_dashboard___nents_knowledge_overview_py["...oard/components/knowledge_overview.py [prototype]"]
         src_zephyr_infra_ops_dashboard_components_olap_trend_py["...ps/dashboard/components/olap_trend.py [prototype]"]
         src_zephyr_infra_ops_dashboard_components_task_progress_py["...dashboard/components/task_progress.py [prototype]"]
-        src_zephyr_infra_ops_infrastructure___init___py[".../infra_ops/infrastructure/__init__.py [prototype]"]
         src_zephyr_infra_ops_interface_base_py["src/zephyr/infra_ops/interface_base.py [prototype]"]
-        src_zephyr_infra_ops_models___init___py["src/zephyr/infra_ops/models/__init__.py [prototype]"]
-        src_zephyr_infra_ops_services___init___py["...zephyr/infra_ops/services/__init__.py [prototype]"]
         src_zephyr_infrastructure_rollback_governance___init___py["...cture/rollback/governance/__init__.py [prototype]"]
         src_zephyr_infrastructure_rollback_governance_auditor_py["...ucture/rollback/governance/auditor.py [prototype]"]
         src_zephyr_infrastructure_roll___overnance_budget_tracker_py["...rollback/governance/budget_tracker.py [prototype]"]

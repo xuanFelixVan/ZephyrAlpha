@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:51:18
+> 最后更新: 2026-07-01 02:17:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -106,6 +106,9 @@ graph TD
     src_zephyr_signal_fundamental_capital_capital_allocator_py -.->|import_depends| D_TRADING
     D_FACTOR["D_FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_signal_fundamental_pipeline_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    D_GOV_AUDIT -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_signal_fundamental_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
@@ -116,9 +119,6 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
-    D_GOV_AUDIT -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     D_GOVERNANCE -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     D_AUDITTEST["D_AUDITTEST production"]

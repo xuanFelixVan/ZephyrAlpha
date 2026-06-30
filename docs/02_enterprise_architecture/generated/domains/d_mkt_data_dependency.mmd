@@ -1,21 +1,15 @@
 %% D_MKT_DATA 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 9, 依赖边数: 17
+%% 模块数: 3, 依赖边数: 17
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_MKT_DATA[行情数据]
         src_zephyr_market_data___init___py["src/zephyr/market_data/__init__.py [production]"]
-        src_zephyr_market_data__extensions___init___py["...r/market_data/_extensions/__init__.py [prototype]"]
-        src_zephyr_market_data_api___init___py["src/zephyr/market_data/api/__init__.py [prototype]"]
-        src_zephyr_market_data_core___init___py["src/zephyr/market_data/core/__init__.py [prototype]"]
-        src_zephyr_market_data_infrastructure___init___py["...arket_data/infrastructure/__init__.py [prototype]"]
         src_zephyr_market_data_market_data_py["src/zephyr/market_data/market_data.py [prototype]"]
         src_zephyr_market_data_market_data_pipeline_py["...r/market_data/market_data_pipeline.py [prototype]"]
-        src_zephyr_market_data_models___init___py["...zephyr/market_data/models/__init__.py [prototype]"]
-        src_zephyr_market_data_services___init___py["...phyr/market_data/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）

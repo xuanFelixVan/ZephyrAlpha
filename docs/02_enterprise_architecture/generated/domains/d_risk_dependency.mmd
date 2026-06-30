@@ -1,21 +1,16 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 25, 依赖边数: 45
+%% 模块数: 18, 依赖边数: 45
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_RISK[风控]
         src_zephyr_risk___init___py["src/zephyr/risk/__init__.py [prototype]"]
-        src_zephyr_risk__extensions___init___py["src/zephyr/risk/_extensions/__init__.py [prototype]"]
-        src_zephyr_risk_api___init___py["src/zephyr/risk/api/__init__.py [prototype]"]
-        src_zephyr_risk_core___init___py["src/zephyr/risk/core/__init__.py [prototype]"]
         src_zephyr_risk_cross_asset___init___py["src/zephyr/risk/cross_asset/__init__.py [prototype]"]
-        src_zephyr_risk_cross_asset_cr___risk_decomposer___init___py["...oss_asset_risk_decomposer/__init__.py [prototype]"]
         src_zephyr_risk_cross_asset_cr___et_data_adapter___init___py["...cross_market_data_adapter/__init__.py [prototype]"]
         src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [prototype]"]
-        src_zephyr_risk_cross_asset_cu___nd_fixed_income___init___py["...y_hedger_and_fixed_income/__init__.py [prototype]"]
         src_zephyr_risk_cross_asset_risk_manager_py["...phyr/risk/cross_asset/risk_manager.py [prototype]"]
         src_zephyr_risk_cross_asset_risk_manager_base_py["...risk/cross_asset/risk_manager_base.py [prototype]"]
         src_zephyr_risk_implementations___init___py["...phyr/risk/implementations/__init__.py [prototype]"]
@@ -24,13 +19,11 @@ graph TD
         src_zephyr_risk_implementation___isk_manager_orchestrator_py[".../default_risk_manager_orchestrator.py [production]"]
         src_zephyr_risk_implementations_default_risk_validator_py["...ementations/default_risk_validator.py [production]"]
         src_zephyr_risk_implementations_default_stop_loss_engine_py["...entations/default_stop_loss_engine.py [production]"]
-        src_zephyr_risk_infrastructure___init___py["...ephyr/risk/infrastructure/__init__.py [prototype]"]
         src_zephyr_risk_oms_risk_engine_py["src/zephyr/risk/oms_risk_engine.py [prototype]"]
         src_zephyr_risk_risk_limits_py["src/zephyr/risk/risk_limits.py [prototype]"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py [production]"]
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py [production]"]
         src_zephyr_risk_risk_validator_py["src/zephyr/risk/risk_validator.py [production]"]
-        src_zephyr_risk_services___init___py["src/zephyr/risk/services/__init__.py [prototype]"]
         src_zephyr_risk_stop_loss_py["src/zephyr/risk/stop_loss.py [production]"]
     end
 

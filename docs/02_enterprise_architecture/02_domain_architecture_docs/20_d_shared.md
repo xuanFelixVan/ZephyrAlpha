@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:52:16
+> 最后更新: 2026-07-01 02:17:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -131,8 +131,8 @@ graph TD
     subgraph D_SHARED["D_SHARED 共享服务"]
         src_zephyr_shared_combinatorial_gate_py["src/zephyr/shared/combinatorial_gate.py production"]
         src_zephyr_shared_compensation_init_py["src/zephyr/shared/compensation/__init__.py production"]
-        src_zephyr_shared_config_init_py["src/zephyr/shared/config/__init__.py ❌ ARCH-038 已删除"]
-        src_zephyr_shared_config_loader_py["src/zephyr/shared/config/loader.py ❌ ARCH-038 已删除"]
+        src_zephyr_shared_config_init_py["src/zephyr/shared/config/__init__.py prototype"]
+        src_zephyr_shared_config_loader_py["src/zephyr/shared/config/loader.py prototype"]
         src_zephyr_shared_constants_py["src/zephyr/shared/constants.py prototype"]
         src_zephyr_shared_content_fingerprint_py["src/zephyr/shared/content_fingerprint.py prototype"]
         src_zephyr_shared_context_engine_py["src/zephyr/shared/context_engine.py prototype"]
@@ -961,8 +961,8 @@ graph TD
 | 28 | src/zephyr/shared/capacity_runbook_generator.py | src/zephyr/shared/capacity_runbook_ge... | production | generated |
 | 29 | src/zephyr/shared/code_economy_analyzer.py | src/zephyr/shared/code_economy_analyz... | production | generated |
 | 30 | src/zephyr/shared/combinatorial_gate.py | src/zephyr/shared/combinatorial_gate.py | production | generated |
-| 31 | ~~src/zephyr/shared/config/__init__.py~~ | ❌ ARCH-038 已删除 | prototype | generated |
-| 32 | ~~src/zephyr/shared/config/loader.py~~ | ❌ ARCH-038 已删除（虚假统一空壳，0消费者） | prototype | generated |
+| 31 | src/zephyr/shared/config/__init__.py | src/zephyr/shared/config/__init__.py | prototype | generated |
+| 32 | src/zephyr/shared/config/loader.py | src/zephyr/shared/config/loader.py | prototype | generated |
 | 33 | src/zephyr/shared/constants.py | src/zephyr/shared/constants.py | prototype | generated |
 | 34 | src/zephyr/shared/content_fingerprint.py | src/zephyr/shared/content_fingerprint.py | prototype | generated |
 | 35 | src/zephyr/shared/context_engine.py | src/zephyr/shared/context_engine.py | prototype | generated |

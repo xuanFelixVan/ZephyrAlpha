@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:51:18
+> 最后更新: 2026-07-01 02:17:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 419 | Module Count | 419 |
 | 域内依赖 | 319 | Internal Dependencies | 319 |
 | 跨域入边 | 401 | Cross-domain Incoming | 401 |
-| 跨域出边 | 81 | Cross-domain Outgoing | 81 |
+| 跨域出边 | 80 | Cross-domain Outgoing | 80 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 396 | Prototype Modules | 396 |
 | 生产态模块 | 22 | Production Modules | 22 |
@@ -774,8 +774,6 @@ graph TD
     src_zephyr_ops_scheduler_py -.->|import_depends| D_GOV_DRIFT
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D_SECURITY prototype"]
-    src_zephyr_ops_scheduler_py -.->|import_depends| D_SECURITY
     src_zephyr_ops_scheduler_py -.->|import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_AUTONOMY_CORE
@@ -790,7 +788,6 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ops_protocols_py,src_zephyr_ops_resilience_init_py,src_zephyr_ops_resilience_config_hot_reload_guard_py,src_zephyr_ops_resilience_deadman_switch_py,src_zephyr_ops_resilience_dr_automation_py,src_zephyr_ops_resilience_graceful_degradation_planner_py,src_zephyr_ops_resilience_multi_instance_coord_py,src_zephyr_ops_resilience_oscillation_damping_py,src_zephyr_ops_resilience_resource_starvation_aware_py,src_zephyr_ops_resilience_self_api_throttle_defense_py,src_zephyr_ops_resilience_split_brain_quorum_py,src_zephyr_ops_scheduler_py,src_zephyr_ops_scheduler_act_py,src_zephyr_ops_scheduler_collect_detect_py,src_zephyr_ops_scheduler_health_py,src_zephyr_ops_scheduler_safety_py,src_zephyr_ops_schema_init_py,src_zephyr_ops_security_init_py,src_zephyr_ops_security_agent_skill_guard_py,src_zephyr_ops_security_dep_cve_correlator_py,src_zephyr_ops_security_metric_prompt_scanner_py,src_zephyr_ops_security_remote_attestation_py,src_zephyr_ops_security_secret_rotation_py,src_zephyr_ops_security_wireheading_prevention_py,src_zephyr_ops_slo_manager_py,src_zephyr_ops_span_stub_py,src_zephyr_ops_subdir_init_py,src_zephyr_ops_subdir_test_file_py,src_zephyr_ops_telemetry_py,src_zephyr_ops_template_py design
     class D_INFRA_RUNTIME,D_GOV_DRIFT,D_BEHAVIORAL_AUDIT,D_AUTONOMY_CORE,D_GOVERNANCE external_prod
-    class D_SECURITY external_design
 ```
 
 ### 第 13 页 / 共 14 页 / Page 13 of 14
@@ -940,7 +937,7 @@ graph TD
 | D_GOVERNANCE | 21 | config_depends,import_depends,test_depends |
 | D_AUTONOMY_CORE | 6 | import_depends,test_depends |
 | D_SHARED | 6 | import_depends |
-| D_SECURITY | 5 | import_depends,test_depends |
+| D_SECURITY | 4 | import_depends,test_depends |
 | D_TRADING | 4 | import_depends |
 | D_BEHAVIORAL_AUDIT | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |

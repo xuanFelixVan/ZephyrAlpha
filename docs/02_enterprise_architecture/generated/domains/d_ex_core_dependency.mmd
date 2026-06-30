@@ -1,26 +1,21 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 14, 依赖边数: 25
+%% 模块数: 9, 依赖边数: 25
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_EX_CORE[执行核心]
         src_zephyr_ex_core___init___py["src/zephyr/ex_core/__init__.py [production]"]
-        src_zephyr_ex_core__extensions___init___py["...ephyr/ex_core/_extensions/__init__.py [prototype]"]
         src_zephyr_ex_core_adapters___init___py["src/zephyr/ex_core/adapters/__init__.py [prototype]"]
         src_zephyr_ex_core_adapters_broker_interface_py[".../ex_core/adapters/broker_interface.py [production]"]
         src_zephyr_ex_core_adapters_risk_validation_bridge_py["...re/adapters/risk_validation_bridge.py [prototype]"]
         src_zephyr_ex_core_adapters_simulation_broker_py["...ex_core/adapters/simulation_broker.py [production]"]
-        src_zephyr_ex_core_api___init___py["src/zephyr/ex_core/api/__init__.py [prototype]"]
         src_zephyr_ex_core_broker_interface_py["src/zephyr/ex_core/broker_interface.py [prototype]"]
-        src_zephyr_ex_core_core___init___py["src/zephyr/ex_core/core/__init__.py [prototype]"]
         src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py [prototype]"]
-        src_zephyr_ex_core_infrastructure___init___py["...yr/ex_core/infrastructure/__init__.py [prototype]"]
         src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py [prototype]"]
         src_zephyr_ex_core_order_state_escalator_py["...phyr/ex_core/order_state_escalator.py [prototype]"]
-        src_zephyr_ex_core_services___init___py["src/zephyr/ex_core/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）

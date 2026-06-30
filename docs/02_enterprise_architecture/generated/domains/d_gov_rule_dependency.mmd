@@ -1,21 +1,12 @@
 %% D_GOV_RULE 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 11, 依赖边数: 7
+%% 模块数: 2, 依赖边数: 7
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_GOV_RULE[规则治理]
-        config_alert_rules_yaml["config/alert_rules.yaml [production]"]
-        config_budget_policy_yaml["config/budget_policy.yaml [production]"]
-        config_capacity_ai_context_policy_yaml["config/capacity/ai_context_policy.yaml [production]"]
-        config_capacity_sandbox_policy_yaml["config/capacity/sandbox_policy.yaml [production]"]
-        config_compression_policy_yaml["config/compression/policy.yaml [production]"]
-        config_context_rules_yaml["config/context_rules.yaml [production]"]
-        config_context_rules_v1_yaml["config/context_rules_v1.yaml [production]"]
-        config_data_survivorship_policy_yaml["config/data/survivorship_policy.yaml [production]"]
-        config_feature_activation_policy_yaml["config/feature_activation_policy.yaml [production]"]
         src_zephyr_governance_constitu___te_constitutional_update_py["...ional_update/constitutional_update.py [production]"]
         src_zephyr_governance_rule_engine_py["src/zephyr/governance/rule_engine.py [production]"]
     end

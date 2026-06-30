@@ -1,13 +1,12 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-01 01:51:20
+%% 生成时间: 2026-07-01 02:17:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 430, 依赖边数: 801
+%% 模块数: 419, 依赖边数: 800
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_OPS[反馈循环]
-        config_capacity_token_budget_yaml["config/capacity/token_budget.yaml [production]"]
         docs_03_modules__domain_infra____stem_telemetry_blueprint_md["...fra_ops/system_telemetry/blueprint.md [design]"]
         scripts_ops_auto_fix_cron_py["scripts/ops/auto_fix_cron.py [production]"]
         scripts_ops_upgrade_headers_to_14fields_py["...ts/ops/upgrade_headers_to_14fields.py [production]"]
@@ -28,7 +27,6 @@ graph TD
         src_zephyr_ops___init___py["src/zephyr/ops/__init__.py [production]"]
         src_zephyr_ops__budget_telemetry_bridge_py["...ephyr/ops/_budget_telemetry_bridge.py [prototype]"]
         src_zephyr_ops__circuit_breaker_py["src/zephyr/ops/_circuit_breaker.py [prototype]"]
-        src_zephyr_ops__extensions___init___py["src/zephyr/ops/_extensions/__init__.py [prototype]"]
         src_zephyr_ops__gen_inherited_py["src/zephyr/ops/_gen_inherited.py [prototype]"]
         src_zephyr_ops__trace_bridge_py["src/zephyr/ops/_trace_bridge.py [prototype]"]
         src_zephyr_ops_actors___init___py["src/zephyr/ops/actors/__init__.py [prototype]"]
@@ -49,7 +47,6 @@ graph TD
         src_zephyr_ops_alert_dispatcher_py["src/zephyr/ops/alert_dispatcher.py [prototype]"]
         src_zephyr_ops_alerts___init___py["src/zephyr/ops/alerts/__init__.py [prototype]"]
         src_zephyr_ops_analytics_base_py["src/zephyr/ops/analytics_base.py [prototype]"]
-        src_zephyr_ops_api___init___py["src/zephyr/ops/api/__init__.py [prototype]"]
         src_zephyr_ops_archive___init___py["src/zephyr/ops/archive/__init__.py [prototype]"]
         src_zephyr_ops_archive_cold_stub_py["src/zephyr/ops/archive/cold_stub.py [prototype]"]
         src_zephyr_ops_auto_bootstrap_py["src/zephyr/ops/auto_bootstrap.py [prototype]"]
@@ -81,7 +78,6 @@ graph TD
         src_zephyr_ops_collectors_token_finops_py["...zephyr/ops/collectors/token_finops.py [prototype]"]
         src_zephyr_ops_config_py["src/zephyr/ops/config.py [prototype]"]
         src_zephyr_ops_contract_metrics_py["src/zephyr/ops/contract_metrics.py [prototype]"]
-        src_zephyr_ops_core___init___py["src/zephyr/ops/core/__init__.py [prototype]"]
         src_zephyr_ops_db_bridge_py["src/zephyr/ops/db_bridge.py [prototype]"]
         src_zephyr_ops_db_writer_py["src/zephyr/ops/db_writer.py [prototype]"]
         src_zephyr_ops_decision_engine_py["src/zephyr/ops/decision_engine.py [prototype]"]
@@ -107,7 +103,11 @@ graph TD
         src_zephyr_ops_detectors_config_drift_py["src/zephyr/ops/detectors/config_drift.py [prototype]"]
         src_zephyr_ops_detectors_conte___w_contamination_detector_py["...text_window_contamination_detector.py [prototype]"]
         src_zephyr_ops_detectors_cross_signal_validator_py["...s/detectors/cross_signal_validator.py [prototype]"]
-        %% ... 还有 330 个模块未显示
+        src_zephyr_ops_detectors_cross_system_correlator_py[".../detectors/cross_system_correlator.py [prototype]"]
+        src_zephyr_ops_detectors_decision_provenance_py[".../ops/detectors/decision_provenance.py [prototype]"]
+        src_zephyr_ops_detectors_dependency_freshness_monitor_py["...ctors/dependency_freshness_monitor.py [prototype]"]
+        src_zephyr_ops_detectors_diminishing_returns_detector_py["...ctors/diminishing_returns_detector.py [prototype]"]
+        %% ... 还有 319 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -322,9 +322,8 @@ graph TD
     %% D_OPS -> D_INTEGRATION (2 条)
     src_zephyr_ops_backpressure_bridge_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_ops_feedback_collector_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    %% D_OPS -> D_SECURITY (5 条)
+    %% D_OPS -> D_SECURITY (4 条)
     src_zephyr_ops_evolution_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_ops_scheduler_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_ops_gates_adversarial_validation_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_test_observability_root_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
@@ -344,4 +343,4 @@ graph TD
     %% 统计
     %% 域内依赖: 319 条
     %% 跨域入边: 401 条
-    %% 跨域出边: 81 条
+    %% 跨域出边: 80 条
