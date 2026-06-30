@@ -1,3 +1,11 @@
+# ============================================================================
+# _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034）
+# ============================================================================
+# 职责：增量/无头/孤儿扫描 + 符号链接/文件属性/命名魔法/测试夹具检查 + 数据质量扫描
+# 归属规则：*_scanner/*_checker/scan_mutex/data_*/cross_env_consistency/python_compat/
+#   gitignore_auditor/benchmark_integrity/code_review_ai
+# 完整模块清单见 __init__.py 顶部"模块地图"
+# ============================================================================
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._scanners
 # [DOMAIN] D_SECURITY

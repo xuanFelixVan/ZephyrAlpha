@@ -956,6 +956,119 @@ capabilities:
       - TEST_EXEMPT_PREFIXES        # 豁免前缀常量(篡改加"src/"可豁免所有源码绕过 create_guard,C层golden hash保护)
       - is_test_exempt              # 豁免判定函数(归一化+startswith逻辑真源,删则gate各自硬编码漂移)
 
+  # --------------------------------------------------------------------------
+  # 以下 5 条为 2026-06-30 ARCH-034 治本新增（behavioral_audit 模块地图发现性）
+  # 病根：behavioral_audit/ 74文件平铺，新AI不知道已有5个聚合子模块的逻辑分类
+  # 治本：登记5个聚合为能力条目，CapabilityLookup 可反查；不建物理子目录（向内收原则①）
+  # 完整模块清单见 src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"
+
+  - capability_id: behavioral_audit_core_aggregator
+    canonical_override: src/zephyr/behavioral_audit/_core.py
+    aliases:
+      - _core
+      - behavioral_audit_core
+      - drift_engine
+      - drift_models
+      - state_machine
+      - detector_dispatcher
+      - architecture_contracts
+      - architecture_principles
+    description: >-
+      behavioral_audit 核心引擎聚合（ARCH-034，MOD-INF-033）。聚合 drift 扫描调度、
+      事件类型、状态机、检测器分发、架构契约/原则、脑集成等核心功能模块。完整模块清单见
+      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
+      治本：登记5个聚合为能力条目，解决"新AI不知道已有逻辑分类"的发现性问题，
+      不建物理子目录（向内收原则①能现成不创造——已有5聚合是现成分类）。
+      解决发现性：新AI 搜 "drift engine/detector dispatcher/architecture contracts"
+      可定位 _core 聚合，进而发现所有核心模块。
+      解决防重建：check_file_canonical() 反查 + capability_overlap_gate 提示，
+      新AI准备造核心引擎类功能前会被引导到本聚合。
+
+  - capability_id: behavioral_audit_drift_aggregator
+    canonical_override: src/zephyr/behavioral_audit/_drift.py
+    aliases:
+      - _drift
+      - behavioral_audit_drift
+      - contract_drift_detector
+      - drift_detection
+      - cascade_detector
+      - baseline_poisoning_guard
+    description: >-
+      behavioral_audit 漂移检测器聚合（ARCH-034，MOD-INF-033）。聚合契约/DB/版本/文档/
+      语义/安全等漂移类型检测 + 级联检测 + 基线投毒防护模块。完整模块清单见
+      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
+      命名规则约定：drift_*/*_drift_detector/cascade_detector/baseline_poisoning* 归本聚合。
+      解决发现性：新AI 搜 "drift detection/contract drift/cascade/baseline poisoning"
+      可定位 _drift 聚合，进而发现所有漂移检测器。
+      解决防重建：新AI准备造新的漂移检测器前会被引导到本聚合，提示扩展而非新建。
+
+  - capability_id: behavioral_audit_scanners_aggregator
+    canonical_override: src/zephyr/behavioral_audit/_scanners.py
+    aliases:
+      - _scanners
+      - behavioral_audit_scanners
+      - incremental_scanner
+      - headless_scanner
+      - orphan_scanner
+      - symlink_checker
+      - file_attr_checker
+      - naming_magic_checker
+      - test_fixture_checker
+      - gitignore_auditor
+    description: >-
+      behavioral_audit 扫描器与检查器聚合（ARCH-034，MOD-INF-033）。聚合增量/无头/孤儿扫描 +
+      符号链接/文件属性/命名魔法/测试夹具检查 + 数据质量扫描模块。完整模块清单见
+      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
+      命名规则约定：*_scanner/*_checker/scan_mutex/data_*/cross_env_consistency 归本聚合。
+      解决发现性：新AI 搜 "scanner/checker/file check/data quality" 可定位 _scanners 聚合。
+      解决防重建：新AI准备造新的扫描器/检查器前会被引导到本聚合，提示扩展而非新建。
+
+  - capability_id: behavioral_audit_infrastructure_aggregator
+    canonical_override: src/zephyr/behavioral_audit/_infrastructure.py
+    aliases:
+      - _infrastructure
+      - behavioral_audit_infrastructure
+      - absence_manager
+      - alert_router
+      - baseline_manager
+      - canary_controller
+      - cold_start
+      - config_consistency
+      - dashboard
+      - gate_persistence
+      - handoff_manager
+      - resource_guard
+    description: >-
+      behavioral_audit 基础设施聚合（ARCH-034，MOD-INF-033）。聚合缺勤管理/AI上下文注入/
+      告警路由/基线管理/金丝雀控制/冷启动/配置一致性/仪表盘等基础设施模块。完整模块清单见
+      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
+      命名规则约定：*_manager/*_controller/*_router/cold_start/dashboard 归本聚合。
+      解决发现性：新AI 搜 "manager/controller/router/canary/cold start" 可定位 _infrastructure 聚合。
+      解决防重建：新AI准备造新的基础设施类模块前会被引导到本聚合，提示扩展而非新建。
+
+  - capability_id: behavioral_audit_analysis_aggregator
+    canonical_override: src/zephyr/behavioral_audit/_analysis.py
+    aliases:
+      - _analysis
+      - behavioral_audit_analysis
+      - correlation_engine
+      - credibility_engine
+      - forensics_engine
+      - roi_engine
+      - trend_analyzer
+      - reconciler
+      - runbook_generator
+      - tamper_proof_audit
+      - chaos_injector
+      - rollback_bridge
+    description: >-
+      behavioral_audit 分析与报告聚合（ARCH-034，MOD-INF-033）。聚合相关性/可信度/跨模块评分/
+      取证/ROI/趋势分析/混沌注入/回滚/自检/抑制学习等分析与报告模块。完整模块清单见
+      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
+      命名规则约定：*_engine/*_analyzer/forensics_*/reconciler/runbook_* 归本聚合。
+      解决发现性：新AI 搜 "analysis engine/forensics/roi/trend/reconciler" 可定位 _analysis 聚合。
+      解决防重建：新AI准备造新的分析引擎前会被引导到本聚合，提示扩展而非新建。
+
 # ============================================================================
 # creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

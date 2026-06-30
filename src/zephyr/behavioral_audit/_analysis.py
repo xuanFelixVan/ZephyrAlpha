@@ -1,3 +1,12 @@
+# ============================================================================
+# _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034）
+# ============================================================================
+# 职责：相关性/可信度/跨模块评分/取证/ROI/趋势分析/混沌注入/回滚/自检/抑制学习等
+# 归属规则：*_engine/*_analyzer/forensics_*/reconciler/runbook_*/self_check/
+#   suppression_learner/tamper_proof_audit/chaos_injector/backcompat_checker/
+#   ai_construction_detectors/self_test_verifier/cross_module_score/git_bisector
+# 完整模块清单见 __init__.py 顶部"模块地图"
+# ============================================================================
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._analysis
 # [DOMAIN] D_SECURITY

@@ -1,3 +1,12 @@
+# ============================================================================
+# _core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034）
+# ============================================================================
+# 职责：drift扫描调度、事件类型、状态机、检测器分发、架构契约/原则、脑集成等核心功能
+# 归属规则：events/state_machine/detector_dispatcher/architecture_*/brain_integration/
+#   dependency_manager/integration_test_runner/ml_engineering/model_drift_monitor/
+#   performance_baseline/regime_detector/system_topology/drift_engine/drift_models
+# 完整模块清单见 __init__.py 顶部"模块地图"
+# ============================================================================
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._core
 # [DOMAIN] D_SECURITY

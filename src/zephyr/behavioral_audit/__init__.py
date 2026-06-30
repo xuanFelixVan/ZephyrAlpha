@@ -1,6 +1,61 @@
 # [A_module] module_id=MOD-SEC_behavioral_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
+# ============================================================================
+# behavioral_audit 模块地图（ARCH-034 治本：强化发现性，不建物理子目录）
+# ============================================================================
+# 本包74个.py文件采用"平铺+5聚合子模块逻辑分类"形态（向内收原则①能现成不创造）。
+# 物理平铺 + 逻辑分类已分层：新AI通过本地图 + _SYMBOL_SOURCE 字典即可定位任意符号。
+# 不建物理子目录的理由：
+#   ① behavioral_audit 是横切关注点，增速远低于 tests/（当前 78/150 容量，离阈值有72名额）
+#   ② 已有5聚合是现成分类，建物理子目录=造第二套分类=违反原则①
+#   ③ 104+外部import改动=漂移源（含大量@patch字符串引用+drift_engine的__file__路径陷阱）
+#
+# 5个聚合子模块（_xxx.py）是功能域门面，各自聚合一类功能模块：
+#
+#   _core.py        — 核心引擎与状态机（drift扫描调度/事件/状态/检测器分发/架构契约）
+#     含: drift_engine, drift_models, events, state_machine, detector_dispatcher,
+#         architecture_contracts, architecture_principles, brain_integration,
+#         dependency_manager, integration_test_runner, ml_engineering,
+#         model_drift_monitor, performance_baseline, regime_detector, system_topology
+#
+#   _drift.py       — 漂移检测器簇（契约/DB/版本/文档/语义/安全等漂移类型）
+#     含: contract_drift_detector, drift_hotfix_bypass, drift_infrastructure,
+#         drift_result_types, drift_training, cascade_detector, baseline_poisoning_guard
+#
+#   _scanners.py    — 扫描器与检查器簇（增量/无头/孤儿/符号链接/文件属性等扫描）
+#     含: incremental_scanner, headless_scanner, orphan_scanner, scan_mutex,
+#         symlink_checker, file_attr_checker, naming_magic_checker,
+#         test_fixture_checker, python_compat, gitignore_auditor,
+#         benchmark_integrity, code_review_ai, cross_env_consistency,
+#         data_classification, data_lifecycle, data_quality, data_source_reliability
+#
+#   _infrastructure.py — 基础设施簇（缺勤/告警/基线/金丝雀/冷启动/配置/仪表盘等）
+#     含: absence_manager, ai_context_injector, alert_router, baseline_manager,
+#         canary_controller, cold_start, config_consistency, dashboard,
+#         gate_persistence, handoff_manager, resource_guard
+#
+#   _analysis.py    — 分析与报告簇（相关性/可信度/取证/ROI/趋势/混沌/回滚等）
+#     含: correlation_engine, credibility_engine, cross_module_score,
+#         forensics_engine, git_bisector, reconciler, roi_engine, rollback_bridge,
+#         runbook_generator, self_check, suppression_learner, tamper_proof_audit,
+#         trend_analyzer, chaos_injector, backcompat_checker,
+#         ai_construction_detectors, self_test_verifier
+#
+# 命名规则约定（未来新增文件遵循，便于按名定位归聚合）：
+#   - drift_* / *_drift_detector / cascade_detector / baseline_poisoning*  → _drift
+#   - *_scanner / *_checker / scan_mutex / data_* / cross_env_consistency   → _scanners
+#   - *_manager / *_controller / *_router / cold_start / dashboard          → _infrastructure
+#   - *_engine / *_analyzer / forensics_* / reconciler / runbook_*          → _analysis
+#   - events / state_machine / detector_dispatcher / architecture_*         → _core
+#
+# 新AI使用指引（对应向内收原则④：如何发现+如何不重造）：
+#   1. 定位符号：查 _SYMBOL_SOURCE 字典（符号→聚合映射），再 import 对应聚合
+#   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.behavioral_audit.<module>
+#   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
+#   4. 新增文件：按命名规则命名，并更新对应聚合的 _SUBMODULES + 本地图 + 能力卡
+# ============================================================================
+
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit
 # [INVARIANTS] __all__列表不变; 公开API不变

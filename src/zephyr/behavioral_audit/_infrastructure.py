@@ -1,3 +1,11 @@
+# ============================================================================
+# _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034）
+# ============================================================================
+# 职责：缺勤管理/AI上下文注入/告警路由/基线管理/金丝雀控制/冷启动/配置一致性/仪表盘等
+# 归属规则：*_manager/*_controller/*_router/cold_start/dashboard/gate_persistence/
+#   handoff_manager/resource_guard
+# 完整模块清单见 __init__.py 顶部"模块地图"
+# ============================================================================
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._infrastructure
 # [DOMAIN] D_SECURITY

@@ -1,3 +1,10 @@
+# ============================================================================
+# _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034）
+# ============================================================================
+# 职责：契约/DB/版本/文档/语义/安全等漂移类型检测 + 级联检测 + 基线投毒防护
+# 归属规则：drift_*/contract_drift_detector/cascade_detector/baseline_poisoning_guard
+# 完整模块清单见 __init__.py 顶部"模块地图"
+# ============================================================================
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._drift
 # [DOMAIN] D_SECURITY
