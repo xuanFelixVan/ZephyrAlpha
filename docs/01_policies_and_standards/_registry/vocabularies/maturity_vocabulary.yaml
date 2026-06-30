@@ -18,7 +18,7 @@
 # 校验器从本文件动态加载合法值。
 #
 # 对标标准：
-#   - depgraph nodes.design_maturity 字段（与本词表值完全一致，零冲突）
+#   - depgraph.db nodes.design_maturity 字段（与本词表值完全一致，零冲突）
 
 schema_version: "1.0.0"
 doc_type: vocabulary

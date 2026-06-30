@@ -8,7 +8,7 @@
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] Output MUST be ground-truth file-level dependency graph; every import MUST resolve to actual file; unresolved MUST be flagged
-# [MODIFY-GUARD] depgraph.db; cross_pkg_imports_scan.json
+# [MODIFY-GUARD] depgraph; cross_pkg_imports_scan.json
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

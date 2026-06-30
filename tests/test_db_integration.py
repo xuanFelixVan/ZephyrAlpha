@@ -122,7 +122,7 @@ def test_schema_version_consistency():
         if row:
             versions["depgraph"] = row[0]
     except psycopg2.Error:
-        print("  ⚠ WARNING: depgraph (PG) 无 _schema_version 表")
+        print("  ⚠ WARNING: depgraph (PostgreSQL) 无 _schema_version 表")
     dep_conn.close()
 
     # market.duckdb

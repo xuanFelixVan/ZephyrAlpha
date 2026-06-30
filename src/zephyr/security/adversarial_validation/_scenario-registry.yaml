@@ -576,7 +576,7 @@ scenarios:
     steady_state_verification: "verify_schema_health.py exit 1 when DB has column not in _DDL_*"
     status: active
     test_file: "tests/test_verify_schema_health.py::TestCheckDdlColumns::test_detects_extra_column"
-    description: "攻击者直接 ALTER TABLE ADD COLUMN 向 depgraph.db 注入 DDL 未声明的列（绕过 depgraph_schema._MIGRATIONS）。verify_schema_health.check_ddl_columns 比对 DB 实际列 vs _DDL_* 声明列，检测到 DB 多出列即报告 [DDL-DRIFT] 并 exit 1 阻断提交。"
+    description: "攻击者直接 ALTER TABLE ADD COLUMN 向 depgraph 注入 DDL 未声明的列（绕过 depgraph_schema._MIGRATIONS）。verify_schema_health.check_ddl_columns 比对 DB 实际列 vs _DDL_* 声明列，检测到 DB 多出列即报告 [DDL-DRIFT] 并 exit 1 阻断提交。"
 
   - scenario_id: RB-SCEN-052
     name: "Schema Drift — DB Missing Column (False Negative)"
@@ -600,7 +600,7 @@ scenarios:
     steady_state_verification: "verify_schema_health.py exit 1 on _schema_version MAX < len(_MIGRATIONS)"
     status: active
     test_file: "tests/test_verify_schema_health.py::TestCheckSchemaVersion::test_detects_version_behind"
-    description: "攻击者绕过 init_db() migration 框架，直接用 sqlite3 CLI 修改 depgraph.db（如手动 DROP TABLE/CREATE TABLE）。_schema_version 表不前进，verify_schema_health.check_schema_version 检测到 MAX(version) < len(_MIGRATIONS)，报告 [VERSION-DRIFT] 并 exit 1。此场景对应 DDL-as-Code 铁律第4步门禁。"
+    description: "攻击者绕过 init_db() migration 框架，直接用 sqlite3 CLI 修改 depgraph（如手动 DROP TABLE/CREATE TABLE）。_schema_version 表不前进，verify_schema_health.check_schema_version 检测到 MAX(version) < len(_MIGRATIONS)，报告 [VERSION-DRIFT] 并 exit 1。此场景对应 DDL-as-Code 铁律第4步门禁。"
 
   - scenario_id: RB-SCEN-054
     name: "Migration Atomicity — Interrupted Migration ROLLBACK"

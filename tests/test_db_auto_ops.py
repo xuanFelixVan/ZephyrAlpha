@@ -72,9 +72,9 @@ def test_database_service_init():
                 cur.execute("SELECT 1")
                 cur.fetchone()
             conn.close()
-            print("  ✓ depgraph (PG) 直接连接成功")
+            print("  ✓ depgraph (PostgreSQL) 直接连接成功")
         except Exception as ex:
-            assert False, f"depgraph (PG) 连接失败: {ex}"
+            assert False, f"depgraph (PostgreSQL) 连接失败: {ex}"
 
         print("  ✓ PASS: 直接连接测试通过（DatabaseService 待完善）")
     except Exception as e:
@@ -103,10 +103,10 @@ def test_health_check():
             cur.execute("SELECT 1")
             result = cur.fetchone()
         conn.close()
-        assert result and result[0] == 1, f"depgraph (PG): 健康检查返回异常值: {result}"
-        print("  ✓ depgraph (PG): 健康检查通过")
+        assert result and result[0] == 1, f"depgraph (PostgreSQL): 健康检查返回异常值: {result}"
+        print("  ✓ depgraph (PostgreSQL): 健康检查通过")
     except Exception as e:
-        assert False, f"depgraph (PG): 健康检查失败: {e}"
+        assert False, f"depgraph (PostgreSQL): 健康检查失败: {e}"
 
     # DuckDB 健康检查
     try:
@@ -224,13 +224,13 @@ def test_schema_version_check():
             row = cur.fetchone()
         conn.close()
         if row:
-            print(f"  ✓ depgraph (PG): schema 版本 = {row[0]}")
+            print(f"  ✓ depgraph (PostgreSQL): schema 版本 = {row[0]}")
         else:
-            print(f"  ⚠ depgraph (PG): _schema_version 表为空")
+            print(f"  ⚠ depgraph (PostgreSQL): _schema_version 表为空")
     except psycopg2.Error:
-        print(f"  ⚠ depgraph (PG): 无 _schema_version 表")
+        print(f"  ⚠ depgraph (PostgreSQL): 无 _schema_version 表")
     except Exception as e:
-        assert False, f"depgraph (PG): 检查失败: {e}"
+        assert False, f"depgraph (PostgreSQL): 检查失败: {e}"
 
     print("  ✓ PASS: schema 版本检查完成")
 

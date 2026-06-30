@@ -1392,7 +1392,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | P1 重要问题 | — | 14 | **0**（V3.4 全部修复） |
 
 **修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定）
-**Schema修复**：depgraph 数据库（PostgreSQL，SQLite 时期为 `data/databases/depgraph.db` 文件；J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
+**Schema修复**：depgraph (PostgreSQL)（SQLite 时期为 `data/databases/depgraph.db` 文件；J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
 **文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2）
 
 **待施工**（V5.8 文档已就绪，按 §22 七批次施工）：
@@ -1775,7 +1775,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 **核心教训**（4条）：
 1. **生成器是唯一数据入口** — 生成器的 bug 会系统性污染整个依赖图
 2. **设计态数据需要独立保护** — DELETE+INSERT 架构中，设计态节点需用 `WHERE design_maturity='design'` 保护
-3. **备份是最后防线** — 施工前必须 `pg_dump` 导出 depgraph 数据库备份（SQLite 时期为 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`）
+3. **备份是最后防线** — 施工前必须 `pg_dump` 导出 depgraph (PostgreSQL)备份（SQLite 时期为 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`）
 4. **AI vibe coding 的膨胀效应** — 需系统性清理机制（如 5,738 个 prototype 节点）
 
 ---

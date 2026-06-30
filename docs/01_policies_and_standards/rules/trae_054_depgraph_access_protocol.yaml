@@ -50,7 +50,7 @@ sections:
     - type: mandatory
       step: '备份触发条件: 每次 apply_depgraph.py 执行前(apply_depgraph.py 是唯一合法 depgraph 写入口)。通过 PG 事务回滚提供原子性保障。extract_depgraph.py/diagnose_depgraph.py 是只读操作不需要备份。generate_project_depgraph.py 治本后允许运行（需先执行OPS-2026062502-506）'
     - type: mandatory
-      step: '备份范围: 通过 pg_dump 备份整个 depgraph 数据库。脚本文件(extract_depgraph.py/apply_depgraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
+      step: '备份范围: 通过 pg_dump 备份整个 depgraph (PostgreSQL)。脚本文件(extract_depgraph.py/apply_depgraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
     - type: mandatory
       step: '物理备份规范: apply_depgraph.py 每次非 dry-run 写操作前通过 PG 事务保护。需要完整备份时使用 pg_dump。存放位置: data/databases/backups/。命名格式: depgraph.backup.{YYYYMMDD_HHMMSS}_{tag}.sql'
     - type: mandatory

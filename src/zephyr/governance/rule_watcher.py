@@ -347,7 +347,7 @@ def main() -> int:
         "--db-path",
         type=str,
         default=None,
-        help="depgraph.db 路径（默认: data/databases/depgraph.db）",
+        help="depgraph 路径（PG模式下忽略；原 SQLite data/databases/depgraph.db 已删除归档）",
     )
     args = parser.parse_args()
 

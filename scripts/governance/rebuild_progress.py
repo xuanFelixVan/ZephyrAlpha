@@ -94,7 +94,7 @@ def main():
         print(f"  边总数: {edge_count}")
         print(f"  设计态节点: {design_nodes}")
     except Exception as e:
-        print(f"[WARN] 查询depgraph(PG)失败: {e}")
+        print(f"[WARN] 查询 depgraph (PostgreSQL) 失败: {e}")
 
     print("\n" + "=" * 80)
     completed = status_counts.get("COMPLETED", 0)

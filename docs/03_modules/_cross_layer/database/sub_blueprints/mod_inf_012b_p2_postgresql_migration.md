@@ -1,7 +1,7 @@
 ---
 module_id: MOD-DB_DEPGRAPH_PG
 submodule_path: src/zephyr/infrastructure/db
-title: "P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL"
+title: "P2 PostgreSQL迁移详细施工方案 — depgraph从SQLite迁移到PostgreSQL"
 doc_type: blueprint
 status: Active
 version: "1.0.0"
@@ -25,7 +25,7 @@ actual_disk_path: ''
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "P2中期方案——将depgraph.db从SQLite迁移到PostgreSQL，获得MVCC并发能力，支持40+AI并发写入不同功能域。覆盖Windows原生安装、数据迁移、SQL方言调整、文件锁删除、连接配置、红蓝测试6大施工阶段。"
+summary: "P2中期方案——将depgraph从SQLite迁移到PostgreSQL，获得MVCC并发能力，支持40+AI并发写入不同功能域。覆盖Windows原生安装、数据迁移、SQL方言调整、文件锁删除、连接配置、红蓝测试6大施工阶段。"
 tags: [postgresql, migration, mvcc, depgraph, concurrency, p2, database-upgrade]
 priority: P1
 runtime_plane: hot
@@ -39,7 +39,7 @@ references:
   - {id: "trae_054", at: "全篇", why: "depgraph访问协议——迁移后访问方式变更"}
 ---
 
-# P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL
+# P2 PostgreSQL迁移详细施工方案 — depgraph从SQLite迁移到PostgreSQL
 
 > module_id: MOD-DB_DEPGRAPH_PG | version: 1.0.0 | status: Active | belongs_to: SH-DB-001
 > 施工阶段: P2（中期：治本） | 目标: 迁移depgraph.db到PostgreSQL，获得MVCC并发能力
@@ -56,14 +56,14 @@ references:
 
 ### 1.1 问题根因
 
-当前 `depgraph.db` 使用 SQLite，存在以下致命限制：
+当前 `depgraph` 使用 SQLite，存在以下致命限制：
 
 | 限制 | 根因 | 影响 |
 |------|------|------|
 | **文件级EXCLUSIVE锁** | SQLite写操作获取EXCLUSIVE锁，全局唯一 | 40个AI并发写入时，39个必须等待 |
 | **WAL不支持并发写** | WAL模式仅支持"并发读+单写" | 写入串行化，吞吐量瓶颈 |
 | **busy_timeout超时** | 超时后抛 `database is locked` | AI任务失败，需重试 |
-| **_db_write_lock补丁** | apply_depgraph.py用threading.Lock+文件锁双重保护 | 锁粒度=整个depgraph.db文件，非功能域分区 |
+| **_db_write_lock补丁** | apply_depgraph.py用threading.Lock+文件锁双重保护 | 锁粒度=整个depgraph文件，非功能域分区 |
 | **sync_yaml_to_depgraph.py无锁** | 完全无锁保护 | 与其他写入并发会产生数据损坏 |
 
 ### 1.2 迁移目标
@@ -80,14 +80,14 @@ references:
 
 > ⚠️ 历史裁定记录。当前数据库清单真源：`infrastructure_registry.yaml`（INFRA-DB-001~005，详见 AGENTS.md §11.0）。
 
-**原D50裁定**：3库：governance.db(SQLite)+depgraph.db(SQLite)+market.duckdb(DuckDB)
+**原D50裁定**：3库：governance.db(SQLite)+depgraph(SQLite)+market.duckdb(DuckDB)
 
 **P2更新裁定（D50-PG）**：
-- depgraph.db → PostgreSQL（获得MVCC并发能力）
+- depgraph → PostgreSQL（获得MVCC并发能力）
 - governance.db → 保持SQLite（任务卡系统，单写者足够，无并发写入需求）
 - market.duckdb → 保持DuckDB（OLAP分析，无并发写入需求）
 
-**理由**：只有depgraph.db面临40+AI并发写入问题。governance.db（任务卡）由TaskRepository单写者管理，market.duckdb（行情数据）由数据管道串行写入。迁移范围最小化，降低风险。
+**理由**：只有depgraph面临40+AI并发写入问题。governance.db（任务卡）由TaskRepository单写者管理，market.duckdb（行情数据）由数据管道串行写入。迁移范围最小化，降低风险。
 
 ### 1.4 不变的设计哲学
 
@@ -141,9 +141,9 @@ references:
 ### 2.3 DB_PATH 真源与散布情况（必须同步修改）
 
 > **注意**：以下行号为 2026-06-27 核查记录，实际修改前请用 `grep -rn "DB_PATH\s*=\|depgraph\.db" <文件路径>` 验证当前行号。
-> **关键澄清**：`DB_PATH` 在项目中并非干净 SSoT——`governance.db` 与 `depgraph.db` 是两个不同数据库，各自有定义点。本迁移只动 `depgraph.db`。
+> **关键澄清**：`DB_PATH` 在项目中并非干净 SSoT——`governance.db` 与 `depgraph` 是两个不同数据库，各自有定义点。本迁移只动 `depgraph`。
 
-**A. depgraph.db 路径定义（本迁移范围，必须改为 PostgreSQL 连接串）**
+**A. depgraph 路径定义（本迁移范围，必须改为 PostgreSQL 连接串）**
 
 | # | 文件路径 | 行号(参考) | 当前定义 | 迁移后 |
 |---|---------|------|---------|--------|
@@ -162,11 +162,11 @@ references:
 | 1 | `src/zephyr/shared/io/paths.py` | 67 | `DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"`（governance.db 真源） | 不变 |
 | 2 | `src/zephyr/governance/sqlite_schema.py` | 77 | `DB_PATH = _find_repo_root() / "data" / "databases" / "governance.db"` | 不变 |
 
-**C. scripts/ 下散布的 depgraph.db 路径定义（约 28 处）**
+**C. scripts/ 下散布的 depgraph 路径定义（约 28 处）**
 
-`scripts/governance/` 与 `scripts/ops/` 下多个脚本各自定义 depgraph.db 路径（如 `apply_depgraph.py`、`audit_domain_nodes.py`、`check_rule_four_way_alignment.py`、`generate_project_depgraph.py`、`upgrade_headers_to_14fields.py` 等），部分硬编码 `D:/ZephyrAlpha/...`。完整清单见受影响文件索引（并发审查文档），迁移时需统一改为从 `depgraph_schema.py` 导入 PG 连接配置，消除散布与硬编码。
+`scripts/governance/` 与 `scripts/ops/` 下多个脚本各自定义 depgraph 路径（如 `apply_depgraph.py`、`audit_domain_nodes.py`、`check_rule_four_way_alignment.py`、`generate_project_depgraph.py`、`upgrade_headers_to_14fields.py` 等），部分硬编码 `D:/ZephyrAlpha/...`。完整清单见受影响文件索引（并发审查文档），迁移时需统一改为从 `depgraph_schema.py` 导入 PG 连接配置，消除散布与硬编码。
 
-> **治理原则**：迁移后 depgraph.db 的 PG 连接配置应收敛到 `depgraph_schema.py` 单一真源，其他文件通过 `from zephyr.governance.depgraph_schema import get_db_connection` 复用，禁止重复定义。
+> **治理原则**：迁移后 depgraph 的 PG 连接配置应收敛到 `depgraph_schema.py` 单一真源，其他文件通过 `from zephyr.governance.depgraph_schema import get_db_connection` 复用，禁止重复定义。
 
 ---
 
@@ -228,10 +228,10 @@ Get-Service postgresql-x64-16
 # 创建应用用户 zephyr
 psql -U postgres -c "CREATE USER zephyr WITH PASSWORD 'zephyr_dev_2026';"
 
-# 创建 depgraph 数据库，属主为 zephyr
+# 创建 depgraph (PostgreSQL)，属主为 zephyr
 psql -U postgres -c "CREATE DATABASE depgraph OWNER zephyr ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;"
 
-# 授予 zephyr 用户在 depgraph 数据库的全部权限
+# 授予 zephyr 用户在 depgraph (PostgreSQL)的全部权限
 psql -U postgres -d depgraph -c "GRANT ALL ON DATABASE depgraph TO zephyr;"
 ```
 
@@ -344,7 +344,7 @@ psql -U zephyr -d depgraph -c "\dx"
 ### 5.1 前置条件
 
 - [ ] 阶段1已完成（PostgreSQL运行中）
-- [ ] `depgraph.db`已git commit备份（最新状态）
+- [ ] `depgraph`已git commit备份（最新状态）
 - [ ] Python环境已安装`psycopg2-binary`包
 
 #### [动作1] 安装Python依赖
@@ -401,7 +401,7 @@ python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); [
 """
 SQLite → PostgreSQL 数据迁移脚本
 ===============================
-将 depgraph.db 的所有数据迁移到 PostgreSQL。
+将 depgraph 的所有数据迁移到 PostgreSQL。
 
 使用方式：
     python scripts/governance/migrate_sqlite_to_pg/migrate_data.py
@@ -409,7 +409,7 @@ SQLite → PostgreSQL 数据迁移脚本
 前置条件：
     1. PostgreSQL已启动（Windows服务运行中）
     2. PG Schema已创建（01_create_pg_schema.sql已执行）
-    3. depgraph.db已git commit备份
+    3. depgraph已git commit备份
 """
 
 import sqlite3
@@ -615,7 +615,7 @@ if __name__ == "__main__":
 ```powershell
 cd D:\ZephyrAlpha
 
-# 1. 先备份depgraph.db
+# 1. 先备份depgraph
 git add data/databases/depgraph.db
 git commit -m "backup: depgraph.db before PostgreSQL migration"
 
@@ -661,7 +661,7 @@ WHERE n.node_id IS NULL;
 
 | # | 验证项 | 命令 | 预期结果 |
 |---|--------|------|---------|
-| 1 | depgraph.db已备份 | `git log --oneline -1` | 显示backup commit |
+| 1 | depgraph已备份 | `git log --oneline -1` | 显示backup commit |
 | 2 | PG Schema创建成功 | `psql -U zephyr -d depgraph -c "\dt"` | 显示所有表 |
 | 3 | 数据迁移成功 | `python migrate_data.py` | 迁移成功! 总行数: ~37000 |
 | 4 | nodes行数匹配 | `SELECT COUNT(*) FROM nodes` | 14383 |
@@ -804,7 +804,7 @@ WHERE n.node_id IS NULL;
 
 #### 6.4.1 文件：`src/zephyr/governance/depgraph_schema.py`
 
-**当前状态**：depgraph.db的Schema DDL + 版本化迁移框架（v1-v18，v18 为 blueprint_id 三轨制 DB 触发器），23张表定义，18个索引，dep_cycles视图。
+**当前状态**：depgraph的Schema DDL + 版本化迁移框架（v1-v18，v18 为 blueprint_id 三轨制 DB 触发器），23张表定义，18个索引，dep_cycles视图。
 
 **修改清单**：
 
@@ -828,7 +828,7 @@ WHERE n.node_id IS NULL;
 | 16 | 全文 | `CREATE VIRTUAL TABLE ... USING fts5(...)` | `CREATE INDEX ... USING gin(to_tsvector(...))` | 全文搜索 |
 | 17 | 全文 | `conn.execute(sql)` | `cursor = conn.cursor(); cursor.execute(sql)` | PG需要cursor |
 
-**具体操作**：由于此文件是depgraph.db的Schema真源，修改量很大。建议：
+**具体操作**：由于此文件是depgraph的Schema真源，修改量很大。建议：
 1. 先完整阅读 `depgraph_schema.py` 全文
 2. 逐个函数修改，对照翻译规则表
 3. 每修改一个函数，运行对应测试验证
@@ -843,7 +843,7 @@ WHERE n.node_id IS NULL;
 
 | # | 当前内容 | 修改为 | 说明 |
 |---|---------|--------|------|
-| 1 | 如果有引用depgraph.db路径的变量 | 改为引用PG连接配置 | 区分governance.db和depgraph.db |
+| 1 | 如果有引用depgraph路径的变量 | 改为引用PG连接配置 | 区分governance.db和depgraph |
 | 2 | 如果有跨库查询depgraph的SQL | 改为通过PG连接执行 | 跨库查询需调整 |
 
 **验证方法**：
@@ -851,7 +851,7 @@ WHERE n.node_id IS NULL;
 # 检查sqlite_schema.py中是否引用depgraph
 grep -n "depgraph" src/zephyr/governance/sqlite_schema.py
 ```
-如果无输出，则此文件无需修改（governance.db独立于depgraph.db）。
+如果无输出，则此文件无需修改（governance.db独立于depgraph）。
 
 #### 6.4.3 文件：`src/zephyr/shared/utils/db_utils.py`
 
@@ -887,7 +887,7 @@ def get_governance_connection():
 
 #### 6.5.1 文件：`scripts/governance/apply_depgraph.py`
 
-**当前状态**：depgraph.db唯一写入口，15个命令，_db_write_lock双重锁。
+**当前状态**：depgraph唯一写入口，15个命令，_db_write_lock双重锁。
 
 > **注意**：以下行号为调研时（2026-06-25）记录，实际修改前请用 `grep -n "_db_write_lock\|_check_git_backup\|_create_physical_backup" scripts/governance/apply_depgraph.py` 验证当前行号。
 
@@ -1132,7 +1132,7 @@ def _create_physical_backup():
 
 #### [动作4] 保留git备份门禁
 
-**操作**：`_check_git_backup` 函数保留，但检查对象从depgraph.db文件改为相关代码文件：
+**操作**：`_check_git_backup` 函数保留，但检查对象从depgraph文件改为相关代码文件：
 
 ```python
 def _check_git_backup():
@@ -1248,7 +1248,7 @@ PG_CONFIG = {
 
 @contextmanager
 def get_depgraph_connection():
-    """获取depgraph数据库连接（直连PostgreSQL）。
+    """获取 depgraph (PostgreSQL) 连接（直连）。
 
     使用方式：
         with get_depgraph_connection() as conn:
@@ -1766,10 +1766,10 @@ cd D:\ZephyrAlpha
 git revert HEAD~N  # N为P2迁移的commit数
 ```
 
-#### [动作2] 恢复depgraph.db
+#### [动作2] 恢复depgraph
 
 ```powershell
-# depgraph.db从未被删除（迁移是复制不是移动），直接使用
+# depgraph从未被删除（迁移是复制不是移动），直接使用
 # 如果有修改，从git恢复
 git checkout -- data/databases/depgraph.db
 ```
@@ -1792,7 +1792,7 @@ pytest tests/ -x
 
 | # | 验证项 | 预期结果 |
 |---|--------|---------|
-| 1 | depgraph.db可用 | diagnose正常输出 |
+| 1 | depgraph可用 | diagnose正常输出 |
 | 2 | 单元测试通过 | 全部通过 |
 | 3 | apply_depgraph.py可用 | 可正常执行命令 |
 | 4 | PostgreSQL已停止 | `Get-Service postgresql-x64-16` 返回 Stopped |

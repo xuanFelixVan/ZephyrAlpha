@@ -16,7 +16,7 @@
 """DM-200913 Phase4-B: 重写9个14层相关图表为52域派生
 
 基于§2.1裁定，将 diagrams/ 下9个图表从14层(L00-L13)节点改为52域节点。
-数据源: depgraph.db
+数据源: depgraph
 保留: P0跨层契约标注(CTR-001~CTR-006)、C4层级语义、业务数据流。
 """
 import sys
@@ -35,14 +35,14 @@ DIAGRAMS_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_archi
 NOW = datetime.now().strftime("%Y-%m-%d")
 HEADER = f"""%% 重写时间: {NOW} (DM-200913 Phase4-B)
 %% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
-%% 数据源: depgraph.db
+%% 数据源: depgraph
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 """
 
 
 def get_domain_stats():
-    """从depgraph.db获取域统计"""
+    """从depgraph获取域统计"""
     conn = get_depgraph_pg_connection(autocommit=True)
     cur = conn.execute(
         """SELECT d.domain_id, d.domain_name, d.layer_id,
@@ -78,7 +78,7 @@ graph LR
         LLM_A["D_FRONTEND/<br/>(ACL for LLM)"]
     end
 
-    subgraph Core["ZephyrAlpha Core Domains (depgraph.db派生)"]
+    subgraph Core["ZephyrAlpha Core Domains (depgraph派生)"]
         D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
         D_ALT_DATA["D_ALT_DATA<br/>另类数据"]
         D_FACTOR["D_FACTOR<br/>因子"]
@@ -537,7 +537,7 @@ def write_capability_heatmap_visual(stats):
     lines.append("%% Source: capability_heatmap.md §3")
     lines.append("%%{init: {'theme': 'default'}}%%")
     lines.append("%% v2.0.0: 14层×7能力域 → 52域×10能力域矩阵")
-    lines.append("%% 成熟度数据由depgraph.db派生")
+    lines.append("%% 成熟度数据由depgraph派生")
     lines.append("")
     lines.append("graph LR")
     lines.append(f'    subgraph Heatmap["52域×10能力域热力图（{NOW}快照）"]')
@@ -657,7 +657,7 @@ C4Component
     title C4 Level 3 — D_MKT_DATA 行情数据域组件
     title (D_MKT_DATA 数据源域组件分解 / H5)
 
-    Container_Boundary(d_mkt_data, "D_MKT_DATA 行情数据 / Market Data (depgraph.db派生)") {
+    Container_Boundary(d_mkt_data, "D_MKT_DATA 行情数据 / Market Data (depgraph派生)") {
 
         Component(vendor_registry, "Vendor Registry", "Python / vendor_registry.py", "Vendor 统一注册中心：按 asset_class/jurisdiction/data_domain 解析可用 Vendor，含优先级排序与健康状态上报<br/>Vendor Registry: register / resolve / healthcheck_all")
 
@@ -725,7 +725,7 @@ C4Component
     title C4 Level 3 — D_EX_CORE 执行核心域组件
     title (D_EX_CORE 执行域组件分解 / H5)
 
-    Container_Boundary(d_ex_core, "D_EX_CORE 执行核心 / Trade Execution (depgraph.db派生)") {
+    Container_Boundary(d_ex_core, "D_EX_CORE 执行核心 / Trade Execution (depgraph派生)") {
 
         Component(broker_interface, "IBroker Interface", "Python / broker_interface.py", "🔒 BrokerInterface 抽象契约（锁死）：submit / cancel / query_status / stream_fills / get_positions")
 
@@ -807,7 +807,7 @@ C4Component
     title C4 Level 3 — D_ML_TRAIN 训练域组件
     title (D_ML_TRAIN ML平台域组件分解 / H5)
 
-    Container_Boundary(d_ml_train, "D_ML_TRAIN 训练 / ML Platform (depgraph.db派生)") {
+    Container_Boundary(d_ml_train, "D_ML_TRAIN 训练 / ML Platform (depgraph派生)") {
 
         Component(feature_store, "Feature Store", "Python / feature_store/", "特征物化层：按 entity_id × asof_date PIT 对齐；写入供训练、读取供 inference")
 
@@ -878,7 +878,7 @@ def main():
     print()
 
     stats = get_domain_stats()
-    print(f"从depgraph.db加载 {len(stats)} 个域统计")
+    print(f"从depgraph加载 {len(stats)} 个域统计")
     print()
 
     write_integration_topology()

@@ -96,7 +96,7 @@ def _compute_risk_level(transitive: int, depth: int) -> str:
 class BlastRadiusAnalyzer:
     """爆炸半径分析器 — 蓝图 §3.1 Stage 9.
 
-    基于 depgraph.db 构建反向依赖索引，
+    基于 depgraph 构建反向依赖索引，
     对给定 SemanticAuditFinding 计算修复操作的影响范围。
 
     用法:

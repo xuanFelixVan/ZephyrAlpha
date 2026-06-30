@@ -96,7 +96,7 @@ class TestDepgraphIntegration:
                 db_count = cursor.fetchone()[0]
             conn.close()
         except Exception as exc:
-            pytest.skip(f"Cannot query depgraph (PG): {exc}")
+            pytest.skip(f"Cannot query depgraph (PostgreSQL): {exc}")
         yaml_count = len(list(_RULES_DIR.glob("*.yaml")))
         assert db_count > 0 or yaml_count > 0, "Both DB and YAML should have rule entries"
         assert abs(db_count - yaml_count) <= yaml_count * 0.5, (
@@ -113,7 +113,7 @@ class TestArchitecturePanorama:
                 domain_count = cursor.fetchone()[0]
             conn.close()
         except Exception as exc:
-            pytest.skip(f"Cannot query depgraph (PG): {exc}")
+            pytest.skip(f"Cannot query depgraph (PostgreSQL): {exc}")
         all_rules = loader.list_all_rules()
         rule_domains = set()
         for rule in all_rules:

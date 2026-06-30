@@ -1100,7 +1100,7 @@ SELECT COUNT(*) FROM nodes;
 -- ============================================================
 
 -- 注意：此脚本需要在维护窗口执行
--- 执行前请确保已备份depgraph数据库
+-- 执行前请确保已备份 depgraph (PostgreSQL)
 -- 完整列定义获取命令：
 --   psql -U zephyr -d depgraph -c "\d nodes"
 --   psql -U zephyr -d depgraph -c "\d edges"

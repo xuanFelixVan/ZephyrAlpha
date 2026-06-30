@@ -25,13 +25,13 @@ actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "Database 集成蓝图——聚合 MOD-INF-012A（Core: SQLite+DuckDB已实现）和 MOD-INF-012B（v3.0: depgraph.db 从 SQLite 迁移到 PostgreSQL，P2迁移主体已完成2026-06-28，TC-PG-08/10残留于2026-06-29清理完毕4/4验收通过，整体待24任务卡全面验证故 partially_implemented，P3优化待施工）。DW-045拆分完成，详细内容见子蓝图。"
+summary: "Database 集成蓝图——聚合 MOD-INF-012A（Core: SQLite+DuckDB已实现）和 MOD-INF-012B（v3.0: depgraph 从 SQLite 迁移到 PostgreSQL，P2迁移主体已完成2026-06-28，TC-PG-08/10残留于2026-06-29清理完毕4/4验收通过，整体待24任务卡全面验证故 partially_implemented，P3优化待施工）。DW-045拆分完成，详细内容见子蓝图。"
 tags: [database, db, sqlite, duckdb, atm, atomic-transaction, task-repo, olap, infrastructure, migration, self-healing, operational-excellence, dual-db-router, write-batcher, integration-blueprint]
 priority: P1
 runtime_plane: hot
 child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub_blueprints/（012A 无独立蓝图文件，代码清单见本文档 §1.1）"}
-  - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
+  - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
   - {module_id: "MOD-DB_DEPGRAPH_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
 depends_on:
   - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
@@ -64,7 +64,7 @@ references:
 
 本蓝图是 Database 模块的集成入口——聚合两个子蓝图：
 - **MOD-INF-012A Database Core**：SQLite+DuckDB 双引擎核心运营（13 个 .py 全部已实现，物理代码主位置 `src/zephyr/infrastructure/db/`）
-- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph.db 从 SQLite 迁移到 PostgreSQL（P2 迁移主体已完成 2026-06-28，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收通过，整体待 24 任务卡全面验证故 partially_implemented + P3 优化待施工）
+- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移主体已完成 2026-06-28，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收通过，整体待 24 任务卡全面验证故 partially_implemented + P3 优化待施工）
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
 
@@ -73,7 +73,7 @@ references:
 | module_id | 标题 | 状态 | 施工进度 | 文件路径 |
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
-| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装） | Active | partially_implemented | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
+| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | partially_implemented | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
 | MOD-DB_DEPGRAPH_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | partially_implemented | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
 
 ### 职责划分
@@ -122,7 +122,7 @@ references:
 ```
 MOD-TASK_SYSTEM (task-system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-FEEDBACK_LOOP (FLE)
 MOD-GATE_ENGINE (gate-engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
-v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ PG（depgraph）──→ script_executions 表（暂缓，待 M-1 级）
+v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph (PostgreSQL)──→ script_executions 表（暂缓，待 M-1 级）
                             └─→ get_db_connection() ──→ SQLite（governance.db，治理/任务卡）
 注: DualDBRouter 已裁定删除（P2 迁移完成，过渡期前提消失）；WriteBatcher 暂缓（待 L 级 5000+脚本）
 注: 无路由器——PG 入口 get_depgraph_pg_connection() 与 SQLite 入口 get_db_connection() 是不同函数，调用方按需选择（见 AGENTS.md §11.4 真源冲突治本）
@@ -266,7 +266,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ PG（depg
 | 5 | `pg_lock.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\pg_lock.py` | v3.0 PG Advisory Lock | 待施工 (012B 阶段3 SQL方言) |
 | 6 | `fts5_index.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\fts5_index.py` | v3.0 FTS5 | 待施工 (012B 阶段3 SQL方言) |
 | 7 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
-| 8 | `data/databases/depgraph.db` | `D:\ZephyrAlpha\data/databases/depgraph.db` | 012B 迁移目标库（SQLite→PostgreSQL） | 运行时生成 |
+| 8 | `PostgreSQL depgraph` | `D:\ZephyrAlpha\PostgreSQL depgraph` | 012B 迁移目标库（SQLite→PostgreSQL） | 运行时生成 |
 | 9 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
 | 10 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
 

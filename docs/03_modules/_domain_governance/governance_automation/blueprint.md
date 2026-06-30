@@ -2381,7 +2381,7 @@ concurrency:
 ### 36.4 G3：SQLite 写入队列 + 批量合并 ⏸ 暂缓（待 L 级 5000+脚本）
 
 > **⚠ 012B 裁定（2026-06-28）**：WriteBatcher 暂缓。当前 S 级 571 脚本无写争抢实证，
-> L 级（5000+脚本）启动。depgraph.db 已迁 PG（MVCC 解决其写争抢），剩余 SQLite 争抢仅在 governance.db。
+> L 级（5000+脚本）启动。depgraph 已迁 PG（MVCC 解决其写争抢），剩余 SQLite 争抢仅在 governance.db。
 
 **问题**：SQLite WAL 模式只允许 1 个写事务。100 AI 同时写 events/gates/tasks 时，99 个排队等待 busy_timeout（5s）。
 

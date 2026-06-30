@@ -177,7 +177,7 @@ def test_wal_mode():
 
     # depgraph 已迁移到 PostgreSQL，WAL 由 PostgreSQL 服务器管理（postgresql.conf）
     # 不再检查 depgraph 的 PRAGMA journal_mode（PG 无此 PRAGMA）
-    print("  ✓ depgraph (PG): WAL 由 PostgreSQL 服务器管理（无需 PRAGMA 检查）")
+    print("  ✓ depgraph (PostgreSQL): WAL 由 PostgreSQL 服务器管理（无需 PRAGMA 检查）")
 
     print("  ✓ PASS: 数据库 WAL 模式验证完成")
     return True

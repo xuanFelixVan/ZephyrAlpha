@@ -16,7 +16,7 @@
 # [TTL] task_bound
 """audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
 
-扫描 depgraph.db 所有表的所有 TEXT 列，检测旧标识符残留。
+扫描 depgraph 所有表的所有 TEXT 列，检测旧标识符残留。
 裁定#204 改名（D-SIGNAL* 4域）时，cmd_rename_domain 的 17步 UPDATE（v14前为18步，含invariants.domain_id）只覆盖
 预定义列名枚举，遗漏了 nodes.owner/business_stream/tags 等
 未枚举列，导致314行存量残留。本脚本用"值扫描兜底"检测所有残留。

@@ -80,7 +80,7 @@ ttl: permanent
 | 17 | TC-PG-17 | perf_depgraph_baseline.py迁移（含rebuild_progress.py合并） | perf_depgraph_baseline.py + rebuild_progress.py | 2 | MT-PG-17 |
 | 18 | TC-PG-18 | upgrade_headers_to_14fields.py迁移 | upgrade_headers_to_14fields.py | 1 | MT-PG-18 |
 | 19 | TC-PG-19 | d5_architecture生成器批量迁移 | 18个生成器 | 18 | MT-PG-19 |
-| 20 | TC-PG-20 | tests/ depgraph.db测试迁移 | 6个测试文件 | 6 | MT-PG-20 |
+| 20 | TC-PG-20 | tests/ depgraph测试迁移 | 6个测试文件 | 6 | MT-PG-20 |
 | 21 | TC-PG-21 | PG依赖与连接配置 | requirements.txt + pyproject.toml + .env.example + pg_connection.py | 4 | MT-PG-21 |
 | 22 | TC-PG-22 | 规则/注册表YAML描述更新 | trae_056 + trae_059 + registry_of_registries.yaml | 3 | MT-PG-22 |
 | 23 | TC-PG-23 | depgraph_schema.py视图迁移 | CREATE VIEW dep_cycles | 1 | MT-PG-23 |
@@ -131,11 +131,11 @@ TC-PG-23（视图迁移）依赖 TC-PG-01（depgraph_schema.py）完成
 
 **施工范围**：
 - 可修改：`scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql`（新建）、`config/.env.postgres`（新建）、`.gitignore`（修改）
-- 禁止修改：`src/`、`data/databases/depgraph.db`
+- 禁止修改：`src/`、`PostgreSQL depgraph`
 
 **施工步骤**：见P2方案§四.4.2[动作1-8]，包含：
 1. 下载安装PostgreSQL 16 EDB安装包（图形化向导，设置postgres密码，端口5432，安装为Windows服务）
-2. 创建zephyr用户和depgraph数据库
+2. 创建 zephyr 用户和 depgraph (PostgreSQL)
 3. 创建扩展初始化脚本
 4. 安装扩展（pg_stat_statements + pgcrypto）
 5. 配置 config/.env.postgres 并添加到 .gitignore
@@ -173,10 +173,10 @@ git checkout -- .gitignore
 
 **施工范围**：
 - 可修改：`scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql`（新建）、`scripts/governance/migrate_sqlite_to_pg/01_create_pg_schema.sql`（新建）、`scripts/governance/migrate_sqlite_to_pg/migrate_data.py`（新建）、`requirements.txt`（修改）
-- 禁止修改：`src/`、`data/databases/depgraph.db`（只读取）
+- 禁止修改：`src/`、`PostgreSQL depgraph`（只读取）
 
 **施工步骤**：见P2方案§五.5.2[动作1-6]，包含：
-1. 备份depgraph.db（git commit）
+1. 备份depgraph（git commit）
 2. 安装psycopg2-binary
 3. 导出SQLite实际schema（注意：DB实际41列，非DDL的30列）
 4. 创建PostgreSQL Schema DDL（翻译规则见P2方案§五.5.2[动作2]）
@@ -266,7 +266,7 @@ psql -U zephyr -d depgraph -c "DELETE FROM nodes WHERE domain_id LIKE 'D-TEST-%'
 
 | 位置 | 当前 | 迁移后 | 说明 |
 |------|------|--------|------|
-| L71 | `DB_PATH = .../depgraph.db` | 从环境变量读取`PG_DSN` | 路径常量→PG连接串 |
+| L71 | `DB_PATH = .../depgraph` | 从环境变量读取`PG_DSN` | 路径常量→PG连接串 |
 | L326-333 | `_PRAGMAS`（6条） | 删除全部 | PG无PRAGMA机制 |
 | L336-338 | `_apply_pragmas()` | 删除函数及所有调用点（L1064、L1145、L1168，共3处；L1107为`PRAGMA foreign_keys=ON`非_apply_pragmas调用） | - |
 | L119,227,275,347,392,460,573 | `INTEGER PRIMARY KEY AUTOINCREMENT` | `BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY` | 7处 |
@@ -365,13 +365,13 @@ git checkout -- src/zephyr/governance/database_service.py
 
 | 文件 | 位置 | 当前 | 迁移后 |
 |------|------|------|--------|
-| depgraph_reader.py | L48 | `DB_PATH = .../depgraph.db` | 从环境变量读取`PG_DSN` |
+| depgraph_reader.py | L48 | `DB_PATH = .../depgraph` | 从环境变量读取`PG_DSN` |
 | depgraph_reader.py | L60 | `sqlite3.connect()` | `psycopg2.connect()`；移除`row_factory = sqlite3.Row` |
 | depgraph_reader.py | L80-247（约23处） | `?`占位符 | 全部`?`→`%s` |
 | depgraph_reader.py | L114,120 | `from_node`/`to_node`列名 | 核对修复为`from_node_id`/`to_node_id`（潜在bug） |
 | depgraph_reader.py | L126 | `edge_type`列名 | 核对修复为`dep_type`（潜在bug） |
 | depgraph_reader.py | L206 | `arch_domains`表 | 核对修复（表不存在，潜在bug） |
-| dashboard.py | L162 | `dep_path = .../depgraph.db` | 从环境变量读取`PG_DSN` |
+| dashboard.py | L162 | `dep_path = .../depgraph` | 从环境变量读取`PG_DSN` |
 | dashboard.py | L189 | `sqlite3.connect(timeout=10.0)` | `psycopg2.connect()` |
 | dashboard.py | L190 | `SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5` | 删除该查询或改为基于edges表度数计算（`fan_in`列不存在；`in_degree`已在v15 migration L907删除） |
 
@@ -412,7 +412,7 @@ git checkout -- src/zephyr/governance/depgraph_reader.py src/zephyr/infrastructu
 
 | 位置 | 当前 | 迁移后 | 说明 |
 |------|------|--------|------|
-| L51 | `_DB_PATH = .../depgraph.db` | 从环境变量读取`PG_DSN` | 路径常量 |
+| L51 | `_DB_PATH = .../depgraph` | 从环境变量读取`PG_DSN` | 路径常量 |
 | L54-58 | `_PRAGMAS`（WAL/foreign_keys/busy_timeout） | 删除全部 | PG无PRAGMA |
 | L91 | `sqlite3.connect(timeout=10.0)` | `psycopg2.connect()`；`timeout`→PG连接超时配置 | - |
 | L93-94 | `for pragma in _PRAGMAS: conn.execute(pragma)` | 删除循环 | - |
@@ -455,7 +455,7 @@ git checkout -- src/zephyr/governance/rule_engine.py
 
 | 位置 | 当前 | 迁移后 | 说明 |
 |------|------|--------|------|
-| L42 | `_DEPGRAPH_DB = .../depgraph.db` | 从环境变量读取`PG_DSN` | 路径常量 |
+| L42 | `_DEPGRAPH_DB = .../depgraph` | 从环境变量读取`PG_DSN` | 路径常量 |
 | L203,261,283 | `sqlite3.connect()` | `psycopg2.connect()` | 3处（L200为`if not _DEPGRAPH_DB.exists()`非连接点） |
 | L206-216 | `CREATE TABLE IF NOT EXISTS governance_audit_logs (... AUTOINCREMENT ...)` | `AUTOINCREMENT`→`SERIAL`；建议删除兜底建表逻辑 | 兜底建表 |
 | L221 | `VALUES (?, ?, ?, ?, ?, ?, ?)` | `VALUES (%s, %s, %s, %s, %s, %s, %s)` | 占位符 |
@@ -692,7 +692,7 @@ git checkout -- scripts/governance/extract_depgraph.py
 
 | 位置 | 当前 | 迁移后 |
 |------|------|--------|
-| L197 | `DEPGRAPH_DB_PATH = .../depgraph.db` | 从环境变量读取`PG_DSN` |
+| L197 | `DEPGRAPH_DB_PATH = .../depgraph` | 从环境变量读取`PG_DSN` |
 | L65,143,816 | `sqlite3.connect(str(db_path))` | `psycopg2.connect()` |
 | L667,675,753 | `lock_files`（subprocess调用） | 删除（PG MVCC管理并发） |
 | L156-159,832-835 | `INSERT OR IGNORE ... VALUES (?,?,?,?,?,?,?,?,?,?)` | `INSERT ... ON CONFLICT DO NOTHING`；`?`→`%s` |
@@ -907,11 +907,11 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 | 位置 | 当前 | 迁移后 | 说明 |
 |------|------|--------|------|
 | L40 | `DB_PATH`(governance.db) | 保留（governance.db不迁移） | governance.db保持SQLite |
-| L41 | `DEPGRAPH_DB`(depgraph.db) | 从环境变量读取`PG_DSN` | 路径常量→PG连接配置 |
+| L41 | `DEPGRAPH_DB`(depgraph) | 从环境变量读取`PG_DSN` | 路径常量→PG连接配置 |
 | L55 | `sqlite3.connect(DB_PATH)` | 保留（governance.db连接） | governance.db保持SQLite |
-| L78 | `sqlite3.connect(DEPGRAPH_DB)` | `psycopg2.connect()` | depgraph.db连接迁移PG |
+| L78 | `sqlite3.connect(DEPGRAPH_DB)` | `psycopg2.connect()` | depgraph连接迁移PG |
 
-**关键约束**：rebuild_progress.py同时操作governance.db（保持SQLite）和depgraph.db（迁移PG），仅depgraph部分迁移。
+**关键约束**：rebuild_progress.py同时操作governance.db（保持SQLite）和depgraph（迁移PG），仅depgraph部分迁移。
 
 **验收标准**：
 1. 无残留sqlite3.connect/sqlite_master（depgraph部分）
@@ -936,7 +936,7 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 
 **可修改文件白名单**：`scripts/ops/upgrade_headers_to_14fields.py`（中复杂度，有测试，CI集成）
 
-**施工要点**：此脚本位于`scripts/ops/`而非`scripts/governance/`，但访问depgraph.db。迁移要点：
+**施工要点**：此脚本位于`scripts/ops/`而非`scripts/governance/`，但访问depgraph。迁移要点：
 1. 路径常量→PG_DSN
 2. sqlite3.connect()→psycopg2.connect()
 3. 占位符?→%s
@@ -1002,12 +1002,12 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 
 ---
 
-### 5.20 TC-PG-20：tests/ depgraph.db测试迁移
+### 5.20 TC-PG-20：tests/ depgraph测试迁移
 
 | 字段 | 值 |
 |------|-----|
 | 任务卡ID | TC-PG-20 |
-| 标题 | tests/ depgraph.db测试迁移（6个测试文件） |
+| 标题 | tests/ depgraph测试迁移（6个测试文件） |
 | 优先级 | P2 |
 | 安全级别 | M |
 | 依赖 | TC-PG-01完成 |
@@ -1031,7 +1031,7 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 **施工要点**：
 1. 逐文件修改：sqlite3.connect→psycopg2.connect、?→%s（仅#1）、PRAGMA删除（仅#1）
 2. 确保测试连接PG而非SQLite文件
-3. 注意#5 test_rule_integration.py有2处connect（L94用_DB_PATH、L113用_ARCH_PANORAMA，均指向depgraph.db）
+3. 注意#5 test_rule_integration.py有2处connect（L94用_DB_PATH、L113用_ARCH_PANORAMA，均指向depgraph）
 
 **验收标准**：
 
@@ -1102,12 +1102,12 @@ git checkout -- requirements.txt pyproject.toml .env.example
 | 超时 | 30分钟 |
 
 **可修改文件白名单**：
-- `docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml`（修改：更新depgraph.db描述为PostgreSQL）
-- `src/zephyr/governance/rule_enforcement/g_trae_059.yaml`（修改：L1,40,58,63,76,77注释引用depgraph.db）
+- `docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml`（修改：更新depgraph描述为PostgreSQL）
+- `src/zephyr/governance/rule_enforcement/g_trae_059.yaml`（修改：L1,40,58,63,76,77注释引用depgraph）
 - `docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml`（修改：更新数据库描述）
 
 **施工要点**：
-1. 更新YAML文件中所有`depgraph.db`引用为`PostgreSQL (depgraph)`
+1. 更新YAML文件中所有`depgraph`引用为`PostgreSQL (depgraph)`
 2. 更新数据库类型描述：SQLite→PostgreSQL
 3. 保持YAML规则逻辑不变，仅更新描述性文本
 
@@ -1246,7 +1246,7 @@ Remove-Item scripts/_archive/README.md
 | 17 | MT-PG-14 | TC-PG-14 | 无残留sqlite3.connect |
 | 18 | MT-PG-15 | TC-PG-15 | 无残留sqlite3.connect、statement_timeout |
 | 19 | MT-PG-16 | TC-PG-16 | 无残留sqlite3.connect、_MIGRATIONS导入 |
-| 20 | MT-PG-17 | TC-PG-17 | 无残留sqlite_master、URI连接改造、governance.db保持SQLite+depgraph.db迁移PG |
+| 20 | MT-PG-17 | TC-PG-17 | 无残留sqlite_master、URI连接改造、governance.db保持SQLite+depgraph迁移PG |
 | 21 | MT-PG-18 | TC-PG-18 | CI测试通过 |
 | 22 | MT-PG-19 | TC-PG-19 | 无残留GROUP_CONCAT/sqlite_master（批量18个） |
 | 23 | MT-PG-20 | TC-PG-20 | 无残留sqlite3.connect(depgraph)、测试通过 |

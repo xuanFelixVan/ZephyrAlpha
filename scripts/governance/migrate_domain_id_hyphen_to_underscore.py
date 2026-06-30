@@ -280,7 +280,7 @@ def replace_in_files(migrations: list[tuple[str, str]], dry_run: bool) -> dict:
 
 
 def backup_database():
-    """pg_dump 备份 depgraph 数据库。"""
+    """pg_dump 备份 depgraph (PostgreSQL)。"""
     import time
     ts = time.strftime("%Y%m%d_%H%M%S")
     backup_file = REPO_ROOT / "data" / "backups" / f"depgraph_pre_hyphen_migration_{ts}.sql"

@@ -50,9 +50,9 @@ completes_when: "报告归档"
   ```
 - **新代码**：
   ```
-  > **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次修改 depgraph 数据库
+  > **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次修改 depgraph (PostgreSQL)
   ```
-- **依据文件**：P2迁移审查修复指南 §重点检查（"每次commit depgraph.db"→"每次修改depgraph数据库"）
+- **依据文件**：P2迁移审查修复指南 §重点检查（"每次commit depgraph.db"→"每次修改depgraph (PostgreSQL)"）
 
 ### 修复3
 - **文件**：AGENTS.md
@@ -115,7 +115,7 @@ completes_when: "报告归档"
 确保新进项目的AI读AGENTS.md宪法和README.md时，看到的是PostgreSQL迁移后的正确指引（pg_dump备份、get_db_connection()入口、修改depgraph而非commit .db文件），不会按过时的SQLite方式操作。
 
 ### 达成了什么目标
-AGENTS.md第11节depgraph指引4处全部适配PG（P2迁移说明✅、pg_dump备份✅、"每次修改depgraph数据库"✅、"修改depgraph后"✅），README.md技术栈补充PostgreSQL 16。
+AGENTS.md第11节depgraph指引4处全部适配PG（P2迁移说明✅、pg_dump备份✅、"每次修改depgraph (PostgreSQL)"✅、"修改depgraph后"✅），README.md技术栈补充PostgreSQL 16。
 
 ### 解决了什么痛点
 消除新AI读AGENTS.md后误用"git commit data/databases/depgraph.db"备份（数据已在PG服务器，git备份无效）或误认为depgraph仍是SQLite的漂移风险。

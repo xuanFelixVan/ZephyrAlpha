@@ -22,7 +22,7 @@ Handles three input cases:
   2. Only [A_module] old format → replace with 14-field header (parse A_module for stability/safety/ai_autonomy)
   3. No header at all → insert full 14-field header at top (after shebang if present)
 
-New fields (sourced from depgraph.db):
+New fields (sourced from depgraph):
   [DOMAIN]       — nodes.domain_id
   [DEPENDENCIES] — edges table (from_node_id → to_node_id paths)
   [CONSUMERS]    — edges table (reverse: who imports this file)

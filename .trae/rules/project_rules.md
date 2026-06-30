@@ -432,7 +432,7 @@ python scripts/lock_files.py status
 ├─ 指标 2: 涉及修改 > 3 个文件？ → YES → 走任务系统
 ├─ 指标 3: 需要读取蓝图/设计文档？ → YES → 走任务系统
 ├─ 指标 4: 是数据库 Schema 变更？ → YES → 走任务系统
-├─ 指标 5: depgraph 数据库操作(INSERT/UPDATE/DELETE)？ → YES → 走任务系统
+├─ 指标 5: depgraph (PostgreSQL)操作(INSERT/UPDATE/DELETE)？ → YES → 走任务系统
 ├─ 指标 6: 消费者影响 > 50 个文件？ → YES → 走任务系统
 ├─ 指标 7: 跨域操作？ → YES → 走任务系统
 ├─ 指标 8: 多步骤施工 > 3 个步骤？ → YES → 走任务系统
@@ -471,7 +471,7 @@ python scripts/lock_files.py status
 | 清理根目录临时文件 | 全不触发 | ❌ |
 | 重构 pipeline（需读蓝图+大量新代码） | 指标1+3 ✅ | ✅ |
 | 新增 gate 门禁 | 指标1+3 ✅ | ✅ |
-| depgraph 数据库 INSERT 新域 | 指标5 ✅ | ✅ |
+| depgraph (PostgreSQL) INSERT 新域 | 指标5 ✅ | ✅ |
 | 大规模 import 更新（>50 文件） | 指标6 ✅ | ✅ |
 | 跨域模块迁移 | 指标7 ✅ | ✅ |
 
@@ -813,7 +813,7 @@ STEP 3  验证       → 端到端测试确认消费方仍能正常调用
 ```
 1. python scripts/governance/audit_registration.py → exit 0
 2. python scripts/governance/generate_project_path_tree.py --write
-3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph 数据库。用 extract_depgraph.py --summary 替代
+3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph (PostgreSQL)。用 extract_depgraph.py --summary 替代
 # python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
 ```
 
@@ -1013,7 +1013,7 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 
 ### Schema 变更协议（DDL-as-Code 铁律）
 
-depgraph 数据库的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
+depgraph (PostgreSQL)的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
 
 1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
 2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 PostgreSQL 报错）
@@ -1074,7 +1074,7 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 
 | # | 行为 | 后果 |
 |---|------|------|
-| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph 数据库 | 绕过 `get_depgraph_pg_connection()` 连接管理，连接泄漏风险 |
+| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph (PostgreSQL) | 绕过 `get_depgraph_pg_connection()` 连接管理，连接泄漏风险 |
 | ❌ | 用 Read 工具读取 `data/databases/archive/` 下归档文件 | 数据过时，真源在 PostgreSQL |
 | ❌ | 用任何方式将 depgraph 全表内容注入 AI 上下文 | 55M tokens → 内存溢出 |
 | ❌ | 拆分 depgraph 为 39 个域文件 | 跨域关系丢失 → 漂移和幻觉 |
@@ -1381,7 +1381,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
 | **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN。depgraph 在 PostgreSQL，连接用 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` | 裸连/读 archive/ 下文件 → 数据过时 |
 | **涉及数据库连接函数**（`get_db_connection` / `get_depgraph_pg_connection`） | MUST 先读 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §11.4 数据库连接函数真源冲突治本。PG 连接用 `get_depgraph_pg_connection`（F1/F4），SQLite 连接用 `get_db_connection`（F2/F3，同名冲突遗留项）。 CapabilityLookup 查 `find("get_db_connection")` 可定位真源 | 误用 SQLite 入口连 PG → `no such table: nodes`；重复造第三个 `get_db_connection` → 违反真源唯一 |
-| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph 数据库）。仅 depgraph 数据库为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
+| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph (PostgreSQL)）。仅 depgraph (PostgreSQL)为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | 安全敏感变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 回滚/撤销 | `python scripts/rollback.py preflight` → CLEAN → `rollback.py <cmd>` | preflight FAIL → 禁止回滚 |

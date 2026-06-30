@@ -525,7 +525,7 @@ PATH_MAPPINGS = [
         "test_root": "",
         "script_root": "",
         "naming_rule": "{category}/{name}.yaml or .json",
-        "examples": ["data/databases/depgraph.db"],
+        "examples": ["PostgreSQL depgraph"],
     },
 ]
 
@@ -626,7 +626,7 @@ def _load_panorama_from_db(db_path):
 
 
 def _load_domain_mappings_from_db(db_path: Path):
-    """从 depgraph.db 动态加载域映射数据（ARCH-CAP-005 抽屉式扩展）。
+    """从 depgraph 动态加载域映射数据（ARCH-CAP-005 抽屉式扩展）。
 
     替代原硬编码 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP。
     新增域只需 INSERT domains/domain_mapping 表，无需修改生成器代码。
@@ -3104,7 +3104,7 @@ def load_design_state_from_db(db_path: str) -> dict:
     """G1修复+DM-3012: 从数据库加载设计态数据（nodes+edges+arch）
 
     Args:
-        db_path: depgraph.db路径
+        db_path: depgraph路径
 
     Returns:
         dict: {"nodes": {path: node_dict}, "edges": [...], "arch": [...]}
@@ -3193,7 +3193,7 @@ def load_production_state_from_db(db_path: str) -> dict:
     重新生成会丢失。本函数加载这些元数据，供重建后恢复(防数据丢失)。
 
     Args:
-        db_path: depgraph.db路径
+        db_path: depgraph路径
 
     Returns:
         dict: {path: {protected_field: value}} 仅含非空保护字段
@@ -3313,7 +3313,7 @@ def main():
         "--force",
         action="store_true",
         help="裁定#207 R2 C2：确认执行破坏性DB重建（DELETE运营态节点后从磁盘扫描重建）。"
-        "不加此flag时--output-db将被拒绝。depgraph.db 是唯一真源，禁止重新创建派生 YAML 副本。",
+        "不加此flag时--output-db将被拒绝。depgraph 是唯一真源，禁止重新创建派生 YAML 副本。",
     )
     args = parser.parse_args()
 
@@ -3601,7 +3601,7 @@ def main():
                 "  原因: --output-db 未搭配 --force\n"
                 "  风险: DELETE运营态节点后从磁盘扫描重建，手工维护数据可能丢失\n"
                 "  \n"
-                "  depgraph.db 是唯一真源（禁止重新创建派生 YAML 副本）。\n"
+                "  depgraph 是唯一真源（禁止重新创建派生 YAML 副本）。\n"
                 "  确认破坏性重建（需人工评估）:\n"
                 "    python scripts/governance/generate_project_depgraph.py --output-db <path> --force\n"
                 + "=" * 70,
