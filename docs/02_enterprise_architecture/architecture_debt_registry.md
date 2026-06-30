@@ -4,7 +4,7 @@
 > **审核日期**：2026-06-30
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
-> **问题总数**：**956个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮新增，去重后），归因于5个病根
+> **问题总数**：**988个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档由架构健康度仪表盘（第0期交付物）自动派生，禁止手工编辑违规清单部分
 
@@ -16,7 +16,7 @@
 - [二、问题总数确定](#二问题总数确定)
 - [三、病根分析（5个根因）](#三病根分析5个根因)
 - [四、战略层裁定（针对100%AI开发）](#四战略层裁定针对100ai开发)
-- [五、956个问题详细清单](#五956个问题详细清单)
+- [五、988个问题详细清单](#五988个问题详细清单)
   - [5.1 SSoT真源唯一性违规（211个）](#51-ssot真源唯一性违规211个)
   - [5.2 永久系统全自动触发违规（32个）](#52-永久系统全自动触发违规32个)
   - [5.3 新AI可发现性违规（55个）](#53-新ai可发现性违规55个)
@@ -103,6 +103,13 @@
   - [5.84 错误路径资源清理（2个，第17轮新增）](#584-错误路径资源清理2个第17轮新增)
   - [5.85 浅拷贝与可变返回值（4个，第17轮新增）](#585-浅拷贝与可变返回值4个第17轮新增)
   - [5.86 字符串与路径边界情况（4个，第17轮新增）](#586-字符串与路径边界情况4个第17轮新增)
+  - [5.87 错误链与traceback保全（3个，第18轮新增）](#587-错误链与traceback保全3个第18轮新增)
+  - [5.88 生产代码assert误用（6个，第18轮新增）](#588-生产代码assert误用6个第18轮新增)
+  - [5.89 类级可变状态（8个，第18轮新增）](#589-类级可变状态8个第18轮新增)
+  - [5.90 魔术方法一致性（1个，第18轮新增）](#590-魔术方法一致性1个第18轮新增)
+  - [5.91 Property副作用（4个，第18轮新增）](#591-property副作用4个第18轮新增)
+  - [5.92 Enum正确性（2个，第18轮新增）](#592-enum正确性2个第18轮新增)
+  - [5.93 __init__.py污染（8个，第18轮新增）](#593-initpy污染8个第18轮新增)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -112,7 +119,7 @@
 
 ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有限。项目治理体系设计严谨（trae_060三原则 + 17个reconciler + 52个gate + 34个词表 + CapabilityLookup反查机制），但**执行覆盖存在系统性断层**。
 
-经17轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 956个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮新增），分布在86个维度：
+经18轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 988个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮新增），分布在93个维度：
 
 | 维度 | 违规数 | 高危 | 中危 | 低危 | 核心问题 |
 |---|:---:|:---:|:---:|:---:|---|
@@ -127,9 +134,9 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 元数据数字漂移（第6轮） | 7 | 2 | 3 | 2 | gate数52/49/51 + 词表34/35 + MCP10/11 |
 | 注册表消费链断裂（第6轮） | 22 | 9 | 9 | 4 | 30卡片错配 + __init__ 9幻影 + 3catalog漏登记 |
 | 门禁与规则格式漂移（第6轮） | 6 | 2 | 3 | 1 | CommitGateRegistry 4/12/51 + depends_on 6格式 |
-| 代码语义与异常反模式（第7轮） | 30 | 7 | 13 | 7 | 205处except:pass + 签名漂移 + 并发泄漏 |
+| 代码语义与异常反模式（第7轮） | 30 | 10 | 13 | 7 | 205处except:pass + 签名漂移 + 并发泄漏 |
 | 文档内容数字准确性（第7轮） | 20 | 10 | 10 | 0 | 43域过时 + 87行低估 + DB清单遗漏PG |
-| 配置部署运行时一致性（第7轮） | 26 | 8 | 12 | 5 | Dockerfile引用幻影模块 + MCP ACL失效 |
+| 配置部署运行时一致性（第7轮） | 26 | 9 | 12 | 5 | Dockerfile引用幻影模块 + MCP ACL失效 |
 | 韧性恢复与错误处理（第8轮） | 15 | 4 | 10 | 1 | 事务持锁+DB/git分裂+dlq死代码+UPDATE无UPSERT |
 | 并发与线程安全（第8轮） | 15 | 9 | 6 | 0 | 4处无锁单例+3处锁外写共享+TOCTOU僵尸锁+async/sync混用 |
 | 安全纵深防御（第8轮） | 15 | 6 | 7 | 2 | 审计writer no-op+HMAC硬编码+eval配置+RBAC默认关 |
@@ -202,9 +209,16 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 错误路径资源清理（第17轮） | 2 | 0 | 1 | 1 | ordered_lock_acquisition list.index重复锁bug+get_market_read_conn无try/finally |
 | 浅拷贝与可变返回值（第17轮） | 4 | 2 | 2 | 0 | cache_layer读写非对称+skill_context_isolation返回内部引用+doc_guard_server返回carryover引用+work_orchestrator返回内部引用 |
 | 字符串与路径边界情况（第17轮） | 4 | 1 | 2 | 1 | capability_passport漏\净化+runbook_generator漏\null+staging_area未净化+Windows MAX_PATH未处理 |
-| **合计** | **956** | **475** | **401** | **64** | |
+| 错误链与traceback保全（第18轮） | 3 | 0 | 3 | 0 | 3处raise无from exc丢失异常链（money.py 2副本+task_repo） |
+| 生产代码assert误用（第18轮） | 6 | 5 | 1 | 0 | 36处assert用于校验（atomic_tm 7+task_repo 8+transition 1+hallucination_detector 4副本16+intent_parser 2副本4+circuit_breaker 1） |
+| 类级可变状态（第18轮） | 8 | 0 | 3 | 5 | daemon_registry 3处ClassVar可变+5处标准注册表模式（LOW） |
+| 魔术方法一致性（第18轮） | 1 | 1 | 0 | 0 | factor_base.py @classmethod __len__失效（TriggerResult __eq__无__hash__交叉参考5.83.1） |
+| Property副作用（第18轮） | 4 | 0 | 4 | 0 | 4处@property getter修改状态（admission_controller 2+resource_optimization 1+circuit_breaker 1） |
+| Enum正确性（第18轮） | 2 | 0 | 0 | 2 | 30+处Enum用==而非is+7个plain Enum缺__str__ |
+| __init__.py污染（第18轮） | 8 | 5 | 3 | 0 | zephyr/__init__副作用+10幻影子包+shared/__init__ 170名无import+trading/__init__ 41名无import+13处__all__=["*"] |
+| **合计** | **988** | **502** | **415** | **71** | |
 
-所有956个问题归因于**5个病根**：
+所有988个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -283,7 +297,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ## 三、病根分析（5个根因）
 
-所有956个问题归因于5个根因。每个根因配证据链，所有问题都能溯源到这5个根因之一。
+所有988个问题归因于5个根因。每个根因配证据链，所有问题都能溯源到这5个根因之一。
 
 ### 根因1：trae_060的"违规清单"是静态快照，未随项目演进动态更新
 
@@ -503,7 +517,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、956个问题详细清单
+## 五、988个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -750,7 +764,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 26 | gate-adm-manifest-admission | [.pre-commit-config.yaml:641](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L641) |
 | 27 | gate-idx-index-reality | [.pre-commit-config.yaml:657](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L657) |
 | 28 | gate-dd07-shared-bypass | [.pre-commit-config.yaml:673](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L673) |
-| 29 | gate-19-manifest-drift | [.pre-commit-config.yaml:701](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L701) |
+| 29 | gate-21-manifest-drift | [.pre-commit-config.yaml:701](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L701) |
 | 30 | gate-generate-derived | [.pre-commit-config.yaml:736](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L736) |
 | 31 | gate-schema-health | [.pre-commit-config.yaml:757](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L757) |
 | 32 | gate-22-load-path-integrity | [.pre-commit-config.yaml:771](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L771) |
@@ -3426,7 +3440,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`SQLITE_PATH = r'D:\ZephyrAlpha\data\databases\depgraph'`
 - **问题**：迁移脚本硬编码Windows绝对路径，未使用REPO_ROOT或环境变量
 - **影响**：脚本在Linux/Mac/CI/Docker中无法运行
-- **修复**：改用`from _shared.constants import REPO_ROOT` + `SQLITE_PATH = REPO_ROOT / "PostgreSQL depgraph"`
+- **修复**：改用`from _shared.constants import REPO_ROOT` + `SQLITE_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"`
 
 #### 5.32.2 [HIGH] migrate_data.py先TRUNCATE再INSERT，迁移中途失败导致数据全损
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L140)
@@ -3507,7 +3521,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **维度定义**：数据库备份、灾难恢复、RTO/RPO定义、单点故障消除。
 > **病根归属**：根因1（静态快照——P2迁移后备份机制未更新）。
 
-#### 5.33.1 [HIGH] PostgreSQL depgraph无任何备份脚本（无pg_dump、无cron）
+#### 5.33.1 [HIGH] depgraph (PostgreSQL)无任何备份脚本（无pg_dump、无cron）
 - **文件**：全项目Grep pg_dump|postgres.*backup返回0匹配
 - **证据**：phase_a_backup.py仅_backup_sqlite_vacuum；backup_runtime_state.py仅备份YAML/JSONL；apply_depgraph.py注释"PG用MVCC事务rollback提供原子性，无需文件备份"
 - **问题**：P2迁移后depgraph（依赖图真源，含3000+节点、5000+边、35个域）无任何备份
@@ -3528,7 +3542,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：备份脚本在Docker/CI/Linux中不可用；"异地备份"实为同盘备份
 - **修复**：改BACKUP_BASE = Path(os.environ.get("ZEPHYR_BACKUP_DIR", REPO_ROOT / "data/backups/phase-A"))
 
-#### 5.33.4 [HIGH] phase_a_backup.py Tier0备份遗漏PG depgraph（核心资产）
+#### 5.33.4 [HIGH] phase_a_backup.py Tier0备份遗漏depgraph (PostgreSQL)（核心资产）
 - **文件**：[phase_a_backup.py](file:///D:/ZephyrAlpha/scripts/governance/phase_a_backup.py#L66)
 - **证据**：TIER0_FILES含5个核心资产，无PG depgraph备份项；data/asset_index/project-entity-depgraph.yaml是YAML导出非PG数据库备份
 - **问题**：Tier0标称"5个核心资产"但遗漏真正的depgraph PG数据库
@@ -3647,7 +3661,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 #### 5.34.7 [HIGH] 生产代码硬编码SQLite governance.db路径，与PG depgraph形成双库无隔离
 - **文件**：[dashboard.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/dashboard.py#L60)、[dlq.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/dlq.py#L30)
 - **证据**：6个生产模块硬编码`data/databases/governance.db`路径；depgraph已迁PG但governance.db仍为SQLite
-- **问题**：生产同时运行两套数据库系统（SQLite governance.db + PostgreSQL depgraph）；两库无跨库事务一致性
+- **问题**：生产同时运行两套数据库系统（SQLite governance.db + depgraph (PostgreSQL)）；两库无跨库事务一致性
 - **影响**：governance.db文件锁竞争导致写入失败；灾备需同时备份PG+SQLite
 - **修复**：governance.db也迁移到PG（作为governance schema）
 
@@ -6170,6 +6184,299 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | MEDIUM | 2 | 5.86.2/5.86.3 |
 | LOW | 1 | 5.86.4 |
 | **合计** | **4** | |
+
+---
+
+### 5.87 错误链与traceback保全（3个，第18轮新增）
+
+> 维度AC：raise新异常时不带from exc，丢失显式异常链
+
+#### 5.87.1 [MEDIUM] money.py raise MoneyPrecisionError无from exc（trading_contracts副本）
+
+- **文件**：`src/zephyr/trading/trading_contracts/portfolio/contracts/money.py:190-191`
+- **证据**：`except Exception as exc: raise MoneyPrecisionError(...)` 未带 `from exc`。Python 3通过 `__context__` 隐式链式，但缺少显式 `__cause__`，traceback显示"During handling..."而非更清晰的"The above exception was the direct cause"。涉及金额转换的敏感路径。
+- **修复**：`raise MoneyPrecisionError(...) from exc`。
+
+#### 5.87.2 [MEDIUM] money.py raise MoneyPrecisionError无from exc（shared/contracts副本）
+
+- **文件**：`src/zephyr/shared/contracts/portfolio/money.py:204-205`
+- **证据**：与5.87.1完全相同的代码副本，同样缺少 `from exc`。
+- **修复**：同5.87.1。
+
+#### 5.87.3 [MEDIUM] task_repo.py raise PostSyncValidationError无from exc
+
+- **文件**：`src/zephyr/governance/task_repo.py:819-820`
+- **证据**：`except ValueError as exc: raise PostSyncValidationError(...)` 未带 `from exc`。shlex.split的ValueError通过 `__context__` 隐式保留，但调试时不如显式 `from exc` 清晰。
+- **修复**：`raise PostSyncValidationError(...) from exc`。
+
+#### 5.87 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 3 | 5.87.1/5.87.2/5.87.3 |
+| **合计** | **3** | |
+
+---
+
+### 5.88 生产代码assert误用（6个，第18轮新增）
+
+> 维度AD：生产代码中用assert做校验，python -O时校验被完全移除。共36处assert语句跨11个文件。
+
+#### 5.88.1 [HIGH] atomic_transaction_manager.py 7处assert检查_conn非None
+
+- **文件**：`src/zephyr/governance/atomic_transaction_manager.py:192,203,333,376,423,454,519`
+- **证据**：7处 `assert self._conn is not None` 检查SQLite连接。`python -O` 下assert被移除，`self._conn.execute(...)` 在 `_conn` 为None时抛出 `AttributeError` 而非有意义的 `RuntimeError`。事务管理器是核心持久化路径。
+- **修复**：改为 `if self._conn is None: raise RuntimeError("connection not established")`。
+
+#### 5.88.2 [HIGH] task_repo.py 8处assert检查post-write fetch非None
+
+- **文件**：`src/zephyr/governance/task_repo.py:1102,1241,1308,1440,1478,1517,1672,2774`
+- **证据**：每次写操作（INSERT/UPDATE）后fetch行并用assert检查非None。注释"刚刚写入，不应为None"表明开发者认为是不变量。但并发环境或SQLite异常下fetch可能返回None。`python -O`下检查消失，`_row_to_taskcard(None)` 抛出 `TypeError`。
+- **修复**：改为 `if row is None: raise RuntimeError(f"post-write fetch returned None for task_id={task_id}")`。
+
+#### 5.88.3 [HIGH] transition.py 1处assert检查post-write fetch非None
+
+- **文件**：`src/zephyr/governance/transition.py:246`
+- **证据**：与5.88.2相同的模式——状态转换后fetch并assert非空。
+- **修复**：同5.88.2。
+
+#### 5.88.4 [HIGH] hallucination_detector.py 4副本16处assert检查DI注入非None
+
+- **文件**（4副本各4处=16处）：
+  - `src/zephyr/trading/orchestrator/hallucination_detector.py:557,623,643,709`
+  - `src/zephyr/trading/orchestrator/resilience/hallucination_detector.py:557,623,643,709`
+  - `src/zephyr/governance/audit_orchestration/hallucination_detector.py:557,623,643,709`
+  - `src/zephyr/governance/audit_orchestration/resilience/hallucination_detector.py:557,623,643,709`
+- **证据**：4份完全相同的代码副本，各4处 `assert self._primary is not None` / `assert self._verifier is not None`。`python -O` 下检查消失，后续 `self._primary(...)` 抛出 `TypeError: 'NoneType' object is not callable`，错误信息难以诊断。
+- **修复**：改为 `if self._primary is None: raise RuntimeError("primary LLM not injected")`，并消除4份代码重复。
+
+#### 5.88.5 [HIGH] intent_parser.py 2副本4处assert检查DI注入非None
+
+- **文件**（2副本各2处=4处）：
+  - `src/zephyr/autonomy_core/intent_parser.py:269,322`
+  - `src/zephyr/autonomy_core/parsing/intent_parser.py:264,317`
+- **证据**：2份代码副本，各2处 `assert self._emb is not None` / `assert self._llm is not None`。`python -O` 下检查消失。
+- **修复**：同5.88.4，改为if/raise，并消除重复。
+
+#### 5.88.6 [MEDIUM] circuit_breaker.py 1处assert检查post-write fetch非None
+
+- **文件**：`src/zephyr/governance/rule_enforcement/circuit_breaker.py:343`
+- **证据**：`assert updated is not None  # 刚刚写入，不应为 None`。熔断器状态写入后fetch并assert。`python -O` 下检查消失。
+- **修复**：改为 `if updated is None: raise RuntimeError(...)`。
+
+#### 5.88 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 5 | 5.88.1/5.88.2/5.88.3/5.88.4/5.88.5 |
+| MEDIUM | 1 | 5.88.6 |
+| **合计** | **6** | |
+
+---
+
+### 5.89 类级可变状态（8个，第18轮新增）
+
+> 维度AE：类定义中直接使用可变对象作为类属性，所有实例共享
+
+#### 5.89.1 [MEDIUM] daemon_registry._entries ClassVar dict共享
+
+- **文件**：`src/zephyr/shared/lifecycle/daemon_registry.py:133`
+- **证据**：`_entries: ClassVar[dict[str, DaemonEntry]] = {}` 是类级可变dict，所有实例共享。被多个classmethod修改（register/start/stop）。若创建多个DaemonRegistry实例（虽然设计为单例），状态会意外共享。
+- **修复**：强制单例模式或改为实例属性。
+
+#### 5.89.2 [MEDIUM] daemon_registry._pressure_history ClassVar list共享
+
+- **文件**：`src/zephyr/shared/lifecycle/daemon_registry.py:135`
+- **证据**：`_pressure_history: ClassVar[list[ResourceSnapshot]] = []` 类级可变list。多实例时历史数据混合。
+- **修复**：改为实例属性或强制单例。
+
+#### 5.89.3 [MEDIUM] daemon_registry._on_pressure_callbacks ClassVar list共享
+
+- **文件**：`src/zephyr/shared/lifecycle/daemon_registry.py:140`
+- **证据**：`_on_pressure_callbacks: ClassVar[list[Callable]] = []` 类级可变list。多实例注册不同回调会相互干扰。
+- **修复**：同5.89.1。
+
+#### 5.89.4 [LOW] interface_base.py _registry ClassVar dict插件注册模式
+
+- **文件**：`src/zephyr/frontend/interface_base.py:90,111,138`
+- **证据**：3个基类各定义 `_registry: ClassVar[dict] = {}`，通过 `__init_subclass__` 自动注册子类。标准的Python插件注册模式，共享是有意为之。LOW。
+
+#### 5.89.5 [LOW] pipeline_base.py _registry ClassVar dict（2副本）
+
+- **文件**：`src/zephyr/simulation/pipeline_base.py:85,114` + `simulation/pipeline_base_from_resear.py:85,114`
+- **证据**：与5.89.4相同的插件注册模式，2份代码副本。
+
+#### 5.89.6 [LOW] analytics_base.py _registry ClassVar dict
+
+- **文件**：`src/zephyr/reporting/analytics_base.py:66,89`
+- **证据**：同5.89.4模式。
+
+#### 5.89.7 [LOW] backtest_base.py _registry ClassVar dict（2副本）
+
+- **文件**：`src/zephyr/simulation/backtest_base.py:80` + `simulation/backtest_base_from_resear.py:80`
+- **证据**：同5.89.4模式，2份副本。
+
+#### 5.89.8 [LOW] signal_synthesizer.py + factor_base.py _registry ClassVar dict
+
+- **文件**：`src/zephyr/signal_fundamental/synth/signal_synthesizer.py:69` + `factor/factor_base.py:142`
+- **证据**：同5.89.4模式。
+
+#### 5.89 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 3 | 5.89.1/5.89.2/5.89.3 |
+| LOW | 5 | 5.89.4/5.89.5/5.89.6/5.89.7/5.89.8 |
+| **合计** | **8** | |
+
+---
+
+### 5.90 魔术方法一致性（1个，第18轮新增）
+
+> 维度AG：魔术方法定义不符合Python协议。注：TriggerResult __eq__无__hash__已在5.83.1覆盖，此处不重复计数。
+
+#### 5.90.1 [HIGH] factor_base.py @classmethod __len__失效
+
+- **文件**：`src/zephyr/factor/factor_base.py:189-191`
+- **证据**：`__len__` 被装饰为 `@classmethod`。Python魔术方法协议通过 `type(obj).__len__(obj)` 调用，classmethod会将cls绑定为类本身，导致调用时传入的obj变成多余参数，触发 `TypeError: __len__() takes 1 positional argument but 2 were given`。此 `__len__` 是死代码，给人可以工作的假象。
+- **修复**：如果意图是 `len(FactorRegistry)` 返回注册表大小，需在元类上定义 `__len__`；如果意图是实例方法，移除 `@classmethod` 并将 `cls` 改为 `self`。
+
+#### 5.90 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.90.1 |
+| **合计** | **1** | |
+
+---
+
+### 5.91 Property副作用（4个，第18轮新增）
+
+> 维度AH：@property getter在读取时修改对象状态，违反最小惊讶原则
+
+#### 5.91.1 [MEDIUM] admission_controller.tokens getter调用_refill()修改状态
+
+- **文件**：`src/zephyr/trading/admission_controller.py:114-118`
+- **证据**：`@property def tokens(self)` 调用 `self._refill()`，修改 `self._tokens`（令牌补充）和 `self._last_refill`（时间戳更新）。多次读取tokens会不断推进 `_last_refill`。在调试器中查看此属性会改变对象状态。
+- **修复**：将 `_refill()` 移到显式方法，getter仅返回不修改状态的近似值。
+
+#### 5.91.2 [MEDIUM] admission_controller.state getter触发OPEN→HALF_OPEN转换
+
+- **文件**：`src/zephyr/trading/admission_controller.py:168-175`
+- **证据**：`@property def state(self)` 在条件满足时执行 `self._state = self._STATE_HALF_OPEN`。单纯观察属性改变了熔断器运行状态。HALF_OPEN模式下只允许有限次试探，仅读取state就消耗了唯一的转换机会。
+- **修复**：将状态转换移到 `allow()`/`call()` 行为方法中，getter仅返回当前状态。
+
+#### 5.91.3 [MEDIUM] resource_optimization.state getter修改状态和计数器
+
+- **文件**：`src/zephyr/trading/resource_optimization.py:132-139`
+- **证据**：与5.91.2相同模式。读取state不仅修改 `self._state`，还重置 `self._half_open_calls`。同类 `allow()` 方法（行141）也重复了这段转换逻辑。
+- **修复**：提取为私有方法 `_try_recover()`，仅在 `allow()` 中调用。
+
+#### 5.91.4 [MEDIUM] circuit_breaker.state getter调用_maybe_transition()
+
+- **文件**：`src/zephyr/ops/circuit_breaker.py:61-65`
+- **证据**：`@property def state(self)` 调用 `self._maybe_transition()`，方法名明确暗示会转换状态。同类 `call()` 方法（行67-72）也调用此方法。
+- **修复**：同5.91.2/5.91.3。
+
+#### 5.91 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| MEDIUM | 4 | 5.91.1/5.91.2/5.91.3/5.91.4 |
+| **合计** | **4** | |
+
+---
+
+### 5.92 Enum正确性（2个，第18轮新增）
+
+> 维度AI：Enum成员比较方式、缺少__str__导致日志不一致
+
+#### 5.92.1 [LOW] 30+处Enum成员比较用==而非is
+
+- **文件**（代表性实例，10+文件30+处）：
+  - `src/zephyr/security/adversarial_validation/circuit_breaker.py:60,63,77,79,84,99`
+  - `src/zephyr/security/adversarial_validation/async_monitor.py:116`
+  - `src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py:163`
+  - `src/zephyr/infrastructure/reliability/circuit_breaker.py:59,79,84`
+  - `src/zephyr/ops/circuit_breaker.py:70,76`
+- **证据**：PEP 8和Python官方文档推荐Enum成员使用 `is` 比较（身份比较），因为Enum成员是单例。`==` 虽功能正确，但 `is` 更快且不会被 `__eq__` 覆盖干扰。共30+处使用 `==` 比较Enum成员。
+- **修复**：将 `self._state == CircuitState.OPEN` 改为 `self._state is CircuitState.OPEN`。
+
+#### 5.92.2 [LOW] 7个plain Enum缺少自定义__str__/__repr__
+
+- **文件**：`trading/trading_contracts/execution/order.py:21-41`（OrderSide/OrderType/OrderStatus）、`ops/circuit_breaker.py:33-36`（CircuitState）、`behavioral_audit/drift_models.py:41-85`（DriftState/ScanLevel/Severity/OrphanClassification）、`ops/evolution_engine.py:27-45`（Severity/FeedbackLayer/EvolutionSignal）、`ex_core/order_manager.py:54-57`（OrderAction）、`ex_core/execution_engine.py:60-64`（AlgoType）、`trading/zombie_scanner.py:70`（ZombieCategory）
+- **证据**：这些plain `Enum`（非 `str, Enum`）的默认 `__str__` 返回 `"ClassName.MEMBER"`（如 `"CircuitState.OPEN"`），而项目中大量 `str, Enum` 子类的 `__str__` 返回值本身（如 `"OPEN"`）。两类Enum混用导致日志格式不一致。
+- **修复**：对需要出现在日志中的plain Enum添加 `def __str__(self): return self.value`，或统一改用 `str, Enum`。
+
+#### 5.92 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| LOW | 2 | 5.92.1/5.92.2 |
+| **合计** | **2** | |
+
+---
+
+### 5.93 __init__.py污染（8个，第18轮新增）
+
+> 维度AJ：__init__.py中的重型import、无效__all__、命名空间污染
+
+#### 5.93.1 [HIGH] zephyr/__init__.py import时执行重型副作用
+
+- **文件**：`src/zephyr/__init__.py:63,125-127,142-144`
+- **证据**：`import zephyr` 会：(1) `_load_dotenv()` 读取.env文件修改os.environ；(2) 启动daemon Timer线程执行遥测bootstrap（monkey-patch）；(3) 启动另一个daemon Timer执行服务注册。import有全局副作用，违反"import应无副作用"原则。（交叉参考5.77.1 daemon Timer线程、5.79 导入副作用）
+- **修复**：移到显式 `zephyr.init()` 函数，由应用入口点调用。
+
+#### 5.93.2 [HIGH] zephyr/__init__.py __all__列出10个不存在的子包
+
+- **文件**：`src/zephyr/__init__.py:163-194`
+- **证据**：`__all__` 列出30个子包名，但以下10个在 `src/zephyr/` 下不存在：`data`、`execution`、`observability`、`orchestration`、`portfolio`、`research`、`resilience`、`semantic_auditor`（仅compliance下重导出）、`signal`（仅有signal_ashare等）、`testing`。`from zephyr import *` 会抛出 `ImportError`。
+- **修复**：从 `__all__` 移除不存在的子包名，或创建对应子包。
+
+#### 5.93.3 [HIGH] shared/__init__.py __all__列出170+名称但无任何import
+
+- **文件**：`src/zephyr/shared/__init__.py:4-173`
+- **证据**：文件仅包含注释和 `__all__ = [...]`（170+名称如EventBus/StateMachine/ZephyrLogger），无任何import语句，无 `__getattr__`。`from zephyr.shared import EventBus` 会失败。`__all__` 与运行时行为完全不匹配。
+- **修复**：添加对应import语句，或添加PEP 562 `__getattr__` 懒加载，或删除 `__all__`。
+
+#### 5.93.4 [HIGH] trading/__init__.py __all__列出41名称但无任何import
+
+- **文件**：`src/zephyr/trading/__init__.py:3-45`
+- **证据**：与5.93.3相同问题。`__all__` 列出41个名称（action_dispatcher/admission_controller/autopilot等），无import语句，无 `__getattr__`。`from zephyr.trading import autopilot` 会失败。
+- **修复**：同5.93.3。
+
+#### 5.93.5 [HIGH] 13个__init__.py使用无效的__all__=["*"]
+
+- **文件**（13处）：`compliance/zero_knowledge_audit_stub/__init__.py:7`、`compliance/semantic_auditor/__init__.py:7`、`compliance/implementations/__init__.py:7`、`compliance/compliance_gate_a6/__init__.py:7`、`compliance/behavioral_auditor/__init__.py:7`、`compliance/audit_orchestrator/__init__.py:7`、`compliance/behavioral_admission/__init__.py:7`、`pf_core/strategy_engine/__init__.py:7`、`pf_core/performance_attribution_engine/__init__.py:7`、`ops/schema/__init__.py:6`、`ops/profiles/__init__.py:6`、`ops/health/__init__.py:6`、`ops/alerts/__init__.py:6`
+- **证据**：`__all__ = ["*"]` 意味着包的唯一"公开名称"是字面量 `"*"`。`from ... import *` 会尝试获取名为 `"*"` 的属性，触发 `ImportError: cannot import name '*'`。开发者意图是"重导出所有内容"，但此语法不实现该语义。
+- **修复**：删除 `__all__ = ["*"]`（不定义 `__all__` 时默认导出所有非下划线名称），或显式列出名称。
+
+#### 5.93.6 [MEDIUM] 83处from ... import *导致命名空间污染
+
+- **文件**：83处出现在 `__init__.py` 中（Grep返回83行）
+- **代表性文件**：`governance/trading_contracts/market/__init__.py:3-9`（7个子模块import *）、`security/llm_defense/llm_security_01/layers/__init__.py:4-12`（9个子模块import *）
+- **证据**：`from ... import *` 将子模块所有公开名称导入当前命名空间，可能造成名称冲突（多个子模块都定义Severity/Status等常见名称），也使追踪名称来源困难。
+- **修复**：改为显式导入 `from .module import Name1, Name2`。
+
+#### 5.93.7 [MEDIUM] infrastructure/config/__init__.py中定义类和函数
+
+- **文件**：`src/zephyr/infrastructure/config/__init__.py:46,53-66,69-72,75,154`
+- **证据**：`__init__.py` 中定义了 `AppConfig` dataclass、`load_config()` 函数、`reload_config()` 函数、`_deep_merge_lists()` 函数。`__init__.py` 应仅做包初始化和重导出，不应定义业务类/函数。
+- **修复**：移到 `app_config.py` 子模块，`__init__.py` 仅做 `from .app_config import AppConfig` 重导出。
+
+#### 5.93.8 [MEDIUM] behavioral_audit/__init__.py 256条手动符号映射
+
+- **文件**：`src/zephyr/behavioral_audit/__init__.py:16-273,279-292,295-309`
+- **证据**：`_SYMBOL_SOURCE` 字典包含256条符号到子模块的映射，`__getattr__` 实现PEP 562懒加载。虽比5.93.3/5.93.4的做法好，但维护256条手动映射是脆弱的——新增符号时必须同步更新此字典。
+- **修复**：用自动化方式（如遍历子模块的 `__all__`）替代手动映射。
+
+#### 5.93 严重度汇总
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 5 | 5.93.1/5.93.2/5.93.3/5.93.4/5.93.5 |
+| MEDIUM | 3 | 5.93.6/5.93.7/5.93.8 |
+| **合计** | **8** | |
 
 ---
 

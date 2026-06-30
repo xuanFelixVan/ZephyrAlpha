@@ -698,11 +698,12 @@ repos:
         stages: [commit]
         description: "AST 检测纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码），防止新 AI 重建 proxy 层重蹈 shared_08 覆辙"
 
-      # ── GATE-19: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
+      # ── GATE-21: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
       # 权威依据：AGENTS.md §6.16 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_static_manifest_drift.py + 接入 pre-commit
-      - id: gate-19-manifest-drift
-        name: "GATE-19: 静态清单漂移阻断（§6.16）"
+      # 2026-06-30 簇3合并：GATE-19(L308 静态清单漂移) 重命名为 GATE-21（消除与 L222 测试结构 GATE-19 同名冲突）
+      - id: gate-21-manifest-drift
+        name: "GATE-21: 静态清单漂移阻断（§6.16）"
         entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
         args: ["--check"]
         language: system
