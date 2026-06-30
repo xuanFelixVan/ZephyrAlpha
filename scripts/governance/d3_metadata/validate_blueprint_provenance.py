@@ -50,7 +50,6 @@ def main() -> int:
 
     errors = 0
     scan_dirs = [
-        REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture",
         REPO_ROOT / "docs" / "04_construction_plans",
         REPO_ROOT / "docs" / "01_policies_and_standards",
     ]

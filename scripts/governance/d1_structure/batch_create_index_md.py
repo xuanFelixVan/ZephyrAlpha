@@ -133,14 +133,6 @@ RESPONSIBILITY_MAP = {
         "设计决策框架 — build-vs-buy 等架构决策辅助文档",
         [
             ("ADR", "02_enterprise_architecture/adr/"),
-            ("架构视图", "02_enterprise_architecture/target_architecture/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture": (
-        "目标架构视图（TOGAF）— 00-overview 到 dimension-audit-matrix + architecture_model/ + diagrams/（正文已收口，已无 by-domain/）",
-        [
-            ("治理规范", "01_policies_and_standards/"),
-            ("ADR", "02_enterprise_architecture/adr/"),
         ],
     ),
     "_working/audit/reports": (
@@ -211,12 +203,6 @@ RESPONSIBILITY_MAP = {
         "治理相关自动化脚本",
         [
             (".md 文档", "01_policies_and_standards/governance/"),
-        ],
-    ),
-    "02_enterprise_architecture/target_architecture/diagrams": (
-        "架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图",
-        [
-            ("架构文档 .md", "02_enterprise_architecture/target_architecture/（上层）"),
         ],
     ),
 }

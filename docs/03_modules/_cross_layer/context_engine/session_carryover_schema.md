@@ -1,7 +1,7 @@
 ---
 module_id: STD-SESSION-CARRYOVER-001
 title: Session Carryover Schema / 会话接续 Schema
-doc_type: gate
+doc_type: blueprint
 status: Active
 version: 1.0.0
 layer: cross_layer

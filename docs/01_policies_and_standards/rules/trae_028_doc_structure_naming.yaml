@@ -24,6 +24,7 @@ aliases:
 - DOC-005
 - DOC-006
 - DOC-008
+- DOC-018
 severity: error
 scope: doc_structure_naming
 domain: TRAE
@@ -115,8 +116,8 @@ sections:
       fail: 只有其中一个或都没有
     - type: constraint
       check: C轨层内直铺文件数
-      pass: .py文件(排除__init__.py)≤10(WARNING);≤50(ERROR)
-      fail: 超过阈值
+      pass: 单目录直接子文件数(排除__init__.py)≤60(WARNING阈值);≤120(ERROR阈值);适用GOV-DOC-018文件夹平铺容量阈值协议
+      fail: 终局文件数>120(ERROR);或线性增长无封顶型文件夹
     - type: constraint
       check: 03_modules/层内直铺blueprint.md
       pass: 不存在直铺blueprint.md(必须用module/子目录)
@@ -149,7 +150,7 @@ sections:
     - 禁止在operational/下放声明式文件(耦合豁免除外)
     - 禁止在domains/下创建空目录(至少1+1规则)
     - 禁止手动编辑_registry/catalogs/和_registry/schemas/
-    - 禁止在governance/子目录下再建子目录(文件数>20除外)
+    - 禁止在governance/子目录下再建子目录(文件数超过GOV-DOC-018阈值时除外)
     - 禁止把全局规则放入domains/
     - 禁止把层域规则放入governance/
   doc_003:
@@ -622,7 +623,7 @@ sections:
     - description: 规则文件强制路径(含AI治理/架构治理/文档治理等所有规则)
       details: docs/01_policies_and_standards/rules/
     - description: 企业架构视图(TOGAF)强制路径
-      details: docs/02_enterprise_architecture/target_architecture/
+      details: docs/02_enterprise_architecture/（00-04 自动生成层）
     - description: KB决策记录强制路径
       details: KB:decisions(Git-backed);旧docs/02_enterprise_architecture/adr/物理树已移除
     - description: 架构模型YAML强制路径
@@ -1224,23 +1225,76 @@ sections:
     - 禁止拆分后产生真源冲突(多个文件定义相同数据)
     - 禁止拆分后丢失跨文件引用关系
     rationale: 防幻觉>Token节省;AI理解规则需要完整上下文;拆分导致跨文件引用断裂风险;1M context window的AI可处理3000行无压力
+  gov_doc_018_folder_capacity_threshold:
+    title: 文件夹平铺容量阈值协议 (GOV-DOC-018)
+    section_type: rule
+    original_rules:
+    - DOC-018
+    conditions:
+    - type: constraint
+      check: 前置否决项-增量速度
+      pass: 文件夹文件数有自然封顶(项目完成即停止增长,如架构定义/配置模板);进入数量阈值裁定
+      fail: 文件夹文件数随项目开发线性增长且无自然封顶(如测试脚本随模块增加);直接判定必须建子目录,不参与数量裁定
+      rationale: 线性增长无封顶型文件夹无论当前数量多少,终局一定爆炸;数量阈值对它无意义,增量速度作前置否决项
+    - type: constraint
+      check: 数量阈值-无稳定命名前缀规则
+      pass: 封顶型文件夹且终局文件数N≤60;平铺OK
+      fail: 封顶型文件夹且N>60且无稳定命名前缀规则;必须建子目录或先立命名前缀规则
+      rationale: 无稳定前缀分组时AI凭文件名主动召回率仅约15%;60为AI纯记忆可靠扫描上限(实测依据见rationale)
+    - type: constraint
+      check: 数量阈值-有稳定命名前缀规则
+      pass: 封顶型文件夹且终局文件数N≤120且有稳定命名前缀规则(如trae_NNN_主题_描述/gct_NNN_/p0_前缀);平铺OK
+      fail: 封顶型文件夹且N>120;必须建子目录
+      rationale: 有前缀分组时AI可凭前缀构造Glob模式定位;120为工具辅助定位可靠上限;超过则AI主动召回遗漏率飙升
+    - type: constraint
+      check: 命名前缀规则强度判定
+      pass: 文件名有稳定的语义前缀分组(编号序列/功能域前缀/层前缀);前缀可预测且覆盖全部文件
+      fail: 扁平命名(如test_topic.py)无统一前缀;或前缀不覆盖全部文件
+    - type: constraint
+      check: 子目录划分标准
+      pass: 子目录内文件数≤60;按功能域/层/类型划分;子目录内仍适用本协议(递归)
+      fail: 子目录内文件数>120;或划分维度与功能无关
+    actions:
+    - type: mandatory
+      step: 新建文件夹前MUST评估终局文件数和增量特征(线性增长型/封顶型)
+    - type: mandatory
+      step: 封顶型且N≤120+稳定命名前缀规则→平铺;线性增长型或N>120→建子目录
+    - type: mandatory
+      step: 60<N≤120且无前缀→MUST先立命名前缀规则,否则建子目录
+    - type: mandatory
+      step: 检测脚本(validate_nested_flat_dirs.py/validate_directory_structure.py)阈值从thresholds.yaml directory_scalability节读取,warn=60/error=120;脚本默认值fail-open对齐
+    prohibitions:
+    - 禁止无稳定命名前缀规则下平铺>60个文件
+    - 禁止任何文件夹终局文件数>120仍平铺(无论是否有前缀)
+    - 禁止线性增长无封顶型文件夹平铺(无论当前数量)
+    - 禁止子目录内文件数>120
+    rationale: |
+      实验依据(GLM-5.2抄书背书测试,2026-07-01):对tests/governance/下288个.py文件抄书(Glob列出)后背书(主动回忆),
+      仅召回45个(召回率15.6%),其中60%(27个)靠编号序列/前缀,仅18个靠语义钩子零散记住,0虚构但243个遗漏(84.4%)。
+      结论:288个平铺远超AI可靠扫描区间;无前缀时可靠上限约60,有前缀时约120;超过则AI不会主动想到去找,
+      直接回答"没有"而漏掉实际存在的文件。
+      前置否决依据:线性增长无封顶型文件夹(如测试脚本随开发模块增加)无论当前数量,终局一定爆炸,数量阈值对它无意义。
 references:
   rule_ids: [TRAE-010, TRAE-022, TRAE-030, TRAE-042]
-  scripts: [scripts/governance/d3_metadata/check_naming_convention.py]
+  scripts: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py]
   modules: []
   blueprints: []
 enforcement:
   type: code
-  executors: [scripts/governance/d3_metadata/check_naming_convention.py]
+  executors: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py]
   bypass_allowed: false
 metadata:
   change_policy: stable
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.5.0"
-  last_modified: "2026-06-26"
+  version: "1.6.0"
+  last_modified: "2026-07-01"
   change_history:
+  - version: "1.6.0"
+    date: "2026-07-01"
+    author: "AI-Assistant"
+    change: "新增GOV-DOC-018文件夹平铺容量阈值协议——平铺vs建子目录二元裁定;前置否决项=增量速度(线性增长无封顶型直接拆);数量阈值T_hard=60(无前缀)/T_soft=120(有前缀)/>120必拆;实验依据GLM-5.2抄书背书测试288文件召回45个(15.6%);更新doc_002 C轨直铺文件数(≤10/≤50→≤60/≤120)和governance子目录规则(>20除外→GOV-DOC-018阈值);references.scripts和enforcement.executors补录两个validate脚本;thresholds.yaml新增directory_scalability节"
   - version: "1.5.0"
     date: "2026-06-26"
     author: "AI-Assistant"

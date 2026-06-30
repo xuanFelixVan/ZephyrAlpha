@@ -182,7 +182,7 @@ repos:
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
-      # 校验范围：docs/02_enterprise_architecture/target_architecture/ + 04_construction_plans/ + 01_policies_and_standards/
+      # 校验范围：docs/04_construction_plans/ + 01_policies_and_standards/
       # 校验内容：frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）+ 物理路径存在性
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-12-blueprint-provenance
@@ -192,7 +192,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^docs/(02_enterprise_architecture/target_architecture|04_construction_plans|01_policies_and_standards)/.*\\.md$"
+        files: "^docs/(04_construction_plans|01_policies_and_standards)/.*\\.md$"
         description: "蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段 warn-only"
 
       # ── GATE-14: AI 自治权限注册表自校验（Wave 0 终审 R74 · V-11）──

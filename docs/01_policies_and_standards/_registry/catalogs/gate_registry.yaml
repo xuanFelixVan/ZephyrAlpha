@@ -49,7 +49,7 @@ gates:
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
   description: 蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段
     warn-only
-  files_trigger: ^docs/(02_enterprise_architecture/target_architecture|04_construction_plans|01_policies_and_standards)/.*\.md$
+  files_trigger: ^docs/(04_construction_plans|01_policies_and_standards)/.*\.md$
   always_run: false
   category: blueprint_truth_source
   status: active
