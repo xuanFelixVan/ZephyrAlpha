@@ -73,6 +73,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import CONFIG_DIR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 import argparse
@@ -1071,12 +1072,144 @@ def step11_contract_implementation_audit() -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def _scan_config_consumers(filename: str, max_results: int = 5) -> list[str]:
+    """扫描 src/+scripts/+tests/ 下 .py 文件，找出引用此 config 文件名的消费者（最多 max_results 个）。
+
+    治本（ARCH-038 P2）：发现契约——新 AI 需知道每个 config 文件被谁消费。
+    只搜文件名字符串（如 "capabilities.yaml"），避免路径前缀误匹配。
+    """
+    consumers: list[str] = []
+    needle = filename
+    search_roots = [REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tests"]
+    for root in search_roots:
+        if not root.exists():
+            continue
+        for py_file in root.rglob("*.py"):
+            if ".venv" in str(py_file) or "__pycache__" in str(py_file) or ".git" in str(py_file):
+                continue
+            try:
+                text = py_file.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            if needle in text:
+                rel = "/" + str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
+                consumers.append(rel)
+                if len(consumers) >= max_results:
+                    return consumers
+    return consumers
+
+
+def list_configs() -> None:
+    """P2 发现契约：输出 config/ 下所有配置文件的清单到 stdout（YAML 格式，按需生成，不持久化）。
+
+    治本（ARCH-038 P2）：新 AI 运行 `--list-configs` 即可发现 config/ 全貌：
+    - path: 相对路径
+    - type: yaml/yml/json
+    - size_bytes: 文件大小
+    - top_keys: YAML 顶层 keys（仅 .yaml/.yml）
+    - protected_by: 是否在 capabilities.yaml write_config.deny/allow 中
+    - consumers: 代码中引用此文件的位置（最多 5 个）
+
+    向内收逻辑：
+    - ① 复用 L1 的 rglob 枚举逻辑，不新建扫描器
+    - ② 按需生成，无持久化文件，无维护成本
+    - ③ 清单是"视图"不是"数据"，不该持久化（避免多真源+过时）
+    - ④ AGENTS.md 声明此命令为 config/ 发现契约
+    """
+    from datetime import datetime, timezone
+
+    # 只列 directory_contract.yaml allowed 扩展名（.yaml/.yml/.json），
+    # 排除 .env.postgres 等敏感/违规文件（由 contract checker 单独处理）
+    ALLOWED_EXTS = {".yaml", ".yml", ".json"}
+    config_files = sorted(
+        f for f in CONFIG_DIR.rglob("*") if f.is_file() and f.name != ".gitkeep" and f.suffix in ALLOWED_EXTS
+    )
+
+    # 加载 capabilities.yaml 的 write_config 规则，用于判断 protected_by
+    cap_path = CONFIG_DIR / "capabilities.yaml"
+    write_config_deny: set[str] = set()
+    write_config_allow: set[str] = set()
+    if cap_path.exists():
+        try:
+            with open(cap_path, encoding="utf-8") as fh:
+                cap_data = yaml.safe_load(fh) or {}
+            for rule in cap_data.get("rules", []):
+                if rule.get("name") == "write_config":
+                    write_config_deny = {str(x) for x in rule.get("deny", [])}
+                    write_config_allow = {str(x) for x in rule.get("allow", [])}
+                    break
+        except (yaml.YAMLError, OSError):
+            pass
+
+    files_info: list[dict] = []
+    for f in config_files:
+        rel = _rel(f)
+        # config/capabilities.yaml → "config/capabilities.yaml" 用于匹配 deny/allow
+        rel_no_leading_slash = rel.lstrip("/")
+        size_bytes = f.stat().st_size
+        ftype = f.suffix.lstrip(".")
+
+        entry: dict = {
+            "path": rel_no_leading_slash,
+            "type": ftype,
+            "size_bytes": size_bytes,
+        }
+
+        # top_keys（仅 YAML）
+        if f.suffix in (".yaml", ".yml"):
+            try:
+                with open(f, encoding="utf-8") as fh:
+                    data = yaml.safe_load(fh)
+                if isinstance(data, dict):
+                    entry["top_keys"] = list(data.keys())
+                else:
+                    entry["top_keys"] = []
+            except (yaml.YAMLError, OSError):
+                entry["top_keys"] = []
+
+        # protected_by
+        protected: list[str] = []
+        if rel_no_leading_slash in write_config_deny:
+            protected.append("write_config.deny")
+        if rel_no_leading_slash in write_config_allow:
+            protected.append("write_config.allow")
+        entry["protected_by"] = protected if protected else None
+
+        # consumers
+        entry["consumers"] = _scan_config_consumers(f.name)
+
+        files_info.append(entry)
+
+    output = {
+        "_auto_generated": True,
+        "_notice": "config/ 发现契约 — 按需生成，不持久化。新 AI 运行 --list-configs 获取最新清单。",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generator": "scripts/governance/d1_structure/validate_config_integrity.py --list-configs",
+        "total_files": len(files_info),
+        "files": files_info,
+    }
+    # 用 allow_unicode=False 输出纯 ASCII（中文转义为 \uXXXX），
+    # 避免 PowerShell 管道用 GBK 解码 UTF-8 导致乱码；AI 解析 \uXXXX 无障碍
+    yaml_text = yaml.safe_dump(output, sort_keys=False, allow_unicode=False, default_flow_style=False)
+    sys.stdout.write(yaml_text)
+
+
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="运行时配置完整性十一层纵深审计 + 自动修复")
     parser.add_argument("--warn-only", action="store_true", help="警告模式：errors也仅warn不阻塞 (exit 0)")
     parser.add_argument("--fix", action="store_true", help="自动修复模式：修复parents路径bug + 注册孤儿脚本 + 修正笔误")
+    parser.add_argument(
+        "--list-configs",
+        action="store_true",
+        help="P2 发现契约：输出 config/ 下所有配置文件清单到 stdout（按需生成，不持久化）",
+    )
     args = parser.parse_args()
+
+    # P2 发现契约：提前返回，不执行审计
+    if args.list_configs:
+        list_configs()
+        sys.exit(EXIT_PASS)
 
     all_errors = []
     all_warnings = []
@@ -1165,15 +1298,7 @@ def main() -> None:
                     content = fpath.read_text(encoding="utf-8")
                     if old in content:
                         content = content.replace(old, new, 1)
-                        tmp_path = f"{fpath}.{os.getpid()}.tmp"
-                        try:
-                            Path(tmp_path).write_text(content, encoding="utf-8")
-                            os.replace(tmp_path, fpath)
-                        except PermissionError:
-                            try:
-                                os.remove(tmp_path)
-                            except OSError:
-                                pass
+                        atomic_write_safe(fpath, content)
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
@@ -1196,15 +1321,7 @@ def main() -> None:
     warn_only: true
     description: 自动注册脚本（v3.1 --fix）"""
                     if new_entry not in manifest:
-                        tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
-                        try:
-                            Path(tmp_path).write_text(manifest + new_entry, encoding="utf-8")
-                            os.replace(tmp_path, manifest_path)
-                        except PermissionError:
-                            try:
-                                os.remove(tmp_path)
-                            except OSError:
-                                pass
+                        atomic_write_safe(manifest_path, manifest + new_entry)
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
@@ -1221,15 +1338,7 @@ def main() -> None:
                     new_name = "name: " + fix["new_name"]
                     if old_name in manifest:
                         manifest = manifest.replace(old_name, new_name, 1)
-                        tmp_path = f"{manifest_path}.{os.getpid()}.tmp"
-                        try:
-                            Path(tmp_path).write_text(manifest, encoding="utf-8")
-                            os.replace(tmp_path, manifest_path)
-                        except PermissionError:
-                            try:
-                                os.remove(tmp_path)
-                            except OSError:
-                                pass
+                        atomic_write_safe(manifest_path, manifest)
                         print(f"  ✅ {fix['desc']}", file=sys.stderr)
                         applied += 1
                     else:
