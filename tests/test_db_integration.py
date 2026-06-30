@@ -2,11 +2,11 @@
 DM-100019: 三库集成测试+四方对齐验证
 
 验证内容：
-1. governance.db 的 tasks.domain_id → depgraph.db 的 domains.domain_id 外键一致性
-2. depgraph.db 的 arch_directory_tree → 实际文件系统路径对齐
-3. market.duckdb 的 backtest_results.strategy_id → depgraph.db 的 nodes.node_id 关联
+1. governance.db 的 tasks.domain_id → depgraph 的 domains.domain_id 外键一致性
+2. depgraph 的 arch_directory_tree → 实际文件系统路径对齐
+3. market.duckdb 的 backtest_results.strategy_id → depgraph 的 nodes.node_id 关联
 4. 三库数据无矛盾
-5. 四方对齐验证（代码头部 [BLUEPRINT] → 蓝图 → depgraph.db → 实际文件）
+5. 四方对齐验证（代码头部 [BLUEPRINT] → 蓝图 → depgraph → 实际文件）
 """
 
 import sqlite3
@@ -48,17 +48,17 @@ def test_cross_db_domain_consistency():
     missing_in_governance = dep_domains - gov_domains
 
     if missing_in_depgraph:
-        print(f"  ✗ FAIL: {len(missing_in_depgraph)} 个 domain 在 governance.db 中存在但 depgraph.db 中缺失")
+        print(f"  ✗ FAIL: {len(missing_in_depgraph)} 个 domain 在 governance.db 中存在但 depgraph 中缺失")
         print(f"    缺失的 domain: {sorted(missing_in_depgraph)[:10]}")
         return False
 
     if missing_in_governance:
-        print(f"  ⚠ WARNING: {len(missing_in_governance)} 个 domain 在 depgraph.db 中存在但 governance.db 中无任务")
+        print(f"  ⚠ WARNING: {len(missing_in_governance)} 个 domain 在 depgraph 中存在但 governance.db 中无任务")
         print("    这些 domain 可能尚未创建任务卡")
         # 这不是错误，只是警告
 
     print(f"  ✓ PASS: governance.db 有 {len(gov_domains)} 个 domain")
-    print(f"  ✓ PASS: depgraph.db 有 {len(dep_domains)} 个 domain")
+    print(f"  ✓ PASS: depgraph 有 {len(dep_domains)} 个 domain")
     print("  ✓ PASS: 所有 governance domain 在 depgraph 中均存在")
     return True
 
@@ -86,11 +86,11 @@ def test_directory_tree_filesystem_alignment():
             missing_files.append(rel_path)
 
     if missing_files:
-        print(f"  ✗ FAIL: {len(missing_files)} 个文件在 depgraph.db 中记录但文件系统中不存在")
+        print(f"  ✗ FAIL: {len(missing_files)} 个文件在 depgraph 中记录但文件系统中不存在")
         print(f"    示例: {missing_files[:5]}")
         return False
 
-    print(f"  ✓ PASS: depgraph.db 记录了 {len(db_paths)} 个文件")
+    print(f"  ✓ PASS: depgraph 记录了 {len(db_paths)} 个文件")
     print("  ✓ PASS: 所有文件路径在文件系统中均存在")
     return True
 
@@ -187,7 +187,7 @@ def test_data_integrity():
         table_count = 0
 
     print(f"  ✓ governance.db: {task_count} 个任务, {len(gov_tables)} 个表")
-    print(f"  ✓ depgraph.db: {node_count} 个节点, {edge_count} 条边")
+    print(f"  ✓ depgraph: {node_count} 个节点, {edge_count} 条边")
     print(f"  ✓ market.duckdb: {table_count} 个表")
 
     # 验证 governance.db 有完整的表结构（26表）
@@ -198,7 +198,7 @@ def test_data_integrity():
         return False
 
     if node_count == 0:
-        print("  ✗ FAIL: depgraph.db 无节点数据")
+        print("  ✗ FAIL: depgraph 无节点数据")
         return False
 
     print("  ✓ PASS: 三库 schema 完整，数据可用")
