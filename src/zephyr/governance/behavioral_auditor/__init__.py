@@ -216,6 +216,9 @@ from zephyr.governance.drift_detection.drift_infrastructure import (
     get_or_create_budget,
     register_env_tags,
 )
+# ARCH-034 P3: DriftState/DriftEvent 从 drift_models 导入（canonical 10态/12字段版本）
+# events.py 的同名类已改名 ManagedDriftState/ManagedDriftEvent（4态/9字段，管理事件专用）
+# 两者职责不同：drift_models=扫描结果数据载体, events.Managed*=管理事件状态机
 from zephyr.governance.drift_detection.drift_models import (
     BaselineSnapshot,
     BreakingChange,
@@ -264,6 +267,9 @@ from zephyr.governance.drift_detection.drift_training import (
     parse_python_public_api,
     track_training_effectiveness,
 )
+# ARCH-034 P3: DriftType(5值) 从 events 导入（唯一定义源，无同名冲突）
+# 之前 drift_models 导入块不含 DriftType，此处补齐；events 的 DriftState/DriftEvent
+# 已改名 Managed*，不再从此导入（消除"后导入覆盖前导入"的包命名空间静默错乱）
 from zephyr.governance.drift_detection.events import DriftType
 from zephyr.governance.drift_detection.file_attr_checker import (
     FileAttrIssue,

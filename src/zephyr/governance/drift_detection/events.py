@@ -15,8 +15,23 @@
 # [A_module] module_id=MOD-SEC_events | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
+"""G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义.
+
+ARCH-034 P3 改名说明（防 AI 重新造轮子）：
+  本模块的 DriftState/DriftEvent 已改名为 ManagedDriftState/ManagedDriftEvent，
+  与 drift_models.py 的 DriftState(10态)/DriftEvent(12字段 dataclass) 区分。
+
+  两套数据类的职责分工（刚进项目的 AI 必读）：
+  - ManagedDriftState(4态)/ManagedDriftEvent(9字段 BaseModel) — 本模块
+    用途：G-CT-005 管理事件的漂移状态机（DETECTED→FIXED/MANUAL_REQUIRED/IGNORED）
+    消费者：rule_enforcement/drift_detector, infrastructure/rollback/drift_fix 等
+  - DriftState(10态)/DriftEvent(12字段 dataclass) — drift_models.py（canonical 真源）
+    用途：drift_engine 扫描结果的漂移事件数据载体
+    包级 `from drift_detection import DriftState/DriftEvent` 路由到 drift_models canonical 版本
+
+  DriftType(5值) 未改名——本模块是其唯一定义源，无同名冲突。
+  model_drift_monitor 的 DriftType(3值) 已改名 ModelDriftType（ARCH-034 P3 批B）。
 """
-G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义."""
 
 from datetime import UTC, datetime
 from enum import Enum

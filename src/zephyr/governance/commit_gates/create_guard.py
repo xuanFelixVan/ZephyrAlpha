@@ -292,6 +292,61 @@ def make_create_guard() -> GateSpec:
         if not new_py_files:
             return True, ""
 
+        # === ARCH-034 P3 遗留2治本（2026-07-01）：类名跨模块唯一性检测 ===
+        # 病根：AI 新建 .py 文件时可能定义与已有模块同名的 class（同名不同义），
+        # Python 后导入覆盖前导入导致包命名空间静默错乱（不报错），是 AI 开发幻觉温床。
+        # 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 line 23-32 先例）。
+        # 检测：AST 解析 new_py_files 的 ClassDef，git grep 搜索 src/zephyr/ 下同名 class。
+        # 豁免：class 定义前3行内有 '# class-name-alias: <理由>' 标记（合法 re-export 场景）。
+        import ast as _ast
+        _ALIAS_MARKER = "class-name-alias"
+        _class_violations = []
+        for _py_file in new_py_files:
+            _abs_path = str(gateway.project_root / _py_file)
+            try:
+                _src = open(_abs_path, encoding="utf-8").read()
+                _tree = _ast.parse(_src)
+            except Exception:
+                continue  # 语法错误由其他 gate 检测，此处 fail-open
+            _lines = _src.splitlines()
+            for _node in _ast.walk(_tree):
+                if not isinstance(_node, _ast.ClassDef):
+                    continue
+                # 检查豁免标记（def 行前3行内）
+                _has_marker = False
+                for _i in range(max(0, _node.lineno - 4), _node.lineno - 1):
+                    if _i < len(_lines) and _ALIAS_MARKER in _lines[_i]:
+                        _has_marker = True
+                        break
+                if _has_marker:
+                    continue
+                # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
+                try:
+                    _grep_res = gateway._run_git([
+                        "git", "grep", "-l", f"^class {_node.name}\\b",
+                        "--", "src/zephyr/"
+                    ])
+                    if _grep_res.returncode == 0:
+                        _existing = [
+                            f.replace("\\", "/") for f in _grep_res.stdout.strip().splitlines()
+                            if f.replace("\\", "/") != _py_file
+                        ]
+                        if _existing:
+                            _class_violations.append((_py_file, _node.name, _existing))
+                except Exception:
+                    pass  # grep 故障 fail-open（非致命，其他检测仍执行）
+        if _class_violations:
+            _detail = "; ".join(
+                f"{f} 定义 class {name} 与已有 {existing} 同名"
+                for f, name, existing in _class_violations
+            )
+            return False, (
+                f"类名跨模块冲突(ARCH-034 CLASS-UNIQUENESS): {_detail}. "
+                f"同名不同义是 AI 开发幻觉温床（后导入覆盖前导入，不报错）。"
+                f"修复：①改名区分（如 Managed* 前缀）②若是合法 re-export，"
+                f"在 class 定义前加 '# class-name-alias: <理由>' 标记豁免。"
+            )
+
         # 2. 加载 capability registry YAML（真源：capability_lookup.REGISTRY_YAML）
         # 治本1（2026-06-30）：YAML 不可达改 fail-closed——registry 是 creation_token 真源，
         # 缺失/解析失败=检测器失效，fail-open 会漏放未登记 .py（红蓝：删 registry 绕过 token 检查）。

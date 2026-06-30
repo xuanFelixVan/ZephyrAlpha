@@ -157,6 +157,8 @@ _SYMBOL_SOURCE = {
     "InvalidTransitionError": "_core",
     "KnowledgeGraphSyncResult": "_drift",
     "MaintenanceWindow": "_drift",
+    "ManagedDriftEvent": "_core",
+    "ManagedDriftState": "_core",
     "ModuleScore": "_analysis",
     "MultiBaselineVote": "_drift",
     "NamingMagicAlert": "_scanners",
