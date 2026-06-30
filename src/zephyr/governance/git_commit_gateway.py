@@ -2450,19 +2450,25 @@ class GitCommitGateway:
         files: list[str],
         message: str,
     ) -> CommitResult:
-        """reconciler auto-commit 唯一入口（锁 + ttl 校验 + commit，不触发 reconciler）。
+        """reconciler auto-commit 唯一入口（锁 + 五重 gate + commit，不触发 reconciler）。
 
-        治本：5 个 reconciler 的 auto-commit 统一经此入口，ttl 校验无法绕过。
-        原设计 reconciler 裸调 ``_run_git(["git","commit",...])`` 绕过 commit() 全部
-        保护（校验/锁/stash），是 TTL 防御的最大盲区。
+        治本（2026-06-30 红蓝对抗）：7 个 reconciler 的 auto-commit 统一经此入口，
+        ttl/deprecated/pure_assertion/pure_shim/DCR 五重 gate 覆盖。原设计 reconciler
+        裸调 ``_run_git(["git","commit",...])`` 绕过 commit() 全部保护（校验/锁/stash），
+        是 TTL + DCR 防御的最大盲区——若生成器写到废弃/违规目录，reconciler 会把
+        违规文件 commit 入 git 历史。
 
         与 ``commit()`` 的区别：
-        - 只跑 ttl 校验（机器生成文件不需 completes_when/promote/ssot/naming 校验）
+        - 只跑五重 gate（ttl/deprecated/pure_assertion/pure_shim/DCR），不跑
+          completes_when/promote/ssot/naming/claim_required/held_overlap 等
+          （机器生成文件不需这些校验，且 reconciler 无 session claim 语义）
+        - DCR gate 通过 ``gate_registry.get("DIRECTORY-CONTRACT")`` 真源复用，
+          不复制 DCR 逻辑（真源唯一在 directory_contract_gate.py）
         - 不触发 reconciler（避免递归：commit→reconciler→_commit_auto→reconciler）
         - 不做 stash 隔离（reconciler 在锁外运行，工作区只有机器生成文件）
         - message 自动追加 [GW:{session_id}:auto] 标记
 
-        真源：本方法是 reconciler auto-commit 的唯一合法入口（AGENTS.md 注册）。
+        真源：本方法是 reconciler auto-commit 的唯一合法入口（AGENTS.md §8 L280 注册）。
         禁止 reconciler 裸调 ``_run_git(["git","commit",...])``。
 
         Args:
@@ -2531,13 +2537,21 @@ class GitCommitGateway:
                 message=f"GATE-NO-PURE-SHIM 纯 re-export shim 违规（auto-commit）: {shim_detail}",
             )
 
-        # NOTE: 未调 DIRECTORY-CONTRACT gate（DCR-001~007 等效校验）。
-        # 原因：_commit_auto 当前 0 调用方（活代码未被调用，见 AGENTS.md §8
-        # "reconciler auto-commit 入口选择"条目），8 个 reconciler 均走入口②
-        # （裸调 _run_git + 手动 GW 标记）。给死代码加防御违反向内收原则。
-        # 未来启用 _commit_auto 时需评估是否补 DCR gate：
-        #   - 选项A：subprocess 调 check_directory_contract.py（对标 directory_contract_gate.py）
-        #   - 选项B：改为走 self._gate_registry.check_all(...)（但会触发全部注册 gate，过严）
+        # DIRECTORY-CONTRACT gate 校验（DCR-001~007 等效校验，2026-06-30 治本）
+        # 真源复用：从 gate_registry 获取已注册的 DIRECTORY-CONTRACT GateSpec，调其 check 方法，
+        # 不复制 DCR 逻辑（真源唯一在 directory_contract_gate.py → check_directory_contract.py）。
+        # 治本：reconciler 走 _commit_auto 统一入口后，DCR gate 覆盖 reconciler 路径，
+        # 防止生成器写到废弃/违规目录时 reconciler 把违规文件 commit 入 git 历史。
+        # 复用方式对标 commit() 路径的 gate_registry.check_all，但只跑 DCR gate（不触发全部 gate，
+        # 避免 CLAIM-REQUIRED/HELD-OVERLAP 等对 reconciler 无意义的 gate 误阻断）。
+        dcr_spec = self._gate_registry.get("DIRECTORY-CONTRACT")
+        if dcr_spec is not None:
+            dcr_passed, dcr_detail = dcr_spec.check(self, existing)
+            if not dcr_passed:
+                return CommitResult(
+                    status=CommitStatus.NAMING_VIOLATION,
+                    message=f"目录契约违规（auto-commit）: {dcr_detail}",
+                )
 
         # 追加 GW auto 标记
         gw_marker = f"[GW:{session_id}:auto]"

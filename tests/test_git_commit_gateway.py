@@ -55,7 +55,13 @@ from zephyr.governance.git_commit_gateway import (  # noqa: E402
 # 辅助函数
 # ---------------------------------------------------------------------------
 def _init_git_repo(repo_dir: Path) -> None:
-    """在 tmp_path 初始化一个 git 仓库（含初始 commit）。"""
+    """在 tmp_path 初始化一个 git 仓库（含初始 commit）。
+
+    并创建 ``check_directory_contract.py`` stub——DCR gate（directory_contract_gate.py）
+    fail-closed 设计要求 checker 脚本存在，否则阻断 commit。测试目的是测 stash/rename/delete
+    逻辑，不是测 DCR 校验逻辑（DCR 逻辑由 check_directory_contract.py 自己的测试覆盖）。
+    stub 总是 exit 0（通过），让测试环境的 DCR gate 不误拦。
+    """
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["GIT_AUTHOR_NAME"] = "Test"
@@ -72,6 +78,13 @@ def _init_git_repo(repo_dir: Path) -> None:
         capture_output=True,
         env=env,
         check=True,
+    )
+    # DCR gate checker stub（fail-closed 要求 checker 存在；stub exit 0 让测试通过）
+    checker_stub = repo_dir / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+    checker_stub.parent.mkdir(parents=True, exist_ok=True)
+    checker_stub.write_text(
+        "#!/usr/bin/env python\nimport sys\nsys.exit(0)\n",
+        encoding="utf-8",
     )
     # 初始 commit（空仓库无法 commit，先建一个文件）
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")

@@ -16,6 +16,7 @@
 - TestCheckAllException: 单个 gate 异常降级为 fail-closed（passed=False），不阻断后续 gate
 - TestEmptyRegistry: 空 registry check_all 返回空列表
 - TestKwargsPassthrough: kwargs 透传给 gate check 函数
+- TestGet: get(gate_id) 按 gate_id 获取已注册 GateSpec（_commit_auto 复用 DCR gate 用，2026-06-30 治本）
 """
 from __future__ import annotations
 
@@ -124,6 +125,33 @@ class TestKwargsPassthrough:
         registry.register(GateSpec(gate_id="cap", check=capturing_gate, priority=100))
         registry.check_all(None, [], session_id="s-1", allow_overlap=True, extra="x")
         assert received == {"session_id": "s-1", "allow_overlap": True, "extra": "x"}
+
+
+class TestGet:
+    """get(gate_id) 按 gate_id 获取已注册的 GateSpec。"""
+
+    def test_get_returns_registered_spec(self):
+        """get 返回已注册的 GateSpec 实例。"""
+        registry = CommitGateRegistry()
+        spec = GateSpec(gate_id="G1", check=lambda gw, f, **kw: (True, ""), priority=100)
+        registry.register(spec)
+        got = registry.get("G1")
+        assert got is spec
+
+    def test_get_returns_none_for_unregistered_gate_id(self):
+        """未注册的 gate_id 返回 None（_commit_auto 用此判定 DCR gate 是否注册）。"""
+        registry = CommitGateRegistry()
+        assert registry.get("NONEXISTENT") is None
+
+    def test_get_returns_overriding_spec_after_reregister(self):
+        """同 gate_id 重新 register 后，get 返回新 spec（幂等覆盖语义）。"""
+        registry = CommitGateRegistry()
+        old = GateSpec(gate_id="G1", check=lambda gw, f, **kw: (True, "old"), priority=100)
+        new = GateSpec(gate_id="G1", check=lambda gw, f, **kw: (False, "new"), priority=100)
+        registry.register(old)
+        registry.register(new)
+        got = registry.get("G1")
+        assert got is new
 
 
 class TestGateResultDefaults:

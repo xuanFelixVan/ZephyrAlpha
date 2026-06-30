@@ -281,31 +281,26 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
             return ReconcileResult(action="clean", detail="manifest up to date")
 
-        # 3. 变更 → 自动提交修复
-        add_result = gateway._run_git(["git", "add", "scripts/script_manifest.yaml"])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add manifest failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(manifest): auto-reconcile by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg,
-             "--", "scripts/script_manifest.yaml"]
-        )
-        if commit_result.returncode == 0:
+        # 3. 变更 → 自动提交修复（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，ttl/deprecated/pure_assertion/pure_shim/DCR 五重 gate 覆盖。
+        auto_msg = "chore(manifest): auto-reconcile by GitCommitGateway post-commit"
+        abs_files = [str(project_root / "scripts/script_manifest.yaml")]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail="manifest drift detected and auto-reconciled",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="manifest no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"manifest drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"manifest drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -726,31 +721,27 @@ def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
             return ReconcileResult(action="clean", detail="rule_catalog_registry up to date")
 
-        # 3. 变更 → 自动提交（精确路径，禁 git add -A 防捡拾其他 session WIP）
-        add_result = gateway._run_git(["git", "add", "--", _CATALOG_REL])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add rule_catalog_registry failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg,
-             "--", _CATALOG_REL]
-        )
-        if commit_result.returncode == 0:
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖；_commit_auto 内部用 pathspec-from-file 精确暂存，
+        # 不会捡拾其他 session WIP（原"禁 git add -A"约束自动满足）。
+        auto_msg = "chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit"
+        abs_files = [str(project_root / _CATALOG_REL)]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail="rule_catalog_registry drift detected and auto-reconciled",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="rule_catalog_registry no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"rule_catalog_registry drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"rule_catalog_registry drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -819,31 +810,26 @@ def make_registry_index_reconciler(gateway: "object") -> ReconcilerSpec:
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
             return ReconcileResult(action="clean", detail="registry_master_index up to date")
 
-        # 3. 变更 → 自动提交（精确路径，禁 git add -A 防捡拾其他 session WIP）
-        add_result = gateway._run_git(["git", "add", "--", _INDEX_REL])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add registry_master_index failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(registry): auto-sync registry_master_index by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg,
-             "--", _INDEX_REL]
-        )
-        if commit_result.returncode == 0:
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖；_commit_auto 内部用 pathspec-from-file 精确暂存。
+        auto_msg = "chore(registry): auto-sync registry_master_index by GitCommitGateway post-commit"
+        abs_files = [str(project_root / _INDEX_REL)]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail="registry_master_index drift detected and auto-reconciled",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="registry_master_index no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"registry_master_index drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"registry_master_index drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -1131,34 +1117,34 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
             )
 
-        # 3. 归档后自动 commit _working/ 的删除
-        # 只 stage 归档产生的删除文件（不用 -A，避免捡拾其他 session 在 _working/ 的 WIP）
-        # 违反 session 隔离强不变量的修复：原 git add -A docs/_working/ 会把其他 session 的 WIP 一并 commit
+        # 3. 归档后自动 commit _working/ 的删除（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖。_commit_auto 内部用 pathspec-from-file 精确暂存，
+        # 不会捡拾其他 session 在 _working/ 的 WIP（原"禁 git add -A"约束自动满足）。
+        # _commit_auto 的 _is_git_tracked 检测支持已删除文件（不存在但 git 跟踪）。
         archived_rel = [f"docs/_working/{name}" for name in archived]
-        add_result = gateway._run_git(["git", "add", "--"] + archived_rel)
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"working_docs archived {len(archived)} but git add failed: "
-                       f"{add_result.stderr.strip()[:200]}",
-            )
+        abs_files = [str(project_root / rel) for rel in archived_rel]
         auto_msg = (
             f"chore(working_docs): auto-archive {len(archived)} ghost-ref docs by "
-            f"GitCommitGateway post-commit [GW:{session_id}:auto]"
+            f"GitCommitGateway post-commit"
         )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg, "--"] + archived_rel
-        )
-        if commit_result.returncode == 0:
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail=f"working_docs archived {len(archived)} ghost-ref docs, "
                        f"report={report_path.name}",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail=f"working_docs archived {len(archived)} but no staged changes "
+                       f"(auto-commit), report={report_path.name}",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"working_docs archived {len(archived)} but auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"working_docs archived {len(archived)} but auto-commit failed "
+                   f"({commit_result.status}): {commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -1243,30 +1229,30 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
             return ReconcileResult(action="clean", detail="domain docs up to date")
 
-        # 3. 变更 → 自动提交
-        add_result = gateway._run_git(["git", "add", "--", *_DOC_DIRS])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add domain docs failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(docs): auto-regenerate domain docs by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg, "--", *_DOC_DIRS]
-        )
-        if commit_result.returncode == 0:
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖。_DOC_DIRS 是目录，_commit_auto 需要文件列表，
+        # 从 diff_result.stdout 提取变更文件列表（上一步已检测过，复用结果）。
+        changed_files = [
+            f.strip() for f in diff_result.stdout.splitlines() if f.strip()
+        ]
+        abs_files = [str(project_root / f) for f in changed_files]
+        auto_msg = "chore(docs): auto-regenerate domain docs by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail="domain docs drift detected and auto-regenerated",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="domain docs no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"domain docs drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"domain docs drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -1278,13 +1264,13 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 EA 树 architecture_model/index.yaml post-commit 自动重生 reconciler。
+    """构造根树 architecture_model/index.yaml post-commit 自动重生 reconciler。
 
-    治本（2026-06-30）：dm200916_write_direct.py 当前 ``[STARTUP] manual``，EA 树
+    治本（2026-06-30）：dm200916_write_direct.py 当前 ``[STARTUP] manual``，根树
     index.yaml 的 domains 部分在 depgraph 域变更后不会自动重生，与 GATE-DOMAIN-DOC
-    （priority=600，重生域文档）形成缺口——DB 域变更（新增/删除/重命名域）后，EA 树
+    （priority=600，重生域文档）形成缺口——DB 域变更（新增/删除/重命名域）后，根树
     index.yaml 的 domains 列表漂移。本 reconciler 在 PG 写入脚本 commit 后触发
-    dm200916 重生 EA 树 index.yaml。
+    dm200916 重生根树 index.yaml（双树合并后单树，2026-06-30 治本）。
 
     派生范围：index.yaml 的 domains 列表 + global_stats.total_domains（从 PG depgraph
     domains 表派生）。不派生：partitions/query_hints/id_conventions（手工模板）、
@@ -1315,7 +1301,7 @@ def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
     )
     _GEN_SCRIPT = "scripts/governance/d5_architecture/dm200916_write_direct.py"
     _ARCH_MODEL_INDEX = (
-        "docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml",
+        "architecture_model/index.yaml",
     )
 
     def _trigger(committed_files: list[str]) -> bool:
@@ -1326,7 +1312,7 @@ def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重生 EA 树 index.yaml（dm200916 从 PG depgraph domains 表派生）
+        # 1. 重生根树 index.yaml（dm200916 从 PG depgraph domains 表派生）
         gen_result = subprocess.run(
             [sys.executable, _GEN_SCRIPT],
             cwd=str(project_root),
@@ -1349,30 +1335,28 @@ def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
             return ReconcileResult(action="clean", detail="EA tree index.yaml up to date")
 
-        # 3. 变更 → 自动提交
-        add_result = gateway._run_git(["git", "add", "--", *_ARCH_MODEL_INDEX])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add EA tree index.yaml failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(arch_model): auto-regenerate EA tree index.yaml by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg, "--", *_ARCH_MODEL_INDEX]
-        )
-        if commit_result.returncode == 0:
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖。_ARCH_MODEL_INDEX 是文件路径元组，直接转绝对路径。
+        # 注意：如果路径违反 DCR（如双树合并前的废弃路径），_commit_auto 的 DCR gate
+        # 会返回 NAMING_VIOLATION，reconciler 降级为 warn（不阻断，供人工追责）。
+        abs_files = [str(project_root / rel) for rel in _ARCH_MODEL_INDEX]
+        auto_msg = "chore(arch_model): auto-regenerate EA tree index.yaml by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail="EA tree index.yaml drift detected and auto-regenerated",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="EA tree index.yaml no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"EA tree index.yaml drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"EA tree index.yaml drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
@@ -1559,31 +1543,30 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail="ttl rejudge: no drift detected (all ttl consistent)",
             )
 
-        # 3. 变更 → 自动提交修复（--no-verify 斩断 pre-commit 循环）
-        add_result = gateway._run_git(["git", "add", "--"] + changed_files)
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add rejudge changes failed: "
-                       f"{add_result.stderr.strip()[:200]}",
-            )
-
+        # 3. 变更 → 自动提交修复（经 _commit_auto 统一入口，DCR gate 覆盖）
+        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
+        # 统一入口，五重 gate 覆盖。原"--no-verify 斩断 pre-commit 循环"由 _commit_auto
+        # 内部的 --no-verify 保证（_commit_with_file_message 统一用 --no-verify）。
+        abs_files = [str(project_root / f) for f in changed_files]
         auto_msg = (
             f"chore(ttl): auto-rejudge by GATE-VOCAB-CHANGE post-commit "
-            f"(decision_tree changed) [GW:{session_id}:auto]"
+            f"(decision_tree changed)"
         )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg, "--"] + changed_files
-        )
-        if commit_result.returncode == 0:
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
             return ReconcileResult(
                 action="auto_committed",
                 detail=f"ttl rejudge: {len(changed_files)} files auto-reconciled",
             )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail=f"ttl rejudge: {len(changed_files)} files but no staged changes (auto-commit)",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"ttl rejudge: auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            detail=f"ttl rejudge: auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(
