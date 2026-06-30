@@ -1,7 +1,7 @@
 %% D_GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-07-01 04:32:13
+%% 生成时间: 2026-07-01 04:34:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 77, 依赖边数: 179
+%% 模块数: 77, 依赖边数: 178
 
 graph TD
 
@@ -171,7 +171,7 @@ graph TD
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_trust_bridge_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_feedback_bridge_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___ridges_delegation_bridge_py
-    %% D_GOVERNANCE -> D_GOV_AUDIT (35 条)
+    %% D_GOVERNANCE -> D_GOV_AUDIT (34 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
@@ -184,7 +184,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
@@ -202,6 +201,7 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_complian___default_security_gateway_py
     %% D_GOV_DRIFT -> D_GOV_AUDIT (3 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_merkle_hourly_py
@@ -289,5 +289,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 69 条
-    %% 跨域入边: 79 条
+    %% 跨域入边: 78 条
     %% 跨域出边: 31 条

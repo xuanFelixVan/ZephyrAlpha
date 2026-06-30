@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 04:32:13
+%% 生成时间: 2026-07-01 04:34:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 805, 依赖边数: 990
+%% 模块数: 804, 依赖边数: 987
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___race_context_propagation_py["...rs/check_trace_context_propagation.py [prototype]"]
         scripts_governance_d5_architecture_detectors___init___py["...d5_architecture/detectors/__init__.py [prototype]"]
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
-        %% ... 还有 705 个模块未显示
+        %% ... 还有 704 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -134,7 +134,6 @@ graph TD
     src_zephyr_governance_phase_manager_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_policy_tree_validator_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_rollback_integration_py -->|import_depends| src_zephyr_governance___init___py
-    src_zephyr_governance_rollback_executor_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_security_gateway_base_py -->|import_depends| src_zephyr_governance_compliance_rule_py
     src_zephyr_governance_self_benchmark_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_self_test_py -->|import_depends| src_zephyr_governance___init___py
@@ -191,7 +190,8 @@ graph TD
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_absence_manager_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_ai_context_injector_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_alert_router_py
-    %% ... 还有 491 条域内依赖未显示
+    src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_backcompat_checker_py
+    %% ... 还有 490 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
@@ -396,7 +396,7 @@ graph TD
     src_zephyr_governance_blind_spot_tracker_py -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     docs_03_modules__cross_layer_mcp_servers_blueprint_md -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    %% D_GOVERNANCE -> D_GOV_AUDIT (35 条)
+    %% D_GOVERNANCE -> D_GOV_AUDIT (34 条)
     src_zephyr_governance_audit_write_failure_protector_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -409,7 +409,6 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_rollback_audit_nexus_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_rollback_abuse_detector_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_rollback_executor_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_tamper_evident_log_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -427,6 +426,7 @@ graph TD
     src_zephyr_governance_semantic_auditor_compliance_map_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_semantic_auditor_kb_gate_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOVERNANCE -> D_GOV_DRIFT (7 条)
     src_zephyr_governance_merkle_audit_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
@@ -528,7 +528,7 @@ graph TD
     %% D_GOVERNANCE -> D_REPORTING (2 条)
     src_zephyr_governance_default_attribution_engine_py -->|import_depends| D_REPORTING[D_REPORTING]
     src_zephyr_governance_default_tca_engine_py -->|import_depends| D_REPORTING[D_REPORTING]
-    %% D_GOVERNANCE -> D_SECURITY (33 条)
+    %% D_GOVERNANCE -> D_SECURITY (32 条)
     src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_delegation_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
@@ -538,7 +538,6 @@ graph TD
     src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_phase_check_registry_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_governance_rollback_executor_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_implemen___default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_conftest_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_behavior_audit_logger_py -->|test_depends| D_SECURITY[D_SECURITY]
@@ -559,6 +558,7 @@ graph TD
     tests_llm_security_test_l4_agent_security_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l7_red_team_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l7_validation_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_llm_security_test_l8_multi_agent_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_GOVERNANCE -> D_SHARED (22 条)
     src_zephyr_governance_alerts_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_base_repo_py -->|import_depends| D_SHARED[D_SHARED]
@@ -615,6 +615,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 571 条
+    %% 域内依赖: 570 条
     %% 跨域入边: 150 条
-    %% 跨域出边: 269 条
+    %% 跨域出边: 267 条
