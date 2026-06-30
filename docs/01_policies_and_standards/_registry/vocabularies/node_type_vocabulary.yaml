@@ -1,0 +1,404 @@
+# [A_config] module_id=CFG-node-type-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# node_type 受控词表
+# ZephyrAlpha 2.0 依赖图节点类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-30
+#
+# 本词表定义 depgraph nodes 表 node_type 字段的全项目合法值。
+# 治本（2026-06-30）：消除 generate_project_depgraph.py 中 30+ 处 node_type 硬编码——
+#   原先 NODE_TYPES_FILE / NODE_TYPES_DOMAIN / CODE_TYPES / CONFIG_TYPES / DOC_TYPES /
+#   DOMAIN_TYPES / NODES_WHITELIST / TYPE_PRIORITY / architecture_layer SQL CASE / 
+#   stability_fallback / autonomy_fallback 全部散落在 .py 中，词表变更需改多处=多真源=必漂移。
+#   现统一由本词表 SSoT，脚本动态加载。
+#
+# 分类体系（category 字段）：
+#   code    —— 代码节点（module/script/test）
+#   config  —— 配置/契约节点（config/registry/contract/schema/gate）
+#   doc     —— 文档节点（doc/blueprint/policy/template/diagram）
+#   domain  —— 域级节点（application/package/domain/aggregate/service/library）
+#   other   —— 特殊节点（knowledge_doc/infra/data——不归入上述四类）
+#
+# 层级（level 字段）：
+#   file    —— 文件粒度节点（单文件扫描产出）
+#   domain  —— 域粒度节点（域级聚合产出，非单文件）
+#
+# 消费者：
+#   - generate_project_depgraph.py：NODE_TYPES / 分类集合 / 白名单 / 优先级 / layer / stability / autonomy
+#   - check_vocab_hardcode.py：词表值集加载（检测其他 .py 中的硬编码副本）
+#
+# 对标标准：
+#   - dependency-cruiser：node-type + category 分类
+#   - Bazel：target kind（cc_library/java_test/proto_library）
+#   - OpenAPI 3.1：enum + description + deprecated flag
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-033
+version: "1.0.0"
+title: "node_type 受控词表"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: node_type
+total_values: 22
+depends_on:
+  - target: PS-VOC-005
+    at: "_registry/vocabularies/layer_vocabulary.yaml"
+    why: "architecture_layer_fallback 字段值（L0_infrastructure/L1_foundation/L2_domain/L3_application）由 layer_vocabulary.yaml 定义"
+  - target: PS-VOC-010
+    at: "_registry/vocabularies/stability_vocabulary.yaml"
+    why: "stability_fallback 字段值（frozen/stable/evolving）由 stability_vocabulary.yaml 定义"
+  - target: PS-VOC-012
+    at: "_registry/vocabularies/ai_autonomy_vocabulary.yaml"
+    why: "autonomy_fallback 字段值（immutable_core/human_gated/ai_modifiable）由 ai_autonomy_vocabulary.yaml 定义"
+
+# ── 字段说明 ──
+# value                       : node_type 字面值
+# category                    : 分类体系（code/config/doc/domain/other）——对应 CODE_TYPES/CONFIG_TYPES/DOC_TYPES/DOMAIN_TYPES
+# level                       : 节点层级（file/domain）
+# type_priority               : 文件粒度合并时的类型优先级（数字越小越优先；null=不参与文件合并）
+# in_nodes_whitelist          : 是否进入 nodes 表白名单（裁定#184：仅 module/script/test/config 进 nodes 表）
+# architecture_layer_fallback : node_type→architecture_layer 兜底映射（SQL CASE 的 SSoT）
+# stability_fallback          : node_type→stability 兜底映射（derive_stability_fallback 的 SSoT）
+# autonomy_fallback           : node_type→ai_autonomy 兜底映射（derive_autonomy_fallback 的 SSoT）
+# definition                  : 语义定义
+
+values:
+  # ════════════════════════════════════════════════════════════════════
+  # 文件级 - 代码类（category: code）
+  # ════════════════════════════════════════════════════════════════════
+  - value: module
+    category: code
+    level: file
+    type_priority: 1
+    in_nodes_whitelist: true
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "代码模块——Python .py 源文件（src/ 下业务代码），import 依赖分析的核心对象"
+
+  - value: script
+    category: code
+    level: file
+    type_priority: 2
+    in_nodes_whitelist: true
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "脚本——Python .py 脚本（scripts/ 下工具脚本），可独立执行的入口文件"
+
+  - value: test
+    category: code
+    level: file
+    type_priority: 3
+    in_nodes_whitelist: true
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "测试——Python .py 测试文件（test_*.py / *_test.py），test_depends 依赖分析对象"
+
+  # ════════════════════════════════════════════════════════════════════
+  # 文件级 - 文档类（category: doc）
+  # ════════════════════════════════════════════════════════════════════
+  - value: blueprint
+    category: doc
+    level: file
+    type_priority: 4
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L0_infrastructure
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "蓝图——模块/子系统的完整设计文档，blueprint_depends 依赖分析对象"
+
+  - value: policy
+    category: doc
+    level: file
+    type_priority: 10
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: frozen
+    autonomy_fallback: immutable_core
+    definition: "策略——声明式规则文档（必须/禁止/条件约束），治理规则不可变"
+
+  - value: template
+    category: doc
+    level: file
+    type_priority: 12
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: stable
+    autonomy_fallback: ai_modifiable
+    definition: "模板——可复用文档结构骨架，templates/ 目录下的文件"
+
+  - value: diagram
+    category: doc
+    level: file
+    type_priority: 13
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "图表——架构图/流程图/关系图等可视化文档"
+
+  - value: doc
+    category: doc
+    level: file
+    type_priority: 15
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "通用文档——不归入 blueprint/policy/template/diagram 的其他文档类型"
+
+  # ════════════════════════════════════════════════════════════════════
+  # 文件级 - 配置/契约类（category: config）
+  # ════════════════════════════════════════════════════════════════════
+  - value: config
+    category: config
+    level: file
+    type_priority: 5
+    in_nodes_whitelist: true
+    architecture_layer_fallback: L1_foundation
+    stability_fallback: stable
+    autonomy_fallback: human_gated
+    definition: "运行时配置——YAML/JSON 配置文件，config_depends 依赖分析对象"
+
+  - value: registry
+    category: config
+    level: file
+    type_priority: 6
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L1_foundation
+    stability_fallback: stable
+    autonomy_fallback: human_gated
+    definition: "注册表——结构化数据清单/登记表（_registry/ 下 YAML），配置相对稳定"
+
+  - value: contract
+    category: config
+    level: file
+    type_priority: 7
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L1_foundation
+    stability_fallback: stable
+    autonomy_fallback: human_gated
+    definition: "契约——接口契约/门禁契约文件（_registry/contracts/ 下），contract_depends 依赖分析对象"
+
+  - value: schema
+    category: config
+    level: file
+    type_priority: 8
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L1_foundation
+    stability_fallback: stable
+    autonomy_fallback: human_gated
+    definition: "Schema——JSON Schema / 数据模式定义文件，数据结构约束"
+
+  - value: gate
+    category: config
+    level: file
+    type_priority: 9
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L1_foundation
+    stability_fallback: frozen
+    autonomy_fallback: immutable_core
+    definition: "门禁定义——质量门禁规则文件，治理规则 AI 不可改"
+
+  # ════════════════════════════════════════════════════════════════════
+  # 文件级 - 其他类（category: other）
+  # ════════════════════════════════════════════════════════════════════
+  - value: data
+    category: other
+    level: file
+    type_priority: 14
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "数据文件——data/ 目录下的数据资产，data_depends 依赖分析对象（不归入 code/config/doc 三类）"
+
+  - value: knowledge_doc
+    category: other
+    level: file
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "知识文档——docs/08_knowledge/ 等知识库 .md 文件，轻量收录（仅元数据，不提取引用）"
+
+  - value: infra
+    category: other
+    level: file
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "基础设施脚本——.sh/.ps1 Shell 脚本，infra 层部署/运维文件"
+
+  # ════════════════════════════════════════════════════════════════════
+  # 域级 - 域类（category: domain）
+  # ════════════════════════════════════════════════════════════════════
+  - value: application
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "应用域——顶层应用边界，DDD 战略设计最高层"
+
+  - value: package
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "包域——应用内的模块包边界"
+
+  - value: domain
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "领域域——DDD 限界上下文边界"
+
+  - value: aggregate
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "聚合域——DDD 聚合根边界，事务一致性范围"
+
+  - value: service
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "服务域——微服务/应用服务边界"
+
+  - value: library
+    category: domain
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L3_application
+    stability_fallback: evolving
+    autonomy_fallback: ai_modifiable
+    definition: "库域——共享库/公共库边界"
+
+# ── type_priority 编号说明 ──
+# 文件粒度合并时，同一路径多个扫描结果按 type_priority 取最小值（越优先）。
+# 编号 11 故意留空（历史间隙），不分配给任何值——保持与原硬编码 TYPE_PRIORITY 完全一致。
+# domain 级节点 type_priority=null（不参与文件粒度合并）。
+
+# ── 白名单说明（裁定#184）──
+# nodes 表只收录 in_nodes_whitelist=true 的 4 种 node_type：
+#   module(.py 代码) / script(.py 脚本) / test(.py 测试) / config(.yaml 运行时配置)
+# 新类型默认不进 nodes 表，天然安全（对齐 dependency-cruiser/madge/Bazel 实践）。
+# 非白名单类型（registry/contract/schema/gate/doc/blueprint/policy/template/diagram/data/
+#   knowledge_doc/infra/domain 级 6 种）进入 edges 表但不进 nodes 表。
+
+# ── architecture_layer_fallback 映射说明 ──
+# 本字段是 generate_project_depgraph.py L2728-2736 SQL CASE 的 SSoT。
+# 兜底逻辑（Tier 3）：当 architecture_layer 为空时按 node_type 推导。
+#   script/test                       → L3_application
+#   config/registry/gate/contract/schema → L1_foundation
+#   blueprint                         → L0_infrastructure
+#   其他（含 module/data/doc/policy/template/diagram/domain 级/special）→ L3_application
+# 注意：module 落 L3_application 是历史行为（SQL ELSE 分支），本词表如实记录而非修正。
+
+# ── stability_fallback / autonomy_fallback 映射说明 ──
+# 本字段是 generate_project_depgraph.py derive_stability_fallback / derive_autonomy_fallback 的 SSoT。
+#   gate/policy                        → frozen / immutable_core（治理规则不可变，AI 不可改）
+#   config/registry/schema/contract/template → stable / human_gated（配置需人工审批）
+#   其他                               → evolving / ai_modifiable（默认开发中，AI 可改）
+
+deprecated_values:
+  - value: doc_template
+    deprecated_in: "1.0.0"
+    reason: "doc_type v3.0.0 合并：doc_template 并入 template（AI 视角语义同构）"
+    migrated_to: ["template"]
+  - value: data_template
+    deprecated_in: "1.0.0"
+    reason: "doc_type v3.0.0 合并：data_template 并入 template"
+    migrated_to: ["template"]
+  - value: feature
+    deprecated_in: "1.0.0"
+    reason: "语义模糊，已由 module/service 承载"
+    migrated_to: ["module", "service"]
+  - value: reference
+    deprecated_in: "1.0.0"
+    reason: "语义模糊，已由 doc/index 承载"
+    migrated_to: ["doc", "index"]
+  - value: implementation
+    deprecated_in: "1.0.0"
+    reason: "语义模糊，已由 module/script 承载"
+    migrated_to: ["module", "script"]
+  - value: boundary
+    deprecated_in: "1.0.0"
+    reason: "DDD 边界概念由 domain/aggregate 承载"
+    migrated_to: ["domain", "aggregate"]
+  - value: event
+    deprecated_in: "1.0.0"
+    reason: "事件概念由 event_depends edge_type 承载，不需独立 node_type"
+    migrated_to: ["module"]
+  - value: value_object
+    deprecated_in: "1.0.0"
+    reason: "DDD 值对象概念过于细粒度，不作为节点类型"
+    migrated_to: ["module"]
+  - value: decision
+    deprecated_in: "1.0.0"
+    reason: "决策记录由 audit_report doc_type 承载，不需独立 node_type"
+    migrated_to: ["doc"]
+  - value: domain_root
+    deprecated_in: "1.0.0"
+    reason: "域根概念由 domain 域级 node_type 承载"
+    migrated_to: ["domain"]
+  - value: design_node
+    deprecated_in: "1.0.0"
+    reason: "设计节点概念过于宽泛，已由 blueprint/doc 承载"
+    migrated_to: ["blueprint", "doc"]
+  - value: production_node
+    deprecated_in: "1.0.0"
+    reason: "生产节点概念由 module 承载（nodes 白名单准入）"
+    migrated_to: ["module"]
+  - value: capability
+    deprecated_in: "1.0.0"
+    reason: "能力概念由 service/domain 承载"
+    migrated_to: ["service", "domain"]
+  - value: rule
+    deprecated_in: "1.0.0"
+    reason: "规则概念由 policy/gate 承载（rule 是 doc_type 维度，非 node_type 维度）"
+    migrated_to: ["policy", "gate"]
+
+# ── 正交性说明：node_type vs doc_type ──
+# node_type 和 doc_type 是正交维度：
+#   node_type —— 依赖图视角：这个文件在依赖图中是什么节点？（代码/配置/文档/域）
+#   doc_type  —— 文档治理视角：这个文档的语义类型是什么？（策略/蓝图/词表/门禁）
+#
+# 关系：
+#   - .py 文件有 node_type=module/script/test，但无 doc_type（代码不是文档）
+#   - .md 文件同时有 node_type=doc/blueprint/policy 和 doc_type=policy/blueprint/...
+#   - .yaml 配置文件有 node_type=config/registry/schema，doc_type=register/gate
+#   - node_type 回答"依赖图怎么收录这个文件"；doc_type 回答"文档治理怎么管理这个文件"

@@ -75,10 +75,40 @@ _FALLBACK_EXEMPT_DIRS = {
     ".audit_cache",
     "session_logs",
 }
-# 白名单准入（裁定#184）：nodes表只收录4种node_type
+# === node_type 词表（从 node_type_vocabulary.yaml 动态加载，SSoT）===
+# 真源：docs/01_policies_and_standards/_registry/vocabularies/node_type_vocabulary.yaml
+# 治本（2026-06-30）：消除原硬编码 NODE_TYPES_FILE/DOMAIN/WHITELIST/CODE_TYPES/CONFIG_TYPES/
+#   DOC_TYPES/DOMAIN_TYPES/TYPE_PRIORITY/architecture_layer SQL/stability/autonomy fallback
+_NODE_TYPE_VOCAB_PATH = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "vocabularies" / "node_type_vocabulary.yaml"
+)
+
+
+def _load_node_type_vocabulary() -> list[dict]:
+    """从 node_type_vocabulary.yaml 加载 node_type 词表条目（SSoT）。
+
+    治本（2026-06-30）：消除原散落在 .py 中的 30+ 处 node_type 硬编码。
+    词表变更只需改 YAML 一处，脚本自动同步。
+    """
+    if not _NODE_TYPE_VOCAB_PATH.exists():
+        raise FileNotFoundError(
+            f"[FATAL] node_type 词表文件不存在: {_NODE_TYPE_VOCAB_PATH}\n"
+            f"该文件是 node_type 系统的唯一真源（SSoT），缺失则脚本无法运行。"
+        )
+    with open(_NODE_TYPE_VOCAB_PATH, encoding="utf-8") as f:
+        vocab = yaml.safe_load(f) or {}
+    return vocab.get("values", [])
+
+
+_NODE_TYPE_ENTRIES = _load_node_type_vocabulary()
+
+# 白名单准入（裁定#184）：nodes表只收录 in_nodes_whitelist=true 的 node_type
 # module(.py代码) / script(.py脚本) / test(.py测试) / config(.yaml运行时配置)
 # 新类型默认不进nodes，天然安全（对齐dependency-cruiser/madge/Bazel实践）
-NODES_WHITELIST = {"module", "script", "test", "config"}
+NODES_WHITELIST = frozenset(
+    e["value"] for e in _NODE_TYPE_ENTRIES if e.get("in_nodes_whitelist")
+)
 _FALLBACK_SCAN_DIRS = [
     "src/zephyr",
     "scripts",
@@ -113,30 +143,9 @@ _FALLBACK_TYPE_PREFIXES = {
     "schema": ["docs/01_policies_and_standards/_registry/schemas/", "schemas/"],
 }
 
-NODE_TYPES_FILE = [
-    "module",
-    "script",
-    "test",
-    "config",
-    "registry",
-    "data",
-    "contract",
-    "schema",
-    "gate",
-    "doc",
-    "blueprint",
-    "policy",
-    "template",
-    "diagram",
-]
-NODE_TYPES_DOMAIN = [
-    "application",
-    "package",
-    "domain",
-    "aggregate",
-    "service",
-    "library",
-]
+# node_type 列表与分类集合（从词表动态加载——真源：node_type_vocabulary.yaml）
+NODE_TYPES_FILE = [e["value"] for e in _NODE_TYPE_ENTRIES if e.get("level") == "file"]
+NODE_TYPES_DOMAIN = [e["value"] for e in _NODE_TYPE_ENTRIES if e.get("level") == "domain"]
 NODE_TYPES = NODE_TYPES_FILE + NODE_TYPES_DOMAIN
 EDGE_TYPES = [
     "import_depends",
@@ -153,10 +162,64 @@ EDGE_TYPES = [
     "runtime_depends",
 ]
 
-CODE_TYPES = {"module", "script", "test"}
-CONFIG_TYPES = {"config", "registry", "contract", "schema", "gate"}
-DOC_TYPES = {"doc", "blueprint", "policy", "template", "diagram"}
-DOMAIN_TYPES = set(NODE_TYPES_DOMAIN)
+CODE_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "code")
+CONFIG_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "config")
+DOC_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "doc")
+DOMAIN_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "domain")
+
+# TYPE_PRIORITY（文件粒度合并优先级——从词表动态加载）
+# 真源：node_type_vocabulary.yaml values[].type_priority（null 值不参与文件合并）
+TYPE_PRIORITY = {
+    e["value"]: e["type_priority"]
+    for e in _NODE_TYPE_ENTRIES
+    if e.get("type_priority") is not None
+}
+
+# architecture_layer 兜底映射（从词表动态加载——真源：values[].architecture_layer_fallback）
+_NODE_TYPE_LAYER_MAP = {
+    e["value"]: e.get("architecture_layer_fallback", "L3_application")
+    for e in _NODE_TYPE_ENTRIES
+}
+
+# stability / autonomy 兜底映射（从词表动态加载——真源：values[].stability_fallback / autonomy_fallback）
+_STABILITY_FALLBACK = {
+    e["value"]: e.get("stability_fallback", "evolving")
+    for e in _NODE_TYPE_ENTRIES
+}
+_AUTONOMY_FALLBACK = {
+    e["value"]: e.get("autonomy_fallback", "ai_modifiable")
+    for e in _NODE_TYPE_ENTRIES
+}
+
+
+def _build_architecture_layer_case_sql() -> str:
+    """从 node_type_vocabulary.yaml 构建 architecture_layer 兜底 SQL CASE 表达式。
+
+    真源：node_type_vocabulary.yaml values[].architecture_layer_fallback
+    治本（2026-06-30）：消除原硬编码 L2728-2736 SQL CASE 语句。
+    非默认层（非 L3_application）用 WHEN ... IN (...) THEN ...，默认层用 ELSE。
+    """
+    layer_groups: dict[str, list[str]] = {}
+    for entry in _NODE_TYPE_ENTRIES:
+        layer = entry.get("architecture_layer_fallback", "L3_application")
+        layer_groups.setdefault(layer, []).append(entry["value"])
+
+    default_layer = "L3_application"
+    case_clauses = []
+    for layer in sorted(layer_groups):
+        if layer == default_layer:
+            continue  # 用 ELSE 处理
+        values = sorted(layer_groups[layer])
+        vals_sql = ", ".join(f"'{v}'" for v in values)
+        if len(values) == 1:
+            case_clauses.append(f"WHEN node_type = '{values[0]}' THEN '{layer}'")
+        else:
+            case_clauses.append(f"WHEN node_type IN ({vals_sql}) THEN '{layer}'")
+    case_clauses.append(f"ELSE '{default_layer}'")
+    return "CASE\n" + "\n".join("    " + c for c in case_clauses) + "\nEND"
+
+
+_ARCHITECTURE_LAYER_CASE_SQL = _build_architecture_layer_case_sql()
 
 EXEMPT_DIRS = set(_DEPGRAPH_CONFIG.get("exempt_dirs", list(_FALLBACK_EXEMPT_DIRS)))
 
@@ -1405,22 +1468,7 @@ def build_depgraph(
     # into a single entry, preferring type=module over other types.
     if granularity == "file":
         merged_files: dict[str, dict] = {}
-        TYPE_PRIORITY = {
-            "module": 1,
-            "script": 2,
-            "test": 3,
-            "blueprint": 4,
-            "config": 5,
-            "registry": 6,
-            "contract": 7,
-            "schema": 8,
-            "gate": 9,
-            "policy": 10,
-            "template": 12,
-            "diagram": 13,
-            "data": 14,
-            "doc": 15,
-        }
+        # TYPE_PRIORITY 已提升为模块级常量（从 node_type_vocabulary.yaml 动态加载）
         for fd in files_data:
             path = fd["path"]
             if path in merged_files:
@@ -2723,19 +2771,11 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         tier2_count = cursor.rowcount
 
         # Tier 3: Node-type based fallback for remaining nodes without architecture_layer
-        # scripts → L3_application, tests → L3_application, config/registry → shared, gate → governance
-        cursor.execute("""
-            UPDATE nodes SET architecture_layer = CASE
-                WHEN node_type = 'script' THEN 'L3_application'
-                WHEN node_type = 'test' THEN 'L3_application'
-                WHEN node_type IN ('config', 'registry') THEN 'L1_foundation'
-                WHEN node_type IN ('gate', 'contract') THEN 'L1_foundation'
-                WHEN node_type = 'blueprint' THEN 'L0_infrastructure'
-                WHEN node_type = 'schema' THEN 'L1_foundation'
-                ELSE 'L3_application'
-            END
-            WHERE (architecture_layer IS NULL OR architecture_layer = '')
-        """)
+        # 治本（2026-06-30）：SQL CASE 从 node_type_vocabulary.yaml 动态生成（_ARCHITECTURE_LAYER_CASE_SQL）
+        cursor.execute(
+            "UPDATE nodes SET architecture_layer = " + _ARCHITECTURE_LAYER_CASE_SQL + "\n"
+            "            WHERE (architecture_layer IS NULL OR architecture_layer = '')"
+        )
         tier3_count = cursor.rowcount
 
         total_backfilled = tier1_count + tier2_count + tier3_count
@@ -3237,36 +3277,27 @@ def apply_production_metadata_protection(nodes: dict, production_meta: dict) -> 
 
 
 def derive_stability_fallback(node_type: str, path: str) -> str:
-    """G3修复：根据节点类型和路径推导合理的stability默认值
+    """G3修复：根据节点类型推导合理的stability默认值
 
-    替代无脑fallback='evolving'：
+    治本（2026-06-30）：映射真源从硬编码 if-else 迁移到 node_type_vocabulary.yaml
+    values[].stability_fallback（_STABILITY_FALLBACK 字典）。
     - gate/policy → frozen（治理规则不可变）
-    - config/registry → stable（配置相对稳定）
-    - test → evolving（测试可变）
-    - module/script → evolving（默认开发中）
+    - config/registry/schema/contract/template → stable（配置相对稳定）
+    - 其他 → evolving（默认开发中）
     """
-    if node_type in ("gate", "policy"):
-        return "frozen"
-    if node_type in ("config", "registry", "schema", "contract"):
-        return "stable"
-    if node_type in ("template",):
-        return "stable"
-    return "evolving"
+    return _STABILITY_FALLBACK.get(node_type, "evolving")
 
 
 def derive_autonomy_fallback(node_type: str, path: str) -> str:
-    """G4修复：根据节点类型和路径推导合理的ai_autonomy默认值
+    """G4修复：根据节点类型推导合理的ai_autonomy默认值
 
-    替代无脑fallback='ai_modifiable'：
+    治本（2026-06-30）：映射真源从硬编码 if-else 迁移到 node_type_vocabulary.yaml
+    values[].autonomy_fallback（_AUTONOMY_FALLBACK 字典）。
     - gate/policy → immutable_core（治理规则AI不可改）
-    - config/registry/schema → human_gated（配置需人工审批）
-    - module/script/test → ai_modifiable（代码AI可改）
+    - config/registry/schema/contract → human_gated（配置需人工审批）
+    - 其他 → ai_modifiable（代码AI可改）
     """
-    if node_type in ("gate", "policy"):
-        return "immutable_core"
-    if node_type in ("config", "registry", "schema", "contract"):
-        return "human_gated"
-    return "ai_modifiable"
+    return _AUTONOMY_FALLBACK.get(node_type, "ai_modifiable")
 
 
 def main():
