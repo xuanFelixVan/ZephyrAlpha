@@ -101,6 +101,7 @@ from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-com
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate  # 搭便车防护门禁
 from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate  # claim_files 前置检查门禁
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate  # 新建 .py CapabilityLookup 提示（warn-only）
+from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate  # DCR-001~007 等效校验（--no-verify 补偿，fail-closed）
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
@@ -342,6 +343,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_held_overlap_gate())
         self._gate_registry.register(make_claim_required_gate())  # claim_files 前置检查（priority=40，先于 HELD-OVERLAP 检查 claim）
         self._gate_registry.register(make_capability_overlap_gate())  # 缺口4：新建 .py CapabilityLookup 提示（warn-only）
+        self._gate_registry.register(make_directory_contract_gate())  # DCR-001~007 等效校验（--no-verify 补偿，fail-closed，priority=30）
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
         """为 session 声明持有本次 commit 的文件（激活 session 隔离 stash）。
