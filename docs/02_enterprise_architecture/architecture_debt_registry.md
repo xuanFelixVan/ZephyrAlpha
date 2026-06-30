@@ -1782,6 +1782,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 [✓ FIXED: 2026-07-01 5.12.2#6 load_config 类型注解已补充（governance/config.py:237-244：load_config/reload_config/AppConfig 均添加完整类型注解）；5.12.2#7 send_alert/raise_alert 经评估为域特定实现（failover通道/security层/alert_manager 各属不同域），非真签名漂移，Protocol设计暂缓避免过度设计。簇#1-5（atomic_write/estimate_cost/rollback/health_check/validate_schema）需Protocol/ABC设计+批量迁移，记入后续架构批次]
 [✓ FIXED: 2026-07-01 5.12.2#1 atomic_write 三方签名漂移已收敛：file_utils.py 新增 `AtomicWriteFn` Protocol（@runtime_checkable，canonical 真源 atomic_write 满足该协议）；fix_safety.py `WriteSafety.atomic_write` 改为委托 canonical（catch AtomicWriteError→return False，保持 bool 返回契约向后兼容）；forensic.py `ForensicEngine.atomic_write` str 路径委托 canonical、bytes 路径保留最小原子写实现（canonical 仅支持 str）。冒烟测试 7 项全通过。簇#2-5（estimate_cost/rollback/health_check/validate_schema）规模大（3-36实现/簇），记入后续批量迁移批次]
 
+> **[2026-07-01 簇#2-5 评估与批次规划]** 经源码核验，4 簇评估如下：
+> - **#2 estimate_cost（4 unique 实现/6 文件，含2组镜像）**：TRUE DRIFT。`model_router.estimate_cost(model, tokens_used) -> dict[str,float]`（返回 input_cost/output_cost/total_cost 分项）vs `cost_tracker/cost_router/pricing_sync.estimate_cost(...) -> float`（返回总成本）。dict vs float 返回类型不兼容，消费者无法 drop-in 替换。**迁移方案**：定义 `EstimateCostFn` Protocol（`-> float` 总成本），`model_router` 新增 `estimate_cost_detailed() -> dict` 保留分项能力，`estimate_cost` 改返回 `total_cost` float。需消费者影响分析（6 文件，预计 10-15 处调用点）。**记入批量迁移批次**。
+> - **#3 rollback（8 签名变体/30+ 实现）**：TRUE DRIFT，规模最大。参数语义完全不同（some take `task_id`, some take `migration_id`, some take `checkpoint_path`，部分 async 部分 sync）。**迁移方案**：需分域评估（infrastructure/rollback vs governance vs auto_fix_engine），每域定义独立 Protocol，禁止跨域统一。**记入批量迁移批次（大规模）**。
+> - **#4 health_check（8 返回类型/36 实现，async/sync 混用）**：TRUE DRIFT，规模最大。返回 dict/bool/HealthReport/ProbeResult 等多种类型。**迁移方案**：优先统一为 `HealthReport` Pydantic 模型（5.55 已建立 HealthcheckService.check_all() -> HealthReport 先例），async/sync 用 `run_sync()` 桥接（5.12.8 已建立 canonical）。36 实现需分批迁移。**记入批量迁移批次（大规模）**。
+> - **#5 validate_schema（3 unique 实现/4 文件）**：DOMAIN-SPECIFIC，非真漂移。`provider_base.validate_schema(df: DataFrame) -> bool`（OHLCV 列校验，数据源域）vs `data_pipeline_guard.validate_schema(actual_cols, expected_cols) -> list[str]`（列差集，管道域）vs `l3_output.validate_schema(data, schema: type) -> SchemaValidationResult`（Pydantic 校验，安全域）。三者在不同域中校验完全不同的对象，共享名称纯属巧合。**Protocol 设计暂缓**，避免过度设计（与 #7 send_alert 评估一致）。
+
 #### 5.12.3 now_iso()时间戳格式漂移（HIGH）
 
 **违反**：trae_060 §2 唯一真源（时间戳格式不一致导致DB比较/排序错乱）
@@ -2623,6 +2629,24 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第32轮修复进度（2026-07-01）**：
 > - **已修复 5 个**：5.18.1（PRAGMA foreign_keys排序）、5.18.8（PG edges CASCADE+删trigger）、5.18.9部分（nodes+domain_mapping 补FK）、5.18.10（task_reviews CASCADE）、5.18.11（fle_dispatch_log CASCADE）
 > - **需迁移规划 10 个**：5.18.2/5.18.3（SQL快照/迁移文件FK，需rules表设计决策；5.18.3被5.18.2类型不匹配TEXT vs BIGINT阻塞）、5.18.4（gate_decisions三schema统一）、5.18.5（tasks.domain_id跨库FK架构决策）、5.18.6（task_events补CHECK/UNIQUE需新迁移）、5.18.7（writable_schema hack改重建模式，高风险）、5.18.9余（arch_directory_tree.domain_id 573孤儿需先清理）、5.18.12（迁移框架恢复）、5.18.13（downgrade脚本）、5.18.14（gates改名gate_runs）、5.18.15（时间戳DEFAULT统一）。此10项涉及PG schema（硬约束#6/#7）或破坏性迁移，治本变更未提交前禁止并发（约束#18），需独立迁移批次处理。
+
+> **[2026-07-01 迁移批次决策矩阵]** 10 项剩余 5.18 的架构决策与执行规划：
+>
+> | 编号 | 决策类型 | 推荐方案 | 阻塞因素 | 风险 | 批次 |
+> |---|---|---|---|---|---|
+> | 5.18.2 | 架构决策 | 新建 `rules` 表作为 rule_id 真源（BIGINT），rule_bindings.rule_id 改 BIGINT REFERENCES rules(rule_id) | 需确认 rules 表列设计（rule_id/name/version/yaml_path） | MEDIUM | 批次A |
+> | 5.18.3 | 被5.18.2阻塞 | PG schema 补 FK（等5.18.2类型统一后） | 5.18.2 | LOW | 批次A（随5.18.2） |
+> | 5.18.4 | 架构决策 | 统一 gate_decisions 为 sqlite_schema.py v28 版本（decision_id PK），删除 gate_persistence.py 散点建表 | 需消费者分析（gate_persistence.py 调用点） | MEDIUM | 批次B |
+> | 5.18.5 | 架构决策 | 删除 tasks.domain_id 列（跨库 FK SQLite 无法实现，v28 已清洗485行违规→NULL） | 需确认无消费者依赖 domain_id 列 | MEDIUM | 批次B |
+> | 5.18.6 | 破坏性迁移 | 新增 v30 migration：建新表（含 CHECK+UNIQUE）→复制数据→DROP旧→RENAME | SQLite 不支持 ALTER ADD CONSTRAINT，需表重建 | HIGH | 批次C |
+> | 5.18.7 | 破坏性迁移 | v23/v25/v27 的 writable_schema hack 改为"建新表→复制→DROP→RENAME"重建模式 | 3处 hack 需逐一改写，HIGH RISK（可致DB损坏） | HIGH | 批次C |
+> | 5.18.9余 | 数据清理 | 先清理 arch_directory_tree 的 573 孤儿 domain_id（SET NULL 或删除行），再补 FK | 573 孤儿需逐一裁定（保留/删除/修正） | MEDIUM | 批次D |
+> | 5.18.12 | 架构决策 | 引入 alembic 或恢复 `_MIGRATIONS` 执行 + `_schema_version` 表 | 需评估 alembic vs 自研框架 | LOW | 批次E |
+> | 5.18.13 | 随5.18.12 | 为每个 migration 补 downgrade 脚本（alembic up/down 双向） | 5.18.12 框架决策 | LOW | 批次E（随5.18.12） |
+> | 5.18.14 | 破坏性迁移 | governance.db gates 改名 gate_runs（ALTER TABLE RENAME TO），更新所有消费者 | 需消费者分析（gate_persistence.py 等） | MEDIUM | 批次B |
+> | 5.18.15 | DDL统一 | 全 DB 统一 `DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))`，PG 用 `DEFAULT now()` | SQLite 需表重建改 DEFAULT，PG 可 ALTER SET DEFAULT | LOW | 批次D |
+>
+> **批次依赖**：批次A（5.18.2/3）→ 批次B（5.18.4/5/14）→ 批次C（5.18.6/7，HIGH RISK独立）→ 批次D（5.18.9余/15）→ 批次E（5.18.12/13）。每批次需 git commit 备份（约束#7）+ 治本提交前禁止并发（约束#18）。
 
 ---
 
