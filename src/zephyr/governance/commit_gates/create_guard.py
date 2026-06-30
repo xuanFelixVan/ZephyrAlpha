@@ -100,7 +100,7 @@ from __future__ import annotations
 import logging
 import os
 
-from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.governance.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -321,6 +321,10 @@ def make_create_guard() -> GateSpec:
                 if _has_marker:
                     continue
                 # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
+                # ARCH-034 遗留3治本（2026-07-01）：git grep 故障改 fail-closed
+                # 病根：原 fail-open（except: pass）会漏放同名 class，检测器失效时
+                # 红攻可构造 git grep 故障绕过类名唯一性检测。对标 create_guard 其他
+                # fail-closed 设计（YAML 不可达 L210/L214, git diff 失败 L204）。
                 try:
                     _grep_res = gateway._run_git([
                         "git", "grep", "-l", f"^class {_node.name}\\b",
@@ -333,8 +337,13 @@ def make_create_guard() -> GateSpec:
                         ]
                         if _existing:
                             _class_violations.append((_py_file, _node.name, _existing))
-                except Exception:
-                    pass  # grep 故障 fail-open（非致命，其他检测仍执行）
+                except Exception as e:
+                    return False, (
+                        f"CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常"
+                        f"({type(e).__name__}: {e})，无法检测 class '{_node.name}' 跨模块冲突。"
+                        f"禁止放行——检测器失效时漏放同名 class（AI 开发幻觉温床）。"
+                        f"修复：检查 git 状态（git status）确认仓库可用后重试。"
+                    )
         if _class_violations:
             _detail = "; ".join(
                 f"{f} 定义 class {name} 与已有 {existing} 同名"

@@ -140,6 +140,21 @@ capabilities:
       relation=conflicting，头部 [MODULE] 错声明为 infrastructure 路径——需 Owner 裁定）。
 
   # --------------------------------------------------------------------------
+  - capability_id: drift_fix
+    aliases:
+      - DriftFixHandler
+      - drift_fix
+    description: >-
+      漂移自动修复处理器（G-CT-005 消费端）。canonical = src/zephyr/infrastructure/
+      rollback/drift_fix.py（auto 派生：basename drift_fix 匹配 capability_id）。
+      ARCH-034 P3 / SRC-038 合并后唯一 canonical 真源（MATURITY=production）。
+      原有3份冗余副本已合并：governance/drift_fix.py（路径漂移，已删）、
+      rollback/governance/drift_fix.py（prototype，已删）。
+      DriftFixHandler.on_drift_fix() 消费 ManagedDriftEvent 执行回滚兜底。
+      解决发现性：新 AI 搜 "drift_fix/DriftFixHandler" 可定位真源。
+      解决防重建：check_file_canonical() 反查，新AI准备造同类功能前可发现。
+
+  # --------------------------------------------------------------------------
   - capability_id: project_root_resolution
     canonical_override: src/zephyr/shared/io/paths.py
     aliases:

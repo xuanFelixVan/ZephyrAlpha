@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.drift_fix
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.drift_detection.events
-# [CONSUMERS] rollback_executor;auto_rollback_trigger;zephyr.infrastructure.rollback.governance (re-export);tests/drift/test_drift_fix
+# [CONSUMERS] rollback_executor;auto_rollback_trigger;tests/drift/test_drift_fix
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 漂移修复必须验证; ARCH-034 P3 SRC-038 合并后唯一 canonical 真源
