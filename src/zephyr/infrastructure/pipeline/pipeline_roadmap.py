@@ -598,47 +598,47 @@ class CrossModuleSyncEntry(BaseModel):
 
 CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\config\\blueprint_routing.yaml",
+        file_path="config/blueprint_routing.yaml",  # 5.12.4 修复：相对路径（原 D:\ZephyrAlpha\... 硬编码）
         sync_content="路由项 keywords/path_patterns/priority 与蓝图一致",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\src\\zephyr\\mcp\\blueprint_search_server.py",
+        file_path="src/zephyr/integration/mcp/blueprint_search_server.py",  # 5.12.4 修复：路径漂移 mcp/→integration/mcp/
         sync_content="routing 配置路径正确",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\src\\zephyr\\orchestrator\\trigger_router.py",
+        file_path="src/zephyr/trading/orchestrator/trigger_router.py",  # 5.12.4 修复：路径漂移 orchestrator/→trading/orchestrator/
         sync_content="blueprint_lookup handler 可用",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint.md",
+        file_path="docs/03_modules/_master-blueprint/blueprint.md",
         sync_content="MOD-MASTER_BLUEPRINT §2.7 CT-PIPE-ORC-001 集成契约",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\AGENTS.md",
+        file_path="AGENTS.md",
         sync_content="Pipeline 专章 §8.x 同步",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\src\\zephyr\\orchestrator\\deferred_queue.py",
+        file_path="src/zephyr/trading/orchestrator/deferred_queue.py",  # 5.12.4 修复：路径漂移 orchestrator/→trading/orchestrator/
         sync_content="waiting_for 条件 lock_release:* 正确",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure_runtime_integration\\capacity-assurance\\blueprint.md",
+        file_path="docs/03_modules/infrastructure_runtime_integration/capacity-assurance/blueprint.md",
         sync_content="Kill Switch + Token Budget 集成契约",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\llm-security\\blueprint.md",
+        file_path="docs/03_modules/_cross_layer/llm-security/blueprint.md",
         sync_content="MOD-LLM_SECURITY LSG Pipeline 集成契约 v0.8.0 B131",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
-        file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure_runtime_integration\\rbac\\blueprint.md",
+        file_path="docs/03_modules/infrastructure_runtime_integration/rbac/blueprint.md",
         sync_content="MOD-CONTEXT_ENGINE RBAC SoD 集成契约 v0.8.0 B137",
         last_synced="2026-05-07",
     ),

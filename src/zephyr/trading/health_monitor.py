@@ -32,10 +32,14 @@ from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
+import logging
+
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+
+logger = logging.getLogger(__name__)
 
 
 class PressureLevel(str, Enum):
@@ -155,7 +159,8 @@ class HealthMonitor:
 
             self.register_probe("shared.healthcheck_service", _healthcheck_probe)
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞注册失败
+            logger.debug("healthcheck probe registration failed", exc_info=True)
 
     def _monitor_loop(self) -> None:
         """分钟级监控循环 — DM-201247.
@@ -173,7 +178,8 @@ class HealthMonitor:
                     self.reconcile()
                     self._last_health_check = now
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 使监控变僵尸进程（故障不可见）
+                logger.exception("monitor loop iteration failed")
             time.sleep(self._metrics_interval)
 
     def _collect_metrics(self) -> None:

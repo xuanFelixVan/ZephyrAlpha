@@ -142,7 +142,8 @@ class AutoRuntimeCore:
 
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞资源监控启动失败（系统大脑失明）
+                logger.exception("ResourceOptimizationEngine.start_monitor failed at boot")
 
             self._bootstrap_rbac()
             self._register_task_system_cron_jobs()
@@ -277,7 +278,8 @@ class AutoRuntimeCore:
                         po.dispatch(task)
                         return True
                 except Exception:
-                    pass
+                    # 5.12.1 修复：原 except: pass 静默吞任务派发失败（任务黑洞）
+                    logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id)
                 return False
 
             self._task_queue.set_dispatch_handler(_dispatch_handler)
@@ -494,23 +496,27 @@ class AutoRuntimeCore:
             try:
                 self._local_scheduler.stop()
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
+                logger.exception("local_scheduler.stop() failed during shutdown")
         if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
             try:
                 self._fle_scheduler.stop()
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
+                logger.exception("fle_scheduler.stop() failed during shutdown")
         if self._vms is not None:
             try:
                 self._vms.shutdown()
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
+                logger.exception("vms.shutdown() failed during shutdown")
         try:
             from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
 
             ResourceOptimizationEngine().stop_monitor()
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
+            logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown")
         report = self._lifecycle.shutdown_sequence(
             stop_gate=self._stop_gate,
             finalizer=self._finalizer,
@@ -562,7 +568,8 @@ class AutoRuntimeCore:
                 if count >= 50:
                     break
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）
+            logger.exception("_learn_from_completed_tasks failed")
 
         if count > 0:
             self._task_learner._save()

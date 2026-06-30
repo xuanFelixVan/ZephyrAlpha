@@ -445,7 +445,9 @@ class PipelineOrchestrator:
                         f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
                     )
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
+                logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
+                               task_card.task_id, exit_code, exc_info=True)
 
         rbac_result = self._rbac_check(task_card)
         if rbac_result is not None and not rbac_result.passed:
@@ -619,7 +621,8 @@ class PipelineOrchestrator:
                             f"tokens={skill_injection.token_budget.get('total_tokens', '?')}"
                         )
                 except Exception:
-                    pass
+                    # 5.12.1 修复：原 except: pass 静默吞 skill injection 失败（技能增强静默失效）
+                    logger.debug("skill injection failed for task=%s", task_card.task_id, exc_info=True)
 
             for mod_id in modules:
                 if prev_module is not None:
@@ -662,7 +665,8 @@ class PipelineOrchestrator:
                             if skid:
                                 fb.record_module_result(skid, mr, task_card.task_id)
                     except Exception:
-                        pass
+                        # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
+                        logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
 
                 consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
                 produced_keys: list[str] = []
@@ -672,7 +676,8 @@ class PipelineOrchestrator:
                         manifest.artifacts.append(artifact)
                         produced_keys.append(artifact.artifact_key)
                     except Exception:
-                        pass
+                        # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
+                        logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
 
                 if mr.output.get("artifact_key") and mr.output.get("artifact_type"):
                     try:
@@ -686,7 +691,8 @@ class PipelineOrchestrator:
                         manifest.artifacts.append(artifact)
                         produced_keys.append(artifact.artifact_key)
                     except Exception:
-                        pass
+                        # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
+                        logger.debug("artifact build failed for mod=%s key=%s", mod_id, mr.output.get("artifact_key"), exc_info=True)
 
                 lineage_entry = PipelineLineageEntry(
                     module_id=mod_id,
@@ -817,7 +823,8 @@ class PipelineOrchestrator:
                     },
                 )
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 EventBus 失败事件发布失败（故障信号丢失）
+                logger.warning("EventBus pipeline_failed emit failed for task=%s", task_card.task_id, exc_info=True)
             self._release_pipeline_lock(task_card.task_id)
             self._active_dispatches.discard(task_card.task_id)
             tw = self._transition(task_card.task_id, TaskStatus.FAILED)
@@ -1617,7 +1624,8 @@ class PipelineOrchestrator:
                     reason=task_type,
                 )
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞遥测记录失败（指标丢失不可见）
+                logger.debug("telemetry ai_behavior.record failed for task_type=%s", task_type, exc_info=True)
         label = f"decision_{task_type}_{node_id}"
         self._metrics[label] = self._metrics.get(label, 0) + 1
 
@@ -1630,7 +1638,8 @@ class PipelineOrchestrator:
                     latency_ms,
                 )
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞延迟遥测失败（指标丢失不可见）
+                logger.debug("telemetry metrics.histogram failed for task_type=%s", task_type, exc_info=True)
         key = f"latency_{task_type}"
         if key not in self._latency_samples:
             self._latency_samples[key] = []
@@ -1645,7 +1654,8 @@ class PipelineOrchestrator:
                     tags={"from": from_zone, "to": to_zone},
                 )
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞跨区遥测失败（指标丢失不可见）
+                logger.debug("telemetry metrics.counter failed for %s→%s", from_zone, to_zone, exc_info=True)
         label = f"zone_{from_zone}→{to_zone}"
         self._metrics[label] = self._metrics.get(label, 0) + 1
 
@@ -1682,7 +1692,8 @@ class PipelineOrchestrator:
             }
             EventBusBackpressure().emit("TASK_EVENT", payload=payload)
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 TASK_EVENT 发布失败（状态变更信号丢失）
+            logger.debug("EventBus TASK_EVENT emit failed for task=%s %s→%s", task_id, from_status, to_status, exc_info=True)
 
     # ------------------------------------------------------------------
     # Zone Crossing 防线 —— B70（AP2: A区→B区 M6边界标记校验）
@@ -1990,7 +2001,8 @@ class PipelineOrchestrator:
                 return True, f"BUDGET-WARN: {result.reason}; tier={result.model_tier}"
             return True, ""
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞预算门禁决策失败（预算失控不可见）
+            logger.warning("BudgetEngine decision failed for task=%s", task_card.task_id, exc_info=True)
 
         consumed_now = sum(self._token_budget_consumed.values())
         remaining = max(0, self._DEFAULT_TOKEN_BUDGET - consumed_now)
@@ -2097,7 +2109,8 @@ class PipelineOrchestrator:
                 }
             )
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞审计写入失败（审计链断链不可见）
+            logger.warning("audit_writer.write failed for task=%s op=%s", task_id, operation, exc_info=True)
 
     # ------------------------------------------------------------------
     # Circuit Breaker —— B151（对标 Netflix Hystrix），委托至 CircuitBreakerManager（SRC-0024）
