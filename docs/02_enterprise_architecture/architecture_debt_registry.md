@@ -1780,6 +1780,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **修复方向**：建立Protocol/ABC接口 + 签名统一为真源
 
 [✓ FIXED: 2026-07-01 5.12.2#6 load_config 类型注解已补充（governance/config.py:237-244：load_config/reload_config/AppConfig 均添加完整类型注解）；5.12.2#7 send_alert/raise_alert 经评估为域特定实现（failover通道/security层/alert_manager 各属不同域），非真签名漂移，Protocol设计暂缓避免过度设计。簇#1-5（atomic_write/estimate_cost/rollback/health_check/validate_schema）需Protocol/ABC设计+批量迁移，记入后续架构批次]
+[✓ FIXED: 2026-07-01 5.12.2#1 atomic_write 三方签名漂移已收敛：file_utils.py 新增 `AtomicWriteFn` Protocol（@runtime_checkable，canonical 真源 atomic_write 满足该协议）；fix_safety.py `WriteSafety.atomic_write` 改为委托 canonical（catch AtomicWriteError→return False，保持 bool 返回契约向后兼容）；forensic.py `ForensicEngine.atomic_write` str 路径委托 canonical、bytes 路径保留最小原子写实现（canonical 仅支持 str）。冒烟测试 7 项全通过。簇#2-5（estimate_cost/rollback/health_check/validate_schema）规模大（3-36实现/簇），记入后续批量迁移批次]
 
 #### 5.12.3 now_iso()时间戳格式漂移（HIGH）
 

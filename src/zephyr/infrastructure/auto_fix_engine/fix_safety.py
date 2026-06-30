@@ -35,6 +35,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     SafetyDecision,
     ValidationResult,
 )
+# 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
+from zephyr.shared.io.file_utils import AtomicWriteError, atomic_write as _canonical_atomic_write
 
 logger = logging.getLogger(__name__)
 
@@ -105,19 +107,11 @@ class LockGuard:
 class WriteSafety:
     @staticmethod
     def atomic_write(filepath: str, content: str) -> bool:
+        # 5.12.2#1 修复：委托 canonical 真源 file_utils.atomic_write（fsync+mkstemp，更安全）
         try:
-            tmp_path = f"{filepath}.{os.getpid()}.tmp"
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                f.write(content)
-            os.replace(tmp_path, filepath)
+            _canonical_atomic_write(filepath, content)
             return True
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
-            return False
-        except Exception as exc:
+        except (AtomicWriteError, OSError) as exc:
             logger.error("Atomic write failed for %s: %s", filepath, exc)
             return False
 

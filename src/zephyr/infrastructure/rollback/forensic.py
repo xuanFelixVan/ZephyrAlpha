@@ -55,6 +55,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+# 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
+from zephyr.shared.io.file_utils import AtomicWriteError, atomic_write as _canonical_atomic_write
 
 EXIT_TIME_ATTEST_FAIL = 26
 EXIT_FORENSIC_CHAIN_BROKEN = 36
@@ -359,14 +361,19 @@ class ForensicEngine:
         return actual_hash == expected_content_hash
 
     def atomic_write(self, file_path: Path, content: str | bytes) -> bool:
+        # 5.12.2#1 修复：str 路径委托 canonical 真源 file_utils.atomic_write（fsync+mkstemp）
+        if isinstance(content, str):
+            try:
+                _canonical_atomic_write(file_path, content)
+                return True
+            except (AtomicWriteError, OSError):
+                return False
+
+        # bytes 路径：canonical 仅支持 str，保留最小原子写实现（tmp + os.replace）
         tmp_path = Path(str(file_path) + f".{os.getpid()}.tmp")
 
         try:
-            if isinstance(content, str):
-                tmp_path.write_text(content, encoding="utf-8")
-            else:
-                tmp_path.write_bytes(content)
-
+            tmp_path.write_bytes(content)
             os.replace(str(tmp_path), str(file_path))
             return True
         except (OSError, PermissionError):

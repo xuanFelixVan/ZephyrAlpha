@@ -51,9 +51,23 @@ import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Protocol, runtime_checkable
+
+
+@runtime_checkable
+class AtomicWriteFn(Protocol):
+    """5.12.2#1 修复：atomic_write 签名 Protocol——统一3处漂移实现。
+
+    canonical 真源：file_utils.atomic_write（本模块）。
+    变体（fix_safety.WriteSafety / forensic.ForensicWriter）应委托本真源。
+    """
+
+    def __call__(self, filepath: Path | str, content: str, **kwargs: object) -> Path: ...
+
 
 __all__ = [
     "AtomicWriteError",
+    "AtomicWriteFn",
     "atomic_write",
     "backup_and_rollback",
     "backup_file",
