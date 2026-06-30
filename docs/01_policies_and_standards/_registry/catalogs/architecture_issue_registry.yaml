@@ -377,3 +377,58 @@ entries:
   - TRAE-060
   created: '2026-07-01'
   last_updated: '2026-07-01'
+- issue_id: '#ARCH-033'
+  title: autonomy_core 子目录命名治本（根平铺归位 + ce/ 缩写消除 + 门禁加固 + 渐进收敛策略）
+  severity: P1高
+  adjudication: |
+    trae_060 §4 + trae_028 治本。src/zephyr/autonomy_core/ 根目录平铺文件
+    按功能归位到子目录。多阶段治本：批次1（commit 1334b9e3b4）删除死代码
+    孤岛；Batch 2（b8f0cc8ca2）迁移 skill_*.py 58 文件 → skills/ 子目录；
+    Batch 3（64f2ea7d18）迁移 context_*.py 17 文件 → context/ 子目录；
+    Batch 4（13aff9bbcd）迁移 ce_*.py 4 文件 → ce/ 子目录；Step 5
+    （07c2fcf425）删除死代码 + 修复 MODULE_LIST 真源分裂 + 建立包结构指引；
+    形态治理（843b4ddfac）删除空壳子目录 + typo 双真源 + 运行时数据清理；
+    形态修复（a5ceaeea11）残留引用清理 + 4个模糊命名改名 + MODULE_LIST 纯化；
+    路径漂移修复（88c3418820）蓝图 frontmatter + §0.1 更新 + 生成器子目录路径拼接；
+    阶段A+B（2fee1fca9a）规则补全 + ce/ 缩写合并至 context/（GOV-DOC-003 R1
+    缩写必除）；阶段D（9a36ae2c81）门禁加固——目录命名语义检测；阶段C+E
+    （ea4b300cfb）kb 白名单 + 文档化 trae_028 v1.7.0→1.7.1，建立渐进收敛策略
+    （progressive_convergence：历史违规目录不批量改名，下次 refactor 时顺带修正）；
+    阶段C-1/C-2（905aaa828c）删除2个死代码目录（infra_06 + observability_02）。
+    符合向内收四原则：真源唯一（根平铺归位到功能子目录）、向内收（用现成功能前缀
+    归位）、第一性原理（ce/ 是自创缩写违反 GOV-DOC-003，合并到 context/）、
+    可发现性（新 AI 按功能域直觉定位）。
+  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：1334b9e3b4 批次1 → 905aaa828c 阶段C-1/C-2）
+  status: resolved
+  related_rules:
+  - TRAE-028
+  - TRAE-060
+  created: '2026-06-30'
+  last_updated: '2026-07-01'
+- issue_id: '#ARCH-034'
+  title: behavioral_audit 合并至 governance/drift_detection/（74文件平铺发现性治本 + 同名不同义治理）
+  severity: P1高
+  adjudication: |
+    trae_060 §4 治本。病根：原 src/zephyr/behavioral_audit/ 74 文件平铺，
+    新 AI 不知道已有哪些功能模块（无能力索引）。治本：整体合并至
+    src/zephyr/governance/drift_detection/，模块级注册 67 条 capability
+    （capability_canonical_file_registry.yaml L1051-1266+），canonical 指向
+    governance/drift_detection/。多阶段治本：治本（d0a7ea32f9）behavioral_audit
+    强化发现性不建物理子目录；整体合并（3929edf969）behavioral_audit/ →
+    governance/drift_detection/；P1（6c44e5ec2f）能力索引补全——删5聚合器条目
+    + 新增67模块级 capability 条目；P3阶段1（09661f7e67）删除 bridges/events.py
+    死代码；P3阶段2（4dc0d3989f）重命名同名不同义数据类消除覆盖链；P3批C
+    （075fa8661d）events.py DriftState/DriftEvent → Managed* 重命名+消费者迁移；
+    P3遗留修复（8d260812a7+422c37f646）同名不同义治理收尾；P3/SRC-038合并审核
+    （0cb4964ee3）drift_fix.py 3副本去重+路径漂移修复；双真源消除
+    （56bc982598）result_types.py 与 rollback_types.py；元数据校验
+    （84912e081a）audit_registration.py 扩展D6；死代码清理
+    （9143df95ad）data_quality + integration_test_runner；消费者修正
+    （f049eb4e6e）governance/result_types.py [CONSUMERS]。符合向内收原则①
+    能现成不创造：模块已存在，只需登记发现性（模块级注册非聚合器）。
+  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：d0a7ea32f9 治本 → f049eb4e6e 消费者修正）
+  status: resolved
+  related_rules:
+  - TRAE-060
+  created: '2026-06-30'
+  last_updated: '2026-07-01'
