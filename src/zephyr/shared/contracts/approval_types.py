@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.approval_types
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.approval; zephyr.security.access_control.approver_check; zephyr.security.access_control.governance_bridges.approver_check
+# [CONSUMERS] zephyr.governance.approval; zephyr.security.access_control.approver_check
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审批请求必须包含完整上下文;审批结果不可伪造
