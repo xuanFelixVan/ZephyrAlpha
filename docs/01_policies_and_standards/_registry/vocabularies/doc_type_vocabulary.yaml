@@ -13,12 +13,14 @@
 # 版本：2.0.0
 # 创建日期：2026-04-30
 #
-# 本词表定义 doc_type 字段的全项目合法值（10 种）——v3.0.0 精简：
+# 本词表定义 doc_type 字段的全项目合法值（9 种）——v3.1.0 精简：
 # v2.0.0: 移除 design/plan/schema/reference/protocol/declaration 6 值（语义合并到
 # blueprint/construction_plan/contract/register/architecture_view/audit_report/config/policy）。
 # v3.0.0: 再精简 9 值——terminology→vocabulary, readme→index, contract→gate,
 # service_spec→architecture_view, standard→policy, construction_plan→blueprint,
 # log→audit_report, config→register, knowledge_entry→vocabulary（AI 视角语义同构合并）。
+# v3.1.0: operational_rule→policy（过程式规则合并入 policy，policy 承载双 rule_form：
+# declarative 默认 + procedural 文件显式标注 + verifiability 字段）。doc_type 从 10 值收敛到 9 值。
 # 任何文件 frontmatter 中的 doc_type 必须是以下值之一。
 # 新增 doc_type 必须先在此词表中注册，再在 PS-STD-001 中更新。
 #
@@ -28,14 +30,14 @@
 #   - Cursor Rules：glob 自动触发 + 决策辅助
 #   - OpenAPI 3.1：enum + description + deprecated flag
 
-schema_version: "3.0.0"
+schema_version: "3.1.0"
 doc_type: vocabulary
 module_id: PS-VOC-001
-version: "3.0.0"
+version: "3.1.0"
 title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
-total_values: 10
+total_values: 9
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1 + §3.2"
@@ -52,22 +54,13 @@ depends_on:
 values:
   - value: policy
     ttl_default: permanent
-    definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
-    rule_form: declarative
-    required_fields: ["valid_from"]
-    ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该"]
-    examples: ["secret-management-policy.md", "access-control-policy.md"]
-    filename_suffixes: ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"]
-
-
-  - value: operational_rule
-    ttl_default: task_bound
-    definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
-    rule_form: procedural
-    required_fields: ["verifiability"]
-    ai_keywords: ["步骤", "流程", "操作规程", "runbook", "Step 1"]
-    examples: ["connector-onboarding-runbook.md", "factor-onboarding-runbook.md"]
-    filename_suffixes: ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"]
+    definition: "规则——定义'必须/禁止/条件'的行为约束、可量化技术标准（格式/接口/度量），或'如何做'的过程式步骤（runbook/playbook/procedure/checklist）。v3.1.0 合并 operational_rule 后承载声明式与过程式两类规则"
+    rule_form: declarative  # 默认；过程式规则文件显式标 rule_form: procedural
+    required_fields: []  # 声明式建议 valid_from，过程式必须 verifiability（VR-011 约束）
+    ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该", "步骤", "流程", "操作规程", "runbook", "Step 1"]
+    examples: ["secret-management-policy.md", "access-control-policy.md", "connector-onboarding-runbook.md", "factor-onboarding-runbook.md"]
+    filename_suffixes: ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml", "_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"]
+    usage_note: "v3.1.0 合并 operational_rule（2026-06-30）：policy 承载声明式（rule_form=declarative，默认）与过程式（rule_form=procedural，文件显式标注）两类规则。过程式 policy 必须含 verifiability 字段（VR-011）。原 operational_rule 文件的 ttl=task_bound 在 frontmatter 逐文件保留。"
 
   - value: register
     ttl_default: permanent
@@ -188,11 +181,12 @@ values:
 # （便捷参考——canonical 规则定义见 PS-STD-001 §3.2 + §3.2.1）
 # ============================================================
 # Q1: 你的文件在定义"规则"还是"操作步骤"？
-#     → 规则（声明式）  → 看 Q2
-#     → 操作步骤（过程式）→ 必须用 operational_rule，放 operational/
+#     → 规则（声明式）或操作步骤（过程式）→ 都用 policy（v3.1.0 合并 operational_rule）
+#       声明式 policy：rule_form=declarative（默认），如行为约束/技术标准
+#       过程式 policy：rule_form=procedural（显式标注），如 runbook/playbook/checklist
 #
 # Q2: 你的规则约束什么？
-#     → 行为约束或技术规范（必须做/禁止做/格式/接口/度量）→ 用 policy
+#     → 行为约束或技术规范（必须做/禁止做/格式/接口/度量）→ 声明式 policy（rule_form=declarative）
 #
 # Q3: 你的文件是"导航入口"、"数据结构"还是"结构骨架"？
 #     → 目录级导航入口  → 用 index
@@ -210,10 +204,10 @@ values:
 # 【原则】文件名后缀必须反映 doc_type。不允许文件名误导文档类型。
 # 做到"看名字就知道这个文件是什么类型的规则"——这是零记忆重启标准的基础。
 #
-# doc_type → 文件名后缀映射（v3.0.0，10 值）：
-#   policy           → {subject}-policy.md / {subject}-rules.yaml
-#   operational_rule → {subject}-runbook.md / -playbook.md / -procedure.md / -checklist.md
-#                       注：这些后缀均属过程式操作范畴，是 operational_rule 的合法表达
+# doc_type → 文件名后缀映射（v3.1.0，9 值）：
+#   policy           → {subject}-policy.md / {subject}-rules.yaml（声明式）
+#                       {subject}-runbook.md / -playbook.md / -procedure.md / -checklist.md（过程式）
+#                       注：v3.1.0 合并 operational_rule，过程式后缀是 policy 的合法表达
 #   register         → {subject}-registry.yaml / -registry.md / -register.md
 #   index            → index.md（固定，不可变）
 #   template         → {subject}-template.md（templates/ 目录下模板文件）
@@ -381,3 +375,9 @@ deprecated_values:
     reason: "与 vocabulary 语义重叠（知识条目是受控参考数据的一种），合并到 vocabulary"
     migrated_to: ["vocabulary"]
     date: "2026-06-29"
+
+  # ── v3.1.0 精简：operational_rule 合并入 policy（2026-06-30）──
+  - value: operational_rule
+    reason: "与 policy 语义同构（规则类文档），独立维护增加 AI 分类负担。合并到 policy，policy 承载双 rule_form（declarative 默认 + procedural 显式标注）。过程式 policy 由 VR-011 约束 verifiability 字段。doc_type 从 10 值收敛到 9 值。"
+    migrated_to: ["policy"]
+    date: "2026-06-30"
