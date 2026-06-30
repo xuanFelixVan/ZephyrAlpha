@@ -25,7 +25,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.governance.down_migration_generator import DownMigration, DownMigrationGenerator
+from zephyr.infrastructure.rollback.down_migration_generator import DownMigration, DownMigrationGenerator
 
 
 class TestDownMigrationGeneratorInit:

@@ -435,8 +435,6 @@ routes:
     blueprint_level: module
     path_patterns:
       - "src/zephyr/security/**"
-      - "src/zephyr/security/llm_defense/llm_security_01/gateway.py"
-      - "src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py"
     task_keywords:
       - "安全"
       - "security"

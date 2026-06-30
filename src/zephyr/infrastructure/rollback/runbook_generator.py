@@ -104,3 +104,38 @@ class RunbookGenerator:
             if isinstance(details, dict) and "step" in details:
                 steps.add(details["step"])
         return sorted(steps) if steps else ["Verify state → Execute revert → Verify result"]
+
+
+# 模块级工具函数（原 governance/runbook_generator.py 死副本合并，P2-1 价值保留）
+# 测试 tests/governance/ops/test_runbook_generator.py 消费这些函数
+
+
+def build_runbook_frontmatter(
+    title: str = "",
+    version: str = "1.0",
+    author: str = "",
+    created: str | None = None,
+    description: str = "",
+) -> dict[str, Any]:
+    """构建 runbook frontmatter 字典。"""
+    return {
+        "title": title,
+        "version": version,
+        "author": author,
+        "created": created,
+        "description": description,
+    }
+
+
+def generate_runbook(
+    title: str = "",
+    steps: list[str] | None = None,
+    rollback_plan: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """生成单个 runbook 字典。"""
+    return {"title": title, "steps": steps or [], "rollback_plan": rollback_plan or {}}
+
+
+def generate_bulk_runbook(items: list[Any]) -> list[dict[str, Any]]:
+    """批量生成 runbook 列表。"""
+    return [generate_runbook(title=getattr(i, "title", "")) for i in items]

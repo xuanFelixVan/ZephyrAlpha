@@ -19,7 +19,7 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from zephyr.governance.runbook_generator import (
+from zephyr.infrastructure.rollback.runbook_generator import (
     build_runbook_frontmatter,
     generate_bulk_runbook,
     generate_runbook,
