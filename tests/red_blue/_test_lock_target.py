@@ -1,1 +1,0 @@
-# lock test target
