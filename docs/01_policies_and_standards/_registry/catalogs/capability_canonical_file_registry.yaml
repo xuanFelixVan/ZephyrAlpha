@@ -971,117 +971,633 @@ capabilities:
       - is_test_exempt              # 豁免判定函数(归一化+startswith逻辑真源,删则gate各自硬编码漂移)
 
   # --------------------------------------------------------------------------
-  # 以下 5 条为 2026-06-30 ARCH-034 治本新增（behavioral_audit 模块地图发现性）
-  # 病根：behavioral_audit/ 74文件平铺，新AI不知道已有5个聚合子模块的逻辑分类
-  # 治本：登记5个聚合为能力条目，CapabilityLookup 可反查；不建物理子目录（向内收原则①）
-  # 完整模块清单见 src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"
+  # 以下 67 条为 ARCH-034 治本：behavioral_audit 合并至 governance/drift_detection/
+  # 病根：原 behavioral_audit/ 74文件平铺，新AI不知道已有哪些功能模块
+  # 治本：模块级注册（非聚合器），canonical 指向 governance/drift_detection/
+  # 向内收原则①能现成不创造：模块已存在，只需登记发现性
 
-  - capability_id: behavioral_audit_core_aggregator
-    canonical_override: src/zephyr/behavioral_audit/_core.py
+  - capability_id: drift_detection_absence_manager
+    canonical_override: src/zephyr/governance/drift_detection/absence_manager.py
     aliases:
-      - _core
-      - behavioral_audit_core
-      - drift_engine
-      - drift_models
-      - state_machine
-      - detector_dispatcher
+      - absence_manager
+    description: >-
+      Owner Absence Manager — Owner缺席模式 §6.32。 module_id: MOD-INF-023 模块级注册（ARCH-034，原
+       behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: p
+      roduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "abse
+      nce_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_ai_construction_detectors
+    canonical_override: src/zephyr/governance/drift_detection/ai_construction_detectors.py
+    aliases:
+      - ai_construction_detectors
+    description: >-
+      [BLUEPRINT] MOD-INF-033 | 03_modules/_cross_layer/behavioral-auditor/blueprint.m
+      d | § Drift Detector AI 施工检测器 — ai_construction_detectors.py 模块级注册（ARCH-034，原 be
+      havioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: prod
+      uction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "ai_cons
+      truction_detectors" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_ai_context_injector
+    canonical_override: src/zephyr/governance/drift_detection/ai_context_injector.py
+    aliases:
+      - ai_context_injector
+    description: >-
+      AI Context Injector — 施工前预检D-023-16 · §6.8。 module_id: MOD-INF-023 模块级注册（ARCH-03
+      4，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度
+      : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "a
+      i_context_injector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_alert_router
+    canonical_override: src/zephyr/governance/drift_detection/alert_router.py
+    aliases:
+      - alert_router
+    description: >-
+      Alert Router — alert_router.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behaviora
+      l_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: dri
+      ft_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "alert_router" 可定位本模块。 解
+      决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_architecture_contracts
+    canonical_override: src/zephyr/governance/drift_detection/architecture_contracts.py
+    aliases:
       - architecture_contracts
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "architecture_contracts" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能
+      前会被引导到本模块。
+  - capability_id: drift_detection_architecture_principles
+    canonical_override: src/zephyr/governance/drift_detection/architecture_principles.py
+    aliases:
       - architecture_principles
     description: >-
-      behavioral_audit 核心引擎聚合（ARCH-034，MOD-INF-033）。聚合 drift 扫描调度、
-      事件类型、状态机、检测器分发、架构契约/原则、脑集成等核心功能模块。完整模块清单见
-      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
-      治本：登记5个聚合为能力条目，解决"新AI不知道已有逻辑分类"的发现性问题，
-      不建物理子目录（向内收原则①能现成不创造——已有5聚合是现成分类）。
-      解决发现性：新AI 搜 "drift engine/detector dispatcher/architecture contracts"
-      可定位 _core 聚合，进而发现所有核心模块。
-      解决防重建：check_file_canonical() 反查 + capability_overlap_gate 提示，
-      新AI准备造核心引擎类功能前会被引导到本聚合。
-
-  - capability_id: behavioral_audit_drift_aggregator
-    canonical_override: src/zephyr/behavioral_audit/_drift.py
+      装饰器：为函数标记适用的架构原则。 def decorator(func: F) -> F: 模块级注册（ARCH-034，原 behavioral_audit
+       迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: production。 消费者: M
+      OD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新AI 搜 "architecture_principles" 可定
+      位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_backcompat_checker
+    canonical_override: src/zephyr/governance/drift_detection/backcompat_checker.py
     aliases:
-      - _drift
-      - behavioral_audit_drift
-      - contract_drift_detector
-      - drift_detection
-      - cascade_detector
+      - backcompat_checker
+    description: >-
+      Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。 module_id: MOD-INF
+      -023 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEH
+      AVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_rout
+      er。 解决发现性：新AI 搜 "backcompat_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI
+      准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_baseline_manager
+    canonical_override: src/zephyr/governance/drift_detection/baseline_manager.py
+    aliases:
+      - baseline_manager
+    description: >-
+      Baseline Manager — baseline_manager.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: pro
+      duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "baseli
+      ne_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_baseline_poisoning_guard
+    canonical_override: src/zephyr/governance/drift_detection/baseline_poisoning_guard.py
+    aliases:
       - baseline_poisoning_guard
     description: >-
-      behavioral_audit 漂移检测器聚合（ARCH-034，MOD-INF-033）。聚合契约/DB/版本/文档/
-      语义/安全等漂移类型检测 + 级联检测 + 基线投毒防护模块。完整模块清单见
-      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
-      命名规则约定：drift_*/*_drift_detector/cascade_detector/baseline_poisoning* 归本聚合。
-      解决发现性：新AI 搜 "drift detection/contract drift/cascade/baseline poisoning"
-      可定位 _drift 聚合，进而发现所有漂移检测器。
-      解决防重建：新AI准备造新的漂移检测器前会被引导到本聚合，提示扩展而非新建。
-
-  - capability_id: behavioral_audit_scanners_aggregator
-    canonical_override: src/zephyr/behavioral_audit/_scanners.py
+      Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。 module_id: MOD-INF-023 模块级注册
+      （ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AU
+      DIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：
+      新AI 搜 "baseline_poisoning_guard" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
+      类功能前会被引导到本模块。
+  - capability_id: drift_detection_benchmark_integrity
+    canonical_override: src/zephyr/governance/drift_detection/benchmark_integrity.py
     aliases:
-      - _scanners
-      - behavioral_audit_scanners
-      - incremental_scanner
-      - headless_scanner
-      - orphan_scanner
-      - symlink_checker
+      - benchmark_integrity
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "benchmark_integrity" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
+      引导到本模块。
+  - capability_id: drift_detection_brain_integration
+    canonical_override: src/zephyr/governance/drift_detection/brain_integration.py
+    aliases:
+      - brain_integration
+    description: >-
+      ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation from __future__ import a
+      nnotations 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域:
+       D_BEHAVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;aler
+      t_router。 解决发现性：新AI 搜 "brain_integration" 可定位本模块。 解决防重建：check_file_canonical() 反
+      查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_canary_controller
+    canonical_override: src/zephyr/governance/drift_detection/canary_controller.py
+    aliases:
+      - canary_controller
+    description: >-
+      Detector Canary Controller — 检测器金丝雀部署 §6.11。 module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      canary_controller" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_cascade_detector
+    canonical_override: src/zephyr/governance/drift_detection/cascade_detector.py
+    aliases:
+      - cascade_detector
+    description: >-
+      Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。 module_id: MOD-INF-023 模块级注册
+      （ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AU
+      DIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：
+      新AI 搜 "cascade_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导
+      到本模块。
+  - capability_id: drift_detection_chaos_injector
+    canonical_override: src/zephyr/governance/drift_detection/chaos_injector.py
+    aliases:
+      - chaos_injector
+    description: >-
+      Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。 module_id: MOD-INF-023 模块级注册（ARCH-034，原
+       behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: p
+      roduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "chao
+      s_injector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_code_review_ai
+    canonical_override: src/zephyr/governance/drift_detection/code_review_ai.py
+    aliases:
+      - code_review_ai
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "code_review_ai" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
+      块。
+  - capability_id: drift_detection_cold_start
+    canonical_override: src/zephyr/governance/drift_detection/cold_start.py
+    aliases:
+      - cold_start
+    description: >-
+      Cold Start Bootstrapper — 冷启动引导 §6.31。 module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 
+      消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cold_start" 可定位
+      本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_config_consistency
+    canonical_override: src/zephyr/governance/drift_detection/config_consistency.py
+    aliases:
+      - config_consistency
+    description: >-
+      Config Consistency Checker — 配置多源一致性 D-023-29 · §6.21。 module_id: MOD-INF-023 模块
+      级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL
+      _AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发
+      现性：新AI 搜 "config_consistency" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能
+      前会被引导到本模块。
+  - capability_id: drift_detection_contract_drift_detector
+    canonical_override: src/zephyr/governance/drift_detection/contract_drift_detector.py
+    aliases:
+      - contract_drift_detector
+    description: >-
+      contract_drift_detector — 契约漂移检测器。 从 MOD-INF-015 contract_metrics.py 迁移而来（v3.0.0
+       委托决策）。 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_
+      BEHAVIORAL_AUDIT。 成熟度: production。 消费者: src/zephyr/infra_ops/observability/contr
+      act_metrics.py(委托调用)。 解决发现性：新AI 搜 "contract_drift_detector" 可定位本模块。 解决防重建：check_
+      file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_correlation_engine
+    canonical_override: src/zephyr/governance/drift_detection/correlation_engine.py
+    aliases:
+      - correlation_engine
+    description: >-
+      Correlation Engine — correlation_engine.py module_id: MOD-INF-023 模块级注册（ARCH-034
+      ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度:
+       production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "co
+      rrelation_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_credibility_engine
+    canonical_override: src/zephyr/governance/drift_detection/credibility_engine.py
+    aliases:
+      - credibility_engine
+    description: >-
+      Credibility Engine — credibility_engine.py module_id: MOD-INF-023 模块级注册（ARCH-034
+      ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度:
+       production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cr
+      edibility_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_cross_env_consistency
+    canonical_override: src/zephyr/governance/drift_detection/cross_env_consistency.py
+    aliases:
+      - cross_env_consistency
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "cross_env_consistency" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前
+      会被引导到本模块。
+  - capability_id: drift_detection_cross_module_score
+    canonical_override: src/zephyr/governance/drift_detection/cross_module_score.py
+    aliases:
+      - cross_module_score
+    description: >-
+      Cross Module Score — cross_module_score.py module_id: MOD-INF-023 模块级注册（ARCH-034
+      ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度:
+       production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cr
+      oss_module_score" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_dashboard
+    canonical_override: src/zephyr/governance/drift_detection/dashboard.py
+    aliases:
+      - dashboard
+    description: >-
+      Coverage Dashboard — dashboard.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavi
+      oral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: producti
+      on。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "dashboard" 
+      可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_data_classification
+    canonical_override: src/zephyr/governance/drift_detection/data_classification.py
+    aliases:
+      - data_classification
+    description: >-
+      检查 self_level 是否有权限访问 target_level 的数据。 self_order = LEVEL_ORDER.get(self_level,
+       0) 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHA
+      VIORAL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发
+      现性：新AI 搜 "data_classification" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功
+      能前会被引导到本模块。
+  - capability_id: drift_detection_data_lifecycle
+    canonical_override: src/zephyr/governance/drift_detection/data_lifecycle.py
+    aliases:
+      - data_lifecycle
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "data_lifecycle" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
+      块。
+  - capability_id: drift_detection_data_quality
+    canonical_override: src/zephyr/governance/drift_detection/data_quality.py
+    aliases:
+      - data_quality
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY
+      。 成熟度: prototype。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新AI 搜 "dat
+      a_quality" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_data_source_reliability
+    canonical_override: src/zephyr/governance/drift_detection/data_source_reliability.py
+    aliases:
+      - data_source_reliability
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "data_source_reliability" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功
+      能前会被引导到本模块。
+  - capability_id: drift_detection_dependency_manager
+    canonical_override: src/zephyr/governance/drift_detection/dependency_manager.py
+    aliases:
+      - dependency_manager
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "dependency_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引
+      导到本模块。
+  - capability_id: drift_detection_detector_dispatcher
+    canonical_override: src/zephyr/governance/drift_detection/detector_dispatcher.py
+    aliases:
+      - detector_dispatcher
+    description: >-
+      Detector Dispatcher — detector_dispatcher.py module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      detector_dispatcher" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
+      。
+  - capability_id: drift_detection_drift_engine
+    canonical_override: src/zephyr/governance/drift_detection/drift_engine.py
+    aliases:
+      - drift_engine
+    description: >-
+      Drift Engine — 编排器核心 (SRC-0030 精简后) module_id: MOD-INF-023 模块级注册（ARCH-034，原 beha
+      vioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: produc
+      tion。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "drift_eng
+      ine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_drift_hotfix_bypass
+    canonical_override: src/zephyr/governance/drift_detection/drift_hotfix_bypass.py
+    aliases:
+      - drift_hotfix_bypass
+    description: >-
+      Drift Hotfix Bypass — drift_hotfix_bypass.py module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      drift_hotfix_bypass" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
+      。
+  - capability_id: drift_detection_drift_infrastructure
+    canonical_override: src/zephyr/governance/drift_detection/drift_infrastructure.py
+    aliases:
+      - drift_infrastructure
+    description: >-
+      Drift Detector 基础设施 — drift_infrastructure.py module_id: MOD-INF-023 (SRC-0031) 
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解
+      决发现性：新AI 搜 "drift_infrastructure" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造
+      同类功能前会被引导到本模块。
+  - capability_id: drift_detection_drift_models
+    canonical_override: src/zephyr/governance/drift_detection/drift_models.py
+    aliases:
+      - drift_models
+    description: >-
+      Drift Detector 数据模型 — drift_models.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 be
+      havioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: prod
+      uction。 消费者: drift_engine;detector_dispatcher;correlation_engine。 解决发现性：新AI 搜 "d
+      rift_models" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_drift_result_types
+    canonical_override: src/zephyr/governance/drift_detection/drift_result_types.py
+    aliases:
+      - drift_result_types
+    description: >-
+      Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py module_id: MOD-INF-023 (SRC
+      -0033) 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_B
+      EHAVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_ro
+      uter。 解决发现性：新AI 搜 "drift_result_types" 可定位本模块。 解决防重建：check_file_canonical() 反查，新
+      AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_drift_training
+    canonical_override: src/zephyr/governance/drift_detection/drift_training.py
+    aliases:
+      - drift_training
+    description: >-
+      Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py module_id: MOD-INF-023 (SRC-0
+      034) 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEH
+      AVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_rout
+      er。 解决发现性：新AI 搜 "drift_training" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
+      类功能前会被引导到本模块。
+  - capability_id: drift_detection_events
+    canonical_override: src/zephyr/governance/drift_detection/events.py
+    aliases:
+      - events
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY
+      。 成熟度: prototype。 消费者: behavioral_auditor包内所有模块。 解决发现性：新AI 搜 "events" 可定位本模块。 解决
+      防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_file_attr_checker
+    canonical_override: src/zephyr/governance/drift_detection/file_attr_checker.py
+    aliases:
       - file_attr_checker
-      - naming_magic_checker
-      - test_fixture_checker
+    description: >-
+      File Attribute Integrity — 文件底层属性完整性 §6.30。 module_id: MOD-INF-023 模块级注册（ARCH-03
+      4，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度
+      : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "f
+      ile_attr_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_forensics_engine
+    canonical_override: src/zephyr/governance/drift_detection/forensics_engine.py
+    aliases:
+      - forensics_engine
+    description: >-
+      Drift Forensics Engine — 漂移取证引擎 §6.17。 module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: pro
+      duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "forens
+      ics_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_gate_persistence
+    canonical_override: src/zephyr/governance/drift_detection/gate_persistence.py
+    aliases:
+      - gate_persistence
+    description: >-
+      Gate Persistence — gate_persistence.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: pro
+      duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "gate_p
+      ersistence" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_git_bisector
+    canonical_override: src/zephyr/governance/drift_detection/git_bisector.py
+    aliases:
+      - git_bisector
+    description: >-
+      Git Bisector — git_bisector.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behaviora
+      l_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: production。
+       消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "git_bisector" 
+      可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_gitignore_auditor
+    canonical_override: src/zephyr/governance/drift_detection/gitignore_auditor.py
+    aliases:
       - gitignore_auditor
     description: >-
-      behavioral_audit 扫描器与检查器聚合（ARCH-034，MOD-INF-033）。聚合增量/无头/孤儿扫描 +
-      符号链接/文件属性/命名魔法/测试夹具检查 + 数据质量扫描模块。完整模块清单见
-      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
-      命名规则约定：*_scanner/*_checker/scan_mutex/data_*/cross_env_consistency 归本聚合。
-      解决发现性：新AI 搜 "scanner/checker/file check/data quality" 可定位 _scanners 聚合。
-      解决防重建：新AI准备造新的扫描器/检查器前会被引导到本聚合，提示扩展而非新建。
-
-  - capability_id: behavioral_audit_infrastructure_aggregator
-    canonical_override: src/zephyr/behavioral_audit/_infrastructure.py
+      .gitignore Integrity Auditor — gitignore完整性审计 D-023-32 · §6.24。 module_id: MOD-I
+      NF-023 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_B
+      EHAVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_ro
+      uter。 解决发现性：新AI 搜 "gitignore_auditor" 可定位本模块。 解决防重建：check_file_canonical() 反查，新A
+      I准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_handoff_manager
+    canonical_override: src/zephyr/governance/drift_detection/handoff_manager.py
     aliases:
-      - _infrastructure
-      - behavioral_audit_infrastructure
-      - absence_manager
-      - alert_router
-      - baseline_manager
-      - canary_controller
-      - cold_start
-      - config_consistency
-      - dashboard
-      - gate_persistence
       - handoff_manager
+    description: >-
+      Cross-Session Handoff Manager — 跨Session修复上下文交接 §6.14。 module_id: MOD-INF-023 模块
+      级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL
+      _AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发
+      现性：新AI 搜 "handoff_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
+      引导到本模块。
+  - capability_id: drift_detection_headless_scanner
+    canonical_override: src/zephyr/governance/drift_detection/headless_scanner.py
+    aliases:
+      - headless_scanner
+    description: >-
+      Headless Scanner — headless_scanner.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: pro
+      duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "headle
+      ss_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_incremental_scanner
+    canonical_override: src/zephyr/governance/drift_detection/incremental_scanner.py
+    aliases:
+      - incremental_scanner
+    description: >-
+      Incremental Scanner — incremental_scanner.py module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      incremental_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
+      。
+  - capability_id: drift_detection_integration_test_runner
+    canonical_override: src/zephyr/governance/drift_detection/integration_test_runner.py
+    aliases:
+      - integration_test_runner
+    description: >-
+      Integration Test Runner — integration_test_runner.py module_id: MOD-INF-023 模块级注
+      册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟
+      度: prototype。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "i
+      ntegration_test_runner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到
+      本模块。
+  - capability_id: drift_detection_ml_engineering
+    canonical_override: src/zephyr/governance/drift_detection/ml_engineering.py
+    aliases:
+      - ml_engineering
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "ml_engineering" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
+      块。
+  - capability_id: drift_detection_model_drift_monitor
+    canonical_override: src/zephyr/governance/drift_detection/model_drift_monitor.py
+    aliases:
+      - model_drift_monitor
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "model_drift_monitor" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
+      引导到本模块。
+  - capability_id: drift_detection_naming_magic_checker
+    canonical_override: src/zephyr/governance/drift_detection/naming_magic_checker.py
+    aliases:
+      - naming_magic_checker
+    description: >-
+      Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。 module_id: MOD-INF-023 模块级注册（ARCH-034，
+      原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: 
+      production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "nam
+      ing_magic_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_orphan_scanner
+    canonical_override: src/zephyr/governance/drift_detection/orphan_scanner.py
+    aliases:
+      - orphan_scanner
+    description: >-
+      Orphan Resource Scanner — 孤儿资源检测 §6.28。 module_id: MOD-INF-023 模块级注册（ARCH-034，原 
+      behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: pr
+      oduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "orpha
+      n_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_performance_baseline
+    canonical_override: src/zephyr/governance/drift_detection/performance_baseline.py
+    aliases:
+      - performance_baseline
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "performance_baseline" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会
+      被引导到本模块。
+  - capability_id: drift_detection_python_compat
+    canonical_override: src/zephyr/governance/drift_detection/python_compat.py
+    aliases:
+      - python_compat
+    description: >-
+      Python Compatibility Checker — Python版本兼容性漂移 D-023-30 · §6.22。 module_id: MOD-IN
+      F-023 模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BE
+      HAVIORAL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_rou
+      ter。 解决发现性：新AI 搜 "python_compat" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
+      类功能前会被引导到本模块。
+  - capability_id: drift_detection_reconciler
+    canonical_override: src/zephyr/governance/drift_detection/reconciler.py
+    aliases:
+      - reconciler
+    description: >-
+      Auto Reconciler — reconciler.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavior
+      al_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: dr
+      ift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "reconciler" 可定位本模块。 解决
+      防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_regime_detector
+    canonical_override: src/zephyr/governance/drift_detection/regime_detector.py
+    aliases:
+      - regime_detector
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "regime_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本
+      模块。
+  - capability_id: drift_detection_resource_guard
+    canonical_override: src/zephyr/governance/drift_detection/resource_guard.py
+    aliases:
       - resource_guard
     description: >-
-      behavioral_audit 基础设施聚合（ARCH-034，MOD-INF-033）。聚合缺勤管理/AI上下文注入/
-      告警路由/基线管理/金丝雀控制/冷启动/配置一致性/仪表盘等基础设施模块。完整模块清单见
-      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
-      命名规则约定：*_manager/*_controller/*_router/cold_start/dashboard 归本聚合。
-      解决发现性：新AI 搜 "manager/controller/router/canary/cold start" 可定位 _infrastructure 聚合。
-      解决防重建：新AI准备造新的基础设施类模块前会被引导到本聚合，提示扩展而非新建。
-
-  - capability_id: behavioral_audit_analysis_aggregator
-    canonical_override: src/zephyr/behavioral_audit/_analysis.py
+      Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。 module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      resource_guard" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_roi_engine
+    canonical_override: src/zephyr/governance/drift_detection/roi_engine.py
     aliases:
-      - _analysis
-      - behavioral_audit_analysis
-      - correlation_engine
-      - credibility_engine
-      - forensics_engine
       - roi_engine
-      - trend_analyzer
-      - reconciler
-      - runbook_generator
-      - tamper_proof_audit
-      - chaos_injector
+    description: >-
+      ROI Engine — roi_engine.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavioral_au
+      dit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: production。 消费者
+      : drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "roi_engine" 可定位本模块
+      。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_rollback_bridge
+    canonical_override: src/zephyr/governance/drift_detection/rollback_bridge.py
+    aliases:
       - rollback_bridge
     description: >-
-      behavioral_audit 分析与报告聚合（ARCH-034，MOD-INF-033）。聚合相关性/可信度/跨模块评分/
-      取证/ROI/趋势分析/混沌注入/回滚/自检/抑制学习等分析与报告模块。完整模块清单见
-      src/zephyr/behavioral_audit/__init__.py 顶部"模块地图"。
-      命名规则约定：*_engine/*_analyzer/forensics_*/reconciler/runbook_* 归本聚合。
-      解决发现性：新AI 搜 "analysis engine/forensics/roi/trend/reconciler" 可定位 _analysis 聚合。
-      解决防重建：新AI准备造新的分析引擎前会被引导到本聚合，提示扩展而非新建。
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解
+      决发现性：新AI 搜 "rollback_bridge" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前
+      会被引导到本模块。
+  - capability_id: drift_detection_runbook_generator
+    canonical_override: src/zephyr/governance/drift_detection/runbook_generator.py
+    aliases:
+      - runbook_generator
+    description: >-
+      Drift Runbook Generator — 漂移演练手册自动生成 §6.9。 module_id: MOD-INF-023 模块级注册（ARCH-034
+      ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototy
+      pe。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "runbook_gen
+      erator" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_scan_mutex
+    canonical_override: src/zephyr/governance/drift_detection/scan_mutex.py
+    aliases:
+      - scan_mutex
+    description: >-
+      Scan Mutex — scan_mutex.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavioral_au
+      dit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: production。 消费者
+      : drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "scan_mutex" 可定位本模块
+      。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_self_check
+    canonical_override: src/zephyr/governance/drift_detection/self_check.py
+    aliases:
+      - self_check
+    description: >-
+      Self-Drift Check — self_check.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavio
+      ral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: productio
+      n。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "self_check" 
+      可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_self_test_verifier
+    canonical_override: src/zephyr/governance/drift_detection/self_test_verifier.py
+    aliases:
+      - self_test_verifier
+    description: >-
+      Self Test Verifier — self_test_verifier.py module_id: MOD-INF-023 模块级注册（ARCH-034
+      ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度:
+       production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "se
+      lf_test_verifier" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_state_machine
+    canonical_override: src/zephyr/governance/drift_detection/state_machine.py
+    aliases:
+      - state_machine
+    description: >-
+      [BLUEPRINT] MOD-INF-033 | 03_modules/_cross_layer/behavioral-auditor/blueprint.m
+      d | § Drift State Machine — state_machine.py 模块级注册（ARCH-034，原 behavioral_audit 迁
+      移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: drift_engine
+      ;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "state_machine" 可定位本模块。 解决防重建：che
+      ck_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_suppression_learner
+    canonical_override: src/zephyr/governance/drift_detection/suppression_learner.py
+    aliases:
+      - suppression_learner
+    description: >-
+      Suppression Learner — suppression_learner.py module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      suppression_learner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
+      。
+  - capability_id: drift_detection_symlink_checker
+    canonical_override: src/zephyr/governance/drift_detection/symlink_checker.py
+    aliases:
+      - symlink_checker
+    description: >-
+      Symlink Integrity Checker — 软链接完整性检测 §6.29。 module_id: MOD-INF-023 模块级注册（ARCH-03
+      4，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度
+      : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "s
+      ymlink_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_system_topology
+    canonical_override: src/zephyr/governance/drift_detection/system_topology.py
+    aliases:
+      - system_topology
+    description: >-
+      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
+      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
+      AI 搜 "system_topology" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本
+      模块。
+  - capability_id: drift_detection_tamper_proof_audit
+    canonical_override: src/zephyr/governance/drift_detection/tamper_proof_audit.py
+    aliases:
+      - tamper_proof_audit
+    description: >-
+      Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 module_id: MOD-INF-023 模块级注册（ARCH-0
+      34，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟
+      度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
+      tamper_proof_audit" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
+  - capability_id: drift_detection_test_fixture_checker
+    canonical_override: src/zephyr/governance/drift_detection/test_fixture_checker.py
+    aliases:
+      - test_fixture_checker
+    description: >-
+      Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.20。 module_id: MOD-INF-023 模块级注册（A
+      RCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDI
+      T。 成熟度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新A
+      I 搜 "test_fixture_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
+      引导到本模块。
+  - capability_id: drift_detection_trend_analyzer
+    canonical_override: src/zephyr/governance/drift_detection/trend_analyzer.py
+    aliases:
+      - trend_analyzer
+    description: >-
+      Trend Analyzer — trend_analyzer.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behav
+      ioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度: product
+      ion。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "trend_anal
+      yzer" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
 
   # --------------------------------------------------------------------------
   - capability_id: scaffold_file_creator
