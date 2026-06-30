@@ -1493,11 +1493,16 @@ class GitCommitGateway:
     # ------------------------------------------------------------------
     # 废弃目录门禁（09_audit 治本加固，红蓝对抗修复）
     # ------------------------------------------------------------------
-    # 废弃目录清单：key=相对路径前缀，value=废弃原因+迁移目标
+    # 废弃目录清单：从 directory_contract.yaml §7 deprecated_directories 动态加载
+    # 真源迁移（2026-06-30 治本）：原硬编码 dict 迁入 directory_contract.yaml §7，
+    #   消除"目录规则分散存储"硬约束违反。对标 _PERMANENT_ZONE_DIRS 加载模式（L146-152）。
+    # 接口保持 dict[str, str]（path → reason），reconciler 通过 getattr 引用无需改动。
     # 与 validate_directory_structure.py 的 ALLOWED_DOCS_DIRS 白名单互补——
     # 白名单是"允许的"（warn-only 脚本），DEPRECATED_DIRS 是"显式禁止的"（gateway 硬阻断）
     _DEPRECATED_DIRS: dict[str, str] = {
-        "docs/09_audit": "已合并入 docs/_working/audit/（trae_047 gov_eng_002_directory_mapping）",
+        item["path"]: item["reason"]
+        for item in _CONTRACT_CACHE.get("deprecated_directories", []) or []
+        if "path" in item and "reason" in item
     }
 
     def _check_deprecated_directories(self, files: list[str]) -> tuple[bool, str]:
@@ -2525,6 +2530,14 @@ class GitCommitGateway:
                 status=CommitStatus.PURE_SHIM_VIOLATION,
                 message=f"GATE-NO-PURE-SHIM 纯 re-export shim 违规（auto-commit）: {shim_detail}",
             )
+
+        # NOTE: 未调 DIRECTORY-CONTRACT gate（DCR-001~007 等效校验）。
+        # 原因：_commit_auto 当前 0 调用方（活代码未被调用，见 AGENTS.md §8
+        # "reconciler auto-commit 入口选择"条目），8 个 reconciler 均走入口②
+        # （裸调 _run_git + 手动 GW 标记）。给死代码加防御违反向内收原则。
+        # 未来启用 _commit_auto 时需评估是否补 DCR gate：
+        #   - 选项A：subprocess 调 check_directory_contract.py（对标 directory_contract_gate.py）
+        #   - 选项B：改为走 self._gate_registry.check_all(...)（但会触发全部注册 gate，过严）
 
         # 追加 GW auto 标记
         gw_marker = f"[GW:{session_id}:auto]"

@@ -27,6 +27,8 @@
 #   - GitCommitGateway._PERMANENT_ZONE_DIRS（已改为从本契约动态加载，git_commit_gateway.py:140-144）
 #   - backfill_ttl_metadata.py（路径→ttl 推断，经 ttl_vocabulary.yaml decision_tree Q3 的 criteria_source 间接读取本契约永久区路径）
 #   - check_src_no_data.py（从本契约 global_forbidden[].forbidden_prefix 动态加载 forbidden 前缀）
+#   - GitCommitGateway._DEPRECATED_DIRS（2026-06-30 治本：从本契约 §7 deprecated_directories 动态加载，原硬编码已迁出）
+#   - make_deprecated_directory_reconciler（通过 getattr(gateway, '_DEPRECATED_DIRS') 间接引用本契约 §7）
 #
 # 对标标准：
 #   - OpenAPI 3.1：契约先行（先定义规则，再验证合规）
@@ -47,7 +49,7 @@ title: "Directory Contract"
 status: active
 ttl: permanent
 contract_version: "1.0.0"
-last_updated: "2026-06-29"
+last_updated: "2026-06-30"
 
 # ============================================================
 # 0. 真源溯源（三维来源声明）
@@ -384,3 +386,24 @@ global_forbidden:
     check: "no .csv/.jsonl file in permanent zone"
     severity: error
     exception: "docs/_working/ttl_content_audit/ 除外（临时区）"
+
+# ============================================================
+# 7. 废弃目录清单（Deprecated Directories）
+# 来源：GitCommitGateway._DEPRECATED_DIRS（原硬编码，2026-06-30 迁入治本）
+# ============================================================
+# 显式禁止的目录前缀——与 global_forbidden 互补：
+#   - global_forbidden 是"规则化禁止"（如"src/ 下禁止 .bak"，按扩展名/模式）
+#   - deprecated_directories 是"目录级显式废弃"（整个目录已迁移他处，禁止新建任何文件）
+# 双层防御（对标 GATE-DEPRECATED-DIR 设计）：
+#   ① GitCommitGateway._check_deprecated_directories（commit 时阻断，--no-verify 绕不过）
+#   ② make_deprecated_directory_reconciler（post-commit 自动迁移+清理，消灭"只告警不消除"）
+
+deprecated_directories:
+  - path: "docs/09_audit"
+    reason: "已合并入 docs/_working/audit/（trae_047 gov_eng_002_directory_mapping）"
+    migrated_to: "docs/_working/audit/"
+    severity: error
+    history_lesson: "09_audit/ 历史为独立审计目录，trae_047 裁定合并入 _working/audit/（临时区），原目录废弃"
+    consumers:
+      - "GitCommitGateway._check_deprecated_directories（commit 时阻断，从 _CONTRACT_CACHE 动态加载）"
+      - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理，通过 getattr(gateway, '_DEPRECATED_DIRS') 引用，不复制）"
