@@ -96,7 +96,6 @@ from zephyr.governance.reconciliation_registry import (
     make_rule_file_audit_reconciler,
     make_exempt_zone_frontmatter_reconciler,
     make_ttl_reconciler,
-    make_import_drift_reconciler,
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-commit 门禁注册表（架构债务 #AD-001 治本）
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate  # 搭便车防护门禁
@@ -520,7 +519,6 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))  # GATE-RULE-FILE-AUDIT 缺口3：规则文件变更审计（warn-only）
         self._reconciliation_registry.register(make_exempt_zone_frontmatter_reconciler(self))  # GATE-EXEMPT-ZONE-FM 缺口2：豁免区 frontmatter 检测（P0修复：独立trigger，消除死代码）
         self._reconciliation_registry.register(make_ttl_reconciler(self))  # GATE-15-ttl post-commit 兜底重校（pre-compensation 异常被吞时拦截违规 .md，2026-06-30 注册补全）
-        self._reconciliation_registry.register(make_import_drift_reconciler(self))  # GATE-SSOT-IMPORT-DRIFT: post-commit AST 扫描检测非 sanctioned 源 import REPO_ROOT/DB_PATH（SSoT 治本 D2，2026-06-30）
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -1696,7 +1694,7 @@ class GitCommitGateway:
             except SyntaxError:
                 pass  # 语法错误跳过(其他门禁会报)
             else:
-                _TARGET_SSOT = {"REPO_ROOT", "DB_PATH"}
+                _TARGET_SSOT = {"REPO_ROOT", "DB_PATH", "find_repo_root"}  # SSoT 治本 D2 收敛（2026-06-30）：find_repo_root 从 D2 reconciler 合并进 pre-commit gate，消除冗余 post-commit warn-only 层
                 _imported: dict[str, int] = {}  # symbol -> import 行号
                 _has_star = False
                 # Bug1 修复（2026-06-30）：_shared.constants 是 scripts/ 侧合法导入源
