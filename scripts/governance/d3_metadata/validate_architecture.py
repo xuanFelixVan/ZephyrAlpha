@@ -104,7 +104,10 @@ def _file_matches_directory_scope(fpath: Path, directory_scope: str) -> bool:
 
 def _iter_target_files() -> list[Path]:
     """枚举扫描目录下所有 .md / .yaml / .yml 文件。"""
+    # ARCH-036 P3-C4: 静默失效修正 — 返回空列表会让调用方认为"无文件需检查"，
+    # 导致架构验证整体跳过。改为 stderr 警告。
     if not _SCAN_DIR.exists():
+        print(f"[WARN] _SCAN_DIR not found: {_SCAN_DIR} — architecture validation scan skipped", file=sys.stderr)
         return []
     return [
         p

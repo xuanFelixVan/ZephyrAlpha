@@ -2220,7 +2220,10 @@ def generate_markdown_section(depgraph: dict) -> str:
 
 def load_cross_module_registry() -> list:
     """Load cross-module-dependency-registry.yaml and return dependencies list."""
+    # ARCH-036 P3-C4: 静默失效修正 — 返回空列表会让调用方认为"无跨模块依赖"，
+    # 导致跨模块依赖分析整体失效。改为 stderr 警告。
     if not CROSS_MODULE_REGISTRY_PATH.exists():
+        print(f"[WARN] CROSS_MODULE_REGISTRY_PATH not found: {CROSS_MODULE_REGISTRY_PATH} — cross-module dep scan skipped", file=sys.stderr)
         return []
     try:
         data = _yaml_load(CROSS_MODULE_REGISTRY_PATH)

@@ -394,7 +394,10 @@ def _build_script_registry() -> set[str]:
 
 def _build_gate_registry() -> set[str]:
     """从 _registry.yaml 中提取已注册的 gate 文件名集合。"""
+    # ARCH-036 P3-C4: 静默失效修正 — 返回空 set 会让调用方认为"无注册 gate"，
+    # 导致 gate 孤儿检测整体失效。改为 stderr 警告（与 GATES_DIR 处理一致）。
     if not GATE_REGISTRY.exists():
+        print(f"[WARN] GATE_REGISTRY not found: {GATE_REGISTRY} — gate registry scan skipped", file=sys.stderr)
         return set()
 
     registry_data = yaml.safe_load(GATE_REGISTRY.read_text(encoding="utf-8")) or {}
