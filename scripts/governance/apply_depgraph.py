@@ -1162,6 +1162,40 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
             conn.close()
 
 
+def delete_constraint(constraint_id: str, db_path: str = None) -> bool:
+    """
+    删除 arch_constraints 表中的约束记录（用于清理孤儿约束/历史脏数据）。
+    返回：True=成功，False=失败
+    校验：constraint_id 必须在 arch_constraints 中存在
+    用途：清除生成代码已不存在的孤儿约束（如 stability 类型历史残留），
+         以及 YAML 真源已删除但 UPSERT 未清理的陈旧约束。
+    注意：检测违规（constraint_id IS NULL）不由此命令删除，由 check_all() 重建。
+    """
+    with _db_write_lock(db_path=db_path, task="delete_constraint"):
+        conn = get_depgraph_pg_connection(autocommit=False)
+        try:
+            row = conn.execute(
+                "SELECT constraint_id, name, constraint_type FROM arch_constraints WHERE constraint_id=%s",
+                (constraint_id,),
+            ).fetchone()
+            if not row:
+                print(f"ERROR: constraint_id={constraint_id} 不存在", file=sys.stderr)
+                return False
+            conn.execute("DELETE FROM arch_constraints WHERE constraint_id=%s", (constraint_id,))
+            conn.commit()
+            print(
+                f"[OK] 删除约束 constraint_id={constraint_id} (name={row['name']} type={row['constraint_type']})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: delete_constraint失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
 def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
     """
     清理幽灵节点：删除 nodes 表中 path 在磁盘上不存在的 node（对称漂移修复，P1-DEP）。
@@ -2886,6 +2920,12 @@ def main() -> None:
         help="删除blueprint_links记录（清理悬空引用）: BLUEPRINT_ID",
     )
     parser.add_argument(
+        "--delete-constraint",
+        type=str,
+        metavar="CONSTRAINT_ID",
+        help="删除arch_constraints记录（清理孤儿约束/历史脏数据）: CONSTRAINT_ID",
+    )
+    parser.add_argument(
         "--add-file-node",
         type=str,
         nargs="+",
@@ -3103,6 +3143,12 @@ def main() -> None:
 
     if args.delete_blueprint_link:
         ok = delete_blueprint_link(args.delete_blueprint_link)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.delete_constraint:
+        ok = delete_constraint(args.delete_constraint)
         if not ok:
             sys.exit(4)
         return
