@@ -48,7 +48,7 @@ title: "node_type 受控词表"
 status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: node_type
-total_values: 22
+total_values: 23
 depends_on:
   - target: PS-VOC-005
     at: "_registry/vocabularies/layer_vocabulary.yaml"
@@ -243,6 +243,16 @@ values:
     stability_fallback: evolving
     autonomy_fallback: ai_modifiable
     definition: "基础设施脚本——.sh/.ps1 Shell 脚本，infra 层部署/运维文件"
+
+  - value: database
+    category: other
+    level: domain
+    type_priority: null
+    in_nodes_whitelist: false
+    architecture_layer_fallback: L0_infrastructure
+    stability_fallback: stable
+    autonomy_fallback: human_gated
+    definition: "数据库节点——关系型/列式/向量数据库等持久化基础设施（governance.db/depgraph/market.duckdb）。手工维护的持久节点，design_maturity=production（已运营非设计态），扫描器DELETE排除node_type='database'确保不被清空。不进白名单（非磁盘扫描产出，由人工INSERT）。数据库清单真源在infrastructure_registry.yaml，依赖关系真源在depgraph"
 
   # ════════════════════════════════════════════════════════════════════
   # 域级 - 域类（category: domain）

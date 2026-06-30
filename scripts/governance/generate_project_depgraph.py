@@ -2561,6 +2561,7 @@ def resolve_conflicts(cur):
     """
     cur.execute(
         "DELETE FROM nodes WHERE design_maturity != 'design' "
+        "AND node_type != 'database' "
         "AND path IN (SELECT path FROM nodes WHERE design_maturity = 'design')"
     )
     deleted = cur.rowcount
@@ -2639,9 +2640,18 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
 
         # Clear existing operational data (preserve design-state)
         # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
-        cursor.execute("DELETE FROM nodes WHERE design_maturity != 'design' OR design_maturity IS NULL")
+        # 裁定#2026-0701: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
+        cursor.execute(
+            "DELETE FROM nodes WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
+            "AND node_type != 'database'"
+        )
         # P0-1 schema fix: 保留设计态边（dep_maturity='design'），只删除运营态边
-        cursor.execute("DELETE FROM edges WHERE dep_maturity != 'design' OR dep_maturity IS NULL")
+        # 裁定#2026-0701: 同时保留指向 database 节点的边（模块→数据库依赖，手工维护）
+        cursor.execute(
+            "DELETE FROM edges WHERE (dep_maturity != 'design' OR dep_maturity IS NULL) "
+            "AND from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database') "
+            "AND to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')"
+        )
 
         # DM-3013: 步骤6 - 显式恢复设计态数据（规格§22.6步骤6）
         if design_state is not None:
@@ -2959,17 +2969,22 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
             print(f"[DM-3011] Warning: resolve_conflicts failed: {e}")
 
         # DM-3002: 步骤10 - 调用audit_domain_nodes.py --check
-        try:
-            import subprocess
+        # 注意：audit_domain_nodes.py 已归档到 scripts/governance/_archive/prototype/，4类检测职责待恢复
+        # arch_constraints 表的 VR 规则现由 sync_yaml_to_depgraph.py 的 sync_architecture_contract 函数从 YAML 同步
+        audit_script = str(PROJECT_ROOT / "scripts" / "governance" / "audit_domain_nodes.py")
+        if os.path.exists(audit_script):
+            try:
+                import subprocess
 
-            audit_script = str(PROJECT_ROOT / "scripts" / "governance" / "audit_domain_nodes.py")
-            result = subprocess.run([sys.executable, audit_script, "--check"], capture_output=True, text=True)
-            if result.returncode != 0:
-                print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py失败(exit {result.returncode}): {result.stderr}")
-            else:
-                print("[DEPGRAPH-DB] 步骤10: audit_domain_nodes.py --check 完成")
-        except Exception as e:
-            print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py调用失败: {e}")
+                result = subprocess.run([sys.executable, audit_script, "--check"], capture_output=True, text=True)
+                if result.returncode != 0:
+                    print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py失败(exit {result.returncode}): {result.stderr}")
+                else:
+                    print("[DEPGRAPH-DB] 步骤10: audit_domain_nodes.py --check 完成")
+            except Exception as e:
+                print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py调用失败: {e}")
+        else:
+            print("[DEPGRAPH-DB] 步骤10: 跳过（audit_domain_nodes.py 已归档到 _archive/prototype/，4类检测职责待恢复）")
 
     except Exception as e:
         if conn is not None:  # DM-3004: is not None守卫
