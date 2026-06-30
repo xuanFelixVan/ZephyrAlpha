@@ -47,7 +47,7 @@ SQL 注入防护
 用法
 ----
     from zephyr.governance.persistence.olap_engine import OLAPEngine
-    from zephyr.governance.sqlite_schema import DB_PATH
+    from zephyr.shared.io.paths import DB_PATH
 
     engine = OLAPEngine(sqlite_path=DB_PATH)
     trend = engine.task_progress_trend(period="day", limit=30)
@@ -66,7 +66,7 @@ from typing import Any
 import duckdb
 import structlog
 
-from zephyr.governance.sqlite_schema import DB_PATH, init_db
+from zephyr.governance.sqlite_schema import init_db
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [

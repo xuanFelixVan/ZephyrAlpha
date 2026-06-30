@@ -83,7 +83,8 @@ from zephyr.governance.rule_enforcement.gate_engine import (
     GATES_DIR,
     GateEngine,
 )
-from zephyr.governance.sqlite_schema import DB_PATH, get_db_connection, init_db
+from zephyr.governance.sqlite_schema import get_db_connection, init_db
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.integration.shared.schema.severity_types import Priority
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 from zephyr.shared.utils.time_utils import now_iso

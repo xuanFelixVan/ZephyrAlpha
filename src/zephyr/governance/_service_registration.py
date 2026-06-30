@@ -60,7 +60,7 @@ def register_services() -> None:
 
     # db_path — Path
     def _make_db_path() -> Any:
-        from zephyr.governance.sqlite_schema import DB_PATH
+        from zephyr.shared.io.paths import DB_PATH
 
         return DB_PATH
 

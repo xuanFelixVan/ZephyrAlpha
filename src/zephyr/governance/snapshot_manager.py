@@ -37,7 +37,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.governance.event_store import EventRecord, EventStore
-from zephyr.governance.sqlite_schema import DB_PATH, SchemaManager, get_db_connection
+from zephyr.governance.sqlite_schema import SchemaManager, get_db_connection
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)

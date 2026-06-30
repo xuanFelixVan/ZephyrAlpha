@@ -53,7 +53,6 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
@@ -188,7 +187,7 @@ class QueryMetrics:
         params_preview = str(params)[:200] if params is not None else None
         explain_rows = []
         try:
-            from zephyr.governance.sqlite_schema import DB_PATH as schema_db_path
+            from zephyr.shared.io.paths import DB_PATH as schema_db_path
 
             explain_conn = sqlite3.connect(str(schema_db_path))
             try:

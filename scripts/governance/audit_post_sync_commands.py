@@ -61,7 +61,7 @@ from _shared.constants import DB_PATH
 
 import sqlite3
 
-from zephyr.governance.sqlite_schema import DB_PATH
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.post_sync_validator import (
     validate_post_sync_command,
     validate_rollback_instructions,

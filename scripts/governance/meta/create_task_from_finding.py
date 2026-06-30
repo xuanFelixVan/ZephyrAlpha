@@ -62,7 +62,8 @@ if REPO_ROOT_DIR not in sys.path:
 
 from zephyr.integration.schema.severity_types import Priority, SafetyLevel
 
-from zephyr.governance.sqlite_schema import DB_PATH, init_db
+from zephyr.governance.sqlite_schema import init_db
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.task_types import ExecutionModel, TaskNamespace, TaskStatus
 from zephyr.shared.models import TaskCard

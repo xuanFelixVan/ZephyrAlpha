@@ -102,8 +102,6 @@ class SqliteDumper:
         output_dir: Path | None = None,
         hmac_key: bytes | None = None,
     ) -> None:
-        from zephyr.governance.sqlite_schema import DB_PATH
-
         self._db_path = db_path or DB_PATH
         self._output_dir = output_dir or Path("data/rollback/db_snapshots")
         self._hmac_key = hmac_key or HMAC_KEY_DEFAULT

@@ -37,7 +37,6 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.governance.event_store import EventStore
-from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)

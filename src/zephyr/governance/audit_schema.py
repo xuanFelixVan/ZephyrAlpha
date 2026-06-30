@@ -50,7 +50,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.sqlite_schema import DB_PATH, init_db, schema_version
+from zephyr.governance.sqlite_schema import init_db, schema_version
 from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [

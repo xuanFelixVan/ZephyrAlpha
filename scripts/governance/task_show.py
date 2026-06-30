@@ -96,7 +96,7 @@ def main() -> None:
     if args.like:
         # 模糊查询：列出所有匹配前缀的任务
         import sqlite3
-        from zephyr.governance.sqlite_schema import DB_PATH
+        from zephyr.shared.io.paths import DB_PATH
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         rows = conn.execute(

@@ -54,7 +54,8 @@ PRAGMA 基线（KBG-0030 §4.3）
 
 用法
 ----
-    from zephyr.governance.sqlite_schema import init_db, get_db_connection, DB_PATH
+    from zephyr.governance.sqlite_schema import init_db, get_db_connection
+    from zephyr.shared.io.paths import DB_PATH  # SSoT 源
 
     init_db()              # 幂等，可重复调用
     conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
@@ -65,7 +66,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.io.paths import DB_PATH as _DB_PATH  # 治本(2026-06-30): 别名阻断 re-export, 防止 IDE organize imports 自动加回 from sqlite_schema import DB_PATH
 
 # ---------------------------------------------------------------------------
 # DDL — tasks 表
@@ -476,7 +477,7 @@ def get_db_connection(
     sqlite3.Connection
         row_factory 已设为 sqlite3.Row，可按列名索引。
     """
-    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
+    resolved: Path = Path(db_path) if db_path is not None else _DB_PATH
     conn = sqlite3.connect(
         str(resolved),
         isolation_level=None,
@@ -1032,7 +1033,7 @@ def init_db(
     Path
         数据库文件的绝对路径。
     """
-    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
+    resolved: Path = Path(db_path) if db_path is not None else _DB_PATH
     resolved.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(str(resolved))
@@ -1092,7 +1093,7 @@ def init_db(
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
     """返回数据库中所有表名（不含视图）。"""
-    resolved = Path(db_path) if db_path is not None else DB_PATH
+    resolved = Path(db_path) if db_path is not None else _DB_PATH
     conn = sqlite3.connect(str(resolved))
     try:
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
@@ -1103,7 +1104,7 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
 
 def view_names(db_path: Path | str | None = None) -> list[str]:
     """返回数据库中所有视图名。"""
-    resolved = Path(db_path) if db_path is not None else DB_PATH
+    resolved = Path(db_path) if db_path is not None else _DB_PATH
     conn = sqlite3.connect(str(resolved))
     try:
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='view' ORDER BY name")
@@ -1114,7 +1115,7 @@ def view_names(db_path: Path | str | None = None) -> list[str]:
 
 def schema_version(db_path: Path | str | None = None) -> int:
     """返回当前数据库的 schema 版本（供外部诊断）。"""
-    resolved = Path(db_path) if db_path is not None else DB_PATH
+    resolved = Path(db_path) if db_path is not None else _DB_PATH
     conn = sqlite3.connect(str(resolved))
     try:
         _apply_pragmas(conn)
@@ -1139,7 +1140,7 @@ def migration_dry_run(
 
     返回 dict{current_version, pending_migrations=[{version, description, ddl_preview},...]}。
     """
-    resolved = Path(db_path) if db_path is not None else DB_PATH
+    resolved = Path(db_path) if db_path is not None else _DB_PATH
     current_ver = schema_version(resolved)
     if current_ver < 0:
         current_ver = abs(current_ver)
@@ -1197,7 +1198,6 @@ class SchemaManager:
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(
     {
-        "DB_PATH",
         "init_db",
         "get_db_connection",
         "table_names",

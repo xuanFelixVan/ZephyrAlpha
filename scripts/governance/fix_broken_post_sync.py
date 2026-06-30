@@ -50,7 +50,6 @@ if _SRC_DIR not in sys.path:
 
 from _shared.constants import DB_PATH
 
-from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.governance.task_repo import PostSyncValidationError, TaskRepository
 
 # ---------------------------------------------------------------------------

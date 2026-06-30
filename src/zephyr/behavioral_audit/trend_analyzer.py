@@ -38,7 +38,6 @@ import sqlite3
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.shared.io.paths import DB_PATH
 
 

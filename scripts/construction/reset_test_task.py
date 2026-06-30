@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "governance"))
 from _shared.constants import DB_PATH  # noqa: E402
 import sqlite3
 
-from zephyr.governance.sqlite_schema import DB_PATH
+from zephyr.shared.io.paths import DB_PATH
 
 conn = sqlite3.connect(DB_PATH)
 conn.execute("UPDATE tasks SET status = 'PENDING' WHERE task_id = 'OPS-007'")

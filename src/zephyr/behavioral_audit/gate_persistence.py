@@ -39,7 +39,6 @@ import sqlite3
 import uuid
 from datetime import UTC, datetime
 
-from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.shared.io.paths import DB_PATH
 
 

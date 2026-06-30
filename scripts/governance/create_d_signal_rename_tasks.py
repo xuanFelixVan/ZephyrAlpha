@@ -21,7 +21,8 @@ _SRC_DIR = REPO_ROOT / "src"
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from zephyr.governance.sqlite_schema import DB_PATH, init_db
+from zephyr.governance.sqlite_schema import init_db
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.task_types import (
     ExecutionModel,
@@ -465,11 +466,11 @@ def _build_main_07_active_docs() -> Task:
     active_docs = [
         "D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/index.md",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/consumer_registry.yaml",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/cross_cutting/runtime_planes.yaml",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/cross_cutting/capability_heatmap.yaml",
+        "D:/ZephyrAlpha/architecture_model/index.yaml",
+        "D:/ZephyrAlpha/architecture_model/contracts/cross_layer_contracts.yaml",
+        "D:/ZephyrAlpha/architecture_model/contracts/consumer_registry.yaml",
+        "D:/ZephyrAlpha/architecture_model/cross_cutting/runtime_planes.yaml",
+        "D:/ZephyrAlpha/architecture_model/cross_cutting/capability_heatmap.yaml",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/application_architecture.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/capability_heatmap.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/technology_architecture.md",
