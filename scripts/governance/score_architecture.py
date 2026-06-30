@@ -54,11 +54,12 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.yaml_utils import load_yaml_safe  # noqa: E402  治本(ARCH-036 P1-2): 收敛本地重复实现→共享 graceful 变体
 
 ensure_utf8_stdout()
 
 AUDIT_MATRIX_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "dimension_audit_matrix.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "04_architecture_principles_decisions" / "dimension_audit_matrix.md"
 )
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "manifest.yaml"
 INVARIANTS_PATH = (
@@ -104,17 +105,6 @@ DIMENSION_NAMES = {
     "D11": "治理合规",
     "D12": "AI 幻觉防护",
 }
-
-
-def load_yaml_safe(path: Path) -> dict:
-    """load_yaml_safe implementation."""
-    import yaml
-
-    if not path.is_file():
-        return {}
-    with open(path, encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    return data if isinstance(data, dict) else {}
 
 
 def score_d6_security() -> float:

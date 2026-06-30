@@ -69,3 +69,17 @@ def load_yaml(file_path: str | Path) -> Any:
         raise FileNotFoundError(f"YAML 文件不存在: {p}")
     with p.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def load_yaml_safe(file_path: str | Path) -> dict:
+    """graceful 变体：文件缺失或解析结果非 dict 时返回 {} 而非 raise。
+
+    供防御性调用方使用（如评分脚本对可选配置文件做容错加载）。
+    与 load_yaml 的契约差异：缺失返回 {}（非 raise）；非 dict 返回 {}（非原值）。
+    """
+    p = Path(file_path)
+    if not p.is_file():
+        return {}
+    with p.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data if isinstance(data, dict) else {}
