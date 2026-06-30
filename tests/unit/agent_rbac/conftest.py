@@ -6,58 +6,16 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] task_bound
+"""conftest for tests/unit/agent_rbac/ — 确保 src/ 在 sys.path.
 
-import importlib.util
+ARCH-035 治本：删除路径劫持（_ensure_stub/spec_from_file_location 从 phantom path
+agent-rbac/ 加载），改用 Python 正常包机制解析 zephyr.security.access_control。
+测试文件直接 ``from zephyr.security.access_control.guards.X import Y``。
+"""
+
 import sys
-import types
 from pathlib import Path
 
-_SRC_ROOT = Path(__file__).resolve().parent.parent.parent.parent / "src"
-_ZEPHYR = _SRC_ROOT / "zephyr"
-
-
-def _ensure_stub(name, pkg_path=None):
-    if name in sys.modules:
-        return sys.modules[name]
-    mod = types.ModuleType(name)
-    mod.__package__ = name
-    if pkg_path:
-        mod.__path__ = [str(pkg_path)]
-    sys.modules[name] = mod
-    return mod
-
-
-def _load(name, file_path):
-    if name in sys.modules:
-        return sys.modules[name]
-    spec = importlib.util.spec_from_file_location(name, str(file_path))
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules[name] = mod
-    spec.loader.exec_module(mod)
-    return mod
-
-
-_ensure_stub("zephyr", _ZEPHYR)
-_ensure_stub("zephyr.shared", _ZEPHYR / "shared")
-_ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
-_ensure_stub("zephyr.security.access_control", _ZEPHYR / "agent-rbac")
-
-_load(
-    "zephyr.shared.contracts.identity.agent_identity",
-    _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py",
-)
-_load(
-    "zephyr.shared.contracts.identity.permission",
-    _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py",
-)
-_load("zephyr.security.access_control.immutable_core", _ZEPHYR / "agent-rbac" / "immutable_core.py")
-_load("zephyr.security.access_control.exceptions", _ZEPHYR / "agent-rbac" / "exceptions.py")
-_load("zephyr.security.access_control.kill_switch", _ZEPHYR / "agent-rbac" / "kill_switch.py")
-_load("zephyr.security.access_control.guards.input_guard", _ZEPHYR / "agent-rbac" / "input_guard.py")
-_load("zephyr.security.access_control.guards.sequence_guard", _ZEPHYR / "agent-rbac" / "sequence_guard.py")
-_load("zephyr.security.access_control.guards.output_guard", _ZEPHYR / "agent-rbac" / "output_guard.py")
-_load("zephyr.security.access_control.guards.abac_guard", _ZEPHYR / "agent-rbac" / "abac_guard.py")
-_load("zephyr.security.access_control.decision_explainer", _ZEPHYR / "agent-rbac" / "decision_explainer.py")
-_load("zephyr.security.access_control.guards.rbac_guard", _ZEPHYR / "agent-rbac" / "rbac_guard.py")
-_load("zephyr.security.access_control.engine_degradation", _ZEPHYR / "agent-rbac" / "engine_degradation.py")
+_SRC = Path(__file__).resolve().parents[3] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))

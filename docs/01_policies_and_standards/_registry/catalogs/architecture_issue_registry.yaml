@@ -220,12 +220,12 @@ entries:
   severity: P1高
   adjudication: |
     trae_060 §4元问题审查治本。4形态问题（全部需治本，无合理现状）：(1)根平铺1699个.py文件（远超预估"200+"，新AI无法定位+无分类指引）；(2)contract/（元测试5文件：anchors/import_chain/schema_stability）与contracts/（契约测试16文件：test_ct_模块对_001）单复数歧义；(3)平铺与子目录混合（根1699平铺+unit/289内平铺+13子目录）；(4)子目录粒度混合维度（unit/integration/e2e按类型，governance/llm_security/agent_rbac按功能域，contract/contracts按测试种类，test_code_dedup_engine违规test_前缀目录名）。额外发现：根目录2个verify_result.txt临时产物遗留。治本：按文件名前缀归功能域子目录（trae_060 §1原则①能现成不创造——用文件名既有前缀归位，不新建分类维度）；contract/合并入contracts/_meta/消除单复数歧义；删2个txt临时产物；test_code_dedup_engine/去test_前缀。本次迁移明确前缀簇406文件（a2a45/skill58/trae_rules48/kb22/ke4/ct33/fl81/fle15/self22/auto20/audit27/f_lifecycle13/governance10/llm8），剩余1290个_UNMATCHED文件待后续session接续（按前缀细化或逐文件归位）。
-  fix_phase: 进行中（2026-06-30~2026-07-01，两个session治本：session1完成批次0+1 commit 68605272 登记本议题+contract/合并到contracts/_meta/+test_code_dedup_engine/去test_前缀；ARCH-030 commit 66b381a9+58c72855 gateway delete bug修复+登记；批次2-15 commit 421c8c31 14簇迁移406文件+DCR gate阈值修复。session2完成批次16 commit fffdb76b e+context+cross 86文件；批次17 commit d530f38f rollback+safety+escalation 54文件；批次18 commit 92e54ae0 agent+config+blueprint+budget 48文件；批次19 commit a7e1e90e drift+ba+model+session+knowledge 51文件；批次20 commit c600435d 43个小簇290文件。累计迁移937/1699文件(55.2%)，84个子目录。pytest验证 3628+4473 tests collected 无回归（4预存import errors非本次引入）。剩余762文件（零散前缀384+单前缀324+无前缀54）待后续session按前缀细化或逐文件归位）
+  fix_phase: 扁平迁移完成（2026-06-30~2026-07-01，三个session治本：session1完成批次0+1 commit 68605272 登记本议题+contract/合并到contracts/_meta/+test_code_dedup_engine/去test_前缀；ARCH-030 commit 66b381a9+58c72855 gateway delete bug修复+登记；批次2-15 commit 421c8c31 14簇迁移406文件+DCR gate阈值修复。session2完成批次16-20 累计迁移937/1699文件(55.2%)。session3完成路线B全量治本：批次1 commit 6fc3c755 迁移471文件(governance/feedback/audit/llm_security)；批次2 commit 218a870a 迁移291文件(34个功能域子目录)。累计迁移1699/1699文件(100%)，tests/根目录扁平test_*.py清零。分类方法：AST import自动匹配533+AI语义分析229(BLUEPRINT优先)。pytest收集机制确认安全(rootdir模式，testpaths=["tests"]，无需__init__.py)。剩余议题：(1)维度混合未清理(tests/下仍有unit/e2e/adversarial等测试类型维度目录，与§7 L271"不混入测试类型维度"冲突)；(2)漂移源validate_test_directory_structure.py与§7冲突+虚假引用GOV-DOC-002，待删除；(3)blueprint_construction_template.md §11按pkg vs §7按功能域轻微漂移，待修正）
   status: open
   related_rules:
   - TRAE-060
   created: '2026-06-30'
-  last_updated: '2026-06-30'
+  last_updated: '2026-07-01'
 - issue_id: '#ARCH-030'
   title: GitCommitGateway对staged/unstaged delete文件的git add bug（pathspec did not match）
   severity: P1高
@@ -241,6 +241,45 @@ entries:
     关联：ARCH-029 tests/目录治理的必要前置（delete 文件清理依赖此修复）。
   fix_phase: 已完成（2026-06-30，commit 66b381a9：修复 _commit_locked 分离 existing/deleted + 清理3个delete文件）
   status: resolved
+  related_rules:
+  - TRAE-060
+  created: '2026-06-30'
+  last_updated: '2026-06-30'
+- issue_id: '#ARCH-035'
+  title: access_control 目录形态向内收治理（后缀簇归位 + 死代码清理 + 蓝图治本）
+  severity: P1高
+  adjudication: |
+    trae_060 §2 L117 + §4 治本。阶段1（commit 448fff72+f1285cb6）：29文件后缀簇归位
+    guards/verifiers/detectors/ + 89文件168处import更新 + 4个governance_bridges ghost stub
+    删除。阶段2治本补完（本次）：(1)删除__init__.py的__getattr__+_MOVED_MODULES零消费者
+    死代码（trae_060 §2 L117命中，Grep旧路径0匹配）；(2)修复__init__.py元数据自相矛盾
+    （L1 evolving/L/ai_modifiable vs L7-9 frozen/H/immutable_core）+docstring自指；(3)修复
+    conftest.py路径劫持（_ensure_stub/spec_from_file_location从phantom path agent-rbac/
+    加载）改用Python正常import；(4)修复蓝图三重路径分裂（L3/L18/L61统一为实际磁盘路径
+    src/zephyr/security/access_control/）+§0.1诚实化（30 stub标记为stub pending ARCH-036）；
+    (5)合并governance_bridges/单文件子目录到root（原则①能合并就合并）；(6)30个ghost stub
+    元数据诚实化（[MATURITY] production→stub）+42消费者测试xfail（ARCH-036前置止血）。
+  fix_phase: 阶段2治本补完（2026-06-30，P0删除死代码+修复conftest+补注册；P1蓝图治本+
+  合并governance_bridges；P2 30stub诚实化+注册ARCH-036）
+  status: decided
+  related_rules:
+  - TRAE-060
+  - TRAE-028
+  created: '2026-06-30'
+  last_updated: '2026-06-30'
+- issue_id: '#ARCH-036'
+  title: 30 个 access_control ghost stub 文件删除/实现裁定 + 12 个 pre-existing TDD 失配测试修复
+  severity: P1高
+  adjudication: |
+    ARCH-035 前置止血后的独立议题。30个ghost stub文件（[MATURITY] stub标记后）的元问题
+    裁定：逐个评估该不该存在/能否删除/能否合并进已有功能。42个消费者（41测试+
+    phase_check_registry.py:718生产代码依赖DependencyAuditor）等待实现或删除决策。
+    12个pre-existing TDD失配测试（PermissionResult缺requires_owner_review/audit_context
+    字段，auto_guard_timeout默认值不符；RBACAuditBridge.check_and_log()不存在）需同步
+    修复契约。裁定方向：从第一性原理审查每个stub的元问题——100%AI开发场景下多造一个=
+    多一份漂移源，优先删除/合并，实现仅限确有存在价值者。
+  fix_phase: 待立项（ARCH-035 P2止血完成后启动）
+  status: open
   related_rules:
   - TRAE-060
   created: '2026-06-30'
