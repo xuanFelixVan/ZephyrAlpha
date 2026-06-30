@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-06-30T08:48:50Z'
+generated_at: '2026-06-30T09:00:49Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml
-total_gates: 41
+total_gates: 29
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -44,15 +44,6 @@ gates:
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-DOC-REF
-  name: 'GATE-DOC-REF: 文档引用完整性（断链/幽灵引用）'
-  entry: python scripts/governance/d2_links/audit_broken_links.py
-  description: 检测 staged 文件中的断链与幽灵引用（markdown 链接 + 纯文本路径 + CSV/YAML + GAP-2/3/4 语义引用），--ci
-    硬阻断 + --check-new 历史豁免（仅阻断新引入断链）
-  files_trigger: ^.*\.(md|csv|yaml|yml|json)$
-  always_run: false
-  category: unknown
-  status: active
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）'
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
@@ -78,21 +69,25 @@ gates:
   always_run: false
   category: blueprint_overlap
   status: active
-- gate_id: GATE-15
-  name: 'GATE-15: Frontmatter ttl 校验（增量）'
-  entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
-  description: 'Frontmatter ttl（必填+合法值，hard block）+ doc_type（必填+合法值，默认 warn-only）校验，从
-    ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载。capability: frontmatter_metadata_validation'
-  files_trigger: ^docs/.*\.md$
+- gate_id: GATE-FRONTMATTER
+  name: 'GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_frontmatter_metadata.py,--ci
+    scripts/governance/d3_metadata/validate_rule_frontmatter.py scripts/governance/d5_architecture/validators/validate_ssot.py,--ci
+    scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
+  description: 文档前置元数据合并门禁——GATE-15(ttl全量) + RULE-FM(规则frontmatter) + SSOT-DOCS(SSoT)
+    + DOC-REF(断链，传.全项目)，run_gate_chain 顺序执行。GATE-C1 已删除（脚本归档，status 由 validate_ssot.py
+    覆盖）
+  files_trigger: ^.*\.(md|csv|yaml|yml|json)$
   always_run: false
-  category: frontmatter_metadata
+  category: unknown
   status: active
 - gate_id: GATE-VOCAB
-  name: 'GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）'
-  entry: python scripts/governance/d3_metadata/check_vocab_hardcode.py
-  description: AST 扫描 src/zephyr/ + scripts/ 下 .py 词表合法值硬编码（VALID_*_VALUES 字面量集合=造第二真源=漂移），--ci
-    硬阻断。trae_060 §2 强制执行层
-  files_trigger: ^(src/zephyr/.*\.py|scripts/.*\.py)$
+  name: 'GATE-VOCAB: 词表门禁合并（GATE-VOCAB-HARDCODE + GATE-GENERATE）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_vocab_hardcode.py,--ci
+    scripts/governance/d3_metadata/generate_derived_files.py,--check
+  description: 词表门禁合并——GATE-VOCAB-HARDCODE(.py 硬编码检测) + GATE-GENERATE(.yaml 派生文件一致性)，run_gate_chain
+    顺序执行
+  files_trigger: ^(src/zephyr/.*\.py|scripts/.*\.py|docs/01_policies_and_standards/_registry/vocabularies/.*\.yaml)$
   always_run: false
   category: unknown
   status: active
@@ -152,64 +147,33 @@ gates:
   always_run: false
   category: zero_residue
   status: active
-- gate_id: GATE-SSOT
-  name: 'GATE-SSOT: SSoT 创建门禁（module_path 冲突检测）'
-  entry: python scripts/governance/check_ssot_gate.py
-  description: SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过
-    capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险
+- gate_id: GATE-SSOT-CODE
+  name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py
+    scripts/governance/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
+  description: 代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export
+    shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行
   files_trigger: ^(src/zephyr/|scripts/).*\.py$
-  always_run: false
-  category: ssot_guard
-  status: active
-- gate_id: GATE-SSOT-SINGLESOURCE
-  name: 'GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（文件名级别检测）'
-  entry: python scripts/governance/check_module_singlesource.py --check
-  description: Phase 7 治本门禁——扫描 src/zephyr/ 全量 .py，检测受保护文件名（exam_orchestrator/exam_test_cases/capability_passport/exam_judge/exam_rubric/exam_executor）是否出现在非声明
-    SSoT 路径（src/zephyr/intelligence/model_profiling/）下。基于文件名检测，覆盖 GATE-SSOT 的无 [MODULE]
-    header 盲区
-  files_trigger: ^src/zephyr/.*\.py$
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-18
-  name: 'GATE-18: 测试收集门禁（源码-测试同步铁律）'
-  entry: python -B -m pytest tests/ --collect-only -q --tb=line -p no:cacheprovider
-    -m "not slow and not e2e"
-  description: 源码或测试文件变更时强制验证测试能正常收集（排除 slow/e2e），AGENTS.md §4 源码-测试同步铁律自动化执行层。多AI并发优化：改为按文件触发，避免always_run卡死
+- gate_id: GATE-TEST
+  name: 'GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）'
+  entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:cacheprovider,-m,"not
+    slow and not e2e" scripts/governance/check_test_structure.py
+  description: 测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) +
+    GATE-19(测试结构合规)，run_gate_chain 顺序执行
   files_trigger: ^src/zephyr/.*\.py$|^tests/.*\.py$
-  always_run: false
-  category: test_collection
-  status: active
-- gate_id: GATE-19
-  name: 'GATE-19: 测试结构合规门禁（防脚本伪装测试）'
-  entry: python scripts/governance/check_test_structure.py
-  description: test_*.py 必须含 def test_*（ERROR）；模块级副作用仅 WARN。8个既有文件豁免中。
-  files_trigger: ^tests/.*\.py$
-  always_run: false
-  category: static_manifest_drift
-  status: active
-- gate_id: GATE-SSOT-DOCS
-  name: 'GATE-SSOT-DOCS: SSoT 唯一真源门禁（KBG-0001/0021 强制执行）'
-  entry: python scripts/governance/d5_architecture/validators/validate_ssot.py
-  description: ''
-  files_trigger: ^docs/.*\.md$
   always_run: false
   category: unknown
   status: active
 - gate_id: GATE-REG-BL
-  name: 'GATE-REG-BL: 注册审计基线差分（L4 止血）'
-  entry: python scripts/governance/audit_registration.py --incremental --baseline-aware
-  description: 增量注册审计——仅 NEW 孤儿阻断（PERSISTENT 存量不阻断），对标 RULE-TWO 防线 2 + anti_hallucination
-    W2-T1
-  files_trigger: ^(src/zephyr/.*\.py|scripts/governance/.*\.py|scripts/governance/script_manifest\.yaml)$
-  always_run: false
-  category: unknown
-  status: active
-- gate_id: GATE-RULE-FM
-  name: 'GATE-RULE-FM: 规则文件 frontmatter 标准字段校验'
-  entry: python scripts/governance/d3_metadata/validate_rule_frontmatter.py
-  description: ''
-  files_trigger: ^docs/01_policies_and_standards/rules/trae_.*\.yaml$
+  name: 'GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/audit_registration.py,--incremental,--baseline-aware
+    scripts/governance/d1_structure/validate_index_reality.py,--ci
+  description: 注册基线合并门禁——GATE-REG-BL(注册审计基线差分) + GATE-IDX(索引-实际同步)，run_gate_chain
+    顺序执行
+  files_trigger: ^(src/zephyr/.*\.py|scripts/governance/.*\.py|scripts/governance/(script_manifest\.yaml|index\.md))$
   always_run: false
   category: unknown
   status: active
@@ -222,14 +186,15 @@ gates:
   always_run: false
   category: blueprint_placement
   status: active
-- gate_id: GATE-SQ
-  name: 'GATE-SQ: 审计脚本质量门禁（D-D-07/D-D-08 强制执行）'
-  entry: python scripts/governance/d11_compliance/validate_script_quality.py
-  description: 审计脚本八维度质量检查（编码安全/退出码/_shared API重复/os.walk绕过），warn-only骨架阶段，AGENTS.md
-    §8.2.1 强制执行层
+- gate_id: GATE-SCRIPT-Q
+  name: 'GATE-SCRIPT-Q: 脚本质量合并门禁（GATE-SQ + GATE-DD07）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/validate_script_quality.py,--scripts-dir,scripts/governance,--warn-only
+    scripts/governance/d11_compliance/fix_shared_bypass.py,--ci
+  description: 脚本质量合并门禁——GATE-SQ(八维度质量 warn-only) + GATE-DD07(_shared API 本地重定义)，run_gate_chain
+    顺序执行
   files_trigger: ^scripts/governance/.*\.py$
   always_run: false
-  category: script_quality
+  category: unknown
   status: active
 - gate_id: GATE-ADM
   name: 'GATE-ADM: Manifest 准入控制器（K8s Admission落地）'
@@ -238,33 +203,6 @@ gates:
   files_trigger: ^scripts/governance/script_manifest\.yaml$
   always_run: false
   category: manifest_admission
-  status: active
-- gate_id: GATE-IDX
-  name: 'GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 落地）'
-  entry: python scripts/governance/d1_structure/validate_index_reality.py
-  description: index.md声称脚本数 vs 磁盘实际 .py 文件数对账（AGENTS.md §6.11 CMDB reconciliation
-    自动化执行层），骨架阶段 warn-only
-  files_trigger: ^scripts/governance/(index\.md|script_manifest\.yaml)$
-  always_run: false
-  category: index_sync
-  status: active
-- gate_id: GATE-DD07
-  name: 'GATE-DD07: _shared API 本地重定义检测（D-D-07）'
-  entry: python scripts/governance/d11_compliance/fix_shared_bypass.py
-  description: AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py
-    --fix
-  files_trigger: ^scripts/governance/.*\.py$
-  always_run: false
-  category: dedup_gate
-  status: active
-- gate_id: GATE-NO-PURE-SHIM
-  name: 'GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（防 proxy 层重建）'
-  entry: python scripts/governance/d7_code/check_pure_shim.py
-  description: AST 检测纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码），防止新
-    AI 重建 proxy 层重蹈 shared_08 覆辙
-  files_trigger: ^src/zephyr/.*\.py$
-  always_run: false
-  category: unknown
   status: active
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.16）'
@@ -283,23 +221,6 @@ gates:
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-GENERATE
-  name: 'GATE-GENERATE: vocabulary YAML → 派生文件一致性'
-  entry: python scripts/governance/d3_metadata/generate_derived_files.py
-  description: vocabulary YAML 变更时校验派生文件一致性（硬阻断）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入
-  files_trigger: ^docs/01_policies_and_standards/_registry/vocabularies/.*\.yaml$
-  always_run: false
-  category: unknown
-  status: active
-- gate_id: GATE-SCHEMA-HEALTH
-  name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度校验'
-  entry: python scripts/governance/verify_schema_health.py
-  description: 'depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
-    治本'
-  files_trigger: ^(src/zephyr/governance/depgraph_schema\.py|scripts/governance/sync_yaml_to_depgraph\.py|scripts/governance/verify_schema_health\.py)$
-  always_run: false
-  category: unknown
-  status: active
 - gate_id: GATE-22
   name: 'GATE-22: AI加载路径完整性（§6.18）'
   entry: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
@@ -307,14 +228,6 @@ gates:
   files_trigger: ^AGENTS\.md$
   always_run: false
   category: load_path_integrity
-  status: active
-- gate_id: GATE-C1
-  name: 'GATE-C1: SSoT status 字段枚举白名单'
-  entry: python scripts/governance/d3_metadata/validate_ssot_status.py
-  description: SSoT frontmatter status 枚举白名单——阻止 illusion/placeholder_c_track 等非法值，大小写告警不阻断
-  files_trigger: ^docs/.*\.md$
-  always_run: false
-  category: ssot_status
   status: active
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
@@ -325,21 +238,15 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-C2
-  name: 'GATE-C2: 契约-代码双写漂移阻断'
-  entry: python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
-  description: YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线
-  files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/).*
+  name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci
+    scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci
+    scripts/governance/verify_schema_health.py,--ci
+  description: 契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录)
+    + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，manual 阶段
+  files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(sync_yaml_to_depgraph|verify_schema_health)\.py)$
   always_run: false
   category: contract_drift
-  status: active
-- gate_id: GATE-CONTRACT-PHYSICAL-PATH
-  name: 'GATE-CONTRACT-PHYSICAL-PATH: 契约 physical_path 连字符目录阻断'
-  entry: python scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
-  description: 检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python
-    无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束
-  files_trigger: ^architecture_model/contracts/cross_layer_contracts\.yaml$
-  always_run: false
-  category: unknown
   status: active
 - gate_id: GATE-ENCODING
   name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'

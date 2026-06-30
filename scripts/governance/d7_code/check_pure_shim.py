@@ -62,7 +62,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args:
@@ -161,8 +161,10 @@ def main(argv: list[str] | None = None) -> int:
     files = [a for a in args if not a.startswith("--")]
 
     if not files:
-        # 无文件传入时不阻断（pre-commit 未触发）
-        return EXIT_PASS
+        # 无文件传入时全量扫描 src/zephyr/ 下 .py（run_gate_chain 合并模式 / 手动全量审计）
+        files = [str(p.relative_to(REPO_ROOT)) for p in (REPO_ROOT / "src" / "zephyr").rglob("*.py")]
+        if not files:
+            return EXIT_PASS
 
     findings: list[str] = []
 

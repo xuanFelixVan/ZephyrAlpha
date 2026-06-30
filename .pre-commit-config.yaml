@@ -177,26 +177,7 @@ repos:
         files: "^(AGENTS\\.md|scripts/governance/)"
         description: "C 层兜底：校验 RULES_MANIFEST 受保护文件 golden hash（A 层 gateway AST 锚点为主防线）"
 
-      # ── GATE-DOC-REF: 文档引用完整性校验（断链/幽灵引用检测）──
-      # 治本背景（2026-06-29）：调研发现 AI 在 .md/.csv/.yaml 中编造虚假文件引用
-      # （如 dom_gov_001 虚假审计闭环：index.md 列 22 张不存在的任务卡，
-      #   move_plan.csv 引用 4 个不存在的文件，形成自审自闭环）
-      # 检测范围：staged 的 .md/.csv/.yaml/.yml/.json 文件
-      # 检测内容：markdown 链接 [text](target) + 纯文本路径 + CSV 列值 + YAML 值
-      #           + GAP-2 frontmatter blueprint_id + GAP-3 index.md 清单 + GAP-4 audit_report 审计对象
-      # 路径解析：三重尝试（文件相对 + 项目根相对 + basename 全局兜底）
-      #           GAP-3 index.md 禁 basename 兜底（本目录契约语义）
-      # 模式：--ci 硬阻断 + --check-new 历史豁免（仅阻断新引入断链，参考 N-16 模式）
-      # 真源：scripts/governance/d2_links/audit_broken_links.py
-      - id: gate-doc-ref
-        name: "GATE-DOC-REF: 文档引用完整性（断链/幽灵引用）"
-        entry: python scripts/governance/d2_links/audit_broken_links.py
-        args: ["--ci", "--check-new"]
-        language: system
-        pass_filenames: true
-        always_run: false
-        files: "^.*\\.(md|csv|yaml|yml|json)$"
-        description: "检测 staged 文件中的断链与幽灵引用（markdown 链接 + 纯文本路径 + CSV/YAML + GAP-2/3/4 语义引用），--ci 硬阻断 + --check-new 历史豁免（仅阻断新引入断链）"
+      # ── GATE-DOC-REF 已合并到 GATE-FRONTMATTER（见上 gate-frontmatter）──
 
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
@@ -260,44 +241,38 @@ repos:
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
 
-      # ── GATE-15: Frontmatter ttl 校验（ttl_vocabulary.yaml v2.0.0）──
-      # 权威依据：docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
-      # 脚本能力范围：.md/.py/.sh/.ps1/.mmd/.yaml/.json 全格式（有头部则校验 ttl，trae_047 v1.2.0 全格式加 ttl）
-      # hook 触发范围：仅 docs/ 下的 .md（受下方 files 字段限制，性能优先；src/scripts/tests 的代码文件
-      #   ttl 校验靠全量审计 `--all-files` 命令手动触发，或 CI 全量扫描）
-      # 校验内容：ttl 字段存在 + ttl 值合法（2 种合法值从 ttl_vocabulary.yaml 动态加载）
-      # 模式：增量校验（pass_filenames=true，只校验本次 commit 触发的 docs/*.md）；AI 创建无 ttl 文档时 commit 被阻断
-      # 全量审计：python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
-      # 架构缺口（2026-06-30 审计）：GitCommitGateway 已删除 _check_frontmatter_ttl 且未注册 ttl gate，
-      #   gateway 路径（--no-verify）下 ttl 校验失效，当前真源唯一在本 pre-commit hook
-      - id: gate-15-frontmatter-metadata
-        name: "GATE-15: Frontmatter ttl 校验（增量）"
-        entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: true
-        always_run: false
-        files: "^docs/.*\\.md$"
-        description: "Frontmatter ttl（必填+合法值，hard block）+ doc_type（必填+合法值，默认 warn-only）校验，从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载。capability: frontmatter_metadata_validation"
-
-      # ── GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2 强制执行层）──
-      # 权威依据：docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml §2
-      # 真源声明：trae_060 §2 唯一真源与直接消费——YAML 词表是规则数据唯一真源，.py 必须 yaml.safe_load 动态加载
-      # 检测范围：src/zephyr/ 与 scripts/ 下 .py 文件
-      # 检测内容：AST 扫描 VALID_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS 等变量赋值为字面量集合 → 造第二真源嫌疑；
-      #           load_vocabulary_values("xxx.yaml") 引用文件存在性校验
-      # 例外：DDL 文件白名单（sqlite_schema.py / depgraph_schema.py / audit_post_sync_commands.py，走 DDL-as-Code 协议）；
-      #       行尾 `# noqa: gate-vocab` 内联豁免；_archive 排除
-      # 模式：--ci 硬阻断（2026-06-26 违规清零，转 --ci，新硬编码提交将被阻断）
-      - id: gate-vocab-hardcode
-        name: "GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）"
-        entry: python scripts/governance/d3_metadata/check_vocab_hardcode.py
-        args: ["--ci"]
+      # ── GATE-FRONTMATTER: 文档前置元数据合并门禁（原 GATE-15 + RULE-FM + SSOT-DOCS + DOC-REF 四合一）──
+      # 合并说明：4 个文档 frontmatter/引用门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① check_frontmatter_metadata.py --ci（ttl+doc_type，无参数全量扫描 docs/+src/+scripts/+tests/）
+      #           ② validate_rule_frontmatter.py（规则文件 frontmatter 7 标准字段，自扫 RULES_DIR）
+      #           ③ validate_ssot.py --ci（SSoT 唯一真源 P0/P1/P2，自扫 docs/）
+      #           ④ audit_broken_links.py --ci --check-new .（断链/幽灵引用，传 . 全项目扫描）
+      # 行为变化：原 GATE-15 pass_filenames=true（增量 docs/*.md），合并后 pass_filenames=false 全量扫描（检测增强）。
+      # GATE-C1（status 枚举）已删除——脚本 validate_ssot_status.py 已归档（scripts/_archive/），
+      #           status 校验由 validate_ssot.py（VALID_DOCUMENT_STATUSES）覆盖，检测能力不丢失。
+      - id: gate-frontmatter
+        name: "GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_frontmatter_metadata.py,--ci scripts/governance/d3_metadata/validate_rule_frontmatter.py scripts/governance/d5_architecture/validators/validate_ssot.py,--ci scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(src/zephyr/.*\\.py|scripts/.*\\.py)$"
-        description: "AST 扫描 src/zephyr/ + scripts/ 下 .py 词表合法值硬编码（VALID_*_VALUES 字面量集合=造第二真源=漂移），--ci 硬阻断。trae_060 §2 强制执行层"
+        files: "^.*\\.(md|csv|yaml|yml|json)$"
+        description: "文档前置元数据合并门禁——GATE-15(ttl全量) + RULE-FM(规则frontmatter) + SSOT-DOCS(SSoT) + DOC-REF(断链，传.全项目)，run_gate_chain 顺序执行。GATE-C1 已删除（脚本归档，status 由 validate_ssot.py 覆盖）"
+
+      # ── GATE-VOCAB: 词表门禁合并簇（原 GATE-VOCAB-HARDCODE + GATE-GENERATE 二合一）──
+      # 合并说明：2 个词表门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① check_vocab_hardcode.py --ci（.py 词表合法值硬编码检测）
+      #           ② generate_derived_files.py --check（vocabulary YAML → 派生文件一致性）
+      # 行为变化：原 GATE-VOCAB-HARDCODE files=src/scripts .py，GATE-GENERATE files=vocabularies .yaml；
+      #           合并后 files 覆盖两者，pass_filenames=false，两脚本各自自扫描，检测能力不变。
+      - id: gate-vocab
+        name: "GATE-VOCAB: 词表门禁合并（GATE-VOCAB-HARDCODE + GATE-GENERATE）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_vocab_hardcode.py,--ci scripts/governance/d3_metadata/generate_derived_files.py,--check
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/.*\\.py|scripts/.*\\.py|docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml)$"
+        description: "词表门禁合并——GATE-VOCAB-HARDCODE(.py 硬编码检测) + GATE-GENERATE(.yaml 派生文件一致性)，run_gate_chain 顺序执行"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
@@ -410,41 +385,24 @@ repos:
         files: "\\.(py|yaml|md)$"
         description: "零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库。多AI并发优化：改为按文件触发，避免always_run卡死"
 
-      # ── GATE-SSOT: SSoT 创建门禁（方案 E：零新真源，复用 [MODULE] 头）──
-      # 权威依据：方案 E 裁定（第一性原理推导）+ RULE-FOUR 创建即注册
-      # 检测范围：src/zephyr/**/*.py 变更时触发
-      # 检测内容：staged 新增 .py 文件的 [MODULE] 头声明的 module_path 与已有文件冲突
-      # 模式：硬阻断（exit 1=BLOCK）——发现 module_path 冲突时拒绝提交
-      # 双保险：GitCommitGateway.commit() 内嵌 _check_ssot_canonical 是主防线
-      #         （GitCommitGateway 用 --no-verify 绕过 pre-commit）
-      #         本 hook 拦截不用 GitCommitGateway 而直接 git commit 的场景
-      - id: gate-ssot
-        name: "GATE-SSOT: SSoT 创建门禁（module_path 冲突检测）"
-        entry: python scripts/governance/check_ssot_gate.py
+      # ── GATE-SSOT-CODE: 代码 SSoT 合并门禁（原 GATE-SSOT + SSOT-SINGLESOURCE + NO-PURE-SHIM 三合一）──
+      # 合并说明：3 个代码 SSoT 门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① check_ssot_gate.py（[MODULE] 头 module_path 冲突检测，自扫描 src/scripts）
+      #           ② check_module_singlesource.py --check（受保护文件名级别检测，自扫描 src/zephyr/）
+      #           ③ check_pure_shim.py --ci（纯 re-export shim 检测，无参数全量扫描 src/zephyr/）
+      # 行为变化：原 GATE-NO-PURE-SHIM pass_filenames=true（增量），合并后 check_pure_shim.py 无参数全量扫描（检测增强）。
+      #           原 GATE-SSOT/SINGLESOURCE 均 pass_filenames=false 自扫描，合并后等价。
+      - id: gate-ssot-code
+        name: "GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py scripts/governance/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
         language: system
         pass_filenames: false
         always_run: false
-        # 治本（2026-06-30 第1波任务3）：扩展触发范围到 scripts/——
-        # 原仅 ^src/zephyr/.*\.py$ 漏检 scripts/ 下新增 .py，与 check_ssot_gate.py
-        # 内 startswith(("src/zephyr/", "scripts/")) 同步，覆盖两大 .py 主目录
         files: "^(src/zephyr/|scripts/).*\\.py$"
         stages: [commit]
-        description: "SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过 capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险"
+        description: "代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行"
 
-      # ── GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）──
-      # 病根：v5 调研——7 副本正是 AI「不搜索就新生成」的产物
-      # 检测：受保护文件名（exam_orchestrator 等）在非声明 SSoT 路径下出现 → exit 1
-      # 与 GATE-SSOT 区别：GATE-SSOT 基于 [MODULE] header module_path，本钩子基于文件名
-      # 覆盖盲区：无 [MODULE] header 的副本文件
-      - id: gate-ssot-singlesource
-        name: "GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（文件名级别检测）"
-        entry: python scripts/governance/check_module_singlesource.py --check
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^src/zephyr/.*\\.py$"
-        stages: [commit]
-        description: "Phase 7 治本门禁——扫描 src/zephyr/ 全量 .py，检测受保护文件名（exam_orchestrator/exam_test_cases/capability_passport/exam_judge/exam_rubric/exam_executor）是否出现在非声明 SSoT 路径（src/zephyr/intelligence/model_profiling/）下。基于文件名检测，覆盖 GATE-SSOT 的无 [MODULE] header 盲区"
+      # ── GATE-SSOT-SINGLESOURCE 已合并到 GATE-SSOT-CODE（见上 gate-ssot-code）──
 
       # ── GATE-TEST: 测试门禁合并簇（原 GATE-18 + GATE-19 二合一）──
       # 合并说明：2 个测试门禁合并为单 hook，run_gate_chain 顺序执行：
@@ -460,50 +418,23 @@ repos:
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
         description: "测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) + GATE-19(测试结构合规)，run_gate_chain 顺序执行"
 
-      # ── GATE-SSOT: SSoT 唯一真源门禁（KBG-0001 + KBG-0021 强制执行层）──
-      # 权威依据：KBG-0001（docs/ 为唯一 canonical 真源）+ KBG-0021（三级违规分级 + Phase 0 强制门禁）
-      #  真源声明：Session 20260417 + 20260424 KB 决策记录拍板
-      # 检测范围：docs/ 下所有 .md 文件变更时触发
-      # 检测内容：P0（layer 无效 / module_id 重复活跃 / 死链 / 命名冲突）+ P1（status 漂移 / version 倒挂）+ P2（其他）
-      # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交），与 KBG-0021 §4.2 三级违规分级对齐
-      - id: gate-ssot-docs
-        name: "GATE-SSOT-DOCS: SSoT 唯一真源门禁（KBG-0001/0021 强制执行）"
-        entry: python scripts/governance/d5_architecture/validators/validate_ssot.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/.*\\.md$"
+      # ── GATE-SSOT-DOCS 已合并到 GATE-FRONTMATTER（见上 gate-frontmatter）──
 
-      # ── GATE-REG-BL: 注册审计基线差分（L4 止血 — 仅 NEW 孤儿阻断）──
-      # 权威依据：anti_hallucination 报告 W2-T1 + RULE-TWO 反孤儿防线 2
-      # 真源声明：2026-06-26 Wave 2 接线——audit_registration.py --baseline-aware 代码已存在但无触发者
-      # 检测范围：src/zephyr/ + scripts/governance/ 下 .py 变更 + 关键注册表 .yaml 变更时触发
-      # 检测内容：--incremental --baseline-aware → 仅变更新引入的 NEW 孤儿阻断(exit 1)
-      #           存量 PERSISTENT 孤儿不阻断(exit 0)；基线须先 --save-baseline 初始化（已入库）
-      # 模式：硬阻断（NEW 孤儿 exit 1）；基线文件 audit_registration_baseline.jsonl 已入库
-      - id: gate-reg-bl-baseline-aware
-        name: "GATE-REG-BL: 注册审计基线差分（L4 止血）"
-        entry: python scripts/governance/audit_registration.py --incremental --baseline-aware
+      # ── GATE-REG-BL: 注册基线合并门禁（原 GATE-REG-BL + GATE-IDX 二合一）──
+      # 合并说明：2 个注册/索引门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① audit_registration.py --incremental --baseline-aware（注册审计基线差分）
+      #           ② validate_index_reality.py --ci（索引-实际同步校验）
+      # 行为变化：原两 hook 均 pass_filenames=false 自扫描，合并后 files 覆盖 src/scripts .py + manifest + index.md。
+      - id: gate-reg-bl
+        name: "GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/audit_registration.py,--incremental,--baseline-aware scripts/governance/d1_structure/validate_index_reality.py,--ci
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(src/zephyr/.*\\.py|scripts/governance/.*\\.py|scripts/governance/script_manifest\\.yaml)$"
-        description: "增量注册审计——仅 NEW 孤儿阻断（PERSISTENT 存量不阻断），对标 RULE-TWO 防线 2 + anti_hallucination W2-T1"
+        files: "^(src/zephyr/.*\\.py|scripts/governance/.*\\.py|scripts/governance/(script_manifest\\.yaml|index\\.md))$"
+        description: "注册基线合并门禁——GATE-REG-BL(注册审计基线差分) + GATE-IDX(索引-实际同步)，run_gate_chain 顺序执行"
 
-      # ── GATE-RULE-FM: 规则文件 frontmatter 标准字段校验门禁 ──
-      # 权威依据：trae_043 元数据四域架构 + scaffold.py rule 模式标准模板
-      # 创建日期：2026-06-22（规则YAML frontmatter 统一升级驱动）
-      # 检测范围：docs/01_policies_and_standards/rules/ 下所有 trae_*.yaml 文件变更时触发
-      # 检测内容：DIM-1(11必填字段存在性) + DIM-2(字段顺序) + DIM-3(枚举值合法性) + DIM-4(rule_id与文件名一致性)
-      # 模式：硬阻断（任一FAIL exit(1) 拒绝提交），配合 scaffold.py rule 模式双重保险
-      - id: gate-rule-frontmatter
-        name: "GATE-RULE-FM: 规则文件 frontmatter 标准字段校验"
-        entry: python scripts/governance/d3_metadata/validate_rule_frontmatter.py
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/01_policies_and_standards/rules/trae_.*\\.yaml$"
+      # ── GATE-RULE-FM 已合并到 GATE-FRONTMATTER（见上 gate-frontmatter）──
 
       # ── GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 §4+§6 强制执行层）──
       # 权威依据：PS-STD-005 §4（目录结构规范）+ §6（belongs_to MUST）
@@ -553,38 +484,11 @@ repos:
         files: "^scripts/governance/script_manifest\\.yaml$"
         description: "新脚本 Manifest 准入审核（git diff 检测新条目→质量扫描→违规拒绝准入），AGENTS.md §6.5 准入控制器落地"
 
-      # ── GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 自动化执行层）──
-      # 权威依据：AGENTS.md §6.11（索引-实际同步强制约定——index.md声称数字必须与磁盘实际一致）
-      # 真源声明：Session 20260502-007 索引漂移 → 新建 validate_index_reality.py → 接入 pre-commit
-      # 检测范围：index.md 或 script-manifest.yaml 变更时触发
-      # 检测内容：各维度声称脚本数 vs 磁盘实际 .py 文件数 / 声称 manifest 条目数 vs 实际
-      # 模式：第一次上线用 warn-only（骨架阶段），验证稳定后转硬阻断
-      - id: gate-idx-index-reality
-        name: "GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 落地）"
-        entry: python scripts/governance/d1_structure/validate_index_reality.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^scripts/governance/(index\\.md|script_manifest\\.yaml)$"
-        description: "index.md声称脚本数 vs 磁盘实际 .py 文件数对账（AGENTS.md §6.11 CMDB reconciliation 自动化执行层），骨架阶段 warn-only"
+      # ── GATE-IDX 已合并到 GATE-REG-BL（见上 gate-reg-bl）──
 
       # ── GATE-DD07 已合并到 GATE-SCRIPT-Q（见上 gate-script-q）──
 
-      # ── GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（治本漏洞1 2026-06-29）──
-      # 权威依据：AGENTS.md §禁止纯 re-export shim 文件（规则真源——描述"做什么"）
-      # 检测逻辑真源：scripts/governance/d7_code/check_pure_shim.py（代码——描述"怎么做"）
-      # 不在此复述判定标准/病根/例外，避免与 AGENTS.md 和 check_pure_shim.py 分裂
-      - id: gate-no-pure-shim
-        name: "GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（防 proxy 层重建）"
-        entry: python scripts/governance/d7_code/check_pure_shim.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: true
-        always_run: false
-        files: "^src/zephyr/.*\\.py$"
-        stages: [commit]
-        description: "AST 检测纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码），防止新 AI 重建 proxy 层重蹈 shared_08 覆辙"
+      # ── GATE-NO-PURE-SHIM 已合并到 GATE-SSOT-CODE（见上 gate-ssot-code）──
 
       # ── GATE-21: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
       # 权威依据：AGENTS.md §6.16 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
@@ -619,42 +523,13 @@ repos:
         files: "^src/zephyr/.*\\.py$"
         description: "AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。对标 RULE-LSG-001 + COND-30"
 
-      # ── GATE-GENERATE: vocabulary YAML → 派生文件一致性（#ARCH-008 阶段9 / 裁定#206-D）──
-      # 权威依据：vocabulary_sync_chain_repair_plan.md 阶段9 动作44
-      # SSoT：layer_vocabulary.yaml 等是规则数据唯一真源，派生文件（frontmatter_field_registry.yaml /
-      #        architecture_contract.yaml / frontmatter_schema.json）由 generate_derived_files.py 自动同步
-      # 触发条件：vocabulary YAML 变更时自动校验派生文件一致性
-      # 模式：--check 硬阻断（治本 2026-06-30：双向同步+22字段覆盖+sentinel迁移后 0 漂移，转硬阻断）
-      - id: gate-generate-derived
-        name: "GATE-GENERATE: vocabulary YAML → 派生文件一致性"
-        entry: python scripts/governance/d3_metadata/generate_derived_files.py
-        args: ["--check"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
-        description: "vocabulary YAML 变更时校验派生文件一致性（硬阻断）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
+      # ── GATE-GENERATE 已合并到 GATE-VOCAB（见上 gate-vocab）──
 
       # ── GATE-DERIVED 已删除（派生产物已删除，depgraph 是唯一查询入口）──
       # arch_directory_tree 同步已迁移到 GitCommitGateway post-commit reconciler（make_path_tree_reconciler）
       # 比原 pre-commit hook 优势：depgraph 变更自动包含在后续 commit，无 unstaged 死循环副作用
 
-      # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
-      # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6
-      # 真源声明：depgraph_schema.py 是 DDL 真源；DB 物理状态必须与 DDL 声明一致
-      # 检测范围：depgraph_schema.py / sync_yaml_to_depgraph.py / verify_schema_health.py 变更时触发
-      # 检测内容：DDL 列一致性（DB 实际列 vs _DDL_* 声明列）+ 只读触发器存在性 + Schema 版本一致性
-      # 模式：--ci 硬阻断（发现漂移 exit 1）；已知存在 7 处历史 DDL 漂移（v2-v13 累积，非 v14 引入），
-      #       待后续独立任务修复——触发本门禁的 schema 变更必须先清零历史漂移
-      - id: gate-schema-health
-        name: "GATE-SCHEMA-HEALTH: depgraph Schema 健康度校验"
-        entry: python scripts/governance/verify_schema_health.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^(src/zephyr/governance/depgraph_schema\\.py|scripts/governance/sync_yaml_to_depgraph\\.py|scripts/governance/verify_schema_health\\.py)$"
-        description: "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016 治本"
+      # ── GATE-SCHEMA-HEALTH 已合并到 GATE-C2（见上 gate-c2）──
 
       # ── GATE-22: AI加载路径完整性（AGENTS.md §6.18 自动化执行层）──
       # 权威依据：AGENTS.md §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
@@ -691,21 +566,7 @@ repos:
         stages: [post-commit]
         description: "每次 git commit 成功后记录 HEAD 变更清单到 handoff-logs/"
 
-      # ── GATE-C1: SSoT frontmatter status 枚举白名单（盲点 C1 修复）──
-      # 对标：盲点 C1 — SSoT status 大小写系统性脆弱，阻止 illusion/placeholder_c_track 等非法值
-      # 检测范围：docs/**/*.md 变更时触发
-      # 检测内容：提取 frontmatter status 字段 vs 白名单 {Draft,Review,Active,...,Created}
-      # 模式：大小写告警（warn）不阻断，非法值硬块（--ci）
-      - id: gate-c1-ssot-status-enum
-        name: "GATE-C1: SSoT status 字段枚举白名单"
-        entry: python scripts/governance/d3_metadata/validate_ssot_status.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/.*\\.md$"
-        stages: [manual]
-        description: "SSoT frontmatter status 枚举白名单——阻止 illusion/placeholder_c_track 等非法值，大小写告警不阻断"
+      # ── GATE-C1 已删除（脚本 validate_ssot_status.py 已归档至 scripts/_archive/，status 校验由 validate_ssot.py 覆盖）──
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
@@ -722,38 +583,23 @@ repos:
         files: "^(src/zephyr/integration/mcp/tool_contracts\\.yaml|src/zephyr/integration/mcp/.*\\.py)$"
         description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（mod_inf_013 §9 R3 契约漂移缓解）"
 
-      # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
-      # 检测范围：cross_layer_contracts.yaml 或 contracts/*.py 变更时触发
-      # 检测内容：SHA256 快照对比 → YAML 变更但 .py 未同步 → exit 1
-      # 模式：--ci 硬块，首次运行 --freeze 建立基线
-      - id: gate-c2-contract-code-drift
-        name: "GATE-C2: 契约-代码双写漂移阻断"
-        entry: python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
-        args: ["--ci"]
+      # ── GATE-C2: 契约+Schema 合并门禁（原 GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH 三合一）──
+      # 合并说明：3 个契约/Schema 门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① check_contract_code_drift.py --ci（契约-代码双写漂移）
+      #           ② check_contract_physical_path.py --ci（physical_path 连字符目录阻断）
+      #           ③ verify_schema_health.py --ci（depgraph Schema 健康度）
+      # 行为变化：原三 hook 均 pass_filenames=false 自扫描，合并后 files 覆盖三者触发范围，stages: [manual]。
+      - id: gate-c2
+        name: "GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci scripts/governance/verify_schema_health.py,--ci
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(architecture_model/contracts/|src/zephyr/shared/contracts/).*"
-        description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
+        files: "^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\\.py|scripts/governance/(sync_yaml_to_depgraph|verify_schema_health)\\.py)$"
         stages: [manual]
+        description: "契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录) + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，manual 阶段"
 
-      # ── GATE-CONTRACT-PHYSICAL-PATH: 契约 physical_path 连字符目录阻断（SSoT 死代码治本）──
-      # 权威依据：AGENTS.md §CT-TEL-001~004 codegen 死代码治本约束（2026-06-28）
-      # 病根：CT-TEL-001~004 历史 physical_path 指向 src/zephyr/system-telemetry/（连字符目录），
-      #       Python 无法 import 连字符目录名，codegen 产物全是死代码。治本改为 null 后，
-      #       未来 AI 可能"修复" null 为路径让死代码复活。本门禁治本：检测连字符目录即 hard block。
-      # 检测范围：cross_layer_contracts.yaml 变更时触发
-      # 检测内容：physical_path 路径中任何目录段含连字符（不匹配 [a-zA-Z_][a-zA-Z0-9_]*）→ exit 1
-      # 模式：--ci 硬阻断（默认 pre-commit 阶段，非 manual）
-      - id: gate-contract-physical-path
-        name: "GATE-CONTRACT-PHYSICAL-PATH: 契约 physical_path 连字符目录阻断"
-        entry: python scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^architecture_model/contracts/cross_layer_contracts\\.yaml$"
-        description: "检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python 无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束"
+      # ── GATE-CONTRACT-PHYSICAL-PATH 已合并到 GATE-C2（见上 gate-c2）──
 
       # ── GATE-ENCODING: 编码安全+mojibake+BOM检测（合并 GATE-BOM，DM-379 强制执行层）──
       # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
