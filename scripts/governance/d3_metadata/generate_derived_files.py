@@ -3,7 +3,7 @@
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.__init__
 # [CONSUMERS]
-# [STARTUP] manual
+# [STARTUP] event_driven
 # [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
@@ -89,6 +89,23 @@ VOCAB_FIELD_MAP = {
     "rule_form": "rule_form_vocabulary.yaml",
     "ttl": "ttl_vocabulary.yaml",
     "layer": "layer_vocabulary.yaml",
+    "classification": "classification_vocabulary.yaml",
+    "language": "language_vocabulary.yaml",
+    "created_by": "created_by_vocabulary.yaml",
+    "scope": "scope_vocabulary.yaml",
+    "stability": "stability_vocabulary.yaml",
+    "verifiability": "verifiability_vocabulary.yaml",
+    "safety_level": "safety_level_vocabulary.yaml",
+    "evolution_policy": "evolution_policy_vocabulary.yaml",
+    "ai_autonomy": "ai_autonomy_vocabulary.yaml",
+    "governance_family": "governance_family_vocabulary.yaml",
+    "ai_capability_slot": "ai_capability_slot_vocabulary.yaml",
+    "ai_autonomy_level_planned": "ai_autonomy_level_planned_vocabulary.yaml",
+    "review_status": "review_status_vocabulary.yaml",
+    "category": "category_vocabulary.yaml",
+    "domain": "domain_vocabulary.yaml",
+    "header_format": "header_format_vocabulary.yaml",
+    "file_category": "file_category_vocabulary.yaml",
 }
 
 _drifts: list[str] = []
@@ -112,6 +129,39 @@ def _load_vocab_values(vocab_name: str) -> list[str]:
     return list(
         load_vocabulary_values(vocab_file, fallback_key="id", strict=False)
     )
+
+
+def _load_vocab_entries(vocab_name: str) -> list[dict]:
+    """加载 vocabulary YAML 的有效值+定义列表（用于 missing 检测时获取 description）。
+
+    治本（2026-06-30）：双向同步需要词表的 definition 字段来填充 schema.json
+    新增 oneOf+const 项的 description。本函数直接读 YAML 获取 value+definition，
+    不走 ``load_vocabulary_values``（后者只返回 set[str]）。
+
+    Returns:
+        ``[{"value": "frozen", "definition": "冻结——不可修改"}, ...]``
+    """
+    vocab_file = VOCAB_FIELD_MAP.get(vocab_name)
+    if not vocab_file:
+        return []
+    vocab_path = VOCAB_DIR / vocab_file
+    if not vocab_path.exists():
+        return []
+    try:
+        data = yaml.safe_load(vocab_path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return []
+    entries: list[dict] = []
+    for entry in data.get("values", []) or []:
+        if not isinstance(entry, dict):
+            continue
+        val = entry.get("value") or entry.get("id")
+        if val:
+            entries.append({
+                "value": str(val),
+                "definition": str(entry.get("definition", "")),
+            })
+    return entries
 
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
@@ -265,11 +315,15 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
     return changed
 
 
-def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> bool:
+def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -> bool:
     """同步 frontmatter_schema.json 中的 oneOf+const（或 enum）数组
 
     schema_json 中 enum 可能是字符串数组或带描述的对象数组，
     oneOf+const 用于更结构化的枚举定义，需要正确提取当前值进行比对。
+
+    治本（2026-06-30）：双向同步——除了检测 extra（schema 多出的值），
+    还检测 missing（词表有但 schema 缺失的值）。--apply 时从词表 definition
+    填充新增 oneOf+const 项的 description，保证 schema 完整性。
     """
     if not SCHEMA_JSON_PATH.exists():
         return False
@@ -301,7 +355,8 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
                 if val:
                     current_set.add(str(val))
 
-    vocab_set = set(vocab_values)
+    vocab_set = set(e["value"] for e in vocab_entries)
+    # ── extra 检测：schema 多出的值（不在词表中）──
     extra = current_set - vocab_set
     if extra:
         _drift(f"schema_json.{field_name}: 多出 {len(extra)} 个不在 vocabulary 中的值: {sorted(extra)[:5]}")
@@ -316,6 +371,24 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
             elif "enum" in prop:
                 prop["enum"] = [v for v in current_enum if isinstance(v, str) and v in vocab_set]
             changed = True
+
+    # ── missing 检测：词表有但 schema 缺失的值（治本 2026-06-30 双向同步）──
+    missing = vocab_set - current_set
+    if missing:
+        _drift(f"schema_json.{field_name}: 缺失 {len(missing)} 个 vocabulary 中的值: {sorted(missing)[:5]}")
+        if apply:
+            entry_map = {e["value"]: e["definition"] for e in vocab_entries}
+            if "oneOf" in prop:
+                for val in sorted(missing):
+                    prop["oneOf"].append({
+                        "const": val,
+                        "description": entry_map.get(val, val),
+                    })
+                changed = True
+            elif "enum" in prop:
+                for val in sorted(missing):
+                    prop["enum"].append(val)
+                changed = True
 
     if changed and apply:
         tmp_path = f"{SCHEMA_JSON_PATH}.{os.getpid()}.tmp"
@@ -385,7 +458,9 @@ def main() -> None:
 
         c1 = _sync_field_registry(vocab_name, valid_values, apply)
         c2 = _sync_arch_contract(vocab_name, valid_values, apply)
-        c3 = _sync_schema_json(vocab_name, valid_values, apply)
+        # _sync_schema_json 需要 vocab_entries（含 definition）用于 missing 检测
+        vocab_entries = _load_vocab_entries(vocab_name)
+        c3 = _sync_schema_json(vocab_name, vocab_entries, apply)
 
         changes = sum(1 for c in [c1, c2, c3] if c)
         if changes:

@@ -732,16 +732,16 @@ repos:
       # SSoT：layer_vocabulary.yaml 等是规则数据唯一真源，派生文件（frontmatter_field_registry.yaml /
       #        architecture_contract.yaml / frontmatter_schema.json）由 generate_derived_files.py 自动同步
       # 触发条件：vocabulary YAML 变更时自动校验派生文件一致性
-      # 模式：--check --warn-only（骨架阶段仅警告不阻断，验证稳定后转硬阻断）
+      # 模式：--check 硬阻断（治本 2026-06-30：双向同步+22字段覆盖+sentinel迁移后 0 漂移，转硬阻断）
       - id: gate-generate-derived
         name: "GATE-GENERATE: vocabulary YAML → 派生文件一致性"
         entry: python scripts/governance/d3_metadata/generate_derived_files.py
-        args: ["--check", "--warn-only"]
+        args: ["--check"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
-        description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
+        description: "vocabulary YAML 变更时校验派生文件一致性（硬阻断）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
       # ── GATE-DERIVED 已删除（派生产物已删除，depgraph.db 是唯一查询入口）──
       # arch_directory_tree 同步已迁移到 GitCommitGateway post-commit reconciler（make_path_tree_reconciler）
@@ -841,7 +841,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/|src/zephyr/shared/contracts/).*"
+        files: "^(architecture_model/contracts/|src/zephyr/shared/contracts/).*"
         description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
         stages: [manual]
 
@@ -860,7 +860,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts\\.yaml$"
+        files: "^architecture_model/contracts/cross_layer_contracts\\.yaml$"
         description: "检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python 无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束"
 
       # ── GATE-PATH-NAMING: 连字符路径阻断（2026-06-28 全仓库路径治本防复发）──

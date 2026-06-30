@@ -147,13 +147,13 @@ frontmatter_schema:
       stage: active
 
     - name: language
-      allowed_values: [zh, en, zh_en]
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 language_vocabulary.yaml 动态加载（3 值）
       description: "文件语言"
       derived_from: "_registry/vocabularies/language_vocabulary.yaml"
       stage: active
 
     - name: created_by
-      allowed_values: [human_plus_agent, agent, human]
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 created_by_vocabulary.yaml 动态加载（3 值）
       description: "创建者类型"
       derived_from: "_registry/vocabularies/created_by_vocabulary.yaml"
       stage: active
@@ -185,19 +185,19 @@ frontmatter_schema:
       stage: active
 
     - name: scope
-      allowed_values: [global, domain, layer, module]
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 scope_vocabulary.yaml 动态加载（4 值）
       description: "规则作用范围"
       derived_from: "_registry/vocabularies/scope_vocabulary.yaml"
       stage: active
 
     - name: stability
-      allowed_values: [frozen, stable, evolving, volatile]
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 stability_vocabulary.yaml 动态加载（4 值）
       description: "规则稳定性（PS-STD-001 §2.5：4 值）"
       derived_from: "_registry/vocabularies/stability_vocabulary.yaml"
       stage: active
 
     - name: verifiability
-      allowed_values: [automated, manual, inspection]
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 verifiability_vocabulary.yaml 动态加载（3 值）
       description: "规则可验证性"
       derived_from: "_registry/vocabularies/verifiability_vocabulary.yaml"
       stage: active
