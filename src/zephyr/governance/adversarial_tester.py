@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-# [MODULE] zephyr.infrastructure.budget_enforcement.adversarial_tester
+# [MODULE] zephyr.governance.adversarial_tester
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ipi_defense; zephyr.governance.stream_abort_guard; zephyr.governance.budget_engine; zephyr.governance.budget_models
 # [CONSUMERS]

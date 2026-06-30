@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-# [MODULE] zephyr.infrastructure.budget_enforcement.think_time_model
+# [MODULE] zephyr.governance.think_time_model
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §12
-# [MODULE] zephyr.infrastructure.budget_enforcement.alerts
+# [MODULE] zephyr.governance.alerts
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.escalation.budget_alert
 # [CONSUMERS] zephyr.infrastructure.budget_enforcement

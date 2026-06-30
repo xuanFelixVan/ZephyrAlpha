@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
-# [MODULE] zephyr.infrastructure.budget_enforcement.cost_budget
+# [MODULE] zephyr.governance.cost_budget
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.shared.errors; zephyr.shared.observability_02.metrics
 # [CONSUMERS]
