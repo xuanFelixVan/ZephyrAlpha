@@ -72,7 +72,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from zephyr.governance.rule_bridge.commit_gate_registry import (
+from zephyr.governance.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
 )

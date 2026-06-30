@@ -304,7 +304,8 @@ def make_create_guard() -> GateSpec:
         for _py_file in new_py_files:
             _abs_path = str(gateway.project_root / _py_file)
             try:
-                _src = open(_abs_path, encoding="utf-8").read()
+                with open(_abs_path, encoding="utf-8") as _f:
+                    _src = _f.read()
                 _tree = _ast.parse(_src)
             except Exception:
                 continue  # 语法错误由其他 gate 检测，此处 fail-open
