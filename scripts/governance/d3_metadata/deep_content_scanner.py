@@ -22,8 +22,8 @@ deep_content_scanner.py — 深度内容扫描器
 
 检测内容：
 - 启发式检测 doc_type 与正文关键词不匹配
-- 如 doc_type=policy 但正文含"Step 1→N"（应为 operational_rule）
-- 如 doc_type=policy 但正文含步骤性内容（应为 operational_rule）
+- 如 doc_type=policy(declarative) 但正文含"Step 1→N"（应为 procedural policy）
+- 如 doc_type=policy(declarative) 但正文含步骤性内容（应为 procedural policy）
 - 结果需人工复核
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -104,17 +104,7 @@ def scan_content_type_mismatch() -> list[dict]:
                 {
                     "file": rel,
                     "doc_type": doc_type,
-                    "hint": "正文含步骤式关键词（Step/步骤），可能应为 operational_rule",
-                    "severity": "LOW",
-                }
-            )
-
-        if doc_type == "operational_rule" and has_declarative and not has_procedural:
-            findings.append(
-                {
-                    "file": rel,
-                    "doc_type": doc_type,
-                    "hint": "正文含声明式关键词（定义/规范），可能应为 standard",
+                    "hint": "正文含步骤式关键词（Step/步骤），可能应为 procedural policy（rule_form=procedural）",
                     "severity": "LOW",
                 }
             )

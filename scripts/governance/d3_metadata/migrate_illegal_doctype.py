@@ -105,7 +105,7 @@ ILLEGAL_MAP: dict[str, str] = {
     # 其他单例
     "governance_readme": "index",
     "red_team_corpus": "register",  # v2.0.0: reference 已废弃，red_team_corpus 是配置文件
-    "handoff_instruction": "operational_rule",
+    "handoff_instruction": "policy",  # v3.1.0: operational_rule 合并入 policy
 }
 
 # 无法机械映射的值——需人工裁定

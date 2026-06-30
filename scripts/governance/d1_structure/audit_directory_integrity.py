@@ -87,7 +87,7 @@ _DOMAIN_PARENT_DIRS = frozenset(
 # 真源单一化：后缀规则是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
 # 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或后缀。
 # 阶段4修复：原硬编码 _DOC_TYPE_SUFFIX_MAP 含幽灵值（playbook/runbook 不在 26 合法值中）
-# 和废弃值（checklist 已迁移至 operational_rule/register），已替换为词表直读。
+# 和废弃值（checklist 已迁移至 policy/register），已替换为词表直读。
 # 与 check_naming_convention.py N-11 共享同一词表真源（同源不同消费点，非副本）。
 _DOC_TYPE_VOCAB_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
