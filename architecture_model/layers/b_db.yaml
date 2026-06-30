@@ -98,14 +98,16 @@ modules:
     db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-005（数据库清单真源，禁止同步）"
     files:
       - database_service.py
+      - market_schema.py
     interfaces:
       - contract_id: CT-DB-MARKET-001
         role: producer
         description: market.duckdb 连接契约——DatabaseService.get_market_read_conn(read_only=True代码层强制，查询用) + get_market_conn(读写模式，写入用，market_write_lock串行化)。安全约束真源在代码层不在YAML。禁止裸duckdb.connect(AGENTS.md §11.0铁律)
     test_coverage:
-      tested: []
-      untested_p1:
-        - database_service.py (market.duckdb方法，与db-depgraph-pg共享文件)
+      tested:
+        - database_service.py (tests/io/test_market_duckdb.py DM-100018 覆盖 market.duckdb 方法)
+        - market_schema.py (DDL-as-Code 真源，由 DM-100018 8表 CRUD 间接覆盖)
+      untested_p1: []
       untested_p2: []
 
 summary:

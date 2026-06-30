@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.2.0"
+version: "4.3.0"
 layer: cross_layer
 blueprint_level: module
 owner: ZephyrAlpha-Owner
@@ -25,7 +25,7 @@ actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表)。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
+summary: "Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表，DDL-as-Code 真源 market_schema.py)。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
 tags: [database, db, sqlite, duckdb, atm, atomic-transaction, task-repo, olap, infrastructure, migration, self-healing, operational-excellence, dual-db-router, write-batcher, integration-blueprint]
 priority: P1
 runtime_plane: hot
@@ -89,6 +89,31 @@ references:
 > **read_only=True 安全约束真源在代码层**（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_conn()`），不在 YAML 配置。
 > 理由：安全约束是代码契约不是配置数据，放YAML会和代码脱节（已发生过真源矛盾）。
 > infrastructure_registry.yaml 的 access_method 字段仅作AI发现性文档参考，标注「安全约束以代码为准」。
+
+### market.duckdb 8表 Schema 真源（DDL-as-Code）
+
+> **DDL 真源**：[market_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/market_schema.py)（DDL-as-Code 唯一真源，禁止只靠手动建表）。
+> 表清单真源：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) INFRA-DB-005；安全约束真源：database_service.py 代码层（见上节）。
+> DDL 于 2026-07-01 从现有 market.duckdb 反向导出归档（information_schema.columns + duckdb_views()），字段类型/约束以导出结果为准。
+
+Schema 版本：`MARKET_SCHEMA_VERSION = "1.0.0"`（每次 DDL 变更递增，改前必须 git commit 备份 + 红蓝测试验证）
+
+| # | 表/视图 | 类型 | 主键 | 说明 |
+|---|---------|:----:|------|------|
+| 1 | tick_data | TABLE | — | 行情 tick（symbol/timestamp/price/volume/bid1/ask1） |
+| 2 | orders | TABLE | order_id | 订单（含 fill_price/fill_qty/commission/slippage） |
+| 3 | positions | TABLE | portfolio_id, symbol | 持仓（复合主键） |
+| 4 | risk_snapshots | TABLE | snapshot_id | 风险快照（含 exposure_by_sector） |
+| 5 | factor_values | TABLE | — | 因子值 |
+| 6 | backtest_results | TABLE | backtest_id | 回测结果（含 parameters） |
+| 7 | backtest_trades | TABLE | trade_id | 回测成交 |
+| 8 | kline_3s | VIEW | — | 3 秒 K 线（从 tick_data 聚合：OHLCV + time_bucket） |
+
+**DDL-as-Code 协议**：
+- `init_market_schema(conn)` 幂等初始化（CREATE IF NOT EXISTS / CREATE OR REPLACE VIEW，可重复执行）
+- `verify_market_schema(conn)` 校验完整性，返回 `(ok, missing)` 缺失项列表
+- 执行顺序：先 7 表后 1 视图（kline_3s 依赖 tick_data）
+- 测试覆盖：[test_market_duckdb.py](file:///d:/ZephyrAlpha/tests/io/test_market_duckdb.py) DM-100018 覆盖 8 表 CRUD + 性能
 
 ## 三层冷热架构定位（当前:仅DuckDB单引擎 | 未来蓝图:Redis/FeatureStore/CQRS门禁触发）
 
