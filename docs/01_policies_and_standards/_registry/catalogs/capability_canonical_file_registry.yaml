@@ -1209,14 +1209,6 @@ capabilities:
       AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
       AI 搜 "data_lifecycle" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
       块。
-  - capability_id: drift_detection_data_quality
-    canonical_override: src/zephyr/governance/drift_detection/data_quality.py
-    aliases:
-      - data_quality
-    description: >-
-      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY
-      。 成熟度: prototype。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新AI 搜 "dat
-      a_quality" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_data_source_reliability
     canonical_override: src/zephyr/governance/drift_detection/data_source_reliability.py
     aliases:
@@ -1386,16 +1378,6 @@ capabilities:
       度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
       incremental_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
       。
-  - capability_id: drift_detection_integration_test_runner
-    canonical_override: src/zephyr/governance/drift_detection/integration_test_runner.py
-    aliases:
-      - integration_test_runner
-    description: >-
-      Integration Test Runner — integration_test_runner.py module_id: MOD-INF-023 模块级注
-      册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟
-      度: prototype。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "i
-      ntegration_test_runner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到
-      本模块。
   - capability_id: drift_detection_ml_engineering
     canonical_override: src/zephyr/governance/drift_detection/ml_engineering.py
     aliases:
@@ -1696,6 +1678,12 @@ creation_tokens:
     token: "auto-fix-result-prioritizer-20260701"
     created_by: "session-arch031-limit3"
     capability: "fix_result_prioritizer"
+
+  # --- ARCH-031 形态治理: _service_registration.py 重命名去下划线前缀 ---
+  - file: "src/zephyr/governance/service_registration.py"
+    token: "auto-service-registration-20260701"
+    created_by: "session-arch031-underscore"
+    capability: "service_registration"
 
 # ============================================================================
 # 维护日志
