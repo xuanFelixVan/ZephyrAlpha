@@ -482,7 +482,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 ### 11.2 P3 PostgreSQL 优化裁定记录（2026-06-28）
 
 > **本节是 P3 相关工作的硬约束。** 任何 AI 在涉及 PostgreSQL 优化时必须先读本节。
-> 真源：[P3方案 §裁定记录](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md)
+> 真源：本节（P3方案文档已于 2026-06-30 归档删除，裁定记录内联于此作为唯一真源）
 
 P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如下：
 
