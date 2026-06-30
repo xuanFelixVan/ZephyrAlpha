@@ -58,7 +58,7 @@ _PROJECT_ROOT = REPO_ROOT
 
 
 def _create_temp_db(db_path: Path, with_data: bool = True) -> None:
-    """创建临时 depgraph.db（含 gates 表和 governance_audit_logs 表）。"""
+    """创建临时 depgraph（含 gates 表和 governance_audit_logs 表）。"""
     conn = sqlite3.connect(str(db_path))
     try:
         conn.execute(
