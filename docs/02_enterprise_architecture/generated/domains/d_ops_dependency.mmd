@@ -1,7 +1,7 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-01 04:31:09
+%% 生成时间: 2026-07-01 04:32:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 331, 依赖边数: 358
+%% 模块数: 266, 依赖边数: 292
 
 graph TD
 
@@ -66,48 +66,48 @@ graph TD
         src_zephyr_trading_feedback_loop_db_writer_py["...yr/trading/feedback_loop/db_writer.py [prototype]"]
         src_zephyr_trading_feedback_loop_decision_engine_py["...ding/feedback_loop/decision_engine.py [prototype]"]
         src_zephyr_trading_feedback_loop_detectors___init___py["...g/feedback_loop/detectors/__init__.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors__anomaly_py["...g/feedback_loop/detectors/_anomaly.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors__correlation_py["...edback_loop/detectors/_correlation.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors__drift_py["...ing/feedback_loop/detectors/_drift.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors__guard_py["...ing/feedback_loop/detectors/_guard.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors__reliability_py["...edback_loop/detectors/_reliability.py [prototype]"]
-        src_zephyr_trading_feedback_lo____efficacy_decay_detector_py["...ors/action_efficacy_decay_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ion_interaction_detector_py["...ectors/action_interaction_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___fect_cumulative_detector_py["...on_side_effect_cumulative_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___jectory_anomaly_detector_py[".../agent_trajectory_anomaly_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___rt_desensitization_curve_py["...ectors/alert_desensitization_curve.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ctors_anomaly_clustering_py["..._loop/detectors/anomaly_clustering.py [prototype]"]
-        src_zephyr_trading_feedback_lo___tectors_anomaly_detector_py["...ck_loop/detectors/anomaly_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___rs_autoscale_remediation_py["...op/detectors/autoscale_remediation.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_blast_radius_py["...edback_loop/detectors/blast_radius.py [prototype]"]
-        src_zephyr_trading_feedback_lo___tors_blast_radius_budget_py["...loop/detectors/blast_radius_budget.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ectors_capacity_forecast_py["...k_loop/detectors/capacity_forecast.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ectors_chaos_engineering_py["...k_loop/detectors/chaos_engineering.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_concept_drift_py["...dback_loop/detectors/concept_drift.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_config_drift_py["...edback_loop/detectors/config_drift.py [prototype]"]
-        src_zephyr_trading_feedback_lo___w_contamination_detector_py["...text_window_contamination_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___s_cross_signal_validator_py["...p/detectors/cross_signal_validator.py [prototype]"]
-        src_zephyr_trading_feedback_lo____cross_system_correlator_py[".../detectors/cross_system_correlator.py [prototype]"]
-        src_zephyr_trading_feedback_lo___tors_decision_provenance_py["...loop/detectors/decision_provenance.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ndency_freshness_monitor_py["...ctors/dependency_freshness_monitor.py [prototype]"]
-        src_zephyr_trading_feedback_lo___nishing_returns_detector_py["...ctors/diminishing_returns_detector.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_ebpf_monitor_py["...edback_loop/detectors/ebpf_monitor.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ergent_behavior_detector_py["...tectors/emergent_behavior_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ectors_ensemble_detector_py["...k_loop/detectors/ensemble_detector.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_ensemble_drift_py["...back_loop/detectors/ensemble_drift.py [prototype]"]
-        src_zephyr_trading_feedback_lo___etectors_external_health_py["...ack_loop/detectors/external_health.py [prototype]"]
-        src_zephyr_trading_feedback_lo___al_validation_checkpoint_py["...ors/external_validation_checkpoint.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_flag_lifecycle_py["...back_loop/detectors/flag_lifecycle.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ectors_flapping_detector_py["...k_loop/detectors/flapping_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ance_regression_detector_py["...le_performance_regression_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___adual_poisoning_detector_py["...tectors/gradual_poisoning_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___s_guard_cascade_detector_py["...p/detectors/guard_cascade_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ard_oscillation_detector_py["...tectors/guard_oscillation_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___ctors_heisenbug_detector_py["..._loop/detectors/heisenbug_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___s_infinite_loop_detector_py["...p/detectors/infinite_loop_detector.py [prototype]"]
-        src_zephyr_trading_feedback_lo___rmittent_failure_pattern_py["...ctors/intermittent_failure_pattern.py [prototype]"]
-        src_zephyr_trading_feedback_loop_detectors_log_anomaly_py["...eedback_loop/detectors/log_anomaly.py [prototype]"]
-        %% ... 还有 231 个模块未显示
+        src_zephyr_trading_feedback_loop_diagnosers___init___py[".../feedback_loop/diagnosers/__init__.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers__cognitive_py["...eedback_loop/diagnosers/_cognitive.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers__diagnosis_py["...eedback_loop/diagnosers/_diagnosis.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers__health_py["...g/feedback_loop/diagnosers/_health.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers__reliability_py["...dback_loop/diagnosers/_reliability.py [prototype]"]
+        src_zephyr_trading_feedback_lo___mposition_health_monitor_py[".../action_composition_health_monitor.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_adaptive_param_tuning_py["...p/diagnosers/adaptive_param_tuning.py [prototype]"]
+        src_zephyr_trading_feedback_lo___sers_amplification_guard_py["...oop/diagnosers/amplification_guard.py [prototype]"]
+        src_zephyr_trading_feedback_lo___s_api_dependency_metrics_py[".../diagnosers/api_dependency_metrics.py [prototype]"]
+        src_zephyr_trading_feedback_lo___iagnosers_auto_diagnosis_py["...ack_loop/diagnosers/auto_diagnosis.py [prototype]"]
+        src_zephyr_trading_feedback_lo___nosers_burn_rate_alerter_py["..._loop/diagnosers/burn_rate_alerter.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers_burnout_alarm_py["...back_loop/diagnosers/burnout_alarm.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_capacity_aware_repair_py["...p/diagnosers/capacity_aware_repair.py [prototype]"]
+        src_zephyr_trading_feedback_lo____causal_inference_engine_py["...diagnosers/causal_inference_engine.py [prototype]"]
+        src_zephyr_trading_feedback_lo___iagnosers_cognitive_load_py["...ack_loop/diagnosers/cognitive_load.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_cognitive_load_budget_py["...p/diagnosers/cognitive_load_budget.py [prototype]"]
+        src_zephyr_trading_feedback_lo____start_conservative_mode_py["...osers/cold_start_conservative_mode.py [prototype]"]
+        src_zephyr_trading_feedback_lo___s_collaborative_learning_py[".../diagnosers/collaborative_learning.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_confidence_decomposer_py["...p/diagnosers/confidence_decomposer.py [prototype]"]
+        src_zephyr_trading_feedback_lo___osers_context_truncation_py["...loop/diagnosers/context_truncation.py [prototype]"]
+        src_zephyr_trading_feedback_lo____window_pressure_manager_py["...rs/context_window_pressure_manager.py [prototype]"]
+        src_zephyr_trading_feedback_lo___iagnosers_counterfactual_py["...ack_loop/diagnosers/counterfactual.py [prototype]"]
+        src_zephyr_trading_feedback_lo____guard_conflict_detector_py["...sers/cross_guard_conflict_detector.py [prototype]"]
+        src_zephyr_trading_feedback_lo___on_consistency_validator_py["...ross_session_consistency_validator.py [prototype]"]
+        src_zephyr_trading_feedback_lo___ta_volume_growth_monitor_py["...gnosers/data_volume_growth_monitor.py [prototype]"]
+        src_zephyr_trading_feedback_lo___gnosers_diagnosis_engine_py["...k_loop/diagnosers/diagnosis_engine.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers_diagnosis_kpi_py["...back_loop/diagnosers/diagnosis_kpi.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_dr_resilience_metrics_py["...p/diagnosers/dr_resilience_metrics.py [prototype]"]
+        src_zephyr_trading_feedback_lo___s_e2e_integration_health_py[".../diagnosers/e2e_integration_health.py [prototype]"]
+        src_zephyr_trading_feedback_lo___edback_delay_compensator_py["...gnosers/feedback_delay_compensator.py [prototype]"]
+        src_zephyr_trading_feedback_lo___sers_fle_dogfood_monitor_py["...oop/diagnosers/fle_dogfood_monitor.py [prototype]"]
+        src_zephyr_trading_feedback_lo___ers_fle_self_slo_metrics_py["...op/diagnosers/fle_self_slo_metrics.py [prototype]"]
+        src_zephyr_trading_feedback_loop_diagnosers_gamification_py["...dback_loop/diagnosers/gamification.py [prototype]"]
+        src_zephyr_trading_feedback_lo___nosers_global_health_map_py["..._loop/diagnosers/global_health_map.py [prototype]"]
+        src_zephyr_trading_feedback_lo___eraction_topology_mapper_py[".../guard_interaction_topology_mapper.py [prototype]"]
+        src_zephyr_trading_feedback_lo___self_consistency_auditor_py["...ers/guard_self_consistency_auditor.py [prototype]"]
+        src_zephyr_trading_feedback_lo___n_anomaly_flood_detector_py["...osers/human_anomaly_flood_detector.py [prototype]"]
+        src_zephyr_trading_feedback_lo___gnosers_impact_predictor_py["...k_loop/diagnosers/impact_predictor.py [prototype]"]
+        src_zephyr_trading_feedback_lo___ident_knowledge_injector_py["...nosers/incident_knowledge_injector.py [prototype]"]
+        src_zephyr_trading_feedback_lo___rs_interactive_diagnosis_py["...p/diagnosers/interactive_diagnosis.py [prototype]"]
+        src_zephyr_trading_feedback_lo___ledge_bus_factor_monitor_py["...osers/knowledge_bus_factor_monitor.py [prototype]"]
+        %% ... 还有 166 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -157,7 +157,6 @@ graph TD
     src_zephyr_trading_feedback_loop_collectors___init___py -->|import_depends| src_zephyr_trading_feedback_lo___lectors_schema_migration_py
     src_zephyr_trading_feedback_loop_collectors___init___py -->|import_depends| src_zephyr_trading_feedback_lo___ors_temporal_event_store_py
     src_zephyr_trading_feedback_loop_collectors___init___py -->|import_depends| src_zephyr_trading_feedback_loop_collectors_token_finops_py
-    src_zephyr_trading_feedback_lo___tectors_anomaly_detector_py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     src_zephyr_trading_feedback_loop_detectors___init___py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     src_zephyr_trading_feedback_loop_diagnosers___init___py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     src_zephyr_trading_feedback_loop_docs___init___py -->|import_depends| src_zephyr_trading_feedback_loop_docs_cold_start_manual_py
@@ -191,13 +190,14 @@ graph TD
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___rupt_coherence_validator_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___tion_pre_flight_verifier_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___nt_in_time_reconstructor_py
-    %% ... 还有 226 条域内依赖未显示
+    src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo____self_modification_audit_py
+    %% ... 还有 161 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_FRONTEND -> D_OPS (2 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_feedback_loop___init___py
-    %% D_GOVERNANCE -> D_OPS (21 条)
+    %% D_GOVERNANCE -> D_OPS (20 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_engine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
@@ -209,7 +209,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_trading_feedback_loop_gates___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_trading_feedback_loop_gates___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_lo___tors_knowledge_freshness_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_loop_detectors__anomaly_py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_lo___sers_self_health_monitor_py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_loop_actors___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_loop_verifiers___init___py
@@ -265,6 +264,6 @@ graph TD
     src_zephyr_trading_feedback_loop_alert_dispatcher_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 306 条
-    %% 跨域入边: 29 条
+    %% 域内依赖: 241 条
+    %% 跨域入边: 28 条
     %% 跨域出边: 23 条
