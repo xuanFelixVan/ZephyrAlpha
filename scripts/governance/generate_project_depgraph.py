@@ -38,6 +38,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 import psycopg2  # noqa: E402
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -147,20 +148,10 @@ _FALLBACK_TYPE_PREFIXES = {
 NODE_TYPES_FILE = [e["value"] for e in _NODE_TYPE_ENTRIES if e.get("level") == "file"]
 NODE_TYPES_DOMAIN = [e["value"] for e in _NODE_TYPE_ENTRIES if e.get("level") == "domain"]
 NODE_TYPES = NODE_TYPES_FILE + NODE_TYPES_DOMAIN
-EDGE_TYPES = [
-    "import_depends",
-    "references",
-    "test_depends",
-    "owned_by",
-    "config_depends",
-    "data_depends",
-    "blueprint_depends",
-    "event_depends",
-    "contract_depends",
-    "shared_kernel",
-    "script_depends",
-    "runtime_depends",
-]
+# 治本（2026-06-30）：EDGE_TYPES 从 dep_type_vocabulary.yaml 动态加载（SSoT）。
+# 真源：docs/01_policies_and_standards/_registry/vocabularies/dep_type_vocabulary.yaml
+# 消除原 12 值硬编码 list——词表变更只需改 YAML 一处。
+EDGE_TYPES = sorted(load_vocabulary_values("dep_type_vocabulary.yaml"))
 
 CODE_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "code")
 CONFIG_TYPES = frozenset(e["value"] for e in _NODE_TYPE_ENTRIES if e.get("category") == "config")
@@ -320,7 +311,9 @@ DEP_TYPE_TO_SEMANTIC_TYPE = {
 }
 
 # Valid values for semantic fields (from PS-REG-007 _schema)
-VALID_SEMANTIC_TYPES = {"runtime", "data", "build", "contract"}
+# 治本（2026-06-30）：从 semantic_vocabulary.yaml 动态加载（SSoT，PS-VOC-025）。
+# 消除原 {"runtime","data","build","contract"} 硬编码——词表变更只需改 YAML 一处。
+VALID_SEMANTIC_TYPES = load_vocabulary_values("semantic_vocabulary.yaml")
 VALID_SEMANTIC_DIRECTIONS = {"upstream", "downstream", "peer"}
 VALID_DECISIONS = {"NEW", "MODIFY", "KEEP", "DEPRECATE"}
 VALID_FAILURE_MODES = {

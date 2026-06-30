@@ -1,0 +1,126 @@
+# [A_config] module_id=CFG-dep-type-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# dep_type 受控词表
+# ZephyrAlpha 2.0 depgraph 边类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-30
+#
+# 本词表定义 depgraph edges 表 dep_type 字段的所有合法值（12 种现代命名）。
+# generate_project_depgraph.py / diagnose_depgraph.py 等脚本必须从本词表动态加载，
+# 禁止硬编码 EDGE_TYPES 字面量——同步=复制=多真源=必漂移。
+#
+# 治本（2026-06-30）：消除 generate_project_depgraph.py L150-163 EDGE_TYPES 硬编码。
+#
+# 注意：apply_depgraph.py 的 add_edge/update_edge_type valid_types 是 C集代码层接线的
+# 业务子集校验（7 值，含 4 个 legacy 短名 contract/event/runtime/data），非全量词表副本，
+# 保留硬编码 + # noqa: gate-vocab 豁免。
+#
+# 对标标准：
+#   - PS-REG-007 _schema：dep_type 枚举定义
+#   - dependency-cruiser：dependencyTypes（imports/uses/dependsOn）
+#   - C4 Model：Component 依赖关系分类
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-034
+version: "1.0.0"
+title: "dep_type 受控词表"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: dep_type
+total_values: 12
+depends_on:
+  - target: PS-REG-007
+    at: "_schema"
+    why: "dep_type 枚举定义真源"
+  - target: PS-VOC-025
+    at: "_registry/vocabularies/semantic_vocabulary.yaml"
+    why: "semantic_type 字段值（runtime/data/build/contract）由 semantic_vocabulary.yaml 定义；dep_type 与 semantic_type 为不同字段"
+
+# ── 字段说明 ──
+# value          : dep_type 字面值
+# semantic_type  : 该 dep_type 对应的 semantic_type 分类（runtime/data/build/contract）
+# definition     : 语义定义
+# ai_consumption : AI 标注 depgraph 边时的使用指引
+# ai_keywords    : AI 关键词匹配提示
+
+values:
+  - value: import_depends
+    semantic_type: build
+    definition: "导入依赖——Python import / 静态导入关系"
+    ai_consumption: "AI 标注边时，源文件 import 目标模块使用此值"
+    ai_keywords: ["import", "导入", "静态依赖"]
+
+  - value: references
+    semantic_type: contract
+    definition: "引用关系——文档引用、跨模块声明性引用"
+    ai_consumption: "AI 标注边时，非代码执行的引用关系使用此值"
+    ai_keywords: ["reference", "引用", "声明性"]
+
+  - value: test_depends
+    semantic_type: build
+    definition: "测试依赖——测试目标依赖被测目标"
+    ai_consumption: "AI 标注边时，测试→被测代码的依赖使用此值"
+    ai_keywords: ["test", "测试", "被测"]
+
+  - value: owned_by
+    semantic_type: contract
+    definition: "归属关系——节点归属域/模块"
+    ai_consumption: "AI 标注边时，节点→所属域的归属关系使用此值"
+    ai_keywords: ["owned", "归属", "属于"]
+
+  - value: config_depends
+    semantic_type: runtime
+    definition: "配置依赖——运行时读取配置文件/配置中心"
+    ai_consumption: "AI 标注边时，代码→配置文件的运行时依赖使用此值"
+    ai_keywords: ["config", "配置", "运行时读取"]
+
+  - value: data_depends
+    semantic_type: data
+    definition: "数据依赖——数据模型/Schema/数据流依赖"
+    ai_consumption: "AI 标注边时，数据层面的依赖关系使用此值"
+    ai_keywords: ["data", "数据", "schema"]
+
+  - value: blueprint_depends
+    semantic_type: contract
+    definition: "蓝图依赖——模块依赖其蓝图定义"
+    ai_consumption: "AI 标注边时，模块→蓝图的归属依赖使用此值"
+    ai_keywords: ["blueprint", "蓝图", "模块定义"]
+
+  - value: event_depends
+    semantic_type: runtime
+    definition: "事件依赖——事件发布/订阅关系"
+    ai_consumption: "AI 标注边时，事件驱动的运行时依赖使用此值"
+    ai_keywords: ["event", "事件", "发布订阅"]
+
+  - value: contract_depends
+    semantic_type: contract
+    definition: "契约依赖——接口契约/API 契约消费"
+    ai_consumption: "AI 标注边时，契约层面的依赖关系使用此值"
+    ai_keywords: ["contract", "契约", "接口", "API"]
+
+  - value: shared_kernel
+    semantic_type: data
+    definition: "共享内核——DDD shared kernel 模式"
+    ai_consumption: "AI 标注边时，多个域共享的数据模型依赖使用此值"
+    ai_keywords: ["shared", "kernel", "共享内核", "DDD"]
+
+  - value: script_depends
+    semantic_type: build
+    definition: "脚本依赖——构建链/工具链脚本调用"
+    ai_consumption: "AI 标注边时，脚本间的构建依赖使用此值"
+    ai_keywords: ["script", "脚本", "构建链"]
+
+  - value: runtime_depends
+    semantic_type: runtime
+    definition: "运行时依赖——服务调用/动态加载/远程调用"
+    ai_consumption: "AI 标注边时，运行时产生的服务调用依赖使用此值"
+    ai_keywords: ["runtime", "运行时", "服务调用", "动态加载"]

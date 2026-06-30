@@ -32,6 +32,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -424,7 +425,9 @@ def find_autonomy_violations(nodes, edges):
 
 def find_semantic_field_gaps(nodes, edges):
     """Check for missing or invalid semantic fields on edges and nodes (v3.1.0)."""
-    VALID_SEMANTIC_TYPES = {"runtime", "data", "build", "contract"}
+    # 治本（2026-06-30）：从 semantic_vocabulary.yaml 动态加载（SSoT，PS-VOC-025），
+    # 消除与 generate_project_depgraph.py 的复制粘贴多真源。
+    VALID_SEMANTIC_TYPES = load_vocabulary_values("semantic_vocabulary.yaml")
     VALID_SEMANTIC_DIRECTIONS = {"upstream", "downstream", "peer"}
     VALID_DECISIONS = {"NEW", "MODIFY", "KEEP", "DEPRECATE"}
 

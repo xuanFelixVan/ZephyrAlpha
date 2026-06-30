@@ -758,7 +758,9 @@ def add_edge(
     - 写入前执行 DFS 循环检测，检测到循环则拒绝写入
     用途：C集代码层接线（F1→F14/F21/F23 production 边）
     """
-    valid_types = {
+    # C集代码层接线 dep_type 业务子集（含 legacy 短名 contract/event/runtime/data）
+    # 非全量词表副本——全量真源为 dep_type_vocabulary.yaml（PS-VOC-034）
+    valid_types = {  # noqa: gate-vocab  业务子集校验，非词表硬编码
         "contract", "event", "runtime", "data",
         "import_depends", "test_depends", "config_depends",
     }
@@ -1260,7 +1262,9 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bo
     - new_dep_type 必须为合法值（contract/event/runtime/data/import_depends/test_depends/config_depends）
     用途：§8.3 DIP裁定——F1→F3从import_depends改为contract，F1→F14改为event
     """
-    valid_types = {
+    # update_edge_type dep_type 业务子集（与 add_edge 一致，含 legacy 短名）
+    # 非全量词表副本——全量真源为 dep_type_vocabulary.yaml（PS-VOC-034）
+    valid_types = {  # noqa: gate-vocab  业务子集校验，非词表硬编码
         "contract",
         "event",
         "runtime",
