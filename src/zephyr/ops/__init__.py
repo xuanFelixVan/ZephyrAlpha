@@ -1,9 +1,6 @@
 """[A_module] module_id=MOD-OPS | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
 
-from zephyr.ops.telemetry import MetricPoint
-
 __all__ = [
-    "MetricPoint",
     "alert_dispatcher",
     "auto_evolution",
     "backpressure_bridge",
