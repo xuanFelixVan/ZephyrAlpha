@@ -94,7 +94,7 @@ contracts:
     phase: experimental（T-V2-008）
   resolution: '2026-05-06: CT-005 resolved by session-20260506-012'
 - contract_id: CT-006
-  source: config/compression/policy.yaml
+  source: config/compression_policy.yaml
   promise: 压缩策略 YAML 作为文档压缩的运行时约束（min_chars/max_chars/preserve_* 由 CompressionInvariantError 强制执行）
   actual_consumer: src/zephyr/context-engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段）
   gap: 已兑现——YAML 被 doc_compressor.py 直接消费，Immutable Core 字段有运行时强制校验

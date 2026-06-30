@@ -74,7 +74,7 @@ tiers:
 
       - registry_id: REG-CAP-001
         name: 技术栈清单
-        physical_path: config/capacity/tech_stack_manifest.yaml
+        physical_path: config/tech_stack_manifest.yaml
         format: yaml
         maintenance: manual
         entry_count: 16

@@ -17,7 +17,7 @@
 
 """AssetClassifier — MOD-INF-026 L2 资产自动分类器
 
-蓝图 §3.2：读取扫描结果，按 config/capacity/asset-inventory.yaml 中
+蓝图 §3.2：读取扫描结果，按 config/asset_inventory.yaml 中
 classifier.type_mapping 将每个文件分类为 module/script/gate/doc/config/test/data/registry/unknown。
 """
 
@@ -64,7 +64,6 @@ LAYER_BY_DIR: dict[str, AssetLayer] = {
     "docs/02_": AssetLayer.L02,
     "docs/03_": AssetLayer.L03,
     "docs/": AssetLayer.L04,
-    "config/capacity/": AssetLayer.L01,
     "config/": AssetLayer.L01,
     "tests/": AssetLayer.L04,
     "data/": AssetLayer.CROSS_LAYER,

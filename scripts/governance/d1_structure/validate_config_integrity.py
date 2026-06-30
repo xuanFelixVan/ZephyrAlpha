@@ -233,36 +233,36 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
         if isinstance(desc, str) and len(desc) > 200:
             warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": description={len(desc)} 字符（建议≤200）')
 
-    cp = yaml_data.get("/config/compression/policy.yaml", {})
+    cp = yaml_data.get("/config/compression_policy.yaml", {})
     policy = cp.get("policy", {})
     if not isinstance(policy, dict):
-        errors.append("[L2] compression/policy.yaml: policy 不是 dict")
+        errors.append("[L2] compression_policy.yaml: policy 不是 dict")
         policy = {}
 
     for fname, constraints in IMMUTABLE_SCHEMA.items():
         val = policy.get(fname)
         if val is None:
-            errors.append(f"[L2] compression/policy.yaml: 缺少 Immutable Core 字段 — {fname}")
+            errors.append(f"[L2] compression_policy.yaml: 缺少 Immutable Core 字段 — {fname}")
             continue
         if not isinstance(val, constraints["type"]):
             errors.append(
-                f"[L2] compression/policy.yaml: {fname} 类型={type(val).__name__}，期望 {constraints['type'].__name__}"
+                f"[L2] compression_policy.yaml: {fname} 类型={type(val).__name__}，期望 {constraints['type'].__name__}"
             )
         elif "ge" in constraints and val < constraints["ge"]:
-            errors.append(f"[L2] compression/policy.yaml: {fname}={val} < 下限 {constraints['ge']}")
+            errors.append(f"[L2] compression_policy.yaml: {fname}={val} < 下限 {constraints['ge']}")
         elif "le" in constraints and val > constraints["le"]:
-            errors.append(f"[L2] compression/policy.yaml: {fname}={val} > 上限 {constraints['le']}")
+            errors.append(f"[L2] compression_policy.yaml: {fname}={val} > 上限 {constraints['le']}")
 
     if isinstance(policy.get("min_chars"), int) and isinstance(policy.get("max_chars"), int):
         if policy["max_chars"] < policy["min_chars"]:
             errors.append(
-                f"[L2] compression/policy.yaml: max_chars({policy['max_chars']}) < min_chars({policy['min_chars']}) — 矛盾"
+                f"[L2] compression_policy.yaml: max_chars({policy['max_chars']}) < min_chars({policy['min_chars']}) — 矛盾"
             )
 
     for key, label in [
         ("/config/capabilities.yaml", "capabilities"),
         ("/config/trigger_router.yaml", "trigger_router"),
-        ("/config/compression/policy.yaml", "compression/policy"),
+        ("/config/compression_policy.yaml", "compression_policy"),
     ]:
         d = yaml_data.get(key, {})
         if d and "version" in d:
@@ -407,7 +407,7 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
 
     if AUTH_REG_PATH.exists():
         auth = AUTH_REG_PATH.read_text(encoding="utf-8", errors="replace")
-        for ref in ["config/drift_thresholds.yaml", "config/capabilities.yaml", "config/compression/policy.yaml"]:
+        for ref in ["config/drift_thresholds.yaml", "config/capabilities.yaml", "config/compression_policy.yaml"]:
             if ref not in auth:
                 warnings.append(f'[L5] ai-autonomy-authority-registry.md 中未找到 "{ref}" 引用')
 
@@ -482,8 +482,8 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
         errors.append('[L5] capabilities.yaml 自保缺失："config/capabilities.yaml" 不在 write_config.deny 中')
     if "config/trigger_router.yaml" not in wc_deny:
         errors.append("[L5] trigger_router.yaml 保护缺失：不在 write_config.deny 中（Human-Gated但无CBAC显式保护）")
-    if "config/compression/policy.yaml" not in wc_allow:
-        warnings.append("[L5] compression/policy.yaml 不在 write_config.allow 中")
+    if "config/compression_policy.yaml" not in wc_allow:
+        warnings.append("[L5] compression_policy.yaml 不在 write_config.allow 中")
 
     return errors, warnings
 
@@ -506,13 +506,13 @@ def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
     if not selfp:
         errors.append("[L6] capabilities.yaml 自保失败 — 任何 deny 规则中都未保护自身")
 
-    cp = yaml_data.get("/config/compression/policy.yaml", {})
+    cp = yaml_data.get("/config/compression_policy.yaml", {})
     policy = cp.get("policy", {})
     imm = policy.get("preserve_immutable_blocks", [])
     empty_markers = [m for m in imm if not isinstance(m, str) or not m.strip()]
     if empty_markers:
         warnings.append(
-            f"[L6] compression/policy.yaml: preserve_immutable_blocks 含空标记 — 共 {len(empty_markers)} 个"
+            f"[L6] compression_policy.yaml: preserve_immutable_blocks 含空标记 — 共 {len(empty_markers)} 个"
         )
 
     return errors, warnings

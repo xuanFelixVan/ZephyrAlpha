@@ -33,7 +33,7 @@ if str(_GOV_DIR) not in sys.path:
 # 别名使 `from _arch_ssot import REPO_ROOT` 直接 ImportError，阻断 IDE 副作用。
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
-CAPACITY_SLO_PATH = _REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
+CAPACITY_SLO_PATH = _REPO_ROOT / "config" / "capacity_slo.yaml"
 INVARIANTS_PATH = _REPO_ROOT / (
     "architecture_model/cross_cutting/invariants.yaml"
 )
@@ -41,7 +41,7 @@ CONTRACTS_PATH = _REPO_ROOT / (
     "architecture_model/contracts/cross_layer_contracts.yaml"
 )
 RISK_PARAMS_PATH = _REPO_ROOT / "config" / "risk_params.yaml"
-SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
+SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "survivorship_policy.yaml"
 OCP_MANIFEST_PATH = _REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
 

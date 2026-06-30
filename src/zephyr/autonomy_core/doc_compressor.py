@@ -23,7 +23,7 @@ DocCompressor — 文档压缩服务（CL-018 RI 扩展模式）
            AI-Modifiable（压缩算法实现）
 真源声明 : ai_autonomy_authority_registry.yaml §2.11 (CL-018)
 关联决策 : rationale-log R83（CL-018 升级为 RI 扩展模式）
-           config/compression/policy.yaml（CBAC allow）
+           config/compression_policy.yaml（CBAC allow）
 创建日期 : 2026-04-27
 版本     : v1.0.0
 
@@ -82,7 +82,7 @@ __all__ = [
 # 路径常量
 # ---------------------------------------------------------------------------
 
-DEFAULT_POLICY_PATH: Path = REPO_ROOT / "config" / "compression" / "policy.yaml"
+DEFAULT_POLICY_PATH: Path = REPO_ROOT / "config" / "compression_policy.yaml"
 
 # ---------------------------------------------------------------------------
 # 不变量模型（Immutable Core）
@@ -179,7 +179,7 @@ class CompressionOutcome(BaseModel):
 def load_policy_from_yaml(
     path: Path | None = None,
 ) -> CompressionPolicy:
-    """从 config/compression/policy.yaml 加载 CompressionPolicy。
+    """从 config/compression_policy.yaml 加载 CompressionPolicy。
 
     文件不存在或解析失败时返回 DEFAULT_POLICY。
 

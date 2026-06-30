@@ -495,7 +495,7 @@ permission_table:
       permission: Human-Gated
       reason: 压缩规则需审批
     - component: CL-018 CompressionPolicy YAML
-      path: config/compression/policy.yaml
+      path: config/compression_policy.yaml
       permission: Immutable Core
       reason: 规则不可由 AI 改（Wave 1 V-14 兜底：防 Self-Modification）
     - component: CL-019 ai-onboarding-guide.md 核心思想章

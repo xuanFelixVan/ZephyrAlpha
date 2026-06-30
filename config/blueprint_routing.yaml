@@ -286,7 +286,7 @@ routes:
     path_patterns:
       - "src/zephyr/orchestration/context_management/**"
       - "config/context_rules.yaml"
-      - "config/compression/**"
+      - "config/compression_policy.yaml"
     task_keywords:
       - "上下文"
       - "context"

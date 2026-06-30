@@ -16,7 +16,7 @@
 """
 check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)
 
-  - SSoT：config/capacity/capacity_slo.yaml → CAP-009 / arch_guard.invariant_numeric_alignment.INV-001
+  - SSoT：config/capacity_slo.yaml → CAP-009 / arch_guard.invariant_numeric_alignment.INV-001
   - T0 实测：ZEPHYR_T1_KILL_SWITCH_PROBE=1 时运行 KillSwitchSimulator 健康检查
   - T1 硬件预留：register_ack_callback() 接口支持真实 GPIO 中断
 
@@ -42,7 +42,7 @@ from _arch_ssot import CAPACITY_SLO_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     if not CAPACITY_SLO_PATH.is_file():
-        print("FAIL: 缺少 config/capacity/capacity_slo.yaml")
+        print("FAIL: 缺少 config/capacity_slo.yaml")
         return 2
 
     slo = load_yaml(CAPACITY_SLO_PATH)

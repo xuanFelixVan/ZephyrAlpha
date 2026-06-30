@@ -22,7 +22,7 @@ M-12 ConfigValidator — 配置参数校验器
 对标：JSON Schema + K8s Admission Webhook
 使用方式：
     validator = ConfigValidator(schema_path="config/schemas/")
-    result = validator.validate("config/capacity/thresholds.yaml")
+    result = validator.validate("config/thresholds.yaml")
 """
 
 from __future__ import annotations

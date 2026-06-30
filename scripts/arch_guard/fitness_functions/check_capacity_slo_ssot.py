@@ -17,7 +17,7 @@
 check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数字对齐（SSoT 闭环）
 
 校验：
-  - config/capacity/capacity_slo.yaml 存在且 slo_registry >= min_slo_entries（默认 8）
+  - config/capacity_slo.yaml 存在且 slo_registry >= min_slo_entries（默认 8）
   - arch_guard.invariant_numeric_alignment 与 invariants.yaml 中 INV-001 / INV-015 的 ms 声明一致
 
 exit: 0=pass, 1=fail, 2=config missing

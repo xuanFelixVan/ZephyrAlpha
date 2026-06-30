@@ -119,7 +119,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [
             "config/context_rules.yaml",
-            "config/compression/policy.yaml",
+            "config/compression_policy.yaml",
         ],
         "governance_scripts": [],
         "note": "上下文引擎——9文件骨架+assembler+injector已实现",
