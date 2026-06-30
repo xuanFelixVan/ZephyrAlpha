@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-01'
-total_scripts: 548
+total_scripts: 545
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -590,32 +590,8 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_check_triggers.py
-  path: governance/_tmp_check_triggers.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_gen_fix_plan.py
-  path: governance/_tmp_gen_fix_plan.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_investigate_fk_violations.py
-  path: governance/_tmp_investigate_fk_violations.py
-  description: import sys
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_verify_fix.py
-  path: governance/_tmp_verify_fix.py
+- name: governance/_tmp_query_config_manager.py
+  path: governance/_tmp_query_config_manager.py
   description: import sys
   domain: governance
   execution_plane: warm-path
