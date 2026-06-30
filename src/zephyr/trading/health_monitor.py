@@ -144,11 +144,16 @@ class HealthMonitor:
             _healthcheck = HealthcheckService(project_root=project_root)
 
             def _healthcheck_probe() -> ProbeResult:
+                # 5.55.3 修复：原硬编码 alive=True，现调用 check_all() 真实检查
                 try:
+                    report = _healthcheck.check_all()
+                    healthy = report.overall_healthy
+                    detail = "; ".join(c.message for c in report.components if not c.healthy)
                     return ProbeResult(
                         capability_id="shared.healthcheck_service",
-                        alive=True,
-                        ready=True,
+                        alive=healthy,
+                        ready=healthy,
+                        error=detail if not healthy else "",
                     )
                 except Exception as e:
                     return ProbeResult(

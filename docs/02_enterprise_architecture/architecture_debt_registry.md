@@ -5058,16 +5058,22 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`_longevity_probe`的try块内只有`return ProbeResult(alive=True, ready=True)`，无任何实际活探；except分支因try内无可抛异常代码而永远不可达
 - **问题**：reconcile()基于"假alive=True"判定组件active，从不触发auto_restart
 
+> **[✓ FIXED: 2026-07-01 部分修复]** `_healthcheck_probe` 已改为调用 `HealthcheckService.check_all().overall_healthy` 真实检查。`_longevity_probe` 仍需补内存采集基础设施（LongevityMonitor 无布尔方法，需 register+current_memory_mb+阈值）——留作后续。
+
 #### 5.55.4 [HIGH] VerdictEngine.health_check永远返回"healthy"
 - **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L403)
 - **证据**：`return {"status": "healthy", ...}`——status硬编码，无基于red_rate的降级判定
 - **问题**：裁决引擎大量拒绝操作时健康检查仍报healthy
 - **修复**：根据red_rate阈值返回degraded/unhealthy
 
+> **[✓ FIXED: 2026-07-01]** health_check 现根据 red_rate 阈值返回状态：>=0.5→unhealthy，>=0.2→degraded，否则 healthy。
+
 #### 5.55.5 [MEDIUM] Liveness探针返回硬编码pid=0
 - **文件**：[health_probes.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/health_probes.py#L84)
 - **证据**：`"pid": 0`——硬编码，非os.getpid()；status永远"alive"，无存活检测逻辑
 - **问题**：进程假死时liveness仍返回alive
+
+> **[✓ FIXED: 2026-07-01]** liveness() 现返回 `os.getpid()` 真实 PID。注：status="alive" 对于进程内探针是正确的（探针能执行即证明进程存活）。
 
 #### 5.55.6 [MEDIUM] BlueprintHealthChecker是空壳，永远返回healthy
 - **文件**：[blueprint_health.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/blueprint_health.py#L21)

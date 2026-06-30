@@ -401,13 +401,21 @@ class VerdictEngine:
         return False
 
     def health_check(self) -> dict[str, Any]:
+        # 5.55.4 修复：根据 red_rate 阈值返回降级状态（原硬编码 "healthy"）
+        red_rate = round(self._red_count / max(self._eval_count, 1), 4)
+        if red_rate >= 0.5:
+            status = "unhealthy"
+        elif red_rate >= 0.2:
+            status = "degraded"
+        else:
+            status = "healthy"
         return {
-            "status": "healthy",
+            "status": status,
             "total_evaluations": self._eval_count,
             "red_count": self._red_count,
             "yellow_count": self._yellow_count,
             "pass_count": self._pass_count,
-            "red_rate": round(self._red_count / max(self._eval_count, 1), 4),
+            "red_rate": red_rate,
             "has_protection_index": self._protection_index is not None,
             "has_gpu_scheduler": self._gpu_scheduler is not None,
             "verdict_timeout_s": self._verdict_timeout_s,

@@ -24,6 +24,7 @@
 
 from __future__ import annotations
 
+import os
 import time
 from enum import Enum
 from typing import Any
@@ -84,7 +85,7 @@ class HealthProbeManager:
     def liveness(self, system: str) -> dict:
         return {
             "status": "alive",
-            "pid": 0,
+            "pid": os.getpid(),  # 5.55.5 修复：原硬编码 pid=0，无法用于进程存活判定
             "uptime_s": round(time.monotonic() - self._start_time, 2),
             "system": system,
         }
