@@ -4478,7 +4478,7 @@ scripts:
     type: bool
     description: 跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验
   warn_only: false
-  description: 'depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标
+  description: 'depgraph Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标
     #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py 方案'
   tags:
   - Critical

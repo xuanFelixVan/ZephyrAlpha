@@ -18,7 +18,7 @@
 RuleWatcher — YAML 规则文件变更检测与自动同步
 
 通过 os.stat() 跟踪 YAML 文件 mtime，检测变更后自动触发：
-  1. sync_rule_registry.py --sync-yaml（同步到 depgraph.db）
+  1. sync_rule_registry.py --sync-yaml（同步到 depgraph）
   2. verify_rule_yaml_migration.py --check-hash（哈希验证）
 
 用法：
@@ -190,7 +190,7 @@ class RuleWatcher:
         return changed
 
     def sync_changed(self, changed_files: list[dict]) -> dict:
-        """同步变更文件到 depgraph.db。
+        """同步变更文件到 depgraph。
 
         调用 sync_rule_registry.py --sync-yaml 进行同步。
 
@@ -205,7 +205,7 @@ class RuleWatcher:
             print("[RuleWatcher] No active files to sync (only deletions)")
             return {"exit_code": 0, "stdout": "", "stderr": ""}
 
-        print(f"[RuleWatcher] Syncing {len(active_files)} file(s) to depgraph.db")
+        print(f"[RuleWatcher] Syncing {len(active_files)} file(s) to depgraph")
 
         try:
             result = subprocess.run(

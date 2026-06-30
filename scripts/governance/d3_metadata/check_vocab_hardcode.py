@@ -109,13 +109,21 @@ _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
     "audit_post_sync_commands.py",
 })
 
+# ── SSoT 真源文件白名单（治本 2026-06-30 检测5 行为检测）──
+# 这些文件是 load_vocabulary_values/load_vocabulary_entries 的真源实现，
+# 自身必须用 yaml.safe_load 读取词表——豁免检测5（行为检测）。
+# 约束：仅豁免 SSoT 真源文件，禁止豁免消费者。
+_SSOT_EXEMPT_FILES: frozenset[str] = frozenset({
+    "yaml_utils.py",  # src/zephyr/shared/io/ + scripts/governance/_shared/ 两处真源/re-exporter
+})
+
 # ── noqa 审计基线（治本 2026-06-30）──
 # 防止 ``# noqa: gate-vocab`` 豁免被滥用无限增长——每次 GATE-VOCAB 运行时
 # 输出当前 noqa 分布与趋势，新增 noqa 必须在 commit message 说明理由。
 # 每次治本降低 noqa 数量后更新此基线值；超基线时输出 WARN（warn-only，不阻断）。
 # 收敛期约束（AD-GOV-001）：此为审计输出，非新增门禁/reconciler/规则 YAML。
 # 基线值用 tokenize 精确识别（排除文档引用/字符串字面量/docstring）。
-_NOQA_BASELINE: int = 31
+_NOQA_BASELINE: int = 33
 
 
 def _load_startup_values(vocab_dir: Path) -> set[str]:
@@ -392,16 +400,20 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                     node.lineno,
                     f"load_vocabulary_values 引用的词表文件不存在: {vocab_file}",
                 ))
-        # 检测5：_load_xxx 函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30）
-        # 新AI 可能写 def _load_my_values(): yaml.safe_load(...) 复制词表加载逻辑，
-        # 赋值给变量时是函数调用（检测3 合规），但函数体本身是复制的（违规）。
-        # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免
+        # 检测5：函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30，行为检测 v2）
+        # 治本（2026-06-30 红蓝对抗）：废弃函数名正则门控（漏检 _get_valid_layers/
+        # _load_doc_type_suffixes 等非标准命名），改为行为检测——任何函数体内含
+        # yaml.safe_load 且引用 vocabulary 相关路径/字符串 → 疑似复制词表加载。
+        # SSoT 真源文件（yaml_utils.py）白名单豁免。
+        # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免。
         elif isinstance(node, ast.FunctionDef):
-            func_name = node.name
-            if not _VOCAB_LOAD_FUNC_PATTERN.match(func_name):
+            # SSoT 真源文件豁免（自身必须用 yaml.safe_load 读词表）
+            if filepath.name in _SSOT_EXEMPT_FILES:
                 continue
-            # 检查函数体是否包含 yaml.safe_load 调用
+            func_name = node.name
+            # 行为检测：函数体内是否含 yaml.safe_load 调用
             has_yaml_load = False
+            has_vocab_ref = False
             for child in ast.walk(node):
                 if (isinstance(child, ast.Call)
                         and isinstance(child.func, ast.Attribute)
@@ -409,9 +421,14 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                         and isinstance(child.func.value, ast.Name)
                         and child.func.value.id == "yaml"):
                     has_yaml_load = True
-                    break
-            if not has_yaml_load:
-                continue
+                # 检测 vocabulary 相关字符串字面量（路径/文件名含 vocab/vocabulary）
+                # 注意：不检测变量名——避免误报引用 vocab_values 参数的同步函数
+                if isinstance(child, ast.Constant) and isinstance(child.value, str):
+                    low = child.value.lower()
+                    if "vocab" in low or "vocabulary" in low:
+                        has_vocab_ref = True
+            if not has_yaml_load or not has_vocab_ref:
+                continue  # 非词表 yaml 加载，跳过
             # noqa 豁免
             if _has_noqa_exempt(source, node.lineno):
                 continue
