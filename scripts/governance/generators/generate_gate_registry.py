@@ -82,6 +82,7 @@ CATEGORY_MAP = {
     "DD07": "dedup_gate",
     "C1": "ssot_status",
     "C2": "contract_drift",
+    "TRIPLE-ALIGN": "triple_alignment",
 }
 
 

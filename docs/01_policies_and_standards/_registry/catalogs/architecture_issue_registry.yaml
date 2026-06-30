@@ -203,3 +203,13 @@ entries:
   status: open
   created: '2026-06-27'
   last_updated: '2026-06-27'
+- issue_id: '#ARCH-027'
+  title: 治理军备竞赛陷阱——治理工具与被治理对象同构耦合，治理体系自指膨胀
+  severity: P1高
+  adjudication: |
+    AD-GOV-001治理收敛行动(2026-06-30)。病根(L5元问题·同构耦合)：治理工具用同构方式复制被治理对象的问题——49门禁+17reconciler+60规则YAML+35词表，治理工具本身成为漂移源，违反trae_060 §1原则①"能现成不创造"。具体失效：49门禁中10个warn-only(假门禁)、GATE-19重复登记2次、GATE-PATH-NAMING entry非命令(失效)。治本：(1)收敛49门禁→29，17reconciler→11，delete失效/孤儿；(2)worktree物理隔离治本stash循环根因；(3)create_guard阻断模式(无creation_token的.py提交硬阻断，治本"造第二真源")；(4)新增前MUST过trae_060 §4元问题审查(该不该存在/能否合并进已有)；(5)用trae_060审计trae_060统辖的工具，治本"治理体系自身缺乏向内收"。关联：trae_060 §5的6簇验证(5/6确证成立，canonical_source已识别)。
+  fix_phase: 已完成（2026-06-30，AD-GOV-001治理收敛施工：49门禁→29，17reconciler→11，worktree隔离，create_guard阻断）
+  status: decided
+  related_adjudication: 'AD-GOV-001'
+  created: '2026-06-30'
+  last_updated: '2026-06-30'
