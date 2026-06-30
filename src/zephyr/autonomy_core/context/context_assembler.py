@@ -40,8 +40,7 @@ from pydantic import BaseModel, Field
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
-if True:
-    from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry
+from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if True: 死分支（条件import残留）
 
 __all__ = [
     "AssembledContext",

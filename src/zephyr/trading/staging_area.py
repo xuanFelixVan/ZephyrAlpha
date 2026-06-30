@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.infrastructure.task_manager_server; scripts/lock_files.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash; cross-process lock via os.makedirs in .ailocks/ (threading.Lock is process-local only, ineffective for Trae multi-window multi-process)
+# [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash; cross-process lock via _CrossProcessLock (os.open O_CREAT|O_EXCL in .ailocks/); _COMMIT_LOCK (threading.Lock) 仅作进程内线程安全辅助锁，跨进程互斥由 _CrossProcessLock 负责
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -59,7 +59,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
-_COMMIT_LOCK = threading.Lock()
+_COMMIT_LOCK = threading.Lock()  # 5.12.11 修复：仅进程内线程安全辅助锁；跨进程互斥由 _CrossProcessLock(os.open O_CREAT|O_EXCL) 负责
 
 
 def _atomic_replace(tmp: Path, target: Path, max_retries: int = 5) -> None:

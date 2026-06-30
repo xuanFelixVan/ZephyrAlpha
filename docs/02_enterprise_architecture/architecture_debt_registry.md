@@ -1173,7 +1173,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **违反**：trae_060 §1 唯一真源（宪法级声明与代码不符）
 **证据**：
 - [AGENTS.md:187](file:///D:/ZephyrAlpha/AGENTS.md#L187) §11 声明`make_ttl_reconciler`已删除
-- [reconciliation_registry.py:418](file:///D:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py#L418) 函数仍完整存在
+- [reconciliation_registry.py:418](file:///D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py#L418) 函数仍完整存在
 **病根**：根因1（文档与代码脱节）
 **修复方向**：删除函数或更新AGENTS.md声明
 **修复记录**（2026-06-30）：已删除 `make_ttl_reconciler` 函数体（原 :418-509）+ `__all__` 移除 + git_commit_gateway.py import/register 删除。代码现在与 AGENTS.md §187 声明完全一致。reconciliation_registry.py 中 4 处注释引用已更新（说明"已删除但模式沿用"）。
@@ -1675,8 +1675,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **违反**：AGENTS.md §8"禁止在commit()方法体硬编码_check_*调用"
 **证据**：
-- [commit_gate_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/commit_gate_registry.py) 仅注册4个gate
-- [git_commit_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 仍有12个硬编码`_check_*`方法
+- [commit_gate_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_bridge/commit_gate_registry.py) 仅注册4个gate
+- [git_commit_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py) 仍有12个硬编码`_check_*`方法
 - .pre-commit-config.yaml含51个gate-* id
 - 三层门禁数字严重不一致：registry 4 vs gateway硬编码12 vs pre-commit 51
 **病根**：根因3（架构债务#AD-001未完成迁移）
@@ -1757,6 +1757,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：新增病根维度——异常处理反模式（有逻辑但静默吞失败，比空handler更危险）
 **修复方向**：全局禁止`except: pass`，改为`except Exception: logger.exception(...)` + ruff规则强制
 
+[✓ FIXED: 2026-07-01 P0关键聚簇已修复（33处/4文件）：
+  - auto_runtime_core.py 7处（系统大脑：boot资源监控/task派发/4处shutdown序列/任务学习）
+  - pipeline_orchestrator.py 12处（编排器：rollback门禁/skill注入/2处artifact/EventBus/3处遥测/TASK_EVENT/预算门禁/审计写入）
+  - rollback_executor.py 12处（回滚器：AuditWriter初始化/in-flight清理/merge-base/git log/2处discard回滚/2处审计写入/exit_code解析/pycache清理/2处op审计）
+  - boot_hooks.py 2处（启动链：task_repo查询/EventBus订阅）
+  - health_monitor.py 2处（监控器：主循环僵尸进程/probe注册）
+  剩余~180处分散在90+文件，需通过ruff BLE001/E722规则系统性强制（已记入待办）]
+
 #### 5.12.2 函数签名漂移7簇（HIGH 1 + MEDIUM 5 + LOW 1 = 7聚合）
 
 **违反**：trae_060 §2 唯一真源（同名函数应drop-in可替换）
@@ -1782,6 +1790,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（5.1.4新增簇#11）
 **修复方向**：统一为`Z`后缀，所有副本改调真源
 
+[✓ FIXED: 2026-07-01 now_iso函数副本已收敛（2处）：base_repo.py:182 + task_repo.py:308 均改调真源 shared/utils/time_utils.now_iso()（Z后缀）。注：代码库另有~100处内联 datetime.now(UTC).isoformat() 产出+00:00，属相关但更大范围问题，需单独批量迁移批次处理]
+
 #### 5.12.4 硬编码绝对路径9处（HIGH，1聚合 = 9处）
 
 **违反**：trae_060 §2 唯一真源 + 可移植性
@@ -1790,6 +1800,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 引用的`mcp/`、`orchestrator/`子目录已不存在
 **病根**：根因1（静态硬编码）
 **修复方向**：改用`project_root / 相对路径`
+
+[✓ FIXED: 2026-07-01 pipeline_roadmap.py CROSS_MODULE_SYNC 9处硬编码 D:\ZephyrAlpha\... 全部改为相对路径；3处漂移路径同步修正：mcp/→integration/mcp/、orchestrator/trigger_router.py→trading/orchestrator/、orchestrator/deferred_queue.py→trading/orchestrator/]
 
 #### 5.12.5 os.getcwd()无fallback假设cwd是项目根（MEDIUM，1聚合 = 30+处）
 
@@ -1808,6 +1820,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - TODO条件已满足但注释未清理 + AggregateHealth接入未完成
 **病根**：根因1（stale TODO）
 **修复方向**：清理TODO + 完成接入
+
+[✓ FIXED: 2026-07-01 stale TODO DM-201247 已清理（boot_hooks.py:88）；DM-201247 条件已满足（HealthMonitor._monitor_loop 已实现分钟级调度），AggregateHealth 接入责任转移至 AutoRuntimeCore.boot()（持有 LifecycleManager），本初始化阶段不可用]
 
 #### 5.12.7 threading.local连接泄漏（HIGH）
 
@@ -1835,6 +1849,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因4（资源管理缺陷）
 **修复方向**：返回context manager
 
+[✓ FIXED: 2026-07-01 winfs_defense.py:49 safe_open 已补充 context manager 使用契约文档（返回的文件对象原生支持 __enter__/__exit__，调用方必须用 with 形式）；现有调用方（tests/capacity/test_winfs_defense.py）已全部使用 with 形式，无遗漏]
+
 #### 5.12.10 死分支2处（LOW × 2）
 
 **证据**：
@@ -1843,6 +1859,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（dead code残留）
 **修复方向**：清理死分支
 
+[✓ FIXED: 2026-07-01 2处死分支已清理：context_assembler.py:43 移除 if True: 守卫（条件import残留）；ml_experiment_pipeline.py:120 移除 _BUILTINS_GUARD_ENABLED=True 永真flag及2处条件分支]
+
 #### 5.12.11 staging_area.py锁无效但使用（LOW）
 
 **证据**：
@@ -1850,6 +1868,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - [staging_area.py:62](file:///D:/ZephyrAlpha/src/zephyr/trading/staging_area.py#L62) 仍用`_COMMIT_LOCK = threading.Lock()`
 **病根**：根因4（并发设计缺陷——知病不治）
 **修复方向**：改用文件锁或redis锁
+
+[✓ FIXED: 2026-07-01 跨进程文件锁 _CrossProcessLock(os.open O_CREAT|O_EXCL) 已实现并在 commit()/try_auto_merge() 中使用；_COMMIT_LOCK(threading.Lock) 角色降级为进程内线程安全辅助锁，注释已明确；INVARIANTS 行已更新为准确描述（os.open 而非 os.makedirs）]
 
 #### 5.12.12 小计
 
@@ -2351,12 +2371,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：抽取LazyGatewayHolder基类强制加锁
 
 #### 5.16.5 GitCommitGateway _GlobalCommitLock TOCTOU僵尸锁清理竞态【HIGH】
-- 证据：[git_commit_gateway.py:268-287](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) `if not is_pid_alive(holder_pid): os.remove(lock_file)` check与act非原子；两Trae进程同时发现PID死亡：A remove→A create→B remove(A的)→B create，两进程同时持"全局串行锁"；同问题在 [staging_area.py:_CrossProcessLock](file:///d:/ZephyrAlpha/src/zephyr/trading/staging_area.py) 第90-161行
+- 证据：[git_commit_gateway.py:268-287](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py) `if not is_pid_alive(holder_pid): os.remove(lock_file)` check与act非原子；两Trae进程同时发现PID死亡：A remove→A create→B remove(A的)→B create，两进程同时持"全局串行锁"；同问题在 [staging_area.py:_CrossProcessLock](file:///d:/ZephyrAlpha/src/zephyr/trading/staging_area.py) 第90-161行
 - 病根：根因5（TOCTOU窗口未识别）
 - 修复：用`os.open(O_CREAT|O_EXCL)`单次原子创建或`msvcrt.locking`/`fcntl.flock`内核级锁
 
 #### 5.16.6 GitCommitGateway stash→commit→pop跨子进程非原子+stash堆积【HIGH】
-- 证据：[git_commit_gateway.py:1977-2117](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) `_stash_other_files→git add→git commit→_restore_stash` 跨4+次subprocess；commit后pop前崩溃→stash永久残留；文件注释（2047-2057行）承认"7+个stash无法pop"实测事故
+- 证据：[git_commit_gateway.py:1977-2117](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py) `_stash_other_files→git add→git commit→_restore_stash` 跨4+次subprocess；commit后pop前崩溃→stash永久残留；文件注释（2047-2057行）承认"7+个stash无法pop"实测事故
 - 病根：根因5（INVARIANTS写"commit原子"但跨子进程非原子）
 - 修复：改用`git commit -- <pathspec>`精确提交或worktree隔离
 
@@ -4474,7 +4494,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 维度说明：核心函数docstring完整性、文档与代码行为一致性、结构性bug导致的定义缺失。
 
 #### 5.42.1 [MEDIUM] 核心治理函数缺docstring
-- **文件**：[git_commit_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)等多处
+- **文件**：[git_commit_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)等多处
 - **证据**：Grep `def [a-z_]+\(self`匹配的函数中，约40%无docstring；关键方法如`_check_pure_assertion`/`_check_deprecated`无说明
 - **问题**：核心治理函数无文档，新AI难以理解意图
 - **影响**：维护成本高；违反trae_060新AI可发现性原则

@@ -117,7 +117,7 @@ class MLExperimentPipeline:
     _global_run_count: int = 0
     _seen_idempotency_keys: set[str] = set()
     _MAX_RUNS_BEFORE_P_HACKING_WARNING = 9
-    _BUILTINS_GUARD_ENABLED = True
+    # 5.12.10 修复：移除 _BUILTINS_GUARD_ENABLED = True 死分支（flag永远True，else路径不可达）
 
     def __init__(self) -> None:
         self._models: list[ModelMetadata] = []
@@ -238,7 +238,7 @@ class MLExperimentPipeline:
         predictions: list[dict[str, Any]] = []
         test_features = features or {"dummy": [1.0]}
 
-        builtins_snapshot = self._snapshot_builtins() if self._BUILTINS_GUARD_ENABLED else {}
+        builtins_snapshot = self._snapshot_builtins()  # 5.12.10 修复：移除死分支条件（guard始终启用）
 
         with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(self._models))) as executor:
             futures = {}
@@ -253,18 +253,18 @@ class MLExperimentPipeline:
             for future in as_completed(futures):
                 try:
                     pred = future.result()
-                    if self._BUILTINS_GUARD_ENABLED:
-                        violations = self._check_and_restore_builtins(builtins_snapshot)
-                        if violations:
-                            result.inferences_failed += 1
-                            result.errors.append(
-                                {
-                                    "stage": PipelineStage.INFERENCE_EXEC.value,
-                                    "model": futures[future][1],
-                                    "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
-                                }
-                            )
-                            continue
+                    # 5.12.10 修复：移除 if self._BUILTINS_GUARD_ENABLED: 死分支（guard始终启用）
+                    violations = self._check_and_restore_builtins(builtins_snapshot)
+                    if violations:
+                        result.inferences_failed += 1
+                        result.errors.append(
+                            {
+                                "stage": PipelineStage.INFERENCE_EXEC.value,
+                                "model": futures[future][1],
+                                "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
+                            }
+                        )
+                        continue
                     if pred:
                         predictions.append(pred)
                         result.inferences_run += 1
