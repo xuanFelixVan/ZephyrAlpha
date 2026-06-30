@@ -271,7 +271,7 @@ result = await gateway.full_scan(user_text, llm_response)
   - **根目录禁平铺**：tests/ 根目录禁止新增 test_*.py 平铺文件（根目录仅允许 conftest.py/__init__.py 等基础文件）。新增 test_*.py MUST 归功能域子目录。
   - **contracts/ 唯一**：契约测试唯一目录为 `contracts/`（单复数歧义已消除——原 `contract/` 元测试 5 文件已合并入 `contracts/_meta/`）。禁止再造 `contract/` 单数目录。
   - **目录名禁 test_ 前缀**：tests/ 下子目录名禁止 `test_` 前缀（`test_code_dedup_engine/` 已改名 `code_dedup_engine/`）。`test_` 前缀只用于文件名。
-  - **迁移状态**：ARCH-029 进行中——406/1699 明确前缀簇已迁移（14 簇：a2a/skill/trae_rules/kb/knowledge_engine/contracts/audit/federated_learning/fle/self_check/automation/f_lifecycle/governance/llm_security），剩余 1291 个 _UNMATCHED 文件待后续 session 按前缀细化或逐文件归位。新 AI 接续治本前 MUST 先读 ARCH-029 条目确认进度。
+  - **迁移状态**：ARCH-029 进行中——937/1699 文件已迁移（55.2%），84 个功能域子目录。已迁移前缀簇：批次1-15（406文件：a2a/skill/trae_rules/kb/knowledge_engine/contracts/audit/federated_learning/fle/self_check/automation/f_lifecycle/governance/llm_security）；批次16-19（239文件大簇：e/context/cross/rollback/safety/escalation/agent/config/blueprint/budget/drift/ba/model/session）；批次20（290文件小簇：action/prompt/ai/bridges/event/fix/gate/multi/orchestrator/pipeline/task/capability/ce/data/db/decision/dependency/guard/rule/autonomy/cold/feedback/file/git/memory/observability/phase/risk/temporal/utils/canary/capacity/external/intent/io/path/resource + 归入已有的 adversarial/contracts/chaos/governance/integration/infrastructure/semantic_auditor）。剩余 762 文件（零散前缀2-4个约384 + 单文件前缀约324 + 无前缀54）待后续 session 按前缀细化或逐文件归位。新 AI 接续治本前 MUST 先读 ARCH-029 条目确认进度。
   - **强制方式**：文档约定（本条目）+ code review + 后续 session 接续治本。无硬阻断门禁（向内收原则①——不造无全自动维护价值的门禁；测试目录组织是约定性约束，非安全/真源约束）。
 
 ## 8. 永远不要做的事
