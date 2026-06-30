@@ -187,20 +187,20 @@ def _path_to_domain(path_str):
 def disable_readonly_triggers(cur):
     """临时禁用只读触发器（sync 脚本的通行证）
 
-    P2 PG 迁移：PG 触发器机制与 SQLite 不同（PG 需 CREATE FUNCTION + CREATE TRIGGER）。
-    PG 模式下只读保护通过 GRANT/REVOKE 权限管理实现，sync 脚本使用超权连接直接写入。
-    本函数保留为 no-op 以维持调用结构（sync_all 中 try/finally 仍调用此函数）。
+    P2 PG 迁移修正：PG 模式下 READONLY_TABLES 仍有 readonly_{table}_{insert/update/delete}
+    触发器（SQLite→PG 迁移遗留）。使用 ALTER TABLE DISABLE TRIGGER USER 禁用用户定义触发器，
+    保留 FK 约束触发器（session_replication_role 需 superuser，zephyr 非超权故用此法）。
     """
-    print("  [PG] 只读保护通过权限管理实现，sync 通行证自动生效（no-op）")
+    for table in READONLY_TABLES:
+        cur.execute(f"ALTER TABLE {table} DISABLE TRIGGER USER")
+    print(f"  [PG] 已禁用 {len(READONLY_TABLES)} 张只读表的用户触发器（FK 约束保留）")
 
 
 def restore_readonly_triggers(cur):
-    """恢复只读触发器（无论成功失败必须恢复）
-
-    P2 PG 迁移：PG 模式下只读保护通过 GRANT/REVOKE 权限管理实现，无需恢复触发器。
-    本函数保留为 no-op 以维持调用结构。
-    """
-    print("  [PG] 只读保护由权限管理持续生效（no-op）")
+    """恢复只读触发器（无论成功失败必须恢复）"""
+    for table in READONLY_TABLES:
+        cur.execute(f"ALTER TABLE {table} ENABLE TRIGGER USER")
+    print(f"  [PG] 已恢复 {len(READONLY_TABLES)} 张只读表的用户触发器")
 
 
 # ========== P0 优先级同步 ==========
