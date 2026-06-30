@@ -2442,13 +2442,13 @@ _OLY_008_FILES = [
     "src/zephyr/trading/task_gate.py",
     "scripts/git_commit.py",
     "scripts/governance/verify_schema_health.py",
-    "src/zephyr/governance/git_commit_gateway.py",
+    "src/zephyr/governance/rule_bridge/git_commit_gateway.py",
 ]
 _OLY_008_NEEDLES = [
     {  # 针1: 伪造的量子同步 import（git_commit.py）
         "file": "git_commit.py",
         "content": "from zephyr.governance.quantum_validator import validate_quantum_coherence  # quantum sync",
-        "after": "from zephyr.governance.git_commit_gateway import (",
+        "after": "from zephyr.governance.rule_bridge.git_commit_gateway import (",
     },
     {  # 针2: 伪造的 AI lint import（verify_schema_health.py）
         "file": "verify_schema_health.py",
@@ -2492,13 +2492,13 @@ EX_OLY_008 = ExamTestCase(
 _OLY_009_FILES = [
     "src/zephyr/trading/task_gate.py",
     "scripts/git_commit.py",
-    "src/zephyr/governance/git_commit_gateway.py",
+    "src/zephyr/governance/rule_bridge/git_commit_gateway.py",
 ]
 _OLY_009_NEEDLES = [
     {  # 注入一条不存在的 import（埋错）
         "file": "git_commit.py",
         "content": "from zephyr.governance.commit_orchestrator import orchestrate_pipeline  # pipeline orchestration",
-        "after": "from zephyr.governance.git_commit_gateway import (",
+        "after": "from zephyr.governance.rule_bridge.git_commit_gateway import (",
     },
 ]
 _OLY_009_CONTEXT = assemble_real_context(

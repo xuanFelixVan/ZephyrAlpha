@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_commit_gateway.py | §gate-commit-gw
 # [MODULE] scripts.governance.d11_compliance.validate_commit_gateway
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.d11_compliance.__init__; zephyr.governance.git_commit_gateway
+# [DEPENDENCIES] scripts.governance.d11_compliance.__init__; zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS] .pre-commit-config.yaml (GATE-COMMIT-GW hook)
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -123,7 +123,7 @@ def main() -> int:
         "  正确方式:\n"
         "    python scripts/git_commit.py --session <id> --files <f1,f2> --message <msg>\n"
         "  或代码调用:\n"
-        "    from zephyr.governance.git_commit_gateway import GitCommitGateway\n"
+        "    from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway\n"
         "    GitCommitGateway().commit(session_id, files, message)\n"
         "  如确需绕过（如修复历史）: git commit --no-verify（conscious bypass，"
         "由 GATE-COMMIT-GW-AUDIT 审计 reconciler 追踪）",

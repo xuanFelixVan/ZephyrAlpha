@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-create_guard | tests/test_create_guard.py | §create-guard-tests
 # [MODULE] tests.test_create_guard
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.commit_gates.create_guard, zephyr.governance.git_commit_gateway
+# [DEPENDENCIES] zephyr.governance.commit_gates.create_guard, zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -46,7 +46,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.governance.commit_gates.create_guard import make_create_guard  # noqa: E402
-from zephyr.governance.git_commit_gateway import GitCommitGateway  # noqa: E402
+from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway  # noqa: E402
 
 
 def _init_git_repo(repo_dir: Path) -> None:
@@ -282,7 +282,7 @@ class TestFailClosedGitDiffFailure:
 class TestNewReconcilerMarker:
     """新增 make_*_reconciler 需 # trae_060-reviewed 标记（元问题3治本）。"""
 
-    _RECONCILER_REL = "src/zephyr/governance/reconciliation_registry.py"
+    _RECONCILER_REL = "src/zephyr/governance/audit/reconciliation_registry.py"
 
     def _setup_reconciler_registry(
         self, repo_dir: Path, head_content: str, staged_content: str

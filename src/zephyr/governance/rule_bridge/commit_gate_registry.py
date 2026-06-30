@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GOV-commit_gate_registry | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
-# [MODULE] zephyr.governance.commit_gate_registry
+# [MODULE] zephyr.governance.rule_bridge.commit_gate_registry
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行

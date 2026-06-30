@@ -1329,7 +1329,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 **核心**：AI 完成文件修改后 MUST 在 session 结束前 git commit。未提交的代码 = 不存在 = 会被 git reset/checkout 冲掉。
 
-> **GATE-COMMIT-GW 门禁（OPS-2026062513 治本）**：全项目禁止裸 `git commit`。pre-commit hook [validate_commit_gateway.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_commit_gateway.py) 会阻断所有非 `--no-verify` 的 commit（hook 运行=裸 commit=阻断 exit 1）。所有 commit MUST 经 [GitCommitGateway](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)（串行锁+stash 隔离+GW 标记），CLI 入口为 `python scripts/git_commit.py`。`git_guard.py commit` 是裸透传（不走 gateway），会被门禁阻断——勿用 `git_guard.py commit`。
+> **GATE-COMMIT-GW 门禁（OPS-2026062513 治本）**：全项目禁止裸 `git commit`。pre-commit hook [validate_commit_gateway.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_commit_gateway.py) 会阻断所有非 `--no-verify` 的 commit（hook 运行=裸 commit=阻断 exit 1）。所有 commit MUST 经 [GitCommitGateway](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)（串行锁+stash 隔离+GW 标记），CLI 入口为 `python scripts/git_commit.py`。`git_guard.py commit` 是裸透传（不走 gateway），会被门禁阻断——勿用 `git_guard.py commit`。
 
 ### 触发条件
 

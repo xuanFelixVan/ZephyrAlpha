@@ -563,7 +563,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     # 范围：仅 src/zephyr/governance/commit_gates/*.py
     # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
     # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
-    # 真源：src/zephyr/governance/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
+    # 真源：src/zephyr/governance/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
     commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
     try:
         is_commit_gate = filepath.is_relative_to(commit_gates_dir)
@@ -589,7 +589,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             issues.append((
                 node.lineno,
                 "硬编码测试目录名 'tests/'"
-                "（应 from zephyr.governance.commit_gate_registry import is_test_exempt 引用 SSoT）",
+                "（应 from zephyr.governance.rule_bridge.commit_gate_registry import is_test_exempt 引用 SSoT）",
             ))
 
     return issues

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_git_commit_extreme.py | §ghost-commit-extreme-test
 # [MODULE] tests.test_git_commit_extreme
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] tests.__init__; zephyr.governance.git_commit_gateway
+# [DEPENDENCIES] tests.__init__; zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -46,8 +46,8 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.git_commit_gateway import (
 from _shared.constants import REPO_ROOT
+from zephyr.governance.rule_bridge.git_commit_gateway import (
     CommitStatus,
     GatewayError,
     GitCommitGateway,
@@ -397,14 +397,14 @@ class TestTimeoutAndResourceExhaustion:
         )
 
         # 用短超时的锁替换默认锁（避免测试等 60 秒）
-        from zephyr.governance.git_commit_gateway import _GlobalCommitLock
+        from zephyr.governance.rule_bridge.git_commit_gateway import _GlobalCommitLock
 
         class FastLock(_GlobalCommitLock):
             def __init__(self, project_root):
                 super().__init__(project_root, timeout=2.0)
 
         gw = GitCommitGateway(project_root=tmp_path)
-        with patch("zephyr.governance.git_commit_gateway._GlobalCommitLock", FastLock):
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway._GlobalCommitLock", FastLock):
             (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
             result = gw.commit("sess-wait", [str(tmp_path / "a.py")], "feat: lock wait")
 

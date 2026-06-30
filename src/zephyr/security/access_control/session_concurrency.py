@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.session_concurrency
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_session_concurrency; zephyr.governance.git_commit_gateway
+# [CONSUMERS] tests.test_session_concurrency; zephyr.governance.rule_bridge.git_commit_gateway
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session TTL=3600s 自动过期；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用

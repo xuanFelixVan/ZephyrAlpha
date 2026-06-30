@@ -424,7 +424,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: working_docs_ghost_ref_archiver
-    canonical_override: src/zephyr/governance/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - GATE-WORKING-DOCS
       - working_docs_reconciler
@@ -864,7 +864,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: commit_gateway_audit_reconciler
-    canonical_override: src/zephyr/governance/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - GATE-COMMIT-GW-AUDIT
       - make_commit_gateway_audit_reconciler

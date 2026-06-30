@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-035 | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
-# [MODULE] zephyr.governance.reconciliation_registry
+# [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] ReconciliationRegistry.register 幂等（同 gate_id 覆盖旧 spec）；reconcile_for 按 priority 升序执行命中 trigger 的 reconciler；reconciler 异常被捕获为 warn 结果（不阻断后续 reconciler）
@@ -43,7 +43,7 @@ import 链断裂）。
 
 Usage::
 
-    from zephyr.governance.reconciliation_registry import (
+    from zephyr.governance.audit.reconciliation_registry import (
         ReconcileResult, ReconcilerSpec, ReconciliationRegistry,
     )
 
@@ -2305,7 +2305,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 加载模块 __all__（真源：reconciliation_registry.__all__）
         try:
-            import zephyr.governance.reconciliation_registry as reg_module
+            import zephyr.governance.audit.reconciliation_registry as reg_module
             available = set(reg_module.__all__)
         except Exception as e:
             return ReconcileResult(action="warn", detail=f"failed to load reconciliation_registry: {e}")

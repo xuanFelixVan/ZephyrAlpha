@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/git_commit.py | §ghost-commit-gateway-cli
 # [MODULE] scripts.git_commit
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.git_commit_gateway
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype

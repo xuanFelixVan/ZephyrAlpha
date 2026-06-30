@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_task_repo_gateway_e2e.py | §ghost-commit-e2e
 # [MODULE] tests.test_task_repo_gateway_e2e
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] tests.__init__; zephyr.governance.task_repo; zephyr.governance.git_commit_gateway
+# [DEPENDENCIES] tests.__init__; zephyr.governance.task_repo; zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -42,7 +42,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.git_commit_gateway import CommitResult, CommitStatus
+from zephyr.governance.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
 from zephyr.governance.task_repo import TaskRepository
 
 
@@ -107,7 +107,7 @@ class TestAutoCommitE2E:
         repo = _make_repo(tmp_path)
 
         # patch GitCommitGateway 使用临时仓库
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.return_value = CommitResult(
                 status=CommitStatus.OK,
                 message="committed 1 files",
@@ -128,7 +128,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-002", [])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             repo._auto_commit_on_completion("E2E-002", task)
             MockGW.assert_not_called()
 
@@ -138,7 +138,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-003", [str(tmp_path / "nonexistent.py")])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             repo._auto_commit_on_completion("E2E-003", task)
             MockGW.assert_not_called()
 
@@ -155,7 +155,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-004", [file_path])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.side_effect = RuntimeError("gateway crashed")
             # 不应抛异常
             repo._auto_commit_on_completion("E2E-004", task)
@@ -170,7 +170,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-005", [file_path])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.return_value = CommitResult(
                 status=CommitStatus.NOTHING_TO_COMMIT,
                 message="no staged changes",
@@ -191,7 +191,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-006", [file_path])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.return_value = CommitResult(
                 status=CommitStatus.STASH_CONFLICT,
                 message="commit OK but stash pop failed",
@@ -212,7 +212,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-007", [file_path])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.return_value = CommitResult(
                 status=CommitStatus.COMMIT_FAILED,
                 message="git commit failed: some error",
@@ -230,7 +230,7 @@ class TestAutoCommitE2E:
         task = _make_mock_task("E2E-008", [file_path])
         repo = _make_repo(tmp_path)
 
-        with patch("zephyr.governance.git_commit_gateway.GitCommitGateway") as MockGW:
+        with patch("zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.return_value = CommitResult(
                 status=CommitStatus.LOCK_TIMEOUT,
                 message="Cannot acquire lock (timeout 60s)",
@@ -257,7 +257,7 @@ class TestAutoCommitE2E:
             TaskRepository._auto_commit_on_completion,
         ):
             # 直接调用，但需要 patch GitCommitGateway 的初始化
-            from zephyr.governance.git_commit_gateway import GitCommitGateway
+            from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway
             original_init = GitCommitGateway.__init__
 
             def patched_init(self, project_root=None):
