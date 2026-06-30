@@ -2631,7 +2631,15 @@ class GitCommitGateway:
         return path
 
     def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
-        """执行 git 命令（统一 cwd + encoding）。"""
+        """执行 git 命令（统一 cwd + encoding）。
+
+        .. warning::
+            reconciler auto-commit 禁止裸调本方法执行 ``git commit``——必须走
+            ``_commit_auto()`` 统一入口（五重 gate 覆盖，见 AGENTS.md §8 L280
+            "reconciler auto-commit 统一入口"）。本方法仅用于 git add/diff/log/show
+            等非 commit 命令；commit 命令请用 ``commit()``（用户/AI 入口）或
+            ``_commit_auto()``（reconciler 入口）。
+        """
         env = os.environ.copy()
         env[_GATEWAY_ENV] = "1"  # 标记经 gateway
         return subprocess.run(
