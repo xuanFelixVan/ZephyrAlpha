@@ -372,14 +372,13 @@ sections:
       fail: 字段缺失导致门禁阻断
     doc_types:
     - policy
-    - operational_rule
     - register
     - template
     - blueprint
     conditional_required:
     - tags在scope layer时必填
     - layer/classification在register/blueprint全局型填cross_layer/含敏感信息填confidential
-    - verifiability在operational_rule必填
+    - verifiability在procedural policy必填
     - depends_on在依赖其他文件时必填
     - valid_from在有生效日期时必填
     - evolution_policy在有演进策略时必填
@@ -398,7 +397,7 @@ sections:
     constraints:
     - '#1 frozen→immutable_core(单向逆面不成立stable+immutable_core合法)'
     - '#2 volatile不能immutable_core'
-    - '#3-11 doc_type↔rule_form映射(policy=declarative operational_rule=procedural register=data template=structural)'
+    - '#3-11 doc_type↔rule_form映射(policy=declarative/procedural register=data template=structural)'
     - '#12 template的summary必填非空'
     - '#13 template_for vs tags一致性'
     architecture_citizen_principle: stability描述内容变更频率ai_autonomy描述谁有权改两者正交不耦合
@@ -425,12 +424,12 @@ sections:
       pass: 不触发任何禁止行为
       fail: 违反禁止规则导致校验阻断
     prohibitions:
-    - doc_type与rule_form矛盾(如policy配procedural operational_rule配declarative)
+    - doc_type与rule_form矛盾(如declarative policy配procedural内容)
     - stability frozen配ai_autonomy ai_modifiable
     - Active状态以上省略rule_form字段
     - 使用未在§2.1注册的字段名
     - scope layer配layer cross_layer
-    - verifiability inspection配doc_type operational_rule
+    - verifiability inspection配procedural policy
   ps_std_001_doc_type_vocabulary:
     title: doc_type受控词表
     section_type: rule
@@ -450,8 +449,8 @@ sections:
     key_mapping: doc_type↔layer↔directory三向映射一一对应
     new_doc_type_flow: 发现无法覆盖→提决策记录→仅更新vocabulary YAML→校验脚本动态加载→同步frontmatter_schema.json
     prohibitions:
-    - 在governance/下使用operational_rule
-    - 在operational/下使用policy或standard
+    - 在governance/下使用procedural policy(必须declarative)
+    - 在operational/下使用declarative policy(必须procedural)
     - 使用旧长名(governance_standard/governance_registry等)
     - 使用未在§3.2注册的doc_type
     - doc_type与rule_form矛盾

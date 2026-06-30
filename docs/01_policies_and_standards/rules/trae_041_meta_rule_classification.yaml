@@ -666,7 +666,7 @@ sections:
       v2: 每次修改
       v3: 每月
       v4: 每年
-    - rule_type: doc_type operational_rule
+    - rule_type: doc_type policy (procedural)
       v1: 每次执行
       v2: 每次提交
       v3: 每月
@@ -782,14 +782,14 @@ sections:
     - step: Step1字段扫描(自动化对应V1~V2)
       operations:
       - 遍历所有文件frontmatter检查doc_type是否在受控词表中
-      - 检查doc_type是否匹配所在目录的合法值(如governance/下不能有operational_rule)
+      - 检查doc_type是否匹配所在目录的合法值(如governance/下policy必须declarative)
       - 检查文件名后缀是否匹配doc_type(§一.0强制映射表)
       output: 字段违规清单
     - step: Step2内容读取(人工/AI深度审查对应V5)
       operations:
       - 对Step1通过的文件逐文件打开并阅读正文内容
       - 声明式规则(policy)正文应是"什么必须/禁止/推荐"不是"怎么做"
-      - 过程式规则(operational_rule)正文应是"Step 1→N操作步骤"不是声明式禁令
+      - 过程式规则(policy+procedural)正文应是"Step 1→N操作步骤"不是声明式禁令
       - 注册表(register)正文应是结构化数据清单不是叙事散文
       - 索引入口(index)正文应只是目录导航不含规则文本
       output: 内容-标签不一致清单
@@ -819,7 +819,7 @@ sections:
       verdict: 标签+位置均错误
       action: 搬到03_modules/l*/模块名/blueprint.md
     - content: 施工图(实施步骤)
-      doc_type_claimed: operational_rule
+      doc_type_claimed: policy (procedural)
       actual_content: 模块施工图
       verdict: 内容非操作规则
       action: 搬到03_modules/l*/模块名/construction-plan.md
@@ -844,7 +844,7 @@ sections:
       verdict: 正确
       action: 原地不动
     - content: 过程式步骤
-      doc_type_claimed: operational_rule
+      doc_type_claimed: policy (procedural)
       actual_content: 确实是操作流程
       verdict: 正确
       action: 原地不动

@@ -168,7 +168,7 @@ sections:
       fail: 文件名使用kebab-case(连字符)
     - type: constraint
       check: doc_type→文件名后缀映射
-      pass: policy→-policy.md;standard→-standard.md;protocol→-protocol.md;operational_rule→-runbook.md/-playbook.md/-procedure.md/-checklist.md;register→-registry.md/-register.md;index→index.md;template→{target_doc_type}-template.md
+      pass: policy→-policy.md/-rules.yaml/-runbook.md/-playbook.md/-procedure.md/-checklist.md(v3.1.0合并operational_rule);standard→-standard.md;protocol→-protocol.md;register→-registry.md/-register.md;index→index.md;template→{target_doc_type}-template.md
       fail: 文件名后缀与doc_type不匹配
     - type: constraint
       check: 文件夹命名风格
