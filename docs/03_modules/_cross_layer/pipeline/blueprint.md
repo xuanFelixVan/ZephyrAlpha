@@ -573,7 +573,7 @@ class ArtifactClassification(str, Enum):
 | 对应蓝图契约 | §5.2 容量估算 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\pipeline_orchestrator.py` |
 | 验收标准 | max_concurrent=100, max_parallel=11, enable_parallel_modules=True |
-| 验证命令 | `python -m pytest tests/unit/test_pipeline_orchestrator.py -k test_concurrency -v` |
+| 验证命令 | `python -m pytest tests/test_pipeline_orchestrator.py -k test_concurrency -v` |
 | G7 检查项 | capacity_params.yaml 参数与代码一致 |
 
 #### 步骤 2：增量扫描调度器
@@ -583,7 +583,7 @@ class ArtifactClassification(str, Enum):
 | 对应蓝图契约 | §17 容量升级 GAP-02 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\incremental_scan_orchestrator.py` |
 | 验收标准 | git diff→ScriptImpactMap→15-30 脚本→<1min |
-| 验证命令 | `python -m pytest tests/unit/test_incremental_scan.py -v` |
+| 验证命令 | `python -m pytest tests/test_incremental_scan.py -v` |
 | G7 检查项 | ScriptImpactMap 双向索引完整性 |
 
 #### 步骤 3：水平分片扩展
@@ -593,7 +593,7 @@ class ArtifactClassification(str, Enum):
 | 对应蓝图契约 | §17 容量升级 GAP-05 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\shard_router.py` |
 | 验收标准 | ShardRouter 4→16 片 + 独立 SQLite per shard |
-| 验证命令 | `python -m pytest tests/unit/test_shard_router.py -v` |
+| 验证命令 | `python -m pytest tests/test_shard_router.py -v` |
 | G7 检查项 | 一致性哈希迁移正确性 |
 
 #### 步骤 4：背压与公平调度
@@ -603,7 +603,7 @@ class ArtifactClassification(str, Enum):
 | 对应蓝图契约 | §17 容量升级 缺口 #1/#3 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\pipeline\backpressure_manager.py` |
 | 验收标准 | 三级背压 L1/L2/L3 + per-session 公平调度 |
-| 验证命令 | `python -m pytest tests/unit/test_backpressure.py -v` |
+| 验证命令 | `python -m pytest tests/test_backpressure.py -v` |
 | G7 检查项 | 100 并发下无饥饿 |
 
 #### 步骤 5：压力测试验收
@@ -1023,7 +1023,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_pipeline_orchestrator.py` | ✅ 已实现 | |
+| `tests/test_pipeline_orchestrator.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

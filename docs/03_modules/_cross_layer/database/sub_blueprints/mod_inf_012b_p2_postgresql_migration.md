@@ -1878,10 +1878,10 @@ grep -rln "sqlite3\.\|depgraph\.db\|PRAGMA\|INSERT OR REPLACE" tests/ --include=
 
 | # | 文件路径 | 修改说明 | 完成状态 |
 |---|---------|---------|:---:|
-| 1 | `tests/unit/db/test_task_repo.py` | SQLite→PG连接调整（仅depgraph部分，task_repo保持SQLite） | [x] |
-| 2 | `tests/unit/db/test_depgraph_schema.py` | Schema DDL测试更新 | [x] |
-| 3 | `tests/unit/gates/test_gate_engine.py` | DB连接调整 | [x] |
-| 4 | `tests/unit/test_schemas.py` | DB连接调整 | [x] |
+| 1 | `tests/db/test_task_repo.py` | SQLite→PG连接调整（仅depgraph部分，task_repo保持SQLite） | [x] |
+| 2 | `tests/db/test_depgraph_schema.py` | Schema DDL测试更新 | [x] |
+| 3 | `tests/gates/test_gate_engine.py` | DB连接调整 | [x] |
+| 4 | `tests/test_schemas.py` | DB连接调整 | [x] |
 | 5+ | 其余测试文件（通过上述grep命令获取完整清单） | DB连接调整 | [x] |
 
 ---

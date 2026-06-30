@@ -663,7 +663,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/unit/pf_core/ -v` | 运行 L05 全部单元测试 | — | 12 tests passed |
+| 1 | 命令 | `python -m pytest tests/ -v` | 运行 L05 全部单元测试 | — | 12 tests passed |
 | 2 | 命令 | `python -c "from zephyr.pf_core.strategy_base import autodiscover_strategies; autodiscover_strategies()"` | 策略自动发现 | `package_path`: 默认 `zephyr.pf_core.strategies` | 发现策略数 |
 | 3 | 配置 | `RebalanceMode` | 权重分配模式 | `equal_weight` / `signal_weight` / `min_variance` / `risk_parity` | — |
 

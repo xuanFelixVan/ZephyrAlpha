@@ -525,7 +525,7 @@ vector-memory = [
 ├── .models/                                        # ⏳ 本地模型（加 .gitignore）
 │   └── bge-m3/                                     # ONNX 模型文件 (~1.2GB)
 │
-├── tests/unit/vector-memory/                       # ⏳ experimental 新建
+├── tests/                       # ⏳ experimental 新建
 │   ├── test_chunker.py
 │   ├── test_embedder.py
 │   ├── test_chroma_adapter.py

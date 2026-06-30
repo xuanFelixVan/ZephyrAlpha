@@ -2049,15 +2049,15 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_agent_orchestrator.py` | ✅ 已实现 | |
-| `tests/unit/test_agent_health_monitor.py` | ✅ 已实现 | |
-| `tests/unit/test_hallucination_detector.py` | ✅ 已实现 | |
-| `tests/unit/test_rollback_manager.py` | ✅ 已实现 | |
-| `tests/unit/test_state_synchronizer.py` | ✅ 已实现 | |
-| `tests/unit/test_trigger_router.py` | ✅ 已实现 | |
-| `tests/unit/test_file_task_mapper.py` | ✅ 已实现 | |
-| `tests/unit/test_wave_generator.py` | ✅ 已实现 | |
-| `tests/unit/test_deferred_queue.py` | ❌ 未实现 | |
+| `tests/test_agent_orchestrator.py` | ✅ 已实现 | |
+| `tests/test_agent_health_monitor.py` | ✅ 已实现 | |
+| `tests/test_hallucination_detector.py` | ✅ 已实现 | |
+| `tests/test_rollback_manager.py` | ✅ 已实现 | |
+| `tests/test_state_synchronizer.py` | ✅ 已实现 | |
+| `tests/test_trigger_router.py` | ✅ 已实现 | |
+| `tests/test_file_task_mapper.py` | ✅ 已实现 | |
+| `tests/test_wave_generator.py` | ✅ 已实现 | |
+| `tests/test_deferred_queue.py` | ❌ 未实现 | |
 | `tests/integration/test_agent_e2e.py` | ✅ 已实现 | |
 
 ### 1.3 配置文件

@@ -617,7 +617,7 @@ orchestrator = [
 │       ├── hallucination_events.log
 │       └── sandbox_violations.log
 │
-├── tests/unit/orchestrator/
+├── tests/
 │   ├── test_state_machine.py                       # 合法/非法转移全覆盖
 │   ├── test_submit_and_claim.py
 │   ├── test_concurrent_claim.py                    # 多 Agent 抢锁

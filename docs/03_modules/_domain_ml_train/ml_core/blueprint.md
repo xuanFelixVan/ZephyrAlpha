@@ -551,7 +551,7 @@ class ModelMetadata:
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/unit/ml_train/` | 单元测试 | — | 9 passed |
+| 1 | 命令 | `python -m pytest tests/` | 单元测试 | — | 9 passed |
 | 2 | 配置 | `l11_ml_platform.yaml` → `status` | 模块状态 | implemented/blocked | C轨占位=blocked |
 
 ### 16.10 故障与操作手册

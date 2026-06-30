@@ -2320,7 +2320,7 @@ manifest_schema:
   last_session_date: "2026-05-05T14:30:00Z"
   completion_percent: 60
   completed_items:
-    - "ce_build() 实现完成——tests/unit/test_ce_build.py 全PASS"
+    - "ce_build() 实现完成——tests/test_ce_build.py 全PASS"
     - "ce_compress() 实现完成——Token预算优先级逻辑测试通过"
   remaining_items:
     - "ce_validate() LSG集成——pending（先读 CT-CE-LSG-001 的 ai_prompt）"
@@ -2329,10 +2329,10 @@ manifest_schema:
     - "ce_compress 在 8000 token边界有 ±50 token tiktoken计数误差——待修但不阻塞"
   files_touched:
     - "src/zephyr/orchestration/context_management/builder.py"
-    - "tests/unit/test_ce_build.py"
-    - "tests/unit/test_ce_compress.py"
+    - "tests/test_ce_build.py"
+    - "tests/test_ce_compress.py"
   next_session_instructions: >
-    1. 先跑 tests/unit/test_ce_build.py + test_ce_compress.py 确认绿色
+    1. 先跑 tests/test_ce_build.py + test_ce_compress.py 确认绿色
     2. 从 ce_validate() 开始——CT-CE-LSG-001 的 ai_prompt 是你唯一的施工指南
     3. 不要重构 builder.py——上次session确认结构正确
     4. 完成后更新本 manifest → completion_percent=100

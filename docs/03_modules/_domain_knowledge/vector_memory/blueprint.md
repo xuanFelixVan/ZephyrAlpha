@@ -828,7 +828,7 @@ class FeedbackEntry(BaseModel):
 
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
-| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/unit/vector_memory/test_vector_memory.py` | 覆盖率 > 80% |
+| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/vector_memory/test_vector_memory.py` | 覆盖率 > 80% |
 | 2 | 集成测试 | VMS→CE 检索链路 | CE build 阶段成功检索 KE 条目 | 端到端通过 |
 | 3 | 测试替身 | InMemoryFakeVMS（in_memory_fake_vms.py） | 消费方（CE/Orc/FLE）单元测试独立于 VMS 状态 | InMemoryFakeVMS 接口与 InProcessVectorMemory 一致 |
 | 4 | 确定性嵌入 | DeterministicEmbedder（基于 content_hash 生成固定伪向量） | 测试环境下嵌入结果稳定可复现 | 相同输入→相同向量 |
@@ -1519,7 +1519,7 @@ class FeedbackEntry(BaseModel):
 | Tier 1 | KB 蓝图 (MOD-KB-001) | §12 集成点、§5.3 迁移方案 |
 | Tier 2 | FLE (MOD-FEEDBACK_LOOP) | §4 RetrievalFeedback 接口 |
 | Tier 2 | Orchestrator (MOD-TASK_SYSTEM) | §4 VectorBridge.write_decision() |
-| Tier 3 | tests/unit/vector_memory/ | §4 数据模型、§11 产出物路径 |
+| Tier 3 | tests/ | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则
 

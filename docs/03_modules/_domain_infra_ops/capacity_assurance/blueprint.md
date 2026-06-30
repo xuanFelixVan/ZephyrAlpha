@@ -1630,7 +1630,7 @@ STEP 3: 拆分后验证
 | M-14 | warm_hot_gate.py | ❌ 未实现 | — | — | — |
 | M-15 | pydantic_v2_migrator.py | ❌ 未实现 | — | — | — |
 | M-16 | event_bus_upgrade.py | ❌ 未实现 | — | — | — |
-| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）| `tests/unit/test_ai_behavior_audit_logger.py` | — |
+| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）| `tests/test_ai_behavior_audit_logger.py` | — |
 | M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity_slo.yaml` | `scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py` | arch_guard |
 | M-19 | capacity_governance_loop.py | ❌ 未实现 | — | — | — |
 | M-20 | ttl_cleanup_engine.py | ❌ 未实现 | — | — | — |
@@ -1646,14 +1646,14 @@ STEP 3: 拆分后验证
 
 | 能力 | 源码路径 | 测试路径 | 配置路径 | 归属蓝图 |
 |------|---------|---------|---------|---------|
-| Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/unit/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context-engine |
-| 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/unit/test_doc_compressor.py` | — | context-engine |
-| 熔断器（CBGManager + L08 注册表） | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | `tests/unit/test_circuit_breaker.py` | — | gate-engine |
-| Agent SLO 监控（5 项 SLO + 三态健康） | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | `tests/unit/test_agent_health_monitor.py` | — | orchestrator |
-| AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py` | `tests/unit/test_ai_behavior_audit_logger.py` | — | llm-security |
+| Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context-engine |
+| 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/test_doc_compressor.py` | — | context-engine |
+| 熔断器（CBGManager + L08 注册表） | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate-engine |
+| Agent SLO 监控（5 项 SLO + 三态健康） | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | `tests/test_agent_health_monitor.py` | — | orchestrator |
+| AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py` | `tests/test_ai_behavior_audit_logger.py` | — | llm-security |
 | 输入消毒器（InputSanitizer） | `src/zephyr/security/llm_defense/llm-security/input_sanitizer.py` | — | — | llm-security |
-| 任务反馈收集器 | `src/zephyr/observability/feedback-loop/feedback_collector.py` | `tests/unit/test_feedback_collector.py` | — | feedback-loop |
-| 原子事务管理器（ATM） | `src/zephyr/data/persistence/atomic_transaction_manager.py` | `tests/unit/test_atomic_transaction_manager.py` | — | database |
+| 任务反馈收集器 | `src/zephyr/observability/feedback-loop/feedback_collector.py` | `tests/test_feedback_collector.py` | — | feedback-loop |
+| 原子事务管理器（ATM） | `src/zephyr/data/persistence/atomic_transaction_manager.py` | `tests/test_atomic_transaction_manager.py` | — | database |
 | SQLite Schema DDL + init_db | `src/zephyr/data/persistence/sqlite_schema.py` | — | — | database |
 | MCP 工具限流（声明式 rate_limit_qps） | `src/zephyr/mcp/tool-contracts.yaml` | — | — | mcp-servers |
 | L12 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics/__init__.py` | — | — | system-telemetry |
@@ -1703,7 +1703,7 @@ STEP 3: 拆分后验证
 **路径约定**：
 - 所有路径相对于 `D:\ZephyrAlpha\`
 - 源码在 `src/zephyr/` 下
-- 测试在 `tests/unit/` 下
+- 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
 - 注册表在 `docs/01_policies_and_standards/_registry/catalogs/` 下

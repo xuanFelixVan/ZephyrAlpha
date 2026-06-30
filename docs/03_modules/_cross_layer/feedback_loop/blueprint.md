@@ -1068,12 +1068,12 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_metrics_collector.py` | ❌ 未实现 | |
-| `tests/unit/test_fitness_functions.py` | ✅ 已实现 | |
-| `tests/unit/test_feedback_collector.py` | ✅ 已实现 | |
-| `tests/unit/test_auto_evolution.py` | ✅ 已实现 | |
-| `tests/unit/test_evolution_engine.py` | ✅ 已实现 | |
-| `tests/unit/test_eval_harness.py` | ✅ 已实现 | |
+| `tests/test_metrics_collector.py` | ❌ 未实现 | |
+| `tests/test_fitness_functions.py` | ✅ 已实现 | |
+| `tests/test_feedback_collector.py` | ✅ 已实现 | |
+| `tests/test_auto_evolution.py` | ✅ 已实现 | |
+| `tests/test_evolution_engine.py` | ✅ 已实现 | |
+| `tests/test_eval_harness.py` | ✅ 已实现 | |
 | `tests/integration/test_evolution_e2e.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

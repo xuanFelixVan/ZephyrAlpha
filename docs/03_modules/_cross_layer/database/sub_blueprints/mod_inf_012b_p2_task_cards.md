@@ -1026,7 +1026,7 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 | 3 | `tests/test_path_tree_generator_design_protection.py` | L13 | L23 | 无占位符/PRAGMA/sqlite_master；仅改connect |
 | 4 | `tests/test_f18_automation.py` | L33 | L238 | 无占位符/PRAGMA/sqlite_master；仅改connect（在`if _DEPGRAPH_DB.exists()`内） |
 | 5 | `tests/test_rule_integration.py` | L25,L28 | L94,L113 | 无占位符/PRAGMA/sqlite_master；仅改connect（2处，timeout=10.0） |
-| 6 | `tests/unit/test_vocab_sync_chain.py` | L53 | L171,L187 | 无占位符/PRAGMA/sqlite_master；仅改connect（2处） |
+| 6 | `tests/test_vocab_sync_chain.py` | L53 | L171,L187 | 无占位符/PRAGMA/sqlite_master；仅改connect（2处） |
 
 **施工要点**：
 1. 逐文件修改：sqlite3.connect→psycopg2.connect、?→%s（仅#1）、PRAGMA删除（仅#1）

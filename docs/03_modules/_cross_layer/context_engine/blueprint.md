@@ -271,13 +271,13 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_context_injector.py` | ✅ 已实现 | |
-| `tests/unit/test_doc_compressor.py` | ✅ 已实现 | |
-| `tests/unit/test_prompt_registry.py` | ✅ 已实现 | |
-| `tests/unit/test_intent_parser.py` | ✅ 已实现 | |
-| `tests/unit/test_intent_keyword_mapper.py` | ✅ 已实现 | |
-| `tests/unit/test_pattern_library.py` | ✅ 已实现 | |
-| `tests/unit/test_system_snapshot.py` | ✅ 已实现 | |
+| `tests/test_context_injector.py` | ✅ 已实现 | |
+| `tests/test_doc_compressor.py` | ✅ 已实现 | |
+| `tests/test_prompt_registry.py` | ✅ 已实现 | |
+| `tests/test_intent_parser.py` | ✅ 已实现 | |
+| `tests/test_intent_keyword_mapper.py` | ✅ 已实现 | |
+| `tests/test_pattern_library.py` | ✅ 已实现 | |
+| `tests/test_system_snapshot.py` | ✅ 已实现 | |
 
 ### 1.3 配置文件
 

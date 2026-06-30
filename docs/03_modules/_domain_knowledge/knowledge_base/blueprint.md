@@ -3497,7 +3497,7 @@ beta（计划）：kb/ 能力纳入 VMS
 | 9 | 图谱完整性校验 | `src/zephyr/data/knowledge_management/kb/graph_validator.py` | ✅ |
 | 10 | Embedding 迁移管线 | `src/zephyr/data/knowledge_management/kb/embedding_migrate.py` | ✅ |
 | 11 | RI-02 统一内存 API | `src/zephyr/data/knowledge_management/kb/unified_memory_api.py` | ✅ |
-| 12 | 单元测试（8个测试文件） | `tests/unit/test_*.py` | ✅ 8/8 |
+| 12 | 单元测试（8个测试文件） | `tests/test_*.py` | ✅ 8/8 |
 
 **验收结果**：
 - 代码：3600+ 行 Python，12 模块 ✅
@@ -3679,7 +3679,7 @@ beta (🔮 计划)
 
 ### 12.5 E2E 集成测试约定（End-to-End Testing）
 
-> **触发缺口（盲点#4）**：`tests/unit/` 下有 11 个单元测试文件覆盖每个独立模块，但**没有端到端测试**。从"一条聊天记录进入→G1→G2→G3→G4→G5→ChromaDB→recall()→Reranker→注入"的完整闭环从未被验证过。这导致：每个新功能都在猜测"之前的管道还工作吗"——silent failure 可能潜伏数周才被发现。
+> **触发缺口（盲点#4）**：`tests/` 下有 11 个单元测试文件覆盖每个独立模块，但**没有端到端测试**。从"一条聊天记录进入→G1→G2→G3→G4→G5→ChromaDB→recall()→Reranker→注入"的完整闭环从未被验证过。这导致：每个新功能都在猜测"之前的管道还工作吗"——silent failure 可能潜伏数周才被发现。
 
 **E2E 测试策略**：
 
@@ -4407,7 +4407,7 @@ STEP 3: 拆分后验证
 |---|--------|---------|---------|:---:|
 | 1 | 蓝图完整性 | 对照蓝图模板v4.0逐章节检查 | 所有必需章节存在且非空 | ☐ |
 | 2 | 代码-蓝图对齐 | §0.1 文件清单逐文件`ls`核对 | 100%文件存在 | ☐ |
-| 3 | 测试覆盖 | `pytest tests/unit/test_kb*.py --tb=short` | 全部通过 | ☐ |
+| 3 | 测试覆盖 | `pytest tests/test_kb*.py --tb=short` | 全部通过 | ☐ |
 | 4 | E2E闭环 | `python -m zephyr.kb.eval_harness --golden <path>` | Golden Dataset全链路一致 | ☐ |
 | 5 | 自检通过 | `python -m zephyr.kb --self-test` | 13项全部PASS | ☐ |
 
@@ -4434,17 +4434,17 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 |
 |---------|:---:|
-| `tests/unit/test_ingest.py` | ✅ |
-| `tests/unit/test_triage.py` | ✅ |
-| `tests/unit/test_analyze.py` | ✅ |
-| `tests/unit/test_activate.py` | ✅ |
-| `tests/unit/test_extract.py` | ✅ |
-| `tests/unit/test_batch_ingest.py` | ✅ |
-| `tests/unit/test_kb_repo.py` | ✅ |
-| `tests/unit/test_graph_validator.py` | ✅ |
-| `tests/unit/test_unified_memory_api.py` | ✅ |
-| `tests/unit/test_embedding_migrate.py` | ✅ |
-| `tests/unit/test_knowledge_activation_rate.py` | ✅ |
+| `tests/test_ingest.py` | ✅ |
+| `tests/test_triage.py` | ✅ |
+| `tests/test_analyze.py` | ✅ |
+| `tests/test_activate.py` | ✅ |
+| `tests/test_extract.py` | ✅ |
+| `tests/test_batch_ingest.py` | ✅ |
+| `tests/test_kb_repo.py` | ✅ |
+| `tests/test_graph_validator.py` | ✅ |
+| `tests/test_unified_memory_api.py` | ✅ |
+| `tests/test_embedding_migrate.py` | ✅ |
+| `tests/test_knowledge_activation_rate.py` | ✅ |
 
 ### 6.2 配置文件
 
@@ -4509,17 +4509,17 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_ingest.py` | ✅ 已实现 | |
-| `tests/unit/test_triage.py` | ✅ 已实现 | |
-| `tests/unit/test_analyze.py` | ✅ 已实现 | |
-| `tests/unit/test_activate.py` | ✅ 已实现 | |
-| `tests/unit/test_extract.py` | ✅ 已实现 | |
-| `tests/unit/test_batch_ingest.py` | ✅ 已实现 | |
-| `tests/unit/test_kb_repo.py` | ✅ 已实现 | |
-| `tests/unit/test_graph_validator.py` | ✅ 已实现 | |
-| `tests/unit/test_unified_memory_api.py` | ✅ 已实现 | |
-| `tests/unit/test_embedding_migrate.py` | ✅ 已实现 | |
-| `tests/unit/test_knowledge_activation_rate.py` | ✅ 已实现 | |
+| `tests/test_ingest.py` | ✅ 已实现 | |
+| `tests/test_triage.py` | ✅ 已实现 | |
+| `tests/test_analyze.py` | ✅ 已实现 | |
+| `tests/test_activate.py` | ✅ 已实现 | |
+| `tests/test_extract.py` | ✅ 已实现 | |
+| `tests/test_batch_ingest.py` | ✅ 已实现 | |
+| `tests/test_kb_repo.py` | ✅ 已实现 | |
+| `tests/test_graph_validator.py` | ✅ 已实现 | |
+| `tests/test_unified_memory_api.py` | ✅ 已实现 | |
+| `tests/test_embedding_migrate.py` | ✅ 已实现 | |
+| `tests/test_knowledge_activation_rate.py` | ✅ 已实现 | |
 
 ### 7.3 配置文件
 

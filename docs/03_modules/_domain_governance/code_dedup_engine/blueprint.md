@@ -1321,7 +1321,7 @@ def process_v1(data: dict) -> Result: ...
 
 ### 16.5 验证流程（每次施工后必执行）
 
-1. `python -m pytest tests/unit/ -q` —— 确认全部测试全绿
+1. `python -m pytest tests/ -q` —— 确认全部测试全绿
 2. `python -m zephyr.infra_ops.code_dedup_engine.cli scan --full --warn-only` —— 确认扫描可正常输出含 Health Score
 3. 检查退出码与 severity 的映射是否正确（0/1/2/3/4 五档）
 4. 检查 `function_cache.json` 能与磁盘文件一致
@@ -1334,7 +1334,7 @@ def process_v1(data: dict) -> Result: ...
 | # | 检查项                    | 验证命令                                                             | 通过条件     |  状态 |
 | - | ---------------------- | ---------------------------------------------------------------- | -------- | :-: |
 | 1 | 68 个 .py 文件存在          | Get-ChildItem \*.py \| Measure-Object                            | Count≥68 |  ✅  |
-| 2 | 单元测试通过                 | pytest tests/unit/test\_code\_dedup\_engine.py                   | exit 0   |  ✅  |
+| 2 | 单元测试通过                 | pytest tests/test\_code\_dedup\_engine.py                   | exit 0   |  ✅  |
 | 3 | 红队测试通过                 | pytest tests/adversarial/test\_code\_dedup\_engine\_red\_team.py | exit 0   |  ✅  |
 | 4 | CLI verify 通过          | cli verify                                                       | exit 0   |  ✅  |
 | 5 | GATE-DEDUP handler 可加载 | import DeduplicationHandler                                      | exit 0   |  ✅  |

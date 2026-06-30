@@ -174,7 +174,7 @@ ssot_claims:
 | construction_progress = partially_implemented → 已实现章节的代码存在 | `ls src/zephyr/governance/rule_enforcement/*.py` 核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/governance/rule_enforcement/gate_engine.py` | ☐ |
 | 门禁YAML注册表 = _registry.yaml内容 | `cat src/zephyr/governance/rule_enforcement/_registry.yaml` | ☐ |
-| 测试文件覆盖核心模块 | `ls tests/unit/test_gate_*.py` | ☐ |
+| 测试文件覆盖核心模块 | `ls tests/test_gate_*.py` | ☐ |
 | G0-G7 YAML规则与蓝图§A描述一致 | 逐文件核对entry_conditions | ☐ |
 
 ### §0.3 版本-代码映射
@@ -677,7 +677,7 @@ class ManualApprovalGate:
 
 | 测试类型 | 覆盖范围 | 位置 |
 |----------|---------|------|
-| 单元测试 | gate_engine / circuit_breaker / contract_template_manager / task_completion_gate | `tests/unit/test_*.py` |
+| 单元测试 | gate_engine / circuit_breaker / contract_template_manager / task_completion_gate | `tests/test_*.py` |
 | 集成测试 | G0-G7端到端门禁评估链路 | `tests/integration/test_gate_e2e.py` |
 | 门禁YAML校验 | 每条entry_condition的PASS/FAIL两路径 | `validate_gate_discipline.py` |
 | 容量压测 | BM-01~05五场景(见§17) | `scripts/benchmark/gate_engine_load_gen.py` |
@@ -792,7 +792,7 @@ class ManualApprovalGate:
 | 产出物类型 | 存放完整路径 | 职责 | consumer_min | 注册位置 |
 |-----------|------------|------|-------------|---------|
 | 门禁注册表Catalogs副本 | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | 声明式注册表 | MOD-INF-015 | — |
-| 门禁测试(单元) | tests/unit/test_gate_*.py | 单元测试 | — | — |
+| 门禁测试(单元) | tests/test_gate_*.py | 单元测试 | — | — |
 | 门禁测试(集成) | tests/integration/test_gate_e2e.py | 集成测试 | — | — |
 | 门禁治理脚本 | scripts/governance/d6_security/validate_gate_discipline.py | 注册一致性校验 | — | script-manifest.yaml |
 | 审计数据 | data/audit/gate_chain.db + data/audit/gate_chain.jsonl | 哈希链持久化 | audit_chain_verifier.py | — |
@@ -872,7 +872,7 @@ class ManualApprovalGate:
 2. 按_template.yaml的11节填写全部字段（check必须是布尔表达式）
 3. 写入_registry.yaml的gates列表
 4. 在gate_engine.py的_GATE_FILES映射中添加
-5. 写tests/unit/test_<new_gate>.py——至少覆盖每条entry_condition的PASS/FAIL两路径
+5. 写tests/test_<new_gate>.py——至少覆盖每条entry_condition的PASS/FAIL两路径
 6. 运行validate_gate_discipline.py→确认注册一致
 ```
 
@@ -933,7 +933,7 @@ class ManualApprovalGate:
 | 对应蓝图契约 | §3.2 数据流 + §12.1 CT-SCRIPT-GATE-001 |
 | 产出位置 | `src/zephyr/governance/rule_enforcement/gate_engine.py` |
 | 验收标准 | exit 0→PASS / exit 1→PASS_WITH_WARNINGS / exit 2→FAIL / exit 3→CRITICAL_FAIL |
-| 验证命令 | `python -m pytest tests/unit/test_gate_engine.py -k test_exit_code_mapping` |
+| 验证命令 | `python -m pytest tests/test_gate_engine.py -k test_exit_code_mapping` |
 | G7 检查项 | 四种exit code全覆盖？CRITICAL_FAIL传播链正确？ |
 | AI 自治范围 | ai_modifiable——门禁引擎内部逻辑 |
 | 检查点 | 四种exit code映射测试全部PASS |
@@ -945,7 +945,7 @@ class ManualApprovalGate:
 | 对应蓝图契约 | §17.2 GAP-C01/C03/C04/C06 + §17.3 升级组件1/3/4 |
 | 产出位置 | `src/zephyr/governance/audit-orchestrator/cold_start.py` + `script_cache.py` + `dep_graph.py` patch + `bulkhead.py` patch |
 | 验收标准 | 重启GateEngine→503→5s后200；相同输入两次扫描→第二次cache hit；P0请求在P2饱和时仍<1s |
-| 验证命令 | `python -m pytest tests/unit/test_gate_capacity.py` |
+| 验证命令 | `python -m pytest tests/test_gate_capacity.py` |
 | G7 检查项 | 4个GAP全部覆盖？资源预算不超限？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | 4个GAP验证全部PASS |
@@ -964,7 +964,7 @@ class ManualApprovalGate:
 |---|--------|---------|:----:|:----:|
 | 1 | gate_engine.py无BOM+可导入 | `python -c "from zephyr.gates.gate_engine import GateEngine"` exit 0 | 完成 | ✅ |
 | 2 | CT-ORC-GATE-001测试通过 | `pytest tests/integration/test_gate_e2e.py` exit 0 | 完成 | ☐ |
-| 3 | CT-SCRIPT-GATE-001测试通过 | `pytest tests/unit/test_gate_engine.py -k test_exit_code` exit 0 | 完成 | ☐ |
+| 3 | CT-SCRIPT-GATE-001测试通过 | `pytest tests/test_gate_engine.py -k test_exit_code` exit 0 | 完成 | ☐ |
 | 4 | SLO已定义且可测量 | §5.4每项SLI有测量方式 | 就绪 | ☐ |
 | 5 | 退化策略已实现 | §6.2每个组件有降级逻辑 | 就绪 | ☐ |
 | 6 | 回滚方案已验证 | §16.4回滚操作可执行 | 就绪 | ☐ |
@@ -1345,7 +1345,7 @@ STEP 3: 拆分后验证
 |------|:---:|------|
 | `src/zephyr/governance/rule_enforcement/` | 55 | 门禁引擎核心实现（.py + .yaml） |
 | `src/zephyr/governance/rule_enforcement/` | 1 | re-export shim |
-| `tests/unit/` | 5 | 门禁单元测试 |
+| `tests/` | 5 | 门禁单元测试 |
 | `tests/integration/` | 1 | 门禁端到端测试 |
 | `scripts/governance/d6_security/` | 1 | validate_gate_discipline.py |
 | `architecture_model/layers/` | 1 | b_gates.yaml SSoT |
@@ -1467,10 +1467,10 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_gate_engine.py` | ✅ 已实现 | |
-| `tests/unit/test_task_completion_gate.py` | ✅ 已实现 | |
-| `tests/unit/test_circuit_breaker.py` | ✅ 已实现 | |
-| `tests/unit/test_contract_template_manager.py` | ✅ 已实现 | |
+| `tests/test_gate_engine.py` | ✅ 已实现 | |
+| `tests/test_task_completion_gate.py` | ✅ 已实现 | |
+| `tests/test_circuit_breaker.py` | ✅ 已实现 | |
+| `tests/test_contract_template_manager.py` | ✅ 已实现 | |
 | `tests/integration/test_gate_e2e.py` | ✅ 已实现 | |
 
 ### 1.3 治理脚本

@@ -528,7 +528,7 @@ llm-security = [
 │       ├── lsg_degrade.log
 │       └── lsg_bypass_evidence.log                 # bypass 证据链（红队复盘）
 │
-├── tests/unit/llm-security/
+├── tests/
 │   ├── test_l1_classifier.py
 │   ├── test_l2_isolator.py
 │   ├── test_l3_schema_validation.py

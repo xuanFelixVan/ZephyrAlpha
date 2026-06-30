@@ -395,7 +395,7 @@ class SessionCarryover(BaseModel):
 
 示例：
 - `"继续 T-1-03：将 ChromaDB 客户端替换为 InProcessVectorMemory 实现"`
-- `"先跑 pytest tests/unit/context-engine/ 确认 M-01 没打断测试"`
+- `"先跑 pytest tests/ 确认 M-01 没打断测试"`
 
 #### `Blocker.suggested_prompt`
 
@@ -573,9 +573,9 @@ class ContextEngineProtocol(Protocol):
       "summary": "替换 ChromaDB 客户端为 InProcessVectorMemory 实现",
       "files_in_scope": [
         "src/zephyr/vector-memory/in_process.py",
-        "tests/unit/vector-memory/test_in_process.py"
+        "tests/vector-memory/test_in_process.py"
       ],
-      "last_observation": "pytest tests/unit/vector-memory/ 3 passed, 2 failed: test_multi_search_rrf / test_bootstrap_resume",
+      "last_observation": "pytest tests/ 3 passed, 2 failed: test_multi_search_rrf / test_bootstrap_resume",
       "next_action_hint": "先修 test_multi_search_rrf：RRF 权重分子应该是 60 而不是 1"
     }
   ],
@@ -627,7 +627,7 @@ class ContextEngineProtocol(Protocol):
     "git_head_sha": "a3f9b2c1",
     "uncommitted_files": [
       "src/zephyr/vector-memory/in_process.py",
-      "tests/unit/vector-memory/test_in_process.py"
+      "tests/vector-memory/test_in_process.py"
     ],
     "ruff_status": "clean",
     "pytest_last_result": "fail"

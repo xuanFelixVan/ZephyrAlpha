@@ -575,7 +575,7 @@ feedback-loop = [
 │       ├── fle_degrade.log
 │       └── fle_action_audit.log                    # 所有 Action 审计
 │
-├── tests/unit/feedback-loop/
+├── tests/
 │   ├── test_sink.py
 │   ├── test_ema.py
 │   ├── test_trend_detection.py

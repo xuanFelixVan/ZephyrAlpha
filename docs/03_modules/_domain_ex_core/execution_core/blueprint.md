@@ -525,7 +525,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.1 BrokerInterface |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\broker_interface.py` |
 | 验收标准 | BrokerInterface ABC 定义完整，submit_order/cancel_order 抽象方法 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k broker_interface -v` |
+| 验证命令 | `python -m pytest tests/ -k broker_interface -v` |
 | G7 检查项 | 上游 L05 Order 引用正确？下游 L07 Fill 产出路径精确？ |
 | AI 自治范围 | human_gated——BrokerInterface 是 OCP-003 扩展点，修改需 Owner 审批 |
 | 检查点 | broker_interface.py 存在且非空 |
@@ -539,7 +539,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §3.3 状态生命周期 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\order_manager.py` |
 | 验收标准 | VALID_TRANSITIONS 全部实现，非法转换抛异常 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k order_manager -v` |
+| 验证命令 | `python -m pytest tests/ -k order_manager -v` |
 | G7 检查项 | 所有状态转换路径覆盖？非法转换异常正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | order_manager.py 存在且非空 |
@@ -553,7 +553,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.1 ExecutionEngine |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\execution_engine.py` |
 | 验收标准 | TWAP/VWAP/冰山单算法实现，SOR 评分机制实现 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k execution_engine -v` |
+| 验证命令 | `python -m pytest tests/ -k execution_engine -v` |
 | G7 检查项 | 算法输出正确？SOR 路由逻辑正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | execution_engine.py 存在且非空 |
@@ -567,7 +567,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.1 BrokerInterface 子类 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\simulation_broker.py` |
 | 验收标准 | 模拟成交 + 滑点 + 佣金 + 持仓维护 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k simulation_broker -v` |
+| 验证命令 | `python -m pytest tests/ -k simulation_broker -v` |
 | G7 检查项 | 滑点计算正确？佣金计算正确？持仓更新正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | simulation_broker.py 存在且非空 |
@@ -581,7 +581,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.1 ExecutionEngine 构造函数注入 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\execution_engine.py` |
 | 验收标准 | ExecutionEngine 接受 RiskValidator ABC 注入，DefaultRiskValidator 作为默认实现 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k risk_validator -v` |
+| 验证命令 | `python -m pytest tests/ -k risk_validator -v` |
 | G7 检查项 | 解耦后现有行为不变？ABC 接口完整？回滚方案可执行？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | RiskValidator ABC 定义 + ExecutionEngine 构造函数接受注入 |
@@ -595,7 +595,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.2 数据模型 ExecutionReport |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\execution_report.py` |
 | 验收标准 | ExecutionReport 数据模型定义 + ExecutionEngine 产出逻辑 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k execution_report -v` |
+| 验证命令 | `python -m pytest tests/ -k execution_report -v` |
 | G7 检查项 | 数据模型字段完整？L07 消费路径正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | execution_report.py 存在且非空 |
@@ -609,7 +609,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §4.1 BrokerInterface 子类 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\` |
 | 验收标准 | 继承 BrokerInterface，实现 submit_order/cancel_order |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k broker_adapter -v` |
+| 验证命令 | `python -m pytest tests/ -k broker_adapter -v` |
 | G7 检查项 | 适配器接口完整？外部 API 调用正确？ |
 | AI 自治范围 | human_gated——真实券商接入需 Owner 审批 |
 | 检查点 | 适配器文件存在且非空 |
@@ -623,7 +623,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 对应蓝图契约 | §12 集成目标 |
 | 产出位置 | `D:\ZephyrAlpha\tests\unit\ex_core\` |
 | 验收标准 | L04 风控 + L07 分析端到端测试通过 |
-| 验证命令 | `python -m pytest tests/unit/ex_core/ -k integration -v` |
+| 验证命令 | `python -m pytest tests/ -k integration -v` |
 | G7 检查项 | L04 风控阻断正确？L07 Fill 消费正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | 集成测试通过 |
@@ -673,7 +673,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/unit/ex_core/ -v` | 运行 L06 全部测试 | — | exit 0 = 通过 |
+| 1 | 命令 | `python -m pytest tests/ -v` | 运行 L06 全部测试 | — | exit 0 = 通过 |
 | 2 | 配置 | `ExecutionConfig` → `default_algo` | 默认算法策略 | `AlgoType`: TWAP/VWAP/MARKET | 默认 TWAP |
 | 3 | 配置 | `ExecutionConfig` → `twap_window_minutes` | TWAP 时间窗口 | `int`: 分钟 | 默认 30 |
 

@@ -788,7 +788,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_mcp_servers.py` | ✅ 已实现 | |
+| `tests/test_mcp_servers.py` | ✅ 已实现 | |
 | `tests/integration/test_mcp_e2e.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

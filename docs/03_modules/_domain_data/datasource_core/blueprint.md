@@ -405,8 +405,8 @@ class QualityReport:
 
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
-| 1 | 单元测试 | DataSourceBase | 注册机制+validate_schema | tests/unit/data/test_provider_base_contract.py |
-| 2 | 单元测试 | DataQualityGate | QualityReport+QualityFailureReason+is_within_normal_range+QUALITY_THRESHOLD | tests/unit/data/test_quality_gate.py |
+| 1 | 单元测试 | DataSourceBase | 注册机制+validate_schema | tests/data/test_provider_base_contract.py |
+| 2 | 单元测试 | DataQualityGate | QualityReport+QualityFailureReason+is_within_normal_range+QUALITY_THRESHOLD | tests/data/test_quality_gate.py |
 | 3 | 集成测试 | AkShareProvider | fetch_historical返回OHLCV | 待补充(需网络) |
 | 4 | 集成测试 | MemoryProvider | 合成数据质量 | 待补充 |
 

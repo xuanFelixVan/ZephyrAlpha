@@ -566,11 +566,11 @@ depends_on:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_schemas.py` | ✅ 已实现 | |
-| `tests/unit/test_ssot_guard.py` | ✅ 已实现 | |
-| `tests/unit/test_capability.py` | ✅ 已实现 | |
-| `tests/unit/test_money.py` | ✅ 已实现 | |
-| `tests/unit/test_instrument.py` | ✅ 已实现 | |
+| `tests/test_schemas.py` | ✅ 已实现 | |
+| `tests/test_ssot_guard.py` | ✅ 已实现 | |
+| `tests/test_capability.py` | ✅ 已实现 | |
+| `tests/test_money.py` | ✅ 已实现 | |
+| `tests/test_instrument.py` | ✅ 已实现 | |
 | `tests/contract/test_import_chain.py` | ✅ 已实现 | Phase 10：8 直接消费者导入链路契约验证（Phase 4 初始 6 → Phase 10 扩展至 8，移除 4 间接消费者） |
 | `tests/contract/test_schema_stability.py` | ✅ 已实现 | Phase 4 新增：Task 31字段快照 + TaskCard继承 + 错误层次 + 类型别名 |
 

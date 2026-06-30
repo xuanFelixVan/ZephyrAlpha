@@ -296,7 +296,7 @@ class CrossSignalCorrelator:
 | 条目 | 说明 |
 |------|------|
 | 实现粒度 | `src/zephyr/llm-security/` 下已有核心骨架 |
-| SSOT | 以本蓝图门禁表与磁盘 `tests/unit/` / `tests/llm-security/` 对齐为准 |
+| SSOT | 以本蓝图门禁表与磁盘 `tests/` / `tests/llm-security/` 对齐为准 |
 
 ---
 
@@ -1722,7 +1722,7 @@ payloads:
 | 文件 | 状态 |
 |------|:---:|
 | `process_sandbox.py` (L2aSandbox) | ✅ 已实现（L1-L307） |
-| `tests/unit/test_process_sandbox.py` | ✅ 已实现 |
+| `tests/test_process_sandbox.py` | ✅ 已实现 |
 
 ---
 
@@ -5706,7 +5706,7 @@ Encoding Defense Layers — LSG + LLM 协作
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\llm-security\` | 源码（layers/patterns/payloads/sandbox/self_protection子目录） |
-| 测试代码 | `D:\ZephyrAlpha\tests\llm-security\` + `tests/unit/` | 安全专项+单元测试 |
+| 测试代码 | `D:\ZephyrAlpha\tests\llm-security\` + `tests/` | 安全专项+单元测试 |
 | Red Team载荷 | `D:\ZephyrAlpha\src\zephyr\llm-security\payloads\red-team-payloads.yaml` | 攻击载荷库 |
 | PII/Secret模式 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\secrets.py` | 敏感数据检测模式库 |
 | 注入模式库 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\injection_patterns.py` | Prompt注入特征库 |
@@ -5730,10 +5730,10 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 文件路径 | 实现状态 |
 |---------|:---:|
-| `tests/unit/test_input_sanitizer.py` | ✅ |
-| `tests/unit/test_process_sandbox.py` | ✅ |
-| `tests/unit/test_ai_behavior_audit_logger.py` | ✅ |
-| `tests/unit/test_hallucination_interception.py` | ✅ |
+| `tests/test_input_sanitizer.py` | ✅ |
+| `tests/test_process_sandbox.py` | ✅ |
+| `tests/test_ai_behavior_audit_logger.py` | ✅ |
+| `tests/test_hallucination_interception.py` | ✅ |
 | `tests/llm-security/test_l7_red_team.py` | ✅ |
 | `tests/llm-security/test_lsg_self_regression.py` | ✅ |
 | `tests/llm-security/golden/` | ✅ |
@@ -5830,10 +5830,10 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_input_sanitizer.py` | ✅ 已实现 | |
-| `tests/unit/test_process_sandbox.py` | ✅ 已实现 | |
-| `tests/unit/test_ai_behavior_audit_logger.py` | ✅ 已实现 | |
-| `tests/unit/test_hallucination_interception.py` | ✅ 已实现 | |
+| `tests/test_input_sanitizer.py` | ✅ 已实现 | |
+| `tests/test_process_sandbox.py` | ✅ 已实现 | |
+| `tests/test_ai_behavior_audit_logger.py` | ✅ 已实现 | |
+| `tests/test_hallucination_interception.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

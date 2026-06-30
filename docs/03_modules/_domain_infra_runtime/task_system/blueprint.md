@@ -879,7 +879,7 @@ class TaskLifecycleManager:
 | 内容变更 | ① TaskCard 从独立 BaseModel → 继承 `shared/schemas.py` Task；② task_id format 从 `TASK-INF-XXXX` → `{NAMESPACE}-{SEQ}`；③ TaskStatus 从 created/queued/.../closed → PENDING/IN_PROGRESS/.../CANCELLED（10态）；④ 删除 tags_fn/tags_ly/tags_md/tags_st/tags_mo 五轴字段→改用 Task 父类的 flat `tags[]`；⑤ 保留并追加 Vibe Coding 执行层字段（防漂移六维+门禁+管线+父子层级+自治五级+Prompt版本化+Saga补偿+SLA+模型快照+紧急模式+知识隔离+依赖指纹+取消残留+漂移校验+兼容冲击+重规划+范围蔓延+上下文缓存） |
 | 验收标准 | ① isinstance(TaskCard(...), Task) == True；② task_id pattern `^(KB 决策记录/|CP/|KE/|STD/|DW/|SRC/|OPS)-//d+$`；③ status ∈ TaskStatus enum |
 | AI 自治范围 | human_gated |
-| 验证命令 | `python -m pytest tests/unit/test_task_repo.py -k test_taskcard -x` |
+| 验证命令 | `python -m pytest tests/test_task_repo.py -k test_taskcard -x` |
 | 检查点 | isinstance(TaskCard(...), Task) == True |
 | G7 检查项 | 基座继承正确？字段完整？ |
 
@@ -892,7 +892,7 @@ class TaskLifecycleManager:
 | 内容变更 | ① decompose() 不再写 .md 为主——改为 `task_repo.create(task)`（写 SQLite）为主，.md 同步生成为辅；② task_id 生成从 `TASK-INF-0001` 自增 → 按 `{NAMESPACE}-{SEQ}` 格式（解析蓝图所属域+查询 task_repo 当前最大 seq）；③ 每张任务卡执行 G0/G7 门禁；④ task_repo.create() 成功后同步生成 .md 副本 |
 | 验收标准 | ① decompose(本蓝图) → task_repo.list_tasks() 返回 N≥1 条记录；② task_id 格式正确 |
 | AI 自治范围 | human_gated |
-| 验证命令 | `python -m pytest tests/unit/test_blueprint_decomposer.py -x` |
+| 验证命令 | `python -m pytest tests/test_blueprint_decomposer.py -x` |
 | 检查点 | decompose(本蓝图) 返回 N>=1 条 task_repo 记录 |
 | G7 检查项 | 输出格式正确？门禁通过？ |
 
@@ -905,7 +905,7 @@ class TaskLifecycleManager:
 | 内容变更 | ① MCP Server 必须初始化 task_repo 连接（SQLite），禁止使用内存 dict 作为任务存储；② 实现 5 Tool（decompose_blueprint/create_task/update_task_status/get_task/register_from_triage）；③ decompose_blueprint Tool 调用 BlueprintDecomposer；④ create_task/update_task_status/get_task 直接对接 task_repo |
 | 验收标准 | ① MCP Server 初始化 task_repo 连接（SQLite）；② 实现 5 Tool；③ 禁止内存 dict |
 | AI 自治范围 | human_gated |
-| 验证命令 | `python -m pytest tests/unit/test_mcp_servers.py -k task_manager -x` |
+| 验证命令 | `python -m pytest tests/test_mcp_servers.py -k task_manager -x` |
 | 检查点 | MCP Server 初始化 SQLite 连接成功 + 5 Tool 注册完成 |
 | G7 检查项 | 数据层真源正确？Tool 签名对齐？ |
 
@@ -917,7 +917,7 @@ class TaskLifecycleManager:
 | 产出位置 | `src/zephyr/context-engine/` / `src/zephyr/pipeline/` |
 | 验收标准 | ① G3 门禁可用；② M1-M11 模块引用对齐执行层字段 |
 | AI 自治范围 | ai_modifiable |
-| 验证命令 | `python -m pytest tests/unit/test_pipeline_orchestrator.py -x` |
+| 验证命令 | `python -m pytest tests/test_pipeline_orchestrator.py -x` |
 | 检查点 | G3 门禁可用 + M1-M11 模块引用对齐执行层字段 |
 | G7 检查项 | 管线模块完整？ |
 
@@ -1493,11 +1493,11 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/unit/test_task_repo.py` | ✅ 已实现 | |
-| `tests/unit/test_sqlite_schema.py` | ✅ 已实现 | |
-| `tests/unit/test_mcp_servers.py` | ✅ 已实现 | |
-| `tests/unit/test_pipeline_orchestrator.py` | ✅ 已实现 | |
-| `tests/unit/test_task_completion_gate.py` | ✅ 已实现 | |
+| `tests/test_task_repo.py` | ✅ 已实现 | |
+| `tests/test_sqlite_schema.py` | ✅ 已实现 | |
+| `tests/test_mcp_servers.py` | ✅ 已实现 | |
+| `tests/test_pipeline_orchestrator.py` | ✅ 已实现 | |
+| `tests/test_task_completion_gate.py` | ✅ 已实现 | |
 | `tests/adversarial/test_task_system_red_team.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

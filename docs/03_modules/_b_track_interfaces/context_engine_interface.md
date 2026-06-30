@@ -539,7 +539,7 @@ context-engine = [
 ├── .models/
 │   └── qwen2.5-3b/                                 # GGUF (~2GB)
 │
-├── tests/unit/context-engine/
+├── tests/
 │   ├── test_build.py
 │   ├── test_compress_llm.py
 │   ├── test_compress_rule_based.py

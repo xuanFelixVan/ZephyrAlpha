@@ -536,7 +536,7 @@ class BacktestConfig:
 | 对应蓝图契约 | §3.3 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\research\backtest_base.py` |
 | 验收标准 | candidate→validated→promoted/rejected状态转换正确 |
-| 验证命令 | `python -m pytest tests/unit/research/ -k factor_discovery` |
+| 验证命令 | `python -m pytest tests/ -k factor_discovery` |
 | G7 检查项 | 状态守卫条件完整 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | 状态转换测试通过 |

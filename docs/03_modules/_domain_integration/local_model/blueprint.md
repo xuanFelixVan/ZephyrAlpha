@@ -250,7 +250,7 @@ doc_type: blueprint
 | 产出类型 | 路径 | consumer_min |
 |---------|------|-------------|
 | 代码 | `src/zephyr/local-model/` | agent-spec, pipeline, runtime, vector-memory |
-| 测试 | `tests/unit/local-model/` | CI |
+| 测试 | `tests/` | CI |
 | 模型权重 | `models/bge-m3/`, `models/bge-small-zh-v1.5/` | EmbeddingRouter |
 | 缓存 | `data/vector_db/_embedding_cache/` | CacheLayer |
 
