@@ -320,7 +320,7 @@ infrastructure:
     sla: "持久化, ACID, < 50ms write p95, < 200ms OLAP query p95"
     status: provisioned
     provisioned_at: "2026-06-12"
-    note: "DM-100018 端到端测试覆盖 8 表（tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades）。由 DatabaseService（database_service.py）统一连接管理，独立于治理体系——不参与 depgraph/governance 数据流。写并发由 _market_write_lock 串行化（WRITE_LOCK_TIMEOUT=5.0s）。三层冷热架构定位见 blueprint.md（Warm当前规范+Hot/Cold未来蓝图门禁触发）。3库职责划分决策(2026-06-30)：governance.db/depgraph/market.duckdb 各有硬需求不合并"
+    note: "DM-100018 端到端测试覆盖 8 表（tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades）。由 DatabaseService（database_service.py）统一连接管理，独立于治理体系——不参与 depgraph/governance 数据流。写并发由 _market_write_lock 串行化（WRITE_LOCK_TIMEOUT=5.0s）。三层冷热架构定位见 blueprint.md（Warm当前规范+Hot/Cold未来蓝图门禁触发）。3库职责划分决策(2026-06-30)：governance.db/depgraph/market.duckdb 各有硬需求不合并。DDL-as-Code 真源：market_schema.py（8表/视图 CREATE DDL + init_market_schema 幂等初始化，DatabaseService.get_market_conn 首次连接时自动触发）"
 
 # ============================================================================
 # 汇总统计

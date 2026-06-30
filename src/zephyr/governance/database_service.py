@@ -40,24 +40,18 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.market_schema import (
+    EXPECTED_MARKET_TABLES as _EXPECTED_MARKET_TABLES,
+    init_market_schema,
+)
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 
 class DatabaseService:
     """统一数据库服务层"""
 
-    EXPECTED_MARKET_TABLES = frozenset(
-        {
-            "tick_data",
-            "kline_3s",
-            "orders",
-            "positions",
-            "risk_snapshots",
-            "factor_values",
-            "backtest_results",
-            "backtest_trades",
-        }
-    )
+    # 真源在 market_schema.py（DDL-as-Code 真源），此处仅 re-export 保持向后兼容
+    EXPECTED_MARKET_TABLES = _EXPECTED_MARKET_TABLES
 
     def __init__(self):
         # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
@@ -98,6 +92,7 @@ class DatabaseService:
         """
         if self._market_conn is None:
             self._market_conn = duckdb.connect(self.market_db)
+            init_market_schema(self._market_conn)  # 首次连接自动初始化 schema（DDL-as-Code 真源，事件触发）
         return self._market_conn
 
     @contextmanager

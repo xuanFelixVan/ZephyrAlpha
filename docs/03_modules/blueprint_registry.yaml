@@ -322,13 +322,13 @@ blueprints:
 - module_id: SH-DB-001
   name: database
   title: Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位
-  summary: 'Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除。'
+  summary: 'Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表，DDL-as-Code 真源 market_schema.py)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除。'
   layer: cross_layer
   functional_domain: data
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 4.2.0
+  version: 4.3.0
   generation: 3
   last_updated: '2026-07-01'
   file_path: 03_modules/_cross_layer/database/blueprint.md
