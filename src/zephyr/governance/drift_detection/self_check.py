@@ -1,27 +1,34 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.self_check
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] manual
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 自检逻辑不可跳过
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
 Self-Drift Check — self_check.py
 
+
+
+
+
 module_id: MOD-INF-023
+
+
 Drift detector 自身完整性验证（纯 stdlib，零 zephyr 依赖）。
-对标 blueprint.md §2.7（自漂移检测——Watcher 的 Watcher）。
-"""
+
+
+对标 blueprint.md §2.7（自漂移检测——Watcher 的 Watcher）。"""
 
 from __future__ import annotations
 
@@ -33,12 +40,14 @@ from pathlib import Path
 def sha256_file(path: Path) -> str:
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()
+
     except (OSError, PermissionError):
         return "ERROR"
 
 
 def check_core_files(base: Path) -> dict[str, str]:
     results: dict[str, str] = {}
+
     for fname in [
         "_detector-registry.yaml",
         "drift_engine.py",
@@ -49,28 +58,39 @@ def check_core_files(base: Path) -> dict[str, str]:
         "drift_models.py",
     ]:
         fp = base / fname
+
         if not fp.exists():
             results[fname] = "MISSING"
+
             continue
+
         results[fname] = sha256_file(fp)
+
     return results
 
 
 def check_registry_parsable(base: Path) -> bool:
     registry_path = base / "_detector-registry.yaml"
+
     if not registry_path.exists():
         return False
+
     try:
         import yaml
 
         with open(registry_path, encoding="utf-8") as fh:
             data = yaml.safe_load(fh)
+
         if data is None:
             return False
+
         detectors = data.get("detectors", {})
+
         if not isinstance(detectors, dict):
             return False
+
         return True
+
     except Exception:
         return False
 
@@ -78,19 +98,28 @@ def check_registry_parsable(base: Path) -> bool:
 def bootstrap_self_check(base: Path | None = None) -> bool:
     if base is None:
         base = Path(__file__).parent
+
     results = check_core_files(base)
+
     all_present = all(v != "MISSING" for v in results.values())
+
     registry_ok = check_registry_parsable(base)
+
     return all_present and registry_ok
 
 
 def run_self_check() -> int:
     base = Path(__file__).parent
+
     ok = bootstrap_self_check(base)
+
     if not ok:
         print(f"[P0 CRITICAL] Drift detector self-check FAILED at {base}", file=sys.stderr)
+
         return 1
+
     print("[OK] Drift detector self-check passed")
+
     return 0
 
 

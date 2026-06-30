@@ -1,27 +1,34 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.incremental_scanner
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 增量扫描不可遗漏变更
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_incremental_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_incremental_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
 Incremental Scanner — incremental_scanner.py
 
+
+
+
+
 module_id: MOD-INF-023
+
+
 git diff 驱动的增量扫描器，变更影响范围计算与检测器匹配。
-对标 blueprint.md §2.4（增量扫描与性能 SLO）。
-"""
+
+
+对标 blueprint.md §2.4（增量扫描与性能 SLO）。"""
 
 from __future__ import annotations
 
@@ -34,16 +41,22 @@ from dataclasses import dataclass, field
 @dataclass
 class FileChange:
     path: str
+
     status: str
+
     sha256: str = ""
 
 
 @dataclass
 class ChangeSet:
     changed_files: list[FileChange] = field(default_factory=list)
+
     affected_detectors: list[str] = field(default_factory=list)
+
     affected_modules: list[str] = field(default_factory=list)
+
     is_storm: bool = False
+
     total_changes: int = 0
 
 
@@ -56,10 +69,12 @@ class DetectorFileMapping:
 
     def find_detectors(self, changed_files: list[str]) -> list[str]:
         matched: set[str] = set()
+
         for fp in changed_files:
             for pattern, detectors in self._map.items():
                 if pattern in fp or fp.endswith(pattern.lstrip("*")):
                     matched.update(detectors)
+
         return list(matched)
 
 
@@ -67,8 +82,11 @@ class IncrementalScanner:
     def __init__(self, project_root: str | None = None) -> None:
         if project_root is None:
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
         self._project_root = project_root
+
         self._mapping = DetectorFileMapping()
+
         self._cache: dict[str, str] = {}
 
     def get_changed_files(self, base_ref: str = "HEAD~1") -> list[FileChange]:
@@ -80,23 +98,32 @@ class IncrementalScanner:
                 cwd=self._project_root,
                 timeout=10,
             )
+
             if result.returncode != 0:
                 return []
+
             files: list[FileChange] = []
+
             for line in result.stdout.strip().split("\n"):
                 if not line:
                     continue
+
                 parts = line.split("\t")
+
                 if len(parts) >= 2:
                     files.append(FileChange(path=parts[1], status=parts[0]))
+
                 elif len(parts) == 1:
                     files.append(FileChange(path=parts[0], status="M"))
+
             return files
+
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []
 
     def compute_impact(self, changed_files: list[str] | None = None) -> ChangeSet:
         changes = self.get_changed_files()
+
         if changed_files:
             changes = [c for c in changes if c.path in changed_files]
 
@@ -107,7 +134,9 @@ class IncrementalScanner:
         )
 
         file_paths = [c.path for c in changes]
+
         change_set.affected_detectors = self._mapping.find_detectors(file_paths)
+
         change_set.affected_modules = list(set(self._extract_module(c.path) for c in changes))
 
         return change_set
@@ -115,8 +144,10 @@ class IncrementalScanner:
     def _extract_module(self, filepath: str) -> str:
         if filepath.startswith("src/zephyr/") or filepath.startswith("docs/03_modules/"):
             parts = filepath.split("/")
+
             if len(parts) >= 3:
                 return parts[2]
+
         return "unknown"
 
     def register_mapping(self, detector_id: str, patterns: list[str]) -> None:
@@ -125,10 +156,13 @@ class IncrementalScanner:
 
     def file_hash(self, filepath: str) -> str:
         full = os.path.join(self._project_root, filepath)
+
         if not os.path.exists(full):
             return ""
+
         try:
             with open(full, "rb") as fh:
                 return hashlib.sha256(fh.read()).hexdigest()
+
         except OSError:
             return ""

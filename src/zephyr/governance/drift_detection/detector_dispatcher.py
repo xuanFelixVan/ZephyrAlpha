@@ -1,27 +1,34 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.detector_dispatcher
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 检测器调度不可绕过
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
-# [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_detector_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [SAFETY] M
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_detector_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
 Detector Dispatcher — detector_dispatcher.py
 
+
+
+
+
 module_id: MOD-INF-023
+
+
 并行调度器：asyncio subprocess pool 执行检测器脚本，含结果缓存和并行度控制。
-对标 blueprint.md §2.4（增量扫描与性能 SLO）。
-"""
+
+
+对标 blueprint.md §2.4（增量扫描与性能 SLO）。"""
 
 from __future__ import annotations
 
@@ -30,7 +37,14 @@ import hashlib
 import json
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
+
+
+def _compute_file_hash(fp: str) -> str:
+    with open(fp, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
 
 from .drift_models import Detector, ScanLevel
 
@@ -38,10 +52,15 @@ from .drift_models import Detector, ScanLevel
 @dataclass
 class DetectorResult:
     detector_id: str
+
     success: bool
+
     events: list[dict[str, object]] = field(default_factory=list)
+
     error: str = ""
+
     cached: bool = False
+
     elapsed_ms: float = 0.0
 
 
@@ -62,8 +81,11 @@ class ResultCache:
 class DetectorDispatcher:
     def __init__(self, registry_path: str, max_parallel: int = 8):
         self._registry_path = registry_path
+
         self._max_parallel = max_parallel
+
         self._cache = ResultCache()
+
         self._scripts_root = ""
 
     @property
@@ -74,6 +96,7 @@ class DetectorDispatcher:
                 "scripts",
                 "governance",
             )
+
         return self._scripts_root
 
     async def dispatch(
@@ -85,28 +108,36 @@ class DetectorDispatcher:
             changed_files = []
 
         sem = asyncio.Semaphore(self._max_parallel)
+
         tasks = [self._run_detector(d, changed_files, sem) for d in detectors]
+
         return list(await asyncio.gather(*tasks))
 
     def cache_key(self, detector_id: str, file_path: str) -> str:
         content = f"{detector_id}:{file_path}"
+
         return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
     def build_cache_key(self, detector: Detector, changed_files: list[str]) -> str | None:
         if not detector.script:
             return None
+
         script_path = os.path.join(self.scripts_root, detector.script)
+
         if not os.path.exists(script_path):
             return None
 
         combined = detector.id
-        for fp in changed_files:
-            if os.path.exists(fp):
+
+        existing = [fp for fp in changed_files if os.path.exists(fp)]
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            futures = {pool.submit(_compute_file_hash, fp): fp for fp in existing}
+            for future in as_completed(futures):
                 try:
-                    with open(fp, "rb") as fh:
-                        combined += hashlib.sha256(fh.read()).hexdigest()
+                    combined += future.result()
                 except OSError:
-                    combined += fp
+                    combined += futures[future]
+
         return hashlib.sha256(combined.encode("utf-8")).hexdigest()
 
     async def _run_detector(
@@ -118,8 +149,10 @@ class DetectorDispatcher:
         start = time.perf_counter()
 
         cache_key = self.build_cache_key(detector, changed_files)
+
         if cache_key:
             cached = self._cache.get(cache_key)
+
             if cached is not None:
                 return DetectorResult(
                     detector_id=detector.id,
@@ -132,8 +165,10 @@ class DetectorDispatcher:
 
         async with sem:
             script = detector.script
+
             if not script:
                 elapsed = (time.perf_counter() - start) * 1000
+
                 return DetectorResult(
                     detector_id=detector.id,
                     success=True,
@@ -145,6 +180,7 @@ class DetectorDispatcher:
 
             if not os.path.exists(script_path):
                 elapsed = (time.perf_counter() - start) * 1000
+
                 return DetectorResult(
                     detector_id=detector.id,
                     success=False,
@@ -159,6 +195,7 @@ class DetectorDispatcher:
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )
+
                 stdout, stderr = await asyncio.wait_for(
                     proc.communicate(),
                     timeout=30,
@@ -173,12 +210,15 @@ class DetectorDispatcher:
                         error=stderr.decode("utf-8", errors="replace")[:500],
                         elapsed_ms=elapsed,
                     )
+
                     if cache_key:
                         self._cache.put(cache_key, result)
+
                     return result
 
                 try:
                     output = json.loads(stdout.decode("utf-8"))
+
                 except (json.JSONDecodeError, UnicodeDecodeError):
                     output = []
 
@@ -188,20 +228,25 @@ class DetectorDispatcher:
                     events=output if isinstance(output, list) else [output],
                     elapsed_ms=elapsed,
                 )
+
                 if cache_key:
                     self._cache.put(cache_key, result)
+
                 return result
 
             except TimeoutError:
                 elapsed = (time.perf_counter() - start) * 1000
+
                 return DetectorResult(
                     detector_id=detector.id,
                     success=False,
                     error="TIMEOUT: 30s exceeded",
                     elapsed_ms=elapsed,
                 )
+
             except Exception as exc:
                 elapsed = (time.perf_counter() - start) * 1000
+
                 return DetectorResult(
                     detector_id=detector.id,
                     success=False,
@@ -213,5 +258,6 @@ class DetectorDispatcher:
 def get_max_parallel_for_level(level: ScanLevel) -> int:
     if level == ScanLevel.LIGHT or level == ScanLevel.STANDARD:
         return 4
+
     else:
         return 8

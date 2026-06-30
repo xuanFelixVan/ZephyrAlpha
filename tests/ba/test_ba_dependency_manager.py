@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.dependency_manager import (
+from zephyr.governance.drift_detection.dependency_manager import (
     DEPENDENCIES,
     DependencyTier,
     ManagedDependency,

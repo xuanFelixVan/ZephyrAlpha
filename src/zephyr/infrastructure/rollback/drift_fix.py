@@ -28,7 +28,7 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 
 from typing import Any
 
-from zephyr.behavioral_audit.events import DriftEvent
+from zephyr.governance.drift_detection.events import DriftEvent
 
 
 class DriftFixHandler:

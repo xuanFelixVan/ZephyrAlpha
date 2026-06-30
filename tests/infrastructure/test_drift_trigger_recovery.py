@@ -87,7 +87,7 @@ def test_trigger_recovery_hotfix_bypass():
     }
 
     with patch(
-        "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+        "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
         return_value=True,
     ):
         result = trigger_recovery(payload)
@@ -108,9 +108,9 @@ def test_trigger_recovery_no_drift():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
     ):
@@ -137,17 +137,17 @@ def test_trigger_recovery_cascade_lockout():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
             return_value=True,
         ),
     ):
@@ -173,21 +173,21 @@ def test_trigger_recovery_auto_fix_success():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
             return_value=False,
         ),
         patch(
-            "zephyr.behavioral_audit.reconciler.AutoFixer",
+            "zephyr.governance.drift_detection.reconciler.AutoFixer",
         ) as MockAutoFixer,
     ):
         mock_fixer = MockAutoFixer.return_value
@@ -217,21 +217,21 @@ def test_trigger_recovery_auto_fix_failure_fallback():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.behavioral_audit.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.detect_cascade",
+            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.behavioral_audit.cascade_detector.is_auto_fix_paused",
+            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
             return_value=False,
         ),
         patch(
-            "zephyr.behavioral_audit.reconciler.AutoFixer",
+            "zephyr.governance.drift_detection.reconciler.AutoFixer",
         ) as MockAutoFixer,
     ):
         mock_fixer = MockAutoFixer.return_value

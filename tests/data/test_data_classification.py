@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.data_classification import (
+from zephyr.governance.drift_detection.data_classification import (
     DATA_CLASSIFICATION,
     LEVEL_ORDER,
     DataLevel,

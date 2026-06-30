@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.behavioral_audit.architecture_principles import (
+from zephyr.governance.drift_detection.architecture_principles import (
     IRON_LAW_DEFS,
     PRINCIPLE_DEFS,
     ArchPrinciple,
@@ -235,17 +235,17 @@ class TestValidateAgainstPrinciples:
         assert validate_against_principles(["v1", "v2", "v3"]) is False
 
     def test_logs_warning_on_violation(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.behavioral_audit.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
             validate_against_principles(["test violation"])
         assert len(caplog.records) >= 1
         assert "test violation" in caplog.text
 
     def test_no_log_on_no_violations(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.behavioral_audit.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
             validate_against_principles([])
         assert len(caplog.records) == 0
 
     def test_logs_each_violation_separately(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.behavioral_audit.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
             validate_against_principles(["v1", "v2"])
         assert len(caplog.records) == 2

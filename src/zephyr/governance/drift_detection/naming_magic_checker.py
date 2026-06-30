@@ -1,30 +1,46 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.naming_magic_checker
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 命名约定检查不可跳过
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_naming_magic_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_naming_magic_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。
+"""
+Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 pattern_a.txt_b_logic: a.txt→b.py→c.yaml, 规定不匹配
+
+
 lib_version_hardcode: import hashlib==2.0.1
+
+
 file_pattern_convention: 某功能依赖特定文件命名模式(如*-service.py)
+
+
 hidden_cycle: 生产代码 imports 测试夹具/配置
+
+
 manual_inspection: 标注需要人工确认
-对标 blueprint.md §6.27。
-"""
+
+
+对标 blueprint.md §6.27。"""
 
 from __future__ import annotations
 
@@ -37,12 +53,19 @@ from pathlib import Path
 @dataclass
 class NamingMagicAlert:
     alert_id: str
+
     file_path: str
+
     line_no: int
+
     magic_type: str
+
     current_code: str
+
     description: str
+
     severity: str = "MAJOR"
+
     detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
@@ -52,7 +75,9 @@ _IMPLICIT_FILE_PATTERNS: list[tuple[str, str, str]] = [
     ("open\\(.*\\.txt", "text file path hardcoded", "hardcoded_txt_path"),
 ]
 
+
 _VERSION_HARDCODE_PATTERN: re.Pattern[str] = re.compile(r"(?:import|from)\s+(\w+)\s*==\s*[\d.]+")
+
 
 _CYCLE_PATTERN: re.Pattern[str] = re.compile(r"(?:from|import)\s+tests\.|(?:from|import)\s+test_")
 
@@ -69,13 +94,16 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
     for pf in py_files:
         try:
             content = pf.read_text(encoding="utf-8")
+
         except Exception:
             continue
 
         for pattern, desc, magic_type in _IMPLICIT_FILE_PATTERNS:
             rx = re.compile(pattern)
+
             for match in rx.finditer(content):
                 line_no = content[: match.start()].count("\n") + 1
+
                 alerts.append(
                     NamingMagicAlert(
                         alert_id=(f"naming-magic-{magic_type}-{pf.stem}-L{line_no}"),
@@ -89,6 +117,7 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
 
         for match in _VERSION_HARDCODE_PATTERN.finditer(content):
             line_no = content[: match.start()].count("\n") + 1
+
             alerts.append(
                 NamingMagicAlert(
                     alert_id=(f"naming-magic-version-{pf.stem}-L{line_no}"),
@@ -103,6 +132,7 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
 
         for match in _CYCLE_PATTERN.finditer(content):
             line_no = content[: match.start()].count("\n") + 1
+
             alerts.append(
                 NamingMagicAlert(
                     alert_id=(f"naming-magic-cycle-{pf.stem}-L{line_no}"),

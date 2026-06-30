@@ -79,7 +79,7 @@ from . import (
 
 behavioral-auditor — MOD-INF-023 · 行为审计器 / 漂移检测引擎"""
 
-from zephyr.behavioral_audit.absence_manager import (
+from zephyr.governance.drift_detection.absence_manager import (
     AbsenceManagerConfig,
     EscalationEntry,
     OwnerStatus,
@@ -89,8 +89,8 @@ from zephyr.behavioral_audit.absence_manager import (
     record_activity,
     set_severity_limit,
 )
-from zephyr.behavioral_audit.ai_construction_detectors import AIConstructionDetectors
-from zephyr.behavioral_audit.ai_context_injector import (
+from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
+from zephyr.governance.drift_detection.ai_context_injector import (
     HealthSnapshot,
     InjectedContext,
     InjectionLevel,
@@ -101,8 +101,8 @@ from zephyr.behavioral_audit.ai_context_injector import (
     inject_minimal,
     inject_standard,
 )
-from zephyr.behavioral_audit.alert_router import Alert, AlertRouter
-from zephyr.behavioral_audit.backcompat_checker import (
+from zephyr.governance.drift_detection.alert_router import Alert, AlertRouter
+from zephyr.governance.drift_detection.backcompat_checker import (
     CompatBreakEvent,
     FunctionSignature,
     compare_signatures,
@@ -112,8 +112,8 @@ from zephyr.behavioral_audit.backcompat_checker import (
     run_backcompat_check,
     scan_impact,
 )
-from zephyr.behavioral_audit.baseline_manager import BaselineManager, DiffReport
-from zephyr.behavioral_audit.baseline_poisoning_guard import (
+from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
+from zephyr.governance.drift_detection.baseline_poisoning_guard import (
     BaselineSnapshot,
     HashChainEntry,
     MultiBaselineVote,
@@ -123,7 +123,7 @@ from zephyr.behavioral_audit.baseline_poisoning_guard import (
     multi_baseline_vote,
     verify_hash_chain,
 )
-from zephyr.behavioral_audit.canary_controller import (
+from zephyr.governance.drift_detection.canary_controller import (
     CanaryComparison,
     CanaryConfig,
     CanaryResult,
@@ -134,7 +134,7 @@ from zephyr.behavioral_audit.canary_controller import (
     rollback_detector,
     run_canary,
 )
-from zephyr.behavioral_audit.cascade_detector import (
+from zephyr.governance.drift_detection.cascade_detector import (
     CascadeAlert,
     CascadeConfig,
     CascadeEvent,
@@ -142,7 +142,7 @@ from zephyr.behavioral_audit.cascade_detector import (
     dry_run_impact_analysis,
     is_auto_fix_paused,
 )
-from zephyr.behavioral_audit.chaos_injector import (
+from zephyr.governance.drift_detection.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
@@ -154,7 +154,7 @@ from zephyr.behavioral_audit.chaos_injector import (
     inject_yaml_field_flip,
     run_chaos_experiment,
 )
-from zephyr.behavioral_audit.cold_start import (
+from zephyr.governance.drift_detection.cold_start import (
     ColdStartResult,
     bootstrap,
     detect_missing_env,
@@ -162,7 +162,7 @@ from zephyr.behavioral_audit.cold_start import (
     init_directories,
     session_entry_activate,
 )
-from zephyr.behavioral_audit.config_consistency import (
+from zephyr.governance.drift_detection.config_consistency import (
     ConfigAuditReport,
     ConfigConflict,
     ConfigSource,
@@ -173,23 +173,23 @@ from zephyr.behavioral_audit.config_consistency import (
     parse_yaml_config,
     run_config_audit,
 )
-from zephyr.behavioral_audit.contract_drift_detector import DriftAlert as ContractDriftAlert
-from zephyr.behavioral_audit.contract_drift_detector import detect_contract_drift
-from zephyr.behavioral_audit.correlation_engine import CorrelationEngine, CorrelationReport
-from zephyr.behavioral_audit.credibility_engine import CredibilityEngine, CredibilityScore
-from zephyr.behavioral_audit.cross_module_score import (
+from zephyr.governance.drift_detection.contract_drift_detector import DriftAlert as ContractDriftAlert
+from zephyr.governance.drift_detection.contract_drift_detector import detect_contract_drift
+from zephyr.governance.drift_detection.correlation_engine import CorrelationEngine, CorrelationReport
+from zephyr.governance.drift_detection.credibility_engine import CredibilityEngine, CredibilityScore
+from zephyr.governance.drift_detection.cross_module_score import (
     CrossModuleReport,
     CrossModuleScorer,
     ModuleScore,
 )
-from zephyr.behavioral_audit.dashboard import Dashboard, DashboardData
-from zephyr.behavioral_audit.detector_dispatcher import (
+from zephyr.governance.drift_detection.dashboard import Dashboard, DashboardData
+from zephyr.governance.drift_detection.detector_dispatcher import (
     DetectorDispatcher,
     DetectorResult,
     ResultCache,
     get_max_parallel_for_level,
 )
-from zephyr.behavioral_audit.drift_engine import (
+from zephyr.governance.drift_detection.drift_engine import (
     build_report,
     load_detector_registry,
     push_to_evolution_engine,
@@ -199,8 +199,8 @@ from zephyr.behavioral_audit.drift_engine import (
     scheduled_deep,
     scheduled_light,
 )
-from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixAuditEntry, HotfixBypass
-from zephyr.behavioral_audit.drift_infrastructure import (
+from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixAuditEntry, HotfixBypass
+from zephyr.governance.drift_detection.drift_infrastructure import (
     CheckpointWriter,
     EnvDiffReport,
     MaintenanceWindow,
@@ -216,7 +216,7 @@ from zephyr.behavioral_audit.drift_infrastructure import (
     get_or_create_budget,
     register_env_tags,
 )
-from zephyr.behavioral_audit.drift_models import (
+from zephyr.governance.drift_detection.drift_models import (
     BaselineSnapshot,
     BreakingChange,
     BulkDriftEvent,
@@ -235,7 +235,7 @@ from zephyr.behavioral_audit.drift_models import (
     ScanResult,
     Severity,
 )
-from zephyr.behavioral_audit.drift_result_types import (
+from zephyr.governance.drift_detection.drift_result_types import (
     DBSchemaDriftResult,
     DepVersionDriftResult,
     DocCodeCoevolutionResult,
@@ -253,7 +253,7 @@ from zephyr.behavioral_audit.drift_result_types import (
     detect_security_policy_drift,
     detect_test_coverage_drift,
 )
-from zephyr.behavioral_audit.drift_training import (
+from zephyr.governance.drift_detection.drift_training import (
     AITrainingLoopResult,
     CrossLanguageConfig,
     DriftTrainingPattern,
@@ -266,14 +266,14 @@ from zephyr.behavioral_audit.drift_training import (
     parse_python_public_api,
     track_training_effectiveness,
 )
-from zephyr.behavioral_audit.events import DriftEvent, DriftState, DriftType
-from zephyr.behavioral_audit.file_attr_checker import (
+from zephyr.governance.drift_detection.events import DriftEvent, DriftState, DriftType
+from zephyr.governance.drift_detection.file_attr_checker import (
     FileAttrIssue,
     capture_baseline,
     check_encoding,
     check_size_anomaly,
 )
-from zephyr.behavioral_audit.forensics_engine import (
+from zephyr.governance.drift_detection.forensics_engine import (
     ForensicsConfig,
     ForensicsReport,
     ForensicsTimelineEntry,
@@ -282,9 +282,9 @@ from zephyr.behavioral_audit.forensics_engine import (
     replay_baseline_history,
     serialize_report,
 )
-from zephyr.behavioral_audit.gate_persistence import GatePersistence
-from zephyr.behavioral_audit.git_bisector import BisectResult, GitBisector
-from zephyr.behavioral_audit.gitignore_auditor import (
+from zephyr.governance.drift_detection.gate_persistence import GatePersistence
+from zephyr.governance.drift_detection.git_bisector import BisectResult, GitBisector
+from zephyr.governance.drift_detection.gitignore_auditor import (
     GitignoreAudit,
     audit_gitignore,
     find_over_ignored_critical,
@@ -292,7 +292,7 @@ from zephyr.behavioral_audit.gitignore_auditor import (
     find_untracked_generated,
     parse_gitignore,
 )
-from zephyr.behavioral_audit.handoff_manager import (
+from zephyr.governance.drift_detection.handoff_manager import (
     FileIntegrityRecord,
     HandoffPackage,
     abort_handoff,
@@ -302,34 +302,34 @@ from zephyr.behavioral_audit.handoff_manager import (
     serialize_package,
     verify_integrity,
 )
-from zephyr.behavioral_audit.headless_scanner import (
+from zephyr.governance.drift_detection.headless_scanner import (
     HeadlessDiffEntry,
     InterruptLog,
     headless_scan_light,
     parse_interrupt_log,
 )
-from zephyr.behavioral_audit.incremental_scanner import (
+from zephyr.governance.drift_detection.incremental_scanner import (
     ChangeSet,
     DetectorFileMapping,
     FileChange,
     IncrementalScanner,
 )
-from zephyr.behavioral_audit.naming_magic_checker import NamingMagicAlert, scan_naming_magic
-from zephyr.behavioral_audit.orphan_scanner import (
+from zephyr.governance.drift_detection.naming_magic_checker import NamingMagicAlert, scan_naming_magic
+from zephyr.governance.drift_detection.orphan_scanner import (
     OrphanResource,
     find_orphan_data,
     find_orphan_docs,
     find_orphan_scripts,
     scan_orphan_resources,
 )
-from zephyr.behavioral_audit.python_compat import (
+from zephyr.governance.drift_detection.python_compat import (
     PythonCompatIssue,
     auto_fix_compat,
     generate_compat_report,
     scan_python_compat,
 )
-from zephyr.behavioral_audit.reconciler import AutoFixer, FixSnapshot, Suggestion
-from zephyr.behavioral_audit.resource_guard import (
+from zephyr.governance.drift_detection.reconciler import AutoFixer, FixSnapshot, Suggestion
+from zephyr.governance.drift_detection.resource_guard import (
     DegradationLevel,
     ResourceLimits,
     ResourceSnapshot,
@@ -342,24 +342,24 @@ from zephyr.behavioral_audit.resource_guard import (
     stop_guard_loop,
     validate_scalability,
 )
-from zephyr.behavioral_audit.roi_engine import ROIEngine, ROIScore
-from zephyr.behavioral_audit.rollback_bridge import DriftRollbackBridge
-from zephyr.behavioral_audit.runbook_generator import (
+from zephyr.governance.drift_detection.roi_engine import ROIEngine, ROIScore
+from zephyr.governance.drift_detection.rollback_bridge import DriftRollbackBridge
+from zephyr.governance.drift_detection.runbook_generator import (
     build_runbook_frontmatter,
     generate_bulk_runbook,
     generate_runbook,
 )
-from zephyr.behavioral_audit.scan_mutex import QueuedScan, ScanLockRecord, ScanMutex
-from zephyr.behavioral_audit.self_check import (
+from zephyr.governance.drift_detection.scan_mutex import QueuedScan, ScanLockRecord, ScanMutex
+from zephyr.governance.drift_detection.self_check import (
     bootstrap_self_check,
     check_core_files,
     check_registry_parsable,
     run_self_check,
     sha256_file,
 )
-from zephyr.behavioral_audit.suppression_learner import SuppressionLearner, SuppressionRule
-from zephyr.behavioral_audit.symlink_checker import SymlinkIssue, check_broken_symlinks
-from zephyr.behavioral_audit.tamper_proof_audit import (
+from zephyr.governance.drift_detection.suppression_learner import SuppressionLearner, SuppressionRule
+from zephyr.governance.drift_detection.symlink_checker import SymlinkIssue, check_broken_symlinks
+from zephyr.governance.drift_detection.tamper_proof_audit import (
     AnomalyAlert,
     AuditRecord,
     count_states,
@@ -368,14 +368,14 @@ from zephyr.behavioral_audit.tamper_proof_audit import (
     setup_append_only,
     snapshot_event_hash,
 )
-from zephyr.behavioral_audit.test_fixture_checker import (
+from zephyr.governance.drift_detection.test_fixture_checker import (
     FixtureDriftEvent,
     run_fixture_check,
     scan_expected_output_drift,
     scan_fixture_schema_drift,
     scan_mock_target_drift,
 )
-from zephyr.behavioral_audit.trend_analyzer import TrendAlert, TrendAnalyzer, TrendMetrics
+from zephyr.governance.drift_detection.trend_analyzer import TrendAlert, TrendAnalyzer, TrendMetrics
 from zephyr.security.access_control.auto_fix_engine_03.state_machine import (
     DriftEventRecord,
     DriftStateMachine,

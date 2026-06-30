@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.gitignore_auditor import (
+from zephyr.governance.drift_detection.gitignore_auditor import (
     CRITICAL_FILE_EXTENSIONS,
     CRITICAL_FILE_PATTERNS,
     GENERATED_FILE_EXTENSIONS,

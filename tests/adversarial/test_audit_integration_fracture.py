@@ -154,7 +154,7 @@ class TestDriftHotfixBypassIntegration:
 
     def test_hotfix_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixBypass
+        from zephyr.governance.drift_detection.drift_hotfix_bypass import HotfixBypass
         from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)

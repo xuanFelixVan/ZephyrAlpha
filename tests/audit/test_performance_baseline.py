@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.behavioral_audit.performance_baseline import (
+from zephyr.governance.drift_detection.performance_baseline import (
     E2E_BUDGET_BREAKDOWN,
     E2E_MAX_MS,
     PERFORMANCE_BASELINE,

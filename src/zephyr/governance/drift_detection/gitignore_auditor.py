@@ -1,28 +1,40 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.gitignore_auditor
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 审计结果不可篡改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_gitignore_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_gitignore_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-""".gitignore Integrity Auditor — gitignore完整性审计 D-023-32 · §6.24。
+"""
+.gitignore Integrity Auditor — gitignore完整性审计 D-023-32 · §6.24。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 untracked_generated_files: 扫描可能生成的文件(*.pkl/*.joblib/*.cache)检查gitignore
+
+
 over_ignored_critical_files: 规则模拟检查误匹配
+
+
 gitignore_pattern_coverage: 新文件类型未被覆盖建议添加
-对标 blueprint.md §6.24。
-"""
+
+
+对标 blueprint.md §6.24。"""
 
 from __future__ import annotations
 
@@ -60,6 +72,7 @@ GENERATED_FILE_EXTENSIONS: set[str] = {
     ".lock",
 }
 
+
 CRITICAL_FILE_EXTENSIONS: set[str] = {
     ".py",
     ".yaml",
@@ -71,6 +84,7 @@ CRITICAL_FILE_EXTENSIONS: set[str] = {
     ".env",
     ".md",
 }
+
 
 CRITICAL_FILE_PATTERNS: list[str] = [
     "project.godot",
@@ -87,36 +101,50 @@ CRITICAL_FILE_PATTERNS: list[str] = [
 @dataclass
 class GitignoreAudit:
     project_root: str = ""
+
     gitignore_rules: list[str] = field(default_factory=list)
+
     untracked_generated: list[str] = field(default_factory=list)
+
     over_ignored: list[str] = field(default_factory=list)
+
     uncovered_types: list[str] = field(default_factory=list)
+
     suggestions: list[str] = field(default_factory=list)
 
 
 def parse_gitignore(project_root: str) -> list[str]:
     rules: list[str] = []
+
     gi_path = os.path.join(project_root, ".gitignore")
+
     if not os.path.exists(gi_path):
         return rules
+
     try:
         with open(gi_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
+
                 if line and not line.startswith("#"):
                     rules.append(line.rstrip("/"))
+
     except Exception:
         pass
+
     return rules
 
 
 def _is_ignored(filepath: str, rules: list[str]) -> bool:
     rel_path = filepath.replace("\\", "/")
+
     for rule in rules:
         if fnmatch.fnmatch(rel_path, rule):
             return True
+
         if fnmatch.fnmatch(os.path.basename(rel_path), rule):
             return True
+
     return False
 
 
@@ -125,15 +153,20 @@ def find_untracked_generated(
     rules: list[str],
 ) -> list[str]:
     untracked: list[str] = []
+
     skip_dirs: set[str] = {".git", "__pycache__", "node_modules", ".venv", "venv"}
 
     for root, dirs, files in os.walk(project_root):
         dirs[:] = [d for d in dirs if d not in skip_dirs]
+
         for fname in files:
             ext = os.path.splitext(fname)[1].lower()
+
             if ext in GENERATED_FILE_EXTENSIONS or fname.endswith(".db"):
                 full_path = os.path.join(root, fname)
+
                 rel = os.path.relpath(full_path, project_root)
+
                 if not _is_ignored(rel, rules):
                     untracked.append(rel)
 
@@ -145,15 +178,20 @@ def find_over_ignored_critical(
     rules: list[str],
 ) -> list[str]:
     over_ignored: list[str] = []
+
     skip_dirs: set[str] = {".git", "__pycache__", "node_modules", ".venv", "venv"}
 
     for root, dirs, files in os.walk(project_root):
         dirs[:] = [d for d in dirs if d not in skip_dirs]
+
         for fname in files:
             ext = os.path.splitext(fname)[1].lower()
+
             if ext in CRITICAL_FILE_EXTENSIONS:
                 full_path = os.path.join(root, fname)
+
                 rel = os.path.relpath(full_path, project_root)
+
                 if _is_ignored(rel, rules):
                     over_ignored.append(rel)
 
@@ -165,18 +203,23 @@ def find_uncovered_types(
     rules: list[str],
 ) -> list[str]:
     uncovered: set[str] = set()
+
     skip_dirs: set[str] = {".git", "__pycache__", "node_modules", ".venv", "venv"}
 
     seen_exts: set[str] = set()
+
     for root, dirs, files in os.walk(project_root):
         dirs[:] = [d for d in dirs if d not in skip_dirs]
+
         for fname in files:
             ext = os.path.splitext(fname)[1].lower()
+
             if ext:
                 seen_exts.add(ext)
 
     for ext in seen_exts:
         pattern = f"*{ext}"
+
         if not _is_ignored(pattern, rules):
             uncovered.add(pattern)
 
@@ -187,14 +230,18 @@ def audit_gitignore(project_root: str) -> GitignoreAudit:
     rules = parse_gitignore(project_root)
 
     untracked = find_untracked_generated(project_root, rules)
+
     over_ignored = find_over_ignored_critical(project_root, rules)
+
     uncovered = find_uncovered_types(project_root, rules)
 
     suggestions: list[str] = []
 
     ext_counts: dict[str, int] = {}
+
     for f in untracked:
         ext = os.path.splitext(f)[1].lower()
+
         if ext:
             ext_counts[ext] = ext_counts.get(ext, 0) + 1
 

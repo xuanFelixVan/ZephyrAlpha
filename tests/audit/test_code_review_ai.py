@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.behavioral_audit.code_review_ai import (
+from zephyr.governance.drift_detection.code_review_ai import (
     REVIEW_RULES,
     REVIEW_TIMEOUTS,
     ReviewLevel,

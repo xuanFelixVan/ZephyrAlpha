@@ -16,7 +16,7 @@ from __future__ import annotations
 import tempfile
 from datetime import UTC, datetime, timedelta
 
-from zephyr.behavioral_audit.cascade_detector import (
+from zephyr.governance.drift_detection.cascade_detector import (
     CASCADE_CONFIG,
     CascadeAlert,
     CascadeConfig,

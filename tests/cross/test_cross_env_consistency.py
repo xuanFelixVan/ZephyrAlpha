@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.cross_env_consistency import (
+from zephyr.governance.drift_detection.cross_env_consistency import (
     MODEL_FLOAT_TOLERANCE,
     PYTHON_VERSION,
     WIN11_RISKS,

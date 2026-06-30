@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.backcompat_checker import (
+from zephyr.governance.drift_detection.backcompat_checker import (
     CompatBreakEvent,
     FunctionSignature,
     compare_signatures,

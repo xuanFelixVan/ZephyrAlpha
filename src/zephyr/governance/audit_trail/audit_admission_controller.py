@@ -58,7 +58,7 @@ class AuditAdmissionController:
         "semantic-auditor": "zephyr.security.semantic_auditor",
         "orphan-judge": "zephyr.security.access_control.orphan_judge",
         "red-blue-validator": "zephyr.security.adversarial_validation",
-        "behavioral-auditor": "zephyr.behavioral_audit",
+        "behavioral-auditor": "zephyr.governance.drift_detection",
     }
 
     def __init__(self) -> None:

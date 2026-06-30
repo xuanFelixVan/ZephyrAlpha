@@ -13,7 +13,7 @@
 
 import os
 
-from zephyr.behavioral_audit.baseline_manager import BaselineManager, DiffReport
+from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
 
 
 class TestDiffReport:

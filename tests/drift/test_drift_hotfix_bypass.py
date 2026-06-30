@@ -18,7 +18,7 @@ import os
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from zephyr.behavioral_audit.drift_hotfix_bypass import (
+from zephyr.governance.drift_detection.drift_hotfix_bypass import (
     HOTFIX_PREFIXES,
     SUPPRESSION_TTL_HOURS,
     HotfixAuditEntry,

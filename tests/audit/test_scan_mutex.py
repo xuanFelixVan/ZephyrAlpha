@@ -16,8 +16,8 @@ import os
 import tempfile
 import uuid
 
-from zephyr.behavioral_audit.drift_models import ScanLevel
-from zephyr.behavioral_audit.scan_mutex import (
+from zephyr.governance.drift_detection.drift_models import ScanLevel
+from zephyr.governance.drift_detection.scan_mutex import (
     QueuedScan,
     ScanLockRecord,
     ScanMutex,

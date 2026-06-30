@@ -21,13 +21,13 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.behavioral_audit.ai_construction_detectors import AIConstructionDetectors
-from zephyr.behavioral_audit.drift_engine import (
+from zephyr.governance.drift_detection.ai_construction_detectors import AIConstructionDetectors
+from zephyr.governance.drift_detection.drift_engine import (
     _write_drift_events,
     load_detector_registry,
 )
-from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
-from zephyr.behavioral_audit.self_test_verifier import SelfTestVerifier
+from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
+from zephyr.governance.drift_detection.self_test_verifier import SelfTestVerifier
 from zephyr.shared.io.paths import REPO_ROOT
 
 

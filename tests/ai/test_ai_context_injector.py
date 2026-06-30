@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from zephyr.behavioral_audit.ai_context_injector import (
+from zephyr.governance.drift_detection.ai_context_injector import (
     _INJECTOR_MAP,
     HealthSnapshot,
     InjectedContext,

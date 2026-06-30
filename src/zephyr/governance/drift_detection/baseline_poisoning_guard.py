@@ -1,29 +1,43 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.baseline_poisoning_guard
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
-# [STABILITY] evolving
-# [SAFETY] L
-# [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [MATURITY] production
+# [INVARIANTS] 投毒防护不可禁用
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。
+"""
+Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 cross_validation: 基线快照 vs git对应commit原始代码diff，每DEEP scan抽样10%
+
+
 multi_baseline_voting: 保留3版本，>=2基线同意才信任
+
+
 git_as_ultimate_truth: baseline_hash_chain=SHA256(prev+current)写入commit message
+
+
 integrity_manifest: 每DEEP scan签名存Git
-对标 blueprint.md §6.25。
-"""
+
+
+对标 blueprint.md §6.25。"""
 
 from __future__ import annotations
 
@@ -37,35 +51,53 @@ from datetime import UTC, datetime
 @dataclass
 class BaselineSnapshot:
     version: int
+
     file_path: str
+
     content_hash: str
+
     git_commit: str
+
     scan_type: str
+
     timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
     cross_validated: bool = False
 
 
 @dataclass
 class MultiBaselineVote:
     file_path: str
+
     snapshot_hashes: list[str]
+
     majority_hash: str
+
     voters: int = 0
+
     dissenters: int = 0
+
     consensus: bool = False
 
 
 @dataclass
 class HashChainEntry:
     index: int
+
     prev_hash: str
+
     current_hash: str
+
     chain_hash: str
+
     git_commit: str = ""
+
     verified: bool = False
 
 
 HASH_CHAIN: list[HashChainEntry] = []
+
+
 INTEGRITY_MANIFEST: dict[str, object] = {}
 
 
@@ -94,22 +126,34 @@ def cross_validate_baseline(
             timeout=10,
             cwd=project_root,
         )
+
         if proc.returncode == 0:
             git_content = proc.stdout
+
             git_hash = _sha256(git_content)
+
             if git_hash == result["baseline_hash"]:
                 result["git_verified"] = True
+
             else:
                 diff_lines: list[str] = []
+
                 baseline_lines = baseline_content.splitlines()
+
                 git_lines = git_content.splitlines()
+
                 max_lines = max(len(baseline_lines), len(git_lines))
+
                 for i in range(min(max_lines, 100)):
                     b_line = baseline_lines[i] if i < len(baseline_lines) else ""
+
                     g_line = git_lines[i] if i < len(git_lines) else ""
+
                     if b_line != g_line:
                         diff_lines.append(f"L{i + 1}: baseline vs git: {b_line[:40]} <> {g_line[:40]}")
+
                 result["diff_lines"] = diff_lines[:20]
+
     except Exception:
         pass
 
@@ -128,13 +172,17 @@ def multi_baseline_vote(
         )
 
     results: list[MultiBaselineVote] = []
+
     for file_path, hash_counts in votes.items():
         sorted_hashes = sorted(hash_counts.items(), key=lambda x: -x[1])
+
         if not sorted_hashes:
             continue
 
         majority_hash = sorted_hashes[0][0]
+
         voters = sorted_hashes[0][1]
+
         dissenters = sum(c for _h, c in sorted_hashes[1:])
 
         results.append(
@@ -158,9 +206,12 @@ def build_hash_chain(
     git_commit: str = "",
 ) -> HashChainEntry:
     current_hash = _sha256(current_data)
+
     chain_input = f"{prev_hash}:{current_hash}"
+
     if git_commit:
         chain_input += f":{git_commit}"
+
     chain_hash = _sha256(chain_input)
 
     entry = HashChainEntry(
@@ -172,20 +223,27 @@ def build_hash_chain(
     )
 
     HASH_CHAIN.append(entry)
+
     return entry
 
 
 def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
     violations: list[str] = []
+
     for i, entry in enumerate(entries):
         if i == 0:
             continue
+
         expected_input = f"{entry.prev_hash}:{entry.current_hash}"
+
         if entry.git_commit:
             expected_input += f":{entry.git_commit}"
+
         expected_chain = _sha256(expected_input)
+
         if expected_chain != entry.chain_hash:
             violations.append(f"Chain break at index {i}: expected {expected_chain[:12]} got {entry.chain_hash[:12]}")
+
     return violations
 
 
@@ -202,9 +260,11 @@ def generate_integrity_manifest(
     }
 
     manifest_content = json.dumps(manifest_data, indent=2, sort_keys=True)
+
     manifest_hash = _sha256(manifest_content)
 
     global INTEGRITY_MANIFEST
+
     INTEGRITY_MANIFEST = {
         "scan_id": scan_id,
         "hash": manifest_hash,

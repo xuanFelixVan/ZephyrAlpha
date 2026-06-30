@@ -17,7 +17,7 @@ from datetime import UTC
 
 import pytest
 
-from zephyr.behavioral_audit.symlink_checker import (
+from zephyr.governance.drift_detection.symlink_checker import (
     SymlinkIssue,
     check_broken_symlinks,
 )

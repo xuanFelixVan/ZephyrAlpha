@@ -18,7 +18,7 @@ from datetime import datetime
 
 import pytest
 
-from zephyr.behavioral_audit.tamper_proof_audit import (
+from zephyr.governance.drift_detection.tamper_proof_audit import (
     AnomalyAlert,
     AuditRecord,
     _sha256,

@@ -11,7 +11,7 @@
 # [TESTS] pytest tests/test_benchmark_integrity.py -q
 # [TTL] task_bound
 
-from zephyr.behavioral_audit.benchmark_integrity import (
+from zephyr.governance.drift_detection.benchmark_integrity import (
     HEALTH_CHECK_INTERVAL,
     PIT_MAX_DELAY_MINUTES,
     IntegrityDim,

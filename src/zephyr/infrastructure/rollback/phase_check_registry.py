@@ -563,7 +563,7 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.behavioral_audit.chaos_injector import ChaosInjection
+        from zephyr.governance.drift_detection.chaos_injector import ChaosInjection
 
         _mod = importlib.import_module("zephyr.governance.audit_orchestration.chaos_engine")
         ChaosEngine = _mod.ChaosEngine

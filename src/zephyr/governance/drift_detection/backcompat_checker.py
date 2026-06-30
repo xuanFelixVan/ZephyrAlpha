@@ -1,31 +1,49 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.backcompat_checker
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 向后兼容检查不可跳过
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_backcompat_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_backcompat_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。
+"""
+Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 removed_parameter: 基线(a,b,c) vs 当前(a,b) c被移除
+
+
 changed_return_type: Optional[X] → X
+
+
 renamed_function: Jaccard搜索相似签名
+
+
 changed_exception: ValueError → CustomError
+
+
 impact_analysis: 扫描调用方 BREAKING_CHANGE_REPORT
+
+
 INTENTIONAL_BREAK: 标记宽恕
-对标 blueprint.md §6.23。
-"""
+
+
+对标 blueprint.md §6.23。"""
 
 from __future__ import annotations
 
@@ -40,25 +58,37 @@ from pathlib import Path
 @dataclass
 class CompatBreakEvent:
     event_id: str
+
     detector_id: str = "backcompat_checker"
+
     severity: str = "CRITICAL"
+
     source_file: str = ""
+
     description: str = ""
+
     details: str = ""
+
     intentional_break: bool = False
+
     detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
 class FunctionSignature:
     name: str
+
     params: list[str]
+
     return_type: str | None
+
     file_path: str
+
     line_no: int
 
 
 _SIGNATURE_PATTERN: re.Pattern[str] = re.compile(r"def\s+(\w[\w_]*)\s*\(([^)]*)\)\s*(?:->\s*(\S+))?\s*:")
+
 
 _INTENTIONAL_BREAK_PATTERN: re.Pattern[str] = re.compile(
     r"#\s*INTENTIONAL_BREAK\s*:\s*(.+)",
@@ -68,18 +98,27 @@ _INTENTIONAL_BREAK_PATTERN: re.Pattern[str] = re.compile(
 
 def extract_signatures(file_path: str) -> list[FunctionSignature]:
     sigs: list[FunctionSignature] = []
+
     try:
         content = Path(file_path).read_text(encoding="utf-8")
+
     except Exception:
         return sigs
+
     for match in _SIGNATURE_PATTERN.finditer(content):
         name = match.group(1)
+
         if name.startswith("_"):
             continue
+
         params_str = match.group(2)
+
         return_t = match.group(3)
+
         line_no = content[: match.start()].count("\n") + 1
+
         params = [p.strip() for p in params_str.split(",") if p.strip()]
+
         sigs.append(
             FunctionSignature(
                 name=name,
@@ -89,6 +128,7 @@ def extract_signatures(file_path: str) -> list[FunctionSignature]:
                 line_no=line_no,
             )
         )
+
     return sigs
 
 
@@ -99,11 +139,14 @@ def compare_signatures(
     breaks: list[CompatBreakEvent] = []
 
     current_map: dict[str, FunctionSignature] = {s.name: s for s in current_sigs}
+
     baseline_map: dict[str, FunctionSignature] = {s.name: s for s in baseline_sigs}
 
     removed_names = set(baseline_map.keys()) - set(current_map.keys())
+
     for rname in removed_names:
         bs = baseline_map[rname]
+
         breaks.append(
             CompatBreakEvent(
                 event_id=f"compat-removed-func-{rname}",
@@ -115,12 +158,15 @@ def compare_signatures(
 
     for name in set(baseline_map.keys()) & set(current_map.keys()):
         bs = baseline_map[name]
+
         cs = current_map[name]
 
         bs_param_names = [p.split(":")[0].strip().replace("*", "") for p in bs.params]
+
         cs_param_names = [p.split(":")[0].strip().replace("*", "") for p in cs.params]
 
         removed_params = set(bs_param_names) - set(cs_param_names)
+
         if removed_params:
             breaks.append(
                 CompatBreakEvent(
@@ -152,17 +198,24 @@ def find_renamed_functions(
     threshold: float = 0.6,
 ) -> list[CompatBreakEvent]:
     breaks: list[CompatBreakEvent] = []
+
     removed = set(s.name for s in baseline_sigs) - set(s.name for s in current_sigs)
 
     for rname in removed:
         rchars = set(rname)
+
         for cs in current_sigs:
             cchars = set(cs.name)
+
             if not cchars or not rchars:
                 continue
+
             intersection = rchars & cchars
+
             union = rchars | cchars
+
             jaccard = len(intersection) / len(union) if union else 0
+
             if jaccard > threshold:
                 breaks.append(
                     CompatBreakEvent(
@@ -181,17 +234,24 @@ def scan_impact(
     src_root: str,
 ) -> dict[str, list[str]]:
     impact: dict[str, list[str]] = {}
+
     for b in breaks:
         func_name = b.event_id.split("-")[-1]
+
         callers: list[str] = []
+
         for py_file in Path(src_root).rglob("*.py"):
             try:
                 content = py_file.read_text(encoding="utf-8")
+
             except Exception:
                 continue
+
             if f"{func_name}(" in content:
                 callers.append(str(py_file))
+
         impact[b.event_id] = callers[:10]
+
     return impact
 
 
@@ -199,12 +259,16 @@ def detect_intentional_breaks(
     file_path: str,
 ) -> list[str]:
     marks: list[str] = []
+
     try:
         content = Path(file_path).read_text(encoding="utf-8")
+
     except Exception:
         return marks
+
     for match in _INTENTIONAL_BREAK_PATTERN.finditer(content):
         marks.append(match.group(1).strip())
+
     return marks
 
 
@@ -229,10 +293,12 @@ def run_backcompat_check(
         )
 
         baseline_sigs: list[FunctionSignature] = []
+
         if os.path.exists(baseline_file):
             try:
                 with open(baseline_file, encoding="utf-8") as f:
                     raw_data = json.loads(f.read())
+
                     for entry in raw_data.get("signatures", []):
                         baseline_sigs.append(
                             FunctionSignature(
@@ -243,10 +309,12 @@ def run_backcompat_check(
                                 line_no=entry.get("line_no", 0),
                             )
                         )
+
             except Exception:
                 continue
 
         breaks = compare_signatures(baseline_sigs, current_sigs)
+
         renamed = find_renamed_functions(baseline_sigs, current_sigs)
 
         for b in breaks:

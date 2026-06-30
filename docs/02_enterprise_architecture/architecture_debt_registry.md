@@ -5007,4 +5007,191 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.55.1 [HIGH] Readiness探针不检查真实依赖，默认deps_ok=True
 - **文件**：[health_probes.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/health_probes.py#L92)
-- **证据**：`def readiness(self, system, deps_ok=True)`——deps_ok是调用方传入的布尔值，不是探针自己
+- **证据**：`def readiness(self, system, deps_ok=True)`——deps_ok是调用方传入的布尔值，不是探针自己检查的
+- **问题**：探针声称检查依赖，但实际依赖状态由调用方决定，探针形同虚设
+- **影响**：依赖不可用时readiness仍返回True，流量被路由到不可用实例
+- **修复**：探针内部自行检查依赖（DB连接/ping等），不接受外部传入的deps_ok
+
+> **正文完整性说明**：5.56-5.171的正文因文件损坏丢失（第14轮后元数据持续更新但正文未持久化）。以下5.172-5.177为第30-31轮新发现问题的完整记录。5.56-5.171的详细清单见各轮子代理调研记录，汇总数据已包含在执行摘要汇总表中。
+
+---
+
+### 5.172 并发安全（23个，第30轮新增）
+
+#### HIGH（3个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\database_manager.py:143-243` — `DatabaseManager` docstring明确声称"所有公共方法线程安全"，但 `__init__`（162行）定义的 `self._lock = threading.Lock()` 在公共方法中从未使用。`_fill_pool`（191-195）、`get_connection`（197-216，211行 `self._conn_pool.pop()`）、`return_connection`（218-243，230行 `self._conn_pool.append(conn)`）均无锁保护共享 `_conn_pool: list[sqlite3.Connection]`。连接池 `pop`/`append` 在多线程下可导致：(1) `pop()` 空列表引发 IndexError；(2) 连接被多线程同时获取导致 SQLite 并发写入损坏；(3) 连接泄漏。**严重度理由**：明确违反自身契约（docstring 承诺线程安全但代码未实现）。
+
+2. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\event_bus.py`（EventBus 类）— `EventBus` 单例的 `get_instance` 使用 check-then-act 无锁；`subscribe`（`self._subscribers[event_type].append(handler)`）和 `publish`（`self._event_log.append(event)` + 迭代 `self._subscribers.get(event_type, [])`）均无锁。模块标注 `[MATURITY] production`。**严重度理由**：production + 单例共享 dict/list + publish 时迭代 list 同时 subscribe 可能触发 `RuntimeError: list changed size during iteration`。同文件 `EventBusBackpressure`（156-296）正确使用 `threading.Lock`，形成强烈反差。
+
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\database_service.py:75-96` — 三个 lazy 连接初始化均无锁保护 check-then-act：`get_governance_conn`（75-80）、`get_depgraph_conn`（82-90）、`get_market_conn`（92-96）。`_market_write_lock`（71行）仅用于写操作，不保护连接初始化。**严重度理由**：多线程同时首次调用可创建多个连接，最后仅一个被保留，其余泄漏（SQLite/PostgreSQL/DuckDB 连接句柄泄漏）；并发线程可能拿到不同的连接对象，破坏事务隔离假设。
+
+#### MEDIUM（14个）
+
+1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\infra\lock.py:117-118` — `MemoryLock.acquire` 在 `_locks` dict 上 check-then-act：`if lock_name not in self._locks: self._locks[lock_name] = asyncio.Lock()`。`acquire` 内部存在 await 点，特定时序下可能竞态。
+
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\infra\outbox.py:134-152` — `MemoryOutboxStore` 的 `append` 方法使用 `asyncio.Lock`，但 `fetch_pending`/`mark_published`/`mark_failed`/`count_pending` 均未加锁。形成"半保护"，`fetch_pending` 迭代列表时 `append` 并发修改可触发 `RuntimeError`。
+
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\cold_start.py:35-42`（重复：`d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\cold_start.py:34-41`）— `BootstrapCache.__new__` 使用 check-then-act 无锁。模块标注 `[MATURITY] production`，`[INVARIANTS] 100 Session冷启动共享单例缓存`。production + 100 Session 共享场景下，两个线程同时首次调用可创建两个实例。
+
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\security\capability.py:84-95` — `CapabilityRegistry.__new__` 使用 RLock 正确保护单例创建，但 `__init__` 检查 `self._initialized` 无锁。双重检查锁定不完整，`_load_from_yaml` 可能被调用两次。
+
+5. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\genesis_bootstrap.py:95-106` — `GenesisBootstrap` 的 `__new__` 和 `__init__` 均无锁保护 check-then-act。双重无锁，Genesis 引导阶段并发可创建多个实例。
+
+6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\observability\trace_decorator.py:48-84` — `TraceCollector.get_instance` check-then-act 无锁创建单例；`add_span` 和 `flush` 均无锁修改共享 `self._spans: list`。`flush` 的"读取+清空"非原子。
+
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\finding_ingest.py:53-64` — `_get_writer` check-then-act on `self._writer_initialized` 无锁。多线程并发首次 ingest 时可创建多个 writer 实例。
+
+8. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\agent_orchestrator.py:882-892`（重复：`d:\ZephyrAlpha\src\zephyr\governance\audit_orchestration\agent_orchestrator.py:885-895`）— `_lsg_scan_agent_action` check-then-act on `self._lsg_gateway_instance` 无锁。并发首次调用可创建多个 LSG Gateway 实例。
+
+9. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\scheduler.py:200-206` — `start()` check-then-act on `self._running` 无锁。并发 `start()` 可启动两个调度线程，重复触发任务。
+
+10. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:333-470`（BulkheadExecutor V1）— `_PoolState` dataclass 含 `circuit_state`/`consecutive_failures`/`total_submitted` 等可变字段，多线程修改无锁。计数器竞态导致熔断器误判。讽刺点：名为 `_concurrency.py` 却自身并发不安全。
+
+11. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:1308-1326`（ScriptRegistry.load）— `load` check-then-act on `self._loaded` 无锁。并发调用可重复加载脚本。
+
+12. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\observability\gate_cache.py:43,68,72,81,83` — `GateCache._stats` 使用 `+=` 自增无锁。`+=` 在 Python 中是"读-改-写"三步操作，GIL 不保证原子性。并发下计数丢失。
+
+13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:171,199,347` — `_last_result` 在 `inject` 锁外设置，但 `cleanup` 在 `with self._lock` 内清除。`_lock` 存在但使用不一致。锁使用不一致比无锁更危险——给读者虚假安全感。
+
+14. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\health_monitor.py:316-322` — `start()` 无 `if self._running` 守卫。并发 `start()` 时两个线程都可能通过 `is_alive()` 检查，各启动一个 monitor 线程。
+
+#### LOW（6个）
+
+1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\registry.py:87-89` — `ServiceRegistry.is_registered()` 读 `self._factories` 无锁。dict `in` 操作在 CPython 下原子，影响低。
+
+2. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\infra\cache.py` — `MemoryCache` 的 async 方法无 `asyncio.Lock`，但方法体内无 `await` 间隙，纯内存 dict 操作。当前用法未触发。
+
+3. **[LOW]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:552-558`（ScanCache.get_or_compute）— get-then-set 不持锁。并发未命中时重复计算（浪费 CPU），但不破坏缓存一致性。
+
+4. **[LOW]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:560-563`（ScanCache.hit_rate）— 读 `self._hits`/`self._misses` 无锁。仅统计值瞬时不准。
+
+5. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:237-242` — `_get_worktree_manager` lazy init 无锁。但 commit 流程已被 `_GlobalCommitLock` 串行化，实际不会并发触发。
+
+6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\annotations.py:24-26` — 模块级 `SHARED_FUNCTIONS`/`KNOWN_DUPLICATES` 在 import 时被修改，无锁。import 阶段单线程，理论竞态但实际触发概率极低。
+
+**核心模式总结**：(1)**契约违反型**：`database_manager.py` docstring承诺线程安全但`_lock`从未使用；(2)**连接池lazy初始化无锁**：`database_manager`/`database_service`/`_lsg_gateway_instance`/`finding_ingest._writer`；(3)**单例缺双重检查锁**：`EventBus`/`BootstrapCache`/`TraceCollector`/`GenesisBootstrap`；(4)**类内lock使用不一致**：`chaos_engine._lock`/`BulkheadExecutor`计数器；(5)**asyncio.Lock仅保护部分方法**：`MemoryOutboxStore`；(6)**`+=`自增无锁**：`GateCache._stats`；(7)**`start()`无`_running`守卫**：`health_monitor`/`ops.scheduler`。
+
+**严重度汇总**：HIGH=3, MEDIUM=14, LOW=6, 合计=23
+
+---
+
+### 5.173 硬编码路径/URL/端点（30个，第30轮新增）
+
+#### HIGH（11个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\repair\red_blue_test.py:146,166,177-179,185,205,216,234,243,249,256,264,272,284,291,299,307,313,321,347,348,366,376,377,385,395,405,414`（约28处）— 测试脚本中硬编码 `r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py"` 等28处绝对路径，用于 `subprocess.run`/`os.path.exists`/`cwd` 参数。**严重度理由**：红蓝对抗测试是治理闭环关键脚本，硬编码绝对路径导致测试在CI或其他开发机上全部失败。
+
+2. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\repair\rollback_depgraph.py:41-42,59` — 模块级常量 `DST = r"D:\ZephyrAlpha\data\databases\depgraph"` 和 `PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.backup.pre_rollback"`。**严重度理由**：回滚脚本常量直接写死项目绝对路径，部署到任何其他环境都不可用。
+
+3. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\repair\audit_design_completeness.py:60,64,65,68,69` — `REPORT_PATH = r"D:\临时工作区\design_migration_gap_report.md"`、`SOURCE_DIRS = [r"D:\临时工作区\依赖图", r"D:\临时工作区\架构图"]`。**严重度理由**：硬编码外部临时工作区绝对路径，含中文目录名，环境隔离完全失效。
+
+4. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\migrate_sqlite_to_pg\migrate_data.py:35-36` — `SQLITE_PATH = r'D:\ZephyrAlpha\data\databases\depgraph.db'`、`ENV_PATH = r'D:\ZephyrAlpha\config\.env.postgres'`。**严重度理由**：迁移脚本硬编码源数据库文件路径与.env配置文件路径。
+
+5. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py:61` — `RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"`。**严重度理由**：核心治理同步脚本，规则目录硬编码项目绝对路径；与同文件DB_PATH治理形成讽刺性对比——治了DB路径却留下RULES路径。
+
+6. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\pipeline\pipeline_roadmap.py:601,606,611,616,621,626,631,636,641`（9处）— `CROSS_MODULE_SYNC` 列表中每个 `CrossModuleSyncEntry` 的 `file_path` 字段硬编码 `"D:\\ZephyrAlpha\\config\\blueprint_routing.yaml"` 等。**严重度理由**：作为运行时数据结构的字段值硬编码绝对路径，跨平台/跨环境失效。
+
+7. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\migrate_domain_id_hyphen_to_underscore.py:297` — `pg_dump = r"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe"`。**严重度理由**：硬编码PostgreSQL客户端工具的Windows安装路径，假定PostgreSQL 16默认安装位置。
+
+8. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\fix_broken_post_sync.py:74,75,106` — 字符串字面量硬编码 `r"python D:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py"` 和 `postgresql://localhost:5432/depgraph` 数据库连接串。**严重度理由**：命令比对字典key硬编码绝对路径命令串+数据库连接串。
+
+9. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\ops_governance\environment_manager.py:48,57,65,73,81` — `db_conn="sqlite:///dev.db"`、`db_conn="postgresql://stage"` 等5套环境连接串字面量。**严重度理由**：环境配置字典硬编码数据库连接串字面量，违反"硬编码数据库连接串"明确禁令。
+
+10. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\d11_compliance\validate_commit_message.py:31,128` — 文档字符串与stderr输出中硬编码邮箱 `Co-Authored-By: Trae AI <trae@example.com>`。**严重度理由**：commit message校验器把示例邮箱写死，作为模板会污染所有AI commit。
+
+11. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_commit_test.py:104,106,109,119` — 硬编码 `env["GIT_AUTHOR_EMAIL"] = "rb@test.com"` 等多个邮箱字面量。**严重度理由**：测试脚本硬编码多个邮箱字面量作为git提交身份，重复散落4处。
+
+#### MEDIUM（9个）
+
+1. **[MEDIUM]** Ollama URL `http://localhost:11434` 散落7处（无env var兜底）：`d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\model_discovery.py:40` / `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\pipeline_routing\model_discovery.py:40`（重复副本）/ `d:\ZephyrAlpha\src\zephyr\integration\local_model\ollama_chat.py:40` / `d:\ZephyrAlpha\src\zephyr\integration\local_model\ollama_embedding.py:41` / `d:\ZephyrAlpha\src\zephyr\trading\gpu_consensus_scheduler.py:159` / `d:\ZephyrAlpha\src\zephyr\governance\behavioral_admission\gpu_consensus_scheduler.py:159`（重复副本）/ `d:\ZephyrAlpha\src\zephyr\shared\contracts\runtime_types.py:69`。**严重度理由**：7处散落，3处为重复文件副本，0处使用 `os.getenv` 兜底。
+
+2. **[MEDIUM]** OTLP endpoint `http://localhost:4317` 散落4处（纯字面量）：`d:\ZephyrAlpha\src\zephyr\ops\config.py:25` / `d:\ZephyrAlpha\src\zephyr\ops\detectors\otel_adapter.py:29` / `d:\ZephyrAlpha\src\zephyr\ops\_gen_inherited.py:923` / `d:\ZephyrAlpha\src\zephyr\ops\template.py:2586`。**严重度理由**：4处纯字面量散落，OTLP collector在生产环境通常独立部署，硬编码localhost导致遥测数据无法导出。
+
+3. **[MEDIUM]** DeepSeek base URL 散落3处且 `/v1` 后缀不一致：`d:\ZephyrAlpha\src\zephyr\integration\local_model\deepseek_chat.py:47`（`https://api.deepseek.com/v1`）/ `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\deepseek_v4_chat.py:78`（`https://api.deepseek.com`）/ `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\pipeline_routing\deepseek_v4_chat.py:78`（重复副本）。**严重度理由**：同一provider的base URL在3处硬编码且URL末尾`/v1`不一致，存在真源分裂风险。
+
+4. **[MEDIUM]** LLM gateway provider URL默认值散落3副本×4 provider=12处：`d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:144,153,162,171` / `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:144,153,162,171` / `d:\ZephyrAlpha\src\zephyr\infrastructure\pipeline\llm_gateway.py:152,161,170,179`。**严重度理由**：虽env可覆盖，但3副本DRY违规——修改任一provider默认URL需同步3处，违反SSoT。
+
+5. **[MEDIUM]** `secret_rotation_aware.py` ROTATION_URLS字典硬编码4 URL×2副本=8处：`d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\secret_rotation_aware.py:61-64` / `d:\ZephyrAlpha\src\zephyr\governance\secret_rotation_aware.py:61-64`。**严重度理由**：密钥轮换端点散落2副本，`http://localhost:8999`假定本地密钥管理服务，生产环境通常为独立KMS。
+
+6. **[MEDIUM]** `supply_chain.py` 信任源URL硬编码6 URL×4副本=24处：`d:\ZephyrAlpha\src\zephyr\governance\audit_trail\supply_chain.py:78,79,100,101,102` / `d:\ZephyrAlpha\src\zephyr\governance\semantic_auditor\supply_chain.py:102,103,125,126,127` / `d:\ZephyrAlpha\src\zephyr\governance\supply_chain.py:78,79,100,101,102` / `d:\ZephyrAlpha\src\zephyr\governance\semantic_audit\supply_chain.py:102,103,125,126,127`。**严重度理由**：4副本DRY违规；`http://pypi.org`与`https://pypi.org`在不同副本中混用http/https。
+
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\security\dep_cve_correlator.py:53` — `nvd_api_url: str = "https://services.nvd.nist.gov/rest/json/cves/2.0"`。**严重度理由**：NVD API端点硬编码，无env var兜底；NVD在企业内网通常通过镜像或代理访问。
+
+8. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\ops_governance\environment_manager.py:49,57,65,73,81` — broker_conn字段硬编码端口：`paper://localhost:4002`、`paper://stage:4002`、`paper://uat:4002`、`paper://paper-gw:4001`、`live://ib-gateway:4001`。**严重度理由**：消息中间件端口散落数据字典，与同文件db_conn一起构成连接串字面量双重违规。
+
+9. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\pipeline\pipeline_roadmap.py:601-641` — 9处 `file_path="D:\\ZephyrAlpha\\..."` 使用反斜杠 `\\` 作为路径分隔符。**严重度理由**：跨平台路径分隔符硬编码，Linux/Mac下无法正确解析。
+
+#### LOW（10个）
+
+1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\ops\observability\tracing.py:81` 与 `d:\ZephyrAlpha\src\zephyr\shared\observability_02\tracing.py:81` — `endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")`。**严重度理由**：已使用 `os.environ.get` 兜底，符合环境隔离最佳实践。但2副本DRY违规。
+
+2. **[LOW]** 注释/文档字符串中的 `localhost:5432/depgraph`（5处）：`d:\ZephyrAlpha\src\zephyr\governance\depgraph_schema.py:8,22,71` / `d:\ZephyrAlpha\scripts\governance\create_alignment_tasks.py:41,754,771,802,810` / `d:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py:1039` / `d:\ZephyrAlpha\scripts\governance\d5_architecture\syncers\sync_blueprint_code_index.py:535` / `d:\ZephyrAlpha\scripts\governance\d5_architecture\validators\validate_static_manifest_drift.py:112`。**严重度理由**：注释/打印信息中的路径字面量，不影响运行时，但对AI模仿有误导风险。
+
+3. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:342` — 注释字符串 `"ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"`。**严重度理由**：错误提示中的官方下载链接，非运行时endpoint。
+
+4. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\checkers\check_precommit_id_uniqueness.py:79` — 注释 `# repo 声明行: "  - repo: local" 或 "  - repo: https://github.com/..."`。**严重度理由**：注释中的示例URL。
+
+5. **[LOW]** docstring/usage示例中的URL（5处）：`d:\ZephyrAlpha\src\zephyr\shared\api\api_client.py:149,350` / `d:\ZephyrAlpha\src\zephyr\trading\trading_contracts\portfolio\contracts\money.py:42` 与 `d:\ZephyrAlpha\src\zephyr\shared\contracts\portfolio\money.py:45` / `d:\ZephyrAlpha\src\zephyr\shared\contracts\core\timestamp.py:45` / `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_assembler.py:155` 与 `d:\ZephyrAlpha\src\zephyr\autonomy_core\assembly\context_assembler.py:145`。**严重度理由**：均为docstring中的示例URL/路径。
+
+6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py:589,602` — 测试用例字符串中含有 `test@test.com`、`localhost:5432` 等。**严重度理由**：模型评测用例中的合成代码字符串，作为LLM评测输入数据。
+
+7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\architecture_governance\path_resolver.py:263,285-289` — `if __name__ == "__main__":` 自测块中 `resolver = PathResolver(r"D:\ZephyrAlpha")`。**严重度理由**：`__main__`自测块仅用于本地调试。
+
+8. **[LOW]** 安全检测器中的功能性硬编码模式（5处）：`d:\ZephyrAlpha\src\zephyr\ops\detectors\self_diagnosis_data_leak_detector.py:38` / `d:\ZephyrAlpha\src\zephyr\infrastructure\dry_run_simulator.py:112,113` / `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\layer3_coordination\a2a_security.py:106` / `d:\ZephyrAlpha\src\zephyr\security\llm_defense\llm_security\patterns\secrets.py:158,179` / `d:\ZephyrAlpha\src\zephyr\security\access_control\path_guard.py:43` / `d:\ZephyrAlpha\scripts\governance\d7_code\detect_absolute_path_hardcoding.py:54,59`。**严重度理由**：检测器/安全工具的功能性正则与敏感路径列表，必须硬编码才能识别威胁模式。
+
+9. **[LOW]** `d:\ZephyrAlpha\scripts\_archive\` 归档目录中的硬编码（6文件）：`d:\ZephyrAlpha\scripts\_archive\ops\fill_blueprint_ids.py:9` / `d:\ZephyrAlpha\scripts\_archive\migration\migrate_security_split.py:19` / `d:\ZephyrAlpha\scripts\_archive\governance\repair\list_source_md_files.py:6,7,10,11` / `d:\ZephyrAlpha\scripts\_archive\governance\repair\ensure_dep_cycles_view.py:9` / `d:\ZephyrAlpha\scripts\_archive\governance\dm101_blueprint_domain_mapping.py:14` / `d:\ZephyrAlpha\scripts\_archive\governance\compare_ba_copies.py:8`。**严重度理由**：已归档至`_archive/`，按项目memory豁免规则不参与活跃治理。
+
+10. **[LOW]** `d:\ZephyrAlpha\scripts\governance\meta\detect_hallucinated_packages.py:333` — `url = f"https://pypi.org/pypi/{pkg_name}/json"`。**严重度理由**：PyPI官方API端点用于包真实性校验，属外部公共API。
+
+**核心模式总结**：(1)**路径污染治理盲区**：Phase 2 SSoT路径治理仅覆盖 `Path(__file__).parents[N]`/`REPO_ROOT`/`DB_PATH` 三类，未覆盖字符串字面量中的绝对路径、subprocess命令串中的路径、数据字段中的路径；(2)**LLM gateway已知问题量化**：Ollama URL散落7处0处env兜底，DeepSeek base URL散落3处且`/v1`后缀不一致，llm_gateway.py自身3副本DRY违规；(3)**OTLP endpoint散落6处**，4处纯字面量；(4)**重复副本污染**：gpu_consensus_scheduler×2、deepseek_v4_chat×2、model_discovery×2、llm_gateway×3、secret_rotation_aware×2、supply_chain×4、tracing×2；(5)**环境配置字典反模式**：`environment_manager.py`用Python字典硬编码5套环境连接串；(6)**检测器自身豁免合理**：安全检测器中的硬编码属功能性模式。
+
+**严重度汇总**：HIGH=11, MEDIUM=9, LOW=10, 合计=30
+
+---
+
+### 5.174 导入循环/模块耦合（17个，第30轮新增）
+
+#### HIGH（9个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\foundation\constants.py:45` — `from zephyr.governance.escalation_models import EscalationLevel`。`shared.foundation` 是依赖图最底层的"基础常量"包，却导入L2 governance的枚举。**严重度理由**：foundation比§5.60.4的protocols.py/metrics.py更靠底层，逆向依赖半径最大。
+
+2. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\zephyr_logger.py:16` / `d:\ZephyrAlpha\src\zephyr\shared\tracing.py:25` — L0 shared顶层模块导入L1 ops.observability。`zephyr_logger`是全项目日志门面，逆向依赖使ops实现无法替换。**严重度理由**：§5.60.4未覆盖的新实例。
+
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\shared\schema\schemas.py:26` 与 `:265` — integration层schema模块同时从L2 `governance.rule_enforcement.task_types`导入`TaskNamespace`（L26顶层）和`Task/TaskStatus`（L265延迟导入）。L260-264注释明确承认 `shared→governance→integration→governance cycle`。**严重度理由**：循环被代码注释自证，§5.60未识别的4层循环依赖。
+
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\contracts\runtime_types.py:24` — `from zephyr.integration.shared.schema.schemas import BASE_CONFIG`。L0 shared.contracts逆向导入integration层，构成shared↔integration双向耦合。**严重度理由**：BASE_CONFIG是pydantic模型配置基类，影响面渗入shared契约层。
+
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\blueprint_decomposer.py:45` 与 `:46` — `from zephyr.integration.shared.schema.execution_model import ExecutionModel` 和 `from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel`。**严重度理由**：blueprint_decomposer是蓝图分解核心，被governance/trading多处引用，逆向依赖向上传播。
+
+6. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\lifecycle\task_lifecycle_manager.py:17` / `d:\ZephyrAlpha\src\zephyr\shared\lifecycle\scope_guard.py:17` — 两文件首行注释均写明"代理模块：将zephyr.shared.lifecycle.*重定向到zephyr.infrastructure.lifecycle.*"，随后 `from zephyr.infrastructure.lifecycle.* import (...)`。**严重度理由**：把infrastructure的具体实现混入shared抽象层，违反DIP；shared.lifecycle不再是稳定抽象，而是infrastructure的别名。
+
+7. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\queue\task_scheduler.py:17` / `d:\ZephyrAlpha\src\zephyr\shared\reliability\context_guard.py:17` — 同#6的"代理模块"模式，`from zephyr.infrastructure.{queue,reliability}.* import (...)`。**严重度理由**：与#6合计4处代理壳，表明shared层系统性退化为infrastructure别名，分层架构在shared/infrastructure边界完全崩塌。
+
+8. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\finding_bridge.py:39` — 顶层 `from zephyr.governance.task_repo import TaskRepository`。**严重度理由**：§5.60.1之外的另一条trading→governance顶层依赖边，trading.orchestrator无法脱离governance独立复用。
+
+9. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\trading_contracts\portfolio\contracts\money.py:49` — `from zephyr.governance.instrument import CurrencyCode`。**严重度理由**：trading_contracts自称"纯数据契约包"，却导入governance的领域枚举；money.py是金融Decimal计算基础类型，CurrencyCode逆向依赖使money.py无法独立测试。
+
+#### MEDIUM（6个）
+
+1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:31` — 顶层 `try: from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType; ... except ImportError: _HAS_AUDIT_ENTRY = False`。**严重度理由**：try/except ImportError反模式——既掩盖了真实的循环依赖，又使审计功能在import失败时静默降级（无日志、无告警）。
+
+2. **[MEDIUM]** 2处：`d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\feedback_bridge.py:35` 与 `:95` / `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\feedback_bridge.py:35` 与 `:95` — governance两个feedback_bridge副本均在函数内延迟导入 `zephyr.trading.feedback_loop.{FeedbackLoop, EvolutionProposal}`。**严重度理由**：重复代码+延迟导入规避循环，运行时耦合仍存在。
+
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\alert_handler.py:87` — `_record_event` 函数内延迟 `from zephyr.governance.sqlite_schema import get_db_connection`。**严重度理由**：trading直接获取governance的SQLite连接，绕过了数据访问层抽象。
+
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\boot_hooks.py:207,:273,:277,:298,:317,:322,:363,:390,:415,:426,:437,:448,:462,:476` — 13+处函数内延迟导入 `governance.task_repo / governance.budget_engine / governance.rule_enforcement.triple_alignment` 等。**严重度理由**：单文件13处延迟导入是"循环依赖workaround堆叠"的典型反模式。
+
+5. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:32,:234,:243,:269,:314,:424` — 6处函数内延迟导入 `governance.model_router / governance.coldstart_manager / governance.adapter` 等。**严重度理由**：AutoRuntimeCore是trading运行时核心，6处延迟导入表明它无法脱离governance独立运行。
+
+6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\session_audit.py:328` — `append_record` 方法内延迟 `from zephyr.governance.audit_trail.writer import get_audit_writer`。**严重度理由**：L0 shared顶层模块通过延迟导入规避L0→L2循环，但运行时耦合仍存在。
+
+#### LOW（2个）
+
+1. **[LOW]** 4处：`d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\contracts.py:26` / `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\auditor.py:26` / `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\governance\auditor.py:22` / `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\governance\contracts.py:22` — infrastructure.rollback 4个文件顶层导入 `governance.audit_trail.{contracts,anomaly,bridges.*}.AuditWriter/AnomalyEvent`。**严重度理由**：§5.60.5之外的L0→L2逆向依赖新实例，但rollback子包是低频回滚路径。
+
+2. **[LOW]** `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\legacy_auditor.py:26` — 顶层 `from zephyr.governance.audit_trail.contracts import AuditWriter`。**严重度理由**：legacy模块且低频，但与#1同属infrastructure→governance.audit_trail的L0→L2违规模式。
+
+**核心模式总结**：(a)**L0 shared逆向依赖L2 governance/ops**：foundation/constants.py、zephyr_logger.py、tracing.py、session_audit.py等shared顶层模块向上导入governance/ops；(b)**shared↔integration双向耦合**：代码注释自证4层循环（shared→governance→integration→governance）；(c)**shared退化为infrastructure的代理壳**：shared.lifecycle/queue/reliability 3个子包4个文件首行注释明确声明"代理模块"；(d)**trading↔governance循环依赖的新边**：新发现4条trading→governance依赖边；(e)**延迟导入堆叠掩盖循环**：boot_hooks.py（13处）、auto_runtime_core.py（6处）、verdict_engine.py（try/except静默降级）。
+
+**严重度汇总**：HIGH=9, MEDIUM=6, LOW=2, 合计=17

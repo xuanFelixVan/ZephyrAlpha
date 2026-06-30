@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.chaos_injector import (
+from zephyr.governance.drift_detection.chaos_injector import (
     INJECTORS,
     ChaosInjection,
     ChaosInjectionType,

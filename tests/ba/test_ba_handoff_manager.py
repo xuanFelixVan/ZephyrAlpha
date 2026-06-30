@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import os
 
-from zephyr.behavioral_audit.handoff_manager import (
+from zephyr.governance.drift_detection.handoff_manager import (
     FileIntegrityRecord,
     HandoffPackage,
     abort_handoff,

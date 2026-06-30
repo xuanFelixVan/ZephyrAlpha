@@ -1,27 +1,34 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.roi_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] ROI计算不可人为调整
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_roi_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_roi_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
 ROI Engine — roi_engine.py
 
+
+
+
+
 module_id: MOD-INF-023
+
+
 修复ROI优先级：ROI = impact_weight × frequency / effort + 4级effort + 持续校准。
-对标 blueprint.md §5.5 / TASK-INF-0029 / D-023-14。
-"""
+
+
+对标 blueprint.md §5.5 / TASK-INF-0029 / D-023-14。"""
 
 from __future__ import annotations
 
@@ -33,18 +40,27 @@ from datetime import UTC, datetime
 @dataclass
 class ROIScore:
     detector_id: str
+
     impact_weight: float
+
     frequency_score: float
+
     effort_score: float
+
     roi: float
+
     rank: int
+
     effort_tier: str
+
     computed_at: str = ""
 
 
 class ROIEngine:
     WEIGHT_MAP: dict[str, int] = {"P0": 10, "P1": 5, "P2": 2}
+
     SEVERITY_MULT: dict[str, int] = {"HIGH": 3, "MEDIUM": 2, "LOW": 1}
+
     EFFORT_MAP: dict[str, int] = {
         "auto_fixable": 1,
         "suggestion_simple": 3,
@@ -69,11 +85,14 @@ class ROIEngine:
         impact = self.WEIGHT_MAP.get(module_tier, 2) * self.SEVERITY_MULT.get(severity, 2)
 
         freq = 1.0
+
         if detections_30d > 0:
             freq = 1.0 + math.log2(max(1, detections_30d))
 
         effort = self.EFFORT_MAP.get(effort_tier, 8)
+
         feedback = self._effort_feedback.get(detector_id)
+
         if feedback:
             effort = max(1.0, feedback)
 
@@ -92,6 +111,8 @@ class ROIEngine:
 
     def rank(self, scores: list[ROIScore]) -> list[ROIScore]:
         sorted_scores = sorted(scores, key=lambda s: s.roi, reverse=True)
+
         for i, s in enumerate(sorted_scores):
             s.rank = i + 1
+
         return sorted_scores

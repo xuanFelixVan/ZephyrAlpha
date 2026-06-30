@@ -15,7 +15,7 @@ import json
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from zephyr.behavioral_audit.drift_infrastructure import (
+from zephyr.governance.drift_detection.drift_infrastructure import (
     CheckpointWriter,
     EnvDiffReport,
     MaintenanceWindow,

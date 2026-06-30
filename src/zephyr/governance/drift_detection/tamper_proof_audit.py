@@ -1,29 +1,43 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.tamper_proof_audit
-# [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.audit_trail.bridge
-# [CONSUMERS]
+# [DOMAIN] D_BEHAVIORAL_AUDIT
+# [DEPENDENCIES] zephyr.shared.contracts.protocols
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 审计记录不可篡改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
+# [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_tamper_proof_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_tamper_proof_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。
+"""
+Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 append_only_events: SQLite TRIGGER禁止UPDATE/DELETE + event sourcing
+
+
 git_commit_audit_log: 每DEEP scan AUDIT_<scan_id>.yaml(sha256+per state计数)commit到Git
+
+
 anomaly_detection: 总行数减少/批量清洗/回溯修改 → P0 CRITICAL从Git恢复
+
+
 对标 blueprint.md §6.26。
-同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
-"""
+
+
+同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""
 
 from __future__ import annotations
 
@@ -36,42 +50,75 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.audit_trail.bridge import write_to_core
-
 
 @dataclass
 class AuditRecord:
     scan_id: str
+
     state_counts: dict[str, int]
+
     events_hash: str
+
     file_hashes: dict[str, str]
+
     timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
     committed_to_git: bool = False
+
     verified: bool = False
 
 
 @dataclass
 class AnomalyAlert:
     alert_id: str
+
     anomaly_type: str
+
     severity: str = "CRITICAL"
+
     description: str = ""
+
     detected_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+
     recovery_suggestion: str = ""
 
 
 APPEND_ONLY_TRIGGERS: str = """
+
+
 CREATE TRIGGER IF NOT EXISTS drift_events_no_update
+
+
 BEFORE UPDATE ON drift_events
+
+
 BEGIN
+
+
     SELECT RAISE(FAIL, 'UPDATE denied on drift_events — append_only');
+
+
 END;
 
+
+
+
+
 CREATE TRIGGER IF NOT EXISTS drift_events_no_delete
+
+
 BEFORE DELETE ON drift_events
+
+
 BEGIN
+
+
     SELECT RAISE(FAIL, 'DELETE denied on drift_events — append_only');
+
+
 END;
+
+
 """
 
 
@@ -82,9 +129,7 @@ def _sha256(data: str) -> str:
 def setup_append_only(db_path: str) -> bool:
     try:
         conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        for statement in APPEND_ONLY_TRIGGERS.strip().split("\n\n"):
-            cursor.execute(statement.strip())
+        conn.executescript(APPEND_ONLY_TRIGGERS)
         conn.commit()
         conn.close()
         return True
@@ -95,28 +140,41 @@ def setup_append_only(db_path: str) -> bool:
 def snapshot_event_hash(db_path: str) -> str:
     try:
         conn = sqlite3.connect(db_path)
+
         cursor = conn.cursor()
+
         cursor.execute("SELECT event_id, detector_id, severity, state FROM drift_events ORDER BY timestamp DESC")
+
         rows = cursor.fetchall()
+
         conn.close()
 
         data = json.dumps([list(r) for r in rows], default=str)
+
         return _sha256(data)
+
     except Exception:
         return ""
 
 
 def count_states(db_path: str) -> dict[str, int]:
     counts: dict[str, int] = {}
+
     try:
         conn = sqlite3.connect(db_path)
+
         cursor = conn.cursor()
+
         cursor.execute("SELECT state, COUNT(*) FROM drift_events GROUP BY state")
+
         for row in cursor.fetchall():
             counts[str(row[0])] = int(row[1])
+
         conn.close()
+
     except Exception:
         pass
+
     return counts
 
 
@@ -126,14 +184,19 @@ def generate_audit_log(
     project_root: str,
 ) -> AuditRecord:
     state_counts = count_states(db_path)
+
     events_hash = snapshot_event_hash(db_path)
 
     src_files: dict[str, str] = {}
+
     src_root = Path(project_root) / "src"
+
     for pf in list(src_root.rglob("*.py"))[:30]:
         try:
             content = pf.read_text(encoding="utf-8")
+
             src_files[pf.relative_to(project_root).as_posix()] = _sha256(content)
+
         except Exception:
             pass
 
@@ -145,25 +208,37 @@ def generate_audit_log(
     )
 
     audit_dir = Path(project_root) / "data" / "drift"
+
     audit_dir.mkdir(parents=True, exist_ok=True)
+
     audit_path = audit_dir / f"AUDIT_{scan_id}.yaml"
 
     tmp_path = str(audit_path) + f".{os.getpid()}.tmp"
+
     try:
         with open(tmp_path, "w", encoding="utf-8") as f:
             f.write(f"# Audit Log: {scan_id}\n")
+
             f.write(f"timestamp: {record.timestamp.isoformat()}\n")
+
             f.write(f"events_hash: {events_hash}\n")
+
             f.write("state_counts:\n")
+
             for s, c in state_counts.items():
                 f.write(f"  {s}: {c}\n")
+
             f.write("file_hashes:\n")
+
             for fp, fh in src_files.items():
                 f.write(f"  {fp}: {fh[:16]}\n")
+
         os.replace(tmp_path, str(audit_path))
+
     except PermissionError:
         try:
             os.remove(tmp_path)
+
         except OSError:
             pass
 
@@ -174,6 +249,7 @@ def generate_audit_log(
             timeout=10,
             cwd=project_root,
         )
+
         subprocess.run(
             [
                 "git",
@@ -185,11 +261,16 @@ def generate_audit_log(
             timeout=10,
             cwd=project_root,
         )
+
         record.committed_to_git = True
+
     except Exception:
         pass
 
-    write_to_core(
+    import importlib as _importlib
+
+    _write_to_core = _importlib.import_module("zephyr.governance.audit_trail.bridge").write_to_core
+    _write_to_core(
         "drift_tamper_proof_audit",
         {
             "scan_id": scan_id,
@@ -210,6 +291,7 @@ def detect_anomalies(
 
     if previous:
         total_before = sum(previous.state_counts.values())
+
         total_after = sum(current.state_counts.values())
 
         if total_after < total_before * 0.5 and total_before > 10:
@@ -224,7 +306,9 @@ def detect_anomalies(
             )
 
         resolved_before = previous.state_counts.get("RESOLVED", 0)
+
         resolved_after = current.state_counts.get("RESOLVED", 0)
+
         if resolved_after < resolved_before * 0.5 and resolved_before > 5:
             alerts.append(
                 AnomalyAlert(

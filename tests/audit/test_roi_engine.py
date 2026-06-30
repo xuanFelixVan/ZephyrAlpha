@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.roi_engine import (
+from zephyr.governance.drift_detection.roi_engine import (
     ROIEngine,
     ROIScore,
 )

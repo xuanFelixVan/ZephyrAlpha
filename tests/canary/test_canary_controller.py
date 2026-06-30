@@ -14,7 +14,7 @@
 import json
 import os
 
-from zephyr.behavioral_audit.canary_controller import (
+from zephyr.governance.drift_detection.canary_controller import (
     CONFIG,
     CanaryComparison,
     CanaryConfig,

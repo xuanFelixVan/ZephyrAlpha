@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.cli
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit_trail.audit_admission_controller; zephyr.governance.audit_trail.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.semantic_audit.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.behavioral_audit.drift_engine
+# [DEPENDENCIES] zephyr.governance.audit_trail.audit_admission_controller; zephyr.governance.audit_trail.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.semantic_audit.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.governance.drift_detection.drift_engine
 # [CONSUMERS] End users; CI/CD; MCP tool wrappers
 # [STARTUP] manual
 # [MATURITY] production
@@ -174,7 +174,7 @@ def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any
         try:
             import asyncio
 
-            from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
+            from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
 
             level_enum = ScanLevel[level.upper()]
             loop = asyncio.new_event_loop()

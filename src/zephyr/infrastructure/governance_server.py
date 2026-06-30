@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.drift_infrastructure; zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.drift_detection.cold_start; zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.drift_models; zephyr.governance.drift_detection.drift_infrastructure; zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -439,7 +439,7 @@ class GovernanceServer(BaseMCPServer):
                 "zephyr.governance.audit_trail",
                 "zephyr.governance.rollback",
                 "zephyr.governance.escalation",
-                "zephyr.behavioral_audit",
+                "zephyr.governance.drift_detection",
             ],
             "phase_2": [
                 "zephyr.infrastructure.budget_enforcement",
@@ -526,7 +526,7 @@ class GovernanceServer(BaseMCPServer):
             "zephyr.governance.audit_trail",
             "zephyr.governance.rollback",
             "zephyr.governance.escalation",
-            "zephyr.behavioral_audit",
+            "zephyr.governance.drift_detection",
             "zephyr.infrastructure.budget_enforcement",
             "zephyr.governance.a2a",
         ]
@@ -558,8 +558,8 @@ class GovernanceServer(BaseMCPServer):
         import asyncio
 
         try:
-            from zephyr.behavioral_audit.cold_start import init_database, init_directories
-            from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
+            from zephyr.governance.drift_detection.cold_start import init_database, init_directories
+            from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan
 
             project_root = str(REPO_ROOT)
             init_directories(project_root)
@@ -596,8 +596,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_report(self) -> dict[str, Any]:
         try:
-            from zephyr.behavioral_audit.drift_engine import build_report, load_detector_registry
-            from zephyr.behavioral_audit.drift_models import DriftReport
+            from zephyr.governance.drift_detection.drift_engine import build_report, load_detector_registry
+            from zephyr.governance.drift_detection.drift_models import DriftReport
 
             detectors = load_detector_registry()
             active_count = sum(1 for d in detectors if d.status == "active")
@@ -619,7 +619,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
-            from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
+            from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
 
             result = check_budget_for_gate(module_id)
             return {

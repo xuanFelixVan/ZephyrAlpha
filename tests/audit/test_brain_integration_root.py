@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.behavioral_audit.brain_integration import (
+from zephyr.governance.drift_detection.brain_integration import (
     ClosedLoopResult,
     FullProbeResult,
     L0StartupResult,

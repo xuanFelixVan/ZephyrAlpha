@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.drift_fix
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.behavioral_audit.events
+# [DEPENDENCIES] zephyr.governance.drift_detection.events
 # [CONSUMERS] rollback_executor;auto_rollback_trigger
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -26,7 +26,7 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 
 from typing import Any
 
-from zephyr.behavioral_audit.events import DriftEvent
+from zephyr.governance.drift_detection.events import DriftEvent
 
 
 class DriftFixHandler:

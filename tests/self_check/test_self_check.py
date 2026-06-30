@@ -14,7 +14,7 @@
 import tempfile
 from pathlib import Path
 
-from zephyr.behavioral_audit.self_check import (
+from zephyr.governance.drift_detection.self_check import (
     bootstrap_self_check,
     check_core_files,
     check_registry_parsable,

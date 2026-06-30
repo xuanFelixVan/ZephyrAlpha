@@ -16,7 +16,7 @@ import tempfile
 
 import pytest
 
-from zephyr.behavioral_audit.python_compat import (
+from zephyr.governance.drift_detection.python_compat import (
     PythonCompatIssue,
     _check_stdlib_imports,
     _check_type_hints,

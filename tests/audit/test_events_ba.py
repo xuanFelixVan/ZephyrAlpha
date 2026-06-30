@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from zephyr.behavioral_audit.events import (
+from zephyr.governance.drift_detection.events import (
     DriftEvent,
     DriftState,
     DriftType,

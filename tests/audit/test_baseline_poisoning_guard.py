@@ -13,8 +13,8 @@
 
 import hashlib
 
-import zephyr.behavioral_audit.baseline_poisoning_guard as _bpg_mod
-from zephyr.behavioral_audit.baseline_poisoning_guard import (
+import zephyr.governance.drift_detection.baseline_poisoning_guard as _bpg_mod
+from zephyr.governance.drift_detection.baseline_poisoning_guard import (
     HASH_CHAIN,
     BaselineSnapshot,
     HashChainEntry,

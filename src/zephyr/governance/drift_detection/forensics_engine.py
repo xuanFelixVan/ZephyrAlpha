@@ -1,27 +1,37 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.forensics_engine
-# [DOMAIN] D_GOVERNANCE
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [MATURITY] production
+# [INVARIANTS] 取证结果不可篡改
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
-# [SAFETY] L
-# [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-GOV_forensics_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [SAFETY] H
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] DriftError;BaselineError
+# [TESTS] tests/behavioral-auditor/
+# [A_module] module_id=MOD-SEC_forensics_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""Drift Forensics Engine — 漂移取证引擎 §6.17。
+"""
+Drift Forensics Engine — 漂移取证引擎 §6.17。
+
+
+
+
 
 module_id: MOD-INF-023
+
+
 replay: git checkout还原代码 + drift_events表活跃漂移 + baseline历史重放
+
+
 forensics_report: timeline + state_diffs + actor_trace + dependency_impact
-对标 blueprint.md §6.17。
-"""
+
+
+对标 blueprint.md §6.17。"""
 
 from __future__ import annotations
 
@@ -36,33 +46,51 @@ from pathlib import Path
 @dataclass
 class ForensicsTimelineEntry:
     timestamp: datetime
+
     action: str
+
     actor: str
+
     state_before: str
+
     state_after: str
+
     file_changed: str
+
     diff_summary: str
 
 
 @dataclass
 class ForensicsReport:
     report_id: str
+
     drift_event_id: str
+
     module: str
+
     detector_id: str
+
     severity: str
+
     state: str
+
     timeline: list[ForensicsTimelineEntry]
+
     state_diffs: list[dict[str, str]]
+
     actor_trace: list[str]
+
     dependency_impact: dict[str, list[str]]
+
     generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
 class ForensicsConfig:
     state_dir: str = ""
+
     max_timeline_entries: int = 50
+
     include_blame: bool = True
 
 
@@ -75,31 +103,42 @@ def replay_baseline_history(
     drift_events: list[dict[str, object]],
 ) -> ForensicsReport:
     """重放baseline历史，重构时间线。"""
+
     event_id = Path(file_path).stem
+
     report_id = f"forensics-{event_id}-{datetime.now(UTC).strftime('%Y%m%d%H%M')}"
 
     timeline: list[ForensicsTimelineEntry] = []
+
     states_seen: dict[int, str] = {}
+
     actors: list[str] = []
 
     for i, entry in enumerate(baseline_history[: FORENSICS_CONFIG.max_timeline_entries]):
         ts_str = entry.get("timestamp", "")
+
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+
         except Exception:
             ts = datetime.now(UTC)
 
         action = entry.get("action", "unknown")
+
         state_before_val = states_seen.get(i - 1, "UNKNOWN")
+
         state_after_val = entry.get("state_after", "UNKNOWN")
 
         actor = "system"
+
         for evt in drift_events:
             if str(evt.get("source_file", "")) == file_path:
                 actor = str(evt.get("detector_id", "unknown"))
+
                 break
 
         states_seen[i] = state_after_val
+
         actors.append(actor)
 
         timeline.append(
@@ -115,6 +154,7 @@ def replay_baseline_history(
         )
 
     state_diffs: list[dict[str, str]] = []
+
     for i in range(1, len(timeline)):
         if timeline[i].state_before != timeline[i].state_after:
             state_diffs.append(
@@ -129,8 +169,11 @@ def replay_baseline_history(
     unique_actors = list(dict.fromkeys(actors))
 
     dep_impact: dict[str, list[str]] = {}
+
     source_path = Path(file_path)
+
     parent_dir = source_path.parent
+
     if parent_dir.exists():
         for sibling in parent_dir.iterdir():
             if sibling.is_file() and sibling.suffix == ".py":
@@ -156,6 +199,7 @@ def git_checkout_snapshot(
     project_root: str,
 ) -> str | None:
     """用git checkout还原代码到指定commit状态。"""
+
     try:
         result = subprocess.run(
             ["git", "show", f"{commit_hash}:{file_path}"],
@@ -164,10 +208,13 @@ def git_checkout_snapshot(
             timeout=10,
             cwd=project_root,
         )
+
         if result.returncode == 0:
             return result.stdout
+
     except Exception:
         pass
+
     return None
 
 
@@ -179,7 +226,9 @@ def generate_forensics_report(
     drift_events: list[dict[str, object]] | None = None,
 ) -> ForensicsReport:
     """生成完整的取证报告。"""
+
     history = baseline_history or []
+
     events = drift_events or []
 
     report = replay_baseline_history(source_file, history, events)
@@ -193,12 +242,16 @@ def generate_forensics_report(
                 timeout=10,
                 cwd=project_root,
             )
+
             if blame_result.returncode == 0 and blame_result.stdout.strip():
                 commit_lines = blame_result.stdout.strip().split("\n")
+
                 for cl in commit_lines:
                     parts = cl.split(" ", 1)
+
                     if len(parts) >= 2:
                         report.dependency_impact.setdefault("commits", []).append(parts[0])
+
         except Exception:
             pass
 
@@ -207,8 +260,11 @@ def generate_forensics_report(
 
 def serialize_report(report: ForensicsReport, output_dir: str) -> str:
     """序列化取证报告为JSON。"""
+
     os.makedirs(output_dir, exist_ok=True)
+
     safe_id = report.report_id.replace("/", "-").replace("\\", "-")
+
     path = os.path.join(output_dir, f"{safe_id}.json")
 
     report_dict: dict[str, object] = {
@@ -237,14 +293,19 @@ def serialize_report(report: ForensicsReport, output_dir: str) -> str:
     }
 
     content = json.dumps(report_dict, indent=2, default=str, ensure_ascii=False)
+
     tmp_path = f"{path}.{os.getpid()}.tmp"
+
     try:
         with open(tmp_path, "w", encoding="utf-8") as f:
             f.write(content)
+
         os.replace(tmp_path, path)
+
     except PermissionError:
         try:
             os.remove(tmp_path)
+
         except OSError:
             pass
 

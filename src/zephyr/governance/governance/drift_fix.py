@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.governance.drift_fix
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.behavioral_audit.events
+# [DEPENDENCIES] zephyr.governance.drift_detection.events
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from zephyr.behavioral_audit.events import DriftEvent
+from zephyr.governance.drift_detection.events import DriftEvent
 
 
 class DriftFixHandler:

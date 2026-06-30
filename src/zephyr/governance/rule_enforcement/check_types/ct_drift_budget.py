@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.ct_drift_budget
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.behavioral_audit.drift_infrastructure
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.governance.drift_detection.drift_infrastructure
 # [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -51,7 +51,7 @@ class DriftBudgetHandler(CheckTypeHandler):
         target_module = str(params.get("target_module", task.task_id))
 
         try:
-            from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
+            from zephyr.governance.drift_detection.drift_infrastructure import check_budget_for_gate
 
             budget = check_budget_for_gate(target_module)
 
