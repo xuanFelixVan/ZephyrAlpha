@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T19:46:05Z'
+generated_at: '2026-06-30T19:46:54Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 141
+total_files: 142
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -1469,6 +1469,21 @@ files:
   title: AI Session/Agent 登记表
   doc_type: register
   status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  module_id: REG-ARCH-ISSUE-001
+  title: 架构议题注册表
+  doc_type: register
+  status: active
   version: 1.0.0
   rule_form: ''
   scope: ''
