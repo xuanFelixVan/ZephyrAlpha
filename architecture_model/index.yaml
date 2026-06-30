@@ -11,7 +11,7 @@ system:
 
 governance:
   canonical: true
-  derives_from: "AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律"
+  derives_from: "YAML canonical SSoT 铁律"
   conflict_rule: "YAML 为准，Markdown 视图同步更新"
   gate_alignment: "GATE-A 代码↔YAML 对齐"
   domains_source: >
