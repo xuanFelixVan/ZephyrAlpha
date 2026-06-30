@@ -58,7 +58,6 @@ CRITICAL_FILES = [
     "config/rbac_roles.yaml",
     ".ailocks/registry.json",
     ".ailocks/registry.json.lock",
-    "data/databases/depgraph.db",
     "data/databases/governance.db",
 ]
 

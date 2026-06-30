@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_registry_management | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-037 | data/databases/depgraph.db | D_GOV_REGISTRY_MANAGEMENT
+# [BLUEPRINT] MOD-INF-037 | src/zephyr/governance/registry_management/__init__.py | D_GOV_REGISTRY_MANAGEMENT
 # [MODULE] zephyr.governance.registry_management
 # [INVARIANTS] subdomain_id=D_GOV_REGISTRY_MANAGEMENT; parent_domain=governance
 # [MODIFY-GUARD] domain_migration_phase2

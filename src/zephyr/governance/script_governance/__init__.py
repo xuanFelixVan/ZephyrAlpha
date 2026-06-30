@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_script_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-005 | data/databases/depgraph.db | D-GOV-SCRIPT_GOVERNANCE
+# [BLUEPRINT] MOD-INF-005 | src/zephyr/governance/script_governance/__init__.py | D-GOV-SCRIPT_GOVERNANCE
 # [MODULE] zephyr.governance.script_governance
 # [INVARIANTS] subdomain_id=D-GOV-SCRIPT_GOVERNANCE; parent_domain=governance
 # [MODIFY-GUARD] domain_migration_phase2

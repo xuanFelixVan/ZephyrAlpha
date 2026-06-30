@@ -60,7 +60,7 @@ entry_conditions:
   name: schema_version_db_consistency
   type: db_state_check
   description: >
-    DB 状态校验：depgraph.db 的 _schema_version.MAX(version) 必须等于
+    DB 状态校验：depgraph 的 _schema_version.MAX(version) 必须等于
     depgraph_schema.py 的 _MIGRATIONS 列表最大版本号。不一致表示迁移未完成或被手动篡改。
   check: db_schema_version_matches_migrations
   severity: error
@@ -73,7 +73,7 @@ entry_conditions:
     description: _schema_version 表中 MAX(version) 与 _MIGRATIONS 最大版本号不一致
     example: DB 中 MAX(version)=7 但 _MIGRATIONS 定义到 v8（迁移未完成或被手动篡改）
   params:
-    db_path: data/databases/depgraph.db
+    db_path: postgresql://localhost:5432/depgraph
     migrations_module: zephyr.governance.depgraph_schema._MIGRATIONS
 mutating_rules: []
 severity_levels:

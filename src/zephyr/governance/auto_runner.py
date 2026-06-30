@@ -23,7 +23,7 @@
 职责:
 - 自动运行: 按 PHASE_SEQUENCE 顺序执行 7 维度 gate_checks
 - 自动关闭: 资源释放 + 临时文件清理 + 审计日志 + session 关闭
-- 事件驱动: 基于 depgraph.db 中 event_driven 字段触发对应脚本
+- 事件驱动: 基于 depgraph 中 event_driven 字段触发对应脚本
 """
 
 from __future__ import annotations

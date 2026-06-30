@@ -5,7 +5,7 @@
 # [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] depgraph.db path = data/databases/depgraph.db; init_db must be idempotent
+# [INVARIANTS] depgraph is PostgreSQL (localhost:5432/depgraph); init_db must be idempotent
 # [MODIFY-GUARD] sqlite_schema.py; database_manager.py; depgraph generators
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,11 +15,11 @@
 # [TTL] task_bound
 
 """
-depgraph.db Schema DDL + 版本化迁移框架
+depgraph Schema DDL + 版本化迁移框架
 ========================================
-依据：数据库合并方案（9库→3库），depgraph.db 作为依赖图专用数据库
+依据：数据库合并方案（9库→3库），depgraph 作为依赖图专用数据库（PostgreSQL）
 
-物理路径：data/databases/depgraph.db
+物理路径：PostgreSQL localhost:5432/depgraph（P2迁移后，原 SQLite data/databases/depgraph.db 已删除归档）
 Safety  : M（DDL 定义，init_db 幂等执行）
 
 表结构

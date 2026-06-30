@@ -115,6 +115,71 @@ def load_vocabulary_values(
     return result
 
 
+def load_vocabulary_entries(
+    vocab_file: str | Path,
+    *,
+    vocab_dir: str | Path | None = None,
+    fallback_key: str | None = None,
+    strict: bool = True,
+) -> list[dict]:
+    """从 vocabulary YAML 加载有效值+定义列表（SSoT 唯一真源，禁止硬编码）。
+
+    治本（2026-06-30）：与 ``load_vocabulary_values`` 配对，返回更丰富结构。
+    ``load_vocabulary_values`` 返回 ``set[str]``（只需值集合时用），
+    本函数返回 ``list[dict]``（需要 value + definition 时用，如 schema.json
+    双向同步填充新增 oneOf+const 项的 description）。
+
+    Args:
+        vocab_file: YAML 文件名（如 ``"status_vocabulary.yaml"``）或绝对路径
+        vocab_dir: YAML 所在目录；默认 ``docs/01_policies_and_standards/_registry/vocabularies``
+        fallback_key: entry 缺少 ``value`` 键时的回退键（如 ``"id"``）；None 表示不回退
+        strict: True=fail-fast（默认）；False=宽容模式（返回空 list 而非崩溃）
+
+    Returns:
+        ``[{"value": "frozen", "definition": "冻结——不可修改"}, ...]``
+        definition 可能为空字符串（词表无 definition 字段时）。
+
+    Raises:
+        FileNotFoundError: ``strict=True`` 且文件不存在
+        yaml.YAMLError: ``strict=True`` 且 YAML 解析失败
+        ValueError: ``strict=True`` 且 YAML 顶层非 dict 结构
+    """
+    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
+    p = Path(vocab_file)
+    if not p.is_absolute():
+        p = vdir / p
+    if not p.exists():
+        if strict:
+            raise FileNotFoundError(
+                f"vocabulary YAML 不存在: {p}\n"
+                f"提示：检查文件名拼写。如需测试隔离/渐进迁移，传 strict=False。"
+            )
+        return []
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        if strict:
+            raise
+        return []
+    if not isinstance(data, dict):
+        if strict:
+            raise ValueError(f"vocabulary YAML 顶层非 dict 结构: {p}")
+        return []
+    entries: list[dict] = []
+    for entry in data.get("values", []) or []:
+        if not isinstance(entry, dict):
+            continue
+        val = entry.get("value")
+        if not val and fallback_key:
+            val = entry.get(fallback_key)
+        if val is not None:
+            entries.append({
+                "value": str(val),
+                "definition": str(entry.get("definition", "")),
+            })
+    return entries
+
+
 def load_vocabulary_deprecated_map(
     vocab_file: str | Path,
     *,

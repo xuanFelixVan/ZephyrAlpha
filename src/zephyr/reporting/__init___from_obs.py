@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-026 | data/databases/depgraph.db | D-OBS-ASSET_INVENTORY
+# [BLUEPRINT] MOD-INF-026 | src/zephyr/reporting/__init___from_obs.py | D-OBS-ASSET_INVENTORY
 # [MODULE] zephyr.observability.asset_inventory
 # [DOMAIN] D_REPORTING
 # [DEPENDENCIES] zephyr.reporting.__init__

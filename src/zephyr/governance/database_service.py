@@ -27,7 +27,7 @@ DatabaseService: 统一管理三个数据库的连接池、生命周期、健康
 [ERROR_CONTRACT] ConnectionError; TimeoutError
 [TESTS] tests/test_db_auto_ops.py::test_database_service_init
 
-提供 governance.db / depgraph.db / market.duckdb 的统一连接管理。
+提供 governance.db / depgraph / market.duckdb 的统一连接管理。
 """
 
 import sqlite3
@@ -190,7 +190,7 @@ class DatabaseService:
         )
         conn.commit()
 
-    # ========== depgraph.db 方法 ==========
+    # ========== depgraph 方法 ==========
     # P2迁移后：depgraph 已切换到 PostgreSQL，使用 psycopg2 cursor 模式
     # cursor_factory=RealDictCursor 使每行返回 RealDictRow，dict(row) 兼容原 sqlite3.Row 用法
 
@@ -326,12 +326,12 @@ if __name__ == "__main__":
     tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     print(f"governance.db: {len(tables)} tables")
 
-    # 测试 depgraph.db
+    # 测试 depgraph
     conn = ds.get_depgraph_conn()
     with conn.cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM nodes")
         nodes = cur.fetchone()["count"]
-    print(f"depgraph.db: {nodes} nodes")
+    print(f"depgraph: {nodes} nodes")
 
     # 测试 market.duckdb
     conn = ds.get_market_conn()

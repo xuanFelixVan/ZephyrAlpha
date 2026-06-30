@@ -66,7 +66,6 @@ RBAC_BLOCKED_OPS = {
 PROTECTED_PATHS = [
     ".git",
     ".ailocks",
-    "data/databases/depgraph.db",
 ]
 
 

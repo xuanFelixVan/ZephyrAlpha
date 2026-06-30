@@ -79,7 +79,6 @@ PROTECTED_PATHS = [
     "config/rbac_roles.yaml",
     "config/blueprint_routing.yaml",
     "data/databases/governance.db",
-    "data/databases/depgraph.db",
     ".ailocks/registry.json",
     "scripts/lock_files.py",
     "scripts/scaffold.py",
