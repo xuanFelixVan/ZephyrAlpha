@@ -17,7 +17,7 @@ import json
 import time
 from pathlib import Path
 
-from zephyr.shared.sla.sla_monitor import (
+from zephyr.infrastructure.sla.sla_monitor import (
     RPO_TARGET_TASKS,
     RTO_TARGET_S,
     SLABreach,

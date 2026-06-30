@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.shared.quality.quality_monitor import (
+from zephyr.infrastructure.quality.quality_monitor import (
     CodeQualityReport,
     QualityMetric,
     QualityMonitor,
