@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -479,6 +479,42 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 node.lineno,
                 "硬编码数据库名 'depgraph (PostgreSQL)'"
                 "（应 from _common import DB_DISPLAY_NAME 引用常量）",
+            ))
+
+    # 检测7：commit_gates 测试目录名硬编码（治本 2026-06-30，红攻发现2治本）
+    # commit_gates 中 tests/ 豁免必须从 commit_gate_registry.is_test_exempt 引用，
+    # 禁止硬编码 "tests/" 字面量——真源漂移风险（新AI可能直接硬编码绕过 SSoT，
+    # 导致 Windows 路径归一化等治本逻辑被绕过）。
+    # 范围：仅 src/zephyr/governance/commit_gates/*.py
+    # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
+    # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
+    # 真源：src/zephyr/governance/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
+    commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
+    try:
+        is_commit_gate = filepath.is_relative_to(commit_gates_dir)
+    except (ValueError, AttributeError):
+        is_commit_gate = str(filepath).startswith(str(commit_gates_dir))
+    if is_commit_gate:
+        gate_docstring_ids: set[int] = set()
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                if n.body and isinstance(n.body[0], ast.Expr):
+                    v = n.body[0].value
+                    if isinstance(v, ast.Constant) and isinstance(v.value, str):
+                        gate_docstring_ids.add(id(v))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+                continue
+            if "tests/" not in node.value:
+                continue
+            if id(node) in gate_docstring_ids:
+                continue  # docstring 豁免
+            if _has_noqa_exempt(source, node.lineno):
+                continue
+            issues.append((
+                node.lineno,
+                "硬编码测试目录名 'tests/'"
+                "（应 from zephyr.governance.commit_gate_registry import is_test_exempt 引用 SSoT）",
             ))
 
     return issues
