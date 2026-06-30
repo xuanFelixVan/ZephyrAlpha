@@ -101,7 +101,7 @@ modules:
     interfaces:
       - contract_id: CT-DB-MARKET-001
         role: producer
-        description: market.duckdb 连接契约——DatabaseService.get_market_conn(read_only=True代码层强制，安全约束真源不在YAML)
+        description: market.duckdb 连接契约——DatabaseService.get_market_read_conn(read_only=True代码层强制，查询用) + get_market_conn(读写模式，写入用，market_write_lock串行化)。安全约束真源在代码层不在YAML。禁止裸duckdb.connect(AGENTS.md §11.0铁律)
     test_coverage:
       tested: []
       untested_p1:
