@@ -23,9 +23,6 @@
           "const": "policy"
         },
         {
-          "const": "operational_rule"
-        },
-        {
           "const": "register"
         },
         {
@@ -961,7 +958,7 @@
       }
     },
     {
-      "description": "policy 类型的 rule_form 必须为 declarative",
+      "description": "policy 类型的 rule_form 为 declarative（默认）或 procedural（v3.1.0 合并 operational_rule 后双值并存）",
       "if": {
         "properties": {
           "doc_type": {
@@ -975,27 +972,10 @@
       "then": {
         "properties": {
           "rule_form": {
-            "const": "declarative"
-          }
-        }
-      }
-    },
-    {
-      "description": "operational_rule 类型的 rule_form 必须为 procedural",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "operational_rule"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "procedural"
+            "enum": [
+              "declarative",
+              "procedural"
+            ]
           }
         }
       }
