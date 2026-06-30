@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "18eecf225d109e72",
+      "hash": "8bde29c303d9cf63",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -61,6 +61,6 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T07:31:19.039114+00:00",
+  "registered_at": "2026-06-30T07:36:18.859516+00:00",
   "last_check_at": "2026-06-30T07:19:31.313382+00:00"
 }

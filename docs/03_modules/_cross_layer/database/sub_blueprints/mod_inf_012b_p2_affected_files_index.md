@@ -370,7 +370,7 @@ references:
 | 4 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | L289,807,1038,1039,1084,1298,1301,1335,1338 | 更新D50裁定为D50-PG；将"SQLite"改为"PostgreSQL" | D50-PG裁定 |
 | 5 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30，F1-F37虚假声明） | L114,732 | 将"PostgreSQL容量升级"更新为"已迁移" | D50-PG裁定 |
 | 6 | `docs/_working/domain_split_plan_4_oversized_domains.md` | L1245,1254,1270,1277,1303,1332,1338 | 将`sqlite3.connect`命令改为PG连接方式 | D50-PG裁定 |
-| 7 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | L203,274,391,773,859 | 将"SQLite锁"改为"PostgreSQL MVCC" | D50-PG裁定 |
+| 7 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md（文件不存在）` | L203,274,391,773,859 | 将"SQLite锁"改为"PostgreSQL MVCC" | D50-PG裁定 |
 | 8 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md` | L1445,1473 | 将"从SQLite数据库加载"改为"从PostgreSQL加载" | D50-PG裁定 |
 | 9 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md` | 对应英文版行 | 同上（英文版） | D50-PG裁定 |
 | 10 | `docs/02_enterprise_architecture/00_overview_entry/navigation_index.md` | L5,49 | 补充depgraph.db现为PostgreSQL | D50-PG裁定 |
@@ -416,7 +416,7 @@ references:
 
 | # | 文件路径 | 位置（行号） | 更新内容 | 更新原因 |
 |---|---------|:---------:|---------|---------|
-| 23 | `docs/02_enterprise_architecture/ssot_authority_map.md` | L176 | 确认knowledge表归属（governance.db则无需更新） | 需确认 |
+| 23 | `docs/_archive/ssot_authority_map.md（已归档2026-06-30）` | L176 | 确认knowledge表归属（governance.db则无需更新） | 需确认 |
 
 ---
 
@@ -456,7 +456,7 @@ references:
 | 23 | 源码缺失（仅DB实例） | chk_前缀触发器（7个） | DB实例中 | 删除+重建 | 先从SQLite导出，用PL/pgSQL重写或用PG RLS替代 |
 | 24 | `src/zephyr/governance/sqlite_schema.py` | validate_blocked_by触发器（4个） | L856,865,875,885 | 保留 | governance.db保持SQLite |
 | 25 | `src/zephyr/governance/task_repo.py`（注释引用） | prevent_hard_delete触发器 | 源码缺失 | 保留（补源码） | governance.db保持SQLite；从DB导出补录 |
-| 26 | `docs/02_enterprise_architecture/t18_implementation_plan.md` | nodes_design_readonly触发器（3个） | L367-390 | PG迁移时实现 | 用PL/pgSQL或PG RLS实现 |
+| 26 | `docs/_archive/t18_implementation_plan.md（已归档2026-06-30）` | nodes_design_readonly触发器（3个） | L367-390 | PG迁移时实现 | 用PL/pgSQL或PG RLS实现 |
 
 ---
 
@@ -533,7 +533,7 @@ references:
 
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
-| 99 | `docs/02_enterprise_architecture/migration_registry.yaml` | 引用depgraph.db | 检查是否需要更新 |
+| 99 | `docs/_archive/migration_registry.yaml（已归档2026-06-30）` | 引用depgraph.db | 检查是否需要更新 |
 | 100 | `architecture_model/cross_cutting/capability_heatmap.yaml` | 引用depgraph.db | 同上 |
 | 101 | `docs/registry_of_registries.yaml` | 引用depgraph.db | 同上 |
 | 102 | `architecture_model/index.yaml` | 引用depgraph.db | 同上 |
@@ -618,16 +618,16 @@ references:
 | 131 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50决策记录depgraph.db为SQLite（L807,855,1084,1089,1298,1301,1334-1338,1386-1388） | 更新D50决策为PostgreSQL |
 | 132 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 业界对标表描述depgraph.db为SQLite单库（L1241） | 更新为PostgreSQL |
 | 133 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30） | F25职责描述（L114,732） | 更新为反映depgraph.db已迁移PG |
-| 134 | `docs/02_enterprise_architecture/phase_d_ai_prompts.md` | 三库架构描述（L1255,1265） | 更新三库架构描述 |
-| 135 | `docs/02_enterprise_architecture/ssot_authority_map.md` | knowledge表引用（L176） | 确认knowledge表归属后更新 |
+| 134 | `docs/_archive/phase_d_ai_prompts.md（已归档2026-06-30）` | 三库架构描述（L1255,1265） | 更新三库架构描述 |
+| 135 | `docs/_archive/ssot_authority_map.md（已归档2026-06-30）` | knowledge表引用（L176） | 确认knowledge表归属后更新 |
 
 #### 第3轮新增：操作命令文档（含sqlite3.connect命令，5个）
 
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
 | 136 | `docs/_working/domain_split_plan_4_oversized_domains.md` | 30+处sqlite3.connect命令（L1245,1254,1270,1277,1303,1332,1422,1481,1808,1818-1819,1851,1870,1888,1906,1922,1939,1951-1952,2005-2006,2035,2054,2072,2091,2107,2189-2190,2228,2261,2327-2328） | 替换为psycopg2或extract_depgraph.py |
-| 137 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | sqlite3.connect命令+SQLite锁竞争描述（L203,274,297,310,391,772-773,859） | 替换连接命令；更新锁竞争描述 |
-| 138 | `docs/02_enterprise_architecture/t18_implementation_plan.md` | sqlite3.connect+DROP TRIGGER命令（L553） | 替换为PG连接；TRIGGER语法适配 |
+| 137 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md（文件不存在）` | sqlite3.connect命令+SQLite锁竞争描述（L203,274,297,310,391,772-773,859） | 替换连接命令；更新锁竞争描述 |
+| 138 | `docs/_archive/t18_implementation_plan.md（已归档2026-06-30）` | sqlite3.connect+DROP TRIGGER命令（L553） | 替换为PG连接；TRIGGER语法适配 |
 | 139 | `docs/01_policies_and_standards/templates/dependency_graph_template.md` | 语法检查命令使用sqlite3（L961） | 更新为PG连接验证 |
 | 140 | `docs/_working/audit/research_notes/naming_whitelist_cleanup_plan.md` | sqlite3 CLI命令+SQLite描述（L108-122,235-249,740） | 更新数据库类型描述；替换CLI命令 |
 
@@ -710,7 +710,7 @@ references:
 | - | `docs/registry_of_registries.yaml` | L336,360 | `format: sqlite`声明 | 改为`format: postgresql` |
 | - | `architecture_model/index.yaml` | L26,35,38,41,59,62 | partition路径指向SQLite文件 | 改为PG连接配置引用 |
 | - | 同上 | L240,242,244 | SQL查询使用双引号 | 改单引号（PG字符串语义） |
-| - | `docs/02_enterprise_architecture/migration_registry.yaml` | L15522 | source字段引用SQLite路径 | 改为PG连接字符串 |
+| - | `docs/_archive/migration_registry.yaml（已归档2026-06-30）` | L15522 | source字段引用SQLite路径 | 改为PG连接字符串 |
 | - | `data/asset_index/target_path_tree.yaml` | L5,6 | source_depgraph/source_panorama引用SQLite路径 | 改为PG连接配置引用 |
 | - | `data/rule_optimization/key_facts.yaml` | L44,62,138,140,511,513,823,824,825 | ssot_source/path/must_exist引用SQLite | 改为PG连接引用 |
 | - | `data/asset_index/project_entity_depgraph.yaml` | L4245,4258,5547,6154,7611,8011,8308,8778,9857,10368,10505,10506,11675,11694,11695,7946,7978,10906,11677,11731 | 自动生成的import引用 | 迁移后重新生成 |
