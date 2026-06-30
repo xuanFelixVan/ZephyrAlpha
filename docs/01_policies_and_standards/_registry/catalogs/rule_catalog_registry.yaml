@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T03:44:47Z'
+generated_at: '2026-06-30T07:31:09Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 138
+total_files: 139
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -1976,6 +1976,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
   module_id: PS-VOC-008
   title: created_by 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/dep_type_vocabulary.yaml
+  module_id: PS-VOC-034
+  title: dep_type 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
