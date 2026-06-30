@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_data_quality_gate.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.data_quality_gate import DataQualityGate
+from zephyr.trading.feedback_loop.gates.data_quality_gate import DataQualityGate
 
 
 class TestDataQualityGateInstantiation:

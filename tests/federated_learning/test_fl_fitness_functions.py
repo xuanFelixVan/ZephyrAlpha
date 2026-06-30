@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.fitness_functions import (
+from zephyr.trading.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,

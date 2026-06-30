@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 class TestActionType:

@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.trace_capacity_injector", reason="trace_capacity_injector not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.trace_capacity_injector", reason="trace_capacity_injector not available"
 )
 TraceCapacityInjector = mod.TraceCapacityInjector
 

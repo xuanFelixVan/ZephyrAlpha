@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.actors.action_selector
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.ops.__init__
+# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -18,7 +18,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 @dataclass

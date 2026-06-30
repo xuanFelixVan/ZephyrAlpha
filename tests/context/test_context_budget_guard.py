@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.context_budget_guard", reason="context_budget_guard not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.context_budget_guard", reason="context_budget_guard not available"
 )
 ContextBudgetGuard = mod.ContextBudgetGuard
 

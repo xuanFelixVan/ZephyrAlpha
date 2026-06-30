@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_flag_lifecycle_manager.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.flag_lifecycle_manager import FlagLifecycleManager
+from zephyr.trading.feedback_loop.gates.flag_lifecycle_manager import FlagLifecycleManager
 
 
 class TestFlagLifecycleManagerInstantiation:

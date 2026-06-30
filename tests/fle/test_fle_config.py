@@ -13,7 +13,7 @@
 
 from dataclasses import fields
 
-from zephyr.ops.config import FLEConfig
+from zephyr.trading.feedback_loop.config import FLEConfig
 
 
 class TestFLEConfigInstantiation:

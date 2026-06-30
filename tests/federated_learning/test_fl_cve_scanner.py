@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_cve_scanner.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.cve_scanner import CVEScanner
+from zephyr.trading.feedback_loop.gates.cve_scanner import CVEScanner
 
 
 class TestCVEScannerInstantiation:

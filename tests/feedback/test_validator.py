@@ -11,8 +11,8 @@
 # [TESTS] tests/test_validator.py
 # [TTL] task_bound
 
-from zephyr.ops.template import SKELETONS
-from zephyr.ops.validator import BASE, missing_files, validate_all, validate_one
+from zephyr.trading.feedback_loop.template import SKELETONS
+from zephyr.trading.feedback_loop.validator import BASE, missing_files, validate_all, validate_one
 
 
 class TestBASE:

@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.error_budget import ErrorBudget, ErrorBudgetManager
+from zephyr.trading.feedback_loop.error_budget import ErrorBudget, ErrorBudgetManager
 
 
 class TestErrorBudgetInstantiation:

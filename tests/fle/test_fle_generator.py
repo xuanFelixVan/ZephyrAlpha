@@ -14,7 +14,7 @@
 import os
 from unittest.mock import patch
 
-from zephyr.ops.generator import BASE, generate, main
+from zephyr.trading.feedback_loop.generator import BASE, generate, main
 
 
 class TestGeneratorInstantiation:

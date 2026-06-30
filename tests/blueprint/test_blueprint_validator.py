@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.blueprint_validator import BlueprintValidator
+from zephyr.trading.feedback_loop.gates.blueprint_validator import BlueprintValidator
 
 
 class TestBlueprintValidatorInstantiation:

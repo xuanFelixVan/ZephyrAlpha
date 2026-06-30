@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
+from zephyr.trading.feedback_loop.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
 
 
 class TestScopeEvent:

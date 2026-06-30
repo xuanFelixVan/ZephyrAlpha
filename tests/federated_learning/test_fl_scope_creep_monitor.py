@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_scope_creep_monitor.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
+from zephyr.trading.feedback_loop.gates.scope_creep_monitor import ScopeCreepMonitor, ScopeEvent
 
 
 class TestScopeCreepMonitorInstantiation:

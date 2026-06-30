@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_config_complexity_budget.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.config_complexity_budget import ConfigComplexityBudget
+from zephyr.trading.feedback_loop.gates.config_complexity_budget import ConfigComplexityBudget
 
 
 class TestConfigComplexityBudgetInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_federated_security.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.federated_security import FederatedSecurity
+from zephyr.trading.feedback_loop.gates.federated_security import FederatedSecurity
 
 
 class TestFederatedSecurityInstantiation:

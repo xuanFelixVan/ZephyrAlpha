@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import MagicMock, patch
 
-from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
 
 @dataclass

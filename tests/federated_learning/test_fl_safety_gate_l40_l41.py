@@ -11,8 +11,8 @@
 # [TESTS] tests/test_fl_safety_gate_L40_L41.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
-from zephyr.ops.gates.safety_gate_l40_l41 import SafetyGateL40L41
+from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
+from zephyr.trading.feedback_loop.gates.safety_gate_l40_l41 import SafetyGateL40L41
 
 
 def _ctx(**overrides) -> ActionContext:

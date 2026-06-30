@@ -352,7 +352,7 @@ TASKS = [
         "acceptance_criteria": [
             "AC1: span_stub.py和structured_sink.py不再互相import",
             "AC2: event_types.py包含提取的公共定义",
-            "AC3: python -c 'from zephyr.ops.telemetry.traces import span_stub' 成功",
+            "AC3: python -c 'from zephyr.trading.feedback_loop.telemetry.traces import span_stub' 成功",
             "AC4: diagnose_depgraph.py验证该循环消失",
         ],
         "rollback_instructions": "git checkout恢复3个文件，删除event_types.py",

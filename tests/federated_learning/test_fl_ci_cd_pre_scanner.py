@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.gates.ci_cd_pre_scanner import CICDPreScanner
+from zephyr.trading.feedback_loop.gates.ci_cd_pre_scanner import CICDPreScanner
 
 
 class TestCICDPreScannerInstantiation:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.fitness_functions
 # [DOMAIN] D_INFRA_OPS
-# [DEPENDENCIES] zephyr.ops.__init__
+# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -26,7 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.ops.fitness_functions import (
+from zephyr.trading.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessReport,

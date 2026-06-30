@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.sunk_cost_intervention", reason="sunk_cost_intervention not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.sunk_cost_intervention", reason="sunk_cost_intervention not available"
 )
 SunkCostIntervention = mod.SunkCostIntervention
 

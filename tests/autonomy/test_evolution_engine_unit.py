@@ -31,7 +31,7 @@ from zephyr.trading.feedback_loop.evolution_engine import (
     Severity,
     evolve,
 )
-from zephyr.ops.feedback_collector import FeedbackCollector
+from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
 
 FIXED_NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=UTC)
 
@@ -359,7 +359,7 @@ class TestEvolveEntry:
 
 
 def test_exports_present() -> None:
-    from zephyr.ops.feedback_loop import evolution_engine as m
+    from zephyr.trading.feedback_loop.feedback_loop import evolution_engine as m
 
     for name in [
         "EvolutionSignal",

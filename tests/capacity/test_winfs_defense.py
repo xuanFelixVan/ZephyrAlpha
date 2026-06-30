@@ -15,7 +15,7 @@ import sys
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.winfs_defense", reason="winfs_defense not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.winfs_defense", reason="winfs_defense not available")
 WinFSDefense = mod.WinFSDefense
 
 

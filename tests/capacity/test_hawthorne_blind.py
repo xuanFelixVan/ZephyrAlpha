@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.hawthorne_blind", reason="hawthorne_blind not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.hawthorne_blind", reason="hawthorne_blind not available")
 HawthorneBlind = mod.HawthorneBlind
 
 

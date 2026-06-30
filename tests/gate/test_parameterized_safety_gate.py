@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.parameterized_safety_gate import (
+from zephyr.trading.feedback_loop.gates.parameterized_safety_gate import (
     ActionContext,
     GateVerdict,
     ParameterizedSafetyGate,

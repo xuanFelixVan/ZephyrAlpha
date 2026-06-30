@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.validator import missing_files, validate_all, validate_one
+from zephyr.trading.feedback_loop.validator import missing_files, validate_all, validate_one
 
 
 class TestValidateAll:
@@ -56,7 +56,7 @@ class TestMissingFiles:
             assert isinstance(item, str)
 
     def test_missing_subset_of_skeletons(self):
-        from zephyr.ops.template import SKELETONS
+        from zephyr.trading.feedback_loop.template import SKELETONS
 
         result = missing_files()
         for item in result:

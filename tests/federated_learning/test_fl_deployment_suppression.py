@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_deployment_suppression.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.deployment_suppression import DeployGateState, DeploymentSuppression
+from zephyr.trading.feedback_loop.gates.deployment_suppression import DeployGateState, DeploymentSuppression
 
 
 class TestDeploymentSuppressionInstantiation:

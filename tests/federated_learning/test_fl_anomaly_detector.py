@@ -17,14 +17,14 @@ from zephyr.trading.feedback_loop.detectors.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )
-from zephyr.ops.feedback_collector import (
+from zephyr.trading.feedback_loop.feedback_collector import (
     FeedbackCollector,
 )
-from zephyr.ops.metrics_collector import (
+from zephyr.trading.feedback_loop.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
 )
-from zephyr.ops.protocols import ActionType
+from zephyr.trading.feedback_loop.protocols import ActionType
 
 
 def _make_snapshot(**overrides):

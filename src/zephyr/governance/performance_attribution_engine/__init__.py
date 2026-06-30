@@ -48,7 +48,7 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-# MIGRATED: from zephyr.ops.analytics_base import (  # removed by TC-7-2
+# MIGRATED: from zephyr.trading.feedback_loop.analytics_base import (  # removed by TC-7-2
 # AttributionEngineBase,  # removed by TC-7-2
 # PerformanceAttributionReport,  # removed by TC-7-2
 # TCAEngineBase,  # removed by TC-7-2

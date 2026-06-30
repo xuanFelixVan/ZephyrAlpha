@@ -55,8 +55,8 @@ from zephyr.trading.feedback_loop.evolution_engine import (
     Severity,
     evolve,
 )
-from zephyr.ops.feedback_collector import FeedbackCollector
-from zephyr.ops.fitness_functions import (
+from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.trading.feedback_loop.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,

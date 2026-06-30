@@ -21,9 +21,9 @@ from zephyr.trading.feedback_loop.diagnosers.guard_self_consistency_auditor impo
 from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
 from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
 from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.ops.feedback_collector import FeedbackCollector
-from zephyr.ops.metrics_collector import MetricsCollector, MetricSnapshot
-from zephyr.ops.scheduler_collect_detect import CollectDetectHandler
+from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.trading.feedback_loop.metrics_collector import MetricsCollector, MetricSnapshot
+from zephyr.trading.feedback_loop.scheduler_collect_detect import CollectDetectHandler
 
 
 def _make_handler():

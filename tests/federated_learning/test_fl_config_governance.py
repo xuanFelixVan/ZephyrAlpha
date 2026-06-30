@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_config_governance.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.config_governance import ConfigGovernance
+from zephyr.trading.feedback_loop.gates.config_governance import ConfigGovernance
 
 
 class TestConfigGovernanceInstantiation:

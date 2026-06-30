@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.multi_model_vendor_risk", reason="multi_model_vendor_risk not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.multi_model_vendor_risk", reason="multi_model_vendor_risk not available"
 )
 MultiModelVendorRisk = mod.MultiModelVendorRisk
 

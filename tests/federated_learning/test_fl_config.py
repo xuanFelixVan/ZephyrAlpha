@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.config import FLEConfig
+from zephyr.trading.feedback_loop.config import FLEConfig
 
 
 class TestFLEConfigInstantiation:

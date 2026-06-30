@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.scheduler import FeedbackLoopScheduler, FLEPipelineEvent
+from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler, FLEPipelineEvent
 
 
 class TestFLEPipelineEvent:

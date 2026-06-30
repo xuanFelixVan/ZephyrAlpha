@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.cliff_detector", reason="cliff_detector not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.cliff_detector", reason="cliff_detector not available")
 CliffDetector = mod.CliffDetector
 
 

@@ -16,7 +16,7 @@ from dataclasses import fields
 
 import pytest
 
-from zephyr.ops.metrics_collector import (
+from zephyr.trading.feedback_loop.metrics_collector import (
     EMABaseline,
     MetricsCollector,
     MetricSnapshot,

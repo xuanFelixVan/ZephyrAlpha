@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.slo_manager import SLOManager
+from zephyr.trading.feedback_loop.slo_manager import SLOManager
 
 
 class TestSLOManagerInstantiation:

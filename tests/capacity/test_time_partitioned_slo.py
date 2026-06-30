@@ -17,7 +17,7 @@ from unittest.mock import patch
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.time_partitioned_slo", reason="time_partitioned_slo not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.time_partitioned_slo", reason="time_partitioned_slo not available"
 )
 TimePartitionedSLO = mod.TimePartitionedSLO
 
@@ -30,25 +30,25 @@ class TestTimePartitionedSLO:
 
     def test_current_partition_peak(self):
         tps = TimePartitionedSLO()
-        with patch("zephyr.ops.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
+        with patch("zephyr.trading.feedback_loop.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
             mock_dt.now.return_value = datetime(2026, 1, 1, 14, 0, 0)
             assert tps.current_partition() == "peak"
 
     def test_current_partition_off_peak(self):
         tps = TimePartitionedSLO()
-        with patch("zephyr.ops.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
+        with patch("zephyr.trading.feedback_loop.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
             mock_dt.now.return_value = datetime(2026, 1, 1, 23, 0, 0)
             assert tps.current_partition() == "off_peak"
 
     def test_get_target_peak(self):
         tps = TimePartitionedSLO()
-        with patch("zephyr.ops.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
+        with patch("zephyr.trading.feedback_loop.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
             mock_dt.now.return_value = datetime(2026, 1, 1, 10, 0, 0)
             assert tps.get_target() == 0.999
 
     def test_get_target_off_peak(self):
         tps = TimePartitionedSLO()
-        with patch("zephyr.ops.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
+        with patch("zephyr.trading.feedback_loop.capacity_assurance.time_partitioned_slo.datetime") as mock_dt:
             mock_dt.now.return_value = datetime(2026, 1, 1, 23, 0, 0)
             assert tps.get_target() == 0.99
 

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.db_bridge import bulk_record_via_db_contract, record_via_db_contract
+from zephyr.trading.feedback_loop.db_bridge import bulk_record_via_db_contract, record_via_db_contract
 
 
 class TestRecordViaDbContract:

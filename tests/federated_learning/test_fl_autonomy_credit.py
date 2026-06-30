@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_autonomy_credit.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.autonomy_credit import AutonomyCredit
+from zephyr.trading.feedback_loop.gates.autonomy_credit import AutonomyCredit
 
 
 class TestAutonomyCreditInstantiation:

@@ -102,7 +102,7 @@ class TestStartFleSchedulerCreatesAndStarts:
 
     def test_start_fle_scheduler_creates_scheduler(self, core):
         """_start_fle_scheduler 创建 FeedbackLoopScheduler 实例。"""
-        with patch("zephyr.ops.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
+        with patch("zephyr.trading.feedback_loop.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
             mock_instance = MagicMock()
             mock_fle_cls.return_value = mock_instance
 
@@ -113,7 +113,7 @@ class TestStartFleSchedulerCreatesAndStarts:
 
     def test_start_fle_scheduler_does_not_call_start(self, core):
         """trae_053 v2.0.0: _start_fle_scheduler 不再调用 scheduler.start()（daemon 线程已废除）。"""
-        with patch("zephyr.ops.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
+        with patch("zephyr.trading.feedback_loop.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
             mock_instance = MagicMock()
             mock_fle_cls.return_value = mock_instance
 
@@ -123,7 +123,7 @@ class TestStartFleSchedulerCreatesAndStarts:
 
     def test_start_fle_scheduler_exception_does_not_crash(self, core):
         """_start_fle_scheduler 异常不崩溃 boot（try/except 保护）。"""
-        with patch("zephyr.ops.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
+        with patch("zephyr.trading.feedback_loop.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
             mock_fle_cls.side_effect = RuntimeError("VMS init failed")
 
             core._start_fle_scheduler()
@@ -141,7 +141,7 @@ class TestStartFleSchedulerCreatesAndStarts:
         ) as mock_vms_cls:
             mock_vms_cls.return_value = MagicMock()
 
-            from zephyr.ops.scheduler import FeedbackLoopScheduler
+            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
 
             FeedbackLoopScheduler.reset_instance()
             scheduler = FeedbackLoopScheduler(poll_interval=0.1)
@@ -228,7 +228,7 @@ class TestBootFleFullChain:
                             with patch.object(core, "_run_boot_triple_alignment"):
                                 with patch.object(core, "_init_escalation_protocol"):
                                     with patch(
-                                        "zephyr.ops.scheduler.FeedbackLoopScheduler"
+                                        "zephyr.trading.feedback_loop.scheduler.FeedbackLoopScheduler"
                                     ) as mock_fle_cls:
                                         mock_instance = MagicMock()
                                         mock_fle_cls.return_value = mock_instance

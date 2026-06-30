@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 class TestActionTypeInstantiation:

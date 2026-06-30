@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.dr_drill_scheduler", reason="dr_drill_scheduler not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.dr_drill_scheduler", reason="dr_drill_scheduler not available")
 DRDrillScheduler = mod.DRDrillScheduler
 DRDrillResult = mod.DRDrillResult
 

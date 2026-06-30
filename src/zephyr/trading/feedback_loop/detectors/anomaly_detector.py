@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.detectors.anomaly_detector
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.ops.__init__
+# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -20,7 +20,7 @@ from typing import Any
 
 from zephyr.trading.feedback_loop.collectors.feedback_collector import FeedbackCollector
 from zephyr.trading.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
-from zephyr.ops.protocols import ActionType, FeedbackProtocolAdapter
+from zephyr.trading.feedback_loop.protocols import ActionType, FeedbackProtocolAdapter
 
 
 @dataclass

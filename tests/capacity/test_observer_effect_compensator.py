@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.observer_effect_compensator", reason="observer_effect_compensator not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.observer_effect_compensator", reason="observer_effect_compensator not available"
 )
 ObserverEffectCompensator = mod.ObserverEffectCompensator
 

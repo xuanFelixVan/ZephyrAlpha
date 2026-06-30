@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import os
 
-from zephyr.ops.generator import generate
+from zephyr.trading.feedback_loop.generator import generate
 
 
 class TestGenerate:

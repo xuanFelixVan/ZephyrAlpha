@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0491 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §test
-# [MODULE] zephyr.ops.capacity_assurance
+# [MODULE] zephyr.trading.feedback_loop.capacity_assurance
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline
@@ -16,14 +16,14 @@ import sqlite3
 import pytest
 
 schema_mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.schema", reason="capacity-assurance.schema not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.schema", reason="capacity-assurance.schema not available"
 )
 SchemaManager = schema_mod.SchemaManager
 MetricsWriteBuffer = schema_mod.MetricsWriteBuffer
 compute_hash = SchemaManager.compute_hash
 
 sli_mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.sli_instrumentation", reason="capacity-assurance.sli_instrumentation not available"
 )
 SLIInstrumentation = sli_mod.SLIInstrumentation
 SLIStats = sli_mod.SLIStats

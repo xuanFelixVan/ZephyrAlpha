@@ -14,7 +14,7 @@
 import time
 from unittest.mock import patch
 
-from zephyr.ops.gates.deployment_suppression import (
+from zephyr.trading.feedback_loop.gates.deployment_suppression import (
     DeployGateState,
     DeploymentSuppression,
 )

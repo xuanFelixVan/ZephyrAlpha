@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_action_reversibility.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.action_reversibility import ActionReversibility, Reversibility
+from zephyr.trading.feedback_loop.gates.action_reversibility import ActionReversibility, Reversibility
 
 
 class TestActionReversibilityInstantiation:

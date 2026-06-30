@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.autonomy_maturity import AutonomyMaturity
+from zephyr.trading.feedback_loop.gates.autonomy_maturity import AutonomyMaturity
 
 
 class TestAutonomyMaturityInstantiation:

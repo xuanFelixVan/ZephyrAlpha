@@ -24,20 +24,20 @@ class _FakeProposal:
 
 class TestSyncEvolutionProposalsToBackpressure:
     def test_skipped_when_no_manager(self):
-        from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+        from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
         result = sync_evolution_proposals_to_backpressure([], None)
         assert result["skipped"] is True
 
     def test_skipped_when_no_proposals(self):
-        from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+        from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
         mock_mgr = MagicMock()
         result = sync_evolution_proposals_to_backpressure([], mock_mgr)
         assert result["skipped"] is True
 
     def test_throttled_on_critical_proposals(self):
-        from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+        from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
         mock_mgr = MagicMock()
         critical = _FakeProposal(EvolutionSeverity.CRITICAL)
@@ -51,7 +51,7 @@ class TestSyncEvolutionProposalsToBackpressure:
             mock_emit.assert_called_once()
 
     def test_not_throttled_when_only_high(self):
-        from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+        from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
         mock_mgr = MagicMock()
         high = _FakeProposal(EvolutionSeverity.HIGH)
@@ -61,7 +61,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         assert result["critical_count"] == 0
 
     def test_rate_decreases_with_more_criticals(self):
-        from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+        from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
 
         mock_mgr = MagicMock()
         proposals = [_FakeProposal(EvolutionSeverity.CRITICAL) for _ in range(5)]

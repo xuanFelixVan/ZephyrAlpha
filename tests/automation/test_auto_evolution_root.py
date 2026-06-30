@@ -14,7 +14,7 @@
 from datetime import datetime
 from unittest.mock import MagicMock
 
-from zephyr.ops.auto_evolution import (
+from zephyr.trading.feedback_loop.auto_evolution import (
     AutoEvolution,
     AutoEvolutionConfig,
     AutoEvolutionEngine,

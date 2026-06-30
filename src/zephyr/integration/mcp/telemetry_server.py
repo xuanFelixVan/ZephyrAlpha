@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.telemetry_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.ops.__init__
+# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype

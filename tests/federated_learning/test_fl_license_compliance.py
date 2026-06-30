@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_license_compliance.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.license_compliance import LicenseCompliance, LicenseRisk
+from zephyr.trading.feedback_loop.gates.license_compliance import LicenseCompliance, LicenseRisk
 
 
 class TestLicenseComplianceInstantiation:

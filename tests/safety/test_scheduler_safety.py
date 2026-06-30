@@ -30,7 +30,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.ops.scheduler_safety import SafetyGateManager
+from zephyr.trading.feedback_loop.scheduler_safety import SafetyGateManager
 
 
 def _make_anomaly(evidence: dict[str, Any] | None = None, anomaly_id: str = "anomaly-001") -> Any:

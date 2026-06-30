@@ -29,7 +29,7 @@ from zephyr.trading.feedback_loop.evolution_engine import (
     FeedbackLayer,
     evolve,
 )
-from zephyr.ops.feedback_collector import FeedbackCollector
+from zephyr.trading.feedback_loop.feedback_collector import FeedbackCollector
 
 
 def _fixed_now() -> datetime:

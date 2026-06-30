@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.cold_start_estimator", reason="cold_start_estimator not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.cold_start_estimator", reason="cold_start_estimator not available"
 )
 ColdStartEstimator = mod.ColdStartEstimator
 

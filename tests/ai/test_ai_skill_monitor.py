@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.ai_skill_monitor", reason="ai_skill_monitor not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.ai_skill_monitor", reason="ai_skill_monitor not available")
 AISkillMonitor = mod.AISkillMonitor
 SkillDimension = mod.SkillDimension
 SkillBaseline = mod.SkillBaseline

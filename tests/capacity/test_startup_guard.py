@@ -13,7 +13,7 @@
 
 import pytest
 
-mod = pytest.importorskip("zephyr.ops.capacity_assurance.startup_guard", reason="startup_guard not available")
+mod = pytest.importorskip("zephyr.trading.feedback_loop.capacity_assurance.startup_guard", reason="startup_guard not available")
 StartupGuard = mod.StartupGuard
 
 

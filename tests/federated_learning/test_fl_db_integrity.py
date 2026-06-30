@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_db_integrity.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.db_integrity import DBIntegrity
+from zephyr.trading.feedback_loop.gates.db_integrity import DBIntegrity
 
 
 class TestDBIntegrityInstantiation:

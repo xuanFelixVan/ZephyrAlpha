@@ -20,7 +20,7 @@
 # [TESTS] python -m pytest tests/test_db_bridge.py -q
 # [TTL] task_bound
 
-"""Tests for zephyr.ops.db_bridge — record_via_db_contract and bulk_record_via_db_contract.
+"""Tests for zephyr.trading.feedback_loop.db_bridge — record_via_db_contract and bulk_record_via_db_contract.
 
 Schema aligned with canonical DDL (sqlite_schema.py _DDL_FLE_METRICS):
   timestamp, source_system, metric_name, value, unit, tags_json, collected_at
@@ -36,7 +36,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.ops.db_bridge import (
+from zephyr.trading.feedback_loop.db_bridge import (
     FLE_METRICS_TABLE_DDL,
     _ensure_table,
     bulk_record_via_db_contract,

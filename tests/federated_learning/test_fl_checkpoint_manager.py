@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_checkpoint_manager.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.checkpoint_manager import CheckpointManager
+from zephyr.trading.feedback_loop.gates.checkpoint_manager import CheckpointManager
 
 
 class TestCheckpointManagerInstantiation:

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.meta_performance_gate import MetaPerformanceGate
+from zephyr.trading.feedback_loop.gates.meta_performance_gate import MetaPerformanceGate
 
 
 class TestMetaPerformanceGateInstantiation:

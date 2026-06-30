@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.exceptions import (
+from zephyr.trading.feedback_loop.exceptions import (
     AutonomyViolationError,
     DiagnosisError,
     FLEBaseException,

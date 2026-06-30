@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.slo_manager import SLO_MATRIX, SLOManager
+from zephyr.trading.feedback_loop.slo_manager import SLO_MATRIX, SLOManager
 
 
 class TestSLOManagerInstantiation:

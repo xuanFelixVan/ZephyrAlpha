@@ -14,7 +14,7 @@
 import pytest
 
 mod = pytest.importorskip(
-    "zephyr.ops.capacity_assurance.capacity_testing_harness", reason="capacity_testing_harness not available"
+    "zephyr.trading.feedback_loop.capacity_assurance.capacity_testing_harness", reason="capacity_testing_harness not available"
 )
 CapacityTestingHarness = mod.CapacityTestingHarness
 

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.ops.scheduler_safety import SafetyGateManager
+from zephyr.trading.feedback_loop.scheduler_safety import SafetyGateManager
 
 
 class TestSafetyGateManagerInstantiation:

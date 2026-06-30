@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_dynamic_llm_cost_router.py
 # [TTL] task_bound
 
-from zephyr.ops.gates.dynamic_llm_cost_router import DynamicLLMCostRouter
+from zephyr.trading.feedback_loop.gates.dynamic_llm_cost_router import DynamicLLMCostRouter
 
 
 class TestDynamicLLMCostRouterInstantiation:

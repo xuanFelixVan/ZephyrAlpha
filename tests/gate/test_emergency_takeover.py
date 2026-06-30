@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.gates.emergency_takeover import EmergencyTakeover
+from zephyr.trading.feedback_loop.gates.emergency_takeover import EmergencyTakeover
 
 
 class TestEmergencyTakeoverInstantiation:

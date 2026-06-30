@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] zephyr.trading.auto_runtime_core
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.core.system_configuration; zephyr.shared.protocols.a2a.a2a_registry; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.governance.__init__; zephyr.integration.local_model.local_model_scheduler; zephyr.intelligence.model_profiling.task_model_learner; zephyr.ops.__init__; zephyr.infrastructure.queue.task_queue; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_profiling.__init__; zephyr.intelligence.model_profiling.results_writer; zephyr.shared.lifecycle.resource_optimization_engine; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.integration.__init__
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.core.system_configuration; zephyr.shared.protocols.a2a.a2a_registry; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.governance.__init__; zephyr.integration.local_model.local_model_scheduler; zephyr.intelligence.model_profiling.task_model_learner; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.queue.task_queue; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_profiling.__init__; zephyr.intelligence.model_profiling.results_writer; zephyr.shared.lifecycle.resource_optimization_engine; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouter
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
-    from zephyr.ops.scheduler import FeedbackLoopScheduler
+    from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
     from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
     from zephyr.shared.protocols.a2a.layer3_coordination import A2AProtocolGateway
 
@@ -300,7 +300,7 @@ class AutoRuntimeCore:
 
     def _start_fle_scheduler(self) -> None:
         try:
-            from zephyr.ops.scheduler import FeedbackLoopScheduler
+            from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
 
             self._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
             # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。

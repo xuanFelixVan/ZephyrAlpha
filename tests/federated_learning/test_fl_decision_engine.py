@@ -15,13 +15,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.ops.decision_engine import (
+from zephyr.trading.feedback_loop.decision_engine import (
     AnomalyReport,
     AnomalySeverity,
     DecisionEngine,
     reflect_on_blueprint,
 )
-from zephyr.ops.protocols import ActionType
+from zephyr.trading.feedback_loop.protocols import ActionType
 
 
 class TestDecisionEngineInstantiation:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.tests.e2e.integration_test_pipeline
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.ops.__init__
+# [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,8 +32,8 @@ from zephyr.trading.feedback_loop.collectors.feedback_collector import FeedbackC
 from zephyr.trading.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.trading.feedback_loop.detectors.anomaly_detector import AnomalyDetector
 from zephyr.trading.feedback_loop.diagnosers.diagnosis_engine import DiagnosisEngine
-from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, SafetyGatePipeline
-from zephyr.ops.gates.safety_gate_l66_l67 import SafetyGateL66L67
+from zephyr.trading.feedback_loop.gates.safety_gate_l1_l27 import ActionContext, SafetyGatePipeline
+from zephyr.trading.feedback_loop.gates.safety_gate_l66_l67 import SafetyGateL66L67
 
 
 class IntegrationTestPipeline:

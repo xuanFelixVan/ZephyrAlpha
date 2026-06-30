@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.scheduler_act import ActPhaseHandler, ActResult
+from zephyr.trading.feedback_loop.scheduler_act import ActPhaseHandler, ActResult
 
 
 class TestActResult:

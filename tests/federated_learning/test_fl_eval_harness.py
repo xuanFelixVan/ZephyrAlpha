@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.eval_harness import (
+from zephyr.trading.feedback_loop.eval_harness import (
     CATEGORY_INTENT,
     EvalCase,
     EvalHarness,
