@@ -364,3 +364,72 @@ class TestNewReconcilerMarker:
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
         assert passed is True, f"不含 reconciliation_registry.py 的 commit 应通过: {detail}"
+
+
+# ===========================================================================
+# ARCH-037 治本扩展（2026-07-01，DIM-5 commit-time 强制）
+# 病根：DIM-5 检测能力已就位（validate_rule_frontmatter.py pre-commit hook），但被
+# `git commit --no-verify` 绕过。治本：扩展已有 create_guard 检测范围——rules/ 下新增
+# .yaml 文件单段 name（缺主题前缀）→ 硬阻断。
+# 规避自指递归：不新增门禁，只扩展已有 create_guard（同 reconciler 审查标记检测先例）。
+# ===========================================================================
+
+class TestRulesYamlNamingBlocked:
+    """rules/ 新增 .yaml 单段 name → 硬阻断（ARCH-037 DIM-5 commit-time 强制）。"""
+
+    _RULES_DIR = "docs/01_policies_and_standards/rules"
+
+    def test_single_segment_name_blocked(self, tmp_path: Path) -> None:
+        """staged rules/ 下 trae_999_test.yaml（单段 name）→ 阻断。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            f"{self._RULES_DIR}/trae_999_test.yaml",
+            "rule_id: trae_999\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"rules/ 单段 name .yaml 应被阻断: {detail}"
+        assert "ARCH-037" in detail
+        assert "DIM-5" in detail
+        assert "test" in detail
+
+    def test_compliant_name_passes(self, tmp_path: Path) -> None:
+        """staged rules/ 下 trae_999_test_desc.yaml（合规 name）→ 放行。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            f"{self._RULES_DIR}/trae_999_test_desc.yaml",
+            "rule_id: trae_999\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"rules/ 合规 name .yaml 应放行: {detail}"
+
+    def test_non_rules_dir_yaml_passes(self, tmp_path: Path) -> None:
+        """staged 非 rules/ 目录 .yaml → 放行。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            "docs/02_other/trae_999_test.yaml",
+            "key: value\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"非 rules/ 目录 .yaml 应放行: {detail}"
+
+    def test_non_trae_named_yaml_passes(self, tmp_path: Path) -> None:
+        """staged rules/ 下 foo.yaml（非 trae 命名）→ 放行（DIM-5 只检测 trae_NNN_ 前缀）。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            f"{self._RULES_DIR}/foo.yaml",
+            "key: value\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"非 trae 命名 .yaml 应放行（DIM-5 不检测）: {detail}"
