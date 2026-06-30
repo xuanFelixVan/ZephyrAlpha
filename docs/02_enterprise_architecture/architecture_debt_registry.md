@@ -2289,9 +2289,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：损坏时logger.warning再返回空
 
 #### 5.15.11 audit_domain_nodes.run_4class_check autocommit=True做写操作【MEDIUM】
-- 证据：[audit_domain_nodes.py:192](file:///d:/ZephyrAlpha/scripts/governance/audit_domain_nodes.py) `get_depgraph_pg_connection(autocommit=True)` 执行DELETE+write_violations，每语句独立提交
+- 证据：[audit_domain_nodes.py:192](file:///d:/ZephyrAlpha/scripts/governance/_archive/prototype/audit_domain_nodes.py) `get_depgraph_pg_connection(autocommit=True)` 执行DELETE+write_violations，每语句独立提交
 - 病根：根因5（事务边界缺失）
 - 修复：写检测统一autocommit=False+try/except/rollback
+- [已归档] audit_domain_nodes.py 已移至 _archive/prototype/，此债务项随归档关闭
 
 #### 5.15.12 30+脚本conn裸赋值异常路径连接泄漏【MEDIUM】
 - 证据：`audit_rename_completeness.py:244/273/370/397`、`generate_project_path_tree.py:71`、`diagnose_depgraph.py:62`、`extract_depgraph.py:87/322` 等 `conn=get_depgraph_pg_connection(autocommit=True)` 裸赋值，部分无try/finally
@@ -2506,7 +2507,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：外键约束/级联规则/约束验证/迁移安全/数据类型一致性/NULL语义/时间戳一致性/唯一性保证/引用完整性/Schema版本管理
 > 审计方法：Grep + Read真实文件取证（sqlite_schema.py、depgraph_schema.py、00_sqlite_actual_schema.sql、02_create_pg_schema.sql等8个核心真源）
 
-#### 5.18.1 PRAGMA foreign_keys在事务内执行无效（no-op）【HIGH】
+#### 5.18.1 PRAGMA foreign_keys在事务内执行无效（no-op）【HIGH】 [✓ FIXED: 2026-07-01 sqlite_schema.py init_db在BEGIN前执行PRAGMA foreign_keys=OFF，迁移后finally恢复ON，使v15/v19/v26/v27的破坏性迁移正确禁用FK]
 - 证据：[sqlite_schema.py:1070](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `conn.execute("BEGIN")` 在事务里执行全部迁移；v15(L641)/v19(L754)/v26(L847)/v27(L893)含`"PRAGMA foreign_keys=OFF"...PRAGMA foreign_keys=ON"`；SQLite硬限制：PRAGMA foreign_keys在事务内是no-op（[SQLite文档](https://sqlite.org/pragma.html#pragma_foreign_keys)）
 - 病根：根因5（规则丰富但执行断层）
 - 修复：在init_db的BEGIN之前执行PRAGMA或改连接级开关
@@ -2551,12 +2552,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因1（FK定义遗漏，是949孤儿的DDL层根因之一）
 - 修复：为nodes.domain_id、arch_directory_tree.domain_id、domain_mapping.domain_id补FK
 
-#### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】
+#### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】 [✓ FIXED: 2026-07-01 sqlite_schema.py _DDL_TASK_REVIEWS的FK已加ON DELETE CASCADE，与task_files一致]
 - 证据：[sqlite_schema.py:342](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `FOREIGN KEY (task_id) REFERENCES tasks(task_id)` 无级联；对比[sqlite_schema.py:202](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) task_files `task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE`；删除task后task_files自动清理但task_reviews留孤儿；v29(L933)才补建task_reviews仍未加CASCADE
 - 病根：根因5（约束应用不一致，同级FK级联规则不统一）
 - 修复：统一所有引用tasks(task_id)的FK加`ON DELETE CASCADE`
 
-#### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】
+#### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】 [✓ FIXED: 2026-07-01 sqlite_schema.py _DDL_FLE_DISPATCH_LOG的event_id FK已加ON DELETE CASCADE]
 - 证据：[sqlite_schema.py:317](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `event_id TEXT NOT NULL REFERENCES fle_alerts(event_id)` 无级联；删除fle_alerts记录时被FK阻断（RESTRICT默认）或留孤儿（若PRAGMA foreign_keys=OFF）
 - 病根：根因5（FK级联规则未规范化）
 - 修复：加`ON DELETE CASCADE`，dispatch_log是alert从属记录
@@ -2589,6 +2590,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | MEDIUM | 6（5.18.9~5.18.14） |
 | LOW | 1（5.18.15） |
 | **合计** | **15** |
+
+> **第32轮修复进度（2026-07-01）**：
+> - **已修复 3 个**：5.18.1（PRAGMA foreign_keys排序）、5.18.10（task_reviews CASCADE）、5.18.11（fle_dispatch_log CASCADE）
+> - **需迁移规划 12 个**：5.18.2/5.18.3（SQL快照/迁移文件FK，需rules表设计决策）、5.18.4（gate_decisions三schema统一）、5.18.5（tasks.domain_id跨库FK架构决策）、5.18.6（task_events补CHECK/UNIQUE需新迁移）、5.18.7（writable_schema hack改重建模式，高风险）、5.18.8（PG edges CASCADE+删trigger，约束#6/#7须apply_depgraph.py+先commit）、5.18.9（nodes等补FK）、5.18.12（迁移框架恢复）、5.18.13（downgrade脚本）、5.18.14（gates改名gate_runs）、5.18.15（时间戳DEFAULT统一）。此12项涉及PG schema（硬约束#6/#7）或破坏性迁移，治本变更未提交前禁止并发（约束#18），需独立迁移批次处理。
 
 ---
 
@@ -4151,63 +4156,63 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **维度定义**：Feature flag系统的实现一致性、默认值策略、生命周期管理。
 > **病根归属**：根因5（特性开关规则存在但未接入）。
 
-#### 5.38.1 [HIGH] 4套特性开关系统碎片化
+#### 5.38.1 [HIGH] 4套特性开关系统碎片化 [✓ FIXED: 2026-07-01 收敛为foundation/flags.py单一实现，删除trading/orchestrator/feature_flag.py死代码副本；audit_orchestration/feature_flag.py已不存在；SkillFeatureFlags为skill级专用保留]
 - **文件**：[config/flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml)、[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py)、[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py)、[audit_orchestration/feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py)
 - **证据**：4个独立实现，3种不同API（FlagState枚举/pydantic bool/YAML布尔树），2种FeatureFlag类定义（dataclass vs BaseModel）
 - **问题**：无统一开关真源，行为不一致
 - **影响**：新增开关不知该用哪套；运维需检查4处
 - **修复**：收敛为foundation/flags.py单一实现
 
-#### 5.38.2 [HIGH] global_flag_registry在生产代码中从未使用
+#### 5.38.2 [HIGH] global_flag_registry在生产代码中从未使用 [✓ FIXED: 2026-07-01 foundation/flags.py启动时自动load_flags_from_yaml()加载config/flags.yaml到global_flag_registry；已接入auto_bootstrap守护点（zephyr/__init__.py）]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L168)
 - **证据**：Grep global_flag_registry在src/下仅命中flags.py自身定义和api_index.py注释（非实际import）。生产代码无global_flag_registry.is_enabled()调用
 - **问题**：整个特性开关系统是死代码，定义了但从未接入任何功能路径
 - **影响**：声称有开关系统实际无效；新AI可能误以为可用而依赖它
 - **修复**：要么接入关键功能路径，要么删除避免误导
 
-#### 5.38.3 [HIGH] FeatureFlagManager默认ON违反安全默认原则
+#### 5.38.3 [HIGH] FeatureFlagManager默认ON违反安全默认原则 [✓ FIXED: 2026-07-01 删除默认ON的FeatureFlagManager（orchestrator版）；foundation/flags.py的FlagRegistry.is_enabled未注册flag返回False（默认OFF）]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L40)
 - **证据**：def is_enabled(self, contract_id): flag = self._flags.get(contract_id); return flag.enabled if flag else True——未注册的flag默认返回True
 - **问题**：两套系统默认行为相反（foundation/flags.py声明"默认OFF"）；未注册功能默认开启
 - **影响**：新功能无需显式启用即生效，违反灰度发布原则
 - **修复**：统一默认为False（OFF），未注册flag不允许通过
 
-#### 5.38.4 [MEDIUM] config/flags.yaml从未被代码加载
+#### 5.38.4 [MEDIUM] config/flags.yaml从未被代码加载 [✓ FIXED: 2026-07-01 新增load_flags_from_yaml()，启动时自动解析config/flags.yaml并注册到global_flag_registry，enabled映射为ALWAYS_ON/ALWAYS_OFF]
 - **文件**：[flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml) + [telemetry_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/telemetry_server.py#L186)
 - **证据**：Grep flags.yaml仅在telemetry_server.py第186行_exists(_CONFIG_DIR / "flags.yaml")命中——仅检查文件是否存在，不解析内容
 - **问题**：flags.yaml是死配置文件，其中所有开关值对运行时无影响
 - **影响**：修改flags.yaml不生效；运维误以为可远程控制遥测开关
 - **修复**：在启动时yaml.safe_load解析flags.yaml并驱动FlagRegistry
 
-#### 5.38.5 [MEDIUM] 灰度发布rollout_pct逻辑有缺陷且未使用
+#### 5.38.5 [MEDIUM] 灰度发布rollout_pct逻辑有缺陷且未使用 [✓ FIXED: 2026-07-01 修复rollout_pct逻辑——未传module_id时改用random.randint(0,99)随机分桶（原逻辑全量放行）]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L108)
 - **证据**：第108行if self.rollout_pct > 0 and module_id:——仅当传入module_id才做百分比分桶；第114行return self.state == FlagState.CONDITIONAL——若rollout_pct>0但未传module_id，直接返回True
 - **问题**：灰度分桶逻辑仅在传module_id时生效，未传时全量放行
 - **影响**：声称支持灰度实际不支持
 - **修复**：修正逻辑（未传module_id时按rollout_pct随机分桶）
 
-#### 5.38.6 [MEDIUM] FeatureFlagManager._audit无持久化
+#### 5.38.6 [MEDIUM] FeatureFlagManager._audit无持久化 [✓ FIXED: 2026-07-01 FlagRegistry._audit()将register/unregister/set_state变更记录持久化到data/feature_flag_audit.jsonl]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L32)
 - **证据**：self._audit: list[dict] = []——内存列表；set()时append但不持久化
 - **问题**：开关变更审计记录在内存，重启丢失
 - **影响**：无法追溯谁在何时改了开关
 - **修复**：将变更记录写入持久化审计日志
 
-#### 5.38.7 [MEDIUM] 两个FeatureFlag类名冲突定义不同
+#### 5.38.7 [MEDIUM] 两个FeatureFlag类名冲突定义不同 [✓ FIXED: 2026-07-01 删除orchestrator版FeatureFlag(BaseModel)，仅保留foundation/flags.py的FeatureFlag(dataclass)单一定义]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80) vs [feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L23)
 - **证据**：foundation版：@dataclass(frozen=True) class FeatureFlag: key: str; state: FlagState。orchestrator版：class FeatureFlag(BaseModel): contract_id: str; enabled: bool
 - **问题**：同名FeatureFlag类，不同基类、不同字段、不同语义
 - **影响**：import歧义；类型检查失效
 - **修复**：统一为单一FeatureFlag定义
 
-#### 5.38.8 [MEDIUM] 功能未用flag守护也无if/else硬编码
+#### 5.38.8 [MEDIUM] 功能未用flag守护也无if/else硬编码 [✓ FIXED: 2026-07-01 为高风险特性auto_bootstrap monkey-patch添加global_flag_registry.is_enabled("auto_bootstrap")守护点（zephyr/__init__.py），开关关闭即跳过；registry已可用作其他守护点模板]
 - **文件**：全项目
 - **证据**：Grep if ENABLED_|if USE_NEW_|if FEATURE_无匹配；Grep global_flag_registry.is_enabled在src/生产代码无调用
 - **问题**：所有功能默认全开，无任何开关控制点
 - **影响**：实验性功能无法紧急关闭；新功能无法灰度；故障功能无法快速降级
 - **修复**：为高风险/实验性功能增加flag守护点
 
-#### 5.38.9 [LOW] 无flag过期清理机制
+#### 5.38.9 [LOW] 无flag过期清理机制 [✓ FIXED: 2026-07-01 FeatureFlag增加created_at/expires_at/owner生命周期字段，新增is_expired()方法判断过期]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80)
 - **证据**：FeatureFlag dataclass字段：key/state/description/allowed_modules/allowed_agents/rollout_pct。无expires_at/created_at/owner字段
 - **问题**：flag无生命周期管理，永久残留
