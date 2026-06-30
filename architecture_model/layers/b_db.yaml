@@ -89,7 +89,7 @@ modules:
   - id: db-market-duckdb
     module_id: MOD-INF-012
     name: Market Data DuckDB Layer
-    submodule_path: src/zephyr/governance/data_layer/
+    submodule_path: src/zephyr/governance/
     status: implemented
     priority: P1
     runtime_plane: warm
