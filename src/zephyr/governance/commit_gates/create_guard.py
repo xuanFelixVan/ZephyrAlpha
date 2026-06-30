@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,11 +14,21 @@
 # [TESTS] tests/governance/rule_enforcement/test_create_guard.py
 # [A_module] module_id=MOD-GOV-create_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""create_guard.py — 新建 .py 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
+"""create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
 
-检测 staged 新增 .py 文件是否在 capability_canonical_file_registry.yaml 的
-creation_tokens 字段登记。无 token 的 .py 文件 → 硬阻断，提示"无 creation_token，
-禁止造第二真源（trae_060 §2）"。有 token 的 .py 文件 → 放行。
+检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在 capability_canonical_file_registry.yaml 的
+creation_tokens 字段登记。无 token 的 .py / .yaml 文件 → 硬阻断，提示"无 creation_token，
+禁止造第二真源（trae_060 §2）"。有 token 的 .py / .yaml 文件 → 放行。
+
+.yaml token 扩展（2026-07-01，trae_060 §2 向内收治本）
+-------------------------------------------------------
+病根：.yaml 是配置真源（YAML→DB 单向同步硬约束），第二份 .yaml 配置真源
+的危害比 .py 更隐蔽（同步漂移会污染 9 个 readonly DB 表）。rules/ 目录已有
+命名检查（L232-278），但非 rules/ .yaml 无任何 commit-time 检测，--no-verify
+绕过 pre-commit hooks 后可造第二配置真源。
+治本：扩展现有 create_guard 检测范围到非 rules/ .yaml（不新增门禁，规避自指
+递归——同 reconciler 审查标记检测先例）。新增 .yaml 文件无 creation_token
+→ 硬阻断，复用 .py 的 token 索引（同一 registered_files 集合）。
 
 元问题3治本扩展（2026-06-30，AD-GOV-001 收敛约束技术强制）
 ------------------------------------------------------------

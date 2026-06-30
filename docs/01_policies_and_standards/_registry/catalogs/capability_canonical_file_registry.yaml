@@ -1696,12 +1696,15 @@ capabilities:
       派生，basename frontmatter 匹配 alias；保留 canonical_override 作为最高优先级声明）。
 
 # ============================================================================
-# creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
+# creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
 # 用途:
 #   CREATE-GUARD 门禁（zephyr.governance.commit_gates.create_guard）在 commit 时
-#   检测 staged 新增 .py 文件是否在此登记。未登记 → 硬阻断（禁止造第二真源，
-#   trae_060 §2）。已登记 → 放行。
+#   检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在此登记。未登记 → 硬阻断
+#   （禁止造第二真源，trae_060 §2）。已登记 → 放行。
+#   .yaml 扩展（2026-07-01）：非 rules/ .yaml 亦需登记 token（.yaml 是 YAML→DB
+#   单向同步真源，第二份配置真源漂移污染 9 个 readonly DB 表）；rules/ .yaml 走
+#   命名检查（L232-278）不走 token 检查。
 #
 #   治本"造第二真源"根因：强制 AI 在创建新 .py 文件前先登记 token（声明创建意图
 #   + 关联 capability），把检测点从"commit 时"前移到"创建前"。
@@ -1713,9 +1716,10 @@ capabilities:
 #   - capability:  关联的 capability_id（见上方 capabilities 清单）
 #
 # 维护规则:
-#   - 新建 .py 文件前 MUST 先在此登记 token，否则 commit 被 CREATE-GUARD 阻断
-#   - tests/ 下的 .py 文件豁免（测试非能力真源，对标 capability_overlap_gate 设计）
-#   - 已存在的 .py 文件（git 已跟踪）不需登记（CREATE-GUARD 只检查 --diff-filter=A 新增）
+#   - 新建 .py / 非 rules/ .yaml 文件前 MUST 先在此登记 token，否则 commit 被 CREATE-GUARD 阻断
+#   - tests/ 下的 .py / .yaml 文件豁免（测试非能力真源，对标 capability_overlap_gate 设计）
+#   - 已存在的 .py / .yaml 文件（git 已跟踪）不需登记（CREATE-GUARD 只检查 --diff-filter=A 新增）
+#   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
 

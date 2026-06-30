@@ -168,8 +168,9 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - **GATE-SSOT 第2层（check_capability_duplicates）**：检测 basename 撞 capability_id/alias。
   - 已注册能力的同名文件**硬阻断**（relation=conflicting/sibling）。
   - 真源：capability_canonical_file_registry.yaml + 磁盘扫描派生。
-- **CREATE-GUARD**：新建 .py 文件必须登记 creation_token。
+- **CREATE-GUARD**：新建 .py / 非 rules/ .yaml 文件必须登记 creation_token。
   - 强制 AI 声明创建意图 + 关联 capability，未登记则**硬阻断**。
+  - .yaml 扩展（2026-07-01）：非 rules/ .yaml 亦需 token（.yaml 是 YAML→DB 单向同步真源，第二份配置真源漂移污染 9 个 readonly DB 表）；rules/ .yaml 走命名检查不走 token。
 
 **剩余缺口**：新 AI 创建根目录文件、[MODULE] 标注为根目录路径、文件名与子目录文件相同但未注册 capability 时，三层门禁均不触发。此缺口由本节提示 + governance/__init__.py docstring 文件归属规则提示兜底。
 
@@ -295,7 +296,8 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
   - **contracts/ 唯一**：契约测试唯一目录为 `contracts/`（单复数歧义已消除——原 `contract/` 元测试 5 文件已合并入 `contracts/_meta/`）。禁止再造 `contract/` 单数目录。
   - **目录名禁 test_ 前缀**：tests/ 下子目录名禁止 `test_` 前缀（`test_code_dedup_engine/` 已改名 `code_dedup_engine/`）。`test_` 前缀只用于文件名。
   - **迁移状态**：ARCH-029 全部治本完成——1699/1699 文件已迁移（100%），tests/ 根目录扁平 test_*.py 清零，84 个功能域子目录。session3 路线B 全量治本：批次1 commit 6fc3c755（471文件 governance/feedback/audit/llm_security）；批次2 commit 218a870a（291文件 34个子目录）。分类方法：AST import 自动匹配 533 + AI 语义分析 229（BLUEPRINT 优先）。维度混合清理（session4）：批次1 commit 556a845c 消除 6 个测试类型维度目录（integration/e2e/adversarial/red_blue/benchmarks/performance，96文件）；批次2+3 commit b25d9a46 消除 unit/ 目录（25子目录合并+132平铺文件分类迁移，548文件）。至此 tests/ 下 7 个测试类型维度目录全部消除，全部按功能域归类。漂移源 `validate_test_directory_structure.py` 与本条冲突+虚假引用 GOV-DOC-002，已删除（session3 commit）。
-  - **强制方式**：文档约定（本条目）+ code review + 后续 session 接续治本。无硬阻断门禁（向内收原则①——不造无全自动维护价值的门禁；测试目录组织是约定性约束，非安全/真源约束）。
+  - **强制方式**：文档约定（本条目）+ code review + **GATE-NO-TESTS-UNIT 硬阻断门禁**。
+  - **自动化 guard**（ARCH-029 漂移种子防复发，2026-07-01 添加）：[`.pre-commit-config.yaml` L664-686](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L664-L686) `id: gate-no-tests-unit`，pygrep hook 检测活跃代码/文档中 `tests/unit/` 旧路径重引入，检测到即 exit 1 拒绝提交。豁免：`_archive/`、`scripts/_archive/`、`scripts/.*/_archive/`、`session_logs/`、`data/`、`reports/`、历史规则文件(`trae_028/034`)、`.pre-commit-config.yaml`、`AGENTS.md` 自身（文档真源需描述旧路径）。每次 `git commit` 自动触发，无需手工干预。治本依据：并发 session 不知情回退已修复文件（commit 021c2274 后被回退为 tests/unit/），证明无 guard 时漂移会重新发生。
 
 ## 8. 永远不要做的事
 
