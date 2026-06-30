@@ -26,7 +26,7 @@ import json
 
 import pytest
 
-from zephyr.autonomy_core.ce.ce_explain_cli import InclusionRationale, explain_ke
+from zephyr.autonomy_core.context.ce_explain_cli import InclusionRationale, explain_ke
 
 
 class TestInclusionRationale:

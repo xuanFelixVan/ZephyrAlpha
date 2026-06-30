@@ -1195,6 +1195,63 @@ sections:
     - 禁止创建与项目内已有文件同名的文件(无论目录是否相同)
     - 禁止用版本号后缀区分同名文件(如foo-v2.md),必须重命名为语义不同的名字
     - 禁止将N-16豁免清单硬编码在代码中不记录在YAML真源(本section.n16_config是唯一结构化真源;代码必须从此动态加载,仅允许保留fail-open回退值)
+  gov_doc_003_directory_semantics:
+    title: 目录命名语义规则 (GOV-DOC-003 §目录语义)
+    section_type: rule
+    original_rules:
+    - DOC-003
+    conditions:
+    - type: constraint
+      check: 目录名缩写禁止
+      pass: 新建目录名长度≥3字符且为完整单词或snake_case复合词;行业通用缩写白名单(api/mcp/io/a2a/sla/db)仅限历史目录保留,新建目录不得使用白名单外的缩写
+      fail: 新建目录名为2字符及以下缩写(如ce/ui/ux)或自创缩写(如ce=context_engine的缩写)
+      rationale: AI无法从缩写推断语义;ce/曾导致AI困惑是context_engine还是cli工具;完整单词让AI望文生义
+    - type: constraint
+      check: 集合型目录用复数
+      pass: 放多个同质文件的目录用复数名词(skills/detectors/services/models/contracts/events/errors/patterns/layers/payloads/guards/verifiers/bridges/adapters/implementations/strategies)
+      fail: 集合型目录用单数(如放59个skill_*.py的目录叫skill/)
+      rationale: 复数反映集合性质,AI可预期内部是同质文件
+    - type: constraint
+      check: 单体型目录用单数
+      pass: 放单一核心实现或异构辅助模块的目录用单数名词(core/engine/runtime/dashboard/sandbox/schema/state/pipeline/governance/infrastructure/shared/context)
+      fail: 单体型目录用复数(如只放1个核心引擎的目录叫engines/)
+      rationale: 单数反映单体性质,AI可预期内部是一个主模块+辅助
+    - type: constraint
+      check: 数字后缀目录禁止
+      pass: 目录名无数字后缀(如llm_security/observability/api)
+      fail: 目录名含_NN数字后缀(如llm_security_01/infra_06/observability_02/api_03/ctr_001_consumer)
+      rationale: 数字后缀暗示多真源(存在_01/_02/_03),违反SSoT原则;AI会把_01/_02当作不同实体产生幻觉
+    - type: constraint
+      check: 复合目录名snake_case
+      pass: 多词业务语义目录名用snake_case(drift_detection/audit_trail/semantic_audit/behavioral_admission)
+      fail: 复合目录名用kebab-case或驼峰
+      rationale: 已由gov_doc_003_naming_ssot目录名格式condition覆盖,此处重申强调
+    actions:
+    - type: mandatory
+      step: 新建子目录前MUST评估集合性质——同质多文件用复数,单体或异构辅助用单数
+    - type: mandatory
+      step: 新建子目录MUST使用完整单词,禁止2字符及以下缩写和自创缩写
+    - type: mandatory
+      step: 新建子目录禁止使用_NN数字后缀;若需区分版本,用语义不同的名字(如llm_security_v1→llm_security_legacy+llm_security)
+    - type: mandatory
+      step: 历史违规目录(缩写/数字后缀)在下次涉及该目录的refactor时顺带修正;不发起专门批量改名任务(避免过度工程)
+    prohibitions:
+    - 禁止新建2字符及以下缩写目录名(如ce/ui/ux/bot)
+    - 禁止新建自创缩写目录名(如ce=context_engine的缩写,应为context_engine或合并到context/)
+    - 禁止新建含_NN数字后缀的目录名(如foo_01/foo_02)
+    - 禁止用版本号后缀区分同名目录(如foo_v1/foo_v2),必须重命名为语义不同的名字
+    - 禁止同包内集合型目录用单数(如skills包内放多个detector的目录叫detector/)
+    - 禁止同包内单体型目录用复数(如只放1个engine的目录叫engines/)
+    grandfathered:
+      description: 历史目录 grandfathered 豁免清单(仅保留,新建不得效仿)
+      abbreviation_dirs:
+      - api  # 行业通用,Application Programming Interface
+      - mcp  # 行业通用,Model Context Protocol
+      - io   # 行业通用,Input/Output
+      - a2a  # 项目约定,Agent-to-Agent
+      - sla  # 行业通用,Service Level Agreement
+      - db   # 行业通用,Database
+      note: 历史自创缩写目录(如ce/)不享受grandfathered豁免,MUST在refactor时修正
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1288,9 +1345,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.6.0"
+  version: "1.7.0"
   last_modified: "2026-07-01"
   change_history:
+  - version: "1.7.0"
+    date: "2026-07-01"
+    author: "AI-Assistant"
+    change: "ARCH-033子目录命名风格治本——新增gov_doc_003_directory_semantics section定义目录命名语义规则5条(R1缩写必除:禁止2字符及以下缩写和自创缩写,ce/不享受grandfathered豁免;R2集合型用复数;R3单体型用单数;R4复合名snake_case;R5数字后缀禁止);grandfathered豁免清单仅保留行业通用缩写(api/mcp/io/a2a/sla/db);历史违规目录渐进收敛不批量改名;依据:全项目459子目录4风格混用(compound_snake47%/singular33%/plural17%/abbreviation3%),12+包严重混用,ce/曾导致AI困惑是context_engine还是cli工具"
   - version: "1.6.0"
     date: "2026-07-01"
     author: "AI-Assistant"

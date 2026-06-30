@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.ce.ce_vibe_shortcuts import (
+from zephyr.autonomy_core.context.ce_vibe_shortcuts import (
     _MODE_CONFIGS,
     CEMode,
     ModeConfig,

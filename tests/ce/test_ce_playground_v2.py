@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.ce.ce_playground_v2 import (
+from zephyr.autonomy_core.context.ce_playground_v2 import (
     PlaygroundV2,
     PlaygroundV2Result,
 )
