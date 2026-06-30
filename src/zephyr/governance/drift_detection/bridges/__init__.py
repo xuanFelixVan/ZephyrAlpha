@@ -33,7 +33,7 @@ try:
 except ImportError:
     pass
 
-__all__ = ["events", "rollback_bridge"]
+__all__ = ["rollback_bridge"]
 
 __version__ = "1.0.0"
 __module_id__ = "MOD-INF-023"
