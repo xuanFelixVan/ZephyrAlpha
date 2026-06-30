@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T13:07:14Z'
+generated_at: '2026-06-30T13:10:09Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 141
+total_files: 142
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -1428,6 +1428,21 @@ files:
   scope: ''
   stability: ''
   layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
+  module_id: GOV-AI-001
+  title: AI 自治权限登记表（全模块权限终表）
+  doc_type: register
+  status: active
+  version: 1.4.0
+  rule_form: data
+  scope: ''
+  stability: ''
+  layer: cross_layer
   superseded_by: ''
   severity: ''
   tier: ''
