@@ -1,240 +1,128 @@
-# ZephyrAlpha 根目?architecture_model/layers/*.yaml 字段约束
+# ZephyrAlpha 根目录 architecture_model/layers/*.yaml 字段约束
 
-# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/module_registry.yaml 对齐校验?
+# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/module_registry.yaml 对齐校验。
 
-# 注意：与企业架构?docs/02_enterprise_architecture/.../layers/schema.yaml 并存时，
+# 单树声明（2026-06-30 治本）：双树已合并，architecture_model/ 是唯一架构模型存储位置。
+# EA artifacts（contracts/cross_cutting/domain/events/technology）迁入本树顶层子目录。
 
-# 以本文件约束**仓库?* architecture_model；跨树复制时请同步字段语义?
+schema_version: "1.2.0"
 
-
-
-schema_version: "1.1.0"
-
-description: "根目?architecture_model 分区与模块条目的运营 Schema"
-
-
+description: "根目录 architecture_model 分区与模块条目的运营 Schema"
 
 id_namespace_note: >
-
-  施工树中模块条目?id（小?slug，如 l02-*）与 docs/03_modules/module_registry.yaml
-
-  ?module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图?
-
-  跨登记对账。企业架构镜像树 docs/02_enterprise_architecture/.../layers/schema.yaml
-
-  应与本文档语义保持一致?
-
-
+  根树中模块条目 id（小写 slug，如 l02-*）与 docs/03_modules/module_registry.yaml
+  的 module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图
+  跨登记对账。
 
 operational_schema:
-
   partition:
-
     id:
-
       type: string
-
       required: true
-
     name:
-
       type: string
-
       required: true
-
     track:
-
       type: enum
-
-      values: [c_track, b_track]
-
+      values: [b_track]
+      description: "c_track 已废弃（§2.1 裁定：14 层降级为域属性，物理分类由 depgraph domains 表定义）；仅保留 b_track"
     status:
-
       type: enum
-
       values: [implemented, skeleton]
-
-      description: "分区整体成熟度；子模块可有更细粒?status"
-
+      description: "分区整体成熟度；子模块可有更细粒度 status"
     optional_fields:
-
       description: >
-
         下列字段可出现于 partition：version, note, bounded_context, umbrella_layer,
-
-        layer_position, runtime_plane, db_file_path ?均为可选，供分区说明与闸门对齐?
-
-
+        layer_position, runtime_plane, db_file_path 等，均为可选，供分区说明与闸门对齐。
 
   modules:
-
     id:
-
       type: string
-
       required: true
-
       pattern: "^[a-z0-9]+-[a-z0-9-]+$"
-
     name:
-
       type: string
-
       required: true
-
     submodule_path:
-
       type: string
-
       required: true
-
     module_id:
-
       type: string
-
       required: false
-
       pattern: "^MOD-[A-Z0-9-]+$"
-
-      description: "可选，对应 module_registry.yaml 顶层 modules[] ?module_id"
-
+      description: "可选，对应 module_registry.yaml 顶层 modules[] 的 module_id"
     status:
-
       type: enum
-
       required: true
-
       values: [implemented, skeleton, phase_1_partial]
-
       description: >
-
-        implemented/skeleton 为常规分层状态；phase_1_partial 用于长周期演进模块（?FLE）的施工中态登记?
-
+        implemented/skeleton 为常规分层状态；phase_1_partial 用于长周期演进模块（如 FLE）的施工中态登记。
     priority:
-
       type: enum
-
       values: [P0, P1, P2, P3]
-
     runtime_plane:
-
       type: enum
-
       values: [hot, warm, cold, all]
-
-
-
     optional_fields:
-
       description: >
-
         下列字段可出现于单模块：files, components, blueprint_ref, construction_phases（字符串或结构化列表由实现约定）,
-
-        version, file_count ??均可选?
-
-
-
+        version, file_count 等，均可选。
     interfaces:
-
       type: array
-
       required: false
-
       default: []
-
       items:
-
         contract_id:
-
           type: string
-
           required: true
-
           pattern: >-
-
             ^(CT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|EXT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|CTR-[A-Z0-9-]+|OCP-[A-Z0-9-]+|AI-GOV-[A-Z0-9-]+)$
-
         role:
-
           type: enum
-
           values: [producer, consumer, both, internal]
-
           description: >
-
-            internal = 系统内部子域耦合，不对外跨系?API 承诺；仍?CT 编号作施工索引?
-
+            internal = 系统内部子域耦合，不对外跨系统 API 承诺；仍以 CT 编号作施工索引。
         description:
-
           type: string
-
           required: false
-
-
-
     kb_ref:
-
       type: array
-
       items: { type: string }
-
-      description: "KB 知识条目引用（替代原 adr_ref；KB 决策记录 物理文件已废弃，决策记录 SSoT ?KB?"
-
+      description: "KB 知识条目引用（替代原 adr_ref；KB 决策记录物理文件已废弃，决策记录 SSoT 为 KB）"
 
   summary:
-
     required: false
-
     description: >
-
       建议包含 total、by_status。by_status 的键可与 modules[].status 枚举一致，
-
-      亦可包含 phase_1_partial 等扩展键以与模块清单对齐?
-
-
+      亦可包含 phase_1_partial 等扩展键以与模块清单对齐。
 
 # 可与 partition / modules / summary 并列出现的根级键（大分区运营元数据）
-
 file_root_optional:
-
   description: "单层 YAML 文件根部额外结构（当前：FLE 等）"
-
   allowed_keys:
-
     - version
-
     - generation
-
     - file_count
-
     - blind_spot_count
-
     - subsystems
-
     - safety_gates
-
     - construction_phases
-
     - depends_on
 
-
-
 changelog:
-
+  - version: "1.2.0"
+    date: "2026-06-30"
+    changes:
+      - "删除 c_track 枚举值（§2.1 裁定：14 层降级为域属性，物理分类由 depgraph domains 表定义）"
+      - "删除双树并存引用（双树已合并为单树）"
+      - "修复中文标点损坏"
   - version: "1.1.0"
-
     date: "2026-05-05"
-
     changes:
-
       - "interfaces.role 增加 internal"
-
-      - "modules.status 增加 phase_1_partial；summary.by_status 允许对齐扩展?"
-      - "partition / modules / file_root 记录可选字段白名单（FLE 等大分区?"
+      - "modules.status 增加 phase_1_partial；summary.by_status 允许对齐扩展"
+      - "partition / modules / file_root 记录可选字段白名单（FLE 等大分区）"
   - version: "1.0.0"
-
     date: "2026-05-05"
-
     changes:
-
-      - "初始：根目录 architecture_model 专用 schema（implemented/skeleton + CT/EXT/CTR 契约 ID?"
+      - "初始：根目录 architecture_model 专用 schema（implemented/skeleton + CT/EXT/CTR 契约 ID）"
