@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 15:14:34
+> 最后更新: 2026-06-30 15:32:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -56,9 +56,9 @@ graph TD
     docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_INTEGRATION
+    tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

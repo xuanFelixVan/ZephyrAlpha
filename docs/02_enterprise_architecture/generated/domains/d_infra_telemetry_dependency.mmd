@@ -1,7 +1,7 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-06-30 12:34:25
+%% 生成时间: 2026-06-30 15:32:30
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 35, 依赖边数: 29
+%% 模块数: 35, 依赖边数: 28
 
 graph TD
 
@@ -79,12 +79,11 @@ graph TD
     src_zephyr_infrastructure_syst___lemetry_traces_span_stub_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_INFRA_TELEMETRY -> D_OPS (1 条)
     src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_OPS[D_OPS]
-    %% D_INFRA_TELEMETRY -> D_SHARED (3 条)
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_INFRA_TELEMETRY -> D_SHARED (2 条)
     src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 11 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 18 条
+    %% 跨域出边: 17 条

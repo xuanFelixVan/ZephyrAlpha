@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 15:14:34
+> 最后更新: 2026-06-30 15:32:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -90,25 +90,25 @@ graph TD
     src_zephyr_governance_kb_backend_protocol_py -.->|config_depends| src_zephyr_governance_kb_init_py
     src_zephyr_governance_kb_filing_nlp_engine_init_py -.->|config_depends| src_zephyr_governance_kb_filing_nlp_engine_extract_py
     src_zephyr_governance_kb_pipeline_init_py -.->|config_depends| src_zephyr_governance_kb_pipeline_activate_py
+    D_SHARED["D_SHARED production"]
+    src_zephyr_governance_kb_kb_engine_kb_gate_task_py -.->|import_depends| D_SHARED
     D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_governance_kb_batch_ingest_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_kb_activate_py -.->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_kb_activate_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_kb_extract_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_kb_extract_py -.->|import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    src_zephyr_governance_kb_extract_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_kb_batch_ingest_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_kb_activate_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_governance_kb_activate_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_kb_bootstrap_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_kb_embedding_migrate_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_kb_embedding_migrate_py -.->|import_depends| D_INTEGRATION
-    D_SHARED["D_SHARED production"]
-    src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_kb_embedding_migrate_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
+    src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
     D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
     D_GOVERNANCE -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
@@ -117,7 +117,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_kb_init_py,src_zephyr_governance_kb_backend_protocol_py,src_zephyr_governance_kb_activate_py,src_zephyr_governance_kb_analyze_py,src_zephyr_governance_kb_batch_ingest_py,src_zephyr_governance_kb_bootstrap_py,src_zephyr_governance_kb_embedding_migrate_py,src_zephyr_governance_kb_extract_py,src_zephyr_governance_kb_filing_nlp_engine_init_py,src_zephyr_governance_kb_filing_nlp_engine_extract_py,src_zephyr_governance_kb_freeze_py,src_zephyr_governance_kb_graph_validator_py,src_zephyr_governance_kb_ingest_py,src_zephyr_governance_kb_integrity_py,src_zephyr_governance_kb_kb_engine_init_py,src_zephyr_governance_kb_kb_engine_kb_gate_task_py,src_zephyr_governance_kb_kb_gate_task_py,src_zephyr_governance_kb_ke_tombstone_py,src_zephyr_governance_kb_load_bearing_py,src_zephyr_governance_kb_migration_init_py,src_zephyr_governance_kb_migration_kb_gate_task_py,src_zephyr_governance_kb_pipeline_init_py,src_zephyr_governance_kb_pipeline_activate_py,src_zephyr_governance_kb_pipeline_analyze_py,src_zephyr_governance_kb_pipeline_batch_ingest_py,src_zephyr_governance_kb_pipeline_extract_py,src_zephyr_governance_kb_pipeline_ingest_py,src_zephyr_governance_kb_quiet_period_monitor_py,src_zephyr_governance_kb_reranker_py,src_zephyr_governance_kb_safety_brake_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_INTEGRATION,D_SHARED external_prod
+    class D_SHARED,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_INTEGRATION external_prod
     class D_TRADING external_design
 ```
 

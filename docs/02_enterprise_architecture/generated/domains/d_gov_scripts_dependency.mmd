@@ -1,7 +1,7 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-06-30 12:34:25
+%% 生成时间: 2026-06-30 15:32:30
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 411, 依赖边数: 407
+%% 模块数: 410, 依赖边数: 386
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_construction_test_event_hook_py["scripts/construction/test_event_hook.py [prototype]"]
         scripts_context_generate_architecture_context_py["...text/generate_architecture_context.py [prototype]"]
         scripts_dm90971_add_test_headers_py["scripts/dm90971_add_test_headers.py [prototype]"]
-        %% ... 还有 311 个模块未显示
+        %% ... 还有 310 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -171,7 +171,6 @@ graph TD
     scripts__archive_governance_create_depgraph_task_cards_py -->|config_depends| scripts_governance___init___py
     scripts_governance_detect_causal_conflicts_py -->|config_depends| scripts_governance___init___py
     scripts_governance_env_check_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_dm106_p2b_verification_py -->|config_depends| scripts_governance___init___py
     scripts_governance_crosscheck_sys_master_deps_py -->|config_depends| scripts_governance___init___py
     scripts__archive_governance_dm___blueprint_domain_mapping_py -->|config_depends| scripts_governance___init___py
     scripts_governance_diagnose_depgraph_py -->|config_depends| scripts_governance___init___py
@@ -191,7 +190,8 @@ graph TD
     scripts_governance_phase_a_backup_py -->|config_depends| scripts_governance___init___py
     scripts_governance_rename_kebab_to_snake_py -->|config_depends| scripts_governance___init___py
     scripts_governance_rebuild_progress_py -->|config_depends| scripts_governance___init___py
-    %% ... 还有 234 条域内依赖未显示
+    scripts_governance_pre_op_check_py -->|config_depends| scripts_governance___init___py
+    %% ... 还有 233 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_GOV_SCRIPTS (12 条)
@@ -215,36 +215,19 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_EX_CORE[D_EX_CORE]
     %% D_GOV_SCRIPTS -> D_FUNDAMENTAL_SIGNAL (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    %% D_GOV_SCRIPTS -> D_GOVERNANCE (29 条)
+    %% D_GOV_SCRIPTS -> D_GOVERNANCE (12 条)
     scripts_rollback_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_scaffold_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_check_statuses_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_check_statuses_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_check_transition_code_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_d_init_task_system_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_d_init_task_system_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_construction_local_layer_daemon_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_reset_test_task_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_test_event_hook_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_test_event_hook_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_finalize_tasks_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_construction_finalize_tasks_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_construction_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_create_alignment_tasks_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_session_startup_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_session_startup_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_task_self_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_task_self_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_task_summary_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_task_summary_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_vms_health_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_vms_cron_monitor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_vms_migrate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_vms_migration_dry_run_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_SCRIPTS -> D_GOV_AUDIT (2 条)
     scripts_a2a_full_verification_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     scripts_governance_rebuild_audit_index_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -271,12 +254,11 @@ graph TD
     scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D_GOV_SCRIPTS -> D_INTEGRATION (13 条)
+    %% D_GOV_SCRIPTS -> D_INTEGRATION (12 条)
     scripts_a2a_full_verification_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_scaffold_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_demo_a2a_coordination_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_d_init_task_system_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_test_event_hook_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
@@ -299,14 +281,12 @@ graph TD
     %% D_GOV_SCRIPTS -> D_SECURITY (2 条)
     scripts_a2a_full_verification_py -->|import_depends| D_SECURITY[D_SECURITY]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SECURITY[D_SECURITY]
-    %% D_GOV_SCRIPTS -> D_SHARED (3 条)
-    scripts_construction_d_init_task_system_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_GOV_SCRIPTS -> D_SHARED (1 条)
     scripts_governance__e2e_verify_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_GOV_SCRIPTS -> D_SIMULATION (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D_SIMULATION]
 
     %% 统计
-    %% 域内依赖: 314 条
+    %% 域内依赖: 313 条
     %% 跨域入边: 13 条
-    %% 跨域出边: 80 条
+    %% 跨域出边: 60 条

@@ -1,15 +1,12 @@
 %% D_DATA_SEC 域全景依赖图
-%% 生成时间: 2026-06-30 12:34:25
+%% 生成时间: 2026-06-30 15:32:30
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 10, 依赖边数: 3
+%% 模块数: 7, 依赖边数: 0
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_DATA_SEC[数据安全与契约]
-        src_zephyr_data_persistence___init___py["src/zephyr/data/persistence/__init__.py [prototype]"]
-        src_zephyr_data_persistence_circuit_breaker_types_py[".../persistence/circuit_breaker_types.py [prototype]"]
-        src_zephyr_data_persistence_sqlite_schema_py["...hyr/data/persistence/sqlite_schema.py [prototype]"]
         src_zephyr_data_security___init___py["src/zephyr/data_security/__init__.py [prototype]"]
         src_zephyr_data_security__extensions___init___py["...data_security/_extensions/__init__.py [prototype]"]
         src_zephyr_data_security_api___init___py["src/zephyr/data_security/api/__init__.py [prototype]"]
@@ -20,17 +17,12 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_data_persistence___init___py -->|config_depends| src_zephyr_data_persistence_sqlite_schema_py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_DATA_SEC -> D_GOVERNANCE (1 条)
-    src_zephyr_data_persistence_sqlite_schema_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_DATA_SEC -> D_OPS (1 条)
-    src_zephyr_data_persistence_circuit_breaker_types_py -->|import_depends| D_OPS[D_OPS]
 
     %% 统计
-    %% 域内依赖: 1 条
+    %% 域内依赖: 0 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 2 条
+    %% 跨域出边: 0 条
