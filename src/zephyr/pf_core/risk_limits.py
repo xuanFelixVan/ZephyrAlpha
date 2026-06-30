@@ -1,7 +1,7 @@
-﻿# [BLUEPRINT] MOD-PF_CORE
+# [BLUEPRINT] MOD-PF_CORE
 # [MODULE] zephyr.pf_core.risk_limits
 # [DOMAIN] D_PF_CORE
-# [DEPENDENCIES] zephyr.governance.risk_limits
+# [DEPENDENCIES] zephyr.governance.trading_contracts.risk.risk_limits
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""Re-export wrapper: risk_limits has migrated to zephyr.portfolio.core.risk_limits"""
+"""Re-export wrapper: risk_limits canonical at zephyr.governance.trading_contracts.risk.risk_limits"""
 
 from zephyr.governance.trading_contracts.risk.risk_limits import *  # noqa: F403
