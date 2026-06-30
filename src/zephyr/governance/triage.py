@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
+﻿# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.triage
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
@@ -42,7 +42,7 @@ from typing import Any
 
 import yaml
 
-from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
+from zephyr.governance.kb.ingest import COLLOQUIAL_PATTERNS
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult

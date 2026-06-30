@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0170 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0170 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-327 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_kb_pipeline_gate_order
 # [STABILITY] evolving
@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.ingest import IngestGate
+from zephyr.governance.kb.ingest import IngestGate
 from zephyr.governance.kb.analyze import AnalyzeGate
 from zephyr.governance.kb.extract import ExtractGate
 from zephyr.governance.rule_enforcement.gate_engine import GateResult

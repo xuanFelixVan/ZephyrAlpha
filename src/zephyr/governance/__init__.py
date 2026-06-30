@@ -1,4 +1,4 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
+﻿# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
 # [TTL] task_bound
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
@@ -67,50 +67,50 @@ def __getattr__(name):
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-from zephyr.governance.agent_signer import AgentSigner
+from zephyr.governance.audit_trail.agent_signer import AgentSigner
 from zephyr.governance.akshare_provider import AkshareProvider
 from zephyr.governance.base import FactorMeta
 from zephyr.governance.blind_spot_tracker import BlindSpotStatus
 from zephyr.governance.capability_lookup import CapabilityLookup
 from zephyr.governance.canary_manager import CanaryFile
-from zephyr.governance.changelog_manager import ChangeImpact
+from zephyr.governance.audit_trail.changelog_manager import ChangeImpact
 from zephyr.governance.classifier import Classifier
 from zephyr.governance.cli import main
-from zephyr.governance.code_archaeology import BlameRecord
+from zephyr.governance.audit_trail.code_archaeology import BlameRecord
 from zephyr.governance.complexity_budget import ComplexityReport
-from zephyr.governance.compliance_map import ComplianceFramework
+from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
 from zephyr.governance.construction_verifier import ConstructionVerifier
-from zephyr.governance.corporate_actions import CorporateActionType
+from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
 from zephyr.governance.dashboard import Dashboard
 from zephyr.governance.database_service import DatabaseService
 from zephyr.governance.dependency import DependencyNode
 from zephyr.governance.dlq_retry_policy import RetryResult
-from zephyr.governance.dora_metrics import DORATargets
-from zephyr.governance.feedback_self_audit import FeedbackNode
+from zephyr.governance.audit_trail.dora_metrics import DORATargets
+from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
 from zephyr.governance.finding_ingest import IngestResult
 from zephyr.governance.fix_prioritizer import PrioritizedFixResult
 from zephyr.governance.gate_event_adapter import GateEventAdapter
-from zephyr.governance.glossary_matrix import GlossaryEntry
+from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
 from zephyr.governance.index_generator import IndexGenerator
-from zephyr.governance.kb_gate import KBWriteCheckResult
+from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
 from zephyr.governance.lifecycle import Lifecycle
 from zephyr.governance.llm_impact_analyzer import RiskLevel
 from zephyr.governance.metadata import GitCommitInfo
 from zephyr.governance.models import AssetType
 from zephyr.governance.phase_executor import PhaseStatus
 from zephyr.governance.pipeline_base import ExperimentConfig
-from zephyr.governance.privacy import PIICategory
+from zephyr.governance.audit_trail.privacy import PIICategory
 from zephyr.governance.reconciler import Reconciler
 from zephyr.governance.registry_adapter import RegistryParseError
-from zephyr.governance.sbom_generator import LicenseType
-from zephyr.governance.self_healer import SelfHealError
-from zephyr.governance.self_health import SLIResult
+from zephyr.governance.audit_trail.sbom_generator import LicenseType
+from zephyr.governance.semantic_audit.self_healer import SelfHealError
+from zephyr.governance.semantic_audit.self_health import SLIResult
 from zephyr.governance.snapshot_manager import SnapshotError
-from zephyr.governance.spec_auditor import record_agent_spec
-from zephyr.governance.supply_chain import PackageRecord
+from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
+from zephyr.governance.audit_trail.supply_chain import PackageRecord
 from zephyr.governance.token_budget import PoolLevel
 from zephyr.governance.trust_anchor import TrustLevel
-from zephyr.governance.wqa_scorer import WQAScore
+from zephyr.governance.audit_trail.wqa_scorer import WQAScore
 
 __all__ = [
     "AdmissionResponse",

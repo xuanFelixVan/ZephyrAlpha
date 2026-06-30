@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-270 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.e2e.test_kb_full_pipeline
 # [STABILITY] evolving
@@ -27,7 +27,7 @@ from pathlib import Path
 
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
-from zephyr.governance.ingest import IngestGate
+from zephyr.governance.kb.ingest import IngestGate
 from zephyr.governance.kb.bootstrap import (
     Bootstrap,
     BootstrapConfig,

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
+﻿# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.knowledge_management.kb.bootstrap
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
@@ -46,7 +46,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.ingest import IngestGate
+from zephyr.governance.kb.ingest import IngestGate
 
 _INTELLIGENCE_UMA_NAMES = {
     "InMemoryMemoryBackend",

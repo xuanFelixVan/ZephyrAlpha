@@ -81,6 +81,24 @@ _RAW_INTAKE_DIR_NAME = "01_raw_intake"
 
 _UTC = UTC
 
+# 口语化模式 — 用于 triage 门禁检测非正式表述
+COLLOQUIAL_PATTERNS = [
+    r"gonna",
+    r"wanna",
+    r"gotta",
+    r"kinda",
+    r"sorta",
+    r"yeah",
+    r"nope",
+    r"ok\b",
+    r"ok\s*,",
+    r"\btbh\b",
+    r"\bimo\b",
+    r"\bfyi\b",
+    r"\btbd\b",
+    r"\bwip\b",
+]
+
 
 @dataclass
 class IngestResult:

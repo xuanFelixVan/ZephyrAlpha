@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-208 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_kb_adversarial
 # [STABILITY] evolving
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.ingest import IngestGate, IngestResult
+from zephyr.governance.kb.ingest import IngestGate, IngestResult
 
 
 @pytest.fixture
