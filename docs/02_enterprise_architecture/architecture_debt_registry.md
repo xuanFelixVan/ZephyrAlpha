@@ -2568,12 +2568,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（用hack绕过SQLite不支持ALTER CONSTRAINT的限制）
 - 修复：改用"建新表→复制数据→DROP旧表→RENAME"重建模式
 
-#### 5.18.8 edges表FK无ON DELETE CASCADE靠trigger补救但trigger在replica模式失效【HIGH】
+#### 5.18.8 edges表FK无ON DELETE CASCADE靠trigger补救但trigger在replica模式失效【HIGH】 [✓ FIXED: 2026-07-01 PG edges FK 改 ON DELETE CASCADE + 删除 trigger trg_nodes_delete_cleanup_edges。02_create_pg_schema.sql 真源同步更新。replica 模式下孤儿边问题消除]
 - 证据：[00_sqlite_actual_schema.sql:210-211](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (from_node_id) REFERENCES "nodes"(node_id)` 无CASCADE；`:724-729` 用`trg_nodes_delete_cleanup_edges` trigger补救；但[depgraph_schema.py:1199-1201](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) `get_depgraph_pg_connection(replica=True)` 会`SET session_replication_role='replica'`禁用所有trigger——此时删nodes留孤儿edges；`dependency_path_panorama.md:2041`已承认148条孤儿边
 - 病根：根因1（用trigger模拟CASCADE是反模式，replica模式下失效）
 - 修复：PG中改`REFERENCES nodes(node_id) ON DELETE CASCADE`，删除trigger
 
-#### 5.18.9 nodes/arch_directory_tree/domain_mapping的domain_id无FK到domains【MEDIUM】
+#### 5.18.9 nodes/arch_directory_tree/domain_mapping的domain_id无FK到domains【MEDIUM】 [✓ FIXED: 2026-07-01 部分修复：nodes.domain_id + domain_mapping.domain_id 已补 FK 到 domains（PG DDL 执行，0 孤儿）。arch_directory_tree.domain_id 因 573 孤儿暂缓，需先清理]
 - 证据：[00_sqlite_actual_schema.sql:278-309](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) nodes表domain_id TEXT无FK；`:57-68` arch_directory_tree.domain_id TEXT无FK；`:161-170` domain_mapping.domain_id TEXT无FK；对比`:71-80` arch_path_mappings有FK(L79)；[02_create_pg_schema.sql:285](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql) arch_path_mappings在PG有FK但nodes(L224-262)仍无FK到domains
 - 病根：根因1（FK定义遗漏，是949孤儿的DDL层根因之一）
 - 修复：为nodes.domain_id、arch_directory_tree.domain_id、domain_mapping.domain_id补FK
@@ -2618,8 +2618,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | **合计** | **15** |
 
 > **第32轮修复进度（2026-07-01）**：
-> - **已修复 3 个**：5.18.1（PRAGMA foreign_keys排序）、5.18.10（task_reviews CASCADE）、5.18.11（fle_dispatch_log CASCADE）
-> - **需迁移规划 12 个**：5.18.2/5.18.3（SQL快照/迁移文件FK，需rules表设计决策）、5.18.4（gate_decisions三schema统一）、5.18.5（tasks.domain_id跨库FK架构决策）、5.18.6（task_events补CHECK/UNIQUE需新迁移）、5.18.7（writable_schema hack改重建模式，高风险）、5.18.8（PG edges CASCADE+删trigger，约束#6/#7须apply_depgraph.py+先commit）、5.18.9（nodes等补FK）、5.18.12（迁移框架恢复）、5.18.13（downgrade脚本）、5.18.14（gates改名gate_runs）、5.18.15（时间戳DEFAULT统一）。此12项涉及PG schema（硬约束#6/#7）或破坏性迁移，治本变更未提交前禁止并发（约束#18），需独立迁移批次处理。
+> - **已修复 5 个**：5.18.1（PRAGMA foreign_keys排序）、5.18.8（PG edges CASCADE+删trigger）、5.18.9部分（nodes+domain_mapping 补FK）、5.18.10（task_reviews CASCADE）、5.18.11（fle_dispatch_log CASCADE）
+> - **需迁移规划 10 个**：5.18.2/5.18.3（SQL快照/迁移文件FK，需rules表设计决策；5.18.3被5.18.2类型不匹配TEXT vs BIGINT阻塞）、5.18.4（gate_decisions三schema统一）、5.18.5（tasks.domain_id跨库FK架构决策）、5.18.6（task_events补CHECK/UNIQUE需新迁移）、5.18.7（writable_schema hack改重建模式，高风险）、5.18.9余（arch_directory_tree.domain_id 573孤儿需先清理）、5.18.12（迁移框架恢复）、5.18.13（downgrade脚本）、5.18.14（gates改名gate_runs）、5.18.15（时间戳DEFAULT统一）。此10项涉及PG schema（硬约束#6/#7）或破坏性迁移，治本变更未提交前禁止并发（约束#18），需独立迁移批次处理。
 
 ---
 
