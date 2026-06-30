@@ -924,6 +924,29 @@ capabilities:
       - make_held_overlap_gate     # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: dangling_reference_gate
+    aliases:
+      - DANGLING-REFERENCE
+      - dangling-reference
+      - make_dangling_reference_gate
+      - agents_md_section_ref_checker
+      - phantom_section_blocker
+    description: >-
+      AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE，2026-07-01 治本）。
+      检测 staged 文件中新增的 AGENTS.md §X.Y 引用是否指向 AGENTS.md 中实际存在的
+      章节号。命中则阻断 commit（DANGLING_REFERENCE_VIOLATION）。病根：AGENTS.md
+      章节重构（如 §6 从"六大纪律+子章节"重构为"关键路径"）后，§6.9/§6.10/§6.14
+      引用变悬空，audit_broken_links.py 明确跳过 §X.Y 锚点引用，全项目无检测机制。
+      治本：GitCommitGateway pre-commit 阶段注册 gate（priority=70），只检测新增
+      引用（git diff HEAD 对比），不阻断历史悬空引用（防卡死工作流）。fail-closed：
+      AGENTS.md 缺失/git 异常时阻断。canonical basename dangling_reference_gate
+      匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "悬空引用/dangling reference/AGENTS.md 章节号/phantom section" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类悬空引用检测脚本。
+    integrity_anchors:
+      - make_dangling_reference_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -1651,6 +1674,11 @@ creation_tokens:
     created_by: "session-trae-redteam-deadly-5"
     capability: "held_overlap_gate"
 
+  - file: "src/zephyr/governance/commit_gates/dangling_reference_gate.py"
+    token: "auto-dangling-reference-gate-20260701"
+    created_by: "session-trae-dangling-ref-gate"
+    capability: "dangling_reference_gate"
+
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/git_commit_gateway.py"
     token: "auto-git-commit-gateway-20260630"
@@ -1678,6 +1706,12 @@ creation_tokens:
     token: "auto-fix-result-prioritizer-20260701"
     created_by: "session-arch031-limit3"
     capability: "fix_result_prioritizer"
+
+  # --- ARCH-031: data_quality.py 迁移（从 governance/governance/ 到根目录，[MODULE] 标注为根目录 canonical） ---
+  - file: "src/zephyr/governance/data_quality.py"
+    token: "auto-data-quality-20260701"
+    created_by: "session-arch031-migration"
+    capability: "data_quality"
 
   # --- ARCH-031 形态治理: _service_registration.py 重命名去下划线前缀 ---
   - file: "src/zephyr/governance/service_registration.py"
