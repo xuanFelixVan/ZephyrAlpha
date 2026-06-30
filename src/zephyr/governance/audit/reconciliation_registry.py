@@ -161,7 +161,7 @@ class ReconciliationRegistry:
                     continue
                 result = spec.reconcile(committed_files, session_id)
                 results.append(result)
-            except Exception as e:  # noqa: BLE001 — drift 对账非阻断
+            except (Exception, KeyboardInterrupt) as e:  # noqa: BLE001 — drift 对账非阻断；KeyboardInterrupt 也降级（commit 已入库，reconciler 中断不应 crash 进程，治本 #2026-0701）
                 logger.warning(
                     "ReconciliationRegistry: reconciler %s failed: %s",
                     spec.gate_id, e,
@@ -1526,6 +1526,9 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
             if rel in _PG_WRITE_SCRIPTS:
                 return True
+            # 文件删除也触发：layer 1 ghost 过滤确保重生后的文档不含幽灵节点
+            if not os.path.isfile(f) and f.endswith((".py", ".yaml", ".yml")):
+                return True
         return False
 
     def _reconcile_domain_doc(committed_files: list[str], session_id: str) -> ReconcileResult:
@@ -1642,7 +1645,63 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
         priority=610,
     )
 
-    return _compose_reconcilers("GATE-REGENERATE", spec_domain_doc, spec_arch_model)
+    # === GATE-MANIFEST 逻辑（新增 2026-07-01：.py 文件增删后自动重生 script_manifest.yaml）===
+    _MANIFEST_FILE = "scripts/governance/script_manifest.yaml"
+    _MANIFEST_GEN = "scripts/governance/generators/generate_script_manifest.py"
+
+    def _trigger_manifest(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py") and rel.startswith("scripts/"):
+                return True
+        return False
+
+    def _reconcile_manifest(committed_files: list[str], session_id: str) -> ReconcileResult:
+        gen_result = subprocess.run(
+            [sys.executable, _MANIFEST_GEN],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"generate_script_manifest.py failed: {gen_result.stderr.strip()[:200]}",
+            )
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _MANIFEST_FILE]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="script manifest up to date")
+        abs_file = str(project_root / _MANIFEST_FILE)
+        auto_msg = "chore(manifest): auto-regenerate script_manifest.yaml by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, [abs_file], auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="script manifest drift detected and auto-regenerated",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="script manifest no drift",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"script manifest drift detected, auto-commit failed ({commit_result.status})",
+        )
+
+    spec_manifest = ReconcilerSpec(
+        gate_id="GATE-MANIFEST",
+        trigger=_trigger_manifest,
+        reconcile=_reconcile_manifest,
+        priority=620,
+    )
+
+    return _compose_reconcilers("GATE-REGENERATE", spec_domain_doc, spec_arch_model, spec_manifest)
 
 
 def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:

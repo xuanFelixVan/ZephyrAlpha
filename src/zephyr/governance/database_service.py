@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 DatabaseService: 统一管理三个数据库的连接池、生命周期、健康检查
 
