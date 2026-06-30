@@ -132,6 +132,34 @@ STEP 3: 复用决策（四选一）:
 
 **后果量化**: 项目已有 483 脚本 + 43 门禁 + 4,639 模块 + 10 MCP 服务器。不搜索就新建 = 在 483 个脚本里造第 484 个重复。
 
+#### 4.1 生成器发现专项（RULE-EIGHT 生成器扩展条款）
+
+**病根**: 项目历史上因"AI 不知道生成器已存在"产生 6 个死副本（wave 4 + down_migration 3 + runbook 1 + index 1）+ 1 个寄生包 llm_security_01（25 文件）。每次新 AI 想做"域架构文档/迁移脚本"，第一反应是 `scaffold.py` 新建，而不是先查 12 个现有生成器。
+
+**专项三步（生成器场景的 STEP 1-3 具化）**:
+```
+STEP G1: 关键词命中 → 在 capability_canonical_file_registry.yaml 搜索生成器名
+         （generate_path_tree / generate_domain_doc / generate_contracts / ...）
+         命中 domain_architecture_generators 条目 = 已有覆盖
+STEP G2: 对照 outputs 字段 → 12 生成器→输出目录映射，确认目标输出已被某生成器覆盖
+STEP G3: 复用决策 → 已覆盖则直接调用 scripts/governance/d5_architecture/generators/ 下源码
+         未覆盖才走 scaffold.py 新建（且 scaffold P0-4 basename 跨域查重会兜底阻断）
+```
+
+**P0 防再生门禁兜底**（生成器专项 5 道防线）:
+- N-16 src/ basename 唯一性（P0-1，check_naming_convention.py）
+- GATE-SSOT 硬层3 module_id 全局唯一（P0-2，check_ssot_gate.py）
+- GATE-SSOT 硬层4 MODULE 声明域与物理路径一致（P0-3）
+- scaffold 维度3b basename 跨域查重（P0-4，scaffold.py）
+- scaffold 自动登记 creation_token（P0-5，create_guard 闭环）
+
+**索引入口**:
+- 能力索引真源：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml) → 搜 `domain_architecture_generators`
+- 中央注册表索引：[registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → REG-GEN-001
+- AGENTS.md §11.1.0 生成器发现指引（12 生成器表 + 输出目录）
+
+**反例（已发生）**: wave_generator 真源 vs governance/wave_generator.py 死副本；down_migration_generator 真源 vs 3 个影子副本；llm_security_01 寄生包（25 文件，无消费者）。病根均为"新 AI 未执行 STEP G1 即新建"。
+
 ---
 
 ## 二、并发写入安全（RULE-ONE + RULE-SEVEN）

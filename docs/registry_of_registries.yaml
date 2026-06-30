@@ -395,6 +395,23 @@ tiers:
         query_api_class: CapabilityLookup
         cli: "python -m zephyr.governance.capability_lookup --find <keyword> | --check-file <path> | --list-conflicts | --summary"
 
+      - registry_id: REG-GEN-001
+        name: 生成器发现索引（capability registry 子集）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+        format: yaml
+        tier: tier_1_governance
+        maintenance: manual（aliases/description 随生成器增减同步）
+        entry_count: 12
+        status: active
+        description: >-
+          12 个架构生成器的发现索引——capability_canonical_file_registry.yaml 中
+          domain_architecture_generators 条目的别名+outputs 子集。AI 搜索任一生成器名
+          （如 generate_path_tree）即命中该条目。真源同 REG-CAP-001，不引入第二份文件。
+          P1-1（2026-07-01）：从 1 条聚合别名扩展为 12 条逐生成器别名（向内收）。
+          发现指引见 AGENTS.md §11.1.0。
+        owner: MOD-GOVERNANCE
+        parent_registry: REG-CAP-001
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
@@ -543,11 +560,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 50
+  total_registries: 51
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 10
-    tier_1_governance: 15
+    tier_1_governance: 16
     tier_2_runtime: 9

@@ -548,13 +548,28 @@ capabilities:
       - architecture_generators
       - generator
       - d5_generators
+      # P1-1: 逐生成器别名（AI可发现性——搜索任一生成器名即命中本条目）
+      - generate_navigation_index
+      - generate_path_tree
+      - generate_cross_domain_matrix
+      - generate_integration_topology
+      - generate_capability_heatmap
+      - generate_domain_doc
+      - generate_domain_index
+      - generate_design_vs_production
+      - generate_constraint_violations
+      - generate_capacity_report
+      - generate_domain_dependency_diagram
+      - generate_contracts
     description: >-
-      depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（14+ 生成器）。
+      depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（12 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
       输出幂等（相同 DB 输入→相同输出），零时间戳（date: auto-generated，
       最后更新以 git log 为准），禁止在生成器中使用 datetime.now()。
       GATE-DOMAIN-DOC reconciler 在 commit depgraph（PostgreSQL）后自动触发
       generate_domain_doc.py 和 generate_domain_dependency_diagram.py。
+      AI 发现路径：搜索任一生成器名（如 generate_path_tree）→ 命中本条目 →
+      outputs 字段列出生成器→输出目录映射 → scripts/governance/d5_architecture/generators/ 找源码。
     # 生成器→输出目录映射（生成器豁免区真源）
     # 落在这些目录内的新文件跳过 GitCommitGateway PROMOTION_BLOCKED 门禁
     # 对应代码：git_commit_gateway.py _GENERATOR_EXEMPT_SUBDIRS 常量
@@ -563,11 +578,13 @@ capabilities:
       - output_dir: docs/02_enterprise_architecture/00_overview_entry/
         generators: [generate_navigation_index.py]
       - output_dir: docs/02_enterprise_architecture/01_global_architecture_diagram/
-        generators: [generate_path_tree.py, generate_cross_domain_matrix.py, generate_runtime_plane_mapping.py, generate_integration_topology.py, generate_capability_heatmap.py]
+        generators: [generate_path_tree.py, generate_cross_domain_matrix.py, generate_integration_topology.py, generate_capability_heatmap.py]
       - output_dir: docs/02_enterprise_architecture/02_domain_architecture_docs/
-        generators: [generate_domain_doc.py, generate_domain_index.py]
+        generators: [generate_domain_doc.py, generate_domain_index.py, generate_domain_dependency_diagram.py]
       - output_dir: docs/02_enterprise_architecture/03_governance_reports/
         generators: [generate_design_vs_production.py, generate_constraint_violations.py, generate_capacity_report.py]
+      - output_dir: docs/02_enterprise_architecture/05_contracts/
+        generators: [generate_contracts.py]
 
   # --------------------------------------------------------------------------
   - capability_id: rule_catalog_generation
