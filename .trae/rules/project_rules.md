@@ -702,7 +702,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 
 ### 依赖方向铁律（DIP例外）
 
-**YAML真源**: → 参见 rules/trae_013_arch_cross_package_dep.yaml + [core_function_dependency_design.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/core_function_dependency_design.md)
+**YAML真源**: → 参见 rules/trae_013_arch_cross_package_dep.yaml
 
 | # | 规则 | 说明 |
 |:---:|:---|:---|
@@ -724,8 +724,6 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 1. 跨层循环：禁止。依赖方向只能从上层→下层，禁止逆向
 2. 同层循环：禁止。同层间允许单向依赖，但禁止形成环（如 F2→F4→F2 禁止）
 3. DIP例外：编排器→下层contract/event依赖不计入逆向依赖——contract依赖抽象接口，event通过事件总线解耦
-
-> 详见 [core_function_dependency_design.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/core_function_dependency_design.md)（37个功能依赖设计真源）
 
 ### 绝对禁止
 

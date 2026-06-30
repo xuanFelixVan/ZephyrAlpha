@@ -910,8 +910,6 @@ STEP 3: 评估修改对每个消费者的影响 → 无影响 → 继续 / 有�
 - **BLOCKED**：产生新循环（跨层或同层）或向上runtime依赖 → 禁止执行，必须先解决阻塞
 - **DIP例外**：编排器→下层contract(抽象接口)/event(事件总线)依赖不视为逆向依赖——对标K8s CRI/CSI、Netflix Conductor Worker API
 
-> 详见 [core_function_dependency_design.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/core_function_dependency_design.md)（37个功能依赖设计真源，含四种依赖类型定义）
-
 ### 13.3 治理顺序的因果链
 
 治理项之间有**因果关系**——前面的决定会影响后面的问题是否还需要做。**必须按因果链从根到叶执行，不能按数量从大到小。**
