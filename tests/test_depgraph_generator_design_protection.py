@@ -11,7 +11,7 @@ from pathlib import Path
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT, DB_PATH  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph"
 GENERATOR_SCRIPT = REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"
 
 
