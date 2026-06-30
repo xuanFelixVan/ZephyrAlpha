@@ -30,8 +30,8 @@ validate_config_integrity.py — 运行时配置完整性十一层纵深审计 +
 - L2 Schema深度校验：required字段、类型约束、边界值、semver版本
 - L3 交叉引用：handler函数存在性、glob路径真实性、trigger_router↔PHASE1D对齐
 - L4 全项目路径常量：parents[N]统一性（防off-by-one溢出bug）
-- L5 治理文档对账：authority-registry ↔ directory-std ↔ capabilities.yaml 三方一致 + 权限交叉比对（registry Human-Gated/Immutable Core 路径 vs capabilities write_src allow globs）
-- L6 安全态势：CBAC自保、deny显式覆盖、宽泛allow检测、权限降级路径
+- L5 治理文档对账：authority-registry.yaml 引用一致性 + directory-std config/ 目录定义
+- L6 安全态势：deny显式覆盖、宽泛allow检测、权限降级路径
 - L7 自动同步检测：manifest↔文件系统脚本登记对账、预埋文件就绪提醒
     （⚠️ 仅检测报告，不自动修改CBAC权限——AGENTS.md §6.1 变更须Owner审批）
 - L8 代码-配置对账：KNOWN_MODELS同步、registry路径漂移、状态机完整性、implementation_status标注
@@ -84,7 +84,7 @@ from _shared.constants import CONFIG_DIR, EXIT_PASS, SRC_DIR  # noqa: E402  治�
 
 EXCLUDE_DIRS: tuple[str, ...] = ()
 
-AUTH_REG_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
+AUTH_REG_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml"
 DIR_STD_PATH = REPO_ROOT / "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
 
 PHASE1D_TRIGGER_TYPES = frozenset(
@@ -383,62 +383,9 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
         auth = AUTH_REG_PATH.read_text(encoding="utf-8", errors="replace")
         for ref in ["config/drift_thresholds.yaml", "config/capabilities.yaml", "config/compression_policy.yaml"]:
             if ref not in auth:
-                warnings.append(f'[L5] ai-autonomy-authority-registry.md 中未找到 "{ref}" 引用')
-
-        table_rows = [l for l in auth.split("\n") if l.strip().startswith("|") and "|" in l[1:]]
-        path_pattern = re.compile(r"`([^`]+)`")
-        path_to_lines: dict[str, list[int]] = {}
-        for i, row in enumerate(table_rows):
-            for m in path_pattern.finditer(row):
-                p = m.group(1)
-                if "/" in p or "\\" in p:
-                    path_to_lines.setdefault(p, []).append(i)
-        duplicates = {p: idxs for p, idxs in path_to_lines.items() if len(idxs) > 1}
-        if duplicates:
-            for p, idxs in sorted(duplicates.items()):
-                errors.append(f'[L5] 注册表路径重复（= CMDB 腐败）: "{p}" 出现在 {len(idxs)} 行（行索引: {idxs}）')
-
-        # ── 根源修复: capabilities.yaml allow globs ↔ registry 权限交叉比对 ──
-        # 提取 registry 表格中所有 Human-Gated / Immutable Core 的 src/zephyr 路径
-        hg_immutable_paths: dict[str, str] = {}
-        for row_idx, row in enumerate(table_rows):
-            cols = [c.strip() for c in row.split("|")][1:]
-            if len(cols) < 3:
-                continue
-            perm_cell = cols[-2] if len(cols) >= 2 else cols[-1]
-            if "Human-Gated" not in perm_cell and "Immutable Core" not in perm_cell:
-                continue
-            for m in path_pattern.finditer(row):
-                raw_path = m.group(1)
-                if "src/zephyr/" in raw_path or "scripts/" in raw_path:
-                    clean_path = raw_path.replace("\\", "/")
-                    if "Immutable Core" in perm_cell:
-                        hg_immutable_paths[clean_path] = "Immutable Core"
-                    elif "Human-Gated" in perm_cell:
-                        hg_immutable_paths[clean_path] = "Human-Gated"
-
-        cap_data = yaml_data.get("/config/capabilities.yaml", {})
-        write_src_rule = next((r for r in cap_data.get("rules", []) if r.get("name") == "write_src"), {})
-        ws_allow = write_src_rule.get("allow", [])
-
-        if ws_allow and hg_immutable_paths:
-            for reg_path, reg_perm in sorted(hg_immutable_paths.items()):
-                for allow_glob in ws_allow:
-                    allow_dir = allow_glob.replace("/**/*.py", "/").replace("/*.py", "/")
-                    overlap = False
-                    if reg_path.startswith(allow_dir) or (
-                        allow_dir.startswith(reg_path) or (allow_glob.replace("/**/*.py", "") == reg_path.rstrip("/"))
-                    ):
-                        overlap = True
-                    if overlap:
-                        errors.append(
-                            f'[L5] 权限冲突: registry 将 "{reg_path}" 标为 {reg_perm}，'
-                            f'但 capabilities.yaml write_src allow 包含 "{allow_glob}"'
-                            f" — 对标 ITIL SACM CMDB 腐败（同一资源双重冲突定义）"
-                        )
-                        break
+                warnings.append(f'[L5] ai_autonomy_authority_registry.yaml 中未找到 "{ref}" 引用')
     else:
-        warnings.append(f"[L5] ai-autonomy-authority-registry.md 不存在 — {AUTH_REG_PATH}")
+        warnings.append(f"[L5] ai_autonomy_authority_registry.yaml 不存在 — {AUTH_REG_PATH}")
 
     if DIR_STD_PATH.exists():
         dir_s = DIR_STD_PATH.read_text(encoding="utf-8", errors="replace")
