@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.7.1
+version: 1.7.2
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -1254,7 +1254,7 @@ sections:
       - kb   # 行业通用,Knowledge Base
       note: 历史自创缩写目录(如ce/)不享受grandfathered豁免,MUST在refactor时修正
     progressive_convergence:
-      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C审查结果)
+      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C审查结果,2026-07-01更新)
       strategy: 历史违规目录不批量改名(避免过度工程),在下次refactor时顺带修正;多真源问题优先处理
       pending_directories:
       - path: src/zephyr/shared/observability_02/
@@ -1266,28 +1266,32 @@ sections:
         violation: R5数字后缀
         action: 多真源处理(与llm_security/共存;context_scanner.py仅在_01中)
         note: 需迁移context_scanner到llm_security/后删除_01;context_bridge.py:105引用_01
-      - path: src/zephyr/integration/shared/api_03/
-        violation: R5数字后缀
-        action: 多真源处理(与shared/api/文件名完全相同)
-        note: 需确认活跃真源
-      - path: src/zephyr/shared/infra_06/
-        violation: R5数字后缀
-        action: 改名infra_components/或合并到shared/根
-        note: 6文件+4测试引用
-      - path: src/zephyr/infrastructure/infra_06/
-        violation: R5数字后缀
-        action: 合并到infrastructure/根目录
-        note: 3文件,无测试引用
-      - path: src/zephyr/infrastructure/observability_02/
-        violation: R5数字后缀
-        action: 合并到infrastructure/system_telemetry/
-        note: 2文件,无测试引用
       resolved_directories:
       - path: src/zephyr/security/access_control/auto_fix_engine_03/
         violation: R5数字后缀
         action: 已删除
         status: resolved
         note: 其他session已清理
+      - path: src/zephyr/integration/shared/api_03/
+        violation: R5数字后缀
+        action: 已删除(多真源,真源在shared/api/)
+        status: resolved
+        note: "ARCH-033阶段C-3完成(commit 70e345bcc6);2处测试import更新;34测试通过"
+      - path: src/zephyr/shared/infra_06/
+        violation: R5数字后缀
+        action: 已删除(合并到shared/infra/)
+        status: resolved
+        note: "ARCH-033阶段C-4完成(commit 9981dd19db);13文件import更新(7源码+6测试);91测试通过"
+      - path: src/zephyr/infrastructure/infra_06/
+        violation: R5数字后缀
+        action: 已删除(死代码,真源在shared/infra/)
+        status: resolved
+        note: "ARCH-033阶段C-1完成(commit 905aaa828c);0外部引用"
+      - path: src/zephyr/infrastructure/observability_02/
+        violation: R5数字后缀
+        action: 已删除(死代码,__init__.py已损坏)
+        status: resolved
+        note: "ARCH-033阶段C-2完成(commit 905aaa828c);0外部引用"
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1381,9 +1385,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.7.1"
+  version: "1.7.2"
   last_modified: "2026-07-01"
   change_history:
+  - version: "1.7.2"
+    date: "2026-07-01"
+    author: "AI-Assistant"
+    change: "ARCH-033阶段C-1/C-2/C-3/C-4完成——progressive_convergence中4个R5数字后缀目录从pending迁移到resolved(infrastructure/infra_06/+infrastructure/observability_02/+integration/shared/api_03/+shared/infra_06/);当前状态:2待处理(observability_02 in_progress+llm_security_01)+5已解决"
   - version: "1.7.1"
     date: "2026-07-01"
     author: "AI-Assistant"
