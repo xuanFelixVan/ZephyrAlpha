@@ -1,40 +1,12 @@
 # [A_test] module_id: SRC-TST-1936 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-import importlib.util
 import sys
-import types
-from pathlib import Path
 from unittest.mock import MagicMock
 
-_SRC = Path(__file__).resolve().parent.parent.parent.parent / "src"
-
-
-def _ensure_pkg(name, path):
-    if name not in sys.modules:
-        m = types.ModuleType(name)
-        m.__path__ = [str(path)]
-        m.__package__ = name
-        m.__file__ = str(path / "__init__.py")
-        sys.modules[name] = m
-    elif not hasattr(sys.modules[name], "__path__"):
-        sys.modules[name].__path__ = [str(path)]
-
-
-def _load_mod(name, file_path):
-    if name in sys.modules:
-        return sys.modules[name]
-    spec = importlib.util.spec_from_file_location(name, str(file_path))
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules[name] = mod
-    spec.loader.exec_module(mod)
-    return mod
-
-
-_rb_dir = _SRC / "zephyr" / "infrastructure" / "rollback"
-
-_load_mod("zephyr.infrastructure.rollback.kill_switch", _rb_dir / "kill_switch.py")
-_load_mod("zephyr.infrastructure.rollback.rollback_lock", _rb_dir / "rollback_lock.py")
-
+# tests/conftest.py already adds src/ to sys.path.
+# Mock sqlite_dumper for rollback_executor test isolation
+# (avoids real SQLite operations during unit tests).
+# ARCH-034 P4: replaced manual importlib.util.spec_from_file_location loading
+# (caused circular-import deadlocks via governance.audit_trail chain) with
+# normal imports — test files import what they need directly.
 sys.modules.setdefault("zephyr.infrastructure.rollback.sqlite_dumper", MagicMock())
-
-_load_mod("zephyr.infrastructure.rollback.rollback_executor", _rb_dir / "rollback_executor.py")

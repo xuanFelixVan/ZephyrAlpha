@@ -51,6 +51,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from zephyr.infrastructure.rollback.concurrency_guard import (
+    check_rollback_conflict,
+    classify_uncommitted_files,
+)
 from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
 from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界

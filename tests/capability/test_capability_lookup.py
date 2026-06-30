@@ -1134,17 +1134,18 @@ def test_find_ascii_multi_word_real_registry():
     assert "vocab_hardcode_detector" not in cap_ids
 
 
-def test_real_registry_has_ssot_conflict():
-    """集成测试：真实注册表应派生出 rollback_executor 的 SSoT 冲突。
+def test_real_registry_ssot_conflict_resolved_for_rollback_executor():
+    """集成测试：rollback_executor SSoT 冲突已解决。
 
-    scan=True 派生：governance/rollback_executor.py (prototype) 与
-    infrastructure/rollback/rollback_executor.py (production) 同 basename +
-    同蓝图 MOD-INF-021 → conflicting。
+    ARCH-034 P4 删除 governance/rollback_executor.py 孤儿副本后，
+    rollback_executor 不再出现在 list_ssot_conflicts() 中。
+    rollback_executor 曾是唯一已登记的 SSoT 冲突
+    （capability_canonical_file_registry.yaml 显式标注）。
     """
     reg = CapabilityLookup(scan=True, derive_removed=False)
     conflicts = reg.list_ssot_conflicts()
     cap_ids = {c["capability_id"] for c in conflicts}
-    assert "rollback_executor" in cap_ids
+    assert "rollback_executor" not in cap_ids
 
 
 def test_real_registry_canonical_derived():

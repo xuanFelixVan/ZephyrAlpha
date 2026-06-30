@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只读扫描 .ailocks/；不修改锁状态；BLOCKED 时返回冲突不执行回滚
-# [MODIFY-GUARD] 修改需同步 governance/rollback_executor.py 副本（SSoT 违规待统一）
+# [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

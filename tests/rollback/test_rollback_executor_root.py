@@ -18,13 +18,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.rollback_executor import (
+from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     PreflightResult,
     PreviewResult,
     RollbackExecutor,
     RollbackOp,
-    RollbackResult,
+    RollbackExecutionResult,
 )
 
 
@@ -243,7 +243,7 @@ class TestHardReset:
     def test_hard_reset_with_token(self, executor: RollbackExecutor):
         with patch.object(executor, "_lsg_verify_critical_operation"):
             with patch.object(executor, "_execute") as mock_exec:
-                mock_exec.return_value = RollbackResult(
+                mock_exec.return_value = RollbackExecutionResult(
                     success=True,
                     operation=RollbackOp.HARD_RESET,
                     commit_sha="abc1234",

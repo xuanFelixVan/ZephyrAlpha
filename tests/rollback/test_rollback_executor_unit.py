@@ -23,13 +23,13 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.rollback_executor import (
+from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     DiscardResult,
     PreviewResult,
     RollbackExecutor,
     RollbackOp,
-    RollbackResult,
+    RollbackExecutionResult,
 )
 
 
@@ -206,7 +206,7 @@ class TestRollbackOrDiscard:
             patch.object(exec, "full_revert") as mock_revert,
             patch.object(exec, "_write_audit_log"),
         ):
-            mock_revert.return_value = RollbackResult(
+            mock_revert.return_value = RollbackExecutionResult(
                 success=True,
                 operation=RollbackOp.FULL_REVERT,
                 commit_sha="abc123",
@@ -229,7 +229,7 @@ class TestHardReset:
     def test_hard_reset_with_token(self):
         exec = RollbackExecutor()
         with patch.object(exec, "_lsg_verify_critical_operation"), patch.object(exec, "_execute") as mock_exec:
-            mock_exec.return_value = RollbackResult(
+            mock_exec.return_value = RollbackExecutionResult(
                 success=True,
                 operation=RollbackOp.HARD_RESET,
                 commit_sha="abc123",
@@ -311,7 +311,7 @@ class TestDiscardConcurrencyGuard:
         )
         with (
             patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
-            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+            patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
         ):
             result = exec.discard_changes(["file.py"], force=False)
             assert not result.success
@@ -326,7 +326,7 @@ class TestDiscardConcurrencyGuard:
         conflict = ConflictResult(has_conflict=False, blocked_files=[])
         with (
             patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
-            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+            patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
             patch.object(exec, "_run_git", return_value=""),
@@ -353,7 +353,7 @@ class TestExecuteConcurrencyGuard:
         )
         with (
             patch.object(exec, "_resolve_conflict_files", return_value=["src/a.py"]),
-            patch("zephyr.governance.rollback_executor.check_rollback_conflict", return_value=conflict),
+            patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
             patch.object(exec, "_write_in_flight"),
             patch.object(exec, "_write_op_audit"),
         ):
@@ -367,7 +367,7 @@ class TestExecuteConcurrencyGuard:
 
     def test_execute_stash_blocked_other_session_files(self):
         """stash 前发现其他 session 未提交文件 → 阻断"""
-        from zephyr.governance.rollback_executor import PreflightResult
+        from zephyr.infrastructure.rollback.rollback_executor import PreflightResult
         from zephyr.infrastructure.rollback.concurrency_guard import StashPlan
 
         exec = RollbackExecutor()
@@ -391,7 +391,7 @@ class TestExecuteConcurrencyGuard:
             patch.object(exec, "preflight_check", return_value=preflight),
             patch.object(exec, "get_uncommitted_files", return_value=["own.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=["other.py"]),
-            patch("zephyr.governance.rollback_executor.classify_uncommitted_files", return_value=stash_plan),
+            patch("zephyr.infrastructure.rollback.rollback_executor.classify_uncommitted_files", return_value=stash_plan),
             patch.object(exec, "_write_in_flight"),
             patch.object(exec, "_write_op_audit"),
         ):

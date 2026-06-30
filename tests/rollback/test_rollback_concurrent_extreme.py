@@ -171,8 +171,6 @@ class TestBudgetExhaustion:
 
     def test_budget_exhausted_rejects_new_rollback(self, executor):
         """When rollback budget is exhausted, new rollback should be rejected."""
-        from zephyr.infrastructure.rollback.rollback_executor import RollbackResult
-
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
             with patch.object(executor, "_run_git", return_value="src/file.py"):
                 # Mock lock to simulate budget exhaustion

@@ -134,10 +134,9 @@ capabilities:
       - RollbackExecutor
     description: >-
       回滚执行器核心封装。canonical = src/zephyr/infrastructure/rollback/
-      rollback_executor.py（auto 派生：basename rollback_executor 匹配 capability_id，
-      多候选按成熟度排序——infrastructure 版 production > governance 版 prototype）。
-      duplicates (auto): governance/rollback_executor.py（同蓝图 MOD-INF-021，
-      relation=conflicting，头部 [MODULE] 错声明为 infrastructure 路径——需 Owner 裁定）。
+      rollback_executor.py（auto 派生：basename rollback_executor 匹配 capability_id）。
+      ARCH-034 P4 已删除 governance/rollback_executor.py 孤儿副本（prototype，
+      无消费者，SSoT 冲突已消除）。
 
   # --------------------------------------------------------------------------
   - capability_id: drift_fix
