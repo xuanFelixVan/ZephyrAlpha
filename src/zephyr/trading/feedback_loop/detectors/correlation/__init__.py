@@ -1,19 +1,20 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors._correlation
+# [MODULE] zephyr.trading.feedback_loop.detectors.correlation
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS] zephyr.trading.feedback_loop.detectors.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] _SUBMODULES列表不变
-# [MODIFY-GUARD] 新增子模块须同步更新__init__.py的__all__
+# [MODIFY-GUARD] 新增子模块须同步更新detectors/__init__.py的__all__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
-# [A_module] module_id=MOD-UNK__correlation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_correlation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
+# [GOV-DOC-018] 子包correlation: 跨信号/系统关联与因果族（DW-244分类，原_correlation.py聚合迁移而来）
 
 _SUBMODULES = [
     "cross_signal_validator",
