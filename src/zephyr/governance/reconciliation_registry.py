@@ -1537,6 +1537,10 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 docs/ 下 .md 变更（reconciler 执行时工作区只有本次修改，
         #    其他 session 修改已被 stash 隔离）
+        #    只提交 .md 变更——reconciler 目的是重判 docs/*.md 的 ttl（docstring 明确）；
+        #    .yaml/.json 等规则文件的 body section 变更不应由 reconciler 代提交
+        #    （防御 backfill_ttl_metadata.py 误改 rules/*.yaml 的 body section，
+        #     2026-06-30 红蓝对抗修复：曾因无 .md 过滤误删 trae_001 ttl_design section）
         diff_result = gateway._run_git(
             ["git", "diff", "--name-only", "--", "docs/"]
         )
@@ -1546,7 +1550,8 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"git diff failed: {diff_result.stderr.strip()[:200]}",
             )
         changed_files = [
-            f.strip() for f in diff_result.stdout.strip().splitlines() if f.strip()
+            f.strip() for f in diff_result.stdout.strip().splitlines()
+            if f.strip() and f.strip().endswith(".md")
         ]
         if not changed_files:
             return ReconcileResult(
@@ -1740,7 +1745,7 @@ def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         return True
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 扫描最近 N 个 commit
+        # 1. 扫描最近 N 个 commit（--oneline 快速扫描 subject）
         log_result = subprocess.run(
             ["git", "log", f"-{_AUDIT_WINDOW}", "--oneline"],
             cwd=str(project_root),
@@ -1757,6 +1762,9 @@ def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             )
 
         # 2. 解析，标记无 [GW: 标记的 commit（跳过 merge commit）
+        #    两阶段检查：subject 快速扫描 + body 二次确认
+        #    （GitCommitGateway.commit() 把 [GW:tag] 追加到 message 末尾用 \n\n 分隔，
+        #     --oneline 只看 subject 会误判手动 commit 为裸 commit，需查 body）
         violations: list[dict] = []
         for line in log_result.stdout.strip().splitlines():
             # format: <hash> <subject>
@@ -1767,8 +1775,21 @@ def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             # 跳过 merge commit（合并提交无作者意图）
             if subject.startswith("Merge "):
                 continue
-            if _GW_MARKER not in subject:
-                violations.append({"hash": commit_hash, "subject": subject[:120]})
+            if _GW_MARKER in subject:
+                continue  # subject 已含 [GW:（reconciler auto-commit）
+            # subject 无 [GW: → 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
+            body_result = subprocess.run(
+                ["git", "show", "-s", "--format=%B", commit_hash],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=5,
+            )
+            if body_result.returncode == 0 and _GW_MARKER in body_result.stdout:
+                continue  # body 含 [GW:（手动 commit 经 GitCommitGateway）
+            violations.append({"hash": commit_hash, "subject": subject[:120]})
 
         # 3. 报告落盘
         report = {

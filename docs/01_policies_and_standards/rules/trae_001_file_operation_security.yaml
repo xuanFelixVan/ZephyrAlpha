@@ -57,6 +57,22 @@ sections:
     - check 返回 LOCKED 后仍然写文件
     - 用 Write 工具绕过 lock_files.py
     - 写完后不执行 release（死锁）
+  ttl_design:
+    section_type: rule
+    title: TTL 设计说明（3 处文件锁 TTL 一致 + session TTL 差异化）
+    original_rules: []
+    conditions:
+    - type: pre_condition
+      check: 'lock_files.DEFAULT_TTL_S / session_concurrency.LOCK_TTL_SECONDS / staging_area._TTL_SECONDS 是否一致？'
+      pass: 文件锁 TTL=1800s 一致（3 处）
+      fail: 强行统一会破坏设计
+    actions:
+    - type: mandatory
+      step: '文件锁 TTL=1800s（30min，AI 对话级锁）：lock_files.DEFAULT_TTL_S / session_concurrency.LOCK_TTL_SECONDS / staging_area._TTL_SECONDS 三处一致。session TTL=3600s（1h，session 生命周期，比单次锁长，差异化设计合理，禁止统一）。stale 判定先查 PID 存活（is_pid_alive 真源唯一 process_pool.py），PID 已死立即清理，不靠 TTL 过期。'
+    prohibitions:
+    - 强行统一文件锁 TTL 与 session TTL（用途不同，差异化设计合理）
+    - 在代码中硬编码 TTL 常量而不引用本 YAML ttl_design section（漂移源）
+    - 本地重复定义 _pid_alive（AGENTS.md §8 is_pid_alive 真源声明，真源唯一 process_pool.is_pid_alive）
   atomic_write:
     section_type: procedure
     title: Python脚本并发写入安全
