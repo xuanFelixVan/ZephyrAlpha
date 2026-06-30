@@ -462,16 +462,6 @@ capabilities:
       - _check_protected_script_integrity  # 完整性校验本身(自指保护,删则integrity_anchors校验失效)
       - _check_pure_assertion     # 纯陈述门禁(删则GOV-DOC-016失效)
       - _check_pure_shim          # shim门禁(删则GATE-NO-PURE-SHIM失效)
-      # 治本（2026-06-30 红攻9 深度调研）：commit 守卫核心组件 A 层 AST 锚点保护。
-      # _run_git 是 git 命令执行 + commit 守卫的锁芯（检测裸 git commit + _in_commit_flow 标志，
-      # 删则守卫失效，reconciler 闭包可绕过 _commit_auto 裸调 git commit）；
-      # _commit_with_file_message 是 commit 真源（设 _in_commit_flow=True 的唯一合法点，
-      # 篡改即守卫机制失效）。
-      # 注：_in_commit_flow 不加入——_collect_nodes 不收集 Attribute target
-      # （self._in_commit_flow = False 的 target 是 ast.Attribute 非 ast.Name），加入无效；
-      # 且手动设 _in_commit_flow=True 属故意绕过（自指悖论固有边界，技术无法防止）。
-      - _run_git                  # git命令执行+commit守卫(删则_in_commit_flow守卫失效,P3治本)
-      - _commit_with_file_message # commit真源(设_in_commit_flow=True的唯一合法点,P4治本)
 
   # --------------------------------------------------------------------------
   - capability_id: git_commit_cli_staged_delete
@@ -943,6 +933,72 @@ capabilities:
       - make_claim_required_gate    # gate 工厂(删则 gate 不注册)
 
 # ============================================================================
+# creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
+# ============================================================================
+# 用途:
+#   CREATE-GUARD 门禁（zephyr.governance.commit_gates.create_guard）在 commit 时
+#   检测 staged 新增 .py 文件是否在此登记。未登记 → 硬阻断（禁止造第二真源，
+#   trae_060 §2）。已登记 → 放行。
+#
+#   治本"造第二真源"根因：强制 AI 在创建新 .py 文件前先登记 token（声明创建意图
+#   + 关联 capability），把检测点从"commit 时"前移到"创建前"。
+#
+# 字段结构:
+#   - file:        相对仓库根的 .py 文件路径（正斜杠，与 git diff 输出对齐）
+#   - token:       creation_token 标识（auto-<capability>-<date> 格式）
+#   - created_by:  创建该文件的 session_id
+#   - capability:  关联的 capability_id（见上方 capabilities 清单）
+#
+# 维护规则:
+#   - 新建 .py 文件前 MUST 先在此登记 token，否则 commit 被 CREATE-GUARD 阻断
+#   - tests/ 下的 .py 文件豁免（测试非能力真源，对标 capability_overlap_gate 设计）
+#   - 已存在的 .py 文件（git 已跟踪）不需登记（CREATE-GUARD 只检查 --diff-filter=A 新增）
+# ============================================================================
+creation_tokens:
+
+  # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
+  - file: "src/zephyr/governance/commit_gates/create_guard.py"
+    token: "auto-create-guard-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "create_guard"
+
+  - file: "src/zephyr/governance/commit_gates/capability_overlap_gate.py"
+    token: "auto-capability-overlap-gate-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "capability_overlap_gate"
+
+  - file: "src/zephyr/governance/commit_gates/claim_required_gate.py"
+    token: "auto-claim-required-gate-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "claim_required_gate"
+
+  - file: "src/zephyr/governance/commit_gates/directory_contract_gate.py"
+    token: "auto-directory-contract-gate-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "directory_contract_checker"
+
+  - file: "src/zephyr/governance/commit_gates/held_overlap_gate.py"
+    token: "auto-held-overlap-gate-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "held_overlap_gate"
+
+  # --- governance/ 核心文件（示例条目） ---
+  - file: "src/zephyr/governance/git_commit_gateway.py"
+    token: "auto-git-commit-gateway-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "completes_when_validator"
+
+  - file: "src/zephyr/governance/worktree_manager.py"
+    token: "auto-worktree-manager-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "session_worktree_isolation"
+
+  - file: "src/zephyr/governance/commit_gate_registry.py"
+    token: "auto-commit-gate-registry-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "commit_gate_registry"
+
+# ============================================================================
 # 维护日志
 # ============================================================================
 # 2026-06-26 v1.0.0 初版。种子 2 条：session_handoff_continuity + rollback_executor。
@@ -994,3 +1050,11 @@ capabilities:
 #   - 治本（2d 可发现性）：新 AI 搜 "数据库连接/pg连接/sqlite连接/get_db_connection" 能定位真源
 #   - 治本（2c 防重建）：check_file_canonical() 反查 + AGENTS.md §11.4 警告阻止新建第三个同名函数
 #   - 红蓝对抗发现：此前 capability_lookup.find("get_db_connection") 返回空，新 AI 可能重复造轮子
+# 2026-06-30 新增 creation_tokens 顶层字段（CREATE-GUARD 门禁治本"造第二真源"）：
+#   - 用户 A/A/A 决策③：create_guard 阻断模式（无 creation_token 的 .py 提交硬阻断）
+#   - 治本根因：AI 新建 .py 文件时可能复制已有实现（违反 trae_060 §2 唯一真源原则），
+#     现有缓解（GATE-SSOT + capability_overlap_gate warn-only）均在 commit 时检测，滞后于创建。
+#     creation_tokens 强制 AI 创建前先登记 token，把检测点从"commit 时"前移到"创建前"。
+#   - 字段结构：[{file, token, created_by, capability}]
+#   - 种子 8 条：commit_gates/ 5 个 gate 文件 + governance/ 3 个核心文件（gateway/worktree/registry）
+#   - tests/ 豁免：测试非能力真源，对标 capability_overlap_gate 设计

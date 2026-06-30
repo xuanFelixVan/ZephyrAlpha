@@ -61,12 +61,12 @@ from zephyr.governance.reconciliation_registry import (
     make_deprecated_directory_reconciler,
     make_rule_file_audit_reconciler,
     make_exempt_zone_frontmatter_reconciler,
-    make_ttl_reconciler,
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
 from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
+from zephyr.governance.commit_gates.create_guard import make_create_guard
 from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
@@ -229,12 +229,13 @@ class GitCommitGateway:
             self._registry = SessionRegistry(self.project_root)
         self._reconciliation_registry = ReconciliationRegistry()
         self._register_default_reconcilers()
-        # pre-commit 门禁注册表（架构债务 #AD-001 治本：4 个 in-process gate 替代 12 个硬编码 _check_*）
+        # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
+        self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 
@@ -285,7 +286,6 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
         self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))
         self._reconciliation_registry.register(make_exempt_zone_frontmatter_reconciler(self))
-        self._reconciliation_registry.register(make_ttl_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
