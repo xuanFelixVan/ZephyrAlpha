@@ -33,9 +33,9 @@
 #       新增模块时只需注册 module_id/title/path/status，无需手动同步 doc_type。
 
 module_id: MOD-GOVERNANCE
-registry_version: "2.2.0"
-last_updated: "2026-05-08"
-total_registered: 141
+registry_version: "2.4.0"
+last_updated: "2026-06-30"
+total_registered: 74  # P8-FIX-S0（2026-06-30）：从 141 修正为实际条目数（74 个文档规则模块）。原值 141 包含 66 个代码模块但 registered_modules 为空。S0-4 reconciler 将实现自动派生。
 
 # ID 分配规则
 allocation_rules:
@@ -81,6 +81,12 @@ allocation_rules:
     5. 校验正则：module_id 不得包含父编号+后缀模式（如 XXX-001-SUFFIX）
 
 # 已注册的文档规则模块 ID
+# P8-FIX-S0（2026-06-30）全局说明：
+# 以下 status=draft 条目的 path 若指向 governance/ / operational/ / domains/ 子目录，
+# 均为"未来规划位置"——这些目录在磁盘上尚未创建，文件也不存在。
+# 新增相关规则时，应优先放入 rules/trae_*.yaml（与现有规则一致），而非创建 governance/ 目录。
+# 这些 draft 条目保留仅为记录"已规划但未创建"的意图，不应被 AI 视为可引用的现有文件。
+# 已修正的 active 条目（GOV-AI-003/004, GOV-TASK-001/004/005）已指向 rules/ 下的实际文件。
 registered_ids:
   # === PS 元标准层 ===
   - module_id: PS-STD-000
@@ -235,34 +241,39 @@ registered_ids:
     status: active
   - module_id: GOV-AI-003
     title: "AI 幻觉自检清单"
-    path: "docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml"
     status: active
+    note: "P8-FIX-S0（2026-06-30）：原路径 governance/ai/ai-hallucination-self-check-policy.md 为幻影路径（governance/ 目录不存在），修正为实际文件 trae_039_ai_hallucination_detection.yaml（rule_catalog_registry.yaml aliases 确认）"
   - module_id: GOV-AI-004
     title: "双编辑器协作规则"
-    path: "docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md"
+    path: "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml"
     status: active
+    note: "P8-FIX-S0（2026-06-30）：原路径 governance/ai/dual-editor-collaboration-policy.md 为幻影路径，修正为实际文件 trae_040_ai_model_routing.yaml（§双编辑器编码安全规则）"
   - module_id: GOV-AI-006
     title: "AI 模型能力矩阵契约"
-    path: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
+    path: "docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml"
     status: active
   - module_id: GOV-AI-007
     title: "Session Log 标准 Schema"
-    path: "docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml"
+    path: "docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml"
     status: active
 
   # === GOV 任务治理层 ===
   - module_id: GOV-TASK-001
     title: "任务卡规范标准"
-    path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
+    path: "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml"
     status: active
+    note: "P8-FIX-S0（2026-06-30）：原路径 governance/task/task-card-standard.md 为幻影路径，修正为实际文件 trae_034_task_card_standard.yaml（rule_catalog_registry.yaml aliases 确认）"
   - module_id: GOV-TASK-004
-    title: "任务生命周期治理标准"
-    path: "docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md"
+    title: "任务生命周期治理标准（已合并至 trae_034）"
+    path: "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml"
     status: active
+    note: "P8-FIX-S0（2026-06-30）：原路径 governance/task/task-lifecycle-standard.md 为幻影路径，修正为 trae_034_task_card_standard.yaml（aliases 包含 GOV-TASK-004）"
   - module_id: GOV-TASK-005
-    title: "任务关闭标准"
-    path: "docs/01_policies_and_standards/governance/task/task-closure-standard.md"
+    title: "任务关闭标准（已合并至 trae_034）"
+    path: "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml"
     status: active
+    note: "P8-FIX-S0（2026-06-30）：原路径 governance/task/task-closure-standard.md 为幻影路径，修正为 trae_034_task_card_standard.yaml（aliases 包含 GOV-TASK-005）"
 
   # === GOV 安全层 ===
   - module_id: GOV-SEC-001
@@ -409,7 +420,7 @@ registered_ids:
 # 代码模块 ID 注册表
 # population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
 # planned_count: ~110（估算：14 层 ~90 + shared ~5 + frontend ~7 + scripts ~8）
-registered_modules: []  # 代码模块在各分区 YAML 中定义——AUDIT-04 填充后 total_registered=138 含 72 文档规则 + 66 代码模块
+registered_modules: []  # 代码模块在各分区 YAML 中定义——P8-FIX-S0（2026-06-30）：registered_modules 仍为空，total_registered=74 仅含 registered_ids 条目数。代码模块 ID 应从 layers/*.yaml 自动派生（S0-4 reconciler 将实现）。
 # TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）

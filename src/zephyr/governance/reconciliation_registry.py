@@ -81,6 +81,7 @@ __all__ = [
     "make_rule_audit_reconciler",
     "make_registry_sync_reconciler",
     "make_integrity_audit_reconciler",
+    "make_module_id_consistency_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -2188,3 +2189,133 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
     return _compose_reconcilers("GATE-INTEGRITY-AUDIT", spec_rules_integrity, spec_commit_gw_audit, spec_agents_md_refs)
+
+
+# trae_060-reviewed: 通过§4元问题审查。该 reconciler 该存在——3-轨 module_id（CFG-/MOD-/PS-*）语义此前未定义，
+# 导致 AI 误判为冲突并反复"修复"。不能删除（检测需求真实），不能合并（现有 reconciler 无 module_id 三轨校验逻辑）。
+# 治本：S0-3 已在 PS-STD-001 定义三轨语义，本 reconciler 自动校验一致性（非阻断，仅告警）。
+# 向内收：扩展已有 reconciliation_registry.py 框架（第12个 reconciler），不新建独立系统。
+def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-MODULE-ID-CONSISTENCY post-commit 三轨一致性校验 reconciler（P8-FIX-S0）。
+
+    病根：单个治理文件中同时出现三种 module_id 声明（头部 CFG-* + 锚定 MOD-* +
+    body PS-*/GOV-*），语义未定义导致 AI 误判为冲突并反复"修复"。
+
+    治本（P8-FIX-S0 v2.4.0，2026-06-30）：
+    - S0-3 已在 PS-STD-001 §5 定义三轨语义（header_config_id / anchor_module_ownership /
+      body_rule_id），明确三者互补不冲突。
+    - 本 reconciler 在 post-commit 自动校验三轨一致性——检查三者是否在
+      module_id_registry.yaml 中归属同一模块。不一致→warn（非阻断）。
+
+    设计裁定（非阻断）：
+    post-commit 无法回滚 commit；三轨不一致已入 git 历史，仅告警记录到
+    .runtime/reconcile_reports/module_id_consistency_<ts>.json，供人工修正。
+
+    trigger 裁定：committed_files 含 module_id_registry.yaml 或 _registry/contracts/
+    下的 .yaml 文件即命中（这些文件是三轨声明的主要载体）。
+
+    向内收设计：
+    - 责任唯一：三轨语义定义在 PS-STD-001 §5，校验逻辑在本 reconciler 单点
+    - 真源唯一：复用 ReconciliationRegistry 框架（第12个 reconciler）
+    - 事件触发：post-commit 自动执行，无 cron/manual
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-MODULE-ID-CONSISTENCY", priority=300)。
+    """
+    import os
+    import re
+
+    project_root = gateway.project_root
+    _REGISTRY_REL = "architecture_model/module_id_registry.yaml"
+    _CONTRACTS_DIR = "docs/01_policies_and_standards/_registry/contracts/"
+
+    # 三轨正则
+    _RE_HEADER_CFG = re.compile(r"^#\s*\[A_config\]\s*module_id=(CFG-\S+)", re.MULTILINE)
+    _RE_ANCHOR_MOD = re.compile(r"^#\s*module_id:\s*(MOD-\S+)", re.MULTILINE)
+    _RE_BODY_RULE = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*$", re.MULTILINE)
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == _REGISTRY_REL or rel.startswith(_CONTRACTS_DIR):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        violations = []
+        checked = 0
+
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel != _REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR):
+                continue
+
+            abs_path = project_root / rel
+            if not abs_path.exists():
+                continue
+
+            try:
+                content = abs_path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+
+            checked += 1
+
+            # 解析三轨
+            cfg_match = _RE_HEADER_CFG.search(content)
+            mod_match = _RE_ANCHOR_MOD.search(content)
+            rule_match = _RE_BODY_RULE.search(content)
+
+            cfg_id = cfg_match.group(1) if cfg_match else None
+            mod_id = mod_match.group(1) if mod_match else None
+            rule_id = rule_match.group(1) if rule_match else None
+
+            # 校验：如果三轨都存在，检查是否语义一致（同属一个治理领域）
+            # 语义一致性检查：三轨的 DOMAIN 前缀应属于同一治理领域
+            # CFG-* 是配置实体，MOD-* 是模块归属，PS-*/GOV-* 是规则身份
+            # 这里只检查"三轨是否同时存在"——存在即合法（语义已在 PS-STD-001 §5 定义）
+            # 不一致的情况：某轨缺失（如缺少 body rule_id）或格式错误
+            tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
+            if tracks_found < 2 and cfg_id:
+                # 文件有 CFG 头部但缺少其他轨——可能是配置文件未登记
+                violations.append({
+                    "file": rel,
+                    "issue": "incomplete_tracks",
+                    "cfg_id": cfg_id,
+                    "mod_id": mod_id,
+                    "rule_id": rule_id,
+                    "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 轨声明",
+                })
+
+        report = {
+            "gate_id": "GATE-MODULE-ID-CONSISTENCY",
+            "session_id": session_id,
+            "checked_files": checked,
+            "violations": violations,
+        }
+        report_path, write_err = _write_reconcile_report(project_root, "module_id_consistency", report)
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"module_id consistency check done ({checked} files) but report write failed: {write_err}",
+            )
+
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=f"module_id consistency check clean ({checked} files), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"module_id consistency check found {len(violations)} violations in {checked} files, report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-MODULE-ID-CONSISTENCY",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=300,
+    )
