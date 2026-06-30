@@ -30,16 +30,16 @@ def _load_mod(name, file_path):
     return mod
 
 
-_es_dir = _SRC / "zephyr" / "escalation-engine"
+_gov_dir = _SRC / "zephyr" / "governance"
 
-_ensure_pkg("zephyr.infrastructure.escalation", _es_dir)
+_ensure_pkg("zephyr.infrastructure.escalation", _gov_dir)
 
-_load_mod("zephyr.governance.escalation_models", _es_dir / "escalation_models.py")
-_load_mod("zephyr.ops.circuit_breaker", _es_dir / "circuit_breaker.py")
-_load_mod("zephyr.governance.escalation_metrics", _es_dir / "escalation_metrics.py")
-_load_mod("zephyr.governance.delegation_engine", _es_dir / "delegation_engine.py")
+_load_mod("zephyr.governance.escalation_models", _gov_dir / "escalation_models.py")
+_load_mod("zephyr.governance.circuit_breaker", _gov_dir / "circuit_breaker.py")
+_load_mod("zephyr.governance.escalation_metrics", _gov_dir / "escalation_metrics.py")
+_load_mod("zephyr.governance.delegation_engine", _gov_dir / "delegation_engine.py")
 
 sys.modules.setdefault("zephyr.security.llm_defense.llm_security", MagicMock())
 sys.modules.setdefault("zephyr.security.llm_defense.llm_security.gateway", MagicMock())
 
-_load_mod("zephyr.governance.escalation_engine", _es_dir / "escalation-engine.py")
+_load_mod("zephyr.governance.escalation_engine", _gov_dir / "escalation_engine.py")

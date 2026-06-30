@@ -1,13 +1,13 @@
 # [A_test] module_id: SRC-TST-0522 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §test
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §test
 # [MODULE] tests.test_circuit_breaker_types
 # [INVARIANTS] Values MUST align with shared.schema.severity_types.CircuitBreakerState
-# [MODIFY-GUARD] src/zephyr/db/circuit_breaker_types.py
+# [MODIFY-GUARD] src/zephyr/shared/schema/severity_types.py
 # [CONSUMERS] pytest
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ImportError->skip_module
+# [ERROR_CONTRACT] none
 # [TESTS] tests/test_circuit_breaker_types.py
 # [TTL] task_bound
 
@@ -15,8 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-cbt_mod = pytest.importorskip("zephyr.ops.circuit_breaker_types")
-CircuitBreakerState = cbt_mod.CircuitBreakerState
+from zephyr.shared.schema.severity_types import CircuitBreakerState
 
 
 class TestCircuitBreakerStateEnum:

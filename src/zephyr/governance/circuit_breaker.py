@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §2.3
-# [MODULE] zephyr.ops.circuit_breaker
-# [DOMAIN] D_OPS
+# [MODULE] zephyr.governance.circuit_breaker
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] zephyr.governance.escalation_engine;zephyr.governance.__init__
+# [CONSUMERS] zephyr.governance.escalation_engine;zephyr.governance.escalation;zephyr.governance.self_test
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] SSoT=shared/resilience/circuit_breaker(MOD-INF-016);error_budget是022特有扩展;接口保持call()->bool兼容
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/shared/resilience/circuit_breaker.py
+# [INVARIANTS] error_budget是022特有扩展;接口call()->bool;与shared/resilience/circuit_breaker(MOD-INF-016)是不同实现(016用call(func)->raises)
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.ops.circuit_breaker import (
+from zephyr.governance.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerOpenError,
     CircuitState,

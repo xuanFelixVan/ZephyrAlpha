@@ -45,7 +45,7 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
-from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
+from zephyr.governance.circuit_breaker import CircuitBreaker, CircuitState
 
 
 class EscalationEngine:

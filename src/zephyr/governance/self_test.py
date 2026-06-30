@@ -75,7 +75,7 @@ def run_self_test() -> SelfTestReport:
             EscalationState,
             RuleCategory,
         )
-        from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitState
+        from zephyr.governance.circuit_breaker import CircuitBreaker, CircuitState
 
         check_results.append(CheckResult("import_chain", True, detail="All core symbols importable"))
     except ImportError as e:

@@ -80,7 +80,7 @@ DECISION_MAP: list[DecisionMapping] = [
         "D-022-05",
         "引擎故障处理 fail-safe",
         DecisionStatus.IN_PROGRESS,
-        "zephyr.ops.circuit_breaker",
+        "zephyr.governance.circuit_breaker",
         "CircuitBreaker 提供降级保护",
     ),
     DecisionMapping(

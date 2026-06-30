@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.circuit_breaker import (
+from zephyr.governance.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,
     CircuitState,

@@ -17,11 +17,9 @@
 
 from __future__ import annotations
 
-import importlib as _il
 from enum import Enum
 
-_mod = _il.import_module("zephyr.ops.circuit_breaker_types")
-CircuitBreakerState = _mod.CircuitBreakerState
+from zephyr.shared.schema.severity_types import CircuitBreakerState
 
 __all__ = [
     "AuditSeverity",
