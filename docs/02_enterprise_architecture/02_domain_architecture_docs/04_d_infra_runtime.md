@@ -474,7 +474,7 @@ graph TD
 | 55 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | production | generated |
 | 56 | src/zephyr/infrastructure/compensation/__init__.py | src/zephyr/infrastructure/compensatio... | production | generated |
 | 57 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | production | generated |
-| 58 | src/zephyr/infrastructure/config/shared/config/__init__.py | src/zephyr/infrastructure/config/shar... | production | generated |
+| 58 | ~~src/zephyr/infrastructure/config/shared/config/__init__.py~~ | ❌ ARCH-038 已删除 | production | generated |
 | 59 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | generated |
 | 60 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | generated |
 | 61 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | generated |

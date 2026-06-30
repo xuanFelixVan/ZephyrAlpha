@@ -38,7 +38,7 @@ ttl: permanent
 |---------|:---:|------|
 | RI-01 EventBus | **MOD-INF-016** | `shared/observer.py` + `shared/events/` + `shared/events/dlq.py` |
 | RI-02 ModuleLifecycle | **MOD-INF-016** | `lifecycle_manager/hooks.py` |
-| RI-03 ConfigCenter | **MOD-INF-016** | `shared/config/` + `shared/flags.py` |
+| RI-03 ConfigCenter | **MOD-INF-016** | `infrastructure/config/load_config.py` + `shared/flags.py`（ARCH-038: `shared/config/` 已退役，虚假统一空壳） |
 | RI-04 DependencyInjector | **MOD-INF-016** (planned) | `shared/production/di_container.py`（待施工） |
 | RI-05 ResilienceGuard | **MOD-INF-016** | `shared/resilience/` |
 | RI-06 IdempotencyGuard | **MOD-INF-016** | `shared/production/idempotency.py` |
