@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "e409091cec02d5c0",
+      "hash": "1748267566098e79",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -56,11 +56,11 @@
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "89d5c89397549248",
+      "hash": "75e208243d68742d",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T04:50:22.384687+00:00",
-  "last_check_at": "2026-06-30T04:50:22.384687+00:00"
+  "registered_at": "2026-06-30T04:55:32.173094+00:00",
+  "last_check_at": "2026-06-30T04:52:38.676378+00:00"
 }
