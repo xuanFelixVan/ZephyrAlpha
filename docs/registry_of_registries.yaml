@@ -357,16 +357,16 @@ tiers:
         excluded_node_types: doc, policy, standard, template, diagram, data
 
       - registry_id: REG-MIGRATION-001
-        name: 迁移登记表（已归档）
-        description: 每个需要迁移的文件的旧路径→新路径映射。从 depgraph 设计态节点自动生成。搬家任务卡的唯一真源。
+        name: 迁移登记表（已删除）
+        description: 每个需要迁移的文件的旧路径→新路径映射。从 depgraph 设计态节点自动生成。原文件 2026-06-30 删除（commit 20b7264ea4），历史可通过 git log 查询 docs/02_enterprise_architecture/migration_registry.yaml。功能与 depgraph edges 表重叠，不再独立维护。
         owner: MOD-INF-037
-        physical_path: docs/_archive/migration_registry.yaml
+        physical_path: docs/02_enterprise_architecture/migration_registry.yaml
         format: yaml
         tier: tier_1_governance
-        maintenance: auto（从 depgraph 设计态节点生成）
+        maintenance: deleted
         entry_count: 2574
-        status: archived
-        ssoT_for: migration_mapping
+        status: deleted
+        ssoT_for: migration_mapping（已废弃，功能由 depgraph edges 表取代）
 
       - registry_id: REG-ARCH-ISSUE-001
         name: 架构议题注册表

@@ -2,7 +2,7 @@
 module_id: GOV-036
 doc_type: index
 status: Active
-version: 2.2.0
+version: 3.0.0
 generated: '2026-06-30'
 depends_on:
 - target: DOCS-INDEX
@@ -58,12 +58,11 @@ ttl: permanent
 |------|------|:---:|
 | architecture_debt_registry.md | 架构债务注册表（全项目架构债务单一真源，337个违规点+6个根因） | 人类视图 |
 | dependency_architecture_panorama.md | 依赖与架构全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
-| _archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
-| ssot_authority_map.md | SSoT 权威映射 | 人类视图 |
-| migration_registry.yaml | 迁移注册表 | 机器视图 |
-| t18_implementation_plan.md | T18 实施计划（暂缓） | 人类视图 |
 | ai_team_mode_full_config.md | AI 团队模式完整配置 | 人类视图 |
-| phase_d_ai_prompts.md | 阶段D：18个AI完整提示词 | 人类视图 |
+| _archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
+| _archive/ssot_authority_map.md | 已归档：SSoT权威映射（权威角色已被专门YAML取代，validate_ssot.py不消费） | 人类视图 |
+| _archive/t18_implementation_plan.md | 已归档：T18实施计划（暂缓，重启条件未满足） | 人类视图 |
+| _archive/phase_d_ai_prompts.md | 已归档：阶段D一次性施工提示词（引用文档不存在） | 人类视图 |
 
 ## 排除规则（严禁放入本目录的内容）
 

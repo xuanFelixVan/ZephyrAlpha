@@ -344,10 +344,9 @@ path_facts:
 
   - id: migration_registry_underscore
     fact: "migration_registry.yaml"
-    description: "迁移注册表文件名（已归档到_archive，下划线，非连字符）"
-    ssot_source: "docs/_archive/migration_registry.yaml"
-    must_appear_in:
-      - ".trae/rules/project_rules.md"
+    description: "迁移注册表文件名（已删除，下划线非连字符。原文件 2026-06-30 删除 commit 20b7264ea4，历史通过 git log 查询）"
+    ssot_source: "git log（原路径 docs/02_enterprise_architecture/migration_registry.yaml，已删除）"
+    must_appear_in: []
     must_not_appear_as:
       - file: ".trae/rules/project_rules.md"
         pattern: "migration-registry.yaml"
@@ -523,8 +522,8 @@ path_facts:
 
   - id: migration_registry_in_registry
     fact: "migration_registry.yaml"
-    description: "迁移注册表文件名（已归档到_archive，在 registry_of_registries.yaml 中，下划线非连字符）"
-    ssot_source: "docs/_archive/migration_registry.yaml"
+    description: "迁移注册表文件名（已删除，在 registry_of_registries.yaml 中标注为 deleted，下划线非连字符）"
+    ssot_source: "git log（原路径 docs/02_enterprise_architecture/migration_registry.yaml，已删除）"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
