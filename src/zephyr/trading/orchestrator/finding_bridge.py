@@ -37,9 +37,13 @@ BridgeResult = _bridge_mod.BridgeResult
 FindingTaskBridge = _bridge_mod.FindingTaskBridge
 SEVERITY_TO_PRIORITY = _bridge_mod.SEVERITY_TO_PRIORITY
 from zephyr.governance.task_repo import TaskRepository
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)
+
+# 治本(2026-06-30): 消除默认参数硬编码 "data/databases/governance.db", 改用 SSoT 源
+_DEFAULT_DB_PATH = str(DB_PATH)
 
 __all__ = [
     "finding_to_audit_finding",
@@ -98,7 +102,7 @@ def finding_to_audit_finding(finding: object) -> AuditFinding:
 
 def report_finding(
     finding: object,
-    db_path: str | Path = "data/databases/governance.db",
+    db_path: str | Path = _DEFAULT_DB_PATH,
     namespace: TaskNamespace | None = None,
     dry_run: bool = False,
 ) -> BridgeResult:
@@ -108,7 +112,7 @@ def report_finding(
 
 def report_findings(
     findings: Sequence[object | AuditFinding],
-    db_path: str | Path = "data/databases/governance.db",
+    db_path: str | Path = _DEFAULT_DB_PATH,
     namespace: TaskNamespace | None = None,
     dry_run: bool = False,
     min_severity: str = "medium",

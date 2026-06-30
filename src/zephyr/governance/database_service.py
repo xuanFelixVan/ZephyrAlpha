@@ -40,6 +40,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 
 class DatabaseService:
@@ -59,8 +60,9 @@ class DatabaseService:
     )
 
     def __init__(self):
-        self.governance_db = r"D:\ZephyrAlpha\data\databases\governance.db"
-        self.market_db = r"D:\ZephyrAlpha\data\databases\market.duckdb"
+        # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
+        self.governance_db = str(DB_PATH)
+        self.market_db = str(REPO_ROOT / "data" / "databases" / "market.duckdb")
 
         self._governance_conn: sqlite3.Connection | None = None
         self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
