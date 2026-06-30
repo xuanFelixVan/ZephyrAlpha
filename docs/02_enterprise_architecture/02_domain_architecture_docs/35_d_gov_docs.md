@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 40 | Module Count | 40 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
-| 跨域入边 | 2 | Cross-domain Incoming | 2 |
-| 跨域出边 | 40 | Cross-domain Outgoing | 40 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域出边 | 39 | Cross-domain Outgoing | 39 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 40 | Prototype Modules | 40 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -109,16 +109,12 @@ graph TD
     src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
-    D_TRADING["D_TRADING prototype"]
-    D_TRADING -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_kb_init_py,src_zephyr_governance_kb_backend_protocol_py,src_zephyr_governance_kb_activate_py,src_zephyr_governance_kb_analyze_py,src_zephyr_governance_kb_batch_ingest_py,src_zephyr_governance_kb_bootstrap_py,src_zephyr_governance_kb_embedding_migrate_py,src_zephyr_governance_kb_extract_py,src_zephyr_governance_kb_filing_nlp_engine_init_py,src_zephyr_governance_kb_filing_nlp_engine_extract_py,src_zephyr_governance_kb_freeze_py,src_zephyr_governance_kb_graph_validator_py,src_zephyr_governance_kb_ingest_py,src_zephyr_governance_kb_integrity_py,src_zephyr_governance_kb_kb_engine_init_py,src_zephyr_governance_kb_kb_engine_kb_gate_task_py,src_zephyr_governance_kb_kb_gate_task_py,src_zephyr_governance_kb_ke_tombstone_py,src_zephyr_governance_kb_load_bearing_py,src_zephyr_governance_kb_migration_init_py,src_zephyr_governance_kb_migration_kb_gate_task_py,src_zephyr_governance_kb_pipeline_init_py,src_zephyr_governance_kb_pipeline_activate_py,src_zephyr_governance_kb_pipeline_analyze_py,src_zephyr_governance_kb_pipeline_batch_ingest_py,src_zephyr_governance_kb_pipeline_extract_py,src_zephyr_governance_kb_pipeline_ingest_py,src_zephyr_governance_kb_quiet_period_monitor_py,src_zephyr_governance_kb_reranker_py,src_zephyr_governance_kb_safety_brake_py design
     class D_SHARED,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_INTEGRATION external_prod
-    class D_TRADING external_design
 ```
 
 ### 第 2 页 / 共 2 页 / Page 2 of 2
@@ -164,19 +160,16 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 20 | import_depends,runtime |
+| D_GOVERNANCE | 19 | import_depends |
 | D_GOV_ENFORCEMENT | 10 | import_depends |
 | D_SHARED | 8 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_GOVERNANCE | 1 | runtime |
-| D_TRADING | 1 | runtime |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 架构文档治理（D_GOV_DOCS）的模块分布。共 40 个模块 / 40 modules。
 

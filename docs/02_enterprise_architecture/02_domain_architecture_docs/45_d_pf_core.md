@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -153,7 +153,7 @@ graph TD
 |------|:---:|---------|
 | D_GOVERNANCE | 6 | test_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 39 个模块 / 39 modules。
 

@@ -1,7 +1,7 @@
 %% D_BEHAVIORAL_AUDIT 域全景依赖图
-%% 生成时间: 2026-07-01 01:40:55
+%% 生成时间: 2026-07-01 01:47:35
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 78, 依赖边数: 171
+%% 模块数: 78, 依赖边数: 170
 
 graph TD
 
@@ -152,10 +152,9 @@ graph TD
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
     %% D_INFRA_TELEMETRY -> D_BEHAVIORAL_AUDIT (1 条)
     D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_behavioral_audit_contract_drift_detector_py
-    %% D_OPS -> D_BEHAVIORAL_AUDIT (3 条)
+    %% D_OPS -> D_BEHAVIORAL_AUDIT (2 条)
     D_OPS[D_OPS] -->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
     D_OPS[D_OPS] -->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
-    D_OPS[D_OPS] -->|runtime| src_zephyr_behavioral_audit_forensics_engine_py
     %% D_SECURITY -> D_BEHAVIORAL_AUDIT (51 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_behavioral_audit_drift_models_py
@@ -195,5 +194,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 11 条
-    %% 跨域入边: 158 条
+    %% 跨域入边: 157 条
     %% 跨域出边: 2 条

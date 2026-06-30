@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则执行（D_GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 75 | Module Count | 75 |
 | 域内依赖 | 138 | Internal Dependencies | 138 |
-| 跨域入边 | 211 | Cross-domain Incoming | 211 |
+| 跨域入边 | 204 | Cross-domain Incoming | 204 |
 | 跨域出边 | 27 | Cross-domain Outgoing | 27 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 36 | Prototype Modules | 36 |
@@ -320,19 +320,18 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 168 | import_depends,runtime,test_depends |
-| D_GOV_SCRIPTS | 10 | import_depends |
+| D_GOVERNANCE | 164 | import_depends,test_depends |
 | D_GOV_DOCS | 10 | import_depends |
-| D_TRADING | 6 | contract,import_depends |
-| D_GOV_AUDIT | 5 | import_depends,runtime |
+| D_GOV_SCRIPTS | 10 | import_depends |
+| D_TRADING | 5 | import_depends |
 | D_SECURITY | 5 | import_depends |
-| D_AUDITTEST | 2 | test_depends |
+| D_GOV_AUDIT | 4 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
-| D_INTELLIGENCE | 1 | import_depends |
-| D_GOV_DRIFT | 1 | runtime |
+| D_AUDITTEST | 2 | test_depends |
 | D_AUTONOMY_CORE | 1 | import_depends |
+| D_INTELLIGENCE | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 规则执行（D_GOV_ENFORCEMENT）的模块分布。共 75 个模块 / 75 modules。
 

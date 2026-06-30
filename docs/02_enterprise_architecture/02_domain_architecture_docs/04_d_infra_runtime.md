@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 118 | Module Count | 118 |
 | 域内依赖 | 91 | Internal Dependencies | 91 |
-| 跨域入边 | 240 | Cross-domain Incoming | 240 |
+| 跨域入边 | 238 | Cross-domain Incoming | 238 |
 | 跨域出边 | 37 | Cross-domain Outgoing | 37 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
@@ -363,19 +363,20 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 124 | config_depends,import_depends,runtime,test_depends |
-| D_OPS | 33 | import_depends,test_depends |
+| D_GOVERNANCE | 120 | config_depends,import_depends,runtime,test_depends |
 | D_INFRA_RECOVERY | 33 | import_depends |
+| D_OPS | 33 | import_depends,test_depends |
 | D_INFRA_A2A | 13 | import_depends |
 | D_INFRA_TELEMETRY | 12 | import_depends |
 | D_GOV_SCRIPTS | 11 | import_depends |
-| D_GOV_AUDIT | 5 | import_depends |
+| D_GOV_AUDIT | 6 | import_depends,runtime |
 | D_SHARED | 4 | import_depends |
-| D_TRADING | 3 | contract,import_depends |
-| D_INFRA_OPS | 1 | import_depends |
+| D_AUDITTEST | 2 | runtime |
+| D_TRADING | 2 | import_depends |
 | D_AUTONOMY_PERM | 1 | test_depends |
+| D_INFRA_OPS | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 运行时集成（D_INFRA_RUNTIME）的模块分布。共 118 个模块 / 118 modules。
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 6 | Module Count | 6 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 5 | Prototype Modules | 5 |
@@ -72,15 +72,13 @@ graph TD
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py design
     class D_TRADING,D_INTELLIGENCE external_prod
-    class D_SHARED,D_GOVERNANCE external_design
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -98,9 +96,8 @@ graph TD
 |------|:---:|---------|
 | D_INTELLIGENCE | 4 | import_depends |
 | D_SHARED | 2 | import_depends |
-| D_GOVERNANCE | 1 | data |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 训练（D_ML_TRAIN）的模块分布。共 6 个模块 / 6 modules。
 

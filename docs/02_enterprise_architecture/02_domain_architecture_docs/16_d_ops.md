@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,9 +25,9 @@ ttl: permanent
 | 域名称 | 反馈循环 | Domain Name | 反馈循环 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 419 | Module Count | 419 |
-| 域内依赖 | 326 | Internal Dependencies | 326 |
+| 域内依赖 | 319 | Internal Dependencies | 319 |
 | 跨域入边 | 401 | Cross-domain Incoming | 401 |
-| 跨域出边 | 85 | Cross-domain Outgoing | 85 |
+| 跨域出边 | 81 | Cross-domain Outgoing | 81 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 396 | Prototype Modules | 396 |
 | 生产态模块 | 22 | Production Modules | 22 |
@@ -108,9 +108,9 @@ graph TD
     src_zephyr_governance_meta_observability_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_observability_dashboard_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_token_budget_py -.->|config_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|runtime| src_zephyr_ops_actors_intent_driven_ops_py
     D_FRONTEND["D_FRONTEND prototype"]
     D_FRONTEND -.->|import_depends| src_zephyr_ops_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
@@ -170,7 +170,6 @@ graph TD
         src_zephyr_ops_collectors_knowledge_packaging_py["src/zephyr/ops/collectors/knowledge_packaging.py prototype"]
         src_zephyr_ops_collectors_known_unknown_registry_py["src/zephyr/ops/collectors/known_unknown_registr... prototype"]
     end
-    src_zephyr_ops_auto_evolution_py -.->|runtime| src_zephyr_ops_collectors_init_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_calendar_adapter_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_config_timeline_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_data_quality_validator_py
@@ -202,10 +201,7 @@ graph TD
     src_zephyr_ops_ai_behavior_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_alerts_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_archive_init_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE -.->|runtime| src_zephyr_ops_auto_evolution_py
-    D_TRADING -.->|runtime| src_zephyr_ops_auto_evolution_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_ops_auto_evolution_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_ops_auto_evolution_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_ops_collectors_knowledge_packaging_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -638,12 +634,15 @@ graph TD
         src_zephyr_ops_gates_safety_gate_l46_l47_py["src/zephyr/ops/gates/safety_gate_l46_l47.py production"]
         src_zephyr_ops_gates_safety_gate_l48_l49_py["src/zephyr/ops/gates/safety_gate_l48_l49.py production"]
     end
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    D_GOVERNANCE -.->|runtime| src_zephyr_ops_gates_safety_gate_l42_l43_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ops_gates_safety_gate_l28_l29_py,src_zephyr_ops_gates_safety_gate_l36_l37_py,src_zephyr_ops_gates_safety_gate_l38_l39_py,src_zephyr_ops_gates_safety_gate_l40_l41_py,src_zephyr_ops_gates_safety_gate_l42_l43_py,src_zephyr_ops_gates_safety_gate_l44_l45_py,src_zephyr_ops_gates_safety_gate_l46_l47_py,src_zephyr_ops_gates_safety_gate_l48_l49_py production
     class src_zephyr_ops_gates_autonomy_maturity_py,src_zephyr_ops_gates_blueprint_code_reconciler_py,src_zephyr_ops_gates_blueprint_validator_py,src_zephyr_ops_gates_checkpoint_manager_py,src_zephyr_ops_gates_ci_cd_pre_scanner_py,src_zephyr_ops_gates_concurrent_change_deconfliction_py,src_zephyr_ops_gates_config_complexity_budget_py,src_zephyr_ops_gates_conflict_arbitration_py,src_zephyr_ops_gates_cve_scanner_py,src_zephyr_ops_gates_data_quality_gate_py,src_zephyr_ops_gates_db_integrity_py,src_zephyr_ops_gates_deployment_suppression_py,src_zephyr_ops_gates_dynamic_llm_cost_router_py,src_zephyr_ops_gates_emergency_takeover_py,src_zephyr_ops_gates_federated_security_py,src_zephyr_ops_gates_flag_lifecycle_manager_py,src_zephyr_ops_gates_license_compliance_py,src_zephyr_ops_gates_llm_cost_router_py,src_zephyr_ops_gates_merkle_audit_root_py,src_zephyr_ops_gates_meta_performance_gate_py,src_zephyr_ops_gates_parameterized_safety_gate_py,src_zephyr_ops_gates_safety_gate_l1_l27_py design
+    class D_GOVERNANCE external_design
 ```
 
 ### 第 11 页 / 共 14 页 / Page 11 of 14
@@ -859,6 +858,7 @@ graph TD
     src_zephyr_ops_traces_init_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_ops_trading_kill_switch_py -.->|config_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|runtime| src_zephyr_ops_verifiers_ab_test_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -937,32 +937,32 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 33 | import_depends,test_depends |
-| D_GOVERNANCE | 22 | config_depends,import_depends,runtime,test_depends |
-| D_AUTONOMY_CORE | 8 | import_depends,runtime,test_depends |
+| D_GOVERNANCE | 21 | config_depends,import_depends,test_depends |
+| D_AUTONOMY_CORE | 6 | import_depends,test_depends |
 | D_SHARED | 6 | import_depends |
 | D_SECURITY | 5 | import_depends,test_depends |
 | D_TRADING | 4 | import_depends |
-| D_BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
+| D_BEHAVIORAL_AUDIT | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
-| D_GOV_AUDIT | 1 | test_depends |
 | D_GOV_DRIFT | 1 | import_depends |
+| D_GOV_AUDIT | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 384 | config_depends,import_depends,runtime,test_depends |
+| D_GOVERNANCE | 385 | config_depends,import_depends,runtime,test_depends |
 | D_SHARED | 5 | import_depends |
-| D_TRADING | 3 | import_depends,runtime |
 | D_GOV_SCRIPTS | 2 | import_depends |
 | D_FRONTEND | 2 | import_depends |
+| D_TRADING | 2 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
 | D_INFRA_OPS | 1 | import_depends |
 | D_AUDITTEST | 1 | test_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
 | D_INTEGRATION | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 反馈循环（D_OPS）的模块分布。共 419 个模块 / 419 modules。
 
@@ -1258,17 +1258,16 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 326 条 / 326 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 319 条 / 319 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 326 条 / 326 edges)       │
+│      依赖关系图 / Dependency Graph (共 319 条 / 319 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 4                               │
+│   依赖类型数 / Dependency Types: 3                               │
 │   [config_depends]: 183 条 / edges                               │
 │   [import_depends]: 130 条 / edges                               │
-│   [runtime]: 7 条 / edges                                        │
 │   [test_depends]: 6 条 / edges                                   │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -1329,11 +1328,9 @@ graph TD
 
 **[import_depends]** (130 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (7 条 / edges) — 已达显示上限，省略 / limit reached
-
 **[test_depends]** (6 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 326 条)
+> (最多显示前 50 条依赖边，共 319 条)
 
 ```
 

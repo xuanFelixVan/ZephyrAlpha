@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:53
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 19 | Module Count | 19 |
 | 域内依赖 | 20 | Internal Dependencies | 20 |
-| 跨域入边 | 10 | Cross-domain Incoming | 10 |
+| 跨域入边 | 16 | Cross-domain Incoming | 16 |
 | 跨域出边 | 18 | Cross-domain Outgoing | 18 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 15 | Prototype Modules | 15 |
@@ -116,13 +116,20 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    D_GOV_AUDIT -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOVERNANCE -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_AUDITTEST["D_AUDITTEST production"]
+    D_AUDITTEST -.->|data| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
     class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_combiner_synthesized_signal_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
-    class D_TRADING,D_GOVERNANCE external_prod
+    class D_TRADING,D_GOVERNANCE,D_GOV_AUDIT,D_AUDITTEST external_prod
     class D_FACTOR,D_GOV_SCRIPTS external_design
 ```
 
@@ -139,11 +146,13 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 8 | test_depends |
+| D_GOVERNANCE | 12 | contract,runtime,test_depends |
+| D_AUDITTEST | 1 | data |
 | D_FACTOR | 1 | import_depends |
+| D_GOV_AUDIT | 1 | contract |
 | D_GOV_SCRIPTS | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 基本面信号（D_FUNDAMENTAL_SIGNAL）的模块分布。共 19 个模块 / 19 modules。
 

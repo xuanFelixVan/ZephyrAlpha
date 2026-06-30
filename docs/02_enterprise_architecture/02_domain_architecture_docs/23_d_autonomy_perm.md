@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:53
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 62 | Module Count | 62 |
 | 域内依赖 | 7 | Internal Dependencies | 7 |
-| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 143 | Cross-domain Outgoing | 143 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 60 | Prototype Modules | 60 |
@@ -103,12 +103,6 @@ graph TD
     tests_agent_rbac_test_cross_model_consistency_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_cross_model_consistency_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_cross_model_consistency_py -.->|test_depends| D_SECURITY
-    D_GOVERNANCE -.->|runtime| docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md
-    D_GOV_DRIFT["D_GOV_DRIFT design"]
-    D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md
-    D_GOVERNANCE -.->|contract| docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md
-    D_GOVERNANCE -.->|contract| docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md
-    D_GOVERNANCE -.->|runtime| docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -116,7 +110,6 @@ graph TD
     class src_zephyr_security_access_control_governance_bridges_bootstrap_superadmin_py production
     class docs_03_modules_domain_autonomy_core_agent_rbac_blueprint_md,src_zephyr_autonomy_perm_red_blue_validator_init_py,src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py,src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py,src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py,src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py,src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py,src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py,src_zephyr_governance_agent_signer_py,src_zephyr_security_access_control_governance_bridges_init_py,src_zephyr_security_access_control_governance_bridges_a2a_check_py,src_zephyr_security_access_control_governance_bridges_approver_check_py,src_zephyr_security_access_control_governance_bridges_capability_check_py,src_zephyr_security_access_control_governance_bridges_contracts_py,tests_agent_rbac_init_py,tests_agent_rbac_conftest_py,tests_agent_rbac_test_abac_guard_agent_rbac_py,tests_agent_rbac_test_adversarial_agent_rbac_py,tests_agent_rbac_test_blind_spot_coverage_py,tests_agent_rbac_test_cross_model_consistency_py,tests_agent_rbac_test_crosscut_d_py,tests_agent_rbac_test_cybersec_2026_py,tests_agent_rbac_test_decision_explainer_agent_rbac_py,tests_agent_rbac_test_decisions_py,tests_agent_rbac_test_derive_rbac_py,tests_agent_rbac_test_dry_run_agent_rbac_py,tests_agent_rbac_test_engine_degradation_agent_rbac_py,tests_agent_rbac_test_enhanced_security_py,tests_agent_rbac_test_exceptions_agent_rbac_py design
     class D_GOVERNANCE,D_SECURITY external_prod
-    class D_GOV_DRIFT external_design
 ```
 
 ### 第 2 页 / 共 3 页 / Page 2 of 3
@@ -174,6 +167,7 @@ graph TD
     tests_agent_rbac_test_guard_layers_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_guard_layers_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_forensic_c_py -.->|test_depends| D_SECURITY
+    D_GOVERNANCE -.->|runtime| tests_agent_rbac_test_forensic_a_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -224,10 +218,9 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 4 | contract,runtime |
-| D_GOV_DRIFT | 1 | runtime |
+| D_GOVERNANCE | 1 | runtime |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 自治保护（D_AUTONOMY_PERM）的模块分布。共 62 个模块 / 62 modules。
 

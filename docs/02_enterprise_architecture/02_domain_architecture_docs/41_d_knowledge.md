@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 4 | Module Count | 4 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 4 | Cross-domain Outgoing | 4 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 2 | Prototype Modules | 2 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -52,21 +52,19 @@ graph TD
         tests_test_skill_knowledge_base_py["tests/test_skill_knowledge_base.py prototype"]
         tests_unit_vector_memory_test_vector_memory_py["tests/unit/vector_memory/test_vector_memory.py prototype"]
     end
-    D_GOVERNANCE["D_GOVERNANCE design"]
-    docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_INTEGRATION
+    D_GOVERNANCE["D_GOVERNANCE production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
+    D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,tests_test_skill_knowledge_base_py,tests_unit_vector_memory_test_vector_memory_py design
-    class D_AUTONOMY_CORE,D_INTEGRATION external_prod
-    class D_GOVERNANCE external_design
+    class D_AUTONOMY_CORE,D_INTEGRATION,D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -75,17 +73,17 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 2 | runtime,test_depends |
 | D_AUTONOMY_CORE | 1 | test_depends |
+| D_GOVERNANCE | 1 | test_depends |
 | D_INTEGRATION | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 1 | contract |
+| D_AUTONOMY_CORE | 1 | contract |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 知识管理（D_KNOWLEDGE）的模块分布。共 4 个模块 / 4 modules。
 

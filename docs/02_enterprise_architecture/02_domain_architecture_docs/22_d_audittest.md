@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:53
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,9 +25,9 @@ ttl: permanent
 | 域名称 | 审计测试套件 | Domain Name | 审计测试套件 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 148 | Module Count | 148 |
-| 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 14 | Cross-domain Outgoing | 14 |
+| 域内依赖 | 7 | Internal Dependencies | 7 |
+| 跨域入边 | 22 | Cross-domain Incoming | 22 |
+| 跨域出边 | 37 | Cross-domain Outgoing | 37 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 141 | Production Modules | 141 |
@@ -80,16 +80,39 @@ graph TD
         tests_test_fl_safety_gate_l36_l37_py["tests/test_fl_safety_gate_l36_l37.py production"]
         tests_test_fl_safety_gate_l38_l39_py["tests/test_fl_safety_gate_l38_l39.py production"]
     end
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    tests_test_budget_event_driven_py -.->|contract| D_GOVERNANCE
+    tests_test_budget_event_driven_py -.->|runtime| D_GOVERNANCE
+    tests_test_budget_event_driven_py -.->|data| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_test_budget_event_driven_py -.->|contract| D_GOVERNANCE
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_test_budget_event_driven_py -->|runtime| D_INFRA_RUNTIME
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    tests_test_budget_event_driven_py -->|runtime| D_GOV_AUDIT
+    D_EX_CORE["D_EX_CORE prototype"]
+    tests_test_budget_event_driven_py -.->|contract| D_EX_CORE
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
+    tests_test_budget_event_driven_py -.->|data| D_FUNDAMENTAL_SIGNAL
+    tests_test_budget_event_driven_py -.->|runtime| D_GOVERNANCE
+    D_GOVERNANCE -.->|runtime| tests_agent_rbac_test_rbac_auto_lifecycle_py
+    D_GOVERNANCE -.->|runtime| tests_test_budget_event_driven_py
+    D_GOVERNANCE -.->|contract| tests_agent_rbac_test_rbac_auto_lifecycle_py
+    D_GOVERNANCE -.->|runtime| tests_test_budget_event_driven_py
+    D_GOVERNANCE -.->|contract| tests_e2e_test_mcp_full_lifecycle_e2e_py
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| tests_agent_rbac_test_rbac_auto_lifecycle_py
+    D_AUTONOMY_CORE -.->|runtime| tests_test_budget_event_driven_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_agent_rbac_test_rbac_auto_lifecycle_py,tests_e2e_test_mcp_full_lifecycle_e2e_py,tests_test_adversarial_extreme_py,tests_test_arbiter_py,tests_test_auto_fix_autopilot_py,tests_test_auto_fix_phase_manager_py,tests_test_auto_fix_red_blue_py,tests_test_auto_runtime_e2e_py,tests_test_auto_runtime_fle_integration_py,tests_test_budget_event_driven_py,tests_test_budget_lifecycle_e2e_py,tests_test_budget_shutdown_py,tests_test_conductor_py,tests_test_f10_red_blue_py,tests_test_f18_automation_py,tests_test_f18_redblue_py,tests_test_f1_event_trigger_py,tests_test_f21_auto_run_py,tests_test_f21_auto_shutdown_py,tests_test_f21_auto_startup_py,tests_test_f21_event_driven_py,tests_test_f5_auto_shutdown_py,tests_test_f5_auto_startup_py,tests_test_f5_e2e_lifecycle_py,tests_test_f5_event_startup_py,tests_test_f5_red_team_extreme_py,tests_test_fl_safety_gate_l28_l29_py,tests_test_fl_safety_gate_l36_l37_py,tests_test_fl_safety_gate_l38_l39_py production
     class tests_test_audit_chain_verifier_py design
-    class D_GOV_ENFORCEMENT external_prod
+    class D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_GOV_AUDIT external_prod
+    class D_GOVERNANCE,D_EX_CORE,D_FUNDAMENTAL_SIGNAL,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 2 页 / 共 5 页 / Page 2 of 5
@@ -216,13 +239,32 @@ graph TD
     end
     D_SECURITY["D_SECURITY production"]
     tests_test_legal_audit_chain_py -.->|test_depends| D_SECURITY
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_test_lock_release_uncommitted_py -->|runtime| D_INFRA_RUNTIME
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    tests_test_lock_release_uncommitted_py -.->|runtime| D_GOVERNANCE
+    tests_test_red_blue_validator_tests_py -.->|runtime| D_GOVERNANCE
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    tests_test_red_blue_validator_tests_py -->|contract| D_GOV_AUDIT
+    tests_test_red_blue_validator_tests_py -.->|runtime| D_GOVERNANCE
+    tests_test_red_blue_validator_tests_py -.->|runtime| D_GOVERNANCE
+    D_EX_CORE["D_EX_CORE prototype"]
+    tests_test_red_blue_validator_tests_py -.->|runtime| D_EX_CORE
+    tests_test_red_blue_validator_tests_py -.->|runtime| D_GOVERNANCE
+    tests_test_red_blue_validator_tests_py -.->|contract| D_GOVERNANCE
+    D_GOVERNANCE -.->|contract| tests_test_lock_release_uncommitted_py
+    D_GOVERNANCE -.->|contract| tests_test_lock_release_uncommitted_py
+    D_GOV_AUDIT -.->|runtime| tests_test_red_blue_validator_tests_py
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|contract| tests_test_lock_release_uncommitted_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_test_g_trae_054_py,tests_test_g_trae_055_py,tests_test_ide_health_daemon_py,tests_test_l00_data_source_py,tests_test_l02_alpha_factor_py,tests_test_l03_signal_generation_py,tests_test_l04_risk_management_py,tests_test_l05_portfolio_construction_py,tests_test_l06_trade_execution_py,tests_test_l07_post_trade_analytics_py,tests_test_l08_human_ai_interface_py,tests_test_l09_research_innovation_py,tests_test_l10_compliance_py,tests_test_l11_ml_platform_py,tests_test_l13_experimentation_py,tests_test_lock_release_uncommitted_py,tests_test_mcp_launcher_py,tests_test_phase_executor_rule_enforcement_py,tests_test_pipeline_orchestrator_auto_py,tests_test_post_doc_review_py,tests_test_red_blue_validator_tests_py,tests_test_safety_gate_l28_l29_py,tests_test_safety_gate_l36_l37_py,tests_test_safety_gate_l38_l39_py,tests_test_safety_gate_l40_l41_py,tests_test_safety_gate_l42_l43_py,tests_test_safety_gate_l44_l45_py,tests_test_safety_gate_l46_l47_py,tests_test_safety_gate_l48_l49_py production
     class tests_test_legal_audit_chain_py design
-    class D_SECURITY external_prod
+    class D_SECURITY,D_INFRA_RUNTIME,D_GOV_AUDIT external_prod
+    class D_GOVERNANCE,D_EX_CORE,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 5 页 / 共 5 页 / Page 5 of 5
@@ -274,6 +316,24 @@ graph TD
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_audit_core_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_audit_core_py -.->|test_depends| D_GOV_AUDIT
+    tests_unit_test_concurrency_guard_py -->|contract| D_GOV_AUDIT
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    tests_unit_test_concurrency_guard_py -.->|runtime| D_GOVERNANCE
+    tests_unit_test_concurrency_guard_py -.->|contract| D_GOVERNANCE
+    tests_unit_vector_memory_test_vms_adversarial_injection_py -.->|runtime| D_GOVERNANCE
+    D_EX_CORE["D_EX_CORE prototype"]
+    D_EX_CORE -.->|contract| tests_unit_test_concurrency_guard_py
+    D_GOVERNANCE -.->|runtime| tests_unit_test_concurrency_guard_py
+    D_GOVERNANCE -.->|runtime| tests_test_task_repo_auto_commit_py
+    D_GOV_AUDIT -->|runtime| tests_test_task_repo_auto_commit_py
+    D_GOVERNANCE -.->|data| tests_test_task_repo_auto_commit_py
+    D_GOVERNANCE -.->|data| tests_test_task_repo_auto_commit_py
+    D_GOVERNANCE -.->|runtime| tests_unit_pipeline_conftest_py
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| tests_unit_pipeline_conftest_py
+    D_AUTONOMY_CORE -.->|data| tests_test_task_repo_auto_commit_py
+    D_AUTONOMY_CORE -.->|runtime| tests_unit_test_concurrency_guard_py
+    D_GOVERNANCE -.->|runtime| tests_unit_test_concurrency_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -281,6 +341,7 @@ graph TD
     class tests_test_safety_gate_l50_l51_py,tests_test_safety_gate_l52_l53_py,tests_test_safety_gate_l54_l55_py,tests_test_safety_gate_l56_l57_py,tests_test_safety_gate_l58_l59_py,tests_test_safety_gate_l60_l61_py,tests_test_safety_gate_l62_l63_py,tests_test_safety_gate_l64_l65_py,tests_test_safety_gate_l66_l67_py,tests_test_task_repo_auto_commit_py,tests_test_trading_session_lifecycle_py,tests_test_validate_rule_frontmatter_red_blue_py,tests_unit_feedback_loop_test_scheduler_integration_py,tests_unit_pipeline_conftest_py,tests_unit_telemetry_test_l12_telemetry_py,tests_unit_test_concurrency_guard_py,tests_unit_test_context_pipeline_auto_py,tests_unit_test_l08_interface_py,tests_unit_test_l12_telemetry_unit_py,tests_unit_vector_memory_test_vms_adversarial_hijack_py,tests_unit_vector_memory_test_vms_adversarial_injection_py,tests_unit_vector_memory_test_vms_automation_py,tests_unit_vector_memory_test_vms_lifecycle_py production
     class tests_test_self_heal_agent_py,tests_test_self_health_monitor_py,tests_unit_audit_trail_test_audit_core_py,tests_unit_audit_trail_test_import_smoke_audit_trail_py,tests_unit_resource_optimization_test_self_healing_py design
     class D_OPS,D_SECURITY,D_GOV_AUDIT,D_GOV_DRIFT external_prod
+    class D_GOVERNANCE,D_EX_CORE,D_AUTONOMY_CORE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -289,17 +350,26 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOV_AUDIT | 7 | test_depends |
+| D_GOVERNANCE | 15 | contract,data,runtime |
+| D_GOV_AUDIT | 10 | contract,runtime,test_depends |
 | D_SECURITY | 3 | test_depends |
+| D_EX_CORE | 2 | contract,runtime |
 | D_GOV_ENFORCEMENT | 2 | test_depends |
+| D_INFRA_RUNTIME | 2 | runtime |
+| D_FUNDAMENTAL_SIGNAL | 1 | data |
 | D_GOV_DRIFT | 1 | test_depends |
 | D_OPS | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D_GOVERNANCE | 13 | contract,data,runtime |
+| D_AUTONOMY_CORE | 6 | contract,data,runtime |
+| D_GOV_AUDIT | 2 | runtime |
+| D_EX_CORE | 1 | contract |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 审计测试套件（D_AUDITTEST）的模块分布。共 148 个模块 / 148 modules。
 
@@ -508,10 +578,42 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 7 条 / 7 edges）。按依赖类型分组，使用 → 表示方向。
 
-（无域内依赖 / No internal dependencies）
+```
 
+┌──────────────────────────────────────────────────────────────────┐
+│        依赖关系图 / Dependency Graph (共 7 条 / 7 edges)         │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 3                               │
+│   [data]: 3 条 / edges                                           │
+│   [runtime]: 3 条 / edges                                        │
+│   [contract]: 1 条 / edges                                       │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                      [data] (3 条 / edges)                       │
+├──────────────────────────────────────────────────────────────────┤
+│   test_budget_event_driven.py → test_pipeline_orchestrato...     │
+│   test_budget_event_driven.py → test_task_repo_auto_commi...     │
+│   test_red_blue_validator_t... → test_budget_event_driven.py     │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                     [runtime] (3 条 / edges)                     │
+├──────────────────────────────────────────────────────────────────┤
+│   test_red_blue_validator_t... → test_self_heal_agent.py         │
+│   test_red_blue_validator_t... → test_mcp_full_lifecycle_e...    │
+│   test_concurrency_guard.py → test_rbac_auto_lifecycle.py        │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                    [contract] (1 条 / edges)                     │
+├──────────────────────────────────────────────────────────────────┤
+│   test_red_blue_validator_t... → test_rbac_auto_lifecycle.py     │
+└──────────────────────────────────────────────────────────────────┘
+
+```
 
 ## 说明 / Notes
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 23 | Module Count | 23 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 45 | Cross-domain Incoming | 45 |
-| 跨域出边 | 29 | Cross-domain Outgoing | 29 |
+| 跨域入边 | 39 | Cross-domain Incoming | 39 |
+| 跨域出边 | 22 | Cross-domain Outgoing | 22 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 14 | Prototype Modules | 14 |
 | 生产态模块 | 8 | Production Modules | 8 |
@@ -125,11 +125,9 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 10 | config_depends,import_depends,runtime,test_depends |
 | D_BEHAVIORAL_AUDIT | 8 | test_depends |
-| D_GOV_AUDIT | 7 | import_depends,runtime |
-| D_AUTONOMY_PERM | 1 | runtime |
-| D_GOV_ENFORCEMENT | 1 | runtime |
+| D_GOVERNANCE | 6 | config_depends,import_depends,test_depends |
+| D_GOV_AUDIT | 6 | import_depends |
 | D_GOV_SCRIPTS | 1 | import_depends |
 | D_SECURITY | 1 | test_depends |
 
@@ -137,14 +135,14 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 25 | config_depends,contract,import_depends,runtime,test_depends |
-| D_GOV_AUDIT | 13 | import_depends,runtime |
-| D_TRADING | 3 | import_depends,runtime |
+| D_GOVERNANCE | 21 | config_depends,import_depends,test_depends |
+| D_GOV_AUDIT | 12 | import_depends |
 | D_COMPLIANCE | 2 | import_depends |
+| D_TRADING | 2 | import_depends |
 | D_AUDITTEST | 1 | test_depends |
 | D_OPS | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 23 个模块 / 23 modules。
 

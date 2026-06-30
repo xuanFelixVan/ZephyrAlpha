@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:40:54
+> 最后更新: 2026-07-01 01:47:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 152 | Module Count | 152 |
 | 域内依赖 | 137 | Internal Dependencies | 137 |
 | 跨域入边 | 271 | Cross-domain Incoming | 271 |
-| 跨域出边 | 108 | Cross-domain Outgoing | 108 |
+| 跨域出边 | 98 | Cross-domain Outgoing | 98 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 132 | Prototype Modules | 132 |
 | 生产态模块 | 20 | Production Modules | 20 |
@@ -481,16 +481,15 @@ graph TD
 |--------|:---:|---------|
 | D_SHARED | 31 | contract,import_depends |
 | D_INTEGRATION | 21 | event,import_depends |
-| D_GOVERNANCE | 17 | contract,import_depends,runtime |
-| D_GOV_AUDIT | 8 | contract,import_depends |
+| D_GOVERNANCE | 13 | import_depends |
+| D_GOV_AUDIT | 7 | import_depends |
 | D_SECURITY | 7 | import_depends |
-| D_GOV_ENFORCEMENT | 6 | contract,import_depends |
 | D_INTELLIGENCE | 5 | import_depends |
-| D_INFRA_RUNTIME | 3 | contract,import_depends |
-| D_GOV_DRIFT | 3 | import_depends,runtime |
+| D_GOV_ENFORCEMENT | 5 | import_depends |
 | D_AUTONOMY_CORE | 3 | import_depends |
-| D_OPS | 3 | import_depends,runtime |
-| D_GOV_DOCS | 1 | runtime |
+| D_OPS | 2 | import_depends |
+| D_INFRA_RUNTIME | 2 | import_depends |
+| D_GOV_DRIFT | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -511,7 +510,7 @@ graph TD
 | D_INTELLIGENCE | 1 | import_depends |
 | D_INTEGRATION | 1 | import_depends |
 
-## 架构全景图 / Architecture Overview
+## 架构分层视图 / Architecture Overview
 
 > 按 architecture_layer 分层显示 交易运营（D_TRADING）的模块分布。共 152 个模块 / 152 modules。
 
