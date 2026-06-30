@@ -508,7 +508,7 @@ path_facts:
 
   - id: depgraph_db_in_registry
     fact: "depgraph (PostgreSQL)"
-    description: "架构全景图+依赖全景图真源（在 registry_of_registries.yaml 中，非 project-architecture-panorama.yaml 或 project-entity-depgraph.yaml）"
+    description: "路径全景图+依赖全景图真源（在 registry_of_registries.yaml 中，非 project-architecture-panorama.yaml 或 project-entity-depgraph.yaml）"
     ssot_source: "depgraph (PostgreSQL)"
     must_appear_in:
       - "docs/registry_of_registries.yaml"

@@ -9,15 +9,22 @@ doc_type: architecture_view
 > 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
 
 
-# 依赖与架构全景图能力定位书
+# 依赖与路径全景图能力定位书
 
 > 版本：V6.0 | 2026-06-30（全量更新版：P2/P3 迁移 + v15-v18 schema + 53 域）
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主。这是我的私人项目，我写了给我自己看，也是给接手的 AI 看。
 > 变更历史见 git log。本文档只保留当前有效的设计规格和裁定结论。
 
-> **文档责任范围**：本文档定义**依赖与架构全景图**（depgraph + 生成器）的能力定位、设计决策和裁定记录。
-> 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 架构全景图（arch_ 表组，管"放在哪"）+ 共享表（domains/contracts 等）。
+> **⚠️ 命名变更说明（2026-07-01）**：为消除"架构"一词的歧义（"架构"易被误解为"架构设计规则"，但实际管的是"物理路径"），本次重命名如下：
+> - **原"架构全景图" → 现"路径全景图"**（arch_ 表组，管"放在哪"——文件/目录的物理位置和域归属）
+> - **原"共享表" → 现"设计规则缓存表"**（domains/contracts/gates 等，从 YAML 同步过来的只读缓存）
+> - 文档标题同步从"依赖与架构全景图能力定位书"改为"依赖与路径全景图能力定位书"
+> - 英文文件名 `dependency_architecture_panorama.md` 暂保留（影响引用面大，单独任务处理）
+> - 旧名"架构全景图"在本文档历史段落中若仍出现，均按本说明映射为"路径全景图"
+
+> **文档责任范围**：本文档定义**依赖与路径全景图**（depgraph + 生成器）的能力定位、设计决策和裁定记录。
+> 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 路径全景图（arch_ 表组，管"放在哪"）+ 设计规则缓存表（domains/contracts 等）。
 > 不包含：施工步骤和问题清单（见 archive/depgraph_issue_registry.md）、架构升级项目导航（见 architecture_upgrade_discussion.md）、生成器技术问题清单（见 generator_issues.md）。
 
 > **⚠️ 数据源迁移说明（P2 迁移完成 2026-06-27）**：全景图数据库已从 SQLite 迁移至 **PostgreSQL 16**，数据库名统一为 `depgraph (PostgreSQL)`（一眼可知全景图所在引擎，避免与 SQLite 物理文件 `depgraph.db` 混淆）。本次迁移带来的引擎差异：
@@ -29,15 +36,15 @@ doc_type: architecture_view
 
 ---
 
-## 一、依赖与架构全景图是什么？（一句话）
+## 一、依赖与路径全景图是什么？（一句话）
 
-**依赖与架构全景图是整个项目的最大蓝图，记录"规划中应该依赖什么、放在哪"和"代码里实际依赖什么、放在哪"。**
+**依赖与路径全景图是整个项目的最大蓝图，记录"规划中应该依赖什么、放在哪"和"代码里实际依赖什么、放在哪"。**
 
 它存在数据库里（`depgraph`），不是一张图片，不是一份文档。里面写清楚了：这个项目有多少个功能域、每个功能域有多少个模块、模块和模块之间怎么依赖、每个文件放在哪个目录属于哪个域、哪些模块造好了、哪些还没造。
 
 **两个职责合一**：
 - **依赖全景图**（dep_ 表组）：管"谁依赖谁"——模块间的 import 关系
-- **架构全景图**（arch_ 表组）：管"放在哪"——文件/目录的物理位置和域归属
+- **路径全景图**（arch_ 表组）：管"放在哪"——文件/目录的物理位置和域归属
 
 两者同库不同表组，共享 domains 表外键，合并为一份能力定位书。
 
@@ -76,7 +83,7 @@ doc_type: architecture_view
 
 ## 四、它由哪几部分组成？
 
-依赖与架构全景图由三部分组成，共同存在 `depgraph` 里：
+依赖与路径全景图由三部分组成，共同存在 `depgraph` 里：
 
 ### 4.1 依赖全景（nodes + edges）
 
@@ -99,7 +106,7 @@ doc_type: architecture_view
 
 > **v6 合并说明**：原 `arch_domain_layers`（域→层映射）和 `arch_domain_capacity`（域容量上限）已在 v6 合并入 `domains` 表（layer_id/max_modules/current_modules 列），不再作为独立表存在。
 
-### 4.3 共享表（5 张表，v14 删除 invariants 后）
+### 4.3 设计规则缓存表（5 张表，v14 删除 invariants 后）
 
 | 表 | 存什么 | 两个全景图怎么共享 |
 |----|--------|----------------|
@@ -141,7 +148,7 @@ doc_type: architecture_view
 
 ### 4.5 生成器（generate_project_depgraph.py）
 
-生成器是把物理世界的文件"翻译"到全景图的桥梁。它同时管依赖全景图（扫描 import）和架构全景图（扫描文件系统目录树）。
+生成器是把物理世界的文件"翻译"到全景图的桥梁。它同时管依赖全景图（扫描 import）和路径全景图（扫描文件系统目录树）。
 
 **它做的事（V3.2 合并后 12 步完整流程，V5.5 裁定：arch_directory_tree 由 path_tree 独立管理，生成器不再处理）**：
 1. 获取 PostgreSQL MVCC 行级锁（G-Blind-6 修复，PG 无需文件级写锁）
@@ -166,15 +173,15 @@ doc_type: architecture_view
 
 ---
 
-## 架构全景图能力定位（§5-§11）
+## 路径全景图能力定位（§5-§11）
 
-> 架构全景图管"放在哪"，依赖全景图管"谁依赖谁"。两者同库不同表组，共享 domains 表外键。
+> 路径全景图管"放在哪"，依赖全景图管"谁依赖谁"。两者同库不同表组，共享 domains 表外键。
 
 ---
 
-## 五、架构全景图是什么？（一句话）
+## 五、路径全景图是什么？（一句话）
 
-**架构全景图是项目的"物理地图"**——记录每个文件/目录放在哪、属于哪个域、什么状态。
+**路径全景图是项目的"物理地图"**——记录每个文件/目录放在哪、属于哪个域、什么状态。
 
 它回答 AI 的三个问题：
 1. 这个路径属于哪个功能域？（arch_directory_tree.domain_id）
@@ -183,7 +190,7 @@ doc_type: architecture_view
 
 **与依赖全景图的区别**：
 
-| 维度 | 依赖全景图（nodes/edges） | 架构全景图（arch_ 表组） |
+| 维度 | 依赖全景图（nodes/edges） | 路径全景图（arch_ 表组） |
 |------|-------------------------|------------------------|
 | 管什么 | 谁依赖谁（import 关系） | 放在哪（物理位置） |
 | 粒度 | 模块级（功能级+文件级） | 文件级+目录级 |
@@ -193,7 +200,7 @@ doc_type: architecture_view
 
 ---
 
-## 六、架构全景图的 3 张表（v6 合并 arch_domain_layers/arch_domain_capacity 入 domains 表，v14 删除 arch_layers/arch_bottlenecks 后）
+## 六、路径全景图的 3 张表（v6 合并 arch_domain_layers/arch_domain_capacity 入 domains 表，v14 删除 arch_layers/arch_bottlenecks 后）
 
 | # | 表名 | 职责 | 管理方 | 生成器行为 |
 |---|------|------|--------|-----------|
@@ -211,8 +218,8 @@ doc_type: architecture_view
 
 | 数据 | SSoT | 消费方 |
 |------|------|--------|
-| 物理路径 path | **arch_directory_tree.path**（架构全景图） | nodes.path 外键引用 |
-| 域归属 domain_id | **domains 表**（共享表） | nodes + arch_directory_tree 共同外键 |
+| 物理路径 path | **arch_directory_tree.path**（路径全景图） | nodes.path 外键引用 |
+| 域归属 domain_id | **domains 表**（设计规则缓存表） | nodes + arch_directory_tree 共同外键 |
 | 模块依赖 | **edges 表**（依赖全景图） | arch_constraints 引用 |
 | 容量上限 | **domains.max_modules**（v6 合并自 arch_domain_capacity） | 门禁检查引用 |
 
@@ -229,7 +236,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 **单向约束说明**（V3.3 E15 修正）：
 - `nodes.path` 必须在 `arch_directory_tree` 中存在（运营态节点必须有物理位置）
 - 反向不要求：`arch_directory_tree` 中的 path 不一定在 `nodes` 中（文档/数据/模板节点不在 nodes 表）
-- 这是因为架构全景图覆盖所有文件，依赖全景图只覆盖有 import 依赖的代码节点
+- 这是因为路径全景图覆盖所有文件，依赖全景图只覆盖有 import 依赖的代码节点
 - **迁移期注意**：详见 §12.3 迁移期统一说明
 
 ### 7.3 同步协议
@@ -250,15 +257,15 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | nodes.path 在 arch_directory_tree 中不存在 | 生成器报警告（path 校验失败，节点无物理位置） |
 | nodes.blueprint_id 在蓝图中不存在 | 生成器标记 `blueprint_id_invalid=1`（V3.4 新增字段，表示 blueprint_id 校验失败）。详见 §12.3 迁移期统一说明 |
 | arch_directory_tree 有 path 但 nodes 没有 | 正常（文档/数据/模板节点不在 nodes 中） |
-| domain_id 在 nodes 和 arch_directory_tree 不一致 | 以 arch_directory_tree 为准（架构全景图是 path 归属的 SSoT） |
+| domain_id 在 nodes 和 arch_directory_tree 不一致 | 以 arch_directory_tree 为准（路径全景图是 path 归属的 SSoT） |
 
 ---
 
-## 八、架构全景图的双态模型（V3.3 E16 修正）
+## 八、路径全景图的双态模型（V3.3 E16 修正）
 
-架构全景图共享依赖全景图的双态模型，但职责不同：
+路径全景图共享依赖全景图的双态模型，但职责不同：
 
-| 维度 | 依赖全景图（nodes） | 架构全景图（arch_directory_tree） |
+| 维度 | 依赖全景图（nodes） | 路径全景图（arch_directory_tree） |
 |------|-------------------|-------------------------------|
 | 设计态 | 功能级节点，目录 path | 目录节点，design_maturity='design' |
 | 运营态 | 文件级节点，文件 path | 文件/目录节点，design_maturity='production'/'prototype' |
@@ -339,7 +346,7 @@ SELECT * FROM arch_constraints WHERE domain_id = 'D_TRADING';
 
 ## 十一、合并后的整体能力边界
 
-| 能力 | 依赖全景图 | 架构全景图 | 共享表 |
+| 能力 | 依赖全景图 | 路径全景图 | 设计规则缓存表 |
 |------|:---:|:---:|:---:|
 | 查"谁依赖谁" | ✅ | ❌ | ❌ |
 | 查"放在哪" | ❌ | ✅ | ❌ |
@@ -350,7 +357,7 @@ SELECT * FROM arch_constraints WHERE domain_id = 'D_TRADING';
 | 查"设计态规划" | ✅（design_maturity='design'） | ✅（design_maturity='design'） | ❌ |
 | 查"运营态实际" | ✅（design_maturity='production'） | ✅（design_maturity='production'） | ❌ |
 
-**一句话总结**：依赖全景图管"谁依赖谁"（import 关系），架构全景图管"放在哪"（物理位置），共享表管"域定义"（domains/contracts 等）。三者合并为《依赖与架构全景图能力定位书》。
+**一句话总结**：依赖全景图管"谁依赖谁"（import 关系），路径全景图管"放在哪"（物理位置），设计规则缓存表管"域定义"（domains/contracts 等）。三者合并为《依赖与路径全景图能力定位书》。
 
 ---
 
@@ -632,7 +639,7 @@ python scripts/governance/apply_depgraph.py --remove-design-node --node-id 1001
   ↓
 第一步：查依赖全景图 → 这个功能域有什么模块？我要改的模块依赖谁？谁依赖它？
   ↓
-第二步：查架构全景图 → 这个路径属于哪个域？域容量还够吗？位置和蓝图一致吗？
+第二步：查路径全景图 → 这个路径属于哪个域？域容量还够吗？位置和蓝图一致吗？
   ↓
 第三步：确认模块在设计态还是运营态 → 设计态 = 可以改蓝图，运营态 = 只能改代码
   ↓
@@ -685,7 +692,7 @@ SELECT * FROM dep_cycles_report ORDER BY edge_count DESC;
 
 **注意**：上述 SQL 使用 `from_node_id`/`to_node_id`（V3.4 后字段名）。P0-1 Schema 迁移完成前，需用 `from_node`/`to_node`。
 
-**第二步：查架构全景图**
+**第二步：查路径全景图**
 
 ```sql
 -- 查某个路径属于哪个域
@@ -1005,7 +1012,7 @@ AI查询模式：
 | 文件类型 | 扫描 | 理由 |
 |---------|:---:|------|
 | .py | ✅ | 有 import 依赖，是依赖图主体 |
-| .yaml/.yml | ✅ | 有配置依赖（config_depends），是架构全景图主体 |
+| .yaml/.yml | ✅ | 有配置依赖（config_depends），是路径全景图主体 |
 | .md | ✅ | 有蓝图引用（blueprint_depends），设计态派生物 |
 | .json | ❌ | 无解析器，不扫（未来如需扫描需新增解析器） |
 | .toml | ❌ | 无解析器，不扫 |
@@ -1047,7 +1054,7 @@ AI查询模式：
 | 9 | `reports/` | 报告输出，非代码 | 新增排除 |
 | 10 | `logs/` | 运行时日志，非代码 | 新增排除 |
 
-**节点类型白名单准入（4 种，裁定#184）**——只有这 4 种 node_type 进入依赖图（nodes 表），其余类型保留在架构全景图（arch_directory_tree 表）：
+**节点类型白名单准入（4 种，裁定#184）**——只有这 4 种 node_type 进入依赖图（nodes 表），其余类型保留在路径全景图（arch_directory_tree 表）：
 
 | # | node_type | 准入理由 | 文件类型 | 裁定 |
 |---|-----------|---------|---------|:---:|
@@ -1058,7 +1065,7 @@ AI查询模式：
 
 **白名单机制**（裁定#184）：删除原 EXCLUDED_NODE_TYPES 黑名单，改为 `if node_type not in NODES_WHITELIST: skip`。黑名单已证明不可靠（漏掉 gate/contract/registry/schema 共 561 个非代码节点污染 nodes 表）；白名单天然安全——新类型默认不进 nodes。gate/contract/registry/schema/blueprint/doc/policy/standard/template/diagram/data 等类型不进 nodes，保留在 arch_directory_tree。
 
-**关键边界**：依赖全景图只管有 import 依赖的代码节点（4 种白名单类型）；架构全景图管所有文件（包括文档/数据/模板）。非白名单类型在 arch_directory_tree 中有记录，在 nodes 表中无记录。
+**关键边界**：依赖全景图只管有 import 依赖的代码节点（4 种白名单类型）；路径全景图管所有文件（包括文档/数据/模板）。非白名单类型在 arch_directory_tree 中有记录，在 nodes 表中无记录。
 
 **业界依据**：Google Bazel 显式声明 BUILD 文件位置；Jane Street 显式声明模块路径。扫描范围必须显式文档化，否则 AI 不知道哪些目录被扫、哪些不被扫。
 
@@ -1072,7 +1079,7 @@ AI查询模式：
 |------|------|------|
 | 全景图目的 | 防止 AI 幻觉/漂移/局部最优/位置漂移 | §一、§二 |
 | 依赖图职责 | 回答"谁依赖谁"——只对有依赖关系的代码节点有意义 | §4.1、裁定#19 |
-| 架构全景图职责 | 回答"放在哪"——所有文件都需要位置记录 | §4.2、裁定#19 |
+| 路径全景图职责 | 回答"放在哪"——所有文件都需要位置记录 | §4.2、裁定#19 |
 | 噪音 vs 信息 | 零 import 边的文件进 nodes 表 = 孤岛节点，增加图规模但不增加依赖信息 | 图论：孤岛节点对依赖分析无贡献 |
 | 规则约束落地 | 规则不通过 nodes 表附加，通过 arch_constraints + rule_bindings 表附加 | §9、§14.4 |
 
@@ -1200,7 +1207,7 @@ SELECT * FROM dep_cycles WHERE domain_id = 'D_TRADING';
 生成器运行后输出标准化报告：
 
 ```
-=== 依赖与架构全景图生成器报告 ===
+=== 依赖与路径全景图生成器报告 ===
 扫描统计：
   - 扫描目录：15 个
   - 扫描文件：3,400 个
@@ -1273,7 +1280,7 @@ SSoT = Single Source of Truth = 唯一真源。
 
 ## 十六、覆盖范围（项目全貌）
 
-依赖与架构全景图覆盖整个项目的所有内容，不挑食：
+依赖与路径全景图覆盖整个项目的所有内容，不挑食：
 
 | 层次 | 包含内容 |
 |------|---------|
@@ -1286,13 +1293,13 @@ SSoT = Single Source of Truth = 唯一真源。
 
 **两个全景图的覆盖差异**：
 
-| 维度 | 依赖全景图（nodes/edges） | 架构全景图（arch_directory_tree） |
+| 维度 | 依赖全景图（nodes/edges） | 路径全景图（arch_directory_tree） |
 |------|-------------------------|-------------------------------|
 | 覆盖范围 | 有 import 依赖的代码节点 | 所有文件（包括文档/数据/模板） |
 | 节点数 | 6,092 | 9,363（比 nodes 多 3,271 个文档/数据/模板/目录节点） |
 | 边数 | 6,197 | — |
 
-**当前实际覆盖**：53 个功能域，依赖全景图 6,092 节点（1,251 production + 4,752 prototype + 89 design）+ 6,197 边（6,084 active + 113 design），架构全景图 9,363 行目录树。（2026-06-30 查询 depgraph (PostgreSQL)）
+**当前实际覆盖**：53 个功能域，依赖全景图 6,092 节点（1,251 production + 4,752 prototype + 89 design）+ 6,197 边（6,084 active + 113 design），路径全景图 9,363 行目录树。（2026-06-30 查询 depgraph (PostgreSQL)）
 
 ---
 
@@ -1414,9 +1421,9 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ## 十九、一句话总结
 
-依赖与架构全景图的本质：
+依赖与路径全景图的本质：
 
-> **设计态定义"应该长什么样、放在哪"（施工图纸），运营态记录"当前长什么样、放在哪"（竣工照片）。两者共存于同一数据库，用 design_maturity 字段区分。依赖全景图管"谁依赖谁"，架构全景图管"放在哪"，共享表管"域定义"。**
+> **设计态定义"应该长什么样、放在哪"（施工图纸），运营态记录"当前长什么样、放在哪"（竣工照片）。两者共存于同一数据库，用 design_maturity 字段区分。依赖全景图管"谁依赖谁"，路径全景图管"放在哪"，设计规则缓存表管"域定义"。**
 
 设计态是整个项目最大的蓝图，所有蓝图和代码都从它派生。运营态是代码的实际照片，由生成器自动扫描产生。所有 AI 干活之前必须先来查它。
 
@@ -1437,7 +1444,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 9 | 双态关联方式 | **blueprint_id 精确关联**（禁止 path 前缀匹配） | ✅ |
 | 16 | 状态机 | **双正交：design_maturity（拓扑）+ build_status（生命周期）** | ✅ |
 | 17 | SSoT 分层 | **设计态全景图>代码，运营态代码>全景图** | ✅ |
-| 19 | 两全景图职责 | **依赖全景图管"依赖什么"，架构全景图管"放在哪"** | ✅ |
+| 19 | 两全景图职责 | **依赖全景图管"依赖什么"，路径全景图管"放在哪"** | ✅ |
 | 30 | 域数 | **53 域**（以数据库实际值为准；裁定#200/#201 拆分后） | ✅ |
 | 42 | 设计态-运营态关系 | **一对多：1 设计态（功能级）→ N 运营态（文件级）** | ✅ |
 | 145 | 两表设计 | **保持两张表不合并**（nodes 6,092 节点 vs arch_directory_tree 9,363 行） | ✅ |
@@ -1480,11 +1487,11 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 82 | arch_directory_tree state | **删除 state 字段，统一用 design_maturity**（V3.4 P0-1 已施工，v15 确认移除） | ✅ |
 | 87 | ~~arch_layers 层级~~ | **清除后 7 条（L0-L6）**（~~v14已删arch_layers表~~） | ✅ |
 
-### 20.4 架构全景图裁定（位置层）
+### 20.4 路径全景图裁定（位置层）
 
 | # | 裁定 | 结论 | 状态 |
 |---|------|------|:---:|
-| 53 | 架构全景图合并 | **合并到本文档 §5-§11** | ✅ |
+| 53 | 路径全景图合并 | **合并到本文档 §5-§11** | ✅ |
 | 58 | 两全景图协同 | **arch_directory_tree.path 是 SSoT，nodes.path 外键约束** | ✅ |
 | 81 | 外键约束方向 | **单向外键：nodes.path 必须在 arch_directory_tree 存在，反向不要求** | ✅ |
 | 149 | 两表覆盖范围 | **nodes 6,092 节点 vs arch_directory_tree 9,363 行**（差 3,271 个文档/数据/模板节点） | ✅ |

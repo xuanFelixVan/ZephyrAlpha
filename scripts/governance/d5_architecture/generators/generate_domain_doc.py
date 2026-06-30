@@ -19,7 +19,7 @@
 - 模块清单（按 architecture_layer 分组）
 - 域内依赖图（内嵌 Mermaid，分页显示）
 - 跨域依赖（出边/入边聚合）
-- 架构全景图（ASCII art 分层可视化）
+- 架构分层视图（ASCII art 分层可视化）
 - 依赖关系图（ASCII art 按 dep_type 分组）
 
 治本合并：消除 generate_domain_architecture_diagram.py 的 4 个 DB 查询函数逐字重复 +
@@ -593,7 +593,7 @@ def _display_edge_name(name: str, path: str, max_len: int = 28) -> str:
 def generate_ascii_architecture_overview(
     domain_id: str, domain_name: str, nodes: list[dict]
 ) -> str:
-    """生成ASCII架构全景图（按 architecture_layer 分层显示）。
+    """生成ASCII架构分层视图（按 architecture_layer 分层显示）。
 
     - 按 architecture_layer 分组节点
     - 每层一个ASCII box，最多显示20个模块（超过显示前18个+"...还有N个"）
@@ -837,7 +837,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("")
     lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh}")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -930,8 +930,8 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
 
-    # 架构全景图（ASCII art，合并自 generate_domain_architecture_diagram.py）
-    lines.append("## 架构全景图 / Architecture Overview")
+    # 架构分层视图（ASCII art，合并自 generate_domain_architecture_diagram.py）
+    lines.append("## 架构分层视图 / Architecture Overview")
     lines.append("")
     lines.append(
         f"> 按 architecture_layer 分层显示 {domain_name_zh}（{domain_id}）的模块分布。"

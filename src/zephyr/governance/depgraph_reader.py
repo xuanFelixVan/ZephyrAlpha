@@ -218,7 +218,7 @@ class DepgraphReader:
         row = cursor.fetchone()
         return dict(row) if row else None
 
-    # ── 架构全景图查询 ────────────────────────────────────────
+    # ── 路径全景图查询 ────────────────────────────────────────
 
     def get_architecture_domains(self) -> list[dict[str, Any]]:
         """获取所有架构域"""

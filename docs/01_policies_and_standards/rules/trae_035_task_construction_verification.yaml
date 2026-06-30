@@ -58,7 +58,7 @@ sections:
     - type: mandatory
       step: 验证无漂移——对比文件mtime或关键字段确认与任务卡创建时一致
     - type: mandatory
-      step: 验证路径符合容量规划——目标路径与架构全景图/迁移登记表一致
+      step: 验证路径符合容量规划——目标路径与路径全景图/迁移登记表一致
     prohibitions:
     - 禁止跳过前置检查直接施工
   task_002_plan_audit_gate:

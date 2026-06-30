@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PanoramaLoadError
 # [TESTS]
 # [TTL] task_bound
-"""从磁盘扫描生成架构全景图的tree段（运营态目录结构）。
+"""从磁盘扫描生成路径全景图的tree段（运营态目录结构）。
 
 核心变更（DM-283/DM-310）:
   - 输出写入 depgraph 的 tree 段（而非独立文件）

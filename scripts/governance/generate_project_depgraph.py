@@ -3007,7 +3007,7 @@ class GenerationReport:
         print(f"扫描文件数: {self.scanned_count}")
         print(f"节点总数: {self.node_count}")
         print(f"边总数: {self.edge_count}")
-        print(f"架构全景图行数: {self.arch_count}")
+        print(f"路径全景图行数: {self.arch_count}")
         print(f"循环依赖数: {self.cycle_count}")
         print(f"无效 blueprint_id 数: {self.invalid_blueprint_count}")
         print(f"已实现设计态节点数: {self.realized_count}")

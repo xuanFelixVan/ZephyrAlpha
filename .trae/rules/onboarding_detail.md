@@ -305,7 +305,7 @@ STEP 0.5 — 🧠 大脑系统启动（单次 boot 模式，Trae AI 进入项目
            start_brain.py 现在以 --once 模式运行：执行 boot 后立即退出。
 STEP 1  — 读 docs/registry_of_registries.yaml → 了解全项目 48 个注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板（蓝图/任务卡/依赖图/策略/标准等）
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph` localhost:5432，禁止裸连）→ 项目域架构+模块归属+路径设计规则+capacity声明。连接用 `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`
+STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（路径全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph` localhost:5432，禁止裸连）→ 项目域架构+模块归属+路径设计规则+capacity声明。连接用 `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`
 STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgraph.py --paths`（文件级依赖关系，含设计态和运营态，真源 depgraph (PostgreSQL)）→ 文件依赖+迁移状态
 STEP 1.2.2 — 路径树工具链（全景图维护，文件变更后必跑）:
            - 运营态目录树刷新: `python scripts/governance/generate_project_path_tree.py --write`（扫描磁盘→写入 depgraph (PostgreSQL) arch_directory_tree表。文件创建/删除/移动后MUST执行）

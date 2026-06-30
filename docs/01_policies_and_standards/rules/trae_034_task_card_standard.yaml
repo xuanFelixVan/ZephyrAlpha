@@ -120,9 +120,9 @@ sections:
     - type: mandatory
       step: 第五步-循环验证（MUST施工后强制执行）——执行acceptance+post_sync_standard命令，连续2轮0问题才通过
     - type: mandatory
-      step: 第六步-更新清单（MUST验证通过后强制执行）——逐项更新registry_of_registries/project_rules/onboarding_detail/AGENTS/CLAUDE/script-manifest/__init__/架构全景图/依赖全景图/迁移登记表/生成器脚本/蓝图/gate定义
+      step: 第六步-更新清单（MUST验证通过后强制执行）——逐项更新registry_of_registries/project_rules/onboarding_detail/AGENTS/CLAUDE/script-manifest/__init__/路径全景图/依赖全景图/迁移登记表/生成器脚本/蓝图/gate定义
     - type: mandatory
-      step: 第七步-四方对齐（MUST更新清单完成后强制执行）——架构全景图/依赖全景图/蓝图/代码头部四方数据一致
+      step: 第七步-四方对齐（MUST更新清单完成后强制执行）——路径全景图/依赖全景图/蓝图/代码头部四方数据一致
     - type: mandatory
       step: 第八步-端到端测试（MUST四方对齐完成后强制执行）——验证生成器→全景图→依赖图整条管线无断裂
     prohibitions:

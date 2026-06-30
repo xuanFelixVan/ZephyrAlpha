@@ -45,15 +45,15 @@
 
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
-| **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
+| **路径全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
 | **数据库清单（5库唯一真源）** | `D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~005 唯一真源（governance.db/ChromaDB/depgraph (PostgreSQL)/DuckDB OLAP/market.duckdb）。包含类型/地址/健康检查/依赖/SLA/状态。**禁止在其它文档同步数据库清单**，所有引用用纯指针。详见 AGENTS.md §11.0 |
 
 **绝对禁止**：
 - ❌ 引用 `project-entity-depgraph-v3-domain-draft.yaml`（已合并入真源，保留为副本）
 - ❌ 引用 `target_path_tree.yaml` 作为真源（它是验证工具输出，非真源；path_design 在 depgraph 内）
 - ❌ 引用 `archive/` 下的任何归档 depgraph 文件作为真源
-- ❌ 把 `project-path-tree.yaml` 当作独立真源修改（已合并至架构全景图）
-- ❌ 把 `functional_domain_registry.yaml` 当作域定义唯一真源（域定义已合并至架构全景图，registry 保留为兼容副本）
+- ❌ 把 `project-path-tree.yaml` 当作独立真源修改（已合并至路径全景图）
+- ❌ 把 `functional_domain_registry.yaml` 当作域定义唯一真源（域定义已合并至路径全景图，registry 保留为兼容副本）
 
 > 创建任何新功能前，MUST 先搜索 483 脚本 + 4,639 模块中是否已有覆盖。不搜索 = 违规。
 
@@ -81,7 +81,7 @@
 
 ```
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
-2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
+2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（路径全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
 2.1 确认数据库就绪：5 库清单（INFRA-DB-001~005）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）。其中 depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` 提取子集，禁止裸连
 3. 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事

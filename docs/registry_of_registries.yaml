@@ -320,8 +320,8 @@ tiers:
         note: 域定义部分已合并至 REG-ARCH-PANORAMA-001
 
       - registry_id: REG-ARCH-PANORAMA-001
-        name: 项目架构全景图
-        description: "域定义(设计态真源) + 目录结构(运营态+设计态) + 蓝图/测试/脚本/知识库/数据/门禁/前端路径设计(设计态)。v2.0.0: 增加capacity声明+7个区域路径设计，支撑1500模块/1000蓝图容量。因果链：架构全景图(ssot_path) → depgraph(设计态节点) → 迁移登记表。"
+        name: 项目路径全景图
+        description: "域定义(设计态真源) + 目录结构(运营态+设计态) + 蓝图/测试/脚本/知识库/数据/门禁/前端路径设计(设计态)。v2.0.0: 增加capacity声明+7个区域路径设计，支撑1500模块/1000蓝图容量。因果链：路径全景图(ssot_path) → depgraph(设计态节点) → 迁移登记表。"
         owner: MOD-INF-037
         physical_path: postgresql://localhost:5432/depgraph
         format: postgresql

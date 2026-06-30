@@ -112,7 +112,7 @@ sections:
     description: |
       nodes 表只收录 4 种 node_type（白名单准入），其余类型默认不进 nodes 表。
       白名单机制天然安全——新类型默认不进 nodes，无需手动维护排除清单。
-      非白名单类型保留在架构全景图（arch_directory_tree 表），AI 仍可查询其位置。
+      非白名单类型保留在路径全景图（arch_directory_tree 表），AI 仍可查询其位置。
       原 EXCLUDED_NODE_TYPES 黑名单不可靠（漏掉 4 种类型导致 561 个非代码节点污染）。
     whitelist:
     - type: module
