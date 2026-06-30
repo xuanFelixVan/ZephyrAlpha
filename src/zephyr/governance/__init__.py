@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
 # [TTL] task_bound
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
@@ -23,6 +23,14 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
   src/zephyr/governance/*  — 跨模块契约+桥接
   src/zephyr/<name>/       — 引擎实现（escalation/budget_enforcer/a2a/drift_detector）
   src/zephyr/mcp/governance_server.py — MCP统一入口（5工具）
+
+文件归属规则（ARCH-031 命名约定，task_bound，对标 ARCH-029）：
+  - 属于子模块的文件必须放在子目录（如 audit_trail/agent_signer.py）
+  - 根目录仅放跨模块桥接文件（如 __init__.py, capability_lookup.py, base.py）
+  - 判定标准：文件头 [MODULE] 标注属于子模块的，禁止在根目录创建副本
+  - 同名歧义消除：根目录与子目录同名文件，canonical 在 [MODULE] 标注所属位置
+  - 治本门禁：N-16 文件名唯一性检查暂未覆盖 src/（待 AD-GOV-001 收敛期结束后扩展）
+  - 历史清理：ARCH-031 步骤A+B-1 已删除 24 个根目录 STALE duplicates（2026-06-30）
 
 施工状态（2026-05-08 审计修正）：
   蓝图文档 v0.1.0 — 100% 完成（G-CT-001~008 契约定义 + Phase 1~4 施工顺序）
