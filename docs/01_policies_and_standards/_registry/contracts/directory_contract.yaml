@@ -168,7 +168,7 @@ directory_extensions:
         extensions: [".json"]
     forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
     zone: permanent
-    allowed_doc_types: [policy, operational_rule, register, index, template, vocabulary, gate]
+    allowed_doc_types: [policy, register, index, template, vocabulary, gate]
 
   - path: "docs/02_enterprise_architecture/"
     allowed: [".md", ".mmd", ".yaml"]

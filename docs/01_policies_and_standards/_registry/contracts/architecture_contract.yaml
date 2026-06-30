@@ -64,18 +64,18 @@ directory_schema:
     governance:
       allowed_subdirs: [document, ai, task, security, compliance, architecture, data, module]
       allowed_doc_types: [policy, register, index]
-      forbidden_doc_types: [operational_rule]
-      description: "声明式规则——定义'必须/禁止/条件'"
+      forbidden_doc_types: []  # v3.1.0: operational_rule 合并入 policy；governance/ 禁止 procedural policy 由 VR-008 约束
+      description: "声明式规则——定义'必须/禁止/条件'（governance/ 下 policy 必须 declarative，见 VR-008）"
 
     operational:
       allowed_subdirs: [vibe_coding, devops, migration]
-      allowed_doc_types: [operational_rule]
-      forbidden_doc_types: [policy]
-      description: "过程式规则——定义'如何做'的步骤（architecture 子目录已于 2026-05-01 删除）"
+      allowed_doc_types: [policy]  # v3.1.0: operational_rule 合并入 policy；operational/ 下 policy 必须 procedural，见 VR-009
+      forbidden_doc_types: []
+      description: "过程式规则——定义'如何做'的步骤（v3.1.0: 原 operational_rule 语义由 procedural policy 承载）"
 
     domains:
       allowed_subdirs_pattern: "{domain_name}"
-      allowed_doc_types: [policy, operational_rule]
+      allowed_doc_types: [policy]  # v3.1.0: operational_rule 合并入 policy
       subdirs_must_have: [governance, operational]
       description: "层域特定规则——每个层域有 governance/ + operational/ 子目录"
 
@@ -268,17 +268,17 @@ validation_rules:
 
   - id: VR-008
     tier: directory_scoped
-    name: "governance/ 下无 operational_rule"
-    check: "files under governance/ must not have doc_type=operational_rule"
+    name: "governance/ 下 policy 必须为 declarative（禁止 procedural）"
+    check: "files under governance/ with doc_type=policy must have rule_form=declarative"
     severity: error
-    source: "PS-STD-001 §3.2.1"
+    source: "PS-STD-001 §3.2.1（v3.1.0 重新设计：operational_rule 合并入 policy 后，governance/ 只放声明式规则）"
 
   - id: VR-009
     tier: directory_scoped
-    name: "operational/ 下无 policy"
-    check: "files under operational/ must not have doc_type in [policy]"
+    name: "operational/ 下 policy 必须为 procedural（禁止 declarative）"
+    check: "files under operational/ with doc_type=policy must have rule_form=procedural"
     severity: error
-    source: "PS-STD-001 §3.2.1"
+    source: "PS-STD-001 §3.2.1（v3.1.0 重新设计：operational_rule 合并入 policy 后，operational/ 只放过程式规则）"
 
   - id: VR-010
     tier: project_wide
@@ -289,7 +289,7 @@ validation_rules:
 
   - id: VR-011
     tier: project_wide
-    name: "operational_rule 必须可验证（不能是 inspection）"
-    check: "if doc_type=operational_rule then verifiability != inspection"
+    name: "procedural policy 必须可验证（不能是 inspection）"
+    check: "if rule_form=procedural then verifiability != inspection"
     severity: error
-    source: "PS-STD-001 §2.8 #6"
+    source: "PS-STD-001 §2.8 #6（v3.1.0 重新设计：operational_rule 合并入 policy 后，可验证性约束改为按 rule_form=procedural 触发）"
