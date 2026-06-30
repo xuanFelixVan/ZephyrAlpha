@@ -1,15 +1,15 @@
-# 自动生成于 2026-06-29T11:30:42Z
+# 自动生成于 2026-06-30T04:16:58Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-29T11:30:42Z'
+generated_at: '2026-06-30T04:16:58Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 380
+total_scripts: 379
 with_manifest: 221
-missing_manifest: 159
+missing_manifest: 158
 categories:
-  governance: 114
+  governance: 113
   governance:_sync: 4
   governance:d10_performance: 1
   governance:d11_compliance: 13
@@ -18,9 +18,9 @@ categories:
   governance:d2_links: 3
   governance:d3_metadata: 17
   governance:d4_paths: 4
-  governance:d5_architecture: 93
+  governance:d5_architecture: 92
   governance:d6_security: 14
-  governance:d7_code: 28
+  governance:d7_code: 29
   governance:d8_doc_sync: 4
   governance:d9_knowledge: 2
   governance:generators: 7
@@ -552,16 +552,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: create_alignment_tasks.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: create_d_signal_rename_tasks.py
   owner: governance
   dimensions: []
   priority: P2
@@ -1626,20 +1616,6 @@ scripts:
     module-injection-rules-policy.md。
 
     '
-  tags:
-  - Critical
-- name: d5_architecture/checkers/check_dual_tree_sync.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args:
-  - --warn-only
-  - --ci
-  warn_only: false
-  description: GATE-DTS — 双树同步检查闸门（architecture_model/ 施工树 vs docs/EA/architecture_model/
-    企业架构树）
   tags:
   - Critical
 - name: d5_architecture/checkers/check_g6_ctr_compliance.py
@@ -2793,6 +2769,19 @@ scripts:
   description: 'PIT 合规检查（HC-10）——回测代码访问未来数据检测。 对标 GOV-AI-009 ai-hallucination-detection-rules.md。
 
     '
+  tags:
+  - Critical
+- name: d7_code/check_pure_shim.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --ci
+  - --warn-only
+  warn_only: false
+  description: GATE-NO-PURE-SHIM - 检测纯 re-export shim 文件（star import + 无实质代码）
   tags:
   - Critical
 - name: d7_code/detect_absolute_path_hardcoding.py

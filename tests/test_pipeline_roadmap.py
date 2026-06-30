@@ -18,7 +18,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from zephyr.integration.pipeline_roadmap import (
+from zephyr.infrastructure.pipeline.pipeline_roadmap import (  # 治本(2026-06-30): integration 副本已删除, 改从 infrastructure 真源导入
     PIPELINE_DEPENDENCIES,
     PIPELINE_VERSION_MAP,
     PROFILES,

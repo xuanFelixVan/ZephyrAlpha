@@ -21,6 +21,9 @@
 对标：蓝图 §22 (v0.10.0 / B173-B234)、§23 (v0.11.0 / B233-B289)、§24 (v0.12.0 / B284-B325)。
 
 每个类/函数为规划中骨架——生产实现将在对应版本迭代时完成。
+
+真源声明（治本 2026-06-30）：本文件是 pipeline_roadmap 的唯一真源。
+integration/pipeline_roadmap.py 副本已删除，所有消费者改从本文件导入。
 """
 
 from __future__ import annotations

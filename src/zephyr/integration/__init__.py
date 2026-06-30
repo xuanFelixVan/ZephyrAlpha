@@ -21,7 +21,6 @@ __all__ = [
     "pipeline_agent_bridge",
     "pipeline_lock",
     "pipeline_orchestrator",
-    "pipeline_roadmap",
     "ports",
     "preemption_manager",
     "routing_plugins",
