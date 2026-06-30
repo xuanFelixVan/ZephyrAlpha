@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.ce_bootstrap import (
+from zephyr.autonomy_core.ce.ce_bootstrap import (
     BootstrapGate,
     CEBootstrap,
     CEBootstrapLevel,
