@@ -177,15 +177,25 @@ def _save_db(data: dict) -> None:
 
 
 def register() -> dict:
-    """register implementation."""
+    """register implementation。
+
+    治本（2026-06-30 自指循环）：仅当 hash 变化或文件数变化时写 db。
+    原实现每次都重建 data 并 _save_db，导致 registered_at/last_check_at
+    时间戳变化 → db dirty → commit db → reconciler 又跑 register → 循环。
+    现改为：读旧 db，计算新 hash，对比；全相同则不写 db（返回 "unchanged"），
+    消除自指循环。register 语义从"无条件重写"改为"仅在变化时重写"。
+    """
     now = datetime.now(UTC).isoformat()
-    data = {"files": {}, "registered_at": now, "last_check_at": now}
+    old_db = _load_db()
+    old_files = old_db.get("files", {})
+
+    new_files: dict = {}
     for entry in RULES_MANIFEST:
         rel = entry["path"]
         # 红蓝发现3 治本：基于 git HEAD 状态 hash，不基于工作树 WIP。
         git_hash = _hash_git_head(rel)
         if git_hash is not None:
-            data["files"][rel] = {
+            new_files[rel] = {
                 "hash": git_hash,
                 "critical": entry["critical"],
                 "desc": entry["desc"],
@@ -194,13 +204,24 @@ def register() -> dict:
             # 文件不在 git HEAD（新文件/未跟踪）→ 回退到工作树状态
             fp = _REPO_ROOT / rel
             if fp.exists():
-                data["files"][rel] = {
+                new_files[rel] = {
                     "hash": _hash_file(fp),
                     "critical": entry["critical"],
                     "desc": entry["desc"],
                 }
+
+    # 治本（自指循环）：hash 全相同则不写 db，消除 register→commit db→register 循环。
+    # registered_at 保留旧值（基线未变）；last_check_at 也保留旧值（register 不是 check）。
+    if new_files == old_files:
+        return {"status": "unchanged", "count": len(new_files), "at": old_db.get("registered_at", now)}
+
+    data = {
+        "files": new_files,
+        "registered_at": now,
+        "last_check_at": old_db.get("last_check_at", ""),
+    }
     _save_db(data)
-    return {"status": "registered", "count": len(data["files"]), "at": now}
+    return {"status": "registered", "count": len(new_files), "at": now}
 
 
 def check() -> dict:
