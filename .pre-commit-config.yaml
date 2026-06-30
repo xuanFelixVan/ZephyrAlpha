@@ -743,9 +743,9 @@ repos:
         files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
         description: "vocabulary YAML 变更时校验派生文件一致性（硬阻断）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
-      # ── GATE-DERIVED 已删除（派生产物已删除，depgraph.db 是唯一查询入口）──
+      # ── GATE-DERIVED 已删除（派生产物已删除，depgraph 是唯一查询入口）──
       # arch_directory_tree 同步已迁移到 GitCommitGateway post-commit reconciler（make_path_tree_reconciler）
-      # 比原 pre-commit hook 优势：depgraph.db 变更自动包含在后续 commit，无 unstaged 死循环副作用
+      # 比原 pre-commit hook 优势：depgraph 变更自动包含在后续 commit，无 unstaged 死循环副作用
 
       # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
       # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6
@@ -755,7 +755,7 @@ repos:
       # 模式：--ci 硬阻断（发现漂移 exit 1）；已知存在 7 处历史 DDL 漂移（v2-v13 累积，非 v14 引入），
       #       待后续独立任务修复——触发本门禁的 schema 变更必须先清零历史漂移
       - id: gate-schema-health
-        name: "GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验"
+        name: "GATE-SCHEMA-HEALTH: depgraph Schema 健康度校验"
         entry: python scripts/governance/verify_schema_health.py
         args: ["--ci"]
         language: system
