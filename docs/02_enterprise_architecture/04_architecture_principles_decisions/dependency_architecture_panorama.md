@@ -2194,13 +2194,13 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
   - SQL 方言调整：AUTOINCREMENT→GENERATED AS IDENTITY、INSERT OR REPLACE→ON CONFLICT、PRAGMA 全删、sqlite_master→information_schema
 - **状态**: ✅ 已执行（详见 `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md`）
 
-#### P3 优化：pgvector/LISTEN-NOTIFY/分区表/监控告警（2026-06-28）
+#### P3 优化：pgvector/LISTEN-NOTIFY/分区表/监控告警（2026-06-28 裁定，2026-06-30 文档归档删除）
 
-- **执行日期**: 2026-06-28
+- **执行日期**: 2026-06-28 裁定 / 2026-06-30 文档归档删除
 - **变更**:
-  - P3-T1: pgvector 改造（向量搜索能力，扩展已安装）
-  - P3-T2: LISTEN-NOTIFY 机制删除（改用轮询，降低复杂度）
-  - P3-T3: 分区表删除（容量未达阈值，分区增加维护成本无收益）
-  - P3-T4: 监控告警改造（pg_stat_statements 接入）
-- **状态**: ✅ 已执行（详见 `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md`）
+  - P3-T1: pgvector 改造（待VMS code_context自然演进，不新建pgvector）
+  - P3-T2: LISTEN-NOTIFY 机制裁定删除（伪需求，100% AI开发无常驻监听者）
+  - P3-T3: 分区表裁定删除（24MB过度工程，edges无domain_id列）
+  - P3-T4: 监控告警改造已实现（扩展verify_schema_health.py事件驱动检查）
+- **状态**: P3文档已于2026-06-30归档删除（T2/T3裁定删除，T1待VMS演进，T4已实现）。裁定约束见AGENTS.md §11.2
 - **当前规模**: edges 表 6,197 行 / 24MB（P3 审查时记录，AGENTS.md §11.2）

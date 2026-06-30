@@ -1,10 +1,10 @@
 ---
 module_id: SH-DB-001
 submodule_path: src/zephyr/infrastructure/db
-title: "Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级"
+title: "Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.0.1"
+version: "4.1.0"
 layer: cross_layer
 blueprint_level: module
 owner: ZephyrAlpha-Owner
@@ -25,7 +25,7 @@ actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "Database 集成蓝图——聚合 MOD-INF-012A（Core: SQLite+DuckDB已实现）和 MOD-INF-012B（v3.0: depgraph 从 SQLite 迁移到 PostgreSQL，P2迁移主体已完成2026-06-28，TC-PG-08/10残留于2026-06-29清理完毕4/4验收通过，整体待24任务卡全面验证故 partially_implemented，P3优化待施工）。DW-045拆分完成，详细内容见子蓝图。"
+summary: "Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表)。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
 tags: [database, db, sqlite, duckdb, atm, atomic-transaction, task-repo, olap, infrastructure, migration, self-healing, operational-excellence, dual-db-router, write-batcher, integration-blueprint]
 priority: P1
 runtime_plane: hot
@@ -60,13 +60,55 @@ references:
 
 ### §0.1 代码文件清单
 
-> 本蓝图为集成索引，012A 代码清单见本文档 §1.1，012B 施工方案见子蓝图 mod_inf_012b_p2/p3_*
+> 本蓝图为集成索引，012A 代码清单见本文档 §1.1，012B 施工方案见子蓝图 mod_inf_012b_p2_*
 
 本蓝图是 Database 模块的集成入口——聚合两个子蓝图：
 - **MOD-INF-012A Database Core**：SQLite+DuckDB 双引擎核心运营（13 个 .py 全部已实现，物理代码主位置 `src/zephyr/infrastructure/db/`）
-- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移主体已完成 2026-06-28，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收通过，整体待 24 任务卡全面验证故 partially_implemented + P3 优化待施工）
+- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移主体已完成 2026-06-28，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收通过，整体待 24 任务卡全面验证故 partially_implemented）
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
+
+## 三库职责划分（2026-06-30 决策：3库是合理最小集，不合并）
+
+> **决策依据**：单人开发+无实盘阶段。3个关系数据库各有硬需求，引擎选择需求驱动，合并代价远大于收益。统一入口 `DatabaseService` 封装3引擎差异，AI只需记住一个类。
+> **数据库清单真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（5个INFRA-DB条目，含2个非关系库）
+
+| # | 数据库 | 引擎 | infra_id | 职责 | 表数 | 集成度 | 引擎选择硬需求 |
+|---|--------|------|----------|------|:----:|:------:|-------------|
+| 1 | governance.db | SQLite | INFRA-DB-001 | **治理运行时**——TaskCard/事件/门禁/断路器/FLE指标 | 15+ | 18+处import(核心) | 嵌入式零部署、高频小事务、状态机CHECK约束 |
+| 2 | depgraph | PostgreSQL 16 | INFRA-DB-003 | **架构静态真源**——nodes/edges/domains等28表，架构治理 | 28 | 架构真源 | 复杂关系查询、MVCC并发、架构图遍历 |
+| 3 | market.duckdb | DuckDB | INFRA-DB-005 | **业务时序**——tick/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades | 8 | 回测用 | 列式压缩10:1、零拷贝读Parquet、AS OF JOIN时序PIT |
+
+**不合并理由**（第一性原理）：
+- SQLite→PostgreSQL：18+处import重写、TaskRepository核心类重写、SQL语法适配(?→%s, GLOB→SIMILAR TO)，代价极高
+- DuckDB不可替代：列式压缩、Parquet零拷贝、AS OF JOIN时序PIT查询，PostgreSQL无此优势
+- 真源唯一：3库职责不重叠（治理运行时/架构静态/业务时序），无同步需求
+- 责任唯一：`DatabaseService`统一入口，3引擎差异封装
+
+### market.duckdb 安全约束（read_only 真源：代码层强制）
+
+> **read_only=True 安全约束真源在代码层**（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_conn()`），不在 YAML 配置。
+> 理由：安全约束是代码契约不是配置数据，放YAML会和代码脱节（已发生过真源矛盾）。
+> infrastructure_registry.yaml 的 access_method 字段仅作AI发现性文档参考，标注「安全约束以代码为准」。
+
+## 三层冷热架构定位（2026-06-30 裁定：降级为未来蓝图+门禁）
+
+> **裁定依据**：设计文档(数据架构.md v6.0)自身有门禁分级。当前单人+无实盘，Hot层(Redis)的<5ms推理需求(DD-11-01)不存在。降级为未来蓝图使当前规范与实现一致，AI不混淆，且不阻塞未来。
+
+| 架构组件 | 蓝图定位 | 门禁触发条件 | 理由 |
+|---------|:-------:|------------|------|
+| **Warm层(DuckDB+Parquet)** | **当前规范** | — | 已实现market.duckdb，回测/因子研究够用，DuckDB~100ms满足15秒延迟预算 |
+| **Cold层(E盘Parquet归档)** | **当前规范(架构预留)** | 交易≥7年合规(证监会) | 法律硬要求；当前无实盘数据但架构需预留，DuckDB直接ATTACH E盘Parquet，单引擎管理 |
+| **Hot层(Redis)** | **未来蓝图** | **实盘交易触发** | 无实盘=无<5ms推理需求；Redis的<5ms需求来自盘中5000只×200因子推理(DD-11-01)，非Tick存储 |
+| **Feature Store三件套** | **未来蓝图** | 因子>500触发 | 当前因子少，DuckDB表+视图替代；DD-11-01训练-推理双存储需求暂缓 |
+| **Event Store CQRS** | **未来蓝图** | 吸纳外部资金触发 | 单人阶段DuckDB INSERT ONLY表替代；DD-12-01事件溯源暂缓 |
+| **ClickHouse升级** | **未来蓝图** | AUM>200万触发 | DuckDB→ClickHouse平滑升级，Parquet数据层不动 |
+
+**门禁触发后的升级路径**：
+1. **实盘交易触发** → 启用Hot Redis层（盘中因子截面<5ms推理）
+2. **因子>500触发** → 启用Feature Store（离线Parquet+在线Redis+Registry SQLite）
+3. **吸纳外部资金触发** → 启用Event Store CQRS + E盘双副本（DD-07-04）
+4. **AUM>200万触发** → DuckDB→ClickHouse升级（DD-07-01门禁）
 
 ## 子蓝图索引
 
@@ -74,7 +116,8 @@ references:
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
 | MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | partially_implemented | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
-| MOD-DB_DEPGRAPH_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | partially_implemented | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
+
+> **P3 PostgreSQL优化方案已归档删除**（2026-06-30）：原P3的4任务中T2/T3裁定删除（伪需求/过度工程），T1 pgvector改造待VMS自然演进，T4监控告警已实现（扩展verify_schema_health.py，实现记录见AGENTS.md §11.2）。P3历史文档已删除，避免Draft状态误导AI实现已裁定的伪需求。
 
 ### 职责划分
 
@@ -82,13 +125,11 @@ references:
 |--------|---------|---------|
 | MOD-INF-012A | SQLite WAL 事务引擎 / DuckDB OLAP / ATM v2.0 / TaskRepository 10状态机 / DatabaseManager 运维 / AuditSchema 审计查询 / QueryMetrics 性能监控 | `src/zephyr/infrastructure/db/` 13 个 .py（全部已实现；governance/ 根与 governance/persistence/ 存在过渡期副本） |
 | MOD-DB_DEPGRAPH_PG | Windows原生安装 PostgreSQL / 数据迁移 / SQL 方言调整 / 删除文件锁 / 红蓝测试 | 见 P2 方案 §十二受影响文件索引 |
-| MOD-DB_DEPGRAPH_OPT | pgvector 语义检索 / LISTEN/NOTIFY 事件通知 / 按 domain_id 分区表 / pg_stat_activity 监控告警 | 见 P3 方案 §十受影响文件索引 |
 
 ### AI 施工指引
 
 - **读 Core 实现** → 本文档 §1.1——了解已实现的 SQLite+DuckDB 基础设施
 - **施工 P2 迁移** → [mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md)——迁移设计 + 施工步骤 + 验收标准
-- **施工 P3 优化** → [mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md)——4 大优化方向
 - **查看代码** → `D:\ZephyrAlpha\src\zephyr\infrastructure\db\`
 - **查看测试** → `D:\ZephyrAlpha\tests\unit\`（unit 单元测试）与 `D:\ZephyrAlpha\tests\unit\db\`（db 集成测试）
 
@@ -171,11 +212,11 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 |----------|---------------|------|
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` | 本文件 |
 | 子蓝图 P2 迁移 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` | P2 迁移方案 |
-| 子蓝图 P3 优化 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p3_postgresql_optimization.md` | P3 优化方案 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | Python 源码（012A 13 个 .py 已实现；012B 待施工） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\db\` | 单元测试 |
 | 数据文件 | `D:\ZephyrAlpha\data/databases/governance.db` | 012A SQLite 主数据库（任务卡库，保持 SQLite 不迁移） |
 | 数据文件 | `localhost:5432/depgraph`（PostgreSQL 16，连接配置 `config/.env.postgres`） | 012B 迁移目标库（SQLite→PostgreSQL，depgraph 全景图，28 表） |
+| 数据文件 | `D:\ZephyrAlpha\data/databases/market.duckdb` | INFRA-DB-005 业务时序库（8表，read_only=True强制，安全约束真源在代码层） |
 | 备份目录 | `D:\ZephyrAlpha\data\backups\` | 自动备份文件（7天日备份 + 4周末备份） |
 | 冷数据归档 | `D:\ZephyrAlpha\data\warehouse\` | Parquet 冷数据（events_YYYYMMDD.parquet） |
 
@@ -195,9 +236,9 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 012B-P2/P3 条目（版本 4.0.1 已于 2026-06-27 更新） | DW-045 拆分 + P2/P3 细化 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 012B-P2 条目（版本 4.0.1 已于 2026-06-27 更新） | DW-045 拆分 + P2 细化 |
 | 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
-| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B-P2/P3 | 新模块 ID 注册 |
+| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B-P2 | 新模块 ID 注册 |
 
 ---
 
@@ -251,7 +292,6 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | DB YAML真源 |
 | 6 | 子蓝图 P2 迁移 | MOD-DB_DEPGRAPH_PG | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` | P2 迁移方案真源 |
-| 7 | 子蓝图 P3 优化 | MOD-DB_DEPGRAPH_OPT | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p3_postgresql_optimization.md` | P3 优化方案真源 |
 
 ---
 

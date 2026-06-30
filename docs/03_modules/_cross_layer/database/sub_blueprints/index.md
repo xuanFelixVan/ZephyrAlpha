@@ -21,7 +21,8 @@ ttl: permanent
 |-----------|------|------|
 | [index.md](index.md) | Markdown | sub-blueprints — 目录索引 |
 | [mod_inf_012b_p2_postgresql_migration.md](mod_inf_012b_p2_postgresql_migration.md) | Markdown | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（已完成 2026-06-27） |
-| [mod_inf_012b_p3_postgresql_optimization.md](mod_inf_012b_p3_postgresql_optimization.md) | Markdown | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控（待施工） |
+
+> P3 PostgreSQL优化方案已于 2026-06-30 归档删除（T2/T3裁定删除，T1待VMS自然演进，T4已实现见AGENTS.md §11.2）。
 
 ## 导航
 
