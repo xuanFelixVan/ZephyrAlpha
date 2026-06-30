@@ -13,7 +13,7 @@
 
 import json
 
-from zephyr.ops.observability.cli_summary import BuildSummary, CLISummary
+from zephyr.shared.observability_02.cli_summary import BuildSummary, CLISummary
 
 
 def _make_summary(

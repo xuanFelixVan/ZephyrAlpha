@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.zephyr_logger
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.ops.observability.logging
+# [DEPENDENCIES] zephyr.shared.observability_02.logging
 # [CONSUMERS] tests.unit.shared.test_orphan_integration
 # [STARTUP] imported
 # [MATURITY] production
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.ops.observability.logging import (
+from zephyr.shared.observability_02.logging import (
     LogLevel,
     TraceContext,
     ZephyrLogger,

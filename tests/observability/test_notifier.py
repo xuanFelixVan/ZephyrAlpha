@@ -13,7 +13,7 @@
 
 import json
 
-from zephyr.ops.observability.notifier import (
+from zephyr.infrastructure.observability.notifier import (
     Notification,
     NotificationChannel,
     NotificationLevel,

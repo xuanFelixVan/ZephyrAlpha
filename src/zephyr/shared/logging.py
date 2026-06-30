@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.logging
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.ops.observability.logging
+# [DEPENDENCIES] zephyr.shared.observability_02.logging
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -16,10 +16,10 @@
 # [TTL] task_bound
 
 """
-logging.py —— Re-export wrapper → canonical: zephyr.ops.observability.logging
+logging.py —— Re-export wrapper → canonical: zephyr.shared.observability_02.logging
 
 本文件是向后兼容的顶层别名。规范实现位于 observability/logging.py。
 修改日志逻辑请编辑 observability/logging.py，不要编辑本文件。
 """
 
-from zephyr.ops.observability.logging import *  # noqa: F403
+from zephyr.shared.observability_02.logging import *  # noqa: F403
