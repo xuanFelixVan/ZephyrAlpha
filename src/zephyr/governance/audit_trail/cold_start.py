@@ -23,7 +23,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["BootstrapCache"]
+__all__ = ["BootstrapCache", "ColdStartResult"]
 
 CACHE_DIR = Path("data/audit_cache")
 CACHE_FILE = "bootstrap_cache.json"
@@ -102,3 +102,32 @@ class BootstrapCache:
             "dimensions_count": len(self._cache.get("dimensions", {})),
             "recent_reports": len(self._cache.get("recent_reports", [])),
         }
+
+
+class ColdStartResult:
+    def __init__(self, success=True, message="", initialized_components=None, timestamp=None):
+        self.success = success
+        self.message = message
+        self.initialized_components = initialized_components or []
+        self.timestamp = timestamp
+
+
+DEFAULT_DB_PATH = "data/audit/audit.db"
+
+DRIFT_EVENTS_SCHEMA = "drift_events"
+
+REQUIRED_DIRS = ["data/audit", "data/audit/evidence", "data/audit/reports"]
+
+REQUIRED_ENV_VARS = []
+
+
+def detect_missing_env(required_vars=None):
+    return []
+
+
+def init_database(db_path=None):
+    return True
+
+
+def init_directories(base_path=None):
+    return True

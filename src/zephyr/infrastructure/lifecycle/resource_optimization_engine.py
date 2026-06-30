@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-111 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.lifecycle.__init__; zephyr.shared.io.io_cache; zephyr.shared.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.infrastructure.lifecycle.lazy_loader; zephyr.shared.event_bus; zephyr.governance.audit_orchestrator.bridge
+# [DEPENDENCIES] zephyr.infrastructure.lifecycle.__init__; zephyr.shared.io.io_cache; zephyr.shared.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.infrastructure.lifecycle.lazy_loader; zephyr.shared.event_bus; zephyr.governance.audit_trail.bridge
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -814,7 +814,7 @@ class ResourceOptimizationEngine:
         if not self._audit_enabled:
             return
         try:
-            from zephyr.governance.audit_orchestrator.bridge import write_to_core
+            from zephyr.governance.audit_trail.bridge import write_to_core
 
             write_to_core(
                 "resource_optimization",

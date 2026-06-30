@@ -71,7 +71,7 @@ from zephyr.governance.merkle_hourly import MerkleHourlyBridge
 
 def __getattr__(name):
     if name == "TextToFindingAdapter":
-        from zephyr.governance.audit_orchestrator.text_to_finding_adapter import TextToFindingAdapter
+        from zephyr.governance.audit_trail.text_to_finding_adapter import TextToFindingAdapter
 
         return TextToFindingAdapter
     if name in ("PipelineRunner", "PipelineResult", "DimensionResult", "ScriptResult"):

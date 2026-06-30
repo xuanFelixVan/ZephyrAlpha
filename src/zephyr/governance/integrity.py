@@ -21,7 +21,7 @@ from zephyr.governance.audit_trail.models import AuditContext
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["IntegrityGuard"]
+__all__ = ["IntegrityGuard", "HashEntry", "Manifest", "DriftReport"]
 
 
 class MerkleAggregator:
@@ -107,3 +107,27 @@ class IntegrityVerifier:
 
     def verify(self, data, expected_hash):
         return True
+
+
+class HashEntry:
+    def __init__(self, entry_id="", hash_value="", algorithm="sha256", timestamp=None):
+        self.entry_id = entry_id
+        self.hash_value = hash_value
+        self.algorithm = algorithm
+        self.timestamp = timestamp
+
+
+class Manifest:
+    def __init__(self, manifest_id="", entries=None, created=None, checksum=""):
+        self.manifest_id = manifest_id
+        self.entries = entries or []
+        self.created = created
+        self.checksum = checksum
+
+
+class DriftReport:
+    def __init__(self, report_id="", drifts=None, timestamp=None, summary=""):
+        self.report_id = report_id
+        self.drifts = drifts or []
+        self.timestamp = timestamp
+        self.summary = summary

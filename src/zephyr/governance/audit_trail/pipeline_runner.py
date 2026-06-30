@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.pipeline_runner
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.governance.audit_orchestrator.text_to_finding_adapter
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.governance.audit_trail.text_to_finding_adapter
 # [CONSUMERS] audit-orchestrator.cli; audit_admission_controller
 # [STARTUP] imported
 # [MATURITY] production
@@ -26,7 +26,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-# STUB: from zephyr.governance.audit_orchestrator.text_to_finding_adapter import TextToFindingAdapter
+# STUB: from zephyr.governance.audit_trail.text_to_finding_adapter import TextToFindingAdapter
 # Reason: lazy import to break circular import with audit-orchestrator.__init__
 from zephyr.governance.audit_trail.finding_model import (
     AuditFinding,
@@ -102,7 +102,7 @@ class PipelineRunner:
     def __init__(self, scripts_dir: str = "scripts/governance", max_workers: int = 8) -> None:
         self.scripts_dir = scripts_dir
         self.max_workers = max_workers
-        from zephyr.governance.audit_orchestrator.text_to_finding_adapter import TextToFindingAdapter
+        from zephyr.governance.audit_trail.text_to_finding_adapter import TextToFindingAdapter
 
         self._adapter = TextToFindingAdapter()
         self._script_output_mode: dict[str, str] = {}

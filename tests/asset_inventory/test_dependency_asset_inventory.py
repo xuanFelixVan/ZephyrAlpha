@@ -71,7 +71,7 @@ class TestDependencyExtractor:
 
     def test_classify_absolute(self) -> None:
         ex = DependencyExtractor()
-        assert ex._classify_import("zephyr.governance.audit_orchestrator.models") == "absolute"
+        assert ex._classify_import("zephyr.governance.audit_trail.models") == "absolute"
 
     def test_classify_relative(self) -> None:
         ex = DependencyExtractor()
@@ -83,10 +83,10 @@ class TestDependencyExtractor:
 
     def test_import_from_with_alias(self) -> None:
         ex = DependencyExtractor()
-        code = "from zephyr.governance.audit_orchestrator.models import Field as F"
+        code = "from zephyr.governance.audit_trail.models import Field as F"
         edges = ex.extract("test.py", code)
         assert len(edges) == 1
-        assert edges[0].to_module == "zephyr.governance.audit_orchestrator.models.Field"
+        assert edges[0].to_module == "zephyr.governance.audit_trail.models.Field"
 
 
 class TestBuildDependencyGraph:

@@ -39,7 +39,7 @@ PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 
 adapter_mod = pytest.importorskip(
-    "zephyr.audit_orchestrator.text_to_finding_adapter", reason="text_to_finding_adapter not available"
+    "zephyr.governance.audit_trail.text_to_finding_adapter", reason="text_to_finding_adapter not available"
 )
 TextToFindingAdapter = adapter_mod.TextToFindingAdapter
 

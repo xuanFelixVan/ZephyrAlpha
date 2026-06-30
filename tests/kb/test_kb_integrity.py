@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.audit_orchestrator.integrity import DriftReport, HashEntry, IntegrityGuard, Manifest
+from zephyr.governance.integrity import DriftReport, HashEntry, IntegrityGuard, Manifest
 
 
 class TestIntegrityGuard:
