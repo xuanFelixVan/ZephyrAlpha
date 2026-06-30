@@ -661,6 +661,29 @@ repos:
         description: "SSoT 变更时自动同步 audit_protocol.md 中的硬编码数字"
         stages: [manual]
 
+      # ── GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 漂移种子防复发）──
+      # 权威依据：AGENTS.md §7 tests/ 目录组织规范——tests/unit/ 已扁平化为 tests/
+      # 真源声明：ARCH-029 漂移种子清理——6轮87文件修复后，添加自动化 guard 防止重引入
+      # 检测范围：活跃代码和文档（.py/.md/.yaml/.yml）
+      # 豁免：_archive/、session_logs/、data/、reports/、历史规则文件(trae_028/034)
+      # 模式：硬阻断（检测到 tests/unit/ 即 exit 1 拒绝提交）
+      - id: gate-no-tests-unit
+        name: "GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）"
+        entry: "tests/unit/"
+        language: pygrep
+        files: "\\.(py|md|yaml|yml)$"
+        exclude: |
+          (?x)^(
+              _archive/.*|
+              scripts/.*/_archive/.*|
+              session_logs/.*|
+              data/.*|
+              reports/.*|
+              docs/01_policies_and_standards/rules/trae_0(28|34)_.*|
+              \.pre-commit-config\.yaml
+          )$
+        description: "ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免"
+
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
   # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
