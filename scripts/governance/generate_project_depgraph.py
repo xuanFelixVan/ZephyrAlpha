@@ -3204,6 +3204,23 @@ PRODUCTION_PROTECTED_FIELDS = (
 )
 
 
+# P2遗留修复：运营态edges的手动维护字段（防重新生成丢失）
+# 对标 PRODUCTION_PROTECTED_FIELDS，但针对edges表。
+# 这些字段由人工或enrich_edges_semantic标注，无法从AST import扫描恢复。
+# 使用"仅当为空时恢复"模式——enrich_edges_semantic已填充的不覆盖。
+EDGES_PROTECTED_FIELDS = (
+    "failure_mode",
+    "fallback",
+    "activation_condition",
+    "data_transfer_description",
+    "resource_impact",
+    "ddd_integration_pattern",
+    "event_ref",
+    "api_contract_refs",
+    "verified",
+)
+
+
 def load_production_state_from_db(db_path: str) -> dict:
     """P1修复: 从数据库加载运营态(production)节点的手动维护元数据。
 
@@ -3284,6 +3301,102 @@ def apply_production_metadata_protection(nodes: dict, production_meta: dict) -> 
                 node[field] = value
         # 强制保留运营态身份
         node["design_maturity"] = "production"
+        protected += 1
+    return protected
+
+
+def load_edge_production_state_from_db(db_path: str) -> dict:
+    """P2遗留修复: 从数据库加载运营态edges的手动维护元数据（防重新生成丢失）。
+
+    对标 load_production_state_from_db，但针对edges表。edges没有path列，
+    使用 (from_path, to_path, dep_type) 作为业务键——node_id在DELETE+重建
+    后会变化，但path稳定。
+
+    查询条件与 write_depgraph_to_db 的 DELETE edges 条件完全匹配：
+    排除 design 边和涉及 database 节点的边（这些不被DELETE，无需备份）。
+
+    Args:
+        db_path: depgraph路径（PG迁移后未使用，保留参数兼容签名）
+
+    Returns:
+        dict: {(from_path, to_path, dep_type): {protected_field: value}}
+              仅含非空保护字段
+    """
+    edge_meta = {}
+    try:
+        conn = get_depgraph_pg_connection(autocommit=False)
+        cur = conn.cursor()
+        cols = EDGES_PROTECTED_FIELDS
+        col_list = ", ".join(cols)
+        rows = cur.execute(
+            f"""SELECT n1.path AS from_path, n2.path AS to_path,
+                e.dep_type, {col_list}
+                FROM edges e
+                JOIN nodes n1 ON e.from_node_id = n1.node_id
+                JOIN nodes n2 ON e.to_node_id = n2.node_id
+                WHERE (e.dep_maturity != 'design' OR e.dep_maturity IS NULL)
+                AND e.from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')
+                AND e.to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')"""
+        ).fetchall()
+        for row in rows:
+            from_path = row["from_path"]
+            to_path = row["to_path"]
+            dep_type = row["dep_type"] or ""
+            if not from_path or not to_path:
+                continue
+            key = (normalize_path(from_path), normalize_path(to_path), dep_type)
+            meta = {}
+            for col in cols:
+                val = row[col]
+                if val is not None and val != "":
+                    meta[col] = val
+            if meta:
+                edge_meta[key] = meta
+        conn.close()
+    except Exception as e:
+        print(f"[DEPGRAPH] WARNING: 加载运营态edge元数据失败: {e}")
+    return edge_meta
+
+
+def apply_edge_production_protection(edges: list, nodes: dict, edge_meta: dict) -> int:
+    """P2遗留修复: 将运营态edge手动元数据恢复到重建后的edges。
+
+    对标 apply_production_metadata_protection。使用 (from_path, to_path, dep_type)
+    匹配。仅当重建edge该字段为空时恢复（不覆盖enrich_edges_semantic已填充的值）。
+
+    Args:
+        edges: build_depgraph + enrich_edges_semantic 产出的edges列表
+        nodes: nodes字典 {gen_node_id: node_dict}，用于gen_node_id→path映射
+        edge_meta: load_edge_production_state_from_db的返回值
+
+    Returns:
+        int: 受保护(恢复元数据)的edge数
+    """
+    if not edge_meta:
+        return 0
+    # 建立 gen_node_id → normalized_path 映射
+    gen_id_to_path = {}
+    for nid, node in nodes.items():
+        p = node.get("path", "")
+        if p:
+            gen_id_to_path[nid] = normalize_path(p)
+    protected = 0
+    for edge in edges:
+        from_nid = edge.get("from", "")
+        to_nid = edge.get("to", "")
+        from_path = gen_id_to_path.get(from_nid, "")
+        to_path = gen_id_to_path.get(to_nid, "")
+        if not from_path or not to_path:
+            continue
+        dep_type = edge.get("dep_type", "")
+        key = (from_path, to_path, dep_type)
+        meta = edge_meta.get(key)
+        if not meta:
+            continue
+        for field, value in meta.items():
+            cur_val = edge.get(field)
+            if cur_val is None or cur_val == "" or cur_val == []:
+                edge[field] = value
         protected += 1
     return protected
 
@@ -3469,6 +3582,21 @@ def main():
 
     print("[DEPGRAPH] Enriching edges with semantic fields...")
     depgraph["edges"] = enrich_edges_semantic(depgraph["edges"], depgraph["nodes"], registry_deps)
+
+    # P2遗留修复: 恢复运营态edges的手动维护元数据(防重新生成丢失)
+    # 在 enrich_edges_semantic 之后调用——enrich已填充的不覆盖(仅当为空时恢复)
+    try:
+        edge_meta = load_edge_production_state_from_db(None)
+        if edge_meta:
+            protected_cnt = apply_edge_production_protection(
+                depgraph.get("edges", []), depgraph.get("nodes", {}), edge_meta
+            )
+            print(
+                f"[DEPGRAPH] P2遗留修复: 从PG加载 {len(edge_meta)} 个运营态edge元数据, "
+                f"恢复保护 {protected_cnt} 个重建edge"
+            )
+    except Exception as e:
+        print(f"[DEPGRAPH] 警告: 从PG加载运营态edge元数据失败: {e}")
 
     # Enrich nodes with decision field from DEP-GRAPH design files
     print("[DEPGRAPH] Enriching nodes with decision field...")
