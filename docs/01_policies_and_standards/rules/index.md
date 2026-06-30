@@ -5,21 +5,21 @@ title: "rules — 目录索引"
 module_id: ""
 blueprint_id: ""
 version: "1.0.0"
-created: "2026-06-22"
-updated: "2026-06-22"
-ttl: permanent
+created: "2026-06-30"
+updated: "2026-06-30"
+ttl: "permanent"
 ---
 
 # rules
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-06-22
+> 生成日期：2026-06-30
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [_index.yaml](_index.yaml) | YAML | |
+| [index.md](index.md) | Markdown | rules — 目录索引 |
 | [trae_001_file_operation_security.yaml](trae_001_file_operation_security.yaml) | YAML | |
 | [trae_002_anti_orphan_search_first.yaml](trae_002_anti_orphan_search_first.yaml) | YAML | |
 | [trae_003_task_granularity_threshold.yaml](trae_003_task_granularity_threshold.yaml) | YAML | |
@@ -78,6 +78,8 @@ ttl: permanent
 | [trae_056_module_creation_workflow.yaml](trae_056_module_creation_workflow.yaml) | YAML | |
 | [trae_057_ai_consumer_first.yaml](trae_057_ai_consumer_first.yaml) | YAML | |
 | [trae_058_depgraph_scan_exclusions.yaml](trae_058_depgraph_scan_exclusions.yaml) | YAML | |
+| [trae_059_schema_version_write_protection.yaml](trae_059_schema_version_write_protection.yaml) | YAML | |
+| [trae_060_inward_consolidation.yaml](trae_060_inward_consolidation.yaml) | YAML | |
 
 ## 导航
 

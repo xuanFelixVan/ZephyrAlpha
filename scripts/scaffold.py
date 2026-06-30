@@ -77,6 +77,43 @@ GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
 
 # ---------------------------------------------------------------------------
+# 规则主题前缀（ARCH-037，按文件名定位的命名约定）
+# ---------------------------------------------------------------------------
+# 多段主题前缀无法机械拆分，显式声明；新增多段主题时更新此处。
+# 单段主题前缀由 _derive_rule_theme_prefixes() 从现有文件名自动派生。
+_MULTI_SEGMENT_THEMES = frozenset({
+    "anti_hallucination", "anti_orphan", "meta_rule", "domain_policy",
+    "cross_blueprint", "file_operation",
+})
+
+
+def _derive_rule_theme_prefixes() -> frozenset[str]:
+    """从现有规则文件名派生主题前缀集合（SSoT: rules/ 下现有文件名）。
+
+    文件名格式 trae_NNN_<theme>_<desc>.yaml，提取 <theme> 段。
+    多段主题（如 anti_hallucination）优先匹配 _MULTI_SEGMENT_THEMES，
+    其余取第一段。新增规则后前缀集合自动更新，无需手动维护前缀列表。
+    """
+    prefixes: set[str] = set()
+    for f in RULES_DIR.glob("trae_[0-9][0-9][0-9]_*.yaml"):
+        parts = f.stem.split("_", 2)  # [trae, NNN, <rest>]
+        if len(parts) < 3 or not parts[2]:
+            continue
+        rest = parts[2]
+        matched = next(
+            (ms for ms in _MULTI_SEGMENT_THEMES if rest == ms or rest.startswith(ms + "_")),
+            None,
+        )
+        if matched:
+            prefixes.add(matched)
+        else:
+            first = rest.split("_", 1)[0]
+            if first:
+                prefixes.add(first)
+    return frozenset(prefixes)
+
+
+# ---------------------------------------------------------------------------
 # 模块空壳模板
 # ---------------------------------------------------------------------------
 MODULE_TEMPLATE = '''"""{description}"""
@@ -441,6 +478,25 @@ class ScaffoldEngine:
             raise ScaffoldError(
                 f"命名规范阻断: '{name}' 不符合 snake_case 规范。\n"
                 f"  规则文件名必须使用 snake_case（小写+下划线），e.g. 'arch_new_rule'"
+            )
+
+        # ── 检查 1.5: 规则主题前缀（ARCH-037，按文件名定位的命名约定）──
+        # 强制 name 至少含主题+描述两段；已知前缀静默通过，新前缀警告（允许扩展）。
+        if "_" not in name:
+            raise ScaffoldError(
+                f"主题前缀阻断: '{name}' 缺少主题前缀。\n"
+                f"  命名约定(trae_028 GOV-DOC-003, ARCH-037): 规则文件名 MUST 为 "
+                f"trae_NNN_<主题>_<描述>.yaml，<主题>段便于按文件名定位。\n"
+                f"  e.g. arch_new_rule / behavior_xxx / doc_xxx / methodology_xxx"
+            )
+        _known_prefixes = _derive_rule_theme_prefixes()
+        if not any(name == p or name.startswith(p + "_") for p in _known_prefixes):
+            _first_seg = name.split("_", 1)[0]
+            print(
+                f"  [WARN] 新主题前缀 '{_first_seg}'，现有主题前缀: "
+                f"{sorted(_known_prefixes)}\n"
+                f"  确认为新主题后继续（trae_028 GOV-DOC-003, ARCH-037）。",
+                file=sys.stderr,
             )
 
         # ── 检查 2: layer 合法性 ──

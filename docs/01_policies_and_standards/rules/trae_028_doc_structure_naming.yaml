@@ -190,6 +190,10 @@ sections:
       check: 大写文件白名单
       pass: 仅AGENTS.md允许保留;新建文件一律全小写
       fail: 新建大写文件名
+    - type: constraint
+      check: 规则文件主题前缀(ARCH-037)
+      pass: rules/下规则文件名格式trae_NNN_<主题>_<描述>.yaml;<主题>段便于按文件名定位(如arch_/behavior_/doc_/methodology_/module_/meta_rule_/anti_hallucination_等);主题前缀集合由scaffold.py::_derive_rule_theme_prefixes从现有文件名自动派生(无独立词表真源)
+      fail: 规则文件名缺<主题>段(单段name);scaffold.py create_rule检查1.5阻断
     actions:
     - type: mandatory
       step: 文件名后缀必须匹配doc_type(GATE-11 N-08强制校验)
@@ -197,6 +201,8 @@ sections:
       step: 文件夹命名按决策树:对应功能域→域英文名snake_case;一个词够→单词;不够→snake_case
     - type: mandatory
       step: 技术栈专有名词版本白名单维护在scripts/governance/d3_metadata/check_naming_convention.py::TECH_VERSION_TOKENS
+    - type: mandatory
+      step: 规则文件创建MUST经scaffold.py rule子命令(检查1.5强制<主题>_<描述>格式);主题前缀从现有文件名派生,新前缀仅警告不阻断(允许主题扩展)
     prohibitions:
     - 禁止声明式规则用过程式后缀(governance-runbook.md→governance-protocol.md)
     - 禁止策略文件用操作后缀(security-incident-playbook.md→security-incident-response-policy.md)
