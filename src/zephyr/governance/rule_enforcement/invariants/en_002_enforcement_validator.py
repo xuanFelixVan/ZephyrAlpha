@@ -39,9 +39,6 @@ from zephyr.integration.shared.schema.schemas import Priority
 from zephyr.shared.io.paths import REPO_ROOT
 CONTRACTS_PATH = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"

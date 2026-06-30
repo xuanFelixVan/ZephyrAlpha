@@ -52,9 +52,6 @@ ensure_utf8_stdout()
 
 TECH_LANDSCAPE = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "technology"
     / "technology_landscape.yaml"

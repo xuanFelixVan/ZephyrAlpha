@@ -64,7 +64,7 @@ from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
 
-ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
+ARCH_MODEL = REPO_ROOT / "architecture_model"
 
 
 def scan_partition_yaml(yaml_path: Path) -> list[dict]:

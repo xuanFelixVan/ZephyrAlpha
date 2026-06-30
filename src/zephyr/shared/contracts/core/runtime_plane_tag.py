@@ -97,7 +97,7 @@ L08 api_gateway 的订单提交端点）。Hot-adjacent 模块在 Warm Path 标�
 - 当前本文件版本 v1.0.0 对齐 runtime-planes v1.0.0 + ADR-0011 v1.0.0
 
 参见：
-  - docs/02_enterprise_architecture/target_architecture/runtime_planes.md
+  - architecture_model/cross_cutting/runtime_planes.yaml
   - adr/adr-0011-runtime-planes-orthogonal-view.md
   - OQ-083（已 closed，本批次拍板）
 ═══════════════════════════════════════════════════════════════════════

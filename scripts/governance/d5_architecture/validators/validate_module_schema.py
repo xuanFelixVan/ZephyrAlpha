@@ -154,9 +154,6 @@ def check_config_registry(module_id: str = None) -> list[str]:
     findings = []
     config_yaml = (
         REPO_ROOT
-        / "docs"
-        / "02_enterprise_architecture"
-        / "target_architecture"
         / "architecture_model"
         / "system-configuration.yaml"
     )

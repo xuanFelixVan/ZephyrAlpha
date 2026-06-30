@@ -47,9 +47,6 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 CONTRACTS_YAML = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"

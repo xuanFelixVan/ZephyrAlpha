@@ -169,9 +169,6 @@ def check_tech_radar(module_id: str = None) -> list[str]:
     findings = []
     tech_landscape = (
         REPO_ROOT
-        / "docs"
-        / "02_enterprise_architecture"
-        / "target_architecture"
         / "architecture_model"
         / "technology"
         / "technology_landscape.yaml"

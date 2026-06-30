@@ -192,7 +192,6 @@ _ARCH_SUBDIR_ORDER = [
     "_archive",
     "archive",
     "sample",
-    "target_architecture",
 ]
 
 
@@ -227,7 +226,6 @@ DIR_DESCRIPTIONS_ZH = {
     "sample": "样板文件：文档格式参考",
     "generated": "自动生成产物：依赖图等",
     "domains": "域依赖图：各功能域Mermaid图",
-    "target_architecture": "目标架构：架构设计文档",
     "architecture_model": "架构模型：契约/事件/分层模型",
     "diagrams": "架构图：Mermaid图表",
     "contracts": "契约：跨层契约定义",
@@ -249,7 +247,6 @@ DIR_DESCRIPTIONS_EN = {
     "sample": "Sample files: format reference",
     "generated": "Generated artifacts: dependency graphs",
     "domains": "Domain dependency graphs: Mermaid per domain",
-    "target_architecture": "Target architecture: design documents",
     "architecture_model": "Architecture model: contracts/events/layers",
     "diagrams": "Diagrams: Mermaid charts",
     "contracts": "Contracts: cross-layer definitions",
@@ -263,7 +260,7 @@ DIR_DESCRIPTIONS_EN = {
 # 最大显示深度（相对于 docs/02_enterprise_architecture）
 # depth 0=根, 1=00_overview_entry等, 2=architecture_model, 3=architecture_model/contracts(不展开)
 # 最大显示深度（相对于根目录）
-# arch 模式: depth 0=根, 1=00_overview_entry等, 2=target_architecture, 3=contracts(不展开)
+# arch 模式: depth 0=根, 1=00_overview_entry等, 2=architecture_model, 3=contracts(不展开)
 # full 模式: depth 0=顶级(src/scripts等), 1=二级, 2=三级(不展开)
 MAX_DISPLAY_DEPTH_ARCH = 3
 MAX_DISPLAY_DEPTH_FULL = 2
@@ -421,7 +418,7 @@ FILE_DESC_ZH = {
     "6_手工架构图_样板.mmd": "手工架构图样板",
     "integration_topology_sample.md": "集成拓扑样板",
     "path_tree_sample.md": "路径树样板",
-    # target_architecture 根目录文件
+    # 以下文件随 target_architecture/ 删除（2026-07-01），描述保留供历史参考
     "application_architecture.md": "应用架构",
     "architecture_endgame_locked.md": "架构终态锁定",
     "architecture_principles.md": "架构原则",

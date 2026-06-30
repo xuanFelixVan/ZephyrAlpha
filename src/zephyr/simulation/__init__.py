@@ -22,8 +22,7 @@ AI 时代的"自动化实验"层：Scout Agent 自动抓取外部资讯 + 内部
 
 架构真源
 --------
-docs/02_enterprise_architecture/target_architecture/
-  03-application_architecture.md §4.3（AI/ML Platform：L11/L12/L13）
+architecture_model/index.yaml（53域清单，layer_id 属性枚举 L00-L13）
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------

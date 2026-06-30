@@ -62,7 +62,7 @@ from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
 EA_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
-ARCH_MODEL = EA_DIR / "target_architecture" / "architecture_model"
+ARCH_MODEL = REPO_ROOT / "architecture_model"
 
 
 def get_yaml_truth() -> dict:

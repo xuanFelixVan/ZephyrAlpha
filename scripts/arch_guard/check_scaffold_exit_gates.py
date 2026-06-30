@@ -15,13 +15,13 @@
 # [TTL] task_bound
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
-对标 security_architecture.md §10.2。
+对标 architecture_model/cross_cutting/invariants.yaml 安全不变量。
 4 条安全门禁：
 
   G1: git-secrets pre_commit hook 已部署 (06-SEC SG-1)
   G2: 全库 secret 泄漏扫描已执行且无 P0 发现 (06-SEC SG-2)
   G3: audit.db schema 已物理创建 (06-SEC SG-3)
-  G4: 06-SEC 视图 status=active 且被 00-overview.md §5 引用 (06-SEC SG-4)
+  G4: invariants.yaml 安全不变量已定义且有 owner+enforcement (06-SEC SG-4)
 
 exit: 0=all gates pass, 1=gates not passed, 2=infrastructure error
 """
@@ -40,6 +40,7 @@ if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
 from _shared.constants import REPO_ROOT  # noqa: E402
+from _shared.yaml_utils import load_yaml  # noqa: E402
 
 GIT_SECRETS_HOOK = REPO_ROOT / ".git" / "hooks" / "pre_commit"
 AUDIT_DB_PATH = REPO_ROOT / "data" / "audit.db"
@@ -86,37 +87,43 @@ def check_audit_db() -> tuple[bool, str]:
         return True, f"audit.db 已创建 ({AUDIT_DB_PATH.stat().st_size} bytes)"
     return False, "audit.db 未物理创建或为空"
 
-SEC_VIEW_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "security_architecture.md"
-)
-OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "overview.md"
+INVARIANTS_PATH = REPO_ROOT / "architecture_model" / "cross_cutting" / "invariants.yaml"
+_SECURITY_CATEGORIES = {"capital_safety", "boundary_integrity"}
 
-def check_security_view_active() -> tuple[bool, str]:
-    if not SEC_VIEW_PATH.exists():
-        return False, "security_architecture.md 不存在"
-    try:
-        sec_content = SEC_VIEW_PATH.read_text(encoding="utf-8", errors="ignore")
-    except Exception as e:
-        return False, f"无法读取 security_architecture.md: {e}"
-    if "status: active" not in sec_content:
-        return False, "security_architecture.md status != active"
-    if not OVERVIEW_PATH.exists():
-        return False, "overview.md 不存在"
-    try:
-        ov_content = OVERVIEW_PATH.read_text(encoding="utf-8", errors="ignore")
-    except Exception as e:
-        return False, f"无法读取 overview.md: {e}"
-    sec_refs = ["security_architecture", "安全架构", "Security Architecture"]
-    found = [r for r in sec_refs if r in ov_content]
-    if not found:
-        return False, "overview.md 未引用 security_architecture 视图"
-    return True, f"SEC status=active + overview 引用 ({', '.join(found[:2])})"
+def check_security_invariants_active() -> tuple[bool, str]:
+    """G4: invariants.yaml 安全不变量已定义且有 owner+enforcement。
+
+    真源迁移：security_architecture.md 已删除（2026-07-01），
+    安全基线真源迁至 architecture_model/cross_cutting/invariants.yaml
+    （capital_safety / boundary_integrity category）。
+    """
+    if not INVARIANTS_PATH.exists():
+        return False, "invariants.yaml 不存在"
+    data = load_yaml(INVARIANTS_PATH)
+    if not data:
+        return False, "invariants.yaml 为空或无法解析"
+    invariants = data.get("invariants", [])
+    if not isinstance(invariants, list) or not invariants:
+        return False, "invariants.yaml 无 invariant 条目"
+    sec_invs = [
+        i for i in invariants
+        if isinstance(i, dict) and i.get("category") in _SECURITY_CATEGORIES
+    ]
+    if not sec_invs:
+        return False, "invariants.yaml 无 capital_safety/boundary_integrity 条目"
+    missing = [
+        i.get("id", "?") for i in sec_invs
+        if not i.get("owner") or not i.get("enforcement")
+    ]
+    if missing:
+        return False, f"安全不变量缺少 owner/enforcement: {', '.join(missing)}"
+    return True, f"{len(sec_invs)} 条安全不变量已定义且有 owner+enforcement"
 
 GATES = [
     ("G1", "git-secrets hook", check_git_secrets_hook),
     ("G2", "secret 泄漏扫描", check_scan_secret_leak),
     ("G3", "audit.db 创建", check_audit_db),
-    ("G4", "SEC 视图治理", check_security_view_active),
+    ("G4", "安全不变量治理", check_security_invariants_active),
 ]
 
 def main() -> int:
@@ -147,7 +154,7 @@ def main() -> int:
         print("  G1: 运行 scripts/hooks/git_secrets_setup.sh 部署 hook")
         print("  G2: 运行 detect_secrets.py --warn-only 确认无 P0 发现")
         print("  G3: 运行 scripts/governance/d6_security/init_audit_db.py 创建 audit.db")
-        print("  G4: 确认 detect_secrets.py 可正常执行")
+        print("  G4: 确认 architecture_model/cross_cutting/invariants.yaml 存在且安全不变量有 owner+enforcement")
         return 1
 
     print("\n[OK] 所有安全门禁通过。scaffold→experimental 过渡条件满足。")

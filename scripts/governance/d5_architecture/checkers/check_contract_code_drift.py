@@ -64,9 +64,6 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 _CONTRACTS_YAML = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"

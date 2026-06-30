@@ -49,9 +49,6 @@ _logger = logging.getLogger(__name__)
 
 DEFAULT_CONTRACTS_PATH: Path = (
     REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "target_architecture"
     / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"
