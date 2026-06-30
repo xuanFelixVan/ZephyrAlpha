@@ -201,7 +201,7 @@ def load_decision_tree(
 def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
     """展开 decision_tree 节点中的 criteria_source 引用为 criteria 列表（原地修改）。
 
-    criteria_source 结构::
+    criteria_source 结构（基础模式——从 section 读取标量列表）::
 
         criteria_source:
           target: directory_contract.yaml
@@ -210,7 +210,20 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
           signal: path
           operator: startswith
 
-    展开后：node["criteria"] = [{"signal": ..., "value": <每个 path>, "operator": ...}, ...]
+    v2.0.0 增强：支持 filter + extract_field（从 dict 列表项中按条件过滤并提取字段）::
+
+        criteria_source:
+          target: doc_type_vocabulary.yaml
+          path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
+          section: values
+          filter:
+            field: ttl_default
+            equals: task_bound
+          extract_field: value
+          signal: frontmatter.doc_type
+          operator: equals
+
+    展开后：node["criteria"] = [{"signal": ..., "value": <每个值>, "operator": ...}, ...]
 
     约束：向内收——路径列表真源在外部 YAML，本函数加载时展开，evaluate_ttl 零感知。
     """
@@ -250,6 +263,17 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
                 )
             node["criteria"] = []
             continue
+        # v2.0.0: 支持 filter + extract_field（从 dict 列表项中按条件过滤并提取字段值）
+        filt = cs.get("filter")
+        extract_field = cs.get("extract_field")
+        if filt and extract_field:
+            field_name = filt.get("field")
+            field_value = filt.get("equals")
+            value = [
+                item.get(extract_field)
+                for item in value
+                if isinstance(item, dict) and item.get(field_name) == field_value
+            ]
         node["criteria"] = [
             {"signal": signal, "value": str(v), "operator": operator}
             for v in value

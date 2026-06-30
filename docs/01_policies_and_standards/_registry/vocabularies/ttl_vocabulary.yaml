@@ -111,15 +111,19 @@ decision_tree:
     Q2:
       question: "文档 doc_type 是否为过程性类型？"
       # 真源：doc_type_vocabulary.yaml values[].ttl_default == task_bound
-      # 治本（2026-06-30）：log 已废弃（v3.0.0 合并到 audit_report），移除
-      # 完整动态加载需扩展 load_decision_tree 支持 criteria_source（待实现）
-      criteria:
-        - signal: frontmatter.doc_type
-          value: "audit_report"
-          operator: equals
-        - signal: frontmatter.doc_type
-          value: "operational_rule"
-          operator: equals
+      # 治本（2026-06-30）：从 doc_type_vocabulary.yaml 动态加载（via criteria_source filter+extract_field）
+      # 消除硬编码 audit_report/operational_rule 副本——doc_type 变更只需改词表一处
+      criteria_source:
+        target: doc_type_vocabulary.yaml
+        path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
+        module_id: PS-VOC-001
+        section: values
+        filter:
+          field: ttl_default
+          equals: task_bound
+        extract_field: value
+        signal: frontmatter.doc_type
+        operator: equals
       match: any
       yes: task_bound
       no: Q3
