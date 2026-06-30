@@ -605,7 +605,7 @@ class {DataModel}(BaseModel):
 |----------|---------------|------|:-----------:|---------|
 | 蓝图文件 | `docs/03_modules/{layer}/{module-name}/blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
 | 业务代码 | `src/zephyr/{pkg}/` | Python 源码 | ≥1 | `__init__.py` __all__ |
-| 测试代码 | `tests/{pkg}/` | 测试用例 | ≥0 | pytest 自动发现 |
+| 测试代码 | `tests/{功能域}/` | 测试用例（按功能域归类，非测试类型维度；真源见 AGENTS.md §7） | ≥0 | pytest 自动发现 |
 
 ---
 

@@ -2447,19 +2447,6 @@ scripts:
     vs disk. Anchored to AGENTS.md section 6.16
   tags:
   - Critical
-- name: d5_architecture/validators/validate_test_directory_structure.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args:
-  - --warn-only
-  - --jsonl
-  warn_only: false
-  description: 测试目录结构校验（tests/unit/ 模块分组 + 平铺检测）
-  tags:
-  - Critical
 - name: d5_architecture/validators/validate_three_way_consistency.py
   owner: governance:d5_architecture
   dimensions:
