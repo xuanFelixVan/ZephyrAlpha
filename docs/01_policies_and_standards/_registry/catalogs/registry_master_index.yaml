@@ -1,8 +1,8 @@
-# 自动生成于 2026-06-30T15:50:23Z
+# 自动生成于 2026-06-30T16:02:33Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-30T15:50:23Z'
+generated_at: '2026-06-30T16:02:33Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 21
@@ -31,14 +31,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
-- registry_id: REG-ARCH-ISSUE-001
-  name: 架构议题注册表
+- registry_id: CFG-architecture-issue-registry
+  name: architecture_issue_registry
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 22
-  status: active
+  entry_count: 0
+  status: unknown
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
   category: governance_rule
