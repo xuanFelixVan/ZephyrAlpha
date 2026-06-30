@@ -615,11 +615,17 @@ class GitCommitGateway:
                     return True
         return False
 
-    def _verify_staged_is_clean(self, target_files: list[str]) -> tuple[bool, str]:
-        """验证 staged 区只有目标文件（防误提交其他 session WIP，无 pathspec commit 前置验证）。"""
+    def _verify_staged_is_clean(
+        self, target_files: list[str]
+    ) -> tuple[bool, str, list[str]]:
+        """验证 staged 区只有目标文件（防误提交其他 session WIP，无 pathspec commit 前置验证）。
+
+        返回 (is_clean, error_msg, non_target_files)。
+        non_target_files 为完整的非目标文件相对路径列表（供调用方自动 unstage）。
+        """
         staged_result = self._run_git(["git", "diff", "--cached", "--name-only"])
         if staged_result.returncode != 0:
-            return False, f"git diff --cached failed: {staged_result.stderr.strip()}"
+            return False, f"git diff --cached failed: {staged_result.stderr.strip()}", []
         staged_files = {
             os.path.normcase(f.strip())
             for f in staged_result.stdout.splitlines() if f.strip()
@@ -628,10 +634,30 @@ class GitCommitGateway:
             os.path.normcase(os.path.relpath(f, str(self.project_root)).replace("\\", "/"))
             for f in target_files
         }
-        non_target = staged_files - target_rel
+        non_target = sorted(staged_files - target_rel)
         if non_target:
-            sample = sorted(non_target)[:5]
-            return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}"
+            sample = non_target[:5]
+            return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}", non_target
+        return True, "", []
+
+    def _unstage_non_target_files(
+        self, non_target_files: list[str]
+    ) -> tuple[bool, str]:
+        """自动 unstage 非目标文件（治本：多 session 共享 git index 时清理并发污染）。
+
+        git index 是工作区级单例，并发 session 可能 staged 了不属于本次 commit 的文件。
+        无 pathspec 模式会提交整个 staging 区，所以 commit 前必须清理非目标文件。
+        此前由调用方手动 git reset HEAD 清理（反复出现 commit 卡死），现改为 GitCommitGateway 自动处理。
+        """
+        if not non_target_files:
+            return True, ""
+        result = self._run_git(["git", "reset", "HEAD", "--"] + non_target_files)
+        if result.returncode != 0:
+            return False, result.stderr.strip() or result.stdout.strip()
+        logger.info(
+            "GitCommitGateway: 自动 unstage %d 个非目标文件（多 session staging 区污染清理）",
+            len(non_target_files),
+        )
         return True, ""
 
     def _commit_with_file_message(
@@ -647,9 +673,18 @@ class GitCommitGateway:
         if not use_pathspec:
             if not target_files:
                 return None, "无 pathspec commit 需要 target_files 参数"
-            clean, err = self._verify_staged_is_clean(target_files)
+            clean, err, non_target = self._verify_staged_is_clean(target_files)
             if not clean:
-                return None, f"staged 区不干净，拒绝无 pathspec commit: {err}"
+                # 治本：自动 unstage 非目标文件后重新验证，避免并发 session
+                # 污染 staging 区导致 commit 卡死（此前需调用方手动 git reset HEAD）
+                unstage_ok, unstage_err = self._unstage_non_target_files(non_target)
+                if not unstage_ok:
+                    return None, (
+                        f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}"
+                    )
+                clean, err, _ = self._verify_staged_is_clean(target_files)
+                if not clean:
+                    return None, f"staged 区不干净，自动 unstage 后仍不干净: {err}"
         msg_fd, msg_path = tempfile.mkstemp(
             prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
         )
