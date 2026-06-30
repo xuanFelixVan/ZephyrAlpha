@@ -62,15 +62,6 @@ gates:
   scope: global
   execution_plane: warm
   note: beta hard compliance — AI MUST read blueprint BEFORE any code change
-- gate_id: GATE_18
-  gate_name: precommit
-  title: GATE-18 Pre-Commit Gate
-  category: lifecycle
-  file: ''
-  status: active
-  scope: global
-  execution_plane: hot
-  note: pre-commit钩子定义——非独立YAML，file字段为空（避免zombie检测误判）
 - gate_id: G10
   gate_name: position_limits
   title: G10 Position Limits Gate
@@ -843,15 +834,6 @@ gates:
   scope: global
   execution_plane: warm
   note: 2026-06-22 落地 — Session关门时文档内容审查（trae_030 §1.2 执行后文档审查协议）
-- gate_id: GATE_RULE_FM
-  gate_name: validate_rule_frontmatter
-  title: GATE-RULE-FM Rule YAML Frontmatter Standard Fields Gate
-  category: compliance
-  file: scripts/governance/d3_metadata/validate_rule_frontmatter.py
-  status: active
-  scope: global
-  execution_plane: warm
-  note: 2026-06-22 落地 — trae_XXX.yaml frontmatter 7标准字段+顺序+枚举值校验（配合 scaffold.py rule 模式双重保险）
 - gate_id: G_FWD_REF
   gate_name: forward_reference_detection
   title: G_FWD_REF Forward Reference Detection Gate
