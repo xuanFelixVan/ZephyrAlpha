@@ -9,17 +9,6 @@ Usage:
     python scripts/governance/d7_code/fix_naming_manual.py --report     # 仅报告违规
 """
 
-__manifest__ = """
-args: []
-description: fix_naming_manual — 手动修复少量命名违规(N-11/N-10/N-03/N-09/N-16)。
-dimensions:
-- D7
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
-
-
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_naming_manual.py | §
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
 # [DOMAIN] D_GOVERNANCE
@@ -37,6 +26,17 @@ warn_only: false
 # [TTL] task_bound
 
 from __future__ import annotations
+
+__manifest__ = """
+args: []
+description: fix_naming_manual — 手动修复少量命名违规(N-11/N-10/N-03/N-09/N-16)。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 
 import argparse
 import os

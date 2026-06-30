@@ -39,6 +39,8 @@ Usage::
     python scripts/governance/d3_metadata/classify_ttl_by_content.py docs/02_enterprise_architecture/
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 基于内容关键词的 ttl 精细分类审查脚本。
@@ -49,8 +51,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import csv
 import re

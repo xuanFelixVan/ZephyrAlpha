@@ -43,6 +43,17 @@ Exit codes: 0=pass, 1=findings (error-severity violations), 2=script error
 
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'GATE-DIRECTORY-CONTRACT: Directory Contract validation gate.'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import subprocess
 import sys

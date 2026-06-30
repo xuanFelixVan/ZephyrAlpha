@@ -24,6 +24,8 @@
   python rename_whitelist_cleanup.py --verify     # 验证残留（检查是否还有旧名）
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 命名规范白名单清理 - 全文替换脚本。
@@ -34,8 +36,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import os

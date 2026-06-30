@@ -20,6 +20,8 @@
 （如 D-SIGNAL 重命名后 26_d_digital_twin_architecture.md 残留为孤儿文件）。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 生成器公共工具（向内收：消除重复）。
@@ -30,8 +32,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import re
 from pathlib import Path

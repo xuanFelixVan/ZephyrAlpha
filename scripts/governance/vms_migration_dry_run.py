@@ -24,6 +24,8 @@ VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
     python scripts/governance/vms_migration_dry_run.py --persist-dir .audit_cache/vector_index
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
@@ -34,8 +36,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import json

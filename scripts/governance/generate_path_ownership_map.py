@@ -25,6 +25,8 @@
     python scripts/governance/generate_path_ownership_map.py --conflicts  # 仅输出冲突
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。
@@ -35,8 +37,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import logging

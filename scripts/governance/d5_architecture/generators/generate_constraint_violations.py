@@ -28,6 +28,8 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档'
@@ -38,8 +40,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

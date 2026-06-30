@@ -23,6 +23,8 @@ exit 0 = 所有攻击被防御系统检测到（预期行为）
 exit 1 = 至少一个攻击未被检测到（漏洞）
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT
@@ -34,8 +36,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import json
 import re

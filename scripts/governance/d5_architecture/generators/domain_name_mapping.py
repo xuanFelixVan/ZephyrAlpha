@@ -21,6 +21,8 @@
     preload_domain_names()
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
@@ -31,8 +33,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

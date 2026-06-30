@@ -19,6 +19,8 @@ CI Entry: Drift Detector E2E Pipeline Check
 Tier 8 — 每次 CI 全量回归时运行 drift E2E + 自检 + 注册表一致性。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'CI Entry: Drift Detector E2E Pipeline Check'
@@ -29,8 +31,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import subprocess
 import sys

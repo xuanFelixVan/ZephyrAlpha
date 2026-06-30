@@ -20,6 +20,8 @@ RULE-NINE 合规：生成 unified-asset-index.yaml 供新 AI session 冷启动�
 运行方式：python scripts/governance/generate_asset_index.py [--output <path>]
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 全项目资产索引生成器
@@ -30,8 +32,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 from collections import defaultdict

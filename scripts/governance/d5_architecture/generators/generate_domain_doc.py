@@ -39,6 +39,8 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
@@ -49,8 +51,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import os

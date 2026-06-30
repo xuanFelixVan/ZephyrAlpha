@@ -28,6 +28,8 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
@@ -39,8 +41,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import os

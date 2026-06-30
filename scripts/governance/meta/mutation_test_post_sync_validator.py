@@ -41,6 +41,8 @@ score（被 oracle 杀死的变异 / 总变异）。打破自指悖论——AI �
 而既有校验/测试未能拦截。变异测试验证当前 oracle 是否真能拦截这类机械扰动。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: mutation_test_post_sync_validator.py — SSoT 变异测试（独立 oracle）
@@ -51,8 +53,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import os

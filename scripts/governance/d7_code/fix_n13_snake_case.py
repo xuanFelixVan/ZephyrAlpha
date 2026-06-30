@@ -25,6 +25,8 @@
 用法: python scripts/governance/d7_code/fix_n13_snake_case.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚本。
@@ -35,8 +37,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 import re

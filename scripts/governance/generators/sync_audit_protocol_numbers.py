@@ -40,6 +40,8 @@ SSoT 源:
     changelog 区域（§10 修订记录）中的数字不会被替换。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: sync_audit_protocol_numbers.py — 从 SSoT 注册表自动同步审计协议中的硬编码数字。
@@ -51,8 +53,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import os

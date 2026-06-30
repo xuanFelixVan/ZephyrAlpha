@@ -21,6 +21,8 @@ DOM-GOV-001 §7 运维脚本.
 用法: python scripts/governance/changelog.py [--since YYYY-MM-DD] [--format yaml|markdown]
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: changelog.py — 治理域变更日志生成/追加工具.
@@ -31,8 +33,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

@@ -43,6 +43,8 @@ Usage::
     python scripts/governance/d3_metadata/backfill_doctype_metadata.py docs/08_knowledge/01_raw_intake/
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1）
@@ -53,8 +55,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 import re

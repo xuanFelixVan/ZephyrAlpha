@@ -23,6 +23,8 @@ test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
   python scripts/governance/test_lock_scenarios.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
@@ -33,8 +35,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

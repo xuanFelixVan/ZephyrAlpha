@@ -55,6 +55,8 @@ Usage::
     python scripts/governance/meta/verify_reconciliation_registry.py --warn-only
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: verify_reconciliation_registry.py — ReconciliationRegistry 轻量结构 audit（P3-T1）
@@ -65,8 +67,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import importlib.util

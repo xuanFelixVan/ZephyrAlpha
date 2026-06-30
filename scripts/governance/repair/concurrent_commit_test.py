@@ -35,6 +35,8 @@
 exit codes: 0=全部PASS, 1=有FAIL, 2=脚本错误
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: concurrent_commit_test.py — 幽灵提交红蓝对抗脚本（OPS-2026062514）
@@ -45,8 +47,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 import subprocess

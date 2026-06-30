@@ -108,30 +108,52 @@ def has_manifest(content: str) -> bool:
     return "__manifest__" in content
 
 
-def inject_manifest(content: str, manifest_data: dict) -> str:
-    """在 docstring 结束后插入 __manifest__ 块。
+def _compute_insert_position(content: str) -> int:
+    """计算 __manifest__ 插入位置：max(所有 from __future__ import 之后, docstring 之后)。
 
-    治本(ARCH-036 P0-C): 修复注入位置 bug——原 find(空行, find(首三引号))
-    会匹配到 docstring 内部空行，导致 __manifest__ 被插入到 docstring 中间。
-    正确做法：找 docstring 结束的第二个三引号后的空行。
+    治本(ARCH-036 P0-C): manifest 必须在 docstring 和 from __future__ import 之后，
+    否则触发 SyntaxError: from __future__ imports must occur at the beginning of the file。
     """
-    yaml_block = yaml.dump(manifest_data, allow_unicode=True, default_flow_style=False).strip()
-    block = f'__manifest__ = """\n{yaml_block}\n"""\n'
-    # 找 docstring 结束位置（第二个 """）
+    candidates: list[int] = []
+    # 1. 找所有 from __future__ import 行（合法 Python 中只在文件头部）
+    future_re = re.compile(r"^from __future__ import [^\n]+\n", re.MULTILINE)
+    last_future_end = -1
+    for m in future_re.finditer(content):
+        last_future_end = m.end()
+    if last_future_end != -1:
+        candidates.append(last_future_end)
+    # 2. 找 docstring 结束位置（第二个 """）
     first_triple = content.find('"""')
-    pos = -1
     if first_triple != -1:
         second_triple = content.find('"""', first_triple + 3)
         if second_triple != -1:
-            pos = content.find("\n\n", second_triple + 3)
-    # fallback: 找 import/from 语句
-    if pos == -1:
-        pos = content.find("\nimport")
-    if pos == -1:
-        pos = content.find("\nfrom ")
-    if pos == -1:
+            nl = content.find("\n", second_triple + 3)
+            if nl != -1:
+                candidates.append(nl + 1)
+    # 3. 若都无，找第一个 import/from（非 __future__）
+    if not candidates:
+        m = re.search(r"^(?:import |from (?!__future__))", content, re.MULTILINE)
+        if m:
+            candidates.append(m.start())
+        else:
+            return 0
+    return max(candidates)
+
+
+def inject_manifest(content: str, manifest_data: dict) -> str:
+    """在文件头部（docstring + from __future__ import 之后）插入 __manifest__ 块。
+
+    治本(ARCH-036 P0-C):
+    - Bug1: 原 find(空行, find(首三引号)) 匹配 docstring 内部空行 → manifest 插入 docstring 中间。
+    - Bug2: manifest 插入到 from __future__ import 之前 → SyntaxError。
+      修复：插入点 = max(最后一个 from __future__ import 之后, docstring 之后)。
+    """
+    yaml_block = yaml.dump(manifest_data, allow_unicode=True, default_flow_style=False).strip()
+    block = f'__manifest__ = """\n{yaml_block}\n"""\n'
+    pos = _compute_insert_position(content)
+    if pos == 0:
         return block + "\n" + content
-    return content[: pos + 1] + "\n" + block + "\n" + content[pos + 1 :]
+    return content[:pos] + "\n" + block + "\n" + content[pos:]
 
 
 def build_manifest_entry(entry: dict) -> dict:

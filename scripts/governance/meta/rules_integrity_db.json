@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "02248f37cf2e1601",
+      "hash": "e5337d2cc8b2e438",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "2d8e132697628cb1",
+      "hash": "d3890d19ac11dd6b",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,27 +46,27 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "aca4e8d1a62ce63e",
+      "hash": "cea549cb24b15f2e",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "dce78ddafd554298",
+      "hash": "074efafdc8394c0c",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "3b070bf5f5f6552b",
+      "hash": "35d15414af5cb6dc",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "da32c3f626744c3d",
+      "hash": "3253e0ae1649cb34",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/governance/rule_bridge/commit_gate_registry.py": {
-      "hash": "2b4c3f7d786973cf",
+      "hash": "4879c3d9dae1a79c",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
@@ -86,7 +86,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: claim_required_gate.py）"
     },
     "src/zephyr/governance/commit_gates/create_guard.py": {
-      "hash": "e9ad849e0c9132d9",
+      "hash": "c93b0ef3fb0aac4c",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: create_guard.py）"
     },
@@ -106,6 +106,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
     }
   },
-  "registered_at": "2026-06-30T19:50:12.684276+00:00",
+  "registered_at": "2026-06-30T21:02:01.917268+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }

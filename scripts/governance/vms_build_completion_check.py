@@ -23,6 +23,8 @@ Phase 1 完成自检: 验证 6 模块全部可用 + 无 import error
     python scripts/governance/vms_build_completion_check.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
@@ -33,8 +35,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

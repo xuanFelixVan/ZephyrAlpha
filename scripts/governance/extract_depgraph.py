@@ -45,6 +45,8 @@ P2 迁移后（2026-06-27 治本）：
   原 DB 新鲜度检查（基于 SQLite 文件 mtime）已删除，PG 模式下用 _schema_version 判断版本。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
@@ -55,8 +57,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import datetime

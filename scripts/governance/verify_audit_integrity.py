@@ -23,6 +23,8 @@ verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
 任何环境都可直接运行，只需 events.jsonl 文件。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
@@ -33,8 +35,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

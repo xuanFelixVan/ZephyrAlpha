@@ -34,6 +34,8 @@
     2 = 扫描错误
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
@@ -44,8 +46,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

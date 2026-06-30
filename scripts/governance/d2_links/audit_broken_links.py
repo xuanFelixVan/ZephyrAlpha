@@ -54,6 +54,8 @@
     - 空值 blueprint_id（合法，如 index.md 无归属蓝图）
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 检测文档/数据文件中的断链与幽灵引用。
@@ -64,8 +66,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

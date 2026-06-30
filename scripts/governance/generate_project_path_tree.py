@@ -27,6 +27,8 @@
     python scripts/governance/generate_project_path_tree.py --check    # CI 漂移检测
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 从磁盘扫描生成路径全景图的tree段（运营态目录结构）。
@@ -37,8 +39,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import json

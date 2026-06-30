@@ -38,6 +38,8 @@ Usage::
     python scripts/governance/d3_metadata/migrate_illegal_doctype.py docs/02_enterprise_architecture/
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 批量迁移非法 doc_type 值（doc_type 存量治理 Stage 2.2）
@@ -48,8 +50,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 import re

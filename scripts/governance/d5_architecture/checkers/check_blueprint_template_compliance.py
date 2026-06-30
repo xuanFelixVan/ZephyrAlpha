@@ -26,6 +26,8 @@
 [TESTS] tests/governance/test_blueprint_compliance.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: '[BLUEPRINT] GOV-DOC-011 | d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml'
@@ -36,8 +38,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import logging
 import subprocess

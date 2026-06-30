@@ -16,6 +16,16 @@
 # P0-P3 任务优先级——业务常量（非治理词表），无 priority_vocabulary.yaml。
 # 治本说明（2026-06-30）：若未来纳入词表管理，改用 load_vocabulary_values("priority_vocabulary.yaml")。
 # 当前 GATE-VOCAB 检测1 漏检（PRIORITIES 不在后缀正则），检测4 值匹配漏检（无 priority 词表）。
+__manifest__ = """
+args: []
+description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 
 
@@ -27,17 +37,6 @@ def _load_valid_document_statuses() -> set[str]:
     故合法值精简为 draft/active/deprecated 三值。
     """
     from _shared.yaml_utils import load_vocabulary_values
-
-__manifest__ = """
-args: []
-description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
-dimensions:
-- D5
-priority: P2
-timeout_seconds: 60
-warn_only: false
-"""
-
 
     return load_vocabulary_values("status_vocabulary.yaml")
 

@@ -19,6 +19,8 @@ CI Entry: Adversarial Validation — Red-Blue Drift Test
 Tier 8 — 每次 CI 运行红蓝对抗：注入混沌漂移 → 蓝队检测 → 裁判对比。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'CI Entry: Adversarial Validation — Red-Blue Drift Test'
@@ -29,8 +31,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import subprocess
 import sys

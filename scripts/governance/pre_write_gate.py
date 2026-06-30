@@ -27,6 +27,8 @@ exit 0 = CLEAN（允许写入）, exit 1 = BLOCKED（拒绝写入）。
     - 快速: 目标 <3s，不阻塞 AI 工作流
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证'
@@ -37,8 +39,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import re

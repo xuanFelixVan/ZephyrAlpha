@@ -37,6 +37,8 @@ depgraph 查询性能基线测试（RULE-SIXTEEN 配套）
   python scripts/governance/perf_depgraph_baseline.py --output baseline.json  # 输出到文件
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: depgraph 查询性能基线测试（RULE-SIXTEEN 配套）
@@ -47,8 +49,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import datetime

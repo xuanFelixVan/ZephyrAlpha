@@ -26,6 +26,8 @@
 [TESTS] tests/governance/test_check_budget_health.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: '[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
@@ -37,8 +39,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import json

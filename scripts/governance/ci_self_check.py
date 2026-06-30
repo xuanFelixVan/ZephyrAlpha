@@ -19,6 +19,8 @@ CI Entry: Self-Check — Drift Detector 自身完整性验证
 Tier 8 — 纯 stdlib 零依赖的完整性检查。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'CI Entry: Self-Check — Drift Detector 自身完整性验证'
@@ -29,8 +31,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import subprocess
 import sys

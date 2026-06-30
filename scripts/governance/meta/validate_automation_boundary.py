@@ -15,6 +15,8 @@
 # [TTL] task_bound
 """Module docstring — see module-level docstring for details."""
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: Module docstring — see module-level docstring for details.
@@ -25,8 +27,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

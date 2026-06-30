@@ -22,6 +22,8 @@
 用法: python scripts/governance/d7_code/fix_n15_blueprint_path.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: N-15 BLUEPRINT 头部路径不存在批量修复脚本。
@@ -32,8 +34,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import os
 import re

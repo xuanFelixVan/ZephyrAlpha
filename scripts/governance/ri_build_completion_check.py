@@ -23,6 +23,8 @@ Runtime Integration Phase 2 完工验证 — MOD-INF-002
     python scripts/governance/ri_build_completion_check.py
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: Runtime Integration Phase 2 完工验证 — MOD-INF-002
@@ -33,8 +35,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path

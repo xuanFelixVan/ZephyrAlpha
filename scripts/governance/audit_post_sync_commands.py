@@ -38,6 +38,8 @@
     建议改名/重构后、CI 流水线中定期运行。
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CLI漂移）
@@ -48,8 +50,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import json

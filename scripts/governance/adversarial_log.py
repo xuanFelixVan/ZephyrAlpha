@@ -22,6 +22,8 @@
     python scripts/governance/adversarial_log.py --summary      # 摘要报告
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪
@@ -32,8 +34,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import argparse
 import json

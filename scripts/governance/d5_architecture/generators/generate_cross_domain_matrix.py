@@ -28,6 +28,8 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: 'G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档'
@@ -38,8 +40,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-
-from __future__ import annotations
 
 import sys
 from pathlib import Path
