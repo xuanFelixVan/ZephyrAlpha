@@ -1400,7 +1400,7 @@ scripts:
   dimensions: []
 - name: governance/verify_schema_health.py
   path: governance/verify_schema_health.py
-  description: verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016 治本）
+  description: verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2104,7 +2104,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/dm200912_rewrite_views.py
   path: governance/d5_architecture/dm200912_rewrite_views.py
-  description: 将14层主框架改为52域+全景图(depgraph.db)派生。
+  description: 将14层主框架改为52域+全景图(depgraph)派生。
   domain: governance
   execution_plane: warm-path
   status: registered
