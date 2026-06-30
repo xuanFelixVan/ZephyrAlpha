@@ -18,7 +18,7 @@ date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/governance/code_dedup_engine/"
+actual_disk_path: "src/zephyr/infra_ops/code_dedup_engine/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3

@@ -66,33 +66,33 @@ Knowledge Base 是 ZephyrAlpha 的知识库系统——解决"AI 不知道项目
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:---:|------|
-| 1 | `kb/__init__.py` | §4.1 | 包初始化 | 已实现 | — |
-| 2 | `kb/kb_repo.py` | §3.2 | KE CRUD + SQLite 元数据 | 已实现 | — |
-| 3 | `kb/ingest.py` | §5.2 G1 | 摄取门禁 | 已实现 | — |
-| 4 | `kb/triage.py` | §5.3 G2 | 分拣门禁 | 已实现 | — |
-| 5 | `kb/analyze.py` | §5.4 G3 | 分析门禁 | 已实现 | — |
-| 6 | `kb/activate.py` | §5.5 G4 | 激活门禁 | 已实现 | — |
-| 7 | `kb/extract.py` | §5.6 G5 | 提取门禁 | 已实现 | — |
-| 8 | `kb/bootstrap.py` | §4.5 | 冷启动引导引擎 | 已实现 | — |
-| 9 | `kb/chromadb_init.py` | §7 | ChromaDB 初始化 | 已实现 | — |
-| 10 | `kb/freeze.py` | §9.13 | 紧急冻结 | 已实现 | — |
-| 11 | `kb/integrity.py` | §7.10 | 完整性校验 | 已实现 | — |
-| 12 | `kb/graph_validator.py` | §9.8.1 | 引用完整性自检 | 已实现 | — |
-| 13 | `kb/load_bearing.py` | §9.7 | 承重 KE 检测 | 已实现 | — |
-| 14 | `kb/ke_tombstone.py` | §9.6 | KE 墓碑机制 | 已实现 | — |
-| 15 | `kb/quiet_period_monitor.py` | §9.4 | 静默期监控 | 已实现 | — |
-| 16 | `kb/reranker.py` | §9 | 重排序器 | 已实现 | — |
-| 17 | `kb/safety_brake.py` | §9.13 | 安全刹车 | 已实现 | — |
-| 18 | `kb/self_test.py` | §12.5 | 自检 | 已实现 | — |
-| 19 | `kb/verify.py` | §9.8 | 验证 | 已实现 | — |
-| 20 | `kb/vms_memory_backend.py` | §9.12 | VMS 记忆后端 | 已实现 | — |
-| 21 | `kb/unified_memory_api.py` | §9.12 | 统一记忆 API | 已实现 | — |
-| 22 | `kb/kb_gate_task.py` | §9.5 | KB 规则执行引擎 | 已实现 | — |
-| 23 | `kb/batch_ingest.py` | §5.2 | 批量入库 | 已实现 | — |
-| 24 | `kb/embedding_migrate.py` | §7 | Embedding 迁移 | 已实现 | — |
-| 25 | `kb/pipeline/` | §5 | 入库管线子目录（共 7 个 .py 文件） | 已实现 | — |
-| 26 | `kb/storage/` | §7 | 存储子目录（共 5 个 .py 文件） | 已实现 | — |
-| 27 | `kb/migration/` | §7 | 迁移子目录（共 3 个 .py 文件） | 已实现 | — |
+| 1 | `__init__.py` | §4.1 | 包初始化 | 已实现 | — |
+| 2 | `kb_repo.py` | §3.2 | KE CRUD + SQLite 元数据 | 已实现 | — |
+| 3 | `ingest.py` | §5.2 G1 | 摄取门禁 | 已实现 | — |
+| 4 | `triage.py` | §5.3 G2 | 分拣门禁 | 已实现 | — |
+| 5 | `analyze.py` | §5.4 G3 | 分析门禁 | 已实现 | — |
+| 6 | `activate.py` | §5.5 G4 | 激活门禁 | 已实现 | — |
+| 7 | `extract.py` | §5.6 G5 | 提取门禁 | 已实现 | — |
+| 8 | `bootstrap.py` | §4.5 | 冷启动引导引擎 | 已实现 | — |
+| 9 | `chromadb_init.py` | §7 | ChromaDB 初始化 | 已实现 | — |
+| 10 | `freeze.py` | §9.13 | 紧急冻结 | 已实现 | — |
+| 11 | `integrity.py` | §7.10 | 完整性校验 | 已实现 | — |
+| 12 | `graph_validator.py` | §9.8.1 | 引用完整性自检 | 已实现 | — |
+| 13 | `load_bearing.py` | §9.7 | 承重 KE 检测 | 已实现 | — |
+| 14 | `ke_tombstone.py` | §9.6 | KE 墓碑机制 | 已实现 | — |
+| 15 | `quiet_period_monitor.py` | §9.4 | 静默期监控 | 已实现 | — |
+| 16 | `reranker.py` | §9 | 重排序器 | 已实现 | — |
+| 17 | `safety_brake.py` | §9.13 | 安全刹车 | 已实现 | — |
+| 18 | `self_test.py` | §12.5 | 自检 | 已实现 | — |
+| 19 | `verify.py` | §9.8 | 验证 | 已实现 | — |
+| 20 | `vms_memory_backend.py` | §9.12 | VMS 记忆后端 | 已实现 | — |
+| 21 | `unified_memory_api.py` | §9.12 | 统一记忆 API | 已实现 | — |
+| 22 | `kb_gate_task.py` | §9.5 | KB 规则执行引擎 | 已实现 | — |
+| 23 | `batch_ingest.py` | §5.2 | 批量入库 | 已实现 | — |
+| 24 | `embedding_migrate.py` | §7 | Embedding 迁移 | 已实现 | — |
+| 25 | `pipeline/` | §5 | 入库管线子目录（共 7 个 .py 文件） | 已实现 | — |
+| 26 | `storage/` | §7 | 存储子目录（共 5 个 .py 文件） | 已实现 | — |
+| 27 | `migration/` | §7 | 迁移子目录（共 3 个 .py 文件） | 已实现 | — |
 | 28 | `scripts/governance/d9_knowledge/triage_knowledge_base.py` | §9.18 | KB 自动化筛选（6门+5维+L0-L4处置） | 已实现 | — |
 | `storage/_backend_protocol.py` | § — | — | 已实现 | | 本模块 |
 

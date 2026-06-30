@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-009
-submodule_path: src/zephyr/integration/pipeline_orchestrator.py
+submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
@@ -14,7 +14,7 @@ date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/integration/pipeline_orchestrator.py"
+actual_disk_path: "src/zephyr/integration/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 2

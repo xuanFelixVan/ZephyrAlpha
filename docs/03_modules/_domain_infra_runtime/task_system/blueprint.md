@@ -28,8 +28,8 @@ verifiability: hybrid
 references: []
 codification_level: L2
 codification_at: "2026-05-15"
-submodule_path: src/zephyr/governance/task_repo.py
-actual_disk_path: "src/zephyr/governance/task_repo.py"
+submodule_path: src/zephyr/governance
+actual_disk_path: "src/zephyr/governance/"
 runtime_plane: hot
 ttl: permanent
 construction_progress: partially_implemented

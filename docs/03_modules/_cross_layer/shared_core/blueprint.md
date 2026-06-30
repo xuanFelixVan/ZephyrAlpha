@@ -78,20 +78,20 @@ depends_on:
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:---:|-------------------|
-| 1 | shared/ (215 files) | §2 | 跨层共享基础设施 | 已实现 | |
+| 1 | (215 files) | §2 | 跨层共享基础设施 | 已实现 | |
 | 2 | core/ (60 files) | §3 | 核心模块 | 已实现 | |
-| 3 | shared/infra/process_lifecycle_gateway.py | §2.10 | 进程生命周期统一入口网关 | 已实现 | |
-| 4 | shared/health.py + healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
-| 5 | shared/longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
-| 6 | shared/metrics.py | §2.8 | 指标收集(F20恢复) | 已实现 | |
-| 7 | shared/observability_02/ (health/health_discovery/metrics) | §2.7 | 可观测性子模块(F20恢复) | 已实现 | |
-| 8 | shared/shared_services/observability_02/ (health/metrics) | §2.7 | 可观测性代理(F20恢复) | 已实现 | |
-| 9 | shared/quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
-| 10 | shared/sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
-| 11 | shared/maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
-| 12 | shared/contracts/core/telemetry_emitter.py | §2.1 | 遥测契约(F20恢复) | 已实现 | |
-| 13 | shared/contracts/market/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
-| 14 | shared/contracts/risk/ (risk_dashboard_snapshot/risk_metrics) | §2.1 | 风险监控契约(F20恢复) | 已实现 | |
+| 3 | infra/process_lifecycle_gateway.py | §2.10 | 进程生命周期统一入口网关 | 已实现 | |
+| 4 | health.py + healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
+| 5 | longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
+| 6 | metrics.py | §2.8 | 指标收集(F20恢复) | 已实现 | |
+| 7 | observability_02/ (health/health_discovery/metrics) | §2.7 | 可观测性子模块(F20恢复) | 已实现 | |
+| 8 | shared_services/observability_02/ (health/metrics) | §2.7 | 可观测性代理(F20恢复) | 已实现 | |
+| 9 | quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
+| 10 | sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
+| 11 | maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
+| 12 | contracts/core/telemetry_emitter.py | §2.1 | 遥测契约(F20恢复) | 已实现 | |
+| 13 | contracts/market/factor_monitor_report.py | §2.1 | 因子监控报告契约(F20恢复) | 已实现 | |
+| 14 | contracts/risk/ (risk_dashboard_snapshot/risk_metrics) | §2.1 | 风险监控契约(F20恢复) | 已实现 | |
 
 ### §0.2 对齐验证矩阵
 

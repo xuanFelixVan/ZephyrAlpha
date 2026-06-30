@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/orchestration/runtime_core/lifecycle_manager.py"
+actual_disk_path: "src/zephyr/shared/lifecycle/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 submodule_path: src/zephyr/runtime/
 summary: "MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环"
