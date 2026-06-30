@@ -106,9 +106,9 @@ references:
 | # | 文件路径 | 位置（行号） | 变量/函数名 | 变更影响 | 执行办法 |
 |---|---------|:---------:|-----------|---------|---------|
 | 8 | `src/zephyr/governance/blast_radius.py` | L44 | `_DEPGRAPH_DEFAULT_PATH = Path("...depgraph")` | 常量指向.db文件却按YAML解析（逻辑存疑） | 确认数据源意图；迁移后路径变为连接串 |
-| 9 | `src/zephyr/security/access_control/rbac_guard.py` | L68 | `PROTECTED_PATHS`含`"PostgreSQL depgraph"` | 文件路径保护规则 | 迁移后PG无本地文件需保护，需重新设计保护策略 |
-| 10 | `src/zephyr/security/access_control/path_guard.py` | L60 | `CRITICAL_FILES`含`"PostgreSQL depgraph"` | 关键文件写保护 | 同上 |
-| 11 | `src/zephyr/security/access_control/immutable_core.py` | L82 | `PROTECTED_PATHS`含`"PostgreSQL depgraph"` | 不可变核心保护路径 | 同上 |
+| 9 | `src/zephyr/security/access_control/rbac_guard.py` | L66 | `PROTECTED_PATHS = [".git", ".ailocks"]`（无depgraph引用） | 无depgraph引用 | 无需迁移（原索引描述为幻觉，实际代码不含depgraph） |
+| 10 | `src/zephyr/security/access_control/path_guard.py` | L56 | `CRITICAL_FILES`含`"data/databases/governance.db"`（无depgraph引用） | 仅保护governance.db | 无需迁移（governance.db不迁移） |
+| 11 | `src/zephyr/security/access_control/immutable_core.py` | L62 | `PROTECTED_PATHS = [".git/**", ".env", ...]`（无depgraph引用） | 无depgraph引用 | 无需迁移（原索引描述为幻觉，实际代码不含depgraph） |
 
 ### 1.4 代理/导出文件（2个，随真源迁移）
 
@@ -1027,7 +1027,7 @@ references:
 
 ### 9.4 scripts/governance/ 去噪详情（44→14任务卡）
 
-#### DELETE（一次性脚本归档，8个）
+#### DELETE（一次性脚本归档，7个）
 
 | # | 文件路径 | 理由 |
 |---|---------|------|
@@ -1038,7 +1038,8 @@ references:
 | 5 | `scripts/governance/d5_architecture/dm200912_rewrite_views.py` | docstring自述"一次性脚本" |
 | 6 | `scripts/governance/d5_architecture/dm200912_query_domains.py` | docstring自述"一次性脚本" |
 | 7 | `scripts/governance/d5_architecture/dm200913_rewrite_diagrams.py` | docstring自述"一次性脚本" |
-| 8 | `scripts/governance/d5_architecture/dm200916_write_direct.py` | docstring自述"一次性脚本" |
+
+> **注**：dm200916_write_direct.py 原列第 8 项，已于 2026-06-30 治本改造为 depgraph (PostgreSQL) 派生脚本，不再是一次性脚本，从 DELETE 清单移除。
 
 #### OBSOLETE（已完成使命，4个）
 

@@ -62,7 +62,7 @@ modules:
     status: implemented
     priority: P1
     runtime_plane: hot
-    description: depgraph PostgreSQL 迁移层——28表schema v18，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。数据库清单真源：infrastructure_registry.yaml INFRA-DB-003
+    description: depgraph (PostgreSQL) 迁移层——28表schema v18，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。数据库清单真源：infrastructure_registry.yaml INFRA-DB-003
     db_engine: postgresql
     db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-003（数据库清单真源，禁止同步）"
     files:
@@ -74,7 +74,7 @@ modules:
     interfaces:
       - contract_id: CT-DB-PG-001
         role: producer
-        description: depgraph PG连接契约——get_db_connection(autocommit/superuser/replica)
+        description: depgraph (PostgreSQL) 连接契约——get_db_connection(autocommit/superuser/replica)
       - contract_id: CT-DB-PG-002
         role: producer
         description: PG兼容层契约——PgConnExecuteWrapper(execute/executemany/commit/rollback)

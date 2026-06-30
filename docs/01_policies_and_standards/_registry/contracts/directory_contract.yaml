@@ -27,8 +27,7 @@
 #   - GitCommitGateway._PERMANENT_ZONE_DIRS（已改为从本契约动态加载，git_commit_gateway.py:140-144）
 #   - backfill_ttl_metadata.py（路径→ttl 推断，经 ttl_vocabulary.yaml decision_tree Q3 的 criteria_source 间接读取本契约永久区路径）
 #   - check_src_no_data.py（从本契约 global_forbidden[].forbidden_prefix 动态加载 forbidden 前缀）
-#   - GitCommitGateway._DEPRECATED_DIRS（2026-06-30 治本：从本契约 §7 deprecated_directories 动态加载，原硬编码已迁出）
-#   - make_deprecated_directory_reconciler（通过 getattr(gateway, '_DEPRECATED_DIRS') 间接引用本契约 §7）
+#   - make_deprecated_directory_reconciler（2026-06-30 治本：直接从本契约 §7 deprecated_directories 动态加载，原 getattr(gateway, '_DEPRECATED_DIRS') 已废弃——_DEPRECATED_DIRS 在 AD-001 阶段3 删除）
 #
 # 对标标准：
 #   - OpenAPI 3.1：契约先行（先定义规则，再验证合规）
@@ -131,7 +130,12 @@ directory_zones:
       - "ttl_content_audit/"
 
   neutral:
-    description: "中性区——代码/脚本/配置/测试/数据/日志/工具，无 ttl 门禁（代码文件无 ttl 字段）"
+    # 语义澄清（2026-06-30 修正，trae_047 v1.2.0 全格式加 ttl 后原描述过时）：
+    #   - default_ttl: null 表示该 zone 不提供默认 ttl 兜底值（非"代码文件无 ttl 字段"）
+    #   - 代码/脚本文件 ttl 由文件头部显式声明（A_full/A_test/E_shell 格式含 [TTL] 字段，
+    #     见 trae_047 v1.2.0 L469-470），值合法性由 GATE-15（check_frontmatter_metadata.py）校验
+    #   - DCR-003/004 不校验 neutral zone（无 default_ttl 可比对），与"是否有 ttl 字段"无关
+    description: "中性区——代码/脚本/配置/测试/数据/日志/工具，default_ttl=null 表示 zone 不提供默认 ttl 兜底（文件 ttl 由头部显式声明，GATE-15 校验值合法性）"
     paths:
       - "src/"
       - "scripts/"
@@ -395,8 +399,8 @@ global_forbidden:
 #   - global_forbidden 是"规则化禁止"（如"src/ 下禁止 .bak"，按扩展名/模式）
 #   - deprecated_directories 是"目录级显式废弃"（整个目录已迁移他处，禁止新建任何文件）
 # 双层防御（对标 GATE-DEPRECATED-DIR 设计）：
-#   ① GitCommitGateway._check_deprecated_directories（commit 时阻断，--no-verify 绕不过）
-#   ② make_deprecated_directory_reconciler（post-commit 自动迁移+清理，消灭"只告警不消除"）
+#   ① GitCommitGateway._check_deprecated_directories（已在 AD-001 阶段3 删除，未迁移到 directory_contract_gate——① 层阻断缺口待补全，在 check_directory_contract.py::scan_files 添加 deprecated_directories 检测）
+#   ② make_deprecated_directory_reconciler（post-commit 自动迁移+清理，2026-06-30 修复为直接读本契约 §7，消灭"只告警不消除"）
 
 deprecated_directories:
   - path: "docs/09_audit"
@@ -405,5 +409,4 @@ deprecated_directories:
     severity: error
     history_lesson: "09_audit/ 历史为独立审计目录，trae_047 裁定合并入 _working/audit/（临时区），原目录废弃"
     consumers:
-      - "GitCommitGateway._check_deprecated_directories（commit 时阻断，从 _CONTRACT_CACHE 动态加载）"
-      - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理，通过 getattr(gateway, '_DEPRECATED_DIRS') 引用，不复制）"
+      - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理，2026-06-30 修复为直接读本契约 §7 deprecated_directories，原 getattr(gateway, '_DEPRECATED_DIRS') 已废弃）"

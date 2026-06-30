@@ -148,7 +148,7 @@ sections:
       fail: 可豁免(但仍需循环验收)
     actions:
     - type: mandatory
-      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/PostgreSQL depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
+      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
       step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     - type: mandatory
@@ -169,7 +169,7 @@ sections:
     - type: mandatory
       step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/audit_registration.py
     - type: mandatory
-      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/PostgreSQL depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
+      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
       step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
     - type: mandatory
@@ -259,7 +259,7 @@ sections:
     content:
       summary: 全景图对齐涉及的真源文件和派生视图
       sources:
-      - file: D:/ZephyrAlpha/PostgreSQL depgraph
+      - file: depgraph (PostgreSQL)
         type: 唯一真源
         note: 设计态+运行态合一，双向驱动。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图
       - file: D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml
@@ -280,7 +280,7 @@ sections:
       expected_exit: 0
       on_fail: 有孤儿禁止关闭
     - step: G6依赖全景图生成（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行）
-      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/PostgreSQL depgraph --force
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db depgraph --force
       expected_exit: 0
       on_fail: 结构未同步
     - step: G6依赖图诊断

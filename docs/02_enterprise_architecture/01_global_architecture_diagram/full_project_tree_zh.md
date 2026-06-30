@@ -1155,7 +1155,7 @@ scripts/  (包含26个文件: .py(24), .yaml(2))
 │   │   ├── dm200912_query_domains.py  — DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用  
 │   │   ├── dm200912_rewrite_views.py  — DM-200912 Phase4-A: 重写4个核心架构视图(overview/index/application_architecture/capability_heatmap)  
 │   │   ├── dm200913_rewrite_diagrams.py  — DM-200913 Phase4-B: 重写9个14层相关图表为52域派生  
-│   │   ├── dm200916_write_direct.py  — 从 PostgreSQL depgraph 派生 architecture_model/index.yaml。  
+│   │   ├── dm200916_write_direct.py  — 从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。  
 │   │   └── pre_commit_hook.ps1  
 │   ├── d6_security/  (包含15个文件: .py(15))  
 │   │   ├── __pycache__/  (包含15个文件: .pyc(15))  

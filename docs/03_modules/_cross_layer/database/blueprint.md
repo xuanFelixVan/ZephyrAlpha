@@ -266,7 +266,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 5 | `pg_lock.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\pg_lock.py` | v3.0 PG Advisory Lock | 待施工 (012B 阶段3 SQL方言) |
 | 6 | `fts5_index.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\fts5_index.py` | v3.0 FTS5 | 待施工 (012B 阶段3 SQL方言) |
 | 7 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
-| 8 | `PostgreSQL depgraph` | `D:\ZephyrAlpha\PostgreSQL depgraph` | 012B 迁移目标库（SQLite→PostgreSQL） | 运行时生成 |
+| 8 | `depgraph (PostgreSQL)` | `localhost:5432/depgraph` | 012B 迁移目标库（SQLite→PostgreSQL） | 运行时生成 |
 | 9 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
 | 10 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
 

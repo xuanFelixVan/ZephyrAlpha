@@ -2,19 +2,19 @@ schema_version: 1.0.0
 partition:
   id: l12
   name: System Telemetry
-  track: c_track
+  track: b_track
   layer_position: 12
   runtime_plane: warm
   status: implemented
   note: '全系统遥测的 metrics/logs/traces/ai_behavior 采集与归档，为 L00-L11 + L13 所有业务层提供可观测性数据底座。
-    归入 C 轨（业务脊柱层内子系统），与 5 个 AI 核心服务不同。
+    归入 B 轨（横切基础设施模块），2026-06-30 治本：c_track→b_track（§2.1 裁定后 c_track 已废弃）。
 
     '
 modules:
 - id: l12-core
   module_id: MOD-INF-015
   name: Telemetry Core Utilities
-  submodule_path: src/zephyr/system_telemetry/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/
   status: implemented
   priority: P0
   runtime_plane: warm
@@ -29,7 +29,7 @@ modules:
 - id: l12-ai-behavior
   module_id: MOD-INF-015
   name: AI Behavior Telemetry
-  submodule_path: src/zephyr/system_telemetry/ai_behavior/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/ai_behavior/
   status: implemented
   priority: P1
   runtime_plane: warm
@@ -41,7 +41,7 @@ modules:
 - id: l12-metrics
   module_id: MOD-INF-015
   name: Metrics Stream
-  submodule_path: src/zephyr/system_telemetry/metrics/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/metrics/
   status: implemented
   priority: P1
   runtime_plane: warm
@@ -53,7 +53,7 @@ modules:
 - id: l12-logs
   module_id: MOD-INF-015
   name: Logs Stream
-  submodule_path: src/zephyr/system_telemetry/logs/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/logs/
   status: implemented
   priority: P1
   runtime_plane: warm
@@ -65,7 +65,7 @@ modules:
 - id: l12-traces
   module_id: MOD-INF-015
   name: Traces Stream
-  submodule_path: src/zephyr/system_telemetry/traces/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/traces/
   status: implemented
   priority: P1
   runtime_plane: warm
@@ -77,7 +77,7 @@ modules:
 - id: l12-archive
   module_id: MOD-INF-015
   name: Archive
-  submodule_path: src/zephyr/system_telemetry/archive/
+  submodule_path: src/zephyr/infrastructure/system_telemetry/archive/
   status: implemented
   priority: P2
   runtime_plane: cold

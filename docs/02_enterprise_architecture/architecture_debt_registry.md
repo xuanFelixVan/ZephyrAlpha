@@ -4,7 +4,7 @@
 > **审核日期**：2026-06-30
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
-> **问题总数**：**1200个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮新增，去重后），归因于5个病根
+> **问题总数**：**1301个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档由架构健康度仪表盘（第0期交付物）自动派生，禁止手工编辑违规清单部分
 
@@ -16,7 +16,7 @@
 - [二、问题总数确定](#二问题总数确定)
 - [三、病根分析（5个根因）](#三病根分析5个根因)
 - [四、战略层裁定（针对100%AI开发）](#四战略层裁定针对100ai开发)
-- [五、988个问题详细清单](#五988个问题详细清单)
+- [五、1301个问题详细清单](#五1301个问题详细清单)
   - [5.1 SSoT真源唯一性违规（211个）](#51-ssot真源唯一性违规211个)
   - [5.2 永久系统全自动触发违规（32个）](#52-永久系统全自动触发违规32个)
   - [5.3 新AI可发现性违规（55个）](#53-新ai可发现性违规55个)
@@ -110,6 +110,30 @@
   - [5.91 Property副作用（4个，第18轮新增）](#591-property副作用4个第18轮新增)
   - [5.92 Enum正确性（2个，第18轮新增）](#592-enum正确性2个第18轮新增)
   - [5.93 __init__.py污染（8个，第18轮新增）](#593-initpy污染8个第18轮新增)
+  - [5.94 类型注解准确性（68个，第19轮新增）](#594-类型注解准确性68个第19轮新增)
+  - [5.95 未使用参数与死代码（21个，第19轮新增）](#595-未使用参数与死代码21个第19轮新增)
+  - [5.96 布尔参数蔓延（5个，第19轮新增）](#596-布尔参数蔓延5个第19轮新增)
+  - [5.97 深层嵌套与圈复杂度（18个，第19轮新增）](#597-深层嵌套与圈复杂度18个第19轮新增)
+  - [5.98 元类与描述符误用（4个，第19轮新增）](#598-元类与描述符误用4个第19轮新增)
+  - [5.99 错误消息一致性（22个，第19轮新增）](#599-错误消息一致性22个第19轮新增)
+  - [5.100 异步资源生命周期（18个，第19轮新增）](#5100-异步资源生命周期18个第19轮新增)
+  - [5.101 变量遮蔽与命名冲突（56个，第19轮新增）](#5101-变量遮蔽与命名冲突56个第19轮新增)
+  - [5.102 可变默认参数（7个，第20轮新增）](#5102-可变默认参数7个第20轮新增)
+  - [5.103 闭包延迟绑定（0个，第20轮新增）](#5103-闭包延迟绑定0个第20轮新增)
+  - [5.104 ABC抽象方法完整性（33个，第20轮新增）](#5104-abc抽象方法完整性33个第20轮新增)
+  - [5.105 类型强制转换安全（13个，第20轮新增）](#5105-类型强制转换安全13个第20轮新增)
+  - [5.106 排序与比较正确性（7个，第20轮新增）](#5106-排序与比较正确性7个第20轮新增)
+  - [5.107 数据类设计正确性（6个，第20轮新增）](#5107-数据类设计正确性6个第20轮新增)
+  - [5.108 比较运算符完整性（3个，第20轮新增）](#5108-比较运算符完整性3个第20轮新增)
+  - [5.109 迭代器协议完整性（1个，第20轮新增）](#5109-迭代器协议完整性1个第20轮新增)
+  - [5.110 __repr__/__str__泄露与一致性（9个，第21轮新增）](#5110-reprstr泄露与一致性9个第21轮新增)
+  - [5.111 Lock可重入性（3个，第21轮新增）](#5111-lock可重入性3个第21轮新增)
+  - [5.112 asyncio取消传播（3个，第21轮新增）](#5112-asyncio取消传播3个第21轮新增)
+  - [5.113 __slots__一致性（1个，第21轮新增）](#5113-slots一致性1个第21轮新增)
+  - [5.114 Final/@final强制（7个，第21轮新增）](#5114-finalfinal强制7个第21轮新增)
+  - [5.115 ABC注册模式（2个，第21轮新增）](#5115-abc注册模式2个第21轮新增)
+  - [5.116 __init_subclass__副作用（5个，第21轮新增）](#5116-init_subclass__副作用5个第21轮新增)
+  - [5.117 pickle/__reduce__安全（1个，第21轮新增）](#5117-picklereduce__安全1个第21轮新增)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -119,7 +143,7 @@
 
 ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有限。项目治理体系设计严谨（trae_060三原则 + 17个reconciler + 52个gate + 34个词表 + CapabilityLookup反查机制），但**执行覆盖存在系统性断层**。
 
-经19轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 1200个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮新增），分布在101个维度：
+经21轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 1301个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮新增），分布在117个维度：
 
 | 维度 | 违规数 | 高危 | 中危 | 低危 | 核心问题 |
 |---|:---:|:---:|:---:|:---:|---|
@@ -224,9 +248,25 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 错误消息一致性（第19轮） | 22 | 1 | 11 | 10 | SQL泄露+中英文混用×6+异常类型不一致×3+MCP错误码不统一+格式混用+无上下文 |
 | 异步资源生命周期（第19轮） | 18 | 7 | 9 | 2 | limiter锁反模式×2+brain_integration阻塞×2+pipeline死锁×3+阻塞IO×4+get_event_loop弃用×12+asyncio.run高频 |
 | 变量遮蔽与命名冲突（第19轮） | 56 | 0 | 1 | 55 | known_unknown_registry参数遮蔽id+42处数据类字段遮蔽内置名+6处模块名冲突标准库 |
-| **合计** | **1200** | **554** | **486** | **160** | |
+| 可变默认参数（第20轮） | 7 | 0 | 5 | 2 | task_manager_server create_task 5个可变列表默认参数+模板字符串dataclass可变默认×2 |
+| 闭包延迟绑定（第20轮） | 0 | 0 | 0 | 0 | **未发现问题**——事件订阅全部使用方法引用+正确使用functools.partial |
+| ABC抽象方法完整性（第20轮） | 33 | 13 | 6 | 14 | 4个ABC签名与实现不匹配+4个ABC定义但实现类不继承+14个Phase-B骨架ABC无实现 |
+| 类型强制转换安全（第20轮） | 13 | 2 | 7 | 4 | Decimal/float混合比较致风控失效×2+int()截断Decimal+Decimal→float精度损失×5 |
+| 排序与比较正确性（第20轮） | 7 | 0 | 4 | 3 | max()空序列×3+key函数不稳定float(None)×2+排序键None TypeError×2 |
+| 数据类设计正确性（第20轮） | 6 | 0 | 3 | 3 | Pydantic V1 class Config在V2代码库×3+dataclass字段类型标注与默认值不一致×3 |
+| 比较运算符完整性（第20轮） | 3 | 1 | 2 | 0 | ReboundSeverity仅定义__ge__比较不一致+TriggerResult.__eq__返回False非NotImplemented+VerifyResult.__bool__与dict.__len__冲突 |
+| 迭代器协议完整性（第20轮） | 1 | 0 | 0 | 1 | enforcer.py next()无default依赖隐式不变量 |
+| __repr__/__str__泄露与一致性（第21轮） | 9 | 0 | 2 | 7 | Capability.auth_token经auto-__repr__暴露+DeepSeek客户端持_api_key无__repr__防护+5个类__repr__不可重建+DatabaseHealthStatus.__repr__应为__str__ |
+| Lock可重入性（第21轮） | 3 | 0 | 2 | 1 | admission_controller持三锁嵌套+gpu_consensus_scheduler持两锁嵌套+协程中使用threading.Lock违反INVARIANTS |
+| asyncio取消传播（第21轮） | 3 | 1 | 2 | 0 | CancelledError路径子进程未kill(4文件)+gather吞没CancelledError+线程runner未捕获CancelledError致future挂起 |
+| __slots__一致性（第21轮） | 1 | 0 | 1 | 0 | RiskLimitViolationError(Exception)声明__slots__但Exception自带__dict__致优化失效 |
+| Final/@final强制（第21轮） | 7 | 5 | 2 | 0 | governance/config.py 4个可变dict常量无Final+375处模块级常量系统性未标Final+@final全项目零使用 |
+| ABC注册模式（第21轮） | 2 | 0 | 1 | 1 | DefaultRiskLimitsCalculator从错误源导入ABC致注册静默失败+__init_subclass__守卫脆弱 |
+| __init_subclass__副作用（第21轮） | 5 | 0 | 3 | 2 | interface_base.py 3个死_registry+5个注册表只写不读+hasattr沿MRO致覆盖注册+文档引用不存在的类 |
+| pickle/__reduce__安全（第21轮） | 1 | 1 | 0 | 0 | joblib.load(pickle变体)反序列化模型文件无校验(2文件) |
+| **合计** | **1301** | **577** | **527** | **197** | |
 
-所有1200个问题归因于**5个病根**：
+所有1301个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -525,7 +565,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、1200个问题详细清单
+## 五、1301个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -6304,10 +6344,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`_on_pressure_callbacks: ClassVar[list[Callable]] = []` 类级可变list。多实例注册不同回调会相互干扰。
 - **修复**：同5.89.1。
 
-#### 5.89.4 [LOW] interface_base.py _registry ClassVar dict插件注册模式
+#### 5.89.4 [LOW→MEDIUM] interface_base.py _registry ClassVar dict死注册表
 
 - **文件**：`src/zephyr/frontend/interface_base.py:90,111,138`
-- **证据**：3个基类各定义 `_registry: ClassVar[dict] = {}`，通过 `__init_subclass__` 自动注册子类。标准的Python插件注册模式，共享是有意为之。LOW。
+- **证据**：3个基类各定义 `_registry: ClassVar[dict] = {}`。
+- **订正（第21轮）**：原条目声称"通过 `__init_subclass__` 自动注册子类"是**事实性错误**——该文件**无`__init_subclass__`**，也无`register`装饰器/classmethod。注册表从未被填充也从未被读取，是死代码。详见5.116.1。
+- **修复**：补全注册API或删除`_registry`字段。
 
 #### 5.89.5 [LOW] pipeline_base.py _registry ClassVar dict（2副本）
 
@@ -6333,8 +6375,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| MEDIUM | 3 | 5.89.1/5.89.2/5.89.3 |
-| LOW | 5 | 5.89.4/5.89.5/5.89.6/5.89.7/5.89.8 |
+| MEDIUM | 4 | 5.89.1/5.89.2/5.89.3/5.89.4 |
+| LOW | 4 | 5.89.5/5.89.6/5.89.7/5.89.8 |
 | **合计** | **8** | |
 
 ---
@@ -6855,6 +6897,418 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | **合计** | **56** | |
 
 **附注**：`shared/contracts/market_data.py:39-41`中`idempotency_key: str`字段被声明3次（codegen产物），`@dataclass`静默使用最后一条声明，虽非遮蔽但属命名冲突/重复定义bug。
+
+---
+
+### 5.102 可变默认参数（7个，第20轮新增）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.102.1 | `infrastructure/task_manager_server.py:146` | `files_in_scope: list[str] = []` 可变列表默认参数。函数未直接修改但有间接共享引用隐患（传入TaskCard构造器） | MEDIUM | 改为`files_in_scope: list[str] \| None = None` + 函数体内`files_in_scope = files_in_scope or []` |
+| 5.102.2 | `infrastructure/task_manager_server.py:147` | `deliverables: list[str] = []` 同上模式 | MEDIUM | 同上 |
+| 5.102.3 | `infrastructure/task_manager_server.py:148` | `allowed_touch: list[str] = []` 同上模式 | MEDIUM | 同上 |
+| 5.102.4 | `infrastructure/task_manager_server.py:155` | `downstream_outputs: list = []` 同上模式 | MEDIUM | 同上 |
+| 5.102.5 | `integration/mcp/task_manager_server.py:146` | `downstream_outputs: list = []` 同上模式（重复副本） | MEDIUM | 同上+消除重复 |
+| 5.102.6 | `ops/_gen_inherited.py:1279` | 模板字符串内`owner_preferences: dict = {}` dataclass可变默认。实际生成代码已正确修复为`field(default_factory=dict)`，但模板保留错误模式 | LOW | 同步更新模板 |
+| 5.102.7 | `ops/template.py:3592` | 同上模板字符串问题（重复） | LOW | 同上 |
+
+**严重度汇总**：HIGH=0, MEDIUM=5, LOW=2, 合计=7
+
+---
+
+### 5.103 闭包延迟绑定（0个，第20轮新增）
+
+**未发现问题。** 项目在闭包延迟绑定维度表现优秀：
+
+1. **事件订阅全部使用方法引用**：所有`bus.subscribe(...)`调用使用`self._method`或模块级函数引用，未使用内联lambda
+2. **正确使用`functools.partial`**：`async_runtime.py`在异步任务提交场景使用`partial`而非lambda绑定参数
+3. **防御性默认参数**：`process_lifecycle_gateway.py`即使在非循环场景也使用了`lambda n=name:`防御写法
+4. **lambda使用场景集中在安全类别**：全部为`key=`排序键、`default_factory=`工厂、`defaultdict`工厂三类即时/一次性调用场景
+
+---
+
+### 5.104 ABC抽象方法完整性（33个，第20轮新增）
+
+#### 5.104.1 ABC签名与实现不匹配（13个HIGH）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.104.1 | `pf_core/default_equity_strategy.py:93` | `generate_target_weights(self) -> list[Order]` 与ABC `strategy_base.py:73` 的`generate_target_weights(self, universe, signals, constraints) -> dict[str, float]`完全不同 | HIGH | 对齐ABC签名或拆为两个独立扩展点 |
+| 5.104.2 | `pf_core/strategies/default_equity_strategy.py:93` | 同上（重复文件） | HIGH | 先合并3份重复实现 |
+| 5.104.3 | `governance/strategies/default_equity_strategy.py:93` | 同上（重复文件） | HIGH | 同上 |
+| 5.104.4 | `simulation/default_backtest_engine.py:68` | `run(self, data, signals, initial_capital, **kwargs)` 与ABC `backtest_base.py:82` 的`run(self, signals, prices)` 参数名/类型/数量均不符 | HIGH | 修订ABC使反映真实实现契约 |
+| 5.104.5 | `intelligence/model_evaluation/implementations/default_backtest_engine.py:68` | 同上（重复文件） | HIGH | 删除重复实现，改为重导出 |
+| 5.104.6 | `governance/default_security_gateway.py:166` | `pre_filter(self, content, metadata) -> str` 与ABC `security_gateway_base.py:82` 的`pre_filter(self, content, source) -> bool` 参数名+返回类型均不符 | HIGH | 对齐ABC |
+| 5.104.7 | `governance/default_security_gateway.py:202` | `security_scan(self, content, metadata) -> list[ScanFinding]` 与ABC的`security_scan(self, content) -> list[str]`不符 | HIGH | 对齐ABC或升级ABC |
+| 5.104.8 | `governance/default_security_gateway.py:233` | `decide(self, content, metadata) -> AuditDecision` 与ABC的`decide(self, risks, context) -> AuditDecision`参数完全不同 | HIGH | 对齐ABC |
+| 5.104.9-5.104.11 | `governance/compliance_gate_a6/default_security_gateway.py:166,202,233` | 上述3个问题的重复副本 | HIGH | 删除重复文件，改为重导出 |
+| 5.104.12 | `governance/adapters/simulation_broker.py:117` | `cancel_order(self, order_id: str)` 参数名`order_id`应为ABC定义的`broker_order_id`，关键字调用会TypeError | HIGH | 改参数名为`broker_order_id` |
+| 5.104.13 | `governance/adapters/simulation_broker.py:125` | `query_order(self, order_id: str)` 同上参数名不匹配 | HIGH | 同上 |
+
+#### 5.104.2 ABC定义但实现类不继承（6个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.104.14 | `governance/audit_trail/indexer.py:30` | `class AuditIndexer:` 不继承`AuditIndexer(ABC)`，类名相同但无继承关系 | MEDIUM | 改为`class AuditIndexer(AuditIndexerABC):` |
+| 5.104.15 | `governance/audit_trail/writer.py:33` | `class AuditReportWriter:` 不继承`AuditWriter(ABC)` | MEDIUM | 改为继承ABC |
+| 5.104.16 | `governance/audit_trail/query.py:32` | `class AuditQueryEngine:` 不继承`AuditQuery(ABC)` | MEDIUM | 改为继承ABC |
+| 5.104.17 | `governance/audit_orchestrator/indexer.py:30` | 同样不继承ABC（重复） | MEDIUM | 同上 |
+| 5.104.18 | `governance/audit_orchestrator/contracts.py:43-86` | 与`audit_trail/contracts.py`完全重复定义5个ABC（违反SSoT） | MEDIUM | 删除重复，改为重导出 |
+| 5.104.19 | `governance/audit_trail/indexer.py:30` | `AuditIndexer` ABC声明了`cold_start_cache()`但实现类未提供 | MEDIUM | 补全实现或从ABC降级 |
+
+#### 5.104.3 Phase-B骨架ABC无实现（14个LOW）
+
+约17个ABC作为OCP扩展点声明，无任何具体实现类。可能是Phase B skeleton预留：
+
+| 编号 | 代表性file_path | ABC名称 | 严重度 |
+|---|---|---|---|
+| 5.104.20 | `security/llm_defense/llm_security/protocol.py:43` | `LLMSecurityProtocol`（3个抽象方法） | LOW |
+| 5.104.21 | `governance/compliance_manager.py:46` | `ComplianceManagerBase`（4个抽象方法） | LOW |
+| 5.104.22 | `risk/risk_manager.py:51` | `RiskManagerBase`（3个抽象方法） | LOW |
+| 5.104.23 | `risk/risk_validator.py` | `RiskValidator` | LOW |
+| 5.104.24 | `risk/risk_limits.py` | `RiskLimitsCalculator` | LOW |
+| 5.104.25 | `integration/vector_memory/interface.py:71` | `EmbeddingEngineBase` | LOW |
+| 5.104.26 | `ml_train/trainer_base.py` | `TrainerBase` | LOW |
+| 5.104.27 | `ml_train/inference_base.py` | `InferenceBase` | LOW |
+| 5.104.28 | `frontend/interface_base.py` | `DashboardBase`/`NotificationManagerBase`/`ApprovalGatewayBase` | LOW |
+| 5.104.29 | `infra_ops/interface_base.py` | 同上3个ABC（重复定义） | LOW |
+| 5.104.30 | `infrastructure/infrastructure_base.py:56,81,110` | `InfrastructureManagerBase`/`ConfigManagerBase`/`KillSwitchManagerBase` | LOW |
+| 5.104.31 | `signal_fundamental/gen/aggregator_base.py:100` | `DegradationMonitorBase` | LOW |
+| 5.104.32 | `signal_fundamental/synth/signal_synthesizer.py:54` | `SignalSynthesizerBase` | LOW |
+| 5.104.33 | `simulation/pipeline_base.py:100` | `ScoutAgentBase` | LOW |
+
+**严重度汇总**：HIGH=13, MEDIUM=6, LOW=14, 合计=33
+
+---
+
+### 5.105 类型强制转换安全（13个，第20轮新增）
+
+#### 5.105.1 HIGH级（2个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.105.1 | `risk/implementations/default_risk_validator.py:167` | `dd_from_peak > drawdown_limit` 中dd_from_peak是Decimal，drawdown_limit是float。float 0.2的精确Decimal表示为`0.20000000000000001110...`，导致回撤达阈值时违规未触发 | HIGH | 统一转换：`if dd_from_peak > Decimal(str(drawdown_limit)):` |
+| 5.105.2 | `risk/stop_loss.py:110` | `current_price <= stop_price` 中current_price允许float类型（签名`float \| Decimal`），但stop_price是Decimal。float 0.1的精确值大于Decimal('0.1')，可能导致止损该触发时未触发 | HIGH | 函数入口统一转换：`current_price = Decimal(str(current_price)) if not isinstance(current_price, Decimal) else current_price` |
+
+#### 5.105.2 MEDIUM级（7个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.105.3 | `reporting/default_tca_engine.py:76-77` | `int(order.quantity)` 对Decimal向零截断而非四舍五入，执行报告数量被低估 | MEDIUM | 用`int(order.quantity.to_integral_value(rounding=ROUND_HALF_EVEN))` |
+| 5.105.4 | `governance/default_tca_engine.py:76-77` | 同上（重复文件） | MEDIUM | 同上+消除重复 |
+| 5.105.5 | `ex_core/execution_engine.py:132` | `float(order.quantity) / 1000000.0` 对Decimal大数量丢精度，影响风险校验 | MEDIUM | 在Decimal域内计算后转换 |
+| 5.105.6 | `trading/trading_contracts/factories.py:70` | `float(max_portfolio_var_1d)` 对Decimal VaR丢精度 | MEDIUM | 保留Decimal或用quantize明确精度 |
+| 5.105.7 | `trading/trading_contracts/factories.py:98,131-134` | 5处`float()`将Decimal VaR/CVaR指标转float，尾部风险场景精度敏感 | MEDIUM | 改字段类型为Decimal或转换前quantize |
+| 5.105.8 | `risk/implementations/default_risk_limits_calculator.py:98` | `_estimate_var`返回Decimal后立即`float()`转换，精度保护失效 | MEDIUM | 保留Decimal到最终输出边界 |
+| 5.105.9 | `risk/implementations/default_risk_manager_orchestrator.py:219` | `float(v)` 对`positions: Any`字典值，若v为None或非数字字符串会抛异常 | MEDIUM | 添加类型校验或try/except |
+
+#### 5.105.3 LOW级（4个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.105.10 | `risk/implementations/default_risk_manager_orchestrator.py:106` | Decimal传入float参数位置，类型契约不一致 | LOW | 显式转换或修改签名 |
+| 5.105.11 | `risk/implementations/default_stop_loss_engine.py:99-100` | Decimal转float存入RiskCheckResult，影响日志诊断精度 | LOW | 可接受或改字段类型 |
+| 5.105.12 | `simulation/default_backtest_engine.py:202` | `_calc_nav`返回float，每日float→Decimal往返转换精度累积误差（+intelligence副本） | LOW | 直接返回Decimal |
+| 5.105.13 | `risk/implementations/default_risk_manager_orchestrator.py:204` | `or 0.0`掩盖None（未设置限额）与0.0（不允许回撤）的语义差异 | LOW | 显式判断`is not None` |
+
+**严重度汇总**：HIGH=2, MEDIUM=7, LOW=4, 合计=13
+
+**正面发现**：`money.py`显式拒绝float并抛出`MoneyPrecisionError`；`factories.py`的`_to_decimal`使用`Decimal(str(value))`安全模式。
+
+---
+
+### 5.106 排序与比较正确性（7个，第20轮新增）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.106.1 | `governance/witness_isolation.py:49` | `max(counts.values())` 当`_witnesses`为空时抛`ValueError: max() arg is an empty sequence`。同类方法`winner()`有空集保护但此方法缺失 | MEDIUM | 添加`if not self._witnesses: return 0` |
+| 5.106.2 | `ops/detectors/anomaly_detector.py:47` | `max(triggered_metrics, key=...)` 当`z_threshold`与类常量`Z_THRESHOLD`分叉时`triggered_metrics`可能为空 | MEDIUM | 添加空集保护或统一阈值来源 |
+| 5.106.3 | `governance/drift_detection/ai_context_injector.py:85` | `float(evt.get("roi_score", 0.0))` 当roi_score值为None时`float(None)`抛TypeError。`.get(key, default)`仅在key缺失时返回default，key存在但值为None时不返回default | MEDIUM | 改为`float(evt.get("roi_score") or 0.0)` |
+| 5.106.4 | `governance/drift_detection/ai_context_injector.py:152` | 排序键`-float(e.get("roi_score", 0.0))` 同上float(None)风险 | MEDIUM | 改为`-float(e.get("roi_score") or 0.0)` |
+| 5.106.5 | `shared/context_engine.py:89` | `sorted(manifest, key=lambda x: x.get("reason", ""))` 当reason值为None时None与str比较抛TypeError | LOW | 改为`x.get("reason") or ""` |
+| 5.106.6 | `behavioral_audit/data_classification.py:102` | `max(levels, key=...)` 空列表抛ValueError。公开函数无保护 | LOW | 添加`if not levels: return DataLevel.PUBLIC` |
+| 5.106.7 | `governance/data_governance/data_classification.py:102` | 同上（重复定义） | LOW | 同上+消除重复 |
+
+**严重度汇总**：HIGH=0, MEDIUM=4, LOW=3, 合计=7
+
+**核心风险模式**：`.get(key, default)`的误用——开发者假设它能在值为None时返回default，但实际仅在key缺失时才返回。
+
+---
+
+### 5.107 数据类设计正确性（6个，第20轮新增）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.107.1 | `infrastructure/pipeline/models.py:505` | Pydantic V1风格`class Config: use_enum_values = True`在V2代码库中已废弃，产生`PydanticDeprecatedSince20`警告 | MEDIUM | 替换为`model_config = ConfigDict(use_enum_values=True)` |
+| 5.107.2 | `shared/contracts/identity/agent_identity.py:144` | 同上V1风格Config | MEDIUM | 同上 |
+| 5.107.3 | `integration/models.py:504` | 同上V1风格Config（重复副本） | MEDIUM | 同上+消除重复 |
+| 5.107.4 | `security/llm_defense/llm_security/layers/l1_input.py:44` | dataclass字段`hits: list[str] = None` 类型标注与默认值不一致。`__post_init__`运行时转换None→[]但静态类型标注错误 | LOW | 改为`field(default_factory=list)`或`list[str] \| None = None` |
+| 5.107.5 | `governance/kb/safety_brake.py:71` | `blocking_issues: list[str] = None` 同上模式 | LOW | 同上 |
+| 5.107.6 | `governance/kb/safety_brake.py:72` | `warnings: list[str] = None` 同上模式 | LOW | 同上 |
+
+**严重度汇总**：HIGH=0, MEDIUM=3, LOW=3, 合计=6
+
+**正面发现**：所有frozen dataclass的`__post_init__`正确使用`object.__setattr__`；可变默认值正确使用`default_factory`；继承层次字段顺序正确；无V1的`@validator`/`orm_mode`/`.dict()`遗留。
+
+---
+
+### 5.108 比较运算符完整性（3个，第20轮新增）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.108.1 | `governance/reward_hacking_rebound_detector.py:50` | `ReboundSeverity(str, Enum)`仅定义`__ge__`，缺失`__lt__`/`__le__`/`__gt__`/`__eq__`。由于继承`str`，未定义的比较方法回退到`str`字典序，导致严重度排序语义矛盾：`HIGH > MEDIUM`返回False（应为True），`HIGH < MEDIUM`返回True（应为False）。安全相关Enum，比较不一致可能导致门禁/升级判断错误 | HIGH | 使用`@functools.total_ordering`并定义`__eq__`与`__lt__`，或手动补全四个比较方法 |
+| 5.108.2 | `security/access_control/kill_switch.py:92` | `TriggerResult.__eq__`返回`False`而非`NotImplemented`，违反Python比较协议，阻断了右操作数的`__eq__`参与机会。同时`isinstance(other, TriggerResult)`允许子类比较但只比较`action`字段，且接受`str`类型比较导致类型不安全 | MEDIUM | 最后一行改为`return NotImplemented`；考虑取消与str的隐式比较 |
+| 5.108.3 | `security/access_control/non_repudiation.py:37` | `VerifyResult(dict)`定义`__bool__`返回`self.get("verified", False)`，但继承的`dict.__len__`返回键数量。`__bool__`优先级高于`__len__`但语义不一致：`bool(VerifyResult({"verified": False, "reason": "tampered"}))` → False，但`len(...)` → 2（非空），违反"非空容器为真"的Python直觉 | MEDIUM | 显式覆盖`__len__`使其与`__bool__`一致，或不继承dict改为组合模式 |
+
+**严重度汇总**：HIGH=1, MEDIUM=2, LOW=0, 合计=3
+
+**附注**：`FactorRegistry.__len__`作为`@classmethod`无法被`len()`触发的问题已在5.91.1（第18轮魔术方法一致性维度）覆盖，此处不重复报告。
+
+---
+
+### 5.109 迭代器协议完整性（1个，第20轮新增）
+
+**总体评价**：`src/zephyr/`在迭代器协议完整性方面表现良好。代码库几乎不使用自定义迭代器类（仅1个可迭代对象`FindingCollection`，且实现正确），避免了大部分协议陷阱。
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.109.1 | `shared/contracts/core/enforcer.py:404` | `next(a for a in args if a is not type(None))` 未提供default值。当前由line 403的守卫`if len(args) == 2 and type(None) in args:`保护（Python的Union规范化保证生成器必定产出一个非None元素），但其安全性依赖于此非显然的类型规范化不变量。若守卫被重构为更宽松条件，将立即变为潜在StopIteration缺陷 | LOW | 改为`next((a for a in args if a is not type(None)), None)`并增加`if non_none is not None:`守卫 |
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=1, 合计=1
+
+**未发现的问题**：无`__next__`定义、无`__getitem__`旧式迭代、无生成器`return value`、所有`next()`调用（14/15处）提供default或有长度守卫、无迭代过程中修改集合、无`zip/map/filter`迭代器复用。
+
+---
+
+### 5.110 __repr__/__str__泄露与一致性（9个，第21轮新增）
+
+#### 5.110.1 [MEDIUM] Capability(BaseModel) auto-__repr__暴露auth_token字段
+
+- **文件**：`src/zephyr/governance/rule_enforcement/cbac_matrix.py:31-37`
+- **问题**：`Capability`继承`pydantic.BaseModel`，Pydantic v2自动生成`__repr__`列出所有字段（含`auth_token`）。`list_capabilities()`返回`Capability`实例列表，调用方`print()`/`repr()`/`logging`时`auth_token`即被输出到日志或控制台。未定义自定义`__repr__`，也未用`SecretStr`保护该字段。
+- **证据**：`class Capability(BaseModel): ... auth_token: str = ""`
+- **修复**：改用`SecretStr`或重命名为`transport`；至少添加自定义`__repr__`排除敏感字段。
+
+#### 5.110.2 [MEDIUM] DeepSeek客户端持有_api_key却无__repr__防护（3处副本）
+
+- **文件**：
+  - `src/zephyr/integration/local_model/deepseek_chat.py:109-128`
+  - `src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py:286-313`
+  - `src/zephyr/intelligence/model_profiling/pipeline_routing/deepseek_v4_chat.py:156-183`
+- **问题**：三个类均持有`self._api_key`（真实DeepSeek API Key），未定义`__repr__`。当前默认`__repr__`不泄露（仅输出地址），但无调试价值；后续维护者按惯例添加`__repr__`列出属性时，`_api_key`将被打印到日志/异常信息。
+- **修复**：显式定义安全`__repr__`，明确排除`_api_key`，如`return f"DeepSeekChat(model={self._model!r}, verified={self._verified})"`。
+
+#### 5.110.3-5.110.7 [LOW] 5个类__repr__不可重建（字符串字段未用!r）
+
+- `src/zephyr/trading/action_dispatcher.py:752-753` — `ActionReport.__repr__`返回`f"ActionReport({self.target}, ...)"`，字符串字段未加引号
+- `src/zephyr/infrastructure/script_system/finding.py:262-263` — `Finding.__repr__`混用缩写键（`D=`/`SEV=`）与裸字符串
+- `src/zephyr/ops/protocols.py:41-42` — `AgentCapability.__repr__`返回`f"AgentCapability({self.name}, level={self.level})"`
+- `src/zephyr/security/adversarial_validation/constitution_guard.py:60-61` — `ConstitutionArticle.__repr__`冒号分隔非Python表达式
+- `src/zephyr/governance/database_manager.py:123-125` — `DatabaseHealthStatus.__repr__`返回人类可读状态摘要，语义应为`__str__`
+- **问题**：`__repr__`返回值不是合法Python表达式，违反PEP 257"应返回可重建对象表达式"约定。
+- **修复**：统一为`f"ClassName(field={self.field!r}, ...)"`格式。
+
+#### 5.110.8 [LOW] EscalationAPI持有_api_keys字典却无__repr__
+
+- **文件**：`src/zephyr/governance/escalation_api.py:35-44`
+- **问题**：持有多个service的api_key映射，无`__repr__`，调试时无法快速查看已注册服务列表。存在latent泄露风险。
+- **修复**：`def __repr__(self): return f"EscalationAPI(services={list(self._api_keys.keys())})"`
+
+#### 5.110.9 [LOW] IdentityVerifier持有_secret却无__repr__
+
+- **文件**：`src/zephyr/infrastructure/a2a_protocol/layer1_discovery/identity_verifier.py:24-28`
+- **问题**：存储HMAC共享密钥，无`__repr__`。
+- **修复**：`def __repr__(self): return f"IdentityVerifier(secret_configured={self._secret is not None})"`
+
+**严重度汇总**：HIGH=0, MEDIUM=2, LOW=7, 合计=9
+
+---
+
+### 5.111 Lock可重入性（3个，第21轮新增）
+
+#### 5.111.1 [MEDIUM] admission_controller.py get_metrics持三锁嵌套
+
+- **文件**：`src/zephyr/trading/admission_controller.py:284-295`
+- **问题**：`get_metrics()`持有`_metrics_lock`时访问`_global_bucket.tokens`和`_circuit_breaker.state`，两个`@property`各自获取独立`threading.Lock`，构成"持A锁时获取B锁、C锁"嵌套。当前未形成死锁环路，但锁顺序未文档化，未来若`_TokenBucket.consume()`增加回调`_metrics_lock`的逻辑将立即触发死锁。
+- **修复**：持锁前先快照子对象状态：`bucket_tokens = self._global_bucket.tokens; cb_state = self._circuit_breaker.state`，然后在`with self._metrics_lock`块内仅组装返回值。
+
+#### 5.111.2 [MEDIUM] gpu_consensus_scheduler.py get_metrics持两锁嵌套
+
+- **文件**：`src/zephyr/trading/gpu_consensus_scheduler.py:238-254`
+- **问题**：`get_metrics()`持有`self._lock`时访问`self._queue.depth`，`@property`内部获取`_PriorityQueue._lock`，构成嵌套。
+- **修复**：先快照`queue_depth = self._queue.depth`再进入`with self._lock`。
+
+#### 5.111.3 [LOW] 协程中使用threading.Lock违反INVARIANTS
+
+- **文件**：`src/zephyr/trading/gpu_consensus_scheduler.py:194-219`
+- **问题**：`submit()`是`async def`协程，但使用`with self._lock`（`threading.Lock`）。`async_runtime.py` INVARIANTS声明"不持有threading.Lock避免asyncio死锁"。持锁区间无`await`，当前不死锁，但违反约定，后续维护者在持锁块内加入`await`将立即触发事件循环阻塞。
+- **修复**：改为`asyncio.Lock`或通过`asyncio.to_thread`隔离同步/异步边界。
+- **注**：与5.16.8部分关联（5.16.8聚焦`async_runtime.py`自身，本条是该INVARIANTS被另一文件违反的具体实例）。
+
+**严重度汇总**：HIGH=0, MEDIUM=2, LOW=1, 合计=3
+
+---
+
+### 5.112 asyncio取消传播（3个，第21轮新增）
+
+#### 5.112.1 [HIGH] CancelledError路径子进程未kill（4文件无finally块）
+
+- **文件**：
+  - `src/zephyr/behavioral_audit/drift_engine.py:401-441`
+  - `src/zephyr/governance/drift_detection/drift_engine.py:298-322`
+  - `src/zephyr/behavioral_audit/detector_dispatcher.py:191-255`
+  - `src/zephyr/governance/drift_detection/detector_dispatcher.py:155-210`
+- **问题**：四处采用`try/except TimeoutError/except Exception`结构，**无`finally`块**。`CancelledError`继承`BaseException`不被`except Exception`捕获，正确向上传播，但`proc`（asyncio子进程）从未被`kill()`，成为孤儿进程持续占用CPU/内存。
+- **与5.68.1/5.68.2的区别**：5.68仅覆盖TimeoutError路径（"TimeoutError被捕获仅返回事件，但proc从未kill"）；本条覆盖CancelledError路径+2个新文件（detector_dispatcher）。5.68建议的"except块中kill"**无法修复CancelledError路径**——CancelledError绕过所有except块，需`finally`块才能覆盖。
+- **修复**：增加`finally`块（`proc`初始化为`None`），`finally`中`if proc is not None and proc.returncode is None: proc.kill(); await proc.wait()`。
+
+#### 5.112.2 [MEDIUM] gather(return_exceptions=True) + isinstance(r, Exception)吞没CancelledError（2文件）
+
+- **文件**：
+  - `src/zephyr/trading/gpu_consensus_scheduler.py:295-308`
+  - `src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py:295-308`
+- **问题**：`gather(*tasks, return_exceptions=True)`在子任务被取消时将`CancelledError`作为结果返回。后续`isinstance(r, Exception)`对`CancelledError`返回`False`（Python 3.8+中`CancelledError`继承`BaseException`而非`Exception`）。被取消的子任务结果静默丢弃或进入`elif r is not None`分支调用`r.get("verdict")`抛`AttributeError`。
+- **修复**：改用`isinstance(r, BaseException)`，`CancelledError`单独`raise`传播取消信号。
+
+#### 5.112.3 [MEDIUM] 线程runner except Exception未捕获CancelledError致future永久挂起
+
+- **文件**：`src/zephyr/behavioral_audit/brain_integration.py:224-244`
+- **问题**：`_run_async`在已有事件循环时通过新线程运行协程。线程函数`_runner`用`except Exception`捕获异常回填future，但`CancelledError`是`BaseException`不被捕获，`future.set_exception(exc)`被跳过，future永不resolve。调用方`future.result()`**永久阻塞**。
+- **修复**：改用`except BaseException`，或在`finally`中确保`if not future.done(): future.set_exception(exc)`。
+
+**严重度汇总**：HIGH=1, MEDIUM=2, LOW=0, 合计=3
+
+---
+
+### 5.113 __slots__一致性（1个，第21轮新增）
+
+#### 5.113.1 [MEDIUM] RiskLimitViolationError(Exception)声明__slots__但Exception自带__dict__致优化失效
+
+- **文件**：`src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py:21`
+- **问题**：继承`Exception`并声明`__slots__`（10个槽位），但`BaseException`基类**未声明`__slots__`**，所有Exception子类实例始终携带`__dict__`，`__slots__`的内存优化完全失效。与项目内其他异常类惯例不一致（均未声明`__slots__`）。全项目16处`__slots__`声明中这是唯一对异常类声明的案例。
+- **修复**：删除`__slots__`声明。Exception子类的`__dict__`无法通过`__slots__`消除，保留它只会给人"已做内存优化"的错觉。
+
+**严重度汇总**：HIGH=0, MEDIUM=1, LOW=0, 合计=1
+
+---
+
+### 5.114 Final/@final强制（7个，第21轮新增）
+
+#### 5.114.1-5.114.4 [HIGH] governance/config.py 4个可变dict常量未标注Final
+
+- **文件**：`src/zephyr/governance/config.py:34,89,126,136`
+- **问题**：`PROJECT_SCALE_TIERS`、`POLICY_TREE`、`EXIT_CODES`、`PATH_THRESHOLDS`四个项目级配置常量是**可变dict类型**，未标注`Final`。任何import方可执行`PROJECT_SCALE_TIERS["Tier1_small"]["ast_similarity_threshold"] = 0.0`静默篡改全局策略，连`Final`静态防护都没有。
+- **修复**：标注`Final[dict[...]]`，并用`types.MappingProxyType`包裹防止内容突变。
+
+#### 5.114.5 [HIGH] 375处模块级UPPER_CASE常量系统性未标注Final
+
+- **文件**：100个文件，375处（代表性样本见下）
+- **问题**：全项目仅1个文件（`runtime_plane_tag.py`）导入`Final`，仅5个`Final`变量。375处模块级常量（含`security`/`governance`/`behavioral_audit`敏感域）缺乏`Final`契约保护，常量被运行时意外/恶意重赋值不触发任何静态检查告警。
+- **代表性证据**：
+  - `trading/session_lifecycle.py:34-36` — `IDLE_TIMEOUT_S`等3个超时魔法数字
+  - `security/adversarial_validation/circuit_breaker.py:30-32` — `BYPASS_RATE_OPEN_THRESHOLD`安全熔断阈值
+  - `security/access_control/session_concurrency.py:78` — `LOCK_TTL_SECONDS`访问控制锁TTL
+  - `behavioral_audit/data_lifecycle.py:31-32` — `PURGE_AFTER_YEARS`合规销毁年限
+  - `autonomy_core/token_budget.py:29,47` — `DEFAULT_CONTEXT_TOKEN_BUDGET`等LLM令牌预算
+  - `governance/backtest_engine.py:32` — `TARGET_FF`回测目标
+- **修复**：分批推进，P0优先`security`/`governance`/`behavioral_audit`域约30处，统一改写为`NAME: Final[type] = value`。
+
+#### 5.114.6 [MEDIUM] 常量re-export文件未声明Final语义
+
+- **文件**：`src/zephyr/shared/foundation/constants.py`、`src/zephyr/shared/constants.py`
+- **问题**：从`runtime_plane_tag` re-export 5个`Final`常量，但re-export本身未声明`Final`语义，下游类型检查器跨模块re-export不一定能传递`Final`约束。
+- **修复**：re-export文件显式标注`Final[type]`。
+
+#### 5.114.7 [MEDIUM] @final全项目零使用，安全敏感类未标注
+
+- **文件**：全项目（67个Config类+多个安全敏感类）
+- **问题**：`@final`在`src/zephyr/`**零匹配**。`tamper_proof_audit`、`SkillFileLock`、`capability`等安全敏感类未标注`@final`，子类化可绕过安全契约。缺少`@final`意味着静态检查器无法发现"子类化此安全类"的违规。
+- **修复**：优先标注安全类`@final`（`tamper_proof_audit`、`SkillFileLock`、`capability`）。
+
+**严重度汇总**：HIGH=5, MEDIUM=2, LOW=0, 合计=7
+
+---
+
+### 5.115 ABC注册模式（2个，第21轮新增）
+
+#### 5.115.1 [MEDIUM] DefaultRiskLimitsCalculator从错误源导入ABC致__init_subclass__注册静默失败
+
+- **文件**：`src/zephyr/risk/implementations/default_risk_limits_calculator.py:49,54,57`
+- **问题**：存在两个同名`RiskLimitsCalculator`类：`risk/risk_limits.py`（ABC，有`__init_subclass__`注册到`_registry`）和`trading_contracts/risk/risk_limits.py`（具体类，无注册）。`DefaultRiskLimitsCalculator`从**后者**导入继承，但设置了`__calculator_id__`标记属性，意图通过`__init_subclass__`注册到ABC的`_registry`。由于继承了错误源，`__init_subclass__`从未触发，`_registry`保持为空，`isinstance`检查返回`False`。
+- **修复**：改为`from zephyr.risk.risk_limits import RiskLimitsCalculator`。
+
+#### 5.115.2 [LOW] __init_subclass__守卫abc.ABC not in cls.__bases__逻辑脆弱（6处同一模式）
+
+- **文件**：
+  - `src/zephyr/signal_fundamental/synth/signal_synthesizer.py:73`
+  - `src/zephyr/risk/risk_validator.py:91`
+  - `src/zephyr/risk/risk_limits.py:73`
+  - `src/zephyr/governance/quality_gate.py:99`
+  - `src/zephyr/governance/provider_base.py:91`
+  - `src/zephyr/governance/alt_data_connector/provider_base.py:91`
+- **问题**：守卫`abc.ABC not in cls.__bases__`只检查直接基类是否含`abc.ABC`，无法可靠识别中间抽象类。若中间抽象类不带显式`abc.ABC`但定义了标记属性，会被错误注册到`_registry`，实例化时抛`TypeError: Can't instantiate abstract class`。
+- **修复**：改用`inspect.isabstract(cls)`判断类是否仍为抽象类。
+- **注**：与5.116.3（`hasattr`沿MRO）是同一`if`语句中两个不同条件的不同问题。
+
+**严重度汇总**：HIGH=0, MEDIUM=1, LOW=1, 合计=2
+
+---
+
+### 5.116 __init_subclass__副作用（5个，第21轮新增）
+
+#### 5.116.1 [MEDIUM] interface_base.py 3个_registry死注册表——既无__init_subclass__也无register装饰器
+
+- **文件**：`src/zephyr/frontend/interface_base.py:90,111,138`
+- **问题**：`DashboardBase`、`NotificationManagerBase`、`ApprovalGatewayBase`三个基类声明了`_registry: ClassVar[dict]`字段暗示注册意图，但**既未实现`__init_subclass__`钩子，也未提供`register`装饰器/classmethod**。全局搜索确认无任何子类，注册表从未被填充也从未被读取。
+- **订正5.89.4**：5.89.4声称此处"通过`__init_subclass__`自动注册子类"是**事实性错误**，该文件无`__init_subclass__`，注册表为死代码。
+- **修复**：补全注册API（参照`factor_base.py`的`@classmethod register`模式）或删除`_registry`字段。
+
+#### 5.116.2 [MEDIUM] 5个__init_subclass__注册表只写不读——import时副作用零收益
+
+- **文件**：
+  - `src/zephyr/signal_fundamental/synth/signal_synthesizer.py:71-74`
+  - `src/zephyr/risk/risk_validator.py:89-92`
+  - `src/zephyr/risk/risk_limits.py:71-74`
+  - `src/zephyr/governance/quality_gate.py:97-100`
+  - `src/zephyr/governance/alt_data_connector/provider_base.py:89-94`（+`governance/provider_base.py:89-94`重复副本）
+- **问题**：`__init_subclass__`在子类定义（import时）触发注册写入`_registry`，但全代码库**无任何消费方读取这些注册表**（无`get`/`list` classmethod，无`_registry[id]`查找）。对比`factor/factor_base.py`的`register`/`get`/`list_all` API被实际消费，当前5个注册表是半成品——注册了但无人用，import时的注册副作用纯属开销。
+- **修复**：补充`@classmethod get/list_all`访问器并接入消费方，或移除注册逻辑与`_registry`字段。
+
+#### 5.116.3 [MEDIUM] hasattr沿MRO继承——深层子类会覆盖父类注册（5处同一模式）
+
+- **文件**：同5.116.2的5个文件
+- **问题**：`__init_subclass__`中`hasattr(cls, "__xxx_id__")`会沿MRO查找继承属性。若未来出现二级子类未重定义`__xxx_id__`，会以继承的父类id**覆盖**父类注册。当前仅有直接子类，故为潜在bug，但一旦有人扩展二级子类即触发。
+- **修复**：将`hasattr(cls, "__xxx_id__")`改为`"__xxx_id__" in cls.__dict__`，只注册在自身类体中定义了id的类。
+
+#### 5.116.4 [LOW] 文档引用不存在的DataSourceRegistry类
+
+- **文件**：`src/zephyr/governance/alt_data_connector/provider_base.py:82`（+`governance/provider_base.py:82`重复副本）
+- **问题**：`DataSourceBase`类文档字符串指引开发者使用`@DataSourceRegistry.register`装饰器注册，但`DataSourceRegistry`类在代码库中**不存在**。实际注册由`__init_subclass__`自动完成。文档与代码矛盾，会误导新增数据源的实现者。
+- **修复**：将文档改为"设置类属性`__meta__ = DataSourceMeta(...)`即自动注册"。
+
+#### 5.116.5 [LOW] _base_server.py文档误导——建议在__init_subclass__中调用实例方法
+
+- **文件**：`src/zephyr/integration/mcp/_base_server.py:273`（+`infrastructure/_base_server.py:273`重复副本）
+- **问题**：文档建议"在`__init_subclass__`或`__init__`中调用`_install_decorated_tools()`"，但该方法签名是`(self)`**实例方法**，只能在`__init__`中调用，无法在类级别的`__init_subclass__`中调用。
+- **修复**：将文档改为"在`__init__`中调用`_install_decorated_tools()`"，删除对`__init_subclass__`的提及。
+
+**严重度汇总**：HIGH=0, MEDIUM=3, LOW=2, 合计=5
+
+---
+
+### 5.117 pickle/__reduce__安全（1个，第21轮新增）
+
+#### 5.117.1 [HIGH] joblib.load(pickle变体)反序列化模型文件无校验（2文件）
+
+- **文件**：
+  - `src/zephyr/ml_train/implementations/default_inference_engine.py:69`
+  - `src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py:71`
+- **问题**：`joblib.load`底层使用`pickle`反序列化，是已知**RCE sink**——构造恶意`.joblib`/`.pkl`模型文件即可在加载时执行任意代码。`load_model(self, model_id, model_path)`是公开方法，`model_path`为自由字符串参数，**全程无任何校验**：无路径白名单/限定、无哈希签名校验、无`RestrictedUnpickler`。该引擎标注`MATURITY: production`，属生产服务面。
+- **攻击路径**：(a)模型文件供应链——若攻击者能替换/写入`model_path`指向的文件；(b)路径穿越——若上层服务把`model_id→path`映射未加白名单地暴露。
+- **证据**：`self._models[model_id] = joblib.load(model_path)`
+- **修复**：优先改用ONNX Runtime/`torch.jit.load(weights_only=True)`加载模型权重；若必须保留joblib，需(1)路径白名单+`Path.resolve()`前缀校验(2)SHA256+签名校验(3)`RestrictedUnpickler`重写`find_class`。两份实现为重复代码，修复时统一到单一实现。
+
+**严重度汇总**：HIGH=1, MEDIUM=0, LOW=0, 合计=1
 
 ---
 

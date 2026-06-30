@@ -397,7 +397,7 @@ changelog:
     date: "2026-06-28"
     author: "AI-GLM-5.2"
     changes:
-      - "回填 INFRA-DB-003 P2迁移完成状态：host PostgreSQL depgraph→localhost:5432/depgraph，status planned→connected，provisioned_at null→2026-06-28"
+      - "回填 INFRA-DB-003 P2迁移完成状态：host depgraph (PostgreSQL)→localhost:5432/depgraph，status planned→connected，provisioned_at null→2026-06-28"
       - "更新 INFRA-DB-003 description：20+表→28表（PostgreSQL public schema 实测），新增 PostgreSQL 16 标注"
       - "更新 INFRA-DB-003 sla：新增 MVCC 标注"
       - "更新 INFRA-DB-003 note：从'P2迁移目标'改为'P2迁移已完成'，记录连接配置路径与统一入口函数"

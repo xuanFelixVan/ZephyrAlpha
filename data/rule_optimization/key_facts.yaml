@@ -40,7 +40,7 @@ numeric_facts:
   - id: module_count
     fact: "4,639"
     description: "模块数量（depgraph total_modules，extract_depgraph.py --summary 输出）"
-    ssot_source: "PostgreSQL depgraph via extract_depgraph.py --summary"
+    ssot_source: "depgraph (PostgreSQL) via extract_depgraph.py --summary"
     must_appear_in:
       - ".trae/rules/project_rules.md"
       - ".trae/rules/onboarding_detail.md"
@@ -58,7 +58,7 @@ numeric_facts:
   - id: domain_count
     fact: "39 域"
     description: "功能域数量（depgraph 实际计数，extract_depgraph.py --summary 输出 39 个域）"
-    ssot_source: "PostgreSQL depgraph via extract_depgraph.py --summary"
+    ssot_source: "depgraph (PostgreSQL) via extract_depgraph.py --summary"
     must_appear_in:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
@@ -135,9 +135,9 @@ numeric_facts:
 # ============================================================
 path_facts:
   - id: depgraph_db
-    fact: "PostgreSQL depgraph"
+    fact: "depgraph (PostgreSQL)"
     description: "依赖图+全景图唯一真源（2026-06-13 取代 panorama.yaml）"
-    ssot_source: "PostgreSQL depgraph"
+    ssot_source: "depgraph (PostgreSQL)"
     must_appear_in:
       - ".trae/rules/project_rules.md"
       - ".trae/rules/onboarding_detail.md"
@@ -507,9 +507,9 @@ path_facts:
         reason: "registry_of_registries.yaml 内部引用连字符写法错误"
 
   - id: depgraph_db_in_registry
-    fact: "PostgreSQL depgraph"
+    fact: "depgraph (PostgreSQL)"
     description: "架构全景图+依赖全景图真源（在 registry_of_registries.yaml 中，非 project-architecture-panorama.yaml 或 project-entity-depgraph.yaml）"
-    ssot_source: "PostgreSQL depgraph"
+    ssot_source: "depgraph (PostgreSQL)"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
@@ -819,7 +819,7 @@ command_facts:
 # ============================================================
 file_existence_checks:
   - id: depgraph_db_exists
-    path: "PostgreSQL depgraph"
+    path: "depgraph (PostgreSQL)"
     must_exist: true
     description: "depgraph 必须存在——依赖图+全景图唯一真源"
 

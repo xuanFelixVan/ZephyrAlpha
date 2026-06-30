@@ -1,7 +1,7 @@
 # v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
 # c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
-# 本文件由 dm200916_write_direct.py 从 PostgreSQL depgraph 派生，禁止手工编辑 domains 列表
+# 本文件由 dm200916_write_direct.py 从 depgraph (PostgreSQL) 派生，禁止手工编辑 domains 列表
 module_id: MOD-GOVERNANCE
 schema_version: '3.0.2'
 system:
@@ -26,7 +26,7 @@ governance:
 partitions:
 # === 53域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
-  path: PostgreSQL depgraph
+  path: depgraph (PostgreSQL)
   description: >
     53域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
@@ -132,6 +132,11 @@ partitions:
     path: layers/b_vector_memory.yaml
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
+  - id: system_telemetry
+    name: System Telemetry
+    path: layers/b_system_telemetry.yaml
+    status: implemented
+    description: 全系统遥测：metrics/logs/traces/ai_behavior 采集与归档（2026-06-30 治本：c_track→b_track）
 
 # === 53域清单（从depgraph派生，禁止手工编辑）===
 domains:
@@ -298,12 +303,12 @@ domains:
 global_stats:
   total_domains: 53
   total_partitions: 12
-  b_track_modules: 12
-  b_track_implemented: 11
+  b_track_modules: 13
+  b_track_implemented: 12
   b_track_skeleton: 1
   notes: >
     53域唯一物理分类体系，14层是域的layer_id属性枚举。
-    b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
+    b_track 13横切基础设施模块（context_engine/core/db/system_telemetry等），implemented 12 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 

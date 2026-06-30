@@ -704,7 +704,7 @@ sections:
       action_detail: 评估是否删除文件（走RULE-THREE三步审判）或保留并补全流程
     - order: 3
       action: depgraph已修改
-      action_detail: "git checkout PostgreSQL depgraph 回滚到备份版本"
+      action_detail: "git checkout depgraph (PostgreSQL) 回滚到备份版本"
     - order: 4
       action: 设计态已创建但实体文件未创建
       action_detail: 保留设计态（标记can_build=false）或删除设计态节点

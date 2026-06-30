@@ -131,7 +131,7 @@ TC-PG-23（视图迁移）依赖 TC-PG-01（depgraph_schema.py）完成
 
 **施工范围**：
 - 可修改：`scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql`（新建）、`config/.env.postgres`（新建）、`.gitignore`（修改）
-- 禁止修改：`src/`、`PostgreSQL depgraph`
+- 禁止修改：`src/`、`depgraph (PostgreSQL)`
 
 **施工步骤**：见P2方案§四.4.2[动作1-8]，包含：
 1. 下载安装PostgreSQL 16 EDB安装包（图形化向导，设置postgres密码，端口5432，安装为Windows服务）
@@ -173,7 +173,7 @@ git checkout -- .gitignore
 
 **施工范围**：
 - 可修改：`scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql`（新建）、`scripts/governance/migrate_sqlite_to_pg/01_create_pg_schema.sql`（新建）、`scripts/governance/migrate_sqlite_to_pg/migrate_data.py`（新建）、`requirements.txt`（修改）
-- 禁止修改：`src/`、`PostgreSQL depgraph`（只读取）
+- 禁止修改：`src/`、`depgraph (PostgreSQL)`（只读取）
 
 **施工步骤**：见P2方案§五.5.2[动作1-6]，包含：
 1. 备份depgraph（git commit）
@@ -1174,7 +1174,7 @@ git checkout -- requirements.txt pyproject.toml .env.example
 
 **可修改文件白名单**（12个一次性脚本，基于affected-files-index.md §9.4 DELETE + OBSOLETE）：
 
-**DELETE（8个一次性脚本）**：
+**DELETE（7个一次性脚本）**：
 
 | # | 文件路径 | 理由 |
 |---|---------|------|
@@ -1185,7 +1185,8 @@ git checkout -- requirements.txt pyproject.toml .env.example
 | 5 | `scripts/governance/d5_architecture/dm200912_rewrite_views.py` | docstring自述"一次性脚本" |
 | 6 | `scripts/governance/d5_architecture/dm200912_query_domains.py` | docstring自述"一次性脚本" |
 | 7 | `scripts/governance/d5_architecture/dm200913_rewrite_diagrams.py` | docstring自述"一次性脚本" |
-| 8 | `scripts/governance/d5_architecture/dm200916_write_direct.py` | docstring自述"一次性脚本" |
+
+> **注**：dm200916_write_direct.py 原列第 8 项，已于 2026-06-30 治本改造为 depgraph (PostgreSQL) 派生脚本（生成 architecture_model/index.yaml 的 domains 列表），不再是一次性脚本，从 DELETE 清单移除。
 
 **OBSOLETE（4个已完成使命）**：
 

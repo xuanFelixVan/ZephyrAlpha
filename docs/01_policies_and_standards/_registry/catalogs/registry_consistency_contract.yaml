@@ -247,7 +247,7 @@ registries:
   - id: "REG-017"
     name: "project-path-tree"
     title: "物理路径树"
-    path: "PostgreSQL depgraph (arch_directory_tree 表)"
+    path: "depgraph (PostgreSQL) (arch_directory_tree 表)"
     version: "2.0.0"
     description: "项目物理目录/文件结构，真源已迁移至 depgraph.db arch_directory_tree 表"
     ssoT_for:
