@@ -24,6 +24,9 @@
   3. 赋值为函数调用（如 _load_xxx_values()）→ 动态加载 → 合规
   4. load_vocabulary_values("xxx.yaml") 调用 → 校验 xxx.yaml 是否存在
   5. 值匹配（v1.3.0）：不限变量名，字面量集合含 3+ 词表值 → 疑似硬编码
+  6. _load_xxx 函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30）：
+     新AI 可能写 def _load_my_values(): yaml.safe_load(...) 复制词表加载逻辑，
+     赋值给变量时是函数调用（检测3 合规），但函数体本身是复制的（违规）。
 
 模式:
   --warn-only（默认）: print 违规清单，exit 0
@@ -90,6 +93,14 @@ _VALID_VAR_PATTERN = re.compile(
 # ── [STARTUP] 标记值校验（v1.2.0 新增——红蓝发现3 治本）──
 # 扫描 .py 文件头部 [STARTUP] 标记，校验值是否在 startup_vocabulary.yaml 合法值中
 _STARTUP_MARKER_PATTERN = re.compile(r"^#\s*\[STARTUP\]\s*(\w+)")
+
+# ── 检测5：_load_xxx 函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30）──
+# 匹配 _load_ 前缀 + 词表相关关键词的函数名（如 _load_ttl_values, _load_legal_values）
+# 命中后检查函数体是否包含 yaml.safe_load 调用 → 疑似复制词表加载逻辑
+# 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免
+_VOCAB_LOAD_FUNC_PATTERN = re.compile(
+    r"^_load_[a-z_]*?(value|values|vocab|legal|valid|status|ttl|type|layer|safety|stability|autonomy|classification)$"
+)
 
 # ── DDL 例外白名单（SQL CHECK 无法 yaml.safe_load，走 DDL-as-Code 协议）──
 _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
@@ -184,7 +195,7 @@ def _is_literal_collection(value: ast.expr) -> bool:
     return False
 
 
-def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:
+def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gate-vocab  # R4 豁免：批量加载所有词表（SSoT 不支持批量，合理不收敛）
     """加载所有 *_vocabulary.yaml 的合法值，构建 vocab_name → set[value] 映射。
 
     用于值匹配检测（检测4）：不限变量名，扫描字面量集合的字符串值，
@@ -373,6 +384,34 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                     node.lineno,
                     f"load_vocabulary_values 引用的词表文件不存在: {vocab_file}",
                 ))
+        # 检测5：_load_xxx 函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30）
+        # 新AI 可能写 def _load_my_values(): yaml.safe_load(...) 复制词表加载逻辑，
+        # 赋值给变量时是函数调用（检测3 合规），但函数体本身是复制的（违规）。
+        # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免
+        elif isinstance(node, ast.FunctionDef):
+            func_name = node.name
+            if not _VOCAB_LOAD_FUNC_PATTERN.match(func_name):
+                continue
+            # 检查函数体是否包含 yaml.safe_load 调用
+            has_yaml_load = False
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call)
+                        and isinstance(child.func, ast.Attribute)
+                        and child.func.attr == "safe_load"
+                        and isinstance(child.func.value, ast.Name)
+                        and child.func.value.id == "yaml"):
+                    has_yaml_load = True
+                    break
+            if not has_yaml_load:
+                continue
+            # noqa 豁免
+            if _has_noqa_exempt(source, node.lineno):
+                continue
+            issues.append((
+                node.lineno,
+                f"def {func_name}() 函数体含 yaml.safe_load 读取词表逻辑"
+                f"(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
+            ))
 
     return issues
 

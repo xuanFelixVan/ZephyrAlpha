@@ -59,23 +59,27 @@ def load_vocabulary_values(
 
     YAML 结构约定：顶层 ``values`` 列表，每个 entry 为 dict，取 ``value`` 键。
 
-    失败模式（v1.1.0 fail-fast 治本）:
-        - ``strict=True``（默认）: 文件不存在 → 抛 FileNotFoundError。
-          理由：静默返回空 set 会导致合规检查变空集（"全部不合法"或"全部通过"），
+    失败模式（v1.1.0 fail-fast + R6 治本 2026-06-30）:
+        - ``strict=True``（默认）: fail-fast——文件不存在/YAML 解析错误/非 dict 结构
+          均抛异常。理由：静默返回空 set 会导致合规检查变空集（"全部不合法"或"全部通过"），
           是 DoS 漂移源。AI 误拼 yaml 名应立即崩溃而非静默漂移。
-        - ``strict=False``: 文件不存在 → 返回空 set（仅用于测试隔离/渐进迁移）。
+        - ``strict=False``: 宽容模式——文件不存在/YAML 解析错误/非 dict 结构
+          均返回空 set。用于 warn-only 检测工具（如 check_vocab_hardcode）和测试隔离，
+          避免词表数据问题导致检测工具崩溃卡住 commit 流水线。
 
     Args:
         vocab_file: YAML 文件名（如 ``"status_vocabulary.yaml"``）或绝对路径
         vocab_dir: YAML 所在目录；默认 ``docs/01_policies_and_standards/_registry/vocabularies``
         fallback_key: entry 缺少 ``value`` 键时的回退键（如 ``"id"``）；None 表示不回退
-        strict: 文件不存在时是否抛异常（默认 True，fail-fast）
+        strict: True=fail-fast（默认）；False=宽容模式（返回空 set 而非崩溃）
 
     Returns:
         合法值 ``set[str]``
 
     Raises:
         FileNotFoundError: ``strict=True`` 且文件不存在
+        yaml.YAMLError: ``strict=True`` 且 YAML 解析失败
+        ValueError: ``strict=True`` 且 YAML 顶层非 dict 结构
     """
     vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
     p = Path(vocab_file)
@@ -89,7 +93,16 @@ def load_vocabulary_values(
                 f"如需测试隔离/渐进迁移，传 strict=False。"
             )
         return set()
-    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        if strict:
+            raise
+        return set()  # R6: strict=False 宽容模式，YAML 格式错误返回空 set
+    if not isinstance(data, dict):
+        if strict:
+            raise ValueError(f"vocabulary YAML 顶层非 dict 结构: {p}")
+        return set()  # R6: strict=False 宽容模式
     result: set[str] = set()
     for entry in data.get("values", []) or []:
         if not isinstance(entry, dict):
@@ -201,7 +214,7 @@ def load_decision_tree(
 def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
     """展开 decision_tree 节点中的 criteria_source 引用为 criteria 列表（原地修改）。
 
-    criteria_source 结构（基础模式——从 section 读取标量列表）::
+    criteria_source 结构::
 
         criteria_source:
           target: directory_contract.yaml
@@ -210,20 +223,7 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
           signal: path
           operator: startswith
 
-    v2.0.0 增强：支持 filter + extract_field（从 dict 列表项中按条件过滤并提取字段）::
-
-        criteria_source:
-          target: doc_type_vocabulary.yaml
-          path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
-          section: values
-          filter:
-            field: ttl_default
-            equals: task_bound
-          extract_field: value
-          signal: frontmatter.doc_type
-          operator: equals
-
-    展开后：node["criteria"] = [{"signal": ..., "value": <每个值>, "operator": ...}, ...]
+    展开后：node["criteria"] = [{"signal": ..., "value": <每个 path>, "operator": ...}, ...]
 
     约束：向内收——路径列表真源在外部 YAML，本函数加载时展开，evaluate_ttl 零感知。
     """
@@ -263,17 +263,6 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
                 )
             node["criteria"] = []
             continue
-        # v2.0.0: 支持 filter + extract_field（从 dict 列表项中按条件过滤并提取字段值）
-        filt = cs.get("filter")
-        extract_field = cs.get("extract_field")
-        if filt and extract_field:
-            field_name = filt.get("field")
-            field_value = filt.get("equals")
-            value = [
-                item.get(extract_field)
-                for item in value
-                if isinstance(item, dict) and item.get(field_name) == field_value
-            ]
         node["criteria"] = [
             {"signal": signal, "value": str(v), "operator": operator}
             for v in value
