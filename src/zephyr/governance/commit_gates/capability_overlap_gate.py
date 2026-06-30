@@ -86,7 +86,18 @@ def make_capability_overlap_gate() -> GateSpec:
             f.replace("\\", "/") for f in staged_new
             if f.endswith(".py") and not f.startswith("tests/")
         ]
-        if not new_py_files:
+        # 1b. 也关心 _registry/ 下新增 .yaml 文件（P1修复：防 .yaml 第二真源分裂）
+        _REGISTRY_DIRS = (
+            "docs/01_policies_and_standards/_registry/contracts/",
+            "docs/01_policies_and_standards/_registry/vocabularies/",
+            "docs/01_policies_and_standards/_registry/catalogs/",
+        )
+        new_yaml_files = [
+            f.replace("\\", "/") for f in staged_new
+            if f.endswith((".yaml", ".yml"))
+            and any(f.replace("\\", "/").startswith(d) for d in _REGISTRY_DIRS)
+        ]
+        if not new_py_files and not new_yaml_files:
             return True, ""
 
         # 2. 加载 capability registry YAML（真源：capability_lookup.REGISTRY_YAML）
@@ -136,6 +147,28 @@ def make_capability_overlap_gate() -> GateSpec:
                         f"扩展该 capability 的 canonical 文件，勿新建（见 AGENTS.md §7 step 0）"
                     )
                     break  # 每文件只报第一个命中
+
+        # 4b. 检测新建 _registry/ .yaml 文件名与同目录现有 .yaml token 交集（P1修复：防第二真源）
+        import glob
+        for yaml_file in new_yaml_files:
+            stem = os.path.basename(yaml_file).rsplit(".", 1)[0]
+            file_tokens = _tokenize(stem)
+            if not file_tokens:
+                continue
+            yaml_dir = os.path.dirname(yaml_file)
+            for existing in glob.glob(os.path.join(yaml_dir, "*.yaml")):
+                existing_rel = existing.replace("\\", "/")
+                if existing_rel == yaml_file:
+                    continue
+                existing_stem = os.path.basename(existing).rsplit(".", 1)[0]
+                overlap = file_tokens & _tokenize(existing_stem)
+                if len(overlap) >= 2:  # ≥2 token 重叠 = 高置信度第二真源
+                    warnings.append(
+                        f"new .yaml '{yaml_file}' tokens {sorted(overlap)} "
+                        f"overlap with existing '{existing_rel}'——"
+                        f"可能是第二真源，扩展现有文件勿新建"
+                    )
+                    break
 
         if warnings:
             logger.info(

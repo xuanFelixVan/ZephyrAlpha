@@ -94,6 +94,7 @@ from zephyr.governance.reconciliation_registry import (
     make_commit_gateway_audit_reconciler,
     make_deprecated_directory_reconciler,
     make_rule_file_audit_reconciler,
+    make_exempt_zone_frontmatter_reconciler,
     make_ttl_reconciler,
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-commit 门禁注册表（架构债务 #AD-001 治本）
@@ -513,7 +514,8 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_arch_model_reconciler(self))  # GATE-ARCH-MODEL: post-commit 重生 EA 树 index.yaml（dm200916 从 PG depgraph 派生 domains 列表，治 EA树域漂移缺口）
         self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))  # GATE-COMMIT-GW-AUDIT 缺口4接线：裸commit post-compensation 审计
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))  # GATE-DEPRECATED-DIR 09_audit 治本加固：post-commit 检测废弃目录重建
-        self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))  # GATE-RULE-FILE-AUDIT 缺口3+2：规则文件变更审计 + 豁免区 frontmatter 告警（warn-only）
+        self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))  # GATE-RULE-FILE-AUDIT 缺口3：规则文件变更审计（warn-only）
+        self._reconciliation_registry.register(make_exempt_zone_frontmatter_reconciler(self))  # GATE-EXEMPT-ZONE-FM 缺口2：豁免区 frontmatter 检测（P0修复：独立trigger，消除死代码）
         self._reconciliation_registry.register(make_ttl_reconciler(self))  # GATE-15-ttl post-commit 兜底重校（pre-compensation 异常被吞时拦截违规 .md，2026-06-30 注册补全）
 
     # ------------------------------------------------------------------
