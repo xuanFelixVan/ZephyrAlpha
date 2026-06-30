@@ -1,13 +1,12 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-01 04:28:30
+%% 生成时间: 2026-07-01 04:31:09
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 253, 依赖边数: 334
+%% 模块数: 252, 依赖边数: 333
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_SHARED[共享服务]
-        src_zephyr_integration_shared_api_03_api_index_py["...ntegration/shared/api_03/api_index.py [prototype]"]
         src_zephyr_shared___init___py["src/zephyr/shared/__init__.py [production]"]
         src_zephyr_shared___version___py["src/zephyr/shared/__version__.py [prototype]"]
         src_zephyr_shared__cross_layer___init___py["...ephyr/shared/_cross_layer/__init__.py [prototype]"]
@@ -107,11 +106,11 @@ graph TD
         src_zephyr_shared_contracts_risk_risk_limits_py[".../shared/contracts/risk/risk_limits.py [prototype]"]
         src_zephyr_shared_contracts_risk_risk_metrics_py["...shared/contracts/risk/risk_metrics.py [production]"]
         src_zephyr_shared_contracts_risk_risk_validator_protocol_py["...racts/risk/risk_validator_protocol.py [prototype]"]
-        %% ... 还有 153 个模块未显示
+        src_zephyr_shared_contracts_security___init___py["...shared/contracts/security/__init__.py [prototype]"]
+        %% ... 还有 152 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_integration_shared_api_03_api_index_py -->|import_depends| src_zephyr_shared_api_api_index_py
     src_zephyr_shared_blueprint_decomposer_py -->|import_depends| src_zephyr_shared___init___py
     src_zephyr_shared_api_client_py -->|import_depends| src_zephyr_shared_api_api_client_py
     src_zephyr_shared_capability_py -->|import_depends| src_zephyr_shared_security_capability_py
@@ -191,7 +190,8 @@ graph TD
     src_zephyr_shared_contracts_identity___init___py -->|import_depends| src_zephyr_shared_contracts_identity_permission_py
     src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_factor_monitor_report_py
     src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_factor_signal_py
-    %% ... 还有 82 条域内依赖未显示
+    src_zephyr_shared_contracts_market___init___py -->|import_depends| src_zephyr_shared_contracts_market_instrument_py
+    %% ... 还有 81 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_CROSS_ASSET -> D_SHARED (1 条)
@@ -395,6 +395,6 @@ graph TD
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_SIMULATION[D_SIMULATION]
 
     %% 统计
-    %% 域内依赖: 162 条
+    %% 域内依赖: 161 条
     %% 跨域入边: 159 条
     %% 跨域出边: 13 条
