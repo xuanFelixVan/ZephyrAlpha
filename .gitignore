@@ -156,9 +156,10 @@ src/zephyr/data/audit_logs/*
 src/zephyr/data/telemetry/*
 
 # P6b 治本：autonomy_core 运行时缓存/状态（代码运行时自动生成，不应入库）
-src/zephyr/autonomy_core/_benchmark_history.json
-src/zephyr/autonomy_core/_freshness.json
-src/zephyr/autonomy_core/_skill_cache/
+# ARCH-033: 文件迁移到 skills/ 子目录后更新路径
+src/zephyr/autonomy_core/skills/_benchmark_history.json
+src/zephyr/autonomy_core/skills/_freshness.json
+src/zephyr/autonomy_core/skills/_skill_cache/
 data/drift_audit/*
 !data/drift_audit/.gitkeep
 data/drift_runbooks/*

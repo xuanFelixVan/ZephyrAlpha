@@ -36,7 +36,6 @@ __all__ = [
     "engine",
     "fallback_staleness_gate",
     "file_autoregister",
-    "file_autorregister",
     "fragmentation_index",
     "host_resource_governor",
     "ide_watcher",
