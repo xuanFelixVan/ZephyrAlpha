@@ -73,7 +73,6 @@ depends_on:
 | [_b_track_interfaces/](file:///D:/ZephyrAlpha/docs/03_modules/_b_track_interfaces/index.md) | B 轨 6 大核心服务接口合同 | index.md |
 | [_master_blueprint/](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER_BLUEPRINT） | blueprint.md |
 | [_sys_master/](file:///D:/ZephyrAlpha/docs/03_modules/_sys_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
-| [_manifests/](file:///D:/ZephyrAlpha/docs/03_modules/_manifests/index.md) | 模块清单（43 个 *_manifest.md） | index.md |
 
 ### 2.3 遗留目录（待清理）
 
@@ -105,7 +104,7 @@ depends_on:
 | 目录名 | snake_case | `_domain_data/`, `datasource_core/` |
 | 文件名 | snake_case | `module_registry.yaml`, `blueprint.md` |
 | 域目录前缀 | `_domain_*` | `_domain_factor/` |
-| 跨层目录前缀 | `_cross_layer` 或功能名 | `_cross_layer/`, `_manifests/` |
+| 跨层目录前缀 | `_cross_layer` 或功能名 | `_cross_layer/` |
 
 > **豁免**：`docker-compose.yml` / `docker-compose.yaml`（Docker 外部约定）。
 
