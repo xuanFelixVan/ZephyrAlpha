@@ -127,4 +127,4 @@ depends_on:
 
 - [上级目录](file:///D:/ZephyrAlpha/docs/index.md)
 - [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
-- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/dependency_architecture_panorama.md)
+- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md)

@@ -1858,7 +1858,7 @@ pytest tests/ -x
 | # | 文件路径 | 更新内容 | 完成状态 |
 |---|---------|---------|:---:|
 | 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DB_DEPGRAPH_PG状态更新为Active | [x] |
-| 2 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 全景图数据源更新为PostgreSQL | [x] |
+| 2 | `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md` | 全景图数据源更新为PostgreSQL | [x] |
 | 3 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50裁定更新（D50-PG） | [x] |
 | 4 | `docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml` | 访问协议更新（5步流程修改） | [x] |
 | 5 | `architecture_model/layers/b_db.yaml` | DB YAML真源更新 | [x] |

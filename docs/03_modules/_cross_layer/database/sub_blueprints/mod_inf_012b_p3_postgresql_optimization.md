@@ -1773,7 +1773,7 @@ psql -U zephyr -d depgraph -f data\databases\backups\depgraph_pre_partition.sql
 | # | 文件路径 | 更新内容 |
 |---|---------|---------|
 | 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DB_DEPGRAPH_PG状态更新 |
-| 2 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 全景图优化说明 |
+| 2 | `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md` | 全景图优化说明 |
 | 3 | `docs/03_modules/_cross_layer/database/sub_blueprints/index.md` | 子蓝图索引更新 |
 
 ---

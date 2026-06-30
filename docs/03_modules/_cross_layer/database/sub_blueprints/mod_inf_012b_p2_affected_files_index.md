@@ -365,7 +365,7 @@ references:
 
 | # | 文件路径 | 位置（行号） | 更新内容 | 更新原因 |
 |---|---------|:---------:|---------|---------|
-| 3 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | L97 | 将"sqlite_sequence由SQLite自动管理"改为PG系统表说明 | D50-PG裁定 |
+| 3 | `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md` | L97 | 将"sqlite_sequence由SQLite自动管理"改为PG系统表说明 | D50-PG裁定 |
 | | | L1241 | 将"depgraph（SQLite单库）"改为"PostgreSQL单库" | D50-PG裁定 |
 | 4 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | L289,807,1038,1039,1084,1298,1301,1335,1338 | 更新D50裁定为D50-PG；将"SQLite"改为"PostgreSQL" | D50-PG裁定 |
 | 5 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30，F1-F37虚假声明） | L114,732 | 将"PostgreSQL容量升级"更新为"已迁移" | D50-PG裁定 |
@@ -616,7 +616,7 @@ references:
 |---|---------|---------|---------|
 | 130 | `docs/02_enterprise_architecture/target_architecture/overview.md` | 技术栈描述SQLite WAL（L48）+depgraph引用（L44,179,181） | 更新技术栈为PostgreSQL |
 | 131 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50决策记录depgraph为SQLite（L807,855,1084,1089,1298,1301,1334-1338,1386-1388） | 更新D50决策为PostgreSQL |
-| 132 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 业界对标表描述depgraph为SQLite单库（L1241） | 更新为PostgreSQL |
+| 132 | `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md` | 业界对标表描述depgraph为SQLite单库（L1241） | 更新为PostgreSQL |
 | 133 | `docs/_archive/core_function_dependency_design.md`（已归档 2026-06-30） | F25职责描述（L114,732） | 更新为反映depgraph.db已迁移PG |
 | 134 | `docs/_archive/phase_d_ai_prompts.md（已归档2026-06-30）` | 三库架构描述（L1255,1265） | 更新三库架构描述 |
 | 135 | `docs/_archive/ssot_authority_map.md（已归档2026-06-30）` | knowledge表引用（L176） | 确认knowledge表归属后更新 |
@@ -831,7 +831,7 @@ references:
 | - | `scripts/governance/repair/concurrent_write_test.py` | L54(PROD_DB), L55(TEST_DB), L66-69(WAL文件处理), L87(WAL清理), L137(monkey-patch), L342(PRAGMA busy_timeout), L72,111,180,229,268,310,341,580(8处sqlite3.connect) | 多处SQLite特有机制 | 全面改造为PG |
 | - | `docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml` | L41(INSERT OR IGNORE), L44(INSERT OR REPLACE), L49(?占位符), L51(INSERT OR REPLACE), L63(sqlite3命令行), L77(depgraph_schema.py路径), L78(db_check) | SQLite特有SQL语法 | 改为PG的ON CONFLICT语法 |
 | - | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | L273,277,289,494,807,855,902,1038,1043,1084,1298,1335（12处显式"SQLite"标注） | 存储引擎标注 | 更新为PostgreSQL |
-| - | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | L97(sqlite_sequence系统表), L1241(SQLite单库标注) | SQLite特有系统表+存储引擎标注 | 更新为PG的SEQUENCE对象 |
+| - | `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_architecture_panorama.md` | L97(sqlite_sequence系统表), L1241(SQLite单库标注) | SQLite特有系统表+存储引擎标注 | 更新为PG的SEQUENCE对象 |
 | - | `.trae/rules/project_rules.md` | L975("SQLite数据库"标注), L997-1001(git备份命令) | 存储引擎标注+git备份 | 更新为PostgreSQL+pg_dump |
 | - | `.trae/rules/onboarding_detail.md` | L302,303(文件路径), L345(git备份命令) | 文件路径+备份命令 | 更新路径引用和备份策略 |
 
