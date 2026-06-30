@@ -86,7 +86,8 @@ from zephyr.governance.rule_enforcement.gate_types import (
 )
 from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.governance.rule_enforcement.task_types import Task
-from zephyr.shared.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
+from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.utils.db_utils import ensure_schema, get_db_connection
 from zephyr.shared.io.io_cache import FileCache
 
 __all__ = [

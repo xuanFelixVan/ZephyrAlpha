@@ -45,7 +45,7 @@ from pathlib import Path
 import yaml
 
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
-from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
+from zephyr.shared.utils.db_utils import get_db_connection, init_db
 from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.task_types import TaskNamespace
 

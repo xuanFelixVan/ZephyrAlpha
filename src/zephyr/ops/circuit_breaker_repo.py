@@ -30,8 +30,8 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.ops.circuit_breaker_types import CircuitBreakerState
-from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 from zephyr.shared.io.paths import DB_PATH
+from zephyr.shared.utils.db_utils import get_db_connection
 
 __all__ = [
     "CircuitBreakerRecord",
