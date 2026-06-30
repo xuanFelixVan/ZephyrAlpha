@@ -1,4 +1,4 @@
-"""OPS-2026062504: 数据清洗depgraph历史脏值
+"""OPS-2026062504: 数据清洗 depgraph (PostgreSQL) 历史脏值
 
 3类清洗（裁定#178-193）：
 A. build_status脏值归一化 → 5态枚举
@@ -7,7 +7,7 @@ C. 删除7682个无blueprint_id的design_maturity='design'幽灵节点（裁定#
 
 执行顺序：先删非标准节点 → 删幽灵节点 → 归一化build_status → 归一化design_maturity
 
-P2迁移后：depgraph 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理。
+P2迁移后：全景图数据库为 depgraph (PostgreSQL)，连接由 get_depgraph_pg_connection 统一管理。
 """
 import sys
 from pathlib import Path
@@ -191,12 +191,12 @@ def clean_depgraph():
 
         print("\n[PASS] All verification checks passed!")
         conn.commit()
-        print("[COMMITTED] Changes saved to depgraph")
+        print("[COMMITTED] Changes saved to depgraph (PostgreSQL)")
 
     except Exception as e:
         conn.rollback()
         print(f"\n[ROLLBACK] Error: {e}", file=sys.stderr)
-        print("All changes rolled back. depgraph is unchanged.", file=sys.stderr)
+        print("All changes rolled back. depgraph (PostgreSQL) is unchanged.", file=sys.stderr)
         sys.exit(1)
     finally:
         conn.close()
