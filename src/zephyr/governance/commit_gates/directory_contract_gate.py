@@ -70,7 +70,9 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_directory_contract_gate"]
 
 # 命令行长度安全阈值——超过则改用 --all-files 全量扫描（避免 Windows WinError 206）
-_MAX_INLINE_FILES = 200
+# Windows 命令行限制约32767字符，500文件×平均30字符≈15000字符，在限制内
+# 200过保守（ARCH-029批次2-15迁移406文件触发--all-files全量扫描发现68预存违规阻断）
+_MAX_INLINE_FILES = 500
 
 
 def make_directory_contract_gate() -> GateSpec:
