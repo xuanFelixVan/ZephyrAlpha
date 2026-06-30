@@ -1565,7 +1565,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-RULE-AUDIT post-commit 规则同步+审计 reconciler（AD-GOV-001 合并）。
+    """构造 GATE-RULE-AUDIT post-commit 规则同步+审计+ARCH引用检测 reconciler（AD-GOV-001 合并）。
 
     合并来源：
     - 旧 GATE-RULE-CATALOG (priority=160)：commit rules/ 下文件后跑
@@ -1573,18 +1573,27 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     - 旧 GATE-RULE-FILE-AUDIT (priority=700)：commit 治理真源规则文件
       （directory_contract/doc_type_vocabulary/ttl_vocabulary/architecture_contract/
       gate_registry）后落盘审计记录，提示人工审查（约束可能被悄悄放宽）。
+    - 新增 GATE-ARCH-REFS (priority=710，元问题2治本 2026-06-30)：扫描 committed_files
+      中所有 #ARCH-XXX 引用，检查是否在 architecture_issue_registry.yaml 的 entries 中
+      有对应条目。病根：注册表铁律#6"任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止
+      grep-and-claim 占位"是君子协定，无技术强制。#ARCH-027 冲突就是 AI 占位而不查重
+      导致的。检测到未登记的 #ARCH-XXX 引用→warn（非阻断，detail 列出未登记编号）。
 
-    合并原因：两者关注点相邻（规则文件变更的自动同步 + 人工审计兜底），trigger
-    重叠（规则文件变更），合并形成"自动同步+审计告警"单入口，消除分散注册。
+    合并原因：三者关注点相邻（规则文件变更的自动同步 + 人工审计兜底 + ARCH引用查重），
+    trigger 重叠（规则文件/文本文件变更），合并形成"自动同步+审计告警+ARCH查重"单入口。
 
-    合并后执行：先重生成 catalog（自动提交漂移），再落盘规则文件审计告警；
-    action 取较严重，detail 拼接。priority=max(160,700)=700。
+    合并后执行：先重生成 catalog（自动提交漂移），再落盘规则文件审计告警，最后检测
+    #ARCH-XXX 引用有效性；action 取较严重，detail 拼接。priority=max(160,700,710)=710。
 
     治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_rule_catalog_reconciler
     与 _make_old_rule_file_audit_reconciler，私有函数已删除。
+
+    治本（2026-06-30 元问题2）：新增 #ARCH-XXX 引用查重检测，合并入本 reconciler
+    不新增 reconciler（trae_060 §4 审查通过：该存在+可合并入已有）。
     """
     import json
     import os
+    import re
     import subprocess
     import sys
     from datetime import datetime
@@ -1703,7 +1712,72 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         priority=700,
     )
 
-    return _compose_reconcilers("GATE-RULE-AUDIT", spec_catalog, spec_rule_file_audit)
+    # === 元问题2治本（2026-06-30）：#ARCH-XXX 引用查重检测 ===
+    _ARCH_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
+    _ARCH_PATTERN = re.compile(r'#ARCH-\d{3}\b')
+    _ARCH_TEXT_EXTS = (".md", ".yaml", ".yml", ".py", ".txt")
+
+    def _trigger_arch_refs(committed_files: list[str]) -> bool:
+        # 文本文件可能含 #ARCH-XXX 引用
+        for f in committed_files:
+            if f.replace("\\", "/").lower().endswith(_ARCH_TEXT_EXTS):
+                return True
+        return False
+
+    def _reconcile_arch_refs(committed_files: list[str], session_id: str) -> ReconcileResult:
+        from pathlib import Path
+
+        arch_registry = Path(project_root) / _ARCH_REGISTRY_REL
+        if not arch_registry.exists():
+            return ReconcileResult(action="clean", detail="architecture_issue_registry.yaml not found, skip ARCH refs check")
+
+        # 加载注册表 entries（真源：architecture_issue_registry.yaml）
+        try:
+            import yaml
+            data = yaml.safe_load(arch_registry.read_text(encoding="utf-8"))
+            entries = data.get("entries", []) if isinstance(data, dict) else []
+            registered_ids: set[str] = set()
+            for entry in entries:
+                if isinstance(entry, dict):
+                    iid = entry.get("issue_id", "")
+                    if isinstance(iid, str) and iid:
+                        registered_ids.add(iid)
+        except Exception as e:
+            return ReconcileResult(action="warn", detail=f"failed to parse architecture_issue_registry: {e}")
+
+        # 扫描 committed_files 中所有 #ARCH-XXX 引用
+        referenced: set[str] = set()
+        for f in committed_files:
+            if not f.replace("\\", "/").lower().endswith(_ARCH_TEXT_EXTS):
+                continue
+            try:
+                content = Path(f).read_text(encoding="utf-8")
+                referenced.update(_ARCH_PATTERN.findall(content))
+            except (OSError, UnicodeDecodeError):
+                continue
+
+        if not referenced:
+            return ReconcileResult(action="clean", detail="no #ARCH-XXX refs in committed files")
+
+        # 失效引用（引用了但不在注册表 entries 中）——铁律#6: 禁止 grep-and-claim 占位
+        stale = referenced - registered_ids
+        if stale:
+            return ReconcileResult(
+                action="warn",
+                detail=f"committed files reference unregistered #ARCH-XXX ids: {sorted(stale)}. "
+                       f"These ids not in architecture_issue_registry.yaml entries. "
+                       f"Register them first or fix the reference (铁律#6: 禁止 grep-and-claim 占位).",
+            )
+        return ReconcileResult(action="clean", detail=f"all #ARCH-XXX refs registered ({len(referenced)} refs)")
+
+    spec_arch_refs = ReconcilerSpec(
+        gate_id="GATE-ARCH-REFS",
+        trigger=_trigger_arch_refs,
+        reconcile=_reconcile_arch_refs,
+        priority=710,  # 最后执行（ARCH引用检测非阻断，低优先级）
+    )
+
+    return _compose_reconcilers("GATE-RULE-AUDIT", spec_catalog, spec_rule_file_audit, spec_arch_refs)
 
 
 def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:

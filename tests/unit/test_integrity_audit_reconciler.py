@@ -50,6 +50,7 @@ from zephyr.governance.reconciliation_registry import (  # noqa: E402
     _audit_commit_history,
     _compose_reconcilers,
     make_integrity_audit_reconciler,
+    make_rule_audit_reconciler,
 )
 
 
@@ -435,3 +436,63 @@ class TestAgentsMdRefs:
         result = spec.reconcile([], "sess-test")
         assert "stale reconciliation_registry functions" in result.detail
         assert "make_baseline_aware_reconciler" in result.detail
+
+
+# ---------------------------------------------------------------------------
+# TestArchRefs — 元问题2治本：#ARCH-XXX 引用查重检测（2026-06-30）
+# ---------------------------------------------------------------------------
+class TestArchRefs:
+    """GATE-ARCH-REFS #ARCH-XXX 引用查重检测——检测 committed_files 中的
+    #ARCH-XXX 引用是否在 architecture_issue_registry.yaml 的 entries 中。
+
+    治本病根：注册表铁律#6"任何 #ARCH-XXX 引用必须在本注册表有对应条目"是
+    君子协定，无技术强制。#ARCH-027 冲突就是 AI 占位而不查重导致的。
+
+    测试策略：直接调用 make_rule_audit_reconciler 的 spec.reconcile，检查
+    detail 中是否含 arch_refs 部分的结果（catalog 在 tmp_path 无
+    generate_rule_catalog.py 会失败产生 warn，但不影响 arch_refs 部分的 detail）。
+    """
+
+    _ARCH_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
+
+    def _setup_arch_registry(self, repo_dir: Path, entries_yaml: str) -> None:
+        """在 tmp_path 创建 architecture_issue_registry.yaml。"""
+        registry_dir = repo_dir / "docs/01_policies_and_standards/_registry/catalogs"
+        registry_dir.mkdir(parents=True, exist_ok=True)
+        (registry_dir / "architecture_issue_registry.yaml").write_text(
+            entries_yaml, encoding="utf-8"
+        )
+
+    def test_arch_no_refs(self, tmp_path):
+        """committed_files 无 #ARCH-XXX 引用 → detail 含 'no #ARCH-XXX refs'。"""
+        _init_git_repo(tmp_path)
+        self._setup_arch_registry(tmp_path, "entries:\n- issue_id: '#ARCH-008'\n  title: test\n  status: open\n")
+        test_file = tmp_path / "test.md"
+        test_file.write_text("no arch refs here", encoding="utf-8")
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_rule_audit_reconciler(gw)
+        result = spec.reconcile([str(test_file)], "sess-test")
+        assert "no #ARCH-XXX refs" in result.detail
+
+    def test_arch_valid_ref(self, tmp_path):
+        """committed_files 含已登记的 #ARCH-008 引用 → detail 含 'all #ARCH-XXX refs registered'。"""
+        _init_git_repo(tmp_path)
+        self._setup_arch_registry(tmp_path, "entries:\n- issue_id: '#ARCH-008'\n  title: test\n  status: open\n")
+        test_file = tmp_path / "test.md"
+        test_file.write_text("see #ARCH-008 for details", encoding="utf-8")
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_rule_audit_reconciler(gw)
+        result = spec.reconcile([str(test_file)], "sess-test")
+        assert "all #ARCH-XXX refs registered" in result.detail
+
+    def test_arch_stale_ref(self, tmp_path):
+        """committed_files 含未登记的 #ARCH-999 引用 → detail 含 'unregistered' + '#ARCH-999'。"""
+        _init_git_repo(tmp_path)
+        self._setup_arch_registry(tmp_path, "entries:\n- issue_id: '#ARCH-008'\n  title: test\n  status: open\n")
+        test_file = tmp_path / "test.md"
+        test_file.write_text("see #ARCH-999 for details", encoding="utf-8")
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_rule_audit_reconciler(gw)
+        result = spec.reconcile([str(test_file)], "sess-test")
+        assert "unregistered #ARCH-XXX ids" in result.detail
+        assert "#ARCH-999" in result.detail
