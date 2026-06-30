@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 03:32:30
+> 最后更新: 2026-07-01 03:38:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_INFRA_RECOVERY | Domain ID | D_INFRA_RECOVERY |
 | 域名称 | 回滚恢复 | Domain Name | 回滚恢复 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 107 | Module Count | 107 |
-| 域内依赖 | 79 | Internal Dependencies | 79 |
+| 模块数 | 106 | Module Count | 106 |
+| 域内依赖 | 78 | Internal Dependencies | 78 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 48 | Cross-domain Outgoing | 48 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
-| 生产态模块 | 107 | Production Modules | 107 |
+| 生产态模块 | 106 | Production Modules | 106 |
 | 容量 | 107/150 (正常) | Capacity | 107/150 (正常) |
 | 描述 | 双轨Checkpoint(git commit + SQLite JSONL dump) | Description | 双轨Checkpoint(git commit + SQLite JSONL dump) |
 
@@ -211,7 +211,6 @@ graph TD
         src_zephyr_infrastructure_rollback_phase_check_registry_py["src/zephyr/infrastructure/rollback/phase_check_... production"]
         src_zephyr_infrastructure_rollback_phase_manager_py["src/zephyr/infrastructure/rollback/phase_manage... production"]
         src_zephyr_infrastructure_rollback_post_live_verification_py["src/zephyr/infrastructure/rollback/post_live_ve... production"]
-        src_zephyr_infrastructure_rollback_result_types_py["src/zephyr/infrastructure/rollback/result_types.py production"]
         src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["src/zephyr/infrastructure/rollback/right_to_be_... production"]
         src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["src/zephyr/infrastructure/rollback/rollback_abu... production"]
         src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["src/zephyr/infrastructure/rollback/rollback_aud... production"]
@@ -230,6 +229,7 @@ graph TD
         src_zephyr_infrastructure_rollback_rollback_state_machine_py["src/zephyr/infrastructure/rollback/rollback_sta... production"]
         src_zephyr_infrastructure_rollback_rollback_target_staleness_py["src/zephyr/infrastructure/rollback/rollback_tar... production"]
         src_zephyr_infrastructure_rollback_rollback_verifier_py["src/zephyr/infrastructure/rollback/rollback_ver... production"]
+        src_zephyr_infrastructure_rollback_rollback_wal_py["src/zephyr/infrastructure/rollback/rollback_wal.py production"]
     end
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
@@ -253,7 +253,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_llm_impact_analyzer_py,src_zephyr_infrastructure_rollback_model_drift_detector_py,src_zephyr_infrastructure_rollback_owner_absent_py,src_zephyr_infrastructure_rollback_paper_live_transition_py,src_zephyr_infrastructure_rollback_phase_check_registry_py,src_zephyr_infrastructure_rollback_phase_manager_py,src_zephyr_infrastructure_rollback_post_live_verification_py,src_zephyr_infrastructure_rollback_result_types_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py production
+    class src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_llm_impact_analyzer_py,src_zephyr_infrastructure_rollback_model_drift_detector_py,src_zephyr_infrastructure_rollback_owner_absent_py,src_zephyr_infrastructure_rollback_paper_live_transition_py,src_zephyr_infrastructure_rollback_phase_check_registry_py,src_zephyr_infrastructure_rollback_phase_manager_py,src_zephyr_infrastructure_rollback_post_live_verification_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py production
     class D_GOVERNANCE,D_INFRA_RUNTIME external_prod
     class D_INTEGRATION,D_SHARED,D_GOV_AUDIT external_design
 ```
@@ -263,7 +263,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
-        src_zephyr_infrastructure_rollback_rollback_wal_py["src/zephyr/infrastructure/rollback/rollback_wal.py production"]
         src_zephyr_infrastructure_rollback_runbook_generator_py["src/zephyr/infrastructure/rollback/runbook_gene... production"]
         src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["src/zephyr/infrastructure/rollback/s3_snapshot_... production"]
         src_zephyr_infrastructure_rollback_sandbox_enforcer_py["src/zephyr/infrastructure/rollback/sandbox_enfo... production"]
@@ -287,7 +286,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py,src_zephyr_infrastructure_rollback_sandbox_enforcer_py,src_zephyr_infrastructure_rollback_secret_rotation_aware_py,src_zephyr_infrastructure_rollback_semantic_rollback_tag_py,src_zephyr_infrastructure_rollback_semantic_similar_detector_py,src_zephyr_infrastructure_rollback_sqlite_dumper_py,src_zephyr_infrastructure_rollback_startup_shutdown_py,src_zephyr_infrastructure_rollback_startup_shutdown_cli_py,src_zephyr_infrastructure_rollback_submodule_sync_py,src_zephyr_infrastructure_rollback_temporal_context_adapter_py,src_zephyr_infrastructure_rollback_topology_change_log_py,src_zephyr_infrastructure_rollback_trading_kill_switch_py,src_zephyr_infrastructure_rollback_venv_sync_py,src_zephyr_infrastructure_rollback_vulnerability_rescanner_py,src_zephyr_infrastructure_rollback_warm_standby_py production
+    class src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py,src_zephyr_infrastructure_rollback_sandbox_enforcer_py,src_zephyr_infrastructure_rollback_secret_rotation_aware_py,src_zephyr_infrastructure_rollback_semantic_rollback_tag_py,src_zephyr_infrastructure_rollback_semantic_similar_detector_py,src_zephyr_infrastructure_rollback_sqlite_dumper_py,src_zephyr_infrastructure_rollback_startup_shutdown_py,src_zephyr_infrastructure_rollback_startup_shutdown_cli_py,src_zephyr_infrastructure_rollback_submodule_sync_py,src_zephyr_infrastructure_rollback_temporal_context_adapter_py,src_zephyr_infrastructure_rollback_topology_change_log_py,src_zephyr_infrastructure_rollback_trading_kill_switch_py,src_zephyr_infrastructure_rollback_venv_sync_py,src_zephyr_infrastructure_rollback_vulnerability_rescanner_py,src_zephyr_infrastructure_rollback_warm_standby_py production
     class D_SHARED external_design
 ```
 
@@ -309,12 +308,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 回滚恢复（D_INFRA_RECOVERY）的模块分布。共 107 个模块 / 107 modules。
+> 按 architecture_layer 分层显示 回滚恢复（D_INFRA_RECOVERY）的模块分布。共 106 个模块 / 106 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (105 modules)            │
+│            L1 基础层 / Foundation Layer (104 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/infrastructure/auto_fix_engine/__init__.py  [pro... │
 │   src/zephyr/infrastructure/auto_fix_engine/__main__.py  [pro... │
@@ -334,7 +333,7 @@ graph TD
 │   src/zephyr/infrastructure/auto_fix_engine/fix_health_check.... │
 │   src/zephyr/infrastructure/auto_fix_engine/fix_pattern_miner... │
 │   src/zephyr/infrastructure/auto_fix_engine/fix_reliability.p... │
-│   ...还有 87 个模块 / 87 more modules                            │
+│   ...还有 86 个模块 / 86 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -349,9 +348,9 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 107 个模块 / 107 modules）。
+> 按 architecture_layer 分组的模块清单（共 106 个模块 / 106 modules）。
 
-### L1 基础层 / Foundation Layer (105 modules)
+### L1 基础层 / Foundation Layer (104 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -426,40 +425,39 @@ graph TD
 | 69 | src/zephyr/infrastructure/rollback/phase_check_registry.py | src/zephyr/infrastructure/rollback/ph... | production | generated |
 | 70 | src/zephyr/infrastructure/rollback/phase_manager.py | src/zephyr/infrastructure/rollback/ph... | production | generated |
 | 71 | src/zephyr/infrastructure/rollback/post_live_verification.py | src/zephyr/infrastructure/rollback/po... | production | generated |
-| 72 | src/zephyr/infrastructure/rollback/result_types.py | src/zephyr/infrastructure/rollback/re... | production | generated |
-| 73 | src/zephyr/infrastructure/rollback/right_to_be_forgotten.py | src/zephyr/infrastructure/rollback/ri... | production | generated |
-| 74 | src/zephyr/infrastructure/rollback/rollback_abuse_detecto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 75 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 76 | src/zephyr/infrastructure/rollback/rollback_bootstrap.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 77 | src/zephyr/infrastructure/rollback/rollback_budget.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 78 | src/zephyr/infrastructure/rollback/rollback_context_resto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 79 | src/zephyr/infrastructure/rollback/rollback_dashboard.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 80 | src/zephyr/infrastructure/rollback/rollback_drill.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 81 | src/zephyr/infrastructure/rollback/rollback_executor.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 82 | src/zephyr/infrastructure/rollback/rollback_integration.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 83 | src/zephyr/infrastructure/rollback/rollback_lock.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 84 | src/zephyr/infrastructure/rollback/rollback_loop_detector.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 85 | src/zephyr/infrastructure/rollback/rollback_simulator.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 86 | src/zephyr/infrastructure/rollback/rollback_state_machine.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 87 | src/zephyr/infrastructure/rollback/rollback_target_stalen... | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 88 | src/zephyr/infrastructure/rollback/rollback_verifier.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 89 | src/zephyr/infrastructure/rollback/rollback_wal.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 90 | src/zephyr/infrastructure/rollback/runbook_generator.py | src/zephyr/infrastructure/rollback/ru... | production | generated |
-| 91 | src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py | src/zephyr/infrastructure/rollback/s3... | production | generated |
-| 92 | src/zephyr/infrastructure/rollback/sandbox_enforcer.py | src/zephyr/infrastructure/rollback/sa... | production | generated |
-| 93 | src/zephyr/infrastructure/rollback/secret_rotation_aware.py | src/zephyr/infrastructure/rollback/se... | production | generated |
-| 94 | src/zephyr/infrastructure/rollback/semantic_rollback_tag.py | src/zephyr/infrastructure/rollback/se... | production | generated |
-| 95 | src/zephyr/infrastructure/rollback/semantic_similar_detec... | src/zephyr/infrastructure/rollback/se... | production | generated |
-| 96 | src/zephyr/infrastructure/rollback/sqlite_dumper.py | src/zephyr/infrastructure/rollback/sq... | production | generated |
-| 97 | src/zephyr/infrastructure/rollback/startup_shutdown.py | src/zephyr/infrastructure/rollback/st... | production | generated |
-| 98 | src/zephyr/infrastructure/rollback/startup_shutdown_cli.py | src/zephyr/infrastructure/rollback/st... | production | generated |
-| 99 | src/zephyr/infrastructure/rollback/submodule_sync.py | src/zephyr/infrastructure/rollback/su... | production | generated |
-| 100 | src/zephyr/infrastructure/rollback/temporal_context_adapt... | src/zephyr/infrastructure/rollback/te... | production | generated |
-| 101 | src/zephyr/infrastructure/rollback/topology_change_log.py | src/zephyr/infrastructure/rollback/to... | production | generated |
-| 102 | src/zephyr/infrastructure/rollback/trading_kill_switch.py | src/zephyr/infrastructure/rollback/tr... | production | generated |
-| 103 | src/zephyr/infrastructure/rollback/venv_sync.py | src/zephyr/infrastructure/rollback/ve... | production | generated |
-| 104 | src/zephyr/infrastructure/rollback/vulnerability_rescanne... | src/zephyr/infrastructure/rollback/vu... | production | generated |
-| 105 | src/zephyr/infrastructure/rollback/warm_standby.py | src/zephyr/infrastructure/rollback/wa... | production | generated |
+| 72 | src/zephyr/infrastructure/rollback/right_to_be_forgotten.py | src/zephyr/infrastructure/rollback/ri... | production | generated |
+| 73 | src/zephyr/infrastructure/rollback/rollback_abuse_detecto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 74 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 75 | src/zephyr/infrastructure/rollback/rollback_bootstrap.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 76 | src/zephyr/infrastructure/rollback/rollback_budget.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 77 | src/zephyr/infrastructure/rollback/rollback_context_resto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 78 | src/zephyr/infrastructure/rollback/rollback_dashboard.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 79 | src/zephyr/infrastructure/rollback/rollback_drill.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 80 | src/zephyr/infrastructure/rollback/rollback_executor.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 81 | src/zephyr/infrastructure/rollback/rollback_integration.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 82 | src/zephyr/infrastructure/rollback/rollback_lock.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 83 | src/zephyr/infrastructure/rollback/rollback_loop_detector.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 84 | src/zephyr/infrastructure/rollback/rollback_simulator.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 85 | src/zephyr/infrastructure/rollback/rollback_state_machine.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 86 | src/zephyr/infrastructure/rollback/rollback_target_stalen... | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 87 | src/zephyr/infrastructure/rollback/rollback_verifier.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 88 | src/zephyr/infrastructure/rollback/rollback_wal.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 89 | src/zephyr/infrastructure/rollback/runbook_generator.py | src/zephyr/infrastructure/rollback/ru... | production | generated |
+| 90 | src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py | src/zephyr/infrastructure/rollback/s3... | production | generated |
+| 91 | src/zephyr/infrastructure/rollback/sandbox_enforcer.py | src/zephyr/infrastructure/rollback/sa... | production | generated |
+| 92 | src/zephyr/infrastructure/rollback/secret_rotation_aware.py | src/zephyr/infrastructure/rollback/se... | production | generated |
+| 93 | src/zephyr/infrastructure/rollback/semantic_rollback_tag.py | src/zephyr/infrastructure/rollback/se... | production | generated |
+| 94 | src/zephyr/infrastructure/rollback/semantic_similar_detec... | src/zephyr/infrastructure/rollback/se... | production | generated |
+| 95 | src/zephyr/infrastructure/rollback/sqlite_dumper.py | src/zephyr/infrastructure/rollback/sq... | production | generated |
+| 96 | src/zephyr/infrastructure/rollback/startup_shutdown.py | src/zephyr/infrastructure/rollback/st... | production | generated |
+| 97 | src/zephyr/infrastructure/rollback/startup_shutdown_cli.py | src/zephyr/infrastructure/rollback/st... | production | generated |
+| 98 | src/zephyr/infrastructure/rollback/submodule_sync.py | src/zephyr/infrastructure/rollback/su... | production | generated |
+| 99 | src/zephyr/infrastructure/rollback/temporal_context_adapt... | src/zephyr/infrastructure/rollback/te... | production | generated |
+| 100 | src/zephyr/infrastructure/rollback/topology_change_log.py | src/zephyr/infrastructure/rollback/to... | production | generated |
+| 101 | src/zephyr/infrastructure/rollback/trading_kill_switch.py | src/zephyr/infrastructure/rollback/tr... | production | generated |
+| 102 | src/zephyr/infrastructure/rollback/venv_sync.py | src/zephyr/infrastructure/rollback/ve... | production | generated |
+| 103 | src/zephyr/infrastructure/rollback/vulnerability_rescanne... | src/zephyr/infrastructure/rollback/vu... | production | generated |
+| 104 | src/zephyr/infrastructure/rollback/warm_standby.py | src/zephyr/infrastructure/rollback/wa... | production | generated |
 
 ### 未分类 / Unclassified (2 modules)
 
@@ -470,16 +468,16 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 79 条 / 79 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 78 条 / 78 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│       依赖关系图 / Dependency Graph (共 79 条 / 79 edges)        │
+│       依赖关系图 / Dependency Graph (共 78 条 / 78 edges)        │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
 │   [import_depends]: 61 条 / edges                                │
-│   [config_depends]: 18 条 / edges                                │
+│   [config_depends]: 17 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -537,9 +535,9 @@ graph TD
 │   ...还有 12 条 / 12 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (18 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (17 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 79 条)
+> (最多显示前 50 条依赖边，共 78 条)
 
 ```
 

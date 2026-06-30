@@ -1,7 +1,7 @@
 %% D_INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-07-01 03:32:32
+%% 生成时间: 2026-07-01 03:38:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 107, 依赖边数: 127
+%% 模块数: 106, 依赖边数: 126
 
 graph TD
 
@@ -78,7 +78,6 @@ graph TD
         src_zephyr_infrastructure_rollback_phase_check_registry_py["...ture/rollback/phase_check_registry.py [production]"]
         src_zephyr_infrastructure_rollback_phase_manager_py["...rastructure/rollback/phase_manager.py [production]"]
         src_zephyr_infrastructure_rollback_post_live_verification_py["...re/rollback/post_live_verification.py [production]"]
-        src_zephyr_infrastructure_rollback_result_types_py["...frastructure/rollback/result_types.py [production]"]
         src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["...ure/rollback/right_to_be_forgotten.py [production]"]
         src_zephyr_infrastructure_roll____rollback_abuse_detector_py["...e/rollback/rollback_abuse_detector.py [production]"]
         src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["...ture/rollback/rollback_audit_nexus.py [production]"]
@@ -107,7 +106,8 @@ graph TD
         src_zephyr_infrastructure_rollback_sqlite_dumper_py["...rastructure/rollback/sqlite_dumper.py [production]"]
         src_zephyr_infrastructure_rollback_startup_shutdown_py["...tructure/rollback/startup_shutdown.py [production]"]
         src_zephyr_infrastructure_rollback_startup_shutdown_cli_py["...ture/rollback/startup_shutdown_cli.py [production]"]
-        %% ... 还有 7 个模块未显示
+        src_zephyr_infrastructure_rollback_submodule_sync_py["...astructure/rollback/submodule_sync.py [production]"]
+        %% ... 还有 6 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -184,7 +184,6 @@ graph TD
     src_zephyr_infrastructure_rollback_llm_impact_analyzer_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
     src_zephyr_infrastructure_rollback_intent_archiver_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
     src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
-    src_zephyr_infrastructure_rollback_result_types_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
     src_zephyr_infrastructure_rollback_rollback_lock_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
     src_zephyr_infrastructure_rollback_rollback_verifier_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
     src_zephyr_infrastructure_rollback_rollback_wal_py -->|config_depends| src_zephyr_infrastructure_rollback___init___py
@@ -246,6 +245,6 @@ graph TD
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 79 条
+    %% 域内依赖: 78 条
     %% 跨域入边: 0 条
     %% 跨域出边: 48 条
