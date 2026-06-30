@@ -1,11 +1,11 @@
-# 自动生成于 2026-06-30T12:16:45Z
+# 自动生成于 2026-06-30T12:19:05Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-30T12:16:45Z'
+generated_at: '2026-06-30T12:19:05Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 19
+total_registries: 20
 registries:
 - registry_id: CFG-ai-risk-register
   name: AI 风险登记簿
@@ -23,14 +23,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
-- registry_id: CFG-architecture-issue-registry
-  name: architecture_issue_registry
+- registry_id: REG-ARCH-ISSUE-001
+  name: 架构议题注册表
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 0
-  status: unknown
+  entry_count: 22
+  status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
   category: governance_rule
@@ -94,6 +94,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
+  status: active
+- registry_id: PS-REG-012
+  name: Frontmatter 字段定义登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 58
   status: active
 - registry_id: REG-FUNC-DOMAIN-001
   name: 功能域注册表
