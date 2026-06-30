@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 03:40:35
+%% 生成时间: 2026-07-01 03:42:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 813, 依赖边数: 1000
+%% 模块数: 812, 依赖边数: 999
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___race_context_propagation_py["...rs/check_trace_context_propagation.py [prototype]"]
         scripts_governance_d5_architecture_detectors___init___py["...d5_architecture/detectors/__init__.py [prototype]"]
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
-        %% ... 还有 713 个模块未显示
+        %% ... 还有 712 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -329,14 +329,13 @@ graph TD
     %% D_PF_ALLOC -> D_GOVERNANCE (2 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_ALLOC[D_PF_ALLOC] -->|config_depends| src_zephyr_governance___init___py
-    %% D_PF_CORE -> D_GOVERNANCE (11 条)
+    %% D_PF_CORE -> D_GOVERNANCE (10 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_attribution_engine_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_compliance_rule_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_tca_engine_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_registry_py
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_performa___ribution_engine___init___py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_engine___init___py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategies_default_equity_strategy_py
@@ -618,5 +617,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 578 条
-    %% 跨域入边: 151 条
+    %% 跨域入边: 150 条
     %% 跨域出边: 271 条
