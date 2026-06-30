@@ -70,6 +70,7 @@ EXPECTED_THRESHOLD_GROUPS = {
     "script_health",
     "ast_similarity",
     "blueprint_sync",
+    "concurrency",  # ARCH-036 P3-A5: 补齐第九组（蓝图 §35 分布式执行，原遗漏）
 }
 
 
