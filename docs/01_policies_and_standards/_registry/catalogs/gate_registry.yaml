@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-06-30T09:00:49Z'
+generated_at: '2026-06-30T09:52:42Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml
-total_gates: 29
+total_gates: 30
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -68,6 +68,14 @@ gates:
   files_trigger: ^docs/19_development_workspace/drafts-and-audits/.*\.md$
   always_run: false
   category: blueprint_overlap
+  status: active
+- gate_id: GATE-TRIPLE-ALIGN
+  name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
+  entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
+  description: ''
+  files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py|docs/02_enterprise_architecture/system-dependency-map\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\.yaml)$
+  always_run: false
+  category: triple_alignment
   status: active
 - gate_id: GATE-FRONTMATTER
   name: 'GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）'

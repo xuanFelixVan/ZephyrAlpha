@@ -234,7 +234,7 @@ repos:
       # 检测内容：module_id/属性(stability/safety/ai_autonomy)/文件存在/进度/依赖图条目
       # 模式：硬阻断（ERROR 时 exit(1) 拒绝提交）
       - id: gate-triple-align
-        name: "G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁"
+        name: "GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁"
         entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
         language: system
         pass_filenames: false
