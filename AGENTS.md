@@ -180,31 +180,6 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - `data/work_dags/`: 工作 DAG 定义（待创建）
 - `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——53域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；53域是唯一物理分类（depgraph），14层（L00-L13）是域的 `layer_id` 属性枚举
 
-### 6.1 target_architecture 目录读写规则
-
-[`docs/02_enterprise_architecture/target_architecture/`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/index.md) 是 TOGAF 架构视图集 + EA YAML 模型真源区。新 AI 进入此目录前 MUST 读 [`index.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/index.md) 责任声明。
-
-**分区与真源映射**（违反 = 漂移源）：
-
-| 子目录/文件 | doc_type | 数据流方向 | 治本铁律 |
-|------------|---------|-----------|----------|
-| `overview.md` ~ `frontend_architecture.md` (14 视图) | architecture_view | 手工撰写 | 视图解释 why；结构化数据 MUST 引用 YAML/depgraph，禁止硬编码会变数字（如域数）|
-| `architecture_principles.md` | architecture_view | 手工撰写 SSoT | 架构原则唯一真源（R1-R4 安全红线 + BvB + 准入铁律），其他文件引用只读 |
-| `architecture_endgame_locked.md` | architecture_view | 手工撰写（status: Draft 占位）| 终局验收标准 + Emergency Change Board 协议；激活需 Owner 手动转 Active |
-| `dimension_audit_matrix.md` | audit_report | 手工撰写 + 脚本消费 | 12 维架构评分矩阵；[`score_architecture.py`](file:///d:/ZephyrAlpha/scripts/governance/score_architecture.py) `AUDIT_MATRIX_PATH` 真源，禁止删/移位 |
-| `session_carryover_schema.md` | gate | 手工撰写（placement_note 标注暂放）| Context Engine 子接口契约；doc_type=gate 与位置不一致是已知折中，14 个引用点不支持迁移 |
-| `revision_history.md` | audit_report | 手工撰写（永久归档）| `index.md §10` 完整版归档；§10 仅保留最近 3 条 |
-| `architecture_model/` | - | YAML SSoT | 结构化数据真源；53域清单/契约/事件/能力热力图等，禁止手编 MD 同步副本 |
-| `architecture_model/cross_cutting/capability_heatmap.yaml` | - | depgraph 派生 | `data_source: depgraph_db`；53域×10能力域矩阵，禁止手编 |
-| `diagrams/` | - | Mermaid 图源 | 仅 .mmd；非 Mermaid 图表不入库；`index.md` 文件清单登记 |
-
-**新 AI 防漂移 5 条**：
-1. **找文件先读 `index.md` §3 文件清单**——target_architecture 下所有文件 MUST 在 index.md §3 登记；新文件创建 MUST 同步登记。
-2. **结构化数据从 `architecture_model/` YAML 或 `depgraph` 派生**——禁止在 .md 视图中硬编码会变化的数字（如 53域、模块数、节点数）。
-3. **`generated/` 目录是派生视图**——由 [`generators/`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/) 自动生成，禁止手编；depgraph 变更后由 reconciler 自动重生。
-4. **`architecture_model/index.yaml` 的 `domains` 列表是 depgraph 派生**——禁止手编；改 depgraph 后由生成器自动同步。
-5. **删除/迁移文件前 MUST `Grep` 全库引用**——target_architecture 下文件被多个脚本/文档活跃引用（如 `score_architecture.py` 真源 `dimension_audit_matrix.md`，[`check_scaffold_exit_gates.py`](file:///d:/ZephyrAlpha/scripts/arch_guard/check_scaffold_exit_gates.py) 真源 `security_architecture.md` §10.2），强删会导致脚本断裂。
-
 ## 7. 代码规范
 
 - Python >=3.11, ruff lint, pydantic v2
@@ -212,7 +187,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - 所有 AI 行为**必须**写入 AiAuditLogger
 - 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）
 - **文件命名规范真源见 [`trae_028_doc_structure_naming.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)（GOV-DOC-003 §N-16）**——创建新文件前 MUST 先 `Grep` 检查项目内是否已存在同名 basename；**N-16 文件名项目内唯一性检测为硬阻断**（不受 GATE-NAMING `--warn-only` 过渡期影响），覆盖 `tests/` + `docs/` 目录，commit 时 pre-commit 钩子自动检测；同名文件导致 AI 无法确定真源产生漂移（如 `capability_heatmap.md` 曾存在两个不同内容同名文件，19315 vs 11966 字节）；**N-16 豁免清单（conftest.py/__init__.py/index.md 等）真源为 §gov_doc_003_filename_uniqueness.n16_config，`check_naming_convention.py` 从此动态加载（非硬编码），改 YAML 即生效，禁止改代码豁免清单**；**临时沙箱目录（`tests/_tmp_*` / `docs/_tmp_*`，如并发红蓝对抗沙箱 `tests/_tmp_redblue_f2/`）由 `n16_config.skip_dir_prefixes` 豁免（`os.walk` 按目录名前缀 `_tmp_` 剪枝），防沙箱文件与正式文件撞名误触发 N-16 硬阻断卡死并发 commit**
-- **规则文件创建入口（ARCH-037，GOV-DOC-003 主题前缀条款）**——新建 `docs/.../rules/trae_XXX.yaml` MUST 经 `python scripts/scaffold.py rule <主题_描述>`（RULE-TWO 强制入口）。scaffold 检查1.5 强制文件名格式 `trae_NNN_<主题>_<描述>.yaml`——单段 name 阻断，新主题前缀仅警告。绕过 scaffold 直接 Write 规则文件 → 双层强制：① [`validate_rule_frontmatter.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/validate_rule_frontmatter.py) DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② [`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py) commit-time 强制（ARCH-037 B 选项，扩展现有 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 单段 name 硬阻断。主题前缀集合由 `scaffold.py::_derive_rule_theme_prefixes` 从现有文件名自动派生（无独立词表真源，符合向内收）。
+- **规则文件创建入口（ARCH-037，GOV-DOC-003 主题前缀条款）**——新建 `docs/.../rules/trae_XXX.yaml` MUST 经 `python scripts/scaffold.py rule <主题_描述>`（RULE-TWO 强制入口）。scaffold 检查1.5 强制文件名格式 `trae_NNN_<主题>_<描述>.yaml`——单段 name 阻断，新主题前缀仅警告。绕过 scaffold 直接 Write 规则文件 → 双层强制：① [`validate_rule_frontmatter.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/validate_rule_frontmatter.py) DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② [`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py) commit-time 强制（ARCH-037 B 选项，扩展现有 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 非 trae 命名 + 单段 name 硬阻断（含 rename 检测）。主题前缀集合由 `scaffold.py::_derive_rule_theme_prefixes` 从现有文件名自动派生（无独立词表真源，符合向内收）。
 - **module_id/blueprint_id/domain_id 格式校验真源见 [`validate_module_id_naming.py`](file:///d:/ZephyrAlpha/scripts/governance/validate_module_id_naming.py)（裁定#208 三轨制）**——三轨正则（layer-master 轨 MOD-{LAYER}-NNN / 派生轨 MOD-{DOMAIN}[-NNN] 或 D-{DOMAIN}-NNN / 跨域共享轨 SH-{ABBR}-NNN）唯一责任点；`is_valid_module_id(bp_id)` 和 `is_valid_domain_id(domain_id)` 两个公共函数供 `check_naming_convention.py`（GATE-NAMING N-06）和 `apply_depgraph.py`（NR-002/cmd_rename_domain/cmd_insert_domain）import 复用；**禁止在代码中定义本地 module_id 正则（防真源分裂）**；capability 反查 alias=`validate_module_id_naming`（`capability_canonical_file_registry.yaml` 注册 13 个 aliases 覆盖中英文关键词）
 - 治理决策方法论见 [`trae_024_methodology_diagnosis.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
 - 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
@@ -478,9 +453,9 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
 - **observability/ 模块边界**：[src/zephyr/infrastructure/observability/](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/observability/) 仅含 `notifier` + `trace_decorator` 两个模块，不再有 `contract_metrics.py` / `health_probes.py`（已作为 codegen 死代码删除）。新 AI 不要在 observability/ 下重建这两个文件。
 
 **路径命名约束（全仓库治本，2026-06-28）**：
-- **下划线唯一合法**：`docs/02_enterprise_architecture/` 下的目录名 MUST 使用下划线：`target_architecture/` + `architecture_model/`（不是连字符 `target-architecture/` + `architecture-model/`）。
+- **下划线唯一合法**：`docs/02_enterprise_architecture/` 下的目录名 MUST 使用下划线：`architecture_model/`（不是连字符 `architecture-model/`）。
 - **历史病根**：路径重命名（连字符→下划线）时漏改 48 个 .py 文件，导致 `gate-c2-contract-code-drift` 钩子空跑数月（找不到文件就 WARN 跳过返回 PASS），`check_contract_code_drift.py` 的 `_REPO_ROOT = parents[3]` 也少算一层。本次治本：48 文件机械替换 + `_REPO_ROOT` 改为 `from _shared.constants import REPO_ROOT` 真源常量 + 基线重新冻结。
-- **pre-commit 防复发**：`gate-path-naming` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）用 pygrep 检测 .py 文件中含 `target-architecture` 或 `architecture-model` → hard block。新 AI 不要在 .py 文件中写连字符路径，MUST 用下划线 `target_architecture` / `architecture_model`。
+- **pre-commit 防复发**：`gate-path-naming` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）用 pygrep 检测 .py 文件中含 `architecture-model` → hard block。新 AI 不要在 .py 文件中写连字符路径，MUST 用下划线 `architecture_model`。
 - **REPO_ROOT 真源唯一**：scripts/ 下脚本 MUST `from _shared.constants import REPO_ROOT` 获取仓库根常量，禁止 `Path(__file__).resolve().parents[N]` 自行推算（易错且违反 SSoT）。
 
 **P3 遗留项登记**（第二轮第一性原理审查 2026-06-28）：

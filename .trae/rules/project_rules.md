@@ -385,7 +385,7 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 | `src/zephyr/gates/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
 | `docs/.../rules/trae_NNN_<主题>_<描述>.yaml` | `scaffold.py rule <主题_描述>` | `rule_catalog_registry.yaml`（auto-sync） |
 
-**规则文件命名约定（ARCH-037, trae_028 GOV-DOC-003）**：文件名 MUST 为 `trae_NNN_<主题>_<描述>.yaml`（如 `arch_new_rule`/`behavior_xxx`/`doc_xxx`）。`scaffold.py rule` 检查1.5 强制 `<主题>_<描述>` 两段——单段 name 阻断。主题前缀从现有文件名自动派生（`_derive_rule_theme_prefixes`），新前缀仅警告不阻断。绕过 scaffold 直接 Write 规则文件 → 双层强制：① `validate_rule_frontmatter.py` DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② `create_guard.py` commit-time 强制（ARCH-037 B 选项，扩展 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 单段 name 硬阻断。
+**规则文件命名约定（ARCH-037, trae_028 GOV-DOC-003）**：文件名 MUST 为 `trae_NNN_<主题>_<描述>.yaml`（如 `arch_new_rule`/`behavior_xxx`/`doc_xxx`）。`scaffold.py rule` 检查1.5 强制 `<主题>_<描述>` 两段——单段 name 阻断。主题前缀从现有文件名自动派生（`_derive_rule_theme_prefixes`），新前缀仅警告不阻断。绕过 scaffold 直接 Write 规则文件 → 双层强制：① `validate_rule_frontmatter.py` DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② `create_guard.py` commit-time 强制（ARCH-037 B 选项，扩展 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 非 trae 命名 + 单段 name 硬阻断（含 rename 检测）。
 
 **scaffold 自动完成**：查重 → 创建（temp-file + atomic rename）→ 注册 → 返回路径+导入命令。
 

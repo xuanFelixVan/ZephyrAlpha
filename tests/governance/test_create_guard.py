@@ -421,8 +421,8 @@ class TestRulesYamlNamingBlocked:
         passed, detail = gate.check(gw, [str(f)])
         assert passed is True, f"非 rules/ 目录 .yaml 应放行: {detail}"
 
-    def test_non_trae_named_yaml_passes(self, tmp_path: Path) -> None:
-        """staged rules/ 下 foo.yaml（非 trae 命名）→ 放行（DIM-5 只检测 trae_NNN_ 前缀）。"""
+    def test_non_trae_named_yaml_blocked(self, tmp_path: Path) -> None:
+        """staged rules/ 下 foo.yaml（非 trae 命名）→ 阻断（红蓝漏洞1修复）。"""
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
@@ -432,4 +432,28 @@ class TestRulesYamlNamingBlocked:
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
-        assert passed is True, f"非 trae 命名 .yaml 应放行（DIM-5 不检测）: {detail}"
+        assert passed is False, f"非 trae 命名 .yaml 应被阻断: {detail}"
+        assert "非trae命名" in detail
+
+    def test_rename_to_single_segment_blocked(self, tmp_path: Path) -> None:
+        """rename rules/ 合规文件→单段 name → 阻断（红蓝漏洞2修复）。"""
+        _init_git_repo(tmp_path)
+        # 先 commit 一个合规文件（创建 HEAD 历史）
+        old_rel = f"{self._RULES_DIR}/trae_999_old_desc.yaml"
+        _stage_file(tmp_path, old_rel, "rule_id: trae_999\n")
+        subprocess.run(
+            ["git", "commit", "-m", "init rule", "--no-verify"],
+            cwd=str(tmp_path), capture_output=True, check=True,
+        )
+        # rename 为单段 name
+        new_rel = f"{self._RULES_DIR}/trae_999_new.yaml"
+        subprocess.run(
+            ["git", "mv", old_rel, new_rel],
+            cwd=str(tmp_path), capture_output=True, check=True,
+        )
+        new_file = tmp_path / new_rel
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(new_file)])
+        assert passed is False, f"rename 到单段 name 应被阻断: {detail}"
+        assert "单段name" in detail

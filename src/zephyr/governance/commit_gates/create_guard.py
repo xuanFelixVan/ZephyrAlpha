@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增 .yaml 单段 name 硬阻断（ARCH-037 DIM-5 commit-time 强制，复用 validate_rule_frontmatter.py 正则，--no-verify 绕不过）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -33,15 +33,19 @@ def 前 5 行内添加 ``# trae_060-reviewed: <审查结论>`` 标记，否则�
 
 ARCH-037 治本扩展（2026-07-01，DIM-5 commit-time 强制）
 -------------------------------------------------------
-扩展检测范围：若 commit 含 ``docs/01_policies_and_standards/rules/`` 下新增
-``.yaml`` 文件，用正则提取 name 段（trae_NNN_ 之后、.yaml 之前的部分），单段
-（无下划线）= 缺主题前缀 → 硬阻断。
+扩展检测范围：若 commit 含 ``docs/01_policies_and_standards/rules/`` 下新增(A)
+或 rename(R) 的 ``.yaml`` 文件，检测两类命名违规 → 硬阻断：
+  ① 非 trae 命名（不匹配 trae_NNN_ 前缀，如 foo.yaml）——红蓝漏洞1修复
+  ② 单段 name（匹配 trae_NNN_ 但 name 段无下划线，如 trae_999_test.yaml）
 
 病根：DIM-5 检测能力已就位（validate_rule_frontmatter.py pre-commit hook），但
 ``git commit --no-verify`` 绕过所有 pre-commit hooks，DIM-5 沦为君子协定，无技术
 强制。治本：扩展已有 create_guard（GitCommitGateway 注册 gate，``--no-verify``
 绕不过），复用 DIM-5 正则逻辑（commit-time 强制层，DIM-5 真源仍在
-validate_rule_frontmatter.py，此处不复制实现只复用规则）。
+validate_rule_frontmatter.py，两处正则保持一致）。
+
+rename 检测（红蓝漏洞2修复）：--diff-filter=R 取新文件名检测，防 rename+--no-verify
+绕过（rename 不是新增，--diff-filter=A 漏检）。
 
 同 line 23-32 reconciler 审查标记检测先例：扩展现有 gate 检测范围（不新增门禁，
 规避自指递归 + AD-GOV-001 收敛约束）。
@@ -210,18 +214,24 @@ def make_create_guard() -> GateSpec:
                 f"修复：检查 git 仓库状态后重试。"
             )
 
-        # === ARCH-037 治本扩展（2026-07-01）：rules/ 新增 .yaml 命名格式硬阻断 ===
+        # === ARCH-037 治本扩展（2026-07-01）：rules/ .yaml 命名格式硬阻断 ===
         # DIM-5 检测能力已就位（validate_rule_frontmatter.py pre-commit hook），但被
         # `git commit --no-verify` 绕过。治本：扩展已有 create_guard 检测范围（不新增门禁，
         # 规避自指递归——同 line 23-32 reconciler 审查标记检测先例）。
         # 病根：--no-verify 绕过所有 pre-commit hooks，DIM-5 君子协定无技术强制。
-        # 检测：staged 新增 docs/.../rules/trae_*.yaml，name 段（trae_NNN_ 之后）单段=缺主题前缀→硬阻断。
-        # 复用 DIM-5 正则逻辑（commit-time 强制层，DIM-5 真源仍在 validate_rule_frontmatter.py）。
-        # 放在 new_py_files 过滤前：若 commit 只新增 .yaml 无 .py，new_py_files 为空会提前 return True
-        # 跳过本检测，故须在 return 前完成 .yaml 命名检测。
+        # 检测：staged 新增(A)+rename(R) docs/.../rules/*.yaml，两类违规→硬阻断：
+        #   ① 非 trae 命名（不匹配 trae_\d+_ 前缀，如 foo.yaml）——红蓝漏洞1修复
+        #   ② 单段 name（匹配 trae_NNN_ 但 name 段无下划线，如 trae_999_test.yaml）
+        # rename 检测（红蓝漏洞2修复）：--diff-filter=R 取新文件名检测，防 rename+--no-verify 绕过
+        # 放在 new_py_files 过滤前：若 commit 只含 .yaml 无 .py，new_py_files 为空会提前
+        # return True 跳过本检测，故须在 return 前完成 .yaml 命名检测。
+        #
+        # 真源一致性：_RULE_NAME_RE 与 validate_rule_frontmatter.py DIM-5 正则（line 209）保持一致
+        # （修改此处 MUST 同步修改 validate_rule_frontmatter.py，两处共同构成 DIM-5 双层强制）。
         import re as _re
         _RULES_DIR_PREFIX = "docs/01_policies_and_standards/rules/"
         _RULE_NAME_RE = _re.compile(r"^trae_\d+_(.+)\.yaml$")
+        # 收集 rules/ 下新增(A) 的 .yaml 文件
         new_rule_files: list[str] = []
         for f in staged_new:
             f_norm = f.replace("\\", "/")
@@ -229,16 +239,38 @@ def make_create_guard() -> GateSpec:
                     and f_norm.endswith(".yaml")
                     and f_norm in commit_files_rel):
                 new_rule_files.append(f_norm)
+        # 收集 rules/ 下 rename(R) 的 .yaml 文件（检测 rename 后的新文件名）
+        renamed_rule_files: list[str] = []
+        try:
+            rename_result = gateway._run_git(
+                ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
+            )
+            if rename_result.returncode == 0:
+                for line in rename_result.stdout.strip().splitlines():
+                    parts = line.split("\t")
+                    if len(parts) >= 3:
+                        new_path = parts[-1].replace("\\", "/")
+                        if (new_path.startswith(_RULES_DIR_PREFIX)
+                                and new_path.endswith(".yaml")
+                                and new_path in commit_files_rel):
+                            renamed_rule_files.append(new_path)
+        except Exception:
+            pass  # fail-open：rename 检测故障不阻断（新增检测已覆盖主要场景）
+        all_rule_files = new_rule_files + renamed_rule_files
         bad_rule_names = []
-        for f in new_rule_files:
+        for f in all_rule_files:
             basename = f.rsplit("/", 1)[-1]
             m = _RULE_NAME_RE.match(basename)
-            if m and "_" not in m.group(1):
-                bad_rule_names.append((f, m.group(1)))
+            if not m:
+                # ① 非 trae 命名（不匹配 trae_\d+_<xxx>.yaml）
+                bad_rule_names.append((f, basename, "非trae命名"))
+            elif "_" not in m.group(1):
+                # ② 单段 name（匹配 trae_NNN_ 但缺主题前缀）
+                bad_rule_names.append((f, m.group(1), "单段name缺主题前缀"))
         if bad_rule_names:
-            detail = "; ".join(f"{f}（name段='{seg}'）" for f, seg in bad_rule_names)
+            detail = "; ".join(f"{f}（{reason}='{seg}'）" for f, seg, reason in bad_rule_names)
             return False, (
-                f"rules/ 新增 .yaml 文件缺主题前缀(ARCH-037 DIM-5硬阻断): {detail}. "
+                f"rules/ .yaml 文件命名违规(ARCH-037 DIM-5硬阻断): {detail}. "
                 f"命名约定: trae_NNN_<主题>_<描述>.yaml（见 trae_028 GOV-DOC-003）。"
                 f"--no-verify 绕不过本检测（create_guard 是 GitCommitGateway 注册 gate，非 pre-commit hook）。"
                 f"修复：用 `python scripts/scaffold.py rule <主题_描述>` 创建（RULE-TWO 强制入口），"
