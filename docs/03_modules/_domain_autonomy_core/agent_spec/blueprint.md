@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-019
-submodule_path: src/zephyr/governance/agent_spec
+submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
@@ -15,7 +15,7 @@ last_updated: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: src/zephyr/governance/agent_spec/
+actual_disk_path: src/zephyr/autonomy_core/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive Disclosure 按需加载。"
 tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, skill-knowledge-base, dependency-injection, output-guardrails, team-composition, skill-discovery]
@@ -105,82 +105,75 @@ references: []
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
-| 1 | engine.py | §3.1 | SpecEngine 四阶段升级引擎 | 已实现 | — |
-| 2 | skill_model.py | §4.2 | Skill 数据模型（Pydantic V2） | 已实现 | — |
-| 3 | skill_loader.py | §3.1 | Skill 加载器 + Progressive Disclosure | 已实现 | — |
-| 4 | skill_executor.py | §3.1 | Skill 执行器 + 门禁 + 审计 | 已实现 | — |
-| 5 | skill_router.py | §3.1 | Skill 路由（原 trigger_router.py，重命名消除与 orchestrator 命名冲突） | 已实现 | — |
-| 6 | registry.py | §3.1 | SpecRegistry 注册表 | 已实现 | — |
-| 7 | skill_factory.py | §3.1 | Skill 自动生成 | 已实现 | — |
-| 8 | skill_freshness.py | §3.1 | 新鲜度管理（720h 衰减） | 已实现 | — |
-| 9 | skill_lifecycle.py | §3.1 | 四阶段生命周期状态机 | 已实现 | — |
-| 10 | skill_security.py | §8 | Defense in Depth 四层防护 | 已实现 | — |
-| 11 | skill_evaluator.py | §9 | L1+L2+L3 三层评估 | 已实现 | — |
-| 12 | skill_canary.py | 蓝图特有 | 灰度部署 + A/B Test | 已实现 | — |
-| 13 | skill_kill_switch.py | §8 | 三种 kill 机制 | 已实现 | — |
-| 14 | skill_contract.py | §4.7 | Pre/Post/Invariant 契约 | 已实现 | — |
-| 15 | skill_observability.py | §6.1 | Trace/Span/Metric/Log | 已实现 | — |
-| 16 | skill_telemetry.py | §6.1 | 18 字段遥测 | 已实现 | — |
-| 17 | skill_resilience.py | §6.2 | 熔断器 + 隔离舱 + 降级 | 已实现 | — |
-| 18 | skill_cross_model.py | 蓝图特有 | 跨模型兼容性矩阵 | 已实现 | — |
-| 19 | skill_ontology.py | 蓝图特有 | 语义本体 + 知识图谱 | 已实现 | — |
-| 20 | skill_prompt_opt.py | 蓝图特有 | Token 优化 + 对抗鲁棒性 | 已实现 | — |
-| 21 | skill_model_evolution.py | 蓝图特有 | Model Fingerprint + Output Signature | 已实现 | — |
-| 22 | skill_explain.py | 蓝图特有 | XAI 可解释性 | 已实现 | — |
-| 23 | skill_calibration.py | 蓝图特有 | 置信度校准 + ECE | 已实现 | — |
-| 24 | skill_context_isolation.py | 蓝图特有 | Per-Skill Namespace 隔离 | 已实现 | — |
-| 25 | skill_consensus.py | 蓝图特有 | 多 Skill 共识辩论 | 已实现 | — |
-| 26 | skill_cognitive_preservation.py | 蓝图特有 | ADI Tracker + 认知退化防护 | 已实现 | — |
-| 27 | skill_temperature.py | 蓝图特有 | 每 Skill 温度策略 | 已实现 | — |
-| 28 | skill_workflow.py | 蓝图特有 | StateGraph + Gate Enforcer | 已实现 | — |
-| 29 | skill_durable.py | 蓝图特有 | 持久执行 + 中断恢复 | 已实现 | — |
-| 30 | skill_prompt_cache.py | 蓝图特有 | 三级 Prompt 缓存 | 已实现 | — |
-| 31 | skill_cache_provider.py | 蓝图特有 | 跨 Provider 缓存自适应 | 已实现 | — |
-| 32 | skill_knowledge_base.py | 蓝图特有 | 跨 Skill 经验知识库 | 已实现 | — |
-| 33 | skill_di.py | 蓝图特有 | Skill 依赖注入 | 已实现 | — |
-| 34 | skill_guardrails.py | §8 | 输出护栏三层校验 | 已实现 | — |
-| 35 | skill_team_optimizer.py | 蓝图特有 | SCI 三维团队选择 | 已实现 | — |
-| 36 | skill_discovery.py | §3.1 | 语义发现 + Embedding Index | 已实现 | — |
-| 37 | skill_sandbox.py | §8 | Docker 隔离沙箱 | 已实现 | — |
-| 38 | skill_compliance.py | §8 | EU AI Act/MiFID II 合规 | 已实现 | — |
-| 39 | skill_kya.py | §8 | KYA JWT 凭证管理 | 已实现 | — |
-| 40 | skill_lineage.py | §6.1 | 血缘追踪 | 已实现 | — |
-| 41 | skill_economics.py | §5.4 | Token×模型×会话成本 | 已实现 | — |
-| 42 | skill_postmortem.py | §6 | 事故复盘引擎 | 已实现 | — |
-| 43 | skill_gitops.py | 蓝图特有 | CI/CD 管线 | 已实现 | — |
-| 44 | skill_translator.py | 蓝图特有 | Cross-IDE 翻译 | 已实现 | — |
-| 45 | skill_breakage_checker.py | §4.6 | 语义版本断裂检测 | 已实现 | — |
-| 46 | skill_learning.py | 蓝图特有 | 自学习环 | 已实现 | — |
-| 47 | skill_feature_flags.py | 蓝图特有 | Feature Flag 渐进发布 | 已实现 | — |
-| 48 | skill_idempotency.py | §6.2 | 幂等性 + 去重 | 已实现 | — |
-| 49 | skill_shadow.py | 蓝图特有 | Shadow Mode 并行执行 | 已实现 | — |
-| 50 | skill_silent_failure.py | §6.2 | 静默失败检测 | 已实现 | — |
-| 51 | skill_locking.py | §16.12 | Skill 文件锁 | 已实现 | — |
-| 52 | skill_feedback.py | §3.1 | 反馈信号模型 | 已实现 | — |
-| 53 | skill_tokenomics.py | §5.4 | Token 经济学 | 已实现 | — |
-| 54 | skill_schema_registry.py | §4.7 | Schema 注册 | 已实现 | — |
-| 55 | skill_constructor.py | §3.1 | Skill 构造器 | 已实现 | — |
-| 56 | skill_risk_mitigator.py | §14 | 风险缓解 | 已实现 | — |
-| 57 | skill_efficacy_calibrator.py | §9 | 效能校准 | 已实现 | — |
+| 1 | spec_engine.py | §3.1 | SpecEngine 四阶段升级引擎 | 已实现 | — |
+| 2 | skills/skill_model.py | §4.2 | Skill 数据模型（Pydantic V2） | 已实现 | — |
+| 3 | skills/skill_loader.py | §3.1 | Skill 加载器 + Progressive Disclosure | 已实现 | — |
+| 4 | skills/skill_executor.py | §3.1 | Skill 执行器 + 门禁 + 审计 | 已实现 | — |
+| 5 | skills/skill_router.py | §3.1 | Skill 路由（原 trigger_router.py，重命名消除与 orchestrator 命名冲突） | 已实现 | — |
+| 6 | skills/skill_rbac_registry.py | §3.1 | SpecRegistry 注册表 | 已实现 | — |
+| 7 | skills/skill_factory.py | §3.1 | Skill 自动生成 | 已实现 | — |
+| 8 | skills/skill_freshness.py | §3.1 | 新鲜度管理（720h 衰减） | 已实现 | — |
+| 9 | skills/skill_lifecycle.py | §3.1 | 四阶段生命周期状态机 | 已实现 | — |
+| 10 | skills/skill_security.py | §8 | Defense in Depth 四层防护 | 已实现 | — |
+| 11 | skills/skill_evaluator.py | §9 | L1+L2+L3 三层评估 | 已实现 | — |
+| 12 | skills/skill_canary.py | 蓝图特有 | 灰度部署 + A/B Test | 已实现 | — |
+| 13 | skills/skill_kill_switch.py | §8 | 三种 kill 机制 | 已实现 | — |
+| 14 | skills/skill_contract.py | §4.7 | Pre/Post/Invariant 契约 | 已实现 | — |
+| 15 | skills/skill_observability.py | §6.1 | Trace/Span/Metric/Log | 已实现 | — |
+| 16 | skills/skill_telemetry.py | §6.1 | 18 字段遥测 | 已实现 | — |
+| 17 | skills/skill_resilience.py | §6.2 | 熔断器 + 隔离舱 + 降级 | 已实现 | — |
+| 18 | skills/skill_cross_model.py | 蓝图特有 | 跨模型兼容性矩阵 | 已实现 | — |
+| 19 | skills/skill_ontology.py | 蓝图特有 | 语义本体 + 知识图谱 | 已实现 | — |
+| 20 | skills/skill_prompt_opt.py | 蓝图特有 | Token 优化 + 对抗鲁棒性 | 已实现 | — |
+| 21 | skills/skill_model_evolution.py | 蓝图特有 | Model Fingerprint + Output Signature | 已实现 | — |
+| 22 | skills/skill_explain.py | 蓝图特有 | XAI 可解释性 | 已实现 | — |
+| 23 | skills/skill_calibration.py | 蓝图特有 | 置信度校准 + ECE | 已实现 | — |
+| 24 | skills/skill_context_isolation.py | 蓝图特有 | Per-Skill Namespace 隔离 | 已实现 | — |
+| 25 | skills/skill_consensus.py | 蓝图特有 | 多 Skill 共识辩论 | 已实现 | — |
+| 26 | skills/skill_cognitive_preservation.py | 蓝图特有 | ADI Tracker + 认知退化防护 | 已实现 | — |
+| 27 | skills/skill_temperature.py | 蓝图特有 | 每 Skill 温度策略 | 已实现 | — |
+| 28 | skills/skill_workflow.py | 蓝图特有 | StateGraph + Gate Enforcer | 已实现 | — |
+| 29 | skills/skill_durable.py | 蓝图特有 | 持久执行 + 中断恢复 | 已实现 | — |
+| 30 | skills/skill_prompt_cache.py | 蓝图特有 | 三级 Prompt 缓存 | 已实现 | — |
+| 31 | skills/skill_cache_provider.py | 蓝图特有 | 跨 Provider 缓存自适应 | 已实现 | — |
+| 32 | skills/skill_knowledge_base.py | 蓝图特有 | 跨 Skill 经验知识库 | 已实现 | — |
+| 33 | skills/skill_di.py | 蓝图特有 | Skill 依赖注入 | 已实现 | — |
+| 34 | skills/skill_guardrails.py | §8 | 输出护栏三层校验 | 已实现 | — |
+| 35 | skills/skill_team_optimizer.py | 蓝图特有 | SCI 三维团队选择 | 已实现 | — |
+| 36 | skills/skill_discovery.py | §3.1 | 语义发现 + Embedding Index | 已实现 | — |
+| 37 | skills/skill_sandbox.py | §8 | Docker 隔离沙箱 | 已实现 | — |
+| 38 | skills/skill_compliance.py | §8 | EU AI Act/MiFID II 合规 | 已实现 | — |
+| 39 | skills/skill_kya.py | §8 | KYA JWT 凭证管理 | 已实现 | — |
+| 40 | skills/skill_lineage.py | §6.1 | 血缘追踪 | 已实现 | — |
+| 41 | skills/skill_economics.py | §5.4 | Token×模型×会话成本 | 已实现 | — |
+| 42 | skills/skill_postmortem.py | §6 | 事故复盘引擎 | 已实现 | — |
+| 43 | skills/skill_gitops.py | 蓝图特有 | CI/CD 管线 | 已实现 | — |
+| 44 | skills/skill_translator.py | 蓝图特有 | Cross-IDE 翻译 | 已实现 | — |
+| 45 | skills/skill_breakage_checker.py | §4.6 | 语义版本断裂检测 | 已实现 | — |
+| 46 | skills/skill_learning.py | 蓝图特有 | 自学习环 | 已实现 | — |
+| 47 | skills/skill_feature_flags.py | 蓝图特有 | Feature Flag 渐进发布 | 已实现 | — |
+| 48 | skills/skill_idempotency.py | §6.2 | 幂等性 + 去重 | 已实现 | — |
+| 49 | skills/skill_shadow.py | 蓝图特有 | Shadow Mode 并行执行 | 已实现 | — |
+| 50 | skills/skill_silent_failure.py | §6.2 | 静默失败检测 | 已实现 | — |
+| 51 | skills/skill_locking.py | §16.12 | Skill 文件锁 | 已实现 | — |
+| 52 | skills/skill_feedback.py | §3.1 | 反馈信号模型 | 已实现 | — |
+| 53 | skills/skill_tokenomics.py | §5.4 | Token 经济学 | 已实现 | — |
+| 54 | skills/skill_schema_registry.py | §4.7 | Schema 注册 | 已实现 | — |
+| 55 | skills/skill_constructor.py | §3.1 | Skill 构造器 | 已实现 | — |
+| 56 | skills/skill_risk_mitigator.py | §14 | 风险缓解 | 已实现 | — |
+| 57 | skills/skill_efficacy_calibrator.py | §9 | 效能校准 | 已实现 | — |
 | 58 | self_evolution_fidelity_gate.py | §9 | 自进化保真度门控 | 已实现 | — |
-| 60 | file_autorregister.py | §3.1 | 文件自动注册（re-export shim → file_autoregister.py） | 已实现 | — |
 | 61 | file_autoregister.py | §3.1 | 文件自动注册（正确拼写版） | 已实现 | — |
 | 62 | ide_watcher.py | §3.1 | IDE 热重载（CircadianScheduler hour=2 调度） | 已实现 | — |
 | 63 | phase_planner.py | §16 | Phase 规划（CLI `python -m zephyr.agent_spec phase`） | 已实现 | — |
 | 64 | agent_observability.py | §6.1 | Agent 可观测性（re-export shim → skill_observability.py） | 已实现 | — |
-| 65 | context_optimizer.py | §3.1 | 上下文优化（re-export shim → skill_loader.py） | 已实现 | — |
-| 66 | llm_gateway.py | §3.1 | LLM 网关（re-export shim → pipeline/llm_gateway.py） | 已实现 | — |
+| 65 | context/context_optimizer.py | §3.1 | 上下文优化（re-export shim → skill_loader.py） | 已实现 | — |
 | 66 | all_skill_modules.py | §3.1 | 全量模块索引 | 已实现 | 本模块 |
 | 67 | integration/pipeline_bridge.py | §12 | Pipeline 桥接 | 已实现 | 本模块 |
 | 68 | __main__.py | §4.1 | CLI 入口 | 已实现 | 本模块 |
-| 69 | skills/domain/ | §3.1 | Domain Skill 定义（19 个已注册） | 已实现 | 本模块 |
-| 70 | skills/role/ | §3.1 | Role Skill 定义 | 已实现 | 本模块 |
-| 76 | skill_attention.py | §3.1 | 注意力权重 | 已实现 | 本模块 |
-| 77 | skill_freshness_ext.py | §3.1 | 新鲜度扩展 | 已实现 | 本模块（3个消费者） |
-| 78 | skill-registry.py | §3.1 | Skill 注册表（独立版） | 已实现 | 本模块（5个消费者） |
+| 76 | skills/skill_attention.py | §3.1 | 注意力权重 | 已实现 | 本模块 |
+| 77 | skills/skill_freshness_ext.py | §3.1 | 新鲜度扩展 | 已实现 | 本模块（3个消费者） |
 | 79 | trigger_router.py | §3.1 | 触发表路由 | 已实现 | 本模块（2个消费者） |
-| `__main__.py` | § — | — | 已实现 | | 本模块 |
-| `__main__.py` | § — | — | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

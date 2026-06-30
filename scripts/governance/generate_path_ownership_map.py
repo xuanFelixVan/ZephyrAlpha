@@ -131,7 +131,12 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
         files = extract_section_01_files(text)
         for f in files:
             raw_path = f["path"]
-            if "/" not in raw_path and "\\" not in raw_path and disk_path:
+            # 支持 §0.1 中的子目录相对路径（如 skills/skill_model.py）
+            # 当 raw_path 不是项目根路径前缀开头时，拼接 disk_path
+            _PROJECT_PREFIXES = ("src/", "scripts/", "tests/", "docs/", "config/", "architecture_model/")
+            if raw_path.startswith(_PROJECT_PREFIXES):
+                full_path = raw_path
+            elif disk_path:
                 full_path = f"{disk_path.rstrip('/')}/{raw_path}"
             else:
                 full_path = raw_path
