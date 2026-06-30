@@ -294,7 +294,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
   - **根目录禁平铺**：tests/ 根目录禁止新增 test_*.py 平铺文件（根目录仅允许 conftest.py/__init__.py 等基础文件）。新增 test_*.py MUST 归功能域子目录。
   - **contracts/ 唯一**：契约测试唯一目录为 `contracts/`（单复数歧义已消除——原 `contract/` 元测试 5 文件已合并入 `contracts/_meta/`）。禁止再造 `contract/` 单数目录。
   - **目录名禁 test_ 前缀**：tests/ 下子目录名禁止 `test_` 前缀（`test_code_dedup_engine/` 已改名 `code_dedup_engine/`）。`test_` 前缀只用于文件名。
-  - **迁移状态**：ARCH-029 扁平迁移完成——1699/1699 文件已迁移（100%），tests/ 根目录扁平 test_*.py 清零，84 个功能域子目录。session3 路线B 全量治本：批次1 commit 6fc3c755（471文件 governance/feedback/audit/llm_security）；批次2 commit 218a870a（291文件 34个子目录）。分类方法：AST import 自动匹配 533 + AI 语义分析 229（BLUEPRINT 优先）。剩余议题（非扁平类）：(1)维度混合未清理（tests/ 下仍有 unit/e2e/adversarial 等测试类型维度目录，与本条"不混入测试类型维度"冲突）；(2)漂移源 `validate_test_directory_structure.py` 与本条冲突+虚假引用 GOV-DOC-002，已删除（本次 commit）。新 AI 接续剩余议题前 MUST 先读 ARCH-029 条目确认进度。
+  - **迁移状态**：ARCH-029 全部治本完成——1699/1699 文件已迁移（100%），tests/ 根目录扁平 test_*.py 清零，84 个功能域子目录。session3 路线B 全量治本：批次1 commit 6fc3c755（471文件 governance/feedback/audit/llm_security）；批次2 commit 218a870a（291文件 34个子目录）。分类方法：AST import 自动匹配 533 + AI 语义分析 229（BLUEPRINT 优先）。维度混合清理（session4）：批次1 commit 556a845c 消除 6 个测试类型维度目录（integration/e2e/adversarial/red_blue/benchmarks/performance，96文件）；批次2+3 commit b25d9a46 消除 unit/ 目录（25子目录合并+132平铺文件分类迁移，548文件）。至此 tests/ 下 7 个测试类型维度目录全部消除，全部按功能域归类。漂移源 `validate_test_directory_structure.py` 与本条冲突+虚假引用 GOV-DOC-002，已删除（session3 commit）。
   - **强制方式**：文档约定（本条目）+ code review + 后续 session 接续治本。无硬阻断门禁（向内收原则①——不造无全自动维护价值的门禁；测试目录组织是约定性约束，非安全/真源约束）。
 
 ## 8. 永远不要做的事
