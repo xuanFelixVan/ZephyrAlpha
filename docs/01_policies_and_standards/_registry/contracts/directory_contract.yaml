@@ -190,7 +190,7 @@ directory_extensions:
     allowed: [".yaml"]
     forbidden: [".py", ".csv", ".jsonl", ".md", ".json", ".sh", ".ps1", ".bak", ".baseline"]
     zone: permanent
-    note: "架构模型机读边界声明（canonical SSoT，与 docs/02_enterprise_architecture/target_architecture/architecture_model/ 配对）。纯 YAML 数据树，不允许 .md（人读视图在 docs/ 树）"
+    note: "架构模型机读边界声明（canonical SSoT，单树）。纯 YAML 数据树，不允许 .md（人读视图在 docs/ 树）。双树已合并（2026-06-30），EA artifacts 迁入本树顶层子目录"
 
   # --- 代码区（中性区）---
   - path: "src/zephyr/"

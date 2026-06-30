@@ -73,7 +73,7 @@ END_REQUIRED_SECTIONS
 | 节点字段 | 20核心字段（全类型统一）+ 按类型差异字段 |
 | 边字段 | 5必填 + 11应该有 = 16字段 |
 | 生成器 | `generate_project_depgraph.py`（唯一产出入口） |
-| 产出物 | `data/databases/depgraph.db` |
+| 产出物 | `PostgreSQL depgraph` |
 | 设计态/运营态 | `design_maturity`（设计成熟度）+ `deployment_lifecycle`（部署生命周期）+ `drive_direction`（驱动方向）三维度区分 |
 
 ---
@@ -88,7 +88,7 @@ END_REQUIRED_SECTIONS
 | 使用对象 | AI Agent（100% AI 开发，每次全新状态）/ 人类 Owner / 依赖分析器 / 漂移检测器 |
 | 适用场景 | 全项目文件级依赖图（自动生成）+ 域级依赖图（设计态） |
 | 核心定位 | 依赖图是**全项目唯一依赖真源**。AI 施工读此文件定位一切依赖关系 |
-| 产出物 | `data/databases/depgraph.db` |
+| 产出物 | `PostgreSQL depgraph` |
 | 对标 | CycloneDX v1.7 + C4 Model + Clean Architecture + DDD Context Mapping |
 
 ### 1.2 责任边界
@@ -118,7 +118,7 @@ END_REQUIRED_SECTIONS
 # 核心原则：模板定义好的标准。字段 = AI防幻觉防漂移的必要信息。
 # 命名原则：零歧义。全新AI第一眼即精确理解。
 # 生成器: generate_project_depgraph.py（唯一产出入口）
-# 产出物: data/databases/depgraph.db
+# 产出物: PostgreSQL depgraph
 # ============================================================================
 
 # ---- §0 硬边界 (Hard Boundaries) ------------------------------------------
@@ -874,7 +874,7 @@ reverse[B] = [A, ...]      →  B 被 A 依赖
 |---------|-------------|------|
 | `generate_project_depgraph.py` | §2 Nodes + §3 Edges + §8-§9 | 字段名需对齐受控词表，边类型需从 2 种映射到 §3.2 的 12 种 |
 | `diagnose_depgraph.py` | §4 计算规则 | 缺 amplification/blast_radius/risk_propagation/dead_dependency |
-| `depgraph.db` | 全 23 段 | 唯一真源文件 |
+| `depgraph` | 全 23 段 | 唯一真源文件 |
 | `dependency.py` Pydantic 模型 | §2 Nodes + §3 Edges + §8 Graph Metrics | 缺 architecture_direction/coupling_strength/completeness_declaration/architecture_constraints 及 §4-§21 |
 | `cross-module-dependency-registry.yaml` (PS-REG-007) | §4 Adjacency Lists + §12 Matrix | 缺 §5-§21 |
 | `system-dependency-map.md` | §10 Business Streams + §11 Stream Cross Points + §8 Depth Heat Map | 纯文档，不可计算 |
@@ -958,7 +958,7 @@ reverse[B] = [A, ...]      →  B 被 A 依赖
 
 | # | 自检项 | 命令/方法 | 通过标准 | 失败处置 |
 |---|--------|----------|---------|---------|
-| 1 | 语法检查 | `python -c "import sqlite3; sqlite3.connect('data/databases/depgraph.db')"` | 无异常 | 修复 DB 结构 |
+| 1 | 语法检查 | `python -c "import sqlite3; sqlite3.connect('PostgreSQL depgraph')"` | 无异常 | 修复 DB 结构 |
 | 2 | 节点类型合规 | 检查每个 node.type ∈ §3.1（21 种） | 100% 合规 | 修正到词表值 |
 | 3 | 边类型合规 | 检查每个 edge.dep_type ∈ §3.2（12 种） | 100% 合规 | 修正到词表值 |
 | 4 | 蓝图双向对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --all` | 无 missing | 补充 blueprint_link |

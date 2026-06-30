@@ -31,7 +31,7 @@ ttl: permanent
 verifiability: manual
 version: 1.0.0
 # === 蓝图精简方案B（v1.0.0）===
-# 蓝图只存全景图(depgraph.db)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
+# 蓝图只存全景图(depgraph)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
 # 禁止存储与全景图重叠的结构态信息：文件清单/依赖关系/域归属/物理路径（委托全景图作为SSoT）
 # 蓝图颗粒度标准：模块级1-10个文件/50-300行；域级≤500行；系统级≤1000行
 # 蓝图创建顺序（混合模式）：先在全景图创建设计态(phase_2)→再创建蓝图(phase_4)→再创建代码文件(phase_5)
@@ -634,7 +634,7 @@ class {DataModel}(BaseModel):
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
+| 1 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | `docs/02_enterprise_architecture/system-dependency-map.md` | {新增/修改什么} | {为什么} |
@@ -1000,7 +1000,7 @@ class {DataModel}(BaseModel):
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml doc_002` | 路径映射 |
-| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | 编号注册 |
+| 3 | 模块ID注册表 | — | `architecture_model/module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | {按项目实际补充} | {—} | `docs/...` | {用途} |
 

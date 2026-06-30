@@ -86,7 +86,7 @@ sections:
     - version: '1.1.0'
       date: '2026-06-21'
       by: AI-Assistant
-      changes: '新增 STEP0 前置备份规则——每次 apply_depgraph.py 执行前 MUST git 备份 depgraph.db 单文件，提供回滚能力。备份范围=depgraph.db 单文件，触发条件=apply_depgraph.py 执行前。Owner 审批方案B后通过 immutable_core 5步流程修改'
+      changes: '新增 STEP0 前置备份规则——每次 apply_depgraph.py 执行前 MUST git 备份 depgraph 单文件，提供回滚能力。备份范围=depgraph 单文件，触发条件=apply_depgraph.py 执行前。Owner 审批方案B后通过 immutable_core 5步流程修改'
     - version: '1.1.1'
       date: '2026-06-21'
       by: AI-Assistant
@@ -102,7 +102,7 @@ sections:
     - version: '1.4.0'
       date: '2026-06-27'
       by: session-p2-pg-migration
-      changes: 'P2 PostgreSQL迁移同步更新——depgraph.db 从 SQLite 迁移到 PostgreSQL 16。更新数据源描述、备份机制（pg_dump替代git文件备份）、错误类型（psycopg2.IntegrityError替代sqlite3.IntegrityError）。STEP0备份流程适配PG事务回滚'
+      changes: 'P2 PostgreSQL迁移同步更新——depgraph 从 SQLite 迁移到 PostgreSQL 16。更新数据源描述、备份机制（pg_dump替代git文件备份）、错误类型（psycopg2.IntegrityError替代sqlite3.IntegrityError）。STEP0备份流程适配PG事务回滚'
     - version: '1.5.0'
       date: '2026-06-29'
       by: session-p1-path-pollution
@@ -136,7 +136,7 @@ metadata:
     date: '2026-06-27'
     by: session-p2-pg-migration
     changes:
-    - P2 PostgreSQL迁移同步更新——depgraph.db 从 SQLite 迁移到 PostgreSQL 16
+    - P2 PostgreSQL迁移同步更新——depgraph 从 SQLite 迁移到 PostgreSQL 16
     - 更新数据源描述（SQLite 文件 → PostgreSQL localhost:5432，通过 config/.env.postgres 连接）
     - 更新备份机制（pg_dump 替代 git 文件备份，STEP0 适配 PG 事务回滚）
     - 更新错误类型（psycopg2.IntegrityError 替代 sqlite3.IntegrityError）

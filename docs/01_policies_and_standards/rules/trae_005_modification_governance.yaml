@@ -66,7 +66,7 @@ sections:
     - 用零消费者判定删除
     - 先补测试再重构
     - 新建功能域/子域未经Owner审批
-    - 架构升级期间运行 generate_project_depgraph.py（会覆盖 depgraph.db 设计态数据）
+    - 架构升级期间运行 generate_project_depgraph.py（会覆盖 depgraph 设计态数据）
   change_history:
     title: 变更历史
     section_type: context

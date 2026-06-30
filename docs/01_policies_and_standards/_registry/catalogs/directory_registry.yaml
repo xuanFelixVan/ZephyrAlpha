@@ -995,7 +995,7 @@ directories:
 
 
 
-  - path: "docs/02_enterprise_architecture/target_architecture/architecture_model/"
+  - path: "architecture_model/"
 
     responsibility: "架构模型——layers/cross-cutting/events/contracts/domain/technology/scripts"
 

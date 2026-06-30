@@ -59,7 +59,7 @@ ttl: permanent
 
 | 文件 | 位置 | registry_id |
 |------|------|:--:|
-| 模块ID注册表 | `02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | REG-MOD-ALPHA_SIGNAL_DOMAIN |
+| 模块ID注册表 | `architecture_model/module_id_registry.yaml` | REG-MOD-ALPHA_SIGNAL_DOMAIN |
 | 模块生命周期登记表 | `03_modules/module_registry.yaml` | REG-MOD-002 |
 | 蓝图深度评估登记表 | `03_modules/blueprint_registry.yaml` | REG-MOD-003 |
 | Embedding模型注册表 | `config/embedding_model_registry.yaml` | REG-AI-002 |
@@ -71,7 +71,7 @@ ttl: permanent
 - ❌ policy/standard 类文件 → `governance/`
 - ❌ template 类文件 → `templates/`
 - ✅ YAML 格式的登记表允许存放在此（如 ai_autonomy_authority_registry.yaml），优先使用 YAML 格式
-- ❌ 架构模型 YAML → `02_enterprise_architecture/target_architecture/architecture_model/`
+- ❌ 架构模型 YAML → `architecture_model/`
 - ❌ 运行时配置 YAML → `config/` 或 `src/zephyr/` 对应子包
 
 ## 父级目录

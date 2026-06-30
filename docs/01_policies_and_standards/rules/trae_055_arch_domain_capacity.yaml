@@ -173,7 +173,7 @@ sections:
     conditions:
     - type: constraint
       check: 新增域操作
-      pass: INSERT 到 depgraph.db domains 表，不修改生成器代码
+      pass: INSERT 到 depgraph domains 表，不修改生成器代码
       fail: 修改 generate_project_depgraph.py 的 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP 等硬编码
     actions:
     - type: mandatory
@@ -243,7 +243,7 @@ sections:
     - type: mandatory
       step: 新增域只需 INSERT domains 表（ARCH-CAP-005），总容量自动扩展
     - type: mandatory
-      step: 硬件资源监控：当 depgraph.db > 500MB 或节点数 > 50000 时评估硬件升级
+      step: 硬件资源监控：当 depgraph > 500MB 或节点数 > 50000 时评估硬件升级
     prohibitions:
     - 设置固定项目总容量上限（违反抽屉式扩展）
     - 将 1500 作为上限（1500 是下限）

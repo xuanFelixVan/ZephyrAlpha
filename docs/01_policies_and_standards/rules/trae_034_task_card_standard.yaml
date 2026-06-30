@@ -1264,7 +1264,7 @@ sections:
 
         title: diagnose_depgraph.py全文edge["type"]→edge["dep_type"]字段名修正
 
-        description: 根因：depgraph.db的边使用dep_type字段记录类型，但diagnose_depgraph.py全文19处读取edge["type"]，字段名不对齐导致所有需要按类型过滤边的逻辑全部KeyError崩溃。治根：逐处替换为dep_type。'
+        description: 根因：depgraph的边使用dep_type字段记录类型，但diagnose_depgraph.py全文19处读取edge["type"]，字段名不对齐导致所有需要按类型过滤边的逻辑全部KeyError崩溃。治根：逐处替换为dep_type。'
       language: yaml
       note: 含根因+治根+施工步骤+验收标准
     - title: 新文件创建类示例

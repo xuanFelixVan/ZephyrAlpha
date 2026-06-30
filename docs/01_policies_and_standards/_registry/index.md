@@ -40,7 +40,7 @@ ttl: permanent
 ## 排除规则（不应放入本目录的内容）
 
 - ❌ .md 治理文档 → `docs/02_enterprise_architecture/` 或 `docs/08_knowledge/`
-- ❌ 架构模型 YAML → `docs/02_enterprise_architecture/target_architecture/architecture_model/`
+- ❌ 架构模型 YAML → `architecture_model/`
 - ❌ 运行时配置 YAML → `config/` 或 `src/zephyr/`
 - ❌ Python 脚本中的注册表（如 SCRIPT_REGISTRY 代码嵌入）→ beta 后统一提取至 catalogs/
 

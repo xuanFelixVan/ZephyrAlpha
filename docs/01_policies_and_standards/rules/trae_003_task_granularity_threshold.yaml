@@ -32,7 +32,7 @@ sections:
     - RULE-SIX
     conditions:
     - type: pre_condition
-      check: 八指标机械门——1.新代码>50行？2.涉及>3文件？3.需读蓝图？4.Schema变更？5.depgraph.db操作？6.消费者影响>50文件？7.跨域操作？8.多步骤>3施工步骤？
+      check: 八指标机械门——1.新代码>50行？2.涉及>3文件？3.需读蓝图？4.Schema变更？5.depgraph操作？6.消费者影响>50文件？7.跨域操作？8.多步骤>3施工步骤？
       pass: 任一YES→走任务系统
       fail: 全NO→直接做
     actions:

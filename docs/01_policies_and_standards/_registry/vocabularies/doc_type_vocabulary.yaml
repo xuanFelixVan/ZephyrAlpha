@@ -47,7 +47,7 @@ depends_on:
 # ttl_default 字段（v3.1.0 新增）：声明该 doc_type 的默认 ttl（permanent/task_bound）。
 # 本字段是 doc_type→ttl 映射的唯一真源。
 # 消费者：classify_ttl_by_content.py 从本字段动态加载 PROCESS_DOC_TYPES / PERMANENT_DOC_TYPES。
-# 对标：ttl_vocabulary.yaml 的 decision_tree Q2 引用本字段（via criteria_source filter+extract_field，已迁移 2026-06-30）。
+# 对标：ttl_vocabulary.yaml 的 decision_tree Q2 引用本字段（via criteria_source，待迁移）。
 
 values:
   - value: policy

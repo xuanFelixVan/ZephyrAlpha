@@ -17,7 +17,7 @@
 #   v1.1.0 (2026-06-26): 裁定#206-D/#ARCH-011——新增 dir_prefix 字段，消除 validate_blueprint_placement.py
 #                        硬编码 _LAYER_DIR_PREFIX_MAP 漂移风险，validator 改为从本 SSoT 动态读取
 #
-# 镜像路径：docs/02_enterprise_architecture/target_architecture/architecture_model/layers/
+# 镜像路径：architecture_model/layers/
 # 与仓库根 architecture_model/layers/ 对应层 id 必须一致；以根目录为施工 SSoT。
 #
 # 本词表从架构模型 YAML 自动派生——架构模型是房产证，本词表是复印件。

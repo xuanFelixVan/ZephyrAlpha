@@ -102,7 +102,7 @@ sections:
     - type: mandatory
       step: 蓝图颗粒度标准——模块级蓝图覆盖1-10个production节点/50-300行；域级蓝图≤500行；系统级蓝图≤1000行。超过上限必须拆分为子蓝图；低于下限合并到父蓝图
     - type: mandatory
-      step: 蓝图精简原则——蓝图只存全景图没有的独有信息（设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理）。禁止存储与全景图重叠的信息（文件清单/依赖关系/域归属/物理路径），这些信息委托全景图(depgraph.db)作为SSoT
+      step: 蓝图精简原则——蓝图只存全景图没有的独有信息（设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理）。禁止存储与全景图重叠的信息（文件清单/依赖关系/域归属/物理路径），这些信息委托全景图(depgraph)作为SSoT
     - type: mandatory
       step: 蓝图创建顺序遵循混合模式——先在全景图创建设计态节点(phase_2)→再创建蓝图(phase_4)→再创建代码文件(phase_5)。蓝图是设计态的叙事化补充，不是结构态真源
     prohibitions:
@@ -123,9 +123,9 @@ sections:
       fail: 任一方module_id不一致导致AI看到幻影或漏掉真实文件
     actions:
     - type: mandatory
-      step: 结构变更后MUST同步刷新：1.python scripts/governance/generate_project_depgraph.py(写入depgraph.db，架构升级期禁止)→2.python scripts/governance/generate_project_path_tree.py --write→3.代码头部[BLUEPRINT]字段更新module_id引用；任一步失败=回滚变更
+      step: 结构变更后MUST同步刷新：1.python scripts/governance/generate_project_depgraph.py(写入depgraph，架构升级期禁止)→2.python scripts/governance/generate_project_path_tree.py --write→3.代码头部[BLUEPRINT]字段更新module_id引用；任一步失败=回滚变更
     - type: mandatory
-      step: 三方对齐关系——全景图(depgraph.db)是结构态真源(依赖边/路径/域归属)；代码头部[BLUEPRINT]引用全景图节点ID+蓝图module_id；蓝图是设计态真源(设计意图/职责边界/施工指引)，通过frontmatter.module_id与代码头部对齐。蓝图不再存文件清单/依赖关系/域归属(委托全景图)
+      step: 三方对齐关系——全景图(depgraph)是结构态真源(依赖边/路径/域归属)；代码头部[BLUEPRINT]引用全景图节点ID+蓝图module_id；蓝图是设计态真源(设计意图/职责边界/施工指引)，通过frontmatter.module_id与代码头部对齐。蓝图不再存文件清单/依赖关系/域归属(委托全景图)
     prohibitions:
     - 结构变更后不重新生成depgraph和path-tree
     - 路径树过时状态下关闭任务
@@ -134,7 +134,7 @@ sections:
   arch_scope:
     title: 蓝图对齐约束的目的与范围（精简版）
     section_type: context
-    summary: 管理ZephyrAlpha项目全景图-代码-蓝图三方对齐。全景图(depgraph.db)是结构态真源(依赖边/路径/域归属)，蓝图是设计态真源(设计意图/职责边界/施工指引)，代码头部[BLUEPRINT]引用两者。蓝图精简为只存独有信息，不再存文件清单/依赖关系/域归属(委托全景图)。含蓝图颗粒度标准(模块级1-10文件/50-300行)和混合模式创建顺序(先设计态后蓝图)
+    summary: 管理ZephyrAlpha项目全景图-代码-蓝图三方对齐。全景图(depgraph)是结构态真源(依赖边/路径/域归属)，蓝图是设计态真源(设计意图/职责边界/施工指引)，代码头部[BLUEPRINT]引用两者。蓝图精简为只存独有信息，不再存文件清单/依赖关系/域归属(委托全景图)。含蓝图颗粒度标准(模块级1-10文件/50-300行)和混合模式创建顺序(先设计态后蓝图)
     applies_to:
     - docs/03_modules/ 下所有蓝图文件
     - 代码头部[BLUEPRINT]字段

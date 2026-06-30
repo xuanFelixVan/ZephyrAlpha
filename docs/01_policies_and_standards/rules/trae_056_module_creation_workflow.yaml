@@ -132,7 +132,7 @@ sections:
         purpose: 可用模板清单
       - command: "python scripts/governance/extract_depgraph.py --summary"
         purpose: 全景图架构全景+域+模块归属+capacity声明
-        note: 禁止直接Read depgraph.db——必须通过extract_depgraph.py查询
+        note: 禁止直接Read depgraph——必须通过extract_depgraph.py查询
       - command: "python scripts/governance/extract_depgraph.py --paths"
         purpose: 文件级依赖关系（含设计态和运营态）
       - file: docs/03_modules/_sys_master/blueprint.md
@@ -153,7 +153,7 @@ sections:
       pass: 当前阶段已确认
     prohibitions:
     - 禁止跳过STEP1守护进程启动直接执行写操作
-    - 禁止直接Read depgraph.db（必须通过extract_depgraph.py）
+    - 禁止直接Read depgraph（必须通过extract_depgraph.py）
     - 治本后允许运行generate_project_depgraph.py（需先执行OPS-2026062502-506，生成器已修复build_status推导和白名单准入）
 
   phase_1_search:
@@ -198,14 +198,14 @@ sections:
       rule_id: TRAE-035
       section: task_003_panorama_alignment
       alias: TASK-003
-    purpose: 创建前先在全景图（depgraph.db）设计位置+依赖+启动方式
+    purpose: 创建前先在全景图（depgraph）设计位置+依赖+启动方式
     applies_when: 创建长期使用的代码/脚本/模块（非临时代码）
     principle: 先设计后施工——设计态未完成禁止创建实体文件
     steps:
     - order: 1
       action: 全景图设计态创建
       rule_ref: TRAE-035 task_003_panorama_alignment
-      check: 在depgraph.db创建design_maturity=design的节点
+      check: 在depgraph创建design_maturity=design的节点
       required_fields:
       - domain_id
       - module_id
@@ -237,13 +237,13 @@ sections:
       fail: 路径预审失败 → 调整路径
     - order: 5
       action: 设计态升级运营态（文件创建后）
-      check: 实体文件创建后更新depgraph.db将design_maturity从design升级为production
+      check: 实体文件创建后更新depgraph将design_maturity从design升级为production
       pass: 设计态已升级为运营态
       fail: 升级失败 → 修复
     prohibitions:
     - 禁止跳过设计态直接创建实体文件
     - 治本后允许运行generate_project_depgraph.py（需先执行OPS-2026062502-506，生成器已修复build_status推导和白名单准入）
-    - 禁止直接SQL写入depgraph.db——使用apply_depgraph.py --add-design-node
+    - 禁止直接SQL写入depgraph——使用apply_depgraph.py --add-design-node
 
   phase_3_admission:
     section_type: procedure
@@ -293,7 +293,7 @@ sections:
       rule_id: TRAE-014
       section: arch_011
       alias: ARCH-011
-    purpose: 蓝图是设计态的叙事化补充。全景图(depgraph.db)是结构态真源（依赖边/路径/域归属），蓝图只存全景图没有的独有信息（设计意图/职责边界/施工指引/验收标准）。创建顺序：先在全景图创建设计态→再创建蓝图→再创建代码
+    purpose: 蓝图是设计态的叙事化补充。全景图(depgraph)是结构态真源（依赖边/路径/域归属），蓝图只存全景图没有的独有信息（设计意图/职责边界/施工指引/验收标准）。创建顺序：先在全景图创建设计态→再创建蓝图→再创建代码
     applies_when: 创建新模块（脚本/门禁可跳过）
     prerequisite: 全景图设计态已创建（phase_2_design_node已完成）
     blueprint_granularity_standard:
@@ -688,7 +688,7 @@ sections:
     - order: 6
       action: 设计态升级运营态
       rule_ref: TRAE-035
-      check: depgraph.db中design_maturity从design升级为production
+      check: depgraph中design_maturity从design升级为production
       pass: 设计态已升级为运营态
       fail: 升级失败 → 修复
 
@@ -703,8 +703,8 @@ sections:
       action: 文件已创建但流程未完成
       action_detail: 评估是否删除文件（走RULE-THREE三步审判）或保留并补全流程
     - order: 3
-      action: depgraph.db已修改
-      action_detail: "git checkout data/databases/depgraph.db 回滚到备份版本"
+      action: depgraph已修改
+      action_detail: "git checkout PostgreSQL depgraph 回滚到备份版本"
     - order: 4
       action: 设计态已创建但实体文件未创建
       action_detail: 保留设计态（标记can_build=false）或删除设计态节点

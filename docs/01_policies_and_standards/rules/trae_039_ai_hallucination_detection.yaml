@@ -193,9 +193,9 @@ references:
   scripts:
   - scripts/arch_guard/run_all.py
   modules:
-  - docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml
-  - docs/02_enterprise_architecture/target_architecture/architecture_model/technology/technology_landscape.yaml
-  - docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml
+  - architecture_model/module_id_registry.yaml
+  - architecture_model/technology/technology_landscape.yaml
+  - architecture_model/contracts/cross_layer_contracts.yaml
   blueprints: []
 enforcement:
   type: code

@@ -332,9 +332,9 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-SCHEMA-HEALTH
-  name: 'GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验'
+  name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度校验'
   entry: python scripts/governance/verify_schema_health.py
-  description: 'depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
+  description: 'depgraph Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
     治本'
   files_trigger: ^(src/zephyr/governance/depgraph_schema\.py|scripts/governance/sync_yaml_to_depgraph\.py|scripts/governance/verify_schema_health\.py)$
   always_run: false
@@ -368,7 +368,7 @@ gates:
   name: 'GATE-C2: 契约-代码双写漂移阻断'
   entry: python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   description: YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线
-  files_trigger: ^(docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/|src/zephyr/shared/contracts/).*
+  files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/).*
   always_run: false
   category: contract_drift
   status: active
@@ -377,7 +377,7 @@ gates:
   entry: python scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
   description: 检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python
     无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束
-  files_trigger: ^docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts\.yaml$
+  files_trigger: ^architecture_model/contracts/cross_layer_contracts\.yaml$
   always_run: false
   category: unknown
   status: active

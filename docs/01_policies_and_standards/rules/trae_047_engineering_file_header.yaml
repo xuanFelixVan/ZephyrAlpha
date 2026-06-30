@@ -288,7 +288,7 @@ sections:
     - order: 6
       action: 更新注册表和全景图
       pre_condition: 蓝图已更新
-      expected_result: script-manifest.yaml/__init__.py/_registry.yaml已更新 + depgraph.db nodes表已INSERT/UPDATE对应节点(design_maturity/path/domain_id/belongs_to) + edges表已INSERT上下游依赖边
+      expected_result: script-manifest.yaml/__init__.py/_registry.yaml已更新 + depgraph nodes表已INSERT/UPDATE对应节点(design_maturity/path/domain_id/belongs_to) + edges表已INSERT上下游依赖边
       on_failure: 注册表或全景图未更新=孤儿
     - order: 7
       action: 验证双向对齐
@@ -464,7 +464,7 @@ sections:
       change: RQ审查STEP13修复：修复6处kebab-case引用违规(template-registry.yaml→template_registry.yaml×1, blueprint_registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2 snake_case裁定(RQ-05)
     - version: 1.1.0
       date: '2026-06-24'
-      change: A_full格式从10字段升级为14字段——新增[DEPENDENCIES](上游依赖,对应edges表from→to)/[STARTUP](启动方式,枚举auto_start/event_driven/scheduled/manual/imported)/[MATURITY](设计成熟度,枚举design/prototype/production/legacy,对应nodes.design_maturity)；新增MATURITY-ENUM和STARTUP-ENUM枚举定义；锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph.db nodes/edges表同步)；目的——反向促进AI创建代码时到全景图先填写定位，防止漂移和幻觉
+      change: A_full格式从10字段升级为14字段——新增[DEPENDENCIES](上游依赖,对应edges表from→to)/[STARTUP](启动方式,枚举auto_start/event_driven/scheduled/manual/imported)/[MATURITY](设计成熟度,枚举design/prototype/production/legacy,对应nodes.design_maturity)；新增MATURITY-ENUM和STARTUP-ENUM枚举定义；锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph nodes/edges表同步)；目的——反向促进AI创建代码时到全景图先填写定位，防止漂移和幻觉
     - version: 1.2.0
       date: '2026-06-27'
       change: 新增gov_eng_002_directory_mapping section——格式-目录映射规则定死(永久区/临时区/根目录白名单/禁止规则);全格式加ttl字段(A_full 15/A_test 7/B_yaml 6/C_json 6/E_shell 5);合并docs/09_audit/+docs/decomposition/→docs/_working/统一临时区
@@ -545,7 +545,7 @@ metadata:
     changes:
     - A_full格式从10字段升级为14字段——新增[DEPENDENCIES]/[STARTUP]/[MATURITY]三个字段
     - 新增MATURITY-ENUM(design/prototype/production/legacy)和STARTUP-ENUM(auto_start/event_driven/scheduled/manual/imported)枚举定义
-    - 锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph.db nodes/edges表同步)
+    - 锚定7步流程步骤6从"更新注册表"升级为"更新注册表和全景图"(depgraph nodes/edges表同步)
     - 目的——反向促进AI创建代码时到全景图先填写定位，防止漂移和幻觉
   - version: 1.0.5
     date: '2026-06-21'

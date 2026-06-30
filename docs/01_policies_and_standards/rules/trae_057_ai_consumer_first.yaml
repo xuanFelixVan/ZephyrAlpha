@@ -201,9 +201,9 @@ sections:
     - "关键冗余不是需要消除的重复，而是AI冷启动的安全保障"
     evidence:
       experiment: "2026-06-22 模拟新AI冷启动实验"
-      test_case: "onboarding_detail.md STEP 1.2 depgraph.db描述改为引用project_rules.md §资产全景"
+      test_case: "onboarding_detail.md STEP 1.2 depgraph描述改为引用project_rules.md §资产全景"
       result:
-        missing_info_1: "depgraph.db绝对路径→AI不知道→可能幻觉出错误路径"
+        missing_info_1: "depgraph绝对路径→AI不知道→可能幻觉出错误路径"
         missing_info_2: "禁止直接Read警告→AI猜测理由（二进制而非OOM）→理解不完整"
         missing_info_3: "唯一真源声明→AI不确定→可能引用旧版depgraph文件"
       conclusion: "引用方式导致AI缺失3项关键信息，存在幻觉风险。关键信息必须保留在当前文件中。"

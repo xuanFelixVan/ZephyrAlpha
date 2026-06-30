@@ -194,7 +194,7 @@ sections:
       - id: IRN-007
         name: 架构终局锁定
         rule: 架构模型锁定后任何变更必须走Emergency Change Board流程——禁止直接修改
-        verify: 架构模型锁定状态校验——检查depgraph.db中架构节点的locked标记，锁定后任何架构节点变更必须附Owner批准的Emergency Change Board记录
+        verify: 架构模型锁定状态校验——检查depgraph中架构节点的locked标记，锁定后任何架构节点变更必须附Owner批准的Emergency Change Board记录
         violation: 架构漂移，终局锁定失效
     gov_mod_002_violation_severity:
       section_type: decision_tree
@@ -652,7 +652,7 @@ metadata:
     date: '2026-06-21'
     by: AI-Assistant
     changes:
-    - 'IRN-007 verify字段从不存在的architecture-endgame-locked声明检查改为描述验证逻辑（Owner批准裁定）——改为描述depgraph.db中架构节点locked标记校验+Emergency Change Board记录检查'
+    - 'IRN-007 verify字段从不存在的architecture-endgame-locked声明检查改为描述验证逻辑（Owner批准裁定）——改为描述depgraph中架构节点locked标记校验+Emergency Change Board记录检查'
   - version: 1.1.0
     date: '2026-06-21'
     by: AI-Assistant
