@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_workflow.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_workflow import SkillWorkflow
+from zephyr.autonomy_core.skills.skill_workflow import SkillWorkflow
 
 
 class TestSkillWorkflowInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_team_optimizer.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_team_optimizer import SkillTeamOptimizer
+from zephyr.autonomy_core.skills.skill_team_optimizer import SkillTeamOptimizer
 
 
 class TestSkillTeamOptimizerInstantiation:

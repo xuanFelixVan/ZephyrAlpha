@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_risk_mitigator import RiskMitigator
+from zephyr.autonomy_core.skills.skill_risk_mitigator import RiskMitigator
 
 
 class TestRiskMitigatorInstantiation:

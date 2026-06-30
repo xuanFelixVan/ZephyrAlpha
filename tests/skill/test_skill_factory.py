@@ -18,7 +18,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_factory import SkillFactory
+from zephyr.autonomy_core.skills.skill_factory import SkillFactory
 
 
 class TestSkillFactoryInstantiation:

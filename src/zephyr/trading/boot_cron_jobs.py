@@ -42,8 +42,8 @@ def register_boot_cron_jobs(
 
         def _on_freshness_critical(payload: dict) -> None:
             try:
-                from zephyr.autonomy_core.skill_freshness_ext import auto_deprecate_skill
-                from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle
+                from zephyr.autonomy_core.skills.skill_freshness_ext import auto_deprecate_skill
+                from zephyr.autonomy_core.skills.skill_lifecycle import SkillLifecycle
 
                 sl = SkillLifecycle()
                 for item in payload.get("criticals", []):

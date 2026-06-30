@@ -16,7 +16,7 @@ from __future__ import annotations
 from datetime import datetime
 from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.skill_executor import (
+from zephyr.autonomy_core.skills.skill_executor import (
     AuditEvent,
     BudgetEnforcer,
     EscalationHandler,
@@ -261,7 +261,7 @@ class TestKBIntegration:
 
 class TestSkillExecutorInit:
     def test_instantiation_with_default_loader(self):
-        with patch("zephyr.autonomy_core.skill_executor.SkillLoader"):
+        with patch("zephyr.autonomy_core.skills.skill_executor.SkillLoader"):
             ex = SkillExecutor()
             assert ex.loader is not None
             assert ex.audit_log == []
@@ -291,7 +291,7 @@ class TestSkillExecutorExecute:
         }
         mock_loader._load_l2_body.return_value = "Skill body content here"
         mock_loader._load_registry.return_value = {"skills": {"domain": {"test-skill": {}}, "role": {}}}
-        with patch("zephyr.autonomy_core.skill_executor.GateEngine", create=True):
+        with patch("zephyr.autonomy_core.skills.skill_executor.GateEngine", create=True):
             ex = SkillExecutor(loader=mock_loader)
             result = ex.execute("test-skill", "test task")
             assert result["skill_id"] == "test-skill"

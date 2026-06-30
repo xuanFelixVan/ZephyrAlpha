@@ -14,7 +14,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.skill_observability import SkillObservability, Span, Trace
+from zephyr.autonomy_core.skills.skill_observability import SkillObservability, Span, Trace
 
 
 @pytest.fixture(autouse=True)

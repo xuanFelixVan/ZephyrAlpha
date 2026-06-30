@@ -11,8 +11,8 @@
 # [TESTS] tests/test_skill_lifecycle.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_lifecycle import SkillLifecycle, Transition
-from zephyr.autonomy_core.skill_model import SkillStatus
+from zephyr.autonomy_core.skills.skill_lifecycle import SkillLifecycle, Transition
+from zephyr.autonomy_core.skills.skill_model import SkillStatus
 
 
 class TestTransitionInstantiation:

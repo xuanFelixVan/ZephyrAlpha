@@ -16,7 +16,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from zephyr.autonomy_core.skill_model import (
+from zephyr.autonomy_core.skills.skill_model import (
     ProgressiveLevel,
     SkillModel,
     SkillStatus,

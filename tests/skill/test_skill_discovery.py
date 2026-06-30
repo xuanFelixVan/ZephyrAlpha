@@ -14,7 +14,7 @@
 import os
 import tempfile
 
-from zephyr.autonomy_core.skill_discovery import DiscoveryGap, DiscoveryResult, SkillDiscovery
+from zephyr.autonomy_core.skills.skill_discovery import DiscoveryGap, DiscoveryResult, SkillDiscovery
 
 
 class TestDiscoveryGapInstantiation:

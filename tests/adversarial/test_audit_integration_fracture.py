@@ -249,7 +249,7 @@ class TestSkillExecutorIntegration:
 
     def test_skill_executor_persists_audit(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.autonomy_core.skill_executor import SkillExecutor
+        from zephyr.autonomy_core.skills.skill_executor import SkillExecutor
         from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)

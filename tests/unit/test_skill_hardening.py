@@ -11,18 +11,18 @@
 import threading
 import time
 
-from zephyr.autonomy_core.skill_calibration import SkillCalibration
-from zephyr.autonomy_core.skill_consensus import SkillConsensus
-from zephyr.autonomy_core.skill_di import SkillDI
-from zephyr.autonomy_core.skill_feature_flags import SkillFeatureFlags
-from zephyr.autonomy_core.skill_idempotency import SkillIdempotency
-from zephyr.autonomy_core.skill_kill_switch import SkillKillSwitch
-from zephyr.autonomy_core.skill_lineage import SkillLineage
-from zephyr.autonomy_core.skill_locking import SkillLock
-from zephyr.autonomy_core.skill_prompt_cache import SkillPromptCache
-from zephyr.autonomy_core.skill_resilience import SkillResilience
-from zephyr.autonomy_core.skill_schema_registry import SkillSchemaRegistry
-from zephyr.autonomy_core.skill_temperature import SkillTemperature
+from zephyr.autonomy_core.skills.skill_calibration import SkillCalibration
+from zephyr.autonomy_core.skills.skill_consensus import SkillConsensus
+from zephyr.autonomy_core.skills.skill_di import SkillDI
+from zephyr.autonomy_core.skills.skill_feature_flags import SkillFeatureFlags
+from zephyr.autonomy_core.skills.skill_idempotency import SkillIdempotency
+from zephyr.autonomy_core.skills.skill_kill_switch import SkillKillSwitch
+from zephyr.autonomy_core.skills.skill_lineage import SkillLineage
+from zephyr.autonomy_core.skills.skill_locking import SkillLock
+from zephyr.autonomy_core.skills.skill_prompt_cache import SkillPromptCache
+from zephyr.autonomy_core.skills.skill_resilience import SkillResilience
+from zephyr.autonomy_core.skills.skill_schema_registry import SkillSchemaRegistry
+from zephyr.autonomy_core.skills.skill_temperature import SkillTemperature
 
 
 class TestConcurrencySafety:

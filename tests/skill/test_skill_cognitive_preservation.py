@@ -16,7 +16,7 @@ from __future__ import annotations
 import time
 from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_cognitive_preservation import (
+from zephyr.autonomy_core.skills.skill_cognitive_preservation import (
     CognitiveSnapshot,
     SkillCognitivePreservation,
 )

@@ -17,8 +17,8 @@ import time
 
 import pytest
 
-from zephyr.autonomy_core.skill_kill_switch import SkillKillSwitch
-from zephyr.autonomy_core.skill_model import SkillStatus
+from zephyr.autonomy_core.skills.skill_kill_switch import SkillKillSwitch
+from zephyr.autonomy_core.skills.skill_model import SkillStatus
 
 
 @pytest.fixture(autouse=True)

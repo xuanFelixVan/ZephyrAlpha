@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_shadow.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_shadow import SkillShadowDeploy
+from zephyr.autonomy_core.skills.skill_shadow import SkillShadowDeploy
 
 
 class TestSkillShadowDeployInstantiation:

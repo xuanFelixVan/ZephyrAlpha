@@ -31,7 +31,7 @@ import threading
 import pytest
 
 from zephyr.autonomy_core.context_budget import ContextBudget, TruncationStrategy
-from zephyr.autonomy_core.skill_registry import (
+from zephyr.autonomy_core.skills.skill_registry import (
     PromptTemplate,
     PromptVariable,
     SkillDefinition,

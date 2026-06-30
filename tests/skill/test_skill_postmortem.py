@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
+from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
 
 
 class TestSkillPostmortemInferSymptomCategory:

@@ -655,7 +655,7 @@ class PipelineOrchestrator:
 
                 if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
                     try:
-                        from zephyr.autonomy_core.skill_feedback import SkillFeedback
+                        from zephyr.autonomy_core.skills.skill_feedback import SkillFeedback
 
                         fb = SkillFeedback()
                         for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:

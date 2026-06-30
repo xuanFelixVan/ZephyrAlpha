@@ -13,7 +13,7 @@
 
 import copy
 
-from zephyr.autonomy_core.skill_context_isolation import ContextIsolation
+from zephyr.autonomy_core.skills.skill_context_isolation import ContextIsolation
 
 
 class TestContextIsolationInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_tokenomics.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_tokenomics import (
+from zephyr.autonomy_core.skills.skill_tokenomics import (
     SkillBudgetPreset,
     SkillTokenomics,
     TokenBudget,

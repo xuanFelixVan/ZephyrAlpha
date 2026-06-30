@@ -14,7 +14,7 @@
 import time
 from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_telemetry import SkillTelemetry
+from zephyr.autonomy_core.skills.skill_telemetry import SkillTelemetry
 
 
 class TestSkillTelemetryInstantiation:

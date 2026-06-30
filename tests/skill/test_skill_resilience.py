@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_resilience import SkillResilience
+from zephyr.autonomy_core.skills.skill_resilience import SkillResilience
 
 
 @pytest.fixture(autouse=True)
@@ -118,7 +118,7 @@ class TestRetryWithBackoff:
                 raise ValueError("transient")
             return "ok"
 
-        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
+        with patch("zephyr.autonomy_core.skills.skill_resilience.time.sleep"):
             result, attempts = SkillResilience.retry_with_backoff("skill_flaky", flaky, max_retries=3)
         assert result == "ok"
         assert attempts == 2
@@ -127,7 +127,7 @@ class TestRetryWithBackoff:
         def always_fail():
             raise RuntimeError("boom")
 
-        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
+        with patch("zephyr.autonomy_core.skills.skill_resilience.time.sleep"):
             with pytest.raises(RuntimeError, match="boom"):
                 SkillResilience.retry_with_backoff("skill_dead", always_fail, max_retries=2)
 
@@ -139,7 +139,7 @@ class TestRetryWithBackoff:
             call_count += 1
             raise ValueError("fail")
 
-        with patch("zephyr.autonomy_core.skill_resilience.time.sleep"):
+        with patch("zephyr.autonomy_core.skills.skill_resilience.time.sleep"):
             with pytest.raises(ValueError):
                 SkillResilience.retry_with_backoff("skill_dead2", always_fail)
         assert call_count == SkillResilience.MAX_RETRIES

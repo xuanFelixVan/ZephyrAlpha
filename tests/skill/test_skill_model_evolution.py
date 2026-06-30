@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skill_model_evolution import _MODEL_PROFILES, SkillModelEvolution
+from zephyr.autonomy_core.skills.skill_model_evolution import _MODEL_PROFILES, SkillModelEvolution
 
 
 class TestSkillModelEvolutionInstantiation:

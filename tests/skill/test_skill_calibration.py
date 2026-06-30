@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.skill_calibration import CalibrationEntry, SkillCalibration
+from zephyr.autonomy_core.skills.skill_calibration import CalibrationEntry, SkillCalibration
 
 
 class TestCalibrationEntry:

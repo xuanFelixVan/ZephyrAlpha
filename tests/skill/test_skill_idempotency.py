@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.autonomy_core.skill_idempotency import SkillIdempotency
+from zephyr.autonomy_core.skills.skill_idempotency import SkillIdempotency
 
 
 @pytest.fixture(autouse=True)

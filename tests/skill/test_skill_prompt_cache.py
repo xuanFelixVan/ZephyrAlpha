@@ -14,7 +14,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.skill_prompt_cache import SkillPromptCache
+from zephyr.autonomy_core.skills.skill_prompt_cache import SkillPromptCache
 
 
 @pytest.fixture(autouse=True)

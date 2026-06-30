@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_knowledge_base.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_knowledge_base import SkillKnowledgeBridge
+from zephyr.autonomy_core.skills.skill_knowledge_base import SkillKnowledgeBridge
 
 
 class TestSkillKnowledgeBridgeInstantiation:

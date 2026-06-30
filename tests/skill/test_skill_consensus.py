@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.skill_consensus import SkillConsensus, VoteResult
+from zephyr.autonomy_core.skills.skill_consensus import SkillConsensus, VoteResult
 
 
 class TestVoteResultInit:
@@ -115,7 +115,7 @@ class TestMajorityVote:
         mock_fdm = MagicMock()
         mock_fdm.current_state.return_value = {"freshness_score": 50}
         with patch(
-            "zephyr.autonomy_core.skill_freshness.FreshnessDecayModel",
+            "zephyr.autonomy_core.skills.skill_freshness.FreshnessDecayModel",
             return_value=mock_fdm,
         ):
             winner, result = SkillConsensus.majority_vote(

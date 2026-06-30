@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skill_cross_model import (
+from zephyr.autonomy_core.skills.skill_cross_model import (
     CrossModelContext,
     ModelCapability,
     ModelProvider,
@@ -183,7 +183,7 @@ class TestAdaptMessages:
         assert system_msgs[0]["content"] == "Be helpful"
 
     def test_anthropic_tag_style_wraps_system(self):
-        from zephyr.autonomy_core.skill_cross_model import _MODEL_CAPABILITIES
+        from zephyr.autonomy_core.skills.skill_cross_model import _MODEL_CAPABILITIES
 
         scm = SkillCrossModel()
         ctx = CrossModelContext(system_prompt="Be helpful", user_content="Hello")

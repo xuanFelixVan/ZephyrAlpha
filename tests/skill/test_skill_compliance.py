@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_compliance import PII_PATTERNS, SkillCompliance
+from zephyr.autonomy_core.skills.skill_compliance import PII_PATTERNS, SkillCompliance
 
 
 class TestSkillComplianceInit:

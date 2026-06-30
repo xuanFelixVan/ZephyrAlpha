@@ -17,7 +17,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
 
 
 class TestFreshnessDecayModelInstantiation:
@@ -138,7 +138,7 @@ class TestBoost:
 class TestLoadSave:
     def test_load_nonexistent_returns_empty(self, tmp_path):
         fdm = FreshnessDecayModel()
-        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", tmp_path / "nonexistent.json"):
+        with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", tmp_path / "nonexistent.json"):
             result = fdm._load()
         assert result == {}
 
@@ -148,7 +148,7 @@ class TestLoadSave:
             json.dumps({"SKILL-X": {"last_validated": "2025-01-01T00:00:00+00:00", "boost": 10}}), encoding="utf-8"
         )
         fdm = FreshnessDecayModel()
-        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
             result = fdm._load()
         assert "SKILL-X" in result
 
@@ -156,7 +156,7 @@ class TestLoadSave:
         hist = tmp_path / "bad.json"
         hist.write_text("not valid json{{{", encoding="utf-8")
         fdm = FreshnessDecayModel()
-        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
             result = fdm._load()
         assert result == {}
 
@@ -164,7 +164,7 @@ class TestLoadSave:
         hist = tmp_path / "roundtrip.json"
         fdm = FreshnessDecayModel()
         data = {"SKILL-RT": {"last_validated": "2025-06-01T00:00:00+00:00", "boost": 30}}
-        with patch("zephyr.autonomy_core.skill_freshness._HISTORY", hist):
+        with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
             fdm._save(data)
             loaded = fdm._load()
         assert loaded == data

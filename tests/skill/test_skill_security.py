@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_security.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_security import SkillSecurity
+from zephyr.autonomy_core.skills.skill_security import SkillSecurity
 
 
 class TestSkillSecurityInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_translator.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_translator import _MODEL_ADAPTATIONS, SkillTranslator
+from zephyr.autonomy_core.skills.skill_translator import _MODEL_ADAPTATIONS, SkillTranslator
 
 
 class TestSkillTranslatorInstantiation:

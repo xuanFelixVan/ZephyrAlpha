@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_lineage.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_lineage import SkillLineage
+from zephyr.autonomy_core.skills.skill_lineage import SkillLineage
 
 
 class TestSkillLineageInstantiation:

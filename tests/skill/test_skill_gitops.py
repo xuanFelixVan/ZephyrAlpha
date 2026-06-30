@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_gitops import SkillGitOps
+from zephyr.autonomy_core.skills.skill_gitops import SkillGitOps
 
 
 class TestSkillGitOpsInstantiation:

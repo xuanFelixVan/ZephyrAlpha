@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.skill_economics import PRICING, SkillEconomics
+from zephyr.autonomy_core.skills.skill_economics import PRICING, SkillEconomics
 
 
 @pytest.fixture

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_canary import SkillCanary
+from zephyr.autonomy_core.skills.skill_canary import SkillCanary
 
 
 class TestSkillCanaryInit:

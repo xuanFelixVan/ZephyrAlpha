@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.skill_explain import SkillExplain
+from zephyr.autonomy_core.skills.skill_explain import SkillExplain
 
 
 class TestSkillExplainInstantiation:
@@ -166,8 +166,8 @@ class TestIsolateFactors:
         with patch.dict(
             "sys.modules",
             {
-                "zephyr.autonomy_core.skill_evaluator": MagicMock(SkillEvaluator=mock_eval),
-                "zephyr.autonomy_core.skill_model_evolution": MagicMock(SkillModelEvolution=mock_evo),
+                "zephyr.autonomy_core.skills.skill_evaluator": MagicMock(SkillEvaluator=mock_eval),
+                "zephyr.autonomy_core.skills.skill_model_evolution": MagicMock(SkillModelEvolution=mock_evo),
             },
         ):
             result = SkillExplain.isolate_factors(
@@ -185,11 +185,11 @@ class TestIsolateFactors:
     def test_isolation_with_import_failure(self):
         with (
             patch(
-                "zephyr.autonomy_core.skill_evaluator.SkillEvaluator.evaluate",
+                "zephyr.autonomy_core.skills.skill_evaluator.SkillEvaluator.evaluate",
                 side_effect=RuntimeError("test error"),
             ),
             patch(
-                "zephyr.autonomy_core.skill_model_evolution.SkillModelEvolution.assess_impact",
+                "zephyr.autonomy_core.skills.skill_model_evolution.SkillModelEvolution.assess_impact",
                 side_effect=RuntimeError("test error"),
             ),
         ):

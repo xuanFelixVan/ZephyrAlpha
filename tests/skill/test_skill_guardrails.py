@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_guardrails import DESTRUCTIVE, SkillGuardrails
+from zephyr.autonomy_core.skills.skill_guardrails import DESTRUCTIVE, SkillGuardrails
 
 
 class TestSkillGuardrailsInstantiation:

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skill_contract import SkillContract
+from zephyr.autonomy_core.skills.skill_contract import SkillContract
 
 
 class TestSkillContractInstantiation:

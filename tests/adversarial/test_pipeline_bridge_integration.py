@@ -24,7 +24,7 @@ from zephyr.autonomy_core.integration.pipeline_bridge import (
     SkillContextInjector,
     SkillInjectionResult,
 )
-from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 
 
 class TestPipelineSkillBridge:

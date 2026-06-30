@@ -19,7 +19,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.autonomy_core.skill_durable import DurableExecution
+from zephyr.autonomy_core.skills.skill_durable import DurableExecution
 
 
 @pytest.fixture

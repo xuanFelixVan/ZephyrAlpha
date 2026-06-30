@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.skill_di import SkillDI
+from zephyr.autonomy_core.skills.skill_di import SkillDI
 
 
 @pytest.fixture(autouse=True)

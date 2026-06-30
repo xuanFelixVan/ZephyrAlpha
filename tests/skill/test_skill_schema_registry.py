@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.skill_schema_registry import SkillSchemaRegistry
+from zephyr.autonomy_core.skills.skill_schema_registry import SkillSchemaRegistry
 
 
 @pytest.fixture(autouse=True)

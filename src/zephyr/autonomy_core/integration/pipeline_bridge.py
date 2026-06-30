@@ -33,7 +33,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 from zephyr.autonomy_core.trigger_router import ConstructionStage, TriggerRouter
 
 

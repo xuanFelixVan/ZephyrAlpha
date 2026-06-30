@@ -15,13 +15,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.skill_freshness_ext import (
+from zephyr.autonomy_core.skills.skill_freshness_ext import (
     auto_deprecate_skill,
     increment_round,
     scan_all_freshness,
     should_load_onboarding,
 )
-from zephyr.autonomy_core.skill_model import SkillStatus
+from zephyr.autonomy_core.skills.skill_model import SkillStatus
 
 
 class TestScanAllFreshness:
@@ -62,7 +62,7 @@ class TestScanAllFreshness:
         assert result["criticals"] == 0
 
     def test_scan_none_model_creates_default(self):
-        with patch("zephyr.autonomy_core.skill_freshness_ext.FreshnessDecayModel") as MockCls:
+        with patch("zephyr.autonomy_core.skills.skill_freshness_ext.FreshnessDecayModel") as MockCls:
             instance = MagicMock()
             instance.WARNING_THRESHOLD = 30.0
             instance.CRITICAL_THRESHOLD = 10.0

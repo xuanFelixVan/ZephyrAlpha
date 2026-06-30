@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_sandbox import (
+from zephyr.autonomy_core.skills.skill_sandbox import (
     _DEFAULT_SAFE_TOOLS,
     _FORBIDDEN_TOOLS,
     SkillSandbox,
@@ -26,7 +26,7 @@ from zephyr.autonomy_core.skill_sandbox import (
 
 @pytest.fixture(autouse=True)
 def _mock_write_to_core():
-    with patch("zephyr.autonomy_core.skill_sandbox.write_to_core") as mock_wtc:
+    with patch("zephyr.autonomy_core.skills.skill_sandbox.write_to_core") as mock_wtc:
         yield mock_wtc
 
 

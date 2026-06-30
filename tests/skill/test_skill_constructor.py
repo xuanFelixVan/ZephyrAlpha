@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_constructor import SkillConstructor
+from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
 
 class TestSkillConstructorInit:
@@ -229,7 +229,7 @@ class TestValidateConstruction:
     def test_validate_missing_skill(self):
         sc = SkillConstructor()
         with patch(
-            "zephyr.autonomy_core.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skills.skill_loader.SkillLoader",
             side_effect=KeyError("not found"),
         ):
             result = sc.validate_construction("SKILL-NONEXISTENT")
@@ -239,7 +239,7 @@ class TestValidateConstruction:
     def test_validate_file_not_found(self):
         sc = SkillConstructor()
         with patch(
-            "zephyr.autonomy_core.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skills.skill_loader.SkillLoader",
             side_effect=FileNotFoundError("missing"),
         ):
             result = sc.validate_construction("SKILL-MISSING-FILE")
@@ -255,7 +255,7 @@ class TestValidateConstruction:
         }
         sc = SkillConstructor()
         with patch(
-            "zephyr.autonomy_core.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skills.skill_loader.SkillLoader",
             return_value=mock_loader,
         ):
             result = sc.validate_construction("SKILL-DOM-TES-001")
@@ -271,7 +271,7 @@ class TestValidateConstruction:
         }
         sc = SkillConstructor()
         with patch(
-            "zephyr.autonomy_core.skill_loader.SkillLoader",
+            "zephyr.autonomy_core.skills.skill_loader.SkillLoader",
             return_value=mock_loader,
         ):
             result = sc.validate_construction("SKILL-DOM-TES-002")

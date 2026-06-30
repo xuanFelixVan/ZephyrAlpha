@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.skill_ontology import SkillOntology
+from zephyr.autonomy_core.skills.skill_ontology import SkillOntology
 
 
 class TestSkillOntologyExtractEntities:

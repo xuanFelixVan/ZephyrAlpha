@@ -34,9 +34,9 @@ from typing import Any
 
 import yaml
 
-from zephyr.autonomy_core.skill_factory import SkillFactory
-from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
-from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.skills.skill_factory import SkillFactory
+from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
+from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 from zephyr.autonomy_core.trigger_router import TriggerRouter
 
 _AUDIT_AVAILABLE = False

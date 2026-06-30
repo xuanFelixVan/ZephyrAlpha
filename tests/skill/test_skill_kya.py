@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_kya.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_kya import RISKY, SkillKYA
+from zephyr.autonomy_core.skills.skill_kya import RISKY, SkillKYA
 
 
 class TestSkillKYAInstantiation:

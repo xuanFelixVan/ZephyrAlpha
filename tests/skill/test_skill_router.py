@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.autonomy_core.skill_router import ConstructionStage, SkillRouter, TriggerRouter
+from zephyr.autonomy_core.skills.skill_router import ConstructionStage, SkillRouter, TriggerRouter
 
 _MISSING_REGISTRY = Path("/nonexistent/skill_registry_for_test.yaml")
 

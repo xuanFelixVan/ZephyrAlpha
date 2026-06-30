@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.skill_attention import (
+from zephyr.autonomy_core.skills.skill_attention import (
     AttentionPlan,
     AttentionSlot,
     SkillAttention,

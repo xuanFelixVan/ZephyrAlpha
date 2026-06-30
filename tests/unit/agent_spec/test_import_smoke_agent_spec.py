@@ -40,7 +40,7 @@ class TestAgentSpecImportSmoke:
     def test_import_skill_model(self) -> None:
         """测试导入 SkillModel / SkillTier / SkillType."""
         _ensure_path()
-        from zephyr.autonomy_core.skill_model import (
+        from zephyr.autonomy_core.skills.skill_model import (
             SkillStatus,
             SkillTier,
             SkillType,
@@ -53,27 +53,27 @@ class TestAgentSpecImportSmoke:
     def test_import_skill_loader(self) -> None:
         """测试导入 SkillLoader."""
         _ensure_path()
-        from zephyr.autonomy_core.skill_loader import SkillLoader
+        from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 
         assert SkillLoader is not None
 
     def test_import_skill_factory(self) -> None:
         """测试导入 SkillFactory — 蓝图→Skill 升级引擎核心."""
         _ensure_path()
-        from zephyr.autonomy_core.skill_factory import SkillFactory
+        from zephyr.autonomy_core.skills.skill_factory import SkillFactory
 
         assert SkillFactory is not None
 
     def test_import_skill_router(self) -> None:
         _ensure_path()
-        from zephyr.autonomy_core.skill_router import SkillRouter
+        from zephyr.autonomy_core.skills.skill_router import SkillRouter
 
         assert SkillRouter is not None
 
     def test_import_skill_constructor(self) -> None:
         """测试导入 SkillConstructor — 蓝图→Skill 构建器."""
         _ensure_path()
-        from zephyr.autonomy_core.skill_constructor import SkillConstructor
+        from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         assert SkillConstructor is not None
 

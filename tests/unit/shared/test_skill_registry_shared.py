@@ -38,7 +38,7 @@ Safety: MEDIUM（Pydantic 模型契约验证）
 import pytest
 from pydantic import ValidationError
 
-from zephyr.autonomy_core.skill_registry import (
+from zephyr.autonomy_core.skills.skill_registry import (
     PromptTemplate,
     PromptVariable,
     SkillCategory,

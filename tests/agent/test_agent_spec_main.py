@@ -103,7 +103,7 @@ class TestCmdStatus:
 
     def test_reports_degraded_on_import_failure(self, capsys):
         with patch("zephyr.autonomy_core.__main__._load_registry", side_effect=RuntimeError("fail")):
-            with patch.dict(sys.modules, {"zephyr.autonomy_core.skill_model": None}):
+            with patch.dict(sys.modules, {"zephyr.autonomy_core.skills.skill_model": None}):
                 result = cmd_status()
                 assert result == 1
 

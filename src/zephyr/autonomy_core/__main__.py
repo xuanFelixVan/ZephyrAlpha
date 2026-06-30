@@ -68,7 +68,7 @@ def cmd_status() -> int:
     """显示模块健康状态."""
     ok = True
     try:
-        from zephyr.autonomy_core.skill_model import SkillStatus, SkillTier, SkillType
+        from zephyr.autonomy_core.skills.skill_model import SkillStatus, SkillTier, SkillType
 
         print(f"skill_model       OK  ({len(SkillTier)} tiers, {len(SkillType)} types, {len(SkillStatus)} statuses)")
     except Exception as exc:
@@ -76,7 +76,7 @@ def cmd_status() -> int:
         ok = False
 
     try:
-        from zephyr.autonomy_core.skill_loader import SkillLoader
+        from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 
         loader = SkillLoader()
         print(f"skill_loader      OK  (path={loader.registry_path})")

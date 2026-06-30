@@ -70,28 +70,28 @@ class TestSelfEvolutionFidelityGate:
 
 class TestSkillConstructor:
     def test_keyword_inference(self):
-        from zephyr.autonomy_core.skill_constructor import SkillConstructor
+        from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
         result = c._infer_skill_name({"frontmatter": {}, "body": "database migration sql"})
         assert result == "database-specialist"
 
     def test_keyword_mcp(self):
-        from zephyr.autonomy_core.skill_constructor import SkillConstructor
+        from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
         result = c._infer_skill_name({"frontmatter": {}, "body": "MCP server tool"})
         assert result == "mcp-specialist"
 
     def test_keyword_security(self):
-        from zephyr.autonomy_core.skill_constructor import SkillConstructor
+        from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
         result = c._infer_skill_name({"frontmatter": {}, "body": "prompt injection security"})
         assert result == "lsg-security"
 
     def test_construct_blueprint_missing_file(self):
-        from zephyr.autonomy_core.skill_constructor import SkillConstructor
+        from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
         result = c.construct("d:/nonexistent/blueprint.md")
@@ -100,7 +100,7 @@ class TestSkillConstructor:
 
 class TestSkillEfficacyCalibrator:
     def test_run_benchmark_nonexistent_skill(self):
-        from zephyr.autonomy_core.skill_efficacy_calibrator import SkillEfficacyCalibrator
+        from zephyr.autonomy_core.skills.skill_efficacy_calibrator import SkillEfficacyCalibrator
 
         cal = SkillEfficacyCalibrator()
         result = cal.run_benchmark("NONEXISTENT-SKILL")
@@ -108,14 +108,14 @@ class TestSkillEfficacyCalibrator:
         assert result["passed"] is False
 
     def test_regression_detect_insufficient_data(self):
-        from zephyr.autonomy_core.skill_efficacy_calibrator import SkillsBenchRunner
+        from zephyr.autonomy_core.skills.skill_efficacy_calibrator import SkillsBenchRunner
 
         runner = SkillsBenchRunner()
         result = runner.detect_regression("no-data-skill")
         assert result["regression_detected"] is False
 
     def test_calibrate_stub_skill(self):
-        from zephyr.autonomy_core.skill_efficacy_calibrator import SkillEfficacyCalibrator
+        from zephyr.autonomy_core.skills.skill_efficacy_calibrator import SkillEfficacyCalibrator
 
         cal = SkillEfficacyCalibrator()
         result = cal.calibrate("NONEXISTENT-SKILL", 90.0)
@@ -124,20 +124,20 @@ class TestSkillEfficacyCalibrator:
 
 class TestSkillModelEvolution:
     def test_assess_unknown_old_model(self):
-        from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution
+        from zephyr.autonomy_core.skills.skill_model_evolution import SkillModelEvolution
 
         result = SkillModelEvolution.assess_impact("test-skill", "unknown-model", "deepseek-v3")
         assert result["risk"] == "unknown"
         assert "error" in result
 
     def test_assess_same_model(self):
-        from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution
+        from zephyr.autonomy_core.skills.skill_model_evolution import SkillModelEvolution
 
         result = SkillModelEvolution.assess_impact("test-skill", "deepseek-v3", "deepseek-v3")
         assert result["risk"] == "minimal"
 
     def test_assess_cross_family(self):
-        from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution
+        from zephyr.autonomy_core.skills.skill_model_evolution import SkillModelEvolution
 
         result = SkillModelEvolution.assess_impact("test-skill", "deepseek-v3", "claude-sonnet-4")
         assert result["risk"] in ("minimal", "low", "medium", "high", "critical")
@@ -146,7 +146,7 @@ class TestSkillModelEvolution:
 
 class TestSkillEvaluator:
     def test_evaluate_nonexistent(self):
-        from zephyr.autonomy_core.skill_evaluator import SkillEvaluator
+        from zephyr.autonomy_core.skills.skill_evaluator import SkillEvaluator
 
         result = SkillEvaluator.evaluate("NONEXISTENT-SKILL")
         assert result["overall_score"] == 0.0
@@ -155,7 +155,7 @@ class TestSkillEvaluator:
 
 class TestSkillPostmortem:
     def test_analyze_registration_error(self):
-        from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
+        from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
 
         result = SkillPostmortem.analyze("test-skill", "KeyError: skill not found")
         assert result["symptom_category"] == "registration"
@@ -164,7 +164,7 @@ class TestSkillPostmortem:
         assert len(result["preventive_actions"]) >= 1
 
     def test_analyze_budget_error(self):
-        from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
+        from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
 
         result = SkillPostmortem.analyze("test-skill", "token budget exceeded")
         assert result["symptom_category"] == "budget"
@@ -173,7 +173,7 @@ class TestSkillPostmortem:
 
 class TestSkillSandbox:
     def test_activate_sandbox(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         result = sb.activate()
@@ -182,7 +182,7 @@ class TestSkillSandbox:
         assert len(result["blocked_tools"]) > 0
 
     def test_allow_safe_tool(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -190,7 +190,7 @@ class TestSkillSandbox:
         assert allowed is True
 
     def test_block_forbidden_tool(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -198,7 +198,7 @@ class TestSkillSandbox:
         assert allowed is False
 
     def test_block_risky_tool_by_default(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -206,7 +206,7 @@ class TestSkillSandbox:
         assert allowed is False
 
     def test_dangerous_command_blocked(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -214,7 +214,7 @@ class TestSkillSandbox:
         assert allowed is False
 
     def test_safe_command_allowed(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -222,7 +222,7 @@ class TestSkillSandbox:
         assert allowed is True
 
     def test_deactivate(self):
-        from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+        from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 
         sb = SkillSandbox("test-skill")
         sb.activate()
@@ -232,14 +232,14 @@ class TestSkillSandbox:
 
 class TestSilentFailureDetector:
     def test_scan_clean_output(self):
-        from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
+        from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
 
         detector = SilentFailureDetector()
         result = detector.scan("test-skill", "All 5 checks passed successfully.")
         assert result["silent_failure_detected"] is False
 
     def test_scan_truncated_output(self):
-        from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
+        from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
 
         detector = SilentFailureDetector()
         result = detector.scan("test-skill", "The database contains many entries...")
@@ -247,7 +247,7 @@ class TestSilentFailureDetector:
         assert any(a["type"] == "output_truncation" for a in result["anomalies"])
 
     def test_scan_partial_success(self):
-        from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
+        from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
 
         detector = SilentFailureDetector()
         result = detector.scan("test-skill", "partially completed: 3/5 checks passed")
@@ -256,7 +256,7 @@ class TestSilentFailureDetector:
 
 class TestSkillExplain:
     def test_build_reasoning_chain(self):
-        from zephyr.autonomy_core.skill_explain import SkillExplain
+        from zephyr.autonomy_core.skills.skill_explain import SkillExplain
 
         chain = SkillExplain.build_reasoning_chain(
             "database-specialist",
@@ -268,7 +268,7 @@ class TestSkillExplain:
         assert chain["overall_confidence"] > 0.5
 
     def test_explain_routing(self):
-        from zephyr.autonomy_core.skill_explain import SkillExplain
+        from zephyr.autonomy_core.skills.skill_explain import SkillExplain
 
         result = SkillExplain.explain_routing(
             "audit the database migration",
@@ -278,7 +278,7 @@ class TestSkillExplain:
         assert result["chosen_skill"] == "drift-detector"
 
     def test_isolate_factors(self):
-        from zephyr.autonomy_core.skill_explain import SkillExplain
+        from zephyr.autonomy_core.skills.skill_explain import SkillExplain
 
         result = SkillExplain.isolate_factors("database-specialist", 0.75, "deepseek-v3")
         assert result["skill_factor"] >= 0.0
@@ -288,7 +288,7 @@ class TestSkillExplain:
 
 class TestSkillTranslator:
     def test_translate_deepseek_to_claude(self):
-        from zephyr.autonomy_core.skill_translator import SkillTranslator
+        from zephyr.autonomy_core.skills.skill_translator import SkillTranslator
 
         result = SkillTranslator.translate(
             "test-skill",
@@ -301,22 +301,22 @@ class TestSkillTranslator:
 
 class TestSkillGitOps:
     def test_version_bump_patch(self):
-        from zephyr.autonomy_core.skill_gitops import SkillGitOps
+        from zephyr.autonomy_core.skills.skill_gitops import SkillGitOps
 
         assert SkillGitOps.version_bump("1.2.3", "fix") == "1.2.4"
 
     def test_version_bump_minor(self):
-        from zephyr.autonomy_core.skill_gitops import SkillGitOps
+        from zephyr.autonomy_core.skills.skill_gitops import SkillGitOps
 
         assert SkillGitOps.version_bump("1.2.3", "feature") == "1.3.0"
 
     def test_version_bump_major(self):
-        from zephyr.autonomy_core.skill_gitops import SkillGitOps
+        from zephyr.autonomy_core.skills.skill_gitops import SkillGitOps
 
         assert SkillGitOps.version_bump("1.2.3", "breaking") == "2.0.0"
 
     def test_generate_branch_name(self):
-        from zephyr.autonomy_core.skill_gitops import SkillGitOps
+        from zephyr.autonomy_core.skills.skill_gitops import SkillGitOps
 
         branch = SkillGitOps.generate_branch_name("database-specialist", "fix", "fix timeout")
         assert "fix/" in branch.lower() or branch.startswith("fix")
@@ -324,7 +324,7 @@ class TestSkillGitOps:
 
 class TestSkillShadowDeploy:
     def test_shadow_run_identical(self):
-        from zephyr.autonomy_core.skill_shadow import SkillShadowDeploy
+        from zephyr.autonomy_core.skills.skill_shadow import SkillShadowDeploy
 
         shadow = SkillShadowDeploy()
         result = shadow.shadow_run("test-skill", "output content", "output content")
@@ -332,7 +332,7 @@ class TestSkillShadowDeploy:
         assert len(result["differences"]) == 0
 
     def test_shadow_run_different(self):
-        from zephyr.autonomy_core.skill_shadow import SkillShadowDeploy
+        from zephyr.autonomy_core.skills.skill_shadow import SkillShadowDeploy
 
         shadow = SkillShadowDeploy()
         result = shadow.shadow_run("test-skill", "old output", "new output different")
@@ -341,7 +341,7 @@ class TestSkillShadowDeploy:
 
 class TestSkillLearning:
     def test_add_execution_success(self):
-        from zephyr.autonomy_core.skill_learning import SkillLearning
+        from zephyr.autonomy_core.skills.skill_learning import SkillLearning
 
         learner = SkillLearning()
         result = learner.add_execution("test-skill", "MUST validated output", "MUST validated output", success=True)
@@ -349,14 +349,14 @@ class TestSkillLearning:
         assert result["delta"] == 0.0
 
     def test_add_execution_with_divergence(self):
-        from zephyr.autonomy_core.skill_learning import SkillLearning
+        from zephyr.autonomy_core.skills.skill_learning import SkillLearning
 
         learner = SkillLearning()
         result = learner.add_execution("test-skill", "wrong output", "expected output")
         assert result["delta"] > 0.0
 
     def test_get_learning_empty(self):
-        from zephyr.autonomy_core.skill_learning import SkillLearning
+        from zephyr.autonomy_core.skills.skill_learning import SkillLearning
 
         learner = SkillLearning()
         learning = learner.get_learning("no-such-skill")
@@ -365,14 +365,14 @@ class TestSkillLearning:
 
 class TestContextIsolation:
     def test_create_namespace(self):
-        from zephyr.autonomy_core.skill_context_isolation import ContextIsolation
+        from zephyr.autonomy_core.skills.skill_context_isolation import ContextIsolation
 
         iso = ContextIsolation()
         ns = iso.create_namespace("test-skill")
         assert ns == "ns:test-skill"
 
     def test_isolate_execution_strict(self):
-        from zephyr.autonomy_core.skill_context_isolation import ContextIsolation
+        from zephyr.autonomy_core.skills.skill_context_isolation import ContextIsolation
 
         iso = ContextIsolation(mode="strict")
         context = {"data": 1, "skill_previous_data": "leaked"}
@@ -381,7 +381,7 @@ class TestContextIsolation:
         assert "skill_previous_data" not in result["context"]
 
     def test_check_contamination(self):
-        from zephyr.autonomy_core.skill_context_isolation import ContextIsolation
+        from zephyr.autonomy_core.skills.skill_context_isolation import ContextIsolation
 
         iso = ContextIsolation()
         context = {"data": 1, "skill_other_data": "foreign"}
@@ -392,7 +392,7 @@ class TestContextIsolation:
 
 class TestSkillWorkflow:
     def test_define_workflow(self):
-        from zephyr.autonomy_core.skill_workflow import SkillWorkflow
+        from zephyr.autonomy_core.skills.skill_workflow import SkillWorkflow
 
         wf = SkillWorkflow()
         result = wf.define(
@@ -404,7 +404,7 @@ class TestSkillWorkflow:
         assert len(result["parallel_levels"]) >= 1
 
     def test_define_cycle_detection(self):
-        from zephyr.autonomy_core.skill_workflow import SkillWorkflow
+        from zephyr.autonomy_core.skills.skill_workflow import SkillWorkflow
 
         wf = SkillWorkflow()
         result = wf.define(
@@ -418,7 +418,7 @@ class TestSkillWorkflow:
 
 class TestDurableExecution:
     def test_start_and_complete(self):
-        from zephyr.autonomy_core.skill_durable import DurableExecution
+        from zephyr.autonomy_core.skills.skill_durable import DurableExecution
 
         durable = DurableExecution()
         exec_id = durable.start("test-skill", "migrate")
@@ -427,7 +427,7 @@ class TestDurableExecution:
         assert status["status"] == "completed"
 
     def test_start_and_resume(self):
-        from zephyr.autonomy_core.skill_durable import DurableExecution
+        from zephyr.autonomy_core.skills.skill_durable import DurableExecution
 
         durable = DurableExecution()
         exec_id = durable.start("test-skill", "migrate")
@@ -439,7 +439,7 @@ class TestDurableExecution:
 
 class TestSkillKnowledgeBase:
     def test_extract_from_skill(self):
-        from zephyr.autonomy_core.skill_knowledge_base import SkillKnowledgeBridge
+        from zephyr.autonomy_core.skills.skill_knowledge_base import SkillKnowledgeBridge
 
         kb = SkillKnowledgeBridge()
         entities = kb.extract_from_skill(
@@ -449,7 +449,7 @@ class TestSkillKnowledgeBase:
         assert len(entities) >= 1
 
     def test_sync_to_kb(self):
-        from zephyr.autonomy_core.skill_knowledge_base import SkillKnowledgeBridge
+        from zephyr.autonomy_core.skills.skill_knowledge_base import SkillKnowledgeBridge
 
         kb = SkillKnowledgeBridge()
         result = kb.sync_to_kb("test-skill", "MUST: validate inputs. `read_file` `grep`")
@@ -459,21 +459,21 @@ class TestSkillKnowledgeBase:
 
 class TestSkillGuardrails:
     def test_pre_execution_clean(self):
-        from zephyr.autonomy_core.skill_guardrails import SkillGuardrails
+        from zephyr.autonomy_core.skills.skill_guardrails import SkillGuardrails
 
         g = SkillGuardrails()
         result = g.check_pre_execution("test-skill", "read file", budget_remaining=100)
         assert result["allowed"] is True
 
     def test_pre_execution_destructive(self):
-        from zephyr.autonomy_core.skill_guardrails import SkillGuardrails
+        from zephyr.autonomy_core.skills.skill_guardrails import SkillGuardrails
 
         g = SkillGuardrails()
         result = g.check_pre_execution("test-skill", "DELETE FROM users")
         assert result["allowed"] is False
 
     def test_output_short_blocked(self):
-        from zephyr.autonomy_core.skill_guardrails import SkillGuardrails
+        from zephyr.autonomy_core.skills.skill_guardrails import SkillGuardrails
 
         g = SkillGuardrails()
         result = g.check_output("test-skill", "ok")
@@ -482,7 +482,7 @@ class TestSkillGuardrails:
 
 class TestSkillTeamOptimizer:
     def test_optimize(self):
-        from zephyr.autonomy_core.skill_team_optimizer import SkillTeamOptimizer
+        from zephyr.autonomy_core.skills.skill_team_optimizer import SkillTeamOptimizer
 
         result = SkillTeamOptimizer.optimize("fix database migration with rollback")
         assert len(result["best_team"]) == 3
@@ -514,7 +514,7 @@ class TestVibeCodingQualityGate:
 
 class TestSkillCanary:
     def test_deploy_canary(self):
-        from zephyr.autonomy_core.skill_canary import SkillCanary
+        from zephyr.autonomy_core.skills.skill_canary import SkillCanary
 
         canary = SkillCanary()
         result = canary.deploy_canary("test-skill", "0.2.0")
@@ -522,7 +522,7 @@ class TestSkillCanary:
         assert result["mode"] == "canary"
 
     def test_promote(self):
-        from zephyr.autonomy_core.skill_canary import SkillCanary
+        from zephyr.autonomy_core.skills.skill_canary import SkillCanary
 
         canary = SkillCanary()
         canary.deploy_canary("test-skill", "0.2.0")
@@ -530,7 +530,7 @@ class TestSkillCanary:
         assert "promoted" in result.get("status", "").lower() or result["traffic_percent"] == 100
 
     def test_rollback(self):
-        from zephyr.autonomy_core.skill_canary import SkillCanary
+        from zephyr.autonomy_core.skills.skill_canary import SkillCanary
 
         canary = SkillCanary()
         canary.deploy_canary("test-skill", "0.2.0")
@@ -540,14 +540,14 @@ class TestSkillCanary:
 
 class TestSkillEconomics:
     def test_track_cost(self):
-        from zephyr.autonomy_core.skill_economics import SkillEconomics
+        from zephyr.autonomy_core.skills.skill_economics import SkillEconomics
 
         econ = SkillEconomics()
         result = econ.track_cost("test-skill", 500, 200, "deepseek-chat")
         assert result["cost_estimated"] > 0.0
 
     def test_recommend_cheapest(self):
-        from zephyr.autonomy_core.skill_economics import SkillEconomics
+        from zephyr.autonomy_core.skills.skill_economics import SkillEconomics
 
         econ = SkillEconomics()
         result = econ.recommend_cheapest_model("code_generation")
@@ -556,14 +556,14 @@ class TestSkillEconomics:
 
 class TestSkillCompliance:
     def test_check_pii_detection(self):
-        from zephyr.autonomy_core.skill_compliance import SkillCompliance
+        from zephyr.autonomy_core.skills.skill_compliance import SkillCompliance
 
         result = SkillCompliance.check("test-skill", "user email: test@example.com")
         assert result["compliant"] is False
         assert result["pii_check"]["pii_detected"] is True
 
     def test_check_no_pii(self):
-        from zephyr.autonomy_core.skill_compliance import SkillCompliance
+        from zephyr.autonomy_core.skills.skill_compliance import SkillCompliance
 
         result = SkillCompliance.check("test-skill", "No personal data in this output.")
         assert result["compliant"] is True
@@ -571,7 +571,7 @@ class TestSkillCompliance:
 
 class TestSkillKYA:
     def test_certify_basic(self):
-        from zephyr.autonomy_core.skill_kya import SkillKYA
+        from zephyr.autonomy_core.skills.skill_kya import SkillKYA
 
         kya = SkillKYA()
         result = kya.certify("test-skill", ["read_file", "grep"])
@@ -579,14 +579,14 @@ class TestSkillKYA:
         assert result["certified"] is True
 
     def test_certify_advanced(self):
-        from zephyr.autonomy_core.skill_kya import SkillKYA
+        from zephyr.autonomy_core.skills.skill_kya import SkillKYA
 
         kya = SkillKYA()
         result = kya.certify("test-skill", ["read_file", "write_file", "run_command", "search_replace"])
         assert result["kya_level"] in ("intermediate", "advanced")
 
     def test_revalidate(self):
-        from zephyr.autonomy_core.skill_kya import SkillKYA
+        from zephyr.autonomy_core.skills.skill_kya import SkillKYA
 
         kya = SkillKYA()
         kya.certify("test-skill", ["read_file"])
@@ -596,14 +596,14 @@ class TestSkillKYA:
 
 class TestSkillCacheProvider:
     def test_memory_cache(self):
-        from zephyr.autonomy_core.skill_cache_provider import SkillCacheProvider
+        from zephyr.autonomy_core.skills.skill_cache_provider import SkillCacheProvider
 
         cache = SkillCacheProvider("memory")
         cache.set("key1", {"data": 42})
         assert cache.get("key1") == {"data": 42}
 
     def test_invalidate(self):
-        from zephyr.autonomy_core.skill_cache_provider import SkillCacheProvider
+        from zephyr.autonomy_core.skills.skill_cache_provider import SkillCacheProvider
 
         cache = SkillCacheProvider("memory")
         cache.set("key2", "value")
@@ -613,14 +613,14 @@ class TestSkillCacheProvider:
 
 class TestSkillBreakageChecker:
     def test_no_breaking_change(self):
-        from zephyr.autonomy_core.skill_breakage_checker import SkillBreakageChecker
+        from zephyr.autonomy_core.skills.skill_breakage_checker import SkillBreakageChecker
 
         content = "## CRITICAL\n- MUST validate\nUse `read_file` `grep`"
         result = SkillBreakageChecker().check(content, content)
         assert result["compatible"] is True
 
     def test_constraint_removed(self):
-        from zephyr.autonomy_core.skill_breakage_checker import SkillBreakageChecker
+        from zephyr.autonomy_core.skills.skill_breakage_checker import SkillBreakageChecker
 
         old = "## CRITICAL\n- MUST validate\n- 不可删除"
         new = "## Section\nNo constraints here"
@@ -631,14 +631,14 @@ class TestSkillBreakageChecker:
 
 class TestSkillContract:
     def test_validate_missing_contracts(self):
-        from zephyr.autonomy_core.skill_contract import SkillContract
+        from zephyr.autonomy_core.skills.skill_contract import SkillContract
 
         result = SkillContract.validate_contracts("test-skill", "No inputs or outputs defined here.")
         assert result["contracts_valid"] is False
         assert len(result["violations"]) >= 1
 
     def test_validate_with_contracts(self):
-        from zephyr.autonomy_core.skill_contract import SkillContract
+        from zephyr.autonomy_core.skills.skill_contract import SkillContract
 
         result = SkillContract.validate_contracts(
             "test-skill",
@@ -663,7 +663,7 @@ class TestPipelineSkillBridge:
 
 class TestFreshnessDecayModel:
     def test_current_state_unregistered(self):
-        from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
+        from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
 
         f = FreshnessDecayModel()
         state = f.current_state("nonexistent-skill-9999")

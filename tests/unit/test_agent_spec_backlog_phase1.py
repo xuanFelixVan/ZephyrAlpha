@@ -22,8 +22,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.autonomy_core.skill_compliance import SkillCompliance
-from zephyr.autonomy_core.skill_executor import (
+from zephyr.autonomy_core.skills.skill_compliance import SkillCompliance
+from zephyr.autonomy_core.skills.skill_executor import (
     BudgetEnforcer,
     EscalationHandler,
     GateResult,
@@ -31,9 +31,9 @@ from zephyr.autonomy_core.skill_executor import (
     PermissionLevel,
     SkillExecutor,
 )
-from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
-from zephyr.autonomy_core.skill_sandbox import SkillSandbox
-from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
+from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
+from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
+from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
 
 
 class TestKBIntegration:
@@ -60,7 +60,7 @@ class TestKBIntegration:
         assert result_above["action"] == "upgrade_to_instruction"
 
     def test_sync_freshness_returns_float(self):
-        with patch("zephyr.autonomy_core.skill_freshness.FreshnessDecayModel") as MockModel:
+        with patch("zephyr.autonomy_core.skills.skill_freshness.FreshnessDecayModel") as MockModel:
             instance = MockModel.return_value
             instance.current_state.return_value = {
                 "skill_id": "SKILL-004",

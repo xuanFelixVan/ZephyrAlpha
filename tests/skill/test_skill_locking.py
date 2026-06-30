@@ -19,7 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.autonomy_core.skill_locking import SkillFileLock, SkillLock
+from zephyr.autonomy_core.skills.skill_locking import SkillFileLock, SkillLock
 
 
 class TestSkillLockInstantiation:

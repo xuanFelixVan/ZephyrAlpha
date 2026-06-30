@@ -52,13 +52,13 @@ class SkillRouterProtocol(Protocol):
 
 def create_skill_loader(registry_path: Path | None = None) -> SkillLoaderProtocol:
     """延迟导入并创建SkillLoader实例。"""
-    _mod = importlib.import_module("zephyr.autonomy_core.skill_loader")
+    _mod = importlib.import_module("zephyr.autonomy_core.skills.skill_loader")
     _SkillLoader = _mod.SkillLoader
     return _SkillLoader(registry_path=registry_path)
 
 
 def create_skill_router(registry_path: Path | None = None) -> SkillRouterProtocol:
     """延迟导入并创建SkillRouter实例。"""
-    _mod = importlib.import_module("zephyr.autonomy_core.skill_router")
+    _mod = importlib.import_module("zephyr.autonomy_core.skills.skill_router")
     _SkillRouter = _mod.SkillRouter
     return _SkillRouter(registry_path=registry_path)

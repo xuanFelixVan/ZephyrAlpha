@@ -26,7 +26,7 @@ from zephyr.autonomy_core.engine import SpecEngine
 from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
 )
-from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 from zephyr.shared.models import TaskCard
 
 

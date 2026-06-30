@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skill_prompt_opt import SkillPromptOptimizer
+from zephyr.autonomy_core.skills.skill_prompt_opt import SkillPromptOptimizer
 
 
 class TestSkillPromptOptimizerComputeReadability:

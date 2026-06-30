@@ -11,16 +11,16 @@ from __future__ import annotations
 """Backlog Phase 2 测试: cross-model, ontology, prompt-eng, model-evolution, xai."""
 
 
-from zephyr.autonomy_core.skill_cross_model import (
+from zephyr.autonomy_core.skills.skill_cross_model import (
     CrossModelContext,
     ModelCapability,
     ModelProvider,
     SkillCrossModel,
 )
-from zephyr.autonomy_core.skill_explain import SkillExplain
-from zephyr.autonomy_core.skill_model_evolution import SkillModelEvolution
-from zephyr.autonomy_core.skill_ontology import SkillOntology
-from zephyr.autonomy_core.skill_prompt_opt import SkillPromptOptimizer
+from zephyr.autonomy_core.skills.skill_explain import SkillExplain
+from zephyr.autonomy_core.skills.skill_model_evolution import SkillModelEvolution
+from zephyr.autonomy_core.skills.skill_ontology import SkillOntology
+from zephyr.autonomy_core.skills.skill_prompt_opt import SkillPromptOptimizer
 
 
 class TestSkillCrossModel:

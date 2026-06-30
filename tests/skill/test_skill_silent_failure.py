@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_silent_failure.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
+from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
 
 
 class TestSilentFailureDetectorInstantiation:

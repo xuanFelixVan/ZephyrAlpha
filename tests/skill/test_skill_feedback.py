@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import patch
 
-from zephyr.autonomy_core.skill_feedback import FeedbackSignal, SkillFeedback
+from zephyr.autonomy_core.skills.skill_feedback import FeedbackSignal, SkillFeedback
 
 
 @dataclass

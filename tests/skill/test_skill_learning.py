@@ -11,7 +11,7 @@
 # [TESTS] tests/test_skill_learning.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.skill_learning import SkillLearning
+from zephyr.autonomy_core.skills.skill_learning import SkillLearning
 
 
 class TestSkillLearningInstantiation:
