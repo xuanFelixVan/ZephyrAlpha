@@ -112,99 +112,35 @@ repos:
 
   - repo: local
     hooks:
-      # ── GATE-01: _index.yaml 可达性检查 ──
-      - id: gate-01-index-reachability
-        name: "GATE-01: _index.yaml 可达性检查"
+      # ── GATE-ARCH: 架构门禁合并簇（原 GATE-01/02/03/06/07 五合一）──
+      # 合并说明：5 个架构子门禁共用 check_architecture_gates.py，合并为单 hook。
+      #           无 --gate 参数时脚本运行全量 19 项架构检查（GATE-01~08/A/B/D/E/SC/SUM/BS/EXTRA-01~04），
+      #           原 5 项（01/02/03/06/07）为子集，检测能力不丢失（实际增强）。
+      #           stages: [manual] 保持不变——手动诊断工具，不卡常规 commit。
+      - id: gate-arch
+        name: "GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）"
         entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-        args: ["--gate", "01"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
         stages: [manual]
-        description: "检查所有 _index.yaml 文件的引用可达性，确保无断链"
+        description: "架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 19 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强"
 
-      # ── GATE-02: P0 接口契约完整性检查 ──
-      - id: gate-02-p0-contract-integrity
-        name: "GATE-02: P0 接口契约完整性检查"
-        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-        args: ["--gate", "02"]
+      # ── GATE-NAMING: 命名规范门禁合并簇（原 GATE-11 + GATE-11-SSOT 二合一）──
+      # 合并说明：2 个门禁共用 check_naming_convention.py，但 --validate-ssot 是独立模式（提前 exit），
+      #           无法在同一进程中组合。使用 run_gate_chain.py 顺序执行两个模式：
+      #           ① --warn-only --scan（全库命名规范，过渡期 warn-only）
+      #           ② --validate-ssot（N-16 fallback 与 YAML 一致性，硬阻断）
+      # 行为变化：原 GATE-11 pass_filenames=true（增量），合并后 --scan 全量扫描。检测增强。
+      - id: gate-naming
+        name: "GATE-NAMING: 命名规范+SSOT一致性（合并 GATE-11/GATE-11-SSOT）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_naming_convention.py,--warn-only,--scan scripts/governance/d3_metadata/check_naming_convention.py,--validate-ssot
         language: system
         pass_filenames: false
-        always_run: false
-        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
-        stages: [manual]
-        description: "验证所有 P0 接口契约的字段完整性（schema_version / fields / owner）"
-
-      # ── GATE-03: 不变量 owner 检查 ──
-      - id: gate-03-invariant-owner
-        name: "GATE-03: 不变量 owner 检查"
-        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-        args: ["--gate", "03"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
-        stages: [manual]
-        description: "检查每条不变量是否有且仅有一个 owner 层，防止职责模糊"
-
-      # ── GATE-06: KB 决策记录状态检查 ──
-      - id: gate-06-kb-decision-status
-        name: "GATE-06: KB 决策记录状态检查"
-        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-        args: ["--gate", "06"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
-        stages: [manual]
-        description: "验证所有 KB 决策记录的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）"
-
-      # ── GATE-07: 事件 publisher 层级检查 ──
-      - id: gate-07-event-publisher-layer
-        name: "GATE-07: 事件 publisher 层级检查"
-        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-        args: ["--gate", "07"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^docs/02_enterprise_architecture/.*\\.yaml$"
-        stages: [manual]
-        description: "检查每条领域事件的 publisher 层级是否与事件所属域一致"
-
-      # ── GATE-11: 命名规范门禁（Stage G 落地）──
-      # 权威依据：docs/01_policies_and_standards/rules/file_naming_standard.md v2.0.1 §五
-      # 续号于 Architecture-as-Code GATE-01 ~ GATE-10（避让 AaC 编号空间）
-      # 检测 7 条 N-01 ~ N-07 违规：文件名大小写 / 版本号后缀 / 日期后缀 /
-      #   KBG 嵌套编号 / KBG kebab 尾缀 / module_id scope 前缀 / KBG 编号一致性
-      - id: gate-11-naming-convention
-        name: "GATE-11: 命名规范门禁"
-        entry: python scripts/governance/d3_metadata/check_naming_convention.py
-        args: ["--warn-only"]
-        language: system
-        pass_filenames: true
         always_run: false
         files: "^.*"
-        description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律）。裁定#208 过渡期 --warn-only（N-17/N-06 历史违规不阻断，阶段 E 激活后移除转硬阻断）。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件"
-
-      # ── GATE-11-SSOT: N-16 fallback 与 YAML 一致性校验 ──
-      # 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
-      #          §gov_doc_003_filename_uniqueness.n16_config
-      # 真源声明：trae_028 v1.5.0 §n16_config 是 N-16 豁免清单的唯一真源；
-      #          脚本侧 _N16_*_FALLBACK 是 fail-open 回退值（YAML 不可达时兜底）。
-      # 校验内容：_validate_ssot_linkage() 比对 fallback 4元组与 YAML n16_config，
-      #          防止 fallback 过时漂移（YAML 改了豁免项但 fallback 未同步 → fail-open 时用旧值导致检测失效）
-      # 触发条件：trae_028.yaml 或 check_naming_convention.py 变更时自动触发（非 always_run，节省每次 commit 成本）
-      # 模式：硬阻断（exit 1=BLOCK）—— fallback 漂移即拒绝提交
-      # 红蓝对抗：第二轮红蓝四维测试 ADV.7/ADV.8 验证 4 元组漂移全被检测
-      - id: gate-11-ssot
-        name: "GATE-11-SSOT: N-16 fallback 与 YAML 一致性校验"
-        entry: python scripts/governance/d3_metadata/check_naming_convention.py --validate-ssot
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^(docs/01_policies_and_standards/rules/trae_028.*\\.yaml|scripts/governance/d3_metadata/check_naming_convention\\.py)$"
-        description: "N-16 fallback 4元组与 YAML n16_config 一致性校验（trae_028.yaml 或 check_naming_convention.py 变更时触发，防 fallback 过时漂移），硬阻断"
+        description: "命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback 与 YAML 一致性），run_gate_chain 顺序执行"
 
       # ── GATE-ID-UNIQ: pre-commit hook id 唯一性门禁 ──
       # 权威依据：commit a09e510ec 历史教训（两个 SSoT 门禁同用 id: gate-ssot，后者覆盖前者）
@@ -326,11 +262,14 @@ repos:
 
       # ── GATE-15: Frontmatter ttl 校验（ttl_vocabulary.yaml v2.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
-      # 校验范围：docs/ 下所有 .md 文件（有 frontmatter 的文档）
+      # 脚本能力范围：.md/.py/.sh/.ps1/.mmd/.yaml/.json 全格式（有头部则校验 ttl，trae_047 v1.2.0 全格式加 ttl）
+      # hook 触发范围：仅 docs/ 下的 .md（受下方 files 字段限制，性能优先；src/scripts/tests 的代码文件
+      #   ttl 校验靠全量审计 `--all-files` 命令手动触发，或 CI 全量扫描）
       # 校验内容：ttl 字段存在 + ttl 值合法（2 种合法值从 ttl_vocabulary.yaml 动态加载）
-      # 模式：增量校验（pass_filenames=true，只校验本次 commit 的 .md）；AI 创建无 ttl 文档时 commit 被阻断
+      # 模式：增量校验（pass_filenames=true，只校验本次 commit 触发的 docs/*.md）；AI 创建无 ttl 文档时 commit 被阻断
       # 全量审计：python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
-      # Gateway 等效校验：GitCommitGateway 内置 GATE-15 等效检查（弥补 --no-verify 副作用）
+      # 架构缺口（2026-06-30 审计）：GitCommitGateway 已删除 _check_frontmatter_ttl 且未注册 ttl gate，
+      #   gateway 路径（--no-verify）下 ttl 校验失效，当前真源唯一在本 pre-commit hook
       - id: gate-15-frontmatter-metadata
         name: "GATE-15: Frontmatter ttl 校验（增量）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
@@ -507,53 +446,19 @@ repos:
         stages: [commit]
         description: "Phase 7 治本门禁——扫描 src/zephyr/ 全量 .py，检测受保护文件名（exam_orchestrator/exam_test_cases/capability_passport/exam_judge/exam_rubric/exam_executor）是否出现在非声明 SSoT 路径（src/zephyr/intelligence/model_profiling/）下。基于文件名检测，覆盖 GATE-SSOT 的无 [MODULE] header 盲区"
 
-      # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
-      # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
-      # 真源声明：Session 20260502-006 六环根因分析 → 根源：源码重构未同步测试 → 治根措施
-      # 检测范围：src/zephyr/**/*.py 或 tests/**/*.py 变更时触发
-      # 检测内容：pytest --collect-only → 零收集失败 = 通过；任何 ImportError / 路径漂移 / 模块缺失 = 阻塞提交
-      # 执行频率：always_run=true（源码或测试任一变更即触发）
-      # 耗时：~1-2s（仅收集阶段，不执行测试体）
-      - id: gate-18-test-collection
-        name: "GATE-18: 测试收集门禁（源码-测试同步铁律）"
-        entry: python -B -m pytest tests/ --collect-only -q --tb=line -p no:cacheprovider -m "not slow and not e2e"
+      # ── GATE-TEST: 测试门禁合并簇（原 GATE-18 + GATE-19 二合一）──
+      # 合并说明：2 个测试门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① pytest --collect-only（保留 -m "not slow and not e2e" 排除标记，检测能力不变）
+      #           ② check_test_structure.py（测试结构合规）
+      # 行为变化：原 GATE-18/GATE-19 分别 pass_filenames=false 自扫描，合并后 run_gate_chain 等价。
+      - id: gate-test
+        name: "GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）"
+        entry: "python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:cacheprovider,-m,\"not slow and not e2e\" scripts/governance/check_test_structure.py"
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
-        description: "源码或测试文件变更时强制验证测试能正常收集（排除 slow/e2e），AGENTS.md §4 源码-测试同步铁律自动化执行层。多AI并发优化：改为按文件触发，避免always_run卡死"
-
-      # ── GATE-19: 测试结构合规门禁（防脚本伪装测试 + 模块级副作用）──
-      # 检测内容: 1) test_*.py 必须含 def test_* 函数（ERROR 硬阻断）
-      #          2) 模块级零副作用（WARN 级，不阻断）
-      # 豁免: _EXEMPTED 集合中 8 个既有文件，逐步清零
-      - id: gate-19-test-structure
-        name: "GATE-19: 测试结构合规门禁（防脚本伪装测试）"
-        entry: python scripts/governance/check_test_structure.py
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^tests/.*\\.py$"
-        description: "test_*.py 必须含 def test_*（ERROR）；模块级副作用仅 WARN。8个既有文件豁免中。"
-
-      # ── GATE-MUT: 变异测试门禁（打破自指悖论——机械注入与 AI 盲区正交）──
-      # 权威依据：systemic_drift_root_cure_continuation_plan.md §5.3 P3-T3
-      # 真源声明：P3-T1 修复 validate_mutation_testing D2 盲区（yaml case 加载）+ 8 个 RR case；
-      #           P3-T2 落地 mutation_test_reconciliation_registry（机械注入 15 变异，score 100% PASS）
-      # 检测范围：手动触发（stages: [manual]，不卡顿常规 commit）
-      # 检测内容：加载 false_negative_cases/ 全量 case（json+yaml），跑各 case verifier，
-      #           expected_finding_id 未在 stdout = FALSE NEGATIVE（检测盲区）
-      # 模式：--warn-only（reporting/非阻断）——6 个 pre-existing 死库存 case 已归档至
-      #       false_negative_cases/archived/（verifier 不存在/timeout/未检出），现 0 false negative，
-      #       达标后可移除 --warn-only 转硬阻断（沿用 plan §5.3）
-      - id: gate-mut
-        name: "GATE-MUT: 变异测试门禁（false negative 检测，打破自指）"
-        entry: python scripts/governance/meta/validate_mutation_testing.py --warn-only
-        language: system
-        pass_filenames: false
-        always_run: false
-        stages: [manual]
-        description: "P3-T3：手动触发变异测试——加载 false_negative_cases 全量 case，跑 verifier 检测 false negative。死库存已归档，RR 8 case 全 detected"
+        description: "测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) + GATE-19(测试结构合规)，run_gate_chain 顺序执行"
 
       # ── GATE-SSOT: SSoT 唯一真源门禁（KBG-0001 + KBG-0021 强制执行层）──
       # 权威依据：KBG-0001（docs/ 为唯一 canonical 真源）+ KBG-0021（三级违规分级 + Phase 0 强制门禁）
@@ -617,22 +522,19 @@ repos:
         stages: [manual]
         description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），KBG-0001 + KBG-0021 §4.2 强制执行层"
 
-      # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
-      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality_standard.md
-      # 真源声明：Session 20260502-007 五轮审计修复 → D-D-07/D-D-08 checker 系统性防护 → 接入 pre-commit 强制执行层
-      # 检测范围：scripts/governance/**/*.py 变更时触发
-      # 检测内容：D-A~D-H 八维度质量检查（编码安全 / 退出码 / 短路模式 /
-      #   异常规范 / 模块封装 / _shared API 重复定义 / os.walk 绕过 / 其他异味）
-      # 模式：warn-only（骨架阶段——2141 项预存质量债务需逐步清理，稳定后转硬阻断）
-      - id: gate-sq-script-quality
-        name: "GATE-SQ: 审计脚本质量门禁（D-D-07/D-D-08 强制执行）"
-        entry: python scripts/governance/d11_compliance/validate_script_quality.py
-        args: ["--scripts-dir", "scripts/governance", "--warn-only"]
+      # ── GATE-SCRIPT-Q: 脚本质量合并门禁（原 GATE-SQ + GATE-DD07 二合一）──
+      # 合并说明：2 个 scripts/governance 质量门禁合并为单 hook，run_gate_chain 顺序执行：
+      #           ① validate_script_quality.py --scripts-dir scripts/governance --warn-only（八维度质量）
+      #           ② fix_shared_bypass.py --ci（_shared API 本地重定义检测）
+      # 行为变化：原两 hook 均 pass_filenames=false 自扫描 scripts/governance/，合并后等价。
+      - id: gate-script-q
+        name: "GATE-SCRIPT-Q: 脚本质量合并门禁（GATE-SQ + GATE-DD07）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/validate_script_quality.py,--scripts-dir,scripts/governance,--warn-only scripts/governance/d11_compliance/fix_shared_bypass.py,--ci
         language: system
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/.*\\.py$"
-        description: "审计脚本八维度质量检查（编码安全/退出码/_shared API重复/os.walk绕过），warn-only骨架阶段，AGENTS.md §8.2.1 强制执行层"
+        description: "脚本质量合并门禁——GATE-SQ(八维度质量 warn-only) + GATE-DD07(_shared API 本地重定义)，run_gate_chain 顺序执行"
 
       # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §6.5 K8s Admission Controller 落地）──
       # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定——任何.py创建必须通过准入审核）
@@ -667,21 +569,7 @@ repos:
         files: "^scripts/governance/(index\\.md|script_manifest\\.yaml)$"
         description: "index.md声称脚本数 vs 磁盘实际 .py 文件数对账（AGENTS.md §6.11 CMDB reconciliation 自动化执行层），骨架阶段 warn-only"
 
-  # ── GATE-DD07: _shared API 本地重定义检测+自动修复（D-D-07 强制执行）──
-      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + SCRIPT-QUALITY-001 D-D-07
-      # 真源声明：Session 20260503 根因审计 → fix_shared_bypass.py 创建 → 接入 pre-commit
-      # 检测范围：scripts/governance/**/*.py 变更时触发
-      # 检测内容：AST 级别检测本地重定义 _shared API 符号（REPO_ROOT/EXCLUDE_DIRS/SRC_DIR/SCAN_EXTENSIONS 等）
-      # 模式：warn-only（检测+报告），需修复时运行 fix_shared_bypass.py --fix
-      - id: gate-dd07-shared-bypass
-        name: "GATE-DD07: _shared API 本地重定义检测（D-D-07）"
-        entry: python scripts/governance/d11_compliance/fix_shared_bypass.py
-        args: ["--ci"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^scripts/governance/.*\\.py$"
-        description: "AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py --fix"
+      # ── GATE-DD07 已合并到 GATE-SCRIPT-Q（见上 gate-script-q）──
 
       # ── GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（治本漏洞1 2026-06-29）──
       # 权威依据：AGENTS.md §禁止纯 re-export shim 文件（规则真源——描述"做什么"）
@@ -867,43 +755,23 @@ repos:
         files: "^architecture_model/contracts/cross_layer_contracts\\.yaml$"
         description: "检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python 无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束"
 
-      # ── GATE-PATH-NAMING: 连字符路径阻断（2026-06-28 全仓库路径治本防复发）──
-      # 权威依据：AGENTS.md §路径命名约束（target_architecture/architecture_model 下划线）
-      # 病根：历史路径重命名（连字符→下划线）时漏改 48 个 .py 文件，导致 gate-c2 等钩子空跑数月
-      # 检测：.py 文件中含 target-architecture 或 architecture-model → hard block
-      # 正确路径：target_architecture / architecture_model（下划线，Python 合法标识符）
-      - id: gate-path-naming
-        name: "GATE-PATH-NAMING: 连字符路径阻断 (target-architecture/architecture-model)"
-        entry: "target-architecture|architecture-model"
-        language: pygrep
-        files: \.py$
-        exclude: "_archive/"
-        description: "检测 .py 文件中含连字符路径 target-architecture/architecture-model（应为下划线），防止路径重命名技术债复发；_archive/ 归档目录豁免"
-
-      - id: gate-bom-utf8-check
-        name: "GATE-BOM: UTF-8 BOM 检测"
-        entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "\\.(yaml|md|py)$"
-        description: "检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全。多AI并发优化：改为按文件触发，避免always_run卡死"
-
-      # ── GATE-ENCODING: 编码安全+mojibake检测（DM-379 强制执行层）──
+      # ── GATE-ENCODING: 编码安全+mojibake+BOM检测（合并 GATE-BOM，DM-379 强制执行层）──
       # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
-      # 检测范围：src/zephyr/**/*.py + docs/**/*.md 变更时触发
+      # 检测范围：全项目（--dir . 递归扫描，覆盖原 GATE-BOM 的 yaml/md/py 范围）
       # 检测内容：UTF-8 BOM / CRLF / autoGuessEncoding / GBK-as-UTF-8 mojibake
       # 模式：BOM/autoGuessEncoding/mojibake 硬阻断；CRLF 为 WARNING 不阻断（OPS-2026062501 语义修复）
       #       CRLF 应靠 .gitattributes + git add --renormalize 在仓库层解决，不靠每次提交阻断
+      # 合并说明：GATE-BOM（validate_no_utf8_bom.py）已并入本 hook——check_encoding.py 的 check_dir_encoding
+      #           已含 BOM 检测（INJ-007），--dir . 覆盖全项目，检测范围超集
       - id: gate-encoding-safety
-        name: "GATE-ENCODING: 编码安全+mojibake检测"
+        name: "GATE-ENCODING: 编码安全+mojibake+BOM检测"
         entry: python scripts/governance/d7_code/check_encoding.py
-        args: ["--dir", "src/zephyr"]
+        args: ["--dir", "."]
         language: system
         pass_filenames: false
         always_run: false
         files: "\\.(py|md|yaml|yml|json|toml)$"
-        description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）"
+        description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。已合并 GATE-BOM（--dir . 全项目覆盖）"
 
       # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本，RB-6 修复 2026-06-29）──
       # 权威依据：OPS-2026062513——多 AI session 共享 git index 导致幽灵提交

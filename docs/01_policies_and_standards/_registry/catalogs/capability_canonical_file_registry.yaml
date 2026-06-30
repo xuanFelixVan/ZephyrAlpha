@@ -444,24 +444,22 @@ capabilities:
       # 注：_is_pid_alive 已归一到 process_pool.py（见 process_liveness_detection 条目），
       # gateway 现通过 from zephyr.shared.infra.process_pool import is_pid_alive 复用，
       # 僵尸锁调用点在 _GlobalCommitLock.__enter__（L229），由 test_lock_timeout_when_held_indefinitely 保护。
-      - _check_capability_aliases  # 中文aliases门禁(红蓝对抗修复2,删则中文aliases可绕过)
-      - _check_deprecated_directories  # 废弃目录门禁(09_audit治本加固,删则新AI可在docs/09_audit/下提交)
-      - _check_repo_root_usage     # REPO_ROOT门禁(删则parents[N]反模式可绕过SSoT)
-      - _match_is_bootstrap        # bootstrap豁免检测(删则sys.path合法豁免失效→误杀或漏检)
+      # ======================================================================
+      # STALE 清理（2026-06-30 AD-001 阶段3治本副作用）：
+      # A 层 AST 锚点校验机制（_check_protected_script_integrity + _load_protected_scripts）
+      # 已在 commit cde1255c（AD-GOV-001 阶段3瘦身）中被删除。原 15 个 anchor 中 11 个
+      # _check_* 方法已删除（迁移到 commit_gates/ 注册制 gate 或 pre-commit hook），
+      # integrity_anchors 字段当前无代码消费者（死数据）。保留 4 个仍存在的方法 anchor
+      # 供未来复活 A 层时参考。当前对 gateway.py 自身篡改的检测靠 CI 层兜底。
+      # 已删除的 11 个 anchor：_check_capability_aliases / _check_deprecated_directories /
+      # _check_repo_root_usage / _match_is_bootstrap / _check_src_no_data /
+      # _check_frontmatter_ttl / _check_ssot_canonical / _check_naming_uniqueness /
+      # _check_protected_script_integrity / _check_pure_assertion / _check_pure_shim
+      # ======================================================================
       - _is_staged_delete          # staged delete识别(纵深防御,删则git add -f可能撤销用户的git rm --cached)
-      - _check_src_no_data         # src/data/路径门禁(删则src/下可放数据→双真源漂移,GATE-SRC-NO-DATA等效校验)
       - _should_use_no_pathspec    # no-pathspec决策(staged delete保护核心,删则gitignored staged delete静默丢失,commit 32ead90e教训)
-      # 治本（2026-06-30 病根1 看门人无人看）：commit 主入口与核心 _check_* 方法 A 层 AST 锚点保护。
-      # 红蓝对抗发现 completes_when_validator 仅覆盖 7 个辅助方法，遗漏 commit()/_commit_auto()/
-      # _check_frontmatter_ttl/_check_ssot_canonical 等核心方法——篡改这些方法 A 层不检测。
-      - commit                    # 主入口(篡改即所有门禁失效,治本病根1)
-      - _commit_auto              # reconciler统一入口(篡改则reconciler路径五重gate失效)
-      - _check_frontmatter_ttl    # TTL门禁(删则TTL校验失效,permanent/task_bound可伪造)
-      - _check_ssot_canonical     # SSoT门禁(删则真源唯一校验失效,重复造轮子不阻断)
-      - _check_naming_uniqueness  # N-16门禁(删则文件名唯一性失效)
-      - _check_protected_script_integrity  # 完整性校验本身(自指保护,删则integrity_anchors校验失效)
-      - _check_pure_assertion     # 纯陈述门禁(删则GOV-DOC-016失效)
-      - _check_pure_shim          # shim门禁(删则GATE-NO-PURE-SHIM失效)
+      - commit                    # 主入口(篡改即所有门禁失效)
+      - _commit_auto              # reconciler统一入口(篡改则reconciler路径DIRECTORY-CONTRACT gate失效)
 
   # --------------------------------------------------------------------------
   - capability_id: git_commit_cli_staged_delete
@@ -997,6 +995,12 @@ creation_tokens:
     token: "auto-commit-gate-registry-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "commit_gate_registry"
+
+  # --- 阶段2门禁合并新增（簇2 GATE-NAMING 依赖 run_gate_chain.py 顺序执行多门禁） ---
+  - file: "scripts/governance/run_gate_chain.py"
+    token: "auto-run-gate-chain-20260630"
+    created_by: "session-trae-redteam-deadly-5"
+    capability: "gate_chain_runner"
 
 # ============================================================================
 # 维护日志

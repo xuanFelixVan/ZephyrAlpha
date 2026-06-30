@@ -3,67 +3,27 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-06-29T11:21:08Z'
+generated_at: '2026-06-30T08:48:50Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml
-total_gates: 49
+total_gates: 41
 gates:
-- gate_id: GATE-01
-  name: 'GATE-01: _index.yaml 可达性检查'
+- gate_id: GATE-ARCH
+  name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
   entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 检查所有 _index.yaml 文件的引用可达性，确保无断链
+  description: 架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 19 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强
   files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
   always_run: false
-  category: architecture_reachability
+  category: unknown
   status: active
-- gate_id: GATE-02
-  name: 'GATE-02: P0 接口契约完整性检查'
-  entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 验证所有 P0 接口契约的字段完整性（schema_version / fields / owner）
-  files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
-  always_run: false
-  category: contract_integrity
-  status: active
-- gate_id: GATE-03
-  name: 'GATE-03: 不变量 owner 检查'
-  entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 检查每条不变量是否有且仅有一个 owner 层，防止职责模糊
-  files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
-  always_run: false
-  category: invariant_governance
-  status: active
-- gate_id: GATE-06
-  name: 'GATE-06: KB 决策记录状态检查'
-  entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 验证所有 KB 决策记录的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）
-  files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
-  always_run: false
-  category: adr_status
-  status: active
-- gate_id: GATE-07
-  name: 'GATE-07: 事件 publisher 层级检查'
-  entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 检查每条领域事件的 publisher 层级是否与事件所属域一致
-  files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
-  always_run: false
-  category: event_routing
-  status: active
-- gate_id: GATE-11
-  name: 'GATE-11: 命名规范门禁'
-  entry: python scripts/governance/d3_metadata/check_naming_convention.py
-  description: 全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律）。裁定#208 过渡期 --warn-only（N-17/N-06
-    历史违规不阻断，阶段 E 激活后移除转硬阻断）。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件
+- gate_id: GATE-NAMING
+  name: 'GATE-NAMING: 命名规范+SSOT一致性（合并 GATE-11/GATE-11-SSOT）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_naming_convention.py,--warn-only,--scan
+    scripts/governance/d3_metadata/check_naming_convention.py,--validate-ssot
+  description: 命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback
+    与 YAML 一致性），run_gate_chain 顺序执行
   files_trigger: ^.*
-  always_run: false
-  category: naming_convention
-  status: active
-- gate_id: GATE-11-SSOT
-  name: 'GATE-11-SSOT: N-16 fallback 与 YAML 一致性校验'
-  entry: python scripts/governance/d3_metadata/check_naming_convention.py --validate-ssot
-  description: N-16 fallback 4元组与 YAML n16_config 一致性校验（trae_028.yaml 或 check_naming_convention.py
-    变更时触发，防 fallback 过时漂移），硬阻断
-  files_trigger: ^(docs/01_policies_and_standards/rules/trae_028.*\.yaml|scripts/governance/d3_metadata/check_naming_convention\.py)$
   always_run: false
   category: unknown
   status: active
@@ -162,10 +122,11 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-DIRECTORY-CONTRACT
-  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml + doc_type_vocabulary.yaml）'
+  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml +
+    doc_type_vocabulary.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
-  description: 目录契约校验——消费 directory_contract.yaml + doc_type_vocabulary.yaml，校验 staged 文件的 doc_type 目录归属/扩展名/ttl/根目录白名单合规性。DCR-001~007
-    全部已启用
+  description: 目录契约校验——消费 directory_contract.yaml + doc_type_vocabulary.yaml，校验 staged
+    文件的 doc_type 目录归属/扩展名/ttl/根目录白名单合规性。DCR-001~007 全部启用
   files_trigger: ''
   always_run: false
   category: unknown
@@ -196,7 +157,7 @@ gates:
   entry: python scripts/governance/check_ssot_gate.py
   description: SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过
     capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险
-  files_trigger: ^src/zephyr/.*\.py$
+  files_trigger: ^(src/zephyr/|scripts/).*\.py$
   always_run: false
   category: ssot_guard
   status: active
@@ -226,15 +187,6 @@ gates:
   files_trigger: ^tests/.*\.py$
   always_run: false
   category: static_manifest_drift
-  status: active
-- gate_id: GATE-MUT
-  name: 'GATE-MUT: 变异测试门禁（false negative 检测，打破自指）'
-  entry: python scripts/governance/meta/validate_mutation_testing.py --warn-only
-  description: P3-T3：手动触发变异测试——加载 false_negative_cases 全量 case，跑 verifier 检测 false
-    negative。死库存已归档，RR 8 case 全 detected
-  files_trigger: ''
-  always_run: false
-  category: unknown
   status: active
 - gate_id: GATE-SSOT-DOCS
   name: 'GATE-SSOT-DOCS: SSoT 唯一真源门禁（KBG-0001/0021 强制执行）'
@@ -305,13 +257,22 @@ gates:
   always_run: false
   category: dedup_gate
   status: active
+- gate_id: GATE-NO-PURE-SHIM
+  name: 'GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（防 proxy 层重建）'
+  entry: python scripts/governance/d7_code/check_pure_shim.py
+  description: AST 检测纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码），防止新
+    AI 重建 proxy 层重蹈 shared_08 覆辙
+  files_trigger: ^src/zephyr/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.16）'
   entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
   description: 运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.16 静态清单自动生成铁律
   files_trigger: ^(scripts/governance/script_manifest\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\.yaml|\.pre-commit-config\.yaml)$
   always_run: false
-  category: static_manifest_drift
+  category: unknown
   status: active
 - gate_id: GATE-20
   name: 'GATE-20: 裸调 LLM API 检测（RULE-LSG-001 + COND-30）'
@@ -325,8 +286,7 @@ gates:
 - gate_id: GATE-GENERATE
   name: 'GATE-GENERATE: vocabulary YAML → 派生文件一致性'
   entry: python scripts/governance/d3_metadata/generate_derived_files.py
-  description: vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix
-    字段新增后接入
+  description: vocabulary YAML 变更时校验派生文件一致性（硬阻断）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入
   files_trigger: ^docs/01_policies_and_standards/_registry/vocabularies/.*\.yaml$
   always_run: false
   category: unknown
@@ -334,7 +294,7 @@ gates:
 - gate_id: GATE-SCHEMA-HEALTH
   name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度校验'
   entry: python scripts/governance/verify_schema_health.py
-  description: 'depgraph Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
+  description: 'depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
     治本'
   files_trigger: ^(src/zephyr/governance/depgraph_schema\.py|scripts/governance/sync_yaml_to_depgraph\.py|scripts/governance/verify_schema_health\.py)$
   always_run: false
@@ -381,27 +341,11 @@ gates:
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-PATH-NAMING
-  name: 'GATE-PATH-NAMING: 连字符路径阻断 (target-architecture/architecture-model)'
-  entry: target-architecture|architecture-model
-  description: 检测 .py 文件中含连字符路径 target-architecture/architecture-model（应为下划线），防止路径重命名技术债复发；_archive/
-    归档目录豁免
-  files_trigger: \.py$
-  always_run: false
-  category: unknown
-  status: active
-- gate_id: GATE-BOM
-  name: 'GATE-BOM: UTF-8 BOM 检测'
-  entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py
-  description: 检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全。多AI并发优化：改为按文件触发，避免always_run卡死
-  files_trigger: \.(yaml|md|py)$
-  always_run: false
-  category: unknown
-  status: active
 - gate_id: GATE-ENCODING
-  name: 'GATE-ENCODING: 编码安全+mojibake检测'
+  name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'
   entry: python scripts/governance/d7_code/check_encoding.py
-  description: 编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）
+  description: 编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。已合并
+    GATE-BOM（--dir . 全项目覆盖）
   files_trigger: \.(py|md|yaml|yml|json|toml)$
   always_run: false
   category: unknown

@@ -4,7 +4,7 @@
 > **审核日期**：2026-06-30
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
-> **问题总数**：**988个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮新增，去重后），归因于5个病根
+> **问题总数**：**1200个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档由架构健康度仪表盘（第0期交付物）自动派生，禁止手工编辑违规清单部分
 
@@ -119,7 +119,7 @@
 
 ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有限。项目治理体系设计严谨（trae_060三原则 + 17个reconciler + 52个gate + 34个词表 + CapabilityLookup反查机制），但**执行覆盖存在系统性断层**。
 
-经18轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 988个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮新增），分布在93个维度：
+经19轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 1200个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮新增），分布在101个维度：
 
 | 维度 | 违规数 | 高危 | 中危 | 低危 | 核心问题 |
 |---|:---:|:---:|:---:|:---:|---|
@@ -216,9 +216,17 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | Property副作用（第18轮） | 4 | 0 | 4 | 0 | 4处@property getter修改状态（admission_controller 2+resource_optimization 1+circuit_breaker 1） |
 | Enum正确性（第18轮） | 2 | 0 | 0 | 2 | 30+处Enum用==而非is+7个plain Enum缺__str__ |
 | __init__.py污染（第18轮） | 8 | 5 | 3 | 0 | zephyr/__init__副作用+10幻影子包+shared/__init__ 170名无import+trading/__init__ 41名无import+13处__all__=["*"] |
-| **合计** | **988** | **502** | **415** | **71** | |
+| 类型注解准确性（第19轮） | 68 | 42 | 26 | 0 | -> Self系统性误用40+处+裸泛型13处+Any滥用10处+公共API缺失注解11处 |
+| 未使用参数与死代码（第19轮） | 21 | 1 | 6 | 14 | hallucination_detector重复死文件+_ = statistics绕过ruff×4+未使用import×6+空TYPE_CHECKING块×2+UTC自赋值×4 |
+| 布尔参数蔓延（第19轮） | 5 | 1 | 4 | 0 | VerifyResult 5布尔字段+TriggerDecision 3布尔冗余+_calculate_trust 3布尔+determine_exit_code行为切换+RulesFileIntegrityResult矛盾布尔 |
+| 深层嵌套与圈复杂度（第19轮） | 18 | 0 | 11 | 7 | evolve 148行5层+inject 130行+register_boot_hooks 130行7闭包+dispatch 104行5段重复+_run_once 105行5层 |
+| 元类与描述符误用（第19轮） | 4 | 0 | 3 | 1 | BootstrapCache __new__初始化+无锁×2+单例__init__守卫无锁竞态×3+_LazyModule递归 |
+| 错误消息一致性（第19轮） | 22 | 1 | 11 | 10 | SQL泄露+中英文混用×6+异常类型不一致×3+MCP错误码不统一+格式混用+无上下文 |
+| 异步资源生命周期（第19轮） | 18 | 7 | 9 | 2 | limiter锁反模式×2+brain_integration阻塞×2+pipeline死锁×3+阻塞IO×4+get_event_loop弃用×12+asyncio.run高频 |
+| 变量遮蔽与命名冲突（第19轮） | 56 | 0 | 1 | 55 | known_unknown_registry参数遮蔽id+42处数据类字段遮蔽内置名+6处模块名冲突标准库 |
+| **合计** | **1200** | **554** | **486** | **160** | |
 
-所有988个问题归因于**5个病根**：
+所有1200个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -269,7 +277,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | **小计** | | **26** | 9高+3中+14低 | |
 | **三方对齐与规则**（第5轮） | check_blueprint_code_alignment.py三方矛盾 | 1 | 1高 | L1 MOD-INF-005 vs L17 MOD-INF-024 vs 蓝图不存在 |
 | | 3个无效module_id | 3 | 3高 | 不在blueprint_registry |
-| | make_ttl_reconciler宪法级不符 | 1 | 1高 | AGENTS.md声明已删但代码存在 |
+| | make_ttl_reconciler宪法级不符 | 1 | 1高 | AGENTS.md声明已删但代码存在 ✅已修复(2026-06-30) |
 | | 2处其他规则不符 | 2 | 1高+1中 | 详见5.6 |
 | | rule_catalog 20条空stability | 1聚合 | 0高+1中 | stability字段空值 |
 | **小计** | | **9** | 6高+3中 | |
@@ -287,11 +295,11 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 真孤儿未监控 | 346（过滤后） | **949真孤儿**（ORPHAN_EXEMPT_TYPES滤掉603个） | 第1轮报告数据被脚本过滤低估2.7倍 |
 | 表脱管schema健康 | 21表全覆盖 | **25表实有，2表脱管** | 第1轮未检查 |
 | 文档引用断裂 | 5.3.6 11文件57行 | **57文件338处连字符+136处断链** | 第1轮严重低估30倍 |
-| 宪法级声明不符 | 未检查 | **AGENTS.md §11声明make_ttl_reconciler"已删"，代码仍存在** | 第1轮未检查 |
+| 宪法级声明不符 | 未检查 | **AGENTS.md §11声明make_ttl_reconciler"已删"，代码仍存在** ✅已修复(2026-06-30) | 第1轮未检查 |
 
 **最大发现（初轮）**：文件复制对从6对暴增到159对——这是之前所有审核都未发现的"隐性债务冰山"。`governance/` ↔ `infrastructure/rollback/`（71同名）和 `behavioral_audit/` ↔ `governance/drift_detection/`（51同名）两个并行目录树贡献了114对复制。
 
-**最大发现（第5轮）**：①孤儿过滤掩盖603个真孤儿——`diagnose_depgraph.py:58 ORPHAN_EXEMPT_TYPES`把949个真孤儿滤成346，给治理层造成"孤儿问题不严重"的假象；②AGENTS.md宪法级声明与代码不符——§11声明`make_ttl_reconciler`已删，但`reconciliation_registry.py:418`函数仍存在；③连字符路径违规规模被低估9倍——原报告11文件57行，实测57文件338处。
+**最大发现（第5轮）**：①孤儿过滤掩盖603个真孤儿——`diagnose_depgraph.py:58 ORPHAN_EXEMPT_TYPES`把949个真孤儿滤成346，给治理层造成"孤儿问题不严重"的假象；②AGENTS.md宪法级声明与代码不符——§11声明`make_ttl_reconciler`已删，但`reconciliation_registry.py:418`函数仍存在（✅已修复2026-06-30：删除函数体+import+register）；③连字符路径违规规模被低估9倍——原报告11文件57行，实测57文件338处。
 
 ---
 
@@ -517,7 +525,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、988个问题详细清单
+## 五、1200个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -755,7 +763,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 17 | gate-ssot-singlesource | [.pre-commit-config.yaml:497](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L497) |
 | 18 | gate-18-test-collection | [.pre-commit-config.yaml:514](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L514) |
 | 19 | gate-19-test-structure | [.pre-commit-config.yaml:527](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L527) |
-| 20 | gate-mut | [.pre-commit-config.yaml:546](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L546) |
 | 21 | gate-ssot-docs | [.pre-commit-config.yaml:561](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L561) |
 | 22 | gate-reg-bl-baseline-aware | [.pre-commit-config.yaml:577](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L577) |
 | 23 | gate-rule-frontmatter | [.pre-commit-config.yaml:592](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L592) |
@@ -1000,7 +1007,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（文档版本未同步）
 **修复方向**：统一为PostgreSQL
 
-#### 5.5.6 AGENTS.md声明make_ttl_reconciler"已删"但代码存在（HIGH）
+#### 5.5.6 AGENTS.md声明make_ttl_reconciler"已删"但代码存在（HIGH）✅ 已修复（2026-06-30）
 
 **违反**：trae_060 §1 唯一真源（宪法级声明与代码不符）
 **证据**：
@@ -1008,6 +1015,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - [reconciliation_registry.py:418](file:///D:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py#L418) 函数仍完整存在
 **病根**：根因1（文档与代码脱节）
 **修复方向**：删除函数或更新AGENTS.md声明
+**修复记录**（2026-06-30）：已删除 `make_ttl_reconciler` 函数体（原 :418-509）+ `__all__` 移除 + git_commit_gateway.py import/register 删除。代码现在与 AGENTS.md §187 声明完全一致。reconciliation_registry.py 中 4 处注释引用已更新（说明"已删除但模式沿用"）。
 
 #### 5.5.7 check_blueprint_code_alignment.py三方矛盾（HIGH）
 
@@ -1078,10 +1086,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **说明**：与5.5.7同源，此处归入"三方对齐"维度（跨维度计数=同一问题在2个维度均计入）
 **证据**：见5.5.7
 
-#### 5.6.2 make_ttl_reconciler宪法级不符（HIGH）
+#### 5.6.2 make_ttl_reconciler宪法级不符（HIGH）✅ 已修复（2026-06-30）
 
 **说明**：与5.5.6同源，此处归入"三方对齐"维度
 **证据**：见5.5.6
+**修复记录**：见5.5.6 修复记录（2026-06-30 已删除函数体 + import + register）
 
 #### 5.6.3 3个无效module_id不在blueprint_registry（HIGH × 3）
 
@@ -3543,8 +3552,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.33.4 [HIGH] phase_a_backup.py Tier0备份遗漏depgraph (PostgreSQL)（核心资产）
 - **文件**：[phase_a_backup.py](file:///D:/ZephyrAlpha/scripts/governance/phase_a_backup.py#L66)
-- **证据**：TIER0_FILES含5个核心资产，无PG depgraph备份项；data/asset_index/project-entity-depgraph.yaml是YAML导出非PG数据库备份
-- **问题**：Tier0标称"5个核心资产"但遗漏真正的depgraph PG数据库
+- **证据**：TIER0_FILES含5个核心资产，无 depgraph (PostgreSQL) 备份项；data/asset_index/project-entity-depgraph.yaml是YAML导出非PG数据库备份
+- **问题**：Tier0标称"5个核心资产"但遗漏真正的 depgraph (PostgreSQL)
 - **影响**：恢复时depgraph数据丢失；YAML副本只能恢复到上次导出时点
 - **修复**：TIER0_FILES新增pg://depgraph虚拟路径，run_tier0识别pg://前缀时调用pg_dump
 
@@ -6476,6 +6485,376 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | HIGH | 5 | 5.93.1/5.93.2/5.93.3/5.93.4/5.93.5 |
 | MEDIUM | 3 | 5.93.6/5.93.7/5.93.8 |
 | **合计** | **8** | |
+
+### 5.94 类型注解准确性（68个，第19轮新增）
+
+#### 5.94.1 `-> Self`系统性误用——方法实际返回其他类型（28个HIGH）
+
+`-> Self`（PEP 673）被当作"返回某对象"的通用标记批量误用，实际`Self`仅用于`return self`的链式/builder模式。部分文件甚至未导入`Self`，仅因`from __future__ import annotations`延迟求值而在运行时不报NameError。
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.94.1 | `shared/infra/cache.py:98,188` | Protocol `stats(self) -> Self` 返回CacheStats；文件未导入Self | HIGH | 改为`-> CacheStats` |
+| 5.94.2 | `infrastructure/infra_06/cache.py:98,188` | 同上重复副本 | HIGH | 同上+消除重复代码 |
+| 5.94.3 | `shared/infra/limiter.py:156` | `TokenBucketLimiter.stats(self) -> Self` 返回RateLimiterStats | HIGH | 改为`-> RateLimiterStats` |
+| 5.94.4 | `ops/circuit_breaker_repo.py:60` | 模块级函数`_row_to_record(row) -> Self` 返回CircuitBreakerRecord；Self未导入 | HIGH | 改为`-> CircuitBreakerRecord` |
+| 5.94.5 | `ops/observability/metrics.py:264` | 模块级函数`get_registry() -> Self` 返回MetricsRegistry | HIGH | 改为`-> MetricsRegistry` |
+| 5.94.6 | `ops/observability/health.py:107,178,231,247` | 4处`-> Self`返回HealthSummary（含模块级函数和实例方法） | HIGH | 改为`-> HealthSummary` |
+| 5.94.7 | `integration/shared/schema/schema_registry.py:192` | 模块级函数`get_schema_registry() -> Self` | HIGH | 改为`-> SchemaRegistry` |
+| 5.94.8 | `trading/orchestrator/core/agent_orchestrator.py:561,709,713,730` | 4处`-> Self`：snapshot返回SLOSnapshot、router/monitor属性返回其他类型、orchestrate返回OrchestrationResult | HIGH | 改为各自实际类型 |
+| 5.94.9 | `trading/orchestrator/state/session_manager.py:113,127,190,262` | 4处`-> Self`返回Session对象；文件未导入Self | HIGH | 改为`-> Session` |
+| 5.94.10 | `trading/orchestrator/state/agent_health_monitor.py:164` | `evaluate(self) -> Self` 返回SLO评估结果 | HIGH | 改为`-> SLOEvaluationReport` |
+| 5.94.11 | `trading/orchestrator/state/file_task_mapper.py:211,270` | 2处`-> Self`返回RegisterReport/SyncReport | HIGH | 改为各自实际类型 |
+| 5.94.12 | `trading/orchestrator/resilience/hallucination_detector.py:441` | `budget_state`属性`-> Self` 返回budget对象 | HIGH | 改为实际类型 |
+| 5.94.13 | `autonomy_core/support/prompt_registry.py:213,365` | `render() -> Self` 返回RenderedPrompt；`get() -> Self` 返回PromptTemplate | HIGH | 改为各自实际类型 |
+| 5.94.14 | `autonomy_core/management/context_budget_tracker.py:119` | `check_budget() -> Self` 返回ContextBudgetLevel枚举 | HIGH | 改为`-> ContextBudgetLevel` |
+| 5.94.15 | `autonomy_core/assembly/context_injector.py:116` | `inject() -> Self` 返回InjectedContext | HIGH | 改为`-> InjectedContext` |
+| 5.94.16 | `autonomy_core/assembly/context_pipeline.py:93` | 模块级函数`build_pipeline() -> Self` | HIGH | 改为实际返回类型 |
+| 5.94.17-5.94.30 | `governance/audit_orchestration/`下`core/agent_orchestrator.py:562,711,715,732`、`state/session_manager.py:113,127,190,262`、`state/agent_health_monitor.py`、`state/file_task_mapper.py`、`resilience/hallucination_detector.py:441,458,495,556,735,767,801,885` | 上述trading/orchestrator所有问题的重复副本（SSoT违规），`-> Self`错误在同名文件同行全部复制存在 | HIGH | 消除governance/audit_orchestration重复代码，统一从trading/orchestrator引用 |
+
+#### 5.94.2 裸泛型类型（13个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.94.31 | `shared/event_bus.py:188,192` | 2处`handler: Callable`裸Callable无参数化 | MEDIUM | 改为`Callable[[Event], None]` |
+| 5.94.32 | `shared/event_bus.py:269` | `get_stats() -> dict`裸dict | MEDIUM | 改为`-> dict[str, int]` |
+| 5.94.33 | `shared/contract_bus.py:77,107` | 2处`data: dict -> dict`裸dict | MEDIUM | 参数化`dict[str, Any]` |
+| 5.94.34 | `governance/annotations.py:29,32,49,65` | 装饰器`-> Callable`裸Callable | MEDIUM | 用TypeVar参数化 |
+| 5.94.35 | `shared/foundation/deprecation.py:96,123` | 2处`-> Callable`裸Callable | MEDIUM | 用TypeVar实现类型保留 |
+| 5.94.36 | `governance/audit_schema.py:154` | `query_schema_drift() -> dict`裸dict | MEDIUM | 参数化 |
+| 5.94.37 | `infrastructure/event_store.py:87,105` | `to_row() -> tuple`裸tuple + `from_row(cls, row: dict)`裸dict | MEDIUM | 参数化 |
+| 5.94.38 | `shared/contracts/core/registry.py:345` | `get_stats() -> dict`裸dict | MEDIUM | 参数化 |
+| 5.94.39 | `governance/f5_boot_integration.py:279` | `last_periodic_result() -> dict`裸dict | MEDIUM | 参数化 |
+| 5.94.40 | `shared/evals.py:41` | dataclass字段`metadata: dict`裸dict | MEDIUM | 改为`dict[str, Any]` |
+
+#### 5.94.3 Any滥用掩盖已知类型（10个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.94.41 | `shared/contract_bus.py:110,115` | `call()`/`call_async()`返回`-> Any`实际返回dict | MEDIUM | 改为`-> dict[str, Any]` |
+| 5.94.42 | `governance/rule_enforcement/phase_executor.py:149,225` | `gate_engine`属性和`execute_gate()`返回`-> Any`实际返回GateResult | MEDIUM | 改为`-> GateResult`（TYPE_CHECKING导入） |
+| 5.94.43 | `governance/rule_enforcement/truth_source_validator.py:155` | `resolve_fact() -> Any`实际返回`object | None` | MEDIUM | 改为`-> object | None` |
+| 5.94.44 | `governance/database_service.py:82` | `get_depgraph_conn() -> Any`可改为psycopg2连接类型 | MEDIUM | 用具体连接类型 |
+| 5.94.45 | `governance/depgraph_schema.py:1180` | `get_depgraph_pg_connection() -> Any` SSoT连接工厂 | MEDIUM | 同上 |
+| 5.94.46 | `governance/f5_boot_integration.py:263,267,271,275` | 4个引擎属性返回Any | MEDIUM | 改为具体引擎类型 |
+| 5.94.47 | `shared/session_continuity.py:247` | `generate_and_save() -> Any`实际返回Path或dict | MEDIUM | 改为`-> Path | dict[str, Any]` |
+| 5.94.48 | `trading/action_dispatcher.py:115` | `dispatch(self, task: Any)`参数过松 | MEDIUM | 定义Task Protocol |
+
+#### 5.94.4 公共API/构造器缺失返回注解（17个MEDIUM合并为11条）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.94.49 | `trading/conductor.py:61,69` | `autopilot`/`repo`属性无返回注解 | MEDIUM | 补`-> AutoPilot`/`-> TaskRepository` |
+| 5.94.50 | `governance/database_service.py:62,99,105,144,176,182` | 6处`__init__`/contextmanager/方法缺`-> None`或返回注解 | MEDIUM | 补全返回注解 |
+| 5.94.51 | `infrastructure/event_store.py:127` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
+| 5.94.52 | `governance/depgraph_reader.py:74` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
+| 5.94.53 | `governance/rule_engine.py:88` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 42 | 5.94.1-5.94.30（`-> Self`误用） |
+| MEDIUM | 26 | 5.94.31-5.94.53（裸泛型+Any滥用+缺失注解） |
+| **合计** | **68** | |
+
+**根因**：`-> Self`被当作"返回某对象"的通用标记批量使用，作者未理解PEP 673中`Self`专指"当前类实例类型"。该错误模式集中在trading/orchestrator/与其重复副本governance/audit_orchestration/、ops/observability/、autonomy_core/、shared/infra/。建议接入`mypy src/zephyr/`一次性定位所有`Self`未定义与语义错误。
+
+---
+
+### 5.95 未使用参数与死代码（21个，第19轮新增）
+
+#### 5.95.1 死代码文件（1个HIGH + 1个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.95.1 | `trading/orchestrator/resilience/hallucination_detector.py`（整个文件） | 100%重复死代码：与`trading/orchestrator/hallucination_detector.py`几乎完全相同（仅module_id注释MOD-ORC vs MOD-RES不同）。全项目grep `from zephyr.trading.orchestrator.resilience.hallucination_detector import`返回0匹配 | HIGH | 删除该重复文件 |
+| 5.95.2 | `trading/orchestrator/resilience/rollback_manager.py`（整个文件） | 无任何外部import引用：全项目grep返回0匹配，仅出现在`resilience/__init__.py`的`__all__`列表中 | MEDIUM | 验证动态加载路径后删除或接入调用方 |
+
+#### 5.95.2 `_ = statistics` linter绕过反模式（4个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.95.3 | `trading/orchestrator/core/agent_orchestrator.py:71,874` | `import statistics`未使用 + line 874 `_ = statistics`绕过ruff | MEDIUM | 删除import和workaround行 |
+| 5.95.4 | `trading/orchestrator/agent_orchestrator.py:72,936` | 同上模式 | MEDIUM | 同上 |
+| 5.95.5 | `governance/audit_orchestration/agent_orchestrator.py:73,939` | 同上模式 | MEDIUM | 同上 |
+| 5.95.6 | `governance/audit_orchestration/core/agent_orchestrator.py:73,878` | 同上模式 | MEDIUM | 同上 |
+
+#### 5.95.3 未使用import与属性（6个LOW + 1个MEDIUM）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.95.7 | `autonomy_core/engine.py:40,105` | `from ... import TriggerRouter`导入仅用于`self.router = TriggerRouter()`，但`self.router`全文从未被读取 | MEDIUM | 删除导入和属性赋值 |
+| 5.95.8 | `trading/orchestrator/core/agent_orchestrator.py:78` | `from pathlib import Path`未使用 | LOW | 删除导入 |
+| 5.95.9 | `trading/orchestrator/agent_orchestrator.py:79` | 同上 | LOW | 删除导入 |
+| 5.95.10 | `governance/audit_orchestration/agent_orchestrator.py:80` | 同上 | LOW | 删除导入 |
+| 5.95.11 | `governance/audit_orchestration/core/agent_orchestrator.py:80` | 同上 | LOW | 删除导入 |
+| 5.95.12 | `trading/boot_hooks.py:22` | `from pathlib import Path`未使用 | LOW | 删除导入 |
+| 5.95.13 | `autonomy_core/engine.py:45` | `from ... import AuditWriterProtocol`未使用 | LOW | 删除导入 |
+
+#### 5.95.4 空TYPE_CHECKING块与死分支（3个LOW）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.95.14 | `autonomy_core/dispatch_table.py:34,36-37` | `if TYPE_CHECKING: pass`空块，无任何import | LOW | 删除导入和空块 |
+| 5.95.15 | `infrastructure/vector_memory_server.py:36,38-39` | `TYPE_CHECKING`仅用于空`if TYPE_CHECKING: pass` | LOW | 移除TYPE_CHECKING导入和空块 |
+| 5.95.16 | `autonomy_core/context_assembler.py:43` | `if True:`包裹import，因`from __future__ import annotations`运行时不需要 | LOW | 移入`if TYPE_CHECKING:`或直接删除 |
+
+#### 5.95.5 冗余自赋值与未使用变量（5个LOW）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.95.17 | `trading/orchestrator/chaos_engine.py:110` | `_ORIGINAL_EXIT_CODE: int = 0`模块级变量从未被引用 | LOW | 删除 |
+| 5.95.18 | `autonomy_core/context_rot_model.py:28,30` | `from datetime import UTC` + `UTC = UTC`自赋值no-op，且UTC全文未使用 | LOW | 删除导入和自赋值 |
+| 5.95.19 | `autonomy_core/memory_bank.py:29` | `UTC = UTC`冗余自赋值（UTC被使用但自赋值是no-op） | LOW | 删除自赋值行 |
+| 5.95.20 | `autonomy_core/cache_invalidation.py:23` | 同上`UTC = UTC` | LOW | 删除自赋值行 |
+| 5.95.21 | `autonomy_core/fallback_staleness_gate.py:25` | 同上`UTC = UTC` | LOW | 删除自赋值行 |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.95.1 |
+| MEDIUM | 6 | 5.95.2-5.95.7 |
+| LOW | 14 | 5.95.8-5.95.21 |
+| **合计** | **21** | |
+
+---
+
+### 5.96 布尔参数蔓延（5个，第19轮新增）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.96.1 | `governance/sqlite_dumper.py:89-95` + `infrastructure/rollback/sqlite_dumper.py:89-95`（重复副本） | `VerifyResult`数据类含5个布尔字段：`passed`/`merkle_match`/`hmac_match`/`table_count_match`/`row_count_match`。构造调用传递5个布尔字面量。`passed`字段冗余（line 424计算为其他4个的and） | HIGH | 移除冗余`passed`改为@property；4个`*_match`重构为`dict[str, bool] checks`或`list[CheckResult]` |
+| 5.96.2 | `governance/auto_rollback_trigger.py:59-65` + `infrastructure/rollback/auto_rollback_trigger.py:59-65`（重复副本） | `TriggerDecision`含3个布尔字段`should_rollback`/`retry_allowed`/`forward_fix_allowed`，与同类`action: str`字段完全冗余。构造调用使用`(True, False, False)`等组合，表达互斥动作而非独立标志 | MEDIUM | 替换为枚举`ActionType { ROLLBACK, RETRY, FORWARD_FIX, RETRY_THEN_FORWARD_FIX }` |
+| 5.96.3 | `infrastructure/asset_inventory/trust_anchor.py:138` + `governance/trust_anchor.py:140`（重复副本） | `_calculate_trust(git_ok: bool, test_ok: bool, audit_ok: bool)`接收3个布尔参数，函数体内`sum(...)`统计绿灯数 | MEDIUM | 改为`checks: dict[str, bool]`，`green_count = sum(checks.values())` |
+| 5.96.4 | `governance/exit_codes.py:40` | `determine_exit_code(max_severity, tool_error: bool = False, degraded: bool = False)`两个布尔参数直接切换核心返回逻辑，存在隐式优先级 | MEDIUM | 引入枚举`RunMode { NORMAL, TOOL_ERROR, DEGRADED }`或拆分为3个函数 |
+| 5.96.5 | `security/llm_defense/llm_security/layers/l0_supply_chain.py:109` | `RulesFileIntegrityResult.__init__(integrity_valid: bool = True, hash_mismatch: bool = False)`两个布尔语义矛盾（`integrity_valid=True`表示OK，`hash_mismatch=True`表示NOT OK），存在`integrity_valid=False, hash_mismatch=False`语义不清的组合 | MEDIUM | 合并为枚举`IntegrityState { UNCHECKED, VALID, HASH_MISMATCH }` |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.96.1 |
+| MEDIUM | 4 | 5.96.2-5.96.5 |
+| **合计** | **5** | |
+
+**附注**：5个问题中有3个同时存在于重复文件中（trust_anchor ×2、auto_rollback_trigger ×2、sqlite_dumper ×2），实际需修改文件位置为8处。大量`dry_run: bool = False`单标志参数（45处）为业界惯例不构成蔓延。
+
+---
+
+### 5.97 深层嵌套与圈复杂度（18个，第19轮新增）
+
+#### 5.97.1 MEDIUM级（11个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.97.1 | `ops/evolution_engine.py:192-339` | `EvolutionEngine.evolve`函数体148行，嵌套5层。L1/L2/L3三段聚合逻辑+L3分支内`if not dry_run → for → if → try` | MEDIUM | 拆分为`_collect_l1/l2/l3_proposals`三个方法 |
+| 5.97.2 | `autonomy_core/context_injector.py:269-398` | `inject`函数体130行，嵌套4层。4个layer的sources/provenances填充逻辑内嵌于主循环 | MEDIUM | 提取`_populate_layer_metadata(layer_name, ...)` |
+| 5.97.3 | `trading/boot_hooks.py:271-400+` | `register_boot_hooks`函数体~130行，含7个内嵌`_on_task_*`闭包，每个含try-except | MEDIUM | 拆为模块级私有函数或配置表驱动注册 |
+| 5.97.4 | `trading/orchestrator/trigger_router.py:377-481` | `TriggerRouter.dispatch`函数体104行，5段几乎相同的`result = self._build_result(...); self._audit_dispatch(...); return result`模式 | MEDIUM | 抽取`_fail_dispatch(...)`统一构造+审计+返回 |
+| 5.97.5 | `ops/scheduler.py:327-432` | `FeedbackLoopScheduler._run_once`函数体105行，嵌套5层含嵌套try。Phase 5段`if → try → if → if → if` | MEDIUM | 将Phase 5 VMS持久化逻辑抽取为`_persist_failure_pattern(event)` |
+| 5.97.6 | `governance/audit_trail/cli.py:90-197` | `_run_single_audit`函数体108行，5个`elif`分支各含`try-except`，圈复杂度~15 | MEDIUM | 改用dispatch表`_AUDITORS: dict[str, Callable]` |
+| 5.97.7 | `trading/zombie_scanner.py:175-261` | `scan_zombie_processes`函数体86行，嵌套4层+嵌套try-except（line 216 try内嵌try） | MEDIUM | 封装`_extract_proc_info(proc)`和`_classify_zombie(...)` |
+| 5.97.8 | `governance/budget_engine.py:472-557` | `BudgetEngine._check_dimension`函数体85行，5段重复GateResult构造（仅decision/reason不同） | MEDIUM | 抽取`_build_gate_result(...)`辅助函数 |
+| 5.97.9 | `autonomy_core/context_pipeline.py:82-162` | `run_context_four_stage`函数体80行，嵌套5层。inject分派段`if → else → try → if/elif/elif` | MEDIUM | 抽取`_run_inject(...)`返回`(injected, warning)` |
+| 5.97.10 | `trading/orchestrator/hallucination_detector.py:472-479`（+governance/audit_orchestration/和trading/orchestrator/resilience/两个副本） | `should_trigger`超长条件表达式：6个`or`顶层分支+嵌套`and`/`or`，圈复杂度高 | MEDIUM | 提取命名变量`is_low_confidence_semantic`/`is_high_risk_signal` |
+| 5.97.11 | `ops/scheduler_act.py:72-140` | `ActionHandler.run_act`函数体68行，嵌套4-5层，圈复杂度~10 | MEDIUM | 抽取`_is_action_blocked(...)`和`_record_action_outcome(...)` |
+
+#### 5.97.2 LOW级（7个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.97.12 | `security/llm_defense/llm_security/runtime_interceptor.py:282-304` | `_patch_langchain`嵌套try-except：except块内嵌try | LOW | 抽取`_import_chat_classes()`辅助函数 |
+| 5.97.13 | `trading/ide_health_daemon.py:399-406` | `_collect_drift_metrics`嵌套try-except：except PermissionError内嵌try | LOW | 抽取`_safe_unlink(path)` |
+| 5.97.14 | `trading/ide_health_daemon.py:285-298` | `cleanup_completed_tasks`嵌套try-except：for内嵌try | LOW | 抽取`_list_completed_tasks(repo, statuses)` |
+| 5.97.15 | `ops/scheduler.py:268-290` | `_audit_trail_check`嵌套try-except：try内嵌try | LOW | 抽取`_emit_chain_compromised(issues)` |
+| 5.97.16 | `trading/boot_hooks.py:315-340` | `_on_task_verified_triple_align`嵌套try-except | LOW | 抽取`_get_source_blueprint(task_id)` |
+| 5.97.17 | `autonomy_core/context_assembler.py:479-494` | `build_context`4段重复try-except-pass | LOW | 改用循环+setattr |
+| 5.97.18 | `infrastructure/gateway_server.py:300-355` | `_init_server_handlers`9段重复try-except，每段仅import与key不同 | LOW | 改用配置表驱动循环 |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 0 | — |
+| MEDIUM | 11 | 5.97.1-5.97.11 |
+| LOW | 7 | 5.97.12-5.97.18 |
+| **合计** | **18** | |
+
+---
+
+### 5.98 元类与描述符误用（4个，第19轮新增）
+
+**总体评价**：该项目在元类与描述符层面相当干净——无`metaclass=`、无描述符协议、无`__getattribute__`/`__setattr__`重写、无`__del__`、`__slots__`使用规范、`__init_subclass__`模式一致。主要风险集中在单例`__new__`/`__init__`协调缺陷。
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.98.1 | `governance/audit_orchestrator/cold_start.py:34-41` + `governance/audit_trail/cold_start.py:35-42`（重复副本） | `BootstrapCache.__new__`中执行初始化工作（设置`_cache`/`_loaded`/`_cache_path`），该类未定义`__init__`。`__new__`无锁保护，并发调用时两个线程可同时观测到`cls._instance is None`，各自创建实例，破坏单例不变式 | MEDIUM | 将初始化移至`__init__`，用`_initialized`标志守卫；`__new__`中加`threading.Lock`双重检查 |
+| 5.98.2 | `security/access_control/genesis_bootstrap.py:95-99` | `GenesisBootstrap.__new__`完全无线程同步。并发首次实例化时多个线程可同时通过`cls._instance is None`检查。管理RBAC 5阶段启动序列，多实例会导致启动状态不一致 | MEDIUM | 引入`threading.Lock`并采用双重检查锁定 |
+| 5.98.3 | `shared/security/capability.py:84-95` + `trading/resource_optimization.py:264-275` + `infrastructure/lifecycle/resource_optimization_engine.py:238-249`（3处重复） | 单例`__new__`有锁但`__init__`守卫无锁的经典竞态缺陷。Python在`__new__`返回cls实例后自动调用`__init__`且`__init__`在`__new__`的锁作用域之外执行。并发场景下两个线程同时进入`__init__`，均执行初始化逻辑（如`_load_from_yaml()`被并发执行两次） | MEDIUM | 在`__init__`内也用同一把锁包裹守卫检查与初始化逻辑；或改用模块级单例 |
+| 5.98.4 | `__init__.py:77-91` | `_LazyModule.__getattr__`调用`self._load()`后者访问`self._module`。若`__init__`被绕过（pickle/copy/测试），`_module`不在`__dict__`中则`__getattr__`→`_load()`→`self._module`→`__getattr__('_module')`→无限递归至`RecursionError` | LOW | 在`__getattr__`中对`name in ('_module', '_module_path')`直接`raise AttributeError` |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 0 | — |
+| MEDIUM | 3 | 5.98.1-5.98.3 |
+| LOW | 1 | 5.98.4 |
+| **合计** | **4** | |
+
+---
+
+### 5.99 错误消息一致性（22个，第19轮新增）
+
+#### 5.99.1 HIGH级（1个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.99.1 | `governance/depgraph_schema.py:1115` | 错误消息泄露SQL语句：`raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}")`。将原始SQL DDL片段拼入异常消息，可能暴露数据库结构。同模块`init_db`还拼接了`psql -U postgres -d depgraph -f scripts/...sql`命令行（line 1148-1151） | HIGH | 异常消息仅保留`migration v{version} statement #{i} failed`，SQL文本放入`details={...}`结构化字段或仅debug日志 |
+
+#### 5.99.2 MEDIUM级（11个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.99.2 | `trading/orchestrator/hallucination_detector.py:221,517,627,629,633,637,647,718` | 同一模块内中英文错误消息混用：中文`"verify_questions 不得超过 5 条"`/`"claim 不得为空"` + 英文`"step1 failed: ..."`/`"step1 cost ... exceeds hard cap"`。line 637甚至同一字符串内中英拼接`step1 verify_questions 非列表` | MEDIUM | 统一为中文 |
+| 5.99.3 | `trading/orchestrator/trigger_router.py:189-212` | 同一函数内中英文混用：前两条英文`"trigger_router.yaml not found"`/`"YAML parse failed"`，后四条中文`"必须包含顶层 'triggers' 映射"` | MEDIUM | 统一为中文 |
+| 5.99.4 | `governance/fix_prioritizer.py:103-109,241,262` | 同一类内中英文混用：`_validate_weights`用中文，`get_top_n`/`batch`用英文 | MEDIUM | 统一为中文 |
+| 5.99.5 | `governance/blast_radius.py:125-130` | 同一方法内中英文混用：line 125英文`max_depth must be >= 1`，line 127-130中文`depgraph_path 必须显式传入` | MEDIUM | 统一为中文 |
+| 5.99.6 | `trading/orchestrator/agent_orchestrator.py:537` vs `trading/orchestrator/agent_health_monitor.py:143` vs `governance/audit_orchestration/state/agent_health_monitor.py:145` | 同一`window_size >= 1`校验，同一`orchestrator/`包下语言不一致：一处中文`"window_size 必须 >= 1"`，两处英文`"window_size must be >= 1"` | MEDIUM | 统一语言和模板 |
+| 5.99.7 | `infrastructure/pipeline/ct_pipe_routing.py:156,194,201` | 同一模块内中英文混用：line 156英文`"unknown pipeline node_id"`，line 194/201中文`"CT-PIPE: task_type=... 需要 target_layer"` | MEDIUM | 统一为中文 |
+| 5.99.8 | `trading/orchestrator/session_manager.py:125,147` + `trading/orchestrator/state/session_manager.py:130` + `governance/audit_orchestration/state/session_manager.py:130` + `trading/session_lifecycle.py:255,301,325` | "Session not found"同一错误条件使用3种异常类型：`KeyError`/`SessionError`/`ValueError`，调用方难以用单一except捕获 | MEDIUM | 统一为`SessionError` |
+| 5.99.9 | `trading/orchestrator/session_manager.py:130` vs `trading/orchestrator/state/session_manager.py:221-223` | "Invalid transition"异常类型不一致（`SessionTransitionError` vs `SessionError`），箭头符号也不一致（`->` vs `→`） | MEDIUM | 统一异常类型和符号 |
+| 5.99.10 | `governance/delegation_engine.py:248` vs `governance/escalation_engine.py:466` vs `infrastructure/rollback/rollback_executor.py:492` | "LSG blocked"同一安全闸门拦截场景使用不同异常类型：`escalation_engine`错误地用了`ValueError`，与`delegation_engine`/`rollback_executor`的`PermissionError`不一致 | MEDIUM | 统一为`PermissionError` |
+| 5.99.11 | `infrastructure/error_codes.py` + 多个MCP server | MCP错误码命名前缀不统一：部分有`ZA-XX-XXXX`业务码（KB/GT/INT），部分无（sandbox_server）；同一文件内不一致（doc_guard_server line 282/284缺前缀，gate_engine_server line 330缺前缀）。`error_codes.py`仅注册8个协议级码，无业务码SSoT | MEDIUM | 扩展error_codes.py为业务错误码SSoT |
+| 5.99.12 | `governance/database_service.py:109` | 中文消息中混入英文内部锁名：`raise TimeoutError(f"market_write_lock 获取超时 ({self.WRITE_LOCK_TIMEOUT}s)")` | MEDIUM | 消除内部锁名或翻译 |
+
+#### 5.99.3 LOW级（10个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.99.13 | `trading/orchestrator/chaos_engine.py:168` + `governance/rule_enforcement/adversarial_strategies.py:225` + `ops/gates/adversarial_validation.py:97` | 3处`%`格式化与f-string混用 | LOW | 统一为f-string |
+| 5.99.14 | `governance/budget_engine.py:308,363` | 错误消息无空格分隔中英文：`"BudgetEngine已关闭"` | LOW | 加空格 |
+| 5.99.15 | `integration/governance/embedding_router.py:165,179` + `integration/local_model/embedding_router.py:214,228` | 错误消息无具体上下文值：`"输出维度异常"`未包含实际维度/期望维度 | LOW | 包含实际值和期望值 |
+| 5.99.16 | `infrastructure/finding_task_bridge.py:122` | `raise ValueError(f"Invalid severity: {self.severity}")`未列出合法枚举值 | LOW | 附加合法枚举值列表 |
+| 5.99.17 | `ml_train/trainer_base.py:99` | 裸`raise KeyError(model_id)`无说明 | LOW | 附加说明文字 |
+| 5.99.18 | `governance/kb/load_bearing.py:160` + `infrastructure/task_manager_server.py:303,415,426,437,448,456,474` | 错误消息暴露内部参数名/字段名（`force=True`/`task_repo`/`update_task_status`） | LOW | 剥离内部实现细节 |
+| 5.99.19 | `infrastructure/system_telemetry/metrics_bridge.py:200,208` + `infrastructure/task_manager_server.py:133` + `infrastructure/gate_engine_server.py:337` | 错误消息暴露内部异常类型/类名（`{exc}`/`{type(exc).__name__}`/`{type(m.value)}`） | LOW | 剥离底层异常类名 |
+| 5.99.20 | `governance/depgraph_schema.py:100,113` + `governance/database_manager.py:597` + `governance/kb/load_bearing.py:175,189` + `trading/staging_area.py:150,194,316,330,345,414,471,545` + `governance/atomic_transaction_manager.py:182,239,260,262,264,369,389,403,417,419,461,505` | 错误消息暴露文件路径和内部tx_id | LOW | 路径和tx_id放入details字段 |
+| 5.99.21 | `infrastructure/error_codes.py` | 业务异常缺失错误码字段：`MoneyPrecisionError`/`StagingError`/`ContractViolationError`/`SessionError`/`TransactionError`等均无`error_code`字段（`MCPError`和`ContractViolationError`是良好范式但未推广） | LOW | 要求所有自定义异常携带`error_code`字段 |
+| 5.99.22 | 多文件 | 标点符号不一致：中文消息有的以`。`结尾有的无；箭头符号`→` vs `->`混用；克隆文件中错误消息完全重复（hallucination_detector ×4副本、money ×2副本、unified_memory_api ×3副本、embedding_router ×2副本） | LOW | 统一标点和格式；抽取到共享errors模块 |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 1 | 5.99.1 |
+| MEDIUM | 11 | 5.99.2-5.99.12 |
+| LOW | 10 | 5.99.13-5.99.22 |
+| **合计** | **22** | |
+
+---
+
+### 5.100 异步资源生命周期（18个，第19轮新增）
+
+#### 5.100.1 HIGH级（7个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.100.1 | `shared/infra/limiter.py:137-142` | `TokenBucketLimiter.acquire()`在`async with self._lock:`块内手动调用`self._lock.release()` → `await asyncio.sleep()` → `finally: await self._lock.acquire()`。释放锁期间其他协程可修改`_tokens`/`_last_refill`，重新获取后覆盖其修改。取消安全：若任务在sleep期间被取消，finally中的acquire也可能被取消 | HIGH | 不要在持锁期间释放锁；改用条件变量或asyncio.Semaphore |
+| 5.100.2 | `shared/infra_06/limiter.py:133-138` | 与5.100.1完全相同的反模式（`_06`副本） | HIGH | 同上+消除重复 |
+| 5.100.3 | `behavioral_audit/brain_integration.py:206-244` | `_run_async(coro)`当检测到运行中的事件循环时，新建线程+新loop运行协程，主线程`t.join(timeout=120)`阻塞等待。若从async上下文调用，会阻塞事件循环长达120秒 | HIGH | async上下文应直接`await coro` |
+| 5.100.4 | `governance/drift_detection/brain_integration.py:150-177` | 与5.100.3完全相同的`_run_async`反模式（governance副本，t.join(120)阻塞） | HIGH | 同上 |
+| 5.100.5 | `integration/pipeline_orchestrator.py:1749-1751` | `_lsg_sanitize_input`中`asyncio.run_coroutine_threadsafe(gw.scan_input(...), loop)` + `future.result()`。若本方法被async上下文（loop所在线程）直接调用，`future.result()`阻塞loop线程而协程需在loop上调度执行→死锁 | HIGH | 区分loop线程内/跨线程；loop线程内应直接`await` |
+| 5.100.6 | `integration/pipeline_orchestrator.py:1785-1793` | `_lsg_sanitize_output`中与5.100.5相同的死锁模式 | HIGH | 同上 |
+| 5.100.7 | `integration/pipeline_orchestrator.py:1842-1852` | `_lsg_scan_agent_action`中与5.100.5相同的死锁模式 | HIGH | 同上 |
+
+#### 5.100.2 MEDIUM级（9个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.100.8 | `shared/security/secrets.py:186,203-204` | `DotEnvSecretProvider.get_secret`（async def）调用同步方法`_load_env_file`，后者执行`with open(...)`阻塞文件IO | MEDIUM | 用`await asyncio.to_thread(...)`或aiofiles |
+| 5.100.9 | `infrastructure/_base_server.py:565-567` | `run_async`（async def）直接调用同步`handle_request(request)` + 阻塞`out.write()`/`out.flush()`。若tool handler执行阻塞IO会阻塞事件循环 | MEDIUM | 改为`await loop.run_in_executor(None, ...)` |
+| 5.100.10 | `integration/mcp/_base_server.py:565-567` | 与5.100.9完全相同（integration/mcp副本） | MEDIUM | 同上 |
+| 5.100.11 | `shared/infra/outbox.py:219` | `_poll_loop`（async def）同步调用`result = self._handler(entry)`。若handler是同步阻塞函数会阻塞事件循环 | MEDIUM | 统一要求handler为async或用`asyncio.to_thread` |
+| 5.100.12 | `shared/infra_06/outbox.py:219` | 与5.100.11完全相同（`_06`副本） | MEDIUM | 同上+消除重复 |
+| 5.100.13 | `trading/runtime/async_runtime.py:205-206` | `run_in_executor`（同步方法）执行`loop.run_in_executor(...)` + `asyncio.ensure_future(future).result()`。`.result()`阻塞当前线程，若从async上下文调用导致死锁 | MEDIUM | 加`if asyncio.get_running_loop(): raise RuntimeError`保护 |
+| 5.100.14 | `trading/runtime/async_runtime.py:171` | `run_coroutine`当`self._loop`存在且未运行时仍调用`asyncio.run(coro)`，创建新loop导致`self._loop`成为孤儿 | MEDIUM | 用`self._loop.run_until_complete(coro)` |
+| 5.100.15 | 12+文件：`autonomy_core/llm_gateway.py:74,103`、`integration/llm_gateway.py`、`infrastructure/pipeline/llm_gateway.py`、`infrastructure/gateway_server.py:107`、`integration/mcp/gateway_server.py:107`、`infrastructure/a2a_protocol/`3个adapter、`governance/default_security_gateway.py:278`（+compliance_gate_a6副本）、`trading/orchestrator/agent_orchestrator.py:911`（+audit_orchestration副本） | 多处fallback路径使用`asyncio.get_event_loop()`。Python 3.10+中当无运行loop时该API已弃用，3.12+发出DeprecationWarning | MEDIUM | 改用`asyncio.new_event_loop()` + `set_event_loop()` + `run_until_complete()` + `close()` |
+| 5.100.16 | 12+文件：`ops/evolution_engine.py:351`、`ops/scheduler.py:298`、`autonomy_core/context_injector.py:261`、`autonomy_core/llm_gateway.py:69,96`、`infrastructure/governance_server.py:575`、`infrastructure/gateway_server.py:95`、`infrastructure/_base_server.py:527`、`infrastructure/a2a_protocol/legacy_governance_adapter.py:70` | 多处同步函数中调用`asyncio.run(...)`桥接async代码。`asyncio.run`每次创建并销毁新loop，频繁调用开销大且无法复用loop-bound资源（Lock/Queue绑定到首次创建的loop） | MEDIUM | 对高频路径用`AsyncRuntime.run_coroutine`复用loop |
+
+#### 5.100.3 LOW级（2个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.100.17 | `trading/runtime/async_runtime.py:108` | `AsyncRuntime.start`调用`asyncio.new_event_loop()`但未调用`asyncio.set_event_loop(loop)`，后续`asyncio.get_event_loop()`可能返回不同loop | LOW | 补`asyncio.set_event_loop(self._loop)` |
+| 5.100.18 | `behavioral_audit/__main__.py:60-66` + `governance/audit_trail/cli.py:180-183` + `governance/audit_orchestration/cli.py:180-183` + `behavioral_audit/cold_start.py:247-252` + `governance/drift_detection/cold_start.py:154-162` | 5处CLI/冷启动入口使用`new_event_loop() + set_event_loop() + ... + close()`模式但未保存/恢复之前的loop | LOW | 保存原loop并在finally中恢复；或直接用`asyncio.run(...)` |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 7 | 5.100.1-5.100.7 |
+| MEDIUM | 9 | 5.100.8-5.100.16 |
+| LOW | 2 | 5.100.17-5.100.18 |
+| **合计** | **18** | |
+
+---
+
+### 5.101 变量遮蔽与命名冲突（56个，第19轮新增）
+
+**关键结论**：无HIGH级问题。所有遮蔽均未在作用域内调用被遮蔽的内置函数。MEDIUM级仅1处，LOW级55处集中在数据类/Pydantic字段使用内置名（Python生态中极常见的模式）。
+
+#### 5.101.1 MEDIUM级（1个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.101.1 | `ops/collectors/known_unknown_registry.py:51` | `def register(self, id: str, ...)`参数`id`遮蔽Python 3内置函数`id()`。`id`是真实内置函数，虽函数体内未调用`id()`故未触发bug，但参数遮蔽内置函数易在后续维护中引入错误 | MEDIUM | 重命名为`item_id`或`known_unknown_id` |
+
+#### 5.101.2 LOW级——函数参数遮蔽内置名`file`（6个）
+
+| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.101.2 | `governance/hotspot_tracker.py:48,53,62` | 3处`file`参数/循环变量遮蔽 | LOW | 改为`file_path` |
+| 5.101.3 | `governance/code_archaeology.py:53` + `governance/audit_trail/code_archaeology.py:56`（重复副本） | 2处`def blame(file: str, ...)`参数遮蔽 | LOW | 改为`file_path` |
+| 5.101.4 | `security/adversarial_validation/steady_state.py:190` | `def _lock_time(self, file: str)`参数遮蔽 | LOW | 改为`file_path` |
+
+#### 5.101.3 LOW级——数据类/Pydantic字段遮蔽内置名（42个，按内置名分组）
+
+以下均为`@dataclass`或`BaseModel`字段名与Python内置名相同。Python作用域解析机制下方法内调用内置函数仍走全局作用域不会出错，属风格性遮蔽。
+
+| 编号 | 遮蔽的内置名 | 数量 | 代表性file_path:line | 严重度 |
+|---|---|---|---|---|
+| 5.101.5 | `id` | 15 | `governance/blind_spot_tracker.py:27`、`integration/vector_memory/hybrid_retriever.py:72`、`integration/models.py:256`、`infrastructure/pipeline/models.py:257`、`trading/night_shift_queue.py:37`、`governance/cache_manager.py:42`、`governance/self_benchmark.py:44`、`governance/drift_detection/drift_models.py:199`、`behavioral_audit/drift_models.py:282`、`autonomy_core/checkpoint_manager.py:27`、`ops/circuit_breaker_repo.py:44`、`ops/collectors/schema_migration.py:42`、`ops/collectors/known_unknown_registry.py:40`、`shared/infra/outbox.py:82`、`shared/infra_06/outbox.py:82` | LOW |
+| 5.101.6 | `file` | 11 | `governance/atomic_fixer.py:50`、`security/access_control/intent_binder.py:34`、`governance/audit_trail/code_archaeology.py:26`、`governance/cache_manager.py:43`、`governance/code_archaeology.py:23`、`governance/diff_detector.py:37`、`governance/drift_detection/headless_scanner.py:38`、`governance/hotspot_tracker.py:28`、`ops/gates/blueprint_code_reconciler.py:34`、`behavioral_audit/headless_scanner.py:45` | LOW |
+| 5.101.7 | `type` | 3 | `governance/integration_hub.py:27`、`ops/observability/metrics.py:79`、`shared/observability_02/metrics.py:79`（重复） | LOW |
+| 5.101.8 | `format` | 4 | `governance/audit_trail/evidence_pack.py:50,63`、`governance/audit_trail/sbom_generator.py:52`、`governance/sbom_generator.py:49`（重复） | LOW |
+| 5.101.9 | `hash` | 5 | `ops/detectors/temporal_coherence_of_self_model.py:35`、`governance/commit_quality_gate.py:36`、`governance/rule_enforcement/audit_chain_verifier.py:47`、`infrastructure/rollback/commit_quality_gate.py:36`（重复）、`ops/forensic/guard_configuration_drift_monitor.py:33` | LOW |
+| 5.101.10 | `open` | 3 | `market_data/market_data.py:31`、`trading/trading_contracts/market/market_data.py:31`（重复）、`shared/contracts/market_data.py:43`（codegen产物） | LOW |
+| 5.101.11 | `input` | 1 | `shared/evals.py:37` | LOW |
+| 5.101.12 | `round` | 1 | `governance/blind_spot_tracker.py:29` | LOW |
+| 5.101.13 | Enum成员遮蔽`file` | 1 | `governance/audit_trail/finding_model.py:85` `class BlastRadius(str, Enum): file = "file"` | LOW |
+
+#### 5.101.4 LOW级——模块名与标准库冲突（6个）
+
+| 编号 | file_path | 问题描述 | 严重度 | 修复建议 |
+|---|---|---|---|---|
+| 5.101.14 | `shared/secrets.py` | 文件名与标准库`secrets`模块同名（re-export wrapper） | LOW | 改名为`secrets_compat.py` |
+| 5.101.15 | `shared/types.py` + `shared/foundation/types.py` | 2个文件名与标准库`types`模块同名 | LOW | 改名 |
+| 5.101.16 | `shared/security/secrets.py` | 文件名与标准库`secrets`模块同名（canonical实现） | LOW | 改名 |
+| 5.101.17 | `security/llm_defense/llm_security/patterns/secrets.py` + `security/llm_defense/llm_security_01/patterns/secrets.py` | 2个文件名与标准库`secrets`模块同名（重复） | LOW | 改名 |
+
+**严重度汇总**：
+
+| 严重度 | 数量 | 编号 |
+|---|:---:|---|
+| HIGH | 0 | — |
+| MEDIUM | 1 | 5.101.1 |
+| LOW | 55 | 5.101.2-5.101.17（含42处数据类字段遮蔽+6处file参数+6处模块名冲突+1处Enum成员） |
+| **合计** | **56** | |
+
+**附注**：`shared/contracts/market_data.py:39-41`中`idempotency_key: str`字段被声明3次（codegen产物），`@dataclass`静默使用最后一条声明，虽非遮蔽但属命名冲突/重复定义bug。
 
 ---
 
