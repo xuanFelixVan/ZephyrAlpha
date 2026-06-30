@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-06-30'
-total_scripts: 570
+generated_at: '2026-07-01'
+total_scripts: 545
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -582,105 +582,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_audit_gate_registry.py
-  path: governance/_audit_gate_registry.py
-  description: 找出未注册的门禁YAML文件。
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_check_all_status.py
-  path: governance/_check_all_status.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_check_task.py
-  path: governance/_check_task.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_check_vs.py
-  path: governance/_check_vs.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/_concurrency.py
   path: governance/_concurrency.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_e2e_verify.py
-  path: governance/_e2e_verify.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_finding_lifecycle.py
-  path: governance/_finding_lifecycle.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_list_gate_ids.py
-  path: governance/_list_gate_ids.py
-  description: import sys
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_resource_guard.py
-  path: governance/_resource_guard.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_fle_gates.py
-  path: governance/_verify_fle_gates.py
-  description: import importlib
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_gate_loading.py
-  path: governance/_verify_gate_loading.py
-  description: import sys
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_yaml.py
-  path: governance/_verify_yaml.py
-  description: import yaml
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/add_file_headers.py
-  path: governance/add_file_headers.py
-  description: import argparse
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -721,14 +625,6 @@ scripts:
 - name: governance/apply_depgraph.py
   path: governance/apply_depgraph.py
   description: '[BLUEPRINT] | scripts/governance/apply_depgraph.py | §1'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/audit_blueprint_alignment.py
-  path: governance/audit_blueprint_alignment.py
-  description: 扫描 blueprints → task cards → downstream_outputs → 磁盘文件，
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -777,22 +673,6 @@ scripts:
 - name: governance/auto_sync_all_registries.py
   path: governance/auto_sync_all_registries.py
   description: =====================================
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/blind_spot_registry.py
-  path: governance/blind_spot_registry.py
-  description: 'python scripts/governance/blind_spot_registry.py --json     # AI消费'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/build_script_dep_graph.py
-  path: governance/build_script_dep_graph.py
-  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -870,14 +750,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/check_rule_four_way_alignment.py
-  path: governance/check_rule_four_way_alignment.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/check_schema_version_writes.py
   path: governance/check_schema_version_writes.py
   description: G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
@@ -929,14 +801,6 @@ scripts:
 - name: governance/create_alignment_tasks.py
   path: governance/create_alignment_tasks.py
   description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/crosscheck_sys_master_deps.py
-  path: governance/crosscheck_sys_master_deps.py
-  description: crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致.
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1078,14 +942,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/iterative_cleanup_imports.py
-  path: governance/iterative_cleanup_imports.py
-  description: 1. 尝试 import zephyr.governance
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/list_phase0_tasks.py
   path: governance/list_phase0_tasks.py
   description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/list_phase0_tasks.py | §1.11'
@@ -1158,22 +1014,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/rebuild_progress.py
-  path: governance/rebuild_progress.py
-  description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/rebuild_progress.py | §9.3'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/register_orphan_modules.py
-  path: governance/register_orphan_modules.py
-  description: 1. 从 audit_registration.py --json 获取 50 个 ORPHAN MODULES
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/rename_kebab_to_snake.py
   path: governance/rename_kebab_to_snake.py
   description: 操作流程：
@@ -1222,14 +1062,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/run_incremental.py
-  path: governance/run_incremental.py
-  description: '等价于: python run_all.py --diff-ref HEAD~1 --warn-only'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/scan_ground_truth_deps.py
   path: governance/scan_ground_truth_deps.py
   description: import argparse
@@ -1273,14 +1105,6 @@ scripts:
 - name: governance/sync_blueprint_status.py
   path: governance/sync_blueprint_status.py
   description: '----'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/sync_progress.py
-  path: governance/sync_progress.py
-  description: sync_progress.py — 从 domain_progress.json 同步进度到 §2 模块清单表.
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1361,22 +1185,6 @@ scripts:
 - name: governance/verify_audit_integrity.py
   path: governance/verify_audit_integrity.py
   description: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/verify_downstream_anchors.py
-  path: governance/verify_downstream_anchors.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/verify_file_paths.py
-  path: governance/verify_file_paths.py
-  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2720,14 +2528,6 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_static_manifest_drift.py
   path: governance/d5_architecture/validators/validate_static_manifest_drift.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/validators/validate_test_directory_structure.py
-  path: governance/d5_architecture/validators/validate_test_directory_structure.py
   description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
