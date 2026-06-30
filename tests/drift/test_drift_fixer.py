@@ -13,8 +13,8 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.auto_fix_engine_03.drift_fixer import DriftFixer
-from zephyr.security.access_control.auto_fix_engine_03.models import FixStatus, ValidationResult
+from zephyr.infrastructure.auto_fix_engine.drift_fixer import DriftFixer
+from zephyr.infrastructure.auto_fix_engine.models import FixStatus, ValidationResult
 
 
 class TestDriftFixerInstantiation:

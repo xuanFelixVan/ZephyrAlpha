@@ -16,11 +16,11 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     ShadowResult,
 )
-from zephyr.security.access_control.auto_fix_engine_03.shadow_workspace import ShadowWorkspace
+from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
 
 
 class TestShadowWorkspaceInstantiation:

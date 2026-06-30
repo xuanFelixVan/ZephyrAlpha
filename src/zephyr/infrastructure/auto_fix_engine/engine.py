@@ -55,6 +55,28 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 )
 from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspace
 
+try:
+    from zephyr.governance.audit_trail.finding_model import (
+        AuditFinding,
+        BlastRadius,
+        FindingDimension,
+        FindingImpact,
+        FindingLifecycle,
+        FindingRemediation,
+        FindingSeverity,
+        FindingStatus,
+        FindingTarget,
+        FindingTraceability,
+        RecommendationBlock,
+        RemediationAction,
+        RemediationPriority,
+        generate_finding_id,
+    )
+
+    _FINDING_MODEL_AVAILABLE = True
+except ImportError:
+    _FINDING_MODEL_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 _NO_AUTO_FIX_TYPES = {"behavioral_audit_red", "security_critical", "data_loss_risk"}

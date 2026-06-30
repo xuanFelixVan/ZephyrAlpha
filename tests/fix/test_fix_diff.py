@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import hashlib
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_diff import FixDiff
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction
+from zephyr.infrastructure.auto_fix_engine.fix_diff import FixDiff
+from zephyr.infrastructure.auto_fix_engine.models import FixAction
 
 
 class TestFixDiffCompute:

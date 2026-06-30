@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import json
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_report import FixReportGenerator
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.fix_report import FixReportGenerator
+from zephyr.infrastructure.auto_fix_engine.models import (
     BudgetInfo,
     FixAction,
     FixConfidence,

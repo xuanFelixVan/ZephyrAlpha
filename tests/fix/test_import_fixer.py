@@ -18,11 +18,11 @@ from pathlib import Path
 import pytest
 
 import_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.import_fixer", reason="import_fixer not available"
+    "zephyr.infrastructure.auto_fix_engine.import_fixer", reason="import_fixer not available"
 )
 ImportFixer = import_mod.ImportFixer
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
 
@@ -77,7 +77,7 @@ class TestImportFixerFix:
 
     def test_fix_dry_run_does_not_modify_file(self):
         fixer = ImportFixer()
-        content = "from zephyr.security.access_control.auto_fix_engine_03.models import FixAction\n"
+        content = "from zephyr.infrastructure.auto_fix_engine.models import FixAction\n"
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
             f.write(content)
             f.flush()

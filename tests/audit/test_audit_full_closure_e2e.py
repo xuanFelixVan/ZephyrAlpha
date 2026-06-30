@@ -46,7 +46,7 @@ GateResult = phase_check_mod.GateResult
 check_critical_findings = phase_check_mod.check_critical_findings
 
 auto_fix_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.engine", reason="auto-fix-engine not available"
+    "zephyr.infrastructure.auto_fix_engine.engine", reason="auto-fix-engine not available"
 )
 AutoFixEngine = auto_fix_mod.AutoFixEngine
 

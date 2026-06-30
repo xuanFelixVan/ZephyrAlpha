@@ -376,7 +376,7 @@ from zephyr.governance.drift_detection.test_fixture_checker import (
     scan_mock_target_drift,
 )
 from zephyr.governance.drift_detection.trend_analyzer import TrendAlert, TrendAnalyzer, TrendMetrics
-from zephyr.security.access_control.auto_fix_engine_03.state_machine import (
+from zephyr.infrastructure.auto_fix_engine.state_machine import (
     DriftEventRecord,
     DriftStateMachine,
     InvalidTransitionError,

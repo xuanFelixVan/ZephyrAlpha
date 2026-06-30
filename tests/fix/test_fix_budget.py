@@ -13,13 +13,13 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_budget import (
+from zephyr.infrastructure.auto_fix_engine.fix_budget import (
     DriftBudgetLink,
     FixBudget,
     FixStormGuard,
     LLMCostEstimator,
 )
-from zephyr.security.access_control.auto_fix_engine_03.models import BudgetInfo, FixLevel
+from zephyr.infrastructure.auto_fix_engine.models import BudgetInfo, FixLevel
 
 
 class TestFixBudget:

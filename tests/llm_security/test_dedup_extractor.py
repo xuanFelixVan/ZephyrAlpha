@@ -18,11 +18,11 @@ from pathlib import Path
 import pytest
 
 dedup_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.dedup_extractor", reason="dedup_extractor not available"
+    "zephyr.infrastructure.auto_fix_engine.dedup_extractor", reason="dedup_extractor not available"
 )
 DedupExtractor = dedup_mod.DedupExtractor
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
 

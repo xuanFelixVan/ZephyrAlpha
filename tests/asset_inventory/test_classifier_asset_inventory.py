@@ -61,7 +61,7 @@ class TestClassifier:
 
     def test_classify_config(self) -> None:
         c = Classifier()
-        entry = _make_entry("config/capacity/settings.yaml", ext=".yaml")
+        entry = _make_entry("config/settings.yaml", ext=".yaml")
         scan = ScanResult(scan_id="S-005", total_files=1, total_size_bytes=100, entries=[entry])
         result = c.classify(scan)
         assert result.assets[0].asset_type == AssetType.CONFIG

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_reliability import (
+from zephyr.infrastructure.auto_fix_engine.fix_reliability import (
     ApprovalQueue,
     BlastRadiusEstimator,
     CanaryFixer,
@@ -23,7 +23,7 @@ from zephyr.security.access_control.auto_fix_engine_03.fix_reliability import (
     FixResultCache,
     IdempotencyGuard,
 )
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     FixConfidence,
     FixDeadLetter,

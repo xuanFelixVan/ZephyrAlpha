@@ -17,8 +17,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.security.access_control.auto_fix_engine_03.llm_fix_adapter import LLMFixAdapter
-from zephyr.security.access_control.auto_fix_engine_03.models import FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine.llm_fix_adapter import LLMFixAdapter
+from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
 
 
 class TestLLMFixAdapterInstantiation:

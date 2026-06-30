@@ -17,11 +17,11 @@ import tempfile
 import pytest
 
 syncer_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.alignment_syncer", reason="alignment_syncer not available"
+    "zephyr.infrastructure.auto_fix_engine.alignment_syncer", reason="alignment_syncer not available"
 )
 AlignmentSyncer = syncer_mod.AlignmentSyncer
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
 

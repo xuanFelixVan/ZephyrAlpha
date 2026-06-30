@@ -682,7 +682,48 @@ class TestRenameFallback:
             f"pathspec commit 应成功: {result.status} {result.message}"
         # b.txt 修改留在工作区（pathspec commit 不 stash）
         assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
-            "b.txt 修改应留在工作区"
+            "b.txt 修改应留工作区"
+
+    def test_rename_with_dirty_staged_auto_unstage(self, tmp_path: Path) -> None:
+        """无 pathspec 模式（rename）+ staging 区有非目标文件 → 自动 unstage → commit 成功。
+
+        场景：session A staged rename（R100），session B staged 了 b.txt 修改。
+        rename 触发无 pathspec 模式，_verify_staged_is_clean 发现 b.txt 非目标，
+        _unstage_non_target_files 自动 git reset HEAD b.txt，commit 成功。
+        """
+        _init_git_repo(tmp_path)
+        # 初始文件 UPPER.txt + b.txt
+        _write_file(tmp_path, "UPPER.txt", "hello\n")
+        _write_file(tmp_path, "b.txt", "b\n")
+        env = self._git_env()
+        subprocess.run(["git", "add", "UPPER.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        # rename UPPER.txt -> lower.txt（触发无 pathspec 模式）
+        self._do_rename(tmp_path, "UPPER.txt", "lower.txt")
+        # 模拟并发 session：stage b.txt 修改（非目标文件污染 staging 区）
+        _write_file(tmp_path, "b.txt", "b modified\n")
+        subprocess.run(["git", "add", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        # 通过 GitCommitGateway commit rename
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="auto-unstage-test",
+            files=[str(tmp_path / "lower.txt")],
+            message="refactor: rename UPPER to lower",
+        )
+        assert result.status == CommitStatus.OK, \
+            f"auto-unstage 后 rename commit 应成功: {result.status} {result.message}"
+        # b.txt 修改不在 commit 中（只提交了 rename）
+        r = subprocess.run(
+            ["git", "show", "--name-status", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, \
+            f"HEAD 应含 rename: {r.stdout}"
+        assert "b.txt" not in r.stdout, \
+            f"b.txt 不应被搭便车提交: {r.stdout}"
+        # b.txt 修改仍留在工作区（被 auto-unstage，未丢失）
+        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
+            "b.txt 修改应留工作区"
 
 
 class TestGitignoredTrackedDeleted:

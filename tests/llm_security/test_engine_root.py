@@ -18,7 +18,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.models import (
     BudgetDecision,
     BudgetInfo,
     FixAction,
@@ -33,27 +33,27 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
 @pytest.fixture
 def mock_engine():
     patches = [
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixBudget",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixStormGuard",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.CascadeBreaker",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.SafetyGate",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.IdempotencyGuard",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.ConflictResolver",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixOrderResolver",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.BlastRadiusEstimator",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.DeadLetterQueue",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.ApprovalQueue",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.CanaryFixer",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.SecretLeakGuard",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixValidator",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.WriteSafety",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.ShadowWorkspace",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.ComplianceAuditor",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.EscalationBridge",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixPatternMiner",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixReportGenerator",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.BatchFixer",
-        "zephyr.security.access_control.auto_fix_engine_03.engine.FixHealthCheck",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixBudget",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixStormGuard",
+        "zephyr.infrastructure.auto_fix_engine.engine.CascadeBreaker",
+        "zephyr.infrastructure.auto_fix_engine.engine.SafetyGate",
+        "zephyr.infrastructure.auto_fix_engine.engine.IdempotencyGuard",
+        "zephyr.infrastructure.auto_fix_engine.engine.ConflictResolver",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixOrderResolver",
+        "zephyr.infrastructure.auto_fix_engine.engine.BlastRadiusEstimator",
+        "zephyr.infrastructure.auto_fix_engine.engine.DeadLetterQueue",
+        "zephyr.infrastructure.auto_fix_engine.engine.ApprovalQueue",
+        "zephyr.infrastructure.auto_fix_engine.engine.CanaryFixer",
+        "zephyr.infrastructure.auto_fix_engine.engine.SecretLeakGuard",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixValidator",
+        "zephyr.infrastructure.auto_fix_engine.engine.WriteSafety",
+        "zephyr.infrastructure.auto_fix_engine.engine.ShadowWorkspace",
+        "zephyr.infrastructure.auto_fix_engine.engine.ComplianceAuditor",
+        "zephyr.infrastructure.auto_fix_engine.engine.EscalationBridge",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixPatternMiner",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixReportGenerator",
+        "zephyr.infrastructure.auto_fix_engine.engine.BatchFixer",
+        "zephyr.infrastructure.auto_fix_engine.engine.FixHealthCheck",
     ]
     with ExitStack() as stack:
         mocks = {}
@@ -87,7 +87,7 @@ def mock_engine():
         mock_batch.execute_batch.return_value = FixReport()
         mock_health = MockHealthCheck.return_value
         mock_health.check.return_value = FixHealthReport()
-        from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine
+        from zephyr.infrastructure.auto_fix_engine.engine import AutoFixEngine
 
         engine = AutoFixEngine(config_path="/nonexistent_config_xyz.yaml")
         yield engine

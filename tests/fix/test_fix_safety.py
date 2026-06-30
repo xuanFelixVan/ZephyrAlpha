@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
+from zephyr.infrastructure.auto_fix_engine.fix_safety import (
     CascadeBreaker,
     FixValidator,
     LockGuard,
@@ -22,7 +22,7 @@ from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
     SecretLeakGuard,
     WriteSafety,
 )
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     FixConfidence,
     FixLevel,

@@ -18,8 +18,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_health_check import FixHealthCheck
-from zephyr.security.access_control.auto_fix_engine_03.models import FixHealthReport
+from zephyr.infrastructure.auto_fix_engine.fix_health_check import FixHealthCheck
+from zephyr.infrastructure.auto_fix_engine.models import FixHealthReport
 
 
 @pytest.fixture
@@ -108,7 +108,7 @@ class TestCheckDb:
         os.makedirs(tmp_path / "readonly_dir", exist_ok=True)
         hc = FixHealthCheck(db_path=db_path)
         with patch(
-            "zephyr.security.access_control.auto_fix_engine_03.fix_health_check.sqlite3.connect",
+            "zephyr.infrastructure.auto_fix_engine.fix_health_check.sqlite3.connect",
             side_effect=OSError("permission denied"),
         ):
             result = hc._check_db()

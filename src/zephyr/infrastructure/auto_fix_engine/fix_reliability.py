@@ -115,12 +115,13 @@ class ConflictResolver:
         for a in actions:
             by_target[a.target].append(a)
         result: list[FixAction] = []
+        _CONFIDENCE_ORDER = {"high": 0, "medium": 1, "low": 2}
         for target, target_actions in by_target.items():
             sorted_actions = sorted(
                 target_actions,
                 key=lambda a: (
                     a.level.value,
-                    -a.confidence.value,
+                    _CONFIDENCE_ORDER.get(a.confidence.value, 1),
                     a.timestamp.isoformat() if isinstance(a.timestamp, datetime) else str(a.timestamp),
                 ),
             )

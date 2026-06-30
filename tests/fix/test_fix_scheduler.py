@@ -13,8 +13,8 @@
 
 from __future__ import annotations
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_scheduler import FixScheduler, SchedulerMode
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixReport
+from zephyr.infrastructure.auto_fix_engine.fix_scheduler import FixScheduler, SchedulerMode
+from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixLevel, FixReport
 
 
 def _make_action(target: str = "t.py") -> FixAction:

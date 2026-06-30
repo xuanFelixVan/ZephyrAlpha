@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.dep_version_fixer import DepVersionFixer
-from zephyr.security.access_control.auto_fix_engine_03.models import FixStatus, ValidationResult
+from zephyr.infrastructure.auto_fix_engine.dep_version_fixer import DepVersionFixer
+from zephyr.infrastructure.auto_fix_engine.models import FixStatus, ValidationResult
 
 
 @pytest.fixture

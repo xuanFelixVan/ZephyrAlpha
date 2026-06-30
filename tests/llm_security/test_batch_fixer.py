@@ -16,11 +16,11 @@ from unittest.mock import MagicMock
 import pytest
 
 batch_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.batch_fixer", reason="batch_fixer not available"
+    "zephyr.infrastructure.auto_fix_engine.batch_fixer", reason="batch_fixer not available"
 )
 BatchFixer = batch_mod.BatchFixer
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixAction = models.FixAction
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
@@ -28,13 +28,13 @@ FixConfidence = models.FixConfidence
 FixReport = models.FixReport
 
 budget_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.fix_budget", reason="fix_budget not available"
+    "zephyr.infrastructure.auto_fix_engine.fix_budget", reason="fix_budget not available"
 )
 FixBudget = budget_mod.FixBudget
 FixStormGuard = budget_mod.FixStormGuard
 
 reliability_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.fix_reliability", reason="fix_reliability not available"
+    "zephyr.infrastructure.auto_fix_engine.fix_reliability", reason="fix_reliability not available"
 )
 ConflictResolver = reliability_mod.ConflictResolver
 IdempotencyGuard = reliability_mod.IdempotencyGuard

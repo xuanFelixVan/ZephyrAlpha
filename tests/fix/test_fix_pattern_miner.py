@@ -17,8 +17,8 @@ import os
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner import FixPatternMiner
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine.fix_pattern_miner import FixPatternMiner
+from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixLevel, FixStatus
 
 
 @pytest.fixture

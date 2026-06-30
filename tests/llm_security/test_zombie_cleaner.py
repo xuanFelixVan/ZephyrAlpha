@@ -17,8 +17,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.security.access_control.auto_fix_engine_03.models import FixLevel, FixStatus
-from zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner import ZombieCleaner
+from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine.zombie_cleaner import ZombieCleaner
 
 
 class TestZombieCleanerInstantiation:
@@ -55,7 +55,7 @@ class TestZombieCleanerScan:
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [yaml_file] if pattern == "*.yaml" else []
                 with patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                    "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
                 ):
                     findings = cleaner.scan()
             assert any(f["type"] == "zombie_reference" for f in findings)
@@ -69,7 +69,7 @@ class TestZombieCleanerScan:
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [py_file] if pattern == "*.py" else []
                 with patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                    "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
                 ):
                     findings = cleaner.scan()
             assert any(f["type"] == "zombie_import" for f in findings)
@@ -83,7 +83,7 @@ class TestZombieCleanerScan:
             with patch.object(Path, "rglob") as mock_rglob:
                 mock_rglob.side_effect = lambda pattern: [py_file] if pattern == "*.py" else []
                 with patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                    "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
                 ):
                     findings = cleaner.scan()
             zombie_imports = [f for f in findings if f["type"] == "zombie_import"]
@@ -111,7 +111,7 @@ class TestZombieCleanerFix:
             yaml_file = Path(tmpdir) / "test.yaml"
             yaml_file.write_text(yaml_content, encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 action = cleaner.fix(str(yaml_file), dry_run=True)
             assert action.status == FixStatus.COMPLETED
@@ -125,7 +125,7 @@ class TestZombieCleanerFix:
             yaml_file.write_text(yaml_content, encoding="utf-8")
             original = yaml_file.read_text(encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 cleaner.fix(str(yaml_file), dry_run=True)
             assert yaml_file.read_text(encoding="utf-8") == original
@@ -137,7 +137,7 @@ class TestZombieCleanerFix:
             yaml_file = Path(tmpdir) / "test.yaml"
             yaml_file.write_text(yaml_content, encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 action = cleaner.fix(str(yaml_file))
             assert action.status == FixStatus.COMPLETED
@@ -149,7 +149,7 @@ class TestZombieCleanerFix:
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 action = cleaner.fix(str(py_file), dry_run=True)
             assert action.status == FixStatus.COMPLETED
@@ -169,7 +169,7 @@ class TestZombieCleanerValidate:
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 result = cleaner.validate(str(py_file))
             assert result.valid is True
@@ -181,7 +181,7 @@ class TestZombieCleanerValidate:
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text(py_content, encoding="utf-8")
             with patch(
-                "zephyr.security.access_control.auto_fix_engine_03.zombie_cleaner.os.getcwd", return_value=tmpdir
+                "zephyr.infrastructure.auto_fix_engine.zombie_cleaner.os.getcwd", return_value=tmpdir
             ):
                 result = cleaner.validate(str(py_file))
             assert result.valid is False

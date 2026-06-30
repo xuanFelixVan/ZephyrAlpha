@@ -18,7 +18,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from zephyr.security.access_control.auto_fix_engine_03.interrupt_guard import InterruptGuard
+from zephyr.infrastructure.auto_fix_engine.interrupt_guard import InterruptGuard
 
 
 class TestInterruptGuardInstantiation:

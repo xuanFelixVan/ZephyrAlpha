@@ -209,3 +209,26 @@ class BaseFixer(BaseModel):
 
     def rollback(self, target: str) -> bool:
         raise NotImplementedError
+
+
+_STABILITY_FROZEN = True
+_FROZEN_PUBLIC_API = frozenset(
+    {
+        "FixLevel",
+        "FixConfidence",
+        "FixStatus",
+        "BlastRadius",
+        "ValidationResult",
+        "BudgetInfo",
+        "SafetyDecision",
+        "BudgetDecision",
+        "FixAction",
+        "FixHistory",
+        "FixDeadLetter",
+        "FixReport",
+        "FixHealthReport",
+        "ShadowResult",
+        "ComplianceEvidence",
+        "BaseFixer",
+    }
+)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.integrity; zephyr.governance.drift_detection.drift_engine; zephyr.security.access_control.auto_fix_engine_03.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.integrity; zephyr.governance.drift_detection.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] ide_health_service.py; auto_runtime_core.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -311,7 +311,7 @@ class FeedbackLoopScheduler:
 
     def _auto_fix_drifts(self, drifts: list) -> None:
         try:
-            from zephyr.security.access_control.auto_fix_engine_03 import AutoFixEngine
+            from zephyr.infrastructure.auto_fix_engine import AutoFixEngine
 
             engine = AutoFixEngine()
             for d in drifts[:3]:

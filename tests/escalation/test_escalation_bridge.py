@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import sys
 
-from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
-from zephyr.security.access_control.auto_fix_engine_03.models import FixAction, FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine.escalation_bridge import EscalationBridge
+from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixLevel, FixStatus
 
 
 def _make_action(status: FixStatus = FixStatus.PENDING) -> FixAction:

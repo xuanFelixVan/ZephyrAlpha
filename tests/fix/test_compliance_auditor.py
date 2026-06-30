@@ -16,11 +16,11 @@ import os
 import pytest
 
 compliance_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.compliance_auditor", reason="compliance_auditor not available"
+    "zephyr.infrastructure.auto_fix_engine.compliance_auditor", reason="compliance_auditor not available"
 )
 ComplianceAuditor = compliance_mod.ComplianceAuditor
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixAction = models.FixAction
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel

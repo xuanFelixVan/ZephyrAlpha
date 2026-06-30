@@ -17,7 +17,7 @@ import hashlib
 
 import pytest
 
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+from zephyr.infrastructure.auto_fix_engine.models import (
     BaseFixer,
     BlastRadius,
     BudgetDecision,

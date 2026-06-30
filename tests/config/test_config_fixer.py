@@ -18,11 +18,11 @@ from pathlib import Path
 import pytest
 
 config_mod = pytest.importorskip(
-    "zephyr.security.access_control.auto_fix_engine_03.config_fixer", reason="config_fixer not available"
+    "zephyr.infrastructure.auto_fix_engine.config_fixer", reason="config_fixer not available"
 )
 ConfigFixer = config_mod.ConfigFixer
 
-models = pytest.importorskip("zephyr.security.access_control.auto_fix_engine_03.models", reason="models not available")
+models = pytest.importorskip("zephyr.infrastructure.auto_fix_engine.models", reason="models not available")
 FixStatus = models.FixStatus
 FixLevel = models.FixLevel
 

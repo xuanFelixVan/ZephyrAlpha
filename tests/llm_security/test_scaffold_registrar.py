@@ -18,8 +18,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.security.access_control.auto_fix_engine_03.models import FixLevel, FixStatus
-from zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar import ScaffoldRegistrar
+from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine.scaffold_registrar import ScaffoldRegistrar
 
 
 class TestScaffoldRegistrarInstantiation:
@@ -65,7 +65,7 @@ class TestScaffoldRegistrarScan:
 
                 mock_rglob.side_effect = rglob_side_effect
                 with patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    "zephyr.infrastructure.auto_fix_engine.scaffold_registrar.os.getcwd",
                     return_value=tmpdir,
                 ):
                     findings = reg.scan()
@@ -81,7 +81,7 @@ class TestScaffoldRegistrarScan:
             with (
                 patch.object(Path, "rglob", return_value=[underscore_script]),
                 patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    "zephyr.infrastructure.auto_fix_engine.scaffold_registrar.os.getcwd",
                     return_value=tmpdir,
                 ),
             ):
@@ -94,7 +94,7 @@ class TestScaffoldRegistrarScan:
             with (
                 patch.object(Path, "rglob", return_value=[]),
                 patch(
-                    "zephyr.security.access_control.auto_fix_engine_03.scaffold_registrar.os.getcwd",
+                    "zephyr.infrastructure.auto_fix_engine.scaffold_registrar.os.getcwd",
                     return_value=tmpdir,
                 ),
             ):

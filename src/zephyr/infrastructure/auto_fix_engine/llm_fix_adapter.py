@@ -18,7 +18,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
 
 from zephyr.infrastructure.auto_fix_engine.fix_safety import SecretLeakGuard
 from zephyr.infrastructure.auto_fix_engine.models import (
@@ -45,7 +48,7 @@ class LLMFixAdapter(BaseFixer):
             description="L2 LLM 修复桥接",
         )
         self._secret_guard = SecretLeakGuard()
-        self._llm_bridge: Any = None
+        self._llm_bridge: LLMGateway | None = None
 
     def _get_llm_bridge(self) -> Any:
         if self._llm_bridge is not None:

@@ -130,3 +130,25 @@ class FixStateMachine:
             self._current = FixState.DETECTED
             self._history.clear()
             return self._current
+
+
+class DriftEventRecord:
+    def __init__(self, record_id="", drift_type="", state="detected", timestamp=None, details=None):
+        self.record_id = record_id
+        self.drift_type = drift_type
+        self.state = state
+        self.timestamp = timestamp
+        self.details = details or {}
+
+
+class DriftStateMachine:
+    def __init__(self, initial_state="detected"):
+        self.state = initial_state
+        self.history = []
+
+    def transition(self, new_state):
+        self.history.append(self.state)
+        self.state = new_state
+
+    def can_transition(self, target):
+        return True
