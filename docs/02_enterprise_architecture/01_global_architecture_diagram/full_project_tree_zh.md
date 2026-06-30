@@ -1283,7 +1283,7 @@ scripts/  (包含26个文件: .py(24), .yaml(2))
 │   ├── generate_nav_table.py  — generate_nav_table.py — 全流程导航表自动生成器 v1.0.0  
 │   ├── generate_path_ownership_map.py  — 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。  
 │   ├── generate_project_depgraph.py  — # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7  
-│   ├── generate_project_path_tree.py  — 从磁盘扫描生成架构全景图的tree段（运营态目录结构）。  
+│   ├── generate_project_path_tree.py  — 从磁盘扫描生成路径全景图的tree段（运营态目录结构）。  
 │   ├── governance_watchdog.py  — governance_watchdog脚本  
 │   ├── human_memory_card.md  — 脚本系统 — 人类维护者速览卡片  
 │   ├── index.md  — 索引  
@@ -2398,7 +2398,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   ├── realtime_streaming.py  — realtime_streaming脚本  
 │   │   ├── startup_shutdown.py  — startup_shutdown脚本  
 │   │   └── startup_shutdown_cli.py  — startup_shutdown_cli脚本  
-│   ├── orphan_judgment/  (包含2个文件: .py(2))  
+│   ├── orphan_judge/  (包含2个文件: .py(2))  
 │   │   ├── __init__.py  — [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md  
 │   │   └── orphan_detector.py  — [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md  
 │   ├── performance_attribution_engine/  (包含1个文件: .py(1))  
@@ -3838,7 +3838,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   └── __init__.py  — __init__脚本  
 │   ├── access_control/  (包含52个文件: .py(52))  
 │   │   ├── __pycache__/  (包含81个文件: .pyc(81))  
-│   │   ├── auto_fix_engine_03/  (包含31个文件: .py(30), .yaml(1))  
+│   │   ├── auto_fix_engine/  (包含31个文件: .py(30), .yaml(1))  
 │   │   ├── detectors/  (包含7个文件: .py(7))  
 │   │   ├── governance_bridges/  (包含2个文件: .py(2))  
 │   │   ├── guards/  (包含19个文件: .py(19))  

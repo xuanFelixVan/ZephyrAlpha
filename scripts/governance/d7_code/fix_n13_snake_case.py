@@ -73,8 +73,8 @@ RENAMES: list[tuple[str, str]] = [
     ),
     # kebab-case → snake_case (2 files)
     (
-        "src/zephyr/security/access_control/auto_fix_engine_03/auto_fix_config.yaml",
-        "src/zephyr/security/access_control/auto_fix_engine_03/auto_fix_config.yaml",
+        "src/zephyr/infrastructure/auto_fix_engine/auto_fix_config.yaml",
+        "src/zephyr/infrastructure/auto_fix_engine/auto_fix_config.yaml",
     ),
     (
         "src/zephyr/data/circadian_tasks/schedule_state.json",

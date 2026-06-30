@@ -631,7 +631,7 @@ docs/  (1 files: .yaml(1))
 │   │   ├── constraint_violations.md  — Constraint violations  
 │   │   └── design_vs_production.md  — Design vs production  
 │   ├── 04_architecture_principles_decisions/  — Architecture principles & decisions  (1 files: .md(1))  
-│   │   └── dependency_architecture_panorama.md  — 依赖与架构全景图能力定位书  
+│   │   └── dependency_architecture_panorama.md  — 依赖与路径全景图能力定位书  
 │   ├── generated/  — Generated artifacts: dependency graphs  
 │   │   └── domains/  — Domain dependency graphs: Mermaid per domain  (53 files: .mmd(53))  
 │   ├── sample/  — Sample files: format reference  (7 files: .md(6), .mmd(1))  
@@ -1271,7 +1271,7 @@ scripts/  (26 files: .py(24), .yaml(2))
 │   ├── gate_engine_selfcheck.py  — Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?  
 │   ├── generate_path_ownership_map.py  — 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。  
 │   ├── generate_project_depgraph.py  — # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7  
-│   ├── generate_project_path_tree.py  — 从磁盘扫描生成架构全景图的tree段（运营态目录结构）。  
+│   ├── generate_project_path_tree.py  — 从磁盘扫描生成路径全景图的tree段（运营态目录结构）。  
 │   ├── governance_watchdog.py  — governance_watchdog script  
 │   ├── human_memory_card.md  — 脚本系统 — 人类维护者速览卡片  
 │   ├── index.md  — Index  
@@ -2371,7 +2371,7 @@ zephyr/  (2 files: .py(1), .yaml(1))
 │   │   ├── realtime_streaming.py  — realtime_streaming script  
 │   │   ├── startup_shutdown.py  — startup_shutdown script  
 │   │   └── startup_shutdown_cli.py  — startup_shutdown_cli script  
-│   ├── orphan_judgment/  (2 files: .py(2))  
+│   ├── orphan_judge/  (2 files: .py(2))  
 │   │   ├── __init__.py  — [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md  
 │   │   └── orphan_detector.py  — [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md  
 │   ├── performance_attribution_engine/  (1 files: .py(1))  
@@ -3809,7 +3809,7 @@ zephyr/  (2 files: .py(1), .yaml(1))
 │   │   └── __init__.py  — __init__ script  
 │   ├── access_control/  (52 files: .py(52))  
 │   │   ├── __pycache__/  (81 files: .pyc(81))  
-│   │   ├── auto_fix_engine_03/  (31 files: .py(30), .yaml(1))  
+│   │   ├── auto_fix_engine/  (31 files: .py(30), .yaml(1))  
 │   │   ├── detectors/  (7 files: .py(7))  
 │   │   ├── governance_bridges/  (2 files: .py(2))  
 │   │   ├── guards/  (19 files: .py(19))  

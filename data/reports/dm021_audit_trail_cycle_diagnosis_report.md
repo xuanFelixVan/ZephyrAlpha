@@ -173,8 +173,8 @@ audit_trail/__init__.py
 | 1 | `security/adversarial_validation/defense_runner.py` | finding_model | 22 |
 | 2 | `security/llm_defense/llm_security/behavior_audit_logger.py` | audit_trail.bridge | 50 |
 | 3 | `security/llm_defense/llm_security/self_protection/isolation.py` | audit_trail.bridge | 34 |
-| 4 | `security/access_control/auto_fix_engine_03/engine.py` | finding_model | 69 |
-| 5 | `security/access_control/auto_fix_engine_03/engine.py` | finding_ingest | 330, 389 |
+| 4 | `security/access_control/auto_fix_engine/engine.py` | finding_model | 69 |
+| 5 | `security/access_control/auto_fix_engine/engine.py` | finding_ingest | 330, 389 |
 | 6 | `security/access_control/behavioral_auditor/drift_engine.py` | finding_model | 124 |
 | 7 | `security/access_control/behavioral_auditor/drift_engine.py` | finding_ingest | 1369 |
 | 8 | `security/access_control/behavioral_auditor/drift_hotfix_bypass.py` | audit_trail.writer | 169 |
@@ -204,7 +204,7 @@ def some_function():
 
 **受影响文件**:
 - `security/adversarial_validation/defense_runner.py`
-- `security/access_control/auto_fix_engine_03/engine.py`
+- `security/access_control/auto_fix_engine/engine.py`
 - `security/access_control/behavioral_auditor/drift_engine.py`
 - `security/access_control/orphan_judge/judge.py`
 - `audit_trail/audit_admission_controller.py`

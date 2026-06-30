@@ -832,7 +832,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 1 | [ide_health_daemon.py:341](file:///D:/ZephyrAlpha/src/zephyr/trading/ide_health_daemon.py#L341) + [:363](file:///D:/ZephyrAlpha/src/zephyr/trading/ide_health_daemon.py#L363) | 30s | boot_hooks→register_daemon()→registry.start()；还自动调cleanup_stash.py | 是 |
 | 2 | [commit_trigger.py:207](file:///D:/ZephyrAlpha/src/zephyr/security/adversarial_validation/commit_trigger.py#L207) + [:212](file:///D:/ZephyrAlpha/src/zephyr/security/adversarial_validation/commit_trigger.py#L212) | 30s | boot_hooks→RedBlueTriggerConsumer().start() | 是 |
 | 3 | [fix_scheduler.py:91](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py#L91) + [:105](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py#L105) | 300s | CONTINUOUS默认模式 | 是 |
-| 4 | [fix_scheduler.py:88](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/fix_scheduler.py#L88) + [:102](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/fix_scheduler.py#L102) | 300s | 同上（副本） | 是 |
+| 4 | [fix_scheduler.py:88](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py#L88) + [:102](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py#L102) | 300s | 同上（副本） | 是 |
 | 5 | [pipeline_orchestrator.py:276](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L276) + [:277](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L277) | 3600s | start_periodic_profile() | 是 |
 | 6 | [health_monitor.py:166](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L166) + [:177](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L177) | metrics_interval | boot监控模块初始化 | 是 |
 | 7 | [local_model_scheduler.py:221](file:///D:/ZephyrAlpha/src/zephyr/integration/local_model/local_model_scheduler.py#L221) + [:275](file:///D:/ZephyrAlpha/src/zephyr/integration/local_model/local_model_scheduler.py#L275) | backoff | 调度器启动 | 是 |
@@ -2607,7 +2607,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：删除 `__all__=["*"]`（不声明时import *自动导出非_开头名称）或显式列出符号
 
 #### 5.19.3 BaseFixer(BaseModel)用Pydantic数据模型充当抽象基类【HIGH】
-- 证据：[auto_fix_engine/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) `class BaseFixer(BaseModel): def scan(self): raise NotImplementedError; def fix(self,...): raise NotImplementedError` 4个方法；[security/access_control/auto_fix_engine_03/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/models.py) 完全相同duplicate；BaseFixer非ABC可被直接实例化，子类无需实现即可通过类型检查
+- 证据：[auto_fix_engine/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) `class BaseFixer(BaseModel): def scan(self): raise NotImplementedError; def fix(self,...): raise NotImplementedError` 4个方法；[security/access_control/auto_fix_engine/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) 完全相同duplicate；BaseFixer非ABC可被直接实例化，子类无需实现即可通过类型检查
 - 病根：根因5（抽象基类未实现，Pydantic BaseModel不应承载抽象行为契约）
 - 修复：改为 `class BaseFixer(abc.ABC)` + `@abc.abstractmethod`
 
@@ -4772,7 +4772,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：保存Popen引用到self._ollama_proc，shutdown路径中terminate()+wait()
 
 #### 5.49.2 [MEDIUM] sqlite3.connect未用try/finally，异常时连接泄漏（系统性，8+文件）
-- **文件**：[trend_analyzer.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/trend_analyzer.py#L98), [gate_persistence.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/gate_persistence.py#L61), [drift_engine.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/drift_engine.py#L507), [fix_reliability.py](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/fix_reliability.py#L53), [fix_pattern_miner.py](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/fix_pattern_miner.py#L38), [compliance_auditor.py](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/compliance_auditor.py#L39), [fix_budget.py](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/auto_fix_engine_03/fix_budget.py#L58)
+- **文件**：[trend_analyzer.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/trend_analyzer.py#L98), [gate_persistence.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/gate_persistence.py#L61), [drift_engine.py](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/drift_engine.py#L507), [fix_reliability.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py#L53), [fix_pattern_miner.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_pattern_miner.py#L38), [compliance_auditor.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/compliance_auditor.py#L39), [fix_budget.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_budget.py#L58)
 - **证据**：典型模式`conn = sqlite3.connect(...); conn.execute(...); conn.close()`——execute抛异常时close不执行，且被`except Exception: pass`吞掉
 - **问题**：异常路径sqlite连接泄漏
 - **影响**：长期运行导致FD耗尽或WAL膨胀
@@ -5572,3 +5572,52 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 4. **正文完整性说明**：5.56-5.171的正文因文件损坏丢失（第14轮后元数据持续更新但正文未持久化）。5.172-5.177为第30-31轮新发现问题的完整记录。5.56-5.171的详细清单见各轮子代理调研记录，汇总数据已包含在执行摘要汇总表中。
 5. **局限性**：`src/zephyr/`体量巨大，部分维度（如except Exception匹配超200处）受head_limit截断，可能存在未列出的同类实例。如需exhaustive扫描可指定目录后继续。
 6. **本文档为架构债务单一真源（SSoT）**，所有治理决策应以此为准。违规清单部分需通过调研脚本生成，禁止手工编辑。
+
+---
+
+## 八、第32轮验证结果（5.172-5.177）
+
+> **验证日期**：2026-07-01
+> **验证方法**：对5.172-5.177维度的221个问题逐条读取file:line引用，对照实际代码验证问题是否仍然存在。6个维度并行验证。
+
+### 验证汇总
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.172 并发安全 | 23 | 15 | 0 | 2 | 6 |
+| 5.173 硬编码路径 | 30 | 16 | 0 | 5 | 9 |
+| 5.174 导入循环 | 17 | 17 | 0 | 0 | 0 |
+| 5.175 异常处理 | 100 | 100 | 0 | 0 | 0 |
+| 5.176 SQL注入 | 27 | 15 | 0 | 0 | 12 |
+| 5.177 命名规范 | 24 | 24 | 0 | 0 | 0 |
+| **合计** | **221** | **187** | **0** | **7** | **27** |
+
+**核心结论**：221个问题中**零修复**（FIXED=0），**187个仍然有效**需修复，**7个偏移**需更新注册表，**27个误报/豁免**建议降级。
+
+### DRIFTED问题（7个，需更新注册表）
+
+| # | 维度 | 原引用 | 偏移原因 | 处理建议 |
+|---|---|---|---|---|
+| 1 | 5.172#12 | gate_cache.py:43,68,72,81,83 | 行号偏移，实际+=操作在74,78,87,89行 | 更新行号 |
+| 2 | 5.172#13 | chaos_engine.py:171,199,347 | 描述与代码不符，cleanup在锁之前 | 更新描述 |
+| 3 | 5.173#7 | migrate_domain_id_hyphen_to_underscore.py:297 | 文件已归档到_archive/one_off/ | 删除条目（归档豁免） |
+| 4 | 5.173#8 | fix_broken_post_sync.py:74,75,106 | 文件已归档到_archive/one_off/ | 删除条目（归档豁免） |
+| 5 | 5.173 MEDIUM#4 | llm_gateway.py 3副本 | autonomy_core/llm_gateway.py已删除，3→2副本 | 更新计数为2副本 |
+| 6 | 5.173 MEDIUM#6 | supply_chain.py 4副本 | governance/supply_chain.py已删除，4→3副本 | 更新计数为3副本 |
+| 7 | 5.173 LOW#2 | localhost:5432/depgraph 5处 | 1文件归档+2处描述字符串失准 | 更新描述 |
+
+### NOT_NEEDED问题（27个，建议降级/移除）
+
+**5.172（6个，asyncio误报）**：#1 lock.py（asyncio单线程无await间隙原子执行）、#2 outbox.py（同前）、#1-LOW registry.py（CPython dict in原子）、#2-LOW cache.py（asyncio无await安全）、#5-LOW git_commit_gateway.py（调用方已串行化）、#6-LOW annotations.py（import单线程）
+
+**5.173（9个，合理豁免）**：#11 concurrent_commit_test.py合成git身份、#3-LOW auto_runtime_core.py官方下载链接、#4-LOW check_precommit_id_uniqueness.py格式示例、#5-LOW docstring官方文档链接、#6-LOW exam_test_cases.py评测数据、#7-LOW path_resolver.py自测块、#8-LOW安全检测器功能性硬编码、#9-LOW归档文件、#10-LOW PyPI公共API端点
+
+**5.176（12个，常量/元数据回插风险极低）**：#16-#27均为硬编码常量列名/表名或sqlite_master元数据回插，非用户输入可控，修复纯为代码风格统一
+
+### 验证后的真实债务数
+
+5.172-5.177原始登记221个问题，验证后：
+- **真实待修复**：187个（STILL_VALID）
+- **需更新注册表**：7个（DRIFTED，其中5个问题仍存在需更新行号/描述，2个已归档应删除）
+- **应降级/移除**：27个（NOT_NEEDED）
+- **实际有效债务**：187 + 5（DRIFTED中问题仍存在的）= **192个**
