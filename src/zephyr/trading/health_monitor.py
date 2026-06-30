@@ -113,17 +113,41 @@ class HealthMonitor:
         将 LongevityMonitor 和 HealthcheckService 注册为 K8s Probe 模式的健康检查。
         """
         # 1. LongevityMonitor
+        # 5.55.3 修复：原硬编码 alive=True，现使用 LongevityMonitor.report() + psutil 真实内存退化检查
         try:
             from zephyr.shared.longevity_monitor import LongevityMonitor
 
             _longevity = LongevityMonitor()
+            _longevity_component_id = "health_monitor"
+
+            # 注册时采集基线内存（psutil 不可用时基线为 0，退化分数始终为 0 → 永远 healthy）
+            _baseline_mb = 0.0
+            try:
+                import psutil
+
+                _baseline_mb = psutil.Process().memory_info().rss / (1024 * 1024)
+            except ImportError:
+                pass
+            _longevity.register(_longevity_component_id, baseline_memory_mb=_baseline_mb)
 
             def _longevity_probe() -> ProbeResult:
                 try:
+                    current_mb = _baseline_mb  # psutil 不可用时退化分数为 0
+                    try:
+                        import psutil
+
+                        current_mb = psutil.Process().memory_info().rss / (1024 * 1024)
+                    except ImportError:
+                        pass
+                    report = _longevity.report(_longevity_component_id, current_mb)
+                    # 退化分数阈值：>=0.8 视为不存活；>=0.5 视为存活但未就绪
+                    alive = report.degradation_score < 0.8
+                    ready = report.degradation_score < 0.5
                     return ProbeResult(
                         capability_id="shared.longevity_monitor",
-                        alive=True,
-                        ready=True,
+                        alive=alive,
+                        ready=ready,
+                        error=f"degradation_score={report.degradation_score:.3f}" if not ready else "",
                     )
                 except Exception as e:
                     return ProbeResult(
@@ -134,7 +158,7 @@ class HealthMonitor:
 
             self.register_probe("shared.longevity_monitor", _longevity_probe)
         except Exception:
-            pass
+            logger.debug("longevity probe registration failed", exc_info=True)
 
         # 2. HealthcheckService
         try:

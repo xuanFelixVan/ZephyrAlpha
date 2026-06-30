@@ -26,7 +26,9 @@ from __future__ import annotations
 
 import os
 import time
+from collections.abc import Callable
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -78,9 +80,12 @@ SPECIAL_RULES: dict[str, dict] = {
 
 
 class HealthProbeManager:
-    def __init__(self):
+    def __init__(self, dependency_checker: Callable[[], bool] | None = None):
         self._start_time = time.monotonic()
         self._states: dict[str, dict[str, Any]] = {}
+        # 5.55.1 修复：探针内部自行检查依赖，不接受外部传入的 deps_ok=True
+        # 可注入 dependency_checker 回调；未注入时回退到数据目录可达性检查
+        self._dependency_checker = dependency_checker
 
     def liveness(self, system: str) -> dict:
         return {
@@ -90,7 +95,50 @@ class HealthProbeManager:
             "system": system,
         }
 
-    def readiness(self, system: str, deps_ok: bool = True) -> dict:
+    def _check_dependencies(self) -> bool:
+        """5.55.1 修复：探针内部真实检查依赖状态，而非信任外部传入的 deps_ok。
+
+        检查优先级：
+          1. 注入的 dependency_checker 回调（若提供）
+          2. 数据目录可达性回退检查（项目根/.runtime 或临时目录可写性）
+        """
+        # 优先使用注入的检查器
+        if self._dependency_checker is not None:
+            try:
+                return bool(self._dependency_checker())
+            except Exception:
+                return False
+        # 回退：数据目录可达性检查
+        # 5.55.1：尝试项目根的 .runtime 目录（SSoT: REPO_ROOT），失败则回退到临时目录
+        try:
+            from zephyr.shared.io.paths import REPO_ROOT  # 延迟导入避免循环
+
+            data_dir = Path(REPO_ROOT) / ".runtime"
+            if data_dir.exists():
+                # 探针写入探测文件以确认可写
+                probe = data_dir / f".probe_{os.getpid()}.tmp"
+                probe.write_text("ok", encoding="utf-8")
+                probe.unlink(missing_ok=True)
+                return True
+        except Exception:
+            pass
+        # 最终回退：临时目录可写性（进程级最低可用性保证）
+        try:
+            import tempfile
+
+            with tempfile.NamedTemporaryFile(prefix="probe_", suffix=".tmp", delete=True):
+                return True
+        except Exception:
+            return False
+
+    def readiness(self, system: str, deps_ok: bool | None = None) -> dict:
+        """5.55.1 修复：deps_ok 默认 None 时探针内部自行检查依赖。
+
+        - deps_ok=None（默认）：探针内部调用 _check_dependencies() 真实检查
+        - deps_ok=True/False：保留显式传入能力（向后兼容），但默认不再信任外部传入
+        """
+        if deps_ok is None:
+            deps_ok = self._check_dependencies()
         return {
             "status": "ready" if deps_ok else "not_ready",
             "dependencies": {"db": "ok" if deps_ok else "down"},

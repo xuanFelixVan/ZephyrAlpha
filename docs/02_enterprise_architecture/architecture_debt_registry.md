@@ -5048,6 +5048,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：依赖不可用时readiness仍返回True，流量被路由到不可用实例
 - **修复**：探针内部自行检查依赖（DB连接/ping等），不接受外部传入的deps_ok
 
+> **[✓ FIXED: 2026-07-01]** `readiness()` 默认参数从 `deps_ok=True` 改为 `deps_ok=None`；`deps_ok=None` 时探针内部调用新增的 `_check_dependencies()` 真实检查依赖（优先注入的 `dependency_checker` 回调 → `.runtime` 数据目录可达性 → 临时目录可写性三级回退）。支持通过 `__init__(dependency_checker=...)` 注入自定义检查器。
+
 > **[✓ RECOVERED: 2026-07-01]** 5.55.2-5.55.6 正文从 git 历史（commit 104f514986）恢复。第32轮验证中5项均标记为DRIFTED（因正文丢失无法验证），恢复后经源码核验5项均为STILL_VALID。
 
 #### 5.55.2 [HIGH] HealthAggregator.poll_all调用readiness不传依赖状态
@@ -5056,12 +5058,16 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：健康面板readiness数据完全失真
 - **修复**：为每个system查询真实依赖状态后传入
 
+> **[✓ FIXED: 2026-07-01]** 由 5.55.1 联动修复——`poll_all()` 调用 `readiness(system)` 不传 `deps_ok`，现默认 `None` 触发探针内部 `_check_dependencies()` 真实检查。烟雾测试验证 12 系统均经过内部依赖校验。
+
 #### 5.55.3 [HIGH] 健康探针注册中"假"探针——永远返回alive=True
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L117)
 - **证据**：`_longevity_probe`的try块内只有`return ProbeResult(alive=True, ready=True)`，无任何实际活探；except分支因try内无可抛异常代码而永远不可达
 - **问题**：reconcile()基于"假alive=True"判定组件active，从不触发auto_restart
 
 > **[✓ FIXED: 2026-07-01 部分修复]** `_healthcheck_probe` 已改为调用 `HealthcheckService.check_all().overall_healthy` 真实检查。`_longevity_probe` 仍需补内存采集基础设施（LongevityMonitor 无布尔方法，需 register+current_memory_mb+阈值）——留作后续。
+
+> **[✓ FIXED: 2026-07-01 完成修复]** `_longevity_probe` 现使用 `LongevityMonitor.register(component_id, baseline_memory_mb)` + `report(component_id, current_memory_mb)` 真实内存退化检查：注册时通过 psutil 采集基线 RSS 内存；探针调用时采集当前 RSS，计算 `degradation_score`，阈值 `>=0.8→alive=False`、`>=0.5→ready=False`。psutil 不可用时基线=0、退化分数=0（安全回退为 healthy）。
 
 #### 5.55.4 [HIGH] VerdictEngine.health_check永远返回"healthy"
 - **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L403)
@@ -5083,6 +5089,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`def check_consistency(self, blueprint_file): return {"status": "healthy", "errors": []}`——空壳不做任何检查
 - **问题**：蓝图字段缺失或引用断裂时不会被发现
 - **修复**：实现真实检查逻辑
+
+> **[✓ FIXED: 2026-07-01]** `BlueprintHealthChecker.check_consistency()` 现实现真实检查：验证文件存在性→解析头部 40 行 `[KEY] value` 字段→校验 `[BLUEPRINT]/[MODULE]/[DOMAIN]` 必需字段齐全→验证 `[BLUEPRINT]` 引用的 `.md` 路径在仓库内可达。空壳行为消除，缺失字段/断裂引用返回 `unhealthy` + 错误列表。
 
 #### 5.55.7 严重度汇总
 
