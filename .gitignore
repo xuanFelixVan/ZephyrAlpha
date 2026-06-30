@@ -149,6 +149,16 @@ data/drift_checkpoints/*
 # Health snapshots runtime data (only .gitkeep is tracked)
 src/zephyr/data/health_snapshots/*
 !src/zephyr/data/health_snapshots/.gitkeep
+
+# P6b 治本（2026-06-30）：src/zephyr/data/ 下运行时产物 untrack
+# 代码真源为 root data/（data/audit_logs/、data/telemetry/），src/zephyr/data/ 为 legacy
+src/zephyr/data/audit_logs/*
+src/zephyr/data/telemetry/*
+
+# P6b 治本：autonomy_core 运行时缓存/状态（代码运行时自动生成，不应入库）
+src/zephyr/autonomy_core/_benchmark_history.json
+src/zephyr/autonomy_core/_freshness.json
+src/zephyr/autonomy_core/_skill_cache/
 data/drift_audit/*
 !data/drift_audit/.gitkeep
 data/drift_runbooks/*
@@ -184,6 +194,8 @@ _fix_*.py
 _debug_*.py
 _final_*.py
 _tmp_*.py
+_tmp_*.txt
+_tmp_*.md
 _temp*.txt
 _temp*.md
 

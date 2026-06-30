@@ -418,10 +418,72 @@ def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> l
 def scan_all(contract: dict) -> list[str]:
     """扫描契约覆盖的所有目录，返回相对路径文件列表。
 
+    治本（P6b 2026-06-30）：用 ``git ls-files --cached --others --exclude-standard``
+    替代 ``os.walk``——只扫描 git 跟踪文件 + 未跟踪但未被 .gitignore 排除的文件。
+    运行时产物（.json/.jsonl 缓存等，已被 .gitignore 排除）不再被误判为漂移。
+
     扫描范围：
       - 根目录（仅一级文件，DCR-007）
       - directory_extensions 中所有 path
       - directory_zones 中所有 zone 的 paths
+
+    降级：git 不可用时回退到 os.walk（iter_files），此时运行时产物可能被误报。
+    """
+    # 构建扫描前缀集合（相对路径，末尾加 / 确保前缀匹配精确）
+    scan_prefixes: set[str] = set()
+    for rule in contract["directory_extensions"]:
+        scan_prefixes.add(rule["path"].rstrip("/") + "/")
+    for zone in contract["directory_zones"].values():
+        for path in zone["paths"]:
+            scan_prefixes.add(path.rstrip("/") + "/")
+
+    # 尝试用 git ls-files 获取待扫描文件（治本：尊重 .gitignore）
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard",
+             "--full-name"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT),
+            encoding="utf-8", errors="replace",
+        )
+        if result.returncode == 0:
+            git_files = set(
+                line.strip() for line in result.stdout.splitlines() if line.strip()
+            )
+            return _filter_scan_files(git_files, scan_prefixes)
+    except (FileNotFoundError, subprocess.SubprocessError):
+        pass  # 降级到 os.walk
+
+    # 降级：os.walk（git 不可用时）
+    return _scan_all_walk(contract, scan_prefixes)
+
+
+def _filter_scan_files(git_files: set[str], scan_prefixes: set[str]) -> list[str]:
+    """从 git ls-files 输出中筛选契约覆盖的文件。
+
+    根目录文件（不含 /）全部保留（DCR-007 校验）。
+    子目录文件必须落在某个 scan_prefix 内，且扩展名在 _SCAN_EXTENSIONS 中。
+    """
+    files: list[str] = []
+    for rel_path in git_files:
+        rel_posix = rel_path.replace("\\", "/")
+        # 根目录文件（DCR-007）
+        if "/" not in rel_posix:
+            files.append(rel_posix)
+            continue
+        # 子目录文件：检查是否在扫描范围内
+        for prefix in scan_prefixes:
+            if rel_posix.startswith(prefix):
+                ext = Path(rel_posix).suffix.lower()
+                if ext in _SCAN_EXTENSIONS:
+                    files.append(rel_posix)
+                break
+    return sorted(set(files))
+
+
+def _scan_all_walk(contract: dict, scan_prefixes: set[str]) -> list[str]:
+    """降级扫描：git 不可用时用 os.walk（iter_files）。
+
+    注意：此路径不尊重 .gitignore，运行时产物可能被误报。
     """
     scan_dirs: set[Path] = set()
     scan_dirs.add(REPO_ROOT)  # 根目录文件（DCR-007）
@@ -436,22 +498,9 @@ def scan_all(contract: dict) -> list[str]:
         if not scan_dir.exists():
             continue
         if scan_dir == REPO_ROOT:
-            # 根目录：只扫描一级文件（不递归）
-            # 跳过 .gitignore 排除的文件（如 .env——本地敏感文件不入库不应被校验）
-            ignored = set()
-            ign_result = subprocess.run(
-                ["git", "ls-files", "--others", "--ignored", "--exclude-standard",
-                 "--full-name", "--directory"],
-                capture_output=True, text=True, cwd=str(REPO_ROOT),
-            )
-            if ign_result.returncode == 0:
-                ignored = {line.rstrip("/") for line in ign_result.stdout.splitlines() if line.strip()}
             for p in REPO_ROOT.iterdir():
                 if p.is_file() and not p.name.startswith(".git"):
-                    rel = str(p.relative_to(REPO_ROOT)).replace("\\", "/")
-                    if rel in ignored:
-                        continue  # 被 .gitignore 排除，跳过
-                    files.append(rel)
+                    files.append(str(p.relative_to(REPO_ROOT)).replace("\\", "/"))
         else:
             for p in iter_files(scan_dir, extensions=_SCAN_EXTENSIONS):
                 files.append(str(p.relative_to(REPO_ROOT)).replace("\\", "/"))

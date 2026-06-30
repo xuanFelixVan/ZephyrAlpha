@@ -208,12 +208,25 @@ directory_extensions:
     forbidden: [".bak", ".baseline"]
     zone: neutral
     allowed_doc_types: []
+    allowed_exceptions:
+      # codegen 快照 + OCP 冻结签名——架构守护产物，被 check_contract_code_drift.py /
+      # validate_blind_spot_status.py / check_ocp_signatures.py 消费
+      - subdir: "shared/contracts/"
+        extensions: [".txt"]
+      - subdir: "shared/contracts/_frozen_signatures/"
+        extensions: [".json"]
 
   - path: "scripts/"
     allowed: [".py", ".sh", ".ps1", ".yaml", ".json", ".md"]
     forbidden: [".bak", ".baseline"]
     zone: neutral
     allowed_doc_types: [policy, index]
+    allowed_exceptions:
+      # 治理元数据——frozen_versions.txt（冻结版本记录）+ baselines/*.jsonl（审计基线）
+      - subdir: "governance/meta/"
+        extensions: [".txt"]
+      - subdir: "governance/meta/baselines/"
+        extensions: [".jsonl"]
 
   - path: "config/"
     allowed: [".yaml", ".yml", ".json"]
