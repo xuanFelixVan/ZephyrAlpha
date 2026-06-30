@@ -62,6 +62,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.thresholds import get_thresholds_safe  # noqa: E402  治本(ARCH-036 P1-4): 收敛本地 _load_thresholds 重复实现→共享 graceful 变体
 
 _EB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "error_budget_state.yaml"
@@ -82,18 +83,8 @@ def _load_eb() -> dict:
 
 def _save_eb(data: dict) -> None:
     """_save_eb implementation."""
-    _EB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_EB_PATH}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-        os.replace(tmp_path, _EB_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    content = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    atomic_write_safe(_EB_PATH, content)
 
 
 def _init_eb() -> dict:
@@ -195,18 +186,8 @@ def _activate_feature_freeze(data: dict, reason: str) -> dict:
     }
 
     ks_data = {"scripts": {}, "global_freeze": True, "freeze_reason": reason, "freeze_set_at": now.isoformat()}
-    _KILL_SWITCH_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_KILL_SWITCH_PATH}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-        os.replace(tmp_path, _KILL_SWITCH_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    content = yaml.dump(ks_data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    atomic_write_safe(_KILL_SWITCH_PATH, content)
     return data
 
 
@@ -258,16 +239,8 @@ def check_thresholds() -> dict:
                 if datetime.now(UTC) > datetime.fromisoformat(freeze_at):
                     data["feature_freeze"]["active"] = False
                     ks_data = {"scripts": {}, "global_freeze": False}
-                    tmp_path = f"{_KILL_SWITCH_PATH}.{os.getpid()}.tmp"
-                    try:
-                        with open(tmp_path, encoding="utf-8") as f:
-                            yaml.dump(ks_data, f, allow_unicode=True, default_flow_style=False)
-                        os.replace(tmp_path, _KILL_SWITCH_PATH)
-                    except PermissionError:
-                        try:
-                            os.remove(tmp_path)
-                        except OSError:
-                            pass
+                    content = yaml.dump(ks_data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+                    atomic_write_safe(_KILL_SWITCH_PATH, content)
                     data["feature_freeze"]["auto_lift_at"] = ""
                     _save_eb(data)
                     return {"status": "auto_lifted", "freeze": False}

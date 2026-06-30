@@ -53,6 +53,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 _safe_atomic_write→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
@@ -114,21 +115,6 @@ def _find_orphans() -> dict[str, list[str]]:
             orphans[pkg_dir].append(module_name)
 
     return dict(orphans)
-
-
-def _safe_atomic_write(path: Path, content: str) -> None:
-    """RULE-ONE compliant: temp-file + atomic os.replace."""
-    tmp_path = f"{path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        os.replace(tmp_path, str(path))
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
-        raise
 
 
 def _generate_init_content(pkg_rel: str, modules: list[str], existing_content: str = "") -> str:
@@ -236,7 +222,7 @@ def main() -> None:
         existing = init_path.read_text(encoding="utf-8") if init_path.exists() else ""
         new_content = _generate_init_content(pkg_rel, modules, existing)
 
-        _safe_atomic_write(init_path, new_content)
+        atomic_write(init_path, new_content)
 
         for m in sorted(modules):
             action = "CREATE" if not existing else "UPDATE"
