@@ -237,7 +237,7 @@ invariants:
     fitness_function_path: "scripts/governance/d5_architecture/validators/validate_ssot.py"
     priority: P1
     status: active
-    note: "SSoT-CAP 铁律——对照 AGENTS.md S5.3.3 + ssot-authority-map.md。D3 评估（2026-06-30）：部分自动化已覆盖——validate_ssot.py（frontmatter 字段矛盾校验）+ check_ssot_gate.py（模块唯一性）+ _check_repo_root_usage（import 来源检测，git_commit_gateway.py 内 pre-commit blocking gate）；全自动化因 AD-GOV-001 收敛期禁止新增门禁暂缓。原 fitness_function_path 指向不存在的 check_ssot_cap.py，已修正为实际真源 validate_ssot.py。"
+    note: "SSoT-CAP 铁律——对照 AGENTS.md S5.3.3 + ssot-authority-map.md。D3 评估（2026-06-30）：部分自动化已覆盖——validate_ssot.py（frontmatter 字段矛盾校验）+ check_ssot_gate.py（模块唯一性）+ _check_repo_root_usage（import 来源检测，rule_bridge/git_commit_gateway.py 内 pre-commit blocking gate，AD-GOV-001 阶段3 commit cde1255c 已移除）；全自动化因 AD-GOV-001 收敛期禁止新增门禁暂缓。原 fitness_function_path 指向不存在的 check_ssot_cap.py，已修正为实际真源 validate_ssot.py。"
 
   - id: INV-018
     category: boundary_integrity
