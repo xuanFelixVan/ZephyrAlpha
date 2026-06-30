@@ -77,6 +77,15 @@ LAYER_DISPLAY = {
 BOX_WIDTH = 64
 
 
+def _is_ghost(path: str) -> bool:
+    """检查节点路径是否为 ghost（path 非空但磁盘上不存在）。
+
+    第一性原理治本：即使不手动 deprecate，生成器也自动过滤幽灵文件，
+    防止架构文档引用已删除的文件。铁律保障：新 AI 不需要知道要跑 deprecate。
+    """
+    return bool(path) and not (REPO_ROOT / path).exists()
+
+
 # ---------------------------------------------------------------------------
 # 数据库查询函数
 # ---------------------------------------------------------------------------
@@ -115,6 +124,8 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     rows = []
     for r in cur.fetchall():
+        if _is_ghost(r["path"] or ""):
+            continue
         rows.append(
             {
                 "node_id": r["node_id"],
@@ -152,6 +163,8 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     edges = []
     for r in cur.fetchall():
+        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+            continue
         edges.append(
             {
                 "from_node_id": r["from_node_id"],
@@ -242,6 +255,8 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
+        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+            continue
         outgoing_edges.append(
             {
                 "dep_type": r["dep_type"] or "",
@@ -271,6 +286,8 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
+        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+            continue
         incoming_edges.append(
             {
                 "dep_type": r["dep_type"] or "",

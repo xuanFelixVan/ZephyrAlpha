@@ -68,17 +68,30 @@ def shorten_path(path: str, max_len: int = 40) -> str:
     return "..." + path[-(max_len - 3) :]
 
 
+def _is_ghost(path: str) -> bool:
+    """检查节点路径是否为 ghost（path 非空但磁盘上不存在）。
+
+    第一性原理治本：即使不手动 deprecate，生成器也自动过滤幽灵文件，
+    防止架构文档引用已删除的文件。铁律保障：新 AI 不需要知道要跑 deprecate。
+    """
+    return bool(path) and not (REPO_ROOT / path).exists()
+
+
 def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询指定域的所有节点（排除 deprecated 孤儿节点）。"""
+    """查询指定域的所有节点（排除 deprecated 和 ghost 节点）。"""
     cur = conn.execute(
         "SELECT node_id, path, design_maturity FROM nodes WHERE domain_id=%s AND build_status != 'deprecated' ORDER BY path",
         (domain_id,),
     )
-    return [{"node_id": r["node_id"], "path": r["path"] or "", "design_maturity": r["design_maturity"] or ""} for r in cur.fetchall()]
+    return [
+        {"node_id": r["node_id"], "path": r["path"] or "", "design_maturity": r["design_maturity"] or ""}
+        for r in cur.fetchall()
+        if not _is_ghost(r["path"] or "")
+    ]
 
 
 def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询涉及指定域的所有边（域内+跨域，排除 deprecated 孤儿节点的边）。"""
+    """查询涉及指定域的所有边（域内+跨域，排除 deprecated 和 ghost 节点的边）。"""
     cur = conn.execute(
         """SELECT e.from_node_id, n1.path AS from_path, n1.domain_id AS from_domain,
                   e.to_node_id, n2.path AS to_path, n2.domain_id AS to_domain,
@@ -104,6 +117,7 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
             "coupling": r["coupling_strength"] or "",
         }
         for r in cur.fetchall()
+        if not _is_ghost(r["from_path"] or "") and not _is_ghost(r["to_path"] or "")
     ]
 
 

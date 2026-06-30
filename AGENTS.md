@@ -404,6 +404,9 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - **查哪些表不能手写** → `python scripts/governance/sync_yaml_to_depgraph.py --list-readonly-tables`
 - **文件结构变更后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-PATH-TREE reconciler，无需手动）
 - **DB 变更后重生域文档** → 自动完成（GitCommitGateway post-commit GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能），无需手动）
+- **文件删除后重生域文档** → 自动完成（GATE-REGENERATE trigger 已扩展：committed 文件不在磁盘 = 删除 commit 时也触发生成器重生。生成器内置 ghost 过滤，重生后的文档自动排除已删除文件的节点，无需手动 deprecate）
+- **scripts/ 下 .py 增删后重生 manifest** → 自动完成（GitCommitGateway post-commit GATE-MANIFEST reconciler，priority=620，2026-07-01 新增。无需手动跑 generate_script_manifest.py）
+- **铁律：架构文档（02_domain_architecture_docs/ + generated/domains/）由生成器自动产出，禁止手动编辑**。手动编辑会被下次生成器运行覆盖。如需修改内容，改 depgraph 或生成器代码，不要改输出文件。
 - **改了 YAML 规则文件后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-YAML-SYNC reconciler，无需手动）。手动调试可跑 `python scripts/governance/sync_yaml_to_depgraph.py`
 - **改了 rules/ 下规则文件后同步 catalog** → 自动完成（GitCommitGateway post-commit GATE-RULE-AUDIT reconciler（含原 RULE-CATALOG 功能），无需手动）。catalog 真源：`_registry/catalogs/rule_catalog_registry.yaml`（由 `scripts/governance/d3_metadata/generate_rule_catalog.py` 自动生成，60 条规则元数据；#ARCH-024 治本：原 `rules/_index.yaml` 手工索引已删除）
 - **改了 infrastructure_registry.yaml 后同步 registry_master_index** → 自动完成（GitCommitGateway post-commit GATE-REGISTRY-SYNC reconciler（含原 REGISTRY-INDEX 功能），无需手动）
@@ -413,9 +416,56 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 > **ghost 自动检测（已实现，勿重复造）**：删除文件 commit 时，GitCommitGateway post-commit 的 `GATE-DELETE-AUDIT` reconciler（含原 GHOST 功能，priority=400）自动调用 `diagnose_depgraph.py` 检测 ghost node（磁盘已删但 DB 残留），报告落盘 `.runtime/reconcile_reports/ghost_*.json`。无需手动跑 diagnose 检测 ghost；发现 ghost 后用 `apply_depgraph.py --cleanup-orphan-nodes` 清理（人工触发，防误删）。trigger 仅覆盖"删除 commit"是 intentional（删除才会产生 ghost），勿扩展到 PG 写入脚本 commit（脚本 commit ≠ DB 内容变更，扩展会引入噪音）。
 
+> **三层 ghost 防御（2026-07-01 ARCH-038 铁律，勿重复造）**：
+> 1. **Layer 1（技术铁律）**：生成器（`generate_domain_doc.py` + `generate_domain_dependency_diagram.py`）内置 `_is_ghost()` 过滤——path 非空但磁盘不存在的节点自动排除。即使 depgraph 有 2774 个 ghost 节点，生成的文档也不会引用幽灵文件。**新 AI 不需要知道要跑 deprecate——不跑也不会有问题**。
+> 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script_manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
+> 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。depgraph 是只读缓存，禁止直接操作数据库，必须通过 `apply_depgraph.py`。架构文档由生成器自动产出，禁止手动编辑。
+
 > **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
 
-### 11.1 生成器时间戳约定
+### 11.1 生成器发现指引与时间戳约定
+
+> **新 AI 进入项目涉及"生成器"相关工作时，MUST 先读本节。**
+> 病根：AI 跨域复刻生成器（wave_generator 4 份副本、index_generator 影子副本等），
+> 根因是新 AI 不知道已有生成器存在。治本：发现指引 + P0 防再生门禁。
+
+#### 11.1.0 生成器发现指引（RULE-EIGHT 生成器专项）
+
+**创建新生成器前 MUST 执行以下 3 步查重**：
+
+1. **关键词搜索**：`python -m zephyr.governance.capability_lookup --find <关键词>`
+   - 搜索 capability_id / aliases / description / canonical_file / module_id
+   - 例：`--find generator`、`--find path_tree`、`--find index`
+2. **注册表匹配**：查 [`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
+   - `domain_architecture_generators` 条目列出全部 12 个架构生成器及其别名
+   - `outputs` 字段列出生成器→输出目录映射
+3. **复用决策**：命中已有 → 扩展已有生成器（RULE-EIGHT 扩展优先于新建）；未命中 → 通过 `scaffold.py` 创建（P0-5 create_guard 强制）
+
+**已有生成器清单**（真源：`scripts/governance/d5_architecture/generators/`）：
+
+| 生成器 | 输出目录 | 用途 |
+|--------|----------|------|
+| `generate_navigation_index.py` | `02_enterprise_architecture/00_overview_entry/` | 导航索引 |
+| `generate_path_tree.py` | `01_global_architecture_diagram/` | 项目路径树 |
+| `generate_cross_domain_matrix.py` | `01_global_architecture_diagram/` | 跨域矩阵 |
+| `generate_integration_topology.py` | `01_global_architecture_diagram/` | 集成拓扑 |
+| `generate_capability_heatmap.py` | `01_global_architecture_diagram/` | 能力热图 |
+| `generate_domain_doc.py` | `02_domain_architecture_docs/` | 域架构文档 |
+| `generate_domain_index.py` | `02_domain_architecture_docs/` | 域索引 |
+| `generate_domain_dependency_diagram.py` | `02_domain_architecture_docs/` | 域依赖图 |
+| `generate_design_vs_production.py` | `03_governance_reports/` | 设计 vs 生产 |
+| `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规 |
+| `generate_capacity_report.py` | `03_governance_reports/` | 容量报告 |
+| `generate_contracts.py` | `05_contracts/` | 契约文档 |
+
+**P0 防再生门禁**（2026-07-01 生成器治理治本）：
+- P0-1：N-16 src/ basename 唯一门禁——同 basename 跨域 commit 阻断
+- P0-2：GATE-SSOT 硬层3——同 module_id 多文件 commit 阻断
+- P0-3：GATE-SSOT 硬层4——[MODULE] 声明域 ≠ 物理路径域 commit 阻断
+- P0-4：scaffold 维度3b——同 basename 跨域创建阻断
+- P0-5：scaffold 自动登记 creation_token——绕 scaffold 直接 Write .py → commit 阻断
+
+#### 11.1.1 时间戳约定
 
 > 所有生成器（`scripts/governance/d5_architecture/generators/` 下的 `.py` 文件）输出的文档中，
 > 日期字段 MUST 使用 `auto-generated`，最后更新时间 MUST 标注"最后更新以 git log 为准"。
