@@ -27,18 +27,22 @@ _GOV_DIR = ARCH_GUARD_ROOT.parent / "governance"
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
-from _shared.constants import REPO_ROOT  # noqa: E402
+# 治本（2026-06-30）：使用 _REPO_ROOT 别名，使 REPO_ROOT 不出现在本模块命名空间中。
+# 原因：若 _arch_ssot 导出 REPO_ROOT，IDE organize imports 会自动在 arch_guard 文件中
+# 加回 `from _arch_ssot import REPO_ROOT`，覆盖 SSoT 源（_shared.constants）。
+# 别名使 `from _arch_ssot import REPO_ROOT` 直接 ImportError，阻断 IDE 副作用。
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
-CAPACITY_SLO_PATH = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
-INVARIANTS_PATH = REPO_ROOT / (
+CAPACITY_SLO_PATH = _REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
+INVARIANTS_PATH = _REPO_ROOT / (
     "docs/02_enterprise_architecture/target_architecture/architecture_model/cross-cutting/invariants.yaml"
 )
-CONTRACTS_PATH = REPO_ROOT / (
+CONTRACTS_PATH = _REPO_ROOT / (
     "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
 )
-RISK_PARAMS_PATH = REPO_ROOT / "config" / "risk_params.yaml"
-SURVIVORSHIP_POLICY_PATH = REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
-OCP_MANIFEST_PATH = REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
+RISK_PARAMS_PATH = _REPO_ROOT / "config" / "risk_params.yaml"
+SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
+OCP_MANIFEST_PATH = _REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
 
 def load_yaml(path: Path) -> dict[str, Any]:

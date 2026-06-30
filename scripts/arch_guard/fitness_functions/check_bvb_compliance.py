@@ -29,7 +29,9 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+# 治本（2026-06-30）：删除未使用的 from _arch_ssot import REPO_ROOT。
+# _arch_ssot 不再导出 REPO_ROOT（改为 _REPO_ROOT 别名），此 import 会 ImportError。
+# 若未来需要 REPO_ROOT，应从 _shared.constants import（SSoT 源）。
 
 
 def main() -> int:
