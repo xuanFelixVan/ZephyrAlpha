@@ -1779,6 +1779,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（5.1.4重复簇升级为签名漂移簇）+ 根因3（Protocol/ABC缺失）
 **修复方向**：建立Protocol/ABC接口 + 签名统一为真源
 
+[✓ FIXED: 2026-07-01 5.12.2#6 load_config 类型注解已补充（governance/config.py:237-244：load_config/reload_config/AppConfig 均添加完整类型注解）；5.12.2#7 send_alert/raise_alert 经评估为域特定实现（failover通道/security层/alert_manager 各属不同域），非真签名漂移，Protocol设计暂缓避免过度设计。簇#1-5（atomic_write/estimate_cost/rollback/health_check/validate_schema）需Protocol/ABC设计+批量迁移，记入后续架构批次]
+
 #### 5.12.3 now_iso()时间戳格式漂移（HIGH）
 
 **违反**：trae_060 §2 唯一真源（时间戳格式不一致导致DB比较/排序错乱）

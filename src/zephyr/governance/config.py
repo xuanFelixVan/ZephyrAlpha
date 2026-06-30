@@ -229,16 +229,18 @@ def load_policy_rules() -> list[dict[str, Any]]:
 
 
 class AppConfig:
-    def __init__(self, config_path=None, data=None):
-        self.config_path = config_path
-        self.data = data or {}
+    def __init__(self, config_path: str | Path | None = None, data: dict[str, Any] | None = None) -> None:
+        self.config_path: str | Path | None = config_path
+        self.data: dict[str, Any] = data or {}
 
 
-def load_config(path=None):
+def load_config(path: str | Path | None = None) -> AppConfig:
+    # 5.12.2#6 修复：补充类型注解（原完全无注解）
     return AppConfig(config_path=path)
 
 
-def reload_config(app_config):
+def reload_config(app_config: AppConfig) -> AppConfig:
+    # 5.12.2#6 修复：补充类型注解
     return app_config
 
 
