@@ -233,7 +233,7 @@ directory_extensions:
     forbidden: [".py", ".md"]
     zone: neutral
     allowed_doc_types: []
-    note: "ARCH-038: 根目录平铺所有配置文件，禁止建模块归属子目录（如 capacity/、compression/）。仅允许语义子目录 runtime/（运行时状态）和 infra/（基础设施配置）。命名规则：小写+下划线，名字即责任"
+    note: "ARCH-038: 根目录平铺所有配置文件，禁止建模块归属子目录（如 capacity/、compression/）。仅允许语义子目录 runtime/（运行时状态）和 infra/（基础设施配置）。命名规则：小写+下划线，名字即责任。豁免：.env.postgres（PG连接配置真源，被 depgraph_schema.py 引用，已被 .gitignore 保护，非 YAML/JSON 格式但属必要的敏感配置例外）"
 
   - path: "tests/"
     allowed: [".py", ".yaml", ".json", ".txt"]

@@ -107,7 +107,7 @@ ssot_ref: "docs/03_modules/_b_track_interfaces/agent-orchestrator-interface.md"
 | 25 | dlq_manager.py | §3.1 | 死信队列管理器 | 已实现 |
 | 26 | deferred_queue.py | §3.1 | 延迟队列 | 已实现 |
 | 27 | capacity_budget.py | §3.1 | 容量预算 | 已实现 |
-| 28 | config_manager.py | §3.1 | 配置管理器 | 已实现 |
+| 28 | config_manager.py | §3.1 | 配置管理器 | 已删除（ARCH-038 P1 空壳退役） |
 | 29 | contract_registry.py | §3.1 | 契约注册表 | 已实现 |
 | 30 | contract_router.py | §3.1 | 契约路由器 | 已实现 |
 | 31 | backup_manager.py | §3.1 | 备份管理器 | 已实现 |

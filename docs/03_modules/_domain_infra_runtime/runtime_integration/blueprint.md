@@ -1989,7 +1989,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/orchestration/runtime_core/orchestrator/canary_manager.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/runtime_core/orchestrator/chaos_engine.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/config_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestration/runtime_core/orchestrator/config_manager.py` | ❌ 已删除（ARCH-038 P1 空壳退役） | |
 | `src/zephyr/orchestration/runtime_core/orchestrator/construction_guide.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/runtime_core/orchestrator/contract_registry.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/runtime_core/orchestrator/contract_router.py` | ✅ 已实现 | |

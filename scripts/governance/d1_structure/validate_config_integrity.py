@@ -78,7 +78,6 @@ from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 
 ensure_utf8_stdout()
 import argparse
 import tomllib
-from collections import Counter
 
 import yaml
 from _shared.constants import CONFIG_DIR, EXIT_PASS, SRC_DIR  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_DIR import（L8 l8_code_config_reconciliation 使用）
@@ -105,8 +104,6 @@ IMMUTABLE_SCHEMA = {
     "preserve_provenance": {"type": bool},
     "preserve_immutable_blocks": {"type": list},
 }
-
-RULE_REQUIRED_FIELDS = {"name", "description", "allow", "deny"}
 
 
 def _rel(path: Path) -> str:
@@ -180,33 +177,9 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
     errors = []
     warnings = []
 
-    cap = yaml_data.get("/config/capabilities.yaml", {})
-    rules = cap.get("rules", [])
-    if not isinstance(rules, list):
-        errors.append("[L2] capabilities.yaml: rules 不是 list")
-        rules = []
-
-    for i, rule in enumerate(rules):
-        name = rule.get("name", f"<missing #{i}>")
-        missing = RULE_REQUIRED_FIELDS - set(rule.keys())
-        if missing:
-            errors.append(f'[L2] capabilities.yaml rule[{i}] "{name}": 缺少字段 {missing}')
-
-        for field in ("allow", "deny"):
-            val = rule.get(field)
-            if val is not None and not isinstance(val, list):
-                errors.append(f'[L2] capabilities.yaml rule "{name}": {field} 不是 list')
-
-        a = [x.strip() for x in rule.get("allow", []) if isinstance(x, str) and x.strip()]
-        d = [x.strip() for x in rule.get("deny", []) if isinstance(x, str) and x.strip()]
-        for path in a:
-            if path in d:
-                errors.append(f'[L2] capabilities.yaml rule "{name}": allow=deny 自相矛盾 — {path}')
-
-    rule_names = [r.get("name", "") for r in rules]
-    dups = [n for n, c in Counter(rule_names).items() if c > 1]
-    if dups:
-        errors.append(f"[L2] capabilities.yaml: 重复规则名 — {dups}")
+    # ARCH-038 R2: capabilities.yaml 已从 CBAC 规则文件重构为功能开关文件（无 rules 字段）。
+    # CBAC 写保护已由 GitCommitGateway claim_files 机制替代，删除过时的 rules 检查。
+    # 保留 trigger_router/compression_policy 的 schema 检查。
 
     tr = yaml_data.get("/config/trigger_router.yaml", {})
     triggers = tr.get("triggers", {})
@@ -474,17 +447,8 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     else:
         warnings.append(f"[L5] trae_028_doc_structure_naming.yaml 不存在 — {DIR_STD_PATH}")
 
-    cap = yaml_data.get("/config/capabilities.yaml", {})
-    write_config = next((r for r in cap.get("rules", []) if r.get("name") == "write_config"), {})
-    wc_deny = set(write_config.get("deny", []))
-    wc_allow = set(write_config.get("allow", []))
-
-    if "config/capabilities.yaml" not in wc_deny:
-        errors.append('[L5] capabilities.yaml 自保缺失："config/capabilities.yaml" 不在 write_config.deny 中')
-    if "config/trigger_router.yaml" not in wc_deny:
-        errors.append("[L5] trigger_router.yaml 保护缺失：不在 write_config.deny 中（Human-Gated但无CBAC显式保护）")
-    if "config/compression_policy.yaml" not in wc_allow:
-        warnings.append("[L5] compression_policy.yaml 不在 write_config.allow 中")
+    # ARCH-038 R2: capabilities.yaml 已无 rules.write_config（重构为功能开关）。
+    # CBAC 写保护已由 GitCommitGateway claim_files 机制替代，删除过时检查。
 
     return errors, warnings
 
@@ -494,18 +458,8 @@ def l6_security_posture(yaml_data: dict) -> tuple[list[str], list[str]]:
     errors = []
     warnings = []
 
-    cap = yaml_data.get("/config/capabilities.yaml", {})
-    rules = cap.get("rules", [])
-
-    for rule in rules:
-        name = rule.get("name", "?")
-        for pat in rule.get("allow", []):
-            if pat in ("**", "*", "config/**", "src/**"):
-                errors.append(f'[L6] capabilities.yaml rule "{name}" allow="{pat}" 过于宽泛 — 权限旁路风险')
-
-    selfp = any("config/capabilities.yaml" in r.get("deny", []) for r in rules)
-    if not selfp:
-        errors.append("[L6] capabilities.yaml 自保失败 — 任何 deny 规则中都未保护自身")
+    # ARCH-038 R2: capabilities.yaml 已无 rules（重构为功能开关）。
+    # CBAC 写保护已由 GitCommitGateway claim_files 机制替代，删除过时检查。
 
     cp = yaml_data.get("/config/compression_policy.yaml", {})
     policy = cp.get("policy", {})
