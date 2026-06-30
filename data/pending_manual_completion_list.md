@@ -8,7 +8,7 @@
 
 ## 说明
 
-本清单记录了源MD文件中声明但depgraph.db中未找到对应设计态节点的模块。
+本清单记录了源MD文件中声明但depgraph中未找到对应设计态节点的模块。
 v2.0版本支持11种ID格式的提取和补入：D-XXX-NN, C-XXX, GATE-XX-NN, HB-XXX-NN,
 E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 
@@ -24,7 +24,7 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 6 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-004 | module_name | 记录到待人工补全清单 |
 | 7 | 31-D_SELL_DECISION-卖出决策域.md | E-XXX-NN | E-SELL-005 | module_name | 记录到待人工补全清单 |
 
-## 缺失项（源MD有声明，depgraph.db无匹配）
+## 缺失项（源MD有声明，depgraph无匹配）
 
 | # | 源MD文件 | ID格式 | 模块ID | 模块名称 | 缺失原因 |
 |---|---|---|---|---|---|
