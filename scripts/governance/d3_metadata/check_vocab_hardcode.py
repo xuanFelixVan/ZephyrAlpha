@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -100,6 +100,15 @@ _STARTUP_MARKER_PATTERN = re.compile(r"^#\s*\[STARTUP\]\s*(\w+)")
 # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免
 _VOCAB_LOAD_FUNC_PATTERN = re.compile(
     r"^_load_[a-z_]*?(value|values|vocab|legal|valid|status|ttl|type|layer|safety|stability|autonomy|classification)$"
+)
+
+# ── 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）──
+# 匹配含 THRESHOLD/DEADLINE/TIMEOUT/QUARANTINE/LIMIT 的变量名，
+# 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
+# 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
+# 豁免：合理不接入 SSoT 的阈值（如实验性/脚本专用）加 # noqa: gate-vocab。
+_THRESHOLD_VAR_PATTERN = re.compile(
+    r"^[A-Z_]*?(THRESHOLD|DEADLINE|TIMEOUT|QUARANTINE|LIMIT)[A-Z_]*$"
 )
 
 # ── DDL 例外白名单（SQL CHECK 无法 yaml.safe_load，走 DDL-as-Code 协议）──
@@ -208,6 +217,49 @@ def _is_literal_collection(value: ast.expr) -> bool:
             if isinstance(value.func.value, ast.Constant):
                 return True
             return False
+    return False
+
+
+def _is_number_literal_or_collection(value: ast.expr) -> bool:
+    """判断 AST 节点是否为数值字面量或数值集合（阈值硬编码嫌疑）。
+
+    检测8（ARCH-036 P3-A5）专用：匹配阈值变量名后，判断赋值是否为数值字面量/
+    数值集合。函数调用（如 _get_threshold()）= 动态加载 = 合规 → False。
+
+    覆盖：
+    - 数值字面量：24, 0.05, 900
+    - 数值 dict：{"CRITICAL": 24, "HIGH": 168}（值全为数值）
+    - 数值 list/set/tuple：[24, 168, 720]
+    - set/frozenset/list/tuple([数值集合]) 调用
+
+    注意：bool 是 int 子类，需排除（True/False 不是阈值）。
+    """
+    # 数值字面量（排除 bool，因为 bool 是 int 子类）
+    if isinstance(value, ast.Constant) and isinstance(value.value, (int, float)) and not isinstance(value.value, bool):
+        return True
+    # 数值 dict：所有 values 为数值（排除 None 和 bool）
+    if isinstance(value, ast.Dict) and value.values:
+        numeric_vals = [v for v in value.values if v is not None]
+        if numeric_vals and all(
+            isinstance(v, ast.Constant) and isinstance(v.value, (int, float)) and not isinstance(v.value, bool)
+            for v in numeric_vals
+        ):
+            return True
+        return False
+    # 数值 list/set/tuple
+    if isinstance(value, (ast.List, ast.Set, ast.Tuple)) and value.elts:
+        return all(
+            isinstance(e, ast.Constant) and isinstance(e.value, (int, float)) and not isinstance(e.value, bool)
+            for e in value.elts
+        )
+    # set/frozenset/list/tuple([数值集合]) 调用
+    if isinstance(value, ast.Call) and isinstance(value.func, ast.Name):
+        if value.func.id in ("set", "frozenset", "list", "tuple"):
+            if value.args and isinstance(value.args[0], (ast.List, ast.Set, ast.Tuple)):
+                return all(
+                    isinstance(e, ast.Constant) and isinstance(e.value, (int, float)) and not isinstance(e.value, bool)
+                    for e in value.args[0].elts
+                ) and len(value.args[0].elts) > 0
     return False
 
 
@@ -378,6 +430,26 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                                 f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
                             ))
                             break  # 一个词表命中即可，避免重复报
+
+            # 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）
+            # 匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名，
+            # 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
+            # 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
+            if not name_match_reported and not _has_noqa_exempt(source, node.lineno):
+                for target in targets:
+                    if not isinstance(target, ast.Name):
+                        continue
+                    var_name = target.id
+                    if not _THRESHOLD_VAR_PATTERN.match(var_name):
+                        continue
+                    if not _is_number_literal_or_collection(node.value):
+                        continue
+                    issues.append((
+                        node.lineno,
+                        f"{var_name} 硬编码阈值数值"
+                        f"(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+                    ))
+                    break  # 一个变量名命中即可，避免重复报
         # 检测2：load_vocabulary_values("xxx.yaml") 引用的词表文件存在性
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
             if node.func.id != "load_vocabulary_values":
