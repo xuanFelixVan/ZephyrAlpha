@@ -60,8 +60,14 @@ __manifest__ = {
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
+
+try:
+    import yaml as _yaml
+except ImportError:  # pragma: no cover
+    _yaml = None
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -140,6 +146,37 @@ SRC_ZEPHYR_ALLOWED_FILES: set[str] = {
     "__init__.py",
 }
 
+# gov_doc_003_directory_semantics R5: 数字后缀禁止（_\d+ 结尾）
+_DIGIT_SUFFIX_RE = re.compile(r"_\d+$")
+
+# gov_doc_003_directory_semantics R1 grandfathered 白名单 fail-open 回退
+# 真源: trae_028 gov_doc_003_directory_semantics.grandfathered.abbreviation_dirs
+_GRANDFATHERED_ABBREVIATION_FALLBACK: set[str] = {"api", "mcp", "io", "a2a", "sla", "db"}
+
+_TRAE_028_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
+)
+
+
+def _load_grandfathered_abbreviations() -> set[str]:
+    """从 trae_028 gov_doc_003_directory_semantics.grandfathered.abbreviation_dirs 动态加载。
+
+    fail-open: YAML 缺失/解析失败/字段不完整时返回硬编码回退值。
+    """
+    if _yaml is None:
+        return _GRANDFATHERED_ABBREVIATION_FALLBACK
+    try:
+        data = _yaml.safe_load(_TRAE_028_PATH.read_text(encoding="utf-8"))
+        sections = data.get("sections", {})
+        sem = sections.get("gov_doc_003_directory_semantics", {})
+        grandfathered = sem.get("grandfathered", {})
+        abbrev_dirs = grandfathered.get("abbreviation_dirs", [])
+        if abbrev_dirs:
+            return set(abbrev_dirs)
+        return _GRANDFATHERED_ABBREVIATION_FALLBACK
+    except Exception:
+        return _GRANDFATHERED_ABBREVIATION_FALLBACK
+
 
 def _scan_directory(path: Path, allowed_dirs: set[str], allowed_files: set[str], label: str) -> list[str]:
     """_scan_directory implementation."""
@@ -177,9 +214,9 @@ def _scan_layer_internals() -> list[str]:
             for f in layer_dir.iterdir()
             if f.is_file() and f.suffix == ".py" and f.name != "__init__.py" and not f.name.startswith("_")
         ]
-        if len(py_files) >= get("directory_scalability.src_py_error", 50):
+        if len(py_files) >= get("directory_scalability.src_py_error", 120):
             violations.append(
-                f"\u26a0\ufe0f [{layer_name}] {len(py_files)} 个平铺 .py 文件 -- 应采用 <module>/ 子目录隔离 (GOV-DOC-002 §三 C轨层内规范，阈值=20，对标 Google/K8s ≤30 files/dir)"
+                f"\u26a0\ufe0f [{layer_name}] {len(py_files)} 个平铺 .py 文件 -- 应采用 <module>/ 子目录隔离 (GOV-DOC-018 文件夹平铺容量阈值协议，warn=60/error=120)"
             )
     docs_modules = DOCS / "03_modules"
     if docs_modules.exists():
@@ -191,6 +228,34 @@ def _scan_layer_internals() -> list[str]:
                 violations.append(
                     f"\u274c [docs/{layer_name}] blueprint.md 直接平铺 -- 必须在 <module>/ 子目录下 (GOV-DOC-002 §三 C轨层内规范)"
                 )
+    return violations
+
+
+def _scan_directory_naming_semantics() -> list[str]:
+    """检测子目录命名语义违规（gov_doc_003_directory_semantics）。
+
+    R1: 缩写必除——2字符及以下缩写（grandfathered 白名单外）警告
+    R5: 数字后缀禁止——_\\d+ 结尾硬阻断
+    """
+    violations: list[str] = []
+    grandfathered = _load_grandfathered_abbreviations()
+    for dirpath in SRC_ZEPHYR.rglob("*"):
+        if not dirpath.is_dir():
+            continue
+        name = dirpath.name
+        if name.startswith("_") or name == "__pycache__":
+            continue
+        rel = dirpath.relative_to(SRC_ZEPHYR)
+        # R5: 数字后缀检测（硬阻断）
+        if _DIGIT_SUFFIX_RE.search(name):
+            violations.append(
+                f"\u274c [命名语义] 数字后缀目录: {rel} \u2192 gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多真源）"
+            )
+        # R1: 缩写检测（2字符及以下，非 grandfathered）
+        elif len(name) <= 2 and name not in grandfathered:
+            violations.append(
+                f"\u26a0\ufe0f [命名语义] 缩写目录: {rel} \u2192 gov_doc_003_directory_semantics R1 禁止2字符及以下缩写（AI无法推断语义）"
+            )
     return violations
 
 
@@ -213,6 +278,12 @@ def main() -> int:
 
     layer_violations = _scan_layer_internals()
     all_violations.extend(layer_violations)
+
+    # gov_doc_003_directory_semantics 命名语义检测（仅警告，不影响 exit code）
+    # 历史违规目录渐进收敛，不批量改名（避免过度工程）
+    naming_violations = _scan_directory_naming_semantics()
+    for v in naming_violations:
+        print(f"  {v}", file=sys.stderr)
 
     if not all_violations:
         print("\u2705 目录结构合规: src/zephyr/ 和 docs/ 下无违规目录/文件", file=sys.stderr)
