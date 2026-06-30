@@ -5,7 +5,7 @@ completeness: unknown
 created_by: human_plus_agent
 date: ''
 depends_on: []
-doc_type: operational_rule
+doc_type: policy
 language: zh
 layer: cross_layer
 module_id: OPS-007
@@ -16,7 +16,7 @@ stability: evolving
 status: Draft
 summary: Playbook 创建模板——过程式操作规则，定义如何做的步骤化流程，新建 playbook 类文档时使用此模板
 tags: []
-template_for: operational_rule
+template_for: policy
 title: Playbook Template
 ttl: permanent
 verifiability: manual
