@@ -5,16 +5,16 @@ version: "1.0"
 status: active
 date: auto-generated
 owner: auto-generator
-ttl: task_bound
+ttl: permanent
 ---
 
 # 架构约束违规报告
 
 > **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。
 
-> 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成
+> 本文档由 generate_constraint_violations.py 从 depgraph (PostgreSQL) 自动生成
 > 最后更新以 git log 为准
-> 数据源: depgraph.db arch_constraints表
+> 数据源: depgraph (PostgreSQL) arch_constraints表
 
 ## 统计概览
 
@@ -48,10 +48,10 @@ ttl: task_bound
 | CONSTRAINT_D-DATA-KNOWLEDGE_MANAGEMENT | knowledge_management稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：knowledge_management |
 | CONSTRAINT_D-DATA-PERSISTENCE | persistence稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：persistence |
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | gate | 稳定性约束：vector_storage |
-| CONSTRAINT_D_GOV_DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：drift_detection |
+| CONSTRAINT_D-GOV-DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：drift_detection |
 | CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：orphan_judgment |
-| CONSTRAINT_D_GOV_REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：registry_management |
-| CONSTRAINT_D_GOV_RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：rule_enforcement |
+| CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：registry_management |
+| CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：rule_enforcement |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：script_governance |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：semantic_audit |
 | CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | gate | 稳定性约束：lifecycle_management |
@@ -69,39 +69,39 @@ ttl: task_bound
 | CONSTRAINT_D-SEC-ADVERSARIAL_VALIDATION | adversarial_validation稳定性约束 | stability | D_SECURITY |  | hard | gate | 稳定性约束：adversarial_validation |
 | CONSTRAINT_D-SEC-LLM_DEFENSE | llm_defense稳定性约束 | stability | D_SECURITY |  | hard | gate | 稳定性约束：llm_defense |
 | CONSTRAINT_D-TEST-CODE_DEDUP | code_dedup稳定性约束 | stability | D_GOVERNANCE |  | hard | gate | 稳定性约束：code_dedup |
-| F1-CAPACITY-D_ALT_DATA | 容量超限告警: D_ALT_DATA | capacity_limit | D_ALT_DATA |  | hard | gate | 域D_ALT_DATA(另类数据)当前117模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_AUTONOMY_CORE | 容量超限告警: D_AUTONOMY_CORE | capacity_limit | D_AUTONOMY_CORE |  | hard | gate | 域D_AUTONOMY_CORE(自治核心)当前225模块超过上限180，需拆分或提升上限 |
-| F1-CAPACITY-D_AUTONOMY_PERM | 容量超限告警: D_AUTONOMY_PERM | capacity_limit | D_AUTONOMY_PERM |  | hard | gate | 域D_AUTONOMY_PERM(自治保护)当前236模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_COMPLIANCE | 容量超限告警: D_COMPLIANCE | capacity_limit | D_COMPLIANCE |  | hard | gate | 域D_COMPLIANCE(合规)当前972模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_CROSS_ASSET | 容量超限告警: D_CROSS_ASSET | capacity_limit | D_CROSS_ASSET |  | hard | gate | 域D_CROSS_ASSET(跨资产)当前82模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_DATA_ENG | 容量超限告警: D_DATA_ENG | capacity_limit | D_DATA_ENG |  | hard | gate | 域D_DATA_ENG(数据工程(增值+融合+知识))当前201模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_DATA_GOV | 容量超限告警: D_DATA_GOV | capacity_limit | D_DATA_GOV |  | hard | gate | 域D_DATA_GOV(数据治理(质量+血缘+参考))当前62模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_EX_CORE | 容量超限告警: D_EX_CORE | capacity_limit | D_EX_CORE |  | hard | gate | 域D_EX_CORE(执行核心)当前186模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_EX_SOR | 容量超限告警: D_EX_SOR | capacity_limit | D_EX_SOR |  | hard | gate | 域D_EX_SOR(执行路由)当前168模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_FACTOR | 容量超限告警: D_FACTOR | capacity_limit | D_FACTOR |  | hard | gate | 域D_FACTOR(因子)当前104模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_FRONTEND | 容量超限告警: D_FRONTEND | capacity_limit | D_FRONTEND |  | hard | gate | 域D_FRONTEND(前端)当前278模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_GOVERNANCE | 容量超限告警: D_GOVERNANCE | capacity_limit | D_GOVERNANCE |  | hard | gate | 域D_GOVERNANCE(治理)当前2881模块超过上限750，需拆分或提升上限 |
-| F1-CAPACITY-D_GOV_SCRIPTS | 容量超限告警: D_GOV_SCRIPTS | capacity_limit | D_GOVERNANCE |  | hard | gate | 域D_GOV_SCRIPTS(治理脚本)当前359模块超过上限340，需拆分或提升上限 |
-| F1-CAPACITY-D_INFRA_OPS | 容量超限告警: D_INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | gate | 域D_INFRA_OPS(基础设施运维)当前409模块超过上限40，需拆分或提升上限 |
-| F1-CAPACITY-D_INFRA_RUNTIME | 容量超限告警: D_INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | gate | 域D_INFRA_RUNTIME(运行时基础设施)当前892模块超过上限480，需拆分或提升上限 |
-| F1-CAPACITY-D_INTEGRATION | 容量超限告警: D_INTEGRATION | capacity_limit | D_INTEGRATION |  | hard | gate | 域D_INTEGRATION(集成)当前314模块超过上限220，需拆分或提升上限 |
-| F1-CAPACITY-D_INTELLIGENCE | 容量超限告警: D_INTELLIGENCE | capacity_limit | D_INTELLIGENCE |  | hard | gate | 域D_INTELLIGENCE(智能)当前322模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_KNOWLEDGE | 容量超限告警: D_KNOWLEDGE | capacity_limit | D_KNOWLEDGE |  | hard | gate | 域D_KNOWLEDGE(知识)当前209模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_MKT_DATA | 容量超限告警: D_MKT_DATA | capacity_limit | D_MKT_DATA |  | hard | gate | 域D_MKT_DATA(行情数据(接入+存储))当前109模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_ML_SERVE | 容量超限告警: D_ML_SERVE | capacity_limit | D_ML_SERVE |  | hard | gate | 域D_ML_SERVE(推理)当前77模块超过上限40，需拆分或提升上限 |
-| F1-CAPACITY-D_ML_TRAIN | 容量超限告警: D_ML_TRAIN | capacity_limit | D_ML_TRAIN |  | hard | gate | 域D_ML_TRAIN(训练)当前166模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_OPS | 容量超限告警: D_OPS | capacity_limit | D_OPS |  | hard | gate | 域D_OPS(运维)当前453模块超过上限380，需拆分或提升上限 |
-| F1-CAPACITY-D_PF_ALLOC | 容量超限告警: D_PF_ALLOC | capacity_limit | D_PF_ALLOC |  | hard | gate | 域D_PF_ALLOC(组合分配)当前120模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_PF_CORE | 容量超限告警: D_PF_CORE | capacity_limit | D_PF_CORE |  | hard | gate | 域D_PF_CORE(组合核心)当前246模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_POSITION | 容量超限告警: D_POSITION | capacity_limit | D_POSITION |  | hard | gate | 域D_POSITION(仓位管理)当前127模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_REPORTING | 容量超限告警: D_REPORTING | capacity_limit | D_REPORTING |  | hard | gate | 域D_REPORTING(报告)当前170模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_RISK | 容量超限告警: D_RISK | capacity_limit | D_RISK |  | hard | gate | 域D_RISK(风控)当前150模块超过上限100，需拆分或提升上限 |
-| F1-CAPACITY-D_SECURITY | 容量超限告警: D_SECURITY | capacity_limit | D_SECURITY |  | hard | gate | 域D_SECURITY(安全)当前341模块超过上限320，需拆分或提升上限 |
-| F1-CAPACITY-D_SELL_DECISION | 容量超限告警: D_SELL_DECISION | capacity_limit | D_SELL_DECISION |  | hard | gate | 域D_SELL_DECISION(卖出决策)当前94模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_SHARED | 容量超限告警: D_SHARED | capacity_limit | D_SHARED |  | hard | gate | 域D_SHARED(共享)当前275模块超过上限210，需拆分或提升上限 |
-| F1-CAPACITY-D_SIGLEGACY | 容量超限告警: D_SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | gate | 域D_SIGLEGACY(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
-| F1-CAPACITY-D_SIMULATION | 容量超限告警: D_SIMULATION | capacity_limit | D_SIMULATION |  | hard | gate | 域D_SIMULATION(仿真)当前92模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D_TRADING | 容量超限告警: D_TRADING | capacity_limit | D_TRADING |  | hard | gate | 域D_TRADING(交易运营)当前163模块超过上限140，需拆分或提升上限 |
+| F1-CAPACITY-D-ALT_DATA | 容量超限告警: D-ALT_DATA | capacity_limit | D_ALT_DATA |  | hard | gate | 域D-ALT_DATA(另类数据)当前117模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-AUTONOMY_CORE | 容量超限告警: D-AUTONOMY_CORE | capacity_limit | D_AUTONOMY_CORE |  | hard | gate | 域D-AUTONOMY_CORE(自治核心)当前225模块超过上限180，需拆分或提升上限 |
+| F1-CAPACITY-D-AUTONOMY_PERM | 容量超限告警: D-AUTONOMY_PERM | capacity_limit | D_AUTONOMY_PERM |  | hard | gate | 域D-AUTONOMY_PERM(自治保护)当前236模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-COMPLIANCE | 容量超限告警: D-COMPLIANCE | capacity_limit | D_COMPLIANCE |  | hard | gate | 域D-COMPLIANCE(合规)当前972模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-CROSS_ASSET | 容量超限告警: D-CROSS_ASSET | capacity_limit | D_CROSS_ASSET |  | hard | gate | 域D-CROSS_ASSET(跨资产)当前82模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-DATA_ENG | 容量超限告警: D-DATA_ENG | capacity_limit | D_DATA_ENG |  | hard | gate | 域D-DATA_ENG(数据工程(增值+融合+知识))当前201模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-DATA_GOV | 容量超限告警: D-DATA_GOV | capacity_limit | D_DATA_GOV |  | hard | gate | 域D-DATA_GOV(数据治理(质量+血缘+参考))当前62模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-EX_CORE | 容量超限告警: D-EX_CORE | capacity_limit | D_EX_CORE |  | hard | gate | 域D-EX_CORE(执行核心)当前186模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-EX_SOR | 容量超限告警: D-EX_SOR | capacity_limit | D_EX_SOR |  | hard | gate | 域D-EX_SOR(执行路由)当前168模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-FACTOR | 容量超限告警: D-FACTOR | capacity_limit | D_FACTOR |  | hard | gate | 域D-FACTOR(因子)当前104模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D_FRONTEND |  | hard | gate | 域D-FRONTEND(前端)当前278模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D_GOVERNANCE |  | hard | gate | 域D-GOVERNANCE(治理)当前2881模块超过上限750，需拆分或提升上限 |
+| F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D_GOVERNANCE |  | hard | gate | 域D-GOV_SCRIPTS(治理脚本)当前359模块超过上限340，需拆分或提升上限 |
+| F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | gate | 域D-INFRA_OPS(基础设施运维)当前409模块超过上限40，需拆分或提升上限 |
+| F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | gate | 域D-INFRA_RUNTIME(运行时基础设施)当前892模块超过上限480，需拆分或提升上限 |
+| F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D_INTEGRATION |  | hard | gate | 域D-INTEGRATION(集成)当前314模块超过上限220，需拆分或提升上限 |
+| F1-CAPACITY-D-INTELLIGENCE | 容量超限告警: D-INTELLIGENCE | capacity_limit | D_INTELLIGENCE |  | hard | gate | 域D-INTELLIGENCE(智能)当前322模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-KNOWLEDGE | 容量超限告警: D-KNOWLEDGE | capacity_limit | D_KNOWLEDGE |  | hard | gate | 域D-KNOWLEDGE(知识)当前209模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-MKT_DATA | 容量超限告警: D-MKT_DATA | capacity_limit | D_MKT_DATA |  | hard | gate | 域D-MKT_DATA(行情数据(接入+存储))当前109模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-ML_SERVE | 容量超限告警: D-ML_SERVE | capacity_limit | D_ML_SERVE |  | hard | gate | 域D-ML_SERVE(推理)当前77模块超过上限40，需拆分或提升上限 |
+| F1-CAPACITY-D-ML_TRAIN | 容量超限告警: D-ML_TRAIN | capacity_limit | D_ML_TRAIN |  | hard | gate | 域D-ML_TRAIN(训练)当前166模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-OPS | 容量超限告警: D-OPS | capacity_limit | D_OPS |  | hard | gate | 域D-OPS(运维)当前453模块超过上限380，需拆分或提升上限 |
+| F1-CAPACITY-D-PF_ALLOC | 容量超限告警: D-PF_ALLOC | capacity_limit | D_PF_ALLOC |  | hard | gate | 域D-PF_ALLOC(组合分配)当前120模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-PF_CORE | 容量超限告警: D-PF_CORE | capacity_limit | D_PF_CORE |  | hard | gate | 域D-PF_CORE(组合核心)当前246模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-POSITION | 容量超限告警: D-POSITION | capacity_limit | D_POSITION |  | hard | gate | 域D-POSITION(仓位管理)当前127模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-REPORTING | 容量超限告警: D-REPORTING | capacity_limit | D_REPORTING |  | hard | gate | 域D-REPORTING(报告)当前170模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-RISK | 容量超限告警: D-RISK | capacity_limit | D_RISK |  | hard | gate | 域D-RISK(风控)当前150模块超过上限100，需拆分或提升上限 |
+| F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D_SECURITY |  | hard | gate | 域D-SECURITY(安全)当前341模块超过上限320，需拆分或提升上限 |
+| F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D_SELL_DECISION |  | hard | gate | 域D-SELL_DECISION(卖出决策)当前94模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D_SHARED |  | hard | gate | 域D-SHARED(共享)当前275模块超过上限210，需拆分或提升上限 |
+| F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | gate | 域D-SIGLEGACY(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D_SIMULATION |  | hard | gate | 域D-SIMULATION(仿真)当前92模块超过上限60，需拆分或提升上限 |
+| F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D_TRADING |  | hard | gate | 域D-TRADING(交易运营)当前163模块超过上限140，需拆分或提升上限 |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
 
 ## 完整约束清单
@@ -112,10 +112,10 @@ ttl: task_bound
 | CONSTRAINT_D-DATA-KNOWLEDGE_MANAGEMENT | knowledge_management稳定性约束 | stability | D_DATA_ENG |  | hard | open |
 | CONSTRAINT_D-DATA-PERSISTENCE | persistence稳定性约束 | stability | D_DATA_ENG |  | hard | open |
 | CONSTRAINT_D-DATA-VECTOR_STORAGE | vector_storage稳定性约束 | stability | D_DATA_ENG |  | hard | open |
-| CONSTRAINT_D_GOV_DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
+| CONSTRAINT_D-GOV-DRIFT_DETECTION | drift_detection稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-ORPHAN_JUDGMENT | orphan_judgment稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
-| CONSTRAINT_D_GOV_REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
-| CONSTRAINT_D_GOV_RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
+| CONSTRAINT_D-GOV-REGISTRY_MANAGEMENT | registry_management稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
+| CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | open |
@@ -133,37 +133,37 @@ ttl: task_bound
 | CONSTRAINT_D-SEC-ADVERSARIAL_VALIDATION | adversarial_validation稳定性约束 | stability | D_SECURITY |  | hard | open |
 | CONSTRAINT_D-SEC-LLM_DEFENSE | llm_defense稳定性约束 | stability | D_SECURITY |  | hard | open |
 | CONSTRAINT_D-TEST-CODE_DEDUP | code_dedup稳定性约束 | stability | D_GOVERNANCE |  | hard | open |
-| F1-CAPACITY-D_ALT_DATA | 容量超限告警: D_ALT_DATA | capacity_limit | D_ALT_DATA |  | hard | open |
-| F1-CAPACITY-D_AUTONOMY_CORE | 容量超限告警: D_AUTONOMY_CORE | capacity_limit | D_AUTONOMY_CORE |  | hard | open |
-| F1-CAPACITY-D_AUTONOMY_PERM | 容量超限告警: D_AUTONOMY_PERM | capacity_limit | D_AUTONOMY_PERM |  | hard | open |
-| F1-CAPACITY-D_COMPLIANCE | 容量超限告警: D_COMPLIANCE | capacity_limit | D_COMPLIANCE |  | hard | open |
-| F1-CAPACITY-D_CROSS_ASSET | 容量超限告警: D_CROSS_ASSET | capacity_limit | D_CROSS_ASSET |  | hard | open |
-| F1-CAPACITY-D_DATA_ENG | 容量超限告警: D_DATA_ENG | capacity_limit | D_DATA_ENG |  | hard | open |
-| F1-CAPACITY-D_DATA_GOV | 容量超限告警: D_DATA_GOV | capacity_limit | D_DATA_GOV |  | hard | open |
-| F1-CAPACITY-D_EX_CORE | 容量超限告警: D_EX_CORE | capacity_limit | D_EX_CORE |  | hard | open |
-| F1-CAPACITY-D_EX_SOR | 容量超限告警: D_EX_SOR | capacity_limit | D_EX_SOR |  | hard | open |
-| F1-CAPACITY-D_FACTOR | 容量超限告警: D_FACTOR | capacity_limit | D_FACTOR |  | hard | open |
-| F1-CAPACITY-D_FRONTEND | 容量超限告警: D_FRONTEND | capacity_limit | D_FRONTEND |  | hard | open |
-| F1-CAPACITY-D_GOVERNANCE | 容量超限告警: D_GOVERNANCE | capacity_limit | D_GOVERNANCE |  | hard | open |
-| F1-CAPACITY-D_GOV_SCRIPTS | 容量超限告警: D_GOV_SCRIPTS | capacity_limit | D_GOVERNANCE |  | hard | open |
-| F1-CAPACITY-D_INFRA_OPS | 容量超限告警: D_INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | open |
-| F1-CAPACITY-D_INFRA_RUNTIME | 容量超限告警: D_INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | open |
-| F1-CAPACITY-D_INTEGRATION | 容量超限告警: D_INTEGRATION | capacity_limit | D_INTEGRATION |  | hard | open |
-| F1-CAPACITY-D_INTELLIGENCE | 容量超限告警: D_INTELLIGENCE | capacity_limit | D_INTELLIGENCE |  | hard | open |
-| F1-CAPACITY-D_KNOWLEDGE | 容量超限告警: D_KNOWLEDGE | capacity_limit | D_KNOWLEDGE |  | hard | open |
-| F1-CAPACITY-D_MKT_DATA | 容量超限告警: D_MKT_DATA | capacity_limit | D_MKT_DATA |  | hard | open |
-| F1-CAPACITY-D_ML_SERVE | 容量超限告警: D_ML_SERVE | capacity_limit | D_ML_SERVE |  | hard | open |
-| F1-CAPACITY-D_ML_TRAIN | 容量超限告警: D_ML_TRAIN | capacity_limit | D_ML_TRAIN |  | hard | open |
-| F1-CAPACITY-D_OPS | 容量超限告警: D_OPS | capacity_limit | D_OPS |  | hard | open |
-| F1-CAPACITY-D_PF_ALLOC | 容量超限告警: D_PF_ALLOC | capacity_limit | D_PF_ALLOC |  | hard | open |
-| F1-CAPACITY-D_PF_CORE | 容量超限告警: D_PF_CORE | capacity_limit | D_PF_CORE |  | hard | open |
-| F1-CAPACITY-D_POSITION | 容量超限告警: D_POSITION | capacity_limit | D_POSITION |  | hard | open |
-| F1-CAPACITY-D_REPORTING | 容量超限告警: D_REPORTING | capacity_limit | D_REPORTING |  | hard | open |
-| F1-CAPACITY-D_RISK | 容量超限告警: D_RISK | capacity_limit | D_RISK |  | hard | open |
-| F1-CAPACITY-D_SECURITY | 容量超限告警: D_SECURITY | capacity_limit | D_SECURITY |  | hard | open |
-| F1-CAPACITY-D_SELL_DECISION | 容量超限告警: D_SELL_DECISION | capacity_limit | D_SELL_DECISION |  | hard | open |
-| F1-CAPACITY-D_SHARED | 容量超限告警: D_SHARED | capacity_limit | D_SHARED |  | hard | open |
-| F1-CAPACITY-D_SIGLEGACY | 容量超限告警: D_SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | open |
-| F1-CAPACITY-D_SIMULATION | 容量超限告警: D_SIMULATION | capacity_limit | D_SIMULATION |  | hard | open |
-| F1-CAPACITY-D_TRADING | 容量超限告警: D_TRADING | capacity_limit | D_TRADING |  | hard | open |
+| F1-CAPACITY-D-ALT_DATA | 容量超限告警: D-ALT_DATA | capacity_limit | D_ALT_DATA |  | hard | open |
+| F1-CAPACITY-D-AUTONOMY_CORE | 容量超限告警: D-AUTONOMY_CORE | capacity_limit | D_AUTONOMY_CORE |  | hard | open |
+| F1-CAPACITY-D-AUTONOMY_PERM | 容量超限告警: D-AUTONOMY_PERM | capacity_limit | D_AUTONOMY_PERM |  | hard | open |
+| F1-CAPACITY-D-COMPLIANCE | 容量超限告警: D-COMPLIANCE | capacity_limit | D_COMPLIANCE |  | hard | open |
+| F1-CAPACITY-D-CROSS_ASSET | 容量超限告警: D-CROSS_ASSET | capacity_limit | D_CROSS_ASSET |  | hard | open |
+| F1-CAPACITY-D-DATA_ENG | 容量超限告警: D-DATA_ENG | capacity_limit | D_DATA_ENG |  | hard | open |
+| F1-CAPACITY-D-DATA_GOV | 容量超限告警: D-DATA_GOV | capacity_limit | D_DATA_GOV |  | hard | open |
+| F1-CAPACITY-D-EX_CORE | 容量超限告警: D-EX_CORE | capacity_limit | D_EX_CORE |  | hard | open |
+| F1-CAPACITY-D-EX_SOR | 容量超限告警: D-EX_SOR | capacity_limit | D_EX_SOR |  | hard | open |
+| F1-CAPACITY-D-FACTOR | 容量超限告警: D-FACTOR | capacity_limit | D_FACTOR |  | hard | open |
+| F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D_FRONTEND |  | hard | open |
+| F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D_GOVERNANCE |  | hard | open |
+| F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D_GOVERNANCE |  | hard | open |
+| F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | open |
+| F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | open |
+| F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D_INTEGRATION |  | hard | open |
+| F1-CAPACITY-D-INTELLIGENCE | 容量超限告警: D-INTELLIGENCE | capacity_limit | D_INTELLIGENCE |  | hard | open |
+| F1-CAPACITY-D-KNOWLEDGE | 容量超限告警: D-KNOWLEDGE | capacity_limit | D_KNOWLEDGE |  | hard | open |
+| F1-CAPACITY-D-MKT_DATA | 容量超限告警: D-MKT_DATA | capacity_limit | D_MKT_DATA |  | hard | open |
+| F1-CAPACITY-D-ML_SERVE | 容量超限告警: D-ML_SERVE | capacity_limit | D_ML_SERVE |  | hard | open |
+| F1-CAPACITY-D-ML_TRAIN | 容量超限告警: D-ML_TRAIN | capacity_limit | D_ML_TRAIN |  | hard | open |
+| F1-CAPACITY-D-OPS | 容量超限告警: D-OPS | capacity_limit | D_OPS |  | hard | open |
+| F1-CAPACITY-D-PF_ALLOC | 容量超限告警: D-PF_ALLOC | capacity_limit | D_PF_ALLOC |  | hard | open |
+| F1-CAPACITY-D-PF_CORE | 容量超限告警: D-PF_CORE | capacity_limit | D_PF_CORE |  | hard | open |
+| F1-CAPACITY-D-POSITION | 容量超限告警: D-POSITION | capacity_limit | D_POSITION |  | hard | open |
+| F1-CAPACITY-D-REPORTING | 容量超限告警: D-REPORTING | capacity_limit | D_REPORTING |  | hard | open |
+| F1-CAPACITY-D-RISK | 容量超限告警: D-RISK | capacity_limit | D_RISK |  | hard | open |
+| F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D_SECURITY |  | hard | open |
+| F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D_SELL_DECISION |  | hard | open |
+| F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D_SHARED |  | hard | open |
+| F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | open |
+| F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D_SIMULATION |  | hard | open |
+| F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D_TRADING |  | hard | open |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |

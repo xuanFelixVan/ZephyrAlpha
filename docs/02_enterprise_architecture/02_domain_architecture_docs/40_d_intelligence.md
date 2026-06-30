@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 上下文管理（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 33 | Module Count | 33 |
 | 域内依赖 | 28 | Internal Dependencies | 28 |
 | 跨域入边 | 47 | Cross-domain Incoming | 47 |
-| 跨域出边 | 17 | Cross-domain Outgoing | 17 |
+| 跨域出边 | 16 | Cross-domain Outgoing | 16 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 17 | Prototype Modules | 17 |
 | 生产态模块 | 16 | Production Modules | 16 |
@@ -115,7 +115,6 @@ graph TD
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
     D_SIMULATION["D_SIMULATION prototype"]
     src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|import_depends| D_SIMULATION
     src_zephyr_intelligence_model_evaluation_implementations_default_backtest_engine_py -.->|import_depends| D_SIMULATION
@@ -125,6 +124,7 @@ graph TD
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -->|import_depends| D_TRADING
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
+    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|import_depends| D_SIMULATION
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_INTEGRATION["D_INTEGRATION prototype"]
@@ -185,7 +185,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 5 | config_depends,import_depends |
+| D_GOVERNANCE | 4 | config_depends,import_depends |
 | D_ML_TRAIN | 4 | import_depends |
 | D_SIMULATION | 3 | import_depends |
 | D_SHARED | 1 | import_depends |

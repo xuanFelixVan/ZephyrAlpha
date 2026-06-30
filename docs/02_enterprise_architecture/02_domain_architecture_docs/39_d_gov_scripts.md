@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 脚本治理（D_GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_GOV_SCRIPTS | Domain ID | D_GOV_SCRIPTS |
 | 域名称 | 脚本治理 | Domain Name | 脚本治理 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 386 | Module Count | 386 |
-| 域内依赖 | 314 | Internal Dependencies | 314 |
+| 模块数 | 385 | Module Count | 385 |
+| 域内依赖 | 313 | Internal Dependencies | 313 |
 | 跨域入边 | 13 | Cross-domain Incoming | 13 |
-| 跨域出边 | 78 | Cross-domain Outgoing | 78 |
+| 跨域出边 | 60 | Cross-domain Outgoing | 60 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 381 | Prototype Modules | 381 |
+| 原型态模块 | 380 | Prototype Modules | 380 |
 | 生产态模块 | 5 | Production Modules | 5 |
 | 容量 | 26/150 (正常) | Capacity | 26/150 (正常) |
 | 描述 | 代码去重检测 | Description | 代码去重检测 |
@@ -219,12 +219,6 @@ graph TD
     scripts_arch_guard_fitness_functions_check_warm_cold_async_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_construction_e2e_check_py -.->|config_depends| scripts_construction_check_statuses_py
     scripts_construction_e2e_deep_py -.->|config_depends| scripts_construction_check_statuses_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    scripts_construction_check_statuses_py -.->|import_depends| D_GOVERNANCE
-    scripts_construction_check_statuses_py -.->|import_depends| D_GOVERNANCE
-    scripts_construction_check_transition_code_py -.->|import_depends| D_GOVERNANCE
-    scripts_construction_d_init_task_system_py -.->|import_depends| D_GOVERNANCE
-    scripts_construction_d_init_task_system_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     scripts_construction_d_init_task_system_py -.->|import_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -232,7 +226,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_arch_guard_check_cross_plane_communication_py,scripts_arch_guard_check_fe_acl_boundary_py,scripts_arch_guard_check_hot_path_purity_py,scripts_arch_guard_check_scaffold_exit_gates_py,scripts_arch_guard_check_schema_consistency_py,scripts_arch_guard_fitness_functions_init_py,scripts_arch_guard_fitness_functions_check_aisg_gateway_py,scripts_arch_guard_fitness_functions_check_audit_log_immutability_py,scripts_arch_guard_fitness_functions_check_bvb_compliance_py,scripts_arch_guard_fitness_functions_check_capacity_slo_ssot_py,scripts_arch_guard_fitness_functions_check_daily_loss_limit_py,scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py,scripts_arch_guard_fitness_functions_check_idempotency_key_py,scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_arch_guard_fitness_functions_check_log_secret_leak_py,scripts_arch_guard_fitness_functions_check_no_cross_plane_mutable_state_py,scripts_arch_guard_fitness_functions_check_ocp_signatures_py,scripts_arch_guard_fitness_functions_check_pit_compliance_py,scripts_arch_guard_fitness_functions_check_position_limit_py,scripts_arch_guard_fitness_functions_check_risk_params_consistency_py,scripts_arch_guard_fitness_functions_check_survivorship_bias_py,scripts_arch_guard_fitness_functions_check_warm_cold_async_py,scripts_arch_guard_import_linter_init_py,scripts_arch_guard_import_linter_layer_boundary_check_py,scripts_arch_guard_run_all_py,scripts_construction_e2e_check_py,scripts_construction_e2e_deep_py,scripts_construction_check_statuses_py,scripts_construction_check_transition_code_py,scripts_construction_d_init_task_system_py design
-    class D_GOVERNANCE,D_INTEGRATION external_prod
+    class D_INTEGRATION external_prod
 ```
 
 ### 第 4 页 / 共 13 页 / Page 4 of 13
@@ -290,7 +284,6 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_GOVERNANCE
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
-    scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTEGRATION
     D_RISK["D_RISK prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
@@ -306,6 +299,8 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTELLIGENCE
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTEGRATION
     scripts_construction_local_layer_daemon_py -.->|import_depends| D_GOVERNANCE
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    scripts_construction_local_layer_daemon_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOV_DRIFT["D_GOV_DRIFT production"]
     D_GOV_DRIFT -->|import_depends| scripts_governance_shared_frontmatter_py
     D_GOVERNANCE -.->|test_depends| scripts_governance_shared_frontmatter_py
@@ -319,7 +314,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_shared_frontmatter_py production
     class scripts_construction_demo_a2a_chat_py,scripts_construction_demo_a2a_coordination_py,scripts_construction_demo_e2e_pipeline_py,scripts_construction_finalize_tasks_py,scripts_construction_local_layer_daemon_py,scripts_construction_reset_test_task_py,scripts_construction_start_brain_py,scripts_construction_test_event_hook_py,scripts_dm90971_add_test_headers_py,scripts_fix_freeze_manifest_py,scripts_fix_orphan_all_py,scripts_generate_manifest_py,scripts_generate_pathway_registry_py,scripts_governance_init_py,scripts_governance_concurrency_py,scripts_governance_e2e_verify_py,scripts_governance_finding_lifecycle_py,scripts_governance_resource_guard_py,scripts_governance_shared_init_py,scripts_governance_shared_base_py,scripts_governance_shared_constants_py,scripts_governance_shared_encoding_py,scripts_governance_shared_libcst_docstring_adder_py,scripts_governance_shared_registry_entry_count_py,scripts_governance_shared_thresholds_py,scripts_governance_shared_walk_py,scripts_governance_shared_yaml_utils_py,scripts_governance_sync_check_p0_status_py,scripts_governance_sync_cleanup_p0_auto_bridged_py design
-    class D_INTEGRATION,D_MKT_DATA,D_GOVERNANCE,D_EX_CORE,D_INTELLIGENCE,D_GOV_DRIFT external_prod
+    class D_INTEGRATION,D_MKT_DATA,D_GOVERNANCE,D_EX_CORE,D_INTELLIGENCE,D_INFRA_RUNTIME,D_GOV_DRIFT external_prod
     class D_FUNDAMENTAL_SIGNAL,D_RISK,D_SIMULATION,D_SECURITY external_design
 ```
 
@@ -367,7 +362,6 @@ graph TD
     scripts_governance_adversarial_sys_master_test_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_governance_construction_gate_py -.->|import_depends| D_GOVERNANCE
-    scripts_governance_create_alignment_tasks_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -589,7 +583,6 @@ graph TD
         scripts_governance_detect_causal_conflicts_py["scripts/governance/detect_causal_conflicts.py prototype"]
         scripts_governance_diagnose_depgraph_py["scripts/governance/diagnose_depgraph.py prototype"]
         scripts_governance_dm105_depgraph_triage_py["scripts/governance/dm105_depgraph_triage.py prototype"]
-        scripts_governance_dm106_p2b_verification_py["scripts/governance/dm106_p2b_verification.py prototype"]
         scripts_governance_env_check_py["scripts/governance/env_check.py prototype"]
         scripts_governance_extract_depgraph_py["scripts/governance/extract_depgraph.py prototype"]
         scripts_governance_fix_orphan_exports_py["scripts/governance/fix_orphan_exports.py prototype"]
@@ -601,6 +594,7 @@ graph TD
         scripts_governance_generate_project_depgraph_py["scripts/governance/generate_project_depgraph.py prototype"]
         scripts_governance_generate_project_path_tree_py["scripts/governance/generate_project_path_tree.py prototype"]
         scripts_governance_generators_init_py["scripts/governance/generators/__init__.py prototype"]
+        scripts_governance_generators_fix_module_manifest_layout_py["scripts/governance/generators/fix_module_manife... prototype"]
     end
     scripts_governance_d8_doc_sync_validate_document_ttl_py -.->|config_depends| scripts_governance_d8_doc_sync_init_py
     scripts_governance_d8_doc_sync_detect_dated_snapshots_py -.->|config_depends| scripts_governance_d8_doc_sync_init_py
@@ -608,6 +602,7 @@ graph TD
     scripts_governance_d8_doc_sync_validate_document_lifecycle_py -.->|config_depends| scripts_governance_d8_doc_sync_init_py
     scripts_governance_d9_knowledge_detect_duplicated_normative_language_py -.->|config_depends| scripts_governance_d9_knowledge_init_py
     scripts_governance_d9_knowledge_detect_orphan_documents_py -.->|config_depends| scripts_governance_d9_knowledge_init_py
+    scripts_governance_generators_fix_module_manifest_layout_py -.->|config_depends| scripts_governance_generators_init_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_gate_engine_selfcheck_py -.->|import_depends| D_GOV_ENFORCEMENT
     scripts_governance_gate_engine_selfcheck_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -618,7 +613,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_dependency_graph_py production
-    class scripts_governance_d7_code_validate_kb_write_provenance_py,scripts_governance_d7_code_validate_python_syntax_py,scripts_governance_d7_code_validate_test_assertion_depth_py,scripts_governance_d7_code_validate_test_coverage_py,scripts_governance_d7_code_validate_type_annotation_coverage_py,scripts_governance_d7_code_validate_unused_imports_py,scripts_governance_d8_doc_sync_init_py,scripts_governance_d8_doc_sync_detect_ai_products_in_docs_py,scripts_governance_d8_doc_sync_detect_dated_snapshots_py,scripts_governance_d8_doc_sync_validate_document_lifecycle_py,scripts_governance_d8_doc_sync_validate_document_ttl_py,scripts_governance_d9_knowledge_init_py,scripts_governance_d9_knowledge_detect_duplicated_normative_language_py,scripts_governance_d9_knowledge_detect_orphan_documents_py,scripts_governance_detect_causal_conflicts_py,scripts_governance_diagnose_depgraph_py,scripts_governance_dm105_depgraph_triage_py,scripts_governance_dm106_p2b_verification_py,scripts_governance_env_check_py,scripts_governance_extract_depgraph_py,scripts_governance_fix_orphan_exports_py,scripts_governance_g9_compliance_check_py,scripts_governance_gate_engine_selfcheck_py,scripts_governance_generate_asset_index_py,scripts_governance_generate_nav_table_py,scripts_governance_generate_path_ownership_map_py,scripts_governance_generate_project_depgraph_py,scripts_governance_generate_project_path_tree_py,scripts_governance_generators_init_py design
+    class scripts_governance_d7_code_validate_kb_write_provenance_py,scripts_governance_d7_code_validate_python_syntax_py,scripts_governance_d7_code_validate_test_assertion_depth_py,scripts_governance_d7_code_validate_test_coverage_py,scripts_governance_d7_code_validate_type_annotation_coverage_py,scripts_governance_d7_code_validate_unused_imports_py,scripts_governance_d8_doc_sync_init_py,scripts_governance_d8_doc_sync_detect_ai_products_in_docs_py,scripts_governance_d8_doc_sync_detect_dated_snapshots_py,scripts_governance_d8_doc_sync_validate_document_lifecycle_py,scripts_governance_d8_doc_sync_validate_document_ttl_py,scripts_governance_d9_knowledge_init_py,scripts_governance_d9_knowledge_detect_duplicated_normative_language_py,scripts_governance_d9_knowledge_detect_orphan_documents_py,scripts_governance_detect_causal_conflicts_py,scripts_governance_diagnose_depgraph_py,scripts_governance_dm105_depgraph_triage_py,scripts_governance_env_check_py,scripts_governance_extract_depgraph_py,scripts_governance_fix_orphan_exports_py,scripts_governance_g9_compliance_check_py,scripts_governance_gate_engine_selfcheck_py,scripts_governance_generate_asset_index_py,scripts_governance_generate_nav_table_py,scripts_governance_generate_path_ownership_map_py,scripts_governance_generate_project_depgraph_py,scripts_governance_generate_project_path_tree_py,scripts_governance_generators_init_py,scripts_governance_generators_fix_module_manifest_layout_py design
     class D_GOV_ENFORCEMENT external_prod
     class D_GOVERNANCE external_design
 ```
@@ -628,7 +623,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
-        scripts_governance_generators_fix_module_manifest_layout_py["scripts/governance/generators/fix_module_manife... prototype"]
         scripts_governance_generators_generate_gate_registry_py["scripts/governance/generators/generate_gate_reg... prototype"]
         scripts_governance_generators_generate_registry_master_index_py["scripts/governance/generators/generate_registry... prototype"]
         scripts_governance_generators_generate_script_manifest_py["scripts/governance/generators/generate_script_m... prototype"]
@@ -658,6 +652,7 @@ graph TD
         scripts_governance_meta_manage_script_ab_test_py["scripts/governance/meta/manage_script_ab_test.py prototype"]
         scripts_governance_meta_manage_script_retirement_py["scripts/governance/meta/manage_script_retiremen... prototype"]
         scripts_governance_meta_manage_shadow_mode_py["scripts/governance/meta/manage_shadow_mode.py prototype"]
+        scripts_governance_meta_phase_e_context_check_py["scripts/governance/meta/phase_e_context_check.py prototype"]
     end
     scripts_governance_meta_arbitrate_findings_py -.->|config_depends| scripts_governance_meta_init_py
     scripts_governance_meta_detect_config_deviation_py -.->|config_depends| scripts_governance_meta_init_py
@@ -674,23 +669,21 @@ graph TD
     scripts_governance_meta_manage_finding_timeseries_py -.->|config_depends| scripts_governance_meta_init_py
     scripts_governance_meta_manage_kill_switch_py -.->|config_depends| scripts_governance_meta_init_py
     scripts_governance_meta_manage_shadow_mode_py -.->|config_depends| scripts_governance_meta_init_py
+    scripts_governance_meta_phase_e_context_check_py -.->|config_depends| scripts_governance_meta_init_py
     scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py -.->|config_depends| scripts_governance_meta_benchmark_test_fixtures_bad_imports_py
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -.->|config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_INTEGRATION
-    scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_meta_finding_state_machine_py -.->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_generators_fix_module_manifest_layout_py,scripts_governance_generators_generate_gate_registry_py,scripts_governance_generators_generate_registry_master_index_py,scripts_governance_generators_generate_script_manifest_py,scripts_governance_generators_inject_manifests_py,scripts_governance_generators_refresh_master_entries_py,scripts_governance_generators_sync_audit_protocol_numbers_py,scripts_governance_governance_watchdog_py,scripts_governance_list_phase0_tasks_py,scripts_governance_meta_init_py,scripts_governance_meta_arbitrate_findings_py,scripts_governance_meta_backup_runtime_state_py,scripts_governance_meta_benchmark_test_fixtures_bad_imports_py,scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py,scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py,scripts_governance_meta_compute_sla_metrics_py,scripts_governance_meta_create_task_from_finding_py,scripts_governance_meta_detect_config_deviation_py,scripts_governance_meta_detect_fix_oscillation_py,scripts_governance_meta_detect_hallucinated_packages_py,scripts_governance_meta_detect_script_divergence_py,scripts_governance_meta_detect_script_rot_py,scripts_governance_meta_finding_state_machine_py,scripts_governance_meta_manage_baseline_py,scripts_governance_meta_manage_error_budget_py,scripts_governance_meta_manage_finding_timeseries_py,scripts_governance_meta_manage_kill_switch_py,scripts_governance_meta_manage_script_ab_test_py,scripts_governance_meta_manage_script_retirement_py,scripts_governance_meta_manage_shadow_mode_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_INTEGRATION,D_INFRA_RUNTIME external_prod
+    class scripts_governance_generators_generate_gate_registry_py,scripts_governance_generators_generate_registry_master_index_py,scripts_governance_generators_generate_script_manifest_py,scripts_governance_generators_inject_manifests_py,scripts_governance_generators_refresh_master_entries_py,scripts_governance_generators_sync_audit_protocol_numbers_py,scripts_governance_governance_watchdog_py,scripts_governance_list_phase0_tasks_py,scripts_governance_meta_init_py,scripts_governance_meta_arbitrate_findings_py,scripts_governance_meta_backup_runtime_state_py,scripts_governance_meta_benchmark_test_fixtures_bad_imports_py,scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py,scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py,scripts_governance_meta_compute_sla_metrics_py,scripts_governance_meta_create_task_from_finding_py,scripts_governance_meta_detect_config_deviation_py,scripts_governance_meta_detect_fix_oscillation_py,scripts_governance_meta_detect_hallucinated_packages_py,scripts_governance_meta_detect_script_divergence_py,scripts_governance_meta_detect_script_rot_py,scripts_governance_meta_finding_state_machine_py,scripts_governance_meta_manage_baseline_py,scripts_governance_meta_manage_error_budget_py,scripts_governance_meta_manage_finding_timeseries_py,scripts_governance_meta_manage_kill_switch_py,scripts_governance_meta_manage_script_ab_test_py,scripts_governance_meta_manage_script_retirement_py,scripts_governance_meta_manage_shadow_mode_py,scripts_governance_meta_phase_e_context_check_py design
+    class D_GOV_ENFORCEMENT,D_INTEGRATION,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 11 页 / 共 13 页 / Page 11 of 13
@@ -698,7 +691,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
-        scripts_governance_meta_phase_e_context_check_py["scripts/governance/meta/phase_e_context_check.py prototype"]
         scripts_governance_meta_score_script_effectiveness_py["scripts/governance/meta/score_script_effectiven... prototype"]
         scripts_governance_meta_trace_finding_lifecycle_py["scripts/governance/meta/trace_finding_lifecycle.py prototype"]
         scripts_governance_meta_track_script_costs_py["scripts/governance/meta/track_script_costs.py prototype"]
@@ -728,6 +720,7 @@ graph TD
         scripts_governance_rebuild_audit_index_py["scripts/governance/rebuild_audit_index.py prototype"]
         scripts_governance_rebuild_progress_py["scripts/governance/rebuild_progress.py prototype"]
         scripts_governance_rename_kebab_to_snake_py["scripts/governance/rename_kebab_to_snake.py prototype"]
+        scripts_governance_ri_boundary_check_py["scripts/governance/ri_boundary_check.py prototype"]
     end
     scripts_governance_observability_init_py -.->|config_depends| scripts_governance_observability_gate_cache_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
@@ -744,7 +737,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_meta_phase_e_context_check_py,scripts_governance_meta_score_script_effectiveness_py,scripts_governance_meta_trace_finding_lifecycle_py,scripts_governance_meta_track_script_costs_py,scripts_governance_meta_validate_automation_boundary_py,scripts_governance_meta_validate_cross_model_consensus_py,scripts_governance_meta_validate_dependency_chain_py,scripts_governance_meta_validate_emergency_bypass_log_py,scripts_governance_meta_validate_end_to_end_benchmark_py,scripts_governance_meta_validate_environment_health_py,scripts_governance_meta_validate_false_negatives_py,scripts_governance_meta_validate_gate_engine_external_py,scripts_governance_meta_validate_mutation_testing_py,scripts_governance_meta_validate_rule_freshness_py,scripts_governance_meta_validate_rules_file_backdoor_py,scripts_governance_meta_validate_rules_integrity_py,scripts_governance_meta_validate_script_onboarding_py,scripts_governance_meta_validate_script_provenance_py,scripts_governance_meta_validate_script_system_health_py,scripts_governance_meta_validate_threshold_changes_py,scripts_governance_meta_validate_trust_tier_py,scripts_governance_observability_init_py,scripts_governance_observability_gate_cache_py,scripts_governance_phase_a_backup_py,scripts_governance_pre_delete_safety_check_py,scripts_governance_pre_op_check_py,scripts_governance_pre_write_gate_py,scripts_governance_rebuild_audit_index_py,scripts_governance_rebuild_progress_py,scripts_governance_rename_kebab_to_snake_py design
+    class scripts_governance_meta_score_script_effectiveness_py,scripts_governance_meta_trace_finding_lifecycle_py,scripts_governance_meta_track_script_costs_py,scripts_governance_meta_validate_automation_boundary_py,scripts_governance_meta_validate_cross_model_consensus_py,scripts_governance_meta_validate_dependency_chain_py,scripts_governance_meta_validate_emergency_bypass_log_py,scripts_governance_meta_validate_end_to_end_benchmark_py,scripts_governance_meta_validate_environment_health_py,scripts_governance_meta_validate_false_negatives_py,scripts_governance_meta_validate_gate_engine_external_py,scripts_governance_meta_validate_mutation_testing_py,scripts_governance_meta_validate_rule_freshness_py,scripts_governance_meta_validate_rules_file_backdoor_py,scripts_governance_meta_validate_rules_integrity_py,scripts_governance_meta_validate_script_onboarding_py,scripts_governance_meta_validate_script_provenance_py,scripts_governance_meta_validate_script_system_health_py,scripts_governance_meta_validate_threshold_changes_py,scripts_governance_meta_validate_trust_tier_py,scripts_governance_observability_init_py,scripts_governance_observability_gate_cache_py,scripts_governance_phase_a_backup_py,scripts_governance_pre_delete_safety_check_py,scripts_governance_pre_op_check_py,scripts_governance_pre_write_gate_py,scripts_governance_rebuild_audit_index_py,scripts_governance_rebuild_progress_py,scripts_governance_rename_kebab_to_snake_py,scripts_governance_ri_boundary_check_py design
     class D_GOV_ENFORCEMENT,D_GOV_AUDIT,D_INFRA_RUNTIME,D_INTEGRATION external_prod
 ```
 
@@ -753,7 +746,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
-        scripts_governance_ri_boundary_check_py["scripts/governance/ri_boundary_check.py prototype"]
         scripts_governance_ri_build_completion_check_py["scripts/governance/ri_build_completion_check.py prototype"]
         scripts_governance_run_all_py["scripts/governance/run_all.py prototype"]
         scripts_governance_run_incremental_py["scripts/governance/run_incremental.py prototype"]
@@ -783,6 +775,7 @@ graph TD
         scripts_governance_vms_cron_monitor_py["scripts/governance/vms_cron_monitor.py prototype"]
         scripts_governance_vms_cross_file_check_py["scripts/governance/vms_cross_file_check.py prototype"]
         scripts_governance_vms_health_check_py["scripts/governance/vms_health_check.py prototype"]
+        scripts_governance_vms_migrate_py["scripts/governance/vms_migrate.py prototype"]
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_run_all_py -.->|import_depends| D_INFRA_RUNTIME
@@ -791,19 +784,16 @@ graph TD
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS production"]
     scripts_governance_session_simulator_py -.->|import_depends| D_OPS
-    scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
-    scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_task_self_check_py -.->|import_depends| D_INTEGRATION
-    scripts_governance_task_summary_py -.->|import_depends| D_GOVERNANCE
-    scripts_governance_task_summary_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_vms_health_check_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_vms_cron_monitor_py -.->|import_depends| D_GOVERNANCE
+    scripts_governance_vms_migrate_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_ri_boundary_check_py,scripts_governance_ri_build_completion_check_py,scripts_governance_run_all_py,scripts_governance_run_incremental_py,scripts_governance_scan_ground_truth_deps_py,scripts_governance_score_architecture_py,scripts_governance_session_simulator_py,scripts_governance_session_startup_check_py,scripts_governance_status_py,scripts_governance_sync_blueprint_status_py,scripts_governance_sync_progress_py,scripts_governance_sync_rule_registry_py,scripts_governance_sync_yaml_to_depgraph_py,scripts_governance_task_self_check_py,scripts_governance_task_summary_py,scripts_governance_test_concurrent_safety_ps1,scripts_governance_test_lock_scenarios_py,scripts_governance_update_progress_py,scripts_governance_validate_module_id_naming_py,scripts_governance_validate_tool_contracts_consistency_py,scripts_governance_verify_audit_integrity_py,scripts_governance_verify_downstream_anchors_py,scripts_governance_verify_file_paths_py,scripts_governance_verify_final_delivery_py,scripts_governance_verify_rule_yaml_migration_py,scripts_governance_vms_blindspot_check_py,scripts_governance_vms_build_completion_check_py,scripts_governance_vms_cron_monitor_py,scripts_governance_vms_cross_file_check_py,scripts_governance_vms_health_check_py design
+    class scripts_governance_ri_build_completion_check_py,scripts_governance_run_all_py,scripts_governance_run_incremental_py,scripts_governance_scan_ground_truth_deps_py,scripts_governance_score_architecture_py,scripts_governance_session_simulator_py,scripts_governance_session_startup_check_py,scripts_governance_status_py,scripts_governance_sync_blueprint_status_py,scripts_governance_sync_progress_py,scripts_governance_sync_rule_registry_py,scripts_governance_sync_yaml_to_depgraph_py,scripts_governance_task_self_check_py,scripts_governance_task_summary_py,scripts_governance_test_concurrent_safety_ps1,scripts_governance_test_lock_scenarios_py,scripts_governance_update_progress_py,scripts_governance_validate_module_id_naming_py,scripts_governance_validate_tool_contracts_consistency_py,scripts_governance_verify_audit_integrity_py,scripts_governance_verify_downstream_anchors_py,scripts_governance_verify_file_paths_py,scripts_governance_verify_final_delivery_py,scripts_governance_verify_rule_yaml_migration_py,scripts_governance_vms_blindspot_check_py,scripts_governance_vms_build_completion_check_py,scripts_governance_vms_cron_monitor_py,scripts_governance_vms_cross_file_check_py,scripts_governance_vms_health_check_py,scripts_governance_vms_migrate_py design
     class D_INFRA_RUNTIME,D_OPS,D_INTEGRATION external_prod
     class D_GOVERNANCE external_design
 ```
@@ -813,7 +803,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
-        scripts_governance_vms_migrate_py["scripts/governance/vms_migrate.py prototype"]
         scripts_governance_vms_migration_dry_run_py["scripts/governance/vms_migration_dry_run.py prototype"]
         scripts_governance_vms_phase_rollback_py["scripts/governance/vms_phase_rollback.py prototype"]
         scripts_governance_vms_version_sync_check_py["scripts/governance/vms_version_sync_check.py prototype"]
@@ -855,14 +844,13 @@ graph TD
     scripts_scaffold_py -.->|import_depends| D_INFRA_RUNTIME
     scripts_scaffold_py -.->|import_depends| D_INTEGRATION
     scripts_scaffold_py -.->|import_depends| D_GOVERNANCE
-    scripts_governance_vms_migrate_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_vms_migration_dry_run_py -.->|import_depends| D_GOVERNANCE
     scripts_mcp_launcher_py -.->|import_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_vms_migrate_py,scripts_governance_vms_migration_dry_run_py,scripts_governance_vms_phase_rollback_py,scripts_governance_vms_version_sync_check_py,scripts_hooks_auto_handoff_log_py,scripts_hooks_contract_fingerprint_hook_sh,scripts_hooks_git_secrets_setup_sh,scripts_lock_files_py,scripts_mcp_generate_ide_config_py,scripts_mcp_launcher_py,scripts_mcp_start_all_py,scripts_mcp_status_all_py,scripts_mcp_stop_all_py,scripts_migration_dm311_autonomy_core_split_py,scripts_migration_dm314_infra_ops_split_py,scripts_ops_align_header_ten_fields_py,scripts_ops_cleanup_duplicate_headers_py,scripts_ops_dedup_header_fields_py,scripts_ops_final_header_cleanup_py,scripts_ops_migrate_docstring_headers_py,scripts_ops_normalize_headers_py,scripts_ops_recover_git_headers_py,scripts_ops_verify_header_completeness_py,scripts_rollback_py,scripts_run_deepseek_v4_exam_py,scripts_scaffold_py design
+    class scripts_governance_vms_migration_dry_run_py,scripts_governance_vms_phase_rollback_py,scripts_governance_vms_version_sync_check_py,scripts_hooks_auto_handoff_log_py,scripts_hooks_contract_fingerprint_hook_sh,scripts_hooks_git_secrets_setup_sh,scripts_lock_files_py,scripts_mcp_generate_ide_config_py,scripts_mcp_launcher_py,scripts_mcp_start_all_py,scripts_mcp_status_all_py,scripts_mcp_stop_all_py,scripts_migration_dm311_autonomy_core_split_py,scripts_migration_dm314_infra_ops_split_py,scripts_ops_align_header_ten_fields_py,scripts_ops_cleanup_duplicate_headers_py,scripts_ops_dedup_header_fields_py,scripts_ops_final_header_cleanup_py,scripts_ops_migrate_docstring_headers_py,scripts_ops_normalize_headers_py,scripts_ops_recover_git_headers_py,scripts_ops_verify_header_completeness_py,scripts_rollback_py,scripts_run_deepseek_v4_exam_py,scripts_scaffold_py design
     class D_GOVERNANCE,D_INFRA_RUNTIME,D_INTEGRATION external_prod
 ```
 
@@ -872,8 +860,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 29 | import_depends |
-| D_INTEGRATION | 13 | import_depends |
+| D_GOVERNANCE | 12 | import_depends |
+| D_INTEGRATION | 12 | import_depends |
 | D_INFRA_RUNTIME | 11 | import_depends |
 | D_GOV_ENFORCEMENT | 10 | import_depends |
 | D_RISK | 3 | import_depends |
@@ -896,12 +884,12 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 脚本治理（D_GOV_SCRIPTS）的模块分布。共 386 个模块 / 386 modules。
+> 按 architecture_layer 分层显示 脚本治理（D_GOV_SCRIPTS）的模块分布。共 385 个模块 / 385 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (386 modules)            │
+│            L1 基础层 / Foundation Layer (385 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   scripts/__init__.py  [prototype]                               │
 │   scripts/_archive/construction/create_db_alignment_tasks.py ... │
@@ -921,16 +909,16 @@ graph TD
 │   scripts/_archive/governance/d3_metadata/scan_deep_content.p... │
 │   scripts/_archive/governance/d3_metadata/validate_blueprint_... │
 │   scripts/_archive/governance/d3_metadata/validate_cross_modu... │
-│   ...还有 368 个模块 / 368 more modules                          │
+│   ...还有 367 个模块 / 367 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 386 个模块 / 386 modules）。
+> 按 architecture_layer 分组的模块清单（共 385 个模块 / 385 modules）。
 
-### L1 基础层 / Foundation Layer (386 modules)
+### L1 基础层 / Foundation Layer (385 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -1135,24 +1123,24 @@ graph TD
 | 199 | scripts/governance/d3_metadata/validate_architecture.py | scripts/governance/d3_metadata/valida... | prototype | generated |
 | 200 | scripts/governance/d3_metadata/validate_blueprint_provena... | scripts/governance/d3_metadata/valida... | prototype | generated |
 
-> (仅显示前 200 个模块，共 386 个)
+> (仅显示前 200 个模块，共 385 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 314 条 / 314 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 313 条 / 313 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 314 条 / 314 edges)       │
+│      依赖关系图 / Dependency Graph (共 313 条 / 313 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
-│   [config_depends]: 313 条 / edges                               │
+│   [config_depends]: 312 条 / edges                               │
 │   [import_depends]: 1 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                [config_depends] (313 条 / edges)                 │
+│                [config_depends] (312 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   fix_freeze_manifest.py → __init__.py                           │
 │   generate_manifest.py → __init__.py                             │
@@ -1203,12 +1191,12 @@ graph TD
 │   blind_spot_registry.py → __init__.py                           │
 │   build_script_dep_graph.py → __init__.py                        │
 │   auto_sync_all_registries.py → __init__.py                      │
-│   ...还有 264 条 / 264 more edges                                │
+│   ...还有 263 条 / 263 more edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 **[import_depends]** (1 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 314 条)
+> (最多显示前 50 条依赖边，共 313 条)
 
 ```
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_INFRA_RUNTIME | Domain ID | D_INFRA_RUNTIME |
 | 域名称 | 运行时集成 | Domain Name | 运行时集成 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 136 | Module Count | 136 |
-| 域内依赖 | 101 | Internal Dependencies | 101 |
+| 模块数 | 122 | Module Count | 122 |
+| 域内依赖 | 95 | Internal Dependencies | 95 |
 | 跨域入边 | 240 | Cross-domain Incoming | 240 |
-| 跨域出边 | 52 | Cross-domain Outgoing | 52 |
+| 跨域出边 | 37 | Cross-domain Outgoing | 37 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
-| 生产态模块 | 136 | Production Modules | 136 |
+| 生产态模块 | 122 | Production Modules | 122 |
 | 容量 | 139/150 (正常) | Capacity | 139/150 (正常) |
 | 描述 | 运行时集成层 | Description | 运行时集成层 |
 
@@ -116,7 +116,6 @@ graph TD
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOV_AUDIT
-    src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION prototype"]
@@ -239,20 +238,6 @@ graph TD
         src_zephyr_infrastructure_config_validator_py["src/zephyr/infrastructure/config_validator.py production"]
         src_zephyr_infrastructure_contract_tester_py["src/zephyr/infrastructure/contract_tester.py production"]
         src_zephyr_infrastructure_cost_tracker_py["src/zephyr/infrastructure/cost_tracker.py production"]
-        src_zephyr_infrastructure_db_init_py["src/zephyr/infrastructure/db/__init__.py production"]
-        src_zephyr_infrastructure_db_atomic_transaction_manager_py["src/zephyr/infrastructure/db/atomic_transaction... production"]
-        src_zephyr_infrastructure_db_audit_schema_py["src/zephyr/infrastructure/db/audit_schema.py production"]
-        src_zephyr_infrastructure_db_base_repo_py["src/zephyr/infrastructure/db/base_repo.py production"]
-        src_zephyr_infrastructure_db_circuit_breaker_repo_py["src/zephyr/infrastructure/db/circuit_breaker_re... production"]
-        src_zephyr_infrastructure_db_circuit_breaker_types_py["src/zephyr/infrastructure/db/circuit_breaker_ty... production"]
-        src_zephyr_infrastructure_db_database_manager_py["src/zephyr/infrastructure/db/database_manager.py production"]
-        src_zephyr_infrastructure_db_gate_repo_py["src/zephyr/infrastructure/db/gate_repo.py production"]
-        src_zephyr_infrastructure_db_olap_engine_py["src/zephyr/infrastructure/db/olap_engine.py production"]
-        src_zephyr_infrastructure_db_query_py["src/zephyr/infrastructure/db/query.py production"]
-        src_zephyr_infrastructure_db_query_metrics_py["src/zephyr/infrastructure/db/query_metrics.py production"]
-        src_zephyr_infrastructure_db_sqlite_schema_py["src/zephyr/infrastructure/db/sqlite_schema.py production"]
-        src_zephyr_infrastructure_db_task_repo_py["src/zephyr/infrastructure/db/task_repo.py production"]
-        src_zephyr_infrastructure_db_transition_py["src/zephyr/infrastructure/db/transition.py production"]
         src_zephyr_infrastructure_dependency_init_py["src/zephyr/infrastructure/dependency/__init__.py production"]
         src_zephyr_infrastructure_doc_guard_server_py["src/zephyr/infrastructure/doc_guard_server.py production"]
         src_zephyr_infrastructure_draft_init_py["src/zephyr/infrastructure/draft/__init__.py production"]
@@ -266,41 +251,6 @@ graph TD
         src_zephyr_infrastructure_gateway_server_py["src/zephyr/infrastructure/gateway_server.py production"]
         src_zephyr_infrastructure_handoff_auto_loader_py["src/zephyr/infrastructure/handoff_auto_loader.py production"]
         src_zephyr_infrastructure_health_monitor_init_py["src/zephyr/infrastructure/health_monitor/__init... production"]
-    end
-    src_zephyr_infrastructure_db_atomic_transaction_manager_py -->|config_depends| src_zephyr_infrastructure_db_init_py
-    src_zephyr_infrastructure_db_circuit_breaker_types_py -->|config_depends| src_zephyr_infrastructure_db_init_py
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION
-    src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_INTEGRATION
-    D_SHARED["D_SHARED prototype"]
-    src_zephyr_infrastructure_event_bus_upgrade_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_gateway_server_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| D_INTEGRATION
-    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_INTEGRATION
-    src_zephyr_infrastructure_db_circuit_breaker_repo_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_db_gate_repo_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_infrastructure_db_audit_schema_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_db_olap_engine_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_db_olap_engine_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_db_database_manager_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_db_database_manager_py -.->|import_depends| D_SHARED
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_config_validator_py,src_zephyr_infrastructure_contract_tester_py,src_zephyr_infrastructure_cost_tracker_py,src_zephyr_infrastructure_db_init_py,src_zephyr_infrastructure_db_atomic_transaction_manager_py,src_zephyr_infrastructure_db_audit_schema_py,src_zephyr_infrastructure_db_base_repo_py,src_zephyr_infrastructure_db_circuit_breaker_repo_py,src_zephyr_infrastructure_db_circuit_breaker_types_py,src_zephyr_infrastructure_db_database_manager_py,src_zephyr_infrastructure_db_gate_repo_py,src_zephyr_infrastructure_db_olap_engine_py,src_zephyr_infrastructure_db_query_py,src_zephyr_infrastructure_db_query_metrics_py,src_zephyr_infrastructure_db_sqlite_schema_py,src_zephyr_infrastructure_db_task_repo_py,src_zephyr_infrastructure_db_transition_py,src_zephyr_infrastructure_dependency_init_py,src_zephyr_infrastructure_doc_guard_server_py,src_zephyr_infrastructure_draft_init_py,src_zephyr_infrastructure_dry_run_simulator_py,src_zephyr_infrastructure_error_codes_py,src_zephyr_infrastructure_event_bus_upgrade_py,src_zephyr_infrastructure_event_store_py,src_zephyr_infrastructure_file_watcher_py,src_zephyr_infrastructure_finding_task_bridge_py,src_zephyr_infrastructure_gate_engine_server_py,src_zephyr_infrastructure_gateway_server_py,src_zephyr_infrastructure_handoff_auto_loader_py,src_zephyr_infrastructure_health_monitor_init_py production
-    class D_INTEGRATION,D_GOVERNANCE external_prod
-    class D_SHARED external_design
-```
-
-### 第 4 页 / 共 5 页 / Page 4 of 5
-
-```mermaid
-graph TD
-    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_health_monitor_health_aggregator_py["src/zephyr/infrastructure/health_monitor/health... production"]
         src_zephyr_infrastructure_hooks_init_py["src/zephyr/infrastructure/hooks/__init__.py production"]
         src_zephyr_infrastructure_hooks_event_hook_py["src/zephyr/infrastructure/hooks/event_hook.py production"]
@@ -315,6 +265,38 @@ graph TD
         src_zephyr_infrastructure_knowledge_init_py["src/zephyr/infrastructure/knowledge/__init__.py production"]
         src_zephyr_infrastructure_knowledge_base_server_py["src/zephyr/infrastructure/knowledge_base_server.py production"]
         src_zephyr_infrastructure_lifecycle_init_py["src/zephyr/infrastructure/lifecycle/__init__.py production"]
+    end
+    src_zephyr_infrastructure_health_monitor_health_aggregator_py -->|config_depends| src_zephyr_infrastructure_health_monitor_init_py
+    src_zephyr_infrastructure_hooks_event_hook_py -->|config_depends| src_zephyr_infrastructure_hooks_init_py
+    src_zephyr_infrastructure_impact_init_py -->|import_depends| src_zephyr_infrastructure_impact_llm_impact_analyzer_py
+    src_zephyr_infrastructure_impact_init_py -->|import_depends| src_zephyr_infrastructure_impact_impact_propagator_py
+    src_zephyr_infrastructure_infra_06_init_py -->|import_depends| src_zephyr_infrastructure_infra_06_cache_py
+    D_INTEGRATION["D_INTEGRATION production"]
+    src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION
+    src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_INTEGRATION
+    D_SHARED["D_SHARED prototype"]
+    src_zephyr_infrastructure_event_bus_upgrade_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_gateway_server_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED
+    src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| D_SHARED
+    src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| D_INTEGRATION
+    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED
+    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_INTEGRATION
+    src_zephyr_infrastructure_infra_06_init_py -->|import_depends| D_SHARED
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_infrastructure_config_validator_py,src_zephyr_infrastructure_contract_tester_py,src_zephyr_infrastructure_cost_tracker_py,src_zephyr_infrastructure_dependency_init_py,src_zephyr_infrastructure_doc_guard_server_py,src_zephyr_infrastructure_draft_init_py,src_zephyr_infrastructure_dry_run_simulator_py,src_zephyr_infrastructure_error_codes_py,src_zephyr_infrastructure_event_bus_upgrade_py,src_zephyr_infrastructure_event_store_py,src_zephyr_infrastructure_file_watcher_py,src_zephyr_infrastructure_finding_task_bridge_py,src_zephyr_infrastructure_gate_engine_server_py,src_zephyr_infrastructure_gateway_server_py,src_zephyr_infrastructure_handoff_auto_loader_py,src_zephyr_infrastructure_health_monitor_init_py,src_zephyr_infrastructure_health_monitor_health_aggregator_py,src_zephyr_infrastructure_hooks_init_py,src_zephyr_infrastructure_hooks_event_hook_py,src_zephyr_infrastructure_impact_init_py,src_zephyr_infrastructure_impact_impact_propagator_py,src_zephyr_infrastructure_impact_llm_impact_analyzer_py,src_zephyr_infrastructure_infra_06_init_py,src_zephyr_infrastructure_infra_06_cache_py,src_zephyr_infrastructure_infra_06_process_lifecycle_gateway_py,src_zephyr_infrastructure_infrastructure_base_py,src_zephyr_infrastructure_kill_switch_sim_py,src_zephyr_infrastructure_knowledge_init_py,src_zephyr_infrastructure_knowledge_base_server_py,src_zephyr_infrastructure_lifecycle_init_py production
+    class D_INTEGRATION external_prod
+    class D_SHARED external_design
+```
+
+### 第 4 页 / 共 5 页 / Page 4 of 5
+
+```mermaid
+graph TD
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_lifecycle_lazy_loader_py["src/zephyr/infrastructure/lifecycle/lazy_loader.py production"]
         src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py["src/zephyr/infrastructure/lifecycle/resource_op... production"]
         src_zephyr_infrastructure_lifecycle_scope_guard_py["src/zephyr/infrastructure/lifecycle/scope_guard.py production"]
@@ -331,37 +313,6 @@ graph TD
         src_zephyr_infrastructure_sandbox_server_py["src/zephyr/infrastructure/sandbox_server.py production"]
         src_zephyr_infrastructure_script_system_init_py["src/zephyr/infrastructure/script_system/__init_... production"]
         src_zephyr_infrastructure_script_system_finding_py["src/zephyr/infrastructure/script_system/finding.py production"]
-    end
-    src_zephyr_infrastructure_hooks_event_hook_py -->|config_depends| src_zephyr_infrastructure_hooks_init_py
-    src_zephyr_infrastructure_impact_init_py -->|import_depends| src_zephyr_infrastructure_impact_llm_impact_analyzer_py
-    src_zephyr_infrastructure_impact_init_py -->|import_depends| src_zephyr_infrastructure_impact_impact_propagator_py
-    src_zephyr_infrastructure_infra_06_init_py -->|import_depends| src_zephyr_infrastructure_infra_06_cache_py
-    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle_lazy_loader_py
-    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle_init_py
-    src_zephyr_infrastructure_lifecycle_init_py -->|import_depends| src_zephyr_infrastructure_lifecycle_scope_guard_py
-    src_zephyr_infrastructure_observability_02_init_py -->|import_depends| src_zephyr_infrastructure_observability_02_session_audit_py
-    src_zephyr_infrastructure_runtime_startup_shutdown_py -->|config_depends| src_zephyr_infrastructure_runtime_init_py
-    D_SHARED["D_SHARED production"]
-    src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_infra_06_init_py -->|import_depends| D_SHARED
-    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
-    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -.->|import_depends| D_GOV_AUDIT
-    D_INTEGRATION["D_INTEGRATION production"]
-    src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_health_monitor_health_aggregator_py,src_zephyr_infrastructure_hooks_init_py,src_zephyr_infrastructure_hooks_event_hook_py,src_zephyr_infrastructure_impact_init_py,src_zephyr_infrastructure_impact_impact_propagator_py,src_zephyr_infrastructure_impact_llm_impact_analyzer_py,src_zephyr_infrastructure_infra_06_init_py,src_zephyr_infrastructure_infra_06_cache_py,src_zephyr_infrastructure_infra_06_process_lifecycle_gateway_py,src_zephyr_infrastructure_infrastructure_base_py,src_zephyr_infrastructure_kill_switch_sim_py,src_zephyr_infrastructure_knowledge_init_py,src_zephyr_infrastructure_knowledge_base_server_py,src_zephyr_infrastructure_lifecycle_init_py,src_zephyr_infrastructure_lifecycle_lazy_loader_py,src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py,src_zephyr_infrastructure_lifecycle_scope_guard_py,src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py,src_zephyr_infrastructure_maintenance_init_py,src_zephyr_infrastructure_observability_02_init_py,src_zephyr_infrastructure_observability_02_session_audit_py,src_zephyr_infrastructure_prompt_provider_py,src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_rate_limiter_py,src_zephyr_infrastructure_resource_provider_py,src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_finding_py production
-    class D_SHARED,D_INTEGRATION external_prod
-    class D_GOV_AUDIT external_design
-```
-
-### 第 5 页 / 共 5 页 / Page 5 of 5
-
-```mermaid
-graph TD
-    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_script_system_gate_bridge_py["src/zephyr/infrastructure/script_system/gate_br... production"]
         src_zephyr_infrastructure_script_system_kb_bridge_py["src/zephyr/infrastructure/script_system/kb_brid... production"]
         src_zephyr_infrastructure_sentinel_server_py["src/zephyr/infrastructure/sentinel_server.py production"]
@@ -376,22 +327,24 @@ graph TD
         src_zephyr_shared_lifecycle_hooks_from_infra_py["src/zephyr/shared/lifecycle/hooks_from_infra.py production"]
         src_zephyr_shared_lifecycle_lazy_loader_py["src/zephyr/shared/lifecycle/lazy_loader.py production"]
         src_zephyr_shared_lifecycle_resource_optimization_engine_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
-        src_zephyr_shared_lifecycle_resource_optimization_models_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
-        src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
     end
+    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle_lazy_loader_py
+    src_zephyr_infrastructure_observability_02_init_py -->|import_depends| src_zephyr_infrastructure_observability_02_session_audit_py
+    src_zephyr_infrastructure_runtime_startup_shutdown_py -->|config_depends| src_zephyr_infrastructure_runtime_init_py
+    src_zephyr_infrastructure_script_system_gate_bridge_py -->|config_depends| src_zephyr_infrastructure_script_system_init_py
     src_zephyr_shared_lifecycle_hooks_from_infra_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
     src_zephyr_shared_lifecycle_daemon_registry_from_infra_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
     src_zephyr_shared_lifecycle_resource_optimization_engine_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
-    src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_vector_memory_server_py -->|import_depends| D_SHARED
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
+    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -.->|import_depends| D_GOV_AUDIT
+    src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_script_system_kb_bridge_py -->|import_depends| D_SHARED
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
-    D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     D_TRADING["D_TRADING prototype"]
@@ -400,9 +353,28 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_daemon_registry_from_infra_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_hooks_from_infra_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py production
+    class src_zephyr_infrastructure_lifecycle_lazy_loader_py,src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py,src_zephyr_infrastructure_lifecycle_scope_guard_py,src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py,src_zephyr_infrastructure_maintenance_init_py,src_zephyr_infrastructure_observability_02_init_py,src_zephyr_infrastructure_observability_02_session_audit_py,src_zephyr_infrastructure_prompt_provider_py,src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_rate_limiter_py,src_zephyr_infrastructure_resource_provider_py,src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_daemon_registry_from_infra_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_hooks_from_infra_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py production
     class D_INTEGRATION,D_SHARED external_prod
-    class D_OPS,D_TRADING external_design
+    class D_GOV_AUDIT,D_OPS,D_TRADING external_design
+```
+
+### 第 5 页 / 共 5 页 / Page 5 of 5
+
+```mermaid
+graph TD
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
+        src_zephyr_shared_lifecycle_resource_optimization_models_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
+        src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
+    end
+    D_SHARED["D_SHARED prototype"]
+    D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
+    D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py production
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -411,10 +383,10 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 29 | import_depends |
-| D_GOVERNANCE | 9 | import_depends |
+| D_SHARED | 21 | import_depends |
 | D_INTEGRATION | 9 | import_depends |
 | D_GOV_AUDIT | 4 | import_depends |
+| D_GOVERNANCE | 2 | import_depends |
 | D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -435,12 +407,12 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 运行时集成（D_INFRA_RUNTIME）的模块分布。共 136 个模块 / 136 modules。
+> 按 architecture_layer 分层显示 运行时集成（D_INFRA_RUNTIME）的模块分布。共 122 个模块 / 122 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (136 modules)            │
+│            L1 基础层 / Foundation Layer (122 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/__init__.py  [production]                           │
 │   src/zephyr/autonomy_core/pipeline_orchestrator.py  [product... │
@@ -460,16 +432,16 @@ graph TD
 │   src/zephyr/infrastructure/asset_inventory/models.py  [produ... │
 │   src/zephyr/infrastructure/asset_inventory/reconciler.py  [p... │
 │   src/zephyr/infrastructure/asset_inventory/registry_adapter.... │
-│   ...还有 118 个模块 / 118 more modules                          │
+│   ...还有 104 个模块 / 104 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 136 个模块 / 136 modules）。
+> 按 architecture_layer 分组的模块清单（共 122 个模块 / 122 modules）。
 
-### L1 基础层 / Foundation Layer (136 modules)
+### L1 基础层 / Foundation Layer (122 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -536,96 +508,82 @@ graph TD
 | 61 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | generated |
 | 62 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | generated |
 | 63 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | generated |
-| 64 | src/zephyr/infrastructure/db/__init__.py | src/zephyr/infrastructure/db/__init__.py | production | generated |
-| 65 | src/zephyr/infrastructure/db/atomic_transaction_manager.py | src/zephyr/infrastructure/db/atomic_t... | production | generated |
-| 66 | src/zephyr/infrastructure/db/audit_schema.py | src/zephyr/infrastructure/db/audit_sc... | production | generated |
-| 67 | src/zephyr/infrastructure/db/base_repo.py | src/zephyr/infrastructure/db/base_rep... | production | generated |
-| 68 | src/zephyr/infrastructure/db/circuit_breaker_repo.py | src/zephyr/infrastructure/db/circuit_... | production | generated |
-| 69 | src/zephyr/infrastructure/db/circuit_breaker_types.py | src/zephyr/infrastructure/db/circuit_... | production | generated |
-| 70 | src/zephyr/infrastructure/db/database_manager.py | src/zephyr/infrastructure/db/database... | production | generated |
-| 71 | src/zephyr/infrastructure/db/gate_repo.py | src/zephyr/infrastructure/db/gate_rep... | production | generated |
-| 72 | src/zephyr/infrastructure/db/olap_engine.py | src/zephyr/infrastructure/db/olap_eng... | production | generated |
-| 73 | src/zephyr/infrastructure/db/query.py | src/zephyr/infrastructure/db/query.py | production | generated |
-| 74 | src/zephyr/infrastructure/db/query_metrics.py | src/zephyr/infrastructure/db/query_me... | production | generated |
-| 75 | src/zephyr/infrastructure/db/sqlite_schema.py | src/zephyr/infrastructure/db/sqlite_s... | production | generated |
-| 76 | src/zephyr/infrastructure/db/task_repo.py | src/zephyr/infrastructure/db/task_rep... | production | generated |
-| 77 | src/zephyr/infrastructure/db/transition.py | src/zephyr/infrastructure/db/transiti... | production | generated |
-| 78 | src/zephyr/infrastructure/dependency/__init__.py | src/zephyr/infrastructure/dependency/... | production | generated |
-| 79 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | production | generated |
-| 80 | src/zephyr/infrastructure/draft/__init__.py | src/zephyr/infrastructure/draft/__ini... | production | generated |
-| 81 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | production | generated |
-| 82 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | production | generated |
-| 83 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | production | generated |
-| 84 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | production | generated |
-| 85 | src/zephyr/infrastructure/file_watcher.py | src/zephyr/infrastructure/file_watche... | production | generated |
-| 86 | src/zephyr/infrastructure/finding_task_bridge.py | src/zephyr/infrastructure/finding_tas... | production | generated |
-| 87 | src/zephyr/infrastructure/gate_engine_server.py | src/zephyr/infrastructure/gate_engine... | production | generated |
-| 88 | src/zephyr/infrastructure/gateway_server.py | src/zephyr/infrastructure/gateway_ser... | production | generated |
-| 89 | src/zephyr/infrastructure/handoff_auto_loader.py | src/zephyr/infrastructure/handoff_aut... | production | generated |
-| 90 | src/zephyr/infrastructure/health_monitor/__init__.py | src/zephyr/infrastructure/health_moni... | production | generated |
-| 91 | src/zephyr/infrastructure/health_monitor/health_aggregato... | src/zephyr/infrastructure/health_moni... | production | generated |
-| 92 | src/zephyr/infrastructure/hooks/__init__.py | src/zephyr/infrastructure/hooks/__ini... | production | generated |
-| 93 | src/zephyr/infrastructure/hooks/event_hook.py | src/zephyr/infrastructure/hooks/event... | production | generated |
-| 94 | src/zephyr/infrastructure/impact/__init__.py | src/zephyr/infrastructure/impact/__in... | production | generated |
-| 95 | src/zephyr/infrastructure/impact/impact_propagator.py | src/zephyr/infrastructure/impact/impa... | production | generated |
-| 96 | src/zephyr/infrastructure/impact/llm_impact_analyzer.py | src/zephyr/infrastructure/impact/llm_... | production | generated |
-| 97 | src/zephyr/infrastructure/infra_06/__init__.py | src/zephyr/infrastructure/infra_06/__... | production | generated |
-| 98 | src/zephyr/infrastructure/infra_06/cache.py | src/zephyr/infrastructure/infra_06/ca... | production | generated |
-| 99 | src/zephyr/infrastructure/infra_06/process_lifecycle_gate... | src/zephyr/infrastructure/infra_06/pr... | production | generated |
-| 100 | src/zephyr/infrastructure/infrastructure_base.py | src/zephyr/infrastructure/infrastruct... | production | generated |
-| 101 | src/zephyr/infrastructure/kill_switch_sim.py | src/zephyr/infrastructure/kill_switch... | production | generated |
-| 102 | src/zephyr/infrastructure/knowledge/__init__.py | src/zephyr/infrastructure/knowledge/_... | production | generated |
-| 103 | src/zephyr/infrastructure/knowledge_base_server.py | src/zephyr/infrastructure/knowledge_b... | production | generated |
-| 104 | src/zephyr/infrastructure/lifecycle/__init__.py | src/zephyr/infrastructure/lifecycle/_... | production | generated |
-| 105 | src/zephyr/infrastructure/lifecycle/lazy_loader.py | src/zephyr/infrastructure/lifecycle/l... | production | generated |
-| 106 | src/zephyr/infrastructure/lifecycle/resource_optimization... | src/zephyr/infrastructure/lifecycle/r... | production | generated |
-| 107 | src/zephyr/infrastructure/lifecycle/scope_guard.py | src/zephyr/infrastructure/lifecycle/s... | production | generated |
-| 108 | src/zephyr/infrastructure/lifecycle/task_lifecycle_manage... | src/zephyr/infrastructure/lifecycle/t... | production | generated |
-| 109 | src/zephyr/infrastructure/maintenance/__init__.py | src/zephyr/infrastructure/maintenance... | production | generated |
-| 110 | src/zephyr/infrastructure/observability_02/__init__.py | src/zephyr/infrastructure/observabili... | production | generated |
-| 111 | src/zephyr/infrastructure/observability_02/session_audit.py | src/zephyr/infrastructure/observabili... | production | generated |
-| 112 | src/zephyr/infrastructure/prompt_provider.py | src/zephyr/infrastructure/prompt_prov... | production | generated |
-| 113 | src/zephyr/infrastructure/pydantic_v2_migrator.py | src/zephyr/infrastructure/pydantic_v2... | production | generated |
-| 114 | src/zephyr/infrastructure/rate_limiter.py | src/zephyr/infrastructure/rate_limite... | production | generated |
-| 115 | src/zephyr/infrastructure/resource_provider.py | src/zephyr/infrastructure/resource_pr... | production | generated |
-| 116 | src/zephyr/infrastructure/runtime/__init__.py | src/zephyr/infrastructure/runtime/__i... | production | generated |
-| 117 | src/zephyr/infrastructure/runtime/startup_shutdown.py | src/zephyr/infrastructure/runtime/sta... | production | generated |
-| 118 | src/zephyr/infrastructure/sandbox_server.py | src/zephyr/infrastructure/sandbox_ser... | production | generated |
-| 119 | src/zephyr/infrastructure/script_system/__init__.py | src/zephyr/infrastructure/script_syst... | production | generated |
-| 120 | src/zephyr/infrastructure/script_system/finding.py | src/zephyr/infrastructure/script_syst... | production | generated |
-| 121 | src/zephyr/infrastructure/script_system/gate_bridge.py | src/zephyr/infrastructure/script_syst... | production | generated |
-| 122 | src/zephyr/infrastructure/script_system/kb_bridge.py | src/zephyr/infrastructure/script_syst... | production | generated |
-| 123 | src/zephyr/infrastructure/sentinel_server.py | src/zephyr/infrastructure/sentinel_se... | production | generated |
-| 124 | src/zephyr/infrastructure/task_manager_server.py | src/zephyr/infrastructure/task_manage... | production | generated |
-| 125 | src/zephyr/infrastructure/telemetry_server.py | src/zephyr/infrastructure/telemetry_s... | production | generated |
-| 126 | src/zephyr/infrastructure/vector_memory_server.py | src/zephyr/infrastructure/vector_memo... | production | generated |
-| 127 | src/zephyr/infrastructure/warm_hot_gate.py | src/zephyr/infrastructure/warm_hot_ga... | production | generated |
-| 128 | src/zephyr/shared/lifecycle/__init__.py | src/zephyr/shared/lifecycle/__init__.py | production | generated |
-| 129 | src/zephyr/shared/lifecycle/daemon_registry.py | src/zephyr/shared/lifecycle/daemon_re... | production | generated |
-| 130 | src/zephyr/shared/lifecycle/daemon_registry_from_infra.py | src/zephyr/shared/lifecycle/daemon_re... | production | generated |
-| 131 | src/zephyr/shared/lifecycle/hooks.py | src/zephyr/shared/lifecycle/hooks.py | production | generated |
-| 132 | src/zephyr/shared/lifecycle/hooks_from_infra.py | src/zephyr/shared/lifecycle/hooks_fro... | production | generated |
-| 133 | src/zephyr/shared/lifecycle/lazy_loader.py | src/zephyr/shared/lifecycle/lazy_load... | production | generated |
-| 134 | src/zephyr/shared/lifecycle/resource_optimization_engine.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
-| 135 | src/zephyr/shared/lifecycle/resource_optimization_models.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
-| 136 | src/zephyr/shared/lifecycle/resource_optimization_models_... | src/zephyr/shared/lifecycle/resource_... | production | generated |
+| 64 | src/zephyr/infrastructure/dependency/__init__.py | src/zephyr/infrastructure/dependency/... | production | generated |
+| 65 | src/zephyr/infrastructure/doc_guard_server.py | src/zephyr/infrastructure/doc_guard_s... | production | generated |
+| 66 | src/zephyr/infrastructure/draft/__init__.py | src/zephyr/infrastructure/draft/__ini... | production | generated |
+| 67 | src/zephyr/infrastructure/dry_run_simulator.py | src/zephyr/infrastructure/dry_run_sim... | production | generated |
+| 68 | src/zephyr/infrastructure/error_codes.py | src/zephyr/infrastructure/error_codes.py | production | generated |
+| 69 | src/zephyr/infrastructure/event_bus_upgrade.py | src/zephyr/infrastructure/event_bus_u... | production | generated |
+| 70 | src/zephyr/infrastructure/event_store.py | src/zephyr/infrastructure/event_store.py | production | generated |
+| 71 | src/zephyr/infrastructure/file_watcher.py | src/zephyr/infrastructure/file_watche... | production | generated |
+| 72 | src/zephyr/infrastructure/finding_task_bridge.py | src/zephyr/infrastructure/finding_tas... | production | generated |
+| 73 | src/zephyr/infrastructure/gate_engine_server.py | src/zephyr/infrastructure/gate_engine... | production | generated |
+| 74 | src/zephyr/infrastructure/gateway_server.py | src/zephyr/infrastructure/gateway_ser... | production | generated |
+| 75 | src/zephyr/infrastructure/handoff_auto_loader.py | src/zephyr/infrastructure/handoff_aut... | production | generated |
+| 76 | src/zephyr/infrastructure/health_monitor/__init__.py | src/zephyr/infrastructure/health_moni... | production | generated |
+| 77 | src/zephyr/infrastructure/health_monitor/health_aggregato... | src/zephyr/infrastructure/health_moni... | production | generated |
+| 78 | src/zephyr/infrastructure/hooks/__init__.py | src/zephyr/infrastructure/hooks/__ini... | production | generated |
+| 79 | src/zephyr/infrastructure/hooks/event_hook.py | src/zephyr/infrastructure/hooks/event... | production | generated |
+| 80 | src/zephyr/infrastructure/impact/__init__.py | src/zephyr/infrastructure/impact/__in... | production | generated |
+| 81 | src/zephyr/infrastructure/impact/impact_propagator.py | src/zephyr/infrastructure/impact/impa... | production | generated |
+| 82 | src/zephyr/infrastructure/impact/llm_impact_analyzer.py | src/zephyr/infrastructure/impact/llm_... | production | generated |
+| 83 | src/zephyr/infrastructure/infra_06/__init__.py | src/zephyr/infrastructure/infra_06/__... | production | generated |
+| 84 | src/zephyr/infrastructure/infra_06/cache.py | src/zephyr/infrastructure/infra_06/ca... | production | generated |
+| 85 | src/zephyr/infrastructure/infra_06/process_lifecycle_gate... | src/zephyr/infrastructure/infra_06/pr... | production | generated |
+| 86 | src/zephyr/infrastructure/infrastructure_base.py | src/zephyr/infrastructure/infrastruct... | production | generated |
+| 87 | src/zephyr/infrastructure/kill_switch_sim.py | src/zephyr/infrastructure/kill_switch... | production | generated |
+| 88 | src/zephyr/infrastructure/knowledge/__init__.py | src/zephyr/infrastructure/knowledge/_... | production | generated |
+| 89 | src/zephyr/infrastructure/knowledge_base_server.py | src/zephyr/infrastructure/knowledge_b... | production | generated |
+| 90 | src/zephyr/infrastructure/lifecycle/__init__.py | src/zephyr/infrastructure/lifecycle/_... | production | generated |
+| 91 | src/zephyr/infrastructure/lifecycle/lazy_loader.py | src/zephyr/infrastructure/lifecycle/l... | production | generated |
+| 92 | src/zephyr/infrastructure/lifecycle/resource_optimization... | src/zephyr/infrastructure/lifecycle/r... | production | generated |
+| 93 | src/zephyr/infrastructure/lifecycle/scope_guard.py | src/zephyr/infrastructure/lifecycle/s... | production | generated |
+| 94 | src/zephyr/infrastructure/lifecycle/task_lifecycle_manage... | src/zephyr/infrastructure/lifecycle/t... | production | generated |
+| 95 | src/zephyr/infrastructure/maintenance/__init__.py | src/zephyr/infrastructure/maintenance... | production | generated |
+| 96 | src/zephyr/infrastructure/observability_02/__init__.py | src/zephyr/infrastructure/observabili... | production | generated |
+| 97 | src/zephyr/infrastructure/observability_02/session_audit.py | src/zephyr/infrastructure/observabili... | production | generated |
+| 98 | src/zephyr/infrastructure/prompt_provider.py | src/zephyr/infrastructure/prompt_prov... | production | generated |
+| 99 | src/zephyr/infrastructure/pydantic_v2_migrator.py | src/zephyr/infrastructure/pydantic_v2... | production | generated |
+| 100 | src/zephyr/infrastructure/rate_limiter.py | src/zephyr/infrastructure/rate_limite... | production | generated |
+| 101 | src/zephyr/infrastructure/resource_provider.py | src/zephyr/infrastructure/resource_pr... | production | generated |
+| 102 | src/zephyr/infrastructure/runtime/__init__.py | src/zephyr/infrastructure/runtime/__i... | production | generated |
+| 103 | src/zephyr/infrastructure/runtime/startup_shutdown.py | src/zephyr/infrastructure/runtime/sta... | production | generated |
+| 104 | src/zephyr/infrastructure/sandbox_server.py | src/zephyr/infrastructure/sandbox_ser... | production | generated |
+| 105 | src/zephyr/infrastructure/script_system/__init__.py | src/zephyr/infrastructure/script_syst... | production | generated |
+| 106 | src/zephyr/infrastructure/script_system/finding.py | src/zephyr/infrastructure/script_syst... | production | generated |
+| 107 | src/zephyr/infrastructure/script_system/gate_bridge.py | src/zephyr/infrastructure/script_syst... | production | generated |
+| 108 | src/zephyr/infrastructure/script_system/kb_bridge.py | src/zephyr/infrastructure/script_syst... | production | generated |
+| 109 | src/zephyr/infrastructure/sentinel_server.py | src/zephyr/infrastructure/sentinel_se... | production | generated |
+| 110 | src/zephyr/infrastructure/task_manager_server.py | src/zephyr/infrastructure/task_manage... | production | generated |
+| 111 | src/zephyr/infrastructure/telemetry_server.py | src/zephyr/infrastructure/telemetry_s... | production | generated |
+| 112 | src/zephyr/infrastructure/vector_memory_server.py | src/zephyr/infrastructure/vector_memo... | production | generated |
+| 113 | src/zephyr/infrastructure/warm_hot_gate.py | src/zephyr/infrastructure/warm_hot_ga... | production | generated |
+| 114 | src/zephyr/shared/lifecycle/__init__.py | src/zephyr/shared/lifecycle/__init__.py | production | generated |
+| 115 | src/zephyr/shared/lifecycle/daemon_registry.py | src/zephyr/shared/lifecycle/daemon_re... | production | generated |
+| 116 | src/zephyr/shared/lifecycle/daemon_registry_from_infra.py | src/zephyr/shared/lifecycle/daemon_re... | production | generated |
+| 117 | src/zephyr/shared/lifecycle/hooks.py | src/zephyr/shared/lifecycle/hooks.py | production | generated |
+| 118 | src/zephyr/shared/lifecycle/hooks_from_infra.py | src/zephyr/shared/lifecycle/hooks_fro... | production | generated |
+| 119 | src/zephyr/shared/lifecycle/lazy_loader.py | src/zephyr/shared/lifecycle/lazy_load... | production | generated |
+| 120 | src/zephyr/shared/lifecycle/resource_optimization_engine.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
+| 121 | src/zephyr/shared/lifecycle/resource_optimization_models.py | src/zephyr/shared/lifecycle/resource_... | production | generated |
+| 122 | src/zephyr/shared/lifecycle/resource_optimization_models_... | src/zephyr/shared/lifecycle/resource_... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 101 条 / 101 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 95 条 / 95 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 101 条 / 101 edges)       │
+│       依赖关系图 / Dependency Graph (共 95 条 / 95 edges)        │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
-│   [import_depends]: 63 条 / edges                                │
-│   [config_depends]: 38 条 / edges                                │
+│   [import_depends]: 59 条 / edges                                │
+│   [config_depends]: 36 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (63 条 / edges)                 │
+│                 [import_depends] (59 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   blueprint_search_server.py → __init__.py                       │
 │   doc_guard_server.py → __init__.py                              │
@@ -671,17 +629,17 @@ graph TD
 │   __init__.py → winfs_defense.py                                 │
 │   __init__.py → __init__.py                                      │
 │   __init__.py → __init__.py                                      │
-│   circuit_breaker_repo.py → __init__.py                          │
-│   database_manager.py → __init__.py                              │
-│   query.py → __init__.py                                         │
 │   __init__.py → __init__.py                                      │
-│   transition.py → __init__.py                                    │
-│   ...还有 14 条 / 14 more edges                                  │
+│   __init__.py → __init__.py                                      │
+│   __init__.py → __init__.py                                      │
+│   __init__.py → __init__.py                                      │
+│   __init__.py → llm_impact_analyzer.py                           │
+│   ...还有 10 条 / 10 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (38 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (36 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 101 条)
+> (最多显示前 50 条依赖边，共 95 条)
 
 ```
 

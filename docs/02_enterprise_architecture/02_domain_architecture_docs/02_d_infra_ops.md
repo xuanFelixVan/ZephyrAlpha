@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 9 | Internal Dependencies | 9 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 13 | Cross-domain Outgoing | 13 |
+| 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 20 | Prototype Modules | 20 |
 | 生产态模块 | 4 | Production Modules | 4 |
@@ -86,8 +86,6 @@ graph TD
     tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
     D_OPS["D_OPS production"]
@@ -118,7 +116,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 8 | config_depends,import_depends,test_depends |
+| D_GOVERNANCE | 6 | config_depends,test_depends |
 | D_GOV_AUDIT | 2 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
 | D_OPS | 1 | import_depends |

@@ -1,21 +1,10 @@
----
-module_id: ARCH-IDX-001
-title: "架构文档库总览"
-doc_type: index
-status: active
-version: 1.0.0
-date: 2026-06-27
-owner: ZephyrAlpha-Owner
-ttl: permanent
----
-
 # 架构文档库总览
 
 > 这是你查看 ZephyrAlpha 架构的入口。从这里出发，你能找到所有架构相关的文档和图。
 >
-> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph.db），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。
+> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph (PostgreSQL)），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。
 >
-> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-06-25 18:42:33
+> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-06-30 12:25:33
 
 ---
 
@@ -25,8 +14,8 @@ ttl: permanent
 |--------|--------|--------|-----------|
 | `00_overview_entry/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |
 | `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 6 个文件 | 自动生成 | 全景图更新时 |
-| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 109 个文件 | 自动生成 | 全景图更新时 |
-| `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 8 个文件 | 自动生成 | 全景图更新时 |
+| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 54 个文件 | 自动生成 | 全景图更新时 |
+| `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 3 个文件 | 自动生成 | 全景图更新时 |
 
 ---
 
@@ -57,7 +46,7 @@ ttl: permanent
 ## 数据从哪来
 
 **所有文档都是自动生成的**：
-- 数据源：`data/databases/depgraph.db`（全景图数据库）
+- 数据源：depgraph (PostgreSQL) 数据库（全景图数据库）
 - 全景图是唯一真源
 - 架构图是全景图的派生物
 - 禁止手工修改自动生成的文档
@@ -71,10 +60,10 @@ ttl: permanent
 
 | 层级 | 域数量 | 代表域 |
 |------|:---:|--------|
-| 基础设施层 | 5 | D_INFRA_A2A（a2a_communication）、D_INFRA_OPS（基础设施运维）、D_INFRA_RECOVERY（rollback_recovery） 等 |
+| 基础设施层 | 5 | D_INFRA_A2A（A2A通信）、D_INFRA_OPS（基础设施运维）、D_INFRA_RECOVERY（回滚恢复） 等 |
 | 基础层 | 15 | D_ALT_DATA（另类数据）、D_AUTONOMY_CORE（自治核心）、D_BEHAVIORAL_AUDIT（行为审计） 等 |
-| 业务域层 | 32 | D_ASHARE_SIGNAL（A股特色信号）、D_AUTONOMY_PERM（自治保护）、D_BACKTEST（回测） 等 |
-| 未分层 | 1 | D_GOV_REPAIR（rollback） |
+| 业务域层 | 32 | D_ASHARE_SIGNAL（A股特色信号）、D_AUDITTEST（审计测试套件）、D_AUTONOMY_PERM（自治保护） 等 |
+| 未分层 | 1 | D_GOV_REPAIR（治理修复） |
 
 ---
 
@@ -82,4 +71,4 @@ ttl: permanent
 
 | 日期 | 说明 |
 |------|------|
-| 2026-06-25 18:42:33 | 自动生成 |
+| 2026-06-30 12:25:33 | 自动生成 |

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 230 | Module Count | 230 |
 | 域内依赖 | 243 | Internal Dependencies | 243 |
 | 跨域入边 | 375 | Cross-domain Incoming | 375 |
-| 跨域出边 | 75 | Cross-domain Outgoing | 75 |
+| 跨域出边 | 74 | Cross-domain Outgoing | 74 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 103 | Prototype Modules | 103 |
 | 生产态模块 | 127 | Production Modules | 127 |
@@ -349,10 +349,9 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_main_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_security_access_control_orphan_judge_db_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|import_depends| D_TRADING
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_security_access_control_orphan_judge_escalation_bridge_py -.->|import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_security_access_control_orphan_judge_drift_bridge_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -379,7 +378,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_access_control_immutable_core_py,src_zephyr_security_access_control_input_guard_py,src_zephyr_security_access_control_integration_py,src_zephyr_security_access_control_integrity_self_check_py,src_zephyr_security_access_control_intent_binder_py,src_zephyr_security_access_control_key_hierarchy_py,src_zephyr_security_access_control_kill_switch_py,src_zephyr_security_access_control_legal_audit_chain_py,src_zephyr_security_access_control_memory_guard_py,src_zephyr_security_access_control_memory_provenance_guard_py,src_zephyr_security_access_control_micro_verifier_py,src_zephyr_security_access_control_microstructure_defense_py,src_zephyr_security_access_control_monotonic_clock_py,src_zephyr_security_access_control_multi_agent_collusion_detector_py,src_zephyr_security_access_control_native_api_guard_py,src_zephyr_security_access_control_non_repudiation_py,src_zephyr_security_access_control_novel_attack_guard_py,src_zephyr_security_access_control_observability_py,src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py,src_zephyr_security_access_control_orphan_judge_decision_table_py,src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py,src_zephyr_security_access_control_orphan_judge_judge_py production
     class src_zephyr_security_access_control_orphan_judge_init_py,src_zephyr_security_access_control_orphan_judge_main_py,src_zephyr_security_access_control_orphan_judge_config_loader_py,src_zephyr_security_access_control_orphan_judge_db_py,src_zephyr_security_access_control_orphan_judge_drift_bridge_py,src_zephyr_security_access_control_orphan_judge_duplicate_detector_py,src_zephyr_security_access_control_orphan_judge_escalation_bridge_py,src_zephyr_security_access_control_orphan_judge_feedback_bridge_py design
-    class D_GOVERNANCE,D_TRADING external_prod
+    class D_TRADING,D_GOVERNANCE external_prod
     class D_GOV_ENFORCEMENT,D_GOV_AUDIT external_design
 ```
 
@@ -716,7 +715,7 @@ graph TD
 | D_SHARED | 5 | import_depends |
 | D_GOV_AUDIT | 5 | import_depends |
 | D_GOV_ENFORCEMENT | 5 | import_depends |
-| D_GOVERNANCE | 4 | import_depends |
+| D_GOVERNANCE | 3 | import_depends |
 | D_TRADING | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
 | D_INTELLIGENCE | 1 | import_depends |

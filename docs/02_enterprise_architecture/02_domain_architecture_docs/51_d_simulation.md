@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 12:28:25
+> 最后更新: 2026-06-30 15:14:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 13 | Module Count | 13 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 17 | Cross-domain Incoming | 17 |
-| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 4 | Production Modules | 4 |
@@ -71,9 +71,6 @@ graph TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|import_depends| src_zephyr_simulation_init_py
     src_zephyr_simulation_implementations_init_py -.->|config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py
     src_zephyr_simulation_implementations_init_from_resear_py -.->|config_depends| src_zephyr_simulation_implementations_init_py
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    src_zephyr_simulation_pipeline_base_from_resear_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_simulation_pipeline_base_py -.->|import_depends| D_INTEGRATION
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
@@ -99,16 +96,14 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_backtest_base_py,src_zephyr_simulation_default_backtest_engine_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
     class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_init_from_resear_py,src_zephyr_simulation_backtest_base_from_resear_py,src_zephyr_simulation_default_backtest_engine_from_resear_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_init_from_resear_py,src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py,src_zephyr_simulation_pipeline_base_from_resear_py design
-    class D_INTEGRATION,D_INTELLIGENCE,D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE external_design
+    class D_INTELLIGENCE,D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
-|--------|:---:|---------|
-| D_INTEGRATION | 2 | import_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
