@@ -1832,6 +1832,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因4（并发设计缺陷）
 **修复方向**：用context manager或atexit注册
 
+[✓ FIXED: 2026-07-01 sqlite_metadata_store.py 修复：(1)新增 _all_conns 跨线程连接注册表+_all_conns_lock；(2)_conn 属性注册新连接到全局表；(3)新增 close_all() 关闭所有线程连接；(4)新增 __enter__/__exit__ context manager；(5)atexit.register(close_all) 进程退出兜底；(6)close() 委托 close_all()]
+
 #### 5.12.8 asyncio.run()在40+同步站点（MEDIUM，1聚合 = 40+处）
 
 **证据**：

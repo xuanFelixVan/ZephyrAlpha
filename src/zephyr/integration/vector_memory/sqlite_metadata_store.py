@@ -41,6 +41,7 @@ SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)
 
 from __future__ import annotations
 
+import atexit
 import json
 import logging
 import sqlite3
@@ -117,6 +118,10 @@ class SQLiteMetadataStore:
         self._db_path = Path(db_path)
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         self._local = threading.local()
+        # 5.12.7 修复：跨线程连接注册，防止线程池场景下其他线程连接泄漏
+        self._all_conns: dict[int, sqlite3.Connection] = {}
+        self._all_conns_lock = threading.Lock()
+        atexit.register(self.close_all)
 
     @property
     def _conn(self) -> sqlite3.Connection:
@@ -127,7 +132,31 @@ class SQLiteMetadataStore:
             conn.execute("PRAGMA foreign_keys=ON")
             conn.row_factory = sqlite3.Row
             self._local.conn = conn
+            # 5.12.7 修复：注册到全局连接表，close_all 可关闭所有线程的连接
+            tid = threading.get_ident()
+            with self._all_conns_lock:
+                self._all_conns[tid] = conn
         return self._local.conn
+
+    def __enter__(self) -> "SQLiteMetadataStore":
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        self.close_all()
+        return False
+
+    def close_all(self) -> None:
+        """5.12.7 修复：关闭所有线程的连接（线程池场景下 close() 只关闭当前线程连接是不够的）。"""
+        with self._all_conns_lock:
+            for tid, conn in list(self._all_conns.items()):
+                try:
+                    conn.close()
+                except Exception:
+                    _logger.debug("close_all: failed to close conn for thread %s", tid, exc_info=True)
+            self._all_conns.clear()
+        # 清理当前线程 local 引用
+        if hasattr(self._local, "conn"):
+            self._local.conn = None
 
     def _ensure_tables(self) -> None:
         conn = self._conn
@@ -319,6 +348,6 @@ class SQLiteMetadataStore:
         return result
 
     def close(self) -> None:
-        if hasattr(self._local, "conn") and self._local.conn:
-            self._local.conn.close()
-            self._local.conn = None
+        # 5.12.7 修复：原 close() 只关闭当前线程连接，线程池中其他线程连接泄漏；
+        # 现委托 close_all() 关闭所有线程连接
+        self.close_all()
