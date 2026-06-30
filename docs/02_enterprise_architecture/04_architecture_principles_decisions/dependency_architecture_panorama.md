@@ -456,7 +456,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 > - `arch_directory_tree.state`（TEXT，迁移后删除，统一用 `design_maturity`）
 >
 > 迁移前：edges 用 `from_node`/`to_node`（TEXT），无 `dep_maturity`；arch_directory_tree 有 `state` 字段，无 `node_id`。
-> 迁移后：edges 用 `from_node_id`/`to_node_id`（INTEGER FK），有 `dep_maturity`；arch_directory_tree 删除 `state`，新增 `node_id`（列数不变，11→11）。
+> 迁移后：edges 用 `from_node_id`/`to_node_id`（bigint FK），有 `dep_maturity`；arch_directory_tree 删除 `state`，新增 `node_id`（列数不变，11→11）。**v15 后**：arch_directory_tree 重建表时删除 `node_id`（最终 10 列），edges 的 `INTEGER FK` 在 PG 迁移后为 `bigint FK`。
 >
 > **本文档其他章节引用上述字段时，不再重复此说明。**
 >
@@ -789,14 +789,14 @@ edges表当前 22 列（v15 删除 migration_status 后）。
 
 | 字段 | 类型 | 含义 | 来源 |
 |------|------|------|------|
-| edge_id | INTEGER PK | 主键自增 | 新edge分配新ID |
+| edge_id | bigint PK（IDENTITY） | 主键自增 | 新edge分配新ID |
 
 **生成器重建的字段（运营态，9 列）**——从代码扫描得出：
 
 | 字段 | 类型 | 含义 | 来源 |
 |------|------|------|------|
-| from_node_id | INTEGER FK | 源节点 ID（V3.4 改名，原 from_node TEXT） | 生成器扫描import语句，关联到节点 node_id |
-| to_node_id | INTEGER FK | 目标节点 ID（V3.4 改名，原 to_node TEXT） | 同上 |
+| from_node_id | bigint FK | 源节点 ID（V3.4 改名，原 from_node TEXT，PG 迁移后为 bigint） | 生成器扫描import语句，关联到节点 node_id |
+| to_node_id | bigint FK | 目标节点 ID（V3.4 改名，原 to_node TEXT，PG 迁移后为 bigint） | 同上 |
 | dep_type | TEXT | 依赖类型（import/inherit等） | 生成器分析import语句 |
 | architecture_direction | TEXT | 架构方向（upstream/downstream） | 生成器根据域层级推导 |
 | coupling_strength | TEXT | 耦合强度 | 生成器根据import类型推导 |
@@ -1453,7 +1453,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 2 | 生成器必要性 | **有必要**，9 个 bug 已修复，只做扫描+对齐不做创造 | ✅ |
 | 13 | 生成器覆盖范围 | **nodes 运营态全覆盖，edges active 全覆盖，设计态保留** | ✅ |
 | 14 | edges 字段级覆盖 | **9 运营态字段重建，9 设计态字段保留，1 共享字段(dep_maturity)各写各的** | ✅ |
-| 15 | 生成器加载设计态 | **从数据库加载**（不依赖已退役的 YAML 文件） | ⏳ |
+| 15 | 生成器加载设计态 | **从数据库加载**（不依赖已退役的 YAML 文件） | ✅ |
 | 18 | 生成器触发条件 | **只在改了代码后才触发**（代码文件数变化>0 OR 蓝图§4变化 OR 路径树变化） | ✅ |
 | 39 | 设计态节点写入入口 | **apply_depgraph.py --add-design-node 唯一入口** | ✅ |
 | 40 | 设计态边写入入口 | **apply_depgraph.py --add-design-edge 唯一入口** | ✅ |
@@ -1508,7 +1508,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 |---|------|------|:---:|
 | 11 | node_type 简化 | **文件制品类为主，DDD概念转 tags** | ⏳ |
 | 28 | contracts 表来源 | **先确认来源再决定去重/合并** | ❌ |
-| 31 | 超容域 22 个 | **重新评估拆分策略** | ⏳ |
+| 31 | 超容域 21 个（current_modules > 150，2026-06-30 实查） | **重新评估拆分策略** | ⏳ |
 | 49 | 6 层与 53 域映射 | **后续阶段补充映射规则** | ⏳ |
 | 65 | 增量更新机制 | **长期目标——引入文件 mtime/hash 缓存** | ⏳ |
 | 66 | 设计态版本管理 | **长期目标——记录变更历史，当前用 git log** | ⏳ |
