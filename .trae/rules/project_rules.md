@@ -407,7 +407,7 @@ python scripts/governance/audit_registration.py --fix     # 交互式修复
 ### 每日安检
 
 ```
-python scripts/lock_files.py check-session <session_id>
+python scripts/lock_files.py status
 ```
 
 发现任何匹配 → 必须先处置再施工。

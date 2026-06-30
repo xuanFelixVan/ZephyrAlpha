@@ -214,7 +214,7 @@ except PermissionError:
 
 **临时文件前缀**: `_temp*` / `_check*` / `_fix*` / `_phase_*` / `_deep*` / `_construction*` / `_rebuild*` / `_audit*`
 
-**每日安检**: `python scripts/lock_files.py check-session <session_id>`
+**每日安检**: `python scripts/lock_files.py status`（check-session 命令从未实现，trae_001 YAML L223 已确认；status 是真源命令，覆盖 check-session 设计意图）
 
 **规则真源**: [zero_residue.yaml](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/zero_residue.yaml)（gate_id: ZERO-RESIDUE, ZR-001~009）
 

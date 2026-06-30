@@ -63,12 +63,21 @@ import time
 from pathlib import Path
 from typing import Any
 
-from _shared.constants import REPO_ROOT
-sys.path.insert(0, str(REPO_ROOT / "scripts" / "governance" / "d3_metadata"))
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent  # bootstrap: scripts/ -> root
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+_SRC_ROOT = _PROJECT_ROOT / "src"
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
+sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "governance" / "d3_metadata"))
 
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+from zephyr.shared.infra.process_pool import is_pid_alive  # noqa: E402  僵尸锁检测真源唯一（AGENTS.md §8 L273，禁止本地重复定义）
 from check_naming_convention import check_file as _check_naming  # noqa: E402
 
 LOCK_ROOT = REPO_ROOT / ".ailocks"
+# TTL 真源：trae_001_file_operation_security.yaml ttl_design section
+# 文件锁 TTL=1800s（AI 对话级锁，30min）；session TTL=3600s（session 生命周期，差异化设计合理，禁止统一）
 DEFAULT_TTL_S = 1800.0  # 30 分钟——超时未释放视为死锁（AI 对话级锁）
 REGISTRY_PATH = LOCK_ROOT / "registry.json"
 
@@ -97,20 +106,17 @@ def _owner_file(lock_dir: Path) -> Path:
     return lock_dir / "owner.json"
 
 
-def _pid_alive(pid: int) -> bool:
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
-
-
 def _is_stale(lock_dir: Path) -> bool:
     owner = _read_owner(lock_dir)
     if owner is None:
         # owner.json 不存在 — 锁可能正在创建中（makedirs 成功但 _write_owner 还没执行）
         # 不判定为 stale，避免误清理正在创建的锁（race condition 修复）
         return False
+    # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：AGENTS.md §8 L273 is_pid_alive 真源唯一）
+    # 不靠 TTL 30min 过期——进程崩溃时锁文件残留，PID 已死立即清理
+    pid = owner.get("pid", 0)
+    if pid and not is_pid_alive(pid):
+        return True
     ts = owner.get("timestamp", 0.0)
     if time.time() - ts > DEFAULT_TTL_S:
         return True
