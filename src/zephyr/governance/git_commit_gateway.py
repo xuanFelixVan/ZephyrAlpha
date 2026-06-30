@@ -1264,7 +1264,12 @@ class GitCommitGateway:
                         if isinstance(a, str) and str(a).strip()
                     ]
                     if cleaned:
-                        result[override] = cleaned
+                        # 治本（2026-06-30 病根1 看门人无人看）：合并语义而非覆盖。
+                        # 同 canonical_override 可被多 capability 声明（如
+                        # working_docs_ghost_ref_archiver + commit_gateway_audit_reconciler
+                        # 都指向 reconciliation_registry.py），覆盖语义会让先注册的
+                        # anchors 丢失——A 层保护形同虚设。改为列表拼接。
+                        result[override] = result.get(override, []) + cleaned
             if result:
                 return result
         except Exception as e:
@@ -2552,6 +2557,16 @@ class GitCommitGateway:
                     status=CommitStatus.NAMING_VIOLATION,
                     message=f"目录契约违规（auto-commit）: {dcr_detail}",
                 )
+        else:
+            # DCR gate 未注册——环境异常，静默跳过会让 DCR 防御失效。
+            # 不阻断（避免过度惩罚），但告警让跳过可观测（对标 fail-closed 的可观测性补丁）。
+            # commit() 路径的 check_all 会跑全部 gate，若 DCR 未注册那边也会静默跳过——
+            # 此告警是双重保险，提示 __init__ 的 make_directory_contract_gate() 注册可能被删。
+            logger.warning(
+                "_commit_auto: DIRECTORY-CONTRACT gate 未注册，跳过 DCR 校验"
+                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+                session_id, len(existing),
+            )
 
         # 追加 GW auto 标记
         gw_marker = f"[GW:{session_id}:auto]"

@@ -23,6 +23,9 @@
     python scripts/git_commit.py --session <id> --files <f1,f2> --message <msg>
     python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"
 
+    # 含中文/特殊字符的 message——用 --message-file 避免 PowerShell 编码问题（治本）：
+    python scripts/git_commit.py --session sess-001 --files src/a.py --message-file .runtime/_commit_msg.txt
+
 对标: scripts/git_guard.py（git 命令透传封装），区别：
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
@@ -137,8 +140,13 @@ def main() -> int:
     )
     parser.add_argument(
         "--message",
-        required=True,
-        help="commit message（不含 GW 标记，自动追加 [GW:<session>]）",
+        help="commit message（不含 GW 标记，自动追加 [GW:<session>]）。"
+             "含中文/特殊字符时推荐用 --message-file 避免 shell 编码问题",
+    )
+    parser.add_argument(
+        "--message-file",
+        help="从 UTF-8 文件读取 commit message（治本 PowerShell 中文编码问题）。"
+             "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）",
     )
     parser.add_argument(
         "--project-root",
@@ -161,6 +169,22 @@ def main() -> int:
              "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
     )
     args = parser.parse_args()
+
+    # message 解析：优先 --message-file（UTF-8，治本 PowerShell 中文编码），否则 --message
+    if args.message_file:
+        try:
+            message = Path(args.message_file).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as e:
+            print(f"ERROR: --message-file 读取失败: {e}", file=sys.stderr)
+            return 1
+    elif args.message:
+        message = args.message
+    else:
+        print("ERROR: 必须提供 --message 或 --message-file", file=sys.stderr)
+        return 1
+    if not message.strip():
+        print("ERROR: message 不能为空", file=sys.stderr)
+        return 1
 
     files = _parse_files(args.files)
     if not files:
@@ -189,7 +213,7 @@ def main() -> int:
         result = gw.commit(
             session_id=args.session,
             files=files,
-            message=args.message,
+            message=message,
             allow_promote=args.allow_promote,
             allow_overlap=args.allow_overlap,
         )
