@@ -254,27 +254,11 @@ directories:
 
   # ========================================
 
-  # config/ 子目?
+  # config/ 子目录（ARCH-038: config/ 根目录平铺，子目录已删除）
 
   # ========================================
 
-  - path: "config/compression/"
-
-    responsibility: "文档压缩策略配置"
-
-    parent: "config/"
-
-    has_index: false
-
-    module_id: null
-
-    kb_ref: null
-
-    track: B
-
-    status: active
-
-    note: ""
+  # ARCH-038: config/compression/ 已删除，compression_policy.yaml 平铺到 config/ 根
 
 
 
