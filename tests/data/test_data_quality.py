@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.governance.data_quality import (
+from zephyr.governance.data_quality import (
     DQ_DIM_COUNT,
     DQ_SPECS,
     DQDimension,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-006 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.data_quality
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.governance.__init__
+# [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_data_quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
+# ARCH-031: migrated from governance/governance/data_quality.py to root (canonical per [MODULE] annotation)
 from enum import Enum
 
 from pydantic import BaseModel

@@ -65,6 +65,7 @@ from zephyr.governance.commit_gates.claim_required_gate import make_claim_requir
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
 from zephyr.governance.commit_gates.create_guard import make_create_guard
 from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate
+from zephyr.governance.commit_gates.dangling_reference_gate import make_dangling_reference_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -233,6 +234,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
+        self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 

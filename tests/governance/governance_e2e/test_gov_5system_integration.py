@@ -35,7 +35,7 @@ MODULE_VERSIONS = {
 
 class TestFiveSystemDiscovery:
     def test_all_modules_importable(self):
-        from zephyr.governance.governance import (
+        from zephyr.governance import (
             a2a_protocol,
             budget_enforcer_mod,
             drift_detector_mod,
@@ -59,7 +59,7 @@ class TestFiveSystemDiscovery:
         ],
     )
     def test_versions_match_blueprint(self, mod_name, expected_version):
-        from zephyr.governance.governance import (
+        from zephyr.governance import (
             budget_enforcer_mod,
             drift_detector_mod,
             escalation_protocol,
