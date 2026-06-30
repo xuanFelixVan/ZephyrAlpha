@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cross_session_consistency_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.cross_session_consistency_validator
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.cross_session_consistency_validator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.diagnosers.cross_session_consistency_validator import (
+from zephyr.trading.feedback_loop.diagnosers.cross_session_consistency_validator import (
     CrossSessionConsistencyValidator,
 )
 

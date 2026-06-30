@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 
-from zephyr.ops.detectors.capacity_forecast import CapacityForecast
+from zephyr.trading.feedback_loop.detectors.capacity_forecast import CapacityForecast
 
 
 class TestCapacityForecastInstantiation:

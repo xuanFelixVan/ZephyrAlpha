@@ -19,7 +19,7 @@ from zephyr.integration.backpressure_manager import BackpressureManager
 from zephyr.shared.time_utils import default_now
 from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
 from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionProposal,
     EvolutionSignal,
     FeedbackLayer,

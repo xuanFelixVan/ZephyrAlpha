@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_exceptions
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.exceptions
+# [CONSUMERS] zephyr.trading.feedback_loop.exceptions
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

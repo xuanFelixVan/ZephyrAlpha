@@ -3,7 +3,7 @@
 # [MODULE] tests.test_auto_reward
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.auto_reward
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.auto_reward
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.auto_reward import AutoReward
+from zephyr.trading.feedback_loop.evolution.auto_reward import AutoReward
 
 
 class TestAutoRewardInstantiation:

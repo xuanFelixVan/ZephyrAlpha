@@ -3,7 +3,7 @@
 # [MODULE] tests.test_burn_rate_alerter
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.burn_rate_alerter
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.burn_rate_alerter
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_burn_rate_alerter.py
 # [TTL] task_bound
 
-from zephyr.ops.diagnosers.burn_rate_alerter import (
+from zephyr.trading.feedback_loop.diagnosers.burn_rate_alerter import (
     BurnRateAlerter,
     BurnWindow,
 )

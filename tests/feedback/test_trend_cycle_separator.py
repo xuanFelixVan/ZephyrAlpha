@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.trend_cycle_separator import TrendCycleSeparator
+from zephyr.trading.feedback_loop.detectors.trend_cycle_separator import TrendCycleSeparator
 
 
 class TestTrendCycleSeparatorInstantiation:

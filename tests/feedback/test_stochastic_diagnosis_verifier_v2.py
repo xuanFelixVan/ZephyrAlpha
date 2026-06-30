@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.stochastic_diagnosis_verifier import (
+from zephyr.trading.feedback_loop.verifiers.stochastic_diagnosis_verifier import (
     StochasticDiagnosisVerifier,
 )
 

@@ -13,7 +13,7 @@
 
 import hashlib
 
-from zephyr.ops.detectors.silent_corruption_detector import (
+from zephyr.trading.feedback_loop.detectors.silent_corruption_detector import (
     CorruptionSeverity,
     SilentCorruptionDetector,
 )

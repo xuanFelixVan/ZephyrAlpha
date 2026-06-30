@@ -3,7 +3,7 @@
 # [MODULE] tests.test_llm_quality_regression
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.llm_quality_regression
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.llm_quality_regression
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.llm_quality_regression import LLMQualityRegression
+from zephyr.trading.feedback_loop.diagnosers.llm_quality_regression import LLMQualityRegression
 
 
 class TestLLMQualityRegressionInstantiation:

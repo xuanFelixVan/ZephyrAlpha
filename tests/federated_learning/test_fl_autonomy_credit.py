@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_autonomy_credit
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.autonomy_credit
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.autonomy_credit
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

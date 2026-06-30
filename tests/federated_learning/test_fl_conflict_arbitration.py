@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_conflict_arbitration
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.conflict_arbitration
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.conflict_arbitration
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

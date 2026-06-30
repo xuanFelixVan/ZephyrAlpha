@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_checkpoint_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.checkpoint_manager
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.checkpoint_manager
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

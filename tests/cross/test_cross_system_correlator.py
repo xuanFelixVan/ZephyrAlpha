@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.cross_system_correlator import CrossSystemCorrelator
+from zephyr.trading.feedback_loop.detectors.cross_system_correlator import CrossSystemCorrelator
 
 
 class TestCrossSystemCorrelatorInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_worm_write_integrity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.forensic.worm_write_integrity
+# [CONSUMERS] zephyr.trading.feedback_loop.forensic.worm_write_integrity
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -18,7 +18,7 @@ import json
 
 import pytest
 
-from zephyr.ops.forensic.worm_write_integrity import WORMEntry, WORMWriteIntegrity
+from zephyr.trading.feedback_loop.forensic.worm_write_integrity import WORMEntry, WORMWriteIntegrity
 
 
 class TestWORMEntry:

@@ -48,7 +48,7 @@ from zephyr.infrastructure.doc_guard_server import DocGuardServer
 from zephyr.infrastructure.gate_engine_server import GateEngineServer
 from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
 from zephyr.infrastructure.sentinel_server import SentinelServer
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,
@@ -92,7 +92,7 @@ pytest.skip(
 )
 
 # ---------------------------------------------------------------------------
-# JSON-RPC 辅助（与 tests/unit/test_mcp_e2e.py 风格一致）
+# JSON-RPC 辅助（与 tests/infrastructure/test_mcp_e2e.py 风格一致）
 # ---------------------------------------------------------------------------
 
 

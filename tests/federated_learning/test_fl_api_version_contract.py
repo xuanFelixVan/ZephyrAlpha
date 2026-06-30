@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_api_version_contract
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.actors.api_version_contract
+# [CONSUMERS] zephyr.trading.feedback_loop.actors.api_version_contract
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.api_version_contract import APIVersionContract, VersionStatus
+from zephyr.trading.feedback_loop.actors.api_version_contract import APIVersionContract, VersionStatus
 
 
 class TestAPIVersionContractInstantiation:

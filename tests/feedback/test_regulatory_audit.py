@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.regulatory_audit import RegulatoryAudit
+from zephyr.trading.feedback_loop.detectors.regulatory_audit import RegulatoryAudit
 
 
 class TestRegulatoryAuditInstantiation:

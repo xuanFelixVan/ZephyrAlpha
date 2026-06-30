@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_slo_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.slo_manager
+# [CONSUMERS] zephyr.trading.feedback_loop.slo_manager
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

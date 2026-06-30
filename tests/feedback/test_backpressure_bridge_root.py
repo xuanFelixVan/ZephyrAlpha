@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 from zephyr.ops.backpressure_bridge import (
     sync_evolution_proposals_to_backpressure,
 )
-from zephyr.ops.evolution_engine import Severity
+from zephyr.trading.feedback_loop.evolution_engine import Severity
 
 
 class TestSyncEvolutionProposalsInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_license_compliance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.license_compliance
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.license_compliance
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

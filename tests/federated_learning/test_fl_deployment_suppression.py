@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_deployment_suppression
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.deployment_suppression
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.deployment_suppression
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

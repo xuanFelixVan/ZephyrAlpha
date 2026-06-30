@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_data_quality_gate
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.data_quality_gate
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.data_quality_gate
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

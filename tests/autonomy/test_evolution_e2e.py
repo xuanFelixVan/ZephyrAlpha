@@ -23,7 +23,7 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,

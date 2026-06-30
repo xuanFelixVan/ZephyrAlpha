@@ -3,7 +3,7 @@
 # [MODULE] tests.test_zombie_fle_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.zombie_fle_detector
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.zombie_fle_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.zombie_fle_detector import (
+from zephyr.trading.feedback_loop.diagnosers.zombie_fle_detector import (
     CognitionTest,
     CognitiveState,
     ZombieFLEDetector,

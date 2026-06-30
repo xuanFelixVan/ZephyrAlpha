@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.traffic_replay_validator import (
+from zephyr.trading.feedback_loop.detectors.traffic_replay_validator import (
     ReplaySession,
     ReplayVerdict,
     TrafficReplayValidator,

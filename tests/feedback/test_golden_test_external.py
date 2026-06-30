@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.golden_test_external import (
+from zephyr.trading.feedback_loop.verifiers.golden_test_external import (
     GoldenTest,
     GoldenTestExternal,
 )

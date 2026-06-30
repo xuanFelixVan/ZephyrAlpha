@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_notification_personalizer
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.actors.notification_personalizer
+# [CONSUMERS] zephyr.trading.feedback_loop.actors.notification_personalizer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.notification_personalizer import NotificationPersonalizer
+from zephyr.trading.feedback_loop.actors.notification_personalizer import NotificationPersonalizer
 
 
 class TestNotificationPersonalizerInstantiation:

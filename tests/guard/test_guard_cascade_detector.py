@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.guard_cascade_detector import (
+from zephyr.trading.feedback_loop.detectors.guard_cascade_detector import (
     GuardCascadeDetector,
     GuardTriggerEvent,
 )

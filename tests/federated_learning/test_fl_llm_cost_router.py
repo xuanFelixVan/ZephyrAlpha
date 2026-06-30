@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_llm_cost_router
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.llm_cost_router
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.llm_cost_router
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

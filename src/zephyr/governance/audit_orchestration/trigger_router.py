@@ -681,11 +681,11 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
 def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_published`` — 新蓝图发布后触发反思循环与 KE 索引。
 
-    调用 zephyr.observability.feedback_loop.decision_engine 触发蓝图反思。
+    调用 zephyr.trading.feedback_loop.decision_engine 触发蓝图反思。
     对标 MOD-CONTEXT_ENGINE (feedback-loop) §4。
     """
     try:
-        _mod = importlib.import_module("zephyr.observability.feedback_loop.decision_engine")
+        _mod = importlib.import_module("zephyr.trading.feedback_loop.decision_engine")
         reflect_on_blueprint = _mod.reflect_on_blueprint
         result = reflect_on_blueprint(payload)
         return {

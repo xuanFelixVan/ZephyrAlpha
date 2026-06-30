@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config_timeline
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.collectors.config_timeline
+# [CONSUMERS] zephyr.trading.feedback_loop.collectors.config_timeline
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.collectors.config_timeline import ConfigTimeline
+from zephyr.trading.feedback_loop.collectors.config_timeline import ConfigTimeline
 
 
 class TestConfigTimelineInstantiation:

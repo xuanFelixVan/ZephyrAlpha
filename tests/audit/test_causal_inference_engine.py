@@ -3,7 +3,7 @@
 # [MODULE] tests.test_causal_inference_engine
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.causal_inference_engine
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.causal_inference_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_causal_inference_engine.py
 # [TTL] task_bound
 
-from zephyr.ops.diagnosers.causal_inference_engine import (
+from zephyr.trading.feedback_loop.diagnosers.causal_inference_engine import (
     CausalGraph,
     CausalInferenceEngine,
 )

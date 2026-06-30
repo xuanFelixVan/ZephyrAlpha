@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.agent_lifecycle import AgentLifecycle
+from zephyr.trading.feedback_loop.actors.agent_lifecycle import AgentLifecycle
 
 
 class TestAgentLifecycleInstantiation:

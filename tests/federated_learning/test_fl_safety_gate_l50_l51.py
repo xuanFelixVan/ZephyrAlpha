@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_safety_gate_L50_L51
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.safety_gate_L50_L51
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.safety_gate_L50_L51
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

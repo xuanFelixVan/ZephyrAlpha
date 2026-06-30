@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.incident_priority_triage_automator import (
+from zephyr.trading.feedback_loop.actors.incident_priority_triage_automator import (
     IncidentPriorityTriageAutomator,
     Severity,
 )

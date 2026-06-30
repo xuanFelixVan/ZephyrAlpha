@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scheduler_safety
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler_safety
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler_safety
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.detectors.concept_drift import ConceptDrift
+from zephyr.trading.feedback_loop.detectors.concept_drift import ConceptDrift
 
 
 class TestConceptDriftInstantiation:

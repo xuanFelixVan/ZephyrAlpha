@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.emergent_behavior_detector import (
+from zephyr.trading.feedback_loop.detectors.emergent_behavior_detector import (
     EmergenceState,
     EmergentBehaviorDetector,
 )

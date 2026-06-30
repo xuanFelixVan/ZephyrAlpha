@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_emergency_takeover
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.emergency_takeover
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.emergency_takeover
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

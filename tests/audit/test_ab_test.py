@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.ab_test import ABTest
+from zephyr.trading.feedback_loop.verifiers.ab_test import ABTest
 
 
 class TestABTestInstantiation:

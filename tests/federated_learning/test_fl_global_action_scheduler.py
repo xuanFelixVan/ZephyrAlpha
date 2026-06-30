@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_global_action_scheduler
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.actors.global_action_scheduler
+# [CONSUMERS] zephyr.trading.feedback_loop.actors.global_action_scheduler
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.global_action_scheduler import (
+from zephyr.trading.feedback_loop.actors.global_action_scheduler import (
     ActionState,
     GlobalActionScheduler,
     ScheduledAction,

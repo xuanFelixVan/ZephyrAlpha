@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.preventive_repair import PreventiveRepair
+from zephyr.trading.feedback_loop.verifiers.preventive_repair import PreventiveRepair
 
 
 class TestPreventiveRepairInstantiation:

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_autonomy_maturity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.autonomy_maturity
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.autonomy_maturity
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

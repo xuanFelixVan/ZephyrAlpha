@@ -3,7 +3,7 @@
 # [MODULE] tests.test_boot_integrity_attestation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.forensic.boot_integrity_attestation
+# [CONSUMERS] zephyr.trading.feedback_loop.forensic.boot_integrity_attestation
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -17,7 +17,7 @@ import hashlib
 import os
 import tempfile
 
-from zephyr.ops.forensic.boot_integrity_attestation import (
+from zephyr.trading.feedback_loop.forensic.boot_integrity_attestation import (
     BootIntegrityAttestation,
     BootIntegrityResult,
 )

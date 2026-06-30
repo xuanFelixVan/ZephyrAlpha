@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.sim2real_calibration import Sim2RealCalibration
+from zephyr.trading.feedback_loop.verifiers.sim2real_calibration import Sim2RealCalibration
 
 
 class TestSim2RealCalibrationInstantiation:

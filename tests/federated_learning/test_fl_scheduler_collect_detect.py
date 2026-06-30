@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scheduler_collect_detect
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.scheduler_collect_detect
+# [CONSUMERS] zephyr.trading.feedback_loop.scheduler_collect_detect
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,12 +15,12 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
-from zephyr.ops.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
-from zephyr.ops.diagnosers.numerical_stability_guard import NumericalStabilityGuard
-from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
-from zephyr.ops.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
+from zephyr.trading.feedback_loop.detectors.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import ColdStartConservativeMode
+from zephyr.trading.feedback_loop.diagnosers.guard_self_consistency_auditor import GuardSelfConsistencyAuditor
+from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
+from zephyr.trading.feedback_loop.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
+from zephyr.trading.feedback_loop.diagnosers.statistical_hygiene_auditor import StatisticalHygieneAuditor
 from zephyr.ops.feedback_collector import FeedbackCollector
 from zephyr.ops.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.ops.scheduler_collect_detect import CollectDetectHandler

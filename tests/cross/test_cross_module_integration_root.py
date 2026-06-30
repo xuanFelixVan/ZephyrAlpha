@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.verifiers.cross_module_integration import CrossModuleIntegration
+from zephyr.trading.feedback_loop.verifiers.cross_module_integration import CrossModuleIntegration
 
 
 class TestCrossModuleIntegrationInstantiation:

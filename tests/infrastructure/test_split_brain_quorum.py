@@ -3,7 +3,7 @@
 # [MODULE] tests.test_split_brain_quorum
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.resilience.split_brain_quorum
+# [CONSUMERS] zephyr.trading.feedback_loop.resilience.split_brain_quorum
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.ops.resilience.split_brain_quorum import (
+from zephyr.trading.feedback_loop.resilience.split_brain_quorum import (
     QuorumState,
     SplitBrainQuorum,
 )

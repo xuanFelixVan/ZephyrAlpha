@@ -3,7 +3,7 @@
 # [MODULE] tests.test_llm_cost_accounting
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.collectors.llm_cost_accounting
+# [CONSUMERS] zephyr.trading.feedback_loop.collectors.llm_cost_accounting
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.collectors.llm_cost_accounting import LLMCostAccounting
+from zephyr.trading.feedback_loop.collectors.llm_cost_accounting import LLMCostAccounting
 
 
 class TestLLMCostAccountingInstantiation:

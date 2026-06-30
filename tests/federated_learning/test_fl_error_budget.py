@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_error_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.error_budget
+# [CONSUMERS] zephyr.trading.feedback_loop.error_budget
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

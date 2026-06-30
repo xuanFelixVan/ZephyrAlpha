@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.detectors.config_drift import ConfigDrift
+from zephyr.trading.feedback_loop.detectors.config_drift import ConfigDrift
 
 
 class TestConfigDriftInstantiation:

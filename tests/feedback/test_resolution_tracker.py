@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.resolution_tracker import ResolutionTracker
+from zephyr.trading.feedback_loop.detectors.resolution_tracker import ResolutionTracker
 
 
 class TestResolutionTrackerInstantiation:

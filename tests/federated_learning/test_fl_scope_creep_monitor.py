@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_scope_creep_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.scope_creep_monitor
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.scope_creep_monitor
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_concurrent_change_deconfliction
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.concurrent_change_deconfliction
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.concurrent_change_deconfliction
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

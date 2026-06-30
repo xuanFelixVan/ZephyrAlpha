@@ -3,7 +3,7 @@
 # [MODULE] tests.test_serialization_format_tracker
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.forensic.serialization_format_tracker
+# [CONSUMERS] zephyr.trading.feedback_loop.forensic.serialization_format_tracker
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pickle
 
-from zephyr.ops.forensic.serialization_format_tracker import (
+from zephyr.trading.feedback_loop.forensic.serialization_format_tracker import (
     Compatibility,
     SerdeFormat,
     SerializationFormatTracker,

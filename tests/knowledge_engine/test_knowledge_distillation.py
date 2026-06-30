@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_distillation
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.knowledge_distillation
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.knowledge_distillation
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.evolution.knowledge_distillation import KnowledgeDistillation
+from zephyr.trading.feedback_loop.evolution.knowledge_distillation import KnowledgeDistillation
 
 
 class TestKnowledgeDistillationInstantiation:

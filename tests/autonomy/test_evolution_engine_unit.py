@@ -21,7 +21,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     DEFAULT_THRESHOLDS,
     EvolutionEngine,
     EvolutionProposal,

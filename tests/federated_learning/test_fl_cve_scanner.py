@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_cve_scanner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.cve_scanner
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.cve_scanner
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cold_start_conservative_mode
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.cold_start_conservative_mode
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.cold_start_conservative_mode import (
+from zephyr.trading.feedback_loop.diagnosers.cold_start_conservative_mode import (
     ColdStartConservativeMode,
     ColdStartPhase,
 )

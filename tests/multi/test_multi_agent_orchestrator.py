@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.multi_agent_orchestrator import MultiAgentOrchestrator
+from zephyr.trading.feedback_loop.actors.multi_agent_orchestrator import MultiAgentOrchestrator
 
 
 class TestMultiAgentOrchestratorInstantiation:

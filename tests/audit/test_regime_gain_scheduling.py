@@ -3,7 +3,7 @@
 # [MODULE] tests.test_regime_gain_scheduling
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.regime_gain_scheduling
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.regime_gain_scheduling
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.diagnosers.regime_gain_scheduling import (
+from zephyr.trading.feedback_loop.diagnosers.regime_gain_scheduling import (
     MarketRegime,
     RegimeGainScheduling,
 )

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config_governance
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.config_governance
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.config_governance
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

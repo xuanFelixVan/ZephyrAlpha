@@ -3,7 +3,7 @@
 # [MODULE] tests.test_feedback_delay_compensator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.feedback_delay_compensator
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.feedback_delay_compensator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.feedback_delay_compensator import (
+from zephyr.trading.feedback_loop.diagnosers.feedback_delay_compensator import (
     DelayState,
     FeedbackDelayCompensator,
 )

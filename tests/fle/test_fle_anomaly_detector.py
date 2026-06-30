@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.ops.detectors.anomaly_detector import (
+from zephyr.trading.feedback_loop.detectors.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )

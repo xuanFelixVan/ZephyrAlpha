@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fle_upgrade_safety_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.forensic.fle_upgrade_safety_validator
+# [CONSUMERS] zephyr.trading.feedback_loop.forensic.fle_upgrade_safety_validator
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.forensic.fle_upgrade_safety_validator import (
+from zephyr.trading.feedback_loop.forensic.fle_upgrade_safety_validator import (
     FLEUpgradeSafetyValidator,
     UpgradeSafetyResult,
 )

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_config_complexity_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.config_complexity_budget
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.config_complexity_budget
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_flag_lifecycle_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.flag_lifecycle_manager
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.flag_lifecycle_manager
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_guard_configuration_drift_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.forensic.guard_configuration_drift_monitor
+# [CONSUMERS] zephyr.trading.feedback_loop.forensic.guard_configuration_drift_monitor
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.forensic.guard_configuration_drift_monitor import (
+from zephyr.trading.feedback_loop.forensic.guard_configuration_drift_monitor import (
     GuardConfigSnapshot,
     GuardConfigurationDriftMonitor,
 )

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_prompt_self_optimization_loop
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.prompt_self_optimization_loop
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.prompt_self_optimization_loop
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.prompt_self_optimization_loop import (
+from zephyr.trading.feedback_loop.evolution.prompt_self_optimization_loop import (
     PromptSelfOptimizationLoop,
 )
 

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_fitness_functions
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.fitness_functions
+# [CONSUMERS] zephyr.trading.feedback_loop.fitness_functions
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

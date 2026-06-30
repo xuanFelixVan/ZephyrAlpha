@@ -3,7 +3,7 @@
 # [MODULE] tests.test_model_version_semantic_drift
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.model_version_semantic_drift
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.model_version_semantic_drift
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.ops.diagnosers.model_version_semantic_drift import (
+from zephyr.trading.feedback_loop.diagnosers.model_version_semantic_drift import (
     DriftSeverity,
     ModelVersionSemanticDrift,
 )

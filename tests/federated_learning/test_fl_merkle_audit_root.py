@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_merkle_audit_root
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.merkle_audit_root
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.merkle_audit_root
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

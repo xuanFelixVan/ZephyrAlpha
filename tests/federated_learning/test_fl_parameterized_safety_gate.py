@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_parameterized_safety_gate
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.parameterized_safety_gate
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.parameterized_safety_gate
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

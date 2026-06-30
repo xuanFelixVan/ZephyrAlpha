@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_alert_router
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.actors.alert_router
+# [CONSUMERS] zephyr.trading.feedback_loop.actors.alert_router
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.alert_router import AlertRouter
+from zephyr.trading.feedback_loop.actors.alert_router import AlertRouter
 
 
 class TestAlertRouterInstantiation:

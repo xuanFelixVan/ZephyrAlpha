@@ -24,7 +24,7 @@ from zephyr.ops.auto_evolution import (
     _count_consecutive_below,
     _extract_metric,
 )
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     Severity,
 )

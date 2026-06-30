@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.ops.verifiers.toctou_revalidation import (
+from zephyr.trading.feedback_loop.verifiers.toctou_revalidation import (
     TOCTOUResult,
     TOCTOURevalidation,
 )

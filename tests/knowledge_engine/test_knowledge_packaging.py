@@ -3,7 +3,7 @@
 # [MODULE] tests.test_knowledge_packaging
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.collectors.knowledge_packaging
+# [CONSUMERS] zephyr.trading.feedback_loop.collectors.knowledge_packaging
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -11,7 +11,7 @@
 # [TESTS] tests/test_knowledge_packaging.py
 # [TTL] task_bound
 
-from zephyr.ops.collectors.knowledge_packaging import KnowledgePackaging
+from zephyr.trading.feedback_loop.collectors.knowledge_packaging import KnowledgePackaging
 
 
 class TestKnowledgePackagingInstantiation:

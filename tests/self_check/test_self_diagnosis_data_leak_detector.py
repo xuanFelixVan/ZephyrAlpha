@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.self_diagnosis_data_leak_detector import (
+from zephyr.trading.feedback_loop.detectors.self_diagnosis_data_leak_detector import (
     SelfDiagnosisDataLeakDetector,
 )
 

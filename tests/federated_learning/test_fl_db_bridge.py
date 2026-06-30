@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_db_bridge
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.db_bridge
+# [CONSUMERS] zephyr.trading.feedback_loop.db_bridge
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

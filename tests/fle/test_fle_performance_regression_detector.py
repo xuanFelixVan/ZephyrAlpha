@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.fle_performance_regression_detector import (
+from zephyr.trading.feedback_loop.detectors.fle_performance_regression_detector import (
     FLEPerformanceRegressionDetector,
     PerformanceBaseline,
 )

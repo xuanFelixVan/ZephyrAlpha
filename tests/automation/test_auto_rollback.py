@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.verifiers.auto_rollback import AutoRollback
+from zephyr.trading.feedback_loop.verifiers.auto_rollback import AutoRollback
 
 
 class TestAutoRollbackInstantiation:

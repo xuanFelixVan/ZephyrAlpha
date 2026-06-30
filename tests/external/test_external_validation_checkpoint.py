@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.external_validation_checkpoint import (
+from zephyr.trading.feedback_loop.detectors.external_validation_checkpoint import (
     EscalationReason,
     ExternalValidationCheckpoint,
 )

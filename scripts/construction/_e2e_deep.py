@@ -43,7 +43,7 @@ tests = [
     ("MOD-INF-022", "zephyr.resilience.escalation", []),
     ("MOD-INF-024", "zephyr.resilience.budget_enforcement", []),
     ("MOD-INF-025", "zephyr.shared.protocols.a2a", []),
-    ("MOD-FEEDBACK_LOOP", "zephyr.observability.feedback_loop", []),
+    ("MOD-FEEDBACK_LOOP", "zephyr.trading.feedback_loop", []),
     ("MOD-INF-017", "zephyr.testing.code_dedup", []),
     ("MOD-INF-023", "zephyr.governance.behavioral_auditor", []),
     ("MOD-INF-033", "zephyr.governance.behavioral_auditor", []),

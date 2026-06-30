@@ -3,7 +3,7 @@
 # [MODULE] tests.test_prompt_optimization_regression_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.prompt_optimization_regression_detector
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.prompt_optimization_regression_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.prompt_optimization_regression_detector import (
+from zephyr.trading.feedback_loop.evolution.prompt_optimization_regression_detector import (
     PromptOptimizationRegressionDetector,
 )
 

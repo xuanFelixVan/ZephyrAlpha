@@ -3,7 +3,7 @@
 # [MODULE] tests.test_numerical_stability_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.numerical_stability_guard
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.numerical_stability_guard import (
+from zephyr.trading.feedback_loop.diagnosers.numerical_stability_guard import (
     NumAnomaly,
     NumericalStabilityGuard,
 )

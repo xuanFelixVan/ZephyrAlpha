@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_action_reversibility
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.action_reversibility
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.action_reversibility
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

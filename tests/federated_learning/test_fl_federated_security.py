@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_federated_security
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.federated_security
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.federated_security
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

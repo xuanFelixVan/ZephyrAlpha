@@ -3,7 +3,7 @@
 # [MODULE] tests.test_training_data_gov
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.training_data_gov
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.training_data_gov
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.training_data_gov import (
+from zephyr.trading.feedback_loop.evolution.training_data_gov import (
     DataSnapshot,
     TrainingDataGov,
 )

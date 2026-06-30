@@ -3,7 +3,7 @@
 # [MODULE] tests.test_cross_guard_conflict_detector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.cross_guard_conflict_detector
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.cross_guard_conflict_detector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.cross_guard_conflict_detector import (
+from zephyr.trading.feedback_loop.diagnosers.cross_guard_conflict_detector import (
     CrossGuardConflictDetector,
     GuardDecision,
 )

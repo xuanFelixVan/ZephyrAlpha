@@ -15,12 +15,12 @@ import time
 
 import pytest
 
-from zephyr.ops.security.agent_skill_guard import AgentSkillGuard, SkillSecurityStatus
-from zephyr.ops.security.dep_cve_correlator import CVEAlert, CVESeverity, DepCVECorrelator
-from zephyr.ops.security.metric_prompt_scanner import MetricPromptScanner
-from zephyr.ops.security.remote_attestation import AttestationReport, RemoteAttestation
-from zephyr.ops.security.secret_rotation import SecretRotation
-from zephyr.ops.security.wireheading_prevention import WireheadingPrevention, WireheadState
+from zephyr.trading.feedback_loop.security.agent_skill_guard import AgentSkillGuard, SkillSecurityStatus
+from zephyr.trading.feedback_loop.security.dep_cve_correlator import CVEAlert, CVESeverity, DepCVECorrelator
+from zephyr.trading.feedback_loop.security.metric_prompt_scanner import MetricPromptScanner
+from zephyr.trading.feedback_loop.security.remote_attestation import AttestationReport, RemoteAttestation
+from zephyr.trading.feedback_loop.security.secret_rotation import SecretRotation
+from zephyr.trading.feedback_loop.security.wireheading_prevention import WireheadingPrevention, WireheadState
 
 
 class TestWireheadingPrevention:

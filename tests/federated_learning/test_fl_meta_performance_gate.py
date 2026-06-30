@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_meta_performance_gate
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.meta_performance_gate
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.meta_performance_gate
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

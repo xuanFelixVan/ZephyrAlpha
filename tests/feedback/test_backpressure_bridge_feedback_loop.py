@@ -14,7 +14,7 @@ backpressure_bridge 模块单元测试 — AUDIT-08 M6
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.ops.evolution_engine import Severity as EvolutionSeverity
+from zephyr.trading.feedback_loop.evolution_engine import Severity as EvolutionSeverity
 
 
 class _FakeProposal:

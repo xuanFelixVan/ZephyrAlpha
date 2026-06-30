@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_db_integrity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.db_integrity
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.db_integrity
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

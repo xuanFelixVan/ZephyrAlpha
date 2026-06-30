@@ -3,7 +3,7 @@
 # [MODULE] tests.test_latency_slo
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.latency_slo
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.latency_slo
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.latency_slo import LatencySLO, LatencyWindow
+from zephyr.trading.feedback_loop.diagnosers.latency_slo import LatencySLO, LatencyWindow
 
 
 class TestLatencyWindowInstantiation:

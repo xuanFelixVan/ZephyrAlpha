@@ -3,7 +3,7 @@
 # [MODULE] tests.test_confidence_decomposer
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.confidence_decomposer
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.confidence_decomposer
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.diagnosers.confidence_decomposer import ConfidenceDecomposer
+from zephyr.trading.feedback_loop.diagnosers.confidence_decomposer import ConfidenceDecomposer
 
 
 class TestConfidenceDecomposerInstantiation:

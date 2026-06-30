@@ -3,7 +3,7 @@
 # [MODULE] tests.test_llm_provider_integrity
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.llm_provider_integrity
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.llm_provider_integrity
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.llm_provider_integrity import (
+from zephyr.trading.feedback_loop.diagnosers.llm_provider_integrity import (
     LLMProviderIntegrity,
     ProviderResponse,
 )

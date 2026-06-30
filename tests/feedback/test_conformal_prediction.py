@@ -3,7 +3,7 @@
 # [MODULE] tests.test_conformal_prediction
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.conformal_prediction
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.conformal_prediction
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.conformal_prediction import ConformalPrediction
+from zephyr.trading.feedback_loop.evolution.conformal_prediction import ConformalPrediction
 
 
 class TestConformalPredictionInstantiation:

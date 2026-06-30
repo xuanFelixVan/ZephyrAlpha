@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.orchestrator.alert_handler
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema
-# [CONSUMERS] zephyr.observability.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
+# [CONSUMERS] zephyr.trading.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] CRITICAL→P0+HIGH→P1任务; MEDIUM→不创建任务仅日志; 同 event_id 不重复创建

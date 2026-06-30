@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_blueprint_validator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.gates.blueprint_validator
+# [CONSUMERS] zephyr.trading.feedback_loop.gates.blueprint_validator
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

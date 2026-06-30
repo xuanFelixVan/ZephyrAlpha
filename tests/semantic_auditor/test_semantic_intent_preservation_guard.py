@@ -3,7 +3,7 @@
 # [MODULE] tests.test_semantic_intent_preservation_guard
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.semantic_intent_preservation_guard
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.semantic_intent_preservation_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.semantic_intent_preservation_guard import (
+from zephyr.trading.feedback_loop.evolution.semantic_intent_preservation_guard import (
     SemanticIntentPreservationGuard,
 )
 

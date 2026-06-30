@@ -3,7 +3,7 @@
 # [MODULE] tests.test_incident_knowledge_injector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.incident_knowledge_injector
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.incident_knowledge_injector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.incident_knowledge_injector import (
+from zephyr.trading.feedback_loop.diagnosers.incident_knowledge_injector import (
     IncidentKnowledgeInjector,
     InjectedRule,
 )

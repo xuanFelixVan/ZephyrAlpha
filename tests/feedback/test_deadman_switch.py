@@ -3,7 +3,7 @@
 # [MODULE] tests.test_deadman_switch
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.resilience.deadman_switch
+# [CONSUMERS] zephyr.trading.feedback_loop.resilience.deadman_switch
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.resilience.deadman_switch import (
+from zephyr.trading.feedback_loop.resilience.deadman_switch import (
     DeadmanState,
     DeadmanSwitch,
 )

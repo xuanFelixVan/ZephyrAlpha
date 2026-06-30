@@ -3,7 +3,7 @@
 # [MODULE] tests.test_toil_quantification
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.toil_quantification
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.toil_quantification
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.toil_quantification import (
+from zephyr.trading.feedback_loop.diagnosers.toil_quantification import (
     ActionClass,
     ToilQuantification,
 )

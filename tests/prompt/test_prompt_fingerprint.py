@@ -3,7 +3,7 @@
 # [MODULE] tests.test_prompt_fingerprint
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.prompt_fingerprint
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.prompt_fingerprint
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -15,7 +15,7 @@ import hashlib
 
 import pytest
 
-from zephyr.ops.diagnosers.prompt_fingerprint import PromptFingerprint
+from zephyr.trading.feedback_loop.diagnosers.prompt_fingerprint import PromptFingerprint
 
 
 class TestPromptFingerprintInstantiation:

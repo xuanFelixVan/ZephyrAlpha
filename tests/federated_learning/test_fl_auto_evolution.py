@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_auto_evolution
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.auto_evolution
+# [CONSUMERS] zephyr.trading.feedback_loop.auto_evolution
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -24,7 +24,7 @@ from zephyr.ops.auto_evolution import (
     _count_consecutive_below,
     _extract_metric,
 )
-from zephyr.ops.evolution_engine import EvolutionEngine
+from zephyr.trading.feedback_loop.evolution_engine import EvolutionEngine
 
 
 class TestAutoEvolutionConfigInstantiation:

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.detectors.decision_provenance import DecisionProvenance
+from zephyr.trading.feedback_loop.detectors.decision_provenance import DecisionProvenance
 
 
 class TestDecisionProvenanceInstantiation:

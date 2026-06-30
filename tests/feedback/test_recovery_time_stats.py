@@ -3,7 +3,7 @@
 # [MODULE] tests.test_recovery_time_stats
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.recovery_time_stats
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.recovery_time_stats
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.diagnosers.recovery_time_stats import RecoveryTimeStats
+from zephyr.trading.feedback_loop.diagnosers.recovery_time_stats import RecoveryTimeStats
 
 
 class TestRecoveryTimeStatsInstantiation:

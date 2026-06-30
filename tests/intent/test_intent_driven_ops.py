@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.actors.intent_driven_ops import IntentDrivenOps
+from zephyr.trading.feedback_loop.actors.intent_driven_ops import IntentDrivenOps
 
 
 class TestIntentDrivenOpsInstantiation:

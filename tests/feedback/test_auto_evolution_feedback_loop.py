@@ -49,11 +49,11 @@ from zephyr.ops.auto_evolution import (
     AutoTrigger,
     AutoTriggerType,
 )
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionProposal,
 )
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     Severity as EvolutionSeverity,
 )
 from zephyr.ops.feedback_collector import FeedbackCollector

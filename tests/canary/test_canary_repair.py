@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.canary_repair import CanaryRepair
+from zephyr.trading.feedback_loop.verifiers.canary_repair import CanaryRepair
 
 
 class TestCanaryRepairInstantiation:

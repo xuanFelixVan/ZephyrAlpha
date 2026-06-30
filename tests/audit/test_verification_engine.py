@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.verifiers.verification_engine import (
+from zephyr.trading.feedback_loop.verifiers.verification_engine import (
     Verdict,
     VerificationEngine,
     VerificationResult,

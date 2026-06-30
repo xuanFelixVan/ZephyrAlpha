@@ -3,7 +3,7 @@
 # [MODULE] tests.test_diagnosis_engine
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.diagnosis_engine
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.diagnosis_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.diagnosis_engine import Diagnosis, DiagnosisEngine
+from zephyr.trading.feedback_loop.diagnosers.diagnosis_engine import Diagnosis, DiagnosisEngine
 
 
 class TestDiagnosisDataclass:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.verifiers.no_llm_degradation import NoLLMDegradation
+from zephyr.trading.feedback_loop.verifiers.no_llm_degradation import NoLLMDegradation
 
 
 class TestNoLLMDegradationInstantiation:

@@ -49,7 +49,7 @@ from zephyr.ops.auto_evolution import (
     AutoTrigger,
     AutoTriggerType,
 )
-from zephyr.ops.evolution_engine import (
+from zephyr.trading.feedback_loop.evolution_engine import (
     EvolutionEngine,
     EvolutionProposal,
     Severity,

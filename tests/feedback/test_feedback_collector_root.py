@@ -3,7 +3,7 @@
 # [MODULE] tests.test_feedback_collector
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.feedback_collector
+# [CONSUMERS] zephyr.trading.feedback_loop.feedback_collector
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.ops.actors.api_version_contract import (
+from zephyr.trading.feedback_loop.actors.api_version_contract import (
     APIVersionContract,
     VersionStatus,
 )

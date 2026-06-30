@@ -3,7 +3,7 @@
 # [MODULE] tests.test_graceful_degradation_planner
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.resilience.graceful_degradation_planner
+# [CONSUMERS] zephyr.trading.feedback_loop.resilience.graceful_degradation_planner
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.resilience.graceful_degradation_planner import (
+from zephyr.trading.feedback_loop.resilience.graceful_degradation_planner import (
     DegradationLevel,
     DegradationTier,
     GracefulDegradationPlanner,

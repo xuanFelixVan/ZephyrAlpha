@@ -3,7 +3,7 @@
 # [MODULE] tests.test_ewc_kb_review
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.evolution.ewc_kb_review
+# [CONSUMERS] zephyr.trading.feedback_loop.evolution.ewc_kb_review
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.ops.evolution.ewc_kb_review import EWCKBReview
+from zephyr.trading.feedback_loop.evolution.ewc_kb_review import EWCKBReview
 
 
 class TestEWCKBReviewInstantiation:

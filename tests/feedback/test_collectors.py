@@ -15,34 +15,34 @@ import time
 
 import pytest
 
-from zephyr.ops.collectors.calendar_adapter import CalendarAdapter
-from zephyr.ops.collectors.config_timeline import ConfigTimeline
-from zephyr.ops.collectors.data_quality_validator import DataQualityValidator
-from zephyr.ops.collectors.financial_stratification import FinancialStratification
-from zephyr.ops.collectors.kb_provenance import KBProvenance
-from zephyr.ops.collectors.knowledge_capture import KnowledgeCapture
-from zephyr.ops.collectors.knowledge_freshness import KnowledgeFreshness
-from zephyr.ops.collectors.knowledge_injection import KnowledgeInjection
-from zephyr.ops.collectors.knowledge_packaging import KnowledgePackaging
-from zephyr.ops.collectors.known_unknown_registry import (
+from zephyr.trading.feedback_loop.collectors.calendar_adapter import CalendarAdapter
+from zephyr.trading.feedback_loop.collectors.config_timeline import ConfigTimeline
+from zephyr.trading.feedback_loop.collectors.data_quality_validator import DataQualityValidator
+from zephyr.trading.feedback_loop.collectors.financial_stratification import FinancialStratification
+from zephyr.trading.feedback_loop.collectors.kb_provenance import KBProvenance
+from zephyr.trading.feedback_loop.collectors.knowledge_capture import KnowledgeCapture
+from zephyr.trading.feedback_loop.collectors.knowledge_freshness import KnowledgeFreshness
+from zephyr.trading.feedback_loop.collectors.knowledge_injection import KnowledgeInjection
+from zephyr.trading.feedback_loop.collectors.knowledge_packaging import KnowledgePackaging
+from zephyr.trading.feedback_loop.collectors.known_unknown_registry import (
     KnownUnknownRegistry,
     KnownUnknownState,
 )
-from zephyr.ops.collectors.llm_cost_accounting import LLMCostAccounting
-from zephyr.ops.collectors.market_calendar import MarketCalendar
-from zephyr.ops.collectors.market_event_integrator import (
+from zephyr.trading.feedback_loop.collectors.llm_cost_accounting import LLMCostAccounting
+from zephyr.trading.feedback_loop.collectors.market_calendar import MarketCalendar
+from zephyr.trading.feedback_loop.collectors.market_event_integrator import (
     MarketEventIntegrator,
     MarketMode,
 )
-from zephyr.ops.collectors.notification_feedback import NotificationFeedback
-from zephyr.ops.collectors.schema_evolution import SchemaEvolution
-from zephyr.ops.collectors.schema_migration import (
+from zephyr.trading.feedback_loop.collectors.notification_feedback import NotificationFeedback
+from zephyr.trading.feedback_loop.collectors.schema_evolution import SchemaEvolution
+from zephyr.trading.feedback_loop.collectors.schema_migration import (
     MigrationStatus,
     MigrationStep,
     SchemaMigration,
 )
-from zephyr.ops.collectors.temporal_event_store import TemporalEventStore
-from zephyr.ops.collectors.token_finops import TokenFinOps
+from zephyr.trading.feedback_loop.collectors.temporal_event_store import TemporalEventStore
+from zephyr.trading.feedback_loop.collectors.token_finops import TokenFinOps
 from zephyr.ops.feedback_collector import (
     ActionResult,
     FeedbackChannel,

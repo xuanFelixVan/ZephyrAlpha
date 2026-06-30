@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.ops.verifiers.cross_session_knowledge_integrity import (
+from zephyr.trading.feedback_loop.verifiers.cross_session_knowledge_integrity import (
     CrossSessionKnowledgeIntegrity,
     SessionAnchor,
 )

@@ -3,7 +3,7 @@
 # [MODULE] tests.test_meta_guard_latency_budget
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.meta_guard_latency_budget
+# [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.meta_guard_latency_budget
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.ops.diagnosers.meta_guard_latency_budget import MetaGuardLatencyBudget
+from zephyr.trading.feedback_loop.diagnosers.meta_guard_latency_budget import MetaGuardLatencyBudget
 
 
 class TestMetaGuardLatencyBudgetInstantiation:

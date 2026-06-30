@@ -3,7 +3,7 @@
 # [MODULE] tests.test_fl_eval_harness
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.observability.feedback_loop.eval_harness
+# [CONSUMERS] zephyr.trading.feedback_loop.eval_harness
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
