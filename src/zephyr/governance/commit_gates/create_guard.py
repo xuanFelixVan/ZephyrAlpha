@@ -282,14 +282,22 @@ def make_create_guard() -> GateSpec:
             f.replace("\\", "/") for f in staged_new
             if f.endswith(".py") and not is_test_exempt(f)
         ]
-        if not new_py_files:
+        # 过滤非 rules/ 目录的新增 .yaml 文件（rules/ 已有命名检查 L232-278）
+        # 扩展 CREATE-GUARD 到 .yaml：防止造第二配置真源（trae_060 §2 向内收原则）
+        new_yaml_files = [
+            f.replace("\\", "/") for f in staged_new
+            if f.endswith(".yaml") and not is_test_exempt(f)
+            and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
+        ]
+        if not new_py_files and not new_yaml_files:
             return True, ""
 
         # 治本 2026-06-30：gateway 选择性提交（只提交 files_in_scope，其他 staged 文件 stash），
         # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP。
         # commit_files_rel 已在函数开头计算（reconciler 检测 + token 检测复用），此处直接复用。
         new_py_files = [f for f in new_py_files if f in commit_files_rel]
-        if not new_py_files:
+        new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
+        if not new_py_files and not new_yaml_files:
             return True, ""
 
         # === ARCH-034 P3 遗留2治本（2026-07-01）：类名跨模块唯一性检测 ===
@@ -404,6 +412,16 @@ def make_create_guard() -> GateSpec:
             return False, (
                 f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered}. "
                 f"commit 新建 .py 文件前 MUST 在 capability_canonical_file_registry.yaml "
+                f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
+                f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
+                f"created_by: \"session-xxx\"  capability: \"xxx\""
+            )
+        # 5. 检测新增非 rules/ .yaml 文件是否登记了 creation_token
+        unregistered_yaml = [f for f in new_yaml_files if f not in registered_files]
+        if unregistered_yaml:
+            return False, (
+                f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered_yaml}. "
+                f"commit 新建 .yaml 文件前 MUST 在 capability_canonical_file_registry.yaml "
                 f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
                 f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
                 f"created_by: \"session-xxx\"  capability: \"xxx\""

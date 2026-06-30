@@ -408,8 +408,13 @@ class TestRulesYamlNamingBlocked:
         passed, detail = gate.check(gw, [str(f)])
         assert passed is True, f"rules/ 合规 name .yaml 应放行: {detail}"
 
-    def test_non_rules_dir_yaml_passes(self, tmp_path: Path) -> None:
-        """staged 非 rules/ 目录 .yaml → 放行。"""
+    def test_non_rules_dir_yaml_without_token_blocked(self, tmp_path: Path) -> None:
+        """staged 非 rules/ 目录 .yaml 无 token → 阻断（扩展 CREATE-GUARD 到 .yaml）。
+
+        病根：.yaml 是配置真源（YAML→DB 单向同步硬约束），第二份 .yaml 配置真源
+        的危害比 .py 更隐蔽（同步漂移会污染 9 个 readonly DB 表）。
+        治本：扩展 CREATE-GUARD 检测范围到非 rules/ .yaml（rules/ 已有命名检查）。
+        """
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
@@ -419,7 +424,35 @@ class TestRulesYamlNamingBlocked:
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
-        assert passed is True, f"非 rules/ 目录 .yaml 应放行: {detail}"
+        assert passed is False, f"非 rules/ 目录 .yaml 无 token 应被阻断: {detail}"
+        assert "creation_token" in detail
+        assert "造第二真源" in detail
+
+    def test_non_rules_dir_yaml_with_token_passes(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        """staged 非 rules/ 目录 .yaml 有 token → 放行。"""
+        _init_git_repo(tmp_path)
+        yaml_rel = "docs/02_other/trae_999_test_desc.yaml"
+        f = _stage_file(tmp_path, yaml_rel, "key: value\n")
+        # 写临时 registry（避免触碰真源），登记 token
+        registry_file = tmp_path / "registry.yaml"
+        registry_file.write_text(
+            f"creation_tokens:\n"
+            f"  - file: \"{yaml_rel}\"\n"
+            f"    token: \"auto-yaml-test-20260701\"\n"
+            f"    created_by: \"test\"\n"
+            f"    capability: \"test\"\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            registry_file,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"非 rules/ 目录 .yaml 有 token 应放行: {detail}"
 
     def test_non_trae_named_yaml_blocked(self, tmp_path: Path) -> None:
         """staged rules/ 下 foo.yaml（非 trae 命名）→ 阻断（红蓝漏洞1修复）。"""
