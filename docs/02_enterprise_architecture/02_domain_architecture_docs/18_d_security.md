@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 03:02:35
+> 最后更新: 2026-07-01 03:09:19
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_SECURITY | Domain ID | D_SECURITY |
 | 域名称 | 对抗验证 | Domain Name | 对抗验证 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 156 | Module Count | 156 |
-| 域内依赖 | 171 | Internal Dependencies | 171 |
+| 模块数 | 131 | Module Count | 131 |
+| 域内依赖 | 128 | Internal Dependencies | 128 |
 | 跨域入边 | 326 | Cross-domain Incoming | 326 |
 | 跨域出边 | 70 | Cross-domain Outgoing | 70 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 79 | Prototype Modules | 79 |
+| 原型态模块 | 54 | Prototype Modules | 54 |
 | 生产态模块 | 77 | Production Modules | 77 |
 | 容量 | 132/150 (正常) | Capacity | 132/150 (正常) |
 | 描述 | 红蓝对抗验证 | Description | 红蓝对抗验证 |
@@ -44,7 +44,7 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 6 页 / Page 1 of 6
+### 第 1 页 / 共 5 页 / Page 1 of 5
 
 ```mermaid
 graph TD
@@ -94,7 +94,7 @@ graph TD
     class D_GOVERNANCE,D_GOV_SCRIPTS external_design
 ```
 
-### 第 2 页 / 共 6 页 / Page 2 of 6
+### 第 2 页 / 共 5 页 / Page 2 of 5
 
 ```mermaid
 graph TD
@@ -169,7 +169,7 @@ graph TD
     class D_GOV_ENFORCEMENT external_design
 ```
 
-### 第 3 页 / 共 6 页 / Page 3 of 6
+### 第 3 页 / 共 5 页 / Page 3 of 5
 
 ```mermaid
 graph TD
@@ -242,7 +242,7 @@ graph TD
     class D_AUTONOMY_PERM,D_OPS external_design
 ```
 
-### 第 4 页 / 共 6 页 / Page 4 of 6
+### 第 4 页 / 共 5 页 / Page 4 of 5
 
 ```mermaid
 graph TD
@@ -353,7 +353,7 @@ graph TD
     class D_GOV_AUDIT,D_SHARED,D_AUTONOMY_PERM,D_GOVERNANCE external_design
 ```
 
-### 第 5 页 / 共 6 页 / Page 5 of 6
+### 第 5 页 / 共 5 页 / Page 5 of 5
 
 ```mermaid
 graph TD
@@ -369,37 +369,10 @@ graph TD
         src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py["src/zephyr/security/llm_defense/llm_security/se... production"]
         src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py["src/zephyr/security/llm_defense/llm_security/se... production"]
         src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py["src/zephyr/security/llm_defense/llm_security/se... production"]
-        src_zephyr_security_llm_defense_llm_security_01_init_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_behavior_audit_logger_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_context_scanner_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_gateway_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_input_sanitizer_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_init_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l0_supply_chain_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l1_input_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l2_prompt_protection_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l2a_process_sandbox_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l3_output_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l4_agent_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l5_resource_protection_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l6_observability_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_layers_l8_multi_agent_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_patterns_init_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_patterns_injection_patterns_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_patterns_secrets_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_process_sandbox_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
     end
     src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
-    src_zephyr_security_llm_defense_llm_security_01_process_sandbox_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_process_sandbox_py
-    src_zephyr_security_llm_defense_llm_security_01_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_01_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_process_sandbox_py
-    src_zephyr_security_llm_defense_llm_security_01_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_01_context_scanner_py
-    src_zephyr_security_llm_defense_llm_security_01_patterns_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py
-    src_zephyr_security_llm_defense_llm_security_01_patterns_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_patterns_secrets_py
-    src_zephyr_security_llm_defense_llm_security_01_patterns_secrets_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_patterns_secrets_py
-    src_zephyr_security_llm_defense_llm_security_01_patterns_injection_patterns_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_security_llm_defense_llm_security_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_patterns_secrets_py -.->|import_depends| D_SHARED
@@ -409,8 +382,6 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_TRADING["D_TRADING prototype"]
-    D_TRADING -.->|import_depends| src_zephyr_security_llm_defense_llm_security_01_context_scanner_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py
@@ -424,28 +395,9 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py,src_zephyr_security_llm_defense_llm_security_patterns_secrets_py,src_zephyr_security_llm_defense_llm_security_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py,src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py,src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py,src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py,src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py production
-    class src_zephyr_security_llm_defense_llm_security_payloads_init_py,src_zephyr_security_llm_defense_llm_security_protocol_py,src_zephyr_security_llm_defense_llm_security_self_protection_init_py,src_zephyr_security_llm_defense_llm_security_01_init_py,src_zephyr_security_llm_defense_llm_security_01_behavior_audit_logger_py,src_zephyr_security_llm_defense_llm_security_01_context_scanner_py,src_zephyr_security_llm_defense_llm_security_01_gateway_py,src_zephyr_security_llm_defense_llm_security_01_input_sanitizer_py,src_zephyr_security_llm_defense_llm_security_01_layers_init_py,src_zephyr_security_llm_defense_llm_security_01_layers_l0_supply_chain_py,src_zephyr_security_llm_defense_llm_security_01_layers_l1_input_py,src_zephyr_security_llm_defense_llm_security_01_layers_l2_prompt_protection_py,src_zephyr_security_llm_defense_llm_security_01_layers_l2a_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_01_layers_l3_output_py,src_zephyr_security_llm_defense_llm_security_01_layers_l4_agent_py,src_zephyr_security_llm_defense_llm_security_01_layers_l5_resource_protection_py,src_zephyr_security_llm_defense_llm_security_01_layers_l6_observability_py,src_zephyr_security_llm_defense_llm_security_01_layers_l8_multi_agent_py,src_zephyr_security_llm_defense_llm_security_01_patterns_init_py,src_zephyr_security_llm_defense_llm_security_01_patterns_injection_patterns_py,src_zephyr_security_llm_defense_llm_security_01_patterns_secrets_py,src_zephyr_security_llm_defense_llm_security_01_process_sandbox_py design
+    class src_zephyr_security_llm_defense_llm_security_payloads_init_py,src_zephyr_security_llm_defense_llm_security_protocol_py,src_zephyr_security_llm_defense_llm_security_self_protection_init_py design
     class D_GOV_AUDIT external_prod
-    class D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_TRADING external_design
-```
-
-### 第 6 页 / 共 6 页 / Page 6 of 6
-
-```mermaid
-graph TD
-    subgraph D_SECURITY["D_SECURITY 对抗验证"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_adversarial_mutator_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_code_integrity_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_isolation_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_l7_validation_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-        src_zephyr_security_llm_defense_llm_security_01_self_protection_red_team_scanner_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py,src_zephyr_security_llm_defense_llm_security_01_self_protection_adversarial_mutator_py,src_zephyr_security_llm_defense_llm_security_01_self_protection_code_integrity_py,src_zephyr_security_llm_defense_llm_security_01_self_protection_isolation_py,src_zephyr_security_llm_defense_llm_security_01_self_protection_l7_validation_py,src_zephyr_security_llm_defense_llm_security_01_self_protection_red_team_scanner_py design
+    class D_SHARED,D_GOVERNANCE,D_INTEGRATION external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -481,12 +433,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 对抗验证（D_SECURITY）的模块分布。共 156 个模块 / 156 modules。
+> 按 architecture_layer 分层显示 对抗验证（D_SECURITY）的模块分布。共 131 个模块 / 131 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (156 modules)            │
+│            L1 基础层 / Foundation Layer (131 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/security/__init__.py  [prototype]                   │
 │   src/zephyr/security/access_control/__init__.py  [production]   │
@@ -506,16 +458,16 @@ graph TD
 │   src/zephyr/security/access_control/cascading_failure_isolat... │
 │   src/zephyr/security/access_control/cold_start_lock.py  [pro... │
 │   src/zephyr/security/access_control/compliance_matrix.py  [p... │
-│   ...还有 138 个模块 / 138 more modules                          │
+│   ...还有 113 个模块 / 113 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 156 个模块 / 156 modules）。
+> 按 architecture_layer 分组的模块清单（共 131 个模块 / 131 modules）。
 
-### L1 基础层 / Foundation Layer (156 modules)
+### L1 基础层 / Foundation Layer (131 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -650,48 +602,23 @@ graph TD
 | 129 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
 | 130 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
 | 131 | src/zephyr/security/llm_defense/llm_security/self_protect... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 132 | src/zephyr/security/llm_defense/llm_security_01/__init__.py | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 133 | src/zephyr/security/llm_defense/llm_security_01/behavior_... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 134 | src/zephyr/security/llm_defense/llm_security_01/context_s... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 135 | src/zephyr/security/llm_defense/llm_security_01/gateway.py | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 136 | src/zephyr/security/llm_defense/llm_security_01/input_san... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 137 | src/zephyr/security/llm_defense/llm_security_01/layers/__... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 138 | src/zephyr/security/llm_defense/llm_security_01/layers/l0... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 139 | src/zephyr/security/llm_defense/llm_security_01/layers/l1... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 140 | src/zephyr/security/llm_defense/llm_security_01/layers/l2... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 141 | src/zephyr/security/llm_defense/llm_security_01/layers/l2... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 142 | src/zephyr/security/llm_defense/llm_security_01/layers/l3... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 143 | src/zephyr/security/llm_defense/llm_security_01/layers/l4... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 144 | src/zephyr/security/llm_defense/llm_security_01/layers/l5... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 145 | src/zephyr/security/llm_defense/llm_security_01/layers/l6... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 146 | src/zephyr/security/llm_defense/llm_security_01/layers/l8... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 147 | src/zephyr/security/llm_defense/llm_security_01/patterns/... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 148 | src/zephyr/security/llm_defense/llm_security_01/patterns/... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 149 | src/zephyr/security/llm_defense/llm_security_01/patterns/... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 150 | src/zephyr/security/llm_defense/llm_security_01/process_s... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 151 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 152 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 153 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 154 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 155 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 156 | src/zephyr/security/llm_defense/llm_security_01/self_prot... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 171 条 / 171 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 128 条 / 128 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 171 条 / 171 edges)       │
+│      依赖关系图 / Dependency Graph (共 128 条 / 128 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
-│   [import_depends]: 168 条 / edges                               │
+│   [import_depends]: 125 条 / edges                               │
 │   [config_depends]: 3 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                [import_depends] (168 条 / edges)                 │
+│                [import_depends] (125 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → __init__.py                                      │
 │   __init__.py → __init__.py                                      │
@@ -742,12 +669,12 @@ graph TD
 │   cli.py → convergence_checker.py                                │
 │   cli.py → game_day_scheduler.py                                 │
 │   cli.py → game_day_runner.py                                    │
-│   ...还有 119 条 / 119 more edges                                │
+│   ...还有 76 条 / 76 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
 **[config_depends]** (3 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 171 条)
+> (最多显示前 50 条依赖边，共 128 条)
 
 ```
 

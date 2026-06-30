@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 03:02:36
+%% 生成时间: 2026-07-01 03:09:21
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 822, 依赖边数: 1008
+%% 模块数: 819, 依赖边数: 1005
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___race_context_propagation_py["...rs/check_trace_context_propagation.py [prototype]"]
         scripts_governance_d5_architecture_detectors___init___py["...d5_architecture/detectors/__init__.py [prototype]"]
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
-        %% ... 还有 722 个模块未显示
+        %% ... 还有 719 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -129,7 +129,6 @@ graph TD
     src_zephyr_governance_delegation_engine_py -->|import_depends| src_zephyr_governance_escalation_models_py
     src_zephyr_governance_escalation_engine_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_escalation_smoke_tests_py -->|import_depends| src_zephyr_governance___init___py
-    src_zephyr_governance_index_generator_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_lifecycle_py -->|import_depends| src_zephyr_governance___init___py
     src_zephyr_governance_memory_provider_py -->|import_depends| src_zephyr_governance_provider_base_py
     src_zephyr_governance_model_provider_data_py -->|import_depends| src_zephyr_governance___init___py
@@ -191,7 +190,8 @@ graph TD
     src_zephyr_governance_drift_detection_reconciler_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_scan_mutex_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_runbook_generator_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    %% ... 还有 506 条域内依赖未显示
+    src_zephyr_governance_drift_detection_state_machine_py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
+    %% ... 还有 503 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
@@ -617,6 +617,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 586 条
+    %% 域内依赖: 583 条
     %% 跨域入边: 151 条
     %% 跨域出边: 271 条
