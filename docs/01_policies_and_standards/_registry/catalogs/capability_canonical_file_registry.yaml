@@ -1483,7 +1483,7 @@ capabilities:
     aliases:
       - runbook_generator
     description: >-
-      Drift Runbook Generator — 漂移演练手册自动生成 §6.9。 module_id: MOD-INF-023 模块级注册（ARCH-034
+      Drift Runbook Generator — 漂移演练手册自动生成。 module_id: MOD-INF-023 模块级注册（ARCH-034
       ，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototy
       pe。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "runbook_gen
       erator" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。

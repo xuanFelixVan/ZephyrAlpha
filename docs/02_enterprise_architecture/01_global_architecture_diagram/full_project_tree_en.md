@@ -631,7 +631,7 @@ docs/  (1 files: .yaml(1))
 │   │   ├── constraint_violations.md  — Constraint violations  
 │   │   └── design_vs_production.md  — Design vs production  
 │   ├── 04_architecture_principles_decisions/  — Architecture principles & decisions  (1 files: .md(1))  
-│   │   └── dependency_architecture_panorama.md  — 依赖与路径全景图能力定位书  
+│   │   └── dependency_path_panorama.md  — 依赖与路径全景图能力定位书  
 │   ├── generated/  — Generated artifacts: dependency graphs  
 │   │   └── domains/  — Domain dependency graphs: Mermaid per domain  (53 files: .mmd(53))  
 │   ├── sample/  — Sample files: format reference  (7 files: .md(6), .mmd(1))  
@@ -1696,7 +1696,7 @@ zephyr/  (2 files: .py(1), .yaml(1))
 │   ├── resource_guard.py  — Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。  
 │   ├── roi_engine.py  — ROI Engine — roi_engine.py  
 │   ├── rollback_bridge.py  — G-CT-006 契约：Drift → Rollback 漂移触发回滚.  
-│   ├── runbook_generator.py  — Drift Runbook Generator — 漂移演练手册自动生成 §6.9。  
+│   ├── runbook_generator.py  — Drift Runbook Generator — 漂移演练手册自动生成。  
 │   ├── scan_mutex.py  — Scan Mutex — scan_mutex.py  
 │   ├── self_check.py  — Self-Drift Check — self_check.py  
 │   ├── self_test_verifier.py  — Self Test Verifier — self_test_verifier.py  
@@ -2261,7 +2261,7 @@ zephyr/  (2 files: .py(1), .yaml(1))
 │   │   ├── reconciler.py  — Auto Reconciler — reconciler.py  
 │   │   ├── resource_guard.py  — Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。  
 │   │   ├── roi_engine.py  — ROI Engine — roi_engine.py  
-│   │   ├── runbook_generator.py  — Drift Runbook Generator — 漂移演练手册自动生成 §6.9。  
+│   │   ├── runbook_generator.py  — Drift Runbook Generator — 漂移演练手册自动生成。  
 │   │   ├── scan_mutex.py  — Scan Mutex — scan_mutex.py  
 │   │   ├── self_check.py  — Self-Drift Check — self_check.py  
 │   │   ├── self_test_verifier.py  — Self Test Verifier — self_test_verifier.py  
