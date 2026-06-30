@@ -399,24 +399,24 @@ registered_ids:
   - module_id: OPS-VC-002
     title: "Vibe Coding Session 状态机规则"
     path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-machine.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: deprecated
     deprecated_reason: "文件从未创建（幽灵条目）——2026-05-02 审计发现。Session 状态机操作已合并到 vibe-coding-session-state-runbook.md（OPS-VC-004）"
   - module_id: OPS-VC-004
     title: "AI 与系统事故响应手册"
     path: "docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
     note: "合并 OPS-VC-004（emergency-playbook）+ OPS-VC-006（incident-playbook）"
   - module_id: OPS-VC-005
     title: "Vibe Coding 会话门禁检查清单"
     path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
   - module_id: OPS-DEV-002
     title: "架构变更操作手册"
     path: "docs/01_policies_and_standards/governance/architecture/architecture-change-playbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: deprecated
     note: "原 operational/architecture/ 于 2026-05-01 删除，内容待归入 governance/architecture/"
   - module_id: MOD-INF-003
@@ -440,7 +440,7 @@ registered_ids:
   - module_id: DOM-L00-002
     title: "连接器入职操作手册"
     path: "docs/01_policies_and_standards/domains/L00_data_source/operational/connector-onboarding-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
   - module_id: DOM-L02-001
     title: "因子质量门控"
@@ -450,7 +450,7 @@ registered_ids:
   - module_id: DOM-L02-002
     title: "因子入职操作手册"
     path: "docs/01_policies_and_standards/domains/L02_alpha_factor/operational/factor-onboarding-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
   - module_id: DOM-L04-001
     title: "风控限额策略"
@@ -460,7 +460,7 @@ registered_ids:
   - module_id: DOM-L04-002
     title: "止损配置操作手册"
     path: "docs/01_policies_and_standards/domains/L04_risk_management/operational/stop-loss-config-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
   - module_id: DOM-L07-001
     title: "盘后报告策略"
@@ -470,7 +470,7 @@ registered_ids:
   - module_id: DOM-L07-002
     title: "分析管线操作手册"
     path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics-pipeline-runbook.md"
-    doc_type: operational_rule
+    doc_type: policy
     status: draft
 
 # 代码模块 ID 注册表

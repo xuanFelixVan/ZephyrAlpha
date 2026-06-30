@@ -101,7 +101,7 @@ templates:
     path: "docs/01_policies_and_standards/templates/playbook-template.md"
     version: "0.2.0"
     for: "Playbook 的创建——应急响应流程，事件驱动 + 概述段"
-    template_for: "operational_rule"
+    template_for: "policy"
     status: "active"
     last_updated: "2026-05-13"
 
@@ -110,7 +110,7 @@ templates:
     path: "docs/01_policies_and_standards/templates/runbook-runbook.md"
     version: "0.2.0"
     for: "Runbook 的创建——例行操作流程，日历驱动 + 概述段"
-    template_for: "operational_rule"
+    template_for: "policy"
     status: "active"
     last_updated: "2026-05-13"
 

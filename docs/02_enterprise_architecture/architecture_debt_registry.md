@@ -1708,13 +1708,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（格式约定违反/元规则不一致）
 **修复方向**：统一为rule_id格式
 
-#### 5.11.5 doc_type operational_rule指向真空目录（MEDIUM）
+#### 5.11.5 doc_type operational_rule指向真空目录（MEDIUM）✅ RESOLVED（P7-T1, 2026-06-30）
 
 **证据**：
 - [doc_type_vocabulary.yaml:65-74](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml#L65) operational_rule的allowed_directories声明`docs/01_policies_and_standards/operational/`
 - 该目录不存在（LS验证）
 **病根**：根因1（DCR-002校验基础错误）
 **修复方向**：创建目录或修正allowed_directories
+**解决**：v3.1.0 operational_rule 合并入 policy（P7-T1 commit 848cd19be），doc_type_vocabulary.yaml 不再声明 operational_rule，debt 自动消除
 
 #### 5.11.6 script_manifest domain/description字段为垃圾值（LOW，1聚合 = 多条）
 

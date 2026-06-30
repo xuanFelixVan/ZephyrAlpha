@@ -102,7 +102,7 @@ ttl: permanent
 | F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | gate | 域D-SIGLEGACY(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D_SIMULATION |  | hard | gate | 域D-SIMULATION(仿真)当前92模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D_TRADING |  | hard | gate | 域D-TRADING(交易运营)当前163模块超过上限140，需拆分或提升上限 |
-|  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
+|  | procedural policy 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
 
 ## 完整约束清单
 
@@ -166,4 +166,4 @@ ttl: permanent
 | F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D_SIGLEGACY |  | hard | open |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D_SIMULATION |  | hard | open |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D_TRADING |  | hard | open |
-|  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |
+|  | procedural policy 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |

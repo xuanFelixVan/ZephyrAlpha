@@ -278,7 +278,7 @@ repos:
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
       # 真源声明：stable D-008/D-011 产出
       # 校验范围：docs/01_policies_and_standards/ 下所有 .md 和 .yaml 文件
-      # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下无operational_rule / operational下无policy
+      # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下policy必须declarative / operational下policy必须procedural
       # 骨架阶段：--warn-only 模式（只警告不阻塞），待验证稳定后转 --ci 强制
       - id: gate-16-architecture-compliance
         name: "GATE-16: 架构合规校验（architecture-contract v1.0.0）"
@@ -288,7 +288,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^docs/01_policies_and_standards/.*\\.(md|yaml|yml)$"
-        description: "架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance无operational_rule / operational无policy），骨架阶段 warn-only"
+        description: "架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance下policy必须declarative / operational下policy必须procedural），骨架阶段 warn-only"
 
       # ── GATE-17: 孤儿.py文件检测（AGENTS.md §6.5）──
       # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定）
