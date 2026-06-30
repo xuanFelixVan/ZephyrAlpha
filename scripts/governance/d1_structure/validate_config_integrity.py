@@ -81,7 +81,7 @@ import tomllib
 from collections import Counter
 
 import yaml
-from _shared.constants import CONFIG_DIR, EXIT_PASS
+from _shared.constants import CONFIG_DIR, EXIT_PASS, SRC_DIR  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_DIR import（L8 l8_code_config_reconciliation 使用）
 
 EXCLUDE_DIRS: tuple[str, ...] = ()
 
