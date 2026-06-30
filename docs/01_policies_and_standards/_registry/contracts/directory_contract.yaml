@@ -259,6 +259,249 @@ directory_extensions:
     zone: temporary
     overrides_parent: true
 
+  # --- 根级兜底声明（P1 阶段新增，2026-07-01 治裸奔）---
+  # 防未来文件落入 docs/、src/ 根级无约束
+  - path: "docs/"
+    allowed: [".md", ".yaml"]
+    forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+    note: "docs/ 根兜底——子目录已精细化，本条防未来文件落入根级"
+
+  - path: "src/"
+    allowed: [".py", ".yaml", ".json"]
+    forbidden: [".bak", ".baseline", ".md"]
+    zone: neutral
+    note: "src/ 根兜底——子目录已精细化（src/zephyr/、src/config/），本条防未来文件落入根级"
+
+  # --- 数据区（中性区）---
+  # data/ 是运行态数据唯一合法位置，子目录按业务用途精细化
+  # 真源：directory_contract.yaml P1 阶段新增（2026-07-01 治 34 个裸奔目录）
+  # 调研依据：data/ 下 35 个子目录扩展名分布调研报告
+  - path: "data/"
+    allowed: [".json", ".jsonl", ".yaml", ".md", ".csv", ".db", ".duckdb", ".sqlite3", ".bin", ".index", ".wal", ".sql", ".ndjson", ".log", ".tar.gz", ".mmd", ".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp"]
+    zone: neutral
+    note: "运行态数据区根声明——子目录按业务用途精细化，本条作为兜底"
+
+  # A 类 - 纯 JSON 状态/快照（8 个目录）
+  - path: "data/budget/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/circadian_tasks/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/classified/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/governance/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+    note: "治理看门狗状态——.tmp 为运行时产物，显式禁止入库"
+  - path: "data/health_snapshots/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/model_learning/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/security_baselines/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/snapshots/"
+    allowed: [".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+
+  # B 类 - 纯 JSONL 日志/流式数据（4 个目录）
+  - path: "data/audit_logs/"
+    allowed: [".jsonl"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/metrics/"
+    allowed: [".jsonl"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/model_profiles/"
+    allowed: [".jsonl"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json"]
+    zone: neutral
+    overrides_parent: true
+    note: "模型基准测试结果——2026-07-01 调研发现 200+ 空文件，需后续清理"
+  - path: "data/test_audit_bridge/"
+    allowed: [".jsonl"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json"]
+    zone: neutral
+    overrides_parent: true
+
+  # C 类 - 纯 YAML 规则/配置/契约（5 个目录）
+  - path: "data/capability_cards/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/contracts/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/cleanup_log/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/feedback_proposals/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/work_dags/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+
+  # D 类 - 数据库文件（4 个目录）
+  - path: "data/databases/"
+    allowed: [".db", ".duckdb", ".db-wal", ".db-shm", ".json", ".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".yaml", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "数据库文件区——governance.db(SQLite)+market.duckdb+元数据；.db-wal/.db-shm 为 SQLite 旁车"
+  - path: "data/databases/governance_metadata/"
+    allowed: [".json", ".yaml", ".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "governance.db 提取的审计元数据——70+ 个 .json + merge_plan.yaml + content_type_inventory.md"
+  - path: "data/vector_db/"
+    allowed: [".sqlite3", ".bin", ".index", ".db", ".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "主向量数据库 ChromaDB——含 HNSW 向量数据(.bin)+命名索引(.index)+元数据库(.db)"
+  - path: "data/semantic_test/"
+    allowed: [".sqlite3", ".bin"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/vector_db_e2e_test/"
+    allowed: [".sqlite3", ".bin"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+
+  # E 类 - 报告/归档任务卡（2 个目录）
+  - path: "data/reports/"
+    allowed: [".md", ".json"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".yaml", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "诊断/验证报告——DM-018~DM-031 系列任务报告"
+  - path: "data/archive/"
+    allowed: [".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "已归档任务卡——结构化任务数据"
+
+  # F 类 - 运行时缓存（1 个目录）
+  - path: "data/cache/"
+    allowed: [".yaml", ".json", ".ndjson", ".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "运行时缓存——含 .ndjson 新行分隔 JSON 格式"
+
+  # G 类 - 复合遥测（1 个目录）
+  - path: "data/telemetry/"
+    allowed: [".jsonl", ".json", ".md", ".tar.gz"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".yaml"]
+    zone: neutral
+    overrides_parent: true
+    note: "遥测数据——含无扩展名看门狗心跳文件（.watchdog_heartbeat_wd-*），需特殊处理"
+
+  # H 类 - 资产索引及归档遗留（2 个目录）
+  - path: "data/asset_index/"
+    allowed: [".yaml", ".csv"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "资产索引主目录——archive/ 子目录有归档遗留例外"
+  - path: "data/asset_index/archive/"
+    allowed: [".yaml", ".json", ".md", ".py", ".mmd"]
+    forbidden: [".sh", ".ps1", ".bak", ".baseline", ".tmp", ".jsonl", ".csv"]
+    zone: neutral
+    overrides_parent: true
+    note: "归档遗留区——含历史迁移脚本(.py)+架构视图(.md/.mmd)+遗留 depmap(.json)"
+
+  # I 类 - 其他单功能目录（4 个目录）
+  - path: "data/auto_fix/"
+    allowed: [".wal"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "自动修复 WAL（Write-Ahead Log）"
+  - path: "data/backups/"
+    allowed: [".db", ".sql"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "数据库备份——SQLite(.db)+PostgreSQL 转储(.sql)"
+  - path: "data/dream_archive/"
+    allowed: [".json", ".log"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/brain/"
+    allowed: [".json", ".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+    note: "模型大脑——passports/quick_profiles(.json)+岗位矩阵(.yaml)"
+
+  # Z 类 - 空占位目录（5 个 drift_* 目录）
+  - path: "data/drift_audit/"
+    allowed: [".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/drift_baselines/"
+    allowed: [".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/drift_checkpoints/"
+    allowed: [".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/drift_handoffs/"
+    allowed: [".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+  - path: "data/drift_runbooks/"
+    allowed: [".gitkeep"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".md", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    overrides_parent: true
+
 # ============================================================
 # 3. 根目录白名单（Root Directory Whitelist）
 # 来源：trae_047 §gov_eng_002_directory_mapping actions step 3
