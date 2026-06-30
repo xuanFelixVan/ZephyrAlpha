@@ -27,10 +27,11 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.security.access_control.auto_fix_engine_03.models import BudgetDecision, BudgetInfo, FixLevel
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
-_DB_PATH = Path("data/databases/governance.db")
+_DB_PATH = DB_PATH
 
 
 class FixBudget:

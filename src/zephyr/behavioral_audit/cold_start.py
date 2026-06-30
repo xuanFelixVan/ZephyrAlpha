@@ -50,6 +50,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.shared.io.paths import DB_PATH
+
 REQUIRED_DIRS: list[str] = [
     "data/drift",
     "data/checkpoints",
@@ -64,8 +66,7 @@ REQUIRED_ENV_VARS: list[str] = [
 ]
 
 
-DEFAULT_DB_PATH: str = "data/databases/governance.db"
-
+DEFAULT_DB_PATH: str = str(DB_PATH)
 
 DRIFT_EVENTS_SCHEMA: str = """
 
