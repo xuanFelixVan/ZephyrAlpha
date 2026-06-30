@@ -27,6 +27,21 @@ from zephyr.governance.commit_gates.directory_contract_gate import (  # noqa: E4
 )
 from zephyr.governance.commit_gate_registry import GateSpec  # noqa: E402
 
+# ── check_directory_contract.py 纯函数加载（TestCheckDeprecatedDirectory 用） ──
+# check_directory_contract.py 在 scripts/ 下（非包模块），用 importlib 从文件路径加载。
+# 模块自身有 bootstrap（L54-57）把 _shared 所在目录加到 sys.path，exec_module 时自动执行。
+import importlib.util  # noqa: E402
+
+_SCRIPT_DIR = Path(__file__).resolve().parent.parent / "scripts" / "governance" / "d1_structure"
+_spec = importlib.util.spec_from_file_location(
+    "_check_directory_contract_under_test",
+    _SCRIPT_DIR / "check_directory_contract.py",
+)
+_mod = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_mod)
+check_deprecated_directory = _mod.check_deprecated_directory
+scan_files = _mod.scan_files
+
 
 class _MockGateway:
     """Mock gateway——DCR gate 只用 project_root 属性。"""
@@ -230,3 +245,79 @@ class TestRelativePathHandling:
         rel_arg = captured_cmd[2]
         assert "\\" not in rel_arg, f"expected forward slash, got {rel_arg!r}"
         assert rel_arg == "docs/sub/foo.py"
+
+
+class TestCheckDeprecatedDirectory:
+    """check_deprecated_directory 纯函数测试——检测文件是否位于废弃目录。
+
+    验证 directory_contract.yaml §7 deprecated_directories 的检测逻辑：
+    前缀匹配 + "/" 边界匹配（防 docs/09_audit 误报 docs/09_audit_other）。
+    2026-06-30 补全：原 scan_files 漏检 deprecated_directories，新增本函数修复。
+    """
+
+    def test_file_in_deprecated_dir_detected(self):
+        """文件在废弃目录内 → 命中 DCR-DEPRECATED。"""
+        contract = {
+            "deprecated_directories": [
+                {"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}
+            ]
+        }
+        findings = check_deprecated_directory("docs/_archive/old.md", contract)
+        assert len(findings) == 1
+        assert findings[0]["rule"] == "DCR-DEPRECATED"
+        assert "docs/_archive" in findings[0]["detail"]
+
+    def test_file_in_safe_dir_not_flagged(self):
+        """文件在安全目录 → 放行（无 finding）。"""
+        contract = {
+            "deprecated_directories": [
+                {"path": "docs/_archive", "reason": "已迁移", "migrated_to": "docs/01_policies"}
+            ]
+        }
+        findings = check_deprecated_directory("docs/01_policies/new.md", contract)
+        assert findings == []
+
+    def test_exact_deprecated_path_detected(self):
+        """精确路径命中（rel_path 本身就是废弃目录路径）。"""
+        contract = {
+            "deprecated_directories": [{"path": "docs/_archive"}]
+        }
+        findings = check_deprecated_directory("docs/_archive", contract)
+        assert len(findings) == 1
+
+    def test_prefix_similar_not_false_positive(self):
+        """前缀相似非子目录不误报（docs/09_audit vs docs/09_audit_other）。
+
+        边界匹配：rel_norm == dep_path or rel_norm.startswith(dep_path + "/")。
+        docs/09_audit_other 不以 "docs/09_audit/" 开头，故不误报。
+        """
+        contract = {
+            "deprecated_directories": [{"path": "docs/09_audit"}]
+        }
+        findings = check_deprecated_directory("docs/09_audit_other/foo.md", contract)
+        assert findings == []
+
+    def test_empty_deprecated_directories(self):
+        """contract 无 deprecated_directories → 放行。"""
+        findings = check_deprecated_directory("any/file.py", {})
+        assert findings == []
+
+    def test_scan_files_calls_check_deprecated_directory(self, monkeypatch):
+        """scan_files 集成——验证 scan_files 调用 check_deprecated_directory（防漏调）。
+
+        用 monkeypatch 替换为 spy，验证每个文件都被检测。防未来误删 scan_files L415 的调用。
+        其他 check 函数 stub 为空（避免 contract 不完整报错，聚焦 deprecated 调用验证）。
+        """
+        called = []
+
+        def _spy(rel_path, contract):
+            called.append(rel_path)
+            return []
+
+        monkeypatch.setattr(_mod, "check_deprecated_directory", _spy)
+        monkeypatch.setattr(_mod, "check_doc_type_directory", lambda *a, **k: [])
+        monkeypatch.setattr(_mod, "check_extension", lambda *a, **k: [])
+        monkeypatch.setattr(_mod, "check_root_whitelist", lambda *a, **k: [])
+        monkeypatch.setattr(_mod, "check_ttl_zone", lambda *a, **k: [])
+        scan_files(["foo.py", "bar.py"], {})
+        assert called == ["foo.py", "bar.py"]

