@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.data._service_registration
+# [MODULE] zephyr.governance.service_registration
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if D-DATA modules unavailable; KeyError if registry key invalid
 # [TESTS] tests/unit/test_shared_core.py
-# [A_module] module_id=MOD-DAT__service_registration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-service_registration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """

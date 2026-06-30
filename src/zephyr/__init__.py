@@ -132,7 +132,7 @@ _bootstrap_timer.start()
 # 延迟注册，避免循环导入。
 def _deferred_service_registration():
     try:
-        from zephyr.governance._service_registration import register_services
+        from zephyr.governance.service_registration import register_services
 
         register_services()
     except Exception:
