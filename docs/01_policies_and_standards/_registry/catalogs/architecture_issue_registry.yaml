@@ -220,8 +220,27 @@ entries:
   severity: P1高
   adjudication: |
     trae_060 §4元问题审查治本。4形态问题（全部需治本，无合理现状）：(1)根平铺1699个.py文件（远超预估"200+"，新AI无法定位+无分类指引）；(2)contract/（元测试5文件：anchors/import_chain/schema_stability）与contracts/（契约测试16文件：test_ct_模块对_001）单复数歧义；(3)平铺与子目录混合（根1699平铺+unit/289内平铺+13子目录）；(4)子目录粒度混合维度（unit/integration/e2e按类型，governance/llm_security/agent_rbac按功能域，contract/contracts按测试种类，test_code_dedup_engine违规test_前缀目录名）。额外发现：根目录2个verify_result.txt临时产物遗留。治本：按文件名前缀归功能域子目录（trae_060 §1原则①能现成不创造——用文件名既有前缀归位，不新建分类维度）；contract/合并入contracts/_meta/消除单复数歧义；删2个txt临时产物；test_code_dedup_engine/去test_前缀。本次迁移明确前缀簇406文件（a2a45/skill58/trae_rules48/kb22/ke4/ct33/fl81/fle15/self22/auto20/audit27/f_lifecycle13/governance10/llm8），剩余1290个_UNMATCHED文件待后续session接续（按前缀细化或逐文件归位）。
-  fix_phase: 进行中（2026-06-30，批次0-16：登记本议题→额外发现治理→14簇迁移→pytest验证→汇报）
+  fix_phase: 进行中（2026-06-30，批次0+1已完成 commit 68605272：登记本议题+contract/合并到contracts/_meta/+test_code_dedup_engine/去test_前缀；delete文件清理+gateway bug修复转ARCH-030；14簇迁移待施工）
   status: open
+  related_rules:
+  - TRAE-060
+  created: '2026-06-30'
+  last_updated: '2026-06-30'
+- issue_id: '#ARCH-030'
+  title: GitCommitGateway对staged/unstaged delete文件的git add bug（pathspec did not match）
+  severity: P1高
+  adjudication: |
+    trae_060 §4治本。GitCommitGateway._commit_locked 第484-503行对 staged/unstaged delete
+    文件执行 git add --pathspec-from-file 报错（fatal: pathspec did not match any files），
+    导致整个 commit 流程中断。根因：git add 对工作区不存在的文件失败（需 git rm 替代）。
+    _check_staged_delete_fallback 只修了 CLI 层校验（允许 staged delete 通过校验进入 gw.commit），
+    未修 gateway 层 git add 步骤。修复（commit 66b381a9）：分离 normal_files 为 existing
+    和 deleted，existing 用 git add，deleted 用 git rm --cached --ignore-unmatch（幂等，
+    跳过已 staged delete）。28个 test_git_commit_gateway.py 测试全通过无回归。本次修复
+    同时清理 ARCH-029 批次1延后的3个 delete 文件（verify_result×2 + contract/__init__.py）。
+    关联：ARCH-029 tests/目录治理的必要前置（delete 文件清理依赖此修复）。
+  fix_phase: 已完成（2026-06-30，commit 66b381a9：修复 _commit_locked 分离 existing/deleted + 清理3个delete文件）
+  status: resolved
   related_rules:
   - TRAE-060
   created: '2026-06-30'
