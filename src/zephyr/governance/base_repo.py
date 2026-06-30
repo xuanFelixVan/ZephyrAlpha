@@ -47,6 +47,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.shared.task_types import TaskCard, TaskStatus
+from zephyr.shared.utils.time_utils import now_iso as _now_iso_true_source  # 5.12.3 修复：统一Z后缀真源
 
 logger = logging.getLogger(__name__)
 
@@ -179,9 +180,10 @@ _UTC = UTC
 
 
 def now_iso() -> str:
-    """返回当前 UTC 时间的 ISO 8601 字符串。"""
-
-    return datetime.now(_UTC).isoformat()
+    """返回当前 UTC 时间的 ISO 8601 字符串（Z 后缀真源：shared/utils/time_utils.now_iso）。"""
+    # 5.12.3 修复：原 datetime.now(_UTC).isoformat() 产出 "+00:00" 后缀，
+    # 与真源 shared/utils/time_utils.now_iso() 的 "Z" 后缀漂移，导致字符串排序错乱。
+    return _now_iso_true_source()
 
 
 def _new_id(prefix: str = "") -> str:

@@ -84,8 +84,10 @@ def _init_shared_monitoring_modules() -> None:
     except Exception as e:
         logger.warning("Shared monitoring: HealthcheckService init failed: %s", e)
 
-    # 3. AggregateHealth — 延迟到 observability_02 就绪（需 LifecycleManager）
-    # TODO DM-201247: 当 HealthMonitor 分钟级调度就绪后接入
+    # 3. AggregateHealth — DM-201247 条件已满足（HealthMonitor._monitor_loop 已实现分钟级调度），
+    #    但 AggregateHealth 需 LifecycleManager 实例，本初始化阶段不可用。
+    #    AggregateHealth 接入改由 AutoRuntimeCore.boot() 负责（持有 LifecycleManager）。
+    # 5.12.6 修复：清理 stale TODO DM-201247（条件已满足，接入责任转移至 AutoRuntimeCore）
 
     # 4. HealthDiscovery — 注册系统健康检查
     try:
@@ -325,7 +327,8 @@ def register_boot_hooks() -> None:
                     task = tr.get(task_id)
                     source_bp = getattr(task, "source_blueprint", "") if task else ""
                 except Exception:
-                    pass
+                    # 5.12.1 修复：原 except: pass 静默吞 task_repo 查询失败（三对齐检查被静默跳过）
+                    logger.debug("task_repo.get failed for triple_align check task_id=%s", task_id, exc_info=True)
                 if not source_bp:
                     return
                 result = check_triple_alignment(specific_module=source_bp, warn_only=False)
@@ -502,7 +505,8 @@ def register_boot_hooks() -> None:
             _bus.subscribe("blueprint.changed", _on_blueprint_changed_triple_align)
             _bus.subscribe("blueprint.decomposed", _on_blueprint_changed_triple_align)
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 EventBus 订阅失败（blueprint 变更事件丢失→三对齐检查不触发）
+            logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
 
         logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
     except Exception as e:

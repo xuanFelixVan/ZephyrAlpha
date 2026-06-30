@@ -47,6 +47,12 @@ class WinFSDefense:
         return normalized
 
     def safe_open(self, filepath: str, mode: str = "r", encoding: str = "utf-8"):
+        """安全打开文件——路径经 normalize_path 规范化后调用内置 open。
+
+        5.12.9 修复：返回的文件对象支持 context manager 协议（__enter__/__exit__），
+        调用方**必须**使用 ``with safe_open(...) as f:`` 形式以确保句柄释放，
+        避免遗忘 close 导致 sqlite/文件句柄泄漏。
+        """
         safe_path = self.normalize_path(filepath)
         return open(safe_path, mode, encoding=encoding)
 

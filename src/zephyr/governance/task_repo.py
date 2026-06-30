@@ -305,9 +305,13 @@ def _is_valid_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool
 _UTC = UTC
 
 
-def now_iso() -> str:
-    """返回当前 UTC 时间的 ISO 8601 字符串。"""
-    return datetime.now(_UTC).isoformat()
+def now_iso() -> str:  # noqa: F811  5.12.3 修复：保留签名以兼容调用方，但委托真源
+    """返回当前 UTC 时间的 ISO 8601 字符串（Z 后缀真源：shared/utils/time_utils.now_iso）。"""
+    # 5.12.3 修复：原 datetime.now(_UTC).isoformat() 产出 "+00:00" 后缀，
+    # 与模块顶部已导入的真源 now_iso (line 90) 漂移，导致字符串排序错乱。
+    # 模块顶部已 `from zephyr.shared.utils.time_utils import now_iso`，此处直接复用。
+    from zephyr.shared.utils.time_utils import now_iso as _now_iso_true_source
+    return _now_iso_true_source()
 
 
 def _new_id(prefix: str = "") -> str:

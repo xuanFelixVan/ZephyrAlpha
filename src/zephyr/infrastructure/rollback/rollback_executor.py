@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import importlib
 import json
+import logging
 import os
 import subprocess
 import uuid
@@ -52,6 +53,8 @@ from typing import Any
 
 from zephyr.infrastructure.rollback.rollback_lock import LockPriority, RollbackLock
 from zephyr.infrastructure.rollback.sqlite_dumper import SqliteDumper
+
+logger = logging.getLogger(__name__)
 
 _AUDIT_AVAILABLE = False
 try:
@@ -147,7 +150,8 @@ class RollbackExecutor:
             try:
                 self._audit_writer = _CoreAuditWriter()
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞审计写入器初始化失败（审计链断链不可见）
+                logger.warning("AuditWriter init failed; audit trail will fall back to jsonl", exc_info=True)
 
     def _generate_execution_id(self) -> str:
         ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
@@ -184,7 +188,8 @@ class RollbackExecutor:
         try:
             path.unlink(missing_ok=True)
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 in-flight 标记清理失败（残留标记会导致下次回滚误判）
+            logger.debug("in-flight marker unlink failed for execution_id=%s", execution_id, exc_info=True)
 
     def _recover_stale_in_flight(self) -> list[str]:
         recovered: list[str] = []
@@ -249,7 +254,8 @@ class RollbackExecutor:
                 remote_not_ahead = False
                 errors.append("Remote may be ahead of local")
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 git merge-base 检查失败（无 remote 时属预期，但仍需可观测）
+            logger.debug("preflight merge-base check failed (expected if no remote)", exc_info=True)
 
         passed = len(errors) == 0
         return PreflightResult(
@@ -313,7 +319,8 @@ class RollbackExecutor:
                 if self._owner_session_id and self._owner_session_id in log_output:
                     blocked.append(f)
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 git log 查询失败（owner 检测漏判不可见）
+                logger.debug("git log owner detection failed for file=%s", f, exc_info=True)
         return blocked
 
     def discard_changes(
@@ -372,14 +379,16 @@ class RollbackExecutor:
                 self._run_git(["checkout", "--", f])
                 files_discarded.append(f)
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 discard 失败（回滚失败不可见——最危险）
+                logger.warning("git checkout discard failed for file=%s (rollback incomplete)", f, exc_info=True)
 
         for f in staged_files:
             if f in discardable:
                 try:
                     self._run_git(["reset", "HEAD", "--", f])
                 except Exception:
-                    pass
+                    # 5.12.1 修复：原 except: pass 静默吞 staged reset 失败（staged 变更残留）
+                    logger.warning("git reset HEAD failed for staged file=%s", f, exc_info=True)
 
         audit_record = self._build_discard_audit(
             decision=DiscardDecision.DISCARD,
@@ -548,7 +557,8 @@ class RollbackExecutor:
                 self._audit_writer.write(event)
                 return
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞审计写入失败（审计链断链不可见）
+                logger.warning("AuditWriter.write failed for discard audit; falling back to jsonl", exc_info=True)
         try:
             audit_dir = Path(".zephyr/audit")
             audit_dir.mkdir(parents=True, exist_ok=True)
@@ -556,7 +566,8 @@ class RollbackExecutor:
             with open(audit_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（审计记录彻底丢失）
+            logger.error("jsonl audit fallback write failed for discard audit (audit record LOST)", exc_info=True)
 
     def cancel_pending_rollback(self, task_id: str, reason: str, token: str = "") -> dict[str, Any]:
         if not token:
@@ -784,7 +795,8 @@ class RollbackExecutor:
                 _exit = resolve_exit_code(result.exit_code)
                 object.__setattr__(result, "exit_code_resolution", _exit)
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞 exit_code 解析失败（门禁决策信号丢失）
+                logger.debug("exit_code resolution failed for execution_id=%s", execution_id, exc_info=True)
 
             self._write_in_flight(execution_id, "complete", "SUCCESS")
 
@@ -921,7 +933,8 @@ class RollbackExecutor:
                 try:
                     shutil.rmtree(cache_dir)
                 except Exception:
-                    pass
+                    # 5.12.1 修复：原 except: pass 静默吞 pycache 清理失败（残留缓存可能导致后续导入幽灵模块）
+                    logger.debug("pycache rmtree failed for %s", cache_dir, exc_info=True)
 
             return True
         except Exception:
@@ -955,7 +968,8 @@ class RollbackExecutor:
                 self._audit_writer.write(event)
                 return
             except Exception:
-                pass
+                # 5.12.1 修复：原 except: pass 静默吞操作审计写入失败（审计链断链不可见）
+                logger.warning("AuditWriter.write failed for op audit; falling back to jsonl", exc_info=True)
         try:
             audit_dir = Path(".zephyr/audit")
             audit_dir.mkdir(parents=True, exist_ok=True)
@@ -963,4 +977,5 @@ class RollbackExecutor:
             with open(audit_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
         except Exception:
-            pass
+            # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（操作审计记录彻底丢失）
+            logger.error("jsonl audit fallback write failed for op audit (audit record LOST)", exc_info=True)
