@@ -233,6 +233,7 @@ directory_extensions:
     forbidden: [".py", ".md"]
     zone: neutral
     allowed_doc_types: []
+    note: "ARCH-038: 根目录平铺所有配置文件，禁止建模块归属子目录（如 capacity/、compression/）。仅允许语义子目录 runtime/（运行时状态）和 infra/（基础设施配置）。命名规则：小写+下划线，名字即责任"
 
   - path: "tests/"
     allowed: [".py", ".yaml", ".json", ".txt"]
@@ -571,6 +572,13 @@ directory_extensions:
     zone: neutral
     allowed_doc_types: []
     overrides_parent: true
+  # P8-FIX-S2: scripts/_archive/ 显式声明——消除契约盲区（磁盘存在 60+ .py 文件但未声明）
+  - path: "scripts/_archive/"
+    allowed: [".py", ".sh", ".ps1", ".yaml", ".json", ".md"]
+    forbidden: []
+    zone: neutral
+    allowed_doc_types: []
+    note: "归档区——已退役的脚本存放处，不参与活跃治理。allowed_doc_types=[] 豁免 doc_type 约束"
 
 # ============================================================
 # 3. 根目录白名单（Root Directory Whitelist）
@@ -724,3 +732,11 @@ deprecated_directories:
     consumers:
       - "check_directory_contract.py::check_deprecated_directory（commit 时阻断，2026-06-30 补全，directory_contract_gate 通过 subprocess 复用）"
       - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理，2026-06-30 修复为直接读本契约 §7 deprecated_directories，原 getattr(gateway, '_DEPRECATED_DIRS') 已废弃）"
+  # P8-FIX-S2: _backups 物理快照禁止——git history 已是真源，禁止在仓库内堆积物理快照
+  - path: "scripts/governance/meta/_backups"
+    reason: "物理快照违反向内收原则——git history 已是真源，禁止在仓库内堆积物理快照。74 个运行时状态快照（2026-05-07~09）已删除"
+    severity: error
+    history_lesson: "scripts/governance/meta/_backups/ 曾存放 runtime_state_snapshot 快照，每个含 12 YAML + 1 manifest，74 个快照共约 962 个文件，违反真源唯一原则（P8-FIX-S2 清理）"
+    consumers:
+      - "check_directory_contract.py::check_deprecated_directory（commit 时阻断新建）"
+      - "make_deprecated_directory_reconciler（post-commit 自动迁移+清理）"
