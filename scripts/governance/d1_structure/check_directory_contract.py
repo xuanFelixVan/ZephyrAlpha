@@ -107,8 +107,11 @@ def load_contract() -> dict:
 def load_doc_type_vocabulary() -> dict:
     """加载 doc_type_vocabulary.yaml，返回 doc_type → config 映射。
 
-    DCR-001/002 真源：doc_type 的 allowed_directories/forbidden_directories
-    由 doc_type_vocabulary.yaml 单一定义，本函数读取后建立查找表。
+    P3/P4 治本后用途收窄：DCR-001 真源已切到 directory_contract.yaml 的
+    allowed_doc_types 字段，本函数仅用于验证 doc_type 是否为已知合法值
+    （未知 doc_type 跳过 DCR-001 校验，交 GATE-15 负责）。
+    doc_type_vocabulary.yaml 的 allowed_directories/forbidden_directories
+    字段已于 P4 删除（目录约束迁移到 directory_contract.yaml）。
     """
     with open(_VOCABULARY_PATH, encoding="utf-8") as f:
         vocab = yaml.safe_load(f)

@@ -324,12 +324,12 @@ repos:
 
       # ── GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007）──
       # 真源：docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
-      #       + doc_type_vocabulary.yaml（DCR-001/002 的 allowed/forbidden_directories 真源）
-      #       收敛三维目录约束（目录→扩展名 + 目录→ttl + doc_type→目录交叉验证）为唯一真源
+      #       （目录维度约束唯一真源——P3/P4 治本后收敛 allowed_doc_types + 扩展名 + ttl + 白名单）
+      #       doc_type_vocabulary.yaml 仅用于 doc_type 合法性验证（GATE-15 主责）
       # 检测范围：staged 文件（新增/修改/重命名）
       # 检测内容：
-      #   DCR-001: doc_type 的 allowed_directories 包含文件所在目录（error，豁免临时/归档/runtime/trae/templates 区）
-      #   DCR-002: doc_type 的 forbidden_directories 不包含文件所在目录（error）
+      #   DCR-001: directory.allowed_doc_types 包含 file.doc_type（error，P3 改造，豁免临时/归档/runtime/trae/templates 区）
+      #   DCR-002: 已废弃（P3 改造——forbidden_directories 全为空，allowed_doc_types 白名单已足够）
       #   DCR-003: permanent zone 文件 ttl 必须=permanent
       #   DCR-004: temporary zone 文件 ttl 建议=task_bound（warning，不阻断）
       #   DCR-005: 文件扩展名必须在目录 allowed 清单内
@@ -339,13 +339,13 @@ repos:
       # 注：gate-src-no-data 是本契约 DCR-005/006 的子集（src/ 禁止 .json/.jsonl），
       #     保留 gate-src-no-data 作为纵深防御（其检查更具体的 src/data/ 路径）
       - id: gate-directory-contract
-        name: "GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml + doc_type_vocabulary.yaml）"
+        name: "GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml）"
         entry: python scripts/governance/d1_structure/check_directory_contract.py
         args: ["--staged"]
         language: system
         pass_filenames: false
         always_run: false
-        description: "目录契约校验——消费 directory_contract.yaml + doc_type_vocabulary.yaml，校验 staged 文件的 doc_type 目录归属/扩展名/ttl/根目录白名单合规性。DCR-001~007 全部启用"
+        description: "目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl + 白名单），校验 staged 文件合规性。DCR-001/003~007 启用，DCR-002 废弃（P3/P4 治本）"
 
       # ── GATE-VMS-SSOT: VMS 单一真源门禁（双检测：governance/vector_memory 漂移副本 + snapshot 方法重建）──
       # 权威依据：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4 snapshot 整体删除治本

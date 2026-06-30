@@ -54,8 +54,6 @@ values:
     ttl_default: permanent
     definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
     rule_form: declarative
-    allowed_directories: ["docs/01_policies_and_standards/policies/", "scripts/governance/"]
-    forbidden_directories: []
     required_fields: ["valid_from"]
     ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该"]
     examples: ["secret-management-policy.md", "access-control-policy.md"]
@@ -66,8 +64,6 @@ values:
     ttl_default: task_bound
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
     rule_form: procedural
-    allowed_directories: ["docs/01_policies_and_standards/operational/"]
-    forbidden_directories: []
     required_fields: ["verifiability"]
     ai_keywords: ["步骤", "流程", "操作规程", "runbook", "Step 1"]
     examples: ["connector-onboarding-runbook.md", "factor-onboarding-runbook.md"]
@@ -77,8 +73,6 @@ values:
     ttl_default: permanent
     definition: "注册表/配置——结构化数据清单或运行时配置定义，用于发现、索引和参数设置"
     rule_form: data
-    allowed_directories: ["docs/01_policies_and_standards/_registry/", "docs/03_modules/_manifests/", "docs/registry_of_registries.yaml", "src/zephyr/", "scripts/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: []
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry", "配置", "config", "参数", "settings"]
     examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
@@ -89,8 +83,6 @@ values:
     ttl_default: permanent
     definition: "目录级导航/概况文件——声明子域的职责边界、文件清单和依赖关系，或项目/目录概况说明。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
     rule_form: declarative
-    allowed_directories: ["docs/", "scripts/governance/"]
-    forbidden_directories: []
     required_fields: []
     ai_keywords: ["索引", "导航", "入口", "index", "README"]
     usage_note: "index.md 的 doc_type 是 index，不是 register。register 是结构化数据清单（机器解析为主的 YAML/JSON），index 是目录级导航（人+AI 读写为主的 Markdown）。对标 Linux FHS：/usr/share/doc/*/index.html vs /etc/apt/sources.list ——前者是索引入口，后者是注册表。"
@@ -101,11 +93,9 @@ values:
     ttl_default: permanent
     definition: "模板——可复用的文档结构骨架"
     rule_form: structural
-    allowed_directories: ["docs/01_policies_and_standards/templates/"]
-    forbidden_directories: []
     required_fields: ["completeness"]
     ai_keywords: ["模板", "骨架", "template", "boilerplate"]
-    usage_note: "本文档类型的 doc_type 约束主要用于'模板的模板'（如 templates/ 目录自身结构规范）。cookbook template（用于生成目标文档的预填骨架）的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint 而非 template）——这是对 PS-STD-001 §3.4 的语义澄清。对标 K8s Helm：模板文件的 kind 不改 'Template'，仍是 Deployment/Service。**注意**：templates/ 下的文件不受其 doc_type 的 allowed_directories 约束——模板是 Class Definition 而非 CI 实例，详见 §模板豁免规则。"
+    usage_note: "本文档类型的 doc_type 约束主要用于'模板的模板'（如 templates/ 目录自身结构规范）。cookbook template（用于生成目标文档的预填骨架）的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint 而非 template）——这是对 PS-STD-001 §3.4 的语义澄清。对标 K8s Helm：模板文件的 kind 不改 'Template'，仍是 Deployment/Service。**注意**：templates/ 下的文件豁免 directory_contract.yaml 的 allowed_doc_types 约束——模板是 Class Definition 而非 CI 实例，详见 §模板豁免规则 TMP-EX-001。"
     template_must_contain:
       - "frontmatter completeness 字段（5 级枚举: complete/incomplete/incomplete_first_party_only/incomplete_third_party_only/unknown）"
       - "COMPLIANCE_CHECKLIST HTML 注释块（机器可解析合规清单，含 REQUIRED_SECTIONS）"
@@ -121,8 +111,6 @@ values:
     ttl_default: permanent
     definition: "受控参考数据——定义枚举值域、术语定义或知识内容的机器可读清单，供 AI 和 CI 消费"
     rule_form: data
-    allowed_directories: ["docs/01_policies_and_standards/_registry/vocabularies/"]
-    forbidden_directories: []
     required_fields: []
     ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled", "术语", "定义", "glossary", "terminology", "知识", "knowledge"]
     examples: ["doc_type_vocabulary.yaml", "status_vocabulary.yaml"]
@@ -133,8 +121,6 @@ values:
     ttl_default: permanent
     definition: "蓝图——模块/子系统的完整设计文档和施工指导，包含架构决策、数据模型、接口定义、任务分解"
     rule_form: declarative
-    allowed_directories: ["docs/03_modules/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: []
     required_fields: ["valid_from", "architecture_layers", "last_verified"]
     ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块", "施工", "任务", "checklist", "construction", "plan"]
     examples: ["script-system-blueprint.md"]
@@ -147,8 +133,6 @@ values:
     ttl_default: task_bound
     definition: "审计/记录——时间戳驱动的记录、session log 或结构化审计产出物"
     rule_form: data
-    allowed_directories: ["session_logs/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: []
     required_fields: []
     ai_keywords: ["审计", "报告", "audit", "report", "日志", "session", "记录", "log", "timestamp"]
     examples: []
@@ -159,8 +143,6 @@ values:
     ttl_default: permanent
     definition: "架构视图——4+1 架构视角文档或服务/模块的外部接口规格"
     rule_form: declarative
-    allowed_directories: ["docs/02_enterprise_architecture/", "docs/03_modules/specs/", "docs/03_modules/_b_track_interfaces/"]
-    forbidden_directories: []
     required_fields: []  # v3.0.0: service_spec 已并入（api_version 降为可选 via tags）
     ai_keywords: ["架构视图", "4+1", "view", "architecture_view", "服务", "接口", "API", "spec", "服务规格"]
     examples: []
@@ -169,8 +151,6 @@ values:
     ttl_default: permanent
     definition: "门禁/验证定义——定义质量门禁的触发条件、检查项、阻断规则或 VR 验证标准"
     rule_form: declarative
-    allowed_directories: ["src/zephyr/governance/rule_enforcement/", "docs/01_policies_and_standards/_registry/contracts/", "docs/01_policies_and_standards/_registry/schemas/", "docs/02_enterprise_architecture/"]
-    forbidden_directories: []
     required_fields: ["valid_from"]
     ai_keywords: ["门禁", "gate", "阻断", "检查", "准入", "契约", "验证", "VR", "contract", "rule"]
     usage_note: "门禁文件的 doc_type。Gate YAML 登记表（_registry/catalogs/gate_registry.yaml）使用 register 而非 gate——gate 用于规则文档"
@@ -178,39 +158,30 @@ values:
 
 
 # ============================================================
-# 字段语义正交说明：doc_type vs allowed_directories vs forbidden_directories
-# （Stage 4.1 防漂移——消除"类型即位置"的常见误解）
+# 字段语义说明：doc_type 与目录约束的关系
+# （P4 治本 2026-06-30：allowed_directories/forbidden_directories 字段已删除，
+#  目录约束迁移到 directory_contract.yaml 的 allowed_doc_types 字段）
 # ============================================================
-# 三个字段是正交维度，分别回答不同问题：
+# doc_type 是文件的内在语义属性，回答"这个文件是什么"：
+#   - 由文件内容/用途决定，不随存放位置改变
+#   - 一个 policy 文件无论放在 governance/ 还是 _working/，它仍然是 policy
 #
-#   doc_type              —— 这个文件"是什么"？（语义类型，由内容/用途决定）
-#   allowed_directories   —— 这个文件"应该放在哪"？（允许位置，DCR-001 硬约束）
-#   forbidden_directories —— 这个文件"禁止放在哪"？（硬约束，门禁拦截）
+# 目录约束（"这个文件夹能放什么类型的文件"）已迁移到：
+#   directory_contract.yaml §2 directory_extensions[].allowed_doc_types
+#   - 方向：directory → doc_types（每个目录声明允许的 doc_type 列表）
+#   - 校验：DCR-001（check_directory_contract.py）——file.doc_type 必须在
+#     所在目录的 allowed_doc_types 内
+#   - 豁免：allowed_doc_types=[] 的目录（代码/数据/临时区）豁免 doc_type 约束
 #
-# 【正交性】
-#   doc_type 是文件的内在属性，不随存放位置改变。
-#   一个 policy 文件无论放在 governance/ 还是 _working/，它仍然是 policy。
-#   目录决定的是"组织归属"，doc_type 决定的是"语义归属"——两者独立。
-#
-# 【约束层级】（v3.1.0 更新：DCR-001/002 启用后 allowed_directories 升级为硬约束）
-#   forbidden_directories = 硬约束（DCR-002 门禁强制拦截，违反即阻断提交）
-#   allowed_directories   = 硬约束（DCR-001 门禁强制校验，文件目录必须在其中，否则阻断提交）
-#   未列入两者的目录       = 中性区（临时/归档区豁免，见下文）
-#
-# 【临时/归档区豁免】（DCR-001/002 检查器跳过以下目录）
-#   docs/_working/、docs/_archive/ 等临时/归档目录的文件不受 DCR-001/002 检查。
-#   临时工作区是"过渡态"，归档区是"历史遗留"——其文件的 doc_type 由内容决定，
-#   不受 allowed_directories 硬约束。当文件从 _working/ 迁入正式目录时，
-#   再按目标目录的 allowed_directories 校验 doc_type 归属。
-#
-# 【常见误解纠正】
-#   ✗ "在 governance/ 下的文件 doc_type 必须是 policy"
-#   ✓ governance/ 下可有 policy/index/gate 等多种 doc_type
-#      （见各值的 allowed_directories 列表，governance/ 出现于多个值）
-#   ✗ "doc_type 决定了文件只能在某个目录"
-#   ✓ doc_type 的 allowed_directories 是多值列表（一个 doc_type 可在多个目录）
-#   ✗ "_working/ 下的文件不需要 doc_type"
-#   ✓ 仍需要——doc_type 是语义属性，_working/ 只是位置豁免，不是类型豁免
+# 历史迁移说明（P3/P4 治本）：
+#   - 旧方向（已废弃）：doc_type_vocabulary.yaml values[].allowed_directories
+#     定义"doc_type 允许去哪些目录"（doc_type → directories）
+#   - 新方向（P3 启用）：directory_contract.yaml allowed_doc_types
+#     定义"目录允许哪些 doc_type"（directory → doc_types）
+#   - 迁移原因：用户诉求"每个文件夹只能放什么类型的文件"对应 directory→doc_types
+#     方向；旧方向的 forbidden_directories 全为空数组，从未拦截过任何东西，
+#     allowed_doc_types 白名单已足够严格（不在白名单即违规）
+#   - DCR-002（forbidden_directories 校验）已废弃，无副作用
 
 # ============================================================
 # AI 决策辅助：选择 doc_type 的三问决策树
@@ -264,13 +235,14 @@ values:
 # 模板豁免规则（便捷参考——canonical 规则见 PS-STD-001 §3.4 + TMP-EX-001）
 # ============================================================
 # 【核心原则】templates/ 下的文件是"类定义"（Class Definition），不是
-# "配置项实例"（CI Instance）。它不受目标 doc_type 的 allowed_directories
-# 约束——因为模板本身不需要被部署到目标目录。
+# "配置项实例"（CI Instance）。它不受 directory_contract.yaml 的
+# allowed_doc_types 约束——因为模板本身不需要被部署到目标目录。
 #
-# 豁免规则 TMP-EX-001：模板文件 allowed_directories 豁免
+# 豁免规则 TMP-EX-001：模板文件 allowed_doc_types 豁免
 #   触发条件：文件位于 templates/ 目录下
-#   豁免内容：该文件的 doc_type 条目中定义的 allowed_directories /
-#             forbidden_directories 约束不对此文件生效
+#   豁免内容：directory_contract.yaml 中该目录的 allowed_doc_types 约束
+#             不对此文件生效（check_directory_contract.py 的 _DCR_EXEMPT_PREFIXES
+#             包含 docs/01_policies_and_standards/templates/）
 #   保留约束：doc_type 的 required_fields 仍然生效（模板应具备目标
 #             文档所需的所有必填字段）
 #
@@ -287,6 +259,8 @@ values:
 #
 # 历史背景：本规则于 v1.3.0 从 template entry 的 usage_note 中"暗示"
 # 升级为正式章节——暗示不够，AI 新 session 需要显式豁免条款。
+# P4 治本（2026-06-30）：豁免对象从 allowed_directories/forbidden_directories
+#   更新为 allowed_doc_types（目录约束已迁移到 directory_contract.yaml）
 # ============================================================
 # ============================================================
 
