@@ -189,16 +189,6 @@ utilities:
       note: '上下文管理器: 备份后修改，失败自动回滚'
     - symbol: backup_file
       note: 创建 .bak.N 轮转备份
-  config_loader:
-    file: src/zephyr/shared/config/loader.py
-    entry_point: from zephyr.shared.config import load_yaml_config, load_yaml_config_validated
-    exports:
-    - symbol: load_yaml_config
-      note: 加载 YAML 配置
-    - symbol: load_yaml_config_validated
-      note: '3阶段: parse→merge→Pydantic validate'
-    - symbol: ConfigLoadError
-      note: 配置加载失败异常
 resilience:
   retry:
     file: src/zephyr/shared/resilience/retry.py

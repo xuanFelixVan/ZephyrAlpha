@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:51:19
+> 最后更新: 2026-07-01 01:52:16
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 255 | Module Count | 255 |
 | 域内依赖 | 165 | Internal Dependencies | 165 |
-| 跨域入边 | 249 | Cross-domain Incoming | 249 |
+| 跨域入边 | 248 | Cross-domain Incoming | 248 |
 | 跨域出边 | 18 | Cross-domain Outgoing | 18 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 188 | Prototype Modules | 188 |
@@ -131,8 +131,8 @@ graph TD
     subgraph D_SHARED["D_SHARED 共享服务"]
         src_zephyr_shared_combinatorial_gate_py["src/zephyr/shared/combinatorial_gate.py production"]
         src_zephyr_shared_compensation_init_py["src/zephyr/shared/compensation/__init__.py production"]
-        src_zephyr_shared_config_init_py["src/zephyr/shared/config/__init__.py prototype"]
-        src_zephyr_shared_config_loader_py["src/zephyr/shared/config/loader.py prototype"]
+        src_zephyr_shared_config_init_py["src/zephyr/shared/config/__init__.py ❌ ARCH-038 已删除"]
+        src_zephyr_shared_config_loader_py["src/zephyr/shared/config/loader.py ❌ ARCH-038 已删除"]
         src_zephyr_shared_constants_py["src/zephyr/shared/constants.py prototype"]
         src_zephyr_shared_content_fingerprint_py["src/zephyr/shared/content_fingerprint.py prototype"]
         src_zephyr_shared_context_engine_py["src/zephyr/shared/context_engine.py prototype"]
@@ -759,19 +759,19 @@ graph TD
 | D_GOV_DOCS | 8 | import_depends |
 | D_GOV_ENFORCEMENT | 7 | import_depends |
 | D_OPS | 6 | import_depends |
-| D_SECURITY | 5 | import_depends |
 | D_INFRA_RECOVERY | 4 | import_depends |
+| D_SECURITY | 4 | import_depends |
 | D_AUTONOMY_CORE | 3 | import_depends |
 | D_INFRA_TELEMETRY | 2 | import_depends |
 | D_ML_TRAIN | 2 | import_depends |
 | D_PF_ALLOC | 2 | contract,import_depends |
 | D_INTELLIGENCE | 1 | import_depends |
-| D_INFRA_OPS | 1 | import_depends |
-| D_FRONTEND | 1 | import_depends |
-| D_CROSS_ASSET | 1 | import_depends |
-| D_RISK | 1 | import_depends |
-| D_FACTOR | 1 | import_depends |
 | D_GOV_SCRIPTS | 1 | import_depends |
+| D_FACTOR | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
+| D_RISK | 1 | import_depends |
+| D_CROSS_ASSET | 1 | import_depends |
+| D_FRONTEND | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -961,8 +961,8 @@ graph TD
 | 28 | src/zephyr/shared/capacity_runbook_generator.py | src/zephyr/shared/capacity_runbook_ge... | production | generated |
 | 29 | src/zephyr/shared/code_economy_analyzer.py | src/zephyr/shared/code_economy_analyz... | production | generated |
 | 30 | src/zephyr/shared/combinatorial_gate.py | src/zephyr/shared/combinatorial_gate.py | production | generated |
-| 31 | src/zephyr/shared/config/__init__.py | src/zephyr/shared/config/__init__.py | prototype | generated |
-| 32 | src/zephyr/shared/config/loader.py | src/zephyr/shared/config/loader.py | prototype | generated |
+| 31 | ~~src/zephyr/shared/config/__init__.py~~ | ❌ ARCH-038 已删除 | prototype | generated |
+| 32 | ~~src/zephyr/shared/config/loader.py~~ | ❌ ARCH-038 已删除（虚假统一空壳，0消费者） | prototype | generated |
 | 33 | src/zephyr/shared/constants.py | src/zephyr/shared/constants.py | prototype | generated |
 | 34 | src/zephyr/shared/content_fingerprint.py | src/zephyr/shared/content_fingerprint.py | prototype | generated |
 | 35 | src/zephyr/shared/context_engine.py | src/zephyr/shared/context_engine.py | prototype | generated |

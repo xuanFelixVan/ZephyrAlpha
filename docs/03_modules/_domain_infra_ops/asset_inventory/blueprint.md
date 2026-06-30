@@ -3041,10 +3041,10 @@ retention: {raw_scan: 48, classified: 24, index_snapshots: 30, security_logs: 90
 notifications: {dashboard_alert_level: P1, handoff_injection: true, gate_blocking: true}
 ```
 
-### 32.2 配置加载器（对齐 `src/zephyr/shared/config/loader.py`）
+### 32.2 配置加载器（ARCH-038: `shared/config/loader.py` 已退役，使用 `infrastructure/config/load_config()`）
 
 ```python
-from zephyr.shared.config.loader import ConfigLoader
+from zephyr.infrastructure.config import load_config
 
 class AssetInventoryConfig(BaseModel):
     scanner: ScannerConfig

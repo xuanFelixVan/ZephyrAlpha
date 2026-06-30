@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 01:51:18
+> 最后更新: 2026-07-01 01:52:16
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -473,8 +473,8 @@ graph TD
 | 55 | src/zephyr/infrastructure/capacity_assurance/tech_stack.py | src/zephyr/infrastructure/capacity_as... | production | generated |
 | 56 | src/zephyr/infrastructure/compensation/__init__.py | src/zephyr/infrastructure/compensatio... | production | generated |
 | 57 | src/zephyr/infrastructure/config/__init__.py | src/zephyr/infrastructure/config/__in... | production | generated |
-| 58 | src/zephyr/infrastructure/config/shared/config/__init__.py | src/zephyr/infrastructure/config/shar... | production | generated |
-| 59 | src/zephyr/infrastructure/config/shared/config/loader.py | src/zephyr/infrastructure/config/shar... | production | generated |
+| 58 | ~~src/zephyr/infrastructure/config/shared/config/__init__.py~~ | ❌ ARCH-038 已删除 | production | generated |
+| 59 | ~~src/zephyr/infrastructure/config/shared/config/loader.py~~ | ❌ ARCH-038 已删除（虚假统一空壳，0消费者） | production | generated |
 | 60 | src/zephyr/infrastructure/config_validator.py | src/zephyr/infrastructure/config_vali... | production | generated |
 | 61 | src/zephyr/infrastructure/contract_tester.py | src/zephyr/infrastructure/contract_te... | production | generated |
 | 62 | src/zephyr/infrastructure/cost_tracker.py | src/zephyr/infrastructure/cost_tracke... | production | generated |

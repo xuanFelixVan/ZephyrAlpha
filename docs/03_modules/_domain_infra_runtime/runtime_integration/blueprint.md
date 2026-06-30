@@ -113,7 +113,7 @@ summary: >
 | 4 | shared/events/dlq.py | §1 RI-01 | DLQ SQLite 持久化 | 已实现 | — | Shared Core |
 | 5 | shared/events/dlq_bridge.py | §1 RI-01 | DLQ→Observer 集成桥 | 已实现 | — | Shared Core |
 | 6 | lifecycle_manager/hooks.py | §1 RI-02 | ModuleLifecycle LifecycleAware | 已实现 | — | Shared Core |
-| 7 | shared/config/loader.py | §1 RI-03 | YAML 配置加载+Pydantic 校验 | 已实现 | — | Shared Core |
+| 7 | shared/config/loader.py | §1 RI-03 | YAML 配置加载+Pydantic 校验 | ❌ ARCH-038 已退役 | 虚假统一空壳(0消费者) | Shared Core |
 | 8 | shared/foundation/flags.py | §1 RI-03 | FeatureFlag 三态+灰度 | 已实现 | — | Shared Core |
 | 10 | shared/resilience/circuit_breaker.py | §1 RI-05 | 熔断器状态机 | 已实现 | — | Shared Core |
 | 11 | shared/resilience/retry.py | §1 RI-05 | 统一重试策略 | 已实现 | — | Shared Core |
@@ -156,7 +156,7 @@ summary: >
 | shared/production/secrets.py | shared/security/secrets.py | `shared/production/` 目录不存在 |
 | shared/production/metrics.py | shared/observability/metrics.py | `shared/production/` 目录不存在 |
 | shared/production/cache.py | shared/infra/cache.py | `shared/production/` 目录不存在 |
-| shared/config/（目录） | shared/config/loader.py | 展开为具体文件 |
+| shared/config/（目录） | ❌ ARCH-038 已删除 | 虚假统一空壳，目录已移除 |
 | shared/resilience/（目录） | shared/resilience/circuit_breaker.py 等 | 展开为具体文件 |
 
 ### §0.2 对齐验证矩阵
@@ -777,7 +777,7 @@ class ModuleMetadata:
 ```python
 from zephyr.shared.lifecycle import LifecycleAware
 from zephyr.shared.observer import EventConsumer, EventProducer
-from zephyr.shared.config import Configurable
+# from zephyr.shared.config import Configurable  # ARCH-038: loader.py 已退役，配置加载用 infrastructure/config/load_config()
 from zephyr.shared.errors import ZephyrError
 
 class {{ class_name }}(LifecycleAware, EventConsumer, Configurable):

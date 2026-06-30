@@ -413,7 +413,7 @@ depends_on:
 | `src/zephyr/shared/types.py` | ✅ 已实现 | Phase 3 新增：13 个语义化 NewType |
 | `src/zephyr/shared/diff_utils.py` | ✅ 已实现 | Phase 3 新增：diff/patch 统一工具 |
 | `src/zephyr/shared/file_utils.py` | ✅ 已实现 | Phase 3 新增：原子写/备份/rollback |
-| `src/zephyr/shared/config/loader.py` | ✅ 已实现 | Phase 3 新增：YAML加载+Pydantic校验 |
+| `src/zephyr/shared/config/loader.py` | ❌ ARCH-038 已退役 | 虚假统一空壳（0消费者），配置加载回归 infrastructure/config/load_config() |
 | `src/zephyr/shared/logging.py` | ✅ 已实现 | Phase 4 新增：结构化日志 ZephyrLogger + trace_id 传播 |
 | `src/zephyr/shared/api/shared_quickref.yaml` | ✅ 已实现 | Phase 4 新增：AI 零歧义快速参考 canonical YAML |
 | `src/zephyr/shared/testing.py` | ✅ 已实现 | Phase 5 新增：测试夹具/工厂——7个工厂函数 |
