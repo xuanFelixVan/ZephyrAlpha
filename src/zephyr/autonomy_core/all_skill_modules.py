@@ -77,6 +77,15 @@ class AllSkillModules:
         "skill_team_optimizer",
         "skill_discovery",
         "skill_risk_mitigator",
+        "skill_constructor",
+        "skill_efficacy_calibrator",
+        "skill_feedback",
+        "skill_freshness_ext",
+        "skill_locking",
+        "skill_registry",
+        "skill_router",
+        "skill_schema_registry",
+        "skill_tokenomics",
         "phase_planner",
     ]
 
