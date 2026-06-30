@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV-create_guard | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.create_guard
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML, CapabilityLookup)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -436,6 +436,37 @@ def make_create_guard() -> GateSpec:
                 f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
                 f"created_by: \"session-xxx\"  capability: \"xxx\""
             )
+
+        # === ARCH-031 门禁缺口治本（2026-07-01）：磁盘 basename 碰撞检测 ===
+        # 病根：check_capability_duplicates 原只在 L3 pre-commit hook（check_ssot_gate.py）
+        # 调用，--no-verify 绕过 L3 → basename 碰撞检测被绕过。
+        # 治本：在 L2 create_guard（GitCommitGateway 注册 gate，--no-verify 绕不过）
+        # 追加调用 check_capability_duplicates，复用检测逻辑唯一真源（不重复实现）。
+        # 扩展：check_capability_duplicates 的 info is None 分支已追加未注册 basename
+        # 碰撞检测（_check_unregistered_basename_collision），L2 调用自动获得该检测能力。
+        # fail-open：CapabilityLookup 不可用时 warning 并跳过（对标 L3 check_ssot_gate.py
+        # L100-103 设计——capability_lookup 不可用不阻断，GitCommitGateway 内嵌门禁是主防线）。
+        if new_py_files:
+            try:
+                from zephyr.governance.capability_lookup import (
+                    CapabilityLookup,
+                    CAPABILITY_DUPLICATE_FIX_HINT,
+                )
+                _lookup = CapabilityLookup()
+                _new_py_tuples = [(str(gateway.project_root / f), f) for f in new_py_files]
+                _dups = _lookup.check_capability_duplicates(_new_py_tuples)
+                if _dups:
+                    _details = "; ".join(f"{d.rel_path}: {d.detail}" for d in _dups)
+                    return False, (
+                        f"能力重复/basename碰撞(GATE-SSOT L2): {_details}. "
+                        f"{CAPABILITY_DUPLICATE_FIX_HINT}"
+                    )
+            except Exception as _e:
+                logger.warning(
+                    "CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s",
+                    _e,
+                )
+
         return True, ""
 
     return GateSpec(gate_id="CREATE-GUARD", check=_check, priority=60)

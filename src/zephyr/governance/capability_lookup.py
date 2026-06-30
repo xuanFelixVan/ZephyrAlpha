@@ -1014,7 +1014,8 @@ class CapabilityLookup:
 
         决策矩阵（B 方案：所有信号皆阻断，无 advisory）：
           info = check_file_canonical(rel_path) 反查已派生状态：
-          - info is None（basename 不撞任何 cap）→ 无信号
+          - info is None（basename 不撞任何 cap）→ 追加未注册 basename 碰撞检测
+            （ARCH-031 治本：_check_unregistered_basename_collision 收窄 governance/ 前缀）
           - info.is_canonical=True + cap.duplicates 非空 → 阻断（canonical_displaced_*）
           - info.is_canonical=True + cap.duplicates 空 → 无信号（合法首实现）
           - info.is_canonical=False → 阻断（duplicate，relation=conflicting/sibling/unknown）
@@ -1054,7 +1055,14 @@ class CapabilityLookup:
             detail = ""
 
             if info is None:
-                continue  # basename 不撞任何 cap → 无信号
+                # ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
+                # 追加磁盘 basename 碰撞检测（根vs子目录同名文件）。
+                # 病根：原直接 continue → 新 AI 可在 governance/ 根目录重建子目录同名文件，
+                # basename 不撞 capability 但构成磁盘碰撞，三层门禁无一层检测。
+                collision = self._check_unregistered_basename_collision(rel_path)
+                if collision:
+                    results.append(collision)
+                continue
             elif info.get("is_canonical"):
                 # 新文件被派生为 canonical
                 cap = self.get(own_cap_id)
@@ -1088,6 +1096,97 @@ class CapabilityLookup:
                 detail=detail,
             ))
         return results
+
+    def _check_unregistered_basename_collision(
+        self, rel_path: str
+    ) -> CapabilityDuplicate | None:
+        """检测未注册 capability 的新文件是否与已有文件构成 basename 碰撞。
+
+        ARCH-031 门禁缺口治本（2026-07-01）：
+          病根——check_capability_duplicates 原只检测 basename 撞已注册 capability，
+          若新文件 basename 不撞任何 capability（info is None），直接跳过。
+          但新 AI 可在 governance/ 根目录重建子目录同名文件（如 audit/foo.py 存在时
+          新建 governance/foo.py），basename 不撞 capability 但构成磁盘碰撞，
+          三层门禁无一层检测——门禁盲区。
+
+          治本——在 info is None 分支追加磁盘 basename 碰撞检测：
+            - 收窄到 src/zephyr/governance/ 前缀（ARCH-031 原始场景）
+            - 排除 _archive/ 路径（归档副本非真源）
+            - 只检测"根vs子目录"碰撞模式（同层平级不阻断，子目录化才阻断）
+
+        已知限制：
+          仅检测 _disk_headers 中收录的文件（有 [MODULE]/[A_module] 头的文件）。
+          已有文件无头部时不在 _disk_headers 中 → 漏检（与 check_file_canonical
+          同边界，header 完整性由其他门禁负责）。
+        """
+        _GOV_PREFIX = "src/zephyr/governance/"
+        if not rel_path.startswith(_GOV_PREFIX):
+            return None
+        if "/_archive/" in rel_path:
+            return None
+
+        basename = rel_path.rsplit("/", 1)[-1]
+
+        collisions: list[str] = []
+        for existing_path in self._disk_headers:
+            if existing_path == rel_path:
+                continue  # 排除自己
+            if not existing_path.startswith(_GOV_PREFIX):
+                continue
+            if "/_archive/" in existing_path:
+                continue
+            existing_basename = existing_path.rsplit("/", 1)[-1]
+            if existing_basename != basename:
+                continue
+            if self._is_root_vs_subdir_collision(rel_path, existing_path):
+                collisions.append(existing_path)
+
+        if not collisions:
+            return None
+
+        return CapabilityDuplicate(
+            rel_path=rel_path,
+            capability_id="",  # 未注册 capability
+            canonical_file=collisions[0],
+            relation="unregistered_basename_collision",
+            detail=(
+                f"新文件与已有文件 basename 碰撞（ARCH-031 门禁盲区治本）: "
+                f"{rel_path} 与 {', '.join(collisions)} 同名，"
+                f"构成根vs子目录碰撞——违反 ARCH-031 命名约定"
+                f"（属于子模块的文件必须放在子目录，根目录仅放跨模块桥接文件）。"
+                f"修复：将新文件放入对应子目录，或扩展现有文件后删除新文件。"
+            ),
+        )
+
+    @staticmethod
+    def _is_root_vs_subdir_collision(rel_a: str, rel_b: str) -> bool:
+        """判断同 basename 文件是否构成"同域包根 vs 子目录"碰撞。
+
+        ARCH-031 场景：一方在域根（如 src/zephyr/governance/foo.py），
+        另一方在子目录（如 src/zephyr/governance/audit/foo.py）。
+
+        判定逻辑：
+          - 共同前缀至少 3 级（src/zephyr/governance）
+          - 一方 depth = common_depth + 1（直接在域根下，即根文件）
+          - 另一方 depth > common_depth + 1（在子目录下，即子目录文件）
+          - 一根一子目录 → 碰撞；同层（都根或都子目录）→ 不碰撞
+        """
+        parts_a = rel_a.split("/")
+        parts_b = rel_b.split("/")
+        common = 0
+        for i in range(min(len(parts_a), len(parts_b))):
+            if parts_a[i] == parts_b[i]:
+                common += 1
+            else:
+                break
+        # 共同前缀至少 3 级（src/zephyr/governance）
+        if common < 3:
+            return False
+        depth_a = len(parts_a)
+        depth_b = len(parts_b)
+        root_a = (depth_a == common + 1)
+        root_b = (depth_b == common + 1)
+        return root_a != root_b
 
     def check_module_id_conflicts(
         self, new_py_files: list[tuple[str, str]]
