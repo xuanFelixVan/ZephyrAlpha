@@ -840,6 +840,72 @@ capabilities:
       - audit_file_check_new     # 历史豁免审计(对比HEAD,仅报新引入断链,删则--ci阻断存量文件)
       - SUPPORTED_EXTENSIONS     # 支持的文件扩展名集合(篡改即检测范围改变)
 
+  # --------------------------------------------------------------------------
+  - capability_id: capability_overlap_gate
+    aliases:
+      - CAPABILITY-OVERLAP
+      - capability-overlap
+      - make_capability_overlap_gate
+      - duplicate_wheel_detector
+      - second_source_yaml_detector
+    description: >-
+      新建 .py/.yaml 文件 CapabilityLookup 提示门禁（CAPABILITY-OVERLAP，warn-only，
+      2026-06-30 治本）。检测 commit 中新建 .py 文件名是否与
+      capability_canonical_file_registry.yaml 已注册能力 aliases token 重叠 +
+      _registry/ 下新增 .yaml/.yml 文件名是否与同目录现有 yaml token 重叠（≥2 token =
+      高置信度第二真源）。命中则 logger.warning 告警（不阻断），提示 AI 应扩展现有
+      canonical 文件而非新建。病根：AGENTS.md §7 把"查 CapabilityLookup 确认能力
+      是否已存在"列为 step 0，但仅靠文档约定——新 AI 跳过 AGENTS.md 即可重复造轮子。
+      本 gate 在 commit 时自动反查 capability registry，补上文档约定的代码层兜底。
+      warn-only 裁定：文件名 token 匹配是启发式（可能误报），阻断会阻碍合法开发。
+      canonical basename capability_overlap_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "capability overlap/重复造轮子检测/second source yaml" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类检测脚本。
+    integrity_anchors:
+      - _tokenize                  # 文件名分词(篡改即检测失效)
+      - make_capability_overlap_gate # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: held_overlap_gate
+    aliases:
+      - HELD-OVERLAP
+      - held-overlap
+      - make_held_overlap_gate
+      - held_file_overlap_detector
+      - piggyback_commit_blocker
+    description: >-
+      搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）。检测 commit 中是否包含
+      其他 session held（claim）的文件——防止并发 session 互相覆盖未提交的修改。
+      病根：多 session 并发开发时，session A 修改的文件可能被 session B 的 commit
+      覆盖（回退），held_overlap_gate 在 commit 前校验目标文件是否被其他 session claim。
+      priority=50（早执行早阻断）。canonical basename held_overlap_gate 匹配
+      capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "搭便车/held overlap/piggyback commit/file claim conflict" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类防护脚本。
+    integrity_anchors:
+      - make_held_overlap_gate     # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: claim_required_gate
+    aliases:
+      - CLAIM-REQUIRED
+      - claim-required
+      - make_claim_required_gate
+      - unclaimed_file_blocker
+      - file_claim_enforcer
+    description: >-
+      claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）。已注册 session
+      提交代码前必须 claim 目标文件，未 claim 则阻断（CLAIM_REQUIRED_VIOLATION）。
+      病根：不 claim_files 可绕过 held_overlap_gate 防护（session 未声明 held_files
+      则 held_overlap 无比对基准），claim_required_gate 治本——强制 session 先 claim
+      再 commit。priority=40（优先于 HELD-OVERLAP(50)，先检查 claim 再检查 overlap）。
+      逃生通道：--allow-overlap 参数放行（特殊情况）。canonical basename
+      claim_required_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "claim required/file claim/unclaimed commit" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类强制 claim 脚本。
+    integrity_anchors:
+      - make_claim_required_gate    # gate 工厂(删则 gate 不注册)
+
 # ============================================================================
 # 维护日志
 # ============================================================================

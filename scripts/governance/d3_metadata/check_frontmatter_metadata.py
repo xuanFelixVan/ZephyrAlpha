@@ -65,14 +65,11 @@ from _shared.frontmatter import (  # noqa: E402
     parse_json_meta,
     parse_py_header,
 )
-
-_VOCAB_DIR = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
-)
+from _shared.yaml_utils import load_vocabulary_values, load_vocabulary_deprecated_map  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
 
 # 字段校验配置——GATE-15 校验哪些字段的唯一声明
 # 吸收归档脚本 validate_frontmatter_values.py 的 VOCAB_FIELD_MAP 模式
-# 新增字段校验只需在此添加一行，不改 _load_vocab_values / _check_file 逻辑
+# 新增字段校验只需在此添加一行，不改 _check_file 逻辑
 _FIELD_RULES: dict[str, dict] = {
     "ttl": {
         "vocab_file": "ttl_vocabulary.yaml",
@@ -86,47 +83,6 @@ _FIELD_RULES: dict[str, dict] = {
         "deprecated_key": "deprecated_values",  # 词表有废弃值节
     },
 }
-
-
-def _load_vocab_values(vocab_file: str) -> set[str]:
-    """通用词表值加载（吸收归档脚本 validate_frontmatter_values.py:73-90 模式）。
-
-    单一加载函数服务 _FIELD_RULES 中所有字段，避免每字段写一个 _load_xxx_values()。
-    """
-    import yaml
-
-    path = _VOCAB_DIR / vocab_file
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    values: set[str] = set()
-    for entry in data.get("values", []):
-        if isinstance(entry, dict):
-            val = entry.get("value") or entry.get("id")
-            if val:
-                values.add(str(val))
-        elif isinstance(entry, str):
-            values.add(entry)
-    return values
-
-
-def _load_deprecated_values(
-    vocab_file: str, deprecated_key: str
-) -> dict[str, str | None]:
-    """加载废弃值及迁移目标（单值→目标，多值/N/A→None 需人工判定）。"""
-    import yaml
-
-    path = _VOCAB_DIR / vocab_file
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    result: dict[str, str | None] = {}
-    for v in data.get(deprecated_key, []):
-        val = v.get("value", "")
-        mt = v.get("migrated_to", [])
-        if isinstance(mt, str) and mt and not mt.startswith("N/A"):
-            result[val] = mt
-        elif isinstance(mt, list) and len(mt) == 1 and mt[0] and not mt[0].startswith("N/A"):
-            result[val] = mt[0]
-        else:
-            result[val] = None  # 多值/N/A → 需人工判定
-    return result
 
 
 def _check_file(
@@ -212,10 +168,10 @@ def main() -> int:
     vocab_cache: dict[str, set[str]] = {}
     deprecated_cache: dict[str, dict[str, str | None]] = {}
     for field, rule in _FIELD_RULES.items():
-        vocab_cache[field] = _load_vocab_values(rule["vocab_file"])
+        vocab_cache[field] = load_vocabulary_values(rule["vocab_file"], fallback_key="id")
         if "deprecated_key" in rule:
-            deprecated_cache[field] = _load_deprecated_values(
-                rule["vocab_file"], rule["deprecated_key"]
+            deprecated_cache[field] = load_vocabulary_deprecated_map(
+                rule["vocab_file"], deprecated_key=rule["deprecated_key"]
             )
 
     # 过滤掉 -- 开头的参数（如 --ci, --all-files, --strict-doctype），只保留文件路径

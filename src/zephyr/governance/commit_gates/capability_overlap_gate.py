@@ -86,16 +86,15 @@ def make_capability_overlap_gate() -> GateSpec:
             f.replace("\\", "/") for f in staged_new
             if f.endswith(".py") and not f.startswith("tests/")
         ]
-        # 1b. 也关心 _registry/ 下新增 .yaml 文件（P1修复：防 .yaml 第二真源分裂）
-        _REGISTRY_DIRS = (
-            "docs/01_policies_and_standards/_registry/contracts/",
-            "docs/01_policies_and_standards/_registry/vocabularies/",
-            "docs/01_policies_and_standards/_registry/catalogs/",
-        )
+        # 1b. 也关心 _registry/ 下新增 .yaml/.yml 文件（P1修复：防 yaml 第二真源分裂）
+        # 治本（V1+V5）：不硬编码子目录列表（原硬编码遗漏 schemas/），用 _registry/
+        # 前缀匹配所有子目录（contracts/vocabularies/catalogs/schemas/ + 未来新增）；
+        # endswith 同时覆盖 .yaml 和 .yml（glob 部分同理）。
+        _REGISTRY_PREFIX = "docs/01_policies_and_standards/_registry/"
         new_yaml_files = [
             f.replace("\\", "/") for f in staged_new
-            if f.endswith((".yaml", ".yml"))
-            and any(f.replace("\\", "/").startswith(d) for d in _REGISTRY_DIRS)
+            if f.replace("\\", "/").endswith((".yaml", ".yml"))
+            and f.replace("\\", "/").startswith(_REGISTRY_PREFIX)
         ]
         if not new_py_files and not new_yaml_files:
             return True, ""
@@ -156,7 +155,7 @@ def make_capability_overlap_gate() -> GateSpec:
             if not file_tokens:
                 continue
             yaml_dir = os.path.dirname(yaml_file)
-            for existing in glob.glob(os.path.join(yaml_dir, "*.yaml")):
+            for existing in glob.glob(os.path.join(yaml_dir, "*.yaml")) + glob.glob(os.path.join(yaml_dir, "*.yml")):
                 existing_rel = existing.replace("\\", "/")
                 if existing_rel == yaml_file:
                     continue

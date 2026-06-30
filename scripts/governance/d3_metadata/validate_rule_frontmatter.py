@@ -56,23 +56,10 @@ import yaml
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.yaml_utils import load_vocabulary_values  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）
 
 ensure_utf8_stdout()
 
-_VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
-
-
-def _load_valid_values(vocab_file: str) -> set[str]:
-    """从 vocabulary YAML 动态加载合法值（SSoT 唯一真源，禁止硬编码）。"""
-    p = _VOCAB_DIR / vocab_file
-    if not p.exists():
-        return set()
-    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-    return {
-        str(entry.get("value") or entry.get("id"))
-        for entry in data.get("values", [])
-        if isinstance(entry, dict)
-    }
 
 # 规则文件目录
 RULES_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules"
@@ -115,10 +102,10 @@ REQUIRED_FIELDS = [
     "provenance",
 ]
 
-VALID_LAYER = _load_valid_values("layer_vocabulary.yaml")
-VALID_STABILITY = _load_valid_values("stability_vocabulary.yaml")
-VALID_SAFETY = _load_valid_values("safety_level_vocabulary.yaml")
-VALID_AUTONOMY = _load_valid_values("ai_autonomy_vocabulary.yaml")
+VALID_LAYER = load_vocabulary_values("layer_vocabulary.yaml", fallback_key="id", strict=False)
+VALID_STABILITY = load_vocabulary_values("stability_vocabulary.yaml", fallback_key="id", strict=False)
+VALID_SAFETY = load_vocabulary_values("safety_level_vocabulary.yaml", fallback_key="id", strict=False)
+VALID_AUTONOMY = load_vocabulary_values("ai_autonomy_vocabulary.yaml", fallback_key="id", strict=False)
 
 # 顶层字段行：行首不含空格的 key: 形式
 _TOP_KEY_RE = re.compile(r"^([a-z_][a-z0-9_]*)\s*:")
