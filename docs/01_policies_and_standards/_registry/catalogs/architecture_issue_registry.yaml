@@ -286,3 +286,23 @@ entries:
   - TRAE-060
   created: '2026-06-30'
   last_updated: '2026-06-30'
+- issue_id: '#ARCH-031'
+  title: src/zephyr/governance/ 命名约定与 SSOT 门禁（[MODULE]标注 + 三层GATE + basename唯一性局限）
+  severity: P2中
+  adjudication: |
+    src/zephyr/governance/ 根目录 350 个 .py 文件的归属与去重问题。
+    (1)[MODULE]标注决定文件归属：子目录文件标注[MODULE]归属子目录，未标注归属根目录；
+    (2)三层GATE-SSOT门禁：check_ssot_conflicts/check_capability_duplicates/CREATE-GUARD；
+    (3)N-16 basename唯一性仅覆盖tests/和docs/，不覆盖src/（500个同名basename不可行）；
+    (4)ARCH-031局限1调研结论（2026-07-01）：自动门禁无法覆盖src/全量basename去重；
+    (5)历史清理：步骤A+B-1已删除24个根目录STALE duplicates（2026-06-30）。
+    当前状态：split-src-gov session 拆分失败后，P8 phase0 恢复根目录350个.py为唯一真源；
+    GOV-DOC-018（T_hard=60）暂缓，根目录350超标5.85x，留待AST import rewriter工具开发后处理。
+    2026-07-01 P0清理：删除85个untracked SSOT冲突副本（split-src-gov残留），保留3个__init__.py包标记，
+    修改constants.py:53 import路径（rule_bridge.depgraph_schema→depgraph_schema）。
+  fix_phase: 暂缓（根目录350 .py超T_hard=60，需AST import rewriter工具方可拆分）
+  status: open
+  related_rules:
+  - TRAE-028
+  created: '2026-07-01'
+  last_updated: '2026-07-01'

@@ -1736,6 +1736,20 @@ creation_tokens:
     created_by: "session-arch031-underscore"
     capability: "service_registration"
 
+  # --- ARCH-031 P0: __init__.py 包标记（audit/observability/rule_bridge 子目录包初始化） ---
+  - file: "src/zephyr/governance/audit/__init__.py"
+    token: "auto-audit-init-package-20260701"
+    created_by: "session-arch031-p0p1-cleanup"
+    capability: "audit_package_marker"
+  - file: "src/zephyr/governance/observability/__init__.py"
+    token: "auto-observability-init-package-20260701"
+    created_by: "session-arch031-p0p1-cleanup"
+    capability: "observability_package_marker"
+  - file: "src/zephyr/governance/rule_bridge/__init__.py"
+    token: "auto-rule-bridge-init-package-20260701"
+    created_by: "session-arch031-p0p1-cleanup"
+    capability: "rule_bridge_package_marker"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

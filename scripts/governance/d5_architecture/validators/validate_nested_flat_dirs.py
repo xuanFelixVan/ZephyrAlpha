@@ -146,7 +146,7 @@ def main() -> int:
         return EXIT_PASS
     if errors:
         print(
-            "\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-002 \u00a7\u4e09 C轨层内规范。", file=sys.stderr
+            "\n\u274c 阻断: 存在超过 error 阈值的平铺目录。参考 GOV-DOC-018 \u6587\u4ef6\u5939\u5e73\u94fa\u5bb9\u91cf\u9608\u503c\u534f\u8bae\u3002", file=sys.stderr
         )
         return EXIT_FINDINGS
     return EXIT_PASS
