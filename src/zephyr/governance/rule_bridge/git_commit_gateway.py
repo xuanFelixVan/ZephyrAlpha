@@ -443,7 +443,19 @@ class GitCommitGateway:
             ]
             del_tracked = [f for f, rel in zip(deleted, del_rels) if self._is_git_tracked(rel)]
             if del_tracked:
-                r = self._run_git(["git", "rm", "--cached", "--ignore-unmatch", "--"] + del_tracked)
+                # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
+                # 大批量 gitignored+deleted 文件（如 _backups 1036 个）直接传命令行会超长
+                del_pathspec = self._write_pathspec_file(del_tracked)
+                try:
+                    r = self._run_git(
+                        ["git", "rm", "--cached", "--ignore-unmatch",
+                         f"--pathspec-from-file={del_pathspec}"]
+                    )
+                finally:
+                    try:
+                        os.remove(del_pathspec)
+                    except OSError:
+                        pass
                 if r.returncode != 0:
                     return False, f"git rm --cached failed: {r.stderr.strip()}", normal_files
         if existing:
@@ -456,7 +468,17 @@ class GitCommitGateway:
                 if self._is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
             if ex_tracked:
-                r = self._run_git(["git", "add", "-f", "--"] + ex_tracked)
+                # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
+                ex_pathspec = self._write_pathspec_file(ex_tracked)
+                try:
+                    r = self._run_git(
+                        ["git", "add", "-f", f"--pathspec-from-file={ex_pathspec}"]
+                    )
+                finally:
+                    try:
+                        os.remove(ex_pathspec)
+                    except OSError:
+                        pass
                 if r.returncode != 0:
                     return False, f"git add -f failed: {r.stderr.strip()}", normal_files
         return True, "", normal_files
@@ -516,14 +538,19 @@ class GitCommitGateway:
                                 pass
                     # 3b. git rm deleted_files（delete 文件用 git rm 替代 git add）
                     # --ignore-unmatch 跳过已 staged delete（git rm 幂等）
+                    # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
                     if add_ok and deleted_files:
-                        del_rels = [
-                            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                            for f in deleted_files
-                        ]
-                        rm_result = self._run_git(
-                            ["git", "rm", "--cached", "--ignore-unmatch", "--"] + del_rels
-                        )
+                        del_pathspec = self._write_pathspec_file(deleted_files)
+                        try:
+                            rm_result = self._run_git(
+                                ["git", "rm", "--cached", "--ignore-unmatch",
+                                 f"--pathspec-from-file={del_pathspec}"]
+                            )
+                        finally:
+                            try:
+                                os.remove(del_pathspec)
+                            except OSError:
+                                pass
                         add_ok = rm_result.returncode == 0
                         if not add_ok:
                             logger.warning("GitCommitGateway: git rm 失败: %s", rm_result.stderr.strip())
