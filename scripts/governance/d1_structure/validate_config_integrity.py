@@ -1076,10 +1076,13 @@ def _scan_config_consumers(filename: str, max_results: int = 5) -> list[str]:
     """扫描 src/+scripts/+tests/ 下 .py 文件，找出引用此 config 文件名的消费者（最多 max_results 个）。
 
     治本（ARCH-038 P2）：发现契约——新 AI 需知道每个 config 文件被谁消费。
-    只搜文件名字符串（如 "capabilities.yaml"），避免路径前缀误匹配。
+    用正则词边界匹配，避免子串假阳性（如 "flags.yaml" 误匹配 "feature_flags.yaml"）。
+    前瞻否定 [A-Za-z0-9_]：排除 "feature_flags.yaml" 中的 "_" 前缀。
+    后瞻否定 [A-Za-z0-9_.]：排除 "flags.yaml.bak" 中的 "." 后缀。
     """
     consumers: list[str] = []
-    needle = filename
+    # 正则：文件名前后不能是字母/数字/下划线（前）/点（后），确保匹配完整文件名
+    pattern = re.compile(r'(?<![A-Za-z0-9_])' + re.escape(filename) + r'(?![A-Za-z0-9_.])')
     search_roots = [REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tests"]
     for root in search_roots:
         if not root.exists():
@@ -1091,7 +1094,7 @@ def _scan_config_consumers(filename: str, max_results: int = 5) -> list[str]:
                 text = py_file.read_text(encoding="utf-8", errors="replace")
             except OSError:
                 continue
-            if needle in text:
+            if pattern.search(text):
                 rel = "/" + str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
                 consumers.append(rel)
                 if len(consumers) >= max_results:
