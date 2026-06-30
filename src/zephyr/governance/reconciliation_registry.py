@@ -1203,45 +1203,45 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
 
 def _compose_reconcilers(
     gate_id: str,
-    spec_a: ReconcilerSpec,
-    spec_b: ReconcilerSpec,
+    *specs: ReconcilerSpec,
 ) -> ReconcilerSpec:
-    """合并两个 reconciler spec 为一个（AD-GOV-001 治理收敛工具函数）。
+    """合并 N 个（≥2）reconciler spec 为一个（AD-GOV-001 治理收敛工具函数）。
 
-    - trigger: spec_a.trigger 与 spec_b.trigger 的 OR（任一命中即执行）
-    - reconcile: 串联执行 spec_a.reconcile → spec_b.reconcile；action 取较严重
-      （severity: warn=auto_committed=2 > clean=1 > skip=nothing=0），detail 拼接两者
-    - priority: max(spec_a.priority, spec_b.priority)
+    元问题1治本扩展（2026-06-30）：原签名只支持 2 个 spec，AGENTS.md 引用检测
+    需 3-way 合并（rules_integrity + commit_gw_audit + agents_md_refs）。扩展为
+    *specs 可变参数，向后兼容（2 参数时行为不变，5 个现有调用点零回归）。
+
+    - trigger: 所有 spec trigger 的 OR（任一命中即执行）
+    - reconcile: 串联执行所有 spec.reconcile（按传入顺序）；action 取较严重
+      （severity: warn=auto_committed=2 > clean=1 > skip=nothing=0），detail 拼接全部
+    - priority: max(所有 spec.priority)
     """
-    trigger_a = spec_a.trigger
-    trigger_b = spec_b.trigger
-    reconcile_a = spec_a.reconcile
-    reconcile_b = spec_b.reconcile
+    if len(specs) < 2:
+        raise ValueError(f"_compose_reconcilers requires at least 2 specs, got {len(specs)}")
 
-    def _trigger(committed_files: list[str]) -> bool:
-        return trigger_a(committed_files) or trigger_b(committed_files)
-
+    triggers = [s.trigger for s in specs]
+    reconciles = [s.reconcile for s in specs]
     _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2}
 
+    def _trigger(committed_files: list[str]) -> bool:
+        return any(t(committed_files) for t in triggers)
+
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        result_a = reconcile_a(committed_files, session_id)
-        result_b = reconcile_b(committed_files, session_id)
-        action = (
-            result_a.action
-            if _SEVERITY.get(result_a.action, 0) >= _SEVERITY.get(result_b.action, 0)
-            else result_b.action
-        )
-        detail = (
-            f"[{result_a.action}] {result_a.detail} | "
-            f"[{result_b.action}] {result_b.detail}"
-        )
+        results = [r(committed_files, session_id) for r in reconciles]
+        # action 取较严重（severity 高者胜）
+        action = results[0].action
+        for res in results[1:]:
+            if _SEVERITY.get(res.action, 0) > _SEVERITY.get(action, 0):
+                action = res.action
+        # detail 平铺拼接全部（格式：[action_a] detail_a | [action_b] detail_b | ...）
+        detail = " | ".join(f"[{r.action}] {r.detail}" for r in results)
         return ReconcileResult(action=action, detail=detail)
 
     return ReconcilerSpec(
         gate_id=gate_id,
         trigger=_trigger,
         reconcile=_reconcile,
-        priority=max(spec_a.priority, spec_b.priority),
+        priority=max(s.priority for s in specs),
     )
 
 
@@ -1868,7 +1868,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-INTEGRITY-AUDIT post-commit 完整性+网关审计 reconciler（AD-GOV-001 合并）。
+    """构造 GATE-INTEGRITY-AUDIT post-commit 完整性+网关审计+引用检测 reconciler（AD-GOV-001 合并）。
 
     合并来源：
     - 旧 GATE-RULES-INTEGRITY (priority=270)：每次 commit 后跑
@@ -1876,16 +1876,25 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
       本地基线，消除"C 层基线与 commit 不同步→误报 TAMPERED"结构性缺陷。
     - 旧 GATE-COMMIT-GW-AUDIT (priority=800)：扫描最近 20 个 commit，标记未经
       GitCommitGateway 的裸 commit（message 不含 [GW: 标记），告警 --no-verify 绕过。
+    - 新增 GATE-AGENTS-MD-REFS (priority=810，元问题1治本 2026-06-30)：检测 AGENTS.md
+      中引用的 reconciliation_registry.py 公共函数名（make_*_reconciler）是否在 __all__
+      列表中。病根：AGENTS.md 硬编码函数名，reconciler 重命名/合并后 AGENTS.md 不会
+      自动更新，新AI按失效指引造幻觉（如步骤1修复的 _make_old_rules_integrity_reconciler
+      失效引用）。检测到失效引用→warn（非阻断，告警供人工修正）。
 
-    合并原因：两者 trigger 均 always True（完整性重注册与网关审计都无法用文件前缀
-    限定），逻辑可串联，合并形成"基线同步+网关审计"非阻断兜底单入口。
+    合并原因：三者 trigger 均 always True 或与 AGENTS.md/reconciliation_registry.py
+    变更相关，逻辑可串联，合并形成"基线同步+网关审计+引用检测"非阻断兜底单入口。
 
-    合并后执行：先重注册 rules_integrity 基线，再审计 commit 网关标记；
-    action 取较严重，detail 拼接。priority=max(270,800)=800。
+    合并后执行：先重注册 rules_integrity 基线，再审计 commit 网关标记，最后检测
+    AGENTS.md 引用有效性；action 取较严重，detail 拼接。priority=max(270,800,810)=810。
 
     治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_rules_integrity_reconciler
     与 _make_old_commit_gateway_audit_reconciler，私有函数已删除。_audit_commit_history
     是模块级函数（非 _make_old_*），保留供本闭包调用与 integrity_anchors 保护。
+
+    治本（2026-06-30 元问题1）：新增 AGENTS.md 引用有效性检测，合并入本 reconciler
+    不新增 reconciler（trae_060 §4 审查通过：该存在+可合并入已有）。检测逻辑用正则
+    提取 make_*_reconciler 公共函数名引用，检查是否在 __all__ 中。
     """
     import os
     import subprocess
@@ -2003,4 +2012,53 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         priority=800,  # 最后执行（审计非阻断，低优先级）
     )
 
-    return _compose_reconcilers("GATE-INTEGRITY-AUDIT", spec_rules_integrity, spec_commit_gw_audit)
+    # === 元问题1治本（2026-06-30）：AGENTS.md 引用有效性检测 ===
+    def _trigger_agents_md_refs(committed_files: list[str]) -> bool:
+        # AGENTS.md 或 reconciliation_registry.py 变更时触发——引用关系在这两个文件
+        # 变更时可能过时（reconciler 合并/重命名会导致 AGENTS.md 引用失效）
+        for f in committed_files:
+            fn = f.replace("\\", "/").lower()
+            if "agents.md" in fn or "reconciliation_registry.py" in fn:
+                return True
+        return False
+
+    def _reconcile_agents_md_refs(committed_files: list[str], session_id: str) -> ReconcileResult:
+        import re
+        from pathlib import Path
+
+        agents_md = Path(project_root) / "AGENTS.md"
+        if not agents_md.exists():
+            return ReconcileResult(action="clean", detail="AGENTS.md not found, skip refs check")
+
+        content = agents_md.read_text(encoding="utf-8")
+        # 提取 AGENTS.md 中引用的 make_*_reconciler 公共函数名
+        # （_make_old_* 私有函数引用是描述性提及"已删除"，不检测——私有函数不在 __all__ 是正常的）
+        referenced = set(re.findall(r'\bmake_\w+_reconciler\b', content))
+        if not referenced:
+            return ReconcileResult(action="clean", detail="no make_*_reconciler refs in AGENTS.md")
+
+        # 加载模块 __all__（真源：reconciliation_registry.__all__）
+        try:
+            import zephyr.governance.reconciliation_registry as reg_module
+            available = set(reg_module.__all__)
+        except Exception as e:
+            return ReconcileResult(action="warn", detail=f"failed to load reconciliation_registry: {e}")
+
+        # 失效引用（AGENTS.md 引用了但不在 __all__ 中）
+        stale = referenced - available
+        if stale:
+            return ReconcileResult(
+                action="warn",
+                detail=f"AGENTS.md references stale reconciliation_registry functions: {sorted(stale)}. "
+                       f"These functions not in __all__. Update AGENTS.md to reference valid function names.",
+            )
+        return ReconcileResult(action="clean", detail=f"AGENTS.md refs all valid ({len(referenced)} refs)")
+
+    spec_agents_md_refs = ReconcilerSpec(
+        gate_id="GATE-AGENTS-MD-REFS",
+        trigger=_trigger_agents_md_refs,
+        reconcile=_reconcile_agents_md_refs,
+        priority=810,  # 最后执行（引用检测非阻断，最低优先级）
+    )
+
+    return _compose_reconcilers("GATE-INTEGRITY-AUDIT", spec_rules_integrity, spec_commit_gw_audit, spec_agents_md_refs)

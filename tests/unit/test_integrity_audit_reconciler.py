@@ -111,18 +111,19 @@ class TestSpecProperties:
         assert spec.gate_id == "GATE-INTEGRITY-AUDIT"
 
     def test_priority_is_last(self, tmp_path):
-        """priority=800 最后执行（审计非阻断，低优先级）。"""
+        """priority=810 最后执行（审计非阻断，低优先级；元问题1治本后含 agents_md_refs=810）。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
         spec = make_integrity_audit_reconciler(gw)
-        assert spec.priority == 800
+        assert spec.priority == 810
 
 
 # ---------------------------------------------------------------------------
 # TestTrigger — 公共 API trigger
 # ---------------------------------------------------------------------------
 class TestTrigger:
-    """trigger always True——两个旧 trigger 均 always True，OR 仍 always True。"""
+    """trigger always True——rules_integrity 与 commit_gw_audit 均 always True，
+    agents_md_refs 检测特定文件（非 always True），OR 仍 always True（前两个保证）。"""
 
     def test_trigger_empty_files(self, tmp_path):
         _init_git_repo(tmp_path)
@@ -385,3 +386,52 @@ class TestAuditCommitHistory:
         assert "hash" in v
         assert "subject" in v
         assert "[GW:" not in v["subject"]
+
+
+# ---------------------------------------------------------------------------
+# TestAgentsMdRefs — 元问题1治本：AGENTS.md 引用有效性检测（2026-06-30）
+# ---------------------------------------------------------------------------
+class TestAgentsMdRefs:
+    """GATE-AGENTS-MD-REFS 引用有效性检测——检测 AGENTS.md 中引用的
+    make_*_reconciler 公共函数名是否在 reconciliation_registry.__all__ 中。
+
+    治本病根：AGENTS.md 硬编码函数名，reconciler 重命名/合并后 AGENTS.md 不会
+    自动更新，新AI按失效指引造幻觉。本检测在 commit 后自动告警失效引用。
+
+    测试策略：直接调用 compose spec.reconcile，检查 detail 中是否含 agents_md_refs
+    部分的结果（rules_integrity 在 tmp_path 无 validate_rules_integrity.py 会失败
+    产生 warn，但不影响 agents_md_refs 部分的 detail）。
+    """
+
+    def test_agents_md_not_found(self, tmp_path):
+        """AGENTS.md 不存在 → detail 含 'AGENTS.md not found'。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_integrity_audit_reconciler(gw)
+        result = spec.reconcile([], "sess-test")
+        assert "AGENTS.md not found" in result.detail
+
+    def test_agents_md_valid_refs(self, tmp_path):
+        """AGENTS.md 引用全部有效（make_integrity_audit_reconciler 在 __all__ 中）→ detail 含 'refs all valid'。"""
+        _init_git_repo(tmp_path)
+        (tmp_path / "AGENTS.md").write_text(
+            "see make_integrity_audit_reconciler for details",
+            encoding="utf-8",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_integrity_audit_reconciler(gw)
+        result = spec.reconcile([], "sess-test")
+        assert "AGENTS.md refs all valid" in result.detail
+
+    def test_agents_md_stale_ref(self, tmp_path):
+        """AGENTS.md 含失效引用（make_baseline_aware_reconciler 已合并删除）→ detail 含 'stale' + 失效函数名。"""
+        _init_git_repo(tmp_path)
+        (tmp_path / "AGENTS.md").write_text(
+            "see make_baseline_aware_reconciler for details",
+            encoding="utf-8",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        spec = make_integrity_audit_reconciler(gw)
+        result = spec.reconcile([], "sess-test")
+        assert "stale reconciliation_registry functions" in result.detail
+        assert "make_baseline_aware_reconciler" in result.detail
