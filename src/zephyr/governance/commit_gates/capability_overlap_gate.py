@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] warn-only——永不阻断 commit（passed=True）；YAML 不可达时静默跳过（fail-open）；token 匹配 ≥4 字符才告警（减少短词误报）
+# [INVARIANTS] warn-only——永不阻断 commit（passed=True）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-loud（logger.warning 告警检测器失效，仍 return True 保留 warn-only 契约；create_guard 已 fail-closed 阻断，本 gate 无需重复阻断）；git diff 失败亦 fail-loud；token 匹配 ≥4 字符才告警（减少短词误报）
 # [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——YAML 读取/解析异常降级为静默跳过（不阻断 commit，不误报警）
+# [ERROR_CONTRACT] check 永不抛异常——YAML/git diff 异常降级为 fail-loud warn（不阻断 commit 保留 warn-only 契约，但 logger.warning 告警检测器失效以防静默漂移）；warn-only gate 的 fail-closed 语义=告警而非阻断
 # [TESTS] tests/test_capability_overlap_gate.py（P2-2 补全，11 用例覆盖 overlap/no-overlap/yaml/fail-open）
 # [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -48,7 +48,7 @@ import logging
 import os
 import re
 
-from zephyr.governance.commit_gate_registry import GateSpec
+from zephyr.governance.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -72,19 +72,31 @@ def make_capability_overlap_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 仅关心 staged 新增 .py 文件
+        # 治本1（2026-06-30）：git diff 失败改 fail-loud——warn-only gate 的 fail-closed 语义
+        # 是"告警检测器失效"而非"阻断 commit"（保留 warn-only 契约 passed=True）。
+        # create_guard 已 fail-closed 阻断（同一 git diff），本 gate 无需重复阻断；
+        # 但须 logger.warning 防静默漂移（原 fail-silent 让检测器失效无任何信号）。
         try:
             diff_result = gateway._run_git(
                 ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
             )
             if diff_result.returncode != 0:
-                return True, ""  # fail-open：git diff 失败不阻断
+                logger.warning(
+                    "CAPABILITY-OVERLAP gate fail-loud: git diff 失败(rc=%d)，"
+                    "检测器失效，无法检测 capability 重叠。", diff_result.returncode,
+                )
+                return True, ""  # warn-only 契约：仍 return True
             staged_new = diff_result.stdout.strip().splitlines()
-        except Exception:
-            return True, ""  # fail-open
+        except Exception as e:
+            logger.warning(
+                "CAPABILITY-OVERLAP gate fail-loud: git diff 异常(%s: %s)，"
+                "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
+            )
+            return True, ""  # warn-only 契约：仍 return True
 
         new_py_files = [
             f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not f.startswith("tests/")
+            if f.endswith(".py") and not is_test_exempt(f)
         ]
         # 1b. 也关心 _registry/ 下新增 .yaml/.yml 文件（P1修复：防 yaml 第二真源分裂）
         # 治本（V1+V5）：不硬编码子目录列表（原硬编码遗漏 schemas/），用 _registry/
@@ -100,17 +112,35 @@ def make_capability_overlap_gate() -> GateSpec:
             return True, ""
 
         # 2. 加载 capability registry YAML（真源：capability_lookup.REGISTRY_YAML）
+        # 治本1（2026-06-30）：YAML 不可达改 fail-loud——warn-only gate 的 fail-closed 语义
+        # 是"告警检测器失效"而非"阻断 commit"（保留 warn-only 契约 passed=True）。
+        # create_guard 已 fail-closed 阻断（同一 YAML），本 gate 无需重复阻断；
+        # 但须 logger.warning 防静默漂移（原 fail-silent 让检测器失效无任何信号）。
+        # import 放 try 外（代码级故障不捕获，由 check_all 的 try-except 兜底为 fail-closed）。
+        from zephyr.governance.capability_lookup import REGISTRY_YAML
+
+        if not REGISTRY_YAML.exists():
+            logger.warning(
+                "CAPABILITY-OVERLAP gate fail-loud: registry 缺失(%s)，检测器失效，"
+                "无法检测 capability 重叠。修复：git checkout HEAD -- %s",
+                REGISTRY_YAML, REGISTRY_YAML,
+            )
+            return True, ""  # warn-only 契约：仍 return True
         try:
-            from zephyr.governance.capability_lookup import REGISTRY_YAML
-            if not REGISTRY_YAML.exists():
-                return True, ""  # fail-open：registry 不存在不阻断
             import yaml
             data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
-        except Exception:
-            return True, ""  # fail-open：YAML 解析失败不阻断
+        except Exception as e:
+            logger.warning(
+                "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，"
+                "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
+            )
+            return True, ""  # warn-only 契约：仍 return True
 
         if not isinstance(data, dict):
-            return True, ""
+            logger.warning(
+                "CAPABILITY-OVERLAP gate fail-loud: registry 顶层非 dict，检测器失效。"
+            )
+            return True, ""  # warn-only 契约：仍 return True
 
         # 3. 构建 capability token 索引（capability_id + aliases 分词）
         cap_tokens: dict[str, set[str]] = {}  # capability_id → token set

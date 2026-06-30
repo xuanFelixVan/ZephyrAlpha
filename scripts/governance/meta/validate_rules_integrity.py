@@ -68,7 +68,16 @@ from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
 
-RULES_MANIFEST: list[dict] = [
+# ============================================================
+# RULES_MANIFEST 构造（治本3，2026-06-30）：静态条目 + glob 动态条目
+# ============================================================
+# 第一性原理：保护机制防漏登优先于防误登。
+# - 静态条目：核心治理文件 + 治本1② registry YAML + 治本2 配套 commit_gate_registry.py
+# - 动态条目：commit_gates/*.py 全量 glob 自动加载（防漏登，新增 gate 自动受保护）
+# glob 在模块加载时执行一次，RULES_MANIFEST 仍为稳定 list[dict]，下游消费者透明
+# （register/check 仅迭代，不感知静态/动态来源）。
+
+_STATIC_MANIFEST: list[dict] = [
     {"path": "AGENTS.md", "critical": True, "desc": "AI Agent 全局行为约束"},
     {"path": "scripts/governance/quickstart.md", "critical": True, "desc": "AI Session 冷启动卡片"},
     {"path": "scripts/governance/_shared/thresholds.yaml", "critical": True, "desc": "关键阈值 SSoT"},
@@ -100,7 +109,38 @@ RULES_MANIFEST: list[dict] = [
         "critical": True,
         "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)",
     },
+    # 治本1②（2026-06-30）：capability registry YAML 入保护——
+    # 防"删 registry 绕过 create_guard fail-closed"在裸 commit 路径被 C 层检测。
+    # critical=True：MISSING（删除）须阻断（防 DoS：攻击者删 registry 锁死全项目 commit）。
+    {
+        "path": "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
+        "critical": True,
+        "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）",
+    },
+    # 治本2 配套（2026-06-30）：commit_gate_registry.py 入保护——
+    # TEST_EXEMPT_PREFIXES/is_test_exempt 真源将集中于此，是高价值篡改目标
+    # （篡改加 \"src/\" 可豁免所有源码绕过 create_guard）。须 C 层 golden hash 保护。
+    {
+        "path": "src/zephyr/governance/commit_gate_registry.py",
+        "critical": True,
+        "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）",
+    },
 ]
+
+# 动态条目：commit_gates/*.py 全量自动加载（治本3，防漏登）。
+# 含 __init__.py（保护机制防漏登优先；__init__.py 含 __all__ 声明，篡改可影响包导入）。
+# 新增 gate 文件自动受保护——防漏登 > 噪音成本（TAMPERED 是信息性报告，post-commit 自动重基线）。
+_GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
+_DYNAMIC_GATE_ENTRIES: list[dict] = [
+    {
+        "path": str(p.relative_to(_REPO_ROOT)).replace("\\", "/"),
+        "critical": True,
+        "desc": f"pre-commit gate 实现（auto-glob 保护: {p.name}）",
+    }
+    for p in sorted(_GATES_DIR.glob("*.py"))
+]
+
+RULES_MANIFEST: list[dict] = _STATIC_MANIFEST + _DYNAMIC_GATE_ENTRIES
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")

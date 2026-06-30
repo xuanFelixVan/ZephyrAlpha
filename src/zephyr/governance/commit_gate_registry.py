@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行
-# [MODIFY-GUARD] GateSpec 字段结构；GateResult 语义
+# [MODIFY-GUARD] GateSpec 字段结构；GateResult 语义；TEST_EXEMPT_PREFIXES / is_test_exempt（tests/ 豁免真源）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -66,7 +66,41 @@ __all__ = [
     "GateResult",
     "GateSpec",
     "CommitGateRegistry",
+    "TEST_EXEMPT_PREFIXES",
+    "is_test_exempt",
 ]
+
+
+# ---------------------------------------------------------------------------
+# tests/ 豁免真源（治本2，2026-06-30）
+# ---------------------------------------------------------------------------
+# 病根：tests/ 豁免前缀在 create_guard.py / capability_overlap_gate.py 两处硬编码，
+# 且实现不一致（create_guard L99 先归一再比对；capability_overlap_gate L87 直接 startswith，
+# 未归一化——Windows 反斜杠路径会漏豁免，latent bug）。
+#
+# 治本（向内收·真源唯一）：提取到本模块（gate 基础设施真源），两 gate import 复用。
+# 放此处而非 capability_lookup.py：tests/ 豁免是 gate 行为配置（哪些文件跳过 token 检查），
+# 非能力索引关注点——关注点分离。
+#
+# 安全约束：本常量是高价值篡改目标（加 "src/" 可豁免所有源码绕过 create_guard），
+# 已纳入 validate_rules_integrity.py RULES_MANIFEST C 层 golden hash 保护。
+TEST_EXEMPT_PREFIXES: tuple[str, ...] = ("tests/",)
+
+
+def is_test_exempt(file_path: str) -> bool:
+    """判断文件是否在 tests/ 豁免区（归一化反斜杠后比对，消除 Windows 路径漂移）。
+
+    治本2：封装归一化+比对逻辑，消除两 gate 实现不一致（create_guard 归一化、
+    capability_overlap_gate 未归一化）。调用方不再自行实现 startswith 判断。
+
+    Args:
+        file_path: 文件相对路径（可能含正斜杠或反斜杠）。
+
+    Returns:
+        True 表示文件在 tests/ 豁免区（不需要 creation_token / 不检测 capability 重叠）。
+    """
+    normalized = file_path.replace("\\", "/")
+    return any(normalized.startswith(prefix) for prefix in TEST_EXEMPT_PREFIXES)
 
 
 @dataclass

@@ -307,201 +307,6 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def _make_old_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-REG-BL baseline-aware post-commit 对账 reconciler（P2-T3）。
-
-    GATE-REG-BL 被 GitCommitGateway 的 --no-verify 系统性绕过（机制层病根）。
-    本 reconciler 在 post-commit 跑 audit_registration.py --incremental --baseline-aware
-    增量扫描，检测 NEW 孤儿（不阻断——commit 已入历史，仅记录报告供人工追责）。
-
-    非阻断设计理由：post-commit 对账无法回滚已提交 commit；记录 NEW 孤儿到
-    .runtime/reconcile_reports/baseline_aware_<ts>.json，供 ide_health_daemon + 人工追责。
-
-    flag 真实性已核实：--baseline-aware 在 audit_registration.py L810-814 真实注册
-    （呼应 project_memory 反幻觉教训：上一轮 AI 误判为臆造 flag）。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本模块纯 stdlib 不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-REG-BL", priority=200)。
-    """
-    import json
-    import os
-    import subprocess
-    import sys
-    import time
-
-    project_root = gateway.project_root
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.startswith("src/zephyr/") and rel.endswith(".py"):
-                return True
-            if rel.startswith("scripts/governance/") and rel.endswith(".py"):
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. post-commit baseline-aware 扫描（非阻断）
-        # 治本 Bug 1：改用 --files 传入精确 committed_files，替代 --incremental。
-        # --incremental 用 git diff HEAD 扫描工作树全部 WIP，会把与本次 commit 无关的
-        # WIP 文件误判为 NEW orphan（例如 runtime_interceptor.py 是 WIP 未提交却被扫到，
-        # 而 commit 实际只含 fix_shared_bypass.py 等 4 个无关文件）。
-        # 仅传 src/zephyr/ 与 scripts/ 下的 .py（与 trigger 范围一致；audit 内部会再过滤）。
-        rel_py_files = [
-            os.path.relpath(f, str(project_root)).replace("\\", "/")
-            for f in committed_files
-            if f.endswith(".py")
-        ]
-        rel_py_files = [
-            rel for rel in rel_py_files
-            if rel.startswith("src/zephyr/") or rel.startswith("scripts/")
-        ]
-        if not rel_py_files:
-            return ReconcileResult(
-                action="skip",
-                detail="baseline_aware: no src/zephyr|scripts .py in committed files",
-            )
-        scan_result = subprocess.run(
-            [sys.executable, "scripts/governance/audit_registration.py",
-             "--baseline-aware", "--files"] + rel_py_files,
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=60,
-        )
-        # 2. 报告落盘（无论 exit code，记录供追责）
-        report = {
-            "gate_id": "GATE-REG-BL",
-            "session_id": session_id,
-            "exit_code": scan_result.returncode,
-            "stdout_tail": scan_result.stdout.strip()[-500:],
-            "stderr_tail": scan_result.stderr.strip()[-500:],
-            "committed_files": committed_files,
-            "scanned_files": rel_py_files,
-        }
-        report_path, write_err = _write_reconcile_report(project_root, "baseline_aware", report)
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"baseline_aware scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
-            )
-        # 3. 判定结果
-        if scan_result.returncode == 0:
-            return ReconcileResult(
-                action="clean",
-                detail=f"baseline_aware scan clean, report={report_path.name}",
-            )
-        # exit 1 = NEW 孤儿检出（commit 已入历史，仅告警）
-        return ReconcileResult(
-            action="warn",
-            detail=f"baseline_aware scan detected NEW orphans (exit={scan_result.returncode}), report={report_path.name}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-REG-BL",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=200,
-    )
-
-
-def _make_old_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 depgraph ghost post-commit 对账 reconciler（P2-T5）。
-
-    commit 删除文件后，depgraph 可能残留 ghost node（磁盘已删除但 depgraph
-    仍保留——对称漂移）。本 reconciler 在 post-commit 跑 diagnose_depgraph.py
-    检测 ghost_count，记录报告供 ide_health_daemon + 人工追责。
-
-    路径核实（反幻觉第四次验证）：diagnose_depgraph.py 真实路径为
-    ``scripts/governance/diagnose_depgraph.py``（非 continuation plan §4.5 所述
-    ``scripts/governance/d5_architecture/diagnose_depgraph.py``——该路径不存在）。
-
-    设计裁定（trigger 检测删除方式）：
-    continuation plan §4.5 建议用 ``git show --name-status HEAD`` 检测 D 状态。
-    本实现改用 ``os.path.isfile(f)`` 检测 committed 文件不在磁盘 = 删除 commit。
-    理由：①更廉价（无 git subprocess）；②post-commit 时点等价（commit 刚发生，
-    工作树反映删除）；③代码更简。
-
-    非阻断设计：post-commit 无法回滚 commit；记录 ghost_count 到
-    .runtime/reconcile_reports/ghost_<ts>.json，ghost_count>0 仅告警。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本模块纯 stdlib 不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-GHOST", priority=400)。
-    """
-    import json
-    import os
-    import re
-    import subprocess
-    import sys
-    import time
-
-    project_root = gateway.project_root
-
-    def _trigger(committed_files: list[str]) -> bool:
-        # committed 文件不在磁盘 = 删除 commit（post-commit 时点，工作树已反映删除）
-        return any(not os.path.isfile(f) for f in committed_files)
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 跑 diagnose_depgraph.py（无 --output，捕获 stdout 解析 ghost_count）
-        diag_result = subprocess.run(
-            [sys.executable, "scripts/governance/diagnose_depgraph.py"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=120,
-        )
-        # 2. 解析 ghost_count（输出格式：[DIAG]   Found N orphan nodes (M ghost: ...))
-        ghost_count = -1
-        m = re.search(r"\((\d+)\s+ghost:", diag_result.stdout)
-        if m:
-            ghost_count = int(m.group(1))
-        # 3. 报告落盘
-        report = {
-            "gate_id": "GATE-GHOST",
-            "session_id": session_id,
-            "exit_code": diag_result.returncode,
-            "ghost_count": ghost_count,
-            "deleted_files": [f for f in committed_files if not os.path.isfile(f)],
-            "stdout_tail": diag_result.stdout.strip()[-800:],
-            "stderr_tail": diag_result.stderr.strip()[-500:],
-        }
-        report_path, write_err = _write_reconcile_report(project_root, "ghost", report)
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {write_err}",
-            )
-        # 4. 判定（ghost_count==0 = clean；>0 = warn；-1 = 解析失败 = warn）
-        if diag_result.returncode == 0 and ghost_count == 0:
-            return ReconcileResult(
-                action="clean",
-                detail=f"ghost diagnose clean (ghost_count=0), report={report_path.name}",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"ghost diagnose: ghost_count={ghost_count} (exit={diag_result.returncode}), report={report_path.name}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-GHOST",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=400,
-    )
-
-
 def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 arch_directory_tree post-commit 自动同步 reconciler。
 
@@ -561,184 +366,6 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
-    )
-
-
-def _make_old_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 rule_catalog_registry post-commit 自动同步 reconciler。
-
-    commit ``docs/01_policies_and_standards/rules/`` 下文件后，
-    ``rule_catalog_registry.yaml`` 可能过时（新增/修改/删除规则文件但 catalog
-    未重新生成）。本 reconciler 在 post-commit 跑
-    ``generate_rule_catalog.py`` 重新生成，如有变更自动提交。
-
-    对标 ``make_path_tree_reconciler`` 的"检测变更→自动提交"模式。
-    治 P3 审查发现的 catalog stale 问题（2026-05-07 至 2026-06-26 stale
-    1个月+，153条目74%死链）。catalog 是 ``sync_yaml_to_depgraph.py`` 的
-    数据源（同步到 depgraph 的 arch_directory_tree 表），stale 会导致
-    全景图数据污染。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-RULE-CATALOG", priority=160)。
-    """
-    import os
-    import subprocess
-    import sys
-
-    project_root = gateway.project_root
-    _CATALOG_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
-    _RULES_PREFIX = "docs/01_policies_and_standards/rules/"
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.startswith(_RULES_PREFIX) and rel.endswith((".yaml", ".yml", ".md")):
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重新生成 catalog（generate_rule_catalog.py 幂等）
-        gen_result = subprocess.run(
-            [sys.executable, "scripts/governance/d3_metadata/generate_rule_catalog.py"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=60,
-        )
-        if gen_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"rule_catalog generation failed: {gen_result.stderr.strip()[:200]}",
-            )
-
-        # 2. 检测 catalog 变更
-        diff_result = gateway._run_git(
-            ["git", "diff", "--name-only", "--", _CATALOG_REL]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="rule_catalog_registry up to date")
-
-        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
-        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
-        # 统一入口，五重 gate 覆盖；_commit_auto 内部用 pathspec-from-file 精确暂存，
-        # 不会捡拾其他 session WIP（原"禁 git add -A"约束自动满足）。
-        auto_msg = "chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit"
-        abs_files = [str(project_root / _CATALOG_REL)]
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-        if commit_result.status == "OK":
-            return ReconcileResult(
-                action="auto_committed",
-                detail="rule_catalog_registry drift detected and auto-reconciled",
-            )
-        if commit_result.status == "NOTHING_TO_COMMIT":
-            return ReconcileResult(
-                action="clean",
-                detail="rule_catalog_registry no drift (auto-commit found no staged changes)",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"rule_catalog_registry drift detected, auto-commit failed ({commit_result.status}): "
-                   f"{commit_result.message[:200]}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-RULE-CATALOG",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=160,
-    )
-
-
-def _make_old_registry_index_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 registry_master_index post-commit 自动同步 reconciler。
-
-    commit ``infrastructure_registry.yaml`` 后，``registry_master_index.yaml``
-    可能过时（新增/修改/删除基础设施条目但总索引未重新生成）。本 reconciler
-    在 post-commit 跑 ``generate_registry_master_index.py`` 重新生成，如有
-    变更自动提交。
-
-    对标 ``make_rule_catalog_reconciler`` 的"检测变更→自动提交"模式。
-    治 P2 审查发现的 registry_master_index stale 问题：当前仅有 pre-commit
-    GATE-19 校验（阻断漂移），无 post-commit 自动重新生成，违反"永久性系统
-    必须自动维护"铁律（逻辑2.2）。补建后形成"校验+自动修复"双闭环。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-REGISTRY-INDEX", priority=155)。
-    """
-    import os
-    import subprocess
-    import sys
-
-    project_root = gateway.project_root
-    _INDEX_REL = "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml"
-    _INFRA_REL = "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel == _INFRA_REL:
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重新生成 registry_master_index（generate_registry_master_index.py 幂等）
-        gen_result = subprocess.run(
-            [sys.executable, "scripts/governance/generators/generate_registry_master_index.py"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=60,
-        )
-        if gen_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"registry_master_index generation failed: {gen_result.stderr.strip()[:200]}",
-            )
-
-        # 2. 检测 index 变更
-        diff_result = gateway._run_git(
-            ["git", "diff", "--name-only", "--", _INDEX_REL]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="registry_master_index up to date")
-
-        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
-        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
-        # 统一入口，五重 gate 覆盖；_commit_auto 内部用 pathspec-from-file 精确暂存。
-        auto_msg = "chore(registry): auto-sync registry_master_index by GitCommitGateway post-commit"
-        abs_files = [str(project_root / _INDEX_REL)]
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-        if commit_result.status == "OK":
-            return ReconcileResult(
-                action="auto_committed",
-                detail="registry_master_index drift detected and auto-reconciled",
-            )
-        if commit_result.status == "NOTHING_TO_COMMIT":
-            return ReconcileResult(
-                action="clean",
-                detail="registry_master_index no drift (auto-commit found no staged changes)",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"registry_master_index drift detected, auto-commit failed ({commit_result.status}): "
-                   f"{commit_result.message[:200]}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-REGISTRY-INDEX",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=155,
     )
 
 
@@ -944,329 +571,6 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
         "details": details,
         "archive_dir": str(archive_dir) if archive_dir else None,
     }
-
-
-def _make_old_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 docs/_working/ 幽灵引用 post-commit 对账 reconciler（治本：AI 工作文档堆积治理）。
-
-    docs/_working/ 下的 task_bound 文档引用脚本/规则/状态，随项目演进这些引用会
-    过时变成"幽灵引用"，误导后续 AI 产生幻觉（违反"减少幻觉"核心原则）。本
-    reconciler 在 post-commit 扫描 _working/*.md 的文件路径引用，检测引用路径
-    是否仍存在；有幽灵引用的文档归档到 .runtime/working_archive/，并自动 commit
-    _working/ 的删除，防止幽灵引用持续误导。
-
-    向内收设计（三原则审核）：
-    - 责任唯一：扫描+归档逻辑只在 ``scan_and_archive_working_docs`` 一处，reconciler
-      与一次性归档（S5/CLI）共用，不另建脚本
-    - 真源唯一：复用 ReconciliationRegistry 框架（第6个 reconciler），不新建清理系统；
-      复用 _make_old_ghost_reconciler 的"删除检测 trigger"模式；复用 make_manifest_reconciler
-      的"检测→git add→git commit --no-verify"自动提交模式
-    - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
-
-    非阻断设计：归档后自动 commit 删除；commit 失败降级为 warn（报告落盘供追责）。
-    .runtime/ 已 .gitignore，归档文件不入库，仅 _working/ 删除需 commit。
-
-    trigger 裁定：与 _make_old_ghost_reconciler 一致——committed 文件不在磁盘 = 删除
-    commit。删除是产生幽灵引用的主要原因（引用的文件被删/改名）；改名 = 删除+新增，
-    删除部分会被检测。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root + _run_git，类型注解
-            object 保持本纯 stdlib 模块不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-WORKING-DOCS", priority=500)。
-    """
-    import json
-    import os
-    import time
-
-    project_root = gateway.project_root
-
-    def _trigger(committed_files: list[str]) -> bool:
-        # 与 _make_old_ghost_reconciler 一致：committed 文件不在磁盘 = 删除 commit
-        return any(not os.path.isfile(f) for f in committed_files)
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 扫描+归档（复用真源函数）
-        scan = scan_and_archive_working_docs(project_root, dry_run=False)
-        scanned = scan["scanned"]
-        archived = scan["archived"]
-        details = scan["details"]
-
-        # 2. 报告落盘
-        report = {
-            "gate_id": "GATE-WORKING-DOCS",
-            "session_id": session_id,
-            "scanned": scanned,
-            "archived": archived,
-            "clean": scan["clean"],
-            "details": details,
-            "archive_dir": scan["archive_dir"],
-        }
-        report_path, write_err = _write_reconcile_report(project_root, "working_docs", report)
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"working_docs scan done but report write failed: {write_err}",
-            )
-
-        if scanned == 0:
-            return ReconcileResult(action="skip", detail="no task_bound .md in _working/")
-        if not archived:
-            return ReconcileResult(
-                action="clean",
-                detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
-            )
-
-        # 3. 归档后自动 commit _working/ 的删除（经 _commit_auto 统一入口，DCR gate 覆盖）
-        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
-        # 统一入口，五重 gate 覆盖。_commit_auto 内部用 pathspec-from-file 精确暂存，
-        # 不会捡拾其他 session 在 _working/ 的 WIP（原"禁 git add -A"约束自动满足）。
-        # _commit_auto 的 _is_git_tracked 检测支持已删除文件（不存在但 git 跟踪）。
-        archived_rel = [f"docs/_working/{name}" for name in archived]
-        abs_files = [str(project_root / rel) for rel in archived_rel]
-        auto_msg = (
-            f"chore(working_docs): auto-archive {len(archived)} ghost-ref docs by "
-            f"GitCommitGateway post-commit"
-        )
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-        if commit_result.status == "OK":
-            return ReconcileResult(
-                action="auto_committed",
-                detail=f"working_docs archived {len(archived)} ghost-ref docs, "
-                       f"report={report_path.name}",
-            )
-        if commit_result.status == "NOTHING_TO_COMMIT":
-            return ReconcileResult(
-                action="clean",
-                detail=f"working_docs archived {len(archived)} but no staged changes "
-                       f"(auto-commit), report={report_path.name}",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"working_docs archived {len(archived)} but auto-commit failed "
-                   f"({commit_result.status}): {commit_result.message[:200]}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-WORKING-DOCS",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=500,
-    )
-
-
-def _make_old_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造域文档制品 post-commit 自动重生 reconciler。
-
-    治本（2026-06-27）：原 trigger 匹配 ``data/databases/depgraph.db`` commit 事件，
-    P2 PG 迁移后 depgraph 已迁至 PostgreSQL，无 .db 文件 commit 路径，trigger 永不命中，
-    reconciler 沦为死代码。现改为匹配 PG 写入脚本 commit（apply_depgraph.py /
-    sync_yaml_to_depgraph.py / generate_project_path_tree.py），这三者是 depgraph (PostgreSQL)
-    的唯一写入入口，其变更即代表 DB 内容可能漂移，需重生域制品。
-
-    本 reconciler 在 post-commit 跑 generate_domain_doc.py --all +
-    generate_domain_dependency_diagram.py --all 重生所有域制品，如有变更自动提交。
-
-    治本修复2a/2b：消除"DB 变更→制品漂移"窗口（红蓝对抗严重2 治本延伸）。
-    之前手工运行生成器（违反逻辑2.2 自动触发原则），现改为 post-commit 事件驱动。
-
-    循环安全：trigger 只匹配 PG 写入脚本（.py），制品 auto-commit 的 committed_files
-    是 .md/.mmd，不命中 trigger，不会递归触发。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-DOMAIN-DOC", priority=600)。
-    """
-    import os
-    import subprocess
-    import sys
-
-    project_root = gateway.project_root
-    # 治本（2026-06-27）：PG 写入脚本真源列表（替代 depgraph.db trigger）。
-    # 这三脚本是 depgraph (PostgreSQL) 的唯一写入入口，其 commit 即代表 DB 变更。
-    _PG_WRITE_SCRIPTS = (
-        "scripts/governance/apply_depgraph.py",
-        "scripts/governance/sync_yaml_to_depgraph.py",
-        "scripts/governance/generate_project_path_tree.py",
-    )
-    _GEN_DIR = "scripts/governance/d5_architecture/generators"
-    _DOC_DIRS = (
-        "docs/02_enterprise_architecture/02_domain_architecture_docs",
-        "docs/02_enterprise_architecture/generated/domains",
-    )
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel in _PG_WRITE_SCRIPTS:
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入→相同输出）
-        for gen_name in ("generate_domain_doc.py", "generate_domain_dependency_diagram.py"):
-            gen_result = subprocess.run(
-                [sys.executable, f"{_GEN_DIR}/{gen_name}", "--all"],
-                cwd=str(project_root),
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=180,
-            )
-            if gen_result.returncode != 0:
-                return ReconcileResult(
-                    action="warn",
-                    detail=f"{gen_name} --all failed: {gen_result.stderr.strip()[:200]}",
-                )
-
-        # 2. 检测制品变更
-        diff_result = gateway._run_git(
-            ["git", "diff", "--name-only", "--", *_DOC_DIRS]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="domain docs up to date")
-
-        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
-        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
-        # 统一入口，五重 gate 覆盖。_DOC_DIRS 是目录，_commit_auto 需要文件列表，
-        # 从 diff_result.stdout 提取变更文件列表（上一步已检测过，复用结果）。
-        changed_files = [
-            f.strip() for f in diff_result.stdout.splitlines() if f.strip()
-        ]
-        abs_files = [str(project_root / f) for f in changed_files]
-        auto_msg = "chore(docs): auto-regenerate domain docs by GitCommitGateway post-commit"
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-        if commit_result.status == "OK":
-            return ReconcileResult(
-                action="auto_committed",
-                detail="domain docs drift detected and auto-regenerated",
-            )
-        if commit_result.status == "NOTHING_TO_COMMIT":
-            return ReconcileResult(
-                action="clean",
-                detail="domain docs no drift (auto-commit found no staged changes)",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"domain docs drift detected, auto-commit failed ({commit_result.status}): "
-                   f"{commit_result.message[:200]}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-DOMAIN-DOC",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=600,
-    )
-
-
-def _make_old_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造根树 architecture_model/index.yaml post-commit 自动重生 reconciler。
-
-    治本（2026-06-30）：dm200916_write_direct.py 当前 ``[STARTUP] manual``，根树
-    index.yaml 的 domains 部分在 depgraph 域变更后不会自动重生，与 GATE-DOMAIN-DOC
-    （priority=600，重生域文档）形成缺口——DB 域变更（新增/删除/重命名域）后，根树
-    index.yaml 的 domains 列表漂移。本 reconciler 在 PG 写入脚本 commit 后触发
-    dm200916 重生根树 index.yaml（双树合并后单树，2026-06-30 治本）。
-
-    派生范围：index.yaml 的 domains 列表 + global_stats.total_domains（从 depgraph (PostgreSQL)
-    domains 表派生）。不派生：partitions/query_hints/id_conventions（手工模板）、
-    index.md、capability_heatmap.yaml（含手工评估数据）。
-
-    循环安全：trigger 只匹配 PG 写入脚本（.py），制品 auto-commit 的 committed_files
-    是 index.yaml，不命中 trigger，不会递归触发。dm200916 不修改 depgraph (PostgreSQL)（只读
-    domains 表）。
-
-    priority=610（在 GATE-DOMAIN-DOC 600 之后，确保域文档先生成再重生架构模型索引）。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-ARCH-MODEL", priority=610)。
-    """
-    import os
-    import subprocess
-    import sys
-
-    project_root = gateway.project_root
-    # PG 写入脚本真源列表（与 GATE-DOMAIN-DOC 一致，DB 变更即代表域可能漂移）
-    _PG_WRITE_SCRIPTS = (
-        "scripts/governance/apply_depgraph.py",
-        "scripts/governance/sync_yaml_to_depgraph.py",
-        "scripts/governance/generate_project_path_tree.py",
-    )
-    _GEN_SCRIPT = "scripts/governance/d5_architecture/dm200916_write_direct.py"
-    _ARCH_MODEL_INDEX = (
-        "architecture_model/index.yaml",
-    )
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel in _PG_WRITE_SCRIPTS:
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重生根树 index.yaml（dm200916 从 depgraph (PostgreSQL) domains 表派生）
-        gen_result = subprocess.run(
-            [sys.executable, _GEN_SCRIPT],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=180,
-        )
-        if gen_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"dm200916_write_direct.py failed: {gen_result.stderr.strip()[:200]}",
-            )
-
-        # 2. 检测 index.yaml 变更
-        diff_result = gateway._run_git(
-            ["git", "diff", "--name-only", "--", *_ARCH_MODEL_INDEX]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="EA tree index.yaml up to date")
-
-        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
-        # 治本（2026-06-30）：原裸调 _run_git commit 绕过 DCR gate，改为走 _commit_auto
-        # 统一入口，五重 gate 覆盖。_ARCH_MODEL_INDEX 是文件路径元组，直接转绝对路径。
-        # 注意：如果路径违反 DCR（如双树合并前的废弃路径），_commit_auto 的 DCR gate
-        # 会返回 NAMING_VIOLATION，reconciler 降级为 warn（不阻断，供人工追责）。
-        abs_files = [str(project_root / rel) for rel in _ARCH_MODEL_INDEX]
-        auto_msg = "chore(arch_model): auto-regenerate EA tree index.yaml by GitCommitGateway post-commit"
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-        if commit_result.status == "OK":
-            return ReconcileResult(
-                action="auto_committed",
-                detail="EA tree index.yaml drift detected and auto-regenerated",
-            )
-        if commit_result.status == "NOTHING_TO_COMMIT":
-            return ReconcileResult(
-                action="clean",
-                detail="EA tree index.yaml no drift (auto-commit found no staged changes)",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"EA tree index.yaml drift detected, auto-commit failed ({commit_result.status}): "
-                   f"{commit_result.message[:200]}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-ARCH-MODEL",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=610,
-    )
 
 
 def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -1479,111 +783,6 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def _make_old_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-RULES-INTEGRITY post-commit 基线自动同步 reconciler（红蓝发现1 治本）。
-
-    根因（红蓝发现1 P0）：
-    ``rules_integrity_db.json``（C 层 golden hash 基线）不被 git 跟踪，合法 commit
-    修改 RULES_MANIFEST 文件后本地基线不自动更新 → 下次 ``--check`` 误报 TAMPERED
-    → 阻断裸 git commit（pre-commit gate-rules-integrity hook 触发）。这是 C 层基线
-    与 commit 不同步的结构性缺陷。
-
-    治本（事件驱动自动同步）：
-    commit 涉及 RULES_MANIFEST 任一文件后，post-commit 自动跑
-    ``validate_rules_integrity.py --register`` 重算全部 RULES_MANIFEST 文件 hash
-    并写入本地基线。合法 commit 通过 gateway 时 A 层 AST 锚点校验已先行通过
-    （红蓝发现2 治本：空桩绕过已堵），故 post-commit 重注册的基线是"已验证合法"
-    的状态——消除 C 层误报，同时不削弱篡改检测能力。
-
-    RULES_MANIFEST 真源为 ``validate_rules_integrity.py`` 顶部的列表（SSoT）。本
-    reconciler 的 trigger 总是返回 True（每次 commit 都 --register）。第一性原理：
-    trigger 的价值是避免不必要的 --register（性能优化），但 --register 仅 hash
-    RULES_MANIFEST 文件（毫秒级），远小于 commit 开销；而宽匹配（路径前缀判断）
-    基于"RULES_MANIFEST 全在 governance 下"的未校验假设，未来新增其他路径文件会
-    假阴性漏触发且无告警 → 基线不同步 → 误报 TAMPERED。性能收益不值得假设漂移风险，
-    治本：总是触发，消除假设。
-
-    非阻断设计：--register 仅写本地非跟踪文件，exit 0 即基线已更新；失败降级 warn
-    （报告落盘供追责）。priority 270（在 GATE-ID-UNIQ 250 之后、GATE-VOCAB-CHANGE
-    280 之前），确保其他可能修改 RULES_MANIFEST 文件的 reconciler（如 manifest pri 100
-    会 auto-commit script_manifest.yaml）先完成，再统一重注册基线。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本纯 stdlib 模块不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-RULES-INTEGRITY", priority=270)。
-    """
-    import json
-    import os
-    import subprocess
-    import sys
-    import time
-
-    project_root = gateway.project_root
-    _VALIDATE_SCRIPT = "scripts/governance/meta/validate_rules_integrity.py"
-
-    def _trigger(committed_files: list[str]) -> bool:
-        # 第一性原理治本：总是触发。原宽匹配（AGENTS.md | scripts/governance/ 前缀）
-        # 基于未校验假设，未来 RULES_MANIFEST 新增其他路径文件会假阴性漏触发。
-        # --register 仅 hash RULES_MANIFEST 文件（毫秒级），不值得为省此开销引入假设。
-        # RULES_MANIFEST 真源在 validate_rules_integrity.py 顶部。
-        return True
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
-        # 红蓝发现4 治本：设置 ZEPHYR_RECONCILER_MODE=1 门禁令牌，允许 --register。
-        # validate_rules_integrity.py --register 检查此变量，手动调用不设置 → 阻断。
-        _env = dict(os.environ)
-        _env["ZEPHYR_RECONCILER_MODE"] = "1"
-        reg_result = subprocess.run(
-            [sys.executable, _VALIDATE_SCRIPT, "--register"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
-            env=_env,
-        )
-        # 2. 报告落盘（无论 exit code，记录供追责）
-        report = {
-            "gate_id": "GATE-RULES-INTEGRITY",
-            "session_id": session_id,
-            "exit_code": reg_result.returncode,
-            "stdout_tail": reg_result.stdout.strip()[-500:],
-            "stderr_tail": reg_result.stderr.strip()[-500:],
-            "triggered_by": committed_files,
-        }
-        report_path, write_err = _write_reconcile_report(project_root, "rules_integrity", report)
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"rules_integrity --register done (exit={reg_result.returncode}) "
-                       f"but report write failed: {write_err}",
-            )
-        # 3. 判定（--register exit 0 = 基线已更新；非 0 = 脚本异常）
-        if reg_result.returncode == 0:
-            return ReconcileResult(
-                action="auto_committed",
-                detail=f"rules_integrity baseline re-registered post-commit "
-                       f"(C层基线已同步合法 commit), report={report_path.name}",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"rules_integrity --register failed (exit={reg_result.returncode}), "
-                   f"report={report_path.name}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-RULES-INTEGRITY",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=270,
-    )
-
-
 def _audit_commit_history(
     project_root: "object",
     audit_window: int,
@@ -1650,96 +849,6 @@ def _audit_commit_history(
             continue  # body 含 [GW:（手动 commit 经 GitCommitGateway）
         violations.append({"hash": commit_hash, "subject": subject[:120]})
     return violations, None
-
-
-def _make_old_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-COMMIT-GW-AUDIT post-commit 审计 reconciler（C级 缺口4）。
-
-    扫描最近 N 个 commit，标记未经 GitCommitGateway 的裸 commit（message 不含
-    ``[GW:`` 标记）。双层防御：pre-commit GATE-COMMIT-GW 阻断裸 commit +
-    post-commit 审计兜底 ``--no-verify`` 绕过场景。
-
-    设计裁定（非阻断）：
-    post-commit 无法回滚 commit；裸 commit 已入 git 历史，仅告警记录到
-    ``.runtime/reconcile_reports/commit_gateway_audit_<ts>.json``，供追责。
-    与 make_precommit_id_uniqueness_reconciler 一致的"post-compensation 非阻断"模式。
-
-    trigger 裁定：always True（第一性原理：绕过 gateway 的裸 commit 可能涉及任何
-    文件，无法用文件前缀限定；审计扫描 git log 是毫秒级，不值得为省此开销引入
-    路径假设）。reconciler 仅在 ``commit()``（用户提交）后触发，
-    ``_commit_auto``（reconciler 自动提交）不触发 reconcile_for，无递归风险。
-
-    审计窗口裁定：最近 20 个 commit（覆盖一次开发会话的提交密度，平衡召回率与
-    噪音）。merge commit 跳过（合并提交无作者意图，非裸 commit 范畴）。
-
-    向内收设计（三原则审核）：
-    - 责任唯一：检测逻辑只在 validate_commit_gateway.py 一处（pre-commit hook
-      与本 reconciler 共用同一 GW 标记判定语义 ``[GW:``）
-    - 真源唯一：复用 ReconciliationRegistry 框架（第 11 个 reconciler），不新建
-      兜底系统；复用 _write_reconcile_report 报告落盘
-    - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本纯 stdlib 模块不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-COMMIT-GW-AUDIT", priority=800)。
-    """
-    import os
-    import subprocess
-
-    project_root = gateway.project_root
-    _AUDIT_WINDOW = 20  # 审计最近 20 个 commit
-    _GW_MARKER = "[GW:"
-
-    def _trigger(committed_files: list[str]) -> bool:
-        # 审计始终运行：绕过 gateway 的裸 commit 可能涉及任何文件
-        return True
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 审计逻辑真源：模块级 _audit_commit_history（A 层 AST 锚点保护，
-        # 治本 2026-06-30 病根1 看门人无人看）。闭包只做调用 + 报告落盘 + 判定。
-        violations, err = _audit_commit_history(
-            project_root, _AUDIT_WINDOW, _GW_MARKER,
-        )
-        if err:
-            return ReconcileResult(action="warn", detail=err)
-
-        # 3. 报告落盘
-        report = {
-            "gate_id": "GATE-COMMIT-GW-AUDIT",
-            "session_id": session_id,
-            "audit_window": _AUDIT_WINDOW,
-            "violations_count": len(violations),
-            "violations": violations,
-        }
-        report_path, write_err = _write_reconcile_report(
-            project_root, "commit_gateway_audit", report
-        )
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"audit done ({len(violations)} violations) but report write failed: {write_err}",
-            )
-
-        # 4. 判定（非阻断：commit 已入历史，仅告警）
-        if not violations:
-            return ReconcileResult(
-                action="clean",
-                detail=f"audit clean (window={_AUDIT_WINDOW}), report={report_path.name}",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"audit detected {len(violations)} non-GW commits (window={_AUDIT_WINDOW}), report={report_path.name}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-COMMIT-GW-AUDIT",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=800,  # 最后执行（审计非阻断，低优先级）
-    )
 
 
 def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -1979,77 +1088,6 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
     return ""
 
 
-def _make_old_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-RULE-FILE-AUDIT post-commit 审计 reconciler（缺口3：规则文件变更审计）。
-
-    治本动机：directory_contract / doc_type_vocabulary / ttl_vocabulary /
-    architecture_contract / gate_registry 等治理真源被修改后无 post-commit
-    兜底告警，可能被悄悄放宽约束。本 reconciler 落盘审计记录，提示人工审查。
-
-    P0 修复（2026-06-30）：原设计此函数同时承担缺口2（豁免区 frontmatter 检测），
-    但两者共用一个 trigger（只检测规则文件变更），导致缺口2成死代码——单独提交
-    豁免区文件时 trigger 不命中，缺口2检测永不执行。现已将缺口2拆分到独立的
-    make_exempt_zone_frontmatter_reconciler，trigger 改为检测豁免区文件。
-
-    priority=700（审计非阻断，post-compensation 层）。
-    """
-    import json
-    import os
-    from datetime import datetime
-
-    project_root = gateway.project_root
-    _project_root_str = str(project_root)
-    _rule_set = set(_RULE_FILE_PATHS)
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            if _rel_path(f, _project_root_str) in _rule_set:
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        rule_files_changed = [
-            _rel_path(f, _project_root_str)
-            for f in committed_files
-            if _rel_path(f, _project_root_str) in _rule_set
-        ]
-
-        reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
-        os.makedirs(reports_dir, exist_ok=True)
-        ts_iso = datetime.now().isoformat(timespec="seconds")
-        ts_file = ts_iso.replace(":", "")
-        report = {
-            "timestamp": ts_iso,
-            "session_id": session_id,
-            "rule_files_changed": rule_files_changed,
-            "note": "规则文件变更需人工审查（约束可能被放宽）",
-        }
-        report_path = os.path.join(reports_dir, f"rule_file_audit_{ts_file}.json")
-        try:
-            with open(report_path, "w", encoding="utf-8") as fh:
-                json.dump(report, fh, ensure_ascii=False, indent=2)
-        except OSError as e:
-            return ReconcileResult(
-                action="warn",
-                detail=f"rule-file audit done ({len(rule_files_changed)} file(s)) but report write failed: {e}",
-            )
-
-        return ReconcileResult(
-            action="warn",
-            detail=(
-                f"{len(rule_files_changed)} rule file(s) changed "
-                f"(manual review recommended), report={os.path.basename(report_path)}"
-            ),
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-RULE-FILE-AUDIT",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=700,
-    )
-
-
 def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-EXEMPT-ZONE-FM post-commit reconciler（缺口2：豁免区 frontmatter 检测）。
 
@@ -2151,12 +1189,14 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
 # - reconcile = 串联执行 旧A → 旧B；action 取较严重
 #   （severity: skip/nothing=0, clean=1, warn=2, auto_committed=2），detail 拼接两者
 # - priority = max(旧A, 旧B)
-# 旧实现保留为 _make_old_*_reconciler 私有函数供合并 reconciler 复用——
-# reconcile 逻辑真源不动（gateway._commit_auto / subprocess / 报告落盘调用原样保留），
-# 仅收敛 ReconciliationRegistry 注册入口，治本 AD-GOV-001 治理军备竞赛。
-# **禁止外部 import _make_old_***：这些是私有实现，仅供 _compose_reconcilers 复用。
+# 治本（2026-06-30 元问题4）：原 _make_old_*_reconciler 私有函数已删除，reconcile
+# 逻辑内联到下方 5 个 make_* compose 包装函数的闭包中。Python 无真私有，保留
+# _make_old_* 等于留可 import 的绕过入口；内联后 reconcile 逻辑仅在 make_* 闭包
+# 内可见，无法被外部 import 绕过 compose。reconcile 逻辑真源不动（gateway._commit_auto
+# / subprocess / 报告落盘调用原样保留）。
+# _compose_reconcilers 是 compose 工具函数（被测试覆盖），保留。
 # 测试规范见 tests/unit/test_integrity_audit_reconciler.py——用公共 API +
-# mock spec + 模块级函数 _audit_commit_history 测试，不 import _make_old_*。
+# mock spec + 模块级函数 _audit_commit_history 测试。
 # 新增 reconciler 前 MUST 过 trae_060 §4 元问题审查，教训登记 #ARCH-028。
 # ============================================================
 
@@ -2219,12 +1259,143 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     合并后执行：先 ghost 诊断，再 working_docs 归档；action 取较严重，detail 拼接。
     priority=max(400,500)=500。
+
+    治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_ghost_reconciler
+    与 _make_old_working_docs_reconciler，私有函数已删除，无法被外部 import 绕过。
     """
-    return _compose_reconcilers(
-        "GATE-DELETE-AUDIT",
-        _make_old_ghost_reconciler(gateway),
-        _make_old_working_docs_reconciler(gateway),
+    import os
+    import re
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    # === 旧 GATE-GHOST 逻辑（内联自 _make_old_ghost_reconciler）===
+    def _trigger_ghost(committed_files: list[str]) -> bool:
+        # committed 文件不在磁盘 = 删除 commit（post-commit 时点，工作树已反映删除）
+        return any(not os.path.isfile(f) for f in committed_files)
+
+    def _reconcile_ghost(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 跑 diagnose_depgraph.py（无 --output，捕获 stdout 解析 ghost_count）
+        diag_result = subprocess.run(
+            [sys.executable, "scripts/governance/diagnose_depgraph.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        # 2. 解析 ghost_count（输出格式：[DIAG]   Found N orphan nodes (M ghost: ...))
+        ghost_count = -1
+        m = re.search(r"\((\d+)\s+ghost:", diag_result.stdout)
+        if m:
+            ghost_count = int(m.group(1))
+        # 3. 报告落盘
+        report = {
+            "gate_id": "GATE-GHOST",
+            "session_id": session_id,
+            "exit_code": diag_result.returncode,
+            "ghost_count": ghost_count,
+            "deleted_files": [f for f in committed_files if not os.path.isfile(f)],
+            "stdout_tail": diag_result.stdout.strip()[-800:],
+            "stderr_tail": diag_result.stderr.strip()[-500:],
+        }
+        report_path, write_err = _write_reconcile_report(project_root, "ghost", report)
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {write_err}",
+            )
+        # 4. 判定（ghost_count==0 = clean；>0 = warn；-1 = 解析失败 = warn）
+        if diag_result.returncode == 0 and ghost_count == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"ghost diagnose clean (ghost_count=0), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"ghost diagnose: ghost_count={ghost_count} (exit={diag_result.returncode}), report={report_path.name}",
+        )
+
+    spec_ghost = ReconcilerSpec(
+        gate_id="GATE-GHOST",
+        trigger=_trigger_ghost,
+        reconcile=_reconcile_ghost,
+        priority=400,
     )
+
+    # === 旧 GATE-WORKING-DOCS 逻辑（内联自 _make_old_working_docs_reconciler）===
+    def _trigger_working(committed_files: list[str]) -> bool:
+        # 与 ghost 一致：committed 文件不在磁盘 = 删除 commit
+        return any(not os.path.isfile(f) for f in committed_files)
+
+    def _reconcile_working(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 扫描+归档（复用真源函数）
+        scan = scan_and_archive_working_docs(project_root, dry_run=False)
+        scanned = scan["scanned"]
+        archived = scan["archived"]
+        details = scan["details"]
+
+        # 2. 报告落盘
+        report = {
+            "gate_id": "GATE-WORKING-DOCS",
+            "session_id": session_id,
+            "scanned": scanned,
+            "archived": archived,
+            "clean": scan["clean"],
+            "details": details,
+            "archive_dir": scan["archive_dir"],
+        }
+        report_path, write_err = _write_reconcile_report(project_root, "working_docs", report)
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"working_docs scan done but report write failed: {write_err}",
+            )
+
+        if scanned == 0:
+            return ReconcileResult(action="skip", detail="no task_bound .md in _working/")
+        if not archived:
+            return ReconcileResult(
+                action="clean",
+                detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
+            )
+
+        # 3. 归档后自动 commit _working/ 的删除（经 _commit_auto 统一入口，DCR gate 覆盖）
+        archived_rel = [f"docs/_working/{name}" for name in archived]
+        abs_files = [str(project_root / rel) for rel in archived_rel]
+        auto_msg = (
+            f"chore(working_docs): auto-archive {len(archived)} ghost-ref docs by "
+            f"GitCommitGateway post-commit"
+        )
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"working_docs archived {len(archived)} ghost-ref docs, "
+                       f"report={report_path.name}",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail=f"working_docs archived {len(archived)} but no staged changes "
+                       f"(auto-commit), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"working_docs archived {len(archived)} but auto-commit failed "
+                   f"({commit_result.status}): {commit_result.message[:200]}",
+        )
+
+    spec_working = ReconcilerSpec(
+        gate_id="GATE-WORKING-DOCS",
+        trigger=_trigger_working,
+        reconcile=_reconcile_working,
+        priority=500,
+    )
+
+    return _compose_reconcilers("GATE-DELETE-AUDIT", spec_ghost, spec_working)
 
 
 def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -2243,12 +1414,154 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
     合并后执行：先重生域文档，再重生根树 index.yaml；action 取较严重，detail 拼接。
     priority=max(600,610)=610。
+
+    治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_domain_doc_reconciler
+    与 _make_old_arch_model_reconciler，私有函数已删除。
     """
-    return _compose_reconcilers(
-        "GATE-REGENERATE",
-        _make_old_domain_doc_reconciler(gateway),
-        _make_old_arch_model_reconciler(gateway),
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    # PG 写入脚本真源列表（DB 变更即代表域可能漂移）
+    _PG_WRITE_SCRIPTS = (
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/sync_yaml_to_depgraph.py",
+        "scripts/governance/generate_project_path_tree.py",
     )
+    _GEN_DIR = "scripts/governance/d5_architecture/generators"
+    _DOC_DIRS = (
+        "docs/02_enterprise_architecture/02_domain_architecture_docs",
+        "docs/02_enterprise_architecture/generated/domains",
+    )
+    _GEN_SCRIPT = "scripts/governance/d5_architecture/dm200916_write_direct.py"
+    _ARCH_MODEL_INDEX = (
+        "architecture_model/index.yaml",
+    )
+
+    # === 旧 GATE-DOMAIN-DOC 逻辑（内联自 _make_old_domain_doc_reconciler）===
+    def _trigger_domain_doc(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel in _PG_WRITE_SCRIPTS:
+                return True
+        return False
+
+    def _reconcile_domain_doc(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入→相同输出）
+        for gen_name in ("generate_domain_doc.py", "generate_domain_dependency_diagram.py"):
+            gen_result = subprocess.run(
+                [sys.executable, f"{_GEN_DIR}/{gen_name}", "--all"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,
+            )
+            if gen_result.returncode != 0:
+                return ReconcileResult(
+                    action="warn",
+                    detail=f"{gen_name} --all failed: {gen_result.stderr.strip()[:200]}",
+                )
+
+        # 2. 检测制品变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", *_DOC_DIRS]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="domain docs up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        changed_files = [
+            f.strip() for f in diff_result.stdout.splitlines() if f.strip()
+        ]
+        abs_files = [str(project_root / f) for f in changed_files]
+        auto_msg = "chore(docs): auto-regenerate domain docs by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="domain docs drift detected and auto-regenerated",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="domain docs no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"domain docs drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    spec_domain_doc = ReconcilerSpec(
+        gate_id="GATE-DOMAIN-DOC",
+        trigger=_trigger_domain_doc,
+        reconcile=_reconcile_domain_doc,
+        priority=600,
+    )
+
+    # === 旧 GATE-ARCH-MODEL 逻辑（内联自 _make_old_arch_model_reconciler）===
+    def _trigger_arch_model(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel in _PG_WRITE_SCRIPTS:
+                return True
+        return False
+
+    def _reconcile_arch_model(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重生根树 index.yaml（dm200916 从 depgraph (PostgreSQL) domains 表派生）
+        gen_result = subprocess.run(
+            [sys.executable, _GEN_SCRIPT],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"dm200916_write_direct.py failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 index.yaml 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", *_ARCH_MODEL_INDEX]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="EA tree index.yaml up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        abs_files = [str(project_root / rel) for rel in _ARCH_MODEL_INDEX]
+        auto_msg = "chore(arch_model): auto-regenerate EA tree index.yaml by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="EA tree index.yaml drift detected and auto-regenerated",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="EA tree index.yaml no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"EA tree index.yaml drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    spec_arch_model = ReconcilerSpec(
+        gate_id="GATE-ARCH-MODEL",
+        trigger=_trigger_arch_model,
+        reconcile=_reconcile_arch_model,
+        priority=610,
+    )
+
+    return _compose_reconcilers("GATE-REGENERATE", spec_domain_doc, spec_arch_model)
 
 
 def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -2266,12 +1579,131 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     合并后执行：先重生成 catalog（自动提交漂移），再落盘规则文件审计告警；
     action 取较严重，detail 拼接。priority=max(160,700)=700。
+
+    治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_rule_catalog_reconciler
+    与 _make_old_rule_file_audit_reconciler，私有函数已删除。
     """
-    return _compose_reconcilers(
-        "GATE-RULE-AUDIT",
-        _make_old_rule_catalog_reconciler(gateway),
-        _make_old_rule_file_audit_reconciler(gateway),
+    import json
+    import os
+    import subprocess
+    import sys
+    from datetime import datetime
+
+    project_root = gateway.project_root
+    _project_root_str = str(project_root)
+    _CATALOG_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
+    _RULES_PREFIX = "docs/01_policies_and_standards/rules/"
+    _rule_set = set(_RULE_FILE_PATHS)
+
+    # === 旧 GATE-RULE-CATALOG 逻辑（内联自 _make_old_rule_catalog_reconciler）===
+    def _trigger_catalog(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith(_RULES_PREFIX) and rel.endswith((".yaml", ".yml", ".md")):
+                return True
+        return False
+
+    def _reconcile_catalog(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重新生成 catalog（generate_rule_catalog.py 幂等）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/governance/d3_metadata/generate_rule_catalog.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rule_catalog generation failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 catalog 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _CATALOG_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="rule_catalog_registry up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        auto_msg = "chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit"
+        abs_files = [str(project_root / _CATALOG_REL)]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="rule_catalog_registry drift detected and auto-reconciled",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="rule_catalog_registry no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"rule_catalog_registry drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    spec_catalog = ReconcilerSpec(
+        gate_id="GATE-RULE-CATALOG",
+        trigger=_trigger_catalog,
+        reconcile=_reconcile_catalog,
+        priority=160,
     )
+
+    # === 旧 GATE-RULE-FILE-AUDIT 逻辑（内联自 _make_old_rule_file_audit_reconciler）===
+    def _trigger_rule_file_audit(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            if _rel_path(f, _project_root_str) in _rule_set:
+                return True
+        return False
+
+    def _reconcile_rule_file_audit(committed_files: list[str], session_id: str) -> ReconcileResult:
+        rule_files_changed = [
+            _rel_path(f, _project_root_str)
+            for f in committed_files
+            if _rel_path(f, _project_root_str) in _rule_set
+        ]
+
+        reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
+        os.makedirs(reports_dir, exist_ok=True)
+        ts_iso = datetime.now().isoformat(timespec="seconds")
+        ts_file = ts_iso.replace(":", "")
+        report = {
+            "timestamp": ts_iso,
+            "session_id": session_id,
+            "rule_files_changed": rule_files_changed,
+            "note": "规则文件变更需人工审查（约束可能被放宽）",
+        }
+        report_path = os.path.join(reports_dir, f"rule_file_audit_{ts_file}.json")
+        try:
+            with open(report_path, "w", encoding="utf-8") as fh:
+                json.dump(report, fh, ensure_ascii=False, indent=2)
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rule-file audit done ({len(rule_files_changed)} file(s)) but report write failed: {e}",
+            )
+
+        return ReconcileResult(
+            action="warn",
+            detail=(
+                f"{len(rule_files_changed)} rule file(s) changed "
+                f"(manual review recommended), report={os.path.basename(report_path)}"
+            ),
+        )
+
+    spec_rule_file_audit = ReconcilerSpec(
+        gate_id="GATE-RULE-FILE-AUDIT",
+        trigger=_trigger_rule_file_audit,
+        reconcile=_reconcile_rule_file_audit,
+        priority=700,
+    )
+
+    return _compose_reconcilers("GATE-RULE-AUDIT", spec_catalog, spec_rule_file_audit)
 
 
 def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -2289,12 +1721,150 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     合并后执行：先重生成 registry_master_index，再跑 baseline-aware 孤儿扫描；
     action 取较严重，detail 拼接。priority=max(155,200)=200。
+
+    治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_registry_index_reconciler
+    与 _make_old_baseline_aware_reconciler，私有函数已删除。
     """
-    return _compose_reconcilers(
-        "GATE-REGISTRY-SYNC",
-        _make_old_registry_index_reconciler(gateway),
-        _make_old_baseline_aware_reconciler(gateway),
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _INDEX_REL = "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml"
+    _INFRA_REL = "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
+
+    # === 旧 GATE-REGISTRY-INDEX 逻辑（内联自 _make_old_registry_index_reconciler）===
+    def _trigger_index(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == _INFRA_REL:
+                return True
+        return False
+
+    def _reconcile_index(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重新生成 registry_master_index（generate_registry_master_index.py 幂等）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/governance/generators/generate_registry_master_index.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"registry_master_index generation failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 index 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _INDEX_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="registry_master_index up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        auto_msg = "chore(registry): auto-sync registry_master_index by GitCommitGateway post-commit"
+        abs_files = [str(project_root / _INDEX_REL)]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="registry_master_index drift detected and auto-reconciled",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="registry_master_index no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"registry_master_index drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    spec_index = ReconcilerSpec(
+        gate_id="GATE-REGISTRY-INDEX",
+        trigger=_trigger_index,
+        reconcile=_reconcile_index,
+        priority=155,
     )
+
+    # === 旧 GATE-REG-BL 逻辑（内联自 _make_old_baseline_aware_reconciler）===
+    def _trigger_baseline(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/") and rel.endswith(".py"):
+                return True
+            if rel.startswith("scripts/governance/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile_baseline(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. post-commit baseline-aware 扫描（非阻断）
+        # 治本 Bug 1：改用 --files 传入精确 committed_files，替代 --incremental。
+        rel_py_files = [
+            os.path.relpath(f, str(project_root)).replace("\\", "/")
+            for f in committed_files
+            if f.endswith(".py")
+        ]
+        rel_py_files = [
+            rel for rel in rel_py_files
+            if rel.startswith("src/zephyr/") or rel.startswith("scripts/")
+        ]
+        if not rel_py_files:
+            return ReconcileResult(
+                action="skip",
+                detail="baseline_aware: no src/zephyr|scripts .py in committed files",
+            )
+        scan_result = subprocess.run(
+            [sys.executable, "scripts/governance/audit_registration.py",
+             "--baseline-aware", "--files"] + rel_py_files,
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        # 2. 报告落盘（无论 exit code，记录供追责）
+        report = {
+            "gate_id": "GATE-REG-BL",
+            "session_id": session_id,
+            "exit_code": scan_result.returncode,
+            "stdout_tail": scan_result.stdout.strip()[-500:],
+            "stderr_tail": scan_result.stderr.strip()[-500:],
+            "committed_files": committed_files,
+            "scanned_files": rel_py_files,
+        }
+        report_path, write_err = _write_reconcile_report(project_root, "baseline_aware", report)
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"baseline_aware scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
+            )
+        # 3. 判定结果
+        if scan_result.returncode == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"baseline_aware scan clean, report={report_path.name}",
+            )
+        # exit 1 = NEW 孤儿检出（commit 已入历史，仅告警）
+        return ReconcileResult(
+            action="warn",
+            detail=f"baseline_aware scan detected NEW orphans (exit={scan_result.returncode}), report={report_path.name}",
+        )
+
+    spec_baseline = ReconcilerSpec(
+        gate_id="GATE-REG-BL",
+        trigger=_trigger_baseline,
+        reconcile=_reconcile_baseline,
+        priority=200,
+    )
+
+    return _compose_reconcilers("GATE-REGISTRY-SYNC", spec_index, spec_baseline)
 
 
 def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -2312,9 +1882,125 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     合并后执行：先重注册 rules_integrity 基线，再审计 commit 网关标记；
     action 取较严重，detail 拼接。priority=max(270,800)=800。
+
+    治本（2026-06-30 元问题4）：reconcile 逻辑内联自原 _make_old_rules_integrity_reconciler
+    与 _make_old_commit_gateway_audit_reconciler，私有函数已删除。_audit_commit_history
+    是模块级函数（非 _make_old_*），保留供本闭包调用与 integrity_anchors 保护。
     """
-    return _compose_reconcilers(
-        "GATE-INTEGRITY-AUDIT",
-        _make_old_rules_integrity_reconciler(gateway),
-        _make_old_commit_gateway_audit_reconciler(gateway),
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _VALIDATE_SCRIPT = "scripts/governance/meta/validate_rules_integrity.py"
+    _AUDIT_WINDOW = 20  # 审计最近 20 个 commit
+    _GW_MARKER = "[GW:"
+
+    # === 旧 GATE-RULES-INTEGRITY 逻辑（内联自 _make_old_rules_integrity_reconciler）===
+    def _trigger_rules_integrity(committed_files: list[str]) -> bool:
+        # 第一性原理治本：总是触发。原宽匹配基于未校验假设，未来 RULES_MANIFEST
+        # 新增其他路径文件会假阴性漏触发。--register 仅 hash RULES_MANIFEST 文件
+        # （毫秒级），不值得为省此开销引入假设。RULES_MANIFEST 真源在 validate_rules_integrity.py 顶部。
+        return True
+
+    def _reconcile_rules_integrity(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
+        # 红蓝发现4 治本：设置 ZEPHYR_RECONCILER_MODE=1 门禁令牌，允许 --register。
+        _env = dict(os.environ)
+        _env["ZEPHYR_RECONCILER_MODE"] = "1"
+        reg_result = subprocess.run(
+            [sys.executable, _VALIDATE_SCRIPT, "--register"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            env=_env,
+        )
+        # 2. 报告落盘（无论 exit code，记录供追责）
+        report = {
+            "gate_id": "GATE-RULES-INTEGRITY",
+            "session_id": session_id,
+            "exit_code": reg_result.returncode,
+            "stdout_tail": reg_result.stdout.strip()[-500:],
+            "stderr_tail": reg_result.stderr.strip()[-500:],
+            "triggered_by": committed_files,
+        }
+        report_path, write_err = _write_reconcile_report(project_root, "rules_integrity", report)
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rules_integrity --register done (exit={reg_result.returncode}) "
+                       f"but report write failed: {write_err}",
+            )
+        # 3. 判定（--register exit 0 = 基线已更新；非 0 = 脚本异常）
+        if reg_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"rules_integrity baseline re-registered post-commit "
+                       f"(C层基线已同步合法 commit), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"rules_integrity --register failed (exit={reg_result.returncode}), "
+                   f"report={report_path.name}",
+        )
+
+    spec_rules_integrity = ReconcilerSpec(
+        gate_id="GATE-RULES-INTEGRITY",
+        trigger=_trigger_rules_integrity,
+        reconcile=_reconcile_rules_integrity,
+        priority=270,
     )
+
+    # === 旧 GATE-COMMIT-GW-AUDIT 逻辑（内联自 _make_old_commit_gateway_audit_reconciler）===
+    def _trigger_commit_gw_audit(committed_files: list[str]) -> bool:
+        # 审计始终运行：绕过 gateway 的裸 commit 可能涉及任何文件
+        return True
+
+    def _reconcile_commit_gw_audit(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 审计逻辑真源：模块级 _audit_commit_history（A 层 AST 锚点保护，
+        # 治本 2026-06-30 病根1 看门人无人看）。闭包只做调用 + 报告落盘 + 判定。
+        violations, err = _audit_commit_history(
+            project_root, _AUDIT_WINDOW, _GW_MARKER,
+        )
+        if err:
+            return ReconcileResult(action="warn", detail=err)
+
+        # 3. 报告落盘
+        report = {
+            "gate_id": "GATE-COMMIT-GW-AUDIT",
+            "session_id": session_id,
+            "audit_window": _AUDIT_WINDOW,
+            "violations_count": len(violations),
+            "violations": violations,
+        }
+        report_path, write_err = _write_reconcile_report(
+            project_root, "commit_gateway_audit", report
+        )
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"audit done ({len(violations)} violations) but report write failed: {write_err}",
+            )
+
+        # 4. 判定（非阻断：commit 已入历史，仅告警）
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=f"audit clean (window={_AUDIT_WINDOW}), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"audit detected {len(violations)} non-GW commits (window={_AUDIT_WINDOW}), report={report_path.name}",
+        )
+
+    spec_commit_gw_audit = ReconcilerSpec(
+        gate_id="GATE-COMMIT-GW-AUDIT",
+        trigger=_trigger_commit_gw_audit,
+        reconcile=_reconcile_commit_gw_audit,
+        priority=800,  # 最后执行（审计非阻断，低优先级）
+    )
+
+    return _compose_reconcilers("GATE-INTEGRITY-AUDIT", spec_rules_integrity, spec_commit_gw_audit)

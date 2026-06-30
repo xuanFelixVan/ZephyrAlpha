@@ -18,9 +18,9 @@
 - TestPyNoOverlap: .py 文件名无重叠 → 放行无 warning
 - TestTestsDirExcluded: tests/ 下 .py 文件不检测
 - TestYamlSecondSource: _registry/ 下新建 .yaml 与同目录现有 .yaml token ≥2 重叠 → warning
-- TestFailOpenGitDiff: git diff 失败 → fail-open 放行
-- TestFailOpenYamlMissing: REGISTRY_YAML 不存在 → fail-open 放行
-- TestFailOpenYamlParse: YAML 解析失败 → fail-open 放行
+- TestFailLoudGitDiff: git diff 失败 → fail-loud（passed=True 保留 warn-only 契约 + logger.warning 告警检测器失效）
+- TestFailLoudYamlMissing: REGISTRY_YAML 不存在 → fail-loud
+- TestFailLoudYamlParse: YAML 解析失败 → fail-loud
 """
 from __future__ import annotations
 
@@ -193,30 +193,39 @@ class TestYamlSecondSource:
         assert any("contract_directory" in r.message for r in caplog.records)
 
 
-class TestFailOpenGitDiff:
-    """git diff 失败 → fail-open 放行。"""
+class TestFailLoudGitDiff:
+    """git diff 失败 → fail-loud（passed=True 保留 warn-only 契约 + logger.warning 告警检测器失效）。
 
-    def test_git_diff_nonzero_returncode(self, tmp_path, monkeypatch):
+    治本1（2026-06-30）：warn-only gate 的 fail-closed 语义=告警而非阻断。
+    create_guard 已 fail-closed 阻断（同一 git diff），本 gate 无需重复阻断，
+    但须 logger.warning 防静默漂移。
+    """
+
+    def test_git_diff_nonzero_returncode(self, tmp_path, monkeypatch, caplog):
         _setup_registry(tmp_path, monkeypatch)
         gw = _make_gateway(stdout="", returncode=1)
         gate = make_capability_overlap_gate()
-        passed, detail = gate.check(gw, ["src/foo.py"], session_id="s1")
-        assert passed is True
+        with caplog.at_level(logging.WARNING, logger=_LOGGER_NAME):
+            passed, detail = gate.check(gw, ["src/foo.py"], session_id="s1")
+        assert passed is True  # warn-only 契约：仍 return True
         assert detail == ""
+        assert any("fail-loud" in r.message for r in caplog.records)
 
-    def test_git_diff_exception(self, tmp_path, monkeypatch):
+    def test_git_diff_exception(self, tmp_path, monkeypatch, caplog):
         _setup_registry(tmp_path, monkeypatch)
         gw = _make_gateway(exc=RuntimeError("git down"))
         gate = make_capability_overlap_gate()
-        passed, detail = gate.check(gw, ["src/foo.py"], session_id="s1")
-        assert passed is True
+        with caplog.at_level(logging.WARNING, logger=_LOGGER_NAME):
+            passed, detail = gate.check(gw, ["src/foo.py"], session_id="s1")
+        assert passed is True  # warn-only 契约：仍 return True
         assert detail == ""
+        assert any("fail-loud" in r.message for r in caplog.records)
 
 
-class TestFailOpenYamlMissing:
-    """REGISTRY_YAML 不存在 → fail-open 放行。"""
+class TestFailLoudYamlMissing:
+    """REGISTRY_YAML 不存在 → fail-loud（passed=True 保留 warn-only 契约 + logger.warning 告警）。"""
 
-    def test_yaml_missing(self, tmp_path, monkeypatch):
+    def test_yaml_missing(self, tmp_path, monkeypatch, caplog):
         # 指向不存在的文件
         monkeypatch.setattr(
             "zephyr.governance.capability_lookup.REGISTRY_YAML",
@@ -224,24 +233,28 @@ class TestFailOpenYamlMissing:
         )
         gw = _make_gateway(stdout="src/zephyr/foo/session_handoff_loader.py")
         gate = make_capability_overlap_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/foo/session_handoff_loader.py"], session_id="s1",
-        )
-        assert passed is True
+        with caplog.at_level(logging.WARNING, logger=_LOGGER_NAME):
+            passed, detail = gate.check(
+                gw, ["src/zephyr/foo/session_handoff_loader.py"], session_id="s1",
+            )
+        assert passed is True  # warn-only 契约：仍 return True
         assert detail == ""
+        assert any("fail-loud" in r.message for r in caplog.records)
 
 
-class TestFailOpenYamlParse:
-    """YAML 解析失败 → fail-open 放行。"""
+class TestFailLoudYamlParse:
+    """YAML 解析失败 → fail-loud（passed=True 保留 warn-only 契约 + logger.warning 告警）。"""
 
-    def test_yaml_invalid(self, tmp_path, monkeypatch):
+    def test_yaml_invalid(self, tmp_path, monkeypatch, caplog):
         _setup_registry(
             tmp_path, monkeypatch, content="invalid: yaml: content:",
         )
         gw = _make_gateway(stdout="src/zephyr/foo/session_handoff_loader.py")
         gate = make_capability_overlap_gate()
-        passed, detail = gate.check(
-            gw, ["src/zephyr/foo/session_handoff_loader.py"], session_id="s1",
-        )
-        assert passed is True
+        with caplog.at_level(logging.WARNING, logger=_LOGGER_NAME):
+            passed, detail = gate.check(
+                gw, ["src/zephyr/foo/session_handoff_loader.py"], session_id="s1",
+            )
+        assert passed is True  # warn-only 契约：仍 return True
         assert detail == ""
+        assert any("fail-loud" in r.message for r in caplog.records)
