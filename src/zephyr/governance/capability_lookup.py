@@ -87,7 +87,14 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 # 路径常量
 # ---------------------------------------------------------------------------
 REGISTRY_YAML: Path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
-SCAN_ROOT: Path = REPO_ROOT / "src" / "zephyr"
+# 治本（P8 Phase 3 S4 可发现性）：多根化让 scripts/governance/ 下文件进入自动扫描，
+# 消除 canonical_override 手填需求（原 scripts/ 不在扫描范围，需手动声明 canonical）
+SCAN_ROOTS: list[Path] = [
+    REPO_ROOT / "src" / "zephyr",
+    REPO_ROOT / "scripts" / "governance",
+]
+# 向后兼容别名（单 root 时代的外部引用）：指向 SCAN_ROOTS[0]
+SCAN_ROOT: Path = SCAN_ROOTS[0]
 HEADER_SCAN_LIMIT = 30  # 头部字段都在前 30 行，只读这么多省时间
 
 # 成熟度排序权重（production > prototype > design）；未知成熟度=0
@@ -246,16 +253,31 @@ class CapabilityLookup:
     def __init__(
         self,
         yaml_path: Path | str | None = None,
-        scan_root: Path | str | None = None,
+        scan_root: Path | str | list[Path | str] | None = None,
         *,
         scan: bool = True,
         derive_removed: bool = True,
     ) -> None:
         self._yaml_path: Path = Path(yaml_path) if yaml_path is not None else REGISTRY_YAML
-        self._scan_root: Path = Path(scan_root) if scan_root is not None else SCAN_ROOT
-        # canonical_file 在 YAML 中格式为 src/zephyr/xxx，scan_root 是 src/zephyr，
-        # 所以 canonical_file 相对的基准是 scan_root.parent.parent（项目根或 tmp_path）。
-        self._base_root: Path = self._scan_root.parent.parent
+        # 治本（P8 Phase 3）：scan_root 接受单根或多根（向后兼容）
+        # None → SCAN_ROOTS（默认双根：src/zephyr + scripts/governance）
+        # Path/str → [Path]（向后兼容单根测试场景）
+        # list → [Path(x) for x in list]
+        if scan_root is None:
+            self._scan_roots: list[Path] = list(SCAN_ROOTS)
+        elif isinstance(scan_root, list):
+            self._scan_roots = [Path(r) for r in scan_root]
+        else:
+            self._scan_roots = [Path(scan_root)]
+        # 向后兼容：单根时代的外部引用（如 summary() 输出）
+        self._scan_root: Path = self._scan_roots[0]
+        # canonical_file 在 YAML 中格式为 src/zephyr/xxx 或 scripts/governance/yyy，
+        # 相对基准是项目根。单根时 scan_root.parent.parent = 项目根（向后兼容测试 tmp_path）；
+        # 多根时直接用 REPO_ROOT（双根的公共祖先）。
+        if len(self._scan_roots) == 1:
+            self._base_root: Path = self._scan_roots[0].parent.parent
+        else:
+            self._base_root = REPO_ROOT
         self._capabilities: list[CapabilityEntry] = []
         self._disk_headers: dict[str, HeaderInfo] = {}
         self._loaded = False
@@ -305,22 +327,26 @@ class CapabilityLookup:
         return caps
 
     def _scan_disk_headers(self) -> dict[str, HeaderInfo]:
-        """扫描 scan_root/**/*.py 头部，返回 path → HeaderInfo 映射。
+        """扫描所有 scan_roots/**/*.py 头部，返回 path → HeaderInfo 映射。
 
-        path 用 _base_root 相对路径（与 YAML 中 canonical_file 格式 src/zephyr/xxx 对齐）。
+        path 用 _base_root 相对路径（与 YAML 中 canonical_file 格式 src/zephyr/xxx
+        或 scripts/governance/yyy 对齐）。
+
+        治本（P8 Phase 3）：多根化遍历 self._scan_roots 而非单根 self._scan_root。
         """
         result: dict[str, HeaderInfo] = {}
-        if not self._scan_root.exists():
-            return result
-        for py in self._scan_root.rglob("*.py"):
-            try:
-                rel = py.relative_to(self._base_root).as_posix()
-            except ValueError:
+        for root in self._scan_roots:
+            if not root.exists():
                 continue
-            header = self._parse_header(py, rel)
-            # 只收录有 module_id 或 module_path 的文件（有头部声明的）
-            if header.module_id or header.module_path:
-                result[rel] = header
+            for py in root.rglob("*.py"):
+                try:
+                    rel = py.relative_to(self._base_root).as_posix()
+                except ValueError:
+                    continue
+                header = self._parse_header(py, rel)
+                # 只收录有 module_id 或 module_path 的文件（有头部声明的）
+                if header.module_id or header.module_path:
+                    result[rel] = header
         return result
 
     @staticmethod
@@ -1143,7 +1169,7 @@ class CapabilityLookup:
             "ssot_conflicts": len(self.list_ssot_conflicts()),
             "pending_candidates": sum(len(c.pending_candidates) for c in self._capabilities),
             "yaml_path": str(self._yaml_path),
-            "scan_root": str(self._scan_root),
+            "scan_roots": [str(r) for r in self._scan_roots],
         }
 
     @staticmethod

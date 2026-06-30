@@ -1656,6 +1656,24 @@ capabilities:
       解决发现性：新AI 搜 "创建规则/创建模块/创建脚本/scaffold/rule scaffolding" 可定位到本入口。
       解决防重建：新AI准备直接 Write 新文件前会被引导到 scaffold.py，提示走子命令而非手写。
 
+  # --------------------------------------------------------------------------
+  - capability_id: file_header_parser
+    canonical_override: scripts/governance/_shared/frontmatter.py
+    aliases:
+      - parse_frontmatter
+      - parse_py_header
+      - parse_byaml_anchor
+      - parse_json_meta
+      - PY_HEADER_PATTERN
+      - frontmatter
+    description: >-
+      文件头部格式解析的唯一真源（SSoT，对标 trae_047 GOV-ENG-002）。6 种文件头部
+      格式的统一解析入口：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header /
+      .yaml→parse_byaml_anchor / .json→parse_json_meta。PY_HEADER_PATTERN 正则也在此定义。
+      新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器。
+      canonical = scripts/governance/_shared/frontmatter.py（P8 Phase 3 多根化后可 auto
+      派生，basename frontmatter 匹配 alias；保留 canonical_override 作为最高优先级声明）。
+
 # ============================================================================
 # creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
