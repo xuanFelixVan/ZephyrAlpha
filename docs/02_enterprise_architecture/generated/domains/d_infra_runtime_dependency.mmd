@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-01 03:42:53
+%% 生成时间: 2026-07-01 03:44:26
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 116, 依赖边数: 246
+%% 模块数: 111, 依赖边数: 242
 
 graph TD
 
@@ -86,9 +86,6 @@ graph TD
         src_zephyr_infrastructure_impact___init___py["...hyr/infrastructure/impact/__init__.py [production]"]
         src_zephyr_infrastructure_impact_impact_propagator_py["...structure/impact/impact_propagator.py [production]"]
         src_zephyr_infrastructure_impact_llm_impact_analyzer_py["...ructure/impact/llm_impact_analyzer.py [production]"]
-        src_zephyr_infrastructure_infra_06___init___py["...r/infrastructure/infra_06/__init__.py [production]"]
-        src_zephyr_infrastructure_infra_06_cache_py["...phyr/infrastructure/infra_06/cache.py [production]"]
-        src_zephyr_infrastructure_infr___rocess_lifecycle_gateway_py["...infra_06/process_lifecycle_gateway.py [production]"]
         src_zephyr_infrastructure_infrastructure_base_py["...infrastructure/infrastructure_base.py [production]"]
         src_zephyr_infrastructure_kill_switch_sim_py["...hyr/infrastructure/kill_switch_sim.py [production]"]
         src_zephyr_infrastructure_knowledge___init___py[".../infrastructure/knowledge/__init__.py [production]"]
@@ -99,15 +96,18 @@ graph TD
         src_zephyr_infrastructure_lifecycle_scope_guard_py["...frastructure/lifecycle/scope_guard.py [production]"]
         src_zephyr_infrastructure_life___e_task_lifecycle_manager_py["...e/lifecycle/task_lifecycle_manager.py [production]"]
         src_zephyr_infrastructure_maintenance___init___py["...nfrastructure/maintenance/__init__.py [production]"]
-        src_zephyr_infrastructure_observability_02___init___py["...tructure/observability_02/__init__.py [production]"]
-        src_zephyr_infrastructure_observability_02_session_audit_py["...ure/observability_02/session_audit.py [production]"]
         src_zephyr_infrastructure_prompt_provider_py["...hyr/infrastructure/prompt_provider.py [production]"]
         src_zephyr_infrastructure_pydantic_v2_migrator_py["...nfrastructure/pydantic_v2_migrator.py [production]"]
         src_zephyr_infrastructure_rate_limiter_py["...zephyr/infrastructure/rate_limiter.py [production]"]
         src_zephyr_infrastructure_resource_provider_py["...r/infrastructure/resource_provider.py [production]"]
         src_zephyr_infrastructure_runtime___init___py["...yr/infrastructure/runtime/__init__.py [production]"]
         src_zephyr_infrastructure_runtime_startup_shutdown_py["...structure/runtime/startup_shutdown.py [production]"]
-        %% ... 还有 16 个模块未显示
+        src_zephyr_infrastructure_sandbox_server_py["...phyr/infrastructure/sandbox_server.py [production]"]
+        src_zephyr_infrastructure_script_system___init___py["...rastructure/script_system/__init__.py [production]"]
+        src_zephyr_infrastructure_script_system_finding_py["...frastructure/script_system/finding.py [production]"]
+        src_zephyr_infrastructure_script_system_gate_bridge_py["...tructure/script_system/gate_bridge.py [production]"]
+        src_zephyr_infrastructure_script_system_kb_bridge_py["...astructure/script_system/kb_bridge.py [production]"]
+        %% ... 还有 11 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -160,14 +160,11 @@ graph TD
     src_zephyr_infrastructure_hooks___init___py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_impact___init___py -->|import_depends| src_zephyr_infrastructure_impact_impact_propagator_py
     src_zephyr_infrastructure_impact___init___py -->|import_depends| src_zephyr_infrastructure_impact_llm_impact_analyzer_py
-    src_zephyr_infrastructure_infra_06___init___py -->|import_depends| src_zephyr_infrastructure_infra_06_cache_py
     src_zephyr_infrastructure_knowledge___init___py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle___init___py
     src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle_lazy_loader_py
     src_zephyr_infrastructure_lifecycle___init___py -->|import_depends| src_zephyr_infrastructure_lifecycle_scope_guard_py
     src_zephyr_infrastructure_maintenance___init___py -->|import_depends| src_zephyr_infrastructure___init___py
-    src_zephyr_infrastructure_observability_02___init___py -->|import_depends| src_zephyr_infrastructure___init___py
-    src_zephyr_infrastructure_observability_02___init___py -->|import_depends| src_zephyr_infrastructure_observability_02_session_audit_py
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_contract_tester_py -->|config_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_auto_diagnostics_py -->|config_depends| src_zephyr_infrastructure___init___py
@@ -191,7 +188,10 @@ graph TD
     src_zephyr_infrastructure_asset_inventory_models_py -->|config_depends| src_zephyr_infrastructure_asset_inventory___init___py
     src_zephyr_infrastructure_capa___cross_module_integration_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
     src_zephyr_infrastructure_capacity_assurance_schema_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
-    %% ... 还有 10 条域内依赖未显示
+    src_zephyr_infrastructure_capacity_assurance_tech_stack_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
+    src_zephyr_infrastructure_capa___e_contracts_batch1_infra_py -->|config_depends| src_zephyr_infrastructure_capa___rance_contracts___init___py
+    src_zephyr_infrastructure_capa___ssurance_risk_mitigation_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
+    %% ... 还有 7 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_INFRA_RUNTIME (43 条)
@@ -329,7 +329,7 @@ graph TD
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_INFRA_RUNTIME -> D_OPS (1 条)
     src_zephyr___init___py -->|import_depends| D_OPS[D_OPS]
-    %% D_INFRA_RUNTIME -> D_SHARED (20 条)
+    %% D_INFRA_RUNTIME -> D_SHARED (19 条)
     src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_gateway_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED[D_SHARED]
@@ -345,13 +345,12 @@ graph TD
     src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_infra_06___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_script_system_kb_bridge_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 90 条
+    %% 域内依赖: 87 条
     %% 跨域入边: 121 条
-    %% 跨域出边: 35 条
+    %% 跨域出边: 34 条
