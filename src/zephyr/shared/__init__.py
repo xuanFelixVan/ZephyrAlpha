@@ -138,7 +138,6 @@ __all__ = [
     "outbox",
     "owner_trust_gauge",
     "pagination",
-    "paths",
     "ports",
     "reasoning_spans",
     "registry",

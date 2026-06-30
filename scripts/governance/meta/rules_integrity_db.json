@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "6f694d82bfe49834",
+      "hash": "43e95d422202e41c",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -46,6 +46,6 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     }
   },
-  "registered_at": "2026-06-30T02:40:00.781397+00:00",
-  "last_check_at": "2026-06-30T02:40:00.781397+00:00"
+  "registered_at": "2026-06-30T03:21:44.017208+00:00",
+  "last_check_at": "2026-06-30T03:21:44.017208+00:00"
 }
