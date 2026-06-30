@@ -26,7 +26,7 @@ orphan-judge — MOD-INF-029 · 孤儿审判器
 
 蓝图: docs/03_modules/_cross_layer/orphan-judge/blueprint.md
 
-actual_disk_path: src/zephyr/orphan-judge/
+actual_disk_path: src/zephyr/security/access_control/orphan_judge/
 
 职责
 
@@ -91,23 +91,17 @@ __all__ = [
     "duplicate_detector",
     "escalation_bridge",
     "feedback_bridge",
-    "five_layer_judge",
-    "incremental_scanner",
     "judge",
-    "judgment_cache",
     "kb_bridge",
-    "mcp_handler",
     "mcp_integration",
     "models",
     "orphan_collector",
     "orphan_detector",
     "rbac_bridge",
-    "reference_graph",
     "reference_graph_engine",
     "registration_checker",
     "report_generator",
     "safety_fence",
-    "script_scheduler",
     "standalone_evaluator",
     "swid_tag",
     "unique_analyzer",
@@ -154,11 +148,6 @@ __all__.append("ConfigLoader")
 __all__.append("SwidTag")
 __all__.extend(
     [
-        "DriftBridge",
-        "EscalationBridge",
-        "FeedbackBridge",
-        "KbBridge",
-        "RbacBridge",
         "models",
         "unique_analyzer",
     ]
