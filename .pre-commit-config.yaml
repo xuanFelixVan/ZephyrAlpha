@@ -274,21 +274,22 @@ repos:
         files: "^(src/zephyr/.*\\.py|scripts/.*\\.py|docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml)$"
         description: "词表门禁合并——GATE-VOCAB-HARDCODE(.py 硬编码检测) + GATE-GENERATE(.yaml 派生文件一致性)，run_gate_chain 顺序执行"
 
-      # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
+      # ── GATE-16: 架构合规校验（architecture_contract.yaml machine_check 引擎）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
-      # 真源声明：stable D-008/D-011 产出
+      # 真源声明：stable D-008/D-011 产出 / P7-FIX 重构为 machine_check 动态执行引擎
       # 校验范围：docs/01_policies_and_standards/ 下所有 .md 和 .yaml 文件
-      # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下policy必须declarative / operational下policy必须procedural
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），待验证稳定后转 --ci 强制
+      # 校验内容：VR-008(governance policy→declarative) / VR-009(operational policy→procedural) / VR-011(procedural→verifiability≠inspection)
+      #          VR 规则从 architecture_contract.yaml machine_check 字段动态读取，脚本不硬编码 VR 逻辑
+      # 模式：--ci 硬阻断（违规 exit 1 拒绝提交）；--warn-only 仅警告不阻断
       - id: gate-16-architecture-compliance
-        name: "GATE-16: 架构合规校验（architecture-contract v1.0.0）"
+        name: "GATE-16: 架构合规校验（architecture-contract machine_check 引擎）"
         entry: python scripts/governance/d3_metadata/validate_architecture.py
         args: ["--ci"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^docs/01_policies_and_standards/.*\\.(md|yaml|yml)$"
-        description: "架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance下policy必须declarative / operational下policy必须procedural），骨架阶段 warn-only"
+        description: "架构合规校验——从 architecture_contract.yaml machine_check 动态读取 VR-008/009/011 定义执行（governance policy→declarative / operational policy→procedural / procedural→verifiability≠inspection）"
 
       # ── GATE-17: 孤儿.py文件检测（AGENTS.md §6.5）──
       # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定）

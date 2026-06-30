@@ -67,6 +67,7 @@ severity: error
 scope: module_creation_workflow
 domain: TRAE
 rule_form: procedural
+verifiability: manual
 triggers:
 - operation: create_module
 - operation: create_blueprint

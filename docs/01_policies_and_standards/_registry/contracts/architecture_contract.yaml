@@ -268,15 +268,26 @@ validation_rules:
 
   - id: VR-008
     tier: directory_scoped
+    directory_scope: governance  # 校验目标子目录名（路径中任一组件 == governance 即命中）
     name: "governance/ 下 policy 必须为 declarative（禁止 procedural）"
     check: "files under governance/ with doc_type=policy must have rule_form=declarative"
+    # machine_check：validate_architecture.py 动态消费此结构化定义执行校验，禁止在脚本里硬编码 VR 逻辑
+    machine_check:
+      filter_doc_type: policy        # 仅检查 doc_type=policy 的文件
+      assert_field: rule_form        # 断言字段
+      assert_equals: declarative     # 字段值必须等于此值
     severity: error
     source: "PS-STD-001 §3.2.1（v3.1.0 重新设计：operational_rule 合并入 policy 后，governance/ 只放声明式规则）"
 
   - id: VR-009
     tier: directory_scoped
+    directory_scope: operational  # 校验目标子目录名（路径中任一组件 == operational 即命中）
     name: "operational/ 下 policy 必须为 procedural（禁止 declarative）"
     check: "files under operational/ with doc_type=policy must have rule_form=procedural"
+    machine_check:
+      filter_doc_type: policy
+      assert_field: rule_form
+      assert_equals: procedural
     severity: error
     source: "PS-STD-001 §3.2.1（v3.1.0 重新设计：operational_rule 合并入 policy 后，operational/ 只放过程式规则）"
 
@@ -291,5 +302,11 @@ validation_rules:
     tier: project_wide
     name: "procedural policy 必须可验证（不能是 inspection）"
     check: "if rule_form=procedural then verifiability != inspection"
+    machine_check:
+      filter_field: rule_form        # 前置条件字段
+      filter_value: procedural       # 前置条件值（filter_field == filter_value 时才检查）
+      assert_field: verifiability   # 断言字段
+      assert_not_equals: inspection  # 字段值必须不等于此值
+      assert_required: true          # 字段必须存在（procedural policy 必须显式声明 verifiability）
     severity: error
     source: "PS-STD-001 §2.8 #6（v3.1.0 重新设计：operational_rule 合并入 policy 后，可验证性约束改为按 rule_form=procedural 触发）"
