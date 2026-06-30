@@ -344,8 +344,8 @@ path_facts:
 
   - id: migration_registry_underscore
     fact: "migration_registry.yaml"
-    description: "迁移注册表文件名（下划线，非连字符）"
-    ssot_source: "docs/02_enterprise_architecture/migration_registry.yaml"
+    description: "迁移注册表文件名（已归档到_archive，下划线，非连字符）"
+    ssot_source: "docs/_archive/migration_registry.yaml"
     must_appear_in:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
@@ -523,8 +523,8 @@ path_facts:
 
   - id: migration_registry_in_registry
     fact: "migration_registry.yaml"
-    description: "迁移注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
-    ssot_source: "docs/02_enterprise_architecture/migration_registry.yaml"
+    description: "迁移注册表文件名（已归档到_archive，在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/_archive/migration_registry.yaml"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
