@@ -769,7 +769,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 4 | `infrastructure/pipeline/` ↔ `integration/` | 17 | 17 | 0 | 高 | 是 |
 | 5 | `autonomy_core/` ↔ `parsing/` | 3 | 3 | 0 | 高 | 是 |
 | 6 | `shared/schema/` ↔ `integration/shared/schema/` | 1 | 1 | 0 | 高 | 是 |
-| 7 | `shared/config/` ↔ `infrastructure/config/shared/config/` | 1 | 1 | 0 | 高 | 是 |
+| 7 | `shared/config/` ↔ `infrastructure/config/shared/config/` | 1 | 1 | 0 | 高 | ✅ ARCH-038 已解决（loader.py 退役，双真源删除） |
 | **合计** | **7簇** | **163** | **155** | **2** | | |
 
 > **说明**：159对 = 157清晰复制对（共享度84.8%-99.3%）+ 2漂移对（53.8%、54.7%）。3个DIFFERENT（<35%）已排除。
@@ -789,7 +789,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 |---|---|:---:|---|:---:|:---:|
 | 1 | `atomic_write` | 6处 | [shared/io/file_utils.py:69](file:///D:/ZephyrAlpha/src/zephyr/shared/io/file_utils.py#L69)（真源）+ 5副本 | 中 | 是 |
 | 2 | `load_yaml` | 7处 | [scripts/governance/_shared/yaml_utils.py:53](file:///D:/ZephyrAlpha/scripts/governance/_shared/yaml_utils.py#L53)（真源）+ 6副本 | 中 | 是 |
-| 3 | `load_yaml_config` | 2处 | [shared/config/loader.py:68](file:///D:/ZephyrAlpha/src/zephyr/shared/config/loader.py#L68) + [infrastructure/config/shared/config/loader.py:119](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/shared/config/loader.py#L119) | 中 | 是 |
+| 3 | `load_yaml_config` | ~~2处~~ → 0处 | ~~[shared/config/loader.py:68](file:///D:/ZephyrAlpha/src/zephyr/shared/config/loader.py#L68) + [infrastructure/config/shared/config/loader.py:119](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/shared/config/loader.py#L119)~~ | 中 | ✅ ARCH-038 已解决（loader.py 退役删除，双真源清除） |
 | 4 | `parse_frontmatter` | 4处 | [shared/io/frontmatter_utils.py:38](file:///D:/ZephyrAlpha/src/zephyr/shared/io/frontmatter_utils.py#L38)（真源）+ 3副本——签名已分叉（scripts侧返回`(dict, body)`，src侧返回`dict|None`） | 中 | 是 |
 | 5 | `Priority` Enum | 6处 | asset_inventory/models.py:60 + audit_orchestrator/models.py:48 + audit_trail/models.py:48 + shared/schema/severity_types.py:41 + integration/shared/schema/severity_types.py:46 + governance/models.py:62 | 中 | 是 |
 | 6 | `IntentDomain` Enum | 2处 | [autonomy_core/intent_keyword_mapper.py:299](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/intent_keyword_mapper.py#L299) + [parsing/intent_keyword_mapper.py:297](file:///D:/ZephyrAlpha/src/zephyr/parsing/intent_keyword_mapper.py#L297) | 中 | 是 |
@@ -2921,13 +2921,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：配置漂移→运行时崩溃→AI难以定位（错误信息不指向字段）。
 - **修复**：为每个YAML定义Pydantic schema，loader强制validate；`load_yaml_config_validated()`已有但零调用（见5.23.3）。
 
-#### 5.23.3 [MEDIUM] load_yaml_config_validated()零生产调用（死代码）
+#### 5.23.3 [MEDIUM] load_yaml_config_validated()零生产调用（死代码） ✅ ARCH-038 已解决
 
 - **文件**：[loader.py](file:///D:/ZephyrAlpha/src/zephyr/shared/config/loader.py#L119-L173)
 - **证据**：函数存在且实现了schema校验逻辑，但Grep全项目`load_yaml_config_validated`调用点=0
 - **问题**：建了"正确的"validated loader却没人用。所有调用方仍走未校验的`load_yaml_config()`。这是"建了不用"的反模式——治本工具存在但未强制消费。
 - **影响**：5.23.2的schema缺失问题本可由该函数解决，但因零调用而失效。
-- **修复**：将`load_yaml_config`改为`load_yaml_config_validated`的thin wrapper（deprecation路径），或AST门禁强制新代码用validated版本。
+- **修复**：~~将`load_yaml_config`改为`load_yaml_config_validated`的thin wrapper（deprecation路径），或AST门禁强制新代码用validated版本。~~
+- **✅ 解决（ARCH-038，2026-07-01）**：loader.py 确认为虚假统一空壳（0真实消费者），已直接删除。配置加载责任回归 `infrastructure/config/__init__.py` 的 `load_config()`。死导入清理、api_index 声明清理、架构债登记表更新同步完成。
 
 #### 5.23.4 [MEDIUM] .env.example与实际读取的环境变量不匹配（7个文档化但未读取）
 
