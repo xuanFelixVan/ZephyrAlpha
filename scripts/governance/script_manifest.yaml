@@ -1,15 +1,15 @@
-# 自动生成于 2026-06-30T04:16:58Z
+# 自动生成于 2026-06-30T07:16:46Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-30T04:16:58Z'
+generated_at: '2026-06-30T07:16:46Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 379
+total_scripts: 377
 with_manifest: 221
-missing_manifest: 158
+missing_manifest: 156
 categories:
-  governance: 113
+  governance: 112
   governance:_sync: 4
   governance:d10_performance: 1
   governance:d11_compliance: 13
@@ -18,7 +18,7 @@ categories:
   governance:d2_links: 3
   governance:d3_metadata: 17
   governance:d4_paths: 4
-  governance:d5_architecture: 92
+  governance:d5_architecture: 91
   governance:d6_security: 14
   governance:d7_code: 29
   governance:d8_doc_sync: 4
@@ -1919,16 +1919,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_path_tree.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d5_architecture/generators/generate_runtime_plane_mapping.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
@@ -3967,16 +3957,6 @@ scripts:
   - Security
 - name: meta/verify_reconciliation_registry.py
   owner: governance:meta
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: migrate_arch_f_functions.py
-  owner: governance
   dimensions: []
   priority: P2
   timeout_seconds: 60
