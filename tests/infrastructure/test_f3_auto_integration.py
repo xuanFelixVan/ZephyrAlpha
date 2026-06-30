@@ -73,7 +73,7 @@ def _make_taskcard(task_id: str, depends_on: list[str] | None = None) -> "TaskCa
         acceptance=["pytest exit=0"],
         allowed_touch=[f"d:/tmp/integration_test/{task_id}.dummy"],
         applicable_rules=[{"module_id": "RULE-TEN", "section": "§1", "reason": "test"}],
-        rollback_instructions="git checkout -- tests/integration/test_f3_auto_integration.py",
+        rollback_instructions="git checkout -- tests/infrastructure/test_f3_auto_integration.py",
         post_sync_standard=["echo ok"],
         depends_on=depends_on or [],
         created_at=_NOW,

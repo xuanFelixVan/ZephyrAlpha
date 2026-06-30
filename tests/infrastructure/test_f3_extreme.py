@@ -85,7 +85,7 @@ def _make_taskcard(task_id: str, batch_id: str = "extreme-batch", **overrides):
         acceptance=["pytest exit=0"],
         allowed_touch=[f"d:/tmp/extreme_test/{task_id}.dummy"],
         applicable_rules=[{"module_id": "RULE-TEN", "section": "§1", "reason": "test"}],
-        rollback_instructions="git checkout -- tests/adversarial/test_f3_extreme.py",
+        rollback_instructions="git checkout -- tests/infrastructure/test_f3_extreme.py",
         post_sync_standard=["echo ok"],
         created_at=_NOW,
         updated_at=_NOW,

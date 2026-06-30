@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
-# [TESTS] pytest tests/integration/test_mcp_health_check_recovery.py -v --tb=short
+# [TESTS] pytest tests/infrastructure/test_mcp_health_check_recovery.py -v --tb=short
 # [TTL] task_bound
 """DM-202913: MCP _mcp_health_check死亡进程检测+restart_server验证。
 

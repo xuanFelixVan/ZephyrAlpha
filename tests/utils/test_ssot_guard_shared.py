@@ -216,7 +216,7 @@ class TestIsWatched:
             "src/core/exceptions.py",  # 非 zephyr 包
             "docs/01_GOVERNANCE/some-doc.md",  # 非 STANDARDS
             "README.md",  # 根目录
-            "tests/unit/test_core.py",  # 测试文件
+            "tests/infrastructure/test_core.py",  # 测试文件
         ],
     )
     def test_non_watched_paths(self, guard: SsotGuard, path: str) -> None:

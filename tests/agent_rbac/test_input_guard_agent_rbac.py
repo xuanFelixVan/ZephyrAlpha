@@ -29,7 +29,7 @@ class TestDangerousPatterns:
 
     def test_safe_command_allowed(self):
         guard = InputGuard()
-        result = guard.check_params("execute_command", {"command": "python tests/unit/test_main.py"})
+        result = guard.check_params("execute_command", {"command": "python tests/infrastructure/test_main.py"})
         assert result in (InputDecision.ALLOW, InputDecision.SANITIZED)
 
 
@@ -51,7 +51,7 @@ class TestPathWhitelist:
 
     def test_tests_path_allowed(self):
         guard = InputGuard()
-        result = guard.check_params("write_file", {"path": "tests/unit/test_main.py"})
+        result = guard.check_params("write_file", {"path": "tests/infrastructure/test_main.py"})
         assert result == InputDecision.ALLOW
 
     def test_parent_traversal_blocked(self):

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
-# [TESTS] tests/unit/test_reconciliation_registry.py (P3-T1)
+# [TESTS] tests/test_reconciliation_registry.py (P3-T1)
 # [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
@@ -1196,7 +1196,7 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
 # 内可见，无法被外部 import 绕过 compose。reconcile 逻辑真源不动（gateway._commit_auto
 # / subprocess / 报告落盘调用原样保留）。
 # _compose_reconcilers 是 compose 工具函数（被测试覆盖），保留。
-# 测试规范见 tests/unit/test_integrity_audit_reconciler.py——用公共 API +
+# 测试规范见 tests/governance/audit/test_integrity_audit_reconciler.py——用公共 API +
 # mock spec + 模块级函数 _audit_commit_history 测试。
 # 新增 reconciler 前 MUST 过 trae_060 §4 元问题审查，教训登记 #ARCH-028。
 # ============================================================

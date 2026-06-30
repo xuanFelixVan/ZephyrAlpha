@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | tests/red_blue/test_f18_governance_adversarial.py | §3.1
+# [BLUEPRINT] MOD-INF-005 | tests/infrastructure/test_f18_governance_adversarial.py | §3.1
 # [MODULE] tests.red_blue.test_f18_governance_adversarial
 # [INVARIANTS] red-blue adversarial test; no production data modification
 # [MODIFY-GUARD] test cases; attack vector definitions

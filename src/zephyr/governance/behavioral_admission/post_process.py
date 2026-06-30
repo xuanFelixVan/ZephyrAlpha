@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/unit/shared/test_post_process.py; tests/unit/test_post_process.py; tests/unit/shared/test_adversarial.py
+# [TESTS] tests/governance/delegation/test_post_process_unit.py; tests/governance/delegation/test_post_process_root.py
 # [A_module] module_id=MOD-GOV_post_process | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

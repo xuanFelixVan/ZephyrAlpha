@@ -213,7 +213,7 @@ class TestScanner:
         assert th == 0.6
 
     def test_path_threshold_tests(self):
-        th = self.scanner._get_threshold("tests/unit/test_thing.py")
+        th = self.scanner._get_threshold("tests/governance/test_thing.py")
         assert th == 0.9
 
     def test_path_threshold_scripts(self):

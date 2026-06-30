@@ -26,9 +26,10 @@ validate_test_coverage.py — 测试覆盖率治理校验器
 - 对每个源文件检查 tests/ 下是否存在对应的 test_*.py
 - 输出未覆盖模块清单
 
-映射规则：
-  src/zephyr/{module}/{filename}.py  →  tests/unit/test_{filename}.py
-  src/zephyr/{filename}.py           →  tests/unit/test_{filename}.py
+映射规则（ARCH-029 后 tests/ 按功能域归类，无 unit/ 目录）：
+  src/zephyr/{module}/{filename}.py  →  tests/{domain}/test_{filename}.py
+  src/zephyr/{filename}.py           →  tests/{domain}/test_{filename}.py
+  （domain 由模块功能域决定，递归搜索 tests/ 下所有 test_*.py）
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -99,13 +100,16 @@ def _find_test_file(source_file: Path) -> Path | None:
     except ValueError:
         return None
 
-    candidates = [
-        TESTS_DIR / "unit" / f"test_{stem}.py",
-    ]
+    # ARCH-029: tests/ 按功能域归类，递归搜索所有子目录
+    candidates = list(TESTS_DIR.rglob(f"test_{stem}.py"))
+    candidates = [c for c in candidates if "__pycache__" not in str(c)]
 
     if rel.parent != Path("."):
         module_prefix = rel.parent.name
-        candidates.insert(0, TESTS_DIR / "unit" / f"test_{module_prefix}_{stem}.py")
+        candidates.extend(
+            c for c in TESTS_DIR.rglob(f"test_{module_prefix}_{stem}.py")
+            if "__pycache__" not in str(c)
+        )
 
     for candidate in candidates:
         if candidate.exists():

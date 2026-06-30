@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
-# [TESTS] pytest tests/integration/test_mcp_idle_timeout.py -v --tb=short
+# [TESTS] pytest tests/infrastructure/test_mcp_idle_timeout.py -v --tb=short
 # [TTL] task_bound
 """DM-202912: MCP idle_timeout 10分钟自动回收验证。
 

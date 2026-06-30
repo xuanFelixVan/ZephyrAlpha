@@ -21,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-# 配置 sys.path（tests/unit/ 无 conftest，自行 insert）
+# 配置 sys.path（tests/ 无 conftest，自行 insert）
 from zephyr.shared.io.paths import REPO_ROOT
 _GOV_DIR = str(REPO_ROOT / "scripts" / "governance")
 if _GOV_DIR not in sys.path:

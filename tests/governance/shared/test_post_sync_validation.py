@@ -72,7 +72,7 @@ validate_rollback_instructions = _psv.validate_rollback_instructions
 # ----------------------------------------------------------------------------
 _FIXTURE = Path(__file__).resolve().parents[1] / "fixtures" / "psv_mock_script.py"
 _FIXTURE_REL = "tests/fixtures/psv_mock_script.py"  # 相对于 _PROJECT_ROOT
-_SELF_REL = "tests/unit/test_post_sync_validation.py"  # 本文件相对路径（R09 用）
+_SELF_REL = "tests/governance/shared/test_post_sync_validation.py"  # 本文件相对路径（R09 用）
 # 第二 fixture：仅注册 --foo（用于 R27 验证链内子命令各自校验自身 --help）
 _FIXTURE_ALT = Path(__file__).resolve().parents[1] / "fixtures" / "psv_mock_script_alt.py"
 

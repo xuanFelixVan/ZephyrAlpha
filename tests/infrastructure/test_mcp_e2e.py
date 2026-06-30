@@ -190,7 +190,7 @@ class TestProtocolCompliance:
                     "title": "protocol json test",
                     "category": "best_practice",
                     "content": "json roundtrip content for mcp e2e",
-                    "source_file": "tests/integration/test_mcp_e2e.py",
+                    "source_file": "tests/infrastructure/test_mcp_e2e.py",
                 },
             )
         )
@@ -214,7 +214,7 @@ class TestProtocolCompliance:
         assert ids == [10, 20, 30]
 
 
-# Task Manager 已迁移至 FastMCP——JSON-RPC 生命周期测例见 tests/unit/test_task_manager_mcp.py
+# Task Manager 已迁移至 FastMCP——JSON-RPC 生命周期测例见 tests/infrastructure/test_task_manager_mcp.py
 
 
 # 3. KnowledgeBaseServer 完整生命周期
@@ -243,7 +243,7 @@ class TestLifecycleKnowledgeBase:
                     "title": "E2E test KE",
                     "category": "best_practice",
                     "content": "duckdb olap integration test knowledge entry",
-                    "source_file": "tests/unit/test_mcp_e2e.py",
+                    "source_file": "tests/infrastructure/test_mcp_e2e.py",
                 },
             )
         )

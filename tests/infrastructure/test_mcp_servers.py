@@ -11,7 +11,7 @@ Unit tests for 5 MCP Servers (T-3-04, B15)
 ==========================================
 验收标准：每个 Server ≥ 3 条单元测试，合计 ≥ 15 条，覆盖：
   - BaseMCPServer: tools/list、tools/call、initialize、ping、unknown method、stdio run
-  - Task Manager（FastMCP）→ tests/unit/test_task_manager_mcp.py
+  - Task Manager（FastMCP）→ tests/infrastructure/test_task_manager_mcp.py
   - KnowledgeBaseServer: search、upsert_ke、get_ke
   - GateEngineServer: run_g1_write、run_g4_contract、submit_exemption
   - DocGuardServer: create_package、validate_package、emit_manual_event

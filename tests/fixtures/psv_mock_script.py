@@ -1,7 +1,7 @@
 """Mock script for post_sync_validator flag-registration testing.
 
 Registered flags: --foo, --bar, --baz
-Used by tests/unit/test_post_sync_validation.py to assert that
+Used by tests/governance/shared/test_post_sync_validation.py to assert that
 validate_post_sync_command correctly detects registered vs hallucinated flags
 via the script's --help output.
 
