@@ -273,7 +273,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 
 **裁定**：删除 `state` 字段，统一用 `design_maturity` 作为单一判定信号（与 §12.4 一致）。
 
-**arch_directory_tree 字段（当前 schema 11 列含 state 无 node_id；P0-1 施工后 11 列：删除 state，新增 node_id 外键，列数不变）**：
+**arch_directory_tree 字段（当前 PG schema 10 列；V3.4 删除 state，v15 重建表时移除 node_id 外键列，最终 10 列）**：
 
 | 字段 | 类型 | 设计态 | 运营态 | 说明 |
 |------|------|:---:|:---:|------|
@@ -282,7 +282,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | path_type | TEXT | `directory` | `directory`/`file` | 路径类型 |
 | domain_id | TEXT FK | 用户指定 | 路径推导 | 归属域（A-Blind-3 修复后非空） |
 | ~~state~~ | ~~TEXT~~ | ~~`design`/`operational`~~ | ~~—~~ | ~~V3.4 删除（与 design_maturity 冗余）~~ |
-| node_id | INTEGER FK | NULL（设计态节点不在 nodes 表） | nodes.node_id | V3.4 #147 新增，替换 state，关联依赖全景图 |
+| ~~node_id~~ | ~~INTEGER FK~~ | ~~NULL~~ | ~~nodes.node_id~~ | ~~V3.4 #147 新增，替换 state；v15 重建表时删除（不再关联 nodes 表）~~ |
 | design_maturity | TEXT | `design` | `production`/`prototype` | 拓扑状态（单一判定信号，删除 state） |
 | build_status | TEXT | `planned`/`generated`/`testing`/`stable`/`deprecated` | `stable` | 生命周期状态（与 nodes 对齐，裁定#178 5态） |
 | blueprint_id | TEXT | 用户指定 | 代码头部解析 | 关联蓝图 |
@@ -407,7 +407,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 ### 12.3 双态关联规则
 
-**核心裁定（V3.3 E1/E2 修复）**：设计态和运营态是**不同的行**，通过 `blueprint_id` 关联（一对多）。node_id 是**自增整数主键**（当前 schema 为 TEXT，V3.4 施工时改为 INTEGER GENERATED ALWAYS AS IDENTITY），与 path 解耦。
+**核心裁定（V3.3 E1/E2 修复）**：设计态和运营态是**不同的行**，通过 `blueprint_id` 关联（一对多）。node_id 是**自增整数主键**（V3.4 P0-1 施工后为 INTEGER GENERATED ALWAYS AS IDENTITY，PG 迁移后为 bigint），与 path 解耦。
 
 **为什么 node_id 不能含 filename**：
 - filename 变了 → node_id 变了 → 所有关联的 edges 丢失
@@ -428,8 +428,8 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 **业界依据**：Netflix Service Topology 用服务 ID 精确关联；Google Bazel 用目标 label 精确关联。业界一致用稳定标识符而非可变路径作为关联键。
 
 **node_id 格式**（V3.4 修正）：
-- **当前 schema**：TEXT 类型，格式混乱（有 `D-TRADING-01` 也有文件名）
-- **V3.4 施工后**：INTEGER GENERATED ALWAYS AS IDENTITY，自增整数，与 path 完全解耦
+- **V3.4 前（历史）**：TEXT 类型，格式混乱（有 `D-TRADING-01` 也有文件名）
+- **当前（V3.4 P0-1 + PG 迁移后）**：bigint（INTEGER GENERATED ALWAYS AS IDENTITY），自增整数，与 path 完全解耦
 - **迁移策略**（P0-1 Schema 迁移执行）：
   1. 创建新表 `nodes_new`，node_id 为 INTEGER GENERATED ALWAYS AS IDENTITY，其余字段与 nodes 相同 + 新增 5 字段（has_dynamic_import/blueprint_id_invalid/in_degree/out_degree/blueprint_path）
   2. 从 nodes 复制数据到 nodes_new，node_id 自增分配新值
@@ -443,15 +443,15 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 **业界依据**：Google Bazel 的 target label（//pkg:target）是稳定标识符；Jane Street 的模块路径是稳定标识符。node_id 作为边的端点，必须稳定——路径可变，ID 不变。
 
-> **⚠️ 迁移期统一说明（V3.4 P0-1 Schema 迁移）**
+> **⚠️ 迁移期统一说明（V3.4 P0-1 Schema 迁移，已完成）**
 >
-> 以下字段在当前 schema 中**不存在**，P0-1 施工时新增：
+> 以下字段在 V3.4 P0-1 前**不存在**，P0-1 施工时新增（现已存在，部分被 v15 删除见下方说明）：
 > - `edges.dep_maturity`（TEXT，默认 'active'，区分 design/active edge）
 > - `edges.from_node_id` / `edges.to_node_id`（INTEGER FK，替换旧的 `from_node`/`to_node` TEXT 字段）
 > - `nodes.has_dynamic_import` / `nodes.blueprint_id_invalid` / `nodes.in_degree` / `nodes.out_degree` / `nodes.blueprint_path`
 > - `arch_directory_tree.node_id`（INTEGER FK → nodes.node_id，**替换**删除的 `state` 字段，列数不变）
 >
-> 以下字段在当前 schema 中**存在但将被删除**：
+> 以下字段在 V3.4 迁移前**存在**，迁移后**已删除**：
 > - `edges.from_node` / `edges.to_node`（TEXT，迁移后删除）
 > - `arch_directory_tree.state`（TEXT，迁移后删除，统一用 `design_maturity`）
 >
@@ -597,7 +597,7 @@ python scripts/governance/apply_depgraph.py --add-design-edge \
 - `--relationship-type`：关系类型（one_to_one/one_to_many/many_to_many）
 - `--resource-impact`：资源影响（low/medium/high）
 
-**注意**：`--from-node-id`/`--to-node-id` 引用 nodes.node_id（V3.4 后为 INTEGER）。当前 schema 为 TEXT，P0-1 Schema 迁移完成后才能使用此命令。
+**注意**：`--from-node-id`/`--to-node-id` 引用 nodes.node_id（当前为 bigint，V3.4 P0-1 + PG 迁移已完成，命令可用）。
 
 **build_status 状态转换**（V3.3 E4 新增）：
 ```bash
@@ -709,7 +709,7 @@ ORDER BY usage_pct DESC;
 SELECT * FROM arch_constraints WHERE violation_status = 'open';
 ```
 
-**注意**：arch_directory_tree 的 `state` 字段当前仍存在（V3.4 E16 裁定删除，P0-1 施工时执行）。迁移完成后统一用 `design_maturity`。详见 §12.3 迁移期统一说明。
+**注意**：arch_directory_tree 的 `state` 字段已删除（V3.4 E16 裁定删除，P0-1 施工执行，v15 重建表时确认移除）。统一用 `design_maturity`。详见 §12.3 迁移期统一说明。
 
 **第三步：确认模块在设计态还是运营态**
 
@@ -779,11 +779,11 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 ### 14.4 edges表字段级覆盖裁定（对齐实际 schema）
 
-**V3.3 E1 修复**：对齐数据库实际 schema。当前 edges 表用 `from_node`/`to_node`（TEXT），V3.4 施工后改为 `from_node_id`/`to_node_id`（INTEGER FK）。**当前 edges 表无 `dep_maturity` 字段**，V3.4 施工时新增。
+**V3.3 E1 修复**：对齐数据库实际 schema。当前 edges 表用 `from_node_id`/`to_node_id`（bigint FK，V3.4 P0-1 + PG 迁移后），有 `dep_maturity` 字段（V3.4 新增）。
 
-edges表当前 19 列，V3.4 施工后 20 列（新增 dep_maturity）。
+edges表当前 22 列（v15 删除 migration_status 后）。
 
-**字段归属总览**（V3.4 后 20 列 = 1 主键 + 9 运营态 + 9 设计态（含 resource_impact）+ 1 共享）：
+**字段归属总览**（当前 22 列 = 1 主键 + 9 运营态 + 9 设计态（含 resource_impact）+ 1 共享 + 2 P0-6 扩展）：
 
 **主键（1 列）**：
 
@@ -825,12 +825,11 @@ edges表当前 19 列，V3.4 施工后 20 列（新增 dep_maturity）。
 | relationship_type | TEXT | 关系类型 | 设计态定义的基数关系 |
 | resource_impact | TEXT | 资源影响 | 设计态定义的资源约束（当前 schema 第 16 列） |
 
-**字段数**：当前 19 列（无 dep_maturity），V3.4 后 20 列（含 dep_maturity）。
+**字段数**：当前 22 列（含 dep_maturity，v15 删除 migration_status 后）。
 
-**from_node / to_node 说明**（V3.3 E1 修正）：
-- **当前 schema**：`from_node`/`to_node`（TEXT），存 node_id 字符串
-- **V3.4 施工后**：`from_node_id`/`to_node_id`（INTEGER FK），引用 nodes.node_id（自增整数）
-- **迁移策略**：ALTER TABLE 重命名 + 数据迁移
+**from_node_id / to_node_id 说明**（V3.3 E1 修正，V3.4 P0-1 + PG 迁移后已施工）：
+- **当前 schema**：`from_node_id`/`to_node_id`（bigint FK），引用 nodes.node_id（自增整数）
+- **V3.4 前（历史）**：`from_node`/`to_node`（TEXT），存 node_id 字符串（已删除）
 - 边的两端用节点 ID（稳定标识符），不用 path（可变属性）。路径变更时边不丢失。
 
 **业界依据**：Netflix Service Topology 用服务 ID 作为边主键；Google Bazel 用目标 label 作为边主键。业界一致用稳定标识符而非可变属性作为边端点。
@@ -871,7 +870,7 @@ AI查询模式：
 5. **active edge 只填充 9 个运营态字段**，不碰 9 个设计态字段（含 resource_impact）。dep_maturity 字段由生成器写 'active'
 6. **合并设计态节点和 design edge**（从内存恢复），设计态字段保留不动
 7. **冲突时设计态优先**（SSoT 分层：设计态全景图 > 代码）
-8. **edges 用 from_node_id / to_node_id**（V3.4 后，稳定标识符），不用 path。**当前生成器代码用 from_node/to_node（TEXT），P0-1 Schema 迁移完成后需改为 from_node_id/to_node_id（INTEGER FK）。**
+8. **edges 用 from_node_id / to_node_id**（V3.4 后，稳定标识符），不用 path。**生成器代码已改为 from_node_id/to_node_id（bigint FK，V3.4 P0-1 + PG 迁移后完成）。**
 9. **不处理 arch_directory_tree**（V5.5 裁定：path_tree 脚本独立管理，生成器不碰）
 
 ### 14.6 它有没有必要？
@@ -890,9 +889,9 @@ AI查询模式：
 
 ### 14.7 nodes表字段级覆盖裁定（对齐实际 schema）
 
-**V3.3 E7 修复**：对齐数据库实际 schema（31 列）。当前 schema 没有 `from_node_id`/`to_node_id`/`has_dynamic_import`/`blueprint_id_invalid`/`blueprint_path`/`planned_path`/`cross_domain_count`/`in_degree`/`out_degree` 等字段——这些是 V3.3/V3.4 施工需新增的字段。
+**V3.3 E7 修复**：对齐数据库实际 schema（当前 31 列）。V3.4 P0-1 新增了 `blueprint_id_invalid`/`blueprint_path`（保留至今）；`has_dynamic_import`/`in_degree`/`out_degree` 被 v15 删除（改由生成器动态 COUNT 计算）。edges 表的 `from_node_id`/`to_node_id` 见 §14.4。
 
-**字段数**：当前 31 列，V3.4 后 36 列（+5 新增：1 共享 blueprint_path + 4 运营态 has_dynamic_import/blueprint_id_invalid/in_degree/out_degree）。~~**v15 后又回到 31 列**（删 9 dead 列：has_dynamic_import/in_degree/out_degree/business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces/implementation_ref，见§迁移说明后v15裁定）~~。
+**字段数**：当前 31 列（V3.4 后曾达 36 列，v15 删 9 dead 列回到 31，但列组成与 V3.3 的 31 列不同——含 blueprint_id_invalid/blueprint_path，无 has_dynamic_import/in_degree/out_degree/business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces/implementation_ref）。
 
 **字段归属总览**（当前 31 列 = 1 主键 + 11 运营态 + 3 设计态 + 13 人工/脚本 + 3 共享）：
 
@@ -900,7 +899,7 @@ AI查询模式：
 
 | 字段 | 类型 | 含义 | 来源 |
 |------|------|------|------|
-| node_id | TEXT（V3.4 改为 INTEGER GENERATED ALWAYS AS IDENTITY） | 节点 ID | 当前生成器分配；V3.4 后数据库自增 |
+| node_id | bigint（INTEGER GENERATED ALWAYS AS IDENTITY） | 节点 ID | 数据库自增（V3.4 P0-1 + PG 迁移后） |
 
 **生成器重建的字段（运营态，11 列）**——从代码扫描得出：
 
@@ -922,7 +921,7 @@ AI查询模式：
 
 | 字段 | 类型 | 含义 | 为什么不覆盖 |
 |------|------|------|------------|
-| module_lifecycle_state | TEXT | ~~模块生命周期状态~~（裁定#183 已废弃，合并到 build_status） | V4.3 已合并到 build_status，字段废弃 |
+| ~~module_lifecycle_state~~ | ~~TEXT~~ | ~~模块生命周期状态~~（裁定#183 已废弃，合并到 build_status，字段已删除） | V4.3 已合并到 build_status |
 | subdomain_id | TEXT | 子域 ID | 设计态定义的子域归属 |
 | owner | TEXT | 负责人 | 设计态定义的负责人 |
 
@@ -964,17 +963,17 @@ AI查询模式：
 | consumed_interfaces | TEXT | 消费接口 | 人工 |
 | ~~implementation_ref（v15已删）~~ | TEXT | 实现引用 | 人工 |
 
-**字段数**：当前 31 列，V3.4 后 36 列。~~**v15 后 31 列**（删 9 dead 列，见§迁移说明后v15裁定）~~。
+**字段数**：当前 31 列（V3.4 后曾达 36 列，v15 删 9 dead 列回到 31，含 V3.4 新增的 blueprint_id_invalid/blueprint_path）。
 
-**V3.4 施工需新增的字段（5 列 = 1 共享 + 4 新增）**（~~has_dynamic_import/in_degree/out_degree v15已删；blueprint_path/blueprint_id_invalid 仍在~~，见§迁移说明后v15裁定）：
+**V3.4 新增的字段（5 列，已施工；has_dynamic_import/in_degree/out_degree v15 已删，blueprint_path/blueprint_id_invalid 仍在）**：
 
-| 字段 | 类型 | 含义 | 来源 | 归属 |
-|------|------|------|------|:---:|
-| blueprint_path | TEXT | 蓝图文档路径 | apply_depgraph.py 机械推导（§12.1）/ 生成器从代码头部解析 | 共享 |
-| has_dynamic_import | INTEGER | 是否含动态 import | 生成器扫描 importlib/__import__ | 运营态 |
-| blueprint_id_invalid | INTEGER | blueprint_id 校验失败标记 | 生成器校验 | 运营态 |
-| in_degree | INTEGER | 入度 | 生成器统计 | 运营态 |
-| out_degree | INTEGER | 出度 | 生成器统计 | 运营态 |
+| 字段 | 类型 | 含义 | 来源 | 归属 | 当前状态 |
+|------|------|------|------|:---:|:---:|
+| blueprint_path | TEXT | 蓝图文档路径 | apply_depgraph.py 机械推导（§12.1）/ 生成器从代码头部解析 | 共享 | ✅ 仍在 |
+| has_dynamic_import | INTEGER | 是否含动态 import | 生成器扫描 importlib/__import__ | 运营态 | ~~v15 已删~~ |
+| blueprint_id_invalid | INTEGER | blueprint_id 校验失败标记 | 生成器校验 | 运营态 | ✅ 仍在 |
+| in_degree | INTEGER | 入度 | 生成器统计 | 运营态 | ~~v15 已删，改由动态 COUNT~~ |
+| out_degree | INTEGER | 出度 | 生成器统计 | 运营态 | ~~v15 已删，改由动态 COUNT~~ |
 
 **8 种 node_type（V3.3 E13 修复）**：
 
@@ -1095,7 +1094,7 @@ AI 开发场景适配：项目依靠 100% AI 开发，AI 需要的是"依赖关�
 
 **检测时机**：生成器运行后自动检测（运营态循环）+ apply_depgraph.py 写入前检测（设计态循环）。
 
-**dep_cycles 视图 DDL**（V3.4 E19 新增，当前不存在，施工时创建）：
+**dep_cycles 视图 DDL**（V3.4 E19 新增，P0-5 已施工创建，当前 PG schema 中存在）：
 
 ```sql
 CREATE VIEW IF NOT EXISTS dep_cycles AS
@@ -1203,18 +1202,18 @@ SELECT * FROM dep_cycles WHERE domain_id = 'D_TRADING';
 ```
 === 依赖与架构全景图生成器报告 ===
 扫描统计：
-  - 扫描目录：16 个
+  - 扫描目录：15 个
   - 扫描文件：3,400 个
   - 跳过文件：15 个（排除目录）
   - 解析失败：3 个（见失败清单）
 
 节点统计：
-  - 运营态节点：7,590 个（新增 12 / 删除 8 / 变更 45）
-  - 设计态节点：110 个（保留不动）
+  - 运营态节点：6,003 个（新增 12 / 删除 8 / 变更 45）
+  - 设计态节点：89 个（保留不动）
 
 边统计：
-  - active edge：8,095 条（新增 23 / 删除 15 / 变更 8）
-  - design edge：230 条（保留不动）
+  - active edge：6,084 条（新增 23 / 删除 15 / 变更 8）
+  - design edge：113 条（保留不动）
 
 循环依赖检测：
   - 发现 8 个 SCC（453 条边）
@@ -1470,16 +1469,16 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | # | 裁定 | 结论 | 状态 |
 |---|------|------|:---:|
-| 3 | edges 区分设计/实际依赖 | **edges 加 dep_maturity 字段**（design/active，V3.4 P0-1 新增） | ⏳ |
+| 3 | edges 区分设计/实际依赖 | **edges 加 dep_maturity 字段**（design/active，V3.4 P0-1 新增，已施工） | ✅ |
 | 10 | 蓝图路径记录 | **新增 blueprint_path 字段**（V3.4 新增） | ✅ |
-| 25 | edges 关联字段 | **from_node_id / to_node_id（INTEGER FK），不用 path**（V3.4 P0-1） | ⏳ |
+| 25 | edges 关联字段 | **from_node_id / to_node_id（bigint FK），不用 path**（V3.4 P0-1 已施工，PG 迁移后为 bigint） | ✅ |
 | 34 | 判定信号单一化 | **design_maturity 字段为唯一判定依据**，禁止 os.path.exists() 或 path 末尾 / | ✅ |
 | 37 | build_status 5 态 | **planned → generated → testing → stable → deprecated**（裁定#178） | ✅ |
-| 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增；~~v15已删，见§迁移说明后v15裁定~~） | ⏳ |
-| 67 | node_id 稳定性 | **node_id 改为 INTEGER GENERATED ALWAYS AS IDENTITY，与 path 解耦**（V3.4 P0-1） | ⏳ |
+| 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增；~~v15已删，见§迁移说明后v15裁定~~） | ✅ |
+| 67 | node_id 稳定性 | **node_id 改为 bigint（INTEGER GENERATED ALWAYS AS IDENTITY），与 path 解耦**（V3.4 P0-1 已施工，PG 迁移后为 bigint） | ✅ |
 | 80 | 8 种 node_type | **module/package/script/test/config/schema/doc_template/data_template** | ✅ |
-| 82 | arch_directory_tree state | **删除 state 字段，统一用 design_maturity**（V3.4 P0-1） | ⏳ |
-| 87 | ~~arch_layers 层级~~ | **清除后 7 条（L0-L6）**（~~v14已删arch_layers表~~） | ⏳ |
+| 82 | arch_directory_tree state | **删除 state 字段，统一用 design_maturity**（V3.4 P0-1 已施工，v15 确认移除） | ✅ |
+| 87 | ~~arch_layers 层级~~ | **清除后 7 条（L0-L6）**（~~v14已删arch_layers表~~） | ✅ |
 
 ### 20.4 架构全景图裁定（位置层）
 
@@ -1510,7 +1509,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 11 | node_type 简化 | **文件制品类为主，DDD概念转 tags** | ⏳ |
 | 28 | contracts 表来源 | **先确认来源再决定去重/合并** | ❌ |
 | 31 | 超容域 22 个 | **重新评估拆分策略** | ⏳ |
-| 49 | 6 层与 52 域映射 | **后续阶段补充映射规则** | ⏳ |
+| 49 | 6 层与 53 域映射 | **后续阶段补充映射规则** | ⏳ |
 | 65 | 增量更新机制 | **长期目标——引入文件 mtime/hash 缓存** | ⏳ |
 | 66 | 设计态版本管理 | **长期目标——记录变更历史，当前用 git log** | ⏳ |
 
@@ -1822,10 +1821,10 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 表 | 列数 | 关键字段 |
 |------|:---:|---------|
-| nodes | 36 | node_id(INTEGER PK) / path / node_type / domain_id / design_maturity / build_status / blueprint_id |
-| edges | 20 | from_node_id / to_node_id / dep_maturity / edge_type |
-| arch_directory_tree | 11 | node_id(外键) / path / path_type / domain_id |
-| domains | 15+ | domain_id / domain_name / ssot_path / layer_id / max_modules |
+| nodes | 31 | node_id(bigint IDENTITY) / path / node_type / domain_id / design_maturity / build_status / blueprint_id / blueprint_path |
+| edges | 22 | from_node_id(bigint FK) / to_node_id(bigint FK) / dep_type / dep_maturity |
+| arch_directory_tree | 10 | path / path_type / domain_id / design_maturity / build_status（v15 删除 node_id 外键后 10 列） |
+| domains | 15 | domain_id / domain_name / ssot_path / layer_id / max_modules（v6 合并 arch_domain_layers/arch_domain_capacity 后） |
 
 | 脚本 | 当前能力 |
 |------|---------|
