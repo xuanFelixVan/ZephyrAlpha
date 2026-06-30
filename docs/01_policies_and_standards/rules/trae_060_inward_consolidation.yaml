@@ -250,6 +250,7 @@ references:
   - "First Principles Thinking(第一性原理)"
   - "DRY(Don't Repeat Yourself)"
   - "K8s Admission Controller(准入控制器——创建前审查)"
+  - "#ARCH-028(治理军备竞赛陷阱——本原则§4元问题审查的实践依据；AD-GOV-001收敛行动的教训登记)"
 
 enforcement:
   type: hook

@@ -5325,7 +5325,7 @@ tests/  (包含1700个文件: .py(1698), .txt(2))
 │   ├── test_check_naming_convention_dual_track.py  — GATE-11 module_id 双轨制单测（裁定#208 R1/R4）  
 │   ├── test_circuit_breaker_unit.py  — T-V2-005 单元测试 — CircuitBreakerGateway (CBG)  
 │   ├── test_code_dedup_engine.py  — code-dedup-engine 核心模块单元测试 — Scanner, MonocultureGuard, AutoFixer.  
-│   ├── test_commit_gateway_audit_reconciler.py  — test_commit_gateway_audit_reconciler.py — GATE-COMMIT-GW-AUDIT reconciler 单测（C级 缺口4）  
+│   ├── test_integrity_audit_reconciler.py  — test_integrity_audit_reconciler.py — GATE-INTEGRITY-AUDIT reconciler 单测（AD-GOV-001 合并后）
 │   ├── test_compliance_manager_contract.py  — ComplianceManagerBase — 抽象接口形状校验。  
 │   ├── test_concurrency_guard.py  — Unit tests for concurrency_guard — 回滚并发安全守卫（方案C）。  
 │   ├── test_constitutional_update_unit.py  — Unit tests for constitutional_update.py  

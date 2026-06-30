@@ -959,14 +959,14 @@ def _make_old_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
     - 责任唯一：扫描+归档逻辑只在 ``scan_and_archive_working_docs`` 一处，reconciler
       与一次性归档（S5/CLI）共用，不另建脚本
     - 真源唯一：复用 ReconciliationRegistry 框架（第6个 reconciler），不新建清理系统；
-      复用 make_ghost_reconciler 的"删除检测 trigger"模式；复用 make_manifest_reconciler
+      复用 _make_old_ghost_reconciler 的"删除检测 trigger"模式；复用 make_manifest_reconciler
       的"检测→git add→git commit --no-verify"自动提交模式
     - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
 
     非阻断设计：归档后自动 commit 删除；commit 失败降级为 warn（报告落盘供追责）。
     .runtime/ 已 .gitignore，归档文件不入库，仅 _working/ 删除需 commit。
 
-    trigger 裁定：与 make_ghost_reconciler 一致——committed 文件不在磁盘 = 删除
+    trigger 裁定：与 _make_old_ghost_reconciler 一致——committed 文件不在磁盘 = 删除
     commit。删除是产生幽灵引用的主要原因（引用的文件被删/改名）；改名 = 删除+新增，
     删除部分会被检测。
 
@@ -984,7 +984,7 @@ def _make_old_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
     project_root = gateway.project_root
 
     def _trigger(committed_files: list[str]) -> bool:
-        # 与 make_ghost_reconciler 一致：committed 文件不在磁盘 = 删除 commit
+        # 与 _make_old_ghost_reconciler 一致：committed 文件不在磁盘 = 删除 commit
         return any(not os.path.isfile(f) for f in committed_files)
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
@@ -2148,11 +2148,16 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
 # AD-GOV-001 治理收敛：5 组 reconciler 合并（16→11）
 # 合并规则（严格遵守）：
 # - trigger = 旧A trigger OR 旧B trigger（任一命中即执行）
-# - reconcile = 串联执行 旧A → 旧B；action 取较严重，detail 拼接两者
+# - reconcile = 串联执行 旧A → 旧B；action 取较严重
+#   （severity: skip/nothing=0, clean=1, warn=2, auto_committed=2），detail 拼接两者
 # - priority = max(旧A, 旧B)
 # 旧实现保留为 _make_old_*_reconciler 私有函数供合并 reconciler 复用——
 # reconcile 逻辑真源不动（gateway._commit_auto / subprocess / 报告落盘调用原样保留），
 # 仅收敛 ReconciliationRegistry 注册入口，治本 AD-GOV-001 治理军备竞赛。
+# **禁止外部 import _make_old_***：这些是私有实现，仅供 _compose_reconcilers 复用。
+# 测试规范见 tests/unit/test_integrity_audit_reconciler.py——用公共 API +
+# mock spec + 模块级函数 _audit_commit_history 测试，不 import _make_old_*。
+# 新增 reconciler 前 MUST 过 trae_060 §4 元问题审查，教训登记 #ARCH-028。
 # ============================================================
 
 
