@@ -3191,8 +3191,9 @@ PRODUCTION_PROTECTED_FIELDS = (
     "gate_reason",
     "hard_boundary_ref",
     "consumed_interfaces",
-    "business_stream",
-    "stream_role",
+    # business_stream/stream_role 不是 nodes 表真实列（存在 type_specific_data JSON 里，
+    # 由文件头重建）。曾误列此处导致 SELECT 报 UndefinedColumn，被 except 静默吞掉，
+    # 致使全部 16 个保护字段失效（P0 数据丢失 bug，2026-07-01 修复）。
     "tags",
     "trust_zone",
     "deployment_lifecycle",
