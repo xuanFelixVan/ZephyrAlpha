@@ -58,15 +58,15 @@ class TestGCT004EscalationToRBAC:
 
 class TestGCT005DriftToRollback:
     def test_drift_event_importable(self):
-        from zephyr.governance.drift_detection.events import DriftEvent
+        from zephyr.governance.drift_detection.events import ManagedDriftEvent
 
-        assert DriftEvent is not None
+        assert ManagedDriftEvent is not None
 
     def test_drift_fix_handler(self):
         from zephyr.governance.drift_fix import DriftFixHandler
-        from zephyr.governance.drift_detection.events import DriftEvent
+        from zephyr.governance.drift_detection.events import ManagedDriftEvent
 
-        event = DriftEvent(drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline")
+        event = ManagedDriftEvent(drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline")
         handler = DriftFixHandler()
         result = handler.on_drift_fix(event)
         assert result["fixed"] is True

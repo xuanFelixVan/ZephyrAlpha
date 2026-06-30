@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 from zephyr.governance.drift_fix import DriftFixHandler
-from zephyr.governance.drift_detection.events import DriftEvent, DriftState, DriftType
+from zephyr.governance.drift_detection.events import ManagedDriftEvent, ManagedDriftState, DriftType
 
 
 class TestDriftFixHandlerInit:
@@ -39,7 +39,7 @@ class TestDriftFixHandlerInit:
 class TestDriftFixHandlerOnDriftFix:
     def test_auto_fixable_event_returns_fixed(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-001",
             target="src/module.py",
             drift_type=DriftType.CODE_DIVERGENCE,
@@ -56,17 +56,17 @@ class TestDriftFixHandlerOnDriftFix:
 
     def test_auto_fixable_marks_state_fixed(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-002",
             target="src/other.py",
             auto_fixable=True,
         )
         handler.on_drift_fix(event)
-        assert event.state == DriftState.FIXED
+        assert event.state == ManagedDriftState.FIXED
 
     def test_not_auto_fixable_returns_manual_required(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-003",
             target="src/config.yaml",
             auto_fixable=False,
@@ -78,18 +78,18 @@ class TestDriftFixHandlerOnDriftFix:
 
     def test_not_auto_fixable_marks_manual_required(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-004",
             target="src/schema.py",
             auto_fixable=False,
         )
         handler.on_drift_fix(event)
-        assert event.state == DriftState.MANUAL_REQUIRED
+        assert event.state == ManagedDriftState.MANUAL_REQUIRED
 
     def test_drift_type_preserved_in_result(self):
         handler = DriftFixHandler()
         for dt in DriftType:
-            event = DriftEvent(
+            event = ManagedDriftEvent(
                 drift_id=f"drift-{dt.value}",
                 target="src/test.py",
                 drift_type=dt,
@@ -102,7 +102,7 @@ class TestDriftFixHandlerOnDriftFix:
 class TestDriftFixHandlerBoundary:
     def test_event_with_empty_fix_suggestion(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-empty",
             target="src/empty.py",
             auto_fixable=True,
@@ -114,7 +114,7 @@ class TestDriftFixHandlerBoundary:
 
     def test_event_with_empty_target(self):
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="drift-notarget",
             target="",
             auto_fixable=True,
@@ -124,8 +124,8 @@ class TestDriftFixHandlerBoundary:
 
     def test_multiple_calls_independent(self):
         handler = DriftFixHandler()
-        event1 = DriftEvent(drift_id="a", target="a.py", auto_fixable=True)
-        event2 = DriftEvent(drift_id="b", target="b.py", auto_fixable=False)
+        event1 = ManagedDriftEvent(drift_id="a", target="a.py", auto_fixable=True)
+        event2 = ManagedDriftEvent(drift_id="b", target="b.py", auto_fixable=False)
         r1 = handler.on_drift_fix(event1)
         r2 = handler.on_drift_fix(event2)
         assert r1["fixed"] is True

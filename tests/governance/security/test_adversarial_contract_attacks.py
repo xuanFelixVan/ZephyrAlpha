@@ -27,7 +27,7 @@ from zephyr.security.access_control.a2a_check import verify_a2a_pair
 from zephyr.security.access_control.approver_check import verify_approver
 from zephyr.security.access_control.capability_check import verify_capability_scope
 from zephyr.security.access_control.contracts import RBACAuditBridge
-from zephyr.governance.drift_detection.events import DriftEvent, DriftType
+from zephyr.governance.drift_detection.events import ManagedDriftEvent, DriftType
 
 # ===== 红方攻击 1: G-CT-001 — RBAC→Audit 契约旁路攻击 =====
 
@@ -129,9 +129,9 @@ class TestAdversarialGCT005_DriftInjection:
     """攻击 G-CT-005: 尝试在绕过预算的情况下注入漂移事件。"""
 
     def test_drift_event_validates_enum_type(self):
-        """红方: 尝试创建无效类型的DriftEvent。白方: Pydantic 验证拒绝。"""
+        """红方: 尝试创建无效类型的ManagedDriftEvent。白方: Pydantic 验证拒绝。"""
         with pytest.raises(Exception):
-            DriftEvent(
+            ManagedDriftEvent(
                 drift_id="INVALID-001",
                 target="governance_contracts",
                 drift_type="NONEXISTENT_TYPE",
@@ -140,7 +140,7 @@ class TestAdversarialGCT005_DriftInjection:
     def test_drift_fix_handler_rejects_non_auto_fixable(self):
         """红方: 提交一个不可自动修复的漂移。白方: DriftFixHandler标记为MANUAL_REQUIRED。"""
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="DRIFT-ATTACK-001",
             target="synthetic_injection_target",
             drift_type=DriftType.CONFIG_DRIFT,
@@ -154,7 +154,7 @@ class TestAdversarialGCT005_DriftInjection:
     def test_drift_fix_handler_auto_fixes_when_possible(self):
         """验证正常通路: auto_fixable=True 的漂移应被自动修复。"""
         handler = DriftFixHandler()
-        event = DriftEvent(
+        event = ManagedDriftEvent(
             drift_id="DRIFT-NORMAL-001",
             target="normal_target",
             drift_type=DriftType.CONFIG_DRIFT,

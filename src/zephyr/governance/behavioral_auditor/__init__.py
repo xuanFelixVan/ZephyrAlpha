@@ -264,7 +264,7 @@ from zephyr.governance.drift_detection.drift_training import (
     parse_python_public_api,
     track_training_effectiveness,
 )
-from zephyr.governance.drift_detection.events import DriftEvent, DriftState, DriftType
+from zephyr.governance.drift_detection.events import DriftType
 from zephyr.governance.drift_detection.file_attr_checker import (
     FileAttrIssue,
     capture_baseline,

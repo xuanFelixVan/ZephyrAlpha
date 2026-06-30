@@ -23,18 +23,18 @@ G-CT-005 消费端 — Rollback.on_drift_fix() 消费漂移事件执行自动修
 SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 此文件是 drift-detector 真源的 rollback 消费者，
 包含专属的 DriftFixHandler.on_drift_fix() 回滚兜底逻辑，不可简化为纯 shim。
-已从 drift-detector.events 导入 DriftEvent（此模块本身也需后续合并审核）。
+已从 drift-detector.events 导入 ManagedDriftEvent（此模块本身也需后续合并审核）。
 """
 
 from typing import Any
 
-from zephyr.governance.drift_detection.events import DriftEvent
+from zephyr.governance.drift_detection.events import ManagedDriftEvent
 
 
 class DriftFixHandler:
     """漂移自动修复处理器 — G-CT-005 消费端."""
 
-    def on_drift_fix(self, event: DriftEvent) -> dict[str, Any]:
+    def on_drift_fix(self, event: ManagedDriftEvent) -> dict[str, Any]:
         if not event.auto_fixable:
             event.mark_manual_required()
             return {

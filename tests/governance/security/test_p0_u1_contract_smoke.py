@@ -56,9 +56,9 @@ class TestP0U1ContractSmoke:
 
     def test_gct_005_drift_to_rollback(self):
         from zephyr.governance.drift_fix import DriftFixHandler
-        from zephyr.governance.drift_detection.events import DriftEvent
+        from zephyr.governance.drift_detection.events import ManagedDriftEvent
 
-        event = DriftEvent(drift_id="D001", target="test_config")
+        event = ManagedDriftEvent(drift_id="D001", target="test_config")
         handler = DriftFixHandler()
         assert hasattr(event, "drift_id")
         assert hasattr(handler, "on_drift_fix")

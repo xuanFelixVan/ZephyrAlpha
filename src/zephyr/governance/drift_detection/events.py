@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-G-CT-005 — DriftEvent Pydantic V2 BaseModel 漂移事件定义."""
+G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义."""
 
 from datetime import UTC, datetime
 from enum import Enum
@@ -36,7 +36,7 @@ class DriftType(str, Enum):
     INTERFACE_DRIFT = "INTERFACE_DRIFT"
 
 
-class DriftState(str, Enum):
+class ManagedDriftState(str, Enum):
     DETECTED = "DETECTED"
 
     FIXED = "FIXED"
@@ -46,7 +46,7 @@ class DriftState(str, Enum):
     IGNORED = "IGNORED"
 
 
-class DriftEvent(BaseModel):
+class ManagedDriftEvent(BaseModel):
     drift_id: str
 
     detected_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
@@ -59,14 +59,14 @@ class DriftEvent(BaseModel):
 
     auto_fixable: bool = False
 
-    state: DriftState = DriftState.DETECTED
+    state: ManagedDriftState = ManagedDriftState.DETECTED
 
     agent_id: str = ""
 
     severity: str = "MEDIUM"
 
     def mark_fixed(self) -> None:
-        self.state = DriftState.FIXED
+        self.state = ManagedDriftState.FIXED
 
     def mark_manual_required(self) -> None:
-        self.state = DriftState.MANUAL_REQUIRED
+        self.state = ManagedDriftState.MANUAL_REQUIRED
