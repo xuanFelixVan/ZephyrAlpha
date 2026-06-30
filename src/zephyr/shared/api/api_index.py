@@ -376,7 +376,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # config/loader.py — 配置加载校验（Phase 3 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.config import load_yaml_config, load_yaml_config_validated
+# from zephyr.shared.io.yaml_utils import load_yaml_safe
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

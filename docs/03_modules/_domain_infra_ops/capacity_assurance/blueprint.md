@@ -139,7 +139,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 
 | # | 文件路径 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|---------|------------|------|:-----:|-------------------|
-| 36 | `config/capacity/capacity_slo.yaml` | §8 | 容量 SLI/SLO 标准（M-18） | 已阻塞 | 首版待完善 |
+| 36 | `config/capacity_slo.yaml` | §8 | 容量 SLI/SLO 标准（M-18） | 已阻塞 | 首版待完善 |
 
 **路径不一致**
 
@@ -382,7 +382,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | M-15 | pydantic_v2_migrator.py | Pydantic v2 迁移 | `src/zephyr/infrastructure/runtime_integration/pydantic_v2_migrator.py` | ❌ 未实现 | Human-Gated |
 | M-16 | event_bus_upgrade.py | 事件总线升级 | `src/zephyr/shared/events/event_bus_upgrade.py` | ❌ 未实现 | Human-Gated |
 | M-17 | ai_audit_guard.py | AI修改审计守卫 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）+ `src/zephyr/shared/ai_audit_guard.py`（守卫规则引擎待实现） | ⚠️ 部分实现 | Immutable Core |
-| M-18 | capacity_slo.yaml | 容量SLI/SLO标准 | `config/capacity/capacity_slo.yaml` | ⚠️ 首版已落地（MOD-INF-001 M-18，≥8 SLI + arch_guard 阈值；插桩点仍 TBD） | Human-Gated |
+| M-18 | capacity_slo.yaml | 容量SLI/SLO标准 | `config/capacity_slo.yaml` | ⚠️ 首版已落地（MOD-INF-001 M-18，≥8 SLI + arch_guard 阈值；插桩点仍 TBD） | Human-Gated |
 | M-19 | capacity_governance_loop.py | 容量治理闭环 | `src/zephyr/shared/capacity_governance_loop.py` | ❌ 未实现 | AI-Modifiable |
 | M-20 | ttl_cleanup_engine.py | 派生文件TTL清理 | `src/zephyr/shared/ttl_cleanup_engine.py` | ❌ 未实现 | AI-Modifiable |
 
@@ -393,7 +393,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | M-21 | error_budget_tracker.py | Error Budget 五级响应追踪 + Burn Rate 多窗口监控 | `src/zephyr/shared/error_budget_tracker.py` | Human-Gated（阈值）/ AI-Modifiable（消耗追踪） | ✅ 已实现 |
 | M-22 | kill_switch.py | 全局一键熔断 | `src/zephyr/infrastructure/runtime_integration/rollback/kill_switch.py` | Human-Gated | ✅ 已实现 |
 | M-23 | sandbox_executor.py | 高风险操作沙箱隔离 | `src/zephyr/shared/sandbox_executor.py` | Human-Gated | ✅ 已实现 |
-| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/capacity/degradation_chain.yaml` | Human-Gated（链定义）/ AI-Modifiable（链选择） | ✅ 已实现 |
+| M-24 | degradation_chain.py | Graceful Degradation 模型降级链 | `src/zephyr/shared/degradation_chain.py` + `config/degradation_chain.yaml` | Human-Gated（链定义）/ AI-Modifiable（链选择） | ✅ 已实现 |
 | M-25 | reasoning_spans.py | Agent 推理步骤追踪（OTel 语义规范） | `src/zephyr/shared/reasoning_spans.py` | AI-Modifiable | ✅ 已实现 |
 | M-26 | cost_estimator.py | 执行前成本预估（Pre-flight Estimation） | `src/zephyr/shared/cost_estimator.py` | AI-Modifiable | ✅ 已实现 |
 | M-27 | semantic_cache.py | 语义缓存（复用 ChromaDB） | `src/zephyr/resilience/budget_enforcement/semantic_cache.py` | AI-Modifiable | ✅ 已实现 |
@@ -492,11 +492,11 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 
 | 输入 | 格式 | 来源 |
 |------|------|------|
-| `capacity_slo.yaml` | YAML + Pydantic v2 校验 | `config/capacity/` |
-| `error_budget_config.yaml` | YAML | `config/capacity/` |
-| `token_budget.yaml` | YAML | `config/capacity/` |
-| `sandbox_policy.yaml` | YAML | `config/capacity/` |
-| `degradation_chain.yaml` | YAML | `config/capacity/` |
+| `capacity_slo.yaml` | YAML + Pydantic v2 校验 | `config/` |
+| `error_budget_config.yaml` | YAML | `config/` |
+| `token_budget.yaml` | YAML | `config/` |
+| `sandbox_policy.yaml` | YAML | `config/` |
+| `degradation_chain.yaml` | YAML | `config/` |
 | 环境变量 | `ZEPHYR_KILL_SWITCH` 等 | OS 环境变量 |
 
 ### §4.4 输出契约
@@ -583,7 +583,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 ### 8.2 Error Budget 消耗追踪
 
 ```yaml
-# config/capacity/error_budget_config.yaml 完整示例
+# config/error_budget_config.yaml 完整示例
 error_budgets:
  - slo_id: "CAP-001-startup-time"
  budget_window: "30d"
@@ -660,10 +660,10 @@ error_budgets:
 
 | 级别 | 维度 | 默认值 | 配置文件 |
 |------|------|--------|---------|
-| **Level 1: Per-request** | 单次请求最大 token | input: 32K / output: 4K / tool_calls: 10 | `config/capacity/token_budget.yaml` |
+| **Level 1: Per-request** | 单次请求最大 token | input: 32K / output: 4K / tool_calls: 10 | `已删除` |
 | **Level 2: Per-session** | 单 session token 预算 | 50K tokens / 5 iterations | `config/context-rules.yaml`（已有） |
-| **Level 3: Per-org** | 每日 token 总量 | 5M tokens / $10/day | `config/capacity/token_budget.yaml` |
-| **Level 4: Global** | 全局 token 上限 | 50M tokens / $100/day | `config/capacity/token_budget.yaml` |
+| **Level 3: Per-org** | 每日 token 总量 | 5M tokens / $10/day | `已删除` |
+| **Level 4: Global** | 全局 token 上限 | 50M tokens / $100/day | `已删除` |
 
 ### 9.2 Pre-flight Estimation
 
@@ -815,15 +815,15 @@ async def trace_reasoning(agent_name: str, task: str, steps: list[str]):
 
 ```bash
 # 环境变量
-CAPACITY_SLO_CONFIG_PATH="config/capacity/capacity_slo.yaml"
+CAPACITY_SLO_CONFIG_PATH="config/capacity_slo.yaml"
 CAPACITY_METRICS_DB_PATH=".audit_cache/capacity_metrics.db"
 AI_AUDIT_RULES_PATH="config/audit/audit_rules.yaml"
 AI_AUDIT_PROVENANCE_DB_PATH=".audit_cache/ai_provenance.db"
 CAPACITY_GOVERNANCE_INTERVAL_SECONDS=300
-ERROR_BUDGET_CONFIG_PATH="config/capacity/error_budget_config.yaml"
-TOKEN_BUDGET_CONFIG_PATH="config/capacity/token_budget.yaml"
-SANDBOX_POLICY_PATH="config/capacity/sandbox_policy.yaml"
-DEGRADATION_CHAIN_PATH="config/capacity/degradation_chain.yaml"
+ERROR_BUDGET_CONFIG_PATH="config/error_budget_config.yaml"
+TOKEN_BUDGET_CONFIG_PATH="已删除"
+SANDBOX_POLICY_PATH="config/sandbox_policy.yaml"
+DEGRADATION_CHAIN_PATH="config/degradation_chain.yaml"
 ZEPHYR_KILL_SWITCH="0"
 ```
 
@@ -1397,7 +1397,7 @@ STEP 3: 拆分后验证
 | # | 范围 | 路径 |
 |---|------|------|
 | 1 | 源码 | `src/zephyr/capacity-assurance/` + `src/zephyr/shared/`（容量相关模块） |
-| 2 | 配置 | `config/capacity/*.yaml` |
+| 2 | 配置 | `config/*.yaml` |
 | 3 | 治理脚本 | `scripts/governance/`（容量相关检查脚本） |
 
 ---
@@ -1631,7 +1631,7 @@ STEP 3: 拆分后验证
 | M-15 | pydantic_v2_migrator.py | ❌ 未实现 | — | — | — |
 | M-16 | event_bus_upgrade.py | ❌ 未实现 | — | — | — |
 | M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）| `tests/unit/test_ai_behavior_audit_logger.py` | — |
-| M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity/capacity_slo.yaml` | `scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py` | arch_guard |
+| M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity_slo.yaml` | `scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py` | arch_guard |
 | M-19 | capacity_governance_loop.py | ❌ 未实现 | — | — | — |
 | M-20 | ttl_cleanup_engine.py | ❌ 未实现 | — | — | — |
 | M-21 | error_budget_tracker.py | ❌ 未实现 | — | — | — |

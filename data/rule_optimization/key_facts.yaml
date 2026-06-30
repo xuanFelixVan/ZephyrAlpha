@@ -677,9 +677,9 @@ path_facts:
         reason: "pipeline 包已迁移，routemanifest 拼写错误，实际文件为 config/blueprint_routing.yaml"
 
   - id: reg_cap_001_path
-    fact: "config/capacity/tech_stack_manifest.yaml"
+    fact: "config/tech_stack_manifest.yaml"
     description: "REG-CAP-001 技术栈清单文件名（下划线非连字符）"
-    ssot_source: "config/capacity/tech_stack_manifest.yaml"
+    ssot_source: "config/tech_stack_manifest.yaml"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:

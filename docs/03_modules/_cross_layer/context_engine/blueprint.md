@@ -198,7 +198,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `src/zephyr/orchestration/context_management/citation_walker.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/cold_start_booster.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/complexity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/context-engine/config/compression/policy.yaml` | ✅ 已实现 | |
+| `src/zephyr/context-engine/config/compression_policy.yaml` | ✅ 已实现 | |
 | `src/zephyr/context-engine/config/context-rules.yaml` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/config_safety_guard.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/context_assembler.py` | ✅ 已实现 | |
@@ -284,7 +284,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `config/context_rules.yaml` | ✅ 已实现 | |
-| `config/compression/policy.yaml` | ✅ 已实现 | |
+| `config/compression_policy.yaml` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

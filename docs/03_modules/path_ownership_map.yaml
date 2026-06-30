@@ -4647,7 +4647,7 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'config/capacity/capacity_slo.yaml'
+  - path: 'config/capacity_slo.yaml'
     owner_blueprint: 'MOD-INF-001'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md'

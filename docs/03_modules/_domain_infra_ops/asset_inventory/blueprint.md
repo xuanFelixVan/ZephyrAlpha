@@ -1103,7 +1103,7 @@ class TripleTrustAnchorGate:
 |---|---------|------|---------|---------|
 | 1 | **禁止递归符号链接** | 符号链接可指向项目外目录 → 越权扫描 + 无限递归 | `os.path.islink()` 检测后跳过 | 单元测试 + `security_access_log.jsonl` |
 | 2 | **禁止读取 .env / .secrets** | 密钥泄露 | `SECRET_FILENAME_PATTERNS` 匹配跳过 | `security_access_log.jsonl` 审计 |
-| 3 | **禁止全量扫描生产环境** | 生产环境文件量大 + 安全合规 | 增量模式默认 + `ScanModeSelector` 降级链 | `config/capacity/asset-inventory.yaml` 约束 |
+| 3 | **禁止全量扫描生产环境** | 生产环境文件量大 + 安全合规 | 增量模式默认 + `ScanModeSelector` 降级链 | `config/asset-inventory.yaml` 约束 |
 | 4 | **禁止 LLM 参与分类** | AI 判断不可复现 → 确定性丧失 | 100% 规则引擎驱动 | `auto_classified` 字段审计 |
 | 5 | **禁止跨进程文件锁** | Windows NTFS 锁 + Defender 阻塞 | 乐观扫描 + Glide Window + 原子写入 | 无 `.ailocks/` 读取 |
 
@@ -1775,7 +1775,7 @@ F: 孤儿率≥20% 或 幽灵率≥10%  — 触发 Escalation
 | **D-026-22** | 6 产物保留策略 + 自动清理脚本 | 无/有 | 有 | Prometheus TSDB retention + S3 lifecycle | 2026-04 |
 | **D-026-23** | KnowledgeTransferGate + 六种跨 session 知识 | 无/有 | 有 | Anthropic Artifact + LangChain Memory | 2026-04 |
 | **D-026-24** | CLI: `python -m zephyr.asset_inventory` 7 子命令 | 无/有 | 有 | kubectl 子命令模式 | 2026-04 |
-| **D-026-25** | 配置集中: `config/capacity/asset-inventory.yaml` | 分散/集中 | 集中 | pyproject.toml 的工具配置节 | 2026-04 |
+| **D-026-25** | 配置集中: `config/asset-inventory.yaml` | 分散/集中 | 集中 | pyproject.toml 的工具配置节 | 2026-04 |
 | **D-026-26** | Dry-run/Preview 模式——Safe-by-Default | 直接执行/预览 | 预览 | Terraform plan vs apply | 2026-04 |
 | **D-026-27** | Schema Evolution: AUTOMIGRATE + 迁移脚本 | 手动/自动 | 自动 | Flyway/Liquibase——schema_version 递增 + 逐版本迁移脚本 | 2026-04 |
 | **D-026-28** | RenameDetector: SHA256 交叉匹配 Ghost vs Orphan | 无/有 | 有 | Git diff --find-renames | 2026-04 |
@@ -2313,7 +2313,7 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
 
 | # | 场景 | 操作 | 命令 |
 |---|------|------|------|
-| 1 | 盘点系统阻塞 CI | 激活紧急旁路 | `echo "enabled: true`nreason: CI_BLOCKED`nactivated_by: OWNER`nexpires_at: $(date -d '+24h' +%Y-%m-%dT%H:%M:%S)" > config/capacity/inventory_override.yaml` |
+| 1 | 盘点系统阻塞 CI | 激活紧急旁路 | `echo "enabled: true`nreason: CI_BLOCKED`nactivated_by: OWNER`nexpires_at: $(date -d '+24h' +%Y-%m-%dT%H:%M:%S)" > config/inventory_override.yaml` |
 | 2 | 旁路过期/恢复 | 删除旁路配置 | `del config\capacity\inventory_override.yaml` |
 | 3 | 索引损坏 | 触发全量重建 | `python -m zephyr.asset_inventory scan --full --force` |
 | 4 | 扫描器熔断 | 等待自动恢复（60s）或手动重置 | `python -m zephyr.asset_inventory reset-circuit-breaker --component scanner` |
@@ -2710,7 +2710,7 @@ hooks:
 | `GOV-CMP-003 audit-protocol` | → | 盘点维度纳入 12 维审计清单 | DIM-INV | 每次审计 | ⬜ Phase 2 |
 | `01_policies/governance/` | ← | 规则发现引用 | `_index.yaml` TRAE-010 | 每次入项目 | ✅ 已登记 |
 | `.trae/rules/project_rules.md` | ← | 冷启动 STEP 4.5 | "读 unified-asset-index.yaml" | 每次入项目 | ✅ 已更新 |
-| `config/capacity/risk-register.yaml` | → | 盘点相关运营风险 | R17~R20 | 每次 risk review | ✅ 已登记 |
+| `config/risk-register.yaml` | → | 盘点相关运营风险 | R17~R20 | 每次 risk review | ✅ 已登记 |
 | `registry_of_registries.yaml` | → | 注册表总纲 | REG-INV-001 | 每次入项目 | ✅ 已登记 |
 | `AGENTS.md` | → | AI 能力声明 | "资产盘点查询能力" | 每次入项目 | ⬜ 待补充 |
 
@@ -2869,7 +2869,7 @@ class InventorySelfMetrics(BaseModel):
 ### 28.1 旁路机制
 
 ```yaml
-# config/capacity/inventory_override.yaml — 紧急旁路配置
+# config/inventory_override.yaml — 紧急旁路配置
 # 存在此文件 → 所有盘点 Gate 自动 GREEN（跳过检查）
 # 此文件绝不自动创建——只有 Owner 手动写入
 enabled: false; reason: str; activated_by: str; activated_at: datetime; expires_at: datetime; notification_channel: str
@@ -2878,7 +2878,7 @@ enabled: false; reason: str; activated_by: str; activated_at: datetime; expires_
 ### 28.2 旁路激活流程
 
 ```
-Owner 操作:  echo "enabled: false" > config/capacity/inventory_override.yaml
+Owner 操作:  echo "enabled: false" > config/inventory_override.yaml
 系统反应:   所有 G_asset_inventory gate → 强制 GREEN（exit 0）
             Dashboard: "⚠️ BYPASS ACTIVE — 资产盘点门禁被跳过"
             MOD-INF-020: 写入 Audit 事件："INVENTORY_BYPASS_ACTIVATED"
@@ -2992,7 +2992,7 @@ python -m zephyr.asset_inventory
 | `--dry-run` | 全部 | 预览模式——输出会做什么但不写入任何文件 |
 | `--output json/yaml/text` | 全部 | 输出格式，默认 text（人类可读） |
 | `--verbose / -v` | 全部 | 调试日志级别 |
-| `--config <path>` | 全部 | 指定配置文件路径（默认 `config/capacity/asset-inventory.yaml`） |
+| `--config <path>` | 全部 | 指定配置文件路径（默认 `config/asset-inventory.yaml`） |
 | `--help` | 全部 | 命令帮助 |
 
 ### 31.4 退出码
@@ -3010,7 +3010,7 @@ python -m zephyr.asset_inventory
 
 ```python
 from zephyr.asset_inventory import AssetInventory, AssetScanner, AssetClassifier, ReconciliationEngine, AssetDashboard, InventoryCheck
-inventory = AssetInventory(config_path="config/capacity/asset-inventory.yaml")
+inventory = AssetInventory(config_path="config/asset-inventory.yaml")
 # API: inventory.scan() / .classify(scan_id) / .reconcile(scan_id, auto_fix=True) / .dashboard() / .check() → bool
 ```
 
@@ -3019,12 +3019,12 @@ inventory = AssetInventory(config_path="config/capacity/asset-inventory.yaml")
 ## 32. 配置 Schema — 盘点系统全部可配置项
 
 
-> **决策 D-026-25**：盘点系统配置集中在 `config/capacity/asset-inventory.yaml`。
+> **决策 D-026-25**：盘点系统配置集中在 `config/asset-inventory.yaml`。
 
 ### 32.1 配置文件结构
 
 ```yaml
-# config/capacity/asset-inventory.yaml — 关键字段约束
+# config/asset-inventory.yaml — 关键字段约束
 scanner:
   directories: [src/zephyr/, scripts/, docs/, config/, tests/, data/]
   exclude_dirs: [__pycache__, .pytest_cache, .mypy_cache, .git, .venv, .ailocks, session_logs]
@@ -3055,7 +3055,7 @@ class AssetInventoryConfig(BaseModel):
     retention: RetentionConfig
     notifications: NotificationConfig
 
-def load_inventory_config(path: str = "config/capacity/asset-inventory.yaml") -> AssetInventoryConfig:
+def load_inventory_config(path: str = "config/asset-inventory.yaml") -> AssetInventoryConfig:
     loader = ConfigLoader()
     raw = loader.load_yaml(path)
     return AssetInventoryConfig(**raw)
@@ -3475,7 +3475,7 @@ python -m zephyr.asset_inventory tag src/zephyr/data/asset-inventory/scanner.py 
 ```yaml
 # ============================================================
 # ZephyrAlpha Asset Inventory Configuration v1.0.0
-# 落位: config/capacity/asset-inventory.yaml
+# 落位: config/asset-inventory.yaml
 # 蓝图: MOD-INF-026 v0.3.0
 # ============================================================
 

@@ -876,7 +876,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | §2 MCP 服务端列表 | `src/zephyr/integration/mcp/__init__.py` + `architecture_model/layers/b_mcp.yaml` |
 | §11 施工步骤 | `AGENTS.md` §8.2 MCP 任务菜单 |
 | §0 代码对齐验证 | `src/zephyr/integration/mcp/` 对应代码文件 `[BLUEPRINT]` 头部 |
-| §17 容量升级 | `config/capacity/capacity_slo.yaml` + capacity-assurance 蓝图 |
+| §17 容量升级 | `config/capacity_slo.yaml` + capacity-assurance 蓝图 |
 
 ---
 

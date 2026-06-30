@@ -150,7 +150,7 @@ stability: evolving
 
 | SSoT 声明 | 真源位置 | 冲突方 | 裁定 |
 |-----------|---------|--------|------|
-| Token/Cost/Time 预算策略 | `config/budget_policy.yaml` | `config/capacity/token_budget.yaml`(MOD-INF-001) | **024 为 SSoT**，001 已标记 deprecated |
+| Token/Cost/Time 预算策略 | `config/budget_policy.yaml` | `已删除`(MOD-INF-001) | **024 为 SSoT**，001 已标记 deprecated |
 | 预算降级执行 | `degradation_manager.py` | 无冲突 | — |
 | 模型成本路由 | `model_router.py` + `cost_router.py` | 无冲突 | — |
 
@@ -1360,7 +1360,7 @@ solo_maintainer_optimizations:
 
 | 修改本蓝图 | 必须同步更新 |
 |-----------|-------------|
-| §2.1 预算阈值 | `config/budget_policy.yaml` + `config/capacity/token_budget.yaml`(deprecated 标记) |
+| §2.1 预算阈值 | `config/budget_policy.yaml` + `已删除`(deprecated 标记) |
 | §2.3 模型路由 | `model_provider_data.py` + `cost_router.py` |
 | §4.1 公共 API | `budget_models.py` + `__init__.py` 导出 |
 | §9 跨模块集成 | 对端蓝图 §10 依赖声明 |
@@ -1403,7 +1403,7 @@ solo_maintainer_optimizations:
 | 源码路径 | `src/zephyr/governance/budget_engine.py` |
 | 源码文件数 | **11 个 .py**（蓝图 §4 计划 31 文件，完成率 **35.5%** ← 修复前 22.6%） |
 | 新增 P1 模块 | `budget_tracker.py`, `degradation_manager.py`, `model_router.py`, `timeout_guard.py` |
-| 配置文件 | `config/capacity/token_budget.yaml`（Capacity Assurance——**deprecated，SSoT 已迁移至 024**）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
+| 配置文件 | `已删除`（Capacity Assurance——**deprecated，SSoT 已迁移至 024**）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
 | 门禁 | ✅ GCT-024 `gates/gct-024-budget-enforcer.yaml`（7 checks: 硬4 + 软2 + info1） |
 | 关键入口 | `governance/budget_engine.py` |
 

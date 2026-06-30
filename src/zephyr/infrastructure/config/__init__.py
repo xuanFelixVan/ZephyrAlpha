@@ -41,8 +41,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.config.loader import load_yaml_config_validated as _load_yaml_config_validated
-
 _LOGGER = logging.getLogger(__name__)
 
 _LAST_LOADED_CONFIG_PATH: str | None = None
