@@ -148,6 +148,23 @@ result = await gateway.full_scan(user_text, llm_response)
 - **为什么不在 YAML 声明所有子目录文件**：维护成本高（governance/ 子目录有 200+ 文件）且无必要——Grep 已能可靠发现符号，CapabilityLookup 重复实现符号发现会破坏职责边界（向内收原则①：能现成不创造）。
 - **何时声明新 capability**：当某个功能有明确能力边界、可被复用、且新 AI 可能不知道已存在时（如 `agent_signer`、`self_healer`），才在 YAML 声明 capability 条目。
 
+### 4.5 根目录 vs 子目录同名文件门禁（ARCH-031 局限1 调研结论，2026-07-01）
+
+governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有三层自动门禁：
+
+- **GATE-SSOT 第1层（check_ssot_conflicts）**：检测同 [MODULE] module_path 冲突。
+  - 新 AI 创建根目录文件且 [MODULE] 标注与子目录文件相同时**硬阻断**。
+  - 真源：文件头部 [MODULE] 字段。
+- **GATE-SSOT 第2层（check_capability_duplicates）**：检测 basename 撞 capability_id/alias。
+  - 已注册能力的同名文件**硬阻断**（relation=conflicting/sibling）。
+  - 真源：capability_canonical_file_registry.yaml + 磁盘扫描派生。
+- **CREATE-GUARD**：新建 .py 文件必须登记 creation_token。
+  - 强制 AI 声明创建意图 + 关联 capability，未登记则**硬阻断**。
+
+**剩余缺口**：新 AI 创建根目录文件、[MODULE] 标注为根目录路径、文件名与子目录文件相同但未注册 capability 时，三层门禁均不触发。此缺口由本节提示 + governance/__init__.py docstring 文件归属规则提示兜底。
+
+**N-16 扩展到 src/ 不可行**：src/zephyr/ 有 500 个同名 basename（含 499 个 __init__.py），豁免清单规模过大，维护成本高于收益。N-16 仍只覆盖 tests/ + docs/。
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环

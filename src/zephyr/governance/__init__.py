@@ -29,7 +29,16 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
   - 根目录仅放跨模块桥接文件（如 __init__.py, capability_lookup.py, base.py）
   - 判定标准：文件头 [MODULE] 标注属于子模块的，禁止在根目录创建副本
   - 同名歧义消除：根目录与子目录同名文件，canonical 在 [MODULE] 标注所属位置
-  - 治本门禁：N-16 文件名唯一性检查暂未覆盖 src/（待 AD-GOV-001 收敛期结束后扩展）
+  - 自动门禁（ARCH-031 局限1 调研结论，2026-07-01）：
+    * GATE-SSOT 第1层（check_ssot_conflicts）：检测同 [MODULE] module_path 冲突——
+      新 AI 创建根目录文件且 [MODULE] 标注与子目录文件相同时硬阻断
+    * GATE-SSOT 第2层（check_capability_duplicates）：检测 basename 撞 capability_id/alias——
+      已注册能力的同名文件硬阻断
+    * CREATE-GUARD：新建 .py 文件必须登记 creation_token，强制 AI 声明创建意图
+    * 剩余缺口：新 AI 创建根目录文件、[MODULE] 标注为根目录路径、文件名与子目录文件相同
+      但未注册 capability 时，三层门禁均不触发——由 AGENTS.md §4.4 + 本 docstring 提示
+    * N-16 扩展到 src/ 不可行：src/zephyr/ 有 500 个同名 basename（含 499 个 __init__.py），
+      豁免清单规模过大，维护成本高于收益
   - 历史清理：ARCH-031 步骤A+B-1 已删除 24 个根目录 STALE duplicates（2026-06-30）
 
 施工状态（2026-05-08 审计修正）：
