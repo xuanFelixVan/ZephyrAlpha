@@ -29,7 +29,7 @@ from zephyr.governance.rule_enforcement.gate_types import GateEngineError, GateV
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
-GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gates"
+GATES_DIR = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 
 def _make_task(

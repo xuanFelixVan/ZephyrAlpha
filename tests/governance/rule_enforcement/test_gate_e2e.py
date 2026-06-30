@@ -48,7 +48,7 @@ from zephyr.shared.models import TaskCard
 # 常量
 # ---------------------------------------------------------------------------
 
-GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
+GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 # ---------------------------------------------------------------------------
 # 工具函数
