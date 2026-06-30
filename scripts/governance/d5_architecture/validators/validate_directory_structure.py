@@ -151,7 +151,7 @@ _DIGIT_SUFFIX_RE = re.compile(r"_\d+$")
 
 # gov_doc_003_directory_semantics R1 grandfathered 白名单 fail-open 回退
 # 真源: trae_028 gov_doc_003_directory_semantics.grandfathered.abbreviation_dirs
-_GRANDFATHERED_ABBREVIATION_FALLBACK: set[str] = {"api", "mcp", "io", "a2a", "sla", "db"}
+_GRANDFATHERED_ABBREVIATION_FALLBACK: set[str] = {"api", "mcp", "io", "a2a", "sla", "db", "kb"}
 
 _TRAE_028_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"

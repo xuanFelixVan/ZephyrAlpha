@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.5.0
+version: 1.7.1
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -1251,7 +1251,43 @@ sections:
       - a2a  # 项目约定,Agent-to-Agent
       - sla  # 行业通用,Service Level Agreement
       - db   # 行业通用,Database
+      - kb   # 行业通用,Knowledge Base
       note: 历史自创缩写目录(如ce/)不享受grandfathered豁免,MUST在refactor时修正
+    progressive_convergence:
+      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C审查结果)
+      strategy: 历史违规目录不批量改名(避免过度工程),在下次refactor时顺带修正;多真源问题优先处理
+      pending_directories:
+      - path: src/zephyr/shared/observability_02/
+        violation: R5数字后缀
+        action: 合并到shared/根目录
+        status: in_progress
+        note: 其他session正在处理
+      - path: src/zephyr/security/llm_defense/llm_security_01/
+        violation: R5数字后缀
+        action: 多真源处理(与llm_security/共存;context_scanner.py仅在_01中)
+        note: 需迁移context_scanner到llm_security/后删除_01;context_bridge.py:105引用_01
+      - path: src/zephyr/integration/shared/api_03/
+        violation: R5数字后缀
+        action: 多真源处理(与shared/api/文件名完全相同)
+        note: 需确认活跃真源
+      - path: src/zephyr/shared/infra_06/
+        violation: R5数字后缀
+        action: 改名infra_components/或合并到shared/根
+        note: 6文件+4测试引用
+      - path: src/zephyr/infrastructure/infra_06/
+        violation: R5数字后缀
+        action: 合并到infrastructure/根目录
+        note: 3文件,无测试引用
+      - path: src/zephyr/infrastructure/observability_02/
+        violation: R5数字后缀
+        action: 合并到infrastructure/system_telemetry/
+        note: 2文件,无测试引用
+      resolved_directories:
+      - path: src/zephyr/security/access_control/auto_fix_engine_03/
+        violation: R5数字后缀
+        action: 已删除
+        status: resolved
+        note: 其他session已清理
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1345,9 +1381,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.7.0"
+  version: "1.7.1"
   last_modified: "2026-07-01"
   change_history:
+  - version: "1.7.1"
+    date: "2026-07-01"
+    author: "AI-Assistant"
+    change: "ARCH-033阶段C审查+阶段E文档化——grandfathered.abbreviation_dirs白名单新增kb(knowledge base,行业通用缩写,40+文件改名成本高,向内收原则);修复frontmatter version与metadata version不一致(1.5.0→1.7.1);新增progressive_convergence子节记录7个R5数字后缀目录审查结果与渐进收敛策略(1已解决/1进行中/5待处理);验证器_scan_directory_naming_semantics检测确认"
   - version: "1.7.0"
     date: "2026-07-01"
     author: "AI-Assistant"
