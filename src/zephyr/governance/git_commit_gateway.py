@@ -482,25 +482,49 @@ class GitCommitGateway:
                 # 2. 写 commit pathspec 文件（ALL files，含 gitignored）
                 pathspec_file = self._write_pathspec_file(files)
                 # 3. git add normal_files（避免整批 git add 因 gitignored 路径失败）
+                #    分离 existing 和 deleted——git add 对 delete 文件失败（pathspec
+                #    did not match），需用 git rm 替代（治本 ARCH-030：staged/unstaged
+                #    delete 文件 git add 报错导致整个 commit 流程中断）
                 add_ok = True
                 if normal_files:
-                    add_pathspec_file = self._write_pathspec_file(normal_files)
-                    try:
-                        add_result = self._run_git(
-                            ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
+                    existing_files = [f for f in normal_files if os.path.isfile(f)]
+                    deleted_files = [f for f in normal_files if not os.path.isfile(f)]
+                    # 3a. git add existing_files（modify/new/rename 目标）
+                    if existing_files:
+                        add_pathspec_file = self._write_pathspec_file(existing_files)
+                        try:
+                            add_result = self._run_git(
+                                ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
+                            )
+                            add_ok = add_result.returncode == 0
+                            if not add_ok:
+                                logger.warning("GitCommitGateway: git add 失败: %s", add_result.stderr.strip())
+                                result = CommitResult(
+                                    status=CommitStatus.COMMIT_FAILED,
+                                    message=f"git add failed: {add_result.stderr.strip()}",
+                                )
+                        finally:
+                            try:
+                                os.remove(add_pathspec_file)
+                            except OSError:
+                                pass
+                    # 3b. git rm deleted_files（delete 文件用 git rm 替代 git add）
+                    # --ignore-unmatch 跳过已 staged delete（git rm 幂等）
+                    if add_ok and deleted_files:
+                        del_rels = [
+                            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                            for f in deleted_files
+                        ]
+                        rm_result = self._run_git(
+                            ["git", "rm", "--cached", "--ignore-unmatch", "--"] + del_rels
                         )
-                        add_ok = add_result.returncode == 0
+                        add_ok = rm_result.returncode == 0
                         if not add_ok:
-                            logger.warning("GitCommitGateway: git add 失败: %s", add_result.stderr.strip())
+                            logger.warning("GitCommitGateway: git rm 失败: %s", rm_result.stderr.strip())
                             result = CommitResult(
                                 status=CommitStatus.COMMIT_FAILED,
-                                message=f"git add failed: {add_result.stderr.strip()}",
+                                message=f"git rm failed: {rm_result.stderr.strip()}",
                             )
-                    finally:
-                        try:
-                            os.remove(add_pathspec_file)
-                        except OSError:
-                            pass
                 if add_ok:
                     # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
                     has_gitignored = self._should_use_no_pathspec(files, normal_files)
