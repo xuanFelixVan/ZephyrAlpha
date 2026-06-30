@@ -171,15 +171,18 @@ capabilities:
     canonical_override: src/zephyr/shared/io/yaml_utils.py
     aliases:
       - load_vocabulary_values
+      - load_vocabulary_entries
       - load_vocabulary_deprecated_map
       - vocabulary_loader
       - vocab_loader
       - yaml_vocabulary_loader
     description: >-
-      vocabulary YAML 合法值集合 + 废弃值映射加载的唯一公共真源入口（治本1 收拢点）。
-      真源实现：src/zephyr/shared/io/yaml_utils.py 提供 load_vocabulary_values()
-      和 load_vocabulary_deprecated_map() 两个函数；scripts/governance/_shared/yaml_utils.py
-      重新导出，scripts/ 侧通过 from _shared.yaml_utils import load_vocabulary_values 使用。
+      vocabulary YAML 合法值集合 + 值+定义列表 + 废弃值映射加载的唯一公共真源入口（治本1 收拢点）。
+      真源实现：src/zephyr/shared/io/yaml_utils.py 提供 load_vocabulary_values()（返回 set[str]、
+      只需值集合时用）、load_vocabulary_entries()（返回 list[dict] 含 value+definition、
+      schema.json 双向同步填充 description 时用）和 load_vocabulary_deprecated_map() 三个函数；
+      scripts/governance/_shared/yaml_utils.py 重新导出，scripts/ 侧通过
+      from _shared.yaml_utils import load_vocabulary_values 使用。
       src/zephyr/ 侧直接 from zephyr.shared.io.yaml_utils import load_vocabulary_values。
       严禁任何脚本复制 _load_xxx_values() 局部函数（违反 SCRIPT-QUALITY-001 D-D-05
       + 向内收原则1：能用现成的不创造）。strict=True 默认 fail-fast，文件不存在抛
@@ -459,6 +462,16 @@ capabilities:
       - _check_protected_script_integrity  # 完整性校验本身(自指保护,删则integrity_anchors校验失效)
       - _check_pure_assertion     # 纯陈述门禁(删则GOV-DOC-016失效)
       - _check_pure_shim          # shim门禁(删则GATE-NO-PURE-SHIM失效)
+      # 治本（2026-06-30 红攻9 深度调研）：commit 守卫核心组件 A 层 AST 锚点保护。
+      # _run_git 是 git 命令执行 + commit 守卫的锁芯（检测裸 git commit + _in_commit_flow 标志，
+      # 删则守卫失效，reconciler 闭包可绕过 _commit_auto 裸调 git commit）；
+      # _commit_with_file_message 是 commit 真源（设 _in_commit_flow=True 的唯一合法点，
+      # 篡改即守卫机制失效）。
+      # 注：_in_commit_flow 不加入——_collect_nodes 不收集 Attribute target
+      # （self._in_commit_flow = False 的 target 是 ast.Attribute 非 ast.Name），加入无效；
+      # 且手动设 _in_commit_flow=True 属故意绕过（自指悖论固有边界，技术无法防止）。
+      - _run_git                  # git命令执行+commit守卫(删则_in_commit_flow守卫失效,P3治本)
+      - _commit_with_file_message # commit真源(设_in_commit_flow=True的唯一合法点,P4治本)
 
   # --------------------------------------------------------------------------
   - capability_id: git_commit_cli_staged_delete
@@ -710,7 +723,7 @@ capabilities:
       - postgres_connection
       - psycopg2_connection
     description: >-
-      depgraph PostgreSQL 数据库连接的唯一真源函数（P2 PG 迁移后治本，AGENTS.md §11.4）。
+      depgraph (PostgreSQL) 数据库连接的唯一真源函数（P2 PG 迁移后治本，AGENTS.md §11.4）。
       canonical = src/zephyr/governance/depgraph_schema.py 的 get_depgraph_pg_connection()
       （原名 get_db_connection，2026-06-28 改名消除与 SQLite 同名冲突；保留 deprecated 别名
       向后兼容，新代码必须用 get_depgraph_pg_connection）。
