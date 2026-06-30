@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [E2E_VERIFY] trigger test for GATE-ARCH-MODEL reconciler (2026-06-30)
 # [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
