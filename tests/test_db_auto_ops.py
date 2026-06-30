@@ -3,7 +3,7 @@ DM-100021: 事件驱动自动启动检查+自动运行检查
 
 验证项：
 1. DatabaseService 可初始化并连接 3 个数据库
-2. depgraph.db 数据变更可触发事件（通过回调模拟）
+2. depgraph 数据变更可触发事件（通过回调模拟）
 3. 自动运行检查（SELECT 1 验证数据库存活）
 4. 数据库文件锁检查（多进程写入互斥）
 5. schema 版本检查
@@ -43,7 +43,7 @@ def test_database_service_init():
         # 测试 depgraph 连接
         dep_conn = ds.get_depgraph_conn()
         assert dep_conn is not None, "depgraph 连接为 None"
-        print("  ✓ depgraph.db 连接成功")
+        print("  ✓ depgraph 连接成功")
 
         # 测试 market 连接
         market_conn = ds.get_market_conn()
