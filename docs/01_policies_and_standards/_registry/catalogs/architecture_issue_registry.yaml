@@ -259,10 +259,11 @@ entries:
     src/zephyr/security/access_control/）+§0.1诚实化（30 stub标记为stub pending ARCH-036）；
     (5)合并governance_bridges/单文件子目录到root（原则①能合并就合并）；(6)30个ghost stub
     元数据诚实化（[MATURITY] production→stub）+42消费者测试xfail（ARCH-036前置止血）。
-  fix_phase: 阶段2治本补完+阶段3双真源去重（2026-06-30，P0删除死代码+修复conftest+补注册；
-  P1蓝图治本+合并governance_bridges；P2 30stub诚实化+注册ARCH-036；
-  P3-a auto_fix_engine_03双真源去重+合并5文件独有改进+更新36消费者(commit 444118b4)；
-  P3-b orphan_judgment双真源去重+修复orphan_judge元数据漂移+清理__all__ ghost entries(commit f62b4cb6)）
+  fix_phase: |
+    阶段2治本补完+阶段3双真源去重（2026-06-30，P0删除死代码+修复conftest+补注册；
+    P1蓝图治本+合并governance_bridges；P2 30stub诚实化+注册ARCH-036；
+    P3-a auto_fix_engine_03双真源去重+合并5文件独有改进+更新36消费者(commit 444118b4)；
+    P3-b orphan_judgment双真源去重+修复orphan_judge元数据漂移+清理__all__ ghost entries(commit f62b4cb6)）
   status: resolved
   related_rules:
   - TRAE-060
@@ -304,5 +305,75 @@ entries:
   status: open
   related_rules:
   - TRAE-028
+  created: '2026-07-01'
+  last_updated: '2026-07-01'
+- issue_id: '#ARCH-032'
+  title: ops/ 目录向内收治理（向 trading/feedback_loop/ 迁移 + 死代码清理 + 防复发）
+  severity: P1高
+  adjudication: |
+    trae_060 §4 治本。src/zephyr/ops/ 目录向内收治理——按功能域归位到
+    src/zephyr/trading/feedback_loop/。6 阶段治本：阶段1（commit 7d4cabdbd1）
+    删除 shim/死代码/脏数据；P2（7b9e85e584）删除重复的 kill_switch+
+    analytics_base；P2b（27ee506631）删除重复的 telemetry.py；P2c（6b08324d9a）
+    circuit_breaker 迁移到 governance/；P2f（c0a1435cc9）observability 合并到
+    shared/observability_02；P3-a（8463c046df）git mv 11 子目录到 feedback_loop/
+    （260 文件）；P3-b（a178a3cae1）import 路径批量替换 417 .py 文件；
+    P4（64c62e1d98）ops/ 最终清理——迁移 75 文件 + 删除 10 死代码；
+    P4-fix（4d23d424f9）git rm 74 旧路径文件；P5（cfa61a39f3）防复发机制——
+    directory_contract.yaml §7 添加 ops/ 废弃目录 + gate_engine 蓝图路径修正；
+    P6（5e7444b09f）depgraph ops/ 节点向内收后再生文档。符合向内收四原则：
+    真源唯一（ops/ 唯一真源归位到 feedback_loop/）、向内收（用现成功能域归位
+    不新建分类）、第一性原理（ops/ 是无语义目录，归位到有语义的功能域）、
+    可发现性（新 AI 按功能域直觉定位）。
+  fix_phase: 已完成（2026-07-01，6 阶段治本：7d4cabdbd1 阶段1 → 5e7444b09f P6）
+  status: resolved
+  related_rules:
+  - TRAE-060
+  created: '2026-07-01'
+  last_updated: '2026-07-01'
+- issue_id: '#ARCH-037'
+  title: GOV-DOC-018 split 撤销（_MovedModuleFinder 设计缺陷 + 不完整迁移 + 5 canonical 歧义）
+  severity: P0致命
+  adjudication: |
+    P8 治本。src/zephyr/governance/__init__.py L54-447 提交的 _MovedModuleFinder
+    （GOV-DOC-018 split 触发）有嵌套重定向设计缺陷：phase_manager →
+    lifecycle.phase_manager（L289），但 lifecycle → shared.lifecycle（L257），
+    而 shared/lifecycle.py 是文件非包，无法有子模块 phase_manager，导致
+    import zephyr.governance.phase_manager 必然失败且不回退。迁移状态事实：
+    341 个根 .py 已删除（未暂存）、无迁移清单、无重导出 shim（3 个子包
+    __init__ 为空，escalation/__init__ 自指断裂）、5+ 模块 canonical 歧义
+    （canary_manager/dashboard/models/phase_executor/reconciler 同名文件迁到
+    ≥2 处）、59+ 消费者文件断裂。四条审查逻辑裁定：(1)真源唯一——迁移制造
+    双真源（根文件在 git HEAD + 子包已提交），删除 finder 恢复根文件为唯一
+    真源；(2)向内收——根文件在 git HEAD 完整存在，git checkout 即可恢复，
+    完成迁移=创造新工作，撤销迁移=用现成的；(3)第一性原理——元问题：这个
+    迁移该不该存在？不完整迁移比不迁移更糟（制造大面积静默断裂），撤销迁移；
+    (4)可发现性——根文件恢复后 from zephyr.governance.X import Y 在根目录
+    找到（直觉路径），保留 finder 需理解 341 行映射表（不可发现）。
+  fix_phase: 已完成（2026-07-01，P8 phase0 commit 7757761609 删除 _MovedModuleFinder + 恢复 governance 根目录为唯一真源）
+  status: resolved
+  related_rules:
+  - GOV-DOC-018
+  - TRAE-060
+  created: '2026-07-01'
+  last_updated: '2026-07-01'
+- issue_id: '#ARCH-038'
+  title: trigger_router 6 位置多真源合并（orchestrator/ 主文件 + core/ 子包 + 配置/契约多处定义）
+  severity: P2中
+  adjudication: |
+    P8 phase2 治本时发现。trigger_router 存在 6 位置多真源：(1)主文件
+    src/zephyr/trading/orchestrator/trigger_router.py（Phase 2 已修复
+    handle_drift_stub → handle_drift_detected）；(2)子包死代码
+    src/zephyr/trading/orchestrator/core/trigger_router.py（plan §2.2 明确保留
+    不清理）；(3)config/trigger_router.yaml 配置；(4)declarative_contract_tracker_registry.yaml
+    契约登记；(5)测试文件多处引用；(6)其他消费者 import。违反真源唯一原则。
+    P8 plan §4.3 明确列为后续独立任务——本计划仅治本 trigger_router.yaml 的
+    stub 命名（Phase 2 已完成），不处理 6 位置合并。治本方向：裁定唯一
+    canonical 真源（主文件 orchestrator/trigger_router.py），删除子包死代码
+    core/trigger_router.py，更新所有消费者 import 路径。
+  fix_phase: 待立项（后续独立任务，需完整迁移方案含清单+shim+canonical 裁定）
+  status: open
+  related_rules:
+  - TRAE-060
   created: '2026-07-01'
   last_updated: '2026-07-01'
