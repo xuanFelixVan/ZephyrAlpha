@@ -54,7 +54,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 from _shared.frontmatter import parse_frontmatter  # noqa: E402
-from _shared.yaml_utils import load_yaml  # noqa: E402
+from _shared.yaml_utils import load_vocabulary_deprecated_map, load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
 
 ensure_utf8_stdout()
 
@@ -119,32 +119,24 @@ _EXCLUDE_DIRS = frozenset({".git", "__pycache__", ".venv", "node_modules", ".myp
 
 
 def _load_legal_values() -> set[str]:
-    """从 doc_type_vocabulary.yaml 加载合法值集合（活跃值）。"""
-    data = load_yaml(_DOC_TYPE_VOCAB_PATH)
-    return {v["value"] for v in data.get("values", [])}
+    """从 doc_type_vocabulary.yaml 加载合法值集合（活跃值）。
+
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``，
+    禁止各脚本复制 _load_xxx() 函数。
+    """
+    return load_vocabulary_values("doc_type_vocabulary.yaml")
 
 
 def _load_deprecated_map() -> dict[str, str]:
     """从词表加载废弃值→合法值映射（仅单值 migrated_to）。
 
-    多值 migrated_to（如 governance_standard→[policy, standard]）不返回，
-    这些值会被自动归入 PENDING_REVIEW。
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_deprecated_map``。
+    多值 migrated_to（如 governance_standard→[policy, standard]）映射为 None，
+    调用方需过滤 None 值（这些值会被自动归入 PENDING_REVIEW）。
     """
-    data = load_yaml(_DOC_TYPE_VOCAB_PATH)
-    result: dict[str, str] = {}
-    for v in data.get("deprecated_values", []):
-        val = v.get("value", "")
-        migrated_to = v.get("migrated_to", [])
-        # migrated_to 可能是 list 或 str
-        if isinstance(migrated_to, str):
-            if migrated_to and not migrated_to.startswith("N/A"):
-                result[val] = migrated_to
-        elif isinstance(migrated_to, list) and len(migrated_to) == 1:
-            mt = migrated_to[0]
-            if mt and not mt.startswith("N/A"):
-                result[val] = mt
-        # 多值或 N/A → 不加入 result，自动走 PENDING_REVIEW
-    return result
+    full_map = load_vocabulary_deprecated_map("doc_type_vocabulary.yaml")
+    # 过滤 None（多值/N/A）——保留单值映射，与原逻辑等价
+    return {k: v for k, v in full_map.items() if v is not None}
 
 
 def _get_doc_type(fpath: Path) -> str | None:

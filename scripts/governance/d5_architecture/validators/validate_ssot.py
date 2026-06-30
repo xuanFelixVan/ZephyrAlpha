@@ -16,30 +16,19 @@
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 
 
-def _load_valid_document_statuses() -> list[str]:
+def _load_valid_document_statuses() -> set[str]:
     """从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
 
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``。
     status_vocabulary.yaml v1.1.0 已将 approved→active、superseded→deprecated 迁移，
     故合法值精简为 draft/active/deprecated 三值。
     """
-    from pathlib import Path
+    from _shared.yaml_utils import load_vocabulary_values
 
-    import yaml
+    return load_vocabulary_values("status_vocabulary.yaml")
+
+
 from _shared.constants import REPO_ROOT
-
-    vocab = (
-        REPO_ROOT
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "vocabularies"
-        / "status_vocabulary.yaml"
-    )
-    if not vocab.exists():
-        return []
-    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
-    return [str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)]
-
 
 VALID_DOCUMENT_STATUSES = _load_valid_document_statuses()
 

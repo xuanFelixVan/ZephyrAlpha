@@ -55,6 +55,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.walk import iter_files  # noqa: E402
+from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
 
 # ── 词表前缀 → YAML 文件名映射（用于输出建议）──
 _VOCAB_FILES: dict[str, str] = {
@@ -104,19 +105,13 @@ def _load_startup_values(vocab_dir: Path) -> set[str]:
     红蓝发现3 治本：startup_vocabulary.yaml 声明"校验器从本文件动态加载"但无脚本实际加载。
     本函数兑现该声明，消除 [STARTUP] 标记零门禁缺口。
 
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``（strict=False，
+    文件不存在时返回空 set，warn-only 不崩溃）。
+
     Returns:
         合法值 set[str]；文件不存在时返回空 set（warn-only，不崩溃）。
     """
-    p = vocab_dir / "startup_vocabulary.yaml"
-    if not p.exists():
-        return set()
-    try:
-        data = yaml.safe_load(p.read_text(encoding="utf-8"))
-    except Exception:
-        return set()
-    if not isinstance(data, dict):
-        return set()
-    return {v["value"] for v in data.get("values", []) if isinstance(v, dict) and "value" in v}
+    return load_vocabulary_values("startup_vocabulary.yaml", vocab_dir=vocab_dir, strict=False)
 
 
 def _check_startup_marker(source: str, valid_values: set[str]) -> list[tuple[int, str]]:

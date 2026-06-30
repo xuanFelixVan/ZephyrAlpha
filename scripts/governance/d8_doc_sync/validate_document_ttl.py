@@ -57,25 +57,20 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
+from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
 
 ensure_utf8_stdout()
 import argparse
 from datetime import datetime
 
-_TTL_VOCAB_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards"
-    / "_registry" / "vocabularies" / "ttl_vocabulary.yaml"
-)
-
 
 def _load_ttl_values() -> set[str]:
     """从 ttl_vocabulary.yaml 加载合法 ttl 值集合（v2.0.0 仅 permanent/task_bound）。
 
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``。
     词表是规则数据唯一真源，直接消费不复制（trae_060 §2）。
     """
-    import yaml
-    data = yaml.safe_load(_TTL_VOCAB_PATH.read_text(encoding="utf-8"))
-    return {v["value"] for v in data.get("values", [])}
+    return load_vocabulary_values("ttl_vocabulary.yaml")
 
 
 VALID_TTL_VALUES: set[str] = _load_ttl_values()

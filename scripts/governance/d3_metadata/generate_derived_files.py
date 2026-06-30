@@ -72,7 +72,7 @@ ensure_utf8_stdout()
 import argparse
 
 import yaml
-from _shared.yaml_utils import load_yaml
+from _shared.yaml_utils import load_vocabulary_values, load_yaml  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
 
 VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
@@ -99,37 +99,19 @@ def _drift(msg: str) -> None:
     _drifts.append(msg)
 
 
-def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
-    """加载 vocabulary YAML 的有效值和废弃值列表"""
+def _load_vocab_values(vocab_name: str) -> list[str]:
+    """加载 vocabulary YAML 的有效值列表。
+
+    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``。
+    原函数返回 tuple(valid, deprecated)，但调用方只用 valid（_deprecated 未使用），
+    故简化为只返回 valid list。fallback_key="id" 兼容 value/id 双键。
+    """
     vocab_file = VOCAB_FIELD_MAP.get(vocab_name)
     if not vocab_file:
-        return [], []
-    vocab_path = VOCAB_DIR / vocab_file
-    if not vocab_path.exists():
-        return [], []
-    try:
-        data = load_yaml(vocab_path)
-    except Exception:
-        return [], []
-    if not isinstance(data, dict):
-        return [], []
-    valid: list[str] = []
-    for entry in data.get("values", []):
-        if isinstance(entry, dict):
-            val = entry.get("value") or entry.get("id")
-            if val:
-                valid.append(str(val))
-        elif isinstance(entry, str):
-            valid.append(entry)
-    deprecated: list[str] = []
-    for entry in data.get("deprecated_values", []):
-        if isinstance(entry, dict):
-            val = entry.get("value") or entry.get("id")
-            if val:
-                deprecated.append(str(val))
-        elif isinstance(entry, str):
-            deprecated.append(entry)
-    return valid, deprecated
+        return []
+    return list(
+        load_vocabulary_values(vocab_file, fallback_key="id", strict=False)
+    )
 
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
@@ -394,7 +376,7 @@ def main() -> None:
     total_changes = 0
 
     for vocab_name in VOCAB_FIELD_MAP:
-        valid_values, _deprecated = _load_vocab_values(vocab_name)
+        valid_values = _load_vocab_values(vocab_name)
         if not valid_values:
             print(f"  {vocab_name}: ⚠️ vocabulary 为空或不存在，跳过")
             continue
