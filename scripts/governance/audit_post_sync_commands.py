@@ -62,7 +62,6 @@ if _SRC_DIR not in sys.path:
 
 import sqlite3
 
-from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.post_sync_validator import (
     validate_post_sync_command,
     validate_rollback_instructions,
