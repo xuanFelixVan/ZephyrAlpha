@@ -142,7 +142,7 @@ def scan_coverage() -> tuple[list[dict], int, int]:
             untested.append(
                 {
                     "source": str(rel_src),
-                    "test_expected": f"tests/unit/test_{py_file.stem}.py",
+                    "test_expected": f"tests/{{domain}}/test_{py_file.stem}.py",
                     "module": py_file.parent.name,
                 }
             )

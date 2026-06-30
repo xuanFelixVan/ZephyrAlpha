@@ -8,7 +8,7 @@
 # [MODIFY-GUARD] facade.py; auto_bootstrap.py; health/; alerts/; profiles/; schema/
 # [CONSUMERS] zephyr.__init__; zephyr.security.access_control; zephyr.security.budget_enforcement
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
-# [TESTS] tests/unit/test_telemetry_facade.py; tests/integration/test_auto_telemetry_bootstrap.py
+# [TESTS] tests/infrastructure/test_telemetry_facade.py; tests/infrastructure/test_auto_telemetry_bootstrap.py
 # [TTL] task_bound
 """system-telemetry — 系统遥测模块（MOD-INF-015 v2.1.0）.
 

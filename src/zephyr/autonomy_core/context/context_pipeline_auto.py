@@ -2,7 +2,7 @@
 # [MODULE] zephyr.autonomy_core.context.context_pipeline_auto
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.boot_hooks; tests/unit/test_context_pipeline_auto
+# [CONSUMERS] zephyr.trading.boot_hooks; tests/test_context_pipeline_auto
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] auto_start is idempotent; KillSwitch fuse ON blocks auto_run; timeout triggers auto_shutdown; auto_shutdown is idempotent
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError when fuse ON blocks auto_run; pipeline errors recorded to KillSwitch
-# [TESTS] tests/unit/test_context_pipeline_auto.py
+# [TESTS] tests/context/test_context_pipeline_auto.py
 # [A_module] module_id=MOD-AUTONOMY_CONTEXT_PIPELINE_AUTO | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

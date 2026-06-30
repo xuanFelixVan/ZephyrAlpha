@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] baseline不存在→返回None;z-score<=5.0→返回None
-# [TESTS] tests/unit/telemetry/
+# [TESTS] tests/telemetry/
 # [A_module] module_id=MOD-SEC_contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §4
-# [MODULE] zephyr.testing.code_dedup.cli
+# [MODULE] zephyr.governance.cli
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] pre-commit/verify_dedup.py; ct_deduplication.DeduplicationHandler; CI pipeline
@@ -11,8 +11,8 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
-# [TESTS] tests/unit/test_code_dedup_engine.py
-# [A_module] module_id=MOD-UNK_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] tests/test_code_dedup_engine.py
+# [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""
@@ -231,11 +231,11 @@ def _cmd_verify(args: argparse.Namespace) -> None:
     try:
         import sys as _sys
 
-        _pkg = _sys.modules.get("zephyr.testing.code_dedup")
+        _pkg = _sys.modules.get("zephyr.governance")
         _ver = getattr(_pkg, "__version__", "unknown") if _pkg else "unknown"
         print(f"[VERIFY] code_dedup_engine v{_ver}")
         scanner = Scanner()
-        test_files = list(Path("src/zephyr/testing/code_dedup").glob("*.py"))
+        test_files = list(Path("src/zephyr/governance").glob("*.py"))
         scanner.scan_files([str(f) for f in test_files[:10]])
         scanner.find_duplicates()
         print("[VERIFY] Engine core components operational — GATE_PASSED")

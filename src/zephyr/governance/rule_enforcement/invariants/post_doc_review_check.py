@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] modified_files.json不存在→PASS(无文档可审查); 解析失败→RED
-# [TESTS] tests/unit/test_post_doc_review.py
+# [TESTS] tests/test_post_doc_review.py
 # [A_module] module_id=MOD-GOV_post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """

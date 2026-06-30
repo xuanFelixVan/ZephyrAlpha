@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConcurrencyConflictError on blocked; ConflictResult/StashPlan on check
-# [TESTS] tests/unit/test_concurrency_guard.py
+# [TESTS] tests/rollback/test_concurrency_guard.py
 # [TTL] task_bound
 
 """

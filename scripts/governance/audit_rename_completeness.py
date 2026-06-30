@@ -12,7 +12,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=0残留; exit 1=有残留; exit 2=参数错误/DB错误
-# [TESTS] tests/unit/test_audit_rename_completeness.py
+# [TESTS] tests/infrastructure/test_audit_rename_completeness.py
 # [TTL] task_bound
 """audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
 

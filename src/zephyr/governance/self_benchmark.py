@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §W3-7
-# [MODULE] zephyr.testing.code_dedup.self_benchmark
+# [MODULE] zephyr.governance.self_benchmark
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] cli._cmd_benchmark
@@ -11,8 +11,8 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] run_benchmark() 不抛异常; check_regression() 返回 None 或 RegressionAlert
-# [TESTS] tests/unit/test_code_dedup_engine.py::TestSelfBenchmark
-# [A_module] module_id=MOD-UNK_self_benchmark | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] tests/test_code_dedup_engine.py::TestSelfBenchmark
+# [A_module] module_id=MOD-GOV_self_benchmark | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.

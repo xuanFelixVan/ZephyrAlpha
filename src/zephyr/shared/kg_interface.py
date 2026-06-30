@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
-# [TESTS] tests/unit/test_kg_interface.py
+# [TESTS] tests/kb/test_kg_interface.py
 # [A_module] module_id=MOD-INT_kg_interface | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import threading
