@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-01'
-total_scripts: 587
+total_scripts: 586
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -4129,14 +4129,6 @@ scripts:
 - name: ops/align_header_ten_fields.py
   path: ops/align_header_ten_fields.py
   description: import os
-  domain: ops
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: ops/auto_fix_cron.py
-  path: ops/auto_fix_cron.py
-  description: python scripts/ops/auto_fix_cron.py --dry-run --warn-only
   domain: ops
   execution_plane: warm-path
   status: registered
