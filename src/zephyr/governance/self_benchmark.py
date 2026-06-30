@@ -36,7 +36,7 @@ from typing import Any
 from zephyr.governance.ast_comparator import ASTComparator
 from zephyr.governance.behavioral_sampler import BehavioralSampler
 from zephyr.governance.micro_clone_detector import MicroCloneDetector
-from zephyr.governance.scanner import Scanner
+from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
 
 @dataclass

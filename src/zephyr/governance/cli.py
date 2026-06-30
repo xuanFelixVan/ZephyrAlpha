@@ -26,7 +26,7 @@ from pathlib import Path
 from zephyr.governance.auto_fixer import AutoFixer
 from zephyr.governance.exit_codes import ExitCode
 from zephyr.governance.report import ReportGenerator
-from zephyr.governance.scanner import Scanner
+from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
 
 def _collect_py_files(target: str | None) -> list[str]:

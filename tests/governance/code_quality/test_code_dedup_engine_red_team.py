@@ -33,12 +33,12 @@ class TestStage00_ImportChain:
         assert m == "MOD-INF-017"
 
     def test_scanner_via_proxy(self):
-        from zephyr.governance import scanner
+        from zephyr.infrastructure.asset_inventory import scanner
 
         assert hasattr(scanner, "Scanner")
 
     def test_scanner_direct(self):
-        from zephyr.governance.scanner import Scanner
+        from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
         s = Scanner()
         assert s is not None
@@ -83,7 +83,7 @@ class TestStage00_ImportChain:
 
 class TestStage01_ScannerAdversarial:
     def test_scan_file_detects_self(self):
-        from zephyr.governance.scanner import Scanner
+        from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
         scanner = Scanner()
         result = scanner.scan_file(__file__)
@@ -105,7 +105,7 @@ class TestStage01_ScannerAdversarial:
         with open(b, "w", encoding="utf-8") as f:
             f.write(code)
 
-        from zephyr.governance.scanner import Scanner
+        from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
         scanner = Scanner()
         scanner.scan_file(a)
@@ -122,7 +122,7 @@ class TestStage01_ScannerAdversarial:
         with open(b, "w", encoding="utf-8") as f:
             f.write("class HttpServer:\n    def start(self): pass\n")
 
-        from zephyr.governance.scanner import Scanner
+        from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
         scanner = Scanner()
         scanner.scan_file(a)

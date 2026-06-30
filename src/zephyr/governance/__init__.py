@@ -108,7 +108,7 @@ try:
     from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
     from zephyr.governance.construction_verifier import ConstructionVerifier
     from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
-    from zephyr.governance.dashboard import Dashboard
+    from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
     from zephyr.governance.database_service import DatabaseService
     from zephyr.governance.dependency import DependencyNode
     from zephyr.governance.dlq_retry_policy import RetryResult
@@ -122,7 +122,7 @@ try:
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
     from zephyr.governance.lifecycle import Lifecycle
     from zephyr.governance.llm_impact_analyzer import RiskLevel
-    from zephyr.governance.metadata import GitCommitInfo
+    from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.governance.models import AssetType
     from zephyr.governance.phase_executor import PhaseStatus
     from zephyr.governance.pipeline_base import ExperimentConfig
@@ -136,7 +136,7 @@ try:
     from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
     from zephyr.governance.audit_trail.supply_chain import PackageRecord
     from zephyr.governance.token_budget import PoolLevel
-    from zephyr.governance.trust_anchor import TrustLevel
+    from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
     from zephyr.governance.audit_trail.wqa_scorer import WQAScore
 except ImportError:
     pass

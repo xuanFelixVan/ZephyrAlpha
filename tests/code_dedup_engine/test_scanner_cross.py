@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_same_file_no_duplicate():
-    from zephyr.governance.scanner import Scanner
+    from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
     s = Scanner()
     s.scan_file(Path(__file__))
@@ -24,7 +24,7 @@ def test_same_file_no_duplicate():
 
 
 def test_cross_file_similarity():
-    from zephyr.governance.scanner import Scanner
+    from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
     s = Scanner()
     s.scan_file(Path(__file__))

@@ -26,11 +26,8 @@ from zephyr.governance.monoculture_guard import (
     BlastRadiusScore,
     MonocultureGuard,
 )
-from zephyr.governance.scanner import (
-    DuplicateGroup,
-    Scanner,
-    ScanResult,
-)
+from zephyr.infrastructure.asset_inventory.models import DuplicateGroup
+from zephyr.infrastructure.asset_inventory.scanner import Scanner, ScanResult
 
 _SAMPLE_PYTHON = """
 def add(a, b):

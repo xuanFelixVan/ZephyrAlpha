@@ -257,6 +257,32 @@ class AssetLifecycleEvent(BaseModel):
     auto_applied: bool = Field(default=True, description="是否自动应用")
 
 
+class DuplicateGroup:
+    """重复代码组 - 描述一组相似/重复的代码块.
+
+    字段:
+    - group_id: 组 ID
+    - members: 成员列表 [(file_path, content_hash), ...]
+    - similarity: 相似度 (0.0-1.0)
+    - detection_method: 检测方法 (如 minhash_lsh)
+    - confidence: 置信度 (0.0-100.0)
+    """
+
+    def __init__(
+        self,
+        group_id: str = "",
+        members: list[tuple[str, str]] | None = None,
+        similarity: float = 0.0,
+        detection_method: str = "",
+        confidence: float = 0.0,
+    ):
+        self.group_id = group_id
+        self.members = members if members is not None else []
+        self.similarity = similarity
+        self.detection_method = detection_method
+        self.confidence = confidence
+
+
 __all__ = [
     "AssetLayer",
     "AssetLifecycleEvent",
@@ -267,6 +293,7 @@ __all__ = [
     "DashboardData",
     "DriftEntry",
     "DriftType",
+    "DuplicateGroup",
     "GhostEntry",
     "HealthGrade",
     "HealthScore",

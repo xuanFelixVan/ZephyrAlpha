@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_scanner_blocks():
-    from zephyr.governance.scanner import Scanner
+    from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
     s = Scanner()
     source = "a = 1\nb = 2\nc = 3\nd = 4\ne = 5\nf = 6\n"
