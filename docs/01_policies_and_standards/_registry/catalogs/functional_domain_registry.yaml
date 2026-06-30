@@ -134,10 +134,10 @@ entries:
   - 登记表管理
   stability: stable
   ai_autonomy: human_gated
-- domain: D_GOVERNANCE
-  subdomain: orphan_judgment
+- domain: D_SECURITY
+  subdomain: orphan_judge
   ssot_module: MOD-INF-029
-  ssot_path: src/zephyr/governance/orphan_judgment/
+  ssot_path: src/zephyr/security/access_control/orphan_judge/
   covers:
   - 孤儿文件检测(orphan_detector)
   - 三步审判删除协议

@@ -41,7 +41,7 @@ _REGISTRY_CANDIDATES = [
     "src/zephyr/agent-spec/_registry.yaml",
     "src/zephyr/kb/_registry.yaml",
     "src/zephyr/audit-orchestrator/_registry.yaml",
-    "src/zephyr/orphan-judge/_registry.yaml",
+    "src/zephyr/security/access_control/orphan_judge/_registry.yaml",
     "src/zephyr/semantic-auditor/_registry.yaml",
     "src/zephyr/runtime/_registry.yaml",
     "src/zephyr/db/_registry.yaml",

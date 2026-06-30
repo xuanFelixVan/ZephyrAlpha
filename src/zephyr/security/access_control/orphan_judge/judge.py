@@ -64,7 +64,7 @@ __all__ = [
 ]
 
 _SYSTEM_CRITICAL_PATTERNS = [
-    "src/zephyr/orphan-judge/",
+    "src/zephyr/security/access_control/orphan_judge/",
     "src/zephyr/governance/rule_enforcement/phase_manager.py",
     "src/zephyr/governance/rule_enforcement/phase_check_registry.py",
     "src/zephyr/agent-rbac/",
