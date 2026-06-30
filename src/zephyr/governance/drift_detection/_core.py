@@ -38,7 +38,6 @@ from zephyr.governance.drift_detection.drift_models import (
     BreakingChange,
     BulkDriftEvent,
     CascadeEvent,
-    ConfigConflict,
     Detector,
     DriftBudget,
     DriftEvent,
@@ -51,6 +50,8 @@ from zephyr.governance.drift_detection.drift_models import (
     ScanResult,
     Severity,
 )
+# ARCH-034 P3: ConfigConflict canonical 真源为 config_consistency（drift_models 存根已删除）
+from zephyr.governance.drift_detection.config_consistency import ConfigConflict
 from zephyr.governance.drift_detection.events import DriftType
 from zephyr.governance.drift_detection.state_machine import (
     DriftEventRecord,

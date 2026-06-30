@@ -21,13 +21,11 @@ from zephyr.governance.drift_detection.drift_models import (
     BreakingChange,
     BulkDriftEvent,
     CascadeEvent,
-    ConfigConflict,
     Detector,
     DriftBudget,
     DriftEvent,
     DriftReport,
     DriftState,
-    ForensicsReport,
     OrphanClassification,
     OrphanFile,
     Runbook,
@@ -233,23 +231,6 @@ class TestBulkDriftEvent:
         assert bde.affected_modules == []
         assert bde.is_expected is False
         assert bde.is_unexpected is False
-
-
-class TestForensicsReport:
-    def test_defaults(self):
-        fr = ForensicsReport(event_id=uuid.uuid4())
-        assert fr.timeline == []
-        assert fr.state_diffs == []
-        assert fr.actor_trace == []
-        assert fr.dependency_impact == []
-
-
-class TestConfigConflict:
-    def test_defaults(self):
-        cc = ConfigConflict(key_name="db.url")
-        assert cc.env_source_value is None
-        assert cc.yaml_source_value is None
-        assert cc.hardcoded_default_value is None
 
 
 class TestBreakingChange:

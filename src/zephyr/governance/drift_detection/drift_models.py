@@ -230,30 +230,6 @@ class BulkDriftEvent:
 
 
 @dataclass
-class ForensicsReport:
-    event_id: uuid.UUID
-
-    timeline: list[dict[str, object]] = field(default_factory=list)
-
-    state_diffs: list[dict[str, object]] = field(default_factory=list)
-
-    actor_trace: list[str] = field(default_factory=list)
-
-    dependency_impact: list[str] = field(default_factory=list)
-
-
-@dataclass
-class ConfigConflict:
-    key_name: str
-
-    env_source_value: str | None = None
-
-    yaml_source_value: object | None = None
-
-    hardcoded_default_value: object | None = None
-
-
-@dataclass
 class BreakingChange:
     api_signature: str
 
