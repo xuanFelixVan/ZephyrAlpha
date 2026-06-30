@@ -12,6 +12,4 @@
 # [TTL] task_bound
 """orchestrator.core — auto-generated package init."""
 
-from . import trigger_router
-
-__all__ = ["agent_orchestrator", "task_queue", "trigger_router", "wave_generator"]
+__all__ = ["agent_orchestrator", "task_queue", "wave_generator"]

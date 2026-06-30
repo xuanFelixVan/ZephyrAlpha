@@ -406,7 +406,7 @@ permission_table:
       reason: 检索阈值影响 Agent 决策质量（Wave 1 修正：原草稿 AI-Modifiable 偏松）
       approval: Owner 审批
     - module: RI-03 FileWatchRouter
-      path: src/zephyr/orchestrator/trigger_router.py
+      path: src/zephyr/trading/orchestrator/trigger_router.py
       permission: Human-Gated
       reason: 路由策略影响 Agent 行为（Wave 1 修正：原草稿 AI-Modifiable 偏松）
       approval: Owner 审批

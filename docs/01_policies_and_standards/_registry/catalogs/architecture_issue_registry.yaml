@@ -358,21 +358,29 @@ entries:
   created: '2026-07-01'
   last_updated: '2026-07-01'
 - issue_id: '#ARCH-038'
-  title: trigger_router 6 位置多真源合并（orchestrator/ 主文件 + core/ 子包 + 配置/契约多处定义）
+  title: trigger_router 多真源合并（3 .py 文件 + 5 配置路径漂移 + module_id 撞车）
   severity: P2中
   adjudication: |
-    P8 phase2 治本时发现。trigger_router 存在 6 位置多真源：(1)主文件
-    src/zephyr/trading/orchestrator/trigger_router.py（Phase 2 已修复
-    handle_drift_stub → handle_drift_detected）；(2)子包死代码
-    src/zephyr/trading/orchestrator/core/trigger_router.py（plan §2.2 明确保留
-    不清理）；(3)config/trigger_router.yaml 配置；(4)declarative_contract_tracker_registry.yaml
-    契约登记；(5)测试文件多处引用；(6)其他消费者 import。违反真源唯一原则。
-    P8 plan §4.3 明确列为后续独立任务——本计划仅治本 trigger_router.yaml 的
-    stub 命名（Phase 2 已完成），不处理 6 位置合并。治本方向：裁定唯一
-    canonical 真源（主文件 orchestrator/trigger_router.py），删除子包死代码
-    core/trigger_router.py，更新所有消费者 import 路径。
-  fix_phase: 待立项（后续独立任务，需完整迁移方案含清单+shim+canonical 裁定）
-  status: open
+    P8 phase2 治本时发现，phase5 补登后治本完成。多真源问题：
+    (1)3 个 trigger_router.py 文件——主文件 src/zephyr/trading/orchestrator/
+    trigger_router.py（765行 canonical 真源，6 消费者，5 handler 已升级 operational）、
+    子包 src/zephyr/trading/orchestrator/core/trigger_router.py（710行死代码副本，
+    0 消费者，handler 名与 YAML 不匹配 handle_drift_stub vs handle_drift_detected，
+    Self 类型注解缺陷）、autonomy_core/trigger_router.py（129行同名异义，施工阶段
+    路由器非 YAML 触发分派，4 消费者活跃）；
+    (2)5 处配置路径漂移——declarative_contract_tracker_registry.yaml L66/L68、
+    ai_autonomy_authority_registry.yaml L409 引用不存在的 src/zephyr/orchestrator/
+    trigger_router.py（缺 trading/ 段）；blueprint_routing.yaml L315-316 引用不存在
+    的 src/zephyr/orchestration/ 路径（整个目录不存在）；
+    (3)module_id 撞车——3 文件都声明 MOD-ORC_trigger_router 违反 GATE-SSOT 硬层3。
+    治本：(a)git rm 删除子包死代码 core/trigger_router.py + 清理 core/__init__.py
+    import/__all__ + 清理 blueprint_scorer.py [CONSUMERS] 过期引用；
+    (b)修正 5 处配置路径漂移为真实路径 src/zephyr/trading/orchestrator/trigger_router.py；
+    (c)autonomy_core/trigger_router.py module_id 改为 MOD-AUTONOMY_stage_router
+    消除撞车。autonomy_core 文件保留（同名异义非重复，4 消费者活跃，建议未来
+    重命名为 StageRouter 消除类名撞名，可单独建卡）。
+  fix_phase: 已完成（2026-07-01，删除 core/ 死代码 + 修正 5 配置路径漂移 + module_id 去撞车）
+  status: resolved
   related_rules:
   - TRAE-060
   created: '2026-07-01'
