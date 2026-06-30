@@ -106,9 +106,23 @@ if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
 
+def _normalize_eol(data: bytes) -> bytes:
+    """治本（2026-06-30 CRLF/LF 漂移）：normalize CRLF→LF。
+
+    .gitattributes 全局 eol=lf，git HEAD blob 存 LF；但工作树文件可能是
+    .gitattributes 生效前 checkout 的（那时 core.autocrlf=true，LF→CRLF），
+    git status 因 normalize 比较显示干净，但 Path.read_bytes() 读出 CRLF。
+    register() 用 git show HEAD: 返回 LF，check() 用 Path.read_bytes() 返回 CRLF，
+    不 normalize 会导致 git 干净的文件被误报 TAMPERED。
+    normalize 后两者一致，line ending 差异不再误报为篡改。
+    """
+    return data.replace(b"\r\n", b"\n")
+
+
 def _hash_file(file_path: Path) -> str:
-    """_hash_file implementation."""
-    return hashlib.sha256(file_path.read_bytes()).hexdigest()[:16]
+    """_hash_file implementation（基于工作树，normalize CRLF→LF 后 hash）。"""
+    data = _normalize_eol(file_path.read_bytes())
+    return hashlib.sha256(data).hexdigest()[:16]
 
 
 def _hash_git_head(rel_path: str) -> str | None:
@@ -118,6 +132,10 @@ def _hash_git_head(rel_path: str) -> str | None:
     不基于工作树 WIP——攻击者篡改受保护脚本后 commit 无关文件，
     post-commit --register 不会把 WIP 篡改注册为基线（只注册 HEAD 状态）。
     check() 仍用 _hash_file() 基于工作树状态（检测 WIP 篡改）。
+
+    治本（2026-06-30 CRLF/LF 漂移）：normalize CRLF→LF 后再 hash，
+    与 _hash_file() 一致。git show HEAD: 返回 blob 原始字节，若 blob 为
+    .gitattributes 前的旧 commit（CRLF），需 normalize 才能与工作树一致。
 
     Returns:
         hash 字符串 | None（文件不在 git HEAD）
@@ -130,7 +148,8 @@ def _hash_git_head(rel_path: str) -> str | None:
     )
     if result.returncode != 0:
         return None
-    return hashlib.sha256(result.stdout).hexdigest()[:16]
+    data = _normalize_eol(result.stdout)
+    return hashlib.sha256(data).hexdigest()[:16]
 
 
 def _load_db() -> dict:
