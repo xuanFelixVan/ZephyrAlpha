@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] check永不抛异常——get_session异常降级为放行（registry故障不应卡死commit工作流）
 # [TESTS] tests/test_claim_required_gate.py
 # [A_module] module_id=MOD-GOV-claim_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
+# [TTL] task_bound
 """claim_required_gate.py — claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）
 
 检测 commit 目标文件是否已被当前 session claim。session 已注册但目标文件
@@ -24,7 +24,9 @@
 --------
 session 未注册 → 放行（测试/内部调用不注册 session，安全降级）。
 生产代码（``scripts/git_commit.py`` + ``task_repo.py`` DM-202918）均已 claim_files。
-``_commit_auto``（reconciler 路径）不经过 gate registry，不受本 gate 影响。
+``_commit_auto``（reconciler 路径）不走 ``check_all``，不触发 CLAIM-REQUIRED/HELD-OVERLAP
+等对 reconciler 无意义的 gate；但通过 ``gate_registry.get("DIRECTORY-CONTRACT")`` 单独复用
+DCR gate（见 ``_commit_auto`` 方法体 L2534+，2026-06-30 红蓝对抗治本）。
 
 priority=40 优先于 HELD-OVERLAP(50)：先检查 claim 再检查 overlap，
 未 claim 时直接阻断，无需进入 overlap 检查。
