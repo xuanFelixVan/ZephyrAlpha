@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-dangling_reference_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.dangling_reference_gate
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -72,7 +72,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from zephyr.governance.commit_gate_registry import (
+from zephyr.governance.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
 )

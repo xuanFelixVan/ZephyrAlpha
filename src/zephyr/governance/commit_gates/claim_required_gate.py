@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-claim_required_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.claim_required_gate
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec)
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.commit_gate_registry import GateSpec
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
 
 __all__ = ["make_claim_required_gate"]
 

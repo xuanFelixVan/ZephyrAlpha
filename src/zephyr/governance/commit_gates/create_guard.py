@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-create_guard | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.create_guard
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -100,7 +100,7 @@ from __future__ import annotations
 import logging
 import os
 
-from zephyr.governance.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

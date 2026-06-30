@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-directory_contract_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.directory_contract_gate
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec), scripts/governance/d1_structure/check_directory_contract.py
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), scripts/governance/d1_structure/check_directory_contract.py
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -63,7 +63,7 @@ import os
 import subprocess
 import sys
 
-from zephyr.governance.commit_gate_registry import GateSpec
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 
