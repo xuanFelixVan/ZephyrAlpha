@@ -63,7 +63,7 @@ class TestShouldClean:
 
     def test_normal_file_no_match(self):
         mgr = HousekeepingManager()
-        assert mgr.should_clean("config_manager.py") is False
+        assert mgr.should_clean("script_runner.py") is False
 
     def test_empty_string(self):
         mgr = HousekeepingManager()

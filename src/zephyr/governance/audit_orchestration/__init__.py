@@ -55,7 +55,6 @@ __all__ = [
     "canary_manager",
     "capacity_budget",
     "chaos_engine",
-    "config_manager",
     "construction_guide",
     "contract_registry",
     "contract_router",
