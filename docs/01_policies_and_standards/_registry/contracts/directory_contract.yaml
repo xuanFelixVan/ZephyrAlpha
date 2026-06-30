@@ -204,19 +204,19 @@ directory_extensions:
 
   # --- 代码区（中性区）---
   - path: "src/zephyr/"
-    allowed: [".py", ".yaml"]
-    forbidden: [".bak", ".baseline", ".md"]
+    allowed: [".py", ".yaml", ".md"]
+    forbidden: [".bak", ".baseline"]
     zone: neutral
     allowed_doc_types: []
 
   - path: "scripts/"
-    allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
-    forbidden: [".bak", ".baseline", ".md"]
+    allowed: [".py", ".sh", ".ps1", ".yaml", ".json", ".md"]
+    forbidden: [".bak", ".baseline"]
     zone: neutral
     allowed_doc_types: [policy, index]
 
   - path: "config/"
-    allowed: [".yaml", ".json"]
+    allowed: [".yaml", ".yml", ".json"]
     forbidden: [".py", ".md"]
     zone: neutral
     allowed_doc_types: []

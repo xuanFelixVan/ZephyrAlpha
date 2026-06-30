@@ -187,13 +187,19 @@ def get_extension_exceptions(rule: dict, rel_dir: str) -> set[str]:
     """获取适用于当前子目录的扩展名例外（allowed_exceptions）。
 
     某些子目录允许父规则 forbidden 清单中的扩展名（如 _registry/schemas/ 允许 .json）。
+    subdir 可写相对路径（相对于 rule path，如 _registry/schemas/）或完整路径
+    （如 docs/01_policies_and_standards/_registry/schemas/），两种格式都支持。
     """
     if not rule or "allowed_exceptions" not in rule:
         return set()
     rel_dir_norm = _normalize_dir(rel_dir)
+    rule_path = rule["path"].rstrip("/") + "/"
     exceptions: set[str] = set()
     for exc in rule["allowed_exceptions"]:
         subdir = exc["subdir"].rstrip("/") + "/"
+        # subdir 若非完整路径，拼接 rule path（支持相对路径写法）
+        if not subdir.startswith(rule_path):
+            subdir = rule_path + subdir
         if rel_dir_norm.startswith(subdir):
             exceptions.update(exc.get("extensions", []))
     return exceptions
@@ -431,9 +437,21 @@ def scan_all(contract: dict) -> list[str]:
             continue
         if scan_dir == REPO_ROOT:
             # 根目录：只扫描一级文件（不递归）
+            # 跳过 .gitignore 排除的文件（如 .env——本地敏感文件不入库不应被校验）
+            ignored = set()
+            ign_result = subprocess.run(
+                ["git", "ls-files", "--others", "--ignored", "--exclude-standard",
+                 "--full-name", "--directory"],
+                capture_output=True, text=True, cwd=str(REPO_ROOT),
+            )
+            if ign_result.returncode == 0:
+                ignored = {line.rstrip("/") for line in ign_result.stdout.splitlines() if line.strip()}
             for p in REPO_ROOT.iterdir():
                 if p.is_file() and not p.name.startswith(".git"):
-                    files.append(str(p.relative_to(REPO_ROOT)).replace("\\", "/"))
+                    rel = str(p.relative_to(REPO_ROOT)).replace("\\", "/")
+                    if rel in ignored:
+                        continue  # 被 .gitignore 排除，跳过
+                    files.append(rel)
         else:
             for p in iter_files(scan_dir, extensions=_SCAN_EXTENSIONS):
                 files.append(str(p.relative_to(REPO_ROOT)).replace("\\", "/"))
