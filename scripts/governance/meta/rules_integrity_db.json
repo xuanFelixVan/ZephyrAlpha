@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "cd24c7324b4b365a",
+      "hash": "d2f243b9364bbf60",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/git_commit_gateway.py": {
-      "hash": "afa5d84b21d460a8",
+      "hash": "996ddb48f6e85fef",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/reconciliation_registry.py": {
-      "hash": "488eb564d992ea89",
+      "hash": "a5a3e1b7adfbfe9d",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,6 +61,6 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T04:55:32.173094+00:00",
-  "last_check_at": "2026-06-30T04:52:38.676378+00:00"
+  "registered_at": "2026-06-30T07:18:33.560286+00:00",
+  "last_check_at": "2026-06-30T07:18:45.859486+00:00"
 }
