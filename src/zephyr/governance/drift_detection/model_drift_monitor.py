@@ -22,34 +22,34 @@ from enum import Enum
 from pydantic import BaseModel
 
 
-class DriftType(str, Enum):
+class ModelDriftType(str, Enum):
     CONCEPT = "CONCEPT"
     DATA = "DATA"
     PREDICTION = "PREDICTION"
 
 
 class DriftConfig(BaseModel):
-    drift_type: DriftType
+    drift_type: ModelDriftType
     metric: str
     threshold: str
     action: str
 
 
-DRIFT_MONITORS: dict[DriftType, DriftConfig] = {
-    DriftType.CONCEPT: DriftConfig(
-        drift_type=DriftType.CONCEPT,
+DRIFT_MONITORS: dict[ModelDriftType, DriftConfig] = {
+    ModelDriftType.CONCEPT: DriftConfig(
+        drift_type=ModelDriftType.CONCEPT,
         metric="Factor IC 30日滚动均值",
         threshold="下降 > 1σ",
         action="因子审查（§65）",
     ),
-    DriftType.DATA: DriftConfig(
-        drift_type=DriftType.DATA,
+    ModelDriftType.DATA: DriftConfig(
+        drift_type=ModelDriftType.DATA,
         metric="KL散度",
         threshold="> 阈值",
         action="重新训练",
     ),
-    DriftType.PREDICTION: DriftConfig(
-        drift_type=DriftType.PREDICTION,
+    ModelDriftType.PREDICTION: DriftConfig(
+        drift_type=ModelDriftType.PREDICTION,
         metric="Sharpe 30日",
         threshold="< 0",
         action="策略退役评估（§50）",
@@ -57,5 +57,5 @@ DRIFT_MONITORS: dict[DriftType, DriftConfig] = {
 }
 
 
-def get_drift_config(dt: DriftType) -> DriftConfig | None:
+def get_drift_config(dt: ModelDriftType) -> DriftConfig | None:
     return DRIFT_MONITORS.get(dt)

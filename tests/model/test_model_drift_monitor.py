@@ -18,34 +18,34 @@ import pytest
 from zephyr.governance.drift_detection.model_drift_monitor import (
     DRIFT_MONITORS,
     DriftConfig,
-    DriftType,
+    ModelDriftType,
     get_drift_config,
 )
 
 
-class TestDriftType:
+class TestModelDriftType:
     def test_enum_values(self):
-        assert DriftType.CONCEPT.value == "CONCEPT"
-        assert DriftType.DATA.value == "DATA"
-        assert DriftType.PREDICTION.value == "PREDICTION"
+        assert ModelDriftType.CONCEPT.value == "CONCEPT"
+        assert ModelDriftType.DATA.value == "DATA"
+        assert ModelDriftType.PREDICTION.value == "PREDICTION"
 
     def test_enum_count(self):
-        assert len(DriftType) == 3
+        assert len(ModelDriftType) == 3
 
     def test_enum_is_str(self):
-        for dt in DriftType:
+        for dt in ModelDriftType:
             assert isinstance(dt.value, str)
 
 
 class TestDriftConfig:
     def test_creation(self):
         config = DriftConfig(
-            drift_type=DriftType.CONCEPT,
+            drift_type=ModelDriftType.CONCEPT,
             metric="test_metric",
             threshold="> 0.5",
             action="alert",
         )
-        assert config.drift_type == DriftType.CONCEPT
+        assert config.drift_type == ModelDriftType.CONCEPT
         assert config.metric == "test_metric"
         assert config.threshold == "> 0.5"
         assert config.action == "alert"
@@ -57,40 +57,40 @@ class TestDriftConfig:
 
 class TestDriftMonitors:
     def test_all_types_have_configs(self):
-        for dt in DriftType:
+        for dt in ModelDriftType:
             assert dt in DRIFT_MONITORS
 
     def test_concept_config(self):
-        config = DRIFT_MONITORS[DriftType.CONCEPT]
-        assert config.drift_type == DriftType.CONCEPT
+        config = DRIFT_MONITORS[ModelDriftType.CONCEPT]
+        assert config.drift_type == ModelDriftType.CONCEPT
         assert isinstance(config.metric, str)
         assert len(config.metric) > 0
 
     def test_data_config(self):
-        config = DRIFT_MONITORS[DriftType.DATA]
-        assert config.drift_type == DriftType.DATA
+        config = DRIFT_MONITORS[ModelDriftType.DATA]
+        assert config.drift_type == ModelDriftType.DATA
         assert isinstance(config.threshold, str)
 
     def test_prediction_config(self):
-        config = DRIFT_MONITORS[DriftType.PREDICTION]
-        assert config.drift_type == DriftType.PREDICTION
+        config = DRIFT_MONITORS[ModelDriftType.PREDICTION]
+        assert config.drift_type == ModelDriftType.PREDICTION
         assert isinstance(config.action, str)
 
 
 class TestGetDriftConfig:
     def test_get_concept(self):
-        config = get_drift_config(DriftType.CONCEPT)
+        config = get_drift_config(ModelDriftType.CONCEPT)
         assert config is not None
-        assert config.drift_type == DriftType.CONCEPT
+        assert config.drift_type == ModelDriftType.CONCEPT
 
     def test_get_data(self):
-        config = get_drift_config(DriftType.DATA)
+        config = get_drift_config(ModelDriftType.DATA)
         assert config is not None
 
     def test_get_prediction(self):
-        config = get_drift_config(DriftType.PREDICTION)
+        config = get_drift_config(ModelDriftType.PREDICTION)
         assert config is not None
 
     def test_get_returns_drift_config_type(self):
-        config = get_drift_config(DriftType.CONCEPT)
+        config = get_drift_config(ModelDriftType.CONCEPT)
         assert isinstance(config, DriftConfig)
