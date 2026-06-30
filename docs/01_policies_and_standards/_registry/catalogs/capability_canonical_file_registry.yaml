@@ -1069,6 +1069,26 @@ capabilities:
       解决发现性：新AI 搜 "analysis engine/forensics/roi/trend/reconciler" 可定位 _analysis 聚合。
       解决防重建：新AI准备造新的分析引擎前会被引导到本聚合，提示扩展而非新建。
 
+  # --------------------------------------------------------------------------
+  - capability_id: scaffold_file_creator
+    aliases:
+      - scaffold
+      - scaffold.py
+      - create_rule
+      - scaffold_rule
+      - create_module
+      - create_script
+      - create_gate
+      - rule_scaffolding
+    description: >-
+      文件创建唯一入口（RULE-TWO 强制执行器，RULE-FOUR）。scaffold.py 提供子命令：
+      module/script/gate/rule/yaml/json/md。rule 子命令（ARCH-037）自动分配 rule_id +
+      标准 frontmatter + 检查1.5 强制 trae_NNN_<主题>_<描述>.yaml 命名（单段name阻断，
+      新主题前缀仅警告）。绕过 scaffold 直接 Write 新文件 = 孤儿文件。
+      canonical = scripts/scaffold.py（auto 派生：basename scaffold 匹配 alias）。
+      解决发现性：新AI 搜 "创建规则/创建模块/创建脚本/scaffold/rule scaffolding" 可定位到本入口。
+      解决防重建：新AI准备直接 Write 新文件前会被引导到 scaffold.py，提示走子命令而非手写。
+
 # ============================================================================
 # creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

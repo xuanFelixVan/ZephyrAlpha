@@ -373,6 +373,7 @@ STEP 3 逐行价值检查：每行内容在其他地方存在？删除后有无�
 python scripts/scaffold.py module <包名> <模块名>    # 创建模块
 python scripts/scaffold.py script <路径>              # 创建脚本
 python scripts/scaffold.py gate <ID>                  # 创建门禁
+python scripts/scaffold.py rule <主题_描述>           # 创建规则文件（ARCH-037）
 ```
 
 ### 注册表映射
@@ -382,6 +383,9 @@ python scripts/scaffold.py gate <ID>                  # 创建门禁
 | `src/zephyr/<pkg>/<name>.py` | `scaffold.py module <pkg> <name>` | `<pkg>/__init__.py` `__all__` |
 | `scripts/<path>/<name>.py` | `scaffold.py script <path>` | `scripts/script_manifest.yaml` |
 | `src/zephyr/gates/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
+| `docs/.../rules/trae_NNN_<主题>_<描述>.yaml` | `scaffold.py rule <主题_描述>` | `rule_catalog_registry.yaml`（auto-sync） |
+
+**规则文件命名约定（ARCH-037, trae_028 GOV-DOC-003）**：文件名 MUST 为 `trae_NNN_<主题>_<描述>.yaml`（如 `arch_new_rule`/`behavior_xxx`/`doc_xxx`）。`scaffold.py rule` 检查1.5 强制 `<主题>_<描述>` 两段——单段 name 阻断。主题前缀从现有文件名自动派生（`_derive_rule_theme_prefixes`），新前缀仅警告不阻断。绕过 scaffold 直接 Write 规则文件 → `validate_rule_frontmatter.py` DIM-5 后天检测单段 name → FAIL。
 
 **scaffold 自动完成**：查重 → 创建（temp-file + atomic rename）→ 注册 → 返回路径+导入命令。
 

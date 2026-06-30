@@ -24,6 +24,7 @@ Dimensions:
   DIM-2: 字段顺序 (标准顺序固定)
   DIM-3: 枚举值合法性 (layer/stability/safety_level/ai_autonomy)
   DIM-4: rule_id 与文件名一致性 (trae_XXX.yaml ↔ rule_id: TRAE-XXX)
+  DIM-5: 文件名主题前缀 (ARCH-037, trae_NNN_<主题>_<描述>.yaml, 单段name=缺主题前缀)
 
 Exit 1 on any FAIL -> pre_commit blocks the commit.
 """
@@ -202,6 +203,15 @@ def _validate_file(path: Path) -> None:
         expected_rule_id = f"TRAE-{m.group(1)}"
         if rule_id != expected_rule_id:
             _errors.append(f"{rel}: rule_id='{rule_id}' 与文件名不匹配，期望 '{expected_rule_id}'")
+
+    # DIM-5: 文件名主题前缀（ARCH-037，trae_NNN_<主题>_<描述>.yaml）
+    # name 段（trae_NNN_ 之后）必须含下划线——单段=缺主题前缀（后天防漂移）
+    m_name = re.match(r"^trae_\d+_(.+)\.yaml$", path.name)
+    if m_name and "_" not in m_name.group(1):
+        _errors.append(
+            f"{rel}: 文件名缺主题前缀(ARCH-037)—name段'{m_name.group(1)}'为单段；"
+            f"命名约定: trae_NNN_<主题>_<描述>.yaml（见 trae_028 GOV-DOC-003）"
+        )
 
 
 def main() -> int:
