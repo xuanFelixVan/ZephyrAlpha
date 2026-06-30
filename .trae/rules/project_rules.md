@@ -129,6 +129,40 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 `pre_write_guard()` 在文件被锁时抛出 `FileLockedError`（而非静默通过）。`LockGuard` 在 `with` 块退出时自动释放锁。
 
+### claim 前移协议（Edit 阶段覆盖治本，2026-06-30）
+
+**触发**：AI session 处理任何文件前（Edit/Write 之前）。
+
+**根因**：claim 协议原锚在 commit 阶段（Edit→claim→commit→release），Edit 阶段
+SessionRegistry 无数据，HELD-OVERLAP gate 检测不到并发覆盖。前移到 Edit 前，
+使 `other_held_files` / `find_session_by_file` 在 Edit 阶段可查。
+
+**强制流程**：
+```
+1. CLAIM  → python scripts/git_commit.py --session <id> --files <f1,f2> --claim-only
+2. CHECK  → python scripts/governance/pre_write_gate.py <file> --session <id>
+            （session_overlap 检测：被其他 session 持有则 BLOCK）
+3. EDIT   → AI Edit/Write 工具
+4. COMMIT → python scripts/git_commit.py --session <id> --files <f> --message ...
+            （claim 幂等 → commit → release，标准流程不变）
+```
+
+**判定标准**：
+| 场景 | 模式 | 入口 |
+|------|------|------|
+| 单 AI 对话 | 模式 A（直接锁 + claim） | lock_files.py + git_commit.py --claim-only |
+| ≥2 AI 并发同文件 | 模式 A'（claim 前移 + overlap 检测）MUST | 上方强制流程 |
+| ≥2 AI 并发高风险 | 模式 B（StagingArea 草稿）MUST | StagingArea.write_draft/commit |
+
+**与 StagingArea 关系**：claim 前移是常态软约束防线（IDE 不可 hook 的硬约束下
+理论上限），StagingArea 是高风险兜底（物理隔离 Edit 产物）。两者分层不冲突。
+
+**绝对禁止**：
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | Edit 前不 --claim-only 声明 | overlap 检测无数据，防线失效 |
+| ❌ | 跳过 pre_write_gate 直接 Edit | 软约束失效（依赖 AI 自觉，IDE 不可 hook） |
+
 ### session_id 格式
 
 `session-YYYYMMDD-NNN`，从 `session_logs/` 目录找编号。
