@@ -203,14 +203,14 @@ class TestKillSwitchIntegrationE2E:
     """kill_switch 集成：KillSwitchManager"""
 
     def test_kill_switch_manager_l3_requires_token(self):
-        from zephyr.ops.kill_switch import KillLevel, KillSwitchManager
+        from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager
 
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         with pytest.raises(ValueError, match="BREAK_GLASS"):
             mgr.activate(KillLevel.L3_GLOBAL, "*", "test", token="")
 
     def test_kill_switch_activate_deactivate(self):
-        from zephyr.ops.kill_switch import KillLevel, KillSwitchManager
+        from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager
 
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         entry = mgr.activate(KillLevel.L1_SESSION, "session-X", "test")

@@ -21,7 +21,7 @@ from zephyr.governance.rollback_executor import (
     RollbackOp,
 )
 from zephyr.governance.rollback_lock import LockAcquireResult, RollbackLock
-from zephyr.ops.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
+from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 
 
 @pytest.fixture

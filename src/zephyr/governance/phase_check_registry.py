@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.guards.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_trail.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.guards.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_trail.query; zephyr.shared.contracts.protocols; zephyr.governance.drift_detection.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -562,7 +562,7 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.behavioral_audit.chaos_injector import ChaosInjection
+        from zephyr.governance.drift_detection.chaos_injector import ChaosInjection
         from zephyr.trading.orchestrator.chaos_engine import ChaosEngine
 
         return GateResult.GREEN
@@ -578,7 +578,7 @@ def check_kill_switch() -> GateResult:
     if not ks_dir.exists():
         return GateResult.RED
     try:
-        from zephyr.ops.kill_switch import KillSwitch
+        from zephyr.infrastructure.rollback.kill_switch import KillSwitch
 
         ks = KillSwitch()
         if not ks.l1_ok:
@@ -608,7 +608,7 @@ def check_shadow_mode() -> GateResult:
 def check_rollback_drill() -> GateResult:
     try:
         from zephyr.governance.rollback_executor import RollbackExecutor
-        from zephyr.ops.kill_switch import KillSwitch
+        from zephyr.infrastructure.rollback.kill_switch import KillSwitch
 
         executor = RollbackExecutor()
         pf = executor.preflight_check()

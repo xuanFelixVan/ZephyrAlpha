@@ -5,7 +5,6 @@ from zephyr.ops.telemetry import MetricPoint
 __all__ = [
     "MetricPoint",
     "alert_dispatcher",
-    "analytics_base",
     "auto_evolution",
     "backpressure_bridge",
     "config",
