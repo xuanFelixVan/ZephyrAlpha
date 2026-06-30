@@ -54,6 +54,8 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.governance.capability_lookup import CapabilityLookup  # noqa: E402
+# 治本(2026-06-30): REPO_ROOT 真源来自 zephyr.shared.io.paths (SSoT), 消除路径派生对 parents[N] 的依赖
+from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
 
 def main() -> int:
@@ -62,7 +64,7 @@ def main() -> int:
         ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
         capture_output=True,
         text=True,
-        cwd=str(_PROJECT_ROOT),
+        cwd=str(_REPO_ROOT),
     )
     if result.returncode != 0:
         print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
@@ -87,7 +89,7 @@ def main() -> int:
     # 构造 (abs_path, rel_path) 列表——L3 特有：跳过已从磁盘删除的 staged 文件
     new_py_files: list[tuple[str, str]] = []
     for rel_path in new_files:
-        abs_path = _PROJECT_ROOT / rel_path
+        abs_path = _REPO_ROOT / rel_path
         if not abs_path.exists():
             continue
         new_py_files.append((str(abs_path), rel_path))

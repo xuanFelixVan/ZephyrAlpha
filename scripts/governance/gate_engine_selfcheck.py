@@ -60,9 +60,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
-_DB_PATH = _PROJECT_ROOT / "data" / "databases" / "governance.db"
+# 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants, 消除 parents[N] 硬编码
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
+_GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+_DB_PATH = _REPO_ROOT / "data" / "databases" / "governance.db"
 
 
 def _fmt_status(ok: bool, label: str, detail: str = "") -> str:
@@ -79,7 +86,7 @@ def check_core_files() -> dict[str, Any]:
         _GATES_DIR / "_registry.yaml",
         _GATES_DIR / "_template.yaml",
     ]
-    missing = [str(cf.relative_to(_PROJECT_ROOT)) for cf in core_files if not cf.exists()]
+    missing = [str(cf.relative_to(_REPO_ROOT)) for cf in core_files if not cf.exists()]
     return {
         "label": "S1. 核心文件存在性",
         "passed": len(missing) == 0,
@@ -379,11 +386,11 @@ def main() -> None:
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
     args = parser.parse_args()
 
-    sys.path.insert(0, str(_PROJECT_ROOT / "src"))
+    sys.path.insert(0, str(_REPO_ROOT / "src"))
 
     print("=== Gate Engine Bootstrap Self-Check ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")
-    print(f"项目: {_PROJECT_ROOT}")
+    print(f"项目: {_REPO_ROOT}")
     print(f"门禁目录: {_GATES_DIR}")
     print(f"数据库: {_DB_PATH}")
     print()

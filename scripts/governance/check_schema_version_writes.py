@@ -32,7 +32,7 @@ import re
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+# 治本(2026-06-30): _REPO_ROOT 删除, REPO_ROOT 真源来自 _shared.constants (SSoT)
 SCAN_DIRS = ["src/zephyr", "scripts", "tests"]
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
@@ -40,7 +40,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT as _REPO_ROOT  # noqa: E402  治本(2026-06-30): SSoT
 # Whitelist: depgraph_schema.py (depgraph.db migrations) + sqlite_schema.py (governance.db migrations)
 WHITELIST = {
     "src/zephyr/governance/depgraph_schema.py",
@@ -90,7 +90,7 @@ def _scan_file(filepath: Path) -> list[str]:
             if id(node) in docstring_ids:
                 continue
             if _check_ast_string(node.value):
-                rel = filepath.relative_to(PROJECT_ROOT).as_posix()
+                rel = filepath.relative_to(_REPO_ROOT).as_posix()
                 violations.append(
                     f"{rel}:{node.lineno}: _schema_version write detected: {node.value[:80].strip()}"
                 )
@@ -104,11 +104,11 @@ def run_ast_scan() -> int:
     files_scanned = 0
 
     for scan_dir in SCAN_DIRS:
-        root = PROJECT_ROOT / scan_dir
+        root = _REPO_ROOT / scan_dir
         if not root.exists():
             continue
         for py_file in root.rglob("*.py"):
-            rel = py_file.relative_to(PROJECT_ROOT).as_posix()
+            rel = py_file.relative_to(_REPO_ROOT).as_posix()
             if rel in WHITELIST:
                 continue
             files_scanned += 1
@@ -129,7 +129,7 @@ def run_db_check() -> int:
     """DB state check: verify _schema_version.MAX(version) == _MIGRATIONS max version."""
     print("[G_TRAE_059] DB check: verifying schema version consistency...")
 
-    sys.path.insert(0, str(PROJECT_ROOT / "src"))
+    sys.path.insert(0, str(_REPO_ROOT / "src"))
     from zephyr.governance.depgraph_schema import _MIGRATIONS
 
     migrations_max = max(v for v, _, _ in _MIGRATIONS)

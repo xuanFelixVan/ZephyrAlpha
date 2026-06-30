@@ -49,15 +49,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
-PROJECT_ROOT = _SCRIPT_DIR.parents[2]
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-_SRC_DIR = str(PROJECT_ROOT / "src")
+
+# 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants (SSoT), 消除 parents[N] 硬编码
+from _shared.constants import DB_PATH, REPO_ROOT as _REPO_ROOT  # noqa: E402
+
+_SRC_DIR = str(_REPO_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
-
-from _shared.constants import DB_PATH
 
 import sqlite3
 
@@ -94,7 +95,7 @@ def _resolve_script_path(script_token: str) -> Path:
     """解析脚本路径（相对路径基于 PROJECT_ROOT）。"""
     p = Path(script_token)
     if not p.is_absolute():
-        p = PROJECT_ROOT / p
+        p = _REPO_ROOT / p
     return p
 
 
@@ -108,7 +109,7 @@ def _validate_one_command(cmd: str) -> str | None:
     与 task_repo._validate_post_sync_commands 复用同一逻辑，消除双份漂移风险
     （原 ~80 行重复逻辑已于 2026-06-26 抽取到 SSoT 模块）。
     """
-    return validate_post_sync_command(cmd, PROJECT_ROOT)
+    return validate_post_sync_command(cmd, _REPO_ROOT)
 
 
 def _aggregate_broken(
@@ -200,7 +201,7 @@ def scan_all_post_sync(db_path: Path) -> list[BrokenCommand]:
         #     键加 [rollback]{task_id} 前缀，因回滚文本通常每任务唯一）---
         rollback_text = row["rollback_instructions"] or ""
         if rollback_text.strip():
-            reason = validate_rollback_instructions(rollback_text, PROJECT_ROOT)
+            reason = validate_rollback_instructions(rollback_text, _REPO_ROOT)
             if reason is not None:
                 _aggregate_broken(
                     broken_map,

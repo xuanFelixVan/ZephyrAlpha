@@ -36,6 +36,8 @@ from zephyr.governance.rule_enforcement.sys_master_compliance import (  # noqa: 
     SYS_MASTER_PATH,
     load_blueprint_path,
 )
+# 治本(2026-06-30): REPO_ROOT 真源来自 zephyr.shared.io.paths (SSoT), 消除路径派生对 parents[N] 的依赖
+from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
 DOM_GOV = load_blueprint_path("MOD-GOVERNANCE")
 
@@ -67,7 +69,7 @@ def check_exists(path: Path | None, label: str) -> dict:
     if path is None:
         return {"file": "<not in blueprint_registry.yaml>", "label": label, "status": "MISSING"}
     status = "OK" if path.exists() else "MISSING"
-    return {"file": str(path.relative_to(PROJECT_ROOT)), "label": label, "status": status}
+    return {"file": str(path.relative_to(_REPO_ROOT)), "label": label, "status": status}
 
 
 def check_references(content: str, items: list[str], label: str) -> dict:
