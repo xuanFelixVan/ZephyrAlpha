@@ -121,7 +121,7 @@ class TestArchitecturePanorama:
             if rule_id.startswith("TRAE"):
                 rule_domains.add("TRAE")
         assert domain_count > 0 or len(rule_domains) > 0, (
-            "Domains should exist in depgraph.db or rules should have valid domains"
+            "Domains should exist in depgraph or rules should have valid domains"
         )
 
 
