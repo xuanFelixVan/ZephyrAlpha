@@ -43,8 +43,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from zephyr.governance.git_commit_gateway import GitCommitGateway  # noqa: E402
-from zephyr.governance.reconciliation_registry import (  # noqa: E402
+from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway  # noqa: E402
+from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     ReconcileResult,
     ReconcilerSpec,
     _audit_commit_history,
