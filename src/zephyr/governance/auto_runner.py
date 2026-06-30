@@ -238,7 +238,7 @@ class GovernanceAutoRunner:
 
     @staticmethod
     def get_gates_by_event(event_type: str) -> list[str]:
-        """从 PostgreSQL depgraph 查询指定 event_driven 触发器的 gate 列表.
+        """从 depgraph (PostgreSQL) 查询指定 event_driven 触发器的 gate 列表.
 
         全景图是项目真源——event_driven 配置存储在 gates 表 event_driven 列。
         P2迁移后：从 SQLite 切换到 PostgreSQL，使用 psycopg2 cursor 模式。
@@ -274,7 +274,7 @@ class GovernanceAutoRunner:
 
     @staticmethod
     def get_all_event_types() -> list[str]:
-        """从 PostgreSQL depgraph 查询所有非空的 event_driven 类型。"""
+        """从 depgraph (PostgreSQL) 查询所有非空的 event_driven 类型。"""
         try:
             conn = get_depgraph_pg_connection(autocommit=True)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:

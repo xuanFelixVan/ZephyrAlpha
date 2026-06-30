@@ -80,7 +80,7 @@ class DatabaseService:
         return self._governance_conn
 
     def get_depgraph_conn(self) -> Any:
-        """获取 depgraph PostgreSQL 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
+        """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
 
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
         """

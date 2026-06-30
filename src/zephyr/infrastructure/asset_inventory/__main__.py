@@ -520,7 +520,7 @@ def _cmd_deps(args: argparse.Namespace) -> int:
         for imp in graph.orphan_imports[:5]:
             print(f"    → {imp}")
 
-    print("  （依赖图统一由 generate_project_depgraph.py 产出到 PostgreSQL depgraph，不再产 JSON）")
+    print("  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph (PostgreSQL)，不再产 JSON）")
     return 0
 
 

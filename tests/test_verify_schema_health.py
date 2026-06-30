@@ -432,7 +432,7 @@ class TestMainExitCodes:
 
     def test_no_args_connects_pg(self):
         # 治本（2026-06-29）：测试名+注释语义修正（原 test_no_args_uses_default_db_path 过时）。
-        # P2 PG 迁移后 --db 参数已废弃，脚本经 get_depgraph_pg_connection() 连 PostgreSQL depgraph。
+        # P2 PG 迁移后 --db 参数已废弃，脚本经 get_depgraph_pg_connection() 连 depgraph (PostgreSQL)。
         # PG 健康则 exit 0；PG 不可达则 exit 2——两种都接受，只要不崩溃。
         result = subprocess.run(
             [sys.executable, str(_GOV_DIR / "verify_schema_health.py")],

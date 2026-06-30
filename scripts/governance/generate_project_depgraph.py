@@ -525,7 +525,7 @@ PATH_MAPPINGS = [
         "test_root": "",
         "script_root": "",
         "naming_rule": "{category}/{name}.yaml or .json",
-        "examples": ["PostgreSQL depgraph"],
+        "examples": ["depgraph (PostgreSQL)"],
     },
 ]
 
@@ -2617,7 +2617,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
     """
     from datetime import datetime
 
-    print(f"[DEPGRAPH-DB] Writing to PostgreSQL depgraph...")
+    print(f"[DEPGRAPH-DB] Writing to depgraph (PostgreSQL)...")
     conn = None  # DM-3004: 预初始化None，防御性编程
 
     try:

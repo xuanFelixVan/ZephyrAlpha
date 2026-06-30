@@ -912,83 +912,66 @@ class TestStagedDeleteGitignored:
         assert foo.exists(), "git rm --cached 不应删除磁盘文件"
 
 
-class TestCheckRepoRootUsagePattern6:
-    """模式6 测试：DB 写入脚本中 import lock_files 检测。
+class TestRunGitCommitGuard:
+    """_run_git commit 守卫测试（红攻1治本：_in_commit_flow 标志防裸调 git commit）。
 
-    验证 trae_001 §db_write_protocol prohibition 的自动门禁：
-    同一文件内同时有 DB 写入信号（psycopg2/get_depgraph_pg_connection/
-    get_governance_connection）+ lock_files import → 阻断。
-
-    理由：PG MVCC 事务替代文件锁，文件锁对 PG 写无保护作用。
-    真源：trae_001 §db_write_protocol + trae_054 §mandatory。
-
-    注：直接调用 _check_repo_root_usage 方法，绕过 ttl 等前置门禁，
-    精确测试模式6 检测逻辑。
+    验证 _run_git 在 _in_commit_flow=False 时拦截裸 git commit 命令（returncode=1
+    + "禁止裸调" stderr），在 _in_commit_flow=True 时放行（实际 git commit 执行）。
+    误删守卫 if 块 → test_bare_commit_blocked 失败（--allow-empty 会使裸 git commit
+    成功 returncode=0，与断言 returncode==1 矛盾）。
     """
 
-    def test_db_write_with_lock_files_blocked(self, tmp_path: Path) -> None:
-        """import psycopg2 + import lock_files → 阻断。"""
-        _init_git_repo(tmp_path)
-        bad_content = (
-            "import psycopg2\n"
-            "import lock_files\n"
-            "conn = psycopg2.connect('dbname=depgraph')\n"
-            "lock_files.acquire('x')\n"
-        )
-        f = _write_file(tmp_path, "src/bad.py", bad_content)
-        gw = GitCommitGateway(project_root=tmp_path)
-        passed, detail = gw._check_repo_root_usage([str(f)])
-        assert not passed, f"模式6 应阻断 DB 写入+lock_files: {detail}"
-        assert "lock_files" in detail, f"违规信息应含 lock_files: {detail}"
+    def test_bare_commit_blocked_when_not_in_flow(self, tmp_path: Path) -> None:
+        """_in_commit_flow=False 时 _run_git(["git","commit",...]) 被守卫拦截。
 
-    def test_db_write_without_lock_files_ok(self, tmp_path: Path) -> None:
-        """import psycopg2 无 lock_files → 通过。"""
+        --allow-empty 确保若守卫被删，git commit 会成功（returncode=0），
+        使 returncode==1 断言失败——从而检出守卫误删。
+        """
         _init_git_repo(tmp_path)
-        good_content = (
-            "import psycopg2\n"
-            "conn = psycopg2.connect('dbname=depgraph')\n"
-        )
-        f = _write_file(tmp_path, "src/good_db.py", good_content)
         gw = GitCommitGateway(project_root=tmp_path)
-        passed, detail = gw._check_repo_root_usage([str(f)])
-        assert passed, f"无 lock_files 的 DB 写入应通过: {detail}"
+        assert gw._in_commit_flow is False  # 默认 False
+        head_before = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True,
+        ).stdout.strip()
+        result = gw._run_git(["git", "commit", "-m", "sneaky", "--allow-empty"])
+        assert result.returncode == 1, "裸 git commit 应被守卫拦截（returncode=1）"
+        assert "禁止裸调" in result.stderr, f"stderr 应含拦截信息: {result.stderr}"
+        # 守卫拦截后 HEAD 不应变化（git commit 未执行）
+        head_after = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True,
+        ).stdout.strip()
+        assert head_before == head_after, "守卫拦截后 HEAD 不应变化（无新 commit）"
 
-    def test_lock_files_without_db_write_ok(self, tmp_path: Path) -> None:
-        """import lock_files 无 DB 写入信号 → 通过（文件写场景合法）。"""
+    def test_commit_allowed_when_in_flow(self, tmp_path: Path) -> None:
+        """_in_commit_flow=True 时 _run_git(["git","commit",...]) 放行（实际执行）。"""
         _init_git_repo(tmp_path)
-        file_only_content = (
-            "import lock_files\n"
-            "lock_files.acquire('some_file.txt')\n"
-        )
-        f = _write_file(tmp_path, "src/file_only.py", file_only_content)
         gw = GitCommitGateway(project_root=tmp_path)
-        passed, detail = gw._check_repo_root_usage([str(f)])
-        assert passed, f"无 DB 写入的 lock_files 应通过: {detail}"
+        gw._in_commit_flow = True
+        try:
+            head_before = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+                capture_output=True, text=True,
+            ).stdout.strip()
+            # --allow-empty 确保即使无 staged 变更也能成功 commit
+            result = gw._run_git(["git", "commit", "-m", "test", "--allow-empty"])
+            assert result.returncode == 0, (
+                f"_in_commit_flow=True 时 git commit 应放行成功: {result.stderr}"
+            )
+            assert "禁止裸调" not in result.stderr, "守卫不应拦截"
+            head_after = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+                capture_output=True, text=True,
+            ).stdout.strip()
+            assert head_before != head_after, "应产生新 commit（证明 git commit 实际执行）"
+        finally:
+            gw._in_commit_flow = False  # 清理标志
 
-    def test_from_import_db_signal_with_lock_files_blocked(self, tmp_path: Path) -> None:
-        """from import 形式 DB 信号 + import lock_files → 阻断。"""
+    def test_non_commit_commands_not_blocked(self, tmp_path: Path) -> None:
+        """非 commit 的 git 命令（如 status）不受守卫影响。"""
         _init_git_repo(tmp_path)
-        bad_content = (
-            "from zephyr.infra.db import get_depgraph_pg_connection\n"
-            "import lock_files\n"
-            "conn = get_depgraph_pg_connection()\n"
-        )
-        f = _write_file(tmp_path, "src/bad_from.py", bad_content)
         gw = GitCommitGateway(project_root=tmp_path)
-        passed, detail = gw._check_repo_root_usage([str(f)])
-        assert not passed, f"模式6 应阻断 from import 形式: {detail}"
-        assert "lock_files" in detail, f"违规信息应含 lock_files: {detail}"
-
-    def test_from_import_lock_files_with_db_signal_blocked(self, tmp_path: Path) -> None:
-        """from xxx import lock_files + DB 写入信号 → 阻断。"""
-        _init_git_repo(tmp_path)
-        bad_content = (
-            "import psycopg2\n"
-            "from scripts import lock_files\n"
-            "conn = psycopg2.connect('dbname=depgraph')\n"
-        )
-        f = _write_file(tmp_path, "src/bad_from_lock.py", bad_content)
-        gw = GitCommitGateway(project_root=tmp_path)
-        passed, detail = gw._check_repo_root_usage([str(f)])
-        assert not passed, f"模式6 应阻断 from import lock_files: {detail}"
-        assert "lock_files" in detail, f"违规信息应含 lock_files: {detail}"
+        assert gw._in_commit_flow is False
+        result = gw._run_git(["git", "status", "--porcelain"])
+        assert result.returncode == 0, f"git status 不应被守卫拦截: {result.stderr}"

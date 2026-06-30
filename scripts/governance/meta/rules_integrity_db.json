@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "ac5140b73cc2de2e",
+      "hash": "fedd332bf1347a55",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/git_commit_gateway.py": {
-      "hash": "537be6bab46cee5b",
+      "hash": "dd1d25aa0aa0eafe",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -61,6 +61,6 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     }
   },
-  "registered_at": "2026-06-30T08:02:50.757397+00:00",
+  "registered_at": "2026-06-30T08:27:43.087777+00:00",
   "last_check_at": "2026-06-30T08:01:38.875706+00:00"
 }

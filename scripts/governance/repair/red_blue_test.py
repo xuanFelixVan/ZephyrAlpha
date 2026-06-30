@@ -33,7 +33,7 @@ import sqlite3
 import subprocess
 import sys
 
-DST_DB = "PostgreSQL depgraph"
+DST_DB = "depgraph (PostgreSQL)"
 
 results = []
 

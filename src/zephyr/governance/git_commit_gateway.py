@@ -46,21 +46,16 @@ from zephyr.governance.reconciliation_registry import (
     ReconcileResult,
     ReconciliationRegistry,
     make_manifest_reconciler,
-    make_baseline_aware_reconciler,
-    make_ghost_reconciler,
     make_path_tree_reconciler,
-    make_rule_catalog_reconciler,
-    make_registry_index_reconciler,
-    make_working_docs_reconciler,
-    make_domain_doc_reconciler,
-    make_arch_model_reconciler,
     make_precommit_id_uniqueness_reconciler,
-    make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
-    make_commit_gateway_audit_reconciler,
     make_deprecated_directory_reconciler,
-    make_rule_file_audit_reconciler,
     make_exempt_zone_frontmatter_reconciler,
+    make_delete_audit_reconciler,
+    make_regenerate_reconciler,
+    make_rule_audit_reconciler,
+    make_registry_sync_reconciler,
+    make_integrity_audit_reconciler,
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -272,20 +267,15 @@ class GitCommitGateway:
         """注册默认 post-commit reconciler（声明式框架，P2-T1~T9 + 红蓝发现1 + P3收尾）。"""
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
-        self._reconciliation_registry.register(make_rule_catalog_reconciler(self))
-        self._reconciliation_registry.register(make_registry_index_reconciler(self))
-        self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
-        self._reconciliation_registry.register(make_rules_integrity_reconciler(self))
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
-        self._reconciliation_registry.register(make_ghost_reconciler(self))
-        self._reconciliation_registry.register(make_working_docs_reconciler(self))
-        self._reconciliation_registry.register(make_domain_doc_reconciler(self))
-        self._reconciliation_registry.register(make_arch_model_reconciler(self))
-        self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
-        self._reconciliation_registry.register(make_rule_file_audit_reconciler(self))
         self._reconciliation_registry.register(make_exempt_zone_frontmatter_reconciler(self))
+        self._reconciliation_registry.register(make_delete_audit_reconciler(self))
+        self._reconciliation_registry.register(make_regenerate_reconciler(self))
+        self._reconciliation_registry.register(make_rule_audit_reconciler(self))
+        self._reconciliation_registry.register(make_registry_sync_reconciler(self))
+        self._reconciliation_registry.register(make_integrity_audit_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -338,7 +328,7 @@ class GitCommitGateway:
                 session_id,
             )
 
-        # pre-commit 门禁注册表（架构债务 #AD-001 治本：4 个 in-process gate 替代 12 个硬编码 _check_*）
+        # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
         gate_results = self._gate_registry.check_all(
             self, existing, session_id=session_id, allow_overlap=allow_overlap
@@ -402,7 +392,7 @@ class GitCommitGateway:
     def _should_use_no_pathspec(self, files: list[str], normal_files: list[str]) -> bool:
         """判断本次 commit 是否应用无 pathspec 模式（目标含 gitignored 文件时必须）。
 
-        受 integrity_anchors 保护，AGENTS.md §8 L212 警告勿删调用。
+        AGENTS.md §8 警告勿删调用（staged delete 保护核心，commit 32ead90e 教训）。
         """
         return len(normal_files) < len(files)
 

@@ -62,7 +62,7 @@ from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
 def _connect_ro(db_path: Path):
-    """获取 depgraph PostgreSQL 连接（P2迁移后；原 SQLite 只读 URI 模式已废弃）。
+    """获取 depgraph (PostgreSQL) 连接（P2迁移后；原 SQLite 只读 URI 模式已废弃）。
 
     本脚本仅执行 SELECT，autocommit=True 即可。db_path 参数保留用于日志/结果引用。
     """

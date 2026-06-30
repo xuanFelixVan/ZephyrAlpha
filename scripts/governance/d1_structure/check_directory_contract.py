@@ -262,15 +262,21 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
     DCR-003: permanent zone file ttl == permanent (error)
     DCR-004: temporary zone file ttl == task_bound (warning)
 
-    仅校验 .md 文件（有 frontmatter ttl 字段）。.yaml 文件的治理锚定 ttl 由
-    check_frontmatter_metadata.py 校验，本脚本不重复。
+    范围说明（2026-06-30 修正，trae_047 v1.2.0 全格式加 ttl 后原注释过时）：
+      - DCR-003/004 校验"frontmatter.ttl 与 zone.default_ttl 的一致性"，仅对
+        permanent/temporary zone 生效；neutral zone 的 default_ttl=null，无可比对值，跳过。
+      - 仅校验 .md 是因为 permanent/temporary zone 主体是 .md 文档（.yaml 治理锚定
+        ttl、.py 代码文件 ttl 的值合法性由 GATE-15 check_frontmatter_metadata.py 全格式校验，
+        本脚本不重复）。
+      - 代码文件（.py/.sh/.ps1）确实有 ttl 字段（A_full/A_test/E_shell 格式，trae_047 v1.2.0），
+        但它们位于 neutral zone，DCR-003/004 不适用。
     """
     rel_dir = str(Path(rel_path).parent).replace("\\", "/")
     zone_name, zone = find_zone(contract, rel_dir)
     if not zone or zone.get("default_ttl") is None:
-        return []  # neutral zone（default_ttl=null）不校验 ttl
+        return []  # neutral zone（default_ttl=null）无 default_ttl 可比对，跳过一致性校验
     if not rel_path.endswith(".md"):
-        return []  # 仅 .md 有 frontmatter ttl；代码文件无 ttl 字段
+        return []  # DCR-003/004 聚焦 .md（permanent/temporary zone 主体）；代码文件 ttl 值合法性由 GATE-15 负责
     abs_path = REPO_ROOT / rel_path
     try:
         fm, _ = parse_frontmatter_from_file(abs_path)

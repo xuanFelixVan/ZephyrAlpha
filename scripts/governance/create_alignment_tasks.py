@@ -38,7 +38,7 @@ TASKS = [
         "source_section": "§19.4",
         "upstream_files": [
             str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"),
-            "PostgreSQL depgraph (localhost:5432/depgraph)",
+            "depgraph (PostgreSQL) (localhost:5432/depgraph)",
         ],
         "downstream_outputs": [
             {
@@ -751,7 +751,7 @@ TASKS = [
         "source_blueprint": "GOV-ENG-002",
         "source_section": "§5",
         "upstream_files": [
-            "PostgreSQL depgraph (localhost:5432/depgraph)",
+            "depgraph (PostgreSQL) (localhost:5432/depgraph)",
         ],
         "downstream_outputs": [
             {"path": str(PROJECT_ROOT / "data" / "asset_index" / "header-alignment-report.yaml"), "desc": "对齐报告"},
@@ -768,7 +768,7 @@ TASKS = [
             {"module_id": "GOV-ENG-002", "section": "§5", "reason": "头字段格式规范"},
         ],
         "context_assembly_manifest": [
-            {"file_path": "PostgreSQL depgraph (localhost:5432/depgraph)", "reason": "消费者关系数据"},
+            {"file_path": "depgraph (PostgreSQL) (localhost:5432/depgraph)", "reason": "消费者关系数据"},
         ],
         "assigned_model": "deepseek",
         "assigned_pipeline": "A",
@@ -799,7 +799,7 @@ TASKS = [
         "source_section": "§19",
         "upstream_files": [],
         "downstream_outputs": [
-            {"path": "PostgreSQL depgraph (localhost:5432/depgraph)", "desc": "最终依赖图"},
+            {"path": "depgraph (PostgreSQL) (localhost:5432/depgraph)", "desc": "最终依赖图"},
             {"path": str(PROJECT_ROOT / "data" / "asset_index" / "depgraph-diagnosis.yaml"), "desc": "最终诊断报告"},
             {
                 "path": str(PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "system-dependency-map.md"),
@@ -807,7 +807,7 @@ TASKS = [
             },
         ],
         "allowed_touch": [
-            "PostgreSQL depgraph (localhost:5432/depgraph)",
+            "depgraph (PostgreSQL) (localhost:5432/depgraph)",
             "data/asset_index/depgraph-diagnosis.yaml",
             "docs/02_enterprise_architecture/system-dependency-map.md",
         ],

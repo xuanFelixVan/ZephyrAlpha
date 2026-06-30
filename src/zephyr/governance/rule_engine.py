@@ -83,7 +83,7 @@ def _rule_id_to_filename(rule_id: str) -> str:
     return f"{lower}.yaml"
 
 class RuleLoader:
-    """规则加载器 — 从 YAML 文件加载规则，通过 PostgreSQL depgraph 索引查找。"""
+    """规则加载器 — 从 YAML 文件加载规则，通过 depgraph (PostgreSQL) 索引查找。"""
 
     def __init__(
         self,

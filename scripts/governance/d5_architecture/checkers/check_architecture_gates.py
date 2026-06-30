@@ -49,7 +49,7 @@ from _shared.thresholds import get as get_threshold
 
 ensure_utf8_stdout()
 
-ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
+ARCH_MODEL = REPO_ROOT / "architecture_model"
 TARGET_ARCH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture"
 ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
 

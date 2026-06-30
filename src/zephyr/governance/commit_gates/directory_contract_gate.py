@@ -32,17 +32,17 @@ gate-directory-contract），导致 DCR-001~007 在 gateway 路径完全失效�
 
 治本方案
 --------
-对标 _check_pure_shim 模式（L1904）：通过 subprocess 调用 check_directory_contract.py
-复用真源。fail-closed：checker 缺失/执行失败时阻断（目录契约是核心约束，对标
-_check_frontmatter_ttl 的 fail-closed 设计，而非 _check_pure_shim 的 fail-open）。
+通过 subprocess 调用 check_directory_contract.py 复用真源（subprocess 复用真源模式，
+gateway 内不复制检测逻辑）。fail-closed：checker 缺失/执行失败时阻断（目录契约是
+核心约束，fail-closed 设计，防 checker 被删后静默放行）。
 
 设计决策
 --------
 1. **文件列表而非 --staged**：commit() 在 gate 检查时还未 git add（L714 gate 先于
    L742 _commit_locked 的 git add），--staged 会返回空。改用文件列表参数。
-2. **fail-closed 而非 fail-open**：_check_pure_shim fail-open 是因为"检测器缺失
-   不应阻断业务"；DCR fail-closed 是因为"目录契约违规会导致文件放错地方，是
-   严重问题，对标 _check_frontmatter_ttl 的 fail-closed 设计"。
+2. **fail-closed 而非 fail-open**：DCR fail-closed 是因为"目录契约违规会导致文件
+   放错地方，是严重问题"，checker 缺失属环境异常必须阻断（与检测器缺失不阻断业务
+   的 fail-open 场景不同）。
 3. **priority=30**：在 CLAIM-REQUIRED(40)、HELD-OVERLAP(50) 之前执行——目录契约
    是最基础的检查，应尽早拦截违规文件。
 4. **不传 --all-files**：增量校验（只校验本次 commit 的文件），避免全量扫描开销。
@@ -103,7 +103,7 @@ def make_directory_contract_gate() -> GateSpec:
             / "check_directory_contract.py"
         )
         if not check_script.is_file():
-            # fail-closed：checker 缺失是环境异常，必须阻断（对标 _check_frontmatter_ttl）
+            # fail-closed：checker 缺失是环境异常，必须阻断
             return False, f"check_directory_contract.py not found: {check_script}"
 
         # 3. 构造命令——文件数过多时改用 --all-files（避免 WinError 206）
@@ -112,7 +112,7 @@ def make_directory_contract_gate() -> GateSpec:
         else:
             cmd = [sys.executable, str(check_script)] + rel_files
 
-        # 4. subprocess 调用复用真源（对标 _check_pure_shim L1944 模式）
+        # 4. subprocess 调用复用真源
         try:
             result = subprocess.run(
                 cmd,

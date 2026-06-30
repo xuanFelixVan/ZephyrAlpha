@@ -147,7 +147,7 @@ def _load_from_db(db_path):
 
 
 def _update_db_metadata(db_path, metadata_updates):
-    """Update metadata fields in the depgraph PostgreSQL database.
+    """Update metadata fields in the depgraph (PostgreSQL) database.
 
     DM-202947 止血修复：_schema_version 表仅允许 depgraph_schema.py 的 _run_migration 写入，
     禁止其他脚本通过 INSERT OR REPLACE 覆写版本记录。此函数现为空操作（仅打印日志）。

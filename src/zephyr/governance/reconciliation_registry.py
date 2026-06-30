@@ -71,20 +71,16 @@ __all__ = [
     "ReconcilerSpec",
     "ReconciliationRegistry",
     "make_manifest_reconciler",
-    "make_baseline_aware_reconciler",
-    "make_ttl_reconciler",
-    "make_ghost_reconciler",
     "make_path_tree_reconciler",
-    "make_rule_catalog_reconciler",
-    "make_working_docs_reconciler",
-    "make_domain_doc_reconciler",
     "make_precommit_id_uniqueness_reconciler",
-    "make_rules_integrity_reconciler",
     "make_vocab_change_reconciler",
-    "make_commit_gateway_audit_reconciler",
     "make_deprecated_directory_reconciler",
-    "make_rule_file_audit_reconciler",
     "make_exempt_zone_frontmatter_reconciler",
+    "make_delete_audit_reconciler",
+    "make_regenerate_reconciler",
+    "make_rule_audit_reconciler",
+    "make_registry_sync_reconciler",
+    "make_integrity_audit_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -311,7 +307,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-REG-BL baseline-aware post-commit 对账 reconciler（P2-T3）。
 
     GATE-REG-BL 被 GitCommitGateway 的 --no-verify 系统性绕过（机制层病根）。
@@ -415,101 +411,7 @@ def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_ttl_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-15 ttl post-commit 兜底 reconciler（P2-T4）。
-
-    GATE-15 (frontmatter ttl) 已有 pre-compensation（``_check_frontmatter_ttl``
-    在 commit() 前阻断违规 .md），但若 pre-compensation 因异常被吞，违规 .md
-    会漏放入库。本 reconciler 在 post-commit 兜底重校，记录违规报告供追责。
-
-    设计裁定（增量 vs 全量）：
-    continuation plan §4.4 原述"全量校验"，经核实 check_frontmatter_metadata.py
-    的真实 CLI（手动读 sys.argv，无 argparse；--all-files=全量 docs/，传文件参=增量）后，
-    采用**增量模式**（传 committed .md 文件为参数）。理由：
-    1. pre-compensation 已对 committed 文件增量校验，post 兜底应镜像同范围
-    2. 全量 5149 文件每次 .md 提交都跑会慢且产生无关噪声
-    3. 增量精确锁定"本次 commit 是否漏放违规 .md"（兜底语义）
-
-    非阻断设计：post-commit 无法回滚 commit；记录违规到
-    .runtime/reconcile_reports/ttl_<ts>.json，与 pre-compensation 形成双层防御。
-
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本模块纯 stdlib 不 import zephyr.*）。
-
-    Returns:
-        ReconcilerSpec(gate_id="GATE-15-ttl", priority=300)。
-    """
-    import json
-    import os
-    import subprocess
-    import sys
-    import time
-
-    project_root = gateway.project_root
-
-    def _trigger(committed_files: list[str]) -> bool:
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.startswith("docs/") and rel.endswith(".md"):
-                return True
-        return False
-
-    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 筛选本次 committed 的 docs/*.md（增量模式参数）
-        md_files = []
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.startswith("docs/") and rel.endswith(".md"):
-                md_files.append(rel)
-        if not md_files:
-            return ReconcileResult(action="skip", detail="no docs/*.md in committed files")
-        # 2. post-commit 增量 ttl 校验（传文件参 → 增量模式，非 --all-files）
-        scan_result = subprocess.run(
-            [sys.executable, "scripts/governance/d3_metadata/check_frontmatter_metadata.py"]
-            + md_files,
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=60,
-        )
-        # 3. 报告落盘
-        report = {
-            "gate_id": "GATE-15-ttl",
-            "session_id": session_id,
-            "exit_code": scan_result.returncode,
-            "checked_files": md_files,
-            "stdout_tail": scan_result.stdout.strip()[-500:],
-            "stderr_tail": scan_result.stderr.strip()[-500:],
-        }
-        report_path, write_err = _write_reconcile_report(project_root, "ttl", report)
-        if write_err:
-            return ReconcileResult(
-                action="warn",
-                detail=f"ttl scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
-            )
-        # 4. 判定（exit 0 = clean，非 0 = 违规检出）
-        if scan_result.returncode == 0:
-            return ReconcileResult(
-                action="clean",
-                detail=f"ttl scan clean ({len(md_files)} .md), report={report_path.name}",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"ttl scan detected violations (exit={scan_result.returncode}), report={report_path.name}",
-        )
-
-    return ReconcilerSpec(
-        gate_id="GATE-15-ttl",
-        trigger=_trigger,
-        reconcile=_reconcile,
-        priority=300,
-    )
-
-
-def make_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 depgraph ghost post-commit 对账 reconciler（P2-T5）。
 
     commit 删除文件后，depgraph 可能残留 ghost node（磁盘已删除但 depgraph
@@ -662,7 +564,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 rule_catalog_registry post-commit 自动同步 reconciler。
 
     commit ``docs/01_policies_and_standards/rules/`` 下文件后，
@@ -752,7 +654,7 @@ def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_registry_index_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_registry_index_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 registry_master_index post-commit 自动同步 reconciler。
 
     commit ``infrastructure_registry.yaml`` 后，``registry_master_index.yaml``
@@ -1044,7 +946,7 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
     }
 
 
-def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 docs/_working/ 幽灵引用 post-commit 对账 reconciler（治本：AI 工作文档堆积治理）。
 
     docs/_working/ 下的 task_bound 文档引用脚本/规则/状态，随项目演进这些引用会
@@ -1155,13 +1057,13 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造域文档制品 post-commit 自动重生 reconciler。
 
     治本（2026-06-27）：原 trigger 匹配 ``data/databases/depgraph.db`` commit 事件，
     P2 PG 迁移后 depgraph 已迁至 PostgreSQL，无 .db 文件 commit 路径，trigger 永不命中，
     reconciler 沦为死代码。现改为匹配 PG 写入脚本 commit（apply_depgraph.py /
-    sync_yaml_to_depgraph.py / generate_project_path_tree.py），这三者是 PG depgraph
+    sync_yaml_to_depgraph.py / generate_project_path_tree.py），这三者是 depgraph (PostgreSQL)
     的唯一写入入口，其变更即代表 DB 内容可能漂移，需重生域制品。
 
     本 reconciler 在 post-commit 跑 generate_domain_doc.py --all +
@@ -1185,7 +1087,7 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
 
     project_root = gateway.project_root
     # 治本（2026-06-27）：PG 写入脚本真源列表（替代 depgraph.db trigger）。
-    # 这三脚本是 PostgreSQL depgraph 的唯一写入入口，其 commit 即代表 DB 变更。
+    # 这三脚本是 depgraph (PostgreSQL) 的唯一写入入口，其 commit 即代表 DB 变更。
     _PG_WRITE_SCRIPTS = (
         "scripts/governance/apply_depgraph.py",
         "scripts/governance/sync_yaml_to_depgraph.py",
@@ -1263,7 +1165,7 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造根树 architecture_model/index.yaml post-commit 自动重生 reconciler。
 
     治本（2026-06-30）：dm200916_write_direct.py 当前 ``[STARTUP] manual``，根树
@@ -1272,12 +1174,12 @@ def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
     index.yaml 的 domains 列表漂移。本 reconciler 在 PG 写入脚本 commit 后触发
     dm200916 重生根树 index.yaml（双树合并后单树，2026-06-30 治本）。
 
-    派生范围：index.yaml 的 domains 列表 + global_stats.total_domains（从 PG depgraph
+    派生范围：index.yaml 的 domains 列表 + global_stats.total_domains（从 depgraph (PostgreSQL)
     domains 表派生）。不派生：partitions/query_hints/id_conventions（手工模板）、
     index.md、capability_heatmap.yaml（含手工评估数据）。
 
     循环安全：trigger 只匹配 PG 写入脚本（.py），制品 auto-commit 的 committed_files
-    是 index.yaml，不命中 trigger，不会递归触发。dm200916 不修改 PG depgraph（只读
+    是 index.yaml，不命中 trigger，不会递归触发。dm200916 不修改 depgraph (PostgreSQL)（只读
     domains 表）。
 
     priority=610（在 GATE-DOMAIN-DOC 600 之后，确保域文档先生成再重生架构模型索引）。
@@ -1312,7 +1214,7 @@ def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重生根树 index.yaml（dm200916 从 PG depgraph domains 表派生）
+        # 1. 重生根树 index.yaml（dm200916 从 depgraph (PostgreSQL) domains 表派生）
         gen_result = subprocess.run(
             [sys.executable, _GEN_SCRIPT],
             cwd=str(project_root),
@@ -1371,10 +1273,10 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
     """构造 GATE-ID-UNIQ post-commit 兜底 reconciler（治本改进点2）。
 
     GATE-ID-UNIQ (pre-commit hook id 唯一性) 被 GitCommitGateway 的 --no-verify
-    系统性绕过（机制层病根，与 GATE-15-ttl / GATE-REG-BL 同根：post-commit 补偿层）。
+    系统性绕过（机制层病根，与 GATE-REG-BL 同根：post-commit 补偿层；原 GATE-15-ttl 已删除）。
     本 reconciler 在 post-commit 跑 check_precommit_id_uniqueness.py --ci 重校，
     检测到 same-repo 重复 id 则记录违规报告供追责（commit 已入历史，非阻断——
-    与 make_ttl_reconciler 一致的设计裁定）。
+    沿用原 make_ttl_reconciler 的设计裁定，该 reconciler 已删除但模式沿用）。
 
     设计裁定（非阻断）：
     post-commit 无法回滚 commit；same-repo 重复 id 已入 git 历史，仅告警记录到
@@ -1476,7 +1378,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
     设计依据：trae_060 治本方案——decision_tree 机器可读化后，词表变更应自动传播到
     所有 .md 文件的 ttl 字段，消除手动 backfill 漂移风险。reconciler 优先级 280
-    （在 GATE-15-ttl 300 之前执行，确保 ttl 校验前 ttl 值已纠偏）。
+    （在原 GATE-15-ttl 300 之前执行；GATE-15-ttl 已删除，ttl 校验由 pre-compensation 承担）。
 
     Args:
         gateway: GitCommitGateway 实例（用 project_root + _run_git）。
@@ -1577,7 +1479,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
-def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-RULES-INTEGRITY post-commit 基线自动同步 reconciler（红蓝发现1 治本）。
 
     根因（红蓝发现1 P0）：
@@ -1690,10 +1592,10 @@ def _audit_commit_history(
     """扫描最近 N 个 commit，返回无 GW 标记的裸 commit 列表（审计逻辑真源）。
 
     治本（2026-06-30 病根1 看门人无人看）：把 make_commit_gateway_audit_reconciler
-    闭包内的审计逻辑提取为模块级函数，使其成为可被 A 层 AST 锚点保护的 name
-    （_check_protected_script_integrity._collect_nodes 只收集模块级 + 类内 name，
-    闭包内 name 不被收集）。与 working_docs_ghost_ref_archiver 模式一致：
-    工厂函数 + 模块级逻辑函数（scan_and_archive_working_docs）。
+    闭包内的审计逻辑提取为模块级函数，使其成为可被 integrity_anchors 保护的 name
+    （A 层 _check_protected_script_integrity 已在 AD-001 阶段3 删除，但模块级函数
+    结构保留，供未来复活 A 层时直接复用）。与 working_docs_ghost_ref_archiver 模式
+    一致：工厂函数 + 模块级逻辑函数（scan_and_archive_working_docs）。
 
     两阶段检查：subject 快速扫描 + body 二次确认
     （GitCommitGateway.commit() 把 [GW:tag] 追加到 message 末尾用 \\n\\n 分隔，
@@ -1750,7 +1652,7 @@ def _audit_commit_history(
     return violations, None
 
 
-def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-COMMIT-GW-AUDIT post-commit 审计 reconciler（C级 缺口4）。
 
     扫描最近 N 个 commit，标记未经 GitCommitGateway 的裸 commit（message 不含
@@ -1844,7 +1746,7 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-DEPRECATED-DIR post-commit reconciler（09_audit 治本加固）。
 
     扫描 docs/ 下是否存在已废弃目录（如 09_audit/），存在则告警。
-    双层防御：GitCommitGateway._check_deprecated_directories 阻断提交 +
+    双层防御：directory_contract_gate（subprocess 调 check_directory_contract.py）阻断提交 +
     post-commit reconciler 兜底 mkdir 但未提交的场景（如脚本 mkdir 后未 commit）。
 
     设计裁定（非阻断）：
@@ -1855,18 +1757,36 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
 
     向内收设计：
     - 复用 ReconciliationRegistry 框架，不新建兜底系统
-    - 废弃目录清单复用 GitCommitGateway._DEPRECATED_DIRS（通过 gateway 引用，不复制）
+    - 废弃目录清单从 directory_contract.yaml §7 deprecated_directories 动态加载（真源唯一，治本 2026-06-30：原依赖 gateway._DEPRECATED_DIRS 已删除导致降级为 no-op）
     - 复用 _write_reconcile_report 报告落盘
 
     Args:
-        gateway: GitCommitGateway 实例（用 project_root + _DEPRECATED_DIRS）。
+        gateway: GitCommitGateway 实例（用 project_root 定位契约文件）。
 
     Returns:
         ReconcilerSpec(gate_id="GATE-DEPRECATED-DIR", priority=600)。
     """
     project_root = gateway.project_root
-    # 复用 gateway 的废弃目录清单（真源唯一，不复制）
-    deprecated_dirs: dict[str, str] = getattr(gateway, "_DEPRECATED_DIRS", {})
+    # 从 directory_contract.yaml §7 deprecated_directories 动态加载（真源唯一）
+    # 治本 2026-06-30：原 getattr(gateway, "_DEPRECATED_DIRS", {}) 因 _DEPRECATED_DIRS
+    # 已删除（AD-001 阶段3）返回空 dict 导致 reconciler 降级为 no-op，现直接读契约真源
+    import yaml as _yaml  # 局部导入（模块声明 pure stdlib，yaml 仅此函数需要）
+    _contract_path = (
+        project_root / "docs" / "01_policies_and_standards"
+        / "_registry" / "contracts" / "directory_contract.yaml"
+    )
+    deprecated_dirs: dict[str, str] = {}
+    try:
+        with open(_contract_path, encoding="utf-8") as _f:
+            _contract = _yaml.safe_load(_f) or {}
+        for _entry in _contract.get("deprecated_directories", []):
+            _path = _entry.get("path", "")
+            _reason = _entry.get("reason", "")
+            if _path:
+                deprecated_dirs[_path] = _reason
+    except (OSError, _yaml.YAMLError):
+        # fail-open：契约读取失败时 reconciler 降级为 no-op（不阻断 commit）
+        deprecated_dirs = {}
 
     def _trigger(committed_files: list[str]) -> bool:
         # 始终检测：脚本可能 mkdir 但未 commit（如 session_continuity 的 handoff 写入）
@@ -2059,7 +1979,7 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
     return ""
 
 
-def make_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+def _make_old_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-RULE-FILE-AUDIT post-commit 审计 reconciler（缺口3：规则文件变更审计）。
 
     治本动机：directory_contract / doc_type_vocabulary / ttl_vocabulary /
@@ -2221,4 +2141,175 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
         trigger=_trigger,
         reconcile=_reconcile,
         priority=710,
+    )
+
+
+# ============================================================
+# AD-GOV-001 治理收敛：5 组 reconciler 合并（16→11）
+# 合并规则（严格遵守）：
+# - trigger = 旧A trigger OR 旧B trigger（任一命中即执行）
+# - reconcile = 串联执行 旧A → 旧B；action 取较严重，detail 拼接两者
+# - priority = max(旧A, 旧B)
+# 旧实现保留为 _make_old_*_reconciler 私有函数供合并 reconciler 复用——
+# reconcile 逻辑真源不动（gateway._commit_auto / subprocess / 报告落盘调用原样保留），
+# 仅收敛 ReconciliationRegistry 注册入口，治本 AD-GOV-001 治理军备竞赛。
+# ============================================================
+
+
+def _compose_reconcilers(
+    gate_id: str,
+    spec_a: ReconcilerSpec,
+    spec_b: ReconcilerSpec,
+) -> ReconcilerSpec:
+    """合并两个 reconciler spec 为一个（AD-GOV-001 治理收敛工具函数）。
+
+    - trigger: spec_a.trigger 与 spec_b.trigger 的 OR（任一命中即执行）
+    - reconcile: 串联执行 spec_a.reconcile → spec_b.reconcile；action 取较严重
+      （severity: warn=auto_committed=2 > clean=1 > skip=nothing=0），detail 拼接两者
+    - priority: max(spec_a.priority, spec_b.priority)
+    """
+    trigger_a = spec_a.trigger
+    trigger_b = spec_b.trigger
+    reconcile_a = spec_a.reconcile
+    reconcile_b = spec_b.reconcile
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return trigger_a(committed_files) or trigger_b(committed_files)
+
+    _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2}
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        result_a = reconcile_a(committed_files, session_id)
+        result_b = reconcile_b(committed_files, session_id)
+        action = (
+            result_a.action
+            if _SEVERITY.get(result_a.action, 0) >= _SEVERITY.get(result_b.action, 0)
+            else result_b.action
+        )
+        detail = (
+            f"[{result_a.action}] {result_a.detail} | "
+            f"[{result_b.action}] {result_b.detail}"
+        )
+        return ReconcileResult(action=action, detail=detail)
+
+    return ReconcilerSpec(
+        gate_id=gate_id,
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=max(spec_a.priority, spec_b.priority),
+    )
+
+
+def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-DELETE-AUDIT post-commit 对账 reconciler（AD-GOV-001 合并）。
+
+    合并来源：
+    - 旧 GATE-GHOST (priority=400)：commit 删除文件后跑 diagnose_depgraph.py
+      检测 depgraph 残留 ghost node（磁盘已删除但 DB 仍保留），记录报告供追责。
+    - 旧 GATE-WORKING-DOCS (priority=500)：扫描 docs/_working/ 工作文档的幽灵引用，
+      归档有幽灵引用的文档到 .runtime/working_archive/ 并自动提交 _working/ 删除。
+
+    合并原因：两者 trigger 完全重叠（均检测 committed 文件不在磁盘 = 删除 commit），
+    reconcile 均处理"删除引发的漂移"，逻辑可串联，合并消除冗余 trigger 评估。
+
+    合并后执行：先 ghost 诊断，再 working_docs 归档；action 取较严重，detail 拼接。
+    priority=max(400,500)=500。
+    """
+    return _compose_reconcilers(
+        "GATE-DELETE-AUDIT",
+        _make_old_ghost_reconciler(gateway),
+        _make_old_working_docs_reconciler(gateway),
+    )
+
+
+def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-REGENERATE post-commit 自动重生 reconciler（AD-GOV-001 合并）。
+
+    合并来源：
+    - 旧 GATE-DOMAIN-DOC (priority=600)：PG 写入脚本 commit 后跑
+      generate_domain_doc.py --all + generate_domain_dependency_diagram.py --all
+      重生所有域制品，有变更自动提交。
+    - 旧 GATE-ARCH-MODEL (priority=610)：PG 写入脚本 commit 后跑
+      dm200916_write_direct.py 重生根树 architecture_model/index.yaml 的 domains
+      列表，有变更自动提交。
+
+    合并原因：两者 trigger 完全重叠（均匹配同一组 PG 写入脚本 commit），reconcile
+    均为"DB 变更→派生制品重生"，逻辑可串联，合并消除冗余 trigger 评估。
+
+    合并后执行：先重生域文档，再重生根树 index.yaml；action 取较严重，detail 拼接。
+    priority=max(600,610)=610。
+    """
+    return _compose_reconcilers(
+        "GATE-REGENERATE",
+        _make_old_domain_doc_reconciler(gateway),
+        _make_old_arch_model_reconciler(gateway),
+    )
+
+
+def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-RULE-AUDIT post-commit 规则同步+审计 reconciler（AD-GOV-001 合并）。
+
+    合并来源：
+    - 旧 GATE-RULE-CATALOG (priority=160)：commit rules/ 下文件后跑
+      generate_rule_catalog.py 重新生成 rule_catalog_registry.yaml，有变更自动提交。
+    - 旧 GATE-RULE-FILE-AUDIT (priority=700)：commit 治理真源规则文件
+      （directory_contract/doc_type_vocabulary/ttl_vocabulary/architecture_contract/
+      gate_registry）后落盘审计记录，提示人工审查（约束可能被悄悄放宽）。
+
+    合并原因：两者关注点相邻（规则文件变更的自动同步 + 人工审计兜底），trigger
+    重叠（规则文件变更），合并形成"自动同步+审计告警"单入口，消除分散注册。
+
+    合并后执行：先重生成 catalog（自动提交漂移），再落盘规则文件审计告警；
+    action 取较严重，detail 拼接。priority=max(160,700)=700。
+    """
+    return _compose_reconcilers(
+        "GATE-RULE-AUDIT",
+        _make_old_rule_catalog_reconciler(gateway),
+        _make_old_rule_file_audit_reconciler(gateway),
+    )
+
+
+def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-REGISTRY-SYNC post-commit 注册表同步+基线对账 reconciler（AD-GOV-001 合并）。
+
+    合并来源：
+    - 旧 GATE-REGISTRY-INDEX (priority=155)：commit infrastructure_registry.yaml 后
+      跑 generate_registry_master_index.py 重新生成 registry_master_index.yaml，
+      有变更自动提交（校验+自动修复双闭环）。
+    - 旧 GATE-REG-BL (priority=200)：commit src/zephyr/ 与 scripts/governance/ 下
+      .py 后跑 audit_registration.py --baseline-aware 增量扫描 NEW 孤儿，记录报告。
+
+    合并原因：两者均守护"注册表/基线一致性"，trigger 在 governance 域 .py 变更上
+    重叠，逻辑可串联，合并形成"注册表索引同步+基线孤儿扫描"单入口。
+
+    合并后执行：先重生成 registry_master_index，再跑 baseline-aware 孤儿扫描；
+    action 取较严重，detail 拼接。priority=max(155,200)=200。
+    """
+    return _compose_reconcilers(
+        "GATE-REGISTRY-SYNC",
+        _make_old_registry_index_reconciler(gateway),
+        _make_old_baseline_aware_reconciler(gateway),
+    )
+
+
+def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-INTEGRITY-AUDIT post-commit 完整性+网关审计 reconciler（AD-GOV-001 合并）。
+
+    合并来源：
+    - 旧 GATE-RULES-INTEGRITY (priority=270)：每次 commit 后跑
+      validate_rules_integrity.py --register 重算 RULES_MANIFEST 文件 hash 写入
+      本地基线，消除"C 层基线与 commit 不同步→误报 TAMPERED"结构性缺陷。
+    - 旧 GATE-COMMIT-GW-AUDIT (priority=800)：扫描最近 20 个 commit，标记未经
+      GitCommitGateway 的裸 commit（message 不含 [GW: 标记），告警 --no-verify 绕过。
+
+    合并原因：两者 trigger 均 always True（完整性重注册与网关审计都无法用文件前缀
+    限定），逻辑可串联，合并形成"基线同步+网关审计"非阻断兜底单入口。
+
+    合并后执行：先重注册 rules_integrity 基线，再审计 commit 网关标记；
+    action 取较严重，detail 拼接。priority=max(270,800)=800。
+    """
+    return _compose_reconcilers(
+        "GATE-INTEGRITY-AUDIT",
+        _make_old_rules_integrity_reconciler(gateway),
+        _make_old_commit_gateway_audit_reconciler(gateway),
     )

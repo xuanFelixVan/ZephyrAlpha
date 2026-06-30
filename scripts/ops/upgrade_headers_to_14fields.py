@@ -186,7 +186,7 @@ class UpgradeResult:
 
 
 class DepgraphLoader:
-    """Load node info and edges from PostgreSQL depgraph into memory lookups.
+    """Load node info and edges from depgraph (PostgreSQL) into memory lookups.
 
     治本（2026-06-27）：删除 db_path 实例属性（路径污染源，P2 PG 迁移后无文件路径概念）。
     """

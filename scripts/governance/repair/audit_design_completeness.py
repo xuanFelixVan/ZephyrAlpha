@@ -56,7 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
-DST_DB = "PostgreSQL depgraph"
+DST_DB = "depgraph (PostgreSQL)"
 REPORT_PATH = r"D:\临时工作区\design_migration_gap_report.md"
 
 # 源MD文件目录/文件

@@ -6,16 +6,15 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] task_bound
-"""test_commit_gateway_audit_reconciler.py — GATE-COMMIT-GW-AUDIT reconciler 单测（C级 缺口4）
+"""test_commit_gateway_audit_reconciler.py — GATE-INTEGRITY-AUDIT reconciler 单测（AD-GOV-001 合并后）
 
-权威依据：make_commit_gateway_audit_reconciler（reconciliation_registry.py）
+权威依据：make_integrity_audit_reconciler（reconciliation_registry.py）
+AD-GOV-001 合并：旧 GATE-RULES-INTEGRITY + GATE-COMMIT-GW-AUDIT → GATE-INTEGRITY-AUDIT
 
 测试组：
-- TestTrigger: trigger always True（绕过可能涉及任何文件）
-- TestReconcileClean: 全部 commit 含 [GW: 标记 → action=clean
-- TestReconcileViolations: 存在无 [GW: 标记的裸 commit → action=warn
-- TestMergeSkip: merge commit 跳过（不误报）
-- TestReportWritten: 报告落盘 .runtime/reconcile_reports/commit_gateway_audit_<ts>.json
+- TestTrigger: trigger always True（两个旧 trigger 均 always True，OR 仍 always True）
+- TestSpecProperties: gate_id=GATE-INTEGRITY-AUDIT, priority=800
+- TestReconcileBehavior: 合并后 reconcile 串联执行，action 取较严重
 
 测试隔离: 所有测试用 tmp_path 临时 git 仓库，不污染生产库。
 """
@@ -35,7 +34,8 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.governance.git_commit_gateway import GitCommitGateway  # noqa: E402
 from zephyr.governance.reconciliation_registry import (  # noqa: E402
-    make_commit_gateway_audit_reconciler,
+    make_integrity_audit_reconciler,
+    _make_old_commit_gateway_audit_reconciler,
 )
 
 
@@ -77,13 +77,13 @@ class TestTrigger:
     def test_trigger_empty_files(self, tmp_path):
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = make_integrity_audit_reconciler(gw)
         assert spec.trigger([]) is True
 
     def test_trigger_any_files(self, tmp_path):
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = make_integrity_audit_reconciler(gw)
         assert spec.trigger(["src/foo.py", "docs/bar.md"]) is True
 
 
@@ -91,14 +91,14 @@ class TestTrigger:
 # TestReconcileClean
 # ---------------------------------------------------------------------------
 class TestReconcileClean:
-    """全部 commit 含 [GW: 标记 → action=clean。"""
+    """全部 commit 含 [GW: 标记 → action=clean（测试旧 commit_gateway_audit 逻辑）。"""
 
     def test_all_gw_commits_clean(self, tmp_path):
         _init_git_repo(tmp_path)
         _make_commit(tmp_path, "feat: add a [GW:sess-001]")
         _make_commit(tmp_path, "feat: add b [GW:sess-002:auto]")
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         assert result.action == "clean"
         assert "audit clean" in result.detail
@@ -115,7 +115,7 @@ class TestReconcileViolations:
         _make_commit(tmp_path, "feat: gateway commit [GW:sess-001]")
         _make_commit(tmp_path, "feat: bare commit no marker")  # 裸 commit
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         assert result.action == "warn"
         assert "1 non-GW" in result.detail
@@ -127,7 +127,7 @@ class TestReconcileViolations:
         _make_commit(tmp_path, "bare two")
         _make_commit(tmp_path, "bare three")
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         assert result.action == "warn"
         assert "3 non-GW" in result.detail
@@ -155,7 +155,7 @@ class TestMergeSkip:
         )
         # 现在 git log 含一个 Merge commit（含 [GW: 标记，不会误报）
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         # 所有 commit 都有 [GW: 标记（含 merge），应该 clean
         assert result.action == "clean"
@@ -175,7 +175,7 @@ class TestMergeSkip:
             cwd=str(tmp_path), capture_output=True, check=True,
         )
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         # merge commit 被跳过，其他 commit 都有 [GW: 标记 → clean
         assert result.action == "clean"
@@ -191,7 +191,7 @@ class TestReportWritten:
         _init_git_repo(tmp_path)
         _make_commit(tmp_path, "bare commit")
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         # 报告目录存在
         reports_dir = tmp_path / ".runtime" / "reconcile_reports"
@@ -210,7 +210,7 @@ class TestReportWritten:
         _init_git_repo(tmp_path)
         _make_commit(tmp_path, "feat: bare commit detail test")
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = _make_old_commit_gateway_audit_reconciler(gw)
         result = spec.reconcile([], "sess-test")
         reports_dir = tmp_path / ".runtime" / "reconcile_reports"
         reports = list(reports_dir.glob("commit_gateway_audit_*.json"))
@@ -231,12 +231,12 @@ class TestSpecProperties:
     def test_gate_id(self, tmp_path):
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
-        assert spec.gate_id == "GATE-COMMIT-GW-AUDIT"
+        spec = make_integrity_audit_reconciler(gw)
+        assert spec.gate_id == "GATE-INTEGRITY-AUDIT"
 
     def test_priority_is_last(self, tmp_path):
         """priority=800 最后执行（审计非阻断，低优先级）。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        spec = make_commit_gateway_audit_reconciler(gw)
+        spec = make_integrity_audit_reconciler(gw)
         assert spec.priority == 800

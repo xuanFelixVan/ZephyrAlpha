@@ -128,9 +128,9 @@ def main():
         _pg_conn = get_depgraph_pg_connection(autocommit=True)
         _pg_conn.execute("SELECT 1").fetchone()
         _pg_conn.close()
-        print("  ✅ PASS: depgraph PostgreSQL 连接可用")
+        print("  ✅ PASS: depgraph (PostgreSQL) 连接可用")
     except Exception as e:
-        print(f"  ❌ FAIL: depgraph PostgreSQL 连接失败: {e}")
+        print(f"  ❌ FAIL: depgraph (PostgreSQL) 连接失败: {e}")
         all_pass = False
     # governance.db 仍为 SQLite，验证文件存在
     if DB_PATH.exists():

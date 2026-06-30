@@ -13,11 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""从 PostgreSQL depgraph 派生 architecture_model/index.yaml。
+"""从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。
 
 治本改造（2026-06-29）：
 - 原脚本是一次性写入脚本，硬编码 52域 + §2.1 裁定语境，会覆盖手工修复
-- 现改为真正的派生脚本：从 PG depgraph 读取域列表，动态生成 index.yaml
+- 现改为真正的派生脚本：从 depgraph (PostgreSQL) 读取域列表，动态生成 index.yaml
 - 不再生成 index.md 和 capability_heatmap.yaml（含手工内容，应手工维护）
 - 域数用 f-string 动态生成（{len(domains)}域），消除硬编码数字漂移源
 
@@ -29,14 +29,14 @@ v3.0.2 融合版（2026-06-30 双树合并治本）：
 - query_hints 中 cross-cutting 规范化为 cross_cutting
 
 派生范围：
-- index.yaml 的 domains 列表 + global_stats.total_domains（从 PG depgraph 派生）
+- index.yaml 的 domains 列表 + global_stats.total_domains（从 depgraph (PostgreSQL) 派生）
 - index.yaml 的其他部分（partitions, b_track, query_hints, id_conventions, governance）是手工模板（不变）
 
 不派生的文件（手工维护）：
 - index.md：含责任声明、物理分类说明等手工内容（注：根树不允许 .md，人读视图在 docs/ 树）
 - cross_cutting/capability_heatmap.yaml：含 maturity_score 等手工评估数据
 
-循环安全：本脚本不修改 PG depgraph，可被 reconciler 自动触发。
+循环安全：本脚本不修改 depgraph (PostgreSQL)，可被 reconciler 自动触发。
 """
 import sys
 from pathlib import Path
@@ -51,7 +51,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 BASE = REPO_ROOT / "architecture_model"
 
-# 查询域列表（真源：PostgreSQL depgraph domains 表）
+# 查询域列表（真源：depgraph (PostgreSQL) domains 表）
 conn = get_depgraph_pg_connection(autocommit=True)
 rows = conn.execute("""
     SELECT domain_id, domain_name, layer_id
@@ -68,7 +68,7 @@ print(f"域总数: {domain_count}")
 yaml_content = f"""# v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
 # c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
-# 本文件由 dm200916_write_direct.py 从 PostgreSQL depgraph 派生，禁止手工编辑 domains 列表
+# 本文件由 dm200916_write_direct.py 从 depgraph (PostgreSQL) 派生，禁止手工编辑 domains 列表
 module_id: MOD-GOVERNANCE
 schema_version: '3.0.2'
 system:
@@ -93,7 +93,7 @@ governance:
 partitions:
 # === {domain_count}域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
-  path: PostgreSQL depgraph
+  path: depgraph (PostgreSQL)
   description: >
     {domain_count}域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary

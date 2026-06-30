@@ -1126,7 +1126,7 @@ def init_db(
     *,
     echo: bool = False,
 ) -> None:
-    """验证 PostgreSQL depgraph schema 健康性（幂等）。
+    """验证 depgraph (PostgreSQL) schema 健康性（幂等）。
 
     P2迁移后：PG schema 由 scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql 创建。
     本函数不再执行 DDL/migration，仅验证核心表存在。
@@ -1146,7 +1146,7 @@ def init_db(
             """)
             if cur.fetchone() is None:
                 raise RuntimeError(
-                    "PG depgraph schema 未创建。请运行:\n"
+                    "depgraph (PostgreSQL) schema 未创建。请运行:\n"
                     "  psql -U postgres -d depgraph -f scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql"
                 )
             if echo:
@@ -1178,7 +1178,7 @@ def get_depgraph_pg_connection(
     timeout: float = 30.0,  # SQLite-only，PG 忽略
     apply_foreign_keys: bool = True,  # SQLite-only，PG 忽略（FK 由 schema DDL 管理）
 ) -> Any:
-    """返回 PostgreSQL depgraph 连接。
+    """返回 depgraph (PostgreSQL) 连接。
 
     所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。
 
@@ -1211,7 +1211,7 @@ get_db_connection = get_depgraph_pg_connection
 
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
-    """返回 PostgreSQL depgraph 中所有 public schema 表名。"""
+    """返回 depgraph (PostgreSQL) 中所有 public schema 表名。"""
     conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
@@ -1227,7 +1227,7 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
 
 
 def schema_version(db_path: Path | str | None = None) -> int:
-    """返回当前 PostgreSQL depgraph 的 schema 版本。"""
+    """返回当前 depgraph (PostgreSQL) 的 schema 版本。"""
     conn = get_depgraph_pg_connection()
     try:
         return _get_current_version(conn)
@@ -1250,7 +1250,7 @@ if __name__ == "__main__":
     init_db(echo=True)
     tables = table_names()
     ver = schema_version()
-    print(f"\n  PostgreSQL depgraph schema verified")
+    print(f"\n  depgraph (PostgreSQL) schema verified")
     print(f"  Schema version: v{ver}")
     print(f"  Tables ({len(tables)}): {', '.join(tables)}")
     sys.exit(0)

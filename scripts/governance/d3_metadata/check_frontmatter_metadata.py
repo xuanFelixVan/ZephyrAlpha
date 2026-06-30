@@ -2,10 +2,14 @@
 # [MODULE] governance.d3_metadata.check_frontmatter_metadata
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
-# [CONSUMERS] pre-commit GATE-15; GitCommitGateway._check_frontmatter_ttl; manual validation
+# [CONSUMERS] pre-commit GATE-15（唯一拦截点，见下方说明）; manual validation
+# 说明（2026-06-30 修正）：原 [CONSUMERS] 引用 `GitCommitGateway._check_frontmatter_ttl` 为死引用——
+# 该方法已在 AD-GOV-001 阶段3瘦身中删除（11 个 _check_* 方法迁移到 commit_gates/ 注册制 gate），
+# 且未被注册制 gate 替代——GitCommitGateway 当前不内置 ttl 校验 gate（用 --no-verify 绕过 pre-commit
+# 时 ttl 校验失效，已知架构缺口）。当前 ttl 校验真源唯一在 pre-commit hook GATE-15（本脚本）。
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block；doc_type 默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；只校验有 frontmatter 的 .md；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
+# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -27,8 +31,8 @@ capability registry: 本文件是 frontmatter metadata validation 的 canonical 
 归档脚本 validate_frontmatter_values.py 是 legacy 副本，不复活——如需扩展字段校验，扩展本文件。
 
 两种模式:
-  全量（无参数或 --all-files）: 扫描 docs/ 下所有 .md
-  增量（有文件参数且无 --all-files，pre-commit pass_filenames=true 时用）: 只校验传入的 .md
+  全量（无参数或 --all-files）: 扫描 docs/ + src/ + scripts/ + tests/ 下所有支持格式（.md/.py/.sh/.ps1/.mmd/.yaml/.json）
+  增量（有文件参数且无 --all-files，pre-commit pass_filenames=true 时用）: 只校验传入的支持格式文件
 
 Usage::
 

@@ -195,6 +195,10 @@ jobs:
       - name: Test Collection Gate (GATE-18)
         run: python -m pytest tests/ --collect-only -q --tb=line
 
+      - name: GitCommitGateway Guard Tests (CI 兜底：gateway.py 篡改检测)
+        run: python -m pytest tests/test_git_commit_gateway.py::TestRunGitCommitGuard -v --tb=short
+        continue-on-error: false
+
       - name: TraceContext Propagation Check
         run: python scripts/governance/d5_architecture/checkers/check_trace_context_propagation.py
         continue-on-error: false

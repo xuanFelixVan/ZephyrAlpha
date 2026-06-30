@@ -46,7 +46,7 @@
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
 | **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
-| **数据库清单（5库唯一真源）** | `D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~005 唯一真源（governance.db/ChromaDB/PostgreSQL depgraph/DuckDB OLAP/market.duckdb）。包含类型/地址/健康检查/依赖/SLA/状态。**禁止在其它文档同步数据库清单**，所有引用用纯指针。详见 AGENTS.md §11.0 |
+| **数据库清单（5库唯一真源）** | `D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~005 唯一真源（governance.db/ChromaDB/depgraph (PostgreSQL)/DuckDB OLAP/market.duckdb）。包含类型/地址/健康检查/依赖/SLA/状态。**禁止在其它文档同步数据库清单**，所有引用用纯指针。详见 AGENTS.md §11.0 |
 
 **绝对禁止**：
 - ❌ 引用 `project-entity-depgraph-v3-domain-draft.yaml`（已合并入真源，保留为副本）

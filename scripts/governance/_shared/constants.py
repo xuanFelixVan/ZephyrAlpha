@@ -102,7 +102,7 @@ class PgConnExecuteWrapper:
 
 
 def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
-    """获取 depgraph PostgreSQL 连接（包装为兼容 sqlite3 接口）。
+    """获取 depgraph (PostgreSQL) 连接（包装为兼容 sqlite3 接口）。
 
     P2迁移后：所有治理脚本通过此入口获取 PG 连接，避免散点连接绕过统一配置。
     返回的 PgConnExecuteWrapper 支持 conn.execute(sql, params).fetchone()/fetchall() 模式，
