@@ -102,7 +102,7 @@ class TestHealthCheck:
         assert result["governance"] is True
 
     def test_health_check_depgraph_returns_true(self, db_service):
-        """验证 depgraph.db 健康检查通过"""
+        """验证 depgraph 健康检查通过"""
         result = db_service.health_check()
         assert result["depgraph"] is True
 
