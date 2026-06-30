@@ -3,15 +3,15 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T16:32:57Z'
+generated_at: '2026-06-30T16:33:56Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 141
-total_rules: 60
+total_files: 140
+total_rules: 59
 tier_distribution:
   L0: 20
   L1: 29
-  L2: 11
+  L2: 10
 files:
 - path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
@@ -918,25 +918,6 @@ files:
   - PS-STD-005
   - PS-STD-009
   section_count: 65
-- path: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
-  module_id: TRAE-043
-  title: 元规则-元数据与度量
-  doc_type: ''
-  status: ''
-  version: 1.0.0
-  rule_form: ''
-  scope: meta_metadata_metrics
-  stability: evolving
-  layer: compliance
-  superseded_by: ''
-  severity: warning
-  tier: L2
-  aliases:
-  - PS-STD-001
-  - STD-004
-  - STD-005
-  - GOV-024
-  section_count: 45
 - path: docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml
   module_id: TRAE-044
   title: 合规治理-审计与监管
