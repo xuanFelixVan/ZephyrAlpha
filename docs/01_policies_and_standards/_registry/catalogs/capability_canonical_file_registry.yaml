@@ -731,28 +731,28 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: sqlite_db_connection
-    canonical_override: src/zephyr/shared/utils/db_utils.py
+    canonical_override: src/zephyr/governance/sqlite_schema.py
     aliases:
       - get_db_connection
       - sqlite_connection
       - sqlite3_connection
       - db_utils_get_db_connection
     description: >-
-      SQLite 数据库连接函数（governance.db 等）。F2/F3 同名冲突遗留项（AGENTS.md §11.4 遗留项）。
-      现状：两个文件各有一个 get_db_connection()，函数名相同但实现不同（参数/返回值不同）：
-        F2 = src/zephyr/governance/sqlite_schema.py（governance.db 专用，含 schema 初始化）
-        F3 = src/zephyr/shared/utils/db_utils.py（通用 SQLite，接受 db_path 参数）
-      canonical_override 指向 F3（临时占位，待 F3→F2 合并任务卡裁定后修正，见 AGENTS.md §11.4）。
-      待办：F2/F3 合并需独立任务卡（83 导入点风险高），合并前禁止新建第三个 get_db_connection。
-      解决发现性：新 AI 搜 "sqlite连接/get_db_connection" 可定位真源 + 知晓同名冲突。
+      SQLite 数据库连接函数（governance.db 等）。F2/F3 同名冲突已治本（2026-06-30，AGENTS.md §11.4 治本完成）。
+      真源 canonical = src/zephyr/governance/sqlite_schema.py 的 get_db_connection()（F2，含 schema 初始化，
+      isolation_level=None autocommit）。
+      F3 = src/zephyr/shared/utils/db_utils.py 是 sanctioned re_export 转发层（L34-36 importlib 转发到 F2），
+      作为 shared/utils 公共 API 层保留，避免上层（trading/orchestrator 等）直接 import governance.sqlite_schema
+      （层级倒置）。12 个 F3 调用点抽查确认用显式事务（BEGIN IMMEDIATE/COMMIT/ROLLBACK），与 F2 autocommit 兼容。
+      解决发现性：新 AI 搜 "sqlite连接/get_db_connection" 可定位真源（F2）+ 知晓 F3 是 sanctioned 转发层。
       解决防重建：check_file_canonical() 反查 + AGENTS.md §11.4 警告阻止新建第三个同名函数。
     duplicates_manual:
-      - path: src/zephyr/governance/sqlite_schema.py
-        relation: conflicting
+      - path: src/zephyr/shared/utils/db_utils.py
+        relation: re_export
         note: >-
-          F2 同名冲突（同名 get_db_connection，不同实现）。governance.db 专用版本，
-          含 schema 初始化逻辑。与 F3（shared/utils 通用版）参数签名不同。
-          待 F2/F3 合并任务卡裁定真源（83 导入点需逐一迁移），合并前勿新建第三个。
+          F3 sanctioned 转发层（2026-06-30 治本）。db_utils.py L34-36 用 importlib 转发
+          get_db_connection/init_db 到 F2 sqlite_schema.py。作为 shared/utils 公共 API 层保留，
+          避免层级倒置。勿在 db_utils.py 重新定义 get_db_connection（会破坏转发治本）。
 
   # --------------------------------------------------------------------------
   - capability_id: vms_ssot_gate

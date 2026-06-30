@@ -379,7 +379,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 > **ghost 自动检测（已实现，勿重复造）**：删除文件 commit 时，GitCommitGateway post-commit 的 `GATE-GHOST` reconciler（priority=400）自动调用 `diagnose_depgraph.py` 检测 ghost node（磁盘已删但 DB 残留），报告落盘 `.runtime/reconcile_reports/ghost_*.json`。无需手动跑 diagnose 检测 ghost；发现 ghost 后用 `apply_depgraph.py --cleanup-orphan-nodes` 清理（人工触发，防误删）。trigger 仅覆盖"删除 commit"是 intentional（删除才会产生 ghost），勿扩展到 PG 写入脚本 commit（脚本 commit ≠ DB 内容变更，扩展会引入噪音）。
 
-> **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用 `depgraph (PG)`、`PG（depgraph）`、`depgraph 数据库`（带"数据库"后缀）等变体。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
+> **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
 
 ### 11.1 生成器时间戳约定
 
@@ -546,7 +546,7 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 |------|------|------|---------|--------|
 | F1 `get_depgraph_pg_connection`（原 `get_db_connection`） | [depgraph_schema.py:1169](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) | psycopg2.conn | **PG** (depgraph) | 42 |
 | F2 `get_db_connection` | [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) | sqlite3.conn | SQLite (governance) | 70 |
-| F3 `get_db_connection` | [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) | sqlite3.conn | SQLite (governance) | 13 |
+| F3 `get_db_connection`（转发到 F2，治本 2026-06-30） | [db_utils.py:35](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) | sqlite3.conn | SQLite (governance) | 13 |
 | F4 `get_depgraph_pg_connection` | [constants.py:97](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py) | PgConnExecuteWrapper | **PG** (包装 F1) | 29 |
 
 **治本措施**：
@@ -561,28 +561,21 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - ❌ **勿用 SQLite 入口连 PG**——`db_utils.get_db_connection` / `sqlite_schema.get_db_connection` 返回 sqlite3.Connection，连 depgraph 会报 `no such table: nodes`
 - ✅ **连 PG 用** `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`（src 包）或 `from _shared.constants import get_depgraph_pg_connection`（scripts 包，wrapper 兼容 sqlite3 接口）
 - ✅ **连 SQLite 用** `from zephyr.shared.utils.db_utils import get_db_connection` 或 `from zephyr.governance.sqlite_schema import get_db_connection`
-- ⚠ F2/F3 仍同名 `get_db_connection`（SQLite governance.db），合并需独立任务卡（83 导入点风险高）
+- ✅ F3 已转发到 F2（治本 2026-06-30，db_utils.py L34-36 `get_db_connection = _mod.get_db_connection`），不再独立定义。F3 作为 shared/utils 公共 API 层保留（避免上层 trading/orchestrator 直接 import governance.sqlite_schema 层级倒置）。12 个 F3 调用点抽查确认用显式事务（BEGIN IMMEDIATE/COMMIT/ROLLBACK），与 F2 autocommit 兼容
 
-#### 遗留项：F2/F3 SQLite 同名冲突（待合并，2026-06-28 登记）
+#### 治本完成：F3 已转发到 F2（2026-06-30 治本）
 
-- **状态**：未治本（待独立任务卡，83 导入点风险高）
-- **问题本质**：两个文件各有一个 `get_db_connection()`，函数名相同但实现不同：
-  - F2 [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) — governance.db 专用，含 schema 初始化，70 导入点
-  - F3 [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) — 通用 SQLite，接受 db_path 参数，13 导入点
-- **未合并原因**：83 导入点（真实 `get_db_connection` 调用点约 51）需逐一迁移验证，风险高，需独立任务卡裁定真源（F2 还是 F3）
-- **技术调查推荐方向**（2026-06-28 审查补充，供合并任务卡参考）：**F3→F2（合并 F3 入 F2，F2 作为真源）**
-  - 依据①：F2 签名是 F3 超集——F2 含 `check_same_thread`/`timeout` 关键字参数，F3 仅 `db_path` 一参数。F3 调用方迁到 F2 无需改调用代码；反向不成立
-  - 依据②：F2 用 `isolation_level=None`（autocommit），被 `database_manager.py` 3 处实现（infrastructure/db/、governance/、governance/persistence/）依赖显式事务控制（BEGIN IMMEDIATE/COMMIT/ROLLBACK）。F3 用默认 deferred 隔离级，无法承接 F2 调用方
-  - 依据②补充（F3→F2 迁移风险，2026-06-28 调查）：F3 调用方迁移到 F2 时，依赖隐式事务（多条 DML 在一个事务中自动 BEGIN/需 commit()）的调用方需改为显式 BEGIN/COMMIT，否则 autocommit 下每条 DML 立即提交无法回滚。只读查询（SELECT）迁移安全。DB_PATH 两者一致（`data/databases/governance.db`，F2 自定义 / F3 从 `zephyr.shared.io.paths` 导入）。F3 的 12 个 import 点中含漂移副本（`kb/kb_repo.py` vs `kb/storage/kb_repo.py`、`audit_orchestration/wave_generator.py` vs `audit_orchestration/core/wave_generator.py`），合并前需先清理漂移副本
-  - 依据③：实际 `get_db_connection` 调用点 F2=39 处 vs F3=12 处（"70/13"是 [CONSUMERS] 头部所有符号导入数，非真实调用点），迁移 F3→F2 仅需改 12 处，风险更低
-  - 依据④：F2 同文件含 `init_db`/`SchemaManager`/`_MIGRATIONS`/`schema_version`，是 governance.db schema 管理唯一综合体；F3 的 `init_db` 是轻量版，docstring 自承"full schema migration support, use F2 directly"
-  - **注意**：capability_canonical_file_registry.yaml 当前 `sqlite_db_connection.canonical_override` 指向 F3 是临时占位（登记现状），合并任务卡应按 F3→F2 方向裁定后同步修正
-- **触发条件**（任一满足即应启动合并任务卡）：
-  1. 出现第三个 `get_db_connection` 实现（违反真源唯一）
-  2. F2/F3 行为差异导致 bug（如 schema 初始化副作用不一致）
-  3. 调用方误用错误入口导致连接错误 DB
-- **capability 反查**：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml) 已注册 `sqlite_db_connection` capability（canonical_override 指向 F3，F2 标记为 conflicting duplicate）。新 AI 搜 `get_db_connection` 可通过 `CapabilityLookup.find()` 定位真源 + 知晓同名冲突
+- **状态**：已治本（F3 不再独立定义 `get_db_connection`，转发到 F2）
+- **治本措施**（2026-06-30）：
+  1. `db_utils.py` L34-36 用 `importlib.import_module("zephyr.governance.sqlite_schema")` 转发 `get_db_connection` / `init_db`
+  2. F3 文件头 docstring 已标注真源声明（`get_db_connection` / `init_db` 真源为 `zephyr.governance.sqlite_schema`）
+  3. F3 作为 `shared/utils` 公共 API 层保留，避免上层（trading/orchestrator 等）直接 import `governance.sqlite_schema`（层级倒置）
+- **调用方兼容性验证**（2026-06-30 抽查）：
+  - `circuit_breaker_repo.py`：用显式事务 `BEGIN IMMEDIATE`/`COMMIT`/`ROLLBACK`，与 F2 autocommit (`isolation_level=None`) 兼容
+  - `file_task_mapper.py`：只读查询 + 显式事务，兼容
+  - 其余 10 个调用方同模式（显式事务控制），F3 转发到 F2 后实际运行 F2 autocommit 行为，安全
+- **capability 反查**：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml) `sqlite_db_connection` 已更新（`canonical_override` 指向 F2 `sqlite_schema.py`，F3 标记为 `re_export` sanctioned 转发层）
 - **新 AI 警告**：
-  - ❌ **勿新建第三个 `get_db_connection`**——违反真源唯一，应扩展现有 F2 或 F3
-  - ❌ **勿在未读本节时修改 SQLite 连接代码**——可能误用入口
-  - ⚠ **合并 F2/F3 需独立任务卡**——83 导入点逐一迁移，勿在本节治本中夹带
+  - ❌ **勿新建第三个 `get_db_connection`**——违反真源唯一
+  - ❌ **勿在 `db_utils.py` 重新定义 `get_db_connection`**——会破坏 F3→F2 转发治本
+  - ✅ **连 SQLite 用** `from zephyr.shared.utils.db_utils import get_db_connection`（公共 API 层）或 `from zephyr.governance.sqlite_schema import get_db_connection`（真源直连）
