@@ -13,7 +13,7 @@ governance:
   canonical: true
   derives_from: "AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律"
   conflict_rule: "YAML 为准，Markdown 视图同步更新"
-  gate_alignment: "AGENTS.md §6.10 — GATE-A (代码↔YAML)"
+  gate_alignment: "GATE-A 代码↔YAML 对齐"
   domains_source: >
     domains 列表由 dm200916_write_direct.py 从 depgraph domains 表派生，禁止手编。
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
@@ -132,11 +132,6 @@ partitions:
     path: layers/b_vector_memory.yaml
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
-  - id: system_telemetry
-    name: System Telemetry
-    path: layers/b_system_telemetry.yaml
-    status: implemented
-    description: 全系统遥测：metrics/logs/traces/ai_behavior 采集与归档（2026-06-30 治本：c_track→b_track）
 
 # === 53域清单（从depgraph派生，禁止手工编辑）===
 domains:
@@ -303,12 +298,12 @@ domains:
 global_stats:
   total_domains: 53
   total_partitions: 12
-  b_track_modules: 13
-  b_track_implemented: 12
+  b_track_modules: 12
+  b_track_implemented: 11
   b_track_skeleton: 1
   notes: >
     53域唯一物理分类体系，14层是域的layer_id属性枚举。
-    b_track 13横切基础设施模块（context_engine/core/db/system_telemetry等），implemented 12 + skeleton 1(vector_memory)。
+    b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 
