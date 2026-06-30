@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-GOV-capability_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §capability-overlap-gate
+# [BLUEPRINT] MOD-GOV-capability_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.capability_overlap_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] warn-only——永不阻断 commit（passed=True）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-loud（logger.warning 告警检测器失效，仍 return True 保留 warn-only 契约；create_guard 已 fail-closed 阻断，本 gate 无需重复阻断）；git diff 失败亦 fail-loud；token 匹配 ≥4 字符才告警（减少短词误报）
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML/git diff 异常降级为 fail-loud warn（不阻断 commit 保留 warn-only 契约，但 logger.warning 告警检测器失效以防静默漂移）；warn-only gate 的 fail-closed 语义=告警而非阻断
-# [TESTS] tests/test_capability_overlap_gate.py（P2-2 补全，11 用例覆盖 overlap/no-overlap/yaml/fail-open）
+# [TESTS] tests/capability/test_capability_overlap_gate.py（P2-2 补全，11 用例覆盖 overlap/no-overlap/yaml/fail-open）
 # [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）

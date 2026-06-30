@@ -1,17 +1,17 @@
-# [BLUEPRINT] MOD-GOV-dangling_reference_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §dangling-reference-gate
+# [BLUEPRINT] MOD-GOV-dangling_reference_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.dangling_reference_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec, is_test_exempt)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 只检测 staged 文件中**新增的** AGENTS.md §X.Y 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——AGENTS.md 缺失或 git 异常时阻断；跳过 tests/ 豁免区；不检测 blueprint.md §X.Y 或"蓝图 MOD-XXX §X.Y"（蓝图内部引用非 AGENTS.md）；扫描文件类型 .py/.yaml/.yml/.md；章节号从工作区 AGENTS.md 提取（commit 后的新真源）
 # [MODIFY-GUARD] gate_id="DANGLING-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
-# [SAFETY] M
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AGENTS.md 读取异常/git 异常降级为 fail-closed 阻断（passed=False，detail 含修复指引）
-# [TESTS] tests/test_dangling_reference_gate.py
+# [TESTS] tests/governance/rule_enforcement/test_dangling_reference_gate.py
 # [A_module] module_id=MOD-GOV-dangling_reference_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """dangling_reference_gate.py — AGENTS.md §X.Y 悬空引用自动检测门禁（DANGLING-REFERENCE）

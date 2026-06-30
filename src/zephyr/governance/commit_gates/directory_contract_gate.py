@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-GOV-directory_contract_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §directory-contract-gate
+# [BLUEPRINT] MOD-GOV-directory_contract_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.directory_contract_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec), scripts/governance/d1_structure/check_directory_contract.py
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] fail-closed——checker 缺失/执行失败时阻断 commit（目录契约是核心约束，环境损坏必须阻断）；通过 subprocess 调用 check_directory_contract.py 复用真源，禁止在 gateway 内复制 DCR 逻辑
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通过；exit 1=有违规（阻断 commit）；exit 2=脚本异常（阻断 commit，fail-closed）
-# [TESTS] tests/test_directory_contract_gate.py
+# [TESTS] tests/governance/rule_enforcement/test_directory_contract_gate.py
 # [A_module] module_id=MOD-GOV-directory_contract_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """directory_contract_gate.py — DCR-001~007 等效校验门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）

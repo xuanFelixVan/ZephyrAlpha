@@ -1,17 +1,17 @@
-# [BLUEPRINT] MOD-GOV-claim_required_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §claim-required-gate
+# [BLUEPRINT] MOD-GOV-claim_required_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.claim_required_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] session未注册→放行（测试/内部调用安全降级）；session已注册但目标文件未claim→阻断；allow_overlap=True时放行（逃生通道）；get_session异常→安全降级放行
 # [MODIFY-GUARD] gate_id="CLAIM-REQUIRED"；check闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
-# [SAFETY] M
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check永不抛异常——get_session异常降级为放行（registry故障不应卡死commit工作流）
-# [TESTS] tests/test_claim_required_gate.py
+# [TESTS] tests/governance/rule_enforcement/test_claim_required_gate.py
 # [A_module] module_id=MOD-GOV-claim_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """claim_required_gate.py — claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）

@@ -1,17 +1,17 @@
-# [BLUEPRINT] MOD-GOV-held_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §held-overlap-gate
+# [BLUEPRINT] MOD-GOV-held_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.governance.commit_gates.held_overlap_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.commit_gate_registry (GateSpec)
-# [CONSUMERS] zephyr.governance.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] allow_overlap=True 时直接放行（逃生通道）；other_held_files 读取异常安全降级为空集（不阻断 commit，registry 故障不应卡死工作流）；目标文件用 Path.resolve() 归一化与 other_held 比较（与 _normalize_file_path 对齐）
 # [MODIFY-GUARD] gate_id="HELD-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
-# [SAFETY] M
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——registry 读取异常降级为空集（other_held=set()）
-# [TESTS] tests/test_held_overlap_gate.py
+# [TESTS] tests/governance/rule_enforcement/test_held_overlap_gate.py
 # [A_module] module_id=MOD-GOV-held_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）
