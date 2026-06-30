@@ -11,7 +11,7 @@ doc_type: architecture_view
 
 # 依赖与架构全景图能力定位书
 
-> 版本：V5.8 | 2026-06-18（第16轮检查修复版）
+> 版本：V6.0 | 2026-06-30（全量更新版：P2/P3 迁移 + v15-v18 schema + 53 域）
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主。这是我的私人项目，我写了给我自己看，也是给接手的 AI 看。
 > 变更历史见 git log。本文档只保留当前有效的设计规格和裁定结论。
@@ -87,17 +87,17 @@ doc_type: architecture_view
 | `nodes` | 所有代码制品（8 种 node_type：module/package/script/test/config/schema/doc_template/data_template） | 订单中心、风控引擎、行情网关 |
 | `edges` | 制品之间的依赖关系 | 订单中心 → 依赖 → 风控引擎 |
 
-**目前规模**：运营态 7,590 个节点 + 设计态 110 个 = 7,700 个节点，52 个功能域，运营态 8,095 条 + 设计态 230 条依赖边。（2026-06-16 Phase H+J 修复后）
+**目前规模**：运营态 6,003 个节点（production 1,251 + prototype 4,752）+ 设计态 89 个 = 6,092 个节点，53 个功能域，运营态 6,084 条 + 设计态 113 条依赖边。（2026-06-30 查询 depgraph (PostgreSQL)）
 
-### 4.2 架构全景（arch_ 表组 5 张表，v14 删除 arch_layers/arch_bottlenecks 后）
+### 4.2 架构全景（arch_ 表组 3 张表，v6 合并 arch_domain_layers/arch_domain_capacity 入 domains 表，v14 删除 arch_layers/arch_bottlenecks 后）
 
 | 表 | 存什么 | 例子 |
 |----|--------|------|
 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | src/zephyr/trading/order_center/main.py |
-| `arch_domain_layers` | 每个功能域属于哪一层 | D_TRADING（交易域）属于 L2 领域层 |
-| `arch_domain_capacity` | 域容量上限 | D_TRADING max_modules=80 |
 | `arch_path_mappings` | 路径→域映射规则 | src/zephyr/trading/ → D_TRADING |
 | `arch_constraints` | 架构约束（跨域违规等） | D_TRADING → D-INFRA 违规 |
+
+> **v6 合并说明**：原 `arch_domain_layers`（域→层映射）和 `arch_domain_capacity`（域容量上限）已在 v6 合并入 `domains` 表（layer_id/max_modules/current_modules 列），不再作为独立表存在。
 
 ### 4.3 共享表（5 张表，v14 删除 invariants 后）
 
@@ -109,7 +109,7 @@ doc_type: architecture_view
 | `domain_dependencies` | 域间依赖声明 | arch_constraints 跨域检测引用 |
 | `rule_bindings` | 规则绑定 | 门禁检查引用 |
 
-### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张，v14 删除 arch_layers/arch_bottlenecks/invariants 3 表后余 22 张；系统表 _schema_version 由迁移脚本管理 / PostgreSQL IDENTITY 列内部序列自动维护，无 sqlite_sequence）
+### 4.4 表归属矩阵（当前 25 张表 + 1 业务视图 dep_cycles；v14 删除 arch_layers/arch_bottlenecks/invariants，v6 合并 arch_domain_layers/arch_domain_capacity 入 domains，v15 删除 dead columns，v18 新增 blueprint_id CHECK 触发器；系统表 _schema_version 由 PG schema 脚本一次性填充，PostgreSQL IDENTITY 列内部序列自动维护）
 
 | 管理方 | 表 | 生成器每次运行会怎样 | AI能手动改吗 |
 |--------|---|---------------------|:---:|
@@ -117,8 +117,7 @@ doc_type: architecture_view
 | | nodes（设计态字段） | 保留不动 | ✅ 可以（通过 apply_depgraph.py 写入） |
 | | edges（active 字段） | DELETE+INSERT（`WHERE dep_maturity != 'design' OR dep_maturity IS NULL`） | ❌ 禁止，会被覆盖 |
 | | edges（design 字段） | 保留不动 | ✅ 可以（通过 apply_depgraph.py 写入） |
-| | domains | 不DELETE，只UPDATE current_modules | ✅ 可以改domain_name等；P0-6 扩展的 modification_permission 字段 ❌ 禁止（YAML 真源，由 sync 脚本写入） |
-| | arch_domain_capacity | 不DELETE，只UPDATE current_modules | ✅ 可以改max_modules |
+| | domains | 不DELETE，只UPDATE current_modules | ✅ 可以改domain_name/layer_id/max_modules等（v6 合并原 arch_domain_layers/arch_domain_capacity 入此表）；P0-6 扩展的 modification_permission 字段 ❌ 禁止（YAML 真源，由 sync 脚本写入） |
 | **path_tree 管理** | arch_directory_tree（运营态） | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） | ❌ 禁止，会被 path_tree 覆盖 |
 | | arch_directory_tree（设计态） | 不碰（`WHERE design_maturity='design'`） | ⚠️ 通过 sync 脚本写入（YAML 派生，如 sync_directory_registry） |
 | **脚本管理** | arch_constraints | 不碰（由audit_domain_nodes.py在生成器后写） | ⚠️ 只能通过脚本改 |
@@ -135,8 +134,7 @@ doc_type: architecture_view
 | | hard_boundaries | 不碰（同上） | ❌ 禁止 |
 | | business_streams | 不碰（同上） | ❌ 禁止 |
 | | blueprint_links | 不碰（数据源为 nodes 表派生，非 YAML；由 sync_blueprint_links 从 nodes.blueprint_id 派生） | ❌ 禁止（只读触发器保护） |
-| **人工/蓝图管理** | arch_domain_layers | 不碰 | ✅ 可以 |
-| | arch_path_mappings | 不碰 | ✅ 可以 |
+| **人工/蓝图管理** | arch_path_mappings | 不碰 | ✅ 可以 |
 | | domain_events | 不碰 | ✅ 可以 |
 | | domain_dependencies | 不碰 | ✅ 可以 |
 | | rule_bindings | 不碰 | ✅ 可以 |
@@ -163,7 +161,7 @@ doc_type: architecture_view
 - 不创造设计态模块（设计态必须来自用户输入，生成器不碰）
 - 不删除设计态节点和 design edge
 - 不修改蓝图（蓝图是设计态派生物，生成器只管运营态对齐）
-- 不碰人工管理的表（arch_domain_layers/arch_path_mappings 等）
+- 不碰人工管理的表（arch_path_mappings 等）
 - 不处理 arch_directory_tree（由 path_tree 脚本独立管理，V5.5 裁定）
 
 ---
@@ -180,7 +178,7 @@ doc_type: architecture_view
 
 它回答 AI 的三个问题：
 1. 这个路径属于哪个功能域？（arch_directory_tree.domain_id）
-2. 这个域的容量上限是多少？（arch_domain_capacity.max_modules）
+2. 这个域的容量上限是多少？（domains.max_modules）
 3. 这个路径的架构约束是什么？（arch_constraints）
 
 **与依赖全景图的区别**：
@@ -195,15 +193,15 @@ doc_type: architecture_view
 
 ---
 
-## 六、架构全景图的 5 张表（v14 删除 arch_layers/arch_bottlenecks 后）
+## 六、架构全景图的 3 张表（v6 合并 arch_domain_layers/arch_domain_capacity 入 domains 表，v14 删除 arch_layers/arch_bottlenecks 后）
 
 | # | 表名 | 职责 | 管理方 | 生成器行为 |
 |---|------|------|--------|-----------|
 | 1 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | path_tree | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） |
-| 2 | `arch_domain_layers` | 域→层映射 | 人工 | 不碰 |
-| 3 | `arch_domain_capacity` | 域容量上限（max_modules） | 人工 | UPDATE current_modules |
-| 4 | `arch_path_mappings` | 路径→域映射规则 | 人工 | 不碰 |
-| 5 | `arch_constraints` | 架构约束（跨域违规等） | audit_domain_nodes.py | 不碰（脚本写） |
+| 2 | `arch_path_mappings` | 路径→域映射规则 | 人工 | 不碰 |
+| 3 | `arch_constraints` | 架构约束（跨域违规等） | audit_domain_nodes.py | 不碰（脚本写） |
+
+> **域→层映射和域容量**：原 `arch_domain_layers`（域→层映射）和 `arch_domain_capacity`（max_modules）在 v6 合并入 `domains` 表（layer_id/max_modules/current_modules 列，共 15 列）。
 
 ---
 
@@ -216,7 +214,7 @@ doc_type: architecture_view
 | 物理路径 path | **arch_directory_tree.path**（架构全景图） | nodes.path 外键引用 |
 | 域归属 domain_id | **domains 表**（共享表） | nodes + arch_directory_tree 共同外键 |
 | 模块依赖 | **edges 表**（依赖全景图） | arch_constraints 引用 |
-| 容量上限 | **arch_domain_capacity**（架构全景图） | 门禁检查引用 |
+| 容量上限 | **domains.max_modules**（v6 合并自 arch_domain_capacity） | 门禁检查引用 |
 
 ### 7.2 外键约束（V3.3 E15 修正：单向外键）
 
@@ -304,7 +302,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 
 **写入内容**：
 - 跨域违规检测（nodes 的 import 跨越域边界但未在 domain_dependencies 中声明）
-- 容量超限检测（domains.current_modules > arch_domain_capacity.max_modules）
+- 容量超限检测（domains.current_modules > domains.max_modules）
 - 孤儿节点检测（nodes 有 path 但 arch_directory_tree 无对应记录）
 - 层级违规检测（低层域依赖高层域）
 
@@ -346,7 +344,7 @@ SELECT * FROM arch_constraints WHERE domain_id = 'D_TRADING';
 | 查"谁依赖谁" | ✅ | ❌ | ❌ |
 | 查"放在哪" | ❌ | ✅ | ❌ |
 | 查"属于哪个域" | ✅（nodes.domain_id） | ✅（arch_directory_tree.domain_id） | ✅（domains 表） |
-| 查"域容量" | ❌ | ✅（arch_domain_capacity） | ❌ |
+| 查"域容量" | ❌ | ✅（domains） | ❌ |
 | 查"架构约束违规" | ❌ | ✅（arch_constraints） | ❌ |
 | 查"循环依赖" | ✅（dep_cycles 视图） | ❌ | ❌ |
 | 查"设计态规划" | ✅（design_maturity='design'） | ✅（design_maturity='design'） | ❌ |
@@ -694,16 +692,17 @@ SELECT * FROM dep_cycles_report ORDER BY edge_count DESC;
 SELECT path, domain_id, design_maturity, build_status FROM arch_directory_tree
 WHERE path = 'src/zephyr/trading/order_center/main.py';
 
--- 查某个域的容量
-SELECT d.domain_id, d.domain_name, c.max_modules, c.current_modules,
-       (c.current_modules * 100.0 / c.max_modules) AS usage_pct
-FROM domains d JOIN arch_domain_capacity c ON d.domain_id = c.domain_id
-WHERE d.domain_id = 'D_TRADING';
+-- 查某个域的容量（max_modules/current_modules 在 v6 合并入 domains 表）
+SELECT domain_id, domain_name, max_modules, current_modules,
+       (current_modules * 100.0 / max_modules) AS usage_pct
+FROM domains
+WHERE domain_id = 'D_TRADING';
 
 -- 查超容域（>80%）
-SELECT d.domain_id, d.domain_name, c.max_modules, c.current_modules
-FROM domains d JOIN arch_domain_capacity c ON d.domain_id = c.domain_id
-WHERE c.current_modules * 100.0 / c.max_modules > 80
+SELECT domain_id, domain_name, max_modules, current_modules,
+       (current_modules * 100.0 / max_modules) AS usage_pct
+FROM domains
+WHERE current_modules * 100.0 / max_modules > 80
 ORDER BY usage_pct DESC;
 
 -- 查架构约束违规
@@ -773,9 +772,8 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 |---|---------|---------|
 | nodes | DELETE+INSERT（`WHERE design_maturity != 'design' OR design_maturity IS NULL`） | 保留不动（`WHERE design_maturity='design'`） |
 | edges | DELETE+INSERT（`WHERE dep_maturity != 'design' OR dep_maturity IS NULL`） | 保留不动（`WHERE dep_maturity='design'`） |
-| domains | UPDATE current_modules | — |
-| arch_domain_capacity | UPDATE current_modules | — |
-| 其余 20 张表（含 P0-6 新增 9 张 sync 管理表 + arch_directory_tree 由 path_tree 独立管理） | 不碰 | 不碰 |
+| domains | UPDATE current_modules（v6 合并自 arch_domain_capacity） | — |
+| 其余 21 张表（含 P0-6 新增 9 张 sync 管理表 + arch_directory_tree 由 path_tree 独立管理） | 不碰 | 不碰 |
 
 **统一表述**：运营态字段 DELETE+INSERT（全覆盖），设计态字段保留。非"全表 DELETE+INSERT"。这与 Netflix Service Topology 的多源融合模式一致——每个源各管各的字段。
 
@@ -1091,7 +1089,7 @@ AI查询模式：
 
 AI 开发场景适配：项目依靠 100% AI 开发，AI 需要的是"依赖关系清晰可查"+"规则约束可附加"，而非"所有文件都进依赖图"。文档/规则/模板进 nodes 表会制造大量孤岛节点，增加 AI 查询成本但不增加依赖信息——违反极简产出标准（§十.3）。
 
-落地状态：已落地。当前 nodes 表 7,590 节点均为代码节点；arch_directory_tree 9,204 行包含 1,614 个文档/数据/模板节点（差值即被排除的 6 种 node_type）。
+落地状态：已落地。当前 nodes 表 6,092 节点均为代码节点；arch_directory_tree 9,363 行包含 3,271 个文档/数据/模板节点（差值即被排除的 6 种 node_type）。
 
 ### 14.9 循环依赖检测能力（V3.4 E19 补充 DDL）
 
@@ -1292,10 +1290,10 @@ SSoT = Single Source of Truth = 唯一真源。
 | 维度 | 依赖全景图（nodes/edges） | 架构全景图（arch_directory_tree） |
 |------|-------------------------|-------------------------------|
 | 覆盖范围 | 有 import 依赖的代码节点 | 所有文件（包括文档/数据/模板） |
-| 节点数 | 7,590 | 9,204（比 nodes 多 1,614 个文档/数据/模板/目录节点） |
-| 边数 | 8,095 | — |
+| 节点数 | 6,092 | 9,363（比 nodes 多 3,271 个文档/数据/模板/目录节点） |
+| 边数 | 6,197 | — |
 
-**当前实际覆盖**：52 个功能域，依赖全景图 7,590 节点 + 8,095 边，架构全景图 9,204 行目录树。（2026-06-16 Phase H+J 修复后）
+**当前实际覆盖**：53 个功能域，依赖全景图 6,092 节点（1,251 production + 4,752 prototype + 89 design）+ 6,197 边（6,084 active + 113 design），架构全景图 9,363 行目录树。（2026-06-30 查询 depgraph (PostgreSQL)）
 
 ---
 
@@ -1371,42 +1369,47 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ---
 
-## 十八、当前状态（2026-06-18 V5.8 更新）
+## 十八、当前状态（2026-06-30 V6.0 更新）
 
-> Phase H+J 修复 + V3.1-V3.4 审查 + V4.1-V5.8 规则统一合并 + 16轮检查修复已完成（文档审查），172 项裁定，7 批次施工规格就绪。历史进度详见 git log。
+> Phase H+J 修复 + V3.1-V3.4 审查 + V4.1-V5.8 规则统一 + P0-1~P0-5 七批次施工 + P2 PostgreSQL 迁移 + v15-v18 schema 治本 + 53 域拆分 + #ARCH-REN-001 域 ID 统一，全部已完成。历史进度详见 git log。
 
-| 指标 | 修复前 (2026-06-15) | 修复后 (2026-06-16) | V5.8 状态 |
-|------|:---:|:---:|:---:|
-| 总节点 | 8,174 | **7,590** | 7,590（运营态）+ 110（设计态）= 7,700 |
-| arch_directory_tree 行数 | — | 9,204 | 9,204 |
-| 重复路径 | 21个严重 | **0** | 0 |
-| 空路径 | 42个 | **0** | 0 |
-| 假blueprint_id | 6,219 | **0** | 0 |
-| cross_domain=1 | 0（全默认） | **4,110** | 4,110 |
-| 功能域 | 52 | 52 | 52 |
-| 总表数 | 17 | 17 | 17（P0-6 后 15 业务 + 9 新建 = 24 张 + 2 系统表） |
-| nodes表列数 | 29 | **31** | 31（V3.4 施工后 36 列 + P0-6 扩展 5 列 = 41 列） |
-| edges表列数 | 17 | **19** | 19（V3.4 施工后 20 列 + P0-6 扩展 3 列 = 23 列） |
-| arch_directory_tree 列数 | — | 11 | 11（V3.4 施工后 11 列：删除 state，新增 node_id 外键，列数不变） |
-| P0 阻断问题 | 8 | 2 | **0**（V3.4 全部修复） |
-| P1 重要问题 | — | 14 | **0**（V3.4 全部修复） |
+| 指标 | 修复前 (2026-06-15) | 修复后 (2026-06-16) | V5.8 状态 | V6.0 状态 (2026-06-30) |
+|------|:---:|:---:|:---:|:---:|
+| 总节点 | 8,174 | **7,590** | 7,700 | **6,092**（1,251 production + 4,752 prototype + 89 design） |
+| arch_directory_tree 行数 | — | 9,204 | 9,204 | **9,363** |
+| 重复路径 | 21个严重 | **0** | 0 | **0** |
+| 空路径 | 42个 | **0** | 0 | **0** |
+| 假blueprint_id | 6,219 | **0** | 0 | **0** |
+| cross_domain=1 edges | 0（全默认） | **4,110** | 4,110 | **2,679**（裁定#203-B 清理孤儿边后下降） |
+| 功能域 | 52 | 52 | 52 | **53**（裁定#200/#201 域拆分后） |
+| 总表数 | 17 | 17 | 22 | **25**（含 _schema_version 系统表；v15-v18 治本后） |
+| 业务视图 | 0 | 0 | 1（dep_cycles） | **1**（dep_cycles；pg_stat_statements 为 PG 扩展视图不计入） |
+| schema 版本 | v1 | v14 | v14 | **v18**（v15 删 dead columns，v16 删孤儿触发器，v17 删陈旧索引，v18 加 blueprint_id CHECK 触发器） |
+| nodes表列数 | 29 | **31** | 41（含 P0-6 扩展 5 列） | **31**（v15 删除 5 个 dead columns 后回落） |
+| edges表列数 | 17 | **19** | 23（含 P0-6 扩展 3 列） | **22**（v15 删除 migration_status 后） |
+| arch_directory_tree 列数 | — | 11 | 11 | **10**（v15 重建表，删除 node_id 外键列） |
+| domains 列数 | — | — | — | **15**（v6 合并 arch_domain_layers/arch_domain_capacity 后） |
+| 数据库引擎 | SQLite | SQLite | SQLite | **PostgreSQL 16**（P2 迁移 2026-06-27） |
+| P0 阻断问题 | 8 | 2 | **0** | **0** |
+| P1 重要问题 | — | 14 | **0** | **0** |
 
-**修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定）
-**Schema修复**：depgraph (PostgreSQL)（SQLite 时期为 `data/databases/depgraph.db` 文件；J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
+**修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定，2026-06-30 治本：node_type/edge_type/semantic 词表从 YAML 动态加载）
+**Schema修复**：depgraph (PostgreSQL)（P2 迁移 2026-06-27，SQLite 物理文件 `data/databases/depgraph.db` 已删除归档；PG schema 真源为 `scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql`）
 **文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2）
 
-**待施工**（V5.8 文档已就绪，按 §22 七批次施工）：
-- P0-1：Schema 迁移（node_id 改 INTEGER PK + edges 字段重命名 from_node/to_node→from_node_id/to_node_id + edges 新增 dep_maturity + arch_directory_tree 删 state 新增 node_id 外键 + nodes 新增 5 字段）
-- P0-2：apply_depgraph.py 扩展（4 个新命令）
-- P0-3：生成器升级（12 步流程）
-- P0-4：audit_domain_nodes.py 升级（4 类检测）
-- P0-5：dep_cycles 视图创建 + 数据修复（I7/I8）
+**已施工**（P0-1~P0-5 + P2/P3 全部完成）：
+- ✅ P0-1：Schema 迁移（node_id 改 INTEGER PK + edges 字段重命名 + edges 新增 dep_maturity + arch_directory_tree 删 state）
+- ✅ P0-2：apply_depgraph.py 扩展（4 个新命令）
+- ✅ P0-3：生成器升级（12 步流程，2026-06-30 词表动态加载治本）
+- ✅ P0-4：audit_domain_nodes.py 升级（4 类检测）
+- ✅ P0-5：dep_cycles 视图创建 + 数据修复（I7/I8）
+- ✅ P2：SQLite → PostgreSQL 16 迁移（2026-06-27，MVCC 行级锁，删除文件锁补丁）
+- ✅ P3：pgvector 改造/LISTEN-NOTIFY 删除/分区表删除/监控告警改造（2026-06-28）
+- ✅ v15-v18：schema dead column 清理 + 孤儿触发器/索引删除 + blueprint_id 三轨制 CHECK 触发器（裁定#ARCH-016/#208）
 
-**待修复数据问题**：
-- I7：arch_directory_tree 约 91% 空 domain_id（P0-5 施工时统计准确数量并修复）
-- I8：arch_directory_tree build_status/state 逻辑矛盾（P0-1 删除 state 字段后自动消解）
-
-**执行顺序警告**：P0-1（Schema 迁移）必须在 P0-2/P0-3 之前执行。P0-3（生成器升级）必须在 P0-4 之前执行。否则脚本会因 schema 不匹配而报错。
+**已修复数据问题**：
+- ✅ I7：arch_directory_tree 空 domain_id（P0-5 施工时修复）
+- ✅ I8：arch_directory_tree build_status/state 逻辑矛盾（P0-1 删除 state 字段后消解）
 
 ---
 
@@ -1436,9 +1439,9 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 16 | 状态机 | **双正交：design_maturity（拓扑）+ build_status（生命周期）** | ✅ |
 | 17 | SSoT 分层 | **设计态全景图>代码，运营态代码>全景图** | ✅ |
 | 19 | 两全景图职责 | **依赖全景图管"依赖什么"，架构全景图管"放在哪"** | ✅ |
-| 30 | 域数 | **52 域**（以数据库实际值为准） | ✅ |
+| 30 | 域数 | **53 域**（以数据库实际值为准；裁定#200/#201 拆分后） | ✅ |
 | 42 | 设计态-运营态关系 | **一对多：1 设计态（功能级）→ N 运营态（文件级）** | ✅ |
-| 145 | 两表设计 | **保持两张表不合并**（nodes 7,590 节点 vs arch_directory_tree 9,204 行） | ✅ |
+| 145 | 两表设计 | **保持两张表不合并**（nodes 6,092 节点 vs arch_directory_tree 9,363 行） | ✅ |
 | 146 | 两表关联方式 | **node_id 关联**（不用 path，稳定标识符与路径解耦） | ✅ |
 | 147 | arch_directory_tree 新增字段 | **V3.4 新增 node_id 外键，替换删除的 state 字段** | ✅ |
 | 148 | 共享字段处理 | **保留在两张表中**（domain_id/design_maturity/build_status/blueprint_id），不抽取第三张表 | ✅ |
@@ -1485,7 +1488,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 53 | 架构全景图合并 | **合并到本文档 §5-§11** | ✅ |
 | 58 | 两全景图协同 | **arch_directory_tree.path 是 SSoT，nodes.path 外键约束** | ✅ |
 | 81 | 外键约束方向 | **单向外键：nodes.path 必须在 arch_directory_tree 存在，反向不要求** | ✅ |
-| 149 | 两表覆盖范围 | **nodes 7,590 节点 vs arch_directory_tree 9,204 行**（差 1,614 个文档/数据/模板节点） | ✅ |
+| 149 | 两表覆盖范围 | **nodes 6,092 节点 vs arch_directory_tree 9,363 行**（差 3,271 个文档/数据/模板节点） | ✅ |
 | 173 | nodes 表节点准入边界 | **只收录有 import 依赖的代码节点（.py+.yaml），文档/规则/模板不进 nodes 表**（业界对标 dependency-cruiser/ArchUnit） | ✅ |
 | 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D_GOV_DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D_GOV_RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
 | 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
@@ -2148,3 +2151,57 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 **kebab-case 路径引用清理（任务卡 OPS-2026062628）**:
 
 清理全项目 kebab-case 文件路径引用，统一为 snake_case（commit e3a3e821，54 个文件）。包括 18 个 vocabulary 文件名引用、module_id 注释头、BUG 修复（refresh_master_entries.py:85 stem 检查）。
+
+---
+
+### 20.13 V5.9 域 ID 统一与 schema 治本裁定（#ARCH-REN-001 / #ARCH-016 / #208，2026-06-26~30）
+
+#### 裁定#ARCH-REN-001：域 ID 连字符→下划线统一（2026-06-26）
+
+- **执行日期**: 2026-06-26
+- **背景**: 6 个域 ID 含连字符（kebab-case），违反 snake_case 命名约束（AGENTS.md 硬约束）
+- **变更**: D_GOV_AUDIT_TESTS→D_AUDITTEST、D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY、D_SECURITY-LLM→D_SECURITY_LLM（其余 3 个已是下划线）
+- **状态**: ✅ 已执行（迁移脚本 `migrate_domain_id_hyphen_to_underscore.py`）
+
+#### 裁定#ARCH-016：schema dead column 清理（v15/v16/v17，2026-06）
+
+- **执行日期**: 2026-06（v15-v17 分批执行）
+- **背景**: nodes/edges/arch_directory_tree 表累积 11 个 dead/drifted 列 + 1 个孤儿触发器 + 1 个陈旧索引
+- **v15**（治本）: 删除 11 个 dead columns + 重建 arch_directory_tree（移除 node_id FK）；nodes 列数 41→31，edges 列数 23→22（删 migration_status），arch_directory_tree 列数 11→10
+- **v16**（残留）: 删除孤儿触发器 `chk_edges_design_immutable_update`
+- **v17**（残留）: 删除陈旧索引 `idx_domains_can_build`
+- **状态**: ✅ 已执行（`_MIGRATIONS` v15/v16/v17）
+
+#### 裁定#208：blueprint_id 三轨制 CHECK 触发器（v18，2026-06-30）
+
+- **执行日期**: 2026-06-30
+- **背景**: blueprint_id 字段需强制三轨制格式（MOD-*/D-*/SH-*/PLACEHOLDER*）
+- **变更**: 新增 BEFORE INSERT + BEFORE UPDATE OF blueprint_id 触发器，校验 blueprint_id 符合四类前缀之一
+- **状态**: ✅ 已执行（`_MIGRATIONS` v18）
+
+---
+
+### 20.14 P2/P3 PostgreSQL 迁移裁定（2026-06-27~28）
+
+#### P2 迁移：SQLite → PostgreSQL 16（2026-06-27）
+
+- **执行日期**: 2026-06-27
+- **背景**: SQLite 文件级写锁导致 40+AI 并发写入瓶颈（39 个等待 1 个写）
+- **变更**:
+  - depgraph 从 SQLite 迁移至 PostgreSQL 16，获得 MVCC 行级锁并发能力
+  - SQLite 物理文件 `data/databases/depgraph.db` 已删除归档
+  - PG schema 真源：`scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql`（25 表 + 1 视图 + 39 索引 + 28 触发器）
+  - 删除文件锁补丁（apply_depgraph.py / generate_project_depgraph.py / sync_yaml_to_depgraph.py）
+  - SQL 方言调整：AUTOINCREMENT→GENERATED AS IDENTITY、INSERT OR REPLACE→ON CONFLICT、PRAGMA 全删、sqlite_master→information_schema
+- **状态**: ✅ 已执行（详见 `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md`）
+
+#### P3 优化：pgvector/LISTEN-NOTIFY/分区表/监控告警（2026-06-28）
+
+- **执行日期**: 2026-06-28
+- **变更**:
+  - P3-T1: pgvector 改造（向量搜索能力，扩展已安装）
+  - P3-T2: LISTEN-NOTIFY 机制删除（改用轮询，降低复杂度）
+  - P3-T3: 分区表删除（容量未达阈值，分区增加维护成本无收益）
+  - P3-T4: 监控告警改造（pg_stat_statements 接入）
+- **状态**: ✅ 已执行（详见 `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md`）
+- **当前规模**: edges 表 6,197 行 / 24MB（P3 审查时记录，AGENTS.md §11.2）
