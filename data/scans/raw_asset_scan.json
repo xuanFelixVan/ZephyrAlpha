@@ -2867,7 +2867,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "src/zephyr/context-engine/config/compression/policy.yaml",
+      "relative_path": "config/compression_policy.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\src\\zephyr\\context-engine\\config\\compression\\policy.yaml",
       "file_name": "policy.yaml",
       "extension": ".yaml",
@@ -334307,7 +334307,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/ai_context_policy.yaml",
+      "relative_path": "config/ai_context_policy.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\ai_context_policy.yaml",
       "file_name": "ai_context_policy.yaml",
       "extension": ".yaml",
@@ -334357,7 +334357,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/degradation_chain.yaml",
+      "relative_path": "config/degradation_chain.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\degradation_chain.yaml",
       "file_name": "degradation_chain.yaml",
       "extension": ".yaml",
@@ -334367,7 +334367,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/external_watchdog.yaml",
+      "relative_path": "config/external_watchdog.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\external_watchdog.yaml",
       "file_name": "external_watchdog.yaml",
       "extension": ".yaml",
@@ -334377,7 +334377,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/error_budget_config.yaml",
+      "relative_path": "config/error_budget_config.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\error_budget_config.yaml",
       "file_name": "error_budget_config.yaml",
       "extension": ".yaml",
@@ -334387,7 +334387,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/capacity_slo.yaml",
+      "relative_path": "config/capacity_slo.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\capacity_slo.yaml",
       "file_name": "capacity_slo.yaml",
       "extension": ".yaml",
@@ -334397,7 +334397,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/owner_offline_protocol.yaml",
+      "relative_path": "config/owner_offline_protocol.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\owner_offline_protocol.yaml",
       "file_name": "owner_offline_protocol.yaml",
       "extension": ".yaml",
@@ -334407,7 +334407,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/asset-inventory.yaml",
+      "relative_path": "config/asset_inventory.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\asset-inventory.yaml",
       "file_name": "asset-inventory.yaml",
       "extension": ".yaml",
@@ -334417,7 +334417,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/compression/.gitkeep",
+      "relative_path": "config/.gitkeep",
       "absolute_path": "D:\\ZephyrAlpha\\config\\compression\\.gitkeep",
       "file_name": ".gitkeep",
       "extension": "",
@@ -334427,7 +334427,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/tech_stackmanifest.yaml",
+      "relative_path": "config/tech_stack_manifest.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\tech_stackmanifest.yaml",
       "file_name": "tech_stackmanifest.yaml",
       "extension": ".yaml",
@@ -334437,7 +334437,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/risk-register.yaml",
+      "relative_path": "config/risk_register.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\risk-register.yaml",
       "file_name": "risk-register.yaml",
       "extension": ".yaml",
@@ -334457,7 +334457,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/compression/policy.yaml",
+      "relative_path": "config/compression_policy.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\compression\\policy.yaml",
       "file_name": "policy.yaml",
       "extension": ".yaml",
@@ -334467,7 +334467,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/token_budget.yaml",
+      "relative_path": "config/token_budget.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\token_budget.yaml",
       "file_name": "token_budget.yaml",
       "extension": ".yaml",
@@ -334477,7 +334477,7 @@
       "is_binary": false
     },
     {
-      "relative_path": "config/capacity/sandbox_policy.yaml",
+      "relative_path": "config/sandbox_policy.yaml",
       "absolute_path": "D:\\ZephyrAlpha\\config\\capacity\\sandbox_policy.yaml",
       "file_name": "sandbox_policy.yaml",
       "extension": ".yaml",

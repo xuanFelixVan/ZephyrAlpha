@@ -4315,7 +4315,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "src/zephyr/context-engine/config/compression/policy.yaml",
+      "relative_path": "config/compression_policy.yaml",
       "asset_type": "unknown",
       "layer": "cross_layer",
       "status": "active",
@@ -501475,7 +501475,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/ai_context_policy.yaml",
+      "relative_path": "config/ai_context_policy.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501550,7 +501550,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/degradation_chain.yaml",
+      "relative_path": "config/degradation_chain.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501565,7 +501565,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/external_watchdog.yaml",
+      "relative_path": "config/external_watchdog.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501580,7 +501580,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/error_budget_config.yaml",
+      "relative_path": "config/error_budget_config.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501595,7 +501595,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/capacity_slo.yaml",
+      "relative_path": "config/capacity_slo.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501610,7 +501610,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/owner_offline_protocol.yaml",
+      "relative_path": "config/owner_offline_protocol.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501625,7 +501625,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/asset-inventory.yaml",
+      "relative_path": "config/asset_inventory.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501640,7 +501640,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/compression/.gitkeep",
+      "relative_path": "config/.gitkeep",
       "asset_type": "unknown",
       "layer": "L01",
       "status": "active",
@@ -501655,7 +501655,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/tech_stackmanifest.yaml",
+      "relative_path": "config/tech_stack_manifest.yaml",
       "asset_type": "registry",
       "layer": "L01",
       "status": "active",
@@ -501670,7 +501670,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/risk-register.yaml",
+      "relative_path": "config/risk_register.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501700,7 +501700,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/compression/policy.yaml",
+      "relative_path": "config/compression_policy.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501715,7 +501715,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/token_budget.yaml",
+      "relative_path": "config/token_budget.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
@@ -501730,7 +501730,7 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "config/capacity/sandbox_policy.yaml",
+      "relative_path": "config/sandbox_policy.yaml",
       "asset_type": "config",
       "layer": "L01",
       "status": "active",
