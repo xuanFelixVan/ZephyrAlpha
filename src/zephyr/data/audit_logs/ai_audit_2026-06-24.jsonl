@@ -1,4 +1,0 @@
-{"log_type":"registration","timestamp":"2026-06-24T01:29:06.561996","session_id":"","detail":{"capability_id":"deepseek-chat","event":"VERIFY_OK"}}
-{"log_type":"registration","timestamp":"2026-06-24T01:29:12.898939","session_id":"","detail":{"capability_id":"embedding-router","event":"WARMUP_OK"}}
-{"log_type":"registration","timestamp":"2026-06-24T01:29:12.900067","session_id":"","detail":{"capability_id":"local-model-scheduler","event":"STARTED"}}
-{"log_type":"registration","timestamp":"2026-06-24T01:33:38.398869","session_id":"","detail":{"capability_id":"model-benchmark","event":"2_models_profiled"}}
