@@ -45,13 +45,13 @@ modules:
       - KBG-0041
     test_coverage:
       tested:
-        - atomic_transaction_manager.py (tests/unit/test_atomic_transaction_manager.py)
-        - olap_engine.py (tests/unit/test_olap_engine.py)
-        - sqlite_schema.py (tests/unit/test_sqlite_schema.py)
-        - task_repo.py (tests/unit/test_task_repo.py)
-        - database_manager.py (tests/unit/test_database_manager.py)
-        - audit_schema.py (tests/unit/test_audit_schema.py)
-        - query_metrics.py (tests/unit/test_query_metrics.py)
+        - atomic_transaction_manager.py (tests/test_atomic_transaction_manager.py)
+        - olap_engine.py (tests/test_olap_engine.py)
+        - sqlite_schema.py (tests/test_sqlite_schema.py)
+        - task_repo.py (tests/test_task_repo.py)
+        - database_manager.py (tests/test_database_manager.py)
+        - audit_schema.py (tests/test_audit_schema.py)
+        - query_metrics.py (tests/test_query_metrics.py)
       untested_p1: []
       untested_p2: []
 
@@ -82,7 +82,7 @@ modules:
       - KBG-0041
     test_coverage:
       tested:
-        - depgraph_schema.py (tests/unit/test_depgraph_schema.py)
+        - depgraph_schema.py (tests/io/test_depgraph_schema.py)
       untested_p1: []
       untested_p2: []
 

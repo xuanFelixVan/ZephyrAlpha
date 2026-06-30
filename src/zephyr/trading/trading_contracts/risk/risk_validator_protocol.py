@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError on negative limit_value
-# [TESTS] tests/unit/risk/test_risk_validator.py; tests/unit/ex_core/
+# [TESTS] tests/risk/test_risk_validator.py; tests/ex_core/
 # [A_module] module_id=MOD-UNK_risk_validator_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

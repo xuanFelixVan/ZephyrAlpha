@@ -11,20 +11,20 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无异常抛出——变异应用失败记为 SETUP_ERROR 并跳过；阈值不达标返回 1
-# [TESTS] 自身即测试（oracle: tests/unit/test_post_sync_validation.py 36 场景）
+# [TESTS] 自身即测试（oracle: tests/governance/shared/test_post_sync_validation.py 36 场景）
 # [TTL] task_bound
 """
 mutation_test_post_sync_validator.py — SSoT 变异测试（独立 oracle）
 
 目的：机械注入源码变异到 post_sync_validator.py 的副本，复用
-tests/unit/test_post_sync_validation.py（36 场景）作 oracle，统计 mutation
+tests/governance/shared/test_post_sync_validation.py（36 场景）作 oracle，统计 mutation
 score（被 oracle 杀死的变异 / 总变异）。打破自指悖论——AI 写的 Gate 与 AI 写的
 测试可能共享盲区，但机械注入的变异与 AI 盲区正交，能暴露 oracle 不足。
 
 机制（per mutant）：
   1. 读真源 → 字符串替换注入变异 → 写临时副本
   2. 设环境变量 PSV_UNDER_TEST=临时副本路径（test_post_sync_validation.py 的 seam）
-  3. 跑 `python -m pytest tests/unit/test_post_sync_validation.py -q`
+  3. 跑 `python -m pytest tests/governance/shared/test_post_sync_validation.py -q`
      - exit 0 = 全 PASS = oracle 未察觉变异 → 变异 SURVIVED（假阴性暴露）
      - exit ≠ 0 = 有 FAIL = oracle 杀死变异 → KILLED
   4. 清理临时副本

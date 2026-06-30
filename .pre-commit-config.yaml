@@ -90,7 +90,7 @@ repos:
           (?x)^(
               src/zephyr/security/llm_defense/llm_security/patterns/secrets\.py|
               tests/test_fix_safety\.py|
-              tests/unit/auto_fix_engine/test_auto_fix_core\.py|
+              tests/fix/test_auto_fix_core\.py|
               tests/llm_security/test_secrets\.py|
               tests/test_credential_rotation_trigger\.py
           )$

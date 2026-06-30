@@ -34,7 +34,7 @@ Gate 与 AI 写的测试可能共享盲区，但机械注入的变异与 AI 盲�
 ——沿用 project_memory mutation testing 裁定）。
 
 oracle 选择裁定：continuation plan §5.2 原述 oracle 为
-``tests/unit/test_reconciliation_registry.py``。经 P3-T1 落地，实际 oracle 为
+``tests/test_reconciliation_registry.py``。经 P3-T1 落地，实际 oracle 为
 ``verify_reconciliation_registry.py``（P3-T1 产出的轻量不变量 audit，已 importlib
 加载 SSoT + RR_UNDER_TEST seam）。二者等价——均为"加载 SSoT 副本跑不变量"，
 verifier 无需单独 pytest，更轻量且复用 P3-T1。

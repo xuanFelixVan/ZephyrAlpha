@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] exit 0=clean; exit 1=violations found; exit 2=usage error
-# [TESTS] tests/unit/test_gate11_naming_convention.py
+# [TESTS] tests/test_gate11_naming_convention.py
 # [TTL] task_bound
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
@@ -931,6 +931,12 @@ _N16_DOCS_SKIP_DIRS: set[str] = _N16_DOCS_SKIP_DIRS_RAW
 # 覆盖 tests/_tmp_redblue_f2/ 等并发红蓝对抗沙箱(清理晚于commit,防撞名误阻断);真源在YAML n16_config.skip_dir_prefixes
 _N16_SKIP_DIR_PREFIXES: set[str] = _N16_SKIP_DIR_PREFIXES_RAW
 
+# src/ basename 豁免清单（P0-1 防再生门禁）
+# __init__.py 是 Python 包标识，跨目录同名合法；conftest.py 是 pytest 约定；
+# __main__.py 是 python -m 入口约定（多域各需自己的入口）。
+# 其余同名一律违规——责任唯一，真源唯一（trae_060 §2 原则①）。
+_N16_SRC_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_NAMES | frozenset({"__main__.py"})
+
 
 def _check_basename_uniqueness(
     scan_root: Path,
@@ -1026,20 +1032,54 @@ def check_docs_name_uniqueness(project_root: Path | None = None) -> list[NamingV
     )
 
 
-def check_filename_uniqueness_all(project_root: Path | None = None) -> list[NamingViolation]:
-    """N-16 统一入口——检测 tests/ + docs/ 下的文件名唯一性。"""
+def check_src_name_uniqueness(project_root: Path | None = None) -> list[NamingViolation]:
+    """扫描 src/zephyr/ 下所有 .py，同名文件（basename 相同）视为违规。
+
+    P0-1 防再生门禁：阻断 AI 跨域复刻同名模块（病根1）。
+    N-16 当初因"499 个 __init__.py"放弃 src/ 检测——解法是 __init__.py 已在豁免清单，
+    剩余同名才是真冲突（如 wave_generator 4 份副本）。
+
+    豁免: __init__.py（包标识）、conftest.py（pytest）、__main__.py（python -m 入口）。
+    跳过: __pycache__ / ._archive 等运行时产物。
+    """
+    if project_root is None:
+        project_root = Path.cwd()
+    return _check_basename_uniqueness(
+        scan_root=project_root / "src" / "zephyr",
+        project_root=project_root,
+        exempt_names=_N16_SRC_EXEMPT_NAMES,
+        skip_dirs=_N16_DOCS_SKIP_DIRS,  # 复用 _archive 等跳过规则
+        skip_dir_prefixes=_N16_SKIP_DIR_PREFIXES,
+        file_filter=lambda n: n.endswith(".py"),
+        label="源码文件名",
+    )
+
+
+def check_filename_uniqueness_all(
+    project_root: Path | None = None,
+    include_src: bool = False,
+) -> list[NamingViolation]:
+    """N-16 统一入口——检测 tests/ + docs/ 下的文件名唯一性。
+
+    Args:
+        include_src: 是否包含 src/zephyr/ 检测。默认 False（避免存量 163 影子副本
+            阻断 commit）；设 True 用于诊断全量存量（如治理脚本手动调用）。
+            增量检测（check_new_files_naming）默认覆盖 src/，阻断新增同名。
+    """
     if project_root is None:
         project_root = Path.cwd()
     violations: list[NamingViolation] = []
     violations.extend(check_test_name_uniqueness(project_root))
     violations.extend(check_docs_name_uniqueness(project_root))
+    if include_src:
+        violations.extend(check_src_name_uniqueness(project_root))
     return violations
 
 
 def check_new_files_naming(
     new_files: list[str],
     project_root: Path | None = None,
-    scopes: tuple[str, ...] | None = ("tests", "docs"),
+    scopes: tuple[str, ...] | None = ("tests", "docs", "src"),
 ) -> list[NamingViolation]:
     """增量 N-16 检查（真源唯一）：只检查新文件是否与已跟踪文件同名冲突。
 
@@ -1091,8 +1131,8 @@ def check_new_files_naming(
         return []
 
     # 豁免清单（真源：trae_028.yaml §n16_config，模块级常量已动态加载）
-    # 跨 scope 统一豁免：__init__.py/conftest.py（包标识/pytest约定）+ docs约定同名
-    exempt = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_NAMES
+    # 跨 scope 统一豁免：__init__.py/conftest.py（包标识/pytest约定）+ __main__.py（python -m入口）+ docs约定同名
+    exempt = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_NAMES | frozenset({"__main__.py"})
 
     # 用 git ls-files 构建已跟踪文件基线（只已跟踪文件，排除未跟踪 WIP）
     try:

@@ -58,7 +58,7 @@ matrix:
       description: "架构适应度函数"
       rationale: "可新增测试，不删除或弱化既有不变式"
 
-    - scope: "tests/unit/test_enforcer.py"
+    - scope: "tests/test_enforcer.py"
       level: EXTEND
       description: "ContractEnforcer 单元测试"
       rationale: "可添加用例，不删除或弱化现有用例"
