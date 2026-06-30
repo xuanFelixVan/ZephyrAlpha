@@ -9,8 +9,9 @@
 """test_integrity_audit_reconciler.py — GATE-INTEGRITY-AUDIT reconciler 单测
 
 AD-GOV-001 合并后测试策略（治本红蓝对抗 P0-3/P1-6/P1-7）：
-- **禁止 import _make_old_***（私有实现，仅供 compose 复用）。旧测试直接 import
-  _make_old_commit_gateway_audit_reconciler 绕过 compose 逻辑是反模式，已删除。
+- **_make_old_* 已删除（2026-06-30 元问题4治本）**：原私有函数已内联到
+  make_integrity_audit_reconciler 闭包中，Python 无真私有，保留等于留可 import
+  的绕过入口。内联后 reconcile 逻辑仅在 make_* 闭包内可见。
 - **公共 API 测试**：make_integrity_audit_reconciler 的 spec 属性和 trigger。
 - **compose 行为测试**：用 mock spec 验证 _compose_reconcilers 的 trigger OR /
   reconcile 串联 / action 取较严重 / priority=max（治本 P1-7 零覆盖）。
@@ -24,8 +25,8 @@ compose 策略说明（P1-4 文档化）：
   - reconcile = 串联执行 spec_a.reconcile → spec_b.reconcile；action 取较严重
     （severity: skip/nothing=0, clean=1, warn=2, auto_committed=2），detail 拼接
   - priority = max(spec_a.priority, spec_b.priority)
-  旧 _make_old_* 保留为私有实现供 compose 复用，禁止外部 import（无门禁强制，
-  靠本测试规范示范正确用法）。
+  _make_old_* 私有函数已删除（2026-06-30 元问题4治本），reconcile 逻辑内联到
+  5 个 make_* compose 包装函数闭包中，无法被外部 import 绕过 compose。
 
 测试隔离: 所有测试用 tmp_path 临时 git 仓库，不污染生产库。
 """
