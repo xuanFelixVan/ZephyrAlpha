@@ -96,7 +96,7 @@ from zephyr.governance.dlq_retry_policy import RetryResult
 from zephyr.governance.audit_trail.dora_metrics import DORATargets
 from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
 from zephyr.governance.finding_ingest import IngestResult
-from zephyr.governance.fix_prioritizer import PrioritizedFixResult
+from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
 from zephyr.governance.gate_event_adapter import GateEventAdapter
 from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
 from zephyr.governance.index_generator import IndexGenerator

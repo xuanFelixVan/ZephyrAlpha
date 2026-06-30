@@ -1161,6 +1161,12 @@ creation_tokens:
     created_by: "session-trae-redteam-deadly-5"
     capability: "gate_chain_runner"
 
+  # --- ARCH-031 局限3: fix_prioritizer.py 迁移（git mv 视为新增，需 token 登记） ---
+  - file: "src/zephyr/governance/semantic_audit/fix_result_prioritizer.py"
+    token: "auto-fix-result-prioritizer-20260701"
+    created_by: "session-arch031-limit3"
+    capability: "fix_result_prioritizer"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
