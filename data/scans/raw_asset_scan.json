@@ -1,4 +1,4 @@
-﻿{
+{
   "scan_id": "SCAN-20260508-209",
   "scanned_at": "2026-05-08T04:51:49.071209Z",
   "completed_at": "2026-05-08T04:51:55.944006Z",
@@ -15897,16 +15897,6 @@
       "is_binary": false
     },
     {
-      "relative_path": "src/zephyr/shared/config/__init__.py",
-      "absolute_path": "D:\\ZephyrAlpha\\src\\zephyr\\shared\\config\\__init__.py",
-      "file_name": "__init__.py",
-      "extension": ".py",
-      "size_bytes": 252,
-      "mtime_utc": "2026-05-07T15:07:52.571577Z",
-      "sha256": "e1e30fca857c07da32a41143646e336ad0443141f54099d27c793a9e3d30e15c",
-      "is_binary": false
-    },
-    {
       "relative_path": "src/zephyr/shared/constitutional_update.py",
       "absolute_path": "D:\\ZephyrAlpha\\src\\zephyr\\shared\\constitutional_update.py",
       "file_name": "constitutional_update.py",
@@ -15954,16 +15944,6 @@
       "size_bytes": 347,
       "mtime_utc": "2026-05-08T04:47:15.024810Z",
       "sha256": "d935a729c519a7001ca580e8eba314c58886e5b802f72a7b9e761b6c0a855161",
-      "is_binary": false
-    },
-    {
-      "relative_path": "src/zephyr/shared/config/loader.py",
-      "absolute_path": "D:\\ZephyrAlpha\\src\\zephyr\\shared\\config\\loader.py",
-      "file_name": "loader.py",
-      "extension": ".py",
-      "size_bytes": 4555,
-      "mtime_utc": "2026-05-07T07:52:16.574526Z",
-      "sha256": "7904c9a58e704a7ec7e663b3e78c9384a004020753e9ce42e485813bba27ef6c",
       "is_binary": false
     },
     {
