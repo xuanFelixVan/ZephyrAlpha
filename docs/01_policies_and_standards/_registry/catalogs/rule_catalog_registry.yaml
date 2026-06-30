@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-30T14:39:15Z'
+generated_at: '2026-06-30T14:41:23Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 142
@@ -1301,7 +1301,7 @@ files:
 - path: docs/01_policies_and_standards/templates/playbook_runbook.md
   module_id: OPS-007
   title: Playbook Template
-  doc_type: operational_rule
+  doc_type: policy
   status: draft
   version: 0.1.0
   rule_form: procedural
