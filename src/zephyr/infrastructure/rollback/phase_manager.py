@@ -112,6 +112,54 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             "gate_registry_consistency",
             "gate_precommit_config",
             "gate_sys_master_compliance",
+            "g_trae_003",
+            "g_trae_004",
+            "g_trae_006",
+            "g_trae_007",
+            "g_trae_008",
+            "g_trae_009",
+            "g_trae_018",
+            "g_trae_020",
+            "g_trae_021",
+            "g_trae_052",
+            "g_trae_053",
+            "g_trae_054",
+            "g_trae_055",
+            "g_trae_010",
+            "g_trae_011",
+            "g_trae_012",
+            "g_trae_016",
+            "g_trae_017",
+            "g_trae_022",
+            "g_trae_023",
+            "g_trae_028",
+            "g_trae_029",
+            "g_trae_030",
+            "g_trae_031",
+            "g_trae_032",
+            "g_trae_033",
+            "g_trae_034",
+            "g_trae_035",
+            "g_trae_036",
+            "g_trae_037",
+            "g_trae_038",
+            "g_trae_039",
+            "g_trae_040",
+            "g_trae_044",
+            "g_trae_045",
+            "g_trae_046",
+            "g_trae_047",
+            "g_trae_024",
+            "g_trae_025",
+            "g_trae_026",
+            "g_trae_027",
+            "g_trae_041",
+            "g_trae_042",
+            "g_trae_043",
+            "g_trae_048",
+            "g_trae_049",
+            "g_trae_050",
+            "g_trae_051",
         ],
     ),
     ConstructionPhase.PHASE_1_FUNCTIONAL: PhaseGate(
@@ -144,6 +192,7 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             "gate_escalation_protocol",
             "gate_lsg_security",
             "gate_budget_enforcer",
+            "gate_auto_fix_start",
         ],
     ),
     ConstructionPhase.PHASE_2_E2E: PhaseGate(
@@ -203,6 +252,23 @@ def phase_resolver(completed_gates: set[str]) -> ConstructionPhase:
 
 
 def session_startup(quick: bool = True) -> dict:
+    """Session 启动检查——运行 phase gate 套件并读取上一 session 交接。
+
+    P4-T2：读取 .runtime/handoffs/ 最近 handoff（若有），纳入返回结果供上下文恢复。
+    """
+    # P4-T2: 读取上一 session 交接（crash recovery / 跨 session 上下文）
+    prev_handoff: dict | None = None
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionHandoff
+        prev_handoff = SessionHandoff().read_latest_handoff()
+        if prev_handoff:
+            logger.info(
+                "session_startup: 读取上一 session 交接 (session=%s)",
+                prev_handoff.get("session_id"),
+            )
+    except Exception as e:
+        logger.debug("session_startup: read handoff failed: %s", e)
+
     from zephyr.infrastructure.rollback.phase_check_registry import (
         check_audit_trail_context,
         check_blueprint_mandatory,
@@ -290,4 +356,23 @@ def session_startup(quick: bool = True) -> dict:
         "red": red,
         "checks": results,
         "next_action": next_action,
+        "prev_handoff": prev_handoff,
     }
+
+
+def session_shutdown(
+    session_id: str,
+    summary: str = "",
+    pending_tasks: list[str] | None = None,
+    warnings: list[str] | None = None,
+) -> dict:
+    """Session 结束时写 handoff package（session_startup 镜像，P4-T2 D5）。
+
+    写 .runtime/handoffs/handoff_<session_id>.json，供下一 session startup 读取。
+    轻量——仅写 handoff，不重跑 phase checks（那是 startup 的职责）。
+    由 GitCommitGateway.commit() finally 调用，每次 commit 后更新最新状态（crash recovery）。
+    """
+    from zephyr.security.access_control.session_concurrency import SessionHandoff
+    handoff = SessionHandoff()
+    path = handoff.write_handoff(session_id, summary, pending_tasks, warnings)
+    return {"session_id": session_id, "handoff_path": str(path)}

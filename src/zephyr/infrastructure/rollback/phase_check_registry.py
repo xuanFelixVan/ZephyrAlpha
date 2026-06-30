@@ -328,7 +328,7 @@ def check_contract_compliance() -> GateResult:
         return GateResult.YELLOW
 
     try:
-        _mod = importlib.import_module("zephyr.governance.audit_orchestration.contract_registry")
+        _mod = importlib.import_module("zephyr.trading.orchestrator.contract_registry")
         AIReadOnlyHint = _mod.AIReadOnlyHint
         ContractRegistry = _mod.ContractRegistry
 
@@ -565,7 +565,7 @@ def check_chaos_test() -> GateResult:
     try:
         from zephyr.governance.drift_detection.chaos_injector import ChaosInjection
 
-        _mod = importlib.import_module("zephyr.governance.audit_orchestration.chaos_engine")
+        _mod = importlib.import_module("zephyr.trading.orchestrator.chaos_engine")
         ChaosEngine = _mod.ChaosEngine
 
         return GateResult.GREEN
@@ -767,7 +767,7 @@ def check_task_system() -> GateResult:
     try:
         from zephyr.governance.task_repo import TaskRepository
 
-        _mod = importlib.import_module("zephyr.governance.audit_orchestration.batch_orchestrator")
+        _mod = importlib.import_module("zephyr.trading.orchestrator.batch_orchestrator")
         BatchOrchestrator = _mod.BatchOrchestrator
 
         return GateResult.GREEN
@@ -808,6 +808,47 @@ def check_lsg_security() -> GateResult:
         return GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
+
+
+def _check_trae_gate_factory(gate_name: str) -> Callable[[], GateResult]:
+    """Factory: create a check function for a TRAE rule gate.
+
+    Verifies the gate YAML file exists and is loadable by GateEngine.
+    """
+
+    def _check() -> GateResult:
+        gate_file = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement" / f"{gate_name}.yaml"
+        if not gate_file.exists():
+            return GateResult.RED
+        try:
+            import yaml as _yaml
+
+            data = _yaml.safe_load(gate_file.read_text(encoding="utf-8"))
+            if data.get("gate_id") and data.get("entry_conditions"):
+                return GateResult.GREEN
+            return GateResult.YELLOW
+        except Exception:
+            return GateResult.RED
+
+    return _check
+
+
+def check_auto_fix_start() -> GateResult:
+    """检查 auto_fix_engine 是否已注册到 phase_manager（F15 自动启停门控）。
+
+    验证 auto_fix_engine 模块存在且可导入，确保 F15 自动启停功能可用。
+    """
+    try:
+        import importlib
+
+        mod = importlib.import_module("zephyr.infrastructure.auto_fix_engine.engine")
+        if mod is not None:
+            return GateResult.GREEN
+        return GateResult.YELLOW
+    except ImportError:
+        return GateResult.YELLOW
+    except Exception:
+        return GateResult.RED
 
 
 _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
@@ -867,6 +908,55 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_skill_canary": check_skill_canary,
     "gate_dependency_audit": check_dependency_audit,
     "gate_a2a_hold": check_a2a_hold,
+    "g_trae_003": _check_trae_gate_factory("g_trae_003"),
+    "g_trae_004": _check_trae_gate_factory("g_trae_004"),
+    "g_trae_006": _check_trae_gate_factory("g_trae_006"),
+    "g_trae_007": _check_trae_gate_factory("g_trae_007"),
+    "g_trae_008": _check_trae_gate_factory("g_trae_008"),
+    "g_trae_009": _check_trae_gate_factory("g_trae_009"),
+    "g_trae_018": _check_trae_gate_factory("g_trae_018"),
+    "g_trae_020": _check_trae_gate_factory("g_trae_020"),
+    "g_trae_021": _check_trae_gate_factory("g_trae_021"),
+    "g_trae_052": _check_trae_gate_factory("g_trae_052"),
+    "g_trae_053": _check_trae_gate_factory("g_trae_053"),
+    "g_trae_054": _check_trae_gate_factory("g_trae_054"),
+    "g_trae_055": _check_trae_gate_factory("g_trae_055"),
+    "g_trae_010": _check_trae_gate_factory("g_trae_010"),
+    "g_trae_011": _check_trae_gate_factory("g_trae_011"),
+    "g_trae_012": _check_trae_gate_factory("g_trae_012"),
+    "g_trae_016": _check_trae_gate_factory("g_trae_016"),
+    "g_trae_017": _check_trae_gate_factory("g_trae_017"),
+    "g_trae_022": _check_trae_gate_factory("g_trae_022"),
+    "g_trae_023": _check_trae_gate_factory("g_trae_023"),
+    "g_trae_028": _check_trae_gate_factory("g_trae_028"),
+    "g_trae_029": _check_trae_gate_factory("g_trae_029"),
+    "g_trae_030": _check_trae_gate_factory("g_trae_030"),
+    "g_trae_031": _check_trae_gate_factory("g_trae_031"),
+    "g_trae_032": _check_trae_gate_factory("g_trae_032"),
+    "g_trae_033": _check_trae_gate_factory("g_trae_033"),
+    "g_trae_034": _check_trae_gate_factory("g_trae_034"),
+    "g_trae_035": _check_trae_gate_factory("g_trae_035"),
+    "g_trae_036": _check_trae_gate_factory("g_trae_036"),
+    "g_trae_037": _check_trae_gate_factory("g_trae_037"),
+    "g_trae_038": _check_trae_gate_factory("g_trae_038"),
+    "g_trae_039": _check_trae_gate_factory("g_trae_039"),
+    "g_trae_040": _check_trae_gate_factory("g_trae_040"),
+    "g_trae_044": _check_trae_gate_factory("g_trae_044"),
+    "g_trae_045": _check_trae_gate_factory("g_trae_045"),
+    "g_trae_046": _check_trae_gate_factory("g_trae_046"),
+    "g_trae_047": _check_trae_gate_factory("g_trae_047"),
+    "g_trae_024": _check_trae_gate_factory("g_trae_024"),
+    "g_trae_025": _check_trae_gate_factory("g_trae_025"),
+    "g_trae_026": _check_trae_gate_factory("g_trae_026"),
+    "g_trae_027": _check_trae_gate_factory("g_trae_027"),
+    "g_trae_041": _check_trae_gate_factory("g_trae_041"),
+    "g_trae_042": _check_trae_gate_factory("g_trae_042"),
+    "g_trae_043": _check_trae_gate_factory("g_trae_043"),
+    "g_trae_048": _check_trae_gate_factory("g_trae_048"),
+    "g_trae_049": _check_trae_gate_factory("g_trae_049"),
+    "g_trae_050": _check_trae_gate_factory("g_trae_050"),
+    "g_trae_051": _check_trae_gate_factory("g_trae_051"),
+    "gate_auto_fix_start": check_auto_fix_start,
 }
 
 
