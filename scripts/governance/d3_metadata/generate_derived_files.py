@@ -376,6 +376,134 @@ def _sync_schema_json(field_name: str, vocab_entries: list[dict], apply: bool) -
     return changed
 
 
+def _sync_schema_allof_rule_form(apply: bool) -> bool:
+    """同步 frontmatter_schema.json 的 allOf rule_form 条件约束块（P7-FIX 治本）。
+
+    从 doc_type_vocabulary.yaml 的 per-value allowed_rule_forms 字段自动生成
+    allOf 块（单值→const / 多值→enum），覆盖手动维护的 rule_form 约束。
+    非 rule_form 的 allOf 块（status/stability/file_category 约束）保留不动。
+
+    真源链：doc_type_vocabulary.yaml values[].allowed_rule_forms
+            → frontmatter_schema.json allOf[].then.properties.rule_form
+    """
+    if not SCHEMA_JSON_PATH.exists():
+        return False
+
+    # 1. 加载 doc_type_vocabulary.yaml 的 allowed_rule_forms（按词表顺序）
+    doc_type_path = VOCAB_DIR / "doc_type_vocabulary.yaml"
+    if not doc_type_path.exists():
+        return False
+    doc_type_vocab = load_yaml(str(doc_type_path))
+    if not isinstance(doc_type_vocab, dict):
+        return False
+    values = doc_type_vocab.get("values", [])
+    if not isinstance(values, list):
+        return False
+
+    # 2. 加载 rule_form_vocabulary.yaml 合法值（校验 allowed_rule_forms 引用合法性）
+    rule_form_values = set(load_vocabulary_values("rule_form_vocabulary.yaml"))
+
+    # 3. 构建期望的 rule_form allOf 块（按词表顺序）
+    expected_blocks: list[dict] = []
+    for entry in values:
+        if not isinstance(entry, dict):
+            continue
+        dt = entry.get("value")
+        allowed = entry.get("allowed_rule_forms")
+        if not dt or not allowed or not isinstance(allowed, list):
+            continue
+        # 校验 allowed_rule_forms 引用的值都在 rule_form_vocabulary.yaml 中
+        for rf in allowed:
+            if rule_form_values and str(rf) not in rule_form_values:
+                _drift(
+                    f"schema_json allof: doc_type={dt} allowed_rule_forms "
+                    f"含非法 rule_form 值 '{rf}'（不在 rule_form_vocabulary.yaml 中）"
+                )
+        # 生成约束块
+        allowed_strs = [str(v) for v in allowed]
+        if len(allowed_strs) == 1:
+            rule_form_constraint: dict = {"const": allowed_strs[0]}
+            desc = f"{dt} 类型的 rule_form 必须为 {allowed_strs[0]}"
+        else:
+            rule_form_constraint = {"enum": allowed_strs}
+            desc = f"{dt} 类型的 rule_form 为 {' 或 '.join(allowed_strs)}"
+        expected_blocks.append({
+            "description": desc,
+            "if": {
+                "properties": {"doc_type": {"const": str(dt)}},
+                "required": ["doc_type"],
+            },
+            "then": {
+                "properties": {"rule_form": rule_form_constraint},
+            },
+        })
+
+    # 4. 加载 schema.json，拆分 allOf 为 rule_form 块和其他块
+    try:
+        with open(SCHEMA_JSON_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return False
+    existing_allof = data.get("allOf", [])
+    if not isinstance(existing_allof, list):
+        return False
+
+    # 5. 比较期望 vs 实际的 rule_form 块（结构+描述都比对，全量自动生成）
+    actual_rf_blocks: list[dict] = []
+    for block in existing_allof:
+        if not isinstance(block, dict):
+            continue
+        then_props = block.get("then", {}).get("properties", {})
+        if "rule_form" in then_props:
+            actual_rf_blocks.append(block)
+
+    expected_json = json.dumps(expected_blocks, ensure_ascii=False, sort_keys=True)
+    actual_json = json.dumps(actual_rf_blocks, ensure_ascii=False, sort_keys=True)
+    changed = expected_json != actual_json
+
+    if changed:
+        _drift(
+            f"schema_json allOf rule_form: 需重新生成"
+            f"（期望 {len(expected_blocks)} 块，当前 {len(actual_rf_blocks)} 块）"
+        )
+        if apply:
+            # 重建 allOf：保留非 rule_form 块的原顺序，在首个 rule_form 块位置插入生成块
+            new_allof: list[dict] = []
+            rf_inserted = False
+            for block in existing_allof:
+                if not isinstance(block, dict):
+                    new_allof.append(block)
+                    continue
+                then_props = block.get("then", {}).get("properties", {})
+                if "rule_form" in then_props:
+                    if not rf_inserted:
+                        new_allof.extend(expected_blocks)
+                        rf_inserted = True
+                    # 跳过旧的 rule_form 块（已被生成的替代）
+                else:
+                    new_allof.append(block)
+            if not rf_inserted:
+                # 无既有 rule_form 块，追加到末尾
+                new_allof.extend(expected_blocks)
+            data["allOf"] = new_allof
+
+            tmp_path = f"{SCHEMA_JSON_PATH}.{os.getpid()}.tmp"
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                    f.write("\n")
+                os.replace(tmp_path, SCHEMA_JSON_PATH)
+            except (PermissionError, OSError):
+                pass
+            finally:
+                if os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
+    return changed
+
+
 def _check_unregistered_enum_fields() -> bool:
     """检测 schema.json 中有枚举字段未注册到 VOCAB_FIELD_MAP（治本 2026-06-30）。
 
@@ -481,6 +609,13 @@ def main() -> None:
             )
         else:
             print("    → ✅ 一致")
+
+    # P7-FIX：同步 allOf rule_form 条件约束块（从 doc_type_vocabulary.yaml allowed_rule_forms 自动生成）
+    c4 = _sync_schema_allof_rule_form(apply)
+    if c4:
+        total_changes += 1
+        action = "已同步" if apply else "待同步"
+        print(f"  allOf rule_form: → {action}: schema_json_allof={'✅' if apply else '⏭️'}")
 
     # 治本（2026-06-30）：检测未注册枚举字段（防漏检多真源）
     _check_unregistered_enum_fields()

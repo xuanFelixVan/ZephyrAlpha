@@ -958,7 +958,7 @@
       }
     },
     {
-      "description": "policy 类型的 rule_form 为 declarative（默认）或 procedural（v3.1.0 合并 operational_rule 后双值并存）",
+      "description": "policy 类型的 rule_form 为 declarative 或 procedural",
       "if": {
         "properties": {
           "doc_type": {
@@ -996,6 +996,26 @@
         "properties": {
           "rule_form": {
             "const": "data"
+          }
+        }
+      }
+    },
+    {
+      "description": "index 类型的 rule_form 必须为 declarative",
+      "if": {
+        "properties": {
+          "doc_type": {
+            "const": "index"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
           }
         }
       }
@@ -1041,11 +1061,11 @@
       }
     },
     {
-      "description": "gate 类型的 rule_form 必须为 declarative",
+      "description": "blueprint 类型的 rule_form 必须为 declarative",
       "if": {
         "properties": {
           "doc_type": {
-            "const": "gate"
+            "const": "blueprint"
           }
         },
         "required": [
@@ -1061,11 +1081,51 @@
       }
     },
     {
-      "description": "index 类型的 rule_form 必须为 declarative",
+      "description": "audit_report 类型的 rule_form 必须为 data",
       "if": {
         "properties": {
           "doc_type": {
-            "const": "index"
+            "const": "audit_report"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
+      }
+    },
+    {
+      "description": "architecture_view 类型的 rule_form 必须为 declarative",
+      "if": {
+        "properties": {
+          "doc_type": {
+            "const": "architecture_view"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
+      }
+    },
+    {
+      "description": "gate 类型的 rule_form 必须为 declarative",
+      "if": {
+        "properties": {
+          "doc_type": {
+            "const": "gate"
           }
         },
         "required": [
