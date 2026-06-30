@@ -259,9 +259,11 @@ entries:
     src/zephyr/security/access_control/）+§0.1诚实化（30 stub标记为stub pending ARCH-036）；
     (5)合并governance_bridges/单文件子目录到root（原则①能合并就合并）；(6)30个ghost stub
     元数据诚实化（[MATURITY] production→stub）+42消费者测试xfail（ARCH-036前置止血）。
-  fix_phase: 阶段2治本补完（2026-06-30，P0删除死代码+修复conftest+补注册；P1蓝图治本+
-  合并governance_bridges；P2 30stub诚实化+注册ARCH-036）
-  status: decided
+  fix_phase: 阶段2治本补完+阶段3双真源去重（2026-06-30，P0删除死代码+修复conftest+补注册；
+  P1蓝图治本+合并governance_bridges；P2 30stub诚实化+注册ARCH-036；
+  P3-a auto_fix_engine_03双真源去重+合并5文件独有改进+更新36消费者(commit 444118b4)；
+  P3-b orphan_judgment双真源去重+修复orphan_judge元数据漂移+清理__all__ ghost entries(commit f62b4cb6)）
+  status: resolved
   related_rules:
   - TRAE-060
   - TRAE-028
