@@ -3192,7 +3192,7 @@ scripts:
   dimensions: []
 - name: governance/meta/detect_config_deviation.py
   path: governance/meta/detect_config_deviation.py
-  description: detect_config_deviation.py — 配置文件与蓝图规范偏差检测（蓝图 §28 B65 + B87）
+  description: detect_config_deviation.py — 配置文件结构完整性检测（蓝图 §28 B65 + B87）
   domain: governance
   execution_plane: warm-path
   status: registered
