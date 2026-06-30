@@ -23,6 +23,17 @@
     python scripts/governance/g9_compliance_check.py --warn-only  # 仅报错，不退出
 """
 
+__manifest__ = """
+args: []
+description: G9 四蓝图跨模块集成合规门禁执行器.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

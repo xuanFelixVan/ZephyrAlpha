@@ -30,6 +30,17 @@ P1-2 列出所有Phase 0任务卡状态
 治根：落盘查询脚本确保可验证Phase 0任务卡完整性
 """
 
+__manifest__ = """
+args: []
+description: P1-2 列出所有Phase 0任务卡状态
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import sqlite3
 import sys

@@ -27,6 +27,17 @@ G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查�
     python scripts/governance/check_schema_version_writes.py --all       # 全部检查
 """
 
+__manifest__ = """
+args: []
+description: G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import ast
 import re
 import sys

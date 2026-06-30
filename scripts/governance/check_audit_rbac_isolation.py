@@ -21,6 +21,17 @@ DOM-GOV-001 §5 裁定: Audit 不依赖 RBAC，RBAC 单向调用 Audit.
 用法: python scripts/governance/check_audit_rbac_isolation.py
 """
 
+__manifest__ = """
+args: []
+description: check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

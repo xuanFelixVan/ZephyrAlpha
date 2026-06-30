@@ -17,7 +17,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from zephyr.governance.owner_absent import (
+from zephyr.infrastructure.rollback.owner_absent import (
     EXIT_OWNER_ABSENT_L1,
     EXIT_OWNER_ABSENT_L3,
     AbsentStatus,

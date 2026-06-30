@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.semantic_similar_detector import (
+from zephyr.infrastructure.rollback.semantic_similar_detector import (
     SENSITIVE_APIS,
     MorphingReport,
     SemanticSimilarDetector,

@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from zephyr.governance.hallucination_guard import (
+from zephyr.infrastructure.rollback.hallucination_guard import (
     FileState,
     HallucinationGuard,
 )

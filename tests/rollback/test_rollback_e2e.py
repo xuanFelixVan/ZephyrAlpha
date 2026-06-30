@@ -31,11 +31,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.rollback_executor import (
+from zephyr.infrastructure.rollback.rollback_executor import (
     RollbackExecutor,
     RollbackOp,
 )
-from zephyr.governance.rollback_lock import LockAcquireResult, RollbackLock
+from zephyr.infrastructure.rollback.rollback_lock import LockAcquireResult, RollbackLock
 
 
 @contextmanager

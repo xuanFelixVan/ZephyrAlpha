@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.topology_change_log import (
+from zephyr.infrastructure.rollback.topology_change_log import (
     TopologyChange,
     TopologyChangeLog,
     TopologyOp,

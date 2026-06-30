@@ -40,6 +40,17 @@
     可被 Pipeline Gate 调用（作为 G6 的一部分或独立门禁）
 """
 
+__manifest__ = """
+args: []
+description: audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

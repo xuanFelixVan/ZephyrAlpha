@@ -87,7 +87,7 @@ class TestRollbackExecutorIntegration:
     def test_rollback_executor_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.governance.rollback_executor import DiscardDecision, RollbackExecutor
+        from zephyr.infrastructure.rollback.rollback_executor import DiscardDecision, RollbackExecutor
 
         writer = AuditWriter(data_dir=data_dir)
         executor = RollbackExecutor(project_root=tmp_path)
@@ -119,7 +119,7 @@ class TestRollbackAuditNexusIntegration:
     def test_nexus_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.governance.audit_trail.writer import AuditWriter
-        from zephyr.governance.rollback_audit_nexus import AuditEvent, RollbackAuditNexus
+        from zephyr.infrastructure.rollback.rollback_audit_nexus import AuditEvent, RollbackAuditNexus
 
         writer = AuditWriter(data_dir=data_dir)
         nexus = RollbackAuditNexus(project_root=tmp_path)

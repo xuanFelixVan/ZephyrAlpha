@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.credential_rotation_trigger import (
+from zephyr.infrastructure.rollback.credential_rotation_trigger import (
     CREDENTIAL_PATTERNS,
     CredentialRotationTrigger,
     CredentialScanResult,

@@ -26,6 +26,18 @@
 [TESTS] tests/governance/test_governance.py
 """
 
+__manifest__ = """
+args: []
+description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
+  | §3'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import re
 import sys

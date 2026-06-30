@@ -34,6 +34,17 @@
   - _domain- 前缀中的连字符改（_domain-governance → _domain_governance）
 """
 
+__manifest__ = """
+args: []
+description: rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量重命名。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import os

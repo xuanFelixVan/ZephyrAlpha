@@ -1,3 +1,13 @@
+__manifest__ = """
+args: []
+description: ⚠ 请补充 description
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.d1_structure.archive_drafts_zone
 # [DOMAIN] D_GOVERNANCE

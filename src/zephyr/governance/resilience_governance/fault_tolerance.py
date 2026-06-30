@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-070 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.fault_tolerance
+# [MODULE] zephyr.infrastructure.rollback.fault_tolerance
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__
 # [CONSUMERS]

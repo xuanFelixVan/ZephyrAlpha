@@ -23,6 +23,17 @@
     --ci 模式：不一致时 exit(1)
 """
 
+__manifest__ = """
+args: []
+description: Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

@@ -17,6 +17,18 @@
 # [TTL] task_bound
 """
 
+__manifest__ = """
+args: []
+description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py
+  | §7'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import os
 import sys

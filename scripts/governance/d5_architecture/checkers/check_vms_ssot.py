@@ -62,6 +62,17 @@ Exit codes:
     1 = VIOLATION（检测到违规，--ci 模式）
 """
 
+__manifest__ = """
+args: []
+description: 'GATE-VMS-SSOT: VMS 单一真源门禁——三重检测。'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import subprocess

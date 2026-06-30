@@ -22,6 +22,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 域ID连字符→下划线迁移脚本（分层分批执行）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import os
 import re

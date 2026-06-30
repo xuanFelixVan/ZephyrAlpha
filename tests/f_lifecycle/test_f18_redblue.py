@@ -135,8 +135,8 @@ class TestDBFailure:
     def test_db_file_not_found_phase_manager(self, tmp_path: Path) -> None:
         """DB 文件不存在时 PhaseManager fallback 到硬编码。"""
         fake_db = tmp_path / "nonexistent.db"
-        with patch("zephyr.governance.phase_manager._DEPGRAPH_DB", fake_db):
-            from zephyr.governance.phase_manager import _load_gate_dimensions_from_db, _fallback_gate_dimensions
+        with patch("zephyr.infrastructure.rollback.phase_manager._DEPGRAPH_DB", fake_db):
+            from zephyr.infrastructure.rollback.phase_manager import _load_gate_dimensions_from_db, _fallback_gate_dimensions
 
             dims = _load_gate_dimensions_from_db()
             assert dims is None  # DB 不存在返回 None
@@ -170,8 +170,8 @@ class TestDBFailure:
         """gates 表不存在时查询不崩溃。"""
         db_no_tables = tmp_path / "no_tables.db"
         _create_db_without_tables(db_no_tables)
-        with patch("zephyr.governance.phase_manager._DEPGRAPH_DB", db_no_tables):
-            from zephyr.governance.phase_manager import PhaseManager
+        with patch("zephyr.infrastructure.rollback.phase_manager._DEPGRAPH_DB", db_no_tables):
+            from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
             pm = PhaseManager()
             # 查询不存在的表应返回空 dict
@@ -182,8 +182,8 @@ class TestDBFailure:
         """gates 表缺少 event_driven/auto_start 列时不崩溃。"""
         db_no_cols = tmp_path / "no_cols.db"
         _create_db_without_columns(db_no_cols)
-        with patch("zephyr.governance.phase_manager._DEPGRAPH_DB", db_no_cols):
-            from zephyr.governance.phase_manager import PhaseManager
+        with patch("zephyr.infrastructure.rollback.phase_manager._DEPGRAPH_DB", db_no_cols):
+            from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
             pm = PhaseManager()
             # 查询不存在的列应触发异常但被捕获
@@ -223,7 +223,7 @@ class TestGateExecutionFailure:
         from zephyr.governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.governance.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
             mock_check.side_effect = RuntimeError("gate exploded")
             result = runner._execute_gate("gate_broken")
             assert result is True  # 异常不阻断
@@ -233,7 +233,7 @@ class TestGateExecutionFailure:
         from zephyr.governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.governance.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = None
             result = runner._execute_gate("gate_none")
             # None != GateResult.GREEN → 返回 False，但不应崩溃
@@ -244,7 +244,7 @@ class TestGateExecutionFailure:
         from zephyr.governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.governance.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = "INVALID_STRING"
             result = runner._execute_gate("gate_invalid")
             assert isinstance(result, bool)
@@ -254,7 +254,7 @@ class TestGateExecutionFailure:
         from zephyr.governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch.dict("sys.modules", {"zephyr.governance.phase_check_registry": None}):
+        with patch.dict("sys.modules", {"zephyr.infrastructure.rollback.phase_check_registry": None}):
             result = runner._execute_gate("gate_any")
             assert result is True  # 导入失败视为通过
 
@@ -263,7 +263,7 @@ class TestGateExecutionFailure:
         from zephyr.governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.governance.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
             mock_check.side_effect = Exception("all gates broken")
             result = runner.run()
             assert result.cleanup_done is True
@@ -456,7 +456,7 @@ class TestConcurrentRun:
 
     def test_concurrent_phase_managers(self) -> None:
         """多个 PhaseManager 同时 status_report() 不崩溃。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
         errors: list[Exception] = []
 
@@ -648,8 +648,8 @@ class TestDataConsistency:
         finally:
             conn.close()
 
-        with patch("zephyr.governance.phase_manager._DEPGRAPH_DB", empty_cat_db):
-            from zephyr.governance.phase_manager import _load_gate_dimensions_from_db
+        with patch("zephyr.infrastructure.rollback.phase_manager._DEPGRAPH_DB", empty_cat_db):
+            from zephyr.infrastructure.rollback.phase_manager import _load_gate_dimensions_from_db
 
             dims = _load_gate_dimensions_from_db()
             if dims:
@@ -708,7 +708,7 @@ class TestIdempotency:
 
     def test_verify_auto_start_idempotent(self) -> None:
         """verify_auto_start() 多次调用结果一致。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
         pm = PhaseManager()
         r1 = pm.verify_auto_start()
@@ -718,7 +718,7 @@ class TestIdempotency:
 
     def test_status_report_idempotent(self) -> None:
         """status_report() 多次调用结果一致。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
         pm = PhaseManager()
         r1 = pm.status_report()
@@ -752,8 +752,8 @@ class TestBoundaryValues:
         """空 DB 时 PhaseManager 返回空维度。"""
         empty_db = tmp_path / "empty_pm.db"
         _create_temp_db(empty_db, with_data=False)
-        with patch("zephyr.governance.phase_manager._DEPGRAPH_DB", empty_db):
-            from zephyr.governance.phase_manager import _load_gate_dimensions_from_db
+        with patch("zephyr.infrastructure.rollback.phase_manager._DEPGRAPH_DB", empty_db):
+            from zephyr.infrastructure.rollback.phase_manager import _load_gate_dimensions_from_db
 
             dims = _load_gate_dimensions_from_db()
             if dims:

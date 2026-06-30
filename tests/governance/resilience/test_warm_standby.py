@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.warm_standby import (
+from zephyr.infrastructure.rollback.warm_standby import (
     CutoverResult,
     StandbyState,
     WarmStandby,

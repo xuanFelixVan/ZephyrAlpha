@@ -23,6 +23,17 @@ VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
     python scripts/governance/vms_health_check.py
 """
 
+__manifest__ = """
+args: []
+description: VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import json

@@ -21,7 +21,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.forensic import (
+from zephyr.infrastructure.rollback.forensic import (
     ForensicEngine,
     ForensicReport,
     NtpAttestation,

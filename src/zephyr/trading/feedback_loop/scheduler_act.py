@@ -158,7 +158,7 @@ class ActPhaseHandler:
 
     def _auto_rollback_on_escalation(self, anomaly: Any, escalation_level: str) -> None:
         try:
-            from zephyr.governance.rollback_executor import RollbackExecutor
+            from zephyr.infrastructure.rollback.rollback_executor import RollbackExecutor
 
             executor = RollbackExecutor()
             preflight = executor.preflight_check()

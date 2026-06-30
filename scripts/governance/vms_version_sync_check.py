@@ -23,6 +23,17 @@ P1 · 比对蓝图版本号与模块代码版本号一致性
     python scripts/governance/vms_version_sync_check.py
 """
 
+__manifest__ = """
+args: []
+description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

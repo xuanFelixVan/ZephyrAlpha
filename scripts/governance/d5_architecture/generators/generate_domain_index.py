@@ -28,6 +28,17 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+__manifest__ = """
+args: []
+description: 'G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

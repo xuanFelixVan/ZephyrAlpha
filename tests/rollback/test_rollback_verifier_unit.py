@@ -21,7 +21,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from zephyr.governance.rollback_verifier import RollbackVerifier
+from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
 
 
 @contextmanager

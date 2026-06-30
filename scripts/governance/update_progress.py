@@ -21,6 +21,17 @@ DOM-GOV-001 §7 运维脚本.
 用法: python scripts/governance/update_progress.py [module_id] [progress_pct]
 """
 
+__manifest__ = """
+args: []
+description: update_progress.py — 从 domain_progress.json 批量更新施工进度.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

@@ -42,6 +42,17 @@
                     （pre-commit 自动触发，防规则改了脚本没跟上；能力反查 alias=ssot_linkage_validator）
 """
 
+__manifest__ = """
+args: []
+description: GATE-11 命名规范门禁 — 全类型命名检测。
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import os

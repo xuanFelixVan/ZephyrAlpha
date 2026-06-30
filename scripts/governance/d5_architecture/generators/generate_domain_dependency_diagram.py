@@ -28,6 +28,17 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+__manifest__ = """
+args: []
+description: 'G3: 从 depgraph (PostgreSQL) edges 表生成指定域的全景依赖图(.mmd Mermaid格式)'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

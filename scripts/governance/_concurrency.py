@@ -25,7 +25,9 @@ Phase: 3b+3c 完整版
 
 __manifest__ = """
 args: []
-description: [WARNING] __manifest__ 缺失, 请添加元数据块
+description: >
+  ZCL 并发基础设施（L0/L1/L2 锁+四池隔离 Bulkhead+分级超时+令牌桶+准入控制+分片路由+熔断器）。
+  被 run_all.py 导入，非独立运行脚本。
 dimensions: []
 priority: P2
 timeout_seconds: 60

@@ -17,7 +17,7 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rollback_drill import (
+from zephyr.infrastructure.rollback.rollback_drill import (
     CHAOS_SCENARIOS,
     ChaosScenario,
     DrillResult,

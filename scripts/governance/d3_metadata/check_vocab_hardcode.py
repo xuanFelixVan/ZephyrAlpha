@@ -41,6 +41,17 @@ Usage::
     python scripts/governance/d3_metadata/check_vocab_hardcode.py --ci
 """
 
+__manifest__ = """
+args: []
+description: 'GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）'
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import ast

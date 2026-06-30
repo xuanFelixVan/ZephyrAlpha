@@ -19,7 +19,9 @@
 
 __manifest__ = """
 args: []
-description: [WARNING] __manifest__ 缺失, 请添加元数据块
+description: >
+  一次性：清理历史 P0 自动桥接任务（tags 含 auto-bridged 的 PENDING→P1+COMPLETED）。
+  运行后删除，属止血操作。
 dimensions: []
 priority: P2
 timeout_seconds: 60

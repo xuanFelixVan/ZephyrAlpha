@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.submodule_sync import (
+from zephyr.infrastructure.rollback.submodule_sync import (
     EXIT_SUBMODULE_OUT_OF_SYNC,
     SubmoduleInfo,
     SubmoduleSync,

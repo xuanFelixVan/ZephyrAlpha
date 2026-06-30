@@ -17,7 +17,7 @@ import json
 import os
 import time
 
-from zephyr.governance.checkpoint_gc import CheckpointGC, GCResult
+from zephyr.infrastructure.rollback.checkpoint_gc import CheckpointGC, GCResult
 
 
 class TestCheckpointGCInstantiation:

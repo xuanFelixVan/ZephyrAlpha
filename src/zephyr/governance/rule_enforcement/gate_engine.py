@@ -919,7 +919,7 @@ def _run_check(
         except (TypeError, ValueError):
             exit_code = -1
         try:
-            from zephyr.governance.contract import get_gate_action
+            from zephyr.infrastructure.rollback.contract import get_gate_action
 
             gate_action, description = get_gate_action(exit_code)
             if gate_action in ("FAIL", "BLOCK", "BLOCK_AUTO") or gate_action in (

@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-076 | docs/03_modules/_domain-governance/blueprint.md
-# [MODULE] zephyr.governance.startup_shutdown
+# [MODULE] zephyr.infrastructure.rollback.startup_shutdown
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
 # [CONSUMERS]

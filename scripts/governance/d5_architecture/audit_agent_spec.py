@@ -26,6 +26,18 @@
 [TESTS] tests/governance/test_d5_architecture.py
 """
 
+__manifest__ = """
+args: []
+description: '[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
+  | §'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 import sys
 from pathlib import Path

@@ -25,6 +25,17 @@ SQLite → PostgreSQL 数据迁移脚本
     * 迁移结束逐表对比 SQLite/PG 行数
 """
 
+__manifest__ = """
+args: []
+description: SQLite → PostgreSQL 数据迁移脚本
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import sys
 import sqlite3

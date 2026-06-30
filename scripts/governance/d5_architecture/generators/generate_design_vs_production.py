@@ -28,6 +28,17 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+__manifest__ = """
+args: []
+description: 'G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

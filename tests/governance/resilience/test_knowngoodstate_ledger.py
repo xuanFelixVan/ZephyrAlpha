@@ -17,7 +17,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from zephyr.governance.knowngoodstate_ledger import (
+from zephyr.infrastructure.rollback.knowngoodstate_ledger import (
     KnownGoodRecord,
     KnowngoodstateLedger,
 )

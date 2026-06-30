@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.resilience.deferred_queue
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.infra_06.observer
+# [DEPENDENCIES] zephyr.shared.infra.observer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,7 +32,7 @@ from enum import Enum, unique
 from threading import RLock
 from typing import Any
 
-from zephyr.shared.infra_06.observer import EventType, Observer
+from zephyr.shared.infra.observer import EventType, Observer
 
 
 @unique

@@ -1,19 +1,20 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers._health
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.health
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS] zephyr.trading.feedback_loop.diagnosers.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] _SUBMODULES列表不变
-# [MODIFY-GUARD] 新增子模块须同步更新__init__.py的__all__
+# [MODIFY-GUARD] 新增子模块须同步更新diagnosers/__init__.py的__all__
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
-# [A_module] module_id=MOD-UNK__health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
+# [GOV-DOC-018] 子包health: 自健康/可观测族（DW-242分类，原_health.py聚合迁移而来）
 
 _SUBMODULES = [
     "action_composition_health_monitor",

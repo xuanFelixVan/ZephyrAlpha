@@ -28,6 +28,17 @@
 [DOMAIN] D_GOVERNANCE
 """
 
+__manifest__ = """
+args: []
+description: 'DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import json

@@ -6,6 +6,17 @@ Usage:
     python scripts/governance/task_show.py --like OPS-2026062
 """
 
+__manifest__ = """
+args: []
+description: governance/task_show 脚本 — 任务卡详情查询 CLI。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/task_show.py | §
 # [MODULE] zephyr.governance.task_repo.TaskRepository
 # [DOMAIN] D_GOVERNANCE

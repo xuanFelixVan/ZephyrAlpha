@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.secret_rotation_aware import (
+from zephyr.infrastructure.rollback.secret_rotation_aware import (
     ROTATION_URLS,
     SECRET_PATTERNS,
     RotationResult,

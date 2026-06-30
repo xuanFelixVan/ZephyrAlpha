@@ -21,7 +21,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.sqlite_dumper import (
+from zephyr.infrastructure.rollback.sqlite_dumper import (
     HMAC_KEY_DEFAULT,
     JSONL_HEADER_PREFIX,
     DumpResult,

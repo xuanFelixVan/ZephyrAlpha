@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.auto_rollback_trigger import (
+from zephyr.infrastructure.rollback.auto_rollback_trigger import (
     AutoGuardResult,
     AutoRollbackTrigger,
     FailureCategory,

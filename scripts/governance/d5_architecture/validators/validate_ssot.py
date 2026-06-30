@@ -28,6 +28,17 @@ def _load_valid_document_statuses() -> set[str]:
     """
     from _shared.yaml_utils import load_vocabulary_values
 
+__manifest__ = """
+args: []
+description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
     return load_vocabulary_values("status_vocabulary.yaml")
 
 

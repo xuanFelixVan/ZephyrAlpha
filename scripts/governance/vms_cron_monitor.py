@@ -29,6 +29,17 @@ P2 · 运维基础设施收尾——定时 task 封装
     python scripts/governance/vms_cron_monitor.py --daemon  # daemon 模式
 """
 
+__manifest__ = """
+args: []
+description: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

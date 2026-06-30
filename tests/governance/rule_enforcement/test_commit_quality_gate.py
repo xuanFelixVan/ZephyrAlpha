@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.commit_quality_gate import (
+from zephyr.infrastructure.rollback.commit_quality_gate import (
     COMMIT_MSG_REQUIREMENTS,
     CommitQualityGate,
 )

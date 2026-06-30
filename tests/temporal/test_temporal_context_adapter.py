@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.temporal_context_adapter import (
+from zephyr.infrastructure.rollback.temporal_context_adapter import (
     AttestResult,
     TemporalContextAdapter,
     TimeAttestion,

@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.env_watcher import EnvChangeAlert, EnvWatcher
+from zephyr.infrastructure.rollback.env_watcher import EnvChangeAlert, EnvWatcher
 
 
 class TestEnvWatcherInit:

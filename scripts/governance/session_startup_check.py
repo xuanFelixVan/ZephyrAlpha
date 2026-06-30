@@ -30,6 +30,17 @@
     或作为 RULE-FIRST-READ 的自动化实现。
 """
 
+__manifest__ = """
+args: []
+description: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

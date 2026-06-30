@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.contract import (
+from zephyr.infrastructure.rollback.contract import (
     EXIT_CODE_TO_GATE_ACTION,
     PIPELINE_ACTIONS,
     RollbackExitCode,
@@ -48,7 +48,7 @@ class TestRollbackExitCode:
         assert len(RollbackExitCode) == 51
 
     def test_exit_code_alias(self):
-        from zephyr.governance.contract import ExitCode
+        from zephyr.infrastructure.rollback.contract import ExitCode
 
         assert ExitCode is RollbackExitCode
 

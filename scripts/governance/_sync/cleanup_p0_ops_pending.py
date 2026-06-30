@@ -19,7 +19,9 @@ cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+
 
 __manifest__ = """
 args: []
-description: [WARNING] __manifest__ 缺失, 请添加元数据块
+description: >
+  一次性：将所有 OPS-* P0+PENDING 任务降级+完成（P0→P1, PENDING→COMPLETED）。
+  运行后删除，属止血操作。
 dimensions: []
 priority: P2
 timeout_seconds: 60

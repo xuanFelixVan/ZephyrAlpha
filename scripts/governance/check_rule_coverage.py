@@ -30,6 +30,17 @@
 [TESTS] python scripts/governance/check_rule_coverage.py --warn-only
 """
 
+__manifest__ = """
+args: []
+description: governance/check_rule_coverage 脚本 — 规则文件漂移检测
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

@@ -24,6 +24,17 @@ VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
     python scripts/governance/vms_phase_rollback.py --list
 """
 
+__manifest__ = """
+args: []
+description: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

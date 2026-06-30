@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.right_to_be_forgotten import (
+from zephyr.infrastructure.rollback.right_to_be_forgotten import (
     EXIT_GDPR_BLOCKED,
     ForgottenUser,
     PurgeResult,

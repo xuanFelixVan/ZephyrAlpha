@@ -26,7 +26,7 @@ from zephyr.governance.rule_enforcement.phase_executor import (
     PhaseExecutionResult,
     PhaseExecutor,
 )
-from zephyr.governance.phase_manager import ConstructionPhase
+from zephyr.infrastructure.rollback.phase_manager import ConstructionPhase
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ class TestExecutePhase:
 
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_execute_phase_returns_result(self, mock_run: MagicMock, executor: PhaseExecutor) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.GREEN
         result = executor.execute_phase(ConstructionPhase.PHASE_0_SKELETON)
@@ -67,7 +67,7 @@ class TestExecutePhase:
 
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_red_stops_execution(self, mock_run: MagicMock, executor: PhaseExecutor) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.RED
         result = executor.execute_phase(ConstructionPhase.PHASE_0_SKELETON)
@@ -80,7 +80,7 @@ class TestExecutePhase:
 
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_yellow_continues_execution(self, mock_run: MagicMock, executor: PhaseExecutor) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.YELLOW
         result = executor.execute_phase(ConstructionPhase.PHASE_0_SKELETON)
@@ -126,7 +126,7 @@ class TestExecutionContext:
 
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_context_propagates_results(self, mock_run: MagicMock, executor: PhaseExecutor) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.GREEN
         ctx = ExecutionContext(phase="test")
@@ -163,7 +163,7 @@ class TestExecuteGate:
 class TestExecutePhaseWithGates:
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_gates_executed_when_phase_passes(self, mock_run: MagicMock) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.GREEN
         mock_ge = MagicMock()
@@ -181,7 +181,7 @@ class TestExecutePhaseWithGates:
 
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_gates_skipped_when_phase_fails(self, mock_run: MagicMock) -> None:
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.RED
         mock_ge = MagicMock()
@@ -246,7 +246,7 @@ class TestRedBlueConfrontation:
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_red_stops_immediately_no_bypass(self, mock_run: MagicMock) -> None:
         """RED检查必须立即停止，不能绕过继续执行."""
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         call_count = [0]
 
@@ -267,7 +267,7 @@ class TestRedBlueConfrontation:
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_gate_engine_not_bypassed(self, mock_run: MagicMock) -> None:
         """execute_gate必须通过GateEngine，不能绕过."""
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.GREEN
         mock_ge = MagicMock()
@@ -290,7 +290,7 @@ class TestRedBlueConfrontation:
         with patch(
             "zephyr.governance.rule_enforcement.phase_executor.run_check"
         ) as mock_run:
-            from zephyr.governance.phase_check_registry import GateResult
+            from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
             mock_run.return_value = GateResult.GREEN
             phase_result, gate_results = ex.execute_phase_with_gates(
@@ -303,7 +303,7 @@ class TestRedBlueConfrontation:
     @patch("zephyr.governance.rule_enforcement.phase_executor.run_check")
     def test_context_not_corrupted_between_checks(self, mock_run: MagicMock) -> None:
         """上下文不应在检查间被破坏."""
-        from zephyr.governance.phase_check_registry import GateResult
+        from zephyr.infrastructure.rollback.phase_check_registry import GateResult
 
         mock_run.return_value = GateResult.GREEN
         ex = PhaseExecutor()

@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-065 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.startup_shutdown_cli
+# [MODULE] zephyr.infrastructure.rollback.startup_shutdown_cli
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.__init__
 # [CONSUMERS]

@@ -50,6 +50,17 @@ Usage::
     # 或 env: ZEPHYR_DOCTYPE_STRICT=1
 """
 
+__manifest__ = """
+args: []
+description: 'GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验）'
+dimensions:
+- D3
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import os

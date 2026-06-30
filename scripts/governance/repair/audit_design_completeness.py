@@ -43,6 +43,17 @@ MIG-4: 完整性审计（v2.0 全面提取版）
 - 输出差距报告到 D:\临时工作区\design_migration_gap_report.md
 """
 
+__manifest__ = """
+args: []
+description: 'MIG-4: 完整性审计（v2.0 全面提取版）'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import re
 import sys

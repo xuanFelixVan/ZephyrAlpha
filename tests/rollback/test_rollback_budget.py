@@ -17,7 +17,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.rollback_budget import (
+from zephyr.infrastructure.rollback.rollback_budget import (
     BudgetConsumeResult,
     BudgetStatus,
     RollbackBudget,

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.agent_cooldown import AgentCooldown, CooldownCheck, CooldownEntry
+from zephyr.infrastructure.rollback.agent_cooldown import AgentCooldown, CooldownCheck, CooldownEntry
 
 
 class TestCooldownEntry:

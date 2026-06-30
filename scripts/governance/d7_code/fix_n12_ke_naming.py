@@ -24,6 +24,17 @@
 用法: python scripts/governance/d7_code/fix_n12_ke_naming.py
 """
 
+__manifest__ = """
+args: []
+description: N-12 KE 条目命名格式批量修复脚本。
+dimensions:
+- D7
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import os

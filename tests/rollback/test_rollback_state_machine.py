@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.rollback_state_machine import (
+from zephyr.infrastructure.rollback.rollback_state_machine import (
     RollbackStateMachine,
     RollbackStep,
     StepStatus,

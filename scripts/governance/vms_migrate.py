@@ -24,6 +24,17 @@ VMS Phase 2 数据迁移脚本 — MOD-INF-011
     python scripts/governance/vms_migrate.py --execute
 """
 
+__manifest__ = """
+args: []
+description: VMS Phase 2 数据迁移脚本 — MOD-INF-011
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

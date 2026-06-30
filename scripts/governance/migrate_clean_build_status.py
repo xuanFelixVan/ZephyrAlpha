@@ -12,6 +12,17 @@ P2迁移后：全景图数据库为 depgraph (PostgreSQL)，连接由 get_depgra
 import sys
 from pathlib import Path
 
+__manifest__ = """
+args: []
+description: 'OPS-2026062504: 数据清洗 depgraph (PostgreSQL) 历史脏值'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 # ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))

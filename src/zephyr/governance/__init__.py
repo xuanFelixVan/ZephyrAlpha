@@ -104,7 +104,7 @@ try:
     from zephyr.infrastructure.asset_inventory.classifier import Classifier
     from zephyr.governance.cli import main
     from zephyr.governance.audit_trail.code_archaeology import BlameRecord
-    from zephyr.governance.complexity_budget import ComplexityReport
+    from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
     from zephyr.governance.construction_verifier import ConstructionVerifier
     from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
@@ -121,7 +121,7 @@ try:
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
     from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
-    from zephyr.governance.llm_impact_analyzer import RiskLevel
+    from zephyr.infrastructure.rollback.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
     from zephyr.governance.phase_executor import PhaseStatus
@@ -162,19 +162,20 @@ try:
     import zephyr.governance.data_quality as data_quality
     import zephyr.governance.decision_fatigue as decision_fatigue
     import zephyr.governance.decision_fatigue_cli as decision_fatigue_cli
-    import zephyr.governance.fault_tolerance as fault_tolerance
+    import zephyr.infrastructure.rollback.fault_tolerance as fault_tolerance
     import zephyr.governance.financial_compliance as financial_compliance
-    import zephyr.governance.fsm_verifier as fsm_verifier
+    import zephyr.infrastructure.rollback.fsm_verifier as fsm_verifier
     import zephyr.governance.incident_response as incident_response
     import zephyr.governance.knowledge_engine as knowledge_engine
     import zephyr.governance.ops_foundation as ops_foundation
-    import zephyr.governance.paper_live_transition as paper_live_transition
-    import zephyr.governance.phase_check_registry as phase_check_registry
-    import zephyr.governance.post_live_verification as post_live_verification
+    import zephyr.infrastructure.rollback.paper_live_transition as paper_live_transition
+    import zephyr.infrastructure.rollback.phase_check_registry as phase_check_registry
+    import zephyr.infrastructure.rollback.phase_manager as phase_manager
+    import zephyr.infrastructure.rollback.post_live_verification as post_live_verification
     import zephyr.governance.realtime_streaming as realtime_streaming
     import zephyr.governance.spof_checker as spof_checker
-    import zephyr.governance.startup_shutdown as startup_shutdown
-    import zephyr.governance.startup_shutdown_cli as startup_shutdown_cli
+    import zephyr.infrastructure.rollback.startup_shutdown as startup_shutdown
+    import zephyr.infrastructure.rollback.startup_shutdown_cli as startup_shutdown_cli
     # 子目录模块（33个）
     import zephyr.governance.behavioral_admission.admission_response as admission_response
     import zephyr.governance.intelligence_governance.agent_debate as agent_debate

@@ -23,6 +23,18 @@ import subprocess
 import sys
 from pathlib import Path
 
+__manifest__ = """
+args: []
+description: '# [A_full] module_id=CFG-check-src-no-data | layer=config | stability=stable
+  | safety=L | ai_autonomy=human_gated'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 # ── 路径设置（一次性 bootstrap，随后用 _shared.constants.REPO_ROOT）──
 # 约束：REPO_ROOT 真源唯一为 zephyr.shared.io.paths.REPO_ROOT
 #       scripts/ 包外消费者仅允许一次性 bootstrap 算 sys.path（N 值固定且仅用一次）

@@ -18,7 +18,7 @@ from zephyr.governance.drift_detection.architecture_contracts import (
     Contract,
     generate_client_order_id,
 )
-from zephyr.governance.phase_check_registry import (
+from zephyr.infrastructure.rollback.phase_check_registry import (
     _CHECK_MAP,
     GateResult,
     PhaseCheckRegistry,

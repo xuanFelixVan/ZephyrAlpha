@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.fault_tolerance import (
+from zephyr.infrastructure.rollback.fault_tolerance import (
     BULKHEAD_ALLOCATION,
     DEGRADATION_LAYERS,
     BulkheadPool,

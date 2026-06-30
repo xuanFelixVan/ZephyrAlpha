@@ -48,6 +48,17 @@
     # （事件驱动，无需手工触发；见 apply_depgraph.py _post_rename_residual_check）
 """
 
+__manifest__ = """
+args: []
+description: audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

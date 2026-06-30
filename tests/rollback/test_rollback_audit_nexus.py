@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.governance.rollback_audit_nexus import (
+from zephyr.infrastructure.rollback.rollback_audit_nexus import (
     AuditEvent,
     RollbackAuditNexus,
 )

@@ -29,6 +29,17 @@
     python scripts/governance/sync_blueprint_status.py --json       # JSON 输出
 """
 
+__manifest__ = """
+args: []
+description: 机械强制：construction_plan=phase_2_complete → blueprint.status=Active.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

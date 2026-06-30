@@ -35,6 +35,17 @@ self_review/rule_comprehension 缺负例对照组。本脚本作为 CI 检查，
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 考试题库一致性检查——根因治本，防止"定义-注册脱钩"复发。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import sys
 

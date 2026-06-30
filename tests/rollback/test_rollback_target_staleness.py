@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rollback_target_staleness import (
+from zephyr.infrastructure.rollback.rollback_target_staleness import (
     RollbackTargetStaleness,
     StalenessResult,
 )

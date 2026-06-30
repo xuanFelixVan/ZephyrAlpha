@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.contract import (
+from zephyr.infrastructure.rollback.contract import (
     EXIT_CODE_TO_GATE_ACTION,
     PIPELINE_ACTIONS,
     RollbackExitCode,

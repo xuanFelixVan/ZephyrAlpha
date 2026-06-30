@@ -26,6 +26,17 @@ VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
 4. 导入路径: 所有 import 路径是否有效
 """
 
+__manifest__ = """
+args: []
+description: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import ast

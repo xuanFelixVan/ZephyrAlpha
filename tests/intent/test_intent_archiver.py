@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from zephyr.governance.intent_archiver import (
+from zephyr.infrastructure.rollback.intent_archiver import (
     IntentArchiver,
     IntentRecord,
 )

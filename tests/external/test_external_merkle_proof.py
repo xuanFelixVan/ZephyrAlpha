@@ -26,7 +26,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from zephyr.governance.external_merkle_proof import (
+from zephyr.infrastructure.rollback.external_merkle_proof import (
     ExternalMerkleProof,
     MerkleProof,
 )

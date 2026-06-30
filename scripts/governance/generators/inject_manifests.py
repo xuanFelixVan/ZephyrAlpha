@@ -59,7 +59,7 @@ description: >
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
 MANIFEST_PATH = SCRIPTS_DIR / "script_manifest.yaml"
 
-EXCLUDE_DIRS = frozenset({"_shared", "__pycache__"})
+EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures", "_archive"})  # 治本(ARCH-036 P0-C): 对齐 generate_script_manifest.py，归档目录不注入
 
 DIM_FROM_DIR = {
     "d1_structure": ["D1"],
@@ -79,14 +79,18 @@ DIM_FROM_DIR = {
 
 
 def extract_first_docstring_line(source: str) -> str:
-    """extract_first_docstring_line implementation."""
+    """提取 docstring 中第一行有效描述（跳过元数据头/Usage/Exit codes）。
+
+    治本(ARCH-036 P0-C): 原 logic 会提取到 [BLUEPRINT]/[MODULE] 等元数据行，
+    而非实际功能描述。跳过 [ 开头的行可提取到真正的描述。
+    """
     m = re.search(r'"""(.*?)"""', source, re.DOTALL)
     if not m:
         return ""
     text = m.group(1).strip()
     lines = [l.strip().lstrip("-").strip() for l in text.split("\n") if l.strip()]
     for l in lines:
-        if l and not l.startswith("Usage") and not l.startswith("Exit codes"):
+        if l and not l.startswith("Usage") and not l.startswith("Exit codes") and not l.startswith("["):
             return l[:120]
     return lines[0][:120] if lines else ""
 
@@ -105,10 +109,22 @@ def has_manifest(content: str) -> bool:
 
 
 def inject_manifest(content: str, manifest_data: dict) -> str:
-    """inject_manifest implementation."""
+    """在 docstring 结束后插入 __manifest__ 块。
+
+    治本(ARCH-036 P0-C): 修复注入位置 bug——原 find(空行, find(首三引号))
+    会匹配到 docstring 内部空行，导致 __manifest__ 被插入到 docstring 中间。
+    正确做法：找 docstring 结束的第二个三引号后的空行。
+    """
     yaml_block = yaml.dump(manifest_data, allow_unicode=True, default_flow_style=False).strip()
     block = f'__manifest__ = """\n{yaml_block}\n"""\n'
-    pos = content.find("\n\n", content.find('"""'))
+    # 找 docstring 结束位置（第二个 """）
+    first_triple = content.find('"""')
+    pos = -1
+    if first_triple != -1:
+        second_triple = content.find('"""', first_triple + 3)
+        if second_triple != -1:
+            pos = content.find("\n\n", second_triple + 3)
+    # fallback: 找 import/from 语句
     if pos == -1:
         pos = content.find("\nimport")
     if pos == -1:
@@ -160,15 +176,19 @@ def main() -> None:
             skipped += 1
             continue
 
-        if rel_path in manifest_entries:
-            md = build_manifest_entry(manifest_entries[rel_path])
+        entry = manifest_entries.get(rel_path)
+        if entry and not entry.get("_manifest_missing"):
+            # manifest 中有有效记录（非缺失）→ 用 manifest 元数据
+            md = build_manifest_entry(entry)
         else:
+            # manifest 缺失或 _manifest_missing=true → 从 docstring 推断 description
+            # 治本(ARCH-036 P0-C): 原 logic 对 _manifest_missing 文件会提取到 "⚠ 缺失" 警告作 description
             md = {
-                "dimensions": infer_dimensions(rel_path),
-                "priority": "P2",
-                "timeout_seconds": 60,
-                "args": [],
-                "warn_only": False,
+                "dimensions": (entry.get("dimensions") if entry else None) or infer_dimensions(rel_path),
+                "priority": (entry.get("priority") if entry else "P2") or "P2",
+                "timeout_seconds": (entry.get("timeout_seconds") if entry else 60) or 60,
+                "args": (entry.get("args") if entry else []) or [],
+                "warn_only": (entry.get("warn_only") if entry else False) or False,
                 "description": extract_first_docstring_line(content) or "⚠ 请补充 description",
             }
             missing.append(rel_path)

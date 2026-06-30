@@ -37,6 +37,17 @@ module_id / domain_id 格式校验真源（裁定#208 三轨制）
     旧式单轨正则 VALID_MODULE_ID_PATTERN / NESTED_ID_PATTERN 一并删除（与三轨正则语义冲突）。
 """
 
+__manifest__ = """
+args: []
+description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import re
 
 # ---------------------------------------------------------------------------

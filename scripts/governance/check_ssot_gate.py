@@ -50,6 +50,17 @@ Exit codes:
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import subprocess
 import sys
 from pathlib import Path

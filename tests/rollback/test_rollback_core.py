@@ -14,13 +14,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.rollback_executor import (
+from zephyr.infrastructure.rollback.rollback_executor import (
     DiscardDecision,
     PreflightResult,
     RollbackExecutor,
     RollbackOp,
 )
-from zephyr.governance.rollback_lock import LockAcquireResult, RollbackLock
+from zephyr.infrastructure.rollback.rollback_lock import LockAcquireResult, RollbackLock
 from zephyr.infrastructure.rollback.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
 
 

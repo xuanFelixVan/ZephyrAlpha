@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.dependency_auditor
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.phase_check_registry; tests.test_dependency_auditor
+# [CONSUMERS] zephyr.infrastructure.rollback.phase_check_registry; tests.test_dependency_auditor
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

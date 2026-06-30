@@ -28,6 +28,17 @@
 §4 红蓝对抗测试（20项）
 """
 
+__manifest__ = """
+args: []
+description: §4 红蓝对抗测试（20项）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import sqlite3
 import subprocess

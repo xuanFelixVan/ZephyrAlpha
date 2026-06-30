@@ -57,6 +57,17 @@ GIT 备份门禁（P2 迁移后治本 2026-06-27）：
   事务失败时 conn.rollback() 自动回滚（已实现）。
 """
 
+__manifest__ = """
+args: []
+description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

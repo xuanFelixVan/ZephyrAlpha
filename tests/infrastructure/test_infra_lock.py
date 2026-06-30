@@ -24,7 +24,7 @@ import asyncio
 
 import pytest
 
-from zephyr.shared.infra_06.lock import (
+from zephyr.shared.infra.lock import (
     LockError,
     LockHandle,
     MemoryLock,

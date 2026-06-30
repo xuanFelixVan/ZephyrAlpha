@@ -28,6 +28,17 @@ check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
 exit: 0=CLEAN, 1=WARNINGS, 2=ERRORS
 """
 
+__manifest__ = """
+args: []
+description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

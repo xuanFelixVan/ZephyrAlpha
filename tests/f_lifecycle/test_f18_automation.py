@@ -46,20 +46,20 @@ class TestAutoStartup:
 
     def test_phase_manager_importable(self) -> None:
         """PhaseManager 可导入。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
         pm = PhaseManager()
         assert pm is not None
 
     def test_phase_manager_has_phases(self) -> None:
         """PhaseManager 包含所有施工阶段（PHASE_SEQUENCE）。"""
-        from zephyr.governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+        from zephyr.infrastructure.rollback.phase_manager import PHASE_SEQUENCE, ConstructionPhase
         assert ConstructionPhase.PHASE_0_SKELETON in PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_1_FUNCTIONAL in PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
 
     def test_all_phases_auto_start(self) -> None:
         """所有 gate 的 auto_start=1（从 depgraph 查询）。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
         pm = PhaseManager()
         auto_start_map = pm.verify_auto_start()
         # 所有 gate 的 auto_start 都应为 True
@@ -68,7 +68,7 @@ class TestAutoStartup:
 
     def test_verify_auto_start_returns_dict(self) -> None:
         """verify_auto_start() 返回非空 dict。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
         pm = PhaseManager()
         result = pm.verify_auto_start()
         assert isinstance(result, dict)
@@ -76,7 +76,7 @@ class TestAutoStartup:
 
     def test_status_report_contains_governance(self) -> None:
         """status_report() 包含 governance 维度信息。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
         pm = PhaseManager()
         report = pm.status_report()
         assert isinstance(report, dict)
@@ -85,7 +85,7 @@ class TestAutoStartup:
 
     def test_get_governance_gates_returns_dict(self) -> None:
         """get_governance_gates() 返回非空 dict（8维度）。"""
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
         pm = PhaseManager()
         gates = pm.get_governance_gates()
         assert isinstance(gates, dict)
@@ -93,7 +93,7 @@ class TestAutoStartup:
 
     def test_governance_gate_dimensions_has_8_dimensions(self) -> None:
         """GOVERNANCE_GATE_DIMENSIONS 包含 8 个维度（含 d8_functional）。"""
-        from zephyr.governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+        from zephyr.infrastructure.rollback.phase_manager import GOVERNANCE_GATE_DIMENSIONS
         expected_dims = {
             "d1_metadata", "d2_architecture", "d3_code_quality",
             "d4_testing", "d5_security", "d6_governance", "d7_operations",
@@ -103,7 +103,7 @@ class TestAutoStartup:
 
     def test_each_dimension_has_gates(self) -> None:
         """每个维度至少有 1 个 gate。"""
-        from zephyr.governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+        from zephyr.infrastructure.rollback.phase_manager import GOVERNANCE_GATE_DIMENSIONS
         for dim, gates in GOVERNANCE_GATE_DIMENSIONS.items():
             assert len(gates) > 0, f"{dim} should have at least 1 gate"
 
@@ -132,7 +132,7 @@ class TestEventDriven:
 
     def test_governance_dimensions_support_events(self) -> None:
         """治理维度支持事件驱动触发。"""
-        from zephyr.governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+        from zephyr.infrastructure.rollback.phase_manager import GOVERNANCE_GATE_DIMENSIONS
         # 每个维度的 gate 可被事件触发
         total_gates = sum(len(gates) for gates in GOVERNANCE_GATE_DIMENSIONS.values())
         assert total_gates > 0
@@ -202,7 +202,7 @@ class TestAutoRun:
     def test_run_covers_8_dimensions(self) -> None:
         """run() 覆盖 8 维度 gate。"""
         from zephyr.governance.auto_runner import GovernanceAutoRunner
-        from zephyr.governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+        from zephyr.infrastructure.rollback.phase_manager import GOVERNANCE_GATE_DIMENSIONS
         runner = GovernanceAutoRunner()
         result = runner.run()
         expected_total = sum(len(gates) for gates in GOVERNANCE_GATE_DIMENSIONS.values())
@@ -301,7 +301,7 @@ class TestIntegration:
     def test_full_automation_pipeline(self) -> None:
         """全流程:PhaseManager 调度 → AutoRunner 执行 → auto_close 清理。"""
         from zephyr.governance.auto_runner import GovernanceAutoRunner
-        from zephyr.governance.phase_manager import PhaseManager
+        from zephyr.infrastructure.rollback.phase_manager import PhaseManager
 
         # 1. 自动启动:PhaseManager 验证（返回 dict，所有 gate auto_start=True）
         pm = PhaseManager()
@@ -321,7 +321,7 @@ class TestIntegration:
     def test_8_dimensions_all_covered(self) -> None:
         """8 维度 gate 全部被 AutoRunner 覆盖。"""
         from zephyr.governance.auto_runner import GovernanceAutoRunner
-        from zephyr.governance.phase_manager import GOVERNANCE_GATE_DIMENSIONS
+        from zephyr.infrastructure.rollback.phase_manager import GOVERNANCE_GATE_DIMENSIONS
 
         runner = GovernanceAutoRunner()
         result = runner.run()

@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rollback_wal import (
+from zephyr.infrastructure.rollback.rollback_wal import (
     RollbackWAL,
     WALEntry,
 )

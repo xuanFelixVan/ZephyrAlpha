@@ -29,6 +29,17 @@
 [TESTS] python scripts/governance/verify_key_imports.py
 """
 
+__manifest__ = """
+args: []
+description: governance/verify_key_imports 脚本 — 关键模块导入验证
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

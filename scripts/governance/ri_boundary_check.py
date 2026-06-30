@@ -23,6 +23,17 @@ Runtime Integration 边界验证脚本 — MOD-INF-002
     python scripts/governance/ri_boundary_check.py
 """
 
+__manifest__ = """
+args: []
+description: Runtime Integration 边界验证脚本 — MOD-INF-002
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

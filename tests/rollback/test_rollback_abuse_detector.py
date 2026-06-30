@@ -17,7 +17,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from zephyr.governance.rollback_abuse_detector import (
+from zephyr.infrastructure.rollback.rollback_abuse_detector import (
     AbuseReport,
     RollbackAbuseDetector,
 )

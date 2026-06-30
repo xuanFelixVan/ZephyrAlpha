@@ -23,6 +23,17 @@ VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
     python scripts/governance/vms_blindspot_check.py
 """
 
+__manifest__ = """
+args: []
+description: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

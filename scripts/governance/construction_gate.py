@@ -36,6 +36,17 @@ Construction Gate — 施工前路径校验门禁
   - 校验在文件创建前执行，不阻塞施工，但报告偏差
 """
 
+__manifest__ = """
+args: []
+description: Construction Gate — 施工前路径校验门禁
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import json
 import os
 import re

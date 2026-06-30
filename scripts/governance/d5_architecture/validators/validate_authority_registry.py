@@ -1,3 +1,13 @@
+__manifest__ = """
+args: []
+description: ⚠ 请补充 description
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 # [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
 # [MODULE] scripts.governance.d5_architecture.validators.validate_authority_registry
 # [DOMAIN] D_GOV_DRIFT

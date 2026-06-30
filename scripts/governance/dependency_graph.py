@@ -15,6 +15,17 @@
 # [TTL] task_bound
 """治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图."""
 
+__manifest__ = """
+args: []
+description: 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

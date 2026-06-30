@@ -39,6 +39,17 @@
     python scripts/governance/pre_delete_safety_check.py <file_path> --warn-only
 """
 
+__manifest__ = """
+args: []
+description: 安全删除门禁脚本——RULE-THREE 强制执行器。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

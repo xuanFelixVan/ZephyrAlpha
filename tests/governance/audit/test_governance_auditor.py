@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.auditor import RollbackAuditor
+from zephyr.infrastructure.rollback.auditor import RollbackAuditor
 
 
 class TestRollbackAuditorInstantiation:

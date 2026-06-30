@@ -41,8 +41,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from zephyr.governance.phase_check_registry import run_check
-from zephyr.governance.phase_manager import ConstructionPhase, get_phase
+from zephyr.infrastructure.rollback.phase_check_registry import run_check
+from zephyr.infrastructure.rollback.phase_manager import ConstructionPhase, get_phase
 
 logger = logging.getLogger(__name__)
 

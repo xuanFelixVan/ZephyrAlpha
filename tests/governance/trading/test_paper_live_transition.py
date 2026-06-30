@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.paper_live_transition import (
+from zephyr.infrastructure.rollback.paper_live_transition import (
     PHASE_ORDER,
     PHASE_SPECS,
     PhaseSpec,

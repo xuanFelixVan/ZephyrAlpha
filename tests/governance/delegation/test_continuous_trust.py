@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.continuous_trust import (
+from zephyr.infrastructure.rollback.continuous_trust import (
     ContinuousTrust,
     TrustEntry,
     TrustScore,

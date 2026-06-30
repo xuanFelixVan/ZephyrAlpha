@@ -21,6 +21,17 @@ RULE-TWO/RULE-FOUR/RULE-EIGHT 自动化执行器。
 一人开发+AI 维护: 每次 session 结束前运行 --all。
 """
 
+__manifest__ = """
+args: []
+description: 全自动注册表同步器
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

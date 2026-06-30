@@ -1,3 +1,13 @@
+__manifest__ = """
+args: []
+description: ⚠ 请补充 description
+dimensions:
+- D11
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
 # [BLUEPRINT] MOD-GOV-SCRIPTS
 # [MODULE] scripts.governance.d11_compliance.validate_truth_source_cascade
 # [DOMAIN] D_GOV_DRIFT

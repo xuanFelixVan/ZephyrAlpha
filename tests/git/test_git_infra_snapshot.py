@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.git_infra_snapshot import GitInfraSnapshot, InfraCheckResult
+from zephyr.infrastructure.rollback.git_infra_snapshot import GitInfraSnapshot, InfraCheckResult
 
 
 @pytest.fixture

@@ -17,7 +17,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from zephyr.governance.s3_snapshot_lifecycle import (
+from zephyr.infrastructure.rollback.s3_snapshot_lifecycle import (
     FastPurgeResult,
     LifecyclePolicy,
     S3SnapshotLifecycle,

@@ -20,7 +20,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.rollback_integration import (
+from zephyr.infrastructure.rollback.rollback_integration import (
     NOTIFICATION_THROTTLE_MAX,
     AclCheckResult,
     CheckpointDensity,

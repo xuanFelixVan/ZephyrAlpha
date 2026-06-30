@@ -30,6 +30,17 @@
 - 规则表数据：gates/field_vocabularies/registries/hard_boundaries/business_streams/blueprint_links 各表 > 0
 """
 
+__manifest__ = """
+args: []
+description: §11最终交付验证
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import sys
 from pathlib import Path

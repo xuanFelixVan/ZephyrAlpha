@@ -18,6 +18,17 @@ Usage:
 import subprocess
 import sys
 
+__manifest__ = """
+args: []
+description: run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 
 def main() -> int:
     """Entry point: parse args, run scripts in sequence, return worst exit code."""

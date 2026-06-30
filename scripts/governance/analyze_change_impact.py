@@ -68,6 +68,17 @@ def _load_depgraph_from_db(db_path: Path) -> dict:
     conn.close()
     return data
 
+__manifest__ = """
+args: []
+description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 
 class DependencyGraphError(Exception):
     def __init__(self, message: str, path: str = ""):

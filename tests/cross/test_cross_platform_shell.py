@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.cross_platform_shell import CrossPlatformScripts, CrossPlatformShell
+from zephyr.infrastructure.rollback.cross_platform_shell import CrossPlatformScripts, CrossPlatformShell
 
 
 class TestCrossPlatformShellInit:

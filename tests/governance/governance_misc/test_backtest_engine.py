@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.backtest_engine import (
+from zephyr.infrastructure.rollback.backtest_engine import (
     BacktestEngine,
     BacktestResult,
     ExecutionSim,

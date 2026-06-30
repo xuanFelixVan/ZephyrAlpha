@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rollback_loop_detector import (
+from zephyr.infrastructure.rollback.rollback_loop_detector import (
     LoopAlert,
     LoopDetectorResult,
     RollbackLoopDetector,

@@ -34,6 +34,17 @@ P1-2 从备份回滚depgraph
     python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.backup.pre_migration
 """
 
+__manifest__ = """
+args: []
+description: P1-2 从备份回滚depgraph
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import os
 import shutil
 import sys

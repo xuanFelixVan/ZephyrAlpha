@@ -29,6 +29,18 @@ Checks:
   6. --check-no-duplicate: No duplicate scope+severity YAML files
 """
 
+__manifest__ = """
+args: []
+description: verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML
+  migration.
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import hashlib
 import json

@@ -21,6 +21,17 @@
     preload_domain_names()
 """
 
+__manifest__ = """
+args: []
+description: 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.venv_sync import (
+from zephyr.infrastructure.rollback.venv_sync import (
     DepDiff,
     VenvSync,
     VenvSyncResult,

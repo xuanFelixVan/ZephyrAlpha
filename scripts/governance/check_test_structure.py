@@ -15,6 +15,17 @@
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import ast
 import re

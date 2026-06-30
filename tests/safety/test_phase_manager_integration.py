@@ -318,25 +318,25 @@ class TestRegisterToPhaseManager:
 
     def test_returns_false_when_phase_manager_unavailable(self, scheduler: GameDayScheduler):
         with patch(
-            "zephyr.governance.phase_manager",
+            "zephyr.infrastructure.rollback.phase_manager",
             side_effect=ImportError("not available"),
             create=True,
         ):
             # 由于 phase_manager 已经导入，需要模拟 ImportError
             # 使用 sys.modules 替换
             import sys
-            original = sys.modules.get("zephyr.governance.phase_manager")
+            original = sys.modules.get("zephyr.infrastructure.rollback.phase_manager")
             try:
                 # 移除模块让 import 失败
-                if "zephyr.governance.phase_manager" in sys.modules:
-                    del sys.modules["zephyr.governance.phase_manager"]
+                if "zephyr.infrastructure.rollback.phase_manager" in sys.modules:
+                    del sys.modules["zephyr.infrastructure.rollback.phase_manager"]
 
                 # 使用 import 钩子模拟 ImportError
                 import builtins
                 original_import = builtins.__import__
 
                 def mock_import(name, *args, **kwargs):
-                    if name == "zephyr.governance.phase_manager":
+                    if name == "zephyr.infrastructure.rollback.phase_manager":
                         raise ImportError("simulated unavailable")
                     return original_import(name, *args, **kwargs)
 
@@ -348,7 +348,7 @@ class TestRegisterToPhaseManager:
                     builtins.__import__ = original_import
             finally:
                 if original is not None:
-                    sys.modules["zephyr.governance.phase_manager"] = original
+                    sys.modules["zephyr.infrastructure.rollback.phase_manager"] = original
 
     def test_returns_bool_type(self, scheduler: GameDayScheduler):
         result = scheduler.register_to_phase_manager()
@@ -356,7 +356,7 @@ class TestRegisterToPhaseManager:
 
     def test_phase_manager_import_success(self):
         """验证 phase_manager 模块可正常导入。"""
-        from zephyr.governance.phase_manager import (
+        from zephyr.infrastructure.rollback.phase_manager import (
             ConstructionPhase,
             GateResult,
             PhaseGate,
@@ -369,7 +369,7 @@ class TestRegisterToPhaseManager:
 
     def test_phase_2_e2e_exists(self):
         """验证 PHASE_2_E2E 阶段存在。"""
-        from zephyr.governance.phase_manager import ConstructionPhase, PHASE_SEQUENCE
+        from zephyr.infrastructure.rollback.phase_manager import ConstructionPhase, PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
         phase_gate = PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E]
         assert phase_gate is not None

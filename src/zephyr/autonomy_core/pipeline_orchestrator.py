@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.pipeline_orchestrator
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.infra_06.observer
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.infra.observer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -53,7 +53,7 @@ from zephyr.autonomy_core.pattern_library import (
     DangerousPatternLibrary,
     validate_context,
 )
-from zephyr.shared.infra_06.observer import Observer
+from zephyr.shared.infra.observer import Observer
 
 
 @dataclass

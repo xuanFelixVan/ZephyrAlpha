@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.sandbox_enforcer import (
+from zephyr.infrastructure.rollback.sandbox_enforcer import (
     SandboxBreachResult,
     SandboxEnforcer,
     SandboxMode,

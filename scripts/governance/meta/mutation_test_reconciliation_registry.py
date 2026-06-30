@@ -50,6 +50,18 @@ verifier 无需单独 pytest，更轻量且复用 P3-T1。
 正交，是验证 oracle 是否真能拦截这类扰动的客观手段。
 """
 
+__manifest__ = """
+args: []
+description: mutation_test_reconciliation_registry.py — ReconciliationRegistry SSoT
+  变异测试（P3-T2）
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

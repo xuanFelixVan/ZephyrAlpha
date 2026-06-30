@@ -26,6 +26,18 @@
 [TESTS] tests/governance/test_check_blueprint_code_alignment.py
 """
 
+__manifest__ = """
+args: []
+description: '[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
+  | S10.2'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import argparse

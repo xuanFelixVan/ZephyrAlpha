@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rollback_lock import (
+from zephyr.infrastructure.rollback.rollback_lock import (
     LockAcquireResult,
     LockPriority,
     LockStatus,
@@ -178,7 +178,7 @@ class TestLockExpiry:
 
 class TestQueueManagement:
     def test_enqueue_creates_file(self, rollback_lock: RollbackLock):
-        from zephyr.governance.rollback_lock import LockRequest
+        from zephyr.infrastructure.rollback.rollback_lock import LockRequest
 
         req = LockRequest(
             lock_id="TEST-001",
@@ -198,7 +198,7 @@ class TestQueueManagement:
     def test_count_queue_with_entries(self, rollback_lock: RollbackLock):
         from datetime import datetime
 
-        from zephyr.governance.rollback_lock import LockRequest
+        from zephyr.infrastructure.rollback.rollback_lock import LockRequest
 
         req = LockRequest(
             lock_id="TEST-001",

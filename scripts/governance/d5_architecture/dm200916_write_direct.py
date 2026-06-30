@@ -41,6 +41,17 @@ v3.0.2 融合版（2026-06-30 双树合并治本）：
 import sys
 from pathlib import Path
 
+__manifest__ = """
+args: []
+description: 从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:

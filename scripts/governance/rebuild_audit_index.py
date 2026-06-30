@@ -24,6 +24,17 @@ scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生�
     python scripts/governance/rebuild_audit_index.py --warn-only  # 重建+警告模式
 """
 
+__manifest__ = """
+args: []
+description: scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 from __future__ import annotations
 
 import sys

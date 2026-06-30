@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.rollback_verifier import (
+from zephyr.infrastructure.rollback.rollback_verifier import (
     G0Report,
     RollbackVerifier,
 )

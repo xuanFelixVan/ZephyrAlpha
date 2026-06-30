@@ -47,7 +47,7 @@ def test_session_continuity_auto_emits():
 
 
 def test_phase_manager_auto_emits():
-    from zephyr.governance.phase_manager import PHASE_SEQUENCE, ConstructionPhase
+    from zephyr.infrastructure.rollback.phase_manager import PHASE_SEQUENCE, ConstructionPhase
 
     p0 = PHASE_SEQUENCE[ConstructionPhase.PHASE_0_SKELETON]
     result = p0.run_checks()

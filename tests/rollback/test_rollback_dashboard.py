@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.rollback_dashboard import (
+from zephyr.infrastructure.rollback.rollback_dashboard import (
     DashboardMetrics,
     RollbackDashboard,
 )

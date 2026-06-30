@@ -20,7 +20,7 @@
 # [TESTS] pytest tests/test_infra_observer.py -q
 # [TTL] task_bound
 
-from zephyr.shared.infra_06.observer import (
+from zephyr.shared.infra.observer import (
     EventType,
     Observer,
 )

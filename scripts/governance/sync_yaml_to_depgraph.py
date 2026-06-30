@@ -35,6 +35,17 @@ P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步�
 - 通行证机制：临时DROP只读触发器→同步→finally恢复触发器
 """
 
+__manifest__ = """
+args: []
+description: P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
+dimensions:
+- D1
+priority: P2
+timeout_seconds: 60
+warn_only: false
+"""
+
+
 import argparse
 import os
 import sys

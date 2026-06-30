@@ -18,7 +18,7 @@ import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rollback_bootstrap import (
+from zephyr.infrastructure.rollback.rollback_bootstrap import (
     _check_git_available,
     _get_recent_commits,
     _git,

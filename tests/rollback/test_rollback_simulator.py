@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.rollback_simulator import RollbackSimulator, SimulationResult
+from zephyr.infrastructure.rollback.rollback_simulator import RollbackSimulator, SimulationResult
 
 
 @pytest.fixture
