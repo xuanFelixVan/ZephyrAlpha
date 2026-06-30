@@ -116,7 +116,7 @@ class GovernanceWatchdog:
                     svc.consecutive_failures = 0
                 else:
                     svc.consecutive_failures += 1
-                    if svc.consecutive_failures >= 2:
+                    if svc.consecutive_failures >= _QUARANTINE_FAILURES_THRESHOLD:
                         svc.status = ServiceStatus.FAILED
                     else:
                         svc.status = ServiceStatus.DEGRADED

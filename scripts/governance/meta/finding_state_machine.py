@@ -84,25 +84,28 @@ VALID_TRANSITIONS = {
 }
 
 # SLA 定时器：严重度 → 最大修复时间（小时）
+# ARCH-036 P3-A5: 从 SSoT (thresholds.yaml) 读取，消除第二真源
 SLA_DEADLINES: dict[str, int | None] = {
-    "CRITICAL": 24,
-    "HIGH": 168,
-    "MEDIUM": 720,
+    "CRITICAL": _get_threshold("sla_timers.fix_deadline_hours.CRITICAL", 24),
+    "HIGH": _get_threshold("sla_timers.fix_deadline_hours.HIGH", 168),
+    "MEDIUM": _get_threshold("sla_timers.fix_deadline_hours.MEDIUM", 720),
     "LOW": None,
     "INFO": None,
 }
 
 # 超时升级：超过修复时间 N 小时后 → 升级严重度
+# ARCH-036 P3-A5: 从 SSoT (thresholds.yaml) 读取
 OVERDUE_ESCALATION: dict[str, int] = {
-    "CRITICAL": 48,
-    "HIGH": 336,
-    "MEDIUM": 1440,
+    "CRITICAL": _get_threshold("sla_timers.overdue_escalation.CRITICAL", 48),
+    "HIGH": _get_threshold("sla_timers.overdue_escalation.HIGH", 336),
+    "MEDIUM": _get_threshold("sla_timers.overdue_escalation.MEDIUM", 1440),
 }
 
 # PERSISTENT 升级：连续存在超过 N 天 → 升级
+# ARCH-036 P3-A5: 从 SSoT (thresholds.yaml) 读取
 PERSISTENT_UPGRADE: dict[str, tuple[int, str]] = {
-    "MEDIUM": (30, "HIGH"),
-    "HIGH": (60, "CRITICAL"),
+    "MEDIUM": (_get_threshold("sla_timers.persistent_upgrade_days.MEDIUM_to_HIGH", 30), "HIGH"),
+    "HIGH": (_get_threshold("sla_timers.persistent_upgrade_days.HIGH_to_CRITICAL", 60), "CRITICAL"),
 }
 
 if sys.stdout.encoding != "utf-8":

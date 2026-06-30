@@ -162,12 +162,13 @@ def _update_burn_rate(data: dict) -> dict:
     t = get_thresholds_safe()
     eb = t.get("error_budget", {}).get("burn_rate", {})
     critical_th = eb.get("critical_1h_percent", 0.02) * 100
+    warning_th = eb.get("warning_6h_percent", 0.05) * 100
 
     data["burn_rate"] = {
         "last_1h_percent": round(h1_consumed, 4),
         "last_6h_percent": round(h6_consumed, 4),
         "critical_alert": h1_consumed > critical_th,
-        "warning_alert": h6_consumed > 5.0,
+        "warning_alert": h6_consumed > warning_th,
     }
     return data
 
