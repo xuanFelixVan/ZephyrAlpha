@@ -76,7 +76,7 @@ class IntegrationHub:
 
 def register_ce_rules() -> int:
     try:
-        from zephyr.autonomy_core.context_rule_registry import ContextRule, ContextRuleRegistry
+        from zephyr.autonomy_core.context.context_rule_registry import ContextRule, ContextRuleRegistry
     except ImportError:
         return 0
 

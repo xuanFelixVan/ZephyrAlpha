@@ -8,7 +8,7 @@
 # [TTL] task_bound
 """Tests for context_evaluator.py (TASK-014 beta b)."""
 
-from zephyr.autonomy_core.context_evaluator import ContextEvaluator
+from zephyr.autonomy_core.context.context_evaluator import ContextEvaluator
 
 
 class TestContextEvaluator:

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_assembler
+# [MODULE] zephyr.autonomy_core.context.context_assembler
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.intelligence.model_evaluation.reranker; zephyr.governance.__init__
 # [CONSUMERS]
@@ -41,7 +41,7 @@ from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, esti
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if True:
-    from zephyr.autonomy_core.context_rule_registry import ContextRuleRegistry
+    from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry
 
 __all__ = [
     "AssembledContext",

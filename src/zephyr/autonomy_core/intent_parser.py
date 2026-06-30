@@ -457,7 +457,7 @@ def inject_context_for(
         return injector.inject_by_keyword(parser_result.query)
     raise AttributeError(
         "injector 缺少 inject_by_module_id / inject_by_keyword 方法；"
-        "请传入 zephyr.autonomy_core.context_injector.ContextInjector 实例"
+        "请传入 zephyr.autonomy_core.context.context_injector.ContextInjector 实例"
     )
 
 

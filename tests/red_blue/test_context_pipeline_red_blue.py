@@ -24,7 +24,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.autonomy_core.context_pipeline import (
+from zephyr.autonomy_core.context.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
     run_context_four_stage_or_raise,
@@ -314,7 +314,7 @@ class TestOrRaiseExtreme:
 
     def test_or_raise_with_invalid_manifest(self) -> None:
         """无效manifest → 抛出AssemblyError不崩溃。"""
-        from zephyr.autonomy_core.context_assembler import AssemblyError
+        from zephyr.autonomy_core.context.context_assembler import AssemblyError
 
         with pytest.raises(AssemblyError):
             run_context_four_stage_or_raise(
@@ -324,7 +324,7 @@ class TestOrRaiseExtreme:
 
     def test_or_raise_with_empty_manifest(self) -> None:
         """空manifest → or_raise版本抛出AssemblyError（G3校验失败是正确行为）。"""
-        from zephyr.autonomy_core.context_assembler import AssemblyError
+        from zephyr.autonomy_core.context.context_assembler import AssemblyError
 
         # 空manifest导致G3校验失败，or_raise版本应抛出AssemblyError
         with pytest.raises(AssemblyError):

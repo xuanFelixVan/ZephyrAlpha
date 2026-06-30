@@ -389,7 +389,7 @@ class TestBudgetTrackerDocCompressorIntegration:
     def _make_tracker(self):
         from unittest.mock import MagicMock
 
-        from zephyr.autonomy_core.context_budget_tracker import (
+        from zephyr.autonomy_core.context.context_budget_tracker import (
             ContextBudgetTracker,
         )
 
@@ -424,7 +424,7 @@ class TestBudgetTrackerDocCompressorIntegration:
     def test_l2_throttle_event_includes_compression_suggested(self):
         from unittest.mock import MagicMock
 
-        from zephyr.autonomy_core.context_budget_tracker import (
+        from zephyr.autonomy_core.context.context_budget_tracker import (
             ContextBudgetLevel,
             ContextBudgetTracker,
         )

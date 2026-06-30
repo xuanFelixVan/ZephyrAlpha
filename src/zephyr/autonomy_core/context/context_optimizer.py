@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_optimizer
+# [MODULE] zephyr.autonomy_core.context.context_optimizer
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]

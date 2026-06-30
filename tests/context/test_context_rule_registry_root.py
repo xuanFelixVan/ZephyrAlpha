@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0606 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
-# [MODULE] zephyr.autonomy_core.context_rule_registry
+# [MODULE] zephyr.autonomy_core.context.context_rule_registry
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -21,7 +21,7 @@ import tempfile
 import pytest
 
 try:
-    from zephyr.autonomy_core.context_rule_registry import ContextRule, ContextRuleRegistry
+    from zephyr.autonomy_core.context.context_rule_registry import ContextRule, ContextRuleRegistry
 except Exception as _exc:
     pytest.skip(f"cannot import context_rule_registry: {_exc}", allow_module_level=True)
 

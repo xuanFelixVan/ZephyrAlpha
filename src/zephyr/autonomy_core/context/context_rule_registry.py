@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §4.7
-# [MODULE] zephyr.autonomy_core.context_rule_registry
+# [MODULE] zephyr.autonomy_core.context.context_rule_registry
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] MOD-INF-017; MOD-INF-018; MOD-INF-023; MOD-INF-033

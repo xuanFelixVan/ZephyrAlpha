@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_health_score
+# [MODULE] zephyr.autonomy_core.context.context_health_score
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]

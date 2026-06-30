@@ -74,7 +74,7 @@ _MODULE_MANIFESTS: dict[str, str] = {
     "zephyr.governance.rule_enforcement.circuit_breaker": "v1.0.0",
     "zephyr.autonomy_core.system_snapshot": "v1.0.0",
     "zephyr.autonomy_core.doc_compressor": "v1.0.0",
-    "zephyr.autonomy_core.context_budget_tracker": "v1.0.0",
+    "zephyr.autonomy_core.context.context_budget_tracker": "v1.0.0",
     "zephyr.shared.capability": "v1.0.0",
     "zephyr.security.llm_defense.llm_security.process_sandbox": "v1.0.0",
     "zephyr.governance.sqlite_schema": "v1.0.0",

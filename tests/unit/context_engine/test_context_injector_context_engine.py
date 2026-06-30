@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.autonomy_core.context_injector import (
+from zephyr.autonomy_core.context.context_injector import (
     ContextInjector,
     InjectedContext,
     RetrievalMode,

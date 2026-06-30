@@ -42,9 +42,9 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from zephyr.autonomy_core.context_assembler import RawContext, build_context
-from zephyr.autonomy_core.context_budget_tracker import ContextBudgetTracker
-from zephyr.autonomy_core.context_injector import (
+from zephyr.autonomy_core.context.context_assembler import RawContext, build_context
+from zephyr.autonomy_core.context.context_budget_tracker import ContextBudgetTracker
+from zephyr.autonomy_core.context.context_injector import (
     InjectionResult,
     ValidatedContext,
     inject,

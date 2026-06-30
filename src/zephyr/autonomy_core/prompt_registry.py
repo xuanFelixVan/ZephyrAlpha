@@ -66,7 +66,7 @@ from zephyr.autonomy_core.token_budget import estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:
-    from zephyr.autonomy_core.context_injector import ContextInjector, InjectedContext
+    from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext
 
 __all__ = [
     "PromptRegistry",

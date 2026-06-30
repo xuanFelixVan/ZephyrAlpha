@@ -17,7 +17,7 @@ Minimum: 12 tests
 
 import pytest
 
-from zephyr.autonomy_core.context_rot_model import (
+from zephyr.autonomy_core.context.context_rot_model import (
     ContextRotModel,
 )
 

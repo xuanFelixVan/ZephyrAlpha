@@ -44,7 +44,7 @@ def test_00_imports():
         ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
         ("pipeline.models", "zephyr.integration.models"),
         ("pipeline.pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
-        ("context-engine.context_assembler", "zephyr.autonomy_core.context_assembler"),
+        ("context-engine.context_assembler", "zephyr.autonomy_core.context.context_assembler"),
         ("kb.triage", "zephyr.data.storage.triage"),
     ]
 
@@ -539,7 +539,7 @@ def test_03_invalid_pipeline_rejected():
 
 def test_04_context_assemble():
     """测试基本上下文装配"""
-    from zephyr.autonomy_core.context_assembler import ContextAssembler
+    from zephyr.autonomy_core.context.context_assembler import ContextAssembler
 
     assembler = ContextAssembler(max_file_size_mb=5, require_absolute_paths=False)
     manifest = [{"file_path": __file__, "reason": "红白对抗脚本自身"}]
@@ -550,7 +550,7 @@ def test_04_context_assemble():
 
 def test_04_context_empty_manifest():
     """测试空 manifest"""
-    from zephyr.autonomy_core.context_assembler import ContextAssembler
+    from zephyr.autonomy_core.context.context_assembler import ContextAssembler
 
     assembler = ContextAssembler()
     ctx = assembler.assemble([], token_budget=8000)
@@ -559,7 +559,7 @@ def test_04_context_empty_manifest():
 
 def test_04_context_validate():
     """测试 validate"""
-    from zephyr.autonomy_core.context_assembler import ContextAssembler
+    from zephyr.autonomy_core.context.context_assembler import ContextAssembler
 
     assembler = ContextAssembler(require_absolute_paths=False)
     manifest = [{"file_path": __file__, "reason": "测试文件"}]
@@ -570,7 +570,7 @@ def test_04_context_validate():
 
 def test_04_context_shadow():
     """测试 shadow 生成"""
-    from zephyr.autonomy_core.context_assembler import ContextAssembler
+    from zephyr.autonomy_core.context.context_assembler import ContextAssembler
 
     with tempfile.TemporaryDirectory() as tmpdir:
         assembler = ContextAssembler(require_absolute_paths=False)

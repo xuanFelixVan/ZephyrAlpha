@@ -11,7 +11,7 @@
 # [TESTS] pytest tests/test_context_optimizer.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.context_optimizer import ContextOptimizer
+from zephyr.autonomy_core.context.context_optimizer import ContextOptimizer
 
 
 class TestContextOptimizerInstantiation:

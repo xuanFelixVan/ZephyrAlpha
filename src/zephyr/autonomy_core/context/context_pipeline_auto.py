@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
-# [MODULE] zephyr.autonomy_core.context_pipeline_auto
+# [MODULE] zephyr.autonomy_core.context.context_pipeline_auto
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading.boot_hooks; tests/unit/test_context_pipeline_auto
@@ -30,7 +30,7 @@ import threading
 from collections.abc import Callable
 from typing import Any
 
-from zephyr.autonomy_core.context_pipeline import (
+from zephyr.autonomy_core.context.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
 )

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.context_playground import (
+from zephyr.autonomy_core.context.context_playground import (
     ContextPlayground,
     DryRunResult,
     playground_cli,

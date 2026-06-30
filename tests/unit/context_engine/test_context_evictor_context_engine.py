@@ -11,7 +11,7 @@ from __future__ import annotations
 """Tests for context_evictor.py (TASK-014 beta a — migrated to ContextBlock model)."""
 
 
-from zephyr.autonomy_core.context_evictor import (
+from zephyr.autonomy_core.context.context_evictor import (
     ContextBlock,
     ContextEvictor,
     EvictionResult,

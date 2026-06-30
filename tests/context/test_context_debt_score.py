@@ -20,13 +20,13 @@
 # [TESTS] tests/test_context_debt_score.py
 # [TTL] task_bound
 
-"""Tests for zephyr.autonomy_core.context_debt_score."""
+"""Tests for zephyr.autonomy_core.context.context_debt_score."""
 
 from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.context_debt_score import ContextDebtScorer, DebtScore
+from zephyr.autonomy_core.context.context_debt_score import ContextDebtScorer, DebtScore
 
 
 class TestDebtScore:

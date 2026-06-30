@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.context_model_strategy import (
+from zephyr.autonomy_core.context.context_model_strategy import (
     ContextModelStrategy,
     ModelStrategy,
 )

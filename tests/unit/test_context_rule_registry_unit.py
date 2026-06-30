@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 import yaml
 
-from zephyr.autonomy_core.context_rule_registry import ContextRule, ContextRuleRegistry
+from zephyr.autonomy_core.context.context_rule_registry import ContextRule, ContextRuleRegistry
 
 
 class TestContextRule:

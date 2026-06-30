@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_outcome_tracker
+# [MODULE] zephyr.autonomy_core.context.context_outcome_tracker
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]

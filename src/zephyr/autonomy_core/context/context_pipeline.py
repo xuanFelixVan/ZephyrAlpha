@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_pipeline
+# [MODULE] zephyr.autonomy_core.context.context_pipeline
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
@@ -49,9 +49,9 @@ from zephyr.autonomy_core.architecture_context_loader import (
     format_architecture_context_excerpt,
     load_architecture_context_dict,
 )
-from zephyr.autonomy_core.context_assembler import AssembledContext, AssemblyError, ContextAssembler
-from zephyr.autonomy_core.context_injector import ContextInjector, InjectedContext
-from zephyr.autonomy_core.context_rule_registry import ContextRuleRegistry
+from zephyr.autonomy_core.context.context_assembler import AssembledContext, AssemblyError, ContextAssembler
+from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext
+from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 

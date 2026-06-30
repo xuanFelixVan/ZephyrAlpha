@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.context_outcome_tracker import (
+from zephyr.autonomy_core.context.context_outcome_tracker import (
     ContextOutcomeLink,
     ContextOutcomeTracker,
 )

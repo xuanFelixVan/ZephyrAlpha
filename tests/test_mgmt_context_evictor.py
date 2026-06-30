@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-1272 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
-# [MODULE] zephyr.autonomy_core.context_evictor
+# [MODULE] zephyr.autonomy_core.context.context_evictor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.context_evictor import (
+    from zephyr.autonomy_core.context.context_evictor import (
         ContextBlock,
         ContextEvictor,
         EvictionResult,

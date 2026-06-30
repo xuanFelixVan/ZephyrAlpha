@@ -15,12 +15,12 @@ import tempfile
 
 import pytest
 
-from zephyr.autonomy_core.context_assembler import (
+from zephyr.autonomy_core.context.context_assembler import (
     AssembledContext,
     AssemblyError,
     ContextAssembler,
 )
-from zephyr.autonomy_core.context_pipeline import (
+from zephyr.autonomy_core.context.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
     run_context_four_stage_or_raise,

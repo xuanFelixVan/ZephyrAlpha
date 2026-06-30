@@ -10,7 +10,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.context_rot_model import ContextDecayResult, ContextRotModel
+from zephyr.autonomy_core.context.context_rot_model import ContextDecayResult, ContextRotModel
 
 
 class TestContextRotModel:

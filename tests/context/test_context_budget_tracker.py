@@ -13,7 +13,7 @@
 
 from unittest.mock import MagicMock
 
-from zephyr.autonomy_core.context_budget_tracker import (
+from zephyr.autonomy_core.context.context_budget_tracker import (
     DEFAULT_THRESHOLDS,
     ContextBudgetLevel,
     ContextBudgetTracker,

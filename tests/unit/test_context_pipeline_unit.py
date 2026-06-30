@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.autonomy_core.context_pipeline import run_context_four_stage
+from zephyr.autonomy_core.context.context_pipeline import run_context_four_stage
 
 
 def test_four_stage_build_validate_no_inject(tmp_path: Path) -> None:

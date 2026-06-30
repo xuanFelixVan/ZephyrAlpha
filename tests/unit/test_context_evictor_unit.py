@@ -15,7 +15,7 @@ Minimum: 12 tests
 """
 
 
-from zephyr.autonomy_core.context_evictor import (
+from zephyr.autonomy_core.context.context_evictor import (
     ContextBlock,
     ContextEvictor,
     PriorityLevel,

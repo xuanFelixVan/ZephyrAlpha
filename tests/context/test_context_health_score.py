@@ -11,7 +11,7 @@
 # [TESTS] test_context_health_score.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.context_health_score import ContextHealthScore, HealthScoreReport
+from zephyr.autonomy_core.context.context_health_score import ContextHealthScore, HealthScoreReport
 
 
 class TestHealthScoreReport:

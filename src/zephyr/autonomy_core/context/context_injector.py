@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
-# [MODULE] zephyr.autonomy_core.context_injector
+# [MODULE] zephyr.autonomy_core.context.context_injector
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
