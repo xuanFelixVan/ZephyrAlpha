@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-01'
-total_scripts: 544
+total_scripts: 545
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -585,6 +585,14 @@ scripts:
 - name: governance/_concurrency.py
   path: governance/_concurrency.py
   description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_deprecate.py
+  path: governance/_tmp_deprecate.py
+  description: import subprocess
   domain: governance
   execution_plane: warm-path
   status: registered
