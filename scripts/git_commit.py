@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION)
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -30,7 +30,7 @@
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
 
-exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断
+exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突
 """
 
 from __future__ import annotations
@@ -125,7 +125,7 @@ def main() -> int:
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
             "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突"
         ),
     )
     parser.add_argument(
@@ -168,10 +168,26 @@ def main() -> int:
              "（HELD_OVERLAP_VIOLATION）。commit message 追加 [GW:<sid>:overlap] 标记"
              "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
     )
+    parser.add_argument(
+        "--claim-only",
+        action="store_true",
+        default=False,
+        help="仅 claim_files 声明持有，不 commit（claim 前移协议：Edit 前调用）。"
+             "exit 0=全部 claim 成功, exit 7=部分文件被其他 session 持有（冲突跳过）",
+    )
+    parser.add_argument(
+        "--release-only",
+        action="store_true",
+        default=False,
+        help="仅 release_files 释放持有，不 commit（claim 前移协议：Edit 中断/结束时调用）",
+    )
     args = parser.parse_args()
 
-    # message 解析：优先 --message-file（UTF-8，治本 PowerShell 中文编码），否则 --message
-    if args.message_file:
+    # message 解析：claim-only / release-only 时不需要 message
+    is_pure_claim = args.claim_only or args.release_only
+    if is_pure_claim:
+        message = ""
+    elif args.message_file:
         try:
             message = Path(args.message_file).read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:
@@ -182,7 +198,7 @@ def main() -> int:
     else:
         print("ERROR: 必须提供 --message 或 --message-file", file=sys.stderr)
         return 1
-    if not message.strip():
+    if not is_pure_claim and not message.strip():
         print("ERROR: message 不能为空", file=sys.stderr)
         return 1
 
@@ -207,7 +223,23 @@ def main() -> int:
         print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
         return 2
 
-    # Phase 2: claim files 激活 session 隔离 stash
+    # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
+    if args.release_only:
+        gw.release_files(args.session, files)
+        print(f"RELEASED: {len(files)} files (session={args.session})")
+        return 0
+
+    if args.claim_only:
+        claimed = gw.claim_files(args.session, files)
+        conflicts = [f for f in files if f not in claimed]
+        if conflicts:
+            print(f"CONFLICT: {len(conflicts)} files held by other session: {conflicts}", file=sys.stderr)
+            print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
+            return 7
+        print(f"CLAIMED: {len(claimed)}/{len(files)} files (session={args.session})")
+        return 0
+
+    # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
     claimed = gw.claim_files(args.session, files)
     try:
         result = gw.commit(

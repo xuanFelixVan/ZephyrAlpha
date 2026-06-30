@@ -71,6 +71,34 @@ def _check_lock(file_path: str) -> tuple[bool, str]:
     return True, f"LOCK_CHECK_WARN: {output[:200]}"
 
 
+def _check_session_overlap(file_path: str, session_id: str) -> tuple[bool, str]:
+    """检测目标文件是否被其他活跃 session 持有（claim 前移协议防线）。
+
+    复用 SessionRegistry.find_session_by_file（只读，无写副作用）。
+    fail-open：registry 读取异常或无 session_id 时降级 PASS（对标 held_overlap_gate）。
+    """
+    if not session_id:
+        return True, "OK (no --session, skip overlap check)"
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        reg = SessionRegistry(_PROJECT_ROOT)
+        holder = reg.find_session_by_file(file_path)
+        if holder is not None and holder.session_id != session_id:
+            rel = Path(file_path)
+            try:
+                rel = rel.resolve().relative_to(_PROJECT_ROOT.resolve())
+            except ValueError:
+                rel = file_path
+            return False, (
+                f"HELD_BY_OTHER: {rel} 被 session '{holder.session_id}' 持有"
+                f"（claim 前移协议，AGENTS.md §8 L301）。"
+                f"协调方式：等对方 release / 用 --allow-overlap 逃生通道 / 切 StagingArea 模式 B。"
+            )
+        return True, "OK"
+    except Exception as e:
+        return True, f"OVERLAP_WARN: 检测异常 ({e})——降级通过（对标 held_overlap_gate fail-open）"
+
+
 def _check_root_pollution(file_path: str) -> tuple[bool, str]:
     """_check_root_pollution implementation."""
     rel = Path(file_path)
@@ -246,6 +274,7 @@ def main() -> int:
     parser.add_argument("file_path", help="要写入的文件路径（相对或绝对）")
     parser.add_argument("--create", action="store_true", help="是否创建新文件")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
+    parser.add_argument("--session", default="", help="AI session 标识（启用 session overlap 检测；未提供则跳过）")
     args = parser.parse_args()
 
     checks: list[dict] = []
@@ -264,6 +293,9 @@ def main() -> int:
 
     ok, msg = _check_encoding_safety(args.file_path)
     checks.append({"check": "encoding_safety", "pass": ok, "message": msg})
+
+    ok, msg = _check_session_overlap(args.file_path, args.session)
+    checks.append({"check": "session_overlap", "pass": ok, "message": msg})
 
     blocked = [c for c in checks if not c["pass"]]
 
