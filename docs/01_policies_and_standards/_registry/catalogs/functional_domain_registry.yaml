@@ -161,7 +161,7 @@ entries:
 - domain: D_GOV_AUDIT
   subdomain: audit_orchestration
   ssot_module: MOD-INF-027
-  ssot_path: src/zephyr/governance/audit_orchestration/
+  ssot_path: src/zephyr/governance/
   covers:
   - 审计管线编排
   - 多维度审计调度
@@ -508,7 +508,7 @@ entries:
 - domain: D_OPS
   subdomain: telemetry
   ssot_module: MOD-INF-015
-  ssot_path: src/zephyr/ops/
+  ssot_path: src/zephyr/infrastructure/system_telemetry/
   covers:
   - 自动引导(auto_bootstrap)
   - SessionContinuity恢复
@@ -526,7 +526,7 @@ entries:
 - domain: D_OPS
   subdomain: feedback-loop
   ssot_module: MOD-FEEDBACK_LOOP
-  ssot_path: src/zephyr/ops/
+  ssot_path: src/zephyr/trading/feedback_loop/
   covers:
   - 反馈收集器(collectors)
   - 反馈检测器(detectors)

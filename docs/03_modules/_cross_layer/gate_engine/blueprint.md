@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/trading/feedback_loop/gates/"
+actual_disk_path: "src/zephyr/governance/rule_enforcement/ + src/zephyr/trading/feedback_loop/gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
 last_updated: "2026-05-18"
@@ -61,7 +61,7 @@ ssot_claims:
 本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
 > module_id: MOD-GATE_ENGINE | version: 0.8.2 | status: Draft | layer: cross_layer
-> actual_disk_path: src/zephyr/governance/rule_enforcement/ + src/zephyr/governance/rule_enforcement/ | generation: 1 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/governance/rule_enforcement/ + src/zephyr/trading/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
