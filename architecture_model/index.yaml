@@ -1,182 +1,355 @@
-schema_version: "1.0.0"
-generated_at: "2026-05-02"
+# v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
+# 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
+# c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph.db domains 表定义。
+# 本文件由 dm200916_write_direct.py 从 PostgreSQL depgraph 派生，禁止手工编辑 domains 列表
+module_id: MOD-GOVERNANCE
+schema_version: '3.0.2'
 system:
   name: ZephyrAlpha
-  description: AI-native quantitative research platform
-  architecture_style: layered_event_driven_dual_track
+  description: 个人量化交易系统
+  architecture_style: domain_driven_event_driven_polyglot
 
 governance:
   canonical: true
   derives_from: "AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律"
-  derived_views: "docs/02_enterprise_architecture/target_architecture/00-10*.md"
   conflict_rule: "YAML 为准，Markdown 视图同步更新"
-  gate_alignment: "AGENTS.md §6.10 — 双层对齐闸门 GATE-A (代码↔YAML) + GATE-B (YAML↔MD)"
-  drift_root_cause: >
-    审计漂移的病根是「双轨真源 + 门禁只盯一半」：(1) 企业架构树在 docs/.../architecture_model，
-    施工真源在仓库根 architecture_model/，二者 _schema 形状与枚举曾长期不一致；(2) check_architecture_gates 的
-    GATE-SC 原先只扫描 docs 树，施工树处于盲区；(3) module_registry.yaml 的 dependencies[].module_id
-    无词法闸门，易被粘贴为人类可读占位符并破坏 YAML 结构。修复：GATE-SC 现已并列扫描两套 layers +
-    各自 _schema；抽取 enum 支持 operational_schema 嵌套分组；新增 EXTRA-05 校验 MOD-*/SYS-*；
-    登记表尾部损坏与非法依赖需靠 EXTRA-05 + yaml 解析在 CI 内阻断复发。
+  gate_alignment: "AGENTS.md §6.10 — GATE-A (代码↔YAML)"
+  domains_source: >
+    domains 列表由 dm200916_write_direct.py 从 depgraph.db domains 表派生，禁止手编。
+    改 depgraph.db 后由 GATE-ARCH-MODEL reconciler 自动重生。
+
+# === 分区管理约定（Partition Management Convention）===
+# 53域是唯一物理分类体系（depgraph.db domains表），14层（L00-L13）是域的layer_id属性枚举。
+# AI找模块只有一条路：按域找。
+# b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
 partitions:
-  c_track:
-    - id: l00
-      name: Data Source
-      path: layers/l00_data_source.yaml
-      status: phase_e_verified
-      description: 外部数据源适配接入：行情、基本面、另类数据摄取与标准化
-    - id: l01
-      name: Infrastructure
-      path: layers/l01_infrastructure.yaml
-      status: phase_e_verified
-      description: 脚本系统与基础设施运行时支撑
-    - id: l02
-      name: Alpha Factor
-      path: layers/l02_alpha_factor.yaml
-      status: phase_e_verified
-      description: Alpha 因子计算引擎、PIT 合规与因子库管理
-    - id: l03
-      name: Signal Generation
-      path: layers/l03_signal_generation.yaml
-      status: phase_e_verified
-      description: 因子融合为交易信号：加权组合、信号打分、过滤去重
-    - id: l04
-      name: Risk Management
-      path: layers/l04_risk_management.yaml
-      status: phase_e_verified
-      description: 实时风控与止损执行：止损计算、头寸校验与风险敞口监控
-    - id: l05
-      name: Portfolio Construction
-      path: layers/l05_portfolio_construction.yaml
-      status: phase_e_verified
-      description: 信号→持仓映射：仓位分配、约束校验、再平衡触发
-    - id: l06
-      name: Trade Execution
-      path: layers/l06_trade_execution.yaml
-      status: phase_e_verified
-      description: 订单执行与路由：TWAP/VWAP、滑点控制、多经纪商
-    - id: l07
-      name: Post-Trade Analytics
-      path: layers/l07_post_trade_analytics.yaml
-      status: phase_e_verified
-      description: PnL 归因、交易成本分析、执行质量评估
-    - id: l08
-      name: Human-AI Interface
-      path: layers/l08_human_ai_interface.yaml
-      status: phase_e_verified
-      description: 人机交互、Dashboard 监控面板与告警通知
-    - id: l09
-      name: Research & Innovation
-      path: layers/l09_research_innovation.yaml
-      status: phase_e_verified
-      description: 量化研究实验：新因子发现、回测框架、idea 孵化
-    - id: l10
-      name: Compliance
-      path: layers/l10_compliance.yaml
-      status: phase_e_verified
-      description: 合规校验引擎：法规检查、持仓审计、监管报告
-    - id: l11
-      name: ML Platform
-      path: layers/l11_ml_platform.yaml
-      status: phase_e_verified
-      description: ML 生命周期：训练调度、特征存储、模型注册、推理服务
-    - id: l12
-      name: System Telemetry
-      path: layers/system_telemetry.yaml
-      status: phase_e_verified
-      description: 全系统遥测：metrics/logs/traces/ai_behavior 采集归档
-    - id: l13
-      name: Experimentation
-      path: layers/l13_experimentation.yaml
-      status: phase_e_verified
-      description: A/B 实验框架与实验管线编排
+# === 53域索引（物理分类唯一真源：depgraph.db domains表）===
+- id: domains
+  path: ../data/databases/depgraph.db
+  description: >
+    53域物理分类唯一真源。
+    查询命令: python scripts/governance/extract_depgraph.py --summary
+    14层（L00-L13）是域的layer_id属性枚举。
 
-  b_track:
-    - id: context_engine
-      name: Context Engine (CE)
-      path: layers/b_context_engine.yaml
-      status: implemented
-      description: 上下文四阶段流水线：build→compress→validate→inject
-    - id: core
-      name: Core
-      path: layers/b_core.yaml
-      status: implemented
-      description: 蓝图分解器 + TaskCard 核心模型
-    - id: db
-      name: Database
-      path: layers/b_db.yaml
-      status: implemented
-      description: 元数据持久化层（SQLite + PostgreSQL）+ 原子事务管理器
-    - id: feedback_loop
-      name: Feedback Loop Engine (FLE)
-      path: layers/b_feedback_loop.yaml
-      status: implemented
-      description: 系统自调节闭环：collect→detect→dispatch
-    - id: gates
-      name: Gates
-      path: layers/b_gates.yaml
-      status: implemented
-      description: 门禁引擎、断路器、契约模板管理器
-    - id: kb
-      name: Knowledge Base
-      path: layers/b_kb.yaml
-      status: implemented
-      description: 知识生命周期管理：摄取→分析→提取→验证→激活
-    - id: llm_security
-      name: LLM Security Gateway (LSG)
-      path: layers/b_llm_security.yaml
-      status: implemented
-      description: LLM 四层安全防御：输入/System Prompt/输出/Pattern
-    - id: mcp
-      name: MCP Servers
-      path: layers/b_mcp.yaml
-      status: implemented
-      description: MCP 协议服务端：task_manager/gate_engine/knowledge_base 等
-    - id: orchestrator
-      name: Agent Orchestrator (Orc)
-      path: layers/b_orchestrator.yaml
-      status: implemented
-      description: 任务生命周期 + Agent 调度 + 沙箱执行 + 幻觉检测
-    - id: pipeline
-      name: Pipeline
-      path: layers/b_pipeline.yaml
-      status: implemented
-      description: M1-M11 双管线：生产管线(M1-M5) + 审计管线(M6-M11)
-    - id: shared
-      name: Shared
-      path: layers/b_shared.yaml
-      status: implemented
-      description: 跨层共享基础设施：契约、工具、不可变核心
-    - id: vector_memory
-      name: Vector Memory Service (VMS)
-      path: layers/b_vector_memory.yaml
-      status: skeleton
-      description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
+# === 横切关注点分区（非业务分类）===
+- id: shared
+  path: layers/b_shared.yaml
+  description: 跨域公共契约与基础能力
+- id: frontend
+  path: frontend/frontend_model.yaml
+  description: 前端独立平台 FE-L1~L4
+  status: planned
+- id: scripts
+  path: scripts/scripts_model.yaml
+  description: 治理/审计/部署脚本
+  status: planned
+- id: cross_cutting
+  path: cross_cutting/
+  description: 运行平面、不变量、能力成熟度
+- id: contracts
+  path: contracts/cross_layer_contracts.yaml
+  description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
+- id: events
+  path: events/domain_events.yaml
+  description: 22条领域事件（6域）、事件链、频率等级与运行时声明
+- id: ddd-model
+  path: domain/ddd_model.yaml
+  description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
+- id: technology
+  path: technology/
+  description: 技术选型与版本治理SSoT
+- id: core-services
+  path: infra/core_services.yaml
+  description: Vibe Coding 2.0 6大核心服务
+  status: planned
+- id: shared-infra
+  path: infra/shared_infra.yaml
+  description: 跨域共享基础设施
+  status: planned
+
+# === b_track 横切基础设施模块（施工视图，代码目录对齐）===
+- id: b_track
+  description: 横切基础设施模块施工视图（context_engine/core/db 等代码模块对齐登记）
+  modules:
+  - id: context_engine
+    name: Context Engine (CE)
+    path: layers/b_context_engine.yaml
+    status: implemented
+    description: 上下文四阶段流水线：build→compress→validate→inject
+  - id: core
+    name: Core
+    path: layers/b_core.yaml
+    status: implemented
+    description: 蓝图分解器 + TaskCard 核心模型
+  - id: db
+    name: Database
+    path: layers/b_db.yaml
+    status: implemented
+    description: 元数据持久化层（SQLite + PostgreSQL）+ 原子事务管理器
+  - id: feedback_loop
+    name: Feedback Loop Engine (FLE)
+    path: layers/b_feedback_loop.yaml
+    status: implemented
+    description: 系统自调节闭环：collect→detect→dispatch
+  - id: gates
+    name: Gates
+    path: layers/b_gates.yaml
+    status: implemented
+    description: 门禁引擎、断路器、契约模板管理器
+  - id: kb
+    name: Knowledge Base
+    path: layers/b_kb.yaml
+    status: implemented
+    description: 知识生命周期管理：摄取→分析→提取→验证→激活
+  - id: llm_security
+    name: LLM Security Gateway (LSG)
+    path: layers/b_llm_security.yaml
+    status: implemented
+    description: LLM 四层安全防御：输入/System Prompt/输出/Pattern
+  - id: mcp
+    name: MCP Servers
+    path: layers/b_mcp.yaml
+    status: implemented
+    description: MCP 协议服务端：task_manager/gate_engine/knowledge_base 等
+  - id: orchestrator
+    name: Agent Orchestrator (Orc)
+    path: layers/b_orchestrator.yaml
+    status: implemented
+    description: 任务生命周期 + Agent 调度 + 沙箱执行 + 幻觉检测
+  - id: pipeline
+    name: Pipeline
+    path: layers/b_pipeline.yaml
+    status: implemented
+    description: M1-M11 双管线：生产管线(M1-M5) + 审计管线(M6-M11)
+  - id: shared
+    name: Shared
+    path: layers/b_shared.yaml
+    status: implemented
+    description: 跨层共享基础设施：契约、工具、不可变核心
+  - id: vector_memory
+    name: Vector Memory Service (VMS)
+    path: layers/b_vector_memory.yaml
+    status: skeleton
+    description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
+
+# === 53域清单（从depgraph.db派生，禁止手工编辑）===
+domains:
+- id: D_ALT_DATA
+  name: 另类数据
+  layer_id: L1_foundation
+- id: D_ASHARE_SIGNAL
+  name: A股特色信号
+  layer_id: L2_domain
+- id: D_AUDITTEST
+  name: 审计测试套件
+  layer_id: L2_domain
+- id: D_AUTONOMY_CORE
+  name: 自治核心
+  layer_id: L1_foundation
+- id: D_AUTONOMY_PERM
+  name: 自治保护
+  layer_id: L2_domain
+- id: D_BACKTEST
+  name: 回测
+  layer_id: L2_domain
+- id: D_BEHAVIORAL_AUDIT
+  name: 行为审计
+  layer_id: L1_foundation
+- id: D_COMPLIANCE
+  name: 合规
+  layer_id: L2_domain
+- id: D_CROSS_ASSET
+  name: 跨资产
+  layer_id: L2_domain
+- id: D_DATA_ENG
+  name: 数据工程
+  layer_id: L1_foundation
+- id: D_DATA_GOV
+  name: 数据治理
+  layer_id: L1_foundation
+- id: D_DATA_SEC
+  name: 数据安全与契约
+  layer_id: L1_foundation
+- id: D_DIGITAL_TWIN
+  name: 数字孪生
+  layer_id: L2_domain
+- id: D_EXEC_SIM
+  name: 执行仿真
+  layer_id: L2_domain
+- id: D_EX_CORE
+  name: 执行核心
+  layer_id: L2_domain
+- id: D_EX_SOR
+  name: 执行路由
+  layer_id: L2_domain
+- id: D_FACTOR
+  name: 因子
+  layer_id: L2_domain
+- id: D_FRONTEND
+  name: 前端
+  layer_id: L1_foundation
+- id: D_FUNDAMENTAL_SIGNAL
+  name: 基本面信号
+  layer_id: L2_domain
+- id: D_GOVERNANCE
+  name: 生命周期管理
+  layer_id: L2_domain
+- id: D_GOV_AUDIT
+  name: 审计追踪
+  layer_id: L2_domain
+- id: D_GOV_DOCS
+  name: 架构文档治理
+  layer_id: L2_domain
+- id: D_GOV_DRIFT
+  name: 漂移检测
+  layer_id: L2_domain
+- id: D_GOV_ENFORCEMENT
+  name: 规则执行
+  layer_id: L2_domain
+- id: D_GOV_REPAIR
+  name: 治理修复
+  layer_id:
+- id: D_GOV_RULE
+  name: 规则治理
+  layer_id: L2_domain
+- id: D_GOV_SCRIPTS
+  name: 脚本治理
+  layer_id: L2_domain
+- id: D_INFRA_A2A
+  name: A2A通信
+  layer_id: L0_infrastructure
+- id: D_INFRA_OPS
+  name: 基础设施运维
+  layer_id: L0_infrastructure
+- id: D_INFRA_RECOVERY
+  name: 回滚恢复
+  layer_id: L0_infrastructure
+- id: D_INFRA_RUNTIME
+  name: 运行时集成
+  layer_id: L0_infrastructure
+- id: D_INFRA_TELEMETRY
+  name: 可观测性
+  layer_id: L0_infrastructure
+- id: D_INTEGRATION
+  name: 管线路由
+  layer_id: L1_foundation
+- id: D_INTEGRATION_GATEWAY
+  name: 集成网关
+  layer_id: L1_foundation
+- id: D_INTELLIGENCE
+  name: 上下文管理
+  layer_id: L2_domain
+- id: D_KNOWLEDGE
+  name: 知识管理
+  layer_id: L2_domain
+- id: D_MKT_DATA
+  name: 行情数据
+  layer_id: L1_foundation
+- id: D_ML_SERVE
+  name: 推理
+  layer_id: L2_domain
+- id: D_ML_TRAIN
+  name: 训练
+  layer_id: L2_domain
+- id: D_OPS
+  name: 反馈循环
+  layer_id: L1_foundation
+- id: D_PF_ALLOC
+  name: 组合分配
+  layer_id: L2_domain
+- id: D_PF_CORE
+  name: 组合核心
+  layer_id: L2_domain
+- id: D_POSITION
+  name: 仓位管理
+  layer_id: L2_domain
+- id: D_REPORTING
+  name: 报告
+  layer_id: L1_foundation
+- id: D_RISK
+  name: 风控
+  layer_id: L2_domain
+- id: D_SECURITY
+  name: 对抗验证
+  layer_id: L1_foundation
+- id: D_SECURITY_LLM
+  name: LLM防御
+  layer_id: L1_foundation
+- id: D_SELL_DECISION
+  name: 卖出决策
+  layer_id: L2_domain
+- id: D_SHARED
+  name: 共享服务
+  layer_id: L1_foundation
+- id: D_SIGLEGACY
+  name: 信号遗留设计态
+  layer_id: L2_domain
+- id: D_SIGQC
+  name: 信号质量控制
+  layer_id: L2_domain
+- id: D_SIMULATION
+  name: 仿真
+  layer_id: L2_domain
+- id: D_TRADING
+  name: 交易运营
+  layer_id: L2_domain
 
 global_stats:
-  total_partitions: 26
-  c_track: 14
-  b_track: 12
-  phase_e_verified: 14
-  implemented: 11
-  skeleton: 1
-  total_tests_collected: 2045
-  status_note: >
-    phase_e_verified = 已通过 Phase E/F/G 全链路集成测试。
-    C-track 全部 14 层均达到 phase_e_verified：
-      - Phase D 测试（50 tests）：层骨架导入 + 合约一致性 + 层隔离
-      - Phase E 测试（主流程）：L00→L02→L03→L04→L05→L06→L07 全线 E2E +
-        LayerDataRouter 路由注册 + TraceContext 传播 + Akshare 真实数据 E2E
-      - Phase F 测试（蓝图落地）：L08/L09/L10/L11/L12/L13 逐层行为验证 +
-        Backpressure 背压管理器 + P1 合约落地
-      - Phase G 测试（性能基线）：13 层延迟采集 + 全线吞吐 + SLA 合规 + 内存基线
-      - 架构测试：合约一致性 (3) + 层隔离 (117) + Money/Docs 合规 (2)
-    implemented = 已有实质代码路径，B-track 全模块均已实现。
-    skeleton = vector_memory 为骨架（与 kb/ 过渡期一致）。
-    最近两次 session（014/015）补齐：
-      - BLIND-CODEGEN-DATACLASS-ORDER 根因修复（31 合约重新生成）
-      - L08/L12 Phase D 测试（34 tests）
-      - 9 处 float→Decimal 迁移
-      - 32 处 frontmatter 补全
-last_updated: "2026-05-05"
+  total_domains: 53
+  total_partitions: 12
+  b_track_modules: 12
+  b_track_implemented: 11
+  b_track_skeleton: 1
+  notes: >
+    53域唯一物理分类体系，14层是域的layer_id属性枚举。
+    b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
+    结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+  last_updated: '2026-06-30'
+
+query_hints:
+- question: 系统有哪些域？
+  answer: 53域，见domains列表，真源为depgraph.db domains表
+- question: 某域有哪些模块？
+  answer: "查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>"
+- question: 模块间的依赖关系？
+  answer: "查询depgraph.db: python scripts/governance/extract_depgraph.py --paths"
+- question: 为什么这样分域？
+  answer: 读architecture_upgrade_discussion.md（域分类体系背景）
+- question: 不变量/安全红线？
+  answer: 读cross_cutting/invariants.yaml
+- question: 运行平面分布？
+  answer: 读cross_cutting/runtime_planes.yaml
+- question: 系统能力成熟度？
+  answer: 读cross_cutting/capability_heatmap.yaml（53域×10能力域矩阵）
+- question: 前端有哪些模块？
+  answer: 读frontend/frontend_model.yaml
+- question: 治理/审计脚本有哪些？
+  answer: 读scripts/scripts_model.yaml
+- question: 跨域公共契约？
+  answer: 读layers/b_shared.yaml
+- question: P0跨域数据契约有哪些？
+  answer: 读contracts/cross_layer_contracts.yaml §p0_contracts
+- question: 领域事件清单？
+  answer: 读events/domain_events.yaml
+- question: DDD聚合/实体/值对象？
+  answer: 读domain/ddd_model.yaml
+- question: 技术选型全景？
+  answer: 读technology/technology_landscape.yaml
+
+id_conventions:
+  description: 各分区YAML中实体ID的命名前缀规范
+  prefixes:
+  - prefix: CTR-{NNN}
+    scope: contracts/cross_layer_contracts.yaml
+    example: CTR-001
+  - prefix: E-{DOMAIN}-{NN}
+    scope: events/domain_events.yaml
+    example: E-EX-01
+  - prefix: AGG-{NNN}
+    scope: domain/ddd_model.yaml
+    example: AGG-001
+  - prefix: D_{NAME}
+    scope: depgraph.db domains表
+    example: D_MKT_DATA
+    note: "域ID是唯一物理分类标识（全大写+下划线）"
