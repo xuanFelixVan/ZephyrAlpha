@@ -46,7 +46,7 @@ from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05：禁止复制 _load_xxx()）
 
 __all__ = [
     "APPROVED_LABELS",
@@ -71,52 +71,12 @@ APPROVED_LABELS = [
     "ENCODING_BROKEN",
 ]
 
-# 真源单一化：doc_type 合法值由 doc_type_vocabulary.yaml 唯一维护。
-# 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名。
-_DOC_TYPE_VOCAB_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "vocabularies"
-    / "doc_type_vocabulary.yaml"
-)
-
-
-def _load_doc_type_values() -> list[str]:
-    """从 doc_type_vocabulary.yaml 加载活跃的 doc_type 值列表。
-
-    读 ``values`` 列表（不含 ``deprecated_values``），天然排除废弃值。
-    """
-    data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
-    return [v["value"] for v in data.get("values", [])]
-
-
-# 模块级加载一次（词表是项目内稳定文件，import 时读取）
-VALID_DOC_TYPES: list[str] = _load_doc_type_values()
-
-# 真源单一化：layer 合法值由 layer_vocabulary.yaml 唯一维护（trae_060 §2）。
-_LAYER_VOCAB_PATH = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "vocabularies"
-    / "layer_vocabulary.yaml"
-)
-
-
-def _load_layer_values() -> list[str]:
-    """从 layer_vocabulary.yaml 加载活跃的 layer 值列表。
-
-    读 ``values`` 列表（不含 ``deprecated_values``），天然排除废弃值。
-    """
-    data = yaml.safe_load(_LAYER_VOCAB_PATH.read_text(encoding="utf-8"))
-    return [v["value"] for v in data.get("values", [])]
-
-
-# 模块级加载一次（词表是项目内稳定文件，import 时读取）
-VALID_LAYERS: list[str] = _load_layer_values()
+# 真源单一化：doc_type/layer 合法值由各自 vocabulary.yaml 唯一维护。
+# 治本（P2-1，2026-06-30）：消除私有 _load_doc_type_values()/_load_layer_values()，
+# 收敛到共享 SSoT load_vocabulary_values()（D-D-05 禁止跨脚本复制粘贴逻辑）。
+# 词表改即生效，本模块不复制值名。返回 set[str]（消费者均用 in/set() 消费，类型安全）。
+VALID_DOC_TYPES: set[str] = load_vocabulary_values("doc_type_vocabulary.yaml")
+VALID_LAYERS: set[str] = load_vocabulary_values("layer_vocabulary.yaml")
 
 HIGH_VALUE_THRESHOLD = 0.7
 REJECT_THRESHOLD = 0.3

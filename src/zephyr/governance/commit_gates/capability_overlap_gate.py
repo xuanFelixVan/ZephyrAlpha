@@ -11,13 +11,13 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 读取/解析异常降级为静默跳过（不阻断 commit，不误报警）
-# [TESTS] TODO tests/test_capability_overlap_gate.py（warn-only gate，测试优先级低）
+# [TESTS] tests/test_capability_overlap_gate.py（P2-2 补全，11 用例覆盖 overlap/no-overlap/yaml/fail-open）
 # [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
+# [TTL] task_bound
 """capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
 
 检测 commit 中新建的 .py 文件名是否与 capability_canonical_file_registry.yaml 已注册能力
-的 aliases 重叠——命中则 logger.info 告警（**不阻断 commit**），提示 AI 应扩展现有
+的 aliases 重叠——命中则 logger.warning 告警（**不阻断 commit**），提示 AI 应扩展现有
 canonical 文件而非新建。
 
 病根（缺口4：CapabilityLookup 被动反查）
@@ -31,7 +31,7 @@ GATE-NO-PURE-SHIM 只拦 pure re-export shim，拦不住完整实现（新 AI �
 warn-only 裁定
 ---------------
 文件名 token 匹配是启发式（可能误报：新建 ``data_loader.py`` 可能命中 ``data_loader``
-capability 但实际是不同域的合法新脚本）。阻断会阻碍合法开发，故仅 logger.info 告警——
+capability 但实际是不同域的合法新脚本）。阻断会阻碍合法开发，故仅 logger.warning 告警——
 AI 看到 warning 后自行判断是扩展还是新建。
 
 Usage::
@@ -171,7 +171,7 @@ def make_capability_overlap_gate() -> GateSpec:
                     break
 
         if warnings:
-            logger.info(
+            logger.warning(
                 "CAPABILITY-OVERLAP gate warn-only: %s", " | ".join(warnings)
             )
         return True, ""  # warn-only：永远 passed=True
