@@ -215,3 +215,14 @@ entries:
   - TRAE-060
   created: '2026-06-30'
   last_updated: '2026-06-30'
+- issue_id: '#ARCH-029'
+  title: tests/目录形态向内收治理（1699根平铺+contract/contracts并存+子目录粒度混合维度）
+  severity: P1高
+  adjudication: |
+    trae_060 §4元问题审查治本。4形态问题（全部需治本，无合理现状）：(1)根平铺1699个.py文件（远超预估"200+"，新AI无法定位+无分类指引）；(2)contract/（元测试5文件：anchors/import_chain/schema_stability）与contracts/（契约测试16文件：test_ct_模块对_001）单复数歧义；(3)平铺与子目录混合（根1699平铺+unit/289内平铺+13子目录）；(4)子目录粒度混合维度（unit/integration/e2e按类型，governance/llm_security/agent_rbac按功能域，contract/contracts按测试种类，test_code_dedup_engine违规test_前缀目录名）。额外发现：根目录2个verify_result.txt临时产物遗留。治本：按文件名前缀归功能域子目录（trae_060 §1原则①能现成不创造——用文件名既有前缀归位，不新建分类维度）；contract/合并入contracts/_meta/消除单复数歧义；删2个txt临时产物；test_code_dedup_engine/去test_前缀。本次迁移明确前缀簇406文件（a2a45/skill58/trae_rules48/kb22/ke4/ct33/fl81/fle15/self22/auto20/audit27/f_lifecycle13/governance10/llm8），剩余1290个_UNMATCHED文件待后续session接续（按前缀细化或逐文件归位）。
+  fix_phase: 进行中（2026-06-30，批次0-16：登记本议题→额外发现治理→14簇迁移→pytest验证→汇报）
+  status: open
+  related_rules:
+  - TRAE-060
+  created: '2026-06-30'
+  last_updated: '2026-06-30'
