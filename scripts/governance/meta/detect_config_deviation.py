@@ -14,12 +14,17 @@
 # [TESTS]
 # [TTL] task_bound
 """
-detect_config_deviation.py — 配置文件与蓝图规范偏差检测（蓝图 §28 B65 + B87）
+detect_config_deviation.py — 配置文件结构完整性检测（蓝图 §28 B65 + B87）
 
-检测 _shared/thresholds.yaml 和 manifest 中与蓝图声明不一致的地方：
-- thresholds.yaml 中是否有蓝图未声明的阈值组
-- manifest 中脚本声明是否与 §15.2 八组阈值对应
-- 配置文件中过期/残留字段
+检测 _shared/thresholds.yaml 和 manifest 的结构完整性：
+- thresholds.yaml 顶层阈值组（值为 dict）必须非空
+- manifest 必填字段存在性
+
+治本（ARCH-036 P3-A5）：删除原 EXPECTED_THRESHOLD_GROUPS 白名单比对——
+白名单本身是硬编码第二真源，导致自指矛盾（检测器自己违反 trae_060 §2）+
+双真源同步漂移（concurrency/directory_scalability 遗漏即此问题）+
+元数据字段误报（module_id 被报为"未声明的阈值组"）。
+改为结构校验：thresholds.yaml 是 SSoT，新增组即合法，无需白名单登记。
 
 Usage:
     python scripts/governance/meta/detect_config_deviation.py
@@ -61,21 +66,22 @@ from _shared.constants import EXIT_PASS, SCRIPTS_DIR
 THRESHOLDS_PATH = SCRIPTS_DIR / "_shared" / "thresholds.yaml"
 MANIFEST_PATH = SCRIPTS_DIR / "script_manifest.yaml"
 
-EXPECTED_THRESHOLD_GROUPS = {
-    "scanning",
-    "finding_quality",
-    "error_budget",
-    "sla_timers",
-    "shadow_mode",
-    "script_health",
-    "ast_similarity",
-    "blueprint_sync",
-    "concurrency",  # ARCH-036 P3-A5: 补齐第九组（蓝图 §35 分布式执行，原遗漏）
-}
+# ARCH-036 P3-A5: 删除 EXPECTED_THRESHOLD_GROUPS 白名单（自指硬编码+双真源漂移）
+# 改为结构校验：顶层 dict 值字段必须非空（阈值组），元数据字段（str/int/bool）跳过。
+# 这样新增阈值组无需更新检测器，消除双真源同步反模式。
 
 
 def check_thresholds() -> list[str]:
-    """检查 thresholds.yaml 是否与蓝图声明的八组阈值一致。"""
+    """检查 thresholds.yaml 结构完整性（治本 ARCH-036 P3-A5: 删除白名单，改为结构校验）。
+
+    原逻辑用硬编码 EXPECTED_THRESHOLD_GROUPS 白名单比对，导致：
+    - 自指硬编码（检测器自身违反 trae_060 §2）
+    - 双真源同步（thresholds.yaml + 白名单必须同步，concurrency 遗漏即此问题）
+    - 元数据字段误报（module_id 被报为"未声明的阈值组"）
+
+    新逻辑：thresholds.yaml 是 SSoT，顶层 dict 值字段必须非空（阈值组），
+    元数据字段（str/int/bool/None）自动跳过。新增组即合法，无需白名单登记。
+    """
     violations: list[str] = []
     if yaml is None:
         return ["PyYAML 未安装 — 无法解析 thresholds.yaml"]
@@ -87,12 +93,23 @@ def check_thresholds() -> list[str]:
     except Exception:
         return ["thresholds.yaml YAML 解析失败"]
 
-    for group in EXPECTED_THRESHOLD_GROUPS:
-        if group not in data:
-            violations.append(f"thresholds.yaml 缺少阈值组: {group}")
-    for group in data:
-        if group not in EXPECTED_THRESHOLD_GROUPS:
-            violations.append(f"thresholds.yaml 中存在未声明的阈值组: {group}")
+    if not isinstance(data, dict):
+        return ["thresholds.yaml 顶层结构不是 dict"]
+
+    # 结构校验：值为 dict 的顶层字段是阈值组，必须非空
+    # 元数据字段（module_id 等，值为 str/int/bool/None）自动跳过
+    threshold_group_count = 0
+    for key, value in data.items():
+        if not isinstance(value, dict):
+            continue  # 元数据字段，跳过
+        threshold_group_count += 1
+        if not value:
+            violations.append(f"thresholds.yaml 阈值组为空: {key}")
+
+    # 防御性检查：至少应有阈值组存在（避免空文件被误判通过）
+    if threshold_group_count == 0:
+        violations.append("thresholds.yaml 无任何阈值组（顶层 dict 值字段）")
+
     return violations
 
 
