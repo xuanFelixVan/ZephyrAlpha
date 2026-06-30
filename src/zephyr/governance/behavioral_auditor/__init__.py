@@ -114,7 +114,7 @@ from zephyr.governance.drift_detection.backcompat_checker import (
 )
 from zephyr.governance.drift_detection.baseline_manager import BaselineManager, DiffReport
 from zephyr.governance.drift_detection.baseline_poisoning_guard import (
-    BaselineSnapshot,
+    FileBaselineSnapshot,
     HashChainEntry,
     MultiBaselineVote,
     build_hash_chain,
@@ -137,7 +137,7 @@ from zephyr.governance.drift_detection.canary_controller import (
 from zephyr.governance.drift_detection.cascade_detector import (
     CascadeAlert,
     CascadeConfig,
-    CascadeEvent,
+    CascadeEventRecord,
     detect_cascade,
     dry_run_impact_analysis,
     is_auto_fix_paused,
@@ -403,6 +403,7 @@ __all__ = [
     "CascadeAlert",
     "CascadeConfig",
     "CascadeEvent",
+    "CascadeEventRecord",
     "ChangeSet",
     "ChaosInjection",
     "ChaosInjectionType",
@@ -446,6 +447,7 @@ __all__ = [
     "EnvDiffReport",
     "EscalationEntry",
     "FileAttrIssue",
+    "FileBaselineSnapshot",
     "FileChange",
     "FileIntegrityRecord",
     "FixSnapshot",

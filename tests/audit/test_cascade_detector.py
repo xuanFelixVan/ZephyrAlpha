@@ -20,7 +20,7 @@ from zephyr.governance.drift_detection.cascade_detector import (
     CASCADE_CONFIG,
     CascadeAlert,
     CascadeConfig,
-    CascadeEvent,
+    CascadeEventRecord,
     _load_cascade_state,
     _save_cascade_state,
     detect_cascade,
@@ -31,7 +31,7 @@ from zephyr.governance.drift_detection.cascade_detector import (
 
 class TestCascadeEvent:
     def test_instantiation_defaults(self):
-        evt = CascadeEvent(
+        evt = CascadeEventRecord(
             event_id="evt-001",
             module="zephyr.shared",
             detected_at=datetime(2026, 1, 1, tzinfo=UTC),
@@ -43,7 +43,7 @@ class TestCascadeEvent:
 
     def test_instantiation_with_optional_fields(self):
         now = datetime.now(UTC)
-        evt = CascadeEvent(
+        evt = CascadeEventRecord(
             event_id="evt-002",
             module="zephyr.infrastructure.budget_enforcement",
             detected_at=now,

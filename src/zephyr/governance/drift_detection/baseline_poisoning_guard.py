@@ -49,7 +49,7 @@ from datetime import UTC, datetime
 
 
 @dataclass
-class BaselineSnapshot:
+class FileBaselineSnapshot:
     version: int
 
     file_path: str
@@ -161,7 +161,7 @@ def cross_validate_baseline(
 
 
 def multi_baseline_vote(
-    snapshots: list[BaselineSnapshot],
+    snapshots: list[FileBaselineSnapshot],
     threshold: int = 2,
 ) -> list[MultiBaselineVote]:
     votes: dict[str, dict[str, int]] = {}

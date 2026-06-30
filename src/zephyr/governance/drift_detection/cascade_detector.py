@@ -47,7 +47,7 @@ from pathlib import Path
 
 
 @dataclass
-class CascadeEvent:
+class CascadeEventRecord:
     event_id: str
 
     module: str
@@ -65,7 +65,7 @@ class CascadeAlert:
 
     module: str
 
-    trigger_events: list[CascadeEvent]
+    trigger_events: list[CascadeEventRecord]
 
     cascade_count: int
 
@@ -186,11 +186,11 @@ def detect_cascade(
                 window_events.append(evt)
 
         if len(window_events) >= CASCADE_CONFIG.threshold:
-            cascade_events: list[CascadeEvent] = []
+            cascade_events: list[CascadeEventRecord] = []
 
             for we in window_events[: CASCADE_CONFIG.threshold]:
                 cascade_events.append(
-                    CascadeEvent(
+                    CascadeEventRecord(
                         event_id=str(we.get("event_id", "")),
                         module=module,
                         detected_at=datetime.fromisoformat(str(we.get("timestamp", "")).replace("Z", "+00:00")),
@@ -227,7 +227,7 @@ def detect_cascade(
 
 def _trigger_cascade_rollback(
     module: str,
-    cascade_events: list[CascadeEvent],
+    cascade_events: list[CascadeEventRecord],
 ) -> None:
     """CT-005: 级联修复循环 → MOD-INF-021 Rollback 回滚到 cascade 前状态。"""
 

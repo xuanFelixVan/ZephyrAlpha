@@ -16,7 +16,7 @@ import hashlib
 import zephyr.governance.drift_detection.baseline_poisoning_guard as _bpg_mod
 from zephyr.governance.drift_detection.baseline_poisoning_guard import (
     HASH_CHAIN,
-    BaselineSnapshot,
+    FileBaselineSnapshot,
     HashChainEntry,
     MultiBaselineVote,
     _sha256,
@@ -32,7 +32,7 @@ class TestBaselineSnapshot:
     def test_default_fields(self):
         from datetime import datetime
 
-        snap = BaselineSnapshot(
+        snap = FileBaselineSnapshot(
             version=1,
             file_path="test.py",
             content_hash="abc123",
@@ -107,9 +107,9 @@ class TestCrossValidateBaseline:
 class TestMultiBaselineVote:
     def test_consensus_reached(self):
         snapshots = [
-            BaselineSnapshot(version=1, file_path="a.py", content_hash="h1", git_commit="c1", scan_type="DEEP"),
-            BaselineSnapshot(version=2, file_path="a.py", content_hash="h1", git_commit="c2", scan_type="DEEP"),
-            BaselineSnapshot(version=3, file_path="a.py", content_hash="h2", git_commit="c3", scan_type="DEEP"),
+            FileBaselineSnapshot(version=1, file_path="a.py", content_hash="h1", git_commit="c1", scan_type="DEEP"),
+            FileBaselineSnapshot(version=2, file_path="a.py", content_hash="h1", git_commit="c2", scan_type="DEEP"),
+            FileBaselineSnapshot(version=3, file_path="a.py", content_hash="h2", git_commit="c3", scan_type="DEEP"),
         ]
         results = multi_baseline_vote(snapshots, threshold=2)
         assert len(results) == 1
@@ -120,8 +120,8 @@ class TestMultiBaselineVote:
 
     def test_no_consensus(self):
         snapshots = [
-            BaselineSnapshot(version=1, file_path="a.py", content_hash="h1", git_commit="c1", scan_type="DEEP"),
-            BaselineSnapshot(version=2, file_path="a.py", content_hash="h2", git_commit="c2", scan_type="DEEP"),
+            FileBaselineSnapshot(version=1, file_path="a.py", content_hash="h1", git_commit="c1", scan_type="DEEP"),
+            FileBaselineSnapshot(version=2, file_path="a.py", content_hash="h2", git_commit="c2", scan_type="DEEP"),
         ]
         results = multi_baseline_vote(snapshots, threshold=2)
         assert len(results) == 1
