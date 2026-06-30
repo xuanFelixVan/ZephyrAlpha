@@ -26,7 +26,8 @@ ttl_vocabulary.yaml decision_tree 判定 ttl 值：
   .json         → parse_json_meta      → _meta.ttl 字段
 
 判定口径（与 ttl_vocabulary.yaml decision_tree 完全一致，机器可读 criteria 消费）：
-  - Q1: 过程性子目录（_working/changes/delivery/reports/09_audit/_archive/decomposition）→ task_bound
+  - Q1: 过程性子目录（_working/changes/delivery/reports/09_audit/decomposition）→ task_bound
+    注：_archive 已于 commit 87392b2a60 提升为 permanent zone，不再属于过程性子目录
   - Q2: 过程性 doc_type（log/audit_report/operational_rule）→ task_bound
   - Q3: 永久区路径 → permanent；否则 → task_bound
 

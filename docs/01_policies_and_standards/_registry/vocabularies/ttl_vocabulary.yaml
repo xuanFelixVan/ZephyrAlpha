@@ -12,7 +12,7 @@
 # 维护者：ZephyrAlpha-Owner
 # 版本：2.0.0（breaking：6 值→2 值二元裁定）
 # 创建日期：2026-05-02
-# 最后更新：2026-06-26
+# 最后更新：2026-06-30
 #
 # v2.0.0 变更说明（2026-06-26）：
 #   - 删除 7d（0 使用，死代码）
@@ -21,7 +21,23 @@
 #   - 删除 session（0 使用，是 task_bound 子集）
 #   - 只留 permanent / task_bound 二元
 #   - 判定树从 5 节点简化为 1 节点二元（永久区路径→permanent；否则→task_bound）
-#   - 设计依据：粒度越细，AI 判定越靠猜；二元判定消除歧义
+#   - 设计依据：粒度越细，AI 判定越猜；二元判定消除歧义
+#
+# ── ttl 判定优先级（2026-06-30 裁定，治本：消除三处 ttl 定义冲突）──
+# ttl 有三处定义，回答不同问题，冲突时按以下优先级裁决（高→低）：
+#   1. frontmatter.ttl（最高）——AI/人显式声明，直接生效，覆盖一切
+#   2. directory_contract.yaml directory_zones.<zone>.default_ttl（位置优先）——
+#      文件所在目录的 zone 决定默认 ttl（永久区→permanent，临时区→task_bound，中性区→null）
+#   3. doc_type_vocabulary.yaml values[].ttl_default（类型默认）——
+#      doc_type 的默认 ttl，仅在 zone 未声明 default_ttl 时兜底
+#   4. ttl_vocabulary.yaml decision_tree（辅助判定）——
+#      AI 创建文件时的判定流程，输出结果应与上述 1/2 一致；若不一致，以 1/2 为准
+#
+# 裁定理由：
+#   - frontmatter 显式声明优先：AI/人明确意图高于任何推断
+#   - zone 优先于 doc_type：位置决定命运，简单可预测（临时区放 policy 也是临时的）
+#   - DCR-003/004 基于 zone 校验，与 frontmatter 显式声明一致，无需改校验逻辑
+#   - decision_tree 是辅助工具，不是真源；冲突时以契约为准
 #
 # 本词表定义 ttl 字段的所有合法值（2 种）。
 # 校验器 check_frontmatter_metadata.py 从本文件动态加载合法值。
@@ -58,7 +74,8 @@ values:
 # ── 内容判定树（AI 创建文档时 MUST 按此树判定 ttl）──
 # 设计原则：
 #   1. 优先用内容信号判定，路径作为辅助兜底（治本：changes/等过程文件不再误判 permanent）
-#   2. 过程性子目录（changes/delivery/reports/_working/_archive/decomposition）→ task_bound
+#   2. 过程性子目录（changes/delivery/reports/_working/decomposition）→ task_bound
+#      注：_archive 已于 commit 87392b2a60 提升为 permanent zone，不再属于过程性子目录
 #   3. 过程性 doc_type（audit_report/operational_rule）→ task_bound
 #   4. 永久区路径 → permanent（准入受控，必为永久文件）
 #   5. 其他 → task_bound（默认落 docs/_working/）
@@ -82,9 +99,9 @@ decision_tree:
         - signal: path
           value: "/reports/"
           operator: contains
-        - signal: path
-          value: "/_archive/"
-          operator: contains
+        # 已删除：- signal: path value: "/_archive/" operator: contains
+        # 病根：commit 87392b2a60 把 docs/_archive/ 提升为 permanent zone，但此条目未同步删除
+        # _archive 是永久归档区，不是过程性子目录；Q3 会正确判定为 permanent
         - signal: path
           value: "/delivery/"
           operator: contains

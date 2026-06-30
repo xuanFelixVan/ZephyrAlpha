@@ -98,6 +98,15 @@ directory_zones:
     gate: allow_promote_required
     # 永久区子目录中，以下路径豁免晋升门禁（生成器专用）
     # 真源：capability_canonical_file_registry.yaml outputs 字段
+    #
+    # 消费者明确声明（消除死字段歧义，2026-06-30 裁定）：
+    #   - 仅 GitCommitGateway._check_permanent_zone_new_files（PROMOTION_BLOCKED）消费——
+    #     生成器输出文件免 --allow-promote 晋升批准
+    #   - check_directory_contract.py 的 DCR-001~007 仍正常校验这些路径下的文件——
+    #     生成器输出的文件仍须满足 doc_type 目录归属（DCR-001/002）、扩展名（DCR-005/006）、
+    #     ttl=permanent（DCR-003）等约束
+    #   - 理由：生成器输出的 doc_type 与扩展名基本稳定（overview_entry 生成 architecture_view），
+    #     查 DCR 不增加负担；豁免的仅是"人工审批"环节，不是"格式/语义合规"
     exempt_subdirs:
       - "docs/02_enterprise_architecture/00_overview_entry/"
       - "docs/02_enterprise_architecture/01_global_architecture_diagram/"
@@ -203,10 +212,10 @@ directory_extensions:
     zone: neutral
 
   - path: "session_logs/"
-    allowed: [".yaml", ".md", ".json"]
+    allowed: [".yaml", ".yml", ".md", ".json"]
     forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
     zone: neutral
-    note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml 为日志数据，.md 为审计报告，.json 为历史格式（个别文件）"
+    note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml/.yml 为日志数据，.md 为审计报告，.json 为历史格式（个别文件）"
 
   - path: "tools/"
     allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
