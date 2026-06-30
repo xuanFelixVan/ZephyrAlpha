@@ -337,7 +337,7 @@ def test_default_thresholds_exposed() -> None:
 
 
 def test_exports_present() -> None:
-    from zephyr.autonomy_core.parsing import intent_parser as m
+    from zephyr.autonomy_core import intent_parser as m
 
     for name in [
         "EmbeddingHit",
