@@ -66,7 +66,7 @@ DB_DIR: Path = REPO_ROOT / "data"
 # Previously: from zephyr.governance.sqlite_schema import DB_PATH
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
-GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
+GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
 RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 

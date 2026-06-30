@@ -19,7 +19,7 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
-from zephyr.governance.circuit_breaker import (
+from zephyr.governance.resilience.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,
     CircuitState,

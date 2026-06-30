@@ -100,7 +100,7 @@ from __future__ import annotations
 import logging
 import os
 
-from zephyr.governance.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

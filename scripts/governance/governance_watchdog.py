@@ -31,8 +31,11 @@ from pathlib import Path
 from typing import Any
 from _shared.constants import REPO_ROOT
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P1-A2): 连续失败阈值读SSoT
 
 PROJECT_ROOT = REPO_ROOT
+# ARCH-036: 连续失败→Quarantine 阈值从 SSoT (thresholds.yaml) 读取，消除硬编码 2 与权威值 3 的分歧
+_QUARANTINE_FAILURES_THRESHOLD = _get_threshold("script_health.consecutive_failures_before_quarantine", 3)
 
 
 class ServiceUnrecoverableError(Exception):

@@ -72,7 +72,7 @@ from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = REPO_ROOT
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
+_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 _AGENTS_PATH = _PROJECT_ROOT / "AGENTS.md"
 
 

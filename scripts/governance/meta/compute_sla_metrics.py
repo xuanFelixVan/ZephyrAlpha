@@ -59,14 +59,16 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 from _shared.constants import SCRIPTS_DIR
+from _shared.thresholds import get as _get_threshold
 
 SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 DEFAULT_OUTPUT = SCRIPTS_DIR / "meta" / "sla_weekly_report.json"
 
+# ARCH-036: MTTR 阈值从 SSoT (thresholds.yaml) 读取，消除硬编码 72h 与权威值 168h 的分歧
 SLO_TARGETS = {
     "availability": 0.99,
-    "mttr_critical_hours": 24,
-    "mttr_high_hours": 72,
+    "mttr_critical_hours": _get_threshold("sla_timers.fix_deadline_hours.CRITICAL", 24),
+    "mttr_high_hours": _get_threshold("sla_timers.fix_deadline_hours.HIGH", 168),
     "coverage": 1.0,
     "false_positive_rate_max": 0.05,
     "script_health": 1.0,

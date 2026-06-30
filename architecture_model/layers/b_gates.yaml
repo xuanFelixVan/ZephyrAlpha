@@ -10,7 +10,7 @@ modules:
   - id: gates-engine
     module_id: MOD-INF-007
     name: Gate Engine
-    submodule_path: src/zephyr/gates/
+    submodule_path: src/zephyr/governance/rule_enforcement/
     status: implemented
     priority: P0
     runtime_plane: warm

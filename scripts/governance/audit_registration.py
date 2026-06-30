@@ -65,7 +65,7 @@ from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1)
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-GATES_DIR = SRC_ZEPHYR / "gates"
+GATES_DIR = SRC_ZEPHYR / "governance" / "rule_enforcement"
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 

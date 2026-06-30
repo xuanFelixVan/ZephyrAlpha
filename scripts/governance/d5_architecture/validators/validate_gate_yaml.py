@@ -52,7 +52,7 @@ from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
+_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 _MUTABLE_CHECK_TYPES = {"encoding", "line_ending", "frontmatter", "file_extension"}
 _NON_AUTOFIX_TYPES = {

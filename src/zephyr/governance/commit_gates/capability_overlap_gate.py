@@ -48,7 +48,7 @@ import logging
 import os
 import re
 
-from zephyr.governance.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 

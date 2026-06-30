@@ -63,7 +63,7 @@ import os
 import subprocess
 import sys
 
-from zephyr.governance.commit_gate_registry import GateSpec
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
 
