@@ -43,21 +43,21 @@ values:
     definition: "家族 A——策略/标准类规则"
     ai_consumption: "家族 A 文件定义'必须做什么'和'禁止做什么'。AI 必须严格遵守，不可偏离。"
     ai_keywords: ["策略", "标准", "规则", "必须", "禁止", "家族 A"]
-    examples: ["policy", "operational_rule"]
+    examples: ["policy"]  # v3.1.0: operational_rule 已合并入 policy
     conflict_resolution: "家族 A > 家族 B > 家族 C > 家族 D（冲突时高优先级优先）"
 
   - value: B
     definition: "家族 B——操作性流程类规则"
     ai_consumption: "家族 B 文件定义'怎么做'。AI 在执行任务时应优先遵循家族 B 的操作步骤。"
     ai_keywords: ["操作", "流程", "runbook", "步骤", "家族 B"]
-    examples: ["operational_rule", "runbook", "playbook"]
+    examples: ["policy", "runbook", "playbook"]  # v3.1.0: operational_rule 已合并入 policy
     conflict_resolution: "家族 B 与家族 A 冲突时，家族 A 优先"
 
   - value: C
     definition: "家族 C——Schema/契约类规则"
     ai_consumption: "家族 C 文件定义数据结构和接口契约。AI 在生成代码和数据时必须符合家族 C 的约束。"
     ai_keywords: ["Schema", "契约", "接口", "数据结构", "家族 C"]
-    examples: ["register", "gate", "operational_rule"]
+    examples: ["register", "gate", "policy"]  # v3.1.0: operational_rule 已合并入 policy
     conflict_resolution: "家族 C 与家族 A/B 冲突时，家族 A/B 优先（Schema 是约束而非业务规则）"
 
   - value: D

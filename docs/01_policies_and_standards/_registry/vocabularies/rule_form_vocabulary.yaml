@@ -50,7 +50,7 @@ values:
     definition: "过程式规则——定义'如何做'的步骤、检查清单、回滚方案"
     ai_consumption: "AI 按步骤执行，每步验证"
     examples: ["Step 1: 确认数据源准入", "Step 2: 创建连接器模块"]
-    doc_types: ["operational_rule"]
+    doc_types: ["policy"]  # v3.1.0: operational_rule 合并入 policy，procedural rule_form 对应 procedural policy
 
   - value: data
     definition: "数据类规则——结构化数据清单，用于发现和索引"
@@ -72,7 +72,7 @@ values:
 #
 # | 如果你的文件 doc_type 是... | rule_form 自动等于... |
 # | policy / index / gate / architecture_view / blueprint | declarative |
-# | operational_rule               | procedural            |
+# | policy (procedural)            | procedural            |
 # | register / vocabulary / audit_report | data                  |
 # | template                        | structural            |
 # ============================================================
@@ -85,7 +85,8 @@ mapping_rules:
     exceptions: []
   - rule: "doc_type: index → rule_form: declarative"
     exceptions: []
-  - rule: "doc_type: operational_rule → rule_form: procedural"
+  # v3.1.0: operational_rule 已合并入 policy，procedural policy 由文件显式标注 rule_form
+  - rule: "doc_type: policy → rule_form: declarative (default) 或 procedural (显式标注)"
     exceptions: []
   - rule: "doc_type: register → rule_form: data"
     exceptions: []

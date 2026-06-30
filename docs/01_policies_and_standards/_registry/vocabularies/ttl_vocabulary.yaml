@@ -76,7 +76,7 @@ values:
 #   1. 优先用内容信号判定，路径作为辅助兜底（治本：changes/等过程文件不再误判 permanent）
 #   2. 过程性子目录（changes/delivery/reports/_working/decomposition）→ task_bound
 #      注：_archive 已于 commit 87392b2a60 提升为 permanent zone，不再属于过程性子目录
-#   3. 过程性 doc_type（audit_report/operational_rule）→ task_bound
+#   3. 过程性 doc_type（audit_report）→ task_bound（v3.1.0: operational_rule 已合并入 policy）
 #   4. 永久区路径 → permanent（准入受控，必为永久文件）
 #   5. 其他 → task_bound（默认落 docs/_working/）
 #   6. AI 创建文件默认落 docs/_working/，除非用户明确要求创建永久文件
@@ -112,7 +112,7 @@ decision_tree:
       question: "文档 doc_type 是否为过程性类型？"
       # 真源：doc_type_vocabulary.yaml values[].ttl_default == task_bound
       # 治本（2026-06-30）：从 doc_type_vocabulary.yaml 动态加载（via criteria_source filter+extract_field）
-      # 消除硬编码 audit_report/operational_rule 副本——doc_type 变更只需改词表一处
+      # 消除硬编码 audit_report 副本——doc_type 变更只需改词表一处（v3.1.0: operational_rule 已合并）
       criteria_source:
         target: doc_type_vocabulary.yaml
         path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml

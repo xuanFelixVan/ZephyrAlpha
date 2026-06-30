@@ -193,7 +193,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   - register
   - template
   description: 规则表达形式——4 值
@@ -207,7 +206,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   description: 规则作用范围——4 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/scope_vocabulary.yaml
@@ -219,7 +217,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   description: 规则稳定性——4 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/stability_vocabulary.yaml
@@ -231,7 +228,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   description: 规则可验证性——3 值
   source: PS-STD-001 §2.5
   derived_from: _registry/vocabularies/verifiability_vocabulary.yaml
@@ -301,7 +297,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   - register
   description: AI 自治权限——3 值（全小写）
   source: PS-STD-001 §4.5
@@ -333,7 +328,6 @@ fields:
   enum_values: DYNAMIC_FROM_SSOT
   applicable_docs:
   - policy
-  - operational_rule
   - template
   description: 治理系统家族
   source: PS-STD-001 §10.7

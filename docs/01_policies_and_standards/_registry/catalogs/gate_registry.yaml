@@ -102,8 +102,8 @@ gates:
 - gate_id: GATE-16
   name: 'GATE-16: 架构合规校验（architecture-contract v1.0.0）'
   entry: python scripts/governance/d3_metadata/validate_architecture.py
-  description: 架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance无operational_rule
-    / operational无policy），骨架阶段 warn-only
+  description: 架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance policy必须declarative
+    / operational policy必须procedural），骨架阶段 warn-only
   files_trigger: ^docs/01_policies_and_standards/.*\.(md|yaml|yml)$
   always_run: false
   category: architecture_compliance
