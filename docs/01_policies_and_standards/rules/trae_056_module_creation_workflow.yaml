@@ -776,9 +776,6 @@ sections:
     - target: TRAE-033
       file: trae_033_module_registration_sync.yaml
       role: "MRS-001~003 多注册表同步"
-provenance:
-  extracted_at: '2026-06-22T00:00:00'
-  extracted_by: session-20260622-235c
 references:
   rule_ids:
   - TRAE-048
@@ -818,3 +815,6 @@ metadata:
   impact_level: H
   modification_permission: human_gated
   superseded_by: null
+provenance:
+  extracted_at: '2026-06-22T00:00:00'
+  extracted_by: session-20260622-235c
