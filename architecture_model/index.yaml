@@ -1,6 +1,6 @@
 # v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
-# c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph.db domains 表定义。
+# c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
 # 本文件由 dm200916_write_direct.py 从 PostgreSQL depgraph 派生，禁止手工编辑 domains 列表
 module_id: MOD-GOVERNANCE
 schema_version: '3.0.2'
@@ -15,20 +15,19 @@ governance:
   conflict_rule: "YAML 为准，Markdown 视图同步更新"
   gate_alignment: "AGENTS.md §6.10 — GATE-A (代码↔YAML)"
   domains_source: >
-    domains 列表由 dm200916_write_direct.py 从 depgraph.db domains 表派生，禁止手编。
-    改 depgraph.db 后由 GATE-ARCH-MODEL reconciler 自动重生。
+    domains 列表由 dm200916_write_direct.py 从 depgraph domains 表派生，禁止手编。
+    改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 53域是唯一物理分类体系（depgraph.db domains表），14层（L00-L13）是域的layer_id属性枚举。
+# 53域是唯一物理分类体系（depgraph domains表），14层（L00-L13）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
 partitions:
-# === 53域索引（物理分类唯一真源：depgraph.db domains表）===
+# === 53域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
-  path: ../data/databases/depgraph.db
   description: >
-    53域物理分类唯一真源。
+    53域物理分类唯一真源（PostgreSQL depgraph 数据库，localhost:5432/depgraph）。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     14层（L00-L13）是域的layer_id属性枚举。
 
@@ -133,7 +132,7 @@ partitions:
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
 
-# === 53域清单（从depgraph.db派生，禁止手工编辑）===
+# === 53域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
@@ -304,16 +303,16 @@ global_stats:
   notes: >
     53域唯一物理分类体系，14层是域的layer_id属性枚举。
     b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
-    结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+    结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 53域，见domains列表，真源为depgraph.db domains表
+  answer: 53域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
-  answer: "查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>"
+  answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
-  answer: "查询depgraph.db: python scripts/governance/extract_depgraph.py --paths"
+  answer: "查询depgraph: python scripts/governance/extract_depgraph.py --paths"
 - question: 为什么这样分域？
   answer: 读architecture_upgrade_discussion.md（域分类体系背景）
 - question: 不变量/安全红线？
@@ -350,6 +349,6 @@ id_conventions:
     scope: domain/ddd_model.yaml
     example: AGG-001
   - prefix: D_{NAME}
-    scope: depgraph.db domains表
+    scope: depgraph domains表
     example: D_MKT_DATA
     note: "域ID是唯一物理分类标识（全大写+下划线）"
