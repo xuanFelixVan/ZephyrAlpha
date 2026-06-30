@@ -930,6 +930,32 @@ capabilities:
     integrity_anchors:
       - make_claim_required_gate    # gate 工厂(删则 gate 不注册)
 
+  # --------------------------------------------------------------------------
+  - capability_id: test_exempt_checker
+    canonical_override: src/zephyr/governance/commit_gate_registry.py
+    aliases:
+      - is_test_exempt
+      - TEST_EXEMPT_PREFIXES
+      - test_exempt
+      - tests_exempt
+      - test_directory_exempt
+      - commit_gate_test_exempt
+    description: >-
+      commit_gates 中 tests/ 目录豁免的唯一真源（SSoT，2026-06-30 治本2 收拢点）。
+      真源实现：src/zephyr/governance/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
+      常量 + is_test_exempt(file_path) 函数（归一化反斜杠后 startswith 比对，消除
+      Windows 路径漂移）。create_guard / capability_overlap_gate 等 gate 通过
+      from zephyr.governance.commit_gate_registry import is_test_exempt 引用。
+      禁止在 commit_gates/*.py 中硬编码 "tests/" 字面量（GATE-VOCAB 检测7 阻断，
+      治本红攻发现2 is_test_exempt 漂移——新AI 可能直接硬编码绕过 SSoT）。
+      canonical basename commit_gate_registry 不匹配任何 alias，无法 auto 派生，
+      故用 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "tests 豁免/test exempt/is_test_exempt" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止在 gate 中重建 tests/ 豁免逻辑。
+    integrity_anchors:
+      - TEST_EXEMPT_PREFIXES        # 豁免前缀常量(篡改加"src/"可豁免所有源码绕过 create_guard,C层golden hash保护)
+      - is_test_exempt              # 豁免判定函数(归一化+startswith逻辑真源,删则gate各自硬编码漂移)
+
 # ============================================================================
 # creation_tokens — 新建 .py 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
