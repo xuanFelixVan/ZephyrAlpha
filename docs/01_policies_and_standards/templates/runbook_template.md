@@ -16,7 +16,7 @@ stability: evolving
 status: Draft
 summary: Runbook 创建模板——过程式操作规则，定义具体操作的步骤化流程，新建 runbook 类文档时使用此模板
 tags: []
-template_for: operational_rule
+template_for: policy
 title: Runbook Template
 ttl: permanent
 verifiability: manual
