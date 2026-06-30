@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 25 | Module Count | 25 |
+| 模块数 | 22 | Module Count | 22 |
 | 域内依赖 | 9 | Internal Dependencies | 9 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 20 | Prototype Modules | 20 |
+| 原型态模块 | 17 | Prototype Modules | 17 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 资源优化引擎 | Description | 资源优化引擎 |
@@ -69,9 +69,6 @@ graph TD
         src_zephyr_infrastructure_rollback_governance_contracts_py["src/zephyr/infrastructure/rollback/governance/c... prototype"]
         src_zephyr_infrastructure_rollback_governance_drift_fix_py["src/zephyr/infrastructure/rollback/governance/d... prototype"]
         src_zephyr_infrastructure_rollback_governance_result_types_py["src/zephyr/infrastructure/rollback/governance/r... prototype"]
-        tests_test_auto_rollback_trigger_py["tests/test_auto_rollback_trigger.py prototype"]
-        tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
-        tests_test_rollback_wal_py["tests/test_rollback_wal.py prototype"]
     end
     src_zephyr_infra_ops_interface_base_py -.->|config_depends| src_zephyr_infra_ops_init_py
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| src_zephyr_infra_ops_init_py
@@ -82,10 +79,6 @@ graph TD
     src_zephyr_infrastructure_rollback_governance_budget_tracker_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_drift_fix_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_result_types_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
-    tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
-    tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
     D_OPS["D_OPS production"]
@@ -95,6 +88,7 @@ graph TD
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
@@ -105,8 +99,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
-    class src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py,src_zephyr_infrastructure_rollback_governance_result_types_py,tests_test_auto_rollback_trigger_py,tests_test_rollback_simulator_py,tests_test_rollback_wal_py design
-    class D_GOVERNANCE,D_OPS,D_INFRA_RUNTIME,D_FRONTEND external_prod
+    class src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py,src_zephyr_infrastructure_rollback_governance_result_types_py design
+    class D_OPS,D_INFRA_RUNTIME,D_GOVERNANCE,D_FRONTEND external_prod
     class D_SHARED,D_GOV_AUDIT external_design
 ```
 
@@ -130,7 +124,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 22 个模块 / 22 modules。
 
 ```
 
@@ -142,7 +136,7 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (20 modules)             │
+│            L1 基础层 / Foundation Layer (17 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/governance/auto_rollback_trigger.py  [prototype]    │
 │   src/zephyr/governance/rollback_simulator.py  [prototype]       │
@@ -161,9 +155,6 @@ graph TD
 │   src/zephyr/infrastructure/rollback/governance/contracts.py ... │
 │   src/zephyr/infrastructure/rollback/governance/drift_fix.py ... │
 │   src/zephyr/infrastructure/rollback/governance/result_types.... │
-│   tests/test_auto_rollback_trigger.py  [prototype]               │
-│   tests/test_rollback_simulator.py  [prototype]                  │
-│   tests/test_rollback_wal.py  [prototype]                        │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -180,7 +171,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 25 个模块 / 25 modules）。
+> 按 architecture_layer 分组的模块清单（共 22 个模块 / 22 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (1 modules)
 
@@ -188,7 +179,7 @@ graph TD
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/ | 基础设施运维域 | design | planned |
 
-### L1 基础层 / Foundation Layer (20 modules)
+### L1 基础层 / Foundation Layer (17 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -209,9 +200,6 @@ graph TD
 | 15 | src/zephyr/infrastructure/rollback/governance/contracts.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
 | 16 | src/zephyr/infrastructure/rollback/governance/drift_fix.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
 | 17 | src/zephyr/infrastructure/rollback/governance/result_type... | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 18 | tests/test_auto_rollback_trigger.py | tests/test_auto_rollback_trigger.py | prototype | generated |
-| 19 | tests/test_rollback_simulator.py | tests/test_rollback_simulator.py | prototype | generated |
-| 20 | tests/test_rollback_wal.py | tests/test_rollback_wal.py | prototype | generated |
 
 ### 未分类 / Unclassified (4 modules)
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -66,25 +66,15 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_state_escalator_py -.->|config_depends| D_GOVERNANCE
-    D_AUDITTEST["D_AUDITTEST production"]
-    src_zephyr_ex_core_order_state_escalator_py -.->|contract| D_AUDITTEST
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ex_core_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    D_AUDITTEST -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
-    D_AUDITTEST -.->|contract| src_zephyr_ex_core_order_state_escalator_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| src_zephyr_ex_core_order_state_escalator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -93,7 +83,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py production
     class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py design
-    class D_TRADING,D_AUDITTEST external_prod
+    class D_TRADING external_prod
     class D_GOVERNANCE,D_GOV_SCRIPTS,D_AUTONOMY_CORE external_design
 ```
 

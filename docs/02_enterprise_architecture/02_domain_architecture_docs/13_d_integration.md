@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_INTEGRATION | Domain ID | D_INTEGRATION |
 | 域名称 | 管线路由 | Domain Name | 管线路由 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 108 | Module Count | 108 |
+| 模块数 | 103 | Module Count | 103 |
 | 域内依赖 | 119 | Internal Dependencies | 119 |
 | 跨域入边 | 199 | Cross-domain Incoming | 199 |
 | 跨域出边 | 55 | Cross-domain Outgoing | 55 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 90 | Prototype Modules | 90 |
-| 生产态模块 | 18 | Production Modules | 18 |
+| 生产态模块 | 13 | Production Modules | 13 |
 | 容量 | 71/150 (正常) | Capacity | 71/150 (正常) |
 | 描述 | M1-M11双管线路由 | Description | M1-M11双管线路由 |
 
@@ -122,8 +122,6 @@ graph TD
     src_zephyr_integration_mcp_base_server_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_integration_mcp_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_integration_llm_bridge_py -.->|config_depends| D_GOVERNANCE
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_mcp_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
@@ -149,7 +147,7 @@ graph TD
     class src_zephyr_integration_init_py,src_zephyr_integration_behavioral_admission_admission_response_py,src_zephyr_integration_local_model_deepseek_chat_py,src_zephyr_integration_local_model_embedding_router_py production
     class src_zephyr_integration_backpressure_manager_py,src_zephyr_integration_backpressure_types_py,src_zephyr_integration_behavioral_admission_init_py,src_zephyr_integration_budget_enforcer_init_py,src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py,src_zephyr_integration_circuit_breaker_manager_py,src_zephyr_integration_cost_tracker_py,src_zephyr_integration_ct_pipe_routing_py,src_zephyr_integration_dead_letter_queue_py,src_zephyr_integration_layer1_discovery_init_py,src_zephyr_integration_layer2_communication_init_py,src_zephyr_integration_layer3_coordination_init_py,src_zephyr_integration_layer_consumer_registry_py,src_zephyr_integration_layer_router_py,src_zephyr_integration_llm_bridge_py,src_zephyr_integration_llm_gateway_py,src_zephyr_integration_local_model_init_py,src_zephyr_integration_local_model_cache_layer_py,src_zephyr_integration_local_model_local_model_scheduler_py,src_zephyr_integration_local_model_ollama_chat_py,src_zephyr_integration_local_model_ollama_embedding_py,src_zephyr_integration_mcp_init_py,src_zephyr_integration_mcp_base_server_py,src_zephyr_integration_mcp_audit_logger_py,src_zephyr_integration_mcp_blueprint_search_server_py,src_zephyr_integration_mcp_doc_guard_server_py design
     class D_SECURITY,D_TRADING,D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_RUNTIME,D_INTELLIGENCE external_prod
-    class D_SHARED,D_AUTONOMY_CORE,D_OPS,D_GOV_SCRIPTS external_design
+    class D_SHARED,D_OPS,D_GOV_SCRIPTS external_design
 ```
 
 ### 第 2 页 / 共 4 页 / Page 2 of 4
@@ -220,8 +218,6 @@ graph TD
     src_zephyr_integration_preemption_manager_py -.->|import_depends| D_SHARED
     src_zephyr_integration_preemption_manager_py -.->|import_depends| D_SHARED
     src_zephyr_integration_mcp_gateway_server_py -.->|import_depends| D_SECURITY
-    D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_api_03_dos_launcher_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_api_03_dos_launcher_py
     D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|event| src_zephyr_integration_pipeline_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -305,16 +301,6 @@ graph TD
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -343,11 +329,6 @@ graph TD
         src_zephyr_integration_vector_memory_vector_bridge_py["src/zephyr/integration/vector_memory/vector_bri... prototype"]
         src_zephyr_integration_vector_memory_vms_errors_py["src/zephyr/integration/vector_memory/vms_errors.py prototype"]
         src_zephyr_integration_vector_memory_vms_schemas_py["src/zephyr/integration/vector_memory/vms_schema... prototype"]
-        tests_integration_test_f3_auto_integration_py["tests/integration/test_f3_auto_integration.py production"]
-        tests_integration_test_mcp_boot_hooks_integration_py["tests/integration/test_mcp_boot_hooks_integrati... production"]
-        tests_integration_test_mcp_health_check_recovery_py["tests/integration/test_mcp_health_check_recover... production"]
-        tests_integration_test_mcp_idle_timeout_py["tests/integration/test_mcp_idle_timeout.py production"]
-        tests_integration_test_mcp_signal_shutdown_py["tests/integration/test_mcp_signal_shutdown.py production"]
     end
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -.->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py -.->|import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
@@ -370,7 +351,6 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_integration_test_f3_auto_integration_py,tests_integration_test_mcp_boot_hooks_integration_py,tests_integration_test_mcp_health_check_recovery_py,tests_integration_test_mcp_idle_timeout_py,tests_integration_test_mcp_signal_shutdown_py production
     class src_zephyr_integration_vector_memory_in_memory_memory_backend_py,src_zephyr_integration_vector_memory_in_process_vector_memory_py,src_zephyr_integration_vector_memory_index_health_monitor_py,src_zephyr_integration_vector_memory_interface_py,src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py,src_zephyr_integration_vector_memory_ollama_chat_py,src_zephyr_integration_vector_memory_ollama_embedding_py,src_zephyr_integration_vector_memory_provenance_enforcer_py,src_zephyr_integration_vector_memory_retrieval_feedback_py,src_zephyr_integration_vector_memory_sqlite_metadata_store_py,src_zephyr_integration_vector_memory_vector_bridge_py,src_zephyr_integration_vector_memory_vms_errors_py,src_zephyr_integration_vector_memory_vms_schemas_py design
     class D_INFRA_RECOVERY external_prod
     class D_SHARED,D_GOVERNANCE external_design
@@ -413,7 +393,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 管线路由（D_INTEGRATION）的模块分布。共 108 个模块 / 108 modules。
+> 按 architecture_layer 分层显示 管线路由（D_INTEGRATION）的模块分布。共 103 个模块 / 103 modules。
 
 ```
 
@@ -443,22 +423,17 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (7 modules)                 │
+│                未分类 / Unclassified (2 modules)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/integration/local_model/deepseek_chat.py  [produ... │
 │   src/zephyr/integration/pipeline_routing.py  [production]       │
-│   tests/integration/test_f3_auto_integration.py  [production]    │
-│   tests/integration/test_mcp_boot_hooks_integration.py  [prod... │
-│   tests/integration/test_mcp_health_check_recovery.py  [produ... │
-│   tests/integration/test_mcp_idle_timeout.py  [production]       │
-│   tests/integration/test_mcp_signal_shutdown.py  [production]    │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 108 个模块 / 108 modules）。
+> 按 architecture_layer 分组的模块清单（共 103 个模块 / 103 modules）。
 
 ### L1 基础层 / Foundation Layer (101 modules)
 
@@ -566,17 +541,12 @@ graph TD
 | 100 | src/zephyr/integration/vector_memory/vms_errors.py | src/zephyr/integration/vector_memory/... | prototype | generated |
 | 101 | src/zephyr/integration/vector_memory/vms_schemas.py | src/zephyr/integration/vector_memory/... | prototype | generated |
 
-### 未分类 / Unclassified (7 modules)
+### 未分类 / Unclassified (2 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/integration/local_model/deepseek_chat.py | src/zephyr/integration/local_model/de... | production | generated |
 | 2 | src/zephyr/integration/pipeline_routing.py | src/zephyr/integration/pipeline_routi... | production | generated |
-| 3 | tests/integration/test_f3_auto_integration.py | tests/integration/test_f3_auto_integr... | production | generated |
-| 4 | tests/integration/test_mcp_boot_hooks_integration.py | tests/integration/test_mcp_boot_hooks... | production | generated |
-| 5 | tests/integration/test_mcp_health_check_recovery.py | tests/integration/test_mcp_health_che... | production | generated |
-| 6 | tests/integration/test_mcp_idle_timeout.py | tests/integration/test_mcp_idle_timeo... | production | generated |
-| 7 | tests/integration/test_mcp_signal_shutdown.py | tests/integration/test_mcp_signal_shu... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

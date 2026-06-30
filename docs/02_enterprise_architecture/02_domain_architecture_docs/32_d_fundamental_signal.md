@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -106,30 +106,22 @@ graph TD
     src_zephyr_signal_fundamental_capital_capital_allocator_py -.->|import_depends| D_TRADING
     D_FACTOR["D_FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_signal_fundamental_pipeline_py
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_signal_fundamental_init_py
     D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     D_GOV_AUDIT -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_signal_fundamental_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     D_GOVERNANCE -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     D_GOVERNANCE -.->|runtime| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
-    D_AUDITTEST["D_AUDITTEST production"]
-    D_AUDITTEST -.->|data| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    D_GOVERNANCE -.->|contract| src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
     class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_combiner_synthesized_signal_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
-    class D_TRADING,D_GOVERNANCE,D_GOV_AUDIT,D_AUDITTEST external_prod
+    class D_TRADING,D_GOVERNANCE,D_GOV_AUDIT external_prod
     class D_FACTOR,D_GOV_SCRIPTS external_design
 ```
 

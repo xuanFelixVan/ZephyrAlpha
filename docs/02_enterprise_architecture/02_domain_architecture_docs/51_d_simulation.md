@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -57,32 +57,21 @@ graph TD
     end
     src_zephyr_simulation_default_backtest_engine_py -.->|import_depends| src_zephyr_simulation_init_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|import_depends| src_zephyr_simulation_init_py
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
+    D_SHARED["D_SHARED prototype"]
+    D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
-    D_SHARED["D_SHARED prototype"]
-    D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_backtest_base_py,src_zephyr_simulation_default_backtest_engine_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
     class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_implementations_init_py design
-    class D_INTELLIGENCE,D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE external_design
+    class D_GOV_SCRIPTS,D_SHARED,D_INTELLIGENCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

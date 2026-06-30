@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 15 | Cross-domain Incoming | 15 |
+| 跨域入边 | 16 | Cross-domain Incoming | 16 |
 | 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 2 | Prototype Modules | 2 |
@@ -56,20 +56,6 @@ graph TD
     src_zephyr_market_data_market_data_pipeline_py -.->|config_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -92,7 +78,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 14 | test_depends |
+| D_GOVERNANCE | 15 | data,test_depends |
 | D_GOV_SCRIPTS | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview

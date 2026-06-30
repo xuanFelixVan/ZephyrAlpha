@@ -1,7 +1,7 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-01 02:17:06
+%% 生成时间: 2026-07-01 02:53:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 151, 依赖边数: 503
+%% 模块数: 151, 依赖边数: 343
 
 graph TD
 
@@ -222,7 +222,7 @@ graph TD
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
-    %% D_GOVERNANCE -> D_TRADING (215 条)
+    %% D_GOVERNANCE -> D_TRADING (59 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -253,8 +253,7 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
-    %% D_GOV_AUDIT -> D_TRADING (2 条)
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_trading___init___py
+    %% D_GOV_AUDIT -> D_TRADING (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_trading___init___py
     %% D_INTEGRATION -> D_TRADING (1 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_trading___init___py
@@ -263,11 +262,8 @@ graph TD
     %% D_ML_TRAIN -> D_TRADING (2 条)
     D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
     D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
-    %% D_OPS -> D_TRADING (4 条)
+    %% D_OPS -> D_TRADING (1 条)
     D_OPS[D_OPS] -->|import_depends| src_zephyr_trading___init___py
-    D_OPS[D_OPS] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
-    D_OPS[D_OPS] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    D_OPS[D_OPS] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     %% D_PF_ALLOC -> D_TRADING (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     %% D_PF_CORE -> D_TRADING (1 条)
@@ -405,5 +401,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 136 条
-    %% 跨域入边: 270 条
+    %% 跨域入边: 110 条
     %% 跨域出边: 97 条

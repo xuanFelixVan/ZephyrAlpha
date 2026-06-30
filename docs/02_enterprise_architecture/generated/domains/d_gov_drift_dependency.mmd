@@ -1,7 +1,7 @@
 %% D_GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-07-01 02:17:06
+%% 生成时间: 2026-07-01 02:53:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 23, 依赖边数: 63
+%% 模块数: 11, 依赖边数: 26
 
 graph TD
 
@@ -11,7 +11,6 @@ graph TD
         scripts_governance_d5_architec___idate_authority_registry_py["...dators/validate_authority_registry.py [production]"]
         scripts_governance_d5_architec___validators_validate_ssot_py["...hitecture/validators/validate_ssot.py [production]"]
         src_zephyr_governance_artifact_scanner_py["...zephyr/governance/artifact_scanner.py [production]"]
-        src_zephyr_governance_audit_orchestrator_integrity_py["...nance/audit_orchestrator/integrity.py [production]"]
         src_zephyr_governance_audit_trail_drift_bridge_py["...overnance/audit_trail/drift_bridge.py [production]"]
         src_zephyr_governance_audit_trail_self_monitor_py["...overnance/audit_trail/self_monitor.py [production]"]
         src_zephyr_governance_drift_detection_baseline_manager_py["...e/drift_detection/baseline_manager.py [prototype]"]
@@ -19,58 +18,24 @@ graph TD
         src_zephyr_governance_drift_detector_py["src/zephyr/governance/drift_detector.py [prototype]"]
         src_zephyr_governance_integrity_py["src/zephyr/governance/integrity.py [production]"]
         src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py["...d_blue_validator/ai_self_diagnosis.py [production]"]
-        tests_test_ba_chaos_injector_py["tests/test_ba_chaos_injector.py [prototype]"]
-        tests_test_baseline_manager_py["tests/test_baseline_manager.py [prototype]"]
-        tests_test_chaos_injector_py["tests/test_chaos_injector.py [prototype]"]
-        tests_test_context_drift_detector_py["tests/test_context_drift_detector.py [prototype]"]
-        tests_test_contract_drift_detector_py["tests/test_contract_drift_detector.py [prototype]"]
-        tests_test_drift_detector_ee_py["tests/test_drift_detector_ee.py [prototype]"]
-        tests_test_drift_detector_gate_py["tests/test_drift_detector_gate.py [prototype]"]
-        tests_test_model_drift_detector_py["tests/test_model_drift_detector.py [prototype]"]
-        tests_unit_drift_detector___init___py["tests/unit/drift_detector/__init__.py [prototype]"]
-        tests_unit_drift_detector_conftest_py["tests/unit/drift_detector/conftest.py [prototype]"]
-        tests_unit_drift_detector_test_drift_core_py["...nit/drift_detector/test_drift_core.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    tests_unit_drift_detector_conftest_py -->|config_depends| tests_unit_drift_detector___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_GOV_DRIFT (1 条)
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_integrity_py
     %% D_COMPLIANCE -> D_GOV_DRIFT (2 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_artifact_scanner_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_integrity_py
-    %% D_GOVERNANCE -> D_GOV_DRIFT (21 条)
+    %% D_GOVERNANCE -> D_GOV_DRIFT (7 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_baseline_manager_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_chaos_injector_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_audit_orchestrator_integrity_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_audit_trail_self_monitor_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_artifact_scanner_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d5_architec___idate_authority_registry_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d5_architec___validators_validate_ssot_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d5_architec___idate_authority_registry_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d5_architec___validators_validate_ssot_py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py
-    %% D_GOV_AUDIT -> D_GOV_DRIFT (12 条)
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_integrity_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_orchestrator_integrity_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
+    %% D_GOV_AUDIT -> D_GOV_DRIFT (6 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
@@ -84,35 +49,18 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_integrity_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_DRIFT -> D_BEHAVIORAL_AUDIT (8 条)
-    tests_test_baseline_manager_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_test_ba_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_test_chaos_injector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_test_contract_drift_detector_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    tests_unit_drift_detector_test_drift_core_py -->|test_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    %% D_GOV_DRIFT -> D_GOVERNANCE (6 条)
+    %% D_GOV_DRIFT -> D_GOVERNANCE (3 条)
     src_zephyr_governance_audit_trail_drift_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_drift_detection_chaos_injector_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_drift_detector_gate_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_drift_detector_ee_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_model_drift_detector_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_drift_detector_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_DRIFT -> D_GOV_AUDIT (6 条)
+    %% D_GOV_DRIFT -> D_GOV_AUDIT (3 条)
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_audit_orchestrator_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_audit_orchestrator_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_audit_orchestrator_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOV_DRIFT -> D_GOV_SCRIPTS (1 条)
     scripts_governance_d5_architec___validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
-    %% D_GOV_DRIFT -> D_SECURITY (1 条)
-    tests_test_context_drift_detector_py -->|test_depends| D_SECURITY[D_SECURITY]
 
     %% 统计
-    %% 域内依赖: 2 条
-    %% 跨域入边: 39 条
-    %% 跨域出边: 22 条
+    %% 域内依赖: 1 条
+    %% 跨域入边: 18 条
+    %% 跨域出边: 7 条

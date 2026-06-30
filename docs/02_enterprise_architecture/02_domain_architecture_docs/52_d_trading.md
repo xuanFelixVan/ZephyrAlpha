@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 151 | Module Count | 151 |
 | 域内依赖 | 136 | Internal Dependencies | 136 |
-| 跨域入边 | 270 | Cross-domain Incoming | 270 |
+| 跨域入边 | 267 | Cross-domain Incoming | 267 |
 | 跨域出边 | 97 | Cross-domain Outgoing | 97 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 131 | Prototype Modules | 131 |
@@ -123,30 +123,21 @@ graph TD
     src_zephyr_trading_auto_runtime_core_py -.->|import_depends| D_INTELLIGENCE
     src_zephyr_trading_auto_runtime_core_py -.->|import_depends| D_SHARED
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_init_py
-    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_trading_init_py
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     D_GOV_AUDIT -->|import_depends| src_zephyr_trading_init_py
     D_INTEGRATION -->|import_depends| src_zephyr_trading_init_py
     D_OPS -.->|import_depends| src_zephyr_trading_init_py
     D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_trading_init_py
     D_SECURITY -->|import_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_init_py,src_zephyr_trading_auto_runtime_core_py production
     class src_zephyr_trading_main_py,src_zephyr_trading_action_dispatcher_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_ai_audit_logger_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_auto_integrator_py,src_zephyr_trading_auto_task_generator_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_boot_cron_jobs_py,src_zephyr_trading_boot_hooks_py,src_zephyr_trading_capability_card_py,src_zephyr_trading_capability_registry_py,src_zephyr_trading_capability_sync_py,src_zephyr_trading_conductor_py,src_zephyr_trading_dream_cycle_py,src_zephyr_trading_feedback_loop_py,src_zephyr_trading_finalizer_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_health_monitor_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_integration_registry_py,src_zephyr_trading_lifecycle_manager_py,src_zephyr_trading_module_onboarding_scanner_py,src_zephyr_trading_night_shift_queue_py,src_zephyr_trading_orchestrator_init_py,src_zephyr_trading_orchestrator_agent_health_monitor_py,src_zephyr_trading_orchestrator_agent_orchestrator_py design
-    class D_INTEGRATION,D_GOVERNANCE,D_OPS,D_GOV_ENFORCEMENT external_prod
-    class D_SHARED,D_INTELLIGENCE,D_GOV_AUDIT,D_SECURITY external_design
+    class D_INTEGRATION,D_GOVERNANCE,D_OPS,D_GOV_ENFORCEMENT,D_GOV_AUDIT external_prod
+    class D_SHARED,D_INTELLIGENCE,D_SECURITY external_design
 ```
 
 ### 第 2 页 / 共 6 页 / Page 2 of 6
@@ -349,8 +340,6 @@ graph TD
     D_FUNDAMENTAL_SIGNAL -.->|import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL -->|import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL -.->|import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_CROSS_ASSET["D_CROSS_ASSET design"]
     D_CROSS_ASSET -.->|contract| src_zephyr_trading_trading_contracts_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -501,13 +490,13 @@ graph TD
 | D_RISK | 10 | import_depends |
 | D_REPORTING | 6 | import_depends |
 | D_CROSS_ASSET | 5 | contract,import_depends |
-| D_OPS | 4 | import_depends |
 | D_EX_CORE | 3 | import_depends |
 | D_SECURITY | 2 | import_depends |
 | D_GOV_AUDIT | 2 | import_depends |
 | D_ML_TRAIN | 2 | import_depends |
-| D_PF_CORE | 1 | import_depends |
 | D_PF_ALLOC | 1 | import_depends |
+| D_PF_CORE | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 | D_INTELLIGENCE | 1 | import_depends |
 | D_INTEGRATION | 1 | import_depends |
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 可观测性（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 30 | Module Count | 30 |
 | 域内依赖 | 8 | Internal Dependencies | 8 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 17 | Cross-domain Outgoing | 17 |
+| 跨域出边 | 16 | Cross-domain Outgoing | 16 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 30 | Production Modules | 30 |
@@ -93,12 +93,8 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -.->|import_depends| D_SHARED
-    D_OPS["D_OPS prototype"]
-    src_zephyr_infrastructure_system_telemetry_health_aggregator_py -.->|import_depends| D_OPS
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_RUNTIME
-    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
-    src_zephyr_infrastructure_system_telemetry_contract_metrics_py -->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py -->|import_depends| D_INFRA_RUNTIME
@@ -106,13 +102,14 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_archive_init_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_logs_init_py -->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_system_telemetry_traces_init_py -->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_model_capability_exam_init_py,src_zephyr_infrastructure_model_profiler_init_py,src_zephyr_infrastructure_observability_init_py,src_zephyr_infrastructure_observability_notifier_py,src_zephyr_infrastructure_observability_trace_decorator_py,src_zephyr_infrastructure_quality_init_py,src_zephyr_infrastructure_quality_quality_monitor_py,src_zephyr_infrastructure_session_init_py,src_zephyr_infrastructure_sla_init_py,src_zephyr_infrastructure_sla_sla_monitor_py,src_zephyr_infrastructure_system_telemetry_init_py,src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py,src_zephyr_infrastructure_system_telemetry_trace_bridge_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_init_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py,src_zephyr_infrastructure_system_telemetry_archive_init_py,src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py,src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py,src_zephyr_infrastructure_system_telemetry_contract_metrics_py,src_zephyr_infrastructure_system_telemetry_facade_py,src_zephyr_infrastructure_system_telemetry_health_aggregator_py,src_zephyr_infrastructure_system_telemetry_health_probes_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py,src_zephyr_infrastructure_system_telemetry_metrics_init_py,src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py,src_zephyr_infrastructure_system_telemetry_metrics_bridge_py,src_zephyr_infrastructure_system_telemetry_traces_init_py,src_zephyr_infrastructure_system_telemetry_traces_span_stub_py,src_zephyr_infrastructure_system_telemetry_watchdog_py production
-    class D_INFRA_RUNTIME,D_GOVERNANCE,D_BEHAVIORAL_AUDIT external_prod
-    class D_SHARED,D_OPS external_design
+    class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -125,7 +122,6 @@ graph TD
 | D_SHARED | 2 | import_depends |
 | D_BEHAVIORAL_AUDIT | 1 | import_depends |
 | D_GOVERNANCE | 1 | import_depends |
-| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

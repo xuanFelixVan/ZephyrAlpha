@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 上下文管理（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 02:17:48
+> 最后更新: 2026-07-01 02:53:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -125,24 +125,9 @@ graph TD
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|import_depends| D_SIMULATION
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_INTEGRATION["D_INTEGRATION prototype"]
-    D_INTEGRATION -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
     D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
-    D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_cli_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -150,7 +135,7 @@ graph TD
     class src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py production
     class src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_init_py,src_zephyr_intelligence_model_evaluation_backtest_base_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_implementations_default_backtest_engine_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_pipeline_routing_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_profiler_py design
     class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_TRADING external_prod
-    class D_ML_TRAIN,D_SIMULATION,D_SHARED,D_INTEGRATION,D_SECURITY,D_GOV_SCRIPTS external_design
+    class D_ML_TRAIN,D_SIMULATION,D_SHARED,D_SECURITY external_design
 ```
 
 ### 第 2 页 / 共 2 页 / Page 2 of 2
@@ -168,7 +153,6 @@ graph TD
     D_TRADING["D_TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
