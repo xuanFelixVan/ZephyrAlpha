@@ -34,18 +34,17 @@ tags:
 
 ## 一、层架构权威 (Layer Authority)
 
-> **🔷 双树声明（AUDIT-04 Remediation，对齐 `architecture_model/scope.yaml`）**：仓库中存在两套 `architecture_model/`，职责**有意分离**，**禁止假定字节级一致**。
+> **🔷 单树声明（2026-06-30 治本，双树已合并）**：仓库中仅存在一棵 `architecture_model/`（仓库根），是架构模型唯一存储位置（canonical SSoT，纯 YAML 数据树）。原 EA 树 `docs/02_enterprise_architecture/target_architecture/architecture_model/` 已合并至根树：artifacts（contracts/cross_cutting/domain/events/technology/module_id_registry）迁入根树顶层子目录，`index.yaml` 与根树 v2.0.0 融合为 v3.0.2（53域 + 12 partitions + b_track 12 模块）。
 >
 > | 树 | 路径 | SSoT 角色 |
 > |----|------|-----------|
-> | **EA 企业架构树** | `docs/02_enterprise_architecture/target_architecture/architecture_model/` | 跨层契约、不变量、能力热力图、`module_id_registry.yaml`（若仅存于此）、**完整** `technology/technology_landscape.yaml`、`events/`、`domain/`、`contracts/`、`cross-cutting/invariants.yaml` 等——**门禁与 validate_ssot 的层枚举权威仍以此树 `_index.yaml` + `layers/` 为真源**。 |
-> | **施工分区树** | 仓库根 `architecture_model/` | `implementation_partition_registry`：C/B 双轨分区、代码目录对齐状态、`layers/*` 施工视图（与 EA 同名 partition id 可对账，非同一份文件）。 |
+> | **架构模型树（合并后单树）** | 仓库根 `architecture_model/` | 全部架构模型 YAML SSoT：53域清单（depgraph 派生）、跨层契约（`contracts/`）、不变量（`cross_cutting/invariants.yaml`）、能力热力图（`cross_cutting/capability_heatmap.yaml`）、`module_id_registry.yaml`、技术选型（`technology/`）、领域事件（`events/`）、DDD 模型（`domain/`）、b_track 12 模块施工视图（`layers/b_*.yaml`）。**人读视图在 `docs/02_enterprise_architecture/` 树，本树只允许 .yaml**（`directory_contract.yaml` 强制）。 |
 >
-> **`AGENTS.md` §6.9** 中的泛称 `architecture_model/` → 必须先读 **scope.yaml** 再判断改哪一棵树；单纯说「layers YAML」在未限定路径时默认指 **施工树根** + **并列扫描 docs 树**（与 `check_architecture_gates` / GATE-SC 行为一致）。
+> **`AGENTS.md` §6** 中的 `architecture_model/` 统一指根树（合并后无歧义）。`scope.yaml` 已删除（双树分工声明失效）。layers YAML 默认指根树 `layers/b_*.yaml`（b_track 施工视图）。
 
 > **⚠️ §2.1 裁定（2026-06-22）**：52 域是唯一物理分类体系，14 层（L00-L13）降级为域的 `layer_id` 属性，不再作为并行分类体系。本节 `layer` 字段的 `valid_values`（L00-L13 + shared + cross_layer）保留作为**域的属性枚举**，不是分类体系。物理分类由 `depgraph.db` 的 `domains` 表（52 域）定义。AI 找模块只有一条路：按域找。
 
-**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer，作为域属性枚举保留）
+**权威来源（层 ID / frontmatter `layer` 合法值）**：根树 `architecture_model/index.yaml`（v3.0.2，domains 列表的 `layer_id` 字段）+ `depgraph.db` domains 表（layer_id 列）。14 层（L00~L13 + shared + cross_layer）作为域属性枚举保留，物理分类由 53 域定义。原 EA 树 `layers/l{00..13}-*.yaml` + `layers/shared.yaml` 已随 c_track 删除（Phase 0+1 治本，14 层降级为域属性，不再需要独立 layers 文件）。
 
 > **大小写约定**：本节 `valid_values` 使用大写 `L00`~`L13`（架构标识符惯例）。`_index.yaml` 分区 `id` 使用小写 `l00`~`l13`（文件系统标识符惯例）。两者指代同一事物，大小写差异是有意设计：大写用于架构层 ID（受保护字段），小写用于 YAML 分区 id（文件系统路径组件）。（注：`_schema.yaml` v3.0.0 已移除 `layer` 字段——模块级 layer 冗余，层归属由 partition id 承载。此大小写约定仍适用于 frontmatter `layer` 字段。）
 
@@ -74,8 +73,8 @@ tags:
 
 ```yaml
 protected_field: layer
-authority_file: docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml
-authority_file_layers_dir: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/
+authority_file: architecture_model/index.yaml
+authority_file_layers_dir: architecture_model/layers/
 valid_values:
   - L00
   - L01
@@ -192,11 +191,11 @@ violation_severity: P1
 
 ## 五、Module ID 跨文件一致性
 
-**权威来源**：`docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
+**权威来源**：根树 `architecture_model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表；2026-06-30 从 EA 树迁入根树）
 
 ```yaml
 protected_field: module_id
-authority_file: docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml
+authority_file: architecture_model/module_id_registry.yaml
 check_rules:
   - rule: no_duplicate_active   # 同一 module_id 不得在两个 Active 文件中出现
     severity: P0

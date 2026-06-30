@@ -331,7 +331,7 @@ D_MKT_DATA 行情数据 → D_FACTOR 因子 → D_SIGLEGACY 信号 → D_RISK �
 
 ### 11.1 按域资源预算（experimental 单机）
 
-> 域分类唯一（§2.1 裁定），14 层降级为域属性。容量按域统计，数据源 depgraph.db。
+> 域分类唯一（§2.1 裁定），14 层降级为域属性。容量按域统计，数据源 depgraph。
 
 | 域 | CPU (core·h/日) | Memory 峰值 (GB) | Storage 年增 (GB) | IOPS 峰值 |
 |----|:-----:|:------:|:------:|:----:|

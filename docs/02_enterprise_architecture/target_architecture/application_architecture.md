@@ -43,7 +43,7 @@ tags:
 - orthogonal-view
 - vibe-coding-2.0
 - 6-core-services
-summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为53域派生，数据源depgraph.db。原14层模块清单废弃。
+summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为53域派生，数据源depgraph。原14层模块清单废弃。
 date: '2026-06-26'
 ttl: permanent
 ---
@@ -54,7 +54,7 @@ The Application Architecture answers:
 
 - What applications / modules / services exist? (C4 views)
 - How do they interact? (Interfaces and protocols)
-- How is `src/zephyr/` structured? (53域物理分类，数据源depgraph.db)
+- How is `src/zephyr/` structured? (53域物理分类，数据源depgraph)
 - How is `scripts/` organized? (Governance code topology)
 - Where do future platform modules belong? (Module placement)
 
@@ -92,7 +92,7 @@ The Application Architecture answers:
 
 ---
 
-## 4. 域架构（53域，数据源：depgraph.db）
+## 4. 域架构（53域，数据源：depgraph）
 
 > 本节为v3.0.0重写。模块清单由`generated/domains/*.md`派生，禁止在本文硬编码。
 > 完整域索引见`generated/domain_index.md`。
@@ -101,12 +101,12 @@ The Application Architecture answers:
 
 | 指标 | 值 | 数据源 |
 |------|:---:|--------|
-| 域总数 | 53 | depgraph.db `domains` 表 |
-| 节点总数 | 6501 | depgraph.db `nodes` 表 |
-| 依赖边总数 | 7191 | depgraph.db `edges` 表 |
-| production 节点 | 1404 | depgraph.db `nodes.design_maturity` |
-| design 节点 | 89 | depgraph.db `nodes.design_maturity` |
-| prototype 节点 | 5008 | depgraph.db `nodes.design_maturity` |
+| 域总数 | 53 | depgraph `domains` 表 |
+| 节点总数 | 6501 | depgraph `nodes` 表 |
+| 依赖边总数 | 7191 | depgraph `edges` 表 |
+| production 节点 | 1404 | depgraph `nodes.design_maturity` |
+| design 节点 | 89 | depgraph `nodes.design_maturity` |
+| prototype 节点 | 5008 | depgraph `nodes.design_maturity` |
 
 ### 4.2 域层级分布
 
@@ -136,15 +136,15 @@ The Application Architecture answers:
 
 | 缩写 | 服务全称 | 一句话定位 | 域归属 |
 |------|---------|-----------|--------|
-| **LSG** | LLM Security Gateway | LLM 交互的"安全闸"，四层防御，fail-closed | 见depgraph.db |
-| **CE** | Context Engine | AI 编码的"中枢神经" | 见depgraph.db |
-| **Orc** | Agent Orchestrator | Vibe Coding 2.0 的"任务引擎" | 见depgraph.db |
-| **VMS** | Vector Memory Service | 知识与决策的"向量记忆库" | 见depgraph.db |
-| **FLE** | Feedback Loop Engine | 系统自调节的"闭环大脑" | 见depgraph.db |
+| **LSG** | LLM Security Gateway | LLM 交互的"安全闸"，四层防御，fail-closed | 见depgraph |
+| **CE** | Context Engine | AI 编码的"中枢神经" | 见depgraph |
+| **Orc** | Agent Orchestrator | Vibe Coding 2.0 的"任务引擎" | 见depgraph |
+| **VMS** | Vector Memory Service | 知识与决策的"向量记忆库" | 见depgraph |
+| **FLE** | Feedback Loop Engine | 系统自调节的"闭环大脑" | 见depgraph |
 
 ### 4A.2 与域架构的关系
 
-6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph.db `domains`表。
+6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph `domains`表。
 
 ---
 
@@ -160,11 +160,11 @@ The Application Architecture answers:
 
 ### 6.1 域归属判定
 
-新模块归属哪个域？查询depgraph.db `domains`表，按功能职责匹配`description`字段。无法匹配时，评估是否需要新增域（需Owner批准）。
+新模块归属哪个域？查询depgraph `domains`表，按功能职责匹配`description`字段。无法匹配时，评估是否需要新增域（需Owner批准）。
 
 ### 6.2 跨域依赖规则
 
-- 跨域依赖MUST在depgraph.db `edges`表登记
+- 跨域依赖MUST在depgraph `edges`表登记
 - 禁止循环依赖（由`arch_constraints`表约束）
 - 跨域依赖强度由`coupling_strength`字段标注
 
@@ -211,6 +211,6 @@ The Application Architecture answers:
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为53域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
+| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为53域派生（数据源depgraph）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-04-22 | v2.0.0：模块属性详情迁移至 architecture_model/ 联邦 YAML 模型。 |

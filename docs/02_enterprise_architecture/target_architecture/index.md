@@ -41,11 +41,11 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）
 
-> **v3.0.0变更**：物理代码组织以53域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
+> **v3.0.0变更**：物理代码组织以53域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph派生。
 
 ---
 
-## 2. 域索引（53域，数据源：depgraph.db）
+## 2. 域索引（53域，数据源：depgraph）
 
 > 本索引由`scripts/governance/d5_architecture/generators/generate_domain_index.py`派生。
 > 完整域清单见`generated/domain_index.md`。
@@ -152,7 +152,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 4. 派生视图（generated/目录）
 
-> 所有派生视图由`scripts/governance/d5_architecture/generators/`下的生成器从depgraph.db派生。
+> 所有派生视图由`scripts/governance/d5_architecture/generators/`下的生成器从depgraph派生。
 
 | 派生视图 | 生成器 | 数据源 | 说明 |
 |---------|--------|--------|------|
@@ -218,7 +218,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------------|-------------|---------------|
 | **View** (00–10) | Narrative: explains **why** | For humans, conveys architectural intent |
 | **YAML SSoT** (architecture_model/) | Structured: lists **what** | For machines, AI, and CI gates |
-| **派生视图** (generated/) | 派生: 从depgraph.db生成 | 结构化数据可视化，禁止手编 |
+| **派生视图** (generated/) | 派生: 从depgraph生成 | 结构化数据可视化，禁止手编 |
 
 ---
 

@@ -127,7 +127,7 @@ ttl: permanent
 
 ### 2.2 三层物理位置速查
 
-> **详细路径清单** → 查询 depgraph.db: `SELECT path FROM nodes WHERE domain_id IN ('D_GOVERNANCE','D_GOV_AUDIT','D_GOV_RULE')`（governance/arch_guard/quality 三域）
+> **详细路径清单** → 查询 depgraph: `SELECT path FROM nodes WHERE domain_id IN ('D_GOVERNANCE','D_GOV_AUDIT','D_GOV_RULE')`（governance/arch_guard/quality 三域）
 
 | 层 | 关键物理位置 | 代表产物 |
 |---|---|---|
@@ -393,7 +393,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 - [ ] 所有 `module_id` 在全库唯一（无重复）
 - [ ] 所有文件在 `directory-keep-whitelist.yaml` 或有明确 owner
 - [ ] `reference-remap-table.yaml` 审计日志完整（本次重组的 10+ 条 change_log）
-- [ ] 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph.db 定义）
+- [ ] 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph 定义）
 - [ ] 6 大核心服务接口规范已全部在 `docs/03_modules/_b_track_interfaces/` 就位
 
 ### 6.5 6 大核心服务的治理归属

@@ -1,6 +1,6 @@
 %% 重写时间: 2026-06-26 (DM-200913 Phase4-B)
 %% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
-%% 数据源: depgraph.db
+%% 数据源: depgraph
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
@@ -22,7 +22,7 @@ graph LR
         LLM_A["D-FRONTEND/<br/>(ACL for LLM)"]
     end
 
-    subgraph Core["ZephyrAlpha Core Domains (depgraph.db派生)"]
+    subgraph Core["ZephyrAlpha Core Domains (depgraph派生)"]
         D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
         D_FACTOR["D-FACTOR<br/>因子"]

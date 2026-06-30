@@ -1,6 +1,6 @@
 %% 重写时间: 2026-06-26 (DM-200913 Phase4-B)
 %% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
-%% 数据源: depgraph.db
+%% 数据源: depgraph
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
@@ -12,7 +12,7 @@ C4Component
     title C4 Level 3 — D-ML_TRAIN 训练域组件
     title (D-ML_TRAIN ML平台域组件分解 / H5)
 
-    Container_Boundary(d_ml_train, "D-ML_TRAIN 训练 / ML Platform (depgraph.db派生)") {
+    Container_Boundary(d_ml_train, "D-ML_TRAIN 训练 / ML Platform (depgraph派生)") {
 
         Component(feature_store, "Feature Store", "Python / feature_store/", "特征物化层：按 entity_id × asof_date PIT 对齐；写入供训练、读取供 inference")
 

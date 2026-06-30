@@ -29,7 +29,7 @@ tags:
 - orthogonal-view
 - domain-driven
 - depgraph-derived
-summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为53域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph.db派生。
+summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为53域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph派生。
 date: '2026-06-26'
 ttl: permanent
 ---
@@ -72,7 +72,7 @@ ttl: permanent
 基于§2.1裁定：
 - 原14层×7能力域矩阵 → 改为53域×10能力域矩阵
 - 14层降级为域属性，不再作为热力图维度
-- 成熟度数据由depgraph.db `nodes.design_maturity`派生
+- 成熟度数据由depgraph `nodes.design_maturity`派生
 
 ---
 
@@ -80,7 +80,7 @@ ttl: permanent
 
 ### 2.1 五档成熟度定义
 
-| 档位 | 名称 | 定义 | depgraph.db映射 |
+| 档位 | 名称 | 定义 | depgraph映射 |
 |:---:|------|------|----------------|
 | **L0** | 缺失 | 能力完全不存在，无设计无代码 | 域无节点 |
 | **L1** | 设计 | 仅有设计文档/蓝图，无代码 | `design_maturity='design'` |
@@ -98,7 +98,7 @@ ttl: permanent
 
 ## 3. 53域×10能力域热力图
 
-> 数据源：depgraph.db `domains` + `nodes` 表
+> 数据源：depgraph `domains` + `nodes` 表
 > 派生工具：`scripts/governance/d5_architecture/generators/generate_design_vs_production.py`
 
 ### 3.1 能力域定义（10能力域=7业务+3横切）
@@ -255,5 +255,5 @@ ttl: permanent
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-26 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为53域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph.db派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph.db映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
+| 2026-06-26 | **v2.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——热力图改为53域×10能力域矩阵；原14层×7能力域矩阵废弃；成熟度数据由depgraph派生；新增§1.4 v2.0.0变更说明、§2.1五档成熟度depgraph映射、§3.2域成熟度快照、§3.3能力域成熟度汇总。 |
 | 2026-04-22 | v1.0.0：建立能力热力图正交视图。 |

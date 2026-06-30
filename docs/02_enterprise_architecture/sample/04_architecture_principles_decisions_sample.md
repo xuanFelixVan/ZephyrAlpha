@@ -69,7 +69,7 @@ ttl: permanent
 ## 相关文档导航
 
 - [架构原则详细文档](../target_architecture/architecture_principles.md)
-- [技术选型详细文档](../target_architecture/architecture_model/technology/technology_landscape.yaml)
+- [技术选型详细文档](../../architecture_model/technology/technology_landscape.yaml)
 - [全景图能力定位书](../dependency_architecture_panorama.md)
 
 ---

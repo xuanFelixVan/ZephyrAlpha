@@ -1,6 +1,6 @@
 %% 重写时间: 2026-06-26 (DM-200913 Phase4-B)
 %% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
-%% 数据源: depgraph.db
+%% 数据源: depgraph
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
@@ -12,7 +12,7 @@ C4Component
     title C4 Level 3 — D-MKT_DATA 行情数据域组件
     title (D-MKT_DATA 数据源域组件分解 / H5)
 
-    Container_Boundary(d_mkt_data, "D-MKT_DATA 行情数据 / Market Data (depgraph.db派生)") {
+    Container_Boundary(d_mkt_data, "D-MKT_DATA 行情数据 / Market Data (depgraph派生)") {
 
         Component(vendor_registry, "Vendor Registry", "Python / vendor_registry.py", "Vendor 统一注册中心：按 asset_class/jurisdiction/data_domain 解析可用 Vendor，含优先级排序与健康状态上报<br/>Vendor Registry: register / resolve / healthcheck_all")
 
