@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """test_create_guard.py — CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）
 
-覆盖 create_guard._check 的7个核心场景：
+覆盖 create_guard._check 的核心场景：
 1. 新增 .py 文件无 creation_token → 硬阻断
 2. 其他 session 的 staged .py 不误判（files 参数过滤治本）
 3. tests/ 目录下 .py 文件豁免
@@ -23,6 +23,10 @@
 5. registry 缺失 → fail-closed 阻断（治本1，防删 registry 绕过 token 检查）
 6. registry 解析失败 → fail-closed 阻断（治本1）
 7. git diff 失败 → fail-closed 阻断（治本1，对标 directory_contract_gate）
+8. 新增 make_*_reconciler 无 # trae_060-reviewed 标记 → 硬阻断（元问题3治本，2026-06-30）
+9. 新增 make_*_reconciler 有标记 → 通过
+10. 修改已有 make_*_reconciler（未新增函数）→ 通过
+11. commit 不含 reconciliation_registry.py → 通过（不触发检测）
 
 测试隔离：所有测试用 tmp_path 临时 git 仓库，不污染生产 registry。
 create_guard 读取真实项目 capability_canonical_file_registry.yaml（fail-closed 设计，治本1），
@@ -265,3 +269,98 @@ class TestFailClosedGitDiffFailure:
         assert passed is False, f"git diff 异常应 fail-closed 阻断: {detail}"
         assert "fail-closed" in detail
         assert "git diff" in detail
+
+
+# ===========================================================================
+# 元问题3治本（2026-06-30，AD-GOV-001 收敛约束技术强制）
+# 病根："新增 reconciler 前 MUST 过 trae_060 §4 审查"是君子协定，新 AI 可直接造新 reconciler。
+# 治本：扩展已有 create_guard 检测范围——reconciliation_registry.py 新增 make_*_reconciler
+# 时需在 def 前 5 行内添加 '# trae_060-reviewed: <审查结论>' 标记，否则硬阻断。
+# 规避自指递归：不新增门禁，只扩展已有 create_guard。
+# ===========================================================================
+
+class TestNewReconcilerMarker:
+    """新增 make_*_reconciler 需 # trae_060-reviewed 标记（元问题3治本）。"""
+
+    _RECONCILER_REL = "src/zephyr/governance/reconciliation_registry.py"
+
+    def _setup_reconciler_registry(
+        self, repo_dir: Path, head_content: str, staged_content: str
+    ) -> Path:
+        """在 repo_dir 下创建 reconciliation_registry.py：先 commit head_content 到 HEAD，
+        再 stage staged_content（模拟修改新增 make_*_reconciler）。"""
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        f = repo_dir / self._RECONCILER_REL
+        f.parent.mkdir(parents=True, exist_ok=True)
+        # HEAD 版本
+        f.write_text(head_content, encoding="utf-8")
+        subprocess.run(
+            ["git", "add", self._RECONCILER_REL],
+            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "head version", "--no-verify"],
+            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        )
+        # staged 修改版
+        f.write_text(staged_content, encoding="utf-8")
+        subprocess.run(
+            ["git", "add", self._RECONCILER_REL],
+            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        )
+        return f
+
+    def test_new_reconciler_without_marker_blocked(self, tmp_path: Path) -> None:
+        """staged 新增 make_test_reconciler 无 # trae_060-reviewed 标记 → 阻断。"""
+        _init_git_repo(tmp_path)
+        head = '"""mod"""\n\ndef make_existing_reconciler():\n    pass\n'
+        staged = (
+            '"""mod"""\n\n'
+            'def make_existing_reconciler():\n    pass\n\n'
+            'def make_test_reconciler():\n    pass\n'
+        )
+        f = self._setup_reconciler_registry(tmp_path, head, staged)
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"无 trae_060-reviewed 标记的新增 reconciler 应被阻断: {detail}"
+        assert "trae_060" in detail
+        assert "make_test_reconciler" in detail
+
+    def test_new_reconciler_with_marker_passes(self, tmp_path: Path) -> None:
+        """staged 新增 make_test_reconciler 有 # trae_060-reviewed 标记 → 通过。"""
+        _init_git_repo(tmp_path)
+        head = '"""mod"""\n\ndef make_existing_reconciler():\n    pass\n'
+        staged = (
+            '"""mod"""\n\n'
+            'def make_existing_reconciler():\n    pass\n\n'
+            '# trae_060-reviewed: 该存在+治本\n'
+            'def make_test_reconciler():\n    pass\n'
+        )
+        f = self._setup_reconciler_registry(tmp_path, head, staged)
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"有 trae_060-reviewed 标记的新增 reconciler 应通过: {detail}"
+
+    def test_modify_existing_reconciler_passes(self, tmp_path: Path) -> None:
+        """修改已有 make_*_reconciler（未新增函数）→ 通过（不触发检测）。"""
+        _init_git_repo(tmp_path)
+        head = '"""mod"""\n\ndef make_existing_reconciler():\n    return None\n'
+        staged = '"""mod"""\n\ndef make_existing_reconciler():\n    return "modified"\n'
+        f = self._setup_reconciler_registry(tmp_path, head, staged)
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"修改已有 reconciler 不新增函数应通过: {detail}"
+
+    def test_no_reconciler_file_passes(self, tmp_path: Path) -> None:
+        """commit 不含 reconciliation_registry.py → 通过（不触发检测）。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(tmp_path, "docs/readme.md", "# readme\n")
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"不含 reconciliation_registry.py 的 commit 应通过: {detail}"

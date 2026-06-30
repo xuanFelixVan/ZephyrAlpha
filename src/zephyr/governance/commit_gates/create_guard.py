@@ -20,6 +20,17 @@
 creation_tokens 字段登记。无 token 的 .py 文件 → 硬阻断，提示"无 creation_token，
 禁止造第二真源（trae_060 §2）"。有 token 的 .py 文件 → 放行。
 
+元问题3治本扩展（2026-06-30，AD-GOV-001 收敛约束技术强制）
+------------------------------------------------------------
+扩展检测范围：若 commit 包含 ``src/zephyr/governance/reconciliation_registry.py``，
+用 AST 对比 staged 与 HEAD 版本的 ``make_*_reconciler`` 函数集，新增函数需在
+def 前 5 行内添加 ``# trae_060-reviewed: <审查结论>`` 标记，否则硬阻断。
+
+病根：AD-GOV-001 约束"新增 reconciler 前 MUST 过 trae_060 §4 元问题审查"是
+君子协定，无技术强制，新 AI 可直接造新 reconciler 绕过审查。
+递归陷阱：若新增门禁强制此审查，门禁本身也是"新增"，需过 §4 审查，无限递归。
+治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归）。
+
 病根（"造第二真源"根因）
 -------------------------
 AI 新建 .py 文件时可能复制已有实现（违反 trae_060 §2 唯一真源原则）。现有缓解
@@ -86,6 +97,83 @@ def make_create_guard() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 计算 commit_files_rel（reconciler 检测 + token 检测复用）
+        commit_files_rel: set[str] = set()
+        for f in files:
+            try:
+                rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
+                commit_files_rel.add(rel)
+            except (ValueError, OSError):
+                continue
+
+        # === 元问题3治本（2026-06-30）：新增 make_*_reconciler 需 trae_060 §4 审查标记 ===
+        # AD-GOV-001 约束技术强制：扩展已有 create_guard，不新增门禁（规避自指递归——
+        # 若新增门禁强制此审查，门禁本身也是"新增"，需过 §4 审查，无限递归）。
+        # 病根："新增 reconciler 前 MUST 过 §4 审查"是君子协定，新 AI 可直接造新 reconciler。
+        # 治本：扩展已有 create_guard 检测范围——reconciliation_registry.py 新增 make_*_reconciler
+        # 时，需在函数定义前 5 行内添加 '# trae_060-reviewed: <审查结论>' 标记。
+        # 放在最前：reconciliation_registry.py 是已存在文件，不在 new_py_files 里，
+        # 若等 new_py_files 过滤后检测，会被 "not new_py_files: return True" 提前返回跳过。
+        _RECONCILER_REGISTRY_REL = "src/zephyr/governance/reconciliation_registry.py"
+        _TRAEO60_MARKER = "trae_060-reviewed"
+
+        if _RECONCILER_REGISTRY_REL in commit_files_rel:
+            try:
+                staged_res = gateway._run_git(["git", "show", f":{_RECONCILER_REGISTRY_REL}"])
+                head_res = gateway._run_git(["git", "show", f"HEAD:{_RECONCILER_REGISTRY_REL}"])
+            except Exception:
+                staged_res = head_res = None  # fail-open：git 故障时不阻断（避免误伤正常 commit）
+
+            if staged_res is not None and staged_res.returncode == 0:
+                staged_src = staged_res.stdout
+                head_src = head_res.stdout if (head_res is not None and head_res.returncode == 0) else ""
+                import ast
+                try:
+                    staged_tree = ast.parse(staged_src)
+                    head_tree = ast.parse(head_src) if head_src else None
+                except SyntaxError:
+                    staged_tree = head_tree = None  # 语法错误由其他 gate 检测，此处 fail-open
+
+                if staged_tree is not None:
+                    def _extract_makes(tree):
+                        if tree is None:
+                            return set()
+                        return {
+                            n.name for n in ast.walk(tree)
+                            if isinstance(n, ast.FunctionDef)
+                            and n.name.startswith("make_")
+                            and n.name.endswith("_reconciler")
+                        }
+
+                    staged_makes = _extract_makes(staged_tree)
+                    head_makes = _extract_makes(head_tree)
+                    new_reconcilers = staged_makes - head_makes
+
+                    if new_reconcilers:
+                        staged_lines = staged_src.splitlines()
+                        unmarked = []
+                        for n in ast.walk(staged_tree):
+                            if not (isinstance(n, ast.FunctionDef) and n.name in new_reconcilers):
+                                continue
+                            # 检查 def 行前 5 行（含 decorator/注释区）是否有标记
+                            has_marker = False
+                            for i in range(max(0, n.lineno - 6), n.lineno - 1):
+                                if _TRAEO60_MARKER in staged_lines[i]:
+                                    has_marker = True
+                                    break
+                            if not has_marker:
+                                unmarked.append(n.name)
+
+                        if unmarked:
+                            return False, (
+                                f"新增 reconciler 未过 trae_060 §4 元问题审查: {sorted(unmarked)}. "
+                                f"AD-GOV-001 收敛约束：新增 make_*_reconciler 前 MUST 过 trae_060 §4 审查"
+                                f"（该存在/能否合并进已有/治本），并在函数定义前添加 "
+                                f"'# {_TRAEO60_MARKER}: <审查结论>' 标记。"
+                                f"修复：在 reconciliation_registry.py 新增 make_*_reconciler 函数定义前"
+                                f"添加注释 '# {_TRAEO60_MARKER}: <审查结论>'，或合并进已有 reconciler。"
+                            )
+
         # 1. 仅关心 staged 新增 .py 文件（--diff-filter=A）
         # 治本1（2026-06-30）：git diff 失败改 fail-closed——无法确定新增文件=检测器失效，
         # fail-open 会漏放未登记 .py。对标 directory_contract_gate.py L123-125 subprocess 失败 fail-closed。
@@ -116,14 +204,8 @@ def make_create_guard() -> GateSpec:
             return True, ""
 
         # 治本 2026-06-30：gateway 选择性提交（只提交 files_in_scope，其他 staged 文件 stash），
-        # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP
-        commit_files_rel: set[str] = set()
-        for f in files:
-            try:
-                rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
-                commit_files_rel.add(rel)
-            except (ValueError, OSError):
-                continue
+        # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP。
+        # commit_files_rel 已在函数开头计算（reconciler 检测 + token 检测复用），此处直接复用。
         new_py_files = [f for f in new_py_files if f in commit_files_rel]
         if not new_py_files:
             return True, ""
