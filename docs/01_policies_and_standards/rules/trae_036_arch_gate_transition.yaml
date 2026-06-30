@@ -822,7 +822,7 @@ sections:
       language: yaml
       note: 字段命名规范化
     - title: v2.1.0 目录迁移
-      code: '- 迁移门禁YAML到src/zephyr/gates/
+      code: '- 迁移门禁YAML到src/zephyr/governance/rule_enforcement/
 
         - 更新GateEngine加载路径
 
@@ -890,7 +890,7 @@ metadata:
     changes:
     - RQ审查修复——填充references(enforcement)空字段
     - 修正gate_engine.py路径(src/zephyr/governance/gate_engine.py→src/zephyr/governance/rule_enforcement/gate_engine.py)
-    - 修正门禁YAML路径(src/zephyr/gates/→src/zephyr/governance/rule_enforcement/)
+    - 修正门禁YAML路径(src/zephyr/governance/rule_enforcement/→src/zephyr/governance/rule_enforcement/)
     - 标注validate_phase_exit/entry.py为计划中脚本
     - 修复g1_g5_check_items的section_type(verification→rule)
     - 统一L304为绝对路径

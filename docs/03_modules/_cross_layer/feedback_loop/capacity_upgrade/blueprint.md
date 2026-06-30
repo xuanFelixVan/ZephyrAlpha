@@ -51,7 +51,7 @@ last_updated: "2026-05-19"
 ## §0 代码对齐验证
 
 > ⚠️ 防止 construction_progress 与实际代码不符。
-> 本蓝图仅包含容量升级设计方案，无独立代码文件。所有代码变更在父蓝图 MOD-FEEDBACK_LOOP 的 `src/zephyr/feedback-loop/` 下。
+> 本蓝图仅包含容量升级设计方案，无独立代码文件。所有代码变更在父蓝图 MOD-FEEDBACK_LOOP 的 `src/zephyr/trading/feedback_loop/` 下。
 
 ### §0.1 代码文件清单
 

@@ -132,7 +132,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-TASK_SYSTEM | 蓝图拆解器 |
 | src/zephyr/integration/mcp/task_manager_server.py | MOD-TASK_SYSTEM（业务逻辑）/ MOD-INF-013（协议层） | 见 §0.4 SSoT 声明 |
 | src/zephyr/pipeline/ | MOD-INF-009 | 管线调度 |
-| src/zephyr/gates/ | MOD-GATE_ENGINE | 门禁引擎 |
+| src/zephyr/governance/rule_enforcement/ | MOD-GATE_ENGINE | 门禁引擎 |
 
 ---
 

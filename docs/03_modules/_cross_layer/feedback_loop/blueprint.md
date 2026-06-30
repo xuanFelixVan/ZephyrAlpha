@@ -55,7 +55,7 @@ last_updated: "2026-05-19"
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
 > module_id: MOD-FEEDBACK_LOOP | version: 0.35.1 | status: Draft | layer: cross_layer
-> actual_disk_path: src/zephyr/feedback-loop/ | generation: 1 | construction_progress: completed
+> actual_disk_path: src/zephyr/trading/feedback_loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图模板 v3.5：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
@@ -112,10 +112,10 @@ last_updated: "2026-05-19"
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/feedback-loop/` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/trading/feedback_loop/` 逐文件核对 | ☐ |
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | construction_progress = scaffold → __init__.py 存在且非空 | `cat __init__.py` | ☐ |
-| construction_progress = design_only → 代码目录不存在或为空 | `ls src/zephyr/feedback-loop/` | ☐ |
+| construction_progress = design_only → 代码目录不存在或为空 | `ls src/zephyr/trading/feedback_loop/` | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 
 ### §0.3 版本-代码映射
@@ -465,7 +465,7 @@ fire-and-forget 防循环依赖：FLE → Pipeline/Orchestrator/AuditTrail 单�
 | 变更 | 需同步文件 |
 |------|----------|
 | Scheduler v2 部署 | `run_all.py` → 新增 `scheduler_v2.py` |
-| Detector 注册格式变更 | 所有 `src/zephyr/feedback-loop/detectors/*.py` 头部 |
+| Detector 注册格式变更 | 所有 `src/zephyr/trading/feedback_loop/detectors/*.py` 头部 |
 | Config 键新增 | `config.py` + `b_feedback_loop.yaml` |
 | 容量升级施工 | Phase 0~4 路线图条目逐项 tick |
 
@@ -695,7 +695,7 @@ STEP 3: 拆分后验证
 
 ### 完整路径索引
 
-> 335 源码文件 + 7 测试文件分布在 `src/zephyr/feedback-loop/` 下（actors/collectors/detectors/diagnosers/evolution/forensic/gates/resilience/security/verifiers 10 子包）。完整文件清单由 `python scripts/governance/generate_project_path_tree.py --write` 生成至 `data/asset_index/`。
+> 335 源码文件 + 7 测试文件分布在 `src/zephyr/trading/feedback_loop/` 下（actors/collectors/detectors/diagnosers/evolution/forensic/gates/resilience/security/verifiers 10 子包）。完整文件清单由 `python scripts/governance/generate_project_path_tree.py --write` 生成至 `data/asset_index/`。
 
 ---
 
@@ -740,7 +740,7 @@ STEP 3: 拆分后验证
 
 ## 已实现代码完整路径索引
 
-> 完整路径索引（335 源码 + 7 测试）由 `python scripts/governance/generate_project_path_tree.py --write` 生成至 `data/asset_index/`。代码分布在 `src/zephyr/feedback-loop/` 下 10 个子包：actors/collectors/detectors/diagnosers/evolution/forensic/gates/resilience/security/verifiers。
+> 完整路径索引（335 源码 + 7 测试）由 `python scripts/governance/generate_project_path_tree.py --write` 生成至 `data/asset_index/`。代码分布在 `src/zephyr/trading/feedback_loop/` 下 10 个子包：actors/collectors/detectors/diagnosers/evolution/forensic/gates/resilience/security/verifiers。
 
 ---
 
@@ -992,7 +992,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/observability/feedback-loop/gates/merkle_audit_root.py` | ✅ 已实现 | |
 | `src/zephyr/observability/feedback-loop/gates/meta_performance_gate.py` | ⚠️ 骨架 | |
 | `src/zephyr/observability/feedback-loop/gates/parameterized_safety_gate.py` | ✅ 已实现 | |
-| `src/zephyr/feedback-loop/gates/safety-gate-config.yaml` | ✅ 已实现 | |
+| `src/zephyr/trading/feedback_loop/gates/safety-gate-config.yaml` | ✅ 已实现 | |
 | `src/zephyr/observability/feedback-loop/gates/safety_gate_L1_L27.py` | ✅ 已实现 | |
 | `src/zephyr/observability/feedback-loop/gates/safety_gate_L28_L29.py` | ✅ 已实现 | |
 | `src/zephyr/observability/feedback-loop/gates/safety_gate_L36_L37.py` | ✅ 已实现 | |

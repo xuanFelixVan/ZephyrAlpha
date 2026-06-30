@@ -1508,7 +1508,7 @@ directories:
 
 
 
-  - path: "src/zephyr/feedback-loop/"
+  - path: "src/zephyr/trading/feedback_loop/"
 
     responsibility: "反馈闭环——自动进?/ 评估 / 指标收集 / 适应?"
     parent: "src/zephyr/"
@@ -1527,7 +1527,7 @@ directories:
 
 
 
-  - path: "src/zephyr/gates/"
+  - path: "src/zephyr/governance/rule_enforcement/"
 
     responsibility: "门禁引擎——G1~G5 策略 YAML + GateEngine + 断路?"
     parent: "src/zephyr/"

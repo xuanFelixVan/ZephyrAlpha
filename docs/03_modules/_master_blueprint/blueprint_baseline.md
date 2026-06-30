@@ -158,8 +158,8 @@ codification_at: "2026-05-15"
 | **Script System** (脚本系统) | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE, CT-FEATUREFLAG | Finding, KE | ~1400 | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | 部分实现 |
 | **Knowledge Base** (知识库) | CT-SCRIPT-KB, CT-KB-VMS, CT-DATA-LIFECYCLE | KE | ~1000 | `src/zephyr/kb/` | 部分实现 |
 | **Context Engine** (CE) | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG, CT-BULKHEAD | TaskCard | ~1400 | `src/zephyr/context-engine/` | 部分实现 |
-| **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/gates/` | 部分实现 |
-| **Feedback Loop** (FLE) | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE, CT-WATCHDOG | — | ~1200 | `src/zephyr/feedback-loop/` | 部分实现 |
+| **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
+| **Feedback Loop** (FLE) | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE, CT-WATCHDOG | — | ~1200 | `src/zephyr/trading/feedback_loop/` | 部分实现 |
 | **Pipeline** | CT-PIPE-ORC | TaskCard | ~400 | `src/zephyr/pipeline/` | 部分实现 |
 | **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector-memory/` | 部分实现 |
 | **Database** (db) | CT-FLE-DB, CT-ORC-DB, CT-DLQ, CT-BACKUP | — | ~700 | `src/zephyr/db/` | 部分实现 |
@@ -173,7 +173,7 @@ codification_at: "2026-05-15"
 | **Budget Enforcer** | G-CT-006 | — | ~300 | `src/zephyr/budget-enforcer/` | 部分实现 |
 | **A2A Protocol** | G-CT-008 | — | ~400 | `src/zephyr/infra_ops/a2a_protocol/` | 部分实现 |
 | **Agent Spec** | G-CT-007 | — | ~300 | `src/zephyr/agent-spec/` | 部分实现 |
-| **Auto Fix Engine** | — | — | ~200 | `src/zephyr/feedback-loop/auto_fix/` | 空壳 |
+| **Auto Fix Engine** | — | — | ~200 | `src/zephyr/trading/feedback_loop/auto_fix/` | 空壳 |
 | **Drift Detector** | — | — | ~200 | `src/zephyr/behavioral-auditor/` | 部分实现 |
 | **Code Dedup Engine** | — | — | ~200 | `src/zephyr/infra_ops/code_dedup_engine/` | 空壳 |
 | **Capacity Assurance** | — | — | ~200 | `src/zephyr/capacity-assurance/` | 部分实现 |
@@ -194,10 +194,10 @@ codification_at: "2026-05-15"
 | **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-TASK_SYSTEM 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
 | **Script System** | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | MOD-INF-005 脚本系统蓝图 | 12维度治理审计 + pre-commit门禁 + Finding管理 |
 | **Knowledge Base (KB)** | `src/zephyr/kb/` | MOD-KB-001 知识库蓝图 | 知识全生命周期（G1→G5）+ KE管理 + ChromaDB |
-| **Gate Engine (Gates)** | `src/zephyr/gates/` | MOD-GATE_ENGINE gate-engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
+| **Gate Engine (Gates)** | `src/zephyr/governance/rule_enforcement/` | MOD-GATE_ENGINE gate-engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
 | **Context Engine (CE)** | `src/zephyr/context-engine/` | MOD-CONTEXT_ENGINE context-engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
-| **Feedback Loop Engine (FLE)** | `src/zephyr/feedback-loop/` | MOD-FEEDBACK_LOOP feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
+| **Feedback Loop Engine (FLE)** | `src/zephyr/trading/feedback_loop/` | MOD-FEEDBACK_LOOP feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
 | **Vector Memory Service (VMS)** | `src/zephyr/vector-memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
 | **Database (db)** | `src/zephyr/db/` | MOD-DATABASE database蓝图 | SQLite元数据 + ATM原子事务管理器 |
 | **MCP Servers** | `src/zephyr/integration/mcp/` | MOD-INF-013 mcp_servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
@@ -551,7 +551,7 @@ title: "异常检测 → 任务调度调整 + 告警"
 systems:
   - role: producer
     name: feedback-loop
-    path: "src/zephyr/feedback-loop/"
+    path: "src/zephyr/trading/feedback_loop/"
     blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
     name: orchestrator
@@ -742,7 +742,7 @@ systems:
     blueprint: "MOD-INF-005"
   - role: consumer
     name: gate_engine
-    path: "src/zephyr/gates/"
+    path: "src/zephyr/governance/rule_enforcement/"
     blueprint: "MOD-GATE_ENGINE"
 
 mapping:
@@ -841,7 +841,7 @@ systems:
     blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: gate_engine
-    path: "src/zephyr/gates/"
+    path: "src/zephyr/governance/rule_enforcement/"
     blueprint: "MOD-GATE_ENGINE"
 
 data_flow:
@@ -1015,7 +1015,7 @@ title: "FLE评估结果→数据库时序存储——为趋势分析和回滚决
 systems:
   - role: producer
     name: feedback_loop_engine
-    path: "src/zephyr/feedback-loop/"
+    path: "src/zephyr/trading/feedback_loop/"
     blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
     name: database

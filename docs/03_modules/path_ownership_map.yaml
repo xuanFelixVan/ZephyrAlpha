@@ -4269,7 +4269,7 @@ ownership:
     existence: '✅'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/gates/g6-path-tree-freshness.yaml'
+  - path: 'src/zephyr/governance/rule_enforcement/g6-path-tree-freshness.yaml'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
