@@ -358,9 +358,25 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="warn",
                 detail=f"path_tree sync failed: {sync_result.stderr.strip()[:200]}",
             )
+        # 串联调用 d5 generate_path_tree.py 生成架构文档 md（治本 trae_060 §5）
+        # 读 depgraph arch_directory_tree → 生成 md 文档供人类查看
+        doc_result = subprocess.run(
+            [sys.executable, "scripts/governance/d5_architecture/generators/generate_path_tree.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if doc_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"path_tree sync OK but doc gen failed: {doc_result.stderr.strip()[:150]}",
+            )
         return ReconcileResult(
             action="clean",
-            detail="arch_directory_tree synced to PostgreSQL",
+            detail="arch_directory_tree synced + path doc regenerated",
         )
 
     return ReconcilerSpec(

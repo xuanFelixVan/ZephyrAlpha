@@ -127,7 +127,7 @@ doc_type: architecture_view
 | | domains | 不DELETE，只UPDATE current_modules | ✅ 可以改domain_name/layer_id/max_modules等（v6 合并原 arch_domain_layers/arch_domain_capacity 入此表）；P0-6 扩展的 modification_permission 字段 ❌ 禁止（YAML 真源，由 sync 脚本写入） |
 | **path_tree 管理** | arch_directory_tree（运营态） | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） | ❌ 禁止，会被 path_tree 覆盖 |
 | | arch_directory_tree（设计态） | 不碰（`WHERE design_maturity='design'`） | ⚠️ 通过 sync 脚本写入（YAML 派生，如 sync_directory_registry） |
-| **脚本管理** | arch_constraints | 不碰（由audit_domain_nodes.py在生成器后写） | ⚠️ 只能通过脚本改 |
+| **脚本管理** | arch_constraints | 不碰（VR规则由sync_yaml_to_depgraph.py同步；audit_domain_nodes.py已归档，4类检测职责待恢复） | ⚠️ 只能通过脚本改 |
 | **P0-6 字段扩展（YAML→DB，约定保护）** | nodes（+5 字段：business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces，#165-169；~~**v15已删此5字段**，见§迁移说明后v15裁定~~） | 生成器只填充运营态字段，不碰这 5 个扩展字段 | ❌ 禁止（YAML 真源，由 sync 脚本覆盖；无字段级只读触发器，依赖 sync 脚本每次运行覆盖） |
 | | edges（+3 字段：valid_since/migration_status/is_legal_cycle，#152；~~**migration_status v15已删**，见§迁移说明后v15裁定~~） | 生成器只填充运营态字段，不碰这 3 个扩展字段 | ❌ 禁止（同上；migration_status 由 sync 脚本根据 YAML 迁移状态写入） |
 | | domains（+1 字段：modification_permission，#156） | 生成器不碰此字段 | ❌ 禁止（同上；YAML ai_autonomy → DB modification_permission 映射） |
@@ -160,7 +160,7 @@ doc_type: architecture_view
 7. 冲突时设计态优先（SSoT 分层：设计态全景图 > 代码）
 8. 校验 blueprint_id 存在性（D-Blind-3 修复）
 9. 检测循环依赖（Tarjan SCC），输出循环报告（D-Blind-1 修复）
-10. 调用 audit_domain_nodes.py 写入 arch_constraints（A-Blind-5 修复）
+10. 调用 audit_domain_nodes.py 写入 arch_constraints（A-Blind-5 修复）（已归档到 _archive/prototype/，4类检测职责待恢复）
 11. 输出执行报告（G-Blind-5 修复，§14.10 格式）
 12. 释放锁（PG 事务结束自动释放行锁）
 
@@ -206,7 +206,7 @@ doc_type: architecture_view
 |---|------|------|--------|-----------|
 | 1 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | path_tree | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） |
 | 2 | `arch_path_mappings` | 路径→域映射规则 | 人工 | 不碰 |
-| 3 | `arch_constraints` | 架构约束（跨域违规等） | audit_domain_nodes.py | 不碰（脚本写） |
+| 3 | `arch_constraints` | 架构约束（跨域违规等） | sync_yaml_to_depgraph.py | 不碰（脚本写） |
 
 > **域→层映射和域容量**：原 `arch_domain_layers`（域→层映射）和 `arch_domain_capacity`（max_modules）在 v6 合并入 `domains` 表（layer_id/max_modules/current_modules 列，共 15 列）。
 
@@ -303,7 +303,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 
 ## 九、arch_constraints 写入流程
 
-**写入方**：`audit_domain_nodes.py` 脚本
+**写入方**：`sync_yaml_to_depgraph.py`（VR规则同步）
 
 **触发时机**：生成器运行完成后自动触发（生成器末尾调用）
 

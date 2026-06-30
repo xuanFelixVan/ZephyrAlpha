@@ -163,7 +163,8 @@ def run_script_tests():
         test(2, "apply_depgraph 4新命令", False, f"异常: {e}")
 
     # #3 audit_domain_nodes.py 4类检测
-    audit_script = r"D:\ZephyrAlpha\scripts\governance\audit_domain_nodes.py"
+    # 注意：audit_domain_nodes.py 已归档到 scripts/governance/_archive/prototype/，4类检测职责待恢复
+    audit_script = r"D:\ZephyrAlpha\scripts\governance\_archive\prototype\audit_domain_nodes.py"
     if os.path.exists(audit_script):
         try:
             result = subprocess.run(["python", audit_script, "--check"], capture_output=True, text=True, timeout=60)
@@ -171,12 +172,12 @@ def run_script_tests():
         except Exception as e:
             test(3, "audit_domain_nodes 4类检测", False, f"异常: {e}")
     else:
-        test(3, "audit_domain_nodes 4类检测", False, "脚本不存在")
+        test(3, "audit_domain_nodes 4类检测", False, "脚本已归档到 _archive/prototype/，4类检测职责待恢复")
 
     # #6 生成器+apply+audit端到端（验证3个脚本都可执行--help）
     gen_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py")
     apply_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py")
-    audit_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\audit_domain_nodes.py")
+    audit_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\_archive\prototype\audit_domain_nodes.py")
     # 验证apply_depgraph可执行（--help）
     apply_runnable = False
     if apply_exists:
