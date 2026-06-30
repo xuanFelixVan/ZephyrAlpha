@@ -266,6 +266,14 @@ result = await gateway.full_scan(user_text, llm_response)
   - **治本 GAP-3**：解决"index.md 列出的文件清单是否存在无检测"防护缺口。对名为 index.md 的文件做**严格本地解析**（仅相对 source.parent，禁 basename 兜底——本目录契约语义）。处理 markdown 链接 + `file:///D:/ZephyrAlpha/...` 绝对 URL 两种格式。真源：[`audit_broken_links.py` `_check_index_md_inventory`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
   - **治本 GAP-4**：解决"audit_report 审计对象存在性无检测"防护缺口。对 doc_type=audit_report 的 .md 文件，校验三类引用：①frontmatter.blueprint_id ②frontmatter.module_id ③正文 MODULE_ID 匹配（MOD-XXX-NNN/D-XXX-NNN/SH-XXX-NNN 三轨制）。自动生成 audit_report（无 blueprint_id 无 module_id）跳过。真源：[`audit_broken_links.py` `_check_audit_report_objects`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。已检出幻觉：ai_12/17/18_report.md 引用不存在的 `MOD-DB_DEPGRAPH_PG`/`MOD-INF`。
 
+- **tests/ 目录组织规范（向内收防回归，[#ARCH-029](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 治本）**——病根：tests/ 根曾平铺 1699 个 test_*.py（新 AI 无法定位 + 无分类指引），子目录粒度混合维度（unit/integration/e2e 按测试类型 vs governance/llm_security 按功能域 vs contract/contracts 按测试种类），contract/ 与 contracts/ 单复数歧义并存。治本约定（文档化防回归，无硬门禁——AD-GOV-001 收敛期不新增 gate）：
+  - **单一维度=功能域**：tests/ 子目录按功能域归类（a2a/skill/trae_rules/kb/governance/llm_security/...），不混入测试类型维度（unit/integration/e2e）。新测试文件按文件名前缀归对应功能域子目录。
+  - **根目录禁平铺**：tests/ 根目录禁止新增 test_*.py 平铺文件（根目录仅允许 conftest.py/__init__.py 等基础文件）。新增 test_*.py MUST 归功能域子目录。
+  - **contracts/ 唯一**：契约测试唯一目录为 `contracts/`（单复数歧义已消除——原 `contract/` 元测试 5 文件已合并入 `contracts/_meta/`）。禁止再造 `contract/` 单数目录。
+  - **目录名禁 test_ 前缀**：tests/ 下子目录名禁止 `test_` 前缀（`test_code_dedup_engine/` 已改名 `code_dedup_engine/`）。`test_` 前缀只用于文件名。
+  - **迁移状态**：ARCH-029 进行中——406/1699 明确前缀簇已迁移（14 簇：a2a/skill/trae_rules/kb/knowledge_engine/contracts/audit/federated_learning/fle/self_check/automation/f_lifecycle/governance/llm_security），剩余 1291 个 _UNMATCHED 文件待后续 session 按前缀细化或逐文件归位。新 AI 接续治本前 MUST 先读 ARCH-029 条目确认进度。
+  - **强制方式**：文档约定（本条目）+ code review + 后续 session 接续治本。无硬阻断门禁（向内收原则①——不造无全自动维护价值的门禁；测试目录组织是约定性约束，非安全/真源约束）。
+
 ## 8. 永远不要做的事
 
 > 完整禁止清单见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) 四条铁律。此处仅列项目宪法级禁令：

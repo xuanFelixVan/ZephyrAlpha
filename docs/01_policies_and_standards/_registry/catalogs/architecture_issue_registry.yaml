@@ -220,7 +220,7 @@ entries:
   severity: P1高
   adjudication: |
     trae_060 §4元问题审查治本。4形态问题（全部需治本，无合理现状）：(1)根平铺1699个.py文件（远超预估"200+"，新AI无法定位+无分类指引）；(2)contract/（元测试5文件：anchors/import_chain/schema_stability）与contracts/（契约测试16文件：test_ct_模块对_001）单复数歧义；(3)平铺与子目录混合（根1699平铺+unit/289内平铺+13子目录）；(4)子目录粒度混合维度（unit/integration/e2e按类型，governance/llm_security/agent_rbac按功能域，contract/contracts按测试种类，test_code_dedup_engine违规test_前缀目录名）。额外发现：根目录2个verify_result.txt临时产物遗留。治本：按文件名前缀归功能域子目录（trae_060 §1原则①能现成不创造——用文件名既有前缀归位，不新建分类维度）；contract/合并入contracts/_meta/消除单复数歧义；删2个txt临时产物；test_code_dedup_engine/去test_前缀。本次迁移明确前缀簇406文件（a2a45/skill58/trae_rules48/kb22/ke4/ct33/fl81/fle15/self22/auto20/audit27/f_lifecycle13/governance10/llm8），剩余1290个_UNMATCHED文件待后续session接续（按前缀细化或逐文件归位）。
-  fix_phase: 进行中（2026-06-30，批次0+1已完成 commit 68605272：登记本议题+contract/合并到contracts/_meta/+test_code_dedup_engine/去test_前缀；delete文件清理+gateway bug修复转ARCH-030；14簇迁移待施工）
+  fix_phase: 进行中（2026-06-30，本session治本已完成：批次0+1 commit 68605272 登记本议题+contract/合并到contracts/_meta/+test_code_dedup_engine/去test_前缀；ARCH-030 commit 66b381a9+58c72855 gateway delete bug修复+登记；批次2-15 commit 421c8c31 14簇迁移406文件+DCR gate阈值修复；pytest验证 35680 tests collected 23预存errors非本次引入；AGENTS.md §7 tests/目录组织规范条目新增防回归。剩余1291个_UNMATCHED文件待后续session接续）
   status: open
   related_rules:
   - TRAE-060
