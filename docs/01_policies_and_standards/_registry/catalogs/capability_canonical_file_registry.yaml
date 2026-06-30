@@ -411,6 +411,12 @@ capabilities:
       与一次性 dry_run 归档共用（向内收——扫描+归档逻辑唯一真源）。canonical basename
       reconciliation_registry 不匹配任何 alias，无法 auto 派生，故用 canonical_override
       显式声明。对标向内收原则 2.2（自动事件触发+自动维护+自动关闭）。
+    # 治本（2026-06-30 病根1 看门人无人看）：reconciler 工厂函数 A 层 AST 锚点保护。
+    # 红蓝对抗发现 working_docs_ghost_ref_archiver 无 integrity_anchors——篡改
+    # make_working_docs_reconciler/scan_and_archive_working_docs 后 A 层不检测。
+    integrity_anchors:
+      - make_working_docs_reconciler     # reconciler工厂(删则reconciler不注册,幽灵引用检测失效)
+      - scan_and_archive_working_docs     # 扫描归档逻辑真源(删则归档逻辑失效或被绕过)
 
   # --------------------------------------------------------------------------
   - capability_id: completes_when_validator
@@ -442,6 +448,17 @@ capabilities:
       - _is_staged_delete          # staged delete识别(纵深防御,删则git add -f可能撤销用户的git rm --cached)
       - _check_src_no_data         # src/data/路径门禁(删则src/下可放数据→双真源漂移,GATE-SRC-NO-DATA等效校验)
       - _should_use_no_pathspec    # no-pathspec决策(staged delete保护核心,删则gitignored staged delete静默丢失,commit 32ead90e教训)
+      # 治本（2026-06-30 病根1 看门人无人看）：commit 主入口与核心 _check_* 方法 A 层 AST 锚点保护。
+      # 红蓝对抗发现 completes_when_validator 仅覆盖 7 个辅助方法，遗漏 commit()/_commit_auto()/
+      # _check_frontmatter_ttl/_check_ssot_canonical 等核心方法——篡改这些方法 A 层不检测。
+      - commit                    # 主入口(篡改即所有门禁失效,治本病根1)
+      - _commit_auto              # reconciler统一入口(篡改则reconciler路径五重gate失效)
+      - _check_frontmatter_ttl    # TTL门禁(删则TTL校验失效,permanent/task_bound可伪造)
+      - _check_ssot_canonical     # SSoT门禁(删则真源唯一校验失效,重复造轮子不阻断)
+      - _check_naming_uniqueness  # N-16门禁(删则文件名唯一性失效)
+      - _check_protected_script_integrity  # 完整性校验本身(自指保护,删则integrity_anchors校验失效)
+      - _check_pure_assertion     # 纯陈述门禁(删则GOV-DOC-016失效)
+      - _check_pure_shim          # shim门禁(删则GATE-NO-PURE-SHIM失效)
 
   # --------------------------------------------------------------------------
   - capability_id: git_commit_cli_staged_delete
@@ -794,6 +811,12 @@ capabilities:
       本 reconciler 是 post-commit 审计（不可绕过，但非阻断）。
       解决发现性：新 AI 搜 "commit审计/裸commit检测/non-GW commit" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类审计 reconciler。
+    # 治本（2026-06-30 病根1 看门人无人看）：reconciler 工厂函数 A 层 AST 锚点保护。
+    # 红蓝对抗发现 commit_gateway_audit_reconciler 无 integrity_anchors——篡改
+    # make_commit_gateway_audit_reconciler 后 A 层不检测，裸 commit 审计可被静默关闭。
+    integrity_anchors:
+      - make_commit_gateway_audit_reconciler  # reconciler工厂(删则reconciler不注册,裸commit审计失效)
+      - _audit_commit_history                  # 审计逻辑真源(git log -20扫描,删则检测逻辑失效)
 
   # --------------------------------------------------------------------------
   - capability_id: broken_link_detector

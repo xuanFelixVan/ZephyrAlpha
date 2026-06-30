@@ -496,11 +496,11 @@ class GitCommitGateway:
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
         P2-T5: ghost 对账（depgraph 对称漂移检测，删除 commit 触发 diagnose_depgraph）。
         P2-T6: working_docs 对账（_working/ 幽灵引用检测，删除 commit 触发归档，治 AI 工作文档堆积）。
-        P2-T7: domain_doc 重生（commit depgraph.db 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
+        P2-T7: domain_doc 重生（commit depgraph 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
         P2-T8: id_uniqueness 兜底（GATE-ID-UNIQ post-compensation，commit .pre-commit-config.yaml 后重校 hook id 唯一性，非阻断报告落盘，兜底 --no-verify 绕过）。
         P2-T9: vocab_change 纠偏（GATE-VOCAB-CHANGE，commit ttl_vocabulary.yaml 后自动重判所有 docs/*.md 的 ttl，治词表变更后 ttl 漂移）。
         红蓝发现1: rules_integrity 基线同步（GATE-RULES-INTEGRITY，commit RULES_MANIFEST 文件后自动 --register 重注册本地 golden hash 基线，治合法 commit 后 C 层误报 TAMPERED）。
-        P3收尾: rule_catalog 同步（GATE-RULE-CATALOG，commit rules/ 下文件后自动重新生成 rule_catalog_registry.yaml，治 catalog stale 导致 depgraph.db 数据污染）。
+        P3收尾: rule_catalog 同步（GATE-RULE-CATALOG，commit rules/ 下文件后自动重新生成 rule_catalog_registry.yaml，治 catalog stale 导致 depgraph 数据污染）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))

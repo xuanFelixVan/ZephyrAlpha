@@ -82,6 +82,24 @@ RULES_MANIFEST: list[dict] = [
         "critical": True,
         "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）",
     },
+    # 治本（2026-06-30 病根1 看门人无人看）：治理系统自身的 C 层 golden hash 保护。
+    # 红蓝对抗发现 RULES_MANIFEST 9 条清单不含保护机制自身——攻击者篡改 gateway/registry
+    # 后 C 层不检测，篡改持久化。本次追加 3 条闭环自指悖论。
+    {
+        "path": "src/zephyr/governance/git_commit_gateway.py",
+        "critical": True,
+        "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)",
+    },
+    {
+        "path": "src/zephyr/governance/reconciliation_registry.py",
+        "critical": True,
+        "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)",
+    },
+    {
+        "path": "scripts/governance/meta/validate_rules_integrity.py",
+        "critical": True,
+        "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)",
+    },
 ]
 
 if sys.stdout.encoding != "utf-8":

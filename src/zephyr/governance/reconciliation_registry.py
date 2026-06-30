@@ -1682,6 +1682,74 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+def _audit_commit_history(
+    project_root: "object",
+    audit_window: int,
+    gw_marker: str,
+) -> "tuple[list[dict], str | None]":
+    """扫描最近 N 个 commit，返回无 GW 标记的裸 commit 列表（审计逻辑真源）。
+
+    治本（2026-06-30 病根1 看门人无人看）：把 make_commit_gateway_audit_reconciler
+    闭包内的审计逻辑提取为模块级函数，使其成为可被 A 层 AST 锚点保护的 name
+    （_check_protected_script_integrity._collect_nodes 只收集模块级 + 类内 name，
+    闭包内 name 不被收集）。与 working_docs_ghost_ref_archiver 模式一致：
+    工厂函数 + 模块级逻辑函数（scan_and_archive_working_docs）。
+
+    两阶段检查：subject 快速扫描 + body 二次确认
+    （GitCommitGateway.commit() 把 [GW:tag] 追加到 message 末尾用 \\n\\n 分隔，
+    --oneline 只看 subject 会误判手动 commit 为裸 commit，需查 body）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root，类型注解 object 保持纯 stdlib）。
+        audit_window: 审计窗口（最近 N 个 commit）。
+        gw_marker: GW 标记字符串（如 "[GW:"）。
+
+    Returns:
+        (violations, error_msg): error_msg 非 None 表示 git log 失败；
+        error_msg 为 None 时 violations 为违规列表（可能为空）。
+    """
+    import subprocess
+
+    log_result = subprocess.run(
+        ["git", "log", f"-{audit_window}", "--oneline"],
+        cwd=str(project_root),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=10,
+    )
+    if log_result.returncode != 0:
+        return [], f"git log failed: {log_result.stderr.strip()[:200]}"
+
+    violations: list[dict] = []
+    for line in log_result.stdout.strip().splitlines():
+        # format: <hash> <subject>
+        parts = line.split(" ", 1)
+        if len(parts) < 2:
+            continue
+        commit_hash, subject = parts[0], parts[1]
+        # 跳过 merge commit（合并提交无作者意图）
+        if subject.startswith("Merge "):
+            continue
+        if gw_marker in subject:
+            continue  # subject 已含 [GW:（reconciler auto-commit）
+        # subject 无 [GW: → 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
+        body_result = subprocess.run(
+            ["git", "show", "-s", "--format=%B", commit_hash],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=5,
+        )
+        if body_result.returncode == 0 and gw_marker in body_result.stdout:
+            continue  # body 含 [GW:（手动 commit 经 GitCommitGateway）
+        violations.append({"hash": commit_hash, "subject": subject[:120]})
+    return violations, None
+
+
 def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-COMMIT-GW-AUDIT post-commit 审计 reconciler（C级 缺口4）。
 
@@ -1728,51 +1796,13 @@ def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         return True
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 扫描最近 N 个 commit（--oneline 快速扫描 subject）
-        log_result = subprocess.run(
-            ["git", "log", f"-{_AUDIT_WINDOW}", "--oneline"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=10,
+        # 审计逻辑真源：模块级 _audit_commit_history（A 层 AST 锚点保护，
+        # 治本 2026-06-30 病根1 看门人无人看）。闭包只做调用 + 报告落盘 + 判定。
+        violations, err = _audit_commit_history(
+            project_root, _AUDIT_WINDOW, _GW_MARKER,
         )
-        if log_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git log failed: {log_result.stderr.strip()[:200]}",
-            )
-
-        # 2. 解析，标记无 [GW: 标记的 commit（跳过 merge commit）
-        #    两阶段检查：subject 快速扫描 + body 二次确认
-        #    （GitCommitGateway.commit() 把 [GW:tag] 追加到 message 末尾用 \n\n 分隔，
-        #     --oneline 只看 subject 会误判手动 commit 为裸 commit，需查 body）
-        violations: list[dict] = []
-        for line in log_result.stdout.strip().splitlines():
-            # format: <hash> <subject>
-            parts = line.split(" ", 1)
-            if len(parts) < 2:
-                continue
-            commit_hash, subject = parts[0], parts[1]
-            # 跳过 merge commit（合并提交无作者意图）
-            if subject.startswith("Merge "):
-                continue
-            if _GW_MARKER in subject:
-                continue  # subject 已含 [GW:（reconciler auto-commit）
-            # subject 无 [GW: → 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
-            body_result = subprocess.run(
-                ["git", "show", "-s", "--format=%B", commit_hash],
-                cwd=str(project_root),
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=5,
-            )
-            if body_result.returncode == 0 and _GW_MARKER in body_result.stdout:
-                continue  # body 含 [GW:（手动 commit 经 GitCommitGateway）
-            violations.append({"hash": commit_hash, "subject": subject[:120]})
+        if err:
+            return ReconcileResult(action="warn", detail=err)
 
         # 3. 报告落盘
         report = {
