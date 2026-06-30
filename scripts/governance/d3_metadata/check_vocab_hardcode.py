@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -432,10 +432,13 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                             break  # 一个词表命中即可，避免重复报
 
             # 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）
+            # 仅对 scripts/governance/ 范围生效——thresholds.yaml 是脚本治理系统的 SSoT，
+            # src/zephyr/ 的阈值属于不同系统（依赖方向错误，不应接入 scripts SSoT）。
             # 匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名，
             # 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
-            # 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
-            if not name_match_reported and not _has_noqa_exempt(source, node.lineno):
+            if ("scripts" in filepath.parts and "governance" in filepath.parts
+                    and not name_match_reported
+                    and not _has_noqa_exempt(source, node.lineno)):
                 for target in targets:
                     if not isinstance(target, ast.Name):
                         continue
