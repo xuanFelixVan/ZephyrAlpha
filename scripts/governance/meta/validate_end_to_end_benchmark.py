@@ -32,6 +32,7 @@ Usage:
 
 from __future__ import annotations
 from _shared.constants import REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 args:
@@ -83,47 +84,30 @@ def setup_benchmark() -> dict:
     _TEST_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
 
     bad_file = _TEST_FIXTURES_DIR / "bad_frontmatter.md"
-    tmp_path = f"{bad_file}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(
-            """# Test Document
+    atomic_write_safe(
+        bad_file,
+        """# Test Document
 Some body text without frontmatter.
 This should trigger D3 metadata validation.
 """,
-            encoding="utf-8",
-        )
-        os.replace(tmp_path, bad_file)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    )
 
     bad_imports = _TEST_FIXTURES_DIR / "bad_imports.py"
-    tmp_path = f"{bad_imports}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(
-            """import os
+    atomic_write_safe(
+        bad_imports,
+        """import os
 import nonexistent_package_xyz
 from typing import List, Dict, Any
 
 def test_function():
     pass
 """,
-            encoding="utf-8",
-        )
-        os.replace(tmp_path, bad_imports)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    )
 
     incomplete_doc = _TEST_FIXTURES_DIR / "incomplete_module.py"
-    tmp_path = f"{incomplete_doc}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(
-            """
+    atomic_write_safe(
+        incomplete_doc,
+        """
 def calculate(x: int, y: int) -> int:
     return x + y
 
@@ -132,14 +116,7 @@ class DataProcessor:
     def process(self):
         pass
 """,
-            encoding="utf-8",
-        )
-        os.replace(tmp_path, incomplete_doc)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    )
 
     bad_structure = _TEST_FIXTURES_DIR
     (bad_structure / "orphan_file_without_module_registration.py").write_text(
@@ -150,17 +127,7 @@ def helper(x):
         encoding="utf-8",
     )
 
-    tmp_path = f"{_EXPECTED_RESULTS}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            json_mod.dump(DEFAULT_EXPECTED, f, ensure_ascii=False, indent=2)
-
-        os.replace(tmp_path, _EXPECTED_RESULTS)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_EXPECTED_RESULTS, json_mod.dumps(DEFAULT_EXPECTED, ensure_ascii=False, indent=2))
     return {"status": "setup_complete", "fixtures": 4, "path": str(_TEST_FIXTURES_DIR.relative_to(_REPO_ROOT))}
 
 

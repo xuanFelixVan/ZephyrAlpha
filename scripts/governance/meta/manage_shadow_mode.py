@@ -29,6 +29,7 @@ Usage:
 
 from __future__ import annotations
 from _shared.constants import REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 args: []
@@ -74,17 +75,7 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     """_save implementation."""
     _SHADOW_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_SHADOW_STATE_PATH}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-        os.replace(tmp_path, _SHADOW_STATE_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_SHADOW_STATE_PATH, yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False))
 
 
 def get_activation_phase(script_name: str) -> str:

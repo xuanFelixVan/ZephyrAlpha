@@ -40,6 +40,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.registry_entry_count import count_primary_registry_entries
 from _shared.yaml_utils import load_yaml
@@ -245,20 +246,13 @@ def main() -> None:
         print("OK: 登记表总索引与实际一致")
         return
 
-    tmp_path = f"{args.output}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(f"# 自动生成于 {result['generated_at']}\n")
-            f.write("# 来源: _registry/catalogs/*.yaml frontmatter\n")
-            f.write("# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n")
-            yaml.dump(result, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-        os.replace(tmp_path, args.output)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    content = (
+        f"# 自动生成于 {result['generated_at']}\n"
+        "# 来源: _registry/catalogs/*.yaml frontmatter\n"
+        "# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n"
+        + yaml.dump(result, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    )
+    atomic_write_safe(args.output, content)
     print(f"已生成 {result['total_registries']} 张登记表索引 → {args.output}")
 
 

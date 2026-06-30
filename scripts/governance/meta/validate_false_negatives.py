@@ -63,6 +63,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 _CASES_DIR = _REPO_ROOT / "scripts" / "governance" / "meta" / "false_negative_cases"
 _CASES_INDEX = _CASES_DIR / "cases_index.yaml"
 _RESULTS_LOG = _CASES_DIR / "results.jsonl"
@@ -76,18 +77,10 @@ def _ensure_cases_dir() -> None:
     """_ensure_cases_dir implementation."""
     _CASES_DIR.mkdir(parents=True, exist_ok=True)
     if not _CASES_INDEX.exists():
-        tmp_path = f"{_CASES_INDEX}.{os.getpid()}.tmp"
-        try:
-            Path(tmp_path).write_text(
-                "# 已知缺陷测试用例索引\n# 格式：dimension / 预期检测出的脚本 / 预期 Finding 描述\ncases: {}\n",
-                encoding="utf-8",
-            )
-            os.replace(tmp_path, _CASES_INDEX)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(
+            _CASES_INDEX,
+            "# 已知缺陷测试用例索引\n# 格式：dimension / 预期检测出的脚本 / 预期 Finding 描述\ncases: {}\n",
+        )
 
 
 def _load_cases() -> dict:
@@ -122,15 +115,7 @@ def add_case(
         src = _REPO_ROOT / case_file
         if not src.exists():
             return {"error": f"源文件不存在: {src}"}
-        tmp_path = f"{dest}.{os.getpid()}.tmp"
-        try:
-            Path(tmp_path).write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
-            os.replace(tmp_path, dest)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(dest, src.read_text(encoding="utf-8"))
 
     cases = data.setdefault("cases", {})
     cases[case_id] = {
@@ -141,16 +126,7 @@ def add_case(
         "case_file": str(dest.relative_to(_REPO_ROOT)),
         "added_at": datetime.now(UTC).isoformat(),
     }
-    tmp_path = f"{_CASES_INDEX}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-        os.replace(tmp_path, _CASES_INDEX)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_CASES_INDEX, yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False))
     return {"case_id": case_id, "status": "added"}
 
 

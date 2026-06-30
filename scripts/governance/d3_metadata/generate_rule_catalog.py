@@ -61,6 +61,7 @@ from _shared.constants import (  # noqa: E402
     SCAN_EXTENSIONS_MD_YAML,
 )
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.frontmatter import parse_frontmatter  # noqa: E402
 from _shared.walk import iter_files  # noqa: E402
 
@@ -235,16 +236,10 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    tmp_path = f"{output}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            yaml.dump(catalog, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-        os.replace(tmp_path, output)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(
+        output,
+        yaml.dump(catalog, allow_unicode=True, default_flow_style=False, sort_keys=False),
+    )
     print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
 
 

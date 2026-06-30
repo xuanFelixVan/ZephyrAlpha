@@ -32,6 +32,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
@@ -639,10 +640,8 @@ def main():
         import yaml
 
         out_path = PROJECT_ROOT / args.output
-        tmp_path = str(out_path) + ".%d.tmp" % os.getpid()
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            yaml.dump(report, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-        os.replace(tmp_path, str(out_path))
+        content = yaml.dump(report, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        atomic_write(out_path, content)
         print("[DIAG] Report written to %s" % args.output)
 
     print()

@@ -54,6 +54,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.yaml_utils import load_yaml_safe  # noqa: E402  治本(ARCH-036 P1-2): 收敛本地重复实现→共享 graceful 变体
 
 ensure_utf8_stdout()
@@ -257,16 +258,7 @@ def main() -> int:
             "scores": scores,
             "weighted_total": total,
         }
-        tmp_path = f"{snapshot_path}.{os.getpid()}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(snapshot, f, ensure_ascii=False, indent=2)
-            os.replace(tmp_path, snapshot_path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(snapshot_path, json.dumps(snapshot, ensure_ascii=False, indent=2))
         print(f"\n快照已保存: {snapshot_path.relative_to(REPO_ROOT)}")
 
     if args.compare:

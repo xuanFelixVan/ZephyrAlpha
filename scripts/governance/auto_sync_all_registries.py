@@ -40,6 +40,7 @@ import sys
 from pathlib import Path
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 logger = logging.getLogger(__name__)
 
@@ -78,22 +79,17 @@ def _save_yaml(path: Path, data: dict, dry_run: bool = False) -> bool:
     try:
         import yaml
 
-        tmp = str(path) + f".{os.getpid()}.tmp"
         content = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
         if dry_run:
             logger.info("[DRY-RUN] Would write %d bytes to %s", len(content), path)
             return True
-        with open(tmp, "w", encoding="utf-8") as f:
-            f.write(content)
-        os.replace(tmp, str(path))
-        logger.info("Written %s", path)
-        return True
+        if atomic_write_safe(path, content):
+            logger.info("Written %s", path)
+            return True
+        logger.error("Failed to save YAML %s: atomic_write_safe returned False", path)
+        return False
     except Exception as e:
         logger.error("Failed to save YAML %s: %s", path, e)
-        try:
-            os.remove(tmp)
-        except OSError:
-            pass
         return False
 
 

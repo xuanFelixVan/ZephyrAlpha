@@ -71,6 +71,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -179,16 +180,10 @@ def write_blind_spot_timeline(timeline: list[dict], resolved: int, open_count: i
         "open": open_count,
         "blind_spot_timeline": timeline,
     }
-    tmp_path = f"{BLIND_SPOT_FILE}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as fh:
-            yaml.dump(content, fh, allow_unicode=True, default_flow_style=False, sort_keys=False)
-        os.replace(tmp_path, BLIND_SPOT_FILE)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(
+        BLIND_SPOT_FILE,
+        yaml.dump(content, allow_unicode=True, default_flow_style=False, sort_keys=False),
+    )
 
 
 def update_index_by_date(index_data: dict, disk_sessions: dict[str, Path]) -> dict:
@@ -265,16 +260,7 @@ def write_index(index_data: dict) -> None:
     else:
         final = header_text + body_text + "\n"
 
-    tmp_path = f"{INDEX_FILE}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(final)
-        os.replace(tmp_path, INDEX_FILE)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(INDEX_FILE, final)
 
 
 def validate(index_data: dict, disk_sessions: dict[str, Path], warn_only: bool) -> int:

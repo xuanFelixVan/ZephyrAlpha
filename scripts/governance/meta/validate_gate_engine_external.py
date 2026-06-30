@@ -51,6 +51,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 args: []
@@ -145,18 +146,7 @@ def update_hash_snapshot() -> dict[str, str]:
         rel = str(fp.relative_to(_PROJECT_ROOT)).replace("\\", "/")
         snapshot[rel] = _compute_hash(fp)
     _SNAPSHOT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_SNAPSHOT_PATH}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(
-            json.dumps(snapshot, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        os.replace(tmp_path, _SNAPSHOT_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_SNAPSHOT_PATH, json.dumps(snapshot, ensure_ascii=False, indent=2))
     return snapshot
 
 

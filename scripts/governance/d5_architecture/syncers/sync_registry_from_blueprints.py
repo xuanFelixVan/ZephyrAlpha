@@ -52,6 +52,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
@@ -413,19 +414,7 @@ def run_write(
     registry["summary"] = rebuild_summary(new_entries)
 
     content = yaml.dump(registry, allow_unicode=True, default_flow_style=False, sort_keys=False)
-    tmp_path = f"{BLUEPRINT_REGISTRY_PATH}.{os.getpid()}.tmp"
-
-    try:
-        Path(tmp_path).write_text(content, encoding="utf-8")
-
-        os.replace(tmp_path, BLUEPRINT_REGISTRY_PATH)
-
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-
-        except OSError:
-            pass
+    atomic_write_safe(BLUEPRINT_REGISTRY_PATH, content)
     print(f"Wrote: {len(new_entries)} blueprints to {BLUEPRINT_REGISTRY_PATH}")
 
     mod_body: dict[str, Any] = {
@@ -434,18 +423,10 @@ def run_write(
         "_schema": _default_module_registry_schema(),
         "modules": module_entries,
     }
-    tmp_path = f"{MODULE_REGISTRY_PATH}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(
-            yaml.dump(mod_body, allow_unicode=True, default_flow_style=False, sort_keys=False),
-            encoding="utf-8",
-        )
-        os.replace(tmp_path, MODULE_REGISTRY_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(
+        MODULE_REGISTRY_PATH,
+        yaml.dump(mod_body, allow_unicode=True, default_flow_style=False, sort_keys=False),
+    )
     print(f"Wrote: {len(module_entries)} modules to {MODULE_REGISTRY_PATH}")
     return EXIT_PASS
 

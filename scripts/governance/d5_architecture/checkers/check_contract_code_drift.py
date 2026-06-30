@@ -35,6 +35,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -104,19 +105,7 @@ def main() -> int:
     current = _build_snapshot()
 
     if args.freeze:
-        tmp_path = f"{_SNAPSHOT_FILE}.{os.getpid()}.tmp"
-
-        try:
-            Path(tmp_path).write_text(current, encoding="utf-8")
-
-            os.replace(tmp_path, _SNAPSHOT_FILE)
-
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-
-            except OSError:
-                pass
+        atomic_write_safe(_SNAPSHOT_FILE, current)
         print("OK: 契约快照已冻结")
         return EXIT_PASS
     if not _SNAPSHOT_FILE.exists():

@@ -36,6 +36,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 from _shared.constants import REPO_ROOT
+from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
@@ -258,16 +259,7 @@ def generate_yaml() -> str:
 def cmd_write() -> None:
     content = generate_yaml()
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{OUTPUT_FILE}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(content, encoding="utf-8")
-        os.replace(tmp_path, OUTPUT_FILE)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
-        raise
+    atomic_write(OUTPUT_FILE, content)
     print(f"[OK] Written to {OUTPUT_FILE}")
 
 

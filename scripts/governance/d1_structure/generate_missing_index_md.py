@@ -53,6 +53,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.frontmatter import parse_frontmatter
 from _shared.yaml_utils import evaluate_ttl, load_decision_tree
 
@@ -260,15 +261,7 @@ def generate_index(parent: Path, dry_run: bool = False, force_update: bool = Fal
         print(f"  [DRY-RUN] 将创建: {index_path}")
         return True
     try:
-        tmp_path = f"{index_path}.{os.getpid()}.tmp"
-        try:
-            Path(tmp_path).write_text(content, encoding="utf-8")
-            os.replace(tmp_path, index_path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(index_path, content)
         print(f"  + 已创建: {index_path}")
         return True
     except OSError as e:

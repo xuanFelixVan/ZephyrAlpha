@@ -55,6 +55,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, SCRIPTS_DIR
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -257,17 +258,7 @@ def sync(manifest: list[dict], check_only: bool = False) -> int:
         print("       请运行 sync_index_from_manifest.py 修复")
         return EXIT_FINDINGS
 
-    tmp_path = f"{INDEX_MD}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(updated)
-
-        os.replace(tmp_path, INDEX_MD)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(INDEX_MD, updated)
     print("OK: index.md 已从 manifest SSoT 同步更新")
     return EXIT_PASS
     """sync."""

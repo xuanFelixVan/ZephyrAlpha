@@ -58,6 +58,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _PYPI_CACHE = _SCRIPTS_DIR / "meta" / "pypi_verified_cache.json"
 
@@ -287,17 +288,7 @@ def _load_cache() -> dict:
 def _save_cache(data: dict) -> None:
     """_save_cache implementation."""
     _PYPI_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_PYPI_CACHE}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-        os.replace(tmp_path, _PYPI_CACHE)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_PYPI_CACHE, json_mod.dumps(data, ensure_ascii=False, indent=2))
 
 
 def _extract_imports(file_path: Path) -> list[str]:

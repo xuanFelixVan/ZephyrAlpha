@@ -58,6 +58,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -151,21 +152,14 @@ def save_secret_baseline(findings: list[dict]) -> Path:
     BASELINE_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     baseline_path = BASELINE_DIR / f"secret_baseline_{ts}.json"
-    tmp_path = f"{baseline_path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            json.dump(
-                {"timestamp": datetime.now(UTC).isoformat(), "findings": findings, "total": len(findings)},
-                f,
-                ensure_ascii=False,
-                indent=2,
-            )
-        os.replace(tmp_path, baseline_path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(
+        baseline_path,
+        json.dumps(
+            {"timestamp": datetime.now(UTC).isoformat(), "findings": findings, "total": len(findings)},
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
     return baseline_path
 
 
@@ -203,16 +197,7 @@ def write_findings_report(findings: list[dict], new_findings: list[dict]) -> Pat
         "findings": findings,
         "new": new_findings,
     }
-    tmp_path = f"{report_path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-        os.replace(tmp_path, report_path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(report_path, json.dumps(report, ensure_ascii=False, indent=2))
     return report_path
 
 

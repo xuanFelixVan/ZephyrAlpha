@@ -56,6 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_MD
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.frontmatter import parse_frontmatter_raw_from_file
 from _shared.walk import iter_files
 
@@ -241,19 +242,7 @@ def main() -> None:
                 if isinstance(fm["depends_on"], list) and any(isinstance(d, str) for d in fm["depends_on"]):
                     new_content, count = fix_old_format(raw, rel)
                     if new_content and count:
-                        tmp_path = f"{filepath}.{os.getpid()}.tmp"
-
-                        try:
-                            Path(tmp_path).write_text(new_content, encoding="utf-8")
-
-                            os.replace(tmp_path, filepath)
-
-                        except PermissionError:
-                            try:
-                                os.remove(tmp_path)
-
-                            except OSError:
-                                pass
+                        atomic_write_safe(filepath, new_content)
                         print(f"  [FIXED] {rel} → {count} 个条目已转为占位格式", file=sys.stderr)
                         fixed_files += 1
                         fixed_entries += count

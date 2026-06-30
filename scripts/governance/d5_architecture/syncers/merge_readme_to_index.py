@@ -57,6 +57,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.frontmatter import parse_frontmatter
 
 ensure_utf8_stdout()
@@ -217,16 +218,7 @@ def main() -> int:
         try:
             merged_content = merge_pair(str(index_path), str(readme_path))
 
-            tmp_path = f"{index_path}.{os.getpid()}.tmp"
-            try:
-                with open(tmp_path, "w", encoding="utf-8") as f:
-                    f.write(merged_content)
-                os.replace(tmp_path, index_path)
-            except PermissionError:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
+            atomic_write_safe(index_path, merged_content)
 
             if not args.warn_only:
                 backup_dir = readme_path.parent / ".backup"

@@ -30,6 +30,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 from _shared.constants import REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -203,16 +204,7 @@ class GovernanceWatchdog:
                     "last_restart": svc.last_restart.isoformat() if svc.last_restart else None,
                 }
         os.makedirs(os.path.dirname(self._state_path), exist_ok=True)
-        tmp_path = f"{self._state_path}.{os.getpid()}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(state, f, indent=2, default=str)
-            os.replace(tmp_path, self._state_path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(self._state_path, json.dumps(state, indent=2, default=str))
 
 
 def _run_warn_only() -> dict[str, Any]:
@@ -300,16 +292,7 @@ def main() -> int:
     if args.warn_only:
         results = _run_warn_only()
         output_path = str(PROJECT_ROOT / "scripts" / "governance" / "governance_watchdog_warn_result.json")
-        tmp_path = f"{output_path}.{os.getpid()}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(results, f, indent=2, default=str)
-            os.replace(tmp_path, output_path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(output_path, json.dumps(results, indent=2, default=str))
         print(json.dumps(results, indent=2, default=str))
         return 0 if results["overall"] == "PASS" else 1
 

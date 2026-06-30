@@ -64,6 +64,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 POLICIES_ROOT = REPO_ROOT / "docs/01_policies_and_standards"
 IGNORE_FILE_MARKER = "_IGNORE_THIS_DIRECTORY_"
@@ -209,15 +210,7 @@ def fix_index(directory) -> None:
             )
 
     if updated != text:
-        tmp_path = f"{index_path}.{os.getpid()}.tmp"
-        try:
-            Path(tmp_path).write_text(updated, encoding="utf-8")
-            os.replace(tmp_path, index_path)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        if not atomic_write_safe(index_path, updated):
             return "SKIP", "locked by another process"
         return "FIXED", f"counts corrected ({disk_subdir_count} subdirs + {disk_file_count} files = {total})"
     return "OK", "already correct"

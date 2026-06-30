@@ -64,6 +64,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
@@ -203,17 +204,7 @@ def _load_db() -> dict:
 def _save_db(data: dict) -> None:
     """_save_db implementation."""
     _INTEGRITY_DB.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_INTEGRITY_DB}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            json_mod.dump(data, f, ensure_ascii=False, indent=2)
-
-        os.replace(tmp_path, _INTEGRITY_DB)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_INTEGRITY_DB, json_mod.dumps(data, ensure_ascii=False, indent=2))
 
 
 def register() -> dict:

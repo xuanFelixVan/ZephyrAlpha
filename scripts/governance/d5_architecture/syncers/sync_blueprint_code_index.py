@@ -57,6 +57,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -585,19 +586,7 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
         content = content.replace(f"version: {old_version}", f"version: {new_version}", 1)
         actions.append(f"📝 version: {old_version} → {new_version}")
 
-    tmp_path = f"{bp_path}.{os.getpid()}.tmp"
-
-    try:
-        Path(tmp_path).write_text(content, encoding="utf-8")
-
-        os.replace(tmp_path, bp_path)
-
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-
-        except OSError:
-            pass
+    atomic_write_safe(bp_path, content)
     actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")
     return True, actions
 

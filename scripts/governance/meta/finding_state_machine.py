@@ -37,6 +37,7 @@ Usage:
 from __future__ import annotations
 
 from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 args: []
@@ -119,16 +120,7 @@ def _load_states() -> dict:
 def _save_states(data: dict) -> None:
     """_save_states implementation."""
     _STATE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{_STATE_DB_PATH}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            json_mod.dump(data, f, ensure_ascii=False, indent=2)
-        os.replace(tmp_path, _STATE_DB_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(_STATE_DB_PATH, json_mod.dumps(data, ensure_ascii=False, indent=2))
 
 
 def _finding_id(finding: dict) -> str:

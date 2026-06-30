@@ -41,6 +41,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = {
     "args": [],
@@ -211,15 +212,7 @@ def main() -> int:
         clean = raw.removeprefix("\ufeff")
         new_body, changed = fix_content(clean)
         if changed:
-            tmp_path = f"{path}.{os.getpid()}.tmp"
-            try:
-                Path(tmp_path).write_text(new_body, encoding="utf-8", newline="\n")
-                os.replace(tmp_path, path)
-            except PermissionError:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
+            atomic_write_safe(path, new_body)
             changed_n += 1
     print(f"[fix_module_manifest_layout] 已更新 {changed_n} 个文件")
     return EXIT_PASS

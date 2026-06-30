@@ -44,6 +44,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -387,19 +388,7 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     if not dry_run:
-        tmp_path = f"{output_path}.{os.getpid()}.tmp"
-
-        try:
-            Path(tmp_path).write_text(final_content, encoding="utf-8")
-
-            os.replace(tmp_path, output_path)
-
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-
-            except OSError:
-                pass
+        atomic_write_safe(output_path, final_content)
         print(f"  ✅ {physical}")
 
     return str(output_path)
@@ -484,19 +473,7 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
 
     content = "\n".join(init_lines) + "\n"
     if not dry_run:
-        tmp_path = f"{init_file}.{os.getpid()}.tmp"
-
-        try:
-            Path(tmp_path).write_text(content, encoding="utf-8")
-
-            os.replace(tmp_path, init_file)
-
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-
-            except OSError:
-                pass
+        atomic_write_safe(init_file, content)
 
 
 def main() -> None:

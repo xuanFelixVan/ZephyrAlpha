@@ -64,6 +64,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _AB_LOG_DIR = _SCRIPTS_DIR / "meta" / "ab_test_results"
 _KAYENTA_THRESHOLD_PASS = 0.95
@@ -211,17 +212,7 @@ def run_ab_test(baseline: str, canary: str, target_scope: str | None = None) -> 
 
     ts_str = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     report_path = _AB_LOG_DIR / f"ab-{baseline.replace('/', '-')}-{ts_str}.json"
-    tmp_path = f"{report_path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            json_mod.dump(report, f, ensure_ascii=False, indent=2)
-
-        os.replace(tmp_path, report_path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(report_path, json_mod.dumps(report, ensure_ascii=False, indent=2))
     return report
 
 

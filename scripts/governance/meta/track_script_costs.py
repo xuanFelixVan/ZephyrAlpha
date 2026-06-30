@@ -61,6 +61,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 _COST_DB = _REPO_ROOT / "scripts" / "governance" / "meta" / "script_cost_db.jsonl"
 _COST_STATE = _REPO_ROOT / "scripts" / "governance" / "meta" / "cost_tracking_state.json"
 

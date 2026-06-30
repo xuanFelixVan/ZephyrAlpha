@@ -42,6 +42,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 dimensions: [D1, D5]
@@ -177,15 +178,7 @@ def main() -> None:
         if args.dry_run:
             print(f"[DRY-RUN] 将注入: {rel_path}")
         else:
-            tmp_path = f"{py_file}.{os.getpid()}.tmp"
-            try:
-                Path(tmp_path).write_text(new_content, encoding="utf-8")
-                os.replace(tmp_path, py_file)
-            except PermissionError:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
+            atomic_write_safe(py_file, new_content)
 
         injected += 1
 

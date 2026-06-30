@@ -45,6 +45,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.registry_entry_count import count_primary_registry_entries
 
 __manifest__ = """
@@ -155,16 +156,8 @@ def refresh(dry_run: bool = True) -> tuple[bool, list[str]]:
     if not dry_run and changed:
         master["last_auto_refresh"] = "2026-05-06"
         master["entries_auto_refreshed"] = True
-        tmp_path = f"{MASTER_INDEX_PATH}.{os.getpid()}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                yaml.dump(master, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-            os.replace(tmp_path, MASTER_INDEX_PATH)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        content = yaml.dump(master, allow_unicode=True, default_flow_style=False, sort_keys=False)
+        atomic_write_safe(MASTER_INDEX_PATH, content)
         msgs.append(f"  已写盘: {updated_count} 个条目刷新")
 
     return (changed, msgs)

@@ -55,6 +55,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 SSOT_PATHS = {
     "total_scripts": REPO_ROOT / "scripts" / "governance" / "script_manifest.yaml",
@@ -140,19 +141,7 @@ def sync(check_only: bool = False) -> int:
 
     if check_only:
         return EXIT_FINDINGS
-    tmp_path = f"{AUDIT_PROTOCOL}.{os.getpid()}.tmp"
-
-    try:
-        Path(tmp_path).write_text(new_text, encoding="utf-8")
-
-        os.replace(tmp_path, AUDIT_PROTOCOL)
-
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-
-        except OSError:
-            pass
+    atomic_write_safe(AUDIT_PROTOCOL, new_text)
     print(f"SYNCED — {AUDIT_PROTOCOL.name} updated")
     return EXIT_PASS
 

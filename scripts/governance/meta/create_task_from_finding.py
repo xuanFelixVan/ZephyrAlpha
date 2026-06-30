@@ -55,6 +55,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR, DB_PATH
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 REPO_ROOT_DIR = str(REPO_ROOT)
 if REPO_ROOT_DIR not in sys.path:
@@ -336,16 +337,7 @@ def create_task_card(
     TASK_CARDS_DIR.mkdir(parents=True, exist_ok=True)
 
     task_path = TASK_CARDS_DIR / f"TASK-{task_id}.md"
-    tmp_path = f"{task_path}.{id(task_path)}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(md_content)
-        os.replace(tmp_path, str(task_path))
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(task_path, md_content)
 
     write_to_sqlite(tc)
 

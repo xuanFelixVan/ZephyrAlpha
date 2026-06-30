@@ -39,6 +39,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
@@ -162,24 +163,13 @@ def main() -> None:
         print("OK: 门禁登记表与 .pre-commit-config.yaml 一致")
         return
 
-    tmp_path = f"{args.output}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            # .md 文件用 --- frontmatter 格式（GATE-15 要求 .md 必须有 frontmatter）
-            # .yaml 文件用纯 YAML（yaml.load 直接加载）
-            if args.output.endswith(".md"):
-                f.write("---\n")
-                yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-                f.write("---\n")
-            else:
-                yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-
-        os.replace(tmp_path, args.output)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    # .md 文件用 --- frontmatter 格式（GATE-15 要求 .md 必须有 frontmatter）
+    # .yaml 文件用纯 YAML（yaml.load 直接加载）
+    if args.output.endswith(".md"):
+        content = "---\n" + yaml.dump(output, allow_unicode=True, default_flow_style=False, sort_keys=False) + "---\n"
+    else:
+        content = yaml.dump(output, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    atomic_write_safe(args.output, content)
     print(f"已生成 {output['total_gates']} 条门禁 → {args.output}")
 
 

@@ -29,6 +29,7 @@ Usage:
 
 from __future__ import annotations
 from _shared.constants import REPO_ROOT
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
 args: []
@@ -87,20 +88,8 @@ def _build_index(findings: list[dict]) -> dict[str, dict]:
 
 
 def _atomic_write(path: Path, content: str) -> None:
-    """原子写入：写 tmp(pid 后缀) → os.replace → PermissionError 时清理 tmp。
-
-    多 AI 并发安全：tmp 文件名带 pid 避免跨进程覆盖；os.replace 同文件系统原子。
-    """
-    tmp_path = f"{path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        os.replace(tmp_path, path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    """原子写入：委托共享桥 atomic_write_safe（治本 ARCH-036 P1-1 收敛 tmp+replace 样板）。"""
+    atomic_write_safe(path, content)
 
 
 def _serialize_jsonl(findings: list[dict]) -> str:

@@ -47,6 +47,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -104,19 +105,7 @@ def archive_old_stages(dry_run: bool = False) -> int:
             print(f"  [DRY-RUN] 归档: {stage_title} → {archive_path.relative_to(REPO_ROOT)}")
         else:
             ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
-            tmp_path = f"{archive_path}.{os.getpid()}.tmp"
-
-            try:
-                Path(tmp_path).write_text(f"# {stage_title}\n\n{stage_content}", encoding="utf-8")
-
-                os.replace(tmp_path, archive_path)
-
-            except PermissionError:
-                try:
-                    os.remove(tmp_path)
-
-                except OSError:
-                    pass
+            atomic_write_safe(archive_path, f"# {stage_title}\n\n{stage_content}")
             print(f"  归档: {stage_title} → {archive_path.relative_to(REPO_ROOT)}")
 
     if not dry_run:
@@ -126,19 +115,7 @@ def archive_old_stages(dry_run: bool = False) -> int:
             + "\n> 历史归档：旧 Stage 已移至 archive/rationale-log/\n\n"
             + content[last_keep_start:]
         )
-        tmp_path = f"{RATIONALE_LOG}.{os.getpid()}.tmp"
-
-        try:
-            Path(tmp_path).write_text(new_content, encoding="utf-8")
-
-            os.replace(tmp_path, RATIONALE_LOG)
-
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-
-            except OSError:
-                pass
+        atomic_write_safe(RATIONALE_LOG, new_content)
         print(f"主文件已精简：{new_content.count(chr(10)) + 1} 行")
 
     return EXIT_PASS

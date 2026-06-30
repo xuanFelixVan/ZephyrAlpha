@@ -52,6 +52,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 ensure_utf8_stdout()
 
@@ -207,17 +208,7 @@ def sync(check_only: bool = False) -> int:
         print("       请运行 sync_policies_index.py 修复")
         return EXIT_FINDINGS
 
-    tmp_path = f"{PS_IDX_PATH}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            f.write(updated)
-
-        os.replace(tmp_path, PS_IDX_PATH)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    atomic_write_safe(PS_IDX_PATH, updated)
     print("OK: PS-IDX-001 §二 文件数表格已从磁盘实际同步更新")
     return EXIT_PASS
     """sync."""

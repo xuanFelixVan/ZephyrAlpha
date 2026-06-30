@@ -35,6 +35,12 @@ import sys
 from datetime import date
 from pathlib import Path
 
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
@@ -479,16 +485,7 @@ def main() -> None:
         content = build_index_content(rel_dir, list_files)
 
         try:
-            tmp_path = f"{index_path}.{os.getpid()}.tmp"
-            try:
-                with open(tmp_path, encoding="utf-8") as f:
-                    f.write(content)
-                os.replace(tmp_path, index_path)
-            except PermissionError:
-                try:
-                    os.remove(tmp_path)
-                except OSError:
-                    pass
+            atomic_write_safe(index_path, content)
             print(f"  CREATED: {rel_dir or 'docs/'}/index.md")
             created += 1
         except OSError as e:

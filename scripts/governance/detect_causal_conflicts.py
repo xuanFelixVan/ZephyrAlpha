@@ -35,6 +35,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -487,16 +488,7 @@ def main() -> int:
 
     if args.output:
         out_path = PROJECT_ROOT / args.output
-        tmp_path = f"{out_path!s}.{os.getpid()}.tmp"
-        try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(report, f, indent=2, default=str)
-            os.replace(tmp_path, str(out_path))
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        atomic_write_safe(str(out_path), json.dumps(report, indent=2, default=str))
         print(f"[CAUSAL_CONFLICT] Report written to {args.output}")
 
     return 1 if report["has_critical"] else 0

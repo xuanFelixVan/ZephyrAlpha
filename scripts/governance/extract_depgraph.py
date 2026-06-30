@@ -77,6 +77,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 
 def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
@@ -122,17 +123,8 @@ def _write_output(data: dict | list, output_path: str | None) -> None:
     """原子写入输出（RULE-ONE）。"""
     content = json.dumps(data, ensure_ascii=False, indent=2, cls=_CustomEncoder)
     if output_path:
-        tmp = f"{output_path}.{os.getpid()}.tmp"
-        try:
-            with open(tmp, "w", encoding="utf-8") as f:
-                f.write(content)
-            os.replace(tmp, output_path)
+        if atomic_write_safe(output_path, content):
             print(f"Output written to: {output_path}", file=sys.stderr)
-        except PermissionError:
-            try:
-                os.remove(tmp)
-            except OSError:
-                pass
     else:
         print(content)
 
