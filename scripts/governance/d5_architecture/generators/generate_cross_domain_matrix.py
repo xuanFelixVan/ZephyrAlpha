@@ -40,6 +40,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
@@ -107,9 +108,9 @@ def generate_cross_domain_matrix() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。")
     lines.append("")
-    lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_cross_domain_matrix.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph (PostgreSQL) edges表 + nodes表")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} edges表 + nodes表")
     lines.append("")
 
     # 统计概览

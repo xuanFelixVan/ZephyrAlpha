@@ -40,6 +40,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "constraint_violations.md"
@@ -97,9 +98,9 @@ def generate_constraint_violations() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。")
     lines.append("")
-    lines.append("> 本文档由 generate_constraint_violations.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_constraint_violations.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph (PostgreSQL) arch_constraints表")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} arch_constraints表")
     lines.append("")
 
     # 统计概览

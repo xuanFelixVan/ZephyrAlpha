@@ -41,6 +41,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "design_vs_production.md"
@@ -108,9 +109,9 @@ def generate_design_vs_production() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。")
     lines.append("")
-    lines.append("> 本文档由 generate_design_vs_production.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_design_vs_production.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph (PostgreSQL) nodes表")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表")
     lines.append("")
 
     # 全局统计

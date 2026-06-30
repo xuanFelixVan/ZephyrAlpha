@@ -41,6 +41,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "global_capability_heatmap.md"
@@ -253,14 +254,14 @@ def generate_heatmap() -> str:
     try:
         use_arch_table = table_exists(conn, "arch_domain_capacity")
         if use_arch_table:
-            data_source = "depgraph (PostgreSQL) arch_domain_capacity表"
+            data_source = f"{DB_DISPLAY_NAME} arch_domain_capacity表"
             # Primary data source: arch_domain_capacity table
             # When this table exists, query it for capability data
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
         else:
             # Fallback: arch_domain_capacity merged into domains table in v6
-            data_source = "depgraph (PostgreSQL) domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
+            data_source = f"{DB_DISPLAY_NAME} domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
     finally:
@@ -311,7 +312,7 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
     lines.append("")
-    lines.append("> 本文档由 generate_capability_heatmap.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_capability_heatmap.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
     lines.append(f"> 数据源: {data_source}")
     lines.append("")

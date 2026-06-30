@@ -43,6 +43,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"
@@ -103,7 +104,7 @@ def generate_integration_topology(conn: PgConnExecuteWrapper) -> str:
     lines.append("> **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。")
     lines.append("")
     lines.append(f"> 自动生成时间: {now}")
-    lines.append("> 数据源: depgraph (PostgreSQL) edges表（跨域依赖）")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} edges表（跨域依赖）")
     lines.append(f"> 跨域依赖对数: {len(deps)}")
     lines.append("")
     lines.append("```mermaid")
@@ -111,7 +112,7 @@ def generate_integration_topology(conn: PgConnExecuteWrapper) -> str:
 
     lines.append("%% 所有功能域集成依赖关系图")
     lines.append(f"%% 生成时间: {now}")
-    lines.append("%% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）")
+    lines.append(f"%% 数据源: {DB_DISPLAY_NAME} edges表（跨域依赖）")
     lines.append(f"%% 跨域依赖对数: {len(deps)}")
     lines.append("")
     lines.append("graph LR")

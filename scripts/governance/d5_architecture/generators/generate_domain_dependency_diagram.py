@@ -41,7 +41,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
-from _common import cleanup_stale_files  # noqa: E402
+from _common import cleanup_stale_files, DB_DISPLAY_NAME  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -124,7 +124,7 @@ def generate_dependency_diagram(domain_id: str, conn: PgConnExecuteWrapper) -> s
     lines = []
     lines.append(f"%% {domain_id} 域全景依赖图")
     lines.append(f"%% 生成时间: {now}")
-    lines.append("%% 数据源: depgraph (PostgreSQL) nodes表 + edges表")
+    lines.append(f"%% 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append(f"%% 模块数: {len(nodes)}, 依赖边数: {len(edges)}")
     lines.append("")
     lines.append("graph TD")

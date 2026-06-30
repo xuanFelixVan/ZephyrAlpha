@@ -43,6 +43,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
@@ -123,7 +124,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("> 这是你查看 ZephyrAlpha 架构的入口。从这里出发，你能找到所有架构相关的文档和图。")
     lines.append(">")
     lines.append(
-        "> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph (PostgreSQL)），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。"
+        f"> **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（{DB_DISPLAY_NAME}），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。"
     )
     lines.append(">")
     lines.append(
@@ -189,7 +190,7 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("## 数据从哪来")
     lines.append("")
     lines.append("**所有文档都是自动生成的**：")
-    lines.append("- 数据源：depgraph (PostgreSQL) 数据库（全景图数据库）")
+    lines.append(f"- 数据源：{DB_DISPLAY_NAME} 数据库（全景图数据库）")
     lines.append("- 全景图是唯一真源")
     lines.append("- 架构图是全景图的派生物")
     lines.append("- 禁止手工修改自动生成的文档")

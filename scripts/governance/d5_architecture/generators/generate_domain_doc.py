@@ -56,7 +56,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
-from _common import cleanup_stale_files
+from _common import cleanup_stale_files, DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
@@ -839,9 +839,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("")
     lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。")
     lines.append("")
-    lines.append("> 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append(f"> 最后更新: {now}")
-    lines.append("> 数据源: depgraph (PostgreSQL) nodes表 + edges表")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append("")
 
     # 域基本信息（中英文对照）
@@ -964,7 +964,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 说明
     lines.append("## 说明 / Notes")
     lines.append("")
-    lines.append("- **数据源 / Data Source**: `depgraph (PostgreSQL)` 的 `nodes`、`edges`、`domains` 表")
+    lines.append(f"- **数据源 / Data Source**: `{DB_DISPLAY_NAME}` 的 `nodes`、`edges`、`domains` 表")
     lines.append("- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）")
     lines.append("- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新")
     lines.append("- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`")

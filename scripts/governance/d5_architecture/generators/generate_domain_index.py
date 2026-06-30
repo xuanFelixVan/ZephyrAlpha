@@ -41,6 +41,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs" / "domain_index.md"
@@ -99,9 +100,9 @@ def generate_domain_index() -> str:
     lines.append("")
     lines.append("> **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。")
     lines.append("")
-    lines.append("> 本文档由 generate_domain_index.py 从 depgraph (PostgreSQL) 自动生成")
+    lines.append(f"> 本文档由 generate_domain_index.py 从 {DB_DISPLAY_NAME} 自动生成")
     lines.append("> 最后更新以 git log 为准")
-    lines.append("> 数据源: depgraph (PostgreSQL) domains表 + nodes表")
+    lines.append(f"> 数据源: {DB_DISPLAY_NAME} domains表 + nodes表")
     lines.append("")
 
     # 统计概览
