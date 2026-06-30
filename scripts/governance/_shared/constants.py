@@ -50,7 +50,7 @@ from psycopg2.extras import RealDictCursor  # noqa: E402
 # 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
 # 治本（2026-06-28）：原直接 import 同名，L107 调用解析到局部 wrapper → RecursionError →
 # path_tree sync failed warning。改用别名消除遮蔽。见 AGENTS.md §11.4。
-from zephyr.governance.depgraph_schema import (
+from zephyr.governance.rule_bridge.depgraph_schema import (
     get_depgraph_pg_connection as _get_depgraph_pg_connection_from_depgraph_schema,  # noqa: E402
 )
 

@@ -47,7 +47,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.governance.commit_gate_registry import GateSpec
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
 
 __all__ = ["make_held_overlap_gate"]
 

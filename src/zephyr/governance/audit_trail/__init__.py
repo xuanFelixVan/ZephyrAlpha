@@ -64,9 +64,9 @@ from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBri
 from zephyr.governance.audit_trail.trust_bridge import TrustBridge
 from zephyr.governance.audit_trail.trust_engine import TrustEngine, TrustLevel
 from zephyr.governance.audit_trail.writer import AuditReportWriter
-from zephyr.governance.evidence_pack import EvidencePack
-from zephyr.governance.integrity import IntegrityGuard
-from zephyr.governance.merkle_hourly import MerkleHourlyBridge
+from zephyr.governance.audit_trail.evidence_pack import EvidencePack
+from zephyr.governance.audit_trail.integrity import IntegrityGuard
+from zephyr.governance.audit_trail.merkle_hourly import MerkleHourlyBridge
 
 
 def __getattr__(name):

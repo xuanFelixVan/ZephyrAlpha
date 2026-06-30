@@ -69,16 +69,16 @@ def shorten_path(path: str, max_len: int = 40) -> str:
 
 
 def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询指定域的所有节点。"""
+    """查询指定域的所有节点（排除 deprecated 孤儿节点）。"""
     cur = conn.execute(
-        "SELECT node_id, path, design_maturity FROM nodes WHERE domain_id=%s ORDER BY path",
+        "SELECT node_id, path, design_maturity FROM nodes WHERE domain_id=%s AND build_status != 'deprecated' ORDER BY path",
         (domain_id,),
     )
     return [{"node_id": r["node_id"], "path": r["path"] or "", "design_maturity": r["design_maturity"] or ""} for r in cur.fetchall()]
 
 
 def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询涉及指定域的所有边（域内+跨域）。"""
+    """查询涉及指定域的所有边（域内+跨域，排除 deprecated 孤儿节点的边）。"""
     cur = conn.execute(
         """SELECT e.from_node_id, n1.path AS from_path, n1.domain_id AS from_domain,
                   e.to_node_id, n2.path AS to_path, n2.domain_id AS to_domain,
@@ -86,7 +86,9 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n1.domain_id=%s OR n2.domain_id=%s
+           WHERE (n1.domain_id=%s OR n2.domain_id=%s)
+             AND n1.build_status != 'deprecated'
+             AND n2.build_status != 'deprecated'
            ORDER BY e.edge_id""",
         (domain_id, domain_id),
     )
