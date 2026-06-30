@@ -1,12 +1,20 @@
-# 自动生成于 2026-06-30T13:06:23Z
+# 自动生成于 2026-06-30T13:11:52Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-30T13:06:23Z'
+generated_at: '2026-06-30T13:11:52Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 20
+total_registries: 21
 registries:
+- registry_id: GOV-AI-001
+  name: AI 自治权限登记表（全模块权限终表）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: CFG-ai-risk-register
   name: AI 风险登记簿
   category: governance_rule
@@ -157,7 +165,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 141
+  entry_count: 142
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表
