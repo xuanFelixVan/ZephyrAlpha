@@ -144,7 +144,7 @@ SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.infrastructure.finding import (
+    from zephyr.infrastructure.script_system.finding import (
         BlastRadius,
         Dimension,
         Finding,
@@ -156,17 +156,6 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
-
-try:
-    from zephyr.infrastructure.finding_task_bridge import (
-        AuditFinding,
-        FindingTaskBridge,
-        bridge_findings_to_tasks,
-    )
-
-    BRIDGE_AVAILABLE = True
-except ImportError:
-    BRIDGE_AVAILABLE = False
 
     from enum import Enum
 
@@ -202,6 +191,17 @@ except ImportError:
                 "D12": "AI幻觉检测",
             }
             return _LABELS.get(self.value, self.value)
+
+try:
+    from zephyr.infrastructure.finding_task_bridge import (
+        AuditFinding,
+        FindingTaskBridge,
+        bridge_findings_to_tasks,
+    )
+
+    BRIDGE_AVAILABLE = True
+except ImportError:
+    BRIDGE_AVAILABLE = False
 
 
 if FINDING_AVAILABLE:
