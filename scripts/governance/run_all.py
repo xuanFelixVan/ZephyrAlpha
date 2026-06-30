@@ -80,6 +80,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR, DB_PATH
+from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P3-A5): 全局硬超时读SSoT
 
 DEFAULT_OUTPUT = SCRIPTS_DIR / "reports" / "findings.jsonl"
 
@@ -137,7 +138,7 @@ _SKIP_INTERNAL: frozenset[str] = frozenset({_SMOKE_TEST_SCRIPT, _SELF_SCRIPT})
 
 _USE_BULKHEAD = True
 
-GLOBAL_HARD_TIMEOUT_SECONDS = 600
+GLOBAL_HARD_TIMEOUT_SECONDS = _get_threshold("scanning.global_hard_timeout_seconds", 3600)  # 治本(ARCH-036 P3-A5): 从SSoT读取(原硬编码600与SSoT 3600漂移)
 
 SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 
