@@ -22,7 +22,7 @@ Vocabulary 同步链路回归测试（议题 #ARCH-008 / 裁定#206）
   Bug H — DB_PATH 硬编码绝对路径 / constants 缺 DEPGRAPH_DB_PATH
 
 设计原则：
-  1. 只读——不向生产 depgraph.db / governance.db 写入任何数据
+  1. 只读——不向生产 depgraph / governance.db 写入任何数据
   2. 行为优先——能跑脚本验证行为的不只做静态检查
   3. 静态兜底——锁保护 / DB_PATH 引用等无法行为测试的做源码静态断言
   4. 子集容忍——triage.py 等子集消费者只校验"无非法值"，不强制全等
