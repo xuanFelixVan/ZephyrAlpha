@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-29T18:22:52Z'
+generated_at: '2026-06-30T02:31:20Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 137
+total_files: 138
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -84,7 +84,7 @@ files:
   - 创建入口
   - 零残留
   - 根目录清爽
-  section_count: 8
+  section_count: 9
 - path: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml
   module_id: TRAE-002
   title: 反孤儿与搜索先行协议
@@ -2156,6 +2156,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml
   module_id: PS-VOC-027
   title: module_lifecycle_status 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/node_type_vocabulary.yaml
+  module_id: PS-VOC-033
+  title: node_type 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
