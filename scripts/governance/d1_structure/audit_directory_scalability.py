@@ -45,7 +45,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-C_TRACK_LAYERS = [
+C_TRACK_LAYERS = [  # noqa: gate-vocab  层目录名，非 domain 值
     "data",
     "infrastructure_runtime_integration",
     "factor",

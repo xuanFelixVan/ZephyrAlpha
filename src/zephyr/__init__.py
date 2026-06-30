@@ -160,7 +160,7 @@ register_lazy(
 register_lazy("autopilot", "zephyr.integration.runtime_core.autopilot")  # MOD-INF-012B AutoPilot — AI session 自动驾驶
 register_lazy("signal", "zephyr.signal")  # MOD-L03-001 Signal domain
 register_lazy("ml_train", "zephyr.ml_train")  # MOD-L11-001 ML Training domain
-__all__ = [
+__all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "autonomy_perm",
     "compliance",
     "cross_asset",

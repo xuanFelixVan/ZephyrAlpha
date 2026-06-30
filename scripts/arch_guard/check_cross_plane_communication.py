@@ -43,7 +43,7 @@ _FORBIDDEN = re.compile(
     r"from\s+zephyr\.ex_core\b|import\s+zephyr\.ex_core",
     re.IGNORECASE,
 )
-_COLD_PREFIXES = ("data", "factor", "simulation")
+_COLD_PREFIXES = ("data", "factor", "simulation")  # noqa: gate-vocab  冷层前缀业务子集
 
 def main() -> int:
     slo = load_yaml(CAPACITY_SLO_PATH)

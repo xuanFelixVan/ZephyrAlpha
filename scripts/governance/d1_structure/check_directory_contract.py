@@ -4,7 +4,7 @@
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] _shared.constants; _shared.frontmatter; _shared.walk
 # [CONSUMERS] .pre-commit-config.yaml GATE-DIRECTORY-CONTRACT (pre-commit hook，已启用)
-# [STARTUP] auto_pre_commit
+# [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 真源为 directory_contract.yaml + doc_type_vocabulary.yaml；DCR-001~007 全部已启用；只读校验不修改文件
 # [STABILITY] evolving

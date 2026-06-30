@@ -66,7 +66,7 @@ ensure_utf8_stdout()
 
 import argparse
 
-PRODUCER_LAYERS = {
+PRODUCER_LAYERS = {  # noqa: gate-vocab  生产者层业务子集
     "data",
     "factor",
     "signal",
@@ -74,7 +74,7 @@ PRODUCER_LAYERS = {
     "ex_core",
 }
 
-CONSUMER_LAYERS = {
+CONSUMER_LAYERS = {  # noqa: gate-vocab  消费者层值，非 domain 值
     "data",
     "factor",
     "signal",

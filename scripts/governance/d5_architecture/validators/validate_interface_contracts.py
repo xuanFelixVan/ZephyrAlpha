@@ -51,6 +51,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -59,7 +60,8 @@ import argparse
 import yaml
 
 REQUIRED_CONTRACT_FIELDS = ["contract_id", "provider", "consumers", "interface_type", "schema", "version", "status"]
-VALID_CONTRACT_STATUSES = {"draft", "frozen", "deprecated"}
+# 治本（2026-06-30）：从 contract_status_vocabulary.yaml 动态加载（SSoT，PS-VOC-026）。
+VALID_CONTRACT_STATUSES = load_vocabulary_values("contract_status_vocabulary.yaml")
 CONTRACT_ID_PATTERN = re.compile("^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")
 SEMVER_PATTERN = re.compile("^\\d+\\.\\d+\\.\\d+$")
 

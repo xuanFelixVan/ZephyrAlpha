@@ -51,6 +51,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -61,7 +62,8 @@ from datetime import datetime
 
 import yaml
 
-VALID_MODULE_STATUSES = {"planned", "in_design", "in_dev", "testing", "active", "suspended", "deprecated", "archived"}
+# 治本（2026-06-30）：从 module_lifecycle_status_vocabulary.yaml 动态加载（SSoT，PS-VOC-027）。
+VALID_MODULE_STATUSES = load_vocabulary_values("module_lifecycle_status_vocabulary.yaml")
 FORBIDDEN_REVERSE_TRANSITIONS = {
     ("active", "in_dev"),
     ("active", "testing"),

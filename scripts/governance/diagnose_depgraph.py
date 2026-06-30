@@ -55,7 +55,7 @@ LAYER_MAP = {
 
 LAYER_KEYS_SORTED = sorted(LAYER_MAP.keys(), key=lambda x: -len(x))
 
-ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "template", "schema", "data", "config"}
+ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "template", "schema", "data", "config"}  # noqa: gate-vocab  孤儿节点豁免类型业务子集
 
 
 def load_depgraph():

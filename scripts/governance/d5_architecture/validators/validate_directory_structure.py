@@ -78,7 +78,7 @@ from _shared.thresholds import get
 SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"
 DOCS = REPO_ROOT / "docs"
 
-C_TRACK_DIRS: set[str] = {
+C_TRACK_DIRS: set[str] = {  # noqa: gate-vocab  层目录名，非 domain 值
     "data",
     "infrastructure_runtime_integration",
     "factor",

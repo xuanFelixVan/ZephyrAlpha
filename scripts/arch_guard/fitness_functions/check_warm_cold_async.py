@@ -38,8 +38,8 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
-WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}
-COLD_MODULES = {"data", "pf_core", "research", "integration"}
+WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}  # noqa: gate-vocab  温模块业务子集
+COLD_MODULES = {"data", "pf_core", "research", "integration"}  # noqa: gate-vocab  冷模块业务子集
 
 BLOCKING_PATTERNS = ["requests.get", "requests.post", "urllib.request", "subprocess.run", "subprocess.call"]
 

@@ -56,7 +56,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-SCAN_DIRS = ["factor", "signal", "risk"]
+SCAN_DIRS = ["factor", "signal", "risk"]  # noqa: gate-vocab  PIT 扫描目录业务子集
 
 LOOKAHEAD_PATTERNS = [
     (re.compile(r"\.shift\s*\(\s*-\s*\d+"), "shift(-N) — negative shift accesses future data"),

@@ -364,7 +364,7 @@ def check_delete(filepath: str) -> AdmissionResult:
             content = resolved.read_text(encoding="utf-8", errors="replace")
             if len(content.strip()) == 0:
                 return CheckItem("DEL-004", "RULE-THREE STEP 3: 内容价值检查", "GREEN", "空文件——无内容价值")
-            unique_indicators = [
+            unique_indicators = [  # noqa: gate-vocab  内容检测子串，非 file_category
                 "class ",
                 "def ",
                 "yaml",

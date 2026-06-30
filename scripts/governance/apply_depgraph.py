@@ -486,7 +486,7 @@ def add_design_node(
         return -1
 
     # 校验build_status（5态枚举）
-    valid_status = {"planned", "generated", "testing", "stable", "deprecated"}
+    valid_status = {"planned", "generated", "testing", "stable", "deprecated"}  # noqa: gate-vocab  build_status 5态，非 module_lifecycle_status
     if build_status not in valid_status:
         print(f"ERROR: build_status必须是{valid_status}之一: {build_status}", file=sys.stderr)
         return -1

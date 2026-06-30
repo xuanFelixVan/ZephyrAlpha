@@ -63,7 +63,7 @@ from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
 TESTS_DIR = REPO_ROOT / "tests"
 
-SKIP_MODULES = {
+SKIP_MODULES = {  # noqa: gate-vocab  跳过测试覆盖的目录名，非 domain 值
     "data",
     "infrastructure_runtime_integration",
     "factor",

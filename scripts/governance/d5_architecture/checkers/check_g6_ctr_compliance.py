@@ -103,7 +103,7 @@ MONEY_FIELD_PATTERNS = {
 }
 ALLOWED_CONTRACT_DIR = "shared/contracts"
 ALLOWED_SHARED_DIR = "shared"
-LAYER_DIRS = [
+LAYER_DIRS = [  # noqa: gate-vocab  层目录名，非 domain 值
     "data",
     "infrastructure_runtime_integration",
     "factor",

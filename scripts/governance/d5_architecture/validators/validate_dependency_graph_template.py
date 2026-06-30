@@ -56,7 +56,7 @@ NODE_REQUIRED_FIELDS = ["node_id", "type", "layer", "change_policy", "impact_lev
 
 EDGE_REQUIRED_FIELDS = ["edge_id", "from", "to", "dep_type", "strength", "direction"]
 
-NODE_TYPES = {
+NODE_TYPES = {  # noqa: gate-vocab  node_type 枚举，非 file_category
     "application",
     "module",
     "package",
@@ -81,7 +81,7 @@ LAYERS = {
     "domain_integration",
 }
 
-DEP_TYPES = {
+DEP_TYPES = {  # noqa: gate-vocab  模板允许的 dep_type 子集（10/12，排除 references/owned_by）
     "import_depends",
     "blueprint_depends",
     "script_depends",

@@ -57,7 +57,7 @@ ensure_utf8_stdout()
 
 from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
-SKIP_MODULES = {
+SKIP_MODULES = {  # noqa: gate-vocab  跳过 import 风格检查的业务子集
     "signal",
     "risk",
     "pf_core",

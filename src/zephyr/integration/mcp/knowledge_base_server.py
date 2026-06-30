@@ -42,6 +42,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 治本 2026-06-30 SSoT 词表加载
 
 __all__ = ["KnowledgeBaseServer", "create_server"]
 
@@ -76,20 +77,8 @@ _VMS_COLLECTIONS = frozenset(
     }
 )
 _LEGACY_COLLECTIONS = _VALID_COLLECTIONS - _VMS_COLLECTIONS
-_VALID_CATEGORIES = frozenset(
-    {
-        "blueprint_decision",
-        "strategy",
-        "factor",
-        "best_practice",
-        "lesson_learned",
-        "architecture",
-        "risk_control",
-        "data_governance",
-        "operations",
-        "compliance",
-    }
-)
+# 治本（2026-06-30）：从 category_vocabulary.yaml 动态加载（SSoT，PS-VOC-013）。
+_VALID_CATEGORIES = frozenset(load_vocabulary_values("category_vocabulary.yaml"))
 
 
 class KnowledgeBaseServer(BaseMCPServer):
