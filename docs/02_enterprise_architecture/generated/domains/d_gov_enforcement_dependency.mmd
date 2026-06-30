@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-01 04:34:13
+%% 生成时间: 2026-07-01 05:07:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 75, 依赖边数: 198
+%% 模块数: 75, 依赖边数: 197
 
 graph TD
 
@@ -209,11 +209,10 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
-    %% D_TRADING -> D_GOV_ENFORCEMENT (5 条)
+    %% D_TRADING -> D_GOV_ENFORCEMENT (4 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enf___ent_task_completion_gate_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
 
     %% 跨域依赖（出）- 最多显示 30 条
@@ -244,5 +243,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 138 条
-    %% 跨域入边: 40 条
+    %% 跨域入边: 39 条
     %% 跨域出边: 20 条

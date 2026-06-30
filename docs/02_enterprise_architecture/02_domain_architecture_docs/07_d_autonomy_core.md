@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 04:34:11
+> 最后更新: 2026-07-01 05:07:04
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 62 | Module Count | 62 |
 | 域内依赖 | 55 | Internal Dependencies | 55 |
 | 跨域入边 | 223 | Cross-domain Incoming | 223 |
-| 跨域出边 | 46 | Cross-domain Outgoing | 46 |
+| 跨域出边 | 45 | Cross-domain Outgoing | 45 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 61 | Prototype Modules | 61 |
 | 生产态模块 | 1 | Production Modules | 1 |
@@ -123,7 +123,6 @@ graph TD
     D_KNOWLEDGE["D_KNOWLEDGE design"]
     src_zephyr_autonomy_core_all_skill_modules_py -.->|contract| D_KNOWLEDGE
     D_GOVERNANCE -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -131,7 +130,6 @@ graph TD
     D_INTELLIGENCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_all_skill_modules_py
     D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -222,7 +220,7 @@ graph TD
 |--------|:---:|---------|
 | D_INTEGRATION | 17 | import_depends |
 | D_GOVERNANCE | 8 | import_depends,runtime |
-| D_AUDITTEST | 6 | contract,data,runtime |
+| D_AUDITTEST | 5 | contract,data,runtime |
 | D_GOV_AUDIT | 4 | import_depends,runtime |
 | D_SHARED | 3 | import_depends |
 | D_SECURITY | 3 | import_depends |

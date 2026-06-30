@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 04:34:11
+> 最后更新: 2026-07-01 05:07:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 77 | Module Count | 77 |
 | 域内依赖 | 69 | Internal Dependencies | 69 |
-| 跨域入边 | 206 | Cross-domain Incoming | 206 |
+| 跨域入边 | 204 | Cross-domain Incoming | 204 |
 | 跨域出边 | 90 | Cross-domain Outgoing | 90 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 25 | Prototype Modules | 25 |
@@ -209,7 +209,6 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_query_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_indexer_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_query_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_query_py
@@ -269,8 +268,8 @@ graph TD
     D_GOV_DRIFT -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -->|import_depends| src_zephyr_governance_behavioral_admission_mcp_result_push_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_behavioral_admission_mcp_result_push_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -303,9 +302,9 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 138 | contract,import_depends,runtime,test_depends |
+| D_GOVERNANCE | 137 | contract,import_depends,runtime,test_depends |
 | D_COMPLIANCE | 11 | import_depends |
-| D_AUDITTEST | 10 | contract,runtime,test_depends |
+| D_AUDITTEST | 9 | contract,runtime,test_depends |
 | D_TRADING | 7 | import_depends |
 | D_INFRA_RECOVERY | 7 | import_depends |
 | D_GOV_DRIFT | 6 | import_depends |

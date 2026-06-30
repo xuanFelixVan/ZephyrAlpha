@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 04:34:11
+> 最后更新: 2026-07-01 05:07:05
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 16 | Module Count | 16 |
+| 模块数 | 13 | Module Count | 13 |
 | 域内依赖 | 6 | Internal Dependencies | 6 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 11 | Prototype Modules | 11 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 资源优化引擎 | Description | 资源优化引擎 |
@@ -49,9 +49,6 @@ graph TD
     subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
         scripts_construction_test_deepseek_api_py["scripts/construction/test_deepseek_api.py production"]
         scripts_ide_health_service_py["scripts/ide_health_service.py production"]
-        src_zephyr_governance_auto_rollback_trigger_py["src/zephyr/governance/auto_rollback_trigger.py prototype"]
-        src_zephyr_governance_rollback_simulator_py["src/zephyr/governance/rollback_simulator.py prototype"]
-        src_zephyr_governance_rollback_wal_py["src/zephyr/governance/rollback_wal.py prototype"]
         src_zephyr_infra_ops["基础设施运维域 design"]
         src_zephyr_infra_ops_init_py["src/zephyr/infra_ops/__init__.py prototype"]
         src_zephyr_infra_ops_dashboard_init_py["src/zephyr/infra_ops/dashboard/__init__.py production"]
@@ -74,10 +71,6 @@ graph TD
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
     D_OPS["D_OPS production"]
     src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_governance_auto_rollback_trigger_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_simulator_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
     D_FRONTEND["D_FRONTEND production"]
     D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -85,8 +78,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
-    class src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py design
-    class D_OPS,D_GOVERNANCE,D_FRONTEND external_prod
+    class src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py design
+    class D_OPS,D_FRONTEND external_prod
     class D_SHARED external_design
 ```
 
@@ -110,7 +103,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 16 个模块 / 16 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 13 个模块 / 13 modules。
 
 ```
 
@@ -122,11 +115,8 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (11 modules)             │
+│             L1 基础层 / Foundation Layer (8 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/governance/auto_rollback_trigger.py  [prototype]    │
-│   src/zephyr/governance/rollback_simulator.py  [prototype]       │
-│   src/zephyr/governance/rollback_wal.py  [prototype]             │
 │   src/zephyr/infra_ops/__init__.py  [prototype]                  │
 │   src/zephyr/infra_ops/dashboard/app.py  [prototype]             │
 │   src/zephyr/infra_ops/dashboard/components/fitness_functions... │
@@ -151,7 +141,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 16 个模块 / 16 modules）。
+> 按 architecture_layer 分组的模块清单（共 13 个模块 / 13 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (1 modules)
 
@@ -159,21 +149,18 @@ graph TD
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/ | 基础设施运维域 | design | planned |
 
-### L1 基础层 / Foundation Layer (11 modules)
+### L1 基础层 / Foundation Layer (8 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/auto_rollback_trigger.py | src/zephyr/governance/auto_rollback_t... | prototype | generated |
-| 2 | src/zephyr/governance/rollback_simulator.py | src/zephyr/governance/rollback_simula... | prototype | generated |
-| 3 | src/zephyr/governance/rollback_wal.py | src/zephyr/governance/rollback_wal.py | prototype | generated |
-| 4 | src/zephyr/infra_ops/__init__.py | src/zephyr/infra_ops/__init__.py | prototype | generated |
-| 5 | src/zephyr/infra_ops/dashboard/app.py | src/zephyr/infra_ops/dashboard/app.py | prototype | generated |
-| 6 | src/zephyr/infra_ops/dashboard/components/fitness_functio... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 7 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 8 | src/zephyr/infra_ops/dashboard/components/knowledge_overv... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 9 | src/zephyr/infra_ops/dashboard/components/olap_trend.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 10 | src/zephyr/infra_ops/dashboard/components/task_progress.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 11 | src/zephyr/infra_ops/interface_base.py | src/zephyr/infra_ops/interface_base.py | prototype | generated |
+| 1 | src/zephyr/infra_ops/__init__.py | src/zephyr/infra_ops/__init__.py | prototype | generated |
+| 2 | src/zephyr/infra_ops/dashboard/app.py | src/zephyr/infra_ops/dashboard/app.py | prototype | generated |
+| 3 | src/zephyr/infra_ops/dashboard/components/fitness_functio... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 4 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 5 | src/zephyr/infra_ops/dashboard/components/knowledge_overv... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 6 | src/zephyr/infra_ops/dashboard/components/olap_trend.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 7 | src/zephyr/infra_ops/dashboard/components/task_progress.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 8 | src/zephyr/infra_ops/interface_base.py | src/zephyr/infra_ops/interface_base.py | prototype | generated |
 
 ### 未分类 / Unclassified (4 modules)
 

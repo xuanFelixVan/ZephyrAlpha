@@ -1,7 +1,7 @@
 %% D_GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-07-01 04:34:13
+%% 生成时间: 2026-07-01 05:07:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 11, 依赖边数: 26
+%% 模块数: 11, 依赖边数: 25
 
 graph TD
 
@@ -27,11 +27,10 @@ graph TD
     %% D_COMPLIANCE -> D_GOV_DRIFT (2 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_artifact_scanner_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_integrity_py
-    %% D_GOVERNANCE -> D_GOV_DRIFT (7 条)
+    %% D_GOVERNANCE -> D_GOV_DRIFT (6 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_baseline_manager_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_chaos_injector_py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py
@@ -62,5 +61,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 1 条
-    %% 跨域入边: 18 条
+    %% 跨域入边: 17 条
     %% 跨域出边: 7 条
