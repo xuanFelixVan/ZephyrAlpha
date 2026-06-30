@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-027
-submodule_path: src/zephyr/governance/audit_orchestration
+submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint
 status: Active
@@ -28,7 +28,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/audit_orchestration/"
+actual_disk_path: "src/zephyr/governance/"
 summary: "审计编排器——MAPE-K五层自治循环驱动三子系统(结构/语义/行为)四阶段闭环迭代收敛审计引擎。v6.1.0: v3.5模板对齐"
 priority: P1
 runtime_plane: hot
