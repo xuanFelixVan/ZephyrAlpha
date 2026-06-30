@@ -3,17 +3,17 @@ doc_type: architecture_view
 title: D_CROSS_ASSET 跨资产架构文档
 version: "1.0"
 status: active
-date: 2026-06-30
+date: 2026-07-01
 owner: auto-generator
 ttl: permanent
 ---
 
 # 26_d_cross_asset / 跨资产
 
-> **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-06-30 15:42:58
+> 最后更新: 2026-07-01 01:40:53
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview

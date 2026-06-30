@@ -1,7 +1,7 @@
 %% D_INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: 2026-06-30 15:42:59
+%% 生成时间: 2026-07-01 01:40:55
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 35, 依赖边数: 28
+%% 模块数: 34, 依赖边数: 25
 
 graph TD
 
@@ -10,7 +10,6 @@ graph TD
         src_zephyr_infrastructure_model_capability_exam___init___py["...ure/model_capability_exam/__init__.py [production]"]
         src_zephyr_infrastructure_model_profiler___init___py["...astructure/model_profiler/__init__.py [production]"]
         src_zephyr_infrastructure_observability___init___py["...rastructure/observability/__init__.py [production]"]
-        src_zephyr_infrastructure_obse___lity___init___from_infra_py[".../observability/__init___from_infra.py [production]"]
         src_zephyr_infrastructure_observability_notifier_py["...rastructure/observability/notifier.py [production]"]
         src_zephyr_infrastructure_observability_trace_decorator_py["...ture/observability/trace_decorator.py [production]"]
         src_zephyr_infrastructure_quality___init___py["...yr/infrastructure/quality/__init__.py [production]"]
@@ -45,9 +44,6 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_infrastructure_obse___lity___init___from_infra_py -->|import_depends| src_zephyr_infrastructure_observability___init___py
-    src_zephyr_infrastructure_obse___lity___init___from_infra_py -->|import_depends| src_zephyr_infrastructure_observability_notifier_py
-    src_zephyr_infrastructure_obse___lity___init___from_infra_py -->|import_depends| src_zephyr_infrastructure_observability_trace_decorator_py
     src_zephyr_infrastructure_quality___init___py -->|import_depends| src_zephyr_infrastructure_quality_quality_monitor_py
     src_zephyr_infrastructure_sla___init___py -->|import_depends| src_zephyr_infrastructure_sla_sla_monitor_py
     src_zephyr_infrastructure_system_telemetry__trace_bridge_py -->|config_depends| src_zephyr_infrastructure_system_telemetry___init___py
@@ -84,6 +80,6 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 11 条
+    %% 域内依赖: 8 条
     %% 跨域入边: 0 条
     %% 跨域出边: 17 条
