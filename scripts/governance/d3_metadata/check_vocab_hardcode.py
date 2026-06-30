@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -108,6 +108,14 @@ _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
     "depgraph_schema.py",
     "audit_post_sync_commands.py",
 })
+
+# ── noqa 审计基线（治本 2026-06-30）──
+# 防止 ``# noqa: gate-vocab`` 豁免被滥用无限增长——每次 GATE-VOCAB 运行时
+# 输出当前 noqa 分布与趋势，新增 noqa 必须在 commit message 说明理由。
+# 每次治本降低 noqa 数量后更新此基线值；超基线时输出 WARN（warn-only，不阻断）。
+# 收敛期约束（AD-GOV-001）：此为审计输出，非新增门禁/reconciler/规则 YAML。
+# 基线值用 tokenize 精确识别（排除文档引用/字符串字面量/docstring）。
+_NOQA_BASELINE: int = 31
 
 
 def _load_startup_values(vocab_dir: Path) -> set[str]:
@@ -321,7 +329,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 if not _is_literal_collection(node.value):
                     continue
 
-                # noqa: gate-vocab 内联豁免检查
+                # gate-vocab 内联豁免检查（避免以 # noqa: 开头被审计误识别为指令）
                 if _has_noqa_exempt(source, node.lineno):
                     continue  # 豁免，不报
 
@@ -432,6 +440,44 @@ def _has_noqa_exempt(source: str, lineno: int) -> bool:
     return "# noqa: gate-vocab" in lines[lineno - 1]
 
 
+def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
+    """收集文件中所有 ``# noqa: gate-vocab`` 豁免指令的行号和理由注释。
+
+    治本（2026-06-30）：noqa 审计机制——防止豁免被滥用无限增长。
+    每次 GATE-VOCAB 运行时累计输出 noqa 分布，趋势可见。
+    约束（向内收）：扩展现有 main() 输出，不新建 reconciler/YAML。
+
+    精确识别（v1 治本）：用 ``tokenize`` 模块识别真正的 COMMENT token，
+    自动排除 docstring/字符串字面量/文档嵌套引用中的 ``# noqa: gate-vocab``
+    文字——避免审计自身脚本文档时误报。
+
+    Args:
+        source: 文件源码
+
+    Returns:
+        ``[(行号, 理由注释), ...]``；理由注释为 noqa 指令后的说明（可空）。
+    """
+    import io
+    import tokenize
+
+    exemptions: list[tuple[int, str]] = []
+    directive_prefix = "noqa: gate-vocab"
+    try:
+        tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
+    except tokenize.TokenError:
+        return []
+    for tok in tokens:
+        if tok.type != tokenize.COMMENT:
+            continue
+        # tok.string 形如 "# noqa: gate-vocab  R4 豁免：批量加载"
+        after_hash = tok.string[1:].lstrip()
+        if not after_hash.startswith(directive_prefix):
+            continue  # 非指令形式（如文档引用 "# ... # noqa 内联豁免"）
+        reason = after_hash[len(directive_prefix):].strip()
+        exemptions.append((tok.start[0], reason))
+    return exemptions
+
+
 def main() -> int:
     import argparse
 
@@ -476,6 +522,8 @@ def main() -> int:
     exclude = EXCLUDE_DIRS | {"_archive", "tests"}
 
     all_issues: list[tuple[Path, int, str]] = []
+    # noqa 审计累计（治本 2026-06-30）：防止豁免被滥用无限增长
+    all_noqa: list[tuple[Path, int, str]] = []
     checked = 0
 
     for scan_dir in scan_dirs:
@@ -491,24 +539,84 @@ def main() -> int:
             issues = _check_file(filepath, vocab_dir, startup_values, vocab_values)
             for lineno, issue in issues:
                 all_issues.append((filepath, lineno, issue))
-
-    if not all_issues:
-        print(f"OK: No vocabulary hardcode issues found ({checked} files checked)")
-        return EXIT_PASS
+            # noqa 审计：收集本文件的豁免行
+            try:
+                src = filepath.read_text(encoding="utf-8")
+                for lineno, reason in _collect_noqa_exemptions(src):
+                    all_noqa.append((filepath, lineno, reason))
+            except (OSError, UnicodeDecodeError):
+                pass
 
     # 输出违规
-    for filepath, lineno, issue in all_issues:
-        try:
-            rel = filepath.relative_to(REPO_ROOT)
-        except ValueError:
-            rel = filepath
-        print(f"  WARN: {rel}:{lineno} {issue}")
+    if all_issues:
+        for filepath, lineno, issue in all_issues:
+            try:
+                rel = filepath.relative_to(REPO_ROOT)
+            except ValueError:
+                rel = filepath
+            print(f"  WARN: {rel}:{lineno} {issue}")
+        print(f"\nFOUND: {len(all_issues)} vocabulary hardcode issue(s) in {checked} files checked")
+    else:
+        print(f"OK: No vocabulary hardcode issues found ({checked} files checked)")
 
-    print(f"\nFOUND: {len(all_issues)} vocabulary hardcode issue(s) in {checked} files checked")
+    # ── noqa 审计摘要（治本 2026-06-30）──
+    # 输出当前 # noqa: gate-vocab 分布与趋势，超基线时 WARN（warn-only，不阻断）
+    _print_noqa_audit(all_noqa, checked)
 
-    if args.ci:
+    if args.ci and all_issues:
         return EXIT_FINDINGS
     return EXIT_PASS  # warn-only
+
+
+def _print_noqa_audit(all_noqa: list[tuple[Path, int, str]], checked: int) -> None:
+    """输出 ``# noqa: gate-vocab`` 豁免审计摘要。
+
+    治本（2026-06-30）：noqa 审计机制——防止豁免被滥用无限增长。
+    每次 GATE-VOCAB 运行时输出当前分布与趋势，新增 noqa 需在 commit message 说明。
+    约束（向内收）：扩展现有 main() 输出，不新建 reconciler/YAML/门禁。
+
+    Args:
+        all_noqa: 所有文件的 noqa 收集结果 ``[(filepath, lineno, reason), ...]``
+        checked: 本次扫描的 .py 文件总数（用于密度计算）
+    """
+    total = len(all_noqa)
+    files_with_noqa = len({fp for fp, _, _ in all_noqa})
+    trend = total - _NOQA_BASELINE
+    trend_str = (
+        f"+{trend}" if trend > 0
+        else str(trend) if trend < 0
+        else "0"
+    )
+    density = (total / checked * 100) if checked else 0.0
+
+    print(f"\nNOQA AUDIT: {total} exemptions across {files_with_noqa} files "
+          f"(baseline={_NOQA_BASELINE}, trend={trend_str}, density={density:.2f}%)")
+
+    # 按文件分组输出（仅当有豁免时）
+    if all_noqa:
+        from collections import defaultdict
+        by_file: dict[Path, list[tuple[int, str]]] = defaultdict(list)
+        for fp, lineno, reason in all_noqa:
+            by_file[fp].append((lineno, reason))
+        # 按文件内 noqa 数量降序输出（热点文件优先）
+        for fp, items in sorted(by_file.items(), key=lambda kv: -len(kv[1])):
+            try:
+                rel = fp.relative_to(REPO_ROOT)
+            except ValueError:
+                rel = fp
+            print(f"  {rel} ({len(items)}):")
+            for lineno, reason in items:
+                reason_display = reason if reason else "(无理由注释)"
+                print(f"    L{lineno}: {reason_display}")
+
+    # 超基线告警（warn-only，不阻断）
+    if trend > 0:
+        print(f"\n  [WARN] noqa 总数 {total} > 基线 {_NOQA_BASELINE}（趋势 +{trend}）")
+        print(f"  新增 # noqa: gate-vocab 必须在 commit message 说明豁免理由，")
+        print(f"  或通过治本（如扩展 SSoT 函数支持批量/分组模式）消除豁免需求。")
+    elif trend < 0:
+        print(f"\n  [OK] noqa 总数 {total} < 基线 {_NOQA_BASELINE}（趋势 {trend}）"
+              f"——治本见效，建议更新 _NOQA_BASELINE 常量")
 
 
 if __name__ == "__main__":
