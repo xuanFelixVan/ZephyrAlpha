@@ -14,7 +14,7 @@ Minimum: 10 tests
 
 from pathlib import Path
 
-from zephyr.integration.shared.api_03.dos_launcher import (
+from zephyr.shared.api.dos_launcher import (
     DOSLauncher,
     DOSResult,
     _parse_body,
