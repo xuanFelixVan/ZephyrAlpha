@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
-# [MODULE] zephyr.infrastructure.rollback.result_types
+# [MODULE] zephyr.governance.result_types
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.rollback_types
 # [CONSUMERS] rollback_executor;rollback_verifier;auto_rollback_trigger

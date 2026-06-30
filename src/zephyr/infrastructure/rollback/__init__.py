@@ -138,7 +138,6 @@ __all__ = [
     "phase_check_registry",
     "phase_manager",
     "post_live_verification",
-    "result_types",
     "right_to_be_forgotten",
     "rollback_abuse_detector",
     "rollback_audit_nexus",

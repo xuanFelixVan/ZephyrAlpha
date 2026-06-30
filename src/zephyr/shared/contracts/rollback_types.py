@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.rollback_types
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.rollback.result_types;zephyr.governance.contracts
+# [CONSUMERS] zephyr.governance.result_types;zephyr.governance.contracts
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] RollbackResult 字段不可删;status/validation_result 枚举不可改值
