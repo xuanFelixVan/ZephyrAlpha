@@ -246,6 +246,12 @@ directory_scalability:
   # 无稳定命名前缀规则：T_hard=60（AI纯记忆可靠扫描上限）
   # 有稳定命名前缀规则：T_soft=120（工具辅助定位可靠上限）
   # 对标 GOV-DOC-018 §gov_doc_018_folder_capacity_threshold
-  # validate_nested_flat_dirs.py 从此节读取 warn/error 阈值
+  # audit_directory_scalability.py + validate_nested_flat_dirs.py 从此节读取 warn/error 阈值
   src_py_warn: 60
   src_py_error: 120
+  # docs .md 直接文件数（文档目录天然较小，阈值更严）
+  docs_md_warn: 5
+  docs_md_error: 20
+  # 目录直接子项总数（含文件+子目录，防止单目录膨胀）
+  dir_children_warn: 100
+  dir_children_error: 500
