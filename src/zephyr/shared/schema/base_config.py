@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] N/A
-# [TESTS] tests/unit/test_schemas.py
+# [TESTS] tests/test_schemas.py
 # [A_module] module_id=MOD-SHR_base_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 from __future__ import annotations

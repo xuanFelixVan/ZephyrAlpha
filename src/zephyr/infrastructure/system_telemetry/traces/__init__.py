@@ -8,7 +8,7 @@
 # [CONSUMERS] facade.py; logs/structured_sink.py
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
-# [TESTS] tests/unit/telemetry/
+# [TESTS] tests/infrastructure/
 # [TTL] task_bound
 """L12 · traces — 分布式链路追踪（W3C TraceContext）"""
 

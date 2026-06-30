@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/test_agent_rbac/; tests/unit/agent_rbac/
+# [TESTS] tests/agent_rbac/
 # [TTL] task_bound
 """zephyr.security.access_control — Agent RBAC 权限强制执行器根包.
 

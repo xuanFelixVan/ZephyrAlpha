@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
-# [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py; tests/unit/gates/test_gate_engine.py
+# [TESTS] tests/test_schemas.py; tests/db/test_task_repo.py; tests/gate/test_gate_engine.py
 # [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

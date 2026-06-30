@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LLMGatewayProtocol.call returns LLMResponse; LLMResponse.error is set on failure
-# [TESTS] tests/unit/test_llm_gateway_protocol.py
+# [TESTS] tests/test_llm_gateway_protocol.py
 # [A_module] module_id=MOD-SHR_llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

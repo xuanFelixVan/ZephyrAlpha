@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
-# [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py
+# [TESTS] tests/test_schemas.py; tests/db/test_task_repo.py
 # [A_module] module_id=MOD-INF_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

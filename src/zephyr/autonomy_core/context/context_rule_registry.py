@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register: rule_id 冲突→覆盖; lookup: 无匹配→空列表; load_yaml: 文件不存在→FileNotFoundError
-# [TESTS] tests/unit/test_context_rule_registry.py
+# [TESTS] tests/test_context_rule_registry.py
 # [A_module] module_id=MOD-ORC_context_rule_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

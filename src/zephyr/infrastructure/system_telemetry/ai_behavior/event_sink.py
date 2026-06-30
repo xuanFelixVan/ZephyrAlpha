@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag OFF→noop;ring buffer满→丢弃最旧
-# [TESTS] tests/unit/telemetry/
+# [TESTS] tests/infrastructure/
 # [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
