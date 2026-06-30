@@ -1,16 +1,16 @@
-# 自动生成于 2026-06-30T20:28:34Z
+# 自动生成于 2026-06-30T20:31:14Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-30T20:28:34Z'
+generated_at: '2026-06-30T20:31:14Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 394
+total_scripts: 391
 with_manifest: 221
-missing_manifest: 173
+missing_manifest: 170
 categories:
   governance:_archive: 42
-  governance: 89
+  governance: 86
   governance:_sync: 4
   governance:d10_performance: 1
   governance:d11_compliance: 13
@@ -611,16 +611,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: audit_rename_completeness.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: audit_session_07.py
   owner: governance
   dimensions: []
   priority: P2
@@ -3358,16 +3348,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: dm105_depgraph_triage.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: env_check.py
   owner: governance
   dimensions:
@@ -3382,16 +3362,6 @@ scripts:
   - Critical
   - Quick
 - name: extract_depgraph.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: fix_broken_post_sync.py
   owner: governance
   dimensions: []
   priority: P2
