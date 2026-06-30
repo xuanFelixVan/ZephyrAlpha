@@ -209,7 +209,7 @@ TEST_BLUEPRINT_HINTS = {
     "_stress_test_staging_concurrent": "MOD-INF-002",
 }
 
-# tests/unit/<subdir> → blueprint_id
+# tests/<subdir> → blueprint_id (legacy unit/ 层级已扁平化，key 保留旧名供历史匹配)
 TEST_UNIT_DIR_HINTS = {
     "agent-rbac": "MOD-INF-018",
     "budget-enforcer": "MOD-INF-024",
@@ -324,10 +324,10 @@ def match_blueprint_for_path(path_str, csv_mapping, bp_mapping):
                     "medium",
                 )
             return bp_id, "", "", "assimilate_test_name", "low"
-        # tests/unit/<subdir>/ 匹配
+        # tests/<subdir>/ 匹配
         parts = path_str.split("/")
-        if len(parts) >= 3 and parts[0] == "tests" and parts[1] == "unit":
-            unit_dir = parts[2]
+        if len(parts) >= 3 and parts[0] == "tests":
+            unit_dir = parts[1]
             if unit_dir in TEST_UNIT_DIR_HINTS:
                 bp_id = TEST_UNIT_DIR_HINTS[unit_dir]
                 if bp_id in bp_mapping:

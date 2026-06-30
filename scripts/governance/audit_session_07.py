@@ -92,7 +92,7 @@ EXPECTED_FILES: list[dict[str, Any]] = [
     {"path": "src/zephyr/mcp/rate_limiter.py", "card": "TASK-INF-013-0005", "new": True, "check": "has_per_tool_rl"},
     {"path": "src/zephyr/mcp/audit_logger.py", "card": "TASK-INF-013-0005", "new": True, "check": "has_log_call"},
     {"path": "config/mcp.json", "card": "TASK-INF-013-0005", "new": True, "check": "has_7_servers"},
-    {"path": "tests/unit/test_mcp_gateway.py", "card": "TASK-INF-013-0005", "new": True, "check": "has_19_tests"},
+    {"path": "tests/infrastructure/test_mcp_gateway.py", "card": "TASK-INF-013-0005", "new": True, "check": "has_19_tests"},
     # Card 6: 集成脚本
     {"path": "scripts/mcp/start_all.py", "card": "TASK-INF-013-0008", "new": True, "check": "syntax"},
     {"path": "scripts/mcp/stop_all.py", "card": "TASK-INF-013-0008", "new": True, "check": "syntax"},

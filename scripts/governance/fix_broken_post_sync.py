@@ -101,7 +101,7 @@ REPAIR_MAP: dict[str, list[str]] = {
     "python -m pytest tests/test_rule_engine.py": [],
     "python -m pytest tests/test_rule_system_e2e.py -v": [],
     "python -m pytest tests/test_rule_system_red_blue.py -v": [],
-    "python -m pytest tests/unit/test_dm400_stale_task_fix.py -v": [],
+    "python -m pytest tests/db/test_dm400_stale_task_fix.py -v": [],
     "python D:/ZephyrAlpha/_yaml_to_md.py --all": [],
     'python scripts/governance/check_cycle.py --db postgresql://localhost:5432/depgraph --max-depth 15 --warn-only 2>&1 | findstr /C:"cycle" /C:"TOTAL"': [],
     "python scripts/governance/d5_architecture/validators/validate_gate_discipline.py": [],
