@@ -14,8 +14,8 @@
 """F18 治理脚本系统自动化测试.
 
 测试 4 个自动化机制:
-1. 自动启动 — PhaseManager 调度所有 governance gate（从 depgraph.db 查询）
-2. 事件启动 — event_driven 配置触发脚本执行（从 depgraph.db 查询）
+1. 自动启动 — PhaseManager 调度所有 governance gate（从 depgraph 查询）
+2. 事件启动 — event_driven 配置触发脚本执行（从 depgraph 查询）
 3. 自动运行 — GovernanceAutoRunner 执行 8 维度 gate
 4. 自动关闭 — 资源释放 + 临时文件清理 + 审计日志
 
@@ -42,7 +42,7 @@ _PROJECT_ROOT = REPO_ROOT
 
 
 class TestAutoStartup:
-    """自动启动测试:验证 PhaseManager 能调度所有 governance gate（从 depgraph.db 查询）。"""
+    """自动启动测试:验证 PhaseManager 能调度所有 governance gate（从 depgraph 查询）。"""
 
     def test_phase_manager_importable(self) -> None:
         """PhaseManager 可导入。"""
@@ -58,7 +58,7 @@ class TestAutoStartup:
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
 
     def test_all_phases_auto_start(self) -> None:
-        """所有 gate 的 auto_start=1（从 depgraph.db 查询）。"""
+        """所有 gate 的 auto_start=1（从 depgraph 查询）。"""
         from zephyr.governance.phase_manager import PhaseManager
         pm = PhaseManager()
         auto_start_map = pm.verify_auto_start()
