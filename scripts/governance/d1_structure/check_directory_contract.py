@@ -6,7 +6,7 @@
 # [CONSUMERS] .pre-commit-config.yaml GATE-DIRECTORY-CONTRACT (pre-commit hook，已启用)
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 真源为 directory_contract.yaml + doc_type_vocabulary.yaml；DCR-001~007 全部已启用；只读校验不修改文件
+# [INVARIANTS] 真源为 directory_contract.yaml（DCR-001/005/006/007 目录维度 + allowed_doc_types）；doc_type_vocabulary.yaml 仅用于 doc_type 合法性验证（GATE-15 主责）；DCR-001~007 已启用（DCR-002 废弃 P3）；只读校验不修改文件
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -20,16 +20,16 @@ trae_047 directory_mapping / ttl_vocabulary Q3 / doc_type_vocabulary crosscheck
 三维来源）并校验文件合规性。
 
 Implemented checks (DCR-001~007):
-  DCR-001: doc_type.allowed_directories contains file.directory (error)
-  DCR-002: doc_type.forbidden_directories not contains file.directory (error)
+  DCR-001: directory.allowed_doc_types contains file.doc_type (error, P3 改造)
+  DCR-002: 废弃（P3 改造——forbidden_directories 全为空，allowed_doc_types 白名单已足够）
   DCR-003: permanent zone file ttl == permanent             (error)
   DCR-004: temporary zone file ttl == task_bound            (warning)
   DCR-005: file extension in directory_extensions.allowed   (error)
   DCR-006: file extension not in directory_extensions.forbidden (error)
   DCR-007: root directory file in root_directory_whitelist  (error)
 
-DCR-001/002 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）、.trae/（IDE 工具区）、docs/01_policies_and_standards/templates/（模板区 TMP-EX-001）
-DCR-001/002 真源：doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories
+DCR-001 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）、.trae/（IDE 工具区）、docs/01_policies_and_standards/templates/（模板区 TMP-EX-001）
+DCR-001 真源：directory_contract.yaml directory_extensions[].allowed_doc_types（P3 改造，原 doc_type_vocabulary.yaml allowed_directories 已废弃）
 
 Modes:
   --staged              check git-staged files only (pre-commit use)
@@ -304,31 +304,21 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
     return findings
 
 
-def _file_matches_pattern(rel_path: str, pattern: str) -> bool:
-    """检查文件路径是否匹配 allowed/forbidden_directories 模式。
+def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None = None) -> list[dict]:
+    """DCR-001: 目录→doc_type 约束校验（P3 改造：数据源切到 directory_contract.yaml allowed_doc_types）。
 
-    匹配规则：
-    - pattern 以 / 结尾 → 目录前缀匹配（文件所在目录 startswith pattern）
-    - pattern 不以 / 结尾 → 文件路径精确匹配（如 docs/registry_of_registries.yaml）
-    """
-    rel_posix = rel_path.replace("\\", "/")
-    if pattern.endswith("/"):
-        rel_dir = str(Path(rel_posix).parent).replace("\\", "/")
-        rel_dir_norm = rel_dir + "/" if rel_dir != "." else "./"
-        return rel_dir_norm.startswith(pattern)
-    else:
-        return rel_posix == pattern
+    DCR-001: 文件所在目录的 allowed_doc_types 非空时，file.doc_type 必须在 allowed_doc_types 内
+             豁免区：docs/_working/、docs/_archive/、.runtime/、.trae/、templates/（TMP-EX-001）
+    DCR-002: 已废弃（P3 改造）——原 doc_type_vocabulary.yaml 的 forbidden_directories 全为空数组，
+             allowed_doc_types 白名单已足够严格（不在白名单即违规，等价于 forbidden）
 
+    数据源：directory_contract.yaml 的 directory_extensions[].allowed_doc_types
+    方向：directory → doc_types（对应用户诉求"每个文件夹只能放什么类型的文件"）
 
-def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict) -> list[dict]:
-    """DCR-001 + DCR-002: doc_type 的目录约束校验。
+    仅校验有 frontmatter 的文件。doc_type 合法性（是否在词表内）由 GATE-15 负责，
+    本函数仅校验"合法 doc_type 是否出现在正确的目录"。
 
-    DCR-001: file.doc_type.allowed_directories contains file.directory
-             OR file.directory in temporary_zone (docs/_working/)
-             OR file.directory in archive_zone (docs/_archive/)
-    DCR-002: file.doc_type.forbidden_directories not contains file.directory
-
-    仅校验有 frontmatter 的文件。doc_type 真源为 doc_type_vocabulary.yaml。
+    vocab 参数保留向后兼容签名，仅用于验证 doc_type 是否为已知值（未知则跳过，交 GATE-15）。
     """
     if not rel_path.endswith((".md", ".yaml", ".yml")):
         return []
@@ -343,42 +333,38 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict) -> list
     if not doc_type:
         return []  # 无 doc_type 的文件不校验（由 GATE-15 负责）
 
-    if doc_type not in vocab:
-        return []  # 未知 doc_type 由其他门禁负责
+    # 未知 doc_type 跳过（由 GATE-15 check_frontmatter_metadata.py 负责）
+    if vocab is not None and doc_type not in vocab:
+        return []
 
-    doc_type_config = vocab[doc_type]
     rel_posix = rel_path.replace("\\", "/")
     rel_dir = str(Path(rel_posix).parent).replace("\\", "/")
+    if rel_dir == ".":
+        return []  # 根目录文件由 DCR-007 处理
 
-    findings: list[dict] = []
+    # 豁免区检查（临时区、归档区、运行时区、模板区）
+    if any(rel_posix.startswith(prefix) for prefix in _DCR_EXEMPT_PREFIXES):
+        return []
 
-    # DCR-001: allowed_directories 校验（豁免 _working/ 和 _archive/）
-    is_exempt = any(rel_posix.startswith(prefix) for prefix in _DCR_EXEMPT_PREFIXES)
-    if not is_exempt:
-        allowed_dirs = doc_type_config.get("allowed_directories", [])
-        if allowed_dirs:
-            matched = any(_file_matches_pattern(rel_posix, p) for p in allowed_dirs)
-            if not matched:
-                findings.append({
-                    "rule": "DCR-001",
-                    "severity": "error",
-                    "file": rel_path,
-                    "detail": f"doc_type={doc_type} 文件目录 {rel_dir}/ 不在 allowed_directories {allowed_dirs} 内",
-                })
+    # 查找文件所在目录的 extension rule（longest-prefix match）
+    rule = find_extension_rule(contract, rel_dir)
+    if not rule:
+        return []  # 目录无声明，跳过
 
-    # DCR-002: forbidden_directories 校验
-    forbidden_dirs = doc_type_config.get("forbidden_directories", [])
-    if forbidden_dirs:
-        matched = any(_file_matches_pattern(rel_posix, p) for p in forbidden_dirs)
-        if matched:
-            findings.append({
-                "rule": "DCR-002",
-                "severity": "error",
-                "file": rel_path,
-                "detail": f"doc_type={doc_type} 文件目录 {rel_dir}/ 在 forbidden_directories {forbidden_dirs} 内",
-            })
+    allowed_doc_types = rule.get("allowed_doc_types")
+    if not allowed_doc_types:
+        return []  # allowed_doc_types 为空数组 []，该目录豁免 doc_type 约束（代码/数据/临时区）
 
-    return findings
+    # DCR-001: file.doc_type 必须在 directory.allowed_doc_types 内
+    if doc_type not in allowed_doc_types:
+        return [{
+            "rule": "DCR-001",
+            "severity": "error",
+            "file": rel_path,
+            "detail": f"doc_type={doc_type} 不在目录 {rule['path']} 的 allowed_doc_types {allowed_doc_types} 内",
+        }]
+
+    return []
 
 
 def check_deprecated_directory(rel_path: str, contract: dict) -> list[dict]:
