@@ -1,9 +1,10 @@
 # 架构债务注册表（Architecture Debt Registry）
 
 > **文档性质**：全项目架构债务单一真源（Single Source of Truth）
-> **审核日期**：2026-06-30
+> **审核日期**：2026-06-30（初版）/ 2026-07-01（第32轮验证）
 > **审核员**：客观专业架构师（基于4轮深度调研的真实文件证据）
 > **审核方法**：4个并行子agent读真实文件 + Grep真实结果 + AST共享行百分比判定
+> **第32轮验证**：2026-07-01完成5.1-5.55 + 5.172-5.177共1013个问题的逐条代码验证（9批45个并行子代理），详见§八、§九
 > **问题总数**：**3193个唯一违规点**（298初轮 + 52第5轮 + 42第6轮 + 76第7轮 + 60第8轮 + 49第9轮 + 45第10轮 + 98第11轮 + 42第12轮 + 26第13轮 + 54第14轮 + 65第15轮 + 33第16轮 + 16第17轮 + 32第18轮 + 212第19轮 + 70第20轮 + 31第21轮 + 12第22轮 + 147第23轮 + 781第24轮 + 141第25轮 + 160第26轮 + 140第27轮 + 164第28轮 + 126第29轮 + 70第30轮 + 151第31轮新增，去重后），归因于5个病根
 > **治本方案**：4期施工（仪表盘→AST门禁→批量修复→治理层收敛）
 > **维护规则**：本文档当前由手动调研派生（架构健康度仪表盘为第0期交付物，尚未实现）。违规清单部分需通过调研脚本生成，禁止手工编辑
@@ -2541,7 +2542,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改用"建新表→复制数据→DROP旧表→RENAME"重建模式
 
 #### 5.18.8 edges表FK无ON DELETE CASCADE靠trigger补救但trigger在replica模式失效【HIGH】
-- 证据：[00_sqlite_actual_schema.sql:210-211](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (from_node_id) REFERENCES "nodes"(node_id)` 无CASCADE；`:724-729` 用`trg_nodes_delete_cleanup_edges` trigger补救；但[depgraph_schema.py:1199-1201](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) `get_depgraph_pg_connection(replica=True)` 会`SET session_replication_role='replica'`禁用所有trigger——此时删nodes留孤儿edges；`dependency_architecture_panorama.md:2041`已承认148条孤儿边
+- 证据：[00_sqlite_actual_schema.sql:210-211](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (from_node_id) REFERENCES "nodes"(node_id)` 无CASCADE；`:724-729` 用`trg_nodes_delete_cleanup_edges` trigger补救；但[depgraph_schema.py:1199-1201](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) `get_depgraph_pg_connection(replica=True)` 会`SET session_replication_role='replica'`禁用所有trigger——此时删nodes留孤儿edges；`dependency_path_panorama.md:2041`已承认148条孤儿边
 - 病根：根因1（用trigger模拟CASCADE是反模式，replica模式下失效）
 - 修复：PG中改`REFERENCES nodes(node_id) ON DELETE CASCADE`，删除trigger
 
@@ -5622,3 +5623,278 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 - **需更新注册表**：7个（DRIFTED，其中5个问题仍存在需更新行号/描述，2个已归档应删除）
 - **应降级/移除**：27个（NOT_NEEDED）
 - **实际有效债务**：187 + 5（DRIFTED中问题仍存在的）= **192个**
+
+---
+
+## 九、第32轮验证结果（5.1-5.55）
+
+> **验证日期**：2026-07-01
+> **验证方法**：对5.1-5.55维度的792个问题逐条读取file:line引用，对照实际代码验证问题是否仍然存在。9批45个并行子代理（每批5维度），每个子代理用Read工具逐条验证，不依赖Grep缓存。
+> **跳过范围**：5.56-5.171正文因文件损坏丢失（见§七说明），不在本轮验证范围。
+
+### 验证汇总表
+
+| 维度批次 | 维度范围 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|---|:---:|:---:|:---:|:---:|:---:|
+| 第1批 | 5.1-5.15 | 460 | 267 | 120 | 68 | 5 |
+| 第2批 | 5.16-5.20 | 68 | 60 | 2 | 6 | 0 |
+| 第3批 | 5.21-5.25 | 44 | 38 | 1 | 5 | 0 |
+| 第4批 | 5.26-5.30 | 37 | 25 | 3 | 9 | 0 |
+| 第5批 | 5.31-5.35 | 55 | 46 | 1 | 7 | 1 |
+| 第6批 | 5.36-5.40 | 50 | 42 | 2 | 6 | 0 |
+| 第7批 | 5.41-5.45 | 29 | 19 | 2 | 7 | 1 |
+| 第8批 | 5.46-5.50 | 18 | 15 | 0 | 3 | 0 |
+| 第9批 | 5.51-5.55 | 31 | 18 | 0 | 13 | 0 |
+| **合计** | **5.1-5.55** | **792** | **530** | **131** | **124** | **7** |
+
+### 各维度详细验证结果
+
+#### 5.1-5.15（第1批，460个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.1 | 222 | 124 | 83 | 12 | 3 |
+| 5.2-5.3 | 89 | 42 | 2 | 44 | 1 |
+| 5.4-5.6 | 39 | 15 | 18 | 5 | 1 |
+| 5.7-5.10 | 37 | 27 | 8 | 2 | 0 |
+| 5.11-5.15 | 73 | 59 | 9 | 5 | 0 |
+
+**关键发现**：
+- **5.1有39%已修复**（83/222）：主要因YAML词表加载改造（diagnose_depgraph.py:427已改为load_vocabulary_values动态加载）和目录删除
+- **5.3的GATE从51个缩减到30个**（22个重命名/移除）
+- **5.4-5.6有18个FIXED**：大批文件级违规已修复
+- **5.12的except:pass反模式不减反增**（205→213处，恶化）
+- **rule_catalog_registry空stability从20条增至69条**（恶化）
+- **5.14部署层问题最密集**（22/23仍有效）
+
+#### 5.16-5.20（第2批，68个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.16 并发安全 | 15 | 12 | 2 | 1 | 0 |
+| 5.17 安全审计 | 14 | 13 | 0 | 1 | 0 |
+| 5.18 SQLite schema | 15 | 13 | 0 | 2 | 0 |
+| 5.19 Pydantic契约 | 12 | 11 | 0 | 1 | 0 |
+| 5.20 可观测性 | 12 | 11 | 0 | 1 | 0 |
+
+**关键发现**：
+- **5.16.5/5.16.6已修复**：_GlobalCommitLock已用原子os.open(O_CREAT|O_EXCL)；stash逻辑已由worktree隔离替代（阶段3治理成果）
+- **5.18维度15个HIGH问题全部未修复**，含PRAGMA writable_schema直接改sqlite_master的极危险hack
+- **5.20.1/5.20.8描述已过时**：ops/observability/目录已删除，shared/observability_02/现在是唯一规范实现（注册表建议"删除observability_02"会删除唯一规范实现导致系统崩溃）
+
+#### 5.21-5.25（第3批，44个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.21 测试质量 | 13 | 13 | 0 | 0 | 0 |
+| 5.22 幻影子包 | 12 | 9 | 1 | 2 | 0 |
+| 5.23 配置管理 | 8 | 7 | 0 | 1 | 0 |
+| 5.24 性能反模式 | 6 | 5 | 0 | 1 | 0 |
+| 5.25 代码质量 | 5 | 4 | 0 | 1 | 0 |
+
+**关键发现**：
+- **5.21全部13个仍有效**（但所有文件路径漂移：tests/根目录→tests/<子目录>/）
+- **5.22.9已修复**：三个孤儿__init___from_*.py文件已删除
+- **5.23.1确认真API密钥硬编码**：diagnose_breadth_failed.py:31仍含`sk-e88e8757b0974da9bed7def543c2bb2a`，需立即吊销
+- **5.25.2比描述更严重**：AutoRuntimeCore实际42个方法（注册表写36个）
+
+#### 5.26-5.30（第4批，37个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.26 生命周期 | 10 | 8 | 0 | 2 | 0 |
+| 5.27 文档漂移 | 7 | 5 | 1 | 1 | 0 |
+| 5.28 错误消息 | 8 | 3 | 2 | 3 | 0 |
+| 5.29 Git治理 | 6 | 4 | 0 | 2 | 0 |
+| 5.30 依赖管理 | 6 | 5 | 0 | 1 | 0 |
+
+**关键发现**：
+- **5.26.1/5.26.2描述已过时**：boot()/shutdown()已重构委托lifecycle_manager.py，原"无try/except"不成立，但循环不break、无回滚问题仍存（5.26.8承载）
+- **5.27.5是真实bug**：local_model_scheduler.py死代码导致_results字典永不填充，wait_result()永远超时
+- **5.28.2/5.28.7已修复**：错误消息已含字段名约束；faield/succesful拼写错误已消除
+- **5.29所有问题均未修复**：main分支无服务端保护、无CODEOWNERS
+
+#### 5.31-5.35（第5批，55个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.31 容器化 | 17 | 17 | 0 | 0 | 0 |
+| 5.32 数据迁移 | 10 | 9 | 0 | 0 | 1 |
+| 5.33 备份恢复 | 10 | 7 | 0 | 3 | 0 |
+| 5.34 环境隔离 | 10 | 7 | 0 | 3 | 0 |
+| 5.35 API版本 | 8 | 6 | 1 | 1 | 0 |
+
+**关键发现**：
+- **5.31全部17个仍有效**：Dockerfile CMD指向不存在的zephyr.l01_infrastructure、无.dockerignore、版本号三重真源分叉（2.0.0/4.6.0/2.0.0）
+- **5.32.6豁免**：_MIGRATIONS孤儿代码已通过多处显式注释缓解，移至_archive会破坏版本元数据引用
+- **5.35.5已修复**：已建立BreakingChangeDetector/SkillBreakageChecker/backcompat_checker多处检测机制
+- **5.34.7恶化**：注册表称"6个生产模块硬编码governance.db"，实际Grep命中46行
+
+#### 5.36-5.40（第6批，50个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.36 限流 | 10 | 10 | 0 | 0 | 0 |
+| 5.37 审计完整性 | 13 | 11 | 0 | 2 | 0 |
+| 5.38 特性开关 | 9 | 9 | 0 | 0 | 0 |
+| 5.39 可观测性 | 9 | 4 | 1 | 4 | 0 |
+| 5.40 幂等性 | 9 | 8 | 1 | 0 | 0 |
+
+**关键发现**：
+- **5.36全部10个仍有效且行号100%精确**：4+限流器实现碎片化、限流配置不可动态调整
+- **5.37审计完整性严重缺陷**：write_to_core是no-op、AuditChain.verify()永返True、AuditChainVerifier.clear()可绕过防篡改
+- **5.38特性开关是完整死代码区域**：3套独立实现+1份副本+1个未注册的SkillFeatureFlags，全部未接入生产路径
+- **5.39.7已修复**：tracing.py已配置完整OTLP exporter
+- **5.40.3已修复**：retry_count自赋值bug已消除
+
+#### 5.41-5.45（第7批，29个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.41 状态机 | 10 | 7 | 0 | 3 | 0 |
+| 5.42 代码质量 | 4 | 1 | 0 | 2 | 1 |
+| 5.43 资源治理 | 5 | 2 | 2 | 1 | 0 |
+| 5.44 批处理 | 5 | 4 | 0 | 1 | 0 |
+| 5.45 输入验证 | 5 | 5 | 0 | 0 | 0 |
+
+**关键发现**：
+- **5.42.4是HIGH级结构性bug**：baseline_manager.py方法错误嵌套在模块级函数内（影响140/187/232行多个方法），文件已从behavioral_audit/迁移至governance/drift_detection/
+- **5.43.3/5.43.4已修复**：SQLite已用threading.local连接池；asyncio.gather已加Semaphore限流
+- **5.42.2豁免**：未发现"docstring标deprecated且生产代码仍活跃调用"的矛盾实例
+
+#### 5.46-5.50（第8批，18个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.46 时间处理 | 3 | 3 | 0 | 0 | 0 |
+| 5.47 缓存一致性 | 3 | 3 | 0 | 0 | 0 |
+| 5.48 序列化 | 3 | 3 | 0 | 0 | 0 |
+| 5.49 连接泄漏 | 5 | 3 | 0 | 2 | 0 |
+| 5.50 浮点比较 | 4 | 3 | 0 | 1 | 0 |
+
+**关键发现**：
+- **5.46-5.48全部9个仍有效且行号精确**：time.time()用于TTL、SemanticCache无锁重建、SerializationContract不校验版本
+- **5.49.1是孤儿进程风险**：subprocess.Popen(["ollama", "serve"])未保存引用
+- **5.49.3/5.49.4路径漂移**：behavioral_audit/→governance/drift_detection/，问题在新位置仍存在
+
+#### 5.51-5.55（第9批，31个问题）
+
+| 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 5.51 可变默认参数 | 1 | 1 | 0 | 0 | 0 |
+| 5.52 async反模式 | 12 | 5 | 0 | 7 | 0 |
+| 5.53 日志级别 | 7 | 7 | 0 | 0 | 0 |
+| 5.54 配置热重载 | 5 | 4 | 0 | 1 | 0 |
+| 5.55 健康探针 | 6 | 1 | 0 | 5 | 0 |
+
+**关键发现**：
+- **5.52路径漂移最严重**：7个DRIFTED中6个是文件迁移（autonomy_core/llm_gateway.py已删除、ops/→trading/feedback_loop/、governance/escalation_engine.py→governance/escalation/），但问题代码在新位置仍存在
+- **5.52.4中chaos_injector.py:292引用完全失效**：该文件无任何asyncio代码，引用是误报应剔除
+- **5.53全部7个仍有效**：INFO记录FAILED事件、ERROR后不采取行动
+- **5.55.2-5.55.6正文已丢失**：注册表标题声称6个但仅5.55.1有正文，5条无法验证
+
+### FIXED问题清单（131个）
+
+#### 5.1维度（83个FIXED）
+主要因YAML词表加载改造和目录删除修复：
+- diagnose_depgraph.py:427已改为load_vocabulary_values动态加载（原stability词表硬编码）
+- 多个幻影目录/文件已删除
+- 部分GATE已重命名或移除
+
+#### 5.2-5.3维度（2个FIXED）
+- 2个poll-loop/约束违规已修复
+
+#### 5.4-5.6维度（18个FIXED）
+大批文件级违规（命名/路径/格式）已修复
+
+#### 5.7-5.10维度（8个FIXED）
+work_dags和capability_cards已清理
+
+#### 5.11-5.15维度（9个FIXED）
+部分导入/异常处理问题已修复
+
+#### 5.16维度（2个FIXED）
+- 5.16.5：_GlobalCommitLock已用原子os.open(O_CREAT|O_EXCL)消除TOCTOU
+- 5.16.6：stash逻辑已由worktree物理隔离替代
+
+#### 5.22维度（1个FIXED）
+- 5.22.9：三个孤儿__init___from_*.py文件已删除
+
+#### 5.27维度（1个FIXED）
+- 5.27.7：文档中"3073模块"硬编码数字已移除
+
+#### 5.28维度（2个FIXED）
+- 5.28.2：错误消息已含字段名约束（"Invalid input"已消除）
+- 5.28.7：faield/succesful拼写错误已消除
+
+#### 5.35维度（1个FIXED）
+- 5.35.5：已建立BreakingChangeDetector/SkillBreakageChecker/backcompat_checker多处检测机制
+
+#### 5.39维度（1个FIXED）
+- 5.39.7：tracing.py已配置完整OTLP gRPC exporter
+
+#### 5.40维度（1个FIXED）
+- 5.40.3：retry_count自赋值bug已消除，改为6处正确的`retry_count += 1`
+
+#### 5.43维度（2个FIXED）
+- 5.43.3：SQLite已用threading.local连接池复用
+- 5.43.4：asyncio.gather已加Semaphore限流（detector_dispatcher.py:110、drift_engine.py:270）
+
+### DRIFTED问题关键路径漂移映射（124个）
+
+> **说明**：DRIFTED问题中绝大多数（约90%）是因文件目录重构导致路径失效，但问题代码在新位置仍然存在，需更新注册表引用。
+
+| 旧路径前缀 | 新路径前缀 | 影响维度 | 影响问题数（估） |
+|---|---|---|:---:|
+| `src/zephyr/behavioral_audit/` | `src/zephyr/governance/drift_detection/` | 5.16/5.17/5.18/5.19/5.37/5.49 | ~15 |
+| `src/zephyr/ops/` | `src/zephyr/trading/feedback_loop/` | 5.20/5.39/5.52/5.54 | ~12 |
+| `tests/`（根目录） | `tests/<子目录>/`（e/rule/f_lifecycle/infrastructure等） | 5.21 | 13 |
+| `src/zephyr/ops/observability/` | `src/zephyr/shared/observability_02/` | 5.20/5.39 | ~4 |
+| `src/zephyr/autonomy_core/llm_gateway.py` | 已删除（仅剩integration/和infrastructure/pipeline/两副本） | 5.17/5.52/5.53 | ~3 |
+| `src/zephyr/autonomy_core/context_injector.py` | `src/zephyr/autonomy_core/context/context_injector.py` | 5.52 | 1 |
+| `src/zephyr/ops/circuit_breaker.py` | `src/zephyr/governance/circuit_breaker.py` | 5.50 | 1 |
+| `src/zephyr/governance/escalation_engine.py` | `src/zephyr/governance/escalation/escalation_engine.py` | 5.52 | 1 |
+| `src/zephyr/governance/delegation_engine.py` | `src/zephyr/governance/delegation/delegation_engine.py` | 5.52 | 1 |
+| `src/zephyr/governance/env_watcher.py` | `src/zephyr/governance/ops/env_watcher.py` + `src/zephyr/infrastructure/rollback/env_watcher.py` | 5.54 | 1 |
+| `scripts/governance/phase_a_backup.py` | `scripts/governance/_archive/one_off/phase_a_backup.py` | 5.33 | 2 |
+| `tests/test_depgraph_db.py` | `tests/governance/rule_enforcement/test_depgraph_db.py` | 5.34 | 1 |
+
+**特别说明**：
+- **5.52.4中chaos_injector.py:292引用完全失效**：该文件无任何asyncio代码，是误报，应从注册表剔除
+- **5.55.2-5.55.6正文已丢失**：注册表标题声称6个但仅5.55.1有正文，5条无法验证，建议从各轮子代理调研记录恢复
+
+### NOT_NEEDED问题清单（7个）
+
+| 维度 | 问题 | 豁免原因 |
+|---|---|---|
+| 5.1（3个） | 具体问题见各轮记录 | 设计选择/误报 |
+| 5.2-5.3（1个） | 具体问题见各轮记录 | 设计选择 |
+| 5.4-5.6（1个） | 具体问题见各轮记录 | 设计选择 |
+| 5.32.6 | _MIGRATIONS孤儿代码 | 已通过多处显式注释缓解AI混淆风险，移至_archive会破坏版本元数据引用 |
+| 5.42.2 | docstring标deprecated但方法被活跃调用 | 未发现矛盾实例，项目存在规范deprecation生命周期管理框架 |
+
+### 验证后的真实债务数
+
+5.1-5.55原始登记792个问题，验证后：
+- **真实待修复**：530个（STILL_VALID）
+- **需更新注册表**：124个（DRIFTED，其中约90%问题仍存在需更新路径，约10%需重新评估）
+- **应降级/移除**：7个（NOT_NEEDED）
+- **已修复可关闭**：131个（FIXED）
+- **实际有效债务**：530 + ~112（DRIFTED中问题仍存在的）= **约642个**
+
+### 第32轮全量验证总结（5.1-5.177）
+
+| 范围 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED | 实际有效债务 |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| 5.1-5.55 | 792 | 530 | 131 | 124 | 7 | ~642 |
+| 5.172-5.177 | 221 | 187 | 0 | 7 | 27 | 192 |
+| 5.56-5.171 | ~2180 | 未验证（正文丢失） | 未验证 | 未验证 | 未验证 | 未验证 |
+| **已验证合计** | **1013** | **717** | **131** | **131** | **34** | **~834** |
+
+**核心结论**：
+1. **已验证的1013个问题中，717个（70.8%）仍然有效**需修复
+2. **131个（12.9%）已修复**，主要集中在5.1维度的YAML词表改造（83个）和5.4-5.6的文件级清理（18个）
+3. **131个（12.9%）偏移**，主要是文件目录重构导致，问题本身多仍存在
+4. **34个（3.4%）误报/豁免**
+5. **5.56-5.171的2180个问题因正文丢失无法验证**，建议从各轮子代理调研记录恢复正文后补充验证
+6. **实际有效债务约834个**（已验证部分），加上5.56-5.171未验证部分，总实际债务估计超过2500个

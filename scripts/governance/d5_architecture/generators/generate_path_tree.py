@@ -442,7 +442,7 @@ FILE_DESC_ZH = {
     "contract_dedup_analysis.md": "契约去重分析",
     "contract_dedup_integration_analysis.md": "契约去重集成分析",
     "core_function_dependency_design.md": "核心功能依赖设计",
-    "dependency_architecture_panorama.md": "依赖架构全景",
+    "dependency_path_panorama.md": "依赖路径全景图",
     "migration_registry.yaml": "迁移注册表",
     "phase_d_ai_prompts.md": "Phase D AI提示词",
     "phase_d_full_test_construction_plan.md": "Phase D全量测试施工计划",

@@ -70,7 +70,7 @@ ttl: permanent
 
 - [架构原则详细文档](../04_architecture_principles_decisions/architecture_principles.md)
 - [技术选型详细文档](../../architecture_model/technology/technology_landscape.yaml)
-- [全景图能力定位书](../04_architecture_principles_decisions/dependency_architecture_panorama.md)
+- [全景图能力定位书](../04_architecture_principles_decisions/dependency_path_panorama.md)
 
 ---
 

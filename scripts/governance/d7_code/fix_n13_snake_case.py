@@ -56,8 +56,8 @@ RENAMES: list[tuple[str, str]] = [
         "docs/02_enterprise_architecture/ai_team_mode_full_config.md",
     ),
     (
-        "docs/02_enterprise_architecture/dependency_architecture_panorama.md",
-        "docs/02_enterprise_architecture/dependency_architecture_panorama.md",
+        "docs/02_enterprise_architecture/dependency_path_panorama.md",
+        "docs/02_enterprise_architecture/dependency_path_panorama.md",
     ),
     (
         "docs/02_enterprise_architecture/sample/00_overview_entry_sample.md",
@@ -102,7 +102,7 @@ REPLACEMENTS: list[tuple[str, str, str]] = [
     ("index.md", "index.md", "index.md → index.md"),
     # Chinese filenames → English
     ("ai_team_mode_full_config.md", "ai_team_mode_full_config.md", "中文→英文"),
-    ("dependency_architecture_panorama.md", "dependency_architecture_panorama.md", "中文→英文"),
+    ("dependency_path_panorama.md", "dependency_path_panorama.md", "中文→英文"),
     ("00_overview_entry_sample.md", "00_overview_entry_sample.md", "中文→英文"),
     ("04_architecture_principles_decisions_sample.md", "04_architecture_principles_decisions_sample.md", "中文→英文"),
     ("05_manual_architecture_views_sample.md", "05_manual_architecture_views_sample.md", "中文→英文"),

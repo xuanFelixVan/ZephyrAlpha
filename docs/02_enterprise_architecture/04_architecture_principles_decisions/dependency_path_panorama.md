@@ -20,7 +20,7 @@ doc_type: architecture_view
 > - **原"架构全景图" → 现"路径全景图"**（arch_ 表组，管"放在哪"——文件/目录的物理位置和域归属）
 > - **原"共享表" → 现"设计规则缓存表"**（domains/contracts/gates 等，从 YAML 同步过来的只读缓存）
 > - 文档标题同步从"依赖与架构全景图能力定位书"改为"依赖与路径全景图能力定位书"
-> - 英文文件名 `dependency_architecture_panorama.md` 暂保留（影响引用面大，单独任务处理）
+> - 英文文件名已从 `dependency_architecture_panorama.md` 重命名为 `dependency_path_panorama.md`（2026-07-01）
 > - 旧名"架构全景图"在本文档历史段落中若仍出现，均按本说明映射为"路径全景图"
 
 > **文档责任范围**：本文档定义**依赖与路径全景图**（depgraph + 生成器）的能力定位、设计决策和裁定记录。
@@ -1401,7 +1401,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 **修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定，2026-06-30 治本：node_type/edge_type/semantic 词表从 YAML 动态加载）
 **Schema修复**：depgraph (PostgreSQL)（P2 迁移 2026-06-27，SQLite 物理文件 `data/databases/depgraph.db` 已删除归档；PG schema 真源为 `scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql`）
-**文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2）
+**文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2），后重命名为 "dependency_path_panorama.md"（2026-07-01，消除 architecture 歧义）
 
 **已施工**（P0-1~P0-5 + P2/P3 全部完成）：
 - ✅ P0-1：Schema 迁移（node_id 改 INTEGER PK + edges 字段重命名 + edges 新增 dep_maturity + arch_directory_tree 删 state）
