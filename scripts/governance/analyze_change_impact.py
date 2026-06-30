@@ -27,8 +27,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
-PROJECT_ROOT = REPO_ROOT
 # 治本（2026-06-27）：删除 DEFAULT_DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 
@@ -37,7 +35,9 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+
+PROJECT_ROOT = REPO_ROOT
 
 
 def _load_depgraph_from_db(db_path: Path) -> dict:

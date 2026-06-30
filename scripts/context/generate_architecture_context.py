@@ -37,11 +37,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
-from _shared.constants import REPO_ROOT
-if not REPO_ROOT.exists():
-    REPO_ROOT = Path.cwd()
+_PROJECT_ROOT = SCRIPTS_DIR.parents[1]  # scripts/context/ -> repo root
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+_SRC_ROOT = _PROJECT_ROOT / "src"
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
 
 import yaml
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+
 CONTRACTS_YAML = REPO_ROOT / (
     "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
 )

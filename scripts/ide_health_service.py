@@ -37,17 +37,14 @@ from pathlib import Path
 
 # 确保项目根目录与 src/ 在 sys.path 中（src/ 用于 import zephyr.*）
 # 一次性 bootstrap（REPO_ROOT 规则允许 scripts/ 一次性 sys.path bootstrap）
-_THIS_DIR = Path(__file__).resolve().parent
-_GOV_DIR = str(_THIS_DIR.parent / "governance")
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-
-from _shared.constants import REPO_ROOT  # noqa: E402
-_PROJECT_ROOT = REPO_ROOT
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _SRC_ROOT = _PROJECT_ROOT / "src"
-for _p in (str(_PROJECT_ROOT), str(_SRC_ROOT)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
+
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）
 

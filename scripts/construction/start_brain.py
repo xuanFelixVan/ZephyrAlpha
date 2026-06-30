@@ -40,7 +40,12 @@ from pathlib import Path
 from zephyr.shared.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.auto_task_generator import AutoTaskGenerator
-from _shared.constants import REPO_ROOT
+
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parents[1] / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT
 

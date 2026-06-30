@@ -20,11 +20,12 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-_THIS_DIR = Path(__file__).resolve().parent
-_GOV_DIR = str(_THIS_DIR.parent / "governance")
+
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parents[1] / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import REPO_ROOT
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 MCP_CONFIG = REPO_ROOT / "config" / "mcp.json"
 

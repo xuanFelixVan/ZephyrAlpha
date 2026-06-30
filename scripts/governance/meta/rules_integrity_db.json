@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "6d76f69802bc71e7",
+      "hash": "6f694d82bfe49834",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -11,12 +11,12 @@
       "desc": "AI Session 冷启动卡片"
     },
     "scripts/governance/_shared/thresholds.yaml": {
-      "hash": "728f7c8085603fd8",
+      "hash": "ca653431eb4d857d",
       "critical": true,
       "desc": "关键阈值 SSoT"
     },
     "scripts/governance/meta/kill_switch_state.yaml": {
-      "hash": "ccfbaabc14c0091b",
+      "hash": "5f6ba75ff3fbbfac",
       "critical": true,
       "desc": "Kill Switch 状态"
     },
@@ -26,7 +26,7 @@
       "desc": "Shadow Mode 状态"
     },
     "scripts/governance/meta/error_budget_state.yaml": {
-      "hash": "f3b3acbcfaf957e5",
+      "hash": "6f274fbf3875e112",
       "critical": true,
       "desc": "Error Budget 状态"
     },
@@ -46,6 +46,6 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     }
   },
-  "registered_at": "2026-06-29T15:52:31.003531+00:00",
-  "last_check_at": "2026-06-29T15:52:31.003531+00:00"
+  "registered_at": "2026-06-30T02:40:00.781397+00:00",
+  "last_check_at": "2026-06-30T02:40:00.781397+00:00"
 }

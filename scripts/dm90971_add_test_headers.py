@@ -36,9 +36,15 @@ from __future__ import annotations
 import argparse
 import os
 import re
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from _shared.constants import REPO_ROOT
+
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 _MAX_WORKERS = 8
 PROJECT_ROOT = REPO_ROOT

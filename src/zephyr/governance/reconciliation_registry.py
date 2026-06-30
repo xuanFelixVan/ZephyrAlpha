@@ -84,6 +84,7 @@ __all__ = [
     "make_commit_gateway_audit_reconciler",
     "make_deprecated_directory_reconciler",
     "make_rule_file_audit_reconciler",
+    "make_exempt_zone_frontmatter_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -1956,40 +1957,157 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+# ============================================================
+# 缺口2/3 共享辅助（规则文件审计 + 豁免区 frontmatter 检测）
+# 提取到模块级避免两个 reconciler 重复定义（向内收原则）
+# ============================================================
+_RULE_FILE_PATHS = (
+    "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml",
+    "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml",
+    "docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml",
+    "docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml",
+)
+_EXEMPT_ZONE_PREFIXES = (
+    "docs/_working/",
+    "docs/_archive/",
+    ".runtime/",
+    ".trae/",
+    "docs/01_policies_and_standards/templates/",
+)
+_FRONTMATTER_EXTS = (".md", ".yaml", ".yml")
+
+
+def _rel_path(f: str, project_root_str: str) -> str:
+    """文件路径归一化：os.path.relpath + replace("\\", "/")。"""
+    import os
+    return os.path.relpath(f, project_root_str).replace("\\", "/")
+
+
+def _extract_doc_type(content: str, is_markdown: bool) -> str:
+    """从 frontmatter 提取 doc_type 值；无 frontmatter/doc_type 返回空串。
+
+    frontmatter 判定：首行以 ``---`` 开头。.md 取 ``---`` 之间的块；
+    .yaml/.yml 取首行 ``---`` 之后的全部内容（YAML document start marker）。
+    doc_type 仅识别内联形式 ``doc_type: <value>``（最常见，块形式不识别——
+    原型启发式，非完整 YAML 解析，避免引入非 stdlib yaml 依赖）。
+    """
+    lines = content.splitlines()
+    if not lines or not lines[0].lstrip().startswith("---"):
+        return ""
+    if is_markdown:
+        block: list[str] = []
+        closed = False
+        for line in lines[1:]:
+            if line.lstrip().startswith("---"):
+                closed = True
+                break
+            block.append(line)
+        if not closed:
+            return ""
+    else:
+        block = lines[1:]
+    for line in block:
+        stripped = line.strip()
+        if ":" not in stripped:
+            continue
+        key, _, val = stripped.partition(":")
+        if key.strip() != "doc_type":
+            continue
+        val = val.strip()
+        if (val.startswith('"') and val.endswith('"')) or (
+            val.startswith("'") and val.endswith("'")
+        ):
+            val = val[1:-1]
+        if " #" in val:
+            val = val.split(" #", 1)[0].strip()
+        return val
+    return ""
+
+
 def make_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 GATE-RULE-FILE-AUDIT post-commit 审计 reconciler（缺口3 + 缺口2）。
+    """构造 GATE-RULE-FILE-AUDIT post-commit 审计 reconciler（缺口3：规则文件变更审计）。
 
-    治本动机：
-    - 缺口3（规则文件变更无自动审计）：directory_contract / doc_type_vocabulary /
-      ttl_vocabulary / architecture_contract / gate_registry 等治理真源被修改后
-      无 post-commit 兜底告警，可能被悄悄放宽约束（如 TTL 上限调大、gate_registry
-      关闭某 GATE）。本 reconciler 落盘审计记录，提示人工审查变更意图。
-    - 缺口2（豁免区可被利用绕过 DCR-001/002）：docs/_working/ / docs/_archive/ /
-      .runtime/ / .trae/ / docs/01_policies_and_standards/templates/ 五类豁免前缀
-      不受 DCR-001/002 frontmatter 校验约束。若豁免区文件带 frontmatter +
-      非空 doc_type，说明本应放正式目录却被塞进豁免区，需告警提示人工确认是否迁移。
+    治本动机：directory_contract / doc_type_vocabulary / ttl_vocabulary /
+    architecture_contract / gate_registry 等治理真源被修改后无 post-commit
+    兜底告警，可能被悄悄放宽约束。本 reconciler 落盘审计记录，提示人工审查。
 
-    参考模式：make_arch_model_reconciler / make_commit_gateway_audit_reconciler
-    （闭包捕获 gateway.project_root + ReconcilerSpec 声明式注册 + 报告落盘）。
+    P0 修复（2026-06-30）：原设计此函数同时承担缺口2（豁免区 frontmatter 检测），
+    但两者共用一个 trigger（只检测规则文件变更），导致缺口2成死代码——单独提交
+    豁免区文件时 trigger 不命中，缺口2检测永不执行。现已将缺口2拆分到独立的
+    make_exempt_zone_frontmatter_reconciler，trigger 改为检测豁免区文件。
 
-    priority=700（在所有现有 reconciler 之后，现有最高 600；审计非阻断，低优先级，
-    与 GATE-COMMIT-GW-AUDIT priority=800 同属 post-compensation 审计层）。
+    priority=700（审计非阻断，post-compensation 层）。
+    """
+    import json
+    import os
+    from datetime import datetime
 
-    非阻断裁定：规则文件变更已入 git 历史无法回滚；豁免区 frontmatter 文件不违反
-    任何硬约束（DCR-001/002 明确豁免这些前缀）。两者仅告警，落盘到
-    ``.runtime/reconcile_reports/rule_file_audit_<ts>.json`` 供人工审查。
+    project_root = gateway.project_root
+    _project_root_str = str(project_root)
+    _rule_set = set(_RULE_FILE_PATHS)
 
-    纯 stdlib：os/json/datetime/pathlib，不 import zephyr.*（与文件头
-    [DEPENDENCIES] (none — pure stdlib) 一致）。报告 timestamp 用 ISO 格式
-    （datetime.now().isoformat）便于跨时区人工阅读，故不复用 _write_reconcile_report
-    （其注入 int unix 时间戳，与缺口3/2 报告的 ISO 阅读需求不符）。
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            if _rel_path(f, _project_root_str) in _rule_set:
+                return True
+        return False
 
-    Args:
-        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
-            保持本纯 stdlib 模块不 import zephyr.*）。
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        rule_files_changed = [
+            _rel_path(f, _project_root_str)
+            for f in committed_files
+            if _rel_path(f, _project_root_str) in _rule_set
+        ]
 
-    Returns:
-        ReconcilerSpec(gate_id="GATE-RULE-FILE-AUDIT", priority=700)。
+        reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
+        os.makedirs(reports_dir, exist_ok=True)
+        ts_iso = datetime.now().isoformat(timespec="seconds")
+        ts_file = ts_iso.replace(":", "")
+        report = {
+            "timestamp": ts_iso,
+            "session_id": session_id,
+            "rule_files_changed": rule_files_changed,
+            "note": "规则文件变更需人工审查（约束可能被放宽）",
+        }
+        report_path = os.path.join(reports_dir, f"rule_file_audit_{ts_file}.json")
+        try:
+            with open(report_path, "w", encoding="utf-8") as fh:
+                json.dump(report, fh, ensure_ascii=False, indent=2)
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rule-file audit done ({len(rule_files_changed)} file(s)) but report write failed: {e}",
+            )
+
+        return ReconcileResult(
+            action="warn",
+            detail=(
+                f"{len(rule_files_changed)} rule file(s) changed "
+                f"(manual review recommended), report={os.path.basename(report_path)}"
+            ),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-RULE-FILE-AUDIT",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=700,
+    )
+
+
+def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-EXEMPT-ZONE-FM post-commit reconciler（缺口2：豁免区 frontmatter 检测）。
+
+    治本动机：docs/_working/ / docs/_archive/ / .runtime/ / .trae/ / templates/
+    五类豁免前缀不受 DCR-001/002 frontmatter 校验约束。若豁免区文件带
+    frontmatter + 非空 doc_type，说明本应放正式目录却被塞进豁免区。
+
+    P0 修复（2026-06-30）：原设计此检测与规则文件审计共用 trigger（只在规则文件
+    变更时才触发），导致单独提交豁免区文件时检测永不执行（死代码）。现拆分为
+    独立 reconciler，trigger 改为检测豁免区文件被提交。
+
+    priority=710（在 GATE-RULE-FILE-AUDIT 700 之后）。
     """
     import json
     import os
@@ -1999,92 +2117,20 @@ def make_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     project_root = gateway.project_root
     _project_root_str = str(project_root)
 
-    # 治本缺口3：规则文件真源清单（变更需人工审计）
-    _RULE_FILES = (
-        "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml",
-        "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml",
-        "docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml",
-        "docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml",
-        "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml",
-    )
-    # 治本缺口2：DCR-001/002 豁免前缀（frontmatter 文件可绕过校验）
-    _EXEMPT_ZONES = (
-        "docs/_working/",
-        "docs/_archive/",
-        ".runtime/",
-        ".trae/",
-        "docs/01_policies_and_standards/templates/",
-    )
-    _FRONTMATTER_EXTS = (".md", ".yaml", ".yml")
-
-    def _rel(f: str) -> str:
-        # 文件路径归一化：os.path.relpath + replace("\\", "/")
-        return os.path.relpath(f, _project_root_str).replace("\\", "/")
-
-    def _extract_doc_type(content: str, is_markdown: bool) -> str:
-        """从 frontmatter 提取 doc_type 值；无 frontmatter/doc_type 返回空串。
-
-        frontmatter 判定：首行以 ``---`` 开头。.md 取 ``---`` 之间的块；
-        .yaml/.yml 取首行 ``---`` 之后的全部内容（YAML document start marker）。
-        doc_type 仅识别内联形式 ``doc_type: <value>``（最常见，块形式不识别——
-        原型启发式，非完整 YAML 解析，避免引入非 stdlib yaml 依赖）。
-        """
-        lines = content.splitlines()
-        if not lines or not lines[0].lstrip().startswith("---"):
-            return ""
-        if is_markdown:
-            block: list[str] = []
-            closed = False
-            for line in lines[1:]:
-                if line.lstrip().startswith("---"):
-                    closed = True
-                    break
-                block.append(line)
-            if not closed:
-                return ""
-        else:
-            block = lines[1:]
-        for line in block:
-            stripped = line.strip()
-            if ":" not in stripped:
-                continue
-            key, _, val = stripped.partition(":")
-            if key.strip() != "doc_type":
-                continue
-            val = val.strip()
-            # 去引号
-            if (val.startswith('"') and val.endswith('"')) or (
-                val.startswith("'") and val.endswith("'")
-            ):
-                val = val[1:-1]
-            # 去行内注释
-            if " #" in val:
-                val = val.split(" #", 1)[0].strip()
-            return val
-        return ""
-
     def _trigger(committed_files: list[str]) -> bool:
-        rule_set = set(_RULE_FILES)
         for f in committed_files:
-            if _rel(f) in rule_set:
-                return True
+            rel = _rel_path(f, _project_root_str)
+            for zone in _EXEMPT_ZONE_PREFIXES:
+                if rel.startswith(zone):
+                    return True
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 检测哪些规则文件被修改（治本缺口3）
-        rule_set = set(_RULE_FILES)
-        rule_files_changed: list[str] = []
-        for f in committed_files:
-            rel = _rel(f)
-            if rel in rule_set:
-                rule_files_changed.append(rel)
-
-        # 2. 检测豁免区下有 frontmatter + 非空 doc_type 的新文件（治本缺口2）
         exempt_zone_frontmatter_files: list[dict] = []
         for f in committed_files:
-            rel = _rel(f)
+            rel = _rel_path(f, _project_root_str)
             matched_zone = ""
-            for zone in _EXEMPT_ZONES:
+            for zone in _EXEMPT_ZONE_PREFIXES:
                 if rel.startswith(zone):
                     matched_zone = zone
                     break
@@ -2096,7 +2142,6 @@ def make_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             try:
                 content = abs_path.read_text(encoding="utf-8", errors="replace")
             except OSError:
-                # 文件可能已删除（status=D）或不可读，跳过
                 continue
             doc_type = _extract_doc_type(content, rel.endswith(".md"))
             if doc_type:
@@ -2106,48 +2151,40 @@ def make_rule_file_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                     "exempt_zone": matched_zone,
                 })
 
-        # 3. 落盘告警报告（ISO 时间戳；目录可能不存在，os.makedirs exist_ok=True）
+        if not exempt_zone_frontmatter_files:
+            return ReconcileResult(action="clean", detail="no exempt-zone frontmatter files")
+
         reports_dir = os.path.join(_project_root_str, ".runtime", "reconcile_reports")
         os.makedirs(reports_dir, exist_ok=True)
         ts_iso = datetime.now().isoformat(timespec="seconds")
-        # 文件名时间戳：去冒号（Windows 非法字符）
         ts_file = ts_iso.replace(":", "")
         report = {
             "timestamp": ts_iso,
             "session_id": session_id,
-            "rule_files_changed": rule_files_changed,
             "exempt_zone_frontmatter_files": exempt_zone_frontmatter_files,
-            "note": "规则文件变更需人工审查；豁免区下有 frontmatter 的文件不受 DCR-001/002 约束，请确认是否应迁移到正式目录",
+            "note": "豁免区下有 frontmatter 的文件不受 DCR-001/002 约束，请确认是否应迁移到正式目录",
         }
-        report_path = os.path.join(reports_dir, f"rule_file_audit_{ts_file}.json")
+        report_path = os.path.join(reports_dir, f"exempt_zone_fm_{ts_file}.json")
         try:
             with open(report_path, "w", encoding="utf-8") as fh:
                 json.dump(report, fh, ensure_ascii=False, indent=2)
         except OSError as e:
             return ReconcileResult(
                 action="warn",
-                detail=(
-                    f"rule-file audit done ({len(rule_files_changed)} rule file(s), "
-                    f"{len(exempt_zone_frontmatter_files)} exempt frontmatter file(s)) "
-                    f"but report write failed: {e}"
-                ),
+                detail=f"exempt-zone audit done ({len(exempt_zone_frontmatter_files)} file(s)) but report write failed: {e}",
             )
 
-        # 4. 判定（非阻断：规则文件变更已入历史，豁免区文件不违反硬约束；仅告警）
-        # trigger 保证 rule_files_changed 非空，故恒返回 warn 提示人工审查
         return ReconcileResult(
             action="warn",
             detail=(
-                f"{len(rule_files_changed)} rule file(s) changed + "
                 f"{len(exempt_zone_frontmatter_files)} exempt-zone frontmatter file(s) "
-                f"detected (manual review recommended), report="
-                f"{os.path.basename(report_path)}"
+                f"detected (manual review recommended), report={os.path.basename(report_path)}"
             ),
         )
 
     return ReconcilerSpec(
-        gate_id="GATE-RULE-FILE-AUDIT",
+        gate_id="GATE-EXEMPT-ZONE-FM",
         trigger=_trigger,
         reconcile=_reconcile,
-        priority=700,  # 审计非阻断，在现有最高 600 之后
+        priority=710,
     )

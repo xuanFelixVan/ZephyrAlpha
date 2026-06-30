@@ -39,7 +39,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 # find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
-from zephyr.shared.io.paths import REPO_ROOT, find_repo_root, DB_PATH  # noqa: E402
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT, find_repo_root  # noqa: E402
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
@@ -188,8 +188,8 @@ CONFIG_DIR: Path = REPO_ROOT / "config"
 SCRIPTS_DIR: Path = REPO_ROOT / "scripts" / "governance"
 MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 
-# 与 src/zephyr/shared/paths.DB_PATH 对齐（治理脚本不得各自硬编码库文件名）
-DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
+# DB_PATH 真源为 zephyr.shared.io.paths（上方 import），本模块 re-export。
+# 治理脚本不得各自硬编码库文件名。
 
 # depgraph.db 路径——供 sync_yaml_to_depgraph.py 等治理脚本引用（裁定#206 / Bug H 修复）
 # 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"。

@@ -52,13 +52,12 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.governance.sqlite_schema import (
-    DB_PATH,
     get_db_connection,
     init_db,
     schema_version,
 )
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
     "DatabaseHealthStatus",

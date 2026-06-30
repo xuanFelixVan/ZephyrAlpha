@@ -34,7 +34,12 @@ import os
 import re
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
+
+# bootstrap: 定位 scripts/governance/ 以 import _shared.constants（REPO_ROOT SSoT 真源）
+_GOV_DIR = str(Path(__file__).resolve().parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
