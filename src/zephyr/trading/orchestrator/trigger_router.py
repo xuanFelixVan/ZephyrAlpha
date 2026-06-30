@@ -78,7 +78,7 @@ __all__ = [
     "handle_blueprint_lookup_stub",
     "handle_blueprint_stub",
     "handle_cleanup_stub",
-    "handle_drift_stub",
+    "handle_drift_detected",
     "handle_onboarding_stub",
     "load_router_config",
     "reset_trigger_router",
@@ -635,7 +635,7 @@ def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
         return _stub_response("onboarding", payload)
 
 
-def handle_drift_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
+def handle_drift_detected(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``drift_detected`` — 触发 DriftDetector 恢复流程。
 
     调用 zephyr.governance.rule_enforcement.drift_detector 模块执行偏移恢复。

@@ -45,7 +45,7 @@ def good_yaml(tmp_path: Path) -> Path:
                 safety: "M"
                 enabled: true
               drift_detected:
-                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_detected"
                 description: "test drift"
                 safety: "H"
                 enabled: true

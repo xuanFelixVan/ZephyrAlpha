@@ -18,7 +18,7 @@ zephyr.governance.drift_detector.trigger_recovery 完成恢复闭环。
   3. Hotfix 旁路 [HOTFIX] commit
   4. 级联锁定 CASCADE_LOCKOUT
   5. 修复失败兜底回滚 MANUAL_REQUIRED
-  6. handle_drift_stub 真实调用链（非 fallback stub）
+  6. handle_drift_detected 真实调用链（非 fallback stub）
 """
 
 from __future__ import annotations
@@ -40,10 +40,10 @@ def test_trigger_recovery_via_gates_init():
     assert callable(trigger_recovery)
 
 
-def test_handle_drift_stub_uses_trigger_recovery():
-    from zephyr.trading.orchestrator.trigger_router import handle_drift_stub
+def test_handle_drift_detected_uses_trigger_recovery():
+    from zephyr.trading.orchestrator.trigger_router import handle_drift_detected
 
-    assert callable(handle_drift_stub)
+    assert callable(handle_drift_detected)
 
     payload = {"module_id": "MOD-INF-023", "changed_files": [], "commit_message": ""}
 
@@ -52,14 +52,14 @@ def test_handle_drift_stub_uses_trigger_recovery():
             "recovery_id": "test-123",
             "recovery_status": "NO_DRIFT_FOUND",
         }
-        result = handle_drift_stub(payload)
+        result = handle_drift_detected(payload)
         mock_recovery.assert_called_once_with(payload)
         assert result["handler"] == "drift_detected"
         assert result["phase"] == "operational"
 
 
-def test_handle_drift_stub_fallback_on_import_error():
-    from zephyr.trading.orchestrator.trigger_router import handle_drift_stub
+def test_handle_drift_detected_fallback_on_import_error():
+    from zephyr.trading.orchestrator.trigger_router import handle_drift_detected
 
     payload = {"module_id": "MOD-INF-023"}
 
@@ -73,7 +73,7 @@ def test_handle_drift_stub_fallback_on_import_error():
             return_value={"stub": True},
         ),
     ):
-        result = handle_drift_stub(payload)
+        result = handle_drift_detected(payload)
         assert result.get("stub") is True or "drift_detected" in str(result)
 
 

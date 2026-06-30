@@ -81,7 +81,7 @@ contracts:
     goal: zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context
     phase: experimentalf（T-V2-009）
   - trigger: drift_detected
-    current: handle_drift_stub（🔲 stub）
+    current: handle_drift_detected（✅ 真实）
     goal: zephyr.gates.drift_detector.DriftDetector.trigger_recovery
     phase: experimentalf（T-V2-009）
   - trigger: cleanup_due

@@ -43,7 +43,7 @@ from zephyr.trading.orchestrator.trigger_router import (
     get_trigger_router,
     handle_blueprint_stub,
     handle_cleanup_stub,
-    handle_drift_stub,
+    handle_drift_detected,
     handle_onboarding_stub,
     load_router_config,
     reset_trigger_router,
@@ -75,7 +75,7 @@ def good_yaml(tmp_path: Path) -> Path:
                 safety: "M"
                 enabled: true
               drift_detected:
-                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_detected"
                 description: "test drift"
                 safety: "H"
                 enabled: true
@@ -536,8 +536,8 @@ class TestDefaultStubHandlers:
         assert result["phase"] in ("1d-stub", "operational")
 
     def test_drift_stub_operational(self):
-        """``handle_drift_stub`` 已升级为真实调用 trigger_recovery，返回 operational。"""
-        result = handle_drift_stub({"k": "v"})
+        """``handle_drift_detected`` 已升级为真实调用 trigger_recovery，返回 operational。"""
+        result = handle_drift_detected({"k": "v"})
         assert isinstance(result, dict)
         assert result["handler"] == "drift_detected"
         assert result["phase"] == "operational"

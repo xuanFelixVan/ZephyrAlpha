@@ -43,7 +43,7 @@ from zephyr.trading.orchestrator.trigger_router import (
     get_trigger_router,
     handle_blueprint_stub,
     handle_cleanup_stub,
-    handle_drift_stub,
+    handle_drift_detected,
     handle_onboarding_stub,
     load_router_config,
     reset_trigger_router,
@@ -75,7 +75,7 @@ def good_yaml(tmp_path: Path) -> Path:
                 safety: "M"
                 enabled: true
               drift_detected:
-                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_detected"
                 description: "test drift"
                 safety: "H"
                 enabled: true
@@ -525,7 +525,7 @@ class TestDefaultStubHandlers:
         "stub, expected",
         [
             (handle_onboarding_stub, "onboarding"),
-            (handle_drift_stub, "drift_detected"),
+            (handle_drift_detected, "drift_detected"),
             (handle_cleanup_stub, "cleanup_due"),
             (handle_blueprint_stub, "blueprint_published"),
         ],
