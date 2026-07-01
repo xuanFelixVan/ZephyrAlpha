@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-# [MODULE] zephyr.testing.code_dedup.thematic_clusterer
+# [MODULE] zephyr.governance.thematic_clusterer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

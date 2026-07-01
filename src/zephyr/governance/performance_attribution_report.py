@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-197 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-# [MODULE] zephyr.portfolio.core.performance_attribution_report
+# [MODULE] zephyr.governance.performance_attribution_report
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.portfolio.performance_attribution_report
 # [CONSUMERS]

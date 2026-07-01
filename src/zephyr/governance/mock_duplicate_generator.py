@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-# [MODULE] zephyr.testing.code_dedup.mock_duplicate_generator
+# [MODULE] zephyr.governance.mock_duplicate_generator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

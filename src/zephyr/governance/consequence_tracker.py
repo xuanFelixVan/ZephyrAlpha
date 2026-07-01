@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-# [MODULE] zephyr.testing.code_dedup.consequence_tracker
+# [MODULE] zephyr.governance.consequence_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

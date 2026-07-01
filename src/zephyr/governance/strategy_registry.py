@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md
-# [MODULE] zephyr.portfolio.core.strategy_registry
+# [MODULE] zephyr.governance.strategy_registry
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.strategy_base
 # [CONSUMERS]

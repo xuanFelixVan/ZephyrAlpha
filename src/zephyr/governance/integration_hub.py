@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
-# [MODULE] zephyr.testing.code_dedup.integration_hub
+# [MODULE] zephyr.governance.integration_hub
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]

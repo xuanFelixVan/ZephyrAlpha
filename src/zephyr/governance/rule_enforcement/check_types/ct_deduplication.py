@@ -38,8 +38,8 @@ class DeduplicationHandler(CheckTypeHandler):
         try:
             import importlib
 
-            _scanner_mod = importlib.import_module("zephyr.testing.code_dedup.scanner")
-            _exit_mod = importlib.import_module("zephyr.testing.code_dedup.exit_codes")
+            _scanner_mod = importlib.import_module("zephyr.governance.scanner")
+            _exit_mod = importlib.import_module("zephyr.governance.exit_codes")
             Scanner = _scanner_mod.Scanner
             ExitCode = _exit_mod.ExitCode
 
@@ -48,7 +48,7 @@ class DeduplicationHandler(CheckTypeHandler):
 
             scanner = Scanner()
             if scan_mode == "incremental":
-                _diff_mod = importlib.import_module("zephyr.testing.code_dedup.diff_detector")
+                _diff_mod = importlib.import_module("zephyr.governance.diff_detector")
                 DiffDetector = _diff_mod.DiffDetector
                 detector = DiffDetector()
                 changed_files = detector.detect()
