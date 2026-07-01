@@ -2641,10 +2641,11 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         cursor = conn.cursor()
         # DM-012 Fix 4: Auto-cleanup old backup tables before writing
         # P2 PG 迁移：sqlite_master → information_schema.tables
-        backup_tables = cursor.execute(
+        cursor.execute(
             "SELECT table_name AS name FROM information_schema.tables "
             "WHERE table_schema = 'public' AND table_name LIKE '%backup%'"
-        ).fetchall()
+        )
+        backup_tables = cursor.fetchall()
         for bt_row in backup_tables:
             bt_name = bt_row["name"]
             # Validate table name format before using in DDL
@@ -2886,7 +2887,8 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
         # DB node_id是INTEGER自增，通过path建立映射
         path_to_db_node_id = {}
-        for row in cursor.execute("SELECT path, node_id FROM nodes").fetchall():
+        cursor.execute("SELECT path, node_id FROM nodes")
+        for row in cursor.fetchall():
             # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
             path_to_db_node_id[row["path"]] = row["node_id"]
         # 生成器node_id→DB_node_id映射
@@ -3199,13 +3201,14 @@ def load_design_state_from_db(db_path: str) -> dict:
         conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
         # 加载设计态节点
-        rows = cur.execute("""
+        cur.execute("""
             SELECT path, node_type, domain_id, blueprint_id, belongs_to,
                    architecture_layer, design_maturity, build_status,
                    change_policy, impact_level, modification_permission
             FROM nodes
             WHERE design_maturity = 'design'
-        """).fetchall()
+        """)
+        rows = cur.fetchall()
         for row in rows:
             # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
             path = row["path"]
@@ -3226,13 +3229,15 @@ def load_design_state_from_db(db_path: str) -> dict:
                 }
         # DM-3012: 加载设计态边（dep_maturity='design'）
         try:
-            design_edges = cur.execute("SELECT * FROM edges WHERE dep_maturity = 'design'").fetchall()
+            cur.execute("SELECT * FROM edges WHERE dep_maturity = 'design'")
+            design_edges = cur.fetchall()
         except Exception as e:
             print(f"[DM-3012] WARNING: 加载设计态edges失败: {e}")
             design_edges = []
         # DM-3012: 加载设计态架构目录树（design_maturity='design'）
         try:
-            design_arch = cur.execute("SELECT * FROM arch_directory_tree WHERE design_maturity = 'design'").fetchall()
+            cur.execute("SELECT * FROM arch_directory_tree WHERE design_maturity = 'design'")
+            design_arch = cur.fetchall()
         except Exception as e:
             print(f"[DM-3012] WARNING: 加载设计态arch_directory_tree失败: {e}")
             design_arch = []
@@ -3318,10 +3323,11 @@ def load_production_state_from_db(db_path: str) -> dict:
             conn.close()
             return production_meta
         col_list = ", ".join(cols)
-        rows = cur.execute(
+        cur.execute(
             f"SELECT path, {col_list} "
             "FROM nodes WHERE design_maturity = 'production'"
-        ).fetchall()
+        )
+        rows = cur.fetchall()
         for row in rows:
             # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
             path = row["path"]
@@ -3417,7 +3423,7 @@ def load_edge_production_state_from_db(db_path: str) -> dict:
             conn.close()
             return edge_meta
         col_list = ", ".join(cols)
-        rows = cur.execute(
+        cur.execute(
             f"""SELECT n1.path AS from_path, n2.path AS to_path,
                 e.dep_type, {col_list}
                 FROM edges e
@@ -3426,7 +3432,8 @@ def load_edge_production_state_from_db(db_path: str) -> dict:
                 WHERE (e.dep_maturity != 'design' OR e.dep_maturity IS NULL)
                 AND e.from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')
                 AND e.to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')"""
-        ).fetchall()
+        )
+        rows = cur.fetchall()
         for row in rows:
             from_path = row["from_path"]
             to_path = row["to_path"]
