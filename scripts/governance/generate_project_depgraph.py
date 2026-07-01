@@ -2538,9 +2538,16 @@ def _validate_arch_references():
     except Exception:
         return  # 读取失败则静默跳过
 
-    arch_refs = set(_re.findall(r'ARCH-(\d+)', source))
+    arch_refs = set(_re.findall(r'\bARCH-(\d+)', source))
     if not arch_refs:
         return  # 无 ARCH 引用则跳过
+
+    # 1.5 检测小写 arch- 违规（trae_028 §标识符编号格式: 标识符编号必须大写）
+    lowercase_arch = [m.group() for m in _re.finditer(r'\bARCH-\d+', source, _re.IGNORECASE)
+                      if m.group() != m.group().upper()]
+    if lowercase_arch:
+        print(f"[DEPGRAPH] ERROR: 发现小写 arch- 引用 (trae_028 §标识符编号格式: 标识符编号必须大写): {lowercase_arch}")
+        _sys.exit(1)
 
     # 2. 读取 architecture_issue_registry.yaml
     registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
