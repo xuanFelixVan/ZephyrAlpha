@@ -39,7 +39,7 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
         task_id=task_id,
         namespace=ns,
         seq=seq,
-        source_blueprint="MOD-INF-006",
+        source_blueprint="MOD-INF-039",
         source_section="test",
         title="M1-M5 生产管线任务卡测试",
         description="验证 PipelineOrchestrator 能正确调度 DeepSeek 主力模型执行 A 区 5 个模块",
@@ -62,7 +62,7 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
         timeout_minutes=5,
         rollback_instructions="所有产出均为临时文件，删除 D:\\test\\ 目录即可完全撤销所有修改",
         acceptance=["管线产出 ModuleResult"],
-        tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006"],
+        tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-039"],
         assigned_pipeline="A",
         created_at="2026-05-02T00:00:00",
         updated_at="2026-05-02T00:00:00",
@@ -112,13 +112,13 @@ class TestPipelineDispatch:
         assert m7.model == "glm"
 
     def test_experimental_triggers_claude_rescue(self) -> None:
-        task = _make_task("CP-0097", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006", "experimental"])
+        task = _make_task("CP-0097", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-039", "experimental"])
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.needs_claude_rescue is True
 
     def test_security_triggers_claude_rescue(self) -> None:
-        task = _make_task("CP-0096", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006", "security"])
+        task = _make_task("CP-0096", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-039", "security"])
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.needs_claude_rescue is True
@@ -130,7 +130,7 @@ class TestPipelineDispatch:
                 "test",
                 "l01-infrastructure",
                 "deepseek",
-                "MOD-INF-006",
+                "MOD-INF-039",
                 "ct_pipe.task_type=OPS",
             ],
         )
@@ -168,7 +168,7 @@ class TestPipelineDispatch:
             tags=[
                 "test",
                 "l01-infrastructure",
-                "MOD-INF-006",
+                "MOD-INF-039",
                 "ct_pipe.task_type=MODEL_BUILD",
                 "ct_pipe.complexity=HIGH",
             ],

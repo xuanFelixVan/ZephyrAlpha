@@ -146,7 +146,7 @@ class TestTaskInstantiation:
             updated_at=later,
             is_deleted=0,
             schema_version="2.0",
-            source_blueprint="MOD-INF-007",
+            source_blueprint="MOD-GATE_ENGINE",
             source_section="§3",
         )
         assert task.task_id == "SRC-99"

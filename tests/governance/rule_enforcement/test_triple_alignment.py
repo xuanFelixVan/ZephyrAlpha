@@ -46,17 +46,17 @@ class TestAlignmentViolation:
         v = AlignmentViolation(
             check="module_id_code_vs_blueprint",
             severity=Severity.ERROR,
-            module_id="MOD-INF-007",
+            module_id="MOD-GATE_ENGINE",
             source="code [BLUEPRINT] header",
-            expected="MOD-INF-007",
-            actual="MOD-INF-008",
+            expected="MOD-GATE_ENGINE",
+            actual="MOD-CONTEXT_ENGINE",
         )
         assert v.check == "module_id_code_vs_blueprint"
         assert v.severity == Severity.ERROR
-        assert v.module_id == "MOD-INF-007"
+        assert v.module_id == "MOD-GATE_ENGINE"
         assert v.source == "code [BLUEPRINT] header"
-        assert v.expected == "MOD-INF-007"
-        assert v.actual == "MOD-INF-008"
+        assert v.expected == "MOD-GATE_ENGINE"
+        assert v.actual == "MOD-CONTEXT_ENGINE"
         assert v.detail == ""
 
     def test_creation_with_detail(self):
@@ -107,7 +107,7 @@ class TestTripleAlignmentResult:
         v = AlignmentViolation(
             check="test_check",
             severity=Severity.ERROR,
-            module_id="MOD-INF-007",
+            module_id="MOD-GATE_ENGINE",
             source="src",
             expected="A",
             actual="B",
@@ -121,7 +121,7 @@ class TestTripleAlignmentResult:
         v = AlignmentViolation(
             check="test_check",
             severity=Severity.WARN,
-            module_id="MOD-INF-007",
+            module_id="MOD-GATE_ENGINE",
             source="src",
             expected="A",
             actual="B",
@@ -273,7 +273,7 @@ class TestParseCodeHeaders:
     def test_parses_standard_headers(self, tmp_path):
         p = tmp_path / "mod.py"
         p.write_text(
-            "# [BLUEPRINT] MOD-INF-007 | bp.md | §4\n"
+            "# [BLUEPRINT] MOD-GATE_ENGINE | bp.md | §4\n"
             "# [MODULE] zephyr.governance.rule_enforcement.triple_alignment\n"
             "# [STABILITY] evolving\n"
             "# [SAFETY] M\n"
@@ -282,7 +282,7 @@ class TestParseCodeHeaders:
             encoding="utf-8",
         )
         headers = _parse_code_headers(p)
-        assert headers["BLUEPRINT"] == "MOD-INF-007 | bp.md | §4"
+        assert headers["BLUEPRINT"] == "MOD-GATE_ENGINE | bp.md | §4"
         assert headers["MODULE"] == "zephyr.governance.rule_enforcement.triple_alignment"
         assert headers["STABILITY"] == "evolving"
         assert headers["SAFETY"] == "M"
@@ -328,7 +328,7 @@ class TestExtractDepMapModules:
 
     def test_returns_modules_from_database(self):
         fake_rows = [
-            ('MOD-INF-007', 'src/zephyr/gates/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
+            ('MOD-GATE_ENGINE', 'src/zephyr/gates/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
             ('MOD-INF-020', 'src/zephyr/audit_trail/audit.py', None),
         ]
         mock_conn = MagicMock()
@@ -342,16 +342,16 @@ class TestExtractDepMapModules:
         ):
             modules = _extract_dep_map_modules()
 
-        assert 'MOD-INF-007' in modules
-        assert modules['MOD-INF-007']['source_path'] == 'src/zephyr/gates/triple_alignment.py'
+        assert 'MOD-GATE_ENGINE' in modules
+        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/zephyr/gates/triple_alignment.py'
         assert 'MOD-INF-020' in modules
         assert modules['MOD-INF-020']['blueprint_path'] == ''
 
     def test_deduplicates_by_blueprint_id(self):
         """一个模块有多行（多文件），只保留第一行的路径。"""
         fake_rows = [
-            ('MOD-INF-007', 'src/file1.py', 'bp.md'),
-            ('MOD-INF-007', 'src/file2.py', 'bp.md'),
+            ('MOD-GATE_ENGINE', 'src/file1.py', 'bp.md'),
+            ('MOD-GATE_ENGINE', 'src/file2.py', 'bp.md'),
         ]
         mock_conn = MagicMock()
         mock_cur = MagicMock()
@@ -365,8 +365,8 @@ class TestExtractDepMapModules:
             modules = _extract_dep_map_modules()
 
         assert len(modules) == 1
-        assert 'MOD-INF-007' in modules
-        assert modules['MOD-INF-007']['source_path'] == 'src/file1.py'
+        assert 'MOD-GATE_ENGINE' in modules
+        assert modules['MOD-GATE_ENGINE']['source_path'] == 'src/file1.py'
 
     def test_returns_empty_on_connection_error(self):
         with patch(
@@ -392,9 +392,9 @@ class TestExtractDepMapModules:
 
 class TestExtractDepMapDepths:
     def test_extracts_depths(self):
-        content = "| 1 | MOD-INF-007 |\n| 2 | MOD-INF-020 |\n| 3 | MOD-INF-025 |\n"
+        content = "| 1 | MOD-GATE_ENGINE |\n| 2 | MOD-INF-020 |\n| 3 | MOD-INF-025 |\n"
         depths = _extract_dep_map_depths(content)
-        assert depths["MOD-INF-007"] == "1"
+        assert depths["MOD-GATE_ENGINE"] == "1"
         assert depths["MOD-INF-020"] == "2"
         assert depths["MOD-INF-025"] == "3"
 
@@ -403,7 +403,7 @@ class TestExtractDepMapDepths:
         assert depths == {}
 
     def test_no_matching_lines(self):
-        content = "some text\n| MOD-INF-007 | Gate |\n"
+        content = "some text\n| MOD-GATE_ENGINE | Gate |\n"
         depths = _extract_dep_map_depths(content)
         assert depths == {}
 
@@ -440,7 +440,7 @@ class TestCheckTripleAlignment:
         registry_data = {
             "blueprints": [
                 {
-                    "module_id": "MOD-INF-007",
+                    "module_id": "MOD-GATE_ENGINE",
                     "file_path": "nonexistent.md",
                     "construction_progress": "implemented",
                 },
@@ -454,20 +454,20 @@ class TestCheckTripleAlignment:
     def test_specific_module_filters(self):
         registry_data = {
             "blueprints": [
-                {"module_id": "MOD-INF-007", "file_path": "a.md"},
+                {"module_id": "MOD-GATE_ENGINE", "file_path": "a.md"},
                 {"module_id": "MOD-INF-020", "file_path": "b.md"},
             ]
         }
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
-                result = check_triple_alignment(specific_module="MOD-INF-007")
+                result = check_triple_alignment(specific_module="MOD-GATE_ENGINE")
                 assert result.checked_modules == 1
 
     def test_blueprint_file_missing_violation(self):
         registry_data = {
             "blueprints": [
                 {
-                    "module_id": "MOD-INF-007",
+                    "module_id": "MOD-GATE_ENGINE",
                     "file_path": "nonexistent_dir/fake_blueprint.md",
                     "construction_progress": "implemented",
                 },

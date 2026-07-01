@@ -30,7 +30,7 @@ def sample_registry(tmp_path):
             {
                 "domain": "governance",
                 "subdomain": "gate_engine",
-                "ssot_module": "MOD-INF-007",
+                "ssot_module": "MOD-GATE_ENGINE",
                 "ssot_path": "src/zephyr/gates/",
                 "covers": ["rule_checking", "admission_control"],
                 "aliases": ["gate", "门禁", "admission"],
@@ -81,7 +81,7 @@ class TestFunctionalDomainRegistryQuery:
         r.load()
         results = r.query_domain("governance")
         assert len(results) == 1
-        assert results[0].ssot_module == "MOD-INF-007"
+        assert results[0].ssot_module == "MOD-GATE_ENGINE"
 
     def test_query_with_subdomain(self, sample_registry):
         r = FunctionalDomainRegistry(registry_path=sample_registry)

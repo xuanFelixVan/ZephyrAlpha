@@ -88,11 +88,11 @@ class TestContextInjector:
 
     def test_inject_by_module_id(self):
         records = [
-            FakeRecord(category="MOD-INF-008", summary="module info"),
+            FakeRecord(category="MOD-CONTEXT_ENGINE", summary="module info"),
         ]
         repo = FakeKbRepo(records=records)
         injector = ContextInjector(repo)
-        result = injector.inject_by_module_id("MOD-INF-008")
+        result = injector.inject_by_module_id("MOD-CONTEXT_ENGINE")
         assert result.retrieval_mode == "module_id"
         assert "module info" in result.context
 

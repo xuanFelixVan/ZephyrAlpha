@@ -169,7 +169,7 @@ task_manager:
           total: { type: integer }
 
     - name: task_manager.create_task
-      description: "创建 TaskCard（MOD-INF-006 §3.5；实现见 task_manager_server.FastMCP。注入 task_repo 时 task_id 由 {namespace}-{seq} 生成）"
+      description: "创建 TaskCard（MOD-INF-039 §3.5；实现见 task_manager_server.FastMCP。注入 task_repo 时 task_id 由 {namespace}-{seq} 生成）"
       safety_level: H
       stability: stable
       rate_limit_qps: 5

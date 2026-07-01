@@ -804,47 +804,47 @@ consumers:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - resilience.circuit_breaker.CircuitState
-  note: 'MOD-INF-010 v0.3.1——FLE主引? LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
+  note: 'MOD-FEEDBACK_LOOP v0.3.1——FLE主引? LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
 - module: feedback_loop.detection_model_health
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.3.1——FLE自身概念漂移检?Isolation Forest自动重训
+  note: MOD-FEEDBACK_LOOP v0.3.1——FLE自身概念漂移检?Isolation Forest自动重训
 - module: feedback_loop.behavioral_drift
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.3.1——Agent行为漂移(CoT/Tool call/Output结构)
+  note: MOD-FEEDBACK_LOOP v0.3.1——Agent行为漂移(CoT/Tool call/Output结构)
 - module: feedback_loop.llm_vote_cost
   depends_on:
   - errors.FeedbackError
   - time_utils.now_iso
-  note: MOD-INF-010 v0.4.0——LLM投票成本计量+频率控制+$5/月预?per-model分解
+  note: MOD-FEEDBACK_LOOP v0.4.0——LLM投票成本计量+频率控制+$5/月预?per-model分解
 - module: feedback_loop.regime_detector
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
-  note: MOD-INF-010 v0.4.0——MarketRegimeDetector+MarketCalendarAware+Per-Regime基线切换
+  note: MOD-FEEDBACK_LOOP v0.4.0——MarketRegimeDetector+MarketCalendarAware+Per-Regime基线切换
 - module: feedback_loop.model_profiles
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.4.0——Per-Model Failure Profiles(DeepSeek/GLM/GPT-5.2)独立特征空间
+  note: MOD-FEEDBACK_LOOP v0.4.0——Per-Model Failure Profiles(DeepSeek/GLM/GPT-5.2)独立特征空间
 - module: feedback_loop.cross_model_consensus
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
-  note: MOD-INF-010 v0.4.0——Cross-Model Consensus Monitor跨模型分歧检
+  note: MOD-FEEDBACK_LOOP v0.4.0——Cross-Model Consensus Monitor跨模型分歧检
 - module: feedback_loop.fle_observability
   depends_on:
   - logging.get_logger
   - time_utils.now_iso
   - flags.FeatureFlag
   - lifecycle.LifecycleManager
-  note: 'MOD-INF-010 v0.4.0——FLE可观测? FP/FN+Latency Decomp+Longitudinal KPIs+Self-Test
+  note: 'MOD-FEEDBACK_LOOP v0.4.0——FLE可观测? FP/FN+Latency Decomp+Longitudinal KPIs+Self-Test
     Coverage+Dep Version Tracker'
 - module: feedback_loop.causal_engine
   depends_on:
@@ -852,136 +852,136 @@ consumers:
   - flags.FeatureFlag
   - errors.FeedbackError
   - schemas.Task
-  note: MOD-INF-010 v0.5.0——CausalRCA反事实验?DoWhy)+Bayesian ActionEffectiveness因果归因(BSTS)
+  note: MOD-FEEDBACK_LOOP v0.5.0——CausalRCA反事实验?DoWhy)+Bayesian ActionEffectiveness因果归因(BSTS)
 - module: feedback_loop.config_manager
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - time_utils.now_iso
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——Config-as-Code Git对账+Flag交互矩阵验证+配置回滚+部署安全模式
+  note: MOD-FEEDBACK_LOOP v0.5.0——Config-as-Code Git对账+Flag交互矩阵验证+配置回滚+部署安全模式
 - module: feedback_loop.db_integrity
   depends_on:
   - logging.get_logger
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——FLE SQLite PRAGMA完整性自检+腐败告警
+  note: MOD-FEEDBACK_LOOP v0.5.0——FLE SQLite PRAGMA完整性自检+腐败告警
 - module: feedback_loop.checkpoint_manager
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——Checkpoint序列?Resume热恢?冷启?2h?-30min)
+  note: MOD-FEEDBACK_LOOP v0.5.0——Checkpoint序列?Resume热恢?冷启?2h?-30min)
 - module: feedback_loop.code_provenance
   depends_on:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - logging.get_logger
-  note: MOD-INF-010 v0.5.0——AI/human/AI+human三级代码信任追踪+Detection灵敏度自适应
+  note: MOD-FEEDBACK_LOOP v0.5.0——AI/human/AI+human三级代码信任追踪+Detection灵敏度自适应
 - module: feedback_loop.saga_coordinator
   depends_on:
   - errors.FeedbackError
   - logging.get_logger
   - flags.FeatureFlag
   - schemas.Task
-  note: MOD-INF-010 v0.5.0——多步骤REPAIR Saga/Compensation事务协调+RejectedAction日志
+  note: MOD-FEEDBACK_LOOP v0.5.0——多步骤REPAIR Saga/Compensation事务协调+RejectedAction日志
 - module: feedback_loop.action_selection_model
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - errors.FeedbackError
-  note: MOD-INF-010 v0.5.0——基于历?Action→Effect)学习的Action推荐模型
+  note: MOD-FEEDBACK_LOOP v0.5.0——基于历?Action→Effect)学习的Action推荐模型
 - module: feedback_loop.session_awareness
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.5.0——Vibe Coding Session感知+Onboarding模式新人友好
+  note: MOD-FEEDBACK_LOOP v0.5.0——Vibe Coding Session感知+Onboarding模式新人友好
 - module: feedback_loop.fle_value_tracker
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——ROI量化+时间节省+Daily Value Report
+  note: MOD-FEEDBACK_LOOP v0.7.0——ROI量化+时间节省+Daily Value Report
 - module: feedback_loop.skill_retention
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——反自动化悖?手动演习提醒+系统健康摘要
+  note: MOD-FEEDBACK_LOOP v0.7.0——反自动化悖?手动演习提醒+系统健康摘要
 - module: feedback_loop.fle_tco_auditor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——自审计维护成本+精简建议
+  note: MOD-FEEDBACK_LOOP v0.7.0——自审计维护成本+精简建议
 - module: feedback_loop.fle_federation
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   - time_utils.now_iso
-  note: 'MOD-INF-010 v0.7.0——FLE联邦协议: InterFLEDiscovery+Cross-FLE Consensus+Escalation'
+  note: 'MOD-FEEDBACK_LOOP v0.7.0——FLE联邦协议: InterFLEDiscovery+Cross-FLE Consensus+Escalation'
 - module: feedback_loop.action_mediator
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——FLE联邦冲突仲裁+domain优先
+  note: MOD-FEEDBACK_LOOP v0.7.0——FLE联邦冲突仲裁+domain优先
 - module: feedback_loop.federation_policy
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.SecurityError
-  note: MOD-INF-010 v0.7.0——跨域权?mTLS验证
+  note: MOD-FEEDBACK_LOOP v0.7.0——跨域权?mTLS验证
 - module: feedback_loop.adversarial_defense
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——对抗注入检?缓慢投毒+来源验证
+  note: MOD-FEEDBACK_LOOP v0.7.0——对抗注入检?缓慢投毒+来源验证
 - module: feedback_loop.prompt_sanitizer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.SecurityError
-  note: MOD-INF-010 v0.7.0——LLM输入净?Prompt注入防御
+  note: MOD-FEEDBACK_LOOP v0.7.0——LLM输入净?Prompt注入防御
 - module: feedback_loop.amplification_guard
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——攻击放大防?同root_cause暂停LLM
+  note: MOD-FEEDBACK_LOOP v0.7.0——攻击放大防?同root_cause暂停LLM
 - module: feedback_loop.kb_provenance
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——KB来源可靠性评?UNTRUSTED标记
+  note: MOD-FEEDBACK_LOOP v0.7.0——KB来源可靠性评?UNTRUSTED标记
 - module: feedback_loop.unknown_handler
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0—?我不知道'显式输出→HUMAN_REQUIRED'
+  note: MOD-FEEDBACK_LOOP v0.7.0—?我不知道'显式输出→HUMAN_REQUIRED'
 - module: feedback_loop.longitudinal_meta
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——月度纵向自评报?Top3优化方向
+  note: MOD-FEEDBACK_LOOP v0.7.0——月度纵向自评报?Top3优化方向
 - module: feedback_loop.value_added_baseline
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: MOD-INF-010 v0.7.0——FLE vs EMA对照→真正的价值增
+  note: MOD-FEEDBACK_LOOP v0.7.0——FLE vs EMA对照→真正的价值增
 - module: feedback_loop.deprecation_advisor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - lifecycle.LifecycleManager
   - time_utils.now_iso
-  note: MOD-INF-010 v0.7.0——子系统废弃建议+30天自动清
+  note: MOD-FEEDBACK_LOOP v0.7.0——子系统废弃建议+30天自动清
 - module: feedback_loop.daily_report_composer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
-  note: 'MOD-INF-010 v0.7.0——日报生成器: Value+Retention+TCO+Federation+Adversarial+Meta'
+  note: 'MOD-FEEDBACK_LOOP v0.7.0——日报生成器: Value+Retention+TCO+Federation+Adversarial+Meta'
 contract_tests:
   path: tests/contract/
   suites:
@@ -1287,10 +1287,10 @@ audit_trail:
     at: MOD-INF-018 §2.2
     why: 审计记录?subject ?AgentIdentity + permission_level 决定 provenance_depth
   - target: gate_engine
-    at: MOD-INF-007 §2
+    at: MOD-GATE_ENGINE §2
     why: 门禁决策的审计记?+ 实时阻断联动
   - target: feedback_loop
-    at: MOD-INF-010 §2
+    at: MOD-FEEDBACK_LOOP §2
     why: 三角闭环反馈——审计聚合数据推?feedback_to_policy.py
   - target: runtime_integration
     at: MOD-INF-002 §2

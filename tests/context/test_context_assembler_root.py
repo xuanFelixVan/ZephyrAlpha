@@ -181,7 +181,7 @@ class TestBuildContext:
 
 class TestValidateAuthorityChain:
     def test_trusted_sources_pass(self):
-        sources = ["AGENTS.md", "blueprint:MOD-INF-008", "CT-CE-001"]
+        sources = ["AGENTS.md", "blueprint:MOD-CONTEXT_ENGINE", "CT-CE-001"]
         passed, score, msg = validate_authority_chain(sources, min_trusted_count=2)
         assert passed is True
         assert score >= 0.7

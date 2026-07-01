@@ -63,10 +63,10 @@ class TestContextInjectorInjectByTaskId:
 
 class TestContextInjectorInjectByModuleId:
     def test_inject_by_module_id_returns_injected_context(self):
-        records = [_FakeRecord(ke_id="KE-002", summary="module info", category="MOD-INF-008")]
+        records = [_FakeRecord(ke_id="KE-002", summary="module info", category="MOD-CONTEXT_ENGINE")]
         repo = _FakeKbRepo(records=records)
         inj = ContextInjector(repo, token_budget=8000)
-        result = inj.inject_by_module_id("MOD-INF-008")
+        result = inj.inject_by_module_id("MOD-CONTEXT_ENGINE")
         assert isinstance(result, InjectedContext)
         assert result.retrieval_mode == "module_id"
 
