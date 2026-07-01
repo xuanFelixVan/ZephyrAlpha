@@ -582,33 +582,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_concurrency.py
-  path: governance/_concurrency.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/apply_depgraph.py
   path: governance/apply_depgraph.py
   description: '[BLUEPRINT] | scripts/governance/apply_depgraph.py | §1'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/audit_rename_completeness.py
-  path: governance/audit_rename_completeness.py
-  description: 扫描 depgraph 所有表的所有 TEXT 列，检测旧标识符残留。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/dependency_graph.py
-  path: governance/dependency_graph.py
-  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -638,14 +614,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/governance_watchdog.py
-  path: governance/governance_watchdog.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/run_all.py
   path: governance/run_all.py
   description: run_all.py — 脚本系统统一入口脚本
@@ -665,30 +633,6 @@ scripts:
 - name: governance/status.py
   path: governance/status.py
   description: status.py — 审计系统状态仪表盘
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/sync_yaml_to_depgraph.py
-  path: governance/sync_yaml_to_depgraph.py
-  description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/validate_module_id_naming.py
-  path: governance/validate_module_id_naming.py
-  description: r"""
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/verify_schema_health.py
-  path: governance/verify_schema_health.py
-  description: verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -881,6 +825,14 @@ scripts:
 - name: governance/d11_compliance/verify_key_imports.py
   path: governance/d11_compliance/verify_key_imports.py
   description: 结构变更后验证关键模块可正常导入。替代 onboarding_detail.md §13.5 中的内联 python -c 命令。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d11_compliance/verify_schema_health.py
+  path: governance/d11_compliance/verify_schema_health.py
+  description: verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1318,6 +1270,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/validate_module_id_naming.py
+  path: governance/d3_metadata/validate_module_id_naming.py
+  description: r"""
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/validate_registry_master_index.py
   path: governance/d3_metadata/validate_registry_master_index.py
   description: 任务 T-V4-001：扫描 registry-master-index.yaml，校验登记表文件存在性、
@@ -1425,6 +1385,14 @@ scripts:
 - name: governance/d5_architecture/check_drift_e2e.py
   path: governance/d5_architecture/check_drift_e2e.py
   description: 'CI Entry: Drift Detector E2E Pipeline Check'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/dependency_graph.py
+  path: governance/d5_architecture/dependency_graph.py
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2606,6 +2574,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d8_doc_sync/audit_rename_completeness.py
+  path: governance/d8_doc_sync/audit_rename_completeness.py
+  description: 扫描 depgraph 所有表的所有 TEXT 列，检测旧标识符残留。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d8_doc_sync/auto_sync_all_registries.py
   path: governance/d8_doc_sync/auto_sync_all_registries.py
   description: =====================================
@@ -2633,6 +2609,14 @@ scripts:
 - name: governance/d8_doc_sync/sync_rule_registry.py
   path: governance/d8_doc_sync/sync_rule_registry.py
   description: Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  path: governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2766,6 +2750,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/meta/_concurrency.py
+  path: governance/meta/_concurrency.py
+  description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/meta/arbitrate_findings.py
   path: governance/meta/arbitrate_findings.py
   description: arbitrate_findings.py — Finding 仲裁器（跨脚本冲突解决引擎）
@@ -2859,6 +2851,14 @@ scripts:
   description: Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/meta/governance_watchdog.py
+  path: governance/meta/governance_watchdog.py
+  description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
