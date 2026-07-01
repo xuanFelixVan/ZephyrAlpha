@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from zephyr.governance.rule_enforcement.triple_alignment import (
     AlignmentViolation,
@@ -324,49 +324,70 @@ class TestParseCodeHeaders:
 
 
 class TestExtractDepMapModules:
-    def test_extracts_module_rows(self):
-        content = (
-            "## 模块归属表\n"
-            "\n"
-            "| MOD-INF-007 | Gate Engine | src/zephyr/gates/ | bp.md | note |\n"
-            "| MOD-INF-020 | Audit Trail | src/zephyr/audit-trail/ | bp2.md | |\n"
-        )
-        modules = _extract_dep_map_modules(content)
-        assert "MOD-INF-007" in modules
-        assert modules["MOD-INF-007"]["name"] == "Gate Engine"
-        assert modules["MOD-INF-007"]["source_path"] == "src/zephyr/gates/"
-        assert "MOD-INF-020" in modules
+    """测试从 depgraph.nodes 数据库查询模块（替代原 system-dependency-map.md 解析）。"""
 
-    def test_empty_content(self):
-        modules = _extract_dep_map_modules("")
+    def test_returns_modules_from_database(self):
+        fake_rows = [
+            ('MOD-INF-007', 'src/zephyr/gates/triple_alignment.py', 'docs/03_modules/.../blueprint.md'),
+            ('MOD-INF-020', 'src/zephyr/audit_trail/audit.py', None),
+        ]
+        mock_conn = MagicMock()
+        mock_cur = MagicMock()
+        mock_cur.fetchall.return_value = fake_rows
+        mock_conn.cursor.return_value = mock_cur
+
+        with patch(
+            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            return_value=mock_conn,
+        ):
+            modules = _extract_dep_map_modules()
+
+        assert 'MOD-INF-007' in modules
+        assert modules['MOD-INF-007']['source_path'] == 'src/zephyr/gates/triple_alignment.py'
+        assert 'MOD-INF-020' in modules
+        assert modules['MOD-INF-020']['blueprint_path'] == ''
+
+    def test_deduplicates_by_blueprint_id(self):
+        """一个模块有多行（多文件），只保留第一行的路径。"""
+        fake_rows = [
+            ('MOD-INF-007', 'src/file1.py', 'bp.md'),
+            ('MOD-INF-007', 'src/file2.py', 'bp.md'),
+        ]
+        mock_conn = MagicMock()
+        mock_cur = MagicMock()
+        mock_cur.fetchall.return_value = fake_rows
+        mock_conn.cursor.return_value = mock_cur
+
+        with patch(
+            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            return_value=mock_conn,
+        ):
+            modules = _extract_dep_map_modules()
+
+        assert len(modules) == 1
+        assert 'MOD-INF-007' in modules
+        assert modules['MOD-INF-007']['source_path'] == 'src/file1.py'
+
+    def test_returns_empty_on_connection_error(self):
+        with patch(
+            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            side_effect=Exception('conn failed'),
+        ):
+            modules = _extract_dep_map_modules()
         assert modules == {}
 
-    def test_no_section5(self):
-        content = "## Other Section\n| MOD-INF-007 | Gate | src/ | bp.md |\n"
-        modules = _extract_dep_map_modules(content)
+    def test_returns_empty_when_no_modules(self):
+        mock_conn = MagicMock()
+        mock_cur = MagicMock()
+        mock_cur.fetchall.return_value = []
+        mock_conn.cursor.return_value = mock_cur
+
+        with patch(
+            'zephyr.governance.depgraph_schema.get_depgraph_pg_connection',
+            return_value=mock_conn,
+        ):
+            modules = _extract_dep_map_modules()
         assert modules == {}
-
-    def test_section_ends_at_next_h2(self):
-        content = (
-            "## 模块归属表\n"
-            "| MOD-INF-007 | Gate | src/ | bp.md |\n"
-            "## Next Section\n"
-            "| MOD-INF-008 | Other | src2/ | bp2.md |\n"
-        )
-        modules = _extract_dep_map_modules(content)
-        assert "MOD-INF-007" in modules
-        assert "MOD-INF-008" not in modules
-
-    def test_english_header(self):
-        content = "## Module Ownership\n| MOD-INF-007 | Gate | src/ | bp.md |\n"
-        modules = _extract_dep_map_modules(content)
-        assert "MOD-INF-007" in modules
-
-    def test_row_with_few_columns(self):
-        content = "## 模块归属表\n| MOD-INF-007 | Gate |\n"
-        modules = _extract_dep_map_modules(content)
-        assert "MOD-INF-007" in modules
-        assert modules["MOD-INF-007"]["source_path"] == ""
 
 
 class TestExtractDepMapDepths:
@@ -410,8 +431,7 @@ class TestCheckTripleAlignment:
 
     def test_empty_blueprints_list(self):
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value={"blueprints": []}):
-            with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
-                mock_dep.exists.return_value = False
+            with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment()
                 assert result.checked_modules == 0
                 assert result.passed is True
@@ -427,8 +447,7 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
-                mock_dep.exists.return_value = False
+            with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment(warn_only=True)
                 assert result.passed is True
 
@@ -440,8 +459,7 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
-                mock_dep.exists.return_value = False
+            with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment(specific_module="MOD-INF-007")
                 assert result.checked_modules == 1
 
@@ -456,8 +474,7 @@ class TestCheckTripleAlignment:
             ]
         }
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
-                mock_dep.exists.return_value = False
+            with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment()
                 bp_missing = [v for v in result.violations if v.check == "blueprint_file_missing"]
                 assert len(bp_missing) == 1
@@ -465,11 +482,11 @@ class TestCheckTripleAlignment:
 
     def test_dep_map_orphan_module(self):
         registry_data = {"blueprints": []}
-        dep_content = "## 模块归属表\n| MOD-INF-099 | Orphan | src/orphan/ | bp.md |\n"
+        dep_map_modules = {
+            "MOD-INF-099": {"source_path": "src/orphan/", "blueprint_path": "bp.md"},
+        }
         with patch("zephyr.governance.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
-            with patch("zephyr.governance.rule_enforcement.triple_alignment.DEPENDENCY_MAP") as mock_dep:
-                mock_dep.exists.return_value = True
-                mock_dep.read_text.return_value = dep_content
+            with patch("zephyr.governance.rule_enforcement.triple_alignment._extract_dep_map_modules", return_value=dep_map_modules):
                 result = check_triple_alignment()
                 orphans = [v for v in result.violations if v.check == "dep_map_orphan_module"]
                 assert len(orphans) == 1
