@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "edfd2149650babfe",
+      "hash": "01cb5ff9dbf0d09a",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "61cceecc7d5d952b",
+      "hash": "415e5214fa473d52",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "783faf19d708e01a",
+      "hash": "346fe64fdfa5fd53",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -109,8 +109,13 @@
       "hash": "1a970c5514a97bca",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/session_required_gate.py": {
+      "hash": "70847338de9dfedc",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: session_required_gate.py）"
     }
   },
-  "registered_at": "2026-07-01T08:06:03.685917+00:00",
+  "registered_at": "2026-07-01T15:35:43.173047+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }

@@ -1867,10 +1867,25 @@ creation_tokens:
     created_by: "session-trae-redteam-deadly-5"
     capability: "completes_when_validator"
 
-  - file: "src/zephyr/governance/worktree_manager.py"
+  - file: "src/zephyr/governance/rule_bridge/worktree_manager.py"
     token: "auto-worktree-manager-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "session_worktree_isolation"
+
+  - file: "src/zephyr/governance/rule_bridge/session_worktree.py"
+    token: "auto-session-worktree-20260701"
+    created_by: "session-trae-fp-iso-4c"
+    capability: "session_worktree_lifecycle"
+
+  - file: "src/zephyr/governance/rule_bridge/session_claim.py"
+    token: "auto-session-claim-20260701"
+    created_by: "session-trae-fp-iso-4c"
+    capability: "session_claim_helper"
+
+  - file: "src/zephyr/governance/commit_gates/session_required_gate.py"
+    token: "auto-session-required-gate-20260701"
+    created_by: "session-trae-fp-iso-4c"
+    capability: "session_required_gate"
 
   - file: "src/zephyr/governance/rule_bridge/commit_gate_registry.py"
     token: "auto-commit-gate-registry-20260630"

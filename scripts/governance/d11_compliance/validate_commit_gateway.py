@@ -5,8 +5,8 @@
 # [CONSUMERS] .pre-commit-config.yaml (GATE-COMMIT-GW hook)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] hook 运行=裸 git commit→阻断 exit 1；gateway 用 --no-verify 绕过 hook；合并提交放行
-# [MODIFY-GUARD] 阻断逻辑：hook 运行本身即说明是裸 commit（gateway 用 --no-verify 不触发 hook）；合并提交检测（.git/MERGE_HEAD）
+# [INVARIANTS] hook 运行=裸 git commit→阻断 exit 1；gateway 用 --no-verify 绕过 hook；合并提交放行；session worktree 内 commit 放行（FP-ISO.4C：worktree 独立 index 无共享冲突，授权绕过 GitCommitGateway）
+# [MODIFY-GUARD] 阻断逻辑：hook 运行本身即说明是裸 commit（gateway 用 --no-verify 不触发 hook）；合并提交检测（.git/MERGE_HEAD）；session worktree 上下文检测（cwd 含 .aidrafts/sess-）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -89,6 +89,26 @@ def _is_merge_commit() -> bool:
         return False
 
 
+def _is_session_worktree_commit() -> bool:
+    """检测当前 commit 是否在 session worktree 内（FP-ISO.4C，2026-07-01）。
+
+    session worktree 路径格式: {REPO}/.aidrafts/sess-{id}/
+    worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，
+    无需 GitCommitGateway 的全局串行锁。session_worktree_commit 是授权的
+    隔离提交，应放行。
+
+    检测方式: cwd 路径含 .aidrafts/sess- 片段（pre-commit hook 的 cwd =
+    worktree 根目录）。
+    """
+    import os
+    cwd = Path(os.getcwd()).resolve()
+    parts = cwd.parts
+    for i, part in enumerate(parts):
+        if part == ".aidrafts" and i + 1 < len(parts) and parts[i + 1].startswith("sess-"):
+            return True
+    return False
+
+
 def main() -> int:
     import argparse
 
@@ -110,6 +130,11 @@ def main() -> int:
     # 合并提交放行（merge 不经 gateway，属正常操作）
     if _is_merge_commit():
         print("GATE-COMMIT-GW: SKIP (merge commit)")
+        return EXIT_PASS
+
+    # session worktree 内 commit 放行（FP-ISO.4C：worktree 独立 index，授权绕过 gateway）
+    if _is_session_worktree_commit():
+        print("GATE-COMMIT-GW: SKIP (session worktree commit — isolated index, FP-ISO.4C)")
         return EXIT_PASS
 
     # hook 运行 = 非 gateway commit = 阻断

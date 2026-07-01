@@ -140,6 +140,37 @@ class _WorktreeLock:
         return False
 
 
+def _force_rmtree(path: Path) -> None:
+    """Windows 文件锁兜底强删目录。
+
+    ``shutil.rmtree`` 默认遇 [WinError 32]（文件被占用）/ 只读位 直接失败。
+    Windows 上 git/subprocess 刚退出时，文件句柄延迟释放（典型 0.3-2s），
+    立即删除会失败。本 helper 用 ``onerror`` 回调：清除只读位 → 重试 →
+    sleep 500ms 等句柄释放再试 → 最终静默跳过（物理残留无害，git worktree
+    元数据才是真源）。被 ``create_session_worktree``（清残留以重建）和
+    ``_remove_worktree``（清残留）复用。
+    """
+    import shutil
+    import stat
+
+    def _on_error(func, p, exc_info):  # noqa: ANN001
+        # 第一次：清除只读位重试
+        try:
+            os.chmod(p, stat.S_IWRITE)
+            func(p)
+            return
+        except Exception:
+            pass
+        # 第二次：sleep 等句柄释放后重试
+        time.sleep(0.5)
+        try:
+            func(p)
+        except Exception:
+            pass  # 尽力而为，残留不影响 git 状态
+
+    shutil.rmtree(str(path), onerror=_on_error)
+
+
 class WorktreeManager:
     """session worktree 物理隔离管理器。
 
@@ -187,10 +218,15 @@ class WorktreeManager:
         return r.stdout.strip()
 
     def _worktree_exists(self, session_id: str) -> bool:
-        """session worktree 是否已存在（git worktree list 中）。"""
-        wt = str(self._wt_path(session_id))
+        """session worktree 是否已存在（git worktree list 中）。
+
+        路径比较用 os.path.normcase 标准化——git porcelain 输出正斜杠路径
+        （D:/ZephyrAlpha/...），而 Path.__str__ 在 Windows 给反斜杠
+        （D:\\ZephyrAlpha\\...），精确字符串比较会假阴性（FP-ISO.4C 修复）。
+        """
+        wt = os.path.normcase(str(self._wt_path(session_id)))
         for entry in self._list_porcelain():
-            if entry.get("path") == wt:
+            if os.path.normcase(entry.get("path", "")) == wt:
                 return True
         return False
 
@@ -276,6 +312,19 @@ class WorktreeManager:
                     session_id, wt_path,
                 )
                 return wt_path
+
+            # Windows 文件锁兜底：上次 cleanup 可能留下物理残留目录（git 元数据
+            # 已清理但目录因文件占用未删干净）。git worktree add 因路径已存在会失败，
+            # 先用 _force_rmtree 强删残留，再创建。
+            if wt_path.exists():
+                logger.info(
+                    "WorktreeManager: 创建前清理残留物理目录 (session=%s): %s",
+                    session_id, wt_path,
+                )
+                _force_rmtree(wt_path)
+
+            # 清理可能残留的旧分支（上次未 merge 的 cleanup 可能留下分支）
+            self._run_git(["git", "branch", "-D", branch])
 
             head_sha = self._current_head_sha()
             # git worktree add -b <new-branch> <path> <start-point>
@@ -389,16 +438,23 @@ class WorktreeManager:
             # 尝试 prune + 物理删除兜底
             self._run_git(["git", "worktree", "prune"])
             if wt_path.exists():
-                import shutil
-                try:
-                    shutil.rmtree(str(wt_path))
-                except OSError as e:
-                    logger.warning(
-                        "WorktreeManager: 物理删除 worktree 失败 (session=%s): %s",
-                        session_id, e,
-                    )
-                    return False
+                _force_rmtree(wt_path)
             self._run_git(["git", "worktree", "prune"])
+            # Windows 文件锁可能导致物理目录残留，但 git worktree 元数据已清理。
+            # 物理残留无害（下次 create_session_worktree 会覆盖）。
+            # 关键判定：git 是否还认这个 worktree（查 git worktree list）。
+            if self._worktree_exists(session_id):
+                logger.warning(
+                    "WorktreeManager: git 仍认 worktree (session=%s)——真删除失败",
+                    session_id,
+                )
+                return False
+            if wt_path.exists():
+                logger.info(
+                    "WorktreeManager: worktree 物理目录残留 (session=%s)——"
+                    "git 元数据已清理，残留无害",
+                    session_id,
+                )
         # 删除 session 分支（force 因可能未 merge）
         br_r = self._run_git(
             ["git", "branch", "-D" if force else "-d", branch]

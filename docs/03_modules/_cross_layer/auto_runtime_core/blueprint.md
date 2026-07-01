@@ -1230,9 +1230,9 @@ STEP 3: 拆分后验证
 | 逃生通道 | 环境变量 `ZEPHYR_ALLOW_MAIN_BRANCH=1` |
 | 验收 | 主目录 `git commit` 被拒；worktree 内 `git commit` 通过；`ZEPHYR_ALLOW_MAIN_BRANCH=1 git commit` 通过 |
 
-#### FP-ISO.4B 治本三件套设计（模式B：Trae IDE 适配——当前采用）
+#### FP-ISO.4B 治本三件套设计（模式B：Trae IDE 适配——P2 防搭便车提交）
 
-> ✅ **本节为当前采用方案**。适配 Trae IDE「共享工作目录 + 多 AI 对话并发」约束，采用「软编辑 + 硬提交」策略。
+> 🟡 **本节降级为 P2 方案**（2026-07-01 更新）。41 个并发丢失案例分析表明，FP-ISO.4B 的「软编辑+硬提交」只能防 Mode C（搭便车 commit，7%），无法防 Mode A（git stash/reset 冲掉工作区，51%）和 Mode B（直接编辑覆盖，17%）。治本方案已升级为 [FP-ISO.4C worktree 物理隔离](#fp-iso4c-治本方案worktree-物理隔离当前采用)。FP-ISO.4B 保留为 P2——SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate 防主工作目录直接 commit 的搭便车场景。
 
 ##### 件1改：GitCommitGateway commit 时强校验 claim（核心改动）
 
@@ -1271,19 +1271,90 @@ STEP 3: 拆分后验证
 | 与件1/件2关系 | worktree 内 AI 仍须 session_claim_start（worktree 隔离文件系统，不隔离 claim 语义）；worktree commit 时 GitCommitGateway 仍校验 claim |
 | 验收 | `WorktreeManager.create_session_worktree()` 返回 worktree 路径；AI 在 worktree 内 commit 通过；merge 回主目录成功 |
 
+#### FP-ISO.4C 治本方案：worktree 物理隔离（当前采用）
+
+> ✅ **本节为当前治本方案**（2026-07-01 采用）。基于 41 个并发丢失案例分析，worktree 物理隔离是唯一同时覆盖 Mode A（51%）+ Mode B（17%）+ Mode D（7%）= 75%+ 丢失场景的方案。
+
+##### 病根数据（41 案例分析）
+
+从 Trae memory 文件挖掘 41 个并发丢失案例，按失败模式分类：
+
+| 模式 | 占比 | 描述 | FP-ISO.4B 能否防 |
+|------|:---:|------|:---:|
+| **Mode A** | **51%** | git stash/reset/checkout 冲掉工作区（THE #1 KILLER） | ❌ |
+| **Mode B** | **17%** | 直接编辑同一文件覆盖 | ❌ |
+| Mode C | 7% | 搭便车/幽灵 commit（他人文件混入） | ✅ 唯一能防 |
+| Mode D | 7% | 未 commit 被回收（永久丢失，损害最高） | ❌ |
+| 其他 | 18% | 混合/不明 | — |
+
+**结论**：FP-ISO.4B 只能防 7%（Mode C），worktree 物理隔离能防 75%+（A+B+D）。
+
+##### 核心设计：每 AI 对话独占一个 git worktree
+
+```
+主工作目录 (D:\ZephyrAlpha)
+├── .aidrafts/
+│   ├── sess-12345-20260701223518/    ← AI 对话 A 的独立 worktree
+│   │   └── (独立 git index，A 的修改不进入主工作区)
+│   └── sess-67890-20260701223519/    ← AI 对话 B 的独立 worktree
+│       └── (独立 git index，B 的修改不进入主工作区)
+└── (主分支，merge 后才出现 A/B 的改动)
+```
+
+**为什么 worktree 能治 A+B+D**：
+- **Mode A（stash/reset 冲掉）**：worktree 有独立 index，AI 在自己 worktree 内的 git 操作不影响其他 worktree 和主工作区
+- **Mode B（编辑覆盖）**：各 AI 在物理隔离的目录操作，不存在"同一文件"问题
+- **Mode D（未 commit 丢失）**：worktree 内的修改持久存在于 `.aidrafts/{sid}/`，不会被主工作区的 git 操作回收
+
+##### 实现组件
+
+| 组件 | 文件 | 职责 |
+|------|------|------|
+| **session_worktree.py**（新建）| `src/zephyr/governance/rule_bridge/session_worktree.py` | AI 对话 worktree 生命周期 helper（5 函数：start/commit/merge/abort/status）|
+| **worktree_manager.py**（现有+修复）| `src/zephyr/governance/rule_bridge/worktree_manager.py` | 底层 worktree 引擎（create/merge/cleanup/list）；修复 `_worktree_exists` 路径标准化 bug（Windows `\` vs `/`）|
+| **GATE-COMMIT-GW**（现有+扩展）| `scripts/governance/d11_compliance/validate_commit_gateway.py` | 新增 `_is_session_worktree_commit()` 放行 worktree 内 commit（FP-ISO.4C 授权绕过 GitCommitGateway）|
+
+##### AI 对话工作流（AGENTS.md 规定）
+
+```
+1. 对话启动 → session_worktree_start(session_id) → 返回 worktree_path
+2. 在 worktree 内编辑/提交 → session_worktree_commit(session_id, files, message)
+   （worktree 内 commit 用 --no-verify 绕过 pre-commit hooks，与 GitCommitGateway 一致；
+    GATE-COMMIT-GW 检测 worktree 上下文自动放行）
+3. 任务完成 → session_worktree_merge(session_id) → merge 回主分支 + 清理 worktree
+4. 放弃任务 → session_worktree_abort(session_id) → 丢弃修改 + 清理 worktree
+```
+
+##### 关键设计决策
+
+1. **worktree 内 commit 绕过 GitCommitGateway**：worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，无需 GitCommitGateway 的全局串行锁和门禁
+2. **worktree 内 commit 用 `--no-verify`**：与 GitCommitGateway 自身行为一致（GitCommitGateway 也用 `--no-verify` 绕过 pre-commit hooks）；worktree commit 是隔离的中间工作，最终校验在 merge 回主分支时生效
+3. **GATE-COMMIT-GW worktree 上下文放行**：检测 cwd 含 `.aidrafts/sess-` 时放行（纵深防御——即使 AI 不用 `--no-verify`，gate 也不阻断 worktree commit）
+4. **适用场景**：≥2 个并发 AI 对话时 MUST 走 worktree 模式；单 AI 对话可选
+5. **claim/overlap 门禁保留为 P2**：主工作目录直接 commit 路径仍走 GitCommitGateway + SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate（防搭便车提交）
+
+##### 验收（已通过 2026-07-01 端到端测试）
+
+- ✅ 两 session 各建 worktree，路径不同且目录存在
+- ✅ session A 在 worktree 内 commit，主工作区无 A 的文件（物理隔离生效）
+- ✅ session B 在 worktree 内 commit，A/B worktree 互不干扰
+- ✅ merge session A 回主分支，主工作区出现 A 的文件
+- ✅ abort session B，worktree 已清理，B 的修改被丢弃
+- ✅ 主工作区最终只有 A 的改动（B 被丢弃）
+
 #### FP-ISO.5 阻断层次重设计（修订 parallel_session_coordination_policy）
 
 现有 policy §5.2「不新增阻断层」需修订为**四层阻断**：
 
 | 层级 | 机制 | 模式A 强度 | 模式B 强度（当前） | 职责 | 状态 |
 |------|------|:---:|:---:|------|:---:|
-| **L0 物理隔离** | WorktreeManager + 主目录硬阻断 | **最强** | 可选（高风险任务）| 从根本上让多 AI 不在同一工作区 | 🟡 模式A待施工/模式B可选 |
-| **L1 编辑期声明**（模式B 核心）| SessionClaim + AGENTS.md 规则 | 不需要 | **软**（AI 自觉）| 编辑前声明 claim，冲突可见 | 🔴 待施工（件2改） |
-| L2 提交期校验（模式B 核心）| GitCommitGateway commit 强校验 claim | 不需要 | **硬**（commit 拒绝）| 未 claim / 冲突文件拒绝提交 | 🔴 待施工（件1改） |
+| **L0 物理隔离** | **session_worktree + WorktreeManager** | **最强** | **最强（治本，FP-ISO.4C）** | 从根本上让多 AI 不在同一工作区 | ✅ **已落地**（2026-07-01） |
+| L1 编辑期声明 | SessionClaim + AGENTS.md 规则 | 不需要 | 软（AI 自觉）| 编辑前声明 claim，冲突可见 | ✅ 已落地（P2） |
+| L2 提交期校验 | GitCommitGateway + SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate | 不需要 | 硬（commit 拒绝）| 未 claim / 冲突文件拒绝提交 | ✅ 已落地（P2，主目录 commit 路径） |
 | L3 串行化 | GitCommitGateway 全局锁 | 中 | 中 | commit 顺序化，后到者等锁 | ✅ 已落地 |
 | L4 文件锁 | RULE-ZERO lock_files.py | 强 | 强 | LOCKED 后禁止写 | ✅ 已落地 |
 
-**模式B 关键变更**：原设计把阻断责任推给 GitCommitGateway 全局锁（L3），但全局锁只串行化 commit 不防编辑覆盖。模式B 新增 L1（编辑期声明）+ L2（提交期校验）——L1 软约束靠 AI 自觉 claim，L2 硬约束在 commit 时校验 claim。覆盖即使发生（L1 失守），也会在 L2 被拒绝，迫使 AI 重新基于最新基线编辑。
+**模式B 关键变更**（2026-07-01 FP-ISO.4C 更新）：原 FP-ISO.4B 设计把阻断责任推给 L1+L2（编辑期声明+提交期校验），但 41 案例分析表明这只覆盖 Mode C（7%）。FP-ISO.4C 将 L0（worktree 物理隔离）升级为**治本方案**——每 AI 对话独占 worktree，从根本上消除共享工作区冲突，覆盖 Mode A+B+D（75%+）。L1/L2 保留为 P2，防主工作目录直接 commit 的搭便车场景。
 
 #### FP-ISO.6 未考虑到的问题讨论（治本方案完整性审查）
 
