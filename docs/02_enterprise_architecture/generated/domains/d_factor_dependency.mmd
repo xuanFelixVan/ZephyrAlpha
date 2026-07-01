@@ -1,39 +1,41 @@
 %% D_FACTOR 域全景依赖图
-%% 生成时间: 2026-07-02 02:09:36
+%% 生成时间: 2026-07-02 05:36:26
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 7, 依赖边数: 7
+%% 模块数: 14, 依赖边数: 4
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_FACTOR[因子]
-        src_zephyr_factor___init___py["src/zephyr/factor/__init__.py [prototype]"]
+        src_zephyr_factor___init___py["src/zephyr/factor/__init__.py [production]"]
+        src_zephyr_factor__extensions___init___py["...zephyr/factor/_extensions/__init__.py [prototype]"]
         src_zephyr_factor_alpha_signal_pipeline_py["...ephyr/factor/alpha_signal_pipeline.py [prototype]"]
+        src_zephyr_factor_api___init___py["src/zephyr/factor/api/__init__.py [prototype]"]
         src_zephyr_factor_base_py["src/zephyr/factor/base.py [production]"]
-        src_zephyr_factor_bus_factor_defense_py["src/zephyr/factor/bus_factor_defense.py [prototype]"]
+        src_zephyr_factor_bus_factor_defense_py["src/zephyr/factor/bus_factor_defense.py [production]"]
+        src_zephyr_factor_core___init___py["src/zephyr/factor/core/__init__.py [prototype]"]
+        src_zephyr_factor_ctr_001_consumer___init___py["...r/factor/ctr_001_consumer/__init__.py [prototype]"]
+        src_zephyr_factor_engine___init___py["src/zephyr/factor/engine/__init__.py [prototype]"]
         src_zephyr_factor_factor_base_py["src/zephyr/factor/factor_base.py [production]"]
+        src_zephyr_factor_infrastructure___init___py["...hyr/factor/infrastructure/__init__.py [prototype]"]
         src_zephyr_factor_momentum_factor_py["src/zephyr/factor/momentum_factor.py [prototype]"]
+        src_zephyr_factor_services___init___py["src/zephyr/factor/services/__init__.py [prototype]"]
         src_zephyr_factor_value_factor_py["src/zephyr/factor/value_factor.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_factor___init___py -->|config_depends| src_zephyr_factor_alpha_signal_pipeline_py
+    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_momentum_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_FACTOR (1 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_factor_base_py
+    %% D_FUNDAMENTAL_SIGNAL -> D_FACTOR (1 条)
+    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_factor_factor_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FACTOR -> D_FUNDAMENTAL_SIGNAL (1 条)
     src_zephyr_factor_alpha_signal_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    %% D_FACTOR -> D_GOVERNANCE (3 条)
-    src_zephyr_factor_value_factor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_factor_momentum_factor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_factor_bus_factor_defense_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_FACTOR -> D_SHARED (1 条)
-    src_zephyr_factor_factor_base_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 1 条
+    %% 域内依赖: 2 条
     %% 跨域入边: 1 条
-    %% 跨域出边: 5 条
+    %% 跨域出边: 1 条

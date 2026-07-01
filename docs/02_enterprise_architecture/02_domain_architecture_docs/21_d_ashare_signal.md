@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A股特色信号（D_ASHARE_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:34
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_ASHARE_SIGNAL | Domain ID | D_ASHARE_SIGNAL |
 | 域名称 | A股特色信号 | Domain Name | A股特色信号 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 0 | Module Count | 0 |
+| 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 0 | Prototype Modules | 0 |
+| 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | A股特色信号生成 | Description | A股特色信号生成 |
@@ -47,11 +47,19 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_ASHARE_SIGNAL["D_ASHARE_SIGNAL A股特色信号"]
+        src_zephyr_signal_ashare_init_py["src/zephyr/signal_ashare/__init__.py prototype"]
+        src_zephyr_signal_ashare_extensions_init_py["src/zephyr/signal_ashare/_extensions/__init__.py prototype"]
+        src_zephyr_signal_ashare_api_init_py["src/zephyr/signal_ashare/api/__init__.py prototype"]
+        src_zephyr_signal_ashare_core_init_py["src/zephyr/signal_ashare/core/__init__.py prototype"]
+        src_zephyr_signal_ashare_infrastructure_init_py["src/zephyr/signal_ashare/infrastructure/__init_... prototype"]
+        src_zephyr_signal_ashare_models_init_py["src/zephyr/signal_ashare/models/__init__.py prototype"]
+        src_zephyr_signal_ashare_services_init_py["src/zephyr/signal_ashare/services/__init__.py prototype"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -66,16 +74,39 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 A股特色信号（D_ASHARE_SIGNAL）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 A股特色信号（D_ASHARE_SIGNAL）的模块分布。共 7 个模块 / 7 modules。
 
-（无模块 / No modules）
+```
 
+┌──────────────────────────────────────────────────────────────────┐
+│               L2 领域层 / Domain Layer (7 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/signal_ashare/__init__.py  [prototype]              │
+│   src/zephyr/signal_ashare/_extensions/__init__.py  [prototype]  │
+│   src/zephyr/signal_ashare/api/__init__.py  [prototype]          │
+│   src/zephyr/signal_ashare/core/__init__.py  [prototype]         │
+│   src/zephyr/signal_ashare/infrastructure/__init__.py  [proto... │
+│   src/zephyr/signal_ashare/models/__init__.py  [prototype]       │
+│   src/zephyr/signal_ashare/services/__init__.py  [prototype]     │
+└──────────────────────────────────────────────────────────────────┘
+
+```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
+> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
-（无模块 / No modules）
+### L2 领域层 / Domain Layer (7 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/signal_ashare/__init__.py | src/zephyr/signal_ashare/__init__.py | prototype | generated |
+| 2 | src/zephyr/signal_ashare/_extensions/__init__.py | src/zephyr/signal_ashare/_extensions/... | prototype | generated |
+| 3 | src/zephyr/signal_ashare/api/__init__.py | src/zephyr/signal_ashare/api/__init__.py | prototype | generated |
+| 4 | src/zephyr/signal_ashare/core/__init__.py | src/zephyr/signal_ashare/core/__init_... | prototype | generated |
+| 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | src/zephyr/signal_ashare/infrastructu... | prototype | generated |
+| 6 | src/zephyr/signal_ashare/models/__init__.py | src/zephyr/signal_ashare/models/__ini... | prototype | generated |
+| 7 | src/zephyr/signal_ashare/services/__init__.py | src/zephyr/signal_ashare/services/__i... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:35
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,14 +24,14 @@ ttl: permanent
 | 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
 | 域名称 | 组合核心 | Domain Name | 组合核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 34 | Module Count | 34 |
-| 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 6 | Cross-domain Incoming | 6 |
-| 跨域出边 | 14 | Cross-domain Outgoing | 14 |
-| 设计态模块 | 26 | Design Modules | 26 |
-| 原型态模块 | 5 | Prototype Modules | 5 |
-| 生产态模块 | 3 | Production Modules | 3 |
-| 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
+| 模块数 | 14 | Module Count | 14 |
+| 域内依赖 | 1 | Internal Dependencies | 1 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
+| 设计态模块 | 0 | Design Modules | 0 |
+| 原型态模块 | 10 | Prototype Modules | 10 |
+| 生产态模块 | 4 | Production Modules | 4 |
+| 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
 | 描述 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 | Description | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -44,74 +44,42 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 2 页 / Page 1 of 2
-
 ```mermaid
 graph TD
     subgraph D_PF_CORE["D_PF_CORE 组合核心"]
-        D_ALT_DATA_17["D-ALT-DATA-17 design"]
-        D_ALT_DATA_06["D-ALT-DATA-06 design"]
-        D_ALT_DATA_07["D-ALT-DATA-07 design"]
-        MS_02["MS-02 design"]
-        MT_02["MT-02 design"]
-        MT_05["MT-05 design"]
-        D_ALT_DATA_09["D-ALT-DATA-09 design"]
-        D_ALT_DATA_10["D-ALT-DATA-10 design"]
-        MS_04["MS-04 design"]
-        MS_03["MS-03 design"]
-        MS_05["MS-05 design"]
-        MT_04["MT-04 design"]
-        D_ALT_DATA_03["D-ALT-DATA-03 design"]
-        D_ALT_DATA_11["D-ALT-DATA-11 design"]
-        D_ALT_DATA_13["D-ALT-DATA-13 design"]
-        D_ALT_DATA_15["D-ALT-DATA-15 design"]
-        D_ALT_DATA_06_1["D-ALT-DATA-06扩展 design"]
-        A_001["A-001 design"]
-        D_CROSS_ASSET_13["D-CROSS-ASSET-13 design"]
-        AP_07["AP-07 design"]
-        AP_09["AP-09 design"]
-        RK_10["RK-10 design"]
-        PA_01["PA-01 design"]
-        D_CROSS_ASSET_03["D-CROSS-ASSET-03 design"]
-        D_ALT_DATA_14["D-ALT-DATA-14 design"]
-        MT_03["MT-03 design"]
         src_zephyr_pf_core_init_py["src/zephyr/pf_core/__init__.py prototype"]
+        src_zephyr_pf_core_extensions_init_py["src/zephyr/pf_core/_extensions/__init__.py prototype"]
+        src_zephyr_pf_core_api_init_py["src/zephyr/pf_core/api/__init__.py prototype"]
         src_zephyr_pf_core_compliance_rule_py["src/zephyr/pf_core/compliance_rule.py production"]
+        src_zephyr_pf_core_core_init_py["src/zephyr/pf_core/core/__init__.py prototype"]
+        src_zephyr_pf_core_default_equity_strategy_py["src/zephyr/pf_core/default_equity_strategy.py production"]
+        src_zephyr_pf_core_infrastructure_init_py["src/zephyr/pf_core/infrastructure/__init__.py prototype"]
         src_zephyr_pf_core_performance_attribution_report_py["src/zephyr/pf_core/performance_attribution_repo... production"]
         src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py prototype"]
-    end
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    src_zephyr_pf_core_performance_attribution_report_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOVERNANCE
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_performance_attribution_report_py production
-    class D_ALT_DATA_17,D_ALT_DATA_06,D_ALT_DATA_07,MS_02,MT_02,MT_05,D_ALT_DATA_09,D_ALT_DATA_10,MS_04,MS_03,MS_05,MT_04,D_ALT_DATA_03,D_ALT_DATA_11,D_ALT_DATA_13,D_ALT_DATA_15,D_ALT_DATA_06_1,A_001,D_CROSS_ASSET_13,AP_07,AP_09,RK_10,PA_01,D_CROSS_ASSET_03,D_ALT_DATA_14,MT_03,src_zephyr_pf_core_init_py,src_zephyr_pf_core_risk_limits_py design
-    class D_GOVERNANCE external_design
-```
-
-### 第 2 页 / 共 2 页 / Page 2 of 2
-
-```mermaid
-graph TD
-    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
+        src_zephyr_pf_core_services_init_py["src/zephyr/pf_core/services/__init__.py prototype"]
         src_zephyr_pf_core_strategies_init_py["src/zephyr/pf_core/strategies/__init__.py prototype"]
         src_zephyr_pf_core_strategy_base_py["src/zephyr/pf_core/strategy_base.py production"]
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
     end
+    src_zephyr_pf_core_init_py -.->|config_depends| src_zephyr_pf_core_compliance_rule_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
+    src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING
+    src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_strategy_base_py production
-    class src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
+    class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_default_equity_strategy_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
+    class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
+    class D_TRADING external_prod
     class D_GOVERNANCE external_design
 ```
 
@@ -121,97 +89,85 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 12 | contract,import_depends |
-| D_REPORTING | 1 | import_depends |
+| D_GOVERNANCE | 6 | import_depends |
 | D_TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 6 | test_depends |
+| D_GOVERNANCE | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 34 个模块 / 34 modules。
+> 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (34 modules)               │
+│              L2 领域层 / Domain Layer (14 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
-│   D-ALT-DATA-17  [design]                                        │
-│   D-ALT-DATA-06  [design]                                        │
-│   D-ALT-DATA-07  [design]                                        │
-│   MS-02  [design]                                                │
-│   MT-02  [design]                                                │
-│   MT-05  [design]                                                │
-│   D-ALT-DATA-09  [design]                                        │
-│   D-ALT-DATA-10  [design]                                        │
-│   MS-04  [design]                                                │
-│   MS-03  [design]                                                │
-│   MS-05  [design]                                                │
-│   MT-04  [design]                                                │
-│   D-ALT-DATA-03  [design]                                        │
-│   D-ALT-DATA-11  [design]                                        │
-│   D-ALT-DATA-13  [design]                                        │
-│   D-ALT-DATA-15  [design]                                        │
-│   D-ALT-DATA-06扩展  [design]                                    │
-│   A-001  [design]                                                │
-│   ...还有 16 个模块 / 16 more modules                            │
+│   src/zephyr/pf_core/__init__.py  [prototype]                    │
+│   src/zephyr/pf_core/_extensions/__init__.py  [prototype]        │
+│   src/zephyr/pf_core/api/__init__.py  [prototype]                │
+│   src/zephyr/pf_core/compliance_rule.py  [production]            │
+│   src/zephyr/pf_core/core/__init__.py  [prototype]               │
+│   src/zephyr/pf_core/default_equity_strategy.py  [production]    │
+│   src/zephyr/pf_core/infrastructure/__init__.py  [prototype]     │
+│   src/zephyr/pf_core/performance_attribution_report.py  [prod... │
+│   src/zephyr/pf_core/risk_limits.py  [prototype]                 │
+│   src/zephyr/pf_core/services/__init__.py  [prototype]           │
+│   src/zephyr/pf_core/strategies/__init__.py  [prototype]         │
+│   src/zephyr/pf_core/strategy_base.py  [production]              │
+│   src/zephyr/pf_core/strategy_engine/__init__.py  [prototype]    │
+│   src/zephyr/pf_core/strategy_registry.py  [prototype]           │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 34 个模块 / 34 modules）。
+> 按 architecture_layer 分组的模块清单（共 14 个模块 / 14 modules）。
 
-### L2 领域层 / Domain Layer (34 modules)
+### L2 领域层 / Domain Layer (14 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 |  | D-ALT-DATA-17 | design | generated |
-| 2 |  | D-ALT-DATA-06 | design | generated |
-| 3 |  | D-ALT-DATA-07 | design | generated |
-| 4 |  | MS-02 | design | generated |
-| 5 |  | MT-02 | design | generated |
-| 6 |  | MT-05 | design | generated |
-| 7 |  | D-ALT-DATA-09 | design | generated |
-| 8 |  | D-ALT-DATA-10 | design | generated |
-| 9 |  | MS-04 | design | generated |
-| 10 |  | MS-03 | design | generated |
-| 11 |  | MS-05 | design | generated |
-| 12 |  | MT-04 | design | generated |
-| 13 |  | D-ALT-DATA-03 | design | generated |
-| 14 |  | D-ALT-DATA-11 | design | generated |
-| 15 |  | D-ALT-DATA-13 | design | generated |
-| 16 |  | D-ALT-DATA-15 | design | generated |
-| 17 |  | D-ALT-DATA-06扩展 | design | generated |
-| 18 |  | A-001 | design | stable |
-| 19 |  | D-CROSS-ASSET-13 | design | generated |
-| 20 |  | AP-07 | design | generated |
-| 21 |  | AP-09 | design | generated |
-| 22 |  | RK-10 | design | generated |
-| 23 |  | PA-01 | design | generated |
-| 24 |  | D-CROSS-ASSET-03 | design | generated |
-| 25 |  | D-ALT-DATA-14 | design | generated |
-| 26 |  | MT-03 | design | generated |
-| 27 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | prototype | generated |
-| 28 | src/zephyr/pf_core/compliance_rule.py | src/zephyr/pf_core/compliance_rule.py | production | generated |
-| 29 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | generated |
-| 30 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | generated |
-| 31 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | generated |
-| 32 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
-| 33 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
-| 34 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
+| 1 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | prototype | generated |
+| 2 | src/zephyr/pf_core/_extensions/__init__.py | src/zephyr/pf_core/_extensions/__init... | prototype | generated |
+| 3 | src/zephyr/pf_core/api/__init__.py | src/zephyr/pf_core/api/__init__.py | prototype | generated |
+| 4 | src/zephyr/pf_core/compliance_rule.py | src/zephyr/pf_core/compliance_rule.py | production | generated |
+| 5 | src/zephyr/pf_core/core/__init__.py | src/zephyr/pf_core/core/__init__.py | prototype | generated |
+| 6 | src/zephyr/pf_core/default_equity_strategy.py | src/zephyr/pf_core/default_equity_str... | production | generated |
+| 7 | src/zephyr/pf_core/infrastructure/__init__.py | src/zephyr/pf_core/infrastructure/__i... | prototype | generated |
+| 8 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | generated |
+| 9 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | generated |
+| 10 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py | prototype | generated |
+| 11 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | generated |
+| 12 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
+| 13 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
+| 14 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 1 条 / 1 edges）。按依赖类型分组，使用 → 表示方向。
 
-（无域内依赖 / No internal dependencies）
+```
 
+┌──────────────────────────────────────────────────────────────────┐
+│        依赖关系图 / Dependency Graph (共 1 条 / 1 edges)         │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 1                               │
+│   [config_depends]: 1 条 / edges                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [config_depends] (1 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → compliance_rule.py                               │
+└──────────────────────────────────────────────────────────────────┘
+
+```
 
 ## 说明 / Notes
 

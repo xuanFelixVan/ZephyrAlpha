@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:34
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,14 +24,14 @@ ttl: permanent
 | 域ID | D_GOV_DRIFT | Domain ID | D_GOV_DRIFT |
 | 域名称 | 漂移检测 | Domain Name | 漂移检测 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 8 | Module Count | 8 |
-| 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 39 | Cross-domain Incoming | 39 |
-| 跨域出边 | 22 | Cross-domain Outgoing | 22 |
+| 模块数 | 1 | Module Count | 1 |
+| 域内依赖 | 0 | Internal Dependencies | 0 |
+| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 2 | Prototype Modules | 2 |
-| 生产态模块 | 5 | Production Modules | 5 |
-| 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
+| 原型态模块 | 0 | Prototype Modules | 0 |
+| 生产态模块 | 0 | Production Modules | 0 |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 39个漂移检测器注册与调度 | Description | 39个漂移检测器注册与调度 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,41 +48,29 @@ ttl: permanent
 graph TD
     subgraph D_GOV_DRIFT["D_GOV_DRIFT 漂移检测"]
         docs_03_modules_domain_governance_drift_detector_blueprint_md["docs__03_modules___domain_governance__drift_det... design"]
-        scripts_governance_d5_architecture_validators_validate_authority_registry_py["scripts/governance/d5_architecture/validators/v... production"]
-        scripts_governance_d5_architecture_validators_validate_ssot_py["scripts/governance/d5_architecture/validators/v... production"]
-        src_zephyr_governance_audit_trail_drift_bridge_py["src/zephyr/governance/audit_trail/drift_bridge.py production"]
-        src_zephyr_governance_audit_trail_self_monitor_py["src/zephyr/governance/audit_trail/self_monitor.py production"]
-        src_zephyr_governance_drift_detection_baseline_manager_py["src/zephyr/governance/drift_detection/baseline_... prototype"]
-        src_zephyr_governance_drift_detection_chaos_injector_py["src/zephyr/governance/drift_detection/chaos_inj... prototype"]
-        src_zephyr_governance_integrity_py["src/zephyr/governance/integrity.py production"]
     end
-    src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
-    src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
-    src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
-    src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_governance_audit_trail_drift_bridge_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS production"]
-    scripts_governance_d5_architecture_validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS
-    D_COMPLIANCE["D_COMPLIANCE prototype"]
-    D_COMPLIANCE -.->|import_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_integrity_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
-    D_GOV_AUDIT -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
-    D_GOV_AUDIT -->|import_depends| src_zephyr_governance_integrity_py
-    D_GOV_AUDIT -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
-    D_GOV_AUDIT -->|import_depends| src_zephyr_governance_integrity_py
-    D_GOV_AUDIT -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
+    D_GOV_AUDIT["D_GOV_AUDIT design"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOV_AUDIT
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM design"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_AUTONOMY_PERM
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
+    D_GOV_AUDIT -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_GOVERNANCE -.->|contract| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_integrity_py production
-    class docs_03_modules_domain_governance_drift_detector_blueprint_md,src_zephyr_governance_drift_detection_baseline_manager_py,src_zephyr_governance_drift_detection_chaos_injector_py design
-    class D_GOV_AUDIT,D_GOVERNANCE,D_GOV_SCRIPTS external_prod
-    class D_COMPLIANCE external_design
+    class docs_03_modules_domain_governance_drift_detector_blueprint_md design
+    class D_AUTONOMY_CORE external_prod
+    class D_GOVERNANCE,D_GOV_AUDIT,D_AUTONOMY_PERM external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -91,81 +79,48 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_BEHAVIORAL_AUDIT | 8 | test_depends |
-| D_GOVERNANCE | 6 | config_depends,import_depends,test_depends |
-| D_GOV_AUDIT | 6 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
-| D_SECURITY | 1 | test_depends |
+| D_GOVERNANCE | 4 | runtime |
+| D_AUTONOMY_PERM | 1 | runtime |
+| D_GOV_AUDIT | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 21 | config_depends,import_depends,test_depends |
-| D_GOV_AUDIT | 12 | import_depends |
-| D_COMPLIANCE | 2 | import_depends |
-| D_TRADING | 2 | import_depends |
-| D_AUDITTEST | 1 | test_depends |
-| D_OPS | 1 | import_depends |
+| D_GOVERNANCE | 3 | contract,runtime |
+| D_AUTONOMY_CORE | 1 | runtime |
+| D_GOV_AUDIT | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 1 个模块 / 1 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (8 modules)             │
+│             L1 基础层 / Foundation Layer (1 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___domain_governance__drift_detector__bluep... │
-│   scripts/governance/d5_architecture/validators/validate_auth... │
-│   scripts/governance/d5_architecture/validators/validate_ssot... │
-│   src/zephyr/governance/audit_trail/drift_bridge.py  [product... │
-│   src/zephyr/governance/audit_trail/self_monitor.py  [product... │
-│   src/zephyr/governance/drift_detection/baseline_manager.py  ... │
-│   src/zephyr/governance/drift_detection/chaos_injector.py  [p... │
-│   src/zephyr/governance/integrity.py  [production]               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 8 个模块 / 8 modules）。
+> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
 
-### L1 基础层 / Foundation Layer (8 modules)
+### L1 基础层 / Foundation Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | docs/03_modules/_domain_governance/drift_detector/bluepri... | docs__03_modules___domain_governance_... | design | planned |
-| 2 | scripts/governance/d5_architecture/validators/validate_au... | scripts/governance/d5_architecture/va... | production | generated |
-| 3 | scripts/governance/d5_architecture/validators/validate_ss... | scripts/governance/d5_architecture/va... | production | generated |
-| 4 | src/zephyr/governance/audit_trail/drift_bridge.py | src/zephyr/governance/audit_trail/dri... | production | generated |
-| 5 | src/zephyr/governance/audit_trail/self_monitor.py | src/zephyr/governance/audit_trail/sel... | production | generated |
-| 6 | src/zephyr/governance/drift_detection/baseline_manager.py | src/zephyr/governance/drift_detection... | prototype | generated |
-| 7 | src/zephyr/governance/drift_detection/chaos_injector.py | src/zephyr/governance/drift_detection... | prototype | generated |
-| 8 | src/zephyr/governance/integrity.py | src/zephyr/governance/integrity.py | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 1 条 / 1 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
 
-```
+（无域内依赖 / No internal dependencies）
 
-┌──────────────────────────────────────────────────────────────────┐
-│        依赖关系图 / Dependency Graph (共 1 条 / 1 edges)         │
-├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 1                               │
-│   [import_depends]: 1 条 / edges                                 │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (1 条 / edges)                  │
-├──────────────────────────────────────────────────────────────────┤
-│   self_monitor.py → drift_bridge.py                              │
-└──────────────────────────────────────────────────────────────────┘
-
-```
 
 ## 说明 / Notes
 

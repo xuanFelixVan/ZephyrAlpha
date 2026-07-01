@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据治理（D_DATA_GOV）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:34
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_DATA_GOV | Domain ID | D_DATA_GOV |
 | 域名称 | 数据治理 | Domain Name | 数据治理 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 0 | Module Count | 0 |
+| 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 0 | Prototype Modules | 0 |
+| 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 | Description | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 |
@@ -47,11 +47,19 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_DATA_GOV["D_DATA_GOV 数据治理"]
+        src_zephyr_data_governance_init_py["src/zephyr/data_governance/__init__.py prototype"]
+        src_zephyr_data_governance_extensions_init_py["src/zephyr/data_governance/_extensions/__init__.py prototype"]
+        src_zephyr_data_governance_api_init_py["src/zephyr/data_governance/api/__init__.py prototype"]
+        src_zephyr_data_governance_core_init_py["src/zephyr/data_governance/core/__init__.py prototype"]
+        src_zephyr_data_governance_infrastructure_init_py["src/zephyr/data_governance/infrastructure/__ini... prototype"]
+        src_zephyr_data_governance_models_init_py["src/zephyr/data_governance/models/__init__.py prototype"]
+        src_zephyr_data_governance_services_init_py["src/zephyr/data_governance/services/__init__.py prototype"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_data_governance_init_py,src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -66,16 +74,39 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数据治理（D_DATA_GOV）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 数据治理（D_DATA_GOV）的模块分布。共 7 个模块 / 7 modules。
 
-（无模块 / No modules）
+```
 
+┌──────────────────────────────────────────────────────────────────┐
+│             L1 基础层 / Foundation Layer (7 modules)             │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/data_governance/__init__.py  [prototype]            │
+│   src/zephyr/data_governance/_extensions/__init__.py  [protot... │
+│   src/zephyr/data_governance/api/__init__.py  [prototype]        │
+│   src/zephyr/data_governance/core/__init__.py  [prototype]       │
+│   src/zephyr/data_governance/infrastructure/__init__.py  [pro... │
+│   src/zephyr/data_governance/models/__init__.py  [prototype]     │
+│   src/zephyr/data_governance/services/__init__.py  [prototype]   │
+└──────────────────────────────────────────────────────────────────┘
+
+```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
+> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
-（无模块 / No modules）
+### L1 基础层 / Foundation Layer (7 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/data_governance/__init__.py | src/zephyr/data_governance/__init__.py | prototype | generated |
+| 2 | src/zephyr/data_governance/_extensions/__init__.py | src/zephyr/data_governance/_extension... | prototype | generated |
+| 3 | src/zephyr/data_governance/api/__init__.py | src/zephyr/data_governance/api/__init... | prototype | generated |
+| 4 | src/zephyr/data_governance/core/__init__.py | src/zephyr/data_governance/core/__ini... | prototype | generated |
+| 5 | src/zephyr/data_governance/infrastructure/__init__.py | src/zephyr/data_governance/infrastruc... | prototype | generated |
+| 6 | src/zephyr/data_governance/models/__init__.py | src/zephyr/data_governance/models/__i... | prototype | generated |
+| 7 | src/zephyr/data_governance/services/__init__.py | src/zephyr/data_governance/services/_... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

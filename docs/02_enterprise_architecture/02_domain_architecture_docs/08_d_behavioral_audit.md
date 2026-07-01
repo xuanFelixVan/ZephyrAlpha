@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:34
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,12 +26,12 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 157 | Cross-domain Incoming | 157 |
-| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
-| 容量 | 79/150 (正常) | Capacity | 79/150 (正常) |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) | Description | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -58,21 +58,11 @@ graph TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
-|--------|:---:|---------|
-| D_GOV_AUDIT | 2 | import_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_GOVERNANCE | 88 | import_depends,test_depends |
-| D_SECURITY | 51 | import_depends |
-| D_GOV_DRIFT | 8 | test_depends |
-| D_GOV_ENFORCEMENT | 5 | import_depends |
-| D_OPS | 2 | import_depends |
-| D_GOV_AUDIT | 2 | import_depends |
-| D_INFRA_TELEMETRY | 1 | import_depends |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 

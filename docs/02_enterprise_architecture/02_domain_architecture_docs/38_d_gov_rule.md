@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则治理（D_GOV_RULE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:35
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,14 +24,14 @@ ttl: permanent
 | 域ID | D_GOV_RULE | Domain ID | D_GOV_RULE |
 | 域名称 | 规则治理 | Domain Name | 规则治理 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 1 | Module Count | 1 |
+| 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
-| 生产态模块 | 1 | Production Modules | 1 |
-| 容量 | 11/150 (正常) | Capacity | 11/150 (正常) |
+| 生产态模块 | 0 | Production Modules | 0 |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 规则配置管理 | Description | 规则配置管理 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -47,16 +47,11 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_GOV_RULE["D_GOV_RULE 规则治理"]
-        src_zephyr_governance_constitutional_update_constitutional_update_py["src/zephyr/governance/constitutional_update/con... production"]
     end
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_constitutional_update_constitutional_update_py production
-    class D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -67,33 +62,20 @@ graph TD
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_GOVERNANCE | 7 | import_depends,test_depends |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 规则治理（D_GOV_RULE）的模块分布。共 1 个模块 / 1 modules。
+> 按 architecture_layer 分层显示 规则治理（D_GOV_RULE）的模块分布。共 0 个模块 / 0 modules。
 
-```
+（无模块 / No modules）
 
-┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (1 modules)             │
-├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/governance/constitutional_update/constitutional_... │
-└──────────────────────────────────────────────────────────────────┘
-
-```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
+> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
 
-### L1 基础层 / Foundation Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/constitutional_update/constitutiona... | src/zephyr/governance/constitutional_... | production | generated |
+（无模块 / No modules）
 
 ## 依赖关系图 / Dependency Graph
 

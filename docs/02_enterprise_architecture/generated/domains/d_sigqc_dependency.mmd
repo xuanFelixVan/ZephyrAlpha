@@ -1,12 +1,19 @@
 %% D_SIGQC 域全景依赖图
-%% 生成时间: 2026-07-02 02:09:36
+%% 生成时间: 2026-07-02 05:36:26
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 0, 依赖边数: 0
+%% 模块数: 7, 依赖边数: 0
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_SIGQC[信号质量控制]
+        src_zephyr_signal_quality___init___py["src/zephyr/signal_quality/__init__.py [prototype]"]
+        src_zephyr_signal_quality__extensions___init___py["...ignal_quality/_extensions/__init__.py [prototype]"]
+        src_zephyr_signal_quality_api___init___py["...zephyr/signal_quality/api/__init__.py [prototype]"]
+        src_zephyr_signal_quality_core___init___py["...ephyr/signal_quality/core/__init__.py [prototype]"]
+        src_zephyr_signal_quality_infrastructure___init___py["...al_quality/infrastructure/__init__.py [prototype]"]
+        src_zephyr_signal_quality_models___init___py["...hyr/signal_quality/models/__init__.py [prototype]"]
+        src_zephyr_signal_quality_services___init___py["...r/signal_quality/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）

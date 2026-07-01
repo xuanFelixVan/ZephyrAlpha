@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:35
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,14 +24,14 @@ ttl: permanent
 | 域ID | D_KNOWLEDGE | Domain ID | D_KNOWLEDGE |
 | 域名称 | 知识管理 | Domain Name | 知识管理 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 2 | Module Count | 2 |
+| 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
+| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 2 | Design Modules | 2 |
-| 原型态模块 | 0 | Prototype Modules | 0 |
+| 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
-| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 知识管线(ingest/triage/extract/activate/analyze) | Description | 知识管线(ingest/triage/extract/activate/analyze) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -49,36 +49,34 @@ graph TD
     subgraph D_KNOWLEDGE["D_KNOWLEDGE 知识管理"]
         docs_03_modules_domain_knowledge_knowledge_base_blueprint_md["docs__03_modules___domain_knowledge__knowledge_... design"]
         docs_03_modules_domain_knowledge_vector_memory_blueprint_md["docs__03_modules___domain_knowledge__vector_mem... design"]
+        src_zephyr_knowledge_init_py["src/zephyr/knowledge/__init__.py prototype"]
+        src_zephyr_knowledge_extensions_init_py["src/zephyr/knowledge/_extensions/__init__.py prototype"]
+        src_zephyr_knowledge_api_init_py["src/zephyr/knowledge/api/__init__.py prototype"]
+        src_zephyr_knowledge_core_init_py["src/zephyr/knowledge/core/__init__.py prototype"]
+        src_zephyr_knowledge_infrastructure_init_py["src/zephyr/knowledge/infrastructure/__init__.py prototype"]
+        src_zephyr_knowledge_models_init_py["src/zephyr/knowledge/models/__init__.py prototype"]
+        src_zephyr_knowledge_services_init_py["src/zephyr/knowledge/services/__init__.py prototype"]
     end
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
-    D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md design
-    class D_AUTONOMY_CORE external_design
+    class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
-|--------|:---:|---------|
-| D_AUTONOMY_CORE | 1 | test_depends |
-| D_GOVERNANCE | 1 | test_depends |
-| D_INTEGRATION | 1 | test_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
-|------|:---:|---------|
-| D_AUTONOMY_CORE | 1 | contract |
+无跨域入边依赖 / No cross-domain incoming dependencies
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 知识管理（D_KNOWLEDGE）的模块分布。共 2 个模块 / 2 modules。
+> 按 architecture_layer 分层显示 知识管理（D_KNOWLEDGE）的模块分布。共 9 个模块 / 9 modules。
 
 ```
 
@@ -88,12 +86,25 @@ graph TD
 │   docs__03_modules___domain_knowledge__knowledge_base__bluepr... │
 │   docs__03_modules___domain_knowledge__vector_memory__bluepri... │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│               L2 领域层 / Domain Layer (7 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/knowledge/__init__.py  [prototype]                  │
+│   src/zephyr/knowledge/_extensions/__init__.py  [prototype]      │
+│   src/zephyr/knowledge/api/__init__.py  [prototype]              │
+│   src/zephyr/knowledge/core/__init__.py  [prototype]             │
+│   src/zephyr/knowledge/infrastructure/__init__.py  [prototype]   │
+│   src/zephyr/knowledge/models/__init__.py  [prototype]           │
+│   src/zephyr/knowledge/services/__init__.py  [prototype]         │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 2 个模块 / 2 modules）。
+> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
 
 ### L1 基础层 / Foundation Layer (2 modules)
 
@@ -101,6 +112,18 @@ graph TD
 |:--:|---------|---------|:---:|:---:|
 | 1 | docs/03_modules/_domain_knowledge/knowledge_base/blueprin... | docs__03_modules___domain_knowledge__... | design | planned |
 | 2 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | docs__03_modules___domain_knowledge__... | design | planned |
+
+### L2 领域层 / Domain Layer (7 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/knowledge/__init__.py | src/zephyr/knowledge/__init__.py | prototype | generated |
+| 2 | src/zephyr/knowledge/_extensions/__init__.py | src/zephyr/knowledge/_extensions/__in... | prototype | generated |
+| 3 | src/zephyr/knowledge/api/__init__.py | src/zephyr/knowledge/api/__init__.py | prototype | generated |
+| 4 | src/zephyr/knowledge/core/__init__.py | src/zephyr/knowledge/core/__init__.py | prototype | generated |
+| 5 | src/zephyr/knowledge/infrastructure/__init__.py | src/zephyr/knowledge/infrastructure/_... | prototype | generated |
+| 6 | src/zephyr/knowledge/models/__init__.py | src/zephyr/knowledge/models/__init__.py | prototype | generated |
+| 7 | src/zephyr/knowledge/services/__init__.py | src/zephyr/knowledge/services/__init_... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

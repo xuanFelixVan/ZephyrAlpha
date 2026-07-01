@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 02:09:35
+> 最后更新: 2026-07-02 05:36:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,14 +24,14 @@ ttl: permanent
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | 仿真 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 5 | Module Count | 5 |
-| 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 17 | Cross-domain Incoming | 17 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 模块数 | 11 | Module Count | 11 |
+| 域内依赖 | 2 | Internal Dependencies | 2 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 2 | Prototype Modules | 2 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 2 | Production Modules | 2 |
-| 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
+| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -49,92 +49,119 @@ graph TD
     subgraph D_SIMULATION["D_SIMULATION 仿真"]
         src_zephyr_simulation["仿真核心域 design"]
         src_zephyr_simulation_init_py["src/zephyr/simulation/__init__.py prototype"]
+        src_zephyr_simulation_extensions_init_py["src/zephyr/simulation/_extensions/__init__.py prototype"]
+        src_zephyr_simulation_api_init_py["src/zephyr/simulation/api/__init__.py prototype"]
+        src_zephyr_simulation_core_init_py["src/zephyr/simulation/core/__init__.py prototype"]
         src_zephyr_simulation_implementations_init_py["src/zephyr/simulation/implementations/__init__.py prototype"]
         src_zephyr_simulation_implementations_default_experiment_pipeline_py["src/zephyr/simulation/implementations/default_e... production"]
+        src_zephyr_simulation_infrastructure_init_py["src/zephyr/simulation/infrastructure/__init__.py prototype"]
+        src_zephyr_simulation_models_init_py["src/zephyr/simulation/models/__init__.py prototype"]
         src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py production"]
+        src_zephyr_simulation_services_init_py["src/zephyr/simulation/services/__init__.py prototype"]
     end
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|import_depends| src_zephyr_simulation_init_py
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
-    D_SHARED["D_SHARED prototype"]
-    D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
-    D_INTELLIGENCE["D_INTELLIGENCE prototype"]
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|import_depends| src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation_implementations_init_py -.->|config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
+    D_SHARED["D_SHARED production"]
+    src_zephyr_simulation_pipeline_base_py -->|import_depends| D_SHARED
+    D_SHARED -.->|import_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|import_depends| src_zephyr_simulation_init_py
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|test_depends| src_zephyr_simulation_pipeline_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_implementations_init_py design
-    class D_GOV_SCRIPTS,D_SHARED,D_INTELLIGENCE external_design
+    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
+    class D_SHARED external_prod
+    class D_GOVERNANCE,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 12 | test_depends |
-| D_INTELLIGENCE | 3 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
+| D_AUDITTEST | 1 | test_depends |
+| D_GOVERNANCE | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 仿真（D_SIMULATION）的模块分布。共 5 个模块 / 5 modules。
+> 按 architecture_layer 分层显示 仿真（D_SIMULATION）的模块分布。共 11 个模块 / 11 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (5 modules)               │
+│              L2 领域层 / Domain Layer (11 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   仿真核心域  [design]                                           │
 │   src/zephyr/simulation/__init__.py  [prototype]                 │
+│   src/zephyr/simulation/_extensions/__init__.py  [prototype]     │
+│   src/zephyr/simulation/api/__init__.py  [prototype]             │
+│   src/zephyr/simulation/core/__init__.py  [prototype]            │
 │   src/zephyr/simulation/implementations/__init__.py  [prototype] │
 │   src/zephyr/simulation/implementations/default_experiment_pi... │
+│   src/zephyr/simulation/infrastructure/__init__.py  [prototype]  │
+│   src/zephyr/simulation/models/__init__.py  [prototype]          │
 │   src/zephyr/simulation/pipeline_base.py  [production]           │
+│   src/zephyr/simulation/services/__init__.py  [prototype]        │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 5 个模块 / 5 modules）。
+> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
 
-### L2 领域层 / Domain Layer (5 modules)
+### L2 领域层 / Domain Layer (11 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/simulation/ | 仿真核心域 | design | planned |
 | 2 | src/zephyr/simulation/__init__.py | src/zephyr/simulation/__init__.py | prototype | generated |
-| 3 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
-| 4 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
-| 5 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
+| 3 | src/zephyr/simulation/_extensions/__init__.py | src/zephyr/simulation/_extensions/__i... | prototype | generated |
+| 4 | src/zephyr/simulation/api/__init__.py | src/zephyr/simulation/api/__init__.py | prototype | generated |
+| 5 | src/zephyr/simulation/core/__init__.py | src/zephyr/simulation/core/__init__.py | prototype | generated |
+| 6 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
+| 7 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
+| 8 | src/zephyr/simulation/infrastructure/__init__.py | src/zephyr/simulation/infrastructure/... | prototype | generated |
+| 9 | src/zephyr/simulation/models/__init__.py | src/zephyr/simulation/models/__init__.py | prototype | generated |
+| 10 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
+| 11 | src/zephyr/simulation/services/__init__.py | src/zephyr/simulation/services/__init... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 1 条 / 1 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 2 条 / 2 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│        依赖关系图 / Dependency Graph (共 1 条 / 1 edges)         │
+│        依赖关系图 / Dependency Graph (共 2 条 / 2 edges)         │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 1                               │
+│   依赖类型数 / Dependency Types: 2                               │
 │   [import_depends]: 1 条 / edges                                 │
+│   [config_depends]: 1 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   default_experiment_pipeli... → __init__.py                     │
+│   default_experiment_pipeli... → pipeline_base.py                │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [config_depends] (1 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → default_experiment_pipeli...                     │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
