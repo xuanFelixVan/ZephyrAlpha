@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 14:39:20
+> 最后更新: 2026-07-01 16:05:50
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -125,11 +125,11 @@ graph TD
     D_INTEGRATION["D_INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_all_skill_modules_py
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_all_skill_modules_py
     D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py

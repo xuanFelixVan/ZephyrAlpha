@@ -1,7 +1,7 @@
 %% D_SECURITY 域全景依赖图
-%% 生成时间: 2026-07-01 14:39:22
+%% 生成时间: 2026-07-01 16:05:52
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 131, 依赖边数: 261
+%% 模块数: 130, 依赖边数: 260
 
 graph TD
 
@@ -15,7 +15,6 @@ graph TD
         src_zephyr_security_access_control_approver_check_py["...rity/access_control/approver_check.py [production]"]
         src_zephyr_security_access_control_asymmetric_audit_py["...ty/access_control/asymmetric_audit.py [production]"]
         src_zephyr_security_access_control_auto_maintenance_py["...ty/access_control/auto_maintenance.py [production]"]
-        src_zephyr_security_access_control_blind_spot_tracker_py[".../access_control/blind_spot_tracker.py [production]"]
         src_zephyr_security_access_control_blueprint_fidelity_py[".../access_control/blueprint_fidelity.py [production]"]
         src_zephyr_security_access_control_bootstrap_superadmin_py["...ccess_control/bootstrap_superadmin.py [production]"]
         src_zephyr_security_access_control_build_sanitizer_py["...ity/access_control/build_sanitizer.py [production]"]
@@ -107,7 +106,8 @@ graph TD
         src_zephyr_security_adversarial_validation_models_py["...rity/adversarial_validation/models.py [prototype]"]
         src_zephyr_security_adversaria___lidation_scenario_loader_py["...rsarial_validation/scenario_loader.py [prototype]"]
         src_zephyr_security_adversarial_validation_steady_state_py["...dversarial_validation/steady_state.py [prototype]"]
-        %% ... 还有 31 个模块未显示
+        src_zephyr_security_adversarial_validation_validator_py["...y/adversarial_validation/validator.py [prototype]"]
+        %% ... 还有 30 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -194,7 +194,7 @@ graph TD
     %% ... 还有 48 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUTONOMY_PERM -> D_SECURITY (75 条)
+    %% D_AUTONOMY_PERM -> D_SECURITY (74 条)
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___lidation_attack_registry_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversaria___tion_convergence_checker_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
@@ -211,7 +211,6 @@ graph TD
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_non_repudiation_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_blueprint_fidelity_py
-    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_blind_spot_tracker_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_immutable_core_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_derive_rbac_roles_py
@@ -225,6 +224,7 @@ graph TD
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_permission_hooks_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_agent_creation_policy_py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_cache_invalidation_py
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_security_access_control_emergency_override_py
     %% D_GOVERNANCE -> D_SECURITY (23 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_security_llm_defens___security_input_sanitizer_py
@@ -301,5 +301,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 128 条
-    %% 跨域入边: 114 条
+    %% 跨域入边: 113 条
     %% 跨域出边: 19 条
