@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:23:18
+> 最后更新: 2026-07-01 12:24:44
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 146 | Module Count | 146 |
 | 域内依赖 | 117 | Internal Dependencies | 117 |
 | 跨域入边 | 204 | Cross-domain Incoming | 204 |
-| 跨域出边 | 90 | Cross-domain Outgoing | 90 |
+| 跨域出边 | 89 | Cross-domain Outgoing | 89 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 94 | Prototype Modules | 94 |
 | 生产态模块 | 50 | Production Modules | 50 |
@@ -94,6 +94,8 @@ graph TD
     src_zephyr_governance_audit_orchestration_data_lifecycle_py -.->|config_depends| src_zephyr_governance_audit_orchestration_init_py
     src_zephyr_governance_audit_orchestration_core_trigger_router_py -.->|import_depends| src_zephyr_governance_audit_orchestration_blueprint_scorer_py
     src_zephyr_governance_audit_orchestration_core_init_py -.->|import_depends| src_zephyr_governance_audit_orchestration_core_trigger_router_py
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    src_zephyr_governance_audit_orchestration_core_agent_orchestrator_py -.->|runtime| D_INFRA_RUNTIME
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_audit_orchestration_agent_health_monitor_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_orchestration_agent_health_monitor_py -.->|import_depends| D_SHARED
@@ -107,13 +109,11 @@ graph TD
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_governance_audit_orchestration_core_trigger_router_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_audit_orchestration_core_wave_generator_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    src_zephyr_governance_audit_orchestration_core_agent_orchestrator_py -.->|runtime| D_INFRA_RUNTIME
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    D_GOVERNANCE -.->|runtime| src_zephyr_governance_audit_orchestration_core_agent_orchestrator_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_orchestration_contract_registry_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_orchestration_chaos_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_orchestration_batch_orchestrator_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_audit_orchestration_core_agent_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -330,9 +330,11 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_models_py
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
     src_zephyr_governance_audit_trail_merkle_hourly_py -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    src_zephyr_governance_audit_trail_dora_metrics_py -.->|runtime| D_GOVERNANCE
+    src_zephyr_governance_audit_trail_dora_metrics_py -.->|runtime| D_GOVERNANCE
     D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_GOV_DRIFT
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_governance_audit_trail_cli_py -.->|import_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_SECURITY
@@ -345,22 +347,16 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_DRIFT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_audit_trail_bridges_trust_bridge_py -.->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_governance_audit_trail_dora_metrics_py -.->|runtime| D_GOVERNANCE
-    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
-    src_zephyr_governance_audit_trail_dora_metrics_py -.->|contract| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_governance_audit_trail_dora_metrics_py -.->|runtime| D_GOVERNANCE
     D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_audit_trail_bridges_tiered_storage_bridge_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_audit_trail_bridges_trust_bridge_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_governance_audit_trail_dora_metrics_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     D_GOV_DRIFT -->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_indexer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE -.->|contract| src_zephyr_governance_audit_trail_dora_metrics_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -368,7 +364,7 @@ graph TD
     class src_zephyr_governance_audit_trail_changelog_manager_py,src_zephyr_governance_audit_trail_cli_py,src_zephyr_governance_audit_trail_code_archaeology_py,src_zephyr_governance_audit_trail_compliance_map_py,src_zephyr_governance_audit_trail_contracts_py,src_zephyr_governance_audit_trail_corporate_actions_py,src_zephyr_governance_audit_trail_delegation_auditor_py,src_zephyr_governance_audit_trail_delegation_bridge_py,src_zephyr_governance_audit_trail_dora_metrics_py,src_zephyr_governance_audit_trail_external_tool_audit_py,src_zephyr_governance_audit_trail_feedback_bridge_py,src_zephyr_governance_audit_trail_feedback_policy_py,src_zephyr_governance_audit_trail_feedback_self_audit_py,src_zephyr_governance_audit_trail_genesis_py,src_zephyr_governance_audit_trail_glossary_matrix_py,src_zephyr_governance_audit_trail_incremental_review_py,src_zephyr_governance_audit_trail_indexer_py,src_zephyr_governance_audit_trail_kb_gate_py,src_zephyr_governance_audit_trail_log_rotation_py,src_zephyr_governance_audit_trail_models_py,src_zephyr_governance_audit_trail_observability_dashboard_py,src_zephyr_governance_audit_trail_orchestrator_py production
     class src_zephyr_governance_audit_trail_bridges_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_bridges_trust_bridge_py,src_zephyr_governance_audit_trail_cold_start_py,src_zephyr_governance_audit_trail_evidence_pack_py,src_zephyr_governance_audit_trail_financial_compliance_py,src_zephyr_governance_audit_trail_finding_model_py,src_zephyr_governance_audit_trail_integrity_py,src_zephyr_governance_audit_trail_merkle_hourly_py design
     class D_GOV_DRIFT,D_SECURITY,D_TRADING,D_INTEGRATION,D_INFRA_RUNTIME external_prod
-    class D_GOVERNANCE,D_FUNDAMENTAL_SIGNAL,D_COMPLIANCE external_design
+    class D_GOVERNANCE,D_COMPLIANCE external_design
 ```
 
 ### 第 5 页 / 共 5 页 / Page 5 of 5
@@ -422,6 +418,7 @@ graph TD
     D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_financial_compliance_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_merkle_hourly_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_governance_audit_trail_supply_chain_security_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOV_DRIFT["D_GOV_DRIFT production"]
@@ -430,7 +427,6 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_query_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE -->|import_depends| src_zephyr_governance_behavioral_admission_mcp_result_push_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -452,12 +448,11 @@ graph TD
 | D_GOV_DRIFT | 12 | import_depends |
 | D_SECURITY | 6 | import_depends |
 | D_INFRA_RUNTIME | 6 | import_depends,runtime |
-| D_INTEGRATION | 4 | import_depends |
 | D_GOV_ENFORCEMENT | 4 | import_depends |
+| D_INTEGRATION | 4 | import_depends |
 | D_TRADING | 2 | import_depends |
 | D_BEHAVIORAL_AUDIT | 2 | import_depends |
 | D_AUDITTEST | 2 | runtime |
-| D_FUNDAMENTAL_SIGNAL | 1 | contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 12:23:21
+%% 生成时间: 2026-07-01 12:24:47
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 747, 依赖边数: 921
+%% 模块数: 747, 依赖边数: 917
 
 graph TD
 
@@ -381,12 +381,8 @@ graph TD
     docs_03_modules__cross_layer_mcp_servers_blueprint_md -->|runtime| D_EX_CORE[D_EX_CORE]
     %% D_GOVERNANCE -> D_FACTOR (1 条)
     tests_alpha_signal_test_adversarial_alpha_signal_py -->|test_depends| D_FACTOR[D_FACTOR]
-    %% D_GOVERNANCE -> D_FUNDAMENTAL_SIGNAL (5 条)
+    %% D_GOVERNANCE -> D_FUNDAMENTAL_SIGNAL (1 条)
     tests_alpha_signal_test_adversarial_alpha_signal_py -->|test_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_governance_drift_de___ion_drift_infrastructure_py -->|runtime| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_governance_blind_spot_tracker_py -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    docs_03_modules__cross_layer_mcp_servers_blueprint_md -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     %% D_GOVERNANCE -> D_GOV_AUDIT (37 条)
     src_zephyr_governance_audit_write_failure_protector_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -603,4 +599,4 @@ graph TD
     %% 统计
     %% 域内依赖: 517 条
     %% 跨域入边: 143 条
-    %% 跨域出边: 261 条
+    %% 跨域出边: 257 条

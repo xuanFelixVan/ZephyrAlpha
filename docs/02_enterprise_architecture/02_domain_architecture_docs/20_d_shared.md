@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:23:19
+> 最后更新: 2026-07-01 12:24:45
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_SHARED | Domain ID | D_SHARED |
 | 域名称 | 共享服务 | Domain Name | 共享服务 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 240 | Module Count | 240 |
-| 域内依赖 | 159 | Internal Dependencies | 159 |
+| 模块数 | 241 | Module Count | 241 |
+| 域内依赖 | 160 | Internal Dependencies | 160 |
 | 跨域入边 | 246 | Cross-domain Incoming | 246 |
 | 跨域出边 | 13 | Cross-domain Outgoing | 13 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 178 | Prototype Modules | 178 |
-| 生产态模块 | 62 | Production Modules | 62 |
+| 生产态模块 | 63 | Production Modules | 63 |
 | 容量 | 94/150 (正常) | Capacity | 94/150 (正常) |
 | 描述 | 事件总线(event_bus) | Description | 事件总线(event_bus) |
 
@@ -44,7 +44,7 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 8 页 / Page 1 of 8
+### 第 1 页 / 共 9 页 / Page 1 of 9
 
 ```mermaid
 graph TD
@@ -122,7 +122,7 @@ graph TD
     class D_ML_TRAIN,D_SIMULATION,D_GOVERNANCE,D_GOV_DOCS external_design
 ```
 
-### 第 2 页 / 共 8 页 / Page 2 of 8
+### 第 2 页 / 共 9 页 / Page 2 of 9
 
 ```mermaid
 graph TD
@@ -210,7 +210,7 @@ graph TD
     class D_GOVERNANCE external_design
 ```
 
-### 第 3 页 / 共 8 页 / Page 3 of 8
+### 第 3 页 / 共 9 页 / Page 3 of 9
 
 ```mermaid
 graph TD
@@ -292,7 +292,7 @@ graph TD
     class D_GOVERNANCE,D_OPS,D_INTEGRATION,D_ML_TRAIN external_design
 ```
 
-### 第 4 页 / 共 8 页 / Page 4 of 8
+### 第 4 页 / 共 9 页 / Page 4 of 9
 
 ```mermaid
 graph TD
@@ -365,7 +365,7 @@ graph TD
     class D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_OPS external_design
 ```
 
-### 第 5 页 / 共 8 页 / Page 5 of 8
+### 第 5 页 / 共 9 页 / Page 5 of 9
 
 ```mermaid
 graph TD
@@ -388,6 +388,7 @@ graph TD
         src_zephyr_shared_foundation_types_py["src/zephyr/shared/foundation/types.py prototype"]
         src_zephyr_shared_frontmatter_utils_py["src/zephyr/shared/frontmatter_utils.py prototype"]
         src_zephyr_shared_health_py["src/zephyr/shared/health.py production"]
+        src_zephyr_shared_health_discovery_py["src/zephyr/shared/health_discovery.py production"]
         src_zephyr_shared_healthcheck_service_py["src/zephyr/shared/healthcheck_service.py production"]
         src_zephyr_shared_heartbeat_server_py["src/zephyr/shared/heartbeat_server.py production"]
         src_zephyr_shared_idempotency_py["src/zephyr/shared/idempotency.py prototype"]
@@ -399,7 +400,6 @@ graph TD
         src_zephyr_shared_infra_observer_py["src/zephyr/shared/infra/observer.py prototype"]
         src_zephyr_shared_infra_outbox_py["src/zephyr/shared/infra/outbox.py prototype"]
         src_zephyr_shared_infra_process_lifecycle_gateway_py["src/zephyr/shared/infra/process_lifecycle_gatew... production"]
-        src_zephyr_shared_infra_process_pool_py["src/zephyr/shared/infra/process_pool.py prototype"]
     end
     src_zephyr_shared_flags_py -.->|import_depends| src_zephyr_shared_foundation_flags_py
     src_zephyr_shared_idempotency_py -.->|import_depends| src_zephyr_shared_infra_idempotency_py
@@ -412,15 +412,14 @@ graph TD
     src_zephyr_shared_infra_limiter_py -.->|import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_foundation_init_py -.->|config_depends| src_zephyr_shared_foundation_constants_py
     src_zephyr_shared_infra_outbox_py -.->|import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -.->|import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_infra_init_py -.->|import_depends| src_zephyr_shared_infra_cache_py
     src_zephyr_shared_infra_init_py -.->|import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
+    src_zephyr_shared_health_discovery_py -->|config_depends| src_zephyr_shared_health_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_shared_healthcheck_service_py -->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_shared_foundation_constants_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_shared_infra_process_pool_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
@@ -434,17 +433,18 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_shared_events_event_bus_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_fault_isolator_py,src_zephyr_shared_health_py,src_zephyr_shared_healthcheck_service_py,src_zephyr_shared_heartbeat_server_py,src_zephyr_shared_infra_process_lifecycle_gateway_py production
-    class src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_file_utils_py,src_zephyr_shared_flags_py,src_zephyr_shared_foundation_init_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_frontmatter_utils_py,src_zephyr_shared_idempotency_py,src_zephyr_shared_infra_init_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_pool_py design
+    class src_zephyr_shared_events_event_bus_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_fault_isolator_py,src_zephyr_shared_health_py,src_zephyr_shared_health_discovery_py,src_zephyr_shared_healthcheck_service_py,src_zephyr_shared_heartbeat_server_py,src_zephyr_shared_infra_process_lifecycle_gateway_py production
+    class src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_file_utils_py,src_zephyr_shared_flags_py,src_zephyr_shared_foundation_init_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_frontmatter_utils_py,src_zephyr_shared_idempotency_py,src_zephyr_shared_infra_init_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py design
     class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
     class D_GOV_AUDIT,D_TRADING external_design
 ```
 
-### 第 6 页 / 共 8 页 / Page 6 of 8
+### 第 6 页 / 共 9 页 / Page 6 of 9
 
 ```mermaid
 graph TD
     subgraph D_SHARED["D_SHARED 共享服务"]
+        src_zephyr_shared_infra_process_pool_py["src/zephyr/shared/infra/process_pool.py prototype"]
         src_zephyr_shared_io_init_py["src/zephyr/shared/io/__init__.py prototype"]
         src_zephyr_shared_io_content_fingerprint_py["src/zephyr/shared/io/content_fingerprint.py prototype"]
         src_zephyr_shared_io_file_utils_py["src/zephyr/shared/io/file_utils.py prototype"]
@@ -474,7 +474,6 @@ graph TD
         src_zephyr_shared_models_py["src/zephyr/shared/models.py prototype"]
         src_zephyr_shared_module_birth_registry_py["src/zephyr/shared/module_birth_registry.py production"]
         src_zephyr_shared_observer_py["src/zephyr/shared/observer.py prototype"]
-        src_zephyr_shared_outbox_py["src/zephyr/shared/outbox.py prototype"]
     end
     src_zephyr_shared_io_init_py -.->|config_depends| src_zephyr_shared_io_content_fingerprint_py
     src_zephyr_shared_knowledge_ke_linker_py -.->|config_depends| src_zephyr_shared_knowledge_ke_structurer_py
@@ -483,6 +482,7 @@ graph TD
     src_zephyr_shared_maintenance_autonomy_monitor_py -.->|config_depends| src_zephyr_shared_maintenance_zero_config_py
     src_zephyr_shared_maintenance_handbook_py -.->|config_depends| src_zephyr_shared_maintenance_zero_config_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    src_zephyr_shared_infra_process_pool_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_io_io_cache_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_module_birth_registry_py
@@ -505,16 +505,17 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_knowledge_init_py,src_zephyr_shared_lifecycle_scope_guard_py,src_zephyr_shared_lifecycle_task_lifecycle_manager_py,src_zephyr_shared_longevity_monitor_py,src_zephyr_shared_maintenance_init_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_metrics_py,src_zephyr_shared_model_capacity_probe_py,src_zephyr_shared_module_birth_registry_py production
-    class src_zephyr_shared_io_init_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_knowledge_ke_linker_py,src_zephyr_shared_knowledge_ke_structurer_py,src_zephyr_shared_knowledge_kms_interface_py,src_zephyr_shared_limiter_py,src_zephyr_shared_lock_py,src_zephyr_shared_logging_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_migration_py,src_zephyr_shared_models_py,src_zephyr_shared_observer_py,src_zephyr_shared_outbox_py design
+    class src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_init_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_knowledge_ke_linker_py,src_zephyr_shared_knowledge_ke_structurer_py,src_zephyr_shared_knowledge_kms_interface_py,src_zephyr_shared_limiter_py,src_zephyr_shared_lock_py,src_zephyr_shared_logging_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_migration_py,src_zephyr_shared_models_py,src_zephyr_shared_observer_py design
     class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_ENFORCEMENT external_prod
     class D_GOV_AUDIT,D_INTEGRATION,D_TRADING external_design
 ```
 
-### 第 7 页 / 共 8 页 / Page 7 of 8
+### 第 7 页 / 共 9 页 / Page 7 of 9
 
 ```mermaid
 graph TD
     subgraph D_SHARED["D_SHARED 共享服务"]
+        src_zephyr_shared_outbox_py["src/zephyr/shared/outbox.py prototype"]
         src_zephyr_shared_owner_trust_gauge_py["src/zephyr/shared/owner_trust_gauge.py production"]
         src_zephyr_shared_pagination_py["src/zephyr/shared/pagination.py prototype"]
         src_zephyr_shared_ports_py["src/zephyr/shared/ports.py prototype"]
@@ -544,10 +545,8 @@ graph TD
         src_zephyr_shared_schema_schemas_py["src/zephyr/shared/schema/schemas.py prototype"]
         src_zephyr_shared_schema_severity_types_py["src/zephyr/shared/schema/severity_types.py prototype"]
         src_zephyr_shared_schema_registry_py["src/zephyr/shared/schema_registry.py prototype"]
-        src_zephyr_shared_schemas_py["src/zephyr/shared/schemas.py prototype"]
     end
     src_zephyr_shared_schema_registry_py -.->|import_depends| src_zephyr_shared_schema_schema_registry_py
-    src_zephyr_shared_schemas_py -.->|import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_protocols_init_py -.->|import_depends| src_zephyr_shared_protocols_a2a_init_py
     src_zephyr_shared_protocols_a2a_init_py -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     src_zephyr_shared_protocols_a2a_init_py -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
@@ -585,16 +584,17 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_owner_trust_gauge_py,src_zephyr_shared_queue_init_py,src_zephyr_shared_queue_task_scheduler_py,src_zephyr_shared_reasoning_spans_py,src_zephyr_shared_reliability_init_py,src_zephyr_shared_reliability_context_guard_py,src_zephyr_shared_sandbox_executor_py production
-    class src_zephyr_shared_pagination_py,src_zephyr_shared_ports_py,src_zephyr_shared_protocols_init_py,src_zephyr_shared_protocols_a2a_init_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_a2a_layer3_coordination_init_py,src_zephyr_shared_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_init_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_init_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_registry_py,src_zephyr_shared_schemas_py design
+    class src_zephyr_shared_outbox_py,src_zephyr_shared_pagination_py,src_zephyr_shared_ports_py,src_zephyr_shared_protocols_init_py,src_zephyr_shared_protocols_a2a_init_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_a2a_layer3_coordination_init_py,src_zephyr_shared_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_init_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_init_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_registry_py design
     class D_INFRA_RUNTIME,D_INFRA_A2A external_prod
     class D_GOVERNANCE,D_GOV_AUDIT,D_GOV_DOCS external_design
 ```
 
-### 第 8 页 / 共 8 页 / Page 8 of 8
+### 第 8 页 / 共 9 页 / Page 8 of 9
 
 ```mermaid
 graph TD
     subgraph D_SHARED["D_SHARED 共享服务"]
+        src_zephyr_shared_schemas_py["src/zephyr/shared/schemas.py prototype"]
         src_zephyr_shared_secrets_py["src/zephyr/shared/secrets.py prototype"]
         src_zephyr_shared_security_init_py["src/zephyr/shared/security/__init__.py prototype"]
         src_zephyr_shared_security_capability_py["src/zephyr/shared/security/capability.py prototype"]
@@ -624,7 +624,6 @@ graph TD
         src_zephyr_shared_utils_testing_py["src/zephyr/shared/utils/testing.py prototype"]
         src_zephyr_shared_utils_time_utils_py["src/zephyr/shared/utils/time_utils.py prototype"]
         src_zephyr_shared_vibe_experiment_tracker_py["src/zephyr/shared/vibe_experiment_tracker.py production"]
-        src_zephyr_shared_zephyr_logger_py["src/zephyr/shared/zephyr_logger.py production"]
     end
     src_zephyr_shared_secrets_py -.->|import_depends| src_zephyr_shared_security_secrets_py
     src_zephyr_shared_ssot_guard_py -.->|import_depends| src_zephyr_shared_security_ssot_guard_py
@@ -654,10 +653,24 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_shared_session_init_py,src_zephyr_shared_slo_review_assistant_py,src_zephyr_shared_task_heartbeat_py,src_zephyr_shared_ttl_cleanup_engine_py,src_zephyr_shared_vibe_experiment_tracker_py,src_zephyr_shared_zephyr_logger_py production
-    class src_zephyr_shared_secrets_py,src_zephyr_shared_security_init_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_serialization_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_audit_py,src_zephyr_shared_session_continuity_py,src_zephyr_shared_ssot_guard_py,src_zephyr_shared_state_machine_py,src_zephyr_shared_task_types_py,src_zephyr_shared_testing_py,src_zephyr_shared_time_utils_py,src_zephyr_shared_tracing_py,src_zephyr_shared_types_py,src_zephyr_shared_utils_init_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py design
+    class src_zephyr_shared_session_init_py,src_zephyr_shared_slo_review_assistant_py,src_zephyr_shared_task_heartbeat_py,src_zephyr_shared_ttl_cleanup_engine_py,src_zephyr_shared_vibe_experiment_tracker_py production
+    class src_zephyr_shared_schemas_py,src_zephyr_shared_secrets_py,src_zephyr_shared_security_init_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_serialization_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_audit_py,src_zephyr_shared_session_continuity_py,src_zephyr_shared_ssot_guard_py,src_zephyr_shared_state_machine_py,src_zephyr_shared_task_types_py,src_zephyr_shared_testing_py,src_zephyr_shared_time_utils_py,src_zephyr_shared_tracing_py,src_zephyr_shared_types_py,src_zephyr_shared_utils_init_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py design
     class D_GOV_AUDIT external_prod
     class D_GOVERNANCE external_design
+```
+
+### 第 9 页 / 共 9 页 / Page 9 of 9
+
+```mermaid
+graph TD
+    subgraph D_SHARED["D_SHARED 共享服务"]
+        src_zephyr_shared_zephyr_logger_py["src/zephyr/shared/zephyr_logger.py production"]
+    end
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_shared_zephyr_logger_py production
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -702,7 +715,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 共享服务（D_SHARED）的模块分布。共 240 个模块 / 240 modules。
+> 按 architecture_layer 分层显示 共享服务（D_SHARED）的模块分布。共 241 个模块 / 241 modules。
 
 ```
 
@@ -757,12 +770,13 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (13 modules)                │
+│                未分类 / Unclassified (14 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/shared/adaptation/__init__.py  [production]         │
 │   src/zephyr/shared/compensation/__init__.py  [production]       │
 │   src/zephyr/shared/dependency/__init__.py  [production]         │
 │   src/zephyr/shared/draft/__init__.py  [production]              │
+│   src/zephyr/shared/health_discovery.py  [production]            │
 │   src/zephyr/shared/knowledge/__init__.py  [production]          │
 │   src/zephyr/shared/lifecycle/scope_guard.py  [production]       │
 │   src/zephyr/shared/lifecycle/task_lifecycle_manager.py  [pro... │
@@ -778,7 +792,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 240 个模块 / 240 modules）。
+> 按 architecture_layer 分组的模块清单（共 241 个模块 / 241 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (67 modules)
 
@@ -1017,7 +1031,7 @@ graph TD
 | 159 | src/zephyr/shared/vibe_experiment_tracker.py | src/zephyr/shared/vibe_experiment_tra... | production | generated |
 | 160 | src/zephyr/shared/zephyr_logger.py | src/zephyr/shared/zephyr_logger.py | production | generated |
 
-### 未分类 / Unclassified (13 modules)
+### 未分类 / Unclassified (14 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -1025,28 +1039,29 @@ graph TD
 | 2 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | production | generated |
 | 3 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | production | generated |
 | 4 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | production | generated |
-| 5 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | production | generated |
-| 6 | src/zephyr/shared/lifecycle/scope_guard.py | src/zephyr/shared/lifecycle/scope_gua... | production | generated |
-| 7 | src/zephyr/shared/lifecycle/task_lifecycle_manager.py | src/zephyr/shared/lifecycle/task_life... | production | generated |
-| 8 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | production | generated |
-| 9 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | production | generated |
-| 10 | src/zephyr/shared/queue/task_scheduler.py | src/zephyr/shared/queue/task_schedule... | production | generated |
-| 11 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | production | generated |
-| 12 | src/zephyr/shared/reliability/context_guard.py | src/zephyr/shared/reliability/context... | production | generated |
-| 13 | src/zephyr/shared/session/__init__.py | src/zephyr/shared/session/__init__.py | production | generated |
+| 5 | src/zephyr/shared/health_discovery.py | src/zephyr/shared/health_discovery.py | production | generated |
+| 6 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | production | generated |
+| 7 | src/zephyr/shared/lifecycle/scope_guard.py | src/zephyr/shared/lifecycle/scope_gua... | production | generated |
+| 8 | src/zephyr/shared/lifecycle/task_lifecycle_manager.py | src/zephyr/shared/lifecycle/task_life... | production | generated |
+| 9 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | production | generated |
+| 10 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | production | generated |
+| 11 | src/zephyr/shared/queue/task_scheduler.py | src/zephyr/shared/queue/task_schedule... | production | generated |
+| 12 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | production | generated |
+| 13 | src/zephyr/shared/reliability/context_guard.py | src/zephyr/shared/reliability/context... | production | generated |
+| 14 | src/zephyr/shared/session/__init__.py | src/zephyr/shared/session/__init__.py | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 159 条 / 159 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 160 条 / 160 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 159 条 / 159 edges)       │
+│      依赖关系图 / Dependency Graph (共 160 条 / 160 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
 │   [import_depends]: 132 条 / edges                               │
-│   [config_depends]: 27 条 / edges                                │
+│   [config_depends]: 28 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -1104,9 +1119,9 @@ graph TD
 │   ...还有 83 条 / 83 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (27 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (28 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 159 条)
+> (最多显示前 50 条依赖边，共 160 条)
 
 ```
 

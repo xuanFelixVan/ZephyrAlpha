@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:23:19
+> 最后更新: 2026-07-01 12:24:45
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -121,28 +121,24 @@ graph TD
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_INTEGRATION
+    D_GOV_AUDIT -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_infrastructure_init_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_A2A["D_INFRA_A2A production"]
-    D_INFRA_A2A -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_A2A -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
-    D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_init_py,src_zephyr_autonomy_core_pipeline_orchestrator_py,src_zephyr_infrastructure_init_py,src_zephyr_infrastructure_base_server_py,src_zephyr_infrastructure_adaptation_init_py,src_zephyr_infrastructure_asset_inventory_init_py,src_zephyr_infrastructure_asset_inventory_main_py,src_zephyr_infrastructure_asset_inventory_classifier_py,src_zephyr_infrastructure_asset_inventory_dashboard_py,src_zephyr_infrastructure_asset_inventory_dependency_py,src_zephyr_infrastructure_asset_inventory_index_generator_py,src_zephyr_infrastructure_asset_inventory_lifecycle_py,src_zephyr_infrastructure_asset_inventory_mcp_server_py,src_zephyr_infrastructure_asset_inventory_metadata_py,src_zephyr_infrastructure_asset_inventory_models_py,src_zephyr_infrastructure_asset_inventory_reconciler_py,src_zephyr_infrastructure_asset_inventory_registry_adapter_py,src_zephyr_infrastructure_asset_inventory_scanner_py,src_zephyr_infrastructure_asset_inventory_telemetry_py,src_zephyr_infrastructure_asset_inventory_trust_anchor_py,src_zephyr_infrastructure_audit_logger_py,src_zephyr_infrastructure_auto_diagnostics_py,src_zephyr_infrastructure_blueprint_code_sync_py,src_zephyr_infrastructure_blueprint_search_server_py,src_zephyr_infrastructure_capacity_assurance_init_py,src_zephyr_infrastructure_capacity_assurance_contracts_init_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py,src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py,src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py production
-    class D_OPS,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED,D_INFRA_A2A,D_INFRA_RECOVERY external_prod
+    class D_OPS,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED external_prod
     class D_INTEGRATION external_design
 ```
 

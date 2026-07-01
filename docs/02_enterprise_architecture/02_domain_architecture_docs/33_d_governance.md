@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:23:18
+> 最后更新: 2026-07-01 12:24:44
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 749 | Module Count | 749 |
 | 域内依赖 | 517 | Internal Dependencies | 517 |
 | 跨域入边 | 191 | Cross-domain Incoming | 191 |
-| 跨域出边 | 1853 | Cross-domain Outgoing | 1853 |
+| 跨域出边 | 1849 | Cross-domain Outgoing | 1849 |
 | 设计态模块 | 50 | Design Modules | 50 |
 | 原型态模块 | 644 | Prototype Modules | 644 |
 | 生产态模块 | 55 | Production Modules | 55 |
@@ -102,16 +102,16 @@ graph TD
     data_asset_index_archive_migration_scripts_migration_shared_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
     data_asset_index_archive_migration_scripts_verify_batch_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
     data_asset_index_archive_migration_scripts_verify_step4_py -.->|config_depends| data_asset_index_archive_migration_scripts_apply_rulings_py
-    D_PF_CORE["D_PF_CORE design"]
-    D_PF_CORE -.->|contract| docs_03_modules_alpha_signal_domain_blueprint_md
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
+    D_PF_CORE["D_PF_CORE design"]
+    D_PF_CORE -.->|contract| docs_03_modules_alpha_signal_domain_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class data_asset_index_archive_migration_scripts_migration_shared_py,data_asset_index_archive_migration_scripts_verify_manifest_py,data_asset_index_archive_migration_scripts_verify_step4_py,data_asset_index_archive_migration_scripts_apply_rulings_py,data_asset_index_archive_migration_scripts_check_coverage_py,data_asset_index_archive_migration_scripts_comprehensive_import_fix_py,data_asset_index_archive_migration_scripts_create_target_dirs_py,data_asset_index_archive_migration_scripts_cross_domain_import_fix_py,data_asset_index_archive_migration_scripts_domain_prefix_import_fix_py,data_asset_index_archive_migration_scripts_execute_move_py,data_asset_index_archive_migration_scripts_generate_migration_registry_py,data_asset_index_archive_migration_scripts_generate_path_migration_mapping_py,data_asset_index_archive_migration_scripts_inject_domain_fields_py,data_asset_index_archive_migration_scripts_lock_batch_py,data_asset_index_archive_migration_scripts_preflight_check_py,data_asset_index_archive_migration_scripts_rollback_batch_py,data_asset_index_archive_migration_scripts_scan_import_impact_py,data_asset_index_archive_migration_scripts_shared_import_fix_py,data_asset_index_archive_migration_scripts_test_import_fix_py,data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py,data_asset_index_archive_migration_scripts_update_imports_py,data_asset_index_archive_migration_scripts_update_non_import_refs_py,data_asset_index_archive_migration_scripts_verify_batch_py,docs_03_modules_alpha_signal_domain_blueprint_md,docs_03_modules_cross_layer_agent_orchestrator_blueprint_md,docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md design
-    class D_PF_CORE,D_AUTONOMY_CORE external_design
+    class D_AUTONOMY_CORE,D_PF_CORE external_design
 ```
 
 ### 第 2 页 / 共 25 页 / Page 2 of 25
@@ -155,23 +155,21 @@ graph TD
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_mcp_servers_blueprint_md
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_INFRA_RUNTIME
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
-    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_GOV_AUDIT
     D_OPS["D_OPS prototype"]
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     D_AUTONOMY_PERM["D_AUTONOMY_PERM prototype"]
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUTONOMY_PERM
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_GOV_AUDIT
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_GOV_AUDIT
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
+    D_EX_CORE["D_EX_CORE prototype"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_EX_CORE
+    D_AUDITTEST["D_AUDITTEST production"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|contract| D_AUDITTEST
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
@@ -183,8 +181,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_feedback_loop_capacity_upgrade_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_llm_security_blueprint_md,docs_03_modules_cross_layer_mcp_servers_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_restructuring_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_compliance_compliance_core_blueprint_md,docs_03_modules_domain_data_datasource_core_blueprint_md,docs_03_modules_domain_factor_alpha_factor_core_blueprint_md,docs_03_modules_domain_frontend_hmi_core_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_capacity_upgrade_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md,docs_03_modules_domain_infra_ops_asset_inventory_blueprint_md,docs_03_modules_domain_infra_ops_capacity_assurance_blueprint_md,docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md design
-    class D_INFRA_RUNTIME,D_GOV_AUDIT external_prod
-    class D_OPS,D_AUTONOMY_PERM,D_AUTONOMY_CORE external_design
+    class D_AUDITTEST external_prod
+    class D_OPS,D_AUTONOMY_PERM,D_GOV_AUDIT,D_EX_CORE,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 3 页 / 共 25 页 / Page 3 of 25
@@ -233,20 +231,20 @@ graph TD
     scripts_governance_d5_architecture_checkers_check_blueprint_automation_sync_py -.->|config_depends| scripts_governance_d5_architecture_checkers_init_py
     scripts_governance_d5_architecture_checkers_check_blueprint_code_alignment_py -.->|config_depends| scripts_governance_d5_architecture_checkers_init_py
     scripts_governance_d5_architecture_checkers_check_blueprint_template_compliance_py -.->|config_depends| scripts_governance_d5_architecture_checkers_init_py
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
-    scripts_governance_d5_architecture_audit_agent_spec_py -.->|import_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|runtime| D_GOV_AUDIT
     docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
+    scripts_governance_d5_architecture_audit_agent_spec_py -.->|import_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_analyze_orphan_consumers_py,scripts_governance_check_rule_coverage_py,scripts_governance_d3_metadata_validate_rule_frontmatter_py production
     class docs_03_modules_domain_infra_runtime_state_machine_engine_blueprint_md,docs_03_modules_domain_infra_runtime_task_system_blueprint_md,docs_03_modules_domain_integration_local_model_blueprint_md,docs_03_modules_domain_ml_train_ml_core_blueprint_md,docs_03_modules_domain_reporting_analytics_core_blueprint_md,docs_03_modules_domain_research_research_core_blueprint_md,docs_03_modules_domain_risk_risk_management_core_blueprint_md,docs_03_modules_domain_signal_signal_generation_core_blueprint_md,docs_03_modules_domain_simulation_experiment_core_blueprint_md,docs_03_modules_master_blueprint_blueprint_md,docs_03_modules_master_blueprint_blueprint_agent_spec_md,docs_03_modules_ml_experiment_domain_blueprint_md,docs_03_modules_sys_master_blueprint_md,scripts_governance_d5_architecture_init_py,scripts_governance_d5_architecture_analyzers_init_py,scripts_governance_d5_architecture_analyzers_analyze_contract_impact_py,scripts_governance_d5_architecture_analyzers_audit_depends_on_chain_depth_py,scripts_governance_d5_architecture_analyzers_measure_deprecation_cascade_py,scripts_governance_d5_architecture_audit_agent_spec_py,scripts_governance_d5_architecture_check_blueprint_code_alignment_py,scripts_governance_d5_architecture_check_budget_health_py,scripts_governance_d5_architecture_check_drift_e2e_py,scripts_governance_d5_architecture_checkers_init_py,scripts_governance_d5_architecture_checkers_check_architecture_gates_py,scripts_governance_d5_architecture_checkers_check_blueprint_automation_sync_py,scripts_governance_d5_architecture_checkers_check_blueprint_code_alignment_py,scripts_governance_d5_architecture_checkers_check_blueprint_template_compliance_py design
-    class D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
+    class D_INFRA_RUNTIME,D_AUTONOMY_CORE external_prod
     class D_GOV_AUDIT external_design
 ```
 
@@ -635,8 +633,6 @@ graph TD
     src_zephyr_governance_burn_rate_monitor_py -.->|import_depends| D_OPS
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_bridges_alerts_py -.->|import_depends| D_SHARED
-    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
-    src_zephyr_governance_blind_spot_tracker_py -.->|contract| D_FUNDAMENTAL_SIGNAL
     D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_compliance_manager_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_compliance_gate_a6_init_py
@@ -654,7 +650,7 @@ graph TD
     class src_zephyr_governance_budget_enforcement_py production
     class src_zephyr_governance_blind_spot_tracker_py,src_zephyr_governance_blueprint_bloat_monitor_py,src_zephyr_governance_blueprint_code_consistency_py,src_zephyr_governance_blueprint_reconciler_py,src_zephyr_governance_bootstrapping_calibrator_py,src_zephyr_governance_bridges_init_py,src_zephyr_governance_bridges_alerts_py,src_zephyr_governance_bridges_rbac_bridge_py,src_zephyr_governance_bridges_spec_auditor_py,src_zephyr_governance_broker_interface_py,src_zephyr_governance_broker_resilience_py,src_zephyr_governance_burn_rate_monitor_py,src_zephyr_governance_cache_manager_py,src_zephyr_governance_canary_manager_py,src_zephyr_governance_canary_register_py,src_zephyr_governance_cli_py,src_zephyr_governance_clock_guard_py,src_zephyr_governance_code_analyzer_runner_py,src_zephyr_governance_code_simulator_py,src_zephyr_governance_coldstart_manager_py,src_zephyr_governance_command_chain_length_gate_py,src_zephyr_governance_compliance_gate_a6_init_py,src_zephyr_governance_compliance_manager_py,src_zephyr_governance_compliance_mapper_py,src_zephyr_governance_compliance_rule_py,src_zephyr_governance_compositional_safety_tester_py,src_zephyr_governance_confidence_estimator_py,src_zephyr_governance_config_py,src_zephyr_governance_config_scanner_py design
     class D_TRADING,D_SHARED,D_PF_CORE external_prod
-    class D_OPS,D_FUNDAMENTAL_SIGNAL,D_COMPLIANCE,D_EX_CORE external_design
+    class D_OPS,D_COMPLIANCE,D_EX_CORE external_design
 ```
 
 ### 第 10 页 / 共 25 页 / Page 10 of 25
@@ -843,22 +839,20 @@ graph TD
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_reconciler_py
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
-    src_zephyr_governance_drift_detection_drift_hotfix_bypass_py -.->|import_depends| D_GOV_AUDIT
     D_EX_CORE["D_EX_CORE prototype"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_EX_CORE
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_GOV_AUDIT
     D_AUDITTEST["D_AUDITTEST production"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_AUDITTEST
-    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
-    src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_FUNDAMENTAL_SIGNAL
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_drift_detection_drift_hotfix_bypass_py -.->|import_depends| D_GOV_AUDIT
+    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     D_GOV_DRIFT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
-    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -867,7 +861,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_drift_detection_backcompat_checker_py,src_zephyr_governance_drift_detection_baseline_poisoning_guard_py,src_zephyr_governance_drift_detection_brain_integration_py,src_zephyr_governance_drift_detection_bridges_init_py,src_zephyr_governance_drift_detection_canary_controller_py,src_zephyr_governance_drift_detection_cascade_detector_py,src_zephyr_governance_drift_detection_cold_start_py,src_zephyr_governance_drift_detection_config_consistency_py,src_zephyr_governance_drift_detection_correlation_engine_py,src_zephyr_governance_drift_detection_credibility_engine_py,src_zephyr_governance_drift_detection_cross_module_score_py,src_zephyr_governance_drift_detection_dashboard_py,src_zephyr_governance_drift_detection_detector_dispatcher_py,src_zephyr_governance_drift_detection_drift_engine_py,src_zephyr_governance_drift_detection_drift_hotfix_bypass_py,src_zephyr_governance_drift_detection_drift_infrastructure_py,src_zephyr_governance_drift_detection_drift_models_py,src_zephyr_governance_drift_detection_drift_result_types_py,src_zephyr_governance_drift_detection_drift_training_py,src_zephyr_governance_drift_detection_file_attr_checker_py,src_zephyr_governance_drift_detection_forensics_engine_py,src_zephyr_governance_drift_detection_gate_persistence_py,src_zephyr_governance_drift_detection_git_bisector_py,src_zephyr_governance_drift_detection_gitignore_auditor_py,src_zephyr_governance_drift_detection_headless_scanner_py,src_zephyr_governance_drift_detection_incremental_scanner_py,src_zephyr_governance_drift_detection_naming_magic_checker_py,src_zephyr_governance_drift_detection_orphan_scanner_py,src_zephyr_governance_drift_detection_python_compat_py,src_zephyr_governance_drift_detection_reconciler_py design
     class D_GOV_AUDIT,D_AUDITTEST external_prod
-    class D_GOV_ENFORCEMENT,D_EX_CORE,D_FUNDAMENTAL_SIGNAL,D_GOV_DRIFT,D_AUTONOMY_CORE external_design
+    class D_EX_CORE,D_GOV_ENFORCEMENT,D_GOV_DRIFT,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 13 页 / 共 25 页 / Page 13 of 25
@@ -1764,20 +1758,20 @@ graph TD
 | D_GOV_DRIFT | 21 | config_depends,import_depends,test_depends |
 | D_MKT_DATA | 15 | data,test_depends |
 | D_RISK | 14 | test_depends |
-| D_FUNDAMENTAL_SIGNAL | 12 | contract,runtime,test_depends |
 | D_GOV_SCRIPTS | 12 | test_depends |
 | D_SIMULATION | 12 | test_depends |
 | D_AUDITTEST | 11 | contract,data,runtime |
-| D_FRONTEND | 8 | test_depends |
 | D_EX_CORE | 8 | runtime,test_depends |
+| D_FUNDAMENTAL_SIGNAL | 8 | test_depends |
+| D_FRONTEND | 8 | test_depends |
 | D_GOV_RULE | 7 | import_depends,test_depends |
-| D_INFRA_A2A | 6 | import_depends |
 | D_PF_CORE | 6 | test_depends |
+| D_INFRA_A2A | 6 | import_depends |
 | D_FACTOR | 4 | test_depends |
 | D_REPORTING | 2 | import_depends |
 | D_CROSS_ASSET | 2 | test_depends |
-| D_PF_ALLOC | 1 | import_depends |
 | D_AUTONOMY_PERM | 1 | runtime |
+| D_PF_ALLOC | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

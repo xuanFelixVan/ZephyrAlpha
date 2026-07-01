@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:23:18
+> 最后更新: 2026-07-01 12:24:44
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 18 | Cross-domain Incoming | 18 |
-| 跨域出边 | 30 | Cross-domain Outgoing | 30 |
+| 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
@@ -70,11 +70,10 @@ graph TD
 |--------|:---:|---------|
 | D_GOVERNANCE | 11 | contract,data,runtime |
 | D_GOV_AUDIT | 9 | contract,runtime,test_depends |
+| D_EX_CORE | 2 | contract,runtime |
 | D_GOV_ENFORCEMENT | 2 | test_depends |
 | D_INFRA_RUNTIME | 2 | runtime |
-| D_EX_CORE | 2 | contract,runtime |
 | D_SECURITY | 1 | test_depends |
-| D_FUNDAMENTAL_SIGNAL | 1 | data |
 | D_GOV_DRIFT | 1 | test_depends |
 | D_OPS | 1 | test_depends |
 
