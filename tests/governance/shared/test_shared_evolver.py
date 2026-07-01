@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.shared_evolver import (
+from zephyr.governance.code_dedup.shared_evolver import (
     EvolutionEntry,
     SharedEvolver,
 )

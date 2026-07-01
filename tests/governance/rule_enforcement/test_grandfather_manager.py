@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.grandfather_manager import (
+from zephyr.governance.code_dedup.grandfather_manager import (
     GrandfatherManager,
 )
 

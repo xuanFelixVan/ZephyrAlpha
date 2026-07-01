@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.prioritizer import PrioritizedFix, Prioritizer
+from zephyr.governance.code_dedup.prioritizer import PrioritizedFix, Prioritizer
 
 
 class TestPrioritizedFix:

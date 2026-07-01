@@ -97,12 +97,12 @@ try:
     from zephyr.governance.audit_trail.agent_signer import AgentSigner
     from zephyr.governance.data_governance.akshare_provider import AkshareProvider
     from zephyr.governance.base import FactorMeta
-    from zephyr.governance.blind_spot_tracker import BlindSpotStatus
+    from zephyr.governance.code_dedup.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
-    from zephyr.governance.canary_manager import CanaryFile
+    from zephyr.governance.code_dedup.canary_manager import CanaryFile
     from zephyr.governance.audit_trail.changelog_manager import ChangeImpact
     from zephyr.infrastructure.asset_inventory.classifier import Classifier
-    from zephyr.governance.cli import main
+    from zephyr.governance.code_dedup.cli import main
     from zephyr.governance.audit_trail.code_archaeology import BlameRecord
     from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
@@ -124,7 +124,7 @@ try:
     from zephyr.infrastructure.rollback.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
-    from zephyr.governance.phase_executor import PhaseStatus
+    from zephyr.governance.code_dedup.phase_executor import PhaseStatus
     from zephyr.governance.pipeline_base import ExperimentConfig
     from zephyr.governance.audit_trail.privacy import PIICategory
     from zephyr.infrastructure.asset_inventory.reconciler import Reconciler

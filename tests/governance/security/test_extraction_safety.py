@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.extraction_safety import (
+from zephyr.governance.code_dedup.extraction_safety import (
     ExtractionSafety,
     SuitabilityScore,
 )

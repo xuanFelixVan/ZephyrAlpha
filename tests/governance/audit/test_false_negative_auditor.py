@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.false_negative_auditor import (
+from zephyr.governance.code_dedup.false_negative_auditor import (
     FalseNegativeAuditor,
     FNAuditResult,
 )

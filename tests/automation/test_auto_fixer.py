@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.auto_fixer import (
+from zephyr.governance.code_dedup.auto_fixer import (
     AutoFixer,
     FixLevel,
     FixParams,

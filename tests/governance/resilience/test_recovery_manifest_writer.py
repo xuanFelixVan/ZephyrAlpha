@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.recovery_manifest_writer import RecoveryManifestWriter
+from zephyr.governance.code_dedup.recovery_manifest_writer import RecoveryManifestWriter
 
 
 class TestRecoveryManifestWriter:

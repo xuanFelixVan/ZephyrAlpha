@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.risk_mitigation_tracker import (
+from zephyr.governance.code_dedup.risk_mitigation_tracker import (
     MitigationEntry,
     RiskMitigationTracker,
 )

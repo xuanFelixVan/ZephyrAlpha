@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.consequence_tracker import (
+from zephyr.governance.code_dedup.consequence_tracker import (
     Consequence,
     ConsequenceTracker,
 )

@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.file_creator import FileCreator
+from zephyr.governance.code_dedup.file_creator import FileCreator
 
 
 class TestFileCreator:

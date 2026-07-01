@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.degradation import (
+from zephyr.governance.code_dedup.degradation import (
     DegradationManager,
 )
 

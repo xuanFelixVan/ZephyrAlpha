@@ -12,7 +12,7 @@
 # [TTL] task_bound
 import hashlib
 
-from zephyr.governance.pre_apply_integrity_gate import PreApplyIntegrityGate
+from zephyr.governance.code_dedup.pre_apply_integrity_gate import PreApplyIntegrityGate
 
 
 class TestPreApplyIntegrityGate:

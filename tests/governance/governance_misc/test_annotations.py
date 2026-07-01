@@ -13,7 +13,7 @@
 import pytest
 
 from zephyr.governance import annotations as ann_mod
-from zephyr.governance.annotations import (
+from zephyr.governance.code_dedup.annotations import (
     get_known_duplicates,
     get_shared_registry,
     intentional,

@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.sensitivity_sweeper import (
+from zephyr.governance.code_dedup.sensitivity_sweeper import (
     SensitivitySweeper,
     SweepResult,
 )

@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.mock_duplicate_generator import (
+from zephyr.governance.code_dedup.mock_duplicate_generator import (
     DuplicateType,
     GeneratedDuplicate,
     MockDuplicateGenerator,

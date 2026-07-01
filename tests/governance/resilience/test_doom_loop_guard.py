@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.doom_loop_guard import (
+from zephyr.governance.code_dedup.doom_loop_guard import (
     DoomLoopGuard,
 )
 

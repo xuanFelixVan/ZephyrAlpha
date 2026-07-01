@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.config import (
+from zephyr.governance.code_dedup.config import (
     EXIT_CODES,
     PATH_THRESHOLDS,
     POLICY_TREE,

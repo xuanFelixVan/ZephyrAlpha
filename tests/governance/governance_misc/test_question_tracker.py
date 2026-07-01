@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.question_tracker import (
+from zephyr.governance.code_dedup.question_tracker import (
     Question,
     QuestionTracker,
 )

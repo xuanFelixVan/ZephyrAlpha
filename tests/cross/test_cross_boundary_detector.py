@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.cross_boundary_detector import (
+from zephyr.governance.code_dedup.cross_boundary_detector import (
     Boundary,
     CrossBoundaryClone,
     CrossBoundaryDetector,

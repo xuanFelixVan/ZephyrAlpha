@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.contract_consistency_checker import (
+from zephyr.governance.code_dedup.contract_consistency_checker import (
     ContractCheck,
     ContractConsistencyChecker,
 )

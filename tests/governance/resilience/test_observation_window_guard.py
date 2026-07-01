@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.observation_window_guard import ObservationWindowGuard
+from zephyr.governance.code_dedup.observation_window_guard import ObservationWindowGuard
 
 
 class TestObservationWindowGuard:

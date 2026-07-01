@@ -33,9 +33,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.ast_comparator import ASTComparator
-from zephyr.governance.behavioral_sampler import BehavioralSampler
-from zephyr.governance.micro_clone_detector import MicroCloneDetector
+from zephyr.governance.code_dedup.ast_comparator import ASTComparator
+from zephyr.governance.code_dedup.behavioral_sampler import BehavioralSampler
+from zephyr.governance.code_dedup.micro_clone_detector import MicroCloneDetector
 from zephyr.infrastructure.asset_inventory.scanner import Scanner
 
 

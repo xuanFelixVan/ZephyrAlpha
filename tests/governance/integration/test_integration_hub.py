@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.integration_hub import (
+from zephyr.governance.code_dedup.integration_hub import (
     IntegrationHub,
 )
 

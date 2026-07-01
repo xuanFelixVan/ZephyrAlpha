@@ -16,7 +16,7 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from zephyr.governance.symbol_index import SymbolIndex
+from zephyr.governance.code_dedup.symbol_index import SymbolIndex
 
 
 class TestSymbolIndex:

@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.self_scanner import (
+from zephyr.governance.code_dedup.self_scanner import (
     SelfScanner,
     SelfScanResult,
 )

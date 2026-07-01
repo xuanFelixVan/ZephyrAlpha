@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.behavioral_trust_checker import (
+from zephyr.governance.code_dedup.behavioral_trust_checker import (
     BehavioralTrustChecker,
     TrustCheck,
 )

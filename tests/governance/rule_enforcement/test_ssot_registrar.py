@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.governance.ssot_registrar import SSOTRegistrar
+from zephyr.governance.code_dedup.ssot_registrar import SSOTRegistrar
 
 
 class TestSSOTRegistrar:
