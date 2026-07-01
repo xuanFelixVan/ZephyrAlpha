@@ -5,6 +5,8 @@
 # [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway
 # [STARTUP] manual
 # [MATURITY] prototype
+# [INVARIANTS] 所有 LLM 调用必须经 LSGSecurityGateway（RULE-LSG-001）；ZEPHYR_RUNTIME_GATE=0 关闭
+# [MODIFY-GUARD] RULE-LSG-001; GATE-20; sitecustomize.py 引导链
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
