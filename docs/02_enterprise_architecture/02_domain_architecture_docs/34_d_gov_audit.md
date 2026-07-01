@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 11:58:49
+> 最后更新: 2026-07-01 12:00:38
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -358,8 +358,9 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_indexer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_contracts_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| src_zephyr_governance_audit_trail_dora_metrics_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -368,7 +369,7 @@ graph TD
     class src_zephyr_governance_audit_trail_changelog_manager_py,src_zephyr_governance_audit_trail_cli_py,src_zephyr_governance_audit_trail_code_archaeology_py,src_zephyr_governance_audit_trail_compliance_map_py,src_zephyr_governance_audit_trail_contracts_py,src_zephyr_governance_audit_trail_corporate_actions_py,src_zephyr_governance_audit_trail_delegation_auditor_py,src_zephyr_governance_audit_trail_delegation_bridge_py,src_zephyr_governance_audit_trail_dora_metrics_py,src_zephyr_governance_audit_trail_external_tool_audit_py,src_zephyr_governance_audit_trail_feedback_bridge_py,src_zephyr_governance_audit_trail_feedback_policy_py,src_zephyr_governance_audit_trail_feedback_self_audit_py,src_zephyr_governance_audit_trail_genesis_py,src_zephyr_governance_audit_trail_glossary_matrix_py,src_zephyr_governance_audit_trail_incremental_review_py,src_zephyr_governance_audit_trail_indexer_py,src_zephyr_governance_audit_trail_kb_gate_py,src_zephyr_governance_audit_trail_log_rotation_py,src_zephyr_governance_audit_trail_models_py,src_zephyr_governance_audit_trail_observability_dashboard_py,src_zephyr_governance_audit_trail_orchestrator_py production
     class src_zephyr_governance_audit_trail_bridges_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_bridges_trust_bridge_py,src_zephyr_governance_audit_trail_cold_start_py,src_zephyr_governance_audit_trail_evidence_pack_py,src_zephyr_governance_audit_trail_financial_compliance_py,src_zephyr_governance_audit_trail_finding_model_py,src_zephyr_governance_audit_trail_integrity_py,src_zephyr_governance_audit_trail_merkle_hourly_py design
     class D_GOV_DRIFT,D_SECURITY,D_TRADING,D_INTEGRATION,D_INFRA_RUNTIME external_prod
-    class D_GOVERNANCE,D_FUNDAMENTAL_SIGNAL,D_COMPLIANCE external_design
+    class D_GOVERNANCE,D_FUNDAMENTAL_SIGNAL,D_COMPLIANCE,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 5 页 / 共 5 页 / Page 5 of 5

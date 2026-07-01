@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 11:58:49
+> 最后更新: 2026-07-01 12:00:38
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -155,34 +155,37 @@ graph TD
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_mcp_servers_blueprint_md
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|contract| D_FUNDAMENTAL_SIGNAL
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_GOV_AUDIT
     D_OPS["D_OPS prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
     D_AUTONOMY_PERM["D_AUTONOMY_PERM prototype"]
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUTONOMY_PERM
-    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_GOV_AUDIT
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_GOV_AUDIT
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_OPS
-    D_EX_CORE["D_EX_CORE prototype"]
-    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_EX_CORE
-    D_AUDITTEST["D_AUDITTEST production"]
-    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|contract| D_AUDITTEST
-    D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
-    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_llm_security_blueprint_md
+    D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_feedback_loop_capacity_upgrade_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_llm_security_blueprint_md,docs_03_modules_cross_layer_mcp_servers_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_restructuring_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_compliance_compliance_core_blueprint_md,docs_03_modules_domain_data_datasource_core_blueprint_md,docs_03_modules_domain_factor_alpha_factor_core_blueprint_md,docs_03_modules_domain_frontend_hmi_core_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_capacity_upgrade_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md,docs_03_modules_domain_infra_ops_asset_inventory_blueprint_md,docs_03_modules_domain_infra_ops_capacity_assurance_blueprint_md,docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md design
-    class D_AUDITTEST external_prod
-    class D_OPS,D_AUTONOMY_PERM,D_GOV_AUDIT,D_EX_CORE,D_AUTONOMY_CORE external_design
+    class D_INFRA_RUNTIME,D_GOV_AUDIT external_prod
+    class D_FUNDAMENTAL_SIGNAL,D_OPS,D_AUTONOMY_PERM,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 3 页 / 共 25 页 / Page 3 of 25
@@ -851,9 +854,9 @@ graph TD
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     D_GOV_DRIFT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
-    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
+    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
