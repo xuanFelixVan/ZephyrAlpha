@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:28:35
+> 最后更新: 2026-07-01 20:34:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 241 | Module Count | 241 |
 | 域内依赖 | 160 | Internal Dependencies | 160 |
-| 跨域入边 | 246 | Cross-domain Incoming | 246 |
+| 跨域入边 | 237 | Cross-domain Incoming | 237 |
 | 跨域出边 | 13 | Cross-domain Outgoing | 13 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 178 | Prototype Modules | 178 |
@@ -344,13 +344,15 @@ graph TD
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_core_integrity_guard_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    D_INFRA_A2A["D_INFRA_A2A production"]
+    D_INFRA_A2A -->|import_depends| src_zephyr_shared_event_bus_py_1
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_core_integrity_guard_py,src_zephyr_shared_cost_estimator_py,src_zephyr_shared_degradation_chain_py,src_zephyr_shared_dependency_init_py,src_zephyr_shared_dependency_capacity_guard_py,src_zephyr_shared_draft_init_py,src_zephyr_shared_dual_channel_alert_py,src_zephyr_shared_error_budget_tracker_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_event_bus_py_1 production
     class src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py,src_zephyr_shared_contracts_risk_init_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_init_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_deprecation_py,src_zephyr_shared_diff_utils_py,src_zephyr_shared_env_py,src_zephyr_shared_errors_py,src_zephyr_shared_events_init_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py design
-    class D_FRONTEND,D_GOV_ENFORCEMENT external_prod
+    class D_FRONTEND,D_GOV_ENFORCEMENT,D_INFRA_A2A external_prod
     class D_GOVERNANCE,D_GOV_AUDIT external_design
 ```
 
@@ -667,8 +669,8 @@ graph TD
 | D_GOV_AUDIT | 33 | import_depends |
 | D_TRADING | 31 | contract,import_depends |
 | D_INTEGRATION | 29 | import_depends |
-| D_INFRA_RUNTIME | 20 | import_depends |
 | D_INFRA_A2A | 16 | import_depends |
+| D_INFRA_RUNTIME | 11 | import_depends |
 | D_GOV_DOCS | 8 | import_depends |
 | D_GOV_ENFORCEMENT | 7 | import_depends |
 | D_OPS | 5 | import_depends |
