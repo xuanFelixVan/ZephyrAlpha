@@ -561,11 +561,12 @@ python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
 
 - **真源实现**：[`generate_project_depgraph.py`](file:///d:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py) `_validate_arch_references()` 函数（L2524）
 - **自动触发**：`generate_project_depgraph.py` 的 `main()` 中 `parse_args()` 后自动调用（L3598-3599），无需手动触发
-- **自动运行**：正则 `ARCH-(\d+)` 扫描本文件源代码 → 提取所有 ARCH 编号 → 读取 registry → 比对差集
-- **自动关闭**：校验完成后打印结果（PASS/FAIL）即返回，不阻塞后续流程
+- **自动运行**：正则 `\bARCH-(\d+)` 扫描本文件源代码 → 提取所有 ARCH 编号 → 读取 registry → 比对差集；另用 `\bARCH-\d+`（IGNORECASE）检测小写 `arch-` 违规（标识符编号必须大写，trae_028 §标识符编号格式）
+- **自动关闭**：校验完成后打印结果即返回；校验失败 sys.exit(1) 阻断运行（ERROR 级别）
 - **校验范围**：仅校验 `generate_project_depgraph.py` 自身源码中的 ARCH 引用，不扫描其他文件
 - **registry 真源**：[`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `entries[].issue_id` 字段
 - **编号铁律#6**：任何 `#ARCH-XXX` 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
+- **标识符编号大写**：ARCH 编号必须大写（`ARCH-033` 合规，`arch-033` 违规），小写引用触发 ERROR 阻断；规则真源见 [trae_028 §标识符编号格式](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)
 - **当前状态**：ERROR 阻断（校验失败 sys.exit(1)，2026-07-02 从 WARN 升级为 ERROR）
 
 ### 11.2 P3 PostgreSQL 优化裁定记录（2026-06-28）
