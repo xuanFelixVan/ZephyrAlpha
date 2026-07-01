@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1557 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_self_ha
 # [INVARIANTS] SelfHA.active_instance is str; standby_instances is list[str]
 # [MODIFY-GUARD] none

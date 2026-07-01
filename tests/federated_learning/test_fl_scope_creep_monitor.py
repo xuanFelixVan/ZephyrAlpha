@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1003 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_fl_scope_creep_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

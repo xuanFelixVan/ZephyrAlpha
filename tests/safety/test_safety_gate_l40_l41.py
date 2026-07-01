@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1507 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L40_L41
 # [INVARIANTS] Immutable core violation must reject; image drift must reject
 # [MODIFY-GUARD] none

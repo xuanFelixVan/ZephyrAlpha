@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0653 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_cross_session_knowledge_integrity
 # [INVARIANTS] verify_continuity detects hash chain breaks
 # [MODIFY-GUARD] none

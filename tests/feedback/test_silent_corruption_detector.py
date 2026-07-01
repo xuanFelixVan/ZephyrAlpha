@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1600 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_silent_corruption_detector
 # [INVARIANTS] seal returns (data,sha256_hex); validate checks checksum; quarantine at rate>3x threshold
 # [MODIFY-GUARD] none

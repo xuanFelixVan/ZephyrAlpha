@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1509 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L44_L45
 # [INVARIANTS] SLO non-compliant must reject; execution_quality<0.5 must reject
 # [MODIFY-GUARD] none

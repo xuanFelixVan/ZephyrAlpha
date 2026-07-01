@@ -1,6 +1,6 @@
 # [A_test] module_id=TEST-F14-RED-BLUE | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] tests.red_blue.test_f14_pipeline_extreme
 # [INVARIANTS] 红蓝对抗测试隔离外部依赖(LLM/ollama/VMS); 每个测试类覆盖一个极端场景
 # [CONSUMERS] pytest

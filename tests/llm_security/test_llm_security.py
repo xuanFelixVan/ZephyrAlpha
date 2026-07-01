@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1237 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §test
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §test
 # [MODULE] zephyr.security.llm_defense.llm_security
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
