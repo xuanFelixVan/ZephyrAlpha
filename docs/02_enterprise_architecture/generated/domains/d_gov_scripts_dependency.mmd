@@ -1,7 +1,7 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-07-02 05:36:26
+%% 生成时间: 2026-07-02 05:59:19
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 394, 依赖边数: 357
+%% 模块数: 388, 依赖边数: 353
 
 graph TD
 
@@ -50,7 +50,6 @@ graph TD
         scripts_governance__archive_vms_ri_vms_migration_dry_run_py["...chive/vms_ri/vms_migration_dry_run.py [prototype]"]
         scripts_governance__archive_vms_ri_vms_phase_rollback_py["..._archive/vms_ri/vms_phase_rollback.py [prototype]"]
         scripts_governance__archive_vms_ri_vms_version_sync_check_py["...hive/vms_ri/vms_version_sync_check.py [prototype]"]
-        scripts_governance__concurrency_py["scripts/governance/_concurrency.py [prototype]"]
         scripts_governance__shared___init___py["scripts/governance/_shared/__init__.py [prototype]"]
         scripts_governance__shared_base_py["scripts/governance/_shared/base.py [prototype]"]
         scripts_governance__shared_constants_py["scripts/governance/_shared/constants.py [production]"]
@@ -74,7 +73,6 @@ graph TD
         scripts_governance__tasks_task_show_py["scripts/governance/_tasks/task_show.py [prototype]"]
         scripts_governance__tasks_task_summary_py["...pts/governance/_tasks/task_summary.py [prototype]"]
         scripts_governance_apply_depgraph_py["scripts/governance/apply_depgraph.py [prototype]"]
-        scripts_governance_audit_rename_completeness_py["...vernance/audit_rename_completeness.py [prototype]"]
         scripts_governance_d10_performance___init___py["...overnance/d10_performance/__init__.py [prototype]"]
         scripts_governance_d10_performance_collect_system_threads_py["...performance/collect_system_threads.py [prototype]"]
         scripts_governance_d11_compliance___init___py["...governance/d11_compliance/__init__.py [prototype]"]
@@ -107,17 +105,16 @@ graph TD
         scripts_governance_d1_structure_check_directory_contract_py["...structure/check_directory_contract.py [prototype]"]
         scripts_governance_d1_structure_check_index_integrity_py["...d1_structure/check_index_integrity.py [prototype]"]
         scripts_governance_d1_structure_detect_orphan_py_py["...ance/d1_structure/detect_orphan_py.py [prototype]"]
-        %% ... 还有 294 个模块未显示
+        scripts_governance_d1_structure_detect_residual_files_py["...d1_structure/detect_residual_files.py [prototype]"]
+        scripts_governance_d1_structure_detect_temp_files_py["...nce/d1_structure/detect_temp_files.py [prototype]"]
+        %% ... 还有 288 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
     scripts_governance_d5_architec___validators_validate_ssot_py -->|import_depends| scripts_governance__shared_frontmatter_py
-    scripts_governance_audit_rename_completeness_py -->|config_depends| scripts_governance___init___py
     scripts_governance_generate_project_path_tree_py -->|config_depends| scripts_governance___init___py
     scripts_governance_run_gate_chain_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_sync_yaml_to_depgraph_py -->|config_depends| scripts_governance___init___py
     scripts_governance_status_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_validate_module_id_naming_py -->|config_depends| scripts_governance___init___py
     scripts_governance_d10_performance_collect_system_threads_py -->|config_depends| scripts_governance_d10_performance___init___py
     scripts_governance_d11_compliance_fix_shared_bypass_py -->|config_depends| scripts_governance_d11_compliance___init___py
     scripts_governance_d11_compliance_validate_commit_message_py -->|config_depends| scripts_governance_d11_compliance___init___py
@@ -191,7 +188,10 @@ graph TD
     scripts_governance_d5_architec____check_g6_ctr_compliance_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
     scripts_governance_d5_architec____precommit_id_uniqueness_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
     scripts_governance_d5_architec___eck_dependency_direction_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
-    %% ... 还有 211 条域内依赖未显示
+    scripts_governance_d5_architec___rs_check_ssot_uniqueness_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
+    scripts_governance_d5_architec___eckers_check_src_no_data_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
+    scripts_governance_d5_architec____checkers_check_vms_ssot_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
+    %% ... 还有 208 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_GOV_SCRIPTS (1 条)
@@ -240,11 +240,10 @@ graph TD
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_GOV_SCRIPTS -> D_INTELLIGENCE (1 条)
     scripts_governance__archive_on___ck_exam_case_consistency_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    %% D_GOV_SCRIPTS -> D_SHARED (30 条)
+    %% D_GOV_SCRIPTS -> D_SHARED (29 条)
     scripts_governance_apply_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_extract_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_generate_project_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance__concurrency_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architecture_dm200916_write_direct_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architecture_dm200912_query_domains_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___erate_capability_heatmap_py -->|import_depends| D_SHARED[D_SHARED]
@@ -275,6 +274,6 @@ graph TD
     scripts_governance_repair_concurrent_write_test_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 291 条
+    %% 域内依赖: 288 条
     %% 跨域入边: 2 条
-    %% 跨域出边: 64 条
+    %% 跨域出边: 63 条

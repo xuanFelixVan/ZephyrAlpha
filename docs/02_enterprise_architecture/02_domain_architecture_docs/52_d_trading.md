@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:36:24
+> 最后更新: 2026-07-02 05:59:16
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 461 | Module Count | 461 |
 | 域内依赖 | 433 | Internal Dependencies | 433 |
-| 跨域入边 | 660 | Cross-domain Incoming | 660 |
+| 跨域入边 | 666 | Cross-domain Incoming | 666 |
 | 跨域出边 | 162 | Cross-domain Outgoing | 162 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 198 | Prototype Modules | 198 |
@@ -218,6 +218,7 @@ graph TD
     src_zephyr_trading_feedback_loop_db_writer_py -.->|import_depends| D_GOVERNANCE
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     src_zephyr_trading_feedback_loop_db_writer_py -.->|import_depends| D_INFRA_TELEMETRY
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_collectors_calendar_adapter_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_auto_evolution_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_db_bridge_py
@@ -233,7 +234,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_collectors_kb_provenance_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_backpressure_bridge_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_collectors_calendar_adapter_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_collectors_config_timeline_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -460,8 +460,9 @@ graph TD
     src_zephyr_trading_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py -.->|config_depends| src_zephyr_trading_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_trading_feedback_loop_diagnosers_diagnosis_knowledge_market_py -.->|config_depends| src_zephyr_trading_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_trading_feedback_loop_diagnosers_diagnosis_mtti_tracker_py -.->|config_depends| src_zephyr_trading_feedback_loop_diagnosers_diagnosis_init_py
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_diagnosers_init_py
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_diagnosers_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_diagnosers_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_diagnosers_init_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_diagnosers_init_py
@@ -482,7 +483,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_feedback_loop_diagnosers_init_py production
     class src_zephyr_trading_feedback_loop_detectors_reliability_openfeature_py,src_zephyr_trading_feedback_loop_detectors_reliability_otel_adapter_py,src_zephyr_trading_feedback_loop_detectors_reliability_regulatory_audit_py,src_zephyr_trading_feedback_loop_detectors_reliability_resolution_tracker_py,src_zephyr_trading_feedback_loop_detectors_reliability_runbook_executor_py,src_zephyr_trading_feedback_loop_detectors_reliability_version_migrator_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_init_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_cognitive_load_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_collaborative_learning_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_confidence_decomposer_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_gamification_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_socratic_questions_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_tone_adapter_py,src_zephyr_trading_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_init_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_counterfactual_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_impact_predictor_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_knowledge_market_py,src_zephyr_trading_feedback_loop_diagnosers_diagnosis_mtti_tracker_py design
-    class D_AUDITTEST external_design
+    class D_GOVERNANCE,D_AUDITTEST external_design
 ```
 
 ### 第 6 页 / 共 16 页 / Page 6 of 16
@@ -837,6 +838,10 @@ graph TD
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_SHARED
     src_zephyr_trading_feedback_loop_metrics_collector_py -->|import_depends| D_GOVERNANCE
     src_zephyr_trading_feedback_loop_scheduler_safety_py -->|import_depends| D_SHARED
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_scheduler_act_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_scheduler_collect_detect_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_scheduler_health_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_scheduler_safety_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_protocols_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_protocols_py
@@ -849,10 +854,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_protocols_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_protocols_py
     D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_gates_emergency_takeover_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_gates_dynamic_llm_cost_router_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_gates_federated_security_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_gates_flag_lifecycle_manager_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_trading_feedback_loop_generator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1383,7 +1384,7 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_AUDITTEST | 557 | test_depends |
-| D_GOVERNANCE | 57 | import_depends |
+| D_GOVERNANCE | 63 | import_depends,runtime |
 | D_FUNDAMENTAL_SIGNAL | 17 | import_depends |
 | D_RISK | 10 | import_depends |
 | D_REPORTING | 6 | import_depends |

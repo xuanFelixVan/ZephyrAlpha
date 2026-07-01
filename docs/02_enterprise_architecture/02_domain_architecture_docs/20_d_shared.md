@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:36:24
+> 最后更新: 2026-07-02 05:59:16
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 244 | Module Count | 244 |
 | 域内依赖 | 177 | Internal Dependencies | 177 |
-| 跨域入边 | 578 | Cross-domain Incoming | 578 |
+| 跨域入边 | 579 | Cross-domain Incoming | 579 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 143 | Prototype Modules | 143 |
@@ -567,7 +567,8 @@ graph TD
     src_zephyr_shared_queue_init_py -.->|import_depends| src_zephyr_shared_queue_task_scheduler_py
     src_zephyr_shared_reliability_init_py -.->|config_depends| src_zephyr_shared_reliability_context_guard_py
     src_zephyr_shared_schema_init_py -.->|config_depends| src_zephyr_shared_schema_base_config_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    D_GOVERNANCE -.->|runtime| src_zephyr_shared_protocols_init_py
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_metrics_py
     D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
@@ -584,14 +585,14 @@ graph TD
     D_INTEGRATION["D_INTEGRATION production"]
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_protocols_a2a_layer3_coordination_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_shared_protocols_a2a_layer3_coordination_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_longevity_monitor_py,src_zephyr_shared_metrics_py,src_zephyr_shared_migration_py,src_zephyr_shared_model_capacity_probe_py,src_zephyr_shared_module_birth_registry_py,src_zephyr_shared_owner_trust_gauge_py,src_zephyr_shared_pagination_py,src_zephyr_shared_queue_task_scheduler_py,src_zephyr_shared_reasoning_spans_py,src_zephyr_shared_reliability_context_guard_py,src_zephyr_shared_resilience_init_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_sandbox_executor_py production
     class src_zephyr_shared_maintenance_init_py,src_zephyr_shared_observer_py,src_zephyr_shared_outbox_py,src_zephyr_shared_protocols_init_py,src_zephyr_shared_protocols_a2a_init_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_governance_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_a2a_layer3_coordination_init_py,src_zephyr_shared_queue_init_py,src_zephyr_shared_reliability_init_py,src_zephyr_shared_schema_init_py,src_zephyr_shared_schema_base_config_py design
-    class D_GOVERNANCE,D_INFRA_A2A,D_INTEGRATION external_prod
+    class D_INFRA_A2A,D_INTEGRATION external_prod
+    class D_GOVERNANCE external_design
 ```
 
 ### 第 8 页 / 共 9 页 / Page 8 of 9
@@ -725,7 +726,7 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_AUDITTEST | 162 | test_depends |
-| D_GOVERNANCE | 116 | import_depends |
+| D_GOVERNANCE | 117 | import_depends,runtime |
 | D_TRADING | 74 | import_depends |
 | D_INFRA_RUNTIME | 55 | import_depends |
 | D_INTEGRATION | 37 | import_depends |

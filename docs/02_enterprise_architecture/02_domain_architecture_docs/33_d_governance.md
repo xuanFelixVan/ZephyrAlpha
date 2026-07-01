@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:36:24
+> 最后更新: 2026-07-02 05:59:15
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,9 +25,9 @@ ttl: permanent
 | 域名称 | 生命周期管理 | Domain Name | 生命周期管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 898 | Module Count | 898 |
-| 域内依赖 | 615 | Internal Dependencies | 615 |
-| 跨域入边 | 679 | Cross-domain Incoming | 679 |
-| 跨域出边 | 287 | Cross-domain Outgoing | 287 |
+| 域内依赖 | 642 | Internal Dependencies | 642 |
+| 跨域入边 | 687 | Cross-domain Incoming | 687 |
+| 跨域出边 | 309 | Cross-domain Outgoing | 309 |
 | 设计态模块 | 44 | Design Modules | 44 |
 | 原型态模块 | 393 | Prototype Modules | 393 |
 | 生产态模块 | 461 | Production Modules | 461 |
@@ -216,23 +216,53 @@ graph TD
         docs_03_modules_cross_layer_model_capability_exam_blueprint_md["docs__03_modules___cross_layer__model_capabilit... design"]
         docs_03_modules_cross_layer_orphan_judge_blueprint_md["docs__03_modules___cross_layer__orphan_judge__b... design"]
     end
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| docs_03_modules_cross_layer_llm_security_blueprint_md
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|data| docs_03_modules_cross_layer_database_blueprint_md
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| docs_03_modules_cross_layer_llm_security_blueprint_md
+    D_TRADING["D_TRADING production"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    D_SECURITY["D_SECURITY production"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_SECURITY
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUTONOMY_CORE
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_AUTONOMY_CORE
+    D_SHARED["D_SHARED prototype"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_SHARED
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md -.->|runtime| D_TRADING
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM design"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|contract| D_AUTONOMY_PERM
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_INFRA_RUNTIME
+    D_GOV_AUDIT["D_GOV_AUDIT design"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_GOV_AUDIT
     D_GOV_DRIFT["D_GOV_DRIFT design"]
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_GOV_DRIFT
+    docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|runtime| D_AUTONOMY_CORE
     D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_database_blueprint_md
-    D_GOV_AUDIT["D_GOV_AUDIT design"]
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_database_blueprint_md
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
     D_AUTONOMY_CORE -.->|data| docs_03_modules_cross_layer_database_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_llm_security_blueprint_md
+    D_KNOWLEDGE["D_KNOWLEDGE design"]
+    D_KNOWLEDGE -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_INFRA_RUNTIME -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_rules_trae_043_meta_rule_metadata_yaml,docs_01_policies_and_standards_rules_trae_044_compliance_audit_yaml,docs_01_policies_and_standards_rules_trae_045_data_quality_lineage_yaml,docs_01_policies_and_standards_rules_trae_046_engineering_code_restructure_yaml,docs_01_policies_and_standards_rules_trae_047_engineering_file_header_yaml,docs_01_policies_and_standards_rules_trae_048_ops_vibe_coding_session_yaml,docs_01_policies_and_standards_rules_trae_049_ops_domain_manual_yaml,docs_01_policies_and_standards_rules_trae_050_domain_policy_data_factor_yaml,docs_01_policies_and_standards_rules_trae_051_domain_policy_risk_backtest_yaml,docs_01_policies_and_standards_rules_trae_052_cross_blueprint_change_cleanup_yaml,docs_01_policies_and_standards_rules_trae_053_automation_dual_track_yaml,docs_01_policies_and_standards_rules_trae_054_depgraph_access_protocol_yaml,docs_01_policies_and_standards_rules_trae_055_arch_domain_capacity_yaml,docs_01_policies_and_standards_rules_trae_056_module_creation_workflow_yaml,docs_01_policies_and_standards_rules_trae_057_ai_consumer_first_yaml,docs_01_policies_and_standards_rules_trae_058_depgraph_scan_exclusions_yaml,docs_01_policies_and_standards_rules_trae_059_schema_version_write_protection_yaml,docs_01_policies_and_standards_rules_trae_060_inward_consolidation_yaml production
     class docs_03_modules_cross_layer_agent_orchestrator_blueprint_md,docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_llm_security_blueprint_md,docs_03_modules_cross_layer_mcp_servers_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md design
-    class D_AUTONOMY_CORE external_prod
-    class D_GOV_DRIFT,D_GOV_AUDIT external_design
+    class D_TRADING,D_SECURITY,D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
+    class D_SHARED,D_AUTONOMY_PERM,D_GOV_AUDIT,D_GOV_DRIFT,D_KNOWLEDGE external_design
 ```
 
 ### 第 5 页 / 共 30 页 / Page 5 of 30
@@ -275,10 +305,18 @@ graph TD
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime| docs_03_modules_domain_governance_code_dedup_engine_blueprint_md
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_domain_infra_runtime_task_system_blueprint_md
     docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
+    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| docs_03_modules_domain_infra_runtime_task_system_blueprint_md
+    docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
+    docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|runtime| docs_03_modules_domain_infra_runtime_state_machine_engine_blueprint_md
     D_GOV_AUDIT["D_GOV_AUDIT design"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract| D_GOV_AUDIT
     D_AUTONOMY_PERM["D_AUTONOMY_PERM design"]
@@ -294,13 +332,18 @@ graph TD
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract| D_INFRA_RUNTIME
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| D_GOV_AUDIT
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_AUTONOMY_PERM
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_GOV_AUDIT
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| D_GOV_DRIFT
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_AUTONOMY_CORE
     D_ML_TRAIN["D_ML_TRAIN design"]
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| D_ML_TRAIN
     D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
+    D_GOV_DRIFT -.->|runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_GOV_AUDIT -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md
     D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
@@ -2327,29 +2370,29 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 116 | import_depends |
-| D_TRADING | 57 | import_depends |
+| D_SHARED | 117 | import_depends,runtime |
+| D_TRADING | 63 | import_depends,runtime |
+| D_INFRA_RUNTIME | 21 | config_depends,contract,import_depends,runtime |
 | D_INTEGRATION | 17 | import_depends |
 | D_GOV_ENFORCEMENT | 17 | import_depends |
 | D_INTELLIGENCE | 17 | import_depends |
-| D_INFRA_RUNTIME | 15 | config_depends,contract,import_depends,runtime |
 | D_INFRA_RECOVERY | 10 | import_depends |
-| D_SECURITY | 7 | import_depends |
+| D_AUTONOMY_CORE | 8 | contract,import_depends,runtime |
+| D_SECURITY | 8 | import_depends,runtime |
+| D_GOV_AUDIT | 5 | contract,runtime |
 | D_SECURITY_LLM | 5 | import_depends |
-| D_GOV_AUDIT | 4 | contract,runtime |
-| D_GOV_DRIFT | 3 | contract,runtime |
-| D_AUTONOMY_CORE | 3 | contract,import_depends |
+| D_GOV_DRIFT | 4 | contract,runtime |
+| D_AUTONOMY_PERM | 3 | contract,runtime |
 | D_RISK | 3 | import_depends |
-| D_AUTONOMY_PERM | 2 | contract,runtime |
 | D_REPORTING | 2 | import_depends |
 | D_INFRA_A2A | 2 | import_depends |
-| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
-| D_SIMULATION | 1 | import_depends |
-| D_INTEGRATION_GATEWAY | 1 | import_depends |
-| D_GOV_SCRIPTS | 1 | import_depends |
-| D_EX_CORE | 1 | import_depends |
 | D_ML_TRAIN | 1 | data |
+| D_GOV_SCRIPTS | 1 | import_depends |
+| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_INTEGRATION_GATEWAY | 1 | import_depends |
+| D_SIMULATION | 1 | import_depends |
 | D_PF_CORE | 1 | import_depends |
+| D_EX_CORE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -2358,25 +2401,26 @@ graph TD
 | D_AUDITTEST | 490 | test_depends |
 | D_TRADING | 27 | import_depends |
 | D_COMPLIANCE | 20 | import_depends |
-| D_INFRA_RUNTIME | 18 | import_depends |
-| D_GOV_SCRIPTS | 16 | import_depends |
+| D_INFRA_RUNTIME | 19 | import_depends,runtime |
 | D_GOV_ENFORCEMENT | 16 | import_depends |
+| D_GOV_SCRIPTS | 16 | import_depends |
+| D_AUTONOMY_CORE | 15 | contract,data,import_depends,runtime |
 | D_INFRA_RECOVERY | 15 | import_depends |
 | D_INTEGRATION_GATEWAY | 12 | import_depends |
-| D_AUTONOMY_CORE | 11 | contract,data,import_depends,runtime |
-| D_INTEGRATION | 9 | import_depends |
 | D_EX_CORE | 9 | import_depends |
+| D_INTEGRATION | 9 | import_depends |
 | D_SECURITY | 7 | import_depends |
 | D_PF_CORE | 6 | import_depends |
+| D_GOV_DRIFT | 5 | runtime |
 | D_INTELLIGENCE | 4 | import_depends |
-| D_GOV_DRIFT | 4 | runtime |
-| D_GOV_AUDIT | 3 | runtime |
+| D_GOV_AUDIT | 4 | contract,runtime |
 | D_REPORTING | 3 | import_depends |
 | D_FRONTEND | 2 | import_depends |
+| D_SHARED | 2 | import_depends |
 | D_INFRA_A2A | 2 | import_depends |
 | D_SECURITY_LLM | 2 | import_depends |
-| D_SHARED | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
+| D_KNOWLEDGE | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -2697,19 +2741,19 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 615 条 / 615 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 642 条 / 642 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 615 条 / 615 edges)       │
+│      依赖关系图 / Dependency Graph (共 642 条 / 642 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 5                               │
 │   [import_depends]: 424 条 / edges                               │
 │   [config_depends]: 174 条 / edges                               │
-│   [runtime]: 9 条 / edges                                        │
-│   [contract]: 5 条 / edges                                       │
-│   [data]: 3 条 / edges                                           │
+│   [runtime]: 28 条 / edges                                       │
+│   [contract]: 10 条 / edges                                      │
+│   [data]: 6 条 / edges                                           │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -2769,13 +2813,13 @@ graph TD
 
 **[config_depends]** (174 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (9 条 / edges) — 已达显示上限，省略 / limit reached
+**[runtime]** (28 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[contract]** (5 条 / edges) — 已达显示上限，省略 / limit reached
+**[contract]** (10 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[data]** (3 条 / edges) — 已达显示上限，省略 / limit reached
+**[data]** (6 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 615 条)
+> (最多显示前 50 条依赖边，共 642 条)
 
 ```
 

@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-02 05:36:26
+%% 生成时间: 2026-07-02 05:59:19
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 138, 依赖边数: 350
+%% 模块数: 138, 依赖边数: 358
 
 graph TD
 
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_infrastructure_auto____engine_shadow_workspace_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| src_zephyr_infrastructure_auto____engine_alignment_syncer_py
-    %% ... 还有 63 条域内依赖未显示
+    %% ... 还有 64 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_INFRA_RUNTIME (86 条)
@@ -225,7 +225,7 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_diff_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
-    %% D_GOVERNANCE -> D_INFRA_RUNTIME (15 条)
+    %% D_GOVERNANCE -> D_INFRA_RUNTIME (21 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_finding_task_bridge_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_pipeline_layer_router_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_hooks_event_hook_py
@@ -239,8 +239,14 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_config___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_runtime___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___cross_module_integration_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr___init___py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___cross_module_integration_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___cross_module_integration_py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_audit_logger_py
     D_GOVERNANCE[D_GOVERNANCE] -->|contract| src_zephyr_infrastructure_audit_logger_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___cross_module_integration_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_infrastructure_capa___cross_module_integration_py
     %% D_GOV_ENFORCEMENT -> D_INFRA_RUNTIME (1 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_lifecycle_task_lifecycle_manager_py
     %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (6 条)
@@ -271,7 +277,7 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_infrastructure_script_system_kb_bridge_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_INFRA_RUNTIME -> D_GOVERNANCE (18 条)
+    %% D_INFRA_RUNTIME -> D_GOVERNANCE (19 条)
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_database_service_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_database_service_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -290,6 +296,7 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr___init___py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INFRA_RUNTIME -> D_INFRA_RECOVERY (1 条)
     src_zephyr_infrastructure_governance_server_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_INFRA_RUNTIME -> D_INFRA_TELEMETRY (2 条)
@@ -337,6 +344,6 @@ graph TD
     src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 143 条
-    %% 跨域入边: 123 条
-    %% 跨域出边: 84 条
+    %% 域内依赖: 144 条
+    %% 跨域入边: 129 条
+    %% 跨域出边: 85 条

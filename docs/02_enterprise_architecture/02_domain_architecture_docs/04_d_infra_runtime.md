@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:36:24
+> 最后更新: 2026-07-02 05:59:16
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -25,9 +25,9 @@ ttl: permanent
 | 域名称 | 运行时集成 | Domain Name | 运行时集成 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 138 | Module Count | 138 |
-| 域内依赖 | 143 | Internal Dependencies | 143 |
-| 跨域入边 | 123 | Cross-domain Incoming | 123 |
-| 跨域出边 | 84 | Cross-domain Outgoing | 84 |
+| 域内依赖 | 144 | Internal Dependencies | 144 |
+| 跨域入边 | 129 | Cross-domain Incoming | 129 |
+| 跨域出边 | 85 | Cross-domain Outgoing | 85 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 130 | Production Modules | 130 |
@@ -102,12 +102,13 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_init_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_config_fixer_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
     src_zephyr_infrastructure_auto_fix_engine_auto_fix_config_yaml -->|config_depends| src_zephyr_infrastructure_auto_fix_engine_init_py
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    src_zephyr_init_py -.->|runtime| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
     src_zephyr_init_py -->|import_depends| D_SHARED
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     src_zephyr_init_py -->|import_depends| D_INFRA_TELEMETRY
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_base_server_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_base_server_py -->|import_depends| D_GOVERNANCE
@@ -119,7 +120,7 @@ graph TD
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_asset_inventory_mcp_server_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| D_SHARED
+    D_GOVERNANCE -.->|runtime| src_zephyr_init_py
     D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_audit_logger_py
     D_GOVERNANCE -.->|contract| src_zephyr_infrastructure_audit_logger_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
@@ -138,15 +139,14 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_asset_inventory_models_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_asset_inventory_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_init_py,src_zephyr_infrastructure_init_py,src_zephyr_infrastructure_base_server_py,src_zephyr_infrastructure_asset_inventory_init_py,src_zephyr_infrastructure_asset_inventory_main_py,src_zephyr_infrastructure_asset_inventory_classifier_py,src_zephyr_infrastructure_asset_inventory_dashboard_py,src_zephyr_infrastructure_asset_inventory_dependency_py,src_zephyr_infrastructure_asset_inventory_index_generator_py,src_zephyr_infrastructure_asset_inventory_lifecycle_py,src_zephyr_infrastructure_asset_inventory_mcp_server_py,src_zephyr_infrastructure_asset_inventory_metadata_py,src_zephyr_infrastructure_asset_inventory_models_py,src_zephyr_infrastructure_asset_inventory_reconciler_py,src_zephyr_infrastructure_asset_inventory_registry_adapter_py,src_zephyr_infrastructure_asset_inventory_scanner_py,src_zephyr_infrastructure_asset_inventory_telemetry_py,src_zephyr_infrastructure_asset_inventory_trust_anchor_py,src_zephyr_infrastructure_audit_logger_py,src_zephyr_infrastructure_auto_diagnostics_py,src_zephyr_infrastructure_auto_fix_engine_init_py,src_zephyr_infrastructure_auto_fix_engine_main_py,src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py,src_zephyr_infrastructure_auto_fix_engine_all_completer_py,src_zephyr_infrastructure_auto_fix_engine_auto_fix_config_yaml,src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py,src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py,src_zephyr_infrastructure_auto_fix_engine_config_fixer_py production
     class src_zephyr_infrastructure_extensions_init_py,src_zephyr_infrastructure_api_init_py design
-    class D_SHARED,D_INFRA_TELEMETRY,D_GOVERNANCE,D_TRADING external_prod
-    class D_SECURITY,D_GOV_SCRIPTS,D_AUDITTEST external_design
+    class D_SHARED,D_INFRA_TELEMETRY,D_TRADING external_prod
+    class D_GOVERNANCE,D_SECURITY,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
 ### 第 2 页 / 共 5 页 / Page 2 of 5
@@ -321,6 +321,11 @@ graph TD
     src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_governance_server_py -->|import_depends| D_SHARED
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_finding_task_bridge_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_hooks_event_hook_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_config_init_py
@@ -333,11 +338,6 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_event_bus_upgrade_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_event_store_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_file_watcher_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_cost_tracker_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_dry_run_simulator_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_finding_task_bridge_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_infrastructure_base_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_kill_switch_sim_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -510,7 +510,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_SHARED | 55 | import_depends |
-| D_GOVERNANCE | 18 | import_depends |
+| D_GOVERNANCE | 19 | import_depends,runtime |
 | D_INTEGRATION | 8 | import_depends |
 | D_INFRA_TELEMETRY | 2 | import_depends |
 | D_INFRA_RECOVERY | 1 | import_depends |
@@ -520,7 +520,7 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_AUDITTEST | 86 | test_depends |
-| D_GOVERNANCE | 15 | config_depends,contract,import_depends,runtime |
+| D_GOVERNANCE | 21 | config_depends,contract,import_depends,runtime |
 | D_TRADING | 9 | import_depends |
 | D_GOV_SCRIPTS | 6 | import_depends |
 | D_SHARED | 4 | import_depends |
@@ -709,16 +709,17 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 143 条 / 143 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 144 条 / 144 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 143 条 / 143 edges)       │
+│      依赖关系图 / Dependency Graph (共 144 条 / 144 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 2                               │
+│   依赖类型数 / Dependency Types: 3                               │
 │   [import_depends]: 133 条 / edges                               │
 │   [config_depends]: 10 条 / edges                                │
+│   [runtime]: 1 条 / edges                                        │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -778,7 +779,9 @@ graph TD
 
 **[config_depends]** (10 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 143 条)
+**[runtime]** (1 条 / edges) — 已达显示上限，省略 / limit reached
+
+> (最多显示前 50 条依赖边，共 144 条)
 
 ```
 
