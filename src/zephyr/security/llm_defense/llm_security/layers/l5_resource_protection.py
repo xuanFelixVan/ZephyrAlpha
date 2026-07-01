@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l5_resource_protection
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.l5_resource_protection; zephyr.security.llm_defense.llm_security_01.layers.__init__; tests.llm_security.test_l5_resource_protection
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l5_resource_protection
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

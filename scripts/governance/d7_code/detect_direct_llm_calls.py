@@ -107,7 +107,6 @@ _BARE_LLM_CLIENTS = {
 _LSG_IMPORT_PATTERNS = (
     "LSGSecurityGateway",
     "llm_security.gateway",
-    "llm_security_01",
 )
 
 # ── 存量豁免清单（待迁移后移除）──

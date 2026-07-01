@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.context_bridge
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security_01.context_scanner
+# [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.agent_orchestrator; zephyr.trading.orchestrator.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -88,7 +88,6 @@ class ContextBridge:
                 session_id=session_id,
             )
 
-            self._filter_context(response)
             self._vectorize_context(response)
 
             return response
@@ -99,24 +98,6 @@ class ContextBridge:
                 status="degraded",
                 error=str(exc),
             )
-
-    def _filter_context(self, response: ContextResponse) -> None:
-        try:
-            from zephyr.security.llm_defense.llm_security_01.context_scanner import ContextScanner
-
-            scanner = ContextScanner()
-            for i, block in enumerate(response.blocks):
-                if isinstance(block, dict) and block.get("content"):
-                    scan_result = scanner.scan(block["content"])
-                    if scan_result and scan_result.get("flagged"):
-                        logger.info(
-                            "[CE-LSG] flagged block#%d in task=%s: %s",
-                            i,
-                            response.task_id,
-                            scan_result.get("reason", ""),
-                        )
-        except Exception:
-            logger.debug("[CE-LSG] context filter skipped")
 
     def _vectorize_context(self, response: ContextResponse) -> None:
         try:

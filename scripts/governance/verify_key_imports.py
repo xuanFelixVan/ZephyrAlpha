@@ -48,7 +48,7 @@ KEY_MODULES = [
     "zephyr.shared",
     "zephyr.governance.budget_engine",
     "zephyr.governance.escalation_engine",
-    "zephyr.security.llm_defense.llm_security_01.gateway",
+    "zephyr.security.llm_defense.llm_security.gateway",
     "zephyr.infrastructure.system_telemetry.auto_bootstrap",
     "zephyr.governance.kb.unified_memory_api",
     "zephyr.governance",

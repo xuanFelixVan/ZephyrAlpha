@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l6_observability
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.alert_manager
-# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.__init__; zephyr.security.llm_defense.llm_security_01.layers.l6_observability; tests.llm_security.test_l6_observability
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; tests.llm_security.test_l6_observability
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]
