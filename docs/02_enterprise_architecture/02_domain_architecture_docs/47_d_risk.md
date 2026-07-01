@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:10:57
+> 最后更新: 2026-07-01 19:28:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_RISK | Domain ID | D_RISK |
 | 域名称 | 风控 | Domain Name | 风控 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 18 | Module Count | 18 |
+| 模块数 | 17 | Module Count | 17 |
 | 域内依赖 | 16 | Internal Dependencies | 16 |
 | 跨域入边 | 17 | Cross-domain Incoming | 17 |
 | 跨域出边 | 12 | Cross-domain Outgoing | 12 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 9 | Prototype Modules | 9 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 9 | Production Modules | 9 |
 | 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
 | 描述 | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 | Description | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 |
@@ -59,7 +59,6 @@ graph TD
         src_zephyr_risk_implementations_default_risk_manager_orchestrator_py["src/zephyr/risk/implementations/default_risk_ma... production"]
         src_zephyr_risk_implementations_default_risk_validator_py["src/zephyr/risk/implementations/default_risk_va... production"]
         src_zephyr_risk_implementations_default_stop_loss_engine_py["src/zephyr/risk/implementations/default_stop_lo... production"]
-        src_zephyr_risk_oms_risk_engine_py["src/zephyr/risk/oms_risk_engine.py prototype"]
         src_zephyr_risk_risk_limits_py["src/zephyr/risk/risk_limits.py prototype"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py production"]
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py production"]
@@ -82,8 +81,6 @@ graph TD
     src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_init_py -.->|config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_risk_oms_risk_engine_py -.->|config_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
@@ -106,8 +103,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py production
-    class src_zephyr_risk_init_py,src_zephyr_risk_cross_asset_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_cross_asset_risk_manager_py,src_zephyr_risk_cross_asset_risk_manager_base_py,src_zephyr_risk_implementations_init_py,src_zephyr_risk_oms_risk_engine_py,src_zephyr_risk_risk_limits_py design
-    class D_GOVERNANCE,D_TRADING external_prod
+    class src_zephyr_risk_init_py,src_zephyr_risk_cross_asset_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_cross_asset_risk_manager_py,src_zephyr_risk_cross_asset_risk_manager_base_py,src_zephyr_risk_implementations_init_py,src_zephyr_risk_risk_limits_py design
+    class D_TRADING external_prod
     class D_SHARED,D_GOV_SCRIPTS external_design
 ```
 
@@ -130,17 +127,10 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 风控（D_RISK）的模块分布。共 18 个模块 / 18 modules。
+> 按 architecture_layer 分层显示 风控（D_RISK）的模块分布。共 17 个模块 / 17 modules。
 
 ```
 
-┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (1 modules)             │
-├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/risk/oms_risk_engine.py  [prototype]                │
-└──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │              L2 领域层 / Domain Layer (17 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
@@ -167,13 +157,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 18 个模块 / 18 modules）。
-
-### L1 基础层 / Foundation Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/risk/oms_risk_engine.py | src/zephyr/risk/oms_risk_engine.py | prototype | generated |
+> 按 architecture_layer 分组的模块清单（共 17 个模块 / 17 modules）。
 
 ### L2 领域层 / Domain Layer (17 modules)
 

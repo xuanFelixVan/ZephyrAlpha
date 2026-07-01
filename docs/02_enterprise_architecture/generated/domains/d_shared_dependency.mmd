@@ -1,7 +1,7 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-01 19:10:59
+%% 生成时间: 2026-07-01 19:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 241, 依赖边数: 344
+%% 模块数: 241, 依赖边数: 334
 
 graph TD
 
@@ -273,29 +273,18 @@ graph TD
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_events_dlq_bridge_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_schema_schemas_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared___init___py
-    %% D_INFRA_OPS -> D_SHARED (1 条)
-    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     %% D_INFRA_RECOVERY -> D_SHARED (4 条)
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_state_machine_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_INFRA_RUNTIME -> D_SHARED (19 条)
+    %% D_INFRA_RUNTIME -> D_SHARED (10 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_manager_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_precision_tracker_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_dual_channel_alert_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_error_budget_tracker_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_heartbeat_server_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_longevity_monitor_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_task_heartbeat_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_ttl_cleanup_engine_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_slo_review_assistant_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_infra_observer_py
@@ -408,5 +397,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 160 条
-    %% 跨域入边: 171 条
+    %% 跨域入边: 161 条
     %% 跨域出边: 13 条

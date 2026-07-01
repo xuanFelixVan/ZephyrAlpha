@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:10:57
+> 最后更新: 2026-07-01 19:28:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -343,19 +343,15 @@ graph TD
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_core_integrity_guard_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
-    D_INFRA_OPS["D_INFRA_OPS prototype"]
-    D_INFRA_OPS -.->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_dual_channel_alert_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_core_integrity_guard_py,src_zephyr_shared_cost_estimator_py,src_zephyr_shared_degradation_chain_py,src_zephyr_shared_dependency_init_py,src_zephyr_shared_dependency_capacity_guard_py,src_zephyr_shared_draft_init_py,src_zephyr_shared_dual_channel_alert_py,src_zephyr_shared_error_budget_tracker_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_event_bus_py_1 production
     class src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py,src_zephyr_shared_contracts_risk_init_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_init_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_deprecation_py,src_zephyr_shared_diff_utils_py,src_zephyr_shared_env_py,src_zephyr_shared_errors_py,src_zephyr_shared_events_init_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py design
-    class D_FRONTEND,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME external_prod
-    class D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_OPS external_design
+    class D_FRONTEND,D_GOV_ENFORCEMENT external_prod
+    class D_GOVERNANCE,D_GOV_AUDIT external_design
 ```
 
 ### 第 5 页 / 共 9 页 / Page 5 of 9
@@ -416,7 +412,6 @@ graph TD
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_heartbeat_server_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_infra_observer_py
     D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_shared_events_event_bus_upgrade_py
@@ -483,7 +478,6 @@ graph TD
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_streaming_reader_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_shared_io_io_cache_py
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_longevity_monitor_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_io_paths_py

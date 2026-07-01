@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:10:57
+> 最后更新: 2026-07-01 19:28:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -118,8 +118,6 @@ graph TD
     src_zephyr_autonomy_core_all_skill_modules_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_all_skill_modules_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_all_skill_modules_py -.->|runtime| D_GOVERNANCE
-    D_EX_CORE["D_EX_CORE prototype"]
-    src_zephyr_autonomy_core_all_skill_modules_py -.->|runtime| D_EX_CORE
     D_KNOWLEDGE["D_KNOWLEDGE design"]
     src_zephyr_autonomy_core_all_skill_modules_py -.->|contract| D_KNOWLEDGE
     D_INTEGRATION["D_INTEGRATION prototype"]
@@ -141,7 +139,7 @@ graph TD
     class src_zephyr_autonomy_core_init_py production
     class src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_adversarial_robustness_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_alignment_scorer_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_architecture_context_loader_py,src_zephyr_autonomy_core_atomic_injector_py,src_zephyr_autonomy_core_budget_forecaster_py,src_zephyr_autonomy_core_cache_invalidation_py,src_zephyr_autonomy_core_checkpoint_manager_py,src_zephyr_autonomy_core_citation_walker_py,src_zephyr_autonomy_core_cold_start_booster_py,src_zephyr_autonomy_core_complexity_budget_py,src_zephyr_autonomy_core_config_safety_guard_py,src_zephyr_autonomy_core_contextual_fetch_api_py,src_zephyr_autonomy_core_curation_loop_py,src_zephyr_autonomy_core_dependency_tracker_py,src_zephyr_autonomy_core_diff_injector_py,src_zephyr_autonomy_core_dispatch_table_py,src_zephyr_autonomy_core_diversity_constraint_py,src_zephyr_autonomy_core_doc_compressor_py,src_zephyr_autonomy_core_domain_decay_config_py,src_zephyr_autonomy_core_embedding_version_lock_py,src_zephyr_autonomy_core_fallback_staleness_gate_py,src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_fragmentation_index_py,src_zephyr_autonomy_core_host_resource_governor_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_init_py design
     class D_AUDITTEST,D_GOV_AUDIT external_prod
-    class D_GOVERNANCE,D_EX_CORE,D_KNOWLEDGE,D_INTEGRATION,D_INTELLIGENCE,D_OPS,D_TRADING external_design
+    class D_GOVERNANCE,D_KNOWLEDGE,D_INTEGRATION,D_INTELLIGENCE,D_OPS,D_TRADING external_design
 ```
 
 ### 第 2 页 / 共 3 页 / Page 2 of 3

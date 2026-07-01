@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:10:57
+> 最后更新: 2026-07-01 19:28:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 13 | Module Count | 13 |
-| 域内依赖 | 6 | Internal Dependencies | 6 |
+| 模块数 | 6 | Module Count | 6 |
+| 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 8 | Prototype Modules | 8 |
+| 原型态模块 | 1 | Prototype Modules | 1 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 资源优化引擎 | Description | 资源优化引擎 |
@@ -52,25 +52,8 @@ graph TD
         src_zephyr_infra_ops["基础设施运维域 design"]
         src_zephyr_infra_ops_init_py["src/zephyr/infra_ops/__init__.py prototype"]
         src_zephyr_infra_ops_dashboard_init_py["src/zephyr/infra_ops/dashboard/__init__.py production"]
-        src_zephyr_infra_ops_dashboard_app_py["src/zephyr/infra_ops/dashboard/app.py prototype"]
         src_zephyr_infra_ops_dashboard_components_init_py["src/zephyr/infra_ops/dashboard/components/__ini... production"]
-        src_zephyr_infra_ops_dashboard_components_fitness_functions_py["src/zephyr/infra_ops/dashboard/components/fitne... prototype"]
-        src_zephyr_infra_ops_dashboard_components_gate_statistics_py["src/zephyr/infra_ops/dashboard/components/gate_... prototype"]
-        src_zephyr_infra_ops_dashboard_components_knowledge_overview_py["src/zephyr/infra_ops/dashboard/components/knowl... prototype"]
-        src_zephyr_infra_ops_dashboard_components_olap_trend_py["src/zephyr/infra_ops/dashboard/components/olap_... prototype"]
-        src_zephyr_infra_ops_dashboard_components_task_progress_py["src/zephyr/infra_ops/dashboard/components/task_... prototype"]
-        src_zephyr_infra_ops_interface_base_py["src/zephyr/infra_ops/interface_base.py prototype"]
     end
-    src_zephyr_infra_ops_interface_base_py -.->|config_depends| src_zephyr_infra_ops_init_py
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| src_zephyr_infra_ops_init_py
-    src_zephyr_infra_ops_dashboard_components_gate_statistics_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_fitness_functions_py
-    src_zephyr_infra_ops_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
-    src_zephyr_infra_ops_dashboard_components_knowledge_overview_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
-    src_zephyr_infra_ops_dashboard_components_olap_trend_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
-    D_SHARED["D_SHARED prototype"]
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
-    D_OPS["D_OPS production"]
-    src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
     D_FRONTEND["D_FRONTEND production"]
     D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -78,9 +61,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
-    class src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py design
-    class D_OPS,D_FRONTEND external_prod
-    class D_SHARED external_design
+    class src_zephyr_infra_ops,src_zephyr_infra_ops_init_py design
+    class D_FRONTEND external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -103,7 +85,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 13 个模块 / 13 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 6 个模块 / 6 modules。
 
 ```
 
@@ -115,16 +97,9 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (8 modules)             │
+│             L1 基础层 / Foundation Layer (1 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/infra_ops/__init__.py  [prototype]                  │
-│   src/zephyr/infra_ops/dashboard/app.py  [prototype]             │
-│   src/zephyr/infra_ops/dashboard/components/fitness_functions... │
-│   src/zephyr/infra_ops/dashboard/components/gate_statistics.p... │
-│   src/zephyr/infra_ops/dashboard/components/knowledge_overvie... │
-│   src/zephyr/infra_ops/dashboard/components/olap_trend.py  [p... │
-│   src/zephyr/infra_ops/dashboard/components/task_progress.py ... │
-│   src/zephyr/infra_ops/interface_base.py  [prototype]            │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -141,7 +116,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 13 个模块 / 13 modules）。
+> 按 architecture_layer 分组的模块清单（共 6 个模块 / 6 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (1 modules)
 
@@ -149,18 +124,11 @@ graph TD
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/ | 基础设施运维域 | design | planned |
 
-### L1 基础层 / Foundation Layer (8 modules)
+### L1 基础层 / Foundation Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/__init__.py | src/zephyr/infra_ops/__init__.py | prototype | generated |
-| 2 | src/zephyr/infra_ops/dashboard/app.py | src/zephyr/infra_ops/dashboard/app.py | prototype | generated |
-| 3 | src/zephyr/infra_ops/dashboard/components/fitness_functio... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 4 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 5 | src/zephyr/infra_ops/dashboard/components/knowledge_overv... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 6 | src/zephyr/infra_ops/dashboard/components/olap_trend.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 7 | src/zephyr/infra_ops/dashboard/components/task_progress.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 8 | src/zephyr/infra_ops/interface_base.py | src/zephyr/infra_ops/interface_base.py | prototype | generated |
 
 ### 未分类 / Unclassified (4 modules)
 
@@ -173,35 +141,10 @@ graph TD
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 6 条 / 6 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
 
-```
+（无域内依赖 / No internal dependencies）
 
-┌──────────────────────────────────────────────────────────────────┐
-│        依赖关系图 / Dependency Graph (共 6 条 / 6 edges)         │
-├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 2                               │
-│   [config_depends]: 5 条 / edges                                 │
-│   [import_depends]: 1 条 / edges                                 │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                 [config_depends] (5 条 / edges)                  │
-├──────────────────────────────────────────────────────────────────┤
-│   interface_base.py → __init__.py                                │
-│   gate_statistics.py → fitness_functions.py                      │
-│   task_progress.py → gate_statistics.py                          │
-│   knowledge_overview.py → gate_statistics.py                     │
-│   olap_trend.py → gate_statistics.py                             │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (1 条 / edges)                  │
-├──────────────────────────────────────────────────────────────────┤
-│   app.py → __init__.py                                           │
-└──────────────────────────────────────────────────────────────────┘
-
-```
 
 ## 说明 / Notes
 

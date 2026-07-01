@@ -1,7 +1,7 @@
 %% D_AUTONOMY_CORE 域全景依赖图
-%% 生成时间: 2026-07-01 19:10:58
+%% 生成时间: 2026-07-01 19:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 62, 依赖边数: 80
+%% 模块数: 62, 依赖边数: 79
 
 graph TD
 
@@ -147,8 +147,6 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_AUDITTEST (1 条)
     src_zephyr_autonomy_core_all_skill_modules_py -->|runtime| D_AUDITTEST[D_AUDITTEST]
-    %% D_AUTONOMY_CORE -> D_EX_CORE (1 条)
-    src_zephyr_autonomy_core_all_skill_modules_py -->|runtime| D_EX_CORE[D_EX_CORE]
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
     src_zephyr_autonomy_core_vector_writer_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_autonomy_core_all_skill_modules_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
@@ -171,4 +169,4 @@ graph TD
     %% 统计
     %% 域内依赖: 55 条
     %% 跨域入边: 9 条
-    %% 跨域出边: 16 条
+    %% 跨域出边: 15 条

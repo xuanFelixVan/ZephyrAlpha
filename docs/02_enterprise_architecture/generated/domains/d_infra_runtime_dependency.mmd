@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-01 19:10:59
+%% 生成时间: 2026-07-01 19:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 111, 依赖边数: 245
+%% 模块数: 90, 依赖边数: 216
 
 graph TD
 
@@ -37,27 +37,6 @@ graph TD
         src_zephyr_infrastructure_capa___racts_batch3_integration_py["...rance/contracts/batch3_integration.py [production]"]
         src_zephyr_infrastructure_capa___e_contracts_contract_bus_py["...y_assurance/contracts/contract_bus.py [production]"]
         src_zephyr_infrastructure_capa___cross_module_integration_py["...assurance/cross_module_integration.py [production]"]
-        src_zephyr_infrastructure_capa___surance_modules___init___py["...apacity_assurance/modules/__init__.py [production]"]
-        src_zephyr_infrastructure_capa___modules_ai_skill_monitor_py["...assurance/modules/ai_skill_monitor.py [production]"]
-        src_zephyr_infrastructure_capa___capacity_testing_harness_py["...e/modules/capacity_testing_harness.py [production]"]
-        src_zephyr_infrastructure_capa___e_modules_cliff_detector_py["...y_assurance/modules/cliff_detector.py [production]"]
-        src_zephyr_infrastructure_capa___les_cold_start_estimator_py["...rance/modules/cold_start_estimator.py [production]"]
-        src_zephyr_infrastructure_capa___s_config_reload_semantic_py["...nce/modules/config_reload_semantic.py [production]"]
-        src_zephyr_infrastructure_capa___les_context_budget_guard_py["...rance/modules/context_budget_guard.py [production]"]
-        src_zephyr_infrastructure_capa___radation_spiral_detector_py["...odules/degradation_spiral_detector.py [production]"]
-        src_zephyr_infrastructure_capa___dules_dr_drill_scheduler_py["...surance/modules/dr_drill_scheduler.py [production]"]
-        src_zephyr_infrastructure_capa___odules_graceful_shutdown_py["...ssurance/modules/graceful_shutdown.py [production]"]
-        src_zephyr_infrastructure_capa____modules_hawthorne_blind_py["..._assurance/modules/hawthorne_blind.py [production]"]
-        src_zephyr_infrastructure_capa____multi_model_vendor_risk_py["...ce/modules/multi_model_vendor_risk.py [production]"]
-        src_zephyr_infrastructure_capa___erver_effect_compensator_py["...odules/observer_effect_compensator.py [production]"]
-        src_zephyr_infrastructure_capa___les_owner_health_monitor_py["...rance/modules/owner_health_monitor.py [production]"]
-        src_zephyr_infrastructure_capa___es_per_task_token_budget_py["...ance/modules/per_task_token_budget.py [production]"]
-        src_zephyr_infrastructure_capa___ce_modules_startup_guard_py["...ty_assurance/modules/startup_guard.py [production]"]
-        src_zephyr_infrastructure_capa___s_sunk_cost_intervention_py["...nce/modules/sunk_cost_intervention.py [production]"]
-        src_zephyr_infrastructure_capa___les_time_partitioned_slo_py["...rance/modules/time_partitioned_slo.py [production]"]
-        src_zephyr_infrastructure_capa____token_value_attribution_py["...ce/modules/token_value_attribution.py [production]"]
-        src_zephyr_infrastructure_capa____trace_capacity_injector_py["...ce/modules/trace_capacity_injector.py [production]"]
-        src_zephyr_infrastructure_capa___ce_modules_winfs_defense_py["...ty_assurance/modules/winfs_defense.py [production]"]
         src_zephyr_infrastructure_capa___ssurance_risk_mitigation_py["...capacity_assurance/risk_mitigation.py [production]"]
         src_zephyr_infrastructure_capacity_assurance_schema_py["...tructure/capacity_assurance/schema.py [production]"]
         src_zephyr_infrastructure_capa___ance_sli_instrumentation_py["...city_assurance/sli_instrumentation.py [production]"]
@@ -107,7 +86,17 @@ graph TD
         src_zephyr_infrastructure_script_system_finding_py["...frastructure/script_system/finding.py [production]"]
         src_zephyr_infrastructure_script_system_gate_bridge_py["...tructure/script_system/gate_bridge.py [production]"]
         src_zephyr_infrastructure_script_system_kb_bridge_py["...astructure/script_system/kb_bridge.py [production]"]
-        %% ... 还有 11 个模块未显示
+        src_zephyr_infrastructure_sentinel_server_py["...hyr/infrastructure/sentinel_server.py [production]"]
+        src_zephyr_infrastructure_task_manager_server_py["...infrastructure/task_manager_server.py [production]"]
+        src_zephyr_infrastructure_telemetry_server_py["...yr/infrastructure/telemetry_server.py [production]"]
+        src_zephyr_infrastructure_vector_memory_server_py["...nfrastructure/vector_memory_server.py [production]"]
+        src_zephyr_infrastructure_warm_hot_gate_py["...ephyr/infrastructure/warm_hot_gate.py [production]"]
+        src_zephyr_shared_lifecycle___init___py["src/zephyr/shared/lifecycle/__init__.py [production]"]
+        src_zephyr_shared_lifecycle_daemon_registry_py["...r/shared/lifecycle/daemon_registry.py [production]"]
+        src_zephyr_shared_lifecycle_hooks_py["src/zephyr/shared/lifecycle/hooks.py [production]"]
+        src_zephyr_shared_lifecycle_lazy_loader_py["...ephyr/shared/lifecycle/lazy_loader.py [production]"]
+        src_zephyr_shared_lifecycle_resource_optimization_engine_py["...cycle/resource_optimization_engine.py [production]"]
+        src_zephyr_shared_lifecycle_resource_optimization_models_py["...cycle/resource_optimization_models.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -133,26 +122,6 @@ graph TD
     src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_capa___e_contracts_contract_bus_py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_capa___rance_contracts___init___py -->|import_depends| src_zephyr_infrastructure___init___py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___modules_ai_skill_monitor_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___capacity_testing_harness_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___e_modules_cliff_detector_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___les_cold_start_estimator_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___s_config_reload_semantic_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___les_context_budget_guard_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___radation_spiral_detector_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___dules_dr_drill_scheduler_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___odules_graceful_shutdown_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa____modules_hawthorne_blind_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa____multi_model_vendor_risk_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___erver_effect_compensator_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___les_owner_health_monitor_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___es_per_task_token_budget_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___ce_modules_startup_guard_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___s_sunk_cost_intervention_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___les_time_partitioned_slo_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa____token_value_attribution_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa____trace_capacity_injector_py
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| src_zephyr_infrastructure_capa___ce_modules_winfs_defense_py
     src_zephyr_infrastructure_compensation___init___py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_draft___init___py -->|import_depends| src_zephyr_infrastructure___init___py
     src_zephyr_infrastructure_dependency___init___py -->|import_depends| src_zephyr_infrastructure___init___py
@@ -191,7 +160,13 @@ graph TD
     src_zephyr_infrastructure_capacity_assurance_tech_stack_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
     src_zephyr_infrastructure_capa___e_contracts_batch1_infra_py -->|config_depends| src_zephyr_infrastructure_capa___rance_contracts___init___py
     src_zephyr_infrastructure_capa___ssurance_risk_mitigation_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
-    %% ... 还有 7 条域内依赖未显示
+    src_zephyr_infrastructure_capa___ance_sli_instrumentation_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance___init___py
+    src_zephyr_infrastructure_capa___racts_batch3_integration_py -->|config_depends| src_zephyr_infrastructure_capa___rance_contracts___init___py
+    src_zephyr_infrastructure_heal___onitor_health_aggregator_py -->|config_depends| src_zephyr_infrastructure_health_monitor___init___py
+    src_zephyr_infrastructure_hooks_event_hook_py -->|config_depends| src_zephyr_infrastructure_hooks___init___py
+    src_zephyr_infrastructure_runtime_startup_shutdown_py -->|config_depends| src_zephyr_infrastructure_runtime___init___py
+    src_zephyr_infrastructure_script_system_gate_bridge_py -->|config_depends| src_zephyr_infrastructure_script_system___init___py
+    src_zephyr_shared_lifecycle_resource_optimization_engine_py -->|config_depends| src_zephyr_shared_lifecycle___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_INFRA_RUNTIME (43 条)
@@ -332,28 +307,19 @@ graph TD
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_INFRA_RUNTIME -> D_OPS (1 条)
     src_zephyr___init___py -->|import_depends| D_OPS[D_OPS]
-    %% D_INFRA_RUNTIME -> D_SHARED (19 条)
+    %% D_INFRA_RUNTIME -> D_SHARED (10 条)
     src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_gateway_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_vector_memory_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_script_system_kb_bridge_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 87 条
+    %% 域内依赖: 67 条
     %% 跨域入边: 124 条
-    %% 跨域出边: 34 条
+    %% 跨域出边: 25 条

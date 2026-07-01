@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 19:10:57
+> 最后更新: 2026-07-01 19:28:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -63,8 +63,6 @@ graph TD
     src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_analytics_base_py -.->|import_depends| D_GOVERNANCE
-    D_PF_CORE["D_PF_CORE production"]
-    D_PF_CORE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -73,7 +71,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_demos_demo_e2e_pipeline_py production
     class src_zephyr_reporting_init_py,src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py design
-    class D_TRADING,D_PF_CORE external_prod
+    class D_TRADING external_prod
     class D_GOVERNANCE external_design
 ```
 

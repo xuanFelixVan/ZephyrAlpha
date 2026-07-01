@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 19:10:59
+%% 生成时间: 2026-07-01 19:28:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 503, 依赖边数: 635
+%% 模块数: 502, 依赖边数: 623
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
         scripts_governance_d5_architec___detect_depends_on_cycles_py["...detectors/detect_depends_on_cycles.py [prototype]"]
         scripts_governance_d5_architec___eprecated_adr_references_py["...s/detect_deprecated_adr_references.py [prototype]"]
-        %% ... 还有 403 个模块未显示
+        %% ... 还有 402 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -187,11 +187,11 @@ graph TD
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_tamper_proof_audit_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_de___ion_test_fixture_checker_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_trend_analyzer_py
-    src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_de___i_construction_detectors_py
-    src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
-    src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_reconciler_py
-    %% ... 还有 216 条域内依赖未显示
+    src_zephyr_governance_implemen___ault_experiment_pipeline_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_ops_governance_phase_manager_py -->|import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| src_zephyr_governance___init___py
+    src_zephyr_governance_satellit___ospatial_engine___init___py -->|import_depends| src_zephyr_data_governance___init___py
+    %% ... 还有 211 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
@@ -209,7 +209,7 @@ graph TD
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_implementations___init___py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_semantic_auditor___init___py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub___init___py
-    %% D_EX_CORE -> D_GOVERNANCE (8 条)
+    %% D_EX_CORE -> D_GOVERNANCE (7 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
@@ -217,7 +217,6 @@ graph TD
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_broker_interface_py
-    D_EX_CORE[D_EX_CORE] -->|config_depends| src_zephyr_governance___init___py
     %% D_FACTOR -> D_GOVERNANCE (3 条)
     D_FACTOR[D_FACTOR] -->|import_depends| src_zephyr_governance___init___py
     D_FACTOR[D_FACTOR] -->|import_depends| src_zephyr_governance___init___py
@@ -301,13 +300,10 @@ graph TD
     D_OPS[D_OPS] -->|import_depends| src_zephyr_governance___init___py
     D_OPS[D_OPS] -->|import_depends| src_zephyr_governance___init___py
     D_OPS[D_OPS] -->|import_depends| src_zephyr_trading_feedback_lo___rompt_factory_governance_py
-    %% D_PF_ALLOC -> D_GOVERNANCE (2 条)
+    %% D_PF_ALLOC -> D_GOVERNANCE (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategy_base_py
-    D_PF_ALLOC[D_PF_ALLOC] -->|config_depends| src_zephyr_governance___init___py
-    %% D_PF_CORE -> D_GOVERNANCE (8 条)
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_attribution_engine_py
+    %% D_PF_CORE -> D_GOVERNANCE (6 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_compliance_rule_py
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_tca_engine_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_registry_py
@@ -318,8 +314,6 @@ graph TD
     %% D_REPORTING -> D_GOVERNANCE (2 条)
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
-    %% D_RISK -> D_GOVERNANCE (1 条)
-    D_RISK[D_RISK] -->|config_depends| src_zephyr_governance___init___py
     %% D_SECURITY -> D_GOVERNANCE (2 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance___init___py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance___init___py
@@ -352,9 +346,6 @@ graph TD
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_AUTONOMY_PERM[D_AUTONOMY_PERM]
     %% D_GOVERNANCE -> D_CROSS_ASSET (1 条)
     tests_ml_experiment_test_adversarial_ml_py -->|test_depends| D_CROSS_ASSET[D_CROSS_ASSET]
-    %% D_GOVERNANCE -> D_EX_CORE (2 条)
-    src_zephyr_governance_drift_de___ion_drift_infrastructure_py -->|runtime| D_EX_CORE[D_EX_CORE]
-    docs_03_modules__cross_layer_mcp_servers_blueprint_md -->|runtime| D_EX_CORE[D_EX_CORE]
     %% D_GOVERNANCE -> D_FACTOR (1 条)
     tests_alpha_signal_test_adversarial_alpha_signal_py -->|test_depends| D_FACTOR[D_FACTOR]
     %% D_GOVERNANCE -> D_FUNDAMENTAL_SIGNAL (1 条)
@@ -545,6 +536,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 296 条
-    %% 跨域入边: 120 条
-    %% 跨域出边: 219 条
+    %% 域内依赖: 291 条
+    %% 跨域入边: 115 条
+    %% 跨域出边: 217 条
