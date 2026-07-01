@@ -71,7 +71,7 @@ sections:
       fail: 注册表间不一致
     actions:
     - type: mandatory
-      step: 修改一个注册表时MUST同步更新所有关联注册表；注册表间通过引用而非复制保持一致；YAML文件是规则数据唯一真源，DB为只读缓存
+      step: 修改一个注册表时MUST同步更新所有关联注册表；注册表间通过引用而非复制保持一致；YAML文件是规则数据唯一真源，DB规则表为只读缓存（8张readonly表）
     prohibitions:
     - 只更新一个注册表不更新相关注册表
     - 直接修改DB规则表而非通过YAML同步
@@ -141,7 +141,7 @@ sections:
     - 所有文件必须注册到对应注册表(无孤儿)
     - 结构变更后必须刷新path-tree+depgraph
     key_decisions:
-    - YAML是规则数据唯一真源，DB为只读缓存
+    - YAML是规则数据唯一真源，DB规则表为只读缓存（8张readonly表）
     - scaffold.py是唯一文件创建入口(自动注册)
     - 命名规则真源在trae_028_doc_structure_naming.yaml
   arch_change_history:

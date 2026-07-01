@@ -458,7 +458,21 @@ python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
 
 ## 11. depgraph 使用指引（唯一全景真源）
 
-### 11.0 数据库清单真源指针（新 AI 进入项目先读此段）
+### 11.0 真源方向决策表（唯一入口，新 AI 必读）
+
+> 项目存在两个真源方向，按数据类型机械判定。**禁止凭记忆推断真源方向**——拿到数据先查此表。
+
+| 数据类型 | 真源 | 修改入口 | 判定关键词 | DB 表 |
+|---------|------|---------|-----------|-------|
+| 架构全景图（域/模块/依赖/path_design/physical_files） | PostgreSQL depgraph | `apply_depgraph.py` | 实例态（磁盘上有什么） | nodes/edges/domains/domain_dependencies/domain_mapping 等 16+ 张可写表 |
+| 规则/契约/门禁/词汇表 | YAML 文件 | 改 YAML → GATE-YAML-SYNC 自动同步 | 声明态（应该有什么） | gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/business_streams/infrastructure_components/model_capabilities（8 张 readonly 表，禁止手写） |
+| 数据库清单 | `infrastructure_registry.yaml` | 改 YAML | INFRA-DB-* | infrastructure_components（与规则数据共享表，但真源是 YAML） |
+
+> **判定规则**：拿到一个数据，先问"是实例态还是声明态？"——实例态（磁盘上有什么模块/文件/依赖）→ DB 真源（apply_depgraph.py）；声明态（规则/契约/词表应该有什么）→ YAML 真源（改 YAML，DB 自动同步）。边界模糊时查此表。
+>
+> **blueprint_links 特殊裁定（2026-07-02）**：`blueprint_links` 表是从 `nodes` 表派生的物化视图（非 YAML 真源），由 `sync_yaml_to_depgraph.py` 重建，但无 readonly 触发器保护，`apply_depgraph.py` 可直接写入。
+
+### 11.0.1 数据库清单真源指针（新 AI 进入项目先读此段）
 
 > **唯一真源**：[`docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) 的 `infrastructure:` 段（`type` 含 `*_db` 的条目）。
 >
@@ -493,7 +507,7 @@ python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
 > **三层 ghost 防御（2026-07-01 ARCH-038 铁律，勿重复造）**：
 > 1. **Layer 1（技术铁律）**：生成器（`generate_domain_doc.py` + `generate_domain_dependency_diagram.py`）内置 `_is_ghost()` 过滤——path 非空但磁盘不存在的节点自动排除。即使 depgraph 有 2774 个 ghost 节点，生成的文档也不会引用幽灵文件。**新 AI 不需要知道要跑 deprecate——不跑也不会有问题**。
 > 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script_manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
-> 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。depgraph 是只读缓存，禁止直接操作数据库，必须通过 `apply_depgraph.py`。架构文档由生成器自动产出，禁止手动编辑。
+> 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。禁止裸连数据库，必须通过 `apply_depgraph.py` 程序化访问（真源方向见 §11.0 决策表）。架构文档由生成器自动产出，禁止手动编辑。
 
 > **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
 

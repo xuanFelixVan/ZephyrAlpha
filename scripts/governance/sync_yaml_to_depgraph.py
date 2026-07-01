@@ -71,7 +71,7 @@ import psycopg2  # noqa: E402
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"
 
-# V5.0 裁定：9 张表全部保护（与 P0-6 创建触发器列表一致）
+# V5.1 裁定（2026-07-02）：8 张表保护。blueprint_links 移除——它是 nodes 派生物化视图，非 YAML 真源，apply_depgraph.py 可直接写入。
 READONLY_TABLES = [
     "gates",
     "field_vocabularies",
@@ -81,7 +81,6 @@ READONLY_TABLES = [
     "business_streams",
     "infrastructure_components",
     "model_capabilities",
-    "blueprint_links",
 ]
 
 

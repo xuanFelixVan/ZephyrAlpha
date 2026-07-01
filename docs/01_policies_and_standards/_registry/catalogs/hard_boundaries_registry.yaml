@@ -22,10 +22,10 @@ description: "架构核心硬边界——不可违反的约束。对标 K8s Hard
 boundaries:
   - id: HB-001
     category: architectural
-    constraint: "YAML 是规则数据唯一真源，DB 是只读缓存"
+    constraint: "YAML 是规则数据唯一真源，DB 规则表为只读缓存（8 张 readonly 表，blueprint_links 除外——它是 nodes 派生物化视图）"
     parameters:
       ssot: "YAML"
-      readonly_tables: 9
+      readonly_tables: 8
     impact: "违反→双源数据不一致→AI 困惑"
 
   - id: HB-002
@@ -44,9 +44,9 @@ boundaries:
 
   - id: HB-004
     category: data
-    constraint: "禁止直接修改 DB 规则表（只读触发器保护）"
+    constraint: "禁止直接修改 DB 规则表（只读触发器保护，8 张表）"
     parameters:
-      protected_tables: 9
+      protected_tables: 8
       sync_script: "sync_yaml_to_depgraph.py"
     impact: "违反→绕过 SSoT→数据不一致"
 

@@ -438,7 +438,7 @@ ORDER BY n.domain_id, n.node_id;
 
 -- ========== 4. 触发器函数 ==========
 
--- 4.1 只读表保护函数（9个只读表 × 3 操作 = 27个触发器复用此函数）
+-- 4.1 只读表保护函数（8个只读表 × 3 操作 = 24个触发器复用此函数。blueprint_links 于 2026-07-02 移除——它是 nodes 派生物化视图）
 CREATE OR REPLACE FUNCTION raise_readonly_exception()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -456,15 +456,7 @@ $$ LANGUAGE plpgsql;
 -- END;
 -- $$ LANGUAGE plpgsql;
 
--- ========== 5. 只读表触发器（27个，复用 raise_readonly_exception） ==========
-
--- blueprint_links (只读)
-CREATE TRIGGER readonly_blueprint_links_delete
-    BEFORE DELETE ON blueprint_links FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
-CREATE TRIGGER readonly_blueprint_links_insert
-    BEFORE INSERT ON blueprint_links FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
-CREATE TRIGGER readonly_blueprint_links_update
-    BEFORE UPDATE ON blueprint_links FOR EACH ROW EXECUTE FUNCTION raise_readonly_exception();
+-- ========== 5. 只读表触发器（24个，复用 raise_readonly_exception。blueprint_links 于 2026-07-02 移除——它是 nodes 派生物化视图，apply_depgraph.py 可直接写入） ==========
 
 -- business_streams (只读)
 CREATE TRIGGER readonly_business_streams_delete
