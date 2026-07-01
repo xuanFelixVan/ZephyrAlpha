@@ -1,15 +1,15 @@
-# 自动生成于 2026-07-01T15:44:54Z
+# 自动生成于 2026-07-01T18:16:27Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-01T15:44:54Z'
+generated_at: '2026-07-01T18:16:27Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 349
-with_manifest: 348
+total_scripts: 318
+with_manifest: 317
 missing_manifest: 1
 categories:
-  governance: 74
+  governance: 43
   governance:_sync: 4
   governance:_tasks: 3
   governance:d10_performance: 1
@@ -115,29 +115,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: adversarial_log.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪
-  tags:
-  - Quick
-- name: adversarial_sys_master_test.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT
-    Integration Hardening'
-  tags:
-  - Quick
 - name: analyze_change_impact.py
   owner: governance
   dimensions:
@@ -149,22 +126,6 @@ scripts:
   description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
   tags:
   - Quick
-- name: analyze_orphan_consumers.py
-  owner: governance
-  dimensions:
-  - D1
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args:
-  - flag: --output
-    type: str
-    description: 输出 JSON 路径
-  warn_only: false
-  description: 分析 ORPHAN MODULES 的消费者情况（批量 Grep 优化）
-  tags:
-  - Critical
-  - Quick
 - name: apply_depgraph.py
   owner: governance
   dimensions:
@@ -175,30 +136,6 @@ scripts:
   warn_only: false
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
-  - Quick
-- name: audit_domain_nodes.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'SRC-100200: Audit 13 over-capacity domains granularity distribution.'
-  tags:
-  - Periodic
-  - Quick
-- name: audit_post_sync_commands.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CLI漂移）
-  tags:
-  - Periodic
   - Quick
 - name: audit_registration.py
   owner: governance
@@ -235,28 +172,6 @@ scripts:
   description: 全自动注册表同步器
   tags:
   - Quick
-- name: changelog.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: changelog.py — 治理域变更日志生成/追加工具.
-  tags:
-  - Quick
-- name: check_audit_rbac_isolation.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.
-  tags:
-  - Quick
 - name: check_blueprint_compliance.py
   owner: governance
   dimensions:
@@ -267,17 +182,6 @@ scripts:
   warn_only: false
   description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
     | §3'
-  tags:
-  - Quick
-- name: check_exam_case_consistency.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 考试题库一致性检查——根因治本，防止"定义-注册脱钩"复发。
   tags:
   - Quick
 - name: check_handoff_manifests.py
@@ -300,43 +204,6 @@ scripts:
   args: []
   warn_only: false
   description: 'GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。'
-  tags:
-  - Quick
-- name: check_naming_convention.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ 请补充 description
-  tags:
-  - Quick
-- name: check_registry_consistency.py
-  owner: governance
-  dimensions:
-  - D3
-  - D5
-  - D11
-  priority: P1
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 兼容入口：转发执行 d3_metadata/check_registry_consistency.py
-  tags:
-  - Critical
-  - Quick
-  - Security
-- name: check_rule_coverage.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: governance/check_rule_coverage 脚本 — 规则文件漂移检测
   tags:
   - Quick
 - name: check_schema_version_writes.py
@@ -414,29 +281,6 @@ scripts:
     '
   tags:
   - Critical
-- name: construction_gate.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Construction Gate — 施工前路径校验门禁
-  tags:
-  - Quick
-- name: create_alignment_tasks.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py
-    | §7'
-  tags:
-  - Quick
 - name: d10_performance/collect_system_threads.py
   owner: governance:d10_performance
   dimensions:
@@ -3108,33 +2952,6 @@ scripts:
   tags:
   - Critical
   - Quick
-- name: generate_asset_index.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 全项目资产索引生成器
-  tags:
-  - Disruptive
-  - Quick
-- name: generate_nav_table.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '全流程导航表自动生成器——从 config/nav_table_mapping.yaml + registries 自动生成 AGENTS.md
-    §5.2 七阶段导航表。对标 §6.16 静态清单自动生成铁律。
-
-    '
-  tags:
-  - Disruptive
-  - Quick
 - name: generate_path_ownership_map.py
   owner: governance
   dimensions:
@@ -3315,22 +3132,6 @@ scripts:
   warn_only: false
   description: ⚠ 请补充 description
   tags:
-  - Quick
-- name: group_orphan_modules.py
-  owner: governance
-  dimensions:
-  - D1
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args:
-  - flag: --output
-    type: str
-    description: 输出 JSON 路径
-  warn_only: false
-  description: 按域分组统计 ORPHAN MODULES（用于建任务卡批量处理）
-  tags:
-  - Critical
   - Quick
 - name: meta/arbitrate_findings.py
   owner: governance:meta
@@ -3854,28 +3655,6 @@ scripts:
   description: verify_reconciliation_registry.py — ReconciliationRegistry 轻量结构 audit（P3-T1）
   tags:
   - Quick
-- name: migrate_clean_build_status.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'OPS-2026062504: 数据清洗 depgraph (PostgreSQL) 历史脏值'
-  tags:
-  - Quick
-- name: migrate_domain_id_hyphen_to_underscore.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 域ID连字符→下划线迁移脚本（分层分批执行）
-  tags:
-  - Quick
 - name: migrate_sqlite_to_pg/migrate_data.py
   owner: governance:migrate_sqlite_to_pg
   dimensions:
@@ -3898,32 +3677,6 @@ scripts:
   description: ⚠ 请补充 description
   tags:
   - Quick
-- name: perf_depgraph_baseline.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: depgraph 查询性能基线测试（RULE-SIXTEEN 配套）
-  tags:
-  - Quick
-- name: phase_a_backup.py
-  owner: governance
-  dimensions: []
-  priority: P1
-  timeout_seconds: 600
-  args:
-  - --tier0
-  - --tier1
-  - --tier2
-  - --all
-  - --verify-only
-  - --output-dir
-  warn_only: false
-  description: 阶段A安全网 Tier0/1/2 关键文件备份 + git bundle——原子写入+并行复制+SHA256校验
-  tags: []
 - name: pre_delete_safety_check.py
   owner: governance
   dimensions:
@@ -3966,39 +3719,6 @@ scripts:
   args: []
   warn_only: false
   description: 'AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证'
-  tags:
-  - Quick
-- name: rebuild_audit_index.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
-  tags:
-  - Quick
-- name: rename_kebab_to_snake.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量重命名。
-  tags:
-  - Quick
-- name: rename_whitelist_cleanup.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 命名规范白名单清理 - 全文替换脚本。
   tags:
   - Quick
 - name: repair/apply_verification_results.py
@@ -4081,28 +3801,6 @@ scripts:
   description: P1-2 从备份回滚depgraph
   tags:
   - Quick
-- name: ri_boundary_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Runtime Integration 边界验证脚本 — MOD-INF-002
-  tags:
-  - Quick
-- name: ri_build_completion_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Runtime Integration Phase 2 完工验证 — MOD-INF-002
-  tags:
-  - Quick
 - name: run_all.py
   owner: governance
   dimensions:
@@ -4127,18 +3825,6 @@ scripts:
   description: run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
   tags:
   - Quick
-- name: scan_ground_truth_deps.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py
-    | §7'
-  tags:
-  - Quick
 - name: score_architecture.py
   owner: governance
   dimensions:
@@ -4154,19 +3840,6 @@ scripts:
   description: 12 维架构评分自动化（12-dimension-audit-matrix §6.1 — D1~D12 加权评分）
   tags:
   - Critical
-- name: session_simulator.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args:
-  - --warn-only
-  - --jsonl
-  warn_only: false
-  description: session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
-  tags:
-  - Quick
 - name: session_startup_check.py
   owner: governance
   dimensions:
@@ -4187,17 +3860,6 @@ scripts:
   args: []
   warn_only: false
   description: status.py — 审计系统状态仪表盘
-  tags:
-  - Quick
-- name: sync_blueprint_status.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 机械强制：construction_plan=phase_2_complete → blueprint.status=Active.
   tags:
   - Quick
 - name: sync_rule_registry.py
@@ -4235,17 +3897,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: test_lock_scenarios.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
-  tags:
-  - Quick
 - name: update_progress.py
   owner: governance
   dimensions:
@@ -4290,17 +3941,6 @@ scripts:
   description: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
   tags:
   - Quick
-- name: verify_final_delivery.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: §11最终交付验证
-  tags:
-  - Quick
 - name: verify_key_imports.py
   owner: governance
   dimensions:
@@ -4310,18 +3950,6 @@ scripts:
   args: []
   warn_only: false
   description: governance/verify_key_imports 脚本 — 关键模块导入验证
-  tags:
-  - Quick
-- name: verify_rule_yaml_migration.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: verify_rule_yaml_migration.py - 6-dimensional verification of rule
-    YAML migration.
   tags:
   - Quick
 - name: verify_schema_health.py
