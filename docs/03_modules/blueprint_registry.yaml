@@ -869,7 +869,7 @@ blueprints:
   layer: cross_layer
   functional_domain: data
   blueprint_status: Active
-  blueprint_level: module
+  blueprint_level: domain
   priority: P1
   version: 4.3.0
   generation: 3

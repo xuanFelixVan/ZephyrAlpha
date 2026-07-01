@@ -10,11 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L05 Portfolio Construction — Re-export wrapper (DM-298)
-
-All modules have been migrated to zephyr.portfolio_core.core.
-This package re-exports for backward compatibility.
-"""
+"""L05 Portfolio Construction — Package root"""
 
 from __future__ import annotations
 
