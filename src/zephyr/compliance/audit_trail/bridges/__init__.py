@@ -16,8 +16,6 @@ from zephyr.governance.audit_trail.bridges.feedback_bridge import AuditFeedbackB
 from zephyr.governance.audit_trail.bridges.tiered_storage_bridge import AuditTieredStorageBridge
 from zephyr.governance.audit_trail.bridges.trust_bridge import AuditTrustBridge
 
-from . import spec_auditor
-
 __all__ = [
     "AnomalyDetector",
     "AnomalyEvent",
@@ -40,3 +38,16 @@ __all__ = [
 
 __version__ = "0.1.0"
 __module_id__ = "MOD-INF-020"
+
+
+def __getattr__(name: str):
+    # __all__ 里的子模块名（如 spec_auditor）实际位于 zephyr.governance.audit_trail.bridges.*，
+    # 用 __getattr__ 按需 lazy 加载（替代已删除的 `from . import spec_auditor`）
+    import importlib
+
+    try:
+        mod = importlib.import_module(f"zephyr.governance.audit_trail.bridges.{name}")
+        globals()[name] = mod
+        return mod
+    except ImportError:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

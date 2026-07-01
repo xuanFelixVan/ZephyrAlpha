@@ -66,7 +66,7 @@ from typing import Any
 import duckdb
 import structlog
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH, init_db
+from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [

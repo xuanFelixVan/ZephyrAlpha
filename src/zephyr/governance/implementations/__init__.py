@@ -18,9 +18,7 @@ Phase C 具体实现包。
   - DefaultSecurityGateway : SecurityGateway 的具体实现（正则检测 + 审计决策）
 """
 
-# STUB: from zephyr.governance.security_governance.default_security_gateway import (  # auto-disabled: zephyr.governance.security_governance.default_security_gateway missing
-# DefaultSecurityGateway,
-# )
+from zephyr.governance.implementations.default_security_gateway import DefaultSecurityGateway
 
 __all__ = [
     "DefaultSecurityGateway",

@@ -66,21 +66,21 @@ from zephyr.shared.schema.schemas import (
 
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
 _TRADING_SYMBOLS = {
-    "ETF": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "FX": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "AssetClass": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "Country": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "CryptoContractType": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "CurrencyCode": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "Exchange": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "Future": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "Jurisdiction": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "OptionType": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "Stock": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "TradingCalendarName": "zephyr.execution.trading.trading_contracts.market.instrument",
-    "OrderSide": "zephyr.execution.trading.trading_contracts.execution.order",
-    "OrderStatus": "zephyr.execution.trading.trading_contracts.execution.order",
-    "OrderType": "zephyr.execution.trading.trading_contracts.execution.order",
+    "ETF": "zephyr.trading.trading_contracts.market.instrument",
+    "FX": "zephyr.trading.trading_contracts.market.instrument",
+    "AssetClass": "zephyr.trading.trading_contracts.market.instrument",
+    "Country": "zephyr.trading.trading_contracts.market.instrument",
+    "CryptoContractType": "zephyr.trading.trading_contracts.market.instrument",
+    "CurrencyCode": "zephyr.trading.trading_contracts.market.instrument",
+    "Exchange": "zephyr.trading.trading_contracts.market.instrument",
+    "Future": "zephyr.trading.trading_contracts.market.instrument",
+    "Jurisdiction": "zephyr.trading.trading_contracts.market.instrument",
+    "OptionType": "zephyr.trading.trading_contracts.market.instrument",
+    "Stock": "zephyr.trading.trading_contracts.market.instrument",
+    "TradingCalendarName": "zephyr.trading.trading_contracts.market.instrument",
+    "OrderSide": "zephyr.trading.trading_contracts.execution.order",
+    "OrderStatus": "zephyr.trading.trading_contracts.execution.order",
+    "OrderType": "zephyr.trading.trading_contracts.execution.order",
 }
 
 
