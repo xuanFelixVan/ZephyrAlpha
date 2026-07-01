@@ -1000,7 +1000,7 @@ sections:
     - description: GOV-DOC-002 v3.3.0 (2026-05-03)
       details: 07_ai_engineering删除;目录已物理删除所有残留引用更新为03_modules/_b_track_interfaces/
     - description: GOV-DOC-002 v3.5.0 (2026-05-06)
-      details: 全量审计对齐;adr/树节点替换;注册_b_track_interfaces/_sys-master/_master-blueprint
+      details: 全量审计对齐;adr/树节点替换;注册_b_track_interfaces/_system_master/_master-blueprint
     - description: GOV-DOC-003 v2.4.0 (2026-05-02)
       details: 新增doc_type→文件名后缀强制映射表;GATE-11 N-08检测规则
     - description: GOV-DOC-003 v2.5.0 (2026-05-06)

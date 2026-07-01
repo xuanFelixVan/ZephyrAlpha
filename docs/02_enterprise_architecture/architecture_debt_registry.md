@@ -1,4 +1,4 @@
-﻿# 架构债务注册表（Architecture Debt Registry）
+# 架构债务注册表（Architecture Debt Registry）
 
 > **文档性质**：全项目架构债务单一真源（Single Source of Truth）
 > **审核日期**：2026-06-30（初版）/ 2026-07-01（第32轮验证）
@@ -973,7 +973,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **受影响文件清单（11个文件，57行）**：
 - [system_pathway_registry.yaml:60](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml#L60)/[309](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml#L309)/[311](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml#L311)/[314](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml#L314)（4行）
-- [_sys_master/blueprint.md:47](file:///D:/ZephyrAlpha/docs/03_modules/system_master/blueprint.md#L47)/[75](file:///D:/ZephyrAlpha/docs/03_modules/system_master/blueprint.md#L75)/[782](file:///D:/ZephyrAlpha/docs/03_modules/system_master/blueprint.md#L782)/[840](file:///D:/ZephyrAlpha/docs/03_modules/system_master/blueprint.md#L840)/[3874](file:///D:/ZephyrAlpha/docs/03_modules/system_master/blueprint.md#L3874)（5行）
+- [_sys_master/blueprint.md:47](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/blueprint.md#L47)/[75](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/blueprint.md#L75)/[782](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/blueprint.md#L782)/[840](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/blueprint.md#L840)/[3874](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/blueprint.md#L3874)（5行）
 - [_master_blueprint/blueprint.md:46](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L46)/[49](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L49)/[52](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L52)/[71](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L71)/[107](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L107)/[108](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L108)/[109](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L109)/[193](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L193)/[194](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L194)/[195](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L195)/[211](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L211)/[212](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L212)/[213](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L213)/[214](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md#L214)（14行——自身目录内引用连字符，最严重）
 - [_master_blueprint/blueprint_capacity.md:19](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L19)/[38](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L38)/[59](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L59)/[80](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L80)/[317](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L317)/[1927](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L1927)/[1928](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L1928)/[1944](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L1944)/[1945](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L1945)/[1946](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md#L1946)（10行）
 - [_master_blueprint/blueprint_baseline.md:22](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L22)/[56](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L56)/[57](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L57)/[67](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L67)/[80](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L80)/[81](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md#L81)（6行）
@@ -1652,7 +1652,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **证据**：
 - [docs/03_modules/_domain_governance/blueprint.md:2](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/blueprint.md#L2) `module_id: MOD-GOVERNANCE`
 - [docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md:2](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md#L2) 同样`module_id: MOD-GOVERNANCE`
-- capacity_upgrade应迁为DOM-GOV-CAP-001但未迁移
+- capacity_upgrade已迁为MOD-GOV-CAP-001（已修复，原债务已解决）
 **病根**：根因1（迁移不完整）
 **修复方向**：迁移module_id
 

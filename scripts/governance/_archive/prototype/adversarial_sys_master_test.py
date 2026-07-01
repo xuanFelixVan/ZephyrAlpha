@@ -165,7 +165,7 @@ def attack_02_registry() -> Attack:
 def attack_03_depends_on() -> Attack:
     """attack_03_depends_on implementation."""
     a = Attack("M03-depends_on_broken")
-    bp = PROJECT_ROOT / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
+    bp = PROJECT_ROOT / "docs" / "03_modules" / "_system_master" / "blueprint.md"
 
     def attack_fn():
         """attack_fn implementation."""
@@ -186,7 +186,7 @@ def attack_03_depends_on() -> Attack:
 # ============================================================
 # Attack 4: project_rules.md cold start reference to SYS-MASTER-001 removed
 # Attack：删除 project_rules.md 冷启动序列中对 SYS-MASTER-001 的引用
-# Gate防御：check_cold_start_integration() 搜索 STEP 1..STEP 5 区间内的 SYS-MASTER 或 _sys-master
+# Gate防御：check_cold_start_integration() 搜索 STEP 1..STEP 5 区间内的 SYS-MASTER 或 _system_master
 # ============================================================
 
 
@@ -198,7 +198,7 @@ def attack_04_cold_start() -> Attack:
     def attack_fn():
         """attack_fn implementation."""
         original = rules.read_text(encoding="utf-8")
-        removed = original.replace("_sys-master", "_ATTACK_REMOVED_REF")
+        removed = original.replace("_system_master", "_ATTACK_REMOVED_REF")
         removed = removed.replace("SYS-MASTER-001", "ATTACK_DELETED_MASTER")
         rules.write_text(removed, encoding="utf-8")
         return original
@@ -274,7 +274,7 @@ def attack_06_missing() -> Attack:
 def attack_07_rules() -> Attack:
     """attack_07_rules implementation."""
     a = Attack("M07-ai_rules_regression")
-    bp = PROJECT_ROOT / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
+    bp = PROJECT_ROOT / "docs" / "03_modules" / "_system_master" / "blueprint.md"
 
     def attack_fn():
         """attack_fn implementation."""

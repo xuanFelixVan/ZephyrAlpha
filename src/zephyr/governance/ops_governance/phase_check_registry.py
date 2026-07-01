@@ -624,7 +624,7 @@ def check_full_audit_regression() -> GateResult:
 def check_architecture_guard() -> GateResult:
     exit_code, output = _run_script("d5_architecture/check_g6_ctr_compliance.py", timeout=30)
     if exit_code == 0:
-        mod = REPO_ROOT / "docs/03_modules/_sys-master/blueprint.md"
+        mod = REPO_ROOT / "docs/03_modules/_system_master/blueprint.md"
         if mod.exists():
             return GateResult.GREEN
     return GateResult.YELLOW

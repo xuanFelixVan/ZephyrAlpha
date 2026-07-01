@@ -53398,7 +53398,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/system_master/index.md"
+    relative_path: "docs/03_modules/_system_master/index.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -53488,7 +53488,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/system_master/blueprint.md"
+    relative_path: "docs/03_modules/_system_master/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"

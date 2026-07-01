@@ -1181,7 +1181,7 @@ STEP 3: 拆分后验证
 | 24 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` |
 | 25 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` |
 | 26 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
-| 27 | 系统总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| 27 | 系统总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 
 ---
 

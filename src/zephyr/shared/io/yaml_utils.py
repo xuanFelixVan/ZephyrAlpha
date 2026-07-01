@@ -350,7 +350,7 @@ def evaluate_ttl(
         - ``frontmatter.doc_type``: 用 frontmatter doc_type 判定（operator: equals）
 
     Args:
-        rel_path: 相对仓库根的路径（正斜杠，如 ``docs/03_modules/system_master/changes/index.md``）
+        rel_path: 相对仓库根的路径（正斜杠，如 ``docs/03_modules/_system_master/changes/index.md``）
         frontmatter: 文件 frontmatter dict（可为 None）
         decision_tree: decision_tree 结构（可为 None，回退 task_bound）
 

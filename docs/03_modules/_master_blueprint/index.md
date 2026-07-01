@@ -26,6 +26,10 @@ ttl: permanent
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | _master_blueprint — 目录索引 |
 
+## 模块发现入口
+
+> 需要发现项目中所有模块？请前往 [docs/03_modules/index.md](../index.md)，该文件包含全部业务域（27个）、平台域（12个）、跨层模块的完整导航与 file:// 链接。
+
 ## 导航
 
 - [上级目录](../index.md)

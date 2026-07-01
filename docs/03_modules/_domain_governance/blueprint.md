@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
@@ -28,7 +28,7 @@ stability: evolving
 verifiability: automated
 priority: P0
 runtime_plane: cold
-summary: "治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至DOM-GOV-CAP-001。三轮审计29项D-GAP全覆盖。"
+summary: "治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。"
 codification_level: L1
 codification_at: "2026-05-14"
 submodule_path: src/zephyr/governance/
@@ -45,14 +45,14 @@ depends_on:
   - target: "MOD-INF-016"
     at: "§3"
     why: "Shared Core——_concurrency.py/AiAuditLogger/PermissionGuard等共享组件"
-  - target: "DOM-GOV-CAP-001"
+  - target: "MOD-GOV-CAP-001"
     at: "§0/§3.10~3.13/§9/§11"
     why: "容量升级设计独立蓝图——分层执行/熔断器/分片存储/GPU加速/施工路线图/测试矩阵权威来源"
   - target: "MOD-DATABASE"
     at: "§9"
     why: "Database——ARB-8裁定events表为审计唯一权威存储，分片存储设计直接依赖"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_system_master\\blueprint.md"
     section: "全篇"
     why: "系统总蓝图"
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint.md"
@@ -66,7 +66,7 @@ references:
     why: "压缩工作流标准"
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\capacity-upgrade\\blueprint.md"
     section: "全篇"
-    why: "容量升级设计独立蓝图（DOM-GOV-CAP-001）"
+    why: "容量升级设计独立蓝图（MOD-GOV-CAP-001）"
 tags:
   - domain-blueprint
   - governance
@@ -88,7 +88,7 @@ ssot_claims:
     scope: layer
   - claim: "治理域设计缺失追踪(D-GAP-01~12索引 + D-GAP-13~29设计)"
     scope: layer
-    note: "D-GAP-01~12设计真源在DOM-GOV-CAP-001，本蓝图仅保留索引+引用"
+    note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001，本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
 ---
@@ -100,7 +100,7 @@ ssot_claims:
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
+本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
 
 ---
 
@@ -163,7 +163,7 @@ ssot_claims:
 | GateCache 每日清空 | D-GAP-16 | lifecycle_manager CircadianScheduler hour=0 | ✅ |
 | ChangeImpactAnalyzer 增量触发 | G-CT-017 | run_incremental.py 自动串联 | ✅ |
 | NEW-01~15 脚本 | §12 C.3 | 14 已实现 + 1 复用(NEW-14) | ✅ |
-| D-GAP-01~12 设计真源 | ssot_claims | → DOM-GOV-CAP-001 §1.3 | ✅ |
+| D-GAP-01~12 设计真源 | ssot_claims | → MOD-GOV-CAP-001 §1.3 | ✅ |
 
 ### §0.3 版本-代码映射
 
@@ -181,11 +181,11 @@ ssot_claims:
 |-----------|---------|---------|------|
 | Agent治理八件套跨模块集成契约(G-CT-001~022) | MOD-GOVERNANCE | — | 真源 |
 | 治理域循环依赖裁定(ARB-1~9) | MOD-GOVERNANCE | — | 真源 |
-| 治理域设计缺失追踪(D-GAP-01~12索引) | MOD-GOVERNANCE | DOM-GOV-CAP-001(设计真源) | 索引+引用 |
+| 治理域设计缺失追踪(D-GAP-01~12索引) | MOD-GOVERNANCE | MOD-GOV-CAP-001(设计真源) | 索引+引用 |
 | 治理域设计缺失追踪(D-GAP-13~29设计) | MOD-GOVERNANCE | — | 真源 |
 | 治理域Phase施工路线图与进度 | MOD-GOVERNANCE | — | 真源 |
-| 治理域容量升级架构 | DOM-GOV-CAP-001 | — | 真源 |
-| 容量升级D-GAP-01~12设计方案 | DOM-GOV-CAP-001 | — | 真源 |
+| 治理域容量升级架构 | MOD-GOV-CAP-001 | — | 真源 |
+| 容量升级D-GAP-01~12设计方案 | MOD-GOV-CAP-001 | — | 真源 |
 | G-CT-* 契约（非 CT-*） | MOD-GOVERNANCE | MOD-MASTER-002 仅引用 | 真源 |
 
 ### §0.5 代码目录唯一性
@@ -205,18 +205,18 @@ ssot_claims:
 
 | D-GAP | 描述 | 优先级 | 状态 | 对应章节 |
 |-------|------|:-----:|:----:|---------|
-| D-GAP-01 | 容量 SLO（7 条） | P0 | → DOM-GOV-CAP-001 §1.3 | §0 |
-| D-GAP-02 | 脚本生命周期治理 | P0 | → DOM-GOV-CAP-001 §1.3 | §3.9, G-CT-013 |
-| D-GAP-03 | Module→Script 精准映射 | P0 | → DOM-GOV-CAP-001 §1.3 | G-CT-009 |
-| D-GAP-04 | 分层执行模型 | P0 | → DOM-GOV-CAP-001 §1.3 | §3.10 |
-| D-GAP-05 | 熔断器策略 | P0 | → DOM-GOV-CAP-001 §1.3 | §3.11 |
-| D-GAP-06 | 分片存储架构 | P0 | → DOM-GOV-CAP-001 §1.3 | §3.12 |
-| D-GAP-07 | 多 AI 协调模型 | P0 | → DOM-GOV-CAP-001 §1.3 | G-CT-010 |
-| D-GAP-08 | GPU 加速策略 | P1 | → DOM-GOV-CAP-001 §1.3 | §3.13 |
-| D-GAP-09 | 可观测性架构 | P1 | → DOM-GOV-CAP-001 §1.3 | §3.14 |
-| D-GAP-10 | 维度模型扩展 | P1 | → DOM-GOV-CAP-001 §1.3 | §3.15 |
-| D-GAP-11 | 业务模块治理适配 | P1 | → DOM-GOV-CAP-001 §1.3 | G-CT-011 |
-| D-GAP-12 | Finding 冲突仲裁 | P1 | → DOM-GOV-CAP-001 §1.3 | G-CT-012 |
+| D-GAP-01 | 容量 SLO（7 条） | P0 | → MOD-GOV-CAP-001 §1.3 | §0 |
+| D-GAP-02 | 脚本生命周期治理 | P0 | → MOD-GOV-CAP-001 §1.3 | §3.9, G-CT-013 |
+| D-GAP-03 | Module→Script 精准映射 | P0 | → MOD-GOV-CAP-001 §1.3 | G-CT-009 |
+| D-GAP-04 | 分层执行模型 | P0 | → MOD-GOV-CAP-001 §1.3 | §3.10 |
+| D-GAP-05 | 熔断器策略 | P0 | → MOD-GOV-CAP-001 §1.3 | §3.11 |
+| D-GAP-06 | 分片存储架构 | P0 | → MOD-GOV-CAP-001 §1.3 | §3.12 |
+| D-GAP-07 | 多 AI 协调模型 | P0 | → MOD-GOV-CAP-001 §1.3 | G-CT-010 |
+| D-GAP-08 | GPU 加速策略 | P1 | → MOD-GOV-CAP-001 §1.3 | §3.13 |
+| D-GAP-09 | 可观测性架构 | P1 | → MOD-GOV-CAP-001 §1.3 | §3.14 |
+| D-GAP-10 | 维度模型扩展 | P1 | → MOD-GOV-CAP-001 §1.3 | §3.15 |
+| D-GAP-11 | 业务模块治理适配 | P1 | → MOD-GOV-CAP-001 §1.3 | G-CT-011 |
+| D-GAP-12 | Finding 冲突仲裁 | P1 | → MOD-GOV-CAP-001 §1.3 | G-CT-012 |
 | D-GAP-13 | Finding 存储容量爆炸保留策略 | P0 | 已设计 | G-CT-015 |
 | D-GAP-14 | 硬件资源预算量化 | P0 | 已设计 | G-CT-016 |
 | D-GAP-15 | 传递依赖变更影响面分析 | P0 | 已设计 | G-CT-017 |
@@ -1231,7 +1231,7 @@ P2-RESILIENCE（韧性保障）:
 
 ## 0. 容量升级设计与 SLO
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §1
+> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §1
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1249,7 +1249,7 @@ P2-RESILIENCE（韧性保障）:
 |------|------|--------|
 | 集成契约 | G-CT-001~022 跨模块数据流方向、字段、触发条件 | 各模块内部实现细节（见各模块蓝图） |
 | 仲裁裁定 | ARB-1~9 循环依赖/权限/存储裁定 | 裁定执行代码（见各模块蓝图） |
-| 容量升级 | —（已拆分至 DOM-GOV-CAP-001） | SLO/分片存储/GPU加速/施工路线图 |
+| 容量升级 | —（已拆分至 MOD-GOV-CAP-001） | SLO/分片存储/GPU加速/施工路线图 |
 | 孤儿归属 | governance/ 根目录 79 个文件归属映射 | 实际文件迁移执行 |
 
 ### 1.4 运行场景约束
@@ -1275,7 +1275,7 @@ P2-RESILIENCE（韧性保障）:
 
 | overlap_check | 声明 | 冲突处理 |
 |---------------|------|---------|
-| 容量升级 SLO | 已拆分至 DOM-GOV-CAP-001 | 本蓝图仅引用，不重复定义 |
+| 容量升级 SLO | 已拆分至 MOD-GOV-CAP-001 | 本蓝图仅引用，不重复定义 |
 | 各模块 depends_on | 各模块蓝图自行声明 | 本蓝图 G-CT 契约为元层定义，不替代模块级依赖声明 |
 
 | module_id | 名称 | 优先级 | 施工进度 | 核心职责 |
@@ -1523,7 +1523,7 @@ P2-RESILIENCE（韧性保障）:
 ### 3.10~3.13 容量升级设计（已拆分）
 
 > §3.10 分层执行模型 / §3.11 熔断器策略 / §3.12 分片存储架构 / §3.13 GPU 加速策略
-> **全部已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §2~5
+> **全部已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §2~5
 
 ---
 
@@ -1863,7 +1863,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 9. 施工升级路线图
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §6
+> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §6
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1875,7 +1875,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| SYS-MASTER-001 | 必须 | Level 0 系统总蓝图——治理域是金字塔 Level 1 节点 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| SYS-MASTER-001 | 必须 | Level 0 系统总蓝图——治理域是金字塔 Level 1 节点 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-MASTER_BLUEPRINT | 必须 | 基础设施域集成蓝图——治理域依赖基建域基础能力 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -1935,7 +1935,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 11. 升级后测试矩阵
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §7
+> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §7
 
 
 ## ⚠️ Vibe Coding 蓝图编写铁律
@@ -2010,7 +2010,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
+| 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | 系统拓扑 |
 | 6 | 基础设施域蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 基础设施集成 |
 | 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-001~013 治理决策方法论 |
 | 8 | 代码构建标准 | REG-STD-002 / GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 命名/文件组织/类型注解/SSoT守卫 |
@@ -2061,7 +2061,7 @@ STEP 3: 拆分后验证
 | 11 | D-GOV-11 | get_audit_writer() 单例工厂创建 | — | — | 旁路桥接引用不存在的函数导致死代码 | 2026-05-18 |
 | 12 | D-GOV-12 | AuditEventType 新增枚举值 | — | — | SESSION_RECORD/BUDGET_ENFORCEMENT 语义修复 | 2026-05-18 |
 | 13 | D-GOV-13 | 4个自动化缺口修复 | — | — | finding_lifecycle/gate_cache/watchdog/change_impact 全部接入 | 2026-05-18 |
-| 14 | D-GOV-14 | D-GAP-01~12 SSoT 收窄 | — | — | 设计真源归 DOM-GOV-CAP-001，本蓝图仅保留索引 | 2026-05-18 |
+| 14 | D-GOV-14 | D-GAP-01~12 SSoT 收窄 | — | — | 设计真源归 MOD-GOV-CAP-001，本蓝图仅保留索引 | 2026-05-18 |
 
 ---
 
@@ -2072,7 +2072,7 @@ STEP 3: 拆分后验证
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
 | 治理域集成契约 G-CT-* | **本文档 §3** | — |
-| 治理域容量 SLO | **DOM-GOV-CAP-001 §1** | — |
+| 治理域容量 SLO | **MOD-GOV-CAP-001 §1** | — |
 | 治理域 D-GAP 清单 | **本文档 A/B** | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

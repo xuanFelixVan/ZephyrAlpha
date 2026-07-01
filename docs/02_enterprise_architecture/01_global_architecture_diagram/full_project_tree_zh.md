@@ -779,7 +779,7 @@ docs/  (包含1个文件: .yaml(1))
 │   ├── specifications/  
 │   │   ├── auto_runtime_core/  
 │   │   └── model_capability_exam/  
-│   ├── system_master/  (包含2个文件: .md(2))  
+│   ├── _system_master/  (包含2个文件: .md(2))  
 │   │   ├── blueprint.md  — "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"  
 │   │   └── index.md  — 索引  
 │   ├── blueprint_registry.yaml  — blueprint_registry配置  

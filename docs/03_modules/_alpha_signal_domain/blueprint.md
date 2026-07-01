@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-ALPHA_SIGNAL_DOMAIN
 title: "Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成"
 doc_type: blueprint
@@ -27,6 +27,7 @@ scope: domain
 stability: evolving
 verifiability: manual
 priority: P1
+activation_phase: delete
 summary: "Alpha因子域（L02+L03）Level 1集成蓝图——定义Alpha因子核心(MOD-AF-001)到信号生成核心(MOD-SIG-001)的数据流、接口契约、共享数据模型和施工门禁。"
 codification_level: L1
 codification_at: "2026-05-14"
@@ -47,7 +48,7 @@ depends_on:
     at: "全篇"
     why: "L03 信号生成核心模块蓝图"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_system_master\\blueprint.md"
     section: "§53~§57"
     why: "系统总蓝图Alpha-Signal域章节"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -67,7 +68,7 @@ tags:
 
 # Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成
 
-> module_id: alpha_signal_domain-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: alpha_signal_domain-001 | version: 0.4.0 | status: deprecated | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\src\zephyr\factor\ + D:\ZephyrAlpha\src\zephyr\signal_ashare\ + D:\ZephyrAlpha\src\zephyr\signal_fundamental\ + D:\ZephyrAlpha\src\zephyr\signal_quality\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -286,7 +287,7 @@ L02 Alpha 因子计算和 L03 信号生成是 ZephyrAlpha 量化策略的核心�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| SYS-MASTER-001 | 必须 | 系统总蓝图 §53~§57 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| SYS-MASTER-001 | 必须 | 系统总蓝图 §53~§57 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-AF-001 | 必须 | L02 Alpha 因子核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
 | MOD-SIG-001 | 必须 | L03 信号生成核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` |
 
@@ -589,7 +590,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
+| 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | 系统拓扑 |
 
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-021
 submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
@@ -977,7 +977,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 | MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
 | MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
-| MOD-MASTER_BLUEPRINT | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
 | MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
 

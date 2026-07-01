@@ -22,6 +22,7 @@ summary: "AI模型入职考试系统——五维评测产出CapabilityPassport�
 template_for: blueprint
 tags: [model-capability-exam, exam, benchmark, capability-passport, task-gate, model-profiler, cross-layer]
 priority: P1
+activation_phase: current
 runtime_plane: warm
 belongs_to: "MOD-INF-034"
 parent_module: "MOD-INF-034"
@@ -404,7 +405,7 @@ class ExamMode(str, Enum):
 | MOD-INF-034 (ModelProfiler) | 必须 | benchmark 基础设施、模型发现 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_capability_exam\blueprint.md` |
 | MOD-INF-009 (Pipeline) | 必须 | 考试任务调度 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-024 (BudgetEnforcer) | 可选 | Token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-005 (分布式执行) | 可选 | 并发考试调度（Phase 1） | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| MOD-INF-005 (分布式执行) | 可选 | 并发考试调度（Phase 1） | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-INF-035 (AutoRuntime Core) | 被依赖 | 消费护照做模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-GATE_ENGINE (Gate Engine) | 被依赖 | TaskGate 消费护照 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费护照 cost_efficiency 做LLM路由决策 | — | d:\临时工作区\交易决策流水线设计.md |

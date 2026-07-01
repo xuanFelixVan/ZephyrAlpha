@@ -1368,7 +1368,7 @@ def process_v1(data: dict) -> Result: ...
 
 | 修改项 | 文件 | 类型 |
 |--------|------|------|
-| 蓝图名称修正 Monoculture→爆炸半径防护 | blueprint.md + __init__.py + fifteen_dimension_auditor.py + _sys-master | P0 |
+| 蓝图名称修正 Monoculture→爆炸半径防护 | blueprint.md + __init__.py + fifteen_dimension_auditor.py + _system_master | P0 |
 | ExitCode 三重定义统一 | report.py + degradation.py + test_degradation_edge.py | P0 |
 | GATE-DEDUP 四重空壳修复 | GATE-DEDUP.yaml + ct_deduplication.py + gate_engine.py + _registry.yaml | P0 |
 | __init__.py 版本号 0.10.0→0.14.1 | __init__.py | P0 |

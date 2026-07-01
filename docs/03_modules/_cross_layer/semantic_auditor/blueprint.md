@@ -43,6 +43,7 @@ tags:
   - pure-semantic-audit
   - capacity-upgrade
 priority: P1
+activation_phase: current
 runtime_plane: warm
 depends_on:
   - target: MOD-INF-020
@@ -73,7 +74,7 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\audit-orchestrator\\blueprint.md"
     section: "§0,§1"
     why: "AuditOrchestrator——平级协调方，结构审计维度承接10类二元触发"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_system_master\\blueprint.md"
     section: "§0"
     why: "系统级容量升级方案（Worker Pool/双通道调度/拥塞控制）"
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\shared_core\\blueprint.md"
@@ -638,7 +639,7 @@ class SemanticAuditReport(BaseModel):
 | 5 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 新增 run_semantic_audit.py | 脚本注册 |
 | 6 | Skill 注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 新增 SKILL-DOM-SEM-001 | Skill 注册 |
 | 7 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 新增 MOD-INF-028 10 条依赖 | 依赖注册 |
-| 8 | 系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | §0 分派表新增语义审计任务 | 分派更新 |
+| 8 | 系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | §0 分派表新增语义审计任务 | 分派更新 |
 | 9 | 资产索引 | `D:\ZephyrAlpha\data\asset_index\unified-asset-index.yaml` | 自动扫描发现 | 自动 |
 | 10 | 项目规则 | `D:\ZephyrAlpha\.trae\rules\project_rules.md` | 强制集成对照表新增语义审计 | 规则更新 |
 

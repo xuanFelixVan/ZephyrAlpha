@@ -154,36 +154,11 @@ depends_on:
 
 ### 2.1 shared-contracts（跨层数据契约）
 
-| 文件 | 职责 |
-|------|------|
-| `instrument.py` | 金融 Instrument 模型（symbol/name/asset_type）|
-| `money.py` | 货币金额模型 + 汇兑 |
-| `timestamp.py` | 时间戳模型（ISO 8601 含时区）|
-| `runtime_plane_tag.py` | 运行时平面标签（cold/warm/hot）|
+> → 详见 **MOD-013** `contracts_blueprint.md`（跨层数据契约 SSoT——11 子域 64 文件，含 instrument/money/timestamp/runtime_plane_tag 等）
 
 ### 2.2 shared-infra（共享基础设施）
 
-| 文件 | 职责 |
-|------|------|
-| `schemas.py` | **Task 31字段 Pydantic V2 模型**——TaskCard 基座 |
-| `ssot_guard.py` | SSoT 守卫——防止多个文件定义同一概念 |
-| `observer.py` | 观察者事件总线——系统间松耦合消息通知 |
-| `capability.py` | 能力定义——系统能力注册与发现 |
-| `content_fingerprint.py` | 内容指纹——文件内容哈希去重 |
-| `dos_launcher.py` | DOS 启动器——Windows 兼容性工具 |
-| `paths.py` | 项目路径常量 SSoT——REPO_ROOT/DB_PATH/缓存目录等集中定义 |
-| `time_utils.py` | 时间工具 SSoT——utc_now/now_iso/default_now 唯一入口 |
-| `token_utils.py` | Token 估算 SSoT——estimate_tokens 统一入口（1 token ≈ 4 字符）|
-| `frontmatter_utils.py` | Markdown/YAML frontmatter 解析 SSoT——parse/extract 统一接口 |
-| `API_INDEX.py` | Shared API 索引——AI 冷启动时的"员工通讯录"，列出所有 shared 公开符号 |
-| `logging.py` | **结构化日志系统**——ZephyrLogger + contextvars trace_id 传播 + 双模式输出（控制台人类可读 / 文件 JSON） |
-| `shared_quickref.yaml` | **AI 零歧义快速参考**——按消费场景组织的 YAML canonical 索引 |
-| `testing.py` | **测试夹具/工厂**——Make valid Task/AuditReport/KnowledgeEntry/FailurePattern/HandoffPackage。AI 无需记忆必填字段 |
-| `migration.py` | **Schema 版本化迁移**——BFS 最短路径自动迁移 Task dict 版本链 + 双向支持 |
-| `deprecation.py` | **API 废弃策略**——@deprecated 装饰器 + warn/strict/silent 三模式 |
-| `events/dlq.py` | **死信队列**——拦截 observer 失败事件 → SQLite 持久化 → 定时重试 |
-| `__version__.py` | **版本常量**——PEP 440 __version__ + check_shared_version() 运行时校验 |
-| `health.py` | **聚合健康检查**——AggregateHealth + ALL_HEALTHY/DEGRADED/UNHEALTHY + JSON 可序列化 |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（跨层共享基础设施——14 子目录 ~115 文件，含 schemas/ssot_guard/observer/capability/paths/logging/health 等）
 
 ### 2.3 shared-errors（统一错误层次）
 
@@ -191,63 +166,44 @@ depends_on:
 > 与 contracts/errors/ 的区别：contracts/errors/ 是 dataclass 值对象（跨层结构化错误传递），
 > 本子模块是 Python Exception 继承树（throw/catch 统一入口）。
 
-| 文件 | 职责 |
-|------|------|
-| `errors.py` | **ZephyrBaseError** + 12 子类——ConfigError / ContractError / SecurityError / ValidationError / TaskError / PipelineError / GateError / ContextError / FeedbackError / DataError / IOError / UnimplementedError |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/errors.py — ZephyrBaseError + 12 子类错误层次）
 
 ### 2.4 shared-constants（集中 re-export）
 
 > **修复散落枚举问题**——此前 AI 需要到 instrument.py / order.py / observer.py / schemas.py 四处找枚举。
 
-| 文件 | 职责 |
-|------|------|
-| `constants.py` | 所有共享枚举集中 re-export——AssetClass / OrderSide / EventType / TaskStatus / KeCategory 等 22 个枚举/常量 |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/constants.py — 共享枚举集中 re-export）
 
 ### 2.5 shared-events（事件体 Schema）
 
 > **修复 B6/B10 盲点**——observer.py 的 emit() 接受裸 dict，消费者不知道 payload 结构。
 
-| 文件 | 职责 |
-|------|------|
-| `events/event_schemas.py` | **5 个 EventType 对应的 Pydantic V2 frozen Schema** + EVENT_PAYLOAD_MAP |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/events/event_schemas.py — 事件体 Schema）
 
 ### 2.6 shared-resilience（韧性基座）
 
 > **盲点 B6/B9/B15 修复**——统一重试/熔断/降级策略，零依赖基类。
 > 与 gates/circuit_breaker.py 互补——本模块纯内存，gates 版 SQLite 持久化 + 门禁集成。
 
-| 文件 | 职责 |
-|------|------|
-| `resilience/retry.py` | **async_retry 装饰器**——指数退避 + jitter + 异常白名单/黑名单 |
-| `resilience/circuit_breaker.py` | **CircuitBreaker 状态机**——CLOSED/OPEN/HALF_OPEN 三态，线程安全，零持久化 |
-| `resilience/fallback.py` | **FallbackChain 降级链**——按序尝试 fallback 函数，全部失败抛 FallbackExhaustedError |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/resilience/ — retry/circuit_breaker/fallback 韧性基座）
 
 ### 2.7 shared-lifecycle（模块生命周期）
 
 > **盲点 B8 修复**——统一模块初始化/启动/关闭/健康检查契约。
 
-| 文件 | 职责 |
-|------|------|
-| `lifecycle/hooks.py` | **LifecycleAware Protocol** + **LifecycleManager 编排器**——on_init/on_startup/on_shutdown/health_check |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/lifecycle/hooks.py — 模块生命周期钩子）
 
 ### 2.8 shared-feature-flags（功能开关）
 
 > **盲点 B7/B10 修复**——100% AI 施工下的 AI 行为开关，配置驱动。
 
-| 文件 | 职责 |
-|------|------|
-| `flags.py` | **FeatureFlag + FlagRegistry**——三态开关 ALWAYS_ON/CONDITIONAL/ALWAYS_OFF + 按 module_id/agent_id 灰度 |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/flags.py — FeatureFlag 功能开关系统）
 
 ### 2.9 shared-utilities（通用工具层）
 
 > **盲点 #5/#14/#15/#3 修复**——类型安全 + diff/patch + 安全I/O + 配置加载四大缺口。
 
-| 文件 | 职责 |
-|------|------|
-| `types.py` | **13 个语义化 NewType 别名**——TaskId / ModuleId / FilePath / SessionId / AgentId / ... |
-| `diff_utils.py` | **compute_diff + apply_patch**——统一 diff 格式 + patch 干跑检测 |
-| `file_utils.py` | **atomic_write + backup_and_rollback**——POSIX 原子写入 + 自动备份回滚 |
-| `config/loader.py` | **load_yaml_config + Pydantic 校验**——三段式 YAML 加载（parse→merge→validate）|
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/utils/ — types/diff_utils/file_utils/config 通用工具层）
 
 ### 2.10 shared-process-lifecycle（进程生命周期网关）
 
@@ -255,10 +211,7 @@ depends_on:
 > 设计根因: 裸 Popen/Process 绕过 MCPProcessPool 导致进程泄漏。
 > 依赖图: [DEP-GRAPH-process-lifecycle-001](file:///D:/ZephyrAlpha/data/asset_index/archive/DEP-GRAPH-process-lifecycle-001.yaml)
 
-| 文件 | 职责 |
-|------|------|
-| `infra/process_lifecycle_gateway.py` | **ProcessLifecycleGateway** — launch() 启动子进程 (通过 ProcessPool) / launch_daemon() 启动后台进程 (通过 ProcessPool + DaemonRegistry) / terminate_all() 关闭所有池中进程。强制入口：所有 subprocess.Popen / multiprocessing.Process 必须经过此网关 |
-| `gates/invariants/en_process_lifecycle_gateway.py` | **进程创建入口校验门禁** — AST 扫描检测裸 subprocess.Popen/multiprocessing.Process 调用，CI 阻断 |
+> → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/infra/process_lifecycle_gateway.py + gates 门禁 — 进程生命周期网关）
 
 **ProcessPool 增强** (modify existing `process_pool.py`):
 
@@ -327,27 +280,7 @@ depends_on:
 
 ### 3.1 core/ 文件蓝图归属表
 
-| 子目录 | 文件数 | 蓝图归属 | 施工程度 | 关键文件 |
-|--------|:---:|---------|:---:|------|
-| *(root)* | 7 | MOD-INF-016 | ✅ | `blueprint_decomposer`, `models` v0.3.0, `context_engine`, `healthcheck_service` |
-| adaptation/ | 3 | MOD-INF-016 | ✨ | `execution_tuner`, `prompt_version_manager` |
-| compensation/ | 2 | MOD-INF-016 | ✨ | `saga_compensator` |
-| dependency/ | 2 | MOD-INF-016 | ✨ | `dependency_graph` |
-| draft/ | 2 | MOD-INF-016 | ✨ | `draft_assistant` |
-| events/ | 5 | MOD-INF-016 | ✨ | `event_bus`, `event_reactor`, `event_store`, `hook_dispatcher` |
-| impact/ | 3 | MOD-INF-016 | ✨ | `impact_propagator`, `llm_impact_analyzer` |
-| knowledge/ | 4 | MOD-INF-016 | ✨ | `ke_linker`, `ke_structurer`, `kms_interface` |
-| lifecycle/ | 3 | MOD-INF-016 | ✨ | `scope_guard`, `task_lifecycle_manager` |
-| maintenance/ | 5 | MOD-INF-016 | ✨ | `autonomy_monitor`, `dogfooding`, `handbook`, `zero_config` |
-| observability/ | 6 | MOD-INF-016 | ✨ | `cli_summary`, `cost_tracker`, `failure_matcher`, `notifier`, `trace_decorator` |
-| quality/ | 2 | MOD-INF-016 | ✨ | `quality_monitor` |
-| queue/ | 3 | MOD-INF-016 | ✨ | `task_queue`, `task_scheduler` |
-| reliability/ | 5 | MOD-INF-016 | ✨ | `circuit_breaker`, `context_guard`, `diff_planner`, `retry_handler` |
-| session/ | 3 | MOD-INF-016 | ✨ | `session_boundary`, `session_continuity` |
-| sla/ | 2 | MOD-INF-016 | ✨ | `sla_monitor` |
-| sync/ | 2 | MOD-INF-016 | ✨ | `blueprint_code_sync` |
-
-> ✅ = phase_0_14_complete | ✨ = early-bird（已落盘已导入，缺单元测试）
+> → 详见 **MOD-014** `governance_core_blueprint.md`（core/ 16 子目录 60 文件——blueprint_decomposer/models/context_engine/event_bus/lifecycle 等）
 
 ---
 

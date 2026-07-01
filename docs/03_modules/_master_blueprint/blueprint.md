@@ -200,7 +200,7 @@ tags:
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | SYS-MASTER-001 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 | SYS-MASTER 定义"谁有什么"，本蓝图定义"之间怎么连" |
+| 1 | SYS-MASTER-001 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | 系统拓扑 | SYS-MASTER 定义"谁有什么"，本蓝图定义"之间怎么连" |
 
 ---
 

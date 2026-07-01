@@ -83,7 +83,7 @@
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
 2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（路径全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
 2.1 确认数据库就绪：4 库清单（INFRA-DB-001~004）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）。其中 depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` 提取子集，禁止裸连
-3. 读 docs/03_modules/system_master/blueprint.md §0 → 定位子系统任务域
+3. 读 docs/03_modules/_system_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
 6. **创建任何代码/脚本/模块前** → MUST 读 [trae_056_module_creation_workflow.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)（TRAE-056 完整工作流程：冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证，11个阶段）
@@ -1452,7 +1452,7 @@ STEP 1   — 读 docs/registry_of_registries.yaml → 了解全项目注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板
 STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，PostgreSQL 数据库，禁止裸连。详见 RULE-SIXTEEN）
 STEP 1.3 — 确认数据库就绪：4 库清单（INFRA-DB-001~004）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）
-STEP 1.5 — 读 docs/03_modules/system_master/blueprint.md §0 → 定位子系统任务域
+STEP 1.5 — 读 docs/03_modules/_system_master/blueprint.md §0 → 定位子系统任务域
 STEP 2   — 读本文件（project_rules.md）→ 了解硬规则
 STEP 3   — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
 STEP 4   — Phase Manager: 当前施工阶段（46 个门控检查）
@@ -1477,7 +1477,7 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 ## Session 开关门
 
-**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/system_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）→ **启动大脑系统**（见 onboarding_detail.md §五 STEP 0.5）
+**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_system_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）→ **启动大脑系统**（见 onboarding_detail.md §五 STEP 0.5）
 
 **关门**（缺一不可）:
 ```

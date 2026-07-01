@@ -31,6 +31,7 @@ actual_disk_path: "src/zephyr/security/access_control/orphan_judge/"
 summary: "孤儿判定子系统——五层分级价值判定引擎，对孤儿文件执行注册检查→引用图→功能重复→独特价值→独立价值判定，输出六种处置建议。"
 tags: [orphan-judgment, asset-lifecycle, dedup, value-assessment, extract-merge, decision-tree, confidence-scoring, reference-graph, swid-tag, auto-governance, MOD-INF-029]
 priority: P1
+activation_phase: current
 runtime_plane: warm
 depends_on:
   - {target: "MOD-INF-017", at: "§2", why: "Code Dedup Engine——L2功能重复检测的语义相似度引擎"}

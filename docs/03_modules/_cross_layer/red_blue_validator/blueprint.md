@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-030
 submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
@@ -26,6 +26,7 @@ last_verified: "2026-05-23"
 last_updated: "2026-05-23"
 summary: "红蓝对抗验证器——红方注入攻击→蓝方运行Gate/Check→判定是否拦住→绕过入库扩充攻击库→修复后对抗验证→收敛检测。Total Audit System v4.0.0 Phase 4 ENFORCE & CLOSE 收敛验证器。"
 priority: P1
+activation_phase: requires_100ai
 runtime_plane: warm
 tags: [red-blue, adversarial-validation, chaos-engineering, governance, attack-scenario, defense-verification, bypass-detection, gate-validation, steady-state, blast-radius, game-day, constitution-defense, vibe-coding, ai-agent-security, zero-trust, self-healing, mcp, skill, owasp-asi, nist-ai-rmf]
 rule_form: structural

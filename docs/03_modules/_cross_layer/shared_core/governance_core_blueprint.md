@@ -33,7 +33,7 @@ depends_on:
 
 # Governance Core 蓝图 — 治理核心模块
 
-> module_id: MOD-INF-016-CORE | version: 0.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-014 | version: 0.1.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/core/ | generation: 1 | construction_progress: completed
 > parent: MOD-INF-016 (拆分自 Shared+Core 蓝图，AD-002 触发条件达成)
 

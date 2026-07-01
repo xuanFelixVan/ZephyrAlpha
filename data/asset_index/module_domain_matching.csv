@@ -1354,7 +1354,7 @@ src/zephyr/infrastructure/runtime_integration/event_bus_upgrade.py,,MOD-INF-002,
 src/zephyr/infrastructure/runtime_integration/event_store.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/file_watcher.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/finding_task_bridge.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high
-src/zephyr/infrastructure/runtime_integration/health_monitor/__init__.py,,docs/03_modules/_sys-master/blueprint.md,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_domain,high
+src/zephyr/infrastructure/runtime_integration/health_monitor/__init__.py,,docs/03_modules/_system_master/blueprint.md,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_domain,high
 src/zephyr/infrastructure/runtime_integration/health_monitor/health_aggregator.py,,MOD-MASTER-001,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/hooks/__init__.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high
 src/zephyr/infrastructure/runtime_integration/hooks/event_hook.py,,MOD-INF-002,D-INFRA,D-INFRA-RUNTIME_INTEGRATION,depgraph_blueprint,high

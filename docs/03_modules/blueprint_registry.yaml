@@ -21,7 +21,7 @@ _schema:
   layers:
   - id: META
     name: meta
-    dir: _sys-master
+    dir: _system_master
     description: 元层——系统级总蓝图、金字塔顶点
   - id: DOMAIN
     name: domain
@@ -178,7 +178,7 @@ blueprints:
 - module_id: MOD-GOVERNANCE
   name: _domain_governance
   title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
-  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至DOM-GOV-CAP-001。三轮审计29项D-GAP全覆盖。
+  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。
   layer: cross_layer
   functional_domain: governance
   blueprint_status: Active
@@ -936,7 +936,7 @@ blueprints:
   file_path: 03_modules/_cross_layer/database/blueprint.md
   construction_progress: completed
 - module_id: SYS-MASTER-001
-  name: system_master
+  name: _system_master
   title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
   summary: 系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖+§〇容量升级方案。AI agent冷启动第一站。
   layer: cross_layer
@@ -947,7 +947,7 @@ blueprints:
   version: 0.17.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/system_master/blueprint.md
+  file_path: 03_modules/_system_master/blueprint.md
   construction_progress: completed
 summary:
   total: 58
@@ -993,7 +993,7 @@ changelog:
   - '[auto-sync] blueprint-registry + module-registry；扫描 59 份 blueprint.md；登记项相对上一版有
     29 条差异摘要'
   - 移除 alpha_signal_domain-001（曾位于 _alpha_signal_domain/blueprint.md）
-  - 移除 DOM-GOV-CAP-001（曾位于 _domain_governance/capacity_upgrade/blueprint.md）
+  - 移除 MOD-GOV-CAP-001（曾位于 _domain_governance/capacity_upgrade/blueprint.md）
   - 'GOV-FSTR-001.file_path: [_restructuring/blueprint.md] → [03_modules/_restructuring/blueprint.md]'
   - 移除 ml_experiment_domain-001（曾位于 _ml_experiment_domain/blueprint.md）
   - 新增 MOD-ALPHA_SIGNAL_DOMAIN → 03_modules/_alpha_signal_domain/blueprint.md
@@ -1001,7 +1001,7 @@ changelog:
   - 'MOD-GOVERNANCE.file_path: [_domain_governance/blueprint.md] → [03_modules/_domain_governance/blueprint.md]'
   - 新增 MOD-GOVERNANCE → 03_modules/_domain_governance/capacity_upgrade/blueprint.md
   - 新增 MOD-ML_EXPERIMENT_DOMAIN → 03_modules/_ml_experiment_domain/blueprint.md
-  - 新增 MOD-073 → 03_modules/system_master/blueprint.md
+  - 新增 MOD-073 → 03_modules/_system_master/blueprint.md
   - 'MOD-INF-001.file_path: [_domain_infra_ops/capacity_assurance/blueprint.md] →
     [03_modules/_domain_infra_ops/capacity_assurance/blueprint.md]'
   - 'MOD-INF-001.priority: [P2] → [P0]'

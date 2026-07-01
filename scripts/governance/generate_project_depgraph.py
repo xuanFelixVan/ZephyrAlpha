@@ -519,7 +519,7 @@ PATH_MAPPINGS = [
         "test_root": "",
         "script_root": "",
         "naming_rule": "{package}/blueprint.md",
-        "examples": ["docs/03_modules/_sys-master/blueprint.md"],
+        "examples": ["docs/03_modules/_system_master/blueprint.md"],
     },
     {
         "pattern": "docs/01_policies_and_standards/**",

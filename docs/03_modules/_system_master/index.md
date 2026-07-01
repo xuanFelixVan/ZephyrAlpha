@@ -1,7 +1,7 @@
-﻿---
+---
 doc_type: index
 status: active
-title: "system_master — 目录索引"
+title: "_system_master — 目录索引"
 module_id: "SYS-MASTER-001"
 blueprint_id: "SYS-MASTER-001"
 version: "0.17.0"
@@ -10,7 +10,7 @@ updated: "2026-06-22"
 ttl: permanent
 ---
 
-# system_master
+# _system_master
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
 > 生成日期：2026-06-22
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | System Master 蓝图 — 三级金字塔架构·全部子系统拓扑 |
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
-| [index.md](index.md) | Markdown | system_master — 目录索引 |
+| [index.md](index.md) | Markdown | _system_master — 目录索引 |
 
 ## 导航
 

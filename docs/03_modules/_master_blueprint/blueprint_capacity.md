@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-MASTER-003
 title: "Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计"
 doc_type: blueprint
@@ -1933,7 +1933,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | SYS-MASTER-001 §〇 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 容量升级方案 | SYS-MASTER §〇 定义系统级容量预算，本蓝图定义集成闭环的容量升级设计 |
+| 1 | SYS-MASTER-001 §〇 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | 容量升级方案 | SYS-MASTER §〇 定义系统级容量预算，本蓝图定义集成闭环的容量升级设计 |
 
 ---
 

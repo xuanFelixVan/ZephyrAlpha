@@ -252,7 +252,7 @@ class TestSessionContinuity:
 
     def test_validate_sys_master_dispatch_no_frontmatter(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        bp_dir = tmp_path / "docs" / "03_modules" / "_sys-master"
+        bp_dir = tmp_path / "docs" / "03_modules" / "_system_master"
         bp_dir.mkdir(parents=True, exist_ok=True)
         bp = bp_dir / "blueprint.md"
         bp.write_text("No frontmatter here", encoding="utf-8")
@@ -262,7 +262,7 @@ class TestSessionContinuity:
 
     def test_validate_sys_master_dispatch_valid(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        bp_dir = tmp_path / "docs" / "03_modules" / "_sys-master"
+        bp_dir = tmp_path / "docs" / "03_modules" / "_system_master"
         bp_dir.mkdir(parents=True, exist_ok=True)
         bp = bp_dir / "blueprint.md"
         bp_content = """---

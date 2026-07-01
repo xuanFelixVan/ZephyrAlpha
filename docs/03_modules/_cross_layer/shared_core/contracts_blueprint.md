@@ -32,7 +32,7 @@ depends_on:
 
 # Shared Contracts 蓝图 — 跨层数据契约 SSoT
 
-> module_id: MOD-INF-016-CONTRACTS | version: 0.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-013 | version: 0.1.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/shared/contracts/ | generation: 1 | construction_progress: partially_implemented
 > parent: MOD-INF-016 (拆分自 Shared+Core 蓝图，AD-002 触发条件达成)
 

@@ -90,7 +90,7 @@ LAYER_DIR_MAP = {
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",
     "_domain-governance": "cross_layer",
-    "_sys-master": "cross_layer",
+    "_system_master": "cross_layer",
 }
 
 

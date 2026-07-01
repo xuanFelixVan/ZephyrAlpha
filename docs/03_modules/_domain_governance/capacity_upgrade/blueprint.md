@@ -52,10 +52,10 @@ ssot_claims:
 # Governance Domain 容量升级蓝图 — 10K脚本/1.5K模块/100AI并发
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules DOM-GOV-CAP-001`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-GOV-CAP-001`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **module_id**: DOM-GOV-CAP-001 | **parent**: MOD-GOVERNANCE | **version**: 0.1.0
+> **module_id**: MOD-GOV-CAP-001 | **parent**: MOD-GOVERNANCE | **version**: 0.1.0
 >
 > 本蓝图从 MOD-GOVERNANCE 拆分，专注容量升级设计。未包含的章节（§3.9 脚本生命周期、§3.14 可观测性、§3.15 维度扩展等）见 MOD-GOVERNANCE 原蓝图。
 

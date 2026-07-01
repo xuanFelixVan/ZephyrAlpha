@@ -1097,7 +1097,7 @@ def _remind_sys_master_dispatch(package: str, name: str, description: str) -> No
     RULE-TWO 反孤儿功能——新模块/脚本创建后，下一个 AI session
     需要通过 §0 分派表发现它。如果分派表没有对应条目，新功能就是孤儿。
     """
-    sys_master = PROJECT_ROOT / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
+    sys_master = PROJECT_ROOT / "docs" / "03_modules" / "_system_master" / "blueprint.md"
     if not sys_master.exists():
         return
 

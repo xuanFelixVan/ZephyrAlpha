@@ -32,7 +32,7 @@ depends_on:
 
 # Shared Infrastructure 蓝图 — 跨层共享基础设施
 
-> module_id: MOD-INF-016-SHARED | version: 0.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-015 | version: 0.1.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/shared/ (不含 contracts/) | generation: 1 | construction_progress: completed
 > parent: MOD-INF-016 (拆分自 Shared+Core 蓝图，AD-002 触发条件达成)
 

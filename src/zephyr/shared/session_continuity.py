@@ -280,13 +280,13 @@ class SessionContinuity:
 
     def validate_sys_master_dispatch(self) -> dict:
         """验证 _sys_master 蓝图的分派表"""
-        bp_path = self._project_root / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
+        bp_path = self._project_root / "docs" / "03_modules" / "_system_master" / "blueprint.md"
         if not bp_path.exists():
-            return {"valid": False, "error": "missing: docs/03_modules/_sys-master/blueprint.md"}
+            return {"valid": False, "error": "missing: docs/03_modules/_system_master/blueprint.md"}
         try:
             content = bp_path.read_text(encoding="utf-8")
         except OSError:
-            return {"valid": False, "error": "missing: docs/03_modules/_sys-master/blueprint.md"}
+            return {"valid": False, "error": "missing: docs/03_modules/_system_master/blueprint.md"}
         if not content.startswith("---"):
             return {"valid": False, "error": "no frontmatter found"}
         fm_end = content.find("---", 3)

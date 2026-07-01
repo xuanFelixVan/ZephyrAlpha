@@ -140,7 +140,7 @@ class DomainEventRegistry:
 ⚠️ **部分实施** — 文档规划的"全局+域+蓝图内联"三级结构中，仅蓝图内联配置已实施，config/ 按功能分目录已实施（但非文档规划的按域分目录）。
 
 **已实施部分**：
-- ✅ 蓝图内联配置：蓝图 MD 中含 §配置 章节（如 `docs/03_modules/system_master/blueprint.md`）
+- ✅ 蓝图内联配置：蓝图 MD 中含 §配置 章节（如 `docs/03_modules/_system_master/blueprint.md`）
 - ✅ config/ 按功能分目录：`config/capacity/`、`config/compression/`、`config/infra/`、`config/runtime/` 子目录已存在
 
 **未实施部分**（文档原规划）：

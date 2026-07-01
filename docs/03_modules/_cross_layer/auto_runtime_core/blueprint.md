@@ -483,7 +483,7 @@ class WorkDAG(BaseModel):
 | MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
 | MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge_base\blueprint.md` |
 | MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
-| SYS-MASTER-001 | 必须 | 系统总蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| SYS-MASTER-001 | 必须 | 系统总蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 
 ---
 
@@ -1137,6 +1137,216 @@ STEP 3: 拆分后验证
 | §3.1 自动接入子系统 | §3.1.5 规模适配：增量检测 | ModuleOnboardingScanner 增量 diff 设计；自动注册 API |
 | §3.1 节律调度 | §3.1.5 规模适配：轮转策略 | DreamCycle 按日轮转~215 模块；夜间窗口溢出截断 |
 | §3.1 健康监控与自愈 | §3.1.5 规模适配：分层检查 | 核心模块 30s / 其他模块 5min；异常触发深检 |
+
+---
+
+### 蓝图特有：强制物理隔离层（Forced Physical Isolation Layer, FP-ISO）
+
+> 来源：2026-07-01 治本方案设计——解决多 AI 并发执行时"做着做着全部丢失"的元问题
+> 仅本蓝图需要：worktree 物理隔离是 AutoRuntime Core 独有的并发安全基础设施
+> 不可砍理由：砍掉 = 多 AI 并发覆盖修改的根因永远无法消除，held_files "仅预警不阻断" 设计缺陷永久存在
+
+#### FP-ISO.1 章节定位
+
+本章节定义 ZephyrAlpha 多 AI 并发执行的**强制物理隔离层**。这是对 [parallel_session_coordination_policy.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md) §5.2「不新增阻断层」设计的**治本修订**——现有"仅预警不阻断"无法防止编辑期文件覆盖，必须新增物理隔离作为最强阻断。
+
+#### FP-ISO.2 现有功能盘点（已实现基础设施）
+
+| # | 组件 | 完整绝对路径 | 现有能力 | 缺口 |
+|---|------|------------|---------|------|
+| 1 | WorktreeManager | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py` | create/merge/cleanup/get_current session worktree | **未强制启用**——能力存在但 AI 可绕过 |
+| 2 | GitCommitGateway | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` | 全局跨进程串行锁 + PID 僵尸检测 + TTL 1800s | 主目录裸 commit 仅 logger.info「建议」，**未硬阻断** |
+| 3 | HeldOverlapGate | `D:\ZephyrAlpha\src\zephyr\governance\commit_gates\held_overlap_gate.py` | commit 时检测搭便车（目标文件被其他 session 持有）| **仅 commit 时检测**，编辑期无防护 |
+| 4 | SessionRegistry | `D:\ZephyrAlpha\src\zephyr\security\access_control\session_concurrency.py` | session 注册/心跳/claim_file/release_file | held_files 是「预警不阻断」（policy §3.2 明确） |
+| 5 | SessionHandoff | `D:\ZephyrAlpha\src\zephyr\security\access_control\session_concurrency.py` | 跨 session 状态交接包 `.runtime/handoffs/` | 已落地，不涉及隔离 |
+| 6 | parallel_session_coordination_policy | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\parallel_session_coordination_policy.md` | §5.2「不新增阻断层」+ §7「最外层可见性」 | **设计缺陷**：把阻断责任推给 GitCommitGateway，但全局锁只串行化 commit 不防编辑覆盖 |
+
+**关键洞察**：项目已具备完整治本基础设施（WorktreeManager 全功能实现），致命缺口是**「能力存在但未强制启用」**——GitCommitGateway 第331-341行检测到不在 worktree 时只 `logger.info` 然后向后兼容直接 commit。
+
+#### FP-ISO.3 病根分析（L4 元问题）
+
+| 层级 | 问题 | 证据 |
+|------|------|------|
+| L1 现象 | P0/P1 修改被并发 AI 覆盖丢失 | session_manager.py _db_path 死字段、session_lifecycle.py trust-score 4处、session_state_machine.yaml 路径断裂反复出现 |
+| L2 直接原因 | 多 AI 在主工作目录 `D:\ZephyrAlpha` 裸跑，编辑期无隔离 | 10-20 个 AI 共享同一工作区，行级覆盖无声丢失 |
+| L3 设计原因 | held_files 协议是「预警不阻断」（policy §3.2/§5.2/§7） | GitCommitGateway 全局锁只串行化 commit，AI A 编辑 → AI B 编辑 → AI B commit → AI A 工作区基线已变 |
+| L4 元问题 | **WorktreeManager 物理隔离能力已实现但未强制启用** | git_commit_gateway.py 第336-341行 `wt_session is None` 时 `logger.info("建议使用")` + 向后兼容直接 commit |
+
+**治本原则**：把「可选」变「强制」。Anthropic 16-agent C 编译器案例证明 worktree 物理隔离 + git push 协调足以支撑 16 个 AI 并行产出 10 万行代码，前提是**强制启用**而非「建议」。
+
+#### FP-ISO.3.5 工作模式适配（关键决策点）
+
+> 本节定义两种并发工作模式，**当前 ZephyrAlpha 采用模式B**。
+
+| 模式 | 触发方式 | 工作目录 | worktree 物理隔离 | 当前采用 |
+|------|---------|---------|:---:|:---:|
+| **模式A：命令行编排** | `spawn_agent.ps1` 启动独立 AI 进程 | 每个 AI 独立 worktree | ✅ 强制可用 | ❌ |
+| **模式B：Trae IDE 对话并发** | Trae IDE 内开多个 AI 对话 | **共享 `D:\ZephyrAlpha`** | ❌ 无法直接用 | ✅ 当前 |
+
+**模式B 的核心约束**（决定方案差异）：
+1. Trae IDE 工作目录固定为 `D:\ZephyrAlpha`，所有 AI 对话共享同一工作区
+2. AI 用 Trae 的 Edit/Write 工具直接改主目录文件，**编辑瞬间系统无法拦截**
+3. 多个 AI 对话在同一个 Trae 进程内，无法用 spawn_agent.ps1 切换目录
+4. 硬阻断主目录 commit = 所有 AI 都不能 commit = 项目停摆
+
+**模式B 治本策略**：「软编辑 + 硬提交」——编辑期靠 AI 自觉 claim（系统提供冲突可见性），提交期靠 GitCommitGateway 硬校验（未 claim / 冲突文件拒绝提交）。无法 100% 防止编辑期覆盖，但能 100% 防止覆盖被提交——覆盖即使发生，commit 时被拒绝，迫使 AI 重新基于最新基线编辑。
+
+#### FP-ISO.4 治本三件套设计（模式A：命令行编排——不适用于当前 Trae 工作流）
+
+> ⚠️ 本节方案适用于模式A（命令行启动独立 AI 进程）。**当前 ZephyrAlpha 采用模式B（Trae IDE 对话），本节方案不适用，保留作为模式A 参考与未来切换储备。实际采用方案见 [FP-ISO.4B](#fp-iso4b-治本三件套设计模式btrae-ide-适配当前采用)。**
+
+##### 件1：GitCommitGateway 硬阻断主目录 commit（核心改动）
+
+| 项目 | 内容 |
+|------|------|
+| 变更文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` |
+| 变更位置 | 第326-341行 worktree 检测分支 |
+| 变更内容 | `wt_session is None` 时返回 `CommitStatus.MAIN_BRANCH_VIOLATION`（不再向后兼容） |
+| 新增参数 | `commit(..., allow_main_branch: bool = False)`——逃生通道，对标现有 `allow_overlap` |
+| 新增枚举 | `CommitStatus.MAIN_BRANCH_VIOLATION` |
+| 阻断逻辑 | `if wt_session is None and not allow_main_branch: return CommitResult(status=MAIN_BRANCH_VIOLATION, message="主工作目录禁止裸 commit，必须先 create_session_worktree() 物理隔离")` |
+| 逃生通道 | `commit(allow_main_branch=True)` 仍可在主目录 commit（向后兼容紧急场景） |
+| 验收 | 主目录裸 commit 返回 MAIN_BRANCH_VIOLATION；`allow_main_branch=True` 通过；worktree 内 commit 通过 |
+
+##### 件2：spawn_agent.ps1 全自动编排脚本
+
+| 项目 | 内容 |
+|------|------|
+| 新建文件 | `D:\ZephyrAlpha\scripts\governance\spawn_agent.ps1` |
+| 职责 | 串联「分配 session_id → 创建 worktree → 切目录 → 启动 AI → 退出 merge/cleanup」全自动流程 |
+| 复用组件 | WorktreeManager.create_session_worktree / merge_session_worktree / cleanup_session_worktree |
+| 参数 | `-Task <任务描述>` `-AiTool <trae/cursor/codex>` `-MergeOnExit <switch>` |
+| session_id 规则 | `sess-{PID}-{yyyyMMddHHmmss}` 全局唯一 |
+| 退出处理 | AI 退出后自动 merge_session_worktree（冲突时保留 worktree 供人工解决）或 cleanup_session_worktree |
+| 验收 | 脚本启动后 AI 在独立 worktree 工作；退出后 worktree 自动 merge 或清理；无 worktree 泄漏 |
+
+##### 件3：git pre-commit hook OS 层兜底
+
+| 项目 | 内容 |
+|------|------|
+| 新建文件 | `D:\ZephyrAlpha\.git\hooks\pre-commit` |
+| 职责 | 检测当前是否在 session worktree 内，不在则拒绝 commit（防 AI 绕过 GitCommitGateway 裸调 git） |
+| 检测逻辑 | `git rev-parse --git-dir` vs `git rev-parse --git-common-dir`，相等即主工作目录 |
+| 逃生通道 | 环境变量 `ZEPHYR_ALLOW_MAIN_BRANCH=1` |
+| 验收 | 主目录 `git commit` 被拒；worktree 内 `git commit` 通过；`ZEPHYR_ALLOW_MAIN_BRANCH=1 git commit` 通过 |
+
+#### FP-ISO.4B 治本三件套设计（模式B：Trae IDE 适配——当前采用）
+
+> ✅ **本节为当前采用方案**。适配 Trae IDE「共享工作目录 + 多 AI 对话并发」约束，采用「软编辑 + 硬提交」策略。
+
+##### 件1改：GitCommitGateway commit 时强校验 claim（核心改动）
+
+| 项目 | 内容 |
+|------|------|
+| 变更文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` |
+| 变更位置 | commit 流程中 HeldOverlapGate 调用处 |
+| 变更内容 | HeldOverlapGate 从「warning 不阻断」升级为「reject 阻断」——commit 时对所有 staged 文件做三元校验 |
+| 校验规则 | ① 文件在当前 session 的 claim 列表 → ✅ 通过；② 文件被其他活跃 session claim → ❌ 拒绝（防搭便车覆盖）；③ 文件未 claim → ❌ 拒绝（强制 AI 先声明） |
+| 新增参数 | `commit(..., allow_unclaimed: bool = False)`——逃生通道（对标现有 `allow_overlap`），用于紧急修复未 claim 文件 |
+| 新增状态 | `CommitStatus.CLAIM_VIOLATION`（文件被他人 claim）、`CommitStatus.UNCLAIMED_VIOLATION`（文件未 claim） |
+| 复用组件 | 现有 SessionRegistry.claim_file / other_held_files + HeldOverlapGate 扩展 |
+| 验收 | ① 两个 AI claim 同一文件，后到者 commit 被拒返回 CLAIM_VIOLATION；② 未 claim 文件 commit 被拒返回 UNCLAIMED_VIOLATION；③ `allow_unclaimed=True` 通过；④ claim 内文件 commit 通过 |
+
+##### 件2改：SessionClaim helper（AI 启动必调）
+
+| 项目 | 内容 |
+|------|------|
+| 新建文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\session_claim.py` |
+| 职责 | 提供 AI 对话启动时的 session 注册 + 文件 claim + 冲突检测一体化接口 |
+| 核心 API | `session_claim_start(session_id, files=[])` 启动并声明；`session_claim_add(session_id, file)` 追加声明；`session_claim_check(file, session_id)` 写前检测；`session_claim_end(session_id)` 结束释放 |
+| session_id 生成 | `sess-{PID}-{yyyyMMddHHmmss}`（Trae 对话无内置 session_id，用 PID+时间戳；同一 Trae 进程内多对话用对话索引区分） |
+| 冲突语义 | `session_claim_add` 返回 `{"conflict": True, "owner": "sess-xxx"}` 时 AI 须等待或换文件（软约束，AGENTS.md 规定 AI 必须遵守） |
+| 复用组件 | 现有 SessionRegistry（扩展 claim 为阻断语义）+ SessionHandoff |
+| AGENTS.md 规则 | 新增「AI 对话启动第一步：调用 session_claim_start 声明 session 与将修改文件；改新文件前调用 session_claim_add；冲突时必须等待或换文件」 |
+| 验收 | AI 启动调用 session_claim_start 后，SessionRegistry 有记录；claim 冲突时返回 conflict=True；AI 结束调用 session_claim_end 后 claim 释放 |
+
+##### 件3改：可选 worktree 隔离（高风险任务专用，非强制）
+
+| 项目 | 内容 |
+|------|------|
+| 复用文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py`（已实现，无改动） |
+| 职责 | 对改契约文件/大范围重构等高风险任务，AI 可选择 `WorktreeManager.create_session_worktree()` 创建 worktree，在 worktree 内操作后 merge 回主目录 |
+| 使用场景 | ① 修改 GitCommitGateway/WorktreeManager 等契约文件本身；② 大范围重构（>10 文件）；③ 实验性改动（不确定是否保留） |
+| 非强制原因 | Trae 模式下 AI 默认在主目录用 Trae 工具操作，强制 worktree 会破坏 IDE 工作流；worktree 内 AI 需手动用完整路径，增加认知负担 |
+| 与件1/件2关系 | worktree 内 AI 仍须 session_claim_start（worktree 隔离文件系统，不隔离 claim 语义）；worktree commit 时 GitCommitGateway 仍校验 claim |
+| 验收 | `WorktreeManager.create_session_worktree()` 返回 worktree 路径；AI 在 worktree 内 commit 通过；merge 回主目录成功 |
+
+#### FP-ISO.5 阻断层次重设计（修订 parallel_session_coordination_policy）
+
+现有 policy §5.2「不新增阻断层」需修订为**四层阻断**：
+
+| 层级 | 机制 | 模式A 强度 | 模式B 强度（当前） | 职责 | 状态 |
+|------|------|:---:|:---:|------|:---:|
+| **L0 物理隔离** | WorktreeManager + 主目录硬阻断 | **最强** | 可选（高风险任务）| 从根本上让多 AI 不在同一工作区 | 🟡 模式A待施工/模式B可选 |
+| **L1 编辑期声明**（模式B 核心）| SessionClaim + AGENTS.md 规则 | 不需要 | **软**（AI 自觉）| 编辑前声明 claim，冲突可见 | 🔴 待施工（件2改） |
+| L2 提交期校验（模式B 核心）| GitCommitGateway commit 强校验 claim | 不需要 | **硬**（commit 拒绝）| 未 claim / 冲突文件拒绝提交 | 🔴 待施工（件1改） |
+| L3 串行化 | GitCommitGateway 全局锁 | 中 | 中 | commit 顺序化，后到者等锁 | ✅ 已落地 |
+| L4 文件锁 | RULE-ZERO lock_files.py | 强 | 强 | LOCKED 后禁止写 | ✅ 已落地 |
+
+**模式B 关键变更**：原设计把阻断责任推给 GitCommitGateway 全局锁（L3），但全局锁只串行化 commit 不防编辑覆盖。模式B 新增 L1（编辑期声明）+ L2（提交期校验）——L1 软约束靠 AI 自觉 claim，L2 硬约束在 commit 时校验 claim。覆盖即使发生（L1 失守），也会在 L2 被拒绝，迫使 AI 重新基于最新基线编辑。
+
+#### FP-ISO.6 未考虑到的问题讨论（治本方案完整性审查）
+
+> 本节系统性讨论治本三件套可能引入的新问题，确保方案「非常治本」而非「治标换标」。
+
+| # | 潜在问题 | 风险等级 | 缓解方案 | 责任组件 |
+|---|---------|:---:|---------|---------|
+| Q1 | **session_id 如何全局唯一分配**——多个并发 AI 如何获得不冲突的 session_id | 高 | spawn_agent.ps1 用 `sess-{PID}-{yyyyMMddHHmmss}` 生成；PID + 秒级时间戳在单机内唯一；WorktreeManager.create_session_worktree 内部检测重名则追加 `-{N}` 后缀 | spawn_agent.ps1 + WorktreeManager |
+| Q2 | **worktree 泄漏**——AI 进程崩溃未 cleanup，worktree 残留占磁盘 | 高 | ① WorktreeManager 启动时扫描 `git worktree list --porcelain` 检测无主 worktree；② 超过 TTL（默认 24h）的 session worktree 自动 cleanup；③ spawn_agent.ps1 的 `finally` 块保证退出时清理；④ 新增 `worktree_gc.py` 守护进程定期回收 | WorktreeManager + worktree_gc.py（新增） |
+| Q3 | **merge 冲突如何处理**——多 worktree 改了同一文件，merge 回主分支冲突 | 高 | ① merge_session_worktree 检测冲突时**不强制 merge**，保留 worktree 供人工解决；② 在 `.runtime/worktree_conflicts/{session_id}.json` 记录冲突文件清单；③ spawn_agent.ps1 输出冲突提示，AI 自行决定重试或人工介入；④ 不自动 abort，避免丢失工作 | WorktreeManager.merge_session_worktree |
+| Q4 | **基础设施文件被多 worktree 同时依赖**——GitCommitGateway 本身、AGENTS.md、配置文件被所有 AI 读取，若某个 AI 在 worktree 内修改了它们再 merge，会污染其他 AI | 高 | ① 定义 `infrastructure_contracts.yaml` 列出契约文件（GitCommitGateway/WorktreeManager/AGENTS.md/configs/）；② 契约文件在 worktree 内**只读**，修改必须走主分支 + Owner 审批；③ pre-commit hook 检测契约文件被修改则拒绝；④ 这正是「[蓝图特有:撤回项澄清](#蓝图特有撤回项澄清)」中 ZephyrLock 跨进程升级的延伸应用 | infrastructure_contracts.yaml（新增）+ pre-commit hook |
+| Q5 | **Windows 文件锁兼容性**——NTFS 锁 vs Unix advisory lock，pre-commit hook 在 Windows 是否生效 | 中 | ① git hooks 在 Windows 通过 `sh.exe` 执行，bash 语法兼容；② 文件锁用 `os.open(O_CREAT\|O_EXCL)` 原子创建，跨平台；③ 不依赖 fcntl（Unix only），改用原子文件创建；④ 已在 GitCommitGateway `_GlobalCommitLock` 验证 Windows 可行 | pre-commit hook + 现有 _GlobalCommitLock |
+| Q6 | **worktree 数量上限与磁盘空间**——20 个并发 AI = 20 个 worktree，每个含完整工作树，磁盘占用 | 中 | ① git worktree 共享 `.git` 对象库，只增量存工作树文件，单 worktree 约 200-500MB；② 20 worktree ≈ 4-10GB，单机 64GB RAM + SSD 可承受；③ WorktreeManager 配置 `max_concurrent_worktrees=30` 硬上限；④ 超限时新 AI 排队等待 | WorktreeManager |
+| Q7 | **与 StagingArea（§RULE-ZERO）的关系**——StagingArea 已支持「≥2 AI 并发提交草稿」，与 worktree 隔离是否重复 | 中 | ① StagingArea 是**提交层**隔离（草稿 → 正式 commit），worktree 是**工作区层**隔离（编辑期）；② 二者互补：worktree 防编辑覆盖，StagingArea 防提交冲突；③ worktree 内的 AI 仍可用 StagingArea 提交草稿；④ 不废弃 StagingArea | StagingArea + WorktreeManager 协同 |
+| Q8 | **逃生通道被滥用**——`allow_main_branch=True` 和 `ZEPHYR_ALLOW_MAIN_BRANCH=1` 被频繁使用，回到裸跑状态 | 中 | ① GitCommitGateway 记录每次 `allow_main_branch=True` 的调用到审计日志；② 周报统计逃生通道使用次数，>5 次/周触发 Owner 审查；③ pre-commit hook 在逃生通道触发时输出醒目警告；④ 不硬禁用（保留灵活性），但可观测 | GitCommitGateway 审计 + AiAuditLogger |
+| Q9 | **AI 不知道自己在 worktree 内**——AI 启动时未感知工作目录已切换，仍按主目录逻辑操作 | 中 | ① spawn_agent.ps1 在 worktree 创建后输出 `[session_id] worktree=<path>` 醒目标识；② AGENTS.md 新增「AI 启动时必读 worktree 标识」规则；③ WorktreeManager.get_current_worktree() 供 AI 主动查询；④ GitCommitGateway commit 时在 message 自动追加 `[session=<id>]` 前缀 | spawn_agent.ps1 + AGENTS.md |
+| Q10 | **跨 worktree 的共享状态同步**——多个 AI 在各自 worktree 修改 depgraph (PostgreSQL) 等共享真源，如何避免数据库层冲突 | 高 | ① depgraph 修改必须通过 `apply_depgraph.py`（现有硬约束），该工具内部用 PostgreSQL 事务锁；② worktree 隔离的是文件系统，不是数据库；③ 共享真源（depgraph/YAML 规则）的并发由数据库事务保证，不依赖 worktree；④ worktree 内 AI 调 apply_depgraph.py 时走数据库串行，与文件隔离正交 | apply_depgraph.py（现有）+ PostgreSQL 事务 |
+| Q11 | **蓝图/文档并发修改**——多 AI 同时改蓝图 YAML，merge 时冲突 | 中 | ① 蓝图修改属于「契约文件」（Q4），worktree 内只读；② 蓝图修改走主分支 + Owner 审批；③ 若必须并发改不同蓝图，按蓝图路径分区，每个 AI 只改分配的蓝图 | infrastructure_contracts.yaml + 路径分区 |
+| Q12 | **回滚兼容性**——如果硬阻断导致 AI 无法工作，如何快速回滚 | 中 | ① 件1/件2/件3 都有逃生通道（allow_main_branch / ZEPHYR_ALLOW_MAIN_BRANCH）；② 回滚件1：GitCommitGateway 临时设 `allow_main_branch=True` 默认值；③ 回滚件3：删除 .git/hooks/pre-commit 即恢复；④ 回滚件2：直接在主目录启动 AI（不经过 spawn_agent.ps1） | 各组件逃生通道 |
+
+**模式B（Trae IDE 适配）特有问题**：
+
+| # | 潜在问题 | 风险等级 | 缓解方案 | 责任组件 |
+|---|---------|:---:|---------|---------|
+| Q13 | **AI 忘记 claim 就编辑**——软约束失守，AI 用 Trae Edit 工具直接改文件未先 session_claim_start | 高 | ① AGENTS.md 铁律「AI 对话第一步必调 session_claim_start」；② GitCommitGateway commit 时校验（件1改）——未 claim 文件 commit 被拒，AI 被迫补 claim 或放弃；③ SessionClaim helper 提供 `session_claim_add` 补充声明；④ 即使编辑期覆盖发生，commit 时也会被拦截，覆盖无法落地 | SessionClaim + GitCommitGateway + AGENTS.md |
+| Q14 | **Trae 对话无内置 session_id**——如何区分同一 Trae 进程内的多个并发对话 | 高 | ① session_id = `sess-{trae_pid}-{dialog_index}-{timestamp}`，dialog_index 由 AI 自报（对话启动时 AI 自己计数）；② 备选：session_id = `sess-{uuid4}`，AI 启动时生成；③ SessionRegistry 检测重名则追加后缀；④ session_id 写入 `.runtime/sessions/{session_id}.json` 供其他 AI 可见 | SessionClaim helper |
+| Q15 | **claim 列表预估错误**——AI 启动时无法预知所有要改的文件，导致改了未 claim 的文件 | 高 | ① session_claim_add 支持运行时追加声明，AI 改新文件前先 add；② GitCommitGateway commit 时若发现未 claim 文件，返回 UNCLAIMED_VIOLATION 并列出文件清单，AI 补 claim 后重试；③ AGENTS.md 规则「改新文件前必先 session_claim_add」；④ 提供 `session_claim_auto_add_from_diff` 工具，commit 前自动从 git diff 提取文件并补充 claim | SessionClaim + GitCommitGateway |
+| Q16 | **长对话 claim 过期/会话切换**——AI 对话持续数小时，claim 一直持有导致其他 AI 阻塞 | 中 | ① SessionClaim 的 claim 设 TTL（默认 2h），超时自动释放；② AI 每次操作前调用 `session_claim_heartbeat` 续期；③ 对话结束（AI 主动声明完成）调用 `session_claim_end` 释放；④ TTL 过期后其他 AI 可 force_acquire（强制抢占），原 AI commit 时被拒并提示重新 claim | SessionClaim |
+| Q17 | **编辑期两个 AI 同时改同文件**——覆盖已发生但未 commit，如何恢复 | 高 | ① GitCommitGateway commit 时校验 claim——后到者 commit 被拒（CLAIM_VIOLATION）；② 后到者须 `git checkout <冲突文件>` 丢弃自己的覆盖，重新基于最新基线编辑；③ SessionClaim 检测到冲突时提示「文件 X 被 session Y 持有，请等待或 git checkout 丢弃本地修改」；④ 这是模式B 的固有局限——编辑期覆盖无法 100% 防止，但 commit 校验保证覆盖不落地 | GitCommitGateway + SessionClaim |
+| Q18 | **claim 粒度问题**——claim 单文件 vs 整个目录，粒度过细 AI 负担重，过粗阻塞多 | 中 | ① 默认单文件粒度（精确，不误伤）；② 支持 glob 模式 `session_claim_add("src/zephyr/governance/**/*.py")` 批量 claim；③ 契约文件（GitCommitGateway/WorktreeManager/AGENTS.md）强制单文件 claim + Owner 审批；④ 普通文件支持 glob 批量 claim 降低 AI 负担 | SessionClaim |
+
+**结论**：18 个潜在问题均有缓解方案，无致命阻断。模式A（Q1-Q12）最高风险 Q1/Q2/Q3/Q4/Q10；模式B（Q13-Q18）最高风险 Q13/Q14/Q15/Q17——核心风险是「AI 不自觉 claim」（Q13）和「编辑期覆盖已发生」（Q17），均通过 GitCommitGateway commit 时硬校验兜底，保证覆盖无法落地。治本三件套（模式B）可行。
+
+#### FP-ISO.7 实施计划与验收
+
+> 模式A（命令行编排）实施计划见原表，当前不执行。**模式B（Trae 适配，当前采用）实施计划如下**：
+
+| Phase | 件 | 变更文件 | 验收命令 | 状态 |
+|-------|---|---------|---------|:---:|
+| Phase 1 | 件1改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` + `D:\ZephyrAlpha\src\zephyr\governance\commit_gates\held_overlap_gate.py` | `python -m pytest tests/governance/test_git_commit_gateway.py::test_claim_violation tests/governance/test_git_commit_gateway.py::test_unclaimed_violation -v` | 待施工 |
+| Phase 1 | 件2改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\session_claim.py`（新建） | `python -m pytest tests/governance/test_session_claim.py -v` | 待施工 |
+| Phase 2 | 件3改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py`（复用，无改动） | `python -m pytest tests/governance/test_worktree_manager.py -v` | ✅ 已实现 |
+| Phase 2 | — | `D:\ZephyrAlpha\AGENTS.md` | 新增「AI 对话启动第一步：session_claim_start」规则 | 待施工 |
+| Phase 3 | Q4 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure_contracts.yaml`（新建）| 契约文件清单完整，claim 强制单文件 + Owner 审批 | 待施工 |
+| Phase 3 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\parallel_session_coordination_policy.md` | §3.2/§5.2 修订：held_files 从「预警不阻断」升级为「commit 时硬校验」 | 待施工 |
+
+**模式B 完成标准**：
+1. 两个并发 AI 对话 claim 同一文件，后到者 commit 返回 CLAIM_VIOLATION
+2. AI 改未 claim 文件，commit 返回 UNCLAIMED_VIOLATION，列出文件清单
+3. AI 调用 session_claim_start 后，SessionRegistry 有记录，其他 AI 可见
+4. claim TTL 2h 过期后自动释放，其他 AI 可 force_acquire
+5. 契约文件（GitCommitGateway/AGENTS.md 等）被 worktree 内 AI 修改时 commit 被拒
+6. 逃生通道 `allow_unclaimed=True` 可观测，周报统计使用次数
+
+#### FP-ISO.8 与业界实践对标
+
+| 业界实践 | 来源 | ZephyrAlpha 对应 | 状态 |
+|---------|------|----------------|:---:|
+| Git Worktree 并行 Agent | GitHub Copilot App / Anthropic Agent Teams / Block | WorktreeManager（已实现）+ spawn_agent.ps1（待施工） | 🟡 能力有/未强制 |
+| current_tasks/ 锁 + git push 拒绝 | Anthropic 16-agent C 编译器案例 | GitCommitGateway 全局锁（已实现）+ 硬阻断（待施工） | 🟡 锁有/未阻断主目录 |
+| Write-time 状态校验 | STORM（arXiv:2605.20563, 2026-05）| HeldOverlapGate（已实现，commit 时检测）| 🟢 已落地（commit 级） |
+| Contract Files 不可触碰 | Autonomous Agentic Research Swarm | infrastructure_contracts.yaml（待施工，Q4） | 🔴 待施工 |
+| Resource Warden 文件锁 | HiveMind MCP | SessionRegistry held_files（已实现，仅预警）| 🟡 预警有/未阻断 |
 
 ---
 

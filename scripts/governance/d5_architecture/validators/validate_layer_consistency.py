@@ -26,7 +26,7 @@
 - 物理路径包含 `_cross_layer/`      → 期望 layer=cross_layer
 - 物理路径包含 `_master-blueprint/` → 期望 layer=cross_layer（Level 1 域总蓝图）
 - 物理路径包含 `_domain-governance/`→ 期望 layer=cross_layer（Level 1 治理总蓝图）
-- 物理路径包含 `_sys-master/`       → 期望 layer=cross_layer（Level 0 系统总蓝图）
+- 物理路径包含 `_system_master/`       → 期望 layer=cross_layer（Level 0 系统总蓝图）
 
 三层防线定位：Layer 1 — 预防（AI/人创建蓝图后立即运行）；Layer 2 — 检测（pre_commit/CI）
 
@@ -80,7 +80,7 @@ LAYER_DIR_MAP = {
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",
     "_domain-governance": "cross_layer",
-    "_sys-master": "cross_layer",
+    "_system_master": "cross_layer",
 }
 
 

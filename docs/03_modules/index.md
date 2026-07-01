@@ -72,7 +72,7 @@ depends_on:
 | [_cross_layer/](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/index.md) | 跨层模块（agent_orchestrator, context_engine, feedback_loop, gate_engine, llm_security, mcp_servers, pipeline, shared_core 等 17 模块） | index.md |
 | [_b_track_interfaces/](file:///D:/ZephyrAlpha/docs/03_modules/_b_track_interfaces/index.md) | B 轨 6 大核心服务接口合同 | index.md |
 | [_master_blueprint/](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER_BLUEPRINT） | blueprint.md |
-| [system_master/](file:///D:/ZephyrAlpha/docs/03_modules/system_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
+| [_system_master/](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
 
 ### 2.3 遗留目录（已标记 Deprecated）
 

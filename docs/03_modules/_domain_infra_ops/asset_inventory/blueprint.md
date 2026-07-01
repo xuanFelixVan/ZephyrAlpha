@@ -168,7 +168,7 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 
 > **对齐文件**：
 > - `config/capacity_params.yaml` CFG-CAP-001——所有容量参数的来源
-> - `docs/03_modules/_sys-master/blueprint.md` §〇——系统级 Worker Pool / 硬件感知
+> - `docs/03_modules/_system_master/blueprint.md` §〇——系统级 Worker Pool / 硬件感知
 > - `docs/03_modules/_cross_layer/database/blueprint.md` §〇——Database v3.0 双库路由
 > - `docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md` §〇——审计总控容量审计（触发本审查的源头）
 

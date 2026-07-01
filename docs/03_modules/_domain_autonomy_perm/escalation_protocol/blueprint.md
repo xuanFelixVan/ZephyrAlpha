@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-022
 submodule_path: src/zephyr/governance/escalation_engine.py
 title: Escalation Protocol 蓝图
@@ -30,6 +30,7 @@ belongs_to: MOD-MASTER_BLUEPRINT
 summary: "AI操作安全升级与委托治理协议——五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计），30决策/104文件，量化交易特化升级，Vibe Coding安全防御"
 tags: [escalation, safety, delegation, guardrail, vibe-coding]
 priority: P1
+activation_phase: current
 runtime_plane: hot
 ssot_claims:
   - dimension: "升级规则判定(autonomous/auto_guard/blocked)"

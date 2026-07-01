@@ -1,4 +1,4 @@
-﻿# [A_test] module_id: SRC-TST-0112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-0112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-270 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.e2e.test_kb_full_pipeline
 # [STABILITY] evolving
@@ -57,8 +57,8 @@ class TestBootstrapColdStart:
             "---\ntitle: test\n---\n\n# ADR-0001\n\nDecision: Use ChromaDB\n", encoding="utf-8"
         )
         (tmp_path / "docs" / "03_modules").mkdir(parents=True, exist_ok=True)
-        (tmp_path / "docs" / "03_modules" / "_sys-master").mkdir(exist_ok=True)
-        (tmp_path / "docs" / "03_modules" / "_sys-master" / "blueprint.md").write_text(
+        (tmp_path / "docs" / "03_modules" / "_system_master").mkdir(exist_ok=True)
+        (tmp_path / "docs" / "03_modules" / "_system_master" / "blueprint.md").write_text(
             "---\ntitle: blueprint\n---\n\n## System Architecture\n\nThe system uses a 3-tier pyramid model.\n",
             encoding="utf-8",
         )

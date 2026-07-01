@@ -48,7 +48,7 @@ depends_on:
     at: "全篇"
     why: "L13 实验管线模块蓝图"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_system_master\\blueprint.md"
     section: "§七十八~§八十四"
     why: "系统总蓝图ML-Experiment域章节"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -68,7 +68,7 @@ tags:
 
 # ML-Experiment Domain 蓝图 — L11平台→L13实验跨层集成
 
-> module_id: ml_experiment_domain-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: ml_experiment_domain-001 | version: 0.4.0 | status: deprecated | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\src\zephyr\ml_train\ + D:\ZephyrAlpha\src\zephyr\simulation\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -290,7 +290,7 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| SYS-MASTER-001 | 必须 | 系统总蓝图 §七十八~§八十四 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| SYS-MASTER-001 | 必须 | 系统总蓝图 §七十八~§八十四 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-ML-001 | 必须 | L11 ML 平台核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml-platform-core\blueprint.md` |
 | MOD-EXP-001 | 必须 | L13 实验管线核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\experimentation-core\blueprint.md` |
 
@@ -604,7 +604,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 5 | 系统总蓝图 | SYS-MASTER-001 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
+| 5 | 系统总蓝图 | SYS-MASTER-001 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` | 系统拓扑 |
 
 ---
 

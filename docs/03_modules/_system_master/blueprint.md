@@ -1,6 +1,6 @@
 ---
 module_id: SYS-MASTER-001
-submodule_paths_scope: system_master
+submodule_paths_scope: _system_master
 title: "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"
 doc_type: blueprint
 status: Active
@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-14"
 construction_progress: completed
 drift_status: reviewed
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\system_master\\blueprint.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_system_master\\blueprint.md"
 template_for: blueprint
 generation: 2
 functional_domain: system
@@ -59,7 +59,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 # System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
 
 > module_id: SYS-MASTER-001 | version: 0.17.0 | status: active | layer: meta | blueprint_level: system
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md | generation: 2 | construction_progress: completed | drift_status: reviewed
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md | generation: 2 | construction_progress: completed | drift_status: reviewed
 
 ## 概述
 
@@ -836,7 +836,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 产出物 | 路径 |
 |------|------|
-| 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
 | 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
 | 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |

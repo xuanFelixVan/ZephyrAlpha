@@ -842,7 +842,7 @@ class FeedbackEntry(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-MASTER_BLUEPRINT | 必须 | CT-CE-VMS-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | CT-CE-VMS-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge_base\blueprint.md` |
 | MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` |
 | MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
