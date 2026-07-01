@@ -59,7 +59,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT, SCAN_EXTENSIONS_MD
-from _shared.frontmatter import parse_frontmatter_raw_from_file
+from _shared.frontmatter import parse_frontmatter_from_file as parse_frontmatter_raw_from_file
 from _shared.walk import iter_files
 
 BLOCKQUOTE_PATTERN = re.compile("module_id:\\s*(\\S+).*?version:\\s*(\\S+).*?status:\\s*(\\S+)")

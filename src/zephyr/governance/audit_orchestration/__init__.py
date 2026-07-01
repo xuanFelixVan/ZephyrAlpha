@@ -43,7 +43,6 @@ __all__ = [
     "agent_orchestrator",
     "agent_quality",
     "autonomy_guard",
-    "backup_manager",
     "batch_orchestrator",
     "benchmark_runner",
     "blind_spot_closure",

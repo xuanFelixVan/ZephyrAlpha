@@ -177,8 +177,22 @@ def _generate_init_content(pkg_rel: str, modules: list[str], existing_content: s
         current_line = lines[line_idx]
         close_bracket = current_line.rfind("]")
         if close_bracket >= 0:
-            insert_str = ", " + ", ".join(repr(m) for m in sorted_modules)
-            lines[line_idx] = current_line[:close_bracket] + insert_str + current_line[close_bracket:]
+            new_items = ", ".join(repr(m) for m in sorted_modules)
+            before = current_line[:close_bracket]
+            stripped = before.rstrip()
+            last_char = stripped[-1] if stripped else ""
+
+            if not stripped or last_char == "[":
+                # 空列表 [] 或括号独占一行：不加前导逗号
+                sep = ""
+            elif last_char == ",":
+                # 尾随逗号已存在：只补一个空格
+                sep = " "
+            else:
+                # 正常情形：元素紧邻 ]，需要前导逗号
+                sep = ", "
+
+            lines[line_idx] = stripped + sep + new_items + current_line[close_bracket:]
             bracket_found = True
             break
 
