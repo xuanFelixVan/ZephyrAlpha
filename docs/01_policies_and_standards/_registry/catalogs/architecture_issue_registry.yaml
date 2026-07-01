@@ -464,7 +464,7 @@ entries:
     不新建分类）、第一性原理（病根是归属错误非数量过多）、可发现性（新
     AI 按功能域直觉定位）。
   fix_phase: |
-    P0 已执行（2026-07-01，本session）：
+    P0 施工待重做（曾于 2026-07-01 执行但被外部并发会话 reset 丢失，需重做）：
     (P0-1)删除 down_migration_generator.py + 测试文件 + 清理 __init__.py
     （import L41 + __all__ L121）+ 清理 _manifest.py（L91-95 声明）；
     (P0-2)更新蓝图 MOD-INF-021：28行路径漂移修复（src/zephyr/rollback/
@@ -478,6 +478,7 @@ entries:
     governance 11）+ 同步 import/depgraph/frontmatter；
     P2 修复72个文件 frontmatter [DOMAIN] 造假（D_INFRA_RUNTIME →
     D_INFRA_RECOVERY）+ 8个文件 INVARIANTS 造假 + path_ownership_map 一致性。
+    注：P0 曾在本session执行（down_migration_generator删除+蓝图路径修复+ARCH-039登记），但被外部并发会话 git reset 丢失，需在并发结束后重做。
   status: decided
   related_rules:
   - TRAE-028
