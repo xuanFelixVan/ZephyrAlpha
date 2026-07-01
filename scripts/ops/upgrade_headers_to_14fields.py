@@ -532,7 +532,9 @@ def upgrade_file(filepath: Path, loader: DepgraphLoader, dry_run: bool) -> Upgra
         return UpgradeResult(path=rel, status="SKIPPED_EXEMPT")
 
     try:
-        with open(filepath, encoding="utf-8") as f:
+        # utf-8-sig：读取时自动剥离行首 UTF-8 BOM (\ufeff)，避免 BOM 导致
+        # PY_HEADER_PATTERN 的 ^# 锚点失配（Bug 1：BOM 使 14 字段文件被误判需升级）
+        with open(filepath, encoding="utf-8-sig") as f:
             content = f.read()
     except Exception as e:
         return UpgradeResult(path=rel, status="ERROR", detail=str(e))
