@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:16
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -200,7 +200,6 @@ graph TD
     D_SECURITY["D_SECURITY production"]
     src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|import_depends| D_SHARED
     D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_rollback_phase_manager_py
     D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
     D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py

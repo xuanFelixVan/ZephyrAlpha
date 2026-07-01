@@ -1,7 +1,7 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-02 05:59:18
+%% 生成时间: 2026-07-02 06:16:56
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 1699, 依赖边数: 2111
+%% 模块数: 1692, 依赖边数: 2060
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         tests_agent_rbac_test_kill_switch_agent_rbac_py["...t_rbac/test_kill_switch_agent_rbac.py [prototype]"]
         tests_agent_rbac_test_novel_attack_py["tests/agent_rbac/test_novel_attack.py [prototype]"]
         tests_agent_rbac_test_observability_agent_rbac_py["...rbac/test_observability_agent_rbac.py [prototype]"]
-        %% ... 还有 1599 个模块未显示
+        %% ... 还有 1592 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -152,7 +152,7 @@ graph TD
     %% D_AUDITTEST -> D_FUNDAMENTAL_SIGNAL (2 条)
     tests_cross_test_cross_layer_py -->|test_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     tests_pipeline_test_alpha_signal_pipeline_py -->|test_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    %% D_AUDITTEST -> D_GOVERNANCE (490 条)
+    %% D_AUDITTEST -> D_GOVERNANCE (482 条)
     tests_a2a_test_a2a_failure_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_action_test_action_history_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_agent_test_agent_signer_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -441,15 +441,13 @@ graph TD
     tests_llm_security_test_l7_validation_py -->|test_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     tests_llm_security_test_process_sandbox_llm_security_py -->|test_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     tests_llm_security_test_secrets_py -->|test_depends| D_SECURITY_LLM[D_SECURITY_LLM]
-    %% D_AUDITTEST -> D_SHARED (162 条)
+    %% D_AUDITTEST -> D_SHARED (119 条)
     tests_ai_test_ai_capability_guard_py -->|test_depends| D_SHARED[D_SHARED]
     tests_audit_test_audit_red_blue_e2e_py -->|test_depends| D_SHARED[D_SHARED]
     tests_automation_test_auto_split_py -->|test_depends| D_SHARED[D_SHARED]
     tests_autonomy_test_ide_watcher_py -->|test_depends| D_SHARED[D_SHARED]
     tests_autonomy_test_mgmt_context_budget_tracker_py -->|test_depends| D_SHARED[D_SHARED]
     tests_budget_test_budget_handler_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_budget_test_budget_event_driven_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_context_test_context_pipeline_auto_py -->|test_depends| D_SHARED[D_SHARED]
     tests_contracts_test_abac_guard_root_py -->|test_depends| D_SHARED[D_SHARED]
     tests_contracts_test_alerts_bridge_py -->|test_depends| D_SHARED[D_SHARED]
     tests_contracts_test_rbac_guard_root_py -->|test_depends| D_SHARED[D_SHARED]
@@ -463,15 +461,17 @@ graph TD
     tests_escalation_test_escalation_gov_contracts_py -->|test_depends| D_SHARED[D_SHARED]
     tests_escalation_test_escalation_gov_rbac_bridge_py -->|test_depends| D_SHARED[D_SHARED]
     tests_f_lifecycle_test_f18_automation_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f1_event_trigger_py -->|test_depends| D_SHARED[D_SHARED]
     tests_f_lifecycle_test_f18_redblue_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_shutdown_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_shutdown_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_startup_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_startup_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_startup_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_auto_startup_py -->|test_depends| D_SHARED[D_SHARED]
-    tests_f_lifecycle_test_f21_event_driven_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_gate_test_circuit_breaker_types_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_gate_test_resilience_circuit_breaker_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_governance_rule_enforcem___erator_design_protection_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_governance_rule_enforcement_test_session_worktree_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_governance_shared_test_boot_hooks_unlock_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_governance_shared_test_governance_db_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_infrastructure_test_audit_rename_completeness_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_infrastructure_test_f18_governance_adversarial_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_infrastructure_test_infra_cache_py -->|test_depends| D_SHARED[D_SHARED]
+    tests_infrastructure_test_infra_lock_py -->|test_depends| D_SHARED[D_SHARED]
     %% D_AUDITTEST -> D_SIMULATION (1 条)
     tests_cross_test_cross_layer_py -->|test_depends| D_SIMULATION[D_SIMULATION]
     %% D_AUDITTEST -> D_TRADING (557 条)
@@ -509,4 +509,4 @@ graph TD
     %% 统计
     %% 域内依赖: 1 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 2110 条
+    %% 跨域出边: 2059 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:16
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -427,8 +427,6 @@ graph TD
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
-    src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| D_SHARED
-    src_zephyr_security_adversarial_validation_validator_event_bridge_py -.->|import_depends| D_SHARED
     D_AUTONOMY_PERM["D_AUTONOMY_PERM prototype"]
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_attack_registry_py
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py

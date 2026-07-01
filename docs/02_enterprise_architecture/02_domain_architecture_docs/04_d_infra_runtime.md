@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:16
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -227,7 +227,6 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|import_depends| D_SHARED
@@ -479,7 +478,6 @@ graph TD
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_lifecycle_task_lifecycle_manager_py
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
-    D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py

@@ -1,7 +1,7 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-02 05:59:19
+%% 生成时间: 2026-07-02 06:16:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 461, 依赖边数: 1261
+%% 模块数: 461, 依赖边数: 1241
 
 graph TD
 
@@ -414,39 +414,39 @@ graph TD
     src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
     src_zephyr_trading_orchestrator_core_agent_orchestrator_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
-    %% D_TRADING -> D_SHARED (74 条)
+    %% D_TRADING -> D_SHARED (54 条)
     src_zephyr_trading_action_dispatcher_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_auto_task_generator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_auto_task_generator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_finalizer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_finalizer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_speed_baseline_checker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_runtime_config_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_zombie_scanner_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_feedback_loop_evolution_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_feedback_loop_scheduler_safety_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_agent_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_chaos_hooks_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_deferred_queue_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_orchestrator_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 433 条
     %% 跨域入边: 666 条
-    %% 跨域出边: 162 条
+    %% 跨域出边: 142 条

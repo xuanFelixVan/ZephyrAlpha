@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-02 05:59:19
+%% 生成时间: 2026-07-02 06:16:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 173, 依赖边数: 521
+%% 模块数: 173, 依赖边数: 520
 
 graph TD
 
@@ -300,14 +300,13 @@ graph TD
     src_zephyr_governance_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_rule_enforcement_task_types_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_rule_enf___02_enforcement_validator_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    %% D_GOV_ENFORCEMENT -> D_SHARED (15 条)
+    %% D_GOV_ENFORCEMENT -> D_SHARED (14 条)
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_circuit_breaker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_rule_enf___t_truth_source_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf___nt_sys_master_compliance_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_rule_enf____001_circular_dependency_py -->|import_depends| D_SHARED[D_SHARED]
@@ -320,4 +319,4 @@ graph TD
     %% 统计
     %% 域内依赖: 224 条
     %% 跨域入边: 257 条
-    %% 跨域出边: 40 条
+    %% 跨域出边: 39 条

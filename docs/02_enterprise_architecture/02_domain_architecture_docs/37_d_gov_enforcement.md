@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则执行（D_GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:15
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -435,8 +435,7 @@ graph TD
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_rule_enforcement_task_completion_gate_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_governance_rule_enforcement_truth_source_validator_py -->|import_depends| D_GOVERNANCE
-    D_SHARED["D_SHARED prototype"]
-    src_zephyr_governance_rule_enforcement_truth_source_validator_py -.->|import_depends| D_SHARED
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_rule_enforcement_sys_master_compliance_py -->|import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|import_depends| D_SHARED
     src_zephyr_governance_rule_enforcement_triple_alignment_py -->|import_depends| D_GOVERNANCE
@@ -466,8 +465,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_enforcement_output_quality_gate_py,src_zephyr_governance_rule_enforcement_post_doc_review_yaml,src_zephyr_governance_rule_enforcement_pre_flight_gate_py,src_zephyr_governance_rule_enforcement_risk_ssot_py,src_zephyr_governance_rule_enforcement_rule_canary_manager_py,src_zephyr_governance_rule_enforcement_rule_debt_auditor_py,src_zephyr_governance_rule_enforcement_rule_engine_py,src_zephyr_governance_rule_enforcement_rule_shadow_runner_py,src_zephyr_governance_rule_enforcement_secrets_guard_py,src_zephyr_governance_rule_enforcement_slo_contract_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_yaml,src_zephyr_governance_rule_enforcement_task_g0_entry_yaml,src_zephyr_governance_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_completion_gate_py,src_zephyr_governance_rule_enforcement_task_types_py,src_zephyr_governance_rule_enforcement_triple_alignment_py,src_zephyr_governance_rule_enforcement_truth_source_validator_py,src_zephyr_governance_rule_enforcement_zero_residue_yaml production
     class src_zephyr_governance_rule_enforcement_quality_gate_py,src_zephyr_governance_rule_enforcement_rule_watcher_py,src_zephyr_governance_rule_enforcement_task_init_py design
-    class D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME,D_TRADING external_prod
-    class D_SHARED,D_INTEGRATION_GATEWAY,D_SECURITY,D_GOV_SCRIPTS,D_AUDITTEST external_design
+    class D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME,D_SHARED,D_TRADING external_prod
+    class D_INTEGRATION_GATEWAY,D_SECURITY,D_GOV_SCRIPTS,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

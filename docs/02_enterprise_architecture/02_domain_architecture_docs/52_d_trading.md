@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:16
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -828,14 +828,12 @@ graph TD
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_INFRA_RUNTIME
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_INFRA_TELEMETRY
-    src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_INTEGRATION
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_GOVERNANCE
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_INFRA_RECOVERY
-    src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_SHARED
     src_zephyr_trading_feedback_loop_metrics_collector_py -->|import_depends| D_GOVERNANCE
     src_zephyr_trading_feedback_loop_scheduler_safety_py -->|import_depends| D_SHARED
     D_GOVERNANCE -.->|runtime| src_zephyr_trading_feedback_loop_scheduler_act_py
@@ -988,13 +986,9 @@ graph TD
     src_zephyr_trading_orchestrator_agent_health_monitor_py -->|import_depends| src_zephyr_trading_orchestrator_agent_orchestrator_py
     src_zephyr_trading_orchestrator_init_py -.->|import_depends| src_zephyr_trading_orchestrator_alert_handler_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_trading_finalizer_py -->|import_depends| D_SHARED
-    src_zephyr_trading_finalizer_py -->|import_depends| D_SHARED
     src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_health_monitor_py -->|import_depends| D_INTEGRATION
-    src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED
-    src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED
     src_zephyr_trading_health_monitor_py -->|import_depends| D_SHARED
     src_zephyr_trading_night_shift_queue_py -->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D_GOVERNANCE production"]
@@ -1273,14 +1267,7 @@ graph TD
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_GOVERNANCE

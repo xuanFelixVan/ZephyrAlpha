@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-02 05:59:19
+%% 生成时间: 2026-07-02 06:16:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 138, 依赖边数: 358
+%% 模块数: 138, 依赖边数: 356
 
 graph TD
 
@@ -260,8 +260,7 @@ graph TD
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
     %% D_SECURITY -> D_INFRA_RUNTIME (1 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_infrastructure_asset_inventory_mcp_server_py
-    %% D_SHARED -> D_INFRA_RUNTIME (4 条)
-    D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_hooks_py
+    %% D_SHARED -> D_INFRA_RUNTIME (3 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
@@ -311,7 +310,7 @@ graph TD
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_infrastructure_pipeline___init___py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    %% D_INFRA_RUNTIME -> D_SHARED (55 条)
+    %% D_INFRA_RUNTIME -> D_SHARED (54 条)
     src_zephyr___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_blueprint_search_server_py -->|import_depends| D_SHARED[D_SHARED]
@@ -345,5 +344,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 144 条
-    %% 跨域入边: 129 条
-    %% 跨域出边: 85 条
+    %% 跨域入边: 128 条
+    %% 跨域出边: 84 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:15
+> 最后更新: 2026-07-02 06:16:54
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_AUDITTEST | Domain ID | D_AUDITTEST |
 | 域名称 | 审计测试套件 | Domain Name | 审计测试套件 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 1699 | Module Count | 1699 |
+| 模块数 | 1692 | Module Count | 1692 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 2110 | Cross-domain Outgoing | 2110 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 1650 | Prototype Modules | 1650 |
+| 原型态模块 | 1643 | Prototype Modules | 1643 |
 | 生产态模块 | 49 | Production Modules | 49 |
 | 容量 | 49/150 (正常) | Capacity | 49/150 (正常) |
 | 描述 | 审计单元测试(unit) | Description | 审计单元测试(unit) |
@@ -884,8 +884,6 @@ graph TD
     tests_context_test_context_outcome_tracker_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_package_py -.->|test_depends| D_GOVERNANCE
     tests_context_test_context_pipeline_auto_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D_SHARED production"]
-    tests_context_test_context_pipeline_auto_py -.->|test_depends| D_SHARED
     tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_playground_py -.->|test_depends| D_AUTONOMY_CORE
@@ -901,7 +899,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_context_test_context_manager_py,tests_context_test_context_model_strategy_py,tests_context_test_context_outcome_tracker_py,tests_context_test_context_package_py,tests_context_test_context_pipeline_auto_py,tests_context_test_context_pipeline_root_py,tests_context_test_context_playground_py,tests_context_test_context_rot_model_root_py,tests_context_test_context_rule_registry_root_py,tests_context_test_context_rule_registry_unit_py,tests_context_test_context_switch_governor_py,tests_context_test_context_truncation_py,tests_context_test_context_value_attribution_py,tests_context_test_context_waste_detector_py,tests_context_test_context_window_contamination_detector_py,tests_context_test_context_window_pressure_manager_py,tests_contracts_meta_init_py,tests_contracts_test_abac_guard_root_py,tests_contracts_test_alerts_bridge_py,tests_contracts_test_api_version_contract_py,tests_contracts_test_contract_bus_py,tests_contracts_test_contract_consistency_checker_py,tests_contracts_test_contract_drift_detector_py,tests_contracts_test_contract_metrics_root_py,tests_contracts_test_contract_registry_root_py,tests_contracts_test_contract_router_root_py,tests_contracts_test_contract_tester_py,tests_contracts_test_contract_verifier_py,tests_contracts_test_ct_audit_findings_resolved_py,tests_contracts_test_ct_blueprint_read_check_py design
-    class D_GOVERNANCE,D_AUTONOMY_CORE,D_SHARED,D_TRADING external_prod
+    class D_GOVERNANCE,D_AUTONOMY_CORE,D_TRADING external_prod
 ```
 
 ### 第 15 页 / 共 57 页 / Page 15 of 57
@@ -2420,7 +2418,6 @@ graph TD
     tests_infrastructure_test_graceful_degradation_planner_py -.->|test_depends| D_TRADING
     tests_infrastructure_test_finding_task_bridge_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_infra_cache_py -.->|test_depends| D_SHARED
-    tests_infrastructure_test_infra_cache_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -3478,7 +3475,7 @@ graph TD
         tests_trae_rules_test_g_trae_053_py["tests/trae_rules/test_g_trae_053.py prototype"]
         tests_trae_rules_test_g_trae_054_py["tests/trae_rules/test_g_trae_054.py prototype"]
         tests_trae_rules_test_g_trae_055_py["tests/trae_rules/test_g_trae_055.py prototype"]
-        tests_unit_init_py["tests/unit/__init__.py prototype"]
+        tests_utils_test_foundation_deprecation_py["tests/utils/test_foundation_deprecation.py prototype"]
     end
     D_SHARED["D_SHARED production"]
     tests_trae_rules_test_g_trae_027_py -.->|test_depends| D_SHARED
@@ -3501,7 +3498,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trae_rules_test_g_trae_027_py,tests_trae_rules_test_g_trae_028_py,tests_trae_rules_test_g_trae_029_py,tests_trae_rules_test_g_trae_030_py,tests_trae_rules_test_g_trae_031_py,tests_trae_rules_test_g_trae_032_py,tests_trae_rules_test_g_trae_033_py,tests_trae_rules_test_g_trae_034_py,tests_trae_rules_test_g_trae_035_py,tests_trae_rules_test_g_trae_036_py,tests_trae_rules_test_g_trae_037_py,tests_trae_rules_test_g_trae_038_py,tests_trae_rules_test_g_trae_039_py,tests_trae_rules_test_g_trae_040_py,tests_trae_rules_test_g_trae_041_py,tests_trae_rules_test_g_trae_042_py,tests_trae_rules_test_g_trae_043_py,tests_trae_rules_test_g_trae_044_py,tests_trae_rules_test_g_trae_045_py,tests_trae_rules_test_g_trae_046_py,tests_trae_rules_test_g_trae_047_py,tests_trae_rules_test_g_trae_048_py,tests_trae_rules_test_g_trae_049_py,tests_trae_rules_test_g_trae_050_py,tests_trae_rules_test_g_trae_051_py,tests_trae_rules_test_g_trae_052_py,tests_trae_rules_test_g_trae_053_py,tests_trae_rules_test_g_trae_054_py,tests_trae_rules_test_g_trae_055_py,tests_unit_init_py design
+    class tests_trae_rules_test_g_trae_027_py,tests_trae_rules_test_g_trae_028_py,tests_trae_rules_test_g_trae_029_py,tests_trae_rules_test_g_trae_030_py,tests_trae_rules_test_g_trae_031_py,tests_trae_rules_test_g_trae_032_py,tests_trae_rules_test_g_trae_033_py,tests_trae_rules_test_g_trae_034_py,tests_trae_rules_test_g_trae_035_py,tests_trae_rules_test_g_trae_036_py,tests_trae_rules_test_g_trae_037_py,tests_trae_rules_test_g_trae_038_py,tests_trae_rules_test_g_trae_039_py,tests_trae_rules_test_g_trae_040_py,tests_trae_rules_test_g_trae_041_py,tests_trae_rules_test_g_trae_042_py,tests_trae_rules_test_g_trae_043_py,tests_trae_rules_test_g_trae_044_py,tests_trae_rules_test_g_trae_045_py,tests_trae_rules_test_g_trae_046_py,tests_trae_rules_test_g_trae_047_py,tests_trae_rules_test_g_trae_048_py,tests_trae_rules_test_g_trae_049_py,tests_trae_rules_test_g_trae_050_py,tests_trae_rules_test_g_trae_051_py,tests_trae_rules_test_g_trae_052_py,tests_trae_rules_test_g_trae_053_py,tests_trae_rules_test_g_trae_054_py,tests_trae_rules_test_g_trae_055_py,tests_utils_test_foundation_deprecation_py design
     class D_SHARED,D_GOV_ENFORCEMENT external_prod
 ```
 
@@ -3510,13 +3507,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
-        tests_unit_data_init_py["tests/unit/data/__init__.py prototype"]
-        tests_unit_data_test_akshare_provider_py["tests/unit/data/test_akshare_provider.py prototype"]
-        tests_unit_data_test_default_quality_gate_py["tests/unit/data/test_default_quality_gate.py prototype"]
-        tests_unit_data_test_memory_provider_py["tests/unit/data/test_memory_provider.py prototype"]
-        tests_unit_data_test_provider_base_contract_py["tests/unit/data/test_provider_base_contract.py prototype"]
-        tests_unit_data_test_quality_gate_py["tests/unit/data/test_quality_gate.py prototype"]
-        tests_utils_test_foundation_deprecation_py["tests/utils/test_foundation_deprecation.py prototype"]
         tests_utils_test_foundation_env_py["tests/utils/test_foundation_env.py prototype"]
         tests_utils_test_foundation_errors_py["tests/utils/test_foundation_errors.py prototype"]
         tests_utils_test_foundation_flags_py["tests/utils/test_foundation_flags.py prototype"]
@@ -3530,29 +3520,22 @@ graph TD
         tests_utils_test_utils_time_utils_py["tests/utils/test_utils_time_utils.py prototype"]
         tests_utils_test_version_py["tests/utils/test_version.py prototype"]
     end
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_unit_data_test_akshare_provider_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_akshare_provider_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_default_quality_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_default_quality_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_provider_base_contract_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_memory_provider_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_memory_provider_py -.->|test_depends| D_GOVERNANCE
-    tests_unit_data_test_quality_gate_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
-    tests_utils_test_foundation_deprecation_py -.->|test_depends| D_SHARED
     tests_utils_test_foundation_env_py -.->|test_depends| D_SHARED
-    tests_utils_test_foundation_errors_py -.->|test_depends| D_SHARED
-    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
-    tests_utils_test_foundation_flags_py -.->|test_depends| D_SHARED
     tests_utils_test_resilience_fallback_py -.->|test_depends| D_SHARED
-    tests_utils_test_resilience_fallback_py -.->|test_depends| D_SHARED
+    tests_utils_test_resilience_retry_py -.->|test_depends| D_SHARED
+    tests_utils_test_utils_context_py -.->|test_depends| D_SHARED
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    tests_utils_test_utils_testing_py -.->|test_depends| D_GOV_ENFORCEMENT
+    D_INTEGRATION["D_INTEGRATION production"]
+    tests_utils_test_utils_testing_py -.->|test_depends| D_INTEGRATION
+    tests_utils_test_utils_testing_py -.->|test_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_unit_data_init_py,tests_unit_data_test_akshare_provider_py,tests_unit_data_test_default_quality_gate_py,tests_unit_data_test_memory_provider_py,tests_unit_data_test_provider_base_contract_py,tests_unit_data_test_quality_gate_py,tests_utils_test_foundation_deprecation_py,tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py,tests_utils_test_foundation_flags_py,tests_utils_test_resilience_fallback_py,tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py design
-    class D_GOVERNANCE,D_SHARED external_prod
+    class tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py,tests_utils_test_foundation_flags_py,tests_utils_test_resilience_fallback_py,tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py design
+    class D_SHARED,D_GOV_ENFORCEMENT,D_INTEGRATION external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -3587,12 +3570,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 审计测试套件（D_AUDITTEST）的模块分布。共 1699 个模块 / 1699 modules。
+> 按 architecture_layer 分层显示 审计测试套件（D_AUDITTEST）的模块分布。共 1692 个模块 / 1692 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L2 领域层 / Domain Layer (1699 modules)              │
+│             L2 领域层 / Domain Layer (1692 modules)              │
 ├──────────────────────────────────────────────────────────────────┤
 │   tests/a2a/test_a2a_anomaly_detector.py  [prototype]            │
 │   tests/a2a/test_a2a_behavior_fingerprint.py  [prototype]        │
@@ -3612,16 +3595,16 @@ graph TD
 │   tests/a2a/test_a2a_delegation_chain.py  [prototype]            │
 │   tests/a2a/test_a2a_economics.py  [prototype]                   │
 │   tests/a2a/test_a2a_failure.py  [prototype]                     │
-│   ...还有 1681 个模块 / 1681 more modules                        │
+│   ...还有 1674 个模块 / 1674 more modules                        │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 1699 个模块 / 1699 modules）。
+> 按 architecture_layer 分组的模块清单（共 1692 个模块 / 1692 modules）。
 
-### L2 领域层 / Domain Layer (1699 modules)
+### L2 领域层 / Domain Layer (1692 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -3826,7 +3809,7 @@ graph TD
 | 199 | tests/audit/test_state_machine.py | tests/audit/test_state_machine.py | prototype | generated |
 | 200 | tests/audit/test_statistical_hygiene_auditor.py | tests/audit/test_statistical_hygiene_... | prototype | generated |
 
-> (仅显示前 200 个模块，共 1699 个)
+> (仅显示前 200 个模块，共 1692 个)
 
 ## 依赖关系图 / Dependency Graph
 

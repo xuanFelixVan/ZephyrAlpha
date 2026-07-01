@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 05:59:16
+> 最后更新: 2026-07-02 06:16:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -200,7 +200,6 @@ graph TD
     src_zephyr_integration_shared_schema_init_py -.->|config_depends| src_zephyr_integration_shared_schema_base_config_py
     D_SHARED["D_SHARED production"]
     src_zephyr_integration_mcp_server_py -.->|import_depends| D_SHARED
-    src_zephyr_integration_mcp_server_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_INTELLIGENCE
@@ -211,7 +210,6 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_AUTONOMY_CORE
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_INTELLIGENCE
-    src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED
     D_SECURITY_LLM["D_SECURITY_LLM production"]
