@@ -2169,13 +2169,6 @@ ownership:
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/autonomy_core/context/context_optimizer.py'
-    owner_blueprint: 'MOD-INF-019'
-    claim_type: 'section_0_1'
-    declared_in: 'docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: '—'
-
   - path: 'src/zephyr/autonomy_core/all_skill_modules.py'
     owner_blueprint: 'MOD-INF-019'
     claim_type: 'section_0_1'
