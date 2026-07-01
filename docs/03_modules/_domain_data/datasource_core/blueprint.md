@@ -1,10 +1,10 @@
-﻿---
+---
 module_id: MOD-L00-001
 submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "3.0.0"
+version: "4.0.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -15,15 +15,15 @@ created_by: human_plus_agent
 valid_from: "2026-05-05"
 date: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
+construction_progress: not_started
 actual_disk_path: "src/zephyr/data/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
 last_verified: "2026-05-15"
-last_updated: "2026-05-15"
-generation: 3
+last_updated: "2026-07-01"
+generation: 4
 rule_form: structural
 scope: module
 stability: evolving
@@ -32,6 +32,9 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l00_data_source.yaml"
     section: ""
     why: "架构层YAML真源"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\database\\business_data_architecture.md"
+    section: "§5 品类全景 / §6 插拔式品类管理 / §7 回测调度策略 / §8 能造/硬性边界"
+    why: "业务数据库母蓝图——数据源接入层的上游设计真源"
 depends_on:
   - target: MOD-GATE_ENGINE
     at: "§10"
@@ -50,26 +53,31 @@ runtime_plane: hot
 tags:
   - data-source
   - l00
-  - c-track
-  - blocked-by-infrastructure
-summary: "数据接入层——外部数据源适配接入：行情、基本面、另类数据摄取与标准化。C轨占位——禁止施工。"
+summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
 ---
 
-> ⛔ **C轨占位——业务层未开放，禁止施工**
-> 本蓝图属于 C轨（业务层）占位蓝图。当前仅完成骨架代码，不进行主动施工。
-> 待 A轨（基础设施层）稳定后按 ARB-11 三梯队优先级启动。
-> 任何 AI agent 不得以此蓝图为依据生成新的数据接入业务代码。
+> **v4.0.0 重建中** — 旧C轨占位代码已清理（2026-07-01），抽象层+实现层已按业务数据库母蓝图重建，多品类扩展(对接母蓝图§6插拔机制)待施工。
 
-> actual_disk_path: src/zephyr/data/ (6 .py files + 2 test files)
+> actual_disk_path: src/zephyr/data/ (抽象层+实现层5文件已重建，多品类扩展待施工)
 
-# Data Source Core 蓝图+施工图 — 数据接入层·C轨占位
+# Data Source Core 蓝图+施工图 — 数据接入层
 
-> module_id: MOD-L00-001 | version: 3.0.0 | status: active | domain: data
-> actual_disk_path: src/zephyr/data/ | generation: 3 | construction_progress: partially_implemented
+> module_id: MOD-L00-001 | version: 4.0.0 | status: active | domain: data
+> actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: not_started
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 数据接入层——它解决了外部数据源（行情、基本面、另类数据）格式各异、API限流、数据质量参差不齐的标准化接入问题。核心职责包括：数据源OCP扩展点(DataSourceBase)、数据质量门禁(DataQualityGate)、标准化输出(CTR-001 NormalizedMarketData)。当前规模 1 个数据源(AkShare)，目标容量 5 个数据源。上游依赖 AkShare 等外部 API，下游被 L02/L03/L09 层消费。
+本蓝图描述 ZephyrAlpha 数据接入层——它是业务数据库母蓝图([ARCH-BIZDB-001](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md))的**上游**，为 C1/C2/C3 仓库提供原料数据，解决外部数据源格式各异、API限流、数据质量参差不齐的标准化接入问题。
+
+核心职责：
+- **数据源OCP扩展点**(DataSourceBase)：多数据源标准化接入
+- **数据质量门禁**(DataQualityGate)：对接 CTR 契约质量门禁
+- **标准化输出**(CTR-001~CTR-003)：NormalizedMarketData 及新闻/宏观契约
+- **对接母蓝图§5品类全景**：69 品类摄取能力（行情/基本面/另类/宏观/新闻/舆情）
+- **对接母蓝图§6插拔机制**：品类注册表 enabled 二元开关（硬边界品类 enabled=false 预留）
+- **对接母蓝图§7回测调度**：calc_mode 标注（replay/preload/hybrid）
+
+支持多数据源标准化接入：AkShare(免费行情+基本面)、miniQMT(实盘行情)、iFind(付费基本面+另类)、tushare(新闻+基本面)、爬虫(舆情)。支持原料/成品/事务三层分类（原料=tick/新闻原文接入即存，成品=K线/指标可预计算）。上游依赖各类外部 API，下游为 C1~C4 仓库层及 L02/L03/L09 层提供标准化原料数据。
 
 ---
 
@@ -114,6 +122,7 @@ summary: "数据接入层——外部数据源适配接入：行情、基本面�
 | v0.1.0 (占位) | 无代码 | 全部 | blocked_by_infrastructure |
 | v2.1.0 (模板升级) | DataSourceBase + DataQualityGate + 3个实现 | connectors/normalizers/storage/cache子模块 | C轨占位 |
 | v3.0.0 (回填+对齐) | 同 v2.1.0 | 同 v2.1.0 | C轨占位 |
+| v4.0.0 (重建) | DataSourceBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) | 待Spiral扩展 |
 
 ---
 
@@ -121,51 +130,70 @@ summary: "数据接入层——外部数据源适配接入：行情、基本面�
 
 ### 1.1 背景
 
-ZephyrAlpha 需要接入多种外部数据源（AkShare/Tushare/Wind等），各数据源API格式各异、限流策略不同、数据质量参差不齐。需要统一的数据接入层将原始数据标准化为 CTR-001 NormalizedMarketData，供下游 L02/L03/L09 消费。
+ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据品类全景**：行情数据(10)、基本面(10)、另类(10)、宏观(11)、因子值(5大类)、技术指标(1组)、图形识别(6类)、信号历史(1)、主力行为(1)、板块强度(1)、知识图谱(5类)、回测结果(2)、交易事务(3)、补充品类(9)。数据源接入层作为业务数据库的**上游**，需为 C1/C2/C3 仓库提供这 69 品类的原料数据摄取能力。
+
+各数据源 API 格式各异、限流策略不同、数据质量参差不齐，需统一接入层将原始数据标准化为 CTR 系列契约输出。母蓝图§6 要求**品类插拔式管理**（品类注册表 + DDL-as-Code + CTR 契约 + CategoryManager 发现 4 层机制）；母蓝图§7.5 要求品类标注 **calc_mode**（replay/preload/hybrid）以支撑回测调度策略；母蓝图§8 要求硬边界品类(Level-2/卫星/Barra等)以 enabled=false 预留接口。
 
 ### 1.2 目标范围
 
 | # | 类型 | 内容 | 标准/原因 |
 |---|:----:|------|----------|
-| 1 | ✅ 包含 | 外部数据源标准化接入 | DataSourceBase OCP扩展点可用 |
-| 2 | ✅ 包含 | 行情/基本面/另类数据摄取 | AkShareProvider实现完整 |
-| 3 | ✅ 包含 | 数据质量门禁 | DataQualityGate可配置校验规则 |
-| 4 | ❌ 排除 | 数据存储引擎 | L01 INF-012 Database |
-| 5 | ❌ 排除 | 数据清洗/特征工程 | L02 Alpha Factor |
+| 1 | ✅ 包含 | 多数据源标准化接入 | AkShare/miniQMT/iFind/tushare/爬虫，DataSourceBase OCP扩展点 |
+| 2 | ✅ 包含 | 品类摄取覆盖母蓝图69品类 | 行情/基本面/另类/宏观/新闻/舆情原料摄取 |
+| 3 | ✅ 包含 | 数据质量门禁 | DataQualityGate 对接 CTR 契约质量门禁 |
+| 4 | ✅ 包含 | 标准化输出 | CTR-001~CTR-003 (NormalizedMarketData/新闻/宏观) |
+| 5 | ✅ 包含 | calc_mode 标注 | replay/preload/hybrid 支撑母蓝图§7回测调度 |
+| 6 | ✅ 包含 | 品类注册表 enabled 二元开关 | 硬边界品类 enabled=false 预留接口(母蓝图§8.2) |
+| 7 | ✅ 包含 | 原料/成品/事务三层分类 | 原料=tick/新闻原文接入即存，成品=K线/指标可预计算 |
+| 8 | ❌ 排除 | 数据存储(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 |
+| 9 | ❌ 排除 | 因子计算 | L02 Alpha Factor 负责 |
+| 10 | ❌ 排除 | 信号生成 | L03 Signal Generation 负责 |
+| 11 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 |
 
 ### 1.4 运行场景约束
 
 | 约束 | 影响 |
 |------|------|
 | AkShare API 限流（每分钟60次） | 请求必须限速 + 缓存 |
+| 多数据源格式差异（中文列名/字段命名/时区） | 标准化映射 + Schema版本化 + Drift Detector |
+| 付费数据源(iFind)需API密钥 | 环境变量存储，禁止硬编码 |
 | 数据源格式可能变更 | Schema版本化 + Drift Detector |
-| 网络不可用时需降级 | MemoryProvider提供本地回退 |
-| Akshare为同步HTTP客户端 | 需asyncio.to_thread包装避免阻塞事件循环 |
+| 网络不可用时需降级 | MemoryProvider 提供本地回退 |
+| akshare 为同步HTTP客户端 | 需 asyncio.to_thread 包装避免阻塞事件循环 |
+| 硬边界品类(Level-2/卫星/Barra) | enabled=false 预留接口不摄取(母蓝图§8.2) |
 
 ### 1.5 利益相关者映射
 
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
+| 母蓝图 ARCH-BIZDB-001 | 品类全景/插拔机制/调度策略上游对齐 | 设计 | 数据源接入层为其上游 |
 | L02 Alpha Factor | CTR-001数据格式 | 消费 | 接口兼容性 |
 | L03 Signal Generation | CTR-001数据格式 | 消费 | 接口兼容性 |
+| C1~C4 仓库层 | 原料数据摄取 | 消费 | 品类→库映射(母蓝图§5.2) |
 
 ### 1.6 当前态/目标态差距
 
 | 维度 | 当前态 | 目标态 | 差距 | 优先级 |
 |------|--------|--------|------|:------:|
-| 数据源数量 | 1 (AkShare) | 5 | 缺4个数据源 | P1 |
-| 子模块完整性 | 2/5 (provider+quality) | 5/5 | 缺connectors/normalizers/storage/cache | P0 |
+| 数据源数量 | 1 (AkShare已重建) | 5 (AkShare/miniQMT/iFind/tushare/爬虫) | 缺4个数据源 | P1 |
+| 品类覆盖 | OHLCV行情(CTR-001) | 69品类(CTR-001~003+) | 缺基本面/另类/宏观/新闻等 | P0 |
+| calc_mode 标注 | 无 | replay/preload/hybrid | 待实现(母蓝图§7.5) | P1 |
+| 品类注册表对接 | 无 | enabled 二元开关 | 待实现(母蓝图§6/§8.2) | P1 |
+| 抽象层+实现层 | 5文件已重建 | 5文件+多品类扩展 | 多品类扩展待施工(步骤3) | P0 |
 | SLO/可观测性 | 无 | 完整 | 全缺 | P1 |
 
 ### 1.7 典型场景
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 日线数据摄取 | L02请求行情 | AkshareProvider.fetch_historical → _normalize_columns → DataFrame | OHLCV DataFrame |
+| 日线行情摄取 | L02请求行情 | AkshareProvider.fetch_historical → _normalize_columns → DataFrame | OHLCV DataFrame (CTR-001) |
+| 新闻原文摄取(成品原料) | C3仓库请求新闻 | tushare/爬虫Provider.fetch → 标准化 → QualityGate.check | 新闻原文 (CTR-002) |
+| 宏观数据摄取 | C3仓库请求宏观 | iFindProvider.fetch → 标准化 → QualityGate.check | 宏观指标 (CTR-003) |
 | 数据质量校验 | 数据接入后 | DefaultQualityGate.check → QualityReport | QualityReport(passed=True/False) |
 | 离线测试 | 测试环境 | MemoryProvider.fetch_historical → 合成数据 | OHLCV DataFrame |
 | API限流 | AkShare返回429 | 限速重试 + MemoryProvider降级 | 延迟数据或合成数据 |
+| 硬边界品类预留 | Level-2/卫星品类注册 | enabled=false，CategoryManager发现但不加载 | 预留接口(不摄取) |
 
 ---
 
@@ -175,12 +203,16 @@ ZephyrAlpha 需要接入多种外部数据源（AkShare/Tushare/Wind等），各
 
 | # | 类型 | 职责 | 详情 | 负责方 |
 |---|:----:|------|------|--------|
-| 1 | ✅ 包含 | 数据源适配 | DataSourceBase抽象 + AkShareProvider/MemoryProvider实现 | 本模块 |
-| 2 | ✅ 包含 | 数据质量校验 | DataQualityGate + DefaultQualityGate(5项规则) | 本模块 |
-| 3 | ✅ 包含 | 标准化输出 | CTR-001 NormalizedMarketData (OHLCV DataFrame) | 本模块 |
-| 4 | ❌ 排除 | 数据持久化 | INF-012 Database负责 | INF-012 |
-| 5 | ❌ 排除 | 因子计算 | L02 Alpha Factor负责 | L02 |
-| 6 | ❌ 排除 | 信号生成 | L03 Signal Generation负责 | L03 |
+| 1 | ✅ 包含 | 数据源适配 | DataSourceBase 抽象 + AkShareProvider/MemoryProvider 实现(多数据源OCP扩展) | 本模块 |
+| 2 | ✅ 包含 | 数据质量校验 | DataQualityGate + DefaultQualityGate(5项规则) 对接 CTR 契约门禁 | 本模块 |
+| 3 | ✅ 包含 | 标准化输出 | CTR-001~003 (NormalizedMarketData/新闻/宏观) | 本模块 |
+| 4 | ✅ 包含 | 品类注册表对接 | category_id + enabled 二元开关(母蓝图§6/§8.2) | 本模块 |
+| 5 | ✅ 包含 | calc_mode 标注 | replay/preload/hybrid(母蓝图§7.5) | 本模块 |
+| 6 | ✅ 包含 | 原料/成品/事务三层分类 | 原料接入即存，成品可预计算(母蓝图§5) | 本模块 |
+| 7 | ❌ 排除 | 数据持久化(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 | 母蓝图 |
+| 8 | ❌ 排除 | 因子计算 | L02 Alpha Factor 负责 | L02 |
+| 9 | ❌ 排除 | 信号生成 | L03 Signal Generation 负责 | L03 |
+| 10 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 | 母蓝图 |
 
 ---
 
@@ -188,35 +220,45 @@ ZephyrAlpha 需要接入多种外部数据源（AkShare/Tushare/Wind等），各
 
 ### 3.1 组件架构
 
-| # | 组件 | 职责 | 依赖 | 交互方式 |
-|---|------|------|------|---------|
-| 1 | DataSourceBase | 数据源OCP扩展点(ABC) | — | 同步调用 |
-| 2 | DataSourceMeta | 数据源元数据(frozen dataclass) | — | 数据类 |
-| 3 | DataQualityGate | 数据质量校验(ABC) | DataSourceBase | 同步调用 |
-| 4 | QualityReport | 质量校验报告(frozen dataclass) | — | 数据类 |
-| 5 | QualityFailureReason | 失败原因枚举 | — | 枚举 |
-| 6 | RecoveryHint | 恢复建议枚举 | — | 枚举 |
-| 7 | AkShareProvider | AkShare数据源实现 | DataSourceBase | 继承 |
-| 8 | DefaultQualityGate | 默认校验规则(5项) | DataQualityGate | 继承 |
-| 9 | MemoryProvider | 内存合成数据源 | DataSourceBase | 继承 |
+> 对接母蓝图§6 插拔式品类管理 4 层机制：第1层品类注册表 → 第2层 DDL-as-Code → 第3层 CTR 契约 → 第4层 CategoryManager 发现与路由。
+
+| # | 组件 | 职责 | 依赖 | 交互方式 | 母蓝图对接 |
+|---|------|------|------|---------|---------|
+| 1 | DataSourceBase | 数据源OCP扩展点(ABC)，支持多品类fetch | — | 同步调用 | §6 第3层CTR契约Producer |
+| 2 | DataSourceMeta | 数据源元数据(frozen dataclass)，含 category_id/calc_mode/enabled | — | 数据类 | §6 第1层注册表字段 + §7.5 calc_mode |
+| 3 | DataQualityGate | 数据质量校验(ABC)，对接CTR契约门禁 | DataSourceBase | 同步调用 | §6 第3层质量门禁 |
+| 4 | QualityReport | 质量校验报告(frozen dataclass) | — | 数据类 | — |
+| 5 | QualityFailureReason | 失败原因枚举 | — | 枚举 | — |
+| 6 | RecoveryHint | 恢复建议枚举 | — | 枚举 | — |
+| 7 | AkShareProvider | AkShare数据源实现(免费行情+基本面) | DataSourceBase | 继承 | — |
+| 8 | DefaultQualityGate | 默认校验规则(5项) | DataQualityGate | 继承 | — |
+| 9 | MemoryProvider | 内存合成数据源(测试/离线) | DataSourceBase | 继承 | — |
+| 10 | CategoryManager | 品类发现与路由(母蓝图§6 第4层) | 品类注册表 | 自动扫描 | **未来Spiral(不在当前§0.1代码清单)** |
+
+> ⚠️ CategoryManager 为母蓝图§6 第4层机制，属未来 Spiral 扩展（步骤3），不纳入当前§0.1代码清单。当前由 DataSourceBase 的 `__init_subclass__` 自动注册机制承担发现职责。
 
 ### 3.2 数据流
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | AkShare API | fetch_historical → _normalize_columns → validate_schema | L02/L03/L09 | pd.DataFrame (OHLCV) |
-| 2 | MemoryProvider | 合成数据生成 → validate_schema | 测试/L02 | pd.DataFrame (OHLCV) |
-| 3 | 任意Provider | fetch → DataQualityGate.check | L02 | QualityReport |
+| 1 | AkShare API | fetch_historical → _normalize_columns → validate_schema | C1仓库/L02/L03/L09 | pd.DataFrame (OHLCV, CTR-001) |
+| 2 | tushare/爬虫 | fetch → 标准化 → QualityGate.check | C3仓库 | 新闻原文 (CTR-002) |
+| 3 | iFind API | fetch → 标准化 → QualityGate.check | C3仓库 | 宏观指标 (CTR-003) |
+| 4 | MemoryProvider | 合成数据生成 → validate_schema | 测试/L02 | pd.DataFrame (OHLCV) |
+| 5 | 任意Provider | fetch → DataQualityGate.check | 仓库层 | QualityReport |
+
+> 数据流方向：外部API → DataSourceBase.fetch(多品类) → 标准化 → QualityGate.check → CTR契约输出 → C1~C4仓库层。
 
 ### 3.3 状态生命周期
 
-本模块无状态机。DataSourceBase通过`__init_subclass__`实现自动注册，DataQualityGate同理。
+本模块无状态机。DataSourceBase 通过 `__init_subclass__` 实现自动注册（key=provider_id），DataQualityGate 同理。多品类扩展后，品类发现由 CategoryManager 启动扫描注册表（未来 Spiral）。
 
 ---
 
 ## §4 接口契约
 
-> ⚠️ 代码实际使用 `pd.DataFrame` 而非 Pydantic BaseModel。这是 C轨占位阶段的实现选择，待正式施工时按 KBG-0040 迁移为 Pydantic V2。
+> ⚠️ v4.0.0重建决策：数据输出格式使用 `pd.DataFrame`（CTR-001 NormalizedMarketData），待 KBG-0040 迁移窗口再评估 Pydantic V2 迁移。
+> ⚠️ v4.0.0对接母蓝图：DataSourceBase/DataSourceMeta 扩展 category_id/calc_mode/enabled 字段（步骤3施工），保持向后兼容(默认值)。
 
 ### 4.1 公共 API
 
@@ -224,6 +266,9 @@ ZephyrAlpha 需要接入多种外部数据源（AkShare/Tushare/Wind等），各
 class DataSourceBase(abc.ABC):
     _registry: ClassVar[dict[str, type["DataSourceBase"]]]
     def __init_subclass__(cls, **kwargs): ...
+    # v4.0.0 对接母蓝图§6/§7 扩展（步骤3施工，默认值保证向后兼容）
+    category_id: ClassVar[str] = "market_ohlcv"   # 品类标识(母蓝图§6 第1层 category_id)
+    calc_mode: ClassVar[str] = "preload"           # 回测调度模式(母蓝图§7.5): replay/preload/hybrid
     @abc.abstractmethod
     def fetch_historical(self, symbol: str, start: datetime, end: datetime, interval: str = "1d") -> pd.DataFrame: ...
     @abc.abstractmethod
@@ -254,6 +299,10 @@ class DataSourceMeta:
     supports_historical: bool = True
     supports_local: bool = False
     rate_limit_per_min: int = 60
+    # v4.0.0 对接母蓝图§6/§7/§8 扩展字段（步骤3施工，默认值保证向后兼容）
+    category_id: str = "market_ohlcv"   # 品类标识(母蓝图§5品类→库映射)
+    calc_mode: str = "preload"          # replay/preload/hybrid(母蓝图§7.5)
+    enabled: bool = True                # 硬边界品类 enabled=False 预留(母蓝图§8.2)
 
 class QualityFailureReason(str, Enum):
     MISSING_TICK = "missing_tick"
@@ -281,6 +330,8 @@ class QualityReport:
     checked_at: datetime = field(default_factory=datetime.utcnow)
 ```
 
+> **契约引用**：本模块为 Producer，输出 CTR-001 NormalizedMarketData(OHLCV)。多品类扩展后引用 CTR-002(新闻原文)、CTR-003(宏观指标) 等契约（母蓝图§6 第3层）。当前§0.1代码仅实现 CTR-001，多品类契约为步骤3扩展。
+
 ### 4.3 输入契约
 
 | 接口 | 输入字段 | 必填 | 约束 |
@@ -297,7 +348,7 @@ class QualityReport:
 
 | 接口 | 成功输出 | 失败输出 |
 |------|---------|---------|
-| `fetch_historical()` | `pd.DataFrame` (OHLCV列) | 空 DataFrame / `ImportError`(akshare未安装) |
+| `fetch_historical()` | `pd.DataFrame` (OHLCV列, CTR-001) | 空 DataFrame / `ImportError`(akshare未安装) |
 | `validate_schema()` | `bool` | — |
 | `check()` | `QualityReport` | — |
 | `subscribe_realtime()` | `None` | AkShare不支持实时推送(仅warning) |
@@ -310,11 +361,13 @@ class QualityReport:
 
 | 契约部分 | 兼容性 | 说明 |
 |---------|:---:|------|
-| 新增DataSourceBase子类 | ✅ 向后兼容 | OCP扩展 |
+| 新增DataSourceBase子类 | ✅ 向后兼容 | OCP扩展(新数据源/新品类) |
+| DataSourceMeta新增 category_id/calc_mode/enabled | ✅ 向后兼容 | 默认值保证(母蓝图§6/§7/§8) |
 | DataFrame列新增 | ✅ 向后兼容 | 不影响已有消费者 |
 | DataFrame列删除 | ❌ 破坏性 | 需Owner审批+迁移方案 |
 | QualityFailureReason新增枚举值 | ✅ 向后兼容 | 不破坏已有逻辑 |
 | QUALITY_THRESHOLD变更 | ❌ 破坏性 | 0.7为硬编码最低线 |
+| calc_mode 取值集合扩展 | ✅ 向后兼容 | replay/preload/hybrid 之外的新值需Owner审批 |
 
 **变更通知**：破坏性变更→Owner审批+蓝图minor+1。兼容性变更→AI自主+patch+1。
 
@@ -326,17 +379,21 @@ class QualityReport:
 
 | # | 约束 | 值 |
 |---|------|-----|
-| 1 | DataSourceBase为OCP扩展点 | 新数据源只加不改 |
-| 2 | 数据输出必须标准化 | OHLCV DataFrame (CTR-001) |
+| 1 | DataSourceBase 为OCP扩展点 | 新数据源/新品类只加不改 |
+| 2 | 数据输出必须标准化 | CTR-001~003 (母蓝图§6 第3层契约) |
 | 3 | QUALITY_THRESHOLD = 0.7 | 硬编码最低线，禁止降级 |
-| 4 | 禁止静默丢弃数据 | 不合格必须显式返回QualityReport(passed=False) |
-| 5 | Akshare为同步HTTP客户端 | 需asyncio.to_thread包装 |
+| 4 | 禁止静默丢弃数据 | 不合格必须显式返回 QualityReport(passed=False) |
+| 5 | akshare 为同步HTTP客户端 | 需 asyncio.to_thread 包装 |
+| 6 | 品类注册表 enabled 二元开关 | 每品类 true/false(母蓝图§6.5)，硬边界品类 enabled=false 预留(母蓝图§8.2) |
+| 7 | calc_mode 必须标注 | 每品类标注 replay/preload/hybrid(母蓝图§7.5) |
+| 8 | 硬边界品类预留接口不摄取 | Level-2/卫星/Barra 等 enabled=false(母蓝图§8.2) |
 
 ### 5.2 容量估算
 
 | 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
 |------|:------:|:------:|:------:|:------:|---------|
 | 数据源数量 | 1 (AkShare) | 5 | 无上限 | ✅ | OCP扩展 |
+| 品类覆盖 | 1 (OHLCV) | 69 (母蓝图§5) | 无上限 | ❌ | 多品类扩展(步骤3) |
 | 日行情记录 | ~5000 | ~50000 | 无上限 | ✅ | 分批摄取 |
 | API限流 | 60次/分钟 | 100次/分钟 | AkShare限制 | ❌ | 限速+缓存 |
 
@@ -359,7 +416,9 @@ class QualityReport:
 | 1 | 编码模式 | 静默丢弃不合格数据 | 返回QualityReport(passed=False) | 下游必须知道数据质量 |
 | 2 | 编码模式 | 降级QUALITY_THRESHOLD | 保持0.7硬编码最低线 | 质量底线不可妥协 |
 | 3 | 编码模式 | 直接修改DataSourceBase抽象接口 | 继承+实现新子类 | OCP原则 |
-| 4 | 导入源 | zephyr.signal.* / zephyr.factor.* | 仅允许被下游导入 | 分层约束：data 不依赖 signal+ |
+| 4 | 编码模式 | 硬边界品类enabled=true摄取 | enabled=false预留接口(母蓝图§8.2) | 资金/合规硬边界 |
+| 5 | 编码模式 | 品类未标注calc_mode接入 | 每品类标注replay/preload/hybrid | 母蓝图§7.5回测调度要求 |
+| 6 | 导入源 | zephyr.signal.* / zephyr.factor.* | 仅允许被下游导入 | 分层约束：data 不依赖 signal+ |
 
 ---
 
@@ -429,9 +488,9 @@ class QualityReport:
 |---|--------|---------|:-------:|---------|
 | 1 | §10.1 依赖声明 ↔ system-dependency-map.md §3.8 | 蓝图声明的每个依赖在依赖图中有对应条目 | 已对齐 | 人工核对 |
 | 2 | §11 产出物路径 ↔ 依赖图 §5 MOD-L00-001 | 路径一致 | 已对齐 | 人工核对 |
-| 3 | §0 代码文件清单 ↔ 架构层YAML l00_data_source.yaml | 子模块映射 | 已确认不对齐(C轨占位) | YAML定义5子模块(connectors/normalizers/storage/cache/quality)，代码为provider_base/quality_gate/implementations/结构 |
+| 3 | §0 代码文件清单 ↔ 架构层YAML l00_data_source.yaml | 子模块映射 | 待重建后对齐 | v4.0.0重建后按架构层YAML 5子模块规划施工 |
 
-> ⚠️ **架构层YAML与代码结构不对齐**：YAML定义5子模块(connectors/normalizers/storage/cache/quality)全部status=planned，代码实现了provider_base/quality_gate/implementations/结构。这是C轨占位阶段的正常现象——待正式施工时按YAML路径重组代码(GOV-FSTR-001)。
+> ⚠️ **v4.0.0 重建对齐策略**：旧C轨代码已清理（2026-07-01），重建时按架构层YAML l00_data_source.yaml 定义的5子模块(connectors/normalizers/storage/cache/quality)规划施工，消除历史不对齐。
 
 ### 10.3 内部依赖图
 
@@ -449,7 +508,7 @@ class QualityReport:
 
 | # | 自动化项 | 是否需要 | 理由 | 实现方式 | 现有工具 | 缺口 | 触发方式 | 触发条件 |
 |---|---------|:-------:|------|---------|---------|------|---------|---------|
-| 1 | 依赖图自动生成 | 否 | C轨占位，子模块少 | — | — | — | — | — |
+| 1 | 依赖图自动生成 | 否 | 5文件已重建，多品类扩展待施工 | — | — | — | — | — |
 | 2 | 依赖对齐自动验证 | 否 | 人工核对即可 | — | — | — | — | — |
 | 3 | 临时时态内容自动清理 | 否 | 无临时时态内容 | — | — | — | — | — |
 | 4 | 施工步骤完成度自动检测 | 是 | 验证代码可导入 | pytest | pytest | 无 | CI pipeline | 代码提交时 |
@@ -495,85 +554,103 @@ class QualityReport:
 | 1 | AkShare API限流 | 高 | 数据延迟 | 请求限速 + 缓存 | 风险 |
 | 2 | 数据源格式变更 | 中 | 解析失败 | Schema版本化 + Drift Detector | 风险 |
 | 3 | 新数据源需实现DataSourceBase | — | 中 | OCP扩展点设计，新数据源继承即可 | 负面后果 |
-| 4 | C轨占位期间不主动施工 | — | 中 | 待A轨稳定后按优先级启动 | 负面后果 |
-| 5 | 架构层YAML与代码结构不对齐 | — | 中 | 待GOV-FSTR-001重组 | 负面后果 |
+| 4 | v4.0.0重建期间代码不可用 | — | 中 | 优先重建抽象层+实现层 | 负面后果 |
+| 5 | 架构层YAML与代码结构不对齐 | — | 中 | v4.0.0重建时消除 | 负面后果 |
 
 ---
 
 ## §16 施工指引
 
-> ⛔ C轨占位——禁止施工。以下施工指引仅记录已完成的骨架实现，不新增施工步骤。
+> 🚧 v4.0.0 重建施工指引——对接母蓝图 ARCH-BIZDB-001 Spiral 开发顺序。抽象层+实现层已重建，多品类扩展(对接母蓝图§6插拔机制)为未来 Spiral 工作。
 
 ### ⚠️ AI 施工前检查清单
 
 | # | 检查项 | 确认方式 | 状态 |
 |---|--------|---------|:----:|
 | 1 | 已读取本蓝图全部内容（概述 + §0 对齐 + §1-§14 架构 + §16 施工指引） | 逐节确认 | ☐ |
-| 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
+| 2 | 已读取母蓝图 §5/§6/§7/§8 关键章节 | 逐个打开确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 4 | 理解⛔C轨占位禁止施工 | 确认不新增业务代码 | ☐ |
+| 4 | 理解v4.0.0对接母蓝图重建策略 | 确认按母蓝图69品类/插拔/calc_mode施工 | ☐ |
 
 ### 16.1 施工策略
 
 | 项目 | 内容 |
 |------|------|
-| 施工阶段数 | 2 个 Phase（已完成骨架） |
-| 施工模式 | 扩展 |
-| 核心风险 | 数据源稳定性 |
-| 目标 generation | 3 |
+| 施工阶段数 | 3 个步骤（对接母蓝图 Spiral 开发顺序） |
+| 施工模式 | 重建 + 多品类扩展 |
+| 核心风险 | 数据源稳定性 + 多品类标准化对齐 |
+| 目标 generation | 4 |
+| Spiral 归属 | Spiral 1：数据源接入层（当前） |
 
 ### 16.2 前置条件
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | DataSourceBase定义 | hard | ✅ | ✅ |
-| 2 | DataQualityGate定义 | hard | ✅ | ✅ |
+| 1 | provider_base.py 重建 | hard | 已重建 | ✅ |
+| 2 | quality_gate.py 重建 | hard | 已重建 | ✅ |
+| 3 | 母蓝图 ARCH-BIZDB-001 品类注册表 | soft | 设计完成 | ☐ |
 
 ### 16.3 实施步骤
 
-#### 步骤 1：完善AkShareProvider（已完成）
+#### 步骤 1：重建抽象层（已重建）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §4.1 / §4.2 |
+| 产出位置 | `provider_base.py` + `quality_gate.py` |
+| 验收标准 | DataSourceBase 可继承注册，DataQualityGate 可继承注册 |
+| 验证命令 | `python -c "from zephyr.data.provider_base import DataSourceBase"` |
+| 状态 | ✅ 已重建 |
+| G7 检查项 | 上游无依赖，下游L02可消费 |
+
+#### 步骤 2：重建实现层（已重建）
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\data\implementations\akshare_provider.py` |
-| 验收标准 | import成功，fetch_historical返回OHLCV DataFrame |
+| 产出位置 | `implementations/akshare_provider.py` + `default_quality_gate.py` + `memory_provider.py` |
+| 验收标准 | AkshareProvider/DefaultQualityGate/MemoryProvider 可导入并实例化 |
 | 验证命令 | `python -c "from zephyr.data.implementations.akshare_provider import AkshareProvider"` |
-| G7 检查项 | 上游provider_base.py存在，下游L02可消费 |
+| 状态 | ✅ 已重建 |
+| G7 检查项 | 上游抽象层存在，下游L02可消费 |
 
-#### 步骤 2：完善DefaultQualityGate（已完成）
+#### 步骤 3：扩展多品类支持（待施工）
 
 | 项目 | 内容 |
 |------|------|
-| 对应蓝图契约 | §4.1 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\data\implementations\default_quality_gate.py` |
-| 验收标准 | 校验规则可配置，check返回QualityReport |
-| 验证命令 | `python -c "from zephyr.data.implementations.default_quality_gate import DefaultQualityGate"` |
-| G7 检查项 | 上游quality_gate.py存在，下游可调用 |
+| 对应蓝图契约 | §4.1 category_id/calc_mode + §4.2 enabled + §3.1 CategoryManager |
+| 产出位置 | `provider_base.py`(扩展字段) + 未来 CategoryManager(不在当前§0.1清单) |
+| 对接母蓝图 | §6 插拔式4层机制 / §5 69品类 / §7.5 calc_mode / §8.2 硬边界enabled |
+| 验收标准 | DataSourceMeta 支持 category_id/calc_mode/enabled；品类注册表enabled二元开关生效 |
+| 验证命令 | 待施工后补充 |
+| 状态 | ⬜ 待施工（未来 Spiral） |
+| G7 检查项 | 向后兼容(默认值)，硬边界品类enabled=false不破坏现有消费 |
 
 ### 16.4 回滚方案
 
 | 步骤 | 如果出问题 | 回滚操作 |
 |------|----------|---------|
-| 1 | AkShareProvider实现失败 | 还原implementations/akshare_provider.py |
-| 2 | DefaultQualityGate实现失败 | 还原implementations/default_quality_gate.py |
+| 1 | 抽象层重建失败 | 删除provider_base.py/quality_gate.py |
+| 2 | 实现层重建失败 | 删除implementations/下文件 |
+| 3 | 多品类扩展失败 | category_id/calc_mode/enabled 回退为默认值(向后兼容) |
 
 ### 16.5 施工完成与生产就绪标准
 
 | # | 检查项 | 通过标准 | 类型 | 状态 |
 |---|--------|---------|:----:|:----:|
-| 1 | AkShareProvider存在 | `ls` exit 0 | 完成 | ✅ |
-| 2 | DefaultQualityGate存在 | `ls` exit 0 | 完成 | ✅ |
-| 3 | MemoryProvider存在 | `ls` exit 0 | 完成 | ✅ |
-| 4 | SLO已定义 | §5.4每项SLI有测量方式 | 就绪 | ☐ |
-| 5 | 监控指标已埋点 | §6.1每项指标有采集实现 | 就绪 | ☐ |
-| 6 | 回滚方案已验证 | §16.4回滚操作可执行 | 就绪 | ☐ |
+| 1 | provider_base.py存在 | `ls` exit 0 | 完成 | ✅ |
+| 2 | quality_gate.py存在 | `ls` exit 0 | 完成 | ✅ |
+| 3 | 3个implementations文件存在 | `ls` exit 0 | 完成 | ✅ |
+| 4 | 多品类扩展完成 | category_id/calc_mode/enabled 生效 | 就绪 | ☐ |
+| 5 | SLO已定义 | §5.4每项SLI有测量方式 | 就绪 | ☐ |
+| 6 | 监控指标已埋点 | §6.1每项指标有采集实现 | 就绪 | ☐ |
+| 7 | 回滚方案已验证 | §16.4回滚操作可执行 | 就绪 | ☐ |
 
 ### 16.6 施工状态
 
 | 字段 | 值 | 填写者 |
 |------|-----|-------|
-| construction_status | partially_implemented | 施工者 |
+| construction_status | partially_rebuilt (步骤1-2完成，步骤3待施工) | 施工者 |
 | verification_status | unverified | 审计者 |
 | code_alignment_verified | no | 审计者 |
 
@@ -586,6 +663,7 @@ class QualityReport:
 | 1 | DataSourceBase注册机制 | 协议 | `__init_subclass__` + `__meta__` → `_registry[provider_id] = cls` | provider_base.py |
 | 2 | DefaultQualityGate 5项规则 | 算法 | close≤0→0分; stale>300s→-0.3; future timestamp→-0.5; high<low→-0.5; volume=0→-0.4 | default_quality_gate.py |
 | 3 | AkShare列名映射 | 协议 | 日期→date/开盘→open/收盘→close/最高→high/最低→low/成交量→volume/成交额→amount | akshare_provider.py |
+| 4 | calc_mode 取值集合 | 协议 | replay(回测实时重算) / preload(预计算值) / hybrid(预计算+微调) — 对接母蓝图§7.5 | provider_base.py(步骤3) |
 
 ### 16.8 施工参考卡
 
@@ -594,6 +672,8 @@ class QualityReport:
 | 1 | 命令 | `python -c "from zephyr.data.provider_base import DataSourceBase"` | 验证DataSourceBase可导入 | — | 无报错 |
 | 2 | 命令 | `python -c "from zephyr.data.quality_gate import DataQualityGate"` | 验证DataQualityGate可导入 | — | 无报错 |
 | 3 | 配置 | `DataSourceMeta.rate_limit_per_min` | API限流配置 | int, 默认60 | AkShare=60, Memory=999999 |
+| 4 | 配置 | `DataSourceMeta.calc_mode` | 回测调度模式(母蓝图§7.5) | str, 默认"preload" | replay/preload/hybrid |
+| 5 | 配置 | `DataSourceMeta.enabled` | 硬边界品类开关(母蓝图§8.2) | bool, 默认True | false=预留不摄取 |
 
 ### 16.10 故障与操作手册
 
@@ -618,7 +698,7 @@ class QualityReport:
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 数据源数量 | 1 (AkShare) | DataSourceBase._registry计数 |
+| 数据源数量 | 2 (AkShare+Memory) | DataSourceBase._registry计数 |
 | 日摄取记录 | ~5000 | 日志统计 |
 | QualityGate子类 | 1 (Default) | DataQualityGate._registry计数 |
 
@@ -627,7 +707,7 @@ class QualityReport:
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L00-001 | API限流60次/分钟 | 本地缓存+批量预取 | P1 | 限流触发率>10% | v1.1.0 | 待施工 |
-| GAP-L00-002 | 缺connectors/normalizers/storage/cache子模块 | 按架构层YAML创建 | P0 | C轨开工时 | v2.0.0 | 待施工 |
+| GAP-L00-002 | 缺connectors/normalizers/storage/cache子模块 | 按架构层YAML创建 | P0 | v4.0.0重建时 | v4.0.0 | 待施工 |
 | GAP-L00-003 | DataFrame→Pydantic迁移 | 按KBG-0040迁移 | P2 | L02消费端要求 | v2.0.0 | 待施工 |
 
 ### §17.3 升级版本矩阵
@@ -637,6 +717,7 @@ class QualityReport:
 | v0.1.0 | 1 | 占位 | 仅占位文件 | ❌ |
 | v2.1.0 | 2 | 模板升级 | §0前移+§7/§15删除+§10拆分 | ⚠️ |
 | v3.0.0 | 3 | 回填+对齐 | 模板v4.1合规+代码对齐修正+压缩 | ⚠️ |
+| v4.0.0 | 4 | 重建 | 旧C轨代码清理+按母蓝图重新施工 | ⚠️ |
 
 ### 升级组件清单
 
@@ -655,10 +736,13 @@ class QualityReport:
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
 | 1 | D-L00-01 | DataSourceBase使用OCP扩展点 | 继承/注册表/直接调用 | 继承 | 新数据源只加不改 | 2026-05-05 |
-| 2 | D-L00-02 | 数据输出格式为DataFrame(非Pydantic) | dict/Pydantic/dataclass/DataFrame | DataFrame | C轨占位阶段DataFrame更灵活，待正式施工按KBG-0040迁移Pydantic | 2026-05-05 |
+| 2 | D-L00-02 | 数据输出格式为DataFrame(非Pydantic) | dict/Pydantic/dataclass/DataFrame | DataFrame | v4.0.0重建使用DataFrame，待KBG-0040迁移窗口 | 2026-05-05 |
 | 3 | D-L00-03 | QualityGate独立于Provider | 内建/独立 | 独立 | 质量校验与数据获取职责分离 | 2026-05-05 |
 | 4 | D-L00-04 | QUALITY_THRESHOLD=0.7硬编码 | 可配置/硬编码 | 硬编码 | 质量底线不可妥协 | 2026-05-05 |
 | 5 | D-L00-05 | MemoryProvider用于测试/离线 | Mock/内存/文件 | 内存 | 零网络依赖+合成数据统计特征 | 2026-05-05 |
+| 6 | D-L00-06 | 对接母蓝图69品类全景 | 独立设计/对接母蓝图 | 对接母蓝图 | 数据源接入层为业务数据库上游 | 2026-07-01 |
+| 7 | D-L00-07 | calc_mode三值(replay/preload/hybrid) | 二值/三值 | 三值 | 对接母蓝图§7.5回测调度策略 | 2026-07-01 |
+| 8 | D-L00-08 | 硬边界品类enabled=false预留 | 不预留/预留接口 | 预留接口 | 对接母蓝图§8.2硬性边界 | 2026-07-01 |
 
 ---
 
@@ -669,8 +753,13 @@ class QualityReport:
 | DataSourceBase | 数据源抽象基类，OCP扩展点 | ProviderBase(旧名) | 代码实际类名为DataSourceBase |
 | DataQualityGate | 数据质量门禁抽象基类 | QualityGate(旧名) | 代码实际类名为DataQualityGate |
 | CTR-001 | NormalizedMarketData跨层契约 | — | 本层为Producer，L02/L03/L09为Consumer |
-| OHLCV | Open/High/Low/Close/Volume标准行情格式 | — | 本模块的标准化输出格式 |
+| OHLCV | Open/High/Low/Close/Volume标准行情格式 | — | 本模块的标准化输出格式(CTR-001) |
 | QUALITY_THRESHOLD | 质量门禁阈值0.7 | — | 低于此值的数据标记为不合格 |
+| 母蓝图 | 业务数据库顶层架构设计书(ARCH-BIZDB-001) | — | 本数据源接入层的上游设计真源 |
+| category_id | 品类标识(母蓝图§6 第1层注册表) | — | 对接母蓝图69品类唯一标识 |
+| calc_mode | 品类回测计算模式(母蓝图§7.5) | — | replay/preload/hybrid 三值 |
+| enabled | 品类启用开关(母蓝图§8.2) | — | 硬边界品类enabled=false预留接口 |
+| 原料/成品/事务 | 数据三层分类(母蓝图§5) | — | 原料=接入即存，成品=可预计算，事务=实时写 |
 
 ---
 
@@ -678,10 +767,10 @@ class QualityReport:
 
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
-| 1 | 架构层YAML定义5子模块但代码结构不同 | 高 | C轨占位阶段实现与规划不一致 | 待GOV-FSTR-001重组代码 | §10.2 #3 | 待解决 |
-| 2 | DataFrame未按KBG-0040使用Pydantic | 中 | C轨占位阶段选择灵活实现 | 待v2.0.0迁移 | §5.1 #2 | 待解决 |
+| 1 | 架构层YAML定义5子模块但代码结构不同 | 高 | 历史C轨占位实现与规划不一致 | v4.0.0重建时消除 | §10.2 #3 | 待解决 |
+| 2 | DataFrame未按KBG-0040使用Pydantic | 中 | v4.0.0重建选择DataFrame | 待KBG-0040迁移窗口 | §5.1 #2 | 待解决 |
 | 3 | 无集成测试(需网络) | 中 | AkShare依赖外部API | 待CI环境配置 | §9 #3 | 待解决 |
-| 4 | §6.1可观测性指标未实际埋点 | 中 | C轨占位未施工 | 待正式施工时实现 | §6.1 | 待解决 |
+| 4 | §6.1可观测性指标未实际埋点 | 中 | 代码已重建但未埋点 | 多品类扩展时实现 | §6.1 | 待解决 |
 
 ---
 
@@ -708,10 +797,10 @@ class QualityReport:
 
 | 设计维度 | 成熟度 | 信心 | 升级标准 | 说明 |
 |---------|:------:|:---:|---------|------|
-| 核心架构 | evolving | 中 | 5子模块全部实现 | 仅2/5子模块有骨架代码 |
-| 接口契约 | evolving | 中 | DataFrame→Pydantic迁移 | C轨占位阶段使用DataFrame |
+| 核心架构 | evolving | 中 | 5子模块全部实现 | 5文件已重建，多品类扩展待施工 |
+| 接口契约 | evolving | 中 | DataFrame→Pydantic迁移 | v4.0.0重建使用DataFrame |
 | 数据模型 | evolving | 中 | Pydantic V2迁移 | 同上 |
-| 施工步骤 | stable | 高 | C轨开工时扩展 | 已完成步骤不再变更 |
+| 施工步骤 | evolving | 高 | 重建步骤扩展 | 重建步骤待执行 |
 
 ---
 
@@ -722,8 +811,7 @@ class QualityReport:
 | v0.1.0 | 占位文件 | — | 已完成 |
 | v2.1.0 | 模板升级+骨架代码 | v0.1.0 | 已完成 |
 | v3.0.0 | 模板v4.1合规+代码对齐+压缩 | v2.1.0 | 已完成 |
-| v3.1.0 | 可观测性埋点+集成测试 | v3.0.0 | 待施工(C轨) |
-| v4.0.0 | 5子模块完整实现+Pydantic迁移 | v3.1.0 | 待施工(C轨) |
+| v4.0.0 | 旧C轨代码清理+按母蓝图重新施工 | v3.0.0 | 重建中 |
 
 ---
 
@@ -781,6 +869,7 @@ class QualityReport:
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 | 9 | 架构层YAML | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l00_data_source.yaml` | 子模块定义真源 |
+| 10 | 业务数据库母蓝图 | ARCH-BIZDB-001 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\business_data_architecture.md` | 上游设计真源(§5品类/§6插拔/§7调度/§8边界) |
 
 ---
 
@@ -815,6 +904,7 @@ class QualityReport:
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 子模块定义 | **架构层YAML** | 本蓝图（派生视图） |
+| 69品类全景/插拔机制/调度策略 | **母蓝图 ARCH-BIZDB-001** | 本蓝图（上游对接视图） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 
