@@ -168,6 +168,45 @@ def test_worktree_commit_isolation():
     assert not main_marker.exists(), "主工作区出现了 A 的文件！隔离失败"
 
 
+def test_worktree_commit_file_deletion():
+    """文件删除同步——主工作区删除 tracked 文件，worktree commit 同步删除并 stage。
+
+    验证 session_worktree_commit 的删除同步逻辑（FP-ISO.4C 君子协定模式）：
+    - AI 在主工作区删除 tracked 文件 → session_worktree_commit 应将删除同步到 worktree
+    - worktree commit 应包含删除操作（unlink + git add -A stage 删除）
+    - 排除直接写入 worktree 的未跟踪新文件（不应被误删，由 test_worktree_commit_isolation 覆盖）
+    """
+    # 1. 在主工作区创建 tracked 文件（commit 到 HEAD，worktree 会继承）
+    marker = REPO_ROOT / _TEST_FILE_A
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text('{"session": "del-test"}\n', encoding="utf-8")
+    subprocess.run(["git", "add", "--", _TEST_FILE_A], cwd=REPO_ROOT, capture_output=True)
+    subprocess.run(
+        ["git", "commit", "--no-verify", "-m", "test: add marker for deletion test"],
+        cwd=REPO_ROOT, capture_output=True,
+    )
+
+    # 2. 启动 worktree（继承 HEAD，含 _TEST_FILE_A）
+    rA = session_worktree_start("sess-pytest-A")
+    wtA = Path(rA["worktree_path"])
+    assert (wtA / _TEST_FILE_A).exists(), "worktree 未继承 tracked 文件"
+
+    # 3. 在主工作区删除文件（模拟 AI 删除文件后调用 session_worktree_commit）
+    marker.unlink()
+    assert not marker.exists(), "主工作区文件未删除"
+
+    # 4. worktree commit（应同步删除到 worktree 并 stage 删除）
+    cA = session_worktree_commit(
+        "sess-pytest-A",
+        files=[_TEST_FILE_A],
+        message="test: delete file via worktree",
+    )
+    assert cA["status"] == "OK", f"删除 commit 失败: {cA}"
+
+    # 5. 验证 worktree 内文件已被删除（删除同步生效）
+    assert not (wtA / _TEST_FILE_A).exists(), "worktree 内文件未被删除——删除同步失败"
+
+
 def test_worktree_mutual_isolation():
     """A/B worktree 互不干扰（各自 commit 不影响对方）。"""
     rA = session_worktree_start("sess-pytest-A")
