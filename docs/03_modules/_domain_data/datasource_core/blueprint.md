@@ -15,7 +15,7 @@ created_by: human_plus_agent
 valid_from: "2026-05-05"
 date: "2026-05-05"
 ttl: permanent
-construction_progress: not_started
+construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/data/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
@@ -63,7 +63,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 # Data Source Core 蓝图+施工图 — 数据接入层
 
 > module_id: MOD-L00-001 | version: 4.0.0 | status: active | domain: data
-> actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: not_started
+> actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: partially_implemented
 
 ## 概述
 

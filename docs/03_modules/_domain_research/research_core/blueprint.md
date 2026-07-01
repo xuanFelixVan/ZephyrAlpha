@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/intelligence/research/"
+actual_disk_path: "src/zephyr/research/"
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2

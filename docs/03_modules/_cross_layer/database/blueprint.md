@@ -21,7 +21,7 @@ scope: global
 stability: evolving
 verifiability: automated
 construction_progress: completed
-actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
+actual_disk_path: "src/zephyr/governance/persistence/"
 codification_level: L2
 generation: 3
 functional_domain: data
@@ -48,7 +48,7 @@ references:
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
 > module_id: SH-DB-001 | version: 4.2.0 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
-> actual_disk_path: `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | generation: 3 | construction_progress: completed
+> actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
 ## 概述
