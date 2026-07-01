@@ -66,7 +66,7 @@ MOD-INF-038 提供通用状态机引擎，解决全项目 11+ 个独立状态机
 
 | 文件 | 职责 | 状态 |
 |------|------|:----:|
-| `src/zephyr/shared/state_machine.py` | 通用 StateMachine[S] 泛型基类 | 待创建 |
+| `src/zephyr/shared/state_machine.py` | 通用 StateMachine[S] 泛型基类 | 已实现（零消费者） |
 | `src/zephyr/shared/_state-machine-registry.yaml` | 状态机实例注册表 | 待创建 |
 
 ### §0.4 SSoT与责任唯一性
@@ -378,7 +378,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 - [x] 蓝图注册表已更新（blueprint_registry.yaml）
 - [x] 中央注册表已更新（registry_of_registries.yaml REG-SM-001）
 - [x] 通用基类代码已创建
-- [x] 至少一个消费者已迁移（MOD-TASK_SYSTEM task_repo.py）
+- [ ] 至少一个消费者已迁移（task_repo.py 不存在，零消费者）
 - [x] REG-SM-001 已注册 task-lifecycle（entry_count: 1）
 - [ ] 单元测试已创建（tests/test_state_machine.py）
 - [ ] 剩余 10 个状态机实例迁移

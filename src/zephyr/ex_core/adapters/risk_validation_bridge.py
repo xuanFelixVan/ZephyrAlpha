@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_CORE
+# [BLUEPRINT] MOD-L06-001
 # [MODULE] zephyr.ex_core.adapters.risk_validation_bridge
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.risk_validation_bridge

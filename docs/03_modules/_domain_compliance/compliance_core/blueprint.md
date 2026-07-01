@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L10-001
 submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
@@ -94,7 +94,7 @@ depends_on:
 | 5 | artifact_scanner.py | §3.1 | ArtifactScanner + ArtifactFinding + ScanReport | 已实现 | — |
 | 6 | default_security_gateway.py | §3.1 | DefaultSecurityGateway导出兼容层 | 已废弃 | — |
 | 7 | implementations/__init__.py | §3.1 | 子包导出 | 已实现 | — |
-| 8 | implementations/default_security_gateway.py | §3.1 | DefaultSecurityGateway实际实现 | 已实现 | — |
+| 8 | implementations/default_security_gateway.py | §3.1 | DefaultSecurityGateway实际实现 | 未实现（文件不存在） | — |
 
 ### §0.2 对齐验证矩阵
 

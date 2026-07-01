@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-COMPLIANCE
+# [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.security_gateway_base
 # [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.security_governance.security_gateway_base

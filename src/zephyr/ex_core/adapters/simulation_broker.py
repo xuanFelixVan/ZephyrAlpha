@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_CORE
+# [BLUEPRINT] MOD-L06-001
 # [MODULE] zephyr.ex_core.adapters.simulation_broker
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.simulation_broker

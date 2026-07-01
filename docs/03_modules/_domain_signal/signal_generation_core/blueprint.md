@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L03-001
 submodule_path: src/zephyr/signal
 title: "Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位"
@@ -55,7 +55,7 @@ runtime_plane: hot
 > 任何修改需 Owner 审批。
 
 > module_id: MOD-L03-001 | version: 2.2.0 | status: active | domain: signal
-> actual_disk_path: src/zephyr/signal/ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 2 | construction_progress: partially_implemented
 
 # Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位
 
@@ -97,8 +97,8 @@ runtime_plane: hot
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → 已实现章节的代码存在 | `ls D:\ZephyrAlpha\src\zephyr\signal\` 逐文件核对 | ☐ |
-| 蓝图描述的类名 = 代码中的类名 | `grep "class" D:\ZephyrAlpha\src\zephyr\signal\*.py` | ☐ |
+| construction_progress = partially_implemented → 已实现章节的代码存在 | `ls D:\ZephyrAlpha\src\zephyr\signal_fundamental\` 逐文件核对 | ☐ |
+| 蓝图描述的类名 = 代码中的类名 | `grep "class" D:\ZephyrAlpha\src\zephyr\signal_fundamental\*.py` | ☐ |
 | 4 个 Base 类均存在 | `grep "class.*Base" aggregator_base.py signal_synthesizer.py` | ☐ |
 | 2 个 Default 实现均存在 | `grep "class Default" implementations/*.py` | ☐ |
 

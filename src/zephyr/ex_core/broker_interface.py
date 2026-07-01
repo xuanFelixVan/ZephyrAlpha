@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_CORE
+# [BLUEPRINT] MOD-L06-001
 # [MODULE] zephyr.ex_core.broker_interface
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.broker_interface

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-COMPLIANCE
+# [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.merkle_hourly
 # [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.merkle_hourly

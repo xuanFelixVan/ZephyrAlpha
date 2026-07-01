@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-PF_CORE
+# [BLUEPRINT] MOD-L05-001
 # [MODULE] zephyr.pf_core.strategy_registry
 # [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.strategy_registry

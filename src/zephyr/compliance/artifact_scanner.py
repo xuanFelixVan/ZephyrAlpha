@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-COMPLIANCE
+# [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.artifact_scanner
 # [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.drift_detection.artifact_scanner

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-COMPLIANCE
+# [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.financial_compliance
 # [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.financial_compliance
