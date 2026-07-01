@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_optimizer
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
@@ -17,7 +17,7 @@
 
 """
 MOD-INF-019: Agent Spec — Context Optimizer
-Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
+Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
 """

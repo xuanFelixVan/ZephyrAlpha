@@ -161,7 +161,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `src/zephyr/autonomy_core/context/context_health_score.py` | ✅ 已实现 | 健康评分 |
 | `src/zephyr/autonomy_core/context/context_injector.py` | ✅ 已实现 | 上下文注入 |
 | `src/zephyr/autonomy_core/context/context_model_strategy.py` | ✅ 已实现 | 模型策略 |
-| `src/zephyr/autonomy_core/context/context_optimizer.py` | ✅ 已实现 | 上下文优化 |
 | `src/zephyr/autonomy_core/context/context_outcome_tracker.py` | ✅ 已实现 | 结果追踪 |
 | `src/zephyr/autonomy_core/context/context_pipeline.py` | ✅ 已实现 | Core Pipeline |
 | `src/zephyr/autonomy_core/context/context_pipeline_auto.py` | ✅ 已实现 | 自动管道 |
