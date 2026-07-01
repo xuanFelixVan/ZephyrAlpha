@@ -235,8 +235,10 @@ def sync_cross_module_dependencies(cur):
     if not data:
         return
 
-    # 先删除旧的 YAML 同步的 design edge（valid_since IS NOT NULL）
-    # 保留 apply_depgraph.py --add-design-edge 写入的（valid_since IS NULL）
+    # S1.3: edges 表三写分区硬约束
+    # 只删除 YAML 同步的 design edge（valid_since IS NOT NULL）
+    # 保留 apply_depgraph.py --add-design-edge 写入的（valid_since IS NULL）——DB 触发器 trg_edges_protect_apply_depgraph 硬保护
+    # 禁止将 WHERE 条件扩大为 dep_maturity='design'（会误删 apply_depgraph edges，触发器会 ABORT）
     cur.execute("DELETE FROM edges WHERE dep_maturity = 'design' AND valid_since IS NOT NULL")
 
     deps = data.get("dependencies", [])
