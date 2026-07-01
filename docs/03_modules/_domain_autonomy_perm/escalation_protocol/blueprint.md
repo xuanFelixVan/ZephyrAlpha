@@ -1457,7 +1457,7 @@ STEP 3: 拆分后验证
 |---|--------|---------|:---:|
 | 1 | §0.1 代码文件清单中文件全部存在 | `ls src/zephyr/escalation-engine/*.py \| wc -l` = 110 | ☐ |
 | 2 | §4 接口契约中所有类/函数在代码中存在 | Grep 确认 | ☐ |
-| 3 | §10.1 依赖声明中所有 module_id 在 system-dependency-map.md 中存在 | Grep 确认 | ☐ |
+| 3 | §10.1 依赖声明中所有 module_id 在 dependency_path_panorama.md 中存在 | Grep 确认 | ☐ |
 | 4 | §16.7 参考实现规格中规则 ID 在代码中有对应实现 | Grep ESC-003 等 | ☐ |
 | 5 | 烟雾测试全部通过 | `python -m pytest tests/ -k smoke` exit 0 | ☐ |
 | 6 | 无孤儿文件 | `python scripts/governance/audit_registration.py` exit 0 | ☐ |

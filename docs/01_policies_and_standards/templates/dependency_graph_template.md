@@ -571,7 +571,7 @@ granularity_hierarchy:
 | `script` | 代码类 | 治理/运维脚本 | scripts/governance/generate_project_depgraph.py |
 | `test` | 代码类 | 测试文件 | tests/test_depgraph.py |
 | `config` | 配置类 | 配置文件 YAML/TOML | gate YAML, pyproject.toml |
-| `registry` | 配置类 | 注册表 YAML | cross-module-dependency-registry.yaml |
+| `registry` | 配置类 | 注册表 YAML | gate_registry.yaml |
 | `data` | 配置类 | 数据资产 JSON/YAML | dependency-graph.json |
 | `contract` | 配置类 | 契约定义 | contracts/*.yaml |
 | `schema` | 配置类 | Schema 文件 | schemas/*.json |
@@ -876,8 +876,8 @@ reverse[B] = [A, ...]      →  B 被 A 依赖
 | `diagnose_depgraph.py` | §4 计算规则 | 缺 amplification/blast_radius/risk_propagation/dead_dependency |
 | `depgraph` | 全 23 段 | 唯一真源文件 |
 | `dependency.py` Pydantic 模型 | §2 Nodes + §3 Edges + §8 Graph Metrics | 缺 architecture_direction/coupling_strength/completeness_declaration/architecture_constraints 及 §4-§21 |
-| `cross-module-dependency-registry.yaml` (PS-REG-007) | §4 Adjacency Lists + §12 Matrix | 缺 §5-§21 |
-| `system-dependency-map.md` | §10 Business Streams + §11 Stream Cross Points + §8 Depth Heat Map | 纯文档，不可计算 |
+| `cross-module-dependency-registry.yaml` (PS-REG-007) | 已废弃（PostgreSQL depgraph 替代） | 文件已删除 |
+| `system-dependency-map.md` | 已废弃（dependency_path_panorama.md 替代） | 文件已删除 |
 | `business-domain-dependency-map-draft.md` | §12 Matrix + §13 Event Flows + §14 Causal Chains + §15 Startup Sequence | 纯文档，不可计算 |
 | `EN-001` 门禁 | §9 Architecture Constraints.acyclic | 只检测环，不检测方向/深度/覆盖率/放大/蓝图对齐 |
 | 蓝图-代码双向对齐 | §18 blueprint_links | 当前无结构化链接 |

@@ -85,7 +85,7 @@ references: []
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -712,7 +712,7 @@ class ConstructionStage(str, Enum):
 ### 10.2 依赖图对齐声明
 
 > 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
-> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
@@ -810,7 +810,7 @@ class ConstructionStage(str, Enum):
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-019 条目 | 模块存在 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-019 条目 | 蓝图存在 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-019 文档元数据 | 文档注册 |
-| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | MOD-INF-019 节点+依赖边 | 依赖关系 |
+| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | MOD-INF-019 节点+依赖边 | 依赖关系 |
 | 4 | AGENTS.md | `D:\ZephyrAlpha\AGENTS.md` | Skill 触发表 | 路由入口 |
 | 5 | __init__.py | `D:\ZephyrAlpha\src\zephyr\agent-spec\__init__.py` | __all__ 导出 | 模块注册 |
 
@@ -1133,7 +1133,7 @@ class ConstructionStage(str, Enum):
 | .py 文件数 | 67 | `ls src/zephyr/agent-spec/*.py \| wc -l` |
 | Domain Skill | 19 | `ls skills/domain/` |
 | Role Skill | 3 | `ls skills/role/` |
-| 依赖深度 | 5 | system-dependency-map.md |
+| 依赖深度 | 5 | dependency_path_panorama.md |
 
 ### §17.2 缺口清单
 
@@ -1319,7 +1319,7 @@ class ConstructionStage(str, Enum):
 | 4 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
-| 7 | 依赖图 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 依赖对齐 |
+| 7 | 依赖图 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 依赖对齐 |
 | 8 | 蓝图+施工图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-construction-template.md` | 模板合规 |
 
 ---

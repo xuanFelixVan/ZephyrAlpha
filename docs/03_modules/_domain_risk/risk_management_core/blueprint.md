@@ -77,7 +77,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/risk_management_core/blueprint.md"
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -443,7 +443,7 @@ class ViolationDetail(BaseModel):
 | MOD-L08-001 | 可选 | CTR-P1-008 RiskDashboardSnapshot（产出） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | CTR-P1-013 Telemetry（产出） | v1.0.0 | 风控告警→线4 |
 
-> **对齐说明**：system-dependency-map §3.10 列出 CTR-001/CTR-002/CTR-006 为输入，CTR-003/CTR-P1-011/CTR-P1-013 为输出。蓝图 §10.1 补充了 CTR-P1-015（代码 __init__.py 已声明消费）和 CTR-004（pre-trade 校验必需）。CTR-P1-011 RiskMetricsReport 产出待 Phase 2 实现。
+> **对齐说明**：dependency_path_panorama §3.10 列出 CTR-001/CTR-002/CTR-006 为输入，CTR-003/CTR-P1-011/CTR-P1-013 为输出。蓝图 §10.1 补充了 CTR-P1-015（代码 __init__.py 已声明消费）和 CTR-004（pre-trade 校验必需）。CTR-P1-011 RiskMetricsReport 产出待 Phase 2 实现。
 
 ### 10.2 依赖图对齐声明
 
@@ -453,7 +453,7 @@ class ViolationDetail(BaseModel):
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
-> **依赖图子模块差异**：system-dependency-map §3.10 列出 4 子模块（l04-metrics/l04-limits/l04-stop-loss/l04-monitor），实际代码为 1 个模块（MOD-L04-001）含 5 ABC + 5 实现。待业务层开放后按需拆分。
+> **依赖图子模块差异**：dependency_path_panorama §3.10 列出 4 子模块（l04-metrics/l04-limits/l04-stop-loss/l04-monitor），实际代码为 1 个模块（MOD-L04-001）含 5 ABC + 5 实现。待业务层开放后按需拆分。
 
 ### 10.3 内部依赖图
 
@@ -522,7 +522,7 @@ class ViolationDetail(BaseModel):
 | 1 | ~~YAML SSoT~~ | 已删除（迁移至35域架构） | — | 旧14层架构YAML已废弃 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
 | 3 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 确认 CTR-003/CTR-ERR-004/CTR-P1-008 状态 | 契约状态确认 |
-| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | §3.10 子模块定义与实际代码对齐 | 4子模块 vs 1模块差异 |
+| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | §3.10 子模块定义与实际代码对齐 | 4子模块 vs 1模块差异 |
 
 ---
 
@@ -743,7 +743,7 @@ class ViolationDetail(BaseModel):
 | 1 | 测试目录不存在 | 高 | Phase 1 未创建测试 | 创建 tests/risk/ + 单元测试 | 铁律#14 | 待解决 |
 | 2 | 代码 AI_AUTONOMY=ai_modifiable 与 GOV-AI-001=Immutable Core 不一致 | 高 | 代码头部未同步注册表声明 | 修正代码头部为 human_gated | GOV-AI-001 | 待解决 |
 | 3 | RiskCheckResult/RiskReport 使用 @dataclass 而非 Pydantic BaseModel | 中 | Phase 1 快速实现 | 迁移为 Pydantic BaseModel | KBG-0040 | 待解决 |
-| 4 | system-dependency-map §3.10 列出 4 子模块但实际为 1 模块 | 中 | 架构设计与实现未同步 | 待业务层开放后按需拆分或更新依赖图 | §10.2 | 待解决 |
+| 4 | dependency_path_panorama §3.10 列出 4 子模块但实际为 1 模块 | 中 | 架构设计与实现未同步 | 待业务层开放后按需拆分或更新依赖图 | §10.2 | 待解决 |
 | 5 | INV-001 Kill Switch 延迟未验证 | 高 | 无性能测试 | 创建延迟基准测试 | INV-001 | 待解决 |
 
 ---
@@ -872,7 +872,7 @@ class ViolationDetail(BaseModel):
 | 4 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | 读取 | 本蓝图即SSoT |
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 同步 |
 | 6 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
-| 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | §3.10 子模块对齐 |
+| 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 修改 | §3.10 子模块对齐 |
 
 ---
 

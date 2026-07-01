@@ -57,7 +57,7 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 > - 蓝图+施工图模板：[blueprint-template.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -496,7 +496,7 @@ class ExamMode(str, Enum):
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本升级至 2.1.0 | 蓝图升级 |
 | 2 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 更新版本号 | 元数据同步 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增 MOD-INF-005 依赖 | 容量升级依赖 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 新增 MOD-INF-005 依赖 | 容量升级依赖 |
 
 ---
 

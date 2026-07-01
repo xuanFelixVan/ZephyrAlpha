@@ -4,11 +4,11 @@
 # [MODULE] scripts.governance.generate_project_depgraph
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
-# [CONSUMERS] CI pipeline; governance automation; system-dependency-map.md
+# [CONSUMERS] CI pipeline; governance automation; PostgreSQL depgraph
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML + Mermaid
-# [MODIFY-GUARD] system-dependency-map.md; cross-module-dependency-registry.yaml
+# [MODIFY-GUARD] PostgreSQL depgraph; architecture_model/module_id_registry.yaml
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -3771,7 +3771,7 @@ def main():
         print(f"[DEPGRAPH] Markdown section written to {args.output_md_section}")
     else:
         print("\n" + "=" * 60)
-        print("MARKDOWN SECTION (paste into system-dependency-map.md):")
+        print("MARKDOWN SECTION (paste into dependency_path_panorama.md):")
         print("=" * 60)
         print(md_section[:3000])
         if len(md_section) > 3000:

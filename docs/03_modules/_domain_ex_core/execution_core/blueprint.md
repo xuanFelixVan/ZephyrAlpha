@@ -68,7 +68,7 @@ references:
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -408,7 +408,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 对齐项 | 对齐状态 | 说明 |
 |--------|:---:|------|
-| §10.1 依赖声明 ↔ system-dependency-map.md §3.9 | 已对齐 | L06 5子模块+仿真模式+风控/合规阻断点+契约均匹配 |
+| §10.1 依赖声明 ↔ dependency_path_panorama.md §3.9 | 已对齐 | L06 5子模块+仿真模式+风控/合规阻断点+契约均匹配 |
 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 未对齐 | 待验证 |
 | §10.1 依赖声明 ↔ 各依赖蓝图 §4 契约 | 未对齐 | 待验证 |
 

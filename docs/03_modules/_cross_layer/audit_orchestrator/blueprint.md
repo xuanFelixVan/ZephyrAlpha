@@ -107,7 +107,7 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -618,7 +618,7 @@ class GlobalAuditReport(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-027 版本更新 | 蓝图升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-027 版本更新 | 蓝图升级 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增容量升级组件依赖 | 新组件 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 新增容量升级组件依赖 | 新组件 |
 | 4 | Skill 注册 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | audit-orchestrator skill | AI 发现 |
 | 5 | MCP Server | `D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py` | 新增 3 个 MCP Tool | API 集成 |
 
@@ -973,7 +973,7 @@ STEP 3: 拆分后验证
 | 5 | MCP Server | `D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py` | 修改 | 新增 MCP Tool |
 | 6 | Skill 注册 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 新增 skill |
 | 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 版本更新 |
-| 8 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | 新增依赖 |
+| 8 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 修改 | 新增依赖 |
 
 ---
 

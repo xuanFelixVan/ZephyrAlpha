@@ -8,7 +8,7 @@
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML
-# [MODIFY-GUARD] system-dependency-map.md
+# [MODIFY-GUARD] PostgreSQL depgraph
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

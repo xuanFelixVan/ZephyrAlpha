@@ -91,7 +91,7 @@ tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -913,7 +913,7 @@ class A2ATask(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-025 版本+字段 | 蓝图升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本+路径更新 | 蓝图升级 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | A2A 依赖关系 | 新增依赖 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | A2A 依赖关系 | 新增依赖 |
 
 ---
 
@@ -1370,7 +1370,7 @@ STEP 3: 拆分后验证
 | 代码构建标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` |
 | 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` |
 | 脚本质量标准 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
-| 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` |
+| 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` |
 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 | Agent Spec | `D:\ZephyrAlpha\src\zephyr\agent-spec\` |
 
@@ -1389,7 +1389,7 @@ STEP 3: 拆分后验证
 | 新建 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\script_*.py` (14 个容量扩展文件) |
 | 修改 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer1_discovery\agent_card.py` (容量参数扩展) |
 | 修改 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
-| 修改 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` |
+| 修改 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` |
 
 
 ## Consumers

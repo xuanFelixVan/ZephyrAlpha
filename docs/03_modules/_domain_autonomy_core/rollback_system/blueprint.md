@@ -89,7 +89,7 @@ summary: >
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md) 线3:治理闭环
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md) 线3:治理闭环
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -1012,7 +1012,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 ### 10.3.1 线3 治理闭环——G-CT 契约全景
 
-> 对齐 system-dependency-map.md 线3。本模块直接参与 3 条，全景 8 条提供上下文。
+> 对齐 dependency_path_panorama.md 线3。本模块直接参与 3 条，全景 8 条提供上下文。
 
 | G-CT ID | 契约 | 源 | 目标 | 本模块角色 |
 |---------|------|---|------|-----------|
@@ -1113,7 +1113,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-021 版本+generation | 蓝图升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-021 版本+路径 | 蓝图升级 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-021 元数据 | 蓝图升级 |
-| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 线3:治理闭环 更新 | 容量升级 |
+| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 线3:治理闭环 更新 | 容量升级 |
 
 ---
 
@@ -1704,7 +1704,7 @@ STEP 3: 拆分后验证
 | 代码覆盖率 | evolving | 62 .py 文件已实现，测试覆盖率待提升 |
 | 文档完整性 | stable | 蓝图+施工图模板 v3.6 合规 |
 | 运维就绪度 | evolving | CLI 命令完整，但 DiRT drill 未定期执行 |
-| **整体** | **stable** | 对齐 system-dependency-map.md——核心架构+接口已冻结 |
+| **整体** | **stable** | 对齐 dependency_path_panorama.md——核心架构+接口已冻结 |
 
 ---
 

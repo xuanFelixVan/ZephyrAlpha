@@ -37,7 +37,7 @@ references:
   - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l10_compliance.yaml"
     section: "全篇"
     why: "YAML SSoT"
-  - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\system-dependency-map.md"
+  - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\04_architecture_principles_decisions\\dependency_path_panorama.md"
     section: "§5 模块归属表 + §2.7 线7 + §3.16 权限判定链"
     why: "全局依赖图对齐"
 depends_on:
@@ -71,7 +71,7 @@ depends_on:
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -118,7 +118,7 @@ depends_on:
 
 ### 1.1 背景
 
-AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实现安全检查，导致：①安全策略不一致 ②新增安全规则需修改多个模块 ③审计追踪不完整。合规层（L10）作为系统权限判定链第④步（system-dependency-map §3.16），负责在 AI 指令执行前进行合规检查（CTR-P1-012），拦截不合规指令并生成审计决策。
+AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实现安全检查，导致：①安全策略不一致 ②新增安全规则需修改多个模块 ③审计追踪不完整。合规层（L10）作为系统权限判定链第④步（dependency_path_panorama §3.16），负责在 AI 指令执行前进行合规检查（CTR-P1-012），拦截不合规指令并生成审计决策。
 
 ### 1.2 目标范围
 
@@ -400,7 +400,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 对齐项 | 对齐状态 | 说明 |
 |--------|:---:|------|
-| §10.1 依赖声明 ↔ system-dependency-map.md | 未对齐 | 待验证 |
+| §10.1 依赖声明 ↔ dependency_path_panorama.md | 未对齐 | 待验证 |
 | §10.1 依赖声明 ↔ cross_layer_contracts.yaml | 未对齐 | 待验证 |
 | §10.1 依赖声明 ↔ 下游蓝图 §10 | 未对齐 | 待验证 |
 
@@ -456,7 +456,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | L06 Trade Execution | 新增接口 | CTR-P1-012 ComplianceRule | 交易执行可消费合规规则 |
 | INF-020 Audit Trail | 修改现有接口 | AuditDecision写入 | 审计决策可追溯 |
 | CI/CD Pipeline | 配置注入 | ArtifactScanner | 代码审查门禁可扫描artifact |
-| 权限判定链（system-dependency-map §3.16） | ④ 合规检查 | CTR-P1-012 | 指令执行前合规拦截 |
+| 权限判定链（dependency_path_panorama §3.16） | ④ 合规检查 | CTR-P1-012 | 指令执行前合规拦截 |
 
 ---
 

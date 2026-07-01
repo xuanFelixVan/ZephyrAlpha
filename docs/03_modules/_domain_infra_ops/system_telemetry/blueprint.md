@@ -68,7 +68,7 @@ verifiability: hybrid
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > **SSoT 声明**：本文件是 System Telemetry 模块的唯一设计真源。
@@ -598,7 +598,7 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 
 ### §10.2 依赖图对齐声明
 
-> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
 
 MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。下游: MOD-INF-015 → MOD-INF-001(容量保障) → MOD-RESOURCE_OPTIMIZATION_ENGINE(资源优化) → MOD-INF-026(资产盘点)。交叉引用: V6_CAP→V4_FLE(容量告警), V3_BUD→V6_CAP(预算耗尽)。

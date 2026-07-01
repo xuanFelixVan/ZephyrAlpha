@@ -69,7 +69,7 @@ construction_gate: "ARB-11: C轨T2层保持blocked，代码归档_experimental/�
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -442,7 +442,7 @@ class ExperimentMetric:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ system-dependency-map.md §3.19 | L13→L11(模型产出) + L13→L09(实验结论) + L09→L13(研究假设) 一致 | 已对齐 | 人工核对 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.19 | L13→L11(模型产出) + L13→L09(实验结论) + L09→L13(研究假设) 一致 | 已对齐 | 人工核对 |
 | 2 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-L13-001` |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | l13_experimentation.yaml 已注册 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 

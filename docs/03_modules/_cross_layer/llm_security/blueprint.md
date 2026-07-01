@@ -1778,7 +1778,7 @@ LSG 健康检查失败
 ### 10.2 依赖图对齐声明
 
 > 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
-> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |

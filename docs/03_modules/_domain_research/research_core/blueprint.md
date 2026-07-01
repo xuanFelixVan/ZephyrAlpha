@@ -69,7 +69,7 @@ codification_at: "2026-05-15"
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -407,11 +407,11 @@ class BacktestConfig:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ system-dependency-map.md §5 | L09依赖与依赖图模块归属表一致 | 已对齐 | 逐项核对 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | L09依赖与依赖图模块归属表一致 | 已对齐 | 逐项核对 |
 | 2 | §10.1 依赖声明 ↔ l09_research_innovation.yaml | YAML接口声明与蓝图依赖一致 | 已对齐 | 逐项核对 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `ls src/zephyr/research/` |
 
-> 依赖图对齐说明：system-dependency-map.md §5 将 MOD-L09-001 归类为 T2-deferred、线7业务价值线。蓝图 priority 从 P1 修正为 P2 以对齐依赖图。
+> 依赖图对齐说明：dependency_path_panorama.md §5 将 MOD-L09-001 归类为 T2-deferred、线7业务价值线。蓝图 priority 从 P1 修正为 P2 以对齐依赖图。
 
 ### 10.3 内部依赖图
 
@@ -466,7 +466,7 @@ class BacktestConfig:
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress+priority更新 | 进度+优先级变更 |
 | 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l09_research_innovation.yaml` | 确认files列表与磁盘一致 | ARB-23双重现实 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 确认L09条目与蓝图一致 | 依赖对齐 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 确认L09条目与蓝图一致 | 依赖对齐 |
 
 ---
 
@@ -653,7 +653,7 @@ class BacktestConfig:
 | 3 | D-L09-03 | DefaultBacktestEngine用pandas向量化 | pandas向量化/numpy循环/numba | pandas向量化 | 日频回测pandas生态最成熟 | 2026-05-05 |
 | 4 | D-L09-04 | FactorDiscovery状态机暂不实现 | 立即实现/暂不实现 | 暂不实现 | C轨占位禁止施工，状态机为Phase C内容 | 2026-05-05 |
 | 5 | D-L09-05 | 模板v3.5升级 | 保持v3.3/按v3.5升级 | 按v3.5升级 | §0前移+§7/§15删除+§10拆分+铁律扩展 | 2026-05-15 |
-| 6 | D-L09-06 | priority从P1修正为P2 | P1/P2 | P2 | 对齐system-dependency-map.md T2-deferred分类 | 2026-05-15 |
+| 6 | D-L09-06 | priority从P1修正为P2 | P1/P2 | P2 | 对齐dependency_path_panorama.md T2-deferred分类 | 2026-05-15 |
 
 ---
 
