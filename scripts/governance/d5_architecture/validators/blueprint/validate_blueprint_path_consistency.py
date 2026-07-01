@@ -55,12 +55,12 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-DOCS_MODULES = REPO_ROOT / "docs" / "03_modules"
 C_TRACK_PATTERN = re.compile(r"^src/zephyr/l\d{2}_")
 B_TRACK_NAMES = {
     "llm-security",
@@ -129,7 +129,7 @@ def _classify_path(path: str) -> str:
 def _scan_blueprints() -> list[dict]:
     """_scan_blueprints implementation."""
     results = []
-    for bp in DOCS_MODULES.rglob("blueprint.md"):
+    for bp in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         content = bp.read_text(encoding="utf-8")
         fm_path = _extract_frontmatter_path(content)
         body_path = _extract_body_code_path(content)

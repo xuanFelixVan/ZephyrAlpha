@@ -49,7 +49,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_ERROR, REPO_ROOT
+from _shared.constants import GATES_DIR, EXIT_ERROR, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -72,7 +72,6 @@ from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = REPO_ROOT
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 _AGENTS_PATH = _PROJECT_ROOT / "AGENTS.md"
 
 
@@ -88,7 +87,7 @@ def _load_gate_rules() -> list[dict[str, Any]]:
     import yaml
 
     rules: list[dict[str, Any]] = []
-    for yf in sorted(_GATES_DIR.glob("g*.yaml")):
+    for yf in sorted(GATES_DIR.glob("g*.yaml")):
         if yf.name.startswith("_") or "template" in yf.name.lower():
             continue
         try:

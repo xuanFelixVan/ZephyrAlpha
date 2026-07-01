@@ -50,7 +50,7 @@ from __future__ import annotations
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.constants import GATES_DIR, EXIT_PASS, REPO_ROOT
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 __manifest__ = """
@@ -77,16 +77,15 @@ from pathlib import Path
 from typing import Any
 
 _PROJECT_ROOT = REPO_ROOT
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 _DB_PATH = _PROJECT_ROOT / "data" / "databases" / "governance.db"
 _SNAPSHOT_PATH = _PROJECT_ROOT / "scripts" / "governance" / "meta" / "gate_engine_hashes.json"
 _SRC = _PROJECT_ROOT / "src"
 
 _CORE_FILES: list[Path] = [
-    _GATES_DIR / "gate_engine.py",
-    _GATES_DIR / "circuit_breaker.py",
-    _GATES_DIR / "_registry.yaml",
-    _GATES_DIR / "_template.yaml",
+    GATES_DIR / "gate_engine.py",
+    GATES_DIR / "circuit_breaker.py",
+    GATES_DIR / "_registry.yaml",
+    GATES_DIR / "_template.yaml",
 ]
 
 
@@ -152,7 +151,7 @@ def update_hash_snapshot() -> dict[str, str]:
 
 def verify_yaml_file_count() -> dict[str, Any]:
     """verify_yaml_file_count implementation."""
-    yaml_files = sorted(_GATES_DIR.glob("g*.yaml"))
+    yaml_files = sorted(GATES_DIR.glob("g*.yaml"))
     count = len(yaml_files)
     expected_min = 8
     issues: list[str] = []
@@ -231,7 +230,7 @@ def run_canary_injection_test() -> dict[str, Any]:
 
     try:
         engine = GateEngine(
-            gate_dir=_GATES_DIR,
+            gate_dir=GATES_DIR,
             db_path=_DB_PATH,
             project_root=_PROJECT_ROOT,
         )
@@ -279,7 +278,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
     import yaml
 
     issues: list[str] = []
-    registry = _GATES_DIR / "_registry.yaml"
+    registry = GATES_DIR / "_registry.yaml"
     if not registry.exists():
         return {
             "label": "V5. 注册表↔文件系统",
@@ -310,9 +309,9 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
 
     yaml_gate_ids: set[str] = set()
     for yf in (
-        sorted(_GATES_DIR.glob("*.yaml"))
-        + sorted(_GATES_DIR.glob("task/*.yaml"))
-        + sorted(_GATES_DIR.glob("admission/*.yaml"))
+        sorted(GATES_DIR.glob("*.yaml"))
+        + sorted(GATES_DIR.glob("task/*.yaml"))
+        + sorted(GATES_DIR.glob("admission/*.yaml"))
     ):
         if yf.name.startswith("_"):
             continue
@@ -336,7 +335,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
         if gid == "GATE-18":
             continue  # pre_commit hook——不是在 gates/ 目录下的 YAML 文件
         if fpath.endswith((".yaml", ".yml")):
-            full_path = _GATES_DIR / fpath
+            full_path = GATES_DIR / fpath
             if not full_path.exists():
                 issues.append(f"注册表引用文件不存在: {fpath} (gate_id={gid})")
 

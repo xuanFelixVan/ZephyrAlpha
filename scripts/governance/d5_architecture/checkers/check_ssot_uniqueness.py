@@ -42,7 +42,8 @@ ensure_utf8_stdout()
 
 import argparse
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: [--warn-only]
@@ -54,7 +55,6 @@ timeout_seconds: 30
 warn_only: false
 """
 
-BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 
 
 def extract_frontmatter(content: str) -> dict:
@@ -120,7 +120,7 @@ def main() -> int:
         return EXIT_ERROR
 
     all_claims: dict[str, list[tuple[str, dict]]] = {}
-    for bp in BLUEPRINTS_DIR.rglob("blueprint.md"):
+    for bp in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         claims = extract_ssot_claims(bp)
         module_id = bp.parent.name
         for claim in claims:

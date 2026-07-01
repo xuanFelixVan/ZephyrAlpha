@@ -33,7 +33,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GATES_DIR, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: []
@@ -51,8 +52,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+# 治本(ARCH-036 P1-3): GATES_DIR 从 _shared.constants 导入
 
 _MUTABLE_CHECK_TYPES = {"encoding", "line_ending", "frontmatter", "file_extension"}
 _NON_AUTOFIX_TYPES = {
@@ -70,7 +70,7 @@ _NON_AUTOFIX_TYPES = {
 
 def _load_engine_checktypes() -> set[str]:
     """_load_engine_checktypes implementation."""
-    engine_path = _GATES_DIR / "gate_engine.py"
+    engine_path = GATES_DIR / "gate_engine.py"
     if not engine_path.exists():
         return set()
     content = engine_path.read_text(encoding="utf-8", errors="replace")
@@ -87,7 +87,7 @@ def _load_engine_checktypes() -> set[str]:
 
 def _load_gate_files() -> dict[str, str]:
     """_load_gate_files implementation."""
-    engine_path = _GATES_DIR / "gate_engine.py"
+    engine_path = GATES_DIR / "gate_engine.py"
     if not engine_path.exists():
         return {}
     content = engine_path.read_text(encoding="utf-8", errors="replace")
@@ -111,7 +111,7 @@ def check_yaml_gateids_in_engine() -> dict[str, Any]:
     gate_files = _load_gate_files()
     issues: list[str] = []
 
-    for yf in sorted(_GATES_DIR.glob("g[1-5]_*.yaml")):
+    for yf in iter_files(GATES_DIR, name_pattern="g[1-5]_*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
         except Exception:
@@ -135,7 +135,7 @@ def check_checktype_implementation() -> dict[str, Any]:
     engine_types = _load_engine_checktypes()
     issues: list[str] = []
 
-    for yf in sorted(_GATES_DIR.glob("g*.yaml")):
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
         except Exception:
@@ -160,7 +160,7 @@ def check_registry_file_refs() -> dict[str, Any]:
     """Check compliance and report findings."""
     import yaml
 
-    registry = _GATES_DIR / "_registry.yaml"
+    registry = GATES_DIR / "_registry.yaml"
     if not registry.exists():
         return {
             "label": "D4. 注册表文件引用",
@@ -177,7 +177,7 @@ def check_registry_file_refs() -> dict[str, Any]:
     issues: list[str] = []
     for entry in data.get("gates", []):
         fname = entry.get("file", "")
-        if fname and not (_GATES_DIR / fname).exists():
+        if fname and not (GATES_DIR / fname).exists():
             issues.append(f"注册项 {entry.get('gate_id', '?')} 指向不存在的文件: {fname}")
 
     return {
@@ -195,7 +195,7 @@ def check_severity_consistency() -> dict[str, Any]:
     expected_map = {"error": "P0", "critical": "P0", "warning": "P1", "warn": "P1", "info": "P2"}
     issues: list[str] = []
 
-    for yf in sorted(_GATES_DIR.glob("g*.yaml")):
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
         except Exception:
@@ -219,7 +219,7 @@ def check_autofix_compatibility() -> dict[str, Any]:
     import yaml
 
     issues: list[str] = []
-    for yf in sorted(_GATES_DIR.glob("g*.yaml")):
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
         except Exception:
@@ -246,7 +246,7 @@ def check_duplicate_checkids() -> dict[str, Any]:
     all_ids: dict[str, list[str]] = {}
     issues: list[str] = []
 
-    for yf in sorted(_GATES_DIR.glob("g*.yaml")):
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
         except Exception:
@@ -299,7 +299,7 @@ def main() -> None:
     parser.add_argument("--fix", action="store_true", help="自动修复可修复的漂移")
     args = parser.parse_args()
 
-    sys.path.insert(0, str(_PROJECT_ROOT / "src"))
+    sys.path.insert(0, str(REPO_ROOT / "src"))
 
     print("=== Gate Configuration Drift Detection ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")

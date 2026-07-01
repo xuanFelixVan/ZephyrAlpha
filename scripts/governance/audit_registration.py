@@ -70,13 +70,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import GATES_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-GATES_DIR = SRC_ZEPHYR / "governance" / "rule_enforcement"
 SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 

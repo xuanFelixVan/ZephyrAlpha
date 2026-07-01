@@ -50,7 +50,8 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
@@ -67,10 +68,9 @@ except ImportError:
 
 def find_all_blueprints() -> list[Path]:
     """find_all_blueprints implementation."""
-    tree = REPO_ROOT / "docs" / "03_modules"
-    if not tree.exists():
+    if not BLUEPRINTS_DIR.exists():
         return []
-    return sorted(tree.rglob("blueprint.md"))
+    return iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md")
 
 
 LAYER_DIR_MAP = {

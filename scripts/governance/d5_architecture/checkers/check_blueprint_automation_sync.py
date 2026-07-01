@@ -43,7 +43,8 @@ ensure_utf8_stdout()
 import argparse
 import re
 
-from _shared.constants import EXIT_FINDINGS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: [--warn-only, --json, --blueprint]
@@ -56,7 +57,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 AUTOMATION_TABLE_RE = re.compile(
@@ -109,7 +109,7 @@ CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
 
 
 def find_blueprint_files() -> list[Path]:
-    return list(BLUEPRINTS_DIR.rglob("blueprint.md"))
+    return iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md")
 
 
 def parse_frontmatter(content: str) -> dict[str, str]:

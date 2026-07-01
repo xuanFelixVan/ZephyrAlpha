@@ -44,7 +44,8 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: []
@@ -79,7 +80,6 @@ VALID_PROGRESS = frozenset(
 
 BLUEPRINT_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 MODULE_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-MODULES_ROOT = _REPO_ROOT / "docs" / "03_modules"
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 PROGRESS_RE = re.compile(r"^construction_progress:\s*(.+)$", re.MULTILINE)
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
@@ -88,7 +88,7 @@ MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
 def _collect_frontmatter_progress() -> dict[str, str]:
     """_collect_frontmatter_progress implementation."""
     result: dict[str, str] = {}
-    for bp_path in MODULES_ROOT.rglob("blueprint.md"):
+    for bp_path in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         content = bp_path.read_text(encoding="utf-8")
         fm_match = FRONTMATTER_RE.match(content)
         if not fm_match:

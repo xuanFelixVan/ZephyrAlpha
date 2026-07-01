@@ -44,7 +44,8 @@ import argparse
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from _shared.constants import EXIT_FINDINGS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: [--warn-only, --json, --package]
@@ -57,7 +58,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 BLUEPRINT_REGISTRY = BLUEPRINTS_DIR / "blueprint_registry.yaml"
 MODULE_REGISTRY = BLUEPRINTS_DIR / "module-registry.yaml"
@@ -176,7 +176,7 @@ def check_blueprint_file_list(
     blueprint_registry: dict[str, dict],
 ) -> list[dict]:
     drifts: list[dict] = []
-    for bp_file in BLUEPRINTS_DIR.rglob("blueprint.md"):
+    for bp_file in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         try:
             content = bp_file.read_text(encoding="utf-8")
         except OSError:
@@ -237,7 +237,7 @@ def check_code_not_in_blueprint(
     for entry in code_headers:
         pkg_files.setdefault(entry["package"], []).append(entry["file"])
 
-    for bp_file in BLUEPRINTS_DIR.rglob("blueprint.md"):
+    for bp_file in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         try:
             content = bp_file.read_text(encoding="utf-8")
         except OSError:

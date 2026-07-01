@@ -188,6 +188,12 @@ CONFIG_DIR: Path = REPO_ROOT / "config"
 SCRIPTS_DIR: Path = REPO_ROOT / "scripts" / "governance"
 MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 
+# 治本(ARCH-036 P1-3): 收敛散点路径常量定义。
+# 原 5 个文件各自定义 BLUEPRINTS_DIR，原 5 个文件各自定义 _GATES_DIR。
+# 统一到此处单一真源，调用方 from _shared.constants import BLUEPRINTS_DIR, GATES_DIR。
+BLUEPRINTS_DIR: Path = REPO_ROOT / "docs" / "03_modules"
+GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+
 # DB_PATH 真源为 zephyr.shared.io.paths（上方 import），本模块 re-export。
 # 治理脚本不得各自硬编码库文件名。
 

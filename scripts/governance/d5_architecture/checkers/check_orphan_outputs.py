@@ -44,7 +44,8 @@ import argparse
 import re
 import subprocess
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 
 __manifest__ = """
 args: [--warn-only]
@@ -56,7 +57,6 @@ timeout_seconds: 60
 warn_only: false
 """
 
-BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 
@@ -85,7 +85,7 @@ def main() -> int:
         return EXIT_ERROR
 
     orphans = []
-    for bp in BLUEPRINTS_DIR.rglob("blueprint.md"):
+    for bp in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         content = bp.read_text(encoding="utf-8")
         module_id = bp.parent.name
         in_section11 = False

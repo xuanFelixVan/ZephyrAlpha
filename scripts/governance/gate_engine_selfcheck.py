@@ -66,9 +66,8 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.constants import GATES_DIR, REPO_ROOT as _REPO_ROOT  # noqa: E402
 
-_GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 _DB_PATH = _REPO_ROOT / "data" / "databases" / "governance.db"
 
 
@@ -81,10 +80,10 @@ def _fmt_status(ok: bool, label: str, detail: str = "") -> str:
 def check_core_files() -> dict[str, Any]:
     """Check compliance and report findings."""
     core_files = [
-        _GATES_DIR / "gate_engine.py",
-        _GATES_DIR / "circuit_breaker.py",
-        _GATES_DIR / "_registry.yaml",
-        _GATES_DIR / "_template.yaml",
+        GATES_DIR / "gate_engine.py",
+        GATES_DIR / "circuit_breaker.py",
+        GATES_DIR / "_registry.yaml",
+        GATES_DIR / "_template.yaml",
     ]
     missing = [str(cf.relative_to(_REPO_ROOT)) for cf in core_files if not cf.exists()]
     return {
@@ -99,7 +98,7 @@ def check_yaml_parsability() -> dict[str, Any]:
     """Check compliance and report findings."""
     import yaml
 
-    yaml_files = sorted(_GATES_DIR.glob("g[1-5]_*.yaml"))
+    yaml_files = sorted(GATES_DIR.glob("g[1-5]_*.yaml"))
     issues: list[str] = []
     for yf in yaml_files:
         try:
@@ -123,7 +122,7 @@ def check_registry_integrity() -> dict[str, Any]:
     """Check compliance and report findings."""
     import yaml
 
-    registry = _GATES_DIR / "_registry.yaml"
+    registry = GATES_DIR / "_registry.yaml"
     if not registry.exists():
         return {"label": "S3. 注册表完整性", "passed": False, "detail": "_registry.yaml 不存在", "issues": ["文件缺失"]}
 
@@ -238,7 +237,7 @@ def check_gate_registry_consistency() -> dict[str, Any]:
     import yaml
 
     issues: list[str] = []
-    registry = _GATES_DIR / "_registry.yaml"
+    registry = GATES_DIR / "_registry.yaml"
     if not registry.exists():
         return {
             "label": "S10. 门禁注册一致性",
@@ -257,10 +256,10 @@ def check_gate_registry_consistency() -> dict[str, Any]:
         registry_gate_ids.add(entry.get("gate_id", ""))
 
     yaml_files = (
-        sorted(_GATES_DIR.glob("*.yaml"))
-        + sorted(_GATES_DIR.glob("task/*.yaml"))
-        + sorted(_GATES_DIR.glob("admission/*.yaml"))
-        + sorted(_GATES_DIR.glob("invariants/*.yaml"))
+        sorted(GATES_DIR.glob("*.yaml"))
+        + sorted(GATES_DIR.glob("task/*.yaml"))
+        + sorted(GATES_DIR.glob("admission/*.yaml"))
+        + sorted(GATES_DIR.glob("invariants/*.yaml"))
     )
     yaml_gate_ids = set()
     for yf in yaml_files:
@@ -324,7 +323,7 @@ def check_checktype_coverage() -> dict[str, Any]:
     known_shadow_types = {"position_limit", "leverage_limit", "strategy_correlation"}
 
     yaml_types = set()
-    for yf in _GATES_DIR.glob("g*.yaml"):
+    for yf in GATES_DIR.glob("g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
             checks = yd.get("checks") or yd.get("entry_conditions") or []
@@ -391,7 +390,7 @@ def main() -> None:
     print("=== Gate Engine Bootstrap Self-Check ===")
     print(f"时间: {datetime.now(UTC).isoformat()}")
     print(f"项目: {_REPO_ROOT}")
-    print(f"门禁目录: {_GATES_DIR}")
+    print(f"门禁目录: {GATES_DIR}")
     print(f"数据库: {_DB_PATH}")
     print()
 

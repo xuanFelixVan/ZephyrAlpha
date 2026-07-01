@@ -44,7 +44,8 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
@@ -86,10 +87,9 @@ def _has_negative_indicator(content: str, path: str) -> bool:
 
 def find_blueprints() -> list[Path]:
     """find_blueprints implementation."""
-    modules_dir = REPO_ROOT / "docs" / "03_modules"
-    if not modules_dir.exists():
+    if not BLUEPRINTS_DIR.exists():
         return []
-    return list(modules_dir.rglob("blueprint.md"))
+    return iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md")
 
 
 def extract_claimed_file_paths(content: str) -> list[str]:

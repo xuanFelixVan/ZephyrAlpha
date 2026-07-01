@@ -60,7 +60,8 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
+from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
+from _shared.walk import iter_files
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
@@ -68,7 +69,6 @@ ensure_utf8_stdout()
 
 import yaml
 
-BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 CROSS_LAYER_DIR = BLUEPRINTS_DIR / "_cross_layer"
 INFRA_DIR = BLUEPRINTS_DIR / "infrastructure_runtime_integration"
 
@@ -125,7 +125,7 @@ def _collect_blueprints() -> dict[str, tuple[Path, dict]]:
     result: dict[str, tuple[Path, dict]] = {}
     if not BLUEPRINTS_DIR.exists():
         return result
-    for md_file in BLUEPRINTS_DIR.rglob("blueprint.md"):
+    for md_file in iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md"):
         fm_tuple = parse_frontmatter_from_file(md_file)
         if fm_tuple is None:
             continue

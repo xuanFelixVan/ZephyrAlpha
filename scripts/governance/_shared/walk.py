@@ -22,6 +22,7 @@ walk.py — 目录遍历共享工具
 
 from __future__ import annotations
 
+import fnmatch
 import os
 from pathlib import Path
 
@@ -33,6 +34,7 @@ def iter_files(
     extensions: frozenset[str] | None = None,
     exclude_dirs: frozenset[str] | None = None,
     exclude_files: frozenset[str] | None = None,
+    name_pattern: str | None = None,
 ) -> list[Path]:
     """递归遍历目录，返回符合条件的文件路径列表。
 
@@ -41,6 +43,7 @@ def iter_files(
         extensions: 允许的文件扩展名集合（含点号，如 '.md'），None 表示不限制。
         exclude_dirs: 排除的目录名集合，默认使用共享 EXCLUDE_DIRS。
         exclude_files: 排除的文件名集合。
+        name_pattern: fnmatch 文件名模式（如 "blueprint.md"、"g*.yaml"），None 表示不按名称过滤。
 
     Returns:
         符合条件的文件路径列表（已排序）。
@@ -56,6 +59,8 @@ def iter_files(
         dirnames[:] = [d for d in dirnames if d not in excl and not d.startswith(".")]
         for filename in sorted(filenames):
             if filename in excl_files:
+                continue
+            if name_pattern and not fnmatch.fnmatch(filename, name_pattern):
                 continue
             filepath = Path(dirpath) / filename
             if extensions and filepath.suffix.lower() not in extensions:
