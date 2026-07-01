@@ -1,4 +1,4 @@
-# 规则文件关键事实清单 — SSoT 基准
+﻿# 规则文件关键事实清单 — SSoT 基准
 # 用途：check_rule_coverage.py 读取此文件，验证 .trae/rules/*.md 和 AGENTS.md 是否与项目实际状态对齐
 # 维护原则：事实变更时先改此文件 → 再改规则文件 → 最后跑 check_rule_coverage.py 验证
 # 判定：must_appear_in 中的文件必须包含 fact 字符串；must_not_appear_as 中的文件不得包含 pattern
@@ -334,7 +334,7 @@ path_facts:
   - id: sys_master_underscore
     fact: "_sys_master"
     description: "系统主蓝图目录名（下划线，非连字符）"
-    ssot_source: "docs/03_modules/_sys_master/blueprint.md"
+    ssot_source: "docs/03_modules/system_master/blueprint.md"
     must_appear_in:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
@@ -600,7 +600,7 @@ path_facts:
   - id: sys_master_dir_in_registry
     fact: "_sys_master/"
     description: "系统总蓝图目录名（在 registry_of_registries.yaml 中，下划线非连字符）"
-    ssot_source: "docs/03_modules/_sys_master/"
+    ssot_source: "docs/03_modules/system_master/"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:

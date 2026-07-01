@@ -1,4 +1,4 @@
----
+﻿---
 module_id: "MOD-INF-018"
 submodule_path: src/zephyr/security/access_control
 title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
@@ -441,7 +441,7 @@ immutable_core:
       reason: "仓库状态——不可逆破坏"
     - path: "src/zephyr/agent-rbac/**"
       reason: "权限系统自身——不能被 AI 修改自己的护栏"
-    - path: "docs/03_modules/_domain-infra_ops/agent-rbac/blueprint.md"
+    - path: "docs/03_modules/_domain_infra_ops/agent-rbac/blueprint.md"
       reason: "权限蓝图——唯一真源"
     - path: "AGENTS.md"
       reason: "核心原则——AI 行为宪法"
@@ -451,7 +451,7 @@ immutable_core:
       reason: "门禁注册表——门禁体系 SSoT"
     - path: ".pre-commit-config.yaml"
       reason: "CI 护栏——pre-commit 检查定义"
-    - path: "src/zephyr/security/llm_defense/llm-security/process_sandbox.py"
+    - path: "src/zephyr/security/llm_defense/llm_security/process_sandbox.py"
       reason: "沙箱实现——安全边界代码"
     - path: "data/telemetry/audit/**"
       reason: "审计日志——不可变追溯链"
@@ -1942,7 +1942,7 @@ auto_maintenance:
       - "Kill Switch 触发历史（含原因和恢复时间）"
       - "Maturity 升级/降级事件"
       - "推荐的规则清理列表"
-    delivery: "写入 docs/03_modules/_domain-infra_ops/agent-rbac/reports/weekly-{date}.md"
+    delivery: "写入 docs/03_modules/_domain_infra_ops/agent-rbac/reports/weekly-{date}.md"
 
   # ─── Owner 健康仪表盘 ───
   owner_dashboard:
@@ -5963,7 +5963,7 @@ class PermissionHooks:
 
 ### §9.2 对抗性测试报告
 
-> 完整报告见 [adversarial_test_report.yaml](file:///d:/ZephyrAlpha/docs/03_modules/_domain-infra_ops/agent-rbac/adversarial_test_report.yaml)
+> 完整报告见 [adversarial_test_report.yaml](file:///d:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/agent-rbac/adversarial_test_report.yaml)
 
 ---
 
@@ -6090,7 +6090,7 @@ class PermissionHooks:
 | 4 | 权限钩子配置 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\permission_hooks.yaml` | YAML | 已存在 |
 | 5 | 自动维护配置 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\auto_maintenance.yaml` | YAML | 已存在 |
 | 6 | 健康仪表盘 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\health_dashboard.yaml` | YAML | 已存在 |
-| 7 | 对抗性测试报告 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\adversarial_test_report.yaml` | YAML | 已存在 |
+| 7 | 对抗性测试报告 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\adversarial_test_report.yaml` | YAML | 已存在 |
 | 8 | 派生脚本 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\derive_rbac_roles.py` | Python | 已存在 |
 
 ---
@@ -7058,7 +7058,7 @@ class PermissionHooks:
 
 ## MOD-GOVERNANCE 集成契约锚点
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+> 权威定义见 [`../../_domain_governance/blueprint.md`](../../_domain_governance/blueprint.md) §3。
 
 | 契约 ID | 本模块角色 | 对端模块 |
 |---------|------------|----------|
@@ -7417,11 +7417,11 @@ class PermissionHooks:
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限真源 |
-| 9 | Gate Engine 蓝图 | MOD-GATE_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` | 权限检查集成点 |
-| 10 | 审计追踪蓝图 | MOD-INF-020 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` | 审计日志写入 |
-| 11 | MCP Servers 蓝图 | MOD-INF-013 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\mcp-servers\blueprint.md` | MCP Tool 权限约束 |
-| 12 | Rollback 蓝图 | MOD-INF-021 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback\blueprint.md` | auto_guard 回滚 |
-| 13 | Escalation 蓝图 | MOD-INF-022 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation\blueprint.md` | Kill Switch 联动 |
+| 9 | Gate Engine 蓝图 | MOD-GATE_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` | 权限检查集成点 |
+| 10 | 审计追踪蓝图 | MOD-INF-020 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` | 审计日志写入 |
+| 11 | MCP Servers 蓝图 | MOD-INF-013 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\mcp_servers\blueprint.md` | MCP Tool 权限约束 |
+| 12 | Rollback 蓝图 | MOD-INF-021 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback\blueprint.md` | auto_guard 回滚 |
+| 13 | Escalation 蓝图 | MOD-INF-022 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation\blueprint.md` | Kill Switch 联动 |
 
 ---
 
@@ -7440,7 +7440,7 @@ class PermissionHooks:
 |---|---------|------------|------|---------|
 | 1 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\` | 核心实现 | 新建 |
 | 2 | 测试代码 | `D:\ZephyrAlpha\tests\agent-rbac\` | 测试用例 | 新建 |
-| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` | 本文件 | 修改 |
+| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` | 本文件 | 修改 |
 | 4 | RBAC 角色配置 | `D:\ZephyrAlpha\src\zephyr\agent-rbac\rbac_roles.yaml` | 自动派生 | 新建 |
 | 5 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | 真源 | 读取 |
 

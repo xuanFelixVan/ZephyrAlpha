@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "research_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | research-core — 目录索引 |
+| [index.md](index.md) | Markdown | research_core — 目录索引 |
 
 ## 导航
 

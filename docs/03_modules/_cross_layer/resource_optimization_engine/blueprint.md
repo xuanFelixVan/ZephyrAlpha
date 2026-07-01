@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint
@@ -213,7 +213,7 @@ DaemonRegistry 统一注册调度，禁止自创 while True。风险：单点故
 | 2 | 安全策略执行 | 不做权限控制 | MOD-INF-018 (agent-rbac) |
 | 3 | 日志审计记录 | 不做审计记录存储 | MOD-INF-015 (telemetry) |
 | 4 | 错误恢复/重试 | 不做业务级重试 | MOD-INF-009 (pipeline) |
-| 5 | 容量规划 | 不做事前容量规划 | MOD-INF-001 (capacity-assurance) |
+| 5 | 容量规划 | 不做事前容量规划 | MOD-INF-001 (capacity_assurance) |
 | 6 | Token/Cost 预算 | 不做 LLM 调用预算 | MOD-INF-024 (budget-enforcer) |
 | 7 | 漂移检测 | 不做配置漂移检测 | MOD-INF-023 (drift-detector) |
 | 8 | 回滚执行 | 不做代码级回滚 | MOD-INF-021 (rollback-system) |
@@ -664,16 +664,16 @@ class DegradationMatrix(BaseModel):
 
 | 依赖模块 | 类型 | 内容 | 版本 |
 |----------|------|------|------|
-| MOD-INF-016 (shared-core) | 必须 | daemon_registry, event_bus, lifecycle, contract_bus, API_INDEX | ≥0.14.0 |
-| MOD-INF-015 (system-telemetry) | 必须 | metrics, health_probes, SLI 上报 | ≥0.9.0 |
+| MOD-INF-016 (shared_core) | 必须 | daemon_registry, event_bus, lifecycle, contract_bus, API_INDEX | ≥0.14.0 |
+| MOD-INF-015 (system_telemetry) | 必须 | metrics, health_probes, SLI 上报 | ≥0.9.0 |
 | MOD-INF-009 (pipeline) | 必须 | pipeline_lock, orchestration | ≥0.36.0 |
-| MOD-FEEDBACK_LOOP (feedback-loop) | 必须 | scheduler (注册为守护线程), detectors | ≥0.32.0 |
-| MOD-GATE_ENGINE (gate-engine) | 可选 | 资源检查门禁规则 | ≥0.5.0 |
+| MOD-FEEDBACK_LOOP (feedback_loop) | 必须 | scheduler (注册为守护线程), detectors | ≥0.32.0 |
+| MOD-GATE_ENGINE (gate_engine) | 可选 | 资源检查门禁规则 | ≥0.5.0 |
 | MOD-INF-020 (audit-trail) | 可选 | 优化动作审计记录 | ≥1.4.0 |
 | MOD-INF-023 (drift-detector) | 可选 | 资源配置漂移检测 | ≥1.0.1 |
 | MOD-INF-024 (budget-enforcer) | 可选 | 资源成本预算集成 | ≥0.7.0 |
 | MOD-INF-019 (agent-spec) | 可选 | 技能注册 | ≥0.17.0 |
-| MOD-INF-013 (mcp-servers) | 可选 | MCP 工具暴露 | ≥0.3.41 |
+| MOD-INF-013 (mcp_servers) | 可选 | MCP 工具暴露 | ≥0.3.41 |
 | psutil | pip (可选) | 系统指标采集 | ≥5.9.0 |
 
 ### 10.2 依赖图对齐声明
@@ -742,7 +742,7 @@ class DegradationMatrix(BaseModel):
 | 资源优化配置 | `D:\ZephyrAlpha\config\resource_optimization.yaml` |
 | 单元测试 | `D:\ZephyrAlpha\tests\unit\shared\test_resource_optimization.py` |
 | 容量测试 | `D:\ZephyrAlpha\tests\capacity\test_1500_module_capacity.py` |
-| 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource-optimization-engine\blueprint.md` |
+| 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource_optimization_engine\blueprint.md` |
 
 ---
 
@@ -797,7 +797,7 @@ class DegradationMatrix(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | lifecycle __init__ | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\__init__.py` | 导出 ResourceOptimizationEngine | 模块可导入 |
 | 2 | io __init__ | `D:\ZephyrAlpha\src\zephyr\shared\io\__init__.py` | 导出 io_cache, streaming_reader | 模块可导入 |
-| 3 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback-loop\scheduler.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
+| 3 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 4 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 5 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 6 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
@@ -810,7 +810,7 @@ class DegradationMatrix(BaseModel):
 | 13 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 新增 G-RES 资源检查门禁 | 资源不足时门禁阻断 |
 | 14 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 新增资源优化 SLI 指标 | 可观测性 |
 | 15 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 新增 6 个资源优化工具契约 | MCP 可调用 |
-| 16 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 新增 CT-ROE 集成契约 | 跨系统集成 |
+| 16 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 新增 CT-ROE 集成契约 | 跨系统集成 |
 | 17 | requirements.txt | `D:\ZephyrAlpha\requirements.txt` | 新增 psutil>=5.9.0 (可选) | 依赖声明 |
 
 ---
@@ -1159,12 +1159,12 @@ STEP 3: 拆分后验证
 | 2 | EventBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\event_bus.py` |
 | 3 | ContractBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\contract_bus.py` |
 | 4 | API_INDEX 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\API_INDEX.py` |
-| 5 | FeedbackLoopScheduler | `D:\ZephyrAlpha\src\zephyr\feedback-loop\scheduler.py` |
+| 5 | FeedbackLoopScheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` |
 | 6 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` |
 | 7 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` |
 | 8 | AuditWriter | `D:\ZephyrAlpha\src\zephyr\audit-trail\writer.py` |
-| 9 | CollectionManager | `D:\ZephyrAlpha\src\zephyr\vector-memory\collection_manager.py` |
-| 10 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context-engine\context_budget_tracker.py` |
+| 9 | CollectionManager | `D:\ZephyrAlpha\src\zephyr\vector_memory\collection_manager.py` |
+| 10 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` |
 | 11 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` |
 | 12 | Lifecycle hooks | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\hooks.py` |
 | 13 | MCP Gateway | `D:\ZephyrAlpha\src\zephyr\mcp\gateway_server.py` |
@@ -1180,7 +1180,7 @@ STEP 3: 拆分后验证
 | 23 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` |
 | 24 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` |
 | 25 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` |
-| 26 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| 26 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
 | 27 | 系统总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 
 ---
@@ -1191,9 +1191,9 @@ STEP 3: 拆分后验证
 |---|-------------|------------|----------|-------------|
 | 1 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` | 磁盘空间监控 + os.walk 扫描 | ResourceGuard 只做磁盘监控和文件扫描，无 CPU/内存/进程池/缓存/调度优化能力，且自身就是资源浪费源（每5秒全量扫描） |
 | 2 | DaemonRegistry | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 守护线程注册 | DaemonRegistry 只做注册，无压力感知、无自适应调度、无优先级驱动的启停策略。本蓝图升级 DaemonRegistry 而非替换 |
-| 3 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context-engine\context_budget_tracker.py` | Token 预算管理 | ContextBudgetTracker 只管 Token 预算，不管系统级资源（CPU/内存/磁盘/进程）。两者互补不重叠 |
-| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
-| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
+| 3 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` | Token 预算管理 | ContextBudgetTracker 只管 Token 预算，不管系统级资源（CPU/内存/磁盘/进程）。两者互补不重叠 |
+| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
+| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
 
 ---
 
@@ -1211,11 +1211,11 @@ STEP 3: 拆分后验证
 | 7 | 资源优化配置 | `D:\ZephyrAlpha\config\resource_optimization.yaml` | 新建 | 新建 |
 | 8 | lifecycle __init__ | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\__init__.py` | 修改 | 修改 |
 | 9 | io __init__ | `D:\ZephyrAlpha\src\zephyr\shared\io\__init__.py` | 修改 | 修改 |
-| 10 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback-loop\scheduler.py` | 修改 | 修改 |
-| 11 | LocalModelScheduler | `D:\ZephyrAlpha\src\zephyr\vector-memory\local_model_scheduler.py` | 修改 | 修改 |
+| 10 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` | 修改 | 修改 |
+| 11 | LocalModelScheduler | `D:\ZephyrAlpha\src\zephyr\vector_memory\local_model_scheduler.py` | 修改 | 修改 |
 | 12 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` | 修改 | 修改 |
 | 13 | CircadianScheduler | `D:\ZephyrAlpha\src\zephyr\runtime\circadian_scheduler.py` | 修改 | 修改 |
-| 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback-loop\auto_evolution.py` | 修改 | 修改 |
+| 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback_loop\auto_evolution.py` | 修改 | 修改 |
 | 15 | infra __init__ | `D:\ZephyrAlpha\src\zephyr\shared\infra\__init__.py` | 修改 | 修改 |
 | 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 修改 |
 | 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 修改 | 修改 |
@@ -1235,7 +1235,7 @@ STEP 3: 拆分后验证
 | 31 | 单元测试（进程池） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_process_pool.py` | 新建 | 新建 |
 | 32 | 单元测试（懒加载） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_lazy_loader.py` | 新建 | 新建 |
 | 33 | 单元测试（自愈闭环） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_self_healing.py` | 新建 | 新建 |
-| 34 | 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource-optimization-engine\blueprint.md` | 本文件 | 修改 |
+| 34 | 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource_optimization_engine\blueprint.md` | 本文件 | 修改 |
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L00-001
 submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层·C轨占位"
@@ -418,9 +418,9 @@ class QualityReport:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-GATE_ENGINE Gatekeeper | 可选 | 数据质量门控联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gatekeeper | 可选 | 数据质量门控联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-DATABASE Database | 可选 | 数据缓存 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-INF-015 Telemetry | 必须 | 数据摄取监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
+| MOD-INF-015 Telemetry | 必须 | 数据摄取监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
 | MOD-INF-035 AutoRuntime | 可选 | 数据接入注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -462,7 +462,7 @@ class QualityReport:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\data\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\data\` | 测试用例 |
 

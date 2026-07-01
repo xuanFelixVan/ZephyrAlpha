@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-033
 submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
@@ -494,14 +494,14 @@ class EvidenceChain(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 AuditTrail | 必须 | 事件流数据源 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-023 DriftDetector | 必须 | 漂移信号触发 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 必须 | 许可矩阵查询 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-INF-020 AuditTrail | 必须 | 事件流数据源 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-023 DriftDetector | 必须 | 漂移信号触发 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | 许可矩阵查询 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-INF-021 Rollback | 必须 | 越界操作回滚 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-FEEDBACK_LOOP Feedback Loop | 必须 | 误报/漏报反馈 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
-| MOD-LLM_SECURITY LLM Security | 必须 | Prompt 注入防御 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
-| MOD-INF-018 Agent RBAC | 必须 | 审计权限校验 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-022 Escalation | 必须 | L4~L6 升级通道 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 必须 | 误报/漏报反馈 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
+| MOD-LLM_SECURITY LLM Security | 必须 | Prompt 注入防御 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 必须 | 审计权限校验 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-INF-022 Escalation | 必须 | L4~L6 升级通道 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-DATABASE Database | 可选 | SQLite 底层存储 | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
 | MOD-INF-027 AuditOrchestrator | 必须 | 调度路由 | v5.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 

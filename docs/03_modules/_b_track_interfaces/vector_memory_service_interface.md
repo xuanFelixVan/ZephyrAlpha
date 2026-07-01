@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOV-AI-ENG-VMS-001
 title: Vector Memory Service Interface / 向量记忆服务接口规范
 doc_type: architecture_view
@@ -13,7 +13,7 @@ created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
 truth_source:
-  - "03_modules/infra_ops/vector-memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
+  - "03_modules/infra_ops/vector_memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
   - "architecture_model/layers/b_vector_memory.yaml（Vector Memory YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md (archived 2026-04-24)"
@@ -25,7 +25,7 @@ integration_points:
   - "MCP Server knowledge_base_server.py (MCP 适配层)"
   - "git post-commit hook (upstream writer)"
 tags:
-  - vector-memory
+  - vector_memory
   - chromadb
   - bge-m3
   - service-interface
@@ -70,8 +70,8 @@ mod_master_contracts:
 - ❌ **ChromaDB 使用教程**——见 ChromaDB 官方文档（https://docs.trychroma.com）
 - ❌ **BGE-M3 模型训练指南**——本方案仅使用预训练量化模型，不涉及微调
 - ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
-- ❌ **Context Engine 设计文档**——见 `context-engine-interface.md`（B-a-2 产出）
-- ❌ **MCP 协议适配细则**——VMS 不碰 MCP，相关内容见 `context-engine-interface.md`
+- ❌ **Context Engine 设计文档**——见 `context_engine-interface.md`（B-a-2 产出）
+- ❌ **MCP 协议适配细则**——VMS 不碰 MCP，相关内容见 `context_engine-interface.md`
 - ❌ **具体施工计划**——见 experimental `construction-plan-vms-*.md`（B 阶段后由 E 阶段任务卡覆盖）
 
 ---
@@ -107,7 +107,7 @@ mod_master_contracts:
 **关键决策**：定义 `VectorMemoryProtocol` 抽象基类，两种实现共享同一签名，业务层永远依赖 Protocol 而非具体实现，升级时零重写。
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/protocol.py (experimental 产出)
+# src/zephyr/security/llm_defense/llm_security/protocol.py (experimental 产出)
 
 from typing import Protocol, Literal
 
@@ -167,7 +167,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 |-----------|------|-------------------|
 | `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_b_track_interfaces/*interface*.md` |
 | `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_modules/**/*.md` |
-| `task_history` | 任务卡与执行历史 | `docs/03_modules/_domain-infra_ops/task-system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/data/persistence/task_repo.py` 持久化任务元数据（见 MOD-TASK_SYSTEM） |
+| `task_history` | 任务卡与执行历史 | `docs/03_modules/_domain_infra_ops/task_system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/data/persistence/task_repo.py` 持久化任务元数据（见 MOD-TASK_SYSTEM） |
 | `lessons` | 经验教训与审计 | `docs/_working/audit/reports/`、`docs/_working/audit/findings/` |
 
 ### 3.2 Cascade 语义表（4 种场景）
@@ -175,7 +175,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 update / delete 动作的级联策略，每种对应不同的业务触发：
 
 ```python
-# src/zephyr/data/knowledge_management/vector-memory/cascade.py (experimental 产出)
+# src/zephyr/data/knowledge_management/vector_memory/cascade.py (experimental 产出)
 
 from enum import Enum
 
@@ -303,7 +303,7 @@ class SyncResult(BaseModel):
 ### 4.1 Python 库 API（experimental 主用，`InProcessVectorMemory` 实现）
 
 ```python
-# src/zephyr/data/knowledge_management/vector-memory/in_process.py (experimental 产出)
+# src/zephyr/data/knowledge_management/vector_memory/in_process.py (experimental 产出)
 
 class InProcessVectorMemory:  # implements VectorMemoryProtocol
     """experimental 默认实现。所有方法均为 async，依赖 ChromaDB SDK。"""
@@ -453,7 +453,7 @@ HTTP 请求 / 响应 schema = 库方法入参 / 出参的 Pydantic JSON 序列�
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
 | `src/zephyr/config/embedding_model_registry.yaml` | ✅ 已存在 | - |
-| `src/zephyr/vector-memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| `src/zephyr/vector_memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
 | BGE-M3 ONNX 模型下载到 `.models/bge-m3/` | ⏳ 待建 | experimental T-1-XX |
 | `.runtime/` 目录规范写入 `trae_028_doc_structure_naming.yaml` | ⏳ 待修订 | B-d 阶段（B3/B4） |
 | `.gitignore` 追加 `.runtime/` + `.models/` | ⏳ 待追加 | experimental T-1-XX 首步 |
@@ -464,7 +464,7 @@ HTTP 请求 / 响应 schema = 库方法入参 / 出参的 Pydantic JSON 序列�
 
 ```toml
 [project.optional-dependencies]
-vector-memory = [
+vector_memory = [
     "chromadb==0.6.*",
     "onnxruntime>=1.17,<2.0",
     "transformers>=4.40,<5.0",  # BGE-M3 tokenizer
@@ -475,7 +475,7 @@ vector-memory = [
 
 ### 5.3 运行时依赖（可选的消费者）
 
-- Context Engine（主消费者，见 `context-engine-interface.md`）
+- Context Engine（主消费者，见 `context_engine-interface.md`）
 - MCP `knowledge_base_server.py`（已存在，experimental 重构接入 `get_vm()`）
 
 ---
@@ -485,7 +485,7 @@ vector-memory = [
 ```
 
 ├── src/zephyr/
-│   ├── vector-memory/                              # ⏳ experimental 新建
+│   ├── vector_memory/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_vm() 工厂（按配置返回 InProcess 或 Remote 实现）
 │   │   ├── protocol.py                             # VectorMemoryProtocol 抽象基类（§1.3）
 │   │   ├── in_process.py                           # experimental 实现（ChromaDB SDK）
@@ -503,7 +503,7 @@ vector-memory = [
 │   │   └── config.py                               # VMConfig 加载
 │   ├── config/
 │   │   ├── embedding_model_registry.yaml           # ✅ 已存在
-│   │   └── vector-memory.yaml                      # ⏳ 新建：runtime_root 引用 + ChromaDB 配置
+│   │   └── vector_memory.yaml                      # ⏳ 新建：runtime_root 引用 + ChromaDB 配置
 │   └── clients/                                    # beta 启用时才建
 │
 ├── vibe_config.yaml                                # ⏳ B-d 修订新增字段
@@ -578,7 +578,7 @@ vector-memory = [
 | **KB:decisions**（SQLite ingest / MCP KB） | `decisions` |
 | `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
-| `docs/03_modules/_domain-infra_ops/task-system/changes/**` | `task_history` |
+| `docs/03_modules/_domain_infra_ops/task_system/changes/**` | `task_history` |
 | `docs/_working/audit/reports/**`, `docs/_working/audit/findings/**` | `lessons` |
 | 其他 | `code_context`（保守默认） |
 
@@ -631,7 +631,7 @@ HTTP 映射：`VMConfigError`→503 / `VMEmbeddingError`→422 / `VMStorageError
 try:
     results = await vm.multi_search(query, collections)
     if results.degraded:                       # 上游必须检查此标记
-        context-engine.fallback_to_filesystem_grep(query)
+        context_engine.fallback_to_filesystem_grep(query)
 except VMStorageError:
     # search/multi_search 内部捕获并返回 degraded=True 空结果，通常不抛到调用方
     # 若抛到这里说明基础设施已彻底失效

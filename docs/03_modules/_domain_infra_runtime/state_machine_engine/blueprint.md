@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-038
 submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
@@ -37,7 +37,7 @@ depends_on:
     at: §10
     why: 数据库层提供持久化支持
 references:
-  - path: docs/03_modules/_domain-infra_ops/task-system/blueprint.md
+  - path: docs/03_modules/_domain_infra_ops/task_system/blueprint.md
     section: §3.3
     why: 任务系统状态机(10状态/19转换)是最大消费者
   - path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md

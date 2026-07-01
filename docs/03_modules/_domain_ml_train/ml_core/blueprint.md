@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L11-001
 submodule_path: src/zephyr/ml_train
 title: "ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位"
@@ -364,10 +364,10 @@ class ModelMetadata:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-016 Shared Core | 必须 | ModelServingRequest/Response契约基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| L02 Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
-| MOD-INF-015 System Telemetry | 可选 | 模型监控(CTR-P1-013) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| L06 Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` |
+| MOD-INF-016 Shared Core | 必须 | ModelServingRequest/Response契约基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| L02 Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-INF-015 System Telemetry | 可选 | 模型监控(CTR-P1-013) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| L06 Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -406,7 +406,7 @@ class ModelMetadata:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml_core\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\ml_train\` | 测试用例 |
 
@@ -426,7 +426,7 @@ class ModelMetadata:
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| ML-EXPERIMENT-DOMAIN-001 | ML实验域 | L11→L13模型产出→实验 | MOD-L13-001 | 修改L11推理接口必须同步更新L13蓝图 |
+| ml_experiment_domain-001 | ML实验域 | L11→L13模型产出→实验 | MOD-L13-001 | 修改L11推理接口必须同步更新L13蓝图 |
 
 ---
 
@@ -742,7 +742,7 @@ class ModelMetadata:
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 6 | Shared Core 蓝图 | MOD-INF-016 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` | 契约承载 |
+| 6 | Shared Core 蓝图 | MOD-INF-016 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` | 契约承载 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 
@@ -752,7 +752,7 @@ class ModelMetadata:
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | MOD-INF-016 Shared Core | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` | ModelServingRequest/Response契约 | Shared Core 是契约定义层，本蓝图是ML推理实现层 |
+| 1 | MOD-INF-016 Shared Core | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` | ModelServingRequest/Response契约 | Shared Core 是契约定义层，本蓝图是ML推理实现层 |
 
 ---
 
@@ -761,7 +761,7 @@ class ModelMetadata:
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | ML平台核心代码 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | 修改 | 蓝图描述的核心代码 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml_core\blueprint.md` | 修改 | 本文件 |
 | 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 修改 | 子模块声明对齐 |
 
 ---

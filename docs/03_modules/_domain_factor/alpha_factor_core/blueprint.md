@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L02-001
 submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点"
@@ -105,7 +105,7 @@ summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
-| 代码[BLUEPRINT]字段指向MOD-L02-001 | `grep BLUEPRINT *.py` | ☐(当前指向ALPHA-SIGNAL-DOMAIN-001，需修正) |
+| 代码[BLUEPRINT]字段指向MOD-L02-001 | `grep BLUEPRINT *.py` | ☐(当前指向alpha_signal_domain-001，需修正) |
 
 ### §0.3 版本-代码映射
 
@@ -385,10 +385,10 @@ class FactorMeta(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
-| MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
-| MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` |
+| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
+| MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
+| MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -428,7 +428,7 @@ class FactorMeta(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\factor\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\factor\` | 测试用例 |
 
@@ -451,7 +451,7 @@ class FactorMeta(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress+version更新 | 进度变更 |
 | 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l02_alpha_factor.yaml` | 补充factors/子目录文件 | 文件清单同步 |
-| 3 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\factor\*.py` | [BLUEPRINT]指向MOD-L02-001 | 当前指向ALPHA-SIGNAL-DOMAIN-001，漂移 |
+| 3 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\factor\*.py` | [BLUEPRINT]指向MOD-L02-001 | 当前指向alpha_signal_domain-001，漂移 |
 
 ---
 
@@ -658,7 +658,7 @@ class FactorMeta(BaseModel):
 
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
-| 1 | 代码[BLUEPRINT]指向ALPHA-SIGNAL-DOMAIN-001而非MOD-L02-001 | 高 | 初始代码生成时未对齐蓝图ID | 修正[BLUEPRINT]字段 | §0.2 | 待解决 |
+| 1 | 代码[BLUEPRINT]指向alpha_signal_domain-001而非MOD-L02-001 | 高 | 初始代码生成时未对齐蓝图ID | 修正[BLUEPRINT]字段 | §0.2 | 待解决 |
 | 2 | base.py与factor_base.py双FactorBase共存 | 高 | 旧版未清理 | 废弃base.py | §5.3 | 待解决 |
 | 3 | FactorMeta使用@dataclass违反KBG-0040 | 中 | 初始实现未遵循Pydantic要求 | 迁移至Pydantic BaseModel | §4.2 | 待解决 |
 | 4 | compute()签名蓝图与代码不一致 | 高 | 蓝图写NormalizedMarketData，代码用pd.DataFrame | 蓝图修正为pd.DataFrame | §4.1 | 已解决(v3.0.0) |

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-029
 submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
@@ -566,7 +566,7 @@ class StandaloneResult(BaseModel):
 | MOD-INF-023 | 可选 | 漂移事件双向桥接 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\drift-detector\blueprint.md` |
 | MOD-INF-022 | 可选 | 低置信度升级 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\escalation\blueprint.md` |
 | MOD-INF-018 | 必须 | 删除权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\agent-rbac\blueprint.md` |
-| MOD-KB-001 | 可选 | 判定记录查询与写入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge-base\blueprint.md` |
+| MOD-KB-001 | 可选 | 判定记录查询与写入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge_base\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

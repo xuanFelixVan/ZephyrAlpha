@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "signal_generation_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | signal-generation-core — 目录索引 |
+| [index.md](index.md) | Markdown | signal_generation_core — 目录索引 |
 
 ## 导航
 

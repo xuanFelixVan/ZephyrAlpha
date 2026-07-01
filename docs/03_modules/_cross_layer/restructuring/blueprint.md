@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOV-FSTR-001
 submodule_paths_scope: restructuring
 title: "File Structure Governance 蓝图 — 文件结构治理·大文件拆分·重复合并·安全搬家"
@@ -151,7 +151,7 @@ ZephyrAlpha 项目在快速迭代中产生了大文件（>500行）、跨目录�
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | 代码质量改进 | code-dedup-engine (INF-017) |
-| 2 | 门禁检查 | gate-engine (INF-007) |
+| 2 | 门禁检查 | gate_engine (INF-007) |
 | 3 | 注册表同步 | auto_sync_all_registries.py + audit_registration.py |
 | 4 | 审计追踪 | INF-020 Audit Trail (bridge.py write_to_core) |
 
@@ -326,10 +326,10 @@ class RestructureResult(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| INF-020 Audit Trail | 必须 | 重组操作审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| INF-021 Rollback | 必须 | 重组回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| INF-023 Drift Detector | 必须 | 重组后漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| INF-016 Shared Core | 必须 | 注册表访问 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
+| INF-020 Audit Trail | 必须 | 重组操作审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| INF-021 Rollback | 必须 | 重组回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| INF-023 Drift Detector | 必须 | 重组后漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
+| INF-016 Shared Core | 必须 | 注册表访问 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

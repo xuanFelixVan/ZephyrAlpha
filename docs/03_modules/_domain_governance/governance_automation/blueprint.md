@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-005
 submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
@@ -126,7 +126,7 @@ references: []
 | 1 | 脚本系统代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 治理脚本目录 | `D:\ZephyrAlpha\scripts\governance\` | 修改 | 审计脚本存放目录 |
 | 3 | 脚本清单 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 修改 | 脚本注册表 |
-| 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\governance-automation\blueprint.md` | 修改 | 本文件 |
+| 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` | 修改 | 本文件 |
 
 ---
 
@@ -210,7 +210,7 @@ references: []
 
 | # | 文件 | module_id | 完整绝对路径 | 用途 |
 |---|------|-----------|------------|------|
-| 1 | 任务系统蓝图 | MOD-TASK_SYSTEM | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
+| 1 | 任务系统蓝图 | MOD-TASK_SYSTEM | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
 | 2 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter schema + META-V 验证规则 |
 | 3 | 规则验证标准 | PS-STD-012 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` | V1~V4 四级验证体系 |
 | 4 | 脚本质量标准 | SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束 |
@@ -236,7 +236,7 @@ references: []
 | 已有模块 | 重叠点 | 区别 |
 |---------|--------|------|
 | MOD-INF-004 vibe-coding-pipelines | 脚本系统被提及 | MOD-INF-004 管管线编排，本系统管审计产出物 |
-| MOD-TASK_SYSTEM task-system | 任务管线里有审计 | MOD-TASK_SYSTEM 是内嵌审计，本系统是系统级横切审计 |
+| MOD-TASK_SYSTEM task_system | 任务管线里有审计 | MOD-TASK_SYSTEM 是内嵌审计，本系统是系统级横切审计 |
 
 ---
 
@@ -1076,10 +1076,10 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-001 (capacity-assurance) | runtime | 容量预算检查 + SLO 监控 + Error Budget + Kill Switch | 2.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` |
-| MOD-INF-003 (task-card-kms) | runtime | Finding → CRITICAL 自动创建任务卡 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-card-kms\blueprint.md` |
-| MOD-INF-004 (vibe-coding-pipelines) | contract | 脚本系统是双管线审计侧的脚本基础设施 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vibe-coding-pipelines\blueprint.md` |
-| **MOD-TASK_SYSTEM (task-system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
+| MOD-INF-001 (capacity_assurance) | runtime | 容量预算检查 + SLO 监控 + Error Budget + Kill Switch | 2.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` |
+| MOD-INF-003 (task-card-kms) | runtime | Finding → CRITICAL 自动创建任务卡 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task-card-kms\blueprint.md` |
+| MOD-INF-004 (vibe-coding-pipelines) | contract | 脚本系统是双管线审计侧的脚本基础设施 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vibe-coding-pipelines\blueprint.md` |
+| **MOD-TASK_SYSTEM (task_system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
 | PS-STD-012 (规则验证标准) | contract | V1~V4 验证分级 + 阻断/警告规则定义 | 1.1.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` |
 | PS-STD-001 (元数据注册表) | contract | frontmatter schema + META-V 验证规则 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | SCRIPT-QUALITY-001 | contract | 脚本质量 8 维度 × 38 条款 | 1.0.0 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
@@ -1352,7 +1352,7 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | 施工图 | 本蓝图所有决策 |
-| Tier 2 | MOD-TASK_SYSTEM（task-system） | §6 集成接口——脚本失败↔任务状态 |
+| Tier 2 | MOD-TASK_SYSTEM（task_system） | §6 集成接口——脚本失败↔任务状态 |
 | Tier 3 | scripts/governance/*.py（全部脚本） | §3 分类体系 + §5 调度规范 + §7 质量标准 |
 
 ### 修改条件
@@ -1380,9 +1380,9 @@ STEP 3: 拆分后验证
 
 | 领域 | 真源 |
 |------|------|
-| 任务卡字段定义 | MOD-TASK_SYSTEM（task-system blueprint） |
+| 任务卡字段定义 | MOD-TASK_SYSTEM（task_system blueprint） |
 | 管线编排 | MOD-INF-004（vibe-coding-pipelines） |
-| 门禁引擎 | MOD-GATE_ENGINE（gate-engine blueprint） |
+| 门禁引擎 | MOD-GATE_ENGINE（gate_engine blueprint） |
 | 代码命名/类型注解 | [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) |
 | 脚本质量 8 维度完整条款 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) |
 
@@ -1839,7 +1839,7 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\governance-automation\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 脚本系统核心 |
 | 治理脚本 | `D:\ZephyrAlpha\scripts\governance\` | 80+ 治理脚本 |
 | 脚本注册表 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 脚本登记 SSoT（REG-SCRIPT-001 主清单 + REG-SCRIPT-002 Governance 子集） |

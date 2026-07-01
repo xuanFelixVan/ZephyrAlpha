@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L10-001
 submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
@@ -391,9 +391,9 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| INF-012 Database | 可选 | 合规规则存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\database\blueprint.md` |
-| INF-020 Audit Trail | 必须 | 审计决策写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| INF-018 Agent RBAC | 可选 | 权限联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
+| INF-012 Database | 可选 | 合规规则存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\database\blueprint.md` |
+| INF-020 Audit Trail | 必须 | 审计决策写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| INF-018 Agent RBAC | 可选 | 权限联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
 | shared/contracts/risk | 必须 | ComplianceRule数据类 | — | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk.py` |
 
 ### §10.2 依赖图对齐声明
@@ -432,7 +432,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-compliance\compliance-core\blueprint.md` | 本文件（含设计和施工指引） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_compliance\compliance_core\blueprint.md` | 本文件（含设计和施工指引） |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\compliance\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\compliance\` | 测试用例 |
 
@@ -464,7 +464,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress更新; name统一为compliance-core | 进度更新+命名统一(ARB-21) |
+| 1 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress更新; name统一为compliance_core | 进度更新+命名统一(ARB-21) |
 | 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 补充 artifact_scanner.py + implementations/ 子目录 | 消除孤儿文件 |
 
 ---
@@ -747,7 +747,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 5 | default_security_gateway.py（根目录） | `D:\ZephyrAlpha\src\zephyr\compliance\default_security_gateway.py` | 废弃 | 导出兼容层→迁移 |
 | 6 | implementations/default_security_gateway.py | `D:\ZephyrAlpha\src\zephyr\compliance\implementations\default_security_gateway.py` | 修改 | 完善三层防御实现 |
 | 7 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 修改 | 补充artifact_scanner注册 |
-| 8 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | name统一为compliance-core |
+| 8 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | name统一为compliance_core |
 
 ---
 

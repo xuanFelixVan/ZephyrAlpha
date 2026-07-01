@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L05-001
 submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位"
@@ -403,12 +403,12 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L03-001 | 必须 | CTR-P1-015 SynthesizedSignal, CTR-P1-003 CapitalAllocationResult, CTR-ERR-003 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-signal\signal-generation-core\blueprint.md` |
-| MOD-L04-001 | 必须 | CTR-003 RiskLimits, CTR-ERR-004, CTR-P1-011 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` |
-| MOD-L02-001 | 可选 | CTR-002 FactorSignal | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
-| MOD-L06-001 | 下游 | CTR-004 Order 消费方（终局 CTR-007 TargetPortfolio） | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` |
-| MOD-L07-001 | 下游 | CTR-P1-006 StrategyLifecycleEvent 消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-reporting\analytics-core\blueprint.md` |
-| MOD-L10-001 | 下游 | CTR-P1-006 StrategyLifecycleEvent 消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-compliance\compliance-core\blueprint.md` |
+| MOD-L03-001 | 必须 | CTR-P1-015 SynthesizedSignal, CTR-P1-003 CapitalAllocationResult, CTR-ERR-003 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` |
+| MOD-L04-001 | 必须 | CTR-003 RiskLimits, CTR-ERR-004, CTR-P1-011 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` |
+| MOD-L02-001 | 可选 | CTR-002 FactorSignal | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-L06-001 | 下游 | CTR-004 Order 消费方（终局 CTR-007 TargetPortfolio） | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` |
+| MOD-L07-001 | 下游 | CTR-P1-006 StrategyLifecycleEvent 消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` |
+| MOD-L10-001 | 下游 | CTR-P1-006 StrategyLifecycleEvent 消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_compliance\compliance_core\blueprint.md` |
 
 ### §10.2 依赖图对齐声明
 
@@ -440,7 +440,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-pf_core\portfolio-core\blueprint.md` | 本文件（含设计和施工指引） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio-core\blueprint.md` | 本文件（含设计和施工指引） |
 | 接口定义 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_base.py` | StrategyBase + StrategyMeta + StrategyRegistry |
 | 注册表卫星 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_registry.py` | re-export 卫星模块 |
 | 策略实现 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategies\` | 策略子目录 |
@@ -923,9 +923,9 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-reporting\analytics-core\blueprint.md` | §4 接口契约（CTR-P1-006） |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-compliance\compliance-core\blueprint.md` | §4 接口契约（CTR-P1-006） |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` | §4 接口契约（CTR-P1-006） |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_compliance\compliance_core\blueprint.md` | §4 接口契约（CTR-P1-006） |
 | Tier 2 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | §12 集成点 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_base.py` | §4 数据模型、§11 产出物路径 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_registry.py` | §4 数据模型、§11 产出物路径 |

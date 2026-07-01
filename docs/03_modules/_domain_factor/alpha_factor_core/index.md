@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "alpha_factor_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | alpha-factor-core — 目录索引 |
+| [index.md](index.md) | Markdown | alpha_factor_core — 目录索引 |
 
 ## 导航
 

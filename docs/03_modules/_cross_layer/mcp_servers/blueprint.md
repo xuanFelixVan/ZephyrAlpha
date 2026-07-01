@@ -1,4 +1,4 @@
----
+﻿---
 module_id: "MOD-INF-013"
 submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
@@ -27,7 +27,7 @@ stability: evolving
 verifiability: hybrid
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "MCP Servers 蓝图——11 个 MCP 服务端 + 1 Gateway 通过 stdio 协议暴露内部系统能力。357 项盲点（B1-B357）十八维闭合。"
-tags: [mcp, mcp-servers, stdio, tool-contracts, model-context-protocol, external-api, infrastructure]
+tags: [mcp, mcp_servers, stdio, tool-contracts, model-context-protocol, external-api, infrastructure]
 priority: P1
 runtime_plane: hot
 depends_on:
@@ -130,7 +130,7 @@ END_REQUIRED_SECTIONS
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > 真源声明：本蓝图的 canonical SSoT 为 `architecture_model/layers/b_mcp.yaml`。
-> 代码落位：`src/zephyr/integration/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector-memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
+> 代码落位：`src/zephyr/integration/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector_memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
 ---
 
 ## §0 代码对齐验证
@@ -438,9 +438,9 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-TASK_SYSTEM | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-repo\blueprint.md` |
-| MOD-KB-001 | 必须 | knowledge_base MCP——KE查询接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
-| MOD-GATE_ENGINE | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-TASK_SYSTEM | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task-repo\blueprint.md` |
+| MOD-KB-001 | 必须 | knowledge_base MCP——KE查询接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
 | b_mcp.yaml | 必须 | MCP YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_mcp.yaml` |
 | mcp | 必须 | MCP SDK | ≥1.0.0 | — |
 
@@ -876,7 +876,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | §2 MCP 服务端列表 | `src/zephyr/integration/mcp/__init__.py` + `architecture_model/layers/b_mcp.yaml` |
 | §11 施工步骤 | `AGENTS.md` §8.2 MCP 任务菜单 |
 | §0 代码对齐验证 | `src/zephyr/integration/mcp/` 对应代码文件 `[BLUEPRINT]` 头部 |
-| §17 容量升级 | `config/capacity_slo.yaml` + capacity-assurance 蓝图 |
+| §17 容量升级 | `config/capacity_slo.yaml` + capacity_assurance 蓝图 |
 
 ---
 

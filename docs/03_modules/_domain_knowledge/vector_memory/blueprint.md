@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-011
 submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
@@ -23,7 +23,7 @@ functional_domain: data
 layer_name: "infra_ops"
 summary: "VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d + bge-small-zh-v1.5 512d）本地推理。8大Collection。Phase 0-3 完成，Phase 4 待施工。四轮80盲点全维度覆盖。v0.12.0 MOD-INF-039拆分对齐+SSoT修正+测试修复。"
 template_for: blueprint
-tags: [vector-memory, vms, chromadb, bge-m3, embedding, vector-db, collections, infrastructure, hybrid-search, provenance]
+tags: [vector_memory, vms, chromadb, bge-m3, embedding, vector-db, collections, infrastructure, hybrid-search, provenance]
 priority: P0
 runtime_plane: hot
 parent_module: ""
@@ -843,12 +843,12 @@ class FeedbackEntry(BaseModel):
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-MASTER_BLUEPRINT | 必须 | CT-CE-VMS-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge-base\blueprint.md` |
-| MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` |
+| MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge_base\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` |
 | MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback_loop\blueprint.md` |
 | L02-Alpha因子层 | 可选 | C轨域：因子语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\l02_factor\blueprint.md` |
-| L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\blueprint.md` |
+| L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\blueprint.md` |
 | KBG-0016 | 必须 | VMS生产级嵌入与分块契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` |
 | KBG-0031 | 必须 | Phase 2 ChromaDB基线选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
 | MOD-INF-039 | 必须 | 嵌入服务——EmbeddingRouter/CacheLayer/OllamaEmbedding已迁移至local_model | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
@@ -950,7 +950,7 @@ class FeedbackEntry(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号 0.9.0 + P0 | 蓝图 status → active |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
-| 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
+| 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
 | 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | SSoT 反向同步 |
 | 5 | KBG-0031 状态 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 添加"已通向 VMS v0.9.0 8 Collection"注释 | 避免 KB 决策记录 与蓝图不一致 |
 | 6 | Tech Stack | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\technology\vibe_coding_infrastructure_tech_stack.yaml` | TECH-04/TECH-05 更新双嵌入维度 | 新增 bge-small-zh-v1.5 轻量路径 |
@@ -1408,8 +1408,8 @@ class FeedbackEntry(BaseModel):
 | 1 | VMS YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 蓝图真源 |
 | 2 | KBG-0016 嵌入契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` | 嵌入规格 |
 | 3 | KBG-0031 ChromaDB选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 选型依据 |
-| 4 | CE 蓝图 | MOD-CONTEXT_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` | 集成目标 |
-| 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge-base\blueprint.md` | 整合目标 |
+| 4 | CE 蓝图 | MOD-CONTEXT_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` | 集成目标 |
+| 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge_base\blueprint.md` | 整合目标 |
 | 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 注册 |
 | 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
 | 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |

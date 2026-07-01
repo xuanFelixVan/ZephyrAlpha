@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-004
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 doc_type: architecture_view
@@ -12,9 +12,9 @@ created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
-template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
+template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/feedback-loop/blueprint.md（MOD-FEEDBACK_LOOP — 详细设计与闭环契约；Phase 5 真源）"
+  - "03_modules/_cross_layer/feedback_loop/blueprint.md（MOD-FEEDBACK_LOOP — 详细设计与闭环契约；Phase 5 真源）"
   - "architecture_model/layers/b_feedback_loop.yaml（Feedback Loop YAML SSoT）"
 supersedes: []
 related_kb:
@@ -26,7 +26,7 @@ integration_points:
   - "LLM Security Gateway (upstream, 拦截/异常指标)"
   - "Dashboard (downstream, 可视化)"
 tags:
-  - feedback-loop
+  - feedback_loop
   - quality-baseline
   - trend-analysis
   - protocol-coupling
@@ -184,7 +184,7 @@ class Metric(BaseModel):
     unit: Optional[str] = None
     tags: dict[str, str] = Field(default_factory=dict,
         description="如 {'task_kind':'feature','agent_id':'A-01'}")
-    source: Literal["orchestrator", "vms", "context-engine", "lsg", "external"] = "external"
+    source: Literal["orchestrator", "vms", "context_engine", "lsg", "external"] = "external"
     observed_at: datetime
     correlation_id: Optional[str] = Field(None, description="关联 task_id / request_id，用于根因追溯")
 
@@ -233,7 +233,7 @@ class PendingAction(BaseModel):
         "bump_lsg_strictness",          # → LSG
         "alert_ops",                    # → Dashboard / log only
     ]
-    target_service: Literal["context-engine", "orchestrator", "vms", "lsg", "ops"]
+    target_service: Literal["context_engine", "orchestrator", "vms", "lsg", "ops"]
     payload: dict
     dispatched_at: Optional[datetime] = None
     expires_at: datetime = Field(description="超时未执行自动丢弃")
@@ -250,7 +250,7 @@ class ActionOutcome(BaseModel):
 ### 3.2 Anomaly → Action 静态路由表
 
 ```python
-# src/zephyr/observability/feedback-loop/action_router.py
+# src/zephyr/observability/feedback_loop/action_router.py
 
 ANOMALY_ACTION_ROUTING = {
     # 指标名 → anomaly_kind → action_kind
@@ -387,7 +387,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
 ### 5.1 FLE 侧定义的下游 Protocol
 
 ```python
-# src/zephyr/observability/feedback-loop/action_protocols.py (FLE 侧定义)
+# src/zephyr/observability/feedback_loop/action_protocols.py (FLE 侧定义)
 
 from typing import Protocol
 
@@ -440,7 +440,7 @@ async def build_services():
 ### 5.3 FeedbackSignal 适配（与 CE §3.3 对齐）
 
 ```python
-# src/zephyr/infrastructure/shared_services/context-engine.py
+# src/zephyr/infrastructure/shared_services/context_engine.py
 
 class CEAdjustAdapter:
     """FLE 侧 Anomaly → CE 侧 FeedbackSignal 的适配器。"""
@@ -526,7 +526,7 @@ EMA_t = α · value_t + (1-α) · EMA_{t-1}
 
 ```toml
 [project.optional-dependencies]
-feedback-loop = [
+feedback_loop = [
     "aiosqlite>=0.19",
     "numpy>=1.26,<2.0",     # EMA / 线性拟合
     "filelock>=3.13",
@@ -541,7 +541,7 @@ feedback-loop = [
 ```
 
 ├── src/zephyr/
-│   ├── feedback-loop/                              # ⏳ experimental 新建
+│   ├── feedback_loop/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_fle()
 │   │   ├── protocol.py                             # FeedbackLoopProtocol
 │   │   ├── action_protocols.py                     # §5.1 下游 Protocol 定义
@@ -556,18 +556,18 @@ feedback-loop = [
 │   │   ├── action_router.py                        # §3.2 ANOMALY_ACTION_ROUTING
 │   │   ├── dispatcher.py                           # dispatch_action 逻辑
 │   │   ├── adapters/
-│   │   │   ├── context-engine.py                   # CEAdjustAdapter
+│   │   │   ├── context_engine.py                   # CEAdjustAdapter
 │   │   │   ├── orchestrator.py                     # OrcControlAdapter
 │   │   │   ├── vms.py                              # VMSControlAdapter
 │   │   │   └── lsg.py                              # LSGControlAdapter
 │   │   ├── db.py                                   # SQLite schema
 │   │   └── config.py
 │   └── config/
-│       ├── feedback-loop.yaml
+│       ├── feedback_loop.yaml
 │       └── feedback_loop_rules.yaml                # 阈值外置
 │
 ├── .runtime/
-│   ├── feedback-loop/
+│   ├── feedback_loop/
 │   │   ├── metrics.db                              # SQLite WAL
 │   │   ├── pending_actions.ndjson                  # 下游未注入时的缓冲
 │   │   └── baseline_cache.json
@@ -718,7 +718,7 @@ except Exception as e:
 
 | 指标 | 目标 | 说明 |
 |------|------|------|
-| 进程 import | ≤ 1 s | 仅 import feedback-loop |
+| 进程 import | ≤ 1 s | 仅 import feedback_loop |
 | SQLite 连接 + schema check | ≤ 300 ms | WAL |
 | 基线缓存加载 | ≤ 500 ms | 从 baseline_cache.json |
 | pending_actions.ndjson 回放 | ≤ 1 s | < 1000 条 |

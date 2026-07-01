@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-002
 submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
@@ -39,11 +39,11 @@ depends_on:
 priority: P0
 runtime_plane: hot
 tags:
-  - runtime-integration
+  - runtime_integration
   - ri-modules
   - event-bus
   - infrastructure
-  - shared-core-integration
+  - shared_core-integration
   - structured-concurrency
   - graceful-shutdown
   - trading-kill-switch
@@ -305,13 +305,13 @@ summary: >
 
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
-| 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
-| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm-security） |
+| 1 | AI 审计守卫 | MOD-INF-001（capacity_assurance） |
+| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm_security） |
 | 3 | 因子计算逻辑 | L02-L03 业务层 |
 | 4 | 审计追踪链存储 | MOD-INF-020（audit-trail），RI-13 EventStore 提供事件级溯源 |
 | 5 | 回滚执行 | MOD-INF-021（rollback-system），RI-13 事件重放可配合回滚 |
-| 6 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate-engine） |
-| 7 | Shared Core 实现细节 | MOD-INF-016（shared-core）——本蓝图定义需求，MOD-INF-016 承载实现 |
+| 6 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate_engine） |
+| 7 | Shared Core 实现细节 | MOD-INF-016（shared_core）——本蓝图定义需求，MOD-INF-016 承载实现 |
 
 ---
 
@@ -1389,18 +1389,18 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-016 Shared Core | 必须 | 10 个 RI 模块的代码承载基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-INF-001 Capacity Assurance | 必须 | 容量 SLO + Error Budget | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 可选 | 任务门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-INF-020 Audit Trail | 可选 | 审计追踪链 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-021 Rollback System | 可选 | 回滚系统 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-023 Drift Detector | 可选 | 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| MOD-LLM_SECURITY LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
-| MOD-INF-018 Agent RBAC | 可选 | Agent RBAC | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-025 A2A Protocol | 可选 | Agent-to-Agent 协议 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` |
-| MOD-KB-001 Knowledge Base | 可选 | AutoDiagnostics→修复成功→自动补充知识库 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge-base\blueprint.md` |
-| MOD-INF-022 Escalation Protocol | 可选 | 自治权限升降级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-024 Budget Enforcer | 可选 | 预算强制执行 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
+| MOD-INF-016 Shared Core | 必须 | 10 个 RI 模块的代码承载基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-INF-001 Capacity Assurance | 必须 | 容量 SLO + Error Budget | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 可选 | 任务门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-INF-020 Audit Trail | 可选 | 审计追踪链 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-021 Rollback System | 可选 | 回滚系统 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-023 Drift Detector | 可选 | 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
+| MOD-LLM_SECURITY LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\llm_security\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 可选 | Agent RBAC | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-INF-025 A2A Protocol | 可选 | Agent-to-Agent 协议 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\a2a-protocol\blueprint.md` |
+| MOD-KB-001 Knowledge Base | 可选 | AutoDiagnostics→修复成功→自动补充知识库 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge_base\blueprint.md` |
+| MOD-INF-022 Escalation Protocol | 可选 | 自治权限升降级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| MOD-INF-024 Budget Enforcer | 可选 | 预算强制执行 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1469,7 +1469,7 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` | 本文件 |
 | 业务代码（Shared Core承载） | `D:\ZephyrAlpha\src\zephyr\shared\` | RI-01~RI-11 共享核心承载 |
 | 业务代码（独立落地） | `D:\ZephyrAlpha\src\zephyr\infra_ops\` | RI-12~RI-15 独立落地 |
 | 测试代码 | `D:\ZephyrAlpha\tests\infra_ops\` | 测试用例 |
@@ -1890,8 +1890,8 @@ STEP 3: 拆分后验证
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 | 9 | 蓝图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图结构合规 |
 | 10 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部标准 |
-| 11 | Shared Core 蓝图 | MOD-INF-016 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` | DI容器+共享模块 |
-| 12 | 容量保障蓝图 | MOD-INF-001 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` | 容量规则 |
+| 11 | Shared Core 蓝图 | MOD-INF-016 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` | DI容器+共享模块 |
+| 12 | 容量保障蓝图 | MOD-INF-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` | 容量规则 |
 
 ---
 
@@ -1916,7 +1916,7 @@ STEP 3: 拆分后验证
 | 1 | shared/ | `D:\ZephyrAlpha\src\zephyr\shared\` | 读取/修改 | RI-01~RI-11 代码实现 |
 | 2 | infra_ops/ | `D:\ZephyrAlpha\src\zephyr\infra_ops\` | 读取/修改 | RI-12~RI-15 独立落地 |
 | 3 | lifecycle_manager/ | `D:\ZephyrAlpha\src\zephyr\lifecycle_manager\` | 读取/修改 | hooks.py 启动钩子 |
-| 4 | blueprint.md | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` | 修改 | 蓝图自身 |
+| 4 | blueprint.md | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` | 修改 | 蓝图自身 |
 
 ---
 
@@ -1938,8 +1938,8 @@ STEP 3: 拆分后验证
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\shared\` | §12 集成点 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\infra_ops\` | §4 数据模型、§11 产出物路径 |
 

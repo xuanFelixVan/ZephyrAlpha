@@ -1,4 +1,4 @@
-# ZephyrAlpha AI 入职细则 — L1 施工指导与原理
+﻿# ZephyrAlpha AI 入职细则 — L1 施工指导与原理
 
 > 本文件是 `project_rules.md`（L0）的详细补充。
 > AI 不需要通读本文件——撞到 L0 铁律引用的命令时，命令的输出会指向此处。
@@ -340,7 +340,7 @@ STEP 1.2.2 — 路径树工具链（全景图维护，文件变更后必跑）:
            - 运营态目录树检查: `python scripts/governance/generate_project_path_tree.py --check`（CI漂移检测，Session关门前必跑，G6_PT门禁）
            - 目标路径推导与对齐验证: 通过 `get_depgraph_pg_connection()` 查询 `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph (PostgreSQL)是唯一查询入口，禁止重新创建 YAML 副本）
            - 架构文档路径树: `python scripts/governance/d5_architecture/generators/generate_path_tree.py`（读 depgraph (PostgreSQL)→生成md文档，供人类查看）
-STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
+STEP 1.5 — 读 docs/03_modules/system_master/blueprint.md §0 → 定位子系统任务域
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则
 STEP 3  — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
 STEP 4  — Phase Manager: 当前施工阶段（46 个门控检查）
@@ -694,7 +694,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 代码构建标准（命名/文件组织/类型注解） | [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml) | ~1500 |
 | 编码约定（L3 implementer 专属） | `src/zephyr/agent-spec/references/coding_conventions.md`（待创建） | ~350 |
 | 审计脚本质量标准（8 维度） | [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md) | ~3500 |
-| Vibe Coding 施工方法论 | `docs/03_modules/_sys_master/blueprint.md` §十五 | ~2000 |
+| Vibe Coding 施工方法论 | `docs/03_modules/system_master/blueprint.md` §十五 | ~2000 |
 | Session 状态机（5状态/7转换） | [`session-state-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md)（待创建） | ~800 |
 | 会话门禁检查清单（12项） | [`gate-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md)（待创建） | ~600 |
 | AI 事故响应手册（P0/P1/P2） | [`incident-runbook.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md)（待创建） | ~1500 |

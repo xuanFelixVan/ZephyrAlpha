@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-034
 submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
@@ -35,7 +35,7 @@ depends_on:
   - {target: "MOD-INF-011", at: "§ollama", why: "Vector Memory——复用 OllamaChat 的 /api/chat 调用模式"}
 references:
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\auto-runtime-core\\blueprint.md", section: "§3", why: "AutoRuntimeCore 集成架构"}
-  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md", section: "§3", why: "MOD-GOVERNANCE 集成契约定义"}
+  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\blueprint.md", section: "§3", why: "MOD-GOVERNANCE 集成契约定义"}
 codification_level: L1
 ---
 
@@ -394,8 +394,8 @@ class BenchmarkCase(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-INF-009 | 必须 | Pipeline ModuleResult 数据 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-024 | 必须 | ModelRouter 消费 benchmark 结果 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-MASTER_BLUEPRINT | 必须 | AutoRuntimeCore 生命周期管理 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
-| MOD-INF-011 | 可选 | OllamaChat /api/chat 调用模式 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | AutoRuntimeCore 生命周期管理 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
+| MOD-INF-011 | 可选 | OllamaChat /api/chat 调用模式 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费 TaskModelMatrix cost_efficiency 做LLM路由决策 | — | d:\\临时工作区\\交易决策流水线设计.md |
 
 ### 10.2 依赖图对齐声明
@@ -481,7 +481,7 @@ class BenchmarkCase(BaseModel):
 
 ### 12.1 域契约锚点
 
-> 权威定义见 [MOD-GOVERNANCE blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md) §3。
+> 权威定义见 [MOD-GOVERNANCE blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/blueprint.md) §3。
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|

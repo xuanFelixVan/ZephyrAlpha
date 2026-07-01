@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-GATE_ENGINE
 submodule_path: src/zephyr/trading/feedback_loop/gates
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"
@@ -28,7 +28,7 @@ stability: evolving
 verifiability: hybrid
 codification_level: L1
 summary: "G0-G7任务门禁+G1-G5 KMS决策门+门禁域熔断器+容量架构(10K脚本/100AI并发)+法证审计+自指硬化"
-tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure, shadow-mode, emergency-override, observability, gate-pipeline, gate-context, gate-simulation, hash-chain, forensic-audit, integrity-guard, threat-model, stride, deep-compliance, capacity, scalability, concurrency, sharding, dependency-graph, capacity-upgrade]
+tags: [gate_engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure, shadow-mode, emergency-override, observability, gate-pipeline, gate-context, gate-simulation, hash-chain, forensic-audit, integrity-guard, threat-model, stride, deep-compliance, capacity, scalability, concurrency, sharding, dependency-graph, capacity-upgrade]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -101,7 +101,7 @@ ssot_claims:
 | 16 | g6-ctr-compliance.yaml | §A.1 | G6 CTR合规门禁 | 已实现 | | 本模块 |
 | 17 | g7d_depth_compliance.yaml | §A.1 | G7D深度合规——形式+实质双重验证 | 未实现 | | 本模块 |
 | 18 | g7c_cross_gate_consistency.yaml | §A.1 | G7C跨门禁时序一致性 | 未实现 | | 本模块 |
-| 19 | task/ g0-entry.yaml + g7-orc-gate-engine.yaml | §A.1 | G0准入+G7 Orc门禁 | 已实现 | | 本模块 |
+| 19 | task/ g0-entry.yaml + g7-orc-gate_engine.yaml | §A.1 | G0准入+G7 Orc门禁 | 已实现 | | 本模块 |
 | 20 | admission/ mad_001~004.yaml | §A.1 | MAD-001~004模块准入门禁 | 已实现 | | 本模块 |
 | 21 | invariants/ en_001~003.yaml (3个) | §3.3 | EN-001循环依赖/EN-002执行模式/EN-003契约兼容 | 已实现 | | 本模块 |
 | 22 | zero_residue.yaml | §3.4 | ZERO-RESIDUE零残留门禁 | 已实现 | | 本模块 |
@@ -694,14 +694,14 @@ class ManualApprovalGate:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |------|------|------|------|------|
-| MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task-system/blueprint.md |
+| MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task_system/blueprint.md |
 | MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_cross_layer/script_system/blueprint.md |
-| MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge-base/blueprint.md |
-| MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context-engine/blueprint.md |
-| MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm-security/blueprint.md |
+| MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge_base/blueprint.md |
+| MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context_engine/blueprint.md |
+| MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm_security/blueprint.md |
 | MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
 | MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
-| MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master-blueprint/blueprint.md |
+| MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master_blueprint/blueprint.md |
 | `architecture_model/layers/b_gates.yaml` | ssot | Gates YAML canonical source | — | architecture_model/layers/b_gates.yaml |
 
 ### §10.2 依赖图对齐声明
@@ -838,7 +838,7 @@ class ManualApprovalGate:
 | 2 | `config/blueprint_routing.yaml` | R009路由项 keywords/path_patterns |
 | 3 | `src/zephyr/integration/mcp/gate_engine_server.py` | MCP工具描述引用本蓝图 |
 | 4 | `src/zephyr/integration/mcp/blueprint_search_server.py` | 若keyword变更 |
-| 5 | `docs/03_modules/_master-blueprint/blueprint.md` | MOD-MASTER_BLUEPRINT §2.8 CT-SCRIPT-GATE-001 |
+| 5 | `docs/03_modules/_master_blueprint/blueprint.md` | MOD-MASTER_BLUEPRINT §2.8 CT-SCRIPT-GATE-001 |
 | 6 | `config/known_good_hashes.yaml` | 门禁文件哈希变更 |
 
 ---
@@ -890,7 +890,7 @@ class ManualApprovalGate:
 ```
 1. 修改_template.yaml→bump schema_version
 2. 归档当前模板→_template_v{N}.yaml（不删除）
-3. 在gate-engine blueprint变更记录中登记
+3. 在gate_engine blueprint变更记录中登记
 4. 通知所有门禁维护者评估是否需要迁移
 ```
 
@@ -1320,7 +1320,7 @@ STEP 3: 拆分后验证
 | [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 代码构建标准 GOV-ENG-001 |
 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
 | [b_gates.yaml](file:///d:/ZephyrAlpha/architecture_model/layers/b_gates.yaml) | Gates YAML SSoT |
-| [MOD-MASTER_BLUEPRINT blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
+| [MOD-MASTER_BLUEPRINT blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
 | [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
 | [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/_registry.yaml) | 全部门禁注册表 SSoT |
 
@@ -1455,8 +1455,8 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/rule_enforcement/sys_master_compliance.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/sys-master-compliance.yaml` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/task/g0-entry.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task/g0-orc-gate-engine.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task/g7-orc-gate-engine.yaml` | ✅ 已实现 | |
+| `src/zephyr/governance/rule_enforcement/task/g0-orc-gate_engine.yaml` | ✅ 已实现 | |
+| `src/zephyr/governance/rule_enforcement/task/g7-orc-gate_engine.yaml` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/task_types.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/triple_alignment.py` | ✅ 已实现 | |
@@ -1638,7 +1638,7 @@ STEP 3: 拆分后验证
 | G4 沙箱合规 | `src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml` | G4 | 执行中 | G4-C00 sandbox_profile_matches_task_type | error |
 | G5 模型合规 | (同G4文件) | G5 | → | G5-C00 model_in_capability_matrix | error |
 | G6 安全合规 | `src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml` | G6 | → | G6-C00 tool_call_whitelist | error |
-| G7 交付前 | `src/zephyr/governance/rule_enforcement/task/g7-orc-gate-engine.yaml` | G7 | REVIEW→COMPLETED | G7-C00 all_associated_scripts_audit_pass | error |
+| G7 交付前 | `src/zephyr/governance/rule_enforcement/task/g7-orc-gate_engine.yaml` | G7 | REVIEW→COMPLETED | G7-C00 all_associated_scripts_audit_pass | error |
 
 **YAML字段约束**：check必须是布尔表达式；每条reject必须配fix_hint；severity: error/warning；on_failure: reject/defer/warn
 

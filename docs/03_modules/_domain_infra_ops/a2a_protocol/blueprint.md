@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-025
 submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
@@ -841,11 +841,11 @@ class A2ATask(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|---------|---------|---------|
-| MOD-INF-018 | 必须 | Agent RBAC 身份 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-022 | 必须 | Escalation 升级 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-020 | 必须 | Audit Trail | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-019 | 必须 | Agent Spec / AGENTS.md | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
-| MOD-GATE_ENGINE | 可选 | Gate Engine | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC 身份 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-INF-022 | 必须 | Escalation 升级 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-019 | 必须 | Agent Spec / AGENTS.md | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
+| MOD-GATE_ENGINE | 可选 | Gate Engine | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
 | KBG-0032 | 可选 | AgentOrchestrator | `D:\ZephyrAlpha\docs\02_enterprise_architecture\` |
 | KBG-0041 | 可选 | Session Handoff | `D:\ZephyrAlpha\docs\02_enterprise_architecture\` |
 
@@ -878,7 +878,7 @@ class A2ATask(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\a2a-protocol\blueprint.md` | 本文件 |
 | 业务代码(L1) | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer1_discovery\` | 发现与身份层 |
 | 业务代码(L2) | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer2_communication\` | 通信与任务层 |
 | 业务代码(L3) | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\` | 协调与仲裁层 |

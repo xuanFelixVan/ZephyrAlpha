@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "analytics_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | analytics-core — 目录索引 |
+| [index.md](index.md) | Markdown | analytics_core — 目录索引 |
 
 ## 导航
 

@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "compliance_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Compliance Core 蓝图+施工图 — 合规引擎 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | compliance-core — 目录索引 |
+| [index.md](index.md) | Markdown | compliance_core — 目录索引 |
 
 ## 导航
 

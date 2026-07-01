@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-036
 submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
@@ -407,7 +407,7 @@ class ExamMode(str, Enum):
 | MOD-INF-024 (BudgetEnforcer) | 可选 | Token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-005 (分布式执行) | 可选 | 并发考试调度（Phase 1） | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 | MOD-INF-035 (AutoRuntime Core) | 被依赖 | 消费护照做模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-GATE_ENGINE (Gate Engine) | 被依赖 | TaskGate 消费护照 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE (Gate Engine) | 被依赖 | TaskGate 消费护照 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费护照 cost_efficiency 做LLM路由决策 | — | d:\临时工作区\交易决策流水线设计.md |
 
 ### 10.2 依赖图对齐声明
@@ -934,7 +934,7 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` | §4 接口契约 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` | §4 接口契约 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | CapabilityPassport 数据模型 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\*.py` | §4 数据模型、§11 产出物路径 |
 

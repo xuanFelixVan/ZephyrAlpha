@@ -1,8 +1,8 @@
----
+﻿---
 module_id: MOD-ML_EXPERIMENT_DOMAIN
 title: "ML-Experiment Domain 蓝图 — L11平台→L13实验跨层集成"
 doc_type: blueprint
-status: Active
+status: Deprecated
 version: "0.4.0"
 layer: cross_layer
 layer_name: cross_layer
@@ -31,7 +31,7 @@ summary: "ML实验域（L11+L13）Level 1集成蓝图——定义ML平台(MOD-ML
 codification_level: L1
 codification_at: "2026-05-14"
 submodule_path: src/zephyr/
-submodule_paths_scope: ml-experiment-domain
+submodule_paths_scope: ml_experiment_domain
 submodule_paths_extra:
   - src/zephyr/ml_train/
   - src/zephyr/simulation/
@@ -57,7 +57,7 @@ references:
     section: "全篇"
     why: "压缩工作流标准"
 tags:
-  - ml-experiment-domain
+  - ml_experiment_domain
   - l11
   - l13
   - ml-platform
@@ -67,7 +67,7 @@ tags:
 
 # ML-Experiment Domain 蓝图 — L11平台→L13实验跨层集成
 
-> module_id: ML-EXPERIMENT-DOMAIN-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: ml_experiment_domain-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\src\zephyr\ml_train\ + D:\ZephyrAlpha\src\zephyr\simulation\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -112,7 +112,7 @@ tags:
 
 | 维度 | 值 |
 |------|-----|
-| module_id | ML-EXPERIMENT-DOMAIN-001 |
+| module_id | ml_experiment_domain-001 |
 | actual_disk_path | `D:\ZephyrAlpha\src\zephyr\ml_train\` + `D:\ZephyrAlpha\src\zephyr\simulation\` |
 | 施工程度 | 部分实现（L11/L13模块骨架已就位，跨层管道未施工） |
 | ssot_yaml | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` + `l13_experimentation.yaml` |
@@ -290,14 +290,14 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | SYS-MASTER-001 | 必须 | 系统总蓝图 §七十八~§八十四 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-ML-001 | 必须 | L11 ML 平台核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-platform-core\blueprint.md` |
-| MOD-EXP-001 | 必须 | L13 实验管线核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-simulation\experimentation-core\blueprint.md` |
+| MOD-ML-001 | 必须 | L11 ML 平台核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml-platform-core\blueprint.md` |
+| MOD-EXP-001 | 必须 | L13 实验管线核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\experimentation-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint ML-EXPERIMENT-DOMAIN-001` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint ml_experiment_domain-001` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -338,7 +338,7 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 |----------|---------------|------|
 | L11 ML 平台核心 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | 训练+验证+检查点 |
 | L13 实验管线核心 | `D:\ZephyrAlpha\src\zephyr\simulation\` | AB测试+回测+Shadow |
-| 域集成文档 | `D:\ZephyrAlpha\docs\03_modules\_ml-experiment-domain\blueprint.md` | 本文件 |
+| 域集成文档 | `D:\ZephyrAlpha\docs\03_modules\_ml_experiment_domain\blueprint.md` | 本文件 |
 
 ---
 
@@ -382,7 +382,7 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules ML-EXPERIMENT-DOMAIN-001`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules ml_experiment_domain-001`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -611,7 +611,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | ALPHA-SIGNAL-DOMAIN-001 | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` | 域集成模式 | Alpha-Signal 定义因子域集成，本蓝图定义ML实验域集成 |
+| 1 | alpha_signal_domain-001 | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` | 域集成模式 | Alpha-Signal 定义因子域集成，本蓝图定义ML实验域集成 |
 
 ---
 
@@ -619,7 +619,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 域集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_ml-experiment-domain\blueprint.md` | 修改 | 本文件 |
+| 1 | 域集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_ml_experiment_domain\blueprint.md` | 修改 | 本文件 |
 | 2 | L11 ML 平台 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | 读取 | 代码对齐 |
 | 3 | L13 实验管线 | `D:\ZephyrAlpha\src\zephyr\simulation\` | 读取 | 代码对齐 |
 

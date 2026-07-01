@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "system_telemetry — 目录索引"
@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | System Telemetry 蓝图+施工图 — 全系统可观测性 |
-| [index.md](index.md) | Markdown | system-telemetry — 目录索引 |
+| [index.md](index.md) | Markdown | system_telemetry — 目录索引 |
 
 ## 导航
 

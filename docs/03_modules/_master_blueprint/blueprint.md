@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-MASTER_BLUEPRINT
 submodule_paths_scope: all-modules
 title: "Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图"
@@ -43,13 +43,13 @@ depends_on:
     at: "全篇"
     why: "Agent Spec接口蓝图——§十五CBAC+Skill路由"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_baseline.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_baseline.md"
     section: "全篇"
     why: "基线蓝图"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_capacity.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_capacity.md"
     section: "全篇"
     why: "容量蓝图"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_agent_spec.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_agent_spec.md"
     section: "全篇"
     why: "Agent Spec蓝图"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -68,7 +68,7 @@ tags:
 # Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
 
 > module_id: MOD-MASTER_BLUEPRINT | version: 1.3.1 | status: active | layer: cross_layer | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -104,9 +104,9 @@ tags:
 
 | 蓝图文件 | module_id | 版本 | 内容 |
 |---------|-----------|------|------|
-| [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（12系统拓扑+63条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
-| [blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_capacity.md) | MOD-MASTER-003 | v1.1.0 | §-1/§-2（容量升级：二次审计12缺口+10个升级章） |
-| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_agent_spec.md) | MOD-MASTER_BLUEPRINT | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
+| [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（12系统拓扑+63条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
+| [blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md) | MOD-MASTER-003 | v1.1.0 | §-1/§-2（容量升级：二次审计12缺口+10个升级章） |
+| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_agent_spec.md) | MOD-MASTER_BLUEPRINT | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
 
 ## 12 个集成系统
 
@@ -190,9 +190,9 @@ tags:
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 6 | 基线蓝图 | MOD-MASTER-002 | v0.9.2 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
-| 7 | 容量蓝图 | MOD-MASTER-003 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 升级设计 |
-| 8 | Agent Spec蓝图 | MOD-MASTER_BLUEPRINT | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md` | CBAC+Skill |
+| 6 | 基线蓝图 | MOD-MASTER-002 | v0.9.2 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | 现存设计 |
+| 7 | 容量蓝图 | MOD-MASTER-003 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_capacity.md` | 升级设计 |
+| 8 | Agent Spec蓝图 | MOD-MASTER_BLUEPRINT | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md` | CBAC+Skill |
 
 ---
 
@@ -208,10 +208,10 @@ tags:
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 索引文件 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 修改 | 本文件 |
-| 2 | 基线蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 读取 | 子蓝图 |
-| 3 | 容量蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 读取 | 子蓝图 |
-| 4 | Agent Spec蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md` | 读取 | 子蓝图 |
+| 1 | 索引文件 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 修改 | 本文件 |
+| 2 | 基线蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | 读取 | 子蓝图 |
+| 3 | 容量蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_capacity.md` | 读取 | 子蓝图 |
+| 4 | Agent Spec蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md` | 读取 | 子蓝图 |
 
 ---
 

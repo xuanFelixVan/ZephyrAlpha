@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-026
 submodule_path: src/zephyr/infrastructure/asset_inventory
 title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理"
@@ -113,8 +113,8 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 | # | 消费者模块 | 消费方式 | 依赖字段 |
 |---|----------|---------|---------|
 | 1 | MOD-INF-020 audit-trail | 资产事件写入审计日志 | asset_path, status |
-| 2 | MOD-GATE_ENGINE gate-engine | CI 门禁阻断孤儿超标 | orphan_rate |
-| 3 | MOD-INF-015 system-telemetry | 资产指标遥测上报 | health_score |
+| 2 | MOD-GATE_ENGINE gate_engine | CI 门禁阻断孤儿超标 | orphan_rate |
+| 3 | MOD-INF-015 system_telemetry | 资产指标遥测上报 | health_score |
 | 4 | MOD-INF-022 escalation-engine | 孤儿率骤升升级 | orphan_rate_trend |
 | 5 | MOD-INF-005 governance-automation | 治理脚本调度 | scan_result |
 
@@ -1173,7 +1173,7 @@ class TripleTrustAnchorGate:
 |------------|---------|--------|---------|
 | scaffold.py | 新增接口 | `_atomic_write` 成功后调用 `AssetInventory.register()` | 创建文件后检查 unified-asset-index.yaml 包含新条目 |
 | MOD-INF-020 audit-trail | 事件订阅 | 每次对账/状态变更 → `AuditTrail.record(event)` | 审计日志包含资产事件 |
-| MOD-GATE_ENGINE gate-engine | 新增 Gate | `G_asset_inventory` 门禁（orphan_rate <2%, ghost_rate =0%） | CI Pipeline 通过/阻断 |
+| MOD-GATE_ENGINE gate_engine | 新增 Gate | `G_asset_inventory` 门禁（orphan_rate <2%, ghost_rate =0%） | CI Pipeline 通过/阻断 |
 | MOD-INF-015 telemetry | 数据上报 | asset_count / orphan_rate / drift_rate / health_score | 遥测数据包含资产指标 |
 | MOD-INF-022 escalation | 事件订阅 | orphan_rate 骤升 >10% 或 >50 ghost → `Escalation.trigger()` | 升级事件触发 |
 | Pipeline | 定时触发 | `run_full_scan` / `run_reconciliation` | 定时任务产出扫描结果 |
@@ -1379,7 +1379,7 @@ class AssetType(str, Enum):
 
 - 从目录路径提取：`src/zephyr/risk/` → `L04`
 - B 轨模块（无 C 轨目录前缀）→ `cross_layer`
-- `docs/03_modules/_domain-infra_ops/` → `L01`
+- `docs/03_modules/_domain_infra_ops/` → `L01`
 
 #### 2.3.3 status（资产状态——五态 + 三种偏移）
 
@@ -1926,15 +1926,15 @@ scaffold.py → asset.created
 |------|------|
 | [MOD-INF-020 audit-trail](../audit-trail/blueprint.md) | **兄弟模块**——本模块产出资产事件，MOD-INF-020 做不可变审计记录 |
 | [MOD-DATABASE database](../../_cross_layer/database/blueprint.md) | **存储依赖**——资产索引的对账结果写入 SQLite |
-| [MOD-INF-016 shared-core](../../_cross_layer/shared-core/blueprint.md) | **Schema 依赖**——AssetEntry/AssetScan 等 Pydantic V2 模型 |
+| [MOD-INF-016 shared_core](../../_cross_layer/shared_core/blueprint.md) | **Schema 依赖**——AssetEntry/AssetScan 等 Pydantic V2 模型 |
 | [MOD-INF-005 governance-automation](../governance-automation/blueprint.md) | **调度依赖**——`generate_asset_index.py` 作为治理脚本 |
-| [MOD-GATE_ENGINE gate-engine](../../_cross_layer/gate-engine/blueprint.md) | **门禁集成**——`G_asset_inventory` CI 阻断孤儿超标 |
-| [MOD-INF-015 system-telemetry](../system-telemetry/blueprint.md) | **遥测上报**——资产指标写入遥测通道 |
+| [MOD-GATE_ENGINE gate_engine](../../_cross_layer/gate_engine/blueprint.md) | **门禁集成**——`G_asset_inventory` CI 阻断孤儿超标 |
+| [MOD-INF-015 system_telemetry](../system_telemetry/blueprint.md) | **遥测上报**——资产指标写入遥测通道 |
 | [GOV-CMP-003 审计协议](../../../01_policies_and_standards/governance/compliance/audit-protocol.md) | **治理依赖**——盘点结果纳入 12 维度审计清单 |
 
 ### §12.1 域契约锚点
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+> 权威定义见 [`../../_domain_governance/blueprint.md`](../../_domain_governance/blueprint.md) §3。
 
 | 契约 ID | 本模块角色 | 对端模块 |
 |---------|------------|----------|
@@ -2680,7 +2680,7 @@ hooks:
  活跃资产:     580  (94.8%)
  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  命令:
-   详见: docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
+   详见: docs/03_modules/_domain_infra_ops/asset-inventory/blueprint.md
    Gate:  Phase 1 > gate_asset_inventory (16/16 checks)
    MCP:   mcp://asset-inventory/ (Phase 2)
 ```
@@ -2695,14 +2695,14 @@ hooks:
 |---------|:--:|---------|---------|:--:|:--:|
 | `scaffold.py` | → | 文件创建 hook | `asset.created` event | 实时 | ⬜ Phase 2 |
 | `MOD-INF-020 audit-trail` | → | 每次资产状态变更 | `FileAuditDetail` / `TaskAuditSummary` | 每次 | ⬜ Phase 1 |
-| `MOD-GATE_ENGINE gate-engine` | → | Phase 1 gate_asset_inventory | exit code 0/1 | 每次 Phase 检查 | ✅ 已注册检查 ⬜ 实现逻辑 |
-| `MOD-INF-015 system-telemetry` | → | 每次 Dashboard 更新 | `{asset_count, orphan_rate, health_score}` | 每小时 | ⬜ Phase 2 |
+| `MOD-GATE_ENGINE gate_engine` | → | Phase 1 gate_asset_inventory | exit code 0/1 | 每次 Phase 检查 | ✅ 已注册检查 ⬜ 实现逻辑 |
+| `MOD-INF-015 system_telemetry` | → | 每次 Dashboard 更新 | `{asset_count, orphan_rate, health_score}` | 每小时 | ⬜ Phase 2 |
 | `MOD-INF-023 drift-detector` | → | 对账发现 DRIFT | `DriftSignal(asset_path, sha256_expected, sha256_actual)` | 每次对账 | ⬜ Phase 2 |
 | `MOD-INF-022 escalation` | → | 孤儿率 > 20% 或 健康=F | `Escalation(level=P0, title="ASSET HEALTH CRITICAL")` | 事件触发 | ⬜ Phase 2 |
-| `MOD-FEEDBACK_LOOP feedback-loop` | → | 资产健康趋势数据 | FLE metrics input | 每天 | ⬜ Phase 2 |
+| `MOD-FEEDBACK_LOOP feedback_loop` | → | 资产健康趋势数据 | FLE metrics input | 每天 | ⬜ Phase 2 |
 | `MOD-DATABASE database` | → | 资产索引缓存写入 | SQLite `asset_index_cache` 表 | 每小时 | ⬜ Phase 1 |
 | `MOD-INF-013 MCP` | ← | AI Agent 查询资产 | `tools/call` JSON-RPC | 按需 | ⬜ Phase 2 |
-| `MOD-INF-016 shared-core` | ← | Schema 定义依赖 | import `AssetSchema` | import-time | ⬜ Phase 0 |
+| `MOD-INF-016 shared_core` | ← | Schema 定义依赖 | import `AssetSchema` | import-time | ⬜ Phase 0 |
 | `MOD-INF-005 governance-automation` | ← | 定时扫描调度 | `run_all.py` 调用 | 每小时 | ⬜ Phase 1 |
 | `MOD-INF-018 RBAC` | → | 资产归属权限校验 | G-CT-001 | 按需 | ⬜ Phase 2 |
 | `MOD-INF-021 rollback` | ← | 对账异常触发回滚条件 | G-CT-002 | 事件触发 | ⬜ Phase 2 |
@@ -3221,7 +3221,7 @@ class ClassifiedAsset(BaseModel):
 
 | 来源 | 方式 | 示例 |
 |------|------|------|
-| **AI 自动推断** | 从文件内容特征（Phase 2 依赖图 + ast 分析） | `tags: ["imported-by-gate-engine", "pydantic-v2-validator"]` |
+| **AI 自动推断** | 从文件内容特征（Phase 2 依赖图 + ast 分析） | `tags: ["imported-by-gate_engine", "pydantic-v2-validator"]` |
 | **scaffold 创建时** | 创建命令 `--tags "workflow-abc,v2-refactor"` | `scaffold.py module my_pkg my_mod --tags "v2-migration,high-risk"` |
 | **Owner 手动** | CLI: `inventory tag <path> --add "deprecated-q3-2026"` | Owner 标记"这个文件计划 Q3 废弃" |
 | **自动分类增强** | 分类器发现文件在 `_deprecated/` 下 → 自动添加 | `tags: ["auto-deprecated", "dir-convention"]` |
@@ -3249,7 +3249,7 @@ scaffold.py 扩展支持 docs 类型（RULE-FOUR §14.5 #7 优化点）
   ↓ scaffold 内部调用 AssetInventory.on_asset_created()
   ↓
 AssetInventory.register(
-  path="docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md",
+  path="docs/03_modules/_domain_infra_ops/asset-inventory/blueprint.md",
   asset_type="doc",
   layer="L01",
   priority="P0",         # 蓝图是 P0——项目最关键的文档之一
@@ -3257,7 +3257,7 @@ AssetInventory.register(
 )
   ↓
 unified-asset-index.yaml 中:
-  - relative_path: "docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md"
+  - relative_path: "docs/03_modules/_domain_infra_ops/asset-inventory/blueprint.md"
     asset_type: doc
     layer: L01
     status: active
@@ -3797,7 +3797,7 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 |---|---------|------------|------|---------|
 | 1 | 资产盘点核心代码 | `D:\ZephyrAlpha\src\zephyr\asset-inventory\` | 修改 | 容量升级 |
 | 2 | 资产索引文件 | `D:\ZephyrAlpha\data\unified-asset-index.yaml` | 修改 | YAML→SQLite 迁移 |
-| 3 | 资产盘点蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\asset-inventory\blueprint.md` | 修改 | 规格化 |
+| 3 | 资产盘点蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` | 修改 | 规格化 |
 
 ## Consumers
 - zephyr.asset_inventory (internal)

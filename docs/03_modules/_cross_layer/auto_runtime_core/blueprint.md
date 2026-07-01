@@ -1,4 +1,4 @@
----
+﻿---
 module_id: "MOD-INF-035"
 submodule_path: src/zephyr/trading/autopilot
 title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
@@ -96,7 +96,7 @@ ssot_ref: "specs/auto-runtime-core/spec.md"
 | 8 | circadian_scheduler.py | §3.1 | 日间/夜间/周末节律调度 | 已实现 |
 | 9 | dream_cycle.py | §3.1 | 夜间知识固化 | 已实现 |
 | 10 | health-monitor.py | §3.1 | 健康监控+自愈 | 已实现 |
-| 11 | feedback-loop.py | §3.1 | 反馈闭环 | 已实现 |
+| 11 | feedback_loop.py | §3.1 | 反馈闭环 | 已实现 |
 | 12 | capability_registry.py | §3.1 | 能力注册中心 | 已实现 |
 | 13 | capability_card.py | §3.1 | 能力卡片数据模型 | 已实现 |
 | 14 | status_dashboard.py | §3.1 | 实时状态面板 | 已实现 |
@@ -474,16 +474,16 @@ class WorkDAG(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-002 (RI) | 必须 | EventStore/DryRun/CostTracker | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
-| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志/沙箱 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-INF-009 (Pipeline) | 必须 | 管线任务调度与状态 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\pipeline\blueprint.md` |
-| MOD-INF-034 (ModelProfiler) | 可选 | benchmark 结果用于路由决策 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\model-profiler\blueprint.md` |
-| MOD-GATE_ENGINE (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop-engine\blueprint.md` |
-| MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
-| MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge-base\blueprint.md` |
-| MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
+| MOD-INF-002 (RI) | 必须 | EventStore/DryRun/CostTracker | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
+| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志/沙箱 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
+| MOD-INF-009 (Pipeline) | 必须 | 管线任务调度与状态 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\pipeline\blueprint.md` |
+| MOD-INF-034 (ModelProfiler) | 可选 | benchmark 结果用于路由决策 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\model-profiler\blueprint.md` |
+| MOD-GATE_ENGINE (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop-engine\blueprint.md` |
+| MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
+| MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge_base\blueprint.md` |
+| MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
 | SYS-MASTER-001 | 必须 | 系统总蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 
 ---
@@ -543,7 +543,7 @@ class WorkDAG(BaseModel):
 
 ### §12.1 域契约锚点
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+> 权威定义见 [`../../_domain_governance/blueprint.md`](../../_domain_governance/blueprint.md) §3。
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
@@ -1013,7 +1013,7 @@ STEP 3: 拆分后验证
 > 仅本蓝图需要：跨蓝图容量完整性评估是大脑独有的顶层视角
 > 不可砍理由：砍掉 = 丢失跨蓝图接口缺口信息，下一个 AI 不知道 Agent Spec 容量设计是零覆盖
 
-| 容量维度 | AutoRuntime Core | Agent Spec | SYS-MASTER | Pipeline | Shared | Capacity-Assurance | 综合等级 |
+| 容量维度 | AutoRuntime Core | Agent Spec | SYS-MASTER | Pipeline | Shared | capacity_assurance | 综合等级 |
 |------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
 | 并发 Session 管理 | 🟡 | ❌ 缺 | 🟡 | — | — | — | 🟡 有设计待落地 |
 | 脚本并发执行 | 🟢 依赖下游 | — | 🟢 | 🟢 | — | — | 🟢 已设计 |

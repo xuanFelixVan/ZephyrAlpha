@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-020
 submodule_path: src/zephyr/governance/audit_trail
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
@@ -29,7 +29,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 summary: "不可变审计追踪链——JSONL SSoT + 哈希链 + HMAC + Ed25519 Agent 签名 + CoT 推理链 + 13 异常签名 + 漂移检测 + 三角闭环 + 分片写入架构 + 99 盲点覆盖"
-tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrastructure, cryptographic-integrity, hash-chain, hmac-signing, ed25519, agent-signing, non-repudiation, cot-audit, reasoning-chain, lamport-clock, drift-detection, anomaly-detection, meta-audit, tiered-storage, privacy-redaction, feedback-loop, policy-factory-runtime, w3c-prov, owasp-asi09, owasp-asi10, self-monitoring, trust-score, delegation-chain, cross-ide-consistency, external-verifier, evidence-pack, compliance-map, supply-chain-audit, indirect-operation, git-isolation, kb-poisoning-prevention, nist-2026, fca]
+tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrastructure, cryptographic-integrity, hash-chain, hmac-signing, ed25519, agent-signing, non-repudiation, cot-audit, reasoning-chain, lamport-clock, drift-detection, anomaly-detection, meta-audit, tiered-storage, privacy-redaction, feedback_loop, policy-factory-runtime, w3c-prov, owasp-asi09, owasp-asi10, self-monitoring, trust-score, delegation-chain, cross-ide-consistency, external-verifier, evidence-pack, compliance-map, supply-chain-audit, indirect-operation, git-isolation, kb-poisoning-prevention, nist-2026, fca]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -278,11 +278,11 @@ references:
 
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
-| 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
-| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm-security） |
+| 1 | AI 审计守卫 | MOD-INF-001（capacity_assurance） |
+| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm_security） |
 | 3 | 回滚执行 | MOD-INF-021（rollback-system） |
-| 4 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate-engine） |
-| 5 | Shared Core 实现 | MOD-INF-016（shared-core） |
+| 4 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate_engine） |
+| 5 | Shared Core 实现 | MOD-INF-016（shared_core） |
 | 6 | 事件溯源存储 | MOD-INF-002 RI-13 EventStore |
 | 7 | Dry-Run 沙箱 | MOD-INF-002 RI-14 DryRunSimulator |
 
@@ -810,19 +810,19 @@ class EvidencePackExporter:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-DATABASE | 硬依赖 | events 表查询视图（不独立存储，C15/ARB-8 裁定） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-GATE_ENGINE | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-INF-016 | 硬依赖 | EventType 枚举 + Task Schema + AiAuditLogger | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
-| MOD-TASK_SYSTEM | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
-| MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
-| MOD-INF-011 | 跨线软依赖 | VM 嵌入结果→审计记录（线2→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector-memory\blueprint.md` |
-| MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-engine\blueprint.md` |
-| MOD-INF-031 | 跨线软依赖 | 修复审计（线4→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\auto-fixer\blueprint.md` |
+| MOD-GATE_ENGINE | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
+| MOD-INF-016 | 硬依赖 | EventType 枚举 + Task Schema + AiAuditLogger | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
+| MOD-TASK_SYSTEM | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
+| MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
+| MOD-INF-011 | 跨线软依赖 | VM 嵌入结果→审计记录（线2→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector_memory\blueprint.md` |
+| MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-engine\blueprint.md` |
+| MOD-INF-031 | 跨线软依赖 | 修复审计（线4→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\auto-fixer\blueprint.md` |
 | GOV-CMP-002 | 硬依赖 | AUD-001~004 审计操作留痕规则 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\audit-tracking-policy.md` |
 | GOV-CMP-003 | 硬依赖 | 12 维度审计清单 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\governance-audit-protocol.md` |
-| MOD-INF-005 | 硬依赖 | 脚本执行生命周期审计钩子 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\script-system\blueprint.md` |
+| MOD-INF-005 | 硬依赖 | 脚本执行生命周期审计钩子 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md` |
 | MOD-INF-009 | 硬依赖 | PipelineOrchestrator 扫描调度审计集成 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
 | CFG-CAP-001 | 硬依赖 | 容量参数决定 shard 数和缓冲区大小 | — | — |
 | MOD-INF-027 | 跨线软依赖 | 审计记录→线5 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
@@ -905,7 +905,7 @@ class EvidencePackExporter:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\audit-trail\` | Python 源码（352 .py files） |
 | 测试代码 | `D:\ZephyrAlpha\tests\audit-trail\` | 测试用例 |
 | 审计数据 | `D:\ZephyrAlpha\data\audit\` | JSONL + SQLite + Merkle |
@@ -1662,7 +1662,7 @@ class LamportClockV2:
 
 ## 变更记录
 
-> 变更历史见 `git log -- docs/03_modules/_domain-infra_ops/audit-trail/blueprint.md`
+> 变更历史见 `git log -- docs/03_modules/_domain_infra_ops/audit-trail/blueprint.md`
 
 ## 术语表
 

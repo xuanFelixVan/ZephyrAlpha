@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-KB-001
 submodule_path: src/zephyr/governance/kb
 title: "知识库系统蓝图"
@@ -16,7 +16,7 @@ ttl: permanent
 actual_disk_path: "src/zephyr/governance/kb/"
 construction_progress: completed
 summary: "ZephyrAlpha 知识库系统完整蓝图——[容量升级中 v0.11.0] 设计上限 10,000脚本/1,500模块/100AI并发/40-100脚本并发执行/增量扫描默认/全量扫描可选。当前覆盖：入库(G1-G5五门禁+§3.9.1 8条来源矩阵+§5.14内容安全门禁) → 存储(§7三层存储+§7.8灾备+§7.9部分回滚与事务写入+§7.10系统自身纵深防御+§7.10.8 Windows单机健壮性) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配+§9.4.1多模型格式适配) → 演化(§9 KE版本semver+依赖级联+§9.8隐含因果链检测+§9.8.1引用完整性自检+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV+§4.5冷启动引导引擎+§9.11.1截图文本退化+§12.5 E2E集成测试) → 健康保障(§9.18 7项运营期长青机制+§3.9.6异常中断恢复) → §3.5.1多信号源新鲜度引擎(四信源融合min()防御)。§7.10 纵深防御(7项SOC2/ISO27001审计级保护)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨19类知识分类 + KO→KE→KB三级漏斗 + KE Schema 31字段 + 字段稳定性三级分级 + Human-Gated三层权限模型 + KB规则执行引擎(§9.5) + 互补知识链接(§9.9.1) + 项目阶段感知温度(§9.12.2)。全自动零Owner触发(月均≤12min@≤300KE，非线性增长，LLM费用≤¥0.40)。experimental代码已实现(12模块/3600行)，beta建设进行中。"
-tags: [knowledge-base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline, self-test, tombstone, lifecycle-sla, reference-liveness, non-use-decay, silent-period, complementary-links, phase-aware-temperature, semantic-drift, conflict-pattern-learning, memory-consolidation, pruning-session, emergency-freeze, safe-mode, load-bearing-ke, source-integrity, self-referential-isolation, override-mitigation, red-team, deterministic-verification, soc2, iso27001, defense-in-depth, windows-max-path, av-whitelist, hnsw-compaction, unclean-shutdown, multi-signal-freshness, crash-recovery, nonlinear-time-budget, implicit-causality, multi-model-format, reference-integrity]
+tags: [knowledge_base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline, self-test, tombstone, lifecycle-sla, reference-liveness, non-use-decay, silent-period, complementary-links, phase-aware-temperature, semantic-drift, conflict-pattern-learning, memory-consolidation, pruning-session, emergency-freeze, safe-mode, load-bearing-ke, source-integrity, self-referential-isolation, override-mitigation, red-team, deterministic-verification, soc2, iso27001, defense-in-depth, windows-max-path, av-whitelist, hnsw-compaction, unclean-shutdown, multi-signal-freshness, crash-recovery, nonlinear-time-budget, implicit-causality, multi-model-format, reference-integrity]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -633,8 +633,8 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 4 | ✅包含 | 跨 Agent 知识互通 | MCP 4 Resource + 4 Tool，多模型共享 |
 | 5 | ✅包含 | 审计与质量保障 | 四模型审计流水线 + 知识溯源 PROV |
 | 6 | ❌排除 | 任务系统的 TaskCard 状态机 | MOD-TASK_SYSTEM（任务系统蓝图） |
-| 7 | ❌排除 | 上下文引擎的 Token 预算追踪 | context-engine/ 模块（KBG-0015） |
-| 8 | ❌排除 | VMS 向量内存服务 | src/zephyr/vector-memory/（beta 目标） |
+| 7 | ❌排除 | 上下文引擎的 Token 预算追踪 | context_engine/ 模块（KBG-0015） |
+| 8 | ❌排除 | VMS 向量内存服务 | src/zephyr/vector_memory/（beta 目标） |
 | 9 | ❌排除 | 脚本系统审计执行 | MOD-INF-005（KB 只消费审计结果） |
 | 10 | ❌排除 | 蓝图结构注册和治理 | 各模块 blueprint.md |
 
@@ -688,8 +688,8 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 5 | ✅包含 | 审计与质量保障 | 四模型审计流水线（GLM扫描→Kimi根因→Qwen落地→Opus终审）+ 知识衰减/新鲜度管理 |
 | 6 | ✅包含 | 上下文注入 | 与 MOD-TASK_SYSTEM `context_assembler` 对接，AI session 启动时自动注入相关KE |
 | 7 | ❌排除 | 任务系统的 TaskCard 状态机和任务生命周期 | MOD-TASK_SYSTEM（任务系统蓝图） |
-| 8 | ❌排除 | 上下文引擎的 Token 预算追踪和注入策略 | context-engine/ 模块（KBG-0015） |
-| 9 | ❌排除 | VMS（Vector Memory Service）的 InProcessVectorMemory | src/zephyr/vector-memory/（beta 目标） |
+| 8 | ❌排除 | 上下文引擎的 Token 预算追踪和注入策略 | context_engine/ 模块（KBG-0015） |
+| 9 | ❌排除 | VMS（Vector Memory Service）的 InProcessVectorMemory | src/zephyr/vector_memory/（beta 目标） |
 | 10 | ❌排除 | Session Log 的结构和交接协议 | _registry/schemas/session-log-schema.yaml |
 | 11 | ❌排除 | 蓝图的结构注册和治理 | 各模块 blueprint.md |
 | 12 | ❌排除 | 脚本系统的 12 维度审计结果（MEDIUM Finding → KB 入库） | MOD-INF-005 §6.3 + §6.6（C4→G1 数据流） |
@@ -703,12 +703,12 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 
 | # | 文件 | 说明 |
 |---|------|------|
-| 1 | 本文件 `knowledge-base/blueprint.md` | KB 系统唯一真源蓝图 |
+| 1 | 本文件 `knowledge_base/blueprint.md` | KB 系统唯一真源蓝图 |
 | 2 | `src/zephyr/data/knowledge_management/kb/kb_repo.py` | 核心仓储——10状态机 + SQLite + ChromaDB |
 | 3 | `src/zephyr/data/knowledge_management/kb/unified_memory_api.py` | RI-02 统一内存 API——remember/learn/forget/recall (deprecated → VMS) |
 | 4 | `src/zephyr/data/knowledge_management/kb/chromadb_init.py` | ChromaDB 4 Collection 初始化 (deprecated → VMS) |
 | 5 | `architecture_model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
-| 6 | MOD-TASK_SYSTEM `task-system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |
+| 6 | MOD-TASK_SYSTEM `task_system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |
 
 ### 2.2 关键路径速查
 
@@ -717,9 +717,9 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | KB 代码 | `D:\ZephyrAlpha\src\zephyr\kb\` |
 | 知识数据 | `D:\ZephyrAlpha\docs\08_knowledge\` |
 | 架构 YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_kb.yaml` |
-| 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
-| 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context-engine-architecture.md` |
-| VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector-memory-chromadb-bge-m3.md` |
+| 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
+| 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context_engine-architecture.md` |
+| VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector_memory-chromadb-bge-m3.md` |
 | ChromaDB KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
 | Session Log | `D:\ZephyrAlpha\docs\_working\session_logs\` |
 
@@ -2721,7 +2721,7 @@ def list_recent_batches(n: int = 10) -> list[KETransaction]:
 **自动每日 SQLite 备份**：
 
 ```python
-# 追加到：src/zephyr/observability/feedback-loop/scheduler.py（APScheduler）
+# 追加到：src/zephyr/observability/feedback_loop/scheduler.py（APScheduler）
 {
     "daily_sqlite_backup": {
         "trigger": "cron", "hour": 3, "minute": 0,
@@ -3446,7 +3446,7 @@ KO→KE→KB 是知识内容漏斗，AI 运行时还需要记忆温度分层。
 |:--:|------------|------------|------------|
 | 1 | `03-知识库架构.md` | G1-G5门禁、10状态机、MCP协议、上下文预算、多Agent记忆、Embedding管理、知识衰减、安全架构、4轮审计结果、CLI命令、Phase计划（全文件唯一主题=知识库） | 候选池远优于退役蓝图 |
 | 2 | `知识库升级方案.md` | 5并行分类系统诊断、3阶段升级计划、419+ KE现状分析、10阶段学术参考 | 退役蓝图无此内容 |
-| 3 | `vibe-coding-task-card-and-knowledge-base-design.md` | 混合聚类架构（layer为主+domain为辅）、3阶段持续摄取策略、KB-Agent Harness集成、formal invariants、TagSchemaRegistry需求、Provenance Chain需求 | 候选池设计更系统化 |
+| 3 | `vibe-coding-task-card-and-knowledge_base-design.md` | 混合聚类架构（layer为主+domain为辅）、3阶段持续摄取策略、KB-Agent Harness集成、formal invariants、TagSchemaRegistry需求、Provenance Chain需求 | 候选池设计更系统化 |
 | 4 | `知识库专题讨论文档.md` | 30 KB问题（KB-001~030）、KB 决策记录矛盾裁决（KBG-0005 vs KBG-0016）、KE ID格式冲突裁决（KE-{NNN} vs KMS-{YYYYMMDD}-{SEQ}）、3并行分类系统文档、知识库空洞化诊断 | 退役蓝图无此类深度诊断 |
 | 5 | `01-脚本系统架构.md` §32~§40 | 14组件技术选型（#2 ChromaDB、#3 Embedding）、beta KMS交付物+验收标准、beta KB组件清单（triage/kb_repo/batch_ingest/chromadb_init）、Qwen务实修正（6条：向量DB/Embedding模型版本选择） | KB相关部分已提取，脚本系统部分保留 |
 | 6 | `vibe-coding-infrastructure-7-modules-design.md` §M3 | M3记忆系统（短期/中期/长期三层）、kb/代码状态、vector_memory差距、统一API(remember/learn/forget/recall)、知识归属决策（蓝图→KE系统）、知识库存放架构参考 | KB部分已提取，其余7模块设计保留 |
@@ -3457,11 +3457,11 @@ KO→KE→KB 是知识内容漏斗，AI 运行时还需要记忆温度分层。
 ```
 2（当前）：kb/ 独立运行
   src/zephyr/kb/  →  12模块 ✅
-  vector-memory/  →  空包（__init__.py only）
+  vector_memory/  →  空包（__init__.py only）
 
 beta（计划）：kb/ 能力纳入 VMS
   src/zephyr/kb/  →  DEPRECATED（不删，保留退役标记）
-  src/zephyr/vector-memory/  →  InProcessVectorMemory 完整实现
+  src/zephyr/vector_memory/  →  InProcessVectorMemory 完整实现
   unified_memory_api.py  →  作为 VMS 的统一入口保留
 
 迁移契约：P1-KB-VMS-TRANSITION（定义在 b_kb.yaml interfaces）
@@ -3607,7 +3607,7 @@ beta（计划）：kb/ 能力纳入 VMS
 1. **更新架构 YAML SSoT**：修改 `b_kb.yaml`，将 status 从 `implemented` 更新为 `implemented`（不变），更新 `note` 和 `modules.description` 引用本蓝图
 2. **更新 `_index.yaml`**：确认 `b_kb.yaml` 在 b_track 中正确注册
 3. **候选池KB内容清理**：逐文件删除已提取的KB专属内容，留痕（§9.2）
-4. **创建 `knowledge-base/index.md`**：模块入口索引文件
+4. **创建 `knowledge_base/index.md`**：模块入口索引文件
 
 ### 11.2 施工顺序依赖
 
@@ -3790,7 +3790,7 @@ jobs:
 
 ---
 
-> **module_id**: MOD-KB-001 §16 | **参考**: capacity-assurance (MOD-INF-001) §5 全局容量预算
+> **module_id**: MOD-KB-001 §16 | **参考**: capacity_assurance (MOD-INF-001) §5 全局容量预算
 
 ### 16.1 KE 总数硬约束
 
@@ -3839,7 +3839,7 @@ jobs:
 
 ### 16.6 容量预测
 
-对齐 `capacity-assurance` (MOD-INF-001) §17 容量预测模型：
+对齐 `capacity_assurance` (MOD-INF-001) §17 容量预测模型：
 
 - **新增 KE 速率**：beta 预计 ~50 KE/month（候选池迁移 + Session 提取）
 - **衰减速率**：约 30% KE 的 `half_life_days` < 90d → 月衰减 ~15 KE
@@ -3939,7 +3939,7 @@ jobs:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\kb\` | Knowledge Base 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_kb*.py` | 单元测试 |
 | KE 存储 | `D:\ZephyrAlpha\data\knowledge_base\` | 知识条目持久化 |
@@ -3964,7 +3964,7 @@ jobs:
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | KB 模块状态 | 代码施工后更新 |
-| 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
+| 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
 
 ---
 
@@ -4069,7 +4069,7 @@ STEP 3: 拆分后验证
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | 知识库核心代码 | `D:\ZephyrAlpha\src\zephyr\kb\` | 修改 | 规格化 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` | 修改 | 本文件 |
 
 ---
 
@@ -4227,14 +4227,14 @@ STEP 3: 拆分后验证
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-016 Shared Core | 必须 | KB 模块代码承载基座 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-TASK_SYSTEM Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
-| MOD-INF-005 Script System | 必须 | 审计数据来源 + 标签分类体系 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\script-system\blueprint.md` |
-| MOD-INF-026 Asset Inventory | 可选 | 资产盘点 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\asset-inventory\blueprint.md` |
-| MOD-CONTEXT_ENGINE Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
-| MOD-INF-011 Vector Memory | 可选 | KE 写入时同步向量化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
+| MOD-INF-016 Shared Core | 必须 | KB 模块代码承载基座 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
+| MOD-INF-005 Script System | 必须 | 审计数据来源 + 标签分类体系 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md` |
+| MOD-INF-026 Asset Inventory | 可选 | 资产盘点 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
+| MOD-CONTEXT_ENGINE Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md` |
+| MOD-INF-011 Vector Memory | 可选 | KE 写入时同步向量化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

@@ -1,6 +1,6 @@
-# [A_config] module_id=CFG-template-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+﻿# [A_config] module_id=CFG-template-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
@@ -53,7 +53,7 @@ templates:
 
   - template_id: "TPL-KE-001"
     name: "知识条目 KE 模板"
-    path: "docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md §3.2.2"
+    path: "docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md §3.2.2"
     version: "1.0.0"
     for: "知识库 KE 条目的创建——含 YAML frontmatter 18 字段 + body 5 段模板"
     template_for: "ke"
@@ -62,7 +62,7 @@ templates:
 
   - template_id: "TPL-KO-001"
     name: "知识观察 KO 模板"
-    path: "docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md §3.10"
+    path: "docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md §3.10"
     version: "1.0.0"
     for: "知识库 KO 条目的创建——含 4 状态机 + 轻量模板"
     template_for: "ko"

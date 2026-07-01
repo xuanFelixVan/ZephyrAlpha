@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-007
 title: Task Pipeline Service Interface / 任务双管线服务接口规范
 doc_type: architecture_view
@@ -12,7 +12,7 @@ created_by: human_plus_agent
 created_date: "2026-05-06"
 last_updated: "2026-05-06"
 ttl: permanent
-template_source: "vector-memory-service-interface.md（B 轨接口目录结构对齐）"
+template_source: "vector_memory-service-interface.md（B 轨接口目录结构对齐）"
 truth_source:
   - "03_modules/_cross_layer/pipeline/blueprint.md（MOD-INF-009 — 详细设计与 CT 锚点；Phase 5 真源）"
   - "architecture_model/layers/b_pipeline.yaml（Pipeline YAML SSoT）"

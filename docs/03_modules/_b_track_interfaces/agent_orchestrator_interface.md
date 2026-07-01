@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOV-AI-ENG-ORC-001
 title: Agent Orchestrator Interface / Agent 编排器接口规范
 doc_type: architecture_view
@@ -12,9 +12,9 @@ created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
-template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
+template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/infra_ops/task-system/blueprint.md（MOD-TASK_SYSTEM — Agent Orchestrator / 任务生命周期与状态机真源）"
+  - "03_modules/infra_ops/task_system/blueprint.md（MOD-TASK_SYSTEM — Agent Orchestrator / 任务生命周期与状态机真源）"
   - "architecture_model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md (archived 2026-04-24)"
@@ -83,7 +83,7 @@ tags:
 ### 0.2 本文档**不是**
 
 - ❌ **任务卡 YAML schema**——见 `docs/02_enterprise_architecture/task-card-schema.md`
-- ❌ **Context Engine 设计**——见 `context-engine-interface.md`
+- ❌ **Context Engine 设计**——见 `context_engine-interface.md`
 - ❌ **沙箱内部实现**——本规范定义沙箱接口，具体 Windows ACL / Docker Desktop 实现另出施工图
 - ❌ **SQLite 表设计细则**——见 experimental 施工图 `construction-plan-orchestrator-*.md`
 - ❌ **幻觉检测规则库**——见 `hallucination_rules.yaml`（experimental 另出）

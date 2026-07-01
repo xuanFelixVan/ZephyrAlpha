@@ -1,6 +1,6 @@
 ---
 module_id: SYS-MASTER-001
-submodule_paths_scope: system-master
+submodule_paths_scope: system_master
 title: "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"
 doc_type: blueprint
 status: Active
@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-14"
 construction_progress: completed
 drift_status: reviewed
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys_master\\blueprint.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\system_master\\blueprint.md"
 template_for: blueprint
 generation: 2
 functional_domain: system
@@ -44,7 +44,7 @@ depends_on:
     at: "全篇"
     why: "架构模型拓扑——35域新架构"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint.md"
     section: "全篇"
     why: "集成闭环总蓝图索引"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -72,7 +72,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
-> - 集成总蓝图：[blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)
+> - 集成总蓝图：[blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md)
 
 ---
 
@@ -650,19 +650,19 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 系统 | 蓝图ID | 蓝图完整度 | 核心职责 | actual_disk_path | 施工程度 |
 |------|------|:--:|------|------|:------:|
-| Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 | `src/zephyr/capacity-assurance/` | 已实现 |
+| Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 | `src/zephyr/capacity_assurance/` | 已实现 |
 | Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 | `src/zephyr/runtime/` | 已实现 |
 | Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/script_system/` | 已实现 |
 | Task System | MOD-TASK_SYSTEM | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
 | Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
-| Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context-engine/` | 已实现 |
+| Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context_engine/` | 已实现 |
 | Pipeline | MOD-INF-009 | 95% | M1-M11双管线 | `src/zephyr/pipeline/` | 已实现 |
 | Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 | `src/zephyr/trading/feedback_loop/` | 已实现 |
-| Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector-memory/` | 已实现 |
+| Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector_memory/` | 已实现 |
 | Database | MOD-DATABASE | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
 | MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/integration/mcp/` | 已实现 |
-| LLM Security | MOD-LLM_SECURITY | 95% | L0-L8九层纵深防御 | `src/zephyr/llm-security/` | 部分实现 |
-| System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 | `src/zephyr/system-telemetry/` | 已实现 |
+| LLM Security | MOD-LLM_SECURITY | 95% | L0-L8九层纵深防御 | `src/zephyr/llm_security/` | 部分实现 |
+| System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 | `src/zephyr/system_telemetry/` | 已实现 |
 | Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 | `src/zephyr/shared/` | 已实现 |
 | Code Dedup Engine | MOD-INF-017 | 95% | 爆炸半径防护+全生命周期去重 | `src/zephyr/infra_ops/code_dedup_engine/` | 已实现 |
 | Agent RBAC | MOD-INF-018 | 95% | 七层纵深RBAC | `src/zephyr/agent-rbac/` | 已实现 |
@@ -779,7 +779,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
-| MOD-MASTER_BLUEPRINT | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
 | architecture_model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture_model\_index.yaml` |
 | blueprint_registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 
@@ -837,12 +837,12 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 产出物 | 路径 |
 |------|------|
 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
-| 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
+| 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
+| 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
 | 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | 架构模型 | `D:\ZephyrAlpha\architecture_model\layers\*.yaml` |
 | 业务层代码 | `D:\ZephyrAlpha\src\zephyr\data\` ~ `D:\ZephyrAlpha\src\zephyr\simulation\` |
-| 基础设施代码 | `D:\ZephyrAlpha\src\zephyr\gates\`, `D:\ZephyrAlpha\src\zephyr\context-engine\`, ... |
+| 基础设施代码 | `D:\ZephyrAlpha\src\zephyr\gates\`, `D:\ZephyrAlpha\src\zephyr\context_engine\`, ... |
 | 门禁定义 | `D:\ZephyrAlpha\src\zephyr\gates\*.yaml` |
 
 ---
@@ -3871,7 +3871,7 @@ Point-in-Time Universe:
 | 5 | 蓝图模板 | — | v3.5/v3.6 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图编写模板 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 产出物规格化 |
 | 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 8 | 集成总蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 12系统集成契约 |
+| 8 | 集成总蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 12系统集成契约 |
 | 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十字段标准 |
 
 ---

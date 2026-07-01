@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-039
 submodule_path: src/zephyr/trading/orchestrator
 title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
@@ -425,14 +425,14 @@ class DetectionResult(BaseModel):
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-035 (AutoRuntime) | 必须 | WorkDAG 调度入口 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-CONTEXT_ENGINE (Context) | 必须 | 上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
-| MOD-LLM_SECURITY (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
-| MOD-INF-011 (VMS) | 必须 | task_history 写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
-| MOD-GATE_ENGINE (Gate) | 必须 | TaskGate 门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-INF-020 (Audit) | 必须 | 审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-FEEDBACK_LOOP (FLE) | 必须 | 质量数据上报 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
-| MOD-INF-021 (Rollback) | 必须 | 回滚触发 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-CONTEXT_ENGINE (Context) | 必须 | 上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` |
+| MOD-LLM_SECURITY (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\llm_security\blueprint.md` |
+| MOD-INF-011 (VMS) | 必须 | task_history 写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
+| MOD-GATE_ENGINE (Gate) | 必须 | TaskGate 门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
+| MOD-INF-020 (Audit) | 必须 | 审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-FEEDBACK_LOOP (FLE) | 必须 | 质量数据上报 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
+| MOD-INF-021 (Rollback) | 必须 | 回滚触发 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
 
 ---
 

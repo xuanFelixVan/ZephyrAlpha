@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "gate_engine — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器 |
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
-| [index.md](index.md) | Markdown | gate-engine — 目录索引 |
+| [index.md](index.md) | Markdown | gate_engine — 目录索引 |
 | [sub_blueprints/](sub_blueprints/index.md) | 目录 | sub-blueprints — 目录索引 |
 
 ## 导航

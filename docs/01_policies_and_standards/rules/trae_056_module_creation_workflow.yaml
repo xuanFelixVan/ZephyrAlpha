@@ -1,4 +1,4 @@
-rule_id: TRAE-056
+﻿rule_id: TRAE-056
 title: 操作-模块/蓝图/代码创建完整工作流程
 version: 2.1.0
 layer: compliance
@@ -136,7 +136,7 @@ sections:
         note: 禁止直接Read depgraph——必须通过extract_depgraph.py查询
       - command: "python scripts/governance/extract_depgraph.py --paths"
         purpose: 文件级依赖关系（含设计态和运营态）
-      - file: docs/03_modules/_sys_master/blueprint.md
+      - file: docs/03_modules/system_master/blueprint.md
         section: "§0"
         purpose: 子系统任务域定位
       - file: .trae/rules/project_rules.md

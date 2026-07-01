@@ -1,8 +1,8 @@
----
+﻿---
 module_id: MOD-ALPHA_SIGNAL_DOMAIN
 title: "Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成"
 doc_type: blueprint
-status: Active
+status: Deprecated
 version: "0.4.0"
 layer: cross_layer
 layer_name: cross_layer
@@ -31,11 +31,11 @@ summary: "Alpha因子域（L02+L03）Level 1集成蓝图——定义Alpha因子�
 codification_level: L1
 codification_at: "2026-05-14"
 submodule_path: src/zephyr/
-submodule_paths_scope: alpha-signal-domain
+submodule_paths_scope: alpha_signal_domain
 submodule_paths_extra:
   - src/zephyr/factor/
   - src/zephyr/signal/
-ssot_yaml: "docs/03_modules/_alpha-signal-domain/blueprint.md"
+ssot_yaml: "docs/03_modules/_alpha_signal_domain/blueprint.md"
 depends_on:
   - target: "SYS-MASTER-001"
     at: "§53~§57"
@@ -57,7 +57,7 @@ references:
     section: "全篇"
     why: "压缩工作流标准"
 tags:
-  - alpha-signal-domain
+  - alpha_signal_domain
   - l02
   - l03
   - alpha-factor
@@ -67,7 +67,7 @@ tags:
 
 # Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成
 
-> module_id: ALPHA-SIGNAL-DOMAIN-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: alpha_signal_domain-001 | version: 0.4.0 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\src\zephyr\factor\ + D:\ZephyrAlpha\src\zephyr\signal_ashare\ + D:\ZephyrAlpha\src\zephyr\signal_fundamental\ + D:\ZephyrAlpha\src\zephyr\signal_quality\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -116,10 +116,10 @@ tags:
 
 | 维度 | 值 |
 |------|-----|
-| module_id | ALPHA-SIGNAL-DOMAIN-001 |
+| module_id | alpha_signal_domain-001 |
 | actual_disk_path | `D:\ZephyrAlpha\src\zephyr\factor\` + `D:\ZephyrAlpha\src\zephyr\signal\` |
 | 施工程度 | 部分实现（L02/L03模块骨架已就位，跨层管道未施工） |
-| ssot_yaml | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| ssot_yaml | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
 | blueprint_level | domain |
 | priority | P1 |
 
@@ -287,14 +287,14 @@ L02 Alpha 因子计算和 L03 信号生成是 ZephyrAlpha 量化策略的核心�
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | SYS-MASTER-001 | 必须 | 系统总蓝图 §53~§57 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-AF-001 | 必须 | L02 Alpha 因子核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
-| MOD-SIG-001 | 必须 | L03 信号生成核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-signal\signal-generation-core\blueprint.md` |
+| MOD-AF-001 | 必须 | L02 Alpha 因子核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-SIG-001 | 必须 | L03 信号生成核心 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint ALPHA-SIGNAL-DOMAIN-001` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint alpha_signal_domain-001` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 同上 |
 
 ### 10.3 内部依赖图
@@ -334,7 +334,7 @@ L02 Alpha 因子计算和 L03 信号生成是 ZephyrAlpha 量化策略的核心�
 |----------|---------------|------|
 | L02 因子核心 | `D:\ZephyrAlpha\src\zephyr\factor\` | 因子计算+清洗+存储 |
 | L03 信号核心 | `D:\ZephyrAlpha\src\zephyr\signal\` | 信号合成+评估+发送 |
-| 域集成文档 | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` | 本文件 |
+| 域集成文档 | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` | 本文件 |
 
 ---
 
@@ -377,7 +377,7 @@ L02 Alpha 因子计算和 L03 信号生成是 ZephyrAlpha 量化策略的核心�
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules ALPHA-SIGNAL-DOMAIN-001`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules alpha_signal_domain-001`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -597,7 +597,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | MOD-GOVERNANCE | `D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md` | 域集成模式 | DOM-GOV 定义治理域集成，本蓝图定义因子域集成 |
+| 1 | MOD-GOVERNANCE | `D:\ZephyrAlpha\docs\03_modules\_domain_governance\blueprint.md` | 域集成模式 | DOM-GOV 定义治理域集成，本蓝图定义因子域集成 |
 
 ---
 
@@ -605,7 +605,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 域集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` | 修改 | 本文件 |
+| 1 | 域集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` | 修改 | 本文件 |
 | 2 | L02 因子核心 | `D:\ZephyrAlpha\src\zephyr\factor\` | 读取 | 代码对齐 |
 | 3 | L03 信号核心 | `D:\ZephyrAlpha\src\zephyr\signal\` | 读取 | 代码对齐 |
 

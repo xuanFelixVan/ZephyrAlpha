@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-024
 submodule_path: src/zephyr/governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
@@ -49,7 +49,7 @@ stability: evolving
 
 ## MOD-GOVERNANCE 集成契约锚点
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+> 权威定义见 [`../../_domain_governance/blueprint.md`](../../_domain_governance/blueprint.md) §3。
 
 | 契约 ID | 本模块角色 | 对端模块 |
 |---------|------------|----------|

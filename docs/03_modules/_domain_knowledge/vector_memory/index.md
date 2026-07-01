@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "vector_memory — 目录索引"
@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化 |
-| [index.md](index.md) | Markdown | vector-memory — 目录索引 |
+| [index.md](index.md) | Markdown | vector_memory — 目录索引 |
 
 ## 导航
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-021
 submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
@@ -974,12 +974,12 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
 | MOD-MASTER_BLUEPRINT | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
+| MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
+| MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1073,7 +1073,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\rollback\` | Python 源码（62 .py files）|
 | 测试代码 | `D:\ZephyrAlpha\tests\rollback\` | 测试用例 |
 | SQLite 快照 | `D:\ZephyrAlpha\data\rollback\db_snapshots\` | {commit_sha}.jsonl |
@@ -1604,8 +1604,8 @@ STEP 3: 拆分后验证
 | 2 | resilience/rollback_manager.py | `D:\ZephyrAlpha\src\zephyr\orchestrator\resilience\rollback_manager.py` | 完整 checkpoint/rollback_to 链路 | 旧设计（KBG-0038），仅 DB 恢复无 git-native——**待迁移为 thin shim** |
 | 3 | governance/rollback/contracts.py | `D:\ZephyrAlpha\src\zephyr\governance\rollback\contracts.py` | RollbackHandler 同名 | G-CT-002 契约消费端，非核心引擎——**须重命名** |
 | 4 | governance/rollback/result_types.py | `D:\ZephyrAlpha\src\zephyr\governance\rollback\result_types.py` | RollbackResult 同名 | G-CT-003 数据结构，字段不同——**须重命名** |
-| 5 | feedback-loop/verifiers/auto_rollback.py | `D:\ZephyrAlpha\src\zephyr\feedback-loop\verifiers\auto_rollback.py` | AutoRollback 与 AutoRollbackTrigger 重叠 | **待清理**——应调用 AutoRollbackTrigger |
-| 6 | feedback-loop/verifiers/rollback_integrity.py | `D:\ZephyrAlpha\src\zephyr\feedback-loop\verifiers\rollback_integrity.py` | RollbackIntegrity 与 RollbackVerifier 重叠 | **待清理**——应调用 RollbackVerifier |
+| 5 | feedback_loop/verifiers/auto_rollback.py | `D:\ZephyrAlpha\src\zephyr\feedback_loop\verifiers\auto_rollback.py` | AutoRollback 与 AutoRollbackTrigger 重叠 | **待清理**——应调用 AutoRollbackTrigger |
+| 6 | feedback_loop/verifiers/rollback_integrity.py | `D:\ZephyrAlpha\src\zephyr\feedback_loop\verifiers\rollback_integrity.py` | RollbackIntegrity 与 RollbackVerifier 重叠 | **待清理**——应调用 RollbackVerifier |
 
 ---
 
@@ -1615,7 +1615,7 @@ STEP 3: 拆分后验证
 |---|---------|------------|------|---------|
 | 1 | rollback/ 目录 | `D:\ZephyrAlpha\src\zephyr\rollback\` | 业务代码 | 修改 |
 | 2 | tests/rollback/ | `D:\ZephyrAlpha\tests\rollback\` | 测试代码 | 修改 |
-| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` | 蓝图 | 修改 |
+| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` | 蓝图 | 修改 |
 | 4 | db_snapshots/ | `D:\ZephyrAlpha\data\rollback\db_snapshots\` | 快照存储 | 读取 |
 | 5 | rollback_metrics.db | `D:\ZephyrAlpha\data\rollback\rollback_metrics.db` | 指标存储 | 读取 |
 

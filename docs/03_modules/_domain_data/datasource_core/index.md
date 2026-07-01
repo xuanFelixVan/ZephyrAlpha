@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "datasource_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Data Source Core 蓝图+施工图 — 数据接入层·C轨占位 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | datasource-core — 目录索引 |
+| [index.md](index.md) | Markdown | datasource_core — 目录索引 |
 
 ## 导航
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-001
 submodule_path: src/zephyr/infrastructure/capacity_assurance
 title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断"
@@ -34,7 +34,7 @@ depends_on:
 priority: P0
 runtime_plane: hot
 tags:
- - capacity-assurance
+ - capacity_assurance
  - slo
  - ai-audit-guard
  - contractbus
@@ -85,10 +85,10 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> `actual_disk_path`: `src/zephyr/capacity-assurance/`
+> `actual_disk_path`: `src/zephyr/capacity_assurance/`
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-024`
 
-**核心包（src/zephyr/capacity-assurance/）**
+**核心包（src/zephyr/capacity_assurance/）**
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -99,7 +99,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 | 5 | `risk_mitigation.py` | §14 | R1~R16 全量风险缓解实现 | 已实现 | |
 | 6 | `cross_module_integration.py` | §18 | CT-1~CT-4 跨模块集成契约 | 已实现 | |
 
-**盲点审计模块（src/zephyr/capacity-assurance/modules/）**
+**盲点审计模块（src/zephyr/capacity_assurance/modules/）**
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -242,9 +242,9 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 
 | # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 |
 |---|-------------|---------|---------|---------|------------|
-| 1 | SQLite → PostgreSQL | `src/zephyr/capacity-assurance/` | 同路径，连接层替换 | Phase 3/4，Schema 不变，连接层替换 | 搜索全项目 `sqlite3` 引用并更新 |
+| 1 | SQLite → PostgreSQL | `src/zephyr/capacity_assurance/` | 同路径，连接层替换 | Phase 3/4，Schema 不变，连接层替换 | 搜索全项目 `sqlite3` 引用并更新 |
 | 2 | 本地文件 → 云存储 | `data/` | 云端弹性存储 | Phase 4，`os.replace()` → `cloud_upload()` | 搜索全项目 `os.replace` 引用并更新 |
-| 3 | 单进程 → 多进程 | `src/zephyr/capacity-assurance/` | 同路径，并发层替换 | Phase 3，`ThreadPoolExecutor` → `ProcessPoolExecutor` | 搜索全项目 `ThreadPoolExecutor` 引用并更新 |
+| 3 | 单进程 → 多进程 | `src/zephyr/capacity_assurance/` | 同路径，并发层替换 | Phase 3，`ThreadPoolExecutor` → `ProcessPoolExecutor` | 搜索全项目 `ThreadPoolExecutor` 引用并更新 |
 
 ---
 
@@ -273,7 +273,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 | Owner 容量指示 | "1500 模块极限容量"约束 |
 | Wave 0 终审裁决 5 条 | Claude-Opus-4.7 终审（R-71, R-73, R-75）|
 | ContractBus 现状 | 44 份文件待迁移 |
-| 原始草稿 | ~~`19_development_workspace/drafts-and-audits/vibe-coding-infrastructure/capacity-assurance-construction-plan.md`~~（目录 2026-06-26 退役；现落 `docs/_working/`）|
+| 原始草稿 | ~~`19_development_workspace/drafts-and-audits/vibe-coding-infrastructure/capacity_assurance-construction-plan.md`~~（目录 2026-06-26 退役；现落 `docs/_working/`）|
 
 ---
 
@@ -381,7 +381,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | M-14 | warm_hot_gate.py | Warm→Hot 阻断门 | `src/zephyr/infrastructure/runtime_integration/warm_hot_gate.py` | ❌ 未实现 | Human-Gated |
 | M-15 | pydantic_v2_migrator.py | Pydantic v2 迁移 | `src/zephyr/infrastructure/runtime_integration/pydantic_v2_migrator.py` | ❌ 未实现 | Human-Gated |
 | M-16 | event_bus_upgrade.py | 事件总线升级 | `src/zephyr/shared/events/event_bus_upgrade.py` | ❌ 未实现 | Human-Gated |
-| M-17 | ai_audit_guard.py | AI修改审计守卫 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）+ `src/zephyr/shared/ai_audit_guard.py`（守卫规则引擎待实现） | ⚠️ 部分实现 | Immutable Core |
+| M-17 | ai_audit_guard.py | AI修改审计守卫 | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py`（日志已有）+ `src/zephyr/shared/ai_audit_guard.py`（守卫规则引擎待实现） | ⚠️ 部分实现 | Immutable Core |
 | M-18 | capacity_slo.yaml | 容量SLI/SLO标准 | `config/capacity_slo.yaml` | ⚠️ 首版已落地（MOD-INF-001 M-18，≥8 SLI + arch_guard 阈值；插桩点仍 TBD） | Human-Gated |
 | M-19 | capacity_governance_loop.py | 容量治理闭环 | `src/zephyr/shared/capacity_governance_loop.py` | ❌ 未实现 | AI-Modifiable |
 | M-20 | ttl_cleanup_engine.py | 派生文件TTL清理 | `src/zephyr/shared/ttl_cleanup_engine.py` | ❌ 未实现 | AI-Modifiable |
@@ -402,11 +402,11 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 
 | 已有实现 | 实际路径 | 能力 | 蓝图对应 | 管理方式 |
 |---------|---------|------|---------|---------|
-| Token 预算管理器 | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | 三级阈值 L1/L2/L3 | M-21 的 session 级子集 | 由 context-engine 蓝图管理，本蓝图引用 |
-| 熔断器 | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | 单向熔断 + L08 注册表 | M-13 fault_isolator 的子集 | 由 gate-engine 蓝图管理，本蓝图引用 |
+| Token 预算管理器 | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | 三级阈值 L1/L2/L3 | M-21 的 session 级子集 | 由 context_engine 蓝图管理，本蓝图引用 |
+| 熔断器 | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | 单向熔断 + L08 注册表 | M-13 fault_isolator 的子集 | 由 gate_engine 蓝图管理，本蓝图引用 |
 | Agent SLO 监控 | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | 5 项 SLO + 三态健康 | M-18 capacity_slo.yaml 的 Agent 维度 | 由 orchestrator 蓝图管理，本蓝图引用 |
-| MCP 工具限流 | `src/zephyr/mcp/tool-contracts.yaml` | 声明式 rate_limit_qps | M-21 的 MCP 层子集 | 由 mcp-servers 蓝图管理，本蓝图引用 |
-| 上下文规则 | `config/context-rules.yaml` | 15 条上下文管理规则 | M-18 的上下文维度 | 由 context-engine 蓝图管理，本蓝图引用 |
+| MCP 工具限流 | `src/zephyr/mcp/tool-contracts.yaml` | 声明式 rate_limit_qps | M-21 的 MCP 层子集 | 由 mcp_servers 蓝图管理，本蓝图引用 |
+| 上下文规则 | `config/context-rules.yaml` | 15 条上下文管理规则 | M-18 的上下文维度 | 由 context_engine 蓝图管理，本蓝图引用 |
 | 基础设施登记表 | `_registry/catalogs/infrastructure-registry.md` | 8 个组件 SLA | M-18 的基础设施维度 | 由 registry 管理，本蓝图引用 |
 | AI 风险登记表 | `_registry/catalogs/ai-risk-registry.md` | 8 项 AI 风险 | M-17 的风险维度 | 由 registry 管理，本蓝图引用 |
 
@@ -680,8 +680,8 @@ class CostEstimator:
 
 ### 9.3 与已有实现的关系
 
-- `context_budget_tracker.py`（L1/L2/L3 三级阈值）→ Level 2 的 session 级实现，由 context-engine 管理
-- `tool_contracts.yaml`（rate_limit_qps）→ Level 1 的 MCP 工具维度，由 mcp-servers 管理
+- `context_budget_tracker.py`（L1/L2/L3 三级阈值）→ Level 2 的 session 级实现，由 context_engine 管理
+- `tool_contracts.yaml`（rate_limit_qps）→ Level 1 的 MCP 工具维度，由 mcp_servers 管理
 - 本蓝图 M-21 新增 Level 3/4 的 org/global 级限流 + Pre-flight Estimation
 
 ---
@@ -778,7 +778,7 @@ Agent 推理步骤追踪，遵循 OTel GenAI Span 定义：
 ```python
 from opentelemetry import trace
 
-tracer = trace.get_tracer("zephyr.capacity-assurance")
+tracer = trace.get_tracer("zephyr.capacity_assurance")
 
 async def trace_reasoning(agent_name: str, task: str, steps: list[str]):
  with tracer.start_as_current_span("agent.reasoning") as span:
@@ -914,10 +914,10 @@ slo_registry:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-016 | 必须 | Shared Core 基础设施依赖 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-INF-015 | 必须 | 系统遥测消费容量指标 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-RESOURCE_OPTIMIZATION_ENGINE | 必须 | 预算执行器消费预算策略 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-executor\blueprint.md` |
-| MOD-INF-021 | 可选 | Kill Switch re-export wrapper | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\kill-switch\blueprint.md` |
+| MOD-INF-016 | 必须 | Shared Core 基础设施依赖 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
+| MOD-INF-015 | 必须 | 系统遥测消费容量指标 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-RESOURCE_OPTIMIZATION_ENGINE | 必须 | 预算执行器消费预算策略 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-executor\blueprint.md` |
+| MOD-INF-021 | 可选 | Kill Switch re-export wrapper | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\kill-switch\blueprint.md` |
 | ai_autonomy_authority_registry.yaml | 必须 | 新组件权限的单一真源 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` |
 | infrastructure-registry.md | 可选 | 基础设施组件 SLA 声明 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` |
 | ai-risk-registry.md | 可选 | AI 操作风险登记 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-risk-registry.md` |
@@ -1222,9 +1222,9 @@ def on_agent_health_changed(event: AgentHealthEvent):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\capacity-assurance\` | 容量保障源码 |
-| 施工文档 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\delivery\` | 施工记录 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\capacity_assurance\` | 容量保障源码 |
+| 施工文档 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\delivery\` | 施工记录 |
 
 ---
 
@@ -1244,7 +1244,7 @@ def on_agent_health_changed(event: AgentHealthEvent):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
-| 2 | Budget Enforcer 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` | 容量预算联动 | 容量保障实现后更新 |
+| 2 | Budget Enforcer 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` | 容量预算联动 | 容量保障实现后更新 |
 
 ---
 
@@ -1396,7 +1396,7 @@ STEP 3: 拆分后验证
 
 | # | 范围 | 路径 |
 |---|------|------|
-| 1 | 源码 | `src/zephyr/capacity-assurance/` + `src/zephyr/shared/`（容量相关模块） |
+| 1 | 源码 | `src/zephyr/capacity_assurance/` + `src/zephyr/shared/`（容量相关模块） |
 | 2 | 配置 | `config/*.yaml` |
 | 3 | 治理脚本 | `scripts/governance/`（容量相关检查脚本） |
 
@@ -1451,7 +1451,7 @@ STEP 3: 拆分后验证
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-015 系统遥测蓝图 | §4 接口契约、§10 依赖关系 |
 | Tier 1 | MOD-RESOURCE_OPTIMIZATION_ENGINE 预算执行器蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 2 | `D:\ZephyrAlpha\src\zephyr\capacity-assurance\` | §4 数据模型、§11 产出物路径 |
+| Tier 2 | `D:\ZephyrAlpha\src\zephyr\capacity_assurance\` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 
@@ -1630,7 +1630,7 @@ STEP 3: 拆分后验证
 | M-14 | warm_hot_gate.py | ❌ 未实现 | — | — | — |
 | M-15 | pydantic_v2_migrator.py | ❌ 未实现 | — | — | — |
 | M-16 | event_bus_upgrade.py | ❌ 未实现 | — | — | — |
-| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py`（日志已有）| `tests/test_ai_behavior_audit_logger.py` | — |
+| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py`（日志已有）| `tests/test_ai_behavior_audit_logger.py` | — |
 | M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity_slo.yaml` | `scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py` | arch_guard |
 | M-19 | capacity_governance_loop.py | ❌ 未实现 | — | — | — |
 | M-20 | ttl_cleanup_engine.py | ❌ 未实现 | — | — | — |
@@ -1646,17 +1646,17 @@ STEP 3: 拆分后验证
 
 | 能力 | 源码路径 | 测试路径 | 配置路径 | 归属蓝图 |
 |------|---------|---------|---------|---------|
-| Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context-engine |
-| 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/test_doc_compressor.py` | — | context-engine |
-| 熔断器（CBGManager + L08 注册表） | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate-engine |
+| Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context_engine |
+| 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/test_doc_compressor.py` | — | context_engine |
+| 熔断器（CBGManager + L08 注册表） | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate_engine |
 | Agent SLO 监控（5 项 SLO + 三态健康） | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | `tests/test_agent_health_monitor.py` | — | orchestrator |
-| AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py` | `tests/test_ai_behavior_audit_logger.py` | — | llm-security |
-| 输入消毒器（InputSanitizer） | `src/zephyr/security/llm_defense/llm-security/input_sanitizer.py` | — | — | llm-security |
-| 任务反馈收集器 | `src/zephyr/observability/feedback-loop/feedback_collector.py` | `tests/test_feedback_collector.py` | — | feedback-loop |
+| AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | `tests/test_ai_behavior_audit_logger.py` | — | llm_security |
+| 输入消毒器（InputSanitizer） | `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | — | — | llm_security |
+| 任务反馈收集器 | `src/zephyr/observability/feedback_loop/feedback_collector.py` | `tests/test_feedback_collector.py` | — | feedback_loop |
 | 原子事务管理器（ATM） | `src/zephyr/data/persistence/atomic_transaction_manager.py` | `tests/test_atomic_transaction_manager.py` | — | database |
 | SQLite Schema DDL + init_db | `src/zephyr/data/persistence/sqlite_schema.py` | — | — | database |
-| MCP 工具限流（声明式 rate_limit_qps） | `src/zephyr/mcp/tool-contracts.yaml` | — | — | mcp-servers |
-| L12 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics/__init__.py` | — | — | system-telemetry |
+| MCP 工具限流（声明式 rate_limit_qps） | `src/zephyr/mcp/tool-contracts.yaml` | — | — | mcp_servers |
+| L12 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/metrics/__init__.py` | — | — | system_telemetry |
 
 ### 19.3 治理脚本（已实现）
 
@@ -1678,7 +1678,7 @@ STEP 3: 拆分后验证
 |-----------|---------|------|------------|
 | infrastructure-registry.md | `docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md` | 8 个基础设施组件 SLA 声明 | M-18（基础设施维度） |
 | ai-risk-registry.md | `docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md` | 8 项 AI 操作风险登记 | M-17（风险维度） |
-| cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime-integration → capacity-assurance） | 全局引用 |
+| cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime_integration → capacity_assurance） | 全局引用 |
 | module-registry.yaml | `docs/03_modules/module-registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
 | blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
 | domain_events.yaml | `architecture_model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
@@ -1687,10 +1687,10 @@ STEP 3: 拆分后验证
 
 | 文件 | 完整路径 | 说明 |
 |------|---------|------|
-| 蓝图本体 | `docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md` | 本文件（唯一真源） |
-| 目录索引 | `docs/03_modules/_domain-infra_ops/capacity-assurance/index.md` | 模块目录索引 |
-| 历史施工图 | `docs/03_modules/_domain-infra_ops/capacity-assurance/delivery/construction-plan-v3.1-archived.md` | 已归档，内容已合并至蓝图 |
-| delivery 索引 | `docs/03_modules/_domain-infra_ops/capacity-assurance/delivery/index.md` | delivery 目录索引 |
+| 蓝图本体 | `docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md` | 本文件（唯一真源） |
+| 目录索引 | `docs/03_modules/_domain_infra_ops/capacity_assurance/index.md` | 模块目录索引 |
+| 历史施工图 | `docs/03_modules/_domain_infra_ops/capacity_assurance/delivery/construction-plan-v3.1-archived.md` | 已归档，内容已合并至蓝图 |
+| delivery 索引 | `docs/03_modules/_domain_infra_ops/capacity_assurance/delivery/index.md` | delivery 目录索引 |
 
 ### 19.7 路径索引使用指南
 
@@ -2527,7 +2527,7 @@ context_budget_watermark:
  description: "每次 AI session 启动注入的上下文 token 数"
  target: 32000
  instrumentation:
- hook_point: "context-engine.ContextInjector.inject.exit"
+ hook_point: "context_engine.ContextInjector.inject.exit"
  measurement: "token_counter on assembled context string"
  aggregation: "p50 + p99"
  degradation_alert: "p50 > 40000 for 3 consecutive sessions"
@@ -3144,8 +3144,8 @@ class CapacityAwareMiddleware:
 | 模块ID | 模块名称 | 职责 | 预期路径 | AI自治权限 |
 |--------|---------|------|---------|-----------|
 | M-28 | change_rate_limiter.py | 渐进式施工节奏控制 + Burst 检测（§20 #11 + §20.3 #15） | src/zephyr/shared/change_rate_limiter.py（📋规划路径，待创建） | Human-Gated（策略）/ AI-Modifiable（执行） |
-| M-29 | degradation_spiral_detector.py | 退化螺旋检测 + 自动暂停（§21.1 #19） | src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/degradation_spiral_detector.py（📋规划路径，待创建） | AI-Modifiable |
-| M-30 | token_value_attribution.py | Token 消耗价值归因 + ROI 报告（§21.4 #24） | src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/token_value_attribution.py（📋规划路径，待创建） | AI-Modifiable |
+| M-29 | degradation_spiral_detector.py | 退化螺旋检测 + 自动暂停（§21.1 #19） | src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/degradation_spiral_detector.py（📋规划路径，待创建） | AI-Modifiable |
+| M-30 | token_value_attribution.py | Token 消耗价值归因 + ROI 报告（§21.4 #24） | src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/token_value_attribution.py（📋规划路径，待创建） | AI-Modifiable |
 
 > **M-28~M-30 不应纳入蓝图 §6 的模块分解表**——它们是对已有模块（M-21 error_budget_tracker / M-07 event_bus背压 / M-26 cost_estimator）的横向增强，职责重合度较高。建议在对应模块施工时内联实现，而非独立建模块。
 
@@ -5040,8 +5040,8 @@ class CoreIntegrityGuard:
  Path("src/zephyr/shared/error_budget_tracker.py"),
  Path("src/zephyr/governance/rule_enforcement/circuit_breaker.py"),
  Path("src/zephyr/orchestration/runtime_core/orchestrator/token_budget_tracker.py"),
- Path("src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/graceful_shutdown.py"),
- Path("src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/startup_guard.py"),
+ Path("src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/graceful_shutdown.py"),
+ Path("src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/startup_guard.py"),
  ]
 
  # 核心文件的已知安全哈希——系统启动时和每天校验

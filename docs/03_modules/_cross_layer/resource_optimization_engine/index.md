@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "resource_optimization_engine — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | 资源优化引擎蓝图 |
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
-| [index.md](index.md) | Markdown | resource-optimization-engine — 目录索引 |
+| [index.md](index.md) | Markdown | resource_optimization_engine — 目录索引 |
 
 ## 导航
 

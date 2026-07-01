@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-009
 submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
@@ -412,12 +412,12 @@ class ArtifactClassification(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-TASK_SYSTEM | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task_system\blueprint.md` |
-| MOD-INF-003 | 必须 | Orc.create_task() → Pipeline.dispatch() | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\orchestrator\blueprint.md` |
-| MOD-INF-016 | 必须 | LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared_infrastructure\blueprint.md` |
-| MOD-LLM_SECURITY | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm_security_gateway\blueprint.md` |
-| MOD-GATE_ENGINE | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate_engine\blueprint.md` |
-| MOD-DATABASE | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\deferred_queue\blueprint.md` |
+| MOD-TASK_SYSTEM | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
+| MOD-INF-003 | 必须 | Orc.create_task() → Pipeline.dispatch() | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\orchestrator\blueprint.md` |
+| MOD-INF-016 | 必须 | LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_infrastructure\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\llm_security_gateway\blueprint.md` |
+| MOD-GATE_ENGINE | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-DATABASE | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\deferred_queue\blueprint.md` |
 | GOV-AI-002 | 必须 | 模型路由策略决策树 | v2.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\ai-model-routing-policy.md` |
 
 ### 10.2 依赖图对齐声明
@@ -720,7 +720,7 @@ class ArtifactClassification(str, Enum):
 | 节点 | 职责 | 模型 | Sandbox | Gate |
 |:---:|------|------|:---:|:---:|
 | **M1** | 任务卡解析→结构化执行计划 | DeepSeek V4 Pro | full | full_g0_g7 |
-| **M2** | 上下文装配→调用 context-engine | DeepSeek V4 Pro | standard | pre_commit_only |
+| **M2** | 上下文装配→调用 context_engine | DeepSeek V4 Pro | standard | pre_commit_only |
 | **M3** | 代码/文档生成——核心生产 | DeepSeek V4 Pro | full | full_g0_g7 |
 | **M4** | 格式校验 | DeepSeek V4 Pro | standard | pre_commit_only |
 | **M5** | 产物打包 | GLM-5.1 | standard | post_exec_only |

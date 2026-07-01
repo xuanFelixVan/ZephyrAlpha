@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
@@ -577,13 +577,13 @@ class BaselineSnapshot(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-021 Rollback | 必须 | 漂移→回滚桥接(G-CT-005) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-022 Escalation | 必须 | 漂移预算耗尽升级(G-CT-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-020 Audit Trail | 必须 | 漂移事件审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-018 Agent RBAC | 必须 | 检测器权限控制 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-INF-016 Shared | 必须 | AiAuditLogger + AbstractLock | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-DATABASE DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\db\blueprint.md` |
+| MOD-INF-021 Rollback | 必须 | 漂移→回滚桥接(G-CT-005) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-022 Escalation | 必须 | 漂移预算耗尽升级(G-CT-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| MOD-INF-020 Audit Trail | 必须 | 漂移事件审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 必须 | 检测器权限控制 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-INF-016 Shared | 必须 | AiAuditLogger + AbstractLock | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-DATABASE DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\db\blueprint.md` |
 
 ### 10.5 概念重叠声明
 
@@ -664,7 +664,7 @@ class BaselineSnapshot(BaseModel):
 | 023→022→018 | 3 | 低 | escalation 有独立权限检查 |
 | 023→020→012 | 3 | 中 | audit 有独立写入通道 |
 | 023→007→012 | 3 | 低 | gate 有缓存 + 降级为默认放行 |
-| 023→016→012 | 3 | 低 | shared-core 有本地 fallback |
+| 023→016→012 | 3 | 低 | shared_core 有本地 fallback |
 | 023↔020 (peer) | 2 | 中 | 状态机守卫防无限循环 |
 | 023→021→020→023 (三角) | 3 | 高 | append-only + 状态守卫 + 30min TTL |
 

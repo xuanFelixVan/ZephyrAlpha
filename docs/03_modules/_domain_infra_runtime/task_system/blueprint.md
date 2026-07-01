@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-TASK_SYSTEM
 title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint
@@ -35,7 +35,7 @@ ttl: permanent
 construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "Task System 全链路蓝图 v0.9.1。覆盖意图→草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的闭环工作流。TaskCard 62字段（31基座+31执行层）。v0.9.1 回填OCP扩展点+施工步骤内容变更+依赖对齐+规格化压缩。"
-tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, anti-drift, blind-spot-audit, dogfooding, ai-autonomy, circuit-breaker, diff-plan, saga-compensation, quality-regression-detection, model-snapshot-pinning, schema-migration, cancel-safety, atomic-write, adaptive-replanning, scope-creep-detection, context-cache-reuse]
+tags: [task_system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, anti-drift, blind-spot-audit, dogfooding, ai-autonomy, circuit-breaker, diff-plan, saga-compensation, quality-regression-detection, model-snapshot-pinning, schema-migration, cancel-safety, atomic-write, adaptive-replanning, scope-creep-detection, context-cache-reuse]
 depends_on:
   - {target: PS-STD-001, at: "§7.10", why: "task_id；§7.1 语义28+§7.1.1 追踪3→Task共31字段"}
   - {target: PS-STD-011, at: "MTH-012|MTH-013", why: "涌现式设计+路径合规创建"}
@@ -243,7 +243,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | 17 | ❌排除 | Task 模型基座（Pydantic V2 31字段） | `shared/schemas.py`（`src/zephyr/shared/`）— metadata_registry.yaml §7 真源 |
 | 18 | ❌排除 | MCP Server Web 层 | `task_manager_server.py`（`src/zephyr/mcp/`） |
 | 19 | ❌排除 | 审计脚本 | MOD-INF-005 — 已有 9+ 脚本 |
-| 20 | ❌排除 | context-engine | `context_engine/` — 已有 7 模块 |
+| 20 | ❌排除 | context_engine | `context_engine/` — 已有 7 模块 |
 | 21 | ❌排除 | dashboard | `dashboard/` — 已有代码 |
 | 22 | ❌排除 | 模型注册表完整建设 | 独立小任务——model-registry.yaml 另排 |
 | 23 | ❌排除 | 全功能看板 UI | 排除——CLI 摘要视图替代 |
@@ -636,8 +636,8 @@ class TaskLifecycleManager:
 | GOV-TASK-001 | 必须 | 任务卡操作指南 | ≥3.0.0 | `docs/01_policies_and_standards/governance/task/task-card-standard.md` |
 | GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` |
 | GOV-TASK-005 | 必须 | 关闭三步法 | ≥1.1.0 | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` |
-| MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain-infra_ops/script_system/blueprint.md` |
-| MOD-GATE_ENGINE | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate-engine/blueprint.md` |
+| MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain_infra_ops/script_system/blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate_engine/blueprint.md` |
 | MOD-INF-009 | 必须 | 管线调度 SSoT——任务管线 M1-M11 双管线路由 + Fast/Batch双通道 | ≥2.0.0 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
 | shared/schemas.py | 必须 | Task 31 字段 TaskCard 基座 | 现有代码 | `src/zephyr/shared/schemas.py` |
 | task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N + BatchCoordination | 现有代码 | `src/zephyr/governance/task_repo.py` |
@@ -721,7 +721,7 @@ class TaskLifecycleManager:
 
 | 产出物类型 | 存放完整路径（相对优先） | consumer_min | 说明 |
 |----------|---------------|:---:|------|
-| 蓝图文件 | `docs/03_modules/_domain-infra_ops/task-system/blueprint.md` | 0 | 本文件 |
+| 蓝图文件 | `docs/03_modules/_domain_infra_ops/task_system/blueprint.md` | 0 | 本文件 |
 | 业务代码 | `src/zephyr/governance/task_repo.py` | 1 | TaskSystem 包 |
 | 业务代码 | `src/zephyr/trading/orchestrator/` | 1 | 管线调度器 |
 | 业务代码 | `src/zephyr/shared/shared_services/models.py` | 1 | TaskCard 模型 |
@@ -751,7 +751,7 @@ class TaskLifecycleManager:
 | task_repo.py（状态机） | TaskLifecycleManager → task_repo.update_status() | `transition() → self.repo.update_status()` | events 表新增事件 |
 | 脚本系统（MOD-INF-005） | B区完成→事件触发 C区 | `execute_pipeline(B) → audit_batch()` | B区后检查 Finding |
 | MCP Server | 新增 decompose_blueprint 等 5 Tool | `task_manager_server.py` | ListTools 确认 |
-| context-engine | G3→触发装配 | `transition(IN_PROGRESS) → assemble()` | 检查上下文 |
+| context_engine | G3→触发装配 | `transition(IN_PROGRESS) → assemble()` | 检查上下文 |
 
 ---
 
@@ -909,12 +909,12 @@ class TaskLifecycleManager:
 | 检查点 | MCP Server 初始化 SQLite 连接成功 + 5 Tool 注册完成 |
 | G7 检查项 | 数据层真源正确？Tool 签名对齐？ |
 
-#### 步骤 6：补齐 context-engine + 确认 M1-M11
+#### 步骤 6：补齐 context_engine + 确认 M1-M11
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1.3 |
-| 产出位置 | `src/zephyr/context-engine/` / `src/zephyr/pipeline/` |
+| 产出位置 | `src/zephyr/context_engine/` / `src/zephyr/pipeline/` |
 | 验收标准 | ① G3 门禁可用；② M1-M11 模块引用对齐执行层字段 |
 | AI 自治范围 | ai_modifiable |
 | 验证命令 | `python -m pytest tests/test_pipeline_orchestrator.py -x` |
@@ -926,7 +926,7 @@ class TaskLifecycleManager:
 | 模块 | 管线 | 职责 | 模型 |
 |------|:---:|------|:---:|
 | M1 | A区 | 任务卡解析→结构化执行计划 | DeepSeek V4 Pro |
-| M2 | A区 | 上下文装配→调用 context-engine | DeepSeek V4 Pro |
+| M2 | A区 | 上下文装配→调用 context_engine | DeepSeek V4 Pro |
 | M3 | A区 | 代码/文档生成——核心生产 | DeepSeek V4 Pro |
 | M4 | A区 | 格式校验 | DeepSeek V4 Pro |
 | M5 | A区 | 产物打包 | GLM |
@@ -959,7 +959,7 @@ class TaskLifecycleManager:
 | 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | ☐ | ☐ | ☐ |
 | 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ☐ | ☐ | ☐ |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | ☐ | ☐ | ☐ |
-| 6 | context-engine + M1-M11 | `src/zephyr/context-engine/` + `pipeline/` | ☐ | ☐ | ☐ |
+| 6 | context_engine + M1-M11 | `src/zephyr/context_engine/` + `pipeline/` | ☐ | ☐ | ☐ |
 
 
 | # | 检查项 | 通过标准 | 验证方式 | 不通过处置 |
@@ -1332,8 +1332,8 @@ STEP 3: 拆分后验证
 
 | # | 待删除/废弃文件 | 完整路径（相对优先） | 删除类型 | 接收文件 | 安全删除方案 |
 |---|---------------|------------|---------|---------|------------|
-| 1 | MOD-INF-003 任务卡KMS蓝图 | `docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
-| 2 | MOD-INF-004 双管线蓝图 | `docs/03_modules/_domain-infra_ops/vibe-coding-pipelines/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
+| 1 | MOD-INF-003 任务卡KMS蓝图 | `docs/03_modules/_domain_infra_ops/task-card-kms/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
+| 2 | MOD-INF-004 双管线蓝图 | `docs/03_modules/_domain_infra_ops/vibe-coding-pipelines/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
 | 3 | v0.2.0 TaskCard 模型 | `src/zephyr/shared/shared_services/models.py` | 覆盖型 | v0.3.0 TaskCard | 重写对齐新契约 |
 
 ### 删除铁律
@@ -1357,7 +1357,7 @@ STEP 3: 拆分后验证
 | 1 | 元数据注册表 | PS-STD-001 | 2.0.0+ | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | §7——task_id/语义28/追踪3/Task共31/状态机 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | 2.6.0+ | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
-| 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain-infra_ops/script_system/blueprint.md` | 审计消费方 |
+| 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain_infra_ops/script_system/blueprint.md` | 审计消费方 |
 | 5 | 任务卡操作指南 | GOV-TASK-001 | 3.0.0+ | `docs/01_policies_and_standards/governance/task/task-card-standard.md` | 正文结构与门禁速查 |
 | 6 | 任务生命周期标准 | GOV-TASK-004 | 2.0.0+ | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` | 取消权限、优先级裁决 |
 | 7 | 任务关闭标准 | GOV-TASK-005 | 1.1.0+ | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` | 关闭三步法 |
@@ -1377,8 +1377,8 @@ STEP 3: 拆分后验证
 
 | # | 已有模块/文件 | 完整路径（相对优先） | 功能重叠点 | 为什么不能复用 |
 |---|-------------|------------|----------|-------------|
-| 1 | MOD-INF-003（旧蓝图层） | `docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md` | 任务卡制度+KMS体系 | deprecated——已被本蓝图合并 |
-| 2 | MOD-INF-004（旧双管线） | `docs/03_modules/_domain-infra_ops/vibe-coding-pipelines/blueprint.md` | 双管线流程+M模块 | deprecated——已被本蓝图合并 |
+| 1 | MOD-INF-003（旧蓝图层） | `docs/03_modules/_domain_infra_ops/task-card-kms/blueprint.md` | 任务卡制度+KMS体系 | deprecated——已被本蓝图合并 |
+| 2 | MOD-INF-004（旧双管线） | `docs/03_modules/_domain_infra_ops/vibe-coding-pipelines/blueprint.md` | 双管线流程+M模块 | deprecated——已被本蓝图合并 |
 | 3 | Task 模型（shared/schemas.py） | `src/zephyr/shared/schemas.py` | 语义28+追踪3=31 字段 | ✅ 可复用——本蓝图 TaskCard 继承此模型 |
 | 4 | task_repo.py（SQLite CRUD） | `src/zephyr/governance/task_repo.py` | 创建/查询/更新/删除/状态转换 | ✅ 可复用——本蓝图数据层使用此代码 |
 
@@ -1390,8 +1390,8 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整路径（相对优先） | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 本蓝图 | `docs/03_modules/_domain-infra_ops/task-system/blueprint.md` | 真源 | 重写 v0.9.4 |
-| 2 | Change Folder | `docs/03_modules/_domain-infra_ops/task-system/changes/` | 新建 | 存放任务卡 .md 文件 |
+| 1 | 本蓝图 | `docs/03_modules/_domain_infra_ops/task_system/blueprint.md` | 真源 | 重写 v0.9.4 |
+| 2 | Change Folder | `docs/03_modules/_domain_infra_ops/task_system/changes/` | 新建 | 存放任务卡 .md 文件 |
 | 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-TASK_SYSTEM 条目 |
 | 4 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 依赖 | TaskCard 继承其 Task 类 |
 | 5 | task_repo.py | `src/zephyr/governance/task_repo.py` | 依赖 | 数据层真源 |
@@ -1419,7 +1419,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/shared_services/blueprint_code_sync.py` | ✅ 已实现 | |
 | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/compensation/saga_compensator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/context-engine.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/shared_services/context_engine.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/dependency/dependency-graph.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/draft/draft_assistant.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/events/event_bus.py` | ✅ 已实现 | |

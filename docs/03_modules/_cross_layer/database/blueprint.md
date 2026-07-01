@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SH-DB-001
 submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位"
@@ -33,7 +33,7 @@ child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub_blueprints/（012A 无独立蓝图文件，代码清单见本文档 §1.1）"}
   - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "completed", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
 depends_on:
-  - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
+  - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task_system——TaskCard数据层真源"}
   - {target: "MOD-GATE_ENGINE", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
   - {target: "architecture_model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——本蓝图真源"}
 references:
@@ -185,8 +185,8 @@ Schema 版本：`MARKET_SCHEMA_VERSION = "1.0.0"`（每次 DDL 变更递增，�
 ### 数据流概览
 
 ```
-MOD-TASK_SYSTEM (task-system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-FEEDBACK_LOOP (FLE)
-MOD-GATE_ENGINE (gate-engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
+MOD-TASK_SYSTEM (task_system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-FEEDBACK_LOOP (FLE)
+MOD-GATE_ENGINE (gate_engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
 v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph (PostgreSQL)──→ script_executions 表（暂缓，待 M-1 级）
                             └─→ get_db_connection() ──→ SQLite（governance.db，治理/任务卡）
 注: DualDBRouter 已裁定删除（P2 迁移完成，过渡期前提消失）；WriteBatcher 暂缓（待 L 级 5000+脚本）

@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "experiment_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Experimentation Core 蓝图+施工图 — 实验管理平台 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | experiment-core — 目录索引 |
+| [index.md](index.md) | Markdown | experiment_core — 目录索引 |
 
 ## 导航
 

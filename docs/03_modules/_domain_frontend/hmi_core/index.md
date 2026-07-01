@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "hmi_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工） |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | hmi-core — 目录索引 |
+| [index.md](index.md) | Markdown | hmi_core — 目录索引 |
 
 ## 导航
 

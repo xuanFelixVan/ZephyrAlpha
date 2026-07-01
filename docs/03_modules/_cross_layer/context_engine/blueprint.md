@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-CONTEXT_ENGINE
 submodule_path: src/zephyr/intelligence/context_management
 title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
@@ -28,7 +28,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 summary: Context Engine 集成索引蓝图——拆分为 Core Pipeline (MOD-INF-008A, 40文件) + Governance & Operations (MOD-INF-008B, 47文件)。87个 .py 文件全部已实现。
-tags: [context-engine, ce, context-injection, rag, token-budget, build-compress-validate-inject, infrastructure, capacity-planning, governance, operations]
+tags: [context_engine, ce, context-injection, rag, token-budget, build-compress-validate-inject, infrastructure, capacity-planning, governance, operations]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -96,10 +96,10 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|---------|---------|---------|
-| MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain-infra_ops/vector-memory/blueprint.md` |
-| MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task-system/blueprint.md` |
-| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/llm-security/blueprint.md` |
-| MOD-KB-001 | 必须 | 知识库检索源 | `docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md` |
+| MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain_infra_ops/vector_memory/blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task_system/blueprint.md` |
+| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/llm_security/blueprint.md` |
+| MOD-KB-001 | 必须 | 知识库检索源 | `docs/03_modules/_domain_infra_ops/knowledge_base/blueprint.md` |
 | MOD-INF-035 AutoRuntime Core | 可选 | 运行时调度 | `docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md` |
 
 ## 消费者注册表
@@ -132,19 +132,19 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` | 本文件 |
-| 008A 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\sub-blueprints\MOD-INF-008A-blueprint.md` | Core Pipeline |
-| 008B 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\sub-blueprints\MOD-INF-008B-blueprint.md` | Governance & Operations |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\context-engine\` | 87 个 .py 文件 |
-| 测试代码 | `D:\ZephyrAlpha\tests\context-engine\` | CE 测试用例 |
+| 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` | 本文件 |
+| 008A 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\sub-blueprints\MOD-INF-008A-blueprint.md` | Core Pipeline |
+| 008B 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\sub-blueprints\MOD-INF-008B-blueprint.md` | Governance & Operations |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\context_engine\` | 87 个 .py 文件 |
+| 测试代码 | `D:\ZephyrAlpha\tests\context_engine\` | CE 测试用例 |
 
 ## 必备链接
 
 | 资源 | 路径 |
 |------|------|
 | CE YAML SSoT | [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml) |
-| 代码落位 | `src/zephyr/context-engine/` |
-| 总蓝图 | [MASTER-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) |
+| 代码落位 | `src/zephyr/context_engine/` |
+| 总蓝图 | [MASTER-001](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md) |
 | VMS 蓝图 | MOD-INF-011 |
 | LSG 蓝图 | MOD-LLM_SECURITY |
 | Orchestrator 蓝图 | MOD-TASK_SYSTEM |
@@ -182,7 +182,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 |---------|:---:|------|
 | `src/zephyr/orchestration/context_management/adversarial_robustness.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/alignment_scorer.py` | ✅ 已实现 | |
-| `src/zephyr/context-engine/architecture-context.json` | ✅ 已实现 | |
+| `src/zephyr/context_engine/architecture-context.json` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/architecture_context_loader.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/assembly/context_assembler.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/assembly/context_injector.py` | ✅ 已实现 | |
@@ -198,8 +198,8 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `src/zephyr/orchestration/context_management/citation_walker.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/cold_start_booster.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/complexity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/context-engine/config/compression_policy.yaml` | ✅ 已实现 | |
-| `src/zephyr/context-engine/config/context-rules.yaml` | ✅ 已实现 | |
+| `src/zephyr/context_engine/config/compression_policy.yaml` | ✅ 已实现 | |
+| `src/zephyr/context_engine/config/context-rules.yaml` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/config_safety_guard.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/context_assembler.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/context_budget.py` | ✅ 已实现 | |
@@ -251,7 +251,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `src/zephyr/orchestration/context_management/progressive_disclosure_injector.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/prompt_registry.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/rational.py` | ✅ 已实现 | |
-| `src/zephyr/context-engine/risk-register.yaml` | ✅ 已实现 | |
+| `src/zephyr/context_engine/risk-register.yaml` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/self_diagnosis.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/sensitivity_classifier.py` | ✅ 已实现 | |
 | `src/zephyr/orchestration/context_management/session_learner.py` | ✅ 已实现 | |

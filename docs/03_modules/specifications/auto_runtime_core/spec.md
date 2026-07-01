@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-SPEC-002
 title: "AutoRuntime Core — 三层运行时运营中心（系统大脑）"
 doc_type: architecture_view
@@ -955,7 +955,7 @@ src/zephyr/runtime/
 ├── integration_registry.py        # 集成注册表：全系统接入点清单
 ├── health-monitor.py              # 健康监控 + 自愈（含水平触发调和）
 ├── runtime_config.py              # 配置模型
-├── feedback-loop.py               # 反馈闭环：登记表裁定→规则进化
+├── feedback_loop.py               # 反馈闭环：登记表裁定→规则进化
 ├── dream_cycle.py                 # 知识固化：归档→提取→遗忘→索引
 ├── stop_gate.py                   # 质量闸门：AI 不能空转退出
 ├── finalizer.py                   # 优雅清理：关闭前持久化+备份+commit
@@ -985,7 +985,7 @@ data/
     ├── daily-code-dedup.yaml
     ├── daily-kb-maintenance.yaml
     ├── daily-compliance.yaml
-    ├── daily-feedback-loop.yaml
+    ├── daily-feedback_loop.yaml
     ├── pipeline-full-run.yaml
     ├── kb-ingest-pipeline.yaml
     ├── security-scan.yaml

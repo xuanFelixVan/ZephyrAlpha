@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-016
 submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
@@ -440,7 +440,7 @@ depends_on:
 | `src/zephyr/infrastructure/shared_services/models.py` | ✅ 已实现 | v0.3.0 — 继承Task 31字段全链路贯通 |
 | `src/zephyr/infrastructure/shared_services/__init__.py` | ✅ 已实现 | 包初始化 |
 | `src/zephyr/infrastructure/shared_services/blueprint_code_sync.py` | ✅ 已实现 | 蓝图-代码同步 |
-| `src/zephyr/infrastructure/shared_services/context-engine.py` | ✅ 已实现 | 上下文引擎 |
+| `src/zephyr/infrastructure/shared_services/context_engine.py` | ✅ 已实现 | 上下文引擎 |
 | `src/zephyr/infrastructure/shared_services/healthcheck_service.py` | ✅ 已实现 | 健康检查服务 |
 | `src/zephyr/infrastructure/shared_services/session_continuity.py` | ✅ 已实现 | 会话连续性（根目录副本） |
 | `src/zephyr/shared/tracing.py` | ✅ 已实现 | Phase 6 新增：OpenTelemetry 兼容 tracing context |
@@ -594,7 +594,7 @@ depends_on:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` | 本文件 |
 | Shared 代码 | `D:\ZephyrAlpha\src\zephyr\shared\` | 跨层共享模型/工具 |
 | Core 代码 | `D:\ZephyrAlpha\src\zephyr\core\` | 核心基础设施 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_shared.py` + `test_core.py` | 单元测试 |
@@ -947,14 +947,14 @@ depends_on:
 | **原因** | ① 持久化版在 `gates/circuit_breaker.py`——SQLite + 门禁集成。两版分工：shared 版给 AI agent 内部重试（零依赖、快速恢复），gates 版给生产请求门禁（持久化、可审计）② 纯内存避免依赖 SQLite——shared 是最底层，不应有 DB 依赖 ③ 熔断状态半衰期短（30s）——持久化收益低 |
 | **代价** | 进程重启 → 熔断状态丢失 → burst 期间可能重复请求已熔断的服务（由 retry + timeout 兜底） |
 
-### AD-004: Prompt/Skill 注册表不在 shared/ 而在 context-engine/
+### AD-004: Prompt/Skill 注册表不在 shared/ 而在 context_engine/
 
 | 项目 | 内容 |
 |------|------|
 | **状态** | accepted |
 | **决策** | B34 标记的 Skill/Prompt 注册表缺在 shared/——但当前 `prompt_registry.py` 放在 `context_engine/` 是合理的设计决策，非盲点 |
-| **原因** | ① Prompt 模板与业务语义紧耦合（"为 Task 生成执行计划" vs "为 KB entry 生成摘要"）——不适合作为 shared/ 通用抽象 ② Skill 注册与 Agent Identity 强绑定——归属 agent-rbac 或 context-engine ③ shared/ 只提供通用 PromplTemplate/Skill Schema（Pydantic 模型），具体注册表由业务模块承载 |
-| **shared/ 职责** | 当 context-engine 和 agent-rbac 和 feedback-loop 三个模块都需要 `PromptTemplate` / `SkillDefinition` 数据模型时，将其提升到 shared/ |
+| **原因** | ① Prompt 模板与业务语义紧耦合（"为 Task 生成执行计划" vs "为 KB entry 生成摘要"）——不适合作为 shared/ 通用抽象 ② Skill 注册与 Agent Identity 强绑定——归属 agent-rbac 或 context_engine ③ shared/ 只提供通用 PromplTemplate/Skill Schema（Pydantic 模型），具体注册表由业务模块承载 |
+| **shared/ 职责** | 当 context_engine 和 agent-rbac 和 feedback_loop 三个模块都需要 `PromptTemplate` / `SkillDefinition` 数据模型时，将其提升到 shared/ |
 
 ### AD-005: shared_quickref.yaml 是 AI 派生文件（非 SSoT）
 
@@ -1140,7 +1140,7 @@ logger = get_logger(__name__)
 | 3 | AD-002 | Shared+Core 蓝图合并 vs 拆分 | 合并 / 拆分独立蓝图 | 合并 | 体积均<80文件+强耦合 | 2026-05-05 |
 | 4 | AD-003 | Resilience 持久化策略 | 纯内存 / SQLite持久化 | 纯内存 | 零DB依赖+gates已有持久化版 | 2026-05-05 |
 | 5 | AD-005 | shared_quickref 派生文件定位 | AI派生文件 / SSoT | AI派生文件 | 从__all__派生，无消费者依赖 | 2026-05-05 |
-| 6 | AD-004 | Skill/Prompt注册表归属 | shared/ / context-engine/ | context-engine | Prompt模板与业务语义紧耦合 | 2026-05-05 |
+| 6 | AD-004 | Skill/Prompt注册表归属 | shared/ / context_engine/ | context_engine | Prompt模板与业务语义紧耦合 | 2026-05-05 |
 
 > AD-001~AD-005 详细决策记录 → [§16 KB 决策记录](#16-adr--架构决策记录architecture-decision-records)
 

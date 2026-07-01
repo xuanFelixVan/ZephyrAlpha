@@ -25,7 +25,7 @@ _schema:
     description: 元层——系统级总蓝图、金字塔顶点
   - id: DOMAIN
     name: domain
-    dir: _domain-governance
+    dir: _domain_governance
     description: 域层——域级集成蓝图、跨模块集成契约
   - id: L01
     name: infrastructure
@@ -107,7 +107,7 @@ blueprints:
   summary: Alpha因子域（L02+L03）Level 1集成蓝图——定义Alpha因子核心(MOD-AF-001)到信号生成核心(MOD-SIG-001)的数据流、接口契约、共享数据模型和施工门禁。
   layer: cross_layer
   functional_domain: alpha_signal
-  blueprint_status: Active
+  blueprint_status: Deprecated
   blueprint_level: domain
   priority: P1
   version: 0.4.0
@@ -115,7 +115,7 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_alpha_signal_domain/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-FEEDBACK_LOOP
+- module_id: MOD-FLE-CAP-001
   name: capacity_upgrade
   title: FLE 容量升级附录 — 从S级到L级扩容方案
   summary: FLE容量升级附录：S级→L级扩容D1-D14+GP1-GP5，100 AI Session并发/500 findings/cycle/240
@@ -144,7 +144,7 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-GOVERNANCE
+- module_id: MOD-GOV-CAP-001
   name: capacity_upgrade
   title: Governance Domain 容量升级蓝图 — 10K脚本/1.5K模块/100AI并发
   summary: 治理域容量升级蓝图——从MOD-023拆分。覆盖SLO/D-GAP/分层执行/熔断器/分片存储/GPU加速/施工路线图/测试矩阵。Phase
@@ -165,7 +165,7 @@ blueprints:
   summary: ML实验域（L11+L13）Level 1集成蓝图——定义ML平台(MOD-ML-001)到实验管线(MOD-EXP-001)的模型生命周期、AB测试链路、特征存储读写和实验元数据追踪。
   layer: cross_layer
   functional_domain: ml_experiment
-  blueprint_status: Active
+  blueprint_status: Deprecated
   blueprint_level: domain
   priority: P2
   version: 0.4.0
@@ -174,7 +174,7 @@ blueprints:
   file_path: 03_modules/_ml_experiment_domain/blueprint.md
   construction_progress: partially_implemented
 - module_id: SYS-MASTER-001
-  name: _sys_master
+  name: system_master
   title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
   summary: 系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖+§〇容量升级方案。AI agent冷启动第一站。
   layer: cross_layer
@@ -185,7 +185,7 @@ blueprints:
   version: 0.17.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_sys_master/blueprint.md
+  file_path: 03_modules/system_master/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-001
   name: capacity_assurance
@@ -1002,16 +1002,16 @@ changelog:
   changes:
   - '[auto-sync] blueprint-registry + module-registry；扫描 59 份 blueprint.md；登记项相对上一版有
     29 条差异摘要'
-  - 移除 ALPHA-SIGNAL-DOMAIN-001（曾位于 _alpha_signal_domain/blueprint.md）
+  - 移除 alpha_signal_domain-001（曾位于 _alpha_signal_domain/blueprint.md）
   - 移除 DOM-GOV-CAP-001（曾位于 _domain_governance/capacity_upgrade/blueprint.md）
   - 'GOV-FSTR-001.file_path: [_restructuring/blueprint.md] → [03_modules/_restructuring/blueprint.md]'
-  - 移除 ML-EXPERIMENT-DOMAIN-001（曾位于 _ml_experiment_domain/blueprint.md）
+  - 移除 ml_experiment_domain-001（曾位于 _ml_experiment_domain/blueprint.md）
   - 新增 MOD-ALPHA_SIGNAL_DOMAIN → 03_modules/_alpha_signal_domain/blueprint.md
   - 新增 MOD-FEEDBACK_LOOP → 03_modules/_cross_layer/feedback_loop/capacity_upgrade/blueprint.md
   - 'MOD-GOVERNANCE.file_path: [_domain_governance/blueprint.md] → [03_modules/_domain_governance/blueprint.md]'
   - 新增 MOD-GOVERNANCE → 03_modules/_domain_governance/capacity_upgrade/blueprint.md
   - 新增 MOD-ML_EXPERIMENT_DOMAIN → 03_modules/_ml_experiment_domain/blueprint.md
-  - 新增 MOD-073 → 03_modules/_sys_master/blueprint.md
+  - 新增 MOD-073 → 03_modules/system_master/blueprint.md
   - 'MOD-INF-001.file_path: [_domain_infra_ops/capacity_assurance/blueprint.md] →
     [03_modules/_domain_infra_ops/capacity_assurance/blueprint.md]'
   - 'MOD-INF-001.priority: [P2] → [P0]'
@@ -1038,12 +1038,12 @@ changelog:
   date: '2026-06-10'
   changes:
   - DM-369 断链修复——33条 file_path 从旧目录结构更新为 _domain-* 规范路径
-  - 21条 infra_ops/ 旧路径 → _domain-governance/_domain-infra_ops/_domain-infra_runtime/_domain-autonomy_core/_domain-autonomy_perm/_domain-knowledge/_domain-integration/
+  - 21条 infra_ops/ 旧路径 → _domain_governance/_domain_infra_ops/_domain_infra_runtime/_domain_autonomy_core/_domain_autonomy_perm/_domain_knowledge/_domain_integration/
   - 12条业务域短名路径（data/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/simulation）→
     _domain-* 路径
-  - 重复 module_id 修复：mcp-servers MOD-INF-015→MOD-INF-013, capacity-assurance MOD-INF-024→MOD-INF-001,
+  - 重复 module_id 修复：mcp_servers MOD-INF-015→MOD-INF-013, capacity_assurance MOD-INF-024→MOD-INF-001,
     auto-runtime-core MOD-INF-030→MOD-INF-035
-  - 空字段补全（从物理 frontmatter 同步）：mcp-servers/agent-rbac/auto-runtime-core/capacity-assurance/budget-enforcer/depmap-engine/local-model
+  - 空字段补全（从物理 frontmatter 同步）：mcp_servers/agent-rbac/auto-runtime-core/capacity_assurance/budget-enforcer/depmap-engine/local-model
   - summary 重算：Active 49→52, Draft 11→8, 空 layer 4→0, completed 12→16, not_started
     6→2
 - version: 2.5.4
@@ -1051,17 +1051,17 @@ changelog:
   changes:
   - '[auto-sync] blueprint-registry + module-registry；扫描 55 份 blueprint.md；登记项相对上一版有
     29 条差异摘要'
-  - 移除 MOD-INF-001（曾位于 03_modules/infra_ops/capacity-assurance/blueprint.md）
+  - 移除 MOD-INF-001（曾位于 03_modules/infra_ops/capacity_assurance/blueprint.md）
   - 'MOD-TASK_SYSTEM.version: [0.9.4] → [0.9.5]'
   - 'MOD-GATE_ENGINE.title: [Gate Engine 集成蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 熔断器（已拆分为007A+007B）]
     → [Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器]'
   - 'MOD-GATE_ENGINE.version: [0.8.1] → [0.8.2]'
   - 'MOD-GATE_ENGINE.last_updated: [2026-05-19] → [2026-05-18]'
-  - 移除 MOD-INF-007A（曾位于 03_modules/_cross_layer/gate-engine/sub-blueprints/MOD-INF-007A-blueprint.md）
-  - 移除 MOD-INF-007B（曾位于 03_modules/_cross_layer/gate-engine/sub-blueprints/MOD-INF-007B-blueprint.md）
+  - 移除 MOD-INF-007A（曾位于 03_modules/_cross_layer/gate_engine/sub-blueprints/MOD-INF-007A-blueprint.md）
+  - 移除 MOD-INF-007B（曾位于 03_modules/_cross_layer/gate_engine/sub-blueprints/MOD-INF-007B-blueprint.md）
   - 'MOD-CONTEXT_ENGINE.version: [1.0.0] → [1.0.1]'
-  - 移除 MOD-INF-008A（曾位于 03_modules/_cross_layer/context-engine/sub-blueprints/MOD-INF-008A-blueprint.md）
-  - 移除 MOD-INF-008B（曾位于 03_modules/_cross_layer/context-engine/sub-blueprints/MOD-INF-008B-blueprint.md）
+  - 移除 MOD-INF-008A（曾位于 03_modules/_cross_layer/context_engine/sub-blueprints/MOD-INF-008A-blueprint.md）
+  - 移除 MOD-INF-008B（曾位于 03_modules/_cross_layer/context_engine/sub-blueprints/MOD-INF-008B-blueprint.md）
   - 'MOD-FEEDBACK_LOOP.title: [Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心（整合蓝图）] →
     [Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心]'
   - 'MOD-INF-011.version: [0.12.0] → [0.12.1]'
@@ -1069,13 +1069,13 @@ changelog:
   - 'MOD-DATABASE.version: [4.0.0] → [4.0.1]'
   - 移除 MOD-INF-012A（曾位于 03_modules/_cross_layer/database/sub-blueprints/MOD-INF-012A-blueprint.md）
   - 移除 MOD-INF-012B（曾位于 03_modules/_cross_layer/database/sub-blueprints/MOD-INF-012B-blueprint.md）
-  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp-servers/blueprint.md）
+  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp_servers/blueprint.md）
   - 'MOD-INF-015.version: [2.0.1] → [2.0.2]'
   - 'MOD-INF-016.title: [Shared+Core 集成蓝图（已拆分为 3 子蓝图）] → [Shared+Core 蓝图]'
   - 'MOD-INF-016.last_updated: [2026-05-18] → [2026-05-17]'
-  - 移除 MOD-INF-016-CONTRACTS（曾位于 03_modules/_cross_layer/shared-core/contracts_blueprint.md）
-  - 移除 MOD-INF-016-CORE（曾位于 03_modules/_cross_layer/shared-core/governance_core_blueprint.md）
-  - 移除 MOD-INF-016-SHARED（曾位于 03_modules/_cross_layer/shared-core/shared_infra_blueprint.md）
+  - 移除 MOD-INF-016-CONTRACTS（曾位于 03_modules/_cross_layer/shared_core/contracts_blueprint.md）
+  - 移除 MOD-INF-016-CORE（曾位于 03_modules/_cross_layer/shared_core/governance_core_blueprint.md）
+  - 移除 MOD-INF-016-SHARED（曾位于 03_modules/_cross_layer/shared_core/shared_infra_blueprint.md）
   - 移除 MOD-INF-018（曾位于 03_modules/infra_ops/agent-rbac/blueprint.md）
   - 'MOD-INF-024.title: [Budget Enforcer 蓝图 — 七级三维预算强制执行与信任根] → [Token/Cost/Time 三维预算强制执行蓝图
     — 七级预算 + 全生命周期 + 信任根 + 抗对抗]'
@@ -1128,11 +1128,11 @@ changelog:
   changes:
   - 🎉 两阶蓝图金字塔完工——总蓝图 + 11 个新模块蓝图全部创建
   - 新增 MOD-MASTER_BLUEPRINT（总蓝图）——13条集成契约 CT-* + 3共享Schema + 全系统拓扑
-  - P0梯队新增：MOD-GATE_ENGINE（gate-engine）/ MOD-CONTEXT_ENGINE（context-engine）/ MOD-INF-009（pipeline）/
-    MOD-FEEDBACK_LOOP（feedback-loop）
-  - P1梯队新增：MOD-INF-011（vector-memory）/ MOD-DATABASE（database）/ MOD-INF-013（mcp-servers）
-  - P2梯队新增：MOD-LLM_SECURITY（llm-security）/ MOD-INF-015（system-telemetry）/ MOD-INF-016（shared-core）
-  - 补录 MOD-KB-001（knowledge-base）——原蓝图存在但登记表遗漏
+  - P0梯队新增：MOD-GATE_ENGINE（gate_engine）/ MOD-CONTEXT_ENGINE（context_engine）/ MOD-INF-009（pipeline）/
+    MOD-FEEDBACK_LOOP（feedback_loop）
+  - P1梯队新增：MOD-INF-011（vector_memory）/ MOD-DATABASE（database）/ MOD-INF-013（mcp_servers）
+  - P2梯队新增：MOD-LLM_SECURITY（llm_security）/ MOD-INF-015（system_telemetry）/ MOD-INF-016（shared_core）
+  - 补录 MOD-KB-001（knowledge_base）——原蓝图存在但登记表遗漏
   - 总数：6 → 17（+11）；approved 仍为 5；新增 10 draft + 1 approved 补录
   - scope 升级：仅 infra_ops/ → 03_modules/ 全范围
 - version: 1.5.0

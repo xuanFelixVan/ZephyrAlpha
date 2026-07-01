@@ -1,6 +1,6 @@
----
+﻿---
 blueprint_id: MOD-GOVERNANCE
-title: llm-security README
+title: llm_security README
 module_id: MOD-010
 ttl: permanent
 doc_type: index
@@ -10,7 +10,7 @@ doc_type: index
 
 > **模块标识**: MOD-LLM_SECURITY | **版本**: 0.10.0 | **状态**: 施工中 | **层级**: 跨层
 
-> **真源声明**：本模块的 canonical SSoT 为 `src/zephyr/llm-security/` 代码目录。
+> **真源声明**：本模块的 canonical SSoT 为 `src/zephyr/llm_security/` 代码目录。
 
 ## 📋 模块概述
 
@@ -42,7 +42,7 @@ LLM Security Gateway (LSG) 是 ZephyrAlpha 项目的核心安全组件，提供�
 ### 核心组件
 
 ```
-src/zephyr/llm-security/
+src/zephyr/llm_security/
 ├── layers/                    # 九层防御实现
 │   ├── l0_supply_chain.py     # 供应链安全层
 │   ├── l1_input.py           # 输入防护层
@@ -88,7 +88,7 @@ pip install streamlit plotly pyyaml pandas
 ### 启动安全仪表板
 
 ```bash
-cd src/zephyr/llm-security/dashboard
+cd src/zephyr/llm_security/dashboard
 streamlit run app.py
 ```
 
@@ -154,7 +154,7 @@ else:
 
 ```bash
 # 运行安全模块单元测试
-python -m pytest tests/llm-security/ -v
+python -m pytest tests/llm_security/ -v
 ```
 
 ### 集成测试
@@ -168,7 +168,7 @@ python tests/integration/test_lsg_integration.py
 
 ```bash
 # 执行自动 Red Team 测试
-python src/zephyr/security/llm_defense/llm-security/self_protection/l7_validation.py --red-team
+python src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py --red-team
 ```
 
 ## 📈 性能指标
@@ -227,7 +227,7 @@ python src/zephyr/security/llm_defense/llm-security/self_protection/l7_validatio
 
 - **讨论论坛**: forum.zephyralpha.com
 - **文档中心**: docs.zephyralpha.com
-- **代码仓库**: github.com/zephyralpha/llm-security
+- **代码仓库**: github.com/zephyralpha/llm_security
 
 ## 📄 许可证
 

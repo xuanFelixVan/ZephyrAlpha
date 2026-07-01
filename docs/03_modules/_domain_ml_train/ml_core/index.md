@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "ml_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | ml-core — 目录索引 |
+| [index.md](index.md) | Markdown | ml_core — 目录索引 |
 
 ## 导航
 

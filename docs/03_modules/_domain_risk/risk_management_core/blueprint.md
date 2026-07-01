@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L04-001
 submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
@@ -29,7 +29,7 @@ scope: module
 stability: evolving
 verifiability: manual
 depends_on:
-  - target: "docs/03_modules/_domain-risk/risk-management-core/blueprint.md"
+  - target: "docs/03_modules/_domain_risk/risk_management_core/blueprint.md"
     at: "全篇"
     why: "本蓝图即SSoT（旧YAML已迁移至35域架构）"
   - target: "MOD-L02-001"
@@ -45,14 +45,14 @@ depends_on:
     at: "CTR-006"
     why: "消费 PositionSnapshot"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-risk\\risk-management-core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_risk\\risk_management_core\\blueprint.md"
     section: "全篇"
     why: "本蓝图即SSoT"
 summary: "L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。"
 tags: [risk-management, l04, phase-1-partial, stop-loss, kill-switch]
 priority: P0
 runtime_plane: hot
-ssot_yaml: "docs/03_modules/_domain-risk/risk-management-core/blueprint.md"
+ssot_yaml: "docs/03_modules/_domain_risk/risk_management_core/blueprint.md"
 ---
 
 > ⚠️ **业务层未开放，禁止施工** — L04 属于 C 轨业务层，当前业务层处于冻结状态。
@@ -435,12 +435,12 @@ class ViolationDetail(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L00-001 | 可选 | CTR-001 NormalizedMarketData | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-data\data-source-core\blueprint.md` |
-| MOD-L02-001 | 必须 | CTR-002 FactorSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
-| MOD-L03-001 | 必须 | CTR-P1-015 SynthesizedSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-signal\signal-generation-core\blueprint.md` |
-| MOD-L05-001 | 必须 | CTR-004 Order（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-pf_core\portfolio-core\blueprint.md` |
-| MOD-L06-001 | 必须 | CTR-006 PositionSnapshot（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` |
-| MOD-L08-001 | 可选 | CTR-P1-008 RiskDashboardSnapshot（产出） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-frontend\hmi-core\blueprint.md` |
+| MOD-L00-001 | 可选 | CTR-001 NormalizedMarketData | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
+| MOD-L02-001 | 必须 | CTR-002 FactorSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-L03-001 | 必须 | CTR-P1-015 SynthesizedSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` |
+| MOD-L05-001 | 必须 | CTR-004 Order（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio-core\blueprint.md` |
+| MOD-L06-001 | 必须 | CTR-006 PositionSnapshot（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` |
+| MOD-L08-001 | 可选 | CTR-P1-008 RiskDashboardSnapshot（产出） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | CTR-P1-013 Telemetry（产出） | v1.0.0 | 风控告警→线4 |
 
 > **对齐说明**：system-dependency-map §3.10 列出 CTR-001/CTR-002/CTR-006 为输入，CTR-003/CTR-P1-011/CTR-P1-013 为输出。蓝图 §10.1 补充了 CTR-P1-015（代码 __init__.py 已声明消费）和 CTR-004（pre-trade 校验必需）。CTR-P1-011 RiskMetricsReport 产出待 Phase 2 实现。
@@ -483,7 +483,7 @@ class ViolationDetail(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | 本文件（含设计和施工指引） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | 本文件（含设计和施工指引） |
 | 接口定义 | `D:\ZephyrAlpha\src\zephyr\risk\*.py` | ABC 基类 + 数据模型 |
 | 默认实现 | `D:\ZephyrAlpha\src\zephyr\risk\implementations\` | 5 个 default_* 实现类 |
 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\` | 风险相关契约定义 |
@@ -852,7 +852,7 @@ class ViolationDetail(BaseModel):
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限——L04=Immutable Core |
-| 9 | 本蓝图 | — | — | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | 本蓝图即SSoT |
+| 9 | 本蓝图 | — | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | 本蓝图即SSoT |
 
 ---
 
@@ -869,7 +869,7 @@ class ViolationDetail(BaseModel):
 | 1 | 风险管理模块 | `D:\ZephyrAlpha\src\zephyr\risk\` | 读取 | 确认文件存在 |
 | 2 | 默认实现目录 | `D:\ZephyrAlpha\src\zephyr\risk\implementations\` | 读取 | 确认文件存在 |
 | 3 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\` | 读取 | 确认契约状态 |
-| 4 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | 读取 | 本蓝图即SSoT |
+| 4 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | 读取 | 本蓝图即SSoT |
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 同步 |
 | 6 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
 | 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | §3.10 子模块对齐 |
@@ -894,9 +894,9 @@ class ViolationDetail(BaseModel):
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-pf_core\portfolio-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 2 | `D:\ZephyrAlpha\docs\03_modules\_domain-frontend\hmi-core\blueprint.md` | §12 集成点 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 2 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` | §12 集成点 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\risk\` | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则

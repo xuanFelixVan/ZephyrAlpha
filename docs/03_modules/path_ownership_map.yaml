@@ -1,4 +1,4 @@
-# ============================================================================
+﻿# ============================================================================
 # ZephyrAlpha 路径归属声明 — 自动生成，禁止手写
 # 生成工具: scripts/governance/generate_path_ownership_map.py
 # 用途: 每个路径归哪个蓝图管——路径冲突检测的 SSoT
@@ -5234,11 +5234,11 @@ ssot_claims:
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
 
 > module_id: MOD-GOVERNANCE | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain_governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
+本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
 
 ---
 
@@ -5731,27 +5731,27 @@ Worker 内存上限（OOM 防护）：
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
 
   - claim: '全系统可观测性数据采集唯一真源'
-    scope: 'src/zephyr/system-telemetry/'
+    scope: 'src/zephyr/system_telemetry/'
     owner_blueprint: 'MOD-INF-015'
     declared_in: 'docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md'
 
   - claim: 'AI行为遥测事件模型唯一真源'
-    scope: 'src/zephyr/system-telemetry/ai_behavior/'
+    scope: 'src/zephyr/system_telemetry/ai_behavior/'
     owner_blueprint: 'MOD-INF-015'
     declared_in: 'docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md'
 
   - claim: '指标Schema治理唯一真源'
-    scope: 'src/zephyr/system-telemetry/schema/'
+    scope: 'src/zephyr/system_telemetry/schema/'
     owner_blueprint: 'MOD-INF-015'
     declared_in: 'docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md'
 
   - claim: '告警规则引擎唯一真源'
-    scope: 'src/zephyr/system-telemetry/alerts/'
+    scope: 'src/zephyr/system_telemetry/alerts/'
     owner_blueprint: 'MOD-INF-015'
     declared_in: 'docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md'
 
   - claim: '健康探针与聚合唯一真源'
-    scope: 'src/zephyr/system-telemetry/health/'
+    scope: 'src/zephyr/system_telemetry/health/'
     owner_blueprint: 'MOD-INF-015'
     declared_in: 'docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md'
 

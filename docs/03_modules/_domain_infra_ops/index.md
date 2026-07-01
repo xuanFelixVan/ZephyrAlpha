@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "_domain_infra_ops — 目录索引"
@@ -23,7 +23,7 @@ ttl: permanent
 | [asset_inventory/](asset_inventory/index.md) | 目录 | asset-inventory — 目录索引 |
 | [capacity_assurance/](capacity_assurance/index.md) | 目录 | Capacity Assurance |
 | [index.md](index.md) | Markdown | _domain_infra_ops — 目录索引 |
-| [system_telemetry/](system_telemetry/index.md) | 目录 | system-telemetry — 目录索引 |
+| [system_telemetry/](system_telemetry/index.md) | 目录 | system_telemetry — 目录索引 |
 
 ## 导航
 

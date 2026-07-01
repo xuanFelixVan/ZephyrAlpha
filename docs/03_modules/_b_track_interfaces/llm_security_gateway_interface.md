@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-006
 title: LLM Security Gateway Interface / LLM 安全网关接口规范
 doc_type: architecture_view
@@ -12,9 +12,9 @@ created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
-template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
+template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/llm-security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
+  - "03_modules/_cross_layer/llm_security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
   - "architecture_model/layers/b_llm_security.yaml（LLM Security YAML SSoT）"
   - "OWASP LLM Applications Top 10 (2026.03)（外部威胁分类参考，非项目内 SSoT）"
 supersedes: []
@@ -27,7 +27,7 @@ integration_points:
   - "Agent Sandbox (双层防护，KBG-0018 配套)"
   - "Feedback Loop Engine (upstream signal, bypass/reject 指标)"
 tags:
-  - llm-security
+  - llm_security
   - prompt-injection
   - schema-validation
   - fail-closed
@@ -119,7 +119,7 @@ mod_master_contracts:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/protocol.py (experimental 产出)
+# src/zephyr/security/llm_defense/llm_security/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -472,8 +472,8 @@ class StrictnessSnapshot(BaseModel):
 
 | 前置项 | 状态 |
 |-------|:----:|
-| `src/zephyr/llm-security/` 包创建 | ⏳ 待建 |
-| `config/llm_security_patterns.yaml` + `config/llm-security.yaml` | ⏳ 待建 |
+| `src/zephyr/llm_security/` 包创建 | ⏳ 待建 |
+| `config/llm_security_patterns.yaml` + `config/llm_security.yaml` | ⏳ 待建 |
 | `detect-secrets` + `git-secrets` 安装与 pre-commit hook 注册 | ⏳ experimental T-1-XX |
 | `pip-audit` / `safety` 加入 CI pipeline | ⏳ beta |
 | KBG-0020 批准 | ⏳ pending B-e |
@@ -482,7 +482,7 @@ class StrictnessSnapshot(BaseModel):
 
 ```toml
 [project.optional-dependencies]
-llm-security = [
+llm_security = [
     "pydantic>=2.5,<3.0",
     "detect-secrets>=1.4",
     "pip-audit>=2.7",
@@ -499,7 +499,7 @@ llm-security = [
 ```
 
 ├── src/zephyr/
-│   ├── llm-security/                               # ⏳ experimental 新建
+│   ├── llm_security/                               # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_lsg()
 │   │   ├── protocol.py                             # LLMSecurityGatewayProtocol
 │   │   ├── in_process.py                           # experimental 实现
@@ -516,11 +516,11 @@ llm-security = [
 │   │   ├── registry.py                             # schema 注册中心
 │   │   └── config.py
 │   └── config/
-│       ├── llm-security.yaml                       # 主配置
+│       ├── llm_security.yaml                       # 主配置
 │       └── llm_security_patterns.yaml              # 可热加载规则库
 │
 ├── .runtime/
-│   ├── llm-security/
+│   ├── llm_security/
 │   │   ├── strictness_state.json                   # 动态严格度快照
 │   │   └── quarantine/                             # 被隔离 correlation_id 的内容存档
 │   └── logs/
@@ -537,7 +537,7 @@ llm-security = [
 │   ├── test_strictness_manager.py
 │   ├── test_cold_start.py
 │   └── test_fail_closed_behavior.py                # 关键：降级测试
-├── tests/redteam/llm-security/                     # ⏳ 红队用例（独立目录）
+├── tests/redteam/llm_security/                     # ⏳ 红队用例（独立目录）
 │   ├── injection_corpus/                           # 对抗样本集
 │   ├── test_prompt_injection.py
 │   ├── test_secret_leak.py
@@ -715,7 +715,7 @@ async def validate_input(self, payload):
 
 | 指标 | 目标 | 说明 |
 |------|------|------|
-| 进程 import | ≤ 1 s | 仅 import llm-security |
+| 进程 import | ≤ 1 s | 仅 import llm_security |
 | 规则文件加载 | ≤ 300 ms | yaml + 正则编译 |
 | detect-secrets 初始化 | ≤ 500 ms | 插件加载 |
 | schema registry 初始化 | ≤ 200 ms | 首批 schema 预注册 |

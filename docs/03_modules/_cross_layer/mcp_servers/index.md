@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "mcp_servers — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | MCP Servers 蓝图 — MCP 服务器管理与调度 |
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
-| [index.md](index.md) | Markdown | mcp-servers — 目录索引 |
+| [index.md](index.md) | Markdown | mcp_servers — 目录索引 |
 | [runbook.md](runbook.md) | Markdown | Runbook |
 
 ## 导航

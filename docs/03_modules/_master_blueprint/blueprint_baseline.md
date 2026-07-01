@@ -1,4 +1,4 @@
----
+﻿---
 title: Blueprint Baseline
 module_id: DOC-BLUEPRINT_BASELINE
 ttl: permanent
@@ -19,7 +19,7 @@ created_by: human_plus_agent
 date: "2026-05-03"
 ttl: permanent
 construction_progress: completed
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_baseline.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_baseline.md"
 template_for: blueprint
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
@@ -53,8 +53,8 @@ depends_on:
   - {target: "PS-STD-001", at: "§7", why: "TaskCard 28字段模型——共享Schema真源"}
   - {target: "GOV-DOC-002", at: "§一~§二", why: "LPC双轨——B轨/C轨目录定位"}
 references:
-  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_capacity.md", section: "全篇", why: "容量升级蓝图"}
-  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_agent_spec.md", section: "全篇", why: "Agent Spec蓝图"}
+  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_capacity.md", section: "全篇", why: "容量升级蓝图"}
+  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_agent_spec.md", section: "全篇", why: "Agent Spec蓝图"}
   - {path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md", section: "全篇", why: "蓝图模板v3.6"}
   - {path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\trae_030_doc_numbering_metadata.yaml", section: "全篇", why: "压缩工作流标准"}
 codification_level: L1
@@ -64,7 +64,7 @@ codification_at: "2026-05-15"
 # Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
 
 > module_id: MOD-MASTER-002 | version: 0.9.2 | status: active | layer: cross_layer
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md | generation: 1 | construction_progress: completed
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md | generation: 1 | construction_progress: completed
 
 ## 概述
 
@@ -77,8 +77,8 @@ codification_at: "2026-05-15"
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
-> - 容量蓝图：[blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_capacity.md)
-> - Agent Spec蓝图：[blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_agent_spec.md)
+> - 容量蓝图：[blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md)
+> - Agent Spec蓝图：[blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_agent_spec.md)
 
 ---
 
@@ -157,14 +157,14 @@ codification_at: "2026-05-15"
 | **Orchestrator** (任务系统) | CT-ORC-SCRIPT, CT-ORC-CE, CT-ORC-VMS, CT-ORC-GATE, CT-ORC-DB | TaskCard, Finding | ~1800 | `src/zephyr/orchestrator/` | 部分实现 |
 | **Script System** (脚本系统) | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE, CT-FEATUREFLAG | Finding, KE | ~1400 | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | 部分实现 |
 | **Knowledge Base** (知识库) | CT-SCRIPT-KB, CT-KB-VMS, CT-DATA-LIFECYCLE | KE | ~1000 | `src/zephyr/kb/` | 部分实现 |
-| **Context Engine** (CE) | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG, CT-BULKHEAD | TaskCard | ~1400 | `src/zephyr/context-engine/` | 部分实现 |
+| **Context Engine** (CE) | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG, CT-BULKHEAD | TaskCard | ~1400 | `src/zephyr/context_engine/` | 部分实现 |
 | **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
 | **Feedback Loop** (FLE) | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE, CT-WATCHDOG | — | ~1200 | `src/zephyr/trading/feedback_loop/` | 部分实现 |
 | **Pipeline** | CT-PIPE-ORC | TaskCard | ~400 | `src/zephyr/pipeline/` | 部分实现 |
-| **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector-memory/` | 部分实现 |
+| **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector_memory/` | 部分实现 |
 | **Database** (db) | CT-FLE-DB, CT-ORC-DB, CT-DLQ, CT-BACKUP | — | ~700 | `src/zephyr/db/` | 部分实现 |
-| **LLM Security** (LSG) | CT-CE-LSG, CT-SECRETS | — | ~500 | `src/zephyr/llm-security/` | 部分实现 |
-| **System Telemetry** | CT-TELE-FLE, CT-WATCHDOG | — | ~400 | `src/zephyr/system-telemetry/` | 部分实现 |
+| **LLM Security** (LSG) | CT-CE-LSG, CT-SECRETS | — | ~500 | `src/zephyr/llm_security/` | 部分实现 |
+| **System Telemetry** | CT-TELE-FLE, CT-WATCHDOG | — | ~400 | `src/zephyr/system_telemetry/` | 部分实现 |
 | **MCP Servers** | CT-MCP-* | — | ~300 | `src/zephyr/integration/mcp/` | 部分实现 |
 | **Agent RBAC** | G-CT-001~008 | — | ~800 | `src/zephyr/agent-rbac/` | 部分实现 |
 | **Audit Trail** | G-CT-002 | — | ~400 | `src/zephyr/audit-trail/` | 部分实现 |
@@ -176,7 +176,7 @@ codification_at: "2026-05-15"
 | **Auto Fix Engine** | — | — | ~200 | `src/zephyr/trading/feedback_loop/auto_fix/` | 空壳 |
 | **Drift Detector** | — | — | ~200 | `src/zephyr/behavioral-auditor/` | 部分实现 |
 | **Code Dedup Engine** | — | — | ~200 | `src/zephyr/infra_ops/code_dedup_engine/` | 空壳 |
-| **Capacity Assurance** | — | — | ~200 | `src/zephyr/capacity-assurance/` | 部分实现 |
+| **Capacity Assurance** | — | — | ~200 | `src/zephyr/capacity_assurance/` | 部分实现 |
 | **Asset Inventory** | — | — | ~200 | `src/zephyr/asset-inventory/` | 部分实现 |
 | **Shared Core** | — | — | ~300 | `src/zephyr/shared/` + `src/zephyr/core/` | 已实现 |
 | **Auto Runtime Core** | — | — | ~300 | `src/zephyr/runtime/` | 部分实现 |
@@ -194,15 +194,15 @@ codification_at: "2026-05-15"
 | **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-TASK_SYSTEM 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
 | **Script System** | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | MOD-INF-005 脚本系统蓝图 | 12维度治理审计 + pre-commit门禁 + Finding管理 |
 | **Knowledge Base (KB)** | `src/zephyr/kb/` | MOD-KB-001 知识库蓝图 | 知识全生命周期（G1→G5）+ KE管理 + ChromaDB |
-| **Gate Engine (Gates)** | `src/zephyr/governance/rule_enforcement/` | MOD-GATE_ENGINE gate-engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
-| **Context Engine (CE)** | `src/zephyr/context-engine/` | MOD-CONTEXT_ENGINE context-engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
+| **Gate Engine (Gates)** | `src/zephyr/governance/rule_enforcement/` | MOD-GATE_ENGINE gate_engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
+| **Context Engine (CE)** | `src/zephyr/context_engine/` | MOD-CONTEXT_ENGINE context_engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
-| **Feedback Loop Engine (FLE)** | `src/zephyr/trading/feedback_loop/` | MOD-FEEDBACK_LOOP feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
-| **Vector Memory Service (VMS)** | `src/zephyr/vector-memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
+| **Feedback Loop Engine (FLE)** | `src/zephyr/trading/feedback_loop/` | MOD-FEEDBACK_LOOP feedback_loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
+| **Vector Memory Service (VMS)** | `src/zephyr/vector_memory/` | MOD-INF-011 vector_memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
 | **Database (db)** | `src/zephyr/db/` | MOD-DATABASE database蓝图 | SQLite元数据 + ATM原子事务管理器 |
 | **MCP Servers** | `src/zephyr/integration/mcp/` | MOD-INF-013 mcp_servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
-| **LLM Security Gateway (LSG)** | `src/zephyr/llm-security/` | MOD-LLM_SECURITY llm-security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
-| **System Telemetry (l12)** | `src/zephyr/system-telemetry/` | MOD-INF-015 telemetry蓝图 | metrics/logs/traces/ai_behavior 全系统可观测性 |
+| **LLM Security Gateway (LSG)** | `src/zephyr/llm_security/` | MOD-LLM_SECURITY llm_security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
+| **System Telemetry (l12)** | `src/zephyr/system_telemetry/` | MOD-INF-015 telemetry蓝图 | metrics/logs/traces/ai_behavior 全系统可观测性 |
 
 ### 1.2 拓扑关系图
 
@@ -417,8 +417,8 @@ contract: CT-ORC-CE-001
 title: "任务启动时上下文构建请求"
 systems:
   - role: consumer
-    name: context-engine
-    path: "src/zephyr/context-engine/"
+    name: context_engine
+    path: "src/zephyr/context_engine/"
     blueprint: "MOD-CONTEXT_ENGINE"
   - role: producer
     name: orchestrator
@@ -550,7 +550,7 @@ contract: CT-FLE-ORC-001
 title: "异常检测 → 任务调度调整 + 告警"
 systems:
   - role: producer
-    name: feedback-loop
+    name: feedback_loop
     path: "src/zephyr/trading/feedback_loop/"
     blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
@@ -626,12 +626,12 @@ contract: CT-CE-VMS-001
 title: "上下文构建 → 向量检索"
 systems:
   - role: consumer
-    name: context-engine
-    path: "src/zephyr/context-engine/"
+    name: context_engine
+    path: "src/zephyr/context_engine/"
     blueprint: "MOD-CONTEXT_ENGINE"
   - role: provider
-    name: vector-memory
-    path: "src/zephyr/vector-memory/"
+    name: vector_memory
+    path: "src/zephyr/vector_memory/"
     blueprint: "MOD-INF-011"
 
 interaction:
@@ -785,7 +785,7 @@ systems:
     blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: vector_memory_system
-    path: "src/zephyr/vector-memory/"
+    path: "src/zephyr/vector_memory/"
     blueprint: "MOD-INF-011"
 
 data_flow:
@@ -898,12 +898,12 @@ contract: CT-CE-LSG-001
 title: "LLM调用前的上下文安全审查——fail-closed边界"
 systems:
   - role: producer
-    name: context-engine
-    path: "src/zephyr/context-engine/"
+    name: context_engine
+    path: "src/zephyr/context_engine/"
     blueprint: "MOD-CONTEXT_ENGINE"
   - role: consumer
     name: llm_security_gate
-    path: "src/zephyr/llm-security/"
+    path: "src/zephyr/llm_security/"
     blueprint: "MOD-LLM_SECURITY"
 
 data_flow:
@@ -963,7 +963,7 @@ systems:
     blueprint: "MOD-KB-001"
   - role: consumer
     name: vector_memory_system
-    path: "src/zephyr/vector-memory/"
+    path: "src/zephyr/vector_memory/"
     blueprint: "MOD-INF-011"
 
 data_flow:
@@ -1340,10 +1340,10 @@ Phase A: 无依赖先行（可并行）
 │   └── src/zephyr/governance/rule_enforcement/task_gates.py
 │
 ├── A3: CT-CE-LSG-001     ← 只依赖CE层YAML + LSG层YAML
-│   └── src/zephyr/security/llm_defense/llm-security/ce_lsg_bridge.py
+│   └── src/zephyr/security/llm_defense/llm_security/ce_lsg_bridge.py
 │
 └── A4: CT-KB-VMS-001     ← 只依赖KB + VMS层YAML
-    └── src/zephyr/data/knowledge_management/vector-memory/kb_vms_bridge.py
+    └── src/zephyr/data/knowledge_management/vector_memory/kb_vms_bridge.py
 
 Phase B: 单向依赖（A完成后→B启动）
 ├── B1: CT-ORC-CE-001     ← 依赖 TaskCard + CE层YAML
@@ -1832,7 +1832,7 @@ dlq_backend: "SQLite 表 `dlq_messages`"
 table_schema: dlq_messages
 fields:
   - {name: dlq_id, type: TEXT PRIMARY KEY, format: "uuid7"}
-  - {name: producer_system, type: TEXT, enum: [orchestrator, script_system, context-engine, feedback_loop_engine]}
+  - {name: producer_system, type: TEXT, enum: [orchestrator, script_system, context_engine, feedback_loop_engine]}
   - {name: target_contract, type: TEXT, format: "CT-*-*-*"}
   - {name: payload_json, type: TEXT}
   - {name: original_timestamp, type: TEXT, format: ISO8601}
@@ -1881,7 +1881,7 @@ boot_order:
   layer_1: {systems: [vector_memory, knowledge_base], depends_on: [database], startup_timeout_s: 20}
   layer_2: {systems: [gates, llm_security_gate], startup_timeout_s: 15}
   layer_3: {systems: [context_engine, pipeline], depends_on: [vector_memory, gates, knowledge_base, llm_security_gate], startup_timeout_s: 30}
-  layer_4: {systems: [orchestrator, script_system, feedback_loop_engine, telemetry], depends_on: [context_engine, pipeline, database, vector-memory, gates], startup_timeout_s: 30}
+  layer_4: {systems: [orchestrator, script_system, feedback_loop_engine, telemetry], depends_on: [context_engine, pipeline, database, vector_memory, gates], startup_timeout_s: 30}
 
 startup_health_check:
   mechanism: "每层启动 → 等待本层所有系统 readyz→200 → 启动下一层"
@@ -1900,10 +1900,10 @@ trigger: "TaskCard.status → CANCELLED 或 FAILED"
 
 cleanup_actions:
   - {system: orchestrator, action: "释放并发槽位 → 从 active_tasks 队列中移除"}
-  - {system: context-engine, action: "标记关联 session 为 expired → 释放 token 预算配额"}
+  - {system: context_engine, action: "标记关联 session 为 expired → 释放 token 预算配额"}
   - {system: gates, action: "归档本次任务的门禁裁决记录"}
   - {system: pipeline, action: "中断 M1-M11 管道 → 标记中间产物为 abandoned"}
-  - {system: vector-memory, action: "已写入的向量保持不变（审计追溯）→ 不删除"}
+  - {system: vector_memory, action: "已写入的向量保持不变（审计追溯）→ 不删除"}
   - {system: knowledge_base, action: "DRAFT 状态的 KE 标记为 abandoned"}
   - {system: feedback_loop_engine, action: "标记本任务关联的 anomaly record 为 resolved_by_cancellation"}
 
@@ -2649,7 +2649,7 @@ principle: "升级单个系统时其他11个系统继续服务——不触发全
 
 deploy_strategies:
   blue_green:
-    applicable_to: [context_engine, vector-memory, pipeline, gates]
+    applicable_to: [context_engine, vector_memory, pipeline, gates]
     mechanism: |
       新版本启动在备用端口→通过CT-HEALTH-001三探针确认ready→
       FeatureFlag(CT-FEATUREFLAG)切换流量到新版本→旧版本等待drain_timeout→关闭
@@ -2770,10 +2770,10 @@ principle: "系统A degraded→传播给B→B的degradation signal累积权重�
 
 cascade_model:
   signal_propagation:
-    - from: vector-memory
+    - from: vector_memory
       to: [context_engine, knowledge_base]
       metric: "vms_search_latency > SLO"
-    - from: context-engine
+    - from: context_engine
       to: [orchestrator, pipeline]
       metric: "ce_context_build_duration > SLO"
     - from: orchestrator
@@ -2799,7 +2799,7 @@ cascade_protection_actions:
     duration: "Owner手动恢复"
 
 shedding_strategy:
-  overloaded_system: "context-engine"
+  overloaded_system: "context_engine"
   trigger: "ce_context_build_duration p99 > 8s"
   action:
     - "CE主动拒绝新的build请求→返回 HTTP 429 Too Many Requests"
@@ -3073,7 +3073,7 @@ conflict_detection:
 
 cross_ct_conflict:
   scenario: "Session A on CT-ORC-CE-001, Session B on CT-CE-LSG-001→共享context_engine依赖"
-  check: "B启动时检查A的files_to_touch→CT-CE-LSG-001的依赖(context-engine)是否被A改动"
+  check: "B启动时检查A的files_to_touch→CT-CE-LSG-001的依赖(context_engine)是否被A改动"
   action: "若A已经改了context_engine→B读取最新状态→若A还未完成→B wait或仅写测试"
 
 session_cleanup:

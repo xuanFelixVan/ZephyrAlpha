@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-037
 submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
@@ -574,9 +574,9 @@ class OverlapResult:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-005 | 必须 | scaffold.py创建入口+--domain参数注入 | ≥当前 | `docs/03_modules/_domain-infra_ops/scaffold/blueprint.md` |
-| MOD-INF-017 | 可选 | Token级去重结果作为功能域查重补充 | ≥当前 | `docs/03_modules/_domain-infra_ops/code-dedup-engine/blueprint.md` |
-| MOD-INF-026 | 可选 | 资产盘点消费注册表数据 | ≥当前 | `docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md` |
+| MOD-INF-005 | 必须 | scaffold.py创建入口+--domain参数注入 | ≥当前 | `docs/03_modules/_domain_infra_ops/scaffold/blueprint.md` |
+| MOD-INF-017 | 可选 | Token级去重结果作为功能域查重补充 | ≥当前 | `docs/03_modules/_domain_infra_ops/code-dedup-engine/blueprint.md` |
+| MOD-INF-026 | 可选 | 资产盘点消费注册表数据 | ≥当前 | `docs/03_modules/_domain_infra_ops/asset-inventory/blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -627,7 +627,7 @@ class OverlapResult:
 
 | 产出物类型 | 存放完整路径（相对优先） | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `docs/03_modules/_domain-infra_ops/registry-governance/blueprint.md` | 本文件 | ≥0 | blueprint_registry.yaml |
+| 蓝图文件 | `docs/03_modules/_domain_infra_ops/registry-governance/blueprint.md` | 本文件 | ≥0 | blueprint_registry.yaml |
 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` | 功能域条目数据 | ≥1 | registry_of_registries.yaml |
 | 物理路径树快照 | `docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml` | 磁盘目录树自动快照(REG-017) | ≥1 | registry_of_registries.yaml |
 | 路径归属声明 | `docs/03_modules/path-ownership-map.yaml` | 蓝图→路径映射+冲突检测(REG-018) | ≥1 | registry_of_registries.yaml |
@@ -1045,7 +1045,7 @@ class OverlapResult:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `docs/03_modules/_domain-infra_ops/scaffold/blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `docs/03_modules/_domain_infra_ops/scaffold/blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `scripts/scaffold.py` | §12 集成点 |
 | Tier 3 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` | §4 数据模型、§11 产出物路径 |
 

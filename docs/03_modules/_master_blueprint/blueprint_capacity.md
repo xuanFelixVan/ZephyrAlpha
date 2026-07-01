@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-MASTER-003
 title: "Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计"
 doc_type: blueprint
@@ -16,7 +16,7 @@ ttl: permanent
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 construction_progress: partially_implemented
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_capacity.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_capacity.md"
 template_for: blueprint
 generation: 3
 functional_domain: infrastructure
@@ -35,7 +35,7 @@ depends_on:
     at: "全篇"
     why: "基线蓝图——容量升级基于v0.9.2现存设计"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_baseline.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_baseline.md"
     section: "全篇"
     why: "基线蓝图"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -56,7 +56,7 @@ tags:
 # Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计
 
 > module_id: MOD-MASTER-003 | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md | generation: 3 | construction_progress: partially_implemented
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_capacity.md | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -77,7 +77,7 @@ tags:
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
-> - 基线蓝图：[blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_baseline.md)
+> - 基线蓝图：[blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md)
 
 ---
 
@@ -314,7 +314,7 @@ blueprint_registry_v2:
   per_layer_sharding:
     trigger: "blueprint_index 单表行数 > 500 → 启用 layer-level 分表"
     tables: "blueprint_idx_{layer}——每个 C-track 层一张表"
-    cross_layer: "blueprint_idx_cross_layer——_cross_layer/ 和 _master-blueprint/ 共用"
+    cross_layer: "blueprint_idx_cross_layer——_cross_layer/ 和 _master_blueprint/ 共用"
     benefits: "减少单表行数 → 查询延迟降低 → WAL 写入竞争降低"
 
   consistency_guarantees:
@@ -1752,7 +1752,7 @@ construction_sequence:
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/concurrency_license.py", change: "新建——80slot许可证+优先级抢占", hours: 8}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/capacity_scheduler.py", change: "新建——4级优先级队列+公平分配", hours: 10}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/session_conflict.py", change: "新建——文件锁+乐观锁+冲突解决", hours: 6}
-    - {file: "src/zephyr/observability/feedback-loop/event_driver.py", change: "新建——事件驱动替换30s poll", hours: 8}
+    - {file: "src/zephyr/observability/feedback_loop/event_driver.py", change: "新建——事件驱动替换30s poll", hours: 8}
     - {task: "验证：50 AI 同时工作→无死锁→冲突率<5%→增量<60s", hours: 4}
 
   P3_registry_upgrade:
@@ -1763,7 +1763,7 @@ construction_sequence:
 
   P4_production_hardening:
     - {file: "scripts/governance/_concurrency.py", change: "BulkheadExecutor 改 subprocess pool + 动态扩缩", hours: 8}
-    - {file: "src/zephyr/observability/feedback-loop/scheduler.py", change: "99组件→懒加载+5min基线poll", hours: 6}
+    - {file: "src/zephyr/observability/feedback_loop/scheduler.py", change: "99组件→懒加载+5min基线poll", hours: 6}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/deferred_queue.py", change: "内存EventBus→Redis Pub/Sub适配层(可插拔)", hours: 6}
     - {task: "全量压力测试：100 AI×30脚本→全链路验证→SLO达标", hours: 8}
     - {task: "7×24 稳定性运行→资源监控→无memory leak→无磁盘爆满", hours: 168}
@@ -1924,8 +1924,8 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 5 | 基线蓝图 | MOD-MASTER-002 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
-| 6 | 索引蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 导航索引 |
+| 5 | 基线蓝图 | MOD-MASTER-002 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | 现存设计 |
+| 6 | 索引蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 导航索引 |
 
 ---
 
@@ -1941,6 +1941,6 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 容量蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 修改 | 本文件 |
-| 2 | 基线蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 读取 | 依赖 |
-| 3 | 索引蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 读取 | 导航 |
+| 1 | 容量蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_capacity.md` | 修改 | 本文件 |
+| 2 | 基线蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | 读取 | 依赖 |
+| 3 | 索引蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 读取 | 导航 |

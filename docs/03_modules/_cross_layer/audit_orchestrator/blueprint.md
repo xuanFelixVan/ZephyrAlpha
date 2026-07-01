@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-027
 submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
@@ -501,7 +501,7 @@ class GlobalAuditReport(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-GATE_ENGINE Gate Engine | 必须 | G0 入口 + 蓝方判定 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | G0 入口 + 蓝方判定 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\gate_engine\blueprint.md` |
 | MOD-INF-020 Audit Trail | 必须 | 审计日志 + Merkle 根哈希 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-026 Asset Inventory | 必须 | Phase 1 发现目标清单 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\asset-inventory\blueprint.md` |
 | MOD-INF-028 SemanticAuditor | 必须 | 语义审计 peer 服务 | v4.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` |
@@ -511,7 +511,7 @@ class GlobalAuditReport(BaseModel):
 | MOD-INF-031 AutoFix Engine | 必须 | 修复执行 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
 | MOD-DATABASE Database v3.0 | 必须 | get_depgraph_pg_connection()（PG）+ get_db_connection()（SQLite）+ WriteBatcher（暂缓待 L 级） | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
 | MOD-INF-023 Drift Detector | 可选 | 漂移信号 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\drift-detector\blueprint.md` |
-| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 审计发现回写规则演进 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 审计发现回写规则演进 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\feedback_loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1159,7 +1159,7 @@ STEP 3: 拆分后验证
 | `scripts/governance/d5_architecture/checkers/check_dependency_direction.py` | 依赖方向验证 | P0 |
 | `scripts/governance/d5_architecture/analyzers/audit_depends_on_chain_depth.py` | 依赖链深度审计 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_dag.py` | DAG 验证 | P0 |
-| `scripts/governance/crosscheck_sys_master_deps.py` | SYS-MASTER 依赖交叉检查 | P1 |
+| `scripts/governance/crosschecksystem_master_deps.py` | SYS-MASTER 依赖交叉检查 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_interface_contracts.py` | 接口契约验证 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_p0_module_contracts.py` | P0 模块契约验证 | P1 |
 

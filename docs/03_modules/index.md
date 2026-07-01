@@ -1,4 +1,4 @@
----
+﻿---
 classification: internal
 date: "2026-06-22"
 doc_type: index
@@ -60,7 +60,7 @@ depends_on:
 | [_domain_compliance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_compliance/index.md) | D_COMPLIANCE | 合规 | 活跃 |
 | [_domain_governance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/index.md) | D_GOVERNANCE | 治理 | 活跃 |
 | [_domain_infra_ops/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
-| [_domain_infra_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_runtime/l01_infrastructure_index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
+| [_domain_infra_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_runtime/index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
 | [_domain_integration/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_integration/local_model/blueprint.md) | D_INTEGRATION | 集成 | 活跃 |
 | [_domain_autonomy_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md) | D_AUTONOMY_CORE | 自治核心 | 活跃 |
 | [_domain_autonomy_perm/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) | D_AUTONOMY_PERM | 自治权限 | 活跃 |
@@ -72,14 +72,14 @@ depends_on:
 | [_cross_layer/](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/index.md) | 跨层模块（agent_orchestrator, context_engine, feedback_loop, gate_engine, llm_security, mcp_servers, pipeline, shared_core 等 17 模块） | index.md |
 | [_b_track_interfaces/](file:///D:/ZephyrAlpha/docs/03_modules/_b_track_interfaces/index.md) | B 轨 6 大核心服务接口合同 | index.md |
 | [_master_blueprint/](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER_BLUEPRINT） | blueprint.md |
-| [_sys_master/](file:///D:/ZephyrAlpha/docs/03_modules/_sys_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
+| [system_master/](file:///D:/ZephyrAlpha/docs/03_modules/system_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
 
-### 2.3 遗留目录（待清理）
+### 2.3 遗留目录（已标记 Deprecated）
 
 | 目录 | 说明 | 处置 |
 |------|------|------|
-| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 D_SIGLEGACY 取代） | 待 RULE-THREE 审判后删除或合并 |
-| [_ml_experiment_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_ml_experiment_domain/blueprint.md) | 旧 ML Experiment 域（已被 D_SIMULATION 取代） | 待 RULE-THREE 审判后删除或合并 |
+| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 D_SIGLEGACY 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
+| [_ml_experiment_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_ml_experiment_domain/blueprint.md) | 旧 ML Experiment 域（已被 D_SIMULATION 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
 
 ---
 
@@ -92,8 +92,6 @@ depends_on:
 | [template_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/template_registry.yaml) | 模板注册表 | YAML |
 | [path_ownership_map.yaml](file:///D:/ZephyrAlpha/docs/03_modules/path_ownership_map.yaml) | 路径归属映射 | YAML |
 | [system_pathway_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml) | 系统路径注册表 | YAML |
-
-> ⚠️ `blueprint_registry.yaml`（连字符）为遗留文件，待清理。真源为 `blueprint_registry.yaml`（下划线）。
 
 ---
 

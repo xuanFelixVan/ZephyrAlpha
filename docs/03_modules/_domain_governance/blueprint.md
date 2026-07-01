@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
@@ -55,7 +55,7 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
     section: "全篇"
     why: "系统总蓝图"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint.md"
     section: "全篇"
     why: "基础设施域集成蓝图"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -64,7 +64,7 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\trae_030_doc_numbering_metadata.yaml"
     section: "全篇"
     why: "压缩工作流标准"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\capacity-upgrade\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\capacity-upgrade\\blueprint.md"
     section: "全篇"
     why: "容量升级设计独立蓝图（DOM-GOV-CAP-001）"
 tags:
@@ -96,11 +96,11 @@ ssot_claims:
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
 
 > module_id: MOD-GOVERNANCE | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain_governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
+本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
 
 ---
 
@@ -1176,7 +1176,7 @@ P2-RESILIENCE（韧性保障）:
 | **NEW-04** | `scripts/governance/observability/gate_cache.py` | D-GAP-16 | Phase Gate 文件哈希缓存 | ✅ 已实现（新建，复用 gate_engine 接口） |
 | **NEW-05** | `_concurrency.py` ScriptRegistry 类 | D-GAP-17 | 10K manifest 快速加载 | ✅ 已实现（对齐 MOD-INF-001 CAP-G01） |
 | **NEW-06** | `_concurrency.py` ScanDeduplicator 类 | D-GAP-19 | 跨 Agent 扫描去重 | ✅ 已实现（扫描请求级去重，非代码去重） |
-| **NEW-07** | `scripts/governance/governance_watchdog.py` | D-GAP-20 | 治理服务 watchdog + 自动恢复 | ✅ 已实现（扩展 system-telemetry.watchdog） |
+| **NEW-07** | `scripts/governance/governance_watchdog.py` | D-GAP-20 | 治理服务 watchdog + 自动恢复 | ✅ 已实现（扩展 system_telemetry.watchdog） |
 | **NEW-08** | `src/zephyr/governance/` MCP 扩展 | D-GAP-18 | AdmissionResponse 结构化响应 | ✅ 已实现（桥接 admission_controller → MCP 格式） |
 
 
@@ -1231,7 +1231,7 @@ P2-RESILIENCE（韧性保障）:
 
 ## 0. 容量升级设计与 SLO
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md) §1
+> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §1
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1523,7 +1523,7 @@ P2-RESILIENCE（韧性保障）:
 ### 3.10~3.13 容量升级设计（已拆分）
 
 > §3.10 分层执行模型 / §3.11 熔断器策略 / §3.12 分片存储架构 / §3.13 GPU 加速策略
-> **全部已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md) §2~5
+> **全部已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §2~5
 
 ---
 
@@ -1863,7 +1863,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 9. 施工升级路线图
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md) §6
+> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §6
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1876,7 +1876,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | SYS-MASTER-001 | 必须 | Level 0 系统总蓝图——治理域是金字塔 Level 1 节点 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-MASTER_BLUEPRINT | 必须 | 基础设施域集成蓝图——治理域依赖基建域基础能力 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | 基础设施域集成蓝图——治理域依赖基建域基础能力 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1935,7 +1935,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 11. 升级后测试矩阵
 
-> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md) §7
+> **已拆分至** [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §7
 
 
 ## ⚠️ Vibe Coding 蓝图编写铁律
@@ -2011,7 +2011,7 @@ STEP 3: 拆分后验证
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
-| 6 | 基础设施域蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施集成 |
+| 6 | 基础设施域蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 基础设施集成 |
 | 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-001~013 治理决策方法论 |
 | 8 | 代码构建标准 | REG-STD-002 / GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 命名/文件组织/类型注解/SSoT守卫 |
 | 9 | AI产出物压缩工作流标准 | REG-STD-004 / GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 转化优先/15不可删/6砍错模式 |
@@ -2026,7 +2026,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | MOD-MASTER_BLUEPRINT | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施域集成 | MOD-MASTER 定义基础设施域，本蓝图定义治理域 |
+| 1 | MOD-MASTER_BLUEPRINT | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 基础设施域集成 | MOD-MASTER 定义基础设施域，本蓝图定义治理域 |
 
 ---
 
@@ -2034,7 +2034,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 治理域蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md` | 修改 | 本文件 |
+| 1 | 治理域蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_governance\blueprint.md` | 修改 | 本文件 |
 | 2 | 治理模块代码 | `D:\ZephyrAlpha\src\zephyr\governance\` | 读取 | 代码对齐 |
 | 3 | 治理脚本 | `D:\ZephyrAlpha\scripts\governance\` | 读取 | 脚本清单 |
 
@@ -2163,7 +2163,7 @@ STEP 3: 拆分后验证
 
 | 产出物 | 路径 | 状态 |
 |--------|------|------|
-| 治理域蓝图 | `docs/03_modules/_domain-governance/blueprint.md` | Active |
+| 治理域蓝图 | `docs/03_modules/_domain_governance/blueprint.md` | Active |
 | sync_rule_registry.py | `scripts/governance/sync_rule_registry.py` | Active |
 | audit_registration.py | `scripts/governance/audit_registration.py` | Active |
 | pre_write_gate.py | `scripts/governance/pre_write_gate.py` | Active |

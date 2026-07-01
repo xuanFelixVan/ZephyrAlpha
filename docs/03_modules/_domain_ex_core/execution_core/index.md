@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "execution_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Trade Execution Core 蓝图+施工图 — 交易执行引擎 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | execution-core — 目录索引 |
+| [index.md](index.md) | Markdown | execution_core — 目录索引 |
 
 ## 导航
 

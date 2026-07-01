@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-MASTER_BLUEPRINT
 title: "Agent Spec 蓝图 — CBAC能力矩阵·Skill路由"
 doc_type: blueprint
@@ -16,7 +16,7 @@ ttl: permanent
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 construction_progress: completed
-actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_agent_spec.md"
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_agent_spec.md"
 template_for: blueprint
 generation: 2
 functional_domain: infrastructure
@@ -38,7 +38,7 @@ depends_on:
     at: "全篇"
     why: "Agent Spec蓝图——Skill路由接口定义"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint_baseline.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master_blueprint\\blueprint_baseline.md"
     section: "§二"
     why: "基线蓝图契约总表"
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
@@ -59,7 +59,7 @@ tags:
 # Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
 
 > module_id: MOD-MASTER_BLUEPRINT | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
-> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md | generation: 2 | construction_progress: completed
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md | generation: 2 | construction_progress: completed
 
 ---
 
@@ -69,7 +69,7 @@ tags:
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
-> - 基线蓝图：[blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_baseline.md)
+> - 基线蓝图：[blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md)
 
 ---
 
@@ -251,8 +251,8 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-MASTER-002 | 必须 | CT-* 契约定义 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` |
-| MOD-INF-019 Agent Spec | 必须 | Skill 路由接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
+| MOD-MASTER-002 | 必须 | CT-* 契约定义 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` |
+| MOD-INF-019 Agent Spec | 必须 | Skill 路由接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -311,7 +311,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | blueprint_baseline.md | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | CT-* 契约变更时同步 | CBAC 矩阵基于 CT-* |
+| 1 | blueprint_baseline.md | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | CT-* 契约变更时同步 | CBAC 矩阵基于 CT-* |
 
 ---
 
@@ -484,8 +484,8 @@ STEP 3: 拆分后验证
 
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
-| 1 | 基线蓝图 | MOD-MASTER-002 | v1.3.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | CT-* 契约定义 |
-| 2 | Agent Spec 蓝图 | MOD-INF-019 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` | Skill 路由 |
+| 1 | 基线蓝图 | MOD-MASTER-002 | v1.3.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | CT-* 契约定义 |
+| 2 | Agent Spec 蓝图 | MOD-INF-019 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | Skill 路由 |
 | 3 | circuit_breaker.py | MOD-GATE_ENGINE | — | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-GATE_ENGINE 所有） |
 
 ---
@@ -519,19 +519,19 @@ principle: "最小权限原则 (Least Privilege) → 每个系统仅拥有执行
 
 capability_matrix:
   entries:
-    - {caller: orchestrator, target: context-engine, actions: [build_context, inject_context], auth: cbac_token}
+    - {caller: orchestrator, target: context_engine, actions: [build_context, inject_context], auth: cbac_token}
     - {caller: orchestrator, target: gates, actions: [check_gate], auth: cbac_token}
     - {caller: orchestrator, target: pipeline, actions: [route_task], auth: cbac_token}
-    - {caller: orchestrator, target: vector-memory, actions: [write_output_vectors], auth: cbac_token}
+    - {caller: orchestrator, target: vector_memory, actions: [write_output_vectors], auth: cbac_token}
     - {caller: orchestrator, target: database, actions: [write_task_repo, read_task_repo], auth: cbac_token}
     - {caller: orchestrator, target: feedback_loop_engine, actions: [receive_dispatch], auth: cbac_token}
     - {caller: script_system, target: gates, actions: [emit_exit_code], auth: cbac_token}
     - {caller: script_system, target: orchestrator, actions: [emit_finding], auth: cbac_token}
     - {caller: script_system, target: knowledge_base, actions: [emit_ke_draft], auth: cbac_token}
-    - {caller: context-engine, target: vector-memory, actions: [search_vectors], auth: cbac_token}
-    - {caller: context-engine, target: knowledge_base, actions: [resolve_ke_by_id], auth: cbac_token}
-    - {caller: context-engine, target: llm_security_gate, actions: [validate_context], auth: cbac_token}
-    - {caller: knowledge_base, target: vector-memory, actions: [store_embeddings], auth: cbac_token}
+    - {caller: context_engine, target: vector_memory, actions: [search_vectors], auth: cbac_token}
+    - {caller: context_engine, target: knowledge_base, actions: [resolve_ke_by_id], auth: cbac_token}
+    - {caller: context_engine, target: llm_security_gate, actions: [validate_context], auth: cbac_token}
+    - {caller: knowledge_base, target: vector_memory, actions: [store_embeddings], auth: cbac_token}
     - {caller: knowledge_base, target: database, actions: [read_ke_repo, write_ke_repo], auth: cbac_token}
     - {caller: feedback_loop_engine, target: database, actions: [write_metrics, read_metrics], auth: cbac_token}
     - {caller: feedback_loop_engine, target: orchestrator, actions: [dispatch_action], auth: cbac_token}

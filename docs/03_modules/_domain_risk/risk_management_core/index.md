@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "risk_management_core — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Risk Management Core 蓝图+施工图 — 风险管理引擎 |
 | [delivery/](delivery/index.md) | 目录 | delivery — 目录索引 |
-| [index.md](index.md) | Markdown | risk-management-core — 目录索引 |
+| [index.md](index.md) | Markdown | risk_management_core — 目录索引 |
 
 ## 导航
 

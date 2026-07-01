@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-LLM_SECURITY
 submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
@@ -18,12 +18,12 @@ construction_progress: partially_implemented
 actual_disk_path: src/zephyr/security/llm_defense/llm_security/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha LLM Security Gateway (LSG) 完整蓝图——九层纵深防御 + 自我防护体系 + 运维保障体系：L0 供应链安全（模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御）→ L1 输入防护（直接注入+间接注入+越狱检测+Spotlighting+RAG投毒防御+ToolResultTransform拦截）→ L2 Prompt保护（System Prompt隔离+防泄露+话题控制+长会话Drift检测+Promptware Kill Chain映射）→ L3 输出安全（Schema验证+沙箱执行+PII脱敏+幻觉检测+AI代码信任边界+Embedding Inversion防御）→ L4 Agent安全（权限最小化+HITL+操作审计+MCP Sampling防御+Tool Description Integrity+DeepSeek jailbreak已知漏洞补偿）→ L5 资源保护（速率限制+Token预算+成本熔断+并发限制+LSG性能预算+SLA）→ L6 可观测性（安全日志+异常告警+仪表板+审计报告+LSG自监控+延迟追踪）→ L7 持续验证（自动Red Team+安全回归测试+威胁情报+LSG自我回归测试）→ L8 多Agent安全（Agent间通信认证+跨Agent权限隔离+级联熔断+Rogue检测+Trust Anti-Abuse+Shadow Agent检测+NHI治理）+凭据全生命周期+数据层安全(RLS/默认安全)。fail-closed + 性能预算(SLO/SLA)贯穿全链路。"
-tags: [llm-security, lsg, security-gateway, fail-closed, defense-in-depth, supply-chain, prompt-injection, output-validation, agent-security, observability, red-team, infrastructure]
+tags: [llm_security, lsg, security-gateway, fail-closed, defense-in-depth, supply-chain, prompt-injection, output-validation, agent-security, observability, red-team, infrastructure]
 priority: P0
 runtime_plane: hot
 depends_on:
   - {target: "MOD-CONTEXT_ENGINE", at: "全篇", why: "Context Engine——LSG消费CE的prompt内容做注入检测"}
-  - {target: "_b_track_interfaces/llm-security-gateway-interface.md", at: "全篇", why: "LSG接口合同——输入/输出契约定义"}
+  - {target: "_b_track_interfaces/llm_security-gateway-interface.md", at: "全篇", why: "LSG接口合同——输入/输出契约定义"}
   - {target: "MOD-GATE_ENGINE", at: "全篇", why: "Gate Engine——LSG的门禁判决由Gate Engine消费执行"}
   - {target: "MOD-INF-011", at: "全篇", why: "Vector Memory——RAG注入检测需消费向量库检索结果"}
   - {target: "MOD-INF-013", at: "全篇", why: "MCP Servers——MCP服务器安全校验+工具描述审计"}
@@ -295,8 +295,8 @@ class CrossSignalCorrelator:
 
 | 条目 | 说明 |
 |------|------|
-| 实现粒度 | `src/zephyr/llm-security/` 下已有核心骨架 |
-| SSOT | 以本蓝图门禁表与磁盘 `tests/` / `tests/llm-security/` 对齐为准 |
+| 实现粒度 | `src/zephyr/llm_security/` 下已有核心骨架 |
+| SSOT | 以本蓝图门禁表与磁盘 `tests/` / `tests/llm_security/` 对齐为准 |
 
 ---
 
@@ -305,7 +305,7 @@ class CrossSignalCorrelator:
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-LLM_SECURITY |
-| 代码落位 | `src/zephyr/llm-security/` |
+| 代码落位 | `src/zephyr/llm_security/` |
 | 核心职责 | 所有 LLM 交互的安全门禁——全生命周期全链路防护 |
 | 安全原则 | **fail-closed**：LSG 不可用 → 拒绝所有 LLM 流量，不 bypass |
 | 适用语境 | 100% AI施工 + 1人+AI维护，以氛围编程为主要开发方式 |
@@ -381,8 +381,8 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
-| §0 代码文件清单与磁盘 `src/zephyr/llm-security/` 一致 | `ls src/zephyr/llm-security/` 逐文件核对 | ☐ |
-| v2.0.0 新增组件（signal_bus/）尚未施工 | `ls src/zephyr/llm-security/signal_bus/` | ☐ |
+| §0 代码文件清单与磁盘 `src/zephyr/llm_security/` 一致 | `ls src/zephyr/llm_security/` 逐文件核对 | ☐ |
+| v2.0.0 新增组件（signal_bus/）尚未施工 | `ls src/zephyr/llm_security/signal_bus/` | ☐ |
 
 ### §0.3 版本-代码映射
 
@@ -449,7 +449,7 @@ L0 Supply Chain Security
 ### 3.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l0_supply_chain.py
+# src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py
 
 class SupplyChainGuard:
     """供应链安全守卫——模型/依赖/MCP服务器来源验证。"""
@@ -540,7 +540,7 @@ L1 Input Defense
 ### 4.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l1_input.py
+# src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
 
 class InputDefenseLayer:
     """L1 输入防护——直接+间接+越狱三层检测。"""
@@ -678,7 +678,7 @@ L2 Prompt Protection
 ### 5.3 四段式 Prompt 模板
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l2_prompt_protection.py
+# src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
 
 _PROMPT_TEMPLATE = """<|SYSTEM_START|>
 {system_prompt}
@@ -863,7 +863,7 @@ L3 Output Security
 ### 6.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l3_output.py
+# src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
 
 class OutputSecurityLayer:
     """L3 输出安全层——Schema+沙箱+脱敏+幻觉检测。"""
@@ -920,7 +920,7 @@ class OutputSecurityLayer:
 ### 6.4 PII/Secret 模式库
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/patterns/secrets.py
+# src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
 
 SECRET_PATTERNS: list[tuple[str, str, str]] = [
     # (名称, 正则模式, 脱敏策略: BLOCK | MASK | FLAG)
@@ -952,7 +952,7 @@ SECRET_PATTERNS: list[tuple[str, str, str]] = [
 ### 6.5 代码执行沙箱实现参考
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/sandbox/code_exec_sandbox.py
+# src/zephyr/security/llm_defense/llm_security/sandbox/code_exec_sandbox.py
 
 class CodeExecSandbox:
     """代码执行沙箱——整合原 L2 ProcessSandbox + 新增代码隔离执行。"""
@@ -1067,7 +1067,7 @@ L4 Agent Security
 ### 7.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py
+# src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py
 
 class AgentPermission(str, Enum):
     READ_ONLY = "read_only"
@@ -1218,7 +1218,7 @@ L5 Resource Protection
 ### 8.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py
+# src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py
 
 @dataclass
 class TokenBudget:
@@ -1423,7 +1423,7 @@ L6 Observability
 ### 9.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l6_observability.py
+# src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py
 
 class ObservabilityLayer:
     """L6 可观测性层——日志+异常检测+告警+仪表板+报告。
@@ -1592,7 +1592,7 @@ L7 Continuous Validation
 ### 10.3 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/l7_validation.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
 
 class ContinuousValidationLayer:
     """L7 持续验证层——Red Team+回归测试+威胁情报+度量。"""
@@ -1654,7 +1654,7 @@ class ContinuousValidationLayer:
 ### 10.4 Red Team 载荷库结构
 
 ```yaml
-# src/zephyr/llm-security/payloads/red-team-payloads.yaml
+# src/zephyr/llm_security/payloads/red-team-payloads.yaml
 
 payloads:
   LLM01_prompt_injection:
@@ -1694,7 +1694,7 @@ payloads:
 | 子模块 | 施工状态 | 代码落位 |
 |------|:---:|------|
 | Red Team扫描 | ✅ 75% | `l7_validation.py` — `red_team_scan()` 已实现（401行）+ `payloads/` 4个载荷库 |
-| 安全回归测试 | ✅ 80% | `tests/llm-security/test_l*.py` — 12个测试文件已实现（1780+行） |
+| 安全回归测试 | ✅ 80% | `tests/llm_security/test_l*.py` — 12个测试文件已实现（1780+行） |
 | 威胁情报更新 | ✅ 70% | `l7_validation.py` — `threat_intel_update()` 已实现（自动拉取待对接） |
 | 防御度量 | ✅ 75% | `l7_validation.py` — `defense_metrics()` 已实现 |
 
@@ -1767,13 +1767,13 @@ LSG 健康检查失败
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-CONTEXT_ENGINE | 必须 | Context Engine——LSG消费CE的prompt内容做注入检测 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\context-engine\blueprint.md` |
-| MOD-GATE_ENGINE | 必须 | Gate Engine——LSG的门禁判决由Gate Engine消费执行 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\gate-engine\blueprint.md` |
-| MOD-INF-011 | 必须 | Vector Memory——RAG注入检测需消费向量库检索结果 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\vector-memory\blueprint.md` |
-| MOD-INF-013 | 必须 | MCP Servers——MCP服务器安全校验+工具描述审计 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\mcp-servers\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | Context Engine——LSG消费CE的prompt内容做注入检测 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\context_engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——LSG的门禁判决由Gate Engine消费执行 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\gate_engine\blueprint.md` |
+| MOD-INF-011 | 必须 | Vector Memory——RAG注入检测需消费向量库检索结果 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\vector_memory\blueprint.md` |
+| MOD-INF-013 | 必须 | MCP Servers——MCP服务器安全校验+工具描述审计 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\mcp_servers\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——LSG L4消费RBAC权限检查结果 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\agent-rbac\blueprint.md` |
 | MOD-INF-020 | 必须 | Audit Trail——LSG安全事件写入审计链 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\audit-trail\blueprint.md` |
-| llm-security-gateway-interface | 必须 | LSG接口合同——输入/输出契约定义 | — | `D:\ZephyrAlpha\docs\_b_track_interfaces\llm-security-gateway-interface.md` |
+| llm_security-gateway-interface | 必须 | LSG接口合同——输入/输出契约定义 | — | `D:\ZephyrAlpha\docs\_b_track_interfaces\llm_security-gateway-interface.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1849,7 +1849,7 @@ LSG 健康检查失败
 ### 13.1 完整文件清单
 
 ```
-src/zephyr/llm-security/
+src/zephyr/llm_security/
 ├── __init__.py                          ✅ 已实现 — 模块入口+架构注释+v1.0.0
 ├── protocol.py                          ✅ 已实现 — LLMSecurityProtocol 抽象基类+SecurityContext+SecurityResult
 │
@@ -1909,7 +1909,7 @@ tests/
 │   ├── test_ai_behavior_audit_logger.py ✅ 已实现
 │   └── test_hallucination_interception.py ✅ 已实现
 │
-└── llm-security/
+└── llm_security/
     ├── test_l0_supply_chain.py           ✅ 已实现
     ├── test_l1_input_defense.py          ✅ 已实现
     ├── test_l2_prompt_protection.py      ✅ 已实现
@@ -1982,9 +1982,9 @@ tests/
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号同步 + 完整度同步 | 待更新 |
 | 2 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | GCT-026 LSG Security Gateway 门禁 | ✅ |
 | 3 | Phase Manager | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | gate_lsg_security 到 Phase 1 | ✅ |
-| 4 | red_team_scanner | `D:\ZephyrAlpha\src\zephyr\llm-security\self_protection\red_team_scanner.py` | Red Team 对抗扫描器（271行） | ✅ |
-| 5 | test_l7_red_team | `D:\ZephyrAlpha\tests\llm-security\test_l7_red_team.py` | 16测试用例 | ✅ |
-| 6 | self_protection/__init__.py | `D:\ZephyrAlpha\src\zephyr\llm-security\self_protection\__init__.py` | __all__ 添加 red_team_scanner | ✅ |
+| 4 | red_team_scanner | `D:\ZephyrAlpha\src\zephyr\llm_security\self_protection\red_team_scanner.py` | Red Team 对抗扫描器（271行） | ✅ |
+| 5 | test_l7_red_team | `D:\ZephyrAlpha\tests\llm_security\test_l7_red_team.py` | 16测试用例 | ✅ |
+| 6 | self_protection/__init__.py | `D:\ZephyrAlpha\src\zephyr\llm_security\self_protection\__init__.py` | __all__ 添加 red_team_scanner | ✅ |
 | 7 | phase_check_registry | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | 需添加 check_lsg_security 函数 | 🔒 锁定 |
 
 ---
@@ -2161,7 +2161,7 @@ L8 Multi-Agent Security
 ### 23.3 L8 接口定义
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l8_multi_agent.py
+# src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py
 
 class AgentIdentityToken:
     agent_id: str
@@ -2338,7 +2338,7 @@ AI BOM 生命周期（AI自动维护，Owner定期审计）
 │   ├── 每次MCP服务器接入后更新
 │   └── 每次模型切换后更新
 ├── 存储位置
-│   ├── src/zephyr/llm-security/ai_bom.yaml（canonical）
+│   ├── src/zephyr/llm_security/ai_bom.yaml（canonical）
 │   └── CI产物中附带（每次构建验证）
 ├── 验证流程
 │   ├── CI自动对比 ai_bom.yaml 与实际依赖
@@ -2712,7 +2712,7 @@ LSG Self-Protection Architecture
 ### 28.3 LSG Watchdog 实现
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/lsg_watchdog.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/lsg_watchdog.py
 
 class LSGWatchdog:
     """LSG进程守护——确保LSG自身健康存活。"""
@@ -2892,7 +2892,7 @@ Sampling请求含`includeContext`参数，指定要包含多少对话/服务器�
 ### 31.4 LSG防御策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py 新增 Sampling 防御
+# src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py 新增 Sampling 防御
 
 class MCPSamplingDefense:
     """MCP Sampling攻击向量专用防御。"""
@@ -2955,7 +2955,7 @@ class MCPSamplingDefense:
 ### 32.2 LSG防御策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l3_output.py 新增 Embedding Inversion 防御
+# src/zephyr/security/llm_defense/llm_security/layers/l3_output.py 新增 Embedding Inversion 防御
 
 class EmbeddingInversionDefense:
     """防止通过LLM输出反演向量存储中的敏感数据。"""
@@ -3027,7 +3027,7 @@ Data-Channel Attack (RAG Poisoning):
 ### 33.2 LSG防御策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l1_input.py 新增 RAG投毒防御
+# src/zephyr/security/llm_defense/llm_security/layers/l1_input.py 新增 RAG投毒防御
 
 class RAGPoisoningDefense:
     """RAG知识库投毒防御——数据信道攻击专用。"""
@@ -3122,7 +3122,7 @@ Shadow Agent是在ZephyrAlpha的Agent编排系统之外运行、未被Owner知�
 ### 34.2 Shadow Agent 检测策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/shadow_agent_detector.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/shadow_agent_detector.py
 
 class ShadowAgentDetector:
     """Shadow Agent检测——发现未被注册的AI Agent。"""
@@ -3218,21 +3218,21 @@ NHI Lifecycle Management (适用对象：所有AI Agent)
 ### 35.1 LSG Security Regression Test Suite
 
 ```python
-# tests/llm-security/test_lsg_self_regression.py
+# tests/llm_security/test_lsg_self_regression.py
 
 class TestLSGSelfRegression:
     """LSG自身的安全回归测试——验证安全规则未被意外削弱。"""
 
     def test_known_injection_patterns_still_detected(self):
         """验证所有已知注入模式仍被L1正确检测。"""
-        patterns = load_golden_test_set("tests/llm-security/golden/injection_positive.yaml")
+        patterns = load_golden_test_set("tests/llm_security/golden/injection_positive.yaml")
         for pattern in patterns:
             result = L1_INPUT.check_direct_input(pattern.payload)
             assert result.blocked, f"REGRESSION: {pattern.id} '{pattern.name}' not blocked!"
 
     def test_known_bypass_patterns_not_in_positive_set(self):
         """验证已知良性输入未被误拦（false positive regression）。"""
-        benign = load_golden_test_set("tests/llm-security/golden/benign_negative.yaml")
+        benign = load_golden_test_set("tests/llm_security/golden/benign_negative.yaml")
         for item in benign:
             result = L1_INPUT.check_direct_input(item.payload)
             assert not result.blocked, f"FALSE POSITIVE: {item.id}"
@@ -3260,14 +3260,14 @@ class TestLSGSelfRegression:
         """回放全部Red Team载荷——确保已知攻击全部被拦截。"""
 
 
-# Golden Test Set 格式 (tests/llm-security/golden/injection_positive.yaml)
+# Golden Test Set 格式 (tests/llm_security/golden/injection_positive.yaml)
 # 每次发现新攻击模式 → AI自动追加到golden set
 ```
 
 ### 35.2 安全代码完整性保护
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/code_integrity.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py
 
 class SecurityCodeIntegrityGuard:
     """安全代码完整性保护——防止AI施工/维护时意外削弱安全规则。"""
@@ -3335,7 +3335,7 @@ name: LSG Security Gate
 on:
   push:
     paths:
-      - "src/zephyr/llm-security/**"
+      - "src/zephyr/llm_security/**"
       - "config/**/*.yaml"
 
 jobs:
@@ -3343,16 +3343,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run LSG self-regression tests
-        run: pytest tests/llm-security/test_lsg_self_regression.py -v --strict-markers
+        run: pytest tests/llm_security/test_lsg_self_regression.py -v --strict-markers
 
       - name: Verify security file integrity
         run: python -m zephyr.llm_security.self_protection.code_integrity verify
 
       - name: Replay golden Red Team payloads
-        run: pytest tests/llm-security/test_lsg_self_regression.py::TestLSGSelfRegression::test_full_red_team_payloads_replay
+        run: pytest tests/llm_security/test_lsg_self_regression.py::TestLSGSelfRegression::test_full_red_team_payloads_replay
 
       - name: Check false positive rate
-        run: pytest tests/llm-security/test_lsg_self_regression.py::TestLSGSelfRegression::test_known_bypass_patterns_not_in_positive_set
+        run: pytest tests/llm_security/test_lsg_self_regression.py::TestLSGSelfRegression::test_known_bypass_patterns_not_in_positive_set
 
   security-coverage:
     runs-on: ubuntu-latest
@@ -3365,8 +3365,8 @@ jobs:
 
 | 子模块 | 施工状态 | 代码落位 |
 |------|:---:|------|
-| LSG自我安全回归测试 | ░░ 0% | `tests/llm-security/test_lsg_self_regression.py` |
-| Golden Test Set | ░░ 0% | `tests/llm-security/golden/` |
+| LSG自我安全回归测试 | ░░ 0% | `tests/llm_security/test_lsg_self_regression.py` |
+| Golden Test Set | ░░ 0% | `tests/llm_security/golden/` |
 | 安全代码完整性 | ░░ 0% | `self_protection/code_integrity.py` |
 | CI安全门禁 | ░░ 0% | `.github/workflows/lsg_security_gate.yml` |
 
@@ -3391,7 +3391,7 @@ jobs:
 ### 36.3 LSG 的 Kill Chain 感知能力
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l6_observability.py 新增 Kill Chain 跟踪
+# src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py 新增 Kill Chain 跟踪
 
 class PromptwareKillChainTracker:
     """追踪攻击者在Promptware Kill Chain中的进展阶段。"""
@@ -3468,7 +3468,7 @@ class PromptwareKillChainTracker:
 ### 37.3 LSG防御策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l0_supply_chain.py 新增 Slopsquatting防御
+# src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py 新增 Slopsquatting防御
 
 class SlopsquattingDefense:
     """防止AI幻觉出恶意的Python包依赖。"""
@@ -3570,7 +3570,7 @@ LSG当前的防御模式：
 ### 38.2 LSG 新增防御点：ToolResultTransform
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l1_input.py 新增 ToolResultTransform
+# src/zephyr/security/llm_defense/llm_security/layers/l1_input.py 新增 ToolResultTransform
 
 class ToolResultSecurityLayer:
     """工具结果安全检查——在结果进入LLM上下文之前拦截并检测。"""
@@ -3763,7 +3763,7 @@ LSG Performance Budget（单次LLM请求的LSG处理延迟预算）
 ### 40.4 延迟超预算时的自动降级策略
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py 新增 性能预算管理
+# src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py 新增 性能预算管理
 
 class LSGPerformanceGuard:
     """LSG性能预算管理——安全不能以不可接受的延迟为代价。"""
@@ -3831,7 +3831,7 @@ AI 生成代码的模式：
 ### 41.2 LSG 的数据层安全检查
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/data_layer_auditor.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/data_layer_auditor.py
 
 class DataLayerSecurityAuditor:
     """数据层安全审计——扫描AI生成/维护的数据库配置。"""
@@ -3961,7 +3961,7 @@ V5: Source Map & Debug Artifact Exposure（源码映射与调试产物暴露）
 ### 42.3 LSG 构建产物安全防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/build_artifact_scanner.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/build_artifact_scanner.py
 
 class BuildArtifactSecurityScanner:
     """扫描构建产物中的安全隐患——防止 Claude Code 级泄露。"""
@@ -4068,7 +4068,7 @@ Mechanism 3: Dependency Shift（AI建议升级依赖——新版本可能改变�
 ### 43.3 LSG 安全熵增检测
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/security_entropy_monitor.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/security_entropy_monitor.py
 
 class SecurityEntropyMonitor:
     """监控安全代码的熵增——检测AI维护导致的防御退化。"""
@@ -4119,7 +4119,7 @@ Failure Mode D: Rotation Race Condition（多进程同时检测过期→并发�
 ### 44.2 LSG 原子化轮换（三阶段提交）
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/credential_rotation_safety.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/credential_rotation_safety.py
 
 class CredentialRotationSafetyNet:
     """凭据轮换安全网——确保轮换过程零中断。"""
@@ -4159,7 +4159,7 @@ Attacker → Agent A (入口注入) → Agent B (间接注入—"内部可信"�
 ### 45.2 LSG 级联注入防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l8_multi_agent.py 扩展
+# src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py 扩展
 
 class CascadingInjectionDefense:
     """跨Agent链的级联Prompt注入防御。"""
@@ -4203,7 +4203,7 @@ Prompt Template Poisoning Surface
 ### 46.2 LSG 防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/prompt_template_guard.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/prompt_template_guard.py
 
 class PromptTemplateIntegrityGuard:
     """提示模板完整性保护——防止AI维护中对模板的投毒/弱化。"""
@@ -4252,7 +4252,7 @@ Threat 4: Feedback Loop Manipulation—先提交"容易获批"的操作积累信
 ### 47.2 LSG 反冒充防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/human_verification.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/human_verification.py
 
 class HumanVerificationLayer:
     """确保审批决策来自真正的Owner，而非冒充的Agent。"""
@@ -4303,7 +4303,7 @@ State 5: Feedback Loop Training Data — FLE模式学习数据。投毒：恶意
 ### 48.2 LSG 持久状态防投毒
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/persistent_state_guard.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/persistent_state_guard.py
 
 class PersistentStateGuard:
     """跨会话持久状态的投毒检测——保护AI的长期记忆。"""
@@ -4347,7 +4347,7 @@ class PersistentStateGuard:
 ### 49.2 LSG 公域交互安全守卫
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l3_output.py 扩展
+# src/zephyr/security/llm_defense/llm_security/layers/l3_output.py 扩展
 
 class PublicInteractionGuard:
     """Agent对公域交互的安全门禁——发言前最后一道检查。"""
@@ -4421,7 +4421,7 @@ ZephyrAlpha Extractable IP Assets（所有API/LSG输出都可能被用于模型�
 ### 50.2 LSG 模型提取防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py 新增 Model Extraction Defense
+# src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py 新增 Model Extraction Defense
 
 class ModelExtractionDefense:
     """模型提取攻击防御——保护alpha策略IP不被API查询逆向工程。"""
@@ -4567,7 +4567,7 @@ Trading-Specific Side-Channel Threats
 ### 51.2 LSG 侧信道防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l6_observability.py 新增 Side-Channel Defense
+# src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py 新增 Side-Channel Defense
 
 class SideChannelDefense:
     """LLM推理侧信道防御——保护LLM通信不被时序/长度/包模式分析提取信息。"""
@@ -4698,7 +4698,7 @@ Financial Domain Threat Classification
 ### 52.2 LSG 金融合规门禁
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py 新增 Financial Compliance Gate
+# src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py 新增 Financial Compliance Gate
 
 class FinancialComplianceGate:
     """金融合规门禁——确保LSG输出不构成市场操纵或监管违规。"""
@@ -4834,7 +4834,7 @@ The LSG Security Paradox（LSG自身安全的悖论）
 ### 53.2 LSG 自代码安全审计
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/self_protection/lsg_security_self_audit.py
+# src/zephyr/security/llm_defense/llm_security/self_protection/lsg_security_self_audit.py
 
 class LSGSecuritySelfAuditor:
     """LSG自身代码的安全审计——LSG不能只保护别人，必须检查自己的代码安全。"""
@@ -5099,7 +5099,7 @@ ZephyrAlpha Multimodal Attack Surface
 ### 56.3 LSG 多模态注入防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l1a_multimodal.py 新增层
+# src/zephyr/security/llm_defense/llm_security/layers/l1a_multimodal.py 新增层
 
 class MultimodalInjectionDefense:
     """L1A层——多模态输入的注入检测。L1处理文本，L1A处理图像/音频/视频。"""
@@ -5258,7 +5258,7 @@ Single-Turn Defense vs Long-Horizon Attack
 ### 57.3 LSG 长时域攻击防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py 新增 Long-Horizon Defense
+# src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py 新增 Long-Horizon Defense
 
 class LongHorizonAttackDefense:
     """长时域Agent攻击防御——保护Agent不被多轮交互逐步控制。"""
@@ -5366,7 +5366,7 @@ MCP STDIO RCE — Architectural Root Cause
 ### 58.2 LSG MCP深度安全加固
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l0_supply_chain.py 新增 MCP Deep Security
+# src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py 新增 MCP Deep Security
 
 class MCPDeepSecurityScanner:
     """MCP深度安全扫描——覆盖STDIO RCE + Tool Poisoning + Rug Pull + Cross-Server。"""
@@ -5477,7 +5477,7 @@ How Semantic Cache Key Collision Works
 ### 59.2 LSG 缓存攻击防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py 新增 Cache Defense
+# src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py 新增 Cache Defense
 
 class SemanticCacheDefense:
     """语义缓存安全防御——防止Key Collision和Prefix Caching侧信道。"""
@@ -5595,7 +5595,7 @@ Prompt Obfuscation Taxonomy（2026年确认有效的逃逸技术）
 ### 60.2 LSG 编码逃逸防御
 
 ```python
-# src/zephyr/security/llm_defense/llm-security/layers/l1_input.py 新增 Encoding Defense
+# src/zephyr/security/llm_defense/llm_security/layers/l1_input.py 新增 Encoding Defense
 
 class EncodingBypassDefense:
     """编码逃逸防御——检测并阻断已编码/混淆的恶意指令。"""
@@ -5704,16 +5704,16 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\llm-security\` | 源码（layers/patterns/payloads/sandbox/self_protection子目录） |
-| 测试代码 | `D:\ZephyrAlpha\tests\llm-security\` + `tests/` | 安全专项+单元测试 |
-| Red Team载荷 | `D:\ZephyrAlpha\src\zephyr\llm-security\payloads\red-team-payloads.yaml` | 攻击载荷库 |
-| PII/Secret模式 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\secrets.py` | 敏感数据检测模式库 |
-| 注入模式库 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\injection_patterns.py` | Prompt注入特征库 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\llm_security\` | 源码（layers/patterns/payloads/sandbox/self_protection子目录） |
+| 测试代码 | `D:\ZephyrAlpha\tests\llm_security\` + `tests/` | 安全专项+单元测试 |
+| Red Team载荷 | `D:\ZephyrAlpha\src\zephyr\llm_security\payloads\red-team-payloads.yaml` | 攻击载荷库 |
+| PII/Secret模式 | `D:\ZephyrAlpha\src\zephyr\llm_security\patterns\secrets.py` | 敏感数据检测模式库 |
+| 注入模式库 | `D:\ZephyrAlpha\src\zephyr\llm_security\patterns\injection_patterns.py` | Prompt注入特征库 |
 | 威胁模型 | `D:\ZephyrAlpha\docs\_working\audit\threat_models\` | 威胁建模文档 |
-| 审计日志 | `D:\ZephyrAlpha\src\zephyr\llm-security\audit_logs\` | 运行时审计日志 |
-| 安全仪表板 | `D:\ZephyrAlpha\src\zephyr\llm-security\dashboard\` | Streamlit仪表板 |
-| AI BOM | `D:\ZephyrAlpha\src\zephyr\llm-security\ai_bom.yaml` | AI供应链物料清单 |
+| 审计日志 | `D:\ZephyrAlpha\src\zephyr\llm_security\audit_logs\` | 运行时审计日志 |
+| 安全仪表板 | `D:\ZephyrAlpha\src\zephyr\llm_security\dashboard\` | Streamlit仪表板 |
+| AI BOM | `D:\ZephyrAlpha\src\zephyr\llm_security\ai_bom.yaml` | AI供应链物料清单 |
 | LSG CI安全门禁 | `D:\ZephyrAlpha\.github\workflows\lsg_security_gate.yml` | CI安全自动门禁Pipeline |
 | DeepSeek风险评估 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\risk_assessment\deepseek_provider_risk.md` | 专项风险评估 |
 | 月度Security Scorecard | `D:\ZephyrAlpha\docs\09_audit\security_scorecards\` | 月度安全计分卡 |
@@ -5734,9 +5734,9 @@ Encoding Defense Layers — LSG + LLM 协作
 | `tests/test_process_sandbox.py` | ✅ |
 | `tests/test_ai_behavior_audit_logger.py` | ✅ |
 | `tests/test_hallucination_interception.py` | ✅ |
-| `tests/llm-security/test_l7_red_team.py` | ✅ |
-| `tests/llm-security/test_lsg_self_regression.py` | ✅ |
-| `tests/llm-security/golden/` | ✅ |
+| `tests/llm_security/test_l7_red_team.py` | ✅ |
+| `tests/llm_security/test_lsg_self_regression.py` | ✅ |
+| `tests/llm_security/golden/` | ✅ |
 
 ---
 
@@ -5798,33 +5798,33 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/dashboard/app.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/gateway.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/input_sanitizer.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l0_supply_chain.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l1_input.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l2_prompt_protection.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l2a_process_sandbox.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l3_output.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l6_observability.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/layers/l8_multi_agent.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/patterns/injection_patterns.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/patterns/secrets.py` | ✅ 已实现 | |
-| `src/zephyr/llm-security/payloads/injection-payloads.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm-security/payloads/leak-probe-phrases.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm-security/payloads/red-team-payloads.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm-security/payloads/tool-call-payloads.yaml` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/process_sandbox.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/protocol.py` | ✅ 已实现 | |
-| `src/zephyr/llm-security/red-team-corpus.yaml` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/self_protection/adversarial_mutator.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/self_protection/code_integrity.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/self_protection/isolation.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/self_protection/l7_validation.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm-security/self_protection/red_team_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/dashboard/app.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/gateway.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l1_input.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l3_output.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/patterns/secrets.py` | ✅ 已实现 | |
+| `src/zephyr/llm_security/payloads/injection-payloads.yaml` | ✅ 已实现 | |
+| `src/zephyr/llm_security/payloads/leak-probe-phrases.yaml` | ✅ 已实现 | |
+| `src/zephyr/llm_security/payloads/red-team-payloads.yaml` | ✅ 已实现 | |
+| `src/zephyr/llm_security/payloads/tool-call-payloads.yaml` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/process_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/protocol.py` | ✅ 已实现 | |
+| `src/zephyr/llm_security/red-team-corpus.yaml` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -5874,8 +5874,8 @@ Encoding Defense Layers — LSG + LLM 协作
 | Tier 1 | MOD-CONTEXT_ENGINE Context Engine 蓝图 | §4 L1 输入防护接口 |
 | Tier 1 | MOD-INF-013 MCP Servers 蓝图 | §4 L0 供应链验证接口 |
 | Tier 1 | MOD-INF-018 Agent RBAC 蓝图 | §4 L4 Agent 安全接口 |
-| Tier 2 | `src/zephyr/llm-security/` 代码 | §4 数据模型、§11 产出物路径 |
-| Tier 2 | `tests/llm-security/` 测试 | §4 接口契约、§9 测试策略 |
+| Tier 2 | `src/zephyr/llm_security/` 代码 | §4 数据模型、§11 产出物路径 |
+| Tier 2 | `tests/llm_security/` 测试 | §4 接口契约、§9 测试策略 |
 | Tier 3 | `.github/workflows/lsg_security_gate.yml` | §9 测试策略 |
 
 ### 变更同步规则
@@ -5903,7 +5903,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | 场景 | 关键词 | 操作 |
 |------|--------|------|
-| 修改 LLM 安全相关代码 | llm-security / LSG / prompt injection | 读 §4 接口契约 + §12 fail-closed |
+| 修改 LLM 安全相关代码 | llm_security / LSG / prompt injection | 读 §4 接口契约 + §12 fail-closed |
 | 新增安全检查规则 | security / defense / filter | 读 §3-§11 对应层 + §18 风险 |
 | 修改 MCP Server 安全配置 | mcp / tool / sampling | 读 §30-§31 + §57 |
 | 处理安全事件 | CVE / vulnerability / incident | 读 §28 自身安全 + §35 回归测试 |
@@ -5913,7 +5913,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 1. `docs/blueprint_registry.yaml` → MOD-LLM_SECURITY → 本文件
 2. `python -m zephyr.agent_spec load SKILL-DOM-GAT-001` → 加载安全 Skill
-3. `src/zephyr/security/llm_defense/llm-security/gateway.py` → 代码入口
+3. `src/zephyr/security/llm_defense/llm_security/gateway.py` → 代码入口
 
 ### 负向责任
 
@@ -5931,8 +5931,8 @@ Encoding Defense Layers — LSG + LLM 协作
 | 维度 | 值 |
 |------|-----|
 | construction_progress | partially_implemented |
-| 源码路径 | `src/zephyr/llm-security/`（28 个 .py/.yaml） |
-| 测试路径 | `tests/llm-security/ + tests/adversarial/` |
+| 源码路径 | `src/zephyr/llm_security/`（28 个 .py/.yaml） |
+| 测试路径 | `tests/llm_security/ + tests/adversarial/` |
 | 关键入口 | `llm_security.gateway.LSGSecurityGateway` |
 
 ---
@@ -6031,12 +6031,12 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | LSG 核心模块 | `D:\ZephyrAlpha\src\zephyr\llm-security\` | 修改 | 各层实现迭代 |
-| 2 | LSG 层实现 | `D:\ZephyrAlpha\src\zephyr\llm-security\layers\` | 修改 | L0-L8 各层代码 |
-| 3 | LSG 自我防护 | `D:\ZephyrAlpha\src\zephyr\llm-security\self_protection\` | 修改 | 自我防护模块 |
-| 4 | LSG 模式库 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\` | 修改 | 注入/Secret模式 |
-| 5 | LSG 载荷库 | `D:\ZephyrAlpha\src\zephyr\llm-security\payloads\` | 修改 | Red Team载荷 |
-| 6 | LSG 仪表板 | `D:\ZephyrAlpha\src\zephyr\llm-security\dashboard\` | 修改 | Streamlit仪表板 |
+| 1 | LSG 核心模块 | `D:\ZephyrAlpha\src\zephyr\llm_security\` | 修改 | 各层实现迭代 |
+| 2 | LSG 层实现 | `D:\ZephyrAlpha\src\zephyr\llm_security\layers\` | 修改 | L0-L8 各层代码 |
+| 3 | LSG 自我防护 | `D:\ZephyrAlpha\src\zephyr\llm_security\self_protection\` | 修改 | 自我防护模块 |
+| 4 | LSG 模式库 | `D:\ZephyrAlpha\src\zephyr\llm_security\patterns\` | 修改 | 注入/Secret模式 |
+| 5 | LSG 载荷库 | `D:\ZephyrAlpha\src\zephyr\llm_security\payloads\` | 修改 | Red Team载荷 |
+| 6 | LSG 仪表板 | `D:\ZephyrAlpha\src\zephyr\llm_security\dashboard\` | 修改 | Streamlit仪表板 |
 | 7 | 单元测试 | `D:\ZephyrAlpha\tests\unit\test_input_sanitizer.py` 等 | 修改 | 测试用例 |
-| 8 | 安全测试 | `D:\ZephyrAlpha\tests\llm-security\` | 修改 | 安全专项测试 |
-| 9 | LSG 信号总线（v2.0.0新增） | `D:\ZephyrAlpha\src\zephyr\llm-security\signal_bus\` | 新建 | 安全信号路由/去重/隔离 |
+| 8 | 安全测试 | `D:\ZephyrAlpha\tests\llm_security\` | 修改 | 安全专项测试 |
+| 9 | LSG 信号总线（v2.0.0新增） | `D:\ZephyrAlpha\src\zephyr\llm_security\signal_bus\` | 新建 | 安全信号路由/去重/隔离 |

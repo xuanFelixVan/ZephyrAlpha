@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-SPEC-003
 title: "AutoRuntime Core — 实施任务"
 doc_type: architecture_view
@@ -78,11 +78,11 @@ ttl: permanent
 - **依赖**: T-2.1
 - **产出**: `src/zephyr/runtime/dream_cycle.py`
 
-### T-3.3 创建 feedback-loop.py
+### T-3.3 创建 feedback_loop.py
 - `FeedbackLoop` 类：登记表裁定→规则进化
 - `analyze_pending()`, `generate_proposals()`, `apply_proposal()`
 - **依赖**: T-2.3
-- **产出**: `src/zephyr/runtime/feedback-loop.py`
+- **产出**: `src/zephyr/runtime/feedback_loop.py`
 
 ---
 
@@ -128,7 +128,7 @@ ttl: permanent
 - `data/work_dags/daily-code-dedup.yaml`
 - `data/work_dags/daily-kb-maintenance.yaml`
 - `data/work_dags/daily-compliance.yaml`
-- `data/work_dags/daily-feedback-loop.yaml`
+- `data/work_dags/daily-feedback_loop.yaml`
 - `data/work_dags/pipeline-full-run.yaml`
 - `data/work_dags/kb-ingest-pipeline.yaml`
 - `data/work_dags/security-scan.yaml`

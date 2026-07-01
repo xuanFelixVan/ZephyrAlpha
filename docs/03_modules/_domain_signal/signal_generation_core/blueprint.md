@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L03-001
 submodule_path: src/zephyr/signal
 title: "Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位"
@@ -39,11 +39,11 @@ depends_on:
     at: §3
     why: Alpha信号域集成
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-signal\\signal-generation-core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\signal_generation_core\\blueprint.md"
     section: "§1"
     why: "本蓝图即SSoT"
 summary: "信号生成层C轨占位。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层未开放，禁止施工。"
-ssot_yaml: "docs/03_modules/_domain-signal/signal-generation-core/blueprint.md"
+ssot_yaml: "docs/03_modules/_domain_signal/signal_generation_core/blueprint.md"
 tags: [signal-generation, l03, c-track, ocp-extension-point, blocked]
 priority: P0
 runtime_plane: hot
@@ -382,10 +382,10 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
-| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
-| MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
+| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -423,7 +423,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-signal\signal-generation-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\signal\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\signal\` | 测试用例（待创建） |
 | 市场数据契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\market\market_data.py` | 行情数据结构（归属 MOD-INF-016） |
@@ -452,7 +452,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress + version 更新 | 蓝图升级 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本号更新 | 蓝图升级 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | L03 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
-| 4 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\signal\*.py` | [BLUEPRINT] 字段指向 MOD-L03-001 | 当前指向 ALPHA-SIGNAL-DOMAIN-001 |
+| 4 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\signal\*.py` | [BLUEPRINT] 字段指向 MOD-L03-001 | 当前指向 alpha_signal_domain-001 |
 
 ---
 
@@ -670,7 +670,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
-| 1 | 代码头部 [BLUEPRINT] 指向 ALPHA-SIGNAL-DOMAIN-001 而非 MOD-L03-001 | 中 | 初始创建时使用域蓝图ID | 修正 [BLUEPRINT] 字段 | §5.1 #1 | 待解决 |
+| 1 | 代码头部 [BLUEPRINT] 指向 alpha_signal_domain-001 而非 MOD-L03-001 | 中 | 初始创建时使用域蓝图ID | 修正 [BLUEPRINT] 字段 | §5.1 #1 | 待解决 |
 | 2 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015 | 中 | dep-map 使用旧契约ID | 对齐 dep-map 契约ID | §10.2 | 待解决 |
 | 3 | 无测试文件（tests/signal/ 不存在） | 高 | C轨占位未创建测试 | C轨解除后优先创建 | §9 | 待解决 |
 | 4 | IC加权聚合为占位实现（直接调用等权） | 低 | IC数据不可用 | L02 IC数据就绪后实现 | §16.7 #2 | 待解决 |
@@ -789,7 +789,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | L02 Alpha Factor | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` | 因子信号产出 | L02 是因子计算层，L03 是信号聚合层，职责不同 |
+| 1 | L02 Alpha Factor | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` | 因子信号产出 | L02 是因子计算层，L03 是信号聚合层，职责不同 |
 
 ---
 
@@ -798,7 +798,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | 信号生成代码 | `D:\ZephyrAlpha\src\zephyr\signal\` | 修改 | 蓝图描述的核心代码 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-signal\signal-generation-core\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` | 修改 | 本文件 |
 | 3 | 测试代码 | `D:\ZephyrAlpha\tests\signal\` | 新建 | 测试用例（待创建） |
 
 ---
@@ -821,8 +821,8 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-pf_core\portfolio-construction-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\pf_core\` | §4 数据模型、§11 产出物路径 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\risk\` | §4 数据模型、§11 产出物路径 |
 

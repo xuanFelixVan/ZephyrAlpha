@@ -1,4 +1,4 @@
-registry_version: 3.1.0
+﻿registry_version: 3.1.0
 last_updated: '2026-06-25'
 _schema:
   description: 模块登记表字段——与 REG-001（registry_of_registries.yaml）及物理 blueprint.md 对齐
@@ -33,11 +33,11 @@ modules:
   priority: P1
   path: docs/03_modules/_alpha_signal_domain
   blueprint:
-    status: Active
+    status: Deprecated
     version: 0.4.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-FEEDBACK_LOOP
+- module_id: MOD-FLE-CAP-001
   name: capacity_upgrade
   layer: cross_layer
   functional_domain: operations
@@ -59,7 +59,7 @@ modules:
     version: 0.13.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-GOVERNANCE
+- module_id: MOD-GOV-CAP-001
   name: capacity_upgrade
   layer: cross_layer
   functional_domain: governance
@@ -77,16 +77,16 @@ modules:
   priority: P2
   path: docs/03_modules/_ml_experiment_domain
   blueprint:
-    status: Active
+    status: Deprecated
     version: 0.4.0
   construction_plan:
     status: partially_implemented
 - module_id: SYS-MASTER-001
-  name: _sys_master
+  name: system_master
   layer: cross_layer
   functional_domain: system
   priority: P0
-  path: docs/03_modules/_sys_master
+  path: docs/03_modules/system_master
   blueprint:
     status: Active
     version: 0.17.0
@@ -199,7 +199,7 @@ modules:
   path: docs/03_modules/_cross_layer/database
   blueprint:
     status: Active
-    version: 4.0.1
+    version: 4.3.0
   construction_plan:
     status: partially_implemented
 - module_id: MOD-INF-013

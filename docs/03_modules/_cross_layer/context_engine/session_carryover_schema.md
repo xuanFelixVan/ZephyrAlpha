@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STD-SESSION-CARRYOVER-001
 title: Session Carryover Schema / 会话接续 Schema
 doc_type: blueprint
@@ -20,7 +20,7 @@ related_rationale: R71
 related_open_questions: []
 tags:
   - session-carryover
-  - context-engine-integration
+  - context_engine-integration
   - schema
   - vibe-coding-2.0
   - hallucination-event
@@ -49,7 +49,7 @@ ttl: permanent
 
 ### 0.2 本文档不是
 
-- ❌ Context Engine 的完整 API → 见 `docs/03_modules/_b_track_interfaces/context-engine-interface.md`
+- ❌ Context Engine 的完整 API → 见 `docs/03_modules/_b_track_interfaces/context_engine-interface.md`
 - ❌ 单次 Session 内的任务追踪 → 见 `docs/03_modules/_b_track_interfaces/agent-orchestrator-interface.md`
 - ❌ 6 大核心服务架构图 → 见 `application_architecture.md §4A`
 - ❌ Session 的定义（本文档假设读者已知）→ Session = 一次"打开 Cursor → 编码 → 关闭"的连续工作周期
@@ -264,7 +264,7 @@ Agent 接续工作：知道上次 TODO、已尝试过的失败、已知风险
 ### 2.2 Pydantic v2 等价定义（实现参考）
 
 ```python
-# src/zephyr/context-engine/session_carryover.py
+# src/zephyr/context_engine/session_carryover.py
 from datetime import datetime
 from enum import Enum
 from typing import Literal
@@ -517,7 +517,7 @@ async def load_session_carryover(self) -> SessionCarryover | None:
 ### 6.1 Context Engine 需要暴露的接口
 
 ```python
-# 由 context-engine-interface.md §3.5 约束
+# 由 context_engine-interface.md §3.5 约束
 class ContextEngineProtocol(Protocol):
     async def save_session_carryover(self,
                                       session_id: str,
@@ -572,8 +572,8 @@ class ContextEngineProtocol(Protocol):
       "status": "blocked",
       "summary": "替换 ChromaDB 客户端为 InProcessVectorMemory 实现",
       "files_in_scope": [
-        "src/zephyr/vector-memory/in_process.py",
-        "tests/vector-memory/test_in_process.py"
+        "src/zephyr/vector_memory/in_process.py",
+        "tests/vector_memory/test_in_process.py"
       ],
       "last_observation": "pytest tests/ 3 passed, 2 failed: test_multi_search_rrf / test_bootstrap_resume",
       "next_action_hint": "先修 test_multi_search_rrf：RRF 权重分子应该是 60 而不是 1"
@@ -616,7 +616,7 @@ class ContextEngineProtocol(Protocol):
     "opus_calls_today": 3
   },
   "artifacts_pending_review": [
-    "src/zephyr/vector-memory/in_process.py"
+    "src/zephyr/vector_memory/in_process.py"
   ],
   "user_intentions": [
     "修掉 RRF 测试后进入 T-1-06（bootstrap 断点续传）",
@@ -626,8 +626,8 @@ class ContextEngineProtocol(Protocol):
     "git_branch": "main",
     "git_head_sha": "a3f9b2c1",
     "uncommitted_files": [
-      "src/zephyr/vector-memory/in_process.py",
-      "tests/vector-memory/test_in_process.py"
+      "src/zephyr/vector_memory/in_process.py",
+      "tests/vector_memory/test_in_process.py"
     ],
     "ruff_status": "clean",
     "pytest_last_result": "fail"

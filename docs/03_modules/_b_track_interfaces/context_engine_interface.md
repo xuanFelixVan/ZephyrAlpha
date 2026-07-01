@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-003
 title: Context Engine Interface / 上下文引擎接口规范
 doc_type: architecture_view
@@ -12,9 +12,9 @@ created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
-template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
+template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/context-engine/blueprint.md（MOD-CONTEXT_ENGINE — 详细设计与 CT 锚点；Phase 5 真源）"
+  - "03_modules/_cross_layer/context_engine/blueprint.md（MOD-CONTEXT_ENGINE — 详细设计与 CT 锚点；Phase 5 真源）"
   - "architecture_model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
   - "docs/03_modules/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
@@ -26,7 +26,7 @@ integration_points:
   - "Feedback Loop Engine (upstream signal, adjust strategy)"
   - "MCP Servers (Cursor / Trae / Claude-Desktop) - 注入通道"
 tags:
-  - context-engine
+  - context_engine
   - mcp
   - entity-graph
   - rrf-retrieval
@@ -71,7 +71,7 @@ mod_master_contracts:
 
 ### 0.2 本文档**不是**
 
-- ❌ **VMS 使用教程**——见 `vector-memory-service-interface.md`
+- ❌ **VMS 使用教程**——见 `vector_memory-service-interface.md`
 - ❌ **MCP 协议规范**——见 Anthropic MCP 官方文档（https://modelcontextprotocol.io）
 - ❌ **具体 Prompt 模板库**——见 `prompt_templates/`（experimental 产物，另出）
 - ❌ **Agent 任务状态机**——见 `agent-orchestrator-interface.md`（B-a-3）
@@ -469,8 +469,8 @@ IDE 能力未知 / 探测失败
 
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
-| `src/zephyr/vector-memory/` 包 | ⏳ 待建 | VMS experimental T-1-XX |
-| `src/zephyr/context-engine/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| `src/zephyr/vector_memory/` 包 | ⏳ 待建 | VMS experimental T-1-XX |
+| `src/zephyr/context_engine/` 包创建 | ⏳ 待建 | experimental T-1-XX |
 | Qwen2.5-3B-Instruct GGUF 下载到 `.models/qwen2.5-3b/` | ⏳ 待建 | experimental T-1-XX |
 | llama.cpp Python 绑定（`llama-cpp-python`） | ⏳ 待建 | experimental T-1-XX |
 | KBG-0015 批准 | ⏳ pending | B-e 阶段 |
@@ -479,7 +479,7 @@ IDE 能力未知 / 探测失败
 
 ```toml
 [project.optional-dependencies]
-context-engine = [
+context_engine = [
     "networkx>=3.2,<4.0",
     "llama-cpp-python>=0.2.70",
     "tiktoken>=0.6",
@@ -501,7 +501,7 @@ context-engine = [
 ```
 
 ├── src/zephyr/
-│   ├── context-engine/                             # ⏳ experimental 新建
+│   ├── context_engine/                             # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_ce() 工厂
 │   │   ├── protocol.py                             # ContextEngineProtocol 抽象
 │   │   ├── in_process.py                           # experimental 实现
@@ -525,10 +525,10 @@ context-engine = [
 │   │   ├── entity_graph.py                         # NetworkX 加载 + 查询 + 增量更新
 │   │   └── config.py                               # CEConfig
 │   └── config/
-│       └── context-engine.yaml                     # ⏳ 新建
+│       └── context_engine.yaml                     # ⏳ 新建
 │
 ├── .runtime/
-│   ├── context-engine/
+│   ├── context_engine/
 │   │   ├── entity_graph.json                       # NetworkX 持久化
 │   │   ├── cache/                                  # build 结果缓存（bundle_hash key）
 │   │   └── adjust_state.json                       # adjust_strategy 动态权重状态
@@ -563,7 +563,7 @@ context-engine = [
 | 上游 | 关系 | 调用 |
 |------|------|------|
 | **VMS**（主数据源） | 必须 | `await vm.multi_search(query, [decisions, code_context, task_history, lessons], merge_strategy='rrf')` |
-| NetworkX entity-graph | 必须 | 本地加载 `.runtime/context-engine/entity_graph.json` |
+| NetworkX entity-graph | 必须 | 本地加载 `.runtime/context_engine/entity_graph.json` |
 | **Feedback Loop Engine** | 可选（通过 Protocol） | FLE 调 `await ce.adjust_strategy(task_id, signal)` |
 | 文件系统（降级源） | 必须（DEGRADE-001） | `rg`/`grep` 在项目根扫描 |
 
@@ -578,7 +578,7 @@ context-engine = [
 ### 8.3 Feedback Loop 单向依赖（Protocol 引用，不硬编码）
 
 ```python
-# src/zephyr/observability/feedback-loop/actions.py（FLE 侧，不在本文档实现）
+# src/zephyr/observability/feedback_loop/actions.py（FLE 侧，不在本文档实现）
 
 from typing import Protocol
 
@@ -639,7 +639,7 @@ if vms_result.degraded:
     # 降级到 filesystem_fallback.py
     fs_hits = await rg_search(
         pattern=derive_regex(request.tags + request.target_files),
-        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain-infra_ops/task-system/changes"],
+        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain_infra_ops/task_system/changes"],
         max_results_per_slot=20,
     )
     bundle.degraded = True

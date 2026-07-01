@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "llm_security — 目录索引"
@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则 |
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
-| [readme.md](readme.md) | Markdown | llm-security README |
+| [readme.md](readme.md) | Markdown | llm_security README |
 
 ## 导航
 

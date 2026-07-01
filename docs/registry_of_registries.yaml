@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+﻿# [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 schema_version: "1.1.0"
 doc_type: register
 title: "ZephyrAlpha 中央注册表索引 — 全项目唯一真源总纲"
@@ -427,7 +427,7 @@ tiers:
 
       - registry_id: REG-SYS-MASTER-001
         name: 系统总蓝图（SYS-MASTER-001）
-        physical_path: docs/03_modules/_sys_master/blueprint.md
+        physical_path: docs/03_modules/system_master/blueprint.md
         format: yaml+markdown
         maintenance: manual
         entry_count: 1

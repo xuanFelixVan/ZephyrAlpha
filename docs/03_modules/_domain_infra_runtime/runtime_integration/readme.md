@@ -1,6 +1,6 @@
----
+﻿---
 blueprint_id: MOD-GOVERNANCE
-title: runtime-integration README
+title: runtime_integration README
 module_id: MOD-032
 ttl: permanent
 doc_type: index
@@ -8,7 +8,7 @@ doc_type: index
 
 # Runtime Integration — MOD-INF-002
 
-> **真源**：`docs/03_modules/_domain-infra_ops/runtime-integration/blueprint.md` v5.0.1
+> **真源**：`docs/03_modules/_domain_infra_ops/runtime_integration/blueprint.md` v5.0.1
 > **承载层**：L01 Infrastructure（横切能力集合）
 > **Phase**：Phase 1 完成 / Phase 2 backlog
 ttl: permanent
@@ -80,6 +80,6 @@ Runtime Integration 是 ZephyrAlpha 基础设施层的横切能力集合，解�
 
 ## 5. 关键设计决策
 
-- **KBG-0022**：B 轨平台能力归属——runtime-integration 在 B 轨无 l<NN>_ 前缀
+- **KBG-0022**：B 轨平台能力归属——runtime_integration 在 B 轨无 l<NN>_ 前缀
 - **KBG-0040**：强制 Pydantic V2——禁止 dataclass
 - **FMEA 覆盖**：155+ 盲点全部注入蓝图 §5~§9

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-L08-001
 submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）"
@@ -183,7 +183,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 8 | ✅ 包含 | OLAP 趋势 | OLAPTrendData + fetch_olap_trends | 本模块 |
 | 9 | ❌ 排除 | 风险计算 | L04 Risk Management | L04 |
 | 10 | ❌ 排除 | 绩效归因 | L07 Post-Trade Analytics | L07 |
-| 11 | ❌ 排除 | Fitness Functions 计算 | feedback-loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
+| 11 | ❌ 排除 | Fitness Functions 计算 | feedback_loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
 
 ---
 
@@ -409,15 +409,15 @@ class FitnessDashboardData(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| feedback-loop/fitness_functions | 必须 | FitnessFunctionFramework + FitnessInputs | — | `D:\ZephyrAlpha\src\zephyr\feedback-loop\fitness_functions.py` |
+| feedback_loop/fitness_functions | 必须 | FitnessFunctionFramework + FitnessInputs | — | `D:\ZephyrAlpha\src\zephyr\feedback_loop\fitness_functions.py` |
 | db/task_repo | 必须 | TaskRepository | — | `D:\ZephyrAlpha\src\zephyr\db\task_repo.py` |
 | db/kb_repo | 可选 | KbRepo | — | `D:\ZephyrAlpha\src\zephyr\db\kb_repo.py` |
 | db/olap_engine | 可选 | OLAPEngine | — | `D:\ZephyrAlpha\src\zephyr\db\olap_engine.py` |
-| MOD-L04-001 Risk Management | 可选 | CTR-P1-008 RiskDashboardSnapshot | — | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-core\blueprint.md` |
-| MOD-L07-001 Post-Trade Analytics | 可选 | CTR-P1-009 PerformanceAttributionReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain-reporting\analytics-core\blueprint.md` |
+| MOD-L04-001 Risk Management | 可选 | CTR-P1-008 RiskDashboardSnapshot | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk-core\blueprint.md` |
+| MOD-L07-001 Post-Trade Analytics | 可选 | CTR-P1-009 PerformanceAttributionReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` |
 | MOD-INF-035 系统大脑 | 可选 | 运维可视化 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -453,7 +453,7 @@ class FitnessDashboardData(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-frontend\hmi-core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\frontend\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\frontend\` | 测试用例 |
 
@@ -483,7 +483,7 @@ class FitnessDashboardData(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 not_started | C轨禁止施工 |
-| 2 | 架构层 YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l08_human_ai_interface.yaml` | module id 统一为 hmi-core (ARB-21) | 命名统一 |
+| 2 | 架构层 YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l08_human_ai_interface.yaml` | module id 统一为 hmi_core (ARB-21) | 命名统一 |
 
 ---
 
@@ -492,7 +492,7 @@ class FitnessDashboardData(BaseModel):
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
 | 1 | Streamlit 未安装 | 中 | Dashboard 无法渲染 | import 降级为 CLI 输出 | 风险 |
-| 2 | YAML module id 不一致 | 低 | 发现困难 | ARB-21 统一为 hmi-core | 风险 |
+| 2 | YAML module id 不一致 | 低 | 发现困难 | ARB-21 统一为 hmi_core | 风险 |
 | 3 | OLAPEngine 不可用 | 中 | 门禁统计/OLAP 趋势为空 | 组件返回空 dataclass | 风险 |
 | 4 | KbRepo 不可用 | 中 | 知识库概览为空 | 组件返回空 dataclass | 风险 |
 | 5 | C轨未开放导致蓝图与代码不同步 | 中 | 蓝图标注blocked但代码已存在 | 蓝图明确标注已实现代码范围 | 风险 |

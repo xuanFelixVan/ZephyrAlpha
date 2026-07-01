@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-028
 submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
@@ -76,7 +76,7 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
     section: "§0"
     why: "系统级容量升级方案（Worker Pool/双通道调度/拥塞控制）"
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\shared-core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\shared_core\\blueprint.md"
     section: "§0"
     why: "Shared/Core基础组件18项压力测试"
   - path: "D:\\ZephyrAlpha\\config\\capacity_params.yaml"
@@ -517,13 +517,13 @@ class SemanticAuditReport(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 | 必须 | AuditTrail 记录修复操作 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-LLM_SECURITY | 必须 | LLM Security Gateway 校验 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
-| MOD-INF-026 | 必须 | Asset Inventory 文件存在性查询 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\asset-inventory\blueprint.md` |
-| MOD-INF-021 | 必须 | Rollback System checkpoint/restore | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-024 | 必须 | Budget Enforcer Token 预算 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
+| MOD-INF-020 | 必须 | AuditTrail 记录修复操作 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LLM Security Gateway 校验 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
+| MOD-INF-026 | 必须 | Asset Inventory 文件存在性查询 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
+| MOD-INF-021 | 必须 | Rollback System checkpoint/restore | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-024 | 必须 | Budget Enforcer Token 预算 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
 | MOD-INF-027 | 可选 | AuditOrchestrator 调度协调 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop 发现注入 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop 发现注入 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

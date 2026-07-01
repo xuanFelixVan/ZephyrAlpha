@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-015
 submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
@@ -17,7 +17,7 @@ construction_progress: completed
 actual_disk_path: "src/zephyr/infrastructure/system_telemetry/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha System Telemetry——全系统可观测性平台。9个子系统通过统一接入点 Telemetry 门面类暴露；覆盖三层信号(4 Golden Signals + USE + Annotations) + 多环境隔离；对接已有 shared 基础设施。三层闭环：AI开发闭环+运营闭环+治理闭环。"
-tags: [telemetry, system-telemetry, metrics, logs, traces, ai-behavior, observability, infrastructure, profiling, health-check, alerting, schema-registry, finops, opentelemetry-genai, observability-as-code, single-source-of-truth]
+tags: [telemetry, system_telemetry, metrics, logs, traces, ai-behavior, observability, infrastructure, profiling, health-check, alerting, schema-registry, finops, opentelemetry-genai, observability-as-code, single-source-of-truth]
 priority: P1
 runtime_plane: hot
 depends_on:
@@ -32,15 +32,15 @@ references:
   - {id: "MOD-INF-020", at: "全篇", why: "审计写入遥测-derived 事件——仅存 references"}
 ssot_claims:
   - claim: "全系统可观测性数据采集唯一真源"
-    scope: "src/zephyr/system-telemetry/"
+    scope: "src/zephyr/system_telemetry/"
   - claim: "AI行为遥测事件模型唯一真源"
-    scope: "src/zephyr/system-telemetry/ai_behavior/"
+    scope: "src/zephyr/system_telemetry/ai_behavior/"
   - claim: "指标Schema治理唯一真源"
-    scope: "src/zephyr/system-telemetry/schema/"
+    scope: "src/zephyr/system_telemetry/schema/"
   - claim: "告警规则引擎唯一真源"
-    scope: "src/zephyr/system-telemetry/alerts/"
+    scope: "src/zephyr/system_telemetry/alerts/"
   - claim: "健康探针与聚合唯一真源"
-    scope: "src/zephyr/system-telemetry/health/"
+    scope: "src/zephyr/system_telemetry/health/"
 last_updated: "2026-05-15"
 codification_level: L3
 last_verified: "2026-05-15"
@@ -58,7 +58,7 @@ verifiability: hybrid
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
 > module_id: MOD-INF-015 | version: 2.0.2 | status: Active | layer: L01
-> actual_disk_path: src/zephyr/system-telemetry/ | generation: 3 | construction_progress: completed
+> actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
 
@@ -113,12 +113,12 @@ verifiability: hybrid
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/system-telemetry/` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/system_telemetry/` 逐文件核对 | ☐ |
 | construction_progress = completed → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 | actual_disk_path 与 §11 产出物路径一致 | 路径核对 | ☐ |
 | 代码 [BLUEPRINT] 头部指向 = 本蓝图 module_id | `grep "\[BLUEPRINT\]" *.py` 核对 module_id | ☐ |
-| §4.2 每个数据模型的 SSoT 文件中确实存在该模型 | `grep "class MetricPoint\|class AIBehaviorEvent\|class Span" src/zephyr/system-telemetry/` | ☐ |
+| §4.2 每个数据模型的 SSoT 文件中确实存在该模型 | `grep "class MetricPoint\|class AIBehaviorEvent\|class Span" src/zephyr/system_telemetry/` | ☐ |
 | §0.1 每个文件的职责与其他文件无重叠 | 交叉比对职责列 | ☐ |
 | §0.1 归属判定列无 ⚠️ 标记 | 逐文件核对 | ☐ |
 | §5.5 自动化触发机制状态列与代码实现一致 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint MOD-INF-015` | ☐ |
@@ -149,7 +149,7 @@ verifiability: hybrid
 
 | # | 声明项 | 值 |
 |---|--------|-----|
-| 1 | 主代码目录 | src/zephyr/system-telemetry/ |
+| 1 | 主代码目录 | src/zephyr/system_telemetry/ |
 | 2 | 已知副本目录 | src/zephyr/telemetry/（兼容性shim，re-export到system_telemetry） |
 | 3 | 副本处置状态 | shim保留（9个测试文件引用旧路径），子目录shim需修复为re-export |
 | 4 | 已删除副本 | src/zephyr/infra_ops/（2026-05-16 RULE-THREE审判删除） |
@@ -354,12 +354,12 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 
 | 模型名 | SSoT文件 | 关键字段 | 其他定义位置 | 状态 |
 |--------|---------|---------|------------|------|
-| MetricPoint | src/zephyr/system-telemetry/metrics/ | name, value, timestamp, labels, type(gauge/counter/histogram/summary) | — | ✅ 唯一源 |
-| AIBehaviorEvent | src/zephyr/system-telemetry/ai_behavior/ | event_type, trace_id, module, model_id, input/output_tokens, cost_usd, duration_ms, status | — | ✅ 唯一源 |
-| Span | src/zephyr/system-telemetry/traces/ | trace_id, span_id, parent_span_id, module, start/end_time, status, metadata | — | ✅ 唯一源 |
-| MetricSchema | src/zephyr/system-telemetry/schema/ | name, type, unit, module_id, labels, slo_target, cardinality_limit=1000 | — | ✅ 唯一源 |
-| ErrorContext | src/zephyr/system-telemetry/ai_behavior/ | error_type, persistence(transient/permanent/intermittent), source, severity | — | ✅ 唯一源 |
-| AISelfCorrectionEvent | src/zephyr/system-telemetry/ai_behavior/ | anomaly_id, anomaly_type, action_taken, success, regression_detected | — | ✅ 唯一源 |
+| MetricPoint | src/zephyr/system_telemetry/metrics/ | name, value, timestamp, labels, type(gauge/counter/histogram/summary) | — | ✅ 唯一源 |
+| AIBehaviorEvent | src/zephyr/system_telemetry/ai_behavior/ | event_type, trace_id, module, model_id, input/output_tokens, cost_usd, duration_ms, status | — | ✅ 唯一源 |
+| Span | src/zephyr/system_telemetry/traces/ | trace_id, span_id, parent_span_id, module, start/end_time, status, metadata | — | ✅ 唯一源 |
+| MetricSchema | src/zephyr/system_telemetry/schema/ | name, type, unit, module_id, labels, slo_target, cardinality_limit=1000 | — | ✅ 唯一源 |
+| ErrorContext | src/zephyr/system_telemetry/ai_behavior/ | error_type, persistence(transient/permanent/intermittent), source, severity | — | ✅ 唯一源 |
+| AISelfCorrectionEvent | src/zephyr/system_telemetry/ai_behavior/ | anomaly_id, anomaly_type, action_taken, success, regression_detected | — | ✅ 唯一源 |
 
 ### §4.3 输入契约
 
@@ -587,14 +587,14 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-016 | 必须 | shared/logging / lifecycle / flags / observer / contracts | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-DATABASE | 必须 | olap_engine 持久化 FLE 时序分析结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\database\blueprint.md` |
-| MOD-INF-024 | 必须 | Budget Enforcer 成本 metrics 聚合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
-| MOD-INF-022 | 必须 | Escalation Protocol 告警升级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC L6 Observability 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-LLM_SECURITY | 必须 | LLM Security AI 行为安全事件联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security-gateway\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选 | FLE 消费 metrics/logs | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
-| MOD-INF-020 | 可选 | 审计写入遥测-derived 事件 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-016 | 必须 | shared/logging / lifecycle / flags / observer / contracts | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
+| MOD-DATABASE | 必须 | olap_engine 持久化 FLE 时序分析结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\database\blueprint.md` |
+| MOD-INF-024 | 必须 | Budget Enforcer 成本 metrics 聚合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
+| MOD-INF-022 | 必须 | Escalation Protocol 告警升级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC L6 Observability 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LLM Security AI 行为安全事件联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\llm_security-gateway\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | FLE 消费 metrics/logs | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop\blueprint.md` |
+| MOD-INF-020 | 可选 | 审计写入遥测-derived 事件 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
 
 ### §10.2 依赖图对齐声明
 
@@ -684,8 +684,8 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 
 | 产出物类型 | 存放完整绝对路径 | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\system-telemetry\` | Telemetry 源码 | ≥1 | `__init__.py` __all__ |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\system_telemetry\` | Telemetry 源码 | ≥1 | `__init__.py` __all__ |
 | 遥测数据 | `D:\ZephyrAlpha\data\telemetry\` | 遥测数据存储 | ≥0 | — |
 | DLQ 数据 | `D:\ZephyrAlpha\data\telemetry\{environment}\dlq\` | DLQ 死信队列 | ≥0 | — |
 | emergency_shutdown | `D:\ZephyrAlpha\data\telemetry\{environment}\emergency_shutdown.jsonl` | 异常关闭缓冲区转储 | ≥0 | — |
@@ -791,18 +791,18 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 
 | # | 文件路径 | 创建方式 | 注册位置 | 内容编写指引 |
 |---|---------|---------|---------|------------|
-| 1 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/facade.py` | scaffold.py module | `__init__.py` __all__ | Telemetry 门面类，聚合9子系统，实现 auto_boot/auto_event/auto_schedule |
-| 2 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics/__init__.py` | scaffold.py module | `__init__.py` __all__ | MetricsSubsystem: counter/gauge/histogram/timer，FQMN格式 `{module}.{subsystem}.{metric}` |
-| 3 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/logs/__init__.py` | scaffold.py module | `__init__.py` __all__ | LogsSubsystem: info/warning/error/critical，结构化JSONL输出 |
-| 4 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/traces/__init__.py` | scaffold.py module | `__init__.py` __all__ | TracesSubsystem: span/start_span/finish_span，OTel兼容 |
-| 5 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/ai_behavior/__init__.py` | scaffold.py module | `__init__.py` __all__ | AIBehaviorSubsystem: record/self_correct，AIBehaviorEvent数据类 |
-| 6 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/archive/__init__.py` | scaffold.py module | `__init__.py` __all__ | ArchiveSubsystem: archive/query，冷热分层存储 |
-| 7 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/profiles/__init__.py` | scaffold.py module | `__init__.py` __all__ | ProfilesSubsystem: record_profile/get_profile，模块遥测画像 |
-| 8 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/health/__init__.py` | scaffold.py module | `__init__.py` __all__ | HealthSubsystem: register/set_unhealthy/set_healthy/status，健康探针聚合 |
-| 9 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/alerts/__init__.py` | scaffold.py module | `__init__.py` __all__ | AlertsSubsystem: add_rule/check_alerts/get_active，规则引擎+阈值告警 |
-| 10 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/schema/__init__.py` | scaffold.py module | `__init__.py` __all__ | SchemaSubsystem: register_schema/check_compatibility/get_schema，版本兼容检查 |
-| 11 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/auto_bootstrap.py` | scaffold.py module | `__init__.py` __all__ | 自动初始化：import时触发register_module+monkey-patch |
-| 12 | `src/zephyr/infrastructure/runtime_integration/system-telemetry/watchdog.py` | scaffold.py script | script-manifest.yaml | 独立watchdog进程：健康巡检+告警触发+自愈 |
+| 1 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/facade.py` | scaffold.py module | `__init__.py` __all__ | Telemetry 门面类，聚合9子系统，实现 auto_boot/auto_event/auto_schedule |
+| 2 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/metrics/__init__.py` | scaffold.py module | `__init__.py` __all__ | MetricsSubsystem: counter/gauge/histogram/timer，FQMN格式 `{module}.{subsystem}.{metric}` |
+| 3 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/logs/__init__.py` | scaffold.py module | `__init__.py` __all__ | LogsSubsystem: info/warning/error/critical，结构化JSONL输出 |
+| 4 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/traces/__init__.py` | scaffold.py module | `__init__.py` __all__ | TracesSubsystem: span/start_span/finish_span，OTel兼容 |
+| 5 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/ai_behavior/__init__.py` | scaffold.py module | `__init__.py` __all__ | AIBehaviorSubsystem: record/self_correct，AIBehaviorEvent数据类 |
+| 6 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/archive/__init__.py` | scaffold.py module | `__init__.py` __all__ | ArchiveSubsystem: archive/query，冷热分层存储 |
+| 7 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/profiles/__init__.py` | scaffold.py module | `__init__.py` __all__ | ProfilesSubsystem: record_profile/get_profile，模块遥测画像 |
+| 8 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/health/__init__.py` | scaffold.py module | `__init__.py` __all__ | HealthSubsystem: register/set_unhealthy/set_healthy/status，健康探针聚合 |
+| 9 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/alerts/__init__.py` | scaffold.py module | `__init__.py` __all__ | AlertsSubsystem: add_rule/check_alerts/get_active，规则引擎+阈值告警 |
+| 10 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/schema/__init__.py` | scaffold.py module | `__init__.py` __all__ | SchemaSubsystem: register_schema/check_compatibility/get_schema，版本兼容检查 |
+| 11 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/auto_bootstrap.py` | scaffold.py module | `__init__.py` __all__ | 自动初始化：import时触发register_module+monkey-patch |
+| 12 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/watchdog.py` | scaffold.py script | script-manifest.yaml | 独立watchdog进程：健康巡检+告警触发+自愈 |
 
 #### 步骤 1：logs 子系统独立模块化 — ✅ 已完成
 
@@ -855,7 +855,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 
 | # | 检查项 | 通过标准 | 类型 | 状态 |
 |---|--------|---------|:----:|:----:|
-| 1 | 九子系统代码存在 | `ls src/zephyr/system-telemetry/` exit 0 | 完成 | ✅ |
+| 1 | 九子系统代码存在 | `ls src/zephyr/system_telemetry/` exit 0 | 完成 | ✅ |
 | 2 | SLO 已定义且可测量 | §5.4 每项 SLI 有测量方式 | 就绪 | ✅ |
 | 3 | 监控指标已埋点 | §6.1 每项指标有采集实现 | 就绪 | ☐ |
 | 4 | 告警已配置 | §6.1 每项阈值有告警规则 | 就绪 | ☐ |
@@ -870,13 +870,13 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 
 | # | 规格名称 | 类型 | 规格内容 | 对应代码 |
 |---|---------|------|---------|---------|
-| 1 | Ring buffer 并发控制 | 算法 | threading.local 队列→定时冲刷；当前单进程架构零侵入 | src/zephyr/system-telemetry/metrics/ |
-| 2 | Tail-based sampling | 算法 | 错误/高延迟/root span 100%保留，正常 10%采样，自适应 1%-10% | src/zephyr/system-telemetry/traces/ |
-| 3 | Multi-Window Burn Rate | 算法 | 短窗口(1h)>14.4x→P0，长窗口(6h)>6x→P1，天窗口(3d)>1x→P2 | src/zephyr/system-telemetry/alerts/ |
-| 4 | DLQ 自动修复 | 协议 | SCHEMA_ERROR→re-map / TYPE_ERROR→类型转换 / WRITE_FAILED→重试3次 / 超3次→DEAD | src/zephyr/system-telemetry/metrics/ |
-| 5 | FQMN 自动注入 | 算法 | Telemetry(module_id)→metrics.counter(name)→内部生成 module_id::name | src/zephyr/infrastructure/runtime_integration/system-telemetry/facade.py |
+| 1 | Ring buffer 并发控制 | 算法 | threading.local 队列→定时冲刷；当前单进程架构零侵入 | src/zephyr/system_telemetry/metrics/ |
+| 2 | Tail-based sampling | 算法 | 错误/高延迟/root span 100%保留，正常 10%采样，自适应 1%-10% | src/zephyr/system_telemetry/traces/ |
+| 3 | Multi-Window Burn Rate | 算法 | 短窗口(1h)>14.4x→P0，长窗口(6h)>6x→P1，天窗口(3d)>1x→P2 | src/zephyr/system_telemetry/alerts/ |
+| 4 | DLQ 自动修复 | 协议 | SCHEMA_ERROR→re-map / TYPE_ERROR→类型转换 / WRITE_FAILED→重试3次 / 超3次→DEAD | src/zephyr/system_telemetry/metrics/ |
+| 5 | FQMN 自动注入 | 算法 | Telemetry(module_id)→metrics.counter(name)→内部生成 module_id::name | src/zephyr/infrastructure/runtime_integration/system_telemetry/facade.py |
 | 6 | HMAC 链式校验 | 协议 | HMAC-SHA256(secret, line_index + prev_hmac + log_body)，每24h校验 | — |
-| 7 | Counter 重置检测 | 算法 | process_start_ts 标签+delta recording+FLE reset-aware | src/zephyr/system-telemetry/metrics/ |
+| 7 | Counter 重置检测 | 算法 | process_start_ts 标签+delta recording+FLE reset-aware | src/zephyr/system_telemetry/metrics/ |
 
 ### 16.8 施工参考卡
 
@@ -1110,7 +1110,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 | Tier 1 | MOD-INF-024 Budget Enforcer 蓝图 | §4 接口契约、§10 依赖关系 |
 | Tier 2 | MOD-FEEDBACK_LOOP FLE 集成点 | §12 集成点 |
 | Tier 2 | MOD-INF-022 Escalation Protocol 集成点 | §12 集成点 |
-| Tier 3 | src/zephyr/system-telemetry/ 代码文件 | §4 数据模型、§11 产出物路径 |
+| Tier 3 | src/zephyr/system_telemetry/ 代码文件 | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则
 

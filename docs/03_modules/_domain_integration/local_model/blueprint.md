@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-042
 submodule_path: src/zephyr/integration/local_model
 title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
@@ -67,7 +67,7 @@ doc_type: blueprint
 | # | 声明项 | 值 |
 |---|--------|-----|
 | 1 | 主代码目录 | `src/zephyr/integration/local-model/` |
-| 2 | 已知副本目录 | `src/zephyr/vector-memory/`（re-export兼容层） |
+| 2 | 已知副本目录 | `src/zephyr/vector_memory/`（re-export兼容层） |
 | 3 | 副本处置状态 | 兼容层保留至所有消费者迁移完毕 |
 
 ## §1 设计背景与目标 {temporal_type=permanent}
@@ -84,7 +84,7 @@ doc_type: blueprint
 | # | 差距 | 当前态 | 目标态 | 处置 |
 |---|------|--------|--------|------|
 | 1 | 代码已迁移 | ✅ 完成 | — | — |
-| 2 | vector-memory re-export兼容层 | 存在 | 全部消费者迁移后删除 | 等待 |
+| 2 | vector_memory re-export兼容层 | 存在 | 全部消费者迁移后删除 | 等待 |
 | 3 | ONNX推理优化 | PyTorch后端 | ONNX后端（2-3x加速） | 待施工 |
 
 ## §2 模块边界 {temporal_type=permanent}
@@ -229,9 +229,9 @@ doc_type: blueprint
 
 | module_id | 必须/可选 | 用途 | 契约ID | 蓝图路径 |
 |-----------|:-------:|------|--------|---------|
-| MOD-INF-011 | 可选 | VMS消费嵌入服务 | CT-042-001 | `docs/03_modules/_domain-infra_ops/vector-memory/blueprint.md` |
+| MOD-INF-011 | 可选 | VMS消费嵌入服务 | CT-042-001 | `docs/03_modules/_domain_infra_ops/vector_memory/blueprint.md` |
 | MOD-INF-009 | 可选 | Pipeline消费嵌入+rerank | CT-042-001 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
-| MOD-INF-019 | 可选 | Agent Spec语义路由 | CT-042-001 | `docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md` |
+| MOD-INF-019 | 可选 | Agent Spec语义路由 | CT-042-001 | `docs/03_modules/_domain_infra_ops/agent-spec/blueprint.md` |
 
 ### 10.5 概念重叠声明
 
@@ -249,7 +249,7 @@ doc_type: blueprint
 
 | 产出类型 | 路径 | consumer_min |
 |---------|------|-------------|
-| 代码 | `src/zephyr/local-model/` | agent-spec, pipeline, runtime, vector-memory |
+| 代码 | `src/zephyr/local-model/` | agent-spec, pipeline, runtime, vector_memory |
 | 测试 | `tests/` | CI |
 | 模型权重 | `models/bge-m3/`, `models/bge-small-zh-v1.5/` | EmbeddingRouter |
 | 缓存 | `data/vector_db/_embedding_cache/` | CacheLayer |
@@ -271,7 +271,7 @@ doc_type: blueprint
 |:-----:|------|:----:|
 | 0 | 从MOD-INF-011拆分+代码迁移+注册 | ✅完成 |
 | 1 | ONNX推理优化（2-3x加速） | 📋Backlog |
-| 2 | vector-memory re-export兼容层清理 | 📋Backlog |
+| 2 | vector_memory re-export兼容层清理 | 📋Backlog |
 
 ### 16.5 施工完成标准
 

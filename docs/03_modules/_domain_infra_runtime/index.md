@@ -19,10 +19,9 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [l01_infrastructure_index.md](l01_infrastructure_index.md) | Markdown | Infra Runtime Domain Index |
 | [runtime_integration/](runtime_integration/index.md) | 目录 | Runtime Integration |
-| [state_machine_engine/](state_machine_engine/index.md) | 目录 | state-machine-engine — 目录索引 |
-| [task_system/](task_system/index.md) | 目录 | task-system — 目录索引 |
+| [state_machine_engine/](state_machine_engine/index.md) | 目录 | state_machine_engine — 目录索引 |
+| [task_system/](task_system/index.md) | 目录 | task_system — 目录索引 |
 
 ## 导航
 

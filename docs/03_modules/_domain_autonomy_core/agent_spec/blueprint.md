@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOD-INF-019
 submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
@@ -18,7 +18,7 @@ construction_progress: partially_implemented
 actual_disk_path: src/zephyr/autonomy_core/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive Disclosure 按需加载。"
-tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, skill-knowledge-base, dependency-injection, output-guardrails, team-composition, skill-discovery]
+tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, skill-knowledge_base, dependency-injection, output-guardrails, team-composition, skill-discovery]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -213,7 +213,7 @@ references: []
 
 ## MOD-GOVERNANCE 集成契约锚点 {temporal_type=permanent}
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+> 权威定义见 [`../../_domain_governance/blueprint.md`](../../_domain_governance/blueprint.md) §3。
 
 | 契约 ID | 本模块角色 | 对端模块 |
 |---------|------------|----------|
@@ -501,8 +501,8 @@ class ConstructionStage(str, Enum):
 | CT-011 | governor (Role) | v1.0.0 | {audit_scope: str, audit_type: enum[pre|post|drift], target_paths: List[str]} | {audit_report: AuditReport, findings: List[Finding], gate_results: List[GateResult]} | audit_report MUST be written to Audit Trail |
 | CT-012 | implementer (Role) | v1.0.0 | {task_id: str, blueprint_section: str, code_change: CodeDiff} | {implementation_result: ImplResult, tests_passed: bool, gate_result: GateResult} | code_change MUST pass G7 gate before commit; no TODO/pass/NotImplementedError |
 | CT-013 | lsg-security (LSG) | v1.0.0 | {input_text: str, scan_level: enum[L1_input|L3_output|L4_agent|L0_full]} | {scan_result: ScanResult, threats: List[ThreatFinding], blocked: bool} | blocked=true → MUST emit security.blocked event; MAX_INPUT_TOKENS=32768 |
-| CT-014 | task-system (TSK) | v1.0.0 | {operation: enum[create|read|update|delete|dispatch], task_data: TaskCard} | {task_id: str, state: enum[draft|ready|in_progress|completed|closed], gate_result: GateResult} | dispatch MUST pass G7 gate; MAX_TASK_DEPTH=10 |
-| CT-015 | system-telemetry (TEL) | v1.0.0 | {operation: enum[emit_metric|check_health|generate_alert|archive_rotate], payload: dict} | {result: TelemetryResult, health_status: HealthStatus} | check_health min interval 30s; ARCHIVE_RETENTION_DAYS=90 |
+| CT-014 | task_system (TSK) | v1.0.0 | {operation: enum[create|read|update|delete|dispatch], task_data: TaskCard} | {task_id: str, state: enum[draft|ready|in_progress|completed|closed], gate_result: GateResult} | dispatch MUST pass G7 gate; MAX_TASK_DEPTH=10 |
+| CT-015 | system_telemetry (TEL) | v1.0.0 | {operation: enum[emit_metric|check_health|generate_alert|archive_rotate], payload: dict} | {result: TelemetryResult, health_status: HealthStatus} | check_health min interval 30s; ARCHIVE_RETENTION_DAYS=90 |
 | CT-016 | code-dedup-engine (DED) | v1.0.0 | {scan_level: enum[lexical|ast|semantic], target_paths: List[str]} | {brs_score: float, duplicates: List[DupGroup], auto_fixed: bool} | BRS < 70 → 禁止 auto_fix; 3-wave scan: lexical→AST→semantic |
 | CT-017 | budget-enforcer (BGT) | v1.0.0 | {operation: enum[pre_flight|track|degrade], budget_claim: BudgetClaim} | {decision: GateDecision, degradation_level: enum[NORMAL..HALT]} | 6-level degradation; trust_ring 2-of-3; pre_flight MUST before LLM call |
 | CT-018 | auto-fix-engine (AFX) | v1.0.0 | {fix_level: enum[L1_rule|L2_llm|L3_ooda], error_context: ErrorContext} | {fix_result: FixResult, shadow_verified: bool, gray_fraction: float} | cascade_breaker threshold=3; shadow_timeout=30s; gray_default=0.1 |
@@ -583,7 +583,7 @@ class ConstructionStage(str, Enum):
 | Skill 路由 | on_demand | — | ✅已实现 |
 | Skill 渐进加载 | on_demand | — | ✅已实现 |
 | 蓝图→Skill 升级 | on_demand | — | ✅已实现 |
-| 语义路由（BGE-M3） | auto_boot | EmbeddingRouter local后端，复用 vector-memory 基础设施 | ⚠️待实现 |
+| 语义路由（BGE-M3） | auto_boot | EmbeddingRouter local后端，复用 vector_memory 基础设施 | ⚠️待实现 |
 
 #### 语义路由实现方案
 
@@ -591,7 +591,7 @@ class ConstructionStage(str, Enum):
 |------|------|------|
 | 嵌入后端 | local（SentenceTransformer） | 零外部依赖、离线可用、延迟~50ms |
 | 降级链 | BGE-M3→bge-small-zh→InMemory | 复用 EmbeddingRouter 已有降级链 |
-| 依赖 | MOD-INF-011 vector-memory | EmbeddingRouter.embed_batch() |
+| 依赖 | MOD-INF-011 vector_memory | EmbeddingRouter.embed_batch() |
 | 路由策略 | 关键词精确匹配优先→语义余弦相似度 fallback | 关键词匹配=确定性，语义=模糊补位 |
 | 相似度阈值 | cosine ≥ 0.7 | 低于阈值返回 None（走默认路由） |
 | Skill 描述向量缓存 | 启动时预计算，存内存 | 22个Skill描述→22×1024矩阵，~90KB |
@@ -692,23 +692,23 @@ class ConstructionStage(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-GATE_ENGINE | 必须 | Gate Engine——门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-CONTEXT_ENGINE | 必须 | Context Engine——上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | Context Engine——上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` |
 | MOD-INF-009 | 必须 | Pipeline——多模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC——权限检查 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-020 | 必须 | Audit Trail——审计闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-023 | 必须 | Drift Detector——漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-025 | 必须 | A2A Protocol——Agent间协调后加载规格 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` |
-| MOD-INF-005 | 必须 | Governance Automation——审计管线整合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\governance-automation\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop——预测-诊断-修复闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC——权限检查 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail——审计闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-023 | 必须 | Drift Detector——漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
+| MOD-INF-025 | 必须 | A2A Protocol——Agent间协调后加载规格 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\a2a-protocol\blueprint.md` |
+| MOD-INF-005 | 必须 | Governance Automation——审计管线整合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop——预测-诊断-修复闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
 | MOD-DATABASE | 间接 | Database——间接依赖(019→018→007→005→012) | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-LLM_SECURITY | 可选 | LLM Security Gateway——注入攻击检测 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
-| MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
-| MOD-KB-001 | 可选 | Knowledge Base——KE 沉淀 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
-| MOD-INF-011 | 可选 | Vector Memory——VMS存储服务（嵌入路由已迁至MOD-INF-039） | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector-memory\blueprint.md` |
-| MOD-INF-039 | 必须 | Local Model——BGE-M3 语义路由嵌入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\local-model\blueprint.md` |
+| MOD-LLM_SECURITY | 可选 | LLM Security Gateway——注入攻击检测 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
+| MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
+| MOD-KB-001 | 可选 | Knowledge Base——KE 沉淀 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` |
+| MOD-INF-011 | 可选 | Vector Memory——VMS存储服务（嵌入路由已迁至MOD-INF-039） | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector_memory\blueprint.md` |
+| MOD-INF-039 | 必须 | Local Model——BGE-M3 语义路由嵌入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\local-model\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -773,7 +773,7 @@ class ConstructionStage(str, Enum):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 | consumer_min |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\agent-spec\` | Python 源码（80 个 .py） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\` + `D:\ZephyrAlpha\tests\adversarial\` | 测试用例 |
 | Skill 注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | Skill 索引 |
@@ -1338,7 +1338,7 @@ class ConstructionStage(str, Enum):
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | agent-spec/ 全目录 | `D:\ZephyrAlpha\src\zephyr\agent-spec\` | 修改 | 代码维护 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | 修改 | 本文件 |
 | 3 | 测试文件 | `D:\ZephyrAlpha\tests\unit\` + `D:\ZephyrAlpha\tests\adversarial\` | 修改 | 测试更新 |
 | 4 | AGENTS.md | `D:\ZephyrAlpha\AGENTS.md` | 读取 | 触发表路由 |
 
@@ -1408,7 +1408,7 @@ class ConstructionStage(str, Enum):
 | 施工阶段 | 角色 | 默认 Domain |
 |---------|------|-----------|
 | 想法/草稿 | architect | master-blueprint |
-| 审计（施工前） | governor | gate-engine |
+| 审计（施工前） | governor | gate_engine |
 | 蓝图/设计 | architect | topic 匹配 |
 | 施工/实现 | implementer | module 匹配 |
 | 验收/验证 | governor | module 匹配 |
@@ -1427,9 +1427,9 @@ class ConstructionStage(str, Enum):
 | 知识库/KE | knowledge-specialist | implementer |
 | 回滚/撤销/检查点 | rollback-specialist | governor |
 | 安全/注入/LSG | lsg-security | governor |
-| 向量/嵌入/VMS/ChromaDB | vector-memory | implementer |
-| 任务/TaskCard | task-system | implementer |
-| 遥测/可观测/指标 | system-telemetry | implementer |
+| 向量/嵌入/VMS/ChromaDB | vector_memory | implementer |
+| 任务/TaskCard | task_system | implementer |
+| 遥测/可观测/指标 | system_telemetry | implementer |
 | 去重/重复/单物种 | code-dedup-engine | implementer |
 | 预算/成本限制/Token限制 | budget-enforcer | governor |
 | 修复/自愈/故障 | auto-fix-engine | implementer |

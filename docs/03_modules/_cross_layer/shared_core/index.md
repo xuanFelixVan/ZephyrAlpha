@@ -1,4 +1,4 @@
----
+﻿---
 doc_type: index
 status: active
 title: "shared_core — 目录索引"
@@ -23,7 +23,7 @@ ttl: permanent
 | [changes/](changes/index.md) | 目录 | changes — 目录索引 |
 | [contracts_blueprint.md](contracts_blueprint.md) | Markdown | Shared Contracts 蓝图 — 跨层数据契约 SSoT |
 | [governance_core_blueprint.md](governance_core_blueprint.md) | Markdown | Governance Core 蓝图 — 治理核心模块 |
-| [index.md](index.md) | Markdown | shared-core — 目录索引 |
+| [index.md](index.md) | Markdown | shared_core — 目录索引 |
 | [shared_infra_blueprint.md](shared_infra_blueprint.md) | Markdown | Shared Infrastructure 蓝图 — 跨层共享基础设施 |
 
 ## 导航
