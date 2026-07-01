@@ -8,8 +8,8 @@ registry:
 metadata:
   generated_at: '2026-07-01'
   generated_by: sync_registry_from_blueprints.py
-  canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件与 module-registry.yaml
-    由 sync_registry_from_blueprints.py 联动生成
+  canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
+    自动生成
 _schema:
   description: 蓝图登记表的字段定义和受控词表
   responsibility_domain:

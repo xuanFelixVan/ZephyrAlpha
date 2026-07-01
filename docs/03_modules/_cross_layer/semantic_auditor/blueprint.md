@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-028
 submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
@@ -1157,7 +1157,7 @@ STEP 3: 拆分后验证
 |---------|---------|--------|:---:|
 | ALIGN-SCRIPT-001 | scripts/script-manifest.yaml | scripts/ | RED |
 | ALIGN-GATE-001 | src/zephyr/governance/rule_enforcement/_registry.yaml | src/zephyr/governance/rule_enforcement/ | RED |
-| ALIGN-MODULE-001 | docs/03_modules/module_registry.yaml | src/zephyr/ | RED |
+| ALIGN-MODULE-001 | docs/03_modules/blueprint_registry.yaml | src/zephyr/ | RED |
 | ALIGN-BLUEPRINT-001 | docs/03_modules/blueprint_registry.yaml | docs/03_modules/ | YELLOW |
 | ALIGN-DEPENDENCY-001 | cross-module-dependency-registry.yaml | src/zephyr/ | YELLOW |
 | ALIGN-SKILL-001 | src/zephyr/agent-spec/skill-registry.yaml | src/zephyr/agent-spec/ | YELLOW |

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-031
 submodule_path: src/zephyr/infrastructure/auto_fix_engine
 title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
@@ -870,7 +870,7 @@ class ComplianceEvidence(BaseModel):
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 模块数 | ~51 | module_registry.yaml |
+| 模块数 | ~51 | blueprint_registry.yaml |
 | 治理脚本 | ~268 | script-manifest.yaml |
 | AI 并发 Session | 1 | 运行时观察 |
 | 修复并发执行 | 8 (ThreadPoolExecutor) | BatchFixer MAX_WORKERS |

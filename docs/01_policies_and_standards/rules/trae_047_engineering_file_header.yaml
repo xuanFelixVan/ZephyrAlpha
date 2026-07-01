@@ -85,7 +85,7 @@ sections:
       fail: 对齐率不足
     actions:
     - type: mandatory
-      step: 新模块扩展8步流程：1.创建蓝图模板 2.注册蓝图 3.scaffold.py创建包 4.添加[BLUEPRINT]头 5.注册module_registry.yaml 6.更新path-tree 7.更新depgraph 8.audit_registration.py验证
+      step: 新模块扩展8步流程：1.创建蓝图模板 2.注册蓝图 3.scaffold.py创建包 4.添加[BLUEPRINT]头 5.注册blueprint_registry.yaml 6.更新path-tree 7.更新depgraph 8.audit_registration.py验证
     - type: mandatory
       step: 生成新模块时MUST通过scaffold.py查重
     - type: mandatory
@@ -95,7 +95,7 @@ sections:
     - type: mandatory
       step: 同包互斥——同一__init__.py一次只能一个Agent写入
     - type: mandatory
-      step: 注册表互斥——module_registry.yaml/blueprint_registry.yaml写入需串行
+      step: 注册表互斥——blueprint_registry.yaml写入需串行
     prohibitions:
     - 禁止循环导入——EngineerCheck gate硬阻断
     - 禁止绕过scaffold.py创建模块
@@ -338,7 +338,7 @@ sections:
     - GOV-ENG-003
     items:
     - description: 当前状态
-      details: '顶层包数: 以extract_depgraph.py --summary为准 | 子包数(含__init__.py): 以extract_depgraph.py --summary为准 | .py模块数: 以extract_depgraph.py --summary为准 | 模块注册表条目: 以module_registry.yaml为准 | 蓝图条目: 以blueprint_registry.yaml为准 | 蓝图物理文件: 以blueprint_registry.yaml为准'
+      details: '顶层包数: 以extract_depgraph.py --summary为准 | 子包数(含__init__.py): 以extract_depgraph.py --summary为准 | .py模块数: 以extract_depgraph.py --summary为准 | 模块注册表条目: 以blueprint_registry.yaml为准 | 蓝图条目: 以blueprint_registry.yaml为准 | 蓝图物理文件: 以blueprint_registry.yaml为准'
     - description: 碰撞检测结果
       details: '顶层包名重复: 通过scaffold.py查重门控(无碰撞) | __init__.py __all__大小: 无硬编码限制(Python list) | 模块名冲突: 通过scaffold.py查重检测 | 功能域重叠: 由functional-domain-registry.yaml门控'
     - description: 1500模块时投影
@@ -360,7 +360,7 @@ sections:
     - GOV-ENG-003
     items:
     - description: 当前对齐率
-      details: '蓝图物理文件: 以blueprint_registry.yaml为准 | 子包数: 以extract_depgraph.py --summary为准 | 对齐率(蓝图/包): 通过audit_registration.py运行时查询 | 已注册模块: 以module_registry.yaml为准'
+      details: '蓝图物理文件: 以blueprint_registry.yaml为准 | 子包数: 以extract_depgraph.py --summary为准 | 对齐率(蓝图/包): 通过audit_registration.py运行时查询 | 已注册模块: 以blueprint_registry.yaml为准'
     - description: 新模块对齐标准
       details: '蓝图§4文件清单: 新模块所有.py文件MUST列出 | [BLUEPRINT]头部: module_id|path|§N三字段必填 | cross-reference: 蓝图与代码互相引用 | 不变量: 蓝图§4文件数=代码文件数(audit_registration.py校验) | 对齐率目标: 新模块MUST 100%对齐'
   gov_eng_003_expansion_procedure:
@@ -390,7 +390,7 @@ sections:
       expected_result: 每个新.py填入十字段(GOV-ENG-002§4)
       on_failure: 缺表头=孤儿文件
     - order: 5
-      action: 注册到module_registry.yaml
+      action: 注册到blueprint_registry.yaml
       pre_condition: 表头已添加
       expected_result: 添加新条目——module_id/layer/blueprint/priority
       on_failure: 注册失败=模块不可发现
@@ -420,7 +420,7 @@ sections:
     - description: 扩展时间线(1500包)
       details: '当前: 以extract_depgraph.py --summary为准 | 阶段1: 扩展至500包(约112会话) | 阶段2: 扩展至1000包(约167会话) | 阶段3: 扩展至1500包(约167会话)'
     - description: 并行安全约束
-      details: '同包互斥: 同一__init__.py一次只能一个Agent写入 | 注册表互斥: module_registry.yaml/blueprint_registry.yaml写入需串行 | 不同包并行: 无冲突，可并行创建'
+      details: '同包互斥: 同一__init__.py一次只能一个Agent写入 | 注册表互斥: blueprint_registry.yaml写入需串行 | 不同包并行: 无冲突，可并行创建'
   gov_eng_047_scope:
     title: 适用范围
     section_type: context
@@ -561,7 +561,7 @@ metadata:
     date: '2026-06-21'
     by: session-20260621-fix4
     changes:
-    - RQ-02/GOV-DOC-017修复——references.rule_ids去重(2个TRAE-047→1个)；硬编码事实数字(49包/166子包/62模块/70蓝图/59文件/35.5%对齐率)改为动态查询描述(以extract_depgraph.py/module_registry.yaml/blueprint_registry.yaml为准)
+    - RQ-02/GOV-DOC-017修复——references.rule_ids去重(2个TRAE-047→1个)；硬编码事实数字(49包/166子包/62模块/70蓝图/59文件/35.5%对齐率)改为动态查询描述(以extract_depgraph.py/blueprint_registry.yaml为准)
 provenance:
   extracted_at: '2026-06-13T00:00:00'
   extracted_by: session-20260613-001

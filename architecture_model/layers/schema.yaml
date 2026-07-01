@@ -1,6 +1,6 @@
 # ZephyrAlpha 根目录 architecture_model/layers/*.yaml 字段约束
 
-# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/module_registry.yaml 对齐校验。
+# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/blueprint_registry.yaml 对齐校验。
 
 # 单树声明（2026-06-30 治本）：双树已合并，architecture_model/ 是唯一架构模型存储位置。
 # EA artifacts（contracts/cross_cutting/domain/events/technology）迁入本树顶层子目录。
@@ -10,7 +10,7 @@ schema_version: "1.2.0"
 description: "根目录 architecture_model 分区与模块条目的运营 Schema"
 
 id_namespace_note: >
-  根树中模块条目 id（小写 slug，如 l02-*）与 docs/03_modules/module_registry.yaml
+  根树中模块条目 id（小写 slug，如 l02-*）与 docs/03_modules/blueprint_registry.yaml
   的 module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图
   跨登记对账。
 
@@ -50,7 +50,7 @@ operational_schema:
       type: string
       required: false
       pattern: "^MOD-[A-Z0-9-]+$"
-      description: "可选，对应 module_registry.yaml 顶层 modules[] 的 module_id"
+      description: "可选，对应 blueprint_registry.yaml 顶层 blueprints[] 的 module_id"
     status:
       type: enum
       required: true

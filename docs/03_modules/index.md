@@ -1,4 +1,4 @@
-﻿---
+---
 classification: internal
 date: "2026-06-22"
 doc_type: index
@@ -87,8 +87,7 @@ depends_on:
 
 | 注册表文件 | 说明 | 格式 |
 |-----------|------|:---:|
-| [module_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/module_registry.yaml) | 模块注册表（全项目模块清单） | YAML |
-| [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) | 蓝图注册表 | YAML |
+| [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) | 蓝图注册表（全项目模块清单·SSoT） | YAML |
 | [template_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/template_registry.yaml) | 模板注册表 | YAML |
 | [path_ownership_map.yaml](file:///D:/ZephyrAlpha/docs/03_modules/path_ownership_map.yaml) | 路径归属映射 | YAML |
 | [system_pathway_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml) | 系统路径注册表 | YAML |
@@ -100,7 +99,7 @@ depends_on:
 | 对象 | 规范 | 示例 |
 |------|------|------|
 | 目录名 | snake_case | `_domain_data/`, `datasource_core/` |
-| 文件名 | snake_case | `module_registry.yaml`, `blueprint.md` |
+| 文件名 | snake_case | `blueprint_registry.yaml`, `blueprint.md` |
 | 域目录前缀 | `_domain_*` | `_domain_factor/` |
 | 跨层目录前缀 | `_cross_layer` 或功能名 | `_cross_layer/` |
 

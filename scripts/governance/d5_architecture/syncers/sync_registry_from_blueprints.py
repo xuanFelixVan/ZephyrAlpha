@@ -57,7 +57,6 @@ from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 
 
 ensure_utf8_stdout()
 BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
-MODULE_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "module_registry.yaml"
 
 try:
     import yaml
@@ -181,46 +180,6 @@ def build_registry_entry(filepath: Path, fm: dict[str, Any]) -> dict[str, Any]:
         "last_updated": fm.get("last_updated", fm.get("date", "")),
         "file_path": rel_path,
         "construction_progress": fm.get("construction_progress", "not_started"),
-    }
-
-
-def build_module_entry(filepath: Path, fm: dict[str, Any]) -> dict[str, Any]:
-    """build_module_entry implementation."""
-    rel_docs_parent = filepath.parent.relative_to(REPO_ROOT / "docs")
-    path_str = "docs/" + rel_docs_parent.as_posix()
-    fd = fm.get("functional_domain", fm.get("domain", ""))
-    if fd is None:
-        fd = ""
-    return {
-        "module_id": fm.get("module_id", ""),
-        "name": filepath.parent.name,
-        "layer": str(fm.get("layer", "")),
-        "functional_domain": str(fd),
-        "priority": fm.get("priority", "P2"),
-        "path": path_str,
-        "blueprint": {
-            "status": str(fm.get("status", "Draft")),
-            "version": str(fm.get("version", "")),
-        },
-        "construction_plan": {
-            "status": str(fm.get("construction_progress", "not_started")),
-        },
-    }
-
-
-def _default_module_registry_schema() -> dict[str, Any]:
-    """_default_module_registry_schema implementation."""
-    return {
-        "description": "模块登记表字段——与 REG-001（registry_of_registries.yaml）及物理 blueprint.md 对齐",
-        "priority_values": ["P0", "P1", "P2", "P3"],
-        "construction_plan_status_values": [
-            "not_started",
-            "phase_1_partial",
-            "phase_1_complete",
-            "phase_2_complete",
-            "blocked_by_infrastructure",
-            "completed",
-        ],
     }
 
 
@@ -381,14 +340,12 @@ def run_dry_run(registry: dict[str, Any], new_entries: list[dict[str, Any]], fil
 def run_write(
     registry: dict[str, Any],
     new_entries: list[dict[str, Any]],
-    module_entries: list[dict[str, Any]],
     file_paths: list[Path],
     *,
     write_changelog: bool = True,
 ) -> int:
     """run_write implementation."""
     new_entries = sorted(new_entries, key=lambda e: e.get("module_id", ""))
-    module_entries = sorted(module_entries, key=lambda e: e.get("module_id", ""))
 
     old_entries_raw = registry.get("blueprints", [])
     old_entries: list[dict[str, Any]] = [dict(e) for e in old_entries_raw] if isinstance(old_entries_raw, list) else []
@@ -404,7 +361,7 @@ def run_write(
     registry["metadata"]["generated_by"] = "sync_registry_from_blueprints.py"
     registry["metadata"]["canonical_source"] = (
         "物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；"
-        "本文件与 module-registry.yaml 由 sync_registry_from_blueprints.py 联动生成"
+        "本文件由 sync_registry_from_blueprints.py 自动生成"
     )
     if write_changelog:
         bullets = collect_registry_diff_bullets(old_entries, new_entries)
@@ -416,18 +373,6 @@ def run_write(
     content = yaml.dump(registry, allow_unicode=True, default_flow_style=False, sort_keys=False)
     atomic_write_safe(BLUEPRINT_REGISTRY_PATH, content)
     print(f"Wrote: {len(new_entries)} blueprints to {BLUEPRINT_REGISTRY_PATH}")
-
-    mod_body: dict[str, Any] = {
-        "registry_version": "3.1.0",
-        "last_updated": datetime.now(UTC).strftime("%Y-%m-%d"),
-        "_schema": _default_module_registry_schema(),
-        "modules": module_entries,
-    }
-    atomic_write_safe(
-        MODULE_REGISTRY_PATH,
-        yaml.dump(mod_body, allow_unicode=True, default_flow_style=False, sort_keys=False),
-    )
-    print(f"Wrote: {len(module_entries)} modules to {MODULE_REGISTRY_PATH}")
     return EXIT_PASS
 
 
@@ -449,7 +394,6 @@ def main() -> None:
         sys.exit(EXIT_ERROR if not args.warn_only else EXIT_PASS)
 
     entries: list[dict[str, Any]] = []
-    module_entries: list[dict[str, Any]] = []
     layer_warnings: list[str] = []
     for fp in file_paths:
         fm = extract_frontmatter(fp)
@@ -457,7 +401,6 @@ def main() -> None:
             print(f"WARN: {fp} -- no valid frontmatter or missing module_id")
             continue
         entries.append(build_registry_entry(fp, fm))
-        module_entries.append(build_module_entry(fp, fm))
         layer_warnings.extend(validate_layer_consistency(fp, fm))
 
     if layer_warnings:
@@ -477,7 +420,6 @@ def main() -> None:
         rc = run_write(
             registry,
             entries,
-            module_entries,
             file_paths,
             write_changelog=not args.no_changelog,
         )
