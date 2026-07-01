@@ -63,7 +63,7 @@ REPO_ROOT: Path = find_repo_root()
 DB_DIR: Path = REPO_ROOT / "data"
 
 # DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence
-# Previously: from zephyr.governance.sqlite_schema import DB_PATH
+# Previously: from zephyr.governance.persistence.sqlite_schema import DB_PATH
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"

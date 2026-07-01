@@ -11,7 +11,7 @@
 # [TESTS] tests/test_context_package.py
 # [TTL] task_bound
 
-from zephyr.governance.context_package import ContextPackage
+from zephyr.governance.context_governance.context_package import ContextPackage
 
 
 class TestContextPackage:

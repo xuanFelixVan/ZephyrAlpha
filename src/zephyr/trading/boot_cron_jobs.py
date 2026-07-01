@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.boot_cron_jobs
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.rule_enforcement.task_completion_gate; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.task_completion_gate; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype

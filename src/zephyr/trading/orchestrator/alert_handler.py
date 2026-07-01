@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.trading.orchestrator.alert_handler
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.trading.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -84,7 +84,7 @@ def _get_detail(event: Any) -> str:
 
 def _record_event(event_id: str, severity: str, category: str, event: Any) -> None:
     try:
-        from zephyr.governance.sqlite_schema import get_db_connection
+        from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
         conn = get_db_connection()
         conn.execute(
@@ -116,7 +116,7 @@ def _create_repair_task(
     title: str,
     detail: str,
 ) -> Any:
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
     from zephyr.integration.shared.schema.severity_types import Priority

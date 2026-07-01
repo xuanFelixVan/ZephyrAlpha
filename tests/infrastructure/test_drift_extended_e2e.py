@@ -190,7 +190,7 @@ class TestHotfixBypass:
         assert bypass.is_hotfix_commit("feat: add new feature") is False
 
     def test_hotfix_bypass_in_trigger_recovery(self):
-        from zephyr.governance.drift_detector import trigger_recovery
+        from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
         payload = {
             "module_id": "MOD-INF-023",
@@ -236,7 +236,7 @@ class TestNoDeprecationWarning:
     """验证 _fallback_to_rollback_handler 不触发 DeprecationWarning。"""
 
     def test_fallback_no_deprecation_warning(self):
-        from zephyr.governance.drift_detector import _fallback_to_rollback_handler
+        from zephyr.governance.drift_detection.drift_detector import _fallback_to_rollback_handler
 
         mock_event = MagicMock()
         mock_event.event_id = uuid.uuid4()

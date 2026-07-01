@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.budget_handler import on_budget_alert
+from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert, BudgetSeverity, BudgetType
 
 

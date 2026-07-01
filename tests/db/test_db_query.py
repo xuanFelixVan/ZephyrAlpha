@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.query import QueryMixin
+from zephyr.governance.observability_governance.query import QueryMixin
 
 
 class TestQueryMixinImport:
@@ -61,7 +61,7 @@ class TestQueryMixinViaTaskRepo:
         import sys
 
         sys.path.insert(0, "src")
-        from zephyr.governance.task_repo import TaskRepository
+        from zephyr.governance.persistence.task_repo import TaskRepository
 
         repo = TaskRepository(enable_gate=False)
         result = repo.get("NONEXISTENT-99999")
@@ -71,7 +71,7 @@ class TestQueryMixinViaTaskRepo:
         import sys
 
         sys.path.insert(0, "src")
-        from zephyr.governance.task_repo import TaskRepository
+        from zephyr.governance.persistence.task_repo import TaskRepository
 
         repo = TaskRepository(enable_gate=False)
         counts = repo.count_by_status()

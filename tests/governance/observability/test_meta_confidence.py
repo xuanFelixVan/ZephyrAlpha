@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_meta_confidence.py -q
 # [TTL] task_bound
 
-from zephyr.governance.meta_confidence import MetaConfidence
+from zephyr.governance.intelligence_governance.meta_confidence import MetaConfidence
 
 
 class TestMetaConfidenceInstantiation:

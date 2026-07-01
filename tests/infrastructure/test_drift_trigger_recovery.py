@@ -10,7 +10,7 @@
 Trigger Router → Drift Recovery 集成测试
 ==========================================
 验证 trigger_router.yaml drift_detected 事件能正确触发
-zephyr.governance.drift_detector.trigger_recovery 完成恢复闭环。
+zephyr.governance.drift_detection.drift_detector.trigger_recovery 完成恢复闭环。
 
 覆盖场景：
   1. trigger_recovery 可被 trigger_router 正确导入
@@ -29,7 +29,7 @@ from unittest.mock import MagicMock, patch
 
 
 def test_trigger_recovery_importable():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     assert callable(trigger_recovery)
 
@@ -47,7 +47,7 @@ def test_handle_drift_detected_uses_trigger_recovery():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": [], "commit_message": ""}
 
-    with patch("zephyr.governance.drift_detector.trigger_recovery") as mock_recovery:
+    with patch("zephyr.governance.drift_detection.drift_detector.trigger_recovery") as mock_recovery:
         mock_recovery.return_value = {
             "recovery_id": "test-123",
             "recovery_status": "NO_DRIFT_FOUND",
@@ -65,7 +65,7 @@ def test_handle_drift_detected_fallback_on_import_error():
 
     with (
         patch(
-            "zephyr.governance.drift_detector.trigger_recovery",
+            "zephyr.governance.drift_detection.drift_detector.trigger_recovery",
             side_effect=ImportError("test import error"),
         ),
         patch(
@@ -78,7 +78,7 @@ def test_handle_drift_detected_fallback_on_import_error():
 
 
 def test_trigger_recovery_hotfix_bypass():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     payload = {
         "module_id": "MOD-INF-023",
@@ -96,7 +96,7 @@ def test_trigger_recovery_hotfix_bypass():
 
 
 def test_trigger_recovery_no_drift():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     mock_scan_result = MagicMock()
     mock_scan_result.scan_id = uuid.uuid4()
@@ -120,7 +120,7 @@ def test_trigger_recovery_no_drift():
 
 
 def test_trigger_recovery_cascade_lockout():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()
@@ -156,7 +156,7 @@ def test_trigger_recovery_cascade_lockout():
 
 
 def test_trigger_recovery_auto_fix_success():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()
@@ -199,7 +199,7 @@ def test_trigger_recovery_auto_fix_success():
 
 
 def test_trigger_recovery_auto_fix_failure_fallback():
-    from zephyr.governance.drift_detector import trigger_recovery
+    from zephyr.governance.drift_detection.drift_detector import trigger_recovery
 
     mock_event = MagicMock()
     mock_event.event_id = uuid.uuid4()

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.parent_child_attributor import (
+from zephyr.governance.ops_governance.parent_child_attributor import (
     AttributionChain,
     DelegationReport,
     ParentChildAttributor,

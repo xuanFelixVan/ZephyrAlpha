@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.mvep_orchestrator import MVE_SEQUENCE, MVEPOrchestrator
+from zephyr.governance.intelligence_governance.mvep_orchestrator import MVE_SEQUENCE, MVEPOrchestrator
 
 
 class TestMVEPOrchestratorInit:

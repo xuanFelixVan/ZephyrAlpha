@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.escalation_metrics import EscalationMetrics
+from zephyr.governance.escalation.escalation_metrics import EscalationMetrics
 
 
 class TestEscalationMetricsInit:

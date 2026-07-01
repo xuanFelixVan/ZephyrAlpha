@@ -30,7 +30,7 @@ safety_level: H
 ---------------------
 名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为
 Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十态与合法迁移**
-见 ``zephyr.shared.schemas.TaskStatus`` 与 ``zephyr.governance.task_repo.TaskRepository``。
+见 ``zephyr.shared.schemas.TaskStatus`` 与 ``zephyr.governance.persistence.task_repo.TaskRepository``。
 
 本模块职责
 ----------

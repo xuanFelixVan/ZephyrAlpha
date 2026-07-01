@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.self_validator import SelfValidator
+from zephyr.governance.intelligence_governance.self_validator import SelfValidator
 
 
 class TestSelfValidator:

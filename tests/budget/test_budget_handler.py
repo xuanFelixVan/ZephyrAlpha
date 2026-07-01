@@ -13,7 +13,7 @@
 
 from unittest.mock import patch
 
-from zephyr.governance.budget_handler import on_budget_alert
+from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
 
 
@@ -41,14 +41,14 @@ class TestOnBudgetAlert:
 
     def test_adapter_import_error_handled(self):
         alert = _make_alert()
-        with patch.dict("sys.modules", {"zephyr.governance.adapter": None}):
+        with patch.dict("sys.modules", {"zephyr.governance.services.adapter": None}):
             result = on_budget_alert(alert)
             assert isinstance(result, dict)
 
     def test_adapter_exception_handled(self):
         alert = _make_alert()
         with patch(
-            "zephyr.governance.budget_handler.escalate_if_needed", side_effect=RuntimeError("fail"), create=True
+            "zephyr.governance.ops_governance.budget_handler.escalate_if_needed", side_effect=RuntimeError("fail"), create=True
         ):
             result = on_budget_alert(alert)
             assert isinstance(result, dict)

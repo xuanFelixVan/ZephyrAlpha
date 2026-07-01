@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.governance.semantic_cache import SemanticCache
+from zephyr.governance.semantic_audit.semantic_cache import SemanticCache
 
 
 class TestSemanticCacheInit:

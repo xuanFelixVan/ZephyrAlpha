@@ -51,7 +51,7 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.governance.instrument import (
+from zephyr.governance.financial_governance.instrument import (
     ETF,
     FX,
     AssetClass,

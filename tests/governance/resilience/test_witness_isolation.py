@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.witness_isolation import WitnessIsolator
+from zephyr.governance.resilience_governance.witness_isolation import WitnessIsolator
 
 
 class TestWitnessIsolatorInstantiation:

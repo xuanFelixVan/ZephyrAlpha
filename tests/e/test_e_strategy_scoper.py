@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.strategy_scoper import ScopeLevel, StrategyScoper
+from zephyr.governance.financial_governance.strategy_scoper import ScopeLevel, StrategyScoper
 
 
 class TestScopeLevel:

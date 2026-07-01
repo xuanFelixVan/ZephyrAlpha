@@ -497,7 +497,7 @@ class TestDerivedFileConsistency:
         子集容忍：triage 是 01_policies_and_standards/ 子集消费者，
         不强制全等，但不得出现非法值（含废弃值）。
         """
-        from zephyr.governance.triage import VALID_LAYERS  # noqa: PLC0415
+        from zephyr.governance.escalation.triage import VALID_LAYERS  # noqa: PLC0415
 
         vocab_values = _vocab_active_values("layer_vocabulary.yaml")
         deprecated = _vocab_deprecated_values("layer_vocabulary.yaml")
@@ -514,7 +514,7 @@ class TestDerivedFileConsistency:
 
     def test_triage_valid_doc_types_subset_of_vocab(self) -> None:
         """triage.py VALID_DOC_TYPES 必须是 doc_type_vocabulary.yaml 活跃值的子集。"""
-        from zephyr.governance.triage import VALID_DOC_TYPES  # noqa: PLC0415
+        from zephyr.governance.escalation.triage import VALID_DOC_TYPES  # noqa: PLC0415
 
         vocab_values = _vocab_active_values("doc_type_vocabulary.yaml")
         deprecated = _vocab_deprecated_values("doc_type_vocabulary.yaml")
@@ -585,7 +585,7 @@ class TestDbConnectionNamingConvention:
 
     def test_sqlite_get_db_connection_exists_in_sqlite_schema(self) -> None:
         """F2 必须定义 get_db_connection（SQLite governance.db 入口）。"""
-        import zephyr.governance.sqlite_schema as mod  # noqa: PLC0415
+        import zephyr.governance.persistence.sqlite_schema as mod  # noqa: PLC0415
 
         assert hasattr(mod, "get_db_connection"), (
             "sqlite_schema.py 未定义 get_db_connection（SQLite 入口缺失）"

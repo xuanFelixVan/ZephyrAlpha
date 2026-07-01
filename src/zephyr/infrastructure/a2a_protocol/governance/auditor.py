@@ -17,7 +17,7 @@
 
 """G-CT-008 契约：A2A → Audit 审计 Agent 间通信."""
 
-# STUB: from zephyr.governance.contracts import AuditWriter
+# STUB: from zephyr.governance.escalation.contracts import AuditWriter
 # Reason: zephyr.infrastructure.rollback.contracts does not export AuditWriter yet
 try:
     import importlib as _il

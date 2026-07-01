@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.governance.contracts import EscalationContracts
+from zephyr.governance.escalation.contracts import EscalationContracts
 
 
 class TestEscalationContractsOnRollbackFailure:

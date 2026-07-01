@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.sqlite_schema import get_db_connection
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.trading.orchestrator.rollback_manager import RollbackManager
 
 

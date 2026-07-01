@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_process_isolator.py -q
 # [TTL] task_bound
-from zephyr.governance.process_isolator import ProcessIsolator
+from zephyr.governance.resilience_governance.process_isolator import ProcessIsolator
 
 
 class TestProcessIsolatorInstantiation:

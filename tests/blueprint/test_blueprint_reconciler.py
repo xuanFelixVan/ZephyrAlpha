@@ -11,7 +11,7 @@
 # [TESTS] tests/test_blueprint_reconciler.py
 # [TTL] task_bound
 
-from zephyr.governance.blueprint_reconciler import BlueprintReconciler
+from zephyr.governance.architecture_governance.blueprint_reconciler import BlueprintReconciler
 
 
 class TestBlueprintReconciler:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.api_response_sanitizer import APIResponseSanitizer
+from zephyr.governance.security_governance.api_response_sanitizer import APIResponseSanitizer
 
 
 class TestAPIResponseSanitizerInstantiation:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.poison_cascade_detector import (
+from zephyr.governance.security_governance.poison_cascade_detector import (
     PoisonCascadeDetector,
     PoisonEvent,
     PoisonReport,

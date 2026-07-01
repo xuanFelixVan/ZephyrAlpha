@@ -27,8 +27,8 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.budget_engine import BudgetEngine
-from zephyr.governance.budget_models import BudgetDimension, BudgetLevel, GateDecision
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_models import BudgetDimension, BudgetLevel, GateDecision
 
 
 @pytest.fixture

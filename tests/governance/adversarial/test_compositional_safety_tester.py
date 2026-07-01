@@ -11,7 +11,7 @@
 # [TESTS] tests/test_compositional_safety_tester.py
 # [TTL] task_bound
 
-from zephyr.governance.compositional_safety_tester import CompositionalSafetyTester
+from zephyr.governance.security_governance.compositional_safety_tester import CompositionalSafetyTester
 
 
 class TestCompositionalSafetyTester:

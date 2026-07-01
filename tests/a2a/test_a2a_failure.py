@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.a2a_failure import CommunicationFailureEvent, on_a2a_failure
+from zephyr.governance.agent_spec.a2a_failure import CommunicationFailureEvent, on_a2a_failure
 
 
 class _StubCommunication:

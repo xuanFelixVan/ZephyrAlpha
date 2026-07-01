@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.sqlite_dumper
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -326,7 +326,7 @@ class SqliteDumper:
             conn.close()
 
             if tables_restored > 0 and target_db == self._db_path:
-                from zephyr.governance.sqlite_schema import get_db_connection
+                from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
                 vconn = get_db_connection(target_db)
                 vconn.execute("PRAGMA integrity_check")

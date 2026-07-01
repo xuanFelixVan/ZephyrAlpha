@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.fail_mode_manager import (
+from zephyr.governance.resilience_governance.fail_mode_manager import (
     FailMode,
     FailModeManager,
     FailModeState,

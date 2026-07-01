@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.instruction_bloat_detector import (
+from zephyr.governance.context_governance.instruction_bloat_detector import (
     BloatLevel,
     CompactSuggestion,
     InstructionBloatDetector,

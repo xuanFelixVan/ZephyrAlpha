@@ -7,7 +7,7 @@ Usage:
 """
 
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/task_show.py | §
-# [MODULE] zephyr.governance.task_repo.TaskRepository
+# [MODULE] zephyr.governance.persistence.task_repo.TaskRepository
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] AI session 冷启动查询任务卡详情
@@ -53,8 +53,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.sqlite_schema import init_db
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 
 def _format_task(card) -> None:
@@ -107,7 +107,7 @@ def main() -> None:
     if args.like:
         # 模糊查询：列出所有匹配前缀的任务
         import sqlite3
-        from zephyr.governance.sqlite_schema import DB_PATH
+        from zephyr.governance.persistence.sqlite_schema import DB_PATH
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         rows = conn.execute(

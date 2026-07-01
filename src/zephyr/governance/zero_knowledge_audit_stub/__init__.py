@@ -74,19 +74,19 @@ __all__ = [
 ]
 
 _LAZY_IMPORTS = {
-    "AISGSandbox": ("zephyr.governance.aisg_sandbox", "AISGSandbox"),
-    "ArtifactFinding": ("zephyr.governance.artifact_scanner", "ArtifactFinding"),
-    "ArtifactScanner": ("zephyr.governance.artifact_scanner", "ArtifactScanner"),
-    "ScanReport": ("zephyr.governance.artifact_scanner", "ScanReport"),
-    "ComplianceManagerBase": ("zephyr.governance.compliance_manager", "ComplianceManagerBase"),
-    "ComplianceRule": ("zephyr.governance.compliance_manager", "ComplianceRule"),
-    "DefaultSecurityGateway": ("zephyr.governance.default_security_gateway", "DefaultSecurityGateway"),
-    "ScanFinding": ("zephyr.governance.default_security_gateway", "ScanFinding"),
-    "SecurityContext": ("zephyr.governance.default_security_gateway", "SecurityContext"),
-    "AuditAction": ("zephyr.governance.security_gateway_base", "AuditAction"),
-    "AuditDecision": ("zephyr.governance.security_gateway_base", "AuditDecision"),
-    "ComplianceEngine": ("zephyr.governance.security_gateway_base", "ComplianceEngine"),
-    "SecurityGateway": ("zephyr.governance.security_gateway_base", "SecurityGateway"),
+    "AISGSandbox": ("zephyr.governance.intelligence_governance.aisg_sandbox", "AISGSandbox"),
+    "ArtifactFinding": ("zephyr.governance.drift_detection.artifact_scanner", "ArtifactFinding"),
+    "ArtifactScanner": ("zephyr.governance.drift_detection.artifact_scanner", "ArtifactScanner"),
+    "ScanReport": ("zephyr.governance.drift_detection.artifact_scanner", "ScanReport"),
+    "ComplianceManagerBase": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceManagerBase"),
+    "ComplianceRule": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceRule"),
+    "DefaultSecurityGateway": ("zephyr.governance.security_governance.default_security_gateway", "DefaultSecurityGateway"),
+    "ScanFinding": ("zephyr.governance.security_governance.default_security_gateway", "ScanFinding"),
+    "SecurityContext": ("zephyr.governance.security_governance.default_security_gateway", "SecurityContext"),
+    "AuditAction": ("zephyr.governance.security_governance.security_gateway_base", "AuditAction"),
+    "AuditDecision": ("zephyr.governance.security_governance.security_gateway_base", "AuditDecision"),
+    "ComplianceEngine": ("zephyr.governance.security_governance.security_gateway_base", "ComplianceEngine"),
+    "SecurityGateway": ("zephyr.governance.security_governance.security_gateway_base", "SecurityGateway"),
 }
 
 _SUBMODULES = [

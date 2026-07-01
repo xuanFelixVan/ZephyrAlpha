@@ -1,0 +1,350 @@
+# [BLUEPRINT] MOD-GOVERNANCE
+# [MODULE] zephyr.governance.persistence.database_service
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.__init__
+# [CONSUMERS]
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT]
+# [TESTS]
+# [TTL] permanent
+"""
+DatabaseService: 统一管理三个数据库的连接池、生命周期、健康检查
+
+[BLUEPRINT] DM-100022 | src/zephyr/governance/database_service.py | §22
+[MODULE] zephyr.governance.persistence.database_service
+[INVARIANTS] 三库连接池管理; WAL 模式启用; 健康检查机制
+[MODIFY-GUARD] 修改需同步更新 tests/test_db_auto_ops.py
+[CONSUMERS] src/zephyr/governance/; scripts/database/
+[STABILITY] stable
+[SAFETY] L
+[AI_AUTONOMY] ai_modifiable
+[ERROR_CONTRACT] ConnectionError; TimeoutError
+[TESTS] tests/test_db_auto_ops.py::test_database_service_init
+
+提供 governance.db / depgraph / market.duckdb 的统一连接管理。
+"""
+
+import sqlite3
+import threading
+from contextlib import contextmanager
+from typing import Any
+
+import duckdb
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.market_schema import (
+    EXPECTED_MARKET_TABLES as _EXPECTED_MARKET_TABLES,
+    init_market_schema,
+)
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+
+
+class DatabaseService:
+    """统一数据库服务层"""
+
+    # 真源在 market_schema.py（DDL-as-Code 真源），此处仅 re-export 保持向后兼容
+    EXPECTED_MARKET_TABLES = _EXPECTED_MARKET_TABLES
+
+    def __init__(self):
+        # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
+        self.governance_db = str(DB_PATH)
+        self.market_db = str(REPO_ROOT / "data" / "databases" / "market.duckdb")
+
+        self._governance_conn: sqlite3.Connection | None = None
+        self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
+        self._market_conn: duckdb.DuckDBPyConnection | None = None  # 读写连接（仅写入）
+        self._market_read_conn: duckdb.DuckDBPyConnection | None = None  # 只读连接（查询用，read_only=True安全约束真源在代码层）
+
+        self._market_write_lock = threading.Lock()
+        self.WRITE_LOCK_TIMEOUT = 5.0
+        self._tick_batch_buffer: list[dict[str, Any]] = []
+
+    def get_governance_conn(self) -> sqlite3.Connection:
+        """获取 governance.db 连接（保持 SQLite）"""
+        if self._governance_conn is None:
+            self._governance_conn = sqlite3.connect(self.governance_db)
+            self._governance_conn.row_factory = sqlite3.Row
+        return self._governance_conn
+
+    def get_depgraph_conn(self) -> Any:
+        """获取 depgraph (PostgreSQL) 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
+
+        返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
+        """
+        if self._depgraph_conn is None:
+            self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
+            self._depgraph_conn.cursor_factory = RealDictCursor
+        return self._depgraph_conn
+
+    def get_market_conn(self) -> duckdb.DuckDBPyConnection:
+        """获取 market.duckdb 读写连接（仅用于写入操作，如insert_tick_data/flush_tick_batch/create_order）
+
+        安全约束：查询操作必须用 get_market_read_conn()（read_only=True）。
+        read_only=True 安全约束真源在代码层，不在 YAML 配置。
+        """
+        if self._market_conn is None:
+            self._market_conn = duckdb.connect(self.market_db)
+            init_market_schema(self._market_conn)  # 首次连接自动初始化 schema（DDL-as-Code 真源，事件触发）
+        return self._market_conn
+
+    @contextmanager
+    def get_market_read_conn(self):
+        """获取只读连接上下文管理器（read_only=True 代码层强制，安全约束真源在此）
+
+        所有查询操作必须通过此方法获取连接，防止意外写入。
+        """
+        if self._market_read_conn is None:
+            self._market_read_conn = duckdb.connect(self.market_db, read_only=True)
+        yield self._market_read_conn
+
+    @contextmanager
+    def market_write_lock(self):
+        """DuckDB 写入锁上下文管理器（单写入线程串行化防护）"""
+        acquired = self._market_write_lock.acquire(timeout=self.WRITE_LOCK_TIMEOUT)
+        if not acquired:
+            raise TimeoutError(f"market_write_lock 获取超时 ({self.WRITE_LOCK_TIMEOUT}s)")
+        try:
+            yield
+        finally:
+            self._market_write_lock.release()
+
+    def health_check(self) -> dict[str, bool]:
+        """健康检查"""
+        result = {}
+
+        try:
+            conn = self.get_governance_conn()
+            conn.execute("SELECT 1").fetchone()
+            result["governance"] = True
+        except Exception:
+            result["governance"] = False
+
+        try:
+            conn = self.get_depgraph_conn()
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+                cur.fetchone()
+            result["depgraph"] = True
+        except Exception:
+            result["depgraph"] = False
+
+        try:
+            with self.get_market_read_conn() as conn:
+                conn.execute("SELECT 1").fetchone()
+            result["market"] = True
+        except Exception:
+            result["market"] = False
+
+        return result
+
+    def close_all(self):
+        """关闭所有连接"""
+        if self._governance_conn:
+            self._governance_conn.close()
+            self._governance_conn = None
+
+        if self._depgraph_conn:
+            self._depgraph_conn.close()
+            self._depgraph_conn = None
+
+        if self._market_conn:
+            self._market_conn.close()
+            self._market_conn = None
+
+        if self._market_read_conn:
+            self._market_read_conn.close()
+            self._market_read_conn = None
+
+    # ========== governance.db 方法 ==========
+
+    def get_task(self, task_id: str) -> dict[str, Any] | None:
+        """获取任务"""
+        conn = self.get_governance_conn()
+        row = conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+        return dict(row) if row else None
+
+    def create_task(self, task_data: dict[str, Any]) -> str:
+        """创建任务"""
+        conn = self.get_governance_conn()
+        task_id = task_data["task_id"]
+        columns = ", ".join(task_data.keys())
+        placeholders = ", ".join(["?" for _ in task_data])
+        conn.execute(f"INSERT INTO tasks ({columns}) VALUES ({placeholders})", list(task_data.values()))
+        conn.commit()
+        return task_id
+
+    def update_task_status(self, task_id: str, status: str):
+        """更新任务状态"""
+        conn = self.get_governance_conn()
+        conn.execute("UPDATE tasks SET status=?, updated_at=datetime('now') WHERE task_id=?", (status, task_id))
+        conn.commit()
+
+    def log_rule_enforcement(self, rule_id: str, operation: str, target: str, result: str, details: str = ""):
+        """记录规则执行日志"""
+        conn = self.get_governance_conn()
+        conn.execute(
+            """INSERT INTO rule_enforcement_log
+            (rule_id, operation, target, result, details, enforced_at, enforced_by)
+            VALUES (?, ?, ?, ?, ?, datetime('now'), ?)""",
+            (rule_id, operation, target, result, details, "DatabaseService"),
+        )
+        conn.commit()
+
+    # ========== depgraph 方法 ==========
+    # P2迁移后：depgraph 已切换到 PostgreSQL，使用 psycopg2 cursor 模式
+    # cursor_factory=RealDictCursor 使每行返回 RealDictRow，dict(row) 兼容原 sqlite3.Row 用法
+
+    def get_node(self, node_id: str) -> dict[str, Any] | None:
+        """获取节点"""
+        conn = self.get_depgraph_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE node_id=%s", (node_id,))
+            row = cur.fetchone()
+        return dict(row) if row else None
+
+    def get_nodes_by_domain(self, domain_id: str) -> list:
+        """按域获取节点"""
+        conn = self.get_depgraph_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE domain_id=%s", (domain_id,))
+            rows = cur.fetchall()
+        return [dict(r) for r in rows]
+
+    def get_nodes_by_type(self, node_type: str) -> list:
+        """按类型获取节点"""
+        conn = self.get_depgraph_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE node_type=%s", (node_type,))
+            rows = cur.fetchall()
+        return [dict(r) for r in rows]
+
+    def get_rule_bindings_by_function(self, function_name: str) -> list:
+        """按函数名获取规则绑定"""
+        conn = self.get_depgraph_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM rule_bindings WHERE function_name=%s", (function_name,))
+            rows = cur.fetchall()
+        return [dict(r) for r in rows]
+
+    def get_edges_from_node(self, from_node: str) -> list:
+        """获取节点的出边"""
+        conn = self.get_depgraph_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM edges WHERE from_node=%s", (from_node,))
+            rows = cur.fetchall()
+        return [dict(r) for r in rows]
+
+    # ========== market.duckdb 方法 ==========
+
+    def insert_tick_data(self, tick_data: dict[str, Any]):
+        """插入tick数据"""
+        conn = self.get_market_conn()
+        conn.execute(
+            """INSERT INTO tick_data
+            (symbol, timestamp, price, volume, amount, bid1, ask1, bid_vol1, ask_vol1, data_source, quality_score)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                tick_data["symbol"],
+                tick_data["timestamp"],
+                tick_data["price"],
+                tick_data["volume"],
+                tick_data.get("amount"),
+                tick_data.get("bid1"),
+                tick_data.get("ask1"),
+                tick_data.get("bid_vol1"),
+                tick_data.get("ask_vol1"),
+                tick_data.get("data_source"),
+                tick_data.get("quality_score"),
+            ),
+        )
+
+    def buffer_tick(self, tick_data: dict[str, Any]) -> int:
+        """缓冲tick数据到内存批次（不立即写入DuckDB）"""
+        self._tick_batch_buffer.append(tick_data)
+        return len(self._tick_batch_buffer)
+
+    def flush_tick_batch(self) -> int:
+        """将缓冲区的tick数据批量APPEND到DuckDB，返回写入条数"""
+        if not self._tick_batch_buffer:
+            return 0
+        batch = self._tick_batch_buffer[:]
+        self._tick_batch_buffer.clear()
+        conn = self.get_market_conn()
+        with self.market_write_lock():
+            for tick in batch:
+                conn.execute(
+                    """INSERT INTO tick_data
+                    (symbol, timestamp, price, volume, amount, bid1, ask1, bid_vol1, ask_vol1, data_source, quality_score)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        tick["symbol"],
+                        tick["timestamp"],
+                        tick["price"],
+                        tick["volume"],
+                        tick.get("amount"),
+                        tick.get("bid1"),
+                        tick.get("ask1"),
+                        tick.get("bid_vol1"),
+                        tick.get("ask_vol1"),
+                        tick.get("data_source"),
+                        tick.get("quality_score"),
+                    ),
+                )
+        return len(batch)
+
+    def query_kline(self, symbol: str, start_ts: str, end_ts: str) -> list:
+        """查询K线数据（使用read_only=True只读连接）"""
+        with self.get_market_read_conn() as conn:
+            rows = conn.execute(
+                """SELECT * FROM kline_3s
+                WHERE symbol=? AND ts BETWEEN ? AND ?
+                ORDER BY ts""",
+                (symbol, start_ts, end_ts),
+            ).fetchall()
+        return [
+            dict(zip(["symbol", "open", "high", "low", "close", "volume", "amount", "ts"], r, strict=False))
+            for r in rows
+        ]
+
+    def create_order(self, order_data: dict[str, Any]) -> str:
+        """创建订单"""
+        conn = self.get_market_conn()
+        order_id = order_data["order_id"]
+        columns = ", ".join(order_data.keys())
+        placeholders = ", ".join(["?" for _ in order_data])
+        conn.execute(f"INSERT INTO orders ({columns}) VALUES ({placeholders})", list(order_data.values()))
+        return order_id
+
+
+if __name__ == "__main__":
+    # 测试
+    ds = DatabaseService()
+    print("Health check:", ds.health_check())
+
+    # 测试 governance.db
+    conn = ds.get_governance_conn()
+    tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+    print(f"governance.db: {len(tables)} tables")
+
+    # 测试 depgraph
+    conn = ds.get_depgraph_conn()
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM nodes")
+        nodes = cur.fetchone()["count"]
+    print(f"depgraph: {nodes} nodes")
+
+    # 测试 market.duckdb
+    conn = ds.get_market_conn()
+    tables = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='main'").fetchall()
+    print(f"market.duckdb: {len(tables)} tables")
+
+    ds.close_all()
+    print("All connections closed")

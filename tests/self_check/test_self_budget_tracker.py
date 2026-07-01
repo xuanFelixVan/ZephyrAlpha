@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.self_budget_tracker import (
+from zephyr.governance.ops_governance.self_budget_tracker import (
     SelfBudgetStatus,
     SelfBudgetTracker,
 )

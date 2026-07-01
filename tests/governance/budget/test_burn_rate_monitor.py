@@ -17,12 +17,12 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.governance.budget_models import (
+from zephyr.governance.ops_governance.budget_models import (
     BudgetAlert,
     BudgetDimension,
     BudgetPolicy,
 )
-from zephyr.governance.burn_rate_monitor import (
+from zephyr.governance.ops_governance.burn_rate_monitor import (
     BurnRateMonitor,
     BurnSeverity,
     BurnWindow,

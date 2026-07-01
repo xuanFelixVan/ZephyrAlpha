@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.budget_models import BudgetDimension
-from zephyr.governance.cost_attributor import (
+from zephyr.governance.ops_governance.budget_models import BudgetDimension
+from zephyr.governance.ops_governance.cost_attributor import (
     CostAttribution,
     CostAttributor,
     CostSummary,

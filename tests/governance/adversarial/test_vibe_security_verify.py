@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.vibe_security_verify import (
+from zephyr.governance.security_governance.vibe_security_verify import (
     SECURITY_CHECKS,
     VibeSecurityVerify,
 )

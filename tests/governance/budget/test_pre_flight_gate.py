@@ -13,9 +13,9 @@
 
 from __future__ import annotations
 
-from zephyr.governance.budget_engine import BudgetEngine
-from zephyr.governance.budget_models import BudgetDimension, BudgetPolicy, GateDecision
-from zephyr.governance.pre_flight_gate import (
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_models import BudgetDimension, BudgetPolicy, GateDecision
+from zephyr.governance.rule_enforcement.pre_flight_gate import (
     PreFlightDecision,
     PreFlightGate,
     PreFlightReport,

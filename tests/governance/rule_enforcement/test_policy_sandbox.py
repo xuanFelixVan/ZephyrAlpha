@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 import yaml
 
-from zephyr.governance.policy_sandbox import PolicySandbox, SandboxTrial
+from zephyr.governance.resilience_governance.policy_sandbox import PolicySandbox, SandboxTrial
 
 
 class TestSandboxTrial:

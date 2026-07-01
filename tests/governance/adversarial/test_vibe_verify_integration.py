@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_vibe_verify_integration.py -q
 # [TTL] task_bound
 
-from zephyr.governance.vibe_verify_integration import VibeVerifyIntegration
+from zephyr.governance.security_governance.vibe_verify_integration import VibeVerifyIntegration
 
 
 class TestVibeVerifyIntegrationInstantiation:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_post_sync_commands.py | §post_sync-validation
 # [MODULE] scripts.governance.audit_post_sync_commands
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.sqlite_schema
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -74,7 +74,7 @@ if _SRC_DIR not in sys.path:
 import sqlite3
 
 from zephyr.shared.io.paths import DB_PATH
-from zephyr.governance.post_sync_validator import (
+from zephyr.governance.architecture_governance.post_sync_validator import (
     validate_post_sync_command,
     validate_rollback_instructions,
 )
@@ -116,7 +116,7 @@ def _validate_one_command(cmd: str) -> str | None:
     返回 None 表示通过；返回字符串表示失败原因。
     仅校验含 .py 脚本的命令；非 .py（echo/git 等）跳过。
 
-    校验逻辑真源：``zephyr.governance.post_sync_validator.validate_post_sync_command``（SSoT）。
+    校验逻辑真源：``zephyr.governance.architecture_governance.post_sync_validator.validate_post_sync_command``（SSoT）。
     与 task_repo._validate_post_sync_commands 复用同一逻辑，消除双份漂移风险
     （原 ~80 行重复逻辑已于 2026-06-26 抽取到 SSoT 模块）。
     """

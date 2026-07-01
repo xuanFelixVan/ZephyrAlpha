@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.knowledge_engine import (
+from zephyr.governance.kb.knowledge_engine import (
     KnowledgeEntry,
     KnowledgeIndex,
     get_index,

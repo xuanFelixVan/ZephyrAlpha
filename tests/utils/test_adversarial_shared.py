@@ -45,7 +45,7 @@ from zephyr.governance.constitutional_update.constitutional_update import (
     Learning,
     ProposedUpdate,
 )
-from zephyr.governance.cost_budget import CostBudget, CostBudgetExceededError
+from zephyr.governance.ops_governance.cost_budget import CostBudget, CostBudgetExceededError
 from zephyr.infrastructure.a2a_protocol.multi_agent import (
     AgentCard,
     AgentRole,

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.budget_profile_manager import (
+from zephyr.governance.ops_governance.budget_profile_manager import (
     BudgetProfile,
     BudgetProfileManager,
 )

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.task_repo
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] production
@@ -477,7 +477,7 @@ def check_mcp_servers_health() -> GateResult:
 
 def check_escalation_protocol() -> GateResult:
     try:
-        from zephyr.governance.self_test import HealthLevel, run_self_test
+        from zephyr.governance.intelligence_governance.self_test import HealthLevel, run_self_test
 
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:
@@ -493,8 +493,8 @@ def check_escalation_protocol() -> GateResult:
 
 def check_budget_enforcer() -> GateResult:
     try:
-        from zephyr.governance.budget_engine import BudgetEngine
-        from zephyr.governance.budget_models import BudgetDimension
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -765,7 +765,7 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.governance.task_repo import TaskRepository
+        from zephyr.governance.persistence.task_repo import TaskRepository
 
         _mod = importlib.import_module("zephyr.trading.orchestrator.batch_orchestrator")
         BatchOrchestrator = _mod.BatchOrchestrator

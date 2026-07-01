@@ -11,7 +11,7 @@
 # [TESTS] tests/test_objective_tracker.py
 # [TTL] task_bound
 
-from zephyr.governance.objective_tracker import ObjectiveTracker
+from zephyr.governance.observability_governance.objective_tracker import ObjectiveTracker
 
 
 class TestObjectiveTrackerInit:

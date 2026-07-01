@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.governance.human_factors import HumanFactors
+from zephyr.governance.escalation.human_factors import HumanFactors
 
 
 class TestHumanFactorsInit:

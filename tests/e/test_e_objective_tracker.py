@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.objective_tracker import ObjectiveTracker
+from zephyr.governance.observability_governance.objective_tracker import ObjectiveTracker
 
 
 class TestObjectiveTracker:

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.timeout_guard import (
+from zephyr.governance.ops_governance.timeout_guard import (
     DEFAULT_TIMEOUTS,
     TimeoutEvent,
     TimeoutGuard,

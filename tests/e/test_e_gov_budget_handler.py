@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.governance.budget_handler import on_budget_alert
+from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
 
 class TestOnBudgetAlert:

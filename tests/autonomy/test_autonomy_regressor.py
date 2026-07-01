@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.autonomy_regressor import AutonomyRegressor
+from zephyr.governance.drift_detection.autonomy_regressor import AutonomyRegressor
 
 
 class TestAutonomyRegressorInstantiation:

@@ -40,7 +40,7 @@ def test_00_imports():
         ("shared.schemas", "zephyr.shared.schemas"),
         ("core.models", "zephyr.shared.models"),
         ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
-        ("db.task_repo", "zephyr.governance.task_repo"),
+        ("db.task_repo", "zephyr.governance.persistence.task_repo"),
         ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
         ("pipeline.models", "zephyr.integration.models"),
         ("pipeline.pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
@@ -252,7 +252,7 @@ def test_01_taskcard_string_dates():
 
 def test_02_task_repo_crud():
     """测试 TaskRepo CRUD + 状态机"""
-    from zephyr.governance.task_repo import InvalidTransitionError, TaskRepository
+    from zephyr.governance.persistence.task_repo import InvalidTransitionError, TaskRepository
     from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.models import TaskCard
@@ -301,7 +301,7 @@ def test_02_task_repo_crud():
 
 def test_02_task_repo_lifecycle():
     """测试完整状态生命周期 PENDING→IN_PROGRESS→COMPLETED→VERIFIED"""
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.models import TaskCard
@@ -341,7 +341,7 @@ def test_02_task_repo_lifecycle():
 
 def test_02_taskcard_repo_polymorphism():
     """测试 TaskCard 通过 TaskRepo 保存（多态）"""
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus
 
@@ -706,7 +706,7 @@ def test_06_extract_triage_profile():
 
 def test_06_mcp_persist_and_load():
     """测试 MCP _persist + _load"""
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.infrastructure.task_manager_server import TaskManagerMCP
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus

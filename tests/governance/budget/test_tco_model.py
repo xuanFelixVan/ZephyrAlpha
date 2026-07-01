@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.tco_model import (
+from zephyr.governance.ops_governance.tco_model import (
     TCO_MODEL,
     BudgetColumn,
     column_summary,

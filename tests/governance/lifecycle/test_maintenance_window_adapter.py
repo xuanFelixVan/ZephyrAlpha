@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.maintenance_window_adapter import MaintenanceWindowAdapter
+from zephyr.governance.ops_governance.maintenance_window_adapter import MaintenanceWindowAdapter
 
 
 class TestMaintenanceWindowAdapterInstantiation:

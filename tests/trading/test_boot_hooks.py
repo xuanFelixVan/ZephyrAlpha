@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 from zephyr.trading.boot_hooks import register_boot_hooks
 
 _HOOK_REGISTRY_PATH = "zephyr.governance.event_hook.hook_registry"
-_TASK_REPO_PATH = "zephyr.governance.task_repo.TaskRepository"
+_TASK_REPO_PATH = "zephyr.governance.persistence.task_repo.TaskRepository"
 
 
 class TestRegisterBootHooks:

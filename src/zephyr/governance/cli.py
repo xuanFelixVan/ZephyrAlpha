@@ -250,7 +250,7 @@ def _cmd_verify(args: argparse.Namespace) -> None:
 
 def _cmd_benchmark(args: argparse.Namespace) -> None:
     print("[BENCHMARK] Running 5-group self-benchmark...")
-    from zephyr.governance.self_benchmark import SelfBenchmark
+    from zephyr.governance.intelligence_governance.self_benchmark import SelfBenchmark
 
     bench = SelfBenchmark()
     result = bench.run_benchmark()

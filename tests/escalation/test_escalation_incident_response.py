@@ -21,7 +21,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.governance.incident_response import (
+from zephyr.governance.escalation.incident_response import (
     INCIDENT_PROTOCOLS,
     IncidentLevel,
     IncidentProtocol,

@@ -17,7 +17,7 @@ import uuid
 
 import pytest
 
-base_repo = pytest.importorskip("zephyr.governance.base_repo")
+base_repo = pytest.importorskip("zephyr.governance.persistence.base_repo")
 
 TaskRepositoryError = base_repo.TaskRepositoryError
 TaskNotFoundError = base_repo.TaskNotFoundError

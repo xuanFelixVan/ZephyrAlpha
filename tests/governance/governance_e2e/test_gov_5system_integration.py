@@ -77,7 +77,7 @@ class TestFiveSystemDiscovery:
         )
 
     def test_escalation_engine_functional(self):
-        from zephyr.governance.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine, RuleCategory
 
         e = EscalationEngine("gct009-test")
         ev = e.evaluate(RuleCategory.AUTO_GUARD_FAILURE, "test guard failure")
@@ -86,7 +86,7 @@ class TestFiveSystemDiscovery:
         assert len(e._rules) >= 9
 
     def test_budget_engine_functional(self):
-        from zephyr.governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
         be = BudgetEngine()
         r = be.pre_flight_check("gct009-req", 1000, 0.1)
@@ -94,8 +94,8 @@ class TestFiveSystemDiscovery:
         assert r.budget_level.name == "L0_NORMAL"
 
     def test_cross_system_escalation_chain(self):
-        from zephyr.governance.budget_engine import BudgetEngine
-        from zephyr.governance.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine, RuleCategory
 
         e = EscalationEngine("chain-test")
         be = BudgetEngine()

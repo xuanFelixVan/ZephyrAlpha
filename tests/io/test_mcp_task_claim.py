@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from zephyr.shared.io.paths import REPO_ROOT, DB_PATH
 
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.infrastructure.task_manager_server import TaskManagerMCP
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"

@@ -48,7 +48,7 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-from zephyr.governance.analytics_base import (
+from zephyr.governance.observability_governance.analytics_base import (
     AttributionEngineBase,
     PerformanceAttributionReport,
     TCAEngineBase,

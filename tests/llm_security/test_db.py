@@ -23,17 +23,17 @@ DatabaseManager = dm_mod.DatabaseManager
 DatabaseManagerError = dm_mod.DatabaseManagerError
 DatabaseHealthStatus = dm_mod.DatabaseHealthStatus
 
-task_repo_mod = pytest.importorskip("zephyr.governance.task_repo")
+task_repo_mod = pytest.importorskip("zephyr.governance.persistence.task_repo")
 TaskRepository = task_repo_mod.TaskRepository
 TaskNotFoundError = task_repo_mod.TaskNotFoundError
 InvalidTransitionError = task_repo_mod.InvalidTransitionError
 
-atm_mod = pytest.importorskip("zephyr.governance.atomic_transaction_manager")
+atm_mod = pytest.importorskip("zephyr.governance.financial_governance.atomic_transaction_manager")
 AtomicTransactionManager = atm_mod.AtomicTransactionManager
 TransactionError = atm_mod.TransactionError
 TransactionTimeoutError = atm_mod.TransactionTimeoutError
 
-transition_mod = pytest.importorskip("zephyr.governance.transition")
+transition_mod = pytest.importorskip("zephyr.governance.lifecycle_governance.transition")
 
 try:
     from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus

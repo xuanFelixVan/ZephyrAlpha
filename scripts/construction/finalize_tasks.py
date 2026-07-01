@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/finalize_tasks.py | §
 # [MODULE] scripts.construction.finalize_tasks
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.task_repo; zephyr.governance.sqlite_schema; zephyr.integration.__init__
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -19,8 +19,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from zephyr.integration.schema.schemas import TaskStatus
 
-from zephyr.governance.sqlite_schema import init_db
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 init_db()
 repo = TaskRepository()

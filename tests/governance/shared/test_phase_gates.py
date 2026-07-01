@@ -53,7 +53,7 @@ class TestPhase3GateCheck:
 class TestCycleDependencyAuditIsolation:
     def test_no_cycle_in_imports(self):
         try:
-            from zephyr.governance.contracts import EscalationContracts
+            from zephyr.governance.escalation.contracts import EscalationContracts
 
             contracts = EscalationContracts()
             assert contracts is not None
@@ -78,13 +78,13 @@ class TestA2APhase4Hold:
 
 class TestP0ContractSmoke:
     def test_rollback_result_types_smoke(self):
-        from zephyr.governance.result_types import RollbackResult as RR
+        from zephyr.governance.escalation.result_types import RollbackResult as RR
 
         rr = RR(rollback_id="SMOKE-1", target="test")
         assert rr.rollback_id == "SMOKE-1"
 
     def test_budget_alert_smoke(self):
-        from zephyr.governance.alerts import BudgetAlert
+        from zephyr.governance.ops_governance.alerts import BudgetAlert
 
         alert = BudgetAlert(alert_id="SMOKE-1", burn_rate=0.5)
         assert alert.burn_rate == 0.5
@@ -104,7 +104,7 @@ class TestP0ContractSmoke:
 
 class TestP0InputValidation:
     def test_rollback_result_status_enum(self):
-        from zephyr.governance.result_types import RollbackStatus
+        from zephyr.governance.escalation.result_types import RollbackStatus
 
         assert RollbackStatus.SUCCESS.value == "SUCCESS"
         assert RollbackStatus.FAILED.value == "FAILED"
@@ -115,7 +115,7 @@ class TestP0InputValidation:
         assert DriftType.CODE_DIVERGENCE.value == "CODE_DIVERGENCE"
 
     def test_budget_alert_from_burn_rate_validation(self):
-        from zephyr.governance.alerts import BudgetAlert, BudgetSeverity
+        from zephyr.governance.ops_governance.alerts import BudgetAlert, BudgetSeverity
 
         alert = BudgetAlert.from_burn_rate("B-1", burn_rate=1.5, threshold=0.8, remaining=-100)
         assert alert.severity == BudgetSeverity.CRITICAL

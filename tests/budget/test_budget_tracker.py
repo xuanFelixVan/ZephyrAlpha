@@ -18,8 +18,8 @@ import time
 
 import pytest
 
-from zephyr.governance.budget_models import BudgetDimension
-from zephyr.governance.budget_tracker import (
+from zephyr.governance.ops_governance.budget_models import BudgetDimension
+from zephyr.governance.ops_governance.budget_tracker import (
     BudgetSnapshot,
     BudgetTracker,
     TrackerScope,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
 # [MODULE] zephyr.trading.feedback_loop.db_bridge
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -28,7 +28,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.sqlite_schema import get_db_connection
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
 __all__ = ["FLE_METRICS_TABLE_DDL", "bulk_record_via_db_contract", "record_via_db_contract"]
 

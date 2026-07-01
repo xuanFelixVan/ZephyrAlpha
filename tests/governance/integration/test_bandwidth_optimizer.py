@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.bandwidth_optimizer import (
+from zephyr.governance.ops_governance.bandwidth_optimizer import (
     BandwidthDimension,
     BandwidthScore,
     OptimizationRecommendation,

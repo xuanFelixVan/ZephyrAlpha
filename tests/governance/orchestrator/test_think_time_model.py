@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.think_time_model import ThinkTimeModel, ThinkTimeSnapshot
+from zephyr.governance.context_governance.think_time_model import ThinkTimeModel, ThinkTimeSnapshot
 
 
 class TestThinkTimeModelInit:

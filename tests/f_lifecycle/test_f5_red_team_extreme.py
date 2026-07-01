@@ -29,19 +29,19 @@ from unittest.mock import patch
 import pytest
 
 dd_mod = pytest.importorskip(
-    "zephyr.governance.deadlock_detector",
+    "zephyr.governance.resilience_governance.deadlock_detector",
     reason="deadlock_detector module not available",
 )
 delegation_mod = pytest.importorskip(
-    "zephyr.governance.delegation_engine",
+    "zephyr.governance.intelligence_governance.delegation_engine",
     reason="delegation_engine module not available",
 )
 escalation_api_mod = pytest.importorskip(
-    "zephyr.governance.escalation_api",
+    "zephyr.governance.escalation.escalation_api",
     reason="escalation_api module not available",
 )
 escalation_engine_mod = pytest.importorskip(
-    "zephyr.governance.escalation_engine",
+    "zephyr.governance.escalation.escalation_engine",
     reason="escalation_engine module not available",
 )
 cascade_mod = pytest.importorskip(
@@ -49,7 +49,7 @@ cascade_mod = pytest.importorskip(
     reason="cascade_guard module not available",
 )
 loop_mod = pytest.importorskip(
-    "zephyr.governance.escalation_loop_detector",
+    "zephyr.governance.escalation.escalation_loop_detector",
     reason="escalation_loop_detector module not available",
 )
 arbitrator_mod = pytest.importorskip(
@@ -57,12 +57,12 @@ arbitrator_mod = pytest.importorskip(
     reason="arbitrator module not available",
 )
 
-from zephyr.governance.deadlock_detector import DeadlockDetector
-from zephyr.governance.delegation_engine import DelegationEngine
-from zephyr.governance.escalation_api import EscalationAPI
-from zephyr.governance.escalation_engine import EscalationEngine
-from zephyr.governance.escalation_loop_detector import EscalationLoopDetector
-from zephyr.governance.escalation_models import (
+from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
+from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+from zephyr.governance.escalation.escalation_api import EscalationAPI
+from zephyr.governance.escalation.escalation_engine import EscalationEngine
+from zephyr.governance.escalation.escalation_loop_detector import EscalationLoopDetector
+from zephyr.governance.escalation.escalation_models import (
     DelegationStrategy,
     EscalationEvent,
     EscalationLevel,

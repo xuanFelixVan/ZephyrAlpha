@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.deadlock_detector import DeadlockDetector
+from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
 
 
 class TestDeadlockDetectorInit:

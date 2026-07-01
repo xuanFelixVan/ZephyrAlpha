@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.cost_budget import (
+from zephyr.governance.ops_governance.cost_budget import (
     CostBudget,
     CostBudgetExceededError,
     PricingTier,

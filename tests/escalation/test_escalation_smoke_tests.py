@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.escalation_smoke_tests import SMOKE_TESTS, run_smoke
+from zephyr.governance.escalation.escalation_smoke_tests import SMOKE_TESTS, run_smoke
 
 
 class TestSmokeTestsList:
@@ -53,13 +53,13 @@ class TestRunSmoke:
 
 class TestIndividualSmokeFunctions:
     def test_smoke_engine_init(self):
-        from zephyr.governance.escalation_smoke_tests import test_smoke_engine_init
+        from zephyr.governance.escalation.escalation_smoke_tests import test_smoke_engine_init
 
         result = test_smoke_engine_init()
         assert result is True
 
     def test_smoke_delegation_init(self):
-        from zephyr.governance.escalation_smoke_tests import test_smoke_delegation_init
+        from zephyr.governance.escalation.escalation_smoke_tests import test_smoke_delegation_init
 
         result = test_smoke_delegation_init()
         assert result is True

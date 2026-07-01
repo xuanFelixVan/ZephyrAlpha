@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.silence_detector import SilenceDetector
+from zephyr.governance.drift_detection.silence_detector import SilenceDetector
 
 
 class TestSilenceDetector:

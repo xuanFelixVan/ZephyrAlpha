@@ -93,7 +93,7 @@ def test_anomaly_detector_negative():
 
 def test_rollback_on_anomaly():
     from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
-    from zephyr.governance.contracts import RollbackHandler
+    from zephyr.governance.escalation.contracts import RollbackHandler
 
     handler = RollbackHandler()
     event = AnomalyEvent(

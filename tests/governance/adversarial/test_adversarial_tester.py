@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.adversarial_tester import (
+from zephyr.governance.security_governance.adversarial_tester import (
     AdversarialResult,
     AdversarialTestCase,
     AdversarialTester,

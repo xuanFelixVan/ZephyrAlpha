@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.blast_radius import (
+from zephyr.governance.resilience_governance.blast_radius import (
     BlastRadiusAnalyzer,
     BlastRadiusReport,
     DepgraphLoadError,
@@ -77,7 +77,7 @@ def _make_depgraph_nodes() -> dict:
             "id": "node_d",
             "path": "src/zephyr/semantic-auditor/self_healer.py",
             "type": "module",
-            "imports": ["zephyr.governance.semantic_audit.models", "zephyr.governance.blast_radius"],
+            "imports": ["zephyr.governance.semantic_audit.models", "zephyr.governance.resilience_governance.blast_radius"],
         },
     }
 

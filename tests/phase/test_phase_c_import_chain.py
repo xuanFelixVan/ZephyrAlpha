@@ -28,7 +28,7 @@ class ConcreteClass(NamedTuple):
 
 PHASE_C_CLASSES: list[ConcreteClass] = [
     ConcreteClass("zephyr.data.akshare_provider", "AkshareProvider", "L00"),
-    ConcreteClass("zephyr.governance.default_quality_gate", "DefaultQualityGate", "L00"),
+    ConcreteClass("zephyr.governance.rule_enforcement.default_quality_gate", "DefaultQualityGate", "L00"),
     ConcreteClass(
         "zephyr.signal_fundamental.gen.implementations.default_signal_aggregator", "DefaultSignalAggregator", "L03"
     ),

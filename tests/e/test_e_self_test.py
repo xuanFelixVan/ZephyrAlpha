@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.self_test import (
+from zephyr.governance.intelligence_governance.self_test import (
     CheckResult,
     HealthLevel,
     SelfTestReport,

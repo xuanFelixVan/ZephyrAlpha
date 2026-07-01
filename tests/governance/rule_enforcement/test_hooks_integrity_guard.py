@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.hooks_integrity_guard import HooksIntegrityGuard
+from zephyr.governance.security_governance.hooks_integrity_guard import HooksIntegrityGuard
 
 
 class TestHooksIntegrityGuardInit:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.preemption_manager
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.task_repo
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -41,7 +41,7 @@ from zephyr.infrastructure.pipeline.models import PreemptionRecord
 from zephyr.shared.task_types import TaskStatus
 
 if TYPE_CHECKING:
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
 
 
 class PreemptionManager:

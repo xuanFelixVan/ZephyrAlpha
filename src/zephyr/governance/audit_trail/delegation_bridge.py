@@ -30,7 +30,7 @@ class DelegationBridge:
         self._engine = None
         self._available = False
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
 
             self._engine = EscalationEngine(name="audit-orchestrator", hooks_enabled=False)
             self._available = True
@@ -43,7 +43,7 @@ class DelegationBridge:
         if not self._available or self._engine is None:
             return None
         try:
-            from zephyr.governance.escalation_engine import RuleCategory
+            from zephyr.governance.escalation.escalation_engine import RuleCategory
 
             event = self._engine.evaluate(
                 category=RuleCategory.CASCADE_FAILURE,
@@ -62,7 +62,7 @@ class DelegationBridge:
         if not self._available or self._engine is None:
             return None
         try:
-            from zephyr.governance.escalation_engine import RuleCategory
+            from zephyr.governance.escalation.escalation_engine import RuleCategory
 
             event = self._engine.evaluate(
                 category=RuleCategory.TIMEOUT,

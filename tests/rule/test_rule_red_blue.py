@@ -171,7 +171,7 @@ class TestTRAE002CreateWithoutRegister:
 class TestTRAE003TaskCardOverGranularity:
     def test_task_card_over_granularity(self):
         try:
-            from zephyr.governance.task_repo import TaskRepository
+            from zephyr.governance.persistence.task_repo import TaskRepository
 
             repo = TaskRepository()
             oversized_task = {

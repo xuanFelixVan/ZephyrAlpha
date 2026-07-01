@@ -40,7 +40,7 @@ import pytest
 from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
-from zephyr.governance.memory_provider import MemoryProvider
+from zephyr.governance.intelligence_governance.memory_provider import MemoryProvider
 from zephyr.integration.layer_consumer_registry import get_registry_summary, register_all_consumers
 from zephyr.integration.layer_router import (
     get_layer_router,

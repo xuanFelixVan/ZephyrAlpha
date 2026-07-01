@@ -117,7 +117,7 @@ CROSS_DOMAIN_MAPPINGS: dict[str, str] = {
     "zephyr.trading.feedback_loop.feedback_loop.dynamic_threshold": "zephyr.trading.feedback_loop.evolution.dynamic_threshold",
     "zephyr.trading.feedback_loop.feedback_loop.self_api_throttle_defense": "zephyr.trading.feedback_loop.resilience.self_api_throttle_defense",
     "zephyr.trading.feedback_loop.feedback_loop.graceful_degradation_planner": "zephyr.trading.feedback_loop.resilience.graceful_degradation_planner",
-    "zephyr.security.llm_defense.llm_security.artifact_scanner": "zephyr.governance.artifact_scanner",
+    "zephyr.security.llm_defense.llm_security.artifact_scanner": "zephyr.governance.drift_detection.artifact_scanner",
     "zephyr.orchestration.runtime_core.chaos_injector": "zephyr.governance.drift_detection.chaos_injector",
     "zephyr.data.protocols": "zephyr.trading.feedback_loop.protocols",
     "zephyr.orchestration.runtime_core.self_test_verifier": "zephyr.governance.drift_detection.self_test_verifier",
@@ -174,10 +174,10 @@ CROSS_DOMAIN_MAPPINGS: dict[str, str] = {
     "zephyr.security.agent_rbac.security_decision": "zephyr.shared.contracts.security.security_decision",
     "zephyr.observability.audit_trail.bridges.contracts": "zephyr.resilience.rollback.contracts",
     "zephyr.observability.audit_trail.bridges.anomaly": "zephyr.governance.audit_orchestrator.anomaly",
-    "zephyr.security.llm_defense.llm_security.security_gateway_base": "zephyr.governance.security_gateway_base",
+    "zephyr.security.llm_defense.llm_security.security_gateway_base": "zephyr.governance.security_governance.security_gateway_base",
     "zephyr.security.llm_defense.llm_security.context_scanner": "zephyr.security.llm_defense.llm_security_01.context_scanner",
-    "zephyr.security.llm_defense.llm_security.aisg_sandbox": "zephyr.governance.aisg_sandbox",
-    "zephyr.security.llm_defense.llm_security.default_security_gateway": "zephyr.governance.default_security_gateway",
+    "zephyr.security.llm_defense.llm_security.aisg_sandbox": "zephyr.governance.intelligence_governance.aisg_sandbox",
+    "zephyr.security.llm_defense.llm_security.default_security_gateway": "zephyr.governance.security_governance.default_security_gateway",
     "zephyr.governance.rule_enforcement.phase_check_registry": "zephyr.resilience.rollback.phase_check_registry",
 }
 

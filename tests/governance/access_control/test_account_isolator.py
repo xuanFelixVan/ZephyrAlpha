@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.account_isolator import AccountIsolator
+from zephyr.governance.resilience_governance.account_isolator import AccountIsolator
 
 
 class TestAccountIsolatorInit:

@@ -128,7 +128,7 @@ class TestOnStartup:
     def test_partial_failure_records_errors(self):
         integration = F5BootIntegration()
         with patch(
-            "zephyr.governance.deadlock_detector.DeadlockDetector",
+            "zephyr.governance.resilience_governance.deadlock_detector.DeadlockDetector",
             side_effect=RuntimeError("boom"),
         ):
             result = integration.on_startup()
@@ -240,7 +240,7 @@ class TestRunPeriodicChecks:
         integration.on_startup()
         # Directly inject an active escalation event (bypasses LSG scan which may
         # fail due to pre-existing SupplyChainGuard signature mismatch in project)
-        from zephyr.governance.escalation_models import (
+        from zephyr.governance.escalation.escalation_models import (
             EscalationEvent,
             EscalationState,
             RuleCategory,

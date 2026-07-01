@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.daily_ops import (
+from zephyr.governance.ops_governance.daily_ops import (
     QUICK_COMMANDS,
     OpsPhase,
     QuickCommand,

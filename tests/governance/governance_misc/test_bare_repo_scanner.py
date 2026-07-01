@@ -14,7 +14,7 @@
 import os
 import tempfile
 
-from zephyr.governance.bare_repo_scanner import BareRepoScanner
+from zephyr.governance.security_governance.bare_repo_scanner import BareRepoScanner
 
 
 class TestBareRepoScanner:

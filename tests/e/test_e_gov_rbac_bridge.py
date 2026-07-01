@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.rbac_bridge import (
+from zephyr.governance.agent_spec.rbac_bridge import (
     EscalationRBACBridge,
     RBACCheckResult,
 )

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.error_budget_burst_limiter import BurstLimiter
+from zephyr.governance.ops_governance.error_budget_burst_limiter import BurstLimiter
 
 
 class TestBurstLimiterInit:

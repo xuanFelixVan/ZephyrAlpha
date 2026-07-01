@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.merkle_audit import MerkleAudit, MerkleTree
+from zephyr.governance.audit_trail.merkle_audit import MerkleAudit, MerkleTree
 
 
 class TestMerkleTree:

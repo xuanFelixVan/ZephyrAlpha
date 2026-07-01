@@ -3,7 +3,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7
 # [MODULE] scripts.governance.create_alignment_tasks
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.task_repo
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS] governance automation; alignment workflow
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -35,7 +35,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from zephyr.governance.task_repo import Task, TaskRepository
+from zephyr.governance.persistence.task_repo import Task, TaskRepository
 
 BATCH_ID = "ALIGN-BATCH-001"
 SOURCE_BP = "MOD-INF-005"

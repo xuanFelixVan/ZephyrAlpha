@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.confidence_estimator import ConfidenceEstimator, ConfidenceLevel
+from zephyr.governance.intelligence_governance.confidence_estimator import ConfidenceEstimator, ConfidenceLevel
 
 
 class TestConfidenceLevel:

@@ -15,14 +15,14 @@ class TestGCT003RollbackToEscalation:
     """验证 rollback/result_types.py 的 RollbackResult 可被 escalation/contracts.py 消费."""
 
     def test_rollback_result_creatable(self):
-        from zephyr.governance.result_types import RollbackResult
+        from zephyr.governance.escalation.result_types import RollbackResult
 
         r = RollbackResult(rollback_id="R001", target="test")
         assert r.status is not None
 
     def test_escalation_consumes_rollback(self):
-        from zephyr.governance.contracts import EscalationContracts
-        from zephyr.governance.result_types import RollbackResult, RollbackStatus
+        from zephyr.governance.escalation.contracts import EscalationContracts
+        from zephyr.governance.escalation.result_types import RollbackResult, RollbackStatus
 
         r = RollbackResult(rollback_id="R001", target="test", status=RollbackStatus.FAILED)
         esc = EscalationContracts()
@@ -30,7 +30,7 @@ class TestGCT003RollbackToEscalation:
         assert result is not None
 
     def test_status_enum_values(self):
-        from zephyr.governance.result_types import RollbackStatus
+        from zephyr.governance.escalation.result_types import RollbackStatus
 
         assert RollbackStatus.SUCCESS is not None
         assert RollbackStatus.FAILED is not None

@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_debt_auditor import RuleDebtAuditor
+from zephyr.governance.rule_enforcement.rule_debt_auditor import RuleDebtAuditor
 
 
 class TestRuleDebtAuditorInstantiation:

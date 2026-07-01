@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.approval import ApprovalRequest
+from zephyr.governance.rule_enforcement.approval import ApprovalRequest
 
 
 class TestApprovalRequest:

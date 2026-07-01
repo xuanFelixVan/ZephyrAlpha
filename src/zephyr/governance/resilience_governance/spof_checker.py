@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-074 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.spof_checker
+# [MODULE] zephyr.governance.escalation.spof_checker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__
 # [CONSUMERS]

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.drift_detector import DriftDetector
+from zephyr.governance.drift_detection.drift_detector import DriftDetector
 
 
 class TestDriftDetectorInstantiation:

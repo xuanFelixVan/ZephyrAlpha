@@ -37,8 +37,8 @@ class TestP0U1ContractSmoke:
         assert isinstance(detector.detect({"operation": "delete", "agent": "test"}), (type(None), AnomalyEvent))
 
     def test_gct_003_rollback_to_escalation(self):
-        from zephyr.governance.contracts import EscalationContracts
-        from zephyr.governance.result_types import RollbackResult
+        from zephyr.governance.escalation.contracts import EscalationContracts
+        from zephyr.governance.escalation.result_types import RollbackResult
 
         result = RollbackResult(rollback_id="R001", target="test_module")
         esc = EscalationContracts()
@@ -46,7 +46,7 @@ class TestP0U1ContractSmoke:
         assert hasattr(esc, "on_rollback_failure")
 
     def test_gct_004_escalation_to_rbac(self):
-        from zephyr.governance.approval import ApprovalRequest
+        from zephyr.governance.rule_enforcement.approval import ApprovalRequest
         from zephyr.security.access_control.approver_check import verify_approver
 
         req = ApprovalRequest(task_id="T001", requested_action="deploy", human_approver="admin", reason="emergency")
@@ -64,8 +64,8 @@ class TestP0U1ContractSmoke:
         assert hasattr(handler, "on_drift_fix")
 
     def test_gct_006_budget_to_escalation(self):
-        from zephyr.governance.alerts import BudgetAlert
-        from zephyr.governance.budget_handler import on_budget_alert
+        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
         alert = BudgetAlert(alert_id="B001")
         assert hasattr(alert, "alert_id")
@@ -103,7 +103,7 @@ class TestP0U2InputValidation:
         assert result is not None
 
     def test_no_false_cycle_detection(self):
-        from zephyr.governance.contracts import EscalationContracts
+        from zephyr.governance.escalation.contracts import EscalationContracts
 
         esc = EscalationContracts()
         assert hasattr(esc, "on_a2a_failure")

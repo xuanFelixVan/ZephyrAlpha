@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.conversation_tax_detector import (
+from zephyr.governance.context_governance.conversation_tax_detector import (
     ConversationTaxDetector,
     TaxAssessment,
 )

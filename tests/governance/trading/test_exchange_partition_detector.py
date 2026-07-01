@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.exchange_partition_detector import ExchangePartitionDetector
+from zephyr.governance.data_governance.exchange_partition_detector import ExchangePartitionDetector
 
 
 class TestExchangePartitionDetectorInit:

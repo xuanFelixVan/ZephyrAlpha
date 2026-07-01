@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.auto_dispatcher
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] zephyr.trading.ide_health_service
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -97,7 +97,7 @@ class AutoDispatcher:
             logger.info("[AUTO-DISPATCH] no files_in_scope for %s, skipping audit", task_id)
 
         try:
-            from zephyr.governance.task_repo import TaskRepository
+            from zephyr.governance.persistence.task_repo import TaskRepository
 
             repo = TaskRepository()
             repo.transition(task_id, "COMPLETED", note="auto-dispatched by daemon")

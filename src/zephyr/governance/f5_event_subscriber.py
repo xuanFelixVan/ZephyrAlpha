@@ -313,7 +313,7 @@ class F5EventSubscriber:
             self._log_dispatch(result)
             return result
         try:
-            from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation.escalation_models import RuleCategory
             try:
                 category = RuleCategory(category_str)
             except ValueError:
@@ -624,7 +624,7 @@ def _on_fix_failed(payload: Any) -> None:
 def _dispatch_to_escalation(payload: Any, category: str) -> None:
     """将外部事件派发到 escalate_if_needed（已有公开方法）。"""
     try:
-        from zephyr.governance.adapter import escalate_if_needed
+        from zephyr.governance.services.adapter import escalate_if_needed
 
         data = payload if isinstance(payload, dict) else {}
         description = data.get("detail", f"external event: {category}")

@@ -52,7 +52,7 @@ def test_phase4_gate_all_contracts_exist():
         "zephyr.infrastructure.a2a_protocol.legacy_auditor",
         "zephyr.infrastructure.rollback.auditor",
         "zephyr.infrastructure.rollback.budget_tracker",
-        "zephyr.governance.rbac_bridge",
+        "zephyr.governance.agent_spec.rbac_bridge",
         "zephyr.governance.drift_detection.rollback_bridge",
         "zephyr.infrastructure.budget_enforcement.rbac_bridge",
         "zephyr.governance.audit_trail.drift_bridge",

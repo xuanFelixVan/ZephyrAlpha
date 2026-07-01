@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.pricing_sync import PriceEntry, PricingSync
+from zephyr.governance.data_governance.pricing_sync import PriceEntry, PricingSync
 
 
 class TestPricingSyncInit:

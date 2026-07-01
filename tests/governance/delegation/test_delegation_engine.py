@@ -15,8 +15,8 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.delegation_engine import DelegationEngine
-from zephyr.governance.escalation_models import (
+from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+from zephyr.governance.escalation.escalation_models import (
     DelegationStrategy,
     EscalationEvent,
     EscalationLevel,

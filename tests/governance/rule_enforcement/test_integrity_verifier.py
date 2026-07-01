@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import hashlib
 
-from zephyr.governance.integrity_verifier import IntegrityVerifier
+from zephyr.governance.audit_trail.integrity_verifier import IntegrityVerifier
 
 
 class TestIntegrityVerifierInstantiation:

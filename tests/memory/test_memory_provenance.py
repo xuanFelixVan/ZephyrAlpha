@@ -13,7 +13,7 @@
 
 import hashlib
 
-from zephyr.governance.memory_provenance import MemoryProvenanceLog
+from zephyr.governance.services.memory_provenance import MemoryProvenanceLog
 
 
 class TestMemoryProvenanceLogInstantiation:

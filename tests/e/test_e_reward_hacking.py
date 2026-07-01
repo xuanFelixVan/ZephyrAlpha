@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.reward_hacking_rebound_detector import (
+from zephyr.governance.drift_detection.reward_hacking_rebound_detector import (
     BehaviorRecord,
     ReboundDetection,
     ReboundDetector,

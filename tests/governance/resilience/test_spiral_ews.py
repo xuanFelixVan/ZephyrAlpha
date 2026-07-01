@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.spiral_ews import SpiralEarlyWarningSystem, SpiralSignal
+from zephyr.governance.drift_detection.spiral_ews import SpiralEarlyWarningSystem, SpiralSignal
 
 
 class TestSpiralEWSInit:

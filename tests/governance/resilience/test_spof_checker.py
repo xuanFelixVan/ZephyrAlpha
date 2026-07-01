@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.spof_checker import (
+from zephyr.governance.escalation.spof_checker import (
     SPOF_CHECKS,
     SPOFReport,
     SPOFType,

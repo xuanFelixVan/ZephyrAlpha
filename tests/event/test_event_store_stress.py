@@ -20,13 +20,13 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.event_store import EventStore
-from zephyr.governance.sqlite_schema import SchemaManager
-from zephyr.governance.projection_engine import ProjectionEngine
-from zephyr.governance.snapshot_manager import SnapshotManager
+from zephyr.governance.audit_trail.event_store import EventStore
+from zephyr.governance.persistence.sqlite_schema import SchemaManager
+from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
+from zephyr.governance.audit.snapshot_manager import SnapshotManager
 
-# gate_event_adapter 真源在 zephyr.governance.gate_event_adapter（DW-0006 已补全）
-gate_event_adapter_mod = pytest.importorskip("zephyr.governance.gate_event_adapter")
+# gate_event_adapter 真源在 zephyr.governance.behavioral_admission.gate_event_adapter（DW-0006 已补全）
+gate_event_adapter_mod = pytest.importorskip("zephyr.governance.behavioral_admission.gate_event_adapter")
 GateEventAdapter = gate_event_adapter_mod.GateEventAdapter
 
 

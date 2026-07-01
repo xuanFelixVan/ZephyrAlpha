@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.realtime_streaming import (
+from zephyr.governance.data_governance.realtime_streaming import (
     BACKPRESSURE_THRESHOLD,
     CONNECTION_POOL_MIN,
     DISCONNECT_ALERT_SECONDS,

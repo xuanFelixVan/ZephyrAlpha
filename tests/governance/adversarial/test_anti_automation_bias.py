@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.anti_automation_bias import (
+from zephyr.governance.security_governance.anti_automation_bias import (
     AntiAutomationBias,
     AntiSycophancyFilter,
     FatigueLevel,

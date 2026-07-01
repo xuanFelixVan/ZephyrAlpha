@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.aisg_sandbox
 # [DOMAIN] D_COMPLIANCE
-# [DEPENDENCIES] zephyr.governance.aisg_sandbox
+# [DEPENDENCIES] zephyr.governance.intelligence_governance.aisg_sandbox
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""Re-export wrapper: aisg_sandbox has migrated to zephyr.governance.aisg_sandbox"""
+"""Re-export wrapper: aisg_sandbox has migrated to zephyr.governance.intelligence_governance.aisg_sandbox"""
 
-from zephyr.governance.aisg_sandbox import *  # noqa: F403
+from zephyr.governance.intelligence_governance.aisg_sandbox import *  # noqa: F403

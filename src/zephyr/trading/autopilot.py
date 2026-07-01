@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-193 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] zephyr.trading.autopilot
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -49,7 +49,7 @@ class AutoPilot:
     @property
     def repo(self) -> TaskRepositoryProtocol:
         if self._repo is None:
-            from zephyr.governance.task_repo import TaskRepository
+            from zephyr.governance.persistence.task_repo import TaskRepository
 
             self._repo = TaskRepository(self._db_path, enable_gate=False)
         return self._repo

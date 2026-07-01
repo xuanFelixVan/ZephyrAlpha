@@ -271,7 +271,7 @@ class TestPersistState:
 
     def test_persist_state_captures_delegation_history(self, manager: F5ShutdownManager):
         # 添加一个委托 (mock LSG 验证, 因为 SupplyChainGuard 有预存在的签名问题)
-        from zephyr.governance.escalation_models import (
+        from zephyr.governance.escalation.escalation_models import (
             EscalationEvent,
             RuleCategory,
         )

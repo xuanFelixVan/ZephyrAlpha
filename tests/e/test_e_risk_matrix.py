@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.risk_matrix import (
+from zephyr.governance.financial_governance.risk_matrix import (
     RISK_LEVEL_ORDER,
     RISK_MATRIX,
     RiskCategory,

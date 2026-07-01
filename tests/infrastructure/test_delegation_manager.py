@@ -8,7 +8,7 @@
 # [TTL] task_bound
 """Test Delegation Manager."""
 
-from zephyr.governance.delegation_manager import DelegateResult, DelegationManager
+from zephyr.governance.intelligence_governance.delegation_manager import DelegateResult, DelegationManager
 
 
 def test_self_delegation_blocked():

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.config_scanner import ConfigScanner
+from zephyr.governance.security_governance.config_scanner import ConfigScanner
 
 
 class TestConfigScannerInstantiation:

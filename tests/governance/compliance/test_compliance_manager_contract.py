@@ -11,7 +11,7 @@ from __future__ import annotations
 """ComplianceManagerBase — 抽象接口形状校验。"""
 
 
-from zephyr.governance.compliance_manager import ComplianceManagerBase
+from zephyr.governance.compliance_gate_a6.compliance_manager import ComplianceManagerBase
 
 
 def test_compliance_manager_base_is_abstract() -> None:

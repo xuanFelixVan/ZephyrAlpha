@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.context_waste_detector import (
+from zephyr.governance.context_governance.context_waste_detector import (
     ContextWasteDetector,
     WasteReport,
 )

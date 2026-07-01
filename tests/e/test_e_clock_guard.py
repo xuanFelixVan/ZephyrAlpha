@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.clock_guard import ClockGuard
+from zephyr.governance.ops_governance.clock_guard import ClockGuard
 
 
 class TestClockGuardInit:

@@ -22,7 +22,7 @@
 
 from datetime import UTC, datetime
 
-from zephyr.governance.context_package import (
+from zephyr.governance.context_governance.context_package import (
     ContextPackageBuilder,
     EscalationContext,
 )

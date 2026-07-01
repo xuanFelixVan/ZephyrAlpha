@@ -31,7 +31,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
 
 @pytest.fixture
@@ -61,8 +61,8 @@ class TestShutdown:
 
     def test_shutdown_cleans_up_resources(self, engine):
         """shutdown() 应清理 IPI/Spiral/gate_history。"""
-        from zephyr.governance.ipi_defense import IPIDefense
-        from zephyr.governance.spiral_ews import SpiralEarlyWarningSystem
+        from zephyr.governance.security_governance.ipi_defense import IPIDefense
+        from zephyr.governance.drift_detection.spiral_ews import SpiralEarlyWarningSystem
 
         engine._ipi_defense = IPIDefense()
         engine._spiral_ews = SpiralEarlyWarningSystem()
@@ -107,7 +107,7 @@ class TestShutdown:
 
     def test_shutdown_after_consumption(self, engine):
         """在有消费记录后 shutdown() 应正确持久化。"""
-        from zephyr.governance.budget_models import BudgetDimension
+        from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
         engine.record_consumption(token_policy.policy_id, 5000, 0.05, 0.5)
@@ -134,7 +134,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks
@@ -157,7 +157,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks
@@ -189,7 +189,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks

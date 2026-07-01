@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.cross_assistant_adapter import SUPPORTED_IDES, CrossAssistantAdapter
+from zephyr.governance.intelligence_governance.cross_assistant_adapter import SUPPORTED_IDES, CrossAssistantAdapter
 
 
 class TestCrossAssistantAdapterInstantiation:

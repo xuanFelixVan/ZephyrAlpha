@@ -31,7 +31,7 @@ def test_database_service_init():
 
     try:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.database_service import DatabaseService
+        from zephyr.governance.persistence.database_service import DatabaseService
 
         ds = DatabaseService()
 

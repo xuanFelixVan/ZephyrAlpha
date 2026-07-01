@@ -33,7 +33,7 @@ def _block_escalation_engine():
     for key in list(sys.modules.keys()):
         if key.startswith("zephyr.infrastructure.escalation"):
             saved[key] = sys.modules.pop(key)
-    sys.modules["zephyr.governance.adapter"] = None
+    sys.modules["zephyr.governance.services.adapter"] = None
     return saved
 
 

@@ -26,7 +26,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.blueprint_code_consistency import (
+from zephyr.governance.architecture_governance.blueprint_code_consistency import (
     DECISION_MAP,
     DecisionMapping,
     DecisionStatus,
@@ -112,21 +112,21 @@ class TestVerifyModuleExists:
 
     def test_nonexistent_module_falls_back_to_file_check(self):
         with patch(
-            "zephyr.governance.blueprint_code_consistency._file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=False,
         ):
             assert _verify_module_exists("totally.fake.module.xyz") is False
 
     def test_import_error_triggers_file_check(self):
         with patch(
-            "zephyr.governance.blueprint_code_consistency._file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=True,
         ):
             assert _verify_module_exists("fake.module.that.cannot.import") is True
 
     def test_import_error_file_check_also_false(self):
         with patch(
-            "zephyr.governance.blueprint_code_consistency._file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=False,
         ):
             assert _verify_module_exists("fake.module.no.file") is False
@@ -194,7 +194,7 @@ class TestCheckConsistency:
             code_module="",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             drift_count, results = check_consistency()
@@ -209,7 +209,7 @@ class TestCheckConsistency:
             code_module="totally.nonexistent.module",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             drift_count, results = check_consistency()
@@ -224,7 +224,7 @@ class TestCheckConsistency:
             code_module="json",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             drift_count, results = check_consistency()
@@ -239,7 +239,7 @@ class TestCheckConsistency:
             code_module="totally.nonexistent.module",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             drift_count, results = check_consistency()
@@ -248,7 +248,7 @@ class TestCheckConsistency:
 
     def test_empty_decision_map(self):
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [],
         ):
             drift_count, results = check_consistency()
@@ -273,7 +273,7 @@ class TestMain:
             code_module="json",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             ret = main()
@@ -289,7 +289,7 @@ class TestMain:
             code_module="totally.nonexistent.module",
         )
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [dm],
         ):
             ret = main()
@@ -306,7 +306,7 @@ class TestMain:
         )
         with (
             patch(
-                "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+                "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
                 [dm],
             ),
             patch("sys.argv", ["prog", "--json"]),
@@ -322,7 +322,7 @@ class TestMain:
 
     def test_main_empty_map_returns_zero(self, capsys):
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             [],
         ):
             ret = main()
@@ -339,7 +339,7 @@ class TestMain:
             DecisionMapping("D-5", "E", DecisionStatus.PHASE_GATED),
         ]
         with patch(
-            "zephyr.governance.blueprint_code_consistency.DECISION_MAP",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency.DECISION_MAP",
             dms,
         ):
             ret = main()

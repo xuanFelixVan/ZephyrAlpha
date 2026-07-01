@@ -142,9 +142,9 @@ class TestBootPhase:
 
     def test_components_are_real_instances_not_mocks(self):
         """验证使用真实组件 (非 MagicMock)。"""
-        from zephyr.governance.deadlock_detector import DeadlockDetector
-        from zephyr.governance.delegation_engine import DelegationEngine
-        from zephyr.governance.escalation_engine import EscalationEngine
+        from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine
         from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator
 
         integ = F5BootIntegration()

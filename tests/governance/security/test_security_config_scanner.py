@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.security_config_scanner import REQUIRED_CONFIGS, SecurityConfigScanner
+from zephyr.governance.security_governance.security_config_scanner import REQUIRED_CONFIGS, SecurityConfigScanner
 
 
 class TestRequiredConfigs:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.git_hook_pre_scanner import (
+from zephyr.governance.escalation.git_hook_pre_scanner import (
     SUSPICIOUS_HOOK_CONTENT,
     GitHookPreScanner,
 )

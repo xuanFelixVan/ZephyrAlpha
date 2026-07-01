@@ -98,7 +98,7 @@ class TestDegradationManagerSmoke:
 
 class TestModelRouterSmoke:
     def test_route_free_for_simple(self):
-        from zephyr.governance.model_router import TaskComplexity
+        from zephyr.governance.intelligence_governance.model_router import TaskComplexity
 
         mr = ModelRouter()
         d = mr.route(complexity=TaskComplexity.SIMPLE)

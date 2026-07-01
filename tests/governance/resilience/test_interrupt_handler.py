@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.interrupt_handler import InterruptHandler, InterruptSignal
+from zephyr.governance.ops_governance.interrupt_handler import InterruptHandler, InterruptSignal
 
 
 class TestInterruptSignalEnum:

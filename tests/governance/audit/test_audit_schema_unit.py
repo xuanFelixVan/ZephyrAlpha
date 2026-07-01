@@ -19,8 +19,8 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.audit_schema import AuditQuery
-from zephyr.governance.sqlite_schema import init_db
+from zephyr.governance.audit_trail.audit_schema import AuditQuery
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 
 @pytest.fixture

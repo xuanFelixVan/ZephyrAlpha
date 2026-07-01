@@ -24,7 +24,7 @@ class TestP0I2ConstructionOrder:
 
     def test_all_modules_have_contracts_interface(self):
         from zephyr.governance.audit_trail.contracts import AuditWriter
-        from zephyr.governance.contracts import EscalationContracts, RollbackHandler
+        from zephyr.governance.escalation.contracts import EscalationContracts, RollbackHandler
         from zephyr.security.access_control.contracts import RBACAuditBridge
 
         assert hasattr(RBACAuditBridge(), "check_and_log")

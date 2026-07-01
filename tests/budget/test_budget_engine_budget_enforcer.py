@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.budget_engine import BudgetEngine
-from zephyr.governance.budget_models import (
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_models import (
     BudgetAlert,
     BudgetDimension,
     BudgetLevel,

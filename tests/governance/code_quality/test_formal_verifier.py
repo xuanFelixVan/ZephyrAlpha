@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.formal_verifier import FormalVerifier
+from zephyr.governance.architecture_governance.formal_verifier import FormalVerifier
 
 
 class TestFormalVerifierInstantiation:

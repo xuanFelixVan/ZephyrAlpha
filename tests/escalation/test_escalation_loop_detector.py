@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.escalation_loop_detector import EscalationLoopDetector
+from zephyr.governance.escalation.escalation_loop_detector import EscalationLoopDetector
 
 
 class TestEscalationLoopDetectorInstantiation:

@@ -43,7 +43,7 @@ _NOW = datetime.now(UTC)
 
 def _make_temp_db() -> tuple[Path, "TaskRepository"]:
     """创建临时数据库的 TaskRepository。"""
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
 
     tmp_dir = tempfile.mkdtemp(prefix="f3_extreme_")
     db_path = Path(tmp_dir) / "test_data/databases/governance.db"
@@ -473,12 +473,12 @@ class TestBudgetExhaustion:
 
     def test_token_budget_exhaustion_degradation(self):
         """耗尽Token预算，验证降级触发。"""
-        from zephyr.governance.budget_engine import BudgetDimension, BudgetEngine
+        from zephyr.governance.ops_governance.budget_engine import BudgetDimension, BudgetEngine
 
         engine = BudgetEngine()
 
         # 注册策略
-        from zephyr.governance.budget_engine import BudgetPolicy
+        from zephyr.governance.ops_governance.budget_engine import BudgetPolicy
 
         # 尝试认领大量Token（超过日限额）
         provider_id = "test-provider"
@@ -502,7 +502,7 @@ class TestBudgetExhaustion:
 
     def test_cost_budget_exhaustion(self):
         """耗尽Cost预算，验证降级。"""
-        from zephyr.governance.budget_engine import BudgetDimension, BudgetEngine
+        from zephyr.governance.ops_governance.budget_engine import BudgetDimension, BudgetEngine
 
         engine = BudgetEngine()
         provider_id = "test-cost-provider"
@@ -524,7 +524,7 @@ class TestBudgetExhaustion:
 
     def test_concurrent_budget_claim_thread_safety(self):
         """多线程并发认领预算，验证线程安全。"""
-        from zephyr.governance.budget_engine import BudgetDimension, BudgetEngine
+        from zephyr.governance.ops_governance.budget_engine import BudgetDimension, BudgetEngine
 
         engine = BudgetEngine()
         errors: list[str] = []
@@ -561,7 +561,7 @@ class TestBudgetExhaustion:
 
     def test_budget_rollback_after_claim(self):
         """验证预算认领后回滚。"""
-        from zephyr.governance.budget_engine import BudgetDimension, BudgetEngine
+        from zephyr.governance.ops_governance.budget_engine import BudgetDimension, BudgetEngine
 
         engine = BudgetEngine()
         provider_id = "rollback-test-provider"

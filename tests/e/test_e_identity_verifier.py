@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.identity_verifier import IdentityVerifier
+from zephyr.governance.escalation.identity_verifier import IdentityVerifier
 
 
 class TestIdentityVerifierValidateSession:

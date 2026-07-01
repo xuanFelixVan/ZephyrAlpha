@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md
 # [MODULE] zephyr.portfolio.core.default_tca_engine
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.governance.analytics_base; zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order
+# [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ from __future__ import annotations
 import logging
 from decimal import Decimal
 
-from zephyr.governance.analytics_base import TCAEngineBase
+from zephyr.governance.observability_governance.analytics_base import TCAEngineBase
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order

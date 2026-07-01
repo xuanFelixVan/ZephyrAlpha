@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import hashlib
 
-from zephyr.governance.data_pipeline_guard import DataPipelineGuard
+from zephyr.governance.data_governance.data_pipeline_guard import DataPipelineGuard
 
 
 class TestDataPipelineGuardInstantiation:

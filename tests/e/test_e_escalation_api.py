@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.escalation_api import EscalationAPI
+from zephyr.governance.escalation.escalation_api import EscalationAPI
 
 
 class TestEscalationAPIInit:

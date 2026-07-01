@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.ipi_defense import IPIDefense, IPIDefenseReport
+from zephyr.governance.security_governance.ipi_defense import IPIDefense, IPIDefenseReport
 
 
 class TestIPIDefenseReport:

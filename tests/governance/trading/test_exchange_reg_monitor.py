@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.exchange_reg_monitor import ExchangeRegMonitor
+from zephyr.governance.data_governance.exchange_reg_monitor import ExchangeRegMonitor
 
 
 class TestExchangeRegMonitorInit:

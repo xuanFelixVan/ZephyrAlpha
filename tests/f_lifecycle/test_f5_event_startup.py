@@ -54,7 +54,7 @@ def full_subscriber(isolated_bus: EventBusBackpressure) -> F5EventSubscriber:
     (见 test_f5_auto_startup.py 中的注释)。
     """
     from zephyr.governance.f5_boot_integration import F5BootIntegration
-    from zephyr.governance.escalation_models import EscalationEvent, RuleCategory
+    from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
     integration = F5BootIntegration()
     boot = integration.on_startup()
     assert boot.success is True, f"F5 boot failed: {boot.errors}"

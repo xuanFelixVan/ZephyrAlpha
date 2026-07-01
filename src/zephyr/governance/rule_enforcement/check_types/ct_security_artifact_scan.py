@@ -47,7 +47,7 @@ class SecurityArtifactScanHandler(CheckTypeHandler):
         try:
             import importlib
 
-            _mod = importlib.import_module("zephyr.governance.artifact_scanner")
+            _mod = importlib.import_module("zephyr.governance.drift_detection.artifact_scanner")
             ArtifactScanner = _mod.ArtifactScanner
 
             scanner = ArtifactScanner()

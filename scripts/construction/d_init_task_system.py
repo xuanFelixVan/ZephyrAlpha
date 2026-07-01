@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/d_init_task_system.py | §
 # [MODULE] scripts.construction.d_init_task_system
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.governance.task_repo; zephyr.shared.models; zephyr.integration.__init__
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo; zephyr.shared.models; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -30,8 +30,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from zephyr.integration.schema.schemas import TaskNamespace, TaskStatus
 
-from zephyr.governance.sqlite_schema import init_db
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.shared.models import TaskCard
 
 init_db()

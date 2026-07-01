@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.gap_analyzer import GapAnalyzer
+from zephyr.governance.architecture_governance.gap_analyzer import GapAnalyzer
 
 
 class TestGapAnalyzerInit:

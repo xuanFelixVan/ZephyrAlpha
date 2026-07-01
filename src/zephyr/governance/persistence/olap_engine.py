@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.governance.persistence.olap_engine
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.shared.io.paths
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -66,7 +66,7 @@ from typing import Any
 import duckdb
 import structlog
 
-from zephyr.governance.sqlite_schema import DB_PATH, init_db
+from zephyr.governance.persistence.sqlite_schema import DB_PATH, init_db
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [

@@ -120,7 +120,7 @@ from zephyr.shared.task_types import TaskStatus
 
 _RBAC_AVAILABLE = False
 try:
-    from zephyr.governance.rbac_bridge import EscalationRBACBridge, RBACCheckResult
+    from zephyr.governance.agent_spec.rbac_bridge import EscalationRBACBridge, RBACCheckResult
 
     _RBAC_AVAILABLE = True
 except ImportError:
@@ -1979,7 +1979,7 @@ class PipelineOrchestrator:
         优先使用 BudgetEngine.pre_flight_check()；若不可用则回退到本地简单检查。
         """
         try:
-            from zephyr.governance.budget_engine import BudgetEngine
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
             engine = BudgetEngine()
             result = engine.pre_flight_check(
@@ -1987,7 +1987,7 @@ class PipelineOrchestrator:
                 estimated_tokens=_DEFAULT_TOKEN_BUDGET // 10,
                 estimated_cost=0.01,
             )
-            from zephyr.governance.budget_models import GateDecision
+            from zephyr.governance.ops_governance.budget_models import GateDecision
 
             if result.decision == GateDecision.DENY:
                 self._log(

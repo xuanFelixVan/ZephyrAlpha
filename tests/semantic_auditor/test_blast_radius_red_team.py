@@ -19,7 +19,7 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.governance.blast_radius import (
+from zephyr.governance.resilience_governance.blast_radius import (
     BlastRadiusAnalyzer,
     BlastRadiusReport,
 )

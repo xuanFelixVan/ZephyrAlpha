@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/reset_test_task.py | §
 # [MODULE] scripts.construction.reset_test_task
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

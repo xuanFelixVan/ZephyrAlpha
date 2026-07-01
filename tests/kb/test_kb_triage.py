@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.triage import (
+from zephyr.governance.escalation.triage import (
     APPROVED_LABELS,
     HIGH_VALUE_THRESHOLD,
     REJECT_THRESHOLD,

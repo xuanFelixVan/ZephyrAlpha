@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.provider_failover import FALLBACK_CHAIN, ProviderFailover
+from zephyr.governance.intelligence_governance.provider_failover import FALLBACK_CHAIN, ProviderFailover
 
 
 class TestProviderFailoverInit:

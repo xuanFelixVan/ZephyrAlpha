@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.market_schema
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] duckdb
-# [CONSUMERS] zephyr.governance.database_service.DatabaseService (EXPECTED_MARKET_TABLES 共享)
+# [CONSUMERS] zephyr.governance.persistence.database_service.DatabaseService (EXPECTED_MARKET_TABLES 共享)
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] DDL-as-Code 协议——本文件是 market.duckdb 8 表/视图 DDL 唯一真源

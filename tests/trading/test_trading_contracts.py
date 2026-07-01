@@ -30,7 +30,7 @@ fill_mod = pytest.importorskip(
 Fill = fill_mod.Fill
 
 instrument_mod = pytest.importorskip(
-    "zephyr.governance.instrument", reason="trading-contracts.instrument not available"
+    "zephyr.governance.financial_governance.instrument", reason="trading-contracts.instrument not available"
 )
 Instrument = instrument_mod.Instrument
 Stock = instrument_mod.Stock

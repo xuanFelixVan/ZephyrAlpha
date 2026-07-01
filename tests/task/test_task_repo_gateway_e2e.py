@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_task_repo_gateway_e2e.py | §ghost-commit-e2e
 # [MODULE] tests.test_task_repo_gateway_e2e
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] tests.__init__; zephyr.governance.task_repo; zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] tests.__init__; zephyr.governance.persistence.task_repo; zephyr.governance.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -43,7 +43,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from zephyr.governance.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 
 def _init_repo(repo_dir: Path) -> None:

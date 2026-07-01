@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] zephyr.trading.auto_runtime_core
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.core.system_configuration; zephyr.shared.protocols.a2a.a2a_registry; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.governance.__init__; zephyr.integration.local_model.local_model_scheduler; zephyr.intelligence.model_profiling.task_model_learner; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.queue.task_queue; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_profiling.__init__; zephyr.intelligence.model_profiling.results_writer; zephyr.shared.lifecycle.resource_optimization_engine; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.integration.__init__
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.core.system_configuration; zephyr.shared.protocols.a2a.a2a_registry; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.governance.__init__; zephyr.integration.local_model.local_model_scheduler; zephyr.intelligence.model_profiling.task_model_learner; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.queue.task_queue; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_profiling.__init__; zephyr.intelligence.model_profiling.results_writer; zephyr.shared.lifecycle.resource_optimization_engine; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -29,7 +29,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.governance.model_router import ModelRouter
+    from zephyr.governance.intelligence_governance.model_router import ModelRouter
     from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
     from zephyr.integration.vector_memory.ollama_chat import OllamaChat
     from zephyr.integration.local_model.embedding_router import EmbeddingRouter
@@ -232,7 +232,7 @@ class AutoRuntimeCore:
 
     def _init_escalation_protocol(self) -> None:
         try:
-            from zephyr.governance.coldstart_manager import ColdstartManager
+            from zephyr.governance.ops_governance.coldstart_manager import ColdstartManager
 
             cm = ColdstartManager()
             cm.initialize()
@@ -241,7 +241,7 @@ class AutoRuntimeCore:
             logger.debug("Escalation coldstart skipped")
 
         try:
-            from zephyr.governance.adapter import auto_subscribe_eventbus
+            from zephyr.governance.services.adapter import auto_subscribe_eventbus
 
             auto_subscribe_eventbus()
         except Exception:
@@ -267,7 +267,7 @@ class AutoRuntimeCore:
 
             def _dispatch_handler(item: object) -> bool:
                 try:
-                    from zephyr.governance.task_repo import TaskRepository
+                    from zephyr.governance.persistence.task_repo import TaskRepository
                     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
                     tr = TaskRepository()
@@ -423,7 +423,7 @@ class AutoRuntimeCore:
 
     def _init_model_router(self) -> None:
         try:
-            from zephyr.governance.model_router import ModelRouter
+            from zephyr.governance.intelligence_governance.model_router import ModelRouter
 
             self._model_router = ModelRouter()
         except Exception:

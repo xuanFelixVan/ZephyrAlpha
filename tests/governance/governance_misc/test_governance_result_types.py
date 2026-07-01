@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.result_types import RollbackResult, RollbackStatus, ValidationResult
+from zephyr.governance.escalation.result_types import RollbackResult, RollbackStatus, ValidationResult
 
 
 class TestReExports:

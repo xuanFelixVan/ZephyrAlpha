@@ -10,7 +10,7 @@ from pathlib import Path
 
 import yaml
 
-from zephyr.governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
 
 class TestGCT024HardChecks:
@@ -33,15 +33,15 @@ class TestGCT024HardChecks:
         assert p["budget_levels"]["session_level"]["hard_limit"] == 12000
 
     def test_escalation_bridge_importable(self):
-        from zephyr.governance.alerts import BudgetAlert
-        from zephyr.governance.budget_handler import on_budget_alert
+        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
         a = BudgetAlert(alert_id="B001")
         r = on_budget_alert(a)
         assert r is not None
 
     def test_rbac_bridge_importable(self):
-        from zephyr.governance.rbac_bridge import BudgetRBACBridge
+        from zephyr.governance.agent_spec.rbac_bridge import BudgetRBACBridge
 
         b = BudgetRBACBridge()
         r = b.check_budget("a1", 500, 1000)

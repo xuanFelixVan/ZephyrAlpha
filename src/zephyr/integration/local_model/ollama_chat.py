@@ -412,7 +412,7 @@ class OllamaChat:
 
     def _budget_preflight(self, msg_count: int) -> None:
         try:
-            from zephyr.governance.budget_engine import BudgetEngine
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
             engine = BudgetEngine()
             est_tokens = msg_count * 500

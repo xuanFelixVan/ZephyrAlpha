@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from zephyr.governance.escalation_models import (
+from zephyr.governance.escalation.escalation_models import (
     DEFAULT_ESCALATION_RULES,
     DelegationRecord,
     DelegationStrategy,

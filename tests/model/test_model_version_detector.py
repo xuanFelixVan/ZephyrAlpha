@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_model_version_detector.py -q
 # [TTL] task_bound
 
-from zephyr.governance.model_version_detector import ModelVersionDetector
+from zephyr.governance.intelligence_governance.model_version_detector import ModelVersionDetector
 
 
 class TestModelVersionDetectorInstantiation:

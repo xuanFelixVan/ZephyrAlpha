@@ -12,7 +12,7 @@ Unit tests for cost_budget.py
 
 import pytest
 
-from zephyr.governance.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
+from zephyr.governance.ops_governance.cost_budget import CostBudget, CostBudgetExceededError, PricingTier
 
 
 class TestPricingTier:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.last_resort_watchdog import LastResortWatchdog
+from zephyr.governance.resilience_governance.last_resort_watchdog import LastResortWatchdog
 
 
 class TestLastResortWatchdogInstantiation:

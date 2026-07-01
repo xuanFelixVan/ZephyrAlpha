@@ -11,7 +11,7 @@
 # [TESTS] tests/test_self_validator.py
 # [TTL] task_bound
 
-from zephyr.governance.self_validator import SelfValidator
+from zephyr.governance.intelligence_governance.self_validator import SelfValidator
 
 
 class TestSelfValidatorInit:

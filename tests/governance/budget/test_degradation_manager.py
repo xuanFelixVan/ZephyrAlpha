@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import time
 
-from zephyr.governance.budget_models import BudgetDimension, ModelTier
-from zephyr.governance.degradation_manager import (
+from zephyr.governance.ops_governance.budget_models import BudgetDimension, ModelTier
+from zephyr.governance.ops_governance.degradation_manager import (
     DegradationLevel,
     DegradationManager,
     DegradationState,

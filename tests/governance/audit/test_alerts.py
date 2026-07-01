@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.alerts import BudgetAlert, BudgetSeverity, BudgetType
+from zephyr.governance.ops_governance.alerts import BudgetAlert, BudgetSeverity, BudgetType
 
 
 class TestBudgetSeverity:

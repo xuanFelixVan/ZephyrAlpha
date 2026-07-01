@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.trading.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.trading.orchestrator.chaos_engine; zephyr.governance.task_repo; zephyr.trading.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.trading.orchestrator.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.trading.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.trading.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -553,7 +553,7 @@ def check_mcp_servers_health() -> GateResult:
 
 def check_escalation_protocol() -> GateResult:
     try:
-        from zephyr.governance.self_test import HealthLevel, run_self_test
+        from zephyr.governance.intelligence_governance.self_test import HealthLevel, run_self_test
 
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:
@@ -569,8 +569,8 @@ def check_escalation_protocol() -> GateResult:
 
 def check_budget_enforcer() -> GateResult:
     try:
-        from zephyr.governance.budget_engine import BudgetEngine
-        from zephyr.governance.budget_models import BudgetDimension
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+        from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -852,7 +852,7 @@ def check_code_dedup() -> GateResult:
 def check_task_system() -> GateResult:
     try:
         from zephyr.trading.orchestrator.batch_orchestrator import BatchOrchestrator
-        from zephyr.governance.task_repo import TaskRepository
+        from zephyr.governance.persistence.task_repo import TaskRepository
 
         return GateResult.GREEN
     except ImportError:

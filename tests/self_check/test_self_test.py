@@ -11,7 +11,7 @@
 # [TESTS] tests/test_self_test.py
 # [TTL] task_bound
 
-from zephyr.governance.self_test import (
+from zephyr.governance.intelligence_governance.self_test import (
     CheckResult,
     HealthLevel,
     SelfTestReport,

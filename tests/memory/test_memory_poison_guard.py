@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.memory_poison_guard import MemoryPoisonGuard
+from zephyr.governance.security_governance.memory_poison_guard import MemoryPoisonGuard
 
 
 class TestMemoryPoisonGuardInstantiation:

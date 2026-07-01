@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -167,7 +167,7 @@ def _subscribe_eventbus_consumers() -> None:
     _eventbus_consumers_subscribed = True
 
     consumers = [
-        ("F4 budget_engine", "zephyr.governance.budget_engine"),
+        ("F4 budget_engine", "zephyr.governance.ops_governance.budget_engine"),
         ("F5 f5_event_subscriber", "zephyr.governance.f5_event_subscriber"),
         ("F9 rollback_boot_integration", "zephyr.infrastructure.rollback.rollback_boot_integration"),
         ("F14 pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
@@ -278,7 +278,7 @@ def register_boot_hooks() -> None:
 
         def _on_task_completed(event: object) -> None:
             try:
-                from zephyr.governance.task_repo import TaskRepository
+                from zephyr.governance.persistence.task_repo import TaskRepository
 
                 tr = TaskRepository()
                 completed_id = getattr(event, "task_id", "")
@@ -299,7 +299,7 @@ def register_boot_hooks() -> None:
 
         def _on_task_failed(event: object) -> None:
             try:
-                from zephyr.governance.task_repo import TaskRepository
+                from zephyr.governance.persistence.task_repo import TaskRepository
 
                 tr = TaskRepository()
                 task_id = getattr(event, "task_id", "")
@@ -323,7 +323,7 @@ def register_boot_hooks() -> None:
                 task_id = getattr(event, "task_id", "")
                 source_bp = ""
                 try:
-                    from zephyr.governance.task_repo import TaskRepository
+                    from zephyr.governance.persistence.task_repo import TaskRepository
 
                     tr = TaskRepository()
                     task = tr.get(task_id)
@@ -365,7 +365,7 @@ def register_boot_hooks() -> None:
                 to_status = getattr(event, "to_status", "")
                 if to_status.upper() != "COMPLETED":
                     return
-                from zephyr.governance.task_repo import TaskRepository
+                from zephyr.governance.persistence.task_repo import TaskRepository
                 from zephyr.trading.orchestrator.memory_writer import archive_to_vms
 
                 tr = TaskRepository()
@@ -417,7 +417,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "BLOCKED":
                 return
             try:
-                from zephyr.governance.task_repo import TaskRepository
+                from zephyr.governance.persistence.task_repo import TaskRepository
 
                 TaskRepository().check_escalation(getattr(event, "task_id", ""))
             except Exception as exc:
@@ -428,7 +428,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "IN_PROGRESS":
                 return
             try:
-                from zephyr.governance.task_repo import TaskRepository
+                from zephyr.governance.persistence.task_repo import TaskRepository
 
                 TaskRepository().check_task_timeout(getattr(event, "task_id", ""))
             except Exception as exc:
@@ -439,7 +439,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "COMPLETED":
                 return
             try:
-                from zephyr.governance.budget_engine import BudgetEngine
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
                 engine = BudgetEngine()
                 snapshot = engine.get_snapshot()
@@ -450,7 +450,7 @@ def register_boot_hooks() -> None:
 
         def _on_session_startup_init_budget(event: object) -> None:
             try:
-                from zephyr.governance.budget_engine import BudgetEngine
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
                 engine = BudgetEngine.ensure_initialized()
                 snapshot = engine.get_snapshot()
@@ -464,7 +464,7 @@ def register_boot_hooks() -> None:
 
         def _on_session_shutdown_budget_close(event: object) -> None:
             try:
-                from zephyr.governance.budget_engine import BudgetEngine
+                from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
                 if BudgetEngine._instance is not None:
                     result = BudgetEngine._instance.shutdown()

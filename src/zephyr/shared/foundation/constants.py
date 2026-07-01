@@ -42,7 +42,7 @@ Version: 0.1.0
 
 import importlib
 
-from zephyr.governance.escalation_models import EscalationLevel
+from zephyr.governance.escalation.escalation_models import EscalationLevel
 from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,

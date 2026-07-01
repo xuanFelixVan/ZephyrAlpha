@@ -817,8 +817,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _escalate(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
-            from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_models import RuleCategory
 
             engine = EscalationEngine("mcp-governance")
             cat = RuleCategory(category)
@@ -837,8 +837,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _check_budget(self, dimension: str = "ALL") -> dict[str, Any]:
         try:
-            from zephyr.governance.budget_engine import BudgetEngine
-            from zephyr.governance.budget_models import BudgetDimension
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+            from zephyr.governance.ops_governance.budget_models import BudgetDimension
 
             engine = BudgetEngine()
             dims = (
@@ -868,7 +868,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _escalation_status(self) -> dict[str, Any]:
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
 
             engine = EscalationEngine("mcp-status")
             return {
@@ -883,8 +883,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _escalation_resolve(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
-            from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_models import RuleCategory
 
             engine = EscalationEngine("mcp-resolve")
             cat = RuleCategory(category)

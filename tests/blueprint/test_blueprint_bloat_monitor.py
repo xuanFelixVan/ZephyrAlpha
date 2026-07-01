@@ -11,7 +11,7 @@
 # [TESTS] test_blueprint_bloat_monitor.py
 # [TTL] task_bound
 
-from zephyr.governance.blueprint_bloat_monitor import BlueprintBloatMonitor
+from zephyr.governance.architecture_governance.blueprint_bloat_monitor import BlueprintBloatMonitor
 
 
 class TestBlueprintBloatMonitorConstants:

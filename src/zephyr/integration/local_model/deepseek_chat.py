@@ -290,7 +290,7 @@ class DeepSeekChat:
     def _budget_preflight(self, msg_count: int) -> None:
         """预算预检——与 OllamaChat 保持一致。"""
         try:
-            from zephyr.governance.budget_engine import BudgetEngine
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 
             engine = BudgetEngine()
             est_tokens = msg_count * 500

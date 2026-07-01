@@ -51,7 +51,7 @@ import threading
 
 import pytest
 
-from zephyr.governance.cost_budget import (
+from zephyr.governance.ops_governance.cost_budget import (
     CostBudget,
     CostBudgetExceededError,
     PricingTier,

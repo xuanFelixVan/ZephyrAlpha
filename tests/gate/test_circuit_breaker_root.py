@@ -17,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.governance.circuit_breaker import (
+from zephyr.governance.resilience_governance.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerOpenError,
     CircuitState,

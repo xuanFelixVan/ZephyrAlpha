@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import threading
 
-from zephyr.governance.context_budget import (
+from zephyr.governance.context_governance.context_budget import (
     BudgetEntry,
     ContextBudget,
     QuotaTracker,

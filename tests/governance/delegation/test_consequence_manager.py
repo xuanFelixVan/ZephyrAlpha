@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.consequence_manager import (
+from zephyr.governance.escalation.consequence_manager import (
     CONSEQUENCE_REGISTRY,
     ConsequenceDeclaration,
     ConsequenceSeverity,

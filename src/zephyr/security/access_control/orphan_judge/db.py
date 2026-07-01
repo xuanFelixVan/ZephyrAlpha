@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §5.1
 # [MODULE] zephyr.security.access_control.orphan_judge.db
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.security.access_control.orphan_judge.models
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -20,7 +20,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 
-from zephyr.governance.sqlite_schema import get_db_connection
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.security.access_control.orphan_judge.models import JudgmentRecord, ScanSummary
 
 logger = logging.getLogger(__name__)

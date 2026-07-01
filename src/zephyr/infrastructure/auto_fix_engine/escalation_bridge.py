@@ -40,7 +40,7 @@ class EscalationBridge:
             action.metadata["skip_reason"] = "Escalation bridge disabled"
             return action
         try:
-            from zephyr.governance.adapter import escalate_if_needed
+            from zephyr.governance.services.adapter import escalate_if_needed
 
             result = escalate_if_needed(
                 operation_type=action.action_type,

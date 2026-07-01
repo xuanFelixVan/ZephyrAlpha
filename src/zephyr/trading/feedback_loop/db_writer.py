@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-DB-001
 # [MODULE] zephyr.trading.feedback_loop.db_writer
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.__init__
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.__init__
 # [CONSUMERS] zephyr.trading.feedback_loop.metrics_collector; zephyr.trading.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -25,7 +25,7 @@ import json
 import logging
 from datetime import UTC, datetime
 
-from zephyr.governance.sqlite_schema import get_db_connection
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint
 from zephyr.trading.feedback_loop.alert_dispatcher import AlertEvent
 

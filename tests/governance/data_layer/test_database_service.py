@@ -32,7 +32,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 @pytest.fixture
 def db_service():
     """DatabaseService 实例 fixture（每个测试独立实例）"""
-    from zephyr.governance.database_service import DatabaseService
+    from zephyr.governance.persistence.database_service import DatabaseService
 
     ds = DatabaseService()
     yield ds
@@ -117,7 +117,7 @@ class TestMarketSchema:
 
     def test_expected_tables_exist(self, db_service):
         """验证 market.duckdb 预期表全部存在"""
-        from zephyr.governance.database_service import DatabaseService
+        from zephyr.governance.persistence.database_service import DatabaseService
 
         conn = db_service.get_market_conn()
         tables = {row[0] for row in conn.execute("SHOW TABLES").fetchall()}

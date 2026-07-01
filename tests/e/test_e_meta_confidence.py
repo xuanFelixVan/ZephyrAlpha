@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.meta_confidence import MetaConfidence
+from zephyr.governance.intelligence_governance.meta_confidence import MetaConfidence
 
 
 class TestMetaConfidenceInit:

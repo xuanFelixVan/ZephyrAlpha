@@ -34,7 +34,7 @@ import pytest
 @pytest.fixture
 def repo():
     """创建 TaskRepository 实例。"""
-    from zephyr.governance.task_repo import TaskRepository
+    from zephyr.governance.persistence.task_repo import TaskRepository
 
     return TaskRepository()
 

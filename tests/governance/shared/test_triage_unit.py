@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.triage import HIGH_VALUE_THRESHOLD, TriageGate
+from zephyr.governance.escalation.triage import HIGH_VALUE_THRESHOLD, TriageGate
 
 
 @pytest.fixture()

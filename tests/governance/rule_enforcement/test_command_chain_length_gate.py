@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.command_chain_length_gate import CommandChainGate
+from zephyr.governance.context_governance.command_chain_length_gate import CommandChainGate
 
 
 class TestCommandChainGateConstants:

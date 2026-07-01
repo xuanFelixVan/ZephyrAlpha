@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.arbitrage_asymmetry_detector import ArbitrageAsymmetryDetector
+from zephyr.governance.financial_governance.arbitrage_asymmetry_detector import ArbitrageAsymmetryDetector
 
 
 class TestArbitrageAsymmetryDetectorInstantiation:

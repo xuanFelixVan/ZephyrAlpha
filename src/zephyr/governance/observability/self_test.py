@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-# [MODULE] zephyr.governance.self_test
+# [MODULE] zephyr.governance.intelligence_governance.self_test
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
@@ -20,7 +20,7 @@
 Atomic self-check that validates the escalation engine's own health.
 Used by: cold start STEP 4.8, Phase Manager gate_escalation_protocol, CI/CD.
 
-Run: python -m zephyr.governance.self_test [--warn-only] [--json]
+Run: python -m zephyr.governance.intelligence_governance.self_test [--warn-only] [--json]
 Returns: 0 if fully healthy, 1 if degraded, 2 if critical failure.
 """
 
@@ -66,9 +66,9 @@ def run_self_test() -> SelfTestReport:
     # Check 1: Import chain
     t1 = time.perf_counter()
     try:
-        from zephyr.governance.delegation_engine import DelegationEngine
-        from zephyr.governance.escalation_engine import EscalationEngine
-        from zephyr.governance.escalation_models import (
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine
+        from zephyr.governance.escalation.escalation_models import (
             DelegationStrategy,
             EconomicGuard,
             EscalationLevel,
@@ -155,7 +155,7 @@ def run_self_test() -> SelfTestReport:
 
     # Check 8: Extension detectors (optional — degraded if missing)
     try:
-        from zephyr.governance.escalation_engine import EscalationEngine as EE
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine as EE
 
         engine_with_hooks = EE("self-test-hooks", hooks_enabled=True)
         detector_count = len(engine_with_hooks._extension_detectors)

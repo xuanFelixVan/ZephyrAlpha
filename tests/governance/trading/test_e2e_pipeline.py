@@ -43,7 +43,7 @@ from zephyr.ex_core.order_manager import OrderManager
 from zephyr.governance.compliance_gate_a6.default_security_gateway import (
     DefaultSecurityGateway,
 )
-from zephyr.governance.default_quality_gate import (
+from zephyr.governance.rule_enforcement.default_quality_gate import (
     DefaultQualityGate,
 )
 from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (

@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.multi_turn_intent_analyzer import MultiTurnIntentAnalyzer
+from zephyr.governance.context_governance.multi_turn_intent_analyzer import MultiTurnIntentAnalyzer
 
 
 class TestMultiTurnIntentAnalyzerInit:

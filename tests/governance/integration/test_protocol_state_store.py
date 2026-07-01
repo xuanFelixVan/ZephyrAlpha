@@ -16,7 +16,7 @@ import shutil
 
 import pytest
 
-from zephyr.governance.protocol_state_store import ProtocolStateStore
+from zephyr.governance.persistence.protocol_state_store import ProtocolStateStore
 
 
 @pytest.fixture

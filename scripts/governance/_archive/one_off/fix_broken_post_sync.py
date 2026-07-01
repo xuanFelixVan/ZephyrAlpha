@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/fix_broken_post_sync.py | §post_sync-repair
 # [MODULE] scripts.governance.fix_broken_post_sync
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.task_repo
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -50,7 +50,7 @@ if _SRC_DIR not in sys.path:
 
 from _shared.constants import DB_PATH
 
-from zephyr.governance.task_repo import PostSyncValidationError, TaskRepository
+from zephyr.governance.persistence.task_repo import PostSyncValidationError, TaskRepository
 
 # ---------------------------------------------------------------------------
 # 修复映射表：broken_command → correct_command

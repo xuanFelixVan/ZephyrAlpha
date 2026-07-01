@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-cm_mod = pytest.importorskip("zephyr.governance.consequence_manager")
+cm_mod = pytest.importorskip("zephyr.governance.escalation.consequence_manager")
 ConsequenceSeverity = cm_mod.ConsequenceSeverity
 ConsequenceDeclaration = cm_mod.ConsequenceDeclaration
 CONSEQUENCE_REGISTRY = cm_mod.CONSEQUENCE_REGISTRY

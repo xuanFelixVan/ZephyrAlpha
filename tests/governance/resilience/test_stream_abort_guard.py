@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.stream_abort_guard import (
+from zephyr.governance.ops_governance.stream_abort_guard import (
     AbortDecision,
     ProviderProtocol,
     StreamAbortGuard,

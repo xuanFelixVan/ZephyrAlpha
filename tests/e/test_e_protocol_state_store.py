@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import os
 
-from zephyr.governance.protocol_state_store import ProtocolStateStore
+from zephyr.governance.persistence.protocol_state_store import ProtocolStateStore
 
 
 class TestProtocolStateStore:

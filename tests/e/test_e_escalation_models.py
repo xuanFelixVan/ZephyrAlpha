@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.escalation_models import (
+from zephyr.governance.escalation.escalation_models import (
     DEFAULT_ESCALATION_RULES,
     DelegationRecord,
     DelegationStrategy,
@@ -232,7 +232,7 @@ class TestEconomicGuard:
         guard = EconomicGuard("G-006", daily_budget=100.0, consumed_today=90.0, hard_limit_reached=True)
         guard.last_reset = old_time
 
-        monkeypatch.setattr("zephyr.governance.escalation_models.datetime", _FakeDatetime(new_time))
+        monkeypatch.setattr("zephyr.governance.escalation.escalation_models.datetime", _FakeDatetime(new_time))
 
         guard._maybe_reset()
         assert guard.consumed_today == 0.0
@@ -246,7 +246,7 @@ class TestEconomicGuard:
         guard = EconomicGuard("G-007", daily_budget=100.0, consumed_today=90.0, hard_limit_reached=True)
         guard.last_reset = old_time
 
-        monkeypatch.setattr("zephyr.governance.escalation_models.datetime", _FakeDatetime(same_day))
+        monkeypatch.setattr("zephyr.governance.escalation.escalation_models.datetime", _FakeDatetime(same_day))
 
         guard._maybe_reset()
         assert guard.consumed_today == 90.0
@@ -273,7 +273,7 @@ class TestEconomicGuard:
         guard = EconomicGuard("G-011", daily_budget=100.0, consumed_today=90.0, hard_limit_reached=True)
         guard.last_reset = old_time
 
-        monkeypatch.setattr("zephyr.governance.escalation_models.datetime", _FakeDatetime(new_time))
+        monkeypatch.setattr("zephyr.governance.escalation.escalation_models.datetime", _FakeDatetime(new_time))
 
         assert guard.can_proceed(estimated_cost=50.0) is True
         assert guard.consumed_today == 0.0

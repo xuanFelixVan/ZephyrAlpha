@@ -184,7 +184,7 @@ class BaseMCPServer:
         if not getattr(self, "_AUTO_ENABLE_RBAC", False):
             return
         try:
-            from zephyr.governance.rbac_bridge import EscalationRBACBridge
+            from zephyr.governance.agent_spec.rbac_bridge import EscalationRBACBridge
 
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
@@ -194,7 +194,7 @@ class BaseMCPServer:
     def enable_rbac(self, session_id: str = "") -> None:
         self._agent_session_id = session_id
         try:
-            from zephyr.governance.rbac_bridge import EscalationRBACBridge
+            from zephyr.governance.agent_spec.rbac_bridge import EscalationRBACBridge
 
             self._rbac_guard = EscalationRBACBridge()
             self._log.info("rbac_enabled", session_id=session_id or "auto-detect")

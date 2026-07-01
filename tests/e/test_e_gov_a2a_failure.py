@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.a2a_failure import (
+from zephyr.governance.agent_spec.a2a_failure import (
     _A2ACommunicationLike,
     on_a2a_failure,
 )

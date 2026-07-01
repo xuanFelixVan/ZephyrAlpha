@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.context_switch_governor import ContextSwitchGovernor
+from zephyr.governance.context_governance.context_switch_governor import ContextSwitchGovernor
 
 
 class TestContextSwitchGovernorInstantiation:

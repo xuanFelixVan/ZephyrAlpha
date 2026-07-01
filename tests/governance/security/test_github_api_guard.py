@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.github_api_guard import GitHubAPIGuard
+from zephyr.governance.security_governance.github_api_guard import GitHubAPIGuard
 
 
 class TestGitHubAPIGuardInstantiation:

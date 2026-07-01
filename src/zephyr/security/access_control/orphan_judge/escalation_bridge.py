@@ -30,7 +30,7 @@ class EscalationBridge:
         self._engine = None
         self._available = False
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
 
             self._engine = EscalationEngine(name="orphan-judge", hooks_enabled=True)
             self._available = True

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.credential_guard import CredentialGuard
+from zephyr.governance.security_governance.credential_guard import CredentialGuard
 
 
 class TestCredentialGuardInstantiation:

@@ -11,7 +11,7 @@
 # [TESTS] python -m pytest tests/test_meta_observability.py -q
 # [TTL] task_bound
 
-from zephyr.governance.meta_observability import MetaObservability
+from zephyr.governance.ops_governance.meta_observability import MetaObservability
 
 
 class TestMetaObservabilityInstantiation:

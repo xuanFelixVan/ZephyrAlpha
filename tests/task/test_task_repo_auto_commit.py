@@ -26,7 +26,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 
 class TestAutoCommitOnCompletion:

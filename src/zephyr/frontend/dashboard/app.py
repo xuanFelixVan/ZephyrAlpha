@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.infra_ops.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.infra_ops.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -47,8 +47,8 @@ try:
 except ImportError:
     st = None
 
-from zephyr.governance.sqlite_schema import init_db
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.infra_ops.dashboard.components.fitness_functions import (
     FitnessDashboardData,
     fetch_fitness_data,

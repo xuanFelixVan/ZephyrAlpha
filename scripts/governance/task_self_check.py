@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/task_self_check.py | §
 # [MODULE] scripts.governance.task_self_check
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.task_repo; zephyr.governance.sqlite_schema; zephyr.integration.__init__
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -57,8 +57,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.sqlite_schema import DB_PATH
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 _CHECK_ICON = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌", "FIXED": "🔧"}
 
@@ -223,7 +223,7 @@ def main() -> int:
         print("   请先初始化: python scripts/construction/d_init_task_system.py", file=sys.stderr)
         return EXIT_FINDINGS
 
-    from zephyr.governance.sqlite_schema import init_db
+    from zephyr.governance.persistence.sqlite_schema import init_db
 
     init_db()
     repo = TaskRepository()

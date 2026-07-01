@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-COMPLIANCE
 # [MODULE] zephyr.compliance.artifact_scanner
 # [DOMAIN] D_COMPLIANCE
-# [DEPENDENCIES] zephyr.governance.artifact_scanner
+# [DEPENDENCIES] zephyr.governance.drift_detection.artifact_scanner
 # [CONSUMERS] zephyr.compliance.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""Re-export wrapper: artifact_scanner has migrated to zephyr.governance.artifact_scanner"""
+"""Re-export wrapper: artifact_scanner has migrated to zephyr.governance.drift_detection.artifact_scanner"""
 
-from zephyr.governance.artifact_scanner import *  # noqa: F403
+from zephyr.governance.drift_detection.artifact_scanner import *  # noqa: F403

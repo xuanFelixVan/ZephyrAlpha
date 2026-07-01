@@ -17,7 +17,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.integration.shared.schema.schemas import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.models import (

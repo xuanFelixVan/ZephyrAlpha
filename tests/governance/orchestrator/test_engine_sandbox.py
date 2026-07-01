@@ -17,7 +17,7 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from zephyr.governance.engine_sandbox import (
+from zephyr.governance.resilience_governance.engine_sandbox import (
     AccessDecision,
     EngineSandbox,
     IntegritySnapshot,

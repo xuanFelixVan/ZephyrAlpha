@@ -100,7 +100,7 @@ class F5BootIntegration:
 
         # 1. 初始化 DeadlockDetector (无依赖)
         try:
-            from zephyr.governance.deadlock_detector import DeadlockDetector
+            from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDetector
             self._deadlock_detector = DeadlockDetector()
             details["deadlock_detector_initialized"] = True
             logger.info("F5: DeadlockDetector initialized")
@@ -110,7 +110,7 @@ class F5BootIntegration:
 
         # 2. 初始化 EscalationEngine (无依赖, 但内部加载扩展探测器)
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
             self._escalation_engine = EscalationEngine(name="f5_default", hooks_enabled=True)
             details["escalation_engine_initialized"] = True
             logger.info("F5: EscalationEngine initialized")
@@ -120,7 +120,7 @@ class F5BootIntegration:
 
         # 3. 初始化 DelegationEngine (注入 DeadlockDetector)
         try:
-            from zephyr.governance.delegation_engine import DelegationEngine
+            from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
             self._delegation_engine = DelegationEngine(deadlock_detector=self._deadlock_detector)
             details["delegation_engine_initialized"] = True
             details["delegation_max_depth"] = DelegationEngine.MAX_DELEGATION_DEPTH

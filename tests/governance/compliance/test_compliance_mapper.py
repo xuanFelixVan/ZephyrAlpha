@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.compliance_mapper import COMPLIANCE_MAP, ComplianceMapper
+from zephyr.governance.compliance_gate_a6.compliance_mapper import COMPLIANCE_MAP, ComplianceMapper
 
 
 class TestComplianceMapperInstantiation:

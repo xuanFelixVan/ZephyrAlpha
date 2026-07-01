@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.governance.rbac_bridge import (
+from zephyr.governance.agent_spec.rbac_bridge import (
     EscalationRBACBridge,
     RBACCheckResult,
 )
@@ -99,7 +99,7 @@ class TestPreExecuteCheck:
         assert isinstance(result, RBACCheckResult)
         assert result.passed is True
 
-    @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", False)
+    @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", False)
     def test_pass_through_without_rbac_available(self):
         bridge = EscalationRBACBridge()
         bridge._guard = None
@@ -107,7 +107,7 @@ class TestPreExecuteCheck:
         assert result.passed is True
         assert "pass-through" in result.reason
 
-    @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
+    @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_blocked_by_rbac(self):
         mock_result = MagicMock()
         mock_result.decision = MagicMock()
@@ -131,7 +131,7 @@ class TestPreExecuteCheck:
         assert result.passed is False
         assert result.decision == "BLOCKED"
 
-    @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
+    @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_auto_guard_result(self):
         from zephyr.shared.contracts.identity.permission import GuardDecision
 
@@ -152,7 +152,7 @@ class TestPreExecuteCheck:
         assert result.passed is True
         assert result.decision == "AUTO_GUARD"
 
-    @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
+    @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_allow_result(self):
         from zephyr.shared.contracts.identity.permission import GuardDecision
 
@@ -172,7 +172,7 @@ class TestPreExecuteCheck:
         assert result.passed is True
         assert result.decision == "ALLOW"
 
-    @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
+    @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_exception_in_rbac_passes_through(self):
         mock_guard = MagicMock()
         mock_guard.check.side_effect = RuntimeError("RBAC down")

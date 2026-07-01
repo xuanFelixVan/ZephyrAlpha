@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.ghost_scan import GhostScanner
+from zephyr.governance.security_governance.ghost_scan import GhostScanner
 
 
 class TestGhostScannerInit:

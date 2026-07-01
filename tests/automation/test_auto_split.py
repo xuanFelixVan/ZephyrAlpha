@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from zephyr.governance.task_repo import TaskNotFoundError, TaskRepository
+from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepository
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import SafetyLevel

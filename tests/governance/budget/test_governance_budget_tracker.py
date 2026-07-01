@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.budget_tracker import RollbackBudgetTracker
+from zephyr.governance.ops_governance.budget_tracker import RollbackBudgetTracker
 
 
 class TestRollbackBudgetTrackerInstantiation:

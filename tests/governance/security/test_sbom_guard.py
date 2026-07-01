@@ -11,7 +11,7 @@
 # [TESTS] tests/test_sbom_guard.py
 # [TTL] task_bound
 
-from zephyr.governance.sbom_guard import SBOMGuard
+from zephyr.governance.security_governance.sbom_guard import SBOMGuard
 
 
 class TestSBOMGuardInit:

@@ -2,13 +2,13 @@
 # 测试文件导入 from zephyr.governance.escalation import EscalationEngine, RuleCategory, ...
 # 实际定义在 escalation_engine.py 和 escalation_models.py
 
-from zephyr.governance.delegation_engine import (
+from zephyr.governance.intelligence_governance.delegation_engine import (
     DelegationEngine,
 )
-from zephyr.governance.escalation_engine import (
+from zephyr.governance.escalation.escalation_engine import (
     EscalationEngine,
 )
-from zephyr.governance.escalation_models import (
+from zephyr.governance.escalation.escalation_models import (
     DelegationRecord,
     DelegationStrategy,
     EconomicGuard,
@@ -19,7 +19,7 @@ from zephyr.governance.escalation_models import (
     EscalationState,
     RuleCategory,
 )
-from zephyr.governance.circuit_breaker import (
+from zephyr.governance.resilience_governance.circuit_breaker import (
     CircuitBreaker,
     CircuitBreakerConfig,
     CircuitState,

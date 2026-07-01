@@ -19,7 +19,7 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.governance.self_test import (
+from zephyr.governance.intelligence_governance.self_test import (
     CheckResult,
     CheckStatus,
     SelfTest,

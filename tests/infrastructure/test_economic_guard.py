@@ -8,7 +8,7 @@
 # [TTL] task_bound
 """Test Economic Guard — SSoT validation via escalation_models."""
 
-from zephyr.governance.escalation_models import EconomicGuard
+from zephyr.governance.escalation.escalation_models import EconomicGuard
 
 
 def test_within_budget():

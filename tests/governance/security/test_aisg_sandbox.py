@@ -11,7 +11,7 @@ from __future__ import annotations
 """AISGSandbox — 危险模式拦截与安全样本放行。"""
 
 
-from zephyr.governance.aisg_sandbox import AISGSandbox
+from zephyr.governance.intelligence_governance.aisg_sandbox import AISGSandbox
 
 
 def test_aisg_dangerous_patterns_blocked() -> None:

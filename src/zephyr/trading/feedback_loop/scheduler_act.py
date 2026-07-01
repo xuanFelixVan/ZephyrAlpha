@@ -141,8 +141,8 @@ class ActPhaseHandler:
 
     def _escalate_on_failure(self, anomaly: Any, action_type: Any) -> None:
         try:
-            from zephyr.governance.escalation_engine import EscalationEngine
-            from zephyr.governance.escalation_models import RuleCategory
+            from zephyr.governance.escalation.escalation_engine import EscalationEngine
+            from zephyr.governance.escalation.escalation_models import RuleCategory
 
             engine = EscalationEngine()
             desc = f"FLE act failed: anomaly={getattr(anomaly, 'anomaly_id', '?')}, action={action_type}"

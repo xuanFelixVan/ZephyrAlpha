@@ -17,7 +17,7 @@ import hashlib
 
 import pytest
 
-from zephyr.governance.tamper_evident_log import (
+from zephyr.governance.security_governance.tamper_evident_log import (
     LogEntry,
     TamperEvidentLog,
 )

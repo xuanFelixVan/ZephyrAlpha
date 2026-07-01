@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.contracts import EscalationContracts
+from zephyr.governance.escalation.contracts import EscalationContracts
 from zephyr.shared.contracts.rollback_types import RollbackResult, RollbackStatus, ValidationResult
 from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert, BudgetSeverity, BudgetType
 

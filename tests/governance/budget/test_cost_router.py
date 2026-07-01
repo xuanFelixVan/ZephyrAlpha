@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.cost_router import (
+from zephyr.governance.ops_governance.cost_router import (
     PRICING_TABLE,
     LLMProvider,
     ModelPricing,

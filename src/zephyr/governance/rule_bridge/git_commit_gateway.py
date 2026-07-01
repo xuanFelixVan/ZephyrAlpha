@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ghost-commit-gateway
 # [MODULE] zephyr.governance.rule_bridge.git_commit_gateway
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency; zephyr.governance.worktree_manager
-# [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency; zephyr.governance.rule_bridge.worktree_manager
+# [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）
@@ -244,7 +244,7 @@ class GitCommitGateway:
     def _get_worktree_manager(self):
         """延迟获取 WorktreeManager 单例。"""
         if self._worktree_mgr is None:
-            from zephyr.governance.worktree_manager import WorktreeManager
+            from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
             self._worktree_mgr = WorktreeManager(self.project_root)
         return self._worktree_mgr
 

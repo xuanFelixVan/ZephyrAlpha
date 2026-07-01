@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.governance.drift_detection.trend_analyzer
 # [DOMAIN] D_BEHAVIORAL_AUDIT
-# [DEPENDENCIES] zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
 # [MATURITY] production

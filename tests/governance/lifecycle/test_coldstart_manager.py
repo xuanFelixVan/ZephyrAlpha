@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.coldstart_manager import ColdstartManager
+from zephyr.governance.ops_governance.coldstart_manager import ColdstartManager
 
 
 class TestColdstartManagerInstantiation:

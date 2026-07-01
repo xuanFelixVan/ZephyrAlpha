@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.gate_engine import (
     GateEngine,
     GateEngineError,

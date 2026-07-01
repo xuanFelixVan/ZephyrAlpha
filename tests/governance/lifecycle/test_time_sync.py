@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.time_sync import (
+from zephyr.governance.ops_governance.time_sync import (
     MAX_CLOCK_DRIFT_MS,
     NTP_SERVER,
     NTP_SYNC_INTERVAL_SECONDS,

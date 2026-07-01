@@ -53,11 +53,11 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
 
 try:
-    import zephyr.governance.drift_detector as drift_detector_mod
+    import zephyr.governance.drift_detection.drift_detector as drift_detector_mod
 except ImportError:
     drift_detector_mod = None
 try:
-    import zephyr.governance.escalation_engine as escalation_protocol
+    import zephyr.governance.escalation.escalation_engine as escalation_protocol
 except ImportError:
     escalation_protocol = None
 from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
@@ -95,7 +95,7 @@ def __getattr__(name):
 # 用 try/except 包裹避免单个 import 失败阻塞整个包初始化（符合 __getattr__ 延迟导入设计）。
 try:
     from zephyr.governance.audit_trail.agent_signer import AgentSigner
-    from zephyr.governance.akshare_provider import AkshareProvider
+    from zephyr.governance.data_governance.akshare_provider import AkshareProvider
     from zephyr.governance.base import FactorMeta
     from zephyr.governance.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
@@ -106,17 +106,17 @@ try:
     from zephyr.governance.audit_trail.code_archaeology import BlameRecord
     from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.governance.audit_trail.compliance_map import ComplianceFramework
-    from zephyr.governance.construction_verifier import ConstructionVerifier
+    from zephyr.governance.architecture_governance.construction_verifier import ConstructionVerifier
     from zephyr.governance.audit_trail.corporate_actions import CorporateActionType
     from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
-    from zephyr.governance.database_service import DatabaseService
+    from zephyr.governance.persistence.database_service import DatabaseService
     from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
-    from zephyr.governance.dlq_retry_policy import RetryResult
+    from zephyr.governance.rule_enforcement.dlq_retry_policy import RetryResult
     from zephyr.governance.audit_trail.dora_metrics import DORATargets
     from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
     from zephyr.governance.finding_ingest import IngestResult
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
-    from zephyr.governance.gate_event_adapter import GateEventAdapter
+    from zephyr.governance.behavioral_admission.gate_event_adapter import GateEventAdapter
     from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
@@ -132,10 +132,10 @@ try:
     from zephyr.governance.audit_trail.sbom_generator import LicenseType
     from zephyr.governance.semantic_audit.self_healer import SelfHealError
     from zephyr.governance.semantic_audit.self_health import SLIResult
-    from zephyr.governance.snapshot_manager import SnapshotError
+    from zephyr.governance.audit.snapshot_manager import SnapshotError
     from zephyr.governance.audit_trail.spec_auditor import record_agent_spec
     from zephyr.governance.audit_trail.supply_chain import PackageRecord
-    from zephyr.governance.token_budget import PoolLevel
+    from zephyr.governance.ops_governance.token_budget import PoolLevel
     from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
     from zephyr.governance.audit_trail.wqa_scorer import WQAScore
 except ImportError:
@@ -153,9 +153,9 @@ try:
         PostProcessPipeline,
     )
     # 根目录模块（22个）
-    import zephyr.governance.bandwidth_optimizer as bandwidth_optimizer
+    import zephyr.governance.ops_governance.bandwidth_optimizer as bandwidth_optimizer
     import zephyr.governance.broker_resilience as broker_resilience
-    import zephyr.governance.consequence_manager as consequence_manager
+    import zephyr.governance.escalation.consequence_manager as consequence_manager
     import zephyr.governance.context_manager as context_manager
     import zephyr.governance.context_recycling as context_recycling
     import zephyr.governance.data_lifecycle as data_lifecycle
@@ -165,15 +165,15 @@ try:
     import zephyr.infrastructure.rollback.fault_tolerance as fault_tolerance
     import zephyr.governance.financial_compliance as financial_compliance
     import zephyr.infrastructure.rollback.fsm_verifier as fsm_verifier
-    import zephyr.governance.incident_response as incident_response
-    import zephyr.governance.knowledge_engine as knowledge_engine
+    import zephyr.governance.escalation.incident_response as incident_response
+    import zephyr.governance.kb.knowledge_engine as knowledge_engine
     import zephyr.governance.ops_foundation as ops_foundation
     import zephyr.infrastructure.rollback.paper_live_transition as paper_live_transition
     import zephyr.infrastructure.rollback.phase_check_registry as phase_check_registry
     import zephyr.infrastructure.rollback.phase_manager as phase_manager
     import zephyr.infrastructure.rollback.post_live_verification as post_live_verification
-    import zephyr.governance.realtime_streaming as realtime_streaming
-    import zephyr.governance.spof_checker as spof_checker
+    import zephyr.governance.data_governance.realtime_streaming as realtime_streaming
+    import zephyr.governance.escalation.spof_checker as spof_checker
     import zephyr.infrastructure.rollback.startup_shutdown as startup_shutdown
     import zephyr.infrastructure.rollback.startup_shutdown_cli as startup_shutdown_cli
     # 子目录模块（33个）

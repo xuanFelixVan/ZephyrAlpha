@@ -188,7 +188,7 @@ class Arbitrator:
                 pass
         if self._escalation_engine is not None:
             try:
-                from zephyr.governance.escalation_models import RuleCategory
+                from zephyr.governance.escalation.escalation_models import RuleCategory
                 self._escalation_engine.evaluate(
                     category=RuleCategory.DEADLOCK,
                     description=f"A2A conflict: {agent_a.agent_id} vs {agent_b.agent_id} on {conflicted_files}",

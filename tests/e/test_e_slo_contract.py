@@ -15,7 +15,7 @@ import time
 
 import pytest
 
-from zephyr.governance.slo_contract import (
+from zephyr.governance.rule_enforcement.slo_contract import (
     DEFAULT_CONTRACTS,
     DEFAULT_SLIS,
     TIER_POLICY,

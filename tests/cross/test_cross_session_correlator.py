@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.cross_session_correlator import CrossSessionCorrelator
+from zephyr.governance.services.cross_session_correlator import CrossSessionCorrelator
 
 
 class TestCrossSessionCorrelatorInstantiation:

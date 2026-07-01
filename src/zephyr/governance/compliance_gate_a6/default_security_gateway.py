@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
-# [MODULE] zephyr.governance.default_security_gateway
+# [MODULE] zephyr.governance.security_governance.default_security_gateway
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision
+# [DEPENDENCIES] zephyr.governance.security_governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.intelligence_governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -38,9 +38,9 @@ from datetime import UTC, datetime
 from typing import Any, ClassVar
 from uuid import uuid4
 
-from zephyr.governance.aisg_sandbox import AISGSandbox
+from zephyr.governance.intelligence_governance.aisg_sandbox import AISGSandbox
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
-from zephyr.governance.security_gateway_base import (
+from zephyr.governance.security_governance.security_gateway_base import (
     AuditAction,
     AuditDecision,
     SecurityGateway,

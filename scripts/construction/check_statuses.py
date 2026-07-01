@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/check_statuses.py | §
 # [MODULE] scripts.construction.check_statuses
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.task_repo; zephyr.governance.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -17,8 +17,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-from zephyr.governance.sqlite_schema import init_db
-from zephyr.governance.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 init_db()
 repo = TaskRepository()

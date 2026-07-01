@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.flash_crash_guard import FlashCrashGuard
+from zephyr.governance.financial_governance.flash_crash_guard import FlashCrashGuard
 
 
 class TestFlashCrashGuardInit:

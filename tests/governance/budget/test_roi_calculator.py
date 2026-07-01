@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.roi_calculator import ROICalculator, ROIResult
+from zephyr.governance.ops_governance.roi_calculator import ROICalculator, ROIResult
 
 
 class TestROICalculatorInit:

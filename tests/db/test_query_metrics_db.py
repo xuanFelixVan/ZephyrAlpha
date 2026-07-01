@@ -28,7 +28,7 @@ Task: MOD-INF-012 | Safety: M
 
 import sqlite3
 
-from zephyr.governance.query_metrics import (
+from zephyr.governance.observability_governance.query_metrics import (
     PercentileTracker,
     QueryMetrics,
     query_metrics,

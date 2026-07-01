@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.subagent_hook_propagator import (
+from zephyr.governance.intelligence_governance.subagent_hook_propagator import (
     SubagentHookPropagator,
 )
 
