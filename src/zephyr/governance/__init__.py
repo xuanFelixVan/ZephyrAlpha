@@ -184,7 +184,7 @@ try:
     import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
     import zephyr.governance.architecture_governance.architecture_contracts as architecture_contracts
     import zephyr.governance.architecture_governance.architecture_principles as architecture_principles
-    import zephyr.governance.drift_detection.benchmark_integrity as benchmark_integrity
+    import zephyr.governance.drift_detector_core.benchmark_integrity as benchmark_integrity
     import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
     import zephyr.governance.behavioral_admission.code_review_ai as code_review_ai
     import zephyr.governance.architecture_governance.cross_env_consistency as cross_env_consistency
@@ -197,16 +197,16 @@ try:
     import zephyr.governance.behavioral_admission.mcp_result_push as mcp_result_push
     import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
     import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
-    import zephyr.governance.drift_detection.model_drift_monitor as model_drift_monitor
+    import zephyr.governance.drift_detector_core.model_drift_monitor as model_drift_monitor
     import zephyr.governance.intelligence_governance.multi_model_consensus as multi_model_consensus
     import zephyr.governance.resilience_governance.offline_autonomy as offline_autonomy
     import zephyr.governance.resilience_governance.offline_resilience as offline_resilience
     import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
     import zephyr.governance.architecture_governance.path_resolver as path_resolver
-    import zephyr.governance.drift_detection.performance_baseline as performance_baseline
+    import zephyr.governance.drift_detector_core.performance_baseline as performance_baseline
     import zephyr.governance.behavioral_admission.post_process as post_process
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
-    import zephyr.governance.drift_detection.regime_detector as regime_detector
+    import zephyr.governance.drift_detector_core.regime_detector as regime_detector
     import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.architecture_governance.system_topology as system_topology
     import zephyr.governance.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
