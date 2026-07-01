@@ -1763,6 +1763,31 @@ capabilities:
       canonical = scripts/governance/_shared/frontmatter.py（P8 Phase 3 多根化后可 auto
       派生，basename frontmatter 匹配 alias；保留 canonical_override 作为最高优先级声明）。
 
+  # --------------------------------------------------------------------------
+  - capability_id: async_sync_boundary_bridge
+    canonical_override: src/zephyr/shared/utils/async_utils.py
+    aliases:
+      - run_sync
+      - async_utils
+      - async_to_sync
+      - sync_runner
+    description: >-
+      async/sync 边界桥接的唯一真源（5.12.8 治本收拢点）。run_sync(coro, *, timeout=None)
+      解决在已有 event loop 的同步代码里调用 async 协程的死锁痛点。30+ 处 asyncio.run()
+      调用已迁移到 run_sync()（commit 1548c058）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: atomic_write_protocol
+    canonical_override: src/zephyr/shared/io/file_utils.py
+    aliases:
+      - atomic_write
+      - AtomicWriteFn
+      - atomic_write_fn
+      - safe_write
+    description: >-
+      原子写协议的唯一真源（5.12.2#1 治本收拢点）。atomic_write() + AtomicWriteFn Protocol
+      统一此前 3 处漂移实现。fix_safety.py + forensic.py 已改为委托本真源（commit e64e01e2）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
