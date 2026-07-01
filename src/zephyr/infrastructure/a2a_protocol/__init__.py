@@ -58,11 +58,6 @@ from . import layer1_discovery, layer2_communication
 from .governance.governance_adapter import GovernanceAdapter
 
 
-def __getattr__(name):
-    """Lazy import for symbols that may cause circular dependency."""
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
 __all__ = [
     "A2ACommunication",
     "A2ACommunicationProtocol",

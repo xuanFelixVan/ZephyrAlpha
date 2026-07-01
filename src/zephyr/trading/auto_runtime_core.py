@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
     from zephyr.trading.feedback_loop.scheduler import FeedbackLoopScheduler
     from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
-    from zephyr.shared.protocols.a2a.layer3_coordination import A2AProtocolGateway
+    from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import A2AProtocolGateway
 
 
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
@@ -634,9 +634,9 @@ class AutoRuntimeCore:
         try:
             import importlib
 
-            _a2a_mod = importlib.import_module("zephyr.shared.protocols.a2a")
-            _gw_mod = importlib.import_module("zephyr.shared.protocols.a2a.layer3_coordination.a2a_protocol_gateway")
-            card_registry = _a2a_mod.card_registry
+            _cr_mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.a2a_card_registry")
+            _gw_mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway")
+            card_registry = _cr_mod.card_registry
             A2AProtocolGateway = _gw_mod.A2AProtocolGateway
             self._a2a_registry = card_registry
             self._a2a_protocol_gateway = A2AProtocolGateway()
@@ -644,7 +644,7 @@ class AutoRuntimeCore:
                 IntegrationPoint(
                     point_id="a2a-protocol",
                     target_system="A2AProtocol",
-                    interface="zephyr.shared.protocols.a2a:card_registry",
+                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
                     protocol="python_import",
                     sla="best_effort",
                     status="CONNECTED",
@@ -656,7 +656,7 @@ class AutoRuntimeCore:
                 IntegrationPoint(
                     point_id="a2a-protocol",
                     target_system="A2AProtocol",
-                    interface="zephyr.shared.protocols.a2a:card_registry",
+                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
                     protocol="python_import",
                     sla="best_effort",
                     status="DISCONNECTED",
