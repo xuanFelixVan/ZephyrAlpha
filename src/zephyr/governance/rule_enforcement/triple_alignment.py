@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 蓝图↔代码↔依赖图三方必须对齐;module_id/stability/safety/ai_autonomy三处一致;文件清单三方匹配
-# [MODIFY-GUARD] _registry.yaml;gate_engine.py;system-dependency-map.md
+# [MODIFY-GUARD] _registry.yaml;gate_engine.py;depgraph.nodes
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -48,7 +48,6 @@ logger = logging.getLogger(__name__)
 PROJECT_ROOT = REPO_ROOT
 BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml"
 MODULE_REGISTRY = PROJECT_ROOT / "docs/03_modules/module-registry.yaml"
-DEPENDENCY_MAP = PROJECT_ROOT / "docs/02_enterprise_architecture/system-dependency-map.md"
 GATES_REGISTRY = PROJECT_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml"
 BLUEPRINTS_DIR = PROJECT_ROOT / "docs/03_modules"
 
@@ -112,29 +111,36 @@ def _parse_code_headers(py_path: Path) -> dict[str, str]:
     return headers
 
 
-def _extract_dep_map_modules(content: str) -> dict[str, dict[str, str]]:
+def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
+    """从 depgraph PostgreSQL 数据库查询所有模块节点。
+
+    替代原 system-dependency-map.md §5 解析——depgraph.nodes 是模块归属的机器真源。
+    nodes 表用 blueprint_id 列存储 module_id（如 MOD-CONTEXT_ENGINE），
+    每个模块可能有多行（每行一个文件路径），取 DISTINCT blueprint_id 去重。
+    """
     modules: dict[str, dict[str, str]] = {}
-    in_section5 = False
-    for line in content.splitlines():
-        if "模块归属表" in line or "Module Ownership" in line:
-            in_section5 = True
-            continue
-        if in_section5 and line.startswith("## "):
-            in_section5 = False
-            continue
-        if not in_section5:
-            continue
-        if line.startswith("| MOD-INF-"):
-            parts = [p.strip() for p in line.split("|")]
-            parts = [p for p in parts if p]
-            if len(parts) >= 2:
-                mid = parts[0]
-                modules[mid] = {
-                    "name": parts[1] if len(parts) > 1 else "",
-                    "source_path": parts[2] if len(parts) > 2 else "",
-                    "blueprint_path": parts[3] if len(parts) > 3 else "",
-                    "note": parts[-1] if len(parts) > 10 else "",
-                }
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+        conn = get_depgraph_pg_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT DISTINCT blueprint_id, path, blueprint_path "
+                "FROM nodes WHERE blueprint_id LIKE %s",
+                ('MOD-%',),
+            )
+            for row in cur.fetchall():
+                mid = row[0]
+                if mid and mid not in modules:
+                    modules[mid] = {
+                        "source_path": row[1] or "",
+                        "blueprint_path": row[2] or "",
+                    }
+            cur.close()
+        finally:
+            conn.close()
+    except Exception as e:
+        logger.warning("Failed to query depgraph nodes: %s", e)
     return modules
 
 
@@ -167,11 +173,7 @@ def check_triple_alignment(
         )
         return result
 
-    dep_map_content = ""
-    if DEPENDENCY_MAP.exists():
-        dep_map_content = DEPENDENCY_MAP.read_text(encoding="utf-8")
-
-    dep_map_modules = _extract_dep_map_modules(dep_map_content)
+    dep_map_modules = _extract_dep_map_modules()
 
     bp_entries: dict[str, dict] = {}
     for entry in bp_registry_data.get("blueprints", []):
@@ -250,7 +252,7 @@ def check_triple_alignment(
                     check="module_id_dep_map_missing",
                     severity=Severity.WARN,
                     module_id=mid,
-                    source="system-dependency-map.md §5",
+                    source="depgraph.nodes",
                     expected=mid,
                     actual="NOT FOUND",
                 )
@@ -353,7 +355,7 @@ def check_triple_alignment(
                     check="dep_map_orphan_module",
                     severity=Severity.WARN,
                     module_id=dep_mid,
-                    source="system-dependency-map.md §5",
+                    source="depgraph.nodes",
                     expected="in blueprint_registry.yaml",
                     actual="NOT FOUND",
                 )
