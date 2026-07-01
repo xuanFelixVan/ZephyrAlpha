@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-01'
-total_scripts: 583
+generated_at: '2026-07-02'
+total_scripts: 585
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3478,6 +3478,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/vms/__init__.py
+  path: governance/vms/__init__.py
+  description: No description
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/vms/vms_blindspot_check.py
   path: governance/vms/vms_blindspot_check.py
   description: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
@@ -4001,6 +4009,14 @@ scripts:
 - name: governance/_sync/fix_orphan_deps.py
   path: governance/_sync/fix_orphan_deps.py
   description: fix_orphan_deps.py — 一次性修复孤儿依赖引用
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/__init__.py
+  path: governance/_tasks/__init__.py
+  description: No description
   domain: governance
   execution_plane: warm-path
   status: registered
