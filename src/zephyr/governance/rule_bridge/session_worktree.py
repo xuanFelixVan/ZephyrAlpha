@@ -25,13 +25,14 @@
 提供 start/commit/merge/abort/status 五个函数，全部返回 dict（不抛异常），
 适配 Trae IDE「AI 对话触发并发工作」模式。
 
-核心工作流（AI 对话生命周期）::
+核心工作流（AI 对话生命周期，君子协定模式）::
 
     1. 对话启动 → session_worktree_start(session_id)
        → 注册 session + 创建 worktree
-       → 返回 worktree_path，AI 后续所有文件操作 MUST 用此路径下的绝对路径
-    2. 在 worktree 内编辑文件（Read/Edit/Write 用 worktree_path 前缀）
+       → 返回 worktree_path
+    2. AI 正常编辑文件（Edit/Write 写到项目根，IDE 限制无法改）
     3. 提交 → session_worktree_commit(session_id, files, message)
+       → 自动将 files 从项目根同步到 worktree（解决 Edit/Write 写项目根的问题）
        → worktree 内直接 git add + commit（独立 index，无需 GitCommitGateway）
     4. 任务完成 → session_worktree_merge(session_id)
        → merge 回主分支 + 清理 worktree + 注销 session
@@ -185,9 +186,13 @@ def session_worktree_commit(
     worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，
     无需 GitCommitGateway 的门禁保护和全局锁。
 
+    **文件同步（君子协定模式）**：AI 的 Edit/Write 写到项目根（IDE 限制，无法改），
+    worktree 内文件是创建时的旧版本。本函数在 git add 前自动将 files 从项目根
+    同步（copy）到 worktree，确保 stage 的是最新内容。AI 无需手动同步。
+
     Args:
         session_id: 已注册的 session_id（必须有对应 worktree）。
-        files: 要提交的文件列表。路径可以是绝对的（worktree 内）或相对 worktree 的。
+        files: 要提交的文件列表。路径可以是绝对路径（项目根或 worktree 内）或相对的。
         message: commit message。
         project_root: 项目根目录（默认 REPO_ROOT）。
 
@@ -248,7 +253,42 @@ def session_worktree_commit(
         else:
             rel_files.append(str(p).replace("\\", "/"))
 
-    add_cmd = ["git", "add", "--"] + rel_files
+    # 同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根，
+    # worktree 内文件是创建时的旧版本，需同步才能 stage 到最新内容）
+    # 覆盖三种场景：文件修改/新增（copy2 同步）+ 文件删除（unlink 同步删除）
+    # + 直接写入 worktree 的新文件（未跟踪，不删除）
+    import shutil
+
+    # 批量查询哪些 rel_file 是 git 跟踪的（区分"跟踪文件被删除"vs"直接写入 worktree 的新文件"）
+    tracked_r = subprocess.run(
+        ["git", "ls-files", "--"] + rel_files,
+        cwd=str(wt_path), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=60,
+    )
+    tracked_files: set[str] = set()
+    if tracked_r.returncode == 0 and tracked_r.stdout.strip():
+        tracked_files = {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
+
+    for rel_file in rel_files:
+        src = root / rel_file
+        dst = wt_path / rel_file
+        if src.exists() and src.is_file():
+            # 文件存在——同步最新内容到 worktree
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(src), str(dst))
+        elif not src.exists() and dst.exists() and rel_file in tracked_files:
+            # 文件在主工作区被删除且被 git 跟踪——同步删除到 worktree（物理删除，
+            # 后续 git add -A 会 stage 删除操作）
+            # 排除直接写入 worktree 的未跟踪新文件（src 不存在但 dst 存在且未跟踪）
+            try:
+                dst.unlink()
+            except OSError:
+                # 只读文件兜底：清除只读位后重试
+                os.chmod(str(dst), 0o644)
+                dst.unlink()
+
+    # git add -A 同时 stage 新增/修改/删除（替代原 git add，确保文件删除被 stage）
+    add_cmd = ["git", "add", "-A", "--"] + rel_files
     add_r = subprocess.run(
         add_cmd, cwd=str(wt_path), capture_output=True, text=True,
         encoding="utf-8", errors="replace", timeout=60,
