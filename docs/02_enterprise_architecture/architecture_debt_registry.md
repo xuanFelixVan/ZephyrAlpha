@@ -5109,12 +5109,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **[✓ FIXED: 2026-07-01]** liveness() 现返回 `os.getpid()` 真实 PID。注：status="alive" 对于进程内探针是正确的（探针能执行即证明进程存活）。
 
 #### 5.55.6 [MEDIUM] BlueprintHealthChecker是空壳，永远返回healthy
-- **文件**：[blueprint_health.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/blueprint_health.py#L21)
+- **文件**：~~`src/zephyr/trading/orchestrator/blueprint_health.py`~~（已退役）+ ~~`src/zephyr/governance/audit_orchestration/blueprint_health.py`~~（已退役）
 - **证据**：`def check_consistency(self, blueprint_file): return {"status": "healthy", "errors": []}`——空壳不做任何检查
 - **问题**：蓝图字段缺失或引用断裂时不会被发现
-- **修复**：实现真实检查逻辑
+- **修复**：~~实现真实检查逻辑~~ → 退役（治本裁定）
 
-> **[✓ FIXED: 2026-07-01]** `BlueprintHealthChecker.check_consistency()` 现实现真实检查：验证文件存在性→解析头部 40 行 `[KEY] value` 字段→校验 `[BLUEPRINT]/[MODULE]/[DOMAIN]` 必需字段齐全→验证 `[BLUEPRINT]` 引用的 `.md` 路径在仓库内可达。空壳行为消除，缺失字段/断裂引用返回 `unhealthy` + 错误列表。
+> **[✓ FIXED: 2026-07-01]** 治本裁定：BlueprintHealthChecker 有 0 消费者（无人调用 `check_consistency()`），且蓝图头校验已由 `check_blueprint_code_alignment.py` + `verify_header_completeness` + `generate_project_depgraph.py:parse_blueprint_header()` 三处门禁脚本覆盖。空壳修复无意义——造了真实逻辑也没人用（违反责任唯一 + 向内收原则）。两份副本（trading/orchestrator + governance/audit_orchestration）+ 测试文件 `tests/blueprint/test_blueprint_health.py` 全部退役删除。`__init__.py` __all__ 引用已清理。`decision_engine.py` 的 `"blueprint_health"` 字符串是 metric_name 默认值（数据标签，非代码依赖），保留不动。
 
 #### 5.55.7 严重度汇总
 
