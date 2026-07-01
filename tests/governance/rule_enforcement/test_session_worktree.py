@@ -150,13 +150,14 @@ def _clean_worktree_env(_isolated_repo, monkeypatch):
     测试前清理残留，测试后清理残留 + soft reset 回退测试 commit。
     monkeypatch function 级自动还原（不影响其他测试模块）。
     """
-    monkeypatch.setattr(
-        "zephyr.governance.rule_bridge.session_worktree.REPO_ROOT",
-        _isolated_repo,
-    )
-    # 用模块对象 patch 测试模块的 REPO_ROOT（字符串路径在 pytest 下不可靠）
+    # 用模块对象 patch（字符串路径在 pytest 下不可靠）
     import sys
-    monkeypatch.setattr(sys.modules[__name__], "REPO_ROOT", _isolated_repo)
+    import zephyr.governance.rule_bridge.session_worktree as sw_mod
+    import zephyr.governance.rule_bridge.worktree_manager as wm_mod
+    test_mod = sys.modules[__name__]
+    monkeypatch.setattr(sw_mod, "REPO_ROOT", _isolated_repo)
+    monkeypatch.setattr(wm_mod, "REPO_ROOT", _isolated_repo)
+    monkeypatch.setattr(test_mod, "REPO_ROOT", _isolated_repo)
     orig_head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=_isolated_repo, capture_output=True, text=True
     ).stdout.strip()
