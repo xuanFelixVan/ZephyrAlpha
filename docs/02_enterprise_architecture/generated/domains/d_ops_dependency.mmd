@@ -1,7 +1,7 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-01 13:27:42
+%% 生成时间: 2026-07-01 13:32:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 183, 依赖边数: 201
+%% 模块数: 180, 依赖边数: 198
 
 graph TD
 
@@ -10,10 +10,7 @@ graph TD
         docs_03_modules__domain_infra____stem_telemetry_blueprint_md["...fra_ops/system_telemetry/blueprint.md [design]"]
         scripts_ops_upgrade_headers_to_14fields_py["...ts/ops/upgrade_headers_to_14fields.py [production]"]
         src_zephyr_governance_observability_governance___init___py[".../observability_governance/__init__.py [prototype]"]
-        src_zephyr_governance_observab___ance_benchmark_integrity_py["...ity_governance/benchmark_integrity.py [prototype]"]
         src_zephyr_governance_observab____observability_dashboard_py["...governance/observability_dashboard.py [production]"]
-        src_zephyr_governance_observab___nce_performance_baseline_py["...ty_governance/performance_baseline.py [prototype]"]
-        src_zephyr_governance_observab___nance_provenance_tracker_py["...lity_governance/provenance_tracker.py [prototype]"]
         src_zephyr_trading_feedback_loop___init___py["...hyr/trading/feedback_loop/__init__.py [production]"]
         src_zephyr_trading_feedback_loop__gen_inherited_py["...ading/feedback_loop/_gen_inherited.py [prototype]"]
         src_zephyr_trading_feedback_loop_actors___init___py["...ding/feedback_loop/actors/__init__.py [prototype]"]
@@ -107,7 +104,10 @@ graph TD
         src_zephyr_trading_feedback_lo___sic_worm_write_integrity_py["...loop/forensic/worm_write_integrity.py [prototype]"]
         src_zephyr_trading_feedback_loop_gates___init___py["...ading/feedback_loop/gates/__init__.py [prototype]"]
         src_zephyr_trading_feedback_loop_gates__operational_gates_py["...back_loop/gates/_operational_gates.py [prototype]"]
-        %% ... 还有 83 个模块未显示
+        src_zephyr_trading_feedback_loop_gates__safety_gates_py[".../feedback_loop/gates/_safety_gates.py [prototype]"]
+        src_zephyr_trading_feedback_loop_gates__security_gates_py["...eedback_loop/gates/_security_gates.py [prototype]"]
+        src_zephyr_trading_feedback_lo___tes_action_reversibility_py["...ck_loop/gates/action_reversibility.py [prototype]"]
+        %% ... 还有 80 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo____self_modification_audit_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___alization_format_tracker_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___tate_migration_validator_py
-    %% ... 还有 84 条域内依赖未显示
+    %% ... 还有 81 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_FRONTEND -> D_OPS (2 条)
@@ -250,6 +250,6 @@ graph TD
     src_zephyr_trading_feedback_loop_alert_dispatcher_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 164 条
+    %% 域内依赖: 161 条
     %% 跨域入边: 19 条
     %% 跨域出边: 18 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 13:27:41
+> 最后更新: 2026-07-01 13:32:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -415,7 +415,6 @@ graph TD
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_heartbeat_server_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_infra_observer_py
@@ -480,7 +479,6 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_module_birth_registry_py
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_streaming_reader_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
@@ -560,8 +558,6 @@ graph TD
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_shared_schema_schemas_py
@@ -627,15 +623,8 @@ graph TD
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_shared_session_audit_py -.->|import_depends| D_GOV_AUDIT
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
-    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py

@@ -1,7 +1,7 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-01 13:27:42
+%% 生成时间: 2026-07-01 13:32:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 40, 依赖边数: 52
+%% 模块数: 36, 依赖边数: 42
 
 graph TD
 
@@ -9,14 +9,12 @@ graph TD
     subgraph D_GOV_DOCS[架构文档治理]
         src_zephyr_governance_kb___init___py["src/zephyr/governance/kb/__init__.py [prototype]"]
         src_zephyr_governance_kb__backend_protocol_py["...yr/governance/kb/_backend_protocol.py [prototype]"]
-        src_zephyr_governance_kb_activate_py["src/zephyr/governance/kb/activate.py [prototype]"]
         src_zephyr_governance_kb_analyze_py["src/zephyr/governance/kb/analyze.py [prototype]"]
         src_zephyr_governance_kb_batch_ingest_py["src/zephyr/governance/kb/batch_ingest.py [prototype]"]
         src_zephyr_governance_kb_bootstrap_py["src/zephyr/governance/kb/bootstrap.py [prototype]"]
         src_zephyr_governance_kb_embedding_migrate_py["...yr/governance/kb/embedding_migrate.py [prototype]"]
         src_zephyr_governance_kb_extract_py["src/zephyr/governance/kb/extract.py [prototype]"]
         src_zephyr_governance_kb_filing_nlp_engine___init___py["...ance/kb/filing_nlp_engine/__init__.py [prototype]"]
-        src_zephyr_governance_kb_filing_nlp_engine_extract_py["...nance/kb/filing_nlp_engine/extract.py [prototype]"]
         src_zephyr_governance_kb_freeze_py["src/zephyr/governance/kb/freeze.py [prototype]"]
         src_zephyr_governance_kb_graph_validator_py["...phyr/governance/kb/graph_validator.py [prototype]"]
         src_zephyr_governance_kb_ingest_py["src/zephyr/governance/kb/ingest.py [prototype]"]
@@ -33,13 +31,11 @@ graph TD
         src_zephyr_governance_kb_pipeline_analyze_py["...hyr/governance/kb/pipeline/analyze.py [prototype]"]
         src_zephyr_governance_kb_pipeline_batch_ingest_py["...overnance/kb/pipeline/batch_ingest.py [prototype]"]
         src_zephyr_governance_kb_pipeline_extract_py["...hyr/governance/kb/pipeline/extract.py [prototype]"]
-        src_zephyr_governance_kb_pipeline_ingest_py["...phyr/governance/kb/pipeline/ingest.py [prototype]"]
         src_zephyr_governance_kb_quiet_period_monitor_py["...governance/kb/quiet_period_monitor.py [prototype]"]
         src_zephyr_governance_kb_reranker_py["src/zephyr/governance/kb/reranker.py [prototype]"]
         src_zephyr_governance_kb_safety_brake_py["src/zephyr/governance/kb/safety_brake.py [prototype]"]
         src_zephyr_governance_kb_self_test_py["src/zephyr/governance/kb/self_test.py [prototype]"]
         src_zephyr_governance_kb_sentiment_engine___init___py["...nance/kb/sentiment_engine/__init__.py [prototype]"]
-        src_zephyr_governance_kb_sentiment_engine_analyze_py["...rnance/kb/sentiment_engine/analyze.py [prototype]"]
         src_zephyr_governance_kb_storage___init___py["...hyr/governance/kb/storage/__init__.py [prototype]"]
         src_zephyr_governance_kb_storage__backend_protocol_py["...nance/kb/storage/_backend_protocol.py [prototype]"]
         src_zephyr_governance_kb_storage_unified_memory_api_py["...ance/kb/storage/unified_memory_api.py [prototype]"]
@@ -59,18 +55,15 @@ graph TD
     src_zephyr_governance_kb_safety_brake_py -->|config_depends| src_zephyr_governance_kb___init___py
     src_zephyr_governance_kb_verify_py -->|config_depends| src_zephyr_governance_kb___init___py
     src_zephyr_governance_kb__backend_protocol_py -->|config_depends| src_zephyr_governance_kb___init___py
-    src_zephyr_governance_kb_filing_nlp_engine___init___py -->|config_depends| src_zephyr_governance_kb_filing_nlp_engine_extract_py
     src_zephyr_governance_kb_pipeline___init___py -->|config_depends| src_zephyr_governance_kb_pipeline_activate_py
-    src_zephyr_governance_kb_sentiment_engine___init___py -->|config_depends| src_zephyr_governance_kb_sentiment_engine_analyze_py
     src_zephyr_governance_kb_storage__backend_protocol_py -->|config_depends| src_zephyr_governance_kb_storage___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_DOCS -> D_GOVERNANCE (19 条)
+    %% D_GOV_DOCS -> D_GOVERNANCE (15 条)
     src_zephyr_governance_kb_batch_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_bootstrap_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -79,25 +72,18 @@ graph TD
     src_zephyr_governance_kb_self_test_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_pipeline_batch_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_kb_storage_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (10 条)
+    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (6 条)
     src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOV_DOCS -> D_INTEGRATION (2 条)
     src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_kb_kb_gate_task_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
@@ -112,6 +98,6 @@ graph TD
     src_zephyr_governance_kb_storage_unified_memory_api_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 13 条
+    %% 域内依赖: 11 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 39 条
+    %% 跨域出边: 31 条
