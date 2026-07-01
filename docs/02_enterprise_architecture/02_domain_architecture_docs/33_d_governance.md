@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:24:44
+> 最后更新: 2026-07-01 12:29:18
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -839,20 +839,20 @@ graph TD
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_reconciler_py
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
+    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_GOV_ENFORCEMENT
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    src_zephyr_governance_drift_detection_drift_hotfix_bypass_py -.->|import_depends| D_GOV_AUDIT
     D_EX_CORE["D_EX_CORE prototype"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_EX_CORE
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_GOV_AUDIT
     D_AUDITTEST["D_AUDITTEST production"]
     src_zephyr_governance_drift_detection_drift_infrastructure_py -.->|runtime| D_AUDITTEST
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
-    src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_governance_drift_detection_drift_hotfix_bypass_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     D_GOV_DRIFT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
+    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|runtime| src_zephyr_governance_drift_detection_drift_infrastructure_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -861,7 +861,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_drift_detection_backcompat_checker_py,src_zephyr_governance_drift_detection_baseline_poisoning_guard_py,src_zephyr_governance_drift_detection_brain_integration_py,src_zephyr_governance_drift_detection_bridges_init_py,src_zephyr_governance_drift_detection_canary_controller_py,src_zephyr_governance_drift_detection_cascade_detector_py,src_zephyr_governance_drift_detection_cold_start_py,src_zephyr_governance_drift_detection_config_consistency_py,src_zephyr_governance_drift_detection_correlation_engine_py,src_zephyr_governance_drift_detection_credibility_engine_py,src_zephyr_governance_drift_detection_cross_module_score_py,src_zephyr_governance_drift_detection_dashboard_py,src_zephyr_governance_drift_detection_detector_dispatcher_py,src_zephyr_governance_drift_detection_drift_engine_py,src_zephyr_governance_drift_detection_drift_hotfix_bypass_py,src_zephyr_governance_drift_detection_drift_infrastructure_py,src_zephyr_governance_drift_detection_drift_models_py,src_zephyr_governance_drift_detection_drift_result_types_py,src_zephyr_governance_drift_detection_drift_training_py,src_zephyr_governance_drift_detection_file_attr_checker_py,src_zephyr_governance_drift_detection_forensics_engine_py,src_zephyr_governance_drift_detection_gate_persistence_py,src_zephyr_governance_drift_detection_git_bisector_py,src_zephyr_governance_drift_detection_gitignore_auditor_py,src_zephyr_governance_drift_detection_headless_scanner_py,src_zephyr_governance_drift_detection_incremental_scanner_py,src_zephyr_governance_drift_detection_naming_magic_checker_py,src_zephyr_governance_drift_detection_orphan_scanner_py,src_zephyr_governance_drift_detection_python_compat_py,src_zephyr_governance_drift_detection_reconciler_py design
     class D_GOV_AUDIT,D_AUDITTEST external_prod
-    class D_EX_CORE,D_GOV_ENFORCEMENT,D_GOV_DRIFT,D_AUTONOMY_CORE external_design
+    class D_GOV_ENFORCEMENT,D_EX_CORE,D_GOV_DRIFT,D_AUTONOMY_CORE external_design
 ```
 
 ### 第 13 页 / 共 25 页 / Page 13 of 25
