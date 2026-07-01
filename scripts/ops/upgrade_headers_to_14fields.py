@@ -149,7 +149,13 @@ def load_blueprint_registry() -> dict[str, str]:
         mid = bp.get("module_id", "")
         fp = bp.get("file_path", "")
         if mid and fp:
-            full_path = f"docs/03_modules/{fp}"
+            # Bug 3：registry 的 file_path 已含 "03_modules/" 前缀（scope=03_modules/），
+            # 直接拼 docs/03_modules/ 会产生 docs/03_modules/03_modules/... 重复。
+            # 依据 fp 是否已带前缀决定拼接方式，保证只拼一次 "docs/"。
+            if fp.startswith("03_modules/"):
+                full_path = f"docs/{fp}"
+            else:
+                full_path = f"docs/03_modules/{fp}"
             mapping[mid] = full_path
     return mapping
 
