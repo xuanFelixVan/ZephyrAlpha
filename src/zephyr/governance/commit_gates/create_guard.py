@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -436,6 +436,57 @@ def make_create_guard() -> GateSpec:
                 f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
                 f"created_by: \"session-xxx\"  capability: \"xxx\""
             )
+
+        # === ARCH-031 治本（2026-07-01）：14 字段头部完整性检测 ===
+        # 病根：code_dedup/__init__.py 原仅 3 字段（BLUEPRINT/MODULE/DOMAIN），违反 14 字段规范。
+        # 新 AI 创建 .py 文件时可能漏写字段头部，导致 CapabilityLookup 派生失败 + AI 可发现性断裂。
+        # 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 line 23-32 先例）。
+        # 顺序：放在 token 检测之后——token 是更基本的"声明意图"要求，应先检测；
+        #   14 字段是"内容合规"要求，token 通过后再检测（不破坏现有 token 测试的断言优先级）。
+        # 检测：新建 .py 文件头部 30 行内 MUST 含 14 字段标注（# [FIELD] value）。
+        # 豁免：
+        #   1. codegen 文件（含 BEGIN CODEGEN / BEGIN CODGEN 标记）——自动生成，字段由模板注入
+        #   2. __init__.py 最低要求 3 字段（BLUEPRINT/MODULE/DOMAIN）——包标记，CONSUMERS 等可省
+        # 真源：14 字段规范定义在 AGENTS.md + governance/__init__.py docstring，本 gate 是技术强制层。
+        _REQUIRED_14FIELDS = [
+            "BLUEPRINT", "MODULE", "DOMAIN", "DEPENDENCIES", "CONSUMERS",
+            "STARTUP", "MATURITY", "INVARIANTS", "MODIFY-GUARD",
+            "STABILITY", "SAFETY", "AI_AUTONOMY", "ERROR_CONTRACT", "TESTS",
+        ]
+        _INIT_MIN_FIELDS = ["BLUEPRINT", "MODULE", "DOMAIN"]
+
+        for _py_file in new_py_files:
+            _abs_path = gateway.project_root / _py_file
+            if not _abs_path.exists():
+                continue
+            try:
+                _head = "\n".join(
+                    _abs_path.read_text(encoding="utf-8", errors="replace").split("\n")[:30]
+                )
+            except Exception:
+                continue  # 读取失败由其他 gate 检测，此处 fail-open
+
+            # codegen 文件豁免（自动生成，字段由模板注入，手写会被覆盖）
+            if "BEGIN CODEGEN" in _head or "BEGIN CODGEN" in _head:
+                continue
+
+            # __init__.py 只要求 3 字段（包标记，CONSUMERS 等可省）
+            _is_init = _py_file.endswith("__init__.py")
+            _required = _INIT_MIN_FIELDS if _is_init else _REQUIRED_14FIELDS
+
+            _missing = [
+                _field for _field in _required
+                if not _re.search(rf'#\s*\[{_re.escape(_field)}\]', _head)
+            ]
+
+            if _missing:
+                return False, (
+                    f"14字段头部不完整（ARCH-031）: {_py_file} 缺失字段: {_missing}. "
+                    f"修复：在文件头部添加 '# [FIELD] value' 标注（共14字段: "
+                    f"BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/"
+                    f"INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS）。"
+                    + (f" __init__.py 最低要求: {'/'.join(_INIT_MIN_FIELDS)}" if _is_init else "")
+                )
 
         # === ARCH-031 门禁缺口治本（2026-07-01）：磁盘 basename 碰撞检测 ===
         # 病根：check_capability_duplicates 原只在 L3 pre-commit hook（check_ssot_gate.py）
