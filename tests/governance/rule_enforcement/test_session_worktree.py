@@ -123,19 +123,46 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
             p.unlink()
 
 
-@pytest.fixture(autouse=True)
-def _clean_worktree_env():
-    """每个测试前后自动清理 worktree 残留，保证隔离。
+@pytest.fixture(scope="module")
+def _isolated_repo(tmp_path_factory):
+    """创建独立临时 git 仓库，测试完全隔离不污染主工作区。
 
-    保存测试前 HEAD，测试后用 ``--soft`` 回退（不用 ``--hard``，避免误伤
-    worktree_manager.py / validate_commit_gateway.py 等未提交修复）。
+    临时仓库初始化一个空 commit（作为 worktree 创建分支的 base），
+    所有测试在此仓库上创建/删除 worktree、commit、merge，与主仓库零交集。
+    根因：原 fixture 在主仓库跑测试，git merge/reset 污染主工作区导致代码丢失。
     """
+    repo = tmp_path_factory.mktemp("wt_test_repo")
+    subprocess.run(["git", "init"], cwd=repo, capture_output=True)
+    subprocess.run(["git", "config", "user.email", "test@zephyr.local"], cwd=repo, capture_output=True)
+    subprocess.run(["git", "config", "user.name", "Zephyr Test"], cwd=repo, capture_output=True)
+    # 初始 commit（worktree 基于当前 HEAD 创建分支，无 commit 则 HEAD 不存在）
+    (repo / ".gitkeep").write_text("", encoding="utf-8")
+    subprocess.run(["git", "add", ".gitkeep"], cwd=repo, capture_output=True)
+    subprocess.run(["git", "commit", "-m", "init"], cwd=repo, capture_output=True)
+    return repo
+
+
+@pytest.fixture(autouse=True)
+def _clean_worktree_env(_isolated_repo, monkeypatch):
+    """每个测试用临时仓库，monkeypatch REPO_ROOT 指向它，隔离主工作区。
+
+    patch session_worktree 模块 + 测试模块的 REPO_ROOT → 临时仓库；
+    测试前清理残留，测试后清理残留 + soft reset 回退测试 commit。
+    monkeypatch function 级自动还原（不影响其他测试模块）。
+    """
+    monkeypatch.setattr(
+        "zephyr.governance.rule_bridge.session_worktree.REPO_ROOT",
+        _isolated_repo,
+    )
+    # 用模块对象 patch 测试模块的 REPO_ROOT（字符串路径在 pytest 下不可靠）
+    import sys
+    monkeypatch.setattr(sys.modules[__name__], "REPO_ROOT", _isolated_repo)
     orig_head = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, capture_output=True, text=True
+        ["git", "rev-parse", "HEAD"], cwd=_isolated_repo, capture_output=True, text=True
     ).stdout.strip()
-    _cleanup_artifacts(REPO_ROOT)
+    _cleanup_artifacts(_isolated_repo)
     yield
-    _cleanup_artifacts(REPO_ROOT, orig_head=orig_head)
+    _cleanup_artifacts(_isolated_repo, orig_head=orig_head)
 
 
 def test_two_sessions_separate_worktrees():
