@@ -433,11 +433,37 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     Returns:
         ReconcilerSpec(gate_id="GATE-YAML-SYNC", priority=160)。
     """
+    import json
     import os
     import subprocess
     import sys
+    from datetime import UTC, datetime
+    from pathlib import Path
 
     project_root = gateway.project_root
+    # S1.6: 重试队列持久化路径（data/cache/ 已被 .gitignore）
+    _RETRY_QUEUE_PATH = Path(project_root) / "data" / "cache" / "yaml_sync_retry_queue.json"
+
+    def _read_retry_queue() -> dict | None:
+        """读取重试队列。返回 None 表示无待重试项。"""
+        if not _RETRY_QUEUE_PATH.exists():
+            return None
+        try:
+            return json.loads(_RETRY_QUEUE_PATH.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return None
+
+    def _write_retry_queue(data: dict) -> None:
+        """写入重试队列"""
+        _RETRY_QUEUE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _RETRY_QUEUE_PATH.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
+    def _clear_retry_queue() -> None:
+        """清空重试队列"""
+        if _RETRY_QUEUE_PATH.exists():
+            _RETRY_QUEUE_PATH.unlink()
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
@@ -450,6 +476,9 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
             # 注册表文件变更触发
             if rel.startswith("docs/01_policies_and_standards/_registry/"):
                 return True
+        # S1.6: 有待重试项时也触发（任意 commit 都会重试失败的 sync）
+        if _read_retry_queue() is not None:
+            return True
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
@@ -462,14 +491,25 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
             errors="replace",
             timeout=180,
         )
-        if sync_result.returncode != 0:
+        if sync_result.returncode == 0:
+            # S1.6: 成功→清空重试队列
+            _clear_retry_queue()
             return ReconcileResult(
-                action="warn",
-                detail=f"yaml sync failed: {sync_result.stderr.strip()[:200]}",
+                action="clean",
+                detail="YAML→depgraph rules synced",
             )
+        # S1.6: 失败→写入重试队列（单条记录，记录最近一次失败信息 + 累计次数）
+        prev = _read_retry_queue() or {}
+        attempt = prev.get("attempt", 0) + 1
+        _write_retry_queue({
+            "failed_at": datetime.now(UTC).isoformat(),
+            "attempt": attempt,
+            "error": sync_result.stderr.strip()[:500] or sync_result.stdout.strip()[:500],
+            "triggered_by": session_id,
+        })
         return ReconcileResult(
-            action="clean",
-            detail="YAML→depgraph rules synced",
+            action="warn",
+            detail=f"yaml sync failed (attempt {attempt}, will retry on next commit): {sync_result.stderr.strip()[:200]}",
         )
 
     return ReconcilerSpec(

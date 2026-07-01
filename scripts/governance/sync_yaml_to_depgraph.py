@@ -23,7 +23,7 @@
 [STABILITY] stable
 [SAFETY] H
 [AI_AUTONOMY] human_gated
-[ERROR_CONTRACT] 同步失败→回滚+恢复触发器→exit 1; 成功→exit 0
+[ERROR_CONTRACT] 同步失败→回滚+恢复触发器→exit 1; 触发器恢复失败→FATAL raise（DB无保护）; 成功→exit 0
 [TESTS] 无
 
 P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
@@ -207,9 +207,21 @@ def disable_readonly_triggers(cur):
 
 
 def restore_readonly_triggers(cur):
-    """恢复只读触发器（无论成功失败必须恢复）"""
+    """恢复只读触发器（无论同步成功/失败都必须恢复，否则DB无保护）
+
+    S1.5 硬告警：best-effort 恢复所有表，收集失败项，任一失败则 raise。
+    原实现遇首个失败即中断，剩余表保持触发器禁用=无保护。改为逐表尝试。
+    """
+    failed = []
     for table in READONLY_TABLES:
-        cur.execute(f"ALTER TABLE {table} ENABLE TRIGGER USER")
+        try:
+            cur.execute(f"ALTER TABLE {table} ENABLE TRIGGER USER")
+        except Exception as e:
+            failed.append(f"{table}: {e}")
+    if failed:
+        raise RuntimeError(
+            f"触发器恢复失败 ({len(failed)}/{len(READONLY_TABLES)} 表): " + "; ".join(failed)
+        )
     print(f"  [PG] 已恢复 {len(READONLY_TABLES)} 张只读表的用户触发器")
 
 
@@ -1249,12 +1261,15 @@ def sync_all() -> bool:
         raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
 
     finally:
-        # 恢复只读触发器（PG 模式下为 no-op）
+        # 恢复只读触发器（无论同步成功/失败都必须恢复，否则DB无保护）
         try:
             restore_readonly_triggers(cur)
             conn.commit()
         except Exception as e:
-            print(f"[WARNING] 触发器恢复失败: {e}")
+            # S1.5 硬告警：触发器恢复失败=DB处于无保护状态，必须阻断（原仅WARNING=静默放行）
+            print(f"[FATAL] 触发器恢复失败，DB 只读保护已失效: {e}")
+            print("[FATAL] readonly 表此刻可被直接写入——请手动 ALTER TABLE <table> ENABLE TRIGGER USER 恢复")
+            raise RuntimeError(f"触发器恢复失败，DB 无保护: {e}") from e
         finally:
             conn.close()
             print("=== YAML→DB 同步完成 ===")
