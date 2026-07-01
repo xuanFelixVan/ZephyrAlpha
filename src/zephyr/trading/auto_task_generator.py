@@ -251,3 +251,74 @@ class AutoTaskGenerator:
         except OSError:
             raw = fp.as_posix()
         return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+
+# ============================================================================
+# P3 生成器自动触发接入——boot_hooks 任务状态事件轨
+# ============================================================================
+
+# 模块级调度器引用——由 AutoRuntimeCore/PipelineOrchestrator 启动时通过 set_scheduler() 注入。
+# 设计理由：LocalModelScheduler 无 singleton，实例由上层组件持有；
+# 模块级引用避免 singleton 模式，同时让事件回调可获取调度器实例。
+_scheduler_ref: Any = None
+_subscribed = False
+
+
+def set_scheduler(scheduler: Any) -> None:
+    """注入 LocalModelScheduler 实例（由 AutoRuntimeCore/PipelineOrchestrator 启动时调用）。
+
+    AutoTaskGenerator.generate_and_submit 需要 scheduler.enqueue(task_id, capability, payload)
+    接口。LocalModelScheduler 实例由上层组件创建并持有，本函数让事件回调可获取该实例。
+
+    Args:
+        scheduler: LocalModelScheduler 实例（需有 enqueue 方法）。
+    """
+    global _scheduler_ref
+    _scheduler_ref = scheduler
+    _log.info("AutoTaskGenerator: scheduler injected (%s)", type(scheduler).__name__)
+
+
+def subscribe_eventbus() -> None:
+    """订阅 task_completed 事件——任务完成后自动生成新任务填满队列。
+
+    boot_hooks 的 _subscribe_eventbus_consumers() 统一调用本函数。
+    幂等：重复调用不会重复订阅（_subscribed 标志位）。
+
+    事件轨选择（P3 生成器触发接入）：
+    - 接入 boot_hooks 任务状态事件轨（EventBusBackpressure topic-based）
+    - 触发条件：task_completed 事件到达（任务 COMPLETED 队列空闲时）
+    - 回调行为：若有 scheduler 实例，调用 generate_and_submit 生成新任务；
+      若无 scheduler（系统未启动），仅日志记录（与 autopilot 模式一致）
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("task_completed", _on_task_completed)
+        _subscribed = True
+        _log.info("AutoTaskGenerator: subscribed to task_completed event")
+    except Exception as e:
+        _log.warning("AutoTaskGenerator: subscribe_eventbus failed: %s", e)
+
+
+def _on_task_completed(payload: object) -> None:
+    """task_completed 事件回调——任务完成后自动生成新任务。
+
+    payload 期望字段: {timestamp, source_function, severity, detail}
+    若 scheduler 未注入（系统未启动），仅日志记录（与 autopilot 模式一致）。
+    """
+    try:
+        if _scheduler_ref is None:
+            _log.debug("AutoTaskGenerator: no scheduler injected, skip task generation")
+            return
+
+        from zephyr.shared.io.paths import REPO_ROOT
+        generator = AutoTaskGenerator(project_root=REPO_ROOT)
+        submitted = generator.generate_and_submit(_scheduler_ref)
+        if submitted > 0:
+            _log.info("AutoTaskGenerator: submitted %d tasks after task_completed", submitted)
+    except Exception as exc:
+        _log.debug("AutoTaskGenerator: _on_task_completed failed: %s", exc)
