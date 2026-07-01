@@ -636,7 +636,7 @@ blueprints:
   generation: 4
   last_updated: '2026-07-01'
   file_path: 03_modules/_domain_data/datasource_core/blueprint.md
-  construction_progress: not_started
+  construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: alpha_factor_core
   title: Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
