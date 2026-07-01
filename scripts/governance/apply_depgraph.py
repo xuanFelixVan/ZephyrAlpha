@@ -131,7 +131,7 @@ def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
 
     db_path 参数保留向后兼容（治本2026-06-27：默认 None，PG 模式下忽略）。
     """
-    conn = get_depgraph_pg_connection(autocommit=False)
+    conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
     # P2 PG: row_factory 由 wrapper 处理（RealDictCursor）
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
@@ -183,7 +183,7 @@ def _atomic_write(dep: dict, conn=None) -> None:
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="_atomic_write"):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             for node_id, node_data in dep.get("nodes", {}).items():
                 clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
@@ -461,7 +461,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
         )
         sys.exit(3)
     with _db_write_lock(task="cmd_batch"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         domain_op_count = 0
         try:
             for i, change in enumerate(changes):
@@ -519,7 +519,7 @@ def add_design_node(
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_design_node"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验domain_id存在
             domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
@@ -590,7 +590,7 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = N
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_file_node"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if not domain:
@@ -661,7 +661,7 @@ def add_design_edge(
     写入字段：dep_maturity='design'
     """
     with _db_write_lock(db_path=db_path, task="add_design_edge"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验from_node_id和to_node_id存在且为设计态
             from_node = conn.execute(
@@ -800,7 +800,7 @@ def add_edge(
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_edge"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验节点存在性（不校验 design_maturity）
             from_node = conn.execute(
@@ -887,7 +887,7 @@ def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
     }
 
     with _db_write_lock(db_path=db_path, task="transition_build_status"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute("SELECT build_status FROM nodes WHERE node_id=%s", (node_id,)).fetchone()
             if not row:
@@ -919,7 +919,7 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
     3. 拒绝硬删除（DELETE FROM nodes）
     """
     with _db_write_lock(db_path=db_path, task="remove_design_node"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # STEP 1: 登记检查 - 节点是否存在
             row = conn.execute(
@@ -980,7 +980,7 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
     5. 软删除（build_status='deprecated'）
     """
     with _db_write_lock(db_path=db_path, task="deprecate_node"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT node_id, path, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s",
@@ -1048,7 +1048,7 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) 
         print("ERROR: blueprint_id 不能为空", file=sys.stderr)
         return False
     with _db_write_lock(db_path=db_path, task="mark_blueprint_invalid"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             rows = conn.execute(
                 "SELECT node_id, path FROM nodes WHERE blueprint_id=%s", (blueprint_id,)
@@ -1084,7 +1084,7 @@ def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
     - dep_maturity 必须为 'design'（禁止删除运营态边）
     """
     with _db_write_lock(db_path=db_path, task="delete_design_edge"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT edge_id, from_node_id, to_node_id, dep_maturity FROM edges WHERE edge_id=%s", (edge_id,)
@@ -1121,7 +1121,7 @@ def delete_edge(edge_id: int, db_path: str = None) -> bool:
     用途：add_edge 的对偶命令，支持单条回滚（production 边无法用 --delete-design-edge 删除）
     """
     with _db_write_lock(db_path=db_path, task="delete_edge"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=%s",
@@ -1153,7 +1153,7 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
     用途：F35 蓝图悬空处理（清理已删除蓝图的悬空引用）
     """
     with _db_write_lock(db_path=db_path, task="delete_blueprint_link"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT blueprint_id FROM blueprint_links WHERE blueprint_id=%s", (blueprint_id,)
@@ -1183,7 +1183,7 @@ def delete_constraint(constraint_id: str, db_path: str = None) -> bool:
     注意：检测违规（constraint_id IS NULL）不由此命令删除，由 check_all() 重建。
     """
     with _db_write_lock(db_path=db_path, task="delete_constraint"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT constraint_id, name, constraint_type FROM arch_constraints WHERE constraint_id=%s",
@@ -1217,7 +1217,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
     """
     project_root = REPO_ROOT
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
@@ -1271,7 +1271,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
     返回：删除的边数，-1=失败
     """
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_edges"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
@@ -1342,7 +1342,7 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bo
         return False
 
     with _db_write_lock(db_path=db_path, task="update_edge_type"):
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
                 "SELECT edge_id, from_node_id, to_node_id, dep_type FROM edges WHERE edge_id=%s",
@@ -1387,7 +1387,7 @@ def _validate_domain_naming(
     warnings: list[str] = []
 
     try:
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         cur = conn.execute(
             "SELECT rule_id, severity FROM domain_naming_rules "
             "WHERE applies_to IN ('create', 'both')"
@@ -1467,7 +1467,7 @@ def cmd_insert_domain(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_insert_domain", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if existing:
@@ -1519,7 +1519,7 @@ def cmd_update_domain_id(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_id", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
             if not domain:
@@ -1751,7 +1751,7 @@ def cmd_rename_domain(
 
     if dry_run:
         # dry_run 只读预览，不加写锁不备份
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         if own_conn:
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1762,7 +1762,7 @@ def cmd_rename_domain(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task=f"rename_domain_{old_id}", db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             if own_conn:
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1800,7 +1800,7 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
             file=sys.stderr,
         )
         return
-    conn = get_depgraph_pg_connection(autocommit=False)
+    conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
     try:
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1860,7 +1860,7 @@ def cmd_fix_rename_residual(
         return total
 
     if dry_run:
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         if own_conn:
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1871,7 +1871,7 @@ def cmd_fix_rename_residual(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="fix_rename_residual", db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             if own_conn:
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1982,7 +1982,7 @@ def _with_bp_rename_tx(
     返回 run_fn 的返回值，失败返回 -1。
     """
     if dry_run:
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         if own_conn:
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -1993,7 +1993,7 @@ def _with_bp_rename_tx(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task=task, db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             if own_conn:
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -2211,7 +2211,7 @@ def cmd_rename_blueprint_id(
         return total
 
     if dry_run:
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         if own_conn:
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -2222,7 +2222,7 @@ def cmd_rename_blueprint_id(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="rename_blueprint_id", db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             if own_conn:
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -2331,7 +2331,7 @@ def cmd_propagate_node_paths(
         return total
 
     if dry_run:
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         if own_conn:
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -2342,7 +2342,7 @@ def cmd_propagate_node_paths(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="propagate_node_paths", db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             if own_conn:
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
                 pass  # P2 PG: PRAGMA 已删除（PG 不需要）
@@ -2400,7 +2400,7 @@ def cmd_update_domain_name(
         return cur.rowcount
 
     if dry_run:
-        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
         try:
             return _run(c)
         finally:
@@ -2408,7 +2408,7 @@ def cmd_update_domain_name(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="update_domain_name", db_path=db_path):
-            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
             try:
                 return _run(c)
             except Exception as e:
@@ -2435,7 +2435,7 @@ def cmd_migrate_nodes(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_migrate_nodes", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
             if not domain:
@@ -2483,7 +2483,7 @@ def cmd_update_path(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_path", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             rows = conn.execute(
                 "SELECT node_id, path FROM nodes WHERE belongs_to=%s OR blueprint_id=%s", (module_id, module_id)
@@ -2539,7 +2539,7 @@ def cmd_migrate_dependencies(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_migrate_dependencies", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             rows = conn.execute(
                 "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s",
@@ -2635,7 +2635,7 @@ def cmd_update_domain_capacity(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_capacity", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             existing = conn.execute(
                 "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=%s",
@@ -2687,7 +2687,7 @@ def cmd_update_domain_layer(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_layer", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             existing = conn.execute(
                 "SELECT domain_id, layer_id FROM domains WHERE domain_id=%s", (domain_id,)
@@ -2735,7 +2735,7 @@ def cmd_update_domain_ssot_path(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_ssot_path", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             existing = conn.execute(
                 "SELECT domain_id, ssot_path FROM domains WHERE domain_id=%s", (domain_id,)
@@ -2794,7 +2794,7 @@ def cmd_insert_domain_mapping(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_insert_domain_mapping", db_path=db_path):
         if own_conn:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             # 校验 domain_id 存在
             domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()

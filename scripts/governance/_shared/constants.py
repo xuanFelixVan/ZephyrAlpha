@@ -101,7 +101,7 @@ class PgConnExecuteWrapper:
         pass
 
 
-def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
+def get_depgraph_pg_connection(autocommit: bool = True, allow_edge_delete: bool = False) -> PgConnExecuteWrapper:
     """获取 depgraph (PostgreSQL) 连接（包装为兼容 sqlite3 接口）。
 
     P2迁移后：所有治理脚本通过此入口获取 PG 连接，避免散点连接绕过统一配置。
@@ -109,13 +109,21 @@ def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
     与原 sqlite3.Connection.execute() 接口兼容。
 
     :param autocommit: True 启用自动提交（默认，适合只读/简单写）；False 需显式 conn.commit()
+    :param allow_edge_delete: S1.3 — True 时设置 session variable 允许删除 apply_depgraph design edges
+                              (valid_since IS NULL)。仅 apply_depgraph.py 应传 True。
     :return: PgConnExecuteWrapper 包装的 psycopg2 连接
     """
     # 调用 F1 真源（depgraph_schema.get_depgraph_pg_connection），非本模块 wrapper。
     # 用 import 别名消除同名遮蔽，否则会无限递归（wrapper 调用自己）。
-    return PgConnExecuteWrapper(
+    conn = PgConnExecuteWrapper(
         _get_depgraph_pg_connection_from_depgraph_schema(autocommit=autocommit)
     )
+    if allow_edge_delete:
+        # S1.3: edges 表三写分区保护 — apply_depgraph.py 需删除 design edges (valid_since IS NULL)
+        # 其他脚本（sync_yaml_to_depgraph / generate_project_depgraph）不设此变量，
+        # 触发器 trg_edges_protect_apply_depgraph 会阻断对 apply_depgraph edges 的 DELETE。
+        conn.execute("SET app.allow_delete_apply_depgraph_edges = on")
+    return conn
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {
