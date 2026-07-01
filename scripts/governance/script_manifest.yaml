@@ -1,48 +1,36 @@
-# 自动生成于 2026-07-01T21:36:31Z
+# 自动生成于 2026-07-01T21:56:08Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-01T21:36:31Z'
+generated_at: '2026-07-01T21:56:08Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 319
 with_manifest: 318
 missing_manifest: 1
 categories:
-  governance: 14
   governance:_sync: 4
   governance:_tasks: 3
+  governance: 7
   governance:d10_performance: 1
-  governance:d11_compliance: 21
+  governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 3
-  governance:d3_metadata: 21
+  governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 94
+  governance:d5_architecture: 95
   governance:d6_security: 14
   governance:d7_code: 31
-  governance:d8_doc_sync: 7
+  governance:d8_doc_sync: 9
   governance:d9_knowledge: 2
   governance:generators: 8
-  governance:meta: 45
+  governance:meta: 47
   governance:migrate_sqlite_to_pg: 1
   governance:observability: 1
   governance:repair: 7
   governance:vms: 9
 scripts:
-- name: _concurrency.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'ZCL 并发基础设施（L0/L1/L2 锁+四池隔离 Bulkhead+分级超时+令牌桶+准入控制+分片路由+熔断器）。 被 run_all.py
-    导入，非独立运行脚本。
-
-    '
-  tags: []
 - name: _sync/check_p0_status.py
   owner: governance:_sync
   dimensions: []
@@ -125,18 +113,6 @@ scripts:
   warn_only: false
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
-  - Quick
-- name: audit_rename_completeness.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
-  tags:
-  - Periodic
   - Quick
 - name: d10_performance/collect_system_threads.py
   owner: governance:d10_performance
@@ -423,6 +399,28 @@ scripts:
   description: governance/verify_key_imports 脚本 — 关键模块导入验证
   tags:
   - Quick
+- name: d11_compliance/verify_schema_health.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --ci
+    type: bool
+    description: 硬阻断模式（漂移 exit 1，默认行为）
+  - flag: --warn-only
+    type: bool
+    description: 软警告模式（漂移仍 exit 0，观察期用）
+  - flag: --skip-runtime
+    type: bool
+    description: 跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验
+  warn_only: false
+  description: 'depgraph (PostgreSQL) Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG
+    运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py
+    方案'
+  tags:
+  - Critical
 - name: d12_ai_hallucination/check_logger_kwargs.py
   owner: governance:d12_ai_hallucination
   dimensions:
@@ -1083,6 +1081,17 @@ scripts:
     '
   tags:
   - Quick
+- name: d3_metadata/validate_module_id_naming.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
+  tags:
+  - Quick
 - name: d3_metadata/validate_registry_master_index.py
   owner: governance:d3_metadata
   dimensions:
@@ -1482,6 +1491,17 @@ scripts:
   description: 'GATE-VMS-SSOT: VMS 单一真源门禁——三重检测。'
   tags:
   - Critical
+- name: d5_architecture/dependency_graph.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图.
+  tags:
+  - Quick
 - name: d5_architecture/detect_causal_conflicts.py
   owner: governance:d5_architecture
   dimensions:
@@ -2920,6 +2940,18 @@ scripts:
   description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
   tags:
   - Critical
+- name: d8_doc_sync/audit_rename_completeness.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
+  tags:
+  - Periodic
+  - Quick
 - name: d8_doc_sync/auto_sync_all_registries.py
   owner: governance:d8_doc_sync
   dimensions:
@@ -2966,6 +2998,17 @@ scripts:
     _index.yaml 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 = DRIFT（缺失/孤儿登记）。
 
     '
+  tags:
+  - Quick
+- name: d8_doc_sync/sync_yaml_to_depgraph.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
   tags:
   - Quick
 - name: d8_doc_sync/update_progress.py
@@ -3025,17 +3068,6 @@ scripts:
   tags:
   - AI-Generated
   - Periodic
-- name: dependency_graph.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图.
-  tags:
-  - Quick
 - name: extract_depgraph.py
   owner: governance
   dimensions:
@@ -3217,17 +3249,18 @@ scripts:
   tags:
   - Critical
   - Quick
-- name: governance_watchdog.py
-  owner: governance
-  dimensions:
-  - D1
+- name: meta/_concurrency.py
+  owner: governance:meta
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ 请补充 description
-  tags:
-  - Quick
+  description: 'ZCL 并发基础设施（L0/L1/L2 锁+四池隔离 Bulkhead+分级超时+令牌桶+准入控制+分片路由+熔断器）。 被 run_all.py
+    导入，非独立运行脚本。
+
+    '
+  tags: []
 - name: meta/arbitrate_findings.py
   owner: governance:meta
   dimensions:
@@ -3378,6 +3411,17 @@ scripts:
     '
   tags:
   - Critical
+  - Quick
+- name: meta/governance_watchdog.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ 请补充 description
+  tags:
   - Quick
 - name: meta/manage_baseline.py
   owner: governance:meta
@@ -3949,50 +3993,6 @@ scripts:
   description: status.py — 审计系统状态仪表盘
   tags:
   - Quick
-- name: sync_yaml_to_depgraph.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
-  tags:
-  - Quick
-- name: validate_module_id_naming.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
-  tags:
-  - Quick
-- name: verify_schema_health.py
-  owner: governance
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 30
-  args:
-  - flag: --ci
-    type: bool
-    description: 硬阻断模式（漂移 exit 1，默认行为）
-  - flag: --warn-only
-    type: bool
-    description: 软警告模式（漂移仍 exit 0，观察期用）
-  - flag: --skip-runtime
-    type: bool
-    description: 跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验
-  warn_only: false
-  description: 'depgraph (PostgreSQL) Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG
-    运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py
-    方案'
-  tags:
-  - Critical
 - name: vms/vms_blindspot_check.py
   owner: governance:vms
   dimensions:

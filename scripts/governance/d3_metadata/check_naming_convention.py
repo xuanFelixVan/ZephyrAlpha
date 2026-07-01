@@ -71,7 +71,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 # 三轨正则真源归位：从 validate_module_id_naming.py 复用（消除正则重复定义）
-from validate_module_id_naming import (
+from d3_metadata.validate_module_id_naming import (
     MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
     MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
     MODULE_ID_D_PREFIX_RE as _MODULE_ID_D_PREFIX_RE,

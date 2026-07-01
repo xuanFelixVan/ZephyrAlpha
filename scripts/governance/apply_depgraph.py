@@ -97,9 +97,9 @@ from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # 引入 module_id 三轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
 # 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
-from validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
-from validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
-from validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
+from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
+from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
+from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
 
 # P2 PG 迁移治本（2026-06-27）：_db_write_lock 简化为纯 no-op 上下文管理器。
 # PG 用 MVCC 事务 rollback 提供原子性，无需文件锁/备份门禁。
@@ -1792,11 +1792,11 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
       - import 失败 graceful 降级到提示手工跑
     """
     try:
-        from audit_rename_completeness import scan_residual
+        from d8_doc_sync.audit_rename_completeness import scan_residual
     except ImportError as e:
         print(
             f"[POST-RENAME-CHECK] SKIP: audit_rename_completeness 不可导入 ({e})\n"
-            f"  手工复核: python scripts/governance/audit_rename_completeness.py --old-id {old_id} --rounds 2",
+            f"  手工复核: python scripts/governance/d8_doc_sync/audit_rename_completeness.py --old-id {old_id} --rounds 2",
             file=sys.stderr,
         )
         return
@@ -1820,7 +1820,7 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
                     file=sys.stderr,
                 )
             print(
-                f"  复核命令: python scripts/governance/audit_rename_completeness.py --old-id {old_id} --rounds 2",
+                f"  复核命令: python scripts/governance/d8_doc_sync/audit_rename_completeness.py --old-id {old_id} --rounds 2",
                 file=sys.stderr,
             )
     finally:

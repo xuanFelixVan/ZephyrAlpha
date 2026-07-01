@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_dependency_graph_acyclic():
-    from scripts.governance.dependency_graph import build_dependency_graph, has_cycle
+    from scripts.governance.d5_architecture.dependency_graph import build_dependency_graph, has_cycle
 
     graph = build_dependency_graph()
     cyclic, path = has_cycle(graph)
