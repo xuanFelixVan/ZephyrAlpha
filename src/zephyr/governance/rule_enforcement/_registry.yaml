@@ -255,7 +255,7 @@ gates:
   status: active
   scope: global
   execution_plane: warm
-  note: MOD-INF-032 资源优化引擎门禁——memory_percent > 90% 时阻断非必要操作，提示"系统资源不足"。实现于 ResourceOptimizationEngine.get_pressure_state()。
+  note: MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎门禁——memory_percent > 90% 时阻断非必要操作，提示"系统资源不足"。实现于 ResourceOptimizationEngine.get_pressure_state()。
 - gate_id: G_RES_002
   gate_name: resource_process_check
   title: G-RES-002 Resource Process Count Check Gate
@@ -264,7 +264,7 @@ gates:
   status: active
   scope: global
   execution_plane: warm
-  note: MOD-INF-032 资源优化引擎门禁——process_count > 100 时阻断新进程创建。实现于 ResourceOptimizationEngine.snapshot()。
+  note: MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎门禁——process_count > 100 时阻断新进程创建。实现于 ResourceOptimizationEngine.snapshot()。
 - gate_id: G_RES_003
   gate_name: resource_optimization_verify
   title: G-RES-003 Resource Optimization Verification Gate
@@ -273,7 +273,7 @@ gates:
   status: active
   scope: global
   execution_plane: warm
-  note: MOD-INF-032 资源优化引擎门禁——优化后 memory 未降低时告警 + 升级到 EMERGENCY。实现于 ResourceOptimizationEngine.optimize()
+  note: MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎门禁——优化后 memory 未降低时告警 + 升级到 EMERGENCY。实现于 ResourceOptimizationEngine.optimize()
     后置检查。
 - gate_id: G0
   gate_name: task_entry

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1041 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §J
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §J
 
 # [MODULE] tests.test_gate_health
 

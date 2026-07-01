@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-POST_DOC_REVIEW | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
 # [MODULE] tests.test_post_doc_review
 # [INVARIANTS] 无
 # [MODIFY-GUARD] post_doc_review_check.py

@@ -9,9 +9,9 @@ partition:
 
 modules:
   - id: ce-core
-    module_id: MOD-INF-008
+    module_id: MOD-CONTEXT_ENGINE
     name: Context Engine Core
-    submodule_path: src/zephyr/context_engine/
+    submodule_path: src/zephyr/autonomy_core/context/
     status: implemented
     priority: P0
     runtime_plane: warm

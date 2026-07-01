@@ -27,7 +27,7 @@ class ConcreteClass(NamedTuple):
 
 
 PHASE_C_CLASSES: list[ConcreteClass] = [
-    ConcreteClass("zephyr.data.akshare_provider", "AkshareProvider", "L00"),
+    ConcreteClass("zephyr.data.implementations.akshare_provider", "AkshareProvider", "L00"),
     ConcreteClass("zephyr.governance.rule_enforcement.default_quality_gate", "DefaultQualityGate", "L00"),
     ConcreteClass(
         "zephyr.signal_fundamental.gen.implementations.default_signal_aggregator", "DefaultSignalAggregator", "L03"
@@ -44,13 +44,13 @@ PHASE_C_CLASSES: list[ConcreteClass] = [
     ),
     ConcreteClass("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy", "L05"),
     ConcreteClass("zephyr.ex_core.adapters.simulation_broker", "SimulationBroker", "L06"),
-    ConcreteClass("zephyr.execution.core.order_manager", "OrderManager", "L06"),
+    ConcreteClass("zephyr.ex_core.order_manager", "OrderManager", "L06"),
     ConcreteClass("zephyr.ex_core.execution_engine", "ExecutionEngine", "L06"),
     ConcreteClass("zephyr.reporting.default_tca_engine", "DefaultTCAEngine", "L07"),
     ConcreteClass("zephyr.reporting.default_attribution_engine", "DefaultAttributionEngine", "L07"),
     ConcreteClass("zephyr.research.default_backtest_engine", "DefaultBacktestEngine", "L09"),
     ConcreteClass("zephyr.governance.implementations.default_security_gateway", "DefaultSecurityGateway", "L10"),
-    ConcreteClass("zephyr.ml_serve.default_inference_engine", "DefaultInferenceEngine", "L11"),
+    ConcreteClass("zephyr.intelligence.model_evaluation.implementations.default_inference_engine", "DefaultInferenceEngine", "L11"),
     ConcreteClass("zephyr.simulation.implementations.default_experiment_pipeline", "DefaultExperimentPipeline", "L13"),
 ]
 

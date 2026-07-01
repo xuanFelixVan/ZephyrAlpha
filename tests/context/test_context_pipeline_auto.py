@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-F11AUTO | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
 # [MODULE] tests.unit.test_context_pipeline_auto
 # [STABILITY] evolving
 # [SAFETY] L

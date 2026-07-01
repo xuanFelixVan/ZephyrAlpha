@@ -1,7 +1,7 @@
-# MOD-INF-010 SSoT (Single Source of Truth) ?Architecture Model
+# MOD-FEEDBACK_LOOP SSoT (Single Source of Truth) ?Architecture Model
 # 同步? docs/03_modules/_cross_layer/feedback_loop/blueprint.md §1.1
 
-module_id: MOD-INF-010
+module_id: MOD-FEEDBACK_LOOP
 name: feedback_loop
 human_name: Feedback Loop Engine
 version: 0.41.0

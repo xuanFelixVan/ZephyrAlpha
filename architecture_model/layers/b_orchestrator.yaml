@@ -9,7 +9,7 @@ partition:
 
 modules:
   - id: orc-core
-    module_id: MOD-INF-006
+    module_id: MOD-INF-039
     name: Agent Orchestrator Core
     submodule_path: src/zephyr/orchestrator/
     status: implemented

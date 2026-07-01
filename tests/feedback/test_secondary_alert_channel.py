@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1538 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_secondary_alert_channel
 # [INVARIANTS] active_channel set from channels[0] on init; failover increments failover_count
 # [MODIFY-GUARD] none

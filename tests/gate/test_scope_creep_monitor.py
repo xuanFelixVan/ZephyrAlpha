@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1536 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_scope_creep_monitor
 # [INVARIANTS] Scope audit must be deterministic for same inputs
 # [MODIFY-GUARD] none

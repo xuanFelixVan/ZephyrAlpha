@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1591 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] tests.test_ide_health_daemon
 # [CONSUMERS] zephyr.trading.ide_health_daemon
 # [STABILITY] volatile

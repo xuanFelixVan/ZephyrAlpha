@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0543 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_cold_start_booster
 # [INVARIANTS] cold_start_when_below_min;auto_seed_strategy;manual_tune_when_sufficient
 # [MODIFY-GUARD] source-change-only
