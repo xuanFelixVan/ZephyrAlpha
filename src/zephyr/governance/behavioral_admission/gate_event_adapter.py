@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §event-sourcing
 # [MODULE] zephyr.governance.behavioral_admission.gate_event_adapter
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.audit_trail.event_store; zephyr.governance.persistence.sqlite_schema

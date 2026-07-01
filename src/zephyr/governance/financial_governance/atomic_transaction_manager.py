@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.governance.financial_governance.atomic_transaction_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

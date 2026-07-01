@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md | §task-system
 # [MODULE] zephyr.governance.persistence.task_repo
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.persistence.sqlite_schema; zephyr.governance.audit_trail.event_store; zephyr.governance.observability_governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.shared.utils.time_utils; zephyr.governance.ops_governance.event_hook

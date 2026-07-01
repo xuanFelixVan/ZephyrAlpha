@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md
 # [MODULE] zephyr.governance.observability_governance.query_metrics
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema

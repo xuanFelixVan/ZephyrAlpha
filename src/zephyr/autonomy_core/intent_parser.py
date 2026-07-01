@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
 # [MODULE] zephyr.autonomy_core.intent_parser
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared.schema.schemas

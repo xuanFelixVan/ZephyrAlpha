@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.persistence.base_repo
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types

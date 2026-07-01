@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md
 # [MODULE] zephyr.autonomy_core.adversarial_robustness
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

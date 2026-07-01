@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.prompt_registry
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
 # [MODULE] zephyr.governance.gate_repo
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
