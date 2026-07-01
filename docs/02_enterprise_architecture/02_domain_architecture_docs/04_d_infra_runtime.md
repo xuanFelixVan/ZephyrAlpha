@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 06:16:55
+> 最后更新: 2026-07-02 06:22:07
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -488,8 +488,6 @@ graph TD
     D_TRADING -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_TRADING -->|import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
     D_TRADING -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
-    D_TRADING -.->|import_depends| src_zephyr_infrastructure_script_system_gate_bridge_py
-    D_TRADING -.->|import_depends| src_zephyr_infrastructure_script_system_kb_bridge_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

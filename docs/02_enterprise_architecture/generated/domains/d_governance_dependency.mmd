@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-02 06:16:57
+%% 生成时间: 2026-07-02 06:22:08
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 889, 依赖边数: 1612
+%% 模块数: 889, 依赖边数: 1609
 
 graph TD
 
@@ -415,7 +415,7 @@ graph TD
     D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     %% D_SHARED -> D_GOVERNANCE (1 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
-    %% D_TRADING -> D_GOVERNANCE (27 条)
+    %% D_TRADING -> D_GOVERNANCE (24 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_intellig____governance_model_router_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_ops_governance_coldstart_manager_py
@@ -436,10 +436,7 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_compliance_rule_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_compliance_rule_py
@@ -660,5 +657,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 633 条
-    %% 跨域入边: 678 条
+    %% 跨域入边: 675 条
     %% 跨域出边: 301 条

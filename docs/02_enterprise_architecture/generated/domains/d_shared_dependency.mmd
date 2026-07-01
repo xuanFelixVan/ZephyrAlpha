@@ -1,7 +1,7 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-02 06:16:57
+%% 生成时间: 2026-07-02 06:22:09
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 172, 依赖边数: 647
+%% 模块数: 172, 依赖边数: 636
 
 graph TD
 
@@ -458,7 +458,7 @@ graph TD
     D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     %% D_SIMULATION -> D_SHARED (1 条)
     D_SIMULATION[D_SIMULATION] -->|import_depends| src_zephyr_shared_contracts_experiment_result_py
-    %% D_TRADING -> D_SHARED (54 条)
+    %% D_TRADING -> D_SHARED (43 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_io_paths_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_io_paths_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_core_system_configuration_py
@@ -482,11 +482,11 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_security___init___py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_infra_observer_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_db_utils_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_utils_time_utils_py
 
@@ -509,5 +509,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 141 条
-    %% 跨域入边: 497 条
+    %% 跨域入边: 486 条
     %% 跨域出边: 9 条

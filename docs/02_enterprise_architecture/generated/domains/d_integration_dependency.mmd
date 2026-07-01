@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-02 06:16:57
+%% 生成时间: 2026-07-02 06:22:09
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 88, 依赖边数: 315
+%% 模块数: 88, 依赖边数: 311
 
 graph TD
 
@@ -271,7 +271,7 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
     %% D_SHARED -> D_INTEGRATION (1 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    %% D_TRADING -> D_INTEGRATION (27 条)
+    %% D_TRADING -> D_INTEGRATION (23 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_vector_memory_ollama_chat_py
@@ -290,12 +290,8 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_execution_model_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -361,5 +357,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 96 条
-    %% 跨域入边: 166 条
+    %% 跨域入边: 162 条
     %% 跨域出边: 53 条

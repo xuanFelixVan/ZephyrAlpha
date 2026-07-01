@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-02 06:16:57
+%% 生成时间: 2026-07-02 06:22:09
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 138, 依赖边数: 356
+%% 模块数: 138, 依赖边数: 354
 
 graph TD
 
@@ -264,7 +264,7 @@ graph TD
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    %% D_TRADING -> D_INFRA_RUNTIME (9 条)
+    %% D_TRADING -> D_INFRA_RUNTIME (7 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
@@ -272,8 +272,6 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_engine_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_infrastructure_auto_fix_engine___init___py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_infrastructure_script_system_gate_bridge_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_infrastructure_script_system_kb_bridge_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_INFRA_RUNTIME -> D_GOVERNANCE (19 条)
@@ -344,5 +342,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 144 条
-    %% 跨域入边: 128 条
+    %% 跨域入边: 126 条
     %% 跨域出边: 84 条
