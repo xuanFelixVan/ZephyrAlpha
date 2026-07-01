@@ -333,6 +333,58 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 - **GitCommitGateway ARCH-REFERENCE 门禁（#ARCH-NNN 悬空引用阻断，2026-07-01 治本）**：[`make_arch_reference_gate`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/arch_reference_gate.py)（priority=75，在 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前执行）检测 staged 文件中新增的 `#ARCH-NNN` 引用是否在 [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 中登记。**病根（编号铁律#6 代码强制）**：编号铁律#6"任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位"原为文档约束（靠 AI 自觉查 registry），AI 不查就占位导致编号冲突（如 ARCH-027 误用冲突改 ARCH-028）。本 gate 治本：新 AI 不查 registry 就用未登记编号 → GitCommitGateway 硬阻断（exit=1）。**增量检测**：只检测 staged 文件中**新增的**引用（通过 `git show HEAD:<path>` 对比），不阻断历史悬空引用（防卡死工作流）。**fail-closed**：registry 缺失/git 异常时阻断（防门禁静默失效）。**tests/ 豁免**：测试文件不检测。**capability 反查**：已登记 `arch_reference_gate`（[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）。新 AI 想做"#ARCH 编号引用检测/phantom arch id"前，CapabilityLookup 会反查阻止重复造轮子。
 
+### 8.1 蓝图/模块删除价值判定（RULE-THREE + ARCH-027 + RULE-TWELVE）
+
+> **新AI必读**：当你发现一个模块/蓝图"零消费者"或"看起来没用"时，**禁止直接删除**。必须按以下二元判定标准逐项审判。
+
+**核心铁律**：零消费者 ≠ 无价值
+
+- 真源：[ARCH-027 价值判定原则](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml) + [RULE-THREE 删除前置确认](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) + [RULE-TWELVE 项目瘦身](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml)
+- 禁止：仅凭"零消费者"判定删除（误删有价值的安全/治理组件）
+
+**判定决策树**（按序执行，任一YES即保留）：
+
+```
+发现零消费者/疑似无价值模块时：
+│
+├─ STEP 0: 功能价值判定（ARCH-027 三维度，ANY为YES→保留并接通，不进入删除流程）
+│   ├─ 3a 独立功能价值：该模块是否提供其他模块无法替代的独立功能？
+│   │   YES → 保留，接通消费者管线（接入系统）
+│   ├─ 3b 客观原因：零消费者是否有客观原因？
+│   │   （管线未接通 / C轨blocked / 前置依赖未就绪 / 暂缓施工Suspended）
+│   │   YES → 保留，待管线就绪后自然产生消费者
+│   └─ 3c 重建成本：删除后若需要重建，成本是否高昂？
+│       YES → 保留，重建成本高于维护成本
+│
+│   └─ ALL NO（三维度均为NO）→ 进入 RULE-THREE 三步审判
+│
+├─ RULE-THREE STEP 1: 登记检查
+│   该文件在 manifest/registry/__init__.py 中被引用？
+│   YES → 有价值，不能删
+│
+├─ RULE-THREE STEP 2: 重复检查
+│   有另一个文件与它内容完全相同且已注册？
+│   YES → 真正重复，可删
+│
+└─ RULE-THREE STEP 3: 逐行价值检查
+    逐行检查代码/设计内容是否无价值？
+    确认无价值 → 删除
+│
+└─ 删除后验证三步（RULE-TWELVE 强制）：
+    1. audit_registration.py exit 0
+    2. generate_project_path_tree.py --write
+    3. generate_project_depgraph.py --max-workers 8
+```
+
+**执行器**：[`pre_delete_safety_check.py`](file:///d:/ZephyrAlpha/scripts/governance/pre_delete_safety_check.py)（5项机械检查：.py消费者 / .yaml消费者 / 注册表登记 / 重复内容 / 高价值标记，exit 0=SAFE 允许删除 / exit 1=BLOCKED 禁止删除）
+
+```bash
+# 删除前必须先跑执行器（--dry-run 不修改任何文件）
+python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
+```
+
+**P0模块特殊约束**（[trae_032 §MLC-003](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml)）：P0模块禁止退役——必须先完成P1+等效替代并active≥30天。
+
 ## 9. 新模块接入规则
 
 创建新模块时，必须：
