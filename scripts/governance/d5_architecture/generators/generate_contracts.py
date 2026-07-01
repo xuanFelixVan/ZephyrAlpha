@@ -99,7 +99,7 @@ def _generate_14field_header(physical_path: str) -> str:
     """
     module_path = _path_to_module(physical_path)
     lines = [
-        "# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md",
+        "# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md",
         f"# [MODULE] {module_path}",
         "# [DOMAIN] D_INFRASTRUCTURE",
         "# [DEPENDENCIES]",
