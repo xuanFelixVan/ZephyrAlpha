@@ -22,7 +22,7 @@
 
 检测内容：
 - 文件 frontmatter（status, version）vs 正文 blockquote（status, version）
-- 文件 frontmatter（status, version）vs document-metadata-index-registry.yaml 注册条目
+- 文件 frontmatter（status, version）vs rule_catalog_registry.yaml 注册条目
 - 三方（frontmatter / blockquote / registry）的 status 和 version 是否一致
 
 扫描范围：docs/01_policies_and_standards/ 下有 module_id 的 .md 文件
@@ -38,7 +38,7 @@ ensure_utf8_stdout()
 
 __manifest__ = """
 args: []
-description: 三方一致性检查（frontmatter vs 正文blockquote vs document-metadata-index-registry.yaml 的
+description: 三方一致性检查（frontmatter vs 正文blockquote vs rule_catalog_registry.yaml 的
   status/version 对账）
 dimensions:
 - D5
@@ -190,7 +190,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="三方一致性检查（frontmatter vs blockquote vs registry）")
     parser.add_argument("--warn-only", action="store_true")
     args = parser.parse_args()
-    registry_path = GOV_DOCS_DIR / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
+    registry_path = GOV_DOCS_DIR / "_registry" / "catalogs" / "rule_catalog_registry.yaml"
     findings, files_scanned, files_with_mid = scan_three_way_consistency(GOV_DOCS_DIR, registry_path)
     fm_bq = [f for f in findings if f.get("check_type") == "fm_vs_blockquote"]
     fm_reg = [f for f in findings if f.get("check_type") == "fm_vs_registry"]
