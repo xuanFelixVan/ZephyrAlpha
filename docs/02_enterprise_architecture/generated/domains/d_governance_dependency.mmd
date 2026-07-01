@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 18:30:03
+%% 生成时间: 2026-07-01 19:03:35
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 500, 依赖边数: 635
+%% 模块数: 503, 依赖边数: 635
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
         scripts_governance_d5_architec___detect_depends_on_cycles_py["...detectors/detect_depends_on_cycles.py [prototype]"]
         scripts_governance_d5_architec___eprecated_adr_references_py["...s/detect_deprecated_adr_references.py [prototype]"]
-        %% ... 还有 400 个模块未显示
+        %% ... 还有 403 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_bridges___init___py -->|import_depends| src_zephyr_governance_drift_detection_reconciler_py
-    %% ... 还有 215 条域内依赖未显示
+    %% ... 还有 216 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
@@ -304,16 +304,14 @@ graph TD
     %% D_PF_ALLOC -> D_GOVERNANCE (2 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_ALLOC[D_PF_ALLOC] -->|config_depends| src_zephyr_governance___init___py
-    %% D_PF_CORE -> D_GOVERNANCE (10 条)
+    %% D_PF_CORE -> D_GOVERNANCE (8 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_attribution_engine_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_compliance_rule_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_default_tca_engine_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_registry_py
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_engine___init___py
-    D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategies_default_equity_strategy_py
     D_PF_CORE[D_PF_CORE] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
     %% D_POSITION -> D_GOVERNANCE (1 条)
     D_POSITION[D_POSITION] -->|config_depends| src_zephyr_governance___init___py
@@ -443,11 +441,13 @@ graph TD
     tests_llm_security_test_gateway_e2e_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_llm_security_test_fail_closed_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D_GOVERNANCE -> D_INTEGRATION (8 条)
+    %% D_GOVERNANCE -> D_INTEGRATION (10 条)
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_integration_governance_embedding_router_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_integration_governa____router_embedding_router_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     tests_infrastructure_test_capacity_runtime_red_blue_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_infrastructure_test_cross_blueprint_e2e_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
@@ -512,7 +512,7 @@ graph TD
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SHARED[D_SHARED]
     tests_zephyr_shared_infra_test_process_lifecycle_gateway_py -->|test_depends| D_SHARED[D_SHARED]
-    %% D_GOVERNANCE -> D_TRADING (55 条)
+    %% D_GOVERNANCE -> D_TRADING (54 条)
     src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_broker_interface_py -->|import_depends| D_TRADING[D_TRADING]
@@ -522,7 +522,7 @@ graph TD
     src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_strategies_default_equity_strategy_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
@@ -545,6 +545,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 295 条
-    %% 跨域入边: 122 条
-    %% 跨域出边: 218 条
+    %% 域内依赖: 296 条
+    %% 跨域入边: 120 条
+    %% 跨域出边: 219 条

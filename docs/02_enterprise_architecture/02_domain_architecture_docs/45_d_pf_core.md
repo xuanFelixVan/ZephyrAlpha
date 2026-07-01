@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 18:30:02
+> 最后更新: 2026-07-01 19:03:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
 | 域名称 | 组合核心 | Domain Name | 组合核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 38 | Module Count | 38 |
+| 模块数 | 37 | Module Count | 37 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 14 | Cross-domain Outgoing | 14 |
 | 设计态模块 | 26 | Design Modules | 26 |
-| 原型态模块 | 6 | Prototype Modules | 6 |
+| 原型态模块 | 5 | Prototype Modules | 5 |
 | 生产态模块 | 6 | Production Modules | 6 |
 | 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
 | 描述 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 | Description | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
@@ -103,7 +103,6 @@ graph TD
         src_zephyr_pf_core_performance_attribution_report_py["src/zephyr/pf_core/performance_attribution_repo... production"]
         src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py prototype"]
         src_zephyr_pf_core_strategies_init_py["src/zephyr/pf_core/strategies/__init__.py prototype"]
-        src_zephyr_pf_core_strategies_default_equity_strategy_py["src/zephyr/pf_core/strategies/default_equity_st... prototype"]
         src_zephyr_pf_core_strategy_base_py["src/zephyr/pf_core/strategy_base.py production"]
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
@@ -113,18 +112,13 @@ graph TD
     src_zephyr_pf_core_performance_attribution_report_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D_TRADING production"]
-    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
     src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategies_init_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_default_tca_engine_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
-    class src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategies_default_equity_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
-    class D_TRADING external_prod
+    class src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
     class D_GOVERNANCE external_design
 ```
 
@@ -146,12 +140,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 38 个模块 / 38 modules。
+> 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 37 个模块 / 37 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (38 modules)               │
+│              L2 领域层 / Domain Layer (37 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   D-ALT-DATA-17  [design]                                        │
 │   D-ALT-DATA-06  [design]                                        │
@@ -171,16 +165,16 @@ graph TD
 │   D-ALT-DATA-15  [design]                                        │
 │   D-ALT-DATA-06扩展  [design]                                    │
 │   A-001  [design]                                                │
-│   ...还有 20 个模块 / 20 more modules                            │
+│   ...还有 19 个模块 / 19 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 38 个模块 / 38 modules）。
+> 按 architecture_layer 分组的模块清单（共 37 个模块 / 37 modules）。
 
-### L2 领域层 / Domain Layer (38 modules)
+### L2 领域层 / Domain Layer (37 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -218,10 +212,9 @@ graph TD
 | 32 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | generated |
 | 33 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | generated |
 | 34 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | generated |
-| 35 | src/zephyr/pf_core/strategies/default_equity_strategy.py | src/zephyr/pf_core/strategies/default... | prototype | generated |
-| 36 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
-| 37 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
-| 38 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
+| 35 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
+| 36 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
+| 37 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

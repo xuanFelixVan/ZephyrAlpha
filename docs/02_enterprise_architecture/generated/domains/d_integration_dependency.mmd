@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-01 18:30:03
+%% 生成时间: 2026-07-01 19:03:35
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 98, 依赖边数: 243
+%% 模块数: 99, 依赖边数: 247
 
 graph TD
 
@@ -68,6 +68,7 @@ graph TD
         src_zephyr_integration_shared____sk_limit_violation_error_py[".../errors/risk_limit_violation_error.py [prototype]"]
         src_zephyr_integration_shared____gnal_degradation_warning_py[".../errors/signal_degradation_warning.py [production]"]
         src_zephyr_integration_shared_events___init___py["...integration/shared/events/__init__.py [prototype]"]
+        src_zephyr_integration_shared_events_dlq_py["...phyr/integration/shared/events/dlq.py [prototype]"]
         src_zephyr_integration_shared_events_dlq_bridge_py["...tegration/shared/events/dlq_bridge.py [prototype]"]
         src_zephyr_integration_shared_events_event_bus_upgrade_py["...on/shared/events/event_bus_upgrade.py [prototype]"]
         src_zephyr_integration_shared_events_event_schemas_py["...ration/shared/events/event_schemas.py [prototype]"]
@@ -173,9 +174,11 @@ graph TD
     src_zephyr_integration_shared_contracts_errors___init___py -->|import_depends| src_zephyr_integration_shared____sk_limit_violation_error_py
     src_zephyr_integration_shared_contracts_errors___init___py -->|import_depends| src_zephyr_integration_shared____gnal_degradation_warning_py
     src_zephyr_integration_shared_events_event_schemas_py -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
+    src_zephyr_integration_shared_events_dlq_bridge_py -->|import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_schema_schemas_py -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
     src_zephyr_integration_shared_schema_schemas_py -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
     src_zephyr_integration_shared_schema_schemas_py -->|import_depends| src_zephyr_integration_shared_schema_execution_model_py
+    src_zephyr_integration_shared_events___init___py -->|import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_shared_events___init___py -->|import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
     src_zephyr_integration_shared_events___init___py -->|import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
     src_zephyr_integration_shared_events___init___py -->|import_depends| src_zephyr_integration_shared_events_event_schemas_py
@@ -186,9 +189,7 @@ graph TD
     src_zephyr_integration_vector____faiss_collection_manager_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_embedding_router_py -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
-    %% ... 还有 35 条域内依赖未显示
+    %% ... 还有 37 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_INTEGRATION (5 条)
@@ -197,11 +198,13 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    %% D_GOVERNANCE -> D_INTEGRATION (8 条)
+    %% D_GOVERNANCE -> D_INTEGRATION (10 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_mcp__base_server_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
@@ -345,6 +348,6 @@ graph TD
     src_zephyr_integration_behavio___ssion_admission_response_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 115 条
-    %% 跨域入边: 73 条
+    %% 域内依赖: 117 条
+    %% 跨域入边: 75 条
     %% 跨域出边: 55 条
