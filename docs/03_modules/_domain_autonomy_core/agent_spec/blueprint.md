@@ -167,7 +167,6 @@ references: []
 | 62 | ide_watcher.py | §3.1 | IDE 热重载（CircadianScheduler hour=2 调度） | 已实现 | — |
 | 63 | phase_planner.py | §16 | Phase 规划（CLI `python -m zephyr.agent_spec phase`） | 已实现 | — |
 | 64 | agent_observability.py | §6.1 | Agent 可观测性（re-export shim → skill_observability.py） | 已实现 | — |
-| 65 | context/context_optimizer.py | §3.1 | 上下文优化（独立实现 ContextOptimizer——onboarding skill 加载优化器） | 已实现 | — |
 | 66 | all_skill_modules.py | §3.1 | 全量模块索引 | 已实现 | 本模块 |
 | 67 | integration/pipeline_bridge.py | §12 | Pipeline 桥接 | 已实现 | 本模块 |
 | 68 | __main__.py | §4.1 | CLI 入口 | 已实现 | 本模块 |

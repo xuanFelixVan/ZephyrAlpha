@@ -147,7 +147,7 @@ END_REQUIRED_SECTIONS
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：{填写本蓝图所属的依赖图路径，如 [system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)}
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)（V6.0 依赖路径全景图）；机器真源：PostgreSQL depgraph（`python scripts/governance/extract_depgraph.py --modules {module_id}`）
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -527,12 +527,12 @@ class {DataModel}(BaseModel):
 ### 10.2 依赖图对齐声明
 
 > 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
-> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
-> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
+> 全局依赖图 SSoT：PostgreSQL depgraph（nodes/edges 表）——通过 `python scripts/governance/extract_depgraph.py --modules {module_id}` 查询
+> 人工可读视图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | {已对齐/未对齐} | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint {module_id}` |
+| 1 | §10.1 依赖声明 ↔ PostgreSQL depgraph.nodes | 蓝图声明的每个依赖在 depgraph.nodes 中有对应条目 | {已对齐/未对齐} | `python scripts/governance/extract_depgraph.py --modules {module_id}` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | {已对齐/未对齐} | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | {已对齐/未对齐} | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -637,7 +637,7 @@ class {DataModel}(BaseModel):
 | 1 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
-| 4 | 依赖图 | `docs/02_enterprise_architecture/system-dependency-map.md` | {新增/修改什么} | {为什么} |
+| 4 | 依赖图 | PostgreSQL depgraph（`extract_depgraph.py --modules {module_id}`）+ [dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md) | {新增/修改什么} | {为什么} |
 
 ---
 
@@ -873,7 +873,7 @@ class {DataModel}(BaseModel):
 | 2 | 设计 | §4 每个接口在 §16 有对应施工步骤 | 逐接口核对 | ☐ |
 | 3 | 设计 | §5 每个约束在 §9 有对应测试 | 逐约束核对 | ☐ |
 | 4 | 设计 | §0.1 每个代码文件在 §11 有对应产出物路径 | 逐文件核对 | ☐ |
-| 5 | 设计 | §10 每个依赖在 cross-module-dependency-registry.yaml 有对应条目 | 逐依赖核对 | ☐ |
+| 5 | 设计 | §10 每个依赖在 PostgreSQL depgraph.nodes 有对应条目 | `python scripts/governance/extract_depgraph.py --modules {module_id}` | ☐ |
 | 5.1 | 设计 | §0.1 每个代码文件已同步到 path-ownership-map.yaml 且无路径冲突 | `python scripts/governance/generate_path_ownership_map.py --write && --conflicts` | ☐ |
 | 6 | 前 | 已读取蓝图全文（概述→§0→§1-§18→术语表→自检清单） | 逐节确认 | ☐ |
 | 7 | 前 | 术语表中每个术语含义已理解 | 能回答"X和Y的区别是什么" | ☐ |
