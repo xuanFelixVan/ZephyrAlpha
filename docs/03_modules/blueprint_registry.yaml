@@ -2,9 +2,9 @@ registry:
   version: 2.7.0
   created: '2026-05-02'
   last_updated: '2026-07-01'
-  total_blueprints: 47
+  total_blueprints: 54
   scope: 03_modules/
-  note: Auto-synced from 47 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 54 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
   generated_at: '2026-07-01'
   generated_by: sync_registry_from_blueprints.py
@@ -203,6 +203,21 @@ blueprints:
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/pipeline/blueprint.md
   construction_progress: design_only
+- module_id: MOD-INF-011
+  name: vector_memory
+  title: Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化
+  summary: VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d + bge-small-zh-v1.5 512d）本地推理。8大Collection。Phase
+    0-3 完成，Phase 4 待施工。四轮80盲点全维度覆盖。v0.12.0 MOD-INF-039拆分对齐+SSoT修正+测试修复。
+  layer: cross_layer
+  functional_domain: data
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.12.1
+  generation: 1
+  last_updated: '2026-05-18'
+  file_path: 03_modules/_domain_knowledge/vector_memory/blueprint.md
+  construction_progress: partially_implemented
 - module_id: MOD-INF-013
   name: mcp_servers
   title: MCP Servers 蓝图 — MCP 服务器管理与调度
@@ -247,6 +262,21 @@ blueprints:
   generation: 2
   last_updated: '2026-06-23'
   file_path: 03_modules/_cross_layer/shared_core/blueprint.md
+  construction_progress: design_only
+- module_id: MOD-INF-017
+  name: code_dedup_engine
+  title: Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复
+  summary: 代码去重引擎——全生命周期七维模型+46模块+Monoculture免疫(BRS)+原子修复(WAL)+决策审计链+主动函数发现+漏报盲审+微克隆检测+契约验证+跨边界感知。去重最大化悖论：找到'去重收益vs
+    Monoculture风险vs碎片化风险vs引擎维护成本'的四体最优边界。
+  layer: infra_ops
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.15.0
+  generation: 3
+  last_updated: '2026-05-14'
+  file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
   construction_progress: design_only
 - module_id: MOD-INF-018
   name: agent_rbac
@@ -373,6 +403,34 @@ blueprints:
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_infra_ops/a2a_protocol/blueprint.md
   construction_progress: partially_implemented
+- module_id: MOD-INF-026
+  name: asset_inventory
+  title: 资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
+  summary: 资产盘点系统——五层架构（发现→分类→登记→对账→生命周期），支撑 75,000 资产 / 100 AI 并发
+  layer: infra_ops
+  functional_domain: operations
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 3.1.0
+  generation: 3
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_domain_infra_ops/asset_inventory/blueprint.md
+  construction_progress: completed
+- module_id: MOD-INF-027
+  name: audit_orchestrator
+  title: Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
+  summary: '审计编排器——MAPE-K五层自治循环驱动三子系统(结构/语义/行为)四阶段闭环迭代收敛审计引擎。v6.1.0: v3.5模板对齐'
+  layer: cross_layer
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 6.1.0
+  generation: 6
+  last_updated: '2026-05-14'
+  file_path: 03_modules/_cross_layer/audit_orchestrator/blueprint.md
+  construction_progress: partially_implemented
 - module_id: MOD-INF-028
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
@@ -387,6 +445,20 @@ blueprints:
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/semantic_auditor/blueprint.md
   construction_progress: mostly_implemented
+- module_id: MOD-INF-029
+  name: orphan_judge
+  title: Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
+  summary: 孤儿判定子系统——五层分级价值判定引擎，对孤儿文件执行注册检查→引用图→功能重复→独特价值→独立价值判定，输出六种处置建议。
+  layer: cross_layer
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 2.1.0
+  generation: 3
+  last_updated: '2026-05-14'
+  file_path: 03_modules/_cross_layer/orphan_judge/blueprint.md
+  construction_progress: scaffold
 - module_id: MOD-INF-030
   name: red_blue_validator
   title: Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认
@@ -472,6 +544,20 @@ blueprints:
   generation: 2
   last_updated: '2026-06-27'
   file_path: 03_modules/_cross_layer/model_capability_exam/blueprint.md
+  construction_progress: partially_implemented
+- module_id: MOD-INF-037
+  name: registry_governance
+  title: 注册表治理
+  summary: 注册表体系架构+功能域注册表+SSoT门禁+一致性校验+物理路径树(REG-017)+路径归属图(REG-018)+路径树刷新门禁(G6_PT)
+  layer: infra_ops
+  functional_domain: governance
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P1
+  version: 0.2.0
+  generation: 1
+  last_updated: '2026-05-16'
+  file_path: 03_modules/_domain_governance/registry_governance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-038
   name: state_machine_engine
@@ -746,6 +832,20 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint.md
   construction_progress: partially_implemented
+- module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
+  name: resource_optimization_engine
+  title: 资源优化引擎蓝图
+  summary: MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环
+  layer: cross_layer
+  functional_domain: operations
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 5.4.0
+  generation: 2
+  last_updated: '2026-05-22'
+  file_path: 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+  construction_progress: design_only
 - module_id: MOD-TASK_SYSTEM
   name: task_system
   title: Task System 蓝图 — 全链路任务卡生命周期管理
@@ -791,13 +891,13 @@ blueprints:
   file_path: 03_modules/_system_master/blueprint.md
   construction_progress: completed
 summary:
-  total: 47
+  total: 54
   by_blueprint_status:
-    Draft: 6
-    Active: 41
+    Draft: 7
+    Active: 47
   by_layer:
-    cross_layer: 22
-    infra_ops: 13
+    cross_layer: 26
+    infra_ops: 16
     data: 1
     factor: 1
     signal: 1
@@ -811,15 +911,62 @@ summary:
     ml_train: 1
     simulation: 1
   by_construction_progress:
-    design_only: 8
-    partially_implemented: 26
-    completed: 10
+    design_only: 10
+    partially_implemented: 29
+    completed: 11
     mostly_implemented: 1
-    scaffold: 1
+    scaffold: 2
     not_started: 1
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
   last_recomputed: '2026-07-01'
 changelog:
+- version: 2.7.4
+  date: '2026-07-01'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 54 份 blueprint.md；登记项相对上一版有
+    22 条差异摘要'
+  - 新增 MOD-CONTEXT_ENGINE → 03_modules/_cross_layer/context_engine/blueprint.md
+  - 新增 MOD-FEEDBACK_LOOP → 03_modules/_cross_layer/feedback_loop/blueprint.md
+  - 新增 MOD-GATE_ENGINE → 03_modules/_cross_layer/gate_engine/blueprint.md
+  - 新增 MOD-INF-002 → 03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
+  - 新增 MOD-INF-005 → 03_modules/_domain_governance/governance_automation/blueprint.md
+  - 新增 MOD-INF-009 → 03_modules/_cross_layer/pipeline/blueprint.md
+  - 新增 MOD-INF-011 → 03_modules/_domain_knowledge/vector_memory/blueprint.md
+  - 新增 MOD-INF-013 → 03_modules/_cross_layer/mcp_servers/blueprint.md
+  - 新增 MOD-INF-017 → 03_modules/_domain_governance/code_dedup_engine/blueprint.md
+  - 新增 MOD-INF-026 → 03_modules/_domain_infra_ops/asset_inventory/blueprint.md
+  - 新增 MOD-INF-027 → 03_modules/_cross_layer/audit_orchestrator/blueprint.md
+  - 新增 MOD-INF-029 → 03_modules/_cross_layer/orphan_judge/blueprint.md
+  - 新增 MOD-INF-037 → 03_modules/_domain_governance/registry_governance/blueprint.md
+  - 新增 MOD-INF-042 → 03_modules/_domain_integration/local_model/blueprint.md
+  - 新增 MOD-KB-001 → 03_modules/_domain_knowledge/knowledge_base/blueprint.md
+  - 新增 MOD-L05-001 → 03_modules/_domain_pf_core/portfolio_core/blueprint.md
+  - 新增 MOD-L06-001 → 03_modules/_domain_ex_core/execution_core/blueprint.md
+  - 新增 MOD-L09-001 → 03_modules/_domain_research/research_core/blueprint.md
+  - 新增 MOD-L11-001 → 03_modules/_domain_ml_train/ml_core/blueprint.md
+  - 新增 MOD-LLM_SECURITY → 03_modules/_cross_layer/llm_security/blueprint.md
+  - 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE → 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+  - 新增 MOD-TASK_SYSTEM → 03_modules/_domain_infra_runtime/task_system/blueprint.md
+- version: 2.7.3
+  date: '2026-07-01'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 32 份 blueprint.md；登记项相对上一版有
+    15 条差异摘要'
+  - 移除 MOD-CONTEXT_ENGINE（曾位于 03_modules/_cross_layer/context_engine/blueprint.md）
+  - 移除 MOD-FEEDBACK_LOOP（曾位于 03_modules/_cross_layer/feedback_loop/blueprint.md）
+  - 移除 MOD-GATE_ENGINE（曾位于 03_modules/_cross_layer/gate_engine/blueprint.md）
+  - 移除 MOD-INF-002（曾位于 03_modules/_domain_infra_runtime/runtime_integration/blueprint.md）
+  - 移除 MOD-INF-005（曾位于 03_modules/_domain_governance/governance_automation/blueprint.md）
+  - 移除 MOD-INF-009（曾位于 03_modules/_cross_layer/pipeline/blueprint.md）
+  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp_servers/blueprint.md）
+  - 移除 MOD-INF-042（曾位于 03_modules/_domain_integration/local_model/blueprint.md）
+  - 移除 MOD-KB-001（曾位于 03_modules/_domain_knowledge/knowledge_base/blueprint.md）
+  - 移除 MOD-L05-001（曾位于 03_modules/_domain_pf_core/portfolio_core/blueprint.md）
+  - 移除 MOD-L06-001（曾位于 03_modules/_domain_ex_core/execution_core/blueprint.md）
+  - 移除 MOD-L09-001（曾位于 03_modules/_domain_research/research_core/blueprint.md）
+  - 移除 MOD-L11-001（曾位于 03_modules/_domain_ml_train/ml_core/blueprint.md）
+  - 移除 MOD-LLM_SECURITY（曾位于 03_modules/_cross_layer/llm_security/blueprint.md）
+  - 移除 MOD-TASK_SYSTEM（曾位于 03_modules/_domain_infra_runtime/task_system/blueprint.md）
 - version: 2.7.2
   date: '2026-06-25'
   changes:
