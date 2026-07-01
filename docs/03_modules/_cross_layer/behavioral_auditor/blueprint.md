@@ -823,7 +823,7 @@ class EvidenceChain(BaseModel):
 
 | 保护等级 | 说明 | 越界后果 | 示例文件 |
 |---------|------|---------|---------|
-| anchor | 不可被 AI 修改/删除 | BLOCK+ALERT+ROLLBACK | project_rules.md、module-registry.yaml |
+| anchor | 不可被 AI 修改/删除 | BLOCK+ALERT+ROLLBACK | project_rules.md、module_registry.yaml |
 | protected | AI 可修改但 MUST 经过 Gate | ALERT+事后审计 | blueprint.md、*.yaml |
 | normal | AI 可自由操作 | 仅记录到 AuditTrail | tasks/*.json、docs/08_knowledge/** |
 | public | 无限制 | 无 | *.log、*.tmp |

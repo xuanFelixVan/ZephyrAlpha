@@ -1,4 +1,4 @@
-registry:
+﻿registry:
   version: 2.7.0
   created: '2026-05-02'
   last_updated: '2026-06-25'
@@ -8,7 +8,7 @@ registry:
 metadata:
   generated_at: '2026-06-25'
   generated_by: sync_registry_from_blueprints.py
-  canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件与 module-registry.yaml
+  canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件与 module_registry.yaml
     由 sync_registry_from_blueprints.py 联动生成
 _schema:
   description: 蓝图登记表的字段定义和受控词表
@@ -1102,7 +1102,7 @@ changelog:
   changes:
   - AUDIT-05 全量修复——补录 MOD-INF-002/021；C 轨 file_path 对齐 *-core/；construction_progress
     词表归一（MCP/Pipeline）
-  - sync_registry_from_blueprints.py 联动生成 module-registry.yaml（39 模块）
+  - sync_registry_from_blueprints.py 联动生成 module_registry.yaml（39 模块）
   - 摘要 summary 改为由脚本从 blueprints[] 派生（by_blueprint_status / by_layer / by_construction_progress）
   - blueprint frontmatter 增补 priority / blueprint_level 登记
 - version: 2.2.0

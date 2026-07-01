@@ -752,7 +752,7 @@ class GlobalAuditReport(BaseModel):
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 模块数 | 51 | module-registry.yaml |
+| 模块数 | 51 | module_registry.yaml |
 | 治理脚本 | 268 | script-manifest.yaml |
 | AI 并发 | 1 | 运行时观测 |
 | 脚本并发 | 8 | TriageScheduler max_workers |

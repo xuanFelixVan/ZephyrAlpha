@@ -55,7 +55,7 @@ ssot_claims:
     scope: global
   - claim: "物理路径树快照(project-path-tree.yaml)是项目目录结构的唯一磁盘事实真源"
     scope: global
-  - claim: "路径归属声明(path-ownership-map.yaml)是蓝图→文件路径映射的唯一真源"
+  - claim: "路径归属声明(path_ownership_map.yaml)是蓝图→文件路径映射的唯一真源"
     scope: global
 ---
 
@@ -294,7 +294,7 @@ END_REQUIRED_SECTIONS
 | 2 | ✅ 包含 | SSoT门禁 | scaffold.py创建流程中嵌入功能域重叠检测 | 本模块(scaffold加固) |
 | 3 | ✅ 包含 | 注册表一致性校验 | 检测注册表间引用断裂、条目过期、Schema漂移 | 本模块 |
 | 4 | ✅ 包含 | 物理路径树生成 | 磁盘扫描→project-path-tree.yaml，AI冷启动第一步 | 本模块 |
-| 5 | ✅ 包含 | 路径归属声明+冲突检测 | 蓝图§0.1聚合→path-ownership-map.yaml，检测同路径多蓝图冲突 | 本模块 |
+| 5 | ✅ 包含 | 路径归属声明+冲突检测 | 蓝图§0.1聚合→path_ownership_map.yaml，检测同路径多蓝图冲突 | 本模块 |
 | 6 | ✅ 包含 | 路径树刷新门禁 | G6_PT强制文件创建/删除/移动后刷新路径树，Session关门前--check | 本模块 |
 | 7 | ❌ 排除 | 注册表创建 | scaffold.py已有，不重复 | MOD-INF-005 |
 | 8 | ❌ 排除 | Token级代码去重 | code_dedup_engine已有 | MOD-INF-017 |
@@ -333,7 +333,7 @@ END_REQUIRED_SECTIONS
 | 1 | scaffold.py | ①读取--domain参数→②调用SSoTGate.check_overlap()→③无重叠→创建文件→④调用FunctionalDomainRegistry.register() | functional-domain-registry.yaml | str→DomainEntry→YAML | domain字符串→DomainEntry Pydantic模型→YAML序列化 |
 | 2 | registry_of_registries.yaml | ①遍历所有注册表条目→②检查物理文件存在性→③检查条目Schema合规→④输出断裂清单 | stdout/报告文件 | YAML→dict→CheckResult | YAML解析→字段校验→CheckResult |
 | 3 | 磁盘文件系统 | ①os.walk扫描5个根目录→②过滤__pycache__/.git等→③构建嵌套树结构→④YAML序列化 | project-path-tree.yaml | pathlib→dict→YAML | 目录树→嵌套dict→YAML |
-| 4 | 蓝图§0.1+frontmatter | ①扫描所有蓝图→②提取actual_disk_path+§0.1文件列表→③构建完整路径→④检测同路径多蓝图冲突 | path-ownership-map.yaml | Markdown→dict→YAML | 表格行→路径条目→YAML |
+| 4 | 蓝图§0.1+frontmatter | ①扫描所有蓝图→②提取actual_disk_path+§0.1文件列表→③构建完整路径→④检测同路径多蓝图冲突 | path_ownership_map.yaml | Markdown→dict→YAML | 表格行→路径条目→YAML |
 
 ### 3.3 状态生命周期
 
@@ -630,7 +630,7 @@ class OverlapResult:
 | 蓝图文件 | `docs/03_modules/_domain_infra_ops/registry-governance/blueprint.md` | 本文件 | ≥0 | blueprint_registry.yaml |
 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` | 功能域条目数据 | ≥1 | registry_of_registries.yaml |
 | 物理路径树快照 | `docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml` | 磁盘目录树自动快照(REG-017) | ≥1 | registry_of_registries.yaml |
-| 路径归属声明 | `docs/03_modules/path-ownership-map.yaml` | 蓝图→路径映射+冲突检测(REG-018) | ≥1 | registry_of_registries.yaml |
+| 路径归属声明 | `docs/03_modules/path_ownership_map.yaml` | 蓝图→路径映射+冲突检测(REG-018) | ≥1 | registry_of_registries.yaml |
 | 业务代码 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` | 功能域注册表管理+一致性校验 | ≥1 | `__init__.py` __all__ |
 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 注册表一致性校验CLI | ≥0 | script-manifest.yaml |
 | 路径树生成脚本 | `scripts/governance/generate_project_path_tree.py` | 物理路径树快照生成 | ≥0 | script-manifest.yaml |

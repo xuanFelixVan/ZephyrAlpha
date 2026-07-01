@@ -24,7 +24,7 @@
 #
 # 与 blueprint_registry.yaml 的关系:
 #   - blueprint_registry.yaml：追踪蓝图状态（施工进度/完整度/代际）
-#   - 本文件 template-registry.yaml：追踪模板定义（格式/版本/使用者）
+#   - 本文件 template_registry.yaml：追踪模板定义（格式/版本/使用者）
 #   两张表职责互补，不重叠。
 #
 # 维护约定:

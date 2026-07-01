@@ -2010,7 +2010,7 @@ scaffold.py → asset.created
 
 | # | 登记位置 | 条目 | 状态 |
 |---|---------|------|:--:|
-| 1 | `module-registry.yaml` | `MOD-INF-026: asset-inventory` | ✅ 已登记 |
+| 1 | `module_registry.yaml` | `MOD-INF-026: asset-inventory` | ✅ 已登记 |
 | 2 | `blueprint_registry.yaml` | 自动同步自 blueprint.md frontmatter | ✅ 已同步 |
 | 3 | `registry_of_registries.yaml` | 新增 REG-INV-001 域（资产盘点注册表域） | ✅ 已登记 |
 | 4 | `project_rules.md` 冷启动序列 | STEP 4.5: 读 unified-asset-index.yaml | ✅ 已实施 |
@@ -2365,7 +2365,7 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
 
 | 格式 | 注册表数 | 示例 | 适配器 |
 |------|:--:|------|--------|
-| YAML list of dicts | 8 | `module-registry.yaml` | `YamlListAdapter` |
+| YAML list of dicts | 8 | `module_registry.yaml` | `YamlListAdapter` |
 | YAML dict (keyed) | 5 | `script-manifest.yaml` | `YamlDictAdapter` |
 | Markdown table | 4 | `_index.yaml` | `MarkdownTableAdapter` |
 | Frontmatter + body | 3 | AGENTS.md | `FrontmatterAdapter` |

@@ -373,7 +373,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 ## 自检与闭合清单
 
 - [x] 依赖图已更新（system-dependency-map.md §5/§10）
-- [x] 模块注册表已更新（module-registry.yaml）
+- [x] 模块注册表已更新（module_registry.yaml）
 - [x] 蓝图注册表已更新（blueprint_registry.yaml）
 - [x] 中央注册表已更新（registry_of_registries.yaml REG-SM-001）
 - [x] 通用基类代码已创建

@@ -1,7 +1,7 @@
 ﻿---
 module_id: MOD-L00-001
 submodule_path: src/zephyr/data
-title: "Data Source Core 蓝图+施工图 — 数据接入层·C轨占位"
+title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
 version: "3.0.0"

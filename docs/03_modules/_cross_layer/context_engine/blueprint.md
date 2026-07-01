@@ -41,7 +41,7 @@ child_modules:
 > module_id: MOD-CONTEXT_ENGINE | version: 1.0.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orchestration/context_management/ | generation: 1 | construction_progress: completed
 > child_modules: MOD-INF-008A (Core Pipeline, 40文件) | MOD-INF-008B (Governance & Operations, 47文件)
-> 蓝图+施工图模板：[TPL-BLUEPRINT-001](file:///D:/ZephyrAlpha/docs/03_modules/template-registry.yaml)
+> 蓝图+施工图模板：[TPL-BLUEPRINT-001](file:///D:/ZephyrAlpha/docs/03_modules/template_registry.yaml)
 
 ## 概述
 

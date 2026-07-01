@@ -1264,7 +1264,7 @@ fields:
 |------|:---:|
 | 总蓝图（本文档）创建 | **P0** |
 | Gates / CE / Pipeline / FLE 四个 P0 蓝图创建 | **P0** |
-| module-registry.yaml 更新 | **P0** |
+| module_registry.yaml 更新 | **P0** |
 | §零 Agent分派表 + §七 Anti-Patterns + §十四 HealthCheck 首次写入 | **P0** |
 
 ### 接口契约落地
@@ -1325,7 +1325,7 @@ fields:
 | 3个Shared Schema已在代码中实现 | ❌ | TaskCard / Finding / KE 三个数据类需要先定义 |
 | depends_on中的16个蓝图层文件已存在 | ✅ | architecture_model/layers/*.yaml全部存在 |
 | Python 3.11+ 环境就绪 | ✅ | 项目已有环境 |
-| module-registry.yaml已注册本蓝图 | ✅ | MOD-MASTER_BLUEPRINT已注册 |
+| module_registry.yaml已注册本蓝图 | ✅ | MOD-MASTER_BLUEPRINT已注册 |
 
 ### 8.2 施工顺序（无依赖→有依赖→循环依赖）
 

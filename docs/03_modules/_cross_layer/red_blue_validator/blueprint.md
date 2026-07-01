@@ -1005,7 +1005,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 模块数 | 51 | module-registry.yaml |
+| 模块数 | 51 | module_registry.yaml |
 | 治理脚本数 | ~268 | script-manifest.yaml |
 | 并发 AI session | ~3 | 运行时监控 |
 | 并发脚本执行 | 8 (session-local) | ThreadPoolExecutor |
@@ -1368,7 +1368,7 @@ python -m zephyr.red_blue_validator [OPTIONS]
 
 | # | 注册表 | 登记内容 | 状态 |
 |---|--------|---------|:---:|
-| 1 | module-registry.yaml | MOD-INF-030 条目 | ✅ |
+| 1 | module_registry.yaml | MOD-INF-030 条目 | ✅ |
 | 2 | blueprint_registry.yaml | red_blue_validator 蓝图条目 | ✅ |
 | 3 | cross-module-dependency-registry.yaml | 13 条依赖/引用 | ✅ |
 | 4 | agent-spec/skill-registry.yaml | red-blue-adversarial Skill | ❌ 施工后登记 |

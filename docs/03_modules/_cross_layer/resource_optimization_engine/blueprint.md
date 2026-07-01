@@ -783,7 +783,7 @@ class DegradationMatrix(BaseModel):
 | Blueprint Routing | 新增 R030 路由规则 | `config/blueprint_routing.yaml` | AI 通过关键字自动定位到本蓝图 |
 | Trigger Routing | 新增 task_keywords 映射 | `src/zephyr/agent-spec/skill-registry.yaml` | AI 通过触发词路由到资源优化技能 |
 | Blueprint Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/blueprint_registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
-| Module Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/module-registry.yaml` | 模块可被模块索引发现 |
+| Module Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/module_registry.yaml` | 模块可被模块索引发现 |
 | Cross-Module Dependency | 新增依赖关系 | `cross-module-dependency-registry.yaml` | 依赖链可追溯 |
 | Module ID Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE ID | `module_id_registry.yaml` | ID 不冲突 |
 | AGENTS.md | 新增资源优化冷启动步骤 | `AGENTS.md` | 新 AI session 知道资源优化引擎存在 |
@@ -802,7 +802,7 @@ class DegradationMatrix(BaseModel):
 | 5 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 6 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | 蓝图可发现 |
-| 8 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | 模块可发现 |
+| 8 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | 模块可发现 |
 | 9 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 新增 R030 路由规则 | AI 可路由 |
 | 10 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 新增 SKILL-DOM-ROE-001 + task_keywords | AI 可发现技能 |
 | 11 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 依赖关系 | 依赖链可追溯 |
@@ -983,7 +983,7 @@ class DegradationMatrix(BaseModel):
 
 1. **做**：
    - 更新 `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`：新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
-   - 更新 `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml`：新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
+   - 更新 `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml`：新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
    - 更新 `D:\ZephyrAlpha\config\blueprint_routing.yaml`：新增 R030 路由规则
    - 更新 `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml`：新增 SKILL-DOM-ROE-001 + task_keywords
    - 更新 `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml`：新增依赖
@@ -1051,7 +1051,7 @@ class DegradationMatrix(BaseModel):
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 被管理模块数 | 51 | module-registry.yaml 条目数 |
+| 被管理模块数 | 51 | module_registry.yaml 条目数 |
 | Python 进程数（10 对话） | 180 | psutil.process_iter() |
 | 内存占用 | 19.15 GB | psutil.virtual_memory() |
 | 守护线程数 | ~10 | DaemonRegistry.status() |
@@ -1174,7 +1174,7 @@ STEP 3: 拆分后验证
 | 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` |
 | 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` |
 | 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
-| 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` |
+| 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml` |
 | 21 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` |
 | 22 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` |
 | 23 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` |
@@ -1218,7 +1218,7 @@ STEP 3: 拆分后验证
 | 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback_loop\auto_evolution.py` | 修改 | 修改 |
 | 15 | infra __init__ | `D:\ZephyrAlpha\src\zephyr\shared\infra\__init__.py` | 修改 | 修改 |
 | 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 修改 |
-| 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 修改 | 修改 |
+| 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml` | 修改 | 修改 |
 | 18 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 修改 | 修改 |
 | 19 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 修改 |
 | 20 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 修改 |
@@ -1228,7 +1228,7 @@ STEP 3: 拆分后验证
 | 24 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 修改 | 修改 |
 | 25 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` | 修改 | 修改 |
 | 26 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.md` | 修改 | 修改 |
-| 27 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 修改 | 修改 |
+| 27 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system_pathway_registry.yaml` | 修改 | 修改 |
 | 28 | 单元测试（引擎） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_engine.py` | 新建 | 新建 |
 | 29 | 单元测试（缓存） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_io_cache.py` | 新建 | 新建 |
 | 30 | 单元测试（流式读取） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_streaming_reader.py` | 新建 | 新建 |
@@ -1590,7 +1590,7 @@ AGENTS.md → PS-STD-005 §7 → MOD-MASTER_BLUEPRINT → MOD-RESOURCE_OPTIMIZAT
 | # | 注册表 | 路径 | 登记内容 |
 |---|--------|------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 |
-| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 |
+| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 |
 | 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
 | 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | SKILL-DOM-ROE-001 + keywords |
 | 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 依赖 |
@@ -1601,7 +1601,7 @@ AGENTS.md → PS-STD-005 §7 → MOD-MASTER_BLUEPRINT → MOD-RESOURCE_OPTIMIZAT
 | 10 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` | MOD-RESOURCE_OPTIMIZATION_ENGINE 基础设施条目 |
 | 11 | 文档元数据索引 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 蓝图文档元数据 |
 | 12 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.md` | 新增目录条目 |
-| 13 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 资源优化路径 |
+| 13 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system_pathway_registry.yaml` | 资源优化路径 |
 
 ### 蓝图特有：自动化运维设计
 

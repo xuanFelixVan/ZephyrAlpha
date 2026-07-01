@@ -27,7 +27,7 @@
 # AI 使用方式:
 #   1. 按 layer 过滤 → 找到目标层级的所有模块路径
 #   2. 按 module_id 定位 → 找到指定模块的全部文件路径
-#   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint_registry.yaml 获取完整模块信息
+#   3. 交叉引用 → 结合 module_registry.yaml 和 blueprint_registry.yaml 获取完整模块信息
 # ============================================================================
 
 module_id: MOD-GOVERNANCE
@@ -120,7 +120,7 @@ pathways:
     note: "Phase B 方法签名修复 — BrokerInterface (OCP-003 codegen + 手动修复)"
 
   - module_id: "MOD-L07-001"
-    name: "post-trade-analytics"
+    name: "analytics_core"
     layer: "L07"
     blueprint: "docs/03_modules/_domain_reporting/analytics_core/blueprint.md"
     source_dir: "src/zephyr/reporting/"

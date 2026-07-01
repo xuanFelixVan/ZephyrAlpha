@@ -1062,7 +1062,7 @@ esac
 
 | 维度 | 指标 | 数据来源 | 预测方法 | 预测周期 |
 |------|------|---------|---------|:---:|
-| 模块增长 | 模块数 | `module-registry.yaml` / `git log` | 线性回归 + 指数平滑 | 1 周 / 1 月 / 3 月 |
+| 模块增长 | 模块数 | `module_registry.yaml` / `git log` | 线性回归 + 指数平滑 | 1 周 / 1 月 / 3 月 |
 | 内存占用 | RSS / VIRT | `psutil` 采样（M-23 sandbox_executor） | 线性回归 | 1 月 / 3 月 |
 | Token 消耗 | tokens/day | `token_budget_usage` 表 | 移动平均 + 趋势外推 | 1 周 / 1 月 |
 | 成本消耗 | cost/day | `token_budget_usage` 表 cost_usd | 同上 | 1 周 / 1 月 |
@@ -1679,7 +1679,7 @@ STEP 3: 拆分后验证
 | infrastructure-registry.md | `docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md` | 8 个基础设施组件 SLA 声明 | M-18（基础设施维度） |
 | ai-risk-registry.md | `docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md` | 8 项 AI 操作风险登记 | M-17（风险维度） |
 | cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime_integration → capacity_assurance） | 全局引用 |
-| module-registry.yaml | `docs/03_modules/module-registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
+| module_registry.yaml | `docs/03_modules/module_registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
 | blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
 | domain_events.yaml | `architecture_model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
 
