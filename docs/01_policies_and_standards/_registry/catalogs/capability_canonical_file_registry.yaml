@@ -887,6 +887,51 @@ capabilities:
       - _audit_commit_history                  # 审计逻辑真源(git log -20扫描,删则检测逻辑失效)
 
   # --------------------------------------------------------------------------
+  - capability_id: asset_index_reconciler
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
+    aliases:
+      - GATE-ASSET-INDEX
+      - make_index_generator_reconciler
+      - asset_index_reconciler
+      - unified_asset_index_auto_regen
+      - index_generator_reconciler
+    description: >-
+      unified-asset-index.yaml 自动重生 reconciler（GATE-ASSET-INDEX，P3 生成器触发接入）。
+      post-commit 事件驱动：当 commit 涉及 src/zephyr/**/*.py 或注册表 yaml 变更时触发，
+      跑 scan→classify→index 全管线（python -m zephyr.infrastructure.asset_inventory bootstrap），
+      检测 data/asset_index/unified-asset-index.yaml 漂移，有变更→auto-commit。
+      病根：index_generator 是 MOD-INF-026 production 生成器，但原设计无自动触发，
+      依赖手动跑 bootstrap。P3 治本：接入 GitCommitGateway post-commit reconciler 轨。
+      解决发现性：新 AI 搜 "asset_index/unified-asset-index/auto regen" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类索引重生 reconciler。
+    integrity_anchors:
+      - make_index_generator_reconciler  # reconciler工厂(删则reconciler不注册,索引漂移无人修)
+
+  # --------------------------------------------------------------------------
+  - capability_id: auto_task_generator_eventbus
+    canonical_override: src/zephyr/trading/auto_task_generator.py
+    aliases:
+      - auto_task_generator
+      - subscribe_eventbus
+      - set_scheduler
+      - AutoTaskGenerator
+      - task_auto_generator
+      - auto_generate_tasks
+    description: >-
+      自动任务生成器事件订阅（P3 生成器触发接入）。
+      boot_hooks 任务状态事件轨：subscribe_eventbus() 订阅 EventBusBackpressure
+      的 task_completed 事件，任务完成后自动调用 generate_and_submit 生成新任务
+      送入 LocalModelScheduler。set_scheduler() 由 AutoRuntimeCore/PipelineOrchestrator
+      启动时注入调度器实例（模块级引用，避免 singleton）。
+      病根：auto_task_generator 原设计无自动触发，依赖手动调用。P3 治本：接入
+      boot_hooks._subscribe_eventbus_consumers（第9个消费方）。
+      解决发现性：新 AI 搜 "auto_task/task_completed/subscribe_eventbus" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类任务自动生成器。
+    integrity_anchors:
+      - subscribe_eventbus    # 事件订阅入口(删则boot_hooks调用报AttributeError)
+      - set_scheduler         # 调度器注入入口(删则回调无scheduler跳过)
+
+  # --------------------------------------------------------------------------
   - capability_id: broken_link_detector
     canonical_override: scripts/governance/d2_links/audit_broken_links.py
     aliases:
