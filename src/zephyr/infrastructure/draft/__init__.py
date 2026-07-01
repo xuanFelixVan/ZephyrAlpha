@@ -10,8 +10,25 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.draft — auto-generated package init."""
+"""Re-export wrapper: true source is zephyr.shared.draft.
 
-from . import draft_assistant
+Auto-generated stub; submodules migrated to shared/draft/.
+Uses lazy __getattr__ to avoid import errors for non-existent local submodules.
+"""
+
+_SUBMODULES = {
+    "draft_assistant": "zephyr.shared.draft.draft_assistant",
+}
+
+
+def __getattr__(name):
+    if name in _SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["draft_assistant"]

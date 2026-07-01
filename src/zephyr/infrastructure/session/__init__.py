@@ -10,8 +10,26 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.session — auto-generated package init."""
+"""Re-export wrapper: true source is zephyr.shared.session / zephyr.shared.session_continuity.
 
-from . import session_boundary, session_continuity
+Auto-generated stub; submodules migrated to shared/.
+Uses lazy __getattr__ to avoid import errors for non-existent local submodules.
+"""
+
+_SUBMODULES = {
+    "session_boundary": "zephyr.shared.session.session_boundary",
+    "session_continuity": "zephyr.shared.session_continuity",
+}
+
+
+def __getattr__(name):
+    if name in _SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["session_boundary", "session_continuity"]

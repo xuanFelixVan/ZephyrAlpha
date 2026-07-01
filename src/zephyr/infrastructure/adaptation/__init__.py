@@ -10,8 +10,26 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.adaptation — auto-generated package init."""
+"""Re-export wrapper: true source is zephyr.shared.adaptation.
 
-from . import execution_tuner, prompt_version_manager
+Auto-generated stub; submodules migrated to shared/adaptation/.
+Uses lazy __getattr__ to avoid import errors for non-existent local submodules.
+"""
+
+_SUBMODULES = {
+    "execution_tuner": "zephyr.shared.adaptation.execution_tuner",
+    "prompt_version_manager": "zephyr.shared.adaptation.prompt_version_manager",
+}
+
+
+def __getattr__(name):
+    if name in _SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["execution_tuner", "prompt_version_manager"]

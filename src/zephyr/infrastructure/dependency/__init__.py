@@ -10,8 +10,25 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.dependency — auto-generated package init."""
+"""Re-export wrapper: true source is zephyr.shared.dependency.
 
-from . import dependency_graph
+Auto-generated stub; submodules migrated to shared/dependency/.
+Uses lazy __getattr__ to avoid import errors for non-existent local submodules.
+"""
+
+_SUBMODULES = {
+    "dependency_graph": "zephyr.shared.dependency.dependency_graph",
+}
+
+
+def __getattr__(name):
+    if name in _SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["dependency_graph"]

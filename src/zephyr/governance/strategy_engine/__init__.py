@@ -23,4 +23,4 @@ from zephyr.pf_core.default_equity_strategy import (
     RebalanceMode,
 )
 
-__all__ = ["DefaultEquityStrategy", "RebalanceMode", "default_equity_strategy"]
+__all__ = ["DefaultEquityStrategy", "RebalanceMode"]

@@ -72,6 +72,7 @@ RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
+VMS_PERSIST_DIR: Path = REPO_ROOT / "data" / "vector_db"
 
 __all__ = [
     "DB_DIR",
@@ -82,5 +83,6 @@ __all__ = [
     "REPO_ROOT",
     "SNAPSHOTS_DIR",
     "VECTOR_INDEX_DIR",
+    "VMS_PERSIST_DIR",
     "find_repo_root",
 ]

@@ -10,9 +10,30 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.events — auto-generated package init."""
+"""core.events — event infrastructure.
 
-from . import event_reactor, event_store, hook_dispatcher
+event_store: local implementation.
+event_reactor, hook_dispatcher, event_bus: re-exported from zephyr.shared.events (true source).
+"""
+
+from . import event_store
+
+_LAZY_SUBMODULES = {
+    "event_bus": "zephyr.shared.events.event_bus",
+    "event_reactor": "zephyr.shared.events.event_reactor",
+    "hook_dispatcher": "zephyr.shared.events.hook_dispatcher",
+}
+
+
+def __getattr__(name):
+    if name in _LAZY_SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_LAZY_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["event_bus", "event_reactor", "event_store", "hook_dispatcher"]
 

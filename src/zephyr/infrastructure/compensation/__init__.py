@@ -10,8 +10,25 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""core.compensation — auto-generated package init."""
+"""Re-export wrapper: true source is zephyr.shared.compensation.
 
-from . import saga_compensator
+Auto-generated stub; submodules migrated to shared/compensation/.
+Uses lazy __getattr__ to avoid import errors for non-existent local submodules.
+"""
+
+_SUBMODULES = {
+    "saga_compensator": "zephyr.shared.compensation.saga_compensator",
+}
+
+
+def __getattr__(name):
+    if name in _SUBMODULES:
+        import importlib
+
+        mod = importlib.import_module(_SUBMODULES[name])
+        globals()[name] = mod
+        return mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["saga_compensator"]
