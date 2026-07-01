@@ -193,7 +193,7 @@ sections:
     not_covered:
     - 单个蓝图的章节结构以blueprint_construction_template.md为准
     - 蓝图内的技术决策内容各蓝图独立定义
-    - 蓝图审批流程以MOD-INF-006任务系统蓝图和gate-engine门禁规则为准
+    - 蓝图审批流程以MOD-INF-039任务系统蓝图和gate-engine门禁规则为准
     - 模块生命周期以GOV-MOD-003为准
     - frontmatter字段定义以PS-STD-001为准
   s2_ssot:

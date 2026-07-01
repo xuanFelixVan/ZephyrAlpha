@@ -1503,7 +1503,7 @@ sections:
     responsibility_boundary:
     - 单个蓝图的章节结构→以blueprint-construction-template.md为准
     - 蓝图内的技术决策内容→各蓝图独立定义
-    - 蓝图审批流程→以MOD-INF-006任务系统蓝图和gate-engine门禁规则为准
+    - 蓝图审批流程→以MOD-INF-039任务系统蓝图和gate-engine门禁规则为准
     - 模块生命周期→以GOV-MOD-003(module-lifecycle-policy.md)为准
     - frontmatter字段定义→以PS-STD-001(metadata_registry.yaml)为准
     conditions:
