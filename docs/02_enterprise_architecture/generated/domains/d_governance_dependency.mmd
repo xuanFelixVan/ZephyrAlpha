@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 23:44:49
+%% 生成时间: 2026-07-02 02:09:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 502, 依赖边数: 620
+%% 模块数: 498, 依赖边数: 619
 
 graph TD
 
@@ -30,7 +30,6 @@ graph TD
         data_asset_index_archive_migration_scripts_update_imports_py["...e/migration_scripts/update_imports.py [prototype]"]
         data_asset_index_archive_migra___s_update_non_import_refs_py["...ion_scripts/update_non_import_refs.py [prototype]"]
         data_asset_index_archive_migration_scripts_verify_batch_py["...ive/migration_scripts/verify_batch.py [prototype]"]
-        docs_03_modules__alpha_signal_domain_blueprint_md["...les/_alpha_signal_domain/blueprint.md [design]"]
         docs_03_modules__cross_layer_agent_orchestrator_blueprint_md["...layer/agent_orchestrator/blueprint.md [design]"]
         docs_03_modules__cross_layer_auto_fix_engine_blueprint_md["...ss_layer/auto_fix_engine/blueprint.md [design]"]
         docs_03_modules__cross_layer_auto_runtime_core_blueprint_md["..._layer/auto_runtime_core/blueprint.md [design]"]
@@ -38,7 +37,6 @@ graph TD
         docs_03_modules__cross_layer_context_engine_blueprint_md["...oss_layer/context_engine/blueprint.md [design]"]
         docs_03_modules__cross_layer_database_blueprint_md["...es/_cross_layer/database/blueprint.md [design]"]
         docs_03_modules__cross_layer_feedback_loop_blueprint_md["...ross_layer/feedback_loop/blueprint.md [design]"]
-        docs_03_modules__cross_layer_f___pacity_upgrade_blueprint_md["...ck_loop/capacity_upgrade/blueprint.md [design]"]
         docs_03_modules__cross_layer_gate_engine_blueprint_md["..._cross_layer/gate_engine/blueprint.md [design]"]
         docs_03_modules__cross_layer_llm_security_blueprint_md["...cross_layer/llm_security/blueprint.md [design]"]
         docs_03_modules__cross_layer_mcp_servers_blueprint_md["..._cross_layer/mcp_servers/blueprint.md [design]"]
@@ -58,7 +56,6 @@ graph TD
         docs_03_modules__domain_factor___ha_factor_core_blueprint_md["...factor/alpha_factor_core/blueprint.md [design]"]
         docs_03_modules__domain_frontend_hmi_core_blueprint_md["...domain_frontend/hmi_core/blueprint.md [design]"]
         docs_03_modules__domain_governance_blueprint_md["...dules/_domain_governance/blueprint.md [design]"]
-        docs_03_modules__domain_govern___pacity_upgrade_blueprint_md["...ernance/capacity_upgrade/blueprint.md [design]"]
         docs_03_modules__domain_govern___e_dedup_engine_blueprint_md["...rnance/code_dedup_engine/blueprint.md [design]"]
         docs_03_modules__domain_govern___nce_automation_blueprint_md["...ce/governance_automation/blueprint.md [design]"]
         docs_03_modules__domain_govern___try_governance_blueprint_md["...ance/registry_governance/blueprint.md [design]"]
@@ -77,7 +74,6 @@ graph TD
         docs_03_modules__domain_simula___xperiment_core_blueprint_md["...mulation/experiment_core/blueprint.md [design]"]
         docs_03_modules__master_blueprint_blueprint_md["...odules/_master_blueprint/blueprint.md [design]"]
         docs_03_modules__master_blueprint_blueprint_agent_spec_md["...ter_blueprint/blueprint_agent_spec.md [design]"]
-        docs_03_modules__ml_experiment_domain_blueprint_md["...es/_ml_experiment_domain/blueprint.md [design]"]
         scripts_governance_analyze_orphan_consumers_py["...overnance/analyze_orphan_consumers.py [production]"]
         scripts_governance_check_rule_coverage_py["...pts/governance/check_rule_coverage.py [production]"]
         scripts_governance_d3_metadata_validate_rule_frontmatter_py["...metadata/validate_rule_frontmatter.py [production]"]
@@ -107,7 +103,11 @@ graph TD
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
         scripts_governance_d5_architec___detect_depends_on_cycles_py["...detectors/detect_depends_on_cycles.py [prototype]"]
         scripts_governance_d5_architec___eprecated_adr_references_py["...s/detect_deprecated_adr_references.py [prototype]"]
-        %% ... 还有 402 个模块未显示
+        scripts_governance_d5_architecture_dm200912_query_domains_py["...rchitecture/dm200912_query_domains.py [production]"]
+        scripts_governance_d5_architecture_dm200916_write_direct_py["...architecture/dm200916_write_direct.py [production]"]
+        scripts_governance_d5_architecture_generators___init___py["...5_architecture/generators/__init__.py [prototype]"]
+        scripts_governance_d5_architec___tors_domain_name_mapping_py["...ure/generators/domain_name_mapping.py [production]"]
+        %% ... 还有 398 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -302,13 +302,12 @@ graph TD
     D_OPS[D_OPS] -->|import_depends| src_zephyr_trading_feedback_lo___rompt_factory_governance_py
     %% D_PF_ALLOC -> D_GOVERNANCE (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategy_base_py
-    %% D_PF_CORE -> D_GOVERNANCE (6 条)
+    %% D_PF_CORE -> D_GOVERNANCE (5 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_compliance_rule_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_registry_py
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_governance_strategy_engine___init___py
-    D_PF_CORE[D_PF_CORE] -->|contract| docs_03_modules__alpha_signal_domain_blueprint_md
     %% D_POSITION -> D_GOVERNANCE (1 条)
     D_POSITION[D_POSITION] -->|config_depends| src_zephyr_governance___init___py
     %% D_REPORTING -> D_GOVERNANCE (2 条)
@@ -537,5 +536,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 291 条
-    %% 跨域入边: 115 条
+    %% 跨域入边: 114 条
     %% 跨域出边: 214 条
