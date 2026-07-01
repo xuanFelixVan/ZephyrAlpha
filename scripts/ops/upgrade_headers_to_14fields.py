@@ -390,7 +390,7 @@ def _derive_module_path(filepath: Path) -> str:
         rel = rel[:-3]
     # Strip 'src/' prefix for src/zephyr/ files → zephyr.xxx (not src.zephyr.xxx)
     if rel.startswith("src/zephyr/"):
-        rel = rel[5:]  # remove "src/"
+        rel = rel[4:]  # remove "src/" (4 chars); 原 rel[5:] 误吃 "z" 产生 "ephyr.xxx"（Bug 4）
     return rel.replace("/", ".")
 
 
