@@ -82,6 +82,5 @@ __all__ = [
     "state_propagation",
     "system_transfer",
     "teardown_manager",
-    "trigger_router",
     "version_manifest",
 ]

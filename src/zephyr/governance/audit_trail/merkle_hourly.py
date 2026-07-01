@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit_trail.merkle_hourly
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.integrity
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.merkle_hourly(MerkleHourlyBridge桥接真实实现)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

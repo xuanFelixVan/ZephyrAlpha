@@ -27,7 +27,7 @@ class MerkleHourlyBridge:
         self._aggregator = None
         self._available = False
         try:
-            from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
+            from zephyr.governance.audit_trail.merkle_hourly import HourlyMerkleAggregator
 
             self._aggregator = HourlyMerkleAggregator()
             self._available = True
@@ -62,27 +62,3 @@ class MerkleHourlyBridge:
 
     def is_available(self) -> bool:
         return self._available
-
-
-class AggregationResult:
-    def __init__(self, root_hash="", entry_count=0, timestamp=None, period=""):
-        self.root_hash = root_hash
-        self.entry_count = entry_count
-        self.timestamp = timestamp
-        self.period = period
-
-
-class HourlyMerkleAggregator:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def aggregate(self, entries, period=""):
-        return AggregationResult(period=period, entry_count=len(entries))
-
-
-class MerkleHourlyRoot:
-    def __init__(self, root_hash="", period="", entry_count=0, computed_at=None):
-        self.root_hash = root_hash
-        self.period = period
-        self.entry_count = entry_count
-        self.computed_at = computed_at
