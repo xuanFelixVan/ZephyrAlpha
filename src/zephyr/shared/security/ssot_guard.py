@@ -27,12 +27,12 @@ safety_level : H（治理层代码）
 
 功能
 ----
-检查 ``document-metadata-index-registry.yaml``（文档元数据索引）与暂存区治理敏感文件之间的一致性，
+检查 ``rule_catalog_registry.yaml``（规则路径目录）与暂存区治理敏感文件之间的一致性，
 防止注册表与磁盘状态脱节。
 
 真源
 ----
-- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml``
+- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml``
 
 检查项
 ------
@@ -85,7 +85,7 @@ def _fix_windows_console() -> None:
 # 常量
 # ---------------------------------------------------------------------------
 
-REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
+REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
 
 WATCHED_PREFIXES: tuple[str, ...] = (
     "scripts/hooks/",
@@ -103,6 +103,7 @@ WATCHED_EXTENSIONS: frozenset[str] = frozenset({".py", ".yml", ".yaml", ".md"})
 # 注册表 YAML 中表示文件路径的字段名（用于路径提取）
 PATH_FIELD_PATTERNS: tuple[str, ...] = (
     r"^\s+path:\s+['\"]?([^\s'\"#]+)",
+    r"^\s*-\s+path:\s+['\"]?([^\s'\"#]+)",
     r"^\s+core_file:\s+['\"]?([^\s'\"#]+)",
     r"^\s+canonical_path:\s+['\"]?([^\s'\"#]+)",
     r"^\s+script:\s+['\"]?([^\s'\"#]+)",
