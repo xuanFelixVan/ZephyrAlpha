@@ -47,7 +47,7 @@ from datetime import UTC, datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from zephyr.governance.intelligence_governance.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.data.provider_base import DataSourceBase, DataSourceMeta
 
 _logger = logging.getLogger(__name__)
 

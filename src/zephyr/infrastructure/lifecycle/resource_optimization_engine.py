@@ -30,9 +30,9 @@ from pydantic import BaseModel
 from zephyr.shared.io.io_cache import FileCache
 from zephyr.shared.infra.process_pool import MCPProcessPool
 
-from .daemon_registry import DaemonRegistry
+from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry
 from .lazy_loader import LazyModuleRegistry
-from .resource_optimization_models import (
+from zephyr.shared.lifecycle.resource_optimization_models import (
     CacheStats,
     CircuitBreakerState,
     DefensiveStrategy,

@@ -89,13 +89,13 @@ _LAZY_IMPORTS = {
     "SecurityGateway": ("zephyr.governance.security_governance.security_gateway_base", "SecurityGateway"),
 }
 
-_SUBMODULES = [
-    "aisg_sandbox",
-    "artifact_scanner",
-    "compliance_manager",
-    "default_security_gateway",
-    "security_gateway_base",
-]
+_SUBMODULES = {
+    "aisg_sandbox": "zephyr.governance.intelligence_governance.aisg_sandbox",
+    "artifact_scanner": "zephyr.compliance.artifact_scanner",
+    "compliance_manager": "zephyr.compliance.compliance_manager",
+    "default_security_gateway": "zephyr.governance.implementations.default_security_gateway",
+    "security_gateway_base": "zephyr.compliance.security_gateway_base",
+}
 
 
 def __getattr__(name):
@@ -110,7 +110,7 @@ def __getattr__(name):
     if name in _SUBMODULES:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.governance.{name}")
+        mod = importlib.import_module(_SUBMODULES[name])
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
