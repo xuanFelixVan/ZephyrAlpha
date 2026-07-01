@@ -1,9 +1,10 @@
-﻿---
+---
 module_id: MOD-INF-001
 submodule_path: src/zephyr/infrastructure/capacity_assurance
 title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断"
 doc_type: blueprint
 status: Active
+activation_phase: requires_100ai
 version: 3.1.0
 layer: infra_ops
 layer_name: infrastructure

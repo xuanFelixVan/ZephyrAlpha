@@ -87,6 +87,8 @@ references:
 - governance.db → 保持SQLite（任务卡系统，单写者足够，无并发写入需求）
 - market.duckdb → 保持DuckDB（OLAP分析，无并发写入需求）
 
+> ⚠️ 更新（2026-07-01）：market.duckdb（INFRA-DB-005）已删除/废弃。上述"保持DuckDB"裁定已被 supersede，market.duckdb 数据迁移至 ClickHouse 见 c1_market_clickhouse.md。当前实际为2库：depgraph（PostgreSQL）+ governance.db（SQLite）。
+
 **理由**：只有depgraph面临40+AI并发写入问题。governance.db（任务卡）由TaskRepository单写者管理，market.duckdb（行情数据）由数据管道串行写入。迁移范围最小化，降低风险。
 
 ### 1.4 不变的设计哲学

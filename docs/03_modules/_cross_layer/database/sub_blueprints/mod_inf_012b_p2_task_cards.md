@@ -327,6 +327,8 @@ git checkout -- src/zephyr/governance/depgraph_schema.py src/zephyr/governance/p
 
 **关键约束**：database_service.py管理三库（depgraph/market/governance），仅depgraph部分迁移，governance.db和market.duckdb保持原样。
 
+> ⚠️ 更新（2026-07-01）：market.duckdb（INFRA-DB-005）已删除/废弃。当前实际为2库：depgraph（PostgreSQL）+ governance.db（SQLite）。market.duckdb 迁移至 ClickHouse 见 c1_market_clickhouse.md。
+
 **验收标准**：
 
 | # | 验证项 | 命令 | 预期结果 |

@@ -4,6 +4,7 @@ submodule_path: src/zephyr/security/access_control
 title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
+activation_phase: requires_100ai
 version: "1.1.0"
 layer: infra_ops
 domain: infra_ops
