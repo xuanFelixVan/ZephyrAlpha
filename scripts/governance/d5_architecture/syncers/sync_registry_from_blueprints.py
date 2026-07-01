@@ -118,8 +118,9 @@ def validate_layer_consistency(filepath: Path, fm: dict[str, Any]) -> list[str]:
 def extract_frontmatter(filepath: Path) -> dict[str, Any]:
     """extract_frontmatter implementation."""
     text = filepath.read_text(encoding="utf-8")
-    if text.startswith("\ufeff"):
-        text = text[1:]
+    # 治本: 部分蓝图文件因编辑器/编码转换积累多个 BOM 字符，
+    # 原只去 1 个 BOM，导致 22 个蓝图被误判排除。改用 lstrip 去所有 BOM。
+    text = text.lstrip("\ufeff")
     if not text.startswith("---"):
         return {}
     m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
