@@ -1,7 +1,7 @@
 %% D_GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-07-01 13:32:34
+%% 生成时间: 2026-07-01 13:44:47
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 9, 依赖边数: 22
+%% 模块数: 8, 依赖边数: 21
 
 graph TD
 
@@ -15,7 +15,6 @@ graph TD
         src_zephyr_governance_drift_detection_baseline_manager_py["...e/drift_detection/baseline_manager.py [prototype]"]
         src_zephyr_governance_drift_detection_chaos_injector_py["...nce/drift_detection/chaos_injector.py [prototype]"]
         src_zephyr_governance_integrity_py["src/zephyr/governance/integrity.py [production]"]
-        src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py["...d_blue_validator/ai_self_diagnosis.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -24,12 +23,11 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_COMPLIANCE -> D_GOV_DRIFT (1 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_integrity_py
-    %% D_GOVERNANCE -> D_GOV_DRIFT (5 条)
+    %% D_GOVERNANCE -> D_GOV_DRIFT (4 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_self_monitor_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_baseline_manager_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_drift_detection_chaos_injector_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_governance_red_blue___idator_ai_self_diagnosis_py
     %% D_GOV_AUDIT -> D_GOV_DRIFT (6 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_integrity_py
@@ -56,5 +54,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 1 条
-    %% 跨域入边: 15 条
+    %% 跨域入边: 14 条
     %% 跨域出边: 6 条

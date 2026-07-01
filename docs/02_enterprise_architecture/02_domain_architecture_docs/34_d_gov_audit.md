@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 13:32:32
+> 最后更新: 2026-07-01 13:44:45
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_GOV_AUDIT | Domain ID | D_GOV_AUDIT |
 | 域名称 | 审计追踪 | Domain Name | 审计追踪 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 134 | Module Count | 134 |
+| 模块数 | 133 | Module Count | 133 |
 | 域内依赖 | 111 | Internal Dependencies | 111 |
 | 跨域入边 | 204 | Cross-domain Incoming | 204 |
 | 跨域出边 | 89 | Cross-domain Outgoing | 89 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 82 | Prototype Modules | 82 |
-| 生产态模块 | 50 | Production Modules | 50 |
+| 生产态模块 | 49 | Production Modules | 49 |
 | 容量 | 54/150 (正常) | Capacity | 54/150 (正常) |
 | 描述 | Merkle小时级完整性(merkle_hourly) | Description | Merkle小时级完整性(merkle_hourly) |
 
@@ -380,7 +380,6 @@ graph TD
         src_zephyr_governance_behavioral_admission_mcp_result_push_py["src/zephyr/governance/behavioral_admission/mcp_... production"]
         src_zephyr_governance_behavioral_admission_post_process_py["src/zephyr/governance/behavioral_admission/post... production"]
         src_zephyr_governance_behavioral_admission_vibe_coding_enforcer_py["src/zephyr/governance/behavioral_admission/vibe... production"]
-        src_zephyr_governance_compliance_gate_a6_default_security_gateway_py["src/zephyr/governance/compliance_gate_a6/defaul... production"]
         src_zephyr_governance_financial_compliance_py["src/zephyr/governance/financial_compliance.py production"]
         src_zephyr_governance_merkle_hourly_py["src/zephyr/governance/merkle_hourly.py production"]
         src_zephyr_governance_semantic_audit_self_healer_py["src/zephyr/governance/semantic_audit/self_heale... prototype"]
@@ -389,9 +388,6 @@ graph TD
     src_zephyr_governance_audit_trail_trust_bridge_py -->|import_depends| src_zephyr_governance_audit_trail_trust_engine_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_merkle_hourly_py -->|import_depends| D_GOVERNANCE
-    D_SECURITY["D_SECURITY production"]
-    src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_SECURITY
-    src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_SECURITY
     src_zephyr_governance_semantic_audit_self_health_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_semantic_audit_self_health_py -.->|import_depends| D_GOVERNANCE
     D_COMPLIANCE["D_COMPLIANCE prototype"]
@@ -408,9 +404,9 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_governance_audit_trail_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_trust_bridge_py,src_zephyr_governance_audit_trail_trust_engine_py,src_zephyr_governance_audit_trail_wqa_scorer_py,src_zephyr_governance_audit_trail_writer_py,src_zephyr_governance_behavioral_admission_ai_code_standards_py,src_zephyr_governance_behavioral_admission_mcp_result_push_py,src_zephyr_governance_behavioral_admission_post_process_py,src_zephyr_governance_behavioral_admission_vibe_coding_enforcer_py,src_zephyr_governance_compliance_gate_a6_default_security_gateway_py,src_zephyr_governance_financial_compliance_py,src_zephyr_governance_merkle_hourly_py production
+    class src_zephyr_governance_audit_trail_tiered_storage_bridge_py,src_zephyr_governance_audit_trail_trust_bridge_py,src_zephyr_governance_audit_trail_trust_engine_py,src_zephyr_governance_audit_trail_wqa_scorer_py,src_zephyr_governance_audit_trail_writer_py,src_zephyr_governance_behavioral_admission_ai_code_standards_py,src_zephyr_governance_behavioral_admission_mcp_result_push_py,src_zephyr_governance_behavioral_admission_post_process_py,src_zephyr_governance_behavioral_admission_vibe_coding_enforcer_py,src_zephyr_governance_financial_compliance_py,src_zephyr_governance_merkle_hourly_py production
     class src_zephyr_governance_semantic_audit_self_healer_py,src_zephyr_governance_semantic_audit_self_health_py design
-    class D_GOVERNANCE,D_SECURITY,D_GOV_DRIFT external_prod
+    class D_GOVERNANCE,D_GOV_DRIFT external_prod
     class D_COMPLIANCE external_design
 ```
 
@@ -456,12 +452,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 审计追踪（D_GOV_AUDIT）的模块分布。共 134 个模块 / 134 modules。
+> 按 architecture_layer 分层显示 审计追踪（D_GOV_AUDIT）的模块分布。共 133 个模块 / 133 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (134 modules)            │
+│            L1 基础层 / Foundation Layer (133 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___cross_layer__audit_orchestrator__bluepri... │
 │   docs__03_modules___domain_governance__audit_trail__blueprin... │
@@ -481,16 +477,16 @@ graph TD
 │   src/zephyr/governance/audit_orchestration/bulkhead_manager.... │
 │   src/zephyr/governance/audit_orchestration/capacity_budget.p... │
 │   src/zephyr/governance/audit_orchestration/chaos_engine.py  ... │
-│   ...还有 116 个模块 / 116 more modules                          │
+│   ...还有 115 个模块 / 115 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 134 个模块 / 134 modules）。
+> 按 architecture_layer 分组的模块清单（共 133 个模块 / 133 modules）。
 
-### L1 基础层 / Foundation Layer (134 modules)
+### L1 基础层 / Foundation Layer (133 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -623,11 +619,10 @@ graph TD
 | 127 | src/zephyr/governance/behavioral_admission/mcp_result_pus... | src/zephyr/governance/behavioral_admi... | production | generated |
 | 128 | src/zephyr/governance/behavioral_admission/post_process.py | src/zephyr/governance/behavioral_admi... | production | generated |
 | 129 | src/zephyr/governance/behavioral_admission/vibe_coding_en... | src/zephyr/governance/behavioral_admi... | production | generated |
-| 130 | src/zephyr/governance/compliance_gate_a6/default_security... | src/zephyr/governance/compliance_gate... | production | generated |
-| 131 | src/zephyr/governance/financial_compliance.py | src/zephyr/governance/financial_compl... | production | generated |
-| 132 | src/zephyr/governance/merkle_hourly.py | src/zephyr/governance/merkle_hourly.py | production | generated |
-| 133 | src/zephyr/governance/semantic_audit/self_healer.py | src/zephyr/governance/semantic_audit/... | prototype | generated |
-| 134 | src/zephyr/governance/semantic_audit/self_health.py | src/zephyr/governance/semantic_audit/... | prototype | generated |
+| 130 | src/zephyr/governance/financial_compliance.py | src/zephyr/governance/financial_compl... | production | generated |
+| 131 | src/zephyr/governance/merkle_hourly.py | src/zephyr/governance/merkle_hourly.py | production | generated |
+| 132 | src/zephyr/governance/semantic_audit/self_healer.py | src/zephyr/governance/semantic_audit/... | prototype | generated |
+| 133 | src/zephyr/governance/semantic_audit/self_health.py | src/zephyr/governance/semantic_audit/... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

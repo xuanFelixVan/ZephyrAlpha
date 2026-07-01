@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 13:32:32
+> 最后更新: 2026-07-01 13:44:45
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_GOV_DRIFT | Domain ID | D_GOV_DRIFT |
 | 域名称 | 漂移检测 | Domain Name | 漂移检测 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 9 | Module Count | 9 |
+| 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 39 | Cross-domain Incoming | 39 |
 | 跨域出边 | 22 | Cross-domain Outgoing | 22 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 2 | Prototype Modules | 2 |
-| 生产态模块 | 6 | Production Modules | 6 |
+| 生产态模块 | 5 | Production Modules | 5 |
 | 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
 | 描述 | 39个漂移检测器注册与调度 | Description | 39个漂移检测器注册与调度 |
 
@@ -55,7 +55,6 @@ graph TD
         src_zephyr_governance_drift_detection_baseline_manager_py["src/zephyr/governance/drift_detection/baseline_... prototype"]
         src_zephyr_governance_drift_detection_chaos_injector_py["src/zephyr/governance/drift_detection/chaos_inj... prototype"]
         src_zephyr_governance_integrity_py["src/zephyr/governance/integrity.py production"]
-        src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py["src/zephyr/governance/red_blue_validator/ai_sel... production"]
     end
     src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     D_GOV_AUDIT["D_GOV_AUDIT production"]
@@ -80,7 +79,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_integrity_py,src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py production
+    class scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_integrity_py production
     class docs_03_modules_domain_governance_drift_detector_blueprint_md,src_zephyr_governance_drift_detection_baseline_manager_py,src_zephyr_governance_drift_detection_chaos_injector_py design
     class D_GOV_AUDIT,D_GOVERNANCE,D_GOV_SCRIPTS external_prod
     class D_COMPLIANCE external_design
@@ -111,12 +110,12 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 9 个模块 / 9 modules。
+> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 8 个模块 / 8 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (9 modules)             │
+│             L1 基础层 / Foundation Layer (8 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___domain_governance__drift_detector__bluep... │
 │   scripts/governance/d5_architecture/validators/validate_auth... │
@@ -126,16 +125,15 @@ graph TD
 │   src/zephyr/governance/drift_detection/baseline_manager.py  ... │
 │   src/zephyr/governance/drift_detection/chaos_injector.py  [p... │
 │   src/zephyr/governance/integrity.py  [production]               │
-│   src/zephyr/governance/red_blue_validator/ai_self_diagnosis.... │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
+> 按 architecture_layer 分组的模块清单（共 8 个模块 / 8 modules）。
 
-### L1 基础层 / Foundation Layer (9 modules)
+### L1 基础层 / Foundation Layer (8 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -147,7 +145,6 @@ graph TD
 | 6 | src/zephyr/governance/drift_detection/baseline_manager.py | src/zephyr/governance/drift_detection... | prototype | generated |
 | 7 | src/zephyr/governance/drift_detection/chaos_injector.py | src/zephyr/governance/drift_detection... | prototype | generated |
 | 8 | src/zephyr/governance/integrity.py | src/zephyr/governance/integrity.py | production | generated |
-| 9 | src/zephyr/governance/red_blue_validator/ai_self_diagnosi... | src/zephyr/governance/red_blue_valida... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
