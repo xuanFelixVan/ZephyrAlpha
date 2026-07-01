@@ -63,6 +63,7 @@ PRAGMA 基线（KBG-0030 §4.3）
 
 from __future__ import annotations
 
+import re
 import sqlite3
 from pathlib import Path
 
@@ -936,6 +937,24 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "CREATE INDEX IF NOT EXISTS idx_task_reviews_passed ON task_reviews(passed)",
         ],
     ),
+    (
+        30,
+        "DM-P3001: Drop legacy tasks.domain_id column (遗留列清理)",
+        [
+            # v30 的核心逻辑由 _drop_tasks_domain_id() Python 函数执行（非纯 SQL statements），
+            # 该函数在 init_db() 的 transaction 外调用（因 PRAGMA writable_schema 不能在
+            # transaction 中使用）。statements 列表仅作文档说明，不会在 _run_migration 中执行。
+            #
+            # 执行步骤（_drop_tasks_domain_id 内）：
+            # 1. 清理 events 表 dangling task_id（历史遗留脏数据：ON DELETE SET NULL 未生效）
+            # 2. PRAGMA foreign_keys = OFF（避免 DROP COLUMN 表重建触发其他表 ON DELETE）
+            # 3. PRAGMA writable_schema = ON → 移除 tasks 的 FK(domain_id)→domains → RESET
+            # 4. ALTER TABLE tasks DROP COLUMN domain_id（FK 已移除，表重建不再报错）
+            # 5. PRAGMA foreign_keys = ON（恢复 FK 检查）
+            #
+            # 全新库无 domain_id 列时，_drop_tasks_domain_id 是 no-op，仅登记版本号。
+        ],
+    ),
 ]
 
 
@@ -955,15 +974,69 @@ def _get_current_version(conn: sqlite3.Connection) -> int:
     return row[0] if row else 0
 
 
-def _should_skip_v28_cleanup(conn: sqlite3.Connection) -> bool:
+def _tasks_lacks_domain_id(conn: sqlite3.Connection) -> bool:
     """检查 tasks 表是否存在 domain_id 列。
 
-    v28 statement #0 是为清洗生产库脏数据而写（tasks.domain_id 引用不存在的 domains），
-    但全新库的 tasks 表从未创建 domain_id 列，执行会抛 OperationalError。
-    返回 True 表示当前库无 domain_id 列，应跳过该清洗语句。
+    v28 statement #0 清洗 tasks.domain_id 脏数据，v30 表重建删除该遗留列。
+    全新库的 tasks 表从未创建 domain_id 列，执行会抛 OperationalError。
+    返回 True 表示当前库无 domain_id 列，应跳过相关语句。
     """
     cols = conn.execute("PRAGMA table_info(tasks)").fetchall()
     return not any(c[1] == "domain_id" for c in cols)
+
+
+def _drop_tasks_domain_id(conn: sqlite3.Connection) -> None:
+    """移除 tasks.domain_id 列及其 FK 约束（v30 迁移核心逻辑，必须在 transaction 外调用）。
+
+    SQLite 的 ALTER TABLE DROP COLUMN 在有 FK 引用该列时会失败：
+      "unknown column domain_id in foreign key definition"
+    表重建方式（DROP TABLE + CREATE + RENAME）在 foreign_keys=ON 时会触发
+    task_reviews 的 ON DELETE NO ACTION，导致 "FOREIGN KEY constraint failed"。
+
+    方案：用 PRAGMA writable_schema 移除 FK 定义，然后 ALTER TABLE DROP COLUMN。
+    PRAGMA writable_schema 不能在 transaction 中使用，故本函数必须在 BEGIN/COMMIT 外调用。
+    """
+    if _tasks_lacks_domain_id(conn):
+        return  # 全新库无此列，跳过
+
+    # 1. 清理 events 表的 dangling task_id（历史遗留脏数据：ON DELETE SET NULL 未生效）
+    conn.execute(
+        "UPDATE events SET task_id = NULL "
+        "WHERE task_id IS NOT NULL AND task_id NOT IN (SELECT task_id FROM tasks)"
+    )
+
+    # 2. 关闭 FK 检查（避免 DROP COLUMN 内部表重建触发其他表的 ON DELETE）
+    conn.execute("PRAGMA foreign_keys = OFF")
+
+    # 3. 用 writable_schema 移除 tasks 的 FK(domain_id)→domains 约束
+    conn.execute("PRAGMA writable_schema = ON")
+    try:
+        sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'"
+        ).fetchone()[0]
+        # 移除 FK 约束行（先尝试 "逗号+FK"，再尝试单独 "FK"）
+        new_sql = re.sub(
+            r',\s*\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)',
+            '',
+            sql,
+        )
+        new_sql = re.sub(
+            r'\n\s*FOREIGN\s+KEY\s*\(\s*domain_id\s*\)\s+REFERENCES\s+domains\s*\(\s*domain_id\s*\)',
+            '',
+            new_sql,
+        )
+        conn.execute(
+            "UPDATE sqlite_master SET sql = ? WHERE type='table' AND name='tasks'",
+            (new_sql,),
+        )
+    finally:
+        conn.execute("PRAGMA writable_schema = RESET")
+
+    # 4. 现在 DROP COLUMN 应该能成功（FK 已从 schema 中移除）
+    conn.execute("ALTER TABLE tasks DROP COLUMN domain_id")
+
+    # 5. 重新开启 FK 检查
+    conn.execute("PRAGMA foreign_keys = ON")
 
 
 def _run_migration(
@@ -981,7 +1054,7 @@ def _run_migration(
         if not stmt:
             continue
         # v28 statement #0 是生产库脏数据清洗，全新库无 domain_id 列需跳过
-        if version == 28 and i == 0 and _should_skip_v28_cleanup(conn):
+        if version == 28 and i == 0 and _tasks_lacks_domain_id(conn):
             continue
         try:
             conn.execute(stmt)
@@ -998,6 +1071,7 @@ def _run_migration(
             if any(p in msg for p in benign):
                 continue
             raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
+
     conn.execute(
         "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
         (version, now, description),
@@ -1036,7 +1110,10 @@ def init_db(
     resolved: Path = Path(db_path) if db_path is not None else _DB_PATH
     resolved.parent.mkdir(parents=True, exist_ok=True)
 
-    conn = sqlite3.connect(str(resolved))
+    # isolation_level=None: autocommit 模式，显式控制 transaction
+    # 原因：v30 的 _drop_tasks_domain_id 需要在 transaction 外执行 PRAGMA writable_schema
+    # 和 PRAGMA foreign_keys = OFF，deferred 模式会因 DML 隐式 BEGIN 导致 PRAGMA 失败
+    conn = sqlite3.connect(str(resolved), isolation_level=None)
     try:
         _apply_pragmas(conn)
 
@@ -1066,11 +1143,42 @@ def init_db(
                     )
             current = bootstrapped
 
-        # 步骤 4：只执行缺失的迁移版本
+        # 步骤 4：v30 特殊处理——必须在 transaction 外执行
+        # 原因：_drop_tasks_domain_id 使用 PRAGMA writable_schema 移除 FK 定义，
+        # 然后执行 ALTER TABLE DROP COLUMN（内部表重建）。
+        # PRAGMA writable_schema 不能在 transaction 中使用，且表重建在 foreign_keys=ON
+        # 时会触发 task_reviews 的 ON DELETE NO ACTION。故在 BEGIN 前单独执行。
+        if current < 30 and not _tasks_lacks_domain_id(conn):
+            if echo:
+                print("[sqlite_schema] executing migration v30 (pre-tx): DM-P3001")
+            _drop_tasks_domain_id(conn)
+            from datetime import UTC, datetime
+
+            now = datetime.now(UTC).isoformat()
+            conn.execute(
+                "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) "
+                "VALUES (?, ?, ?)",
+                (30, now, "DM-P3001: Drop legacy tasks.domain_id column (遗留列清理)"),
+            )
+
+        # 步骤 5：执行剩余迁移版本（v30 已在 transaction 外处理）
         conn.execute("BEGIN")
         try:
             for version, description, statements in _MIGRATIONS:
                 if version <= current:
+                    continue
+                if version == 30:
+                    # 全新库无 domain_id 列：_drop_tasks_domain_id 是 no-op，
+                    # 但仍需登记版本号
+                    if _tasks_lacks_domain_id(conn):
+                        from datetime import UTC, datetime
+
+                        now = datetime.now(UTC).isoformat()
+                        conn.execute(
+                            "INSERT OR IGNORE INTO _schema_version "
+                            "(version, applied_at, description) VALUES (?, ?, ?)",
+                            (30, now, description),
+                        )
                     continue
                 if echo:
                     print(f"[sqlite_schema] executing migration v{version}: {description}")
