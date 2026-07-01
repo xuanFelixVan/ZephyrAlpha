@@ -1314,24 +1314,30 @@ STEP 3: 拆分后验证
 | **worktree_manager.py**（现有+修复）| `src/zephyr/governance/rule_bridge/worktree_manager.py` | 底层 worktree 引擎（create/merge/cleanup/list）；修复 `_worktree_exists` 路径标准化 bug（Windows `\` vs `/`）|
 | **GATE-COMMIT-GW**（现有+扩展）| `scripts/governance/d11_compliance/validate_commit_gateway.py` | 新增 `_is_session_worktree_commit()` 放行 worktree 内 commit（FP-ISO.4C 授权绕过 GitCommitGateway）|
 
-##### AI 对话工作流（AGENTS.md 规定）
+##### AI 对话工作流（AGENTS.md 规定，君子协定模式 2026-07-02）
 
 ```
 1. 对话启动 → session_worktree_start(session_id) → 返回 worktree_path
-2. 在 worktree 内编辑/提交 → session_worktree_commit(session_id, files, message)
+2. AI 用 Edit/Write 正常编辑文件（写项目根，IDE 限制无法改 cwd）
+3. 提交 → session_worktree_commit(session_id, files, message)
+   → 自动 shutil.copy2 同步 files 从项目根到 worktree（解决 Edit/Write 写项目根的问题）
+   → worktree 内 git add + commit（独立 index，无需 GitCommitGateway）
    （worktree 内 commit 用 --no-verify 绕过 pre-commit hooks，与 GitCommitGateway 一致；
     GATE-COMMIT-GW 检测 worktree 上下文自动放行）
-3. 任务完成 → session_worktree_merge(session_id) → merge 回主分支 + 清理 worktree
-4. 放弃任务 → session_worktree_abort(session_id) → 丢弃修改 + 清理 worktree
+4. 任务完成 → session_worktree_merge(session_id) → merge 回主分支 + 清理 worktree
+5. 放弃任务 → session_worktree_abort(session_id) → 丢弃修改 + 清理 worktree
 ```
+
+> **君子协定测试状态（2026-07-02）**：Trae IDE 不支持自动触发 worktree（无启动 hook、IDE 不可 hook、AI 不可改 cwd），当前走君子协定——AI 自觉调 start/commit/merge，对标 AI 自觉查锁。文件同步已实现（`session_worktree_commit` 内 `shutil.copy2` 项目根→worktree），AI 无需手动同步。判定标准：连续 5 轮 AI 自觉遵守→转正式规则；AI 绕过→切 selective add（删 stash、按 claimed 文件 `git add`、串行锁）。自动触发条件：Trae 原生支持 worktree（对标 VS Code 1.107）后激活。
 
 ##### 关键设计决策
 
 1. **worktree 内 commit 绕过 GitCommitGateway**：worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，无需 GitCommitGateway 的全局串行锁和门禁
 2. **worktree 内 commit 用 `--no-verify`**：与 GitCommitGateway 自身行为一致（GitCommitGateway 也用 `--no-verify` 绕过 pre-commit hooks）；worktree commit 是隔离的中间工作，最终校验在 merge 回主分支时生效
 3. **GATE-COMMIT-GW worktree 上下文放行**：检测 cwd 含 `.aidrafts/sess-` 时放行（纵深防御——即使 AI 不用 `--no-verify`，gate 也不阻断 worktree commit）
-4. **适用场景**：≥2 个并发 AI 对话时 MUST 走 worktree 模式；单 AI 对话可选
-5. **claim/overlap 门禁保留为 P2**：主工作目录直接 commit 路径仍走 GitCommitGateway + SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate（防搭便车提交）
+4. **文件同步（君子协定模式，2026-07-02）**：AI 的 Edit/Write 写到项目根（IDE 限制，无法改），worktree 内文件是创建时的旧版本。`session_worktree_commit` 在 `git add` 前自动 `shutil.copy2` 将 files 从项目根同步到 worktree，确保 stage 的是最新内容。AI 无需手动同步
+5. **适用场景**：≥2 个并发 AI 对话时 MUST 走 worktree 模式；单 AI 对话可选
+6. **claim/overlap 门禁保留为 P2**：主工作目录直接 commit 路径仍走 GitCommitGateway + SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate（防搭便车提交）
 
 ##### 验收（已通过 2026-07-01 端到端测试）
 
