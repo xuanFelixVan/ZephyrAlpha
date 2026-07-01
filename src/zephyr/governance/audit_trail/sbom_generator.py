@@ -1,26 +1,34 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
-# [MODULE] zephyr.governance.audit_trail
+# [MODULE] zephyr.governance.audit_trail.sbom_generator
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
+# [CONSUMERS] zephyr.governance.__init__ (LicenseType)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 不可变审计记录;密码学完整性;只追加
-# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
+# [INVARIANTS] LicenseType 枚举值稳定（MIT/APACHE2/BSD/PSF/UNKNOWN）
+# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] immutable_core
-# [ERROR_CONTRACT] IntegrityError;WriteError
-# [TESTS] tests/test_audit_trail/
-# [A_module] module_id=MOD-GOV_sbom_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_sbom_generator | layer=module | stability=stable | safety=L | ai_autonomy=immutable_core
 # [TTL] task_bound
+
+"""LicenseType 枚举——许可证类型定义（P3 价值审判退役残留）。
+
+原 SBOM 生成器（DepInfo/SBOMReport/generate_sbom）经价值审判退役：
+- 0 消费者（governance/__init__.py 仅重导出 LicenseType）
+- 代码价值低：SBOMReport 是静态数据容器无生成逻辑，generate_sbom 仅做简单阈值判断
+- 独有性低：许可证校验逻辑可由 ALLOWED_LICENSES 集合直接完成
+- 集成可行性低：无实际 SBOM 扫描器接入，depth/cvss/cve_ids 字段无数据源
+
+保留 LicenseType 枚举（governance/__init__.py:132 重导出，250 行 __all__ 声明）。
+"""
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
 from enum import Enum
-
-from pydantic import BaseModel, Field
 
 
 class LicenseType(str, Enum):
@@ -37,48 +45,3 @@ ALLOWED_LICENSES: set[LicenseType] = {
     LicenseType.BSD,
     LicenseType.PSF,
 }
-
-
-class DepInfo(BaseModel):
-    name: str
-    version: str
-    license: LicenseType = LicenseType.UNKNOWN
-    depth: int = 0
-    cvss_score: float = 0.0
-    cve_ids: list[str] = Field(default_factory=list)
-
-
-class SBOMReport(BaseModel):
-    format: str = "CycloneDX 1.4"
-    generated_at: str = ""
-    max_depth: int = 5
-    dependencies: list[DepInfo] = Field(default_factory=list)
-    blocked: list[str] = Field(default_factory=list)
-    warnings: list[str] = Field(default_factory=list)
-
-    @property
-    def depth_exceeded(self) -> list[DepInfo]:
-        return [d for d in self.dependencies if d.depth > self.max_depth]
-
-    @property
-    def license_violations(self) -> list[DepInfo]:
-        return [d for d in self.dependencies if d.license not in ALLOWED_LICENSES and d.license != LicenseType.UNKNOWN]
-
-    @property
-    def critical_cves(self) -> list[DepInfo]:
-        return [d for d in self.dependencies if d.cvss_score >= 7.0]
-
-
-def generate_sbom(deps: list[DepInfo]) -> SBOMReport:
-    report = SBOMReport(
-        generated_at=datetime.now(UTC).isoformat(),
-        dependencies=deps,
-    )
-    for d in deps:
-        if d.depth > 5:
-            report.warnings.append(f"{d.name} depth={d.depth}>5")
-        if d.license not in ALLOWED_LICENSES and d.license != LicenseType.UNKNOWN:
-            report.warnings.append(f"{d.name} license={d.license.value} not allowed")
-        if d.cvss_score >= 7.0:
-            report.blocked.append(f"{d.name} CVSS={d.cvss_score}≥7.0")
-    return report

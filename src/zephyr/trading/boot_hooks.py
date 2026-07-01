@@ -144,7 +144,7 @@ _eventbus_consumers_subscribed = False
 
 
 def _subscribe_eventbus_consumers() -> None:
-    """统一调用8个消费方模块的 subscribe_eventbus() — DM-2507-J.
+    """统一调用9个消费方模块的 subscribe_eventbus() — DM-2507-J.
 
     混合注册模式：各模块提供模块级 subscribe_eventbus() 函数，
     boot_hooks 统一调用。每个 subscribe_eventbus() 内部幂等。
@@ -158,6 +158,7 @@ def _subscribe_eventbus_consumers() -> None:
       6. F30 validator_event_bridge — fix_completed
       7. F1  autopilot              — task_completed
       8. F6  drift_bridge           — gate_blocked/task_completed
+      9. auto_task_generator        — task_completed（P3 生成器触发接入）
     """
     global _eventbus_consumers_subscribed
     if _eventbus_consumers_subscribed:
@@ -174,6 +175,7 @@ def _subscribe_eventbus_consumers() -> None:
         ("F30 validator_event_bridge", "zephyr.security.adversarial_validation.validator_event_bridge"),
         ("F1 autopilot", "zephyr.trading.autopilot"),
         ("F6 drift_bridge", "zephyr.governance.drift_detection.bridges.drift_bridge"),
+        ("auto_task_generator", "zephyr.trading.auto_task_generator"),
     ]
 
     succeeded = 0

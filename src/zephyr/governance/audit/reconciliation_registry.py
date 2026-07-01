@@ -83,6 +83,7 @@ __all__ = [
     "make_registry_sync_reconciler",
     "make_integrity_audit_reconciler",
     "make_module_id_consistency_reconciler",
+    "make_index_generator_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -2515,4 +2516,112 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=300,
+    )
+
+
+# trae_060-reviewed: P3 生成器自动触发接入——index_generator(infrastructure/asset_inventory)
+# 接入 GitCommitGateway post-commit reconciler 轨（非 boot_hooks 事件轨）。
+# 向内收：扩展已有 reconciliation_registry.py 框架（第14个 reconciler），不新建独立触发系统。
+# 价值审判：index_generator 是 production 资产索引真源，unified-asset-index.yaml 漂移需自动修复。
+def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-ASSET-INDEX post-commit 资产索引重生 reconciler（P3 生成器触发接入）。
+
+    病根：index_generator 是 MOD-INF-026 production 生成器，产出 unified-asset-index.yaml
+    作为项目 SSoT。但 src/zephyr/**/*.py 或注册表 yaml 变更后，索引可能过时——
+    原设计无自动触发，依赖手动跑 ``python -m zephyr.infrastructure.asset_inventory bootstrap``。
+
+    治本（P3 生成器自动触发接入）：
+    - 接入 GitCommitGateway post-commit reconciler 轨（事件触发，非时间触发/手动触发）
+    - trigger: committed_files 含 src/zephyr/**/*.py 或注册表 yaml 变更
+    - reconcile: 跑 scan→classify→index 全管线（bootstrap 幂等），检测 unified-asset-index.yaml
+      漂移，有变更→auto-commit（经 _commit_auto 统一入口，DCR gate 覆盖）
+
+    trigger 裁定（注册表路径真源：index_generator.py REGISTRY_DIRS）：
+    - src/zephyr/**/*.py：资产文件变更→索引可能漂移
+    - src/zephyr/gates/_registry.yaml：gates 注册表变更
+    - docs/03_modules/module-registry.yaml：模块注册表变更
+    - docs/03_modules/blueprint_registry.yaml：蓝图注册表变更
+
+    向内收设计：
+    - 责任唯一：索引生成逻辑只在 IndexGenerator 一处（本 reconciler 仅调用，不复制逻辑）
+    - 真源唯一：复用 ReconciliationRegistry 框架（第14个 reconciler），不新建独立触发系统
+    - 事件触发：post-commit 自动执行，无 cron/manual
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-ASSET-INDEX", priority=170)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _INDEX_REL = "data/asset_index/unified-asset-index.yaml"
+    # 注册表路径真源：index_generator.py REGISTRY_DIRS
+    _REGISTRY_PATHS = (
+        "src/zephyr/gates/_registry.yaml",
+        "docs/03_modules/module-registry.yaml",
+        "docs/03_modules/blueprint_registry.yaml",
+    )
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/") and rel.endswith(".py"):
+                return True
+            if rel in _REGISTRY_PATHS:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 跑 scan→classify→index 全管线（bootstrap 幂等，含 index 生成）
+        bootstrap_result = subprocess.run(
+            [sys.executable, "-m", "zephyr.infrastructure.asset_inventory", "bootstrap"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,  # 全管线较慢（scan+classify+index+reconcile+dashboard）
+        )
+        if bootstrap_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"asset_inventory bootstrap failed: {bootstrap_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 unified-asset-index.yaml 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _INDEX_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="unified-asset-index up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        abs_files = [str(project_root / _INDEX_REL)]
+        auto_msg = "chore(asset_index): auto-regenerate unified-asset-index.yaml by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="unified-asset-index drift detected and auto-regenerated",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="unified-asset-index no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"unified-asset-index drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-ASSET-INDEX",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=170,  # 在 path_tree(150) 和 yaml_sync(160) 之后，vocab_change(280) 之前
     )
