@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1035 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_fragmentation_index
 # [INVARIANTS] entropy_0_to_1;alert_when_gt_0_7;zero_total_entropy_0
 # [MODIFY-GUARD] source-change-only

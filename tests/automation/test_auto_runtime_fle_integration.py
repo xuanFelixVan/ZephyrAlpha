@@ -1,6 +1,6 @@
 # [A_test] module_id=T-GEN_test_auto_runtime_fle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] tests.test_auto_runtime_fle_integration
 # [INVARIANTS] 测试隔离外部依赖(VMS/ollama/lifecycle); 验证FLE自动启动链路
 # [CONSUMERS] pytest

@@ -9,9 +9,9 @@ partition:
 
 modules:
   - id: lsg-core
-    module_id: MOD-INF-014
+    module_id: MOD-LLM_SECURITY
     name: LLM Security Gateway
-    submodule_path: src/zephyr/llm_security/
+    submodule_path: src/zephyr/security/llm_defense/llm_security
     status: implemented
     priority: P0
     runtime_plane: warm

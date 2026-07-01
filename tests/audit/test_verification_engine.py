@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1784 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_verification_engine
 # [INVARIANTS] Verdict thresholds: delta<-0.01=HARMFUL; |delta|<0.01=INEFFECTIVE; else=EFFECTIVE
 # [MODIFY-GUARD] none

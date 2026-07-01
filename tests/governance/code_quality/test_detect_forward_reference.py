@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0668 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] tests.test_detect_forward_reference
 # [INVARIANTS] has_future_annotations; find_self_references excludes method body; scan_file exit codes
 # [MODIFY-GUARD] scanner logic changes require test updates

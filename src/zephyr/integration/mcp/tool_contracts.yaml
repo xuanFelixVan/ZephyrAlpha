@@ -1439,13 +1439,13 @@ vector_memory:
       errors: ["ZA-VMS-0003", "ZA-VMS-0004"]
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 10 · resource_optimization（MOD-INF-032 · ROE v1.0.0）
+# Server 10 · resource_optimization（MOD-RESOURCE_OPTIMIZATION_ENGINE · ROE v1.0.0）
 # ──────────────────────────────────────────────────────────────────────
 
 resource_optimization:
   server_id: resource_optimization
   version: "1.0.0"
-  description: "资源优化引擎 MCP 接口 — MAPE-K 循环驱动的资源监控/分析/优化/自愈（MOD-INF-032）"
+  description: "资源优化引擎 MCP 接口 — MAPE-K 循环驱动的资源监控/分析/优化/自愈（MOD-RESOURCE_OPTIMIZATION_ENGINE）"
   status: experimental
   backend:
     - "src/zephyr/shared/lifecycle/resource_optimization_engine.py (ResourceOptimizationEngine)"

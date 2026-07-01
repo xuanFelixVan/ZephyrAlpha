@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0257 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_ab_test
 # [INVARIANTS] lift = treatment_group - control_group
 # [MODIFY-GUARD] none
