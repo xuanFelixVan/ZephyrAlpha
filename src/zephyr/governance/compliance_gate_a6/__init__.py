@@ -26,5 +26,4 @@ Phase C 具体实现包。
 #
 
 __all__ = [
-    "default_security_gateway",
 ]

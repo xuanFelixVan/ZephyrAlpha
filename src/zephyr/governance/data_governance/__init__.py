@@ -11,8 +11,6 @@ __all__ = [
     "classify",
     "compare_sources",
     "data_classification",
-    "data_lifecycle",
-    "data_quality",
     "data_source_reliability",
     "forget_pii",
     "get_dq_spec",

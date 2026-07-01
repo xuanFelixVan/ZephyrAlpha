@@ -3,4 +3,4 @@
 # [TTL] task_bound
 """kb.pipeline — auto-generated package init."""
 
-__all__ = ["activate", "analyze", "batch_ingest", "extract", "ingest"]
+__all__ = ["activate", "analyze", "batch_ingest", "extract"]

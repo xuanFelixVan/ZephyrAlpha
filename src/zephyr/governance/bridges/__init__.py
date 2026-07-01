@@ -2,6 +2,5 @@
 # [TTL] task_bound
 __all__ = [
     "alerts",
-    "rbac_bridge",
     "spec_auditor",
 ]

@@ -16,7 +16,5 @@ __all__ = [
     "escalate_to_owner",
     "get_drift_config",
     "get_index",
-    "knowledge_engine",
-    "model_drift_monitor",
     "multi_model_consensus",
 ]

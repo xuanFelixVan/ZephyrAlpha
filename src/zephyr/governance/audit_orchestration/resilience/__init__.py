@@ -5,4 +5,4 @@
 
 from . import deferred_queue, failure_matcher
 
-__all__ = ["deferred_queue", "failure_matcher", "hallucination_detector", "rollback_manager"]
+__all__ = ["deferred_queue", "failure_matcher", "hallucination_detector"]

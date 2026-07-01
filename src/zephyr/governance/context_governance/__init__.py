@@ -9,8 +9,6 @@ __all__ = [
     "OptimizationRecommendation",
     "PromptVersion",
     "TokenTier",
-    "bandwidth_optimizer",
-    "context_manager",
     "prompt_lifecycle",
     "recommend",
 ]

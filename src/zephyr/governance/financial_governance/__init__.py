@@ -32,7 +32,6 @@ __all__ = [
     "ValidationReport",
     "ValidationStatus",
     "estimate_capacity",
-    "financial_compliance",
     "fsm_verifier",
     "generate_test_cases",
     "get_protocol",
@@ -41,7 +40,6 @@ __all__ = [
     "microstructure_defense",
     "oms_risk_engine",
     "reconcile_state",
-    "regime_detector",
     "strategy_portfolio",
     "valid_transitions",
 ]
