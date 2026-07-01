@@ -598,73 +598,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/audit_registration.py
-  path: governance/audit_registration.py
-  description: 扫描 src/zephyr/ 和 scripts/ 中所有 .py/.yaml 文件，
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/audit_rename_completeness.py
   path: governance/audit_rename_completeness.py
   description: 扫描 depgraph 所有表的所有 TEXT 列，检测旧标识符残留。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/auto_sync_all_registries.py
-  path: governance/auto_sync_all_registries.py
-  description: =====================================
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_handoff_manifests.py
-  path: governance/check_handoff_manifests.py
-  description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_module_singlesource.py
-  path: governance/check_module_singlesource.py
-  description: 防止考试系统受保护文件名在非声明 SSoT 路径下重复出现。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_ssot_gate.py
-  path: governance/check_ssot_gate.py
-  description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_test_structure.py
-  path: governance/check_test_structure.py
-  description: '检查项:'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/ci_self_check.py
-  path: governance/ci_self_check.py
-  description: 'CI Entry: Self-Check — Drift Detector 自身完整性验证'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/cleanup_stash.py
-  path: governance/cleanup_stash.py
-  description: 对标：OPS-2026062501 病根3（stash 堆积无清理机制）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -678,41 +614,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/diagnose_depgraph.py
-  path: governance/diagnose_depgraph.py
-  description: __manifest__ = """
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/env_check.py
-  path: governance/env_check.py
-  description: 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/extract_depgraph.py
   path: governance/extract_depgraph.py
   description: '[BLUEPRINT] | scripts/governance/extract_depgraph.py | §1'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/gate_engine_selfcheck.py
-  path: governance/gate_engine_selfcheck.py
-  description: Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/generate_path_ownership_map.py
-  path: governance/generate_path_ownership_map.py
-  description: '对标: CODEOWNERS + Bazel visibility。'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -742,30 +646,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/pre_delete_safety_check.py
-  path: governance/pre_delete_safety_check.py
-  description: 删除任何文件前 MUST 通过5项检查：
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/pre_write_gate.py
-  path: governance/pre_write_gate.py
-  description: RULE-ZERO 硬执行器——AI 在调用 Write/SearchReplace 之前 MUST 先通过此门禁。
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/rewrite_imports.py
-  path: governance/rewrite_imports.py
-  description: 当文件从 old_path 移到 new_path 时，扫描所有 .py 文件的 import 语句，
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/run_all.py
   path: governance/run_all.py
   description: run_all.py — 脚本系统统一入口脚本
@@ -790,14 +670,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/sync_rule_registry.py
-  path: governance/sync_rule_registry.py
-  description: Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/sync_yaml_to_depgraph.py
   path: governance/sync_yaml_to_depgraph.py
   description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10'
@@ -809,22 +681,6 @@ scripts:
 - name: governance/validate_module_id_naming.py
   path: governance/validate_module_id_naming.py
   description: r"""
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/validate_tool_contracts_consistency.py
-  path: governance/validate_tool_contracts_consistency.py
-  description: 对比 tool-contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/verify_key_imports.py
-  path: governance/verify_key_imports.py
-  description: 结构变更后验证关键模块可正常导入。替代 onboarding_detail.md §13.5 中的内联 python -c 命令。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -857,6 +713,38 @@ scripts:
 - name: governance/d11_compliance/__init__.py
   path: governance/d11_compliance/__init__.py
   description: No description
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d11_compliance/audit_registration.py
+  path: governance/d11_compliance/audit_registration.py
+  description: 扫描 src/zephyr/ 和 scripts/ 中所有 .py/.yaml 文件，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d11_compliance/check_ssot_gate.py
+  path: governance/d11_compliance/check_ssot_gate.py
+  description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d11_compliance/check_test_structure.py
+  path: governance/d11_compliance/check_test_structure.py
+  description: '检查项:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d11_compliance/ci_self_check.py
+  path: governance/d11_compliance/ci_self_check.py
+  description: 'CI Entry: Self-Check — Drift Detector 自身完整性验证'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -990,6 +878,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d11_compliance/verify_key_imports.py
+  path: governance/d11_compliance/verify_key_imports.py
+  description: 结构变更后验证关键模块可正常导入。替代 onboarding_detail.md §13.5 中的内联 python -c 命令。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d12_ai_hallucination/__init__.py
   path: governance/d12_ai_hallucination/__init__.py
   description: __all__ = [
@@ -1102,9 +998,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d1_structure/check_handoff_manifests.py
+  path: governance/d1_structure/check_handoff_manifests.py
+  description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d1_structure/check_index_integrity.py
   path: governance/d1_structure/check_index_integrity.py
   description: check_index_integrity.py — 索引完整性校验
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d1_structure/cleanup_stash.py
+  path: governance/d1_structure/cleanup_stash.py
+  description: 对标：OPS-2026062501 病根3（stash 堆积无清理机制）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1302,6 +1214,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/check_module_singlesource.py
+  path: governance/d3_metadata/check_module_singlesource.py
+  description: 防止考试系统受保护文件名在非声明 SSoT 路径下重复出现。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/check_naming_convention.py
   path: governance/d3_metadata/check_naming_convention.py
   description: 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.5.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_
@@ -1414,6 +1334,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/validate_tool_contracts_consistency.py
+  path: governance/d3_metadata/validate_tool_contracts_consistency.py
+  description: 对比 tool-contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d4_paths/__init__.py
   path: governance/d4_paths/__init__.py
   description: 检查项：
@@ -1510,6 +1438,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/diagnose_depgraph.py
+  path: governance/d5_architecture/diagnose_depgraph.py
+  description: __manifest__ = """
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/dm200912_query_domains.py
   path: governance/d5_architecture/dm200912_query_domains.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.5'
@@ -1523,6 +1459,22 @@ scripts:
   description: 治本改造（2026-06-29）：
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/pre_delete_safety_check.py
+  path: governance/d5_architecture/pre_delete_safety_check.py
+  description: 删除任何文件前 MUST 通过5项检查：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/pre_write_gate.py
+  path: governance/d5_architecture/pre_write_gate.py
+  description: RULE-ZERO 硬执行器——AI 在调用 Write/SearchReplace 之前 MUST 先通过此门禁。
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -2542,6 +2494,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d7_code/rewrite_imports.py
+  path: governance/d7_code/rewrite_imports.py
+  description: 当文件从 old_path 移到 new_path 时，扫描所有 .py 文件的 import 语句，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d7_code/validate_contracts_purity.py
   path: governance/d7_code/validate_contracts_purity.py
   description: validate_contracts_purity.py — 契约纯度校验
@@ -2646,6 +2606,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d8_doc_sync/auto_sync_all_registries.py
+  path: governance/d8_doc_sync/auto_sync_all_registries.py
+  description: =====================================
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d8_doc_sync/detect_ai_products_in_docs.py
   path: governance/d8_doc_sync/detect_ai_products_in_docs.py
   description: detect_ai_products_in_docs.py — AI 产物位置检测
@@ -2657,6 +2625,14 @@ scripts:
 - name: governance/d8_doc_sync/detect_dated_snapshots.py
   path: governance/d8_doc_sync/detect_dated_snapshots.py
   description: detect_dated_snapshots.py — 带日期快照文件检测
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d8_doc_sync/sync_rule_registry.py
+  path: governance/d8_doc_sync/sync_rule_registry.py
+  description: Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2731,6 +2707,14 @@ scripts:
   description: generate_gate_registry.py — 门禁登记表自动生成器
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generators/generate_path_ownership_map.py
+  path: governance/generators/generate_path_ownership_map.py
+  description: '对标: CODEOWNERS + Bazel visibility。'
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -2854,11 +2838,27 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/meta/env_check.py
+  path: governance/meta/env_check.py
+  description: 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/meta/finding_state_machine.py
   path: governance/meta/finding_state_machine.py
   description: finding_state_machine.py — Finding 全生命周期状态机
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/meta/gate_engine_selfcheck.py
+  path: governance/meta/gate_engine_selfcheck.py
+  description: Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
