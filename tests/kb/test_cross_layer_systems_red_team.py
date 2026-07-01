@@ -264,7 +264,7 @@ class TestVectorMemoryAdversarial:
         assert len(info2) == 8
 
     def test_vector_bridge_all_collections_access(self, tmp_path):
-        from zephyr.autonomy_core.vector_bridge import VectorBridge
+        from zephyr.autonomy_core.context.vector_bridge import VectorBridge
         from zephyr.integration.vector_memory.collection_schemas import COLLECTION_NAMES
         from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 

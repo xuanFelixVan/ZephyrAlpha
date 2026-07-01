@@ -11,7 +11,7 @@
 # [TESTS] test_cold_start_booster.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.cold_start_booster import ColdStartBooster, ColdStartProfile
+from zephyr.autonomy_core.context.cold_start_booster import ColdStartBooster, ColdStartProfile
 
 
 class TestColdStartProfile:

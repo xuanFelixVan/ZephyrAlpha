@@ -24,7 +24,7 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-from zephyr.autonomy_core.verify_paths import (
+from zephyr.shared.verify_paths import (
     CE_DIR,
     SOURCE_FILES,
     TEST_FILES,

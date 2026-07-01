@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.memory_bank import BANK_FILES, MemoryBank
+    from zephyr.autonomy_core.context.memory_bank import BANK_FILES, MemoryBank
 except Exception as _exc:
     pytestmark = pytest.mark.skip(reason=f"import failed: {_exc}")
 

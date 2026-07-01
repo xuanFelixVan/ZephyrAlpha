@@ -8,7 +8,7 @@
 # [TTL] task_bound
 """Tests for curation_loop.py (TASK-014 beta b)."""
 
-from zephyr.autonomy_core.curation_loop import CurationLoop
+from zephyr.autonomy_core.context.curation_loop import CurationLoop
 
 
 class TestCurationLoop:

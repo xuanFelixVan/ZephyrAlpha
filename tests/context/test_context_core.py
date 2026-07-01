@@ -25,7 +25,7 @@ from zephyr.autonomy_core.context.context_pipeline import (
     run_context_four_stage,
     run_context_four_stage_or_raise,
 )
-from zephyr.autonomy_core.token_budget import (
+from zephyr.infrastructure.capacity_assurance.token_budget import (
     DEFAULT_CONTEXT_TOKEN_BUDGET,
     estimate_tokens,
 )

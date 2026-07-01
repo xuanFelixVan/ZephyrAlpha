@@ -11,7 +11,7 @@
 # [TESTS] test_config_safety_guard.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.config_safety_guard import ConfigGuardResult, ConfigSafetyGuard
+from zephyr.shared.config_safety_guard import ConfigGuardResult, ConfigSafetyGuard
 
 
 class TestConfigGuardResult:

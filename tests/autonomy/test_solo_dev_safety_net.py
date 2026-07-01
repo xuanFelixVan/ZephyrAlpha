@@ -12,7 +12,7 @@
 # [TTL] task_bound
 import pytest
 
-from zephyr.autonomy_core.solo_dev_safety_net import SafetyNetCheck, SoloDevSafetyNet
+from zephyr.security.llm_defense.llm_security.solo_dev_safety_net import SafetyNetCheck, SoloDevSafetyNet
 
 
 class TestSafetyNetCheckInstantiation:

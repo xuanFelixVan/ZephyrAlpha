@@ -20,7 +20,7 @@ import sqlite3
 import pytest
 
 try:
-    from zephyr.autonomy_core.system_snapshot import (
+    from zephyr.infrastructure.system_snapshot import (
         CESnapshot,
         SystemSnapshot,
         SystemSnapshotter,

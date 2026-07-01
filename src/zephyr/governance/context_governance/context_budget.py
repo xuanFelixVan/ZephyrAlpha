@@ -44,7 +44,7 @@ import threading
 from dataclasses import dataclass, field
 from enum import Enum, unique
 
-from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 
 @unique

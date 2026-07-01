@@ -9,3 +9,6 @@
 """MOD-INF-023 drift_detector core module.
 Migrated from drift_detection/ to resolve directory boundary with MOD-INF-033.
 """
+
+__all__ = ['benchmark_integrity', 'ml_engineering', 'model_drift_monitor', 'performance_baseline', 'regime_detector']
+

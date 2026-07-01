@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.citation_walker import (
+from zephyr.governance.kb.citation_walker import (
     CitationPath,
     CitationWalker,
 )

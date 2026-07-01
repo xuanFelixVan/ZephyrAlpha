@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.lsg_pattern_tracker import (
+from zephyr.security.llm_defense.llm_security.lsg_pattern_tracker import (
     LSGPatternTracker,
     LSGRejectionPattern,
 )

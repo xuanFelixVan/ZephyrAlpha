@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_position_optimizer.py -q
 # [TTL] task_bound
-from zephyr.autonomy_core.position_optimizer import PositionOptimizer, PositionScore
+from zephyr.autonomy_core.context.position_optimizer import PositionOptimizer, PositionScore
 
 
 class TestPositionScore:

@@ -11,7 +11,7 @@
 # [TESTS] test_fragmentation_index.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.fragmentation_index import FragmentationIndex, FragmentationScore
+from zephyr.governance.kb.fragmentation_index import FragmentationIndex, FragmentationScore
 
 
 class TestFragmentationScore:

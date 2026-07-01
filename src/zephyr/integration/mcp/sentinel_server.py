@@ -48,7 +48,7 @@ from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
 
 __all__ = ["SentinelServer", "create_server"]
 
-from zephyr.autonomy_core.intent_keyword_mapper import IntentDomain
+from zephyr.governance.persistence.intent_keyword_mapper import IntentDomain
 
 _VALID_DOMAINS = frozenset({d.value for d in IntentDomain})
 

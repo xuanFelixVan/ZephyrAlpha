@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.ke_justification import KEJustificationGenerator, SelectedKE
+from zephyr.governance.kb.ke_justification import KEJustificationGenerator, SelectedKE
 
 
 class TestSelectedKE:

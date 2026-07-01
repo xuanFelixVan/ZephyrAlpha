@@ -40,11 +40,11 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
-from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.infra.observer import EventType, Observer
 
 if TYPE_CHECKING:
-    from zephyr.autonomy_core.doc_compressor import DocCompressor
+    from zephyr.shared.doc_compressor import DocCompressor
 
 
 @unique

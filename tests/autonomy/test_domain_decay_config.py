@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.domain_decay_config import DomainDecay, DomainDecayConfig
+from zephyr.autonomy_core.context.domain_decay_config import DomainDecay, DomainDecayConfig
 
 
 class TestDomainDecay:

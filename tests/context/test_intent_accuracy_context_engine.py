@@ -22,7 +22,7 @@ Test matrix:
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.intent_keyword_mapper import (
+from zephyr.governance.persistence.intent_keyword_mapper import (
     IntentKeywordMapper,
     IntentResult,
 )

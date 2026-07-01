@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.sensitivity_classifier import (
+from zephyr.security.llm_defense.llm_security.sensitivity_classifier import (
     ClassificationResult,
     SensitivityClassifier,
     SensitivityLevel,

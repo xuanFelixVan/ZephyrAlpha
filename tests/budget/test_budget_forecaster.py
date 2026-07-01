@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.budget_forecaster import BudgetForecast, BudgetForecaster
+from zephyr.infrastructure.capacity_assurance.budget_forecaster import BudgetForecast, BudgetForecaster
 
 
 class TestBudgetForecast:

@@ -19,7 +19,7 @@ Unit tests for pattern_library.py (T-3-21)
 
 from datetime import UTC
 
-from zephyr.autonomy_core.pattern_library import (
+from zephyr.governance.kb.pattern_library import (
     PatternEntry,
     PatternLibrary,
     PatternQuery,

@@ -29,7 +29,7 @@ from zephyr.autonomy_core.context.context_pipeline import (
     run_context_four_stage,
     run_context_four_stage_or_raise,
 )
-from zephyr.autonomy_core.kill_switch import KillSwitch
+from zephyr.infrastructure.capacity_assurance.kill_switch import KillSwitch
 
 
 # ============================================================================

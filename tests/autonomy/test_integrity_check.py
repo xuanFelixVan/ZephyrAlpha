@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.integrity_check import IntegrityCheck, IntegrityReport
+from zephyr.autonomy_core.context.integrity_check import IntegrityCheck, IntegrityReport
 
 
 class TestIntegrityReport:

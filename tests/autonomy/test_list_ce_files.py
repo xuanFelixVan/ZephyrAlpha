@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.ce_file_lister import CATEGORIES, collect_files, generate_manifest
+    from zephyr.autonomy_core.context.ce_file_lister import CATEGORIES, collect_files, generate_manifest
 except Exception as _exc:
     pytest.skip(f"cannot import list_ce_files: {_exc}", allow_module_level=True)
 

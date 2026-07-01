@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.shadow_canary import (
+from zephyr.autonomy_core.context.shadow_canary import (
     CanaryResult,
     ShadowCanary,
 )

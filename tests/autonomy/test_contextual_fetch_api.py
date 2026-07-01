@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.contextual_fetch_api import (
+from zephyr.autonomy_core.context.contextual_fetch_api import (
     ContextualFetchAPI,
     FetchSession,
 )

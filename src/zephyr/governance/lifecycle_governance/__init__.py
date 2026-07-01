@@ -24,4 +24,4 @@ __all__ = [
     "post_live_verification",
     "remove_api",
     "valid_transition",
-]
+'transition']

@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.alignment_scorer import AlignmentResult, AlignmentScorer
+    from zephyr.security.llm_defense.llm_security.alignment_scorer import AlignmentResult, AlignmentScorer
 
     _IMPORT_OK = True
     _IMPORT_REASON = ""

@@ -91,7 +91,7 @@ from pydantic import BaseModel, Field, field_validator
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
-from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",

@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.token_budget import (
+    from zephyr.infrastructure.capacity_assurance.token_budget import (
         BUDGET_CAPS,
         BudgetState,
         TokenBudgetManager,

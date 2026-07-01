@@ -2,4 +2,4 @@
 
 from zephyr.market_data.market_data import NormalizedMarketData
 
-__all__ = ["NormalizedMarketData"]
+__all__ = ["NormalizedMarketData", 'market_data', 'market_data_pipeline']

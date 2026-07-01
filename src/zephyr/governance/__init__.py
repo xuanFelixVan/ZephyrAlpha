@@ -335,7 +335,7 @@ __all__ = [
     "strategy_portfolio",
     "system_topology",
     "vibe_coding_enforcer",
-]
+'auto_runner', 'base', 'broker_interface', 'budget_enforcement', 'compliance_rule', 'database_manager', 'default_attribution_engine', 'default_tca_engine', 'depgraph_schema', 'evidence_pack', 'f5_boot_integration', 'f5_event_subscriber', 'f5_shutdown_manager', 'gate_repo', 'integrity', 'market_schema', 'merkle_hourly', 'performance_attribution_report', 'pipeline_base', 'strategy_base', 'strategy_registry']
 
 __version__ = "0.2.0"
 __domain_id__ = "DOM-GOV-001"

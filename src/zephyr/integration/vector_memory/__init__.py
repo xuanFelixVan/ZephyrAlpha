@@ -96,4 +96,4 @@ __all__ = [
     "vector_bridge",
     "vms_errors",
     "vms_schemas",
-]
+'context_ingest', 'vector_writer']

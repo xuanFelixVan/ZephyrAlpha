@@ -171,4 +171,4 @@ __all__ = [
     "venv_sync",
     "vulnerability_rescanner",
     "warm_standby",
-]
+'_manifest', 'concurrency_guard', 'gate_coordinator', 'rollback_scheduler']

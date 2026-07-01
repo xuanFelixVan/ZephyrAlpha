@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.token_budget import (
+from zephyr.infrastructure.capacity_assurance.token_budget import (
     BUDGET_CAPS,
     DEGRADED_THRESHOLD,
     BudgetState,

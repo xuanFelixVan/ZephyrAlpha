@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.intent_keyword_mapper import (
+    from zephyr.governance.persistence.intent_keyword_mapper import (
         IntentDomain,
         IntentKeywordMapper,
         IntentResult,

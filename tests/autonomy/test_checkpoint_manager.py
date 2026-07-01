@@ -25,7 +25,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.autonomy_core.checkpoint_manager import Checkpoint, CheckpointManager
+from zephyr.autonomy_core.context.checkpoint_manager import Checkpoint, CheckpointManager
 
 
 class TestCheckpoint:

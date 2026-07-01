@@ -17,4 +17,4 @@
 
 from __future__ import annotations
 
-__all__ = ["intelligence"]
+__all__ = ["intelligence", 'model_drift_detector']

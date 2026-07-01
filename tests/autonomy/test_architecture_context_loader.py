@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.autonomy_core.architecture_context_loader import (
+from zephyr.shared.architecture_context_loader import (
     DEFAULT_ARCH_CONTEXT_PATH,
     format_architecture_context_excerpt,
     load_architecture_context_dict,

@@ -37,8 +37,8 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.autonomy_core.intent_keyword_mapper import IntentKeywordMapper
-from zephyr.autonomy_core.intent_parser import (
+from zephyr.governance.persistence.intent_keyword_mapper import IntentKeywordMapper
+from zephyr.governance.persistence.intent_parser import (
     EmbeddingHit,
     IntentParser,
     LLMIntentVerdict,
