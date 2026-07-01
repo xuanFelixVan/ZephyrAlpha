@@ -12,7 +12,7 @@ doc_type: register
 title: "Session State Machine"
 status: active
 ttl: permanent
-implementation_status: "operational — consumed by src/zephyr/orchestration/runtime_core/orchestrator/session_manager.py (SessionManager v1.1 — CT-003)"
+implementation_status: "operational — consumed by src/zephyr/governance/audit_orchestration/state/session_manager.py (SessionManager v1.1 — CT-003)"
 
 description: "Defines the lifecycle states and transitions for AI agent sessions in the ZephyrAlpha pipeline"
 

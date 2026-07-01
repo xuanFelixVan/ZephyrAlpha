@@ -24,7 +24,7 @@ class TestL01Infrastructure:
     """L01 Infrastructure — config + kill switch"""
 
     def test_appconfig_default_creation(self):
-        from zephyr.governance.code_dedup.config import AppConfig
+        from zephyr.infrastructure.config import AppConfig
 
         cfg = AppConfig()
         assert cfg.env == "dev"
@@ -32,20 +32,20 @@ class TestL01Infrastructure:
         assert "akshare" in cfg.data_source_priority
 
     def test_appconfig_frozen(self):
-        from zephyr.governance.code_dedup.config import AppConfig
+        from zephyr.infrastructure.config import AppConfig
 
         cfg = AppConfig(env="prod", log_level="WARN")
         with pytest.raises(Exception):
             cfg.env = "dev"  # type: ignore[misc]
 
     def test_load_config_returns_appconfig(self):
-        from zephyr.governance.code_dedup.config import AppConfig, load_config
+        from zephyr.infrastructure.config import AppConfig, load_config
 
         cfg = load_config()
         assert isinstance(cfg, AppConfig)
 
     def test_reload_config_returns_appconfig(self):
-        from zephyr.governance.code_dedup.config import AppConfig, reload_config
+        from zephyr.infrastructure.config import AppConfig, reload_config
 
         cfg = reload_config()
         assert isinstance(cfg, AppConfig)

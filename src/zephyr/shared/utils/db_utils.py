@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_db_utils | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
-# [TTL] task_bound
+# [TTL] permanent
 
 """
 db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governance.persistence.sqlite_schema）

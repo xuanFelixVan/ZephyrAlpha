@@ -1,7 +1,7 @@
-﻿---
+---
 module_id: SH-DB-001
 submodule_path: src/zephyr/infrastructure/db
-title: "Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位"
+title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
 version: "4.3.0"
@@ -25,7 +25,7 @@ actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\infrastructure\db\'
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表) (3)market.duckdb(DuckDB,业务时序,8表，DDL-as-Code 真源 market_schema.py)。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
+summary: "Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-01删除/废弃。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
 tags: [database, db, sqlite, duckdb, atm, atomic-transaction, task-repo, olap, infrastructure, migration, self-healing, operational-excellence, dual-db-router, write-batcher, integration-blueprint]
 priority: P1
 runtime_plane: hot
@@ -67,22 +67,20 @@ references:
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
 
-## 三库职责划分（2026-06-30 决策：3库是合理最小集，不合并）
+## 二库职责划分（2026-06-30 决策：原3库中 market.duckdb 已于2026-07-01删除/废弃）
 
-> **决策依据**：单人开发+无实盘阶段。3个关系数据库各有硬需求，引擎选择需求驱动，合并代价远大于收益。统一入口 `DatabaseService` 封装3引擎差异，AI只需记住一个类。
-> **数据库清单真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（5个INFRA-DB条目，含2个非关系库）
+> **决策依据**：单人开发+无实盘阶段。2个关系数据库各有硬需求，引擎选择需求驱动，合并代价远大于收益。统一入口 `DatabaseService` 封装引擎差异，AI只需记住一个类。
+> **数据库清单真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（INFRA-DB条目，含非关系库）
 
 | # | 数据库 | 引擎 | infra_id | 职责 | 表数 | 集成度 | 引擎选择硬需求 |
 |---|--------|------|----------|------|:----:|:------:|-------------|
 | 1 | governance.db | SQLite | INFRA-DB-001 | **治理运行时**——TaskCard/事件/门禁/断路器/FLE指标 | 15+ | 18+处import(核心) | 嵌入式零部署、高频小事务、状态机CHECK约束 |
 | 2 | depgraph | PostgreSQL 16 | INFRA-DB-003 | **架构静态真源**——nodes/edges/domains等28表，架构治理 | 28 | 架构真源 | 复杂关系查询、MVCC并发、架构图遍历 |
-| 3 | market.duckdb | DuckDB | INFRA-DB-005 | **业务时序**——tick/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades | 8 | 回测用 | 列式压缩10:1、零拷贝读Parquet、AS OF JOIN时序PIT |
 
 **不合并理由**（第一性原理）：
 - SQLite→PostgreSQL：18+处import重写、TaskRepository核心类重写、SQL语法适配(?→%s, GLOB→SIMILAR TO)，代价极高
-- DuckDB不可替代：列式压缩、Parquet零拷贝、AS OF JOIN时序PIT查询，PostgreSQL无此优势
-- 真源唯一：3库职责不重叠（治理运行时/架构静态/业务时序），无同步需求
-- 责任唯一：`DatabaseService`统一入口，3引擎差异封装
+- 真源唯一：2库职责不重叠（治理运行时/架构静态），无同步需求
+- 责任唯一：`DatabaseService`统一入口，引擎差异封装
 
 ### market.duckdb 安全约束（read_only 真源：代码层强制）
 
@@ -121,7 +119,7 @@ Schema 版本：`MARKET_SCHEMA_VERSION = "1.0.0"`（每次 DDL 变更递增，�
 
 | 架构组件 | 蓝图定位 | 门禁触发条件 | 理由 |
 |---------|:-------:|------------|------|
-| **Warm层(DuckDB+Parquet)** | **当前规范** | — | 已实现market.duckdb，回测/因子研究够用，DuckDB~100ms满足15秒延迟预算 |
+| **Warm层(DuckDB+Parquet)** | **当前规范** | — | DuckDB OLAP 内存模式（INFRA-DB-004）只读挂载 governance.db，回测/因子研究够用，DuckDB~100ms满足15秒延迟预算（原 market.duckdb 已于2026-07-01删除/废弃） |
 | **Cold层(E盘Parquet归档)** | **当前规范(架构预留)** | 交易≥7年合规(证监会) | 法律硬要求；当前无实盘数据但架构需预留，DuckDB直接ATTACH E盘Parquet，单引擎管理 |
 | **Hot层(Redis)** | **未来蓝图** | **实盘交易触发** | 无实盘=无<5ms推理需求；Redis的<5ms需求来自盘中5000只×200因子推理(DD-11-01)，非Tick存储 |
 | **Feature Store三件套** | **未来蓝图** | 因子>500触发 | 当前因子少，DuckDB表+视图替代；DD-11-01训练-推理双存储需求暂缓 |
@@ -240,7 +238,7 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\db\` | 单元测试 |
 | 数据文件 | `D:\ZephyrAlpha\data/databases/governance.db` | 012A SQLite 主数据库（任务卡库，保持 SQLite 不迁移） |
 | 数据文件 | `localhost:5432/depgraph`（PostgreSQL 16，连接配置 `config/.env.postgres`） | 012B 迁移目标库（SQLite→PostgreSQL，depgraph 全景图，28 表） |
-| 数据文件 | `D:\ZephyrAlpha\data/databases/market.duckdb` | INFRA-DB-005 业务时序库（8表，read_only=True强制，安全约束真源在代码层） |
+| ~~数据文件~~ | ~~`D:\ZephyrAlpha\data/databases/market.duckdb`~~ | ~~INFRA-DB-005 业务时序库（8表，read_only=True强制，安全约束真源在代码层）~~——已于2026-07-01删除/废弃 |
 | 备份目录 | `D:\ZephyrAlpha\data\backups\` | 自动备份文件（7天日备份 + 4周末备份） |
 | 冷数据归档 | `D:\ZephyrAlpha\data\warehouse\` | Parquet 冷数据（events_YYYYMMDD.parquet） |
 

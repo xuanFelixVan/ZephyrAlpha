@@ -450,7 +450,7 @@ python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
 1. 想知道"项目有几个数据库/各负责什么" → 直接读 infrastructure_registry.yaml 的 `infrastructure:` 段，禁止凭记忆或其它文档推断。
 2. 准备改 DB 连接/新增 DB → 先查真源确认当前状态，再按下方 §11 depgraph 流程或对应模块蓝图施工。
 3. 写文档需要提"数据库清单" → 一律用纯指针引用真源，禁止复制条目。
-4. 准备操作 market.duckdb → **铁律：禁止裸 `duckdb.connect(market.duckdb)`**，必须通过 `DatabaseService.get_market_read_conn()`（查询，read_only=True 代码层强制）或 `DatabaseService.get_market_conn()`（写入，market_write_lock 串行化）。违反此铁律会绕过安全约束导致数据损坏。read_only=True 安全约束真源在代码层（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_read_conn()`），不在 YAML 配置。**DDL 真源**：[market_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/market_schema.py)（8表/视图 CREATE DDL + `init_market_schema` 幂等初始化，`get_market_conn()` 首次连接自动触发；改 DDL 前必须 git commit 备份 + 红蓝测试验证）。
+4. ~~准备操作 market.duckdb~~ → **market.duckdb（INFRA-DB-005）已于 2026-07-01 删除/废弃**，原业务时序库不再作为活动数据库。原安全约束真源在代码层（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_read_conn()`），原 DDL 真源为 [market_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/market_schema.py)。**注意**：DuckDB OLAP 引擎（INFRA-DB-004，:memory: 内存模式只读挂载 governance.db）保留不变，与 market.duckdb 是两个独立实体——前者是 OLAP 分析引擎（infrastructure_registry.yaml INFRA-DB-004），后者是已废弃的业务时序持久化库。数据库清单真源见 infrastructure_registry.yaml。
 
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 

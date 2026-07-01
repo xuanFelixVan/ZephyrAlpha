@@ -36,7 +36,7 @@ CLOSED_EXPIRY_S: int = 7776000
 GC_INTERVAL_S: int = 300
 
 _DEFAULT_DB_DIR = Path("data/behavioral-admission")
-_DEFAULT_DB_NAME = "session_state.db"
+_DEFAULT_DB_NAME = "behavioral_audit_session.db"
 
 
 class SessionState(str, Enum):
@@ -142,7 +142,7 @@ _CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS session_state (
     session_id TEXT PRIMARY KEY,
     state TEXT NOT NULL,
-    trust-score REAL NOT NULL,
+    trust_score REAL NOT NULL,
     violation_count INTEGER NOT NULL,
     trust_tier TEXT NOT NULL,
     created_at REAL NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS session_state (
 """
 
 _UPSERT_SQL = """
-INSERT INTO session_state (session_id, state, trust-score, violation_count, trust_tier,
+INSERT INTO session_state (session_id, state, trust_score, violation_count, trust_tier,
     created_at, last_activity_at, last_transition_at, transition_history)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(session_id) DO UPDATE SET
@@ -167,13 +167,13 @@ ON CONFLICT(session_id) DO UPDATE SET
 """
 
 _SELECT_SQL = """
-SELECT session_id, state, trust-score, violation_count, trust_tier,
+SELECT session_id, state, trust_score, violation_count, trust_tier,
     created_at, last_activity_at, last_transition_at, transition_history
 FROM session_state WHERE session_id = ?
 """
 
 _SELECT_ACTIVE_SQL = """
-SELECT session_id, state, trust-score, violation_count, trust_tier,
+SELECT session_id, state, trust_score, violation_count, trust_tier,
     created_at, last_activity_at, last_transition_at, transition_history
 FROM session_state WHERE state IN ('ACTIVE', 'IDLE', 'RESPONDING', 'DEGRADED')
 """

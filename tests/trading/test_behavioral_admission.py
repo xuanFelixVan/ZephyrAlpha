@@ -20,7 +20,7 @@ import pytest
 ve_mod = pytest.importorskip("zephyr.trading.verdict_engine")
 ac_mod = pytest.importorskip("zephyr.trading.admission_controller")
 pi_mod = pytest.importorskip("zephyr.trading.protection_index")
-sl_mod = pytest.importorskip("zephyr.trading.session_lifecycle")
+sl_mod = pytest.importorskip("zephyr.governance.behavioral_admission.session_lifecycle")
 
 VerdictEngine = ve_mod.VerdictEngine
 VerdictLevel = ve_mod.VerdictLevel

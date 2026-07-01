@@ -798,26 +798,10 @@ capabilities:
           避免层级倒置。勿在 db_utils.py 重新定义 get_db_connection（会破坏转发治本）。
 
   # --------------------------------------------------------------------------
-  - capability_id: market_duckdb_schema
-    canonical_override: src/zephyr/governance/market_schema.py
-    aliases:
-      - market_schema
-      - market_duckdb_ddl
-      - init_market_schema
-      - verify_market_schema
-      - expected_market_tables
-      - market_table_ddl
-      - market_view_ddl
-    description: >-
-      market.duckdb 8表/视图 DDL-as-Code 真源（DDL 唯一定义点）。
-      真源 canonical = src/zephyr/governance/market_schema.py 的 MARKET_TABLE_DDL（7表）+
-      MARKET_VIEW_DDL（1视图 kline_3s）+ init_market_schema(conn) 幂等初始化 +
-      verify_market_schema(conn) 校验。MARKET_SCHEMA_VERSION="1.0.0"。
-      EXPECTED_MARKET_TABLES 真源在此，database_service.py 通过 import re-export（向后兼容
-      DatabaseService.EXPECTED_MARKET_TABLES 类属性）。init_market_schema 由
-      DatabaseService.get_market_conn() 首次连接时自动触发（事件触发，非手动/非时间触发）。
-      解决发现性：新 AI 搜 "market.duckdb DDL/schema/init_market_schema" 可定位真源。
-      解决防重建：check_file_canonical() 反查 + AGENTS.md §11.0 警告阻止新建第二个 DDL 定义。
+  # 已删除（2026-07-01）：market_duckdb_schema capability 已随 market.duckdb（INFRA-DB-005）
+  # 删除/废弃而移除。原真源 src/zephyr/governance/market_schema.py 保留为历史归档，不再作为
+  # 活动数据库 DDL。DuckDB OLAP 引擎（INFRA-DB-004 :memory: 模式）不受影响。
+  # --------------------------------------------------------------------------
 
   # --------------------------------------------------------------------------
   - capability_id: vms_ssot_gate

@@ -31,7 +31,6 @@ __all__ = [
     "protection_index",
     "resource_optimization",
     "runtime_config",
-    "session_lifecycle",
     "speed_baseline_checker",
     "staging_area",
     "status_dashboard",

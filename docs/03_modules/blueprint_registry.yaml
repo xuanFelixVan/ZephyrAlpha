@@ -921,9 +921,9 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: SH-DB-001
   name: database
-  title: Database 集成蓝图 — 3库职责划分(SQLite治理+PG架构+DuckDB业务) + 三层冷热架构定位
-  summary: Database 集成蓝图——3个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)
-    (3)market.duckdb(DuckDB,业务时序,8表，DDL-as-Code 真源 market_schema.py)。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature
+  title: Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位
+  summary: Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB,业务时序)
+    已于2026-07-01删除/废弃。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature
     Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。
   layer: cross_layer
   functional_domain: data

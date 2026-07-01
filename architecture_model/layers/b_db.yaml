@@ -5,7 +5,7 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
-  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001/003/005（3个关系数据库清单真源，禁止同步）"
+  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001/003（2个关系数据库清单真源，禁止同步。INFRA-DB-005 market.duckdb 已于2026-07-01删除/废弃）"
   backup_dir: data/backups/
   warehouse_dir: data/warehouse/
   blueprint_ref: docs/03_modules/_cross_layer/database/blueprint.md
@@ -90,19 +90,19 @@ modules:
     module_id: MOD-INF-012
     name: Market Data DuckDB Layer
     submodule_path: src/zephyr/governance/
-    status: implemented
+    status: deleted
     priority: P1
     runtime_plane: warm
-    description: market.duckdb 业务时序库——8表(tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades)，DuckDB列式压缩+Parquet零拷贝+AS OF JOIN时序PIT查询。read_only=True安全约束真源在代码层(database_service.py get_market_read_conn查询/get_market_conn写入)。数据库清单真源：infrastructure_registry.yaml INFRA-DB-005。三层冷热架构定位见blueprint.md§三层冷热架构定位。
+    description: "~~market.duckdb 业务时序库~~——已于2026-07-01删除/废弃。原8表(tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades)，原DuckDB列式压缩+Parquet零拷贝+AS OF JOIN时序PIT查询。原read_only=True安全约束真源在代码层(database_service.py)。数据库清单真源：infrastructure_registry.yaml INFRA-DB-005（已标记deleted）。注意：DuckDB OLAP 引擎（INFRA-DB-004 :memory: 模式）保留不变，与 market.duckdb 是两个独立实体。"
     db_engine: duckdb
-    db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-005（数据库清单真源，禁止同步）"
+    db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-005（已删除/废弃，禁止同步）"
     files:
       - database_service.py
       - market_schema.py
     interfaces:
       - contract_id: CT-DB-MARKET-001
         role: producer
-        description: market.duckdb 连接契约——DatabaseService.get_market_read_conn(read_only=True代码层强制，查询用) + get_market_conn(读写模式，写入用，market_write_lock串行化)。安全约束真源在代码层不在YAML。禁止裸duckdb.connect(AGENTS.md §11.0铁律)
+        description: "~~market.duckdb 连接契约~~——已于2026-07-01删除/废弃"
     test_coverage:
       tested:
         - database_service.py (tests/io/test_market_duckdb.py DM-100018 覆盖 market.duckdb 方法)
@@ -113,7 +113,8 @@ modules:
 summary:
   total: 3
   by_status:
-    implemented: 3
+    implemented: 2
+    deleted: 1
   total_files: 12
   tested_files: 8
   untested_files: 4

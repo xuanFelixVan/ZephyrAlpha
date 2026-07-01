@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-033
 activation_phase: requires_100ai
 submodule_path: src/zephyr/compliance/behavioral_auditor
@@ -1032,9 +1032,9 @@ MCP Tools：behavioral_audit_check / behavioral_audit_baseline / behavioral_audi
 > 仅本蓝图需要：跨 Session 行为审计上下文传递是 BehavioralAuditor 的状态管理核心
 > 不可砍理由：砍掉 = 新 Session 丢失历史行为上下文
 
-Session 状态持久化：session_state.db（Trust Tier/escalation_level/操作计数/基线快照 hash）
+Session 状态持久化：behavioral_audit_session.db（Trust Tier/escalation_level/操作计数/基线快照 hash）
 
-跨 Session 传递：新 Session 启动→从 SQLite 恢复 session_state→加载基线→继续审计
+跨 Session 传递：新 Session 启动→从 SQLite 恢复 behavioral_audit_session→加载基线→继续审计
 
 ---
 

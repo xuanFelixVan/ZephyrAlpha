@@ -50,7 +50,7 @@ def test_cross_db_domain_consistency():
     if missing_in_depgraph:
         print(f"  ✗ FAIL: {len(missing_in_depgraph)} 个 domain 在 governance.db 中存在但 depgraph 中缺失")
         print(f"    缺失的 domain: {sorted(missing_in_depgraph)[:10]}")
-        return False
+        assert False, f"{len(missing_in_depgraph)} 个 governance domain 在 depgraph 中缺失"
 
     if missing_in_governance:
         print(f"  ⚠ WARNING: {len(missing_in_governance)} 个 domain 在 depgraph 中存在但 governance.db 中无任务")
@@ -60,7 +60,6 @@ def test_cross_db_domain_consistency():
     print(f"  ✓ PASS: governance.db 有 {len(gov_domains)} 个 domain")
     print(f"  ✓ PASS: depgraph 有 {len(dep_domains)} 个 domain")
     print("  ✓ PASS: 所有 governance domain 在 depgraph 中均存在")
-    return True
 
 
 def test_directory_tree_filesystem_alignment():
@@ -88,11 +87,10 @@ def test_directory_tree_filesystem_alignment():
     if missing_files:
         print(f"  ✗ FAIL: {len(missing_files)} 个文件在 depgraph 中记录但文件系统中不存在")
         print(f"    示例: {missing_files[:5]}")
-        return False
+        assert False, f"{len(missing_files)} 个文件在 depgraph 中记录但文件系统中不存在"
 
     print(f"  ✓ PASS: depgraph 记录了 {len(db_paths)} 个文件")
     print("  ✓ PASS: 所有文件路径在文件系统中均存在")
-    return True
 
 
 def test_schema_version_consistency():
@@ -145,10 +143,9 @@ def test_schema_version_consistency():
     if versions:
         print(f"  ✓ INFO: 检测到 schema 版本: {versions}")
         # 不强制要求版本一致，因为各库可能独立演进
-        return True
     else:
         print("  ⚠ WARNING: 未检测到任何 schema 版本记录")
-        return True  # 不是错误，只是警告
+        # 不是错误，只是警告
 
 
 def test_data_integrity():
@@ -195,14 +192,13 @@ def test_data_integrity():
     missing = expected_gov_tables - gov_tables
     if missing:
         print(f"  ✗ FAIL: governance.db 缺失核心表: {missing}")
-        return False
+        assert False, f"governance.db 缺失核心表: {missing}"
 
     if node_count == 0:
         print("  ✗ FAIL: depgraph 无节点数据")
-        return False
+        assert False, "depgraph 无节点数据"
 
     print("  ✓ PASS: 三库 schema 完整，数据可用")
-    return True
 
 
 def main():
@@ -240,8 +236,8 @@ def main():
     results = []
     for test in tests:
         try:
-            result = test()
-            results.append(result)
+            test()
+            results.append(True)
         except Exception as e:
             print(f"  ✗ EXCEPTION: {e}")
             results.append(False)

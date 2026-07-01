@@ -98,10 +98,9 @@ class SessionError(RuntimeError):
 class SessionManager:
     """会话状态管理器——运行时消费 session_state_machine.yaml。"""
 
-    def __init__(self, db_path: Path | str | None = None) -> None:
+    def __init__(self) -> None:
         self._sessions: dict[str, Session] = {}
         self._config = self._load_config()
-        self._db_path = Path(db_path) if db_path else (REPO_ROOT / "data" / "sessions.db")
 
     def _load_config(self) -> dict[str, Any]:
         if not _STATE_MACHINE_YAML.exists():

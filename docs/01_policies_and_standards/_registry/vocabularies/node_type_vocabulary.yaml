@@ -252,7 +252,7 @@ values:
     architecture_layer_fallback: L0_infrastructure
     stability_fallback: stable
     autonomy_fallback: human_gated
-    definition: "数据库节点——关系型/列式/向量数据库等持久化基础设施（governance.db/depgraph/market.duckdb）。手工维护的持久节点，design_maturity=production（已运营非设计态），扫描器DELETE排除node_type='database'确保不被清空。不进白名单（非磁盘扫描产出，由人工INSERT）。数据库清单真源在infrastructure_registry.yaml，依赖关系真源在depgraph"
+    definition: "数据库节点——关系型/列式/向量数据库等持久化基础设施（governance.db/depgraph）。手工维护的持久节点，design_maturity=production（已运营非设计态），扫描器DELETE排除node_type='database'确保不被清空。不进白名单（非磁盘扫描产出，由人工INSERT）。数据库清单真源在infrastructure_registry.yaml，依赖关系真源在depgraph。注：market.duckdb 已于2026-07-01删除/废弃"
 
   # ════════════════════════════════════════════════════════════════════
   # 域级 - 域类（category: domain）
