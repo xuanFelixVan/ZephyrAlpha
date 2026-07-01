@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-MASTER_BLUEPRINT
 submodule_paths_scope: all-modules
 title: "Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图"
@@ -106,7 +106,7 @@ tags:
 |---------|-----------|------|------|
 | [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（12系统拓扑+63条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
 | [blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md) | MOD-MASTER-003 | v1.1.0 | §-1/§-2（容量升级：二次审计12缺口+10个升级章） |
-| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_agent_spec.md) | MOD-MASTER_BLUEPRINT | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
+| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_agent_spec.md) | MOD-MASTER-001 | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
 
 ## 12 个集成系统
 
@@ -192,7 +192,7 @@ tags:
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 6 | 基线蓝图 | MOD-MASTER-002 | v0.9.2 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | 现存设计 |
 | 7 | 容量蓝图 | MOD-MASTER-003 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_capacity.md` | 升级设计 |
-| 8 | Agent Spec蓝图 | MOD-MASTER_BLUEPRINT | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md` | CBAC+Skill |
+| 8 | Agent Spec蓝图 | MOD-MASTER-001 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md` | CBAC+Skill |
 
 ---
 

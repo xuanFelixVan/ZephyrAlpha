@@ -1,5 +1,5 @@
-﻿---
-module_id: MOD-MASTER_BLUEPRINT
+---
+module_id: MOD-MASTER-001
 title: "Agent Spec 蓝图 — CBAC能力矩阵·Skill路由"
 doc_type: blueprint
 status: Active
@@ -58,7 +58,7 @@ tags:
 
 # Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
 
-> module_id: MOD-MASTER_BLUEPRINT | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: MOD-MASTER-001 | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_agent_spec.md | generation: 2 | construction_progress: completed
 
 ---

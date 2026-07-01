@@ -1,11 +1,4 @@
-﻿---
-title: Blueprint Baseline
-module_id: DOC-BLUEPRINT_BASELINE
-ttl: permanent
-doc_type: blueprint
 ---
-
-﻿﻿﻿﻿﻿﻿﻿﻿﻿---
 module_id: MOD-MASTER-002
 title: "Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）"
 doc_type: blueprint
