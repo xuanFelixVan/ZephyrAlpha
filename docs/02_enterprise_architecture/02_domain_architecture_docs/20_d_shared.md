@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 05:07:05
+> 最后更新: 2026-07-01 11:55:18
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -342,6 +342,11 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_portfolio_performance_attribution_report_py
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_core_integrity_guard_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_core_integrity_guard_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
@@ -357,7 +362,7 @@ graph TD
     class src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_core_integrity_guard_py,src_zephyr_shared_cost_estimator_py,src_zephyr_shared_degradation_chain_py,src_zephyr_shared_dependency_init_py,src_zephyr_shared_dependency_capacity_guard_py,src_zephyr_shared_draft_init_py,src_zephyr_shared_dual_channel_alert_py,src_zephyr_shared_error_budget_tracker_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_event_bus_py_1 production
     class src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py,src_zephyr_shared_contracts_risk_init_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_init_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_deprecation_py,src_zephyr_shared_diff_utils_py,src_zephyr_shared_env_py,src_zephyr_shared_errors_py,src_zephyr_shared_events_init_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py design
     class D_FRONTEND,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME external_prod
-    class D_GOVERNANCE,D_INFRA_OPS external_design
+    class D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_OPS external_design
 ```
 
 ### 第 5 页 / 共 9 页 / Page 5 of 9
@@ -416,6 +421,9 @@ graph TD
     src_zephyr_shared_foundation_constants_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_infra_process_pool_py -.->|import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_infra_observer_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_heartbeat_server_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_infra_observer_py
@@ -429,7 +437,7 @@ graph TD
     class src_zephyr_shared_events_event_bus_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_fault_isolator_py,src_zephyr_shared_health_py,src_zephyr_shared_healthcheck_service_py,src_zephyr_shared_heartbeat_server_py,src_zephyr_shared_infra_process_lifecycle_gateway_py production
     class src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_file_utils_py,src_zephyr_shared_flags_py,src_zephyr_shared_foundation_init_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_frontmatter_utils_py,src_zephyr_shared_idempotency_py,src_zephyr_shared_infra_init_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_pool_py design
     class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
-    class D_TRADING external_design
+    class D_GOV_AUDIT,D_TRADING external_design
 ```
 
 ### 第 6 页 / 共 9 页 / Page 6 of 9
@@ -478,7 +486,9 @@ graph TD
     src_zephyr_shared_io_io_cache_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_module_birth_registry_py
-    D_GOV_AUDIT["D_GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_paths_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_paths_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_io_streaming_reader_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_shared_io_io_cache_py
@@ -496,8 +506,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_knowledge_init_py,src_zephyr_shared_lifecycle_scope_guard_py,src_zephyr_shared_lifecycle_task_lifecycle_manager_py,src_zephyr_shared_longevity_monitor_py,src_zephyr_shared_maintenance_init_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_metrics_py,src_zephyr_shared_model_capacity_probe_py,src_zephyr_shared_module_birth_registry_py,src_zephyr_shared_observability_02_init_py,src_zephyr_shared_observability_02_health_py production
     class src_zephyr_shared_io_init_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_knowledge_ke_linker_py,src_zephyr_shared_knowledge_ke_structurer_py,src_zephyr_shared_knowledge_kms_interface_py,src_zephyr_shared_limiter_py,src_zephyr_shared_lock_py,src_zephyr_shared_logging_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_migration_py,src_zephyr_shared_models_py design
-    class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_AUDIT,D_GOV_ENFORCEMENT external_prod
-    class D_INTEGRATION,D_TRADING external_design
+    class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_ENFORCEMENT external_prod
+    class D_GOV_AUDIT,D_INTEGRATION,D_TRADING external_design
 ```
 
 ### 第 7 页 / 共 9 页 / Page 7 of 9
@@ -624,6 +634,18 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_task_types_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_schema_schemas_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_state_machine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -647,6 +669,17 @@ graph TD
         src_zephyr_shared_vibe_experiment_tracker_py["src/zephyr/shared/vibe_experiment_tracker.py production"]
         src_zephyr_shared_zephyr_logger_py["src/zephyr/shared/zephyr_logger.py production"]
     end
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_shared_utils_time_utils_py
     D_INTEGRATION["D_INTEGRATION prototype"]
@@ -661,7 +694,7 @@ graph TD
     class src_zephyr_shared_vibe_experiment_tracker_py,src_zephyr_shared_zephyr_logger_py production
     class src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py design
     class D_INFRA_RECOVERY,D_SECURITY external_prod
-    class D_INTEGRATION external_design
+    class D_GOV_AUDIT,D_INTEGRATION external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

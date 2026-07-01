@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-01 05:07:06
+%% 生成时间: 2026-07-01 11:55:20
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 746, 依赖边数: 919
+%% 模块数: 748, 依赖边数: 925
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d5_architec___race_context_propagation_py["...rs/check_trace_context_propagation.py [prototype]"]
         scripts_governance_d5_architecture_detectors___init___py["...d5_architecture/detectors/__init__.py [prototype]"]
         scripts_governance_d5_architec___me_name_module_relations_py["...analyze_same_name_module_relations.py [prototype]"]
-        %% ... 还有 646 个模块未显示
+        %% ... 还有 648 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_de___baseline_poisoning_guard_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_brain_integration_py
     src_zephyr_governance_drift_detection___init___py -->|import_depends| src_zephyr_governance_drift_detection_canary_controller_py
-    %% ... 还有 436 条域内依赖未显示
+    %% ... 还有 437 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
@@ -391,7 +391,7 @@ graph TD
     src_zephyr_governance_blind_spot_tracker_py -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     docs_03_modules__cross_layer_mcp_servers_blueprint_md -->|contract| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    %% D_GOVERNANCE -> D_GOV_AUDIT (32 条)
+    %% D_GOVERNANCE -> D_GOV_AUDIT (37 条)
     src_zephyr_governance_audit_write_failure_protector_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_finding_ingest_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -412,6 +412,9 @@ graph TD
     src_zephyr_governance_drift_detection_tamper_proof_audit_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_semantic_audit_compliance_map_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_semantic_audit_kb_gate_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_semantic_audit_supply_chain_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -419,9 +422,6 @@ graph TD
     src_zephyr_governance_semantic_auditor_compliance_map_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_semantic_auditor_kb_gate_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_llm_security_test_cross____integration_llm_security_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_drift_de___ion_drift_infrastructure_py -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOVERNANCE -> D_GOV_DRIFT (6 条)
     src_zephyr_governance_merkle_audit_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
@@ -605,6 +605,6 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 516 条
+    %% 域内依赖: 517 条
     %% 跨域入边: 147 条
-    %% 跨域出边: 256 条
+    %% 跨域出边: 261 条
