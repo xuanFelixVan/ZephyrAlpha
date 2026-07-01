@@ -41,6 +41,6 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-from zephyr.simulation.backtest_base import BacktestEngineBase, BacktestResult, FactorDiscovery
+from zephyr.research.backtest_base import BacktestEngineBase, BacktestResult, FactorDiscovery
 
 __all__ = ["BacktestEngineBase", "BacktestResult", "FactorDiscovery", "backtest_base"]

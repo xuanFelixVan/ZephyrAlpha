@@ -11,7 +11,7 @@ from __future__ import annotations
 """L07 analytics_base — OCP 扩展点抽象方法形状。"""
 
 
-from zephyr.pf_core.analytics_base import AttributionEngineBase, TCAEngineBase
+from zephyr.reporting.analytics_base import AttributionEngineBase, TCAEngineBase
 
 
 def test_tca_engine_base_is_abstract() -> None:

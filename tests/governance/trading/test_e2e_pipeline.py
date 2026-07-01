@@ -53,7 +53,7 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.pf_core.default_tca_engine import (
+from zephyr.governance.default_tca_engine import (
     DefaultTCAEngine,
 )
 from zephyr.risk.implementations.default_risk_limits_calculator import (
@@ -73,7 +73,7 @@ from zephyr.signal_fundamental.strategy.implementations.default_capital_allocato
     AllocationMethod,
     DefaultCapitalAllocator,
 )
-from zephyr.simulation.default_backtest_engine import (
+from zephyr.research.default_backtest_engine import (
     DefaultBacktestEngine,
 )
 from zephyr.simulation.implementations.default_experiment_pipeline import (

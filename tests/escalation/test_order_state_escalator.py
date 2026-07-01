@@ -11,7 +11,7 @@
 # [TESTS] tests/test_order_state_escalator.py
 # [TTL] task_bound
 
-from zephyr.ex_core.order_state_escalator import OrderStateEscalator
+from zephyr.governance.escalation.order_state_escalator import OrderStateEscalator
 
 
 class TestOrderStateEscalatorInit:

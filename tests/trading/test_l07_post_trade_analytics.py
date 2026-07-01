@@ -20,7 +20,7 @@ import pytest
 
 l07 = pytest.importorskip("zephyr.l07_post_trade_analytics", reason="l07-post-trade-analytics not importable")
 
-from zephyr.pf_core.analytics_base import (
+from zephyr.reporting.analytics_base import (
     AttributionEngineBase,
     TCAEngineBase,
 )

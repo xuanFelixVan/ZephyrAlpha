@@ -49,10 +49,6 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 from __future__ import annotations
 
 __all__ = [
-    "backtest_base",
-    "backtest_base_from_resear",
-    "default_backtest_engine",
-    "default_backtest_engine_from_resear",
     "pipeline_base",
     "pipeline_base_from_resear",
 ]

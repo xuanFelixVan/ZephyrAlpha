@@ -19,7 +19,7 @@ import pytest
 
 l09 = pytest.importorskip("zephyr.simulation", reason="l09-research-innovation not importable")
 
-from zephyr.simulation.backtest_base import (
+from zephyr.research.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,

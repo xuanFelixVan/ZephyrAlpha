@@ -75,12 +75,12 @@ from zephyr.intelligence.model_evaluation.inference_base import (
     ModelTrainerBase,
 )
 from zephyr.pf_core.compliance_rule import ComplianceRule
-from zephyr.simulation.backtest_base import (
+from zephyr.research.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,
 )
-from zephyr.simulation.default_backtest_engine import (
+from zephyr.research.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )

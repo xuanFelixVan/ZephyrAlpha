@@ -59,13 +59,13 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.pf_core.default_tca_engine import DefaultTCAEngine
+from zephyr.governance.default_tca_engine import DefaultTCAEngine
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.simulation.backtest_base import (
+from zephyr.research.backtest_base import (
     BacktestResult,
 )
-from zephyr.simulation.default_backtest_engine import (
+from zephyr.research.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )

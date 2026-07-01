@@ -18,7 +18,7 @@ Phase C 具体实现包。
   - DefaultBacktestEngine : BacktestEngineBase 的具体实现（向量化日频回测）
 """
 
-from zephyr.simulation.default_backtest_engine import (
+from zephyr.research.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )

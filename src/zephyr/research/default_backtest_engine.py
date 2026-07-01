@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L09-001 | docs/03_modules/_domain-research/research-core/blueprint.md
-# [MODULE] zephyr.simulation.default_backtest_engine
+# [MODULE] zephyr.research.default_backtest_engine
 # [DOMAIN] D_SIMULATION
-# [DEPENDENCIES] zephyr.simulation.__init__
+# [DEPENDENCIES] zephyr.research.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -36,7 +36,7 @@ from decimal import Decimal
 
 import pandas as pd
 
-from zephyr.simulation.backtest_base import (
+from zephyr.research.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
 )

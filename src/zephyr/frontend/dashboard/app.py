@@ -49,27 +49,27 @@ except ImportError:
 
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.infra_ops.dashboard.components.fitness_functions import (
+from zephyr.frontend.dashboard.components.fitness_functions import (
     FitnessDashboardData,
     fetch_fitness_data,
     render_fitness_dashboard,
 )
-from zephyr.infra_ops.dashboard.components.gate_statistics import (
+from zephyr.frontend.dashboard.components.gate_statistics import (
     GateStatisticsData,
     fetch_gate_statistics,
     render_gate_statistics,
 )
-from zephyr.infra_ops.dashboard.components.knowledge_overview import (
+from zephyr.frontend.dashboard.components.knowledge_overview import (
     KnowledgeOverviewData,
     fetch_knowledge_overview,
     render_knowledge_overview,
 )
-from zephyr.infra_ops.dashboard.components.olap_trend import (
+from zephyr.frontend.dashboard.components.olap_trend import (
     OLAPTrendData,
     fetch_olap_trends,
     render_olap_trends,
 )
-from zephyr.infra_ops.dashboard.components.task_progress import (
+from zephyr.frontend.dashboard.components.task_progress import (
     TaskProgressData,
     fetch_task_progress,
     render_task_progress,

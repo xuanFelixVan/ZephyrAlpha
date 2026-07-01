@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.pf_core.strategy_portfolio import (
+from zephyr.governance.financial_governance.strategy_portfolio import (
     RetirementTrigger,
     StrategyMethod,
     estimate_capacity,

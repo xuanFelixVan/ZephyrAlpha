@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.risk.oms_risk_engine import (
+from zephyr.governance.financial_governance.oms_risk_engine import (
     AtTradeCheck,
     OMSRiskEngine,
     OrderState,
