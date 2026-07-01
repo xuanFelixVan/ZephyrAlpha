@@ -126,8 +126,7 @@ def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
             cur = conn.cursor()
             cur.execute(
                 "SELECT DISTINCT blueprint_id, path, blueprint_path "
-                "FROM nodes WHERE blueprint_id LIKE %s",
-                ('MOD-%',),
+                "FROM nodes WHERE blueprint_id ~ '^(MOD-|SH-|SYS-)'",
             )
             for row in cur.fetchall():
                 mid = row[0]
