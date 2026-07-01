@@ -30,7 +30,6 @@ PipelineOrchestrator — M1-M11 管线协调器
   - ``_call_model`` 通过 ``LLMGateway`` 调用真实 LLM API（DeepSeek / GLM / Claude / OpenAI）
   - 成功时返回 ``simulated=False``，使用 LLM 实际输出
   - fallback 路径仅在 API 不可用时返回 ``simulated=True`` 占位（防御性降级）
-  - 见 ``specs/GOV-FSTR-001`` §11.3 Phase 1（SRC-0022）
 
 双管线架构：
   A区 M1-M5 → 生产（代码生成/校验/打包）

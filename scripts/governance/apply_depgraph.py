@@ -1150,7 +1150,7 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
     删除 blueprint_links 表中的记录（用于清理悬空引用）。
     返回：True=成功，False=失败
     校验：blueprint_id 必须在 blueprint_links 中存在
-    用途：F35 蓝图悬空处理（GOV-FSTR-001 引用的蓝图文件实际不存在）
+    用途：F35 蓝图悬空处理（清理已删除蓝图的悬空引用）
     """
     with _db_write_lock(db_path=db_path, task="delete_blueprint_link"):
         conn = get_depgraph_pg_connection(autocommit=False)

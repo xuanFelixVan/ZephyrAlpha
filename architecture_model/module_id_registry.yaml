@@ -312,10 +312,6 @@ registered_ids:
     title: "架构版本化策略"
     path: "docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md"
     status: draft
-  - module_id: GOV-FSTR-001
-    title: "系统重组总蓝图"
-    path: "docs/03_modules/_cross_layer/restructuring/blueprint.md"
-    status: active
 
   # === GOV 数据层 ===
   - module_id: GOV-DATA-001
