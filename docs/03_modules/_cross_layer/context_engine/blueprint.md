@@ -1,6 +1,6 @@
 ---
 module_id: MOD-CONTEXT_ENGINE
-submodule_path: src/zephyr/intelligence/context_management
+submodule_path: src/zephyr/autonomy_core/context
 title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
 doc_type: blueprint
 template_for: blueprint
@@ -17,7 +17,7 @@ updated: 2026-05-19
 valid_from: 2026-05-07
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: src/zephyr/intelligence/context_management/
+actual_disk_path: src/zephyr/autonomy_core/context/
 belongs_to: MOD-MASTER_BLUEPRINT
 parent_module:
 generation: 1
@@ -40,7 +40,7 @@ child_modules:
 # Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
 
 > module_id: MOD-CONTEXT_ENGINE | version: 1.0.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/orchestration/context_management/ | generation: 1 | construction_progress: completed
+> actual_disk_path: src/zephyr/autonomy_core/context/ | generation: 1 | construction_progress: completed
 > child_modules: MOD-INF-008A (Core Pipeline, 40文件) | MOD-INF-008B (Governance & Operations, 47文件)
 > 蓝图+施工图模板：[TPL-BLUEPRINT-001](file:///D:/ZephyrAlpha/docs/03_modules/template_registry.yaml)
 
@@ -61,7 +61,7 @@ child_modules:
 | **MOD-INF-008A** | Core Pipeline — build→compress→validate→inject 四阶段流水线 + Token预算三级管控 + VMS 4C检索桥接 + LSG安全审查 + MCP Agentic Pull接口 | 40 | [sub-blueprints/MOD-INF-008A-blueprint.md](sub-blueprints/MOD-INF-008A-blueprint.md) |
 | **MOD-INF-008B** | Governance & Operations — 健康评分(ContextHealthScore) + 生命周期(ContextEvictor/ContextRotModel/SessionLearner) + 安全防护(AdversarialRobustness/PoisoningMonitor) + 熔断监控(KillSwitch/OTel/SelfDiagnosis) + 运维支撑 | 47 | [sub-blueprints/MOD-INF-008B-blueprint.md](sub-blueprints/MOD-INF-008B-blueprint.md) |
 
-canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml)，代码落位 `src/zephyr/orchestration/context_management/`。
+canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml)，代码落位 `src/zephyr/autonomy_core/context/`。
 
 ---
 
@@ -136,7 +136,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` | 本文件 |
 | 008A 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\sub-blueprints\MOD-INF-008A-blueprint.md` | Core Pipeline |
 | 008B 子蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\sub-blueprints\MOD-INF-008B-blueprint.md` | Governance & Operations |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\context_engine\` | 87 个 .py 文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\autonomy_core\context\` | 87 个 .py 文件 |
 | 测试代码 | `D:\ZephyrAlpha\tests\context_engine\` | CE 测试用例 |
 
 ## 必备链接
@@ -144,7 +144,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 资源 | 路径 |
 |------|------|
 | CE YAML SSoT | [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml) |
-| 代码落位 | `src/zephyr/context_engine/` |
+| 代码落位 | `src/zephyr/autonomy_core/context/` |
 | 总蓝图 | [MASTER-001](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md) |
 | VMS 蓝图 | MOD-INF-011 |
 | LSG 蓝图 | MOD-LLM_SECURITY |
