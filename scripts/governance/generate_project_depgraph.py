@@ -2521,6 +2521,56 @@ def _yaml_load(path):
         return yaml.load(f, Loader=loader)
 
 
+def _validate_arch_references():
+    """Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 architecture_issue_registry.yaml 有对应条目。
+
+    编号铁律#6: 任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位。
+    校验失败仅打印 WARN，不阻断运行（防御性，非阻断性门禁）。
+    """
+    import re as _re
+    from pathlib import Path as _Path
+
+    # 1. 读取本文件源代码，提取所有 #ARCH-XXX 引用
+    self_path = _Path(__file__)
+    try:
+        source = self_path.read_text(encoding="utf-8")
+    except Exception:
+        return  # 读取失败则静默跳过
+
+    arch_refs = set(_re.findall(r'ARCH-(\d+)', source))
+    if not arch_refs:
+        return  # 无 ARCH 引用则跳过
+
+    # 2. 读取 architecture_issue_registry.yaml
+    registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
+    if not _Path(registry_path).exists():
+        print(f"[DEPGRAPH] WARN: architecture_issue_registry.yaml 不存在，跳过 ARCH 引用校验")
+        return
+
+    try:
+        registry_data = _yaml_load(registry_path)
+    except Exception as e:
+        print(f"[DEPGRAPH] WARN: 读取 architecture_issue_registry.yaml 失败: {e}")
+        return
+
+    # 3. 提取 registry 中所有 issue_id
+    registered_ids = set()
+    entries = registry_data.get("entries", []) if registry_data else []
+    for entry in entries:
+        issue_id = entry.get("issue_id", "")
+        match = _re.match(r'#?ARCH-(\d+)', str(issue_id))
+        if match:
+            registered_ids.add(match.group(1))
+
+    # 4. 校验
+    unregistered = arch_refs - registered_ids
+    if unregistered:
+        print(f"[DEPGRAPH] WARN: 发现未注册的 #ARCH-XXX 引用 (编号铁律#6): {sorted(unregistered)}")
+        print(f"[DEPGRAPH] WARN: 请在 architecture_issue_registry.yaml 中登记这些编号")
+    else:
+        print(f"[DEPGRAPH] ARCH 引用校验通过: {sorted(arch_refs)} 均已在 registry 中登记")
+
+
 def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
     """Merge new depgraph with existing, preserving manual annotations and design-state nodes.
 
@@ -3544,6 +3594,9 @@ def main():
         "不加此flag时--output-db将被拒绝。depgraph 是唯一真源，禁止重新创建派生 YAML 副本。",
     )
     args = parser.parse_args()
+
+    # Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 registry 中有对应条目
+    _validate_arch_references()
 
     granularity = args.granularity
     report = GenerationReport()
