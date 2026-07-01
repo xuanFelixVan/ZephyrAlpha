@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from .budget_models import ModelTier
+from zephyr.governance.ops_governance.budget_models import ModelTier
 
 _log = logging.getLogger(__name__)
 

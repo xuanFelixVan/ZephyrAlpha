@@ -30,7 +30,7 @@ from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
-from .escalation_models import (
+from zephyr.governance.escalation.escalation_models import (
     DelegationRecord,
     DelegationStrategy,
     EscalationEvent,

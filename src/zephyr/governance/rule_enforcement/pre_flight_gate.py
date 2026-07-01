@@ -18,8 +18,8 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
-from .budget_engine import BudgetEngine
-from .budget_models import GateDecision
+from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+from zephyr.governance.ops_governance.budget_models import GateDecision
 
 
 class PreFlightDecision(Enum):
