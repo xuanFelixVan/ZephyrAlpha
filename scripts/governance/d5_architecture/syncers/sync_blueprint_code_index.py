@@ -309,7 +309,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [],
         "governance_scripts": [],
-        "note": "任务卡+KMS——experimental构建完成，已升级为MOD-INF-006",
+        "note": "任务卡+KMS——experimental构建完成，已升级为MOD-INF-039",
     },
     "task-system": {
         "module_id": "MOD-TASK_SYSTEM",
@@ -350,7 +350,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         ],
         "config_files": [],
         "governance_scripts": [],
-        "note": "Vibe Coding双管线——scaffold构建完成，已升级为MOD-INF-006",
+        "note": "Vibe Coding双管线——scaffold构建完成，已升级为MOD-INF-039",
     },
 }
 

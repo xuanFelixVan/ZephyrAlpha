@@ -64,7 +64,6 @@ logger = logging.getLogger(__name__)
 # 常量
 # ---------------------------------------------------------------------------
 _AIDRAFTS_DIR = REPO_ROOT / ".aidrafts"
-_LOCK_FILE = REPO_ROOT / ".runtime" / "locks" / "worktree.lock"
 _LOCK_TIMEOUT = 30.0  # worktree 操作锁最长等待 30s
 _LOCK_POLL = 0.1
 _BRANCH_PREFIX = "session/"
@@ -79,10 +78,12 @@ class _WorktreeLock:
 
     用于序列化 worktree 创建/删除操作，防止并发 session 同时操作导致
     git worktree 内部状态不一致。对标 GitCommitGateway._GlobalCommitLock。
+    锁文件路径跟随 repo_root（支持测试用独立临时仓库隔离，不污染主仓库）。
     """
 
-    def __init__(self, timeout: float = _LOCK_TIMEOUT, poll: float = _LOCK_POLL) -> None:
-        _LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self, repo_root: Path, timeout: float = _LOCK_TIMEOUT, poll: float = _LOCK_POLL) -> None:
+        self._lock_file = repo_root / ".runtime" / "locks" / "worktree.lock"
+        self._lock_file.parent.mkdir(parents=True, exist_ok=True)
         self._timeout = timeout
         self._poll = poll
         self._acquired = False
@@ -91,7 +92,7 @@ class _WorktreeLock:
         deadline = time.monotonic() + self._timeout
         while True:
             try:
-                fd = os.open(str(_LOCK_FILE), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                fd = os.open(str(self._lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
                 try:
                     os.write(
                         fd,
@@ -107,33 +108,33 @@ class _WorktreeLock:
             except FileExistsError:
                 # 检查是否过期（防死锁，TTL=锁超时×2）
                 try:
-                    data = json.loads(_LOCK_FILE.read_text(encoding="utf-8"))
+                    data = json.loads(self._lock_file.read_text(encoding="utf-8"))
                     acquired_at = data.get("acquired_at", 0)
                     if not isinstance(acquired_at, (int, float)):
                         acquired_at = 0
                     if time.time() - acquired_at > _LOCK_TIMEOUT * 2:
                         try:
-                            os.remove(str(_LOCK_FILE))
+                            os.remove(str(self._lock_file))
                         except OSError:
                             pass
                         continue
                 except (OSError, ValueError, TypeError):
                     try:
-                        os.remove(str(_LOCK_FILE))
+                        os.remove(str(self._lock_file))
                     except OSError:
                         pass
                     continue
                 if time.monotonic() >= deadline:
                     raise WorktreeError(
                         f"Cannot acquire worktree lock (timeout {self._timeout}s): "
-                        f"{_LOCK_FILE}"
+                        f"{self._lock_file}"
                     )
                 time.sleep(self._poll)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if self._acquired:
             try:
-                os.remove(str(_LOCK_FILE))
+                os.remove(str(self._lock_file))
             except OSError:
                 pass
             self._acquired = False
@@ -305,7 +306,7 @@ class WorktreeManager:
         wt_path = self._wt_path(session_id)
         branch = self._branch_name(session_id)
 
-        with _WorktreeLock():
+        with _WorktreeLock(self.repo_root):
             if self._worktree_exists(session_id):
                 logger.info(
                     "WorktreeManager: session worktree 已存在，复用 (session=%s): %s",
@@ -366,7 +367,7 @@ class WorktreeManager:
         branch = self._branch_name(session_id)
         wt_path = self._wt_path(session_id)
 
-        with _WorktreeLock():
+        with _WorktreeLock(self.repo_root):
             if not self._worktree_exists(session_id):
                 raise WorktreeError(
                     f"session worktree 不存在 (session={session_id}): {wt_path}"
@@ -407,7 +408,7 @@ class WorktreeManager:
         if not session_id:
             raise WorktreeError("session_id 不能为空")
 
-        with _WorktreeLock():
+        with _WorktreeLock(self.repo_root):
             if not self._worktree_exists(session_id):
                 logger.info(
                     "WorktreeManager: cleanup no-op——worktree 不存在 (session=%s)",
