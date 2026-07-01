@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-133 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.reliability.circuit_breaker
+# [MODULE] zephyr.infrastructure.reliability.circuit_breaker
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -4,7 +4,7 @@ from zephyr.trading.orchestrator.context_bridge import ContextBridge
 from zephyr.trading.orchestrator.script_runner import ScriptRunner
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
-# [MODULE] zephyr.integration.runtime_core.orchestrator
+# [MODULE] zephyr.trading.orchestrator
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

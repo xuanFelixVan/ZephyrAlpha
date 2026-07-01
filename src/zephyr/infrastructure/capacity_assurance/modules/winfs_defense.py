@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-# [MODULE] zephyr.infrastructure.capacity_assurance.winfs_defense
+# [MODULE] zephyr.infrastructure.capacity_assurance.modules.winfs_defense
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

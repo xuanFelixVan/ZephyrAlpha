@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-046 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.multi_model_consensus
+# [MODULE] zephyr.governance.intelligence_governance.multi_model_consensus
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__
 # [CONSUMERS]

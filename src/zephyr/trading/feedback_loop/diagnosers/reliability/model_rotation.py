@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers.model_rotation
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.reliability.model_rotation
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS]

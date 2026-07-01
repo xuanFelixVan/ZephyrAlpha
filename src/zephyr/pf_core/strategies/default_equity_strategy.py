@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md
-# [MODULE] zephyr.portfolio.core.default_equity_strategy
+# [MODULE] zephyr.pf_core.strategies.default_equity_strategy
 # [DOMAIN] D_PF_CORE
 # [DEPENDENCIES] zephyr.governance.strategy_base; zephyr.trading.trading_contracts.execution.order
 # [CONSUMERS]

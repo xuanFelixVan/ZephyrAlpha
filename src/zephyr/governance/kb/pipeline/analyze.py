@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-# [MODULE] zephyr.data.knowledge_management.kb.pipeline.analyze
+# [MODULE] zephyr.governance.kb.pipeline.analyze
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]

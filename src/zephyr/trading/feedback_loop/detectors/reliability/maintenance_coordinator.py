@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors.maintenance_coordinator
+# [MODULE] zephyr.trading.feedback_loop.detectors.reliability.maintenance_coordinator
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS]

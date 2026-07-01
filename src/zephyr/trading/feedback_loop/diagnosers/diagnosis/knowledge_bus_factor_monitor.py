@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers.knowledge_bus_factor_monitor
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.diagnosis.knowledge_bus_factor_monitor
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS]

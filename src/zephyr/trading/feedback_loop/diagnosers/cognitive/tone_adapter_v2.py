@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers.tone_adapter_v2
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.cognitive.tone_adapter_v2
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS]

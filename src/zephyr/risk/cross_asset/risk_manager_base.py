@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
-# [MODULE] zephyr.risk.risk_manager_base
+# [MODULE] zephyr.risk.cross_asset.risk_manager_base
 # [DOMAIN] D_RISK
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors.external_health
+# [MODULE] zephyr.trading.feedback_loop.detectors.correlation.external_health
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS]

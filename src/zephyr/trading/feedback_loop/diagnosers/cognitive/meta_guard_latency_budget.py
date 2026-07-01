@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers.meta_guard_latency_budget
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.cognitive.meta_guard_latency_budget
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-# [MODULE] zephyr.data.knowledge_management.kb.quiet_period_monitor
+# [MODULE] zephyr.governance.kb.quiet_period_monitor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS]

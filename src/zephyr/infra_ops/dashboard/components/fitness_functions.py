@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-# [MODULE] zephyr.frontend.dashboard.components.fitness_functions
+# [MODULE] zephyr.infra_ops.dashboard.components.fitness_functions
 # [DOMAIN] D_INFRA_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]

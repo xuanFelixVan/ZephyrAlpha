@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-UNK_market | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.system_telemetry
+# [MODULE] zephyr.trading.trading_contracts.market
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

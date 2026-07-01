@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.portfolio.core.compliance_rule
+# [MODULE] zephyr.trading.trading_contracts.risk.compliance_rule
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.__init__
 # [CONSUMERS] l10-compliance

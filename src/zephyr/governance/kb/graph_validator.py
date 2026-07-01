@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
-# [MODULE] zephyr.data.knowledge_management.kb.graph_validator
+# [MODULE] zephyr.governance.kb.graph_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.db_utils; zephyr.governance.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors.intermittent_failure_pattern
+# [MODULE] zephyr.trading.feedback_loop.detectors.anomaly.intermittent_failure_pattern
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS]

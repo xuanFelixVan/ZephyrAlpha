@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.diagnosers.llm_quality_regression
+# [MODULE] zephyr.trading.feedback_loop.diagnosers.reliability.llm_quality_regression
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.diagnosers.__init__
 # [CONSUMERS]

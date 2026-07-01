@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-075 | docs/03_modules/_domain-governance/blueprint.md
-# [MODULE] zephyr.governance.supply_chain_security
+# [MODULE] zephyr.governance.security_governance.supply_chain_security
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]

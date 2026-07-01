@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-# [MODULE] zephyr.data.knowledge_management.kb._backend_protocol
+# [MODULE] zephyr.governance.kb._backend_protocol
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS] zephyr.research.unified_memory_api; zephyr.knowledge.kb.vms_memory_backend

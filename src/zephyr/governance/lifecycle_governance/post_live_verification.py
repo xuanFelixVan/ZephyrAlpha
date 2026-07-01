@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-050 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.infrastructure.rollback.post_live_verification
+# [MODULE] zephyr.governance.lifecycle_governance.post_live_verification
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.lifecycle_governance.__init__
 # [CONSUMERS]

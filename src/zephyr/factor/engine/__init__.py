@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-UNK_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
-# [MODULE] zephyr.factor
+# [MODULE] zephyr.factor.engine
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

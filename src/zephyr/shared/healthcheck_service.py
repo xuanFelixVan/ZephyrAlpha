@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-099 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.healthcheck_service
+# [MODULE] zephyr.shared.healthcheck_service
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]

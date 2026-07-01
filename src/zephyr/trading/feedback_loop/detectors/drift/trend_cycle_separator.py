@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors.trend_cycle_separator
+# [MODULE] zephyr.trading.feedback_loop.detectors.drift.trend_cycle_separator
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.detectors.__init__
 # [CONSUMERS]

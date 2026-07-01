@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-# [MODULE] zephyr.frontend.interface_base
+# [MODULE] zephyr.infra_ops.interface_base
 # [DOMAIN] D_INFRA_OPS
 # [DEPENDENCIES] zephyr.infra_ops.__init__
 # [CONSUMERS]

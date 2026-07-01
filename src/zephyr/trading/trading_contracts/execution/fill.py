@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.execution.trading.trading_contracts.execution.fill
+# [MODULE] zephyr.trading.trading_contracts.execution.fill
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] ex_core; pf_core

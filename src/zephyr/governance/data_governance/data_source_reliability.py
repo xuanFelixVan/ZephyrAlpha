@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-033 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.data_source_reliability
+# [MODULE] zephyr.governance.data_governance.data_source_reliability
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.data_governance.__init__
 # [CONSUMERS]

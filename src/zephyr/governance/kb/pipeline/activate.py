@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-# [MODULE] zephyr.data.knowledge_management.kb.pipeline.activate
+# [MODULE] zephyr.governance.kb.pipeline.activate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.shared.schema.schemas; zephyr.governance.__init__; docs.03_modules._cross_layer.agent_orchestrator.blueprint.md
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
-# [MODULE] zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline
+# [MODULE] zephyr.shared._cross_layer.ml_experiment_pipeline
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.ml_train.inference_base; zephyr.ml_train.trainer_base; zephyr.simulation.__init__
 # [CONSUMERS]

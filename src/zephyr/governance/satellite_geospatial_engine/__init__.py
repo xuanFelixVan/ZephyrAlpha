@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-DAT_satellite_geospatial_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
-# [MODULE] zephyr.data_governance.vector_storage.satellite_geospatial_engine
+# [MODULE] zephyr.governance.satellite_geospatial_engine
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

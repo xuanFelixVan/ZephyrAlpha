@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-# [MODULE] zephyr.frontend.dashboard
+# [MODULE] zephyr.infrastructure.dashboard
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

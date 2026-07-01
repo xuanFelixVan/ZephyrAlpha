@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-086 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.blueprint_decomposer
+# [MODULE] zephyr.shared.blueprint_decomposer
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.models; zephyr.integration.shared.schema.execution_model; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-# [MODULE] zephyr.infrastructure.capacity_assurance.per_task_token_budget
+# [MODULE] zephyr.infrastructure.capacity_assurance.modules.per_task_token_budget
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop.detectors.anomaly_detector
+# [MODULE] zephyr.trading.feedback_loop.detectors.anomaly.anomaly_detector
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.trading.feedback_loop.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-080 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_core.task_types
+# [MODULE] zephyr.shared.task_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)

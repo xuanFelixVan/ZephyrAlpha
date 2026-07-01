@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-120 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.models
+# [MODULE] zephyr.shared.models
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] db.task_repo; core.blueprint_decomposer; pipeline.*; orchestrator.*

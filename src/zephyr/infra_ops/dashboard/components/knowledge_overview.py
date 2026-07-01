@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-# [MODULE] zephyr.frontend.dashboard.components.knowledge_overview
+# [MODULE] zephyr.infra_ops.dashboard.components.knowledge_overview
 # [DOMAIN] D_INFRA_OPS
 # [DEPENDENCIES] zephyr.infra_ops.dashboard.components.gate_statistics
 # [CONSUMERS]

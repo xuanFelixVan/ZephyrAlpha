@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-# [MODULE] zephyr.infrastructure.capacity_assurance.token_value_attribution
+# [MODULE] zephyr.infrastructure.capacity_assurance.modules.token_value_attribution
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

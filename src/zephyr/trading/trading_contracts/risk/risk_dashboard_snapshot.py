@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot
+# [MODULE] zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES]
 # [CONSUMERS] risk; ops

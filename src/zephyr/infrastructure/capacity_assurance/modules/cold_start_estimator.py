@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
-# [MODULE] zephyr.infrastructure.capacity_assurance.cold_start_estimator
+# [MODULE] zephyr.infrastructure.capacity_assurance.modules.cold_start_estimator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

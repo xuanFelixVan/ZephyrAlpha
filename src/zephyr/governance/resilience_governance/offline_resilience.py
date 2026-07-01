@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-073 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.offline_resilience
+# [MODULE] zephyr.governance.resilience_governance.offline_resilience
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__
 # [CONSUMERS]

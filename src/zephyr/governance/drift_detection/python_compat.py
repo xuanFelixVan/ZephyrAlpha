@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-# [MODULE] zephyr.governance.drift_detection.python_compat
+# [MODULE] zephyr.governance.drift_detectionthon_compat
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router

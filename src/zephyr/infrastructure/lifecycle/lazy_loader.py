@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-110 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.lifecycle.lazy_loader
+# [MODULE] zephyr.infrastructure.lifecycle.lazy_loader
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core

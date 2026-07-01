@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-UNK_simulation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
-# [MODULE] zephyr.alt_data
+# [MODULE] zephyr.simulation
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

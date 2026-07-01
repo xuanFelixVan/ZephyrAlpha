@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 6
-# [MODULE] zephyr.governance.semantic_audit.llm_bridge
+# [MODULE] zephyr.integration.llm_bridge
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] self_healer; fix_prioritizer

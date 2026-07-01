@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-085 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.blueprint_code_sync
+# [MODULE] zephyr.infrastructure.blueprint_code_sync
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]

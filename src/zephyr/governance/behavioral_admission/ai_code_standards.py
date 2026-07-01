@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-020 | docs/03_modules/_domain-governance/blueprint.md
-# [MODULE] zephyr.governance.ai_code_standards
+# [MODULE] zephyr.governance.behavioral_admission.ai_code_standards
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS]

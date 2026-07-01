@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
-# [MODULE] zephyr.data.quality_gate
+# [MODULE] zephyr.governance.rule_enforcement.quality_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]

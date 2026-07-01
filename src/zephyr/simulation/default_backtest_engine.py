@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L09-001 | docs/03_modules/_domain-research/research-core/blueprint.md
-# [MODULE] zephyr.research.simulation.default_backtest_engine
+# [MODULE] zephyr.simulation.default_backtest_engine
 # [DOMAIN] D_SIMULATION
 # [DEPENDENCIES] zephyr.simulation.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.execution.trading.trading_contracts.market.factor_signal
+# [MODULE] zephyr.governance.trading_contracts.market.factor_signal
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] signal; _cross_layer

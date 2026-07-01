@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
-# [MODULE] zephyr.execution.core.adapters.risk_validation_bridge
+# [MODULE] zephyr.governance.adapters.risk_validation_bridge
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.ex_core.execution_engine

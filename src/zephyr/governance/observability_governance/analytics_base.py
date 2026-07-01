@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md
-# [MODULE] zephyr.observability.analytics_base
+# [MODULE] zephyr.governance.observability_governance.analytics_base
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.governance.performance_attribution_report
 # [CONSUMERS]

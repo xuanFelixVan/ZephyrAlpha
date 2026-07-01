@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
-# [MODULE] zephyr.portfolio.factor.base
+# [MODULE] zephyr.factor.base
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
-# [MODULE] zephyr.execution.trading.trading_contracts.risk.risk_limits
+# [MODULE] zephyr.risk.risk_limits
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limits
 # [CONSUMERS]

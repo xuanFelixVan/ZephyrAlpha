@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-101 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.impact.impact_propagator
+# [MODULE] zephyr.infrastructure.impact.impact_propagator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

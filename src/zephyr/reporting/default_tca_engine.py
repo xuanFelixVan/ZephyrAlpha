@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md
-# [MODULE] zephyr.portfolio.core.default_tca_engine
+# [MODULE] zephyr.reporting.default_tca_engine
 # [DOMAIN] D_REPORTING
 # [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.trading.trading_contracts.execution.execution_report; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order
 # [CONSUMERS]

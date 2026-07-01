@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-PRT_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/datasource_core/blueprint.md | §4
 # [BLUEPRINT] MOD-BIZ-002
-# [MODULE] zephyr.pf_core
+# [MODULE] zephyr.trading.trading_contracts.portfolio.contracts
 # [INVARIANTS] Money immutability; currency precision
 # [MODIFY-GUARD] trading-contracts/portfolio/contracts/money.py
 # [CONSUMERS] reporting; ex_core

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L09-001 | docs/03_modules/_domain-research/research-core/blueprint.md
-# [MODULE] zephyr.research.simulation.backtest_base
+# [MODULE] zephyr.simulation.backtest_base
 # [DOMAIN] D_SIMULATION
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-200 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
-# [MODULE] zephyr.execution.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event
+# [MODULE] zephyr.trading.trading_contracts.portfolio.contracts.strategy_lifecycle_event
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.shared.contracts.portfolio.strategy_lifecycle_event
 # [CONSUMERS]

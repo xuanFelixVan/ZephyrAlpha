@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-INF_model_capability_exam | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
 
-# [MODULE] zephyr.intelligence.model_profiling
+# [MODULE] zephyr.infrastructure.model_capability_exam
 # [TTL] task_bound
 
 [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐

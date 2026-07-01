@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-135 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.reliability.diff_planner
+# [MODULE] zephyr.shared.reliability.diff_planner
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.reliability.retry_handler
 # [CONSUMERS]

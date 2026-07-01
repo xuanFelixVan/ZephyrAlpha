@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
-# [MODULE] zephyr.data.akshare_provider
+# [MODULE] zephyr.governance.data_governance.akshare_provider
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.provider_base
 # [CONSUMERS]

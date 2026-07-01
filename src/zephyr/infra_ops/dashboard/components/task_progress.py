@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
-# [MODULE] zephyr.frontend.dashboard.components.task_progress
+# [MODULE] zephyr.infra_ops.dashboard.components.task_progress
 # [DOMAIN] D_INFRA_OPS
 # [DEPENDENCIES] zephyr.infra_ops.dashboard.components.gate_statistics
 # [CONSUMERS]

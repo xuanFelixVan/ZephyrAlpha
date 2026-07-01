@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-012 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.architecture_principles
+# [MODULE] zephyr.governance.architecture_governance.architecture_principles
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__
 # [CONSUMERS]

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
-# [MODULE] zephyr.data.knowledge_management.kb.pipeline.batch_ingest
+# [MODULE] zephyr.governance.kb.pipeline.batch_ingest
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]

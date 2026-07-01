@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.governance.financial_governance.instrument
+# [MODULE] zephyr.governance.trading_contracts.market.instrument
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] data; factor; pf_core; ex_core; l10-compliance; shared.foundation.constants

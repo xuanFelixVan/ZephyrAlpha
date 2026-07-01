@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
-# [MODULE] zephyr.portfolio.factor.momentum_factor
+# [MODULE] zephyr.factor.momentum_factor
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

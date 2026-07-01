@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-INT_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
-# [MODULE] zephyr.integration.agent_lifecycle.integration
+# [MODULE] zephyr.autonomy_core.integration
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

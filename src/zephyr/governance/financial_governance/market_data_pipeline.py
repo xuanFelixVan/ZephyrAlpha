@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-037 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.market_data_pipeline
+# [MODULE] zephyr.governance.financial_governance.market_data_pipeline
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__
 # [CONSUMERS]

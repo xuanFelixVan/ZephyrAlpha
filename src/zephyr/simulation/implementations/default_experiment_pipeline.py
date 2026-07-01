@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
-# [MODULE] zephyr.research.simulation.implementations.default_experiment_pipeline
+# [MODULE] zephyr.simulation.implementations.default_experiment_pipeline
 # [DOMAIN] D_SIMULATION
 # [DEPENDENCIES] zephyr.simulation.__init__
 # [CONSUMERS]

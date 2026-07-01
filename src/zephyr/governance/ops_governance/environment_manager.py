@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-058 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.environment_manager
+# [MODULE] zephyr.governance.ops_governance.environment_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.__init__
 # [CONSUMERS]

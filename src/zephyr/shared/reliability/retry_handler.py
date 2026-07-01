@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-136 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.reliability.retry_handler
+# [MODULE] zephyr.shared.reliability.retry_handler
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]

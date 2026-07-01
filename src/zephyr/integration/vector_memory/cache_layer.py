@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.5
-# [MODULE] zephyr.integration.local_model.cache_layer
+# [MODULE] zephyr.integration.vector_memory.cache_layer
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.cache_layer
 # [CONSUMERS] in_process_vector_memory

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
-# [MODULE] zephyr.data.knowledge_management.kb.migration.kb_gate_task
+# [MODULE] zephyr.governance.kb.migration.kb_gate_task
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS]

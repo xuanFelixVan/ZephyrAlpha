@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-128 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.quality.quality_monitor
+# [MODULE] zephyr.infrastructure.quality.quality_monitor
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

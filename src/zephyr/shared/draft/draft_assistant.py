@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-093 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.draft.draft_assistant
+# [MODULE] zephyr.shared.draft.draft_assistant
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]

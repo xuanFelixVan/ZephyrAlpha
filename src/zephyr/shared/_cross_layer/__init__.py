@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-SHR__cross_layer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
-# [MODULE] zephyr.cross_asset.cross_market_data_adapter
+# [MODULE] zephyr.shared._cross_layer
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

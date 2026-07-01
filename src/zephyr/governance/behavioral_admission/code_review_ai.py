@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-021 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.code_review_ai
+# [MODULE] zephyr.governance.behavioral_admission.code_review_ai
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]

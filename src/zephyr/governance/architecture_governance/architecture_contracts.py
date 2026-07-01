@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-011 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.governance.architecture_contracts
+# [MODULE] zephyr.governance.architecture_governance.architecture_contracts
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__
 # [CONSUMERS]

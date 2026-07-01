@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-134 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.reliability.context_guard
+# [MODULE] zephyr.infrastructure.reliability.context_guard
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]

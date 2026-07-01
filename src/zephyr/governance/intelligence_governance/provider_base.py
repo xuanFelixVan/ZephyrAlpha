@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
-# [MODULE] zephyr.data.provider_base
+# [MODULE] zephyr.governance.intelligence_governance.provider_base
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]

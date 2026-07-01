@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-091 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.dependency.dependency_graph
+# [MODULE] zephyr.shared.dependency.dependency_graph
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]

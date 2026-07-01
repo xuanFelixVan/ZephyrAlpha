@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-GOV_zero_knowledge_audit_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
-# [MODULE] zephyr.governance
+# [MODULE] zephyr.governance.zero_knowledge_audit_stub
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

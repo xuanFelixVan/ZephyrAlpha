@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-036 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] zephyr.infrastructure.rollback.fsm_verifier
+# [MODULE] zephyr.governance.financial_governance.fsm_verifier
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__
 # [CONSUMERS]

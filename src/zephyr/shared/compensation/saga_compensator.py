@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-088 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.compensation.saga_compensator
+# [MODULE] zephyr.shared.compensation.saga_compensator
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]

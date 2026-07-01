@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-PRT_strategy_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md
-# [MODULE] zephyr.pf_core
+# [MODULE] zephyr.governance.strategy_engine
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

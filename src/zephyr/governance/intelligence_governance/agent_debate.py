@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-042 | docs/03_modules/_domain-governance/blueprint.md
-# [MODULE] zephyr.governance.agent_debate
+# [MODULE] zephyr.governance.intelligence_governance.agent_debate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]

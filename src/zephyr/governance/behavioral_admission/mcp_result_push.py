@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-022 | docs/03_modules/_domain_governance/blueprint.md | §3.11
-# [MODULE] zephyr.governance.mcp_result_push
+# [MODULE] zephyr.governance.behavioral_admission.mcp_result_push
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] GovernanceServer;run_all.py
