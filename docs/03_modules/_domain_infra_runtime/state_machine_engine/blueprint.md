@@ -1,5 +1,6 @@
-﻿---
+---
 module_id: MOD-INF-038
+activation_phase: requires_100ai
 submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
 doc_type: blueprint

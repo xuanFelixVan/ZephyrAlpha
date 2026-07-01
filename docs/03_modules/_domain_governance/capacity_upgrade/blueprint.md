@@ -1,5 +1,6 @@
 ---
 module_id: MOD-GOV-CAP-001
+activation_phase: requires_100ai
 submodule_path: src/zephyr/governance
 title: "Governance Domain 容量升级蓝图 — 10K脚本/1.5K模块/100AI并发"
 doc_type: blueprint

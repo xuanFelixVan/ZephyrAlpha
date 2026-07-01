@@ -1,5 +1,6 @@
 ---
 module_id: MOD-FLE-CAP-001
+activation_phase: requires_100ai
 submodule_path: src/zephyr/trading/feedback_loop
 title: "FLE 容量升级附录 — 从S级到L级扩容方案"
 doc_type: blueprint

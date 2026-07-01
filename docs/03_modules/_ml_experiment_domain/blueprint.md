@@ -1,5 +1,6 @@
-﻿---
+---
 module_id: MOD-ML_EXPERIMENT_DOMAIN
+activation_phase: requires_100ai
 title: "ML-Experiment Domain 蓝图 — L11平台→L13实验跨层集成"
 doc_type: blueprint
 status: Deprecated

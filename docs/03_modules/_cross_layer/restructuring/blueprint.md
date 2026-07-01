@@ -1,5 +1,6 @@
-﻿---
+---
 module_id: GOV-FSTR-001
+activation_phase: requires_100ai
 submodule_paths_scope: restructuring
 title: "File Structure Governance 蓝图 — 文件结构治理·大文件拆分·重复合并·安全搬家"
 doc_type: blueprint

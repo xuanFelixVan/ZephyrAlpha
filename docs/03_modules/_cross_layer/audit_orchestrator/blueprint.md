@@ -1,5 +1,6 @@
 ﻿---
 module_id: MOD-INF-027
+activation_phase: requires_100ai
 submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint

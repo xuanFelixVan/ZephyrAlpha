@@ -1,5 +1,6 @@
 ﻿---
 module_id: MOD-INF-033
+activation_phase: requires_100ai
 submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint

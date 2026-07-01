@@ -1,5 +1,6 @@
-﻿---
+---
 module_id: MOD-INF-025
+activation_phase: requires_100ai
 submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
