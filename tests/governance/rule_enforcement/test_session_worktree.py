@@ -19,6 +19,9 @@ validate_commit_gateway.py（GATE-COMMIT-GW worktree 放行）
 - test_worktree_merge_back: merge 回主分支后主工作区出现改动
 - test_worktree_abort_discards: abort 丢弃修改并清理 worktree
 - test_worktree_abort_cleans_main_workdir: abort with files 清理主工作区残留（君子协定模式）
+- test_worktree_commit_held_overlap_blocks: HELD-OVERLAP 硬阻断——A commit 后 B commit 同文件被阻断
+- test_worktree_commit_allow_overlap: allow_overlap=True 逃生通道放行
+- test_worktree_merge_releases_claims: merge 后 unregister 自动释放 claim，其他 session 可 commit
 - test_end_to_end_lifecycle: 完整生命周期（建→commit→merge→abort→清理）
 """
 from __future__ import annotations
@@ -301,6 +304,93 @@ def test_worktree_abort_cleans_main_workdir():
 
     # 验证 untracked 文件已被删除
     assert not new_path.exists(), "主工作区 untracked 文件未被清理"
+
+
+def test_worktree_commit_held_overlap_blocks():
+    """HELD-OVERLAP 硬阻断：A commit 文件后（auto-claim），B commit 同文件被阻断。"""
+    # Session A commit _TEST_FILE_A（auto-claim）
+    rA = session_worktree_start("sess-pytest-A")
+    wtA = Path(rA["worktree_path"])
+    marker_a = wtA / _TEST_FILE_A
+    marker_a.parent.mkdir(parents=True, exist_ok=True)
+    marker_a.write_text('{"session": "A"}\n', encoding="utf-8")
+    cA = session_worktree_commit("sess-pytest-A", files=[_TEST_FILE_A], message="test: A claims file")
+    assert cA["status"] == "OK", f"A commit 失败: {cA}"
+
+    # Session B try commit _TEST_FILE_A（应被硬阻断）
+    rB = session_worktree_start("sess-pytest-B")
+    wtB = Path(rB["worktree_path"])
+    marker_b = wtB / _TEST_FILE_A  # B 也写同文件
+    marker_b.parent.mkdir(parents=True, exist_ok=True)
+    marker_b.write_text('{"session": "B"}\n', encoding="utf-8")
+    cB = session_worktree_commit("sess-pytest-B", files=[_TEST_FILE_A], message="test: B overlap")
+    assert cB["status"] == "FAILED", f"B 应被阻断: {cB}"
+    assert cB.get("held_overlap") is True, f"B 应返回 held_overlap=True: {cB}"
+
+
+def test_worktree_commit_allow_overlap():
+    """allow_overlap=True 逃生通道：B commit A 持有的文件时放行。"""
+    # Session A commit _TEST_FILE_A（auto-claim）
+    rA = session_worktree_start("sess-pytest-A")
+    wtA = Path(rA["worktree_path"])
+    marker_a = wtA / _TEST_FILE_A
+    marker_a.parent.mkdir(parents=True, exist_ok=True)
+    marker_a.write_text('{"session": "A"}\n', encoding="utf-8")
+    cA = session_worktree_commit("sess-pytest-A", files=[_TEST_FILE_A], message="test: A claims file")
+    assert cA["status"] == "OK", f"A commit 失败: {cA}"
+
+    # Session B commit _TEST_FILE_A with allow_overlap=True（逃生通道放行）
+    rB = session_worktree_start("sess-pytest-B")
+    wtB = Path(rB["worktree_path"])
+    marker_b = wtB / _TEST_FILE_A
+    marker_b.parent.mkdir(parents=True, exist_ok=True)
+    marker_b.write_text('{"session": "B"}\n', encoding="utf-8")
+    cB = session_worktree_commit(
+        "sess-pytest-B", files=[_TEST_FILE_A], message="test: B overlap escape",
+        allow_overlap=True,
+    )
+    assert cB["status"] == "OK", f"B allow_overlap 应放行: {cB}"
+
+
+def test_worktree_merge_releases_claims():
+    """merge 后 unregister 自动释放 claim，其他 session 可 commit 同文件。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+    registry = SessionRegistry(REPO_ROOT)
+
+    # Session A commit _TEST_FILE_A（auto-claim）
+    rA = session_worktree_start("sess-pytest-A")
+    wtA = Path(rA["worktree_path"])
+    marker_a = wtA / _TEST_FILE_A
+    marker_a.parent.mkdir(parents=True, exist_ok=True)
+    marker_a.write_text('{"session": "A"}\n', encoding="utf-8")
+    cA = session_worktree_commit("sess-pytest-A", files=[_TEST_FILE_A], message="test: A claims")
+    assert cA["status"] == "OK", f"A commit 失败: {cA}"
+
+    # 验证 A 持有 _TEST_FILE_A
+    test_file_a_abs = str((REPO_ROOT / _TEST_FILE_A).resolve())
+    other_held = registry.other_held_files("sess-pytest-B")
+    assert test_file_a_abs in other_held, f"A 应持有 {_TEST_FILE_A}: {other_held}"
+
+    # Session B try commit _TEST_FILE_A → blocked
+    rB = session_worktree_start("sess-pytest-B")
+    wtB = Path(rB["worktree_path"])
+    marker_b = wtB / _TEST_FILE_A
+    marker_b.parent.mkdir(parents=True, exist_ok=True)
+    marker_b.write_text('{"session": "B"}\n', encoding="utf-8")
+    cB = session_worktree_commit("sess-pytest-B", files=[_TEST_FILE_A], message="test: B blocked")
+    assert cB.get("held_overlap") is True, f"B 应被阻断: {cB}"
+
+    # A merge → unregister → 释放 claim
+    mA = session_worktree_merge("sess-pytest-A")
+    assert mA.get("merged"), f"A merge 失败: {mA}"
+
+    # 验证 A 不再持有 _TEST_FILE_A
+    other_held = registry.other_held_files("sess-pytest-B")
+    assert test_file_a_abs not in other_held, f"A merge 后应释放 {_TEST_FILE_A}: {other_held}"
+
+    # B 现在可以 commit _TEST_FILE_A
+    cB2 = session_worktree_commit("sess-pytest-B", files=[_TEST_FILE_A], message="test: B after A merge")
+    assert cB2["status"] == "OK", f"B 应在 A merge 后成功: {cB2}"
 
 
 def test_end_to_end_lifecycle():

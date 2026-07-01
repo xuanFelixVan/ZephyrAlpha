@@ -265,6 +265,45 @@ def session_worktree_commit(
         else:
             rel_files.append(str(p).replace("\\", "/"))
 
+    # HELD-OVERLAP 硬阻断 + auto-claim（2026-07-02 加硬）
+    # 对标 GitCommitGateway 的 HELD-OVERLAP gate，使 worktree 模式下的文件锁一样硬。
+    # 原子 check-and-claim（claim_file 内部加锁，防 TOCTOU 竞态）：
+    #   - 文件被其他活跃 session 持有 → claim_file 返回 False → 硬阻断
+    #   - 文件未被持有或已被自己持有 → claim_file 返回 True → claim 成功
+    # claim 是 session 级（不 per-commit 释放），merge/abort 时 unregister 自动释放。
+    # allow_overlap=True 时跳过检查（逃生通道，对标 GitCommitGateway --allow-overlap）。
+    if not allow_overlap:
+        registry = _get_registry(root)
+        claimed_files: list[str] = []  # 已成功 claim（失败时回滚）
+        overlap_files: list[str] = []  # 被其他 session 持有的文件
+        for rf in rel_files:
+            try:
+                if registry.claim_file(session_id, rf):
+                    claimed_files.append(rf)
+                else:
+                    overlap_files.append(rf)
+            except Exception:
+                pass  # claim 异常时 best-effort 继续（不阻断）
+
+        if overlap_files:
+            # 回滚已 claim 的文件（避免 dangling claim 阻塞其他 session）
+            for cf in claimed_files:
+                try:
+                    registry.release_file(session_id, cf)
+                except Exception:
+                    pass
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"HELD_OVERLAP_VIOLATION: 以下文件被其他活跃 session 持有 "
+                    f"（等待对方 merge/abort 释放后重试，或用 allow_overlap=True 逃生）: "
+                    f"{overlap_files}"
+                ),
+                "commit_hash": "",
+                "held_overlap": True,
+            }
+
     # 同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根，
     # worktree 内文件是创建时的旧版本，需同步才能 stage 到最新内容）
     # 覆盖三种场景：文件修改/新增（copy2 同步）+ 文件删除（unlink 同步删除）
