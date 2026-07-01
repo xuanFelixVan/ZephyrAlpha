@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:29:18
+> 最后更新: 2026-07-01 12:55:31
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -410,10 +410,8 @@ graph TD
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_audit_trail_replay_engine_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_trail_spec_auditor_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_SECURITY
-    src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_GOVERNANCE
     src_zephyr_governance_compliance_gate_a6_default_security_gateway_py -->|import_depends| D_SECURITY
     src_zephyr_governance_semantic_audit_self_health_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_semantic_audit_self_health_py -.->|import_depends| D_GOVERNANCE
@@ -421,13 +419,11 @@ graph TD
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_financial_compliance_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_merkle_hourly_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOV_DRIFT["D_GOV_DRIFT production"]
     D_GOV_DRIFT -->|import_depends| src_zephyr_governance_merkle_hourly_py
     D_GOV_DRIFT -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_GOVERNANCE -->|import_depends| src_zephyr_governance_behavioral_admission_mcp_result_push_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

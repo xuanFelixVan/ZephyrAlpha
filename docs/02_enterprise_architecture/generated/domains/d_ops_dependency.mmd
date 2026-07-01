@@ -1,7 +1,7 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-01 12:29:21
+%% 生成时间: 2026-07-01 12:55:33
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 191, 依赖边数: 216
+%% 模块数: 183, 依赖边数: 201
 
 graph TD
 
@@ -9,19 +9,11 @@ graph TD
     subgraph D_OPS[反馈循环]
         docs_03_modules__domain_infra____stem_telemetry_blueprint_md["...fra_ops/system_telemetry/blueprint.md [design]"]
         scripts_ops_upgrade_headers_to_14fields_py["...ts/ops/upgrade_headers_to_14fields.py [production]"]
-        src_zephyr_governance_budget_engine_py["src/zephyr/governance/budget_engine.py [prototype]"]
-        src_zephyr_governance_budget_handler_py["src/zephyr/governance/budget_handler.py [prototype]"]
-        src_zephyr_governance_budget_models_py["src/zephyr/governance/budget_models.py [prototype]"]
-        src_zephyr_governance_budget_profile_manager_py[".../governance/budget_profile_manager.py [prototype]"]
-        src_zephyr_governance_budget_tracker_py["src/zephyr/governance/budget_tracker.py [prototype]"]
-        src_zephyr_governance_cost_budget_py["src/zephyr/governance/cost_budget.py [prototype]"]
-        src_zephyr_governance_meta_observability_py["...phyr/governance/meta_observability.py [prototype]"]
         src_zephyr_governance_observability_governance___init___py[".../observability_governance/__init__.py [prototype]"]
         src_zephyr_governance_observab___ance_benchmark_integrity_py["...ity_governance/benchmark_integrity.py [prototype]"]
         src_zephyr_governance_observab____observability_dashboard_py["...governance/observability_dashboard.py [production]"]
         src_zephyr_governance_observab___nce_performance_baseline_py["...ty_governance/performance_baseline.py [prototype]"]
         src_zephyr_governance_observab___nance_provenance_tracker_py["...lity_governance/provenance_tracker.py [prototype]"]
-        src_zephyr_governance_token_budget_py["src/zephyr/governance/token_budget.py [prototype]"]
         src_zephyr_trading_feedback_loop___init___py["...hyr/trading/feedback_loop/__init__.py [production]"]
         src_zephyr_trading_feedback_loop__gen_inherited_py["...ading/feedback_loop/_gen_inherited.py [prototype]"]
         src_zephyr_trading_feedback_loop_actors___init___py["...ding/feedback_loop/actors/__init__.py [prototype]"]
@@ -107,12 +99,18 @@ graph TD
         src_zephyr_trading_feedback_lo___rupt_coherence_validator_py["...nsic/interrupt_coherence_validator.py [prototype]"]
         src_zephyr_trading_feedback_lo___tion_pre_flight_verifier_py["...edge_injection_pre_flight_verifier.py [prototype]"]
         src_zephyr_trading_feedback_lo___nt_in_time_reconstructor_py["...rensic/point_in_time_reconstructor.py [prototype]"]
-        %% ... 还有 91 个模块未显示
+        src_zephyr_trading_feedback_lo____self_modification_audit_py["...p/forensic/self_modification_audit.py [prototype]"]
+        src_zephyr_trading_feedback_lo___alization_format_tracker_py["...ensic/serialization_format_tracker.py [prototype]"]
+        src_zephyr_trading_feedback_lo___tate_migration_validator_py["...forensic/state_migration_validator.py [prototype]"]
+        src_zephyr_trading_feedback_lo___nsic_sub_agent_collusion_py["..._loop/forensic/sub_agent_collusion.py [prototype]"]
+        src_zephyr_trading_feedback_loop_forensic_toctou_guard_py["...eedback_loop/forensic/toctou_guard.py [prototype]"]
+        src_zephyr_trading_feedback_lo___sic_worm_write_integrity_py["...loop/forensic/worm_write_integrity.py [prototype]"]
+        src_zephyr_trading_feedback_loop_gates___init___py["...ading/feedback_loop/gates/__init__.py [prototype]"]
+        src_zephyr_trading_feedback_loop_gates__operational_gates_py["...back_loop/gates/_operational_gates.py [prototype]"]
+        %% ... 还有 83 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_governance_budget_engine_py -->|import_depends| src_zephyr_governance_budget_models_py
-    src_zephyr_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_budget_models_py
     src_zephyr_trading_feedback_loop_auto_evolution_py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     src_zephyr_trading_feedback_loop_backpressure_bridge_py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     src_zephyr_trading_feedback_loop_db_writer_py -->|import_depends| src_zephyr_trading_feedback_loop___init___py
@@ -191,21 +189,15 @@ graph TD
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___tion_pre_flight_verifier_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___nt_in_time_reconstructor_py
     src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo____self_modification_audit_py
-    %% ... 还有 86 条域内依赖未显示
+    src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___alization_format_tracker_py
+    src_zephyr_trading_feedback_loop_forensic___init___py -->|import_depends| src_zephyr_trading_feedback_lo___tate_migration_validator_py
+    %% ... 还有 84 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_FRONTEND -> D_OPS (2 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_feedback_loop___init___py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_feedback_loop___init___py
-    %% D_GOVERNANCE -> D_OPS (19 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_engine_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_budget_engine_py
+    %% D_GOVERNANCE -> D_OPS (11 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_trading_feedback_loop_gates___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_trading_feedback_loop_gates___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_trading_feedback_lo___tors_knowledge_freshness_py
@@ -232,14 +224,10 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_OPS -> D_AUTONOMY_CORE (1 条)
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    %% D_OPS -> D_GOVERNANCE (7 条)
-    src_zephyr_governance_budget_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_OPS -> D_GOVERNANCE (3 条)
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_feedback_loop_evolution___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_budget_profile_manager_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_meta_observability_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_governance_token_budget_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_OPS -> D_GOV_DRIFT (1 条)
     src_zephyr_trading_feedback_loop_scheduler_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_OPS -> D_INFRA_RUNTIME (3 条)
@@ -253,8 +241,7 @@ graph TD
     src_zephyr_trading_feedback_loop_evolution_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_trading_feedback_lo___s_adversarial_validation_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_llm_security_test_l6_observability_py -->|test_depends| D_SECURITY[D_SECURITY]
-    %% D_OPS -> D_SHARED (5 条)
-    src_zephyr_governance_budget_handler_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_OPS -> D_SHARED (4 条)
     src_zephyr_trading_feedback_loop_auto_evolution_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_feedback_loop_auto_evolution_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_feedback_loop_auto_evolution_py -->|import_depends| D_SHARED[D_SHARED]
@@ -263,6 +250,6 @@ graph TD
     src_zephyr_trading_feedback_loop_alert_dispatcher_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 166 条
-    %% 跨域入边: 27 条
-    %% 跨域出边: 23 条
+    %% 域内依赖: 164 条
+    %% 跨域入边: 19 条
+    %% 跨域出边: 18 条

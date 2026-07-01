@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:29:19
+> 最后更新: 2026-07-01 12:55:32
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -329,8 +329,6 @@ graph TD
     src_zephyr_trading_orchestrator_state_file_task_mapper_py -.->|import_depends| D_SHARED
     src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
@@ -419,9 +417,8 @@ graph TD
     src_zephyr_trading_work_dag_py -.->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED prototype"]
     src_zephyr_trading_trading_contracts_factories_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
-    src_zephyr_trading_trading_contracts_portfolio_contracts_money_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_trading_contracts_risk_init_py -.->|import_depends| D_GOVERNANCE
     D_CROSS_ASSET["D_CROSS_ASSET prototype"]
@@ -429,7 +426,6 @@ graph TD
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     D_PF_ALLOC["D_PF_ALLOC prototype"]
