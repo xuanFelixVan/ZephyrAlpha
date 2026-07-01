@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 20:34:06
+> 最后更新: 2026-07-01 22:46:36
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 504 | Module Count | 504 |
 | 域内依赖 | 291 | Internal Dependencies | 291 |
 | 跨域入边 | 191 | Cross-domain Incoming | 191 |
-| 跨域出边 | 1846 | Cross-domain Outgoing | 1846 |
+| 跨域出边 | 1845 | Cross-domain Outgoing | 1845 |
 | 设计态模块 | 48 | Design Modules | 48 |
 | 原型态模块 | 404 | Prototype Modules | 404 |
 | 生产态模块 | 52 | Production Modules | 52 |
@@ -1261,7 +1261,7 @@ graph TD
 | D_SHARED | 73 | import_depends,test_depends |
 | D_INTELLIGENCE | 35 | import_depends,test_depends |
 | D_GOV_DRIFT | 21 | config_depends,import_depends,test_depends |
-| D_MKT_DATA | 15 | data,test_depends |
+| D_MKT_DATA | 14 | test_depends |
 | D_RISK | 14 | test_depends |
 | D_GOV_SCRIPTS | 12 | test_depends |
 | D_SIMULATION | 12 | test_depends |
