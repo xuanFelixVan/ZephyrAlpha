@@ -96,6 +96,17 @@ def get_data_dir() -> Path:
     return data_dir
 
 
+def get_config_dir() -> Path:
+    """返回配置目录 REPO_ROOT / 'config'，并确保目录存在。
+
+    Returns:
+        Path: 配置目录的绝对路径（已确保存在）。
+    """
+    config_dir = REPO_ROOT / "config"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    return config_dir
+
+
 __all__ = [
     "DB_DIR",
     "DB_PATH",
@@ -106,6 +117,7 @@ __all__ = [
     "SNAPSHOTS_DIR",
     "VECTOR_INDEX_DIR",
     "find_repo_root",
+    "get_config_dir",
     "get_data_dir",
     "get_tmp_dir",
 ]
