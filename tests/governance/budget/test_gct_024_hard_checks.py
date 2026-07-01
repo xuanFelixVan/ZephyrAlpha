@@ -33,7 +33,7 @@ class TestGCT024HardChecks:
         assert p["budget_levels"]["session_level"]["hard_limit"] == 12000
 
     def test_escalation_bridge_importable(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.bridges.alerts import BudgetAlert
         from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
         a = BudgetAlert(alert_id="B001")

@@ -40,7 +40,7 @@ from zephyr.ex_core.execution_engine import (
     ExecutionEngine,
 )
 from zephyr.ex_core.order_manager import OrderManager
-from zephyr.governance.compliance_gate_a6.default_security_gateway import (
+from zephyr.governance.security_governance.default_security_gateway import (
     DefaultSecurityGateway,
 )
 from zephyr.governance.rule_enforcement.default_quality_gate import (

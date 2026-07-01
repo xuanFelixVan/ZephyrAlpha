@@ -11,7 +11,7 @@
 
 import pytest
 
-from zephyr.governance.drift_detection.architecture_contracts import (
+from zephyr.governance.architecture_governance.architecture_contracts import (
     ARCH_BASE_CONTRACTS,
     CircuitBreaker,
     CircuitBreakerState,

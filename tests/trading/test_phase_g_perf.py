@@ -49,7 +49,7 @@ import pytest
 
 from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
-from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.governance.security_governance.default_security_gateway import DefaultSecurityGateway
 from zephyr.governance.intelligence_governance.memory_provider import MemoryProvider
 from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector
 from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume

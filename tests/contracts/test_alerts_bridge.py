@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.ops_governance.alerts import BudgetAlert, BudgetSeverity, BudgetType
+from zephyr.governance.bridges.alerts import BudgetAlert, BudgetSeverity, BudgetType
 
 
 class TestBudgetSeverity:
@@ -105,7 +105,7 @@ class TestBudgetAlert:
 
 class TestBridgeReexport:
     def test_all_exports_available(self):
-        from zephyr.governance.ops_governance.alerts import __all__
+        from zephyr.governance.bridges.alerts import __all__
 
         assert "BudgetAlert" in __all__
         assert "BudgetSeverity" in __all__

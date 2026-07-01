@@ -39,7 +39,7 @@ from zephyr.frontend.interface_base import (
     NotificationLevel,
     NotificationManagerBase,
 )
-from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.governance.security_governance.default_security_gateway import DefaultSecurityGateway
 from zephyr.governance.security_governance.security_gateway_base import (
     AuditAction,
     AuditDecision,

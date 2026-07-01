@@ -84,7 +84,7 @@ class TestP0ContractSmoke:
         assert rr.rollback_id == "SMOKE-1"
 
     def test_budget_alert_smoke(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.bridges.alerts import BudgetAlert
 
         alert = BudgetAlert(alert_id="SMOKE-1", burn_rate=0.5)
         assert alert.burn_rate == 0.5
@@ -115,7 +115,7 @@ class TestP0InputValidation:
         assert DriftType.CODE_DIVERGENCE.value == "CODE_DIVERGENCE"
 
     def test_budget_alert_from_burn_rate_validation(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert, BudgetSeverity
+        from zephyr.governance.bridges.alerts import BudgetAlert, BudgetSeverity
 
         alert = BudgetAlert.from_burn_rate("B-1", burn_rate=1.5, threshold=0.8, remaining=-100)
         assert alert.severity == BudgetSeverity.CRITICAL

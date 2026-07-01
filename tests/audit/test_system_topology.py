@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.governance.drift_detection.system_topology import (
+from zephyr.governance.architecture_governance.system_topology import (
     BTRACK_LABELS,
     BTRACK_SYSTEM_COUNT,
     CTRACK_LABELS,

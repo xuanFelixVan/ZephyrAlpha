@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.data_source_reliability import (
+from zephyr.governance.data_governance.data_source_reliability import (
     DIMENSION_WEIGHTS,
     ReliabilityDimension,
     ReliabilityScore,

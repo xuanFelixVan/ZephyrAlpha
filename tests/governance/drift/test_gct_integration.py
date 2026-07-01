@@ -10,7 +10,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.ops_governance.alerts import BudgetAlert, BudgetSeverity
+from zephyr.governance.bridges.alerts import BudgetAlert, BudgetSeverity
 from zephyr.governance.escalation.contracts import EscalationContracts
 from zephyr.governance.escalation.result_types import RollbackResult, RollbackStatus, ValidationResult
 from zephyr.infrastructure.a2a_protocol import A2ACommunication, MessageType

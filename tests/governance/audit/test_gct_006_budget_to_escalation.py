@@ -15,13 +15,13 @@ class TestGCT006BudgetToEscalation:
     """验证 budget-enforcer/alerts.py 的 BudgetAlert 可被 escalation/budget_handler.py 处理."""
 
     def test_budget_alert_creatable(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.bridges.alerts import BudgetAlert
 
         a = BudgetAlert(alert_id="B001")
         assert a.alert_id == "B001"
 
     def test_budget_handler_accepts_alert(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.bridges.alerts import BudgetAlert
         from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
         a = BudgetAlert(alert_id="B001")
@@ -29,7 +29,7 @@ class TestGCT006BudgetToEscalation:
         assert result is not None
 
     def test_budget_severity_enum(self):
-        from zephyr.governance.ops_governance.alerts import BudgetSeverity
+        from zephyr.governance.bridges.alerts import BudgetSeverity
 
         assert BudgetSeverity.WARNING is not None
         assert BudgetSeverity.CRITICAL is not None

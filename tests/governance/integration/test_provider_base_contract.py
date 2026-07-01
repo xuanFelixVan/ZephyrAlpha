@@ -15,7 +15,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from zephyr.governance.alt_data_connector.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.governance.intelligence_governance.provider_base import DataSourceBase, DataSourceMeta
 
 _META = DataSourceMeta(
     provider_id="unit-stub-provider",

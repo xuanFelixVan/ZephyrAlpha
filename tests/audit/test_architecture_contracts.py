@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import re
 
-from zephyr.governance.drift_detection.architecture_contracts import (
+from zephyr.governance.architecture_governance.architecture_contracts import (
     ARCH_BASE_CONTRACTS,
     CircuitBreaker,
     CircuitBreakerState,

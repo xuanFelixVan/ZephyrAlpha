@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from zephyr.governance.drift_detection.dependency_manager import (
+from zephyr.governance.architecture_governance.dependency_manager import (
     DEPENDENCIES,
     DependencyTier,
     ManagedDependency,

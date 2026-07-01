@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.red_blue_validator.ai_self_diagnosis import (
+from zephyr.governance.intelligence_governance.ai_self_diagnosis import (
     AUTO_KB_STEPS,
     AutoFixLayer,
     auto_fix_known_pattern,

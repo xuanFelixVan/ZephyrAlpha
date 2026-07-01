@@ -64,7 +64,7 @@ class TestP0U1ContractSmoke:
         assert hasattr(handler, "on_drift_fix")
 
     def test_gct_006_budget_to_escalation(self):
-        from zephyr.governance.ops_governance.alerts import BudgetAlert
+        from zephyr.governance.bridges.alerts import BudgetAlert
         from zephyr.governance.ops_governance.budget_handler import on_budget_alert
 
         alert = BudgetAlert(alert_id="B001")

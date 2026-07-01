@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.extract import BEST_PRACTICES_DIR_NAME, LESSONS_DIR_NAME, ExtractGate
+from zephyr.governance.kb.pipeline.extract import BEST_PRACTICES_DIR_NAME, LESSONS_DIR_NAME, ExtractGate
 
 
 @pytest.fixture()
