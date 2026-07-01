@@ -101,4 +101,4 @@ __all__ = [
     "typecheck_hook",
     "verdict_engine",
     "vibe_coding_enforcer",
-]
+'gate_event_adapter']

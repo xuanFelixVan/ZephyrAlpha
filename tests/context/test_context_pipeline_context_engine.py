@@ -30,7 +30,7 @@ def test_four_stage_build_validate_no_inject(tmp_path: Path) -> None:
 
 
 def test_compress_with_provenance_raw_preserved() -> None:
-    from zephyr.autonomy_core.doc_compressor import DocCompressor
+    from zephyr.shared.doc_compressor import DocCompressor
 
     c = DocCompressor.instance(reset=True)
     # 以大量 Markdown 标题为主，规则基压缩后仍可满足 min_chars 不变量

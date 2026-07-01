@@ -11,3 +11,6 @@
 """
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
+
+__all__ = ['arch_reference_gate', 'capability_overlap_gate', 'claim_required_gate', 'create_guard', 'dangling_reference_gate', 'directory_contract_gate', 'held_overlap_gate', 'session_required_gate']
+

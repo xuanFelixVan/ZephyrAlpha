@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_mode_manager.py -q
 # [TTL] task_bound
-from zephyr.autonomy_core.mode_manager import CEMode, ModeManager
+from zephyr.autonomy_core.context.mode_manager import CEMode, ModeManager
 
 
 class TestCEMode:

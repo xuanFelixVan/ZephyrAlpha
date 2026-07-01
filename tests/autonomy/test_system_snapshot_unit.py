@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.autonomy_core.system_snapshot import (
+from zephyr.infrastructure.system_snapshot import (
     SystemSnapshot,
     SystemSnapshotter,
 )

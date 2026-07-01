@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.diff_injector import DiffInjector, DiffResult
+from zephyr.autonomy_core.context.diff_injector import DiffInjector, DiffResult
 
 
 class TestDiffResult:

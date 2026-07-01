@@ -12,7 +12,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-from zephyr.autonomy_core.diversity_constraint import DiversityConstraint, DiversityReport
+from zephyr.autonomy_core.context.diversity_constraint import DiversityConstraint, DiversityReport
 
 
 class TestDiversityReport:

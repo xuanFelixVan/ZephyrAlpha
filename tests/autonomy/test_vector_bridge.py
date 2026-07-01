@@ -13,7 +13,7 @@
 
 from unittest.mock import MagicMock
 
-from zephyr.autonomy_core.vector_bridge import (
+from zephyr.autonomy_core.context.vector_bridge import (
     VectorBridge,
     VectorSearchResponse,
     VectorSearchResult,

@@ -75,4 +75,4 @@ __all__ = [
     "spec_auditor",
     "supply_chain",
     "trigger_engine",
-]
+'fix_result_prioritizer', 'semantic_cache']

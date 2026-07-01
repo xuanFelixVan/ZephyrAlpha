@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.autonomy_core.session_learner import LearningEvent, SessionLearner
+from zephyr.trading.feedback_loop.session_learner import LearningEvent, SessionLearner
 
 
 class TestLearningEvent:

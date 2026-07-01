@@ -37,7 +37,7 @@ __all__ = [
     "telemetry_server",
     "vector_memory_server",
     "warm_hot_gate",
-]
+'_base_server', 'database_service', 'system_snapshot']
 
 # Bridge from old infrastructure package for backward compatibility
 try:

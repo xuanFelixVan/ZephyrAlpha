@@ -26,4 +26,4 @@ Phase C 具体实现包。
 #
 
 __all__ = [
-]
+'compliance_manager', 'compliance_mapper']

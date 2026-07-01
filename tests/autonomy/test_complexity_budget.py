@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.complexity_budget import (
+from zephyr.autonomy_core.context.complexity_budget import (
     ComplexityAdjustedBudget,
     ComplexityBudgetAdjuster,
 )

@@ -23,7 +23,7 @@ from zephyr.autonomy_core.context.context_injector import (
     InjectedContext,
     RetrievalMode,
 )
-from zephyr.autonomy_core.token_budget import estimate_tokens
+from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
 
 
 class TestEstimateTokens:

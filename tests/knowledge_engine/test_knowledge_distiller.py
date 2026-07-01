@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.autonomy_core.knowledge_distiller import (
+from zephyr.governance.kb.knowledge_distiller import (
     DistillationResult,
     KnowledgeDistiller,
 )

@@ -6,4 +6,4 @@
 
 __all__ = [
     "olap_engine",
-]
+'base_repo', 'database_service', 'depgraph_reader', 'intent_keyword_mapper', 'intent_parser', 'protocol_state_store', 'sqlite_schema', 'task_repo']

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 import time
 
-from zephyr.autonomy_core.otel_instrumentation import OTelInstrumentation, PipelineTraceSpan
+from zephyr.infrastructure.system_telemetry.otel_instrumentation import OTelInstrumentation, PipelineTraceSpan
 
 
 class TestPipelineTraceSpan:

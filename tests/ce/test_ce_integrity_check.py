@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.integrity_check import IntegrityCheck, IntegrityReport
+    from zephyr.autonomy_core.context.integrity_check import IntegrityCheck, IntegrityReport
 except Exception as _exc:
     pytestmark = pytest.mark.skip(reason=f"import failed: {_exc}")
 

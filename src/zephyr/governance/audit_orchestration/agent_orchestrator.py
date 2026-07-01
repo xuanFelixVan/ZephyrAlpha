@@ -87,7 +87,7 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）

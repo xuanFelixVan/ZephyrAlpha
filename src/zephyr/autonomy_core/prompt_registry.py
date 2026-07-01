@@ -62,7 +62,7 @@ import structlog
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.autonomy_core.token_budget import estimate_tokens
+from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 if TYPE_CHECKING:

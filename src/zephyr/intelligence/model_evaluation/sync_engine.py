@@ -38,7 +38,7 @@ class SyncResult:
 class SyncEngine:
     def sync_to_vms(self, since: datetime | None = None) -> SyncResult:
         try:
-            from zephyr.autonomy_core.vector_bridge import VectorBridge
+            from zephyr.autonomy_core.context.vector_bridge import VectorBridge
             from zephyr.governance.persistence.sqlite_schema import get_db_connection
             from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 

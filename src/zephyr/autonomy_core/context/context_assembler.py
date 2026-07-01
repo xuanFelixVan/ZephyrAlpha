@@ -37,7 +37,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
 from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if True: 死分支（条件import残留）
@@ -376,7 +376,7 @@ class ContextAssembler:
     ) -> AssembledContext:
         raw = ctx.context_text
         try:
-            from zephyr.autonomy_core.doc_compressor import DocCompressor
+            from zephyr.shared.doc_compressor import DocCompressor
 
             compressor = DocCompressor()
             outcome = compressor.compress_with_provenance(raw)

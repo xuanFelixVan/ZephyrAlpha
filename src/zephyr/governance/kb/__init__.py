@@ -128,4 +128,4 @@ __all__ = [
     "unified_memory_api",
     "verify",
     "vms_memory_backend",
-]
+'citation_walker', 'embedding_version_lock', 'fragmentation_index', 'ke_justification', 'knowledge_distiller', 'knowledge_engine', 'pattern_library']

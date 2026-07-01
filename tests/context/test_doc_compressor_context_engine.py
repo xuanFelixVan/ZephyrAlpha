@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.autonomy_core.doc_compressor import (
+from zephyr.shared.doc_compressor import (
     DEFAULT_POLICY,
     CompressionInvariantError,
     CompressionPolicy,

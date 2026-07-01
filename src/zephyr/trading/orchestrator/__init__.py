@@ -114,7 +114,7 @@ __all__ = [
     "trigger_router",
     "version_manifest",
     "wave_generator",
-]
+'dispatch_table', 'incremental_review', 'task_context_builder']
 
 _SUBMODULES = [
     "agent_health_monitor",

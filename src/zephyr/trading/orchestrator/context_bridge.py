@@ -76,7 +76,7 @@ class ContextBridge:
                 t_files = []
 
         try:
-            from zephyr.autonomy_core.task_context_builder import TaskContextBuilder
+            from zephyr.trading.orchestrator.task_context_builder import TaskContextBuilder
 
             builder = TaskContextBuilder()
             response = builder.build_from_task(
@@ -101,7 +101,7 @@ class ContextBridge:
 
     def _vectorize_context(self, response: ContextResponse) -> None:
         try:
-            from zephyr.autonomy_core.vector_writer import vectorize_context
+            from zephyr.integration.vector_memory.vector_writer import vectorize_context
 
             vectorize_context(response.task_id, response.blocks)
         except Exception:

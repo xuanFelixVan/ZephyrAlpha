@@ -41,4 +41,4 @@ __all__ = [
     "work_dag",
     "work_orchestrator",
     "zombie_scanner",
-]
+'__main__']

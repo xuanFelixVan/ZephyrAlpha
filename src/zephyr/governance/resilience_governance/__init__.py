@@ -35,4 +35,4 @@ __all__ = [
     "list_by_severity",
     "offline_autonomy",
     "offline_resilience",
-]
+'account_isolator', 'blast_radius', 'circuit_breaker', 'deadlock_detector', 'engine_sandbox', 'fail_mode_manager', 'last_resort_watchdog', 'policy_sandbox', 'process_isolator', 'witness_isolation']

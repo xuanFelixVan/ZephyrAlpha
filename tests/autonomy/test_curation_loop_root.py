@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.curation_loop import CurationLoop, CurationRecord
+    from zephyr.autonomy_core.context.curation_loop import CurationLoop, CurationRecord
 except Exception as exc:
     pytest.skip(f"无法导入 curation_loop: {exc}", allow_module_level=True)
 

@@ -10,7 +10,7 @@
 
 import tempfile
 
-from zephyr.autonomy_core.memory_bank import BANK_FILES, MemoryBank
+from zephyr.autonomy_core.context.memory_bank import BANK_FILES, MemoryBank
 
 
 class TestMemoryBank:

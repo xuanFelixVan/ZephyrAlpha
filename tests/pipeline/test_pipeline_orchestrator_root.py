@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.pipeline_orchestrator import (
+    from zephyr.integration.pipeline_orchestrator import (
         PipelineMetrics,
         PipelineOrchestrator,
         PipelineResult,

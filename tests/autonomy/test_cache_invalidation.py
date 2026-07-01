@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.cache_invalidation import (
+from zephyr.shared.cache_invalidation import (
     CacheInvalidationManager,
     CacheVersion,
 )

@@ -16,7 +16,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from zephyr.autonomy_core.fallback_staleness_gate import FallbackStalenessGate, StalenessReport
+from zephyr.autonomy_core.context.fallback_staleness_gate import FallbackStalenessGate, StalenessReport
 
 
 class TestStalenessReport:

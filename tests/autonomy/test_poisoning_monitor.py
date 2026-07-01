@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_poisoning_monitor.py -q
 # [TTL] task_bound
-from zephyr.autonomy_core.poisoning_monitor import PoisoningMonitor, PoisoningRisk
+from zephyr.security.llm_defense.llm_security.poisoning_monitor import PoisoningMonitor, PoisoningRisk
 
 
 class TestPoisoningRisk:

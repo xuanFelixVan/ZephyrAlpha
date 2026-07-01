@@ -127,7 +127,7 @@ __all__ = [
     "trigger_recovery",
     "triple_alignment",
     "truth_source_validator",
-]
+'approval', 'default_quality_gate', 'dlq_retry_policy', 'output_quality_gate', 'pre_flight_gate', 'quality_gate', 'rule_canary_manager', 'rule_debt_auditor', 'rule_engine', 'rule_shadow_runner', 'rule_watcher', 'slo_contract']
 
 _LAZY_IMPORTS["TripleAlignmentResult"] = {
     "module": "zephyr.governance.rule_enforcement.triple_alignment",

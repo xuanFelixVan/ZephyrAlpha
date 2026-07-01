@@ -11,7 +11,7 @@
 # [TESTS] test_staleness_manager.py
 # [TTL] task_bound
 
-from zephyr.autonomy_core.staleness_manager import StalenessManager, StalenessReport
+from zephyr.autonomy_core.context.staleness_manager import StalenessManager, StalenessReport
 
 
 class TestStalenessReport:

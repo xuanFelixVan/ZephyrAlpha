@@ -22,8 +22,8 @@ from typing import Any
 
 import pytest
 
-from zephyr.autonomy_core.intent_keyword_mapper import IntentKeywordMapper, IntentResult
-from zephyr.autonomy_core.intent_parser import (
+from zephyr.governance.persistence.intent_keyword_mapper import IntentKeywordMapper, IntentResult
+from zephyr.governance.persistence.intent_parser import (
     DEFAULT_STAGE_THRESHOLDS,
     EmbeddingHit,
     IntentParser,

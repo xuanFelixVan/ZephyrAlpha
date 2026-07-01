@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.autonomy_core.atomic_injector import AtomicInjector, AtomicResult
+from zephyr.autonomy_core.context.atomic_injector import AtomicInjector, AtomicResult
 
 
 class TestAtomicResult:

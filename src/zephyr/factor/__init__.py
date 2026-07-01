@@ -48,7 +48,7 @@ __all__ = [
     "factor_base",
     "momentum_factor",
     "value_factor",
-]
+'bus_factor_defense']
 
 # CODEGEN-GUARD: __init__-manual-exports
 # 包级导出以 factor_base 为 SSoT（base.py 为 codegen 占位；禁止混用两套 FactorBase）

@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.host_resource_governor import HostResourceGovernor, ResourceStatus
+    from zephyr.infrastructure.capacity_assurance.host_resource_governor import HostResourceGovernor, ResourceStatus
 except Exception as _exc:
     pytestmark = pytest.mark.skip(reason=f"import failed: {_exc}")
 

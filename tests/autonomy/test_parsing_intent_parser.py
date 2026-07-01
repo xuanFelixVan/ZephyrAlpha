@@ -18,8 +18,8 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.autonomy_core.intent_keyword_mapper import IntentDomain, IntentResult
-    from zephyr.autonomy_core.intent_parser import (
+    from zephyr.governance.persistence.intent_keyword_mapper import IntentDomain, IntentResult
+    from zephyr.governance.persistence.intent_parser import (
         EmbeddingHit,
         IntentParser,
         IntentParseTrace,
