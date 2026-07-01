@@ -2677,13 +2677,35 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # Insert nodes
         nodes = depgraph.get("nodes", {})
         node_count = 0
+        skipped_invalid_blueprint = 0  # 治本 2026-07-02: 预过滤不合规blueprint_id计数
+        failed_insert_count = 0  # 治本 2026-07-02: 逐节点INSERT失败计数
         # P0-1 schema fix: 记录生成器node_id→path映射（用于edges表INSERT）
         # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
         # DB node_id是INTEGER自增，需要通过path建立映射
         gen_node_id_to_path = {}
+        # 治本 2026-07-02 (ARCH-033 Phase 2.2): 预过滤不合规blueprint_id
+        # DB触发器check_blueprint_id_three_track()正则: ^(MOD-|D-|SH-|SYS-|PLACEHOLDER)
+        # 不合规的blueprint_id会触发RAISE EXCEPTION导致整个事务回滚（连累合规节点）
+        # 在INSERT前预过滤，不合规的跳过并记录WARN
+        _BLUEPRINT_ID_VALID_RE = re.compile(r'^(MOD-|D-|SH-|SYS-|PLACEHOLDER)')
+        # 治本 2026-07-02 (ARCH-033 Phase 2.1): 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT
+        # 防御性设计：即使预过滤通过，仍可能有其他DB约束冲突（如CHECK constraint）
+        # 用SAVEPOINT确保单节点失败不影响其他合规节点
+        _sp_counter = 0
         for node_id, node in nodes.items():
             # Skip design-state nodes (already in DB)
             if node.get("design_maturity") == "design":
+                continue
+
+            # Phase 2.2: 预过滤不合规blueprint_id
+            bp_id = node.get("blueprint_id", "")
+            if bp_id and not _BLUEPRINT_ID_VALID_RE.match(bp_id):
+                skipped_invalid_blueprint += 1
+                if skipped_invalid_blueprint <= 10:  # 只打印前10个warning，避免日志爆炸
+                    print(
+                        f"[DEPGRAPH-DB] WARN: 跳过不合规blueprint_id='{bp_id}' "
+                        f"(path={node.get('path', '')}) - 不匹配^(MOD-|D-|SH-|SYS-|PLACEHOLDER)"
+                    )
                 continue
 
             tags = node.get("tags", [])
@@ -2715,50 +2737,79 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
             # H6 fix: Compute can_build from design_maturity
             can_build = 1 if node.get("design_maturity") == "production" else 0
 
-            cursor.execute(
-                """INSERT INTO nodes (
-                node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
-                belongs_to, owner, change_policy, impact_level, modification_permission,
-                file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
-                trust_zone, license, drive_direction, type_specific_data, last_verified,
-                node_name, file_path, build_status,
-                can_build, gate_reason, hard_boundary_ref, consumed_interfaces
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                      %s, %s, %s, %s, %s, %s, %s)""",
-                (
-                    node.get("type", "module"),
-                    node.get("path", ""),
-                    node.get("granularity", "file"),
-                    node.get("domain_id", ""),
-                    node.get("subdomain_id", ""),
-                    node.get("blueprint_id", ""),
-                    node.get("belongs_to", ""),
-                    node.get("owner", ""),
-                    node.get("change_policy", "evolving"),
-                    node.get("impact_level", "M"),
-                    node.get("modification_permission", "ai_modifiable"),
-                    node.get("file_header_score", 0),
-                    tags_json,
-                    node.get("architecture_layer", ""),
-                    node.get("design_maturity", "production"),
-                    node.get("deployment_lifecycle", "stable"),
-                    node.get("trust_zone", "trusted_core"),
-                    node.get("license", "Internal"),
-                    node.get("drive_direction", "bottom_up"),
-                    type_specific_json,
-                    datetime.now().isoformat(),
-                    node.get("node_name", ""),
-                    node.get("file_path", node.get("path", "")),
-                    node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
-                    can_build,  # H6 fix
-                    node.get("gate_reason", ""),  # H6 fix
-                    node.get("hard_boundary_ref", ""),  # H6 fix
-                    node.get("consumed_interfaces", ""),  # H6 fix
-                ),
+            # Phase 2.1: 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT不连累合规节点
+            _sp_counter += 1
+            _sp_name = f"sp_node_{_sp_counter}"
+            try:
+                cursor.execute(f"SAVEPOINT {_sp_name}")
+                cursor.execute(
+                    """INSERT INTO nodes (
+                    node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
+                    belongs_to, owner, change_policy, impact_level, modification_permission,
+                    file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
+                    trust_zone, license, drive_direction, type_specific_data, last_verified,
+                    node_name, file_path, build_status,
+                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                          %s, %s, %s, %s, %s, %s, %s)""",
+                    (
+                        node.get("type", "module"),
+                        node.get("path", ""),
+                        node.get("granularity", "file"),
+                        node.get("domain_id", ""),
+                        node.get("subdomain_id", ""),
+                        node.get("blueprint_id", ""),
+                        node.get("belongs_to", ""),
+                        node.get("owner", ""),
+                        node.get("change_policy", "evolving"),
+                        node.get("impact_level", "M"),
+                        node.get("modification_permission", "ai_modifiable"),
+                        node.get("file_header_score", 0),
+                        tags_json,
+                        node.get("architecture_layer", ""),
+                        node.get("design_maturity", "production"),
+                        node.get("deployment_lifecycle", "stable"),
+                        node.get("trust_zone", "trusted_core"),
+                        node.get("license", "Internal"),
+                        node.get("drive_direction", "bottom_up"),
+                        type_specific_json,
+                        datetime.now().isoformat(),
+                        node.get("node_name", ""),
+                        node.get("file_path", node.get("path", "")),
+                        node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
+                        can_build,  # H6 fix
+                        node.get("gate_reason", ""),  # H6 fix
+                        node.get("hard_boundary_ref", ""),  # H6 fix
+                        node.get("consumed_interfaces", ""),  # H6 fix
+                    ),
+                )
+                cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
+                node_count += 1
+                # P0-1 schema fix: 记录生成器node_id→path映射
+                gen_node_id_to_path[node_id] = node.get("path", "")
+            except Exception as node_err:
+                # ROLLBACK TO SAVEPOINT 恢复事务到SAVEPOINT之前状态，可继续后续INSERT
+                try:
+                    cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_name}")
+                except Exception:
+                    # SAVEPOINT本身失败（极端情况），需要rollback整个事务并重建
+                    conn.rollback()
+                    cursor = conn.cursor()
+                failed_insert_count += 1
+                if failed_insert_count <= 10:  # 只打印前10个warning
+                    print(
+                        f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
+                        f"blueprint_id={bp_id} path={node.get('path', '')} error={node_err}"
+                    )
+
+        if skipped_invalid_blueprint > 0:
+            print(
+                f"[DEPGRAPH-DB] Phase 2.2 预过滤: 跳过 {skipped_invalid_blueprint} 个不合规blueprint_id节点"
             )
-            node_count += 1
-            # P0-1 schema fix: 记录生成器node_id→path映射
-            gen_node_id_to_path[node_id] = node.get("path", "")
+        if failed_insert_count > 0:
+            print(
+                f"[DEPGRAPH-DB] Phase 2.1 逐节点保护: {failed_insert_count} 个节点INSERT失败被跳过（未连累合规节点）"
+            )
 
         # DM-012 Fix 2: Multi-tier architecture_layer backfill for ALL nodes
         # v6: arch_domain_layers已合并入domains表为layer_id字段
