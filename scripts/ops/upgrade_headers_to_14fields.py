@@ -539,6 +539,15 @@ def upgrade_file(filepath: Path, loader: DepgraphLoader, dry_run: bool) -> Upgra
     except Exception as e:
         return UpgradeResult(path=rel, status="ERROR", detail=str(e))
 
+    # 豁免 codegen 自动生成文件（BEGIN CODGEN 标记）——
+    # 这些文件由 generate_contracts.py 从 cross_layer_contracts.yaml 重新生成，
+    # 手动添加的 14 字段头部会在下次 codegen 时被覆盖，故跳过（Bug 2）。
+    # codegen 模板本身已补 14 字段头部（见维护项5），无需本脚本介入。
+    if "BEGIN CODGEN" in content:
+        return UpgradeResult(
+            path=rel, status="SKIPPED_EXEMPT", detail="codegen file (BEGIN CODGEN)"
+        )
+
     lines = content.splitlines(keepends=True)
     fields, header_lines, extra_lines = parse_header(lines)
     a_module = parse_a_module(lines)
