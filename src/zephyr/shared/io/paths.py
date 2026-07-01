@@ -72,18 +72,17 @@ RATIONALE_LOG_PATH: Path = REPO_ROOT / "docs" / "02_enterprise_architecture" / "
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
-VMS_PERSIST_DIR: Path = REPO_ROOT / "data" / "vector_db"
 
 
-def get_log_dir() -> Path:
-    """返回日志目录路径 REPO_ROOT / '.runtime' / 'logs'，并确保目录存在。
+def get_tmp_dir() -> Path:
+    """返回运行时临时目录 REPO_ROOT / '.runtime' / 'tmp'，并确保目录存在。
 
     Returns:
-        Path: 日志目录的绝对路径。
+        Path: 临时目录的绝对路径（已确保存在）。
     """
-    log_dir = REPO_ROOT / ".runtime" / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    return log_dir
+    tmp_dir = REPO_ROOT / ".runtime" / "tmp"
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    return tmp_dir
 
 
 __all__ = [
@@ -95,7 +94,6 @@ __all__ = [
     "REPO_ROOT",
     "SNAPSHOTS_DIR",
     "VECTOR_INDEX_DIR",
-    "VMS_PERSIST_DIR",
     "find_repo_root",
-    "get_log_dir",
+    "get_tmp_dir",
 ]
