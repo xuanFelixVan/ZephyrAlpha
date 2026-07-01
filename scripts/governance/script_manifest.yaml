@@ -1,16 +1,17 @@
-# 自动生成于 2026-07-01T04:00:54Z
+# 自动生成于 2026-07-01T04:22:50Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-01T04:00:54Z'
+generated_at: '2026-07-01T04:22:50Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 349
+total_scripts: 350
 with_manifest: 348
-missing_manifest: 1
+missing_manifest: 2
 categories:
-  governance: 86
+  governance: 75
   governance:_sync: 4
+  governance:_tasks: 3
   governance:d10_performance: 1
   governance:d11_compliance: 13
   governance:d12_ai_hallucination: 4
@@ -28,6 +29,7 @@ categories:
   governance:migrate_sqlite_to_pg: 1
   governance:observability: 1
   governance:repair: 7
+  governance:vms: 9
 scripts:
 - name: _concurrency.py
   owner: governance
@@ -82,6 +84,37 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags:
   - Disruptive
+- name: _tasks/list_phase0_tasks.py
+  owner: governance:_tasks
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: P1-2 列出所有Phase 0任务卡状态
+  tags:
+  - Quick
+- name: _tasks/task_show.py
+  owner: governance:_tasks
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: governance/task_show 脚本 — 任务卡详情查询 CLI。
+  tags:
+  - Quick
+- name: _tasks/task_summary.py
+  owner: governance:_tasks
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: adversarial_log.py
   owner: governance
   dimensions:
@@ -143,6 +176,16 @@ scripts:
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
   - Quick
+- name: ast_import_rewriter.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: audit_domain_nodes.py
   owner: governance
   dimensions:
@@ -3299,17 +3342,6 @@ scripts:
   tags:
   - Critical
   - Quick
-- name: list_phase0_tasks.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: P1-2 列出所有Phase 0任务卡状态
-  tags:
-  - Quick
 - name: meta/arbitrate_findings.py
   owner: governance:meta
   dimensions:
@@ -4213,26 +4245,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: task_show.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: governance/task_show 脚本 — 任务卡详情查询 CLI。
-  tags:
-  - Quick
-- name: task_summary.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
 - name: test_lock_scenarios.py
   owner: governance
   dimensions:
@@ -4344,8 +4356,8 @@ scripts:
     方案'
   tags:
   - Critical
-- name: vms_blindspot_check.py
-  owner: governance
+- name: vms/vms_blindspot_check.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4355,8 +4367,8 @@ scripts:
   description: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
   tags:
   - Quick
-- name: vms_build_completion_check.py
-  owner: governance
+- name: vms/vms_build_completion_check.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4366,8 +4378,8 @@ scripts:
   description: VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
   tags:
   - Quick
-- name: vms_cron_monitor.py
-  owner: governance
+- name: vms/vms_cron_monitor.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4377,8 +4389,8 @@ scripts:
   description: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
   tags:
   - Quick
-- name: vms_cross_file_check.py
-  owner: governance
+- name: vms/vms_cross_file_check.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4388,8 +4400,8 @@ scripts:
   description: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
   tags:
   - Quick
-- name: vms_health_check.py
-  owner: governance
+- name: vms/vms_health_check.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4399,8 +4411,8 @@ scripts:
   description: VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
   tags:
   - Quick
-- name: vms_migrate.py
-  owner: governance
+- name: vms/vms_migrate.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4410,8 +4422,8 @@ scripts:
   description: VMS Phase 2 数据迁移脚本 — MOD-INF-011
   tags:
   - Quick
-- name: vms_migration_dry_run.py
-  owner: governance
+- name: vms/vms_migration_dry_run.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4421,8 +4433,8 @@ scripts:
   description: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
   tags:
   - Quick
-- name: vms_phase_rollback.py
-  owner: governance
+- name: vms/vms_phase_rollback.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
@@ -4432,8 +4444,8 @@ scripts:
   description: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
   tags:
   - Quick
-- name: vms_version_sync_check.py
-  owner: governance
+- name: vms/vms_version_sync_check.py
+  owner: governance:vms
   dimensions:
   - D1
   priority: P2
