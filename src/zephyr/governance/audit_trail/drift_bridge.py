@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §12
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.drift_bridge
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.__init__
