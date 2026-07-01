@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-01'
-total_scripts: 583
+total_scripts: 584
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -630,6 +630,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/ast_import_rewriter.py
+  path: governance/ast_import_rewriter.py
+  description: Rewrites ``from zephyr.governance.foo import bar`` → ``from zephyr.governance.subdir.foo import bar``
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/audit_domain_nodes.py
   path: governance/audit_domain_nodes.py
   description: P0-4升级：4类检测（跨域违规+容量超限+孤儿节点+层级违规）
@@ -918,14 +926,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/list_phase0_tasks.py
-  path: governance/list_phase0_tasks.py
-  description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/list_phase0_tasks.py | §1.11'
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/migrate_clean_build_status.py
   path: governance/migrate_clean_build_status.py
   description: 3类清洗（裁定#178-193）：
@@ -1110,22 +1110,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/task_show.py
-  path: governance/task_show.py
-  description: 'Usage:'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/task_summary.py
-  path: governance/task_summary.py
-  description: task_summary.py — 任务系统全局摘要 CLI
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/test_lock_scenarios.py
   path: governance/test_lock_scenarios.py
   description: test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
@@ -1193,78 +1177,6 @@ scripts:
 - name: governance/verify_schema_health.py
   path: governance/verify_schema_health.py
   description: verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_blindspot_check.py
-  path: governance/vms_blindspot_check.py
-  description: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_build_completion_check.py
-  path: governance/vms_build_completion_check.py
-  description: VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_cron_monitor.py
-  path: governance/vms_cron_monitor.py
-  description: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_cross_file_check.py
-  path: governance/vms_cross_file_check.py
-  description: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_health_check.py
-  path: governance/vms_health_check.py
-  description: VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_migrate.py
-  path: governance/vms_migrate.py
-  description: VMS Phase 2 数据迁移脚本 — MOD-INF-011
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_migration_dry_run.py
-  path: governance/vms_migration_dry_run.py
-  description: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_phase_rollback.py
-  path: governance/vms_phase_rollback.py
-  description: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/vms_version_sync_check.py
-  path: governance/vms_version_sync_check.py
-  description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3574,6 +3486,78 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/vms/vms_blindspot_check.py
+  path: governance/vms/vms_blindspot_check.py
+  description: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_build_completion_check.py
+  path: governance/vms/vms_build_completion_check.py
+  description: VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_cron_monitor.py
+  path: governance/vms/vms_cron_monitor.py
+  description: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_cross_file_check.py
+  path: governance/vms/vms_cross_file_check.py
+  description: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_health_check.py
+  path: governance/vms/vms_health_check.py
+  description: VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_migrate.py
+  path: governance/vms/vms_migrate.py
+  description: VMS Phase 2 数据迁移脚本 — MOD-INF-011
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_migration_dry_run.py
+  path: governance/vms/vms_migration_dry_run.py
+  description: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_phase_rollback.py
+  path: governance/vms/vms_phase_rollback.py
+  description: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/vms/vms_version_sync_check.py
+  path: governance/vms/vms_version_sync_check.py
+  description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/_archive/one_off/analyze_orphan_consumers.py
   path: governance/_archive/one_off/analyze_orphan_consumers.py
   description: from __future__ import annotations
@@ -4025,6 +4009,30 @@ scripts:
 - name: governance/_sync/fix_orphan_deps.py
   path: governance/_sync/fix_orphan_deps.py
   description: fix_orphan_deps.py — 一次性修复孤儿依赖引用
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/list_phase0_tasks.py
+  path: governance/_tasks/list_phase0_tasks.py
+  description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/list_phase0_tasks.py | §1.11'
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/task_show.py
+  path: governance/_tasks/task_show.py
+  description: 'Usage:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/task_summary.py
+  path: governance/_tasks/task_summary.py
+  description: task_summary.py — 任务系统全局摘要 CLI
   domain: governance
   execution_plane: warm-path
   status: registered
