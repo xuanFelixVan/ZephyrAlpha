@@ -27,7 +27,6 @@ ttl: permanent
 | [governance_automation/](governance_automation/index.md) | 目录 | governance_automation |
 | [index.md](index.md) | Markdown | _domain_governance — 目录索引 |
 | [registry_governance/](registry_governance/index.md) | 目录 | registry_governance — 目录索引 |
-| [vibe_coding_pipelines/](vibe_coding_pipelines/index.md) | 目录 | Vibe Coding Pipelines |
 
 ## 导航
 

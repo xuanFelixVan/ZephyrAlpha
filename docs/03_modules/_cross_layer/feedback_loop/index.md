@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "feedback_loop — 目录索引"
@@ -19,7 +19,6 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [asset_inventory/](asset_inventory/index.md) | 目录 | asset-inventory — 目录索引 |
 | [blueprint.md](blueprint.md) | Markdown | Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心 |
 | [capacity_upgrade/](capacity_upgrade/index.md) | 目录 | capacity-upgrade — 目录索引 |
 | [changelog.md](changelog.md) | Markdown | feedback_loop Changelog |
