@@ -91,6 +91,32 @@ def _path_to_module(physical_path: str) -> str:
     return rel.replace("/", ".")
 
 
+def _generate_14field_header(physical_path: str) -> str:
+    """生成 14 字段规范头部（TRAE-047 v1.1.0），使 codegen 文件天然合规。
+
+    维护项5：模板内置 14 字段头部，避免 upgrade_headers 脚本误判。
+    字段值依据 contracts 域约定（cross-layer infrastructure data contracts）。
+    """
+    module_path = _path_to_module(physical_path)
+    lines = [
+        "# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md",
+        f"# [MODULE] {module_path}",
+        "# [DOMAIN] D_INFRASTRUCTURE",
+        "# [DEPENDENCIES]",
+        "# [CONSUMERS]",
+        "# [STARTUP] imported",
+        "# [MATURITY] production",
+        "# [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)",
+        "# [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py",
+        "# [STABILITY] evolving",
+        "# [SAFETY] L",
+        "# [AI_AUTONOMY] ai_modifiable",
+        "# [ERROR_CONTRACT]",
+        "# [TESTS]",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _import_to_module(import_line: str) -> str:
     """_import_to_module implementation."""
     if not import_line.startswith("from "):
@@ -367,7 +393,8 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
         fields,
     )
 
-    generated_block = "\n".join(imports[2:]) + "\n" + header + dataclass_code + "\n"
+    field_header = _generate_14field_header(physical)
+    generated_block = field_header + "\n".join(imports[2:]) + "\n" + header + dataclass_code + "\n"
     begin_marker = CODGEN_BEGIN.format(contract_id=contract_id)
     end_marker = CODGEN_END.format(contract_id=contract_id)
     wrapped_content = f"{begin_marker}\n{generated_block}\n{end_marker}\n"
@@ -425,6 +452,8 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
         if stripped.startswith("from zephyr.shared.contracts"):
             continue
         if stripped.startswith("# ---"):
+            continue
+        if stripped.startswith("# ["):
             continue
         if (
             stripped.startswith("# layer:")
