@@ -22,8 +22,8 @@
 
 import pytest
 
-from zephyr.shared.observability_02.logging import trace_id_var
-from zephyr.shared.observability_02.tracing import (
+from zephyr.shared.logging import trace_id_var
+from zephyr.shared.tracing import (
     _check_otel,
     _NoopSpan,
     start_span,

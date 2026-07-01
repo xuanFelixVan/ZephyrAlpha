@@ -214,7 +214,7 @@ class HealthMonitor:
     def _collect_metrics(self) -> None:
         """采集 probe 指标到 MetricsRegistry — DM-201247."""
         try:
-            from zephyr.shared.observability_02.metrics import MetricsRegistry
+            from zephyr.shared.metrics import MetricsRegistry
 
             registry = MetricsRegistry()
             results = self.probe_all()

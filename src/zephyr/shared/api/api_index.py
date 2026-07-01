@@ -376,7 +376,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # logging.py — 结构化日志系统（Phase 4 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.observability_02.logging import get_logger, TraceContext, configure_root_logger
+# from zephyr.shared.logging import get_logger, TraceContext, configure_root_logger
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -492,7 +492,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # health.py — 聚合健康检查（Phase 6 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.observability_02.health import AggregateHealth, collect_health
+# from zephyr.shared.health import AggregateHealth, collect_health
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

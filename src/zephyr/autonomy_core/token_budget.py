@@ -2,7 +2,7 @@
 # [MODULE] zephyr.autonomy_core.token_budget
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
-# [CONSUMERS] zephyr.infrastructure.shared_services.observability_02.token_utils; zephyr.autonomy_core.*
+# [CONSUMERS] zephyr.autonomy_core.*
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

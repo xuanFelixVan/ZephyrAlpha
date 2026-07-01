@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
-# [MODULE] zephyr.infrastructure.shared_services.observability_02.health_discovery
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
+# [MODULE] zephyr.shared.health_discovery
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.observability_02.health
+# [DEPENDENCIES] zephyr.shared.health
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

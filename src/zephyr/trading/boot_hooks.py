@@ -55,7 +55,7 @@ def _init_shared_monitoring_modules() -> None:
     在系统启动时自动实例化，而非依赖手动调用：
     1. LongevityMonitor — 长寿监控
     2. HealthcheckService — 健康检查服务
-    3. AggregateHealth — 延迟到 observability_02 就绪（需 LifecycleManager）
+    3. AggregateHealth — 延迟到 health 就绪（需 LifecycleManager）
     4. HealthDiscovery — 注册系统健康检查
     5. MetricsRegistry — 指标注册表（懒加载）
     6. AutonomyMonitor — 自治监控
@@ -91,7 +91,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 4. HealthDiscovery — 注册系统健康检查
     try:
-        from zephyr.shared.observability_02.health_discovery import register_system_health
+        from zephyr.shared.health_discovery import register_system_health
         def _boot_hooks_health_check() -> str:
             return "healthy"
         register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
@@ -101,7 +101,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 5. MetricsRegistry — 懒加载
     try:
-        from zephyr.shared.observability_02.metrics import MetricsRegistry
+        from zephyr.shared.metrics import MetricsRegistry
         _metrics = MetricsRegistry()
         _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
         logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
@@ -118,14 +118,14 @@ def _init_shared_monitoring_modules() -> None:
 
     # DM-201248: 事件订阅机制
     try:
-        from zephyr.shared.observability_02.health import subscribe_monitoring_events
+        from zephyr.shared.health import subscribe_monitoring_events
         subscribe_monitoring_events()
         logger.info("Shared monitoring: event subscription registered (health)")
     except Exception as e:
         logger.warning("Shared monitoring: health event subscription failed: %s", e)
 
     try:
-        from zephyr.shared.observability_02.metrics import subscribe_metrics_events
+        from zephyr.shared.metrics import subscribe_metrics_events
         subscribe_metrics_events()
         logger.info("Shared monitoring: event subscription registered (metrics)")
     except Exception as e:

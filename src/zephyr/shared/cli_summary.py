@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-122 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
-# [MODULE] zephyr.shared.observability_02.cli_summary
+# [MODULE] zephyr.shared.cli_summary
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.observability_02.__init__
+# [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

@@ -1254,14 +1254,9 @@ sections:
       - kb   # 行业通用,Knowledge Base
       note: 历史自创缩写目录(如ce/)不享受grandfathered豁免,MUST在refactor时修正
     progressive_convergence:
-      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C审查结果,2026-07-01更新)
+      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C-5完成,2026-07-01更新)
       strategy: 历史违规目录不批量改名(避免过度工程),在下次refactor时顺带修正;多真源问题优先处理
       pending_directories:
-      - path: src/zephyr/shared/observability_02/
-        violation: R5数字后缀
-        action: 合并到shared/根目录
-        status: in_progress
-        note: 其他session正在处理
       - path: src/zephyr/security/llm_defense/llm_security_01/
         violation: R5数字后缀
         action: 多真源处理(与llm_security/共存;context_scanner.py仅在_01中)
@@ -1292,6 +1287,11 @@ sections:
         action: 已删除(死代码,__init__.py已损坏)
         status: resolved
         note: "ARCH-033阶段C-2完成(commit 905aaa828c);0外部引用"
+      - path: src/zephyr/shared/observability_02/
+        violation: R5数字后缀
+        action: 已删除(6实现文件上提至shared/根目录,覆盖4个wrapper)
+        status: resolved
+        note: "ARCH-033阶段C-5完成;6文件迁移(health/logging/metrics/tracing/health_discovery/cli_summary)+15消费者import更新(9源码+6测试);observability_02/目录已删除"
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1385,9 +1385,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.7.2"
+  version: "1.7.3"
   last_modified: "2026-07-01"
   change_history:
+  - version: "1.7.3"
+    date: "2026-07-01"
+    author: "AI-Assistant"
+    change: "ARCH-033阶段C-5完成——shared/observability_02/目录消除(R5数字后缀违规);6个实现文件(health/logging/metrics/tracing/health_discovery/cli_summary)从observability_02/上提至shared/根目录,覆盖4个re-export wrapper;15个消费者import路径更新(9源码+6测试);observability_02/目录删除;当前状态:1待处理(llm_security_01)+6已解决"
   - version: "1.7.2"
     date: "2026-07-01"
     author: "AI-Assistant"

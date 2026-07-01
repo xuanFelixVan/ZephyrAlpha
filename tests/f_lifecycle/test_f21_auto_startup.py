@@ -66,12 +66,12 @@ class TestAutoStartup:
 
     def test_health_discovery_importable(self) -> None:
         """HealthDiscovery 模块可导入。"""
-        from zephyr.shared.observability_02.health_discovery import HealthDiscovery
+        from zephyr.shared.health_discovery import HealthDiscovery
         assert HealthDiscovery is not None
 
     def test_metrics_registry_importable(self) -> None:
         """MetricsRegistry 模块可导入。"""
-        from zephyr.shared.observability_02.metrics import MetricsRegistry
+        from zephyr.shared.metrics import MetricsRegistry
         assert MetricsRegistry is not None
 
     def test_autonomy_monitor_importable(self) -> None:
@@ -81,8 +81,8 @@ class TestAutoStartup:
 
     def test_event_subscription_importable(self) -> None:
         """事件订阅函数可导入。"""
-        from zephyr.shared.observability_02.health import subscribe_monitoring_events
-        from zephyr.shared.observability_02.metrics import subscribe_metrics_events
+        from zephyr.shared.health import subscribe_monitoring_events
+        from zephyr.shared.metrics import subscribe_metrics_events
         assert callable(subscribe_monitoring_events)
         assert callable(subscribe_metrics_events)
 

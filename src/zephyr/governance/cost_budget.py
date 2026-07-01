@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.governance.cost_budget
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.shared.errors; zephyr.shared.observability_02.metrics
+# [DEPENDENCIES] zephyr.shared.errors; zephyr.shared.metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ import threading
 from dataclasses import dataclass, field
 
 from zephyr.shared.errors import ZephyrBaseError
-from zephyr.shared.observability_02.metrics import COUNT_LLM_CALLS, get_registry
+from zephyr.shared.metrics import COUNT_LLM_CALLS, get_registry
 
 
 class CostBudgetExceededError(ZephyrBaseError):
