@@ -1000,6 +1000,29 @@ capabilities:
       - make_dangling_reference_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: arch_reference_gate
+    aliases:
+      - ARCH-REFERENCE
+      - arch-reference
+      - make_arch_reference_gate
+      - arch_issue_ref_checker
+      - phantom_arch_id_blocker
+    description: >-
+      #ARCH-NNN 悬空引用自动检测门禁（ARCH-REFERENCE，2026-07-01 治本）。
+      检测 staged 文件中新增的 #ARCH-NNN 引用是否在 architecture_issue_registry.yaml
+      中登记。命中则阻断 commit（ARCH_REFERENCE_VIOLATION）。病根：编号铁律#6
+      "任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位"
+      原为文档约束（靠 AI 自觉查 registry），AI 不查就占位导致编号冲突（如
+      ARCH-027 误用冲突改 ARCH-028）。治本：GitCommitGateway pre-commit 阶段注册 gate
+      （priority=75），只检测新增引用（git diff HEAD 对比），不阻断历史悬空引用
+      （防卡死工作流）。fail-closed：registry 缺失/git 异常时阻断。canonical
+      basename arch_reference_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "ARCH 引用/arch reference/编号铁律/phantom arch id" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 #ARCH-NNN 引用检测脚本。
+    integrity_anchors:
+      - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
