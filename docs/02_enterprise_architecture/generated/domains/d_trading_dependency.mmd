@@ -1,7 +1,7 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-01 12:19:13
+%% 生成时间: 2026-07-01 12:22:45
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 148, 依赖边数: 336
+%% 模块数: 149, 依赖边数: 338
 
 graph TD
 
@@ -43,6 +43,7 @@ graph TD
         src_zephyr_trading_orchestrator_batch_orchestrator_py["...ng/orchestrator/batch_orchestrator.py [prototype]"]
         src_zephyr_trading_orchestrator_benchmark_runner_py["...ding/orchestrator/benchmark_runner.py [prototype]"]
         src_zephyr_trading_orchestrator_blind_spot_closure_py["...ng/orchestrator/blind_spot_closure.py [prototype]"]
+        src_zephyr_trading_orchestrator_blueprint_health_py["...ding/orchestrator/blueprint_health.py [prototype]"]
         src_zephyr_trading_orchestrator_blueprint_scorer_py["...ding/orchestrator/blueprint_scorer.py [prototype]"]
         src_zephyr_trading_orchestrator_bulkhead_manager_py["...ding/orchestrator/bulkhead_manager.py [prototype]"]
         src_zephyr_trading_orchestrator_canary_manager_py["...rading/orchestrator/canary_manager.py [prototype]"]
@@ -106,8 +107,7 @@ graph TD
         src_zephyr_trading_orchestrator_teardown_manager_py["...ding/orchestrator/teardown_manager.py [prototype]"]
         src_zephyr_trading_orchestrator_trigger_router_py["...rading/orchestrator/trigger_router.py [prototype]"]
         src_zephyr_trading_orchestrator_version_manifest_py["...ding/orchestrator/version_manifest.py [prototype]"]
-        src_zephyr_trading_orchestrator_wave_generator_py["...rading/orchestrator/wave_generator.py [prototype]"]
-        %% ... 还有 48 个模块未显示
+        %% ... 还有 49 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
     src_zephyr_trading_action_dispatcher_py -->|config_depends| src_zephyr_trading___init___py
-    %% ... 还有 53 条域内依赖未显示
+    %% ... 还有 54 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_CROSS_ASSET -> D_TRADING (5 条)
@@ -309,7 +309,8 @@ graph TD
     src_zephyr_trading_trading_con___ortfolio_contracts_money_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_TRADING -> D_GOV_AUDIT (6 条)
+    %% D_TRADING -> D_GOV_AUDIT (7 条)
+    src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -397,6 +398,6 @@ graph TD
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 133 条
+    %% 域内依赖: 134 条
     %% 跨域入边: 109 条
-    %% 跨域出边: 94 条
+    %% 跨域出边: 95 条

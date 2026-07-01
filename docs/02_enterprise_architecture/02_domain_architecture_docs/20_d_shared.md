@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:19:11
+> 最后更新: 2026-07-01 12:22:42
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -96,6 +96,7 @@ graph TD
     D_CROSS_ASSET["D_CROSS_ASSET production"]
     D_CROSS_ASSET -.->|import_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|import_depends| src_zephyr_shared_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_init_py
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_blueprint_code_auditor_py
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_combinatorial_gate_py
@@ -261,9 +262,11 @@ graph TD
     src_zephyr_shared_contracts_market_init_py -.->|import_depends| src_zephyr_shared_contracts_market_market_data_py
     src_zephyr_shared_contracts_market_init_py -.->|import_depends| src_zephyr_shared_contracts_market_factor_signal_py
     src_zephyr_shared_contracts_market_init_py -.->|import_depends| src_zephyr_shared_contracts_market_synthesized_signal_py
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
@@ -286,7 +289,7 @@ graph TD
     class src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_market_factor_monitor_report_py,src_zephyr_shared_contracts_portfolio_money_py production
     class src_zephyr_shared_contracts_escalation_init_py,src_zephyr_shared_contracts_execution_init_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_init_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_init_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_identity_init_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_init_py,src_zephyr_shared_contracts_market_factor_signal_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_market_macro_factor_signal_py,src_zephyr_shared_contracts_market_market_data_py,src_zephyr_shared_contracts_market_synthesized_signal_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_init_py design
     class D_INFRA_RECOVERY,D_INFRA_RUNTIME,D_INTELLIGENCE external_prod
-    class D_OPS,D_GOVERNANCE,D_INTEGRATION,D_ML_TRAIN external_design
+    class D_GOVERNANCE,D_OPS,D_INTEGRATION,D_ML_TRAIN external_design
 ```
 
 ### 第 4 页 / 共 8 页 / Page 4 of 8

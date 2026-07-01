@@ -1,7 +1,7 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-07-01 12:19:12
+%% 生成时间: 2026-07-01 12:22:44
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 356, 依赖边数: 339
+%% 模块数: 356, 依赖边数: 343
 
 graph TD
 
@@ -214,11 +214,15 @@ graph TD
     %% D_GOV_SCRIPTS -> D_GOV_AUDIT (2 条)
     scripts_a2a_full_verification_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     scripts_governance_rebuild_audit_index_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (5 条)
+    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (9 条)
     scripts_governance_adversarial_sys_master_test_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_governance_pre_write_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    scripts_governance_d1_structure_cbg_reset_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    scripts_governance_d1_structure_reset_cbg_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (10 条)
     scripts_a2a_full_verification_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -263,4 +267,4 @@ graph TD
     %% 统计
     %% 域内依赖: 290 条
     %% 跨域入边: 1 条
-    %% 跨域出边: 48 条
+    %% 跨域出边: 52 条

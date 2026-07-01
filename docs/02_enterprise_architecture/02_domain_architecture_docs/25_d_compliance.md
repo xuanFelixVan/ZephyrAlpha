@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:19:11
+> 最后更新: 2026-07-01 12:22:41
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -76,6 +76,7 @@ graph TD
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_compliance_financial_compliance_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_compliance_security_gateway_base_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_merkle_hourly_py -.->|import_depends| D_GOV_AUDIT
     D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_compliance_integrity_py -.->|import_depends| D_GOV_DRIFT
     src_zephyr_compliance_audit_trail_init_py -.->|import_depends| D_GOV_AUDIT
