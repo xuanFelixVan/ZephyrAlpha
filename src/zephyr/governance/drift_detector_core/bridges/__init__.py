@@ -33,7 +33,7 @@ try:
 except ImportError:
     pass
 
-__all__ = [, 'drift_bridge']
+__all__ = ['drift_bridge']
 
 __version__ = "1.0.0"
 __module_id__ = "MOD-INF-023"
