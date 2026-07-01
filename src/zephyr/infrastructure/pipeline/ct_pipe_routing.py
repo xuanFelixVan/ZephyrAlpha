@@ -46,7 +46,7 @@ from zephyr.infrastructure.pipeline.models import (
     PipelineRouteDecision,
 )
 from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 
 __all__ = [
     "CtPipeRoutingHints",

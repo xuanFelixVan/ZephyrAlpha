@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.shared.session_continuity import (
+from zephyr.shared.session.session_continuity import (
     ContinuityContext,
     SessionContinuity,
     SessionState,

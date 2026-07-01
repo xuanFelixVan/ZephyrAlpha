@@ -149,7 +149,7 @@ class TestTaskCardInheritance:
 
     def test_taskcard_inherits_task(self) -> None:
         from zephyr.governance.rule_enforcement.task_types import Task
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         assert issubclass(TaskCard, Task), (
             f"TaskCard 必须继承 schemas.py Task。\n"
@@ -159,7 +159,7 @@ class TestTaskCardInheritance:
 
     def test_taskcard_has_all_task_fields(self) -> None:
         from zephyr.governance.rule_enforcement.task_types import Task
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         task_fields = set(Task.model_fields.keys())
         taskcard_fields = set(TaskCard.model_fields.keys())
@@ -169,7 +169,7 @@ class TestTaskCardInheritance:
 
     def test_taskcard_no_field_shadow_conflict(self) -> None:
         from zephyr.governance.rule_enforcement.task_types import Task
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         task_types = {name: info.annotation for name, info in Task.model_fields.items()}
         taskcard_types = {name: info.annotation for name, info in TaskCard.model_fields.items()}
@@ -210,7 +210,7 @@ class TestErrorHierarchy:
     """错误层次稳定性验证。"""
 
     def test_all_error_subclasses_exist(self) -> None:
-        from zephyr.shared import errors as err_module
+        from zephyr.shared.foundation import errors as err_module
 
         found = {
             name
@@ -229,7 +229,7 @@ class TestErrorHierarchy:
         )
 
     def test_error_subclasses_instantiable(self) -> None:
-        from zephyr.shared import errors as err_module
+        from zephyr.shared.foundation import errors as err_module
 
         for name in ERROR_SUBCLASSES_EXPECTED:
             cls = getattr(err_module, name)
@@ -265,7 +265,7 @@ class TestTypeAliases:
     """共享类型别名稳定性验证。"""
 
     def test_all_type_aliases_exist(self) -> None:
-        from zephyr.shared import types as t_module
+        from zephyr.shared.foundation import types as t_module
 
         found = set(t_module.__all__) if hasattr(t_module, "__all__") else set()
 

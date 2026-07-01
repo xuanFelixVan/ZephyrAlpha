@@ -22,7 +22,7 @@ import tempfile
 import pytest
 
 try:
-    from zephyr.shared.architecture_context_loader import (
+    from zephyr.shared.blueprint_tools.architecture_context_loader import (
         DEFAULT_ARCH_CONTEXT_PATH,
         format_architecture_context_excerpt,
         load_architecture_context_dict,

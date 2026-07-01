@@ -67,7 +67,7 @@ from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.shared.io.paths import DB_PATH
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.governance.rule_enforcement.task_types import ExecutionModel, TaskNamespace, TaskStatus
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 
 DEFAULT_FINDINGS = SCRIPTS_DIR / "reports" / "findings.jsonl"
 TASK_CARDS_DIR = (

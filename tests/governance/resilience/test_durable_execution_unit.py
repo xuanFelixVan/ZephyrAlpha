@@ -12,7 +12,7 @@ Unit tests for durable_execution.py
 
 import tempfile
 
-from zephyr.shared.durable_execution import (
+from zephyr.shared.resilience.durable_execution import (
     ActivityResult,
     ActivityStatus,
     ProgressSnapshot,

@@ -42,8 +42,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.file_utils import atomic_write, backup_and_rollback
-from zephyr.shared.session_audit import SessionAuditTrail
+from zephyr.shared.utils.file_utils import atomic_write, backup_and_rollback
+from zephyr.shared.session.session_audit import SessionAuditTrail
 
 
 @dataclass

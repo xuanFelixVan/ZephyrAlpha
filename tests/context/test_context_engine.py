@@ -19,7 +19,7 @@ import tempfile
 
 import pytest
 
-from zephyr.shared.context_engine import (
+from zephyr.shared.context.context_engine import (
     ContextAssembly,
     ContextEngine,
     ContextSlice,

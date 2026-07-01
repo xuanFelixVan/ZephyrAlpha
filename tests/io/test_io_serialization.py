@@ -28,7 +28,7 @@ from enum import Enum
 
 import pytest
 
-from zephyr.shared.serialization import (
+from zephyr.shared.foundation.serialization import (
     ENCODING_RULES,
     SerializationError,
     SerializationFormat,
@@ -201,7 +201,7 @@ class TestSerializationFormat:
 
 class TestSerializationError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.shared.errors import ZephyrBaseError
+        from zephyr.shared.foundation.errors import ZephyrBaseError
 
         err = SerializationError("fail", details={"type": "bad"})
         assert isinstance(err, ZephyrBaseError)

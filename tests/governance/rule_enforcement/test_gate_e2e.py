@@ -42,7 +42,7 @@ from zephyr.governance.rule_enforcement.gate_engine import (
     GateResult,
 )
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 
 # ---------------------------------------------------------------------------
 # 常量

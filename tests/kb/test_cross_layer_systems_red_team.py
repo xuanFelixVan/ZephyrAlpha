@@ -475,7 +475,7 @@ class TestSharedCoreAdversarial:
             TaskNamespace,
             TaskStatus,
         )
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         now = datetime.now(UTC)
         task = TaskCard(
@@ -501,7 +501,7 @@ class TestSharedCoreAdversarial:
 
     def test_task_invalid_status_rejected(self):
         from zephyr.integration.shared.schema.schemas import Classification, ExecutionModel, SafetyLevel, TaskNamespace
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         now = datetime.now(UTC)
         try:
@@ -523,7 +523,7 @@ class TestSharedCoreAdversarial:
         assert task.status != "__INVALID__", "Invalid status was silently accepted"
 
     def test_event_bus_event_dataclass(self):
-        from zephyr.shared.event_bus import Event, EventPriority
+        from zephyr.shared.events.event_bus import Event, EventPriority
 
         evt = Event(
             topic="test.adversarial",
@@ -534,7 +534,7 @@ class TestSharedCoreAdversarial:
         assert evt.priority == EventPriority.LOW
 
     def test_ssot_guard_instantiate(self):
-        from zephyr.shared.ssot_guard import SsotGuard
+        from zephyr.shared.ai_guards.ssot_guard import SsotGuard
 
         guard = SsotGuard()
         assert guard is not None
@@ -547,7 +547,7 @@ class TestSharedCoreAdversarial:
             TaskNamespace,
             TaskStatus,
         )
-        from zephyr.shared.models import TaskCard
+        from zephyr.shared.foundation.models import TaskCard
 
         now = datetime.now(UTC)
         card = TaskCard(
@@ -570,7 +570,7 @@ class TestSharedCoreAdversarial:
         assert card.phase == 0
 
     def test_blueprint_decomposer_instantiate(self):
-        from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
+        from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 
         decomposer = BlueprintDecomposer()
         assert decomposer is not None

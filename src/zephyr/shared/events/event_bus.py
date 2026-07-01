@@ -27,12 +27,12 @@ v0.6.0 -> v0.3.0: core/events/event_bus.py 的 EventType、DomainEvent、EventBu
 shared/event_bus.py。本文件仅重新导出以保证向后兼容。
 
 Import 路径映射:
-    from zephyr.shared.event_bus import EventType    -> zephyr.shared.event_bus
-    from zephyr.shared.event_bus import DomainEvent  -> zephyr.shared.event_bus
-    from zephyr.shared.event_bus import EventBus     -> zephyr.shared.event_bus
+    from zephyr.shared.events.event_bus import EventType    -> zephyr.shared.event_bus
+    from zephyr.shared.events.event_bus import DomainEvent  -> zephyr.shared.event_bus
+    from zephyr.shared.events.event_bus import EventBus     -> zephyr.shared.event_bus
 """
 
-from zephyr.shared.event_bus import (  # noqa: F401
+from zephyr.shared.events.event_bus import (  # noqa: F401
     DomainEvent,
     Event,
     EventBus,

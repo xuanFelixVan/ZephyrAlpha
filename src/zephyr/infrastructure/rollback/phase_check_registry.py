@@ -104,7 +104,7 @@ def check_session_manager() -> GateResult:
 
 def check_session_continuity() -> GateResult:
     try:
-        from zephyr.shared.session_continuity import SessionContinuity
+        from zephyr.shared.session.session_continuity import SessionContinuity
 
         sc = SessionContinuity()
         return GateResult.GREEN

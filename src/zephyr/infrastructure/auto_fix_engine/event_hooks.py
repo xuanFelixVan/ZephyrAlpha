@@ -75,7 +75,7 @@ class EventHooks:
         # 桥接 fix_completed/fix_failed 到主 EventBus (F15→F5/F30)
         if event in (FixEvent.FIX_COMPLETED, FixEvent.FIX_FAILED):
             try:
-                from zephyr.shared.event_bus import EventBusBackpressure
+                from zephyr.shared.events.event_bus import EventBusBackpressure
 
                 EventBusBackpressure().emit(
                     event.value,
@@ -142,7 +142,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("drift_detected", _on_drift_detected)

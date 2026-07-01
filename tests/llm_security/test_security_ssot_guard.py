@@ -146,7 +146,7 @@ class TestSsotViolation:
         assert issubclass(SsotViolation, SsotError)
 
     def test_inherits_zephyr_base_error(self):
-        from zephyr.shared.errors import ZephyrBaseError
+        from zephyr.shared.foundation.errors import ZephyrBaseError
 
         assert issubclass(SsotViolation, ZephyrBaseError)
 

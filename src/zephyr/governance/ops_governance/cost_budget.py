@@ -38,8 +38,8 @@ from __future__ import annotations
 import threading
 from dataclasses import dataclass, field
 
-from zephyr.shared.errors import ZephyrBaseError
-from zephyr.shared.metrics import COUNT_LLM_CALLS, get_registry
+from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.observability.metrics import COUNT_LLM_CALLS, get_registry
 
 
 class CostBudgetExceededError(ZephyrBaseError):

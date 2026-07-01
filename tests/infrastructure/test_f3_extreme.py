@@ -55,7 +55,7 @@ def _make_taskcard(task_id: str, batch_id: str = "extreme-batch", **overrides):
     """创建最小化测试 TaskCard。"""
     from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-    from zephyr.shared.task_types import Task, TaskCard
+    from zephyr.shared.schema.task_types import Task, TaskCard
 
     defaults = dict(
         task_id=task_id,

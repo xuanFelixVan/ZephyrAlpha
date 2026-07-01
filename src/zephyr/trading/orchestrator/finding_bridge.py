@@ -38,7 +38,7 @@ FindingTaskBridge = _bridge_mod.FindingTaskBridge
 SEVERITY_TO_PRIORITY = _bridge_mod.SEVERITY_TO_PRIORITY
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.shared.io.paths import DB_PATH
-from zephyr.shared.models import TaskNamespace
+from zephyr.shared.foundation.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)
 

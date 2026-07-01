@@ -22,7 +22,7 @@ import threading
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-from zephyr.shared.event_bus import EventBus, EventType
+from zephyr.shared.events.event_bus import EventBus, EventType
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 1. LongevityMonitor
     try:
-        from zephyr.shared.longevity_monitor import LongevityMonitor
+        from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
         _monitor = LongevityMonitor()
         logger.info("Shared monitoring: LongevityMonitor instantiated")
     except Exception as e:
@@ -78,7 +78,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 2. HealthcheckService
     try:
-        from zephyr.shared.healthcheck_service import HealthcheckService
+        from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService
         _healthcheck = HealthcheckService(project_root=project_root)
         logger.info("Shared monitoring: HealthcheckService instantiated")
     except Exception as e:
@@ -91,7 +91,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 4. HealthDiscovery — 注册系统健康检查
     try:
-        from zephyr.shared.health_discovery import register_system_health
+        from zephyr.shared.lifecycle.health_discovery import register_system_health
         def _boot_hooks_health_check() -> str:
             return "healthy"
         register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
@@ -101,7 +101,7 @@ def _init_shared_monitoring_modules() -> None:
 
     # 5. MetricsRegistry — 懒加载
     try:
-        from zephyr.shared.metrics import MetricsRegistry
+        from zephyr.shared.observability.metrics import MetricsRegistry
         _metrics = MetricsRegistry()
         _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
         logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
@@ -118,14 +118,14 @@ def _init_shared_monitoring_modules() -> None:
 
     # DM-201248: 事件订阅机制
     try:
-        from zephyr.shared.health import subscribe_monitoring_events
+        from zephyr.shared.lifecycle.health import subscribe_monitoring_events
         subscribe_monitoring_events()
         logger.info("Shared monitoring: event subscription registered (health)")
     except Exception as e:
         logger.warning("Shared monitoring: health event subscription failed: %s", e)
 
     try:
-        from zephyr.shared.metrics import subscribe_metrics_events
+        from zephyr.shared.observability.metrics import subscribe_metrics_events
         subscribe_metrics_events()
         logger.info("Shared monitoring: event subscription registered (metrics)")
     except Exception as e:
@@ -501,7 +501,7 @@ def register_boot_hooks() -> None:
         hook_registry.register(_on_blueprint_changed_triple_align, priority=72, name="triple_align_event")
 
         try:
-            from zephyr.shared.event_bus import EventBusBackpressure
+            from zephyr.shared.events.event_bus import EventBusBackpressure
 
             _bus = EventBusBackpressure()
             _bus.subscribe("blueprint.changed", _on_blueprint_changed_triple_align)

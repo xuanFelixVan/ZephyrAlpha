@@ -13,7 +13,7 @@
 
 import json
 
-from zephyr.shared.cli_summary import BuildSummary, CLISummary
+from zephyr.shared.utils.cli_summary import BuildSummary, CLISummary
 
 
 def _make_summary(

@@ -32,7 +32,7 @@ from zephyr.integration.schema.schemas import TaskNamespace, TaskStatus
 
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 
 init_db()
 repo = TaskRepository()

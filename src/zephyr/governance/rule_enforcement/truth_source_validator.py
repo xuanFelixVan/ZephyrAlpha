@@ -41,7 +41,7 @@ from typing import Any
 from pydantic import BaseModel, Field, model_validator
 
 from zephyr.governance.audit_trail.bridge import write_to_core
-from zephyr.shared.schemas import AuditFinding, AuditSeverity
+from zephyr.shared.schema.schemas import AuditFinding, AuditSeverity
 
 logger = logging.getLogger(__name__)
 

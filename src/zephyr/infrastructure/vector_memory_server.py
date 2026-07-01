@@ -160,7 +160,7 @@ class VectorMemoryServer(BaseMCPServer):
 
     def _init_vms(self) -> None:
         try:
-            from zephyr.shared.registry import ServiceRegistry
+            from zephyr.shared.protocols.registry import ServiceRegistry
 
             self._vms = ServiceRegistry.get("vector-memory")
             self._vms.init_all_collections()
@@ -177,7 +177,7 @@ class VectorMemoryServer(BaseMCPServer):
     def _write(self, collection_name: str, content: str, metadata: dict[str, Any] | None = None, doc_id: str | None = None) -> dict[str, Any]:
         if self._vms is None:
             return {"error": "VMS 未就绪", "written": False}
-        from zephyr.shared.registry import ServiceRegistry
+        from zephyr.shared.protocols.registry import ServiceRegistry
 
         schemas = ServiceRegistry.get("collection_schemas")
         schema = schemas.get(collection_name, {})

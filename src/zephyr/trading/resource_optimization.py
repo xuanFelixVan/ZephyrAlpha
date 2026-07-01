@@ -61,13 +61,13 @@ from zephyr.shared.lifecycle.resource_optimization_models import (
     ProcessPoolStats,
     ResourceSnapshot,
 )
-from zephyr.shared.capacity_calibrator import CapacityCalibrator
-from zephyr.shared.capacity_digital_twin import CapacityDigitalTwin
-from zephyr.shared.capacity_fingerprint import CapacityFingerprint
-from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop
-from zephyr.shared.capacity_runbook_generator import CapacityRunbookGenerator
+from zephyr.shared.capacity_governance.capacity_calibrator import CapacityCalibrator
+from zephyr.shared.capacity_governance.capacity_digital_twin import CapacityDigitalTwin
+from zephyr.shared.capacity_governance.capacity_fingerprint import CapacityFingerprint
+from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop
+from zephyr.shared.capacity_governance.capacity_runbook_generator import CapacityRunbookGenerator
 from zephyr.shared.lifecycle.lazy_loader import LazyModuleRegistry
-from zephyr.shared.model_capacity_probe import ModelCapacityProbe
+from zephyr.shared.capacity_governance.model_capacity_probe import ModelCapacityProbe
 from zephyr.shared.infra.process_pool import MCPProcessPool
 
 __all__ = [
@@ -857,7 +857,7 @@ class ResourceOptimizationEngine:
             return
         self._last_pressure_level = snap.pressure
         try:
-            from zephyr.shared.event_bus import bus
+            from zephyr.shared.events.event_bus import bus
             bus.emit(
                 self._eventbus_topic,
                 {

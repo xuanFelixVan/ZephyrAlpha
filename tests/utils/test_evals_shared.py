@@ -40,7 +40,7 @@ Safety: MEDIUM（评估框架不影响代码执行安全）
 
 import pytest
 
-from zephyr.shared.evals import (
+from zephyr.shared.evaluation.evals import (
     DimensionScore,
     EvalCase,
     EvalDimension,

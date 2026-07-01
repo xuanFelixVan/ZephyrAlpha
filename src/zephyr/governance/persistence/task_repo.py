@@ -88,7 +88,7 @@ from zephyr.shared.io.paths import DB_PATH
 from zephyr.integration.shared.schema.severity_types import Priority
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 from zephyr.shared.utils.time_utils import now_iso
-from zephyr.shared.task_types import Task, TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.schema.task_types import Task, TaskCard, TaskNamespace, TaskStatus
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [

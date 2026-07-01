@@ -45,7 +45,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.architecture_context_loader import (
+from zephyr.shared.blueprint_tools.architecture_context_loader import (
     format_architecture_context_excerpt,
     load_architecture_context_dict,
 )

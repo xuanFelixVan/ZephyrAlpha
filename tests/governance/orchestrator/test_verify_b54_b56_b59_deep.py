@@ -20,7 +20,7 @@ from zephyr.governance.persistence.task_repo import (
 )
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority as P
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 
 now = datetime.now(UTC)
 

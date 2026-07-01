@@ -28,7 +28,7 @@ import queue
 from enum import Enum, unique
 from typing import Any
 
-from zephyr.shared.registry import ServiceRegistry
+from zephyr.shared.protocols.registry import ServiceRegistry
 
 logger = logging.getLogger(__name__)
 

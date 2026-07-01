@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.shared.session_continuity import (
+from zephyr.shared.session.session_continuity import (
     ContinuityContext,
     SessionContinuity,
     SessionState,

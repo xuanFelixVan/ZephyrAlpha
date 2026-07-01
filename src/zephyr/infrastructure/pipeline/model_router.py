@@ -41,7 +41,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
 __all__ = ["ModelRouter"]
 

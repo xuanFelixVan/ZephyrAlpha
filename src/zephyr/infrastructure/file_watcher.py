@@ -224,8 +224,8 @@ class BlueprintWatcher:
     @staticmethod
     def _trigger_decompose(blueprint_path: Path) -> None:
         try:
-            from zephyr.shared.registry import ServiceRegistry
-            from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
+            from zephyr.shared.protocols.registry import ServiceRegistry
+            from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 
             task_repo = ServiceRegistry.get("task_repo")
             decomposer = BlueprintDecomposer(task_repo=task_repo)

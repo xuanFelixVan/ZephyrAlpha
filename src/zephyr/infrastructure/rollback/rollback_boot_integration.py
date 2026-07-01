@@ -174,7 +174,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("pipeline_failed", _on_pipeline_failed)

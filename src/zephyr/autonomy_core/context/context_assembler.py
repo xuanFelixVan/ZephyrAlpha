@@ -376,7 +376,7 @@ class ContextAssembler:
     ) -> AssembledContext:
         raw = ctx.context_text
         try:
-            from zephyr.shared.doc_compressor import DocCompressor
+            from zephyr.shared.io.doc_compressor import DocCompressor
 
             compressor = DocCompressor()
             outcome = compressor.compress_with_provenance(raw)

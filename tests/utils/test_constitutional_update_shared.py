@@ -95,7 +95,7 @@ class TestConstitutionalAutoUpdate:
         agents_path_file = tmp_path / "AGENTS.md"
         agents_path_file.write_text("", encoding="utf-8")
 
-        from zephyr.shared.session_audit import SessionAuditTrail
+        from zephyr.shared.session.session_audit import SessionAuditTrail
 
         trail = SessionAuditTrail(audit_dir=audit_dir)
         record = trail.start_session("sess-001")
@@ -114,7 +114,7 @@ class TestConstitutionalAutoUpdate:
         agents_path = str(tmp_path / "AGENTS.md")
         (tmp_path / "AGENTS.md").write_text("", encoding="utf-8")
 
-        from zephyr.shared.session_audit import SessionAuditTrail
+        from zephyr.shared.session.session_audit import SessionAuditTrail
 
         trail = SessionAuditTrail(audit_dir=audit_dir)
         record = trail.start_session("sess-002")
@@ -131,7 +131,7 @@ class TestConstitutionalAutoUpdate:
         audit_dir = str(tmp_path / "audit")
         (tmp_path / "AGENTS.md").write_text("", encoding="utf-8")
 
-        from zephyr.shared.session_audit import SessionAuditTrail
+        from zephyr.shared.session.session_audit import SessionAuditTrail
 
         trail = SessionAuditTrail(audit_dir=audit_dir)
 

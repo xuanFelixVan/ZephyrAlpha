@@ -41,7 +41,7 @@ def _make_taskcard(task_id: str, depends_on: list[str] | None = None) -> "TaskCa
     """创建最小化测试 TaskCard，含全部 18 必填字段。"""
     from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-    from zephyr.shared.task_types import TaskCard
+    from zephyr.shared.schema.task_types import TaskCard
 
     ns_str, seq_str = task_id.split("-", 1)
     ns = getattr(TaskNamespace, ns_str, TaskNamespace.DM)

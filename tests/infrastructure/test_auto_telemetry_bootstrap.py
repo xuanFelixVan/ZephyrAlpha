@@ -39,7 +39,7 @@ def test_session_continuity_auto_emits():
     import contextlib
     import io
 
-    from zephyr.shared.session_continuity import SessionContinuity
+    from zephyr.shared.session.session_continuity import SessionContinuity
 
     sc = SessionContinuity()
     with contextlib.redirect_stdout(io.StringIO()):

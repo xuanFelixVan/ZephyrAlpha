@@ -149,7 +149,7 @@ def test_e2e_gate_engine_drift_budget():
         CheckConfig,
         _run_check,
     )
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
     task = TaskCard(
         task_id="ADR-9999",

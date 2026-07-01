@@ -18,7 +18,7 @@ sys.path.insert(0, "src")
 import pytest
 
 try:
-    from zephyr.shared.cache_invalidation import CacheInvalidationManager, CacheVersion
+    from zephyr.shared.io.cache_invalidation import CacheInvalidationManager, CacheVersion
 except Exception as _exc:
     pytest.skip(f"cannot import cache_invalidation: {_exc}", allow_module_level=True)
 

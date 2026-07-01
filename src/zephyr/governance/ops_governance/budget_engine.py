@@ -575,7 +575,7 @@ class BudgetEngine:
         幂等：重复调用安全。EventBus 不可用时静默跳过。
         """
         try:
-            from zephyr.shared.event_bus import EventBus, EventType
+            from zephyr.shared.events.event_bus import EventBus, EventType
 
             bus = EventBus.get_instance()
             bus.subscribe(EventType.TASK_COMPLETED, self._on_task_completed_budget)
@@ -727,7 +727,7 @@ def subscribe_eventbus() -> None:
     if _bus_subscribed:
         return
     try:
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("slo_violation", _on_slo_violation)

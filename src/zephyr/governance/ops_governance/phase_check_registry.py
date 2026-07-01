@@ -114,7 +114,7 @@ def check_session_manager() -> GateResult:
 def check_session_continuity() -> GateResult:
     """验证 SessionContinuity 模块可用."""
     try:
-        from zephyr.shared.session_continuity import SessionContinuity
+        from zephyr.shared.session.session_continuity import SessionContinuity
 
         sc = SessionContinuity()
         return GateResult.GREEN

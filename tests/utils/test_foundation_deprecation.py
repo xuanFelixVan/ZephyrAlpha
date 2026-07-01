@@ -24,7 +24,7 @@ import warnings
 
 import pytest
 
-from zephyr.shared.deprecation import (
+from zephyr.shared.foundation.deprecation import (
     DeprecatedAPIError,
     DeprecationMode,
     deprecated,

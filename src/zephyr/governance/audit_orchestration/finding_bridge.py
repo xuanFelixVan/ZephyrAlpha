@@ -36,7 +36,7 @@ from zephyr.infrastructure.finding_task_bridge import (
     BridgeResult,
     FindingTaskBridge,
 )
-from zephyr.shared.models import TaskNamespace
+from zephyr.shared.foundation.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)
 

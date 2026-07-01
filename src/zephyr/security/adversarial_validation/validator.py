@@ -113,7 +113,7 @@ class RedBlueValidator:
 
         # F30 RedBlueValidator 验证完成时发布 validation_result 事件 (F30→F15)
         try:
-            from zephyr.shared.event_bus import EventBusBackpressure
+            from zephyr.shared.events.event_bus import EventBusBackpressure
 
             EventBusBackpressure().emit(
                 "validation_result",

@@ -44,7 +44,7 @@ from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEX
 from zephyr.shared.infra.observer import EventType, Observer
 
 if TYPE_CHECKING:
-    from zephyr.shared.doc_compressor import DocCompressor
+    from zephyr.shared.io.doc_compressor import DocCompressor
 
 
 @unique

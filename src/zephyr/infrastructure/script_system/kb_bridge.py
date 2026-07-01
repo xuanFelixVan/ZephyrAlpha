@@ -55,7 +55,7 @@ class KBBridge:
             return KBPublishResult()
 
         try:
-            from zephyr.shared.registry import ServiceRegistry
+            from zephyr.shared.protocols.registry import ServiceRegistry
 
             conn = ServiceRegistry.get("db_connection")
             now = datetime.now(UTC).isoformat()

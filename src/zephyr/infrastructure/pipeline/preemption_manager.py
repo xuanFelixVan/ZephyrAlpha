@@ -38,7 +38,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from zephyr.infrastructure.pipeline.models import PreemptionRecord
-from zephyr.shared.task_types import TaskStatus
+from zephyr.shared.schema.task_types import TaskStatus
 
 if TYPE_CHECKING:
     from zephyr.governance.persistence.task_repo import TaskRepository

@@ -58,7 +58,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
 from zephyr.shared.contracts.orchestration_protocol import BatchOrchestratorProtocol
 

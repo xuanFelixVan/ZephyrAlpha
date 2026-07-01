@@ -71,7 +71,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
     def _monitor_flush() -> None:
         """flush MetricsRegistry — DM-201249."""
         try:
-            from zephyr.shared.metrics import get_registry
+            from zephyr.shared.observability.metrics import get_registry
 
             registry = get_registry()
             snapshots = registry.snapshot()
@@ -82,7 +82,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
     def _monitor_health_snapshot() -> None:
         """保存健康快照 — DM-201249."""
         try:
-            from zephyr.shared.health import get_event_health_log
+            from zephyr.shared.lifecycle.health import get_event_health_log
 
             log = get_event_health_log()
             _logger.info("Monitor health snapshot: %d event log entries saved", len(log))

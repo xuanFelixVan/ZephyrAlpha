@@ -63,7 +63,7 @@ foundation:
   error_hierarchy:
     description: 统一异常层次——ZephyrBaseError + 12 子类。所有模?catch/throw 的唯一
     file: src/zephyr/shared/errors.py
-    entry_point: from zephyr.shared.errors import ZephyrBaseError, TaskError, ...
+    entry_point: from zephyr.shared.foundation.errors import ZephyrBaseError, TaskError, ...
     error_classes:
     - name: ZephyrBaseError
       parents:
@@ -102,7 +102,7 @@ foundation:
   type_aliases:
     description: 13 语义类型别名（NewType）——增强类型安?+ AI 消费语义
     file: src/zephyr/shared/types.py
-    entry_point: from zephyr.shared.types import TaskId, ModuleId, SessionId, ...
+    entry_point: from zephyr.shared.foundation.types import TaskId, ModuleId, SessionId, ...
     aliases:
     - symbol: TaskId
       base: str
@@ -154,7 +154,7 @@ utilities:
     - ?Path(__file__).parents[N] 自己算——必须从 paths.py 导入
   time_utils:
     file: src/zephyr/shared/time_utils.py
-    entry_point: from zephyr.shared.time_utils import now_iso, utc_now
+    entry_point: from zephyr.shared.utils.time_utils import now_iso, utc_now
     note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃
   token_utils:
     file: src/zephyr/infrastructure/capacity_assurance/token_budget.py
@@ -162,10 +162,10 @@ utilities:
     note: Token 估算——上下文预算控制的基础
   frontmatter:
     file: src/zephyr/shared/frontmatter_utils.py
-    entry_point: from zephyr.shared.frontmatter_utils import parse_frontmatter
+    entry_point: from zephyr.shared.utils.frontmatter_utils import parse_frontmatter
   diff_utils:
     file: src/zephyr/shared/diff_utils.py
-    entry_point: from zephyr.shared.diff_utils import compute_diff, apply_patch
+    entry_point: from zephyr.shared.utils.diff_utils import compute_diff, apply_patch
     exports:
     - symbol: compute_diff
       note: 生成 unified diff
@@ -179,7 +179,7 @@ utilities:
       note: patch 冲突异常
   file_utils:
     file: src/zephyr/shared/file_utils.py
-    entry_point: from zephyr.shared.file_utils import atomic_write, safe_read, backup_and_rollback
+    entry_point: from zephyr.shared.utils.file_utils import atomic_write, safe_read, backup_and_rollback
     exports:
     - symbol: atomic_write
       note: POSIX 原子写——mkstemp→flush→fsync→os.replace
@@ -217,7 +217,7 @@ resilience:
     - 跳过生命周期注册——所有模?MUST 注册?LifecycleManager
   feature_flags:
     file: src/zephyr/shared/flags.py
-    entry_point: from zephyr.shared.flags import global_flag_registry, FeatureFlag,
+    entry_point: from zephyr.shared.foundation.flags import global_flag_registry, FeatureFlag,
       FlagState
     states:
     - ALWAYS_ON
@@ -243,8 +243,8 @@ events:
     - ?dict 传事件数据——必须用 Pydantic Schema
 logging:
   file: src/zephyr/shared/logging.py
-  entry_point: from zephyr.shared.logging import get_logger, TraceContext, configure_root_logger
-  pattern: "from zephyr.shared.logging import get_logger, TraceContext\nlog = get_logger(__name__,\
+  entry_point: from zephyr.shared.utils.logging import get_logger, TraceContext, configure_root_logger
+  pattern: "from zephyr.shared.utils.logging import get_logger, TraceContext\nlog = get_logger(__name__,\
     \ module_id=\"MOD-XXX-001\")\nwith TraceContext() as trace_id:\n    log.info(\"\
     operation started\", extra={\"param\": value})\n"
   anti_patterns:
@@ -264,7 +264,7 @@ core:
     note: 蓝图分解引擎——YAML blueprint.md ?TaskCard[]
 testing:
   file: src/zephyr/shared/testing.py
-  entry_point: from zephyr.shared.testing import make_valid_task, make_p0_task, ...
+  entry_point: from zephyr.shared.utils.testing import make_valid_task, make_p0_task, ...
   key_exports:
   - symbol: make_valid_task
     note: 构?valid-by-construction Task?1字段全有效）
@@ -284,7 +284,7 @@ testing:
   - 手写 Task(...) 40字段构造——用 make_valid_task(**overrides)
 migration:
   file: src/zephyr/shared/migration.py
-  entry_point: from zephyr.shared.migration import migrate_task, latest_schema_version
+  entry_point: from zephyr.shared.foundation.migration import migrate_task, latest_schema_version
   key_exports:
   - symbol: migrate_task(data, version)
     note: BFS 最短路径版本化迁移
@@ -300,7 +300,7 @@ migration:
   - 在迁移函数中修改共享状态——迁移应是无副作用纯函数
 deprecation:
   file: src/zephyr/shared/deprecation.py
-  entry_point: from zephyr.shared.deprecation import deprecated, set_deprecation_mode
+  entry_point: from zephyr.shared.foundation.deprecation import deprecated, set_deprecation_mode
   key_exports:
   - symbol: '@deprecated(since=, remove_in=, replacement=)'
     note: 标记废弃函数/?方法
@@ -329,7 +329,7 @@ dlq:
 version: 0.22.0
 health:
   file: src/zephyr/shared/health.py
-  entry_point: from zephyr.shared.health import AggregateHealth, collect_health
+  entry_point: from zephyr.shared.lifecycle.health import AggregateHealth, collect_health
   key_exports:
   - symbol: AggregateHealth
     note: 聚合健康检查器——check()/check_block_fast()
@@ -343,7 +343,7 @@ health:
   - 直接遍历 LifecycleManager.health_check_all()——应?AggregateHealth 获得整体视图
 serialization:
   file: src/zephyr/shared/serialization.py
-  entry_point: from zephyr.shared.serialization import to_dict, from_dict, to_json,
+  entry_point: from zephyr.shared.foundation.serialization import to_dict, from_dict, to_json,
     from_json, ENCODING_RULES
   key_exports:
   - symbol: to_dict(obj)
@@ -376,7 +376,7 @@ api_client:
   - ?aiohttp.ClientSession——用 ApiClient 获得重试/熔断/超时/指标一体化
 secrets:
   file: src/zephyr/shared/secrets.py
-  entry_point: from zephyr.shared.secrets import get_secret, sanitize_secret
+  entry_point: from zephyr.shared.security.secrets import get_secret, sanitize_secret
   key_exports:
   - symbol: SecretProvider
     note: 密钥提供?Protocol——get_secret/load_all
@@ -392,7 +392,7 @@ secrets:
   - os.getenv() 直接读取密钥——用 get_secret() 确保非空+脱敏
 cache:
   file: src/zephyr/shared/cache.py
-  entry_point: from zephyr.shared.cache import MemoryCache, cache_key
+  entry_point: from zephyr.shared.io.cache import MemoryCache, cache_key
   key_exports:
   - symbol: MemoryCache
     note: 内存缓存——TTL + LRU 淘汰 + max_size 限制
@@ -404,7 +404,7 @@ cache:
   - 全局 dict 做缓存——用 MemoryCache 获得 TTL/LRU/统计数据
 limiter:
   file: src/zephyr/shared/limiter.py
-  entry_point: from zephyr.shared.limiter import TokenBucketLimiter, async_limited
+  entry_point: from zephyr.shared.resilience.limiter import TokenBucketLimiter, async_limited
   key_exports:
   - symbol: TokenBucketLimiter
     note: 令牌桶——支?warmup + burst + smooth 三种模式
@@ -414,7 +414,7 @@ limiter:
   - time.sleep(1) 硬控速——用 TokenBucketLimiter 精确令牌管控
 idempotency:
   file: src/zephyr/shared/idempotency.py
-  entry_point: from zephyr.shared.idempotency import IdempotencyStore, idempotency_key
+  entry_point: from zephyr.shared.security.idempotency import IdempotencyStore, idempotency_key
   key_exports:
   - symbol: IdempotencyStore
     note: 幂等性存储——start/completed/failed/succeeded + Stripe 24h TTL + 5min lock
@@ -439,7 +439,7 @@ context:
   - 全局变量 ThreadLocal 传上下文——用 contextvars 保证 asyncio 正确传播
 metrics:
   file: src/zephyr/shared/metrics.py
-  entry_point: from zephyr.shared.metrics import MetricsRegistry, Counter, Gauge,
+  entry_point: from zephyr.shared.observability.metrics import MetricsRegistry, Counter, Gauge,
     Histogram
   key_exports:
   - symbol: MetricsRegistry
@@ -458,7 +458,7 @@ metrics:
   - ?handler ?hardcode 指标名称——用 MetricsRegistry 统一管理+Prometheus 导出
 pagination:
   file: src/zephyr/shared/pagination.py
-  entry_point: from zephyr.shared.pagination import Page, CursorPage, paginate, paginate_cursor
+  entry_point: from zephyr.shared.io.pagination import Page, CursorPage, paginate, paginate_cursor
   key_exports:
   - symbol: Page[T]
     note: 偏移分页——items + total + offset + limit + has_more
@@ -472,7 +472,7 @@ pagination:
   - API 直接返回 list——应?Page/CursorPage 支持大数据分?has_more 指示
 time_utils_enhanced:
   file: src/zephyr/shared/time_utils.py
-  entry_point: from zephyr.shared.time_utils import now_utc, freeze_time, now_iso,
+  entry_point: from zephyr.shared.utils.time_utils import now_utc, freeze_time, now_iso,
     parse_iso, format_iso
   key_exports:
   - symbol: now_utc()
@@ -493,7 +493,7 @@ time_utils_enhanced:
   - datetime.utcnow()/datetime.now() 裸用——用 now_utc() 标准UTC+可测
 env:
   file: src/zephyr/shared/env.py
-  entry_point: from zephyr.shared.env import Env, current_env, is_dev, is_prod, is_test
+  entry_point: from zephyr.shared.foundation.env import Env, current_env, is_dev, is_prod, is_test
   key_exports:
   - symbol: Env
     note: DEV/STAGING/PROD/TEST 枚举
@@ -511,7 +511,7 @@ env:
   - os.getenv('ENVIRONMENT') == 'production' 硬编码——用 current_env()/is_prod()
 lock:
   file: src/zephyr/shared/lock.py
-  entry_point: from zephyr.shared.lock import DistributedLock, MemoryLock, LockHandle
+  entry_point: from zephyr.shared.security.lock import DistributedLock, MemoryLock, LockHandle
   key_exports:
   - symbol: DistributedLock
     note: 分布式锁 Protocol——acquire/release/extend/owned
@@ -523,7 +523,7 @@ lock:
   - asyncio.Lock() 裸用——用 DistributedLock 获得 owner 追踪+过期+可观
 outbox:
   file: src/zephyr/shared/outbox.py
-  entry_point: from zephyr.shared.outbox import OutboxStore, MemoryOutboxStore, OutboxPublisher
+  entry_point: from zephyr.shared.events.outbox import OutboxStore, MemoryOutboxStore, OutboxPublisher
   key_exports:
   - symbol: OutboxStore
     note: Outbox 存储 Protocol——enqueue/dequeue/mark_processed/mark_failed
@@ -537,7 +537,7 @@ outbox:
   - DB 写入+事件发布分离(无事?——用 Outbox 模式保证恰好一次语
 schema_registry:
   file: src/zephyr/shared/schema_registry.py
-  entry_point: from zephyr.shared.schema_registry import SchemaRegistry, get_schema_registry
+  entry_point: from zephyr.shared.schema.schema_registry import SchemaRegistry, get_schema_registry
   key_exports:
   - symbol: SchemaRegistry
     note: 集中?Schema 版本编目——register/get/latest/versions/check_register_compatible
@@ -549,7 +549,7 @@ schema_registry:
   - Schema 版本信息散落在各模块 YAML 文件——用 SchemaRegistry 集中编目
 blueprint_scorer:
   file: src/zephyr/shared/blueprint_scorer.py
-  entry_point: from zephyr.shared.blueprint_scorer import score_blueprint_route, score_and_rank_routes
+  entry_point: from zephyr.shared.blueprint_tools.blueprint_scorer import score_blueprint_route, score_and_rank_routes
   key_exports:
   - symbol: score_blueprint_route(route)
     note: 单路由评分——返?relevance + 维度分解 + 分数理由

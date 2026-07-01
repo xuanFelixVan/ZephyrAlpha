@@ -40,7 +40,7 @@ def register_services() -> None:
     if _registered:
         return
 
-    from zephyr.shared.registry import ServiceRegistry
+    from zephyr.shared.protocols.registry import ServiceRegistry
 
     # task_repo — TaskRepository 实例
     def _make_task_repo() -> Any:

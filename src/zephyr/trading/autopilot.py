@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +149,7 @@ class AutoPilot:
         """
         from datetime import UTC, datetime
 
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.emit(
@@ -202,7 +202,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("task_completed", _on_task_completed)

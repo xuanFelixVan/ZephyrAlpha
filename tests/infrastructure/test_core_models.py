@@ -20,7 +20,7 @@ from pydantic import ValidationError
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.integration.shared.schema.schemas import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.models import (
+from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateCheckResult,
     GateLevel,

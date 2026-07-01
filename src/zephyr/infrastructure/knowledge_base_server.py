@@ -243,7 +243,7 @@ class KnowledgeBaseServer(BaseMCPServer):
             try:
                 with self._vms_lock:
                     if self._vms is None:
-                        from zephyr.shared.registry import ServiceRegistry
+                        from zephyr.shared.protocols.registry import ServiceRegistry
 
                         self._vms = ServiceRegistry.get("vector-memory")
                         self._vms.init_all_collections()
@@ -404,7 +404,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         kb_api_count = -1
 
         try:
-            from zephyr.shared.registry import ServiceRegistry
+            from zephyr.shared.protocols.registry import ServiceRegistry
 
             if ServiceRegistry.is_registered("vector-memory"):
                 vms_status = "available"

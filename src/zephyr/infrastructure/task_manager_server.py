@@ -37,8 +37,8 @@ from mcp.server import FastMCP
 from zephyr.shared.io.paths import REPO_ROOT
 
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.models import (
+from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,

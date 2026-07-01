@@ -35,7 +35,7 @@ from zephyr.shared.utils.db_utils import ensure_schema
 def _insert_task(db_path: Path, task_id: str = "OPS-1") -> None:
     import sqlite3
 
-    from zephyr.shared.time_utils import now_iso
+    from zephyr.shared.utils.time_utils import now_iso
 
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:

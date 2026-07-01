@@ -38,7 +38,7 @@ Safety: HIGH（Durable Execution 是长流程可靠性根基）
 import os
 from pathlib import Path
 
-from zephyr.shared.durable_execution import (
+from zephyr.shared.resilience.durable_execution import (
     Activity,
     ActivityResult,
     ActivityStatus,

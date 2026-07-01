@@ -115,7 +115,7 @@ class HealthMonitor:
         # 1. LongevityMonitor
         # 5.55.3 修复：原硬编码 alive=True，现使用 LongevityMonitor.report() + psutil 真实内存退化检查
         try:
-            from zephyr.shared.longevity_monitor import LongevityMonitor
+            from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
 
             _longevity = LongevityMonitor()
             _longevity_component_id = "health_monitor"
@@ -162,7 +162,7 @@ class HealthMonitor:
 
         # 2. HealthcheckService
         try:
-            from zephyr.shared.healthcheck_service import HealthcheckService
+            from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService
 
             project_root = REPO_ROOT
             _healthcheck = HealthcheckService(project_root=project_root)
@@ -214,7 +214,7 @@ class HealthMonitor:
     def _collect_metrics(self) -> None:
         """采集 probe 指标到 MetricsRegistry — DM-201247."""
         try:
-            from zephyr.shared.metrics import MetricsRegistry
+            from zephyr.shared.observability.metrics import MetricsRegistry
 
             registry = MetricsRegistry()
             results = self.probe_all()

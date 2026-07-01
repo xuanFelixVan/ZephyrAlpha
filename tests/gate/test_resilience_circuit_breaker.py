@@ -141,7 +141,7 @@ class TestCircuitBreakerCall:
 
 class TestCircuitOpenError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.shared.errors import ZephyrBaseError
+        from zephyr.shared.foundation.errors import ZephyrBaseError
 
         err = CircuitOpenError("test_cb")
         assert isinstance(err, ZephyrBaseError)

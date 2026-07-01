@@ -138,7 +138,7 @@ class TestAsyncRetry:
 
 class TestRetryExhaustedError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.shared.errors import ZephyrBaseError
+        from zephyr.shared.foundation.errors import ZephyrBaseError
 
         err = RetryExhaustedError("exhausted", details={"max_attempts": 3})
         assert isinstance(err, ZephyrBaseError)

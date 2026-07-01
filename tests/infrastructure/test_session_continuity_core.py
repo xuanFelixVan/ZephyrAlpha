@@ -20,7 +20,7 @@ Tests the canonical session/ version imported through core/ shim.
 import json
 from datetime import UTC, datetime
 
-from zephyr.shared.session_continuity import (
+from zephyr.shared.session.session_continuity import (
     SessionContinuity,
     SessionState,
 )

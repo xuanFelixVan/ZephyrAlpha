@@ -33,13 +33,13 @@ import pytest
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.blueprint_decomposer import (
+from zephyr.shared.blueprint_tools.blueprint_decomposer import (
     BlueprintDecomposer,
     _marker_to_blueprint_label,
     _resolve_task_namespace,
     _split_desc_and_depends,
 )
-from zephyr.shared.models import GateLevel, TaskAuditFinding, TaskCard, TaskStatus
+from zephyr.shared.foundation.models import GateLevel, TaskAuditFinding, TaskCard, TaskStatus
 
 
 def _make_task_card(

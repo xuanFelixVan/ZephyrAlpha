@@ -47,7 +47,7 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
   - task_repo 可选——为 None 时跳过状态流转（向后兼容测试场景）
 
 使用：
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.integration.models import PipelineOrchestratorConfig
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
@@ -75,7 +75,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
 from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.integration.cost_tracker import CostTracker
@@ -115,7 +115,7 @@ from zephyr.integration.models import (
 from zephyr.integration.pipeline_lock import LockResult, PipelineLock
 from zephyr.integration.preemption_manager import PreemptionManager
 from zephyr.integration.routing_plugins import PipelineRouter
-from zephyr.shared.task_types import TaskStatus
+from zephyr.shared.schema.task_types import TaskStatus
 
 _RBAC_AVAILABLE = False
 try:
@@ -811,7 +811,7 @@ class PipelineOrchestrator:
             try:
                 from datetime import UTC, datetime
 
-                from zephyr.shared.event_bus import EventBusBackpressure
+                from zephyr.shared.events.event_bus import EventBusBackpressure
 
                 EventBusBackpressure().emit(
                     "pipeline_failed",
@@ -1680,7 +1680,7 @@ class PipelineOrchestrator:
         try:
             from datetime import UTC, datetime
 
-            from zephyr.shared.event_bus import EventBusBackpressure
+            from zephyr.shared.events.event_bus import EventBusBackpressure
 
             payload: dict[str, Any] = {
                 "task_id": task_id,
@@ -2414,7 +2414,7 @@ def subscribe_eventbus() -> None:
     if _subscribed:
         return
     try:
-        from zephyr.shared.event_bus import EventBusBackpressure
+        from zephyr.shared.events.event_bus import EventBusBackpressure
 
         bus = EventBusBackpressure()
         bus.subscribe("pipeline_start", _on_pipeline_start)

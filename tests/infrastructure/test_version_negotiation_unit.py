@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.shared.version_negotiation import (
+from zephyr.shared.versioning.version_negotiation import (
     ChangeType,
     SchemaName,
     VersionNegotiator,

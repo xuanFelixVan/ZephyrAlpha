@@ -19,13 +19,13 @@ class TestAdaptiveSampler:
         pass
 
     def test_instantiate(self):
-        from zephyr.shared.adaptive_sampler import AdaptiveSampler
+        from zephyr.shared.capacity_governance.adaptive_sampler import AdaptiveSampler
 
         sampler = AdaptiveSampler(base_rate=0.1, error_boost=0.9, max_rate=1.0)
         assert sampler._base_rate == 0.1
 
     def test_decide(self):
-        from zephyr.shared.adaptive_sampler import AdaptiveSampler
+        from zephyr.shared.capacity_governance.adaptive_sampler import AdaptiveSampler
 
         sampler = AdaptiveSampler(base_rate=0.1)
         decision = sampler.decide(is_error=True)
@@ -38,14 +38,14 @@ class TestAIAuditGuard:
         pass
 
     def test_check_approved(self):
-        from zephyr.shared.ai_audit_guard import AiAuditGuard
+        from zephyr.shared.ai_guards.ai_audit_guard import AiAuditGuard
 
         guard = AiAuditGuard()
         record = guard.check("read_data", "agent-1")
         assert record.approved is True
 
     def test_check_needs_approval(self):
-        from zephyr.shared.ai_audit_guard import AiAuditGuard
+        from zephyr.shared.ai_guards.ai_audit_guard import AiAuditGuard
 
         guard = AiAuditGuard(require_approval_for=("delete",))
         record = guard.check("delete_file", "agent-1")
@@ -58,7 +58,7 @@ class TestAIUnderstandabilityConstraint:
         pass
 
     def test_check_pass(self):
-        from zephyr.shared.ai_understandability_constraint import AiUnderstandabilityConstraint
+        from zephyr.shared.blueprint_tools.ai_understandability_constraint import AiUnderstandabilityConstraint
 
         constraint = AiUnderstandabilityConstraint(max_line_length=120, max_nesting=4)
         result = constraint.check("x = 1\ny = 2\n")
@@ -66,7 +66,7 @@ class TestAIUnderstandabilityConstraint:
         assert result.score > 0
 
     def test_check_fail_long_lines(self):
-        from zephyr.shared.ai_understandability_constraint import AiUnderstandabilityConstraint
+        from zephyr.shared.blueprint_tools.ai_understandability_constraint import AiUnderstandabilityConstraint
 
         constraint = AiUnderstandabilityConstraint(max_line_length=10)
         result = constraint.check("x = " + "a" * 50 + "\n")
@@ -78,7 +78,7 @@ class TestAlertEscalation:
         pass
 
     def test_instantiate(self):
-        from zephyr.shared.alert_escalation import AlertEscalation
+        from zephyr.shared.alerts.alert_escalation import AlertEscalation
 
         tracker = AlertEscalation()
         assert tracker.alert_level == "INFO"
@@ -89,7 +89,7 @@ class TestAlertManager:
         pass
 
     def test_create_and_acknowledge(self):
-        from zephyr.shared.alert_manager import AlertManager, AlertSeverity
+        from zephyr.shared.alerts.alert_manager import AlertManager, AlertSeverity
 
         am = AlertManager()
         alert = am.create("test alert", AlertSeverity.CRITICAL, "test-source", "test message")
@@ -99,7 +99,7 @@ class TestAlertManager:
         assert alert.acknowledged is True
 
     def test_get_active(self):
-        from zephyr.shared.alert_manager import AlertManager, AlertSeverity
+        from zephyr.shared.alerts.alert_manager import AlertManager, AlertSeverity
 
         am = AlertManager()
         am.create("a1", AlertSeverity.INFO, "src", "msg")
@@ -112,7 +112,7 @@ class TestAlertPrecisionTracker:
         pass
 
     def test_compute(self):
-        from zephyr.shared.alert_precision_tracker import AlertPrecisionTracker
+        from zephyr.shared.alerts.alert_precision_tracker import AlertPrecisionTracker
 
         tracker = AlertPrecisionTracker()
         tracker.record_true_positive()
@@ -128,7 +128,7 @@ class TestDualChannelAlert:
         pass
 
     def test_send_all_channels(self):
-        from zephyr.shared.dual_channel_alert import DualChannelAlert
+        from zephyr.shared.alerts.dual_channel_alert import DualChannelAlert
 
         mgr = DualChannelAlert()
         alert = mgr.send("test title", "test message")
@@ -136,7 +136,7 @@ class TestDualChannelAlert:
         assert alert.messaging_sent is True
 
     def test_send_dashboard_only(self):
-        from zephyr.shared.dual_channel_alert import Channel, DualChannelAlert
+        from zephyr.shared.alerts.dual_channel_alert import Channel, DualChannelAlert
 
         mgr = DualChannelAlert()
         alert = mgr.send("test title", "test message", channels=(Channel.DASHBOARD,))
@@ -149,7 +149,7 @@ class TestBlueprintCodeAuditor:
         pass
 
     def test_check_file_header(self):
-        from zephyr.shared.blueprint_code_auditor import BlueprintCodeAuditor
+        from zephyr.shared.blueprint_tools.blueprint_code_auditor import BlueprintCodeAuditor
 
         auditor = BlueprintCodeAuditor()
         finding = auditor.check_file_header("MOD-001", "test.py", "MOD-999 | path")
@@ -157,7 +157,7 @@ class TestBlueprintCodeAuditor:
         assert finding.drift_type == "header_mismatch"
 
     def test_audit_no_findings(self):
-        from zephyr.shared.blueprint_code_auditor import BlueprintCodeAuditor
+        from zephyr.shared.blueprint_tools.blueprint_code_auditor import BlueprintCodeAuditor
 
         auditor = BlueprintCodeAuditor()
         report = auditor.audit("blueprint.md")
@@ -170,7 +170,7 @@ class TestSloReviewAssistant:
         pass
 
     def test_register_and_review(self):
-        from zephyr.shared.slo_review_assistant import SloReviewAssistant
+        from zephyr.shared.maintenance.slo_review_assistant import SloReviewAssistant
 
         assistant = SloReviewAssistant()
         assistant.register_slo("sli-1", 0.99)
@@ -181,7 +181,7 @@ class TestSloReviewAssistant:
         assert reviews[0].compliance is True
 
     def test_non_compliant(self):
-        from zephyr.shared.slo_review_assistant import SloReviewAssistant
+        from zephyr.shared.maintenance.slo_review_assistant import SloReviewAssistant
 
         assistant = SloReviewAssistant()
         assistant.register_slo("sli-1", 0.99)
@@ -196,7 +196,7 @@ class TestBudgetAwarePrompt:
         pass
 
     def test_allocate_and_can_fit(self):
-        from zephyr.shared.budget_aware_prompt import BudgetAwarePrompt
+        from zephyr.shared.capacity_governance.budget_aware_prompt import BudgetAwarePrompt
 
         bap = BudgetAwarePrompt(token_budget=4000, reserve_for_response=1000)
         assert bap.can_fit(2000) is True
@@ -205,7 +205,7 @@ class TestBudgetAwarePrompt:
         assert budget.remaining_tokens == 2000
 
     def test_reset(self):
-        from zephyr.shared.budget_aware_prompt import BudgetAwarePrompt
+        from zephyr.shared.capacity_governance.budget_aware_prompt import BudgetAwarePrompt
 
         bap = BudgetAwarePrompt(token_budget=4000, reserve_for_response=1000)
         bap.allocate(2000)
@@ -218,7 +218,7 @@ class TestCodeEconomyAnalyzer:
         pass
 
     def test_register_and_analyze(self):
-        from zephyr.shared.code_economy_analyzer import CodeEconomyAnalyzer
+        from zephyr.shared.maintenance.code_economy_analyzer import CodeEconomyAnalyzer
 
         analyzer = CodeEconomyAnalyzer()
         analyzer.register_module("test_mod", 100)
@@ -234,7 +234,7 @@ class TestCostEstimator:
         pass
 
     def test_estimate(self):
-        from zephyr.shared.cost_estimator import CostEstimator
+        from zephyr.shared.capacity_governance.cost_estimator import CostEstimator
 
         est = CostEstimator()
         result = est.estimate("inference", 1000, output_tokens=500)
@@ -242,7 +242,7 @@ class TestCostEstimator:
         assert result.operation == "inference"
 
     def test_check_budget(self):
-        from zephyr.shared.cost_estimator import CostEstimator
+        from zephyr.shared.capacity_governance.cost_estimator import CostEstimator
 
         est = CostEstimator()
         result = est.estimate("inference", 1000, output_tokens=500)
@@ -255,7 +255,7 @@ class TestErrorBudgetTracker:
         pass
 
     def test_record_and_status(self):
-        from zephyr.shared.error_budget_tracker import ErrorBudgetTracker
+        from zephyr.shared.resilience.error_budget_tracker import ErrorBudgetTracker
 
         tracker = ErrorBudgetTracker(slo_target=0.999, window_hours=720.0)
         for _ in range(100):
@@ -268,7 +268,7 @@ class TestErrorBudgetTracker:
     def test_slo_target_1_rejected(self):
         import pytest
 
-        from zephyr.shared.error_budget_tracker import ErrorBudgetTracker
+        from zephyr.shared.resilience.error_budget_tracker import ErrorBudgetTracker
 
         with pytest.raises(ValueError, match="slo_target must be in"):
             ErrorBudgetTracker(slo_target=1.0)
@@ -276,7 +276,7 @@ class TestErrorBudgetTracker:
     def test_slo_target_negative_rejected(self):
         import pytest
 
-        from zephyr.shared.error_budget_tracker import ErrorBudgetTracker
+        from zephyr.shared.resilience.error_budget_tracker import ErrorBudgetTracker
 
         with pytest.raises(ValueError, match="slo_target must be in"):
             ErrorBudgetTracker(slo_target=-0.1)
@@ -287,7 +287,7 @@ class TestCapacityCalibrator:
         pass
 
     def test_record_and_calibrate(self):
-        from zephyr.shared.capacity_calibrator import CapacityCalibrator
+        from zephyr.shared.capacity_governance.capacity_calibrator import CapacityCalibrator
 
         cal = CapacityCalibrator(history_window=100)
         for v in [50.0, 55.0, 60.0, 65.0, 70.0]:
@@ -303,7 +303,7 @@ class TestCapacityDigitalTwin:
         pass
 
     def test_ingest_and_predict(self):
-        from zephyr.shared.capacity_digital_twin import CapacityDigitalTwin, TwinState
+        from zephyr.shared.capacity_governance.capacity_digital_twin import CapacityDigitalTwin, TwinState
 
         twin = CapacityDigitalTwin("test-twin")
         state = TwinState(
@@ -324,7 +324,7 @@ class TestCapacityFingerprint:
         pass
 
     def test_capture_and_compare(self):
-        from zephyr.shared.capacity_fingerprint import CapacityFingerprint, CapacitySnapshot
+        from zephyr.shared.capacity_governance.capacity_fingerprint import CapacityFingerprint, CapacitySnapshot
 
         fp = CapacityFingerprint()
         baseline = CapacitySnapshot(
@@ -339,7 +339,7 @@ class TestCapacityFingerprint:
         assert deltas["cpu_delta"] == pytest.approx(5.0)
 
     def test_get_baseline(self):
-        from zephyr.shared.capacity_fingerprint import CapacityFingerprint, CapacitySnapshot
+        from zephyr.shared.capacity_governance.capacity_fingerprint import CapacityFingerprint, CapacitySnapshot
 
         fp = CapacityFingerprint()
         snap = CapacitySnapshot(
@@ -355,28 +355,28 @@ class TestCapacityGovernanceLoop:
         pass
 
     def test_evaluate_scale_up(self):
-        from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
+        from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
 
         loop = CapacityGovernanceLoop(upper_threshold=0.85, lower_threshold=0.3)
         decision = loop.evaluate(0.90)
         assert decision.action == GovernanceAction.SCALE_UP
 
     def test_evaluate_hold(self):
-        from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
+        from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
 
         loop = CapacityGovernanceLoop(upper_threshold=0.85, lower_threshold=0.3)
         decision = loop.evaluate(0.50)
         assert decision.action == GovernanceAction.HOLD
 
     def test_evaluate_scale_down(self):
-        from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
+        from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
 
         loop = CapacityGovernanceLoop(upper_threshold=0.85, lower_threshold=0.3)
         decision = loop.evaluate(0.20)
         assert decision.action == GovernanceAction.SCALE_DOWN
 
     def test_zero_utilization_alerts(self):
-        from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
+        from zephyr.shared.capacity_governance.capacity_governance_loop import CapacityGovernanceLoop, GovernanceAction
 
         loop = CapacityGovernanceLoop()
         decision = loop.evaluate(0.0)
@@ -388,7 +388,7 @@ class TestCapacityRunbookGenerator:
         pass
 
     def test_generate_scale_up(self):
-        from zephyr.shared.capacity_runbook_generator import CapacityRunbookGenerator
+        from zephyr.shared.capacity_governance.capacity_runbook_generator import CapacityRunbookGenerator
 
         gen = CapacityRunbookGenerator()
         rb = gen.generate("oom_incident", current_util=0.95, target_util=0.70)
@@ -402,7 +402,7 @@ class TestDependencyCapacityGuard:
         pass
 
     def test_set_capacity_and_check(self):
-        from zephyr.shared.dependency_capacity_guard import DependencyCapacityGuard
+        from zephyr.shared.capacity_governance.dependency_capacity_guard import DependencyCapacityGuard
 
         guard = DependencyCapacityGuard()
         guard.set_capacity("chromadb", 100.0)
@@ -411,7 +411,7 @@ class TestDependencyCapacityGuard:
         assert violation.dependency == "chromadb"
 
     def test_check_all_no_violations(self):
-        from zephyr.shared.dependency_capacity_guard import DependencyCapacityGuard
+        from zephyr.shared.capacity_governance.dependency_capacity_guard import DependencyCapacityGuard
 
         guard = DependencyCapacityGuard()
         guard.set_capacity("chromadb", 100.0)
@@ -422,7 +422,7 @@ class TestDependencyCapacityGuard:
     def test_zero_capacity_rejected(self):
         import pytest
 
-        from zephyr.shared.dependency_capacity_guard import DependencyCapacityGuard
+        from zephyr.shared.capacity_governance.dependency_capacity_guard import DependencyCapacityGuard
 
         guard = DependencyCapacityGuard()
         with pytest.raises(ValueError, match="max_capacity must be > 0"):
@@ -434,7 +434,7 @@ class TestLongevityMonitor:
         pass
 
     def test_register_and_report(self):
-        from zephyr.shared.longevity_monitor import LongevityMonitor
+        from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
 
         monitor = LongevityMonitor()
         monitor.register("comp-1", baseline_memory_mb=100.0)
@@ -449,7 +449,7 @@ class TestModelCapacityProbe:
         pass
 
     def test_probe(self):
-        from zephyr.shared.model_capacity_probe import ModelCapacityProbe
+        from zephyr.shared.capacity_governance.model_capacity_probe import ModelCapacityProbe
 
         probe = ModelCapacityProbe()
         result = probe.probe("deepseek-chat", latency_ms=1000.0, tokens=500)
@@ -458,7 +458,7 @@ class TestModelCapacityProbe:
         assert result.available is True
 
     def test_mark_unavailable(self):
-        from zephyr.shared.model_capacity_probe import ModelCapacityProbe
+        from zephyr.shared.capacity_governance.model_capacity_probe import ModelCapacityProbe
 
         probe = ModelCapacityProbe()
         probe.probe("deepseek-chat", latency_ms=1000.0, tokens=500)
@@ -472,7 +472,7 @@ class TestCombinatorialGate:
         pass
 
     def test_evaluate_and(self):
-        from zephyr.shared.combinatorial_gate import CombinatorialGate, GateCheck
+        from zephyr.shared.ai_guards.combinatorial_gate import CombinatorialGate, GateCheck
 
         gate = CombinatorialGate()
         checks = [GateCheck("c1", True, "ok"), GateCheck("c2", True, "ok")]
@@ -480,7 +480,7 @@ class TestCombinatorialGate:
         assert result.passed is True
 
     def test_evaluate_or(self):
-        from zephyr.shared.combinatorial_gate import CombinatorialGate, GateCheck
+        from zephyr.shared.ai_guards.combinatorial_gate import CombinatorialGate, GateCheck
 
         gate = CombinatorialGate()
         checks = [GateCheck("c1", False, "fail"), GateCheck("c2", True, "ok")]
@@ -493,7 +493,7 @@ class TestCoreIntegrityGuard:
         pass
 
     def test_freeze_and_check(self):
-        from zephyr.shared.core_integrity_guard import CoreIntegrityGuard
+        from zephyr.shared.ai_guards.core_integrity_guard import CoreIntegrityGuard
 
         guard = CoreIntegrityGuard()
         guard.freeze("core-module", "abc123")
@@ -503,7 +503,7 @@ class TestCoreIntegrityGuard:
         assert check.intact is True
 
     def test_checksum_mismatch(self):
-        from zephyr.shared.core_integrity_guard import CoreIntegrityGuard
+        from zephyr.shared.ai_guards.core_integrity_guard import CoreIntegrityGuard
 
         guard = CoreIntegrityGuard()
         guard.freeze("core-module", "abc123")
@@ -511,7 +511,7 @@ class TestCoreIntegrityGuard:
         assert check.is_valid is False
 
     def test_unfrozen_component_check_fails(self):
-        from zephyr.shared.core_integrity_guard import CoreIntegrityGuard
+        from zephyr.shared.ai_guards.core_integrity_guard import CoreIntegrityGuard
 
         guard = CoreIntegrityGuard()
         check = guard.check("unfrozen-module", "any")
@@ -525,7 +525,7 @@ class TestOwnerTrustGauge:
         pass
 
     def test_high_trust(self):
-        from zephyr.shared.owner_trust_gauge import OwnerTrustGauge, TrustLevel
+        from zephyr.shared.maintenance.owner_trust_gauge import OwnerTrustGauge, TrustLevel
 
         gauge = OwnerTrustGauge(default_score=0.5)
         gauge.update("agent-1", 0.4)
@@ -533,7 +533,7 @@ class TestOwnerTrustGauge:
         assert assessment.trust_level == TrustLevel.FULL_AUTONOMY
 
     def test_revoked_trust(self):
-        from zephyr.shared.owner_trust_gauge import OwnerTrustGauge, TrustLevel
+        from zephyr.shared.maintenance.owner_trust_gauge import OwnerTrustGauge, TrustLevel
 
         gauge = OwnerTrustGauge(default_score=0.5)
         gauge.update("agent-1", -0.5)
@@ -546,7 +546,7 @@ class TestDegradationChain:
         pass
 
     def test_propagate(self):
-        from zephyr.shared.degradation_chain import DegradationChain, DegradationLevel
+        from zephyr.shared.resilience.degradation_chain import DegradationChain, DegradationLevel
 
         chain = DegradationChain()
         chain.add_component("svc-a")
@@ -559,7 +559,7 @@ class TestDegradationChain:
     def test_propagate_unregistered_raises(self):
         import pytest
 
-        from zephyr.shared.degradation_chain import DegradationChain, DegradationLevel
+        from zephyr.shared.resilience.degradation_chain import DegradationChain, DegradationLevel
 
         chain = DegradationChain()
         with pytest.raises(KeyError, match="not registered"):
@@ -571,7 +571,7 @@ class TestFaultIsolator:
         pass
 
     def test_report_failure_and_isolate(self):
-        from zephyr.shared.fault_isolator import FaultIsolator
+        from zephyr.shared.resilience.fault_isolator import FaultIsolator
 
         fi = FaultIsolator(failure_threshold=3)
         fi.register("svc-1")
@@ -581,7 +581,7 @@ class TestFaultIsolator:
         assert "svc-1" in fi.get_isolated()
 
     def test_suspect_state(self):
-        from zephyr.shared.fault_isolator import FaultIsolator, IsolationState
+        from zephyr.shared.resilience.fault_isolator import FaultIsolator, IsolationState
 
         fi = FaultIsolator(failure_threshold=3)
         fi.register("svc-1")
@@ -624,7 +624,7 @@ class TestHeartbeatServer:
         pass
 
     def test_register_and_check(self):
-        from zephyr.shared.heartbeat_server import HeartbeatServer
+        from zephyr.shared.alerts.heartbeat_server import HeartbeatServer
 
         server = HeartbeatServer(timeout_seconds=30.0)
         server.register("comp-1")
@@ -633,7 +633,7 @@ class TestHeartbeatServer:
         assert status.is_alive is True
 
     def test_check_all(self):
-        from zephyr.shared.heartbeat_server import HeartbeatServer
+        from zephyr.shared.alerts.heartbeat_server import HeartbeatServer
 
         server = HeartbeatServer(timeout_seconds=30.0)
         server.register("comp-1")
@@ -647,7 +647,7 @@ class TestTaskHeartbeat:
         pass
 
     def test_start_and_check(self):
-        from zephyr.shared.task_heartbeat import TaskHeartbeat
+        from zephyr.shared.lifecycle.task_heartbeat import TaskHeartbeat
 
         th = TaskHeartbeat(default_interval=60.0, timeout_factor=3.0)
         th.start("task-1")
@@ -656,7 +656,7 @@ class TestTaskHeartbeat:
         assert pulse.is_alive is True
 
     def test_detect_dead(self):
-        from zephyr.shared.task_heartbeat import TaskHeartbeat
+        from zephyr.shared.lifecycle.task_heartbeat import TaskHeartbeat
 
         th = TaskHeartbeat(default_interval=0.001, timeout_factor=2.0)
         th.start("task-1")
@@ -672,7 +672,7 @@ class TestTtlCleanupEngine:
         pass
 
     def test_register_and_cleanup(self):
-        from zephyr.shared.ttl_cleanup_engine import TtlCleanupEngine
+        from zephyr.shared.lifecycle.ttl_cleanup_engine import TtlCleanupEngine
 
         engine = TtlCleanupEngine(default_ttl=1800.0)
         engine.register("key-1")
@@ -681,7 +681,7 @@ class TestTtlCleanupEngine:
         assert result.remaining_count == 1
 
     def test_expired_key(self):
-        from zephyr.shared.ttl_cleanup_engine import TtlCleanupEngine
+        from zephyr.shared.lifecycle.ttl_cleanup_engine import TtlCleanupEngine
 
         engine = TtlCleanupEngine(default_ttl=0.001)
         engine.register("key-1")
@@ -696,7 +696,7 @@ class TestModuleBirthRegistry:
         pass
 
     def test_register_and_get(self):
-        from zephyr.shared.module_birth_registry import ModuleBirthRegistry
+        from zephyr.shared.protocols.module_birth_registry import ModuleBirthRegistry
 
         registry = ModuleBirthRegistry()
         record = registry.register("test_module", parent_module="parent", scaffold_method="scaffold.py")
@@ -707,7 +707,7 @@ class TestModuleBirthRegistry:
         assert fetched.module_id == "test_module"
 
     def test_get_children(self):
-        from zephyr.shared.module_birth_registry import ModuleBirthRegistry
+        from zephyr.shared.protocols.module_birth_registry import ModuleBirthRegistry
 
         registry = ModuleBirthRegistry()
         registry.register("child-1", parent_module="parent-mod")
@@ -721,7 +721,7 @@ class TestReasoningSpans:
         pass
 
     def test_start_and_end(self):
-        from zephyr.shared.reasoning_spans import ReasoningSpans
+        from zephyr.shared.observability.reasoning_spans import ReasoningSpans
 
         spans = ReasoningSpans()
         span = spans.start("inference", parent_id="", model="deepseek")
@@ -733,7 +733,7 @@ class TestReasoningSpans:
         assert ended.duration_ms >= 0
 
     def test_get_trace(self):
-        from zephyr.shared.reasoning_spans import ReasoningSpans
+        from zephyr.shared.observability.reasoning_spans import ReasoningSpans
 
         spans = ReasoningSpans()
         root = spans.start("root-op")
@@ -747,13 +747,13 @@ class TestZephyrLogger:
         pass
 
     def test_create_and_log(self):
-        from zephyr.shared.zephyr_logger import ZephyrLogger
+        from zephyr.shared.utils.zephyr_logger import ZephyrLogger
 
         logger = ZephyrLogger("test_logger")
         logger.info("test message")
 
     def test_get_logger(self):
-        from zephyr.shared.zephyr_logger import get_logger
+        from zephyr.shared.utils.zephyr_logger import get_logger
 
         l1 = get_logger("test_module")
         l2 = get_logger("test_module")
@@ -766,7 +766,7 @@ class TestSandboxExecutor:
 
     def test_execute(self):
         from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixLevel
-        from zephyr.shared.sandbox_executor import SandboxExecutor
+        from zephyr.shared.security.sandbox_executor import SandboxExecutor
 
         executor = SandboxExecutor()
         action = FixAction(action_type="replace", level=FixLevel.L1_RULE, target="test.py")
@@ -779,7 +779,7 @@ class TestVibeExperimentTracker:
         pass
 
     def test_start_and_record_outcome(self):
-        from zephyr.shared.vibe_experiment_tracker import VibeExperimentTracker
+        from zephyr.shared.versioning.vibe_experiment_tracker import VibeExperimentTracker
 
         tracker = VibeExperimentTracker()
         record = tracker.start("session-1", model="deepseek", mode="vibe")
@@ -787,7 +787,7 @@ class TestVibeExperimentTracker:
         assert tracker.record_outcome(record.experiment_id, "success", tokens=500.0) is True
 
     def test_get_by_session(self):
-        from zephyr.shared.vibe_experiment_tracker import VibeExperimentTracker
+        from zephyr.shared.versioning.vibe_experiment_tracker import VibeExperimentTracker
 
         tracker = VibeExperimentTracker()
         tracker.start("session-1", model="deepseek")

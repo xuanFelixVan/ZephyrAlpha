@@ -33,7 +33,7 @@ from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskSta
 from zephyr.integration.shared.schema.base_config import Classification
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.models import TaskCard
+from zephyr.shared.foundation.models import TaskCard
 from zephyr.trading.autopilot import AutoPilot
 
 

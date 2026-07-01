@@ -40,7 +40,7 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
-    from zephyr.shared.models import TaskCard
+    from zephyr.shared.foundation.models import TaskCard
 
 from zephyr.integration.models import (
     AFFINITY_CONSTRAINTS,

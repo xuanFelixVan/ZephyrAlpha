@@ -150,10 +150,10 @@ class TestFinalizerAutoShutdown:
     def test_finalizer_with_event_data(self) -> None:
         """Finalizer 在有事件数据时正常工作。"""
         from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
-        from zephyr.shared.health import subscribe_monitoring_events, get_event_health_log
-        from zephyr.shared.event_bus import bus
+        from zephyr.shared.lifecycle.health import subscribe_monitoring_events, get_event_health_log
+        from zephyr.shared.events.event_bus import bus
 
-        import zephyr.shared.health as health_mod
+        import zephyr.shared.lifecycle.health as health_mod
         health_mod._monitoring_events_subscribed = False
         health_mod._event_health_log = []
 

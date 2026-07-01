@@ -46,7 +46,7 @@ class DriftDetector:
             try:
                 from datetime import UTC, datetime
 
-                from zephyr.shared.event_bus import EventBusBackpressure
+                from zephyr.shared.events.event_bus import EventBusBackpressure
 
                 EventBusBackpressure().emit(
                     "drift_detected",

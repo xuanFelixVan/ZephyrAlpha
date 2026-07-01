@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"
 

@@ -38,7 +38,7 @@ def register_boot_cron_jobs(
     # 定时调度已废除（2026-06-26裁定）：CircadianScheduler 已移除。
     # 仅保留事件订阅（bus.subscribe）作为事件驱动入口。
     try:
-        from zephyr.shared.event_bus import bus
+        from zephyr.shared.events.event_bus import bus
 
         def _on_freshness_critical(payload: dict) -> None:
             try:

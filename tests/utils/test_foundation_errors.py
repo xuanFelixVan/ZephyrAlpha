@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.shared.errors import (
+from zephyr.shared.foundation.errors import (
     ConfigError,
     ContextError,
     ContractError,

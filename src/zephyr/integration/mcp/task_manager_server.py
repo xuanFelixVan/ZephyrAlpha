@@ -35,8 +35,8 @@ from mcp.server import FastMCP
 
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
 from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.models import (
+from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,

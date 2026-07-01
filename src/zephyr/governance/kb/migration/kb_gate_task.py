@@ -22,7 +22,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.task_types import Task, TaskNamespace, TaskStatus, normalize_execution_model
+from zephyr.shared.schema.task_types import Task, TaskNamespace, TaskStatus, normalize_execution_model
 
 # 与 KB 流水线文档任务链隔离的专用 seq，避免与真实 tasks 表主键碰撞概率
 _GATE_SEQ: dict[str, tuple[TaskNamespace, int]] = {

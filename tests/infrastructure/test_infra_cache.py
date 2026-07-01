@@ -128,7 +128,7 @@ class TestCacheKey:
 
 class TestCacheError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.shared.errors import ZephyrBaseError
+        from zephyr.shared.foundation.errors import ZephyrBaseError
 
         err = CacheError("fail")
         assert isinstance(err, ZephyrBaseError)

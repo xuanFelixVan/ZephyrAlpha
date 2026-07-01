@@ -99,7 +99,7 @@ def get_global_telemetry():
 def _patch_session_continuity() -> bool:
     """Monkey-patch SessionContinuity.print_restore_summary → 自动发送 session_start 遥测"""
     try:
-        from zephyr.shared.session_continuity import SessionContinuity
+        from zephyr.shared.session.session_continuity import SessionContinuity
 
         _orig_restore = SessionContinuity.print_restore_summary
 
