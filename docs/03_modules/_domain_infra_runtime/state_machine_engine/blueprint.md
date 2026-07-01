@@ -321,7 +321,7 @@ class Transition(Generic[S]):
 |------|---------|
 | `src/zephyr/shared/_state-machine-registry.yaml` | 实例注册 |
 | `docs/registry_of_registries.yaml` | REG-SM-001 entry_count |
-| `docs/02_enterprise_architecture/system-dependency-map.md` | §5/§10 |
+| `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md` | §5/§10 |
 | `docs/03_modules/blueprint_registry.yaml` | 版本/状态 |
 
 ## §14 风险
@@ -373,7 +373,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 
 ## 自检与闭合清单
 
-- [x] 依赖图已更新（system-dependency-map.md §5/§10）
+- [x] 依赖图已更新（dependency_path_panorama.md §5/§10）
 - [x] 模块注册表已更新（blueprint_registry.yaml）
 - [x] 蓝图注册表已更新（blueprint_registry.yaml）
 - [x] 中央注册表已更新（registry_of_registries.yaml REG-SM-001）

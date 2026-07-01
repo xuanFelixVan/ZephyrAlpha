@@ -69,7 +69,7 @@ runtime_plane: hot
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -391,7 +391,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 对齐项 | 对齐方式 | 对齐状态 | 说明 |
 |--------|---------|:-------:|------|
-| §10.1 依赖声明 ↔ system-dependency-map.md §5 | L03 依赖 L02+L00 | ⚠️ 部分对齐 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015，待对齐 |
+| §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | L03 依赖 L02+L00 | ⚠️ 部分对齐 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015，待对齐 |
 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 逐条核对 | 未对齐 | 待验证 |
 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 待验证 |
 
@@ -451,7 +451,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress + version 更新 | 蓝图升级 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本号更新 | 蓝图升级 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | L03 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | L03 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
 | 4 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\signal\*.py` | [BLUEPRINT] 字段指向 MOD-L03-001 | 当前指向 alpha_signal_domain-001 |
 
 ---

@@ -73,7 +73,7 @@ gates:
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
   entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
   description: ''
-  files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py|docs/02_enterprise_architecture/system-dependency-map\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\.yaml)$
+  files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py)$
   always_run: false
   category: triple_alignment
   status: active

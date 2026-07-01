@@ -76,7 +76,7 @@ summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -394,7 +394,7 @@ class FactorMeta(BaseModel):
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ system-dependency-map.md §3.11 | 蓝图声明的每个依赖在依赖图中有对应节点 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-L02-001` |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.11 | 蓝图声明的每个依赖在依赖图中有对应节点 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-L02-001` |
 | 2 | §11 产出物路径 ↔ 依赖图 §5 模块归属表 | 路径一致 | 已对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -673,7 +673,7 @@ class FactorMeta(BaseModel):
 | 2 | 设计 | §4每个接口在§16有对应施工步骤 | 逐接口核对 | ✅ |
 | 3 | 设计 | §5每个约束在§9有对应测试 | 逐约束核对 | ☐ |
 | 4 | 设计 | §0.1每个代码文件在§11有对应产出物路径 | 逐文件核对 | ✅ |
-| 5 | 设计 | §10每个依赖在system-dependency-map.md有对应条目 | 逐依赖核对 | ✅ |
+| 5 | 设计 | §10每个依赖在dependency_path_panorama.md有对应条目 | 逐依赖核对 | ✅ |
 | 6 | 前 | 已读取蓝图全文 | 逐节确认 | ☐ |
 | 7 | 前 | 术语表中每个术语含义已理解 | 能回答区别 | ☐ |
 | 8 | 前 | 已知问题中未解决的问题已知晓 | 知道哪些坑不能踩 | ☐ |

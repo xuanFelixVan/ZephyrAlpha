@@ -108,7 +108,7 @@ COMPLETENESS_VALUES = {
 
 DEPENDENCY_GRAPH_PATHS = [
     REPO_ROOT / "data" / "asset_index" / "dependency-graph.json",
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "system-dependency-map.md",
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "04_architecture_principles_decisions" / "dependency_path_panorama.md",
     REPO_ROOT
     / "docs"
     / "01_policies_and_standards"

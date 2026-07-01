@@ -108,7 +108,7 @@ ssot_claims:
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ## 模板章节映射表
@@ -2205,7 +2205,7 @@ STEP 3: 拆分后验证
 
 | 触发条件 | 需更新内容 | 更新位置 |
 |----------|----------|---------|
-| 新增 G-CT-* 契约 | 蓝图 §3 + §A.1 审计表 + system-dependency-map.md | 本蓝图 + 依赖图 |
+| 新增 G-CT-* 契约 | 蓝图 §3 + §A.1 审计表 + dependency_path_panorama.md | 本蓝图 + 依赖图 |
 | 新增治理脚本 | script-manifest.yaml + 蓝图 §11 产出物 | scripts/ + 本蓝图 |
 | 修改 RULE-* | _index.yaml + sync_rule_registry.py MTH-006 检查 | .trae/rules/ + scripts/ |
 | 修改 PS-REG-012 | MUST 同步检查 PS-STD-001 | docs/ |
@@ -2240,7 +2240,7 @@ STEP 3: 拆分后验证
 | 4 | §11 产出物路径与磁盘一致 | 每个路径可 Grep 到 |
 | 5 | 蓝图 `[BLUEPRINT]` 标注与代码头部双向对齐 | 代码头部有 MOD-GOVERNANCE |
 | 6 | construction_progress 与代码实际状态一致 | 无虚标 |
-| 7 | system-dependency-map.md G-CT-* 描述与蓝图一致 | 无冲突 |
+| 7 | dependency_path_panorama.md G-CT-* 描述与蓝图一致 | 无冲突 |
 | 8 | MTH-006 三向触发器完整 | sync_rule_registry.py PASS |
 
 ---

@@ -61,7 +61,7 @@ references:
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -195,7 +195,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 3 | StrategyRegistry | 策略注册/发现/自动扫描 | StrategyBase | 同步调用 + 装饰器注册 |
 | 4 | DefaultEquityStrategy | 默认股票多头策略（等权/信号加权） | StrategyBase, RiskLimits(L04), SynthesizedSignal(L03) | 同步调用 |
 
-> **依赖图对齐**：system-dependency-map.md §3.12 列出 6 子模块（rebalance/meta-router/allocator/portfolio/strategic/tactical），当前代码仅实现 strategy_base + default_equity_strategy。6 子模块为 YAML SSoT 终局架构，当前为 Phase 1 预研实现。
+> **依赖图对齐**：dependency_path_panorama.md §3.12 列出 6 子模块（rebalance/meta-router/allocator/portfolio/strategic/tactical），当前代码仅实现 strategy_base + default_equity_strategy。6 子模块为 YAML SSoT 终局架构，当前为 Phase 1 预研实现。
 
 ### 3.2 数据流
 
@@ -414,7 +414,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 说明 |
 |---|--------|---------|:-------:|------|
-| 1 | §10.1 依赖声明 ↔ system-dependency-map.md §3.12 | 蓝图声明的每个依赖在依赖图中有对应条目 | ⚠️ 部分对齐 | 依赖图列出6子模块，蓝图当前仅覆盖2个 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.12 | 蓝图声明的每个依赖在依赖图中有对应条目 | ⚠️ 部分对齐 | 依赖图列出6子模块，蓝图当前仅覆盖2个 |
 | 2 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | 待验证 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | ⚠️ 部分对齐 | 依赖图6子模块 vs 代码4文件 |
 | 4 | ARB-20 CTR-007 vs 当前 CTR-004 | 输出契约对齐 | ⚠️ 待重构 | 当前代码产出 CTR-004，终局应为 CTR-007 |
@@ -879,7 +879,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 | 9 | YAML SSoT | — | — | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | 本蓝图真源 |
-| 10 | 系统依赖图 | — | v3.0.0 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 依赖对齐 |
+| 10 | 系统依赖图 | — | v3.0.0 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 依赖对齐 |
 
 ---
 
