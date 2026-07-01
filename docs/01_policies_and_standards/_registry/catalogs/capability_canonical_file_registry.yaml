@@ -1788,6 +1788,36 @@ capabilities:
       原子写协议的唯一真源（5.12.2#1 治本收拢点）。atomic_write() + AtomicWriteFn Protocol
       统一此前 3 处漂移实现。fix_safety.py + forensic.py 已改为委托本真源（commit e64e01e2）。
 
+  # --------------------------------------------------------------------------
+  - capability_id: code_dedup_engine
+    canonical_override: src/zephyr/governance/code_dedup/__init__.py
+    aliases:
+      - code_dedup
+      - code-dedup-engine
+      - MOD-INF-017
+      - dedup_engine
+      - duplicate_code_detector
+      - code_dedup_cli
+    description: >-
+      code-dedup-engine 子包（MOD-INF-017 蓝图）的唯一真源。重复代码检测与治理引擎，
+      包含检测器/审计器/验证器/守卫/修复器等 57 个模块。从 governance 根目录迁入
+      code_dedup/ 子目录以符合 GOV-DOC-018 阈值（commit 92756af5）。
+      新 AI 查找重复代码检测能力时 MUST 使用本子包模块，禁止重新创建。
+
+  - capability_id: code_dedup_trackers
+    canonical_override: src/zephyr/governance/code_dedup/trackers/__init__.py
+    aliases:
+      - blind_spot_tracker
+      - BlindSpotStatus
+      - hotspot_tracker
+      - import_surface_tracker
+      - consequence_tracker
+      - risk_mitigation_tracker
+      - question_tracker
+    description: >-
+      tracker 族子包（MOD-INF-017 蓝图）。风险/盲点/热点跟踪器集合，从 code_dedup/
+      根目录迁入 trackers/ 子目录以符合 GOV-DOC-018 阈值。包含 6 个 tracker 模块。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -1900,6 +1930,36 @@ creation_tokens:
     token: "auto-rule-bridge-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "rule_bridge_package_marker"
+
+  # --- ARCH-031 code_dedup/trackers/ 子目录迁移（GOV-DOC-018 合规） ---
+  - file: "src/zephyr/governance/code_dedup/trackers/__init__.py"
+    token: "auto-codedup-trackers-init-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/blind_spot_tracker.py"
+    token: "auto-codedup-trackers-bst-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/hotspot_tracker.py"
+    token: "auto-codedup-trackers-ht-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/import_surface_tracker.py"
+    token: "auto-codedup-trackers-ist-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/consequence_tracker.py"
+    token: "auto-codedup-trackers-ct-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/risk_mitigation_tracker.py"
+    token: "auto-codedup-trackers-rmt-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
+  - file: "src/zephyr/governance/code_dedup/trackers/question_tracker.py"
+    token: "auto-codedup-trackers-qt-20260701"
+    created_by: "session-arch031-codedup-gov018"
+    capability: "code_dedup_trackers"
 
 # ============================================================================
 # 维护日志

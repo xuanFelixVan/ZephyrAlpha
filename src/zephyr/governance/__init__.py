@@ -97,7 +97,7 @@ try:
     from zephyr.governance.audit_trail.agent_signer import AgentSigner
     from zephyr.governance.data_governance.akshare_provider import AkshareProvider
     from zephyr.governance.base import FactorMeta
-    from zephyr.governance.code_dedup.blind_spot_tracker import BlindSpotStatus
+    from zephyr.governance.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
     from zephyr.governance.code_dedup.canary_manager import CanaryFile
     from zephyr.governance.audit_trail.changelog_manager import ChangeImpact
@@ -114,7 +114,7 @@ try:
     from zephyr.governance.rule_enforcement.dlq_retry_policy import RetryResult
     from zephyr.governance.audit_trail.dora_metrics import DORATargets
     from zephyr.governance.audit_trail.feedback_self_audit import FeedbackNode
-    from zephyr.governance.audit_trail.finding_ingest import IngestResult
+    from zephyr.governance.finding_ingest import IngestResult
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
     from zephyr.governance.behavioral_admission.gate_event_adapter import GateEventAdapter
     from zephyr.governance.audit_trail.glossary_matrix import GlossaryEntry
