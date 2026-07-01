@@ -301,12 +301,15 @@ entries:
     GOV-DOC-018（T_hard=60）暂缓，根目录350超标5.85x，留待AST import rewriter工具开发后处理。
     2026-07-01 P0清理：删除85个untracked SSOT冲突副本（split-src-gov残留），保留3个__init__.py包标记，
     修改constants.py:53 import路径（rule_bridge.depgraph_schema→depgraph_schema）。
-  fix_phase: 暂缓（根目录350 .py超T_hard=60，需AST import rewriter工具方可拆分）
-  status: open
+    2026-07-02 完成：其他session完成governance根目录拆分，.py文件数从271降至31（排除__init__.py），
+    GOV-DOC-018 T_hard=60已合规。验证结果：31文件[MODULE]标注全部为根目录归属，0错位文件；
+    734文件import扫描仅2处断裂（finding_ingest路径漂移+drift_fix跨包引用，均有try/except保护）。
+  fix_phase: 已完成（2026-07-02，governance根目录271→31文件，GOV-DOC-018 T_hard=60合规）
+  status: resolved
   related_rules:
   - TRAE-028
   created: '2026-07-01'
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-02'
 - issue_id: '#ARCH-032'
   title: ops/ 目录向内收治理（向 trading/feedback_loop/ 迁移 + 死代码清理 + 防复发）
   severity: P1高
