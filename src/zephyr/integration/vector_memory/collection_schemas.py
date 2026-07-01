@@ -17,12 +17,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import VMS_PERSIST_DIR
 
 __all__: list[str] = [
     "ALLOWED_DIMENSIONS",
@@ -36,8 +36,6 @@ __all__: list[str] = [
     "VMS_PERSIST_DIR",
     "CollectionInfo",
 ]
-
-VMS_PERSIST_DIR: Path = Path("data/vector_db")
 
 ALLOWED_DIMENSIONS: frozenset[int] = frozenset({512, 1024})
 

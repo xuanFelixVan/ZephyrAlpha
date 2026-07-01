@@ -45,12 +45,10 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, Field
 
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import VMS_PERSIST_DIR
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
 _logger = logging.getLogger(__name__)
-
-VMS_PERSIST_DIR: Path = REPO_ROOT / "data" / "vector_db"
 
 ALLOWED_DIMENSIONS: frozenset[int] = frozenset({512, 1024})
 
