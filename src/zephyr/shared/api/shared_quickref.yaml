@@ -157,8 +157,8 @@ utilities:
     entry_point: from zephyr.shared.time_utils import now_iso, utc_now
     note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃
   token_utils:
-    file: src/zephyr/autonomy_core/token_budget.py
-    entry_point: from zephyr.autonomy_core.token_budget import estimate_tokens
+    file: src/zephyr/infrastructure/capacity_assurance/token_budget.py
+    entry_point: from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
     note: Token 估算——上下文预算控制的基础
   frontmatter:
     file: src/zephyr/shared/frontmatter_utils.py
