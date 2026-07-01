@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L04-001
 submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"

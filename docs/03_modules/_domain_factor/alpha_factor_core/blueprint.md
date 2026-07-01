@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L02-001
 submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点"

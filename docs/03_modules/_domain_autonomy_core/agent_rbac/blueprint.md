@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: "MOD-INF-018"
 submodule_path: src/zephyr/security/access_control
 title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"

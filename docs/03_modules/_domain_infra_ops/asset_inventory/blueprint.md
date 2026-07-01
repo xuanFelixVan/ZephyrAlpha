@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-026
 submodule_path: src/zephyr/infrastructure/asset_inventory
 title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理"

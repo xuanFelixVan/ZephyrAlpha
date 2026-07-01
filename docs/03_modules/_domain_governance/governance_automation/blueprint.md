@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-005
 submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
@@ -217,7 +217,7 @@ references: []
 | 5 | 脚本清单 | script-manifest.yaml | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 脚本的完整注册表（SSoT，以实际生成为准）——REG-SCRIPT-001 主清单 + REG-SCRIPT-002 Governance 子集 |
 | 6 | AGENTS.md | — | `D:\ZephyrAlpha\AGENTS.md` | §6.5 脚本入库强制约定——蓝图的法律依据 |
 | 7 | 脚本治理入口 | index.md | `D:\ZephyrAlpha\scripts\governance\index.md` | AI 施工时查"已有哪些脚本" |
-| 8 | 模块登记表 | — | `D:\ZephyrAlpha\docs\03_modules\module_registry.yaml` | 模块编号注册 |
+| 8 | 模块登记表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 模块编号注册 |
 | 9 | 脚本质量标准 | REG-STD-003 / SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束（同 #4，双注册） |
 
 ### 2.2 depends_on 声明

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint

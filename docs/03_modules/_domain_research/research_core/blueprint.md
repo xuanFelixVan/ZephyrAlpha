@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L09-001
 submodule_path: src/zephyr/intelligence/research
 title: "Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位"

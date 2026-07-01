@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-027
 activation_phase: requires_100ai
 submodule_path: src/zephyr/governance

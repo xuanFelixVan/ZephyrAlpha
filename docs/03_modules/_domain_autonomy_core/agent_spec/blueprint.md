@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-019
 submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"

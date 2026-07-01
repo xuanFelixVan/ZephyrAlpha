@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L08-001
 submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）"

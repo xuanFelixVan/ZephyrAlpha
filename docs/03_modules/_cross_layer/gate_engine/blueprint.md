@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-GATE_ENGINE
 submodule_path: src/zephyr/trading/feedback_loop/gates
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"

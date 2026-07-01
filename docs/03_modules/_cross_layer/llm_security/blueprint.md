@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-LLM_SECURITY
 submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"

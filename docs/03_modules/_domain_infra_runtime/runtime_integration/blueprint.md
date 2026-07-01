@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-002
 submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L05-001
 submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位"

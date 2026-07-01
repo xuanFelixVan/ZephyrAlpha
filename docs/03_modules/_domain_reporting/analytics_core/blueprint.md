@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L07-001
 submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位"

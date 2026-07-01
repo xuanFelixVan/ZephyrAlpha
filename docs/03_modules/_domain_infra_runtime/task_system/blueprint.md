@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-TASK_SYSTEM
 title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint

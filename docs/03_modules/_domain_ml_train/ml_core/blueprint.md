@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L11-001
 submodule_path: src/zephyr/ml_train
 title: "ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位"

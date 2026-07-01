@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L06-001
 submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-011
 submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"

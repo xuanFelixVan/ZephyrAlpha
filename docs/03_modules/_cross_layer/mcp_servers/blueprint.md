@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: "MOD-INF-013"
 submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"

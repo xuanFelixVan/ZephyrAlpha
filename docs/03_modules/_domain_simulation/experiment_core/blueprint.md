@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-L13-001
 submodule_path: src/zephyr/simulation
 title: "Experimentation Core 蓝图+施工图 — 实验管理平台"

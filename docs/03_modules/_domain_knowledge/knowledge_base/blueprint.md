@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-KB-001
 submodule_path: src/zephyr/governance/kb
 title: "知识库系统蓝图"

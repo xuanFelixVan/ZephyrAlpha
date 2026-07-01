@@ -1,4 +1,4 @@
-﻿---
+---
 
 module_id: MOD-INF-017
 submodule_path: src/zephyr/governance/code_dedup_engine

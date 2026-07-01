@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-CONTEXT_ENGINE
 submodule_path: src/zephyr/intelligence/context_management
 title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引

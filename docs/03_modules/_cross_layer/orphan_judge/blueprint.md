@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-029
 submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"

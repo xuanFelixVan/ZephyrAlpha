@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-034
 submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"

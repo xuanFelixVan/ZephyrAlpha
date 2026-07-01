@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-039
 submodule_path: src/zephyr/trading/orchestrator
 title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"

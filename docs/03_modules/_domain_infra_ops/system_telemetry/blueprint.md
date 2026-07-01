@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-015
 submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"

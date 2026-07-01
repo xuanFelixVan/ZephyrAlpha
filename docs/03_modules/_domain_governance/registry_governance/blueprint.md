@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-037
 submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-FEEDBACK_LOOP
 submodule_path: src/zephyr/trading/feedback_loop
 title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心"

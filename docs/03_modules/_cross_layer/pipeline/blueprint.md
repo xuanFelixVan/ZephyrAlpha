@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-009
 submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
