@@ -85,6 +85,17 @@ def get_tmp_dir() -> Path:
     return tmp_dir
 
 
+def get_data_dir() -> Path:
+    """返回数据目录 REPO_ROOT / 'data'，并确保目录存在。
+
+    Returns:
+        Path: 数据目录的绝对路径（已确保存在）。
+    """
+    data_dir = REPO_ROOT / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
+
 __all__ = [
     "DB_DIR",
     "DB_PATH",
@@ -95,5 +106,6 @@ __all__ = [
     "SNAPSHOTS_DIR",
     "VECTOR_INDEX_DIR",
     "find_repo_root",
+    "get_data_dir",
     "get_tmp_dir",
 ]
