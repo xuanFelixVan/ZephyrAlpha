@@ -61,9 +61,9 @@ def _init_git_repo(repo_dir: Path) -> None:
     env["GIT_AUTHOR_EMAIL"] = "test@test.com"
     env["GIT_COMMITTER_NAME"] = "Test"
     env["GIT_COMMITTER_EMAIL"] = "test@test.com"
-    subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30)
     subprocess.run(
-        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True
+        ["git", "config", "user.name", "Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30
     )
     subprocess.run(
         ["git", "config", "user.email", "test@test.com"],
@@ -71,15 +71,17 @@ def _init_git_repo(repo_dir: Path) -> None:
         capture_output=True,
         env=env,
         check=True,
+        timeout=30,
     )
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
-    subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30)
     subprocess.run(
         ["git", "commit", "-m", "init", "--no-verify"],
         cwd=str(repo_dir),
         capture_output=True,
         env=env,
         check=True,
+        timeout=30,
     )
 
 
@@ -88,7 +90,7 @@ def _stage_file(repo_dir: Path, rel_path: str, content: str = "x = 1\n") -> Path
     f = repo_dir / rel_path
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
-    subprocess.run(["git", "add", str(rel_path)], cwd=str(repo_dir), capture_output=True)
+    subprocess.run(["git", "add", str(rel_path)], cwd=str(repo_dir), capture_output=True, timeout=30)
     return f
 
 
@@ -298,17 +300,17 @@ class TestNewReconcilerMarker:
         f.write_text(head_content, encoding="utf-8")
         subprocess.run(
             ["git", "add", self._RECONCILER_REL],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
         )
         subprocess.run(
             ["git", "commit", "-m", "head version", "--no-verify"],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
         )
         # staged 修改版
         f.write_text(staged_content, encoding="utf-8")
         subprocess.run(
             ["git", "add", self._RECONCILER_REL],
-            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+            cwd=str(repo_dir), capture_output=True, env=env, check=True, timeout=30,
         )
         return f
 
@@ -476,13 +478,13 @@ class TestRulesYamlNamingBlocked:
         _stage_file(tmp_path, old_rel, "rule_id: trae_999\n")
         subprocess.run(
             ["git", "commit", "-m", "init rule", "--no-verify"],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path), capture_output=True, check=True, timeout=30,
         )
         # rename 为单段 name
         new_rel = f"{self._RULES_DIR}/trae_999_new.yaml"
         subprocess.run(
             ["git", "mv", old_rel, new_rel],
-            cwd=str(tmp_path), capture_output=True, check=True,
+            cwd=str(tmp_path), capture_output=True, check=True, timeout=30,
         )
         new_file = tmp_path / new_rel
         gw = GitCommitGateway(project_root=tmp_path)
