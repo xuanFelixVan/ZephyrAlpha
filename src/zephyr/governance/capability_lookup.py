@@ -463,9 +463,17 @@ class CapabilityLookup:
             if override_header:
                 self._fill_from_header(cap, override_header)
             cap.duplicates = []
+            # ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
+            # 同目录下的 .py 文件是包组件，不是 conflicting duplicates。
+            # 病根：aliases 含包内模块 basename 时，auto-derive 把同目录模块
+            # 误判为 conflicting（如 code_dedup_trackers 的 6 个 tracker 模块）。
+            # 治本：canonical 是 __init__.py 时，排除同目录候选（包组件模式）。
+            _pkg_dir = self._package_dir_if_marker(norm_override)
             for path, header in candidates:
                 if path == norm_override:
                     continue
+                if _pkg_dir and path.startswith(_pkg_dir + "/"):
+                    continue  # 包组件，非 duplicate
                 cap.duplicates.append(
                     self._make_duplicate_entry(path, header, override_header)
                 )
@@ -505,10 +513,26 @@ class CapabilityLookup:
                 )
 
         cap.duplicates = []
+        # ARCH-031 治本（2026-07-01）：auto-derived canonical 是 __init__.py 时，
+        # 同目录 .py 文件是包组件，排除出 duplicates（同 override 分支逻辑）。
+        _pkg_dir = self._package_dir_if_marker(canonical_path)
         for path, header in sorted_cands[1:]:
+            if _pkg_dir and path.startswith(_pkg_dir + "/"):
+                continue  # 包组件，非 duplicate
             cap.duplicates.append(
                 self._make_duplicate_entry(path, header, canonical_header)
             )
+
+    @staticmethod
+    def _package_dir_if_marker(canonical_path: str) -> str | None:
+        """canonical 是 __init__.py（包标记）时返回其目录，否则 None。
+
+        ARCH-031 治本（2026-07-01）：包标记 canonical 的同目录 .py 文件是
+        包组件，不是 conflicting duplicates。返回目录路径供调用方做前缀排除。
+        """
+        if canonical_path.endswith("/__init__.py"):
+            return canonical_path.rsplit("/", 1)[0]
+        return None
 
     def _rank_candidates(
         self, candidates: list[tuple[str, HeaderInfo]]
