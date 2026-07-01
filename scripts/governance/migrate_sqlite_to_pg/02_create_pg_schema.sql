@@ -539,7 +539,8 @@ CREATE TRIGGER readonly_registries_update
 --     FOR EACH ROW EXECUTE FUNCTION cleanup_edges_on_node_delete();
 
 -- 6.2 blueprint_id 三轨制检查（对应 SQLite chk_nodes_blueprint_id_insert/update）
--- 裁定#208：blueprint_id 必须匹配 MOD-*/D-*/SH-*/PLACEHOLDER*（除非 blueprint_id_invalid=1）
+-- 裁定#208：blueprint_id 必须匹配 MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*（除非 blueprint_id_invalid=1）
+-- 治本 2026-07-02：扩展 SYS- 前缀为 SYS-MASTER-001 等系统级蓝图开路
 -- 用触发器而非 CHECK 约束实现：历史数据可能不符合三轨制，CHECK 会阻止迁移；
 -- 触发器只对新 INSERT/UPDATE 生效，历史数据保留。
 CREATE OR REPLACE FUNCTION check_blueprint_id_three_track()
@@ -548,8 +549,8 @@ BEGIN
     IF NEW.blueprint_id IS NOT NULL
        AND NEW.blueprint_id != ''
        AND NEW.blueprint_id_invalid = 0
-       AND NEW.blueprint_id !~ '^(MOD-|D-|SH-|PLACEHOLDER)' THEN
-        RAISE EXCEPTION 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)';
+       AND NEW.blueprint_id !~ '^(MOD-|D-|SH-|SYS-|PLACEHOLDER)' THEN
+        RAISE EXCEPTION 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)';
     END IF;
     RETURN NEW;
 END;

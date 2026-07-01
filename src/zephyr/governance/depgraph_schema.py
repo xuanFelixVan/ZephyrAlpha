@@ -1012,7 +1012,8 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "v18: Add blueprint_id format CHECK triggers to nodes (裁定#208 三轨制 DB 层防护). "
         "应用层 V1(apply_depgraph L359 禁止 --update-module 改 blueprint_id) + V2(L2135 --rename-blueprint-id 格式校验) "
         "可被直接 SQL 绕过. 本 migration 在 DB 层添加 BEFORE INSERT + BEFORE UPDATE OF blueprint_id 触发器, "
-        "用 GLOB 粗校验 MOD-*/D-*/SH-*/PLACEHOLDER* 前缀(纯 SQL 无依赖), 应用层 is_valid_module_id() 做精细正则校验. "
+        "用 GLOB 粗校验 MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER* 前缀(纯 SQL 无依赖), 应用层 is_valid_module_id() 做精细正则校验. "
+        "治本 2026-07-02: 扩展 SYS- 前缀为 SYS-MASTER-001 等系统级蓝图开路. "
         "分层防御: DB 层阻断 gross violation(如 WRONG-FORMAT), app 层拦截 subtle violation(如 MOD-lowercase). "
         "特殊情况处理: NULL(无蓝图)/空串(无蓝图)/blueprint_id_invalid=1(遗留失效 ID) 均放行. "
         "未保护 arch_directory_tree/blueprint_links: 前者 sync_directory_registry UPSERT 会触发 UPDATE 校验阻断 "
@@ -1021,7 +1022,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         [
             # 1. nodes BEFORE INSERT: 粗校验 blueprint_id 前缀
             # GLOB 大小写敏感(三轨制要求大写), 纯 SQL 无需扩展
-            # 放行: NULL / 空串 / blueprint_id_invalid=1 / MOD-* / D-* / SH-* / PLACEHOLDER*
+            # 放行: NULL / 空串 / blueprint_id_invalid=1 / MOD-* / D-* / SH-* / SYS-* / PLACEHOLDER*
             """CREATE TRIGGER IF NOT EXISTS chk_nodes_blueprint_id_insert
             BEFORE INSERT ON nodes
             WHEN NEW.blueprint_id IS NOT NULL
@@ -1030,9 +1031,10 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
               AND NEW.blueprint_id NOT GLOB 'MOD-*'
               AND NEW.blueprint_id NOT GLOB 'D-*'
               AND NEW.blueprint_id NOT GLOB 'SH-*'
+              AND NEW.blueprint_id NOT GLOB 'SYS-*'
               AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
             BEGIN
-                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
             END""",
             # 2. nodes BEFORE UPDATE OF blueprint_id: 粗校验 blueprint_id 前缀
             # 仅当 blueprint_id 列出现在 SET 子句时触发, 不影响其他列的 UPDATE
@@ -1044,9 +1046,10 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
               AND NEW.blueprint_id NOT GLOB 'MOD-*'
               AND NEW.blueprint_id NOT GLOB 'D-*'
               AND NEW.blueprint_id NOT GLOB 'SH-*'
+              AND NEW.blueprint_id NOT GLOB 'SYS-*'
               AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
             BEGIN
-                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
             END""",
         ],
     ),
