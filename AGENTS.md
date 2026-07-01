@@ -28,7 +28,7 @@
 > ```
 > python -c "from zephyr.governance.rule_bridge.session_worktree import session_worktree_commit; r = session_worktree_commit('<session_id>', ['<file1>', '<file2>'], '<message>'); print(r)"
 > ```
-> **任务完成**：调 `session_worktree_merge(session_id)` merge 回主分支。**放弃**：调 `session_worktree_abort(session_id)`。**merge失败**（脏工作区/冲突，典型症状 "Your local changes would be overwritten by merge"）：先 `git checkout -- <冲突文件>` 还原主工作区（worktree 已含提交，内容一致无丢失）→重试 `session_worktree_merge`→仍失败才 `session_worktree_abort` + 改用 GitCommitGateway。
+> **任务完成**：调 `session_worktree_merge(session_id)` merge 回主分支（pre-merge 自动清理冗余未提交改动，通常无需手动处理脏工作区）。**放弃**：调 `session_worktree_abort(session_id)`。**merge失败**（自动清理后仍失败=AI commit 后又编辑了同一文件导致内容不一致）：先 `git checkout -- <冲突文件>` 还原主工作区→重试 `session_worktree_merge`→仍失败才 `session_worktree_abort` + 改用 GitCommitGateway。
 >
 > **为什么**：多 AI 对话共享工作目录导致 stash 堆积（4 个 stash 卡住对话），worktree 独立 git index 从根本消除冲突。
 > **君子协定**：当前无门禁强制，依赖 AI 自觉（对标 AI 自觉查锁）。测试通过→转正式规则；测试失败→切 selective add。详见 [FP-ISO.4C](#fp-iso4c)。

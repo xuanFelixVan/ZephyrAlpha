@@ -360,6 +360,100 @@ def session_worktree_commit(
     }
 
 
+def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
+    """Pre-merge 自动清理：对 worktree 已 commit 的文件，主工作区有相同内容的未提交改动时自动 checkout。
+
+    君子协定模式下，AI 的 Edit/Write 改动留在主工作区（uncommitted），
+    session_worktree_commit 同步到 worktree 并 commit。这些未提交改动与 worktree
+    commit 内容一致，merge 时会触发 "Your local changes would be overwritten by merge"。
+
+    本函数在 merge 前自动清理这些冗余改动，消除 merge 失败根因。
+    只清理内容完全一致的文件（safe）；内容不一致的文件跳过（AI 可能做了额外编辑）。
+
+    Args:
+        root: 主仓库根目录。
+        session_id: session 标识。
+
+    Returns:
+        (cleaned_count, skipped_files) 元组：
+        - cleaned_count: 自动清理的文件数
+        - skipped_files: 内容不一致或无法比较，跳过的文件列表
+    """
+    branch = f"session/{session_id}"
+
+    # 1. 获取 worktree branch 相对 merge-base 的变更文件列表
+    merge_base_r = subprocess.run(
+        ["git", "merge-base", "HEAD", branch],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if merge_base_r.returncode != 0:
+        return 0, []
+    merge_base = merge_base_r.stdout.strip()
+
+    changed_r = subprocess.run(
+        ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if changed_r.returncode != 0:
+        return 0, []
+    changed_files = [f.strip() for f in changed_r.stdout.strip().split("\n") if f.strip()]
+
+    if not changed_files:
+        return 0, []
+
+    # 2. 获取主工作区有未提交改动的文件（staged + unstaged，相对 HEAD）
+    dirty_r = subprocess.run(
+        ["git", "diff", "--name-only", "HEAD"],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if dirty_r.returncode != 0:
+        return 0, []
+    dirty_files = set(f.strip() for f in dirty_r.stdout.strip().split("\n") if f.strip())
+
+    # 3. 对同时在 changed_files 和 dirty_files 中的文件，比较内容
+    cleaned = 0
+    skipped: list[str] = []
+    to_checkout: list[str] = []
+
+    for rel_file in changed_files:
+        if rel_file not in dirty_files:
+            continue  # 主工作区没有未提交改动，无需清理
+
+        main_file = root / rel_file
+        if not main_file.exists():
+            # 文件在主工作区被删除——无法比较内容，跳过（删除同步由 commit 处理）
+            skipped.append(rel_file)
+            continue
+
+        # 比较主工作区内容与 worktree branch HEAD 内容
+        main_content = main_file.read_bytes()
+        wt_content_r = subprocess.run(
+            ["git", "show", f"{branch}:{rel_file}"],
+            cwd=str(root), capture_output=True,
+        )
+        if wt_content_r.returncode != 0:
+            # worktree branch 中没有该文件——跳过
+            skipped.append(rel_file)
+            continue
+
+        if main_content == wt_content_r.stdout:
+            # 内容一致——安全 checkout（discard 冗余的未提交改动）
+            to_checkout.append(rel_file)
+            cleaned += 1
+        else:
+            # 内容不一致——AI 可能做了额外编辑，不自动清理
+            skipped.append(rel_file)
+
+    # 4. 批量 checkout（一次性清理所有安全文件）
+    if to_checkout:
+        subprocess.run(
+            ["git", "checkout", "--"] + to_checkout,
+            cwd=str(root), capture_output=True,
+        )
+
+    return cleaned, skipped
+
+
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
@@ -367,6 +461,7 @@ def session_worktree_merge(
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
     在主工作目录执行 git merge session/{session_id} --no-ff（保留 session 提交拓扑）。
+    merge 前自动清理主工作区与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）。
     merge 冲突时返回 merged=False（worktree 保留，供手动解决）。
 
     Args:
@@ -385,6 +480,10 @@ def session_worktree_merge(
     manager = _get_manager(root)
     registry = _get_registry(root)
 
+    # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
+    # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
+    auto_cleaned, skipped_files = _pre_merge_auto_clean(root, session_id)
+
     merged = False
     cleaned = False
     msg = ""
@@ -392,10 +491,22 @@ def session_worktree_merge(
     try:
         merged = manager.merge_session_worktree(session_id, delete_after=True)
         if merged:
-            msg = "merge 成功，worktree 已清理"
+            parts = ["merge 成功"]
+            if auto_cleaned > 0:
+                parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
+            if skipped_files:
+                parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
+            parts.append("，worktree 已清理")
+            msg = "".join(parts)
             cleaned = True
         else:
-            msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
+            if skipped_files:
+                msg = (
+                    f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
+                    f"请手动处理：{skipped_files}"
+                )
+            else:
+                msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
     except WorktreeError as e:
         msg = f"merge 失败: {e}"
     except Exception as e:
