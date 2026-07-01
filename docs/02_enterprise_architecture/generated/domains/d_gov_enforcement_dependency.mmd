@@ -1,7 +1,7 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-01 12:00:48
+%% 生成时间: 2026-07-01 12:19:12
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 75, 依赖边数: 201
+%% 模块数: 74, 依赖边数: 195
 
 graph TD
 
@@ -54,7 +54,6 @@ graph TD
         src_zephyr_governance_rule_enf____ct_strategy_correlation_py["...heck_types/ct_strategy_correlation.py [prototype]"]
         src_zephyr_governance_rule_enf____check_types_ct_temporal_py["...nforcement/check_types/ct_temporal.py [prototype]"]
         src_zephyr_governance_rule_enf___es_ct_zero_residue_check_py[".../check_types/ct_zero_residue_check.py [prototype]"]
-        src_zephyr_governance_rule_enforcement_circuit_breaker_py["...e/rule_enforcement/circuit_breaker.py [production]"]
         src_zephyr_governance_rule_enf___ontract_template_manager_py["...orcement/contract_template_manager.py [production]"]
         src_zephyr_governance_rule_enforcement_drift_detector_py["...ce/rule_enforcement/drift_detector.py [prototype]"]
         src_zephyr_governance_rule_enf___t_end_to_end_walkthrough_py["...enforcement/end_to_end_walkthrough.py [production]"]
@@ -90,7 +89,6 @@ graph TD
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_gate_types_py
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf____001_circular_dependency_py
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___02_enforcement_validator_py
     src_zephyr_governance_rule_enforcement_gate_engine_py -->|import_depends| src_zephyr_governance_rule_enf___3_contract_compatibility_py
@@ -117,7 +115,6 @@ graph TD
     src_zephyr_governance_rule_enf___s_adversarial_validation_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    src_zephyr_governance_rule_enf___types_ct_circuit_breaker_py -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____audit_findings_resolved_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____ct_blueprint_read_check_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
@@ -165,7 +162,9 @@ graph TD
     src_zephyr_governance_rule_enf___ck_types_ct_path_routing_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     src_zephyr_governance_rule_enf____types_ct_path_whitelist_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
     src_zephyr_governance_rule_enf____types_ct_path_whitelist_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
-    %% ... 还有 58 条域内依赖未显示
+    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enf___ypes_check_type_registry_py
+    src_zephyr_governance_rule_enf____types_ct_path_blacklist_py -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    %% ... 还有 56 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (8 条)
@@ -193,16 +192,12 @@ graph TD
     D_GOV_DOCS[D_GOV_DOCS] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_GOV_DOCS[D_GOV_DOCS] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_GOV_DOCS[D_GOV_DOCS] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
-    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (9 条)
+    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (5 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enf___nt_sys_master_compliance_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement___init___py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     %% D_INTEGRATION -> D_GOV_ENFORCEMENT (2 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
@@ -247,6 +242,6 @@ graph TD
     src_zephyr_governance_rule_enf___3_contract_compatibility_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 138 条
-    %% 跨域入边: 43 条
+    %% 域内依赖: 136 条
+    %% 跨域入边: 39 条
     %% 跨域出边: 20 条

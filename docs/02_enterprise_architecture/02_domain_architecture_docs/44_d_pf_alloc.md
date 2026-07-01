@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 12:00:46
+> 最后更新: 2026-07-01 12:19:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -55,10 +55,10 @@ graph TD
     end
     D_SHARED["D_SHARED prototype"]
     src_zephyr_pf_alloc -.->|contract| D_SHARED
-    D_TRADING["D_TRADING production"]
-    src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_TRADING
     src_zephyr_pf_core_strategy_portfolio_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
     D_GOVERNANCE -.->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
