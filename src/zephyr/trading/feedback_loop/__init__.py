@@ -9,3 +9,11 @@
 Migrated from src/zephyr/ops/ to src/zephyr/trading/feedback_loop/ by ARCH-032.
 Blueprint: docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 """
+
+# 重新导出核心类（原 feedback_loop.py 迁入包内，解决包/文件同名覆盖）
+from .core import EvolutionProposal, FeedbackLoop
+
+__all__ = [
+    "EvolutionProposal",
+    "FeedbackLoop",
+]

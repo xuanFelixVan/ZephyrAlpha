@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
-# [MODULE] zephyr.trading.feedback_loop
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [MODULE] zephyr.trading.feedback_loop.core
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
-# [CONSUMERS]
+# [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.governance.audit_trail.feedback_bridge; zephyr.security.access_control.orphan_judge.feedback_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -15,17 +15,12 @@
 # [A_module] module_id=MOD-ORC_feedback_loop | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-__all__ = [
-    "EvolutionProposal",
-    "FeedbackLoop",
-]
-
 """
-FeedbackLoop — 反馈闭环
-========================
-蓝图: ARC-0001 §4.3 (三阶)
-借鉴: K8s Controller 调和失败重试 + Magentic-One Progress Ledger
-登记表裁定→规则进化
+FeedbackLoop core — 反馈闭环核心类。
+
+从 src/zephyr/trading/feedback_loop.py 迁入包内，解决包/文件同名覆盖问题。
+ARCH-032 迁移创建 feedback_loop/ 包后未删除旧 feedback_loop.py 文件，
+导致 Python 包优先级覆盖文件，from zephyr.trading.feedback_loop import FeedbackLoop 失败。
 """
 
 from datetime import datetime
@@ -36,6 +31,11 @@ import yaml
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+
+__all__ = [
+    "EvolutionProposal",
+    "FeedbackLoop",
+]
 
 
 class EvolutionProposal(BaseModel):
