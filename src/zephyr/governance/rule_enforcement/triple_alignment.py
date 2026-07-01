@@ -185,7 +185,10 @@ def check_triple_alignment(
         result.checked_modules += 1
 
         bp_path_str = bp.get("file_path", "")
-        bp_path = BLUEPRINTS_DIR / bp_path_str if bp_path_str else None
+        # 修复: file_path 由 sync_registry_from_blueprints.py 的 make_registry_path 生成,
+        # 相对 REPO_ROOT/"docs" (如 "03_modules/_cross_layer/.../blueprint.md"),
+        # 不是相对 BLUEPRINTS_DIR。原 BLUEPRINTS_DIR / bp_path_str 会产生双重 03_modules 前缀。
+        bp_path = PROJECT_ROOT / "docs" / bp_path_str if bp_path_str else None
         # 红蓝对抗修复：路径边界验证，防止路径穿越攻击
         if bp_path:
             try:
@@ -208,6 +211,8 @@ def check_triple_alignment(
         if bp_path and bp_path.exists():
             try:
                 text = bp_path.read_text(encoding="utf-8")
+                # 防御性: 去除所有前导 BOM (部分文件可能因编辑器积累多个 BOM)
+                text = text.lstrip("\ufeff")
                 if text.startswith("---"):
                     end = text.find("---", 3)
                     if end > 0:
