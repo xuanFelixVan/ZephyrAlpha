@@ -553,6 +553,21 @@ python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
 - **按域编号生成器 --all 模式 MUST 调用 cleanup_stale_files**：生成"按域编号文件"（`NN_d_xxx.md`/`.mmd`，域重命名/删除后旧编号会残留）的生成器，在 `--all` 模式下 MUST 调用 `_common.cleanup_stale_files()` 清理孤儿文件，治本"只增不删"。当前适用：`generate_domain_doc.py`、`generate_domain_dependency_diagram.py`（均已调用）。单域模式不清理（避免误删）；生成单文件/非编号文件的生成器（导航索引、容量报告、集成拓扑等）不适用。真源：[`_common.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py)
 - **检测**：对生成 `NN_d_xxx` 格式文件的生成器，`Select-String -Pattern "cleanup_stale_files"` 应返回至少 1 匹配（当前 2 个生成器均通过）
 
+#### 11.1.2 ARCH 引用校验门禁（Phase 4 防御性门禁，ARCH-033，2026-07-02）
+
+> **新 AI 修改 `generate_project_depgraph.py` 中 `#ARCH-XXX` 引用时 MUST 先读本节。**
+> 病根：AI 在脚本中随意写 `#ARCH-XXX` 引用但不在 [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 登记，导致 grep-and-claim 占位（编号铁律#6 违规）。
+> 治本：`generate_project_depgraph.py` 启动时自动校验本文件所有 `ARCH-XXX` 引用是否在 registry 有对应条目。
+
+- **真源实现**：[`generate_project_depgraph.py`](file:///d:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py) `_validate_arch_references()` 函数（L2524）
+- **自动触发**：`generate_project_depgraph.py` 的 `main()` 中 `parse_args()` 后自动调用（L3598-3599），无需手动触发
+- **自动运行**：正则 `ARCH-(\d+)` 扫描本文件源代码 → 提取所有 ARCH 编号 → 读取 registry → 比对差集
+- **自动关闭**：校验完成后打印结果（PASS/FAIL）即返回，不阻塞后续流程
+- **校验范围**：仅校验 `generate_project_depgraph.py` 自身源码中的 ARCH 引用，不扫描其他文件
+- **registry 真源**：[`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `entries[].issue_id` 字段
+- **编号铁律#6**：任何 `#ARCH-XXX` 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
+- **当前状态**：ERROR 阻断（校验失败 sys.exit(1)，2026-07-02 从 WARN 升级为 ERROR）
+
 ### 11.2 P3 PostgreSQL 优化裁定记录（2026-06-28）
 
 > **本节是 P3 相关工作的硬约束。** 任何 AI 在涉及 PostgreSQL 优化时必须先读本节。

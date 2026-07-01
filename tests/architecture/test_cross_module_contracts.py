@@ -22,9 +22,9 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 
 REQUIRED_DEPENDENCIES = [
-    "MOD-INF-006",
+    "MOD-INF-039",
     "MOD-KB-001",
-    "MOD-INF-007",
+    "MOD-GATE_ENGINE",
     "MOD-INF-018",
 ]
 
@@ -62,7 +62,7 @@ class TestUpstreamDependencyReachability:
             ids = [d.get("module_id", d.get("id", str(d))) for d in depends if isinstance(d, dict)]
         else:
             ids = []
-        for req in ["MOD-INF-006", "MOD-KB-001", "MOD-INF-007"]:
+        for req in ["MOD-INF-039", "MOD-KB-001", "MOD-GATE_ENGINE"]:
             found = any(req in str(i) for i in ids)
             assert found, f"Missing upstream dependency: {req}"
 

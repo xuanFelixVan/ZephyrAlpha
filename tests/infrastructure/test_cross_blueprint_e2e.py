@@ -11,7 +11,7 @@
 ===================
 验证四大蓝图协同工作：
 capacity-assurance(MOD-INF-001) → runtime-integration(MOD-INF-002)
-→ governance-automation(MOD-INF-005) → task-system(MOD-INF-006)
+→ governance-automation(MOD-INF-005) → task-system(MOD-INF-039)
 """
 
 from __future__ import annotations

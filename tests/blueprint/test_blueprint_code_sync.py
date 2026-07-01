@@ -237,7 +237,7 @@ class TestCollectEntries:
             / "l01-infrastructure"
             / "task-system"
             / "changes"
-            / "MOD-INF-006"
+            / "MOD-INF-039"
             / "TASK-INF-0999.md"
         )
         with patch.object(Path, "glob", return_value=[fake_card]):

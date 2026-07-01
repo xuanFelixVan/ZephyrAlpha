@@ -9,7 +9,7 @@
 """
 test_session_continuity.py — SessionContinuity 单元测试
 ========================================================
-依据：MOD-INF-006 v0.6.0 + SRC-0056 (session/ canonical version)
+依据：MOD-INF-039 v0.6.0 + SRC-0056 (session/ canonical version)
 
 覆盖率目标：
   - save/load session state round-trip

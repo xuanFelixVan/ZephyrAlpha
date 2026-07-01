@@ -9,7 +9,7 @@
 module_id: MOD-INF-016
 state_machines:
 - fsm_id: task-lifecycle
-  owner_module: MOD-INF-006
+  owner_module: MOD-INF-039
   initial: PENDING
   states:
   - PENDING

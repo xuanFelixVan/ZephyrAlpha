@@ -53,10 +53,10 @@ class TestPriorityLevel:
 
 class TestContextBlock:
     def test_default_construction(self) -> None:
-        block = ContextBlock(block_id="b1", content="test", provenance="MOD-INF-008:§3")
+        block = ContextBlock(block_id="b1", content="test", provenance="MOD-CONTEXT_ENGINE:§3")
         assert block.block_id == "b1"
         assert block.priority == PriorityLevel.NORMAL
-        assert block.provenance == "MOD-INF-008:§3"
+        assert block.provenance == "MOD-CONTEXT_ENGINE:§3"
 
     def test_is_pinned(self) -> None:
         block = ContextBlock(block_id="b1", content="test", priority=PriorityLevel.PINNED)

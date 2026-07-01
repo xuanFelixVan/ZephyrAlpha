@@ -11,7 +11,7 @@ from __future__ import annotations
 """
 test_session_continuity.py — SessionContinuity 单元测试 (core/ variant)
 ========================================================================
-依据：MOD-INF-006 v0.6.0 + SRC-0056
+依据：MOD-INF-039 v0.6.0 + SRC-0056
 
 Tests the canonical session/ version imported through core/ shim.
 """

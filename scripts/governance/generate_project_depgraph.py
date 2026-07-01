@@ -2525,9 +2525,10 @@ def _validate_arch_references():
     """Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 architecture_issue_registry.yaml 有对应条目。
 
     编号铁律#6: 任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位。
-    校验失败仅打印 WARN，不阻断运行（防御性，非阻断性门禁）。
+    校验失败打印 ERROR 并 sys.exit(1) 阻断运行（编号铁律#6 强制门禁，2026-07-02 从 WARN 升级为 ERROR）。
     """
     import re as _re
+    import sys as _sys
     from pathlib import Path as _Path
 
     # 1. 读取本文件源代码，提取所有 #ARCH-XXX 引用
@@ -2544,14 +2545,14 @@ def _validate_arch_references():
     # 2. 读取 architecture_issue_registry.yaml
     registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
     if not _Path(registry_path).exists():
-        print(f"[DEPGRAPH] WARN: architecture_issue_registry.yaml 不存在，跳过 ARCH 引用校验")
-        return
+        print(f"[DEPGRAPH] ERROR: architecture_issue_registry.yaml 不存在，无法校验 ARCH 引用 (编号铁律#6)")
+        _sys.exit(1)
 
     try:
         registry_data = _yaml_load(registry_path)
     except Exception as e:
-        print(f"[DEPGRAPH] WARN: 读取 architecture_issue_registry.yaml 失败: {e}")
-        return
+        print(f"[DEPGRAPH] ERROR: 读取 architecture_issue_registry.yaml 失败: {e}")
+        _sys.exit(1)
 
     # 3. 提取 registry 中所有 issue_id
     registered_ids = set()
@@ -2565,8 +2566,9 @@ def _validate_arch_references():
     # 4. 校验
     unregistered = arch_refs - registered_ids
     if unregistered:
-        print(f"[DEPGRAPH] WARN: 发现未注册的 #ARCH-XXX 引用 (编号铁律#6): {sorted(unregistered)}")
-        print(f"[DEPGRAPH] WARN: 请在 architecture_issue_registry.yaml 中登记这些编号")
+        print(f"[DEPGRAPH] ERROR: 发现未注册的 #ARCH-XXX 引用 (编号铁律#6): {sorted(unregistered)}")
+        print(f"[DEPGRAPH] ERROR: 请在 architecture_issue_registry.yaml 中登记这些编号后重试")
+        _sys.exit(1)
     else:
         print(f"[DEPGRAPH] ARCH 引用校验通过: {sorted(arch_refs)} 均已在 registry 中登记")
 

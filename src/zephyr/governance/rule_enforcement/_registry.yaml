@@ -218,7 +218,7 @@ gates:
     trigger
 - gate_id: GCT_026
   gate_name: lsg_security_integration
-  title: GCT-026 LSG Security Gateway — MOD-INF-014 · v1.0.0 · L0-L8 Nine-Layer Defense-in-Depth
+  title: GCT-026 LSG Security Gateway — MOD-LLM_SECURITY · v1.0.0 · L0-L8 Nine-Layer Defense-in-Depth
   category: governance
   file: ''
   status: active

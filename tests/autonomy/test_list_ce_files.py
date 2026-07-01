@@ -62,7 +62,7 @@ class TestGenerateManifest:
         assert "root" in data
         assert "files" in data
         assert "total_py_files" in data
-        assert data["module_id"] == "MOD-INF-008"
+        assert data["module_id"] == "MOD-CONTEXT_ENGINE"
 
     def test_generate_manifest_total_py_files_non_negative(self):
         import json

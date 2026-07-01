@@ -106,7 +106,7 @@ class TestGenerateDraft:
         assistant = DraftAssistant(output_dir=tmp_path)
         inp = DraftInput(idea_text="Build a task-system for decomposing blueprints")
         draft = assistant.generate_draft(inp)
-        assert draft.module_id == "MOD-INF-006"
+        assert draft.module_id == "MOD-INF-039"
 
     def test_infer_module_rollback_keyword(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
@@ -189,7 +189,7 @@ class TestRenderBlueprintSkeleton:
         draft = BlueprintDraft(
             draft_id="DRAFT-20260101-120000",
             idea_summary="Test idea",
-            module_id="MOD-INF-006",
+            module_id="MOD-INF-039",
             layer="l01-infrastructure",
             targets=["Target A"],
             boundaries=["Boundary A"],
@@ -198,7 +198,7 @@ class TestRenderBlueprintSkeleton:
         )
         result = assistant.render_blueprint_skeleton(draft)
 
-        assert 'module_id: "MOD-INF-006"' in result
+        assert 'module_id: "MOD-INF-039"' in result
         assert 'layer: "l01-infrastructure"' in result
         assert 'draft_id: "DRAFT-20260101-120000"' in result
         assert 'generated_at: "2026-01-01T12:00:00+00:00"' in result
