@@ -43,8 +43,7 @@
 | 4 | `src/zephyr/shared/shared_services/events/__init__.py` |
 | 5 | `src/zephyr/shared/shared_services/infra_06/__init__.py` |
 | 6 | `src/zephyr/shared/shared_services/lifecycle/__init__.py` |
-| 7 | `src/zephyr/shared/shared_services/observability_02/__init__.py` |
-| 8 | `src/zephyr/shared/shared_services/queue/__init__.py` |
+| 7 | `src/zephyr/shared/shared_services/queue/__init__.py` |
 
 ## 3. 未注册模块（717个，项目既有问题，非本次施工引入）
 

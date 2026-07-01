@@ -1826,14 +1826,21 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/shared/observability_02/ (health/health_discovery/metrics)'
+  - path: 'src/zephyr/shared/health_discovery.py'
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/shared/shared_services/observability_02/ (health/metrics)'
+  - path: 'src/zephyr/shared/tracing.py'
+    owner_blueprint: 'MOD-INF-016'
+    claim_type: 'section_0_1'
+    declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
+    existence: '已实现'
+    ownership_judgment: ''
+
+  - path: 'src/zephyr/shared/cli_summary.py'
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'

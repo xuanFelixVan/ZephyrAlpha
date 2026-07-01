@@ -799,7 +799,7 @@ class ManualApprovalGate:
 | 决策快照 | data/audit/snapshots_hot/ → snapshots_warm/ → snapshots_archive/ | 快照生命周期 | audit_chain_verifier.py | — |
 | 已知良好哈希 | config/known_good_hashes.yaml | 信任根 | gate_integrity_guard.py | — |
 | 容量压测 | scripts/benchmark/gate_engine_load_gen.py | 容量压测 | — | script-manifest.yaml |
-| Prometheus指标 | src/zephyr/infrastructure/shared_services/observability_02/metrics.py | 指标采集 | MOD-INF-015 | gates/__init__.py |
+| Prometheus指标 | src/zephyr/shared/metrics.py | 指标采集 | MOD-INF-015 | gates/__init__.py |
 | 门禁类型契约 | src/zephyr/shared/contracts/core/gate_types.py | 共享类型定义 | gate_engine.py | contracts/__init__.py |
 
 ---
@@ -1038,7 +1038,7 @@ class ManualApprovalGate:
 | 缺口 | 施工内容 | 预估产出 | 验证方式 |
 |:---:|---------|---------|---------|
 | GAP-C08 | 压测框架：gate_engine_load_gen.py + 5场景+报告生成 | scripts/benchmark/gate_engine_load_gen.py | 跑BM-01~05全部通过 |
-| GAP-C10 | 容量监控：Prometheus metrics + 7告警规则 + Grafana dashboard | src/zephyr/infrastructure/shared_services/observability_02/metrics.py + config/grafana/ | /metrics端点输出+告警规则验证 |
+| GAP-C10 | 容量监控：Prometheus metrics + 7告警规则 + Grafana dashboard | src/zephyr/shared/metrics.py + config/grafana/ | /metrics端点输出+告警规则验证 |
 | GAP-C12 | 热更新：YAML/manifest文件监控+原子替换+模拟验证 | src/zephyr/governance/rule_enforcement/hot_reload.py | 修改G1 YAML→5s内生效+无重启 |
 
 ### 施工Phase规划

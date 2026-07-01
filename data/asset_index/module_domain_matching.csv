@@ -1573,14 +1573,7 @@ src/zephyr/infrastructure/shared_services/observability/cost_tracker.py,,MOD-INF
 src/zephyr/infrastructure/shared_services/observability/failure_matcher.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/observability/notifier.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/observability/trace_decorator.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
-src/zephyr/infrastructure/shared_services/observability_02/__init__.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/health.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/health_discovery.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/logging.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/metrics.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/session_audit.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/token_utils.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/infrastructure/shared_services/observability_02/tracing.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
+src/zephyr/shared/health_discovery.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/infrastructure/shared_services/quality/__init__.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/quality/quality_monitor.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/queue/__init__.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high

@@ -84,8 +84,8 @@ depends_on:
 | 4 | health.py + healthcheck_service.py | §2.7 | 健康监控服务(F20恢复) | 已实现 | |
 | 5 | longevity_monitor.py | §2.7 | 长寿监控(F20恢复) | 已实现 | |
 | 6 | metrics.py | §2.8 | 指标收集(F20恢复) | 已实现 | |
-| 7 | observability_02/ (health/health_discovery/metrics) | §2.7 | 可观测性子模块(F20恢复) | 已实现 | |
-| 8 | shared_services/observability_02/ (health/metrics) | §2.7 | 可观测性代理(F20恢复) | 已实现 | |
+| 7 | health_discovery.py + tracing.py + cli_summary.py | §2.7 | 可观测性辅助(F20恢复,原observability_02/归位shared/根) | 已实现 | |
+| 8 | (原shared_services/observability_02/ 已删除-stale路径) | §2.7 | — | 已废弃 | |
 | 9 | quality/quality_monitor.py | §2.7 | 质量监控代理(F20恢复) | 已实现 | |
 | 10 | sla/sla_monitor.py | §2.7 | SLA监控代理(F20恢复) | 已实现 | |
 | 11 | maintenance/autonomy_monitor.py | §2.7 | 自治监控(F20恢复) | 已实现 | |
