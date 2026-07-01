@@ -65,7 +65,7 @@ class AutoDispatcher:
         }
 
         try:
-            from zephyr.trading.orchestrator.context_bridge import ContextBridge
+            from zephyr.trading.orchestrator.execution.context_bridge import ContextBridge
 
             bridge = ContextBridge()
             bridge.request_context(task_id=task_id, session_id=session_id)
@@ -77,7 +77,7 @@ class AutoDispatcher:
 
         if files_in_scope:
             try:
-                from zephyr.trading.orchestrator.script_runner import ScriptRunner
+                from zephyr.trading.orchestrator.execution.script_runner import ScriptRunner
 
                 runner = ScriptRunner()
                 audit_result = runner.run_audit(task_id, files_in_scope)

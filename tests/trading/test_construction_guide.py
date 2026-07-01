@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.construction_guide import (
+from zephyr.trading.orchestrator.contracts.construction_guide import (
     MOCK_STRATEGIES,
     ConstructionConfig,
     ConstructionGuide,

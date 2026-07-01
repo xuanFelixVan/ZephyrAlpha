@@ -18,8 +18,8 @@ from zephyr.infrastructure.rollback.contract import (
     get_pipeline_action,
     resolve_exit_code,
 )
-from zephyr.trading.orchestrator.contract_registry import ContractRegistry
-from zephyr.trading.orchestrator.contract_router import ContractRouter
+from zephyr.trading.orchestrator.contracts.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contracts.contract_router import ContractRouter
 
 
 def test_ct_rbk_gate_registered():

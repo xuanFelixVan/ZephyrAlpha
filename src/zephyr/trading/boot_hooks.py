@@ -366,7 +366,7 @@ def register_boot_hooks() -> None:
                 if to_status.upper() != "COMPLETED":
                     return
                 from zephyr.governance.persistence.task_repo import TaskRepository
-                from zephyr.trading.orchestrator.memory_writer import archive_to_vms
+                from zephyr.trading.orchestrator.execution.memory_writer import archive_to_vms
 
                 tr = TaskRepository()
                 task = tr.get(task_id)

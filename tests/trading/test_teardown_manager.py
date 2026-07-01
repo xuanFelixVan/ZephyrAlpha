@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.teardown_manager import (
+from zephyr.trading.orchestrator.lifecycle.teardown_manager import (
     CLEANUP_SYSTEMS,
     CleanupTarget,
     TeardownManager,

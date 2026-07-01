@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.housekeeping import HousekeepingManager
+from zephyr.trading.orchestrator.lifecycle.housekeeping import HousekeepingManager
 
 
 class TestHousekeepingManagerInstantiation:

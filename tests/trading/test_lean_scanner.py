@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.lean_scanner import LeanScanner
+from zephyr.trading.orchestrator.quality.lean_scanner import LeanScanner
 
 
 class TestLeanScannerInstantiation:

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.benchmark_runner import BASELINES, BenchmarkRunner
+from zephyr.trading.orchestrator.quality.benchmark_runner import BASELINES, BenchmarkRunner
 
 
 class TestBenchmarkRunnerInstantiation:

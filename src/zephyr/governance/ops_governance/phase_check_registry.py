@@ -394,7 +394,7 @@ def check_contract_compliance() -> GateResult:
         return GateResult.YELLOW
 
     try:
-        from zephyr.trading.orchestrator.contract_registry import AIReadOnlyHint, ContractRegistry
+        from zephyr.trading.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
 
         cr = ContractRegistry()
         contracts = cr.list_all()
@@ -644,7 +644,7 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.trading.orchestrator.chaos_engine import ChaosEngine
+        from zephyr.trading.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
         from zephyr.governance.drift_detection.chaos_injector import ChaosInjector
 
         return GateResult.GREEN
@@ -851,7 +851,7 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.trading.orchestrator.batch_orchestrator import BatchOrchestrator
+        from zephyr.trading.orchestrator.execution.batch_orchestrator import BatchOrchestrator
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         return GateResult.GREEN

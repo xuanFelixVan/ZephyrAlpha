@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.autonomy_guard import AutonomyGuard
+from zephyr.trading.orchestrator.governance.autonomy_guard import AutonomyGuard
 
 
 class TestAutonomyGuard:

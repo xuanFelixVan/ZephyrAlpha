@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.startup_sequencer import (
+from zephyr.trading.orchestrator.lifecycle.startup_sequencer import (
     GLOBAL_TIMEOUT_S,
     STARTUP_COMPONENTS,
     STARTUP_ORDER,

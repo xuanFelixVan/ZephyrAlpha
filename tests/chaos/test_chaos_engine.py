@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.chaos_engine import INJECTION_POINTS, ChaosEngine
+from zephyr.trading.orchestrator.fault_tolerance.chaos_engine import INJECTION_POINTS, ChaosEngine
 
 
 class TestChaosEngineInstantiation:

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from zephyr.trading.orchestrator.risk_registry import (
+from zephyr.trading.orchestrator.governance.risk_registry import (
     RISKS,
     ConflictResolution,
     Risk,

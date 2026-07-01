@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.trading.orchestrator.chaos_engine import (
+from zephyr.trading.orchestrator.fault_tolerance.chaos_engine import (
     ChaosEngine,
     ChaosInjectError,
     FaultRecord,

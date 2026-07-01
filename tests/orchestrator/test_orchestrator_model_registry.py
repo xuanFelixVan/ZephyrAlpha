@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.trading.orchestrator.model_registry import MODELS, ModelRegistry
+from zephyr.trading.orchestrator.governance.model_registry import MODELS, ModelRegistry
 
 
 class TestModelRegistryInstantiation:

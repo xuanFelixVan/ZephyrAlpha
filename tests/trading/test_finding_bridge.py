@@ -14,7 +14,7 @@
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from zephyr.trading.orchestrator.finding_bridge import (
+from zephyr.trading.orchestrator.contracts.finding_bridge import (
     _SEVERITY_MAP,
     finding_to_audit_finding,
     report_finding,

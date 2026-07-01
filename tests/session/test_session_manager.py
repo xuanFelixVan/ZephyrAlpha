@@ -18,7 +18,7 @@ import time
 import pytest
 import yaml
 
-from zephyr.trading.orchestrator.session_manager import (
+from zephyr.trading.orchestrator.lifecycle.session_manager import (
     SessionManager,
     SessionState,
     SessionTransitionError,

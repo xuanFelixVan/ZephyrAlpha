@@ -96,7 +96,7 @@ class DispatchError(Exception):
 class AlertDispatcher:
     def dispatch(self, event: AlertEvent) -> DispatchResult:
         try:
-            from zephyr.trading.orchestrator.alert_handler import AlertHandler
+            from zephyr.trading.orchestrator.contracts.alert_handler import AlertHandler
 
             handler = AlertHandler()
             task_card = handler.handle_alert(event)

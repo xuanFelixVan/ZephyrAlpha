@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "01cb5ff9dbf0d09a",
+      "hash": "0595657d5fe69c91",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "415e5214fa473d52",
+      "hash": "3c04368961209836",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -51,7 +51,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "6a0dc887c6275c43",
+      "hash": "03f3247c3068a514",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "346fe64fdfa5fd53",
+      "hash": "89d8ee5813883668",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -71,7 +71,7 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
     "src/zephyr/governance/commit_gates/__init__.py": {
-      "hash": "5287e35ebfb456d8",
+      "hash": "625af84e5383f73e",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: __init__.py）"
     },
@@ -116,6 +116,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: session_required_gate.py）"
     }
   },
-  "registered_at": "2026-07-01T15:35:43.173047+00:00",
+  "registered_at": "2026-07-01T22:17:12.760015+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }

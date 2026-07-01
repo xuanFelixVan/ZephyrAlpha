@@ -556,6 +556,29 @@ CREATE TRIGGER chk_nodes_blueprint_id_update
     BEFORE UPDATE OF blueprint_id ON nodes
     FOR EACH ROW EXECUTE FUNCTION check_blueprint_id_three_track();
 
+-- 6.3 edges 表三写分区硬约束（S1.3）
+-- 三写分区：
+--   1. YAML sync (sync_yaml_to_depgraph.py): dep_maturity='design', valid_since IS NOT NULL (DELETE + INSERT)
+--   2. apply_depgraph.py: dep_maturity='design', valid_since IS NULL (INSERT + targeted DELETE by edge_id)
+--   3. generate_project_depgraph.py: dep_maturity='production' (DELETE + INSERT)
+-- 保护：禁止删除 apply_depgraph.py 写入的 design edge (valid_since IS NULL)，
+--        除非连接设置了 app.allow_delete_apply_depgraph_edges=on（apply_depgraph.py 自动设置）。
+CREATE OR REPLACE FUNCTION protect_apply_depgraph_edges()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.dep_maturity = 'design' AND OLD.valid_since IS NULL THEN
+        IF current_setting('app.allow_delete_apply_depgraph_edges', true) IS DISTINCT FROM 'on' THEN
+            RAISE EXCEPTION 'apply_depgraph design edge protected (dep_maturity=design, valid_since IS NULL). Set app.allow_delete_apply_depgraph_edges=on to delete (apply_depgraph.py does this automatically).';
+        END IF;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_edges_protect_apply_depgraph
+    BEFORE DELETE ON edges
+    FOR EACH ROW EXECUTE FUNCTION protect_apply_depgraph_edges();
+
 -- =====================================================================
 -- DDL 翻译完成。统计对照:
 --   SQLite 表: 25 → PG 表: 25 ✓

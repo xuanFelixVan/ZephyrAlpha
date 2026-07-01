@@ -1,7 +1,7 @@
 # [A_module] module_id=MOD-ORC_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-from zephyr.trading.orchestrator.alert_handler import AlertHandler
-from zephyr.trading.orchestrator.context_bridge import ContextBridge
-from zephyr.trading.orchestrator.script_runner import ScriptRunner
+from zephyr.trading.orchestrator.contracts.alert_handler import AlertHandler
+from zephyr.trading.orchestrator.execution.context_bridge import ContextBridge
+from zephyr.trading.orchestrator.execution.script_runner import ScriptRunner
 
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator
@@ -196,6 +196,6 @@ __all__.append("ContextBridge")
 
 __all__.append("ScriptRunner")
 
-from zephyr.trading.orchestrator.memory_writer import MemoryWriter, archive_to_vms
+from zephyr.trading.orchestrator.execution.memory_writer import MemoryWriter, archive_to_vms
 
 __all__.append("MemoryWriter")

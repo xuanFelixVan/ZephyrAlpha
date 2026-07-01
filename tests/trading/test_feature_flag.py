@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.feature_flag import FeatureFlag, FeatureFlagManager
+from zephyr.trading.orchestrator.governance.feature_flag import FeatureFlag, FeatureFlagManager
 
 
 class TestFeatureFlagModel:
