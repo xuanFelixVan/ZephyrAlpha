@@ -14,9 +14,11 @@ validate_commit_gateway.py（GATE-COMMIT-GW worktree 放行）
 测试组：
 - test_two_sessions_separate_worktrees: 两 session 各建独立 worktree，路径不同
 - test_worktree_commit_isolation: worktree 内 commit 不影响主工作区
+- test_worktree_commit_file_deletion: 文件删除同步——主工作区删除 tracked 文件，worktree commit 同步删除
 - test_worktree_mutual_isolation: A/B worktree 互不干扰
 - test_worktree_merge_back: merge 回主分支后主工作区出现改动
 - test_worktree_abort_discards: abort 丢弃修改并清理 worktree
+- test_worktree_abort_cleans_main_workdir: abort with files 清理主工作区残留（君子协定模式）
 - test_end_to_end_lifecycle: 完整生命周期（建→commit→merge→abort→清理）
 """
 from __future__ import annotations
@@ -277,6 +279,28 @@ def test_worktree_abort_discards():
 
     # 主工作区不应有 B 的文件
     assert not (REPO_ROOT / _TEST_FILE_B).exists(), "主工作区不应有 B 的文件"
+
+
+def test_worktree_abort_cleans_main_workdir():
+    """abort with files 参数清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）。"""
+    sid = "sess-pytest-abort-files"
+    r = session_worktree_start(sid)
+    assert r.get("worktree_path"), f"start 失败: {r}"
+
+    # 模拟 AI 用 Write 创建新文件到项目根（untracked）
+    new_file = "tests/governance/rule_enforcement/_wt_abort_main.json"
+    new_path = REPO_ROOT / new_file
+    new_path.parent.mkdir(parents=True, exist_ok=True)
+    new_path.write_text('{"abort_test": true}\n', encoding="utf-8")
+    assert new_path.exists(), "文件未创建"
+
+    # abort with files——应清理主工作区 untracked 文件
+    a = session_worktree_abort(sid, files=[new_file])
+    assert a.get("aborted"), f"abort 失败: {a}"
+    assert a.get("main_cleaned") == 1, f"应清理 1 个文件: {a}"
+
+    # 验证 untracked 文件已被删除
+    assert not new_path.exists(), "主工作区 untracked 文件未被清理"
 
 
 def test_end_to_end_lifecycle():

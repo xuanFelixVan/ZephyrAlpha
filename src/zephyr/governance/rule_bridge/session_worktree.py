@@ -576,14 +576,23 @@ def session_worktree_merge(
 
 def session_worktree_abort(
     session_id: str,
+    files: list[str] | None = None,
     project_root: str | Path | None = None,
 ) -> dict:
     """放弃 worktree 工作：丢弃修改 + 清理 worktree + 注销 session。
 
     **警告**：此操作丢弃 worktree 内所有未提交/未 merge 的修改。
 
+    君子协定模式下，AI 的 Edit/Write 改动留在主工作区（项目根）。abort 只清理
+    worktree 不会自动清理主工作区残留。传入 files 参数可同时清理主工作区：
+    - tracked 文件：git checkout -- 恢复到 HEAD（丢弃 AI 的修改）
+    - untracked 文件：物理删除（丢弃 AI 创建的新文件）
+
     Args:
         session_id: 已注册的 session_id。
+        files: AI 修改/创建的文件列表（相对路径或绝对路径）。传入时同时清理主工作区。
+            为 None 时仅清理 worktree（向后兼容）。
+        project_root: 项目根目录（默认 REPO_ROOT）。
 
     Returns:
         {
@@ -591,6 +600,7 @@ def session_worktree_abort(
             "aborted": bool,
             "message": str,
             "unregistered": bool,
+            "main_cleaned": int,    # 主工作区清理的文件数（files 非 None 时）
         }
     """
     root = Path(project_root) if project_root else REPO_ROOT
@@ -599,11 +609,65 @@ def session_worktree_abort(
 
     aborted = False
     msg = ""
+    main_cleaned = 0
+
+    # 清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）
+    if files:
+        rel_files: list[str] = []
+        for f in files:
+            p = Path(f)
+            if p.is_absolute():
+                try:
+                    rel = p.relative_to(root)
+                    rel_files.append(str(rel).replace("\\", "/"))
+                except ValueError:
+                    rel_files.append(str(p).replace("\\", "/"))
+            else:
+                rel_files.append(str(p).replace("\\", "/"))
+
+        # 批量查询 tracked 文件
+        tracked_r = subprocess.run(
+            ["git", "ls-files", "--"] + rel_files,
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=60,
+        )
+        tracked_files: set[str] = set()
+        if tracked_r.returncode == 0 and tracked_r.stdout.strip():
+            tracked_files = {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
+
+        to_checkout: list[str] = []
+        for rel_file in rel_files:
+            main_file = root / rel_file
+            if rel_file in tracked_files:
+                # tracked 文件——用 git checkout 恢复到 HEAD（仅当有改动时才需要）
+                to_checkout.append(rel_file)
+                main_cleaned += 1
+            elif main_file.exists():
+                # untracked 文件——物理删除
+                try:
+                    main_file.unlink()
+                    main_cleaned += 1
+                except OSError:
+                    try:
+                        os.chmod(str(main_file), 0o644)
+                        main_file.unlink()
+                        main_cleaned += 1
+                    except OSError:
+                        pass  # 尽力而为
+
+        if to_checkout:
+            subprocess.run(
+                ["git", "checkout", "--"] + to_checkout,
+                cwd=str(root), capture_output=True,
+            )
 
     try:
         aborted = manager.cleanup_session_worktree(session_id)
         if aborted:
-            msg = "worktree 已丢弃并清理"
+            parts = ["worktree 已丢弃并清理"]
+            if main_cleaned > 0:
+                parts.append(f"（主工作区清理 {main_cleaned} 个文件）")
+            msg = "".join(parts)
         else:
             msg = "worktree 不存在或清理失败"
     except WorktreeError as e:
@@ -622,6 +686,7 @@ def session_worktree_abort(
         "aborted": aborted,
         "message": msg,
         "unregistered": unregistered,
+        "main_cleaned": main_cleaned,
     }
 
 
