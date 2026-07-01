@@ -2202,7 +2202,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 三方一致性检查（frontmatter vs 正文blockquote vs document-metadata-index-registry.yaml
+  description: 三方一致性检查（frontmatter vs 正文blockquote vs rule_catalog_registry.yaml
     的 status/version 对账）
   tags:
   - Critical

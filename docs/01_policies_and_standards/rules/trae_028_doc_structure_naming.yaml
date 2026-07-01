@@ -1047,6 +1047,11 @@ sections:
       fail: 其他格式(既非layer-master轨也非domain-functional派生轨)
       rationale: 双轨制对标K8s name/UID分离(layer-master≈UID稳定不透明+派生轨≈name语义可读);调和L1038(序号必填)与派生规则(派生序号可选)的历史矛盾
     - type: constraint
+      check: 标识符编号格式（ARCH/MOD/PS-REG/GOV-DOC/D-XXX等）
+      pass: 所有标识符编号一律大写（ARCH-NNN/MOD-{LAYER}-{SEQ}/PS-REG-NNN/GOV-DOC-NNN/D-XXX_YYY/SH-{ABBR}-{NNN}/FE-L{N}-{ABBR}-{NNN}）;标识符编号是YAML/DB中的ID字段值,不是文件名;大写用于与snake_case文件名/字段名视觉区分
+      fail: 小写标识符编号(arch-033/mod-inf-006/ps-reg-002等)
+      rationale: 标识符编号与文件名/目录名/字段名分离——后者强制snake_case小写(跨平台兼容Windows大小写不敏感+Linux大小写敏感的import路径坑+PEP8),前者大写用于视觉区分和与文件名解耦;大写标识符不会出现在文件名上(文件名用snake_case如mod_inf_039_blueprint.yaml)
+    - type: constraint
       check: 文件名格式
       pass: 全小写snake_case;适用于YAML/JSON/MD/所有文件类型;禁止kebab-case(连字符);禁止大写(AGENTS.md白名单除外)
       fail: kebab-case或大写文件名
@@ -1070,7 +1075,7 @@ sections:
     - type: mandatory
       step: 所有命名规则以本文件为唯一真源;修改命名规则必须先修改本文件
     - type: mandatory
-      step: 域ID保持大写D-XXX_YYY格式(标识符不是文件名);统一使用下划线分隔业务语义片段(禁止连字符);下划线不表示父子层级,所有域平级(见域ID语义完整性condition)
+      step: 域ID/模块ID/ARCH议题编号/规则ID等所有标识符编号保持大写格式(标识符不是文件名,与snake_case文件名解耦);统一使用下划线分隔业务语义片段(禁止连字符);下划线不表示父子层级,所有域平级(见域ID语义完整性condition)
     - type: mandatory
       step: 文件名/目录名统一snake_case(全项目统一下划线,一条规则零例外)
     - type: mandatory

@@ -126,14 +126,16 @@ registered_ids:
     path: "docs/01_policies_and_standards/_registry/catalogs/_index.yaml"
     status: active
   - module_id: PS-REG-002
-    title: "规则文档主注册表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
-    status: active
+    title: "规则路径目录（已合并至 PS-REG-018）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
+    status: superseded
+    superseded_by: PS-REG-018
   - module_id: PS-REG-003
-    title: "完整文档清单（SSoT: document-metadata-index-registry.yaml）"
-    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
-    status: active
-    note: "2026-05-03 R5 审计：governance-rules-master-registry.yaml 同样已废弃（AGENTS.md §1），更新为 document-metadata-index-registry.yaml（当前唯一 SSoT）"
+    title: "完整文档清单（已合并至 PS-REG-018 rule_catalog_registry.yaml）"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
+    status: superseded
+    superseded_by: PS-REG-018
+    note: "2026-06-26 v2.3.0：document-metadata-index-registry.yaml 删除（与 rule_catalog_registry.yaml 同源同数据真重复），职能由 PS-REG-018 承接"
   - module_id: PS-REG-004
     title: "Architecture Compliance Contract"
     path: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"

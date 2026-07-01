@@ -157,7 +157,7 @@ RESPONSIBILITY_MAP = {
     ),
     # === Level 3 ===
     "01_policies_and_standards/_registry/catalogs": (
-        "脚本自动生成的 YAML 注册表（document-metadata-index-registry.yaml / master-document-inventory-registry.md / task-card-meta-registry.md）",
+        "脚本自动生成的 YAML 注册表（rule_catalog_registry.yaml / master-document-inventory-registry.md / task-card-meta-registry.md）",
         [
             ("手动编辑的文件", "governance/ 对应子域"),
             (".md 文件", "governance/ 或 operational/"),

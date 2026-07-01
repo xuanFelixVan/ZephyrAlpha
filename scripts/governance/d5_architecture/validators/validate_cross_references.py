@@ -499,7 +499,7 @@ def check_dim9_deprecated_refs() -> None:
     1. 扫描 01_policies_and_standards/ 下所有 .md/.yaml 文件
     2. 在文件内容中搜索废弃文件名
     3. 排除自身引用（废弃文件引用自己）和桩文件的重定向提示
-    4. 排除 document-metadata-index-registry.yaml（auto-generated，含历史路径记录）
+    4. 排除 rule_catalog_registry.yaml（auto-generated，含历史路径记录）
     5. 每个源文件+废弃文件对只报告一次
     """
     deprecated = _build_deprecated_file_set()
@@ -511,7 +511,7 @@ def check_dim9_deprecated_refs() -> None:
     scan_files = iter_files(GOV_DOCS_DIR, {".md", ".yaml", ".yml"}, EXCLUDE_DIRS)
 
     for f in scan_files:
-        if f.name in ("document-metadata-index-registry.yaml",):
+        if f.name in ("rule_catalog_registry.yaml",):
             continue
 
         try:
