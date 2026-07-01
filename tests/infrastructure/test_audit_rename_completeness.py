@@ -31,7 +31,7 @@ if _GOV_DIR not in sys.path:
 os.environ.setdefault("ZEPHYR_SKIP_BACKUP_CHECK", "1")
 
 from apply_depgraph import cmd_rename_domain, _post_rename_residual_check  # noqa: E402
-from audit_rename_completeness import (  # noqa: E402
+from d8_doc_sync.audit_rename_completeness import (  # noqa: E402
     scan_residual, scan_files_residual, EXCLUDE_COLUMNS,
 )
 

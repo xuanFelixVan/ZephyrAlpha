@@ -796,7 +796,7 @@ def run_all_dimensions(
 
     if _USE_BULKHEAD:
         try:
-            from _concurrency import BulkheadExecutorV2
+            from meta._concurrency import BulkheadExecutorV2
 
             bulkhead = BulkheadExecutorV2()
 

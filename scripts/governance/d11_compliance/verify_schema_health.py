@@ -64,7 +64,7 @@ from zephyr.governance import depgraph_schema  # noqa: E402
 
 # READONLY_TABLES 真源在 sync_yaml_to_depgraph.py（创建只读触发器的地方），
 # 此处动态导入消除硬编码副本，防止真源变更后漂移（红蓝对抗修复-严重1）
-from sync_yaml_to_depgraph import READONLY_TABLES  # noqa: E402
+from d8_doc_sync.sync_yaml_to_depgraph import READONLY_TABLES  # noqa: E402
 
 
 def parse_ddl_columns(ddl: str) -> list[str]:

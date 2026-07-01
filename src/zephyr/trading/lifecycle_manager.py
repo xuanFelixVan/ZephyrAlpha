@@ -127,7 +127,7 @@ class LifecycleManager:
         _governance_dir = str(REPO_ROOT / "scripts" / "governance")
         if _governance_dir not in _sys.path:
             _sys.path.insert(0, _governance_dir)
-        from governance_watchdog import GovernanceWatchdog as _GovernanceWatchdog
+        from meta.governance_watchdog import GovernanceWatchdog as _GovernanceWatchdog
         self._governance_watchdog = _GovernanceWatchdog()
         self._governance_watchdog.run(daemon=True)
 
