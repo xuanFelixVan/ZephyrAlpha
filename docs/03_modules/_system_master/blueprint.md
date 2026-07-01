@@ -4,6 +4,7 @@ submodule_paths_scope: _system_master
 title: "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"
 doc_type: blueprint
 status: Active
+activation_phase: current
 version: "0.17.0"
 layer: cross_layer
 layer_name: system
