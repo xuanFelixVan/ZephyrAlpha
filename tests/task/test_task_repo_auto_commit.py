@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0448 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] tests.test_task_repo_auto_commit
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

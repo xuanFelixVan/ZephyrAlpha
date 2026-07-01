@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0706 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] tests.test_db_query
 # [INVARIANTS] 只读查询; 不修改任务状态; QueryMixin 无副作用
 # [MODIFY-GUARD] task_repo.py 组合入口; base_repo.py _row_to_taskcard

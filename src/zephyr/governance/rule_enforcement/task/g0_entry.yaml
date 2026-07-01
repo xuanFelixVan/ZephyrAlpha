@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -15,7 +15,7 @@
 # 任务入口门禁 —— 所有 AI/人工作业任务进入系统前的准入检查
 # SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → G0
 
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 gate_id: G0
 gate_name: task_entry
 title: "G0 Task Entry Gate"

@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # 架构必要性门禁 —— 新模块创建前的架构必要性质询
 # SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-001
 
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 gate_id: MAD-001
 gate_name: architecture_necessity
 title: "MAD-001 Architecture Necessity"

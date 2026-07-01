@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1857 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-006 | docs/03_modules/_domain-infra_runtime/task-system/blueprint.md
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain-infra_runtime/task-system/blueprint.md
 # [MODULE] tests.unit.db.test_dm400_stale_task_fix
 # [INVARIANTS] All tests must pass independently; no external state dependency
 # [MODIFY-GUARD] none
