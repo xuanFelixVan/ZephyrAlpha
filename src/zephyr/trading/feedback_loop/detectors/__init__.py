@@ -143,7 +143,6 @@ __all__ = [
     "placebo_action_detector",
     "positive_feedback_defense",
     "recursive_diagnosis_trust_evaluator",
-    "regime_detector",
     "regulatory_audit",
     "resolution_tracker",
     "rumor_noise_filter",

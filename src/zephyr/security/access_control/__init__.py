@@ -29,7 +29,6 @@ __all__ = [
     "approver_check",
     "asymmetric_audit",
     "auto_maintenance",
-    "blind_spot_tracker",
     "blueprint_fidelity",
     "bootstrap_superadmin",
     "build_sanitizer",

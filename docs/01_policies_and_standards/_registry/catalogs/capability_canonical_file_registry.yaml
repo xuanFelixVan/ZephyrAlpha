@@ -1167,7 +1167,7 @@ capabilities:
       AI 搜 "architecture_contracts" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能
       前会被引导到本模块。
   - capability_id: drift_detection_architecture_principles
-    canonical_override: src/zephyr/governance/drift_detection/architecture_principles.py
+    canonical_override: src/zephyr/governance/architecture_governance/architecture_principles.py
     aliases:
       - architecture_principles
     description: >-

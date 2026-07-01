@@ -23,6 +23,5 @@ _SUBMODULES = [
     "gradual_poisoning_detector",
     "diminishing_returns_detector",
     "context_window_contamination_detector",
-    "regime_detector",
     "trend_cycle_separator",
 ]

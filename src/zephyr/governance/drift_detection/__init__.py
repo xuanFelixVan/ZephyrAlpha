@@ -509,7 +509,6 @@ __all__ = [
     "ai_context_injector",
     "alert_router",
     "apply_degradation",
-    "architecture_principles",
     "audit_gitignore",
     "auto_fix_compat",
     "backcompat_checker",

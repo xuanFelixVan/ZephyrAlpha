@@ -15,7 +15,6 @@
 from . import (
     action_selector,
     agent_lifecycle,
-    alert_router,
     api_version_contract,
     global_action_scheduler,
     incident_priority_triage_automator,
@@ -30,7 +29,6 @@ from . import (
 __all__ = [
     "action_selector",
     "agent_lifecycle",
-    "alert_router",
     "api_version_contract",
     "global_action_scheduler",
     "incident_priority_triage_automator",

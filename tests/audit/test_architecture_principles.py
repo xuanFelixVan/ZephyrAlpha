@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.governance.drift_detection.architecture_principles import (
+from zephyr.governance.architecture_governance.architecture_principles import (
     IRON_LAW_DEFS,
     PRINCIPLE_DEFS,
     ArchPrinciple,
@@ -105,7 +105,7 @@ class TestPrincipleDefs:
         assert len(refs) == len(set(refs)), "Duplicate kb_ref values found"
 
     def test_p1_ssot_kb_ref(self):
-        assert PRINCIPLE_DEFS[ArchPrinciple.P1_SSOT]["kb_ref"] == "KBG-0001"
+        assert PRINCIPLE_DEFS[ArchPrinciple.P1_SSOT]["kb_ref"] == "ADR-0001"
 
     def test_p5_blueprint_first_kb_ref(self):
         assert PRINCIPLE_DEFS[ArchPrinciple.P5_BLUEPRINT_FIRST]["kb_ref"] == "G6"
@@ -188,19 +188,19 @@ class TestPrincpledCheck:
 
 class TestGetPrincipleByKbRef:
     def test_found_adr0001(self):
-        result = get_principle_by_kb_ref("KBG-0001")
+        result = get_principle_by_kb_ref("ADR-0001")
         assert result == ArchPrinciple.P1_SSOT
 
     def test_found_adr0002(self):
-        result = get_principle_by_kb_ref("KBG-0002")
+        result = get_principle_by_kb_ref("ADR-0002")
         assert result == ArchPrinciple.P2_YAML_SCHEMA
 
     def test_found_adr0003(self):
-        result = get_principle_by_kb_ref("KBG-0003")
+        result = get_principle_by_kb_ref("ADR-0003")
         assert result == ArchPrinciple.P3_DUAL_AI
 
     def test_found_adr0004(self):
-        result = get_principle_by_kb_ref("KBG-0004")
+        result = get_principle_by_kb_ref("ADR-0004")
         assert result == ArchPrinciple.P4_OCP
 
     def test_found_g6(self):
@@ -235,17 +235,17 @@ class TestValidateAgainstPrinciples:
         assert validate_against_principles(["v1", "v2", "v3"]) is False
 
     def test_logs_warning_on_violation(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
             validate_against_principles(["test violation"])
         assert len(caplog.records) >= 1
         assert "test violation" in caplog.text
 
     def test_no_log_on_no_violations(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
             validate_against_principles([])
         assert len(caplog.records) == 0
 
     def test_logs_each_violation_separately(self, caplog):
-        with caplog.at_level(logging.WARNING, logger="zephyr.governance.drift_detection.architecture_principles"):
+        with caplog.at_level(logging.WARNING, logger="zephyr.governance.architecture_governance.architecture_principles"):
             validate_against_principles(["v1", "v2"])
         assert len(caplog.records) == 2
