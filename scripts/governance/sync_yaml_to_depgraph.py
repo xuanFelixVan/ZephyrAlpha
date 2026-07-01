@@ -878,7 +878,7 @@ def sync_infrastructure_registry(cur):
             """
         INSERT INTO infrastructure_components
         (component_id, component_type, address, health_check, dependencies, sla, status)
-        VALUES (%s, %s, %s, %s, %s, %s, 'active')
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT(component_id) DO UPDATE SET
             component_type=excluded.component_type,
             address=excluded.address,
@@ -894,6 +894,7 @@ def sync_infrastructure_registry(cur):
                 comp.get("health_check", ""),
                 str(comp.get("dependency_of", comp.get("dependencies", []))),
                 comp.get("sla", ""),
+                comp.get("status", "active"),
             ),
         )
         synced += 1
