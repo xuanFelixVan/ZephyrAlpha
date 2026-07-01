@@ -90,7 +90,6 @@ __all__ = [
     "TaskDispatchProtocol",
     "TaskStatus",
     "a2a_card_registry",
-    "card_registry",
     "layer1_discovery",
     "layer2_communication",
     "layer3_coordination",
