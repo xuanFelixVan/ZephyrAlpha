@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: "MOD-INF-035"
 submodule_path: src/zephyr/trading/autopilot
 title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
@@ -54,7 +54,6 @@ references:
   - {id: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——大脑消费上下文注入"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——大脑异常升级路径"}
-ssot_ref: "specs/auto-runtime-core/spec.md"
 ---
 
 # AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心
@@ -560,7 +559,7 @@ class WorkDAG(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新版本+generation+codification_level | 规格化完成 |
-| 3 | spec.md | `D:\ZephyrAlpha\specs\auto-runtime-core\spec.md` | 追加容量需求章节 | spec 未含容量设计 |
+| 3 | spec.md | 见本蓝图附录A | 追加容量需求章节 | spec 未含容量设计 |
 | 4 | capacity_params.yaml | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 追加 brain_dream_cycle_memory_mb / boot_timeout_ms / recovery_timeout_ms | 容量升级参数 |
 
 ---
@@ -953,7 +952,7 @@ STEP 3: 拆分后验证
 | 大脑接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
-| 详细规范 | [spec.md](file:///D:/ZephyrAlpha/specs/auto-runtime-core/spec.md) | — |
+| 详细规范 | 见本蓝图附录A | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 
@@ -1138,3 +1137,676 @@ STEP 3: 拆分后验证
 | §3.1 自动接入子系统 | §3.1.5 规模适配：增量检测 | ModuleOnboardingScanner 增量 diff 设计；自动注册 API |
 | §3.1 节律调度 | §3.1.5 规模适配：轮转策略 | DreamCycle 按日轮转~215 模块；夜间窗口溢出截断 |
 | §3.1 健康监控与自愈 | §3.1.5 规模适配：分层检查 | 核心模块 30s / 其他模块 5min；异常触发深检 |
+
+---
+
+## 附录 A：详细设计规范（从 specifications/auto_runtime_core/spec.md 迁移，2026-07-01）
+
+> 以下内容原存于 specifications/auto_runtime_core/spec.md（MOD-SPEC-002），已收敛至本蓝图。
+> 系统级全局清单（26包/31蓝图/三层AI工作分类）属于 SYS-MASTER 范畴，不在此重复。
+> 系统级全局清单（§2 26包清单、§3 三层AI工作分类、§7 26包集成点）属于 SYS-MASTER 范畴，已省略。
+
+### A.1 责任地图（原 §0.1：AutoRuntime Core 与其他编排器的职责边界）
+
+#### Q0.1: AutoRuntime Core 是不是系统中唯一一个？有没有功能唯一责？
+
+**是的。** AutoRuntime Core 是整个 ZephyrAlpha 项目中**唯一承担"系统大脑"职责的组件**。
+
+```
+ZephyrAlpha 责任地图：
+┌──────────────────────────────────────────────────────┐
+│ AutoRuntime Core ← 唯一的系统大脑                      │
+│   职责：三层运行时编排、节律调度、健康监控、审计日志       │
+│   职责：工作编排（WorkOrchestrator）                    │
+│   职责：自动接入（ModuleOnboardingScanner）             │
+│                                                      │
+│ PipelineOrchestrator ← 管线内部编排（M1-M11）          │
+│   职责：单条管线的阶段流转                              │
+│                                                      │
+│ AgentOrchestrator ← Agent 生命周期                    │
+│   职责：单个 Agent 的创建/运行/销毁                     │
+│                                                      │
+│ DaemonRegistry ← 守护进程注册                          │
+│   职责：进程级资源监控                                 │
+│                                                      │
+│ Gate Engine ← 安全闸门                                │
+│   职责：策略准入                                       │
+│                                                      │
+│ TaskRepository ← 任务状态机（10状态）                   │
+│   职责：任务 CRUD + 状态流转审计                        │
+│                                                      │
+│ WorkOrchestrator ← 工作编排（AutoRuntime 子系统）      │
+│   职责：决定什么工作、什么时候、用什么模型、什么顺序       │
+└──────────────────────────────────────────────────────┘
+```
+
+### A.2 业界实践对标表（原 §0.2：13项业界实践→ARC对应表）
+
+#### Q0.2: 专业机构和氛围编程社区是怎么做的？
+
+| 业界实践 | 来源 | 核心思想 | ARC 对应 |
+|----------|------|----------|----------|
+| **Agent Card + 能力发现** | Google A2A Protocol | AgentCard 声明能力、技能、端点 URL；自动发现 | CapabilityRegistry + CapabilityCard |
+| **Orchestrator-Ledger** | Microsoft Magentic-One | 单一 Orchestrator 制定计划→分派→跟踪→反思 | AutoRuntimeCore + NightShiftQueue |
+| **Supervisor Pattern** | LangGraph (LangChain) | 中央主管路由，Worker 子图隔离 | MAPE-K 调和循环 |
+| **Level-Triggered Reconciliation** | K8s Controller Pattern | 只看"spec vs actual 的差距"；Idempotent | HealthMonitor + MAPE-K Loop |
+| **Stop Gate** | Claude Code 45天实验 | 被动质量闸门——阻止 AI 什么都不做就退出 | StopGate |
+| **Dream Cycle** | Claude Code 自主实验 | 归档→提取模式→遗忘细节→语义索引→commit | CircadianScheduler 夜间归档 |
+| **Filesystem as Memory** | Claude Code / Vibe Coding | 认知外化到文件系统 | AiAuditLogger JSONL + NightShiftQueue |
+| **Cursor Rules / AGENTS.md** | Cursor IDE 社区 | 持久化上下文给每次 AI 会话 | AGENTS.md + CapabilityRegistry |
+| **MCP Tools/Resources/Prompts** | Anthropic MCP | 三类原语：Tools/Resources/Prompts | CapabilityCard.input/output_schema |
+| **Finalizer** | K8s Operator Pattern | CR 删除前拦截，做清理工作 | Finalizer |
+| **Self-Improving Agent** | 45天 Claude Code 实验 | 自我反思→学习教训→编码改进→提交→部署 | Feedback Loop |
+| **Work Graph / DAG** | Airflow / Prefect / Temporal | 工作编排为 DAG，依赖管理+并行+重试 | WorkOrchestrator |
+| **Solo Operator AIOS** | inonx.com 中央内核架构 | Agent 层 + Memory 层 + Governance 层 | AutoRuntime Core 整体 |
+
+### A.3 WorkOrchestrator 完整代码骨架（原 §4）
+
+#### 4.1 为什么需要工作编排？
+
+300+ 文件、26 个包、上百个可自动化工作。如果没有编排系统：
+- 工作之间有依赖（先入库→再分析→再激活），没有编排会乱序
+- 同类工作可以并行（5 个嵌入任务同时跑），没有编排会串行
+- 优先级不同（P0 合规检查 > P2 代码去重），没有编排会抢资源
+- 工作量波动（夜班多、白天少），没有编排会浪费或过载
+
+#### 4.2 设计理念
+
+借鉴 **Airflow DAG** + **Temporal Workflow** + **K8s Job** 三种模式：
+
+| 模式 | 来源 | 核心思想 | ARC 采用 |
+|------|------|----------|----------|
+| DAG 依赖图 | Airflow / Prefect | 工作定义为 DAG，节点=任务，边=依赖 | WorkDAG |
+| 持久化执行 | Temporal | 工作流状态持久化，崩溃后可恢复 | TaskRepository 10 状态机 |
+| 优先级抢占 | K8s Pod PriorityClass | P0 抢占 P2 资源 | PriorityPreemption |
+| 并行槽位 | K8s Parallelism | 控制同时运行的任务数 | ConcurrencySlot |
+| 工作窃取 | Go Work Stealing | 空闲层窃取其他层的任务 | LayerWorkStealing |
+
+#### 4.3 WorkOrchestrator 架构
+
+```python
+class WorkOrchestrator:
+    """工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。
+
+    借鉴:
+      - Airflow: DAG 依赖图
+      - Temporal: 持久化工作流
+      - K8s Job: 优先级抢占 + 并行控制
+    """
+
+    def __init__(self, task_repo: TaskRepository, capability_registry: CapabilityRegistry)
+
+    # ---- DAG 管理 ----
+    def register_dag(self, dag: WorkDAG) -> None
+    def get_dag(self, dag_id: str) -> WorkDAG | None
+    def list_dags(self) -> list[WorkDAG]
+
+    # ---- 执行 ----
+    def submit(self, work: WorkItem) -> str              # 返回 task_id
+    def submit_dag(self, dag_id: str, params: dict) -> str
+    def cancel(self, task_id: str) -> bool
+
+    # ---- 调度 ----
+    def schedule_next(self) -> list[WorkItem]             # 返回可执行的任务
+    def resolve_layer(self, work: WorkItem) -> str        # 决定跑在哪一层
+    def resolve_priority(self, work: WorkItem) -> str     # P0/P1/P2
+
+    # ---- 并行控制 ----
+    def acquire_slot(self, layer: str) -> bool            # 获取执行槽位
+    def release_slot(self, layer: str) -> None            # 释放槽位
+    def available_slots(self, layer: str) -> int
+
+    # ---- 状态 ----
+    def status(self, task_id: str) -> TaskStatus
+    def pending_count(self) -> dict[str, int]             # 按层统计
+    def running_count(self) -> dict[str, int]
+```
+
+```python
+class WorkDAG(BaseModel):
+    """工作 DAG——定义工作之间的依赖关系。"""
+    dag_id: str
+    name: str
+    description: str
+    nodes: list[WorkNode]
+    edges: list[WorkEdge]
+    default_layer: str                    # trae / local / api
+    default_priority: str                 # P0 / P1 / P2
+    max_parallelism: int = 3
+    retry_on_failure: int = 2
+    timeout_minutes: int = 60
+
+class WorkNode(BaseModel):
+    """DAG 节点——一个可执行的工作单元。"""
+    node_id: str
+    capability_id: str                    # 对应 CapabilityCard.capability_id
+    work_type: str                        # embedding / inference / search / ...
+    params: dict                          # 输入参数
+    layer_override: str | None = None     # 强制指定层
+    priority_override: str | None = None  # 强制指定优先级
+
+class WorkEdge(BaseModel):
+    """DAG 边——节点间依赖。"""
+    from_node: str
+    to_node: str
+    condition: str = "success"            # success / failure / always
+```
+
+```python
+class WorkItem(BaseModel):
+    """工作项——提交到编排系统的最小单元。"""
+    item_id: str
+    dag_id: str | None                    # 所属 DAG（独立任务为 None）
+    node_id: str | None                   # 所属节点
+    capability_id: str
+    work_type: str
+    params: dict
+    layer: str                            # trae / local / api
+    priority: str                         # P0 / P1 / P2
+    status: str                           # PENDING / READY / RUNNING / COMPLETED / FAILED / ...
+    depends_on: list[str]                 # 依赖的 item_id 列表
+    created_at: str
+    scheduled_at: str | None = None
+    started_at: str | None = None
+    completed_at: str | None = None
+    result: dict | None = None
+    error: str | None = None
+```
+
+#### 4.4 与现有 TaskRepository / TaskQueue / TaskScheduler 的衔接
+
+```
+                    WorkOrchestrator
+                    （工作编排子系统）
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+    submit()       schedule_next()   resolve_layer()
+          │              │              │
+          ▼              ▼              ▼
+    TaskRepository   TaskScheduler   _resolve_execution_mode()
+    (10状态机)       (定时调度)       (三层决策)
+          │              │              │
+          └──────┬───────┘              │
+                 ▼                      │
+            TaskQueue                   │
+            (后台轮询自动分发)            │
+                 │                      │
+          ┌──────┴──────┐               │
+          ▼             ▼               ▼
+     L1(Trae)     L2(Local)       L3(API)
+```
+
+**边界清晰**：
+
+| 组件 | 职责 | 不做什么 |
+|------|------|----------|
+| **WorkOrchestrator** | 决定什么工作、什么顺序、什么层、什么优先级 | 不管理任务状态机 |
+| **TaskRepository** | 管理 10 状态机（PENDING→IN_PROGRESS→COMPLETED→VERIFIED） | 不决定跑哪层 |
+| **TaskQueue** | 后台轮询 READY 任务，自动 dispatch | 不决定优先级 |
+| **TaskScheduler** | 定时调度（assigned_model/assigned_pipeline） | 不管理依赖 |
+| **CircadianScheduler** | 生物钟定时触发 | 不管理工作依赖图 |
+
+**衔接流程**：
+```
+1. WorkOrchestrator.submit(work_item)
+   → 写入 TaskRepository.create()（状态=PENDING）
+   → 解析依赖，依赖满足 → 状态=READY
+
+2. TaskQueue 后台轮询 READY 任务
+   → WorkOrchestrator.resolve_layer() 决定跑哪层
+   → WorkOrchestrator.acquire_slot() 获取槽位
+   → dispatch 到对应层执行
+
+3. 执行完成
+   → TaskRepository.update(status=COMPLETED)
+   → WorkOrchestrator 检查下游依赖是否满足
+   → 满足 → 下游任务状态→READY
+
+4. CircadianScheduler 定时触发
+   → WorkOrchestrator.submit_dag() 注入预定义 DAG
+   → 例如 00:00 注入 "daily-dream-cycle" DAG
+```
+
+#### 4.5 预定义工作 DAG
+
+| DAG ID | 触发方式 | 节点 | 层级 |
+|--------|----------|------|------|
+| `daily_dream_cycle` | Circadian 00:00 | archive→extract→forget→index→commit | L2→L3→L2→L2→L2 |
+| `daily_health_check` | Circadian 07:00 | probe_all→reconcile→report | L2→L2→L2 |
+| `daily_code_dedup` | Circadian 02:00 | scan→match→prioritize→merge | L2→L2→L2→L2 |
+| `daily_kb_maintenance` | Circadian 04:00 | integrity→verify→freeze→dedup | L2→L2→L2→L2 |
+| `daily_compliance` | Circadian 22:00 | matrix_check→sbom→supply_chain | L3→L3→L3 |
+| `daily_feedback_loop` | Circadian 03:00 | analyze_pending→generate_proposals→apply | L2→L2→L2 |
+| `pipeline_full_run` | 手动/事件 | M1→M2→M3→...→M11 | L1+L2+L3 |
+| `kb_ingest_pipeline` | 事件（新数据） | triage→extract→analyze→ingest→activate | L2→L2→L2→L2→L2 |
+| `security_scan` | 事件（新代码） | injection_check→red_team→sandbox→report | L2→L3→L2→L2 |
+| `model_drift_check` | Circadian 12:00 | collect_metrics→compare_baseline→alert_if_drift | L2→L2→L2 |
+
+#### 4.6 并行控制
+
+```
+并行槽位（按层分配）：
+┌──────────────────────────────────────────┐
+│ L1 (Trae)  │ 槽位: 1（人在环，串行）      │
+│ L2 (Local) │ 槽位: 3（Ollama 可并行3推理） │
+│ L3 (API)   │ 槽位: 2（成本控制，最多2并发） │
+└──────────────────────────────────────────┘
+
+优先级抢占：
+  P0（合规/安全）→ 抢占 P2 槽位
+  P1（运维）     → 正常排队
+  P2（优化/清理） → 空闲时执行
+
+层间工作窃取：
+  L2 空闲 + L3 排队 → L2 尝试处理（如果能力匹配）
+  L3 空闲 + L2 排队 → 不窃取（成本原因）
+```
+
+### A.4 自动接入子系统代码骨架（原 §5）
+
+#### 5.1 为什么需要自动接入？
+
+当前设计是"被动等注册"——模块启动时 self-register。但问题是：
+- **新模块创建时**，开发者/AI 可能忘记注册到 CapabilityRegistry → 变成孤儿
+- **现有模块**中，大量模块还没接入大脑 → 孤儿率很高
+- **大脑不知道自己不知道什么**——没有主动扫描，就不知道遗漏了什么
+
+需要一套**主动扫描+自动判断+自动接入**的子系统。
+
+#### 5.2 设计理念
+
+借鉴 **K8s Controller Manager**（主动调和）+ **Claude Code Self-Improving Agent**（自我发现+自我完善）：
+
+| 模式 | 来源 | 核心思想 | ARC 采用 |
+|------|------|----------|----------|
+| 主动扫描 | K8s Controller Manager | 不等事件，定期全量扫描 | ModuleOnboardingScanner |
+| 智能判断 | Claude Code Self-Improving | 临时启动高级模型分析 | AutoIntegrator (L3 临时激活) |
+| 孤儿检测 | K8s Orphan Pod Detection | 发现不在管理范围内的资源 | OrphanDetector |
+| 自动注册 | K8s Auto-Registration | 发现即注册 | AutoIntegrator.generate_card() |
+| 终极目标驱动 | Self-Improving Agent | 知道自己的目标，主动向目标靠近 | reconcile() 检查孤儿率 |
+
+#### 5.3 三组件架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 自动接入子系统                                 │
+│                                                             │
+│  ┌──────────────────────┐                                   │
+│  │ ModuleOnboardingScanner │ ← 主动扫描：发现新模块/蓝图     │
+│  │   scan_filesystem()    │                                 │
+│  │   scan_blueprints()    │                                 │
+│  │   diff_registered()    │ ← 对比 CapabilityRegistry       │
+│  └──────────┬───────────┘                                   │
+│             │ 发现未注册模块                                  │
+│             ▼                                               │
+│  ┌──────────────────────┐                                   │
+│  │   AutoIntegrator       │ ← 智能判断：临时启动 L3 分析     │
+│  │   analyze_module()     │   "这个模块要不要接入？"         │
+│  │   should_integrate()   │   "接入哪一层？"                 │
+│  │   generate_card()      │   "怎么接入？"                   │
+│  │   assign_work_type()   │   "分配什么工作类型？"            │
+│  └──────────┬───────────┘                                   │
+│             │ 生成 CapabilityCard + IntegrationPoint          │
+│             ▼                                               │
+│  ┌──────────────────────┐                                   │
+│  │   OrphanDetector       │ ← 孤儿检测：持续监控孤儿率        │
+│  │   compute_orphan_rate()│                                 │
+│  │   find_orphans()       │ ← 找出所有未接入模块             │
+│  │   prioritize_orphans() │ ← 按优先级排序                   │
+│  │   report()             │ ← 生成孤儿报告                   │
+│  └──────────────────────┘                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 5.4 ModuleOnboardingScanner
+
+```python
+class ModuleOnboardingScanner:
+    """模块接入扫描器——主动发现未注册模块。
+
+    借鉴:
+      - K8s Controller Manager: 主动调和，不等事件
+      - K8s Discovery: 自动发现集群中的资源
+    """
+
+    def scan_filesystem(self) -> list[ModuleDiscovery]
+    def scan_blueprints(self) -> list[BlueprintDiscovery]
+    def diff_registered(self) -> list[UnregisteredModule]
+    def watch_for_changes(self) -> None              # 文件系统 watcher
+
+@dataclass
+class ModuleDiscovery:
+    """发现的模块。"""
+    module_path: str               # src/zephyr/governance/cost_router.py
+    module_name: str               # cost_router
+    package: str                   # governance
+    has_class: bool                # 是否定义了类
+    class_names: list[str]         # 类名列表
+    has_public_functions: bool     # 是否有公开函数
+    function_names: list[str]      # 函数名列表
+    has_blueprint: bool            # 对应蓝图是否存在
+    blueprint_path: str | None     # 蓝图路径
+    docstring: str | None          # 模块 docstring
+    imports: list[str]             # 依赖的其他模块
+
+@dataclass
+class UnregisteredModule:
+    """未注册的模块——孤儿。"""
+    discovery: ModuleDiscovery
+    reason: str                    # 为什么没注册（新创建/遗漏/不支持）
+    priority: str                  # P0/P1/P2 接入优先级
+    suggested_layer: str           # 建议接入哪一层
+```
+
+**扫描策略**：
+```
+1. 全量扫描（CircadianScheduler 04:00 触发）
+   - 遍历 src/zephyr/ 下所有 .py 文件
+   - 遍历 architecture_model/ 下所有 .yaml 文件
+   - 对比 CapabilityRegistry.list_all()
+   - 输出 UnregisteredModule 列表
+
+2. 增量扫描（文件系统 watcher 实时触发）
+   - 监听 src/zephyr/ 目录的 create/modify 事件
+   - 新文件 → 立即触发 ModuleOnboardingScanner
+   - 输出单个 UnregisteredModule
+
+3. 蓝图扫描（CircadianScheduler 07:00 触发）
+   - 遍历 architecture_model/ 下所有 .yaml
+   - 检查蓝图定义的模块是否都有对应 CapabilityCard
+   - 输出蓝图→代码→注册的三方对齐报告
+```
+
+#### 5.5 AutoIntegrator
+
+```python
+class AutoIntegrator:
+    """自动接入器——临时启动高级模型分析是否接入。
+
+    借鉴:
+      - Claude Code Self-Improving: 临时启动强推理分析
+      - K8s Admission Controller: 接入前审查
+    """
+
+    def analyze_module(self, module: UnregisteredModule) -> IntegrationAnalysis
+    def should_integrate(self, analysis: IntegrationAnalysis) -> bool
+    def generate_card(self, analysis: IntegrationAnalysis) -> CapabilityCard
+    def assign_work_type(self, analysis: IntegrationAnalysis) -> str
+    def auto_register(self, card: CapabilityCard) -> bool
+
+@dataclass
+class IntegrationAnalysis:
+    """接入分析结果。"""
+    module_path: str
+    should_integrate: bool          # 是否应该接入
+    reason: str                     # 为什么（不）接入
+    suggested_layer: str            # trae / local / api
+    suggested_priority: str         # P0 / P1 / P2
+    suggested_work_types: list[str] # 建议的工作类型
+    suggested_capability_card: CapabilityCard | None
+    confidence: float               # 分析置信度 0.0-1.0
+    model_used: str                 # 分析使用的模型（通常是 L3 API）
+```
+
+**接入决策流程**：
+```
+1. 发现未注册模块 → AutoIntegrator.analyze_module()
+
+2. 临时启动 L3 高级模型（DeepSeek V4 Pro / Claude）分析：
+   - 读取模块源码 + docstring + imports
+   - 读取对应蓝图 YAML（如果有）
+   - 判断：
+     a. 这个模块是否应该接入大脑？（纯工具函数可能不需要）
+     b. 接入哪一层？（Trae/Local/API）
+     c. 分配什么工作类型？
+     d. 生成 CapabilityCard 草稿
+
+3. 如果 confidence >= 0.8 → 自动注册到 CapabilityRegistry
+4. 如果 confidence < 0.8 → 写入 NightShiftQueue，等人类裁定
+5. 无论哪种结果 → AiAuditLogger 记录分析过程
+```
+
+**关键设计：临时启动 L3**
+
+```
+正常情况：L3 只在夜班运行（省钱）
+接入分析时：临时启动 L3 API 做一次深度推理
+           ↓
+  分析完毕后 L3 回到待机状态
+           ↓
+  成本控制：每天最多 10 次临时 L3 激活（可配置）
+```
+
+#### 5.6 OrphanDetector
+
+```python
+class OrphanDetector:
+    """孤儿检测器——持续监控孤儿率，驱动大脑向终极目标靠近。
+
+    借鉴:
+      - K8s Orphan Pod Detection
+      - Self-Improving Agent: 知道目标，主动靠近
+    """
+
+    def compute_orphan_rate(self) -> float          # 0.0-1.0，目标=0.0
+    def find_orphans(self) -> list[UnregisteredModule]
+    def prioritize_orphans(self, orphans: list) -> list  # 按优先级排序
+    def report(self) -> OrphanReport
+    def is_goal_met(self) -> bool                   # 孤儿率 == 0.0?
+
+@dataclass
+class OrphanReport:
+    """孤儿报告。"""
+    total_modules: int
+    registered_modules: int
+    orphan_modules: int
+    orphan_rate: float
+    orphans_by_priority: dict[str, int]             # P0: 3, P1: 12, P2: 45
+    orphans_by_package: dict[str, int]              # governance: 30, shared: 15, ...
+    top_priority_orphans: list[UnregisteredModule]  # 最应该先接入的
+    goal_gap: float                                 # 1.0 - orphan_rate，距离目标的差距
+```
+
+**与调和循环的衔接**：
+```
+HealthMonitor.reconcile() 每次调和时：
+  ① 原有：probe 所有已注册组件 → spec vs actual
+  ② 新增：OrphanDetector.compute_orphan_rate()
+  ③ 新增：如果孤儿率 > 0 → 触发 ModuleOnboardingScanner.scan_filesystem()
+  ④ 新增：发现孤儿 → AutoIntegrator.analyze_module()
+  ⑤ 新增：分析结果 → 自动注册 或 登记表
+  ⑥ 新增：ReconciliationReport 包含孤儿率指标
+```
+
+#### 5.7 新模块创建时的自动接入
+
+**当任何 AI 或人类创建新模块时**，自动触发接入流程：
+
+```
+新 .py 文件创建
+  │
+  ├─ 方式1: 文件系统 watcher 检测到新文件
+  │         → ModuleOnboardingScanner.scan_filesystem()
+  │         → 发现 UnregisteredModule
+  │         → AutoIntegrator.analyze_module()
+  │
+  ├─ 方式2: 新蓝图 YAML 创建
+  │         → ModuleOnboardingScanner.scan_blueprints()
+  │         → 发现蓝图定义的模块未注册
+  │         → AutoIntegrator.analyze_module()
+  │
+  └─ 方式3: AGENTS.md 中写明规则
+            "所有新模块必须注册到 CapabilityRegistry"
+            → AI 创建新模块时，读到这条规则，主动 register()
+```
+
+#### 5.8 扫描现存所有模块的遗漏
+
+**首次全量扫描**（Boot 时 + CircadianScheduler 04:00 定期）：
+
+```
+1. 遍历 src/zephyr/ 下所有 .py 文件 → 300+ 个文件
+2. 遍历 architecture_model/ 下所有 .yaml → 31 个蓝图
+3. 对比 CapabilityRegistry.list_all() → 当前注册数
+4. 差集 = 未注册模块 = 孤儿
+5. 按 priority 排序：
+   - P0: 有蓝图定义但未注册的（蓝图说应该有，但没有）
+   - P1: 有公开 API 的模块（class + public functions）
+   - P2: 纯内部工具函数（可能不需要注册）
+6. P0 立即触发 AutoIntegrator
+7. P1 排队等待
+8. P2 标记为"可选接入"
+```
+
+### A.5 AutoRuntimeCore 类完整方法签名 + 20步 Boot Sequence（原 §6.2-6.3）
+
+#### 6.2 AutoRuntime Core（`auto_runtime_core.py`）
+
+```python
+class AutoRuntimeCore:
+    """三层运行时运营中心——ZephyrAlpha 系统大脑。"""
+
+    def __init__(self, config: RuntimeConfig)
+
+    # ---- 生命周期 ----
+    def boot(self) -> BootReport
+    def shutdown(self) -> None
+
+    # ---- 调和 ----
+    def reconcile(self) -> ReconciliationReport
+    def health(self) -> HealthSnapshot
+
+    # ---- 状态 ----
+    def status_panel(self) -> str
+    def status_json(self) -> dict
+
+    # ---- 任务 ----
+    def dispatch_task(self, task: TaskCard) -> DispatchResult
+    def get_night_shift_queue(self) -> list[NightShiftAmbiguityLogEntry]
+    def resolve_night_shift(self, entry_id: str, decision: str, notes: str) -> None
+
+    # ---- 工作编排 ----
+    @property
+    def work_orchestrator(self) -> WorkOrchestrator
+    def submit_work(self, work: WorkItem) -> str
+    def submit_dag(self, dag_id: str, params: dict) -> str
+
+    # ---- 注册 ----
+    @property
+    def capability_registry(self) -> CapabilityRegistry
+    @property
+    def integration_registry(self) -> IntegrationRegistry
+
+    # ---- 闸门 ----
+    @property
+    def stop_gate(self) -> StopGate
+    def can_stop(self) -> bool
+```
+
+#### 6.3 Lifecycle Manager
+
+Boot Sequence（20步，含 WorkOrchestrator 初始化）：
+```
+01-13. 同 v3.0.0（配置→审计→注册→模型预热→调度器）
+14. WorkOrchestrator.initialize(task_repo, capability_registry)  ← 新增
+15. WorkOrchestrator.load_dags(data/work_dags/)                  ← 新增
+16. CircadianScheduler().start()
+17. HealthMonitor().start()
+18. StatusDashboard().start()
+19. IntegrationRegistry.validate_all()
+20. 输出 BootReport → 进入主调和循环
+```
+
+### A.6 防孤儿机制（9处注册清单 + 零孤儿保证）（原 §8）
+
+#### 8.1 注册清单（全部 9 处）
+
+| 注册位置 | 内容 | 触发时机 |
+|----------|------|----------|
+| **AGENTS.md** | 项目宪法 | 手动维护 |
+| CapabilityRegistry | CapabilityCard | 组件启动时自动 |
+| IntegrationRegistry | IntegrationPoint | 系统 boot 时 |
+| DaemonRegistry | Daemon 心跳 | 持续 |
+| AiAuditLogger | 每次 AI 行为 | 每次调用 |
+| NightShiftQueue | 不确定登记 | 遇到时追加 |
+| ContractRegistry | 接口契约 CT-* | 启动时 |
+| **WorkOrchestrator** | **WorkDAG** | **boot 时加载** |
+| **OrphanDetector** | **OrphanReport** | **调和时自动** |
+
+#### 8.2 零孤儿保证
+
+- **不注册 = 不存在**
+- **不编排 = 不执行**（WorkOrchestrator 只执行注册过的 DAG）
+- **不扫描 = 不发现**（ModuleOnboardingScanner 主动扫描，不等注册）
+- CapabilityCard 校验拒绝错误注册
+- HealthMonitor 持续 probe
+- AiAuditLogger 全量记录
+- AGENTS.md 第一入口
+
+### A.7 全自动优化8阶表（原 §9）
+
+同 v4.0.0 §8，新增：
+
+| 阶 | 优化项 | 实现组件 | 受益 |
+|----|--------|----------|------|
+| 一阶 | **自动扫描** | ModuleOnboardingScanner | 主动发现新模块 |
+| 二阶 | **智能接入** | AutoIntegrator (L3 临时激活) | 自动判断+自动注册 |
+| 二阶 | **孤儿检测** | OrphanDetector | 持续监控孤儿率 |
+| 三阶 | **终极目标驱动** | reconcile() 检查孤儿率 | 大脑主动向目标靠近 |
+
+| 阶 | 优化项 | 实现组件 | 受益 |
+|----|--------|----------|------|
+| 一阶 | **工作编排** | WorkOrchestrator | 自动决定什么工作、什么顺序、什么层 |
+| 一阶 | **DAG 依赖管理** | WorkDAG | 工作间依赖自动解析 |
+| 一阶 | **并行控制** | ConcurrencySlot | 同层多任务并行 |
+| 二阶 | **优先级抢占** | PriorityPreemption | P0 抢占 P2 |
+| 三阶 | **层间工作窃取** | LayerWorkStealing | L2 空闲时帮 L3 |
+
+### A.8 验收标准（22条）（原 §10）
+
+| # | 标准 |
+|---|------|
+| 1 | `python -m zephyr.runtime` 一键启动，自动 warmup 全部组件 |
+| 2 | 开机自启：Windows Service 注册成功 |
+| 3 | 启动后 TUI 面板实时显示三层状态 + 组件 + 节律 + 工作编排状态 |
+| 4 | 内置节律运行：时间到了自动切换层级、触发任务 |
+| 5 | DEMO 7 任务 + tasks/ JSON 投递任务全部自动分派 |
+| 6 | 所有 AI 行为写入 `data/audit_logs/` JSONL |
+| 7 | CapabilityRegistry 中注册了所有已实现组件 |
+| 8 | IntegrationRegistry 验证全部 26 包集成点 |
+| 9 | Ctrl+C → Finalizer → Stop Gate → 优雅关闭 |
+| 10 | 资源 > 80% 自动降级 |
+| 11 | Dream Cycle 每天至少触发一次 |
+| 12 | Stop Gate 阻止空转退出 |
+| 13 | 与 b_execution_model.yaml 100% 对齐 |
+| 14 | `ruff check --select F` 零新增 |
+| 15 | AGENTS.md 存在且完整 |
+| 16 | Feedback Loop 生成至少一个进化提案 |
+| 17 | **WorkOrchestrator 加载 10 个预定义 DAG** |
+| 18 | **DAG 依赖自动解析：上游完成→下游 READY** |
+| 19 | **并行控制：L2 同时跑 3 个嵌入任务** |
+| 20 | **优先级抢占：P0 任务抢占 P2 槽位** |
+| 21 | **ModuleOnboardingScanner 全量扫描发现孤儿** |
+| 22 | **AutoIntegrator 临时启动 L3 分析后自动注册或登记** |
+
+### A.9 与现有蓝图对应表（16个ARC组件→蓝图YAML映射）（原 §11）
+
+| ARC 组件 | 对应蓝图 YAML | 关系 |
+|----------|---------------|------|
+| AutoRuntimeCore | `b_execution_model.yaml` | 运行时实现 |
+| CircadianScheduler | `b_execution_model.yaml` runtime_schedule | 作息落地 |
+| CapabilityRegistry | 新建（桥接 to `b_bridge.yaml`） | 能力注册 |
+| IntegrationRegistry | 新建（桥接 to 所有 b_*.yaml） | 集成注册 |
+| AiAuditLogger | 新建 | 审计日志 |
+| HealthMonitor | `DaemonRegistry` 扩展 | 自愈 |
+| StopGate | 新建 | 质量闸门 |
+| DreamCycle | 新建 | 知识固化 |
+| FeedbackLoop | `b_feedback_loop.yaml` | 自演化 |
+| Finalizer | 新建 | 优雅清理 |
+| AGENTS.md | 新建 | 项目宪法 |
+| **WorkOrchestrator** | **新建** | **工作编排** |
+| **WorkDAG** | **新建** | **DAG 依赖图** |
+| **ModuleOnboardingScanner** | **新建** | **自动扫描** |
+| **AutoIntegrator** | **新建** | **自动接入** |
+| **OrphanDetector** | **新建** | **孤儿检测** |

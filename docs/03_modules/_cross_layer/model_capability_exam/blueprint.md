@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-INF-036
 submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
@@ -39,7 +39,6 @@ references:
   - {id: "MOD-INF-024", at: "§2", why: "Budget Enforcer——考试消耗Token需预算管控"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——考试LLM调用需过安全闸门"}
   - {id: "CFG-CAP-001", at: "全篇", why: "capacity_params.yaml——MCE所有并发/超时参数从该文件读取"}
-ssot_ref: "specs/model_capability_exam/spec.md"
 ---
 
 # Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估
@@ -1031,5 +1030,325 @@ STEP 3: 拆分后验证
 | 快速冒烟（QUICK_SMOKE） | ~500 |
 | 漂移复查（DRIFT_CHECK） | ~1,500 |
 | 100 并发全量考 | ~1,000,000（占日预算 10%） |
+
+---
+
+## 附录 A：详细设计规范（从 specifications/model_capability_exam/spec.md 迁移，2026-07-01）
+
+> 以下内容原存于 specifications/model_capability_exam/spec.md（MOD-SPEC-004），已收敛至本蓝图。
+> 注意：本蓝图 v2.3.2 已在部分领域超越 spec.md v1.0.0（如九维幻觉检测、三级考试模式、岗位匹配），
+> 附录内容保留 v1.0.0 原始设计细节作为实现参考。
+
+### A.1 能力 → 验证 Prompt 映射（原 spec.md §2.2）
+
+| 能力类型 | 验证 Prompt | 通过条件 |
+|----------|------------|----------|
+| `task_classification` | "classify this module: hello\nprint('hello')" | 返回 JSON 含 `category` 字段 |
+| `tag_completion` | "generate tags for: hello\nprint('hello')" | 返回 JSON 含 `tags` 数组 |
+| `summary_extraction` | "summarize: The project uses FastAPI for REST APIs and Pydantic for validation" | 返回 JSON 含 `points` 数组 |
+| `naming_suggest` | "suggest names for: def f(x): return x+1" | 返回 JSON 含 `names` 数组 |
+| `anomaly_triage` | "triage: 500 Internal Server Error at /api/users" | 返回 JSON 含 `needs_human` 布尔 |
+| `code_fix` | "fix: def add(a,b): return a-b  # bug: should be a+b" | 返回 JSON 含 `fixes` 数组 with `old_str`,`new_str` |
+| `refactor` | "refactor: def f(): x=1;y=2;return x+y" | 返回 JSON 含 `changes` 数组 |
+| `code_generate` | "generate: a function that checks if a number is prime" | 返回 JSON 含 `content` 字段 |
+| `dead_code_removal` | "find dead code: def used():pass\ndef unused():pass" | 返回 JSON 含 `dead_sections` 数组 |
+
+### A.2 DepthTestCase 数据结构（原 spec.md §3.2）
+
+```python
+@dataclass
+class DepthTestCase:
+    case_id: str           # "DC-001"
+    capability: str        # "code_fix"
+    difficulty: str        # "easy" | "medium" | "hard"
+    prompt: str            # 输入
+    expected_old_str: str  # code_fix/refactor/dead_code: 期望找到的旧代码
+    expected_new_str: str  # code_fix/refactor: 期望的新代码
+    expected_tags: list[str]     # tag_completion: 正确答案
+    expected_category: str       # classification: 正确答案
+    tolerance: float = 0.0       # 容差（edit_distance 允许误差）
+```
+
+### A.3 各能力类型深度测试题（原 spec.md §3.3，首批各 3 道）
+
+**task_classification:**
+```
+DC-CL-001: classify a FastAPI router → expected: "api" | "web"
+DC-CL-002: classify a numpy computation module → expected: "computation" | "numeric"
+DC-CL-003: classify a config loader → expected: "config" | "infrastructure"
+```
+
+**tag_completion:**
+```
+DC-TG-001: "OllamaChat 推理引擎" → expected: ["inference","llm","chat","ollama"]
+DC-TG-002: "EmbeddingRouter 向量路由" → expected: ["embedding","vector","semantic"]
+DC-TG-003: "ActionDispatcher 动作分发" → expected: ["dispatch","action","runtime"]
+```
+
+**code_fix:**
+```
+DC-CF-001: def add(a,b): return a-b  # bug → expected_old="a-b", expected_new="a+b"
+DC-CF-002: for i in range(len(arr)): arr[i]=arr[i]*2 → expected refactor to comprehension
+DC-CF-003: if x = 5: print(x) → expected fix = to ==
+```
+
+**refactor:**
+```
+DC-RF-001: 过长函数 → 期望拆分为多个小函数
+DC-RF-002: 重复代码 → 期望提取公共逻辑
+DC-RF-003: 魔法数字 → 期望替换为常量
+```
+
+**code_generate:**
+```
+DC-CG-001: 生成 is_prime(n) → 期望: 含 loop + sqrt 优化
+DC-CG-002: 生成 fibonacci(n) → 期望: 返回值正确
+DC-CG-003: 生成 JSON 解析器 → 期望: try-except + json.loads
+```
+
+**dead_code_removal:**
+```
+DC-DC-001: 发现未使用 import → expectation: 标记对应行
+DC-DC-002: 发现不可达代码 → expectation: 标记 return 后的代码
+DC-DC-003: 发现未调用函数 → expectation: 标记无引用的 def
+```
+
+### A.4 评分指标公式（原 spec.md §3.4）
+
+```python
+# 分类/标签类
+precision = |predicted ∩ expected| / |predicted|      # 预测中有多少是对的
+recall    = |predicted ∩ expected| / |expected|        # 正确答案中找到了多少
+f1        = 2 * precision * recall / (precision + recall)
+
+# 代码修改类
+edit_distance = Levenshtein(predicted_code, expected_code)
+exact_match   = 1 if predicted == expected else 0
+normalized_ed = 1 - (edit_distance / max(len(predicted), len(expected)))
+
+# 生成类
+pass_rate   = 通过的测试用例 / 总测试用例
+code_exec   = 0/1 是否可执行（语法检查通过）
+
+depth_score = Σ(加权 F1/EM/normalized_ED) / 总测试数
+```
+
+### A.5 HallucinationCheck 类骨架（原 spec.md §5.1）
+
+```python
+class HallucinationCheck:
+    """三棱镜检测法"""
+
+    @staticmethod
+    def fabrication_check(output: dict, source_text: str) -> bool:
+        """模型是否编造了输入中不存在的内容"""
+        # 检查 output 中的 old_str 是否真的存在于 source_text
+        ...
+
+    @staticmethod
+    def consistency_check(outputs: list[dict]) -> float:
+        """多次跑同一 prompt，输出的一致性"""
+        # 计算输出之间的 Jaccard 相似度
+        ...
+
+    @staticmethod
+    def refusal_check(output: dict) -> bool:
+        """模型是否拒绝了任务（输出空/错误/拒绝语）"""
+        ...
+```
+
+### A.6 漂移测试三阶段协议（原 spec.md §6.1）
+
+```
+阶段 1 — 冷启动测试:
+    模型刚加载 → 跑完整 depth exam → 记录 baseline
+
+阶段 2 — 负载测试:
+    连续提交 20 个随机任务 → 每 5 个任务后穿插 1 道 repeat 题
+    → 追踪 repeat 题的输出变化
+
+阶段 3 — 热稳定测试:
+    负载完成后静置 30s → 再跑一次 depth exam
+    → 与 baseline 比较
+```
+
+### A.7 CapabilityPassport 完整 JSON 示例（原 spec.md §7，qwen3:8b 护照）
+
+```json
+{
+  "passport_version": "1.0.0",
+  "model_id": "qwen3:8b",
+  "exam_timestamp": "2026-05-08T15:45:56.097326+00:00",
+  "exam_duration_seconds": 42.5,
+  "git_commit": "23d213b3ab1758faf69843a660d8511fb245745a",
+
+  "overall_grade": "C+",
+  "overall_score": 0.62,
+
+  "breadth": {
+    "score": 0.89,
+    "passed": 8,
+    "total": 9,
+    "failed_capabilities": ["code_fix"]
+  },
+
+  "depth": {
+    "overall_score": 0.71,
+    "capabilities": {
+      "task_classification": {
+        "pass": true,
+        "grade": "B",
+        "precision": 0.85,
+        "recall": 0.80,
+        "f1": 0.82,
+        "samples_tested": 3
+      },
+      "tag_completion": {
+        "pass": true,
+        "grade": "B+",
+        "precision": 0.90,
+        "recall": 0.86,
+        "f1": 0.88,
+        "samples_tested": 3
+      },
+      "code_fix": {
+        "pass": false,
+        "grade": "F",
+        "precision": 0.35,
+        "recall": 0.28,
+        "f1": 0.31,
+        "edit_distance_avg": 45.2,
+        "exact_match_rate": 0.0,
+        "samples_tested": 3,
+        "failure_reason": "low_precision_below_threshold"
+      }
+    }
+  },
+
+  "speed": {
+    "avg_latency_ms": 520,
+    "latency_p50_ms": 480,
+    "latency_p95_ms": 890,
+    "latency_p99_ms": 1200,
+    "tokens_per_second": 42.5,
+    "time_to_first_token_ms": 180
+  },
+
+  "hallucination": {
+    "overall_rate": 0.12,
+    "fabrication_rate": 0.08,
+    "inconsistency_rate": 0.15,
+    "refusal_rate": 0.02
+  },
+
+  "drift": {
+    "tested": true,
+    "output_drift": 0.05,
+    "speed_drift_ratio": 1.10,
+    "hallucination_drift_delta": 0.02,
+    "stable": true
+  },
+
+  "recommendations": {
+    "safe_capabilities": [
+      "task_classification",
+      "tag_completion",
+      "summary_extraction",
+      "naming_suggest",
+      "anomaly_triage"
+    ],
+    "unsafe_capabilities": [
+      "code_fix",
+      "refactor"
+    ],
+    "max_concurrent_tasks": 4,
+    "note": "code_fix 精度 31% 低于 50% 阈值，已禁用。建议使用更强模型做代码修改类任务。"
+  }
+}
+```
+
+### A.8 TaskGate 代码骨架（原 spec.md §8）
+
+```python
+class TaskGate:
+    """任务门控——dispatch 前检查护照"""
+
+    def __init__(self, passport_dir: Path):
+        self._passports: dict[str, CapabilityPassport] = {}
+        self._passport_dir = passport_dir
+
+    def load_passport(self, model_id: str) -> CapabilityPassport | None:
+        """加载模型的能力护照"""
+        ...
+
+    def can_dispatch(self, model_id: str, capability: str) -> tuple[bool, str]:
+        """判断模型是否可以执行某个能力类型的任务"""
+        passport = self._passports.get(model_id)
+        if passport is None:
+            return (False, "no_passport")
+        cap = passport.depth.capabilities.get(capability)
+        if cap is None:
+            return (False, "capability_not_tested")
+        if not cap.pass_:
+            return (False, f"low_accuracy: {cap.failure_reason}")
+        return (True, "ok")
+
+    def get_safe_capabilities(self, model_id: str) -> list[str]:
+        """返回模型安全可用的能力列表"""
+        ...
+```
+
+### A.9 集成到 AutoRuntime 启动流程（原 spec.md §9）
+
+```
+boot_sequence 当前 16 步 → 扩展为 17 步:
+
+Step 15: LocalModelScheduler 启动
+Step 16: 模型 Benchmark (现有)
+Step 17: ModelCapabilityExam 入职考试     ← NEW
+Step 18: TaskGate 加载护照                 ← NEW
+
+_run_cycle 修改:
+    AutoTaskGenerator.generate() 生成任务时,
+    对每个任务检查 TaskGate.can_dispatch(model_id, capability),
+    不通过 → 跳过该任务类型
+```
+
+### A.10 文件规划（原 spec.md §10）
+
+> **SSoT**：考试系统 + 模型画像器已合并至 `src/zephyr/intelligence/model_profiling/`（唯一真源 #3）。
+> `infrastructure/model_profiler/` 与 `infrastructure/model_capability_exam/` 仅保留 `__init__.py` 垫片转发。
+
+```
+src/zephyr/intelligence/model_profiling/   ← SSoT #3（考试系统 + 模型画像器）
+    __init__.py                ← 公共导出
+    exam_orchestrator.py       ← 五轴考试主控（横/纵/速/幻/稳轴合并实现）
+    exam_test_cases.py         ← 27 道标准题库（9 能力 × 3 难度）
+    capability_passport.py     ← 护照数据模型 + IO（TaskGate 消费）
+    benchmark_suite.py         ← 7 维 × 26 项 benchmark 用例（profiler）
+    profiler.py                ← 评测引擎（profiler）
+    model_discovery.py         ← 模型发现（profiler）
+    results_writer.py          ← 结果持久化 + 漂移检测（profiler）
+    task_model_learner.py       ← 任务×模型学习矩阵（profiler）
+    cli.py                     ← CLI 入口（profiler）
+    deepseek_v4_chat.py        ← DeepSeek V4 Chat 适配器（profiler）
+    provider_data.py           ← provider 数据（profiler）
+
+data/
+    brain/
+        passports/                  ← 护照存储
+            qwen3:8b.json
+            deepseek-r1:8b.json
+            ...
+```
+
+### A.11 踩过的坑 & 设计原则（原 spec.md §11，6 条 v1.0.0 设计原则）
+
+1. **横轴和纵轴必须分离** — 横轴只问"能产出合法的结构化结果吗"，纵轴才问"结果正确吗"
+2. **幻觉检测不是一次性的** — 需要多次重复 + 输入交叉验证
+3. **漂移测试需要热负载** — 冷启动测试和长时间运行测试必须分开
+4. **Gate 必须是硬阻断** — code_fix 精度 31% 就绝对不能 dispatch，不能只 warn
+5. **护照必须可版本化** — 模型更新后要重考，旧护照作废
+6. **门槛可配置** — 各能力类型的 pass 阈值应该是可调的，不用改代码
 
 ---
