@@ -403,10 +403,16 @@ entries:
     （ea4b300cfb）kb 白名单 + 文档化 trae_028 v1.7.0→1.7.1，建立渐进收敛策略
     （progressive_convergence：历史违规目录不批量改名，下次 refactor 时顺带修正）；
     阶段C-1/C-2（905aaa828c）删除2个死代码目录（infra_06 + observability_02）。
+    阶段C-5（1f98c5795c）observability_02/ 真实现归位至 shared/ 根目录（28文件
+    迁移：health_discovery/tracing/cli_summary 等），消除 R5 数字后缀违规目录
+    （GOV-DOC-003）；同步 depgraph 8个 observability_02 节点 deprecated + 4条
+    stale 边删除 + 1条新边创建 + 新增 health_discovery.py 节点(node_id=65184)；
+    同步 path_ownership_map/blueprint/module_domain_matching/pending_deletion
+    等索引与文档。
     符合向内收四原则：真源唯一（根平铺归位到功能子目录）、向内收（用现成功能前缀
     归位）、第一性原理（ce/ 是自创缩写违反 GOV-DOC-003，合并到 context/）、
     可发现性（新 AI 按功能域直觉定位）。
-  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：1334b9e3b4 批次1 → 905aaa828c 阶段C-1/C-2）
+  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：1334b9e3b4 批次1 → 905aaa828c 阶段C-1/C-2 → 1f98c5795c 阶段C-5 observability_02 归位）
   status: resolved
   related_rules:
   - TRAE-028

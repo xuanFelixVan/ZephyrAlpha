@@ -43,8 +43,8 @@ PATH_REPLACEMENTS = [
     (r"src/zephyr/ops/metrics_collector", r"src/zephyr/governance/metrics_collector"),
     (r"src/zephyr/ops/slo_manager", r"src/zephyr/governance/slo_manager"),
     (r"src/zephyr/ops/gates/", r"src/zephyr/infrastructure/system_telemetry/gates/"),
-    # ops/observability → shared/observability_02
-    (r"src/zephyr/ops/observability/", r"src/zephyr/shared/observability_02/"),
+    # ops/observability → shared/ (observability_02/ 已删除,真实现归位至 shared/ 根)
+    (r"src/zephyr/ops/observability/", r"src/zephyr/shared/"),
     # circuit_breaker
     (r"src/zephyr/ops/circuit_breaker", r"src/zephyr/governance/circuit_breaker"),
     # autonomy_core/llm_gateway.py 已删除
