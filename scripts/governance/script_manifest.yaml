@@ -1,31 +1,31 @@
-# 自动生成于 2026-07-01T18:16:27Z
+# 自动生成于 2026-07-01T21:34:13Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-01T18:16:27Z'
+generated_at: '2026-07-01T21:34:13Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 318
-with_manifest: 317
+total_scripts: 319
+with_manifest: 318
 missing_manifest: 1
 categories:
-  governance: 43
+  governance: 14
   governance:_sync: 4
   governance:_tasks: 3
   governance:d10_performance: 1
-  governance:d11_compliance: 13
+  governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
-  governance:d1_structure: 23
+  governance:d1_structure: 25
   governance:d2_links: 3
-  governance:d3_metadata: 17
+  governance:d3_metadata: 21
   governance:d4_paths: 4
-  governance:d5_architecture: 88
+  governance:d5_architecture: 94
   governance:d6_security: 14
-  governance:d7_code: 29
-  governance:d8_doc_sync: 4
+  governance:d7_code: 31
+  governance:d8_doc_sync: 7
   governance:d9_knowledge: 2
-  governance:generators: 7
-  governance:meta: 41
+  governance:generators: 8
+  governance:meta: 45
   governance:migrate_sqlite_to_pg: 1
   governance:observability: 1
   governance:repair: 7
@@ -115,17 +115,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: analyze_change_impact.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
-  tags:
-  - Quick
 - name: apply_depgraph.py
   owner: governance
   dimensions:
@@ -136,18 +125,6 @@ scripts:
   warn_only: false
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
-  - Quick
-- name: audit_registration.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
-  tags:
-  - Periodic
   - Quick
 - name: audit_rename_completeness.py
   owner: governance
@@ -161,126 +138,6 @@ scripts:
   tags:
   - Periodic
   - Quick
-- name: auto_sync_all_registries.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 全自动注册表同步器
-  tags:
-  - Quick
-- name: check_blueprint_compliance.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
-    | §3'
-  tags:
-  - Quick
-- name: check_handoff_manifests.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
-  tags:
-  - Quick
-- name: check_module_singlesource.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。'
-  tags:
-  - Quick
-- name: check_schema_version_writes.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
-  tags:
-  - Quick
-- name: check_ssot_gate.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
-  tags:
-  - Quick
-- name: check_test_structure.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。
-  tags:
-  - Quick
-- name: ci_self_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'CI Entry: Self-Check — Drift Detector 自身完整性验证'
-  tags:
-  - Quick
-- name: cleanup_stash.py
-  owner: governance
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 30
-  args:
-  - flag: --check
-    description: 检查 stash 数量，超过阈值时告警
-  - flag: --cleanup
-    description: 清理过期 stash，保留最近 N 个
-  - flag: --archive
-    description: 导出 stash 列表到归档文件
-  - flag: --keep
-    type: int
-    default: 3
-    description: 保留最近 N 个 stash
-  - flag: --max
-    type: int
-    default: 5
-    description: 告警阈值
-  - flag: --critical
-    type: int
-    default: 10
-    description: 严重阈值，建议清理
-  warn_only: true
-  description: 'git stash 堆积治理——检查/清理/归档 stash。 对标 OPS-2026062501 病根3（stash 堆积无清理机制）。
-
-    '
-  tags:
-  - Critical
 - name: d10_performance/collect_system_threads.py
   owner: governance:d10_performance
   dimensions:
@@ -303,6 +160,51 @@ scripts:
     '
   tags:
   - Periodic
+- name: d11_compliance/audit_registration.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
+  tags:
+  - Periodic
+  - Quick
+- name: d11_compliance/check_ssot_gate.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
+  tags:
+  - Quick
+- name: d11_compliance/check_test_structure.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。
+  tags:
+  - Quick
+- name: d11_compliance/ci_self_check.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'CI Entry: Self-Check — Drift Detector 自身完整性验证'
+  tags:
+  - Quick
 - name: d11_compliance/fix_shared_bypass.py
   owner: governance:d11_compliance
   dimensions:
@@ -321,6 +223,26 @@ scripts:
   - Critical
   - Disruptive
   - Security
+- name: d11_compliance/g9_compliance_check.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: G9 四蓝图跨模块集成合规门禁执行器.
+  tags:
+  - Quick
+- name: d11_compliance/task_self_check.py
+  owner: governance:d11_compliance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
 - name: d11_compliance/validate_blueprint_overlap.py
   owner: governance:d11_compliance
   dimensions:
@@ -479,6 +401,28 @@ scripts:
     '
   tags:
   - Security
+- name: d11_compliance/verify_audit_integrity.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
+  tags:
+  - Quick
+- name: d11_compliance/verify_key_imports.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: governance/verify_key_imports 脚本 — 关键模块导入验证
+  tags:
+  - Quick
 - name: d12_ai_hallucination/check_logger_kwargs.py
   owner: governance:d12_ai_hallucination
   dimensions:
@@ -636,6 +580,17 @@ scripts:
   description: 'GATE-DIRECTORY-CONTRACT: Directory Contract validation gate.'
   tags:
   - Quick
+- name: d1_structure/check_handoff_manifests.py
+  owner: governance:d1_structure
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
+  tags:
+  - Quick
 - name: d1_structure/check_index_integrity.py
   owner: governance:d1_structure
   dimensions:
@@ -647,6 +602,37 @@ scripts:
   description: 索引完整性校验（PS-STD-012 §7.3 — index.md清单vs磁盘双向差集）
   tags:
   - Quick
+- name: d1_structure/cleanup_stash.py
+  owner: governance:d1_structure
+  dimensions:
+  - D7
+  priority: P2
+  timeout_seconds: 30
+  args:
+  - flag: --check
+    description: 检查 stash 数量，超过阈值时告警
+  - flag: --cleanup
+    description: 清理过期 stash，保留最近 N 个
+  - flag: --archive
+    description: 导出 stash 列表到归档文件
+  - flag: --keep
+    type: int
+    default: 3
+    description: 保留最近 N 个 stash
+  - flag: --max
+    type: int
+    default: 5
+    description: 告警阈值
+  - flag: --critical
+    type: int
+    default: 10
+    description: 严重阈值，建议清理
+  warn_only: true
+  description: 'git stash 堆积治理——检查/清理/归档 stash。 对标 OPS-2026062501 病根3（stash 堆积无清理机制）。
+
+    '
+  tags:
+  - Critical
 - name: d1_structure/detect_orphan_py.py
   owner: governance:d1_structure
   dimensions:
@@ -903,6 +889,18 @@ scripts:
   description: 批量回填/重判 ttl 字段（6 格式统一入口，GATE-15 存量治理 + GATE-VOCAB-CHANGE 纠偏）
   tags:
   - Quick
+- name: d3_metadata/check_blueprint_compliance.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
+    | §3'
+  tags:
+  - Quick
 - name: d3_metadata/check_frontmatter_metadata.py
   owner: governance:d3_metadata
   dimensions:
@@ -912,6 +910,17 @@ scripts:
   args: []
   warn_only: false
   description: 'GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验）'
+  tags:
+  - Quick
+- name: d3_metadata/check_module_singlesource.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。'
   tags:
   - Quick
 - name: d3_metadata/check_naming_convention.py
@@ -940,6 +949,17 @@ scripts:
   - Critical
   - Quick
   - Security
+- name: d3_metadata/check_schema_version_writes.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
+  tags:
+  - Quick
 - name: d3_metadata/check_vocab_hardcode.py
   owner: governance:d3_metadata
   dimensions:
@@ -1090,6 +1110,17 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: d3_metadata/validate_tool_contracts_consistency.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
+  tags:
+  - Quick
 - name: d4_paths/detect_deprecated_path_writes.py
   owner: governance:d4_paths
   dimensions:
@@ -1136,6 +1167,17 @@ scripts:
   args: []
   warn_only: false
   description: 删除引用分离提交检测（ABS-15 / GOV-DOC-007 §二）
+  tags:
+  - Quick
+- name: d5_architecture/analyze_change_impact.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
   tags:
   - Quick
 - name: d5_architecture/analyzers/analyze_contract_impact.py
@@ -1440,6 +1482,17 @@ scripts:
   description: 'GATE-VMS-SSOT: VMS 单一真源门禁——三重检测。'
   tags:
   - Critical
+- name: d5_architecture/detect_causal_conflicts.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
+  tags:
+  - Quick
 - name: d5_architecture/detectors/analyze_same_name_module_relations.py
   owner: governance:d5_architecture
   dimensions:
@@ -1484,6 +1537,18 @@ scripts:
   description: 同名模块语义关系分析——AST级导入链+符号重叠检测，区分适配器/Facade vs 真正重复
   tags:
   - Critical
+- name: d5_architecture/diagnose_depgraph.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py
+    | §7'
+  tags:
+  - Quick
 - name: d5_architecture/dm200912_query_domains.py
   owner: governance:d5_architecture
   dimensions:
@@ -1673,6 +1738,43 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/pre_delete_safety_check.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 安全删除门禁脚本——RULE-THREE 强制执行器。
+  tags:
+  - Quick
+- name: d5_architecture/pre_write_gate.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证'
+  tags:
+  - Quick
+- name: d5_architecture/score_architecture.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 60
+  args:
+  - --quarterly
+  - --dimension
+  - --compare
+  - --dashboard
+  warn_only: false
+  description: 12 维架构评分自动化（12-dimension-audit-matrix §6.1 — D1~D12 加权评分）
+  tags:
+  - Critical
 - name: d5_architecture/syncers/archive_rationale_log.py
   owner: governance:d5_architecture
   dimensions:
@@ -2202,8 +2304,8 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 三方一致性检查（frontmatter vs 正文blockquote vs rule_catalog_registry.yaml
-    的 status/version 对账）
+  description: 三方一致性检查（frontmatter vs 正文blockquote vs rule_catalog_registry.yaml 的
+    status/version 对账）
   tags:
   - Critical
 - name: d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py
@@ -2652,6 +2754,37 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d7_code/fix_orphan_exports.py
+  owner: governance:d7_code
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
+  tags:
+  - Disruptive
+  - Quick
+- name: d7_code/rewrite_imports.py
+  owner: governance:d7_code
+  dimensions:
+  - D1
+  - D5
+  priority: P2
+  timeout_seconds: 120
+  args:
+  - --mapping
+  - --old
+  - --new
+  - --dry-run
+  - --apply
+  - --scan-dirs
+  warn_only: false
+  description: rewrite_imports.py — 批量重写 Python import 路径（AST-based）
+  tags:
+  - Critical
+  - Quick
 - name: d7_code/validate_contracts_purity.py
   owner: governance:d7_code
   dimensions:
@@ -2787,6 +2920,17 @@ scripts:
   description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
   tags:
   - Critical
+- name: d8_doc_sync/auto_sync_all_registries.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 全自动注册表同步器
+  tags:
+  - Quick
 - name: d8_doc_sync/detect_ai_products_in_docs.py
   owner: governance:d8_doc_sync
   dimensions:
@@ -2807,6 +2951,32 @@ scripts:
   args: []
   warn_only: false
   description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
+  tags:
+  - Quick
+- name: d8_doc_sync/sync_rule_registry.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D3
+  - D8
+  priority: P1
+  timeout_seconds: 15
+  args: []
+  warn_only: false
+  description: 'TRAE 规则登记同步校验 —— 扫描 .trae/rules/project_rules.md 中所有 RULE-* 条目， 检查是否已在
+    _index.yaml 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 = DRIFT（缺失/孤儿登记）。
+
+    '
+  tags:
+  - Quick
+- name: d8_doc_sync/update_progress.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: update_progress.py — 从 domain_progress.json 批量更新施工进度.
   tags:
   - Quick
 - name: d8_doc_sync/validate_document_lifecycle.py
@@ -2866,42 +3036,6 @@ scripts:
   description: 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图.
   tags:
   - Quick
-- name: detect_causal_conflicts.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
-  tags:
-  - Quick
-- name: diagnose_depgraph.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py
-    | §7'
-  tags:
-  - Quick
-- name: env_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P0
-  timeout_seconds: 120
-  args:
-  - --install
-  warn_only: false
-  description: 环境就绪检查门禁（Python版本 + requirements.txt三方依赖验证 + 自动安装）
-  tags:
-  - Critical
-  - Quick
 - name: extract_depgraph.py
   owner: governance
   dimensions:
@@ -2912,57 +3046,6 @@ scripts:
   warn_only: false
   description: depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
   tags:
-  - Quick
-- name: fix_orphan_exports.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
-  tags:
-  - Disruptive
-  - Quick
-- name: g9_compliance_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: G9 四蓝图跨模块集成合规门禁执行器.
-  tags:
-  - Quick
-- name: gate_engine_selfcheck.py
-  owner: governance
-  dimensions:
-  - D1
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: 'Gate Engine Bootstrap 自检——验证 MOD-GATE_ENGINE Gate Engine 自身的完整性， 包括核心文件存在性、YAML/DB
-    可用性、CheckType 覆盖率及熔断器验证。
-
-    '
-  tags:
-  - Critical
-  - Quick
-- name: generate_path_ownership_map.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。
-  tags:
-  - Disruptive
   - Quick
 - name: generate_project_depgraph.py
   owner: governance
@@ -3021,6 +3104,18 @@ scripts:
     '
   tags:
   - Critical
+  - Disruptive
+  - Quick
+- name: generators/generate_path_ownership_map.py
+  owner: governance:generators
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。
+  tags:
   - Disruptive
   - Quick
 - name: generators/generate_registry_master_index.py
@@ -3239,6 +3334,19 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: meta/env_check.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  priority: P0
+  timeout_seconds: 120
+  args:
+  - --install
+  warn_only: false
+  description: 环境就绪检查门禁（Python版本 + requirements.txt三方依赖验证 + 自动安装）
+  tags:
+  - Critical
+  - Quick
 - name: meta/finding_state_machine.py
   owner: governance:meta
   dimensions:
@@ -3250,6 +3358,22 @@ scripts:
   warn_only: false
   description: 'Finding 全生命周期状态机——管理每个 Finding 从 OPEN→FIXED→VERIFIED 的完整生命周期， 包括 SLA
     定时器、状态转换审计日志、跨 run 持久化。
+
+    '
+  tags:
+  - Critical
+  - Quick
+- name: meta/gate_engine_selfcheck.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'Gate Engine Bootstrap 自检——验证 MOD-GATE_ENGINE Gate Engine 自身的完整性， 包括核心文件存在性、YAML/DB
+    可用性、CheckType 覆盖率及熔断器验证。
 
     '
   tags:
@@ -3377,6 +3501,28 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: meta/pre_op_check.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  - D5
+  priority: P0
+  timeout_seconds: 30
+  args:
+  - --check-write
+  - --check-delete
+  - --check-create
+  - --check-all
+  - --session-id
+  - --json
+  warn_only: false
+  description: 'AI操作前准入控制器——在任何 Write/SearchReplace/DeleteFile 操作前执行机械门禁检查。 对标 K8s
+    Admission Webhook：不放行就不创建。
+
+    '
+  tags:
+  - Critical
+  - Quick
 - name: meta/score_script_effectiveness.py
   owner: governance:meta
   dimensions: []
@@ -3387,6 +3533,17 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: meta/session_startup_check.py
+  owner: governance:meta
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
+  tags:
+  - Quick
 - name: meta/trace_finding_lifecycle.py
   owner: governance:meta
   dimensions:
@@ -3677,50 +3834,6 @@ scripts:
   description: ⚠ 请补充 description
   tags:
   - Quick
-- name: pre_delete_safety_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 安全删除门禁脚本——RULE-THREE 强制执行器。
-  tags:
-  - Quick
-- name: pre_op_check.py
-  owner: governance
-  dimensions:
-  - D1
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args:
-  - --check-write
-  - --check-delete
-  - --check-create
-  - --check-all
-  - --session-id
-  - --json
-  warn_only: false
-  description: 'AI操作前准入控制器——在任何 Write/SearchReplace/DeleteFile 操作前执行机械门禁检查。 对标 K8s
-    Admission Webhook：不放行就不创建。
-
-    '
-  tags:
-  - Critical
-  - Quick
-- name: pre_write_gate.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证'
-  tags:
-  - Quick
 - name: repair/apply_verification_results.py
   owner: governance:repair
   dimensions:
@@ -3825,32 +3938,6 @@ scripts:
   description: run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
   tags:
   - Quick
-- name: score_architecture.py
-  owner: governance
-  dimensions:
-  - D5
-  priority: P1
-  timeout_seconds: 60
-  args:
-  - --quarterly
-  - --dimension
-  - --compare
-  - --dashboard
-  warn_only: false
-  description: 12 维架构评分自动化（12-dimension-audit-matrix §6.1 — D1~D12 加权评分）
-  tags:
-  - Critical
-- name: session_startup_check.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状态报告.
-  tags:
-  - Quick
 - name: status.py
   owner: governance
   dimensions:
@@ -3860,21 +3947,6 @@ scripts:
   args: []
   warn_only: false
   description: status.py — 审计系统状态仪表盘
-  tags:
-  - Quick
-- name: sync_rule_registry.py
-  owner: governance
-  dimensions:
-  - D3
-  - D8
-  priority: P1
-  timeout_seconds: 15
-  args: []
-  warn_only: false
-  description: 'TRAE 规则登记同步校验 —— 扫描 .trae/rules/project_rules.md 中所有 RULE-* 条目， 检查是否已在
-    _index.yaml 的 TRAE 域中登记。RULE-FOUR（创建即注册协议）的执行验证。 Exit 0 = CLEAN, Exit 1 = DRIFT（缺失/孤儿登记）。
-
-    '
   tags:
   - Quick
 - name: sync_yaml_to_depgraph.py
@@ -3888,26 +3960,6 @@ scripts:
   description: P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph
   tags:
   - Quick
-- name: task_self_check.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-- name: update_progress.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: update_progress.py — 从 domain_progress.json 批量更新施工进度.
-  tags:
-  - Quick
 - name: validate_module_id_naming.py
   owner: governance
   dimensions:
@@ -3917,39 +3969,6 @@ scripts:
   args: []
   warn_only: false
   description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
-  tags:
-  - Quick
-- name: validate_tool_contracts_consistency.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
-  tags:
-  - Quick
-- name: verify_audit_integrity.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
-  tags:
-  - Quick
-- name: verify_key_imports.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: governance/verify_key_imports 脚本 — 关键模块导入验证
   tags:
   - Quick
 - name: verify_schema_health.py

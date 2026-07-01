@@ -16,7 +16,6 @@
 """env_check.py — 环境就绪检查门禁 (Environment Readiness Gate)
 
 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）
-     AGENTS.md §7.2（根源分析 — 治根不治标）
 
 功能：
 1. 检查 Python 版本（>= 3.10）
