@@ -59,6 +59,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_integrity_audit_reconciler,
     make_module_id_consistency_reconciler,
     make_index_generator_reconciler,
+    make_runtime_cleanup_reconciler,
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -286,6 +287,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_integrity_audit_reconciler(self))
         self._reconciliation_registry.register(make_module_id_consistency_reconciler(self))  # P8-FIX-S0
         self._reconciliation_registry.register(make_index_generator_reconciler(self))  # P3 生成器触发接入
+        self._reconciliation_registry.register(make_runtime_cleanup_reconciler(self))  # .runtime/ TTL 自动清理
 
     # ------------------------------------------------------------------
     # 公开 API

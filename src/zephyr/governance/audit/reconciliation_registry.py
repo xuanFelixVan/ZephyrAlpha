@@ -84,6 +84,7 @@ __all__ = [
     "make_integrity_audit_reconciler",
     "make_module_id_consistency_reconciler",
     "make_index_generator_reconciler",
+    "make_runtime_cleanup_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -2624,4 +2625,75 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=170,  # 在 path_tree(150) 和 yaml_sync(160) 之后，vocab_change(280) 之前
+    )
+
+
+# trae_060-reviewed: 通过元问题审查。.runtime/ 线性增长无封顶（4100+ 文件），需 TTL 自动清理。
+# 该 reconciler 该存在——扩展已有 reconciliation_registry 框架（第15个 reconciler），
+# 事件触发（post-commit），非 cron/manual，满足项目约束"reconciler 必须事件触发"。
+def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-RUNTIME-CLEANUP post-commit .runtime/ TTL 清理 reconciler。
+
+    病根：.runtime/ 是项目运行时产物目录（.gitignore 豁免），但无自动清理机制——
+    handoffs/（700+ session 交接包）、reconcile_reports/（2900+ 对账报告）、root-level
+    temp files 线性增长，总计 4100+ 文件，GOV-DOC-018 文件夹容量阈值超标。
+
+    治本（事件触发 TTL 清理）：
+    - trigger: 每次 commit 都触发（扫描 4100 文件 mtime 成本 <0.1s）
+    - reconcile: 删除 mtime > 7 天的文件，保留 .gitkeep（目录标记）和 .jsonl（审计日志）
+    - 自维护/自关闭：每次 commit 后自动清理，返回 ReconcileResult
+
+    保护规则（第一性原理：只删临时产物，保留有状态的持久文件）：
+    - .gitkeep：目录结构标记
+    - *.jsonl：append-only 审计日志
+    - 其余 >7 天文件：临时产物，过期安全删除
+
+    向内收：扩展 ReconciliationRegistry 框架（第15个 reconciler），不新建独立清理系统。
+    复用 _GlobalCommitLock 的 TTL+mtime 模式。
+    """
+    import os
+    import time
+
+    project_root = gateway.project_root
+    _TTL_SECONDS = 7 * 86400  # 7 天
+    _PROTECTED_NAMES = {".gitkeep"}
+    _PROTECTED_SUFFIX = ".jsonl"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return True  # .runtime/ 增长与每次 commit 正相关
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        runtime_dir = project_root / ".runtime"
+        if not runtime_dir.exists():
+            return ReconcileResult(action="skip", detail=".runtime/ not found")
+
+        now = time.time()
+        deleted = 0
+        errors = 0
+        for dirpath, _dirnames, filenames in os.walk(runtime_dir):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                try:
+                    mtime = os.path.getmtime(filepath)
+                    if now - mtime < _TTL_SECONDS:
+                        continue  # 仍在 TTL 内
+                    if filename in _PROTECTED_NAMES:
+                        continue  # 目录结构标记
+                    if filename.endswith(_PROTECTED_SUFFIX):
+                        continue  # append-only 审计日志
+                    os.remove(filepath)
+                    deleted += 1
+                except OSError:
+                    errors += 1
+
+        return ReconcileResult(
+            action="clean" if errors == 0 else "warn",
+            detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-RUNTIME-CLEANUP",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=50,  # 在所有 reconciler 之前执行——先清理旧文件
     )
