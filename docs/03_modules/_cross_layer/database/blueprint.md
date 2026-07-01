@@ -84,7 +84,7 @@ references:
 
 ### market.duckdb 安全约束（read_only 真源：代码层强制）
 
-> **read_only=True 安全约束真源在代码层**（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_conn()`），不在 YAML 配置。
+> **read_only=True 安全约束真源在代码层**（~~[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/database_service.py) `get_market_conn()`~~——market.duckdb 已于2026-07-01废弃，`get_market_conn()` 已删除；安全约束真源代码已随市场代码清理移除），不在 YAML 配置。
 > 理由：安全约束是代码契约不是配置数据，放YAML会和代码脱节（已发生过真源矛盾）。
 > infrastructure_registry.yaml 的 access_method 字段仅作AI发现性文档参考，标注「安全约束以代码为准」。
 
@@ -111,7 +111,7 @@ Schema 版本：`MARKET_SCHEMA_VERSION = "1.0.0"`（每次 DDL 变更递增，�
 - `init_market_schema(conn)` 幂等初始化（CREATE IF NOT EXISTS / CREATE OR REPLACE VIEW，可重复执行）
 - `verify_market_schema(conn)` 校验完整性，返回 `(ok, missing)` 缺失项列表
 - 执行顺序：先 7 表后 1 视图（kline_3s 依赖 tick_data）
-- 测试覆盖：[test_market_duckdb.py](file:///d:/ZephyrAlpha/tests/io/test_market_duckdb.py) DM-100018 覆盖 8 表 CRUD + 性能
+- ~~测试覆盖：test_market_duckdb.py DM-100018 覆盖 8 表 CRUD + 性能~~（已于2026-07-01删除，market.duckdb 已废弃）
 
 ## 三层冷热架构定位（当前:仅DuckDB单引擎 | 未来蓝图:Redis/FeatureStore/CQRS门禁触发）
 

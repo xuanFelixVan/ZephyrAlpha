@@ -105,8 +105,8 @@ modules:
         description: "~~market.duckdb 连接契约~~——已于2026-07-01删除/废弃"
     test_coverage:
       tested:
-        - database_service.py (tests/io/test_market_duckdb.py DM-100018 覆盖 market.duckdb 方法)
-        - market_schema.py (DDL-as-Code 真源，由 DM-100018 8表 CRUD 间接覆盖)
+        - database_service.py (~~tests/io/test_market_duckdb.py~~ 已删除，market.duckdb 方法已于2026-07-01废弃)
+        - market_schema.py (DDL-as-Code 真源归档，market.duckdb 已废弃)
       untested_p1: []
       untested_p2: []
 

@@ -774,7 +774,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: sqlite_db_connection
-    canonical_override: src/zephyr/governance/sqlite_schema.py
+    canonical_override: src/zephyr/governance/persistence/sqlite_schema.py
     aliases:
       - get_db_connection
       - sqlite_connection
@@ -782,7 +782,7 @@ capabilities:
       - db_utils_get_db_connection
     description: >-
       SQLite 数据库连接函数（governance.db 等）。F2/F3 同名冲突已治本（2026-06-30，AGENTS.md §11.4 治本完成）。
-      真源 canonical = src/zephyr/governance/sqlite_schema.py 的 get_db_connection()（F2，含 schema 初始化，
+      真源 canonical = src/zephyr/governance/persistence/sqlite_schema.py 的 get_db_connection()（F2，含 schema 初始化，
       isolation_level=None autocommit）。
       F3 = src/zephyr/shared/utils/db_utils.py 是 sanctioned re_export 转发层（L34-36 importlib 转发到 F2），
       作为 shared/utils 公共 API 层保留，避免上层（trading/orchestrator 等）直接 import governance.sqlite_schema

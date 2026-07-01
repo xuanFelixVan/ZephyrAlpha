@@ -2,16 +2,16 @@
 # [MODULE] zephyr.governance.market_schema
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] duckdb
-# [CONSUMERS] zephyr.governance.persistence.database_service.DatabaseService (EXPECTED_MARKET_TABLES 共享)
+# [CONSUMERS] 无（market.duckdb 已于2026-07-01废弃，原消费者 database_service.py market 代码已删除；本文件仅作 DDL 真源归档）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DDL-as-Code 协议——本文件是 market.duckdb 8 表/视图 DDL 唯一真源
+# [INVARIANTS] DDL-as-Code 协议——本文件是 market.duckdb 8 表/视图 DDL 唯一真源; market.duckdb 已于2026-07-01废弃（INFRA-DB-005 deleted），本文件仅作 DDL 真源归档保留
 # [MODIFY-GUARD] 改 DDL 前必须 git commit 备份 + 红蓝测试验证
 # [STABILITY] frozen
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] init_market_schema 幂等；verify_market_schema 返回 (ok, missing)
-# [TESTS] tests/io/test_market_duckdb.py (DM-100018 覆盖 8 表 CRUD+性能)
+# [TESTS] tests/io/test_market_duckdb.py (已删除，market.duckdb 于2026-07-01废弃)
 # [A_module] module_id=MOD-INF-012 | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 """

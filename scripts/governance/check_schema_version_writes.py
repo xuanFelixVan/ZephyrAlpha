@@ -55,7 +55,7 @@ from _shared.constants import get_depgraph_pg_connection, REPO_ROOT as _REPO_ROO
 # Whitelist: depgraph_schema.py (depgraph.db migrations) + sqlite_schema.py (governance.db migrations)
 WHITELIST = {
     "src/zephyr/governance/depgraph_schema.py",
-    "src/zephyr/governance/sqlite_schema.py",
+    "src/zephyr/governance/persistence/sqlite_schema.py",
 }
 WRITE_PATTERNS = {"insert", "update", "replace"}
 # Word-boundary pattern: matches _schema_version but NOT _capacity_schema_version
