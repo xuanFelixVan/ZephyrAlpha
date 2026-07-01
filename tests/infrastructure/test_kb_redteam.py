@@ -146,7 +146,7 @@ class TestRedTeamChromaDBBypass:
         ke_dir.mkdir(parents=True, exist_ok=True)
 
         try:
-            from zephyr.governance.intelligence_governance.self_test import _check_ghost_scan as ghost_scan
+            from zephyr.governance.kb.self_test import _check_ghost_scan as ghost_scan
 
             report = ghost_scan(PROJECT_ROOT)
 
@@ -179,7 +179,7 @@ class TestRedTeamContextOverflow:
         if file_size > MAX_KE_SIZE:
             try:
                 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-                from zephyr.governance.intelligence_governance.self_test import SelfTest
+                from zephyr.governance.kb.self_test import SelfTest
 
                 os.environ["ZEPHYR_PROJECT_ROOT"] = str(PROJECT_ROOT)
                 st = SelfTest()
