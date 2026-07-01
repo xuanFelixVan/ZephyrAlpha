@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-01 16:05:51
+> 最后更新: 2026-07-01 16:21:44
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -124,8 +124,6 @@ graph TD
     src_zephyr_integration_llm_bridge_py -.->|config_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_mcp_init_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_mcp_base_server_py
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_init_py
