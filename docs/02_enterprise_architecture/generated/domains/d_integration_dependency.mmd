@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-01 18:06:58
+%% 生成时间: 2026-07-01 18:13:42
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 98, 依赖边数: 244
+%% 模块数: 98, 依赖边数: 243
 
 graph TD
 
@@ -256,12 +256,11 @@ graph TD
     %% D_SHARED -> D_INTEGRATION (2 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_integration_shared_schema_execution_model_py
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
-    %% D_TRADING -> D_INTEGRATION (21 条)
+    %% D_TRADING -> D_INTEGRATION (20 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration___init___py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -347,5 +346,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 115 条
-    %% 跨域入边: 74 条
+    %% 跨域入边: 73 条
     %% 跨域出边: 55 条
