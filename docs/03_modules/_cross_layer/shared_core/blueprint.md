@@ -446,20 +446,20 @@ depends_on:
 | `src/zephyr/shared/tracing.py` | ✅ 已实现 | Phase 6 新增：OpenTelemetry 兼容 tracing context |
 | `src/zephyr/resilience/budget_enforcement/cost_budget.py` | ✨ early-bird | Phase 11 (B26)：AI 成本预算熔断——208行 3类 9函 |
 | `src/zephyr/orchestration/context_management/context_budget.py` | ✨ early-bird | Phase 11 (B28)：上下文预算管理——259行 4类 17函 |
-| `src/zephyr/integration/shared_08/evals.py` | ✨ early-bird | Phase 12 (B29)：Evals 评估框架——258行 7类 14函 |
+| `src/zephyr/shared/evals.py` | ✨ early-bird | Phase 12 (B29)：Evals 评估框架——258行 7类 14函 |
 | `src/zephyr/shared/session_audit.py` | ✨ early-bird | Phase 12 (B32)：Session 审计轨迹——315行 8类 19函 |
-| `src/zephyr/integration/shared_08/durable_execution.py` | ✨ early-bird | Phase 13 (B30)：Durable Execution——335行 6类 19函 |
+| `src/zephyr/shared/durable_execution.py` | ✨ early-bird | Phase 13 (B30)：Durable Execution——335行 6类 19函 |
 | `src/zephyr/governance/behavioral-admission/post_process.py` | ✨ early-bird | Phase 13 (B31)：后处理管道——289行 5类 9函 |
 | `src/zephyr/governance/constitutional_update/constitutional_update.py` | ✨ early-bird | Phase 14 (B27)：宪法自更新——225行 3类 7函 |
 | `src/zephyr/infrastructure/runtime_integration/a2a_protocol/multi_agent.py` | ✨ early-bird | Phase 14 (B33)：Multi-Agent 编排——272行 7类 13函 |
 | `src/zephyr/orchestration/agent_lifecycle/skill-registry.py` | ✨ early-bird | Phase 14 (B34)：Skill/Prompt 注册表——194行 6类 2函 |
-| `src/zephyr/integration/shared_08/version_negotiation.py` | ✨ early-bird | Phase 14：版本协商——174行 6类 8函 |
+| `src/zephyr/shared/version_negotiation.py` | ✨ early-bird | Phase 14：版本协商——174行 6类 8函 |
 | `src/zephyr/governance/architecture_governance/path_resolver.py` | ✅ 已实现 | Phase 10 补注册：路径解析器——261行2类7函。消费者：mcp/task_manager_server.py |
 | `src/zephyr/shared/contract_bus.py` | ✅ 已实现 | Phase 10 补注册：契约总线——140行6类14函。消费者：contract_tester.py |
 | `src/zephyr/shared/event_bus.py` | ✅ 已实现 | Phase 10 补注册：共享事件总线——124行3类7函（与core/events/event_bus独立） |
 | `src/zephyr/shared/__init__.py` | ✅ 已实现 | 包初始化 |
 | `src/zephyr/shared/blueprint_scorer.py` | ✅ 已实现 | 蓝图路由评分 |
-| `src/zephyr/integration/shared_08/kg_interface.py` | ✅ 已实现 | 知识图谱接口 |
+| `src/zephyr/shared/kg_interface.py` | ✅ 已实现 | 知识图谱接口 |
 | `src/zephyr/shared/adaptive_sampler.py` | ✅ 已实现 | 原 orphan 归类：自适应采样 |
 | `src/zephyr/shared/ai_audit_guard.py` | ✅ 已实现 | 原 orphan 归类：AI修改审计守卫 |
 | `src/zephyr/shared/ai_understandability_constraint.py` | ✅ 已实现 | 原 orphan 归类：AI可理解性约束 |

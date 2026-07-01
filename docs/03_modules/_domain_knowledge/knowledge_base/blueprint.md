@@ -2795,7 +2795,7 @@ load_bearing_guard:
 
 | 参数类别 | 存储位置 | 修改权限 | 示例 |
 |---------|---------|:---:|------|
-| 硬编码常数（frozen） | `src/zephyr/integration/shared_08/constants.py` | 代码修改+PR+Owner merge | `MAX_KE_TTL_DAYS=365`, `MIN_BOOTSTRAP_KE=10` |
+| 硬编码常数（frozen） | `src/zephyr/shared/constants.py` | 代码修改+PR+Owner merge | `MAX_KE_TTL_DAYS=365`, `MIN_BOOTSTRAP_KE=10` |
 | 可配置参数（tunable） | `config/kb_parameters.yaml` | Owner 手动编辑+自动加载 | `hot_cache_size`, `rerank_top_k` |
 | KE 存储的知识 | `docs/08_knowledge/` KEs | G1-G5 标准流程 | A1-A8/B1-B7/C1-C3 |
 

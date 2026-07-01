@@ -43,7 +43,7 @@ class AgentCapability(BaseModel):
 
 | 文件 | 导入路径 | 状态 |
 |------|---------|:---:|
-| `governance/spec_auditor.py` | `from zephyr.integration.shared_08.contracts.protocols import AgentCapability` | 已正确 |
+| `governance/spec_auditor.py` | `from zephyr.shared.contracts.protocols import AgentCapability` | 已正确 |
 | `governance/bridges/spec_auditor.py` | `from zephyr.governance.agent_spec.registry import AgentCapability` | 已正确 |
 | `governance/semantic_audit/spec_auditor.py` | `importlib.import_module("zephyr.orchestration.agent_lifecycle.registry")` | 已正确（动态导入） |
 | `governance/audit_trail/bridges/spec_auditor.py` | `from zephyr.governance.agent_spec.registry import AgentCapability` | 已正确 |
