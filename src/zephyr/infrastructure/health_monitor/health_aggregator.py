@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_system_master/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.infrastructure.health_monitor.health_aggregator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.health_monitor.__init__

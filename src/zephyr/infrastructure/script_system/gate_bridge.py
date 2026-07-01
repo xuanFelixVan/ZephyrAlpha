@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-SCRIPT-GATE-001
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | CT-SCRIPT-GATE-001
 # [MODULE] zephyr.infrastructure.script_system.gate_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.script_system.__init__

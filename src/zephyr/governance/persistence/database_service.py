@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOVERNANCE
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.governance.persistence.database_service
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.memory_writer
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.autonomy_core.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-DB-001
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
 # [MODULE] zephyr.trading.feedback_loop.db_writer
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.feedback_loop.__init__; zephyr.infrastructure.__init__

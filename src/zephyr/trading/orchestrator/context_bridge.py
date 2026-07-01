@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.context_bridge
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

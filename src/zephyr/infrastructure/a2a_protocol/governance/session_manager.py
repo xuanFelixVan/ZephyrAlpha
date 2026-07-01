@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOVERNANCE
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.governance.session_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__

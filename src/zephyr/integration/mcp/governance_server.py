@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOVERNANCE
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md
 # [MODULE] zephyr.integration.mcp.governance_server
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_trail.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__

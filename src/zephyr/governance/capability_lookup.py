@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §registry
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §registry
 # [MODULE] zephyr.governance.capability_lookup
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
