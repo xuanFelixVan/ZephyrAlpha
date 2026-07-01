@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2032 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2095 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-arch_reference_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §arch-reference-gate
 # [MODULE] tests.test_arch_reference_gate
 # [STABILITY] evolving
