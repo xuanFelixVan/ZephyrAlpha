@@ -376,9 +376,37 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="warn",
                 detail=f"path_tree sync OK but doc gen failed: {doc_result.stderr.strip()[:150]}",
             )
+        # 4. 检测 full_project_tree 文档变更 → 自动提交（治本 post-commit 循环）
+        # 病根：原实现生成 md 后返回 action="clean" 不自动提交，导致每次 commit 后
+        # full_project_tree_en/zh.md 变成 modified 残留（post-commit 循环）。
+        # 治本：对标 make_manifest_reconciler line 277-304，检测变更→_commit_auto 自动提交。
+        _tree_files = [
+            "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md",
+            "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md",
+        ]
+        _diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--"] + _tree_files
+        )
+        if _diff_result.returncode == 0 and not _diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="arch_directory_tree synced + path doc up to date")
+        # 变更 → 自动提交（_commit_auto 不触发 reconciler，无循环风险）
+        _auto_msg = "chore(path-tree): auto-reconcile full_project_tree by GitCommitGateway post-commit"
+        _abs_files = [str(project_root / f) for f in _tree_files]
+        _commit_result = gateway._commit_auto(session_id, _abs_files, _auto_msg)
+        if _commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="arch_directory_tree synced + path doc regenerated and auto-committed",
+            )
+        if _commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="arch_directory_tree synced + path doc no drift (auto-commit found no staged changes)",
+            )
         return ReconcileResult(
-            action="clean",
-            detail="arch_directory_tree synced + path doc regenerated",
+            action="warn",
+            detail=f"path doc drift detected, auto-commit failed ({_commit_result.status}): "
+                   f"{_commit_result.message[:200]}",
         )
 
     return ReconcilerSpec(

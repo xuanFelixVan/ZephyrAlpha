@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.governance.database_manager
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.audit_schema; zephyr.governance.query_metrics
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.audit_trail.audit_schema; zephyr.governance.observability_governance.query_metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -53,7 +53,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
-from zephyr.governance.sqlite_schema import (
+from zephyr.governance.persistence.sqlite_schema import (
     get_db_connection,
     init_db,
     schema_version,
@@ -727,8 +727,8 @@ class DatabaseManager:
 
         聚合 health_check + stats + schema_drift + query_performance。
         """
-        from zephyr.governance.audit_schema import AuditQuery
-        from zephyr.governance.query_metrics import query_metrics
+        from zephyr.governance.audit_trail.audit_schema import AuditQuery
+        from zephyr.governance.observability_governance.query_metrics import query_metrics
 
         health = self.health_check()
         stats = self.stats()
