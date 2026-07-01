@@ -1,4 +1,4 @@
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 schema_version: '1.0'
 doc_type: register
 ttl: permanent

@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §N
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §N
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # 蓝图: §N 跨门禁时序一致性
 # 检测: G1快照的blueprint_version vs 当前module blueprint_version 不一致 → WARNING
 
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 gate_id: G7C
 title: G7C Cross Gate Consistency Gate（跨门禁时序一致性）
 gate_name: cross_gate_consistency

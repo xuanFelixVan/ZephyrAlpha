@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # 依赖图模板合规门禁 —— 依赖图产出物必须符合 TPL-DEPGRAPH-001 模板
 # SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-005
 
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 gate_id: MAD-005
 gate_name: dependency_graph_template
 title: "MAD-005 Dependency Graph Template Compliance"

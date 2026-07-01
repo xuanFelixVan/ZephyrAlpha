@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1751 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §test_depgraph_schema
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test_depgraph_schema
 # [MODULE] tests.test_depgraph_schema
 # [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] init_db幂等; migration只向前; 事务原子性; PRAGMA基线一致

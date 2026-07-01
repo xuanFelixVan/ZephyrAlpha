@@ -180,6 +180,7 @@ def session_worktree_commit(
     files: list[str],
     message: str,
     project_root: str | Path | None = None,
+    allow_overlap: bool = False,
 ) -> dict:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
 
@@ -190,11 +191,21 @@ def session_worktree_commit(
     worktree 内文件是创建时的旧版本。本函数在 git add 前自动将 files 从项目根
     同步（copy）到 worktree，确保 stage 的是最新内容。AI 无需手动同步。
 
+    **HELD-OVERLAP 硬阻断（2026-07-02 加硬）**：commit 前对每个文件调
+    ``registry.claim_file()``（原子 check-and-claim，防 TOCTOU 竞态）。若被其他
+    活跃 session 持有 → ``HELD_OVERLAP_VIOLATION`` 硬阻断（回滚已 claim 的文件）。
+    claim 是 session 级（不 per-commit 释放），merge/abort 时 ``unregister`` 自动
+    释放。这使 worktree 模式下的文件锁与 GitCommitGateway 的 HELD-OVERLAP gate
+    一样硬——消除"两 session 编辑同一文件导致 merge conflict"的根因。
+    ``allow_overlap=True`` 逃生通道（对标 GitCommitGateway）。
+
     Args:
         session_id: 已注册的 session_id（必须有对应 worktree）。
         files: 要提交的文件列表。路径可以是绝对路径（项目根或 worktree 内）或相对的。
         message: commit message。
         project_root: 项目根目录（默认 REPO_ROOT）。
+        allow_overlap: True 时跳过 HELD-OVERLAP 检查（逃生通道，对标 GitCommitGateway
+            的 ``--allow-overlap``）。默认 False（硬阻断）。
 
     Returns:
         {
@@ -204,6 +215,7 @@ def session_worktree_commit(
             "commit_hash": str,   # 成功时为短 SHA，否则空
         }
         worktree 不存在时附加 "not_found": True。
+        HELD-OVERLAP 阻断时附加 "held_overlap": True。
     """
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)

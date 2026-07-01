@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -9,12 +9,12 @@
 # _template.yaml — ZephyrAlpha Gate Template v1.0.0
 # 门禁标准模板——AI agent 复制此文件创建新门禁
 # 对标: K8s Admission Controller + OPA Rego Policy + Cursor Rules + Windsurf Rules
-# 真源: GOV-ARCH-006 gate-strategy-standard.md §七 + MOD-INF-007 blueprint
+# 真源: GOV-ARCH-006 gate-strategy-standard.md §七 + MOD-GATE_ENGINE blueprint
 
 # ═══════════════════════════════════════════════════════════
 # 1. 门禁身份（必填）
 # ═══════════════════════════════════════════════════════════
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 schema_version: "1.0"
 doc_type: gate
 gate_id: "<G{N}|MAD-{NNN}|LC-{NNN}>"

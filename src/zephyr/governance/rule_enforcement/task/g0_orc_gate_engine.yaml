@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # 真源：task_id 模式见 shared/schemas.py _TASK_ID_PATTERN
 # 说明：叙事规则与人读条目仍以 task/g0-entry.yaml 为准；本文件仅供 GateEngine.load。
 
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 gate_id: G0
 title: G0 Task Entry Gate（Orc 最小硬校验）
 gate_name: task_entry_orc

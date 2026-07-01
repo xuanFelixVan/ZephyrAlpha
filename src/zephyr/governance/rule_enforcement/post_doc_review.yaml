@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
-# module_id: MOD-INF-007
+# blueprint: MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
+# module_id: MOD-GATE_ENGINE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -12,7 +12,7 @@
 # ═══════════════════════════════════════════════════════════
 # 1. 门禁身份（必填）
 # ═══════════════════════════════════════════════════════════
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 schema_version: "1.0"
 doc_type: gate
 gate_id: "POST_DOC_REVIEW"

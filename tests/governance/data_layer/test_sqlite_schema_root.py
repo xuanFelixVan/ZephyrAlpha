@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1674 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §test
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test
 # [MODULE] tests.test_sqlite_schema
 # [INVARIANTS] init_db幂等;migration只向前;PRAGMA基线一致
 # [MODIFY-GUARD] src/zephyr/db/sqlite_schema.py

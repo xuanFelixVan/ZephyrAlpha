@@ -1,4 +1,4 @@
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 schema_version: '1.0'
 doc_type: gate
 gate_id: G_TRAE_003
@@ -11,7 +11,7 @@ status: active
 ttl: permanent
 scope: global
 category: compliance
-owner: MOD-INF-007
+owner: MOD-GATE_ENGINE
 consumer: gate_engine
 ai_autonomy: autonomous
 token_budget: 200
@@ -81,7 +81,7 @@ simulation:
 upgrade_triggers:
 - condition: Rule TRAE-003 YAML updated with new sections
   action: version bump + update entry_conditions
-  approval: MOD-INF-007 owner
+  approval: MOD-GATE_ENGINE owner
 change_log:
 - version: 0.1.0
   date: '2026-06-22'

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0291 | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] tests.unit.test_post_sync_validation
 # [STABILITY] evolving
 # [SAFETY] L
