@@ -89,19 +89,19 @@ _schema:
 blueprints:
 - module_id: MOD-CONTEXT_ENGINE
   name: context_engine
-  title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
-  summary: Context Engine 集成索引蓝图——拆分为 Core Pipeline (MOD-INF-008A, 40文件) + Governance
-    & Operations (MOD-INF-008B, 47文件)。87个 .py 文件全部已实现。
+  title: Context Engine 集成蓝图 — 上下文引擎集成索引
+  summary: Context Engine 集成索引蓝图——上下文注入管道(build→compress→validate→inject)+Token预算管控。代码位于
+    src/zephyr/autonomy_core/context/（22个.py文件），部分实现。
   layer: cross_layer
   functional_domain: intelligence
-  blueprint_status: Draft
+  blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 1.0.1
+  version: 1.1.0
   generation: 1
-  last_updated: 2026-05-19
+  last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
-  construction_progress: design_only
+  construction_progress: partially_implemented
 - module_id: MOD-FEEDBACK_LOOP
   name: feedback_loop
   title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
@@ -893,8 +893,8 @@ blueprints:
 summary:
   total: 54
   by_blueprint_status:
-    Draft: 7
-    Active: 47
+    Active: 48
+    Draft: 6
   by_layer:
     cross_layer: 26
     infra_ops: 16
@@ -911,8 +911,8 @@ summary:
     ml_train: 1
     simulation: 1
   by_construction_progress:
-    design_only: 10
-    partially_implemented: 29
+    partially_implemented: 30
+    design_only: 9
     completed: 11
     mostly_implemented: 1
     scaffold: 2
