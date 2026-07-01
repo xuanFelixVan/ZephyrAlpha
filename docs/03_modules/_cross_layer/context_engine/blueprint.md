@@ -7,6 +7,7 @@ template_for: blueprint
 status: Draft
 version: 1.0.1
 layer: cross_layer
+blueprint_level: domain
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

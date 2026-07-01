@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 version: "4.3.0"
 layer: cross_layer
-blueprint_level: module
+blueprint_level: domain
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

@@ -95,7 +95,7 @@ blueprints:
   layer: cross_layer
   functional_domain: intelligence
   blueprint_status: Draft
-  blueprint_level: module
+  blueprint_level: domain
   priority: P0
   version: 1.0.1
   generation: 1
