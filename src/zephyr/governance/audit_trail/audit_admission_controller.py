@@ -158,7 +158,7 @@ class AuditAdmissionController:
             jsonl_lines.append(f.to_jsonl())
         if jsonl_lines:
             try:
-                from zephyr.governance.finding_ingest import FindingIngest
+                from zephyr.governance.audit_trail.finding_ingest import FindingIngest
 
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)
