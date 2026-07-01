@@ -74,6 +74,18 @@ VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
 VMS_PERSIST_DIR: Path = REPO_ROOT / "data" / "vector_db"
 
+
+def get_log_dir() -> Path:
+    """返回日志目录路径 REPO_ROOT / '.runtime' / 'logs'，并确保目录存在。
+
+    Returns:
+        Path: 日志目录的绝对路径。
+    """
+    log_dir = REPO_ROOT / ".runtime" / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    return log_dir
+
+
 __all__ = [
     "DB_DIR",
     "DB_PATH",
@@ -85,4 +97,5 @@ __all__ = [
     "VECTOR_INDEX_DIR",
     "VMS_PERSIST_DIR",
     "find_repo_root",
+    "get_log_dir",
 ]
