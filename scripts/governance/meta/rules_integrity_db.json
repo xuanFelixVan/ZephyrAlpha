@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "e5337d2cc8b2e438",
+      "hash": "edfd2149650babfe",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "d3890d19ac11dd6b",
+      "hash": "581e43989f79af29",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "cea549cb24b15f2e",
+      "hash": "e0f6202ad6107199",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "074efafdc8394c0c",
+      "hash": "6a0dc887c6275c43",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "3253e0ae1649cb34",
+      "hash": "ef506f30d98e0cfe",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -75,6 +75,11 @@
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: __init__.py）"
     },
+    "src/zephyr/governance/commit_gates/arch_reference_gate.py": {
+      "hash": "937779638a6376e6",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: arch_reference_gate.py）"
+    },
     "src/zephyr/governance/commit_gates/capability_overlap_gate.py": {
       "hash": "3fd47f3e11b46af1",
       "critical": true,
@@ -86,7 +91,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: claim_required_gate.py）"
     },
     "src/zephyr/governance/commit_gates/create_guard.py": {
-      "hash": "c93b0ef3fb0aac4c",
+      "hash": "e92123f88c916979",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: create_guard.py）"
     },
@@ -106,6 +111,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
     }
   },
-  "registered_at": "2026-06-30T21:02:01.917268+00:00",
+  "registered_at": "2026-07-01T07:06:51.260063+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }
