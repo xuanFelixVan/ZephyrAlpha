@@ -318,7 +318,7 @@ time_budget:
 | L1_warning | >70% OR turn soft_limit接近→WARNING+budget_watch | auto |
 | L1.5_sunk_cost | cost_to_completion>3× AND 产出<20%→告警建议放弃 | auto; ratio=budget_consumed/output_completion |
 | L2_model_switch | >80% OR 单次>$0.50→自动降级Tier-1 | auto; 最高优先——在压缩上下文之前 |
-| L3_compress | >85%→DocCompressor aggressive | auto; 联动MOD-INF-008 |
+| L3_compress | >85%→DocCompressor aggressive | auto; 联动MOD-CONTEXT_ENGINE |
 | L4_minimal | >95%→仅AGENTS.md+当前蓝图§3 | auto |
 | L5_halt | >100% hard_limit→只读+审计; 沟通协议: 保存进度+resume checkpoint | auto; ProvenanceStandard |
 | L6_kill_switch | 单日>$100 OR 连续5 DENY OR runaway→全局熔断 | auto; 联动MOD-INF-001; 30min自动尝试解除 |

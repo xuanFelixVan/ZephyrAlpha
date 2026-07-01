@@ -108,7 +108,7 @@ ssot_claims:
 | 23 | governance/ (8个: g9+gct_016~025) | §3.5 | G9跨蓝图集成+GCT-016~025集成门禁 | 已实现 | | 本模块 |
 | 24 | infrastructure/ (4个: g8+sys_master+vms+observability) | §3.6 | G8 SSoT+系统蓝图合规+向量库健康+可观测性 | 已实现 | | 本模块 |
 | 25 | trading/ (3个: position+leverage+correlation) | §3.7 | G10持仓限制+G11杠杆限制+G12策略相关性 | 已实现 | shadow | 本模块 |
-| 26 | fle/ (43个FLE门禁) | §3.8 | FLE-ACTION-REVERSIBILITY~FLE-SCOPE-CREEP-MONITOR + FLE-SAFETY-GATE-L1~L67（归属MOD-INF-010） | 已实现 | | ⚠️建议迁移至MOD-INF-010 |
+| 26 | fle/ (43个FLE门禁) | §3.8 | FLE-ACTION-REVERSIBILITY~FLE-SCOPE-CREEP-MONITOR + FLE-SAFETY-GATE-L1~L67（归属MOD-FEEDBACK_LOOP） | 已实现 | | ⚠️建议迁移至MOD-FEEDBACK_LOOP |
 | 27 | _registry.yaml | §3.1 | 全部门禁注册表SSoT | 已实现 | | 本模块 |
 | 28 | _template.yaml | §3.1 | 门禁标准模板——11节完整字段 | 已实现 | | 本模块 |
 | `anti_pattern_guard.py` | § — | — | 已实现 | | 本模块 |
@@ -295,11 +295,11 @@ ssot_claims:
 
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
-| G0-G7任务门禁判定 | MOD-TASK_SYSTEM(消费方,非判定方) | Task System蓝图声明"门禁判定委托MOD-INF-007" |
+| G0-G7任务门禁判定 | MOD-TASK_SYSTEM(消费方,非判定方) | Task System蓝图声明"门禁判定委托MOD-GATE_ENGINE" |
 | G1-G5 KMS决策门 | MOD-INF-013(消费方) | MCP Servers蓝图引用gate_engine_server.py |
 | 门禁域熔断器(特化版) | MOD-INF-016(基类SSoT) | §0.4声明委托关系+§10.5登记重叠 |
 | 门禁评估管线 | MOD-INF-009(执行流门控,非合规判定) | §10.5术语区分 |
-| 法证审计哈希链 | MOD-INF-021(回滚后G0验证,消费方) | Rollback蓝图声明依赖MOD-INF-007 §2.3 |
+| 法证审计哈希链 | MOD-INF-021(回滚后G0验证,消费方) | Rollback蓝图声明依赖MOD-GATE_ENGINE §2.3 |
 
 ### §2.2 不包含的职责
 

@@ -1309,7 +1309,7 @@ def process_v1(data: dict) -> Result: ...
 | W3-5 | GATE-DEDUP 正式版              | DeduplicationHandler+_GATE_FILES+skip set移除 | ✅ 已完成 |
 | W3-6 | CI 集成                       | `.github/workflows/governance.yml` 新增 dedup step |
 | W3-7 | Self-Benchmark              | 5组KAT(KAT-01~05)+退化检测+benchmark子命令 | ✅ 已完成 |
-| W3-8 | 渐进式三层记忆注入(委托CE)             | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-INF-008 |
+| W3-8 | 渐进式三层记忆注入(委托CE)             | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-CONTEXT_ENGINE |
 
 ### 16.4 回滚方案
 
@@ -1362,7 +1362,7 @@ def process_v1(data: dict) -> Result: ...
 | W3-5 | GATE-DEDUP 正式版 | DeduplicationHandler+_GATE_FILES+skip set移除 | ✅ 已完成 | — |
 | W3-6 | CI 集成 | .github/workflows/governance.yml | 🔒 非本蓝图 | 堵塞: DevOps/GitHub Actions配置; 本蓝图仅提供cli scan命令 |
 | W3-7 | Self-Benchmark | 5 组已知对自验证 | ⏳ 待施工 | — |
-| W3-8 | 渐进式三层记忆注入(委托CE) | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-INF-008 | MOD-CONTEXT_ENGINE 规则优先级注册API |
+| W3-8 | 渐进式三层记忆注入(委托CE) | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE 规则优先级注册API |
 
 ### 16.7.2 v0.14.1 施工记录
 
