@@ -74,7 +74,7 @@ mod_master_contracts:
 - ❌ **VMS 使用教程**——见 `vector_memory-service-interface.md`
 - ❌ **MCP 协议规范**——见 Anthropic MCP 官方文档（https://modelcontextprotocol.io）
 - ❌ **具体 Prompt 模板库**——见 `prompt_templates/`（experimental 产物，另出）
-- ❌ **Agent 任务状态机**——见 `agent-orchestrator-interface.md`（B-a-3）
+- ❌ **Agent 任务状态机**——见 `agent_orchestrator_interface.md`（B-a-3）
 - ❌ **IDE 插件开发手册**——本规范只描述 Context Engine 如何注入，不描述 IDE 如何渲染
 - ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
 
