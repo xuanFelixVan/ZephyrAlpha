@@ -79,7 +79,7 @@ from pathlib import Path
 from threading import RLock
 
 from zephyr.governance.observability_governance.projection_engine import ProjectionEngine
-from zephyr.governance.rule_enforcement.gate_engine import (
+from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
     GATES_DIR,
     GateEngine,
 )

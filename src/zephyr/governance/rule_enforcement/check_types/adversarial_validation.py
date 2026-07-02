@@ -22,7 +22,7 @@ from __future__ import annotations
 from typing import Any
 
 from zephyr.governance.rule_enforcement.adversarial_strategies import AdversarialSampleGenerator
-from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidationGate
+from zephyr.governance.rule_enforcement.gate_engine.adversarial_validation import AdversarialValidationGate
 from zephyr.governance.rule_enforcement.check_types.check_type_registry import CheckTypeHandler, register_check_type
 from zephyr.governance.rule_enforcement.task_types import Task
 

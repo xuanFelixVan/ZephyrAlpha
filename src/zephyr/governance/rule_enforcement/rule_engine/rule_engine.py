@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
-# [MODULE] zephyr.governance.rule_enforcement.rule_engine
+# [MODULE] zephyr.governance.rule_enforcement.rule_engine.rule_engine
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] SkillLoader; GateEngine; cold_start sequence; AI sessions
@@ -23,7 +23,7 @@ RuleLoader — 规则加载核心 API
 回退路径：直接扫描 docs/01_policies_and_standards/rules/ 目录
 
 用法：
-    from zephyr.governance.rule_enforcement.rule_engine import RuleLoader
+    from zephyr.governance.rule_enforcement.rule_engine.rule_engine import RuleLoader
     loader = RuleLoader()
     rules = loader.load_for_operation("file_write")
     critical = loader.get_critical_rules()

@@ -221,7 +221,7 @@ def run_canary_injection_test() -> dict[str, Any]:
     try:
         from zephyr.integration.schema.schemas import SafetyLevel, Task, TaskNamespace
 
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
     except Exception as exc:
         return {
             "label": "V4. Canary 注入测试",
@@ -357,7 +357,7 @@ def verify_import_integrity() -> dict[str, Any]:
     sys.path.insert(0, str(_SRC))
     try:
         import zephyr.governance.rule_enforcement.circuit_breaker
-        import zephyr.governance.rule_enforcement.gate_engine
+        import zephyr.governance.rule_enforcement.gate_engine.gate_engine
 
         importable = True
     except SyntaxError as exc:

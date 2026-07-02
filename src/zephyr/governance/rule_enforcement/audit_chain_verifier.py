@@ -25,7 +25,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
-from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
+from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
 
 _CORE_AUDIT_AVAILABLE = False
 try:

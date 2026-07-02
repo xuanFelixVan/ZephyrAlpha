@@ -43,23 +43,25 @@ from . import (
     ai_capability_guard,
     breaking_change_detector,
     end_to_end_walkthrough,
+    integration_test_runner,
+    kiss_enforcer,
+    secrets_guard,
+)
+from .gate_engine import (
     gate_health,
     gate_integrity_guard,
     gate_override,
     gate_simulator,
-    integration_test_runner,
-    kiss_enforcer,
-    secrets_guard,
 )
 
 logger = logging.getLogger(__name__)
 
 _LAZY_IMPORTS: dict[str, dict[str, str]] = {
-    "GateContext": {"module": "zephyr.governance.rule_enforcement.gate_context", "attr": "GateContext"},
-    "GatePipeline": {"module": "zephyr.governance.rule_enforcement.gate_pipeline", "attr": "GatePipeline"},
-    "GateSimulator": {"module": "zephyr.governance.rule_enforcement.gate_simulator", "attr": "GateSimulator"},
+    "GateContext": {"module": "zephyr.governance.rule_enforcement.gate_engine.gate_context", "attr": "GateContext"},
+    "GatePipeline": {"module": "zephyr.governance.rule_enforcement.gate_engine.gate_pipeline", "attr": "GatePipeline"},
+    "GateSimulator": {"module": "zephyr.governance.rule_enforcement.gate_engine.gate_simulator", "attr": "GateSimulator"},
     "GateIntegrityGuard": {
-        "module": "zephyr.governance.rule_enforcement.gate_integrity_guard",
+        "module": "zephyr.governance.rule_enforcement.gate_engine.gate_integrity_guard",
         "attr": "GateIntegrityGuard",
     },
     "AdaptiveThreshold": {
@@ -70,8 +72,8 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
         "module": "zephyr.governance.rule_enforcement.audit_chain_verifier",
         "attr": "AuditChainVerifier",
     },
-    "GateHealth": {"module": "zephyr.governance.rule_enforcement.gate_health", "attr": "GateHealth"},
-    "GateOverride": {"module": "zephyr.governance.rule_enforcement.gate_override", "attr": "GateOverride"},
+    "GateHealth": {"module": "zephyr.governance.rule_enforcement.gate_engine.gate_health", "attr": "GateHealth"},
+    "GateOverride": {"module": "zephyr.governance.rule_enforcement.gate_engine.gate_override", "attr": "GateOverride"},
     "SysMasterCompliance": {
         "module": "zephyr.shared.contracts.sys_master_compliance",
         "attr": "SysMasterCompliance",

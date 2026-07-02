@@ -48,7 +48,7 @@ from typing import Any
 import yaml
 
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
-from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
+from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 

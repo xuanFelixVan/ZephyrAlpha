@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.governance.rule_enforcement.gate_pipeline
+# [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_pipeline
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context
 # [CONSUMERS]
@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any
 
-from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
+from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
 
 logger = logging.getLogger(__name__)
 

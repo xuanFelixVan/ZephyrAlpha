@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.rule_enforcement.gate_health import GateHealth, GateSLI, _percentile
+from zephyr.governance.rule_enforcement.gate_engine.gate_health import GateHealth, GateSLI, _percentile
 
 
 class TestPercentile:

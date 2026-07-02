@@ -146,7 +146,7 @@ class ImportRewriter:
     def scan_project(self, root: Path, exclude_dirs: set[str] | None = None) -> list[Path]:
         """Return all .py files under *root* that might reference moved modules."""
         if exclude_dirs is None:
-            exclude_dirs = {".git", "__pycache__", ".venv", "site-packages", "node_modules", ".runtime"}
+            exclude_dirs = {".git", "__pycache__", ".venv", "site-packages", "node_modules", ".runtime", ".aidrafts"}
         py_files: list[Path] = []
         for p in root.rglob("*.py"):
             rel = p.relative_to(root)

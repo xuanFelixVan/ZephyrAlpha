@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_watcher
-# [MODULE] zephyr.governance.rule_enforcement.rule_watcher
+# [MODULE] zephyr.governance.rule_enforcement.rule_engine.rule_watcher
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
@@ -22,7 +22,7 @@ RuleWatcher — YAML 规则文件变更检测与自动同步
   2. verify_rule_yaml_migration.py --check-hash（哈希验证）
 
 用法：
-    from zephyr.governance.rule_enforcement.rule_watcher import RuleWatcher
+    from zephyr.governance.rule_enforcement.rule_engine.rule_watcher import RuleWatcher
     watcher = RuleWatcher()
     changes = watcher.check_changes()
     if changes:
