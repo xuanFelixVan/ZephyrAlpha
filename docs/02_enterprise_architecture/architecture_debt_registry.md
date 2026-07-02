@@ -2640,9 +2640,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > - **批次A（5.18.2/3）已修复**：rule_id 类型统一 + PG FK 补全（depgraph_schema.py 治本注释）
 > - **批次B（5.18.4/5/14）已修复**：gate_decisions 统一 v28 + tasks.domain_id 删除（v30 migration）+ gates→gate_runs 改名（v15 + benign error）
 > - **批次C（5.18.6/7）已修复**：_DDL_TASK_EVENTS_V2 补 CHECK+UNIQUE + v31 migration 重建模式补约束；v23/v25/v27 writable_schema hack 移除（_DDL_TASKS v1 已含正确约束，hack 在全新库是 no-op）
-> - **批次D（5.18.9余/15）已修复**：arch_directory_tree FK 定义补全（02_create_pg_schema.sql + depgraph_schema.py）+ cleanup_arch_dir_orphans.py 清理脚本创建（待执行）；4处 datetime('now') 统一为 strftime ISO 8601
+> - **批次D（5.18.9余/15）已修复**：arch_directory_tree FK 定义补全（02_create_pg_schema.sql + depgraph_schema.py）+ cleanup_arch_dir_orphans.py 清理脚本已执行（676 孤儿清理 + FK fk_arch_dir_domain 补齐）；4处 datetime('now') 统一为 strftime ISO 8601
 > - **批次E（5.18.12/13）已修复**：apply_pg_schema() 恢复 PG 迁移框架 + backup_before_migration()/restore_from_backup() 提供 downgrade 能力
-> - **剩余待执行**：cleanup_arch_dir_orphans.py 需在 git commit 后执行（清理 683 孤儿 domain_id + 补 FK 生效）
+> - **[✓ 2026-07-03 cleanup 已执行]**：cleanup_arch_dir_orphans.py 已执行——573 行 D_GOV_SCRIPTS-META/ARCH → D_GOV_SCRIPTS + 103 行空串 → NULL + FK fk_arch_dir_domain 已添加，剩余孤儿 0
 
 > **[2026-07-01 迁移批次决策矩阵]** 10 项剩余 5.18 的架构决策与执行规划：
 >
