@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-02T10:14:46Z'
+generated_at: '2026-07-02T10:33:55Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 142
+total_files: 145
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -23,6 +23,21 @@ files:
   scope: global
   stability: stable
   layer: cross_layer
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/index.md
+  module_id: ''
+  title: policies — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
   superseded_by: ''
   severity: ''
   tier: ''
@@ -1599,6 +1614,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+  module_id: REG-DOMAIN-NAMING-001
+  title: 域命名规则表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules_registry.yaml
   module_id: REG-DOMAIN-NAMING-001
   title: 域命名规则表
@@ -1609,6 +1639,21 @@ files:
   scope: ''
   stability: ''
   layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
+  module_id: GOV-001
+  title: 前沿大模型综合能力排名登记表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
   superseded_by: ''
   severity: ''
   tier: ''
