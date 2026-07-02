@@ -137,4 +137,4 @@ class PipelineServiceProtocol:
 | 变更类型 | 必须先更新的真源 |
 |----------|------------------|
 | 路由阶段 / M1–M11 语义 | `MOD-INF-009`（`_cross_layer/pipeline/blueprint.md`）+ `b_pipeline.yaml` |
-| 与 Orchestrator 边界 | 本文件 §2 + `_b_track_interfaces/agent-orchestrator-interface.md` |
+| 与 Orchestrator 边界 | 本文件 §2 + `_b_track_interfaces/agent_orchestrator_interface.md` |
