@@ -287,7 +287,9 @@ class FindingTaskBridge:
             ],
             allowed_touch=upstream,
             rollback_instructions="Delete auto-bridged TaskCard from data/databases/governance.db",
-            post_sync_standard=["echo auto-bridged task created"],
+            # post_sync_standard: 自动桥接任务是占位任务，无实际施工内容需同步
+            # 空列表诚实表达"此任务暂无机械验收"，避免echo伪装有验收拆掉完成门槛门禁
+            post_sync_standard=[],
             acceptance=["Finding bridged to TaskCard with all required fields"],
             dependency_type="none",
             estimated_tokens=8000,

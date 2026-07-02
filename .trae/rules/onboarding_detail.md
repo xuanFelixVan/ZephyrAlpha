@@ -1,4 +1,4 @@
-﻿# ZephyrAlpha AI 入职细则 — L1 施工指导与原理
+# ZephyrAlpha AI 入职细则 — L1 施工指导与原理
 
 > 本文件是 `project_rules.md`（L0）的详细补充。
 > AI 不需要通读本文件——撞到 L0 铁律引用的命令时，命令的输出会指向此处。
@@ -281,7 +281,7 @@ except PermissionError:
 
 `.md` 仅伴读副本，禁止作为创建入口。规则来源：trae_003_task_granularity_threshold.yaml RULE-ZERO-TASK。
 
-**模板校验门禁**: `create()` 时自动校验18项必填字段（description/files_in_scope/deliverables/applicable_rules/allowed_touch/rollback_instructions/post_sync_standard/acceptance 等），缺字段直接拒绝建卡。
+**模板校验门禁**: `create()` 时自动校验必填字段（description/files_in_scope/deliverables/applicable_rules/allowed_touch/directive/safety_level/source_blueprint 等），缺字段直接拒绝建卡。完整清单详见 `trae_034_task_card_standard.yaml §6.5`（代码 `TEMPLATE_REQUIRED_FIELDS` 为强制实施真源）。
 
 **粒度门禁（RULE-THIRTEEN）**: `create()` 时自动校验 R1-R6 六条规则（deliverables≤1 / files_in_scope≤3 / acceptance≤1 / construction_targets≤1 / description结构词 / description≥100字），超限直接拒绝建卡。
 
