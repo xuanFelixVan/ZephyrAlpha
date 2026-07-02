@@ -2718,6 +2718,91 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
             cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
             print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
 
+        # 裁定#209 Stage 2: UPSERT 保护字段到 metadata 表（DELETE 前保存）
+        # 替代 Python 端 load_production_state_from_db + apply_production_metadata_protection
+        # 语义：新值非空→覆盖 metadata；新值空→保留 metadata 旧值（与 Python 保护一致）
+        _now_iso = datetime.now().isoformat()
+        try:
+            cursor.execute(
+                """
+                INSERT INTO nodes_metadata (
+                    path, blueprint_id, owner, impact_level, change_policy,
+                    modification_permission, belongs_to, build_status, gate_reason,
+                    hard_boundary_ref, consumed_interfaces, tags, trust_zone,
+                    deployment_lifecycle, architecture_layer, last_updated
+                )
+                SELECT
+                    path, blueprint_id, owner, impact_level, change_policy,
+                    modification_permission, belongs_to, build_status, gate_reason,
+                    hard_boundary_ref, consumed_interfaces, tags, trust_zone,
+                    deployment_lifecycle, architecture_layer, %s
+                FROM nodes
+                WHERE design_maturity = 'production' AND node_type != 'database'
+                ON CONFLICT (path) DO UPDATE SET
+                    blueprint_id            = COALESCE(NULLIF(EXCLUDED.blueprint_id, ''), nodes_metadata.blueprint_id),
+                    owner                    = COALESCE(NULLIF(EXCLUDED.owner, ''), nodes_metadata.owner),
+                    impact_level            = COALESCE(NULLIF(EXCLUDED.impact_level, ''), nodes_metadata.impact_level),
+                    change_policy           = COALESCE(NULLIF(EXCLUDED.change_policy, ''), nodes_metadata.change_policy),
+                    modification_permission = COALESCE(NULLIF(EXCLUDED.modification_permission, ''), nodes_metadata.modification_permission),
+                    belongs_to              = COALESCE(NULLIF(EXCLUDED.belongs_to, ''), nodes_metadata.belongs_to),
+                    build_status            = COALESCE(NULLIF(EXCLUDED.build_status, ''), nodes_metadata.build_status),
+                    gate_reason              = COALESCE(NULLIF(EXCLUDED.gate_reason, ''), nodes_metadata.gate_reason),
+                    hard_boundary_ref       = COALESCE(NULLIF(EXCLUDED.hard_boundary_ref, ''), nodes_metadata.hard_boundary_ref),
+                    consumed_interfaces     = COALESCE(NULLIF(EXCLUDED.consumed_interfaces, ''), nodes_metadata.consumed_interfaces),
+                    tags                     = COALESCE(NULLIF(EXCLUDED.tags, ''), nodes_metadata.tags),
+                    trust_zone               = COALESCE(NULLIF(EXCLUDED.trust_zone, ''), nodes_metadata.trust_zone),
+                    deployment_lifecycle     = COALESCE(NULLIF(EXCLUDED.deployment_lifecycle, ''), nodes_metadata.deployment_lifecycle),
+                    architecture_layer       = COALESCE(NULLIF(EXCLUDED.architecture_layer, ''), nodes_metadata.architecture_layer),
+                    last_updated             = EXCLUDED.last_updated
+                """,
+                (_now_iso,),
+            )
+            _nodes_meta_saved = cursor.rowcount
+            print(f"[DEPGRAPH-DB] Stage 2: UPSERT {_nodes_meta_saved} 条 nodes_metadata（保护字段已保存）")
+        except Exception as e:
+            print(f"[DEPGRAPH-DB] WARNING: nodes_metadata UPSERT 失败（表可能未创建）: {e}")
+
+        try:
+            cursor.execute(
+                """
+                INSERT INTO edges_metadata (
+                    from_path, to_path, dep_type,
+                    failure_mode, fallback, activation_condition,
+                    data_transfer_description, resource_impact,
+                    ddd_integration_pattern, event_ref, api_contract_refs, verified,
+                    last_updated
+                )
+                SELECT
+                    n1.path, n2.path, e.dep_type,
+                    e.failure_mode, e.fallback, e.activation_condition,
+                    e.data_transfer_description, e.resource_impact,
+                    e.ddd_integration_pattern, e.event_ref, e.api_contract_refs, e.verified,
+                    %s
+                FROM edges e
+                JOIN nodes n1 ON e.from_node_id = n1.node_id
+                JOIN nodes n2 ON e.to_node_id = n2.node_id
+                WHERE (e.dep_maturity != 'design' OR e.dep_maturity IS NULL)
+                  AND e.from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')
+                  AND e.to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')
+                ON CONFLICT (from_path, to_path, dep_type) DO UPDATE SET
+                    failure_mode              = COALESCE(NULLIF(EXCLUDED.failure_mode, ''), edges_metadata.failure_mode),
+                    fallback                 = COALESCE(NULLIF(EXCLUDED.fallback, ''), edges_metadata.fallback),
+                    activation_condition     = COALESCE(NULLIF(EXCLUDED.activation_condition, ''), edges_metadata.activation_condition),
+                    data_transfer_description = COALESCE(NULLIF(EXCLUDED.data_transfer_description, ''), edges_metadata.data_transfer_description),
+                    resource_impact          = COALESCE(NULLIF(EXCLUDED.resource_impact, ''), edges_metadata.resource_impact),
+                    ddd_integration_pattern   = COALESCE(NULLIF(EXCLUDED.ddd_integration_pattern, ''), edges_metadata.ddd_integration_pattern),
+                    event_ref                = COALESCE(NULLIF(EXCLUDED.event_ref, ''), edges_metadata.event_ref),
+                    api_contract_refs        = COALESCE(NULLIF(EXCLUDED.api_contract_refs, ''), edges_metadata.api_contract_refs),
+                    verified                 = COALESCE(EXCLUDED.verified, edges_metadata.verified),
+                    last_updated             = EXCLUDED.last_updated
+                """,
+                (_now_iso,),
+            )
+            _edges_meta_saved = cursor.rowcount
+            print(f"[DEPGRAPH-DB] Stage 2: UPSERT {_edges_meta_saved} 条 edges_metadata（保护字段已保存）")
+        except Exception as e:
+            print(f"[DEPGRAPH-DB] WARNING: edges_metadata UPSERT 失败（表可能未创建）: {e}")
+
         # Clear existing operational data (preserve design-state)
         # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
         # 裁定#2026-0701: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
@@ -2942,6 +3027,35 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         if tier4_count > 0:
             print(f"[DEPGRAPH-DB] Normalized non-standard architecture_layer: T4={tier4_count}")
 
+        # 裁定#209 Stage 2: 从 nodes_metadata 恢复保护字段（DELETE 前已 UPSERT 保存）
+        # 替代 Python 端 apply_production_metadata_protection
+        # 语义：当重建后的 nodes 字段为空时，从 metadata 恢复（不覆盖磁盘新值）
+        try:
+            cursor.execute("""
+                UPDATE nodes SET
+                    blueprint_id            = COALESCE(NULLIF(nodes.blueprint_id, ''), nm.blueprint_id, nodes.blueprint_id),
+                    owner                    = COALESCE(NULLIF(nodes.owner, ''), nm.owner, nodes.owner),
+                    impact_level            = COALESCE(NULLIF(nodes.impact_level, ''), nm.impact_level, nodes.impact_level),
+                    change_policy           = COALESCE(NULLIF(nodes.change_policy, ''), nm.change_policy, nodes.change_policy),
+                    modification_permission = COALESCE(NULLIF(nodes.modification_permission, ''), nm.modification_permission, nodes.modification_permission),
+                    belongs_to              = COALESCE(NULLIF(nodes.belongs_to, ''), nm.belongs_to, nodes.belongs_to),
+                    build_status            = COALESCE(NULLIF(nodes.build_status, ''), nm.build_status, nodes.build_status),
+                    gate_reason              = COALESCE(NULLIF(nodes.gate_reason, ''), nm.gate_reason, nodes.gate_reason),
+                    hard_boundary_ref       = COALESCE(NULLIF(nodes.hard_boundary_ref, ''), nm.hard_boundary_ref, nodes.hard_boundary_ref),
+                    consumed_interfaces     = COALESCE(NULLIF(nodes.consumed_interfaces, ''), nm.consumed_interfaces, nodes.consumed_interfaces),
+                    tags                     = COALESCE(NULLIF(nodes.tags, ''), nm.tags, nodes.tags),
+                    trust_zone               = COALESCE(NULLIF(nodes.trust_zone, ''), nm.trust_zone, nodes.trust_zone),
+                    deployment_lifecycle     = COALESCE(NULLIF(nodes.deployment_lifecycle, ''), nm.deployment_lifecycle, nodes.deployment_lifecycle),
+                    architecture_layer       = COALESCE(NULLIF(nodes.architecture_layer, ''), nm.architecture_layer, nodes.architecture_layer)
+                FROM nodes_metadata nm
+                WHERE nodes.path = nm.path
+            """)
+            _nodes_restored = cursor.rowcount
+            if _nodes_restored > 0:
+                print(f"[DEPGRAPH-DB] Stage 2: 从 nodes_metadata 恢复 {_nodes_restored} 个节点的保护字段")
+        except Exception as e:
+            print(f"[DEPGRAPH-DB] WARNING: nodes_metadata 恢复失败: {e}")
+
         # Insert edges
         edges = depgraph.get("edges", [])
         edge_count = 0
@@ -3011,6 +3125,33 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 ),
             )
             edge_count += 1
+
+        # 裁定#209 Stage 2: 从 edges_metadata 恢复保护字段（DELETE 前已 UPSERT 保存）
+        # 替代 Python 端 apply_edge_production_protection
+        # 语义：当重建后的 edges 字段为空时，从 metadata 恢复（不覆盖 enrich 已填充的值）
+        try:
+            cursor.execute("""
+                UPDATE edges SET
+                    failure_mode              = COALESCE(NULLIF(edges.failure_mode, ''), em.failure_mode, edges.failure_mode),
+                    fallback                 = COALESCE(NULLIF(edges.fallback, ''), em.fallback, edges.fallback),
+                    activation_condition     = COALESCE(NULLIF(edges.activation_condition, ''), em.activation_condition, edges.activation_condition),
+                    data_transfer_description = COALESCE(NULLIF(edges.data_transfer_description, ''), em.data_transfer_description, edges.data_transfer_description),
+                    resource_impact          = COALESCE(NULLIF(edges.resource_impact, ''), em.resource_impact, edges.resource_impact),
+                    ddd_integration_pattern   = COALESCE(NULLIF(edges.ddd_integration_pattern, ''), em.ddd_integration_pattern, edges.ddd_integration_pattern),
+                    event_ref                = COALESCE(NULLIF(edges.event_ref, ''), em.event_ref, edges.event_ref),
+                    api_contract_refs        = COALESCE(NULLIF(edges.api_contract_refs, ''), em.api_contract_refs, edges.api_contract_refs)
+                FROM edges_metadata em, nodes n1, nodes n2
+                WHERE edges.from_node_id = n1.node_id
+                  AND edges.to_node_id = n2.node_id
+                  AND n1.path = em.from_path
+                  AND n2.path = em.to_path
+                  AND edges.dep_type = em.dep_type
+            """)
+            _edges_restored = cursor.rowcount
+            if _edges_restored > 0:
+                print(f"[DEPGRAPH-DB] Stage 2: 从 edges_metadata 恢复 {_edges_restored} 条边的保护字段")
+        except Exception as e:
+            print(f"[DEPGRAPH-DB] WARNING: edges_metadata 恢复失败: {e}")
 
         conn.commit()
         print(
@@ -3311,254 +3452,11 @@ def load_design_state_from_db(db_path: str) -> dict:
     return {"nodes": design_nodes, "edges": design_edges, "arch": design_arch}
 
 
-# Production-state fields that are manually maintained and MUST be preserved
-# across depgraph regeneration (they cannot be re-derived from disk scan).
-# 裁定#207 R2 C3：扩展至全量手工维护字段（原仅6字段，导致911节点数据丢失）
-PRODUCTION_PROTECTED_FIELDS = (
-    "blueprint_id",
-    "owner",
-    "impact_level",
-    "change_policy",
-    "modification_permission",
-    "belongs_to",
-    # 裁定#207 R2 C3 新增：onboarding STEP 4.15 点名的 build_status 等
-    "build_status",
-    "gate_reason",
-    "hard_boundary_ref",
-    "consumed_interfaces",
-    # business_stream/stream_role 不是 nodes 表真实列（存在 type_specific_data JSON 里，
-    # 由文件头重建）。曾误列此处导致 SELECT 报 UndefinedColumn，被 except 静默吞掉，
-    # 致使全部 16 个保护字段失效（P0 数据丢失 bug，2026-07-01 修复）。
-    "tags",
-    "trust_zone",
-    "deployment_lifecycle",
-    "architecture_layer",
-)
-
-
-# P2遗留修复：运营态edges的手动维护字段（防重新生成丢失）
-# 对标 PRODUCTION_PROTECTED_FIELDS，但针对edges表。
-# 这些字段由人工或enrich_edges_semantic标注，无法从AST import扫描恢复。
-# 使用"仅当为空时恢复"模式——enrich_edges_semantic已填充的不覆盖。
-EDGES_PROTECTED_FIELDS = (
-    "failure_mode",
-    "fallback",
-    "activation_condition",
-    "data_transfer_description",
-    "resource_impact",
-    "ddd_integration_pattern",
-    "event_ref",
-    "api_contract_refs",
-    "verified",
-)
-
-
-def load_production_state_from_db(db_path: str) -> dict:
-    """P1修复: 从数据库加载运营态(production)节点的手动维护元数据。
-
-    背景: 生成器DELETE所有非design节点后由磁盘扫描重建。production节点的
-    手动元数据(blueprint_id/owner/impact_level等)无法从文件头完整恢复，
-    重新生成会丢失。本函数加载这些元数据，供重建后恢复(防数据丢失)。
-
-    Args:
-        db_path: depgraph路径
-
-    Returns:
-        dict: {path: {protected_field: value}} 仅含非空保护字段
-    """
-    production_meta = {}
-    try:
-        # P2 PG 迁移：sqlite3.connect → get_depgraph_pg_connection(autocommit=False)
-        conn = get_depgraph_pg_connection(autocommit=False)
-        cur = conn.cursor()
-        # 治本：从 information_schema 动态获取 nodes 真实列名，过滤掉不存在的列。
-        # 防止 PRODUCTION_PROTECTED_FIELDS 误含不存在列（如 business_stream）导致
-        # SELECT 报 UndefinedColumn 被 except 静默吞掉 → 保护机制整体失效（P0数据丢失）。
-        cur.execute(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = 'nodes'"
-        )
-        real_cols = {row["column_name"] for row in cur.fetchall()}
-        cols = [c for c in PRODUCTION_PROTECTED_FIELDS if c in real_cols]
-        skipped = set(PRODUCTION_PROTECTED_FIELDS) - set(cols)
-        if skipped:
-            print(f"[DEPGRAPH] WARNING: PRODUCTION_PROTECTED_FIELDS 含不存在列 {skipped}，已自动过滤")
-        if not cols:
-            print("[DEPGRAPH] WARNING: PRODUCTION_PROTECTED_FIELDS 过滤后无有效列，保护机制跳过")
-            conn.close()
-            return production_meta
-        col_list = ", ".join(cols)
-        cur.execute(
-            f"SELECT path, {col_list} "
-            "FROM nodes WHERE design_maturity = 'production'"
-        )
-        rows = cur.fetchall()
-        for row in rows:
-            # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
-            path = row["path"]
-            if not path:
-                continue
-            meta = {}
-            for col in cols:
-                val = row[col]
-                if val is not None and val != "":
-                    meta[col] = val
-            if meta:
-                production_meta[path] = meta
-        conn.close()
-    except Exception as e:
-        print(f"[DEPGRAPH] WARNING: 加载运营态元数据失败: {e}")
-    return production_meta
-
-
-def apply_production_metadata_protection(nodes: dict, production_meta: dict) -> int:
-    """P1修复: 将运营态手动元数据恢复到重建后的同path节点。
-
-    对磁盘扫描重建的节点，若其path在production_meta中，则:
-    - 恢复手动维护字段(仅当重建节点该字段为空时，不覆盖磁盘新值)
-    - 强制标记design_maturity='production'(保留运营态身份)
-
-    Args:
-        nodes: build_depgraph产出的nodes字典 {node_id: node_dict}
-        production_meta: load_production_state_from_db的返回值 {path: {field: value}}
-
-    Returns:
-        int: 受保护(恢复元数据)的节点数
-    """
-    if not production_meta:
-        return 0
-    # 建立 path -> node 索引
-    path_to_node = {}
-    for node in nodes.values():
-        p = node.get("path", "")
-        if p:
-            path_to_node[normalize_path(p)] = node
-    protected = 0
-    for raw_path, meta in production_meta.items():
-        norm_p = normalize_path(raw_path)
-        node = path_to_node.get(norm_p)
-        if node is None:
-            continue
-        for field, value in meta.items():
-            # H4: 不恢复非法blueprint_id
-            if field == "blueprint_id" and not is_valid_blueprint_id(value):
-                continue
-            cur_val = node.get(field)
-            if cur_val is None or cur_val == "" or cur_val == []:
-                node[field] = value
-        # 强制保留运营态身份
-        node["design_maturity"] = "production"
-        protected += 1
-    return protected
-
-
-def load_edge_production_state_from_db(db_path: str) -> dict:
-    """P2遗留修复: 从数据库加载运营态edges的手动维护元数据（防重新生成丢失）。
-
-    对标 load_production_state_from_db，但针对edges表。edges没有path列，
-    使用 (from_path, to_path, dep_type) 作为业务键——node_id在DELETE+重建
-    后会变化，但path稳定。
-
-    查询条件与 write_depgraph_to_db 的 DELETE edges 条件完全匹配：
-    排除 design 边和涉及 database 节点的边（这些不被DELETE，无需备份）。
-
-    Args:
-        db_path: depgraph路径（PG迁移后未使用，保留参数兼容签名）
-
-    Returns:
-        dict: {(from_path, to_path, dep_type): {protected_field: value}}
-              仅含非空保护字段
-    """
-    edge_meta = {}
-    try:
-        conn = get_depgraph_pg_connection(autocommit=False)
-        cur = conn.cursor()
-        # 治本：从 information_schema 动态获取 edges 真实列名，过滤掉不存在的列。
-        # 防止 EDGES_PROTECTED_FIELDS 误含不存在列导致 SELECT 报错被 except 静默吞掉。
-        cur.execute(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = 'edges'"
-        )
-        real_cols = {row["column_name"] for row in cur.fetchall()}
-        cols = [c for c in EDGES_PROTECTED_FIELDS if c in real_cols]
-        skipped = set(EDGES_PROTECTED_FIELDS) - set(cols)
-        if skipped:
-            print(f"[DEPGRAPH] WARNING: EDGES_PROTECTED_FIELDS 含不存在列 {skipped}，已自动过滤")
-        if not cols:
-            print("[DEPGRAPH] WARNING: EDGES_PROTECTED_FIELDS 过滤后无有效列，保护机制跳过")
-            conn.close()
-            return edge_meta
-        col_list = ", ".join(cols)
-        cur.execute(
-            f"""SELECT n1.path AS from_path, n2.path AS to_path,
-                e.dep_type, {col_list}
-                FROM edges e
-                JOIN nodes n1 ON e.from_node_id = n1.node_id
-                JOIN nodes n2 ON e.to_node_id = n2.node_id
-                WHERE (e.dep_maturity != 'design' OR e.dep_maturity IS NULL)
-                AND e.from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')
-                AND e.to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type = 'database')"""
-        )
-        rows = cur.fetchall()
-        for row in rows:
-            from_path = row["from_path"]
-            to_path = row["to_path"]
-            dep_type = row["dep_type"] or ""
-            if not from_path or not to_path:
-                continue
-            key = (normalize_path(from_path), normalize_path(to_path), dep_type)
-            meta = {}
-            for col in cols:
-                val = row[col]
-                if val is not None and val != "":
-                    meta[col] = val
-            if meta:
-                edge_meta[key] = meta
-        conn.close()
-    except Exception as e:
-        print(f"[DEPGRAPH] WARNING: 加载运营态edge元数据失败: {e}")
-    return edge_meta
-
-
-def apply_edge_production_protection(edges: list, nodes: dict, edge_meta: dict) -> int:
-    """P2遗留修复: 将运营态edge手动元数据恢复到重建后的edges。
-
-    对标 apply_production_metadata_protection。使用 (from_path, to_path, dep_type)
-    匹配。仅当重建edge该字段为空时恢复（不覆盖enrich_edges_semantic已填充的值）。
-
-    Args:
-        edges: build_depgraph + enrich_edges_semantic 产出的edges列表
-        nodes: nodes字典 {gen_node_id: node_dict}，用于gen_node_id→path映射
-        edge_meta: load_edge_production_state_from_db的返回值
-
-    Returns:
-        int: 受保护(恢复元数据)的edge数
-    """
-    if not edge_meta:
-        return 0
-    # 建立 gen_node_id → normalized_path 映射
-    gen_id_to_path = {}
-    for nid, node in nodes.items():
-        p = node.get("path", "")
-        if p:
-            gen_id_to_path[nid] = normalize_path(p)
-    protected = 0
-    for edge in edges:
-        from_nid = edge.get("from", "")
-        to_nid = edge.get("to", "")
-        from_path = gen_id_to_path.get(from_nid, "")
-        to_path = gen_id_to_path.get(to_nid, "")
-        if not from_path or not to_path:
-            continue
-        dep_type = edge.get("dep_type", "")
-        key = (from_path, to_path, dep_type)
-        meta = edge_meta.get(key)
-        if not meta:
-            continue
-        for field, value in meta.items():
-            cur_val = edge.get(field)
-            if cur_val is None or cur_val == "" or cur_val == []:
-                edge[field] = value
-        protected += 1
-    return protected
+# 裁定#209 Stage 2: P1/P2 Python 保护机制已下线（2026-07-02）
+# 原 PRODUCTION_PROTECTED_FIELDS / EDGES_PROTECTED_FIELDS 常量及 4 个保护函数
+# (load_production_state_from_db / apply_production_metadata_protection /
+#  load_edge_production_state_from_db / apply_edge_production_protection) 已删除。
+# 保护逻辑迁移到 write_depgraph_to_db 中的 SQL UPSERT+UPDATE（nodes_metadata/edges_metadata 表）。
 
 
 def derive_stability_fallback(node_type: str, path: str) -> str:
@@ -3724,19 +3622,9 @@ def main():
     print("[DEPGRAPH] Building dependency graph...")
     depgraph = build_depgraph(files_data, functional_domains, domain_derivation, existing_design_nodes, granularity)
 
-    # P1修复: 恢复运营态(production)节点的手动维护元数据(防重新生成丢失)
-    # 治本（2026-06-29）：删除 os.path.exists 守卫（同 design_state 幽灵完成处理）。
-    # P2 PG 迁移后 .db 文件不存在，守卫恒 False → production_meta 永不加载（幽灵完成）。
-    try:
-        production_meta = load_production_state_from_db(None)
-        if production_meta:
-            protected_cnt = apply_production_metadata_protection(depgraph.get("nodes", {}), production_meta)
-            print(
-                f"[DEPGRAPH] P1修复: 从PG加载 {len(production_meta)} 个运营态节点元数据, "
-                f"恢复保护 {protected_cnt} 个重建节点"
-            )
-    except Exception as e:
-        print(f"[DEPGRAPH] 警告: 从PG加载运营态元数据失败: {e}")
+    # 裁定#209 Stage 2: P1/P2 Python 保护机制已下线
+    # 保护逻辑已迁移到 write_depgraph_to_db 中的 SQL UPSERT+UPDATE（nodes_metadata/edges_metadata）
+    # 原 load_production_state_from_db + apply_production_metadata_protection 已不需要
 
     # Enrich edges with semantic fields from cross-module-dependency-registry
     print("[DEPGRAPH] Loading cross-module-dependency-registry...")
@@ -3746,20 +3634,7 @@ def main():
     print("[DEPGRAPH] Enriching edges with semantic fields...")
     depgraph["edges"] = enrich_edges_semantic(depgraph["edges"], depgraph["nodes"], registry_deps)
 
-    # P2遗留修复: 恢复运营态edges的手动维护元数据(防重新生成丢失)
-    # 在 enrich_edges_semantic 之后调用——enrich已填充的不覆盖(仅当为空时恢复)
-    try:
-        edge_meta = load_edge_production_state_from_db(None)
-        if edge_meta:
-            protected_cnt = apply_edge_production_protection(
-                depgraph.get("edges", []), depgraph.get("nodes", {}), edge_meta
-            )
-            print(
-                f"[DEPGRAPH] P2遗留修复: 从PG加载 {len(edge_meta)} 个运营态edge元数据, "
-                f"恢复保护 {protected_cnt} 个重建edge"
-            )
-    except Exception as e:
-        print(f"[DEPGRAPH] 警告: 从PG加载运营态edge元数据失败: {e}")
+    # 裁定#209 Stage 2: P2 edges Python 保护机制已下线（同上，已迁移到 SQL）
 
     # Enrich nodes with decision field from DEP-GRAPH design files
     print("[DEPGRAPH] Enriching nodes with decision field...")
