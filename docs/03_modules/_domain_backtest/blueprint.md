@@ -72,7 +72,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/implementations/event_driven_engine.py | planned | 事件驱动回测(MVP待实现) |
 | src/zephyr/backtest/core/matching_engine.py | planned | 撮合引擎(MVP待实现) |
 | src/zephyr/backtest/core/portfolio.py | planned | 持仓/现金/PnL(MVP待实现) |
-| src/zephyr/backtest/core/data_handler.py | planned | DuckDB OHLCV按bar推送(MVP待实现) |
+| src/zephyr/backtest/core/data_handler.py | planned | ClickHouse OHLCV按bar推送(MVP待实现) |
 | src/zephyr/backtest/core/metrics.py | planned | Sharpe/Sortino/MaxDD/IC/IR(MVP待实现) |
 
 **已清理的碎片化位置**(2026-07-02):
@@ -131,7 +131,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 3. implementations/event_driven_engine.py — 事件驱动回测(待实现)
 4. core/matching_engine.py — 撮合引擎(市价/限价/滑点)(待实现)
 5. core/portfolio.py — 持仓/现金/PnL/净值曲线(待实现)
-6. core/data_handler.py — 从DuckDB读OHLCV按bar推送(PIT正确)(待实现)
+6. core/data_handler.py — 从ClickHouse读OHLCV按bar推送(PIT正确)(待实现)
 7. core/metrics.py — Sharpe/Sortino/MaxDD/胜率/IC/IR(待实现)
 
 **v1.1.0**:过拟合检测(SIM-18/38/56三层)+ Walk-Forward(SIM-19/25)
@@ -139,7 +139,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 ### §1.4 运行场景约束
 
 - 回测为离线批量运行,非实时(单进程同步调用)
-- 数据来源:DuckDB(market.duckdb)通过DatabaseService访问,禁止裸duckdb.connect
+- 数据来源:ClickHouse(c1_market)通过DatabaseService访问,禁止裸clickhouse_driver.connect
 - PIT(Point-in-Time)正确性:回测必须使用时间戳截面对齐,禁止未来函数
 - A股特有约束:T+1锁定、涨跌停限制、停牌跳过、ST特别处理
 
@@ -198,7 +198,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 │  │                    FactorDiscovery          │              │
 │  │  matching_engine.py 撮合引擎(市价/限价/滑点)│              │
 │  │  portfolio.py      持仓/现金/PnL/净值       │              │
-│  │  data_handler.py   DuckDB→bar推送(PIT)     │              │
+│  │  data_handler.py   ClickHouse→bar推送(PIT) │              │
 │  │  metrics.py        Sharpe/Sortino/MaxDD/IC  │              │
 │  └─────────────────────────────────────────────┘              │
 │                                                                │
@@ -344,7 +344,7 @@ class MyEngine(BacktestEngineBase):
 ### §5.1 技术约束
 
 **数据访问**:
-- 数据库访问:必须通过DatabaseService,禁止裸duckdb.connect(market.duckdb)
+- 数据库访问:必须通过DatabaseService访问ClickHouse(c1_market),禁止裸clickhouse_driver.connect
 - 数据库连接:必须显式指定read_only=True
 - **Feature Store PIT正确性 R-02**:回测数据源必须通过FeatureStore PIT接口获取,避免look-ahead bias,是回测可信性基石(来源:D-RESEARCH R-02)
 
@@ -400,7 +400,7 @@ class MyEngine(BacktestEngineBase):
 - 禁止从zephyr.research导入回测代码(已迁移)
 - 禁止从zephyr.intelligence.model_evaluation导入回测代码(已删除)
 - 禁止在infrastructure/rollback/存放回测代码
-- 禁止裸duckdb.connect,必须通过DatabaseService
+- 禁止裸clickhouse_driver.connect,必须通过DatabaseService
 
 ## §6 错误处理
 
@@ -414,7 +414,7 @@ class MyEngine(BacktestEngineBase):
 
 | 故障 | 退化行为 | 降级模式 |
 |------|---------|---------|
-| DuckDB连接失败 | 抛出DatabaseConnectionError | 不降级(回测无法运行) |
+| ClickHouse连接失败 | 抛出DatabaseConnectionError | 不降级(回测无法运行) |
 | 数据缺失(停牌) | 跳过该标的该日 | 标记is_suspended |
 | 撮合失败(涨跌停) | 撮合拒绝,记录日志 | 跳过该笔交易 |
 | 过拟合检测异常 | 返回overfitting_flag=False | 保守放行,人工复核 |
@@ -453,7 +453,7 @@ class MyEngine(BacktestEngineBase):
 |------|------|:----:|------|
 | CTR-001(行情) | 硬依赖 | 低 | 已冻结locked-5yr |
 | CTR-002(因子) | 硬依赖 | 低 | 已冻结locked-5yr |
-| DuckDB | 硬依赖 | 中 | 通过DatabaseService抽象 |
+| ClickHouse | 硬依赖 | 中 | 通过DatabaseService抽象(待实现get_clickhouse_conn) |
 
 ## §11 产出物
 
@@ -557,7 +557,7 @@ py -3.12 -c "import yaml; d=yaml.safe_load(open('architecture_model/events/domai
 | 故障 | 操作 |
 |------|------|
 | import失败 | 检查src/zephyr/backtest/__init__.py导出 |
-| DuckDB连接失败 | 检查DatabaseService配置和read_only=True |
+| ClickHouse连接失败 | 检查DatabaseService配置和read_only=True |
 | 回测结果异常 | 检查PIT对齐和T+1锁定 |
 
 ### §16.12 并发操作
