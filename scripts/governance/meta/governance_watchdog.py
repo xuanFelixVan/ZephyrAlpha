@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] GOV-075 | docs/03_modules/_domain_governance/blueprint.md | §3.9
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/governance_watchdog.py | §3.9
 # [MODULE] scripts.governance.meta.governance_watchdog
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.meta.__init__
