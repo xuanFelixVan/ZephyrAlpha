@@ -519,8 +519,45 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 # ===== P0-2 新增：设计态节点/边管理（§22.5）=====
 
 
+def _gate_refresh_runtime_before_design(skip_refresh: bool = False) -> bool:
+    """
+    门闸(L2, 2026-07-02)：写入设计态前MUST刷新运营态。
+
+    治本规则：设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。
+    调用 generate_project_depgraph.py 扫描代码现状，刷新depgraph运营态。
+
+    Args:
+        skip_refresh: True=跳过刷新（逃生通道，仅限生成器故障时使用）
+    Returns:
+        True=刷新成功(或skip)，False=刷新失败(应阻断写入)
+    """
+    if skip_refresh:
+        print("[GATE-L2] --skip-refresh 已跳过运营态刷新（逃生通道，正常流程禁止）", file=sys.stderr)
+        return True
+
+    import subprocess
+    generator = REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"
+    if not generator.exists():
+        print(f"ERROR[GATE-L2]: 运营态生成器不存在: {generator}", file=sys.stderr)
+        return False
+
+    print("[GATE-L2] 刷新运营态（写入设计态前必须刷新，防幻觉/防漂移L2）...", file=sys.stderr)
+    result = subprocess.run(
+        [sys.executable, str(generator), "--output-db", "depgraph", "--force"],
+        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=300
+    )
+    if result.returncode != 0:
+        print(f"ERROR[GATE-L2]: 运营态刷新失败（rc={result.returncode}）", file=sys.stderr)
+        if result.stderr:
+            print(result.stderr[-800:], file=sys.stderr)
+        return False
+    print("[GATE-L2] 运营态刷新完成，允许写入设计态", file=sys.stderr)
+    return True
+
+
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = None
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned",
+    db_path: str = None, skip_refresh: bool = False
 ) -> int:
     """
     新增设计态节点（功能级，目录 path）。
@@ -531,7 +568,12 @@ def add_design_node(
     - domain_id 必须在 domains 表中存在
     - build_status 必须符合 §12.6 状态机规则（5态：planned/generated/testing/stable/deprecated）
     写入字段：design_maturity='design', blueprint_path=机械推导
+    门闸(L2): build_status=planned时自动刷新运营态（防幻觉/防漂移治本规则）
     """
+    # 门闸(L2): 写入设计态前刷新运营态（防幻觉/防漂移治本规则）
+    if build_status == "planned" and not _gate_refresh_runtime_before_design(skip_refresh):
+        return -1
+
     # 校验path以/结尾
     if not path.endswith("/"):
         print(f"ERROR: path必须以/结尾（目录路径）: {path}", file=sys.stderr)
@@ -3109,7 +3151,7 @@ def main() -> None:
         blueprint_id = parts[1] if len(parts) > 1 else ""
         domain_id = parts[2] if len(parts) > 2 else ""
         build_status = parts[3] if len(parts) > 3 else "planned"
-        node_id = add_design_node(path, blueprint_id, domain_id, build_status)
+        node_id = add_design_node(path, blueprint_id, domain_id, build_status, skip_refresh=args.skip_refresh)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")
