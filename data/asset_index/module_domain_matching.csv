@@ -1573,7 +1573,7 @@ src/zephyr/infrastructure/shared_services/observability/cost_tracker.py,,MOD-INF
 src/zephyr/infrastructure/shared_services/observability/failure_matcher.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/observability/notifier.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/observability/trace_decorator.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
-src/zephyr/shared/health_discovery.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
+src/zephyr/shared/lifecycle/health_discovery.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/infrastructure/shared_services/quality/__init__.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/quality/quality_monitor.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
 src/zephyr/infrastructure/shared_services/queue/__init__.py,,MOD-INF-016-CORE,D-INFRA,D-INFRA-SHARED_SERVICES,depgraph_domain,high
@@ -3028,7 +3028,7 @@ src/zephyr/shared/foundation/errors.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MA
 src/zephyr/shared/foundation/flags.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/foundation/types.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/frontmatter_utils.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/health.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
+src/zephyr/shared/lifecycle/health.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/heartbeat_server.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,ssot_path_prefix,high
 src/zephyr/shared/idempotency.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/infra/__init__.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
@@ -3056,16 +3056,12 @@ src/zephyr/shared/lifecycle/resource_optimization_engine.py,,MOD-INF-016,D-INFRA
 src/zephyr/shared/lifecycle/resource_optimization_models.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/limiter.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/lock.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/logging.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
+src/zephyr/shared/utils/logging.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/longevity_monitor.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,ssot_path_prefix,high
-src/zephyr/shared/metrics.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/migration.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/model_capacity_probe.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,ssot_path_prefix,high
 src/zephyr/shared/module_birth_registry.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,ssot_path_prefix,high
 src/zephyr/shared/observability/__init__.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/observability/health.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/observability/health_discovery.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/observability/logging.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/observability/metrics.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/observability/session_audit.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/observability/token_utils.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
@@ -3103,7 +3099,6 @@ src/zephyr/shared/task_heartbeat.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,sso
 src/zephyr/shared/testing.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/time_utils.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/token_utils.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
-src/zephyr/shared/tracing.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/ttl_cleanup_engine.py,,MOD-INF-039,D-INFRA,D-INFRA-SHARED_CORE,ssot_path_prefix,high
 src/zephyr/shared/types.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
 src/zephyr/shared/utils/__init__.py,,MOD-INF-016,D-INFRA,D-INFRA-LIFECYCLE_MANAGEMENT,depgraph_blueprint,high
