@@ -21,22 +21,25 @@ from __future__ import annotations
 """
 validate_nested_flat_dirs.py — 递归嵌套目录平铺检测器
 =====================================================
-依据：GOV-DOC-002 §三 C轨层内规范 + Google Monorepo ≤30 files/dir + K8s ≤20
+依据：GOV-DOC-018 文件夹平铺容量阈值协议（T_hard=60/T_soft=120）
 
 检查项
 ------
 1. 递归扫描 src/zephyr/、tests/、scripts/governance/ 下所有目录
 2. 每个目录的 .py 文件数超过 warn/error 阈值即报警
-3. 阈值来自 thresholds.yaml directory_scalability 节
+3. 阈值来自 thresholds.yaml directory_scalability 节（src_py_warn=60, src_py_error=120）
+4. --check-prefix 模式（ARCH-043 Risk 2-B）：对 >T_hard(60) 的目录验证 __init__.py
+   是否文档化了命名前缀约定（T_soft=120 资格）。无约定的目录 T_hard=60 适用，需拆分。
 
 Usage:
     python scripts/governance/d5_architecture/validate_nested_flat_dirs.py
     python scripts/governance/d5_architecture/validate_nested_flat_dirs.py --warn-only
+    python scripts/governance/d5_architecture/validate_nested_flat_dirs.py --check-prefix
 """
 
 __manifest__ = {
-    "args": ["--warn-only", "--jsonl", "--max-depth"],
-    "description": "递归嵌套目录平铺检测（不限层级，阈值对标 Google/K8s ≤30）",
+    "args": ["--warn-only", "--jsonl", "--max-depth", "--check-prefix"],
+    "description": "递归嵌套目录平铺检测（GOV-DOC-018 T_hard=60/T_soft=120 + 前缀簇合规）",
     "dimensions": ["D5"],
     "priority": "P0",
     "timeout_seconds": 60,
@@ -66,6 +69,74 @@ SCAN_ROOTS = [
 ]
 
 SKIP_DIRS = {"__pycache__", ".git", "node_modules", ".mypy_cache", ".pytest_cache"}
+
+# 前缀约定文档检测标记（__init__.py 注释块中任一存在即视为已文档化 T_soft 资格）
+_PREFIX_CONVENTION_MARKERS = (
+    "命名规则",
+    "前缀簇",
+    "T_soft",
+    "GOV-DOC-018",
+    "模块地图",
+)
+
+
+def _has_prefix_convention(init_path: Path) -> bool:
+    """检查 __init__.py 是否文档化了命名前缀约定（T_soft=120 资格）。
+
+    ARCH-043 Risk 2-B：>T_hard(60) 的目录必须有文档化的前缀约定才能享 T_soft=120。
+    检测 __init__.py 注释块中的关键标记（命名规则/前缀簇/T_soft/GOV-DOC-018/模块地图）。
+    """
+    if not init_path.exists():
+        return False
+    try:
+        content = init_path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    return any(m in content for m in _PREFIX_CONVENTION_MARKERS)
+
+
+def _scan_prefix_compliance(root: Path, t_hard: int, t_soft: int) -> list[dict]:
+    """检查 T_soft 前缀簇合规（ARCH-043 Risk 2-B）。
+
+    - count <= t_hard: PASS（无需前缀约定）
+    - t_hard < count <= t_soft 且有前缀约定: PASS（T_soft=120 适用）
+    - t_hard < count <= t_soft 且无前缀约定: ERROR（T_hard=60 适用，需拆分或补文档）
+    - count > t_soft: ERROR（必须拆分，无论有无前缀约定）
+    """
+    violations = []
+    for d in root.rglob("*"):
+        if not d.is_dir():
+            continue
+        if d.name in SKIP_DIRS or d.name.startswith("."):
+            continue
+        py_files = [f for f in d.iterdir() if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"]
+        count = len(py_files)
+        if count <= t_hard:
+            continue
+        has_conv = _has_prefix_convention(d / "__init__.py")
+        rel = str(d.relative_to(REPO_ROOT)).replace("\\", "/")
+        if count > t_soft:
+            violations.append({
+                "severity": "ERROR",
+                "path": rel,
+                "py_count": count,
+                "threshold": t_soft,
+                "has_prefix_convention": has_conv,
+                "message": f"{count} .py files (>T_soft={t_soft}) — 必须拆分，无论有无前缀约定",
+            })
+        elif not has_conv:
+            violations.append({
+                "severity": "ERROR",
+                "path": rel,
+                "py_count": count,
+                "threshold": t_hard,
+                "has_prefix_convention": False,
+                "message": (
+                    f"{count} .py files (>T_hard={t_hard}) 但 __init__.py 未文档化命名前缀约定 — "
+                    f"需拆分或补充前缀约定文档（GOV-DOC-018 T_soft 资格）"
+                ),
+            })
+    return violations
 
 
 def _scan_recursive(root: Path, max_depth: int, warn: int, error: int) -> list[dict]:
@@ -112,6 +183,11 @@ def main() -> int:
     parser.add_argument("--warn-only", action="store_true")
     parser.add_argument("--jsonl", action="store_true")
     parser.add_argument("--max-depth", type=int, default=0, help="Max directory depth to scan (0=unlimited)")
+    parser.add_argument(
+        "--check-prefix",
+        action="store_true",
+        help="ARCH-043 Risk 2-B: 对 >T_hard(60) 的目录验证 __init__.py 是否文档化命名前缀约定（T_soft=120 资格）",
+    )
     args = parser.parse_args()
 
     warn = get("directory_scalability.src_py_warn", 10)
@@ -123,12 +199,18 @@ def main() -> int:
             continue
         violations = _scan_recursive(root, args.max_depth, warn, error)
         all_violations.extend(violations)
+        if args.check_prefix:
+            all_violations.extend(_scan_prefix_compliance(root, warn, error))
 
     errors = [v for v in all_violations if v["severity"] == "ERROR"]
     warns = [v for v in all_violations if v["severity"] == "WARN"]
 
     if not all_violations:
-        print(f"\u2705 嵌套目录平铺检测通过: 所有目录 .py 文件数在阈值内 (warn={warn}, error={error})", file=sys.stderr)
+        mode = " + --check-prefix" if args.check_prefix else ""
+        print(
+            f"\u2705 嵌套目录平铺检测通过{mode}: 所有目录 .py 文件数在阈值内 (T_hard={warn}, T_soft={error})",
+            file=sys.stderr,
+        )
         if args.jsonl:
             print(json.dumps({"severity": "INFO", "check_id": "NESTED-FLAT", "violations": 0}, ensure_ascii=False))
         return EXIT_PASS
