@@ -73,11 +73,23 @@ def _make_task(
         safety_level="M",
         source_blueprint="test",
         source_section="test",
-        description="E2E 测试任务：门禁端到端验证",
+        description=(
+            "E2E 测试任务：门禁端到端验证。根因：测试需要验证门禁完整流程覆盖。"
+            "治根：通过端到端测试覆盖任务从创建到验证的完整生命周期。"
+            "施工步骤：创建任务并触发对应门禁检查。"
+            "验收标准：任务状态正确更新且门禁结果符合预期。"
+            "此测试确保门禁引擎与任务仓库集成正确。"
+        ),
         verification_status="verified",
-        deliverables=deliverables or [],
-        acceptance=[],
+        deliverables=deliverables or ["src/zephyr/output.py"],
+        acceptance=["exit=0"],
         depends_on=[],
+        files_in_scope=["tests/gate/test_gate_e2e.py"],
+        directive="999",
+        applicable_rules=[{"module_id": "GOV-TASK-001", "section": "§4", "reason": "模板校验"}],
+        allowed_touch=["tests/gate/test_gate_e2e.py"],
+        rollback_instructions="git checkout -- tests/gate/test_gate_e2e.py",
+        post_sync_standard=["echo ok"],
         created_at="2026-01-01T00:00:00+00:00",
         updated_at="2026-01-01T00:00:00+00:00",
     )
@@ -154,6 +166,9 @@ class TestFullPipeline:
         repo._enable_gate = False
         repo.transition("SRC-101", TaskStatus.IN_PROGRESS)
         repo._enable_gate = True
+        # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
+        repo.batch_review("SRC-101")
+        repo.batch_review("SRC-101")
         completed = repo.transition("SRC-101", TaskStatus.COMPLETED)
         assert completed.status == TaskStatus.COMPLETED
         repo.close()
@@ -165,8 +180,11 @@ class TestFullPipeline:
         repo.create(task)
         repo._enable_gate = False
         repo.transition("SRC-102", TaskStatus.IN_PROGRESS)
-        repo.transition("SRC-102", TaskStatus.COMPLETED)
         repo._enable_gate = True
+        # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
+        repo.batch_review("SRC-102")
+        repo.batch_review("SRC-102")
+        repo.transition("SRC-102", TaskStatus.COMPLETED)
         verified = repo.transition("SRC-102", TaskStatus.VERIFIED)
         assert verified.status == TaskStatus.VERIFIED
         repo.close()
@@ -177,8 +195,12 @@ class TestFullPipeline:
         task = _make_task("SRC-103")
         repo.create(task)
         repo._enable_gate = False
-        for s in [TaskStatus.IN_PROGRESS, TaskStatus.COMPLETED, TaskStatus.VERIFIED]:
-            repo.transition("SRC-103", s)
+        repo.transition("SRC-103", TaskStatus.IN_PROGRESS)
+        # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
+        repo.batch_review("SRC-103")
+        repo.batch_review("SRC-103")
+        repo.transition("SRC-103", TaskStatus.COMPLETED)
+        repo.transition("SRC-103", TaskStatus.VERIFIED)
         final = repo.get("SRC-103")
         assert final is not None
         assert final.status == TaskStatus.VERIFIED
@@ -251,6 +273,7 @@ class TestGateBlockingE2E:
         assert exc_info.value.result.summary().startswith("[FAIL]")
         repo.close()
 
+    @pytest.mark.skip(reason="RULE-THIRTEEN R1: deliverables ≤ 1，多 deliverables 场景已不合法")
     def test_multiple_deprecated_deliverables_all_blocked(self, tmp_path: Path) -> None:
         """多个废弃路径交付物时，所有违规均被记录。"""
         repo = _make_repo(tmp_path, "multi_dep.db")
