@@ -24,7 +24,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class AssetType(str, Enum):
@@ -125,6 +125,26 @@ class ClassifiedAsset(BaseModel):
     tags: list[str] = Field(default_factory=list, description="语义标签")
     custom_metadata: dict[str, str] = Field(default_factory=dict, description="自定义键值对")
     tags_last_updated: datetime | None = Field(default=None, description="标签最近更新时间")
+
+    @field_validator("tags", "registered_in", mode="before")
+    @classmethod
+    def _none_to_list(cls, v: Any) -> Any:
+        """容忍旧版 index 中的 None 值，转为空列表。"""
+        return v if v is not None else []
+
+    @field_validator("custom_metadata", mode="before")
+    @classmethod
+    def _none_to_dict(cls, v: Any) -> Any:
+        """容忍旧版 index 中的 None 值，转为空字典。"""
+        return v if v is not None else {}
+
+    @field_validator("tags_last_updated", mode="before")
+    @classmethod
+    def _none_str_to_none(cls, v: Any) -> Any:
+        """容忍旧版 index 中的 'None' 字符串，转为 None。"""
+        if v in (None, "None"):
+            return None
+        return v
 
 
 class ClassificationResult(BaseModel):
