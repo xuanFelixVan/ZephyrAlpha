@@ -2494,10 +2494,10 @@ graph TD
 | 19 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | docs__03_modules___domain_autonomy_co... | design | planned |
 | 20 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | docs__03_modules___domain_autonomy_pe... | design | planned |
 | 21 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | docs__03_modules___domain_autonomy_pe... | design | planned |
-| 22 | docs/03_modules/_domain_compliance/compliance_core/bluepr... | docs__03_modules___domain_compliance_... | design | planned |
-| 23 | docs/03_modules/_domain_data/datasource_core/blueprint.md | docs__03_modules___domain_data__datas... | design | planned |
-| 24 | docs/03_modules/_domain_factor/alpha_factor_core/blueprin... | docs__03_modules___domain_factor__alp... | design | planned |
-| 25 | docs/03_modules/_domain_frontend/human_machine_interface_core/blueprint.md | docs__03_modules___domain_frontend__h... | design | planned |
+| 22 | docs/03_modules/_domain_compliance/bluepr... | docs__03_modules___domain_compliance_... | design | planned |
+| 23 | docs/03_modules/_domain_data/blueprint.md | docs__03_modules___domain_data__datas... | design | planned |
+| 24 | docs/03_modules/_domain_factor/blueprin... | docs__03_modules___domain_factor__alp... | design | planned |
+| 25 | docs/03_modules/_domain_frontend/blueprint.md | docs__03_modules___domain_frontend__h... | design | planned |
 | 26 | docs/03_modules/_domain_governance/blueprint.md | docs__03_modules___domain_governance_... | design | planned |
 | 27 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance_... | design | planned |
 | 28 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance_... | design | planned |
@@ -2508,13 +2508,13 @@ graph TD
 | 33 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration... | docs__03_modules___domain_infra_runti... | design | planned |
 | 34 | docs/03_modules/_domain_infrastructure_runtime/state_machine_engin... | docs__03_modules___domain_infra_runti... | design | planned |
 | 35 | docs/03_modules/_domain_infrastructure_runtime/task_system/bluepri... | docs__03_modules___domain_infra_runti... | design | planned |
-| 36 | docs/03_modules/_domain_integration/local_model/blueprint.md | docs__03_modules___domain_integration... | design | planned |
-| 37 | docs/03_modules/_domain_machine_learning_train/ml_core/blueprint.md | docs__03_modules___domain_machine_learning_train__m... | design | planned |
-| 38 | docs/03_modules/_domain_reporting/analytics_core/blueprin... | docs__03_modules___domain_reporting__... | design | planned |
-| 39 | docs/03_modules/_domain_research/research_core/blueprint.md | docs__03_modules___domain_research__r... | design | planned |
-| 40 | docs/03_modules/_domain_risk/risk_management_core/bluepri... | docs__03_modules___domain_risk__risk_... | design | planned |
-| 41 | docs/03_modules/_domain_signal/signal_generation_core/blu... | docs__03_modules___domain_signal__sig... | design | planned |
-| 42 | docs/03_modules/_domain_simulation/experiment_core/bluepr... | docs__03_modules___domain_simulation_... | design | planned |
+| 36 | docs/03_modules/_domain_integration/blueprint.md | docs__03_modules___domain_integration... | design | planned |
+| 37 | docs/03_modules/_domain_machine_learning_train/blueprint.md | docs__03_modules___domain_machine_learning_train__m... | design | planned |
+| 38 | docs/03_modules/_domain_reporting/blueprin... | docs__03_modules___domain_reporting__... | design | planned |
+| 39 | docs/03_modules/_domain_research/blueprint.md | docs__03_modules___domain_research__r... | design | planned |
+| 40 | docs/03_modules/_domain_risk/bluepri... | docs__03_modules___domain_risk__risk_... | design | planned |
+| 41 | docs/03_modules/_domain_signal/blu... | docs__03_modules___domain_signal__sig... | design | planned |
+| 42 | docs/03_modules/_domain_simulation/bluepr... | docs__03_modules___domain_simulation_... | design | planned |
 | 43 | docs/03_modules/_master_blueprint/blueprint.md | docs__03_modules___master_blueprint__... | design | planned |
 | 44 | docs/03_modules/_master_blueprint/blueprint_agent_spec.md | agent_spec_md | design | planned |
 

@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L07-001 | Analytics Core | [blueprint](analytics_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L07-001 | Analytics Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_reporting/analytics_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_reporting/blueprint.md`
 
 ## 导航
 

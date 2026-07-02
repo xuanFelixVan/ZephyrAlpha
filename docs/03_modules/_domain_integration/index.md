@@ -15,11 +15,13 @@ ttl: permanent
 > 本文件由 `generate_missing_index_md.py` 自动生成
 > 生成日期：2026-06-22
 
-## 目录内容
+## 模块清单
 
-| 文件/目录 | 类型 | 说明 |
-|-----------|------|------|
-| [local_model/](local_model/index.md) | 目录 | local-model — 目录索引 |
+| module_id | 模块名 | blueprint | status | construction_progress |
+|-----------|--------|-----------|--------|-----------------------|
+| MOD-INF-042 | Local Model | [blueprint](blueprint.md) | Active | scaffold |
+
+**架构模型真源**：`docs/03_modules/_domain_integration/blueprint.md`
 
 ## 导航
 

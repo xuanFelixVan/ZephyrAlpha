@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L00-001 | Datasource Core | [blueprint](datasource_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L00-001 | Datasource Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_data/datasource_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`
 
 ## 导航
 

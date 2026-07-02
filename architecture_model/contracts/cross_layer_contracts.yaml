@@ -1284,9 +1284,9 @@ ai_governance_interfaces:
     status: superseded
     superseded_on: "2026-04-24"
     superseded_by:
-      - "03_modules/_b_track_interfaces/llm-security-gateway-interface.md  # §3.4 L3 输出 Schema 校验，工具调用参数强约束"
-      - "03_modules/_b_track_interfaces/context-engine-interface.md        # §5 MCP 能力矩阵，工具通道路由"
-      - "03_modules/_b_track_interfaces/agent-orchestrator-interface.md    # §3.2 Agent capabilities + §6 sandbox allowed_commands"
+      - "03_modules/_cross_layer/_b_track_interfaces/llm-security-gateway-interface.md  # §3.4 L3 输出 Schema 校验，工具调用参数强约束"
+      - "03_modules/_cross_layer/_b_track_interfaces/context-engine-interface.md        # §5 MCP 能力矩阵，工具通道路由"
+      - "03_modules/_cross_layer/_b_track_interfaces/agent-orchestrator-interface.md    # §3.2 Agent capabilities + §6 sandbox allowed_commands"
     detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/tool-interface-contract.md"
     physical_path: src/zephyr/{llm_security,context_engine,orchestrator}/  # 拆分到三个新服务
     description: "【已废弃】原 ToolBase/ToolRegistry 单一契约。2026-04-24 按职责拆分到三个新服务：工具 schema 校验归 LSG L3，MCP 通道路由归 Context Engine，Agent 能力与沙箱命令白名单归 Orchestrator。"
@@ -1296,7 +1296,7 @@ ai_governance_interfaces:
     name: "Memory Interface / 记忆接口"
     status: superseded
     superseded_on: "2026-04-24"
-    superseded_by: "03_modules/_b_track_interfaces/vector-memory-service-interface.md"
+    superseded_by: "03_modules/_cross_layer/_b_track_interfaces/vector-memory-service-interface.md"
     detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md"
     physical_path: src/zephyr/vector-memory/  # 新路径，原 compliance/agent_ops/memory/ 废弃
     description: "【已废弃】原 AI Agent 持久化记忆契约（MemoryReader/Writer + KMS 六层）。2026-04-24 被 Vector Memory Service 替代：ChromaDB 0.6 + BGE-M3 + 递归分块。详见 vector-memory-service-interface.md。"
@@ -1306,7 +1306,7 @@ ai_governance_interfaces:
     name: "Workflow Interface / 工作流接口"
     status: superseded
     superseded_on: "2026-04-24"
-    superseded_by: "03_modules/_b_track_interfaces/agent-orchestrator-interface.md"
+    superseded_by: "03_modules/_cross_layer/_b_track_interfaces/agent-orchestrator-interface.md"
     detail_doc: "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md"
     physical_path: src/zephyr/orchestrator/   # 新路径，原 compliance/agent_ops/workflow/ 废弃
     description: "【已废弃】原 AI Agent 工作流编排契约（WorkflowBase/WorkflowRegistry + KMS G1-G5 五决策门）。2026-04-24 被 Agent Orchestrator 替代：TaskState 状态机 + SQLite 任务队列 + 幻觉检测 + Windows ACL 沙箱。详见 agent-orchestrator-interface.md。"

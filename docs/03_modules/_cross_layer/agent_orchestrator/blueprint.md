@@ -49,7 +49,7 @@ references:
   - {id: "MOD-INF-024", at: "§2", why: "Budget Enforcer——Token/Cost 预算管控"}
   - {id: "MOD-INF-030", at: "§12", why: "Red-Blue Validator——CT-RB-GATE-001 / CT-RB-ESC-002 / CT-RB-KB-003 集成契约"}
   - {id: "AI-ENG-ORC-001", at: "§4", why: "Agent Orchestrator Interface——B轨接口规范"}
-ssot_ref: "docs/03_modules/_b_track_interfaces/agent-orchestrator-interface.md"
+ssot_ref: "docs/03_modules/_cross_layer/_b_track_interfaces/agent-orchestrator-interface.md"
 ---
 
 # Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
@@ -554,7 +554,7 @@ class DetectionResult(BaseModel):
 | Agent Orchestrator 架构设计 | **本文档 §1-§10** | MOD-INF-035 蓝图（已拆分） |
 | Agent Orchestrator 接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
-| B轨接口规范 | [agent-orchestrator-interface.md](file:///D:/ZephyrAlpha/docs/03_modules/_b_track_interfaces/agent-orchestrator-interface.md) | — |
+| B轨接口规范 | [agent-orchestrator-interface.md](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/_b_track_interfaces/agent-orchestrator-interface.md) | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 

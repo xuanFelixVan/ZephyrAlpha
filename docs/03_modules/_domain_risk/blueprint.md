@@ -29,7 +29,7 @@ scope: module
 stability: evolving
 verifiability: manual
 depends_on:
-  - target: "docs/03_modules/_domain_risk/risk_management_core/blueprint.md"
+  - target: "docs/03_modules/_domain_risk/blueprint.md"
     at: "全篇"
     why: "本蓝图即SSoT（旧YAML已迁移至35域架构）"
   - target: "MOD-L02-001"
@@ -52,7 +52,7 @@ summary: "L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔�
 tags: [risk-management, l04, phase-1-partial, stop-loss, kill-switch]
 priority: P0
 runtime_plane: hot
-ssot_yaml: "docs/03_modules/_domain_risk/risk_management_core/blueprint.md"
+ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 ---
 
 > ⚠️ **业务层未开放，禁止施工** — L04 属于 C 轨业务层，当前业务层处于冻结状态。

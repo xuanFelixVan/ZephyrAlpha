@@ -20,7 +20,7 @@ ttl: permanent
 |-----------|--------|-----------|--------|-----------------------|
 | MOD-L08-001 | HMI Core | [blueprint](hmi_core/blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_frontend/human_machine_interface_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_frontend/blueprint.md`
 
 ## 导航
 

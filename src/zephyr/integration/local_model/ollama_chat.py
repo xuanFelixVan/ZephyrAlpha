@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.ollama_chat
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.__init__

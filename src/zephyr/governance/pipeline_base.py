@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/experiment_core/blueprint.md | §
+# [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/blueprint.md | §
 # [MODULE] zephyr.governance.pipeline_base
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.experiment.experiment_result

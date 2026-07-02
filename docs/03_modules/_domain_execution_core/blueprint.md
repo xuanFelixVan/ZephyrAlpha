@@ -28,13 +28,13 @@ rule_form: structural
 scope: module
 stability: evolving
 verifiability: manual
-ssot_yaml: "docs/03_modules/_domain_execution_core/execution_core/blueprint.md"
+ssot_yaml: "docs/03_modules/_domain_execution_core/blueprint.md"
 summary: "L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1 部分实现：执行引擎+订单管理+模拟券商。业务层未开放，禁止施工。"
 tags: [trade-execution, l06, phase-1-partial, execution-engine, order-management, sor-routing, business-layer-blocked]
 priority: P0
 runtime_plane: hot
 depends_on:
-  - target: "docs/03_modules/_domain_execution_core/execution_core/blueprint.md"
+  - target: "docs/03_modules/_domain_execution_core/blueprint.md"
     at: "全篇"
     why: "本蓝图即SSoT（旧YAML已迁移至35域架构）"
   - target: "MOD-L05-001"

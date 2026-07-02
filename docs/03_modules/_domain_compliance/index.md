@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L10-001 | Compliance Core | [blueprint](compliance_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L10-001 | Compliance Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_compliance/compliance_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_compliance/blueprint.md`
 
 ## 导航
 

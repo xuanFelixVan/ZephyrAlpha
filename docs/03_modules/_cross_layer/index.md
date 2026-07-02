@@ -37,8 +37,8 @@ ttl: permanent
 | MOD-INF-009 | Pipeline | [blueprint](pipeline/blueprint.md) |
 | MOD-FEEDBACK_LOOP | Feedback Loop | [blueprint](feedback_loop/blueprint.md) |
 | MOD-DATABASE | Database | [blueprint](database/blueprint.md) |
-| MOD-INF-013 | MCP Servers | [blueprint](mcp_servers/blueprint.md) |
-| MOD-LLM_SECURITY | LLM Security | [blueprint](llm_security/blueprint.md) |
+| MOD-INF-013 | MCP Servers | [blueprint](model_context_protocol_servers/blueprint.md) |
+| MOD-LLM_SECURITY | LLM Security | [blueprint](large_language_model_security/blueprint.md) |
 | MOD-INF-016 | Shared + Core | [blueprint](shared_core/blueprint.md) |
 
 ### 治理与质量模块
