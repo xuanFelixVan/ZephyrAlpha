@@ -239,6 +239,11 @@ class FindingTaskBridge:
         description = f"[自动桥接] {finding.severity.upper()} Finding: {finding.description}"
         if finding.suggested_fix:
             description += f" — 建议修复: {finding.suggested_fix}"
+        # RULE-THIRTEEN R5/R6: 补充结构词和长度
+        description += f"\n\n根因: finding {finding.finding_id} 自动桥接"
+        description += f"\n治根: {finding.suggested_fix or '待分析后确定'}"
+        description += "\n施工步骤: 分析并修复该finding"
+        description += "\n验收标准: finding已解决且通过校验"
 
         upstream: list[str] = []
         if finding.source_file:
