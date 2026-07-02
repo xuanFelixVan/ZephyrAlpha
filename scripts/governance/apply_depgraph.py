@@ -614,10 +614,10 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = N
 
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-                   build_status, design_maturity, blueprint_path, can_build)
-                   VALUES (%s, %s, 'file', %s, %s, 'generated', 'production', %s, 0)
+                   build_status, design_maturity, blueprint_path, can_build, subdomain_id)
+                   VALUES (%s, %s, 'file', %s, %s, 'generated', 'production', %s, 0, %s)
                    RETURNING node_id""",
-                ("module", path, domain_id, blueprint_id, blueprint_path),
+                ("module", path, domain_id, blueprint_id, blueprint_path, domain_id),
             )
             node_id = cur.fetchone()["node_id"]
             conn.commit()
