@@ -1,5 +1,5 @@
 %% D_INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-07-03 02:34:37
+%% 生成时间: 2026-07-03 02:46:25
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 74, 依赖边数: 189
 
@@ -84,9 +84,9 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| src_zephyr_infrastructure_rollback_kill_switch_py
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
@@ -225,8 +225,8 @@ graph TD
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_roll____rollback_abuse_detector_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_roll___ollback_boot_integration_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 02:34:35
+> 最后更新: 2026-07-03 02:46:23
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 114 | Module Count | 114 |
 | 域内依赖 | 40 | Internal Dependencies | 40 |
-| 跨域入边 | 140 | Cross-domain Incoming | 140 |
+| 跨域入边 | 139 | Cross-domain Incoming | 139 |
 | 跨域出边 | 45 | Cross-domain Outgoing | 45 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 3 | Prototype Modules | 3 |
@@ -81,10 +81,10 @@ graph TD
         src_zephyr_autonomy_core_context_context_value_attribution_py["src/zephyr/autonomy_core/context/context_value_... production"]
     end
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D_INTEGRATION production"]
@@ -96,16 +96,16 @@ graph TD
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_INTELLIGENCE
     D_SHARED["D_SHARED production"]
     src_zephyr_autonomy_core_context_context_assembler_py -->|import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_budget_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_injector_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_injector_py -->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_context_context_injector_py -.->|import_depends| D_SHARED
     D_SECURITY_LLM["D_SECURITY_LLM production"]
     src_zephyr_autonomy_core_context_context_injector_py -->|import_depends| D_SECURITY_LLM
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|import_depends| D_SHARED
     D_GOVERNANCE -->|import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -114,15 +114,15 @@ graph TD
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_agent_observability_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_main_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_all_skill_modules_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_injector_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_atomic_injector_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_checkpoint_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_main_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_complexity_budget_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_checkpoint_manager_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_pipeline_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_context_assembler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -174,8 +174,8 @@ graph TD
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
-    D_SECURITY["D_SECURITY production"]
-    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_SECURITY
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_AUDITTEST
     D_COMPLIANCE["D_COMPLIANCE prototype"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_COMPLIANCE
     D_GOV_DRIFT["D_GOV_DRIFT design"]
@@ -185,7 +185,7 @@ graph TD
     src_zephyr_autonomy_core_file_autoregister_py -.->|contract| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|data| D_GOVERNANCE
-    D_SECURITY_LLM["D_SECURITY_LLM prototype"]
+    D_SECURITY_LLM["D_SECURITY_LLM production"]
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_SECURITY_LLM
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
     src_zephyr_autonomy_core_file_autoregister_py -.->|runtime| D_GOVERNANCE
@@ -200,7 +200,6 @@ graph TD
     D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_contextual_fetch_api_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_context_curation_loop_py
@@ -217,8 +216,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_context_contextual_fetch_api_py,src_zephyr_autonomy_core_context_curation_loop_py,src_zephyr_autonomy_core_context_diff_injector_py,src_zephyr_autonomy_core_context_diversity_constraint_py,src_zephyr_autonomy_core_context_domain_decay_config_py,src_zephyr_autonomy_core_context_fallback_staleness_gate_py,src_zephyr_autonomy_core_context_integrity_check_py,src_zephyr_autonomy_core_context_memory_bank_py,src_zephyr_autonomy_core_context_mode_manager_py,src_zephyr_autonomy_core_context_position_optimizer_py,src_zephyr_autonomy_core_context_shadow_canary_py,src_zephyr_autonomy_core_context_staleness_manager_py,src_zephyr_autonomy_core_context_vector_bridge_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_skill_rbac_registry_py,src_zephyr_autonomy_core_skills_skill_attention_py,src_zephyr_autonomy_core_skills_skill_breakage_checker_py,src_zephyr_autonomy_core_skills_skill_cache_provider_py,src_zephyr_autonomy_core_skills_skill_calibration_py,src_zephyr_autonomy_core_skills_skill_canary_py,src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skills_skill_compliance_py production
     class src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_skills_init_py design
-    class D_SECURITY,D_INTEGRATION,D_TRADING external_prod
-    class D_GOVERNANCE,D_COMPLIANCE,D_GOV_DRIFT,D_INFRA_A2A,D_SECURITY_LLM,D_KNOWLEDGE,D_INTELLIGENCE,D_AUDITTEST external_design
+    class D_SECURITY_LLM,D_INTEGRATION,D_TRADING external_prod
+    class D_GOVERNANCE,D_AUDITTEST,D_COMPLIANCE,D_GOV_DRIFT,D_INFRA_A2A,D_KNOWLEDGE,D_INTELLIGENCE external_design
 ```
 
 ### 第 3 页 / 共 4 页 / Page 3 of 4
@@ -260,18 +259,18 @@ graph TD
     src_zephyr_autonomy_core_skills_skill_consensus_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_constructor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_contract_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|import_depends| src_zephyr_autonomy_core_skills_skill_model_py
@@ -288,17 +287,17 @@ graph TD
     D_TRADING -->|import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
     D_TRADING -->|import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_context_isolation_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_consensus_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_constructor_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_context_isolation_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_contract_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_di_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_cross_model_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_contract_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_discovery_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_durable_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_discovery_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_economics_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_executor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -343,24 +342,24 @@ graph TD
     src_zephyr_autonomy_core_spec_engine_py -->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_skills_skill_registry_py -->|import_depends| D_INTEGRATION
-    src_zephyr_autonomy_core_skills_skill_sandbox_py -->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_skills_skill_router_py -->|import_depends| D_INTEGRATION
-    D_GOVERNANCE -.->|runtime| src_zephyr_autonomy_core_skills_skill_security_py
+    src_zephyr_autonomy_core_skills_skill_sandbox_py -->|import_depends| D_GOVERNANCE
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_trigger_router_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_trigger_router_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_observability_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_ontology_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_postmortem_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_observability_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_postmortem_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_prompt_cache_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_ontology_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_prompt_opt_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_risk_mitigator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_resilience_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_risk_mitigator_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_sandbox_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_security_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_shadow_py
     D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_schema_registry_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_autonomy_core_skills_skill_security_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -382,20 +381,20 @@ graph TD
 | D_INTEGRATION | 6 | import_depends |
 | D_SECURITY_LLM | 2 | import_depends,runtime |
 | D_INTELLIGENCE | 2 | import_depends |
-| D_COMPLIANCE | 1 | runtime |
+| D_AUDITTEST | 1 | runtime |
 | D_KNOWLEDGE | 1 | contract |
-| D_SECURITY | 1 | runtime |
-| D_INFRA_A2A | 1 | runtime |
 | D_GOV_DRIFT | 1 | runtime |
+| D_COMPLIANCE | 1 | runtime |
 | D_GOV_ENFORCEMENT | 1 | import_depends |
+| D_INFRA_A2A | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_AUDITTEST | 127 | test_depends |
-| D_GOVERNANCE | 4 | contract,import_depends,runtime |
 | D_TRADING | 4 | import_depends |
+| D_GOVERNANCE | 3 | contract,import_depends |
 | D_GOV_SCRIPTS | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
 | D_INTELLIGENCE | 1 | import_depends |
@@ -580,28 +579,28 @@ graph TD
 │   __main__.py → skill_loader.py                                  │
 │   __main__.py → skill_model.py                                   │
 │   context_assembler.py → context_rule_registry.py                │
-│   context_pipeline_auto.py → context_pipeline.py                 │
 │   context_pipeline.py → context_assembler.py                     │
 │   context_pipeline.py → context_injector.py                      │
 │   context_pipeline.py → context_rule_registry.py                 │
+│   context_pipeline_auto.py → context_pipeline.py                 │
 │   pipeline_bridge.py → trigger_router.py                         │
 │   pipeline_bridge.py → skill_loader.py                           │
 │   skill_consensus.py → skill_freshness.py                        │
 │   skill_constructor.py → skill_loader.py                         │
 │   skill_contract.py → skill_loader.py                            │
+│   skill_efficacy_calibrator.py → skill_loader.py                 │
 │   skill_discovery.py → skill_factory.py                          │
 │   skill_discovery.py → skill_loader.py                           │
-│   skill_executor.py → skill_loader.py                            │
-│   skill_efficacy_calibrator.py → skill_loader.py                 │
 │   skill_evaluator.py → skill_freshness.py                        │
 │   skill_evaluator.py → skill_loader.py                           │
+│   skill_executor.py → skill_loader.py                            │
 │   skill_explain.py → skill_evaluator.py                          │
 │   skill_explain.py → skill_model_evolution.py                    │
+│   skill_feedback.py → skill_freshness.py                         │
+│   skill_feedback.py → skill_kill_switch.py                       │
 │   skill_freshness_ext.py → skill_freshness.py                    │
 │   skill_freshness_ext.py → skill_lifecycle.py                    │
 │   skill_freshness_ext.py → skill_model.py                        │
-│   skill_feedback.py → skill_freshness.py                         │
-│   skill_feedback.py → skill_kill_switch.py                       │
 │   skill_kill_switch.py → skill_model.py                          │
 │   skill_kya.py → skill_loader.py                                 │
 │   skill_lifecycle.py → skill_model.py                            │

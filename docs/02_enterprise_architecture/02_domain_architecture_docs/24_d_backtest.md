@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 02:34:35
+> 最后更新: 2026-07-03 02:46:23
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -58,11 +58,11 @@ graph TD
         src_zephyr_backtest_models_init_py["src/zephyr/backtest/models/__init__.py prototype"]
         src_zephyr_backtest_services_init_py["src/zephyr/backtest/services/__init__.py prototype"]
     end
-    src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     D_SHARED["D_SHARED production"]
     src_zephyr_backtest_core_engine_base_py -.->|import_depends| D_SHARED
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
@@ -150,11 +150,11 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (5 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → engine_base.py                                   │
 │   __init__.py → vectorized_engine.py                             │
-│   __init__.py → engine_base.py                                   │
-│   __init__.py → engine_base.py                                   │
 │   vectorized_engine.py → engine_base.py                          │
 │   __init__.py → vectorized_engine.py                             │
+│   __init__.py → engine_base.py                                   │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
