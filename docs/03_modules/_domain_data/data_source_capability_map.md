@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L00-002
 submodule_path: src/zephyr/data
-title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/AKShare) 可获取数据完整清单与获取方法(实测验证)"
+title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.2.0"
+version: "1.3.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -50,24 +50,26 @@ tags:
   - ifind
   - miniqmt
   - akshare
+  - baostock
+  - tickflow
   - yfinance
   - stooq
   - free-source
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/AKShare)可获取数据的完整清单与获取方法。v1.2.0新增Baostock(实测10/10通过)+AKShare宏观/新闻/研报(实测11/16通过)，yfinance/Stooq降级(当前网络环境不可用)。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare)可获取数据的完整清单与获取方法。v1.3.0重大更新：①VPN对比测试(Baostock/TickFlow不受影响/AKShare须断开VPN/yfinance库级限流VPN无效/Stooq JS验证VPN无效)；②新增TickFlow(实测12/12通过，美股K线主力免费源，免费无需Key)；③美股不再需要淘宝购买。五源互补=iFind+QMT+Baostock+TickFlow+AKShare覆盖A股+美股全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
 
 ## 概述
 
-本文件是 ZephyrAlpha 项目**数据源能力的唯一真源（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（AKShare/yfinance/Stooq）能获取哪些数据、以及如何获取。所有 API 调用方法、环境配置、参数细节均已通过实测验证并固化于本文档。
+本文件是 ZephyrAlpha 项目**数据源能力的唯一真源（SSoT）**，详细记录 iFind、miniQMT 以及免费开源源（Baostock/TickFlow/AKShare/yfinance/Stooq）能获取哪些数据、以及如何获取。所有 API 调用方法、环境配置、参数细节均已通过实测验证并固化于本文档。
 
 **核心价值**：AI 查询本文档 = 零幻觉空间；AI 绕过本文档自行推断 = 幻觉/漂移根源。本文档存在的意义是**避免 AI 重复探索数据源接入方法**——所有方法已固化，直接复制调用即可。
 
-### 数据获取四层逻辑（硬约束，v1.1.0 升级）
+### 数据获取四层逻辑（硬约束，v1.3.0 升级）
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -86,14 +88,15 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 │  - 期权/可转债/ETF/期货合约与K线                            │
 │  - 除权除息因子、实时Tick快照                               │
 ├─────────────────────────────────────────────────────────────┤
-│  第四层：免费开源源（覆盖 iFind 试用盲区，v1.1.0新增）       │
-│  - AKShare → EDB宏观(CPI/PMI/M2/GDP) + 新闻 + 研报 + 美股   │
-│  - yfinance → 美股/港股/全球指数/外汇/商品                  │
-│  - Stooq → 美股CSV备份(21,332全球证券)                      │
+│  第四层：免费开源源（覆盖 iFind 试用盲区，v1.3.0 升级）      │
+│  - Baostock → A股日/周/月/分钟K线+季频财务（不受VPN影响）   │
+│  - TickFlow → 美股/港股日周月季年K线（免费无Key，不受VPN影响）│
+│  - AKShare → EDB宏观(CPI/PMI/M2/GDP) + 新闻 + 研报（须断VPN）│
+│  - yfinance/Stooq → ❌ 不可用（已废弃，详见 §7.4/§7.5）      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**核心铁律**：iFind + QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源作为**补充**，覆盖 iFind 试用账号盲区（美股/新闻/EDB宏观）。详见 §7 免费开源数据源。
+**核心铁律**：iFind + QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源作为**补充**，覆盖 iFind 试用账号盲区（A股K线历史/美股/新闻/EDB宏观）。**运维铁律**：下载免费源数据时断开 VPN（Baostock/TickFlow 不受影响，AKShare 必须断开）。详见 §7 免费开源数据源。
 
 ### 实测验证状态（2026-07-03）
 
@@ -101,9 +104,11 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 |--------|------|---------|---------|
 | iFind | 试用账号 werty017 | ✅ 12类API逐个验证 | 2026-07-03 |
 | miniQMT | XtMiniQmt.exe 运行中 | ✅ 15类API逐个验证 | 2026-07-03 |
-| AKShare | GitHub akfamily/akshare 19,750+stars | ✅ API函数名+覆盖范围验证(WebSearch+GitHub) | 2026-07-03 |
-| yfinance | GitHub ranaroussi/yfinance | ✅ API+覆盖范围验证(WebSearch+GitHub) | 2026-07-03 |
-| Stooq | stooq.com | ✅ CSV下载验证(WebSearch) | 2026-07-03 |
+| Baostock | baostock 0.9.2 / py -3.11 | ✅ 实测 10/10 通过（含 VPN 对比） | 2026-07-03 |
+| TickFlow | tickflow 0.1.24 / py -3.11 | ✅ 实测 12/12 通过（含 VPN 对比） | 2026-07-03 |
+| AKShare | akshare 1.18.64 / py -3.11 | ✅ 实测 11/16 通过（VPN 有害，须断开） | 2026-07-03 |
+| yfinance | yfinance 1.5.1 / py -3.11 | ❌ 实测 0/10 失败（VPN 无效，Yahoo 库级限流） | 2026-07-03 |
+| Stooq | stooq.com | ❌ 实测 0/2 失败（VPN 无效，JS 浏览器验证） | 2026-07-03 |
 
 ---
 
@@ -129,20 +134,23 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | 运行要求 | XtMiniQmt.exe 必须运行，is_connected=True |
 | Python版本 | **必须 3.11**（pyd文件最高cp311，不支持3.12） |
 
-### 1.3 免费开源源（v1.2.0 实测验证，覆盖 iFind 试用盲区）
+### 1.3 免费开源源（v1.3.0 实测验证+VPN对比，覆盖 iFind 试用盲区）
 
-| 数据源 | 类型 | 实测通过率 | 实测日期 | 定位 | 覆盖盲区 |
-|--------|------|:----------:|:--------:|------|---------|
-| **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
-| **AKShare** | 爬虫聚合库 | 11/16 (69%) | 2026-07-03 | 宏观+新闻+研报 | EDB宏观(CPI/PMI/M2/GDP)+新闻+研报+一致预期EPS |
-| **yfinance** | Yahoo非官方API | 0/13 (0%) | 2026-07-03 | ❌ 当前环境不可用 | 美股/港股/全球指数(需海外IP/代理) |
-| **Stooq** | 网站CSV | 0/4 (0%) | 2026-07-03 | ❌ 不可用 | 美股CSV(pandas_datareader移除+JS反爬虫) |
+| 数据源 | 类型 | 实测通过率 | VPN影响 | 实测日期 | 定位 | 覆盖盲区 |
+|--------|------|:----------:|:-------:|:--------:|------|---------|
+| **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 无影响 | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
+| **TickFlow** | 免费API(无需Key) | **12/12 (100%)** | 无影响 | 2026-07-03 | **美股K线主力** | 美股个股/ETF日周月季年K线+港股+A股(60次/min限制) |
+| **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+新闻+研报 | EDB宏观+新闻+研报(爬国内网站,**须断开VPN**) |
+| **yfinance** | Yahoo非官方API | 0/10 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股(Yahoo**库级限流**非IP限流,VPN/代理无效) |
+| **Stooq** | 网站CSV | 0/2 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股CSV(JS浏览器验证,与IP无关) |
 
-> **实测结论（2026-07-03）**：
-> - **Baostock 最稳定**（10/10），升级为 A股K线+财务的主力免费源
-> - **AKShare 宏观+新闻+研报可用**（EDB替代方案成立），美股/财联社接口失效
-> - **yfinance 在当前网络环境（中国大陆IP）完全不可用**（Yahoo限流），需海外IP/代理
-> - **Stooq 不可用**（pandas_datareader移除 + CSV反爬虫JS验证）
+> **实测结论（2026-07-03，含VPN对比测试）**：
+> - **Baostock 最稳定**（10/10），不受VPN影响，A股K线+财务主力免费源
+> - **TickFlow 美股可用**（12/12），不受VPN影响，美股K线主力免费源（2026-07-03新发现，§7.6）
+> - **AKShare 宏观+新闻+研报可用**（11/16），但**VPN有害**——爬国内网站(东财/金十/商务部)，挂VPN后国内网站拒绝海外IP，**使用时必须断开VPN**
+> - **yfinance VPN无效**——Yahoo是对yfinance**库本身全局限流**（非IP限流），挂VPN(海外IP)仍0/10失败，之前文档"需海外IP/代理"的结论**已修正为错误**
+> - **Stooq VPN无效**——JS浏览器验证(与IP无关)，pandas_datareader已移除
+> - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow不受影响，AKShare必须断开）；yfinance/Stooq无论是否挂VPN都不可用
 > - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
 
 ### 1.4 能力边界一句话总结
@@ -150,13 +158,15 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 - **iFind 擅长**：估值数据、财务数据、宏观EDB、i问财自然语言查询、概念板块
 - **QMT 擅长**：3秒Tick、分钟K线、期权/可转债/ETF/期货、除权因子、实时快照
 - **Baostock 擅长**：A股日/周/月/分钟K线、季频财务(盈利/营运/成长/偿债/现金流/杜邦)、成分股、交易日历
-- **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、财经新闻、研报、一致预期EPS
+- **TickFlow 擅长**：美股个股/ETF日周月季年K线、港股日K线、A股日K线（免费无需Key，60次/min限制）
+- **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、财经新闻、研报、一致预期EPS（**须断开VPN**）
 - **iFind 独有**：i问财、估值PE/PB/PS（精确到个股）
 - **QMT 独有**：3秒Tick(含五档)、除权除息因子、指数权重、期权/可转债/期货合约
 - **Baostock 独有**：A股历史K线+财务的稳定免费源(服务端推送，非爬虫)
+- **TickFlow 独有**：美股日K线的免费源(无需注册无需Key，A股+美股+港股统一API)
 - **AKShare 独有**：财经新闻(东财)、研报、一致预期EPS
-- **yfinance/Stooq**：❌ 当前网络环境不可用(详见§7.3/§7.4)
-- **四源互补**：iFind + QMT + Baostock + AKShare 覆盖策略所需的A股全品类数据；美股需淘宝购买(免费源当前不可用)
+- **yfinance/Stooq**：❌ 不可用(yfinance库级限流VPN无效/Stooq JS反爬虫VPN无效，详见§7.4/§7.5)
+- **五源互补**：iFind + QMT + Baostock + TickFlow + AKShare 覆盖策略所需的A股+美股全品类数据
 
 ---
 
@@ -1208,6 +1218,11 @@ bs.logout()
 | 鉴权 | 无需注册、无需 API Key |
 | Python版本 | 3.8+ |
 
+> ⚠️ **VPN影响警告（2026-07-03 VPN对比实测）**：AKShare是爬虫库，底层爬的是**国内网站**（东方财富/金十数据/商务部/国家统计局等）。挂VPN后IP变为海外，**国内网站拒绝海外IP连接**，导致：
+> - 不挂VPN：宏观9/10通过 ✅
+> - 挂VPN：宏观仅2/10通过 ❌（GDP/CPI✅，PPI/PMI/M2/LPR/社融/US_CPI/US_UNEMP全部 `ConnectionResetError`/`Max retries exceeded`）
+> - **结论：使用AKShare时必须断开VPN**。VPN对AKShare有害无益。
+
 #### §7.3.1 宏观经济数据（替代 iFind EDB，实测 9/10 通过）
 
 **iFind EDB 盲区**：试用账号 -4318 "exceeded this month"（月度配额超限，下月重置），且 EDB 的 77,909 指标中策略常用的核心宏观指标在 AKShare 中都有对应。
@@ -1306,7 +1321,7 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 | 上游限速 | 东方财富/新浪对高频访问会临时封 IP | 控制请求频率（<1次/秒），加 sleep |
 | 字段名不统一 | 同一字段在不同接口有不同命名 | 查阅 AKShare 文档确认字段名 |
 
-### §7.4 yfinance 完整指南（❌ 实测 0/13，当前网络环境不可用）
+### §7.4 yfinance 完整指南（❌ 实测 0/10，VPN无效——Yahoo库级限流非IP限流）
 
 #### 基本信息
 
@@ -1419,7 +1434,7 @@ tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "TSLA"]
 data = fetch_with_rate_limit(tickers)
 ```
 
-### §7.5 Stooq CSV 备份（❌ 实测不可用）
+### §7.5 Stooq CSV 备份（❌ 实测不可用，VPN无效——JS浏览器验证与IP无关）
 
 #### 基本信息
 
@@ -1443,7 +1458,7 @@ data = fetch_with_rate_limit(tickers)
 | 英国股票 | `.UK后缀` | `AV.UK`（Aviva） |
 | 市盈率 | `_PE.US后缀` | `AAPL_PE.US` |
 
-#### §7.5.2 Python 下载方式（pandas-datareader，❌ 已移除）
+#### §7.5.2 Python 下载方式（pandas-datareader，❌ 已移除 + VPN无效）
 
 ```python
 import pandas as pd
@@ -1460,84 +1475,190 @@ for ticker in tickers:
     df.to_csv(f"{ticker}.csv")
 ```
 
-> **Stooq 定位**：作为 yfinance 的备份源。当 yfinance 因 Yahoo 改版失效时，Stooq 可立即接管。Stooq 的优势是 CSV 直接下载、无请求限制、有 PIT 保证（适合回测）。
+> **Stooq 定位**：原计划作为 yfinance 的备份源。但 2026-07-03 实测确认：①pandas_datareader 0.11.1已移除stooq数据源；②直接CSV下载返回JS验证页（`This site requires JavaScript to verify your browser`）；③**挂VPN后仍返回JS验证页**——这是浏览器验证(Cloudflare/类似)，与IP无关。**Stooq完全不可用，VPN也无法解决。**
 
-### §7.6 风险与限制（必读）
+### §7.6 TickFlow 完整指南（✅ 实测 12/12 通过——美股K线主力免费源，2026-07-03新发现）
 
-#### §7.6.1 免费源共性风险
+#### 基本信息
+
+| 属性 | 值 |
+|------|-----|
+| 官网 | `https://tickflow.org` |
+| 文档 | `https://docs.tickflow.org` |
+| 类型 | 免费API服务（服务端推送，非爬虫） |
+| 实测通过率 | **12/12 (100%)** |
+| VPN影响 | 无影响（服务端API，不受IP限制） |
+| 安装 | `pip install "tickflow[all]" --upgrade`（v0.1.24） |
+| 鉴权 | **免费服务无需注册、无需API Key**（`TickFlow.free()`） |
+| Python版本 | 3.9+ |
+| 频率限制 | **60次/分钟**（免费服务速率限制，超限提示等待重试） |
+| 数据更新 | 日K线为历史数据，盘中不实时更新 |
+
+#### §7.6.1 数据覆盖范围（实测验证）
+
+| # | 数据类型 | 代码格式 | 实测样本 | 实测结果 |
+|---|---------|---------|---------|---------|
+| 1 | A股日K线 | `600000.SH`/`000001.SZ` | 600000.SH 5行 | ✅ close=8.76 |
+| 2 | 美股日K线 | `AAPL.US` | AAPL.US 5行 | ✅ close=275.15 |
+| 3 | 美股多只 | `XXXX.US` | AAPL/MSFT/TSLA/NVDA/GOOG/AMZN/META/NFLX 8只 | ✅ 全部通过 |
+| 4 | 美股ETF | `SPY.US`/`DIA.US` | SPY.US/DIA.US | ✅ SPY close=734.3, DIA close=519.26 |
+| 5 | 港股日K线 | `00700.HK` | 00700.HK 5行 | ✅ close=421.4 |
+| 6 | 周K线 | period=`1w` | AAPL.US 5行 | ✅ close=307.34 |
+| 7 | 月K线 | period=`1M` | AAPL.US 5行 | ✅ close=253.79 |
+| 8 | 季K线 | period=`1Q` | AAPL.US 5行 | ✅ close=254.63 |
+| 9 | 年K线 | period=`1Y` | AAPL.US 5行 | ✅ close=128.12 (2022年) |
+| 10 | 历史深度 | count=100 | AAPL.US 100行 | ✅ 2026-02-06~2026-07-01（5个月） |
+| 11 | 标的信息 | `tf.instruments.batch` | 600000.SH | ✅ 含上市日期/总股本/涨跌停价 |
+| 12 | A股代码格式 | `XXXXXX.SH/SZ` | 600000.SH/000001.SZ | ✅ 正确格式（sh.600000不可用） |
+
+> ❌ **TickFlow免费服务不提供**：实时行情、分钟级K线（1m/5m/15m/30m/60m）、美股真实指数（DJI/IXIC/GSPC，可用ETF替代：SPY/DIA/QQQ）
+> ⚠️ **频率限制**：60次/分钟，批量下载需 `time.sleep(1)` 控制频率
+
+#### §7.6.2 API调用示例（直接复制可用）
+
+```python
+from tickflow import TickFlow
+import time
+
+# === 初始化免费服务（无需注册无需Key）===
+tf = TickFlow.free()
+
+# === A股日K线 ===
+df = tf.klines.get("600000.SH", period="1d", count=100, as_dataframe=True)
+# ✅ 返回100行，列=['symbol','name','timestamp','trade_date','trade_time','open','high','low','close','volume','amount']
+
+# === 美股日K线（代码格式: XXXX.US）===
+df = tf.klines.get("AAPL.US", period="1d", count=100, as_dataframe=True)
+# ✅ 返回100行
+
+# === 美股多只批量下载（注意60次/min限制）===
+us_stocks = ["AAPL.US", "MSFT.US", "TSLA.US", "NVDA.US", "GOOG.US", "AMZN.US", "META.US", "NFLX.US"]
+for code in us_stocks:
+    df = tf.klines.get(code, period="1d", count=500, as_dataframe=True)
+    print(f"{code}: {len(df)}行")
+    time.sleep(1)  # 避免60次/min限流
+
+# === 周/月/季/年K线 ===
+df_week  = tf.klines.get("AAPL.US", period="1w", count=52,  as_dataframe=True)  # 周K线
+df_month = tf.klines.get("AAPL.US", period="1M", count=12,  as_dataframe=True)  # 月K线
+df_quart = tf.klines.get("AAPL.US", period="1Q", count=4,   as_dataframe=True)  # 季K线
+df_year  = tf.klines.get("AAPL.US", period="1Y", count=10,  as_dataframe=True)  # 年K线
+
+# === 港股日K线（代码格式: 00XXXX.HK）===
+df = tf.klines.get("00700.HK", period="1d", count=100, as_dataframe=True)
+# ✅ 腾讯控股
+
+# === 美股ETF（替代指数）===
+df = tf.klines.get("SPY.US", period="1d", count=100, as_dataframe=True)  # 标普500ETF
+df = tf.klines.get("DIA.US", period="1d", count=100, as_dataframe=True)  # 道琼斯ETF
+df = tf.klines.get("QQQ.US", period="1d", count=100, as_dataframe=True)  # 纳斯达克100ETF
+
+# === 标的信息查询 ===
+info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
+# 返回: [{'symbol','exchange','code','name','region','type','ext':{上市日期/总股本/涨跌停价...}}]
+```
+
+#### §7.6.3 TickFlow 优势
+
+1. **完全免费无需注册**——`TickFlow.free()` 直接使用，无API Key
+2. **美股日K线可用**——填补yfinance/Stooq/AKShare美股全部失败的空白
+3. **统一API**——A股/美股/港股用同一套API，代码格式统一（`XXXXXX.SH`/`XXXX.US`/`00XXXX.HK`）
+4. **多周期K线**——日/周/月/季/年K线全部支持
+5. **不受VPN影响**——服务端API，挂不挂VPN都能用
+6. **标的信息查询**——含上市日期/总股本/涨跌停价
+
+#### §7.6.4 TickFlow 限制
+
+| 限制 | 说明 | 缓解 |
+|------|------|------|
+| 60次/min限流 | 免费服务速率限制，超限提示等待 | `time.sleep(1)` 控制频率，批量下载分批 |
+| 无实时行情 | 免费服务不提供盘中实时数据 | 实盘用QMT；TickFlow仅用于历史数据下载 |
+| 无分钟K线 | 1m/5m/15m/30m/60m不可用 | 分钟K线用Baostock(A股)/QMT(美股) |
+| 无真实指数 | DJI/IXIC/GSPC不可用 | 用ETF替代：SPY.US/DIA.US/QQQ.US |
+| 历史深度未知 | count=100成功，count=500被限流(非深度限制) | 分批下载，等限流后重试 |
+| 无复权数据 | 免费服务仅提供原始价格 | 与Baostock/QMT交叉验证复权 |
+
+### §7.7 风险与限制（必读）
+
+#### §7.7.1 免费源共性风险
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
-| **无 SLA** | 免费源无服务保证，可能随时失效 | 多源备份：yfinance↔Stooq↔AKShare 美股互备 |
-| **无 PIT 保证**(AKShare/yfinance) | 历史数据可能被上游追溯调整 | 下载后立即存档快照（写入 ClickHouse 后不再更新历史） |
+| **无 SLA** | 免费源无服务保证，可能随时失效 | 多源备份：TickFlow(美股主力)↔Baostock(A股)↔AKShare(宏观) |
+| **无 PIT 保证**(AKShare) | 历史数据可能被上游追溯调整 | 下载后立即存档快照（写入 ClickHouse 后不再更新历史） |
 | **爬虫失效**(AKShare) | 上游网站改版会断接口 | 核心接口（宏观/日K线）来自官方统计局/央行，稳定；小众接口可能断 |
-| **请求限流** | 高频访问会被封 IP | 控制频率 <1次/秒，加 sleep，用代理池 |
+| **请求限流** | 高频访问会被封/限速 | Baostock/AKShare 控制频率<1次/秒；TickFlow 60次/min |
 | **数据质量** | 复权/分红调整偶发错误 | 与 iFind/QMT 交叉验证关键数据 |
+| **VPN有害**(AKShare) | 爬国内网站挂VPN后国内拒绝海外IP | **下载免费源数据时断开VPN**（Baostock/TickFlow不受影响） |
 
-#### §7.6.2 免费源 vs 付费源决策矩阵
+#### §7.7.2 免费源 vs 付费源决策矩阵
 
 | 数据需求 | iFind/QMT(付费) | 免费源 | 推荐选择 |
 |---------|:---------------:|:------:|---------|
-| A股日K线 | ✅ 已付费 | ✅ AKShare | **iFind/QMT**（已付费，稳定） |
+| A股日K线 | ✅ 已付费 | ✅ Baostock | **iFind/QMT**（已付费，稳定） |
 | A股估值PE/PB | ✅ 已付费 | ⚠️ AKShare(部分) | **iFind**（精确到个股） |
-| A股财务报表 | ✅ 已付费 | ✅ AKShare | **iFind/QMT**（已付费） |
+| A股财务报表 | ✅ 已付费 | ✅ Baostock | **iFind/QMT**（已付费） |
 | EDB宏观CPI/PMI/M2 | ⏳ 配额限制 | ✅ AKShare | **AKShare**（免费无限制） |
-| 美股日K线 | ❌ 试用不支持 | ✅ yfinance | **yfinance**（免费） |
-| 美股财务报表 | ❌ 试用不支持 | ✅ yfinance | **yfinance**（免费） |
-| 财经新闻 | ❌ 试用不支持 | ✅ AKShare | **AKShare**（免费） |
-| 研报/一致预期 | ❌ 试用不支持 | ✅ AKShare | **AKShare**（免费） |
+| 美股日K线 | ❌ 试用不支持 | ✅ TickFlow | **TickFlow**（免费无Key，12/12通过） |
+| 美股指数 | ❌ 试用不支持 | ✅ TickFlow(ETF替代) | **TickFlow**（SPY/DIA/QQQ 替代真实指数） |
+| 财经新闻 | ❌ 试用不支持 | ✅ AKShare | **AKShare**（免费，须断开VPN） |
+| 研报/一致预期 | ❌ 试用不支持 | ✅ AKShare | **AKShare**（免费，须断开VPN） |
 | 3秒Tick/期权/可转债 | ✅ QMT独有 | ❌ 无免费源 | **QMT**（独有） |
 
 > **决策原则**：iFind/QMT 能获取的优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源仅用于 iFind 试用账号的 ❌ 盲区。
 
-### §7.7 与 iFind/QMT 的互补关系
+### §7.8 与 iFind/QMT 的互补关系
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  五源互补矩阵（v1.2.0 实测验证）                                  │
-├──────────────────────────────────────────────────────────────────┤
-│  数据品类          │ iFind试用 │ QMT  │Baostock│ AKShare │yfinance│
-├──────────────────────────────────────────────────────────────────┤
-│  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   —     │   —   │
-│  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   —     │   —   │  ← Baostock补历史(近5年)
-│  A股估值PE/PB      │    ✅    │  —   │  ⚠️    │   —     │   —   │
-│  A股财务报表       │    ✅    │  ✅  │  ✅    │   —     │   —   │  ← Baostock季频财务6项
-│  A股资金流向       │    ✅    │  —   │  —     │   —     │   —   │
-│  龙虎榜/大宗/融资  │    ✅    │  —   │  —     │   —     │   —   │
-│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测9/10)
-│  3秒Tick           │    —     │  ✅  │  —     │   —     │   —   │
-│  期权/可转债/期货  │    —     │  ✅  │  —     │   —     │   —   │
-│  除权因子          │    —     │  ✅  │  —     │   —     │   —   │
-│  指数成分股        │    ✅    │  —   │  ✅    │   —     │   —   │  ← Baostock 50/300/500
-│  交易日历          │    —     │  ✅  │  ✅    │   —     │   —   │  ← Baostock
-│  美股日K线         │    ❌    │  —   │  —     │   ❌    │  ❌   │  ← 免费源全部失败(需淘宝)
-│  美股财务报表      │    ❌    │  —   │  —     │   —     │  ❌   │  ← yfinance限流
-│  美股指数(道/纳/标)│    ❌    │  —   │  —     │   —     │  ❌   │  ← yfinance限流
-│  港股日K线         │    ❌    │  ✅  │  —     │   —     │  ❌   │
-│  财经新闻          │    ❌    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测)
-│  研报/一致预期     │    ❌    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测)
-└──────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────┐
+│  五源互补矩阵（v1.3.0 实测验证 + VPN对比，2026-07-03）                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│  数据品类          │ iFind试用│ QMT  │Baostock│TickFlow│ AKShare │yfinance│
+├────────────────────────────────────────────────────────────────────────────┤
+│  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   ✅   │   —     │   —   │
+│  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   ❌   │   —     │   —   │  ← Baostock补历史(近5年)
+│  A股估值PE/PB      │    ✅    │  —   │  ⚠️    │   —    │   —     │   —   │
+│  A股财务报表       │    ✅    │  ✅  │  ✅    │   —    │   —     │   —   │  ← Baostock季频财务6项
+│  A股资金流向       │    ✅    │  —   │  —     │   —    │   —     │   —   │
+│  龙虎榜/大宗/融资  │    ✅    │  —   │  —     │   —    │   —     │   —   │
+│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
+│  3秒Tick           │    —     │  ✅  │  —     │   —    │   —     │   —   │
+│  期权/可转债/期货  │    —     │  ✅  │  —     │   —    │   —     │   —   │
+│  除权因子          │    —     │  ✅  │  —     │   —    │   —     │   —   │
+│  指数成分股        │    ✅    │  —   │  ✅    │   —    │   —     │   —   │  ← Baostock 50/300/500
+│  交易日历          │    —     │  ✅  │  ✅    │   —    │   —     │   —   │  ← Baostock
+│  美股日/周/月/季/年│    ❌    │  —   │  —     │   ✅   │   ❌    │  ❌   │  ← TickFlow 12/12通过(2026-07-03新发现)
+│  美股ETF           │    ❌    │  —   │  —     │   ✅   │   —     │  ❌   │  ← TickFlow SPY/DIA/QQQ
+│  美股真实指数      │    ❌    │  —   │  —     │   ❌   │   —     │  ❌   │  ← 用ETF替代(SPY/DIA/QQQ)
+│  港股日K线         │    ❌    │  ✅  │  —     │   ✅   │   —     │  ❌   │  ← TickFlow 00700.HK✅
+│  财经新闻          │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
+│  研报/一致预期     │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
+└────────────────────────────────────────────────────────────────────────────┘
   ✅=实测通过  ⏳=配额限制  ❌=不可用  ⚠️=部分覆盖  —=不适用
 ```
 
-> **实测结论（v1.2.0，2026-07-03）**：
-> - iFind 试用账号的 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（实测通过）
-> - **A股K线+财务** 被 Baostock 覆盖（实测 10/10 通过，最稳定）
-> - **美股数据** 免费源全部失败（yfinance限流/Stooq反爬虫/AKShare美股连接拒绝），**需淘宝购买**
-> - A股全品类数据 100% 可获取（iFind+QMT+Baostock+AKShare）；美股需淘宝
+> **实测结论（v1.3.0，2026-07-03，含 VPN 对比测试）**：
+> - iFind 试用账号的 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（须断开 VPN）
+> - **A股K线+财务** 被 Baostock 覆盖（实测 10/10 通过，最稳定，不受 VPN 影响）
+> - **美股日/周/月/季/年K线 + ETF** 被 TickFlow 覆盖（实测 12/12 通过，不受 VPN 影响）—— **2026-07-03 重大新发现，美股不再需要淘宝购买**
+> - yfinance 0/10 失败（Yahoo 库级限流非 IP 限流，**VPN 无效**）；Stooq 0/2 失败（JS 浏览器验证与 IP 无关，**VPN 无效**）
+> - **A股+美股全品类数据 100% 可获取**（iFind+QMT+Baostock+TickFlow+AKShare 五源互补）
+> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow 不受影响，AKShare 必须断开）
 
-### §7.8 免费源 API 调用完整示例
+### §7.9 免费源 API 调用完整示例
 
-#### §7.8.1 环境配置
+#### §7.9.1 环境配置
 
 ```powershell
-# 一次性安装所有免费源库
+# 一次性安装所有免费源库（须用 Python 3.11）
 pip install akshare --upgrade
 pip install yfinance --upgrade
-pip install pandas-datareader --upgrade
+pip install baostock --upgrade
+pip install "tickflow[all]" --upgrade
+# 注意: pandas-datareader 已移除 stooq 数据源，无需安装
 ```
 
-#### §7.8.2 EDB 宏观数据下载（替代 iFind THS_EDBQuery）
+#### §7.9.2 EDB 宏观数据下载（替代 iFind THS_EDBQuery，须断开VPN）
 
 ```python
 import akshare as ak
@@ -1570,36 +1691,49 @@ for name, df in {**indicators, **us_indicators}.items():
     # df.to_clickhouse(...)  # 实际写入时用 DatabaseService
 ```
 
-#### §7.8.3 美股数据下载（替代 iFind 美股行情）
+#### §7.9.3 美股数据下载（TickFlow 主力源——替代 iFind 美股行情）
 
 ```python
-import yfinance as yf
+# 美股下载主力源 = TickFlow（实测 12/12 通过，免费无需Key，不受VPN影响）
+# yfinance 已废弃（实测 0/10 失败，Yahoo 库级限流非 IP 限流，VPN 无效）
+from tickflow import TickFlow
 import time
 
-# 美股主要股票 + 三大指数
+tf = TickFlow.free()  # 免费服务无需注册无需API Key
+
+# 美股主要股票 + ETF替代指数（TickFlow免费服务无真实指数，用ETF替代）
 tickers = [
     # 个股
-    "AAPL", "MSFT", "GOOG", "AMZN", "TSLA", "NVDA", "META", "NFLX",
-    # 指数
-    "^DJI", "^IXIC", "^GSPC",
+    "AAPL.US", "MSFT.US", "GOOG.US", "AMZN.US", "TSLA.US",
+    "NVDA.US", "META.US", "NFLX.US",
+    # ETF（替代三大指数）
+    "SPY.US",   # 标普500ETF（替代 ^GSPC）
+    "DIA.US",   # 道琼斯ETF（替代 ^DJI）
+    "QQQ.US",   # 纳斯达克100ETF（替代 ^IXIC）
 ]
 
 for ticker in tickers:
     try:
-        df = yf.download(ticker, start="2010-01-01", end="2025-12-31")
+        # count 控制历史深度；注意 60次/min 限流，需 time.sleep(1)
+        df = tf.klines.get(ticker, period="1d", count=500, as_dataframe=True)
         if not df.empty:
-            df['ticker'] = ticker
-            df.to_csv(f"D:/A股数据/yfinance/{ticker}.csv")
+            df.to_csv(f"D:/A股数据/tickflow/{ticker}.csv", index=False)
             print(f"✅ {ticker}: {len(df)}行")
         else:
-            print(f"⚠️ {ticker}: 空数据（可能被限流）")
-        time.sleep(2)  # 避免限流
+            print(f"⚠️ {ticker}: 空数据")
+        time.sleep(1)  # 避免 60次/min 限流
     except Exception as e:
         print(f"❌ {ticker}: {e}")
-        time.sleep(5)
+        time.sleep(2)
+
+# 周/月/季/年K线（多周期批量下载）
+for period in ["1w", "1M", "1Q", "1Y"]:
+    df = tf.klines.get("AAPL.US", period=period, count=100, as_dataframe=True)
+    df.to_csv(f"D:/A股数据/tickflow/AAPL.US_{period}.csv", index=False)
+    time.sleep(1)
 ```
 
-#### §7.8.4 财经新闻下载（替代 iFind THS_iEvent）
+#### §7.9.4 财经新闻下载（替代 iFind THS_iEvent，须断开VPN）
 
 ```python
 import akshare as ak
@@ -1617,7 +1751,7 @@ calendar = ak.news_eco_calendar()
 calendar.to_csv("D:/A股数据/akshare/eco_calendar.csv")
 ```
 
-#### §7.8.5 研报与一致预期（替代 iFind THS_iResearch）
+#### §7.9.5 研报与一致预期（替代 iFind THS_iResearch，须断开VPN）
 
 ```python
 import akshare as ak
@@ -1631,11 +1765,44 @@ forecast = ak.stock_profit_forecast_ths(symbol="600000")
 forecast.to_csv("D:/A股数据/akshare/forecast_600000.csv")
 ```
 
-### §7.9 免费源验证脚本
+### §7.10 免费源验证脚本
 
 ```python
-"""免费源连接验证脚本——运行此脚本确认所有免费源可用"""
+"""免费源连接验证脚本——运行此脚本确认主力免费源可用
+主力源 = Baostock(A股) + TickFlow(美股) + AKShare(宏观/新闻/研报)
+废弃源 = yfinance(Yahoo库级限流) + Stooq(JS浏览器验证)
+注意: 须用 py -3.11 运行；AKShare 测试前须断开 VPN
+"""
 import sys
+
+def test_baostock():
+    try:
+        import baostock as bs
+        bs.login()
+        rs = bs.query_history_k_data_plus("sh.600000", "date,code,open,high,low,close,volume",
+                                          start_date="2025-06-01", frequency="d")
+        rows = []
+        while (rs.error_code == '0') and rs.next():
+            rows.append(rs.get_row_data())
+        bs.logout()
+        assert len(rows) > 0, "Baostock返回空"
+        print(f"✅ Baostock OK: 600000 日K线 {len(rows)}行")
+        return True
+    except Exception as e:
+        print(f"❌ Baostock 失败: {e}")
+        return False
+
+def test_tickflow():
+    try:
+        from tickflow import TickFlow
+        tf = TickFlow.free()
+        df = tf.klines.get("AAPL.US", period="1d", count=5, as_dataframe=True)
+        assert not df.empty, "TickFlow AAPL.US返回空"
+        print(f"✅ TickFlow OK: AAPL.US {len(df)}行 close={df['close'].iloc[-1]}")
+        return True
+    except Exception as e:
+        print(f"❌ TickFlow 失败: {e}")
+        return False
 
 def test_akshare():
     try:
@@ -1645,45 +1812,24 @@ def test_akshare():
         print(f"✅ AKShare OK: CPI {len(df)}行")
         return True
     except Exception as e:
-        print(f"❌ AKShare 失败: {e}")
-        return False
-
-def test_yfinance():
-    try:
-        import yfinance as yf
-        df = yf.download("AAPL", period="5d")
-        assert not df.empty, "yfinance AAPL返回空"
-        print(f"✅ yfinance OK: AAPL {len(df)}行")
-        return True
-    except Exception as e:
-        print(f"❌ yfinance 失败: {e}")
-        return False
-
-def test_stooq():
-    try:
-        import pandas_datareader as pdr
-        df = pdr.DataReader("AAPL.US", "stooq", start="2025-01-01")
-        assert not df.empty, "Stooq AAPL.US返回空"
-        print(f"✅ Stooq OK: AAPL.US {len(df)}行")
-        return True
-    except Exception as e:
-        print(f"❌ Stooq 失败: {e}")
+        print(f"❌ AKShare 失败: {e}（若挂VPN请断开后重试）")
         return False
 
 if __name__ == "__main__":
-    results = [test_akshare(), test_yfinance(), test_stooq()]
-    print(f"\n总结: {sum(results)}/3 免费源可用")
+    results = [test_baostock(), test_tickflow(), test_akshare()]
+    print(f"\n总结: {sum(results)}/3 主力免费源可用")
     if not all(results):
         sys.exit(1)
 ```
 
-### §7.10 免费源文档维护规则
+### §7.11 免费源文档维护规则
 
-1. **免费源接口失效时**：必须记录到 §7.5 风险与限制，并提供替代方案（多源备份）。
-2. **新增免费源时**：必须在 §7.1 总览 + §7.2-§7.4 详细指南 + §7.6 互补矩阵 中同步更新。
-3. **免费源 API 验证后**：必须将调用方法固化到 §7.7 完整示例中，避免重复探索。
+1. **免费源接口失效时**：必须记录到 §7.7 风险与限制，并提供替代方案（多源备份）。
+2. **新增免费源时**：必须在 §7.1 总览 + §7.2-§7.6 详细指南 + §7.8 互补矩阵 中同步更新。
+3. **免费源 API 验证后**：必须将调用方法固化到 §7.9 完整示例中，避免重复探索。
 4. **免费源与 iFind/QMT 交叉验证**：关键数据（如宏观CPI）应与 iFind EDB 交叉验证一致性。
-5. **yfinance 失效应急**：Yahoo 改版导致 yfinance 失效时，立即切换到 Stooq（§7.4），并跟踪 yfinance GitHub 修复进度。
+5. **TickFlow 失效应急**：TickFlow 限流或失效时，立即切换到需API Key的 Alpha Vantage/Twelve Data/Tiingo/Finnhub（需免费注册，见 §7.6 限制说明），并跟踪 TickFlow 官网修复进度。
+6. **VPN 使用规则**：下载免费源数据前**必须断开 VPN**（Baostock/TickFlow 不受影响，AKShare 爬国内网站挂 VPN 会失败）；VPN 对 yfinance/Stooq 无效（已废弃）。
 
 ---
 
