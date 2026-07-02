@@ -37,11 +37,11 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.security_patterns import POISONING_INDICATORS  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+from zephyr.governance.rule_patterns import POISONING_INDICATORS  # SSoT (ARCH-033 Phase 7 修正: 合并进 rule_patterns)
 
 _logger = logging.getLogger(__name__)
 
-# _POISONING_INDICATORS 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
+# _POISONING_INDICATORS 已迁移到 zephyr.governance.rule_patterns（ARCH-033 Phase 7 修正: 合并进 rule_patterns）
 
 
 class KBWriteCheckResult(BaseModel):
