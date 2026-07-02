@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_MKT_DATA 行情数据架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,11 +27,11 @@ ttl: permanent
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
-| 生产态模块 | 1 | Production Modules | 1 |
-| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 原型态模块 | 8 | Prototype Modules | 8 |
+| 生产态模块 | 0 | Production Modules | 0 |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 | Description | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -47,7 +47,7 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        src_zephyr_market_data_init_py["src/zephyr/market_data/__init__.py production"]
+        src_zephyr_market_data_init_py["src/zephyr/market_data/__init__.py prototype"]
         src_zephyr_market_data_extensions_init_py["src/zephyr/market_data/_extensions/__init__.py prototype"]
         src_zephyr_market_data_api_init_py["src/zephyr/market_data/api/__init__.py prototype"]
         src_zephyr_market_data_core_init_py["src/zephyr/market_data/core/__init__.py prototype"]
@@ -57,19 +57,23 @@ graph TD
         src_zephyr_market_data_services_init_py["src/zephyr/market_data/services/__init__.py prototype"]
     end
     src_zephyr_market_data_init_py -.->|import_depends| src_zephyr_market_data_market_data_py
+    D_SHARED["D_SHARED prototype"]
+    src_zephyr_market_data_market_data_py -.->|import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_market_data_init_py production
-    class src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_market_data_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
+    class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_market_data_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
+    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -84,7 +88,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │             L1 基础层 / Foundation Layer (8 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
-│   src/zephyr/market_data/__init__.py  [production]               │
+│   src/zephyr/market_data/__init__.py  [prototype]                │
 │   src/zephyr/market_data/_extensions/__init__.py  [prototype]    │
 │   src/zephyr/market_data/api/__init__.py  [prototype]            │
 │   src/zephyr/market_data/core/__init__.py  [prototype]           │
@@ -104,7 +108,7 @@ graph TD
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/market_data/__init__.py | src/zephyr/market_data/__init__.py | production | generated |
+| 1 | src/zephyr/market_data/__init__.py | src/zephyr/market_data/__init__.py | prototype | generated |
 | 2 | src/zephyr/market_data/_extensions/__init__.py | src/zephyr/market_data/_extensions/__... | prototype | generated |
 | 3 | src/zephyr/market_data/api/__init__.py | src/zephyr/market_data/api/__init__.py | prototype | generated |
 | 4 | src/zephyr/market_data/core/__init__.py | src/zephyr/market_data/core/__init__.py | prototype | generated |

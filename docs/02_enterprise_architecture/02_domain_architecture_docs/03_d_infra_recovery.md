@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INFRA_RECOVERY 回滚恢复架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -29,9 +29,9 @@ ttl: permanent
 | 跨域入边 | 95 | Cross-domain Incoming | 95 |
 | 跨域出边 | 25 | Cross-domain Outgoing | 25 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 1 | Prototype Modules | 1 |
-| 生产态模块 | 73 | Production Modules | 73 |
-| 容量 | 73/150 (正常) | Capacity | 73/150 (正常) |
+| 原型态模块 | 8 | Prototype Modules | 8 |
+| 生产态模块 | 66 | Production Modules | 66 |
+| 容量 | 66/150 (正常) | Capacity | 66/150 (正常) |
 | 描述 | 双轨Checkpoint(git commit + SQLite JSONL dump) | Description | 双轨Checkpoint(git commit + SQLite JSONL dump) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -50,20 +50,20 @@ ttl: permanent
 graph TD
     subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_init_py["src/zephyr/infrastructure/rollback/__init__.py production"]
-        src_zephyr_infrastructure_rollback_manifest_py["src/zephyr/infrastructure/rollback/_manifest.py production"]
+        src_zephyr_infrastructure_rollback_manifest_py["src/zephyr/infrastructure/rollback/_manifest.py prototype"]
         src_zephyr_infrastructure_rollback_agent_cooldown_py["src/zephyr/infrastructure/rollback/agent_cooldo... production"]
         src_zephyr_infrastructure_rollback_auditor_py["src/zephyr/infrastructure/rollback/auditor.py production"]
         src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["src/zephyr/infrastructure/rollback/auto_rollbac... production"]
         src_zephyr_infrastructure_rollback_autonomy_dashboard_py["src/zephyr/infrastructure/rollback/autonomy_das... production"]
-        src_zephyr_infrastructure_rollback_budget_tracker_py["src/zephyr/infrastructure/rollback/budget_track... production"]
+        src_zephyr_infrastructure_rollback_budget_tracker_py["src/zephyr/infrastructure/rollback/budget_track... prototype"]
         src_zephyr_infrastructure_rollback_checkpoint_gc_py["src/zephyr/infrastructure/rollback/checkpoint_g... production"]
         src_zephyr_infrastructure_rollback_commit_quality_gate_py["src/zephyr/infrastructure/rollback/commit_quali... production"]
-        src_zephyr_infrastructure_rollback_complexity_budget_py["src/zephyr/infrastructure/rollback/complexity_b... production"]
+        src_zephyr_infrastructure_rollback_complexity_budget_py["src/zephyr/infrastructure/rollback/complexity_b... prototype"]
         src_zephyr_infrastructure_rollback_concurrency_guard_py["src/zephyr/infrastructure/rollback/concurrency_... production"]
         src_zephyr_infrastructure_rollback_confidence_quantifier_py["src/zephyr/infrastructure/rollback/confidence_q... production"]
         src_zephyr_infrastructure_rollback_continuous_trust_py["src/zephyr/infrastructure/rollback/continuous_t... production"]
         src_zephyr_infrastructure_rollback_contract_py["src/zephyr/infrastructure/rollback/contract.py production"]
-        src_zephyr_infrastructure_rollback_contracts_py["src/zephyr/infrastructure/rollback/contracts.py production"]
+        src_zephyr_infrastructure_rollback_contracts_py["src/zephyr/infrastructure/rollback/contracts.py prototype"]
         src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["src/zephyr/infrastructure/rollback/credential_r... production"]
         src_zephyr_infrastructure_rollback_cross_agent_conflict_detector_py["src/zephyr/infrastructure/rollback/cross_agent_... production"]
         src_zephyr_infrastructure_rollback_cross_platform_shell_py["src/zephyr/infrastructure/rollback/cross_platfo... production"]
@@ -80,39 +80,39 @@ graph TD
         src_zephyr_infrastructure_rollback_hallucination_guard_py["src/zephyr/infrastructure/rollback/hallucinatio... production"]
         src_zephyr_infrastructure_rollback_intent_archiver_py["src/zephyr/infrastructure/rollback/intent_archi... production"]
     end
-    src_zephyr_infrastructure_rollback_manifest_py -->|config_depends| src_zephyr_infrastructure_rollback_init_py
+    src_zephyr_infrastructure_rollback_manifest_py -.->|config_depends| src_zephyr_infrastructure_rollback_init_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_autonomy_dashboard_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_auditor_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_commit_quality_gate_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
+    src_zephyr_infrastructure_rollback_init_py -.->|import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_commit_quality_gate_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_complexity_budget_py
+    src_zephyr_infrastructure_rollback_init_py -.->|import_depends| src_zephyr_infrastructure_rollback_complexity_budget_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_concurrency_guard_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_confidence_quantifier_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_cross_platform_shell_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_down_migration_generator_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_forensic_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_external_merkle_proof_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_fault_tolerance_py
-    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_external_merkle_proof_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_forensic_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_fsm_verifier_py
+    src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOVERNANCE
+    src_zephyr_infrastructure_rollback_contracts_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_infrastructure_rollback_drift_fix_py -->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_rollback_forensic_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_drift_fix_py -->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_rollback_continuous_trust_py
-    D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
-    D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_infrastructure_rollback_contract_py
+    D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_INTEGRATION["D_INTEGRATION production"]
     D_INTEGRATION -->|import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_TRADING["D_TRADING production"]
@@ -130,8 +130,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_rollback_init_py,src_zephyr_infrastructure_rollback_manifest_py,src_zephyr_infrastructure_rollback_agent_cooldown_py,src_zephyr_infrastructure_rollback_auditor_py,src_zephyr_infrastructure_rollback_auto_rollback_trigger_py,src_zephyr_infrastructure_rollback_autonomy_dashboard_py,src_zephyr_infrastructure_rollback_budget_tracker_py,src_zephyr_infrastructure_rollback_checkpoint_gc_py,src_zephyr_infrastructure_rollback_commit_quality_gate_py,src_zephyr_infrastructure_rollback_complexity_budget_py,src_zephyr_infrastructure_rollback_concurrency_guard_py,src_zephyr_infrastructure_rollback_confidence_quantifier_py,src_zephyr_infrastructure_rollback_continuous_trust_py,src_zephyr_infrastructure_rollback_contract_py,src_zephyr_infrastructure_rollback_contracts_py,src_zephyr_infrastructure_rollback_credential_rotation_trigger_py,src_zephyr_infrastructure_rollback_cross_agent_conflict_detector_py,src_zephyr_infrastructure_rollback_cross_platform_shell_py,src_zephyr_infrastructure_rollback_down_migration_generator_py,src_zephyr_infrastructure_rollback_drift_fix_py,src_zephyr_infrastructure_rollback_env_watcher_py,src_zephyr_infrastructure_rollback_external_merkle_proof_py,src_zephyr_infrastructure_rollback_fault_tolerance_py,src_zephyr_infrastructure_rollback_forensic_py,src_zephyr_infrastructure_rollback_forward_fix_runner_py,src_zephyr_infrastructure_rollback_fsm_verifier_py,src_zephyr_infrastructure_rollback_git_infra_snapshot_py,src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py production
-    class src_zephyr_infrastructure_rollback_gate_coordinator_py design
+    class src_zephyr_infrastructure_rollback_init_py,src_zephyr_infrastructure_rollback_agent_cooldown_py,src_zephyr_infrastructure_rollback_auditor_py,src_zephyr_infrastructure_rollback_auto_rollback_trigger_py,src_zephyr_infrastructure_rollback_autonomy_dashboard_py,src_zephyr_infrastructure_rollback_checkpoint_gc_py,src_zephyr_infrastructure_rollback_commit_quality_gate_py,src_zephyr_infrastructure_rollback_concurrency_guard_py,src_zephyr_infrastructure_rollback_confidence_quantifier_py,src_zephyr_infrastructure_rollback_continuous_trust_py,src_zephyr_infrastructure_rollback_contract_py,src_zephyr_infrastructure_rollback_credential_rotation_trigger_py,src_zephyr_infrastructure_rollback_cross_agent_conflict_detector_py,src_zephyr_infrastructure_rollback_cross_platform_shell_py,src_zephyr_infrastructure_rollback_down_migration_generator_py,src_zephyr_infrastructure_rollback_drift_fix_py,src_zephyr_infrastructure_rollback_env_watcher_py,src_zephyr_infrastructure_rollback_external_merkle_proof_py,src_zephyr_infrastructure_rollback_fault_tolerance_py,src_zephyr_infrastructure_rollback_forensic_py,src_zephyr_infrastructure_rollback_forward_fix_runner_py,src_zephyr_infrastructure_rollback_fsm_verifier_py,src_zephyr_infrastructure_rollback_git_infra_snapshot_py,src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py production
+    class src_zephyr_infrastructure_rollback_manifest_py,src_zephyr_infrastructure_rollback_budget_tracker_py,src_zephyr_infrastructure_rollback_complexity_budget_py,src_zephyr_infrastructure_rollback_contracts_py,src_zephyr_infrastructure_rollback_gate_coordinator_py design
     class D_GOVERNANCE,D_INTEGRATION,D_TRADING external_prod
     class D_SHARED,D_GOV_ENFORCEMENT,D_AUDITTEST external_design
 ```
@@ -143,8 +143,8 @@ graph TD
     subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_kill_switch_py["src/zephyr/infrastructure/rollback/kill_switch.py production"]
         src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py["src/zephyr/infrastructure/rollback/knowngoodsta... production"]
-        src_zephyr_infrastructure_rollback_llm_impact_analyzer_py["src/zephyr/infrastructure/rollback/llm_impact_a... production"]
-        src_zephyr_infrastructure_rollback_model_drift_detector_py["src/zephyr/infrastructure/rollback/model_drift_... production"]
+        src_zephyr_infrastructure_rollback_llm_impact_analyzer_py["src/zephyr/infrastructure/rollback/llm_impact_a... prototype"]
+        src_zephyr_infrastructure_rollback_model_drift_detector_py["src/zephyr/infrastructure/rollback/model_drift_... prototype"]
         src_zephyr_infrastructure_rollback_owner_absent_py["src/zephyr/infrastructure/rollback/owner_absent.py production"]
         src_zephyr_infrastructure_rollback_paper_live_transition_py["src/zephyr/infrastructure/rollback/paper_live_t... production"]
         src_zephyr_infrastructure_rollback_phase_check_registry_py["src/zephyr/infrastructure/rollback/phase_check_... production"]
@@ -153,7 +153,7 @@ graph TD
         src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["src/zephyr/infrastructure/rollback/right_to_be_... production"]
         src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["src/zephyr/infrastructure/rollback/rollback_abu... production"]
         src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["src/zephyr/infrastructure/rollback/rollback_aud... production"]
-        src_zephyr_infrastructure_rollback_rollback_boot_integration_py["src/zephyr/infrastructure/rollback/rollback_boo... production"]
+        src_zephyr_infrastructure_rollback_rollback_boot_integration_py["src/zephyr/infrastructure/rollback/rollback_boo... prototype"]
         src_zephyr_infrastructure_rollback_rollback_bootstrap_py["src/zephyr/infrastructure/rollback/rollback_boo... production"]
         src_zephyr_infrastructure_rollback_rollback_budget_py["src/zephyr/infrastructure/rollback/rollback_bud... production"]
         src_zephyr_infrastructure_rollback_rollback_context_restorer_py["src/zephyr/infrastructure/rollback/rollback_con... production"]
@@ -172,18 +172,20 @@ graph TD
         src_zephyr_infrastructure_rollback_runbook_generator_py["src/zephyr/infrastructure/rollback/runbook_gene... production"]
         src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["src/zephyr/infrastructure/rollback/s3_snapshot_... production"]
     end
+    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| src_zephyr_infrastructure_rollback_kill_switch_py
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
-    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_rollback_llm_impact_analyzer_py -.->|import_depends| D_SHARED
+    D_SECURITY["D_SECURITY production"]
+    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INTEGRATION
@@ -197,8 +199,6 @@ graph TD
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
-    D_SECURITY["D_SECURITY production"]
-    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_rollback_phase_check_registry_py
@@ -225,8 +225,9 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_llm_impact_analyzer_py,src_zephyr_infrastructure_rollback_model_drift_detector_py,src_zephyr_infrastructure_rollback_owner_absent_py,src_zephyr_infrastructure_rollback_paper_live_transition_py,src_zephyr_infrastructure_rollback_phase_check_registry_py,src_zephyr_infrastructure_rollback_phase_manager_py,src_zephyr_infrastructure_rollback_post_live_verification_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py production
-    class D_INTEGRATION,D_SECURITY,D_INFRA_RUNTIME,D_INFRA_TELEMETRY,D_TRADING external_prod
+    class src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_owner_absent_py,src_zephyr_infrastructure_rollback_paper_live_transition_py,src_zephyr_infrastructure_rollback_phase_check_registry_py,src_zephyr_infrastructure_rollback_phase_manager_py,src_zephyr_infrastructure_rollback_post_live_verification_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py production
+    class src_zephyr_infrastructure_rollback_llm_impact_analyzer_py,src_zephyr_infrastructure_rollback_model_drift_detector_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py design
+    class D_SECURITY,D_INTEGRATION,D_INFRA_RUNTIME,D_INFRA_TELEMETRY,D_TRADING external_prod
     class D_SHARED,D_GOVERNANCE,D_INTEGRATION_GATEWAY,D_AUDITTEST external_design
 ```
 
@@ -256,20 +257,20 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE
     D_AUDITTEST["D_AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_sandbox_enforcer_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_semantic_similar_detector_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_secret_rotation_aware_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_semantic_rollback_tag_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_startup_shutdown_cli_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_submodule_sync_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_startup_shutdown_cli_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_startup_shutdown_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_topology_change_log_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_venv_sync_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_trading_kill_switch_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_warm_standby_py
-    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_temporal_context_adapter_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_sandbox_enforcer_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_topology_change_log_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_semantic_rollback_tag_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_semantic_similar_detector_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_temporal_context_adapter_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_rollback_trading_kill_switch_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -313,12 +314,12 @@ graph TD
 │        L0 基础设施层 / Infrastructure Layer (74 modules)         │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/infrastructure/rollback/__init__.py  [production]   │
-│   src/zephyr/infrastructure/rollback/_manifest.py  [production]  │
+│   src/zephyr/infrastructure/rollback/_manifest.py  [prototype]   │
 │   src/zephyr/infrastructure/rollback/agent_cooldown.py  [prod... │
 │   src/zephyr/infrastructure/rollback/auditor.py  [production]    │
 │   src/zephyr/infrastructure/rollback/auto_rollback_trigger.py... │
 │   src/zephyr/infrastructure/rollback/autonomy_dashboard.py  [... │
-│   src/zephyr/infrastructure/rollback/budget_tracker.py  [prod... │
+│   src/zephyr/infrastructure/rollback/budget_tracker.py  [prot... │
 │   src/zephyr/infrastructure/rollback/checkpoint_gc.py  [produ... │
 │   src/zephyr/infrastructure/rollback/commit_quality_gate.py  ... │
 │   src/zephyr/infrastructure/rollback/complexity_budget.py  [p... │
@@ -326,7 +327,7 @@ graph TD
 │   src/zephyr/infrastructure/rollback/confidence_quantifier.py... │
 │   src/zephyr/infrastructure/rollback/continuous_trust.py  [pr... │
 │   src/zephyr/infrastructure/rollback/contract.py  [production]   │
-│   src/zephyr/infrastructure/rollback/contracts.py  [production]  │
+│   src/zephyr/infrastructure/rollback/contracts.py  [prototype]   │
 │   src/zephyr/infrastructure/rollback/credential_rotation_trig... │
 │   src/zephyr/infrastructure/rollback/cross_agent_conflict_det... │
 │   src/zephyr/infrastructure/rollback/cross_platform_shell.py ... │
@@ -344,20 +345,20 @@ graph TD
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infrastructure/rollback/__init__.py | src/zephyr/infrastructure/rollback/__... | production | generated |
-| 2 | src/zephyr/infrastructure/rollback/_manifest.py | src/zephyr/infrastructure/rollback/_m... | production | generated |
+| 2 | src/zephyr/infrastructure/rollback/_manifest.py | src/zephyr/infrastructure/rollback/_m... | prototype | generated |
 | 3 | src/zephyr/infrastructure/rollback/agent_cooldown.py | src/zephyr/infrastructure/rollback/ag... | production | generated |
 | 4 | src/zephyr/infrastructure/rollback/auditor.py | src/zephyr/infrastructure/rollback/au... | production | generated |
 | 5 | src/zephyr/infrastructure/rollback/auto_rollback_trigger.py | src/zephyr/infrastructure/rollback/au... | production | generated |
 | 6 | src/zephyr/infrastructure/rollback/autonomy_dashboard.py | src/zephyr/infrastructure/rollback/au... | production | generated |
-| 7 | src/zephyr/infrastructure/rollback/budget_tracker.py | src/zephyr/infrastructure/rollback/bu... | production | generated |
+| 7 | src/zephyr/infrastructure/rollback/budget_tracker.py | src/zephyr/infrastructure/rollback/bu... | prototype | generated |
 | 8 | src/zephyr/infrastructure/rollback/checkpoint_gc.py | src/zephyr/infrastructure/rollback/ch... | production | generated |
 | 9 | src/zephyr/infrastructure/rollback/commit_quality_gate.py | src/zephyr/infrastructure/rollback/co... | production | generated |
-| 10 | src/zephyr/infrastructure/rollback/complexity_budget.py | src/zephyr/infrastructure/rollback/co... | production | generated |
+| 10 | src/zephyr/infrastructure/rollback/complexity_budget.py | src/zephyr/infrastructure/rollback/co... | prototype | generated |
 | 11 | src/zephyr/infrastructure/rollback/concurrency_guard.py | src/zephyr/infrastructure/rollback/co... | production | generated |
 | 12 | src/zephyr/infrastructure/rollback/confidence_quantifier.py | src/zephyr/infrastructure/rollback/co... | production | generated |
 | 13 | src/zephyr/infrastructure/rollback/continuous_trust.py | src/zephyr/infrastructure/rollback/co... | production | generated |
 | 14 | src/zephyr/infrastructure/rollback/contract.py | src/zephyr/infrastructure/rollback/co... | production | generated |
-| 15 | src/zephyr/infrastructure/rollback/contracts.py | src/zephyr/infrastructure/rollback/co... | production | generated |
+| 15 | src/zephyr/infrastructure/rollback/contracts.py | src/zephyr/infrastructure/rollback/co... | prototype | generated |
 | 16 | src/zephyr/infrastructure/rollback/credential_rotation_tr... | src/zephyr/infrastructure/rollback/cr... | production | generated |
 | 17 | src/zephyr/infrastructure/rollback/cross_agent_conflict_d... | src/zephyr/infrastructure/rollback/cr... | production | generated |
 | 18 | src/zephyr/infrastructure/rollback/cross_platform_shell.py | src/zephyr/infrastructure/rollback/cr... | production | generated |
@@ -375,8 +376,8 @@ graph TD
 | 30 | src/zephyr/infrastructure/rollback/intent_archiver.py | src/zephyr/infrastructure/rollback/in... | production | generated |
 | 31 | src/zephyr/infrastructure/rollback/kill_switch.py | src/zephyr/infrastructure/rollback/ki... | production | generated |
 | 32 | src/zephyr/infrastructure/rollback/knowngoodstate_ledger.py | src/zephyr/infrastructure/rollback/kn... | production | generated |
-| 33 | src/zephyr/infrastructure/rollback/llm_impact_analyzer.py | src/zephyr/infrastructure/rollback/ll... | production | generated |
-| 34 | src/zephyr/infrastructure/rollback/model_drift_detector.py | src/zephyr/infrastructure/rollback/mo... | production | generated |
+| 33 | src/zephyr/infrastructure/rollback/llm_impact_analyzer.py | src/zephyr/infrastructure/rollback/ll... | prototype | generated |
+| 34 | src/zephyr/infrastructure/rollback/model_drift_detector.py | src/zephyr/infrastructure/rollback/mo... | prototype | generated |
 | 35 | src/zephyr/infrastructure/rollback/owner_absent.py | src/zephyr/infrastructure/rollback/ow... | production | generated |
 | 36 | src/zephyr/infrastructure/rollback/paper_live_transition.py | src/zephyr/infrastructure/rollback/pa... | production | generated |
 | 37 | src/zephyr/infrastructure/rollback/phase_check_registry.py | src/zephyr/infrastructure/rollback/ph... | production | generated |
@@ -385,7 +386,7 @@ graph TD
 | 40 | src/zephyr/infrastructure/rollback/right_to_be_forgotten.py | src/zephyr/infrastructure/rollback/ri... | production | generated |
 | 41 | src/zephyr/infrastructure/rollback/rollback_abuse_detecto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
 | 42 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
-| 43 | src/zephyr/infrastructure/rollback/rollback_boot_integrat... | src/zephyr/infrastructure/rollback/ro... | production | generated |
+| 43 | src/zephyr/infrastructure/rollback/rollback_boot_integrat... | src/zephyr/infrastructure/rollback/ro... | prototype | generated |
 | 44 | src/zephyr/infrastructure/rollback/rollback_bootstrap.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
 | 45 | src/zephyr/infrastructure/rollback/rollback_budget.py | src/zephyr/infrastructure/rollback/ro... | production | generated |
 | 46 | src/zephyr/infrastructure/rollback/rollback_context_resto... | src/zephyr/infrastructure/rollback/ro... | production | generated |
@@ -435,14 +436,14 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (68 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
+│   phase_manager.py → phase_check_registry.py                     │
 │   phase_check_registry.py → kill_switch.py                       │
 │   phase_check_registry.py → rollback_executor.py                 │
-│   phase_manager.py → phase_check_registry.py                     │
 │   rollback_boot_integration.py → auto_rollback_trigger.py        │
 │   rollback_boot_integration.py → rollback_executor.py            │
 │   rollback_boot_integration.py → rollback_lock.py                │
-│   rollback_boot_integration.py → rollback_verifier.py            │
 │   rollback_boot_integration.py → rollback_wal.py                 │
+│   rollback_boot_integration.py → rollback_verifier.py            │
 │   rollback_integration.py → contract.py                          │
 │   rollback_executor.py → concurrency_guard.py                    │
 │   rollback_executor.py → contract.py                             │
@@ -453,37 +454,37 @@ graph TD
 │   __init__.py → agent_cooldown.py                                │
 │   __init__.py → autonomy_dashboard.py                            │
 │   __init__.py → auditor.py                                       │
+│   __init__.py → auto_rollback_trigger.py                         │
 │   __init__.py → budget_tracker.py                                │
 │   __init__.py → commit_quality_gate.py                           │
-│   __init__.py → auto_rollback_trigger.py                         │
 │   __init__.py → checkpoint_gc.py                                 │
 │   __init__.py → complexity_budget.py                             │
 │   __init__.py → concurrency_guard.py                             │
 │   __init__.py → confidence_quantifier.py                         │
 │   __init__.py → cross_platform_shell.py                          │
-│   __init__.py → env_watcher.py                                   │
 │   __init__.py → down_migration_generator.py                      │
-│   __init__.py → forensic.py                                      │
 │   __init__.py → drift_fix.py                                     │
-│   __init__.py → external_merkle_proof.py                         │
-│   __init__.py → forward_fix_runner.py                            │
+│   __init__.py → env_watcher.py                                   │
 │   __init__.py → fault_tolerance.py                               │
-│   __init__.py → git_infra_snapshot.py                            │
+│   __init__.py → external_merkle_proof.py                         │
+│   __init__.py → forensic.py                                      │
+│   __init__.py → forward_fix_runner.py                            │
 │   __init__.py → fsm_verifier.py                                  │
+│   __init__.py → git_infra_snapshot.py                            │
 │   __init__.py → kill_switch.py                                   │
-│   __init__.py → paper_live_transition.py                         │
 │   __init__.py → model_drift_detector.py                          │
 │   __init__.py → owner_absent.py                                  │
-│   __init__.py → post_live_verification.py                        │
+│   __init__.py → paper_live_transition.py                         │
 │   __init__.py → right_to_be_forgotten.py                         │
-│   __init__.py → rollback_boot_integration.py                     │
+│   __init__.py → post_live_verification.py                        │
 │   __init__.py → rollback_bootstrap.py                            │
+│   __init__.py → rollback_boot_integration.py                     │
 │   __init__.py → rollback_budget.py                               │
 │   __init__.py → rollback_context_restorer.py                     │
-│   __init__.py → rollback_integration.py                          │
 │   __init__.py → rollback_dashboard.py                            │
-│   __init__.py → rollback_executor.py                             │
+│   __init__.py → rollback_integration.py                          │
 │   __init__.py → rollback_drill.py                                │
+│   __init__.py → rollback_executor.py                             │
 │   ...还有 19 条 / 19 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 

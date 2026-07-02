@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:36
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -61,10 +61,10 @@ graph TD
         src_zephyr_ml_train_trainer_base_py["src/zephyr/ml_train/trainer_base.py prototype"]
     end
     src_zephyr_ml_train_inference_base_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_init_py -.->|config_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_init_py -.->|config_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
     D_TRADING["D_TRADING production"]
@@ -181,15 +181,15 @@ graph TD
 │                 [import_depends] (4 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   inference_base.py → trainer_base.py                            │
-│   __init__.py → default_inference_engine.py                      │
-│   default_inference_engine.py → trainer_base.py                  │
 │   default_inference_engine.py → inference_base.py                │
+│   default_inference_engine.py → trainer_base.py                  │
+│   __init__.py → default_inference_engine.py                      │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → trainer_base.py                                  │
+│   __init__.py → inference_base.py                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

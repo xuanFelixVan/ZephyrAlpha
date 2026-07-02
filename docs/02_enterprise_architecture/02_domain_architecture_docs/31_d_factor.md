@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_FACTOR 因子架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域入边 | 2 | Cross-domain Incoming | 2 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
 | 生产态模块 | 4 | Production Modules | 4 |
@@ -64,8 +64,13 @@ graph TD
     end
     src_zephyr_factor_momentum_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_value_factor_py -.->|import_depends| src_zephyr_factor_factor_base_py
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME prototype"]
+    src_zephyr_factor_alpha_signal_pipeline_py -.->|runtime| D_INFRA_RUNTIME
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    src_zephyr_factor_alpha_signal_pipeline_py -.->|runtime| D_GOVERNANCE
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
+    D_GOVERNANCE -.->|runtime| src_zephyr_factor_alpha_signal_pipeline_py
     D_FUNDAMENTAL_SIGNAL -->|import_depends| src_zephyr_factor_factor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -74,6 +79,7 @@ graph TD
     class src_zephyr_factor_init_py,src_zephyr_factor_base_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_factor_base_py production
     class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_FUNDAMENTAL_SIGNAL external_prod
+    class D_INFRA_RUNTIME,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -83,12 +89,15 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_GOVERNANCE | 1 | runtime |
+| D_INFRA_RUNTIME | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_GOVERNANCE | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview
 

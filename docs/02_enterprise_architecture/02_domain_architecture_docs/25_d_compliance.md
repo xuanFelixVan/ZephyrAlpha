@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_COMPLIANCE 合规架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 23 | Cross-domain Outgoing | 23 |
+| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域出边 | 27 | Cross-domain Outgoing | 27 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 25 | Prototype Modules | 25 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -73,30 +73,41 @@ graph TD
         src_zephyr_compliance_services_init_py["src/zephyr/compliance/services/__init__.py prototype"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["src/zephyr/compliance/zero_knowledge_audit_stub... prototype"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_artifact_scanner_py
     D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_compliance_aisg_sandbox_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_artifact_scanner_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_aisg_sandbox_py -.->|import_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
     src_zephyr_compliance_compliance_manager_py -.->|import_depends| D_SECURITY
-    src_zephyr_compliance_evidence_pack_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_default_security_gateway_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_evidence_pack_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_merkle_hourly_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_integrity_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_security_gateway_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_orchestrator_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_behavioral_admission_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime| D_GOVERNANCE
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime| D_GOVERNANCE
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|contract| D_GOVERNANCE
+    D_GOV_DRIFT["D_GOV_DRIFT design"]
+    src_zephyr_compliance_audit_trail_bridges_init_py -.->|runtime| D_GOV_DRIFT
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOV_DRIFT -.->|runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|contract| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_GOVERNANCE -.->|runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| src_zephyr_compliance_audit_trail_bridges_init_py
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|runtime| src_zephyr_compliance_audit_trail_bridges_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_semantic_auditor_init_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOVERNANCE,D_SECURITY external_prod
+    class D_GOV_DRIFT,D_AUTONOMY_CORE,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -105,12 +116,18 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 20 | import_depends |
+| D_GOVERNANCE | 23 | contract,import_depends,runtime |
 | D_SECURITY | 3 | import_depends |
+| D_GOV_DRIFT | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D_GOVERNANCE | 4 | contract,runtime |
+| D_AUDITTEST | 1 | runtime |
+| D_AUTONOMY_CORE | 1 | runtime |
+| D_GOV_DRIFT | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -194,7 +211,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → aisg_sandbox.py                                  │
+│   __init__.py → artifact_scanner.py                              │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

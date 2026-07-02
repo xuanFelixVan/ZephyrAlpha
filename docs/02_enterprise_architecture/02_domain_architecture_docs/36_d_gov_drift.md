@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_GOV_DRIFT 漂移检测架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 5 | Cross-domain Incoming | 5 |
-| 跨域出边 | 6 | Cross-domain Outgoing | 6 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
+| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -52,22 +52,28 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE design"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
-    D_GOV_AUDIT["D_GOV_AUDIT design"]
-    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOV_AUDIT
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_COMPLIANCE
+    D_SECURITY["D_SECURITY production"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_SECURITY
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime| D_GOVERNANCE
-    D_GOV_AUDIT -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_COMPLIANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_governance_drift_detector_blueprint_md
-    D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
+    D_AUDITTEST["D_AUDITTEST prototype"]
+    D_AUDITTEST -.->|runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_governance_drift_detector_blueprint_md design
-    class D_GOVERNANCE,D_GOV_AUDIT external_design
+    class D_SECURITY external_prod
+    class D_GOVERNANCE,D_COMPLIANCE,D_AUTONOMY_CORE,D_AUDITTEST external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -77,14 +83,17 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_GOVERNANCE | 5 | runtime |
-| D_GOV_AUDIT | 1 | runtime |
+| D_COMPLIANCE | 1 | runtime |
+| D_SECURITY | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_GOVERNANCE | 4 | contract,runtime |
-| D_GOV_AUDIT | 1 | runtime |
+| D_GOVERNANCE | 3 | contract,runtime |
+| D_AUDITTEST | 1 | runtime |
+| D_AUTONOMY_CORE | 1 | runtime |
+| D_COMPLIANCE | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview
 

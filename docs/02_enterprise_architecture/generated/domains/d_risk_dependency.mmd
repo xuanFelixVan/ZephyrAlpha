@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-02 18:33:30
+%% 生成时间: 2026-07-03 02:34:37
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 22, 依赖边数: 31
 
@@ -17,11 +17,11 @@ graph TD
         src_zephyr_risk_cross_asset_risk_manager_py["...phyr/risk/cross_asset/risk_manager.py [prototype]"]
         src_zephyr_risk_cross_asset_risk_manager_base_py["...risk/cross_asset/risk_manager_base.py [prototype]"]
         src_zephyr_risk_implementations___init___py["...phyr/risk/implementations/__init__.py [prototype]"]
-        src_zephyr_risk_implementation___t_position_limit_checker_py["...ons/default_position_limit_checker.py [production]"]
+        src_zephyr_risk_implementation___t_position_limit_checker_py["...ons/default_position_limit_checker.py [prototype]"]
         src_zephyr_risk_implementation___t_risk_limits_calculator_py["...ons/default_risk_limits_calculator.py [production]"]
         src_zephyr_risk_implementation___isk_manager_orchestrator_py[".../default_risk_manager_orchestrator.py [production]"]
         src_zephyr_risk_implementations_default_risk_validator_py["...ementations/default_risk_validator.py [production]"]
-        src_zephyr_risk_implementations_default_stop_loss_engine_py["...entations/default_stop_loss_engine.py [production]"]
+        src_zephyr_risk_implementations_default_stop_loss_engine_py["...entations/default_stop_loss_engine.py [prototype]"]
         src_zephyr_risk_infrastructure___init___py["...ephyr/risk/infrastructure/__init__.py [prototype]"]
         src_zephyr_risk_risk_limits_py["src/zephyr/risk/risk_limits.py [prototype]"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py [production]"]
@@ -43,9 +43,9 @@ graph TD
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
-    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_cross_asset_cr___et_data_adapter___init___py -->|config_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
     src_zephyr_risk_implementations___init___py -->|config_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
 
@@ -61,11 +61,11 @@ graph TD
     %% D_RISK -> D_SHARED (1 条)
     src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_RISK -> D_TRADING (10 条)
-    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_risk_risk_limits_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D_TRADING]

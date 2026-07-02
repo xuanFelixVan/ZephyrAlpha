@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_BACKTEST 回测架构文档
 version: "1.0"
 status: active
-date: 2026-07-02
+date: 2026-07-03
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 18:33:27
+> 最后更新: 2026-07-03 02:34:35
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -29,9 +29,9 @@ ttl: permanent
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
-| 生产态模块 | 3 | Production Modules | 3 |
-| 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
+| 原型态模块 | 10 | Prototype Modules | 10 |
+| 生产态模块 | 0 | Production Modules | 0 |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 | Description | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -51,20 +51,20 @@ graph TD
         src_zephyr_backtest_extensions_init_py["src/zephyr/backtest/_extensions/__init__.py prototype"]
         src_zephyr_backtest_api_init_py["src/zephyr/backtest/api/__init__.py prototype"]
         src_zephyr_backtest_core_init_py["src/zephyr/backtest/core/__init__.py prototype"]
-        src_zephyr_backtest_core_engine_base_py["src/zephyr/backtest/core/engine_base.py production"]
-        src_zephyr_backtest_implementations_init_py["src/zephyr/backtest/implementations/__init__.py production"]
-        src_zephyr_backtest_implementations_vectorized_engine_py["src/zephyr/backtest/implementations/vectorized_... production"]
+        src_zephyr_backtest_core_engine_base_py["src/zephyr/backtest/core/engine_base.py prototype"]
+        src_zephyr_backtest_implementations_init_py["src/zephyr/backtest/implementations/__init__.py prototype"]
+        src_zephyr_backtest_implementations_vectorized_engine_py["src/zephyr/backtest/implementations/vectorized_... prototype"]
         src_zephyr_backtest_infrastructure_init_py["src/zephyr/backtest/infrastructure/__init__.py prototype"]
         src_zephyr_backtest_models_init_py["src/zephyr/backtest/models/__init__.py prototype"]
         src_zephyr_backtest_services_init_py["src/zephyr/backtest/services/__init__.py prototype"]
     end
-    src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_init_py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     D_SHARED["D_SHARED production"]
-    src_zephyr_backtest_core_engine_base_py -->|import_depends| D_SHARED
+    src_zephyr_backtest_core_engine_base_py -.->|import_depends| D_SHARED
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
@@ -73,8 +73,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_implementations_init_py,src_zephyr_backtest_implementations_vectorized_engine_py production
-    class src_zephyr_backtest_init_py,src_zephyr_backtest_extensions_init_py,src_zephyr_backtest_api_init_py,src_zephyr_backtest_core_init_py,src_zephyr_backtest_infrastructure_init_py,src_zephyr_backtest_models_init_py,src_zephyr_backtest_services_init_py design
+    class src_zephyr_backtest_init_py,src_zephyr_backtest_extensions_init_py,src_zephyr_backtest_api_init_py,src_zephyr_backtest_core_init_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_implementations_init_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_infrastructure_init_py,src_zephyr_backtest_models_init_py,src_zephyr_backtest_services_init_py design
     class D_SHARED external_prod
     class D_INTELLIGENCE external_design
 ```
@@ -106,8 +105,8 @@ graph TD
 │   src/zephyr/backtest/_extensions/__init__.py  [prototype]       │
 │   src/zephyr/backtest/api/__init__.py  [prototype]               │
 │   src/zephyr/backtest/core/__init__.py  [prototype]              │
-│   src/zephyr/backtest/core/engine_base.py  [production]          │
-│   src/zephyr/backtest/implementations/__init__.py  [production]  │
+│   src/zephyr/backtest/core/engine_base.py  [prototype]           │
+│   src/zephyr/backtest/implementations/__init__.py  [prototype]   │
 │   src/zephyr/backtest/implementations/vectorized_engine.py  [... │
 │   src/zephyr/backtest/infrastructure/__init__.py  [prototype]    │
 │   src/zephyr/backtest/models/__init__.py  [prototype]            │
@@ -128,9 +127,9 @@ graph TD
 | 2 | src/zephyr/backtest/_extensions/__init__.py | src/zephyr/backtest/_extensions/__ini... | prototype | generated |
 | 3 | src/zephyr/backtest/api/__init__.py | src/zephyr/backtest/api/__init__.py | prototype | generated |
 | 4 | src/zephyr/backtest/core/__init__.py | src/zephyr/backtest/core/__init__.py | prototype | generated |
-| 5 | src/zephyr/backtest/core/engine_base.py | src/zephyr/backtest/core/engine_base.py | production | generated |
-| 6 | src/zephyr/backtest/implementations/__init__.py | src/zephyr/backtest/implementations/_... | production | generated |
-| 7 | src/zephyr/backtest/implementations/vectorized_engine.py | src/zephyr/backtest/implementations/v... | production | generated |
+| 5 | src/zephyr/backtest/core/engine_base.py | src/zephyr/backtest/core/engine_base.py | prototype | generated |
+| 6 | src/zephyr/backtest/implementations/__init__.py | src/zephyr/backtest/implementations/_... | prototype | generated |
+| 7 | src/zephyr/backtest/implementations/vectorized_engine.py | src/zephyr/backtest/implementations/v... | prototype | generated |
 | 8 | src/zephyr/backtest/infrastructure/__init__.py | src/zephyr/backtest/infrastructure/__... | prototype | generated |
 | 9 | src/zephyr/backtest/models/__init__.py | src/zephyr/backtest/models/__init__.py | prototype | generated |
 | 10 | src/zephyr/backtest/services/__init__.py | src/zephyr/backtest/services/__init__.py | prototype | generated |
@@ -151,8 +150,8 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (5 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → engine_base.py                                   │
 │   __init__.py → vectorized_engine.py                             │
+│   __init__.py → engine_base.py                                   │
 │   __init__.py → engine_base.py                                   │
 │   vectorized_engine.py → engine_base.py                          │
 │   __init__.py → vectorized_engine.py                             │
