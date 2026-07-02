@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据获取需求清单与数据库现状对照"
 doc_type: blueprint
 status: Active
-version: "1.4.0"
+version: "1.5.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -50,7 +50,7 @@ tags:
   - acquisition-plan
   - l00
   - ssot
-summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费源实测验证(Baostock 10/10通过+AKShare 11/16通过+yfinance 0/13限流+Stooq 0/4不可用)。EDB宏观/新闻/研报由AKShare覆盖，A股K线/财务由Baostock覆盖，美股免费源全部失败需淘宝购买。需求满足度：A股100%可获取，美股需淘宝。"
+summary: "数据获取需求清单与数据库现状对照——v1.5.0：VPN对比测试+TickFlow重大发现。Baostock 10/10通过(不受VPN影响)+TickFlow 12/12通过(美股主力免费源，免费无Key)+AKShare 11/16通过(须断开VPN)+yfinance 0/10失败(VPN无效，库级限流)+Stooq 0/2失败(VPN无效，JS验证)。EDB宏观/新闻/研报由AKShare覆盖，A股K线/财务由Baostock覆盖，美股日/周/月/季/年K线由TickFlow覆盖。需求满足度：A股+美股全品类100%可获取，不再需要淘宝购买美股。"
 ---
 
 # 数据获取需求清单与数据库现状对照
@@ -159,8 +159,8 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 | 9 | 行业分类 | industry_class | iFind | 申万/中证行业分类 | ✅ 已验证(iFind THS_DataPool 30行) |
 | 10 | 指数成分股 | index_constituent | iFind | 沪深300/中证500成分变动 | ✅ 已验证(iFind THS_DataPool 300行) |
 | 11 | 期货行情K线 | futures_kline | QMT | 商品期货日/分钟K线 | ✅ 已验证(QMT 上期所6982/大商所9559/郑商所7281/中金所88个期货) |
-| 12 | 美股日K线 | us_daily_kline | 淘宝(需购买) | 美股主要股票日K线 | ❌ 免费源实测失败(yfinance 0/13限流/Stooq 0/4不可用/AKShare美股连接被拒；详见能力地图§7.4/§7.5/§7.3.2)；需淘宝购买 |
-| 13 | 美股指数 | us_index | 淘宝(需购买) | 道琼斯/纳指/标普500 | ❌ 免费源实测失败(yfinance限流/Stooq不可用)；需淘宝购买 |
+| 12 | 美股日K线 | us_daily_kline | TickFlow(免费无Key) | 美股主要股票日K线 | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过；详见能力地图§7.6) |
+| 13 | 美股指数 | us_index | TickFlow(ETF替代) | 道琼斯/纳指/标普500（用ETF替代） | ✅ 免费源替代(TickFlow SPY.US/DIA.US/QQQ.US实测通过；TickFlow免费服务无真实指数，用ETF替代) |
 | 14 | 港股日K线 | hk_daily_kline | QMT | 港股通标的日K线 | ✅ 已验证(QMT 香港联交所股票957只，01680.HK K线20行) |
 | 15 | 宏观经济 | macro_data | AKShare(主)/iFind EDB(备) | GDP/CPI/PMI/利率/汇率/M2 | ✅ 免费源实测9/10通过(AKShare `macro_china_gdp/cpi/pmi/m2`；详见能力地图§7.3.1) |
 | 16 | 新闻舆情 | news_data | AKShare | 财经新闻/公告/研报 | ⚠️ 免费源实测3/5通过(AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住超时；详见能力地图§7.3.2) |
@@ -206,7 +206,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 
 | # | 数据项 | 需要什么 | 获取方式 | 可获取性 |
 |---|--------|---------|---------|---------|
-| 18 | 美股日K线/指数 | 美股主要股票+三大指数 | 淘宝(需购买) | ❌ 免费源实测失败(yfinance 0/13限流/Stooq 0/4不可用/AKShare美股连接被拒；详见能力地图§7.4/§7.5)；需淘宝购买 |
+| 18 | 美股日K线/指数 | 美股主要股票+三大指数(ETF替代) | TickFlow(免费无Key) | ✅ 免费源替代(TickFlow `AAPL.US`实测12/12通过+SPY/DIA/QQQ ETF替代真实指数；详见能力地图§7.6) |
 | 19 | 港股日K线 | 港股通标的 | QMT | ✅ 已验证(QMT 957只+K线20行)；yfinance备用已失效 |
 
 ---
@@ -230,23 +230,28 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 
 > **iFind API 调用方法**：见 [数据源能力地图 §2](data_source_capability_map.md)
 
-**免费源下载（v1.4.0实测验证，覆盖iFind试用盲区）**:
-- A股日/周/月/分钟K线 + 季频财务 + 成分股 + 交易日历 —— Baostock（实测10/10通过，A股主力免费源）
-- 宏观数据（CPI/PMI/M2/GDP/社融/LPR）—— AKShare `macro_china_*`（实测9/10通过，无配额限制）
-- 财经新闻 + 研报 —— AKShare `stock_news_em`/`stock_research_report_em`（实测3/5通过；`stock_info_global_cls`⏳卡住超时）
-- 一致预期EPS —— AKShare `stock_profit_forecast_ths`（实测通过）
+**免费源下载（v1.5.0实测验证+VPN对比，覆盖iFind试用盲区）**:
+- A股日/周/月/分钟K线 + 季频财务 + 成分股 + 交易日历 —— Baostock（实测10/10通过，不受VPN影响，A股主力免费源）
+- **美股日/周/月/季/年K线 + ETF** —— TickFlow `tf.klines.get("AAPL.US")`（实测12/12通过，不受VPN影响，免费无Key，美股主力免费源；60次/min限流）
+- 宏观数据（CPI/PMI/M2/GDP/社融/LPR）—— AKShare `macro_china_*`（实测9/10通过，须断开VPN）
+- 财经新闻 + 研报 —— AKShare `stock_news_em`/`stock_research_report_em`（实测3/5通过，须断开VPN；`stock_info_global_cls`⏳卡住超时）
+- 一致预期EPS —— AKShare `stock_profit_forecast_ths`（实测通过，须断开VPN）
 - 放到 `D:\A股数据\免费源\`
 
-> ⚠️ **免费源实测结论（2026-07-03）**：
-> - **Baostock 10/10通过**（最稳定），升级为A股K线+财务的主力免费源
-> - **AKShare 11/16通过**（宏观9/10 + 新闻1/3 + 研报2/2 + 一致预期✅），EDB替代方案成立
-> - **yfinance 0/13失败**（Yahoo对中国大陆IP限流），**Stooq 0/4失败**（pandas_datareader移除+JS反爬虫）→ **美股免费源全部不可用，需淘宝购买**
+> ⚠️ **免费源实测结论（2026-07-03，含VPN对比）**：
+> - **Baostock 10/10通过**（不受VPN影响），A股K线+财务主力免费源
+> - **TickFlow 12/12通过**（不受VPN影响），美股K线主力免费源——**2026-07-03重大新发现，美股不再需要淘宝购买**
+> - **AKShare 11/16通过**（须断开VPN，爬国内网站挂VPN后国内拒绝海外IP），EDB+新闻+研报+一致预期替代方案成立
+> - **yfinance 0/10失败**（VPN无效，Yahoo库级限流非IP限流），**Stooq 0/2失败**（VPN无效，JS浏览器验证与IP无关）→ 已废弃
+> - **运维铁律**：下载免费源数据时**断开VPN**（Baostock/TickFlow不受影响，AKShare必须断开）
 > - **免费源 API 调用方法**：见 [数据源能力地图 §7](data_source_capability_map.md)
 
-**淘宝购买（美股历史数据，免费源不可用）**:
-- 美股日K线（主要股票，2000-2025年）—— yfinance/Stooq/AKShare美股接口实测全部失败
-- 美股指数（道琼斯/纳指/标普500）—— 同上
-- 放到 `D:\A股数据\淘宝\美股\`
+**淘宝购买（仅历史大数据，免费源不覆盖）**:
+- 5分钟K线历史(2000-2018) —— QMT只保留最近交易日高频数据，需淘宝买历史
+- Tick数据历史 —— QMT仅实时，需淘宝买历史
+- 沪深港通北向资金历史 —— iFind试用+免费源均不可用，需正式账号或淘宝
+- 放到 `D:\A股数据\淘宝\`
+> 注：美股历史数据已由TickFlow免费覆盖，不再需要淘宝购买
 
 ### 阶段2: 导入（数据就绪后）
 
@@ -362,8 +367,8 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 | EDB宏观数据 | ⏳ | ✅(免费源) | AKShare `macro_china_gdp/cpi/pmi/m2` | 实测9/10通过(GDP/CPI/PPI/PMI/M2/LPR/社融/US_CPI/US_UNEMP✅；`macro_usa_fed_interest_rate`函数名已移除❌) |
 | A股日/周/月/分钟K线 | ✅ | ✅(免费源) | Baostock `bs.query_history_k_data_plus` | 实测10/10通过(日/周/月/5分钟K线全部✅) |
 | A股季频财务 | ✅ | ✅(免费源) | Baostock `query_profit_data`/`query_balance_data`等 | 实测4/4通过(盈利/资产负债/现金流/成长✅) |
-| 美股行情 | ❌ | ❌(免费源失败) | yfinance `yf.download("AAPL")` + Stooq + AKShare `stock_us_hist` | 实测0/13+0/4+0/1全部失败(yfinance限流/Stooq不可用/AKShare连接被拒)；需淘宝购买 |
-| 新闻/研报 | ❌ | ⚠️(部分) | AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em` | 实测3/5通过(新闻✅+研报✅；财联社`stock_info_global_cls`⏳卡住超时) |
+| 美股行情 | ❌ | ✅(免费源) | TickFlow `tf.klines.get("AAPL.US")` | 实测12/12通过(AAPL/MSFT/TSLA/NVDA/GOOG/AMZN/META/NFLX+SPY/DIA ETF+周月季年K线✅；详见能力地图§7.6) |
+| 新闻/研报 | ❌ | ⚠️(部分) | AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em` | 实测3/5通过(新闻✅+研报✅；财联社`stock_info_global_cls`⏳卡住超时；须断开VPN) |
 | 分析师预期 | ❌ | ✅(免费源) | AKShare `stock_profit_forecast_ths` (同花顺一致预期EPS) | 实测通过(3行一致预期EPS数据) |
 
 ### 8.2 按可获取性统计
@@ -372,14 +377,14 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 |---------|---------|:----:|------|
 | ✅ 已验证/API可用 | 39项 | 87% | iFind/QMT 实测验证可获取，可立即执行 |
 | 🔶 需计算/派生 | 3项 | 7% | 原始数据可获取，目标数据需计算(期权IV/可转债IV/期货期限) |
-| ✅ 免费源替代(实测通过) | 4项 | 9% | Baostock(A股K线+财务) + AKShare(宏观+研报+一致预期) 覆盖iFind试用盲区 |
-| ⚠️ 免费源部分可用 | 1项 | 2% | AKShare新闻(stock_news_em✅+财联社⏳卡住) |
-| ❌ 免费源不可用(需淘宝) | 3项 | 7% | 美股日K线/美股指数/沪深港通北向资金(yfinance+Stooq+AKShare美股全部实测失败) |
+| ✅ 免费源替代(实测通过) | 6项 | 13% | Baostock(A股K线+财务) + TickFlow(美股K线+指数ETF替代) + AKShare(宏观+研报+一致预期) 覆盖iFind试用盲区 |
+| ⚠️ 免费源部分可用 | 1项 | 2% | AKShare新闻(stock_news_em✅+财联社⏳卡住，须断开VPN) |
+| ❌ 免费源不可用(需淘宝) | 1项 | 2% | 沪深港通北向资金(iFind试用+免费源均不可用，需正式账号或淘宝) |
 | ❌ 试用不可用(API缺陷) | 1项 | 2% | 期货主力合约(QMT get_main_contract返回交易所代码) |
 | ⚠️ 待验证 | 0项 | 0% | 全部已验证 |
 | **合计** | **45项** | 100% | c1(19)+c3(9)+未建表(17)=45 |
 
-> 注：占比按45项总数计算，部分项可能同时属于多个类别（如"期权IV"既是🔶又是✅），此处按主要类别归类。v1.4.0 实测验证后：免费源可用项从5项调整为4项(Baostock替换yfinance位置)，美股2项从"免费源满足"降级为"需淘宝"。
+> 注：占比按45项总数计算，部分项可能同时属于多个类别（如"期权IV"既是🔶又是✅），此处按主要类别归类。v1.5.0 重大更新：TickFlow实测12/12通过，美股2项从"需淘宝"升级为"免费源满足"；VPN对比测试后yfinance/Stooq确认VPN无效已废弃。
 
 ### 8.3 按数据源统计
 
@@ -387,13 +392,14 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 |--------|:----------:|------|
 | QMT可获取 | 30项 | 含Tick/分钟K线/期权/可转债/ETF/期货/除权因子/港股通等 |
 | iFind可获取 | 27项 | 含估值/资金流向/财务/概念板块/龙虎榜/大宗/融资融券/限售解禁等 |
-| **Baostock可获取(免费)** | **6项** | A股日/周/月/分钟K线 + 季频财务(盈利/营运/成长/偿债/现金流) + 成分股 + 交易日历(实测10/10通过) |
-| **AKShare可获取(免费)** | **4项** | EDB宏观(9/10通过) + 研报(2/2通过) + 一致预期EPS(通过) + 新闻(1/2通过，财联社卡住) |
-| yfinance可获取(免费) | 0项 | ❌ 实测0/13全部失败(Yahoo对中国大陆IP限流，需海外IP/代理) |
-| Stooq可获取(免费) | 0项 | ❌ 实测0/4全部失败(pandas_datareader移除+JS反爬虫) |
+| **Baostock可获取(免费)** | **6项** | A股日/周/月/分钟K线 + 季频财务 + 成分股 + 交易日历(实测10/10通过，不受VPN影响) |
+| **TickFlow可获取(免费)** | **2项** | 美股日/周/月/季/年K线 + 美股ETF替代指数(实测12/12通过，不受VPN影响，免费无Key) |
+| **AKShare可获取(免费)** | **4项** | EDB宏观(9/10通过) + 研报(2/2通过) + 一致预期EPS(通过) + 新闻(1/2通过，须断开VPN) |
+| yfinance可获取(免费) | 0项 | ❌ 实测0/10失败(VPN无效，Yahoo库级限流非IP限流) |
+| Stooq可获取(免费) | 0项 | ❌ 实测0/2失败(VPN无效，JS浏览器验证与IP无关) |
 | 两者均可获取 | 18项 | 日周月K线/指数/财务/交易日历等(iFind+QMT+Baostock三源覆盖) |
-| 仅免费源可获取 | 4项 | EDB宏观/新闻/研报/分析师预期(iFind试用盲区，Baostock+AKShare覆盖) |
-| 不可获取(需淘宝/正式账号) | 3项 | 美股日K线/美股指数/沪深港通北向资金/期货主力合约(4项，含1项API缺陷) |
+| 仅免费源可获取 | 6项 | EDB宏观/新闻/研报/分析师预期/美股K线/美股指数(iFind试用盲区，Baostock+TickFlow+AKShare覆盖) |
+| 不可获取(需正式账号/API缺陷) | 2项 | 沪深港通北向资金/期货主力合约 |
 
 ### 8.4 需求满足结论
 
@@ -401,12 +407,12 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 |--------|:------:|:----:|------|
 | **完全满足** | 39项 | 87% | ✅ iFind/QMT 已验证可获取，可立即开始下载/导入 |
 | **派生满足** | 3项 | 7% | 🔶 原始数据可获取，需编写计算逻辑（期权IV/可转债IV/期货期限结构） |
-| **免费源满足(实测)** | 4项 | 9% | ✅ Baostock(A股K线+财务) + AKShare(宏观+研报+一致预期) 覆盖 iFind 试用盲区 |
-| **免费源部分满足** | 1项 | 2% | ⚠️ AKShare新闻(stock_news_em✅，财联社卡住) |
-| **不满足(需淘宝)** | 3项 | 7% | ❌ 美股日K线/美股指数/沪深港通北向资金(yfinance+Stooq+免费源全部实测失败) |
+| **免费源满足(实测)** | 6项 | 13% | ✅ Baostock(A股K线+财务) + TickFlow(美股K线+ETF替代指数) + AKShare(宏观+研报+一致预期) 覆盖 iFind 试用盲区 |
+| **免费源部分满足** | 1项 | 2% | ⚠️ AKShare新闻(stock_news_em✅，财联社卡住，须断开VPN) |
+| **不满足(需正式账号)** | 1项 | 2% | ❌ 沪深港通北向资金(iFind试用+免费源均不可用) |
 | **不满足(API缺陷)** | 1项 | 2% | ❌ 期货主力合约(QMT API返回错误数据) |
 
-> **最终结论（v1.4.0）**：需求清单 95% 可获取（87% iFind/QMT 已验证 + 4项免费源实测通过 + 1项部分通过 + 3项派生计算），仅 3 项（美股日K线/美股指数/沪深港通）需淘宝购买 + 1项API缺陷。**免费源实测验证后修正：yfinance/Stooq 在当前网络环境不可用，美股免费源方案失败，需淘宝购买；Baostock(10/10)+AKShare(11/16) 实测可用，覆盖A股K线/财务/宏观/研报**。详见 [数据源能力地图 §7 免费开源数据源](data_source_capability_map.md)。
+> **最终结论（v1.5.0）**：需求清单 98% 可获取（87% iFind/QMT 已验证 + 6项免费源实测通过 + 1项部分通过 + 3项派生计算），仅 1 项（沪深港通北向资金）需正式账号/淘宝 + 1项API缺陷。**v1.5.0 重大更新：TickFlow(12/12通过)填补美股免费源空白，美股2项从"需淘宝"升级为"免费源满足"；VPN对比测试确认yfinance(库级限流)/Stooq(JS验证)均VPN无效已废弃；Baostock/TickFlow不受VPN影响，AKShare须断开VPN**。**A股+美股全品类数据100%可获取**。详见 [数据源能力地图 §7 免费开源数据源](data_source_capability_map.md)。
 
 ---
 
@@ -431,8 +437,8 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 | 11 | 期货行情K线 | futures_kline | c1_market | QMT | ✅ 已验证 | 含openInterest字段 |
 | 12 | 港股日K线 | hk_daily_kline | c1_market | QMT | ✅ 已验证 | 港股通957只 |
 | 13 | 宏观经济 | macro_data | c3_fundamental | AKShare(主)/iFind EDB(备) | ✅ 免费源实测9/10通过 | AKShare `macro_china_*`，无配额限制 |
-| 14 | 美股日K线 | us_daily_kline | c1_market | 淘宝(需购买) | ❌ 免费源实测失败 | yfinance 0/13限流/Stooq 0/4不可用/AKShare美股连接被拒；需淘宝购买 |
-| 15 | 美股指数 | us_index | c1_market | 淘宝(需购买) | ❌ 免费源实测失败 | yfinance限流/Stooq不可用；需淘宝购买 |
+| 14 | 美股日K线 | us_daily_kline | c1_market | TickFlow(免费无Key) | ✅ 免费源替代 | TickFlow `AAPL.US`实测12/12通过；60次/min限流，需time.sleep(1) |
+| 15 | 美股指数 | us_index | c1_market | TickFlow(ETF替代) | ✅ 免费源替代 | TickFlow免费服务无真实指数，用SPY.US/DIA.US/QQQ.US ETF替代 |
 | 16 | 新闻舆情 | news_data | c3_fundamental | AKShare | ⚠️ 免费源实测3/5通过 | AKShare `stock_news_em`✅/`stock_research_report_em`✅；`stock_info_global_cls`⏳卡住 |
 | 17 | 分析师预期 | analyst_forecast | c3_fundamental | AKShare | ✅ 免费源实测通过 | AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS(3行) |
 
@@ -441,8 +447,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.4.0：免费�
 | 优先级 | 数据项 | 说明 |
 |--------|--------|------|
 | P0（立即可建） | 龙虎榜/融资融券/大宗交易/限售解禁/交易日历/股票列表/行业分类/指数成分股/期货行情K线/港股日K线 | 10项已验证可获取，可立即建表+导入 |
-| P1（免费源可建，v1.4.0实测） | 宏观经济/新闻舆情/分析师预期 | 3项免费源(AKShare/Baostock)实测可获取，可立即建表+导入 |
-| P2（需淘宝购买，v1.4.0降级） | 美股日K线/美股指数 | 2项免费源(yfinance/Stooq/AKShare美股)实测全部失败，需淘宝购买历史数据 |
+| P1（免费源可建，v1.5.0实测） | 宏观经济/新闻舆情/分析师预期/美股日K线/美股指数 | 5项免费源(AKShare/Baostock/TickFlow)实测可获取，可立即建表+导入（TickFlow填补美股空白） |
 | P3（需正式账号或淘宝） | 沪深港通北向资金 | 1项，iFind试用+免费源均不可用，需正式账号或淘宝 |
 
 > **建表流程**：在 C1/C3 仓库蓝图中定义 DDL-as-Code → apply_schema.py 自动建表 → 编写导入脚本 → 验证数据完整性
