@@ -37,6 +37,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -1464,6 +1465,137 @@ def collect_all_files() -> list:
                 rel = str(fp.relative_to(PROJECT_ROOT)).replace("\\", "/")
                 files.append(rel)
     return files
+
+
+# ============================================================================
+# 裁定#209 Stage 4: scan-level 缓存（真正增量重建）
+# ============================================================================
+# 病根: 原 --incremental 只是二元 skip（全跳过 / 全重建），任何单文件变化 → 重扫
+# 5000+ 文件 + AST 解析。AST 解析是最大成本（非 DB 写入）。
+# 治本: 缓存 scan 结果，key=(rel_path, content_hash)，命中则跳过 AST 解析。
+# 安全: 仍全量 DELETE+INSERT DB（事务原子），无 DB 一致性风险。
+# 失效: content_hash 变 → 单文件 miss；domain_derivation 变 → 全缓存失效
+# (fingerprint)；scan 逻辑变 → bump SCAN_LOGIC_VERSION 全失效。
+_SCAN_LOGIC_VERSION = 1  # scan_*_file 逻辑变更时 bump → 全缓存失效
+_DEFAULT_CACHE_FILE = PROJECT_ROOT / ".runtime" / "depgraph_scan_cache.json"
+
+
+def _compute_derivation_fingerprint(domain_derivation: list, functional_domains: list) -> str:
+    """Hash of domain derivation data — if this changes, scan cache must invalidate.
+
+    scan 结果的 domain_id 字段派生自 domain_derivation，若 panorama 更新导致
+    域映射变化，旧 hash 的缓存 domain_id 会过期 → 必须整体失效缓存。
+    """
+    try:
+        payload = json.dumps(
+            {"dd": domain_derivation, "fd": functional_domains},
+            sort_keys=True, ensure_ascii=False, default=str,
+        )
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+    except Exception:
+        return ""  # 空 → 永不命中 → 安全回退全扫
+
+
+class ScanCache:
+    """Scan 结果缓存。线程安全（ThreadPoolExecutor 并发 put）。
+
+    结构: {path: {content_hash: scan_result_dict}}
+    失效策略:
+      - 单文件: content_hash 变 → 该 path miss（其他 path 不受影响）
+      - 全局: derivation_fingerprint / SCAN_LOGIC_VERSION 变 → 整个缓存丢弃
+    """
+
+    def __init__(self, cache_path: Path, derivation_fingerprint: str, enabled: bool = True):
+        self.enabled = enabled
+        self.cache_path = cache_path
+        self.derivation_fingerprint = derivation_fingerprint
+        self.entries: dict[str, dict[str, dict]] = {}
+        self.hits = 0
+        self.misses = 0
+        self._lock = threading.Lock()
+        self._dirty = False
+        if enabled:
+            self._load()
+
+    def _load(self) -> None:
+        try:
+            with open(self.cache_path, encoding="utf-8") as f:
+                data = json.load(f)
+            meta = data.get("_meta", {})
+            if (meta.get("scan_logic_version") == _SCAN_LOGIC_VERSION
+                    and meta.get("derivation_fingerprint") == self.derivation_fingerprint):
+                self.entries = data.get("entries", {})
+                print(f"[DEPGRAPH][CACHE] Loaded {len(self.entries)} cached paths (fingerprint match)")
+            else:
+                self.entries = {}
+                print(f"[DEPGRAPH][CACHE] Cache invalidated (fingerprint/version mismatch) — full rescan")
+        except FileNotFoundError:
+            self.entries = {}
+            print(f"[DEPGRAPH][CACHE] No cache file — full scan")
+        except Exception as e:
+            self.entries = {}
+            print(f"[DEPGRAPH][CACHE] Load failed ({e}) — full scan")
+
+    def get(self, rel_path: str, content_hash: str) -> dict | None:
+        if not self.enabled:
+            self.misses += 1
+            return None
+        path_entries = self.entries.get(rel_path)
+        if path_entries and content_hash in path_entries:
+            self.hits += 1
+            return path_entries[content_hash]
+        self.misses += 1
+        return None
+
+    def put(self, rel_path: str, content_hash: str, result: dict) -> None:
+        if not self.enabled:
+            return
+        with self._lock:
+            self.entries.setdefault(rel_path, {})[content_hash] = result
+            self._dirty = True
+
+    def save(self) -> None:
+        if not self.enabled or not self._dirty:
+            return
+        try:
+            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+            data = {
+                "_meta": {
+                    "scan_logic_version": _SCAN_LOGIC_VERSION,
+                    "derivation_fingerprint": self.derivation_fingerprint,
+                    "saved_at": datetime.now().isoformat(),
+                },
+                "entries": self.entries,
+            }
+            tmp = self.cache_path.with_suffix(".tmp")
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+            tmp.replace(self.cache_path)  # atomic rename
+            print(f"[DEPGRAPH][CACHE] Saved ({len(self.entries)} paths) -> {self.cache_path}")
+        except Exception as e:
+            print(f"[DEPGRAPH][CACHE] WARNING: save failed: {e}")
+
+    def stats(self) -> str:
+        return f"hits={self.hits} misses={self.misses}"
+
+
+def _scan_with_cache(scan_fn, rel_path: str, domain_derivation: list, cache: ScanCache) -> dict | None:
+    """Cache wrapper: 先算 hash（廉价：只读字节），命中则复用，未命中则全扫。
+
+    scan_fn 会内部重算 content_hash（轻微浪费），但保持原 scan_*_file 函数不动
+    （最小 diff / 低风险）。hash 计算成本远低于 AST 解析。
+    """
+    filepath = PROJECT_ROOT / rel_path
+    if not filepath.exists():
+        return None
+    content_hash = compute_file_hash(filepath)
+    cached = cache.get(rel_path, content_hash)
+    if cached is not None:
+        return cached
+    result = scan_fn(rel_path, domain_derivation)
+    if result is not None:
+        cache.put(rel_path, content_hash, result)
+    return result
 
 
 def build_depgraph(
@@ -3581,6 +3713,17 @@ def main():
         help="裁定#209 Stage 3: 增量模式——比较文件 content_hash，无变更时跳过 DB 重建。"
         "首次运行或 content_hash 列不存在时自动回退全量重建。",
     )
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="裁定#209 Stage 4: 禁用 scan 缓存（强制全扫，用于调试/首次冷启动）。",
+    )
+    parser.add_argument(
+        "--cache-file",
+        type=str,
+        default="",
+        help="Scan 缓存文件路径（默认 .runtime/depgraph_scan_cache.json）。",
+    )
     args = parser.parse_args()
 
     # Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 registry 中有对应条目
@@ -3626,6 +3769,13 @@ def main():
     print(f"[DEPGRAPH] Loaded {len(functional_domains)} functional domains from panorama")
     print(f"[DEPGRAPH] Domain derivation table: {len(domain_derivation)} entries")
 
+    # 裁定#209 Stage 4: scan-level 缓存（真正增量重建）
+    cache_path = Path(args.cache_file) if args.cache_file else _DEFAULT_CACHE_FILE
+    if not cache_path.is_absolute():
+        cache_path = PROJECT_ROOT / cache_path
+    derivation_fp = _compute_derivation_fingerprint(domain_derivation, functional_domains)
+    scan_cache = ScanCache(cache_path, derivation_fp, enabled=not args.no_cache)
+
     # G1修复：设计态加载已在main()开头完成（从DB加载），此处不再重复
     preloaded_old_data = None  # 兼容下游merge逻辑
 
@@ -3646,7 +3796,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(py_files)} .py files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_py_file, f, domain_derivation): f for f in py_files}
+        futures = {pool.submit(_scan_with_cache, scan_py_file, f, domain_derivation, scan_cache): f for f in py_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -3654,7 +3804,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(yaml_files)} .yaml files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_yaml_file, f, domain_derivation): f for f in yaml_files}
+        futures = {pool.submit(_scan_with_cache, scan_yaml_file, f, domain_derivation, scan_cache): f for f in yaml_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -3662,7 +3812,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(md_files)} .md files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_md_file, f, domain_derivation): f for f in md_files}
+        futures = {pool.submit(_scan_with_cache, scan_md_file, f, domain_derivation, scan_cache): f for f in md_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -3670,7 +3820,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(json_files)} .json files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_json_file, f, domain_derivation): f for f in json_files}
+        futures = {pool.submit(_scan_with_cache, scan_json_file, f, domain_derivation, scan_cache): f for f in json_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -3678,7 +3828,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(infra_files)} script files (.sh/.ps1)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_infra_file, f, domain_derivation): f for f in infra_files}
+        futures = {pool.submit(_scan_with_cache, scan_infra_file, f, domain_derivation, scan_cache): f for f in infra_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -3687,13 +3837,17 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(diagram_files)} diagram files (.mmd)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_diagram_file, f, domain_derivation): f for f in diagram_files}
+        futures = {pool.submit(_scan_with_cache, scan_diagram_file, f, domain_derivation, scan_cache): f for f in diagram_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
                 files_data.append(r)
 
     print(f"[DEPGRAPH] Total scanned: {len(files_data)} entities")
+
+    # 裁定#209 Stage 4: 保存 scan 缓存（在 incremental 判定前保存，确保跳过时缓存已落盘）
+    scan_cache.save()
+    print(f"[DEPGRAPH][CACHE] {scan_cache.stats()}")
 
     # 裁定#209 Stage 3: 增量模式——无变更时跳过 DB 重建
     if args.incremental and _check_incremental_skip(files_data, args.output_db):
