@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.integration.pipeline_routing
+# [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.pipeline
 # [MODIFY-GUARD] blueprint.md §ports; runtime/__init__.py __all__
 # [STABILITY] stable
 # [SAFETY] L
