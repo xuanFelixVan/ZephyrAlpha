@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.4.0"
+version: "1.5.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -58,7 +58,7 @@ tags:
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare/财经RSS)可获取数据的完整清单与获取方法。v1.4.0更新：新增财经RSS直连(实测8/10通过，国外新闻主力源，免费无Key，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC)。六源互补=iFind+QMT+Baostock+TickFlow+AKShare+财经RSS覆盖A股+美股+国内外新闻全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.5.0更新：新增5个需Key源(用户已注册,实测4/5新闻可用+Tiingo日K线可用)；API Key清单记录在§7.1.1。十一源互补覆盖A股+美股+国内外新闻+情感分析全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -143,6 +143,11 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | **TickFlow** | 免费API(无需Key) | **12/12 (100%)** | 无影响 | 2026-07-03 | **美股K线主力** | 美股个股/ETF日周月季年K线+港股+A股(60次/min限制) |
 | **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+**国内新闻**+研报 | EDB宏观+东财个股新闻+研报(爬国内网站,**须断开VPN**) |
 | **财经RSS直连** | feedparser RSS | **8/10 (80%)** | 无影响 | 2026-07-03 | **国外新闻主力** | Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC(免费无Key) |
+| **NewsAPI.org** | 全球新闻API(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 全球新闻深度 | everything(16822条)+top-headlines(38条),100请求/天,§7.1.1 |
+| **Alpha Vantage** | 新闻+行情(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 新闻+情感分析 | NEWS_SENTIMENT(50条,含情感)+日K线(100行),5次/min,§7.1.1 |
+| **Finnhub** | 公司新闻+行情(需Key) | **3/3 (100%)** | 无影响 | 2026-07-03 | 公司新闻+报价 | 市场新闻(100条)+AAPL报价(308.63),§7.1.1 |
+| **Newsdata.io** | 财经新闻(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 财经新闻补充 | business(5条)+stock(5条),200请求/天,§7.1.1 |
+| **Tiingo** | 行情API(需Key) | 1/2 (50%) | 无影响 | 2026-07-03 | 日K线backup | 日K线✅(21行); News❌(需付费),§7.1.1 |
 | **yfinance** | Yahoo非官方API | 0/10 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股(Yahoo**库级限流**非IP限流,VPN/代理无效) |
 | **Stooq** | 网站CSV | 0/2 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股CSV(JS浏览器验证,与IP无关) |
 
@@ -1096,27 +1101,51 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 ### §7.1 概述与定位
 
-本章节记录 iFind 试用账号盲区的**免费开源替代源**。iFind 试用账号（werty017）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)月度配额限制。本章节的免费源完全覆盖这些盲区。
+本章节记录 iFind 试用账号盲区的**免费开源替代源**（免费无Key）+ **需免费注册API Key的源**。iFind 试用账号（werty017）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)月度配额限制。本章节的源完全覆盖这些盲区。
 
 **核心定位**：
 - 免费源是**补充**，不是替代。iFind/QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）。
-- 免费源覆盖 iFind 试用账号的 ❌ 盲区（美股/新闻/EDB宏观），使策略所需数据 100% 可获取。
-- 多源备份：任一免费源失效可切到另一个（yfinance↔Stooq↔AKShare 美股互备）。
+- 免费源覆盖 iFind 试用账号的 ❌ 盲区（A股K线历史/美股/国内外新闻/EDB宏观），使策略所需数据 100% 可获取。
+- 优先免费无Key源（Baostock/TickFlow/AKShare/财经RSS），需Key源作为深度补充（历史新闻归档/情感分析/实时报价）。
 
-**四大免费源对比（v1.2.0 实测验证）**：
+**六大免费无Key源 + 五大需Key源对比（v1.5.0 实测验证）**：
 
-| 数据源 | 类型 | 实测通过率 | 是否需注册 | 是否需API Key | 适合场景 |
-|--------|------|:----------:|:----------:|:------------:|---------|
-| **Baostock** | 服务端推送(非爬虫) | **10/10 ✅** | ❌ 否 | ❌ 否 | A股K线+财务主力免费源 |
-| **AKShare** | 爬虫聚合库 | 11/16 ⚠️ | ❌ 否 | ❌ 否 | 宏观EDB/新闻/研报 |
-| **yfinance** | Yahoo非官方API | 0/13 ❌ | ❌ 否 | ❌ 否 | 美股(需海外IP/代理) |
-| **Stooq** | 网站CSV | 0/4 ❌ | ❌ 否 | ❌ 否 | 美股CSV(反爬虫不可用) |
+| 数据源 | 类型 | 实测通过率 | 需Key | 适合场景 |
+|--------|------|:----------:|:-----:|---------|
+| **Baostock** | 服务端推送 | **10/10 ✅** | ❌ | A股K线+财务主力 |
+| **TickFlow** | 免费API | **12/12 ✅** | ❌ | 美股K线主力 |
+| **财经RSS直连** | feedparser RSS | **8/10 ✅** | ❌ | 国外财经新闻主力 |
+| **AKShare** | 爬虫聚合库 | 11/16 ⚠️ | ❌ | 宏观/国内新闻/研报(须断VPN) |
+| yfinance | Yahoo非官方API | 0/10 ❌ | ❌ | 废弃(库级限流VPN无效) |
+| Stooq | 网站CSV | 0/2 ❌ | ❌ | 废弃(JS验证VPN无效) |
+| **NewsAPI.org** | 全球新闻API | **2/2 ✅** | ✅ | 全球新闻(16822条,100请求/天) |
+| **Alpha Vantage** | 新闻+行情API | **2/2 ✅** | ✅ | 新闻+情感分析(50条)+日K线(100行,5次/min) |
+| **Finnhub** | 公司新闻+行情 | **3/3 ✅** | ✅ | 市场新闻(100条)+实时报价(AAPL=308.63) |
+| **Newsdata.io** | 财经新闻API | **2/2 ✅** | ✅ | 财经新闻(5条,200请求/天) |
+| **Tiingo** | 行情+新闻API | 1/2 ⚠️ | ✅ | 日K线✅(21行,TickFlow backup); News❌需付费 |
 
-> **实测结论（2026-07-03）**：
-> - **Baostock** 10/10 全部通过，最稳定，升级为 A股K线+财务主力免费源
-> - **AKShare** 宏观7项+新闻1项+研报2项+美国宏观2项 通过(11/16)，美股/财联社/部分函数名失效
-> - **yfinance** 全部限流(0/13)，当前网络环境不可用，需海外IP/代理
-> - **Stooq** pandas_datareader移除+CSV反爬虫(0/4)，不可用
+> **实测结论（2026-07-03，v1.5.0 含需Key源）**：
+> - **免费无Key主力**：Baostock(A股) + TickFlow(美股) + 财经RSS(国外新闻) + AKShare(国内新闻/宏观)
+> - **需Key源全部验证可用**（4/5新闻可用 + Tiingo日K线可用）：NewsAPI/AlphaVantage/Finnhub/Newsdata 新闻全部✅；AlphaVantage还含情感分析+日K线
+> - **Tiingo News需付费**（免费tier不含），但日K线可用（TickFlow backup）
+> - yfinance/Stooq 已废弃（详见 §7.4/§7.5）
+
+#### §7.1.1 API Key 清单（需免费注册源，用户已注册，2026-07-03）
+
+> **安全说明**：以下Key记录在项目confidential文档中，仅供项目内部使用。iFind试用账号(werty017/R16w864M)已在 §2.1 记录。QMT/Baostock/TickFlow/AKShare/财经RSS 不需要账号密码。
+
+| 数据源 | API Key | 注册邮箱 | 免费额度 | 实测状态 | 实测日期 |
+|--------|---------|---------|---------|:--------:|:--------:|
+| **NewsAPI.org** | `5f54c041aa2a4781a66f8cc6194e1272` | — | 100请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Tiingo** | `67daaf30a656486e0108a94c98267fe7ccbdb5f1` | — | 免费tier(日K线✅/News❌需付费) | ⚠️ 1/2通过 | 2026-07-03 |
+| **Finnhub** | `d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg` | 434419932@qq.com | 免费tier | ✅ 3/3通过 | 2026-07-03 |
+| **Newsdata.io** | `pub_b0314d331fa44f30a649189362c9d5e7` | — | 200请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Alpha Vantage** | `1RASLEIEKE35Q9KB` | — | 5次/min | ✅ 2/2通过 | 2026-07-03 |
+| iFind(试用) | 账号`werty017` / 密码`R16w864M` | — | 试用账号(有限制) | ✅ 已验证 | 2026-07-03 |
+
+> **Tiingo认证方式**：用Header `Authorization: Token <key>`，不是URL `apiKey=`参数。News API返回403"You do not have permission"（免费tier不含），日K线API `tiingo/daily/<symbol>/prices` 可用。
+> **Alpha Vantage限流**：5次/min，请求间隔需≥12秒。
+> **AskNews**：网站已挂售，跳过。
 
 ### §7.2 Baostock 完整指南（实测 10/10 通过，最稳定）
 
@@ -1815,7 +1844,77 @@ print(f"\n总计: {len(df)}条新闻 from {len(rss_sources)}个源")
 
 > **RSS直连优势**：免费无Key、不受VPN影响、覆盖8个权威财经媒体、实时更新。
 > **RSS直连限制**：仅最新新闻（无历史归档）、无情感分析（需自行NLP处理）、部分源偶发SSL错误需重试。
-> **备用方案**：需历史新闻归档时用 Tiingo News（70M+文章20年历史，需免费Key，见 §7.6 限制说明）。
+> **备用方案**：需历史新闻归档时用 NewsAPI.org（16822条）或 Alpha Vantage NEWS_SENTIMENT（含情感分析），需免费Key，见 §7.1.1。
+
+#### §7.9.7 需Key新闻/行情源API调用（用户已注册，实测验证）
+
+```python
+# 需Key源API调用示例（Key见 §7.1.1）
+import requests
+import time
+
+# 1. NewsAPI.org — 全球新闻(16822条), 100请求/天
+NEWSAPI_KEY = "5f54c041aa2a4781a66f8cc6194e1272"
+url = f"https://newsapi.org/v2/everything?q=stock market&apiKey={NEWSAPI_KEY}&pageSize=100&language=en"
+r = requests.get(url, timeout=15)
+articles = r.json().get("articles", [])
+print(f"NewsAPI: {len(articles)}条 | 样本={articles[0]['title'][:80]}")
+
+time.sleep(1)
+
+# 2. Alpha Vantage — 新闻+情感分析(50条)+日K线, 5次/min
+ALPHAVANT_KEY = "1RASLEIEKE35Q9KB"
+url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey={ALPHAVANT_KEY}&limit=50"
+r = requests.get(url, timeout=15)
+feed = r.json().get("feed", [])
+# feed中每条含: title/url/source/overall_sentiment_score/overall_sentiment_label
+print(f"AlphaVantage News: {len(feed)}条 | 情感={feed[0].get('overall_sentiment_label')}")
+
+time.sleep(13)  # 5次/min = 12秒间隔
+
+# 3. Finnhub — 市场新闻(100条)+实时报价, 免费tier
+FINNHUB_KEY = "d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg"
+url = f"https://finnhub.io/api/v1/news?category=general&token={FINNHUB_KEY}"
+r = requests.get(url, timeout=15)
+news = r.json()
+print(f"Finnhub News: {len(news)}条 | 样本={news[0].get('headline','')[:80]}")
+
+time.sleep(1)
+
+# 4. Finnhub — AAPL实时报价
+url = f"https://finnhub.io/api/v1/quote?symbol=AAPL&token={FINNHUB_KEY}"
+r = requests.get(url, timeout=15)
+quote = r.json()
+print(f"AAPL报价: current={quote.get('c')} high={quote.get('h')} low={quote.get('l')}")
+
+time.sleep(1)
+
+# 5. Newsdata.io — 财经新闻, 200请求/天
+NEWSDATA_KEY = "pub_b0314d331fa44f30a649189362c9d5e7"
+url = f"https://newsdata.io/api/1/news?apikey={NEWSDATA_KEY}&category=business&language=en&size=50"
+r = requests.get(url, timeout=15)
+articles = r.json().get("results", [])
+print(f"Newsdata: {len(articles)}条")
+
+time.sleep(1)
+
+# 6. Tiingo — 日K线(TickFlow backup), Header认证
+TIINGO_KEY = "67daaf30a656486e0108a94c98267fe7ccbdb5f1"
+url = "https://api.tiingo.com/tiingo/daily/AAPL/prices?startDate=2025-06-01&endDate=2025-07-01"
+headers = {"Authorization": f"Token {TIINGO_KEY}"}
+r = requests.get(url, headers=headers, timeout=15)
+data = r.json()
+# 每行含: date/open/high/low/close/volume/adjClose/adjHigh/adjLow/adjOpen/adjVolume
+print(f"Tiingo AAPL日K线: {len(data)}行 | close={data[-1].get('close')}")
+# 注意: Tiingo News API返回403(免费tier不含), 仅日K线可用
+```
+
+> **需Key源定位**：
+> - **NewsAPI.org**：全球新闻覆盖最广（16822条），适合宏观舆情监控
+> - **Alpha Vantage**：唯一含**情感分析**的源（overall_sentiment_score/label），适合量化情绪因子
+> - **Finnhub**：公司级新闻+实时报价，适合个股事件驱动
+> - **Newsdata.io**：财经新闻补充（200请求/天额度较高）
+> - **Tiingo**：日K线作为TickFlow backup（News API需付费不可用）
 
 ### §7.10 免费源验证脚本
 
