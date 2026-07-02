@@ -632,3 +632,30 @@ entries:
   - TRAE-028
   created: '2026-07-02'
   last_updated: '2026-07-03'
+- issue_id: '#ARCH-043'
+  title: ARCH-042 遗留3风险——bridges/同名文件真源分裂 + 命名约定无强制门禁 + orchestrator.py compat层名字误导
+  severity: P2中
+  adjudication: |
+    ARCH-042 阶段4 收尾审计发现的3个超范围遗留风险，需独立立项调研治本：
+    风险1（真源分裂）：audit_trail 包内 root 与 bridges/ 子包存在5对同名文件(drift_bridge/delegation_bridge/
+    feedback_bridge/tiered_storage_bridge/trust_bridge)，但实现不同——root=production简单委托shim，
+    bridges/=prototype适配层(不同类名Audit*前缀/不同委托目标/不同API)。同一包内同名文件不同实现
+    违反真源唯一，新AI无法判断谁是canonical。需裁定：bridges/是否应保留为独立adapter层(当前裁定)，
+    还是合并/删除/改名消除同名。compliance/audit_trail/bridges/ 是bridges/的外部消费者(7个子模块import)，
+    删除bridges/会破坏compliance层——这是约束条件。
+    风险2（命名约定无门禁）：drift_detection和audit_trail的T_soft=120裁定靠__init__.py注释文档化，
+    没有GATE强制新文件遵循前缀规则。validate_nested_flat_dirs.py只数文件数不检查命名前缀。
+    新AI可绕过裁定添加不合规文件，或在未读注释情况下强制拆分已裁定合规的目录。
+    需调研：是否需要新增GATE-NAMING-CONVENTION检查新增.py文件是否遵循所在目录的前缀规则。
+    风险3（orchestrator.py compat层名字误导）：文件名"orchestrator"暗示是真正编排器，
+    但实际是compat重导出层(代码已迁移回audit_trail MOD-INF-020)。新AI可能在里面加编排逻辑。
+    需裁定：是否改名为_compat_orchestrator.py(需重写import)，或加[MATURITY] compat标记，
+    或保留现状加__init__.py地图标注(当前已做)。
+  fix_phase: 待调研（需先输出治本方案裁定，再决定施工阶段）
+  status: open
+  related_rules:
+  - GOV-DOC-018
+  - TRAE-028
+  - TRAE-060
+  created: '2026-07-03'
+  last_updated: '2026-07-03'
