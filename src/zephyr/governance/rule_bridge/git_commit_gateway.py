@@ -379,6 +379,8 @@ class GitCommitGateway:
                         logger.info("GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail)
                     elif rr.action == "warn":
                         logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
+                    elif rr.action == "clean":
+                        print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
             except Exception as e:
                 logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
         return result
