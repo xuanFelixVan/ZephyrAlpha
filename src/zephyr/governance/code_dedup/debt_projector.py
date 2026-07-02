@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.debt_projector
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/budget/test_debt_projector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

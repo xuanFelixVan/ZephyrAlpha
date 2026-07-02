@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.cache_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/data_layer/test_cache_manager.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers.consequence_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/delegation/test_consequence_tracker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

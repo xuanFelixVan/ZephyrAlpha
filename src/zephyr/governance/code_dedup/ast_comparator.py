@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.ast_comparator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.intelligence_governance.self_benchmark; tests/governance/code_quality/test_ast_comparator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.risk_mitigator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/risk/test_risk_mitigator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

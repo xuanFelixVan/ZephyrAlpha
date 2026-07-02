@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.code_analyzer_runner
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/code_quality/test_code_analyzer_runner.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

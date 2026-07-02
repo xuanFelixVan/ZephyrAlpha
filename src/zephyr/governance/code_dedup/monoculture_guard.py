@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.monoculture_guard
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/code_quality/test_code_dedup_engine.py; tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/security/test_monoculture_guard.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

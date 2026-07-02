@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.integrations
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/integration/test_integrations.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

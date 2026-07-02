@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.recovery_manifest_writer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/resilience/test_recovery_manifest_writer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

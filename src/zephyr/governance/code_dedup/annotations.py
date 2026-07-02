@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.annotations
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/governance_misc/test_annotations.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.code_simulator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/code_quality/test_code_simulator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

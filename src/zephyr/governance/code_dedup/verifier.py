@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.verifier
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/ops/test_verifier.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

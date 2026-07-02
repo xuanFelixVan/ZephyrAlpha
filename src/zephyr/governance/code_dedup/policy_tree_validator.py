@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.policy_tree_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/rule_enforcement/test_policy_tree_validator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

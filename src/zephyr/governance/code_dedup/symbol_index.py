@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.symbol_index
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/data_layer/test_symbol_index.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

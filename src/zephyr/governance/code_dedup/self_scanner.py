@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.self_scanner
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/self_check/test_self_scanner.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

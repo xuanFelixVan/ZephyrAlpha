@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.contract_consistency_checker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/contracts/test_contract_consistency_checker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

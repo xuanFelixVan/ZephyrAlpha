@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.decision_auditor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/decision/test_decision_auditor.py; tests/governance/code_quality/test_code_dedup_engine_red_team.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

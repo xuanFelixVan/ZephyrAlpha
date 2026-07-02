@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.false_negative_auditor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/audit/test_false_negative_auditor.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

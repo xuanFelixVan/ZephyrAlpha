@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.prioritizer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/orchestrator/test_prioritizer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

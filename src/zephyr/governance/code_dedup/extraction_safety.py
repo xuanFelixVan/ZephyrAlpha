@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.extraction_safety
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/security/test_extraction_safety.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

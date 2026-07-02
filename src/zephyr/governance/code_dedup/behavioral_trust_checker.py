@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.behavioral_trust_checker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/delegation/test_behavioral_trust_checker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

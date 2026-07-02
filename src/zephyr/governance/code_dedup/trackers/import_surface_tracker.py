@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers.import_surface_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/security/test_import_surface_tracker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

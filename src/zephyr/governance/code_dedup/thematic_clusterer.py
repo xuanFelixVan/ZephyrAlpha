@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.thematic_clusterer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/compliance/test_thematic_clusterer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.canary_register
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/canary/test_canary_register.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.behavioral_sampler
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.intelligence_governance.self_benchmark; tests/governance/delegation/test_behavioral_sampler.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.doom_loop_guard
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/resilience/test_doom_loop_guard.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

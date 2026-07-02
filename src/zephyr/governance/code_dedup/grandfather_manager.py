@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.grandfather_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/rule_enforcement/test_grandfather_manager.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.signature_matcher
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/security/test_signature_matcher.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
