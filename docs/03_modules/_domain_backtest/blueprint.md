@@ -454,9 +454,9 @@ class MyEngine(BacktestEngineBase):
 
 | 更新项 | 位置 | 说明 |
 |--------|------|------|
-| blueprint_registry.yaml | 新增MOD-BT-001注册项 | 待执行 |
-| depgraph PostgreSQL | D_BACKTEST域激活(7个prototype→production) | 待执行 |
-| master_blueprint索引 | 加入D_BACKTEST入口 | 待执行 |
+| blueprint_registry.yaml | 新增MOD-BT-001注册项 | ✅已完成(2026-07-02, sync_registry_from_blueprints --write, 54→55) |
+| depgraph PostgreSQL | D_BACKTEST域激活(10节点:3 production+6 prototype+1 deprecated, 全部关联MOD-BT-001) | ✅已完成(2026-07-02) |
+| master_blueprint索引 | 加入D_BACKTEST入口 | ✅已完成(2026-07-02, index.md §2.1 + _system_master §40.2域归属声明) |
 
 ## §14 风险
 
@@ -556,8 +556,8 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 - [x] E-BT-01/02/03事件已注册
 - [x] CTR-001/002 target_domains含D_BACKTEST
 - [x] freeze_manifest路径已更新
-- [ ] blueprint_registry.yaml注册MOD-BT-001
-- [ ] depgraph D_BACKTEST域激活
+- [x] blueprint_registry.yaml注册MOD-BT-001
+- [x] depgraph D_BACKTEST域激活
 - [ ] MVP剩余5个模块实现
 
 ## 成熟度
