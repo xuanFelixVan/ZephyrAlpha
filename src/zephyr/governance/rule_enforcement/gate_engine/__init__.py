@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_engine.__init__
+# [MODULE] zephyr.governance.rule_enforcement.gate_engine.__init__
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.rule_enforcement 内部模块
