@@ -235,7 +235,7 @@ def _scan_directory_naming_semantics() -> list[str]:
     """检测子目录命名语义违规（gov_doc_003_directory_semantics）。
 
     R1: 缩写必除——2字符及以下缩写（grandfathered 白名单外）警告
-    R5: 数字后缀禁止——_\\d+ 结尾硬阻断
+    R5: 数字后缀禁止——_\\d+ 结尾（本脚本 warning-only，硬阻断在 GitCommitGateway R5-DIGIT-SUFFIX gate）
     """
     violations: list[str] = []
     grandfathered = _load_grandfathered_abbreviations()
@@ -246,7 +246,7 @@ def _scan_directory_naming_semantics() -> list[str]:
         if name.startswith("_") or name == "__pycache__":
             continue
         rel = dirpath.relative_to(SRC_ZEPHYR)
-        # R5: 数字后缀检测（硬阻断）
+        # R5: 数字后缀检测（本脚本 warning-only，硬阻断在 GitCommitGateway R5-DIGIT-SUFFIX gate）
         if _DIGIT_SUFFIX_RE.search(name):
             violations.append(
                 f"\u274c [命名语义] 数字后缀目录: {rel} \u2192 gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多真源）"

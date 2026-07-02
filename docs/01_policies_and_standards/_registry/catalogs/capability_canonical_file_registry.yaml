@@ -1052,6 +1052,31 @@ capabilities:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: r5_digit_suffix_gate
+    aliases:
+      - R5-DIGIT-SUFFIX
+      - r5-digit-suffix
+      - make_r5_digit_suffix_gate
+      - digit_suffix_dir_blocker
+      - numeric_suffix_directory_blocker
+    description: >-
+      R5 数字后缀目录禁止门禁（R5-DIGIT-SUFFIX，2026-07-02 治本）。检测本次 commit
+      文件路径中含 _NN 数字后缀的新建目录，命中则阻断（NAMING_VIOLATION）。
+      病根：GitCommitGateway 用 git commit --no-verify 绕过 pre-commit，导致
+      trae_028 L1224-1228 gov_doc_003_directory_semantics R5（数字后缀暗示多真源）
+      在 gateway 路径完全失效；validate_directory_structure.py L234-259 实际是
+      warning-only（naming_violations 仅 print stderr 不加入 all_violations）。
+      治本：GitCommitGateway pre-commit 阶段注册 gate（priority=35），增量检测
+      本次 commit files 参数中的 _NN 目录路径，用 git ls-tree HEAD 判断是否新建。
+      历史违规豁免（progressive_convergence）：HEAD 已存在的目录跳过，不批量改名。
+      fail-closed：git ls-tree 失败时阻断。canonical basename r5_digit_suffix_gate
+      匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "R5/数字后缀/digit suffix/数字目录" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 R5 检测脚本。
+    integrity_anchors:
+      - make_r5_digit_suffix_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -1905,6 +1930,11 @@ creation_tokens:
     token: "auto-dangling-reference-gate-20260701"
     created_by: "session-trae-dangling-ref-gate"
     capability: "dangling_reference_gate"
+
+  - file: "src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py"
+    token: "auto-r5-digit-suffix-gate-20260702"
+    created_by: "session-arch033-c5-fix"
+    capability: "r5_digit_suffix_gate"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
