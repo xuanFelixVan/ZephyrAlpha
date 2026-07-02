@@ -29,6 +29,14 @@ entry_conditions:
     on_failure: reject
     verifiable: true
     verification_method: "Unit test with _legacy/ and ARCHIVE/ paths"
+    params:
+      blacklist_patterns:
+        - "_legacy/"
+        - "ARCHIVE/"
+        - "deprecated/"
+        - "_trash/"
+        - "zephyralpha-1-0/"
+        - "old_tree/"
     rule_ids:
       - TRAE-001
 

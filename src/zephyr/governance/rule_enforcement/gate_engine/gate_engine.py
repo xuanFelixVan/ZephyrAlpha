@@ -106,7 +106,7 @@ __all__ = [
 GATES_DIR = Path(__file__).parent
 
 _DEPRECATED_PATHS_YAML = (
-    Path(__file__).parent.parent.parent.parent / "scripts" / "governance" / "_shared" / "deprecated-paths.yaml"
+    REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
 )
 
 
