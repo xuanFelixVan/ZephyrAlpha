@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
-# [MODULE] zephyr.governance.drift_detectionthon_compat
+# [MODULE] zephyr.governance.drift_detection.python_compat
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_scanners.py; tests/audit/test_python_compat.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 兼容性检查不可跳过

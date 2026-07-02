@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.rollback_bridge
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/rollback/test_rollback_bridge.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 漂移→回滚桥接不可禁用

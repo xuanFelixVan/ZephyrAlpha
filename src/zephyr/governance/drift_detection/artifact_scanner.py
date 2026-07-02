@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.artifact_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] src/zephyr/compliance/artifact_scanner.py; tests/governance/security/test_artifact_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none

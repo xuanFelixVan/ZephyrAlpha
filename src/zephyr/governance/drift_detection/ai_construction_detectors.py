@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.ai_construction_detectors
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; tests/ai/test_ai_construction_detectors.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] AI施工检测不可跳过

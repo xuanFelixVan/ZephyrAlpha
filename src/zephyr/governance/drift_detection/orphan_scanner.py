@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.orphan_scanner
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_scanners.py; src/zephyr/governance/drift_detection/brain_integration.py; tests/audit/test_orphan_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 孤儿扫描不可跳过

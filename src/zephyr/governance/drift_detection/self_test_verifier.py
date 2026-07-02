@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.self_test_verifier
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/drift_detection/__main__.py; tests/infrastructure/drift_red_blue_adversarial.py; tests/infrastructure/test_drift_e2e_pipeline.py; tests/self_check/test_self_test_verifier.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 自检验证不可跳过

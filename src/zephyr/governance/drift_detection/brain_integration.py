@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.brain_integration
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] tests/audit/test_brain_integration_root.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 大脑集成不可断开

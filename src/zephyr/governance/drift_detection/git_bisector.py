@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.git_bisector
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/git/test_git_bisector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 溯源结果不可篡改

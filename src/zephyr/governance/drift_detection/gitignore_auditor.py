@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.gitignore_auditor
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_gitignore_auditor.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计结果不可篡改

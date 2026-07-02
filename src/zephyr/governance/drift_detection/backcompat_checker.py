@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.backcompat_checker
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_backcompat_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 向后兼容检查不可跳过

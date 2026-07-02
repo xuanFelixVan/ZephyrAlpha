@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.baseline_poisoning_guard
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_baseline_poisoning_guard.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 投毒防护不可禁用
