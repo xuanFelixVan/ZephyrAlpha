@@ -2702,6 +2702,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # 与 apply_depgraph.py._db_write_lock 共享 lock key 424242
         # 事务级 lock，conn.commit()/rollback() 自动释放，不会忘记释放
         cursor.execute("SELECT pg_advisory_xact_lock(424242)")
+        # R3 验证(2026-07-02)：干净工作区 reconciler 全流程验证
         # DM-012 Fix 4: Auto-cleanup old backup tables before writing
         # P2 PG 迁移：sqlite_master → information_schema.tables
         cursor.execute(
