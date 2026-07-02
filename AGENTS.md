@@ -238,7 +238,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 **门禁**：[`validate_nested_flat_dirs.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py) `--check-prefix` 模式——检测 >T_hard(60) 目录的 `__init__.py` 是否文档化命名前缀约定（标记词：`命名规则`/`前缀簇`/`T_soft`/`GOV-DOC-018`/`模块地图`），无约定报 ERROR。
 
-**自动触发**：注册为 `GATE-NESTED-FLAT-PREFIX` 到 [`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)，`src/zephyr/*.py` 变更时 pre-commit 自动运行（事件驱动，全自动，无需手工触发）。`--warn-only` 过渡期（8 个 tests/ 目录存量违规未清零，清零后转 `--ci` 硬阻断）。
+**自动触发**：注册为 `GATE-NESTED-FLAT-PREFIX` 到 [`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)，`src/zephyr/*.py` 变更时 pre-commit 自动运行（事件驱动，全自动，无需手工触发）。`--warn-only` 过渡期（9 个存量违规未清零：8 tests/ + src/zephyr/infrastructure/rollback，清零后转 `--ci` 硬阻断）。
 
 **真源**：阈值 `thresholds.yaml` §directory_scalability（`src_py_warn: 60` / `src_py_error: 120`）；规则 `trae_028_doc_structure_naming.yaml` §directory_scalability。
 
