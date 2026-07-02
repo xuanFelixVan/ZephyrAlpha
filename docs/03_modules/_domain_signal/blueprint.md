@@ -39,7 +39,7 @@ depends_on:
     at: §3
     why: Alpha信号域集成
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\signal_generation_core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\blueprint.md"
     section: "§1"
     why: "本蓝图即SSoT"
 summary: "信号生成层C轨占位。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层未开放，禁止施工。"
