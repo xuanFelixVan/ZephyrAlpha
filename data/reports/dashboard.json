@@ -1,8 +1,8 @@
 {
-  "dashboard_id": "DASH-20260702-931",
-  "generated_at": "2026-07-02T06:41:33.819310",
+  "dashboard_id": "DASH-20260702-378",
+  "generated_at": "2026-07-02T06:47:48.600378",
   "health_score": "C",
-  "total_assets": 8730,
+  "total_assets": 8731,
   "orphan_rate_pct": 24.1,
   "ghost_rate_pct": 0.0,
   "drift_rate_pct": 0.0,
@@ -11,7 +11,7 @@
     "unknown": 2104,
     "registry": 35,
     "script": 452,
-    "doc": 281,
+    "doc": 282,
     "config": 46,
     "test": 2173,
     "data": 1016
@@ -20,7 +20,7 @@
     "cross_layer": 4726,
     "L01": 1452,
     "L02": 131,
-    "L03": 141,
+    "L03": 142,
     "L04": 2280
   },
   "alerts": [
