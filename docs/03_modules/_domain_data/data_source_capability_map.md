@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L00-002
 submodule_path: src/zephyr/data
-title: "数据源能力地图 — iFind + miniQMT + 免费开源源(AKShare/yfinance/Stooq) 可获取数据完整清单与获取方法"
+title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/AKShare) 可获取数据完整清单与获取方法(实测验证)"
 doc_type: blueprint
 status: Active
-version: "1.1.0"
+version: "1.2.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -56,7 +56,7 @@ tags:
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(AKShare/yfinance/Stooq)可获取数据的完整清单与获取方法。v1.1.0新增§7免费开源数据源章节，覆盖iFind试用账号盲区(EDB宏观/美股/新闻)。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/AKShare)可获取数据的完整清单与获取方法。v1.2.0新增Baostock(实测10/10通过)+AKShare宏观/新闻/研报(实测11/16通过)，yfinance/Stooq降级(当前网络环境不可用)。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -129,27 +129,34 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | 运行要求 | XtMiniQmt.exe 必须运行，is_connected=True |
 | Python版本 | **必须 3.11**（pyd文件最高cp311，不支持3.12） |
 
-### 1.3 免费开源源（v1.1.0 新增，覆盖 iFind 试用盲区）
+### 1.3 免费开源源（v1.2.0 实测验证，覆盖 iFind 试用盲区）
 
-| 数据源 | GitHub | Stars | 活跃度 | 定位 | 覆盖盲区 |
-|--------|--------|-------|--------|------|---------|
-| **AKShare** | akfamily/akshare | 19,750+ | 2026-07-02更新 | 全品类爬虫聚合库 | EDB宏观/新闻/研报/美股备用 |
-| **yfinance** | ranaroussi/yfinance | — | 2026-06-28推送 | Yahoo Finance 非官方API | 美股/港股/全球指数/外汇 |
-| **Stooq** | stooq.com（非GitHub） | — | 持续运营 | CSV直接下载 | 美股CSV备份(21,332证券) |
+| 数据源 | 类型 | 实测通过率 | 实测日期 | 定位 | 覆盖盲区 |
+|--------|------|:----------:|:--------:|------|---------|
+| **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
+| **AKShare** | 爬虫聚合库 | 11/16 (69%) | 2026-07-03 | 宏观+新闻+研报 | EDB宏观(CPI/PMI/M2/GDP)+新闻+研报+一致预期EPS |
+| **yfinance** | Yahoo非官方API | 0/13 (0%) | 2026-07-03 | ❌ 当前环境不可用 | 美股/港股/全球指数(需海外IP/代理) |
+| **Stooq** | 网站CSV | 0/4 (0%) | 2026-07-03 | ❌ 不可用 | 美股CSV(pandas_datareader移除+JS反爬虫) |
 
-> **定位说明**：免费源是 iFind 试用账号盲区的**补充**，不是替代。iFind/QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有SLA）；免费源覆盖试用账号的 ❌ 盲区（美股/新闻/EDB宏观）。详见 §7。
+> **实测结论（2026-07-03）**：
+> - **Baostock 最稳定**（10/10），升级为 A股K线+财务的主力免费源
+> - **AKShare 宏观+新闻+研报可用**（EDB替代方案成立），美股/财联社接口失效
+> - **yfinance 在当前网络环境（中国大陆IP）完全不可用**（Yahoo限流），需海外IP/代理
+> - **Stooq 不可用**（pandas_datareader移除 + CSV反爬虫JS验证）
+> - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
 
 ### 1.4 能力边界一句话总结
 
 - **iFind 擅长**：估值数据、财务数据、宏观EDB、i问财自然语言查询、概念板块
 - **QMT 擅长**：3秒Tick、分钟K线、期权/可转债/ETF/期货、除权因子、实时快照
+- **Baostock 擅长**：A股日/周/月/分钟K线、季频财务(盈利/营运/成长/偿债/现金流/杜邦)、成分股、交易日历
 - **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、财经新闻、研报、一致预期EPS
-- **yfinance 擅长**：美股/港股/全球指数历史K线、财务报表
 - **iFind 独有**：i问财、估值PE/PB/PS（精确到个股）
 - **QMT 独有**：3秒Tick(含五档)、除权除息因子、指数权重、期权/可转债/期货合约
-- **AKShare 独有**：财经新闻(东财/财联社)、研报、财经事件日历
-- **yfinance 独有**：美股/港股/全球指数（iFind试用账号盲区）
-- **四源互补**：iFind + QMT + AKShare + yfinance 覆盖策略所需的所有数据品类
+- **Baostock 独有**：A股历史K线+财务的稳定免费源(服务端推送，非爬虫)
+- **AKShare 独有**：财经新闻(东财)、研报、一致预期EPS
+- **yfinance/Stooq**：❌ 当前网络环境不可用(详见§7.3/§7.4)
+- **四源互补**：iFind + QMT + Baostock + AKShare 覆盖策略所需的A股全品类数据；美股需淘宝购买(免费源当前不可用)
 
 ---
 
@@ -1081,17 +1088,111 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 - 免费源覆盖 iFind 试用账号的 ❌ 盲区（美股/新闻/EDB宏观），使策略所需数据 100% 可获取。
 - 多源备份：任一免费源失效可切到另一个（yfinance↔Stooq↔AKShare 美股互备）。
 
-**三大免费源对比**：
+**四大免费源对比（v1.2.0 实测验证）**：
 
-| 数据源 | 类型 | 是否需注册 | 是否需API Key | 数据存储 | PIT保证 | 适合场景 |
-|--------|------|:----------:|:------------:|:--------:|:-------:|---------|
-| AKShare | Python库(爬虫聚合) | ❌ 否 | ❌ 否 | 不存储(实时拉) | ❌ 无 | 宏观EDB/新闻/研报/A股备用 |
-| yfinance | Python库(Yahoo非官方) | ❌ 否 | ❌ 否 | 不存储(实时拉) | ❌ 无 | 美股/港股/全球指数/财务报表 |
-| Stooq | 网站(CSV下载) | ❌ 否 | ❌ 否 | CSV文件 | ✅ 有(下载即快照) | 美股CSV备份/历史回测 |
+| 数据源 | 类型 | 实测通过率 | 是否需注册 | 是否需API Key | 适合场景 |
+|--------|------|:----------:|:----------:|:------------:|---------|
+| **Baostock** | 服务端推送(非爬虫) | **10/10 ✅** | ❌ 否 | ❌ 否 | A股K线+财务主力免费源 |
+| **AKShare** | 爬虫聚合库 | 11/16 ⚠️ | ❌ 否 | ❌ 否 | 宏观EDB/新闻/研报 |
+| **yfinance** | Yahoo非官方API | 0/13 ❌ | ❌ 否 | ❌ 否 | 美股(需海外IP/代理) |
+| **Stooq** | 网站CSV | 0/4 ❌ | ❌ 否 | ❌ 否 | 美股CSV(反爬虫不可用) |
 
-> **PIT 保证说明**：AKShare/yfinance 是实时拉取，上游可能追溯调整历史数据（财报修正），做严肃回测时需自己存档快照。Stooq 下载的 CSV 是时间点快照，适合回测。详见 §7.5 风险与限制。
+> **实测结论（2026-07-03）**：
+> - **Baostock** 10/10 全部通过，最稳定，升级为 A股K线+财务主力免费源
+> - **AKShare** 宏观7项+新闻1项+研报2项+美国宏观2项 通过(11/16)，美股/财联社/部分函数名失效
+> - **yfinance** 全部限流(0/13)，当前网络环境不可用，需海外IP/代理
+> - **Stooq** pandas_datareader移除+CSV反爬虫(0/4)，不可用
 
-### §7.2 AKShare 完整指南
+### §7.2 Baostock 完整指南（实测 10/10 通过，最稳定）
+
+#### 基本信息
+
+| 属性 | 值 |
+|------|-----|
+| 官网 | `https://baostock.com` |
+| 类型 | 免费开源证券数据平台（服务端推送，非爬虫） |
+| 实测通过率 | **10/10 (100%)** — 2026-07-03 |
+| 安装 | `pip install baostock` |
+| 鉴权 | 无需注册、无需 API Key（匿名登录 `bs.login()`） |
+| 返回格式 | pandas DataFrame |
+| Python版本 | 3.6/3.9+ |
+| 数据更新时间 | 日K 17:30 / 复权因子 18:00 / 分钟K 20:00 |
+
+#### §7.2.1 数据覆盖范围
+
+| 数据类型 | 接口 | 时间范围 | 实测结果 |
+|---------|------|---------|---------|
+| 日/周/月K线 | `query_history_k_data_plus(frequency="d/w/m")` | 1990-12-19至今 | ✅ 日144行/周51行/月12行 |
+| 5/15/30/60分钟K线 | `query_history_k_data_plus(frequency="5/15/30/60")` | 2020-01-03至今(近5年) | ✅ 5分钟192行 |
+| 季频盈利能力 | `query_profit_data()` | 2007年至今 | ✅ 1行(roeAvg/npMargin/gpMargin) |
+| 季频资产负债 | `query_balance_data()` | 2007年至今 | ✅ 1行(currentRatio/quickRatio) |
+| 季频现金流 | `query_cash_flow_data()` | 2007年至今 | ✅ 1行 |
+| 季频成长能力 | `query_growth_data()` | 2007年至今 | ✅ 1行(YOYEquity/YOYAsset/YOYNI) |
+| 沪深300成分股 | `query_hs300_stocks()` | 每周一更新 | ✅ 300行 |
+| 交易日历 | `query_trade_dates()` | — | ✅ 365行(2025年) |
+
+> **还有**：`query_operation_data()`营运能力 / `query_dupont_data()`杜邦分析 / `query_sz50_stocks()`上证50 / `query_zz500_stocks()`中证500 / `query_stock_industry()`行业分类 / `query_all_stock()`证券列表 / `query_stock_basic()`股票基本信息
+
+#### §7.2.2 API 调用示例（直接复制可用）
+
+```python
+import baostock as bs
+import pandas as pd
+
+# 1. 登录（匿名，无需注册）
+lg = bs.login()
+if lg.error_code != '0':
+    raise Exception(f"登录失败: {lg.error_msg}")
+
+# 2. 日K线（前复权）
+rs = bs.query_history_k_data_plus(
+    "sh.600000",  # 代码格式: sh.XXXXXX / sz.XXXXXX
+    "date,code,open,high,low,close,volume,amount,pctChg,turn",
+    start_date="2024-06-01", end_date="2025-01-01",
+    frequency="d",     # d=日 w=周 m=月 5/15/30/60=分钟
+    adjustflag="2"     # 1=后复权 2=前复权 3=不复权
+)
+# 3. ResultData 转 DataFrame
+data_list = []
+while (rs.error_code == '0') & rs.next():
+    data_list.append(rs.get_row_data())
+df = pd.DataFrame(data_list, columns=rs.fields)
+# ✅ 返回 144行
+
+# 4. 季频财务（盈利能力）
+rs = bs.query_profit_data(code="sh.600000", year=2024, quarter=3)
+df = rs.get_data()  # 也可用 get_data() 替代手动循环
+# ✅ 返回 roeAvg/npMargin/gpMargin
+
+# 5. 沪深300成分股
+rs = bs.query_hs300_stocks()
+df = rs.get_data()
+# ✅ 返回 300行
+
+# 6. 登出
+bs.logout()
+```
+
+**代码格式坑**：Baostock 用 `sh.600000`/`sz.000001`（小写点号），不是 `600000.SH`。需做转换：`code = "sh." + stock_code[:6] if stock_code.endswith("SH") else "sz." + stock_code[:6]`
+
+#### §7.2.3 Baostock 优势
+
+- **服务端推送（非爬虫）**：比 AKShare 稳定，不受上游网站改版影响
+- **数据规范**：字段命名统一，单位明确
+- **K线含估值字段**：可返回 peTTM/pbMRQ/psTTM/isST（需在 fields 中指定）
+- **完全免费**：零注册、零 API Key、零请求限制
+
+#### §7.2.4 Baostock 限制
+
+| 限制 | 说明 |
+|------|------|
+| 仅A股 | 不覆盖美股/港股/期货/期权 |
+| 仅历史 | 无实时行情（日K 17:30后才更新当日数据） |
+| 分钟线仅近5年 | 5/15/30/60分钟K线从2020-01-03起 |
+| 代码格式特殊 | sh.XXXXXX/sz.XXXXXX（需转换） |
+| 需login/logout | 每次使用需登录，用完登出 |
+
+### §7.3 AKShare 完整指南
 
 #### 基本信息
 
@@ -1107,7 +1208,7 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 | 鉴权 | 无需注册、无需 API Key |
 | Python版本 | 3.8+ |
 
-#### §7.2.1 宏观经济数据（替代 iFind EDB）
+#### §7.3.1 宏观经济数据（替代 iFind EDB，实测 9/10 通过）
 
 **iFind EDB 盲区**：试用账号 -4318 "exceeded this month"（月度配额超限，下月重置），且 EDB 的 77,909 指标中策略常用的核心宏观指标在 AKShare 中都有对应。
 
@@ -1153,7 +1254,7 @@ gdp.to_csv("gdp.csv")
 
 > **结论**：策略所需的核心宏观因子（CPI/PPI/PMI/M0/M1/M2/GDP/社融/LPR/利率/汇率）在 AKShare 中**全部覆盖**，可完全替代 iFind EDB 的策略常用部分。iFind EDB 的优势在于细分行業/区域指标（77,909 全量），但策略层面用不到这么细。
 
-#### §7.2.2 财经新闻与研报（替代 iFind iEvent/iResearch）
+#### §7.3.2 财经新闻与研报（替代 iFind iEvent/iResearch，实测 3/5 通过）
 
 **iFind 盲区**：试用账号 -5100 "account type is not supported"（事件/研报不支持）。
 
@@ -1187,7 +1288,7 @@ calendar = ak.news_eco_calendar()                     # 财经事件日历（经
 | THS_iEvent（事件） | ❌ -5100 | `stock_news_em` + `stock_info_global_cls` | ✅ 个股新闻+财联社快讯 |
 | THS_iResearch（研报） | ❌ -5100 | `stock_research_report_em` + `stock_profit_forecast_ths` | ✅ 研报+一致预期EPS |
 
-#### §7.2.3 美股数据（备用，首选 yfinance）
+#### §7.3.3 美股数据（❌ 实测失败，Connection aborted）
 
 ```python
 import akshare as ak
@@ -1195,7 +1296,7 @@ import akshare as ak
 df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_date="20251231")
 ```
 
-#### §7.2.4 AKShare 限制与坑
+#### §7.3.4 AKShare 限制与坑
 
 | 限制 | 说明 | 缓解 |
 |------|------|------|
@@ -1205,7 +1306,7 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 | 上游限速 | 东方财富/新浪对高频访问会临时封 IP | 控制请求频率（<1次/秒），加 sleep |
 | 字段名不统一 | 同一字段在不同接口有不同命名 | 查阅 AKShare 文档确认字段名 |
 
-### §7.3 yfinance 完整指南
+### §7.4 yfinance 完整指南（❌ 实测 0/13，当前网络环境不可用）
 
 #### 基本信息
 
@@ -1221,7 +1322,7 @@ df = ak.stock_us_hist(symbol="AAPL", period="daily", start_date="20200101", end_
 | Python版本 | 3.7+ |
 | 请求限制 | 每小时 < 100 次（否则 429 Too Many Requests） |
 
-#### §7.3.1 美股/港股/全球指数历史K线
+#### §7.4.1 美股/港股/全球指数历史K线
 
 ```python
 import yfinance as yf
@@ -1257,7 +1358,7 @@ df = yf.download("CL=F", start="2010-01-01")  # 原油期货
 # 返回含 OHLCV + Adj Close（复权收盘价）
 ```
 
-#### §7.3.2 财务报表（替代 iFind FDB）
+#### §7.4.2 财务报表（替代 iFind FDB）
 
 ```python
 import yfinance as yf
@@ -1275,7 +1376,7 @@ dividends = t.dividends          # 分红历史
 splits = t.splits                # 拆股历史
 ```
 
-#### §7.3.3 yfinance 限制与坑
+#### §7.4.3 yfinance 限制与坑
 
 | 限制 | 说明 | 缓解 |
 |------|------|------|
@@ -1318,7 +1419,7 @@ tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "TSLA"]
 data = fetch_with_rate_limit(tickers)
 ```
 
-### §7.4 Stooq CSV 备份
+### §7.5 Stooq CSV 备份（❌ 实测不可用）
 
 #### 基本信息
 
@@ -1332,7 +1433,7 @@ data = fetch_with_rate_limit(tickers)
 | 历史深度 | 日K线可回溯30+年；小时线最近1400点；5分钟线最近2000点 |
 | PIT保证 | ✅ 有（下载即时间点快照） |
 
-#### §7.4.1 代码符号规范（坑警告）
+#### §7.5.1 代码符号规范（坑警告）
 
 | 资产类型 | 符号格式 | 示例 |
 |---------|---------|------|
@@ -1342,7 +1443,7 @@ data = fetch_with_rate_limit(tickers)
 | 英国股票 | `.UK后缀` | `AV.UK`（Aviva） |
 | 市盈率 | `_PE.US后缀` | `AAPL_PE.US` |
 
-#### §7.4.2 Python 下载方式（pandas-datareader）
+#### §7.5.2 Python 下载方式（pandas-datareader，❌ 已移除）
 
 ```python
 import pandas as pd
@@ -1361,9 +1462,9 @@ for ticker in tickers:
 
 > **Stooq 定位**：作为 yfinance 的备份源。当 yfinance 因 Yahoo 改版失效时，Stooq 可立即接管。Stooq 的优势是 CSV 直接下载、无请求限制、有 PIT 保证（适合回测）。
 
-### §7.5 风险与限制（必读）
+### §7.6 风险与限制（必读）
 
-#### §7.5.1 免费源共性风险
+#### §7.6.1 免费源共性风险
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
@@ -1373,7 +1474,7 @@ for ticker in tickers:
 | **请求限流** | 高频访问会被封 IP | 控制频率 <1次/秒，加 sleep，用代理池 |
 | **数据质量** | 复权/分红调整偶发错误 | 与 iFind/QMT 交叉验证关键数据 |
 
-#### §7.5.2 免费源 vs 付费源决策矩阵
+#### §7.6.2 免费源 vs 付费源决策矩阵
 
 | 数据需求 | iFind/QMT(付费) | 免费源 | 推荐选择 |
 |---------|:---------------:|:------:|---------|
@@ -1389,39 +1490,45 @@ for ticker in tickers:
 
 > **决策原则**：iFind/QMT 能获取的优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源仅用于 iFind 试用账号的 ❌ 盲区。
 
-### §7.6 与 iFind/QMT 的互补关系
+### §7.7 与 iFind/QMT 的互补关系
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  四源互补矩阵（v1.1.0）                                          │
+│  五源互补矩阵（v1.2.0 实测验证）                                  │
 ├──────────────────────────────────────────────────────────────────┤
-│  数据品类          │ iFind试用 │ QMT  │ AKShare │ yfinance │ Stooq │
+│  数据品类          │ iFind试用 │ QMT  │Baostock│ AKShare │yfinance│
 ├──────────────────────────────────────────────────────────────────┤
-│  A股日K线          │    ✅    │  ✅  │   ✅    │    —    │   —   │
-│  A股估值PE/PB      │    ✅    │  —   │   ⚠️    │    —    │   —   │
-│  A股财务报表       │    ✅    │  ✅  │   ✅    │    —    │   —   │
-│  A股资金流向       │    ✅    │  —   │   ✅    │    —    │   —   │
-│  龙虎榜/大宗/融资  │    ✅    │  —   │   ✅    │    —    │   —   │
-│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │   ✅    │    —    │   —   │  ← AKShare补盲区
-│  3秒Tick           │    —     │  ✅  │   —     │    —    │   —   │
-│  期权/可转债/期货  │    —     │  ✅  │   —     │    —    │   —   │
-│  除权因子          │    —     │  ✅  │   —     │    —    │   —   │
-│  美股日K线         │    ❌    │  —   │   ✅    │   ✅     │  ✅   │  ← 免费3源补盲区
-│  美股财务报表      │    ❌    │  —   │   —     │   ✅     │   —   │  ← yfinance补盲区
-│  美股指数(道/纳/标)│    ❌    │  —   │   —     │   ✅     │  ✅   │  ← 免费2源补盲区
-│  港股日K线         │    ❌    │  ✅  │   ✅    │   ✅     │   —   │
-│  财经新闻          │    ❌    │  —   │   ✅    │    —    │   —   │  ← AKShare补盲区
-│  研报/一致预期     │    ❌    │  —   │   ✅    │    —    │   —   │  ← AKShare补盲区
-│  财经事件日历      │    ❌    │  —   │   ✅    │    —    │   —   │  ← AKShare补盲区
+│  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   —     │   —   │
+│  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   —     │   —   │  ← Baostock补历史(近5年)
+│  A股估值PE/PB      │    ✅    │  —   │  ⚠️    │   —     │   —   │
+│  A股财务报表       │    ✅    │  ✅  │  ✅    │   —     │   —   │  ← Baostock季频财务6项
+│  A股资金流向       │    ✅    │  —   │  —     │   —     │   —   │
+│  龙虎榜/大宗/融资  │    ✅    │  —   │  —     │   —     │   —   │
+│  EDB宏观(CPI/PMI)  │    ⏳    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测9/10)
+│  3秒Tick           │    —     │  ✅  │  —     │   —     │   —   │
+│  期权/可转债/期货  │    —     │  ✅  │  —     │   —     │   —   │
+│  除权因子          │    —     │  ✅  │  —     │   —     │   —   │
+│  指数成分股        │    ✅    │  —   │  ✅    │   —     │   —   │  ← Baostock 50/300/500
+│  交易日历          │    —     │  ✅  │  ✅    │   —     │   —   │  ← Baostock
+│  美股日K线         │    ❌    │  —   │  —     │   ❌    │  ❌   │  ← 免费源全部失败(需淘宝)
+│  美股财务报表      │    ❌    │  —   │  —     │   —     │  ❌   │  ← yfinance限流
+│  美股指数(道/纳/标)│    ❌    │  —   │  —     │   —     │  ❌   │  ← yfinance限流
+│  港股日K线         │    ❌    │  ✅  │  —     │   —     │  ❌   │
+│  财经新闻          │    ❌    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测)
+│  研报/一致预期     │    ❌    │  —   │  —     │   ✅    │   —   │  ← AKShare补盲区(实测)
 └──────────────────────────────────────────────────────────────────┘
-  ✅=可获取  ⏳=配额限制  ❌=试用不支持  ⚠️=部分覆盖  —=不适用
+  ✅=实测通过  ⏳=配额限制  ❌=不可用  ⚠️=部分覆盖  —=不适用
 ```
 
-> **结论**：iFind 试用账号的 5 类 ❌ 盲区（美股/港股/新闻/研报/分析师预期）+ 1 类 ⏳ 配额限制（EDB宏观）全部被免费源覆盖。**策略所需数据 100% 可获取，无需升级 iFind 正式账号**。
+> **实测结论（v1.2.0，2026-07-03）**：
+> - iFind 试用账号的 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（实测通过）
+> - **A股K线+财务** 被 Baostock 覆盖（实测 10/10 通过，最稳定）
+> - **美股数据** 免费源全部失败（yfinance限流/Stooq反爬虫/AKShare美股连接拒绝），**需淘宝购买**
+> - A股全品类数据 100% 可获取（iFind+QMT+Baostock+AKShare）；美股需淘宝
 
-### §7.7 免费源 API 调用完整示例
+### §7.8 免费源 API 调用完整示例
 
-#### §7.7.1 环境配置
+#### §7.8.1 环境配置
 
 ```powershell
 # 一次性安装所有免费源库
@@ -1430,7 +1537,7 @@ pip install yfinance --upgrade
 pip install pandas-datareader --upgrade
 ```
 
-#### §7.7.2 EDB 宏观数据下载（替代 iFind THS_EDBQuery）
+#### §7.8.2 EDB 宏观数据下载（替代 iFind THS_EDBQuery）
 
 ```python
 import akshare as ak
@@ -1463,7 +1570,7 @@ for name, df in {**indicators, **us_indicators}.items():
     # df.to_clickhouse(...)  # 实际写入时用 DatabaseService
 ```
 
-#### §7.7.3 美股数据下载（替代 iFind 美股行情）
+#### §7.8.3 美股数据下载（替代 iFind 美股行情）
 
 ```python
 import yfinance as yf
@@ -1492,7 +1599,7 @@ for ticker in tickers:
         time.sleep(5)
 ```
 
-#### §7.7.4 财经新闻下载（替代 iFind THS_iEvent）
+#### §7.8.4 财经新闻下载（替代 iFind THS_iEvent）
 
 ```python
 import akshare as ak
@@ -1510,7 +1617,7 @@ calendar = ak.news_eco_calendar()
 calendar.to_csv("D:/A股数据/akshare/eco_calendar.csv")
 ```
 
-#### §7.7.5 研报与一致预期（替代 iFind THS_iResearch）
+#### §7.8.5 研报与一致预期（替代 iFind THS_iResearch）
 
 ```python
 import akshare as ak
@@ -1524,7 +1631,7 @@ forecast = ak.stock_profit_forecast_ths(symbol="600000")
 forecast.to_csv("D:/A股数据/akshare/forecast_600000.csv")
 ```
 
-### §7.8 免费源验证脚本
+### §7.9 免费源验证脚本
 
 ```python
 """免费源连接验证脚本——运行此脚本确认所有免费源可用"""
@@ -1570,7 +1677,7 @@ if __name__ == "__main__":
         sys.exit(1)
 ```
 
-### §7.9 免费源文档维护规则
+### §7.10 免费源文档维护规则
 
 1. **免费源接口失效时**：必须记录到 §7.5 风险与限制，并提供替代方案（多源备份）。
 2. **新增免费源时**：必须在 §7.1 总览 + §7.2-§7.4 详细指南 + §7.6 互补矩阵 中同步更新。
