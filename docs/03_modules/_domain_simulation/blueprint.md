@@ -432,8 +432,8 @@ class ExperimentMetric:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L11-001 ML Platform | 必须 | CTR-011 ModelCheckpoint + CTR-P1-004/005 ModelServing | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` |
-| MOD-L09-001 Research | 可选 | CTR-010 ExperimentMetric 上报 + CTR-P1-014 ExperimentResult 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_research\research_core\blueprint.md` |
+| MOD-L11-001 ML Platform | 必须 | CTR-011 ModelCheckpoint + CTR-P1-004/005 ModelServing | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
+| MOD-L09-001 Research | 可选 | CTR-010 ExperimentMetric 上报 + CTR-P1-014 ExperimentResult 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_research\blueprint.md` |
 | L00 Data Source | 可选 | CTR-001 NormalizedMarketData | — | — |
 | INF-012 Database | 必须 | CTR-012 ExperimentArtifact 归档 | — | — |
 | shared/contracts/experiment | 必须 | ExperimentResult 数据类 | — | `D:\ZephyrAlpha\src\zephyr\shared\contracts\experiment\experiment_result.py` |
@@ -475,7 +475,7 @@ class ExperimentMetric:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\experiment_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\blueprint.md` | 本文件 |
 | 业务代码（基类+数据类） | `D:\ZephyrAlpha\src\zephyr\simulation\pipeline_base.py` | ExperimentPipelineBase + ScoutAgentBase + ExperimentConfig + ExperimentMetric |
 | 业务代码（默认实现） | `D:\ZephyrAlpha\src\zephyr\simulation\implementations\default_experiment_pipeline.py` | DefaultExperimentPipeline |
 | 测试代码 | `D:\ZephyrAlpha\tests\simulation\` | 测试用例（待创建） |
@@ -882,7 +882,7 @@ class ExperimentMetric:
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | 实验层代码 | `D:\ZephyrAlpha\src\zephyr\simulation\` | 修改 | 蓝图描述的核心代码 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\experiment_core\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\blueprint.md` | 修改 | 本文件 |
 
 ---
 
@@ -904,8 +904,8 @@ class ExperimentMetric:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` (MOD-L11-001) | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_research\research_core\blueprint.md` (MOD-L09-001) | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` (MOD-L11-001) | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_research\blueprint.md` (MOD-L09-001) | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\simulation\` (代码) | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则

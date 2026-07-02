@@ -682,7 +682,7 @@ Step4: 完成 → CategoryManager自动发现(不加载) → 未来enabled=true�
 
 | 子蓝图 | 路径 | 状态 | 细化程度 |
 |--------|------|:----:|---------|
-| L00 datasource_core（上游） | ../_domain_data/datasource_core/blueprint.md | 🔄重建中(v4.0.0) | 接口契约 |
+| L00 datasource_core（上游） | ../_domain_data/blueprint.md | 🔄重建中(v4.0.0) | 接口契约 |
 | C1 market_clickhouse | sub_blueprints/c1_market_clickhouse.md | ⬜待建 | 字段级DDL |
 | C2 indicator_clickhouse | sub_blueprints/c2_indicator_clickhouse.md | ⬜待建 | 字段级DDL |
 | C3 news_clickhouse | sub_blueprints/c3_news_clickhouse.md | ⬜待建 | 字段级DDL |

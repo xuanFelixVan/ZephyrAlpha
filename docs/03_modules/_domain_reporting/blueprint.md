@@ -382,10 +382,10 @@ class PerformanceAttributionReport:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L06-001 Trade Execution | 必须 | CTR-005 Fill + CTR-004 Order | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` |
+| MOD-L06-001 Trade Execution | 必须 | CTR-005 Fill + CTR-004 Order | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
 | MOD-L05-001 Portfolio Construction | 必须 | CTR-006 PositionSnapshot | — | `D:\ZephyrAlpha\docs\03_modules\_domain_portfolio_core\portfolio-core\blueprint.md` |
-| MOD-L04-001 Risk Management | 可选 | CTR-P1-011 RiskMetricsReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` |
-| MOD-L02-001 Alpha Factor | 可选 | CTR-P1-001 FactorMonitorReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| MOD-L04-001 Risk Management | 可选 | CTR-P1-011 RiskMetricsReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\blueprint.md` |
+| MOD-L02-001 Alpha Factor | 可选 | CTR-P1-001 FactorMonitorReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -421,7 +421,7 @@ class PerformanceAttributionReport:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\reporting\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\reporting\` | 测试用例（待创建） |
 | 绩效归因报告契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\portfolio\performance_attribution_report.py` | 绩效归因报告结构（归属 MOD-INF-016） |

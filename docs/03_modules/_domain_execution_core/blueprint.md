@@ -399,9 +399,9 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-L05-001 | 必须 | CTR-004 Order | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_portfolio_core\portfolio-core\blueprint.md` |
-| MOD-L04-001 | 必须 | CTR-ERR-004 RiskLimitViolationError | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` |
-| MOD-L07-001 | 可选 | CTR-005 Fill / CTR-P1-007 ExecutionReport 消费 | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` |
-| MOD-L11-001 | 可选 | CTR-006 PositionSnapshot 消费 | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` |
+| MOD-L04-001 | 必须 | CTR-ERR-004 RiskLimitViolationError | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\blueprint.md` |
+| MOD-L07-001 | 可选 | CTR-005 Fill / CTR-P1-007 ExecutionReport 消费 | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\blueprint.md` |
+| MOD-L11-001 | 可选 | CTR-006 PositionSnapshot 消费 | v1.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
 | EXT-001 | 可选 | Broker API (REST / FIX 4.2+) | — | 外部系统 |
 
 ### 10.2 依赖图对齐声明
@@ -439,7 +439,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` | 本文件（含设计和施工指引） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` | 本文件（含设计和施工指引） |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\ex_core\` | Python 源码 |
 | 券商适配器 | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\` | 适配器实现 |
 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\` | 契约数据模型 |
@@ -893,7 +893,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
-| 9 | 本蓝图 | — | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` | 本蓝图即SSoT |
+| 9 | 本蓝图 | — | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` | 本蓝图即SSoT |
 
 ---
 
@@ -937,9 +937,9 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` | §4 接口契约（CTR-005 Fill, CTR-P1-007 ExecutionReport） |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | §4 接口契约（CTR-006 PositionSnapshot） |
-| Tier 2 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` | §4 接口契约（CTR-006 PositionSnapshot） |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\blueprint.md` | §4 接口契约（CTR-005 Fill, CTR-P1-007 ExecutionReport） |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\blueprint.md` | §4 接口契约（CTR-006 PositionSnapshot） |
+| Tier 2 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` | §4 接口契约（CTR-006 PositionSnapshot） |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\ex_core\` | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则

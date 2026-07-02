@@ -521,7 +521,7 @@ class QualityReport:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\data\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\data\` | 测试用例 |
 

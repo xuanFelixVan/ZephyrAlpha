@@ -398,10 +398,10 @@ class BacktestConfig:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
-| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
-| MOD-L07-001 Post-Trade Analytics | 可选 | 盘后分析→研究输入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` |
-| MOD-L13-001 Experiment Pipeline | 可选 | CTR-P1-014 ExperimentResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\experiment_core\blueprint.md` |
+| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
+| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
+| MOD-L07-001 Post-Trade Analytics | 可选 | 盘后分析→研究输入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\blueprint.md` |
+| MOD-L13-001 Experiment Pipeline | 可选 | CTR-P1-014 ExperimentResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -443,7 +443,7 @@ class BacktestConfig:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_research\research_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_research\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\research\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\research\` | 测试用例 |
 
