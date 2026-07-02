@@ -1,4 +1,19 @@
 # ==== BEGIN CODGEN:CTR-002 ====
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
+# [MODULE] zephyr.shared.contracts.factor_signal
+# [DOMAIN] D_INFRASTRUCTURE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
+# [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [TTL] task_bound
 from dataclasses import dataclass, field
 
 from datetime import datetime, timezone
@@ -12,7 +27,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-06-24"
+# created: "2026-07-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -37,8 +52,6 @@ class FactorSignal:
     as_of_date: datetime
     factor_id: str
     idempotency_key: str
-    idempotency_key: str
-    idempotency_key: str
     raw_value: float
     symbol: str
     confidence: float = 1.0
@@ -55,3 +68,11 @@ class FactorSignal:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-002 ====
+
+
+
+
+
+
+
+
