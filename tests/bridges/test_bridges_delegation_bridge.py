@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.audit_trail.delegation_bridge import _MAX_DELEGATION_DEPTH, AuditDelegationBridge
+from zephyr.governance.audit_trail.bridges.audit_delegation_bridge import _MAX_DELEGATION_DEPTH, AuditDelegationBridge
 
 
 @pytest.fixture

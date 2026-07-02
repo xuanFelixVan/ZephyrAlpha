@@ -76,14 +76,3 @@ class TieredStorageBridge:
 
     def is_available(self) -> bool:
         return self._available
-
-
-class AuditTieredStorageBridge:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def migrate(self, entry, target_tier):
-        return BridgeResult()
-
-    def query(self, tier, criteria=None):
-        return []

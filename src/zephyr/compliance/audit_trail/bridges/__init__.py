@@ -8,13 +8,13 @@ Audit Trail — MOD-INF-020
 G-CT-001 (RBAC→Audit), G-CT-002 (Audit→Rollback).
 """
 
-from zephyr.governance.audit_trail.bridges.anomaly import AnomalyDetector, AnomalyEvent
-from zephyr.governance.audit_trail.bridges.contracts import AuditWriter
-from zephyr.governance.audit_trail.bridges.delegation_bridge import AuditDelegationBridge
-from zephyr.governance.audit_trail.bridges.drift_bridge import BridgeResult, DriftBridge
-from zephyr.governance.audit_trail.bridges.feedback_bridge import AuditFeedbackBridge
-from zephyr.governance.audit_trail.bridges.tiered_storage_bridge import AuditTieredStorageBridge
-from zephyr.governance.audit_trail.bridges.trust_bridge import AuditTrustBridge
+from zephyr.governance.audit_trail.bridges.audit_anomaly import AnomalyDetector, AnomalyEvent
+from zephyr.governance.audit_trail.bridges.audit_contracts import AuditWriter
+from zephyr.governance.audit_trail.bridges.audit_delegation_bridge import AuditDelegationBridge
+from zephyr.governance.audit_trail.bridges.audit_drift_bridge import BridgeResult, DriftBridge
+from zephyr.governance.audit_trail.bridges.audit_feedback_bridge import AuditFeedbackBridge
+from zephyr.governance.audit_trail.bridges.audit_tiered_storage_bridge import AuditTieredStorageBridge
+from zephyr.governance.audit_trail.bridges.audit_trust_bridge import AuditTrustBridge
 
 __all__ = [
     "AnomalyDetector",
@@ -26,14 +26,13 @@ __all__ = [
     "AuditWriter",
     "BridgeResult",
     "DriftBridge",
-    "anomaly",
-    "contracts",
-    "delegation_bridge",
-    "drift_bridge",
-    "feedback_bridge",
-    "spec_auditor",
-    "tiered_storage_bridge",
-    "trust_bridge",
+    "audit_anomaly",
+    "audit_contracts",
+    "audit_delegation_bridge",
+    "audit_drift_bridge",
+    "audit_feedback_bridge",
+    "audit_tiered_storage_bridge",
+    "audit_trust_bridge",
 ]
 
 __version__ = "0.1.0"
@@ -41,7 +40,7 @@ __module_id__ = "MOD-INF-020"
 
 
 def __getattr__(name: str):
-    # __all__ 里的子模块名（如 spec_auditor）实际位于 zephyr.governance.audit_trail.bridges.*，
+    # __all__ 里的子模块名（如 audit_anomaly）实际位于 zephyr.governance.audit_trail.bridges.*，
     # 用 __getattr__ 按需 lazy 加载（替代已删除的 `from . import spec_auditor`）
     import importlib
 

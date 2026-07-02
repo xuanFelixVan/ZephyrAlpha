@@ -79,17 +79,3 @@ class DelegationBridge:
 
     def is_available(self) -> bool:
         return self._available
-
-
-class AuditDelegationBridge:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def delegate(self, task, target):
-        return True
-
-    def verify(self, delegation_id):
-        return True
-
-
-_MAX_DELEGATION_DEPTH = 5

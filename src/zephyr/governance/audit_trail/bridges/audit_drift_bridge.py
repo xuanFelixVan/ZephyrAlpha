@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
-# [MODULE] zephyr.governance.audit_trail.bridges.drift_bridge
+# [MODULE] zephyr.governance.audit_trail.bridges.audit_drift_bridge
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.governance.audit_trail.anomaly; zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.drift_models
 # [CONSUMERS]
