@@ -64,7 +64,7 @@ from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBri
 from zephyr.governance.audit_trail.trust_bridge import TrustBridge
 from zephyr.governance.audit_trail.trust_engine import TrustEngine, TrustLevel
 from zephyr.governance.audit_trail.writer import AuditReportWriter
-from zephyr.governance.audit_trail.evidence_pack import EvidencePack
+from zephyr.governance.evidence_pack import EvidencePack  # ARCH-031: EvidencePack canonical 在根目录 governance/evidence_pack.py
 from zephyr.governance.integrity import IntegrityGuard  # ARCH-031: IntegrityGuard canonical 在根目录 governance/integrity.py
 from zephyr.governance.merkle_hourly import MerkleHourlyBridge  # ARCH-031: MerkleHourlyBridge canonical 在根目录
 

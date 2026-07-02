@@ -54,24 +54,28 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
 try:
     import zephyr.governance.drift_detection.drift_detector as drift_detector_mod
-except ImportError:
+except (ImportError, RuntimeError):
     drift_detector_mod = None
 try:
     import zephyr.governance.escalation.escalation_engine as escalation_protocol
-except ImportError:
+except (ImportError, RuntimeError):
     escalation_protocol = None
-from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
-from zephyr.governance.behavioral_admission.admission_response import (
-    AdmissionResponse,
-    AdmissionResponseBuilder,
-    AdmissionResponseStatus,
-)
-from zephyr.governance.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
-from zephyr.governance.constitutional_update.constitutional_update import (
-    ConstitutionalAutoUpdate,
-    Learning,
-    ProposedUpdate,
-)
+try:
+    from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
+    from zephyr.governance.behavioral_admission.admission_response import (
+        AdmissionResponse,
+        AdmissionResponseBuilder,
+        AdmissionResponseStatus,
+    )
+    from zephyr.governance.behavioral_admission.mcp_result_push import PushStatus, ResultPushManager
+    from zephyr.governance.constitutional_update.constitutional_update import (
+        ConstitutionalAutoUpdate,
+        Learning,
+        ProposedUpdate,
+    )
+except (ImportError, RuntimeError):
+    # RuntimeError: 捕获循环 import _DeadlockError（behavioral_admission → audit_trail 循环链）
+    pass
 
 
 def __getattr__(name):
@@ -138,7 +142,8 @@ try:
     from zephyr.governance.ops_governance.token_budget import PoolLevel
     from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
     from zephyr.governance.audit_trail.wqa_scorer import WQAScore
-except ImportError:
+except (ImportError, RuntimeError):
+    # RuntimeError: 捕获循环 import _DeadlockError（importlib._bootstrap._DeadlockError 是 RuntimeError 子类）
     pass
 
 # ARCH-031 #6残余: 补齐 __all__ 中声明的悬空符号 import，使 __all__ 与实际 import 一致
@@ -210,7 +215,8 @@ try:
     import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.architecture_governance.system_topology as system_topology
     import zephyr.governance.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
-except ImportError:
+except (ImportError, RuntimeError):
+    # RuntimeError: 捕获循环 import _DeadlockError（同上）
     pass
 
 __all__ = [
