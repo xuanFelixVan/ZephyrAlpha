@@ -2616,7 +2616,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 #### 5.18.14 gates表在两个DB中结构完全不同（同名异构）【MEDIUM】
 - 证据：depgraph [00_sqlite_actual_schema.sql:225-236](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `gates(gate_id TEXT PK, name, entry, description, files_trigger, always_run, category, status, source, event_driven, auto_start)` 11列只读表（YAML真源）；governance.db [sqlite_schema.py:163-174](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `gates(gate_run_id TEXT PK, gate_id TEXT, passed INTEGER, details, artifact_path, session_id, task_id, created_at)` 7列运行记录；两表同名但列名/语义/PK完全不同，跨库JOIN出错
 - 病根：根因2（同名表多定义）
-- 修复：governance.db的gates改名`gate_runs`
+- 修复：governance.db的gates改名`gate_runs` [✓ 2026-07-03 治本补全：v15 改名漏改 3 生产文件（gate_engine.py INSERT INTO gates、system_snapshot.py FROM gates、olap_engine.py _table("gates")+gates_fallback）+ 8 测试文件，已全部对齐 gate_runs；auto_runner.py 引用 depgraph gates 表（PG 仍存在）不改；test_f18_redblue.py 引用 depgraph gates（全部 skip）不改]
 
 #### 5.18.15 schema层时间戳DEFAULT不一致（三套格式混用）【LOW】 [✓ FIXED: 2026-07-02 sqlite_schema.py 4处 datetime('now') 统一为 strftime('%Y-%m-%dT%H:%M:%SZ','now')（ISO 8601 UTC）：circuit_breaker_state.created_at/updated_at、fle_metrics.collected_at、fle_alerts.created_at、fle_dispatch_log.dispatched_at]
 - 证据：[sqlite_schema.py:190-191](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) circuit_breaker_state `created_at TEXT NOT NULL DEFAULT (datetime('now'))` SQLite内置UTC无时区；`:112-113` tasks `created_at TEXT NOT NULL` 无DEFAULT应用层填；`:978` migration记录 `datetime.now(UTC).isoformat()` Python UTC带时区；[apply_depgraph.py:1416](file:///d:/ZephyrAlpha/scripts/governance/apply_depgraph.py) domains `datetime.datetime.now().isoformat()` 本地时间无时区（naive）；三种格式混用导致ORDER BY排序错乱、`>`比较失效
@@ -2638,7 +2638,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮修复进度（2026-07-02）批次A-E 全部完成**：
 > - **批次A（5.18.2/3）已修复**：rule_id 类型统一 + PG FK 补全（depgraph_schema.py 治本注释）
-> - **批次B（5.18.4/5/14）已修复**：gate_decisions 统一 v28 + tasks.domain_id 删除（v30 migration）+ gates→gate_runs 改名（v15 + benign error）
+> - **批次B（5.18.4/5/14）已修复**：gate_decisions 统一 v28 + tasks.domain_id 删除（v30 migration）+ gates→gate_runs 改名（v15 + benign error）[✓ 2026-07-03 治本补全：v15 改名漏改 3 生产文件（gate_engine/system_snapshot/olap_engine）+ 8 测试文件，已全部对齐 gate_runs；auto_runner.py 引用 depgraph gates（PG 仍存在）不改]
 > - **批次C（5.18.6/7）已修复**：_DDL_TASK_EVENTS_V2 补 CHECK+UNIQUE + v31 migration 重建模式补约束；v23/v25/v27 writable_schema hack 移除（_DDL_TASKS v1 已含正确约束，hack 在全新库是 no-op）
 > - **批次D（5.18.9余/15）已修复**：arch_directory_tree FK 定义补全（02_create_pg_schema.sql + depgraph_schema.py）+ cleanup_arch_dir_orphans.py 清理脚本已执行（676 孤儿清理 + FK fk_arch_dir_domain 补齐）；4处 datetime('now') 统一为 strftime ISO 8601
 > - **批次E（5.18.12/13）已修复**：apply_pg_schema() 恢复 PG 迁移框架 + backup_before_migration()/restore_from_backup() 提供 downgrade 能力
