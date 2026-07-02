@@ -531,16 +531,16 @@ entries:
     服务所有权分离）。对标 Netflix/Stripe/Sourcegraph 自动触发主流做法。
   fix_phase: |
     阶段0（已完成）：修订 dependency_path_panorama.md §14.2 + 登记 #ARCH-040（本条目）。
-    阶段1（待施工，需任务卡）：实现 GATE-DEPGRAPH-OPS reconciler
-    （reconciliation_registry.py 新增 make_depgraph_ops_reconciler +
-    git_commit_gateway.py 注册）+ generate_project_depgraph.py 加 pg_advisory_lock。
-    阶段2（待施工，需任务卡，架构债）：schema 迁移，新建 nodes_metadata/edges_metadata
-    表，迁移 14+9 字段，下线 P1/P2 保护机制。
-    阶段3（待施工，需任务卡，架构债）：增量引擎，文件级 hash fingerprint。
-  status: decided
+    阶段1（已完成）：实现 GATE-DEPGRAPH-OPS reconciler + generate_project_depgraph.py 加
+    pg_advisory_xact_lock(424242) 与 apply_depgraph.py 的 pg_advisory_lock(424242) 互斥。
+    阶段2（已完成，commit fd4d301eb9）：schema 迁移，新建 nodes_metadata/edges_metadata 表，
+    迁移 14+9 字段，下线 P1/P2 Python 保护机制（替代为 SQL UPSERT+UPDATE）。
+    阶段3（已完成，commit 2093db3615）：增量引擎，文件级 hash fingerprint——content_hash 列 +
+    compute_file_hash() + --incremental skip 逻辑（无变更时跳过 DB 重建）。
+  status: resolved
   related_adjudication: '#209'
   created: '2026-07-02'
-  last_updated: '2026-07-02'
+  last_updated: '2026-07-03'
 - issue_id: '#ARCH-041'
   title: scripts/governance/meta/ 容量治理裁定——治本优先路线（规则口径消歧+元数据漂移修正+_backups债务清理）
   severity: P2中
