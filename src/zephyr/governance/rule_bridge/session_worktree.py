@@ -5,7 +5,7 @@
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；start 创建 worktree 前自动清扫 .aidrafts/sess-* stale 残留（_sweep_stale_worktrees，三重安全保护：age>30min + 不在 active registry + 分支 tip 在 HEAD 祖先，异常不阻断 start，独立 _WorktreeLock 周期避免锁重入）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -686,9 +686,48 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
     return cleaned, skipped
 
 
+def _get_merge_files(root: Path) -> list[str]:
+    """获取最近一次 merge 引入的文件列表（git diff HEAD~1 HEAD --name-only）。"""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+            cwd=str(root), capture_output=True, text=True, timeout=10,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
+    except Exception:
+        pass
+    return []
+
+
+def _run_reconcilers_after_merge(
+    committed_files: list[str], session_id: str, root: Path
+) -> list[dict]:
+    """merge 后触发 reconciler（补齐 worktree 路径的 reconciler 验证）。
+
+    创建临时 GitCommitGateway 实例，调用 reconcile_for 触发默认 17 个 reconciler。
+    reconciler 的 auto-commit 通过 gateway._commit_auto 处理（防递归已内置）。
+    """
+    try:
+        from zephyr.governance.rule_bridge.git_commit_gateway import GitCommitGateway
+        gateway = GitCommitGateway(project_root=root)
+        results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
+        summary = []
+        for r in results:
+            if r.action == "skip":
+                continue
+            summary.append({"action": r.action, "detail": r.detail})
+            print(f"[RECONCILER] {r.action}" + (f" - {r.detail}" if r.detail else ""))
+        return summary
+    except Exception as e:
+        print(f"[RECONCILER] 触发失败: {e}")
+        return [{"action": "warn", "detail": str(e)}]
+
+
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
+    reconcile_verify: bool = False,
 ) -> dict:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
@@ -761,12 +800,27 @@ def session_worktree_merge(
         except Exception:
             pass
 
+    # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
+    reconcile_results: list[dict] = []
+    if reconcile_verify and merged and cleaned:
+        try:
+            committed_files = _get_merge_files(root)
+            if committed_files:
+                print(f"[RECONCILER] merge 后触发 reconciler 验证（{len(committed_files)} 个文件）...")
+                reconcile_results = _run_reconcilers_after_merge(committed_files, session_id, root)
+            else:
+                print("[RECONCILER] 无变更文件，跳过 reconciler")
+        except Exception as e:
+            print(f"[RECONCILER] 触发失败: {e}")
+            reconcile_results = [{"action": "warn", "detail": str(e)}]
+
     return {
         "session_id": session_id,
         "merged": merged,
         "message": msg,
         "cleaned": cleaned,
         "unregistered": unregistered,
+        "reconcile_results": reconcile_results,
     }
 
 
