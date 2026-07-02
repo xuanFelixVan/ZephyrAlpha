@@ -435,6 +435,8 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
     阶段1（裁定#209）：全量扫描，每次 commit .py 都重跑。
     阶段3（裁定#209）：引入文件级 hash fingerprint 增量，降低频率成本。
 
+    实弹验证（2026-07-02）：xact_lock(424242) 互斥保护已补全，clean 结果可见输出。
+
     Args:
         gateway: GitCommitGateway 实例（用 project_root）。
 
