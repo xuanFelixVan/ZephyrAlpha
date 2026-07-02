@@ -1819,6 +1819,34 @@ capabilities:
       真源。解决防重建：check_file_canonical() 反查 + validate_script_quality.py L343 检测 os.walk()
       散点，阻止新 AI 重新造轮子。对标 trae_060 §2 唯一真源原则 + SCRIPT-QUALITY-001 D-D-05。
 
+  # --------------------------------------------------------------------------
+  - capability_id: ast_import_rewriter
+    canonical_override: scripts/governance/ast_import_rewriter.py
+    aliases:
+      - ImportRewriter
+      - MoveEntry
+      - ast_import_rewriter
+    description: >-
+      AST 精确 import 重写引擎（ARCH-031 P0）。scripts/governance/ast_import_rewriter.py
+      使用 stdlib ast 定位 ImportFrom/Import 节点，行级 replace 保留格式/注释。幂等
+      （已替换模块跳过），支持 dry-run，无 regex。governance_root_split.py 编排器
+      通过 importlib.util 加载本模块（避免 scripts/governance/ 与 src/zephyr/governance/
+      包名冲突）。[TTL] task_bound——ARCH-031 迁移完成后可退役。
+
+  # --------------------------------------------------------------------------
+  - capability_id: governance_root_split
+    canonical_override: scripts/migration/governance_root_split.py
+    aliases:
+      - governance_root_split
+      - MigrationEntry
+    description: >-
+      governance/ 根目录平铺治本迁移编排器（ARCH-031）。scripts/migration/
+      governance_root_split.py 复用 ast_import_rewriter（向内收）做全项目 import 重写，
+      自己做 shutil.move 剪切粘贴 + [BLUEPRINT] header 更新 + registry status 更新。
+      7 子命令：--move/--rewrite-imports/--update-headers/--fix-external-refs/
+      --update-registry-status/--dry-run/--batch。对标 dm314_infra_ops_split.py 模式。
+      [TTL] task_bound——ARCH-031 迁移完成后可退役。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -2002,6 +2030,20 @@ creation_tokens:
     token: "auto-orch-quality-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_quality_package_marker"
+
+  # --- ARCH-031 P0: governance/ root split 迁移工具 ---
+  - file: "scripts/governance/ast_import_rewriter.py"
+    token: "auto-arch031-ast-rewriter-20260702"
+    created_by: "session-arch031-p0-build"
+    capability: "ast_import_rewriter"
+  - file: "scripts/migration/governance_root_split.py"
+    token: "auto-arch031-gov-split-20260702"
+    created_by: "session-arch031-p0-build"
+    capability: "governance_root_split"
+  - file: "docs/02_enterprise_architecture/migration-registry.yaml"
+    token: "auto-arch031-mig-registry-20260702"
+    created_by: "session-arch031-p0-build"
+    capability: "governance_root_split"
 
 # ============================================================================
 # 维护日志
