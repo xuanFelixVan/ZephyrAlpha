@@ -163,7 +163,7 @@ result = await gateway.full_scan(user_text, llm_response)
 新 AI 进入项目后，发现已有功能/符号有两个互补手段，职责边界明确：
 
 - **能力发现（CapabilityLookup）**：查"某个能力是否存在 + canonical 真源在哪"。
-  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（~45 条已声明能力）
+  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（134 条已声明能力）
   - 用法：`from zephyr.governance.capability_lookup import CapabilityLookup; CapabilityLookup().find("handoff")`
   - 覆盖范围：仅已声明 capability_id 的功能。子目录文件（如 `audit_trail/agent_signer.py`）默认未声明，查不到。
   - 何时用：新 AI 想做"X 功能"前，反查是否已有该能力的 canonical 实现。
@@ -176,6 +176,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 - **为什么不在 YAML 声明所有子目录文件**：维护成本高（governance/ 子目录有 200+ 文件）且无必要——Grep 已能可靠发现符号，CapabilityLookup 重复实现符号发现会破坏职责边界（向内收原则①：能现成不创造）。
 - **何时声明新 capability**：当某个功能有明确能力边界、可被复用、且新 AI 可能不知道已存在时（如 `agent_signer`、`self_healer`），才在 YAML 声明 capability 条目。
+- **pipeline 模块 canonical 声明**（2026-07-02，消除 `integration/` 与 `infrastructure/pipeline/` dual source 镜像副本）：管线核心15模块（`model_router`/`cost_tracker`/`layer_router`/`ct_pipe_routing`/`preemption_manager`/`pipeline_agent_bridge`/`llm_gateway`/`routing_plugins`/`pipeline_lock`/`layer_consumer_registry`/`dead_letter_queue`/`circuit_breaker_manager`/`backpressure_types`/`backpressure_manager`/`pipeline_models`）已登记 capability，canonical = [`src/zephyr/infrastructure/pipeline/`](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/)（production/D_INFRA_RUNTIME）。原 `src/zephyr/integration/` 顶层镜像副本（prototype/D_INTEGRATION）已删除。新 AI 想做"管线模型路由/成本追踪/背压管理/断路器"等前，CapabilityLookup 会反查到 canonical 在 `infrastructure/pipeline/`，勿在 `integration/` 重建。编排器 `PipelineOrchestrator` 例外，仍在 `integration/pipeline_orchestrator.py`（跨域集成入口，组合 infra.pipeline 组件）。
 
 ### 4.5 根目录 vs 子目录同名文件门禁（ARCH-031 局限1 调研结论，2026-07-01）
 

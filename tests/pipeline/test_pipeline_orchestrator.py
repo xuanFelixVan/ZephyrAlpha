@@ -13,12 +13,12 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-from zephyr.integration.pipeline_routing import (
+from zephyr.infrastructure.pipeline.models import (
     M_MODULE_SPECS,
     M_MODULES,
-    PipelineOrchestrator,
     PipelineStatus,
 )
+from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.shared.foundation.models import TaskCard
 
 
