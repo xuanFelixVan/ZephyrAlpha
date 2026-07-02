@@ -11,6 +11,55 @@
 # [TESTS] tests/audit-orchestrator/
 # [TTL] task_bound
 
+# ============================================================================
+# audit_trail 模块地图（ARCH-042 阶段4裁定：强化发现性，不建物理子目录）
+# ============================================================================
+# ARCH-042 阶段4裁定（2026-07-03）：本包root=62个.py文件享GOV-DOC-018 T_soft=120
+# （10前缀簇+34功能名单体），62≤120合规，物理拆分非阈值强制。
+# 不建物理子目录的理由（ARCH-034 + ARCH-042裁定双重支持）：
+#   ① 前缀分组已提供可预测的Glob检索（audit_*/ *_bridge / trust_* / merkle_* 等）
+#   ② 100+外部import改动=漂移源（含lazy import别名引用+__file__路径陷阱）
+#   ③ audit_trail/__init__.py 是Safety=H对外垫片（_LAZY_IMPORTS 40+条目），拆分风险>收益
+# 物理平铺 + 逻辑分类已分层：新AI通过本地图 + _LAZY_IMPORTS 字典即可定位任意符号。
+#
+# bridges/ 子包（9文件）：独立adapter层，提供Audit*前缀适配API（与root production实现
+# 不同类名/委托目标/API）。src/zephyr/compliance/audit_trail/bridges/ 是外部消费者。
+#
+# 前缀簇归类（10簇，覆盖22文件）：
+#   audit_*          — 审计准入/写保护（admission_controller, schema, write_failure_protector）
+#   *_bridge         — 桥接适配（bridge, delegation_bridge, drift_bridge, feedback_bridge,
+#                      tiered_storage_bridge, trust_bridge）
+#   trust_*          — 信任引擎（trust_engine, trust_ring_manager）
+#   merkle_*         — Merkle 哈希（merkle_audit, merkle_hourly）
+#   supply_chain*    — 供应链安全（supply_chain, supply_chain_security）
+#   finding_*        — 发现/摄入（finding_ingest, finding_model）
+#   feedback_*       — 反馈策略（feedback_policy, feedback_self_audit）
+#   delegation_*     — 委托审计（delegation_auditor）
+#   tiered_storage*  — 分层存储（tiered_storage）
+#   text_to_finding* — 适配器（text_to_finding_adapter）
+#
+# 功能名单体（40文件，各自独立职责，不强制前缀）：
+#   orchestrator(compat层,MOD-INF-020) models contracts indexer writer query
+#   cli pipeline_runner replay_engine cold_start genesis retention log_rotation
+#   evidence_pack integrity integrity_verifier merkle_hourly(根canonical)
+#   anomaly event_store action_history agent_signer api_lifecycle
+#   changelog_manager code_archaeology compliance_map corporate_actions
+#   dora_metrics external_tool_audit forensic_package glossary_matrix
+#   incremental_review kb_gate observability_dashboard privacy
+#   provenance_tracker resource_aware_pool sbom_generator self_monitor
+#   spec_auditor wqa_scorer
+#
+# 命名规则约定（未来新增文件遵循，便于按名定位归簇）：
+#   - audit_*           → 审计准入/写保护簇
+#   - *_bridge          → 桥接适配簇
+#   - trust_*           → 信任引擎簇
+#   - merkle_*          → Merkle 哈希簇
+#   - supply_chain*     → 供应链安全簇
+#   - finding_*         → 发现/摄入簇
+#   - feedback_*        → 反馈策略簇
+#   - 其他              → 功能单体（需在地图中补登职责说明）
+# ============================================================================
+
 # ARCH-036: 子模块改为延迟导入（__getattr__ + _LAZY_IMPORTS），避免 __init__.py 直接 import 子模块
 # 与外层 `import zephyr.governance.audit_trail.X` 预获取的 module lock 冲突导致 _DeadlockError。
 # 根因: Python `import A.B.C` 先获取 C 的 module lock 再加载父包 A.B; A.B/__init__.py 中 import C
