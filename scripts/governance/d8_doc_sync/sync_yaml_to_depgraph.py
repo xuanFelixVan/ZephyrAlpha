@@ -1187,12 +1187,25 @@ def cleanup_legacy_fk_violations(cur):
 
 
 def verify_readonly_table_comments(cur):
-    """S1.2: 验证 8 张 readonly 表是否有 COMMENT（HB-001 table_comment_required）。
+    """S1.2: 验证 8 张 readonly 表 COMMENT 存在性 + 四要素完整性（HB-001 table_comment_required）。
 
-    COMMENT 缺失不影响数据正确性，只影响 AI 可发现性，因此仅告警不阻断。
+    四要素（HB-001 table_comment_rule）：
+    1. 表性质：包含 "YAML 真源只读缓存"
+    2. 禁止操作：包含 "readonly 触发器"
+    3. 真源路径：包含 "真源："
+    4. 同步入口：包含 "同步入口"
+
+    COMMENT 缺失或要素不全不影响数据正确性，只影响 AI 可发现性，因此仅告警不阻断。
     依据：hard_boundaries_registry.yaml HB-001 table_comment_required=true。
     AI 在 SQL 上下文中通过 \\d+ tablename 或 pg_description 视图发现表性质。
     """
+    REQUIRED_ELEMENTS = [
+        ("表性质", "YAML 真源只读缓存"),
+        ("禁止操作", "readonly 触发器"),
+        ("真源路径", "真源："),
+        ("同步入口", "同步入口"),
+    ]
+
     cur.execute("""
         SELECT c.relname, obj_description(c.oid) as comment
         FROM pg_class c
@@ -1201,13 +1214,31 @@ def verify_readonly_table_comments(cur):
         AND c.relname = ANY(%s)
     """, (READONLY_TABLES,))
     rows = {row["relname"]: row["comment"] for row in cur.fetchall()}
-    missing = [t for t in READONLY_TABLES if not rows.get(t)]
-    if missing:
+
+    missing_comment = []
+    incomplete = []
+
+    for table in READONLY_TABLES:
+        comment = rows.get(table)
+        if not comment:
+            missing_comment.append(table)
+            continue
+        missing_elements = [name for name, keyword in REQUIRED_ELEMENTS if keyword not in comment]
+        if missing_elements:
+            incomplete.append((table, missing_elements))
+
+    if missing_comment:
         print(f"\n[WARN] S1.2 HB-001 以下 readonly 表缺少 COMMENT（AI 可发现性受损）：")
-        for t in missing:
+        for t in missing_comment:
             print(f"  - {t}（需执行 COMMENT ON TABLE {t} IS '...'，见 02_create_pg_schema.sql 末尾）")
-    else:
-        print(f"\n[OK] S1.2 HB-001: {len(READONLY_TABLES)} 张 readonly 表 COMMENT 齐全")
+
+    if incomplete:
+        print(f"\n[WARN] S1.2 HB-001 以下 readonly 表 COMMENT 缺少四要素：")
+        for table, missing in incomplete:
+            print(f"  - {table} 缺少：{', '.join(missing)}")
+
+    if not missing_comment and not incomplete:
+        print(f"\n[OK] S1.2 HB-001: {len(READONLY_TABLES)} 张 readonly 表 COMMENT 齐全且四要素完整")
 
 
 # ========== 主同步函数 ==========
