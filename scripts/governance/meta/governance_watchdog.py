@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# ARCH-041: BLUEPRINT 必须匹配 generate_project_depgraph.py L2755 正则 ^(MOD-|D-|SH-|SYS-|PLACEHOLDER)
+# GOV-075 不匹配正则会导致文件成为孤儿（不注册到 DB）。MOD-INF-005 与同域其他文件一致。
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/governance_watchdog.py | §3.9
 # [MODULE] scripts.governance.meta.governance_watchdog
 # [DOMAIN] D_GOVERNANCE
