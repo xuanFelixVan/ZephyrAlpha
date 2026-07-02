@@ -3767,6 +3767,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：P2迁移后depgraph（依赖图真源，含3000+节点、5000+边、35个域）无任何备份
 - **影响**：RPO=∞（无备份点）；RTO=∞（无恢复路径）；违反"备份先行"硬约束
 - **修复**：新增scripts/governance/backup_pg_depgraph.sh：pg_dump --format=custom；配置每日执行
+- **ARCH-041 立项决定（2026-07-02）**：采用"inward收拢"原则——重写现有 backup_runtime_state.py 为 PG 版本（新增 `backup_pg_depgraph()` 函数），而非新建独立脚本。触发机制待定（方案A: apply_depgraph.py 成功后事件触发 pg_dump；方案B: 每日 cron 时间触发——备份场景豁免"禁止时间触发"约束，该约束仅针对 reconciler）。与 §5.33.2 合并处理——重写完成后两节同时关闭。
 
 #### 5.33.2 [HIGH] backup_runtime_state.py完全过时——仍按SQLite设计，PG迁移后未更新
 - **文件**：[backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L16)
@@ -3774,7 +3775,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：备份工具仍按SQLite时代设计；P2迁移后未更新
 - **影响**：虚假安全感；灾后无PG数据可恢复
 - **修复**：更新docstring + manifest；新增backup_pg_depgraph()函数
-- **ARCH-041 部分治本（2026-07-02）**：docstring 已标注 DEPRECATED 并指向 git history 真源（directory_contract L740）；默认输出路径从 `meta/_backups/`（deprecated）改为 `tmp/runtime_backups/`（不进 git，.gitignore 已加规则）。**剩余债务**：脚本本身仍按 SQLite 时代设计，未新增 `backup_pg_depgraph()` 函数——后续应彻底归档或重写为 PG 版本（与 §5.33.1 合并处理）。
+- **ARCH-041 部分治本（2026-07-02）**：docstring 已标注 DEPRECATED 并指向 git history 真源（directory_contract L740）；默认输出路径从 `meta/_backups/`（deprecated）改为 `tmp/runtime_backups/`（不进 git，.gitignore 已加规则）。**剩余债务**：脚本本身仍按 SQLite 时代设计，未新增 `backup_pg_depgraph()` 函数。
+- **ARCH-041 合并处理立项（2026-07-02）**：与 §5.33.1 合并处理——重写 backup_runtime_state.py 为 PG 版本（新增 `backup_pg_depgraph()` 函数），重写完成后本节与 §5.33.1 同时关闭。治本变更需在无并发 AI 环境下执行（project_memory: "治本变更未提交前禁止并发AI对话"）。
 
 #### 5.33.3 [HIGH] phase_a_backup.py BACKUP_BASE硬编码Windows非ASCII路径
 - **文件**：[phase_a_backup.py](file:///D:/ZephyrAlpha/scripts/governance/_archive/one_off/phase_a_backup.py#L61)
