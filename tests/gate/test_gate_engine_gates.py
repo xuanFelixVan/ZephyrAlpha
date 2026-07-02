@@ -353,7 +353,7 @@ def test_gate_result_persisted_to_db(db_path: Path, engine: GateEngine) -> None:
     engine.evaluate(task, "G1")
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
-    rows = conn.execute("SELECT * FROM gates").fetchall()
+    rows = conn.execute("SELECT * FROM gate_runs").fetchall()
     conn.close()
     assert len(rows) >= 1
     assert rows[0]["gate_id"].startswith("G1:")
@@ -364,7 +364,7 @@ def test_multiple_evaluations_all_persisted(db_path: Path, engine: GateEngine) -
         task = _make_task(task_id=f"SRC-{100 + i:03d}")
         engine.evaluate(task, "G1")
     conn = sqlite3.connect(str(db_path))
-    count = conn.execute("SELECT COUNT(*) FROM gates").fetchone()[0]
+    count = conn.execute("SELECT COUNT(*) FROM gate_runs").fetchone()[0]
     conn.close()
     assert count == 3
 

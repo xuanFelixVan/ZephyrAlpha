@@ -1215,7 +1215,7 @@ class GateEngine:
         try:
             target.execute(
                 """
-                INSERT INTO gates
+                INSERT INTO gate_runs
                     (gate_run_id, gate_id, passed, details, artifact_path, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,

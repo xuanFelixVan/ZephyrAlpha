@@ -257,7 +257,7 @@ class SystemSnapshotter:
         return hashes
 
     def _compute_blueprint_pass_rate(self) -> float:
-        """从 SQLite gates 表查询 G4 门禁通过率。
+        """从 SQLite gate_runs 表查询 G4 门禁通过率。
 
         - 数据库不存在或无数据时返回 -1.0（哨兵值，表示"不可用"）
         - 有数据时返回 [0.0, 1.0]
@@ -270,7 +270,7 @@ class SystemSnapshotter:
             cursor = conn.execute(
                 "SELECT COUNT(*) AS total, "
                 "SUM(CASE WHEN passed = 1 THEN 1 ELSE 0 END) AS passed "
-                "FROM gates WHERE gate_id LIKE 'G4%'"
+                "FROM gate_runs WHERE gate_id LIKE 'G4%'"
             )
             row = cursor.fetchone()
             conn.close()

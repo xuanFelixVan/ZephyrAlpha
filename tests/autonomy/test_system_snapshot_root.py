@@ -91,9 +91,9 @@ class TestSystemSnapshotter:
         snapshots_dir.mkdir()
         gates_dir.mkdir()
         conn = sqlite3.connect(str(db_path))
-        conn.execute("CREATE TABLE gates (gate_id TEXT, passed INTEGER)")
-        conn.execute("INSERT INTO gates VALUES ('G4-001', 1)")
-        conn.execute("INSERT INTO gates VALUES ('G4-002', 0)")
+        conn.execute("CREATE TABLE gate_runs (gate_id TEXT, passed INTEGER)")
+        conn.execute("INSERT INTO gate_runs VALUES ('G4-001', 1)")
+        conn.execute("INSERT INTO gate_runs VALUES ('G4-002', 0)")
         conn.commit()
         conn.close()
         snapshotter = SystemSnapshotter(
@@ -130,7 +130,7 @@ class TestSystemSnapshotter:
         gates_dir = tmp_path / "no_gates"
         snapshots_dir.mkdir()
         conn = sqlite3.connect(str(db_path))
-        conn.execute("CREATE TABLE gates (gate_id TEXT, passed INTEGER)")
+        conn.execute("CREATE TABLE gate_runs (gate_id TEXT, passed INTEGER)")
         conn.commit()
         conn.close()
         snapshotter = SystemSnapshotter(
@@ -150,7 +150,7 @@ class TestSystemSnapshotter:
         for d in [snapshots_dir, gates_dir]:
             d.mkdir()
         conn = sqlite3.connect(str(db_path))
-        conn.execute("CREATE TABLE gates (gate_id TEXT, passed INTEGER)")
+        conn.execute("CREATE TABLE gate_runs (gate_id TEXT, passed INTEGER)")
         conn.commit()
         conn.close()
         snapshotter = SystemSnapshotter(
@@ -169,7 +169,7 @@ class TestSystemSnapshotter:
         for d in [snapshots_dir, gates_dir]:
             d.mkdir()
         conn = sqlite3.connect(str(db_path))
-        conn.execute("CREATE TABLE gates (gate_id TEXT, passed INTEGER)")
+        conn.execute("CREATE TABLE gate_runs (gate_id TEXT, passed INTEGER)")
         conn.commit()
         conn.close()
         snapshot, _ = SystemSnapshotter.run_in_build(
