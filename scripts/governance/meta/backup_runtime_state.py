@@ -18,12 +18,12 @@ backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）
 
 DEPRECATED（ARCH-041）：git history 已是 yaml/jsonl 文件真源（directory_contract L740），
 物理快照违反真源唯一原则。本脚本默认输出路径已从 meta/_backups/（deprecated）改为
-tmp/runtime_backups/（临时目录，不进 git）。脚本本身仍按 SQLite 时代设计，PG 迁移后
-未更新（architecture_debt_registry §5.33.2），后续应重写或归档。
+tmp/runtime_backups/（临时目录，不进 git）。
 
-将脚本系统动态状态导出为可 git commit 的快照：
-- YAML 配置文件 → 时间戳快照
-- 产出归档 → commit
+PG depgraph 备份已实现（ARCH-041 §5.33.1 治本）：backup_pg_depgraph() 函数。
+触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发）。
+
+YAML/JSONL 快照功能仍保留（向后兼容），但已标记 DEPRECATED。
 
 Usage:
     python scripts/governance/meta/backup_runtime_state.py
@@ -137,6 +137,88 @@ def create_manifest(backup_dir: Path, backed_up: list[str]) -> None:
     os.replace(tmp, str(manifest_path))
 
 
+# ── PG depgraph 备份（ARCH-041 §5.33.1 治本）──────────────────────────────
+# pg_dump 不可用时的 fallback：用 psycopg2 查询导出为 JSON。
+# 触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发，非时间触发）。
+# 自动清理：保留最近 max_backups 个备份。
+
+def backup_pg_depgraph(max_backups: int = 10) -> str | None:
+    """备份 PG depgraph 数据（nodes + edges 表）到 tmp/pg_backups/。
+
+    ARCH-041 §5.33.1 治本：PG depgraph 无备份脚本，此处补强。
+    使用 psycopg2 查询导出为 JSON（pg_dump 不可用时的 fallback）。
+    自动清理旧备份（保留最近 max_backups 个）。
+
+    Args:
+        max_backups: 保留的备份数量
+
+    Returns:
+        备份文件路径，失败返回 None
+    """
+    import psycopg2
+
+    # _build_pg_dsn 在 src/ 下，需要 sys.path
+    src_path = str(REPO_ROOT / "src")
+    if src_path not in sys.path:
+        sys.path.insert(0, src_path)
+    from zephyr.governance.depgraph_schema import _build_pg_dsn
+
+    backup_dir = REPO_ROOT / "tmp" / "pg_backups"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    backup_path = backup_dir / f"depgraph_{timestamp}.json"
+
+    try:
+        conn = psycopg2.connect(**_build_pg_dsn())
+        cur = conn.cursor()
+
+        # 导出 nodes 表
+        cur.execute("SELECT * FROM nodes ORDER BY node_id")
+        columns = [desc[0] for desc in cur.description]
+        nodes = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
+
+        # 导出 edges 表
+        cur.execute("SELECT * FROM edges ORDER BY edge_id")
+        columns = [desc[0] for desc in cur.description]
+        edges = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
+
+        conn.close()
+
+        backup_data = {
+            "timestamp": timestamp,
+            "source": "depgraph (PostgreSQL)",
+            "tables": {
+                "nodes": {"count": len(nodes), "rows": nodes},
+                "edges": {"count": len(edges), "rows": edges},
+            },
+        }
+
+        backup_path.write_text(
+            json.dumps(backup_data, default=str, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+        # 自动清理旧备份
+        backups = sorted(backup_dir.glob("depgraph_*.json"))
+        if len(backups) > max_backups:
+            for old in backups[:-max_backups]:
+                try:
+                    old.unlink()
+                except OSError:
+                    pass
+
+        print(
+            f"[BACKUP-PG] depgraph 备份完成: {backup_path.relative_to(REPO_ROOT)} "
+            f"(nodes={len(nodes)}, edges={len(edges)})",
+            file=sys.stderr,
+        )
+        return str(backup_path)
+    except Exception as e:
+        print(f"[BACKUP-PG] ERROR: {e}", file=sys.stderr)
+        return None
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="运行时状态备份")
@@ -152,15 +234,15 @@ def main() -> None:
     # ARCH-041: 运行时 DEPRECATED 警告——防止新 AI 误用过时脚本
     import warnings
     warnings.warn(
-        "backup_runtime_state.py 已 DEPRECATED（ARCH-041）。"
-        "git history 已是 yaml/jsonl 文件真源；PG 备份待重写（§5.33.1 立项）。"
-        "本脚本仅备份 YAML/JSONL 快照到 tmp/，不备份 PG depgraph 数据。",
+        "backup_runtime_state.py YAML/JSONL 快照已 DEPRECATED（ARCH-041）。"
+        "git history 已是 yaml/jsonl 文件真源。"
+        "PG depgraph 备份请用 backup_pg_depgraph() 函数（apply_depgraph.py 自动调用）。",
         DeprecationWarning,
         stacklevel=1,
     )
     print(
-        "\n⚠ DEPRECATED (ARCH-041): 本脚本已过时——不备份 PG depgraph 数据。"
-        "git history 是 YAML/JSONL 真源；PG 备份待重写（§5.33.1 立项）。\n",
+        "\n⚠ DEPRECATED (ARCH-041): YAML/JSONL 快照已过时。"
+        "git history 是 YAML/JSONL 真源。PG 备份用 backup_pg_depgraph()。\n",
         file=sys.stderr,
     )
 

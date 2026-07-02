@@ -3450,4 +3450,32 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        # ARCH-041 §5.33.1 治本：PG depgraph 备份（事件触发——写入命令后自动备份）
+        # 只在写入命令（非 --dry-run）时触发，--list-ops/--help 等只读命令不备份
+        # 治本原则：永久系统必须全自动（事件触发，非时间触发/手动触发）
+        _WRITE_COMMANDS = {
+            "--add-design-node", "--add-design-edge", "--transition-build-status",
+            "--remove-design-node", "--deprecate-node", "--delete-design-edge",
+            "--mark-invalid", "--update-edge-type", "--add-edge", "--delete-edge",
+            "--delete-blueprint-link", "--delete-constraint", "--add-file-node",
+            "--insert-domain", "--update-domain-id", "--update-path",
+            "--migrate-dependencies", "--update-domain-capacity", "--update-domain-layer",
+            "--migrate-nodes", "--update-domain-ssot-path", "--insert-domain-mapping",
+            "--rename-domain", "--update-domain-name", "--fix-residual",
+            "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
+            "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
+            "--batch",
+        }
+        is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
+        has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
+        if has_write_cmd and not is_dry_run:
+            sys.path.insert(0, str(Path(__file__).resolve().parent / "meta"))
+            try:
+                from backup_runtime_state import backup_pg_depgraph
+                backup_pg_depgraph()
+            except Exception as _e:
+                # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
+                print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
