@@ -365,9 +365,9 @@ class ModelMetadata:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 Shared Core | 必须 | ModelServingRequest/Response契约基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
-| L02 Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
+| L02 Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
 | MOD-INF-015 System Telemetry | 可选 | 模型监控(CTR-P1-013) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
-| L06 Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` |
+| L06 Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -406,7 +406,7 @@ class ModelMetadata:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\ml_train\` | 测试用例 |
 
@@ -761,7 +761,7 @@ class ModelMetadata:
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | ML平台核心代码 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | 修改 | 蓝图描述的核心代码 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` | 修改 | 本文件 |
 | 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 修改 | 子模块声明对齐 |
 
 ---

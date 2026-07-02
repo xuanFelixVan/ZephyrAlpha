@@ -385,10 +385,10 @@ class FactorMeta(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
+| MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
 | MOD-ALPHA_SIGNAL_DOMAIN | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
-| MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` |
+| MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -428,7 +428,7 @@ class FactorMeta(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\factor\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\factor\` | 测试用例 |
 

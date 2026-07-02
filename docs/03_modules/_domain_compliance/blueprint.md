@@ -432,7 +432,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_compliance\compliance_core\blueprint.md` | 本文件（含设计和施工指引） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_compliance\blueprint.md` | 本文件（含设计和施工指引） |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\compliance\` | Python 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\compliance\` | 测试用例 |
 
