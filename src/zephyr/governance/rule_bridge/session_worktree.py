@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] zephyr.governance.rule_bridge.session_worktree
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.governance.rule_bridge.session_claim (generate_session_id)
+# [DEPENDENCIES] zephyr.governance.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.governance.rule_bridge.session_claim (generate_session_id); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源)
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -336,6 +336,12 @@ def session_worktree_commit(
     一样硬——消除"两 session 编辑同一文件导致 merge conflict"的根因。
     ``allow_overlap=True`` 逃生通道（对标 GitCommitGateway）。
 
+    **DCR 检测（ARCH-041 治本，2026-07-03 加）**：HELD-OVERLAP gate 后、文件同步前，
+    subprocess 调用 ``check_directory_contract.py``（DCR 检测真源），对标 GitCommitGateway
+    的 DIRECTORY-CONTRACT gate。治本 session_worktree_commit 绕过 GitCommitGateway 导致
+    directory_contract 检测（含 _backups 禁止、DCR-001~007）不触发的问题。fail-closed——
+    checker 缺失/超时也阻断。文件数 >200 时改用 ``--all-files``（避免命令行长度限制）。
+
     Args:
         session_id: 已注册的 session_id（必须有对应 worktree）。
         files: 要提交的文件列表。路径可以是绝对路径（项目根或 worktree 内）或相对的。
@@ -353,6 +359,7 @@ def session_worktree_commit(
         }
         worktree 不存在时附加 "not_found": True。
         HELD-OVERLAP 阻断时附加 "held_overlap": True。
+        DCR 检测阻断时附加 "directory_contract_violation": True。
     """
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)
