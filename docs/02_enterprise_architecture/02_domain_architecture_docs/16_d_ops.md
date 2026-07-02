@@ -47,13 +47,13 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_OPS["D_OPS 反馈循环"]
-        docs_03_modules_domain_infra_ops_system_telemetry_blueprint_md["docs__03_modules___domain_infra_ops__system_tel... design"]
+        docs_03_modules_domain_infrastructure_operations_system_telemetry_blueprint_md["docs__03_modules___domain_infrastructure_operations__system_tel... design"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_domain_infra_ops_system_telemetry_blueprint_md design
+    class docs_03_modules_domain_infrastructure_operations_system_telemetry_blueprint_md design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -75,7 +75,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │             L1 基础层 / Foundation Layer (1 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
-│   docs__03_modules___domain_infra_ops__system_telemetry__blue... │
+│   docs__03_modules___domain_infrastructure_operations__system_telemetry__blue... │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
@@ -88,7 +88,7 @@ graph TD
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_domain_infra_ops/system_telemetry/bluepr... | docs__03_modules___domain_infra_ops__... | design | planned |
+| 1 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/bluepr... | docs__03_modules___domain_infrastructure_operations__... | design | planned |
 
 ## 依赖关系图 / Dependency Graph
 

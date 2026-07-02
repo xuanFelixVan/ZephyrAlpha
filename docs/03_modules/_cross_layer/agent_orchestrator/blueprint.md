@@ -427,12 +427,12 @@ class DetectionResult(BaseModel):
 | MOD-INF-035 (AutoRuntime) | 必须 | WorkDAG 调度入口 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
 | MOD-CONTEXT_ENGINE (Context) | 必须 | 上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` |
-| MOD-LLM_SECURITY (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\llm_security\blueprint.md` |
-| MOD-INF-011 (VMS) | 必须 | task_history 写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
+| MOD-LLM_SECURITY (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\llm_security\blueprint.md` |
+| MOD-INF-011 (VMS) | 必须 | task_history 写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vector_memory\blueprint.md` |
 | MOD-GATE_ENGINE (Gate) | 必须 | TaskGate 门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
-| MOD-INF-020 (Audit) | 必须 | 审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-020 (Audit) | 必须 | 审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
 | MOD-FEEDBACK_LOOP (FLE) | 必须 | 质量数据上报 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
-| MOD-INF-021 (Rollback) | 必须 | 回滚触发 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
+| MOD-INF-021 (Rollback) | 必须 | 回滚触发 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
 
 ---
 

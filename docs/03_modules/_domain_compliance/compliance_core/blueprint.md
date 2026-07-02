@@ -391,9 +391,9 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| INF-012 Database | 可选 | 合规规则存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\database\blueprint.md` |
-| INF-020 Audit Trail | 必须 | 审计决策写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| INF-018 Agent RBAC | 可选 | 权限联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
+| INF-012 Database | 可选 | 合规规则存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\database\blueprint.md` |
+| INF-020 Audit Trail | 必须 | 审计决策写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| INF-018 Agent RBAC | 可选 | 权限联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
 | shared/contracts/risk | 必须 | ComplianceRule数据类 | — | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk.py` |
 
 ### §10.2 依赖图对齐声明

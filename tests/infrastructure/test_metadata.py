@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1267 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infra_ops/asset_inventory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_metadata
 # [INVARIANTS] GitMetadataExtractor.extract returns GitAssetMetadata or None; MultiIDERuleGenerator generates files
 # [MODIFY-GUARD] none

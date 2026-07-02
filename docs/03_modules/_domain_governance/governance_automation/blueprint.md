@@ -126,7 +126,7 @@ references: []
 | 1 | 脚本系统代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 治理脚本目录 | `D:\ZephyrAlpha\scripts\governance\` | 修改 | 审计脚本存放目录 |
 | 3 | 脚本清单 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 修改 | 脚本注册表 |
-| 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` | 修改 | 本文件 |
+| 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\governance-automation\blueprint.md` | 修改 | 本文件 |
 
 ---
 
@@ -210,7 +210,7 @@ references: []
 
 | # | 文件 | module_id | 完整绝对路径 | 用途 |
 |---|------|-----------|------------|------|
-| 1 | 任务系统蓝图 | MOD-TASK_SYSTEM | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
+| 1 | 任务系统蓝图 | MOD-TASK_SYSTEM | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task_system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
 | 2 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter schema + META-V 验证规则 |
 | 3 | 规则验证标准 | PS-STD-012 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` | V1~V4 四级验证体系 |
 | 4 | 脚本质量标准 | SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束 |
@@ -1076,10 +1076,10 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-001 (capacity_assurance) | runtime | 容量预算检查 + SLO 监控 + Error Budget + Kill Switch | 2.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` |
-| MOD-INF-003 (task-card-kms) | runtime | Finding → CRITICAL 自动创建任务卡 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task-card-kms\blueprint.md` |
-| MOD-INF-004 (vibe-coding-pipelines) | contract | 脚本系统是双管线审计侧的脚本基础设施 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vibe-coding-pipelines\blueprint.md` |
-| **MOD-TASK_SYSTEM (task_system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
+| MOD-INF-001 (capacity_assurance) | runtime | 容量预算检查 + SLO 监控 + Error Budget + Kill Switch | 2.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\capacity_assurance\blueprint.md` |
+| MOD-INF-003 (task-card-kms) | runtime | Finding → CRITICAL 自动创建任务卡 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task-card-kms\blueprint.md` |
+| MOD-INF-004 (vibe-coding-pipelines) | contract | 脚本系统是双管线审计侧的脚本基础设施 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vibe-coding-pipelines\blueprint.md` |
+| **MOD-TASK_SYSTEM (task_system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task_system\blueprint.md` |
 | PS-STD-012 (规则验证标准) | contract | V1~V4 验证分级 + 阻断/警告规则定义 | 1.1.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` |
 | PS-STD-001 (元数据注册表) | contract | frontmatter schema + META-V 验证规则 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | SCRIPT-QUALITY-001 | contract | 脚本质量 8 维度 × 38 条款 | 1.0.0 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
@@ -1839,7 +1839,7 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\governance-automation\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 脚本系统核心 |
 | 治理脚本 | `D:\ZephyrAlpha\scripts\governance\` | 80+ 治理脚本 |
 | 脚本注册表 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 脚本登记 SSoT（REG-SCRIPT-001 主清单 + REG-SCRIPT-002 Governance 子集） |

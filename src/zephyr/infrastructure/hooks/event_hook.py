@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.infrastructure.hooks.event_hook
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.hooks.__init__

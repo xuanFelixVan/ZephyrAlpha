@@ -395,7 +395,7 @@ class BenchmarkCase(BaseModel):
 | MOD-INF-009 | 必须 | Pipeline ModuleResult 数据 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-024 | 必须 | ModelRouter 消费 benchmark 结果 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-MASTER_BLUEPRINT | 必须 | AutoRuntimeCore 生命周期管理 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
-| MOD-INF-011 | 可选 | OllamaChat /api/chat 调用模式 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
+| MOD-INF-011 | 可选 | OllamaChat /api/chat 调用模式 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vector_memory\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费 TaskModelMatrix cost_efficiency 做LLM路由决策 | — | d:\\临时工作区\\交易决策流水线设计.md |
 
 ### 10.2 依赖图对齐声明

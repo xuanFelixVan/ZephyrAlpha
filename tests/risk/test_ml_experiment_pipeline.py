@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1279 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # [MODULE] tests.test_ml_experiment_pipeline
 # [INVARIANTS] must test all public classes and methods of ml_experiment_pipeline
 # [MODIFY-GUARD] ml_experiment_pipeline.py changes require sync

@@ -49,18 +49,18 @@ depends_on:
 | [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | D_SIGLEGACY | 信号生成（待拆分: 4域） | 待拆分 |
 | [_domain_simulation/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_simulation/index.md) | D_SIMULATION | 实验仿真（待拆分: 4域） | 待拆分 |
 | [_domain_factor/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_factor/index.md) | D_FACTOR | Alpha 因子 | 活跃 |
-| [_domain_pf_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_pf_core/index.md) | D_PF_CORE | 组合核心 | 活跃 |
-| [_domain_ex_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_ex_core/index.md) | D_EX_CORE | 执行核心 | 活跃 |
+| [_domain_portfolio_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_portfolio_core/index.md) | D_PF_CORE | 组合核心 | 活跃 |
+| [_domain_execution_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_execution_core/index.md) | D_EX_CORE | 执行核心 | 活跃 |
 | [_domain_risk/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_risk/index.md) | D_RISK | 风险管理 | 活跃 |
 | [_domain_research/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_research/index.md) | D-RESEARCH | 研究创新 | 活跃 |
 | [_domain_reporting/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_reporting/index.md) | D_REPORTING | 报表分析 | 活跃 |
-| [_domain_ml_train/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_ml_train/index.md) | D_ML_TRAIN | ML 训练 | 活跃 |
+| [_domain_machine_learning_train/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_machine_learning_train/index.md) | D_ML_TRAIN | ML 训练 | 活跃 |
 | [_domain_knowledge/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_knowledge/index.md) | D_KNOWLEDGE | 知识库 | 活跃 |
 | [_domain_frontend/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_frontend/index.md) | D_FRONTEND | 前端 | 活跃 |
 | [_domain_compliance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_compliance/index.md) | D_COMPLIANCE | 合规 | 活跃 |
 | [_domain_governance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/index.md) | D_GOVERNANCE | 治理 | 活跃 |
-| [_domain_infra_ops/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
-| [_domain_infra_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_runtime/index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
+| [_domain_infrastructure_operations/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
+| [_domain_infrastructure_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_runtime/index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
 | [_domain_integration/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_integration/local_model/blueprint.md) | D_INTEGRATION | 集成 | 活跃 |
 | [_domain_autonomy_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md) | D_AUTONOMY_CORE | 自治核心 | 活跃 |
 | [_domain_autonomy_perm/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) | D_AUTONOMY_PERM | 自治权限 | 活跃 |

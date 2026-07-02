@@ -287,16 +287,16 @@ graph TD
         docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["docs__03_modules___domain_governance__code_dedu... design"]
         docs_03_modules_domain_governance_governance_automation_blueprint_md["docs__03_modules___domain_governance__governanc... design"]
         docs_03_modules_domain_governance_registry_governance_blueprint_md["docs__03_modules___domain_governance__registry_... design"]
-        docs_03_modules_domain_infra_ops_a2a_protocol_arbitration_rules_yaml["docs/03_modules/_domain_infra_ops/a2a_protocol/... production"]
-        docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md["docs__03_modules___domain_infra_ops__a2a_protoc... design"]
-        docs_03_modules_domain_infra_ops_a2a_protocol_trigger_config_yaml["docs/03_modules/_domain_infra_ops/a2a_protocol/... production"]
-        docs_03_modules_domain_infra_ops_asset_inventory_blueprint_md["docs__03_modules___domain_infra_ops__asset_inve... design"]
-        docs_03_modules_domain_infra_ops_capacity_assurance_blueprint_md["docs__03_modules___domain_infra_ops__capacity_a... design"]
-        docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md["docs__03_modules___domain_infra_runtime__runtim... design"]
-        docs_03_modules_domain_infra_runtime_state_machine_engine_blueprint_md["docs__03_modules___domain_infra_runtime__state_... design"]
-        docs_03_modules_domain_infra_runtime_task_system_blueprint_md["docs__03_modules___domain_infra_runtime__task_s... design"]
+        docs_03_modules_domain_infrastructure_operations_a2a_protocol_arbitration_rules_yaml["docs/03_modules/_domain_infrastructure_operations/a2a_protocol/... production"]
+        docs_03_modules_domain_infrastructure_operations_a2a_protocol_blueprint_md["docs__03_modules___domain_infrastructure_operations__a2a_protoc... design"]
+        docs_03_modules_domain_infrastructure_operations_a2a_protocol_trigger_config_yaml["docs/03_modules/_domain_infrastructure_operations/a2a_protocol/... production"]
+        docs_03_modules_domain_infrastructure_operations_asset_inventory_blueprint_md["docs__03_modules___domain_infrastructure_operations__asset_inve... design"]
+        docs_03_modules_domain_infrastructure_operations_capacity_assurance_blueprint_md["docs__03_modules___domain_infrastructure_operations__capacity_a... design"]
+        docs_03_modules_domain_infrastructure_runtime_runtime_integration_blueprint_md["docs__03_modules___domain_infrastructure_runtime__runtim... design"]
+        docs_03_modules_domain_infrastructure_runtime_state_machine_engine_blueprint_md["docs__03_modules___domain_infrastructure_runtime__state_... design"]
+        docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md["docs__03_modules___domain_infrastructure_runtime__task_s... design"]
         docs_03_modules_domain_integration_local_model_blueprint_md["docs__03_modules___domain_integration__local_mo... design"]
-        docs_03_modules_domain_ml_train_ml_core_blueprint_md["docs__03_modules___domain_ml_train__ml_core__bl... design"]
+        docs_03_modules_domain_machine_learning_train_ml_core_blueprint_md["docs__03_modules___domain_machine_learning_train__ml_core__bl... design"]
         docs_03_modules_domain_reporting_analytics_core_blueprint_md["docs__03_modules___domain_reporting__analytics_... design"]
         docs_03_modules_domain_research_research_core_blueprint_md["docs__03_modules___domain_research__research_co... design"]
         docs_03_modules_domain_risk_risk_management_core_blueprint_md["docs__03_modules___domain_risk__risk_management... design"]
@@ -310,13 +310,13 @@ graph TD
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_domain_infra_runtime_task_system_blueprint_md
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data| docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md
     docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| docs_03_modules_domain_infra_runtime_task_system_blueprint_md
-    docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    docs_03_modules_domain_infra_runtime_task_system_blueprint_md -.->|runtime| docs_03_modules_domain_infra_runtime_state_machine_engine_blueprint_md
+    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md
+    docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
+    docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md -.->|runtime| docs_03_modules_domain_infrastructure_runtime_state_machine_engine_blueprint_md
     D_GOV_AUDIT["D_GOV_AUDIT design"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract| D_GOV_AUDIT
     D_AUTONOMY_PERM["D_AUTONOMY_PERM design"]
@@ -344,7 +344,7 @@ graph TD
     D_GOV_AUDIT -.->|contract| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
-    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md
+    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_infrastructure_operations_a2a_protocol_blueprint_md
     D_AUTONOMY_CORE -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
@@ -353,8 +353,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_domain_infra_ops_a2a_protocol_arbitration_rules_yaml,docs_03_modules_domain_infra_ops_a2a_protocol_trigger_config_yaml production
-    class docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_compliance_compliance_core_blueprint_md,docs_03_modules_domain_data_datasource_core_blueprint_md,docs_03_modules_domain_factor_alpha_factor_core_blueprint_md,docs_03_modules_domain_frontend_hmi_core_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_domain_infra_ops_a2a_protocol_blueprint_md,docs_03_modules_domain_infra_ops_asset_inventory_blueprint_md,docs_03_modules_domain_infra_ops_capacity_assurance_blueprint_md,docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md,docs_03_modules_domain_infra_runtime_state_machine_engine_blueprint_md,docs_03_modules_domain_infra_runtime_task_system_blueprint_md,docs_03_modules_domain_integration_local_model_blueprint_md,docs_03_modules_domain_ml_train_ml_core_blueprint_md,docs_03_modules_domain_reporting_analytics_core_blueprint_md,docs_03_modules_domain_research_research_core_blueprint_md,docs_03_modules_domain_risk_risk_management_core_blueprint_md design
+    class docs_03_modules_domain_infrastructure_operations_a2a_protocol_arbitration_rules_yaml,docs_03_modules_domain_infrastructure_operations_a2a_protocol_trigger_config_yaml production
+    class docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_compliance_compliance_core_blueprint_md,docs_03_modules_domain_data_datasource_core_blueprint_md,docs_03_modules_domain_factor_alpha_factor_core_blueprint_md,docs_03_modules_domain_frontend_hmi_core_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_domain_infrastructure_operations_a2a_protocol_blueprint_md,docs_03_modules_domain_infrastructure_operations_asset_inventory_blueprint_md,docs_03_modules_domain_infrastructure_operations_capacity_assurance_blueprint_md,docs_03_modules_domain_infrastructure_runtime_runtime_integration_blueprint_md,docs_03_modules_domain_infrastructure_runtime_state_machine_engine_blueprint_md,docs_03_modules_domain_infrastructure_runtime_task_system_blueprint_md,docs_03_modules_domain_integration_local_model_blueprint_md,docs_03_modules_domain_machine_learning_train_ml_core_blueprint_md,docs_03_modules_domain_reporting_analytics_core_blueprint_md,docs_03_modules_domain_research_research_core_blueprint_md,docs_03_modules_domain_risk_risk_management_core_blueprint_md design
     class D_INFRA_RUNTIME,D_AUTONOMY_CORE external_prod
     class D_GOV_AUDIT,D_AUTONOMY_PERM,D_GOV_DRIFT,D_ML_TRAIN external_design
 ```
@@ -2502,14 +2502,14 @@ graph TD
 | 27 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance_... | design | planned |
 | 28 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance_... | design | planned |
 | 29 | docs/03_modules/_domain_governance/registry_governance/bl... | docs__03_modules___domain_governance_... | design | planned |
-| 30 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | docs__03_modules___domain_infra_ops__... | design | planned |
-| 31 | docs/03_modules/_domain_infra_ops/asset_inventory/bluepri... | docs__03_modules___domain_infra_ops__... | design | planned |
-| 32 | docs/03_modules/_domain_infra_ops/capacity_assurance/blue... | docs__03_modules___domain_infra_ops__... | design | planned |
-| 33 | docs/03_modules/_domain_infra_runtime/runtime_integration... | docs__03_modules___domain_infra_runti... | design | planned |
-| 34 | docs/03_modules/_domain_infra_runtime/state_machine_engin... | docs__03_modules___domain_infra_runti... | design | planned |
-| 35 | docs/03_modules/_domain_infra_runtime/task_system/bluepri... | docs__03_modules___domain_infra_runti... | design | planned |
+| 30 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md | docs__03_modules___domain_infrastructure_operations__... | design | planned |
+| 31 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/bluepri... | docs__03_modules___domain_infrastructure_operations__... | design | planned |
+| 32 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blue... | docs__03_modules___domain_infrastructure_operations__... | design | planned |
+| 33 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration... | docs__03_modules___domain_infra_runti... | design | planned |
+| 34 | docs/03_modules/_domain_infrastructure_runtime/state_machine_engin... | docs__03_modules___domain_infra_runti... | design | planned |
+| 35 | docs/03_modules/_domain_infrastructure_runtime/task_system/bluepri... | docs__03_modules___domain_infra_runti... | design | planned |
 | 36 | docs/03_modules/_domain_integration/local_model/blueprint.md | docs__03_modules___domain_integration... | design | planned |
-| 37 | docs/03_modules/_domain_ml_train/ml_core/blueprint.md | docs__03_modules___domain_ml_train__m... | design | planned |
+| 37 | docs/03_modules/_domain_machine_learning_train/ml_core/blueprint.md | docs__03_modules___domain_machine_learning_train__m... | design | planned |
 | 38 | docs/03_modules/_domain_reporting/analytics_core/blueprin... | docs__03_modules___domain_reporting__... | design | planned |
 | 39 | docs/03_modules/_domain_research/research_core/blueprint.md | docs__03_modules___domain_research__r... | design | planned |
 | 40 | docs/03_modules/_domain_risk/risk_management_core/bluepri... | docs__03_modules___domain_risk__risk_... | design | planned |
@@ -2630,8 +2630,8 @@ graph TD
 | 106 | docs/01_policies_and_standards/rules/trae_058_depgraph_sc... | docs/01_policies_and_standards/rules/... | production | generated |
 | 107 | docs/01_policies_and_standards/rules/trae_059_schema_vers... | docs/01_policies_and_standards/rules/... | production | generated |
 | 108 | docs/01_policies_and_standards/rules/trae_060_inward_cons... | docs/01_policies_and_standards/rules/... | production | generated |
-| 109 | docs/03_modules/_domain_infra_ops/a2a_protocol/arbitratio... | docs/03_modules/_domain_infra_ops/a2a... | production | generated |
-| 110 | docs/03_modules/_domain_infra_ops/a2a_protocol/trigger_co... | docs/03_modules/_domain_infra_ops/a2a... | production | generated |
+| 109 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/arbitratio... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
+| 110 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/trigger_co... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
 | 111 | docs/03_modules/path_ownership_map.yaml | docs/03_modules/path_ownership_map.yaml | production | generated |
 | 112 | scripts/__init__.py | scripts/__init__.py | prototype | generated |
 | 113 | scripts/_archive/construction/create_db_alignment_tasks.py | scripts/_archive/construction/create_... | prototype | generated |

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0372 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §auto_diagnostics
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §auto_diagnostics
 # [MODULE] tests.test_auto_diagnostics
 # [INVARIANTS] AutoDiagnostics.diagnose必须返回DiagnosisReport; DiagnosisReport.to_dict必须包含所有字段
 # [MODIFY-GUARD] 仅当auto_diagnostics公开API变更时修改

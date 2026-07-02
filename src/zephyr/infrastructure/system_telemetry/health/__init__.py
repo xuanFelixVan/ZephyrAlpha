@@ -1,5 +1,5 @@
 # [A_module] module_id: MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.health
 # [INVARIANTS] HEALTHY/DEGRADED/DOWN triple-state; register before use; thread-safe status transitions
 # [MODIFY-GUARD] facade.py; health_probes.py; health_aggregator.py

@@ -479,7 +479,7 @@ class QualityReport:
 |---------|---------|---------|---------|---------|
 | MOD-GATE_ENGINE Gatekeeper | 可选 | 数据质量门控联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-DATABASE Database | 可选 | 数据缓存 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-INF-015 Telemetry | 必须 | 数据摄取监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-INF-015 Telemetry | 必须 | 数据摄取监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
 | MOD-INF-035 AutoRuntime | 可选 | 数据接入注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

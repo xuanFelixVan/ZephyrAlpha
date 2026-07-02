@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.lifecycle_governance.transition
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook

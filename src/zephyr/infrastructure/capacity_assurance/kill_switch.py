@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md
+# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [MODULE] zephyr.infrastructure.capacity_assurance.kill_switch
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] err_count>threshold → fuse off; needs manual reset (DD110)
-# [MODIFY-GUARD] docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

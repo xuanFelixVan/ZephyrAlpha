@@ -984,7 +984,7 @@ sections:
         relationship: TaskCard代码模型+BlueprintDecomposer
       - rule: GOV-TASK-004
         relationship: 任务生命周期治理(取消/优先级/升级)
-      - rule: 03_modules/_domain_infra_runtime/task_system/blueprint.md §5.2-§5.5
+      - rule: 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md §5.2-§5.5
         relationship: 状态机实现+门禁检查逻辑+超时检测
       - rule: handoff-protocol.md
         relationship: 升级通知通过交接协议open_questions传递
@@ -1349,7 +1349,7 @@ references:
   - src/zephyr/governance/rule_enforcement/task_completion_gate.py
   - src/zephyr/governance/task_repo.py
   blueprints:
-  - 03_modules/_domain_infra_runtime/task_system/blueprint.md
+  - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 enforcement:
   type: code
   executors:

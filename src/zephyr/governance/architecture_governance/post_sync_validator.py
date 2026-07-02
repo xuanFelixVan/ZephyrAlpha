@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md | §task-system
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §task-system
 # [MODULE] zephyr.governance.architecture_governance.post_sync_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] (none — stdlib only: shlex/subprocess/sys/re/pathlib)

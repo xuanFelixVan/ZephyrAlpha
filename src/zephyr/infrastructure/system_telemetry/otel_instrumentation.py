@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md
 # [MODULE] zephyr.infrastructure.system_telemetry.otel_instrumentation
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

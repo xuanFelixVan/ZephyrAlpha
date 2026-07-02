@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1697 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | 蓝图特有§A
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] tests.test_structured_sink
 # [INVARIANTS] PII自动脱敏;RULE-ONE原子写入;buffer capped at _BUFFER_MAX
 # [MODIFY-GUARD] logs/structured_sink.py

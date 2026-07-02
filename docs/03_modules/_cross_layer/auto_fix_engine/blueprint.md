@@ -554,14 +554,14 @@ class ComplianceEvidence(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 | 必须 | Audit Trail——修复审计记录 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-017 | 必须 | Code Dedup Engine——DedupExtractor 语义引擎 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\code-dedup-engine\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail——修复审计记录 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| MOD-INF-017 | 必须 | Code Dedup Engine——DedupExtractor 语义引擎 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\code-dedup-engine\blueprint.md` |
 | MOD-LLM_SECURITY | 必须 | LLM Security——LLM 修复安全校验 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
-| MOD-INF-005 | 必须 | Script System——Finding AUTO_FIXABLE 枚举 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC——修复操作权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-022 | 必须 | Escalation Protocol——L1_AUTO_FIX 升级路由 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-023 | 必须 | Drift Detector——auto_fixable 标记 + 漂移预算 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-026 | 必须 | Asset Inventory——孤儿注册逻辑 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
+| MOD-INF-005 | 必须 | Script System——Finding AUTO_FIXABLE 枚举 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\script-system\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC——修复操作权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
+| MOD-INF-022 | 必须 | Escalation Protocol——L1_AUTO_FIX 升级路由 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
+| MOD-INF-023 | 必须 | Drift Detector——auto_fixable 标记 + 漂移预算 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\drift-detector\blueprint.md` |
+| MOD-INF-026 | 必须 | Asset Inventory——孤儿注册逻辑 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\asset-inventory\blueprint.md` |
 | MOD-INF-027 | 必须 | Audit Orchestrator——Phase 3 修复路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 | MOD-INF-029 | 必须 | Orphan Judge——EXTRACT_AND_MERGE/REGISTER/DELETE 判决 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\orphan-judge\blueprint.md` |
 | MOD-INF-030 | 必须 | RedBlue Validator——绕过场景修复 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\redblue-validator\blueprint.md` |

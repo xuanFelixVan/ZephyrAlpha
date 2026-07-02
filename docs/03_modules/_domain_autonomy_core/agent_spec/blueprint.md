@@ -694,20 +694,20 @@ class ConstructionStage(str, Enum):
 | MOD-GATE_ENGINE | 必须 | Gate Engine——门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-CONTEXT_ENGINE | 必须 | Context Engine——上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context_engine\blueprint.md` |
 | MOD-INF-009 | 必须 | Pipeline——多模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC——权限检查 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-020 | 必须 | Audit Trail——审计闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-023 | 必须 | Drift Detector——漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-025 | 必须 | A2A Protocol——Agent间协调后加载规格 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\a2a-protocol\blueprint.md` |
-| MOD-INF-005 | 必须 | Governance Automation——审计管线整合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\governance-automation\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC——权限检查 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail——审计闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| MOD-INF-023 | 必须 | Drift Detector——漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\drift-detector\blueprint.md` |
+| MOD-INF-025 | 必须 | A2A Protocol——Agent间协调后加载规格 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\a2a-protocol\blueprint.md` |
+| MOD-INF-005 | 必须 | Governance Automation——审计管线整合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\governance-automation\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | Feedback Loop——预测-诊断-修复闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
 | MOD-DATABASE | 间接 | Database——间接依赖(019→018→007→005→012) | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
 | MOD-LLM_SECURITY | 可选 | LLM Security Gateway——注入攻击检测 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
-| MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
-| MOD-KB-001 | 可选 | Knowledge Base——KE 沉淀 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` |
+| MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
+| MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
+| MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` |
+| MOD-KB-001 | 可选 | Knowledge Base——KE 沉淀 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-INF-011 | 可选 | Vector Memory——VMS存储服务（嵌入路由已迁至MOD-INF-039） | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector_memory\blueprint.md` |
-| MOD-INF-039 | 必须 | Local Model——BGE-M3 语义路由嵌入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\local-model\blueprint.md` |
+| MOD-INF-039 | 必须 | Local Model——BGE-M3 语义路由嵌入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\local-model\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -772,7 +772,7 @@ class ConstructionStage(str, Enum):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 | consumer_min |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\agent-spec\` | Python 源码（80 个 .py） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\` + `D:\ZephyrAlpha\tests\adversarial\` | 测试用例 |
 | Skill 注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | Skill 索引 |
@@ -1337,7 +1337,7 @@ class ConstructionStage(str, Enum):
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | agent-spec/ 全目录 | `D:\ZephyrAlpha\src\zephyr\agent-spec\` | 修改 | 代码维护 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` | 修改 | 本文件 |
 | 3 | 测试文件 | `D:\ZephyrAlpha\tests\unit\` + `D:\ZephyrAlpha\tests\adversarial\` | 修改 | 测试更新 |
 | 4 | AGENTS.md | `D:\ZephyrAlpha\AGENTS.md` | 读取 | 触发表路由 |
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.system_snapshot
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.shared.io.paths

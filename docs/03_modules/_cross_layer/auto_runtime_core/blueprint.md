@@ -473,16 +473,16 @@ class WorkDAG(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-002 (RI) | 必须 | EventStore/DryRun/CostTracker | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
-| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志/沙箱 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md` |
-| MOD-INF-009 (Pipeline) | 必须 | 管线任务调度与状态 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\pipeline\blueprint.md` |
-| MOD-INF-034 (ModelProfiler) | 可选 | benchmark 结果用于路由决策 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\model-profiler\blueprint.md` |
-| MOD-GATE_ENGINE (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
-| MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop-engine\blueprint.md` |
-| MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
+| MOD-INF-002 (RI) | 必须 | EventStore/DryRun/CostTracker | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\runtime_integration\blueprint.md` |
+| MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志/沙箱 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md` |
+| MOD-INF-009 (Pipeline) | 必须 | 管线任务调度与状态 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\pipeline\blueprint.md` |
+| MOD-INF-034 (ModelProfiler) | 可选 | benchmark 结果用于路由决策 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\model-profiler\blueprint.md` |
+| MOD-GATE_ENGINE (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
+| MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\feedback_loop-engine\blueprint.md` |
+| MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` |
 | MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge_base\blueprint.md` |
-| MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
+| MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vector_memory\blueprint.md` |
 | SYS-MASTER-001 | 必须 | 系统总蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 
 ---

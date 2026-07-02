@@ -14,7 +14,7 @@ ttl: permanent
 summary: "B 轨 6 大核心服务接口索引。v2.3.0：统一下划线命名，对齐43域架构。"
 tags: [b-track, service-interface, index, ai-engineering, interface-spec]
 depends_on:
-  - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/_domain_infra_ops/ 与 docs/03_modules/_cross_layer/（以 blueprint_registry path 为准）"}
+  - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/_domain_infrastructure_operations/ 与 docs/03_modules/_cross_layer/（以 blueprint_registry path 为准）"}
 ---
 
 # B 轨接口规范 — 目录索引
@@ -30,7 +30,7 @@ depends_on:
 
 | Yes（本目录管） | No（不管 → 正确位置） |
 |:--|:--|
-| 6 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 模块蓝图 → `docs/03_modules/_domain_infra_ops/{module}/blueprint.md` **或** `docs/03_modules/_cross_layer/{module}/blueprint.md`（见 `blueprint_registry.yaml` 的 path） |
+| 6 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 模块蓝图 → `docs/03_modules/_domain_infrastructure_operations/{module}/blueprint.md` **或** `docs/03_modules/_cross_layer/{module}/blueprint.md`（见 `blueprint_registry.yaml` 的 path） |
 | 跨服务依赖拓扑声明 | 施工计划 → 同上模块目录 |
 | 渐进路线（scaffold→4）与 SLO | 具体实现代码 → `src/zephyr/` |
 | 错误码与降级策略 | 部署/CI/CD → `04_automation/` |

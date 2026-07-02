@@ -707,7 +707,7 @@ docs/  (包含1个文件: .yaml(1))
 │   ├── _domain_data/  (包含1个文件: .md(1))  
 │   │   ├── datasource_core/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
-│   ├── _domain_ex_core/  (包含1个文件: .md(1))  
+│   ├── _domain_execution_core/  (包含1个文件: .md(1))  
 │   │   ├── execution_core/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
 │   ├── _domain_factor/  (包含1个文件: .md(1))  
@@ -724,13 +724,13 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── registry_governance/  (包含2个文件: .md(2))  
 │   │   ├── blueprint.md  — "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"  
 │   │   └── index.md  — 索引  
-│   ├── _domain_infra_ops/  (包含1个文件: .md(1))  
+│   ├── _domain_infrastructure_operations/  (包含1个文件: .md(1))  
 │   │   ├── a2a_protocol/  (包含4个文件: .md(2), .yaml(2))  
 │   │   ├── asset_inventory/  (包含2个文件: .md(2))  
 │   │   ├── capacity_assurance/  (包含2个文件: .md(2))  
 │   │   ├── system_telemetry/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
-│   ├── _domain_infra_runtime/  (包含1个文件: .md(1))  
+│   ├── _domain_infrastructure_runtime/  (包含1个文件: .md(1))  
 │   │   ├── runtime_integration/  (包含2个文件: .md(2))  
 │   │   ├── state_machine_engine/  (包含2个文件: .md(2))  
 │   │   ├── task_system/  (包含2个文件: .md(2))  
@@ -742,10 +742,10 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── knowledge_base/  (包含2个文件: .md(2))  
 │   │   ├── vector_memory/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
-│   ├── _domain_ml_train/  (包含1个文件: .md(1))  
+│   ├── _domain_machine_learning_train/  (包含1个文件: .md(1))  
 │   │   ├── ml_core/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
-│   ├── _domain_pf_core/  (包含1个文件: .md(1))  
+│   ├── _domain_portfolio_core/  (包含1个文件: .md(1))  
 │   │   ├── portfolio_core/  (包含2个文件: .md(2))  
 │   │   └── index.md  — 索引  
 │   ├── _domain_reporting/  (包含1个文件: .md(1))  

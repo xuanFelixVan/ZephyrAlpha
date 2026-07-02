@@ -839,7 +839,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 |------|------|
 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` |
-| 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
+| 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
 | 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | 架构模型 | `D:\ZephyrAlpha\architecture_model\layers\*.yaml` |
 | 业务层代码 | `D:\ZephyrAlpha\src\zephyr\data\` ~ `D:\ZephyrAlpha\src\zephyr\simulation\` |

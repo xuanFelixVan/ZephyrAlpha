@@ -717,7 +717,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | KB 代码 | `D:\ZephyrAlpha\src\zephyr\kb\` |
 | 知识数据 | `D:\ZephyrAlpha\docs\08_knowledge\` |
 | 架构 YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_kb.yaml` |
-| 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
+| 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task_system\blueprint.md` |
 | 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context_engine-architecture.md` |
 | VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector_memory-chromadb-bge-m3.md` |
 | ChromaDB KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
@@ -3939,7 +3939,7 @@ jobs:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\kb\` | Knowledge Base 源码 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_kb*.py` | 单元测试 |
 | KE 存储 | `D:\ZephyrAlpha\data\knowledge_base\` | 知识条目持久化 |
@@ -3964,7 +3964,7 @@ jobs:
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | KB 模块状态 | 代码施工后更新 |
-| 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
+| 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\context_engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
 
 ---
 
@@ -4069,7 +4069,7 @@ STEP 3: 拆分后验证
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | 知识库核心代码 | `D:\ZephyrAlpha\src\zephyr\kb\` | 修改 | 规格化 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` | 修改 | 本文件 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` | 修改 | 本文件 |
 
 ---
 
@@ -4228,13 +4228,13 @@ STEP 3: 拆分后验证
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 Shared Core | 必须 | KB 模块代码承载基座 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
-| MOD-TASK_SYSTEM Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
-| MOD-INF-005 Script System | 必须 | 审计数据来源 + 标签分类体系 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md` |
-| MOD-INF-026 Asset Inventory | 可选 | 资产盘点 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
-| MOD-CONTEXT_ENGINE Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md` |
-| MOD-INF-011 Vector Memory | 可选 | KE 写入时同步向量化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\vector_memory\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
-| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop\blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\runtime_integration\blueprint.md` |
+| MOD-INF-005 Script System | 必须 | 审计数据来源 + 标签分类体系 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\script-system\blueprint.md` |
+| MOD-INF-026 Asset Inventory | 可选 | 资产盘点 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\asset-inventory\blueprint.md` |
+| MOD-CONTEXT_ENGINE Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\context_engine\blueprint.md` |
+| MOD-INF-011 Vector Memory | 可选 | KE 写入时同步向量化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vector_memory\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\feedback_loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

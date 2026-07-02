@@ -252,7 +252,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-MASTER-002 | 必须 | CT-* 契约定义 | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` |
-| MOD-INF-019 Agent Spec | 必须 | Skill 路由接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
+| MOD-INF-019 Agent Spec | 必须 | Skill 路由接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -485,7 +485,7 @@ STEP 3: 拆分后验证
 | # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------|------------|----------|
 | 1 | 基线蓝图 | MOD-MASTER-002 | v1.3.0 | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md` | CT-* 契约定义 |
-| 2 | Agent Spec 蓝图 | MOD-INF-019 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` | Skill 路由 |
+| 2 | Agent Spec 蓝图 | MOD-INF-019 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` | Skill 路由 |
 | 3 | circuit_breaker.py | MOD-GATE_ENGINE | — | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-GATE_ENGINE 所有） |
 
 ---

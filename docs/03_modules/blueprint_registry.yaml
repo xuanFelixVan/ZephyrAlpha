@@ -1,12 +1,12 @@
 registry:
   version: 2.7.0
   created: '2026-05-02'
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-02'
   total_blueprints: 54
   scope: 03_modules/
   note: Auto-synced from 54 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-01'
+  generated_at: '2026-07-02'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -157,7 +157,7 @@ blueprints:
   version: 3.1.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_infra_ops/capacity_assurance/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-002
   name: runtime_integration
@@ -173,7 +173,7 @@ blueprints:
   version: 6.1.1
   generation: 7
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-005
   name: governance_automation
@@ -245,7 +245,7 @@ blueprints:
   version: 2.0.2
   generation: 3
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_infra_ops/system_telemetry/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-016
   name: shared_core
@@ -277,7 +277,7 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
-  construction_progress: design_only
+  construction_progress: partially_implemented
 - module_id: MOD-INF-018
   name: agent_rbac
   title: Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
@@ -401,7 +401,7 @@ blueprints:
   version: 0.12.0
   generation: 3
   last_updated: '2026-06-23'
-  file_path: 03_modules/_domain_infra_ops/a2a_protocol/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-026
   name: asset_inventory
@@ -415,7 +415,7 @@ blueprints:
   version: 3.1.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_infra_ops/asset_inventory/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-027
   name: audit_orchestrator
@@ -571,7 +571,7 @@ blueprints:
   version: 0.1.0
   generation: 1
   last_updated: '2026-05-16'
-  file_path: 03_modules/_domain_infra_runtime/state_machine_engine/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-039
   name: agent_orchestrator
@@ -692,7 +692,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_pf_core/portfolio_core/blueprint.md
+  file_path: 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L06-001
   name: execution_core
@@ -707,7 +707,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_ex_core/execution_core/blueprint.md
+  file_path: 03_modules/_domain_execution_core/execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
   name: analytics_core
@@ -781,7 +781,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_ml_train/ml_core/blueprint.md
+  file_path: 03_modules/_domain_machine_learning_train/ml_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L13-001
   name: experiment_core
@@ -859,7 +859,7 @@ blueprints:
   version: 0.9.5
   generation: 1
   last_updated: '2026-05-16'
-  file_path: 03_modules/_domain_infra_runtime/task_system/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
   construction_progress: partially_implemented
 - module_id: SH-DB-001
   name: database
@@ -911,15 +911,20 @@ summary:
     ml_train: 1
     simulation: 1
   by_construction_progress:
-    partially_implemented: 30
-    design_only: 9
+    partially_implemented: 32
+    design_only: 8
     completed: 11
     mostly_implemented: 1
     scaffold: 2
-    not_started: 1
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
-  last_recomputed: '2026-07-01'
+  last_recomputed: '2026-07-02'
 changelog:
+- version: 2.7.5
+  date: '2026-07-02'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 54 份 blueprint.md；登记项相对上一版有
+    1 条差异摘要'
+  - 'MOD-INF-017.construction_progress: [design_only] → [partially_implemented]'
 - version: 2.7.4
   date: '2026-07-01'
   changes:
@@ -928,25 +933,25 @@ changelog:
   - 新增 MOD-CONTEXT_ENGINE → 03_modules/_cross_layer/context_engine/blueprint.md
   - 新增 MOD-FEEDBACK_LOOP → 03_modules/_cross_layer/feedback_loop/blueprint.md
   - 新增 MOD-GATE_ENGINE → 03_modules/_cross_layer/gate_engine/blueprint.md
-  - 新增 MOD-INF-002 → 03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
+  - 新增 MOD-INF-002 → 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
   - 新增 MOD-INF-005 → 03_modules/_domain_governance/governance_automation/blueprint.md
   - 新增 MOD-INF-009 → 03_modules/_cross_layer/pipeline/blueprint.md
   - 新增 MOD-INF-011 → 03_modules/_domain_knowledge/vector_memory/blueprint.md
   - 新增 MOD-INF-013 → 03_modules/_cross_layer/mcp_servers/blueprint.md
   - 新增 MOD-INF-017 → 03_modules/_domain_governance/code_dedup_engine/blueprint.md
-  - 新增 MOD-INF-026 → 03_modules/_domain_infra_ops/asset_inventory/blueprint.md
+  - 新增 MOD-INF-026 → 03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
   - 新增 MOD-INF-027 → 03_modules/_cross_layer/audit_orchestrator/blueprint.md
   - 新增 MOD-INF-029 → 03_modules/_cross_layer/orphan_judge/blueprint.md
   - 新增 MOD-INF-037 → 03_modules/_domain_governance/registry_governance/blueprint.md
   - 新增 MOD-INF-042 → 03_modules/_domain_integration/local_model/blueprint.md
   - 新增 MOD-KB-001 → 03_modules/_domain_knowledge/knowledge_base/blueprint.md
-  - 新增 MOD-L05-001 → 03_modules/_domain_pf_core/portfolio_core/blueprint.md
-  - 新增 MOD-L06-001 → 03_modules/_domain_ex_core/execution_core/blueprint.md
+  - 新增 MOD-L05-001 → 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md
+  - 新增 MOD-L06-001 → 03_modules/_domain_execution_core/execution_core/blueprint.md
   - 新增 MOD-L09-001 → 03_modules/_domain_research/research_core/blueprint.md
-  - 新增 MOD-L11-001 → 03_modules/_domain_ml_train/ml_core/blueprint.md
+  - 新增 MOD-L11-001 → 03_modules/_domain_machine_learning_train/ml_core/blueprint.md
   - 新增 MOD-LLM_SECURITY → 03_modules/_cross_layer/llm_security/blueprint.md
   - 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE → 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
-  - 新增 MOD-TASK_SYSTEM → 03_modules/_domain_infra_runtime/task_system/blueprint.md
+  - 新增 MOD-TASK_SYSTEM → 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 - version: 2.7.3
   date: '2026-07-01'
   changes:
@@ -955,18 +960,18 @@ changelog:
   - 移除 MOD-CONTEXT_ENGINE（曾位于 03_modules/_cross_layer/context_engine/blueprint.md）
   - 移除 MOD-FEEDBACK_LOOP（曾位于 03_modules/_cross_layer/feedback_loop/blueprint.md）
   - 移除 MOD-GATE_ENGINE（曾位于 03_modules/_cross_layer/gate_engine/blueprint.md）
-  - 移除 MOD-INF-002（曾位于 03_modules/_domain_infra_runtime/runtime_integration/blueprint.md）
+  - 移除 MOD-INF-002（曾位于 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md）
   - 移除 MOD-INF-005（曾位于 03_modules/_domain_governance/governance_automation/blueprint.md）
   - 移除 MOD-INF-009（曾位于 03_modules/_cross_layer/pipeline/blueprint.md）
   - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp_servers/blueprint.md）
   - 移除 MOD-INF-042（曾位于 03_modules/_domain_integration/local_model/blueprint.md）
   - 移除 MOD-KB-001（曾位于 03_modules/_domain_knowledge/knowledge_base/blueprint.md）
-  - 移除 MOD-L05-001（曾位于 03_modules/_domain_pf_core/portfolio_core/blueprint.md）
-  - 移除 MOD-L06-001（曾位于 03_modules/_domain_ex_core/execution_core/blueprint.md）
+  - 移除 MOD-L05-001（曾位于 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md）
+  - 移除 MOD-L06-001（曾位于 03_modules/_domain_execution_core/execution_core/blueprint.md）
   - 移除 MOD-L09-001（曾位于 03_modules/_domain_research/research_core/blueprint.md）
-  - 移除 MOD-L11-001（曾位于 03_modules/_domain_ml_train/ml_core/blueprint.md）
+  - 移除 MOD-L11-001（曾位于 03_modules/_domain_machine_learning_train/ml_core/blueprint.md）
   - 移除 MOD-LLM_SECURITY（曾位于 03_modules/_cross_layer/llm_security/blueprint.md）
-  - 移除 MOD-TASK_SYSTEM（曾位于 03_modules/_domain_infra_runtime/task_system/blueprint.md）
+  - 移除 MOD-TASK_SYSTEM（曾位于 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md）
 - version: 2.7.2
   date: '2026-06-25'
   changes:
@@ -989,15 +994,15 @@ changelog:
   - 新增 MOD-GOVERNANCE → 03_modules/_domain_governance/capacity_upgrade/blueprint.md
   - 新增 MOD-ML_EXPERIMENT_DOMAIN → 03_modules/_ml_experiment_domain/blueprint.md
   - 新增 MOD-073 → 03_modules/_system_master/blueprint.md
-  - 'MOD-INF-001.file_path: [_domain_infra_ops/capacity_assurance/blueprint.md] →
-    [03_modules/_domain_infra_ops/capacity_assurance/blueprint.md]'
+  - 'MOD-INF-001.file_path: [_domain_infrastructure_operations/capacity_assurance/blueprint.md]
+    → [03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md]'
   - 'MOD-INF-001.priority: [P2] → [P0]'
-  - 'MOD-INF-002.file_path: [_domain_infra_runtime/runtime_integration/blueprint.md]
-    → [03_modules/_domain_infra_runtime/runtime_integration/blueprint.md]'
+  - 'MOD-INF-002.file_path: [_domain_infrastructure_runtime/runtime_integration/blueprint.md]
+    → [03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md]'
   - 'MOD-INF-005.file_path: [_domain_governance/governance_automation/blueprint.md]
     → [03_modules/_domain_governance/governance_automation/blueprint.md]'
-  - 'MOD-TASK_SYSTEM.file_path: [_domain_infra_runtime/task_system/blueprint.md] →
-    [03_modules/_domain_infra_runtime/task_system/blueprint.md]'
+  - 'MOD-TASK_SYSTEM.file_path: [_domain_infrastructure_runtime/task_system/blueprint.md]
+    → [03_modules/_domain_infrastructure_runtime/task_system/blueprint.md]'
   - 'MOD-GATE_ENGINE.file_path: [_cross_layer/gate_engine/blueprint.md] → [03_modules/_cross_layer/gate_engine/blueprint.md]'
   - 'MOD-CONTEXT_ENGINE.file_path: [_cross_layer/context_engine/blueprint.md] → [03_modules/_cross_layer/context_engine/blueprint.md]'
   - 'MOD-INF-009.file_path: [_cross_layer/pipeline/blueprint.md] → [03_modules/_cross_layer/pipeline/blueprint.md]'
@@ -1009,14 +1014,15 @@ changelog:
   - 'MOD-INF-013.file_path: [_cross_layer/mcp_servers/blueprint.md] → [03_modules/_cross_layer/mcp_servers/blueprint.md]'
   - 'MOD-INF-013.priority: [P2] → [P1]'
   - 'MOD-LLM_SECURITY.file_path: [_cross_layer/llm_security/blueprint.md] → [03_modules/_cross_layer/llm_security/blueprint.md]'
-  - 'MOD-INF-015.file_path: [_domain_infra_ops/system_telemetry/blueprint.md] → [03_modules/_domain_infra_ops/system_telemetry/blueprint.md]'
+  - 'MOD-INF-015.file_path: [_domain_infrastructure_operations/system_telemetry/blueprint.md]
+    → [03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md]'
   - 'MOD-INF-016.version: [0.18.0] → [0.19.0]'
   - … 另 47 条差异未展开（运行 dry-run 查看全量）
 - version: 2.7.0
   date: '2026-06-10'
   changes:
   - DM-369 断链修复——33条 file_path 从旧目录结构更新为 _domain-* 规范路径
-  - 21条 infra_ops/ 旧路径 → _domain_governance/_domain_infra_ops/_domain_infra_runtime/_domain_autonomy_core/_domain_autonomy_perm/_domain_knowledge/_domain_integration/
+  - 21条 infra_ops/ 旧路径 → _domain_governance/_domain_infrastructure_operations/_domain_infrastructure_runtime/_domain_autonomy_core/_domain_autonomy_perm/_domain_knowledge/_domain_integration/
   - 12条业务域短名路径（data/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/simulation）→
     _domain-* 路径
   - 重复 module_id 修复：mcp_servers MOD-INF-015→MOD-INF-013, capacity_assurance MOD-INF-024→MOD-INF-001,

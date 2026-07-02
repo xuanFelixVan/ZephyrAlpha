@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §
 # [MODULE] zephyr.governance.persistence.olap_engine
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths

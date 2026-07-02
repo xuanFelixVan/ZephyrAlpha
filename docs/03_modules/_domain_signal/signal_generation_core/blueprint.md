@@ -384,7 +384,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |---------|---------|---------|---------|---------|
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
 | MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
-| MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
 | MOD-ALPHA_SIGNAL_DOMAIN | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -821,7 +821,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_portfolio_core\portfolio_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk_management_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\pf_core\` | §4 数据模型、§11 产出物路径 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\risk\` | §4 数据模型、§11 产出物路径 |

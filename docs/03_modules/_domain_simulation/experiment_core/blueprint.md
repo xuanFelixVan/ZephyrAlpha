@@ -432,7 +432,7 @@ class ExperimentMetric:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-L11-001 ML Platform | 必须 | CTR-011 ModelCheckpoint + CTR-P1-004/005 ModelServing | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml_core\blueprint.md` |
+| MOD-L11-001 ML Platform | 必须 | CTR-011 ModelCheckpoint + CTR-P1-004/005 ModelServing | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` |
 | MOD-L09-001 Research | 可选 | CTR-010 ExperimentMetric 上报 + CTR-P1-014 ExperimentResult 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_research\research_core\blueprint.md` |
 | L00 Data Source | 可选 | CTR-001 NormalizedMarketData | — | — |
 | INF-012 Database | 必须 | CTR-012 ExperimentArtifact 归档 | — | — |
@@ -904,7 +904,7 @@ class ExperimentMetric:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\ml_core\blueprint.md` (MOD-L11-001) | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\ml_core\blueprint.md` (MOD-L11-001) | §4 接口契约、§10 依赖关系 |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_research\research_core\blueprint.md` (MOD-L09-001) | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\simulation\` (代码) | §4 数据模型、§11 产出物路径 |
 

@@ -438,8 +438,8 @@ class ViolationDetail(BaseModel):
 | MOD-L00-001 | 可选 | CTR-001 NormalizedMarketData | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_data\datasource_core\blueprint.md` |
 | MOD-L02-001 | 必须 | CTR-002 FactorSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\alpha_factor_core\blueprint.md` |
 | MOD-L03-001 | 必须 | CTR-P1-015 SynthesizedSignal | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\signal_generation_core\blueprint.md` |
-| MOD-L05-001 | 必须 | CTR-004 Order（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio-core\blueprint.md` |
-| MOD-L06-001 | 必须 | CTR-006 PositionSnapshot（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` |
+| MOD-L05-001 | 必须 | CTR-004 Order（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_portfolio_core\portfolio-core\blueprint.md` |
+| MOD-L06-001 | 必须 | CTR-006 PositionSnapshot（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` |
 | MOD-L08-001 | 可选 | CTR-P1-008 RiskDashboardSnapshot（产出） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | CTR-P1-013 Telemetry（产出） | v1.0.0 | 风控告警→线4 |
 
@@ -894,8 +894,8 @@ class ViolationDetail(BaseModel):
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_pf_core\portfolio-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
-| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_ex_core\execution_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_portfolio_core\portfolio-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\execution_core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\docs\03_modules\_domain_frontend\hmi_core\blueprint.md` | §12 集成点 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\risk\` | §4 数据模型、§11 产出物路径 |
 

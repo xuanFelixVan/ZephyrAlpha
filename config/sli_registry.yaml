@@ -8,7 +8,7 @@
 # config/sli_registry.yaml — Service Level Indicators Registry
 # module_id: MOD-INF-015
 # version: 0.1.0 (scaffold)
-# blueprint: docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md §7.3
+# blueprint: docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md §7.3
 #
 # 本文件定义所有系统组件的SLI（服务水平指标）。
 # 用于SLO计算、健康评分、dashboard展示。

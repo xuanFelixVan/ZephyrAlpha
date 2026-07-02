@@ -416,7 +416,7 @@ class FitnessDashboardData(BaseModel):
 | MOD-L04-001 Risk Management | 可选 | CTR-P1-008 RiskDashboardSnapshot | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk-core\blueprint.md` |
 | MOD-L07-001 Post-Trade Analytics | 可选 | CTR-P1-009 PerformanceAttributionReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\analytics_core\blueprint.md` |
 | MOD-INF-035 系统大脑 | 可选 | 运维可视化 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\system_telemetry\blueprint.md` |
+| MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
 | MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

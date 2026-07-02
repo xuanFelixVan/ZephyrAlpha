@@ -812,17 +812,17 @@ class EvidencePackExporter:
 | MOD-DATABASE | 硬依赖 | events 表查询视图（不独立存储，C15/ARB-8 裁定） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
 | MOD-GATE_ENGINE | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-INF-016 | 硬依赖 | EventType 枚举 + Task Schema + AiAuditLogger | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
-| MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
-| MOD-TASK_SYSTEM | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\task_system\blueprint.md` |
-| MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\runtime_integration\blueprint.md` |
+| MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
+| MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
+| MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` |
+| MOD-TASK_SYSTEM | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task_system\blueprint.md` |
+| MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\runtime_integration\blueprint.md` |
 | MOD-INF-011 | 跨线软依赖 | VM 嵌入结果→审计记录（线2→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector_memory\blueprint.md` |
-| MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-engine\blueprint.md` |
-| MOD-INF-031 | 跨线软依赖 | 修复审计（线4→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\auto-fixer\blueprint.md` |
+| MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-engine\blueprint.md` |
+| MOD-INF-031 | 跨线软依赖 | 修复审计（线4→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\auto-fixer\blueprint.md` |
 | GOV-CMP-002 | 硬依赖 | AUD-001~004 审计操作留痕规则 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\audit-tracking-policy.md` |
 | GOV-CMP-003 | 硬依赖 | 12 维度审计清单 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\governance-audit-protocol.md` |
-| MOD-INF-005 | 硬依赖 | 脚本执行生命周期审计钩子 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md` |
+| MOD-INF-005 | 硬依赖 | 脚本执行生命周期审计钩子 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\script-system\blueprint.md` |
 | MOD-INF-009 | 硬依赖 | PipelineOrchestrator 扫描调度审计集成 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
 | CFG-CAP-001 | 硬依赖 | 容量参数决定 shard 数和缓冲区大小 | — | — |
 | MOD-INF-027 | 跨线软依赖 | 审计记录→线5 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
@@ -905,7 +905,7 @@ class EvidencePackExporter:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\audit-trail\` | Python 源码（352 .py files） |
 | 测试代码 | `D:\ZephyrAlpha\tests\audit-trail\` | 测试用例 |
 | 审计数据 | `D:\ZephyrAlpha\data\audit\` | JSONL + SQLite + Merkle |
@@ -1662,7 +1662,7 @@ class LamportClockV2:
 
 ## 变更记录
 
-> 变更历史见 `git log -- docs/03_modules/_domain_infra_ops/audit-trail/blueprint.md`
+> 变更历史见 `git log -- docs/03_modules/_domain_infrastructure_operations/audit-trail/blueprint.md`
 
 ## 术语表
 

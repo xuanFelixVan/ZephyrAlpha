@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
+# [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.persistence.intent_parser
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared.schema.schemas

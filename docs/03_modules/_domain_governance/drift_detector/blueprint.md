@@ -577,13 +577,13 @@ class BaselineSnapshot(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-021 Rollback | 必须 | 漂移→回滚桥接(G-CT-005) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-022 Escalation | 必须 | 漂移预算耗尽升级(G-CT-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
-| MOD-INF-020 Audit Trail | 必须 | 漂移事件审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-018 Agent RBAC | 必须 | 检测器权限控制 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
-| MOD-GATE_ENGINE Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
+| MOD-INF-021 Rollback | 必须 | 漂移→回滚桥接(G-CT-005) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
+| MOD-INF-022 Escalation | 必须 | 漂移预算耗尽升级(G-CT-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
+| MOD-INF-020 Audit Trail | 必须 | 漂移事件审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 必须 | 检测器权限控制 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
 | MOD-INF-016 Shared | 必须 | AiAuditLogger + AbstractLock | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
-| MOD-DATABASE DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\db\blueprint.md` |
+| MOD-DATABASE DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\db\blueprint.md` |
 
 ### 10.5 概念重叠声明
 

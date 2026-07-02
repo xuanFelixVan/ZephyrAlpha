@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | CT-TELE-FLE-001
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | CT-TELE-FLE-001
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__

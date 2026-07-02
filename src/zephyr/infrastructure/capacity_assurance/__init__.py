@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF_capacity_assurance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md
+# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [MODULE] zephyr.infrastructure.capacity_assurance
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

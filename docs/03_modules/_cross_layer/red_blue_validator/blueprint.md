@@ -696,18 +696,18 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-GATE_ENGINE | 必须 | Gate Engine 门禁检查 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
-| MOD-INF-020 | 必须 | Audit Trail 不可变日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail 不可变日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
 | MOD-INF-028 | 必须 | Semantic Auditor 语义审计 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` |
-| MOD-INF-017 | 必须 | Code Dedup Engine 重复检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\code-dedup-engine\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC 权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-023 | 必须 | Drift Detector 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-022 | 必须 | Escalation Protocol 升级裁决 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-engine\blueprint.md` |
+| MOD-INF-017 | 必须 | Code Dedup Engine 重复检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\code-dedup-engine\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC 权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
+| MOD-INF-023 | 必须 | Drift Detector 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\drift-detector\blueprint.md` |
+| MOD-INF-022 | 必须 | Escalation Protocol 升级裁决 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-engine\blueprint.md` |
 | MOD-LLM_SECURITY | 可选 | LLM Security AI 攻击生成 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
 | MOD-INF-013 | 可选 | MCP Servers 端点注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\mcp_servers\blueprint.md` |
 | MOD-INF-027 | 必须 | Audit Orchestrator Phase 4 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 | MOD-INF-031 | 可选 | AutoFix Engine 修复执行 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-INF-024 | 可选 | Knowledge Base 绕过模式存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` |
-| MOD-INF-026 | 可选 | Asset Inventory 攻击目标发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
+| MOD-INF-024 | 可选 | Knowledge Base 绕过模式存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
+| MOD-INF-026 | 可选 | Asset Inventory 攻击目标发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\asset-inventory\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

@@ -888,13 +888,13 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 
 | 依赖模块 | module_id | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|-----------|---------|---------|---------|
-| RBAC | MOD-INF-018 | 必须 | RBAC 违规→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rbac\blueprint.md` |
-| Gate Engine | MOD-GATE_ENGINE | 可选 | Gate DEFER→升级；熔断器状态读取 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md` |
-| Audit Trail | MOD-INF-020 | 必须 | 升级/委托决策写入审计 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
-| Pipeline | MOD-INF-021 | 必须 | 共识破裂→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\pipeline\blueprint.md` |
-| A2A Protocol | MOD-INF-025 | references | A2A 冲突事件→升级(G-CT-008);Protocol接口解耦 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\a2a-protocol\blueprint.md` |
-| Agent Spec | MOD-INF-019 | 可选 | Skill 发现+路由 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\agent-spec\blueprint.md` |
-| Budget Enforcer | MOD-INF-024 | 必须 | Token/Cost/Time 预算→升级触发 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
+| RBAC | MOD-INF-018 | 必须 | RBAC 违规→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rbac\blueprint.md` |
+| Gate Engine | MOD-GATE_ENGINE | 可选 | Gate DEFER→升级；熔断器状态读取 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
+| Audit Trail | MOD-INF-020 | 必须 | 升级/委托决策写入审计 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
+| Pipeline | MOD-INF-021 | 必须 | 共识破裂→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\pipeline\blueprint.md` |
+| A2A Protocol | MOD-INF-025 | references | A2A 冲突事件→升级(G-CT-008);Protocol接口解耦 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\a2a-protocol\blueprint.md` |
+| Agent Spec | MOD-INF-019 | 可选 | Skill 发现+路由 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` |
+| Budget Enforcer | MOD-INF-024 | 必须 | Token/Cost/Time 预算→升级触发 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` |
 | Budget Engine | MOD-INF-022-Sub | 必须 | Token/Cost/Time 预算 | 本蓝图 §4.5 |
 | Feedback Loop | MOD-INF-022-Sub | 必须 | 升级解决→KB 写入 | 本蓝图 §8.8 |
 
@@ -983,7 +983,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 
 | 产出物类型 | 存放完整绝对路径 | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\escalation-engine\` | Python 源码（104文件，清单见 §0.1） | ≥1 | `__init__.py` __all__ |
 | 测试代码 | `D:\ZephyrAlpha\tests\` | 测试用例 | ≥0 | pytest 自动发现 |
 
@@ -1267,7 +1267,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 
 | # | 铁律 |
 |---|------|
-| 1 | 代码文件 MUST 标注 `[BLUEPRINT] MOD-INF-022 \| D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\escalation-protocol\blueprint.md` |
+| 1 | 代码文件 MUST 标注 `[BLUEPRINT] MOD-INF-022 \| D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
 | 2 | 代码文件 MUST 标注 `[INVARIANTS] deny_by_default;max_chain_depth=3;rules_ai_readonly` |
 | 3 | 代码文件 MUST 标注 `[MODIFY-GUARD] escalation_rules.yaml;escalation_engine.py;delegation_manager.py` |
 | 4 | 禁止 `TODO`/`...`/`pass`/`NotImplementedError`——必须产出可执行代码 |
@@ -1352,10 +1352,10 @@ STEP 3: 拆分后验证
 | 脚本质量标准 | [quality-standard.md](file:///D:/ZephyrAlpha/scripts/governance/quality-standard.md) |
 | 治理方法论 | [governance_methodology_standard.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) |
 | Session 状态机 | [session-state-runbook.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md) |
-| RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/rbac/blueprint.md) |
-| Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/pipeline/blueprint.md) |
-| A2A Protocol | [MOD-INF-025](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/a2a-protocol/blueprint.md) |
-| Budget Enforcer | [MOD-INF-024](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/budget-enforcer/blueprint.md) |
+| RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/rbac/blueprint.md) |
+| Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/pipeline/blueprint.md) |
+| A2A Protocol | [MOD-INF-025](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/a2a-protocol/blueprint.md) |
+| Budget Enforcer | [MOD-INF-024](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/budget-enforcer/blueprint.md) |
 | 注册表总索引 | [registry_of_registries.yaml](file:///D:/ZephyrAlpha/docs/registry_of_registries.yaml) |
 
 ---

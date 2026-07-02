@@ -707,7 +707,7 @@ docs/  (1 files: .yaml(1))
 │   ├── _domain_data/  (1 files: .md(1))  
 │   │   ├── datasource_core/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
-│   ├── _domain_ex_core/  (1 files: .md(1))  
+│   ├── _domain_execution_core/  (1 files: .md(1))  
 │   │   ├── execution_core/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
 │   ├── _domain_factor/  (1 files: .md(1))  
@@ -724,13 +724,13 @@ docs/  (1 files: .yaml(1))
 │   │   ├── registry_governance/  (2 files: .md(2))  
 │   │   ├── blueprint.md  — "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"  
 │   │   └── index.md  — Index  
-│   ├── _domain_infra_ops/  (1 files: .md(1))  
+│   ├── _domain_infrastructure_operations/  (1 files: .md(1))  
 │   │   ├── a2a_protocol/  (4 files: .md(2), .yaml(2))  
 │   │   ├── asset_inventory/  (2 files: .md(2))  
 │   │   ├── capacity_assurance/  (2 files: .md(2))  
 │   │   ├── system_telemetry/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
-│   ├── _domain_infra_runtime/  (1 files: .md(1))  
+│   ├── _domain_infrastructure_runtime/  (1 files: .md(1))  
 │   │   ├── runtime_integration/  (2 files: .md(2))  
 │   │   ├── state_machine_engine/  (2 files: .md(2))  
 │   │   ├── task_system/  (2 files: .md(2))  
@@ -742,10 +742,10 @@ docs/  (1 files: .yaml(1))
 │   │   ├── knowledge_base/  (2 files: .md(2))  
 │   │   ├── vector_memory/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
-│   ├── _domain_ml_train/  (1 files: .md(1))  
+│   ├── _domain_machine_learning_train/  (1 files: .md(1))  
 │   │   ├── ml_core/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
-│   ├── _domain_pf_core/  (1 files: .md(1))  
+│   ├── _domain_portfolio_core/  (1 files: .md(1))  
 │   │   ├── portfolio_core/  (2 files: .md(2))  
 │   │   └── index.md  — Index  
 │   ├── _domain_reporting/  (1 files: .md(1))  

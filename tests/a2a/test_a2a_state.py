@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0251 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md | §
 # [MODULE] tests.test_a2a_state
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

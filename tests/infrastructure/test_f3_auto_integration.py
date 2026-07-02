@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0400 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] DM-201308 | docs/03_modules/_domain_infra_runtime/task_system/blueprint.md | §auto-integration
+# [BLUEPRINT] DM-201308 | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §auto-integration
 # [MODULE] tests.integration.test_f3_auto_integration
 # [STABILITY] volatile
 # [SAFETY] L

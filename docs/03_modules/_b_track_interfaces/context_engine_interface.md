@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-003
 title: Context Engine Interface / 上下文引擎接口规范
 doc_type: architecture_view
@@ -639,7 +639,7 @@ if vms_result.degraded:
     # 降级到 filesystem_fallback.py
     fs_hits = await rg_search(
         pattern=derive_regex(request.tags + request.target_files),
-        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain_infra_ops/task_system/changes"],
+        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain_infrastructure_operations/task_system/changes"],
         max_results_per_slot=20,
     )
     bundle.degraded = True

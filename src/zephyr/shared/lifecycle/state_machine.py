@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-038 | docs/03_modules/_domain_infra_runtime/state_machine_engine/blueprint.md | §4
+# [BLUEPRINT] MOD-INF-038 | docs/03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md | §4
 # [MODULE] zephyr.shared.lifecycle.state_machine
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors

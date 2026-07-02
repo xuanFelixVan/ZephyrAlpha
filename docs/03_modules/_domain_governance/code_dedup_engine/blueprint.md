@@ -1047,12 +1047,12 @@ KNOWN_DUPLICATES = {
 
 | 依赖模块        | 依赖类型 | 依赖内容                             | 版本要求     | 蓝图路径                                                                            |
 | ----------- | ---- | -------------------------------- | -------- | ------------------------------------------------------------------------------- |
-| MOD-INF-005 | 必须   | 退出码约定 0/1/2/3/4 + Finding Schema | ≥ 0.5.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\script-system\blueprint.md`  |
-| MOD-GATE_ENGINE | 必须   | GATE-DEDUP 门禁判定逻辑                | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md`    |
-| MOD-CONTEXT_ENGINE | 必须   | Context Engine 影子清单注入            | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选   | FLE 进化闭环                         | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\feedback_loop\blueprint.md`  |
-| MOD-INF-016 | 必须   | SSoT Guard + shared 目录           | ≥ 0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md`    |
-| MOD-DATABASE | 可选   | KB 持久化 API                       | ≥ 0.1.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\knowledge_base\blueprint.md` |
+| MOD-INF-005 | 必须   | 退出码约定 0/1/2/3/4 + Finding Schema | ≥ 0.5.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\script-system\blueprint.md`  |
+| MOD-GATE_ENGINE | 必须   | GATE-DEDUP 门禁判定逻辑                | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md`    |
+| MOD-CONTEXT_ENGINE | 必须   | Context Engine 影子清单注入            | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\context_engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选   | FLE 进化闭环                         | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\feedback_loop\blueprint.md`  |
+| MOD-INF-016 | 必须   | SSoT Guard + shared 目录           | ≥ 0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md`    |
+| MOD-DATABASE | 可选   | KB 持久化 API                       | ≥ 0.1.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-INF-027 | 必须   | 审计总线（decision_auditor写入）        | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -1110,7 +1110,7 @@ KNOWN_DUPLICATES = {
 
 | 产出物类型  | 存放完整绝对路径                                                                                 | 说明                                                     | consumer_min |
 | ------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------ |
-| 蓝图文件   | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\code-dedup-engine\blueprint.md`       | 本文件                                                    | AI session / 治理审计 |
+| 蓝图文件   | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\code-dedup-engine\blueprint.md`       | 本文件                                                    | AI session / 治理审计 |
 | 业务代码   | `D:\ZephyrAlpha\src\zephyr\infra_ops\code_dedup_engine\`                        | 68 个 .py 文件                                            | CLI / Gate Engine / AutoRuntime |
 | CLI 脚本 | `D:\ZephyrAlpha\src\zephyr\infra_ops\code_dedup_engine\cli.py` | CLI 入口：`python -m zephyr.infra_ops.code_dedup_engine.cli` | pre-commit / CI / Owner |
 | Pre-commit | `D:\ZephyrAlpha\scripts\pre-commit\verify_dedup.py` | 薄壳委托CLI | .pre-commit-config.yaml |
@@ -1678,9 +1678,9 @@ STEP 3: 拆分后验证
 | 4 | 脚本质量标准            | `D:\ZephyrAlpha\scripts\governance\quality-standard.md`                                               |
 | 5 | 蓝图注册表             | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`                                              |
 | 6 | 依赖图               | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md`                             |
-| 7 | Gate Engine 蓝图    | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\gate_engine\blueprint.md`                          |
-| 8 | Context Engine 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\context_engine\blueprint.md`                       |
-| 9 | Shared Core 蓝图    | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\shared_core\blueprint.md`                          |
+| 7 | Gate Engine 蓝图    | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md`                          |
+| 8 | Context Engine 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\context_engine\blueprint.md`                       |
+| 9 | Shared Core 蓝图    | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md`                          |
 
 ## 已有类似功能
 

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0575 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §config_validator
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §config_validator
 # [MODULE] tests.test_config_validator
 # [INVARIANTS] ConfigValidator.validate必须返回ValidationResult; ValidationResult.valid反映errors存在
 # [MODIFY-GUARD] 仅当config_validator公开API变更时修改

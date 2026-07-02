@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md
+# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [MODULE] zephyr.shared.capacity_governance.capacity_governance_loop
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1420 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §pydantic_v2_migrator
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §pydantic_v2_migrator
 # [MODULE] tests.test_pydantic_v2_migrator
 # [INVARIANTS] PydanticV2Migrator.scan必须返回MigrationReport; skip=True的pattern不应出现在findings中
 # [MODIFY-GUARD] 仅当pydantic_v2_migrator公开API变更时修改

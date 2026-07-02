@@ -518,11 +518,11 @@ class SemanticAuditReport(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 | 必须 | AuditTrail 记录修复操作 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\audit-trail\blueprint.md` |
+| MOD-INF-020 | 必须 | AuditTrail 记录修复操作 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
 | MOD-LLM_SECURITY | 必须 | LLM Security Gateway 校验 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm_security\blueprint.md` |
-| MOD-INF-026 | 必须 | Asset Inventory 文件存在性查询 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\asset-inventory\blueprint.md` |
-| MOD-INF-021 | 必须 | Rollback System checkpoint/restore | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\rollback-system\blueprint.md` |
-| MOD-INF-024 | 必须 | Budget Enforcer Token 预算 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` |
+| MOD-INF-026 | 必须 | Asset Inventory 文件存在性查询 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\asset-inventory\blueprint.md` |
+| MOD-INF-021 | 必须 | Rollback System checkpoint/restore | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
+| MOD-INF-024 | 必须 | Budget Enforcer Token 预算 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` |
 | MOD-INF-027 | 可选 | AuditOrchestrator 调度协调 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | Feedback Loop 发现注入 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback_loop\blueprint.md` |
 

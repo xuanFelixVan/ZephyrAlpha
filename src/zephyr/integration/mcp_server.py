@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infra_ops/asset_inventory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] zephyr.integration.mcp_server
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.__init__

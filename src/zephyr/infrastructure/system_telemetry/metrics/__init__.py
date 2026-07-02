@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | 蓝图特有§A
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics
 # [STABILITY] evolving
 # [SAFETY] M

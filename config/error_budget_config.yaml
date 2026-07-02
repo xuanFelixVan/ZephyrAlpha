@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: mod_inf_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §
+# blueprint: mod_inf_001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
 # module_id: mod_inf_001
 # stability: evolving
 # safety_level: M

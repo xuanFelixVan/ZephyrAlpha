@@ -848,7 +848,7 @@ class FeedbackEntry(BaseModel):
 | MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback_loop\blueprint.md` |
 | L02-Alpha因子层 | 可选 | C轨域：因子语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\l02_factor\blueprint.md` |
-| L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_ml_train\blueprint.md` |
+| L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
 | KBG-0016 | 必须 | VMS生产级嵌入与分块契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` |
 | KBG-0031 | 必须 | Phase 2 ChromaDB基线选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
 | MOD-INF-039 | 必须 | 嵌入服务——EmbeddingRouter/CacheLayer/OllamaEmbedding已迁移至local_model | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |

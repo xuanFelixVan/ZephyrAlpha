@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0223 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md | §3
 # [MODULE] tests.test_a2a_context_rot
 # [INVARIANTS] Tests must not modify production state; All imports guarded by pytest.importorskip
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md

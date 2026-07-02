@@ -229,9 +229,9 @@ doc_type: blueprint
 
 | module_id | 必须/可选 | 用途 | 契约ID | 蓝图路径 |
 |-----------|:-------:|------|--------|---------|
-| MOD-INF-011 | 可选 | VMS消费嵌入服务 | CT-042-001 | `docs/03_modules/_domain_infra_ops/vector_memory/blueprint.md` |
+| MOD-INF-011 | 可选 | VMS消费嵌入服务 | CT-042-001 | `docs/03_modules/_domain_infrastructure_operations/vector_memory/blueprint.md` |
 | MOD-INF-009 | 可选 | Pipeline消费嵌入+rerank | CT-042-001 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
-| MOD-INF-019 | 可选 | Agent Spec语义路由 | CT-042-001 | `docs/03_modules/_domain_infra_ops/agent-spec/blueprint.md` |
+| MOD-INF-019 | 可选 | Agent Spec语义路由 | CT-042-001 | `docs/03_modules/_domain_infrastructure_operations/agent-spec/blueprint.md` |
 
 ### 10.5 概念重叠声明
 

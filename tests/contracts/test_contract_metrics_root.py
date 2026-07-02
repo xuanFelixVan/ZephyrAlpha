@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0620 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_contract_metrics
 # [INVARIANTS] SlaRecord.passed derived from latency vs SLA; buffer capped at MAX; singleton collector
 # [MODIFY-GUARD] contract_metrics.py

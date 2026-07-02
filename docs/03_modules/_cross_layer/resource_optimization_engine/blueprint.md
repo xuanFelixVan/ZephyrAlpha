@@ -1192,8 +1192,8 @@ STEP 3: 拆分后验证
 | 1 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` | 磁盘空间监控 + os.walk 扫描 | ResourceGuard 只做磁盘监控和文件扫描，无 CPU/内存/进程池/缓存/调度优化能力，且自身就是资源浪费源（每5秒全量扫描） |
 | 2 | DaemonRegistry | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 守护线程注册 | DaemonRegistry 只做注册，无压力感知、无自适应调度、无优先级驱动的启停策略。本蓝图升级 DaemonRegistry 而非替换 |
 | 3 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` | Token 预算管理 | ContextBudgetTracker 只管 Token 预算，不管系统级资源（CPU/内存/磁盘/进程）。两者互补不重叠 |
-| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\capacity_assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
-| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\_domain_infra_ops\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
+| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\capacity_assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
+| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
 
 ---
 
