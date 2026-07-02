@@ -29,7 +29,7 @@ Safety  : M（DDL 定义，init_db 幂等执行）
  2. task_files            — 任务-文件 N:N 映射表（#21 裁定）
  3. events                — 事件流（DeferredQueue 消费）
  4. knowledge             — KE 索引
- 5. gates                 — 门禁运行记录
+ 5. gate_runs             — 门禁运行记录（5.18.14 改名，避免与 depgraph gates 同名异构）
  6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 experimental）
  7. _schema_version       — Schema 版本追踪（SH-DB-001 v2.0 新增）
  8. slow_queries          — 慢查询记录（SH-DB-001 v2.0 新增）
@@ -162,7 +162,9 @@ CREATE TABLE IF NOT EXISTS knowledge (
 # ---------------------------------------------------------------------------
 
 _DDL_GATES = """
-CREATE TABLE IF NOT EXISTS gates (
+-- 5.18.14 治本（2026-07-01）：governance.db gates 改名 gate_runs，
+-- 避免与 depgraph gates（11列 YAML SSoT 只读表）同名异构冲突。
+CREATE TABLE IF NOT EXISTS gate_runs (
     gate_run_id  TEXT PRIMARY KEY,
     gate_id      TEXT NOT NULL,
     passed       INTEGER NOT NULL CHECK(passed IN (0,1)),
@@ -188,8 +190,8 @@ CREATE TABLE IF NOT EXISTS circuit_breaker_state (
     last_failure_at  TEXT,
     opened_at        TEXT,
     reason           TEXT,
-    created_at       TEXT    NOT NULL DEFAULT (datetime('now')),
-    updated_at       TEXT    NOT NULL DEFAULT (datetime('now')),
+    created_at       TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+    updated_at       TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
     UNIQUE(caller_module, target_module)
 )
 """
@@ -256,13 +258,21 @@ CREATE TABLE IF NOT EXISTS tx_idempotency (
 # ---------------------------------------------------------------------------
 
 _DDL_TASK_EVENTS_V2 = """
+-- 5.18.6 治本（2026-07-02）：补回 v18 的 CHECK+UNIQUE 约束（v19 重建时丢失）
 CREATE TABLE IF NOT EXISTS task_events (
     event_id    TEXT    PRIMARY KEY,
     task_id     TEXT    NOT NULL,
-    event_type  TEXT    NOT NULL,
+    event_type  TEXT    NOT NULL CHECK(event_type IN (
+        'TASK_CREATED', 'TASK_CLAIMED', 'TASK_IN_PROGRESS',
+        'TASK_COMPLETED', 'TASK_FAILED', 'TASK_RETRY_CREATED',
+        'TASK_CLAIM_EXPIRED', 'TASK_CANCELLED',
+        'TASK_ACCEPTANCE_UPDATED', 'TASK_POST_SYNC_UPDATED',
+        'GATE_CREATED', 'GATE_CLAIMED', 'GATE_PASSED', 'GATE_FAILED'
+    )),
     payload     TEXT    NOT NULL DEFAULT '{}',
     timestamp   TEXT    NOT NULL,
-    session_id  TEXT
+    session_id  TEXT,
+    UNIQUE(event_type, task_id, timestamp)
 )
 """
 
@@ -282,7 +292,7 @@ CREATE TABLE IF NOT EXISTS fle_metrics (
     window_avg      REAL,
     window_p99      REAL,
     window_count    INTEGER,
-    collected_at    TEXT    DEFAULT (datetime('now'))
+    collected_at    TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
 )
 """
 
@@ -304,7 +314,7 @@ CREATE TABLE IF NOT EXISTS fle_alerts (
     status          TEXT    DEFAULT 'PENDING' CHECK(status IN ('PENDING','DISPATCHED','RESOLVED','DISMISSED')),
     dispatched_at   TEXT,
     resolved_at     TEXT,
-    created_at      TEXT    DEFAULT (datetime('now'))
+    created_at      TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
 )
 """
 
@@ -320,7 +330,7 @@ CREATE TABLE IF NOT EXISTS fle_dispatch_log (
     result          TEXT    NOT NULL,
     task_id         TEXT,
     error_message   TEXT,
-    dispatched_at   TEXT    DEFAULT (datetime('now'))
+    dispatched_at   TEXT    DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
 )
 """
 
@@ -357,8 +367,8 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_events_type        ON events(event_type)",
     "CREATE INDEX IF NOT EXISTS idx_events_task        ON events(task_id)",
     "CREATE INDEX IF NOT EXISTS idx_events_created     ON events(created_at)",
-    "CREATE INDEX IF NOT EXISTS idx_gates_gate_id      ON gates(gate_id)",
-    "CREATE INDEX IF NOT EXISTS idx_gates_session      ON gates(session_id)",
+    "CREATE INDEX IF NOT EXISTS idx_gate_runs_gate_id  ON gate_runs(gate_id)",
+    "CREATE INDEX IF NOT EXISTS idx_gate_runs_session  ON gate_runs(session_id)",
     "CREATE INDEX IF NOT EXISTS idx_knowledge_cat      ON knowledge(category)",
 ]
 
@@ -655,7 +665,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "INSERT OR IGNORE INTO events_v15 SELECT * FROM events",
             "DROP TABLE IF EXISTS events",
             "ALTER TABLE events_v15 RENAME TO events",
-            """CREATE TABLE gates_v15 (
+            """CREATE TABLE gate_runs_v15 (
                 gate_run_id TEXT PRIMARY KEY,
                 gate_id TEXT NOT NULL,
                 passed INTEGER NOT NULL CHECK(passed IN (0,1)),
@@ -665,9 +675,9 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                 task_id TEXT REFERENCES tasks(task_id) ON DELETE SET NULL,
                 created_at TEXT NOT NULL
             )""",
-            "INSERT OR IGNORE INTO gates_v15 SELECT * FROM gates",
-            "DROP TABLE IF EXISTS gates",
-            "ALTER TABLE gates_v15 RENAME TO gates",
+            "INSERT OR IGNORE INTO gate_runs_v15 SELECT * FROM gate_runs",
+            "DROP TABLE IF EXISTS gate_runs",
+            "ALTER TABLE gate_runs_v15 RENAME TO gate_runs",
             """CREATE TABLE task_files_v15 (
                 task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE,
                 file_path TEXT NOT NULL,
@@ -683,8 +693,8 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type)",
             "CREATE INDEX IF NOT EXISTS idx_events_task ON events(task_id)",
             "CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at)",
-            "CREATE INDEX IF NOT EXISTS idx_gates_gate_id ON gates(gate_id)",
-            "CREATE INDEX IF NOT EXISTS idx_gates_session ON gates(session_id)",
+            "CREATE INDEX IF NOT EXISTS idx_gate_runs_gate_id ON gate_runs(gate_id)",
+            "CREATE INDEX IF NOT EXISTS idx_gate_runs_session ON gate_runs(session_id)",
             "CREATE INDEX IF NOT EXISTS idx_tf_task ON task_files(task_id)",
             "CREATE INDEX IF NOT EXISTS idx_tf_file ON task_files(file_path)",
             "CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status)",
@@ -811,9 +821,9 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         23,
         "ADR->KBG: Update tasks.namespace CHECK constraint to replace KB 决策记录 with KBG",
         [
-            "PRAGMA writable_schema = ON",
-            "UPDATE sqlite_master SET sql = replace(sql, '''KB 决策记录''', '''KBG''') WHERE type='table' AND name='tasks' AND sql LIKE '%''KB 决策记录''%'",
-            "PRAGMA writable_schema = RESET",
+            # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
+            # _DDL_TASKS 在 v1 创建时已用 'KBG'（非 'KB 决策记录'），LIKE 模式不匹配→原 hack 在全新库上是 no-op。
+            # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
         ],
     ),
     (
@@ -832,12 +842,9 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         25,
         "Add DM namespace to tasks.namespace CHECK constraint for Domain Migration tasks",
         [
-            "PRAGMA writable_schema = ON",
-            "UPDATE sqlite_master SET sql = replace(sql, "
-            "'CHECK(namespace IN (''KBG'',''CP'',''KE'',''STD'',''DW'',''SRC'',''OPS''))', "
-            "'CHECK(namespace IN (''KBG'',''CP'',''KE'',''STD'',''DW'',''SRC'',''OPS'',''DM''))') "
-            "WHERE type='table' AND name='tasks' AND sql LIKE '%OPS''))%' AND sql NOT LIKE '%DM%'",
-            "PRAGMA writable_schema = RESET",
+            # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
+            # _DDL_TASKS 在 v1 创建时已含 'DM'，LIKE 模式 `NOT LIKE '%DM%'` 不匹配→原 hack 在全新库上是 no-op。
+            # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
         ],
     ),
     (
@@ -891,21 +898,12 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         27,
         "DM-386: Add CHECK constraints on files_in_scope/deliverables to enforce JSON array format",
         [
-            "PRAGMA foreign_keys = OFF",
+            # 5.18.7 治本（2026-07-02）：writable_schema hack 已移除。
+            # _DDL_TASKS 在 v1 创建时已含 CHECK(files_in_scope LIKE '[%') 和 CHECK(deliverables LIKE '[%')，
+            # LIKE 模式 `NOT LIKE '%files_in_scope LIKE%'` 不匹配→原 hack 在全新库上是 no-op。
+            # 生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。
+            # 保留 events 表 dangling task_id 清理（安全的数据维护操作，非 hack）：
             "UPDATE events SET task_id = NULL WHERE task_id IS NOT NULL AND task_id NOT IN (SELECT task_id FROM tasks)",
-            "PRAGMA writable_schema = ON",
-            "UPDATE sqlite_master SET sql = replace(sql, "
-            "\"files_in_scope   TEXT    NOT NULL DEFAULT '[]'\", "
-            "\"files_in_scope   TEXT    NOT NULL DEFAULT '[]' CHECK(files_in_scope LIKE '[%')\") "
-            "WHERE type='table' AND name='tasks' AND sql LIKE \"%files_in_scope   TEXT    NOT NULL DEFAULT '[]'%\" "
-            "AND sql NOT LIKE '%files_in_scope LIKE%'",
-            "UPDATE sqlite_master SET sql = replace(sql, "
-            "\"deliverables     TEXT    NOT NULL DEFAULT '[]'\", "
-            "\"deliverables     TEXT    NOT NULL DEFAULT '[]' CHECK(deliverables LIKE '[%')\") "
-            "WHERE type='table' AND name='tasks' AND sql LIKE \"%deliverables     TEXT    NOT NULL DEFAULT '[]'%\" "
-            "AND sql NOT LIKE '%deliverables LIKE%'",
-            "PRAGMA writable_schema = RESET",
-            "PRAGMA foreign_keys = ON",
         ],
     ),
     (
@@ -953,6 +951,41 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             # 5. PRAGMA foreign_keys = ON（恢复 FK 检查）
             #
             # 全新库无 domain_id 列时，_drop_tasks_domain_id 是 no-op，仅登记版本号。
+        ],
+    ),
+    (
+        31,
+        "5.18.6 治本: task_events v2 重建补 CHECK+UNIQUE 约束（v19 重建时丢失 v18 的 14 种 event_type 枚举约束和 UNIQUE(event_type,task_id,timestamp)）",
+        [
+            # SQLite 不支持 ALTER TABLE ADD CONSTRAINT，需表重建模式
+            # 步骤：建备份 → RENAME 旧表 → 建新表（含 CHECK+UNIQUE）→ 复制数据（过滤脏数据）→ DROP 备份 → 重建索引
+            "PRAGMA foreign_keys = OFF",
+            "DROP TABLE IF EXISTS _task_events_v31_backup",
+            "ALTER TABLE task_events RENAME TO _task_events_v31_backup",
+            _DDL_TASK_EVENTS_V2.replace(
+                "CREATE TABLE IF NOT EXISTS task_events",
+                "CREATE TABLE task_events",
+            ),
+            # 复制数据：过滤掉不符合 CHECK 约束的脏 event_type（防止 INSERT 失败）
+            """INSERT INTO task_events (event_id, task_id, event_type, payload, timestamp, session_id)
+               SELECT event_id, task_id, event_type, payload, timestamp, session_id
+               FROM _task_events_v31_backup
+               WHERE event_type IN (
+                   'TASK_CREATED', 'TASK_CLAIMED', 'TASK_IN_PROGRESS',
+                   'TASK_COMPLETED', 'TASK_FAILED', 'TASK_RETRY_CREATED',
+                   'TASK_CLAIM_EXPIRED', 'TASK_CANCELLED',
+                   'TASK_ACCEPTANCE_UPDATED', 'TASK_POST_SYNC_UPDATED',
+                   'GATE_CREATED', 'GATE_CLAIMED', 'GATE_PASSED', 'GATE_FAILED'
+               )""",
+            "DROP TABLE _task_events_v31_backup",
+            # 重建索引（DROP TABLE 已删除所有索引）
+            "CREATE INDEX IF NOT EXISTS idx_te_task_v2      ON task_events(task_id)",
+            "CREATE INDEX IF NOT EXISTS idx_te_timestamp_v2 ON task_events(timestamp)",
+            "CREATE INDEX IF NOT EXISTS idx_te_type_v2      ON task_events(event_type)",
+            "CREATE INDEX IF NOT EXISTS idx_te_session_v2   ON task_events(session_id)",
+            # v21 的部分唯一索引需重建
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_te_one_claim_per_task ON task_events(task_id) WHERE event_type='TASK_CLAIMED'",
+            "PRAGMA foreign_keys = ON",
         ],
     ),
 ]
@@ -1056,6 +1089,25 @@ def _run_migration(
         # v28 statement #0 是生产库脏数据清洗，全新库无 domain_id 列需跳过
         if version == 28 and i == 0 and _tasks_lacks_domain_id(conn):
             continue
+        # v31 statement #4: 兼容 v18/v19 两版 task_events schema
+        # v19 在某些旧库上标记 applied 却未执行 DDL，导致 task_events 仍是 v18 schema
+        # （有 details 列，无 payload/session_id 列）。v31 INSERT 假设 v19 已成功（有 payload），
+        # 旧库需动态替换为 details→payload、NULL→session_id
+        if version == 31 and i == 4:
+            backup_cols = {r[1] for r in conn.execute(
+                "PRAGMA table_info(_task_events_v31_backup)"
+            ).fetchall()}
+            if "payload" not in backup_cols and "details" in backup_cols:
+                stmt = """INSERT INTO task_events (event_id, task_id, event_type, payload, timestamp, session_id)
+               SELECT event_id, task_id, event_type, COALESCE(details, '{}'), timestamp, NULL
+               FROM _task_events_v31_backup
+               WHERE event_type IN (
+                   'TASK_CREATED', 'TASK_CLAIMED', 'TASK_IN_PROGRESS',
+                   'TASK_COMPLETED', 'TASK_FAILED', 'TASK_RETRY_CREATED',
+                   'TASK_CLAIM_EXPIRED', 'TASK_CANCELLED',
+                   'TASK_ACCEPTANCE_UPDATED', 'TASK_POST_SYNC_UPDATED',
+                   'GATE_CREATED', 'GATE_CLAIMED', 'GATE_PASSED', 'GATE_FAILED'
+               )"""
         try:
             conn.execute(stmt)
         except sqlite3.OperationalError as exc:
@@ -1067,6 +1119,7 @@ def _run_migration(
                 "duplicate key name:",
                 'no such column: "name"',
                 "no such column: name",
+                "no such table: gates",  # 5.18.14: v30 RENAME on fresh DB (gates->gate_runs)
             )
             if any(p in msg for p in benign):
                 continue
