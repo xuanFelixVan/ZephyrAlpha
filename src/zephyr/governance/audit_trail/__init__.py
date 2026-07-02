@@ -11,91 +11,88 @@
 # [TESTS] tests/audit-orchestrator/
 # [TTL] task_bound
 
-from zephyr.governance.audit_trail.anomaly import AnomalyDetector
-from zephyr.governance.audit_trail.bridge import OrchestratorBridge
-from zephyr.governance.audit_trail.cold_start import BootstrapCache
-from zephyr.governance.audit_trail.contracts import (
-    AuditDiscoverer,
-    ContractViolationError,
-    IntegrityChecker,
-)
-from zephyr.governance.audit_trail.contracts import (
-    AuditIndexer as AuditIndexerContract,
-)
-from zephyr.governance.audit_trail.contracts import (
-    AuditQuery as AuditQueryContract,
-)
-from zephyr.governance.audit_trail.contracts import (
-    AuditWriter as AuditWriterContract,
-)
-from zephyr.governance.audit_trail.delegation_auditor import DelegationAuditor
-from zephyr.governance.audit_trail.delegation_bridge import DelegationBridge
-from zephyr.governance.audit_trail.drift_bridge import DriftBridge
-from zephyr.governance.audit_trail.external_tool_audit import ExternalToolAuditor
-from zephyr.governance.audit_trail.feedback_bridge import FeedbackBridge
-from zephyr.governance.audit_trail.feedback_policy import FeedbackPolicy, PolicyDecision
-from zephyr.governance.audit_trail.genesis import GenesisBlock
-from zephyr.governance.audit_trail.indexer import AuditIndexer
-from zephyr.governance.audit_trail.log_rotation import LogRotation
+# ARCH-036: 子模块改为延迟导入（__getattr__ + _LAZY_IMPORTS），避免 __init__.py 直接 import 子模块
+# 与外层 `import zephyr.governance.audit_trail.X` 预获取的 module lock 冲突导致 _DeadlockError。
+# 根因: Python `import A.B.C` 先获取 C 的 module lock 再加载父包 A.B; A.B/__init__.py 中 import C
+# 会再次请求 C 的 lock -> deadlock。延迟导入让 __init__.py 只定义 __getattr__，访问时才 import 子模块。
+# 对标已有 STUB 模式(line 41-44 旧版 cli/audit_admission_controller)，统一扩展到全部子模块。
+import importlib
 
-# STUB: from zephyr.governance.audit_trail.cli import main as cli_main
-# Reason: lazy import to break circular import with audit_trail.cli → audit_admission_controller → __init__
-# STUB: from zephyr.governance.audit_trail.audit_admission_controller import AuditAdmissionController, AdmissionResult
-# Reason: lazy import to break circular import with audit_admission_controller → finding_model → __init__
-from zephyr.governance.audit_trail.models import (
-    AuditContext,
-    AuditIssue,
-    AuditType,
-    ChangedFile,
-    DiscoveryReport,
-    FixLevel,
-    GlobalAuditReport,
-    OrchestratorStatus,
-    Priority,
-    Severity,
-)
-from zephyr.governance.audit_trail.query import AuditQueryEngine
-from zephyr.governance.audit_trail.replay_engine import ReplayEngine
-from zephyr.governance.audit_trail.resource_aware_pool import PoolStats, ResourceAwarePool
-from zephyr.governance.audit_trail.retention import RetentionPolicy
-from zephyr.governance.audit_trail.self_monitor import SelfMonitor
-from zephyr.governance.audit_trail.tiered_storage import TieredStorage
-from zephyr.governance.audit_trail.tiered_storage_bridge import TieredStorageBridge
-from zephyr.governance.audit_trail.trust_bridge import TrustBridge
-from zephyr.governance.audit_trail.trust_engine import TrustEngine, TrustLevel
-from zephyr.governance.audit_trail.writer import AuditReportWriter
-from zephyr.governance.evidence_pack import EvidencePack  # ARCH-031: EvidencePack canonical 在根目录 governance/evidence_pack.py
-from zephyr.governance.integrity import IntegrityGuard  # ARCH-031: IntegrityGuard canonical 在根目录 governance/integrity.py
-from zephyr.governance.merkle_hourly import MerkleHourlyBridge  # ARCH-031: MerkleHourlyBridge canonical 在根目录
+# 名字 -> (模块路径, 属性名) 延迟导入映射表
+# alias 用原名: AuditIndexerContract 实际取 contracts.AuditIndexer
+_LAZY_IMPORTS = {
+    "AnomalyDetector": ("zephyr.governance.audit_trail.anomaly", "AnomalyDetector"),
+    "OrchestratorBridge": ("zephyr.governance.audit_trail.bridge", "OrchestratorBridge"),
+    "BootstrapCache": ("zephyr.governance.audit_trail.cold_start", "BootstrapCache"),
+    "AuditDiscoverer": ("zephyr.governance.audit_trail.contracts", "AuditDiscoverer"),
+    "ContractViolationError": ("zephyr.governance.audit_trail.contracts", "ContractViolationError"),
+    "IntegrityChecker": ("zephyr.governance.audit_trail.contracts", "IntegrityChecker"),
+    "AuditIndexerContract": ("zephyr.governance.audit_trail.contracts", "AuditIndexer"),
+    "AuditQueryContract": ("zephyr.governance.audit_trail.contracts", "AuditQuery"),
+    "AuditWriterContract": ("zephyr.governance.audit_trail.contracts", "AuditWriter"),
+    "DelegationAuditor": ("zephyr.governance.audit_trail.delegation_auditor", "DelegationAuditor"),
+    "DelegationBridge": ("zephyr.governance.audit_trail.delegation_bridge", "DelegationBridge"),
+    "DriftBridge": ("zephyr.governance.audit_trail.drift_bridge", "DriftBridge"),
+    "ExternalToolAuditor": ("zephyr.governance.audit_trail.external_tool_audit", "ExternalToolAuditor"),
+    "FeedbackBridge": ("zephyr.governance.audit_trail.feedback_bridge", "FeedbackBridge"),
+    "FeedbackPolicy": ("zephyr.governance.audit_trail.feedback_policy", "FeedbackPolicy"),
+    "PolicyDecision": ("zephyr.governance.audit_trail.feedback_policy", "PolicyDecision"),
+    "GenesisBlock": ("zephyr.governance.audit_trail.genesis", "GenesisBlock"),
+    "AuditIndexer": ("zephyr.governance.audit_trail.indexer", "AuditIndexer"),
+    "LogRotation": ("zephyr.governance.audit_trail.log_rotation", "LogRotation"),
+    "AuditContext": ("zephyr.governance.audit_trail.models", "AuditContext"),
+    "AuditIssue": ("zephyr.governance.audit_trail.models", "AuditIssue"),
+    "AuditType": ("zephyr.governance.audit_trail.models", "AuditType"),
+    "ChangedFile": ("zephyr.governance.audit_trail.models", "ChangedFile"),
+    "DiscoveryReport": ("zephyr.governance.audit_trail.models", "DiscoveryReport"),
+    "FixLevel": ("zephyr.governance.audit_trail.models", "FixLevel"),
+    "GlobalAuditReport": ("zephyr.governance.audit_trail.models", "GlobalAuditReport"),
+    "OrchestratorStatus": ("zephyr.governance.audit_trail.models", "OrchestratorStatus"),
+    "Priority": ("zephyr.governance.audit_trail.models", "Priority"),
+    "Severity": ("zephyr.governance.audit_trail.models", "Severity"),
+    "AuditQueryEngine": ("zephyr.governance.audit_trail.query", "AuditQueryEngine"),
+    "ReplayEngine": ("zephyr.governance.audit_trail.replay_engine", "ReplayEngine"),
+    "PoolStats": ("zephyr.governance.audit_trail.resource_aware_pool", "PoolStats"),
+    "ResourceAwarePool": ("zephyr.governance.audit_trail.resource_aware_pool", "ResourceAwarePool"),
+    "RetentionPolicy": ("zephyr.governance.audit_trail.retention", "RetentionPolicy"),
+    "SelfMonitor": ("zephyr.governance.audit_trail.self_monitor", "SelfMonitor"),
+    "TieredStorage": ("zephyr.governance.audit_trail.tiered_storage", "TieredStorage"),
+    "TieredStorageBridge": ("zephyr.governance.audit_trail.tiered_storage_bridge", "TieredStorageBridge"),
+    "TrustBridge": ("zephyr.governance.audit_trail.trust_bridge", "TrustBridge"),
+    "TrustEngine": ("zephyr.governance.audit_trail.trust_engine", "TrustEngine"),
+    "TrustLevel": ("zephyr.governance.audit_trail.trust_engine", "TrustLevel"),
+    "AuditReportWriter": ("zephyr.governance.audit_trail.writer", "AuditReportWriter"),
+    "TextToFindingAdapter": ("zephyr.governance.audit_trail.text_to_finding_adapter", "TextToFindingAdapter"),
+    "PipelineRunner": ("zephyr.governance.audit_trail.pipeline_runner", "PipelineRunner"),
+    "PipelineResult": ("zephyr.governance.audit_trail.pipeline_runner", "PipelineResult"),
+    "DimensionResult": ("zephyr.governance.audit_trail.pipeline_runner", "DimensionResult"),
+    "ScriptResult": ("zephyr.governance.audit_trail.pipeline_runner", "ScriptResult"),
+    "AuditAdmissionController": ("zephyr.governance.audit_trail.audit_admission_controller", "AuditAdmissionController"),
+    "AdmissionResult": ("zephyr.governance.audit_trail.audit_admission_controller", "AdmissionResult"),
+    "cli_main": ("zephyr.governance.audit_trail.cli", "main"),
+    # ARCH-031: root canonical (governance/evidence_pack.py / integrity.py / merkle_hourly.py)
+    "EvidencePack": ("zephyr.governance.evidence_pack", "EvidencePack"),
+    "IntegrityGuard": ("zephyr.governance.integrity", "IntegrityGuard"),
+    "MerkleHourlyBridge": ("zephyr.governance.merkle_hourly", "MerkleHourlyBridge"),
+}
 
 
 def __getattr__(name):
-    if name == "TextToFindingAdapter":
-        from zephyr.governance.audit_trail.text_to_finding_adapter import TextToFindingAdapter
-
-        return TextToFindingAdapter
-    if name in ("PipelineRunner", "PipelineResult", "DimensionResult", "ScriptResult"):
-        from zephyr.governance.audit_trail.pipeline_runner import (
-            DimensionResult,
-            PipelineResult,
-            PipelineRunner,
-            ScriptResult,
-        )
-
-        return {
-            "PipelineRunner": PipelineRunner,
-            "PipelineResult": PipelineResult,
-            "DimensionResult": DimensionResult,
-            "ScriptResult": ScriptResult,
-        }[name]
-    if name in ("AuditAdmissionController", "AdmissionResult"):
-        from zephyr.governance.audit_trail.audit_admission_controller import AdmissionResult, AuditAdmissionController
-
-        return {"AuditAdmissionController": AuditAdmissionController, "AdmissionResult": AdmissionResult}[name]
-    if name == "cli_main":
-        from zephyr.governance.audit_trail.cli import main as cli_main
-
-        return cli_main
+    # 1. 类名/函数名延迟导入
+    entry = _LAZY_IMPORTS.get(name)
+    if entry is not None:
+        module_path, attr = entry
+        mod = importlib.import_module(module_path)
+        val = getattr(mod, attr)
+        globals()[name] = val  # 缓存到模块全局，后续直接命中
+        return val
+    # 2. 尝试作为子模块导入（__all__ 里的子模块名: anomaly, bridge, models, query 等）
+    try:
+        mod = importlib.import_module(f"{__name__}.{name}")
+        globals()[name] = mod
+        return mod
+    except ModuleNotFoundError:
+        pass
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
