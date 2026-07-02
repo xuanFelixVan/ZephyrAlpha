@@ -3768,6 +3768,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：RPO=∞（无备份点）；RTO=∞（无恢复路径）；违反"备份先行"硬约束
 - **修复**：新增scripts/governance/backup_pg_depgraph.sh：pg_dump --format=custom；配置每日执行
 - **ARCH-041 立项决定（2026-07-02）**：采用"inward收拢"原则——重写现有 backup_runtime_state.py 为 PG 版本（新增 `backup_pg_depgraph()` 函数），而非新建独立脚本。触发机制待定（方案A: apply_depgraph.py 成功后事件触发 pg_dump；方案B: 每日 cron 时间触发——备份场景豁免"禁止时间触发"约束，该约束仅针对 reconciler）。与 §5.33.2 合并处理——重写完成后两节同时关闭。
+- **✅ 已解决（2026-07-03）**：`backup_pg_depgraph()` 函数已实现于 [backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L145)。采用方案 A（事件触发）——[apply_depgraph.py](file:///D:/ZephyrAlpha/scripts/governance/apply_depgraph.py#L3452) `if __name__` 块 try/finally 中，检测到写入命令（非 --dry-run）时自动调用。实现细节：psycopg2 查询导出 nodes+edges 表为 JSON（pg_dump 不可用时的 fallback），输出到 `tmp/pg_backups/depgraph_<timestamp>.json`，自动清理旧备份（保留最近 10 个）。测试通过：nodes=5049, edges=5843。治本原则：永久系统全自动（事件触发/自动运行/自动清理），符合 project_memory "禁止时间触发/手动触发" 约束。
 
 #### 5.33.2 [HIGH] backup_runtime_state.py完全过时——仍按SQLite设计，PG迁移后未更新
 - **文件**：[backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L16)
@@ -3777,6 +3778,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：更新docstring + manifest；新增backup_pg_depgraph()函数
 - **ARCH-041 部分治本（2026-07-02）**：docstring 已标注 DEPRECATED 并指向 git history 真源（directory_contract L740）；默认输出路径从 `meta/_backups/`（deprecated）改为 `tmp/runtime_backups/`（不进 git，.gitignore 已加规则）。**剩余债务**：脚本本身仍按 SQLite 时代设计，未新增 `backup_pg_depgraph()` 函数。
 - **ARCH-041 合并处理立项（2026-07-02）**：与 §5.33.1 合并处理——重写 backup_runtime_state.py 为 PG 版本（新增 `backup_pg_depgraph()` 函数），重写完成后本节与 §5.33.1 同时关闭。治本变更需在无并发 AI 环境下执行（project_memory: "治本变更未提交前禁止并发AI对话"）。
+- **✅ 已解决（2026-07-03）**：`backup_pg_depgraph()` 已实现（§5.33.1 已解决），docstring 已更新去掉"PG 备份待重写"表述，main() 添加 DEPRECATED 警告（warnings.warn + stderr）。YAML/JSONL 快照功能保留向后兼容但标记 DEPRECATED。本节与 §5.33.1 同时关闭。
 
 #### 5.33.3 [HIGH] phase_a_backup.py BACKUP_BASE硬编码Windows非ASCII路径
 - **文件**：[phase_a_backup.py](file:///D:/ZephyrAlpha/scripts/governance/_archive/one_off/phase_a_backup.py#L61)

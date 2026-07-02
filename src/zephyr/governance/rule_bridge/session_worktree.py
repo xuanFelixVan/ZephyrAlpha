@@ -74,6 +74,7 @@ __all__ = [
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 from zephyr.governance.rule_bridge.worktree_manager import (
@@ -439,6 +440,51 @@ def session_worktree_commit(
                 "commit_hash": "",
                 "held_overlap": True,
             }
+
+    # ── DCR 检测（对标 GitCommitGateway 的 DIRECTORY-CONTRACT gate）──────────
+    # 治本(ARCH-041): session_worktree_commit 绕过 GitCommitGateway，导致 directory_contract
+    # 检测（含 _backups 禁止、DCR-001~007）不触发。此处补强，subprocess 调用真源
+    # check_directory_contract.py，fail-closed（checker 缺失/超时也阻断）。
+    # 与 directory_contract_gate.py L78-137 保持一致（复用真源，禁止复制 DCR 逻辑）。
+    check_script = root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+    if not check_script.is_file():
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"check_directory_contract.py not found: {check_script} (fail-closed)",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    # 文件数过多时改用 --all-files（避免 WinError 206 命令行长度限制）
+    _MAX_INLINE_FILES = 200
+    if len(rel_files) > _MAX_INLINE_FILES:
+        dcr_cmd = [sys.executable, str(check_script), "--all-files"]
+    else:
+        dcr_cmd = [sys.executable, str(check_script)] + rel_files
+    try:
+        dcr_result = subprocess.run(
+            dcr_cmd, capture_output=True, cwd=str(root), timeout=60,
+        )
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"check_directory_contract.py execution failed (fail-closed): {e}",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    if dcr_result.returncode != 0:
+        detail = dcr_result.stderr.decode("utf-8", errors="replace").strip()
+        if not detail:
+            detail = dcr_result.stdout.decode("utf-8", errors="replace").strip()
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"DIRECTORY_CONTRACT_VIOLATION: {detail or 'unknown violation'}",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    # ── DCR 检测结束 ──────────────────────────────────────────────────────
 
     # 同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根，
     # worktree 内文件是创建时的旧版本，需同步才能 stage 到最新内容）
