@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check永不抛异常——get_session异常降级为放行（registry故障不应卡死commit工作流）
-# [TESTS] tests/governance/rule_enforcement/test_claim_required_gate.py
+# [TESTS] tests/governance/commit_gates/test_claim_required_gate.py
 # [A_module] module_id=MOD-GOV-claim_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """claim_required_gate.py — claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）

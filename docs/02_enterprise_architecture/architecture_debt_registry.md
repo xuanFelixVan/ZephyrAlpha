@@ -3881,7 +3881,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：测试fixture改用PG testcontainers或独立PG test数据库
 
 #### 5.34.4 [HIGH] 测试直接连接生产PostgreSQL，无测试数据库隔离（与5.21交叉确认）
-- **文件**：[test_depgraph_db.py](file:///D:/ZephyrAlpha/tests/governance/rule_enforcement/test_depgraph_db.py#L13)
+- **文件**：[test_depgraph_db.py](file:///D:/ZephyrAlpha/tests/governance/depgraph/test_depgraph_db.py#L13)
 - **证据**：from zephyr.governance.depgraph_schema import get_depgraph_pg_connection；conn = get_depgraph_pg_connection()——直连生产PG (localhost:5432/depgraph)
 - **问题**：测试与生产共用同一PG数据库；测试INSERT/UPDATE/DELETE直接修改生产数据
 - **影响**：违反project_memory.md第10行"测试脚本必须严格隔离生产库"硬约束
@@ -5983,7 +5983,7 @@ work_dags和capability_cards已清理
 | `src/zephyr/governance/delegation/delegation_engine.py` | `src/zephyr/governance/delegation/delegation_engine.py` | 5.52 | 1 |
 | `src/zephyr/governance/ops/env_watcher.py` | `src/zephyr/governance/ops/env_watcher.py` + `src/zephyr/infrastructure/rollback/env_watcher.py` | 5.54 | 1 |
 | `scripts/governance/_archive/one_off/phase_a_backup.py` | `scripts/governance/_archive/one_off/phase_a_backup.py` | 5.33 | 2 |
-| `tests/governance/rule_enforcement/test_depgraph_db.py` | `tests/governance/rule_enforcement/test_depgraph_db.py` | 5.34 | 1 |
+| `tests/governance/depgraph/test_depgraph_db.py` | `tests/governance/depgraph/test_depgraph_db.py` | 5.34 | 1 |
 
 **特别说明**：
 - **5.52.4中chaos_injector.py:292 [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码]引用完全失效**：该文件无任何asyncio代码，是误报，应从注册表剔除

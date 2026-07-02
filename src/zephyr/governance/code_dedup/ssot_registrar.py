@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/governance/code_dedup/test_ssot_registrar.py
 # [A_module] module_id=MOD-UNK_ssot_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通过；exit 1=有违规（阻断 commit）；exit 2=脚本异常（阻断 commit，fail-closed）
-# [TESTS] tests/governance/rule_enforcement/test_directory_contract_gate.py
+# [TESTS] tests/governance/commit_gates/test_directory_contract_gate.py
 # [A_module] module_id=MOD-GOV-directory_contract_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """directory_contract_gate.py — DCR-001~007 等效校验门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）

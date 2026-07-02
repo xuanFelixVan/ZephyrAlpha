@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-2036 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-ssot_redefinition_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
-# [MODULE] tests.governance.rule_enforcement.test_ssot_redefinition_gate
+# [MODULE] tests.governance.commit_gates.test_ssot_redefinition_gate
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

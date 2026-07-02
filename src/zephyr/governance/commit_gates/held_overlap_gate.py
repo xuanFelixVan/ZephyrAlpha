@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——registry 读取异常降级为空集（other_held=set()）
-# [TESTS] tests/governance/rule_enforcement/test_held_overlap_gate.py
+# [TESTS] tests/governance/commit_gates/test_held_overlap_gate.py
 # [A_module] module_id=MOD-GOV-held_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """held_overlap_gate.py — 搭便车防护门禁（HELD-OVERLAP，2026-06-30 治本）

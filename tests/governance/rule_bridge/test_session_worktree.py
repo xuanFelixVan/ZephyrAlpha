@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-2040 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
-# [MODULE] tests.governance.rule_enforcement.test_session_worktree
+# [MODULE] tests.governance.rule_bridge.test_session_worktree
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -46,8 +46,8 @@ from zephyr.governance.rule_bridge.session_worktree import (
 from zephyr.shared.io.paths import REPO_ROOT
 
 _TEST_SIDS = ["sess-pytest-A", "sess-pytest-B"]
-_TEST_FILE_A = "tests/governance/rule_enforcement/_wt_marker_a.json"
-_TEST_FILE_B = "tests/governance/rule_enforcement/_wt_marker_b.json"
+_TEST_FILE_A = "tests/governance/rule_bridge/_wt_marker_a.json"
+_TEST_FILE_B = "tests/governance/rule_bridge/_wt_marker_b.json"
 
 
 def _force_rmtree(path: Path) -> None:
@@ -319,7 +319,7 @@ def test_worktree_abort_cleans_main_workdir():
     assert r.get("worktree_path"), f"start 失败: {r}"
 
     # 模拟 AI 用 Write 创建新文件到项目根（untracked）
-    new_file = "tests/governance/rule_enforcement/_wt_abort_main.json"
+    new_file = "tests/governance/rule_bridge/_wt_abort_main.json"
     new_path = REPO_ROOT / new_file
     new_path.parent.mkdir(parents=True, exist_ok=True)
     new_path.write_text('{"abort_test": true}\n', encoding="utf-8")
