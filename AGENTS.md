@@ -35,6 +35,22 @@
 >
 > **豁免条款（reconciler 实弹验证专用，2026-07-02 裁定）**：验证 GitCommitGateway post-commit reconciler 链路时，允许走 `scripts/git_commit.py --reconciler-verify`（不经过 session_worktree）。**豁免理由**：reconciler 操作主分支数据（depgraph DB / 主仓库 index auto-commit），无法在 worktree 独立 index 内运行；且验证为单 session 诊断场景，与君子协定“防多 session 并发冲突”的核心目的正交。**三重前置条件**（缺一不可）：(1) 主工作区 clean（`git status --short` 空）(2) 无其他活跃 session（或 `--allow-concurrent` 逃生）(3) `claim_files` 全部成功（`--allow-overlap` 自动禁用）。搭便车风险由 claim_files 文件级锁 + `_GlobalCommitLock` 串行锁 + 干净环境三重防护覆盖。**仅限验证场景**，常规开发提交仍 MUST 走 session_worktree。
 
+## RULE-DEPGRAPH：第三件事（防幻觉/防漂移治本规则，2026-07-02）
+
+> **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后，将 `status` 从 `planned → production`。
+>
+> **写入设计态前 MUST 刷新运营态**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时，内置门闸自动调用 `generate_project_depgraph.py` 刷新运营态（代码现状真实依赖快照）。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限生成器故障时使用，正常流程禁止）。
+>
+> **为什么**：depgraph 是依赖关系唯一真源。AI 从 depgraph 查询依赖=零幻觉空间；AI 绕过 depgraph 自行推断依赖=幻觉/漂移根源。未登记依赖在拓扑验证时自动阻断。
+>
+> **流程**：
+> 1. `generate_project_depgraph.py` 刷新运营态（门闸自动执行）
+> 2. `apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID planned` 登记设计态
+> 3. 拓扑验证（无循环/无缺失/无孤儿）
+> 4. 施工（代码引用 depgraph 契约名）
+> 5. 验证依赖一致性
+> 6. `apply_depgraph.py --transition-build-status NODE_ID production` 转正
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
