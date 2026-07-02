@@ -1030,8 +1030,11 @@ def _audit_commit_history(
     project_root: "object",
     audit_window: int,
     gw_marker: str,
-) -> "tuple[list[dict], str | None]":
-    """扫描最近 N 个 commit，返回无 GW 标记的裸 commit 列表（审计逻辑真源）。
+    rv_marker: str = "",
+) -> "tuple[list[dict], list[dict], str | None]":
+    """扫描最近 N 个 commit，返回 (裸commit违规, rv豁免通道使用, error)。
+
+    rv_marker 非空时，含 [GW: 且含 rv_marker 的 commit 记入 rv_uses（合法但追溯）。
 
     治本（2026-06-30 病根1 看门人无人看）：把 make_commit_gateway_audit_reconciler
     闭包内的审计逻辑提取为模块级函数，使其成为可被 integrity_anchors 保护的 name
@@ -1049,8 +1052,8 @@ def _audit_commit_history(
         gw_marker: GW 标记字符串（如 "[GW:"）。
 
     Returns:
-        (violations, error_msg): error_msg 非 None 表示 git log 失败；
-        error_msg 为 None 时 violations 为违规列表（可能为空）。
+        (violations, rv_uses, error_msg): error_msg 非 None 表示 git log 失败；
+        error_msg 为 None 时 violations 为裸 commit 违规列表，rv_uses 为豁免通道使用列表。
     """
     import subprocess
 
@@ -1064,9 +1067,10 @@ def _audit_commit_history(
         timeout=10,
     )
     if log_result.returncode != 0:
-        return [], f"git log failed: {log_result.stderr.strip()[:200]}"
+        return [], [], f"git log failed: {log_result.stderr.strip()[:200]}"
 
     violations: list[dict] = []
+    rv_uses: list[dict] = []
     for line in log_result.stdout.strip().splitlines():
         # format: <hash> <subject>
         parts = line.split(" ", 1)
@@ -1077,7 +1081,10 @@ def _audit_commit_history(
         if subject.startswith("Merge "):
             continue
         if gw_marker in subject:
-            continue  # subject 已含 [GW:（reconciler auto-commit）
+            # subject 已含 [GW:（合法 commit），检测是否豁免通道使用
+            if rv_marker and rv_marker in subject:
+                rv_uses.append({"hash": commit_hash, "subject": subject[:120]})
+            continue
         # subject 无 [GW: → 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
         body_result = subprocess.run(
             ["git", "show", "-s", "--format=%B", commit_hash],
@@ -1088,10 +1095,14 @@ def _audit_commit_history(
             errors="replace",
             timeout=5,
         )
-        if body_result.returncode == 0 and gw_marker in body_result.stdout:
-            continue  # body 含 [GW:（手动 commit 经 GitCommitGateway）
+        body = body_result.stdout if body_result.returncode == 0 else ""
+        if gw_marker in body:
+            # body 含 [GW:（合法 commit），检测是否豁免通道使用
+            if rv_marker and rv_marker in body:
+                rv_uses.append({"hash": commit_hash, "subject": subject[:120]})
+            continue
         violations.append({"hash": commit_hash, "subject": subject[:120]})
-    return violations, None
+    return violations, rv_uses, None
 
 
 def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -2332,6 +2343,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     _VALIDATE_SCRIPT = "scripts/governance/meta/validate_rules_integrity.py"
     _AUDIT_WINDOW = 20  # 审计最近 20 个 commit
     _GW_MARKER = "[GW:"
+    _RV_MARKER = "[RECONCILER-VERIFY]"  # reconciler-verify 豁免通道标记（事后审计追溯）
 
     # === 旧 GATE-RULES-INTEGRITY 逻辑（内联自 _make_old_rules_integrity_reconciler）===
     def _trigger_rules_integrity(committed_files: list[str]) -> bool:
@@ -2399,8 +2411,8 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile_commit_gw_audit(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 审计逻辑真源：模块级 _audit_commit_history（A 层 AST 锚点保护，
         # 治本 2026-06-30 病根1 看门人无人看）。闭包只做调用 + 报告落盘 + 判定。
-        violations, err = _audit_commit_history(
-            project_root, _AUDIT_WINDOW, _GW_MARKER,
+        violations, rv_uses, err = _audit_commit_history(
+            project_root, _AUDIT_WINDOW, _GW_MARKER, _RV_MARKER,
         )
         if err:
             return ReconcileResult(action="warn", detail=err)
@@ -2412,6 +2424,8 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             "audit_window": _AUDIT_WINDOW,
             "violations_count": len(violations),
             "violations": violations,
+            "reconciler_verify_uses_count": len(rv_uses),
+            "reconciler_verify_uses": rv_uses,
         }
         report_path, write_err = _write_reconcile_report(
             project_root, "commit_gateway_audit", report
