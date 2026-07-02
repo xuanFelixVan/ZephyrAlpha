@@ -33,7 +33,7 @@ ModelRouter — 模型路由与降级链管理
 
     model = ModelRouter.resolve_model(task_card)
     chain = ModelRouter.fallback_chain_for("deepseek")
-    cost = ModelRouter.estimate_cost("deepseek", 5000)
+    cost = ModelRouter.estimate_cost("deepseek", 5000)  # -> float（总成本 USD）
 """
 
 from __future__ import annotations
@@ -160,8 +160,30 @@ class ModelRouter:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def estimate_cost(model: str, tokens_used: int) -> dict[str, float]:
-        """估算模型调用成本（USD）。
+    def estimate_cost(model: str, tokens_used: int) -> float:
+        """估算模型调用总成本（USD）。
+
+        5.12.2#2 签名漂移治本（2026-07-02）：返回类型从 dict 收敛为 float（总成本），
+        与 cost_tracker/cost_router/pricing_sync 的 estimate_cost 统一，满足 EstimateCostFn Protocol。
+        分项明细请用 estimate_cost_detailed()。
+
+        Args:
+            model: 模型名称
+            tokens_used: 使用的 token 数
+
+        Returns:
+            总成本（USD），保留 6 位小数
+        """
+        cost_input = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
+        cost_output = (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0)
+        return round(cost_input + cost_output, 6)
+
+    @staticmethod
+    def estimate_cost_detailed(model: str, tokens_used: int) -> dict[str, float]:
+        """估算模型调用成本（USD），返回分项明细。
+
+        5.12.2#2 签名漂移治本（2026-07-02）：从 estimate_cost 拆出，保留分项能力。
+        estimate_cost 改返回 float 总成本，分项需求用此方法。
 
         Args:
             model: 模型名称

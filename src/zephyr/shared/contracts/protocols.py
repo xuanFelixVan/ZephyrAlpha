@@ -30,7 +30,7 @@ from pydantic import BaseModel
 
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
-# ── 7 Protocol interfaces ────────────────────────────────────────────
+# ── 8 Protocol interfaces ────────────────────────────────────────────
 
 
 @runtime_checkable
@@ -84,6 +84,19 @@ class ModuleStatusProtocol(Protocol):
     def get_status(self) -> dict: ...
 
 
+@runtime_checkable
+class EstimateCostFn(Protocol):
+    """Structural interface for LLM cost estimation (5.12.2#2 签名漂移治本).
+
+    Canonical 签名：estimate_cost(model, tokens) -> float（总成本 USD）。
+    model_router.estimate_cost 已收敛为返回 float；cost_tracker/cost_router/pricing_sync
+    的 estimate_cost 均已返回 float，满足此 Protocol。
+    分项明细（input_cost/output_cost/total_cost）请用 model_router.estimate_cost_detailed()。
+    """
+
+    def estimate_cost(self, model: str, tokens: int) -> float: ...
+
+
 # ── Shared contract types ────────────────────────────────────────────
 
 
@@ -114,6 +127,7 @@ _FROZEN_PUBLIC_API = frozenset(
         "DriftScannerProtocol",
         "SelfTestableProtocol",
         "ModuleStatusProtocol",
+        "EstimateCostFn",
         "AgentCapability",
         "IntegrityVerifier",
     }

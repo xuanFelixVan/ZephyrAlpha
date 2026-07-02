@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from zephyr.integration.model_router import ModelRouter
+from zephyr.infrastructure.pipeline.model_router import ModelRouter
 
 
 @dataclass
@@ -105,43 +105,40 @@ class TestModelRouterFallbackChain:
 
 class TestModelRouterEstimateCost:
     def test_deepseek_cost(self):
+        # 5.12.2#2 治本：estimate_cost 返回 float（总成本），非 dict
         result = ModelRouter.estimate_cost("deepseek", 1000)
-        assert "input_cost" in result
-        assert "output_cost" in result
-        assert "total_cost" in result
-        assert result["input_cost"] > 0.0
-        assert result["output_cost"] > 0.0
-        assert result["total_cost"] > 0.0
+        assert isinstance(result, float)
+        assert result > 0.0
 
     def test_claude_cost(self):
         result = ModelRouter.estimate_cost("claude", 1000)
-        assert result["total_cost"] > 0.0
+        assert result > 0.0
 
     def test_glm_cost_zero(self):
         result = ModelRouter.estimate_cost("glm", 1000)
-        assert result["input_cost"] == 0.0
-        assert result["output_cost"] == 0.0
-        assert result["total_cost"] == 0.0
+        assert result == 0.0
 
     def test_unknown_model_zero(self):
         result = ModelRouter.estimate_cost("nonexistent", 1000)
-        assert result["total_cost"] == 0.0
+        assert result == 0.0
 
     def test_zero_tokens(self):
         result = ModelRouter.estimate_cost("deepseek", 0)
-        assert result["total_cost"] == 0.0
+        assert result == 0.0
 
     def test_cost_scales_with_tokens(self):
         cost_1k = ModelRouter.estimate_cost("deepseek", 1000)
         cost_2k = ModelRouter.estimate_cost("deepseek", 2000)
-        assert abs(cost_2k["total_cost"] - 2 * cost_1k["total_cost"]) < 1e-9
+        assert abs(cost_2k - 2 * cost_1k) < 1e-9
 
     def test_input_output_breakdown(self):
-        result = ModelRouter.estimate_cost("deepseek", 1000)
+        # 5.12.2#2 治本：分项明细用 estimate_cost_detailed
+        result = ModelRouter.estimate_cost_detailed("deepseek", 1000)
         expected_input = (1000 / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT["deepseek"]
         expected_output = (1000 / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT["deepseek"]
         assert abs(result["input_cost"] - round(expected_input, 6)) < 1e-9
         assert abs(result["output_cost"] - round(expected_output, 6)) < 1e-9
+        assert abs(result["total_cost"] - round(expected_input + expected_output, 6)) < 1e-9
 
 
 class TestModelRouterModelVersion:
