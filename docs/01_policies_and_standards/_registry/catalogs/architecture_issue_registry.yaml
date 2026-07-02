@@ -570,3 +570,41 @@ entries:
   - GOV-DOC-018
   created: '2026-07-02'
   last_updated: '2026-07-02'
+- issue_id: '#ARCH-042'
+  title: governance/ 4个pre-existing子目录容量治理（audit_trail/code_dedup/drift_detection/rule_enforcement 超GOV-DOC-018 T_hard=60）
+  severity: P2中
+  adjudication: |
+    背景：ARCH-031治本审核发现governance/下4个pre-existing子目录.py文件数超GOV-DOC-018 T_hard=60阈值。
+    非ARCH-031创建，属遗留问题，需单独议题处理。
+    现状（2026-07-02调研）：
+    (1)audit_trail: 71文件(62根+9bridges/)。bridges/下8模块与根目录8文件同名且CONSUMERS全空，
+       疑似未完成迁移残留；orchestrator.py有双重MODULE标注冲突。
+    (2)code_dedup: 65文件(58根+7trackers/)。CONSUMERS 62/65为空，依赖关系无法凭标注判断。
+       已有trackers/子目录(*_tracker后缀)为成功拆分先例。
+    (3)drift_detection: 66文件(无子目录，唯一完全扁平)。CONSUMERS 52/66同质占位(drift_engine;detector_dispatcher;alert_router)。
+       已有5个_*.py私有模块(_core/_drift/_analysis/_infrastructure/_scanners)暗示按层拆分意图。
+       python_compat.py有MODULE拼写错误(drift_detectionthon_compat)。
+    (4)rule_enforcement: 90文件(46根+44子目录:check_types/35+invariants/7+admission/1+task/1)。
+       命名最规范(gate_*8个/rule_*5个/ct_*34个前缀稳定)，已有4个子目录为成熟拆分先例。
+       adversarial_validation.py在根目录与check_types/同名(根版门面/check_types版实现)；
+       zero_residue主题三处分散(check_types/ct_zero_residue_check+invariants/zero_residue_check+zero_residue.yaml)。
+    拆分优先级建议：rule_enforcement(高,命名规范+已有先例) > code_dedup(中,需先补依赖) >
+      drift_detection(中,需先补依赖) > audit_trail(低,需先解决bridges残留)。
+    第一性原理：GOV-DOC-018本质=保证AI可靠召回可执行模块。4子目录超60确实增加AI召回成本，
+      但拆分需谨慎——CONSUMERS标注缺失时盲目拆分会引入import断裂风险。
+    核心裁定：开议题登记，分阶段治本。前置工作：补全code_dedup/drift_detection的CONSUMERS依赖标注；
+      清理audit_trail bridges/同名残留；修复标注异常(orchestrator双重MODULE/python_compat拼写)。
+  fix_phase: |
+    待立项。建议分4个子议题或4阶段执行：
+    阶段1(rule_enforcement优先)：归并gate_*到gate_engine/子目录+rule_*到rule_engine/子目录；
+      解决adversarial_validation同名冲突；归并zero_residue三处分散。
+    阶段2(code_dedup)：先import静态分析补全CONSUMERS；按职责拆detectors/analyzers/fixers/validators/risk/runtime。
+    阶段3(drift_detection)：先重做CONSUMERS标注；落地_*.py为正式子包(core/scanners/analysis/infrastructure)。
+    阶段4(audit_trail)：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
+    每阶段需独立任务卡 + import重写(复用ast_import_rewriter.py) + 防复发门禁。
+  status: open
+  related_rules:
+  - GOV-DOC-018
+  - TRAE-028
+  created: '2026-07-02'
+  last_updated: '2026-07-02'

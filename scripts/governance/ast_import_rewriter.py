@@ -10,7 +10,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [A_config] module_id=SCRIPT-GOV-AST-REWRITER | layer=script | stability=stable | safety=H | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """AST-based import rewriter for governance directory migration.
 
 Rewrites ``from zephyr.governance.foo import bar`` → ``from zephyr.governance.subdir.foo import bar``
