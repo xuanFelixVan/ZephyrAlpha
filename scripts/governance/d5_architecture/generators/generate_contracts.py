@@ -408,7 +408,11 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
             after = existing[existing.index(end_marker) + len(end_marker) :]
             final_content = before + wrapped_content + after
         else:
-            pre_existing = _extract_hand_maintained(existing, begin_marker)
+            # 治本(2026-07-02): 传入class_name, 跳过旧codegen的同名class定义
+            raw_name = contract_name.split(" / ")[0].strip()
+            _class_match = re.match(r"[A-Za-z_][A-Za-z0-9_]*", raw_name)
+            _contract_class_name = _class_match.group(0) if _class_match else ""
+            pre_existing = _extract_hand_maintained(existing, begin_marker, _contract_class_name)
             final_content = pre_existing + "\n" + wrapped_content
     else:
         final_content = wrapped_content
@@ -422,20 +426,40 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
     return str(output_path)
 
 
-def _extract_hand_maintained(source: str, begin_marker: str) -> str:
-    """_extract_hand_maintained implementation."""
+def _extract_hand_maintained(source: str, begin_marker: str, contract_class_name: str = "") -> str:
+    """提取手写维护的代码（BEGIN CODGEN标记之前），跳过旧codegen的同名class定义。
+
+    治本(2026-07-02): 移除@dataclass的过早break（原逻辑遇到任何@dataclass就停止提取，
+    导致手写的FactorDiscovery/BacktestEngineBase等被丢弃）。改为跳过与当前contract
+    同名的class定义块（旧codegen产物），保留其他所有手写代码。
+    修复engine_base.py案例：codegen覆盖手写BacktestEngineBase+FactorDiscovery的问题。
+    """
     lines = source.rstrip().split("\n")
     result: list[str] = []
-    in_enum = False
+    skipping_old_class = False  # 正在跳过旧codegen的同名class body
 
     for line in lines:
         stripped = line.strip()
         if begin_marker in stripped:
             break
-        if stripped.startswith("class ") and "(Enum)" in stripped:
-            in_enum = True
-        if stripped.startswith("@dataclass"):
-            break
+
+        if skipping_old_class:
+            # 跳过class body（缩进行/空行/注释），遇到下一个顶层定义时停止
+            if stripped and not line[0].isspace() and not stripped.startswith("#"):
+                skipping_old_class = False
+                # 不continue，继续处理当前行
+            else:
+                continue
+
+        # 跳过与当前contract同名的class定义（旧codegen产物）
+        if contract_class_name and stripped.startswith(f"class {contract_class_name}"):
+            skipping_old_class = True
+            # 移除前面已添加的装饰器（@dataclass等）
+            while result and result[-1].strip().startswith("@"):
+                result.pop()
+            continue
+
+        # 原有跳过逻辑（import、注释等）
         if stripped.startswith("from __future__"):
             continue
         if stripped.startswith("from dataclasses import"):
@@ -464,7 +488,6 @@ def _extract_hand_maintained(source: str, begin_marker: str) -> str:
         ):
             continue
         if stripped.startswith('"""') or stripped.startswith("ZephyrAlpha"):
-            in_enum = False
             continue
         result.append(line)
 
