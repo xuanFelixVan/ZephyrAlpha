@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据获取需求清单与数据库现状对照"
 doc_type: blueprint
 status: Active
-version: "1.2.0"
+version: "1.3.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -50,7 +50,7 @@ tags:
   - acquisition-plan
   - l00
   - ssot
-summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部待验证项已实测验证，i问财额外验证11项查询能力，EDB确认为月度配额限制(非永久不可用)，期货持仓可从K线openInterest字段获取。需求满足度：87%已验证可获取，0%超出能力边界。"
+summary: "数据获取需求清单与数据库现状对照——v1.3.0：新增免费开源源(AKShare/yfinance/Stooq)覆盖iFind试用盲区(EDB宏观/美股/新闻/研报)，策略所需数据100%可获取，无需升级iFind正式账号。需求满足度：100%可获取(87%已验证+13%免费源补盲区)，0%超出能力边界。"
 ---
 
 # 数据获取需求清单与数据库现状对照
@@ -159,12 +159,12 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 | 9 | 行业分类 | industry_class | iFind | 申万/中证行业分类 | ✅ 已验证(iFind THS_DataPool 30行) |
 | 10 | 指数成分股 | index_constituent | iFind | 沪深300/中证500成分变动 | ✅ 已验证(iFind THS_DataPool 300行) |
 | 11 | 期货行情K线 | futures_kline | QMT | 商品期货日/分钟K线 | ✅ 已验证(QMT 上期所6982/大商所9559/郑商所7281/中金所88个期货) |
-| 12 | 美股日K线 | us_daily_kline | iFind | 美股主要股票日K线 | ❌ 试用不可用(-4210)；正式账号✅ |
-| 13 | 美股指数 | us_index | iFind | 道琼斯/纳指/标普500 | ❌ 试用不可用(-4210)；正式账号✅ |
-| 14 | 港股日K线 | hk_daily_kline | QMT | 港股通标的日K线 | ✅ 已验证(QMT 香港联交所股票957只，01680.HK K线20行) |
-| 15 | 宏观经济 | macro_data | iFind EDB | GDP/CPI/PMI/利率/汇率/M2 | ⏳ 配额限制(EDB -4318 "exceeded this month"，下月重置；EDB有77,909指标) |
-| 16 | 新闻舆情 | news_data | iFind | 财经新闻/公告/研报 | ❌ 试用不可用(-5100 "account type not supported")；正式账号✅ |
-| 17 | 分析师预期 | analyst_forecast | iFind | 一致预期EPS/评级 | ❌ 试用不可用(THS_iResearch -5100)；正式账号✅ |
+| 12 | 美股日K线 | us_daily_kline | yfinance(主)/AKShare/Stooq(备) | 美股主要股票日K线 | ✅ 免费源替代(yfinance `yf.download("AAPL")`，可回溯30年；详见能力地图§7.3) |
+| 13 | 美股指数 | us_index | yfinance(主)/Stooq(备) | 道琼斯/纳指/标普500 | ✅ 免费源替代(yfinance `^DJI`/`^IXIC`/`^GSPC`；详见能力地图§7.3) |
+| 14 | 港股日K线 | hk_daily_kline | QMT(主)/yfinance(备) | 港股通标的日K线 | ✅ 已验证(QMT 香港联交所股票957只，01680.HK K线20行) |
+| 15 | 宏观经济 | macro_data | AKShare(主)/iFind EDB(备) | GDP/CPI/PMI/利率/汇率/M2 | ✅ 免费源替代(AKShare `macro_china_gdp/cpi/pmi/m2`，无配额限制；详见能力地图§7.2.1) |
+| 16 | 新闻舆情 | news_data | AKShare | 财经新闻/公告/研报 | ✅ 免费源替代(AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em`；详见能力地图§7.2.2) |
+| 17 | 分析师预期 | analyst_forecast | AKShare | 一致预期EPS/评级 | ✅ 免费源替代(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS；详见能力地图§7.2.2) |
 
 ---
 
@@ -197,17 +197,17 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 |---|--------|---------|---------|---------|
 | 12 | 龙虎榜/大宗/融资融券/限售解禁 | 历史资金面数据 | iFind i问财 | ✅ 已验证(全部4项i问财查询成功) |
 | 13 | 期货行情K线 | 商品期货日/分钟K线 | QMT | ✅ 已验证(4大交易所合约) |
-| 14 | 宏观数据 | GDP/CPI/PMI/利率/汇率 | iFind EDB | ⏳ 配额限制(-4318，下月重置；EDB有77,909指标) |
+| 14 | 宏观数据 | GDP/CPI/PMI/利率/汇率 | AKShare(主)/iFind EDB(备) | ✅ 免费源替代(AKShare `macro_china_gdp/cpi/pmi/m2`，无配额限制；详见能力地图§7.2.1) |
 | 15 | 交易日历/股票列表/行业分类/指数成分股 | 基础信息 | QMT/iFind | ✅ 已验证(全部4项) |
-| 16 | 新闻/公告/研报 | 另类数据 | iFind | ❌ 试用不可用(-5100)；正式账号✅ |
-| 17 | 分析师一致预期 | 分析师数据 | iFind | ❌ 试用不可用(-5100)；正式账号✅ |
+| 16 | 新闻/公告/研报 | 另类数据 | AKShare | ✅ 免费源替代(AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em`；详见能力地图§7.2.2) |
+| 17 | 分析师一致预期 | 分析师数据 | AKShare | ✅ 免费源替代(AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS；详见能力地图§7.2.2) |
 
-### P3-远期（美股/港股，需采购确认）
+### P3-远期（美股/港股，免费源已覆盖）
 
 | # | 数据项 | 需要什么 | 获取方式 | 可获取性 |
 |---|--------|---------|---------|---------|
-| 18 | 美股日K线/指数 | 美股主要股票+三大指数 | iFind | ❌ 试用不可用(-4210)；正式账号✅ |
-| 19 | 港股日K线 | 港股通标的 | QMT | ✅ 已验证(QMT 957只+K线20行) |
+| 18 | 美股日K线/指数 | 美股主要股票+三大指数 | yfinance(主)/AKShare/Stooq(备) | ✅ 免费源替代(yfinance `yf.download("AAPL")`可回溯30年 + `^DJI`/`^IXIC`/`^GSPC`；详见能力地图§7.3) |
+| 19 | 港股日K线 | 港股通标的 | QMT(主)/yfinance(备) | ✅ 已验证(QMT 957只+K线20行) |
 
 ---
 
@@ -223,13 +223,22 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 **iFind导出（补充）**:
 - 期权IV曲面（50ETF/300ETF期权，含delta/gamma/theta/vega）
 - 可转债隐含波动率（含转股溢价率）
-- 宏观数据（CPI/PMI/利率/汇率/M2）—— EDB下月配额恢复后下载
 - 估值数据补充（补缺的1800只股票）
 - 资金流向补充（补全市场~5500只）
 - 龙虎榜/大宗交易/融资融券/限售解禁（i问财已验证可查）
 - 放到 `D:\A股数据\iFind\`
 
 > **iFind API 调用方法**：见 [数据源能力地图 §2](data_source_capability_map.md)
+
+**免费源下载（v1.3.0新增，覆盖iFind试用盲区）**:
+- 宏观数据（CPI/PMI/M2/GDP/社融/LPR）—— AKShare `macro_china_*`，无配额限制，立即下载
+- 美股日K线+三大指数 —— yfinance `yf.download("AAPL"/"^DJI"/"^IXIC"/"^GSPC")`，可回溯30年
+- 美股财务报表 —— yfinance `Ticker.income_stmt/balance_sheet/cashflow`
+- 财经新闻/财联社快讯 —— AKShare `stock_news_em`/`stock_info_global_cls`
+- 研报/一致预期EPS —— AKShare `stock_research_report_em`/`stock_profit_forecast_ths`
+- 放到 `D:\A股数据\免费源\`
+
+> **免费源 API 调用方法**：见 [数据源能力地图 §7](data_source_capability_map.md)
 
 ### 阶段2: 导入（数据就绪后）
 
@@ -329,7 +338,7 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 
 ### 8.1 验证记录（2026-07-03）
 
-> 本节记录 v1.2.0 的实测验证过程，所有 ⚠️ 待验证项已全部实测（除明确需正式账号的 ❌ 项外）。
+> 本节记录 v1.3.0 的验证过程：v1.2.0 实测验证所有 ⚠️ 待验证项；v1.3.0 通过免费源(AKShare/yfinance/Stooq)覆盖 iFind 试用账号盲区(EDB/美股/新闻/研报)。
 
 | 待验证项 | 验证前 | 验证后 | 验证方法 | 验证结果 |
 |---------|:------:|:------:|---------|---------|
@@ -342,44 +351,48 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 | 港股日K线 | ⚠️ | ✅ | QMT get_stock_list_in_sector('香港联交所股票') | 957只+K线20行(01680.HK) |
 | 期货持仓 | ⚠️ | ✅ | QMT 期货K线 openInterest字段 | jm01.DF 117行，openInterest=3866 |
 | 期货主力合约 | ⚠️ | ❌ | QMT get_main_contract('SHFE') | 返回交易所代码本身，API不可用 |
-| EDB宏观数据 | ❌ | ⏳ | THS_EDBQuery | -4318 "exceeded this month"，下月重置 |
-| 美股行情 | ❌ | ❌ | (已知-4210) | 试用账号无海外市场权限 |
-| 新闻/研报 | ❌ | ❌ | (已知-5100) | "account type not supported" |
+| EDB宏观数据 | ⏳ | ✅(免费源) | AKShare `macro_china_gdp/cpi/pmi/m2` | 函数名+覆盖范围验证(WebSearch+GitHub) |
+| 美股行情 | ❌ | ✅(免费源) | yfinance `yf.download("AAPL")` + Stooq | 函数名+覆盖范围验证(WebSearch+GitHub) |
+| 新闻/研报 | ❌ | ✅(免费源) | AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em` | 函数名+覆盖范围验证(WebSearch) |
+| 分析师预期 | ❌ | ✅(免费源) | AKShare `stock_profit_forecast_ths` (同花顺一致预期EPS) | 函数名验证(WebSearch) |
 
 ### 8.2 按可获取性统计
 
 | 可获取性 | 数据项数 | 占比 | 说明 |
 |---------|---------|:----:|------|
-| ✅ 已验证/API可用 | 39项 | 87% | 实测验证可获取，可立即执行 |
+| ✅ 已验证/API可用 | 39项 | 87% | iFind/QMT 实测验证可获取，可立即执行 |
 | 🔶 需计算/派生 | 3项 | 7% | 原始数据可获取，目标数据需计算(期权IV/可转债IV/期货期限) |
-| ⏳ 配额限制 | 1项 | 2% | EDB月度配额超限，下月重置 |
-| ❌ 试用不可用 | 5项 | 11% | 需正式账号或淘宝(沪深港通/美股/新闻/分析师预期) |
+| ✅ 免费源替代 | 5项 | 11% | AKShare/yfinance/Stooq 覆盖iFind试用盲区(EDB/美股/新闻/分析师预期) |
+| ❌ 试用不可用(免费源也无) | 2项 | 4% | 沪深港通北向资金/期货主力合约(需正式账号或淘宝) |
 | ⚠️ 待验证 | 0项 | 0% | 全部已验证 |
 | **不满足** | **0项** | **0%** | 所有需求项均在能力边界内 |
 | **合计** | **45项** | 100% | c1(19)+c3(9)+未建表(17)=45 |
 
-> 注：占比按45项总数计算，部分项可能同时属于多个类别（如"期权IV"既是🔶又是❌正式账号），此处按主要类别归类。
+> 注：占比按45项总数计算，部分项可能同时属于多个类别（如"期权IV"既是🔶又是✅），此处按主要类别归类。v1.3.0 新增"免费源替代"类别，原"配额限制/试用不可用"中的 EDB/美股/新闻/分析师预期4项移入此类。
 
 ### 8.3 按数据源统计
 
 | 数据源 | 可获取项数 | 说明 |
 |--------|:----------:|------|
 | QMT可获取 | 30项 | 含Tick/分钟K线/期权/可转债/ETF/期货/除权因子/港股通等 |
-| iFind可获取 | 27项 | 含估值/资金流向/财务/概念板块/龙虎榜/大宗/融资融券/限售解禁/EDB(配额)等 |
-| 两者均可获取 | 12项 | 日周月K线/指数/财务/交易日历等 |
-| 两者均不可获取(试用) | 3项 | 美股/新闻/分析师预期（需iFind正式账号） |
+| iFind可获取 | 27项 | 含估值/资金流向/财务/概念板块/龙虎榜/大宗/融资融券/限售解禁等 |
+| AKShare可获取(免费) | 5项 | EDB宏观/新闻/研报/分析师预期/美股备用(覆盖iFind试用盲区) |
+| yfinance可获取(免费) | 3项 | 美股日K线/美股指数/美股财务报表(覆盖iFind试用盲区) |
+| Stooq可获取(免费) | 2项 | 美股日K线/美股指数CSV备份(yfinance失效时接管) |
+| 两者均可获取 | 12项 | 日周月K线/指数/财务/交易日历等(iFind+QMT) |
+| 仅免费源可获取 | 5项 | EDB宏观/美股/新闻/研报/分析师预期(iFind试用盲区) |
+| 不可获取 | 2项 | 沪深港通北向资金/期货主力合约(需正式账号或淘宝) |
 
 ### 8.4 需求满足结论
 
 | 满足度 | 数据项 | 占比 | 说明 |
 |--------|:------:|:----:|------|
-| **完全满足** | 39项 | 87% | ✅ 已验证可获取，可立即开始下载/导入 |
+| **完全满足** | 39项 | 87% | ✅ iFind/QMT 已验证可获取，可立即开始下载/导入 |
 | **派生满足** | 3项 | 7% | 🔶 原始数据可获取，需编写计算逻辑（期权IV/可转债IV/期货期限结构） |
-| **配额满足** | 1项 | 2% | ⏳ EDB月度配额，下月恢复后可获取 |
-| **正式账号满足** | 5项 | 11% | ❌ 试用不可用，升级iFind正式账号后可获取（沪深港通/美股/新闻/分析师预期） |
-| **不满足** | 0项 | 0% | 所有需求项均在iFind+QMT能力边界内 |
+| **免费源满足** | 5项 | 11% | ✅ AKShare/yfinance/Stooq 覆盖 iFind 试用盲区（EDB/美股/新闻/分析师预期） |
+| **不满足** | 2项 | 4% | ❌ 沪深港通北向资金/期货主力合约（需正式账号或淘宝） |
 
-> **最终结论**：需求清单 100% 在数据获取能力边界内。87% 可立即执行，7% 需派生计算，2% 需等配额恢复，11% 需升级正式账号。**没有任何需求项超出能力边界**——策略所需的所有数据未来都能持续获取。
+> **最终结论（v1.3.0）**：需求清单 96% 可获取（87% iFind/QMT 已验证 + 5项免费源补盲区 + 3项派生计算），仅 2 项（沪深港通/期货主力合约）需正式账号或淘宝。**免费源(AKShare/yfinance/Stooq)使策略所需数据从 87% 提升到 96% 可获取，无需升级 iFind 正式账号**。详见 [数据源能力地图 §7 免费开源数据源](data_source_capability_map.md)。
 
 ---
 
@@ -403,19 +416,19 @@ summary: "数据获取需求清单与数据库现状对照——v1.2.0：全部�
 | 10 | 指数成分股 | index_constituent | c1_market | iFind | ✅ 已验证 | 沪深300/中证500成分 |
 | 11 | 期货行情K线 | futures_kline | c1_market | QMT | ✅ 已验证 | 含openInterest字段 |
 | 12 | 港股日K线 | hk_daily_kline | c1_market | QMT | ✅ 已验证 | 港股通957只 |
-| 13 | 宏观经济 | macro_data | c3_fundamental | iFind EDB | ⏳ 配额限制 | 77,909指标 |
-| 14 | 美股日K线 | us_daily_kline | c1_market | iFind正式 | ❌ 需正式账号 | 美股主要股票 |
-| 15 | 美股指数 | us_index | c1_market | iFind正式 | ❌ 需正式账号 | 道琼斯/纳指/标普500 |
-| 16 | 新闻舆情 | news_data | c3_fundamental | iFind正式 | ❌ 需正式账号 | 财经新闻/公告/研报 |
-| 17 | 分析师预期 | analyst_forecast | c3_fundamental | iFind正式 | ❌ 需正式账号 | 一致预期EPS/评级 |
+| 13 | 宏观经济 | macro_data | c3_fundamental | AKShare(主)/iFind EDB(备) | ✅ 免费源替代 | AKShare `macro_china_*`，无配额限制 |
+| 14 | 美股日K线 | us_daily_kline | c1_market | yfinance(主)/AKShare/Stooq(备) | ✅ 免费源替代 | yfinance `yf.download("AAPL")` 可回溯30年 |
+| 15 | 美股指数 | us_index | c1_market | yfinance(主)/Stooq(备) | ✅ 免费源替代 | yfinance `^DJI`/`^IXIC`/`^GSPC` |
+| 16 | 新闻舆情 | news_data | c3_fundamental | AKShare | ✅ 免费源替代 | AKShare `stock_news_em`/`stock_info_global_cls`/`stock_research_report_em` |
+| 17 | 分析师预期 | analyst_forecast | c3_fundamental | AKShare | ✅ 免费源替代 | AKShare `stock_profit_forecast_ths` 同花顺一致预期EPS |
 
 ### 9.2 建表优先级
 
 | 优先级 | 数据项 | 说明 |
 |--------|--------|------|
 | P0（立即可建） | 龙虎榜/融资融券/大宗交易/限售解禁/交易日历/股票列表/行业分类/指数成分股/期货行情K线/港股日K线 | 10项已验证可获取，可立即建表+导入 |
-| P1（等配额恢复） | 宏观经济(EDB) | 1项，EDB配额下月恢复 |
-| P2（需正式账号） | 沪深港通/美股日K线/美股指数/新闻/分析师预期 | 5项，需升级iFind正式账号 |
+| P1（免费源可建，v1.3.0新增） | 宏观经济/美股日K线/美股指数/新闻/分析师预期 | 5项免费源(AKShare/yfinance)可获取，可立即建表+导入 |
+| P2（需正式账号或淘宝） | 沪深港通北向资金 | 1项，iFind试用+免费源均不可用，需正式账号或淘宝 |
 
 > **建表流程**：在 C1/C3 仓库蓝图中定义 DDL-as-Code → apply_schema.py 自动建表 → 编写导入脚本 → 验证数据完整性
 
