@@ -412,7 +412,8 @@ def _serialize_for_db(task: TaskCard) -> dict:
         "phase": task.phase,
         "execution_model": task.execution_model,
         "model_rationale": task.model_rationale,
-        "fallback_model": task.fallback_model,
+        # fallback_model: DB列为 NOT NULL DEFAULT ''，TaskCard默认None需转''避免IntegrityError
+        "fallback_model": task.fallback_model or "",
         "safety_level": task.safety_level.value,
         "directive": task.directive,
         "idempotent": int(task.idempotent),
