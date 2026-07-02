@@ -590,3 +590,27 @@ CREATE TRIGGER trg_edges_protect_apply_depgraph
 --     - 清理触发器: 1 → 1 个 CREATE TRIGGER + 1 个函数 ✓
 --     - 总计: 28 个 PG 触发器 + CHECK 约束 (覆盖原 36 个 SQLite 触发器的全部语义)
 -- =====================================================================
+
+-- =====================================================================
+-- S1.2: YAML 真源只读缓存表 COMMENT（HB-001 规则化，2026-07-02）
+-- 依据：hard_boundaries_registry.yaml HB-001 table_comment_required=true
+-- 目的：AI 在 SQL 上下文中通过 \d+ tablename 或 pg_description 视图
+--       即可一眼识别表性质（YAML 真源只读缓存），无需先读到特定文件
+-- 8 张表对应 sync_yaml_to_depgraph.py READONLY_TABLES 列表
+-- =====================================================================
+
+COMMENT ON TABLE gates IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE field_vocabularies IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/vocabularies/ 目录 + _registry/catalogs/frontmatter_field_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE registries IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE cross_registry_rules IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE hard_boundaries IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE business_streams IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE infrastructure_components IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';
+
+COMMENT ON TABLE model_capabilities IS 'YAML 真源只读缓存表。禁止直接 INSERT/UPDATE/DELETE（readonly 触发器保护）。真源：docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml。同步入口：scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py';

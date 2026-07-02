@@ -1186,6 +1186,30 @@ def cleanup_legacy_fk_violations(cur):
     print(f"  删除 {deleted} 条 '-CONTRACTS' 后缀孤立记录")
 
 
+def verify_readonly_table_comments(cur):
+    """S1.2: 验证 8 张 readonly 表是否有 COMMENT（HB-001 table_comment_required）。
+
+    COMMENT 缺失不影响数据正确性，只影响 AI 可发现性，因此仅告警不阻断。
+    依据：hard_boundaries_registry.yaml HB-001 table_comment_required=true。
+    AI 在 SQL 上下文中通过 \\d+ tablename 或 pg_description 视图发现表性质。
+    """
+    cur.execute("""
+        SELECT c.relname, obj_description(c.oid) as comment
+        FROM pg_class c
+        JOIN pg_namespace n ON c.relnamespace = n.oid
+        WHERE n.nspname = 'public' AND c.relkind = 'r'
+        AND c.relname = ANY(%s)
+    """, (READONLY_TABLES,))
+    rows = {row["relname"]: row["comment"] for row in cur.fetchall()}
+    missing = [t for t in READONLY_TABLES if not rows.get(t)]
+    if missing:
+        print(f"\n[WARN] S1.2 HB-001 以下 readonly 表缺少 COMMENT（AI 可发现性受损）：")
+        for t in missing:
+            print(f"  - {t}（需执行 COMMENT ON TABLE {t} IS '...'，见 02_create_pg_schema.sql 末尾）")
+    else:
+        print(f"\n[OK] S1.2 HB-001: {len(READONLY_TABLES)} 张 readonly 表 COMMENT 齐全")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -1252,6 +1276,10 @@ def sync_all() -> bool:
 
         conn.commit()
         print("\n[PASS] 19 项 YAML→DB 同步完成")
+
+        # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
+        verify_readonly_table_comments(cur)
+
         return True
 
     except Exception as e:
