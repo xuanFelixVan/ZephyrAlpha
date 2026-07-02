@@ -787,7 +787,8 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 | 阶段0（立即） | 纠正文档与认知——本裁定即阶段0产出 | 本节修订 |
 | 阶段1（短期） | 新增 GATE-DEPGRAPH-OPS reconciler（priority=130，trigger=commit .py，reconcile=dry-run检测→有漂移则 --output-db --force，失败降级 warn）+ 加 pg_advisory_lock 与 apply_depgraph.py 互斥 | 新 reconciler + 任务卡 |
 | 阶段2（中期） | 字段角色分离治本——新建 nodes_metadata / edges_metadata 表，迁移 PRODUCTION_PROTECTED_FIELDS(14) + EDGES_PROTECTED_FIELDS(9) 出 nodes/edges；nodes/edges 回归纯派生态，可全量 DELETE+INSERT 无保护顾虑；P1/P2 保护机制下线 | schema 迁移 + 任务卡 |
-| 阶段3（长期） | 增量能力建设——引入文件级 hash fingerprint（对标 Bazel Skyframe / rust-analyzer salsa），只重扫 hash 变化的文件，自动触发频率可提升到每次 commit | 增量引擎 |
+| 阶段3（已完成，commit 2093db3615） | 增量引擎 Stage 3——content_hash 列 + compute_file_hash() + --incremental skip（无变更时跳过 DB 重建，二元 skip） | 增量引擎 |
+| 阶段4（已完成，commit 8641f2b74） | scan-level 缓存（真正增量重建 Stage 4）——ScanCache 缓存 scan 结果到 .runtime/depgraph_scan_cache.json，key=(path, content_hash)，命中跳过 AST 解析；fingerprint（domain_derivation hash）+ SCAN_LOGIC_VERSION 双重失效；3.7x 加速（cached 3.13s vs no-cache 11.61s） | scan 缓存引擎 |
 
 **第一性原理病根**：依赖全景图运营态本质是"代码世界的派生投影"，重新生成本不应有信息丢失。当前设计的悖论是运营态字段同时承担"派生数据"（from_node_id/dep_type 等9字段，应自动重生）与"人工 curated 元数据"（PRODUCTION_PROTECTED_FIELDS 14 + EDGES_PROTECTED_FIELDS 9，不应被覆盖）两种角色——业界主流做法是物理分离这两种角色（Sourcegraph 派生索引+仓库元数据分离；Netflix 流量拓扑+服务所有权分离）。阶段2 的字段分离才是治本。
 
@@ -805,7 +806,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 | 项目 | 实证 |
 |------|------|
-| 扫描模式 | 全量扫描，不支持增量；扫描范围 14 个白名单目录 |
+| 扫描模式 | 全量扫描 + scan-level 缓存（裁定#209 Stage 4，commit 8641f2b74）；--incremental 支持二元 skip（Stage 3）；扫描范围 14 个白名单目录 |
 | DELETE+INSERT | 有保留范围：`WHERE design_maturity != 'design'` 保留设计态节点/边 |
 | 覆盖手动修复的真实含义 | 指运营态 production 字段的手动修改——**已有 P1/P2 保护机制**：`PRODUCTION_PROTECTED_FIELDS`（14字段：blueprint_id/owner/impact_level/build_status 等）+ `EDGES_PROTECTED_FIELDS`（9字段：failure_mode/fallback/resource_impact 等） |
 | 保护机制语义 | DELETE 前读出保护字段 → 重建后 `apply_production_metadata_protection` 恢复——"仅当重建字段为空时恢复，不覆盖磁盘新值" |
