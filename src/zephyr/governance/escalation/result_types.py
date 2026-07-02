@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.escalation.result_types
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.rollback_types
-# [CONSUMERS] tests/governance/rule_enforcement/test_result_types;tests/governance/governance_misc/test_governance_result_types;tests/governance/governance_e2e/test_gct_003_rollback_to_escalation;tests/governance/drift/test_gct_integration;tests/governance/shared/test_phase_gates;tests/governance/security/test_p0_u1_contract_smoke
+# [CONSUMERS] tests/governance/escalation/test_result_types;tests/governance/governance_misc/test_governance_result_types;tests/governance/governance_e2e/test_gct_003_rollback_to_escalation;tests/governance/drift/test_gct_integration;tests/governance/shared/test_phase_gates;tests/governance/security/test_p0_u1_contract_smoke
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 结果类型定义;不可随意扩展

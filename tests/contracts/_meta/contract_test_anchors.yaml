@@ -28,7 +28,7 @@ anchors:
   CT-CE-VMS-001: tests/memory/test_unified_memory_api_unit.py
   CT-KB-VMS-001: tests/memory/test_unified_memory_api_unit.py
   CT-FLE-DB-001: tests/autonomy/test_evolution_e2e.py
-  CT-RBK-GATE-001: tests/governance/rule_enforcement/test_gate_e2e.py
+  CT-RBK-GATE-001: tests/gate/test_gate_e2e.py
   CTR-P1-001: tests/trading/test_phase_f_layers.py
   CTR-P1-002: tests/trading/test_phase_f_layers.py
   CTR-P1-003: tests/trading/test_phase_f_layers.py
