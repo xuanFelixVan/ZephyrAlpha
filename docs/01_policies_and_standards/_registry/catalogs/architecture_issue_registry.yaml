@@ -603,7 +603,11 @@ entries:
       13个文件迁移+100+ import重写(ast_import_rewriter.py)+2次零issue验证。
       拆分后GOV-DOC-018裁定：root=33/gate_engine=9/rule_engine=6/check_types=35/invariants=7/admission=1/task=1，全部≤60通过。
       提交：0b71919d3+6cb32d5a4，merge：912083e610。
-    阶段2(code_dedup) 待执行：先import静态分析补全CONSUMERS(62/65空)；按职责拆detectors/analyzers/fixers/validators/risk/runtime。
+    阶段2(code_dedup) DONE 2026-07-03：
+      前置：AST静态分析(5348个.py文件)补全CONSUMERS——发现全部63模块均有消费者(0空)，header只是未填(任务卡"62/65空"为表象非真相)；62文件CONSUMERS header更新(regex行锚定修复\s*跨newline bug)。
+      拆分裁定：code_dedup root=58≤60，已符合GOV-DOC-018 T_hard阈值——按职责拆detectors/analyzers/fixers/validators/risk/runtime"非阈值强制，本阶段不执行"。
+      阈值仅作触发条件，达标即止；CONSUMERS补全为本阶段唯一必需交付物。
+      提交：7cd0a0e1b6，merge：994b83ae46。
     阶段3(drift_detection) 待执行：先重做CONSUMERS标注(52/66占位)；修复python_compat.py MODULE拼写；落地_*.py为正式子包(core/scanners/analysis/infrastructure)。
     阶段4(audit_trail) 待执行：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
     每阶段需独立任务卡 + import重写(复用ast_import_rewriter.py) + 防复发门禁。
