@@ -550,13 +550,13 @@ def check_architecture_guard() -> GateResult:
 
 
 def check_full_backtest() -> GateResult:
+    # TODO: backtest_engine已迁移到zephyr.backtest,待phase_check重新对接
     try:
-        from zephyr.infrastructure.rollback.backtest_engine import BacktestEngine
-
-        return GateResult.GREEN
+        # from zephyr.infrastructure.rollback.backtest_engine import BacktestEngine  # 已删除
+        return GateResult.YELLOW
     except ImportError:
-        mod = REPO_ROOT / "src/zephyr/research_innovation/implementations/default_backtest_engine.py"
-        return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+        # mod = REPO_ROOT / "src/zephyr/research_innovation/implementations/default_backtest_engine.py"  # 路径不存在
+        return GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
 

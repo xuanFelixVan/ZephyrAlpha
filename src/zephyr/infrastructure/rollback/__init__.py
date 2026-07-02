@@ -106,7 +106,6 @@ __all__ = [
     "auditor",
     "auto_rollback_trigger",
     "autonomy_dashboard",
-    "backtest_engine",
     "budget_tracker",
     "checkpoint_gc",
     "commit_quality_gate",

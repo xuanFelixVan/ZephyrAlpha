@@ -1,10 +1,10 @@
-# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-# [MODULE] zephyr.intelligence.model_evaluation.backtest_base
-# [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_evaluation.__init__
+# [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
+# [MODULE] zephyr.backtest.core.engine_base
+# [DOMAIN] D_BACKTEST
+# [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable
@@ -12,13 +12,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-RSC_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_backtest_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
-L09 — Research & Innovation Layer
+L_BACKTEST — Backtest Engine Layer
 
-研究与创新层。负责离线研究、回测、策略孵化与知识沉淀。
+回测引擎层。负责离线研究、回测、策略孵化与知识沉淀。
 
 核心职责：
   - 因子挖掘与验证（IC / IR / t-stat）

@@ -17,7 +17,7 @@ Phase C 具体实现包。
 
 from __future__ import annotations
 
-from zephyr.intelligence.model_evaluation.implementations.default_backtest_engine import (
+from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
