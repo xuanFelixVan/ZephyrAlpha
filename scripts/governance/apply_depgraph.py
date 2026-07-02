@@ -3142,6 +3142,11 @@ def main() -> None:
         "改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]（无需手动 grep）。"
         "配 --dry-run 预览。",
     )
+    parser.add_argument(
+        "--skip-refresh",
+        action="store_true",
+        help="逃生通道：跳过写入设计态前的运营态刷新门闸（L2），仅限生成器故障时使用，正常流程禁止",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
