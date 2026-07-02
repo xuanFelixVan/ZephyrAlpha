@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 17:31:15
+> 最后更新: 2026-07-02 18:33:27
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 2 | Module Count | 2 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 5 | Cross-domain Outgoing | 5 |
 | 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
@@ -62,15 +62,12 @@ graph TD
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
-    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
-    D_AUTONOMY_CORE -.->|runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOVERNANCE -.->|runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md design
-    class D_AUTONOMY_CORE external_prod
     class D_GOVERNANCE,D_GOV_DRIFT external_design
 ```
 
@@ -88,7 +85,6 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_GOVERNANCE | 5 | contract,runtime |
-| D_AUTONOMY_CORE | 1 | runtime |
 | D_GOV_DRIFT | 1 | runtime |
 
 ## 架构分层视图 / Architecture Overview

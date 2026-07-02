@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 17:31:15
+> 最后更新: 2026-07-02 18:33:27
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 3 | Production Modules | 3 |
@@ -60,17 +60,22 @@ graph TD
     end
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_init_py -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_core_init_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_init_py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_SHARED["D_SHARED production"]
+    src_zephyr_backtest_core_engine_base_py -->|import_depends| D_SHARED
     D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_implementations_init_py,src_zephyr_backtest_implementations_vectorized_engine_py production
     class src_zephyr_backtest_init_py,src_zephyr_backtest_extensions_init_py,src_zephyr_backtest_api_init_py,src_zephyr_backtest_core_init_py,src_zephyr_backtest_infrastructure_init_py,src_zephyr_backtest_models_init_py,src_zephyr_backtest_services_init_py design
+    class D_SHARED external_prod
     class D_INTELLIGENCE external_design
 ```
 
@@ -78,13 +83,15 @@ graph TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_INTELLIGENCE | 1 | import_depends |
+| D_INTELLIGENCE | 3 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -146,8 +153,8 @@ graph TD
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → engine_base.py                                   │
 │   __init__.py → vectorized_engine.py                             │
-│   vectorized_engine.py → engine_base.py                          │
 │   __init__.py → engine_base.py                                   │
+│   vectorized_engine.py → engine_base.py                          │
 │   __init__.py → vectorized_engine.py                             │
 └──────────────────────────────────────────────────────────────────┘
 
