@@ -62,7 +62,7 @@ class FakeModule:
         self.shutdown_called = True
         self._state = LifecycleState.STOPPED
 
-    async def health_check(self) -> ModuleHealth:
+    def health_check(self) -> ModuleHealth:
         return ModuleHealth(
             module_name=self._name,
             state=self._state,
@@ -170,7 +170,7 @@ class TestLifecycleManager:
 
     def test_health_check_all_catches_exception(self):
         class BadHealth(FakeModule):
-            async def health_check(self):
+            def health_check(self):
                 raise RuntimeError("health check boom")
 
         mgr = LifecycleManager()

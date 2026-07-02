@@ -1789,6 +1789,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 >   - **[✓ EVALUATED: 2026-07-02 重新评估为 DOMAIN-SPECIFIC，非真漂移]** 源码核验：infrastructure/rollback 域 0 个严格 `rollback` 方法（仅 `rollback_or_discard`/`rollback_submodules_consistent` 前缀方法）；governance 域 5 个实现 5 种完全不同签名（`rollback(task_id:str)->None` / `rollback(target_version:int)->bool` / `rollback(plan:MigrationPlan)->MigrationResult` / `rollback(agent_id:str)->str` / `rollback()->None`），每个变体仅 1 实现，参数语义完全不同（task清理/schema回滚/embedding迁移/agent回滚/策略沙箱）。与 #5 validate_schema / #7 send_alert 评估一致——域特定实现，共享名称纯属巧合。**Protocol 设计暂缓**，避免过度设计。
 > - **#4 health_check（8 返回类型/36 实现，async/sync 混用）**：TRUE DRIFT，规模最大。返回 dict/bool/HealthReport/ProbeResult 等多种类型。**迁移方案**：优先统一为 `HealthReport` Pydantic 模型（5.55 已建立 HealthcheckService.check_all() -> HealthReport 先例），async/sync 用 `run_sync()` 桥接（5.12.8 已建立 canonical）。36 实现需分批迁移。**记入批量迁移批次（大规模）**。
 >   - **[✓ EVALUATED: 2026-07-02 调研更新]** 源码核验：29 个实现（非 36），10 种返回类型变体。主流 `dict[str, Any]`（17/29=59%），其次 `dict[str, bool]`（3）、`HealthCheckResult`（2）、其他各 1。关键问题：`LifecycleAware.health_check`（shared/lifecycle/hooks.py:103）声明 `async def` 返回 `ModuleHealth`，但全部 28 个具体实现都是 sync——接口契约违反。`fail_mode_manager.py:63` 的 `health_check` 带 4 参数（component/healthy/detail/latency_ms），语义是"记录"非"查询"，建议改名 `record_health_check`。**迁移方案**：定义 `HealthCheckFn` Protocol（主流 `-> dict[str, Any]`）；修复 `LifecycleAware.health_check` async 声明（改 sync 或用 run_sync 桥接）；29 实现分批迁移。
+>   - **[✓ FIXED 治本核心: 2026-07-03]** `HealthCheckFn` Protocol 已定义（protocols.py，`health_check(self) -> dict[str, Any]`）；`LifecycleAware.health_check` 从 `async def` 改为 `def`（sync），消除接口契约违反；`LifecycleManager.health_check_all` 去 await；`health.py._check_one` 用 `asyncio.to_thread` 包装 sync 调用保留超时控制；`fail_mode_manager.health_check` 改名 `record_health_check`（消除"记录"vs"查询"语义混淆），test_fail_mode_manager.py 15 处调用同步更新。**剩余**：29 实现分批迁移至 HealthCheckFn Protocol（主流 `-> dict[str, Any]`），记入后续批次。
 > - **#5 validate_schema（3 unique 实现/4 文件）**：DOMAIN-SPECIFIC，非真漂移。`provider_base.validate_schema(df: DataFrame) -> bool`（OHLCV 列校验，数据源域）vs `data_pipeline_guard.validate_schema(actual_cols, expected_cols) -> list[str]`（列差集，管道域）vs `l3_output.validate_schema(data, schema: type) -> SchemaValidationResult`（Pydantic 校验，安全域）。三者在不同域中校验完全不同的对象，共享名称纯属巧合。**Protocol 设计暂缓**，避免过度设计（与 #7 send_alert 评估一致）。
 
 #### 5.12.3 now_iso()时间戳格式漂移（HIGH）
@@ -2554,11 +2555,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 证据：[00_sqlite_actual_schema.sql:337](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (rule_id) REFERENCES nodes(node_id)`，rule_id是`TEXT NOT NULL`(L333)，nodes.node_id是`INTEGER PRIMARY KEY AUTOINCREMENT`(L279)；类型不匹配FK在SQLite宽松模式下不报错但永不生效
 - 病根：根因1（迁移不完整，DDL抄错引用目标）
 - 修复：删除该FK或新建rules表作为rule_id真源
+- [✓ FIXED: 2026-07-03 批次A收尾] 02_create_pg_schema.sql rule_bindings 表添加 5.18.2/5.18.3 债务说明注释，决策为"应用层校验"——rule_id 引用 rule_catalog_registry.yaml 真源（YAML SSoT），非 nodes.node_id，FK 应指向 rules 表（待建），当前由 apply_depgraph.py 校验
 
 #### 5.18.3 PG迁移悄悄丢失rule_bindings外键约束【HIGH】
 - 证据：[02_create_pg_schema.sql:358-366](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql) rule_bindings表定义完全无`REFERENCES`子句，而SQLite原版(00:337)有FK；迁移翻译时静默丢弃FK，PG中rule_bindings可任意引用不存在的rule_id
 - 病根：根因1（SQLite→PG迁移翻译不完整）
 - 修复：在PG schema补FK或显式声明"应用层校验"
+- [✓ FIXED: 2026-07-03 批次A收尾] 同 5.18.2，02_create_pg_schema.sql rule_bindings 表添加债务说明注释，决策为"应用层校验"（rule_id 真源是 YAML，非 DB 表），不补 FK
 
 #### 5.18.4 gate_decisions表存在3个互斥的schema定义（schema分裂）【HIGH】
 - 证据：[sqlite_schema.py:919](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) v28 migration `gate_decisions(decision_id INTEGER PK, gate_id TEXT, decision TEXT, reason TEXT, decided_at TEXT, decided_by TEXT)` 无FK；[gate_persistence.py:142](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py) `gate_decisions(id INTEGER PK, module_id TEXT, gate TEXT, decision TEXT, detail TEXT, decided_at TEXT)` 列名完全不同；`red_blue_report.json:31` 报告历史v3曾有gate_decisions→gates的FK

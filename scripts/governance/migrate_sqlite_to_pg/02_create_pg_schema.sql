@@ -398,6 +398,12 @@ CREATE TABLE IF NOT EXISTS edges_metadata (
 );
 
 -- rule_bindings: 规则绑定
+-- 5.18.2/5.18.3 债务说明（2026-07-03 批次A 收尾）：
+--   - 5.18.2: SQLite 中 rule_id(TEXT) → nodes.node_id(INTEGER) 类型不匹配，FK 不生效
+--   - 5.18.3: PG 迁移丢失 FK（原 SQLite 有 REFERENCES，PG 无）
+--   - 决策：不补 FK，采用"应用层校验"——rule_id 无对应 rules 表作 FK 目标，
+--     rule_bindings.rule_id 引用的是 rule_catalog_registry.yaml 真源（YAML SSoT），
+--     非 nodes.node_id。FK 应指向 rules 表（待建），当前由 apply_depgraph.py 校验。
 CREATE TABLE IF NOT EXISTS rule_bindings (
     binding_id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     function_name TEXT NOT NULL,

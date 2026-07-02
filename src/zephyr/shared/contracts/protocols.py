@@ -24,13 +24,13 @@ depending on each other's concrete implementations.
 
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel
 
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
-# ── 8 Protocol interfaces ────────────────────────────────────────────
+# ── 9 Protocol interfaces ────────────────────────────────────────────
 
 
 @runtime_checkable
@@ -97,6 +97,19 @@ class EstimateCostFn(Protocol):
     def estimate_cost(self, model: str, tokens: int) -> float: ...
 
 
+@runtime_checkable
+class HealthCheckFn(Protocol):
+    """Structural interface for health check (5.12.2#4 签名漂移治本).
+
+    Canonical 签名：health_check() -> dict[str, Any]（主流签名，17/29=59%）。
+    返回健康状态字典。LifecycleAware.health_check 是独立子协议（返回 ModuleHealth），
+    已修复 async/sync 契约违反（改 sync）。fail_mode_manager.record_health_check
+    （原 health_check）是记录语义非查询，已改名。29 实现分批迁移中。
+    """
+
+    def health_check(self) -> dict[str, Any]: ...
+
+
 # ── Shared contract types ────────────────────────────────────────────
 
 
@@ -128,6 +141,7 @@ _FROZEN_PUBLIC_API = frozenset(
         "SelfTestableProtocol",
         "ModuleStatusProtocol",
         "EstimateCostFn",
+        "HealthCheckFn",
         "AgentCapability",
         "IntegrityVerifier",
     }

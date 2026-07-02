@@ -72,14 +72,14 @@ class TestFailModeManager:
 
     def test_health_check_healthy(self):
         mgr = FailModeManager()
-        hc = mgr.health_check("budget_engine", True, "ok")
+        hc = mgr.record_health_check("budget_engine", True, "ok")
         assert hc.healthy is True
         assert hc.component == "budget_engine"
 
     def test_health_check_unhealthy_increments_fail_count(self):
         mgr = FailModeManager()
-        mgr.health_check("budget_engine", False, "down")
-        mgr.health_check("budget_engine", False, "still down")
+        mgr.record_health_check("budget_engine", False, "down")
+        mgr.record_health_check("budget_engine", False, "still down")
         assert mgr.component_fail_count("budget_engine") == 2
 
     def test_evaluate_no_checks_returns_current(self):
@@ -89,14 +89,14 @@ class TestFailModeManager:
 
     def test_evaluate_one_unhealthy_degraded(self):
         mgr = FailModeManager()
-        mgr.health_check("budget_engine", False, "down")
+        mgr.record_health_check("budget_engine", False, "down")
         state = mgr.evaluate()
         assert state.mode == FailMode.DEGRADED
 
     def test_evaluate_two_unhealthy_closed(self):
         mgr = FailModeManager()
-        mgr.health_check("budget_engine", False, "down")
-        mgr.health_check("model_router", False, "down")
+        mgr.record_health_check("budget_engine", False, "down")
+        mgr.record_health_check("model_router", False, "down")
         state = mgr.evaluate()
         assert state.mode == FailMode.CLOSED
 
@@ -104,14 +104,14 @@ class TestFailModeManager:
         mgr = FailModeManager()
         for comp in ["budget_engine", "model_router", "timeout_guard"]:
             for _ in range(3):
-                mgr.health_check(comp, False, "fail")
+                mgr.record_health_check(comp, False, "fail")
         state = mgr.evaluate()
         assert state.mode == FailMode.DEAD
 
     def test_evaluate_all_healthy_recovers_to_open(self):
         mgr = FailModeManager(default_mode=FailMode.CLOSED)
-        mgr.health_check("budget_engine", True, "ok")
-        mgr.health_check("model_router", True, "ok")
+        mgr.record_health_check("budget_engine", True, "ok")
+        mgr.record_health_check("model_router", True, "ok")
         state = mgr.evaluate()
         assert state.mode == FailMode.OPEN
 
@@ -131,7 +131,7 @@ class TestFailModeManager:
 
     def test_auto_recover(self):
         mgr = FailModeManager(default_mode=FailMode.DEAD)
-        mgr.health_check("budget_engine", False, "down")
+        mgr.record_health_check("budget_engine", False, "down")
         mgr.auto_recover()
         assert mgr._state.mode == FailMode.OPEN
         assert mgr.component_fail_count("budget_engine") == 0
@@ -139,14 +139,14 @@ class TestFailModeManager:
     def test_recent_checks(self):
         mgr = FailModeManager()
         for i in range(25):
-            mgr.health_check("comp", True, f"check {i}")
+            mgr.record_health_check("comp", True, f"check {i}")
         recent = mgr.recent_checks(n=5)
         assert len(recent) == 5
 
     def test_recent_checks_default_n(self):
         mgr = FailModeManager()
         for i in range(25):
-            mgr.health_check("comp", True, f"check {i}")
+            mgr.record_health_check("comp", True, f"check {i}")
         recent = mgr.recent_checks()
         assert len(recent) == 20
 
@@ -156,7 +156,7 @@ class TestFailModeManager:
 
     def test_reset(self):
         mgr = FailModeManager()
-        mgr.health_check("budget_engine", False, "down")
+        mgr.record_health_check("budget_engine", False, "down")
         mgr.reset()
         assert mgr.current_mode() == FailMode.OPEN
         assert mgr.component_fail_count("budget_engine") == 0
