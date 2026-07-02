@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-02 06:22:06
+> 最后更新: 2026-07-02 17:31:15
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 16 | Module Count | 16 |
 | 域内依赖 | 8 | Internal Dependencies | 8 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
@@ -70,20 +70,20 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
-    src_zephyr_frontend_dashboard_init_py -.->|config_depends| src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_components_init_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    D_TRADING["D_TRADING production"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
+    src_zephyr_frontend_dashboard_init_py -.->|config_depends| src_zephyr_frontend_dashboard_app_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_interface_base_py production
     class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
-    class D_TRADING,D_GOVERNANCE external_prod
+    class D_GOVERNANCE,D_TRADING external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -97,7 +97,9 @@ graph TD
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D_AUDITTEST | 1 | test_depends |
 
 ## 架构分层视图 / Architecture Overview
 
@@ -181,8 +183,8 @@ graph TD
 │                 [config_depends] (3 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → interface_base.py                                │
-│   __init__.py → app.py                                           │
 │   __init__.py → fitness_functions.py                             │
+│   __init__.py → app.py                                           │
 └──────────────────────────────────────────────────────────────────┘
 
 ```

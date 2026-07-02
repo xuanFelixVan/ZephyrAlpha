@@ -1,5 +1,5 @@
 %% D_COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-07-02 06:22:08
+%% 生成时间: 2026-07-02 17:31:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 25, 依赖边数: 24
 
@@ -35,21 +35,21 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_artifact_scanner_py
+    src_zephyr_compliance___init___py -->|config_depends| src_zephyr_compliance_aisg_sandbox_py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_COMPLIANCE -> D_GOVERNANCE (20 条)
-    src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_integrity_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
