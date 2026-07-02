@@ -101,9 +101,15 @@ from d3_metadata.validate_module_id_naming import is_valid_module_id as _validat
 from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
 from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
 
-# P2 PG 迁移治本（2026-06-27）：_db_write_lock 简化为纯 no-op 上下文管理器。
-# PG 用 MVCC 事务 rollback 提供原子性，无需文件锁/备份门禁。
-# 保留 with 结构避免大规模重新缩进。
+# 裁定#209 阶段1（2026-07-02）：_db_write_lock 从 no-op 升级为 pg_advisory_lock 互斥保护。
+# 与 generate_project_depgraph.py.write_depgraph_to_db 共享 lock key 424242。
+# 会话级 lock，finally 显式 pg_advisory_unlock 释放。
+# threading.local 防嵌套死锁：同线程嵌套调用时直接 yield（外层已持有锁）。
+import threading as _threading
+_DEPGRAPH_WRITE_LOCK_KEY = 424242
+_depgraph_lock_local = _threading.local()
+
+
 @contextlib.contextmanager
 def _db_write_lock(
     owner_id: str | None = None,
@@ -112,8 +118,27 @@ def _db_write_lock(
     max_retries: int = 30,
     retry_interval: float = 1.0,
 ):
-    """depgraph 写入上下文管理器（P2 PG 迁移治本后：纯 no-op，PG MVCC 提供原子性）。"""
-    yield
+    """depgraph 写入上下文管理器（裁定#209 阶段1：pg_advisory_lock 互斥保护）。
+
+    与 generate_project_depgraph.py.write_depgraph_to_db 共享 lock key 424242。
+    会话级 lock，finally 显式 pg_advisory_unlock 释放。
+    threading.local 防嵌套死锁：同线程嵌套调用时直接 yield（外层已持有锁）。
+    """
+    if getattr(_depgraph_lock_local, "held", False):
+        # 嵌套调用：外层已持有锁，直接 yield
+        yield
+        return
+    lock_conn = get_depgraph_pg_connection(autocommit=True)
+    _depgraph_lock_local.held = True
+    try:
+        lock_conn.execute("SELECT pg_advisory_lock(424242)")
+        yield
+    finally:
+        try:
+            lock_conn.execute("SELECT pg_advisory_unlock(424242)")
+        finally:
+            lock_conn.close()
+            _depgraph_lock_local.held = False
 
 
 @contextlib.contextmanager
