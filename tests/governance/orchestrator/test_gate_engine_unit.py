@@ -46,7 +46,8 @@ from zephyr.shared.foundation.models import TaskCard
 # Fixtures
 # ---------------------------------------------------------------------------
 
-GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "governance" / "rule_enforcement"
+# tests/governance/orchestrator/ → 项目根需 4 层 parent
+GATES_DIR = Path(__file__).parent.parent.parent.parent / "src" / "zephyr" / "governance" / "rule_enforcement"
 
 EXPECTED_GATE_IDS = frozenset(
     {
@@ -71,6 +72,17 @@ EXPECTED_GATE_IDS = frozenset(
         "MAD-003",
         "MAD-004",
         "GATE-DEDUP",
+        "POST_DOC_REVIEW",
+        "G_TRAE_003", "G_TRAE_004", "G_TRAE_006", "G_TRAE_007", "G_TRAE_008",
+        "G_TRAE_009", "G_TRAE_010", "G_TRAE_011", "G_TRAE_012", "G_TRAE_016",
+        "G_TRAE_017", "G_TRAE_018", "G_TRAE_020", "G_TRAE_021", "G_TRAE_022",
+        "G_TRAE_023", "G_TRAE_024", "G_TRAE_025", "G_TRAE_026", "G_TRAE_027",
+        "G_TRAE_028", "G_TRAE_029", "G_TRAE_030", "G_TRAE_031", "G_TRAE_032",
+        "G_TRAE_033", "G_TRAE_034", "G_TRAE_035", "G_TRAE_036", "G_TRAE_037",
+        "G_TRAE_038", "G_TRAE_039", "G_TRAE_040", "G_TRAE_041", "G_TRAE_042",
+        "G_TRAE_043", "G_TRAE_044", "G_TRAE_045", "G_TRAE_046", "G_TRAE_047",
+        "G_TRAE_048", "G_TRAE_049", "G_TRAE_050", "G_TRAE_051", "G_TRAE_052",
+        "G_TRAE_053", "G_TRAE_054", "G_TRAE_055",
     }
 )
 
@@ -110,12 +122,18 @@ def _make_task(
         safety_level="M",
         source_blueprint="test",
         source_section="test",
-        description="测试任务：门禁引擎验证",
+        description=(
+            "测试任务：门禁引擎验证。根因：需要验证门禁引擎对各任务的拦截与放行逻辑。"
+            "治根：通过单元测试覆盖门禁引擎的核心检查路径与边界场景。"
+            "施工步骤：构造测试任务并调用门禁引擎进行评估。"
+            "验收标准：门禁结果符合预期且违规列表正确。"
+        ),
         verification_status="verified",
-        deliverables=deliverables or [],
+        deliverables=deliverables or ["src/zephyr/output.py"],
         acceptance=["exit=0"],
         depends_on=[],
         files_in_scope=["tests/gate/test_gate_engine_gates.py"],
+        directive="999",
         applicable_rules=[{"module_id": "GOV-TASK-001", "section": "§4", "reason": "模板校验"}],
         allowed_touch=["tests/gate/test_gate_engine_gates.py"],
         rollback_instructions="git checkout -- tests/gate/test_gate_engine_gates.py",
@@ -507,6 +525,9 @@ def test_task_repo_other_transitions_no_gate(tmp_path: Path) -> None:
     repo._enable_gate = False
     repo.transition("SRC-081", TaskStatus.IN_PROGRESS)
     repo._enable_gate = True
+    # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
+    repo.batch_review("SRC-081")
+    repo.batch_review("SRC-081")
     # IN_PROGRESS → COMPLETED 不触发门禁
     updated = repo.transition("SRC-081", TaskStatus.COMPLETED)
     assert updated.status == TaskStatus.COMPLETED

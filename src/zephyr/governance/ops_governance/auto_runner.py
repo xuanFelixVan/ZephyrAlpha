@@ -108,15 +108,15 @@ class GovernanceAutoRunner:
     def _run_gates(self) -> None:
         """按阶段顺序执行 gate_checks。"""
         from zephyr.infrastructure.rollback.phase_manager import (
-            GOVERNANCE_GATE_DIMENSIONS,
             PHASE_SEQUENCE,
             ConstructionPhase,
         )
 
         # 收集所有治理 gate
+        # arch034-merge: GOVERNANCE_GATE_DIMENSIONS 已删除，从 PHASE_SEQUENCE 派生
         all_gov_gates: list[str] = []
-        for gates in GOVERNANCE_GATE_DIMENSIONS.values():
-            all_gov_gates.extend(gates)
+        for phase_gate in PHASE_SEQUENCE.values():
+            all_gov_gates.extend(phase_gate.gate_checks)
 
         self._result.total_gates = len(all_gov_gates)
 

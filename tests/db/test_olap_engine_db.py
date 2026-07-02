@@ -188,8 +188,8 @@ class TestTaskProgressTrend:
 
     def test_returns_completion_rate(self, tmp_sqlite: Path) -> None:
         """有数据时返回 completion_rate 字段（0.0–1.0）。"""
-        _insert_task(tmp_sqlite, "ADR-001", "COMPLETED")
-        _insert_task(tmp_sqlite, "ADR-002", "PENDING")
+        _insert_task(tmp_sqlite, "KBG-001", "COMPLETED")
+        _insert_task(tmp_sqlite, "KBG-002", "PENDING")
         with OLAPEngine(sqlite_path=tmp_sqlite, auto_init_sqlite=False) as eng:
             rows = eng.task_progress_trend(period="day")
         if rows:
@@ -199,7 +199,7 @@ class TestTaskProgressTrend:
 
     def test_phase_filter(self, tmp_sqlite: Path) -> None:
         """phase 过滤参数化传入（防注入），不同 phase 独立统计。"""
-        _insert_task(tmp_sqlite, "ADR-010", "COMPLETED", phase=0)
+        _insert_task(tmp_sqlite, "KBG-010", "COMPLETED", phase=0)
         _insert_task(tmp_sqlite, "SRC-020", "PENDING", phase=1)
         with OLAPEngine(sqlite_path=tmp_sqlite, auto_init_sqlite=False) as eng:
             rows_p0 = eng.task_progress_trend(period="day", phase=0)
