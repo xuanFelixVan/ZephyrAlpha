@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.finding_task_bridge
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.schemas
-# [CONSUMERS]
+# [CONSUMERS] scripts/governance/run_all.py (bridge_findings_to_tasks)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
