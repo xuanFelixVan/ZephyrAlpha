@@ -234,7 +234,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
                                ──→ D_OPS(任务监控)
 
 事件:
-  E-BT-01 BacktestCompleted ──→ L05/L04/L07
+  E-BT-01 BacktestCompleted ──→ L05/L04/L07/L08(P1-15,E-RS-02对齐,来源:01-跨域/20-D-RESEARCH)
   E-BT-02 BacktestPassed    ──→ L05/L08(触发E-PF-01)
   E-BT-03 OverfittingDetected ──→ L02(因子衰减)/L08
 ```
@@ -265,6 +265,8 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 3. **OOS(Out-of-Sample)阶段**:参数锁定(不可调整)→通过→正式上线(需人工审批)
 
 **参数稳定性区域**:参数扫描→识别稳定高原→选高原中心→避悬崖型参数
+
+**V1-V6分层验证门禁(P1-26)**:Walk-Forward贯穿V1(单元测试)→V2(集成测试)→V3(样本外回测)→V4(Walk-Forward)→V5(模拟交易)→V6(实盘灰度),每级门禁通过才进入下一级(来源:12-D-ML-TRAIN)
 
 ## §4 接口契约
 
@@ -394,6 +396,8 @@ class MyEngine(BacktestEngineBase):
 - 事件驱动回测:策略代码提交后手动/CI触发
 - **回测Sharpe准入门控(P0-10)**:Sharpe>0.5才能进入模拟阶段(来源:06-D-PF-ALLOC)
 - **回测-实盘偏差监控(P0-11)**:偏差>30%告警,>50%策略退役;GAP-AP-07回测-实盘偏差监控器自动检测(来源:06-D-PF-ALLOC/23-D-AUT-PERM)
+- **回测门禁C-007(P1-12)**:每轮迭代改动必须过回测门禁(Sharpe/MaxDD/换手率阈值),未过阻断合并(来源:交易决策架构)
+- **R-126 Backtest-to-Production Deployer(P1-28)**:回测通过→门控审批→灰度发布→全量上线,自动化部署管道(来源:学习系统架构)
 
 ### §5.7 禁止模式与导入约束
 
@@ -472,6 +476,7 @@ class MyEngine(BacktestEngineBase):
 | 风险预算 | D_RISK | planned | CTR-P1-016 max_drawdown |
 | 因子衰减 | D_FACTOR | planned | E-BT-03 OverfittingDetected |
 | 任务监控 | D_OPS | planned | E-BT-01 BacktestCompleted |
+| 信号回测(P1-25) | D_SIGNAL | planned | 信号驱动回测+多重检验校正(来源:04-D-SIGNAL) |
 
 ## §13 需要更新
 
@@ -519,8 +524,10 @@ class MyEngine(BacktestEngineBase):
   - 多重测试偏差修正(试次数N调整)
   - DSR<0.5判定为过拟合
   - 来源:D-SIMULATION-24
-- **统计显著性**:t检验(p<0.05显著),来源:D-SIMULATION-45
+- **统计显著性(P1-14)**:t检验(p<0.05显著),来源:D-SIMULATION-45
 - 基础指标:Sharpe/Sortino/MaxDD/IC/IR/Calmar/WinRate
+- **DSR扩展(P1-17)**:考虑策略间相关性的DSR修正,组合层面多重测试偏差校正(来源:学习系统架构§8.1)
+- **Probabilistic Backtesting(P1-21)**:贝叶斯回测,计算P(Sharpe>0)后验概率,替代传统p-value(来源:学习系统架构§8.1)
 
 **overfitting_detector.py 详细规格**(P0,来源:D-FACTOR-03/D-SIMULATION-18/56):
 - **过拟合检测三维度**(D-FACTOR-03):
@@ -536,8 +543,26 @@ class MyEngine(BacktestEngineBase):
 **data_handler.py 详细规格**(P0,来源:01-跨域交叉点/D-RESEARCH R-02/D-SIMULATION-51):
 - **PIT三平面一致性**:回测用事件回放(AS OF JOIN),与训练/推理平面因子值一致
 - **Feature Store PIT接口**:通过DatabaseService→FeatureStore获取PIT数据(R-02)
-- **数据质量检查**:缺失值检测+异常值检测(来源:D-SIMULATION-51)
+- **数据质量检查(P1-13)**:缺失值检测+异常值检测(来源:D-SIMULATION-51)
 - **bar推送**:按timestamp逐根K线推送,禁止未来数据泄漏
+- **Look-Ahead Bias Detector(P1-27)**:幸存者偏差检测+重述数据检测,CI/CD自动扫描(来源:14-D-ALT-DATA/安全架构)
+- **FeatureStore PIT AS OF JOIN + PITManager(P1-30)**:强制AS OF时间点查询+PITManager管理版本对齐(来源:15-D-DATA-ENG/02-D-DATA)
+
+**matching_engine.py 详细规格**(P1,来源:D-SIMULATION-34/41/42/08-D-EX-CORE/09-D-EX-SOR):
+- **撮合引擎详细设计(P1-9)**:真实市场模拟+撮合规则(市价/限价/条件单)+市场微观结构(订单簿/集合竞价)(来源:D-SIMULATION-34)
+- **滑点模型(P1-10)**:实盘环境模拟(下单延迟+成交确认+市场冲击)+流动性模型+交易成本(来源:D-SIMULATION-41/42)
+- **3级滑点模型(P1-22)**:Level 1固定滑点→Level 2平方根冲击模型→Level 3订单簿模拟,按精度需求选择(来源:08-D-EX-CORE/09-D-EX-SOR)
+- **Almgren-Chriss市场冲击模型(P1-23)**:线性冲击+永久冲击+时间衰减,大单拆分优化(来源:09-D-EX-SOR/R-118)
+
+**walk_forward.py 详细规格**(P1,来源:D-SIMULATION-19/25/学习系统架构§8.1):
+- **Walk-Forward分析器(P1-11)**:滚动窗口+样本外验证+参数稳定性+WF审计(来源:D-SIMULATION-19/25)
+- **R-93 Walk-Forward三模式(P1-29)**:滚动(固定窗口滑动)/锚定(扩展训练集)/扩展(逐步增长),按策略类型选择(来源:学习系统架构)
+- **Adaptive Walk-Forward(P1-20)**:自适应窗口步进,根据波动率动态调整窗口大小(来源:学习系统架构§8.1)
+- **CPCV v2(P1-18)**:Combinatorial Purged Cross-Validation,组合净化交叉验证,消除PIT泄漏(来源:学习系统架构§8.1)
+- **White's Reality Check增强(P1-19)**:功效提升+30%,多重比较偏差校正(来源:学习系统架构§8.1)
+
+**event_driven_engine.py 详细规格**(P1,来源:学习系统架构):
+- **R-117/R-118/R-119模拟器(P1-24)**:R-117沙盒模拟器(隔离测试)/R-118滑点模拟器(实盘级精度)/R-119撮合模拟器(订单簿重放),Phase 2事件驱动引擎集成(来源:学习系统架构)
 
 ### §16.8 施工参考卡
 
@@ -578,6 +603,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | 解除ARB-11 T2-deferred | 2026-07-02 | 回测是因子库前置依赖,不可延迟 |
 | CTR-P1-016注册 | 2026-07-02 | CTR-P1-014被ExperimentResult占用,新建编号 |
 | E-BT-*事件系列 | 2026-07-02 | E-RS-02 payload_contract=null,需专用事件 |
+| SIM-46/56→SIM-18合并(P1-16) | 2026-07-02 | 去重避免重复造轮子,统一归口SIM-18(来源:D-SIMULATION §0.1) |
 
 ## 术语表
 
