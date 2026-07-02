@@ -20,6 +20,20 @@
 __all__ = ["BackpressureResume"]
 
 # ==== BEGIN CODGEN:CTR-BP-003 ====
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
+# [MODULE] zephyr.shared.contracts.backpressure.resume
+# [DOMAIN] D_INFRASTRUCTURE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
+# [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
 from dataclasses import dataclass, field
 
 from typing import Optional
@@ -29,7 +43,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-06-24"
+# created: "2026-07-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -52,8 +66,6 @@ AI Prompt
 @dataclass(frozen=True)
 class BackpressureResume:
     idempotency_key: str
-    idempotency_key: str
-    idempotency_key: str
     reason: str
     signal_id: str
     symbol: str
@@ -62,3 +74,11 @@ class BackpressureResume:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-BP-003 ====
+
+
+
+
+
+
+
+

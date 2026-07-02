@@ -12,4 +12,4 @@ __all__ = [
     "pause",
     "resume",
     "throttle",
-'_types']
+]

@@ -55,6 +55,7 @@ class DatabaseService:
 
         self._governance_conn: sqlite3.Connection | None = None
         self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
+        self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
 
     def get_governance_conn(self) -> sqlite3.Connection:
         """获取 governance.db 连接（保持 SQLite）
@@ -77,11 +78,18 @@ class DatabaseService:
         return self._depgraph_conn
 
     def get_clickhouse_conn(self):
-        """获取 ClickHouse 连接（业务数据库 C1/C2/C3 仓库）
+        """获取 ClickHouse 连接（C1 行情仓库 c1_market）
 
-        TODO: Spiral 2 业务数据库子蓝图施工时实现。
+        配置来源：tmp/import_intraday.py（数据导入脚本，另一个AI对话创建）
+        host=localhost port=9000 user=default password='' database=c1_market
         """
-        raise NotImplementedError("ClickHouse连接待Spiral 2业务数据库施工时实现")
+        if self._clickhouse_conn is None:
+            from clickhouse_driver import Client
+            self._clickhouse_conn = Client(
+                host='localhost', port=9000, user='default', password='',
+                database='c1_market',
+            )
+        return self._clickhouse_conn
 
     def get_redis_conn(self):
         """获取 Redis 连接（业务数据库 H1 热缓存）
@@ -110,6 +118,13 @@ class DatabaseService:
         except Exception:
             result["depgraph"] = False
 
+        try:
+            conn = self.get_clickhouse_conn()
+            conn.execute("SELECT 1")
+            result["clickhouse"] = True
+        except Exception:
+            result["clickhouse"] = False
+
         return result
 
     def close_all(self):
@@ -121,6 +136,9 @@ class DatabaseService:
         if self._depgraph_conn:
             self._depgraph_conn.close()
             self._depgraph_conn = None
+
+        # clickhouse_driver.Client 无 close()，断开由 GC 处理
+        self._clickhouse_conn = None
 
     # ========== governance.db 方法 ==========
 
