@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "62a845453857e68b",
+      "hash": "0bb05c8683339859",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -131,6 +131,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: ssot_redefinition_gate.py）"
     }
   },
-  "registered_at": "2026-07-02T18:46:36.414294+00:00",
+  "registered_at": "2026-07-02T19:12:41.934644+00:00",
   "last_check_at": "2026-07-02T17:51:10.052545+00:00"
 }
