@@ -198,7 +198,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 ### 4.6 governance/ 根目录防平铺门禁（ARCH-031 P3 防复发，2026-07-02）
 
-`src/zephyr/governance/` 根目录**禁止新增 .py 文件**（含 rename 到根目录）。治本前根目录平铺 32 个 .py 文件，治本后迁移 24 文件到 12 功能子目录，仅保留 8 个高风险核心模块：
+`src/zephyr/governance/` 根目录**禁止新增 .py 文件**（含 rename 到根目录）。治本前根目录平铺 33 个 .py 文件，治本后迁移 24 文件到 12 功能子目录，仅保留 9 个高风险核心模块：
 
 | 保留文件 | 原因 |
 |----------|------|
@@ -210,6 +210,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 | `integrity.py` | 完整性校验（消费者 119+） |
 | `merkle_hourly.py` | Merkle 小时聚合（消费者 71+） |
 | `performance_attribution_report.py` | 绩效归因报告（消费者 71+） |
+| `rule_patterns.py` | 治理规则正则模式唯一真源（SSoT，被 create_guard / r5_digit_suffix_gate / validate_directory_structure / validate_rule_frontmatter 共同 import） |
 
 **门禁**：CREATE-GUARD 扩展检测（[`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py)）——staged 新增(A) + rename(R) .py 文件路径匹配 `src/zephyr/governance/<name>.py`（`path.count("/")==3`）→ **硬阻断**。错误信息含 "ARCH-031 防复发" + "新模块 MUST 放入子目录"。
 
