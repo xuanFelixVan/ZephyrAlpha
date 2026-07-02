@@ -39,17 +39,12 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zephyr.governance.security_patterns import PIICategory, PII_PATTERNS  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+
 _logger = logging.getLogger(__name__)
 
 
-class PIICategory(str, Enum):
-    EMAIL = "email"
-    PHONE = "phone"
-    SSN = "ssn"
-    CREDIT_CARD = "credit_card"
-    API_KEY = "api_key"
-    IP_ADDRESS = "ip_address"
-    CUSTOM = "custom"
+# PIICategory 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 
 
 class RedactionPolicy(str, Enum):
@@ -77,28 +72,7 @@ class PIIScanResult(BaseModel):
     scanned_at: str = ""
 
 
-_PII_PATTERNS: dict[PIICategory, list[re.Pattern[str]]] = {
-    PIICategory.EMAIL: [
-        re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", re.IGNORECASE),
-    ],
-    PIICategory.PHONE: [
-        re.compile(r"\+?1?\s*[-.(]?\s*\d{3}\s*[-.)]\s*\d{3}\s*[-.]\s*\d{4}"),
-        re.compile(r"\+?\d{1,3}[-.\s]?\d{3,4}[-.\s]?\d{3,4}[-.\s]?\d{0,4}"),
-    ],
-    PIICategory.SSN: [
-        re.compile(r"\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b"),
-    ],
-    PIICategory.CREDIT_CARD: [
-        re.compile(r"\b(?:\d{4}[-\s]?){3}\d{4}\b"),
-    ],
-    PIICategory.API_KEY: [
-        re.compile(r"(?:api[_-]?key|token|secret|password|credential)\s*[:=]\s*['\"]?[\w\-]{16,}['\"]?", re.IGNORECASE),
-        re.compile(r"\b(?:sk|pk|ghp|gho|glpat|xox[bpas])_[\w\-]{20,}\b"),
-    ],
-    PIICategory.IP_ADDRESS: [
-        re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
-    ],
-}
+# _PII_PATTERNS 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 
 _MASK_CHAR = "*"
 _HASH_SALT = "zephyr-pii-hash-salt"
@@ -111,7 +85,7 @@ class PrivacyGuard:
         default_policy: RedactionPolicy = RedactionPolicy.MASK,
     ) -> None:
         self._default_policy = default_policy
-        self._patterns: dict[PIICategory, list[re.Pattern[str]]] = dict(_PII_PATTERNS)
+        self._patterns: dict[PIICategory, list[re.Pattern[str]]] = dict(PII_PATTERNS)
         if custom_patterns:
             for category, pattern_strs in custom_patterns.items():
                 if category not in self._patterns:

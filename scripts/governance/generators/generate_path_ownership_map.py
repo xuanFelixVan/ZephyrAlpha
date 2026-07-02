@@ -48,13 +48,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from _shared.constants import REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
 PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 OUTPUT_FILE = MODULES_DIR / "path_ownership_map.yaml"
 BLUEPRINT_PATTERN = "**/blueprint.md"
 
-MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
+# MODULE_ID_RE 已迁移到 zephyr.governance.rule_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 ACTUAL_DISK_PATH_RE = re.compile(r"^actual_disk_path:\s*[\"']?(.+?)[\"']?\s*$", re.MULTILINE)
 FILE_TABLE_ROW_RE = re.compile(
     r"\|\s*\d+\s*\|\s*`?([^`|\n]+)`?\s*\|\s*§[\d.]+\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|"
