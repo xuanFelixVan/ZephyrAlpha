@@ -998,7 +998,7 @@ sections:
     - description: GOV-DOC-002 v3.0.0 (2026-05-01)
       details: 架构合并;删除03_blueprints/04_construction_plans/05_delivery_and_construction合并为03_modules/
     - description: GOV-DOC-002 v3.3.0 (2026-05-03)
-      details: 07_ai_engineering删除;目录已物理删除所有残留引用更新为03_modules/_b_track_interfaces/
+      details: 07_ai_engineering删除;目录已物理删除所有残留引用更新为03_modules/_cross_layer/_b_track_interfaces/
     - description: GOV-DOC-002 v3.5.0 (2026-05-06)
       details: 全量审计对齐;adr/树节点替换;注册_b_track_interfaces/_system_master/_master-blueprint
     - description: GOV-DOC-003 v2.4.0 (2026-05-02)

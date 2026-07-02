@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L11-001 | ML Core | [blueprint](ml_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L11-001 | ML Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_machine_learning_train/ml_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_machine_learning_train/blueprint.md`
 
 ## 导航
 

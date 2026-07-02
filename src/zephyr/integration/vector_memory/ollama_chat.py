@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.3
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/blueprint.md | §3.3
 # [MODULE] zephyr.integration.vector_memory.ollama_chat
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_chat

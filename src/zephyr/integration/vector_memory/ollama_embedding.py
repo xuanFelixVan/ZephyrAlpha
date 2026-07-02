@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.2
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/blueprint.md | §3.2
 # [MODULE] zephyr.integration.vector_memory.ollama_embedding
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding

@@ -600,7 +600,7 @@ blueprints:
   version: 0.1.0
   generation: ''
   last_updated: ''
-  file_path: 03_modules/_domain_integration/local_model/blueprint.md
+  file_path: 03_modules/_domain_integration/blueprint.md
   construction_progress: scaffold
 - module_id: MOD-KB-001
   name: knowledge_base
@@ -635,7 +635,7 @@ blueprints:
   version: 4.0.0
   generation: 4
   last_updated: '2026-07-01'
-  file_path: 03_modules/_domain_data/datasource_core/blueprint.md
+  file_path: 03_modules/_domain_data/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: alpha_factor_core
@@ -649,7 +649,7 @@ blueprints:
   version: 3.0.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_factor/alpha_factor_core/blueprint.md
+  file_path: 03_modules/_domain_factor/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L03-001
   name: signal_generation_core
@@ -663,7 +663,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_signal/signal_generation_core/blueprint.md
+  file_path: 03_modules/_domain_signal/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L04-001
   name: risk_management_core
@@ -677,7 +677,7 @@ blueprints:
   version: 2.2.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_risk/risk_management_core/blueprint.md
+  file_path: 03_modules/_domain_risk/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L05-001
   name: portfolio_core
@@ -692,7 +692,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md
+  file_path: 03_modules/_domain_portfolio_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L06-001
   name: execution_core
@@ -707,7 +707,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_execution_core/execution_core/blueprint.md
+  file_path: 03_modules/_domain_execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
   name: analytics_core
@@ -722,7 +722,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_reporting/analytics_core/blueprint.md
+  file_path: 03_modules/_domain_reporting/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L08-001
   name: human_machine_interface_core
@@ -737,7 +737,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_frontend/human_machine_interface_core/blueprint.md
+  file_path: 03_modules/_domain_frontend/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: research_core
@@ -751,7 +751,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_research/research_core/blueprint.md
+  file_path: 03_modules/_domain_research/blueprint.md
   construction_progress: design_only
 - module_id: MOD-L10-001
   name: compliance_core
@@ -766,7 +766,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_compliance/compliance_core/blueprint.md
+  file_path: 03_modules/_domain_compliance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L11-001
   name: ml_core
@@ -781,7 +781,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_machine_learning_train/ml_core/blueprint.md
+  file_path: 03_modules/_domain_machine_learning_train/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L13-001
   name: experiment_core
@@ -796,7 +796,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_simulation/experiment_core/blueprint.md
+  file_path: 03_modules/_domain_simulation/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-LLM_SECURITY
   name: large_language_model_security
@@ -943,12 +943,12 @@ changelog:
   - 新增 MOD-INF-027 → 03_modules/_cross_layer/audit_orchestrator/blueprint.md
   - 新增 MOD-INF-029 → 03_modules/_cross_layer/orphan_judge/blueprint.md
   - 新增 MOD-INF-037 → 03_modules/_domain_governance/registry_governance/blueprint.md
-  - 新增 MOD-INF-042 → 03_modules/_domain_integration/local_model/blueprint.md
+  - 新增 MOD-INF-042 → 03_modules/_domain_integration/blueprint.md
   - 新增 MOD-KB-001 → 03_modules/_domain_knowledge/knowledge_base/blueprint.md
-  - 新增 MOD-L05-001 → 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md
-  - 新增 MOD-L06-001 → 03_modules/_domain_execution_core/execution_core/blueprint.md
-  - 新增 MOD-L09-001 → 03_modules/_domain_research/research_core/blueprint.md
-  - 新增 MOD-L11-001 → 03_modules/_domain_machine_learning_train/ml_core/blueprint.md
+  - 新增 MOD-L05-001 → 03_modules/_domain_portfolio_core/blueprint.md
+  - 新增 MOD-L06-001 → 03_modules/_domain_execution_core/blueprint.md
+  - 新增 MOD-L09-001 → 03_modules/_domain_research/blueprint.md
+  - 新增 MOD-L11-001 → 03_modules/_domain_machine_learning_train/blueprint.md
   - 新增 MOD-LLM_SECURITY → 03_modules/_cross_layer/large_language_model_security/blueprint.md
   - 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE → 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
   - 新增 MOD-TASK_SYSTEM → 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
@@ -964,12 +964,12 @@ changelog:
   - 移除 MOD-INF-005（曾位于 03_modules/_domain_governance/governance_automation/blueprint.md）
   - 移除 MOD-INF-009（曾位于 03_modules/_cross_layer/pipeline/blueprint.md）
   - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md）
-  - 移除 MOD-INF-042（曾位于 03_modules/_domain_integration/local_model/blueprint.md）
+  - 移除 MOD-INF-042（曾位于 03_modules/_domain_integration/blueprint.md）
   - 移除 MOD-KB-001（曾位于 03_modules/_domain_knowledge/knowledge_base/blueprint.md）
-  - 移除 MOD-L05-001（曾位于 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md）
-  - 移除 MOD-L06-001（曾位于 03_modules/_domain_execution_core/execution_core/blueprint.md）
-  - 移除 MOD-L09-001（曾位于 03_modules/_domain_research/research_core/blueprint.md）
-  - 移除 MOD-L11-001（曾位于 03_modules/_domain_machine_learning_train/ml_core/blueprint.md）
+  - 移除 MOD-L05-001（曾位于 03_modules/_domain_portfolio_core/blueprint.md）
+  - 移除 MOD-L06-001（曾位于 03_modules/_domain_execution_core/blueprint.md）
+  - 移除 MOD-L09-001（曾位于 03_modules/_domain_research/blueprint.md）
+  - 移除 MOD-L11-001（曾位于 03_modules/_domain_machine_learning_train/blueprint.md）
   - 移除 MOD-LLM_SECURITY（曾位于 03_modules/_cross_layer/large_language_model_security/blueprint.md）
   - 移除 MOD-TASK_SYSTEM（曾位于 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md）
 - version: 2.7.2

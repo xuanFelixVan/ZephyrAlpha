@@ -58,7 +58,7 @@ RESPONSIBILITY_MAP = {
             ("治理规范/标准/协议（非 migration-declaration 的其他 .md）", "01_policies_and_standards/"),
             ("架构视图/ADR", "02_enterprise_architecture/"),
             ("模块蓝图/施工图/交付", "03_modules/"),
-            ("AI 服务接口合同", "03_modules/_b_track_interfaces/"),
+            ("AI 服务接口合同", "03_modules/_cross_layer/_b_track_interfaces/"),
             ("审计报告/状态", "_working/audit/"),
         ],
     ),
@@ -73,7 +73,7 @@ RESPONSIBILITY_MAP = {
     "03_modules": (
         "C 轨镜像：14 层模块生命周期文档（蓝图 → 施工图 → 交付记录）。每个模块一个子目录，所有阶段产物在同一目录下",
         [
-            ("5 大 AI 服务的接口文档", "03_modules/_b_track_interfaces/"),
+            ("5 大 AI 服务的接口文档", "03_modules/_cross_layer/_b_track_interfaces/"),
             ("项目级元计划/DevOps 流程", "01_policies_and_standards/operational/devops/"),
             ("治理规范/标准", "01_policies_and_standards/governance/"),
             ("企业架构视图/ADR", "02_enterprise_architecture/"),
@@ -351,7 +351,7 @@ def build_index_content(rel_dir, files) -> dict:
             resp_info = (
                 desc,
                 [
-                    ("非 C 轨业务层文档", "03_modules/_b_track_interfaces/ 或 01_policies_and_standards/"),
+                    ("非 C 轨业务层文档", "03_modules/_cross_layer/_b_track_interfaces/ 或 01_policies_and_standards/"),
                 ],
             )
 

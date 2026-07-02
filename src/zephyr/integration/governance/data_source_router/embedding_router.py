@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.governance.data_source_router.embedding_router
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.local_model.embedding_router

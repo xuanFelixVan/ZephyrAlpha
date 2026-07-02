@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L02-001 | Alpha Factor Core | [blueprint](alpha_factor_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L02-001 | Alpha Factor Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_factor/blueprint.md`
 
 ## 导航
 

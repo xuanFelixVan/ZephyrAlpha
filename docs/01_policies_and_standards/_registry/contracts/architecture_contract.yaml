@@ -34,7 +34,7 @@
 contract_version: "2.2.0"
 last_updated: "2026-05-03"
 total_vr_rules: 11
-contract_scope: "ZephyrAlpha 全项目所有目录下的 .md 和 .yaml 文件（与 PS-STD-001 §1.3 一致）——02_enterprise_architecture/ / 03_modules/ / 03_modules/_b_track_interfaces/ / _working/audit/ / archive/ 均纳入扫描范围"
+contract_scope: "ZephyrAlpha 全项目所有目录下的 .md 和 .yaml 文件（与 PS-STD-001 §1.3 一致）——02_enterprise_architecture/ / 03_modules/ / 03_modules/_cross_layer/_b_track_interfaces/ / _working/audit/ / archive/ 均纳入扫描范围"
 scope_note: "目录 Schema（§1）当前仅定义 01_policies_and_standards/ 的结构规则。其他目录的目录级约束留待后续版本补充。VR 规则通过 tier 字段区分生效范围"
 
 schema_version: "1.2.0"

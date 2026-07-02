@@ -328,7 +328,7 @@ directories:
 
 
 
-  - path: "docs/03_modules/_b_track_interfaces/"
+  - path: "docs/03_modules/_cross_layer/_b_track_interfaces/"
 
     responsibility: "AI 工程接口文档—? 大核心服?+ 接口契约（原 07_ai_engineering/?026-05-03 迁移?"
     parent: "docs/03_modules/"

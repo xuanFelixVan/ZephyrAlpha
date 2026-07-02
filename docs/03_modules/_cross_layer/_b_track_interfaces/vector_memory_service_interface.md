@@ -165,7 +165,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 
 | Collection | 用途 | 典型 Document 来源 |
 |-----------|------|-------------------|
-| `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_b_track_interfaces/*interface*.md` |
+| `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_cross_layer/_b_track_interfaces/*interface*.md` |
 | `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_modules/**/*.md` |
 | `task_history` | 任务卡与执行历史 | `docs/03_modules/_domain_infrastructure_operations/task_system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/data/persistence/task_repo.py` 持久化任务元数据（见 MOD-TASK_SYSTEM） |
 | `lessons` | 经验教训与审计 | `docs/_working/audit/reports/`、`docs/_working/audit/findings/` |
@@ -576,7 +576,7 @@ vector_memory = [
 | 源路径模式 | 目标 Collection |
 |-----------|----------------|
 | **KB:decisions**（SQLite ingest / MCP KB） | `decisions` |
-| `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
+| `docs/03_modules/_cross_layer/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
 | `docs/03_modules/_domain_infrastructure_operations/task_system/changes/**` | `task_history` |
 | `docs/_working/audit/reports/**`, `docs/_working/audit/findings/**` | `lessons` |

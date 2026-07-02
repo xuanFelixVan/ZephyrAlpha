@@ -18,9 +18,9 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L03-001 | Signal Generation Core | [blueprint](signal_generation_core/blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L03-001 | Signal Generation Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/03_modules/_domain_signal/signal_generation_core/blueprint.md`
+**架构模型真源**：`docs/03_modules/_domain_signal/blueprint.md`
 
 ## 导航
 
