@@ -11,36 +11,6 @@
 # [TESTS] tests/audit-orchestrator/
 # [TTL] task_bound
 
-# ============================================================================
-# audit_trail 模块地图（ARCH-042 阶段4裁定：GOV-DOC-018 T_soft=120）
-# ============================================================================
-# ARCH-042 阶段4裁定（2026-07-03）：本包 root=62 个.py文件享GOV-DOC-018 T_soft=120
-# （前缀分组+功能名归簇满足"可预测+覆盖全部文件"），62≤120合规，物理拆分非阈值强制。
-# bridges/ 子包（9文件）为独立 adapter 层，有外部消费者（compliance/audit_trail/bridges/），
-# 提供 Audit* 前缀适配 API，9≤60 已合规。
-#
-# 命名约定（前缀簇 + 功能名归簇，新增文件遵循以便按名定位）：
-#   - audit_*           → 审计核心（admission_controller/schema/write_failure_protector）
-#   - *_bridge          → 桥接器（drift/delegation/feedback/tiered_storage/trust）
-#   - trust_*           → 信任引擎（engine/bridge/ring_manager）
-#   - merkle_*          → 哈希链审计（audit/hourly）
-#   - supply_chain*     → 供应链安全（supply_chain/supply_chain_security/sbom_generator）
-#   - finding_*         → 发现引擎（ingest/model/text_to_finding_adapter）
-#   - feedback_*        → 反馈系统（bridge/policy/self_audit）
-#   - delegation_*      → 委托审计（auditor/bridge）
-#   - tiered_storage*  → 分层存储（tiered_storage/tiered_storage_bridge）
-#   - integrity*        → 完整性验证（integrity/integrity_verifier）
-#   - 功能名单体        → 各自独立职责（orchestrator/models/writer/query/indexer/event_store/
-#                          provenance_tracker/replay_engine/forensic_package/retention/
-#                          privacy/anomaly/self_monitor/pipeline_runner 等34个）
-#
-# 新AI使用指引（对应向内收原则④）：
-#   1. 定位符号：查 _LAZY_IMPORTS 字典（符号→模块映射），按需 import
-#   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.governance.audit_trail.<module>
-#   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
-#   4. bridges/ 子包：adapter 层，提供 Audit* 前缀简化 API；root 为 production 实现
-# ============================================================================
-
 # ARCH-036: 子模块改为延迟导入（__getattr__ + _LAZY_IMPORTS），避免 __init__.py 直接 import 子模块
 # 与外层 `import zephyr.governance.audit_trail.X` 预获取的 module lock 冲突导致 _DeadlockError。
 # 根因: Python `import A.B.C` 先获取 C 的 module lock 再加载父包 A.B; A.B/__init__.py 中 import C

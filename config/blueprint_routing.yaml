@@ -805,7 +805,7 @@ routes:
       - "docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml"
       - "docs/03_modules/path_ownership_map.yaml"
       - "scripts/governance/generate_project_path_tree.py"
-      - "scripts/governance/generate_path_ownership_map.py"
+      - "scripts/governance/generators/generate_path_ownership_map.py"
       - "src/zephyr/infra_ops/cicd_pipeline/registry_governance.py"
       - "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
       - "docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"

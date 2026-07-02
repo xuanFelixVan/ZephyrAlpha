@@ -450,7 +450,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
         ownership_file = "docs/03_modules/path_ownership_map.yaml"
         # 1. 重新生成 path_ownership_map.yaml
         sync_result = subprocess.run(
-            [sys.executable, "scripts/governance/generate_path_ownership_map.py", "--write"],
+            [sys.executable, "scripts/governance/generators/generate_path_ownership_map.py", "--write"],
             cwd=str(project_root),
             capture_output=True, text=True, encoding="utf-8", errors="replace",
             timeout=60,
