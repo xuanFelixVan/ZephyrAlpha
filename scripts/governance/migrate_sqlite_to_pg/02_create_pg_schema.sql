@@ -354,6 +354,49 @@ CREATE TABLE IF NOT EXISTS edges (
     is_legal_cycle             INTEGER DEFAULT 0
 );
 
+-- nodes_metadata: 节点人工curated元数据（裁定#209 Stage 2 字段角色分离）
+-- 迁移 PRODUCTION_PROTECTED_FIELDS(14) 出 nodes 表——path 为稳定 PK
+-- （node_id 是 IDENTITY，DELETE+INSERT 后变化，不可作 FK）。
+-- write_depgraph_to_db 中 UPSERT 保存当前值，INSERT 后 UPDATE nodes 恢复空字段。
+CREATE TABLE IF NOT EXISTS nodes_metadata (
+    path                     TEXT    PRIMARY KEY,
+    blueprint_id             TEXT,
+    owner                    TEXT,
+    impact_level             TEXT,
+    change_policy            TEXT,
+    modification_permission  TEXT,
+    belongs_to               TEXT,
+    build_status             TEXT,
+    gate_reason              TEXT    NOT NULL DEFAULT '',
+    hard_boundary_ref       TEXT,
+    consumed_interfaces     TEXT,
+    tags                     TEXT,
+    trust_zone               TEXT,
+    deployment_lifecycle     TEXT,
+    architecture_layer       TEXT,
+    last_updated             TEXT
+);
+
+-- edges_metadata: 边人工curated元数据（裁定#209 Stage 2 字段角色分离）
+-- 迁移 EDGES_PROTECTED_FIELDS(9) 出 edges 表——(from_path, to_path, dep_type)
+-- 为稳定复合 PK（edge_id 是 IDENTITY，node_id 在 DELETE+INSERT 后变化）。
+CREATE TABLE IF NOT EXISTS edges_metadata (
+    from_path                 TEXT    NOT NULL,
+    to_path                   TEXT    NOT NULL,
+    dep_type                  TEXT    NOT NULL DEFAULT '',
+    failure_mode              TEXT,
+    fallback                  TEXT,
+    activation_condition      TEXT,
+    data_transfer_description TEXT,
+    resource_impact           TEXT,
+    ddd_integration_pattern   TEXT,
+    event_ref                 TEXT,
+    api_contract_refs         TEXT,
+    verified                  INTEGER,
+    last_updated              TEXT,
+    PRIMARY KEY (from_path, to_path, dep_type)
+);
+
 -- rule_bindings: 规则绑定
 CREATE TABLE IF NOT EXISTS rule_bindings (
     binding_id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -406,6 +449,10 @@ CREATE INDEX IF NOT EXISTS idx_nodes_domain                    ON nodes(domain_i
 CREATE INDEX IF NOT EXISTS idx_nodes_file_path                 ON nodes(file_path);
 CREATE INDEX IF NOT EXISTS idx_nodes_path                      ON nodes(path);
 CREATE INDEX IF NOT EXISTS idx_nodes_type                      ON nodes(node_type);
+-- 裁定#209 Stage 2：metadata 表索引
+CREATE INDEX IF NOT EXISTS idx_nodes_metadata_bp               ON nodes_metadata(blueprint_id);
+CREATE INDEX IF NOT EXISTS idx_edges_metadata_from            ON edges_metadata(from_path);
+CREATE INDEX IF NOT EXISTS idx_edges_metadata_to               ON edges_metadata(to_path);
 
 -- ========== 3. 视图 ==========
 

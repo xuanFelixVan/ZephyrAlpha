@@ -205,6 +205,60 @@ CREATE TABLE IF NOT EXISTS edges (
 """
 
 # ---------------------------------------------------------------------------
+# DDL — nodes_metadata 表（裁定#209 Stage 2：字段角色分离）
+# 迁移 PRODUCTION_PROTECTED_FIELDS(14) 出 nodes 表——path 为稳定 PK
+# （node_id 是 IDENTITY，DELETE+INSERT 后变化，不可作 FK）。
+# nodes_metadata 在 write_depgraph_to_db 中 UPSERT（DELETE 前）保存当前值，
+# INSERT 后 UPDATE nodes 从 metadata 恢复空字段（替代 P1/P2 Python 保护机制）。
+# ---------------------------------------------------------------------------
+
+_DDL_NODES_METADATA = """
+CREATE TABLE IF NOT EXISTS nodes_metadata (
+    path                     TEXT    PRIMARY KEY,
+    blueprint_id            TEXT,
+    owner                    TEXT,
+    impact_level            TEXT,
+    change_policy           TEXT,
+    modification_permission TEXT,
+    belongs_to              TEXT,
+    build_status            TEXT,
+    gate_reason              TEXT    NOT NULL DEFAULT '',
+    hard_boundary_ref       TEXT,
+    consumed_interfaces     TEXT,
+    tags                     TEXT,
+    trust_zone               TEXT,
+    deployment_lifecycle     TEXT,
+    architecture_layer       TEXT,
+    last_updated             TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — edges_metadata 表（裁定#209 Stage 2：字段角色分离）
+# 迁移 EDGES_PROTECTED_FIELDS(9) 出 edges 表——(from_path, to_path, dep_type)
+# 为稳定复合 PK（edge_id 是 IDENTITY，node_id 在 DELETE+INSERT 后变化）。
+# ---------------------------------------------------------------------------
+
+_DDL_EDGES_METADATA = """
+CREATE TABLE IF NOT EXISTS edges_metadata (
+    from_path                TEXT    NOT NULL,
+    to_path                  TEXT    NOT NULL,
+    dep_type                 TEXT    NOT NULL DEFAULT '',
+    failure_mode             TEXT,
+    fallback                 TEXT,
+    activation_condition     TEXT,
+    data_transfer_description TEXT,
+    resource_impact          TEXT,
+    ddd_integration_pattern  TEXT,
+    event_ref                TEXT,
+    api_contract_refs        TEXT,
+    verified                 INTEGER,
+    last_updated             TEXT,
+    PRIMARY KEY (from_path, to_path, dep_type)
+)
+"""
+
+# ---------------------------------------------------------------------------
 # DDL — domains 表
 # ---------------------------------------------------------------------------
 
@@ -383,6 +437,10 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_arch_dir_domain    ON arch_directory_tree(domain_id)",
     "CREATE INDEX IF NOT EXISTS idx_arch_dir_build     ON arch_directory_tree(build_status)",
     "CREATE INDEX IF NOT EXISTS idx_arch_path_domain   ON arch_path_mappings(domain_id)",
+    # 裁定#209 Stage 2：metadata 表索引
+    "CREATE INDEX IF NOT EXISTS idx_nodes_metadata_bp     ON nodes_metadata(blueprint_id)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_metadata_from   ON edges_metadata(from_path)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_metadata_to      ON edges_metadata(to_path)",
 ]
 
 # ---------------------------------------------------------------------------
