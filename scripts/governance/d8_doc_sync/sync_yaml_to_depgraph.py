@@ -960,9 +960,9 @@ def sync_model_capability_contract(cur):
 def sync_hard_boundaries(cur):
     """#170: 硬边界 → hard_boundaries 表"""
     print("同步 #170: 硬边界 → hard_boundaries...")
-    data = load_yaml("_registry/catalogs/hard_boundaries.yaml")
+    data = load_yaml("_registry/catalogs/hard_boundaries_registry.yaml")
     if not data:
-        print("  警告: hard_boundaries.yaml 不存在，跳过（待创建 YAML 源）")
+        print("  警告: hard_boundaries_registry.yaml 不存在，跳过（待创建 YAML 源）")
         return
 
     cur.execute("DELETE FROM hard_boundaries")
@@ -997,9 +997,9 @@ def sync_hard_boundaries(cur):
 def sync_business_streams(cur):
     """#171: 业务流定义 → business_streams 表"""
     print("同步 #171: 业务流定义 → business_streams...")
-    data = load_yaml("_registry/catalogs/business_streams.yaml")
+    data = load_yaml("_registry/catalogs/business_streams_registry.yaml")
     if not data:
-        print("  警告: business_streams.yaml 不存在，跳过（待创建 YAML 源）")
+        print("  警告: business_streams_registry.yaml 不存在，跳过（待创建 YAML 源）")
         return
 
     cur.execute("DELETE FROM business_streams")
