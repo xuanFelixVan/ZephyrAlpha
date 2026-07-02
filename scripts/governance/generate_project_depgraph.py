@@ -1244,6 +1244,15 @@ def classify_file(rel_path: str) -> str:
     return ""
 
 
+def compute_file_hash(filepath: Path) -> str:
+    """裁定#209 Stage 3: 计算文件内容 SHA256 hash（用于增量重建检测）。"""
+    try:
+        with open(filepath, "rb") as f:
+            return hashlib.sha256(f.read()).hexdigest()
+    except Exception:
+        return ""
+
+
 def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
@@ -1264,6 +1273,7 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
         "modification_permission": header["modification_permission"],
         "file_header_score": count_header_completeness(filepath),
         "imports": imports,
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1294,6 +1304,7 @@ def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> dict | None
         "impact_level": header["impact_level"],
         "modification_permission": header["modification_permission"],
         ref_key: list(set(refs)),
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1325,6 +1336,7 @@ def scan_md_file(rel_path: str, domain_derivation: list = None) -> dict | None:
         "impact_level": fm.get("impact_level", ""),
         "modification_permission": fm.get("modification_permission", ""),
         "doc_references": refs,
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1366,6 +1378,7 @@ def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> dict |
         "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
         "module_id": module_id,
         "doc_references": list(set(refs)),
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1384,6 +1397,7 @@ def scan_json_file(rel_path: str, domain_derivation: list = None) -> dict | None
         "blueprint_id": "",
         "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
         "yaml_references": refs,
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1407,6 +1421,7 @@ def scan_infra_file(rel_path: str, domain_derivation: list = None) -> dict | Non
         "blueprint_id": header.get("blueprint_id", ""),
         "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
         "doc_references": list(set(refs)),
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1432,6 +1447,7 @@ def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> dict | N
         "blueprint_id": "",
         "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
         "doc_references": refs,
+        "content_hash": compute_file_hash(filepath),
     }
 
 
@@ -1551,8 +1567,9 @@ def build_depgraph(
             "design_maturity": (_dm := derive_design_maturity(ntype, False)),
             "build_status": derive_build_status(_dm, False),  # 裁定#180：从文件特征推导
             "deployment_lifecycle": derive_deployment_lifecycle(ntype),
-            "trust_zone": trust_zone,
-            "drive_direction": drive_direction,
+        "trust_zone": trust_zone,
+        "drive_direction": drive_direction,
+        "content_hash": fd.get("content_hash", ""),
         }
 
         # Only include non-empty optional fields
@@ -2899,9 +2916,9 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                     file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
                     trust_zone, license, drive_direction, type_specific_data, last_verified,
                     node_name, file_path, build_status,
-                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces
+                    can_build, gate_reason, hard_boundary_ref, consumed_interfaces, content_hash
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                          %s, %s, %s, %s, %s, %s, %s)""",
+                          %s, %s, %s, %s, %s, %s, %s, %s)""",
                     (
                         node.get("type", "module"),
                         node.get("path", ""),
@@ -2931,6 +2948,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                         node.get("gate_reason", ""),  # H6 fix
                         node.get("hard_boundary_ref", ""),  # H6 fix
                         node.get("consumed_interfaces", ""),  # H6 fix
+                        node.get("content_hash", ""),  # 裁定#209 Stage 3
                     ),
                 )
                 cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
@@ -3483,6 +3501,58 @@ def derive_autonomy_fallback(node_type: str, path: str) -> str:
     return _AUTONOMY_FALLBACK.get(node_type, "ai_modifiable")
 
 
+def _check_incremental_skip(files_data: list, output_db: str) -> bool:
+    """裁定#209 Stage 3: 增量模式——比较文件 content_hash，无变更时返回 True（跳过 DB 重建）。
+
+    首次运行（content_hash 列不存在）或 DB 连接失败时返回 False（回退全量重建）。
+    """
+    if not output_db:
+        return False
+    conn = None
+    try:
+        conn = get_depgraph_pg_connection(autocommit=False)
+        with conn.cursor() as cur:
+            cur.execute("SELECT path, content_hash FROM nodes WHERE design_maturity = 'production'")
+            db_rows = cur.fetchall()
+    except Exception as e:
+        print(f"[DEPGRAPH][INCREMENTAL] 查询失败（可能 content_hash 列不存在），回退全量重建: {e}")
+        return False
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    db_hashes = {row["path"]: (row["content_hash"] or "") for row in db_rows}
+    scan_hashes = {fd.get("path", ""): fd.get("content_hash", "") for fd in files_data}
+
+    added = set(scan_hashes) - set(db_hashes)
+    removed = set(db_hashes) - set(scan_hashes)
+    common = set(scan_hashes) & set(db_hashes)
+    changed = {p for p in common if scan_hashes[p] and db_hashes[p] != scan_hashes[p]}
+    stale = {p for p in common if not db_hashes[p] and scan_hashes[p]}
+
+    # added/removed 不阻断 skip（稳定态）：
+    # - added: INSERT 失败的节点（如 domain_id FK 违反）每次都在 scan 中但不在 DB 中
+    # - removed: 幽灵节点（文件已删除但 DB 保留记录），全量重建也无法清理
+    # 只有 changed（文件内容变化）+ stale（DB hash 为空）才表示需要重建的变更
+    if not changed and not stale:
+        print("[DEPGRAPH][INCREMENTAL] 无阻断性变更（content_hash 全部匹配），跳过 DB 重建")
+        if added:
+            print(f"  [INFO] {len(added)} 个 scan 文件不在 DB 中（不阻断）")
+        if removed:
+            print(f"  [INFO] {len(removed)} 个 DB 节点文件已删除（不阻断，幽灵节点）")
+        return True
+
+    print(
+        f"[DEPGRAPH][INCREMENTAL] 检测到阻断性变更: 变更 {len(changed)}, "
+        f"待补 hash {len(stale)} -> 继续全量重建"
+        + (f" [INFO: added={len(added)}, removed={len(removed)} 不阻断]" if added or removed else "")
+    )
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate project entity-level dependency graph (full coverage)")
     parser.add_argument(
@@ -3504,6 +3574,12 @@ def main():
         action="store_true",
         help="裁定#207 R2 C2：确认执行破坏性DB重建（DELETE运营态节点后从磁盘扫描重建）。"
         "不加此flag时--output-db将被拒绝。depgraph 是唯一真源，禁止重新创建派生 YAML 副本。",
+    )
+    parser.add_argument(
+        "--incremental",
+        action="store_true",
+        help="裁定#209 Stage 3: 增量模式——比较文件 content_hash，无变更时跳过 DB 重建。"
+        "首次运行或 content_hash 列不存在时自动回退全量重建。",
     )
     args = parser.parse_args()
 
@@ -3618,6 +3694,11 @@ def main():
                 files_data.append(r)
 
     print(f"[DEPGRAPH] Total scanned: {len(files_data)} entities")
+
+    # 裁定#209 Stage 3: 增量模式——无变更时跳过 DB 重建
+    if args.incremental and _check_incremental_skip(files_data, args.output_db):
+        print("[DEPGRAPH][INCREMENTAL] 跳过 DB 重建，直接退出")
+        sys.exit(0)
 
     print("[DEPGRAPH] Building dependency graph...")
     depgraph = build_depgraph(files_data, functional_domains, domain_derivation, existing_design_nodes, granularity)
