@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.5.0"
+version: "1.6.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -58,7 +58,7 @@ tags:
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.5.0更新：新增5个需Key源(用户已注册,实测4/5新闻可用+Tiingo日K线可用)；API Key清单记录在§7.1.1。十一源互补覆盖A股+美股+国内外新闻+情感分析全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.6.0更新：新增国内新闻直连API 4源(东财快讯/同花顺/华尔街见闻/金十数据,实测4/6通过,免费无Key,须断VPN);API Key清单§7.1.1,国内新闻API清单§7.1.2。十五源互补覆盖A股+美股+国内外新闻+情感分析全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -142,6 +142,7 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 无影响 | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
 | **TickFlow** | 免费API(无需Key) | **12/12 (100%)** | 无影响 | 2026-07-03 | **美股K线主力** | 美股个股/ETF日周月季年K线+港股+A股(60次/min限制) |
 | **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+**国内新闻**+研报 | EDB宏观+东财个股新闻+研报(爬国内网站,**须断开VPN**) |
+| **国内新闻直连API** | 4源直连API | **4/6 (67%)** | ⚠️VPN有害 | 2026-07-03 | **国内新闻主力** | 东财快讯(50条)+同花顺(20条)+华尔街见闻(20条)+金十(21条),免费无Key,**须断VPN** |
 | **财经RSS直连** | feedparser RSS | **8/10 (80%)** | 无影响 | 2026-07-03 | **国外新闻主力** | Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC(免费无Key) |
 | **NewsAPI.org** | 全球新闻API(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 全球新闻深度 | everything(16822条)+top-headlines(38条),100请求/天,§7.1.1 |
 | **Alpha Vantage** | 新闻+行情(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 新闻+情感分析 | NEWS_SENTIMENT(50条,含情感)+日K线(100行),5次/min,§7.1.1 |
@@ -1147,6 +1148,23 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 > **Alpha Vantage限流**：5次/min，请求间隔需≥12秒。
 > **AskNews**：网站已挂售，跳过。
 
+#### §7.1.2 国内财经新闻直连API清单（免费无Key，实测4/6通过，2026-07-03）
+
+> 从 [china-finance-rss](https://github.com/yuxuan-made/china-finance-rss) 项目源码提取的正确API URL。**须断开VPN**（国内网站）。与 AKShare(§7.3) 互补——AKShare覆盖个股新闻+研报，直连API覆盖7x24实时快讯。
+
+| 数据源 | API URL | 实测结果 | 说明 |
+|--------|---------|:--------:|------|
+| **东方财富快讯** | `https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html` | ✅ 50条 | 7x24快讯，jsonP格式(需正则提取)，免费无Key |
+| **同花顺快讯** | `https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=50` | ✅ 20条 | 7x24快讯推送，JSON，免费无Key |
+| **华尔街见闻** | `https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=50` | ✅ 20条 | 全球直播(中英文)，JSON，免费无Key |
+| **金十数据** | `https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50` | ✅ 21条 | 快讯(需从jin10.com前端bundle提取x-app-id)，免费无Key |
+| 财联社电报 | `https://www.cls.cn/v1/roll/get_roll_list` | ❌ 0条 | API可达但需签名(cls_sign_params)，暂不可用 |
+| 巨潮资讯网 | `http://www.cninfo.com.cn/new/hisAnnouncement/query` | ❌ NoneType | 公告API，格式问题待修复；HTML页面可访问 |
+
+> **国内新闻主力方案**：东方财富快讯(50条) + 华尔街见闻(20条) + 同花顺快讯(20条) + 金十数据(21条) + AKShare个股新闻/研报(§7.3) = 5源覆盖国内+全球财经快讯。
+> **金十数据特殊处理**：需先GET `https://www.jin10.com/` 提取JS bundle URL → GET bundle 提取 `x-app-id` → 用 `x-app-id` Header调用flash API。详见 §7.9.8。
+> **华尔街见闻**：channel=global-channel 覆盖全球新闻(中英文)，是国外新闻的中文版补充源。
+
 ### §7.2 Baostock 完整指南（实测 10/10 通过，最稳定）
 
 #### 基本信息
@@ -1915,6 +1933,62 @@ print(f"Tiingo AAPL日K线: {len(data)}行 | close={data[-1].get('close')}")
 > - **Finnhub**：公司级新闻+实时报价，适合个股事件驱动
 > - **Newsdata.io**：财经新闻补充（200请求/天额度较高）
 > - **Tiingo**：日K线作为TickFlow backup（News API需付费不可用）
+
+#### §7.9.8 国内财经新闻下载（直连API，免费无Key，须断开VPN）
+
+```python
+# 国内财经新闻主力 = 直连API(7x24快讯) + AKShare(个股新闻/研报, 见 §7.9.4)
+# 直连API 4源: 东方财富/同花顺/华尔街见闻/金十数据
+import requests
+import re
+import json
+import time
+
+HEADERS = {"User-Agent": "Mozilla/5.0", "Accept": "application/json, */*",
+           "Accept-Language": "zh-CN,zh;q=0.9", "Referer": ""}
+
+# 1. 东方财富快讯 (50条, jsonP格式)
+url = "https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html"
+r = requests.get(url, headers={**HEADERS, "Referer": "https://kuaixun.eastmoney.com/"}, timeout=10)
+match = re.search(r'var\s+ajaxResult\s*=\s*(\{.*\})', r.text, re.DOTALL)
+em_news = json.loads(match.group(1)) if match else {}
+print(f"东财快讯: {len(em_news.get('LivesList', []))}条")
+
+time.sleep(1)
+
+# 2. 同花顺快讯 (20条, JSON)
+url = "https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=50"
+r = requests.get(url, headers={**HEADERS, "Referer": "https://news.10jqka.com.cn/"}, timeout=10)
+ths_news = r.json().get("data", {}).get("list", [])
+print(f"同花顺快讯: {len(ths_news)}条 | 样本={ths_news[0].get('title','')[:60]}")
+
+time.sleep(1)
+
+# 3. 华尔街见闻 (20条, JSON, 全球新闻中英文)
+url = "https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=50"
+r = requests.get(url, headers={**HEADERS, "Referer": "https://wallstreetcn.com/live"}, timeout=10)
+wscn_news = r.json().get("data", {}).get("items", [])
+print(f"华尔街见闻: {len(wscn_news)}条 | 样本={wscn_news[0].get('title','')[:60]}")
+
+time.sleep(1)
+
+# 4. 金十数据 (21条, 需提取x-app-id)
+r = requests.get("https://www.jin10.com/", headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+script_match = re.search(r'(?:https:)?//www\.jin10\.com/new/js/index\.[^"\'\ ]+\.js', r.text)
+script_url = script_match.group(0)
+if script_url.startswith("//"): script_url = "https:" + script_url
+r2 = requests.get(script_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+app_id = re.search(r'"x-app-id":"([^"]+)"', r2.text).group(1)
+url = "https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50"
+r3 = requests.get(url, headers={"User-Agent": "Mozilla/5.0", "x-app-id": app_id,
+                                "x-version": "1.0.0", "Referer": "https://www.jin10.com/"}, timeout=10)
+jin10_news = r3.json().get("data", [])
+print(f"金十数据: {len(jin10_news)}条 | 样本={jin10_news[0].get('data',{}).get('content','')[:60]}")
+```
+
+> **国内新闻直连API优势**：免费无Key、7x24实时快讯、覆盖国内+全球财经。
+> **限制**：仅最新快讯（无历史归档）、API可能随网站更新而变更、须断开VPN。
+> **与AKShare互补**：直连API覆盖7x24实时快讯，AKShare覆盖个股关联新闻(stock_news_em)+研报(stock_research_report_em)。
 
 ### §7.10 免费源验证脚本
 
