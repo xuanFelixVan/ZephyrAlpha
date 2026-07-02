@@ -55,6 +55,11 @@ GIT 备份门禁（P2 迁移后治本 2026-06-27）：
   原 SQLite 文件备份门禁（_check_git_backup + _create_physical_backup）已删除——
   PG 用 MVCC 事务 rollback 提供原子性，无需文件备份。
   事务失败时 conn.rollback() 自动回滚（已实现）。
+
+PG depgraph 备份（ARCH-041 §5.33.1 治本，2026-07-03）：
+  写入命令（非 --dry-run）执行后自动调用 backup_pg_depgraph()（事件触发），
+  导出 nodes+edges 表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
+  备份失败不阻断主流程（main 已成功）。定义：backup_runtime_state.py。
 """
 
 from __future__ import annotations
