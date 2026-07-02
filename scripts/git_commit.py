@@ -273,12 +273,13 @@ def main() -> int:
                 from zephyr.security.access_control.session_concurrency import SessionRegistry
                 _rv_reg = SessionRegistry(args.project_root)
                 _rv_active = _rv_reg.list_active()
-                _rv_others = [s for s in _rv_active if s.get("pid") != os.getpid()]
+                # list_active 返回 list[SessionInfo]（dataclass），用属性而非 dict.get
+                _rv_others = [s for s in _rv_active if s.pid != os.getpid()]
                 if _rv_others:
                     print(
                         f"ERROR: --reconciler-verify: 检测到 {len(_rv_others)} 个其他活跃 session，"
                         f"违反单 session 诊断场景约束。sessions: "
-                        f"{[s.get('session_id') for s in _rv_others]}\n"
+                        f"{[s.session_id for s in _rv_others]}\n"
                         "如确认需并发验证，用 --allow-concurrent 逃生通道。",
                         file=sys.stderr,
                     )
