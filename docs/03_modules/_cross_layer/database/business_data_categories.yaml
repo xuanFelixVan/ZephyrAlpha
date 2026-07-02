@@ -1,0 +1,141 @@
+# business_data_categories.yaml
+# 业务数据品类注册表（唯一真源）
+# 母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md §6.2 第1层
+# 每个品类一条记录: category_id / name / engine / table / schema_file / data_type / lifecycle / sla_level / enabled / calc_mode
+# 新增品类 = 加一条YAML记录（不改代码）
+#
+# 当前覆盖范围:
+#   C1 market_clickhouse: 8条（本文件）
+#   C2 indicator_clickhouse: 待建
+#   C3 news_clickhouse: 待建
+#   C4 backtest_clickhouse: 待建
+
+# ========== C1 market_clickhouse（行情仓库，8张表）==========
+
+- category_id: market_tick
+  name: "A股3秒Tick行情"
+  engine: clickhouse
+  database: c1_market
+  table: tick_data
+  schema_file: schemas/categories/market_tick.py
+  data_type: 原料
+  lifecycle: hot_90d
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 3秒
+  data_source: [miniqmt]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.1"
+
+- category_id: market_daily_kline
+  name: "日线OHLCV"
+  engine: clickhouse
+  database: c1_market
+  table: daily_kline
+  schema_file: schemas/categories/market_daily_kline.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.2"
+
+- category_id: market_auction
+  name: "集合竞价快照"
+  engine: clickhouse
+  database: c1_market
+  table: auction_snapshot
+  schema_file: schemas/categories/market_auction.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 9:15-9:25
+  data_source: [miniqmt]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.3"
+
+- category_id: market_index
+  name: "指数行情"
+  engine: clickhouse
+  database: c1_market
+  table: index_quote
+  schema_file: schemas/categories/market_index.py
+  data_type: 原料
+  lifecycle: hot_90d
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 3秒
+  data_source: [miniqmt]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.4"
+
+- category_id: market_option_iv
+  name: "期权IV曲面"
+  engine: clickhouse
+  database: c1_market
+  table: option_iv_surface
+  schema_file: schemas/categories/market_option_iv.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [ifind, akshare]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.5"
+
+- category_id: market_futures_position
+  name: "期货持仓"
+  engine: clickhouse
+  database: c1_market
+  table: futures_position
+  schema_file: schemas/categories/market_futures_position.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.6"
+
+- category_id: market_futures_term
+  name: "期货期限结构"
+  engine: clickhouse
+  database: c1_market
+  table: futures_term_structure
+  schema_file: schemas/categories/market_futures_term.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.7"
+
+- category_id: market_cb_iv
+  name: "可转债隐含波动率"
+  engine: clickhouse
+  database: c1_market
+  table: convertible_bond_iv
+  schema_file: schemas/categories/market_cb_iv.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [ifind]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.8"
