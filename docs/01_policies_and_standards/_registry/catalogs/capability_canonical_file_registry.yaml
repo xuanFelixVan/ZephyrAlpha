@@ -2233,6 +2233,16 @@ creation_tokens:
     created_by: "session-arch033-ssot"
     capability: "rule_patterns_ssot"
 
+  # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
+  - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
+    token: "auto-arch042-gate-engine-init-20260702"
+    created_by: "session-arch042-phase1"
+    capability: "gate_engine_package_marker"
+  - file: "src/zephyr/governance/rule_enforcement/rule_engine/__init__.py"
+    token: "auto-arch042-rule-engine-init-20260702"
+    created_by: "session-arch042-phase1"
+    capability: "rule_engine_package_marker"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

@@ -595,16 +595,21 @@ entries:
     核心裁定：开议题登记，分阶段治本。前置工作：补全code_dedup/drift_detection的CONSUMERS依赖标注；
       清理audit_trail bridges/同名残留；修复标注异常(orchestrator双重MODULE/python_compat拼写)。
   fix_phase: |
-    待立项。建议分4个子议题或4阶段执行：
-    阶段1(rule_enforcement优先)：归并gate_*到gate_engine/子目录+rule_*到rule_engine/子目录；
-      解决adversarial_validation同名冲突；归并zero_residue三处分散。
-    阶段2(code_dedup)：先import静态分析补全CONSUMERS；按职责拆detectors/analyzers/fixers/validators/risk/runtime。
-    阶段3(drift_detection)：先重做CONSUMERS标注；落地_*.py为正式子包(core/scanners/analysis/infrastructure)。
-    阶段4(audit_trail)：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
+    阶段1(rule_enforcement) DONE 2026-07-02：
+      归并gate_*8个到gate_engine/子目录(status=done)；
+      归并rule_*5个到rule_engine/子目录(status=done)；
+      adversarial_validation.py根版门面迁入gate_engine/(check_types/版handler保留)；
+      gate_types.py/task_types.py跨包消费者众多，留根未迁移；
+      13个文件迁移+100+ import重写(ast_import_rewriter.py)+2次零issue验证。
+      拆分后GOV-DOC-018裁定：root=33/gate_engine=9/rule_engine=6/check_types=35/invariants=7/admission=1/task=1，全部≤60通过。
+      提交：0b71919d3+6cb32d5a4，merge：912083e610。
+    阶段2(code_dedup) 待执行：先import静态分析补全CONSUMERS(62/65空)；按职责拆detectors/analyzers/fixers/validators/risk/runtime。
+    阶段3(drift_detection) 待执行：先重做CONSUMERS标注(52/66占位)；修复python_compat.py MODULE拼写；落地_*.py为正式子包(core/scanners/analysis/infrastructure)。
+    阶段4(audit_trail) 待执行：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
     每阶段需独立任务卡 + import重写(复用ast_import_rewriter.py) + 防复发门禁。
   status: open
   related_rules:
   - GOV-DOC-018
   - TRAE-028
   created: '2026-07-02'
-  last_updated: '2026-07-02'
+  last_updated: '2026-07-03'
