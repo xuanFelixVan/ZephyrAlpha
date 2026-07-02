@@ -259,6 +259,13 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
                               E-BT-02          E-BT-03
 ```
 
+**3阶段决策门控(P0-14,来源:学习系统架构§8.1)**:
+1. **IS(In-Sample)阶段**:样本内回测→参数优化→稳定性门控
+2. **WFA(Walk-Forward Analysis)阶段**:滚动Walk-Forward→多数通过+灾难否决
+3. **OOS(Out-of-Sample)阶段**:参数锁定(不可调整)→通过→正式上线(需人工审批)
+
+**参数稳定性区域**:参数扫描→识别稳定高原→选高原中心→避悬崖型参数
+
 ## §4 接口契约
 
 ### §4.1 公共 API
@@ -292,11 +299,12 @@ class MyEngine(BacktestEngineBase):
 - overfitting_flag: bool (可选,默认False)
 - benchmark_symbol: Optional[str]
 
-**BacktestConfig**(4字段,当前实现):
+**BacktestConfig**(5字段,P0补充risk_free_rate):
 - initial_capital: Decimal (默认1,000,000)
 - commission_rate: Decimal (手续费率)
 - slippage_bps: Decimal (滑点bps)
 - benchmark_symbol: str (基准标的)
+- risk_free_rate: float (无风险利率,默认中国10年期国债收益率,用于Sharpe计算,来源:D-SIMULATION-23)
 
 ### §4.3 输入契约
 
@@ -335,11 +343,24 @@ class MyEngine(BacktestEngineBase):
 
 ### §5.1 技术约束
 
+**数据访问**:
 - 数据库访问:必须通过DatabaseService,禁止裸duckdb.connect(market.duckdb)
 - 数据库连接:必须显式指定read_only=True
-- PIT正确性:禁止使用未来数据,所有截面按timestamp对齐
+- **Feature Store PIT正确性 R-02**:回测数据源必须通过FeatureStore PIT接口获取,避免look-ahead bias,是回测可信性基石(来源:D-RESEARCH R-02)
+
+**PIT铁律(零容忍,违反→fail_backtest直接失败退出)**:
+- **INV-004 零前瞻偏差**:禁止使用未来数据,所有截面按timestamp对齐(来源:D-FACTOR INV-004)
+- **INV-014 Survivorship Bias零容忍**:回测必须包含退市股票,幸存者偏差=假alpha(来源:D-DATA INV-014)
+- **PIT三平面一致性**:训练/回测/推理三平面因子值必须一致,回测用事件回放(AS OF JOIN),禁止用未来截面(来源:01-跨域交叉点与因果链)
+- **PIT隔离(P0-12)**:回测强制按时间点查询,禁止访问未来数据,数据访问接口强制AS OF(来源:安全架构)
+- **PIT三公理+Embargo期(P0-13)**:三公理(时点标记/版本对齐/泄漏防护)+Embargo期(标签泄露隔离期)+pit_consistency_test() CI/CD(偏差>1%告警)(来源:数据架构)
+
+**交易规则**:
 - A股T+1:买入当日不可卖出,持仓锁定1日
 - Decimal优先:价格计算用Decimal,禁止float算术(聚合指标IC/Sharpe可用float)
+
+**过拟合否决(P0)**:
+- **样本外Sharpe<70%样本内→否决上线(P0-9)**:过拟合否决阈值(来源:13-D-ML-SERVE/风险架构)
 
 ### §5.2 容量估算
 
@@ -371,6 +392,8 @@ class MyEngine(BacktestEngineBase):
 
 - 触发方式:因子库提交后自动触发向量化回测(通过E-RS-01 FactorResearched事件)
 - 事件驱动回测:策略代码提交后手动/CI触发
+- **回测Sharpe准入门控(P0-10)**:Sharpe>0.5才能进入模拟阶段(来源:06-D-PF-ALLOC)
+- **回测-实盘偏差监控(P0-11)**:偏差>30%告警,>50%策略退役;GAP-AP-07回测-实盘偏差监控器自动检测(来源:06-D-PF-ALLOC/23-D-AUT-PERM)
 
 ### §5.7 禁止模式与导入约束
 
@@ -475,15 +498,46 @@ class MyEngine(BacktestEngineBase):
 2. ✅ implementations/vectorized_engine.py — DefaultBacktestEngine
 3. ⬜ core/matching_engine.py — 撮合引擎(市价/限价/滑点模型)
 4. ⬜ core/portfolio.py — 持仓/现金/PnL/净值曲线
-5. ⬜ core/data_handler.py — DuckDB→bar推送(PIT)
-6. ⬜ core/metrics.py — Sharpe/Sortino/MaxDD/IC/IR
+5. ⬜ core/data_handler.py — 数据处理器(详见下方规格)
+6. ⬜ core/metrics.py — 指标计算(详见下方规格)
 
 **Phase 2(事件驱动)**:
 7. ⬜ implementations/event_driven_engine.py — EventLoop+DataHandler+ExecutionHandler
 
 **Phase 3(过拟合检测)**:
-8. ⬜ core/overfitting_detector.py — 三层检测(因子/策略/门禁)
+8. ⬜ core/overfitting_detector.py — 过拟合检测(详见下方规格)
 9. ⬜ core/walk_forward.py — Walk-Forward优化
+
+**metrics.py 详细规格**(P0,来源:D-SIMULATION-23/24/45):
+- **Sharpe计算修正**:
+  - 无风险利率:中国10年期国债收益率(从BacktestConfig.risk_free_rate传入)
+  - 样本量<60:不计算Sharpe(样本不足,返回NaN)
+  - 非正态分布:用Sortino替代(下行风险)
+  - 年化:按回测频率自动选择(日频×sqrt(252)/周频×sqrt(52)/月频×sqrt(12))
+  - 滚动rolling:支持滚动Sharpe(窗口可配,默认252)
+- **DSR(Deflated Sharpe Ratio)**:
+  - 多重测试偏差修正(试次数N调整)
+  - DSR<0.5判定为过拟合
+  - 来源:D-SIMULATION-24
+- **统计显著性**:t检验(p<0.05显著),来源:D-SIMULATION-45
+- 基础指标:Sharpe/Sortino/MaxDD/IC/IR/Calmar/WinRate
+
+**overfitting_detector.py 详细规格**(P0,来源:D-FACTOR-03/D-SIMULATION-18/56):
+- **过拟合检测三维度**(D-FACTOR-03):
+  1. Walk-Forward:滚动窗口样本外验证,参数稳定性
+  2. 参数敏感性:参数微调±10%,收益变化幅度
+  3. 泛化能力:跨时段/跨市场/跨标的稳健性
+- **过拟合检测三层**(D-SIMULATION-18/38/56):
+  1. SIM-18 研究时手动检测:因子/策略回测后人工审查
+  2. SIM-38 样本内外对比:样本内vs样本外收益差异+交叉验证+多重比较偏差校正
+  3. SIM-56 上线前自动门禁:overfitting_flag=True→阻断上线
+- 输出:BacktestResult.overfitting_flag
+
+**data_handler.py 详细规格**(P0,来源:01-跨域交叉点/D-RESEARCH R-02/D-SIMULATION-51):
+- **PIT三平面一致性**:回测用事件回放(AS OF JOIN),与训练/推理平面因子值一致
+- **Feature Store PIT接口**:通过DatabaseService→FeatureStore获取PIT数据(R-02)
+- **数据质量检查**:缺失值检测+异常值检测(来源:D-SIMULATION-51)
+- **bar推送**:按timestamp逐根K线推送,禁止未来数据泄漏
 
 ### §16.8 施工参考卡
 
