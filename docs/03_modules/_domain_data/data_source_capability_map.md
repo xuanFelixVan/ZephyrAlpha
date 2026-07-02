@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.6.0"
+version: "1.7.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -58,7 +58,7 @@ tags:
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.6.0更新：新增国内新闻直连API 4源(东财快讯/同花顺/华尔街见闻/金十数据,实测4/6通过,免费无Key,须断VPN);API Key清单§7.1.1,国内新闻API清单§7.1.2。十五源互补覆盖A股+美股+国内外新闻+情感分析全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费无Key源(Baostock/TickFlow/AKShare/财经RSS/国内新闻+公告+政策直连API) + 需Key源(NewsAPI/AlphaVantage/Finnhub/Newsdata/Tiingo)可获取数据的完整清单与获取方法。v1.7.0更新：财联社签名修复(SHA1→MD5,sv=8.7.9,50+字段含stock_list/subjects/tags/level,最有价值国内新闻源)；巨潮资讯网公告API可用(证监会指定信息披露平台,深交所3条+全市场10条)；新增政策数据源记录(证监会/中国政府网/央行页面可访问,需爬虫,后续做)+AKShare news_cctv央视新闻联播。十七源互补覆盖A股+美股+国内外新闻+上市公司公告+政策监管+情感分析全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -142,7 +142,7 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 无影响 | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
 | **TickFlow** | 免费API(无需Key) | **12/12 (100%)** | 无影响 | 2026-07-03 | **美股K线主力** | 美股个股/ETF日周月季年K线+港股+A股(60次/min限制) |
 | **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+**国内新闻**+研报 | EDB宏观+东财个股新闻+研报(爬国内网站,**须断开VPN**) |
-| **国内新闻直连API** | 4源直连API | **4/6 (67%)** | ⚠️VPN有害 | 2026-07-03 | **国内新闻主力** | 东财快讯(50条)+同花顺(20条)+华尔街见闻(20条)+金十(21条),免费无Key,**须断VPN** |
+| **国内新闻直连API** | 6源直连API | **6/8 (75%)** | ⚠️VPN有害 | 2026-07-03 | **国内新闻+公告主力** | 东财快讯+同花顺+华尔街见闻+金十+财联社(签名修复)+巨潮(公告),免费无Key,**须断VPN** |
 | **财经RSS直连** | feedparser RSS | **8/10 (80%)** | 无影响 | 2026-07-03 | **国外新闻主力** | Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC(免费无Key) |
 | **NewsAPI.org** | 全球新闻API(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 全球新闻深度 | everything(16822条)+top-headlines(38条),100请求/天,§7.1.1 |
 | **Alpha Vantage** | 新闻+行情(需Key) | **2/2 (100%)** | 无影响 | 2026-07-03 | 新闻+情感分析 | NEWS_SENTIMENT(50条,含情感)+日K线(100行),5次/min,§7.1.1 |
@@ -1148,22 +1148,70 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 > **Alpha Vantage限流**：5次/min，请求间隔需≥12秒。
 > **AskNews**：网站已挂售，跳过。
 
-#### §7.1.2 国内财经新闻直连API清单（免费无Key，实测4/6通过，2026-07-03）
+#### §7.1.2 国内财经新闻+公告+政策直连API清单（免费无Key，实测6/8通过，2026-07-03）
 
-> 从 [china-finance-rss](https://github.com/yuxuan-made/china-finance-rss) 项目源码提取的正确API URL。**须断开VPN**（国内网站）。与 AKShare(§7.3) 互补——AKShare覆盖个股新闻+研报，直连API覆盖7x24实时快讯。
+> 从 [china-finance-rss](https://github.com/yuxuan-made/china-finance-rss) 项目源码提取的正确API URL。**须断开VPN**（国内网站）。与 AKShare(§7.3) 互补——AKShare覆盖个股新闻+研报，直连API覆盖7x24实时快讯+公告+政策。
+
+**A. 财经新闻快讯（4/4通过）**
 
 | 数据源 | API URL | 实测结果 | 说明 |
 |--------|---------|:--------:|------|
 | **东方财富快讯** | `https://newsapi.eastmoney.com/kuaixun/v1/getlist_102_ajaxResult_50_1_.html` | ✅ 50条 | 7x24快讯，jsonP格式(需正则提取)，免费无Key |
-| **同花顺快讯** | `https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=50` | ✅ 20条 | 7x24快讯推送，JSON，免费无Key |
-| **华尔街见闻** | `https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=50` | ✅ 20条 | 全球直播(中英文)，JSON，免费无Key |
-| **金十数据** | `https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50` | ✅ 21条 | 快讯(需从jin10.com前端bundle提取x-app-id)，免费无Key |
-| 财联社电报 | `https://www.cls.cn/v1/roll/get_roll_list` | ❌ 0条 | API可达但需签名(cls_sign_params)，暂不可用 |
-| 巨潮资讯网 | `http://www.cninfo.com.cn/new/hisAnnouncement/query` | ❌ NoneType | 公告API，格式问题待修复；HTML页面可访问 |
+| **同花顺快讯** | `https://news.10jqka.com.cn/tapp/news/push/stock/?page=1&tag=&track=website&pagesize=50` | ✅ 20条 | 7x24快讯推送，JSON，含stock关联股票+tagInfo标签评分 |
+| **华尔街见闻** | `https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=50` | ✅ 20条 | 全球直播(中英文)，JSON，含content_more扩展内容 |
+| **金十数据** | `https://flash-api.jin10.com/get_flash_list?channel=-8200&limit=50` | ✅ 21条 | 快讯+经济数据(type=1含actual/affect/unit)，需提取x-app-id |
 
-> **国内新闻主力方案**：东方财富快讯(50条) + 华尔街见闻(20条) + 同花顺快讯(20条) + 金十数据(21条) + AKShare个股新闻/研报(§7.3) = 5源覆盖国内+全球财经快讯。
+**B. 财联社电报（签名修复，✅可用）**
+
+| 数据源 | API URL | 实测结果 | 说明 |
+|--------|---------|:--------:|------|
+| **财联社电报** | `https://www.cls.cn/v1/roll/get_roll_list` | ✅ 10条 | 签名修复(SHA1→MD5, sv=8.7.9)，字段最丰富(50+字段含stock_list/subjects/tags/level/reading_num) |
+
+> **财联社签名算法**（从china-finance-rss源码提取）：
+> 1. 参数序列化：`key=value` 格式，按key大写排序拼接，嵌套用`key[index]`/`key[subkey]`
+> 2. 签名：`SHA1(serialized) → MD5(sha1_digest) → sign`
+> 3. 参数：`{refresh_type:1, rn:50, last_time:0, os:web, sv:8.7.9, app:CailianpressWeb, sign:<签名>}`
+> 4. Header：`Referer: https://www.cls.cn/telegraph`
+>
+> **财联社字段价值**（50+字段，最有价值的国内新闻源）：
+> - `stock_list` — 关联股票代码（直接可用，不用NLP提取）
+> - `subjects` — 主题分类
+> - `tags` — 标签
+> - `level` — 重要级别（C/B/A级）
+> - `reading_num` — 阅读数（热度指标）
+> - `shareurl` — 分享链接
+
+**C. 上市公司公告（巨潮资讯网，✅可用）**
+
+| 数据源 | API URL | 实测结果 | 说明 |
+|--------|---------|:--------:|------|
+| **巨潮资讯网** | `http://www.cninfo.com.cn/new/hisAnnouncement/query` | ✅ 深交所3条/全市场10条 | 证监会指定信息披露平台，POST请求，需正确column(sse/szse)+orgId |
+
+> **巨潮资讯网**是证监会指定信息披露平台，有完整的上市公司公告历史（年报/季报/临时公告/董事会决议等）。
+> - API: POST `http://www.cninfo.com.cn/new/hisAnnouncement/query`
+> - 参数: `stock=代码,orgId` / `column=sse(上交所)或szse(深交所)` / `pageSize` / `seDate=开始~结束`
+> - 返回字段: secCode/secName/announcementTitle/announcementTime/adjunctUrl(PDF)/announcementType
+> - **坑**：orgId必须正确（如`gssz0000001`深交所/`gsshz0000001`上交所），错则NoneType错误
+> - 实测：平安银行(深交所)✅3条 / 全市场最新公告✅10条 / 浦发银行(上交所)❌orgId待修正
+
+**D. 中国政策/监管数据源（页面可访问，需开发爬虫，后续做）**
+
+| 数据源 | URL | 可访问 | 方式 | 可获取内容 |
+|--------|-----|:------:|------|-----------|
+| **证监会** | `http://www.csrc.gov.cn/csrc/c100028/index.shtml` | ✅ | HTML爬虫(BeautifulSoup) | 要闻/政策解读/行政处罚/监管措施/行政复议/市场禁入/新闻发布会 |
+| **中国政府网** | `https://www.gov.cn/zhengce/` | ✅ | HTML爬虫 | 国务院政策文件/法规/规章 |
+| **中国人民银行** | `http://www.pbc.gov.cn/zhengcehuobisi/125207/index.html` | ✅ | HTML爬虫 | 货币政策/公开市场操作/利率公告 |
+| **AKShare news_cctv** | `ak.news_cctv(date="20260702")` | ✅ 10条 | AKShare | 央视新闻联播文字稿(政策风向标)，列=date/title/content |
+
+> **政策数据获取方案**：
+> - **实时政策快讯**：财联社电报(含stock_list关联股票) + AKShare `news_cctv`(央视新闻联播)
+> - **政策原文归档**：证监会/中国政府网/央行 HTML爬虫（页面已验证可访问，需开发BeautifulSoup解析器，**后续建表时做**）
+> - **证监会可获取内容**：要闻/行政处罚决定书/监管措施(警示函等)/行政复议/市场禁入/新闻发布会文字稿
+
+> **国内新闻+公告+政策主力方案**：东方财富快讯(50条) + 华尔街见闻(20条) + 同花顺快讯(20条) + 金十数据(21条) + **财联社电报(10条,字段最丰富)** + **巨潮资讯网(上市公司公告)** + AKShare个股新闻/研报/央视新闻联播(§7.3) = **8源覆盖国内财经快讯+上市公司公告+政策监管**。
 > **金十数据特殊处理**：需先GET `https://www.jin10.com/` 提取JS bundle URL → GET bundle 提取 `x-app-id` → 用 `x-app-id` Header调用flash API。详见 §7.9.8。
 > **华尔街见闻**：channel=global-channel 覆盖全球新闻(中英文)，是国外新闻的中文版补充源。
+> **巨潮资讯网orgId坑**：必须用正确的orgId（深交所`gssz`前缀/上交所`gsshz`前缀），错则NoneType错误。
 
 ### §7.2 Baostock 完整指南（实测 10/10 通过，最稳定）
 
