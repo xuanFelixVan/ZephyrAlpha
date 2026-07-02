@@ -196,7 +196,8 @@ class AggregateHealth:
 
         async def _check_one(module: LifecycleAware) -> tuple[str, ModuleHealth]:
             try:
-                result = await asyncio.wait_for(module.health_check(), timeout=timeout)
+                # 5.12.2#4 治本：health_check 已改 sync，用 asyncio.to_thread 包装以保留超时控制
+                result = await asyncio.wait_for(asyncio.to_thread(module.health_check), timeout=timeout)
                 return (module.module_name, result)
             except TimeoutError:
                 return (

@@ -100,8 +100,13 @@ class LifecycleAware(Protocol):
     async def on_shutdown(self) -> None:
         """系统关闭——释放连接、取消任务、持久化状态。"""
 
-    async def health_check(self) -> ModuleHealth:
-        """健康检查——返回模块当前状态。"""
+    def health_check(self) -> ModuleHealth:
+        """健康检查——返回模块当前状态。
+
+        5.12.2#4 签名漂移治本（2026-07-03）：从 async def 改为 def（sync）。
+        全部 28 个具体实现均为 sync，原 async 声明是接口契约违反。
+        LifecycleManager.health_check_all 已同步去掉 await。
+        """
 
 
 class LifecycleManager:
@@ -156,7 +161,7 @@ class LifecycleManager:
         results: dict[str, ModuleHealth] = {}
         for mod in self._modules:
             try:
-                results[mod.module_name] = await mod.health_check()
+                results[mod.module_name] = mod.health_check()
             except Exception as exc:
                 results[mod.module_name] = ModuleHealth(
                     module_name=mod.module_name,

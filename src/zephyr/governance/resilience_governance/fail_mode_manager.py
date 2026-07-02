@@ -60,7 +60,8 @@ class FailModeManager:
         self._fail_count: dict[str, int] = {}
         self._recovery_timeout: float = 300.0
 
-    def health_check(self, component: str, healthy: bool, detail: str = "", latency_ms: float = 0.0) -> HealthCheck:
+    def record_health_check(self, component: str, healthy: bool, detail: str = "", latency_ms: float = 0.0) -> HealthCheck:
+        """记录一次健康检查结果（5.12.2#4 治本：从 health_check 改名，消除"记录"vs"查询"语义混淆）。"""
         check = HealthCheck(component=component, healthy=healthy, detail=detail, latency_ms=latency_ms)
         self._health_checks.append(check)
         if not healthy:
