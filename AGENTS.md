@@ -39,7 +39,7 @@
 
 > **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后，将 `status` 从 `planned → production`。
 >
-> **写入设计态前 MUST 刷新运营态**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时，内置门闸自动调用 `generate_project_depgraph.py` 刷新运营态（代码现状真实依赖快照）。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限生成器故障时使用，正常流程禁止）。
+> **写入设计态前 MUST 检查运营态**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时，内置门闸自动检查 depgraph 运营态（production节点）是否就绪。运营态为空→阻断，提示先手动运行 `generate_project_depgraph.py` 刷新；运营态就绪→允许写入设计态。设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。逃生通道：`--skip-refresh`（仅限故障时使用，正常流程禁止）。
 >
 > **为什么**：depgraph 是依赖关系唯一真源。AI 从 depgraph 查询依赖=零幻觉空间；AI 绕过 depgraph 自行推断依赖=幻觉/漂移根源。未登记依赖在拓扑验证时自动阻断。
 >

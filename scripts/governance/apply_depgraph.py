@@ -521,38 +521,49 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
 def _gate_refresh_runtime_before_design(skip_refresh: bool = False) -> bool:
     """
-    门闸(L2, 2026-07-02)：写入设计态前MUST刷新运营态。
+    门闸(L2, 2026-07-02)：写入设计态前MUST检查运营态是否就绪。
 
     治本规则：设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。
-    调用 generate_project_depgraph.py 扫描代码现状，刷新depgraph运营态。
+
+    修复(2026-07-02): 原实现调用generate_project_depgraph.py --force破坏性重建，
+    与裁定#207 R2 C2冲突（DELETE运营态→手工维护数据丢失）。改为"检查运营态是否存在"：
+    - 查询depgraph里是否有运营态节点(design_maturity='production')
+    - 有→允许写入设计态（信任运营态已就绪）
+    - 无→阻断，提示AI先手动运行generate_project_depgraph.py刷新运营态
 
     Args:
-        skip_refresh: True=跳过刷新（逃生通道，仅限生成器故障时使用）
+        skip_refresh: True=跳过检查（逃生通道，仅限故障时使用）
     Returns:
-        True=刷新成功(或skip)，False=刷新失败(应阻断写入)
+        True=运营态就绪(或skip)，False=运营态未就绪(应阻断写入)
     """
     if skip_refresh:
-        print("[GATE-L2] --skip-refresh 已跳过运营态刷新（逃生通道，正常流程禁止）", file=sys.stderr)
+        print("[GATE-L2] ⚠️ --skip-refresh 已跳过运营态检查（逃生通道，正常流程禁止）", file=sys.stderr)
         return True
 
-    import subprocess
-    generator = REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"
-    if not generator.exists():
-        print(f"ERROR[GATE-L2]: 运营态生成器不存在: {generator}", file=sys.stderr)
-        return False
+    # 检查运营态是否存在（不做破坏性重建，避免与裁定#207冲突）
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+        row = conn.execute(
+            "SELECT COUNT(*) as cnt FROM nodes WHERE design_maturity = 'production'"
+        ).fetchone()
+        production_count = row["cnt"] if row else 0
+        conn.close()
 
-    print("[GATE-L2] 刷新运营态（写入设计态前必须刷新，防幻觉/防漂移L2）...", file=sys.stderr)
-    result = subprocess.run(
-        [sys.executable, str(generator), "--output-db", "depgraph", "--force"],
-        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=300
-    )
-    if result.returncode != 0:
-        print(f"ERROR[GATE-L2]: 运营态刷新失败（rc={result.returncode}）", file=sys.stderr)
-        if result.stderr:
-            print(result.stderr[-800:], file=sys.stderr)
+        if production_count == 0:
+            print(
+                "ERROR[GATE-L2]: 运营态为空（depgraph无production节点），禁止写入设计态。\n"
+                "请先手动运行: python scripts/governance/generate_project_depgraph.py "
+                "--output-db depgraph --force\n"
+                "（裁定#207: 破坏性重建需--force，正常仅运行一次即可建立运营态）",
+                file=sys.stderr
+            )
+            return False
+
+        print(f"[GATE-L2] 运营态就绪（{production_count}个production节点），允许写入设计态", file=sys.stderr)
+        return True
+    except Exception as e:
+        print(f"ERROR[GATE-L2]: 检查运营态失败: {e}", file=sys.stderr)
         return False
-    print("[GATE-L2] 运营态刷新完成，允许写入设计态", file=sys.stderr)
-    return True
 
 
 def add_design_node(
