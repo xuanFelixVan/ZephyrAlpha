@@ -50,12 +50,12 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.governance.security_patterns import PIICategory, PII_PATTERNS  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+from zephyr.governance.rule_patterns import PIICategory, PII_PATTERNS  # SSoT (ARCH-033 Phase 7 修正: 合并进 rule_patterns)
 
 _logger = logging.getLogger(__name__)
 
 
-# PIICategory 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
+# PIICategory 已迁移到 zephyr.governance.rule_patterns（ARCH-033 Phase 7 修正: 合并进 rule_patterns）
 
 
 class RedactionPolicy(str, Enum):
@@ -92,7 +92,7 @@ class PIIScanResult(BaseModel):
     scanned_at: str = ""
 
 
-# _PII_PATTERNS 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
+# _PII_PATTERNS 已迁移到 zephyr.governance.rule_patterns（ARCH-033 Phase 7 修正: 合并进 rule_patterns）
 
 
 _MASK_CHAR = "*"
