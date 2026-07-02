@@ -50,6 +50,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import GATES_DIR, EXIT_ERROR, REPO_ROOT
+from _shared.walk import iter_files  # 治本(ARCH-036 P1-3): 收敛 glob→iter_files
 
 __manifest__ = """
 args: []
@@ -87,8 +88,8 @@ def _load_gate_rules() -> list[dict[str, Any]]:
     import yaml
 
     rules: list[dict[str, Any]] = []
-    for yf in sorted(GATES_DIR.glob("g*.yaml")):
-        if yf.name.startswith("_") or "template" in yf.name.lower():
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
+        if "template" in yf.name.lower():
             continue
         try:
             data = yaml.safe_load(yf.read_text(encoding="utf-8"))

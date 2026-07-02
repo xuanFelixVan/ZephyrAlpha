@@ -1802,6 +1802,23 @@ capabilities:
       tracker 族子包（MOD-INF-017 蓝图）。风险/盲点/热点跟踪器集合，从 code_dedup/
       根目录迁入 trackers/ 子目录以符合 GOV-DOC-018 阈值。包含 6 个 tracker 模块。
 
+  - capability_id: iter_files
+    canonical_override: scripts/governance/_shared/walk.py
+    aliases:
+      - iter_files
+      - walk
+      - file_walker
+      - directory_traversal
+      - file_traversal
+    description: >-
+      统一文件遍历入口（ARCH-036 P1-3 治本）。scripts/governance/_shared/walk.py 的 iter_files()
+      是所有治理脚本的唯一文件遍历函数，基于 os.walk() + EXCLUDE_DIRS 过滤 + fnmatch name_pattern
+      模式匹配。30+ 脚本通过 from _shared.walk import iter_files 使用。支持 extensions（扩展名过滤）、
+      exclude_dirs（目录排除）、exclude_files（文件排除）、name_pattern（fnmatch 文件名模式匹配，如
+      "blueprint.md"、"g*.yaml"）四种过滤维度。解决发现性：新 AI 搜 "文件遍历/glob/rglob/walk" 可定位
+      真源。解决防重建：check_file_canonical() 反查 + validate_script_quality.py L343 检测 os.walk()
+      散点，阻止新 AI 重新造轮子。对标 trae_060 §2 唯一真源原则 + SCRIPT-QUALITY-001 D-D-05。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

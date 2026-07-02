@@ -67,6 +67,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import GATES_DIR, REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.walk import iter_files  # noqa: E402  治本(ARCH-036 P1-3): 收敛 glob→iter_files
 
 _DB_PATH = _REPO_ROOT / "data" / "databases" / "governance.db"
 
@@ -98,7 +99,7 @@ def check_yaml_parsability() -> dict[str, Any]:
     """Check compliance and report findings."""
     import yaml
 
-    yaml_files = sorted(GATES_DIR.glob("g[1-5]_*.yaml"))
+    yaml_files = iter_files(GATES_DIR, name_pattern="g[1-5]_*.yaml")
     issues: list[str] = []
     for yf in yaml_files:
         try:
@@ -323,7 +324,7 @@ def check_checktype_coverage() -> dict[str, Any]:
     known_shadow_types = {"position_limit", "leverage_limit", "strategy_correlation"}
 
     yaml_types = set()
-    for yf in GATES_DIR.glob("g*.yaml"):
+    for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
             checks = yd.get("checks") or yd.get("entry_conditions") or []

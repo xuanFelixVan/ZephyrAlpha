@@ -52,6 +52,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 from _shared.constants import GATES_DIR, EXIT_PASS, REPO_ROOT
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.walk import iter_files  # noqa: E402  治本(ARCH-036 P1-3): 收敛 glob→iter_files
 
 __manifest__ = """
 args: []
@@ -151,7 +152,7 @@ def update_hash_snapshot() -> dict[str, str]:
 
 def verify_yaml_file_count() -> dict[str, Any]:
     """verify_yaml_file_count implementation."""
-    yaml_files = sorted(GATES_DIR.glob("g*.yaml"))
+    yaml_files = iter_files(GATES_DIR, name_pattern="g*.yaml")
     count = len(yaml_files)
     expected_min = 8
     issues: list[str] = []
@@ -181,7 +182,7 @@ def verify_sqlite_external() -> dict[str, Any]:
 
     try:
         conn = sqlite3.connect(str(_DB_PATH))
-        required_tables = ["gates", "circuit_breaker_state", "tasks"]
+        required_tables = ["gate_runs", "circuit_breaker_state", "tasks"]
         for table in required_tables:
             row = conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
@@ -192,10 +193,10 @@ def verify_sqlite_external() -> dict[str, Any]:
 
         try:
             conn.execute(
-                "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
+                "INSERT INTO gate_runs (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
                 ("ext-verify-test", "GX-EXT:test", 1, "{}", datetime.now(UTC).isoformat()),
             )
-            conn.execute("DELETE FROM gates WHERE gate_run_id='ext-verify-test'")
+            conn.execute("DELETE FROM gate_runs WHERE gate_run_id='ext-verify-test'")
         except Exception as exc:
             issues.append(f"写入测试失败: {exc}")
 
