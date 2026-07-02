@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-02T07:15:03Z'
+generated_at: '2026-07-02T09:07:09Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 142
@@ -1599,7 +1599,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules_registry.yaml
   module_id: REG-DOMAIN-NAMING-001
   title: 域命名规则表
   doc_type: register
@@ -1614,7 +1614,7 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking_registry.yaml
   module_id: GOV-001
   title: 前沿大模型综合能力排名登记表
   doc_type: register
