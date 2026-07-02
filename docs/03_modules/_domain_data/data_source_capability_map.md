@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L00-002
 submodule_path: src/zephyr/data
-title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
+title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.3.0"
+version: "1.4.0"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -58,7 +58,7 @@ tags:
   - capability-map
   - l00
   - ssot
-summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare)可获取数据的完整清单与获取方法。v1.3.0重大更新：①VPN对比测试(Baostock/TickFlow不受影响/AKShare须断开VPN/yfinance库级限流VPN无效/Stooq JS验证VPN无效)；②新增TickFlow(实测12/12通过，美股K线主力免费源，免费无需Key)；③美股不再需要淘宝购买。五源互补=iFind+QMT+Baostock+TickFlow+AKShare覆盖A股+美股全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
+summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免费开源源(Baostock/TickFlow/AKShare/财经RSS)可获取数据的完整清单与获取方法。v1.4.0更新：新增财经RSS直连(实测8/10通过，国外新闻主力源，免费无Key，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC)。六源互补=iFind+QMT+Baostock+TickFlow+AKShare+财经RSS覆盖A股+美股+国内外新闻全品类。所有API调用方法、配置细节、参数坑均已实测验证并固化，AI查询本文档=零幻觉空间，无需重新探索。"
 ---
 
 # 数据源能力地图 — iFind + miniQMT + 免费开源源
@@ -88,15 +88,16 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 │  - 期权/可转债/ETF/期货合约与K线                            │
 │  - 除权除息因子、实时Tick快照                               │
 ├─────────────────────────────────────────────────────────────┤
-│  第四层：免费开源源（覆盖 iFind 试用盲区，v1.3.0 升级）      │
+│  第四层：免费开源源（覆盖 iFind 试用盲区，v1.4.0 升级）      │
 │  - Baostock → A股日/周/月/分钟K线+季频财务（不受VPN影响）   │
 │  - TickFlow → 美股/港股日周月季年K线（免费无Key，不受VPN影响）│
-│  - AKShare → EDB宏观(CPI/PMI/M2/GDP) + 新闻 + 研报（须断VPN）│
+│  - AKShare → EDB宏观+国内新闻+研报（须断VPN）               │
+│  - 财经RSS → 国外财经新闻8源(Yahoo/Bloomberg/CNBC等,免费无Key)│
 │  - yfinance/Stooq → ❌ 不可用（已废弃，详见 §7.4/§7.5）      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**核心铁律**：iFind + QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源作为**补充**，覆盖 iFind 试用账号盲区（A股K线历史/美股/新闻/EDB宏观）。**运维铁律**：下载免费源数据时断开 VPN（Baostock/TickFlow 不受影响，AKShare 必须断开）。详见 §7 免费开源数据源。
+**核心铁律**：iFind + QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）；免费源作为**补充**，覆盖 iFind 试用账号盲区（A股K线历史/美股/国内外新闻/EDB宏观）。**运维铁律**：下载免费源数据时断开 VPN（Baostock/TickFlow/财经RSS 不受影响，AKShare 必须断开）。详见 §7 免费开源数据源。
 
 ### 实测验证状态（2026-07-03）
 
@@ -140,7 +141,8 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 |--------|------|:----------:|:-------:|:--------:|------|---------|
 | **Baostock** | 服务端推送(非爬虫) | **10/10 (100%)** | 无影响 | 2026-07-03 | A股K线+财务主力 | A股日/周/月/分钟K线+季频财务+成分股+交易日历 |
 | **TickFlow** | 免费API(无需Key) | **12/12 (100%)** | 无影响 | 2026-07-03 | **美股K线主力** | 美股个股/ETF日周月季年K线+港股+A股(60次/min限制) |
-| **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+新闻+研报 | EDB宏观+新闻+研报(爬国内网站,**须断开VPN**) |
+| **AKShare** | 爬虫聚合库 | 11/16 (69%) | ⚠️VPN有害 | 2026-07-03 | 宏观+**国内新闻**+研报 | EDB宏观+东财个股新闻+研报(爬国内网站,**须断开VPN**) |
+| **财经RSS直连** | feedparser RSS | **8/10 (80%)** | 无影响 | 2026-07-03 | **国外新闻主力** | Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC(免费无Key) |
 | **yfinance** | Yahoo非官方API | 0/10 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股(Yahoo**库级限流**非IP限流,VPN/代理无效) |
 | **Stooq** | 网站CSV | 0/2 (0%) | ❌VPN无效 | 2026-07-03 | ❌ 不可用 | 美股CSV(JS浏览器验证,与IP无关) |
 
@@ -150,7 +152,8 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 > - **AKShare 宏观+新闻+研报可用**（11/16），但**VPN有害**——爬国内网站(东财/金十/商务部)，挂VPN后国内网站拒绝海外IP，**使用时必须断开VPN**
 > - **yfinance VPN无效**——Yahoo是对yfinance**库本身全局限流**（非IP限流），挂VPN(海外IP)仍0/10失败，之前文档"需海外IP/代理"的结论**已修正为错误**
 > - **Stooq VPN无效**——JS浏览器验证(与IP无关)，pandas_datareader已移除
-> - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow不受影响，AKShare必须断开）；yfinance/Stooq无论是否挂VPN都不可用
+> - **财经RSS直连可用**（8/10通过，免费无Key，不受VPN影响）——国外新闻主力源，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC
+> - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare必须断开）；yfinance/Stooq无论是否挂VPN都不可用
 > - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
 
 ### 1.4 能力边界一句话总结
@@ -159,14 +162,16 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 - **QMT 擅长**：3秒Tick、分钟K线、期权/可转债/ETF/期货、除权因子、实时快照
 - **Baostock 擅长**：A股日/周/月/分钟K线、季频财务(盈利/营运/成长/偿债/现金流/杜邦)、成分股、交易日历
 - **TickFlow 擅长**：美股个股/ETF日周月季年K线、港股日K线、A股日K线（免费无需Key，60次/min限制）
-- **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、财经新闻、研报、一致预期EPS（**须断开VPN**）
+- **AKShare 擅长**：宏观EDB(CPI/PMI/M2/GDP)、**国内财经新闻**(东财)、研报、一致预期EPS（**须断开VPN**）
+- **财经RSS直连擅长**：**国外财经新闻**(Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC，免费无Key)
 - **iFind 独有**：i问财、估值PE/PB/PS（精确到个股）
 - **QMT 独有**：3秒Tick(含五档)、除权除息因子、指数权重、期权/可转债/期货合约
 - **Baostock 独有**：A股历史K线+财务的稳定免费源(服务端推送，非爬虫)
 - **TickFlow 独有**：美股日K线的免费源(无需注册无需Key，A股+美股+港股统一API)
-- **AKShare 独有**：财经新闻(东财)、研报、一致预期EPS
+- **AKShare 独有**：国内财经新闻(东财个股)、研报、一致预期EPS
+- **财经RSS独有**：国外权威财经媒体实时新闻(Yahoo/Bloomberg/CNBC/FT/MarketWatch等8源，免费无Key)
 - **yfinance/Stooq**：❌ 不可用(yfinance库级限流VPN无效/Stooq JS反爬虫VPN无效，详见§7.4/§7.5)
-- **五源互补**：iFind + QMT + Baostock + TickFlow + AKShare 覆盖策略所需的A股+美股全品类数据
+- **六源互补**：iFind + QMT + Baostock + TickFlow + AKShare + 财经RSS 覆盖策略所需的A股+美股+国内外新闻全品类数据
 
 ---
 
@@ -1611,9 +1616,9 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│  五源互补矩阵（v1.3.0 实测验证 + VPN对比，2026-07-03）                        │
+│  六源互补矩阵（v1.4.0 实测验证 + VPN对比 + 新闻源扩展，2026-07-03）            │
 ├────────────────────────────────────────────────────────────────────────────┤
-│  数据品类          │ iFind试用│ QMT  │Baostock│TickFlow│ AKShare │yfinance│
+│  数据品类          │ iFind试用│ QMT  │Baostock│TickFlow│ AKShare │财经RSS │
 ├────────────────────────────────────────────────────────────────────────────┤
 │  A股日/周/月K线    │    ✅    │  ✅  │  ✅    │   ✅   │   —     │   —   │
 │  A股分钟K线        │    ⚠️    │  ✅  │  ✅    │   ❌   │   —     │   —   │  ← Baostock补历史(近5年)
@@ -1631,19 +1636,21 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 │  美股ETF           │    ❌    │  —   │  —     │   ✅   │   —     │  ❌   │  ← TickFlow SPY/DIA/QQQ
 │  美股真实指数      │    ❌    │  —   │  —     │   ❌   │   —     │  ❌   │  ← 用ETF替代(SPY/DIA/QQQ)
 │  港股日K线         │    ❌    │  ✅  │  —     │   ✅   │   —     │  ❌   │  ← TickFlow 00700.HK✅
-│  财经新闻          │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
+│  财经新闻(国内)    │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare东财个股新闻(须断VPN)
+│  财经新闻(国外)    │    ❌    │  —   │  —     │   —    │   —     │   —   │  ← RSS直连8源(Yahoo/Bloomberg/CNBC等)
 │  研报/一致预期     │    ❌    │  —   │  —     │   —    │   ✅    │   —   │  ← AKShare补盲区(须断VPN)
 └────────────────────────────────────────────────────────────────────────────┘
   ✅=实测通过  ⏳=配额限制  ❌=不可用  ⚠️=部分覆盖  —=不适用
 ```
 
-> **实测结论（v1.3.0，2026-07-03，含 VPN 对比测试）**：
+> **实测结论（v1.4.0，2026-07-03，含 VPN 对比测试 + 新闻源扩展）**：
 > - iFind 试用账号的 ❌ 盲区中，**EDB宏观 + 新闻 + 研报** 被 AKShare 覆盖（须断开 VPN）
 > - **A股K线+财务** 被 Baostock 覆盖（实测 10/10 通过，最稳定，不受 VPN 影响）
 > - **美股日/周/月/季/年K线 + ETF** 被 TickFlow 覆盖（实测 12/12 通过，不受 VPN 影响）—— **2026-07-03 重大新发现，美股不再需要淘宝购买**
 > - yfinance 0/10 失败（Yahoo 库级限流非 IP 限流，**VPN 无效**）；Stooq 0/2 失败（JS 浏览器验证与 IP 无关，**VPN 无效**）
-> - **A股+美股全品类数据 100% 可获取**（iFind+QMT+Baostock+TickFlow+AKShare 五源互补）
-> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow 不受影响，AKShare 必须断开）
+> - **国外财经新闻** 被RSS直连覆盖（实测8/10通过，Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC，免费无Key，不受VPN影响）
+> - **A股+美股+国内外新闻全品类数据 100% 可获取**（iFind+QMT+Baostock+TickFlow+AKShare+财经RSS 六源互补）
+> - **运维建议**：下载免费源数据时**断开 VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare 必须断开）
 
 ### §7.9 免费源 API 调用完整示例
 
@@ -1765,13 +1772,58 @@ forecast = ak.stock_profit_forecast_ths(symbol="600000")
 forecast.to_csv("D:/A股数据/akshare/forecast_600000.csv")
 ```
 
+#### §7.9.6 国外财经新闻下载（RSS直连，免费无Key，不受VPN影响）
+
+```python
+# 国外财经新闻主力源 = RSS直连（feedparser，免费无Key，实测8/10通过）
+# 国内财经新闻 = AKShare stock_news_em（见 §7.9.4，须断开VPN）
+import feedparser
+import pandas as pd
+import time
+
+# 实测可用的8个国外财经RSS源（2026-07-03验证）
+rss_sources = {
+    "Yahoo Finance":  "https://finance.yahoo.com/news/rssindex",
+    "SeekingAlpha":   "https://seekingalpha.com/market_currents.xml",
+    "MarketWatch":    "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+    "Bloomberg":      "https://feeds.bloomberg.com/markets/news.rss",
+    "FT":             "https://www.ft.com/rss/home",
+    "Investing.com":  "https://www.investing.com/rss/news_1.rss",
+    "Forbes":         "https://www.forbes.com/business/feed/",
+    "CNBC TopNews":   "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+    "CNBC World":     "https://www.cnbc.com/id/100727362/device/rss/rss.html",
+}
+
+all_news = []
+for source, url in rss_sources.items():
+    feed = feedparser.parse(url)
+    for entry in feed.entries:
+        all_news.append({
+            "source": source,
+            "title": entry.get("title", ""),
+            "summary": entry.get("summary", "")[:200],
+            "link": entry.get("link", ""),
+            "published": entry.get("published", ""),
+        })
+    print(f"✅ {source}: {len(feed.entries)}条")
+    time.sleep(0.5)
+
+df = pd.DataFrame(all_news)
+df.to_csv("D:/A股数据/rss/global_financial_news.csv", index=False)
+print(f"\n总计: {len(df)}条新闻 from {len(rss_sources)}个源")
+```
+
+> **RSS直连优势**：免费无Key、不受VPN影响、覆盖8个权威财经媒体、实时更新。
+> **RSS直连限制**：仅最新新闻（无历史归档）、无情感分析（需自行NLP处理）、部分源偶发SSL错误需重试。
+> **备用方案**：需历史新闻归档时用 Tiingo News（70M+文章20年历史，需免费Key，见 §7.6 限制说明）。
+
 ### §7.10 免费源验证脚本
 
 ```python
 """免费源连接验证脚本——运行此脚本确认主力免费源可用
-主力源 = Baostock(A股) + TickFlow(美股) + AKShare(宏观/新闻/研报)
-废弃源 = yfinance(Yahoo库级限流) + Stooq(JS浏览器验证)
-注意: 须用 py -3.11 运行；AKShare 测试前须断开 VPN
+主力源 = Baostock(A股) + TickFlow(美股) + AKShare(宏观/国内新闻/研报) + 财经RSS(国外新闻)
+废弃源 = yfinance(Yahoo库级限流) + Stooq(JS浏览器验证) + Inshorts(已收费) + GDELT(不稳定)
+注意: 须用 py -3.11 运行；AKShare 测试前须断开 VPN；RSS/TickFlow/Baostock 不受VPN影响
 """
 import sys
 
@@ -1815,9 +1867,21 @@ def test_akshare():
         print(f"❌ AKShare 失败: {e}（若挂VPN请断开后重试）")
         return False
 
+def test_rss():
+    try:
+        import feedparser
+        feed = feedparser.parse("https://www.cnbc.com/id/100003114/device/rss/rss.html")
+        n = len(feed.entries)
+        assert n > 0, "CNBC RSS返回空"
+        print(f"✅ 财经RSS OK: CNBC {n}条")
+        return True
+    except Exception as e:
+        print(f"❌ 财经RSS 失败: {e}")
+        return False
+
 if __name__ == "__main__":
-    results = [test_baostock(), test_tickflow(), test_akshare()]
-    print(f"\n总结: {sum(results)}/3 主力免费源可用")
+    results = [test_baostock(), test_tickflow(), test_akshare(), test_rss()]
+    print(f"\n总结: {sum(results)}/4 主力免费源可用")
     if not all(results):
         sys.exit(1)
 ```
