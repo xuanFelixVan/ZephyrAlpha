@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
+"""# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 # [MODULE] scripts.governance.generate_project_depgraph
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
@@ -17,6 +16,8 @@
 # [TTL] task_bound
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py
@@ -27,7 +28,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 import argparse
 import ast

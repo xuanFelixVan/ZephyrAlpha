@@ -72,6 +72,7 @@ __all__ = [
     "ReconciliationRegistry",
     "make_manifest_reconciler",
     "make_path_tree_reconciler",
+    "make_depgraph_ops_reconciler",
     "make_yaml_sync_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_vocab_change_reconciler",
@@ -414,6 +415,77 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
+    )
+
+
+def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 depgraph nodes/edges 运营态 post-commit 自动同步 reconciler（裁定#209）。
+
+    commit .py 文件后，depgraph 的 nodes/edges 运营态表可能过时（代码变了但
+    depgraph 未同步）。本 reconciler 在 post-commit 跑 generate_project_depgraph.py
+    同步代码→DB。
+
+    对标 make_path_tree_reconciler（arch_directory_tree 同步）的 subprocess 模式。
+    区别：
+    - trigger 只匹配 .py（不匹配 .yaml/.yml——避免改 depgraph 数据时触发自己）
+    - reconcile 直接跑 --output-db --force（P1/P2 保护机制兜底，不覆盖手工字段）
+    - 失败降级 warn，不阻断 commit
+    - 无文档自动提交（nodes/edges 无人类可读 md 派生，由 design_vs_production 独立生成）
+
+    阶段1（裁定#209）：全量扫描，每次 commit .py 都重跑。
+    阶段3（裁定#209）：引入文件级 hash fingerprint 增量，降低频率成本。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-DEPGRAPH-OPS", priority=130)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 全量同步代码→DB（P1/P2 保护机制兜底，不覆盖手工字段，详见 §14.2.1）
+        sync_result = subprocess.run(
+            [
+                sys.executable,
+                "scripts/governance/generate_project_depgraph.py",
+                "--output-db", "depgraph",
+                "--force",
+            ],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,  # 全量扫描，给足 5 分钟
+        )
+        if sync_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"depgraph ops sync failed (rc={sync_result.returncode}): "
+                       f"{sync_result.stderr.strip()[:200]}",
+            )
+        return ReconcileResult(
+            action="clean",
+            detail="depgraph nodes/edges synced (P1/P2 protection active, 裁定#209 阶段1)",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-DEPGRAPH-OPS",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=130,
     )
 
 
