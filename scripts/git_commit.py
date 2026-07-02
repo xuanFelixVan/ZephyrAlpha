@@ -181,6 +181,23 @@ def main() -> int:
         default=False,
         help="仅 release_files 释放持有，不 commit（claim 前移协议：Edit 中断/结束时调用）",
     )
+    parser.add_argument(
+        "--reconciler-verify",
+        action="store_true",
+        default=False,
+        help="reconciler 实弹验证专用通道（豁免 worktree 君子协定）。前置条件："
+             "(1) 主工作区 clean (2) 无其他活跃 session（或用 --allow-concurrent 逃生）"
+             "(3) claim_files 全部成功（--allow-overlap 自动禁用）。"
+             "豁免理由：reconciler 操作主分支数据无法在 worktree 内运行，且验证为单 session 诊断场景，"
+             "搭便车风险由 claim_files+串行锁+干净环境三重防护覆盖。详见 AGENTS.md RULE-WORKTREE 豁免条款。",
+    )
+    parser.add_argument(
+        "--allow-concurrent",
+        action="store_true",
+        default=False,
+        help="reconciler-verify 模式下放行其他活跃 session 检查（逃生通道）。"
+             "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
+    )
     args = parser.parse_args()
 
     # message 解析：claim-only / release-only 时不需要 message
@@ -223,6 +240,60 @@ def main() -> int:
         print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
         return 2
 
+    # reconciler-verify 模式前置校验（豁免 worktree 君子协定的条件）
+    # 裁定 2026-07-02：reconciler 操作主分支数据无法在 worktree 内运行，验证场景豁免君子协定，
+    # 但须三重防护覆盖搭便车风险：干净环境 + 单 session + claim_files 全部成功。
+    if args.reconciler_verify:
+        # 互斥校验：reconciler-verify 是 commit 场景，与 claim-only/release-only 互斥
+        if is_pure_claim:
+            print("ERROR: --reconciler-verify 与 --claim-only/--release-only 互斥", file=sys.stderr)
+            return 1
+        # 条件1：主工作区必须 clean（无搭便车窗口——共享 index 下 dirty 工作区有污染风险）
+        import subprocess as _rv_sp
+        status_r = _rv_sp.run(
+            ["git", "status", "--short"],
+            capture_output=True, text=True, cwd=args.project_root,
+            encoding="utf-8", errors="replace",
+        )
+        if status_r.returncode != 0:
+            print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}",
+                  file=sys.stderr)
+            return 1
+        if status_r.stdout.strip():
+            print(
+                "ERROR: --reconciler-verify: 主工作区不 clean（有未提交改动），存在搭便车风险。\n"
+                "请先 commit/stash 其他改动或等待其他 session 完成。\n"
+                f"git status --short 输出:\n{status_r.stdout.strip()}",
+                file=sys.stderr,
+            )
+            return 1
+        # 条件2：无其他活跃 session（除非 --allow-concurrent 逃生通道）
+        if not args.allow_concurrent:
+            try:
+                from zephyr.security.access_control.session_concurrency import SessionRegistry
+                _rv_reg = SessionRegistry(args.project_root)
+                _rv_active = _rv_reg.list_active()
+                _rv_others = [s for s in _rv_active if s.get("pid") != os.getpid()]
+                if _rv_others:
+                    print(
+                        f"ERROR: --reconciler-verify: 检测到 {len(_rv_others)} 个其他活跃 session，"
+                        f"违反单 session 诊断场景约束。sessions: "
+                        f"{[s.get('session_id') for s in _rv_others]}\n"
+                        "如确认需并发验证，用 --allow-concurrent 逃生通道。",
+                        file=sys.stderr,
+                    )
+                    return 1
+            except Exception as e:
+                print(f"WARN: --reconciler-verify: session 检查异常（降级放行）: {e}", file=sys.stderr)
+        # 条件3：--allow-overlap 与 reconciler-verify 互斥（claim_files 必须全部成功）
+        if args.allow_overlap:
+            print(
+                "ERROR: --reconciler-verify 与 --allow-overlap 互斥——验证场景 claim_files 必须全部成功，"
+                "不允许搭便车逃生通道。",
+                file=sys.stderr,
+            )
+            return 1
+
     # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
     if args.release_only:
         gw.release_files(args.session, files)
@@ -241,6 +312,16 @@ def main() -> int:
 
     # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
     claimed = gw.claim_files(args.session, files)
+    # reconciler-verify 模式：claim_files 必须全部成功（无搭便车逃生通道）
+    if args.reconciler_verify and len(claimed) != len(files):
+        conflicts = [f for f in files if f not in claimed]
+        gw.release_files(args.session, claimed)
+        print(
+            f"ERROR: --reconciler-verify: claim_files 部分失败，{len(conflicts)} 个文件被其他 session 持有: {conflicts}\n"
+            "验证场景不允许搭便车窗口，等待对方释放后重试。",
+            file=sys.stderr,
+        )
+        return 1
     try:
         result = gw.commit(
             session_id=args.session,

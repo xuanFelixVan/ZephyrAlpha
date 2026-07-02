@@ -32,6 +32,8 @@
 >
 > **为什么**：多 AI 对话共享工作目录导致 stash 堆积（4 个 stash 卡住对话），worktree 独立 git index 从根本消除冲突。
 > **君子协定（正式）**：无门禁强制（Trae IDE 不可 hook），依赖 AI 自觉。6 连续 PASS 已转正式（Round2-4 + Extreme A/B/C，覆盖 4 种代码路径）。**HELD-OVERLAP 已加硬（2026-07-02）**：`session_worktree_commit` 内置 auto-claim + 硬阻断（对标 GitCommitGateway 的 HELD-OVERLAP gate）——commit 前对每个文件调 `registry.claim_file()`（原子 check-and-claim，防 TOCTOU 竞态），被其他活跃 session 持有则 `HELD_OVERLAP_VIOLATION` 阻断（回滚已 claim 文件）；claim 是 session 级，merge/abort 时 `unregister` 自动释放。逃生通道：`allow_overlap=True` 参数放行（对标 `--allow-overlap`）。**逃生通道（永久保留）**：HELD-OVERLAP 加硬消除了"两 session 编辑同一文件"的搭便车根因，但无法解决 git 固有 merge conflict（`allow_overlap=True` 强行覆盖时）+ AI commit 后又编辑同一文件导致内容漂移——此时 `session_worktree_abort` + 改用 GitCommitGateway（stash 隔离）作为兜底。详见 [FP-ISO.4C](#fp-iso4c)。
+>
+> **豁免条款（reconciler 实弹验证专用，2026-07-02 裁定）**：验证 GitCommitGateway post-commit reconciler 链路时，允许走 `scripts/git_commit.py --reconciler-verify`（不经过 session_worktree）。**豁免理由**：reconciler 操作主分支数据（depgraph DB / 主仓库 index auto-commit），无法在 worktree 独立 index 内运行；且验证为单 session 诊断场景，与君子协定“防多 session 并发冲突”的核心目的正交。**三重前置条件**（缺一不可）：(1) 主工作区 clean（`git status --short` 空）(2) 无其他活跃 session（或 `--allow-concurrent` 逃生）(3) `claim_files` 全部成功（`--allow-overlap` 自动禁用）。搭便车风险由 claim_files 文件级锁 + `_GlobalCommitLock` 串行锁 + 干净环境三重防护覆盖。**仅限验证场景**，常规开发提交仍 MUST 走 session_worktree。
 
 ## 1. 项目概述
 
