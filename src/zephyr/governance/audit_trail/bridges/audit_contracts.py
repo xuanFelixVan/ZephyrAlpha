@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
-# [MODULE] zephyr.governance.audit_trail.bridges.contracts
+# [MODULE] zephyr.governance.audit_trail.bridges.audit_contracts
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.writer
 # [CONSUMERS]

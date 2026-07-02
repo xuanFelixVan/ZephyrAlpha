@@ -107,14 +107,3 @@ class FeedbackBridge:
 
     def is_available(self) -> bool:
         return self._available
-
-
-class AuditFeedbackBridge:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def send_feedback(self, feedback):
-        return BridgeResult()
-
-    def receive_feedback(self, source=""):
-        return []

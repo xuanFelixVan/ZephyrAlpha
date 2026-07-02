@@ -66,14 +66,3 @@ class TrustBridge:
 
     def is_available(self) -> bool:
         return self._available
-
-
-class AuditTrustBridge:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def assess_trust(self, entity):
-        return 1.0
-
-    def update_trust(self, entity, delta):
-        pass
