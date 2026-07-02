@@ -619,9 +619,14 @@ entries:
         (e)ARCH-034的"不建物理子目录"裁定获GOV-DOC-018 T_soft=120条款支持——104+import漂移源+__file__路径陷阱+behavioral_auditor Safety=H垫片风险不需要承担。
       先例：rule_enforcement根46<60从未进入T_soft裁定；code_dedup根58≤60同为T_hard合规。本裁定为首例T_soft多簇前缀裁定。
       提交：457b47978(前置CONSUMERS+MODULE修复)。
-    阶段4(audit_trail) 待执行：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
+    阶段4(audit_trail) DONE 2026-07-03：
+      前置厘清：orchestrator.py双MODULE修复——docstring内嵌[BLUEPRINT] MOD-INF-027标签与header MOD-INF-020冲突(STABILITY evolving vs volatile, SAFETY L vs M, CONSUMERS tests.test_orchestrator vs 无外部消费者)。文件实为compat重导出层(代码已迁移回audit-trail MOD-INF-020)，统一为MOD-INF-020单MODULE，CONSUMERS修正为tests/governance/audit/test_orchestrator.py。
+      bridges/归属裁定：保留(非零消费者)。AST分析发现src/zephyr/compliance/audit_trail/bridges/__init__.py导入7个bridges子模块——bridges/为独立adapter层，提供Audit*前缀适配API(与root production实现不同类名/委托目标/API)，9文件≤60已合规。
+      容量裁定：audit_trail享GOV-DOC-018 T_soft=120——root=62个.py(10前缀簇+34功能名单体)+bridges/=9子包。前缀分组(audit_/*_bridge/trust_/merkle_/supply_chain*/finding_/feedback_/delegation_/tiered_storage*/integrity*)+功能名归簇(orchestrator/models/writer等34单体各自独立职责)满足"可预测+覆盖全部文件"，62≤120合规。物理拆分非阈值强制，本阶段不执行（与阶段2/3裁定一致：阈值达标即止）。
+      __init__.py新增模块地图(命名约定+簇归类+新AI发现指引)，对标drift_detection模式。
+      先例：本裁定为第二例T_soft多簇前缀裁定(继drift_detection首例)，首次包含"功能名单体归簇"条款(34单体各自独立职责，不强制前缀)。
     每阶段需独立任务卡 + import重写(复用ast_import_rewriter.py) + 防复发门禁。
-  status: open
+  status: resolved
   related_rules:
   - GOV-DOC-018
   - TRAE-028
