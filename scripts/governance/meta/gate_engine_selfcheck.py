@@ -1,5 +1,5 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/gate_engine_selfcheck.py | §
-# [MODULE] scripts.governance.gate_engine_selfcheck
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/gate_engine_selfcheck.py | §
+# [MODULE] scripts.governance.meta.gate_engine_selfcheck
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.circuit_breaker
 # [CONSUMERS]
@@ -132,7 +132,7 @@ def check_registry_integrity() -> dict[str, Any]:
     except Exception as exc:
         return {"label": "S3. 注册表完整性", "passed": False, "detail": f"解析失败: {exc}", "issues": [str(exc)]}
 
-    gates = data.get("gates", [])
+    gates = data.get("gate_runs", [])
     issues: list[str] = []
     if len(gates) < 5:
         issues.append(f"门禁数量 {len(gates)} < 5")
@@ -172,10 +172,10 @@ def check_sqlite_schema() -> dict[str, Any]:
 
         try:
             conn.execute(
-                "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
+                "INSERT INTO gate_runs (gate_run_id, gate_id, passed, details, created_at) VALUES (?,?,?,?,?)",
                 ("selfcheck-test", "GX:test", 1, "{}", datetime.now(UTC).isoformat()),
             )
-            conn.execute("DELETE FROM gates WHERE gate_run_id='selfcheck-test'")
+            conn.execute("DELETE FROM gate_runs WHERE gate_run_id='selfcheck-test'")
         except Exception as exc:
             issues.append(f"写入测试失败: {exc}")
 

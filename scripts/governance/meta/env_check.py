@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/env_check.py | §
-# [MODULE] scripts.governance.env_check
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/env_check.py | §
+# [MODULE] scripts.governance.meta.env_check
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__
+# [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype

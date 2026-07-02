@@ -223,6 +223,10 @@ directory_extensions:
     allowed_doc_types: [policy, index]
     allowed_exceptions:
       # 治理元数据——frozen_versions.txt（冻结版本记录）+ baselines/*.jsonl（审计基线）
+      # ARCH-041裁定：meta/为封顶型（治理域有自然边界，.py=47<60合规，无需拆分子目录）
+      # 拆分触发条件：.py(排除__init__.py)>60时重新评估，按功能类型拆validators/detectors/managers/operations
+      # baselines/benchmark/false_negative_cases为MOD-INF-005蓝图设计的功能子目录（非容量驱动），
+      # 依据trae_028 L153豁免条件（governance/子目录下功能子目录经directory_contract登记即豁免）
       - subdir: "governance/meta/"
         extensions: [".txt"]
       - subdir: "governance/meta/baselines/"

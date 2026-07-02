@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/_concurrency.py | §
-# [MODULE] scripts.governance._concurrency
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/_concurrency.py | §
+# [MODULE] scripts.governance.meta._concurrency
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__
+# [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
