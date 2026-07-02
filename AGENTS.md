@@ -196,6 +196,25 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 **N-16 扩展到 src/ 不可行**：src/zephyr/ 有 500 个同名 basename（含 499 个 __init__.py），豁免清单规模过大，维护成本高于收益。N-16 仍只覆盖 tests/ + docs/。
 
+### 4.6 governance/ 根目录防平铺门禁（ARCH-031 P3 防复发，2026-07-02）
+
+`src/zephyr/governance/` 根目录**禁止新增 .py 文件**（含 rename 到根目录）。治本前根目录平铺 32 个 .py 文件，治本后迁移 24 文件到 12 功能子目录，仅保留 8 个高风险核心模块：
+
+| 保留文件 | 原因 |
+|----------|------|
+| `__init__.py` | 包标记 |
+| `base.py` | 基类（被大量子目录 import） |
+| `capability_lookup.py` | 能力反查引擎（消费者 76+） |
+| `depgraph_schema.py` | depgraph schema（消费者 156+） |
+| `evidence_pack.py` | 审计证据包 |
+| `integrity.py` | 完整性校验（消费者 119+） |
+| `merkle_hourly.py` | Merkle 小时聚合（消费者 71+） |
+| `performance_attribution_report.py` | 绩效归因报告（消费者 71+） |
+
+**门禁**：CREATE-GUARD 扩展检测（[`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py)）——staged 新增(A) + rename(R) .py 文件路径匹配 `src/zephyr/governance/<name>.py`（`path.count("/")==3`）→ **硬阻断**。错误信息含 "ARCH-031 防复发" + "新模块 MUST 放入子目录"。
+
+**新模块归属规则**：新 .py 文件 MUST 放入对应功能子目录（`audit/` `persistence/` `commit_gates/` `strategies/` `ops_governance/` `resilience_governance/` `context_governance/` `data_governance/` `engine/` `financial_governance/` `trading_contracts/` `rule_enforcement/`）。不确定归属时 Grep `src/zephyr/governance/` 下已有子目录选择最匹配的。
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环

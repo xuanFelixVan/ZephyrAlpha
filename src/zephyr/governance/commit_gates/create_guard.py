@@ -298,24 +298,12 @@ def make_create_guard() -> GateSpec:
             if f.endswith(".yaml") and not is_test_exempt(f)
             and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
         ]
-        if not new_py_files and not new_yaml_files:
-            return True, ""
 
-        # 治本 2026-06-30：gateway 选择性提交（只提交 files_in_scope，其他 staged 文件 stash），
-        # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP。
-        # commit_files_rel 已在函数开头计算（reconciler 检测 + token 检测复用），此处直接复用。
-        new_py_files = [f for f in new_py_files if f in commit_files_rel]
-        new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
-        if not new_py_files and not new_yaml_files:
-            return True, ""
-
-        # === ARCH-031 防复发（2026-07-02）：禁止 governance/ 根新增 .py 文件 ===
-        # 病根：ARCH-031 治本前 governance/ 根平铺 32 个 .py 文件，治本后迁移 24 文件到
-        # 12 子目录，仅保留 8 个高风险核心模块（GOV-DOC-018 T_hard=60 合规）。
-        # 防复发：禁止在 governance/ 根直接新增 .py 文件，新模块 MUST 放入对应子目录。
-        # 检测：new_py_files 中路径匹配 src/zephyr/governance/<name>.py（count("/") == 3）→ 硬阻断
-        # 扩展已有 create_guard（不新增门禁，规避自指递归——同 line 23-32 先例）
+        # === ARCH-031 防复发（2026-07-02）：禁止 governance/ 根新增/rename .py 文件 ===
+        # NOTE: rename 检测 MUST 在 early return 前——git mv 产生 R 不产生 A，
+        #   staged_new 为空 → new_py_files/new_yaml_files 均空 → early return True 跳过检测。
         _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
+        # 检测①: 新增(A) .py 到 governance/ 根
         _gov_root_new = [
             f for f in new_py_files
             if f.startswith(_GOVERNANCE_ROOT_PREFIX) and f.count("/") == 3
@@ -329,6 +317,41 @@ def make_create_guard() -> GateSpec:
                 f"新模块 MUST 放入对应功能子目录（如 audit/ persistence/ commit_gates/ 等）。"
                 f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
             )
+        # 检测②: rename(R) .py 到 governance/ 根（防 git mv 绕过 --diff-filter=A 漏检）
+        try:
+            _rename_result = gateway._run_git(
+                ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
+            )
+            if _rename_result.returncode == 0:
+                _gov_root_renamed = []
+                for line in _rename_result.stdout.strip().splitlines():
+                    parts = line.split("\t")
+                    if len(parts) >= 3:
+                        _new_path = parts[2].replace("\\", "/")
+                        if (_new_path.startswith(_GOVERNANCE_ROOT_PREFIX)
+                                and _new_path.count("/") == 3
+                                and _new_path.endswith(".py")):
+                            _gov_root_renamed.append(_new_path)
+                if _gov_root_renamed:
+                    return False, (
+                        f"ARCH-031 防复发: 禁止 rename 到 governance/ 根 .py 文件: "
+                        f"{_gov_root_renamed}. 新模块 MUST 放入对应功能子目录。"
+                        f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
+                    )
+        except Exception:
+            pass  # fail-open: git diff 失败不阻断
+
+        if not new_py_files and not new_yaml_files:
+            return True, ""
+
+        # 治本 2026-06-30：gateway 选择性提交（只提交 files_in_scope，其他 staged 文件 stash），
+        # create_guard 应只检测 commit 文件中的新增 .py，不应检测其他 session 的 staged WIP。
+        # commit_files_rel 已在函数开头计算（reconciler 检测 + token 检测复用），此处直接复用。
+        new_py_files = [f for f in new_py_files if f in commit_files_rel]
+        new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
+
+        if not new_py_files and not new_yaml_files:
+            return True, ""
 
         # === ARCH-034 P3 遗留2治本（2026-07-01）：类名跨模块唯一性检测 ===
         # 病根：AI 新建 .py 文件时可能定义与已有模块同名的 class（同名不同义），

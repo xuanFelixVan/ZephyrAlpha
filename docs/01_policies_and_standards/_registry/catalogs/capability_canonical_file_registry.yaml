@@ -799,8 +799,9 @@ capabilities:
 
   # --------------------------------------------------------------------------
   # 已删除（2026-07-01）：market_duckdb_schema capability 已随 market.duckdb（INFRA-DB-005）
-  # 删除/废弃而移除。原真源 src/zephyr/governance/market_schema.py 保留为历史归档，不再作为
-  # 活动数据库 DDL。DuckDB OLAP 引擎（INFRA-DB-004 :memory: 模式）不受影响。
+  # 删除/废弃而移除。原真源 src/zephyr/governance/market_schema.py 已迁移至
+  # src/zephyr/governance/persistence/market_schema.py（ARCH-031 P2，2026-07-02），
+  # 不再作为活动数据库 DDL。DuckDB OLAP 引擎（INFRA-DB-004 :memory: 模式）不受影响。
   # --------------------------------------------------------------------------
 
   # --------------------------------------------------------------------------
@@ -2079,8 +2080,8 @@ creation_tokens:
     created_by: "session-arch031-limit3"
     capability: "fix_result_prioritizer"
 
-  # --- ARCH-031: data_quality.py 迁移（从 governance/governance/ 到根目录，[MODULE] 标注为根目录 canonical） ---
-  - file: "src/zephyr/governance/data_quality.py"
+  # --- ARCH-031: data_quality.py 迁移（P2 从 governance/根 到 data_governance/子目录，2026-07-02） ---
+  - file: "src/zephyr/governance/data_governance/data_quality.py"
     token: "auto-data-quality-20260701"
     created_by: "session-arch031-migration"
     capability: "data_quality"

@@ -518,6 +518,29 @@ class TestGovernanceRootNewPyBlocked:
         assert "ARCH-031" in detail
         assert "防复发" in detail
 
+    def test_governance_root_rename_blocked(self, tmp_path: Path) -> None:
+        """rename 到 governance/ 根 .py → 硬阻断（防 rename 绕过 --diff-filter=A 漏检）。"""
+        _init_git_repo(tmp_path)
+        # 先在子目录创建并 commit 一个文件，再 rename 到根目录
+        src_subdir = tmp_path / "src/zephyr/governance/audit"
+        src_subdir.mkdir(parents=True, exist_ok=True)
+        original = src_subdir / "original_for_rename_test.py"
+        original.write_text("# test\n", encoding="utf-8")
+        subprocess.run(["git", "add", str(original)], cwd=tmp_path, check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=tmp_path, check=True)
+        # rename 到 governance/ 根
+        target = tmp_path / "src/zephyr/governance/renamed_to_root_test.py"
+        subprocess.run(
+            ["git", "mv", str(original), str(target)],
+            cwd=tmp_path, check=True,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed is False, f"rename 到 governance/ 根 .py 应被阻断: {detail}"
+        assert "ARCH-031" in detail
+        assert "防复发" in detail
+
 
 class TestGovernanceSubdirNewPyNotAntiRelapse:
     """governance/<subdir>/ 新增 .py 文件不触发 ARCH-031 防复发。"""
