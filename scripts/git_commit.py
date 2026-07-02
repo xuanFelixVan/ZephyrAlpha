@@ -294,6 +294,9 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
+        # 自动追加 [RECONCILER-VERIFY] 标记（供 GATE-COMMIT-GW-AUDIT 事后审计追溯豁免通道使用，
+        # 不依赖人手动加——形成"事前三重校验 + 事后审计追溯"闭环）
+        message = f"{message} [RECONCILER-VERIFY]"
 
     # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
     if args.release_only:
