@@ -122,14 +122,10 @@ class HealthProbeManager:
                 return True
         except Exception:
             pass
-        # 最终回退：临时目录可写性（进程级最低可用性保证）
-        try:
-            import tempfile
-
-            with tempfile.NamedTemporaryFile(prefix="probe_", suffix=".tmp", delete=True):
-                return True
-        except Exception:
-            return False
+        # 5.55.7 修复：无注入检查器且 .runtime/ 不可达时 fail-closed（返回 False）
+        # 原第三层 temp dir fallback 总返回 True，导致 readiness() 永远 "ready"，
+        # 违反 fail-closed 原则。temp dir 可写不代表数据目录可达。
+        return False
 
     def readiness(self, system: str, deps_ok: bool | None = None) -> dict:
         """5.55.1 修复：deps_ok 默认 None 时探针内部自行检查依赖。
