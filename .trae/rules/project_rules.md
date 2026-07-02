@@ -1044,6 +1044,13 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 | ❌ | 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
 
 ---
+## RULE-DEPGRAPH：防幻觉/防漂移治本规则（L1+L2，2026-07-02）
+
+> 详见 [AGENTS.md](../../AGENTS.md) `RULE-DEPGRAPH` 段（第三件事）。核心：
+> - **L1 依赖关系先行**：施工前MUST通过 `apply_depgraph.py --add-design-node` 登记依赖到设计态(`status=planned`)，禁止"先施工后补登记"
+> - **L2 运营态检查门闸**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时内置门闸，自动查询depgraph运营态(production节点)是否就绪。为空→阻断；就绪→允许写入。不调用破坏性重建(避免与裁定#207冲突)
+
+---
 ## RULE-SIXTEEN：depgraph 程序化访问协议
 **YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
 

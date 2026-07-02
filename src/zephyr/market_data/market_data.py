@@ -14,37 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-DAT_market_data | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-# ==== BEGIN CODGEN:CTR-001 ====
-from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime
-from decimal import Decimal
+# 归一(2026-07-02): 删除手工复制的codegen产物(CTR-001 NormalizedMarketData)，
+# 改为从shared/contracts re-export。真源唯一：shared/contracts/market_data.py（codegen生成）。
+# 原问题：market_data.py有codegen标记但不在生成范围，trace_context引用TraceContext未import，
+# from __future__ import annotations掩盖了运行时NameError。
+from zephyr.shared.contracts.market_data import NormalizedMarketData
 
-
-@dataclass(frozen=True)
-class NormalizedMarketData:
-    close: Decimal
-    data_source: str
-    high: Decimal
-    idempotency_key: str
-    low: Decimal
-    open: Decimal
-    symbol: str
-    timestamp: datetime
-    volume: Decimal
-    adj_factor: Decimal | None = None
-    amount: Decimal | None = None
-    config_load_retry_policy: str = "linear"
-    config_load_timeout_ms: int = 1000
-    exceptions: list[str] = field(default_factory=list)
-    ingested_at: datetime | None = None
-    is_suspended: bool = False
-    max_retries: int = 3
-    quality_score: float = 1.0
-    retry_policy: str = "exponential_backoff"
-    schema_version: str = "1.0"
-    timeout_ms: int = 5000
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-001 ====
+__all__ = ["NormalizedMarketData"]

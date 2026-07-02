@@ -355,6 +355,7 @@ STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
 STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。depgraph (PostgreSQL)是唯一查询入口，通过 `get_depgraph_pg_connection()` 或 `apply_depgraph.py --query` 查询。概览用 `python scripts/governance/extract_depgraph.py --summary`
+STEP 4.16 — 防幻觉/防漂移门闸(L1+L2, 2026-07-02): 施工新模块前MUST先通过 `apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID planned` 登记依赖到设计态(L1)。`--add-design-node` 写入 `build_status=planned` 时内置L2门闸：自动查询depgraph运营态(production节点)是否就绪，为空→阻断(提示先手动运行generate_project_depgraph.py)，就绪→允许写入。门闸不调用破坏性重建(与裁定#207兼容)。逃生通道: `--skip-refresh`(仅限故障时使用)。详见 AGENTS.md RULE-DEPGRAPH 段
 STEP 5  — 按需定位具体注册表 → 开工
 STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() → claim_next → 执行 → transition(COMPLETED) → 循环
            `from zephyr.trading.autopilot import AutoPilot; ap = AutoPilot(<session_id>); print(ap.status_report()); tasks = ap.run_cycle(max_tasks=3)`
