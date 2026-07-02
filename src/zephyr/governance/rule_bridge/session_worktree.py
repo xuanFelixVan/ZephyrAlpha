@@ -76,10 +76,19 @@ import os
 import subprocess
 from pathlib import Path
 
-from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager, WorktreeError
+from zephyr.governance.rule_bridge.worktree_manager import (
+    WorktreeManager,
+    WorktreeError,
+    _WorktreeLock,
+    _force_rmtree,
+)
 from zephyr.security.access_control.session_concurrency import SessionRegistry
 from zephyr.governance.rule_bridge.session_claim import generate_session_id
 from zephyr.shared.io.paths import REPO_ROOT
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
@@ -92,6 +101,123 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
     """获取 SessionRegistry 实例（始终用主仓库根目录，非 worktree）。"""
     root = Path(project_root) if project_root else REPO_ROOT
     return SessionRegistry(root)
+
+
+def _sweep_stale_worktrees(
+    manager: WorktreeManager,
+    registry: SessionRegistry,
+    max_age_minutes: int = 30,
+) -> dict:
+    """启动清扫：清理 .aidrafts/ 下的 stale session worktree 残留。
+
+    在 session_worktree_start 创建自己 worktree 前调用，自动清理两类残留：
+    - 孤儿物理目录（git worktree 未注册）—— git 已不认，物理删除
+    - 已注册但 session 已过期 + 分支 tip 在 main 的 worktree —— 对话放弃残留
+
+    安全判据（三重保护，任一不满足则跳过）：
+    1. 目录 age > max_age_minutes（太新的不动，防误清并发 AI 正在创建的）
+    2. session 不在 active 注册表（活跃 session 不动；用 list_active 判定，不依赖 pid）
+    3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
+
+    异常不抛出（sweep 失败不阻断 start）。在独立 _WorktreeLock 周期内执行，
+    退出锁后 caller 才调 create_session_worktree（避免锁重入死锁）。
+
+    Args:
+        manager: WorktreeManager 实例。
+        registry: SessionRegistry 实例。
+        max_age_minutes: 目录年龄阈值（分钟），默认 30。
+
+    Returns:
+        {"swept": int, "skipped": int, "warnings": list[str]}
+    """
+    import time as _time
+
+    swept = 0
+    skipped = 0
+    warnings: list[str] = []
+    drafts = manager._drafts_dir
+    if not drafts.exists():
+        return {"swept": 0, "skipped": 0, "warnings": []}
+
+    now = _time.time()
+    age_threshold = max_age_minutes * 60
+
+    # 活跃 session（list_active 已 reap 过期条目，返回的即活跃；不依赖 pid）
+    # list_active 返回 list[SessionInfo]（非 dict），提取 session_id 集合
+    try:
+        active_list = registry.list_active()
+        active_sids = {getattr(info, "session_id", "") for info in active_list}
+    except Exception:
+        active_sids = set()
+
+    try:
+        with _WorktreeLock(manager.repo_root):
+            for d in drafts.iterdir():
+                if not d.is_dir() or not d.name.startswith("sess-"):
+                    continue
+                sid = d.name
+                # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
+                try:
+                    mtime = d.stat().st_mtime
+                except OSError:
+                    skipped += 1
+                    continue
+                if (now - mtime) < age_threshold:
+                    skipped += 1
+                    continue
+                # 判据 2：活跃 session
+                if sid in active_sids:
+                    skipped += 1
+                    continue
+                # 判据 3：分支 tip 在 main（有未合并提交的不动）
+                branch = manager._branch_name(sid)
+                r_v = manager._run_git(["git", "rev-parse", "--verify", branch])
+                has_branch = r_v.returncode == 0
+                if has_branch:
+                    r_mb = manager._run_git(
+                        ["git", "merge-base", "--is-ancestor", branch, "HEAD"]
+                    )
+                    if r_mb.returncode != 0:
+                        warnings.append(
+                            f"{sid}: 分支有未合并提交，需人工评估（已跳过）"
+                        )
+                        skipped += 1
+                        continue
+                # 通过三重保护——清理
+                try:
+                    is_registered = manager._worktree_exists(sid)
+                    if is_registered:
+                        rm = manager._run_git(
+                            ["git", "worktree", "remove", "--force", str(d)]
+                        )
+                        if rm.returncode != 0:
+                            manager._run_git(["git", "worktree", "prune"])
+                            if d.exists():
+                                _force_rmtree(d)
+                            manager._run_git(["git", "worktree", "prune"])
+                    else:
+                        manager._run_git(["git", "worktree", "prune"])
+                        if d.exists():
+                            _force_rmtree(d)
+                        manager._run_git(["git", "worktree", "prune"])
+                    if has_branch:
+                        manager._run_git(["git", "branch", "-D", branch])
+                    try:
+                        registry.unregister(sid)
+                    except Exception:
+                        pass
+                    swept += 1
+                    logger.info(
+                        "session_worktree sweep: 清理 stale %s (registered=%s)",
+                        sid, is_registered,
+                    )
+                except Exception as e:
+                    warnings.append(f"{sid}: 清理异常 {e}")
+                    skipped += 1
+    except Exception as e:
+        warnings.append(f"sweep 整体异常（已中止）: {e}")
+
+    return {"swept": swept, "skipped": skipped, "warnings": warnings}
 
 
 def session_worktree_start(
@@ -139,6 +265,16 @@ def session_worktree_start(
 
     # 2. 创建 worktree
     manager = _get_manager(root)
+    # 启动清扫：清理 stale worktree 残留（独立锁周期，退出后 create 再获取锁）
+    try:
+        sweep_r = _sweep_stale_worktrees(manager, registry)
+        if sweep_r.get("swept", 0) or sweep_r.get("warnings"):
+            logger.info(
+                "session_worktree sweep: swept=%s skipped=%s warnings=%s",
+                sweep_r.get("swept"), sweep_r.get("skipped"), sweep_r.get("warnings"),
+            )
+    except Exception as e:
+        logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)
