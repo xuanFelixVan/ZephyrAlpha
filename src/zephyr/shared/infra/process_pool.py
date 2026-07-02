@@ -56,7 +56,7 @@ def is_pid_alive(pid: int) -> bool:
     调用方（真源唯一，禁止重复造轮子——曾三处分裂，红蓝对抗归一）：
       - zephyr.governance.rule_bridge.git_commit_gateway._GlobalCommitLock（僵尸锁检测）
       - scripts.ide_health_service（daemon PID 文件 stale 清理）
-      - scripts.governance._concurrency.ProcessLock（L0 全局锁 stale 清理）
+      - scripts.governance.meta._concurrency.ProcessLock（L0 全局锁 stale 清理）
 
     红蓝对抗修复：防御性类型检查——None/str/float 等非法类型直接返回 False
     （_concurrency 调用点 holder.get("pid", -1) 可能返回非 int，无此检查会
