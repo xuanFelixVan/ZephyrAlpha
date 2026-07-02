@@ -456,6 +456,8 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 全量同步代码→DB（P1/P2 保护机制兜底，不覆盖手工字段，详见 §14.2.1）
+        import time
+        start = time.time()
         sync_result = subprocess.run(
             [
                 sys.executable,
@@ -470,15 +472,17 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
             errors="replace",
             timeout=300,  # 全量扫描，给足 5 分钟
         )
+        elapsed = time.time() - start
         if sync_result.returncode != 0:
             return ReconcileResult(
                 action="warn",
-                detail=f"depgraph ops sync failed (rc={sync_result.returncode}): "
+                detail=f"depgraph ops sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
                        f"{sync_result.stderr.strip()[:200]}",
             )
         return ReconcileResult(
             action="clean",
-            detail="depgraph nodes/edges synced (P1/P2 protection active, 裁定#209 阶段1)",
+            detail=f"depgraph nodes/edges synced in {elapsed:.1f}s "
+                   f"(P1/P2 protection active, 裁定#209 阶段1)",
         )
 
     return ReconcilerSpec(
