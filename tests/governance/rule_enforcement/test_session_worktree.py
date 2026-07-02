@@ -469,3 +469,75 @@ def test_end_to_end_lifecycle():
     assert (REPO_ROOT / _TEST_FILE_A).exists(), "主工作区应有 A 的文件"
     assert not (REPO_ROOT / _TEST_FILE_B).exists(), "主工作区不应有 B 的文件"
     # cleanup 由 fixture 处理（--soft 回退 + 删文件）
+
+
+# ---------------------------------------------------------------------------
+# 启动清扫 _sweep_stale_worktrees 单元测试（治本 4.2 方案 1）
+# 验证三重安全保护：age + active registry + 分支 tip（核心两重：age + active）
+# ---------------------------------------------------------------------------
+
+def test_sweep_cleans_stale_orphan():
+    """sweep 清理老化的孤儿物理目录（git worktree 未注册，判据通过）。"""
+    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    orphan = Path(REPO_ROOT) / ".aidrafts" / "sess-stale-orphan"
+    orphan.mkdir(parents=True, exist_ok=True)
+    (orphan / "marker").write_text("stale", encoding="utf-8")
+    # 老化 mtime（2小时前，超过默认 30min 阈值）
+    old = time.time() - 7200
+    os.utime(orphan, (old, old))
+
+    try:
+        manager = WorktreeManager(REPO_ROOT)
+        registry = SessionRegistry(REPO_ROOT)
+        r = _sweep_stale_worktrees(manager, registry, max_age_minutes=30)
+        assert r["swept"] >= 1, f"应清理孤儿目录: {r}"
+        assert not orphan.exists(), f"孤儿目录未被清: {orphan}"
+    finally:
+        if orphan.exists():
+            _force_rmtree(orphan)
+
+
+def test_sweep_preserves_active_session():
+    """sweep 不清理活跃 session 的 worktree（判据2：在 active registry）。"""
+    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    # 创建活跃 session worktree（start 会注册到 active registry）
+    rA = session_worktree_start("sess-pytest-A")
+    wtA = Path(rA["worktree_path"])
+    assert wtA.exists(), f"A worktree 未创建: {rA}"
+    # 老化 A 的 mtime（模拟看起来老，但仍在 active registry——判据2 应保护）
+    old = time.time() - 7200
+    os.utime(wtA, (old, old))
+
+    manager = WorktreeManager(REPO_ROOT)
+    registry = SessionRegistry(REPO_ROOT)
+    r = _sweep_stale_worktrees(manager, registry, max_age_minutes=30)
+    assert r["swept"] == 0, f"不应清活跃 session worktree: {r}"
+    assert wtA.exists(), f"活跃 worktree 被误清: {wtA}"
+
+
+def test_sweep_skips_recent_dirs():
+    """sweep 跳过太新的目录（判据1：age < threshold，防误清并发 AI 正在创建的）。"""
+    from zephyr.governance.rule_bridge.session_worktree import _sweep_stale_worktrees
+    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    fresh = Path(REPO_ROOT) / ".aidrafts" / "sess-fresh-orphan"
+    fresh.mkdir(parents=True, exist_ok=True)
+    (fresh / "marker").write_text("fresh", encoding="utf-8")
+    # 不老化 mtime（now），age < 30min——判据1 应跳过
+
+    try:
+        manager = WorktreeManager(REPO_ROOT)
+        registry = SessionRegistry(REPO_ROOT)
+        r = _sweep_stale_worktrees(manager, registry, max_age_minutes=30)
+        assert r["swept"] == 0, f"不应清新目录: {r}"
+        assert fresh.exists(), f"新目录被误清: {fresh}"
+    finally:
+        if fresh.exists():
+            _force_rmtree(fresh)
