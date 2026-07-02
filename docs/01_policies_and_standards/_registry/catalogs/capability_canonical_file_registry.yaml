@@ -1078,6 +1078,29 @@ capabilities:
       - make_r5_digit_suffix_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ssot_redefinition_gate
+    aliases:
+      - SSOT-REDEFINITION
+      - ssot-redefinition
+      - make_ssot_redefinition_gate
+      - ssot_symbol_redefinition_blocker
+      - ssot_constant_redefinition_guard
+    description: >-
+      SSoT 符号重复定义硬阻断门禁（SSOT-REDEFINITION，ARCH-033 P2 2026-07-02 治本）。
+      检测 staged .py 文件新增行中是否重新定义已 SSoT 化的符号（class 定义或变量赋值）。
+      命中则硬阻断 commit（SSOT_VIOLATION）。病根：CREATE-GUARD 只管新建文件，不管
+      文件内重新定义；新 AI 可能在 privacy.py 里重新写 class PIICategory 而非 import，
+      SSoT 靠约定不靠强制 → 漂移风险。治本：GitCommitGateway pre-commit 阶段注册 gate
+      （priority=65，在 create_guard 60 之后 dangling_reference 70 之前），SSoT 符号
+      清单从 capability_canonical_file_registry.yaml aliases 自动派生（非新真源）。
+      canonical 文件本身定义豁免；tests/ 豁免；import/注释/docstring 行豁免；
+      YAML/git diff 不可达 fail-open（logger.warning 告警检测器失效）。
+      解决发现性：新 AI 搜 "SSoT/符号重定义/ssot redefinition/真源重复定义" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 SSoT 符号重定义检测脚本。
+    integrity_anchors:
+      - make_ssot_redefinition_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED

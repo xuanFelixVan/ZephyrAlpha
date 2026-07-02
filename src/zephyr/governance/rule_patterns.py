@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无运行时错误(纯常量模块)
-# [TESTS] tests/governance/test_rule_patterns.py; tests/governance/test_security_patterns.py
+# [TESTS] tests/governance/test_rule_patterns.py
 # [A_module] module_id=MOD-GOV-rule_patterns | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """rule_patterns.py — 治理规则正则 + 安全审计模式唯一真源 (SSoT)

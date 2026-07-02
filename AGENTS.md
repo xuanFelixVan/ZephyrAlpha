@@ -226,7 +226,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 | `integrity.py` | 完整性校验（消费者 119+） |
 | `merkle_hourly.py` | Merkle 小时聚合（消费者 71+） |
 | `performance_attribution_report.py` | 绩效归因报告（消费者 71+） |
-| `rule_patterns.py` | 治理规则正则模式唯一真源（SSoT，被 create_guard / r5_digit_suffix_gate / validate_directory_structure / validate_rule_frontmatter 共同 import） |
+| `rule_patterns.py` | 治理规则正则 + 安全审计模式唯一真源（SSoT，被 create_guard / r5_digit_suffix_gate / validate_directory_structure / validate_rule_frontmatter + 三包 kb_gate/privacy 共同 import；含 PIICategory/POISONING_INDICATORS/PII_PATTERNS，原 security_patterns.py 已合并 ARCH-033） |
 
 **门禁**：CREATE-GUARD 扩展检测（[`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py)）——staged 新增(A) + rename(R) .py 文件路径匹配 `src/zephyr/governance/<name>.py`（`path.count("/")==3`）→ **硬阻断**。错误信息含 "ARCH-031 防复发" + "新模块 MUST 放入子目录"。
 
