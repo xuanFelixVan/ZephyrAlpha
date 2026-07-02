@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-02T18:46:29Z
+# 自动生成于 2026-07-02T19:12:35Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-02T18:46:29Z'
+generated_at: '2026-07-02T19:12:35Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 322
@@ -2274,8 +2274,9 @@ scripts:
   - --warn-only
   - --jsonl
   - --max-depth
+  - --check-prefix
   warn_only: false
-  description: 递归嵌套目录平铺检测（不限层级，阈值对标 Google/K8s ≤30）
+  description: 递归嵌套目录平铺检测（GOV-DOC-018 T_hard=60/T_soft=120 + 前缀簇合规）
   tags:
   - Critical
 - name: d5_architecture/validators/validate_p0_module_contracts.py
