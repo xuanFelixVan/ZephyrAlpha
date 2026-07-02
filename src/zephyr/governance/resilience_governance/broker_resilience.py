@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-# [MODULE] zephyr.governance.broker_resilience
+# [MODULE] zephyr.governance.resilience_governance.broker_resilience
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018

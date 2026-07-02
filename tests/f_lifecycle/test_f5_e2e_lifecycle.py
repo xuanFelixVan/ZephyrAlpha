@@ -34,14 +34,14 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.governance.f5_boot_integration import BootResult, F5BootIntegration
-from zephyr.governance.f5_event_subscriber import (
+from zephyr.governance.resilience_governance.f5_boot_integration import BootResult, F5BootIntegration
+from zephyr.governance.resilience_governance.f5_event_subscriber import (
     F5EventSubscriber,
     TOPIC_CONFLICT_DETECTED,
     TOPIC_DEADLOCK_DETECTED,
     TOPIC_ESCALATION_NEEDED,
 )
-from zephyr.governance.f5_shutdown_manager import F5ShutdownManager, ShutdownResult
+from zephyr.governance.resilience_governance.f5_shutdown_manager import F5ShutdownManager, ShutdownResult
 from zephyr.shared.events.event_bus import EventBusBackpressure, bus as default_bus
 
 

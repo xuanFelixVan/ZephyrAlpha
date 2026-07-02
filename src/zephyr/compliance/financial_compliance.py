@@ -15,4 +15,4 @@
 # [TTL] task_bound
 """Re-export wrapper: financial_compliance has migrated to zephyr.governance.financial_compliance"""
 
-from zephyr.governance.financial_compliance import *  # noqa: F403
+from zephyr.governance.financial_governance.financial_compliance import *  # noqa: F403

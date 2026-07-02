@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.broker_resilience import (
+from zephyr.governance.resilience_governance.broker_resilience import (
     BROKER_FAILOVER,
     EMERGENCY_LIQUIDATION_STEPS,
     BrokerFailure,

@@ -22,8 +22,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.f5_boot_integration import F5BootIntegration
-from zephyr.governance.f5_shutdown_manager import (
+from zephyr.governance.resilience_governance.f5_boot_integration import F5BootIntegration
+from zephyr.governance.resilience_governance.f5_shutdown_manager import (
     F5ShutdownManager,
     ShutdownResult,
     register_f5_shutdown_hook,

@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §market.duckdb 8表 Schema 真源
-# [MODULE] zephyr.governance.market_schema
+# [MODULE] zephyr.governance.persistence.market_schema
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] duckdb
 # [CONSUMERS] 无（market.duckdb 已于2026-07-01废弃，原消费者 database_service.py market 代码已删除；本文件仅作 DDL 真源归档）

@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.context_manager import (
+from zephyr.governance.context_governance.context_manager import (
     MAX_HISTORY_DAYS,
     TIER_TOKENS,
     TRIM_DUPLICATE_THRESHOLD,

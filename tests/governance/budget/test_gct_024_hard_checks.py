@@ -48,7 +48,7 @@ class TestGCT024HardChecks:
         assert r["action"] == "ALLOW"
 
     def test_burn_rate_monitor_normal(self):
-        from zephyr.governance.budget_enforcement import BurnRateMonitor
+        from zephyr.governance.financial_governance.budget_enforcement import BurnRateMonitor
 
         bm = BurnRateMonitor()
         bm.record_consumption(100)

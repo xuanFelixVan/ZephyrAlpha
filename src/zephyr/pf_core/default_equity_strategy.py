@@ -42,7 +42,7 @@ import uuid
 from decimal import Decimal
 from enum import Enum
 
-from zephyr.governance.strategy_base import (
+from zephyr.governance.strategies.strategy_base import (
     StrategyBase,
     StrategyMeta,
     StrategyRegistry,

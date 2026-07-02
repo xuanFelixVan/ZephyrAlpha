@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.decision_fatigue import (
+from zephyr.governance.resilience_governance.decision_fatigue import (
     EisenhowerPriority,
     TaskTriage,
     filter_priority,

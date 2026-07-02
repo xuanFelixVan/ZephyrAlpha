@@ -7,7 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 
-from zephyr.governance.budget_enforcement import (
+from zephyr.governance.financial_governance.budget_enforcement import (
     BudgetDimension,
     BudgetEngine,
     BudgetTracker,

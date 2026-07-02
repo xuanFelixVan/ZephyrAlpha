@@ -1,6 +1,6 @@
 # [A_module] module_id=MOD-EXE_adapters | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-from zephyr.governance.broker_interface import *
+from zephyr.governance.trading_contracts.broker_interface import *
 from .risk_validation_bridge import *
 from .simulation_broker import *
 

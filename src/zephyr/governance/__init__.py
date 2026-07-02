@@ -81,7 +81,7 @@ except (ImportError, RuntimeError):
 def __getattr__(name):
     """延迟导入避免缺失模块阻塞整个包初始化."""
     if name == "budget_enforcer_mod":
-        import zephyr.governance.budget_enforcement as _mod
+        import zephyr.governance.financial_governance.budget_enforcement as _mod
 
         return _mod
     if name == "rollback_mod":
@@ -129,7 +129,7 @@ try:
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
     from zephyr.governance.code_dedup.phase_executor import PhaseStatus
-    from zephyr.governance.pipeline_base import ExperimentConfig
+    from zephyr.governance.engine.pipeline_base import ExperimentConfig
     from zephyr.governance.audit_trail.privacy import PIICategory
     from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
     from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryParseError
@@ -159,20 +159,20 @@ try:
     )
     # 根目录模块（22个）
     import zephyr.governance.ops_governance.bandwidth_optimizer as bandwidth_optimizer
-    import zephyr.governance.broker_resilience as broker_resilience
+    import zephyr.governance.resilience_governance.broker_resilience as broker_resilience
     import zephyr.governance.escalation.consequence_manager as consequence_manager
-    import zephyr.governance.context_manager as context_manager
-    import zephyr.governance.context_recycling as context_recycling
-    import zephyr.governance.data_lifecycle as data_lifecycle
-    import zephyr.governance.data_quality as data_quality
-    import zephyr.governance.decision_fatigue as decision_fatigue
-    import zephyr.governance.decision_fatigue_cli as decision_fatigue_cli
+    import zephyr.governance.context_governance.context_manager as context_manager
+    import zephyr.governance.context_governance.context_recycling as context_recycling
+    import zephyr.governance.data_governance.data_lifecycle as data_lifecycle
+    import zephyr.governance.data_governance.data_quality as data_quality
+    import zephyr.governance.resilience_governance.decision_fatigue as decision_fatigue
+    import zephyr.governance.resilience_governance.decision_fatigue_cli as decision_fatigue_cli
     import zephyr.infrastructure.rollback.fault_tolerance as fault_tolerance
-    import zephyr.governance.financial_compliance as financial_compliance
+    import zephyr.governance.financial_governance.financial_compliance as financial_compliance
     import zephyr.infrastructure.rollback.fsm_verifier as fsm_verifier
     import zephyr.governance.escalation.incident_response as incident_response
     import zephyr.governance.kb.knowledge_engine as knowledge_engine
-    import zephyr.governance.ops_foundation as ops_foundation
+    import zephyr.governance.ops_governance.ops_foundation as ops_foundation
     import zephyr.infrastructure.rollback.paper_live_transition as paper_live_transition
     import zephyr.infrastructure.rollback.phase_check_registry as phase_check_registry
     import zephyr.infrastructure.rollback.phase_manager as phase_manager

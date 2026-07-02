@@ -15,4 +15,4 @@
 # [TTL] task_bound
 """Re-export wrapper: strategy_registry has migrated to zephyr.portfolio.core.strategy_registry"""
 
-from zephyr.governance.strategy_registry import *  # noqa: F403
+from zephyr.governance.strategies.strategy_registry import *  # noqa: F403

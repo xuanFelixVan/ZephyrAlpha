@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.financial_compliance import (
+from zephyr.governance.financial_governance.financial_compliance import (
     FRAMEWORK_DIMENSIONS,
     PROTOCOL_DEFS,
     SAFEGUARD_LABELS,

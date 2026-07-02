@@ -18,7 +18,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.governance.f5_event_subscriber import (
+from zephyr.governance.resilience_governance.f5_event_subscriber import (
     DEFAULT_RULE_BINDINGS,
     F5_EVENT_TOPICS,
     TOPIC_CONFLICT_DETECTED,
@@ -53,7 +53,7 @@ def full_subscriber(isolated_bus: EventBusBackpressure) -> F5EventSubscriber:
     会触发 LSG 扫描, 而项目中 SupplyChainGuard 存在签名不匹配的预存问题
     (见 test_f5_auto_startup.py 中的注释)。
     """
-    from zephyr.governance.f5_boot_integration import F5BootIntegration
+    from zephyr.governance.resilience_governance.f5_boot_integration import F5BootIntegration
     from zephyr.governance.escalation.escalation_models import EscalationEvent, RuleCategory
     integration = F5BootIntegration()
     boot = integration.on_startup()
@@ -133,7 +133,7 @@ class TestF5EventTopics:
 
 class TestConstruction:
     def test_default_construction_uses_global_bus(self):
-        from zephyr.governance.f5_event_subscriber import default_bus
+        from zephyr.governance.resilience_governance.f5_event_subscriber import default_bus
         sub = F5EventSubscriber()
         assert sub._bus is default_bus
 

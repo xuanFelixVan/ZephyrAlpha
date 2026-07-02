@@ -1,201 +1,169 @@
-# Migration registry for ARCH-031: governance/ root split
-# Single source of truth for file migration entries.
-# P1: 25 files (low+medium risk, consumers < 55)
-# Keep in root: __init__.py, base.py + 5 high-risk core modules
-# (capability_lookup=76, integrity=119, depgraph_schema=156,
-#  merkle_hourly=71, performance_attribution_report=71)
 entries:
-  - old_module: zephyr.governance.default_attribution_engine
-    new_module: zephyr.governance.audit.default_attribution_engine
-    old_path: src/zephyr/governance/default_attribution_engine.py
-    new_path: src/zephyr/governance/audit/default_attribution_engine.py
-    subdir: audit
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.market_schema
-    new_module: zephyr.governance.persistence.market_schema
-    old_path: src/zephyr/governance/market_schema.py
-    new_path: src/zephyr/governance/persistence/market_schema.py
-    subdir: persistence
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.gate_repo
-    new_module: zephyr.governance.commit_gates.gate_repo
-    old_path: src/zephyr/governance/gate_repo.py
-    new_path: src/zephyr/governance/commit_gates/gate_repo.py
-    subdir: commit_gates
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.strategy_registry
-    new_module: zephyr.governance.strategies.strategy_registry
-    old_path: src/zephyr/governance/strategy_registry.py
-    new_path: src/zephyr/governance/strategies/strategy_registry.py
-    subdir: strategies
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.auto_runner
-    new_module: zephyr.governance.ops_governance.auto_runner
-    old_path: src/zephyr/governance/auto_runner.py
-    new_path: src/zephyr/governance/ops_governance/auto_runner.py
-    subdir: ops_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.broker_resilience
-    new_module: zephyr.governance.resilience_governance.broker_resilience
-    old_path: src/zephyr/governance/broker_resilience.py
-    new_path: src/zephyr/governance/resilience_governance/broker_resilience.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.context_recycling
-    new_module: zephyr.governance.context_governance.context_recycling
-    old_path: src/zephyr/governance/context_recycling.py
-    new_path: src/zephyr/governance/context_governance/context_recycling.py
-    subdir: context_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.context_manager
-    new_module: zephyr.governance.context_governance.context_manager
-    old_path: src/zephyr/governance/context_manager.py
-    new_path: src/zephyr/governance/context_governance/context_manager.py
-    subdir: context_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.data_lifecycle
-    new_module: zephyr.governance.data_governance.data_lifecycle
-    old_path: src/zephyr/governance/data_lifecycle.py
-    new_path: src/zephyr/governance/data_governance/data_lifecycle.py
-    subdir: data_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.data_quality
-    new_module: zephyr.governance.data_governance.data_quality
-    old_path: src/zephyr/governance/data_quality.py
-    new_path: src/zephyr/governance/data_governance/data_quality.py
-    subdir: data_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.decision_fatigue_cli
-    new_module: zephyr.governance.resilience_governance.decision_fatigue_cli
-    old_path: src/zephyr/governance/decision_fatigue_cli.py
-    new_path: src/zephyr/governance/resilience_governance/decision_fatigue_cli.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.decision_fatigue
-    new_module: zephyr.governance.resilience_governance.decision_fatigue
-    old_path: src/zephyr/governance/decision_fatigue.py
-    new_path: src/zephyr/governance/resilience_governance/decision_fatigue.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.f5_shutdown_manager
-    new_module: zephyr.governance.resilience_governance.f5_shutdown_manager
-    old_path: src/zephyr/governance/f5_shutdown_manager.py
-    new_path: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.f5_event_subscriber
-    new_module: zephyr.governance.resilience_governance.f5_event_subscriber
-    old_path: src/zephyr/governance/f5_event_subscriber.py
-    new_path: src/zephyr/governance/resilience_governance/f5_event_subscriber.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.f5_boot_integration
-    new_module: zephyr.governance.resilience_governance.f5_boot_integration
-    old_path: src/zephyr/governance/f5_boot_integration.py
-    new_path: src/zephyr/governance/resilience_governance/f5_boot_integration.py
-    subdir: resilience_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.ops_foundation
-    new_module: zephyr.governance.ops_governance.ops_foundation
-    old_path: src/zephyr/governance/ops_foundation.py
-    new_path: src/zephyr/governance/ops_governance/ops_foundation.py
-    subdir: ops_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.pipeline_base
-    new_module: zephyr.governance.engine.pipeline_base
-    old_path: src/zephyr/governance/pipeline_base.py
-    new_path: src/zephyr/governance/engine/pipeline_base.py
-    subdir: engine
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.default_tca_engine
-    new_module: zephyr.governance.audit.default_tca_engine
-    old_path: src/zephyr/governance/default_tca_engine.py
-    new_path: src/zephyr/governance/audit/default_tca_engine.py
-    subdir: audit
-    status: pending
-    classification_method: module_frontmatter
-
-  # evidence_pack: skipped — audit_trail/evidence_pack.py already exists with different content
-
-  - old_module: zephyr.governance.strategy_base
-    new_module: zephyr.governance.strategies.strategy_base
-    old_path: src/zephyr/governance/strategy_base.py
-    new_path: src/zephyr/governance/strategies/strategy_base.py
-    subdir: strategies
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.database_manager
-    new_module: zephyr.governance.persistence.database_manager
-    old_path: src/zephyr/governance/database_manager.py
-    new_path: src/zephyr/governance/persistence/database_manager.py
-    subdir: persistence
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.financial_compliance
-    new_module: zephyr.governance.financial_governance.financial_compliance
-    old_path: src/zephyr/governance/financial_compliance.py
-    new_path: src/zephyr/governance/financial_governance/financial_compliance.py
-    subdir: financial_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.broker_interface
-    new_module: zephyr.governance.trading_contracts.broker_interface
-    old_path: src/zephyr/governance/broker_interface.py
-    new_path: src/zephyr/governance/trading_contracts/broker_interface.py
-    subdir: trading_contracts
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.budget_enforcement
-    new_module: zephyr.governance.financial_governance.budget_enforcement
-    old_path: src/zephyr/governance/budget_enforcement.py
-    new_path: src/zephyr/governance/financial_governance/budget_enforcement.py
-    subdir: financial_governance
-    status: pending
-    classification_method: module_frontmatter
-
-  - old_module: zephyr.governance.compliance_rule
-    new_module: zephyr.governance.rule_enforcement.compliance_rule
-    old_path: src/zephyr/governance/compliance_rule.py
-    new_path: src/zephyr/governance/rule_enforcement/compliance_rule.py
-    subdir: rule_enforcement
-    status: pending
-    classification_method: module_frontmatter
-
+- old_module: zephyr.governance.default_attribution_engine
+  new_module: zephyr.governance.audit.default_attribution_engine
+  old_path: src/zephyr/governance/default_attribution_engine.py
+  new_path: src/zephyr/governance/audit/default_attribution_engine.py
+  subdir: audit
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.market_schema
+  new_module: zephyr.governance.persistence.market_schema
+  old_path: src/zephyr/governance/market_schema.py
+  new_path: src/zephyr/governance/persistence/market_schema.py
+  subdir: persistence
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.gate_repo
+  new_module: zephyr.governance.commit_gates.gate_repo
+  old_path: src/zephyr/governance/gate_repo.py
+  new_path: src/zephyr/governance/commit_gates/gate_repo.py
+  subdir: commit_gates
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.strategy_registry
+  new_module: zephyr.governance.strategies.strategy_registry
+  old_path: src/zephyr/governance/strategy_registry.py
+  new_path: src/zephyr/governance/strategies/strategy_registry.py
+  subdir: strategies
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.auto_runner
+  new_module: zephyr.governance.ops_governance.auto_runner
+  old_path: src/zephyr/governance/auto_runner.py
+  new_path: src/zephyr/governance/ops_governance/auto_runner.py
+  subdir: ops_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.broker_resilience
+  new_module: zephyr.governance.resilience_governance.broker_resilience
+  old_path: src/zephyr/governance/broker_resilience.py
+  new_path: src/zephyr/governance/resilience_governance/broker_resilience.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.context_recycling
+  new_module: zephyr.governance.context_governance.context_recycling
+  old_path: src/zephyr/governance/context_recycling.py
+  new_path: src/zephyr/governance/context_governance/context_recycling.py
+  subdir: context_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.context_manager
+  new_module: zephyr.governance.context_governance.context_manager
+  old_path: src/zephyr/governance/context_manager.py
+  new_path: src/zephyr/governance/context_governance/context_manager.py
+  subdir: context_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.data_lifecycle
+  new_module: zephyr.governance.data_governance.data_lifecycle
+  old_path: src/zephyr/governance/data_lifecycle.py
+  new_path: src/zephyr/governance/data_governance/data_lifecycle.py
+  subdir: data_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.data_quality
+  new_module: zephyr.governance.data_governance.data_quality
+  old_path: src/zephyr/governance/data_quality.py
+  new_path: src/zephyr/governance/data_governance/data_quality.py
+  subdir: data_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.decision_fatigue_cli
+  new_module: zephyr.governance.resilience_governance.decision_fatigue_cli
+  old_path: src/zephyr/governance/decision_fatigue_cli.py
+  new_path: src/zephyr/governance/resilience_governance/decision_fatigue_cli.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.decision_fatigue
+  new_module: zephyr.governance.resilience_governance.decision_fatigue
+  old_path: src/zephyr/governance/decision_fatigue.py
+  new_path: src/zephyr/governance/resilience_governance/decision_fatigue.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.f5_shutdown_manager
+  new_module: zephyr.governance.resilience_governance.f5_shutdown_manager
+  old_path: src/zephyr/governance/f5_shutdown_manager.py
+  new_path: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.f5_event_subscriber
+  new_module: zephyr.governance.resilience_governance.f5_event_subscriber
+  old_path: src/zephyr/governance/f5_event_subscriber.py
+  new_path: src/zephyr/governance/resilience_governance/f5_event_subscriber.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.f5_boot_integration
+  new_module: zephyr.governance.resilience_governance.f5_boot_integration
+  old_path: src/zephyr/governance/f5_boot_integration.py
+  new_path: src/zephyr/governance/resilience_governance/f5_boot_integration.py
+  subdir: resilience_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.ops_foundation
+  new_module: zephyr.governance.ops_governance.ops_foundation
+  old_path: src/zephyr/governance/ops_foundation.py
+  new_path: src/zephyr/governance/ops_governance/ops_foundation.py
+  subdir: ops_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.pipeline_base
+  new_module: zephyr.governance.engine.pipeline_base
+  old_path: src/zephyr/governance/pipeline_base.py
+  new_path: src/zephyr/governance/engine/pipeline_base.py
+  subdir: engine
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.default_tca_engine
+  new_module: zephyr.governance.audit.default_tca_engine
+  old_path: src/zephyr/governance/default_tca_engine.py
+  new_path: src/zephyr/governance/audit/default_tca_engine.py
+  subdir: audit
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.strategy_base
+  new_module: zephyr.governance.strategies.strategy_base
+  old_path: src/zephyr/governance/strategy_base.py
+  new_path: src/zephyr/governance/strategies/strategy_base.py
+  subdir: strategies
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.database_manager
+  new_module: zephyr.governance.persistence.database_manager
+  old_path: src/zephyr/governance/database_manager.py
+  new_path: src/zephyr/governance/persistence/database_manager.py
+  subdir: persistence
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.financial_compliance
+  new_module: zephyr.governance.financial_governance.financial_compliance
+  old_path: src/zephyr/governance/financial_compliance.py
+  new_path: src/zephyr/governance/financial_governance/financial_compliance.py
+  subdir: financial_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.broker_interface
+  new_module: zephyr.governance.trading_contracts.broker_interface
+  old_path: src/zephyr/governance/broker_interface.py
+  new_path: src/zephyr/governance/trading_contracts/broker_interface.py
+  subdir: trading_contracts
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.budget_enforcement
+  new_module: zephyr.governance.financial_governance.budget_enforcement
+  old_path: src/zephyr/governance/budget_enforcement.py
+  new_path: src/zephyr/governance/financial_governance/budget_enforcement.py
+  subdir: financial_governance
+  status: done
+  classification_method: module_frontmatter
+- old_module: zephyr.governance.compliance_rule
+  new_module: zephyr.governance.rule_enforcement.compliance_rule
+  old_path: src/zephyr/governance/compliance_rule.py
+  new_path: src/zephyr/governance/rule_enforcement/compliance_rule.py
+  subdir: rule_enforcement
+  status: done
+  classification_method: module_frontmatter

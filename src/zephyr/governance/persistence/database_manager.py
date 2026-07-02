@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.governance.database_manager
+# [MODULE] zephyr.governance.persistence.database_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.audit_trail.audit_schema; zephyr.governance.observability_governance.query_metrics
 # [CONSUMERS]
@@ -517,7 +517,7 @@ class DatabaseManager:
                 "SELECT COUNT(*) FROM tasks WHERE status IN ('IN_PROGRESS','READY','RETRY','WAITING') AND is_deleted=0"
             ).fetchone()[0]
             event_count = conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
-            gate_count = conn.execute("SELECT COUNT(*) FROM gates").fetchone()[0]
+            gate_count = conn.execute("SELECT COUNT(*) FROM gate_runs").fetchone()[0]
             ke_count = conn.execute("SELECT COUNT(*) FROM knowledge").fetchone()[0]
             slow_count = conn.execute("SELECT COUNT(*) FROM slow_queries").fetchone()[0]
         finally:

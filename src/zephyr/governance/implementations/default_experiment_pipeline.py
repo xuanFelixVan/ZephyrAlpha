@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
-from zephyr.governance.pipeline_base import (
+from zephyr.governance.engine.pipeline_base import (
     ExperimentConfig,
     ExperimentMetric,
     ExperimentPipelineBase,

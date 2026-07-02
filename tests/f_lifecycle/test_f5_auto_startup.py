@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.governance.f5_boot_integration import (
+from zephyr.governance.resilience_governance.f5_boot_integration import (
     BootResult,
     F5BootIntegration,
     register_f5_boot_hook,

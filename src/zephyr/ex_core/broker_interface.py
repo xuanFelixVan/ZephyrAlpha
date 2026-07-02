@@ -15,4 +15,4 @@
 # [TTL] task_bound
 """Re-export wrapper: broker_interface has migrated to zephyr.execution.core.broker_interface"""
 
-from zephyr.governance.broker_interface import *  # noqa: F403
+from zephyr.governance.trading_contracts.broker_interface import *  # noqa: F403

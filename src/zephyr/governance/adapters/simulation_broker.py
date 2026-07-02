@@ -50,7 +50,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from zephyr.governance.broker_interface import BrokerInterface
+from zephyr.governance.trading_contracts.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot

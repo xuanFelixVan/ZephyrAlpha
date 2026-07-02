@@ -2,7 +2,7 @@
 # [TTL] task_bound
 """Re-export wrapper: adapters has migrated to zephyr.execution_core.core.adapters"""
 
-from zephyr.governance.broker_interface import BrokerInterface, FillCallback
+from zephyr.governance.trading_contracts.broker_interface import BrokerInterface, FillCallback
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationBridge,
     RiskValidationPort,

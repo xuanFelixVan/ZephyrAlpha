@@ -53,7 +53,7 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.governance.default_tca_engine import (
+from zephyr.governance.audit.default_tca_engine import (
     DefaultTCAEngine,
 )
 from zephyr.risk.implementations.default_risk_limits_calculator import (

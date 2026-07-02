@@ -158,7 +158,7 @@ def check_api_signature_alignment(content: str) -> dict:
     if "PreFlightVerdict" in content:
         drifts.append("S4 still references PreFlightVerdict (should be GateDecision)")
     try:
-        from zephyr.governance.budget_enforcement.budget_models import GateDecision, GateResult
+        from zephyr.governance.financial_governance.budget_enforcement.budget_models import GateDecision, GateResult
     except ImportError:
         drifts.append("GateResult/GateDecision not importable from code")
     if not drifts:

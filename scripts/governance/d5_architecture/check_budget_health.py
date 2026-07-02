@@ -50,7 +50,7 @@ from _shared.constants import REPO_ROOT
 
 def check_engine_instantiation() -> dict:
     try:
-        from zephyr.governance.budget_enforcement import BudgetEngine
+        from zephyr.governance.financial_governance.budget_enforcement import BudgetEngine
 
         engine = BudgetEngine()
         return {"check": "engine_instantiation", "status": "PASS", "detail": str(type(engine))}
@@ -60,9 +60,9 @@ def check_engine_instantiation() -> dict:
 
 def check_pre_flight() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.budget_models import GateDecision
+        from zephyr.governance.financial_governance.budget_enforcement.budget_models import GateDecision
 
-        from zephyr.governance.budget_enforcement import BudgetEngine
+        from zephyr.governance.financial_governance.budget_enforcement import BudgetEngine
 
         engine = BudgetEngine()
         result = engine.pre_flight_check("health-check", 100, 0.001)
@@ -75,7 +75,7 @@ def check_pre_flight() -> dict:
 
 def check_dimensions() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.budget_models import BudgetDimension
+        from zephyr.governance.financial_governance.budget_enforcement.budget_models import BudgetDimension
 
         dims = set(d.value.lower() for d in BudgetDimension)
         required = {"token", "cost", "time"}
@@ -103,7 +103,7 @@ def check_policy_file() -> dict:
 
 def check_escalation_bridge() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.alerts import BudgetAlert
+        from zephyr.governance.financial_governance.budget_enforcement.alerts import BudgetAlert
         from zephyr.governance.escalation.budget_handler import on_budget_alert
 
         alert = BudgetAlert(alert_id="health-check")
@@ -119,7 +119,7 @@ def check_escalation_bridge() -> dict:
 
 def check_degradation_manager() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.degradation_manager import DegradationManager
+        from zephyr.governance.financial_governance.budget_enforcement.degradation_manager import DegradationManager
 
         dm = DegradationManager()
         level = dm.state.current_level
@@ -135,7 +135,7 @@ def check_degradation_manager() -> dict:
 
 def check_tamper_log() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.tamper_evident_log import TamperEvidentLog
+        from zephyr.governance.financial_governance.budget_enforcement.tamper_evident_log import TamperEvidentLog
 
         log = TamperEvidentLog()
         log.append("health-check", "test-data")
@@ -149,7 +149,7 @@ def check_tamper_log() -> dict:
 
 def check_burn_rate_monitor() -> dict:
     try:
-        from zephyr.governance.budget_enforcement.burn_rate_monitor import BurnRateMonitor
+        from zephyr.governance.financial_governance.budget_enforcement.burn_rate_monitor import BurnRateMonitor
 
         monitor = BurnRateMonitor()
         summary = monitor.get_burn_summary()

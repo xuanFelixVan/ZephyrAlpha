@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import argparse
 
-from zephyr.governance.decision_fatigue_cli import build_parser
+from zephyr.governance.resilience_governance.decision_fatigue_cli import build_parser
 
 
 class TestBuildParser:
@@ -57,7 +57,7 @@ class TestMain:
     def test_main_runs_all(self, capsys):
         import sys
 
-        from zephyr.governance.decision_fatigue_cli import main
+        from zephyr.governance.resilience_governance.decision_fatigue_cli import main
 
         original_argv = sys.argv
         sys.argv = ["zephyr-priorities"]
@@ -71,7 +71,7 @@ class TestMain:
     def test_main_runs_filtered(self, capsys):
         import sys
 
-        from zephyr.governance.decision_fatigue_cli import main
+        from zephyr.governance.resilience_governance.decision_fatigue_cli import main
 
         original_argv = sys.argv
         sys.argv = ["zephyr-priorities", "--filter", "P0"]
@@ -87,7 +87,7 @@ class TestBoundary:
     def test_main_unknown_filter(self, capsys):
         import sys
 
-        from zephyr.governance.decision_fatigue_cli import main
+        from zephyr.governance.resilience_governance.decision_fatigue_cli import main
 
         original_argv = sys.argv
         sys.argv = ["zephyr-priorities", "--filter", "INVALID"]

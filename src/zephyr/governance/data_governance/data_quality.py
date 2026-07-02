@@ -1,5 +1,5 @@
 # [BLUEPRINT] SRC-006 | docs/03_modules/_domain-governance/blueprint.md
-# [MODULE] zephyr.governance.data_quality
+# [MODULE] zephyr.governance.data_governance.data_quality
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]

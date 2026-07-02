@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
-# [MODULE] zephyr.governance.gate_repo
+# [MODULE] zephyr.governance.commit_gates.gate_repo
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
@@ -88,7 +88,7 @@ class GateRepo:
         try:
             target.execute(
                 """
-                INSERT INTO gates
+                INSERT INTO gate_runs
                     (gate_run_id, gate_id, passed, details, artifact_path,
                      session_id, task_id, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -123,7 +123,7 @@ class GateRepo:
             """
             SELECT gate_run_id, gate_id, passed, details,
                    artifact_path, session_id, task_id, created_at
-            FROM gates
+            FROM gate_runs
             WHERE task_id = ?
             ORDER BY created_at DESC
             LIMIT ?

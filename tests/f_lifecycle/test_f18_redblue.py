@@ -147,7 +147,7 @@ class TestDBFailure:
         """DB 文件不存在时 AutoRunner 仍能完成 run()。"""
         fake_db = tmp_path / "nonexistent.db"
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", fake_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             runner = GovernanceAutoRunner()
             result = runner.run()
@@ -159,7 +159,7 @@ class TestDBFailure:
         corrupt_db = tmp_path / "corrupt.db"
         _create_corrupt_db(corrupt_db)
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", corrupt_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             runner = GovernanceAutoRunner()
             result = runner.run()
@@ -199,7 +199,7 @@ class TestDBFailure:
         lock_conn.execute("BEGIN EXCLUSIVE")
         try:
             with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", locked_db):
-                from zephyr.governance.auto_runner import GovernanceAutoRunner
+                from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
                 runner = GovernanceAutoRunner()
                 # 应能完成（查询用独立连接，写 audit_log 可能失败但不崩溃）
@@ -220,7 +220,7 @@ class TestGateExecutionFailure:
 
     def test_gate_throws_exception(self) -> None:
         """gate 抛异常时 _execute_gate 返回 True（不阻断）。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
@@ -230,7 +230,7 @@ class TestGateExecutionFailure:
 
     def test_gate_returns_none(self) -> None:
         """gate 返回 None 时 _execute_gate 捕获。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
@@ -241,7 +241,7 @@ class TestGateExecutionFailure:
 
     def test_gate_returns_invalid_type(self) -> None:
         """gate 返回非 GateResult 类型时不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
@@ -251,7 +251,7 @@ class TestGateExecutionFailure:
 
     def test_gate_import_error(self) -> None:
         """phase_check_registry 导入失败时不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         with patch.dict("sys.modules", {"zephyr.infrastructure.rollback.phase_check_registry": None}):
@@ -260,7 +260,7 @@ class TestGateExecutionFailure:
 
     def test_run_with_all_gates_failing(self) -> None:
         """所有 gate 都抛异常时 run() 仍完成。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
@@ -294,7 +294,7 @@ class TestResourceLeak:
             def close(self) -> None:
                 raise RuntimeError("close failed")
 
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         good = GoodResource()
@@ -311,7 +311,7 @@ class TestResourceLeak:
         class NoCloseResource:
             pass
 
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         runner.register_resource(NoCloseResource())
@@ -320,7 +320,7 @@ class TestResourceLeak:
 
     def test_temp_file_locked(self, tmp_path: Path) -> None:
         """临时文件被占用无法删除时不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         locked_file = tmp_path / "locked.txt"
         locked_file.write_text("locked", encoding="utf-8")
@@ -333,7 +333,7 @@ class TestResourceLeak:
 
     def test_temp_file_not_exist(self, tmp_path: Path) -> None:
         """临时文件路径不存在时不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         ghost_file = tmp_path / "ghost.txt"
         runner = GovernanceAutoRunner()
@@ -348,7 +348,7 @@ class TestResourceLeak:
             def close(self) -> None:
                 raise OSError("disk full")
 
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         for _ in range(100):
@@ -375,7 +375,7 @@ class TestAuditLogFailure:
 
         try:
             with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", readonly_db):
-                from zephyr.governance.auto_runner import GovernanceAutoRunner
+                from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
                 runner = GovernanceAutoRunner()
                 result = runner.run()
@@ -386,7 +386,7 @@ class TestAuditLogFailure:
 
     def test_audit_log_huge_errors_list(self) -> None:
         """errors 列表超大时截断到前 10 条。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         # 注入 1000 条 error
@@ -409,7 +409,7 @@ class TestAuditLogFailure:
             conn.close()
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", db_no_audit):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             runner = GovernanceAutoRunner()
             runner._write_audit_log()
@@ -432,7 +432,7 @@ class TestConcurrentRun:
 
     def test_concurrent_auto_runners(self) -> None:
         """多个 AutoRunner 同时 run() 不死锁。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         results: list[bool] = []
         errors: list[Exception] = []
@@ -478,7 +478,7 @@ class TestConcurrentRun:
 
     def test_concurrent_event_driven_query(self) -> None:
         """并发查询 event_driven 不死锁。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         errors: list[Exception] = []
 
@@ -503,7 +503,7 @@ class TestConcurrentRun:
         _create_temp_db(concurrent_db)
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", concurrent_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             errors: list[Exception] = []
 
@@ -546,21 +546,21 @@ class TestEventDrivenEdgeCases:
 
     def test_event_type_empty_string(self) -> None:
         """event_type 为空字符串时返回空列表。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         result = GovernanceAutoRunner.get_gates_by_event("")
         assert isinstance(result, list)
 
     def test_event_type_none(self) -> None:
         """event_type 为 None 时不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         result = GovernanceAutoRunner.get_gates_by_event(None)  # type: ignore[arg-type]
         assert isinstance(result, list)
 
     def test_event_type_invalid(self) -> None:
         """event_type 为不存在的值时返回空列表。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         result = GovernanceAutoRunner.get_gates_by_event("on_nonexistent_event")
         assert isinstance(result, list)
@@ -583,7 +583,7 @@ class TestEventDrivenEdgeCases:
             conn.close()
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", null_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             # 查询 NULL event_driven 不崩溃
             always_gates = GovernanceAutoRunner.get_gates_by_event("always")
@@ -593,7 +593,7 @@ class TestEventDrivenEdgeCases:
 
     def test_all_event_types_returns_list(self) -> None:
         """get_all_event_types() 返回列表。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         result = GovernanceAutoRunner.get_all_event_types()
         assert isinstance(result, list)
@@ -627,7 +627,7 @@ class TestDataConsistency:
             conn.close()
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", case_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             always_gates = GovernanceAutoRunner.get_gates_by_event("always")
             # 大小写敏感：两个都返回
@@ -663,7 +663,7 @@ class TestDataConsistency:
         inactive_db = tmp_path / "inactive.db"
         _create_temp_db(inactive_db)
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", inactive_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             always_gates = GovernanceAutoRunner.get_gates_by_event("always")
             # gate_test_4 是 inactive，不应出现
@@ -675,7 +675,7 @@ class TestDataConsistency:
         disabled_db = tmp_path / "disabled.db"
         _create_temp_db(disabled_db)
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", disabled_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             always_gates = GovernanceAutoRunner.get_gates_by_event("always")
             # gate_test_3 auto_start=0，不应出现
@@ -692,7 +692,7 @@ class TestIdempotency:
 
     def test_run_idempotent_3_times(self) -> None:
         """连续 run() 3 次结果一致。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         results = []
         for _ in range(3):
@@ -741,7 +741,7 @@ class TestBoundaryValues:
         empty_db = tmp_path / "empty.db"
         _create_temp_db(empty_db, with_data=False)
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", empty_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             runner = GovernanceAutoRunner()
             result = runner.run()
@@ -777,7 +777,7 @@ class TestBoundaryValues:
             conn.close()
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", long_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             always_gates = GovernanceAutoRunner.get_gates_by_event("always")
             assert len(always_gates) == 1
@@ -785,7 +785,7 @@ class TestBoundaryValues:
 
     def test_super_long_errors_in_audit(self, tmp_path: Path) -> None:
         """超长 errors 字符串写入 audit_logs 不崩溃。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         runner._result.errors.append("E" * 100000)
@@ -812,14 +812,14 @@ class TestBoundaryValues:
             conn.close()
 
         with patch("zephyr.governance.auto_runner._DEPGRAPH_DB", many_db):
-            from zephyr.governance.auto_runner import GovernanceAutoRunner
+            from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
             event_types = GovernanceAutoRunner.get_all_event_types()
             assert len(event_types) == 100
 
     def test_thread_safety_with_shared_runner(self) -> None:
         """共享 runner 实例在多线程中不崩溃（虽然不推荐）。"""
-        from zephyr.governance.auto_runner import GovernanceAutoRunner
+        from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
         errors: list[Exception] = []

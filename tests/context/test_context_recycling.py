@@ -16,7 +16,7 @@ from __future__ import annotations
 import os
 import tempfile
 
-from zephyr.governance.context_recycling import (
+from zephyr.governance.context_governance.context_recycling import (
     CompressedContext,
     ContextRecycling,
 )
