@@ -286,6 +286,8 @@ CREATE TABLE IF NOT EXISTS contracts (
 # ---------------------------------------------------------------------------
 
 _DDL_RULE_BINDINGS = """
+-- 5.18.2/5.18.3 治本决策（2026-07-01）：rule_id 是 TEXT（YAML 文件名 stem），
+-- 由 rule_engine.py 通过 YAML 文件存在性校验，非 node 引用，故不设 FK。
 CREATE TABLE IF NOT EXISTS rule_bindings (
     binding_id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     function_name    TEXT    NOT NULL,
@@ -319,11 +321,12 @@ CREATE TABLE IF NOT EXISTS arch_constraints (
 """
 
 _DDL_ARCH_DIRECTORY_TREE = """
+-- 5.18.9 治本（2026-07-02）：补 FK 到 domains（683 孤儿已清理）
 CREATE TABLE IF NOT EXISTS arch_directory_tree (
     path             TEXT    PRIMARY KEY,
     parent_path      TEXT,
     path_type        TEXT    NOT NULL,
-    domain_id        TEXT,
+    domain_id        TEXT    REFERENCES domains(domain_id),
     blueprint_id     TEXT,
     change_policy    TEXT,
     modification_permission TEXT,
@@ -1238,12 +1241,116 @@ def schema_version(db_path: Path | str | None = None) -> int:
         conn.close()
 
 
+# ---------------------------------------------------------------------------
+# 5.18.12 治本：PG 迁移框架恢复（轻量级，不依赖 alembic）
+# ---------------------------------------------------------------------------
+
+_PG_SCHEMA_SQL_PATH: Path = REPO_ROOT / "scripts" / "governance" / "migrate_sqlite_to_pg" / "02_create_pg_schema.sql"
+
+
+def apply_pg_schema(*, version: int | None = None, description: str = "") -> None:
+    """从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。
+
+    5.18.12 治本（2026-07-02）：恢复 PG schema 版本化迁移能力。
+    PG schema 真源为 02_create_pg_schema.sql，本函数提供可重复执行的入口，
+    避免手动 psql -f 操作无版本追踪的问题。
+
+    :param version: 迁移版本号（写入 _schema_version 表）；None 时不登记
+    :param description: 迁移描述（写入 _schema_version 表）
+    """
+    if not _PG_SCHEMA_SQL_PATH.exists():
+        raise FileNotFoundError(f"PG schema 真源文件不存在: {_PG_SCHEMA_SQL_PATH}")
+
+    sql_text = _PG_SCHEMA_SQL_PATH.read_text(encoding="utf-8")
+    conn = get_depgraph_pg_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql_text)
+        if version is not None:
+            from datetime import UTC, datetime
+            now = datetime.now(UTC).isoformat()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO _schema_version (version, applied_at, description) "
+                    "VALUES (%s, %s, %s) ON CONFLICT (version) DO NOTHING",
+                    (version, now, description or f"apply_pg_schema v{version}"),
+                )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# ---------------------------------------------------------------------------
+# 5.18.13 治本：迁移前备份（downgrade 替代方案）
+# ---------------------------------------------------------------------------
+
+def backup_before_migration(backup_path: Path | str) -> Path:
+    """在应用破坏性 migration 前备份 PG depgraph（pg_dump）。
+
+    5.18.13 治本（2026-07-02）：为 PG migration 提供 downgrade 能力。
+    SQLite migration 的 downgrade 策略是"建备份表→重建→恢复"（见 v19/v31）；
+    PG migration 的 downgrade 策略是"pg_dump 备份→pg_restore 恢复"。
+
+    :param backup_path: 备份文件路径（.dump 格式）
+    :return: 备份文件 Path
+    """
+    import subprocess
+
+    config = _load_pg_config()
+    backup_file = Path(backup_path)
+    backup_file.parent.mkdir(parents=True, exist_ok=True)
+
+    cmd = [
+        "pg_dump",
+        "-h", config["POSTGRES_HOST"],
+        "-p", config["POSTGRES_PORT"],
+        "-U", config["POSTGRES_USER"],
+        "-d", config["POSTGRES_DB"],
+        "-F", "c",  # custom format for pg_restore
+        "-f", str(backup_file),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    if result.returncode != 0:
+        raise RuntimeError(f"pg_dump failed: {result.stderr}")
+    return backup_file
+
+
+def restore_from_backup(backup_path: Path | str) -> None:
+    """从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。
+
+    :param backup_path: 备份文件路径（.dump 格式，由 backup_before_migration 创建）
+    """
+    import subprocess
+
+    config = _load_pg_config()
+    backup_file = Path(backup_path)
+    if not backup_file.exists():
+        raise FileNotFoundError(f"备份文件不存在: {backup_file}")
+
+    cmd = [
+        "pg_restore",
+        "-h", config["POSTGRES_HOST"],
+        "-p", config["POSTGRES_PORT"],
+        "-U", config["POSTGRES_USER"],
+        "-d", config["POSTGRES_DB"],
+        "--clean",  # 先 DROP 再 CREATE
+        "--if-exists",
+        str(backup_file),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    if result.returncode != 0:
+        raise RuntimeError(f"pg_restore failed: {result.stderr}")
+
+
 __all__ = [
     "get_depgraph_pg_connection",
     "get_db_connection",  # DEPRECATED 别名，向后兼容
     "init_db",
     "schema_version",
     "table_names",
+    "apply_pg_schema",  # 5.18.12: PG 迁移框架
+    "backup_before_migration",  # 5.18.13: 迁移前备份
+    "restore_from_backup",  # 5.18.13: 从备份恢复（downgrade）
 ]
 
 
