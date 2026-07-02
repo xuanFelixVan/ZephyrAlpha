@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.fifteen_dimension_auditor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/audit/test_fifteen_dimension_auditor.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

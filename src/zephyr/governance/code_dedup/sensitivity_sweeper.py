@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.sensitivity_sweeper
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/security/test_sensitivity_sweeper.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.auto_fixer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.code_dedup.cli; tests/automation/test_auto_fixer.py; tests/governance/code_quality/test_code_dedup_engine.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

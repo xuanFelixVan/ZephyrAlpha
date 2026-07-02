@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.shadow_trust_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/delegation/test_shadow_trust_validator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

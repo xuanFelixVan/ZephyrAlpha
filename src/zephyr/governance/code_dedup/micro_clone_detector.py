@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.micro_clone_detector
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.intelligence_governance.self_benchmark; tests/governance/drift/test_micro_clone_detector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

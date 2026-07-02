@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.cross_boundary_detector
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/cross/test_cross_boundary_detector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

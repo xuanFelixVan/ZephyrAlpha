@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.atomic_fixer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/rule_enforcement/test_atomic_fixer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

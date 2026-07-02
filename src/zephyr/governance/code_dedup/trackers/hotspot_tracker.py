@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers.hotspot_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/observability/test_hotspot_tracker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

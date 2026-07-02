@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.shared_lifecycle_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/shared/test_shared_lifecycle_manager.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

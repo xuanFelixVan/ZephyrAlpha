@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.pre_apply_integrity_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/rule_enforcement/test_pre_apply_integrity_gate.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

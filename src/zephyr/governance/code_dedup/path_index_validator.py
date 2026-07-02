@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.path_index_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/path/test_path_index_validator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

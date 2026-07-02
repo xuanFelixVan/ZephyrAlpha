@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers.blind_spot_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

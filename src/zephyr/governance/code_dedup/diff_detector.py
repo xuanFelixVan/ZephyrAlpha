@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.diff_detector
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/drift/test_diff_detector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

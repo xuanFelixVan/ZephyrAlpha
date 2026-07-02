@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.report
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.code_dedup.cli; tests/governance/observability/test_report.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

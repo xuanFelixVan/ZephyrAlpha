@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.mock_duplicate_generator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/governance_misc/test_mock_duplicate_generator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

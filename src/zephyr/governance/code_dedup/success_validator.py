@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.success_validator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/ops/test_success_validator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

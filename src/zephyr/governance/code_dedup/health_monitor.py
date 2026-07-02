@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.health_monitor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/ops/test_health_monitor.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

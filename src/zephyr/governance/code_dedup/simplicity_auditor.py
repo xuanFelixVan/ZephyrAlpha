@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.simplicity_auditor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/code_quality/test_simplicity_auditor.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

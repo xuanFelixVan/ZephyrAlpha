@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.ssot_registrar
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/rule_enforcement/test_ssot_registrar.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

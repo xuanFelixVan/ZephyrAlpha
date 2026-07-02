@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.exit_codes
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] zephyr.governance.code_dedup.cli; tests/code_dedup_engine/test_degradation_edge.py; tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/ops/test_exit_codes.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

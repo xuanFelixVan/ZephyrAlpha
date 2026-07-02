@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.trackers.question_tracker
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/governance/governance_misc/test_question_tracker.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

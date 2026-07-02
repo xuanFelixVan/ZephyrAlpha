@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.code_dedup.file_creator
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] tests/file/test_file_creator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
