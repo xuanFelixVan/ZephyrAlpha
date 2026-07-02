@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-02T18:40:11Z'
+  generated_at: '2026-07-02T18:46:11Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 739
   total_ssot_claims: 16
@@ -4255,7 +4255,7 @@ ownership:
     existence: '✅'
     ownership_judgment: '本模块'
 
-  - path: 'scripts/governance/generate_path_ownership_map.py'
+  - path: 'scripts/governance/generators/generate_path_ownership_map.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
