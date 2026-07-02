@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1142 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §tests
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §tests
 # [MODULE] zephyr.security.access_control.intent_binder
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

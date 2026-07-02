@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §14
 # [MODULE] scripts.mcp.launcher
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.dashboard.app
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__; zephyr.security.llm_defense.llm_security.self_protection.__init__; zephyr.security.llm_defense.llm_security.payloads.__init__; zephyr.security.llm_defense.llm_security.patterns.__init__; zephyr.security.llm_defense.llm_security.behavior_audit_logger; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.security.llm_defense.llm_security.protocol

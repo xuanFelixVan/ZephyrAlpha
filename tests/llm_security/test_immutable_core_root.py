@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1108 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §
 # [MODULE] tests.test_immutable_core
 # [INVARIANTS] protected_paths_gte_22;always_blocked_gte_14;singleton_identity
 # [MODIFY-GUARD] none

@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-INF-013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §14
 # [MODULE] tests.integration.test_mcp_health_check_recovery
 # [INVARIANTS] 死亡进程被检测; restart后新进程存活; 健康检查幂等; 多进程并发恢复
 # [MODIFY-GUARD] launcher.py 或 boot_cron_jobs.py 的健康检查/restart逻辑变更需同步更新本测试

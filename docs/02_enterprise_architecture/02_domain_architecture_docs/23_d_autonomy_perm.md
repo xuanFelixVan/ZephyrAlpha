@@ -151,7 +151,7 @@ graph TD
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprin... | docs__03_modules___domain_autonomy_co... | design | planned |
+| 1 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprin... | docs__03_modules___domain_autonomy_co... | design | planned |
 
 ### L2 领域层 / Domain Layer (14 modules)
 

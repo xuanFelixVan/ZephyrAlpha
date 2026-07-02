@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §vibe_coding_guard
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §vibe_coding_guard
 # [MODULE] zephyr.security.access_control.guards.vibe_coding_guard
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]

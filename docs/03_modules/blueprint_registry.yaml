@@ -219,7 +219,7 @@ blueprints:
   file_path: 03_modules/_domain_knowledge/vector_memory/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-013
-  name: mcp_servers
+  name: model_context_protocol_servers
   title: MCP Servers 蓝图 — MCP 服务器管理与调度
   summary: MCP Servers 蓝图——11 个 MCP 服务端 + 1 Gateway 通过 stdio 协议暴露内部系统能力。357 项盲点（B1-B357）十八维闭合。
   layer: cross_layer
@@ -230,7 +230,7 @@ blueprints:
   version: 0.3.39
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_cross_layer/mcp_servers/blueprint.md
+  file_path: 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
   construction_progress: design_only
 - module_id: MOD-INF-015
   name: system_telemetry
@@ -279,7 +279,7 @@ blueprints:
   file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-018
-  name: agent_rbac
+  name: agent_role_based_access_control
   title: Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
   summary: Agent RBAC——七层纵深防御+六横切面运行时权限强制执行器。209项盲点全覆盖，94项决策记录，148个组件文件。
   layer: infra_ops
@@ -290,7 +290,7 @@ blueprints:
   version: 1.1.0
   generation: 3
   last_updated: '2026-05-14'
-  file_path: 03_modules/_domain_autonomy_core/agent_rbac/blueprint.md
+  file_path: 03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md
   construction_progress: design_only
 - module_id: MOD-INF-019
   name: agent_spec
@@ -390,7 +390,7 @@ blueprints:
   file_path: 03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-025
-  name: a2a_protocol
+  name: agent_to_agent_protocol
   title: A2A Protocol 蓝图 — Agent间通信协议与冲突解决
   summary: Agent间通信协议与冲突解决——九层十二协议架构，覆盖发现/通信/协商/辩论/共识/经济/路由/事务/协调九层+脚本执行基础设施层，150条盲点全覆盖，57代码骨架+14容量扩展文件。
   layer: infra_ops
@@ -401,7 +401,7 @@ blueprints:
   version: 0.12.0
   generation: 3
   last_updated: '2026-06-23'
-  file_path: 03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md
+  file_path: 03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-026
   name: asset_inventory
@@ -725,7 +725,7 @@ blueprints:
   file_path: 03_modules/_domain_reporting/analytics_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L08-001
-  name: hmi_core
+  name: human_machine_interface_core
   title: Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）
   summary: ⛔ C轨业务层未开放，禁止施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
     Dashboard 5页面已实现。默认实现待施工。
@@ -737,7 +737,7 @@ blueprints:
   version: 2.1.0
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_frontend/hmi_core/blueprint.md
+  file_path: 03_modules/_domain_frontend/human_machine_interface_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: research_core
@@ -799,7 +799,7 @@ blueprints:
   file_path: 03_modules/_domain_simulation/experiment_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-LLM_SECURITY
-  name: llm_security
+  name: large_language_model_security
   title: LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则
   summary: ZephyrAlpha LLM Security Gateway (LSG) 完整蓝图——九层纵深防御 + 自我防护体系 + 运维保障体系：L0
     供应链安全（模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御）→ L1 输入防护（直接注入+间接注入+越狱检测+Spotlighting+RAG投毒防御+ToolResultTransform拦截）→
@@ -816,7 +816,7 @@ blueprints:
   version: 2.0.1
   generation: 2
   last_updated: '2026-05-15'
-  file_path: 03_modules/_cross_layer/llm_security/blueprint.md
+  file_path: 03_modules/_cross_layer/large_language_model_security/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-MASTER_BLUEPRINT
   name: _master_blueprint
@@ -937,7 +937,7 @@ changelog:
   - 新增 MOD-INF-005 → 03_modules/_domain_governance/governance_automation/blueprint.md
   - 新增 MOD-INF-009 → 03_modules/_cross_layer/pipeline/blueprint.md
   - 新增 MOD-INF-011 → 03_modules/_domain_knowledge/vector_memory/blueprint.md
-  - 新增 MOD-INF-013 → 03_modules/_cross_layer/mcp_servers/blueprint.md
+  - 新增 MOD-INF-013 → 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
   - 新增 MOD-INF-017 → 03_modules/_domain_governance/code_dedup_engine/blueprint.md
   - 新增 MOD-INF-026 → 03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
   - 新增 MOD-INF-027 → 03_modules/_cross_layer/audit_orchestrator/blueprint.md
@@ -949,7 +949,7 @@ changelog:
   - 新增 MOD-L06-001 → 03_modules/_domain_execution_core/execution_core/blueprint.md
   - 新增 MOD-L09-001 → 03_modules/_domain_research/research_core/blueprint.md
   - 新增 MOD-L11-001 → 03_modules/_domain_machine_learning_train/ml_core/blueprint.md
-  - 新增 MOD-LLM_SECURITY → 03_modules/_cross_layer/llm_security/blueprint.md
+  - 新增 MOD-LLM_SECURITY → 03_modules/_cross_layer/large_language_model_security/blueprint.md
   - 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE → 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
   - 新增 MOD-TASK_SYSTEM → 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 - version: 2.7.3
@@ -963,14 +963,14 @@ changelog:
   - 移除 MOD-INF-002（曾位于 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md）
   - 移除 MOD-INF-005（曾位于 03_modules/_domain_governance/governance_automation/blueprint.md）
   - 移除 MOD-INF-009（曾位于 03_modules/_cross_layer/pipeline/blueprint.md）
-  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp_servers/blueprint.md）
+  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md）
   - 移除 MOD-INF-042（曾位于 03_modules/_domain_integration/local_model/blueprint.md）
   - 移除 MOD-KB-001（曾位于 03_modules/_domain_knowledge/knowledge_base/blueprint.md）
   - 移除 MOD-L05-001（曾位于 03_modules/_domain_portfolio_core/portfolio_core/blueprint.md）
   - 移除 MOD-L06-001（曾位于 03_modules/_domain_execution_core/execution_core/blueprint.md）
   - 移除 MOD-L09-001（曾位于 03_modules/_domain_research/research_core/blueprint.md）
   - 移除 MOD-L11-001（曾位于 03_modules/_domain_machine_learning_train/ml_core/blueprint.md）
-  - 移除 MOD-LLM_SECURITY（曾位于 03_modules/_cross_layer/llm_security/blueprint.md）
+  - 移除 MOD-LLM_SECURITY（曾位于 03_modules/_cross_layer/large_language_model_security/blueprint.md）
   - 移除 MOD-TASK_SYSTEM（曾位于 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md）
 - version: 2.7.2
   date: '2026-06-25'
@@ -1011,9 +1011,11 @@ changelog:
   - 'MOD-INF-011.file_path: [_domain_knowledge/vector_memory/blueprint.md] → [03_modules/_domain_knowledge/vector_memory/blueprint.md]'
   - 'MOD-DATABASE.file_path: [_cross_layer/database/blueprint.md] → [03_modules/_cross_layer/database/blueprint.md]'
   - 'MOD-INF-013.last_updated: [2026-05-13] → [2026-05-15]'
-  - 'MOD-INF-013.file_path: [_cross_layer/mcp_servers/blueprint.md] → [03_modules/_cross_layer/mcp_servers/blueprint.md]'
+  - 'MOD-INF-013.file_path: [_cross_layer/model_context_protocol_servers/blueprint.md]
+    → [03_modules/_cross_layer/model_context_protocol_servers/blueprint.md]'
   - 'MOD-INF-013.priority: [P2] → [P1]'
-  - 'MOD-LLM_SECURITY.file_path: [_cross_layer/llm_security/blueprint.md] → [03_modules/_cross_layer/llm_security/blueprint.md]'
+  - 'MOD-LLM_SECURITY.file_path: [_cross_layer/large_language_model_security/blueprint.md]
+    → [03_modules/_cross_layer/large_language_model_security/blueprint.md]'
   - 'MOD-INF-015.file_path: [_domain_infrastructure_operations/system_telemetry/blueprint.md]
     → [03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md]'
   - 'MOD-INF-016.version: [0.18.0] → [0.19.0]'
@@ -1053,7 +1055,7 @@ changelog:
   - 'MOD-DATABASE.version: [4.0.0] → [4.0.1]'
   - 移除 MOD-INF-012A（曾位于 03_modules/_cross_layer/database/sub-blueprints/MOD-INF-012A-blueprint.md）
   - 移除 MOD-INF-012B（曾位于 03_modules/_cross_layer/database/sub-blueprints/MOD-INF-012B-blueprint.md）
-  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/mcp_servers/blueprint.md）
+  - 移除 MOD-INF-013（曾位于 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md）
   - 'MOD-INF-015.version: [2.0.1] → [2.0.2]'
   - 'MOD-INF-016.title: [Shared+Core 集成蓝图（已拆分为 3 子蓝图）] → [Shared+Core 蓝图]'
   - 'MOD-INF-016.last_updated: [2026-05-18] → [2026-05-17]'

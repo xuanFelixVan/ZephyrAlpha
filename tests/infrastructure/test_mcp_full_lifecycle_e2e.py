@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-INF-013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §14
 # [MODULE] tests.e2e.test_mcp_full_lifecycle_e2e
 # [INVARIANTS] boot不抛异常; shutdown后_booted=False; _start_mcp_cluster函数存在; launch_all可调用; MCP进程可启动可清理
 # [MODIFY-GUARD] auto_runtime_core.py 或 boot_hooks.py 或 launcher.py 的 boot/MCP/shutdown 逻辑变更需同步更新本测试

@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "3c04368961209836",
+      "hash": "e3929fe9c4f8059c",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -51,7 +51,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "03f3247c3068a514",
+      "hash": "377d942705b6b490",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -116,6 +116,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: session_required_gate.py）"
     }
   },
-  "registered_at": "2026-07-01T22:17:12.760015+00:00",
+  "registered_at": "2026-07-02T04:42:21.811684+00:00",
   "last_check_at": "2026-06-30T11:27:07.498251+00:00"
 }

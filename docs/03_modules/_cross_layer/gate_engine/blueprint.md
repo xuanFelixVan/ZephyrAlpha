@@ -698,7 +698,7 @@ class ManualApprovalGate:
 | MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_cross_layer/script_system/blueprint.md |
 | MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge_base/blueprint.md |
 | MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context_engine/blueprint.md |
-| MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm_security/blueprint.md |
+| MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md |
 | MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
 | MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
 | MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master_blueprint/blueprint.md |

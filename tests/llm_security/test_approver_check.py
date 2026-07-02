@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0326 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §test
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §test
 # [MODULE] tests.test_approver_check
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
