@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-02'
-total_scripts: 555
+total_scripts: 557
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -590,6 +590,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/ast_import_rewriter.py
+  path: governance/ast_import_rewriter.py
+  description: Rewrites ``from zephyr.governance.foo import bar`` → ``from zephyr.governance.subdir.foo import bar``
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/extract_depgraph.py
   path: governance/extract_depgraph.py
   description: '[BLUEPRINT] | scripts/governance/extract_depgraph.py | §1'
@@ -600,7 +608,7 @@ scripts:
   dimensions: []
 - name: governance/generate_project_depgraph.py
   path: governance/generate_project_depgraph.py
-  description: __manifest__ = """
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1408,7 +1416,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/diagnose_depgraph.py
   path: governance/d5_architecture/diagnose_depgraph.py
-  description: __manifest__ = """
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3160,7 +3168,7 @@ scripts:
   dimensions: []
 - name: governance/migrate_sqlite_to_pg/migrate_data.py
   path: governance/migrate_sqlite_to_pg/migrate_data.py
-  description: SQLite → PostgreSQL 数据迁移脚本
+  description: ================================
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3184,7 +3192,7 @@ scripts:
   dimensions: []
 - name: governance/repair/apply_verification_results.py
   path: governance/repair/apply_verification_results.py
-  description: apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
+  description: 1. 批量替换DRIFTED路径（12条已知路径迁移）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3874,6 +3882,14 @@ scripts:
   path: migration/dm314_infra_ops_split.py
   description: 剪切粘贴模式：shutil.move() 将文件从 infra_ops/ 移动到各自设计域路径。
   domain: migration
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: migration/governance_root_split.py
+  path: migration/governance_root_split.py
+  description: Orchestrator that delegates import rewriting to ``ast_import_rewriter.py``
+  domain: governance
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
