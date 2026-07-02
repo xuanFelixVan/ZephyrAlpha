@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-02T10:29:24Z
+# 自动生成于 2026-07-02T10:35:53Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-02T10:29:24Z'
+generated_at: '2026-07-02T10:35:53Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 23
@@ -181,7 +181,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 142
+  entry_count: 145
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表
