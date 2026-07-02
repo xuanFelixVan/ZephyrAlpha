@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.baseline_manager
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/audit/test_baseline_manager.py; tests/drift/test_drift_core.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基线更新必须经过投毒防护

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.correlation_engine
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; src/zephyr/governance/drift_detection/brain_integration.py; tests/audit/test_correlation_engine.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 关联分析结果不可篡改

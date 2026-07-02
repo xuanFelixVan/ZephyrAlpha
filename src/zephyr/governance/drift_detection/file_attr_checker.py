@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.file_attr_checker
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/file/test_file_attr_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 属性检查不可跳过

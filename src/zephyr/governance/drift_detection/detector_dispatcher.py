@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.detector_dispatcher
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_detector_dispatcher.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 检测器调度不可绕过

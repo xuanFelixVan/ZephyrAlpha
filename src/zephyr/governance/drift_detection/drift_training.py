@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.drift_training
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_drift.py; tests/drift/test_drift_training.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 训练模式提取不可遗漏

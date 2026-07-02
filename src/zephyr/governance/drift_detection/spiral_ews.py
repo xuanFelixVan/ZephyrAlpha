@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.spiral_ews
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [CONSUMERS] src/zephyr/governance/ops_governance/budget_engine.py; tests/budget/test_budget_shutdown.py; tests/governance/budget/test_budget_enforcer_submodules.py; tests/governance/resilience/test_spiral_ews.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

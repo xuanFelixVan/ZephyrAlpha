@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.__main__
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine; zephyr.governance.drift_detection.self_test_verifier; zephyr.governance.drift_detection.drift_infrastructure; zephyr.governance.drift_detection.self_check
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] CLI入口不可修改

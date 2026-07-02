@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.drift_hotfix_bypass
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_drift.py; src/zephyr/governance/rule_enforcement/drift_detector.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 旁路必须72h自动过期

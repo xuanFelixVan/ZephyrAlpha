@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.ai_context_injector
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/ai/test_ai_context_injector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 注入内容不可覆盖用户指令

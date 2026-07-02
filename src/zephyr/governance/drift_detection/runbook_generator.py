@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.runbook_generator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 手册生成格式不可变

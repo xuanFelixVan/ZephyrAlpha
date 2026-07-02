@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.cold_start
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; src/zephyr/governance/drift_detection/brain_integration.py (+2 more)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 冷启动必须完整

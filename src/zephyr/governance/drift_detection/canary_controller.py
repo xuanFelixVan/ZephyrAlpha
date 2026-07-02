@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.canary_controller
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/ba/test_ba_canary_controller.py; tests/canary/test_canary_controller.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 金丝雀保护不可禁用

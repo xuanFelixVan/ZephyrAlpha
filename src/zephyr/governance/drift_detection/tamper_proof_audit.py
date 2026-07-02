@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.tamper_proof_audit
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/audit/test_tamper_proof_audit.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计记录不可篡改

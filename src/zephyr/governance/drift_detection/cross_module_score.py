@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.cross_module_score
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/cross/test_cross_module_score.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 跨模块评分不可人为调整

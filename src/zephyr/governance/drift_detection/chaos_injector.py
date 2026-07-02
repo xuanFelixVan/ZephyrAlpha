@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.chaos_injector
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_engine
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/ops_governance/phase_check_registry.py; src/zephyr/infrastructure/rollback/phase_check_registry.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 混沌注入必须金丝雀保护

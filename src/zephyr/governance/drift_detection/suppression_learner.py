@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.suppression_learner
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/audit/test_suppression_learner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 抑制规则必须经3次验证

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.drift_detection.headless_scanner
 # [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.governance.drift_detection.drift_models
-# [CONSUMERS] drift_engine;detector_dispatcher;alert_router
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_headless_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 无头扫描不可跳过
