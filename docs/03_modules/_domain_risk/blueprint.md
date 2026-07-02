@@ -45,7 +45,7 @@ depends_on:
     at: "CTR-006"
     why: "消费 PositionSnapshot"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_risk\\risk_management_core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_risk\\blueprint.md"
     section: "全篇"
     why: "本蓝图即SSoT"
 summary: "L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。"

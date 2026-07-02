@@ -44,7 +44,7 @@ depends_on:
     at: "CTR-ERR-004"
     why: "消费 RiskLimitViolationError"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_execution_core\\execution_core\\blueprint.md"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_execution_core\\blueprint.md"
     section: "全篇"
     why: "本蓝图即SSoT"
 ---
