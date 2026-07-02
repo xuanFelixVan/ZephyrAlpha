@@ -1,10 +1,10 @@
-# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
-# [MODULE] zephyr.intelligence.model_evaluation.implementations.default_backtest_engine
-# [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.simulation.__init__
+# [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
+# [MODULE] zephyr.backtest.implementations.vectorized_engine
+# [DOMAIN] D_BACKTEST
+# [DEPENDENCIES] zephyr.backtest.core.engine_base
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -12,10 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-RSC_default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK_default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L09 — Default Backtest Engine
+"""L_BACKTEST — Vectorized Backtest Engine
 
 回测引擎具体实现。实现 BacktestEngineBase，支持向量化回测。
 
@@ -36,7 +36,7 @@ from decimal import Decimal
 
 import pandas as pd
 
-from zephyr.research.backtest_base import (
+from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
 )

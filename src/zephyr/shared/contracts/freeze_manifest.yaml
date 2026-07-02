@@ -315,7 +315,7 @@ frozen_layer_interfaces:
     note: "Phase B 对齐 ExecutionReport/PerformanceAttributionReport"
 
   L09:
-    file: "src/zephyr/research/backtest_base.py"
+    file: "src/zephyr/backtest/core/engine_base.py"
     classes: ["BacktestEngineBase", "FactorDiscovery"]
     version: "1.0"
     status: "skeleton_frozen"
