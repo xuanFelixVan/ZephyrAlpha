@@ -304,10 +304,21 @@ entries:
     2026-07-02 完成：其他session完成governance根目录拆分，.py文件数从271降至31（排除__init__.py），
     GOV-DOC-018 T_hard=60已合规。验证结果：31文件[MODULE]标注全部为根目录归属，0错位文件；
     734文件import扫描仅2处断裂（finding_ingest路径漂移+drift_fix跨包引用，均有try/except保护）。
-  fix_phase: 已完成（2026-07-02，governance根目录271→31文件，GOV-DOC-018 T_hard=60合规）
+  fix_phase: |
+    已完成（2026-07-02，P0-P3 四阶段治本）：
+    P0: 构建迁移编排器 governance_root_split.py + AST import重写引擎 ast_import_rewriter.py
+    P1: 生成24条目 migration-registry.yaml 映射表（12子目录，消费者风险分析）
+    P2: 执行迁移——24文件move到12子目录(audit/persistence/commit_gates/strategies/
+      ops_governance/resilience_governance/context_governance/data_governance/engine/
+      financial_governance/trading_contracts/rule_enforcement)，44消费者import AST精确重写，
+      governance根.py文件数32→8（保留8个高风险核心模块），py_compile全通过
+    P3: 防复发门禁——CREATE-GUARD扩展检测governance/根新增.py硬阻断(commit 4b2c2c0f)
+    最终状态: governance根8个.py文件（__init__/base/capability_lookup/depgraph_schema/
+      evidence_pack/integrity/merkle_hourly/performance_attribution_report），GOV-DOC-018 T_hard=60合规
   status: resolved
   related_rules:
   - TRAE-028
+  - GOV-DOC-018
   created: '2026-07-01'
   last_updated: '2026-07-02'
 - issue_id: '#ARCH-032'
