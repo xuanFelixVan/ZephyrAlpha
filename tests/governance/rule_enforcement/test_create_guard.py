@@ -492,3 +492,50 @@ class TestRulesYamlNamingBlocked:
         passed, detail = gate.check(gw, [str(new_file)])
         assert passed is False, f"rename 到单段 name 应被阻断: {detail}"
         assert "单段name" in detail
+
+
+# ===========================================================================
+# ARCH-031 防复发（2026-07-02）：governance/ 根禁止新增 .py 文件
+# 病根：ARCH-031 治本前 governance/ 根平铺 32 个 .py 文件，治本后迁移 24 文件到
+# 12 子目录，仅保留 8 个高风险核心模块。防复发：禁止在 governance/ 根直接新增 .py。
+# 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 reconciler 先例）。
+# ===========================================================================
+
+class TestGovernanceRootNewPyBlocked:
+    """governance/ 根新增 .py 文件 → 硬阻断（ARCH-031 防复发）。"""
+
+    def test_governance_root_new_py_blocked(self, tmp_path: Path) -> None:
+        """staged src/zephyr/governance/new_module.py → 阻断，提示 ARCH-031 防复发。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            "src/zephyr/governance/new_anti_relapse_test_module.py",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"governance/ 根新增 .py 应被阻断: {detail}"
+        assert "ARCH-031" in detail
+        assert "防复发" in detail
+
+
+class TestGovernanceSubdirNewPyNotAntiRelapse:
+    """governance/<subdir>/ 新增 .py 文件不触发 ARCH-031 防复发。"""
+
+    def test_governance_subdir_new_py_not_anti_relapse(self, tmp_path: Path) -> None:
+        """staged src/zephyr/governance/audit/new_module.py → 不被 ARCH-031 防复发阻断。
+
+        该文件可能被 token 检测阻断（无 creation_token），但 detail 不应含 "防复发"。
+        """
+        _init_git_repo(tmp_path)
+        f = _stage_file(
+            tmp_path,
+            "src/zephyr/governance/audit/new_anti_relapse_subdir_test.py",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        if not passed:
+            assert "防复发" not in detail, (
+                f"governance 子目录新增 .py 不应触发 ARCH-031 防复发: {detail}"
+            )

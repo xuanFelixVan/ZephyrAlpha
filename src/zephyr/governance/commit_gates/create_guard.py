@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML→DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过→L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 8 个高风险核心模块，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -111,6 +111,7 @@ import logging
 import os
 
 from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.governance.rule_patterns import RULE_NAME_RE
 
 logger = logging.getLogger(__name__)
 
@@ -236,11 +237,9 @@ def make_create_guard() -> GateSpec:
         # 放在 new_py_files 过滤前：若 commit 只含 .yaml 无 .py，new_py_files 为空会提前
         # return True 跳过本检测，故须在 return 前完成 .yaml 命名检测。
         #
-        # 真源一致性：_RULE_NAME_RE 与 validate_rule_frontmatter.py DIM-5 正则（line 209）保持一致
-        # （修改此处 MUST 同步修改 validate_rule_frontmatter.py，两处共同构成 DIM-5 双层强制）。
-        import re as _re
+        # DIM-5 正则真源已迁移至 zephyr.governance.rule_patterns.RULE_NAME_RE（SSoT 治本 2026-07-02）
+        # create_guard 与 validate_rule_frontmatter.py 共同 import 同一真源，消除双层强制同步维护负担。
         _RULES_DIR_PREFIX = "docs/01_policies_and_standards/rules/"
-        _RULE_NAME_RE = _re.compile(r"^trae_\d+_(.+)\.yaml$")
         # 收集 rules/ 下新增(A) 的 .yaml 文件
         new_rule_files: list[str] = []
         for f in staged_new:
@@ -270,7 +269,7 @@ def make_create_guard() -> GateSpec:
         bad_rule_names = []
         for f in all_rule_files:
             basename = f.rsplit("/", 1)[-1]
-            m = _RULE_NAME_RE.match(basename)
+            m = RULE_NAME_RE.match(basename)
             if not m:
                 # ① 非 trae 命名（不匹配 trae_\d+_<xxx>.yaml）
                 bad_rule_names.append((f, basename, "非trae命名"))
@@ -309,6 +308,27 @@ def make_create_guard() -> GateSpec:
         new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
         if not new_py_files and not new_yaml_files:
             return True, ""
+
+        # === ARCH-031 防复发（2026-07-02）：禁止 governance/ 根新增 .py 文件 ===
+        # 病根：ARCH-031 治本前 governance/ 根平铺 32 个 .py 文件，治本后迁移 24 文件到
+        # 12 子目录，仅保留 8 个高风险核心模块（GOV-DOC-018 T_hard=60 合规）。
+        # 防复发：禁止在 governance/ 根直接新增 .py 文件，新模块 MUST 放入对应子目录。
+        # 检测：new_py_files 中路径匹配 src/zephyr/governance/<name>.py（count("/") == 3）→ 硬阻断
+        # 扩展已有 create_guard（不新增门禁，规避自指递归——同 line 23-32 先例）
+        _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
+        _gov_root_new = [
+            f for f in new_py_files
+            if f.startswith(_GOVERNANCE_ROOT_PREFIX) and f.count("/") == 3
+        ]
+        if _gov_root_new:
+            return False, (
+                f"ARCH-031 防复发: 禁止在 governance/ 根新增 .py 文件: {_gov_root_new}. "
+                f"governance/ 根仅保留 8 个高风险核心模块（__init__/base/capability_lookup/"
+                f"depgraph_schema/evidence_pack/integrity/merkle_hourly/"
+                f"performance_attribution_report）。"
+                f"新模块 MUST 放入对应功能子目录（如 audit/ persistence/ commit_gates/ 等）。"
+                f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
+            )
 
         # === ARCH-034 P3 遗留2治本（2026-07-01）：类名跨模块唯一性检测 ===
         # 病根：AI 新建 .py 文件时可能定义与已有模块同名的 class（同名不同义），
