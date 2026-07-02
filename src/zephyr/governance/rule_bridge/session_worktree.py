@@ -592,9 +592,18 @@ def session_worktree_merge(
                 parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
             if skipped_files:
                 parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
-            parts.append("，worktree 已清理")
-            msg = "".join(parts)
-            cleaned = True
+            # 验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
+            # merge 成功但清理失败时 worktree 残留——此时不注销 session，
+            # 保留供重试 cleanup_session_worktree / abort（防孤儿 worktree 累积）。
+            wt_path = manager._wt_path(session_id)
+            if manager._worktree_exists(session_id) or wt_path.exists():
+                parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
+                msg = "".join(parts)
+                cleaned = False
+            else:
+                parts.append("，worktree 已清理")
+                msg = "".join(parts)
+                cleaned = True
         else:
             if skipped_files:
                 msg = (
@@ -608,9 +617,9 @@ def session_worktree_merge(
     except Exception as e:
         msg = f"unexpected: {e}"
 
-    # merge 成功才注销 session；冲突时保留 session 供重试
+    # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
     unregistered = False
-    if merged:
+    if merged and cleaned:
         try:
             unregistered = registry.unregister(session_id)
         except Exception:
