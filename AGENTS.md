@@ -232,6 +232,16 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 **新模块归属规则**：新 .py 文件 MUST 放入对应功能子目录（`audit/` `persistence/` `commit_gates/` `strategies/` `ops_governance/` `resilience_governance/` `context_governance/` `data_governance/` `engine/` `financial_governance/` `trading_contracts/` `rule_enforcement/`）。不确定归属时 Grep `src/zephyr/governance/` 下已有子目录选择最匹配的。
 
+### 4.7 目录平铺容量+前缀簇合规门禁（GOV-DOC-018 ARCH-043 Risk 2-B，2026-07-03）
+
+**痛点**：GOV-DOC-018 规定 T_hard=60/T_soft=120 阈值，>T_hard 的目录享 T_soft=120 需在 `__init__.py` 文档化命名前缀约定。但原 `validate_nested_flat_dirs.py` 只数文件数不检查前缀文档，新 AI 可绕过裁定添加不合规文件，或在未读注释情况下强制拆分已裁定合规的目录。
+
+**门禁**：[`validate_nested_flat_dirs.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py) `--check-prefix` 模式——检测 >T_hard(60) 目录的 `__init__.py` 是否文档化命名前缀约定（标记词：`命名规则`/`前缀簇`/`T_soft`/`GOV-DOC-018`/`模块地图`），无约定报 ERROR。
+
+**自动触发**：注册为 `GATE-NESTED-FLAT-PREFIX` 到 [`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)，`src/zephyr/*.py` 变更时 pre-commit 自动运行（事件驱动，全自动，无需手工触发）。`--warn-only` 过渡期（8 个 tests/ 目录存量违规未清零，清零后转 `--ci` 硬阻断）。
+
+**真源**：阈值 `thresholds.yaml` §directory_scalability（`src_py_warn: 60` / `src_py_error: 120`）；规则 `trae_028_doc_structure_naming.yaml` §directory_scalability。
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环
