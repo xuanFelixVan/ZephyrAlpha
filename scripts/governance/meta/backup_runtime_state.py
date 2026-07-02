@@ -16,14 +16,18 @@
 """
 backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）
 
+DEPRECATED（ARCH-041）：git history 已是 yaml/jsonl 文件真源（directory_contract L740），
+物理快照违反真源唯一原则。本脚本默认输出路径已从 meta/_backups/（deprecated）改为
+tmp/runtime_backups/（临时目录，不进 git）。脚本本身仍按 SQLite 时代设计，PG 迁移后
+未更新（architecture_debt_registry §5.33.2），后续应重写或归档。
+
 将脚本系统动态状态导出为可 git commit 的快照：
-- SQLite 表 → JSON 导出
 - YAML 配置文件 → 时间戳快照
 - 产出归档 → commit
 
 Usage:
     python scripts/governance/meta/backup_runtime_state.py
-    python scripts/governance/meta/backup_runtime_state.py --output-dir _backups/
+    python scripts/governance/meta/backup_runtime_state.py --output-dir tmp/runtime_backups/
     python scripts/governance/meta/backup_runtime_state.py --warn-only
 """
 
@@ -57,7 +61,8 @@ ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR
 
 META_DIR = SCRIPTS_DIR / "meta"
-DEFAULT_BACKUP_DIR = META_DIR / "_backups"
+# ARCH-041: 默认输出路径从 meta/_backups/（deprecated）改为 tmp/runtime_backups/（不进 git）
+DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
 
 
 def backup_yaml_files(backup_dir: Path) -> list[str]:

@@ -1035,11 +1035,11 @@ sections:
       fail: 其他文件中存在命名规则定义(非引用)
     - type: constraint
       check: 域ID格式
-      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D_MKT_DATA/D_ASHARE_SIGNAL/D_AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
+      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules_registry.yaml NR-002);示例D_MKT_DATA/D_ASHARE_SIGNAL/D_AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
       fail: 连字符格式(D_EX_CORE)或小写格式(d-ex_core)
     - type: constraint
       check: 域ID语义完整性
-      pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
+      pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules_registry.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
       fail: D-XXX_YYY形式中XXX是已存在域ID(如D-SIGNAL_ASHARE暗示ASHARE是SIGNAL子域,违反NR-001);或域ID是其他域ID加下划线后缀形式(如D-SIGNAL_QUALITY依赖D-SIGNAL上下文,违反NR-003);或domain_name与domain_id表达不同业务含义(违反NR-005)
     - type: constraint
       check: 模块ID格式（双轨制，裁定#208 R1）
@@ -1332,6 +1332,14 @@ sections:
     section_type: rule
     original_rules:
     - DOC-018
+    definition: |
+      本协议中"文件数N"指可执行模块数（.py文件，排除__init__.py），与验证器实现
+      (validate_nested_flat_dirs.py L82: f.suffix==".py" and f.name!="__init__.py")
+      及thresholds.yaml键名(src_py_warn/src_py_error)对齐。ARCH-031案例亦按.py计数
+      (L304: ".py文件数从271降至31排除__init__.py")。
+      理由：GOV-DOC-018本质保证AI可靠召回可执行模块（实验依据见rationale），非.py
+      配置/状态/数据文件不构成AI召回负担（由脚本内部硬编码引用加载，AI召回的是脚本本身）。
+      裁定来源：#ARCH-041。
     conditions:
     - type: constraint
       check: 前置否决项-增量速度

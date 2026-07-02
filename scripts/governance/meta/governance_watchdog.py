@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # [BLUEPRINT] GOV-075 | docs/03_modules/_domain_governance/blueprint.md | §3.9
-# [MODULE] scripts.governance.governance_watchdog
+# [MODULE] scripts.governance.meta.governance_watchdog
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__
+# [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS] run_all.py;LifecycleManager
 # [STARTUP] manual
 # [MATURITY] prototype

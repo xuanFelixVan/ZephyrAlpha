@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_op_check.py | §
-# [MODULE] scripts.governance.pre_op_check
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/pre_op_check.py | §
+# [MODULE] scripts.governance.meta.pre_op_check
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] scripts.governance.__init__
+# [DEPENDENCIES] scripts.governance.meta.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
