@@ -663,8 +663,30 @@ entries:
     但实际是compat重导出层(代码已迁移回audit_trail MOD-INF-020)。新AI可能在里面加编排逻辑。
     需裁定：是否改名为_compat_orchestrator.py(需重写import)，或加[MATURITY] compat标记，
     或保留现状加__init__.py地图标注(当前已做)。
-  fix_phase: 待调研（需先输出治本方案裁定，再决定施工阶段）
-  status: open
+  fix_phase: |
+    风险1（真源分裂）DONE 2026-07-03：
+      bridges/ 下 5 对同名文件改名为 audit_* 前缀（audit_drift_bridge/audit_delegation_bridge/
+      audit_feedback_bridge/audit_tiered_storage_bridge/audit_trust_bridge），消除与 root 的同名冲突。
+      bridges/ 保留为独立 adapter 层（src/zephyr/compliance/audit_trail/bridges/ 7 子模块 import 不破坏）。
+      裁定：bridges/=独立adapter层（不同类名Audit*前缀/不同委托目标/API），非canonical冲突。
+    风险2（命名约定无门禁）DONE 2026-07-03：
+      扩展 validate_nested_flat_dirs.py 加 --check-prefix 模式，检查 >T_hard(60) 目录是否有前缀约定文档
+      （标记：命名规则/前缀簇/T_soft/GOV-DOC-018/模块地图）。
+      注册为 GATE-NESTED-FLAT-PREFIX 到 .pre-commit-config.yaml，src/zephyr/*.py 变更时自动触发
+      （事件驱动，全自动），--warn-only 过渡期（8 个 tests/ 目录存量违规未清零，清零后转 --ci 硬阻断）。
+      治本：新AI无法绕过裁定添加不合规文件——pre-commit 自动拦截。
+    风险3（orchestrator.py compat层名字误导）DONE 2026-07-03：
+      orchestrator.py 改名为 _orchestrator_compat.py（下划线前缀标识 compat 层，对标 Python 约定），
+      消除"orchestrator"名字暗示真正编排器的误导。import 已重写。
+    收尾（不在代码层范围）DONE 2026-07-03：
+      depgraph 路径同步：session_worktree 绕过 GitCommitGateway，reconciler 未触发，
+      裁定#209 Stage 4 增量重建自动同步路径（orchestrator.py → _orchestrator_compat.py +
+      bridges/ 旧名 → audit_* 新名），0 旧路径节点残留。
+      遗留 session 清理：sess-24960/sess-24668 已 abort 清理。
+  resolution_summary: |
+    3 风险全部治本完成。bridges/ 同名消除（audit_* 前缀）；GATE-NESTED-FLAT-PREFIX 注册为 pre-commit
+    自动门禁（事件驱动，src/zephyr/*.py 变更触发）；orchestrator.py 改名 _orchestrator_compat.py。
+  status: resolved
   related_rules:
   - GOV-DOC-018
   - TRAE-028

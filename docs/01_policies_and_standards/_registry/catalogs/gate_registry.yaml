@@ -3,16 +3,16 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-06-30T09:52:42Z'
+generated_at: '2026-07-02T19:21:57Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml
-total_gates: 30
+total_gates: 32
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
   entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
-  description: 架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 17 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强
+  description: 架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 19 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强
   files_trigger: ^docs/02_enterprise_architecture/.*\.yaml$
   always_run: false
   category: unknown
@@ -75,7 +75,7 @@ gates:
   description: ''
   files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py)$
   always_run: false
-  category: triple_alignment
+  category: unknown
   status: active
 - gate_id: GATE-FRONTMATTER
   name: 'GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）'
@@ -100,10 +100,10 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-16
-  name: 'GATE-16: 架构合规校验（architecture-contract v1.0.0）'
+  name: 'GATE-16: 架构合规校验（architecture-contract machine_check 引擎）'
   entry: python scripts/governance/d3_metadata/validate_architecture.py
-  description: 架构合规校验（目录合规 / frontmatter必填 / doc_type↔rule_form一致性 / governance policy必须declarative
-    / operational policy必须procedural），骨架阶段 warn-only
+  description: 架构合规校验——从 architecture_contract.yaml machine_check 动态读取 VR-008/009/011
+    定义执行（governance policy→declarative / operational policy→procedural / procedural→verifiability≠inspection）
   files_trigger: ^docs/01_policies_and_standards/.*\.(md|yaml|yml)$
   always_run: false
   category: architecture_compliance
@@ -116,6 +116,15 @@ gates:
   always_run: false
   category: orphan_detection
   status: active
+- gate_id: GATE-NESTED-FLAT-PREFIX
+  name: 'GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）'
+  entry: python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py
+  description: GOV-DOC-018 T_hard=60/T_soft=120 前缀簇合规——>60文件的目录须在__init__.py文档化命名前缀约定才能享T_soft=120。ARCH-043
+    Risk 2-B
+  files_trigger: ^src/zephyr/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
 - gate_id: GATE-SRC-NO-DATA
   name: 'GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（数据真源唯一 data/）'
   entry: python scripts/governance/d5_architecture/checkers/check_src_no_data.py
@@ -125,11 +134,10 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-DIRECTORY-CONTRACT
-  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml +
-    doc_type_vocabulary.yaml）'
+  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
-  description: 目录契约校验——消费 directory_contract.yaml + doc_type_vocabulary.yaml，校验 staged
-    文件的 doc_type 目录归属/扩展名/ttl/根目录白名单合规性。DCR-001~007 全部启用
+  description: 目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl +
+    白名单），校验 staged 文件合规性。DCR-001/003~007 启用，DCR-002 废弃（P3/P4 治本）
   files_trigger: ''
   always_run: false
   category: unknown
@@ -157,8 +165,8 @@ gates:
   status: active
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
-  entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py
-    scripts/governance/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/check_ssot_gate.py
+    scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
   description: 代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export
     shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行
   files_trigger: ^(src/zephyr/|scripts/).*\.py$
@@ -168,7 +176,7 @@ gates:
 - gate_id: GATE-TEST
   name: 'GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）'
   entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:cacheprovider,-m,"not
-    slow and not e2e" scripts/governance/check_test_structure.py
+    slow and not e2e" scripts/governance/d11_compliance/check_test_structure.py
   description: 测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) +
     GATE-19(测试结构合规)，run_gate_chain 顺序执行
   files_trigger: ^src/zephyr/.*\.py$|^tests/.*\.py$
@@ -239,7 +247,7 @@ gates:
   status: active
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
-  entry: python scripts/governance/validate_tool_contracts_consistency.py
+  entry: python scripts/governance/d3_metadata/validate_tool_contracts_consistency.py
   description: tool_contracts.yaml ↔ 代码 register_tool 一致性校验（mod_inf_013 §9 R3 契约漂移缓解）
   files_trigger: ^(src/zephyr/integration/mcp/tool_contracts\.yaml|src/zephyr/integration/mcp/.*\.py)$
   always_run: false
@@ -249,10 +257,10 @@ gates:
   name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci
     scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci
-    scripts/governance/verify_schema_health.py,--ci
+    scripts/governance/d11_compliance/verify_schema_health.py,--ci
   description: 契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录)
     + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，manual 阶段
-  files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(sync_yaml_to_depgraph|verify_schema_health)\.py)$
+  files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\.py)$
   always_run: false
   category: contract_drift
   status: active
@@ -279,6 +287,14 @@ gates:
   entry: python -m zephyr.behavioral_auditor scan --level LIGHT
   description: 漂移检测 LIGHT scan——src/zephyr/ 下 .py 变更时触发，warn-only 骨架阶段
   files_trigger: ^src/zephyr/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+- gate_id: GATE-NO-TESTS-UNIT
+  name: 'GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）'
+  entry: tests/unit/
+  description: ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免
+  files_trigger: \.(py|md|yaml|yml)$
   always_run: false
   category: unknown
   status: active

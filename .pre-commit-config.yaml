@@ -307,6 +307,23 @@ repos:
         files: "^.*\\.py$"
         description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
 
+      # ── GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）──
+      # 权威依据：GOV-DOC-018 文件夹平铺容量阈值协议（T_hard=60/T_soft=120）
+      # 真源声明：trae_028_doc_structure_naming.yaml §directory_scalability + thresholds.yaml directory_scalability 节
+      # 检测范围：src/zephyr/ 下所有目录（.py 文件变更时触发，全量扫描 SCAN_ROOTS）
+      # 检测内容：>T_hard(60) 的目录须在 __init__.py 文档化命名前缀约定（标记：命名规则/前缀簇/T_soft/GOV-DOC-018/模块地图）
+      # 模式：--warn-only 过渡期（存量 tests/ 目录违规未清零，清零后转 --ci 硬阻断）
+      # 自动触发：src/zephyr/*.py 变更时 pre-commit 自动运行（事件驱动，无需手工触发）
+      - id: gate-nested-flat-prefix
+        name: "GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）"
+        entry: python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py
+        args: ["--check-prefix", "--warn-only"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        description: "GOV-DOC-018 T_hard=60/T_soft=120 前缀簇合规——>60文件的目录须在__init__.py文档化命名前缀约定才能享T_soft=120。ARCH-043 Risk 2-B"
+
       # ── GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（trae_047 §gov_eng_002_directory_mapping）──
       # 权威依据：trae_047_engineering_file_header.yaml §gov_eng_002_directory_mapping 禁止规则
       # 真源声明：数据真源唯一位置为 data/ 目录，src/ 仅放代码不放运行态数据

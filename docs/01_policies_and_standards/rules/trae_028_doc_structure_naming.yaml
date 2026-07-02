@@ -1372,7 +1372,7 @@ sections:
     - type: mandatory
       step: 60<N≤120且无前缀→MUST先立命名前缀规则,否则建子目录
     - type: mandatory
-      step: 检测脚本(validate_nested_flat_dirs.py/validate_directory_structure.py)阈值从thresholds.yaml directory_scalability节读取,warn=60/error=120;脚本默认值fail-open对齐
+      step: 检测脚本(validate_nested_flat_dirs.py/validate_directory_structure.py)阈值从thresholds.yaml directory_scalability节读取,warn=60/error=120;脚本默认值fail-open对齐;validate_nested_flat_dirs.py --check-prefix 模式检查>T_hard(60)目录是否有前缀约定文档(标记:命名规则/前缀簇/T_soft/GOV-DOC-018/模块地图),GATE-NESTED-FLAT-PREFIX注册在.pre-commit-config.yaml,src/zephyr/*.py变更时自动触发(ARCH-043 Risk 2-B)
     prohibitions:
     - 禁止无稳定命名前缀规则下平铺>60个文件
     - 禁止任何文件夹终局文件数>120仍平铺(无论是否有前缀)
