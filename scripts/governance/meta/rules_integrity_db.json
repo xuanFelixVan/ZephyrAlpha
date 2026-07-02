@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "0595657d5fe69c91",
+      "hash": "142fee3cbb6c71dc",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "e3929fe9c4f8059c",
+      "hash": "62a845453857e68b",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/governance/rule_bridge/git_commit_gateway.py": {
-      "hash": "e0f6202ad6107199",
+      "hash": "9d0c6753cb7818a2",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "377d942705b6b490",
+      "hash": "842f65281bca52ad",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "f84d32e8acb97889",
+      "hash": "417e46603881e69b",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -76,7 +76,7 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: __init__.py）"
     },
     "src/zephyr/governance/commit_gates/arch_reference_gate.py": {
-      "hash": "937779638a6376e6",
+      "hash": "f3e8a5cca6285f50",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: arch_reference_gate.py）"
     },
@@ -86,36 +86,51 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: capability_overlap_gate.py）"
     },
     "src/zephyr/governance/commit_gates/claim_required_gate.py": {
-      "hash": "93f757f2908c868e",
+      "hash": "ea880b60728fcfde",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: claim_required_gate.py）"
     },
     "src/zephyr/governance/commit_gates/create_guard.py": {
-      "hash": "e92123f88c916979",
+      "hash": "b4e22b304f6a27c7",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: create_guard.py）"
     },
     "src/zephyr/governance/commit_gates/dangling_reference_gate.py": {
-      "hash": "981a054c7b250c7a",
+      "hash": "966b81621e5a14f9",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: dangling_reference_gate.py）"
     },
     "src/zephyr/governance/commit_gates/directory_contract_gate.py": {
-      "hash": "b7076197295dd3ea",
+      "hash": "edb417dbdecb282a",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: directory_contract_gate.py）"
     },
+    "src/zephyr/governance/commit_gates/gate_repo.py": {
+      "hash": "b9e61ac49034ebc4",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: gate_repo.py）"
+    },
     "src/zephyr/governance/commit_gates/held_overlap_gate.py": {
-      "hash": "1a970c5514a97bca",
+      "hash": "2f57da818f7d7c62",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: held_overlap_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py": {
+      "hash": "a10534dc7a932cf7",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: r5_digit_suffix_gate.py）"
     },
     "src/zephyr/governance/commit_gates/session_required_gate.py": {
       "hash": "70847338de9dfedc",
       "critical": true,
       "desc": "pre-commit gate 实现（auto-glob 保护: session_required_gate.py）"
+    },
+    "src/zephyr/governance/commit_gates/ssot_redefinition_gate.py": {
+      "hash": "71a65ef2a3beea43",
+      "critical": true,
+      "desc": "pre-commit gate 实现（auto-glob 保护: ssot_redefinition_gate.py）"
     }
   },
-  "registered_at": "2026-07-02T07:15:05.958639+00:00",
-  "last_check_at": "2026-06-30T11:27:07.498251+00:00"
+  "registered_at": "2026-07-02T18:46:36.414294+00:00",
+  "last_check_at": "2026-07-02T17:51:10.052545+00:00"
 }

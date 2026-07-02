@@ -19,8 +19,19 @@ ttl: permanent
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
 | MOD-L00-001 | Datasource Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L00-002 | 数据源能力地图 | [data_source_capability_map](data_source_capability_map.md) | Active | verified |
+| MOD-L00-003 | 数据获取需求清单 | [data_acquisition_plan](data_acquisition_plan.md) | Active | verified |
+
+## 参考文档
+
+| 文档 | 说明 | SSoT 范围 |
+|------|------|----------|
+| [数据源能力地图](data_source_capability_map.md) | iFind + miniQMT 可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化 | 数据源能力唯一真源——"能获取什么+怎么获取" |
+| [数据获取需求清单](data_acquisition_plan.md) | 数据库现状对照 + 需补充数据清单（P0/P1/P2/P3优先级）+ 执行计划 | 数据获取需求唯一真源——"需要什么+现状如何+缺什么" |
 
 **架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`
+**数据源能力真源**：`docs/03_modules/_domain_data/data_source_capability_map.md`
+**数据获取需求真源**：`docs/03_modules/_domain_data/data_acquisition_plan.md`
 
 ## 导航
 

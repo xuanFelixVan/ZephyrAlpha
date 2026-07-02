@@ -543,8 +543,12 @@ entries:
     pg_advisory_xact_lock(424242) 与 apply_depgraph.py 的 pg_advisory_lock(424242) 互斥。
     阶段2（已完成，commit fd4d301eb9）：schema 迁移，新建 nodes_metadata/edges_metadata 表，
     迁移 14+9 字段，下线 P1/P2 Python 保护机制（替代为 SQL UPSERT+UPDATE）。
-    阶段3（已完成，commit 2093db3615）：增量引擎，文件级 hash fingerprint——content_hash 列 +
-    compute_file_hash() + --incremental skip 逻辑（无变更时跳过 DB 重建）。
+    阶段3（已完成，commit 2093db3615）：增量引擎 Stage 3——content_hash 列 +
+    compute_file_hash() + --incremental skip 逻辑（无变更时跳过 DB 重建，二元 skip）。
+    阶段4（已完成，commit 8641f2b74）：scan-level 缓存（真正增量重建 Stage 4）——ScanCache 类
+    缓存 scan 结果到 .runtime/depgraph_scan_cache.json，key=(path, content_hash)，命中跳过
+    AST 解析；fingerprint（domain_derivation hash）+ SCAN_LOGIC_VERSION 双重失效。
+    3.7x 加速（cached 3.13s vs no-cache 11.61s）。
   status: resolved
   related_adjudication: '#209'
   created: '2026-07-02'

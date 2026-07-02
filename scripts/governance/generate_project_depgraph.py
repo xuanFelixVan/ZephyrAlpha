@@ -6,7 +6,7 @@
 # [CONSUMERS] CI pipeline; governance automation; PostgreSQL depgraph
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML + Mermaid
+# [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML + Mermaid; scan 结果自动缓存到 .runtime/depgraph_scan_cache.json（裁定#209 Stage 4），content_hash 命中跳过 AST 解析，fingerprint/SCAN_LOGIC_VERSION 变则全失效
 # [MODIFY-GUARD] PostgreSQL depgraph; architecture_model/module_id_registry.yaml
 # [STABILITY] evolving
 # [SAFETY] M
