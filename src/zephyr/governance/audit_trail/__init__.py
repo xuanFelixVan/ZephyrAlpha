@@ -22,7 +22,7 @@
 #   ③ audit_trail/__init__.py 是Safety=H对外垫片（_LAZY_IMPORTS 40+条目），拆分风险>收益
 # 物理平铺 + 逻辑分类已分层：新AI通过本地图 + _LAZY_IMPORTS 字典即可定位任意符号。
 #
-# bridges/ 子包（9文件）：独立adapter层，提供Audit*前缀适配API（与root production实现
+# bridges/ 子包（8文件）：独立adapter层，提供Audit*前缀适配API（与root production实现
 # 不同类名/委托目标/API）。src/zephyr/compliance/audit_trail/bridges/ 是外部消费者。
 #
 # 前缀簇归类（10簇，覆盖22文件）：
@@ -58,6 +58,13 @@
 #   - finding_*         → 发现/摄入簇
 #   - feedback_*        → 反馈策略簇
 #   - 其他              → 功能单体（需在地图中补登职责说明）
+#
+# 新AI使用指引（对应向内收原则④：如何发现+如何不重造）：
+#   1. 定位符号：查 _LAZY_IMPORTS 字典（符号→模块路径+属性名映射），再 import 对应子模块
+#   2. 定位模块：本地图按文件名前缀归位，直接 import zephyr.governance.audit_trail.<module>
+#   3. 新增功能前：先 CapabilityLookup.find("<关键词>") 反查是否已有实现（防重造）
+#   4. 新增文件：按命名规则命名（归对应前缀簇或功能单体），并更新 _LAZY_IMPORTS + 本地图 + 能力卡
+#   5. bridges/ 子包：Audit*前缀适配层，新增需同步 src/zephyr/compliance/audit_trail/bridges/__init__.py
 # ============================================================================
 
 # ARCH-036: 子模块改为延迟导入（__getattr__ + _LAZY_IMPORTS），避免 __init__.py 直接 import 子模块
@@ -230,7 +237,6 @@ __all__ = [
     "merkle_hourly",
     "models",
     "observability_dashboard",
-    "orchestrator",
     "pipeline_runner",
     "privacy",
     "provenance_tracker",

@@ -1,23 +1,24 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
-# [MODULE] zephyr.governance.audit_trail.orchestrator
+# [MODULE] zephyr.governance.audit_trail._orchestrator_compat
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.writer; zephyr.governance.audit_trail.models; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.audit_trail.anomaly; zephyr.governance.audit_trail.indexer; zephyr.governance.audit_trail.self_monitor; zephyr.governance.audit_trail.bridge; zephyr.governance.audit_trail.contracts
 # [CONSUMERS] tests/governance/audit/test_orchestrator.py
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] compat
 # [INVARIANTS] 兼容重导出层——不实现审计编排逻辑，仅 re-export audit_trail 子模块符号
-# [MODIFY-GUARD] audit_trail/__init__.py __all__
+# [MODIFY-GUARD] audit_trail/_orchestrator_compat.py（自洽，不再依赖 __all__）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/audit/test_orchestrator.py
 # [TTL] task_bound
-"""audit-orchestrator 兼容重导出层（ARCH-042 阶段4 修复双 MODULE）
+"""audit-orchestrator 兼容重导出层（ARCH-042 阶段4 修复双 MODULE，ARCH-043 Risk3 改名）
 
 历史：原 audit-orchestrator (MOD-INF-027) 实现 MAPE-K 五层自治循环。
 代码已迁移回 audit-trail (MOD-INF-020)，本模块仅保留 re-export 兼容层。
-移除 docstring 中的 [BLUEPRINT] MOD-INF-027 标签——双 MODULE 引起 SSoT 分裂。
+ARCH-043 Risk3：文件名 orchestrator.py 暗示是真正编排器，但实际是 compat 重导出层，
+新 AI 可能在里面加编排逻辑。改名为 _orchestrator_compat.py 明确语义（_前缀=私有兼容层）。
 """
 
 from __future__ import annotations
