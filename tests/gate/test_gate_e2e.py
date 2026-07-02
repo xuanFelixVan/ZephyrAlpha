@@ -412,14 +412,14 @@ class TestRollbackAndIntegration:
             repo.transition("SRC-122", TaskStatus.IN_PROGRESS)
         conn = sqlite3.connect(str(db_path))
         conn.row_factory = sqlite3.Row
-        rows = conn.execute("SELECT * FROM gates").fetchall()
+        rows = conn.execute("SELECT * FROM gate_runs").fetchall()
         conn.close()
         repo.close()
         assert len(rows) >= 1
         assert any("G1" in (row["gate_id"] or "") for row in rows)
 
     def test_gate_result_written_to_db_on_success(self, tmp_path: Path) -> None:
-        """G1 通过时，GateResult 也写入 gates 表。"""
+        """G1 通过时，GateResult 也写入 gate_runs 表。"""
         db_path = tmp_path / "rb_db_pass.db"
         init_db(db_path)
         repo = TaskRepository(
@@ -432,7 +432,7 @@ class TestRollbackAndIntegration:
         repo.create(task)
         repo.transition("SRC-123", TaskStatus.IN_PROGRESS)
         conn = sqlite3.connect(str(db_path))
-        rows = conn.execute("SELECT * FROM gates").fetchall()
+        rows = conn.execute("SELECT * FROM gate_runs").fetchall()
         conn.close()
         repo.close()
         assert len(rows) >= 1

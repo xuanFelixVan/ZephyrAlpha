@@ -88,7 +88,7 @@ _PERIOD_FORMAT: dict[str, str] = {
 }
 
 # SQL 注入防护：表名白名单（本模块只查询这些表）
-_ALLOWED_TABLES = frozenset({"tasks", "gates", "knowledge", "events"})
+_ALLOWED_TABLES = frozenset({"tasks", "gate_runs", "knowledge", "events"})
 
 # ---------------------------------------------------------------------------
 # 类型别名
@@ -178,7 +178,7 @@ class OLAPEngine:
             )
         """)
         self._conn.execute("""
-            CREATE TABLE IF NOT EXISTS gates_fallback (
+            CREATE TABLE IF NOT EXISTS gate_runs_fallback (
                 gate_run_id TEXT, gate_id TEXT, passed INTEGER,
                 details TEXT, created_at TEXT
             )
@@ -379,7 +379,7 @@ class OLAPEngine:
         self._validate_period(period)
         self._validate_limit(limit)
         fmt = _PERIOD_FORMAT[period]
-        gates_tbl = self._table("gates")
+        gate_runs_tbl = self._table("gate_runs")
 
         gate_filter = "AND gate_id LIKE ?" if gate_id is not None else ""
         params: list[Any] = []
@@ -393,7 +393,7 @@ class OLAPEngine:
                 COUNT(*)                       AS total_runs,
                 SUM(CASE WHEN passed = 1 THEN 1 ELSE 0 END) AS passed_runs,
                 SUM(CASE WHEN passed = 0 THEN 1 ELSE 0 END) AS failed_runs
-            FROM {gates_tbl}
+            FROM {gate_runs_tbl}
             WHERE created_at IS NOT NULL {gate_filter}
             GROUP BY period
             ORDER BY period DESC
@@ -484,13 +484,13 @@ class OLAPEngine:
         dict[str, int]
             ``{"total": N, "passed": M}``
         """
-        gates_tbl = self._table("gates")
+        gate_runs_tbl = self._table("gate_runs")
         rows = self._execute(
             f"""
             SELECT
                 COUNT(*) AS total,
                 SUM(CASE WHEN passed = 1 THEN 1 ELSE 0 END) AS passed
-            FROM {gates_tbl}
+            FROM {gate_runs_tbl}
             """,
         )
         if not rows:

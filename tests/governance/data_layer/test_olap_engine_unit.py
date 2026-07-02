@@ -100,13 +100,13 @@ def _insert_task(db_path: Path, task_id: str, status: str, phase: int = 0) -> No
 
 
 def _insert_gate(db_path: Path, gate_run_id: str, passed: int) -> None:
-    """向 SQLite gates 表插入测试门禁记录。"""
+    """向 SQLite gate_runs 表插入测试门禁记录。"""
     now = datetime.now(UTC).isoformat()
     conn = sqlite3.connect(str(db_path))
     try:
         conn.execute("BEGIN")
         conn.execute(
-            "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO gate_runs (gate_run_id, gate_id, passed, details, created_at) VALUES (?, ?, ?, ?, ?)",
             (gate_run_id, "G1:T-0-001", passed, "{}", now),
         )
         conn.execute("COMMIT")
