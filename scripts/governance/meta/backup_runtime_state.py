@@ -149,6 +149,21 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="警告模式")
     args = parser.parse_args()
 
+    # ARCH-041: 运行时 DEPRECATED 警告——防止新 AI 误用过时脚本
+    import warnings
+    warnings.warn(
+        "backup_runtime_state.py 已 DEPRECATED（ARCH-041）。"
+        "git history 已是 yaml/jsonl 文件真源；PG 备份待重写（§5.33.1 立项）。"
+        "本脚本仅备份 YAML/JSONL 快照到 tmp/，不备份 PG depgraph 数据。",
+        DeprecationWarning,
+        stacklevel=1,
+    )
+    print(
+        "\n⚠ DEPRECATED (ARCH-041): 本脚本已过时——不备份 PG depgraph 数据。"
+        "git history 是 YAML/JSONL 真源；PG 备份待重写（§5.33.1 立项）。\n",
+        file=sys.stderr,
+    )
+
     backup_dir = Path(args.output_dir)
     backup_dir.mkdir(parents=True, exist_ok=True)
 
