@@ -314,14 +314,14 @@ sections:
 references:
   rule_ids: []
   scripts:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   modules:
   - docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml
   blueprints: []
 enforcement:
   type: manual
   executors:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
 metadata:
   change_policy: stable
@@ -339,7 +339,7 @@ metadata:
     date: '2026-06-21'
     by: AI-Assistant
     changes:
-    - P2修复——enforcement.executors从[]设为[scripts/governance/audit_registration.py]，与references.scripts一致，符合RQ-06规范
+    - P2修复——enforcement.executors从[]设为[scripts/governance/d11_compliance/audit_registration.py]，与references.scripts一致，符合RQ-06规范
   - version: 1.0.4
     date: '2026-06-21'
     by: AI-Assistant

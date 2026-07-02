@@ -1,5 +1,5 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/audit_registration.py | §
-# [MODULE] scripts.governance.audit_registration
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/audit_registration.py | §
+# [MODULE] scripts.governance.d11_compliance.audit_registration
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
@@ -23,12 +23,12 @@
   - __init__.py 缺 __all__: 有模块文件但包级 __init__.py 无 __all__
 
 用法:
-    python scripts/governance/audit_registration.py           # 报告孤儿清单（全量）
-    python scripts/governance/audit_registration.py --full    # 显式全量扫描
-    python scripts/governance/audit_registration.py --incremental  # 仅扫描 git 变更文件
-    python scripts/governance/audit_registration.py --fix     # 交互式修复
-    python scripts/governance/audit_registration.py --full --save-baseline  # 保存当前孤儿为基线
-    python scripts/governance/audit_registration.py --incremental --baseline-aware  # 基线差分：仅 NEW 阻断
+    python scripts/governance/d11_compliance/audit_registration.py           # 报告孤儿清单（全量）
+    python scripts/governance/d11_compliance/audit_registration.py --full    # 显式全量扫描
+    python scripts/governance/d11_compliance/audit_registration.py --incremental  # 仅扫描 git 变更文件
+    python scripts/governance/d11_compliance/audit_registration.py --fix     # 交互式修复
+    python scripts/governance/d11_compliance/audit_registration.py --full --save-baseline  # 保存当前孤儿为基线
+    python scripts/governance/d11_compliance/audit_registration.py --incremental --baseline-aware  # 基线差分：仅 NEW 阻断
 
 返回码:
     0 = CLEAN（无孤儿，或 --baseline-aware 模式下仅有 PERSISTENT 孤儿）
@@ -590,13 +590,14 @@ def _scan_module_orphans(
                 # 有消费者 = 已有自然发现机制 = 豁免
                 continue
 
+            pkg_dotted = pkg.replace('/', '.').replace('\\', '.')
             result.orphan_modules.append(
                 OrphanEntry(
                     path=py_file,
                     relative=rel_str,
                     package=pkg,
                     suggestion=(
-                        f"from zephyr.{pkg.replace('/', '.').replace('\\', '.')}.{module_name} import {class_name}"
+                        f"from zephyr.{pkg_dotted}.{module_name} import {class_name}"
                     ),
                 )
             )

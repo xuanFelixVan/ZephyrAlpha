@@ -458,7 +458,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _audit_registration(self, json_output: bool = True) -> dict[str, Any]:
         args = ["--json"] if json_output else []
-        result = _run_script("scripts/governance/audit_registration.py", *args)
+        result = _run_script("scripts/governance/d11_compliance/audit_registration.py", *args)
         return {
             "exit_code": result["exit_code"],
             "success": result["success"],
@@ -517,7 +517,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _get_governance_health(self) -> dict[str, Any]:
         lock_status = _run_script("scripts/lock_files.py", "status")
-        audit = _run_script("scripts/governance/audit_registration.py")
+        audit = _run_script("scripts/governance/d11_compliance/audit_registration.py")
 
         eight_modules = [
             "zephyr.governance.agent_rbac",

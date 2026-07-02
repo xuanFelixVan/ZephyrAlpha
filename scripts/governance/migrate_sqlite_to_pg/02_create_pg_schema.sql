@@ -254,8 +254,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     hard_boundary_ref       TEXT,
     consumed_interfaces     TEXT,
     blueprint_id_invalid    INTEGER DEFAULT 0,
-    blueprint_path          TEXT,
-    content_hash            TEXT
+    blueprint_path          TEXT
     -- 注意：blueprint_id 三轨制检查（MOD-*/D-*/SH-*/PLACEHOLDER*）由触发器实现，
     -- 而非 CHECK 约束。原因：SQLite 历史数据存在不符合三轨制的 blueprint_id
     -- （如 GOV-FSTR-001），CHECK 约束会阻止迁移。触发器只对新 INSERT/UPDATE 生效，

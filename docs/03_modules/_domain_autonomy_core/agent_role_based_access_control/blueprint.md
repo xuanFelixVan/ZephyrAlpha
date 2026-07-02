@@ -6949,7 +6949,7 @@ class PermissionHooks:
 | 2 | 所有交付物通过测试 | `python -m pytest tests/agent-rbac/ -v` exit 0 |
 | 3 | §0.2 对齐验证矩阵全部 ☑ | 逐项验证 |
 | 4 | construction_progress = completed | frontmatter 字段确认 |
-| 5 | 无遗留临时文件 | `python scripts/governance/audit_registration.py` exit 0 |
+| 5 | 无遗留临时文件 | `python scripts/governance/d11_compliance/audit_registration.py` exit 0 |
 
 ---
 

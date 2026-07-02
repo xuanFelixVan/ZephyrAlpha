@@ -76,11 +76,11 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **修改已有文件不走 scaffold**——走 RULE-ZERO 锁协议。
 
-**孤儿检测**: `python scripts/governance/audit_registration.py`（每次 session 结束或 Pipeline Gate 运行时扫描）。exit 0 = CLEAN，exit 1 = 有孤儿。
+**孤儿检测**: `python scripts/governance/d11_compliance/audit_registration.py`（每次 session 结束或 Pipeline Gate 运行时扫描）。exit 0 = CLEAN，exit 1 = 有孤儿。
 
 **SSoT 创建门禁（三层防线）**: scaffold 查重维度3（module_path 冲突）是硬阻断。三层防线：L1 scaffold 主防线 → L2 GitCommitGateway 兜底 → L3 pre-commit hook 双保险。绕过 scaffold 直接 Write 新 .py 后 commit 会被 L2/L3 拦截。已知边界：`git commit --no-verify` 能绕过 L3，依赖 GATE-COMMIT-GW 规则约束。检测逻辑唯一真源：`capability_lookup.check_ssot_conflicts()`。详见 [check_ssot_gate.py](file:///d:/ZephyrAlpha/scripts/governance/check_ssot_gate.py)。
 
-**规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-FOUR + [trae_015_arch_path_registration.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml) | 实现: [scaffold.py](file:///d:/ZephyrAlpha/scripts/scaffold.py) | 验证: `python scripts/governance/audit_registration.py`
+**规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-FOUR + [trae_015_arch_path_registration.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml) | 实现: [scaffold.py](file:///d:/ZephyrAlpha/scripts/scaffold.py) | 验证: `python scripts/governance/d11_compliance/audit_registration.py`
 
 **搭便车防护 + 门禁注册制（2026-06-30 治本）**: 多 session 修改同一文件时，后提交的 session 会把工作区全部修改（含前一个 session WIP）一并提交（"搭便车提交"/ghost commit）。防护链：① commit 前 MUST `claim_files` 声明工作范围（[AGENTS.md §8 L284](file:///d:/ZephyrAlpha/AGENTS.md)）② `claim_required_gate` 检测 session 已注册但目标文件未 claim → 阻断 ③ `held_overlap_gate` 检测目标文件被其他活跃 session 持有 → `HELD_OVERLAP_VIOLATION` 阻断（`--allow-overlap` 逃生通道）④ 新增 pre-commit 门禁走 `CommitGateRegistry` 注册制（[commit_gates/](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/) 子目录 + `make_*_gate()`），禁止在 `commit()` 方法体硬编码 `_check_*`（架构债务 #AD-001 治本）。详见 [AGENTS.md §8 L283-286](file:///d:/ZephyrAlpha/AGENTS.md)。
 
@@ -382,7 +382,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 修改 YAML 契约/配置 | `python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | 契约断裂 → 禁止合并 |
 | 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |
 | 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
-| 任何文件变更后 | `python scripts/governance/audit_registration.py` | 有孤儿 → 禁止关闭任务 |
+| 任何文件变更后 | `python scripts/governance/d11_compliance/audit_registration.py` | 有孤儿 → 禁止关闭任务 |
 | 写入文件后 | `python scripts/git_guard.py add <具体文件>` + `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（RULE-TWENTY） | 未提交 = 代码丢失 → 禁止关闭任务 |
 | 涉及安全敏感的变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 创建依赖图 | 先读 `TPL-DEPGRAPH-001` 模板 → 按模板格式创建 → 验证蓝图双向链接 | 不符合模板 → 禁止提交 |
@@ -997,7 +997,7 @@ python scripts/governance/diagnose_depgraph.py
 python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
 
 # 4. 注册审计
-python scripts/governance/audit_registration.py
+python scripts/governance/d11_compliance/audit_registration.py
 
 # 5. 关键模块导入测试
 python scripts/governance/verify_key_imports.py

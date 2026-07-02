@@ -168,8 +168,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     hard_boundary_ref        TEXT,
     consumed_interfaces      TEXT,
     blueprint_id_invalid     INTEGER DEFAULT 0,
-    blueprint_path           TEXT,
-    content_hash             TEXT
+    blueprint_path           TEXT
 )
 """
 

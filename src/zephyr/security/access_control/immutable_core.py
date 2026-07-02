@@ -82,7 +82,7 @@ PROTECTED_PATHS = [
     ".ailocks/registry.json",
     "scripts/lock_files.py",
     "scripts/scaffold.py",
-    "scripts/governance/audit_registration.py",
+    "scripts/governance/d11_compliance/audit_registration.py",
     "src/zephyr/governance/rule_enforcement/_registry.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml",
 ]

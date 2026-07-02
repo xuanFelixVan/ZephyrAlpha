@@ -2335,7 +2335,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail="baseline_aware: no src/zephyr|scripts .py in committed files",
             )
         scan_result = subprocess.run(
-            [sys.executable, "scripts/governance/audit_registration.py",
+            [sys.executable, "scripts/governance/d11_compliance/audit_registration.py",
              "--baseline-aware", "--files"] + rel_py_files,
             cwd=str(project_root),
             capture_output=True,

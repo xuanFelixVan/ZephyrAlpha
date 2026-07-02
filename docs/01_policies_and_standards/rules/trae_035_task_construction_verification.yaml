@@ -167,7 +167,7 @@ sections:
     conditions: []
     actions:
     - type: mandatory
-      step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+      step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/d11_compliance/audit_registration.py
     - type: mandatory
       step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
@@ -276,7 +276,7 @@ sections:
     - TASK-003
     steps:
     - step: G7注册审计
-      command: python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+      command: python D:/ZephyrAlpha/scripts/governance/d11_compliance/audit_registration.py
       expected_exit: 0
       on_fail: 有孤儿禁止关闭
     - step: G6依赖全景图生成（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行）
@@ -332,7 +332,7 @@ sections:
 references:
   rule_ids: []
   scripts:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/diagnose_depgraph.py
@@ -344,7 +344,7 @@ references:
 enforcement:
   type: code
   executors:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
 metadata:
   change_policy: stable
@@ -368,7 +368,7 @@ metadata:
     date: '2026-06-21'
     by: session-20260621-batch4
     changes:
-    - P1修复——enforcement.executors补充scripts/governance/audit_registration.py(原为空)，符合RQ-06规范
+    - P1修复——enforcement.executors补充scripts/governance/d11_compliance/audit_registration.py(原为空)，符合RQ-06规范
   - version: 1.2.0
     date: '2026-06-21'
     by: session-20260622-001

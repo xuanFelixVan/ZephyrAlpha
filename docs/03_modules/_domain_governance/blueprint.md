@@ -2115,7 +2115,7 @@ STEP 3: 拆分后验证
 | 验证项 | 命令 | 通过标准 |
 |--------|------|---------|
 | G-CT-021 MTH-006 三向触发器 | `python scripts/governance/sync_rule_registry.py` | [MTH-006] PASS |
-| 孤儿检测 | `python scripts/governance/audit_registration.py` | exit 0 |
+| 孤儿检测 | `python scripts/governance/d11_compliance/audit_registration.py` | exit 0 |
 | 契约代码存在性 | `python -m pytest tests/ --collect-only -q` | 0 errors |
 | 蓝图-代码双向对齐 | `python scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py` | HIGH=0 |
 
@@ -2165,7 +2165,7 @@ STEP 3: 拆分后验证
 |--------|------|------|
 | 治理域蓝图 | `docs/03_modules/_domain_governance/blueprint.md` | Active |
 | sync_rule_registry.py | `scripts/governance/sync_rule_registry.py` | Active |
-| audit_registration.py | `scripts/governance/audit_registration.py` | Active |
+| audit_registration.py | `scripts/governance/d11_compliance/audit_registration.py` | Active |
 | pre_write_gate.py | `scripts/governance/pre_write_gate.py` | Active |
 | lock_files.py | `scripts/lock_files.py` | Active |
 | rollback.py | `scripts/rollback.py` | Active |

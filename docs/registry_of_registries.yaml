@@ -1,4 +1,4 @@
-﻿# [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 schema_version: "1.1.0"
 doc_type: register
 title: "ZephyrAlpha 中央注册表索引 — 全项目唯一真源总纲"
@@ -539,7 +539,7 @@ ai_usage:
   delete_registry:
     - "禁止删除任何注册表除非同时从本文件中移除登记（RULE-THREE）"
   validate:
-    - "运行审计扫描：python scripts/governance/audit_registration.py"
+    - "运行审计扫描：python scripts/governance/d11_compliance/audit_registration.py"
     - "运行 CTR 合规检查：scripts/governance/d5_architecture/check_g6_ctr_compliance.py"
     - "重新生成 Catalogs 索引：scripts/governance/generators/generate_registry_master_index.py"
 

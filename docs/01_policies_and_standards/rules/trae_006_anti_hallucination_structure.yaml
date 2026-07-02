@@ -191,7 +191,7 @@ sections:
       expected_exit: 0
       on_fail: "枚举值不一致=MUST同步PS-REG-012"
     - step: 检查蓝图-代码双向对齐
-      command: "python scripts/governance/audit_registration.py"
+      command: "python scripts/governance/d11_compliance/audit_registration.py"
       expected_exit: 0
       on_fail: "蓝图§0.1文件清单与代码[BLUEPRINT]字段不对齐"
   gov_eng_001_cross_refs:
