@@ -9,14 +9,14 @@
 # --- 治理锚定结束 ---
 module_id: MOD-GOVERNANCE
 schema_version: "2.0"
-payload_contract_note: "9/22 事件 payload_contract 为 null（设计缺口，experimental 填充时补齐）"
+payload_contract_note: "8/25 事件 payload_contract 为 null（设计缺口，experimental 填充时补齐）"
 
 partition:
   id: cross-cutting-events
   name: "Domain Events / 领域事件清单"
   type: cross-cutting
   description: >
-    领域事件 SSoT。22 条核心事件，分 6 域（Research 3 / Signal 3 / Portfolio 2 /
+    领域事件 SSoT。25 条核心事件，分 7 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
     Execution 7 / Risk 4 / Ops 3）+ 2 条量化红线补充事件。
     当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
     来源：domain-event-catalog.md v1.0.0 迁移。
@@ -127,6 +127,84 @@ events:
     causal_precondition: "策略代码提交 + 参数配置锁定 + 数据集 PIT 快照就绪"
     causal_successor: "可能触发 E-PF-01（若回测结果被采纳为生产策略新版本）"
     audit_level: medium
+
+  - id: E-BT-01
+    name: "BacktestCompleted / 回测完成"
+    domain: backtest
+    frequency: L1
+    publisher: l_backtest
+    publisher_module: "backtest_runner"
+    subscribers: [l05, l04, l07]
+    subscriber_details:
+      - {layer: l05, action: "候选策略池更新(若指标达标)"}
+      - {layer: l04, action: "风险预算校准(使用max_drawdown)"}
+      - {layer: l07, action: "归因归档"}
+    aggregate_root: AGG-004
+    payload_contract: CTR-P1-016
+    description: "D_BACKTEST域完成一次回测运行,产出BacktestResult(CTR-P1-016)已落盘。替代E-RS-02的回测部分,契约已注册。"
+    payload_fields:
+      - {name: backtest_run_id, type: str}
+      - {name: strategy_id, type: str}
+      - {name: factor_set, type: "List[str]"}
+      - {name: period, type: "{start, end}"}
+      - {name: config_hash, type: str}
+      - {name: metrics, type: "{sharpe, max_drawdown, calmar, ic_mean, ic_ir, turnover, hit_rate}"}
+      - {name: equity_curve_ref, type: str}
+      - {name: trades_ref, type: str}
+      - {name: lineage_root, type: str}
+    causal_precondition: "策略代码提交 + 参数配置锁定 + 数据集 PIT 快照就绪"
+    causal_successor: "可能触发 E-BT-02 BacktestPassed(若指标达标)或 E-BT-03 OverfittingDetected(若检测到过拟合)"
+    audit_level: medium
+    retention: "≥7 年"
+
+  - id: E-BT-02
+    name: "BacktestPassed / 回测通过门禁"
+    domain: backtest
+    frequency: L1
+    publisher: l_backtest
+    publisher_module: "backtest_gate"
+    subscribers: [l05, l08]
+    subscriber_details:
+      - {layer: l05, action: "策略纳入生产候选池,触发E-PF-01组合构建"}
+      - {layer: l08, action: "通知团队策略通过验证"}
+    aggregate_root: AGG-004
+    payload_contract: CTR-P1-016
+    description: "回测结果通过门禁检查(sharpe>阈值 且 max_drawdown<阈值 且 overfitting_flag=False)。触发组合构建流程。"
+    payload_fields:
+      - {name: backtest_run_id, type: str}
+      - {name: strategy_id, type: str}
+      - {name: gate_result, type: "{passed: bool, checks: List[{name, passed, value, threshold}]}"}
+      - {name: metrics_summary, type: "{sharpe, max_drawdown, annual_return}"}
+    causal_precondition: "E-BT-01 BacktestCompleted 已发布 + 门禁检查全部通过"
+    causal_successor: "触发 E-PF-01 组合构建(若策略被采纳为生产策略新版本)"
+    audit_level: high
+    retention: "≥7 年"
+
+  - id: E-BT-03
+    name: "OverfittingDetected / 过拟合检测"
+    domain: backtest
+    frequency: L1
+    publisher: l_backtest
+    publisher_module: "overfitting_detector"
+    subscribers: [l02, l08]
+    subscriber_details:
+      - {layer: l02, action: "触发因子衰减标记,降低该因子权重"}
+      - {layer: l08, action: "通知研究员过拟合警告"}
+    aggregate_root: AGG-004
+    payload_contract: CTR-P1-016
+    description: "回测过拟合检测器发现策略存在过拟合(样本内外绩效差异过大 或 White's Test未通过)。触发因子衰减机制。"
+    payload_fields:
+      - {name: backtest_run_id, type: str}
+      - {name: strategy_id, type: str}
+      - {name: detection_method, type: str, description: "in_out_gap | whites_test | walk_forward"}
+      - {name: in_sample_sharpe, type: float}
+      - {name: out_sample_sharpe, type: float}
+      - {name: degradation_ratio, type: float, description: "in/out差异比"}
+      - {name: affected_factors, type: "List[str]"}
+    causal_precondition: "E-BT-01 BacktestCompleted 已发布 + 过拟合检测器运行完成"
+    causal_successor: "触发 L02 因子衰减(降低affected_factors权重)"
+    audit_level: high
+    retention: "≥7 年"
 
   - id: E-RS-03
     name: "ModelValidated / 模型验证通过"
