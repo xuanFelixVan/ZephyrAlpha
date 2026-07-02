@@ -415,13 +415,16 @@ entries:
     符合向内收四原则：真源唯一（根平铺归位到功能子目录）、向内收（用现成功能前缀
     归位）、第一性原理（ce/ 是自创缩写违反 GOV-DOC-003，合并到 context/）、
     可发现性（新 AI 按功能域直觉定位）。
-  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：1334b9e3b4 批次1 → 905aaa828c 阶段C-1/C-2 → 1f98c5795c 阶段C-5 observability_02 归位）
+    后续清理（2026-07-02 SSoT 审计）：module_domain_matching.csv 经审计确认零活跃
+    消费者（唯一引用者在 _archive/ 归档目录 dm101/dm105/dm106），3158行死数据删除；
+    路径→域映射改由 depgraph domain_mapping 表实时查询（extract_depgraph.py）。
+  fix_phase: 已完成（2026-06-30~2026-07-01，多阶段治本：1334b9e3b4 批次1 → 905aaa828c 阶段C-1/C-2 → 1f98c5795c 阶段C-5 observability_02 归位；2026-07-02 后续清理 module_domain_matching.csv 死数据）
   status: resolved
   related_rules:
   - TRAE-028
   - TRAE-060
   created: '2026-06-30'
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-02'
 - issue_id: '#ARCH-034'
   title: behavioral_audit 合并至 governance/drift_detection/（74文件平铺发现性治本 + 同名不同义治理）
   severity: P1高
@@ -525,5 +528,34 @@ entries:
     阶段3（待施工，需任务卡，架构债）：增量引擎，文件级 hash fingerprint。
   status: decided
   related_adjudication: '#209'
+  created: '2026-07-02'
+  last_updated: '2026-07-02'
+- issue_id: '#ARCH-041'
+  title: scripts/governance/meta/ 容量治理裁定——治本优先路线（规则口径消歧+元数据漂移修正+_backups债务清理）
+  severity: P2中
+  adjudication: |
+    背景：scripts/governance/meta/ 文件夹67个文件（含__init__.py），按总文件数口径超GOV-DOC-018 T_hard=60，
+    按.py口径（47个排除__init__.py）合规。调研发现9个问题，5个病根：
+    病根1（规则层）：GOV-DOC-018规则文本"终局文件数N"未限定.py，与验证器实现(.py)、thresholds.yaml键名(src_py_)、
+      ARCH历史案例(ARCH-031 L304".py文件数从271降至31")三方口径不一致。
+    病根2（治理层）：meta/作为"第13维度自我审计"缺少封顶型/线性型显式裁定。
+    病根3（元数据层）：6个文件BLUEPRINT/[MODULE]路径漂移（指向scripts/governance/xxx非scripts.governance.meta.xxx）。
+    病根4（债务层）：_backups/ deprecated标记+reconciler登记，但backup_runtime_state.py仍产生新快照（9个snapshot=135文件），reconciler失效。
+    病根5（知识层）：背景描述ARCH-036/031均与meta/无关，meta/非迁移引入（MOD-INF-005蓝图设计之初即规划）。
+    第一性原理：GOV-DOC-018本质=保证AI可靠召回可执行模块（实验依据288文件召回率15.6%）；
+      验证器.py口径与本质一致（AI召回脚本非配置）；非.py不构成召回负担。
+    核心裁定：不拆分子目录。按.py口径meta/47<60合规。执行治本优先四阶段。
+    不拆分理由：拆分违背"能平铺绝不嵌套"原则；.py口径合规时拆分属过度治疗；病根是规则口径不清+元数据漂移+债务堆积，拆分仅症状治疗。
+  fix_phase: |
+    阶段0（本条目）：修订GOV-DOC-018文本加definition明确"文件数N指可执行模块数(.py,排除__init__.py)"；
+      显式裁定meta/为封顶型；为baselines/benchmark/false_negative_cases补充L153豁免依据。
+    阶段1（本条目）：修正6个文件BLUEPRINT/[MODULE]路径漂移（_concurrency/governance_watchdog/env_check/pre_op_check/session_startup_check/gate_engine_selfcheck）。
+    阶段2（本条目）：修复_backups reconciler失效；归档backup_runtime_state.py改默认输出路径；清理_backups/磁盘9个snapshot。
+    阶段3（本条目）：补充meta/增长治理文档章节。
+    阶段4（条件性）：阶段0已裁定".py口径"为准，meta/47<60合规，跳过拆分。
+  status: decided
+  related_rules:
+  - TRAE-028
+  - GOV-DOC-018
   created: '2026-07-02'
   last_updated: '2026-07-02'
