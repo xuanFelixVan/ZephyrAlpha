@@ -32,9 +32,9 @@ validate_nested_flat_dirs.py — 递归嵌套目录平铺检测器
    是否文档化了命名前缀约定（T_soft=120 资格）。无约定的目录 T_hard=60 适用，需拆分。
 
 Usage:
-    python scripts/governance/d5_architecture/validate_nested_flat_dirs.py
-    python scripts/governance/d5_architecture/validate_nested_flat_dirs.py --warn-only
-    python scripts/governance/d5_architecture/validate_nested_flat_dirs.py --check-prefix
+    python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py
+    python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py --warn-only
+    python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py --check-prefix
 """
 
 __manifest__ = {
