@@ -1,0 +1,12 @@
+# Migration registry for ARCH-031: governance/ root split
+# This file is the single source of truth for file migration entries.
+# P0: minimal seed (1 entry) for --dry-run validation
+# P1: will be expanded with full classification + move map
+entries:
+  - old_module: zephyr.governance.auto_runner
+    new_module: zephyr.governance.automation.auto_runner
+    old_path: src/zephyr/governance/auto_runner.py
+    new_path: src/zephyr/governance/automation/auto_runner.py
+    subdir: automation
+    status: pending
+    classification_method: module_frontmatter
