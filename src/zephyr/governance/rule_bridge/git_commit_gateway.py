@@ -47,6 +47,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     ReconciliationRegistry,
     make_manifest_reconciler,
     make_path_tree_reconciler,
+    make_path_ownership_reconciler,
     make_depgraph_ops_reconciler,
     make_yaml_sync_reconciler,
     make_precommit_id_uniqueness_reconciler,
@@ -278,6 +279,7 @@ class GitCommitGateway:
         """注册默认 post-commit reconciler（声明式框架，P2-T1~T9 + 红蓝发现1 + P3收尾）。"""
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
+        self._reconciliation_registry.register(make_path_ownership_reconciler(self))  # path_ownership_map.yaml 自动同步
         self._reconciliation_registry.register(make_depgraph_ops_reconciler(self))  # 裁定#209 阶段1
         self._reconciliation_registry.register(make_yaml_sync_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
