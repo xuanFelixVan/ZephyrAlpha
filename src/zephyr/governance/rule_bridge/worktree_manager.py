@@ -141,18 +141,19 @@ class _WorktreeLock:
         return False
 
 
-def _force_rmtree(path: Path) -> None:
-    """Windows 文件锁兜底强删目录。
+def _force_rmtree(path: Path) -> bool:
+    """Windows 文件锁兜底强删目录。返回 True=完全删除，False=有残留。
 
     ``shutil.rmtree`` 默认遇 [WinError 32]（文件被占用）/ 只读位 直接失败。
     Windows 上 git/subprocess 刚退出时，文件句柄延迟释放（典型 0.3-2s），
     立即删除会失败。本 helper 用 ``onerror`` 回调：清除只读位 → 重试 →
-    sleep 500ms 等句柄释放再试 → 最终静默跳过（物理残留无害，git worktree
-    元数据才是真源）。被 ``create_session_worktree``（清残留以重建）和
-    ``_remove_worktree``（清残留）复用。
+    sleep 500ms 等句柄释放再试 → 记录失败（不再静默吞错，调用方据返回值决策）。
+    被 ``create_session_worktree``（清残留以重建）和 ``_remove_worktree``（清残留）复用。
     """
     import shutil
     import stat
+
+    failed: list[str] = []
 
     def _on_error(func, p, exc_info):  # noqa: ANN001
         # 第一次：清除只读位重试
@@ -167,9 +168,10 @@ def _force_rmtree(path: Path) -> None:
         try:
             func(p)
         except Exception:
-            pass  # 尽力而为，残留不影响 git 状态
+            failed.append(str(p))  # 记录失败，不再静默吞错
 
     shutil.rmtree(str(path), onerror=_on_error)
+    return not failed and not path.exists()
 
 
 class WorktreeManager:
@@ -390,7 +392,16 @@ class WorktreeManager:
                 session_id, branch,
             )
             if delete_after:
-                self._remove_worktree(session_id, force=False)
+                # merge 成功后 worktree 内容已并入主分支；force=True 安全删除
+                # （dirty 的只是冗余未提交修改，主分支已有原版）。
+                # 不忽略返回值：清理失败时调用方应保留 session 供重试（防孤儿 worktree）。
+                removed = self._remove_worktree(session_id, force=True)
+                if not removed:
+                    logger.warning(
+                        "WorktreeManager: merge 成功但 worktree 清理失败 (session=%s)，"
+                        "调用方应保留 session 供重试 cleanup",
+                        session_id,
+                    )
         return True
 
     def cleanup_session_worktree(self, session_id: str) -> bool:
