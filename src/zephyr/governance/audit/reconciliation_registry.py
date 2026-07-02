@@ -424,6 +424,11 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     （contracts/gates/field_vocabularies 等 16 张）可能与 YAML 真源漂移。
     本 reconciler 在 post-commit 跑 sync_yaml_to_depgraph.py 同步 YAML→DB。
 
+    S1.6 重试队列：sync 失败时写入 data/cache/yaml_sync_retry_queue.json，
+    后续任意 commit 自动重试（最多 _MAX_RETRY_ATTEMPTS=3 次），超过后升级为
+    error 停止重试。AI 发现 error 级别告警时应检查 sync 脚本路径/依赖是否正确，
+    而非自行创建新的同步逻辑（本 reconciler 是 YAML→DB 同步的唯一入口）。
+
     治本 trae_060 §5 "MUST 补事件注册"——消除手动 sync 导致的漂移
     （如 contracts 表 126 条外键违规的根因：AI 改 YAML 后忘记手动跑 sync）。
 
@@ -443,6 +448,7 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     project_root = gateway.project_root
     # S1.6: 重试队列持久化路径（data/cache/ 已被 .gitignore）
     _RETRY_QUEUE_PATH = Path(project_root) / "data" / "cache" / "yaml_sync_retry_queue.json"
+    _MAX_RETRY_ATTEMPTS = 3  # S1.6: 超过此次数后停止重试，升级为 error 防止无限循环
 
     def _read_retry_queue() -> dict | None:
         """读取重试队列。返回 None 表示无待重试项。"""
@@ -476,14 +482,16 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
             # 注册表文件变更触发
             if rel.startswith("docs/01_policies_and_standards/_registry/"):
                 return True
-        # S1.6: 有待重试项时也触发（任意 commit 都会重试失败的 sync）
-        if _read_retry_queue() is not None:
-            return True
+        # S1.6: 有待重试项时也触发，但超过最大重试次数后停止（防止无限循环）
+        queue = _read_retry_queue()
+        if queue is not None:
+            if queue.get("attempt", 0) < _MAX_RETRY_ATTEMPTS:
+                return True
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         sync_result = subprocess.run(
-            [sys.executable, "scripts/governance/sync_yaml_to_depgraph.py"],
+            [sys.executable, "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py"],
             cwd=str(project_root),
             capture_output=True,
             text=True,
@@ -507,9 +515,15 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
             "error": sync_result.stderr.strip()[:500] or sync_result.stdout.strip()[:500],
             "triggered_by": session_id,
         })
+        if attempt >= _MAX_RETRY_ATTEMPTS:
+            # S1.6: 超过最大重试次数→升级为 error（停止重试，需人工介入修路径/依赖）
+            return ReconcileResult(
+                action="error",
+                detail=f"yaml sync failed {attempt} times (max={_MAX_RETRY_ATTEMPTS}), STOPPED retry. Manual fix needed: {sync_result.stderr.strip()[:200]}",
+            )
         return ReconcileResult(
             action="warn",
-            detail=f"yaml sync failed (attempt {attempt}, will retry on next commit): {sync_result.stderr.strip()[:200]}",
+            detail=f"yaml sync failed (attempt {attempt}/{_MAX_RETRY_ATTEMPTS}, will retry on next commit): {sync_result.stderr.strip()[:200]}",
         )
 
     return ReconcilerSpec(
@@ -1577,7 +1591,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
     # PG 写入脚本真源列表（DB 变更即代表域可能漂移）
     _PG_WRITE_SCRIPTS = (
         "scripts/governance/apply_depgraph.py",
-        "scripts/governance/sync_yaml_to_depgraph.py",
+        "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
         "scripts/governance/generate_project_path_tree.py",
     )
     _GEN_DIR = "scripts/governance/d5_architecture/generators"
