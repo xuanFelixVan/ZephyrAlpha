@@ -216,6 +216,8 @@ data/semantic_test/
 scripts/governance/meta/_backups/
 # Runtime-generated hash snapshot (validate_gate_engine_external.py L82)
 scripts/governance/meta/gate_engine_hashes.json
+# ARCH-041: backup_runtime_state.py 默认输出路径（治标，git history 是真源）
+tmp/runtime_backups/
 
 # Script warn-only results
 *_warn_result.json
