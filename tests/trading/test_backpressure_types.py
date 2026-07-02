@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_types
 # [INVARIANTS] All three types are frozen dataclasses; action and schema_version have correct defaults; trace_context defaults to None
-# [MODIFY-GUARD] zephyr.integration.backpressure_types
+# [MODIFY-GUARD] zephyr.infrastructure.pipeline.backpressure_types
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@ import dataclasses
 
 import pytest
 
-from zephyr.integration.backpressure_types import (
+from zephyr.infrastructure.pipeline.backpressure_types import (
     BackpressurePause,
     BackpressureResume,
     BackpressureThrottle,

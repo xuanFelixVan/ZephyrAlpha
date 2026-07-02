@@ -42,7 +42,7 @@ def test_00_imports():
         ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
         ("db.task_repo", "zephyr.governance.persistence.task_repo"),
         ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
-        ("pipeline.models", "zephyr.integration.models"),
+        ("pipeline.models", "zephyr.infrastructure.pipeline.models"),
         ("pipeline.pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
         ("context-engine.context_assembler", "zephyr.autonomy_core.context.context_assembler"),
         ("kb.triage", "zephyr.data.storage.triage"),

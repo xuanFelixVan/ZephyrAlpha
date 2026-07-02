@@ -43,7 +43,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         critical = _FakeProposal(EvolutionSeverity.CRITICAL)
         high = _FakeProposal(EvolutionSeverity.HIGH)
 
-        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.infrastructure.pipeline.backpressure_manager.emit_throttle") as mock_emit:
             mock_emit.return_value = MagicMock()
             result = sync_evolution_proposals_to_backpressure([critical, high], mock_mgr)
             assert result["throttled"] is True
@@ -66,7 +66,7 @@ class TestSyncEvolutionProposalsToBackpressure:
         mock_mgr = MagicMock()
         proposals = [_FakeProposal(EvolutionSeverity.CRITICAL) for _ in range(5)]
 
-        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.infrastructure.pipeline.backpressure_manager.emit_throttle") as mock_emit:
             mock_emit.return_value = MagicMock()
             result = sync_evolution_proposals_to_backpressure(proposals, mock_mgr)
             assert result["critical_count"] == 5

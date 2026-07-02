@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.ports
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__
-# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.integration.layer_router
+# [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.infrastructure.pipeline.layer_router
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.a2a_protocol.governance

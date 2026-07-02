@@ -15,7 +15,7 @@ import importlib.util
 import pytest
 
 from zephyr.integration.vector_memory import MemoryEntry, UnifiedVectorMemoryAdapter
-from zephyr.integration.backpressure_manager import BackpressureManager
+from zephyr.infrastructure.pipeline.backpressure_manager import BackpressureManager
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
 from zephyr.trading.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure

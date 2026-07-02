@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.integration.ct_pipe_routing import (
+from zephyr.infrastructure.pipeline.ct_pipe_routing import (
     CtPipeRoutingHints,
     PipelineRoutingInputsError,
     modules_slice_from_node,

@@ -52,7 +52,7 @@ from zephyr.infrastructure.system_telemetry.contract_metrics import (
     SlaRecord,
     get_contract_metrics,
 )
-from zephyr.integration.backpressure_manager import (
+from zephyr.infrastructure.pipeline.backpressure_manager import (
     BackpressureManager,
     BpState,
     emit_pause,

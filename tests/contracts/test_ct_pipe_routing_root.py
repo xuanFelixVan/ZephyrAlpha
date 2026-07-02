@@ -18,7 +18,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.integration.ct_pipe_routing import (
+from zephyr.infrastructure.pipeline.ct_pipe_routing import (
     CtPipeRoutingHints,
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
@@ -26,7 +26,7 @@ from zephyr.integration.ct_pipe_routing import (
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
 )
-from zephyr.integration.models import PipelineRouteDecision
+from zephyr.infrastructure.pipeline.models import PipelineRouteDecision
 
 
 @dataclass

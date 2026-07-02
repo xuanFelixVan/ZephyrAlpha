@@ -11,19 +11,19 @@
 
 import time
 
-from zephyr.integration.backpressure_manager import (
+from zephyr.infrastructure.pipeline.backpressure_manager import (
     BackpressureManager,
     BpState,
     emit_pause,
     emit_resume,
     emit_throttle,
 )
-from zephyr.integration.backpressure_types import (
+from zephyr.infrastructure.pipeline.backpressure_types import (
     BackpressurePause,
     BackpressureResume,
     BackpressureThrottle,
 )
-from zephyr.integration.models import PipelineOrchestratorConfig
+from zephyr.infrastructure.pipeline.models import PipelineOrchestratorConfig
 
 
 class TestBackpressureManager:
@@ -354,7 +354,7 @@ class TestPipelineOrchestratorInit:
         assert PipelineOrchestrator._text_similarity("hello", "") == 0.0
 
     def test_determine_status_all_success(self):
-        from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.infrastructure.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         results = [
@@ -371,7 +371,7 @@ class TestPipelineOrchestratorInit:
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.SUCCESS
 
     def test_determine_status_all_failure(self):
-        from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.infrastructure.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         results = [
@@ -389,7 +389,7 @@ class TestPipelineOrchestratorInit:
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.FAILURE
 
     def test_determine_status_empty(self):
-        from zephyr.integration.models import PipelineStatus
+        from zephyr.infrastructure.pipeline.models import PipelineStatus
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         assert PipelineOrchestrator._determine_status([]) == PipelineStatus.FAILURE

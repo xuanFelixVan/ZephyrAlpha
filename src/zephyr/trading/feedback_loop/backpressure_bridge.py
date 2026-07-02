@@ -22,7 +22,7 @@ AUDIT-08：在 EvolutionEngine 产出含 CRITICAL 提案时，对 BackpressureMa
 
 设计
 ----
-- 延迟 import ``zephyr.integration.backpressure_manager``，避免 feedback-loop 包被
+- 延迟 import ``zephyr.infrastructure.pipeline.backpressure_manager``，避免 feedback-loop 包被
   import 时强依赖 pipeline（运行时仍单向：FLE → pipeline）。
 - 仅 **CRITICAL** 触发；HIGH/MEDIUM 不扰动全局吞吐（可后续按 signal 类型扩展）。
 """
@@ -66,7 +66,7 @@ def sync_evolution_proposals_to_backpressure(
     if not critical:
         return {"skipped": False, "throttled": False, "critical_count": 0}
 
-    from zephyr.integration.backpressure_manager import emit_throttle
+    from zephyr.infrastructure.pipeline.backpressure_manager import emit_throttle
 
     n = len(critical)
     rate = max(1, min(50, 20 // max(n, 1)))

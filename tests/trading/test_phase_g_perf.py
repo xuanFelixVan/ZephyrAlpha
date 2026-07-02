@@ -52,14 +52,14 @@ from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
 from zephyr.governance.security_governance.default_security_gateway import DefaultSecurityGateway
 from zephyr.governance.intelligence_governance.memory_provider import MemoryProvider
 from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector
-from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume
+from zephyr.infrastructure.pipeline.backpressure_manager import BackpressureManager, emit_pause, emit_resume
 from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.governance.default_tca_engine import DefaultTCAEngine
+from zephyr.governance.audit.default_tca_engine import DefaultTCAEngine
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
 from zephyr.research.backtest_base import (

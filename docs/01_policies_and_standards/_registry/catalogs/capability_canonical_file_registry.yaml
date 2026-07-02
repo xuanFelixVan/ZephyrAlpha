@@ -1872,6 +1872,106 @@ capabilities:
       --update-registry-status/--dry-run/--batch。对标 dm314_infra_ops_split.py 模式。
       [TTL] task_bound——ARCH-031 迁移完成后可退役。
 
+  # --------------------------------------------------------------------------
+  # pipeline 模块（infrastructure/pipeline/ 为 canonical，原 integration/ 顶层镜像副本已删除）
+  # --------------------------------------------------------------------------
+  - capability_id: model_router
+    aliases:
+      - ModelRouter
+    description: >-
+      管线模型路由器。canonical = src/zephyr/infrastructure/pipeline/model_router.py
+      （auto 派生：basename 匹配，MATURITY=production，D_INFRA_RUNTIME）。
+      原 src/zephyr/integration/model_router.py 镜像副本（prototype, D_INTEGRATION）已删除，SSoT 冲突消除。
+  - capability_id: cost_tracker
+    aliases:
+      - CostTracker
+    description: >-
+      管线成本追踪器。canonical = src/zephyr/infrastructure/pipeline/cost_tracker.py
+      （auto 派生：basename 匹配）。原 integration/cost_tracker.py 镜像副本已删除。
+  - capability_id: layer_router
+    aliases:
+      - LayerRouter
+      - get_layer_order
+    description: >-
+      管线层级路由器。canonical = src/zephyr/infrastructure/pipeline/layer_router.py
+      （auto 派生：basename 匹配）。原 integration/layer_router.py 镜像副本已删除。
+  - capability_id: ct_pipe_routing
+    aliases:
+      - PipelineRouteDecision
+    description: >-
+      CT 管线路由决策。canonical = src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
+      （auto 派生：basename 匹配）。原 integration/ct_pipe_routing.py 镜像副本已删除。
+  - capability_id: preemption_manager
+    aliases:
+      - PreemptionManager
+    description: >-
+      管线抢占管理器。canonical = src/zephyr/infrastructure/pipeline/preemption_manager.py
+      （auto 派生：basename 匹配）。原 integration/preemption_manager.py 镜像副本已删除。
+  - capability_id: pipeline_agent_bridge
+    aliases:
+      - PipelineAgentBridge
+    description: >-
+      管线 Agent 桥接。canonical = src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py
+      （auto 派生：basename 匹配）。原 integration/pipeline_agent_bridge.py 镜像副本已删除。
+  - capability_id: llm_gateway
+    aliases:
+      - LLMGateway
+    description: >-
+      LLM 网关。canonical = src/zephyr/infrastructure/pipeline/llm_gateway.py
+      （auto 派生：basename 匹配）。原 integration/llm_gateway.py 镜像副本已删除。
+  - capability_id: routing_plugins
+    aliases:
+      - RoutingPlugins
+    description: >-
+      路由插件。canonical = src/zephyr/infrastructure/pipeline/routing_plugins.py
+      （auto 派生：basename 匹配）。原 integration/routing_plugins.py 镜像副本已删除。
+  - capability_id: pipeline_lock
+    aliases:
+      - PipelineLock
+    description: >-
+      管线锁。canonical = src/zephyr/infrastructure/pipeline/pipeline_lock.py
+      （auto 派生：basename 匹配）。原 integration/pipeline_lock.py 镜像副本已删除。
+  - capability_id: layer_consumer_registry
+    aliases:
+      - LayerConsumerRegistry
+    description: >-
+      层级消费者注册表。canonical = src/zephyr/infrastructure/pipeline/layer_consumer_registry.py
+      （auto 派生：basename 匹配）。原 integration/layer_consumer_registry.py 镜像副本已删除。
+  - capability_id: dead_letter_queue
+    aliases:
+      - DeadLetterQueue
+    description: >-
+      死信队列。canonical = src/zephyr/infrastructure/pipeline/dead_letter_queue.py
+      （auto 派生：basename 匹配）。原 integration/dead_letter_queue.py 镜像副本已删除。
+  - capability_id: circuit_breaker_manager
+    aliases:
+      - CircuitBreakerManager
+    description: >-
+      断路器管理器。canonical = src/zephyr/infrastructure/pipeline/circuit_breaker_manager.py
+      （auto 派生：basename 匹配）。原 integration/circuit_breaker_manager.py 镜像副本已删除。
+  - capability_id: backpressure_types
+    aliases:
+      - BackpressureTypes
+    description: >-
+      背压类型定义。canonical = src/zephyr/infrastructure/pipeline/backpressure_types.py
+      （auto 派生：basename 匹配）。原 integration/backpressure_types.py 镜像副本已删除。
+  - capability_id: backpressure_manager
+    aliases:
+      - BackpressureManager
+    description: >-
+      背压管理器。canonical = src/zephyr/infrastructure/pipeline/backpressure_manager.py
+      （auto 派生：basename 匹配）。原 integration/backpressure_manager.py 镜像副本已删除。
+  - capability_id: pipeline_models
+    canonical_override: src/zephyr/infrastructure/pipeline/models.py
+    aliases:
+      - M_MODULES
+      - M_MODULE_SPECS
+      - PipelineStatus
+    description: >-
+      管线数据模型（M1-M11 模块定义/状态/制品）。canonical = src/zephyr/infrastructure/pipeline/models.py
+      （basename=models.py 过于泛化无法 auto 派生，故用 canonical_override 显式声明）。
+      原 integration/models.py 镜像副本已删除。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

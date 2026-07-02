@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.integration.models import ModuleResult, PipelineResult, PipelineStatus
-from zephyr.integration.pipeline_agent_bridge import (
+from zephyr.infrastructure.pipeline.models import ModuleResult, PipelineResult, PipelineStatus
+from zephyr.infrastructure.pipeline.pipeline_agent_bridge import (
     M_TO_ROLE,
     PipelineAgentBridge,
     domain_for_pipeline,

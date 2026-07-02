@@ -41,8 +41,8 @@ from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
 from zephyr.governance.intelligence_governance.memory_provider import MemoryProvider
-from zephyr.integration.layer_consumer_registry import get_registry_summary, register_all_consumers
-from zephyr.integration.layer_router import (
+from zephyr.infrastructure.pipeline.layer_consumer_registry import get_registry_summary, register_all_consumers
+from zephyr.infrastructure.pipeline.layer_router import (
     get_layer_router,
     handle_layer_onboarding,
     reset_layer_router,
@@ -52,7 +52,7 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.governance.default_tca_engine import DefaultTCAEngine
+from zephyr.governance.audit.default_tca_engine import DefaultTCAEngine
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.risk.risk_manager import RiskLimits
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator

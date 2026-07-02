@@ -49,7 +49,7 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
 使用：
     from zephyr.shared.foundation.models import TaskCard
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-from zephyr.integration.models import PipelineOrchestratorConfig
+from zephyr.infrastructure.pipeline.models import PipelineOrchestratorConfig
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
     config = PipelineOrchestratorConfig(max_retries=3, claude_rescue_threshold=3)
@@ -77,18 +77,18 @@ if TYPE_CHECKING:
     from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
     from zephyr.shared.foundation.models import TaskCard
 
-from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
-from zephyr.integration.cost_tracker import CostTracker
-from zephyr.integration.ct_pipe_routing import (
+from zephyr.infrastructure.pipeline.circuit_breaker_manager import CircuitBreakerManager
+from zephyr.infrastructure.pipeline.cost_tracker import CostTracker
+from zephyr.infrastructure.pipeline.ct_pipe_routing import (
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
     modules_slice_from_node,
     resolve_ct_pipe_orc001,
 )
-from zephyr.integration.dead_letter_queue import DeadLetterQueue
-from zephyr.integration.model_router import ModelRouter
+from zephyr.infrastructure.pipeline.dead_letter_queue import DeadLetterQueue
+from zephyr.infrastructure.pipeline.model_router import ModelRouter
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.integration.models import (
+from zephyr.infrastructure.pipeline.models import (
     M_MODULE_SPECS,
     M_MODULES,
     ABExperimentRoute,
@@ -112,9 +112,9 @@ from zephyr.integration.models import (
     PipelineStatus,
     validate_module_output,
 )
-from zephyr.integration.pipeline_lock import LockResult, PipelineLock
-from zephyr.integration.preemption_manager import PreemptionManager
-from zephyr.integration.routing_plugins import PipelineRouter
+from zephyr.infrastructure.pipeline.pipeline_lock import LockResult, PipelineLock
+from zephyr.infrastructure.pipeline.preemption_manager import PreemptionManager
+from zephyr.infrastructure.pipeline.routing_plugins import PipelineRouter
 from zephyr.shared.schema.task_types import TaskStatus
 
 _RBAC_AVAILABLE = False
@@ -749,7 +749,7 @@ class PipelineOrchestrator:
             bridge_result = None
             if self._agent_orchestrator is not None:
                 try:
-                    from zephyr.integration.pipeline_agent_bridge import PipelineAgentBridge
+                    from zephyr.infrastructure.pipeline.pipeline_agent_bridge import PipelineAgentBridge
 
                     bridge = PipelineAgentBridge(self._agent_orchestrator)
                     bridge_result = bridge.bridge(

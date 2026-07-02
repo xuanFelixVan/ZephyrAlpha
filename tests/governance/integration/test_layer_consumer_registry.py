@@ -13,13 +13,13 @@
 
 from __future__ import annotations
 
-from zephyr.integration.layer_consumer_registry import (
+from zephyr.infrastructure.pipeline.layer_consumer_registry import (
     _REGISTRY_DEFINITION,
     get_registry_summary,
     register_all_consumers,
     register_for_layer,
 )
-from zephyr.integration.layer_router import LayerDataRouter, LayerRouteMap
+from zephyr.infrastructure.pipeline.layer_router import LayerDataRouter, LayerRouteMap
 
 _EMPTY_ROUTE_MAP = LayerRouteMap(
     routes=(),

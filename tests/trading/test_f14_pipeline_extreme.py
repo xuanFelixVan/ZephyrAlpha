@@ -34,14 +34,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.integration.backpressure_manager import BackpressureManager, BpState
-from zephyr.integration.backpressure_types import (
+from zephyr.infrastructure.pipeline.backpressure_manager import BackpressureManager, BpState
+from zephyr.infrastructure.pipeline.backpressure_types import (
     BackpressurePause,
     BackpressureResume,
     BackpressureThrottle,
 )
-from zephyr.integration.dead_letter_queue import DeadLetterQueue
-from zephyr.integration.models import (
+from zephyr.infrastructure.pipeline.dead_letter_queue import DeadLetterQueue
+from zephyr.infrastructure.pipeline.models import (
     DeadLetterEntry,
     ModuleResult,
     ModuleStatus,

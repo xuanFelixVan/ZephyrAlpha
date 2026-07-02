@@ -47,7 +47,7 @@ class TestSyncEvolutionProposalsToBackpressure:
 
         proposals = [FakeProposal(severity=Severity.CRITICAL)]
         mock_bp = MagicMock()
-        with patch("zephyr.integration.backpressure_manager.emit_throttle") as mock_emit:
+        with patch("zephyr.infrastructure.pipeline.backpressure_manager.emit_throttle") as mock_emit:
             result = sync_evolution_proposals_to_backpressure(proposals, mock_bp)
             assert result["throttled"] is True
             assert result["critical_count"] == 1

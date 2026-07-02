@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from zephyr.integration.dead_letter_queue import DeadLetterQueue
-from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
+from zephyr.infrastructure.pipeline.dead_letter_queue import DeadLetterQueue
+from zephyr.infrastructure.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
 
 
 @dataclass

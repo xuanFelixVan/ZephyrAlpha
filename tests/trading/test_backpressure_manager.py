@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_manager
 # [INVARIANTS] BackpressureManager state transitions must be PAUSED/THROTTLED→NORMAL via resume; is_blocked auto-resumes on timeout
-# [MODIFY-GUARD] zephyr.integration.backpressure_manager
+# [MODIFY-GUARD] zephyr.infrastructure.pipeline.backpressure_manager
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,7 +13,7 @@
 
 import time
 
-from zephyr.integration.backpressure_manager import (
+from zephyr.infrastructure.pipeline.backpressure_manager import (
     BackpressureManager,
     BpState,
     BpSymbolState,
@@ -21,7 +21,7 @@ from zephyr.integration.backpressure_manager import (
     emit_resume,
     emit_throttle,
 )
-from zephyr.integration.backpressure_types import (
+from zephyr.infrastructure.pipeline.backpressure_types import (
     BackpressurePause,
     BackpressureResume,
     BackpressureThrottle,

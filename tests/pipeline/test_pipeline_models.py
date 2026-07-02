@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_models
 # [INVARIANTS] PipelineDAG.resolve_execution_order must detect cycles; ModuleInput.validate must return bool
-# [MODIFY-GUARD] only when zephyr.integration.models public API changes
+# [MODIFY-GUARD] only when zephyr.infrastructure.pipeline.models public API changes
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.integration.models import (
+from zephyr.infrastructure.pipeline.models import (
     A_DAG,
     B_DAG,
     ArtifactType,

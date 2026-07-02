@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import time
 
-from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
-from zephyr.integration.models import CircuitBreakerState
+from zephyr.infrastructure.pipeline.circuit_breaker_manager import CircuitBreakerManager
+from zephyr.infrastructure.pipeline.models import CircuitBreakerState
 
 
 class TestCircuitBreakerManagerInit:

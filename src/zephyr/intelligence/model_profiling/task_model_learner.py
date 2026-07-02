@@ -179,7 +179,7 @@ class ModelTaskMatrix:
 
         import importlib
 
-        _mod = importlib.import_module("zephyr.integration.models")
+        _mod = importlib.import_module("zephyr.infrastructure.pipeline.models")
         M_MODULE_SPECS = _mod.M_MODULE_SPECS
         spec = M_MODULE_SPECS.get(task_type, {})
         static_model = spec.get("model", "deepseek")
@@ -195,7 +195,7 @@ class ModelTaskMatrix:
         """为所有已知任务类型推荐最佳模型。"""
         import importlib as _il
 
-        _pm = _il.import_module("zephyr.integration.models")
+        _pm = _il.import_module("zephyr.infrastructure.pipeline.models")
         M_MODULES = _pm.M_MODULES
 
         results: list[TaskRecommendation] = []
@@ -208,7 +208,7 @@ class ModelTaskMatrix:
         count = 0
         import importlib as _il2
 
-        _pm2 = _il2.import_module("zephyr.integration.models")
+        _pm2 = _il2.import_module("zephyr.infrastructure.pipeline.models")
         M_MODULE_SPECS = _pm2.M_MODULE_SPECS
         module_to_role = {
             mid: M_MODULE_SPECS.get(mid, {}).get("role", "").split("——")[0].strip()

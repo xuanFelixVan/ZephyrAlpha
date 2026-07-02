@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from zephyr.integration.model_router import ModelRouter
+from zephyr.infrastructure.pipeline.model_router import ModelRouter
 
 
 @dataclass

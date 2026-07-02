@@ -177,7 +177,7 @@ class ModelTaskMatrix:
                 source="benchmark_baseline",
             )
 
-        from zephyr.integration.models import M_MODULE_SPECS
+        from zephyr.infrastructure.pipeline.models import M_MODULE_SPECS
 
         spec = M_MODULE_SPECS.get(task_type, {})
         static_model = spec.get("model", "deepseek")
@@ -191,7 +191,7 @@ class ModelTaskMatrix:
 
     def recommend_all(self) -> list[TaskRecommendation]:
         """为所有已知任务类型推荐最佳模型。"""
-        from zephyr.integration.models import M_MODULES
+        from zephyr.infrastructure.pipeline.models import M_MODULES
 
         results: list[TaskRecommendation] = []
         for module_id in M_MODULES:
@@ -201,7 +201,7 @@ class ModelTaskMatrix:
     def load_benchmark_baseline(self, profiles: list[dict[str, Any]]) -> int:
         """从 ModelProfiler benchmark 结果中播种基准数据。"""
         count = 0
-        from zephyr.integration.models import M_MODULE_SPECS
+        from zephyr.infrastructure.pipeline.models import M_MODULE_SPECS
 
         module_to_role = {
             mid: M_MODULE_SPECS.get(mid, {}).get("role", "").split("——")[0].strip()

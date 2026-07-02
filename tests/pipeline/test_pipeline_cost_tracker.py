@@ -13,8 +13,8 @@
 
 from __future__ import annotations
 
-from zephyr.integration.cost_tracker import CostTracker
-from zephyr.integration.models import CostRecord
+from zephyr.infrastructure.pipeline.cost_tracker import CostTracker
+from zephyr.infrastructure.pipeline.models import CostRecord
 
 
 class TestCostTrackerInit:
