@@ -9,7 +9,7 @@ description: |
 lock_philosophy: |
   "设计已正确 → 锁定 → 修改需审批 → 防止不知情的 AI 为完成任务而擅自改动架构"
   对标：K8s ValidatingAdmissionWebhook（准入控制）+ Terraform state lock（状态锁）
-        + Vibe Coding 社区 "architecture decision record (ADR) immutable" 惯例
+        + Vibe Coding 社区 "架构决策 immutable" 惯例
         + 专业机构 "change advisory board (CAB)" 审批流程
 
 locked_items:
@@ -152,7 +152,7 @@ modification_protocol:
 
 industry_practices: |
   ## Vibe Coding 社区做法
-  - ADR (Architecture Decision Record) 作为知识条目融入 KB——可变、可推翻、可迭代
+  - 架构决策（Architecture Decision）作为知识条目融入 KB——可变、可推翻、可迭代（项目禁用 ADR 术语，因 ADR 暗示不可推翻，与项目持续进化理念冲突）
   - .cursorrules / CLAUDE.md / .trae/rules/ 作为 AI 行为约束文件——锁定关键设计
   - 社区共识：核心架构决策应由人类 Owner 控制，AI 只在授权范围内操作
 

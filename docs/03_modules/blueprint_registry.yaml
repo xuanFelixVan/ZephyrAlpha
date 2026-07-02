@@ -2,9 +2,9 @@ registry:
   version: 2.7.0
   created: '2026-05-02'
   last_updated: '2026-07-02'
-  total_blueprints: 54
+  total_blueprints: 55
   scope: 03_modules/
-  note: Auto-synced from 54 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 55 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
   generated_at: '2026-07-02'
   generated_by: sync_registry_from_blueprints.py
@@ -87,6 +87,21 @@ _schema:
 
     '
 blueprints:
+- module_id: MOD-BT-001
+  name: _domain_backtest
+  title: D_BACKTEST 回测引擎域蓝图
+  summary: D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动),统一归口回测引擎,消除research/intelligence/rollback多处置放。MVP
+    7个核心模块。
+  layer: domain
+  functional_domain: backtest
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 1.0.0
+  generation: 1
+  last_updated: '2026-07-02'
+  file_path: 03_modules/_domain_backtest/blueprint.md
+  construction_progress: partially_implemented
 - module_id: MOD-CONTEXT_ENGINE
   name: context_engine
   title: Context Engine 集成蓝图 — 上下文引擎集成索引
@@ -589,7 +604,7 @@ blueprints:
   file_path: 03_modules/_cross_layer/agent_orchestrator/blueprint.md
   construction_progress: completed
 - module_id: MOD-INF-042
-  name: local_model
+  name: _domain_integration
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
   summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
   layer: infra_ops
@@ -624,7 +639,7 @@ blueprints:
   file_path: 03_modules/_domain_knowledge/knowledge_base/blueprint.md
   construction_progress: completed
 - module_id: MOD-L00-001
-  name: datasource_core
+  name: _domain_data
   title: Data Source Core 蓝图+施工图 — 数据接入层
   summary: 数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。
   layer: data
@@ -638,7 +653,7 @@ blueprints:
   file_path: 03_modules/_domain_data/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L02-001
-  name: alpha_factor_core
+  name: _domain_factor
   title: Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
   summary: Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供L03消费。
   layer: factor
@@ -652,7 +667,7 @@ blueprints:
   file_path: 03_modules/_domain_factor/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L03-001
-  name: signal_generation_core
+  name: _domain_signal
   title: Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位
   summary: 信号生成层C轨占位。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层未开放，禁止施工。
   layer: signal
@@ -666,7 +681,7 @@ blueprints:
   file_path: 03_modules/_domain_signal/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L04-001
-  name: risk_management_core
+  name: _domain_risk
   title: Risk Management Core 蓝图+施工图 — 风险管理引擎
   summary: L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。
   layer: risk
@@ -680,7 +695,7 @@ blueprints:
   file_path: 03_modules/_domain_risk/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L05-001
-  name: portfolio_core
+  name: _domain_portfolio_core
   title: Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位
   summary: L05 组合构建层C轨占位——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
     + 默认股票多头策略 + 注册表。
@@ -695,7 +710,7 @@ blueprints:
   file_path: 03_modules/_domain_portfolio_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L06-001
-  name: execution_core
+  name: _domain_execution_core
   title: Trade Execution Core 蓝图+施工图 — 交易执行引擎
   summary: L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1
     部分实现：执行引擎+订单管理+模拟券商。业务层未开放，禁止施工。
@@ -710,7 +725,7 @@ blueprints:
   file_path: 03_modules/_domain_execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
-  name: analytics_core
+  name: _domain_reporting
   title: Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位
   summary: 盘后分析层C轨占位。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase
     C实现。
@@ -725,7 +740,7 @@ blueprints:
   file_path: 03_modules/_domain_reporting/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L08-001
-  name: human_machine_interface_core
+  name: _domain_frontend
   title: Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）
   summary: ⛔ C轨业务层未开放，禁止施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
     Dashboard 5页面已实现。默认实现待施工。
@@ -740,7 +755,7 @@ blueprints:
   file_path: 03_modules/_domain_frontend/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
-  name: research_core
+  name: _domain_research
   title: Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位
   summary: 研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。C轨占位——业务层未开放，禁止施工。
   layer: research
@@ -754,7 +769,7 @@ blueprints:
   file_path: 03_modules/_domain_research/blueprint.md
   construction_progress: design_only
 - module_id: MOD-L10-001
-  name: compliance_core
+  name: _domain_compliance
   title: Compliance Core 蓝图+施工图 — 合规引擎
   summary: 合规引擎——SecurityGateway+ComplianceEngine OCP扩展点+AISG Sandbox+ArtifactScanner。Phase
     B骨架已就位，核心抽象和实现已定义。
@@ -769,7 +784,7 @@ blueprints:
   file_path: 03_modules/_domain_compliance/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L11-001
-  name: ml_core
+  name: _domain_machine_learning_train
   title: ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位
   summary: ML平台层C轨占位。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase
     B骨架已就位。C轨占位——禁止施工。
@@ -784,7 +799,7 @@ blueprints:
   file_path: 03_modules/_domain_machine_learning_train/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L13-001
-  name: experiment_core
+  name: _domain_simulation
   title: Experimentation Core 蓝图+施工图 — 实验管理平台
   summary: 实验层。ExperimentPipelineBase + ScoutAgentBase OCP 扩展点 + ExperimentConfig/ExperimentMetric。Phase
     B 骨架已就位，CTR-009~012 待施工。
@@ -891,11 +906,12 @@ blueprints:
   file_path: 03_modules/_system_master/blueprint.md
   construction_progress: completed
 summary:
-  total: 54
+  total: 55
   by_blueprint_status:
-    Active: 48
+    Active: 49
     Draft: 6
   by_layer:
+    domain: 1
     cross_layer: 26
     infra_ops: 16
     data: 1
@@ -911,7 +927,7 @@ summary:
     ml_train: 1
     simulation: 1
   by_construction_progress:
-    partially_implemented: 32
+    partially_implemented: 33
     design_only: 8
     completed: 11
     mostly_implemented: 1
@@ -919,6 +935,12 @@ summary:
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
   last_recomputed: '2026-07-02'
 changelog:
+- version: 2.7.6
+  date: '2026-07-02'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 55 份 blueprint.md；登记项相对上一版有
+    1 条差异摘要'
+  - 新增 MOD-BT-001 → 03_modules/_domain_backtest/blueprint.md
 - version: 2.7.5
   date: '2026-07-02'
   changes:

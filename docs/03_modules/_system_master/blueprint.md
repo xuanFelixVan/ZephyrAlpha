@@ -641,7 +641,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | L06 | Trade Execution | MOD-L06-001 | skeleton | 订单路由 — 蓝图已创建,blocked |
 | L07 | Post-Trade Analytics | MOD-L07-001 | skeleton | PnL归因 — 蓝图已创建,blocked |
 | L08 | Human-AI Interface | MOD-L08-001 | implemented | Dashboard — 蓝图已创建,blocked |
-| L09 | Research & Innovation | MOD-L09-001 | skeleton | 回测孵化 — 蓝图已创建,blocked |
+| L09 | Research & Innovation | MOD-L09-001 | skeleton | 研究创新 — 蓝图已创建,blocked（回测已于 2026-07-02 独立为 D_BACKTEST/MOD-BT-001） |
 | L10 | Compliance | MOD-L10-001 | skeleton | 合规校验 — 蓝图已创建,blocked |
 | L11 | ML Platform | MOD-L11-001 | skeleton | ML生命周期 — 蓝图已创建,blocked |
 | L12 | System Telemetry | — | implemented | 全系统遥测 — 已合并到B-Track |
@@ -1329,6 +1329,8 @@ WQA 七维加权评分 (每Session):
 | 3 | FeatureStore | 因子计算+特征存储(§42.1) |
 
 ### 40.2 回测引擎
+
+> **域归属**：回测引擎已于 2026-07-02 独立为 D_BACKTEST 域，蓝图 [MOD-BT-001](file:///D:/ZephyrAlpha/docs/03_modules/_domain_backtest/blueprint.md)。本节仅保留概念级索引。
 
 | 功能 | 要求 |
 |------|------|
