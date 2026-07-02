@@ -496,3 +496,34 @@ entries:
   - GOV-DOC-002
   created: '2026-07-01'
   last_updated: '2026-07-01'
+- issue_id: '#ARCH-040'
+  title: 依赖全景图运营态触发机制改造（手动→自动，分4阶段）
+  severity: P1高
+  adjudication: |
+    裁定#209（dependency_path_panorama.md §14.2）。原"禁止触发，因会覆盖手动修复"条款
+    基于早期无保护机制的设计，经调研核实生成器已内置 P1/P2 保护机制
+    （PRODUCTION_PROTECTED_FIELDS 14字段 + EDGES_PROTECTED_FIELDS 9字段），
+    DELETE 前读出保护字段、重建后仅当重建字段为空时恢复——原禁用理由已大幅弱化。
+    同时确认 15 个 reconciler 中无任何针对 nodes/edges 运营态同步的 reconciler
+    （GATE-PATH-TREE 只管 arch_directory_tree，GATE-YAML-SYNC 只管规则缓存表），
+    是设计缺口。
+    核心裁定：分4阶段——阶段0纠正文档（即本裁定本身）；阶段1新增 GATE-DEPGRAPH-OPS
+    reconciler（priority=130，trigger=commit .py）+ pg_advisory_lock 与 apply_depgraph.py
+    互斥；阶段2字段角色分离治本（新建 nodes_metadata/edges_metadata 表，迁移
+    PRODUCTION_PROTECTED_FIELDS + EDGES_PROTECTED_FIELDS）；阶段3增量能力建设
+    （文件级 hash fingerprint）。
+    第一性原理病根：运营态字段同时承担"派生数据"与"人工 curated 元数据"两种角色，
+    业界主流是物理分离（Sourcegraph 派生索引+仓库元数据分离；Netflix 流量拓扑+
+    服务所有权分离）。对标 Netflix/Stripe/Sourcegraph 自动触发主流做法。
+  fix_phase: |
+    阶段0（已完成）：修订 dependency_path_panorama.md §14.2 + 登记 #ARCH-040（本条目）。
+    阶段1（待施工，需任务卡）：实现 GATE-DEPGRAPH-OPS reconciler
+    （reconciliation_registry.py 新增 make_depgraph_ops_reconciler +
+    git_commit_gateway.py 注册）+ generate_project_depgraph.py 加 pg_advisory_lock。
+    阶段2（待施工，需任务卡，架构债）：schema 迁移，新建 nodes_metadata/edges_metadata
+    表，迁移 14+9 字段，下线 P1/P2 保护机制。
+    阶段3（待施工，需任务卡，架构债）：增量引擎，文件级 hash fingerprint。
+  status: decided
+  related_adjudication: '#209'
+  created: '2026-07-02'
+  last_updated: '2026-07-02'

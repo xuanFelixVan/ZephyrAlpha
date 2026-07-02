@@ -762,14 +762,115 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 ### 14.2 它什么时候跑
 
-两种情况：
+三轨触发（裁定#209，2026-07-02）：
 
-| 触发方式 | 场景 |
-|---------|------|
-| **手动触发** | 我主动跑 `python scripts/governance/generate_project_depgraph.py` |
-| **代码变更后触发** | 批量新建/修改/删除模块后，跑一次让全景图和代码对齐 |
+| 触发方式 | 场景 | 机制 |
+|---------|------|------|
+| **自动触发**（阶段1起） | commit `.py` 文件后 | GATE-DEPGRAPH-OPS post-commit reconciler（priority=130，详见 §14.2.1）|
+| **手动触发**（兜底） | 批量改代码后强制对齐 / 疑似漂移时人工核查 | `python scripts/governance/generate_project_depgraph.py` |
+| **dry-run 检测**（不写入） | 只想知道漂移状况不修改 DB | `python scripts/governance/generate_project_depgraph.py --dry-run` |
 
-**禁止触发的情况**：本次只修改了depgraph数据（手动修数据），没有改代码。此时重跑生成器会覆盖手动修复，是纯损失操作。
+**禁止触发的情况**（已收窄，原"覆盖手动修复"风险由 P1/P2 保护机制兜底，详见 §14.2.1）：
+- 改了 depgraph 数据（apply_depgraph.py / sync 脚本写入）但没改代码——此时重跑生成器无新数据可扫描，是空操作（不再是"损失"，但也是浪费）。
+- 生成器正在运行时（pg_advisory_lock 互斥，阶段1施工后）。
+
+---
+
+#### 裁定#209：依赖全景图运营态触发机制改造（2026-07-02）
+
+**背景**：原 §14.2 "禁止触发，因会覆盖手动修复"条款基于早期无保护机制的设计。经 §14.2.1 调研核实：生成器已内置 P1/P2 保护机制（`PRODUCTION_PROTECTED_FIELDS` 14字段 + `EDGES_PROTECTED_FIELDS` 9字段），DELETE 前读出保护字段、重建后仅当重建字段为空时恢复——原"覆盖手动修复"的禁用理由已大幅弱化。同时确认 15 个 reconciler 中**无任何针对 nodes/edges 运营态同步的 reconciler**（GATE-PATH-TREE 只管 arch_directory_tree，GATE-YAML-SYNC 只管规则缓存表），是设计缺口。
+
+**核心裁定**：依赖全景图运营态应改为自动触发，分 4 阶段实施：
+
+| 阶段 | 内容 | 产出 |
+|------|------|------|
+| 阶段0（立即） | 纠正文档与认知——本裁定即阶段0产出 | 本节修订 |
+| 阶段1（短期） | 新增 GATE-DEPGRAPH-OPS reconciler（priority=130，trigger=commit .py，reconcile=dry-run检测→有漂移则 --output-db --force，失败降级 warn）+ 加 pg_advisory_lock 与 apply_depgraph.py 互斥 | 新 reconciler + 任务卡 |
+| 阶段2（中期） | 字段角色分离治本——新建 nodes_metadata / edges_metadata 表，迁移 PRODUCTION_PROTECTED_FIELDS(14) + EDGES_PROTECTED_FIELDS(9) 出 nodes/edges；nodes/edges 回归纯派生态，可全量 DELETE+INSERT 无保护顾虑；P1/P2 保护机制下线 | schema 迁移 + 任务卡 |
+| 阶段3（长期） | 增量能力建设——引入文件级 hash fingerprint（对标 Bazel Skyframe / rust-analyzer salsa），只重扫 hash 变化的文件，自动触发频率可提升到每次 commit | 增量引擎 |
+
+**第一性原理病根**：依赖全景图运营态本质是"代码世界的派生投影"，重新生成本不应有信息丢失。当前设计的悖论是运营态字段同时承担"派生数据"（from_node_id/dep_type 等9字段，应自动重生）与"人工 curated 元数据"（PRODUCTION_PROTECTED_FIELDS 14 + EDGES_PROTECTED_FIELDS 9，不应被覆盖）两种角色——业界主流做法是物理分离这两种角色（Sourcegraph 派生索引+仓库元数据分离；Netflix 流量拓扑+服务所有权分离）。阶段2 的字段分离才是治本。
+
+**业界对标**（详见 §14.2.1）：Netflix "不完整数据比没有数据更糟糕"、Stripe 从"季度迁移"到"持续计算"、Sourcegraph 周期调度+webhook——业界主流是自动触发，"手动触发防覆盖"是反主流取舍。100% AI 开发场景下图漂移危害被放大（腾讯 Ghost Dependencies、SRI 论文 13.5× 依赖膨胀、Replit Agent 删库事件），自动触发必要性随 AI 改代码频率上升而上升。
+
+**关联议题**：#ARCH-040（[architecture_issue_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）。
+
+---
+
+#### 14.2.1 自动触发机制调研依据（裁定#209 证据基础）
+
+> 调研时间：2026-07-02。方法：阅读 [generate_project_depgraph.py](../../../../scripts/governance/generate_project_depgraph.py)（3924行）+ [reconciliation_registry.py](../../../../src/zephyr/governance/audit/reconciliation_registry.py) + [git_commit_gateway.py](../../../../src/zephyr/governance/rule_bridge/git_commit_gateway.py) 代码实证 + 业界网络调研。
+
+##### A. 生成器实现证据
+
+| 项目 | 实证 |
+|------|------|
+| 扫描模式 | 全量扫描，不支持增量；扫描范围 14 个白名单目录 |
+| DELETE+INSERT | 有保留范围：`WHERE design_maturity != 'design'` 保留设计态节点/边 |
+| 覆盖手动修复的真实含义 | 指运营态 production 字段的手动修改——**已有 P1/P2 保护机制**：`PRODUCTION_PROTECTED_FIELDS`（14字段：blueprint_id/owner/impact_level/build_status 等）+ `EDGES_PROTECTED_FIELDS`（9字段：failure_mode/fallback/resource_impact 等） |
+| 保护机制语义 | DELETE 前读出保护字段 → 重建后 `apply_production_metadata_protection` 恢复——"仅当重建字段为空时恢复，不覆盖磁盘新值" |
+| 并发控制 | **无显式跨进程锁**——生成器与 apply_depgraph.py 都仅依赖 PG MVCC 事务（autocommit=False），未用 advisory lock / row lock / table lock（阶段1需补） |
+| dry-run | 支持 `--dry-run`（只检测漂移不写入） |
+| 外部触发 | `main()` 不接受 argv，但可 subprocess 调用；当前无任何 reconciler 调用它 |
+| 运行时长 | 代码里有计时但无基线数值，无法验证"成本高"是否成立 |
+
+##### B. Reconciler 清单证据（确认缺口）
+
+当前注册 15 个 reconciler，**无任何针对 depgraph nodes/edges 运营态同步的 reconciler**：
+
+| priority | gate_id | 同步对象 |
+|---|---|---|
+| 50 | GATE-RUNTIME-CLEANUP | .runtime/ 旧文件 |
+| 100 | GATE-19-manifest | script_manifest.yaml |
+| 150 | GATE-PATH-TREE | **arch_directory_tree（路径全景图）** |
+| 160 | GATE-YAML-SYNC | 规则缓存表（domains/contracts/gates） |
+| 170 | GATE-ASSET-INDEX | unified-asset-index.yaml |
+| 200 | GATE-REGISTRY-SYNC | 注册主索引+审计 |
+| 250 | GATE-ID-UNIQ | pre-commit hook id 唯一性 |
+| 280 | GATE-VOCAB-CHANGE | ttl 重判 |
+| 300 | GATE-MODULE-ID-CONSISTENCY | module_id 三轨一致 |
+| 500 | GATE-DELETE-AUDIT | 幽灵节点检测+归档 |
+| 600 | GATE-DEPRECATED-DIR | 废弃目录迁移 |
+| 620 | GATE-REGENERATE | 域文档/index.yaml/manifest 重生 |
+| 710 | GATE-EXEMPT-ZONE-FM | 豁免区 frontmatter |
+| 710 | GATE-RULE-AUDIT | 规则审计+DCR+ARCH引用 |
+| 810 | GATE-INTEGRITY-AUDIT | 规则完整性+裸commit审计 |
+
+**GATE-DEPGRAPH-OPS 应排 priority=130**（在 GATE-RUNTIME-CLEANUP=50 之后，GATE-19-manifest=100 之后，GATE-PATH-TREE=150 之前——depgraph nodes/edges 是更上游真源，路径全景图依赖它）。
+
+##### C. 业界对标证据
+
+| 工具/公司 | 触发方式 | 关键论断 |
+|----------|---------|---------|
+| Bazel Skyframe | on-demand + Watchman 增量失效 | 图是派生态，重生成不覆盖手工（无手工字段概念） |
+| Buck2 DICE | daemon + Watchman + 值相等 skip | 同上 |
+| Cargo | 命令调用全量重算 | 依赖图小，全量可控 |
+| Netflix Service Topology | 完全事件驱动 near-real-time | **"不完整或不正确的依赖数据比没有数据更糟糕"** |
+| Stripe AutoJDK | continuous computation | 从"季度迁移项目"改为"持续自动计算"是明确演进方向 |
+| Sourcegraph | 周期调度（2min任务+24h仓库）+ webhook | per-commit SCIP 全量上传 |
+| LSP（rust-analyzer/pyright） | didChange 事件驱动 | 全部自动触发，无"手动触发"概念 |
+
+**业界主流规律**：没有任何主流工具把"手动触发"作为长期方案。三个根本原因——① 派生态原则（图是 derived view，重生成不应有信息丢失）；② 漂移即事故（图漂移导致错误告警/根因定位/影响面判断）；③ 规模化不可承受手动（AI 改代码频率远高于人类，漂移窗口被放大）。
+
+**AI 开发场景危害案例**：腾讯 Ghost Dependencies（2026-02，LLM 幻觉包名→供应链投毒）、SRI 论文（AI 声明依赖 vs 运行时依赖膨胀 13.5×）、Replit Agent 删生产数据库（2025-07，不知下游影响）。
+
+##### D. 问题清单（7项）
+
+| # | 问题 | 类型 | 严重度 |
+|---|------|------|--------|
+| P1 | 依赖全景图运营态无自动触发 reconciler（15个里缺一个） | 架构缺口 | 高 |
+| P2 | §14.2"禁止触发"基于"覆盖手动修复"，但生成器已有 P1/P2 保护机制，原禁用理由已大幅弱化 | 文档失真 | 高 |
+| P3 | design edge 已被 WHERE 条件保护不被覆盖，production 字段已有 P1/P2 保护——"覆盖手动修复"具体场景已说不清，可能已不存在 | 语义漂移 | 高 |
+| P4 | 生成器与 apply_depgraph.py 之间无显式跨进程锁，自动触发时可能并发冲突 | 并发风险 | 中 |
+| P5 | 全量扫描成本无基线数值，"成本高"是主观判断未实证 | 决策依据缺失 | 中 |
+| P6 | 不支持增量，每次全量重算，制约自动触发频率上限 | 性能瓶颈 | 中 |
+| P7 | 100% AI 开发下，图漂移窗口被放大——AI 改代码后立即查图可能看到旧图 | 场景特殊性 | 高 |
+
+##### E. 裁定对用户观点的回应
+
+用户观点："自动生成→出现垃圾→优化→测试→再生成→优化，而不是直接禁止触发停在那里不管"——**完全认可**。与 Netflix "incomplete data is worse than no data" 教训一致，与 Stripe "持续计算"演进方向一致。
+
+关键补充认知：当前"垃圾"的来源不是自动触发本身，而是**字段角色混淆**——把人工 curated 数据塞进派生表，自动触发就会"覆盖手工"。这是设计债，不是自动触发的错。阶段2 的字段分离才是治本。阶段1 的 GATE-DEPGRAPH-OPS 是"先动起来"——用 P1/P2 保护机制兜底，让自动触发跑起来，发现什么字段被错误覆盖，再针对性分离。这正是"自动生成→出现垃圾→优化"的迭代循环。
 
 ### 14.3 生成器覆盖矩阵
 
