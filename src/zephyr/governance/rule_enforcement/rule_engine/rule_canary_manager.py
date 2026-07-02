@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
-# [MODULE] zephyr.governance.rule_enforcement.rule_canary_manager
+# [MODULE] zephyr.governance.rule_enforcement.rule_engine.rule_canary_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.infrastructure.escalation

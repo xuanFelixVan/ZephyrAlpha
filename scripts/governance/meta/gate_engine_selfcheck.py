@@ -195,7 +195,7 @@ def check_gate_engine_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.governance.rule_enforcement.gate_engine import (
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
             GateEngine,
         )
 

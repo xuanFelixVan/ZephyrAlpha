@@ -27,7 +27,7 @@ from datetime import UTC, datetime
 import pytest
 
 from zephyr.governance.rule_enforcement.audit_chain_verifier import AuditChainVerifier, AuditEntry, AuditReport
-from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
+from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
 
 
 def _make_result(

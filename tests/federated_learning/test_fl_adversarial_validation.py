@@ -11,7 +11,7 @@
 # [TESTS] tests/test_fl_adversarial_validation.py
 # [TTL] task_bound
 
-from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidation
+from zephyr.governance.rule_enforcement.gate_engine.adversarial_validation import AdversarialValidation
 
 
 class TestAdversarialValidationInstantiation:

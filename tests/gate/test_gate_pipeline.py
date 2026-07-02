@@ -25,8 +25,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
-from zephyr.governance.rule_enforcement.gate_pipeline import Combinator, GatePipeline, GateStep
+from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
+from zephyr.governance.rule_enforcement.gate_engine.gate_pipeline import Combinator, GatePipeline, GateStep
 
 
 def _pass_checker(ctx: GateContext) -> GateResult:

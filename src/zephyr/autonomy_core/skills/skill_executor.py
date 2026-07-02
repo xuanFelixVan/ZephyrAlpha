@@ -333,7 +333,7 @@ class SkillExecutor:
     def _run_gate_checks(self, skill_id: str, l1: dict[str, Any], results: dict[str, Any]) -> list[GateResult]:
         gate_results: list[GateResult] = []
 
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         engine = GateEngine()
         gate_results.append(GateResult("G0", True, "GateEngine accessible"))

@@ -36,7 +36,7 @@ from zephyr.governance.persistence.task_repo import (
     GateViolationError,
     TaskRepository,
 )
-from zephyr.governance.rule_enforcement.gate_engine import (
+from zephyr.governance.rule_enforcement.gate_engine.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,

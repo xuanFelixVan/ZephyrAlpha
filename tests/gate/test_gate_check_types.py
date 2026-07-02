@@ -24,7 +24,7 @@ from zephyr.governance.rule_enforcement.check_types.check_type_registry import (
     list_check_types,
     register_check_type,
 )
-from zephyr.governance.rule_enforcement.gate_engine import CheckConfig, GateEngine, GateResult
+from zephyr.governance.rule_enforcement.gate_engine.gate_engine import CheckConfig, GateEngine, GateResult
 from zephyr.governance.rule_enforcement.gate_types import GateEngineError, GateViolation
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel

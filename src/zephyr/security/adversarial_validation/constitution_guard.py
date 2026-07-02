@@ -25,7 +25,7 @@ import yaml
 from zephyr.security.adversarial_validation.models import AttackScenario
 
 try:
-    from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 except ImportError:
     GateEngine = None  # type: ignore[assignment,misc]
 

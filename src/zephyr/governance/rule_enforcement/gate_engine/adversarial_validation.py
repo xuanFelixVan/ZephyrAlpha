@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_validation
-# [MODULE] zephyr.governance.rule_enforcement.adversarial_validation
+# [MODULE] zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.rule_enforcement.check_types.adversarial_validation;zephyr.governance.rule_enforcement.gate_pipeline

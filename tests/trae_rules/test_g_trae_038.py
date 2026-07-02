@@ -73,7 +73,7 @@ class TestGTrae038:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         assert "G_TRAE_038" in GateEngine._GATE_FILES, "Gate G_TRAE_038 not in _GATE_FILES"
 
@@ -82,7 +82,7 @@ class TestGTrae038:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
         # Temporarily add to _GATE_FILES if not there
@@ -104,7 +104,7 @@ class TestGTrae038:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from datetime import datetime
 
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
         from zephyr.governance.rule_enforcement.task_types import Task
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
@@ -148,7 +148,7 @@ class TestGTrae038:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from datetime import datetime
 
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
         from zephyr.governance.rule_enforcement.task_types import Task
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
@@ -188,7 +188,7 @@ class TestGTrae038:
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
-        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         original = dict(GateEngine._GATE_FILES)
         try:

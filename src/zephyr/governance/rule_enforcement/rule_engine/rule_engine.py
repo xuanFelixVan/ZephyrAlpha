@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
-# [MODULE] zephyr.governance.rule_enforcement.rule_engine
+# [MODULE] zephyr.governance.rule_enforcement.rule_engine.rule_engine
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
 # [CONSUMERS] SkillLoader; GateEngine; cold_start sequence; AI sessions

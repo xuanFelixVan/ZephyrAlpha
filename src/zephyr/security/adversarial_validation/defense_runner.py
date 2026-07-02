@@ -44,7 +44,7 @@ except ImportError:
     _FINDING_AVAILABLE = False
 
 try:
-    from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+    from zephyr.governance.rule_enforcement.gate_engine.gate_engine import GateEngine
 except ImportError:
     GateEngine = None  # type: ignore[assignment,misc]
 

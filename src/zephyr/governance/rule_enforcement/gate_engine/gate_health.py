@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.governance.rule_enforcement.gate_health
+# [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_health
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
 # [CONSUMERS]

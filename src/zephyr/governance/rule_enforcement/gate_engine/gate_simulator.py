@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
-# [MODULE] zephyr.governance.rule_enforcement.gate_simulator
+# [MODULE] zephyr.governance.rule_enforcement.gate_engine.gate_simulator
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_context; zephyr.governance.rule_enforcement.gate_pipeline
 # [CONSUMERS]
@@ -21,8 +21,8 @@ import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
-from zephyr.governance.rule_enforcement.gate_context import GateContext, GateResult, GateStatus
-from zephyr.governance.rule_enforcement.gate_pipeline import GatePipeline
+from zephyr.governance.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
+from zephyr.governance.rule_enforcement.gate_engine.gate_pipeline import GatePipeline
 
 logger = logging.getLogger(__name__)
 
