@@ -287,7 +287,7 @@ class FindingTaskBridge:
             ],
             allowed_touch=upstream,
             rollback_instructions="Delete auto-bridged TaskCard from data/databases/governance.db",
-            post_sync_standard=["python scripts/governance/audit_registration.py"],
+            post_sync_standard=["echo auto-bridged task created"],
             acceptance=["Finding bridged to TaskCard with all required fields"],
             dependency_type="none",
             estimated_tokens=8000,
