@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §bootstrap_superadmin
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §bootstrap_superadmin
 # [MODULE] zephyr.security.access_control.bootstrap_superadmin
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]

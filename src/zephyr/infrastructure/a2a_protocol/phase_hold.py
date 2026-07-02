@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.a2a_protocol.phase_hold
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.__init__

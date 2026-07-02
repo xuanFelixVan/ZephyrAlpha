@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.payloads.__init__; zephyr.security.llm_defense.llm_security.protocol

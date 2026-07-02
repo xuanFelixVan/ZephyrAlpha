@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §genesis
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §genesis
 # [MODULE] zephyr.security.access_control.genesis_bootstrap
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]

@@ -14,7 +14,7 @@ last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/llm_security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
+  - "03_modules/_cross_layer/large_language_model_security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
   - "architecture_model/layers/b_llm_security.yaml（LLM Security YAML SSoT）"
   - "OWASP LLM Applications Top 10 (2026.03)（外部威胁分类参考，非项目内 SSoT）"
 supersedes: []

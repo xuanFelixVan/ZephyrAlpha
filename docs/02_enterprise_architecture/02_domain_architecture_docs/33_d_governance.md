@@ -287,9 +287,9 @@ graph TD
         docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["docs__03_modules___domain_governance__code_dedu... design"]
         docs_03_modules_domain_governance_governance_automation_blueprint_md["docs__03_modules___domain_governance__governanc... design"]
         docs_03_modules_domain_governance_registry_governance_blueprint_md["docs__03_modules___domain_governance__registry_... design"]
-        docs_03_modules_domain_infrastructure_operations_a2a_protocol_arbitration_rules_yaml["docs/03_modules/_domain_infrastructure_operations/a2a_protocol/... production"]
+        docs_03_modules_domain_infrastructure_operations_a2a_protocol_arbitration_rules_yaml["docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/... production"]
         docs_03_modules_domain_infrastructure_operations_a2a_protocol_blueprint_md["docs__03_modules___domain_infrastructure_operations__a2a_protoc... design"]
-        docs_03_modules_domain_infrastructure_operations_a2a_protocol_trigger_config_yaml["docs/03_modules/_domain_infrastructure_operations/a2a_protocol/... production"]
+        docs_03_modules_domain_infrastructure_operations_a2a_protocol_trigger_config_yaml["docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/... production"]
         docs_03_modules_domain_infrastructure_operations_asset_inventory_blueprint_md["docs__03_modules___domain_infrastructure_operations__asset_inve... design"]
         docs_03_modules_domain_infrastructure_operations_capacity_assurance_blueprint_md["docs__03_modules___domain_infrastructure_operations__capacity_a... design"]
         docs_03_modules_domain_infrastructure_runtime_runtime_integration_blueprint_md["docs__03_modules___domain_infrastructure_runtime__runtim... design"]
@@ -2481,8 +2481,8 @@ graph TD
 | 6 | docs/03_modules/_cross_layer/database/blueprint.md | docs__03_modules___cross_layer__datab... | design | planned |
 | 7 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | docs__03_modules___cross_layer__feedb... | design | planned |
 | 8 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | docs__03_modules___cross_layer__gate_... | design | planned |
-| 9 | docs/03_modules/_cross_layer/llm_security/blueprint.md | docs__03_modules___cross_layer__llm_s... | design | planned |
-| 10 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | docs__03_modules___cross_layer__mcp_s... | design | planned |
+| 9 | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | docs__03_modules___cross_layer__llm_s... | design | planned |
+| 10 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | docs__03_modules___cross_layer__mcp_s... | design | planned |
 | 11 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | docs__03_modules___cross_layer__model... | design | planned |
 | 12 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | docs__03_modules___cross_layer__orpha... | design | planned |
 | 13 | docs/03_modules/_cross_layer/pipeline/blueprint.md | docs__03_modules___cross_layer__pipel... | design | planned |
@@ -2497,12 +2497,12 @@ graph TD
 | 22 | docs/03_modules/_domain_compliance/compliance_core/bluepr... | docs__03_modules___domain_compliance_... | design | planned |
 | 23 | docs/03_modules/_domain_data/datasource_core/blueprint.md | docs__03_modules___domain_data__datas... | design | planned |
 | 24 | docs/03_modules/_domain_factor/alpha_factor_core/blueprin... | docs__03_modules___domain_factor__alp... | design | planned |
-| 25 | docs/03_modules/_domain_frontend/hmi_core/blueprint.md | docs__03_modules___domain_frontend__h... | design | planned |
+| 25 | docs/03_modules/_domain_frontend/human_machine_interface_core/blueprint.md | docs__03_modules___domain_frontend__h... | design | planned |
 | 26 | docs/03_modules/_domain_governance/blueprint.md | docs__03_modules___domain_governance_... | design | planned |
 | 27 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance_... | design | planned |
 | 28 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance_... | design | planned |
 | 29 | docs/03_modules/_domain_governance/registry_governance/bl... | docs__03_modules___domain_governance_... | design | planned |
-| 30 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/blueprint.md | docs__03_modules___domain_infrastructure_operations__... | design | planned |
+| 30 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | docs__03_modules___domain_infrastructure_operations__... | design | planned |
 | 31 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/bluepri... | docs__03_modules___domain_infrastructure_operations__... | design | planned |
 | 32 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blue... | docs__03_modules___domain_infrastructure_operations__... | design | planned |
 | 33 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration... | docs__03_modules___domain_infra_runti... | design | planned |
@@ -2630,8 +2630,8 @@ graph TD
 | 106 | docs/01_policies_and_standards/rules/trae_058_depgraph_sc... | docs/01_policies_and_standards/rules/... | production | generated |
 | 107 | docs/01_policies_and_standards/rules/trae_059_schema_vers... | docs/01_policies_and_standards/rules/... | production | generated |
 | 108 | docs/01_policies_and_standards/rules/trae_060_inward_cons... | docs/01_policies_and_standards/rules/... | production | generated |
-| 109 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/arbitratio... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
-| 110 | docs/03_modules/_domain_infrastructure_operations/a2a_protocol/trigger_co... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
+| 109 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/arbitratio... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
+| 110 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/trigger_co... | docs/03_modules/_domain_infrastructure_operations/a2a... | production | generated |
 | 111 | docs/03_modules/path_ownership_map.yaml | docs/03_modules/path_ownership_map.yaml | production | generated |
 | 112 | scripts/__init__.py | scripts/__init__.py | prototype | generated |
 | 113 | scripts/_archive/construction/create_db_alignment_tasks.py | scripts/_archive/construction/create_... | prototype | generated |

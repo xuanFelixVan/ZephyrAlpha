@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_mcp | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
 # [TTL] task_bound
 """ZephyrAlpha MCP (Model Context Protocol) 子包。
 

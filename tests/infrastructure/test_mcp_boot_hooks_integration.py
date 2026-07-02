@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-INF-013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §14
 # [MODULE] tests.integration.test_mcp_boot_hooks_integration
 # [INVARIANTS] boot_hooks MCP自动启动钩子注册; launcher进程启动能力; check_server_health存活检测
 # [MODIFY-GUARD] launcher.py 或 boot_hooks.py 的 MCP 启动逻辑变更需同步更新本测试

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.runtime_interceptor
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__

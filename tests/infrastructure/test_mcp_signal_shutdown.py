@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-INF-013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §14
 # [MODULE] tests.integration.test_mcp_signal_shutdown
 # [INVARIANTS] SIGINT/SIGTERM信号发送后所有子进程在5秒内被terminate_all清理; atexit兜底关闭验证; 信号处理不抛异常
 # [MODIFY-GUARD] launcher.py 的 signal注册/terminate_all/shutdown 逻辑变更需同步更新本测试

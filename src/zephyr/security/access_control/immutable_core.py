@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §immutable_core
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §immutable_core
 # [MODULE] zephyr.security.access_control.immutable_core
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]

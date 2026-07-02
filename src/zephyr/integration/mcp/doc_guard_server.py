@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.doc_guard_server
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.integration.mcp._base_server; zephyr.shared.utils.time_utils

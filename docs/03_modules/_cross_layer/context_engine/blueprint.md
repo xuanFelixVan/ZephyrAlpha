@@ -69,7 +69,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 |---------|---------|---------|---------|
 | MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain_infrastructure_operations/vector_memory/blueprint.md` |
 | MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task_system/blueprint.md` |
-| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/llm_security/blueprint.md` |
+| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/large_language_model_security/blueprint.md` |
 | MOD-KB-001 | 必须 | 知识库检索源 | `docs/03_modules/_domain_infrastructure_operations/knowledge_base/blueprint.md` |
 | MOD-INF-035 AutoRuntime Core | 可选 | 运行时调度 | `docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md` |
 

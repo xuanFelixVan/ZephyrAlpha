@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §4.2
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §4.2
 # [MODULE] zephyr.infrastructure.task_manager_server
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.models; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.schemas

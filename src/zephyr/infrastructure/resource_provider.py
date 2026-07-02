@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
 # [MODULE] zephyr.infrastructure.resource_provider
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.io.paths
@@ -120,7 +120,7 @@ class ResourceProvider:
         return {"contents": contents}
 
     def _blueprint_handler(self) -> str:
-        path = REPO_ROOT / "docs/03_modules/_cross_layer/mcp_servers/blueprint.md"
+        path = REPO_ROOT / "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md"
         if path.exists():
             return path.read_text(encoding="utf-8")
         return "# Blueprint not found"
