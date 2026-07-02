@@ -72,6 +72,7 @@ __all__ = [
     "ReconciliationRegistry",
     "make_manifest_reconciler",
     "make_path_tree_reconciler",
+    "make_path_ownership_reconciler",
     "make_depgraph_ops_reconciler",
     "make_yaml_sync_reconciler",
     "make_precommit_id_uniqueness_reconciler",
@@ -415,6 +416,81 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
+    )
+
+
+# trae_060-reviewed: 合规——新增 reconciler（无法合并进已有：path_tree 触发 .py/.yaml，path_ownership 触发 blueprint.md，生成器不同；治本：path_ownership_map.yaml 自动同步消除手工维护漂移）
+def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 path_ownership_map.yaml post-commit 自动同步 reconciler。
+
+    commit docs/03_modules/**/blueprint.md 后，path_ownership_map.yaml 可能过时
+    （蓝图 §0.1 文件清单变了但 ownership map 未同步）。本 reconciler 在 post-commit
+    跑 generate_path_ownership_map.py --write 同步，如有变更自动提交。
+
+    对标 make_path_tree_reconciler（arch_directory_tree 同步）的 subprocess 模式。
+    区别：
+    - 触发条件：仅 blueprint.md 变更（path_tree 触发 .py/.yaml）
+    - 生成器：generate_path_ownership_map.py（path_tree 用 generate_project_path_tree.py）
+    - 输出：docs/03_modules/path_ownership_map.yaml（path_tree 输出 full_project_tree.md）
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith("blueprint.md") and rel.startswith("docs/03_modules/"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        ownership_file = "docs/03_modules/path_ownership_map.yaml"
+        # 1. 重新生成 path_ownership_map.yaml
+        sync_result = subprocess.run(
+            [sys.executable, "scripts/governance/generate_path_ownership_map.py", "--write"],
+            cwd=str(project_root),
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=60,
+        )
+        if sync_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"path_ownership sync failed: {sync_result.stderr.strip()[:200]}",
+            )
+        # 2. 检测 path_ownership_map.yaml 是否有变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", ownership_file]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="path_ownership_map.yaml up to date")
+        # 3. 有变更 → 自动提交
+        abs_file = str(project_root / ownership_file)
+        auto_msg = "chore(path-ownership): auto-reconcile path_ownership_map by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, [abs_file], auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="path_ownership_map.yaml regenerated and auto-committed",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="path_ownership_map.yaml no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"path_ownership_map.yaml drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-PATH-OWNERSHIP",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=160,  # 在 path_tree(150) 之后
     )
 
 
