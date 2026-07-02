@@ -53,6 +53,7 @@ depends_on:
 | [_domain_execution_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_execution_core/index.md) | D_EX_CORE | 执行核心 | 活跃 |
 | [_domain_risk/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_risk/index.md) | D_RISK | 风险管理 | 活跃 |
 | [_domain_research/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_research/index.md) | D-RESEARCH | 研究创新 | 活跃 |
+| [_domain_backtest/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_backtest/blueprint.md) | D_BACKTEST | 回测引擎（双模式：向量化+事件驱动，2026-07-02 从 D-RESEARCH 独立） | 活跃 |
 | [_domain_reporting/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_reporting/index.md) | D_REPORTING | 报表分析 | 活跃 |
 | [_domain_machine_learning_train/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_machine_learning_train/index.md) | D_ML_TRAIN | ML 训练 | 活跃 |
 | [_domain_knowledge/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_knowledge/index.md) | D_KNOWLEDGE | 知识库 | 活跃 |
