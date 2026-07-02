@@ -26,6 +26,8 @@ boundaries:
     parameters:
       ssot: "YAML"
       readonly_tables: 8
+      table_comment_required: true
+      table_comment_rule: "新建 readonly 表时 MUST 通过 COMMENT ON TABLE 标注四要素：表性质（YAML 真源只读缓存）+ 禁止操作（INSERT/UPDATE/DELETE 由 readonly 触发器拦截）+ 真源 YAML 绝对路径 + 同步入口脚本路径。目的：AI 在 SQL 上下文中通过 \\d+ tablename 或查 pg_description 视图即可一眼发现表性质，无需先读到特定文件。依据：trae_057 AI消费优先原则 §3 可发现性。落地点：02_create_pg_schema.sql 末尾 COMMENT ON TABLE 段。"
     impact: "违反→双源数据不一致→AI 困惑"
 
   - id: HB-002
