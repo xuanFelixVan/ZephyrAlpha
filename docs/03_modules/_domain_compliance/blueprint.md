@@ -531,7 +531,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 对应蓝图契约 | §0.1 |
 | 产出位置 | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` |
 | 验收标准 | audit_registration.py CLEAN |
-| 验证命令 | `python scripts/governance/audit_registration.py` |
+| 验证命令 | `python scripts/governance/d11_compliance/audit_registration.py` |
 | G7 检查项 | artifact_scanner.py已读取；YAML路径精确；回滚方案可执行 |
 
 #### 步骤 3：完善ComplianceManagerBase
@@ -586,7 +586,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
 | 1 | 命令 | `python -m pytest tests/compliance/` | 运行L10全部测试 | `-v`: 详细输出; `-k`: 过滤 | exit 0=通过 |
-| 2 | 命令 | `python scripts/governance/audit_registration.py` | 检查孤儿文件 | — | exit 0=CLEAN |
+| 2 | 命令 | `python scripts/governance/d11_compliance/audit_registration.py` | 检查孤儿文件 | — | exit 0=CLEAN |
 | 3 | 配置 | `l10_compliance.yaml` → `components` | YAML SSoT组件注册 | 类型/路径 | 必须与§0.1一致 |
 
 ### 16.10 故障与操作手册

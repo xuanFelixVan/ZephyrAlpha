@@ -1357,7 +1357,7 @@ STEP 3: 拆分后验证
 |---|------|
 | 1 | 删除前 MUST 执行 RULE-THREE 三步审判（登记检查→重复检查→逐行价值检查） |
 | 2 | 临时文件（_temp*/_check*/_fix*/_phase_*）删除前 MUST 确认内容价值 |
-| 3 | 删除后 MUST 运行 `python scripts/governance/audit_registration.py` 确认无孤儿 |
+| 3 | 删除后 MUST 运行 `python scripts/governance/d11_compliance/audit_registration.py` 确认无孤儿 |
 
 ## 必备链接
 

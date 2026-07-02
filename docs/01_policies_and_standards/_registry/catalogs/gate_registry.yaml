@@ -177,7 +177,7 @@ gates:
   status: active
 - gate_id: GATE-REG-BL
   name: 'GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）'
-  entry: python scripts/governance/run_gate_chain.py scripts/governance/audit_registration.py,--incremental,--baseline-aware
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/audit_registration.py,--incremental,--baseline-aware
     scripts/governance/d1_structure/validate_index_reality.py,--ci
   description: 注册基线合并门禁——GATE-REG-BL(注册审计基线差分) + GATE-IDX(索引-实际同步)，run_gate_chain
     顺序执行

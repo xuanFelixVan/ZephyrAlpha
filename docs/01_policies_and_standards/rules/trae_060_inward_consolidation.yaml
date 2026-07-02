@@ -241,7 +241,7 @@ references:
   - scripts/governance/d3_metadata/check_vocab_hardcode.py
   - scripts/governance/d3_metadata/check_frontmatter_metadata.py
   - scripts/governance/apply_depgraph.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   modules: []
   blueprints: []
   external:
@@ -257,7 +257,7 @@ enforcement:
   executors:
   - scripts/governance/d3_metadata/check_vocab_hardcode.py
   - scripts/governance/apply_depgraph.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
   gate_id: GATE-VOCAB
 

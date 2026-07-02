@@ -352,7 +352,7 @@ class BlueprintDecomposer:
                     }
                 ],
                 rollback_instructions="git checkout -- <modified_files>",
-                post_sync_standard=["python scripts/governance/audit_registration.py --warn-only"],
+                post_sync_standard=["python scripts/governance/d11_compliance/audit_registration.py --warn-only"],
                 dependency_type="soft",
                 estimated_tokens=4000,
                 timeout_minutes=30,

@@ -802,7 +802,7 @@ sections:
       expected_exit: 0
       on_fail: 刷新后重试
     - step: G7关闭时
-      command: python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+      command: python D:/ZephyrAlpha/scripts/governance/d11_compliance/audit_registration.py
       expected_exit: 0
       on_fail: 有孤儿禁止关闭
   task_001_split_principles:
@@ -1341,7 +1341,7 @@ references:
   - TRAE-024
   - TRAE-053
   scripts:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/diagnose_depgraph.py
@@ -1353,7 +1353,7 @@ references:
 enforcement:
   type: code
   executors:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
 metadata:
   change_policy: stable
@@ -1384,7 +1384,7 @@ metadata:
     changes:
     - P1修复——references.rule_ids去重(6个TRAE-034重复项→1个，保留TRAE-003/TRAE-024/TRAE-053)，符合RQ-02规范
     - P1修复——task_005_consumers中task_repo.py路径修正(src/zephyr/db/→src/zephyr/governance/)，符合RQ-04规范
-    - P1修复——enforcement.executors补充scripts/governance/audit_registration.py(原为空)，符合RQ-06规范
+    - P1修复——enforcement.executors补充scripts/governance/d11_compliance/audit_registration.py(原为空)，符合RQ-06规范
   - version: 1.3.0
     date: '2026-06-21'
     by: session-20260622-001

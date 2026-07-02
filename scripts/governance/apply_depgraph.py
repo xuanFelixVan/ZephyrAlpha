@@ -519,56 +519,8 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 # ===== P0-2 新增：设计态节点/边管理（§22.5）=====
 
 
-def _gate_refresh_runtime_before_design(skip_refresh: bool = False) -> bool:
-    """
-    门闸(L2, 2026-07-02)：写入设计态前MUST检查运营态是否就绪。
-
-    治本规则：设计态必须基于最新运营态，否则在过期快照上设计=幻觉温床。
-
-    修复(2026-07-02): 原实现调用generate_project_depgraph.py --force破坏性重建，
-    与裁定#207 R2 C2冲突（DELETE运营态→手工维护数据丢失）。改为"检查运营态是否存在"：
-    - 查询depgraph里是否有运营态节点(design_maturity='production')
-    - 有→允许写入设计态（信任运营态已就绪）
-    - 无→阻断，提示AI先手动运行generate_project_depgraph.py刷新运营态
-
-    Args:
-        skip_refresh: True=跳过检查（逃生通道，仅限故障时使用）
-    Returns:
-        True=运营态就绪(或skip)，False=运营态未就绪(应阻断写入)
-    """
-    if skip_refresh:
-        print("[GATE-L2] ⚠️ --skip-refresh 已跳过运营态检查（逃生通道，正常流程禁止）", file=sys.stderr)
-        return True
-
-    # 检查运营态是否存在（不做破坏性重建，避免与裁定#207冲突）
-    try:
-        conn = get_depgraph_pg_connection(autocommit=True)
-        row = conn.execute(
-            "SELECT COUNT(*) as cnt FROM nodes WHERE design_maturity = 'production'"
-        ).fetchone()
-        production_count = row["cnt"] if row else 0
-        conn.close()
-
-        if production_count == 0:
-            print(
-                "ERROR[GATE-L2]: 运营态为空（depgraph无production节点），禁止写入设计态。\n"
-                "请先手动运行: python scripts/governance/generate_project_depgraph.py "
-                "--output-db depgraph --force\n"
-                "（裁定#207: 破坏性重建需--force，正常仅运行一次即可建立运营态）",
-                file=sys.stderr
-            )
-            return False
-
-        print(f"[GATE-L2] 运营态就绪（{production_count}个production节点），允许写入设计态", file=sys.stderr)
-        return True
-    except Exception as e:
-        print(f"ERROR[GATE-L2]: 检查运营态失败: {e}", file=sys.stderr)
-        return False
-
-
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned",
-    db_path: str = None, skip_refresh: bool = False
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = None
 ) -> int:
     """
     新增设计态节点（功能级，目录 path）。
@@ -579,12 +531,7 @@ def add_design_node(
     - domain_id 必须在 domains 表中存在
     - build_status 必须符合 §12.6 状态机规则（5态：planned/generated/testing/stable/deprecated）
     写入字段：design_maturity='design', blueprint_path=机械推导
-    门闸(L2): build_status=planned时自动刷新运营态（防幻觉/防漂移治本规则）
     """
-    # 门闸(L2): 写入设计态前刷新运营态（防幻觉/防漂移治本规则）
-    if build_status == "planned" and not _gate_refresh_runtime_before_design(skip_refresh):
-        return -1
-
     # 校验path以/结尾
     if not path.endswith("/"):
         print(f"ERROR: path必须以/结尾（目录路径）: {path}", file=sys.stderr)
@@ -3153,11 +3100,6 @@ def main() -> None:
         "改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]（无需手动 grep）。"
         "配 --dry-run 预览。",
     )
-    parser.add_argument(
-        "--skip-refresh",
-        action="store_true",
-        help="逃生通道：跳过写入设计态前的运营态刷新门闸（L2），仅限生成器故障时使用，正常流程禁止",
-    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -3167,7 +3109,7 @@ def main() -> None:
         blueprint_id = parts[1] if len(parts) > 1 else ""
         domain_id = parts[2] if len(parts) > 2 else ""
         build_status = parts[3] if len(parts) > 3 else "planned"
-        node_id = add_design_node(path, blueprint_id, domain_id, build_status, skip_refresh=args.skip_refresh)
+        node_id = add_design_node(path, blueprint_id, domain_id, build_status)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")

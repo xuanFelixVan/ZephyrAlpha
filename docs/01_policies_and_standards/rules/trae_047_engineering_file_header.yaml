@@ -407,7 +407,7 @@ sections:
     - order: 8
       action: 验证
       pre_condition: 所有更新完成
-      expected_result: python scripts/governance/audit_registration.py → exit 0
+      expected_result: python scripts/governance/d11_compliance/audit_registration.py → exit 0
       on_failure: 验证失败——必须修复
   gov_eng_003_capacity:
     title: 容量分析
@@ -521,7 +521,7 @@ references:
   rule_ids: []
   scripts:
   - scripts/ops/verify_header_completeness.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/scaffold.py

@@ -396,9 +396,9 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 ### 孤儿检测
 
 ```
-python scripts/governance/audit_registration.py           # 报告孤儿
-python scripts/governance/audit_registration.py --json    # JSON 输出
-python scripts/governance/audit_registration.py --fix     # 交互式修复
+python scripts/governance/d11_compliance/audit_registration.py           # 报告孤儿
+python scripts/governance/d11_compliance/audit_registration.py --json    # JSON 输出
+python scripts/governance/d11_compliance/audit_registration.py --fix     # 交互式修复
 ```
 
 返回码 `0` = CLEAN，`1` = 有孤儿。
@@ -849,7 +849,7 @@ STEP 3  验证       → 端到端测试确认消费方仍能正常调用
 ### 清理后验证三步
 
 ```
-1. python scripts/governance/audit_registration.py → exit 0
+1. python scripts/governance/d11_compliance/audit_registration.py → exit 0
 2. python scripts/governance/generate_project_path_tree.py --write
 3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph (PostgreSQL)。用 extract_depgraph.py --summary 替代
 # python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
@@ -1042,13 +1042,6 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 | ❌ | 关键校验只有一轨无兜底 | 事件丢了没补偿＝漏报 |
 | ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑（禁止新建定时轨） |
 | ❌ | 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
-
----
-## RULE-DEPGRAPH：防幻觉/防漂移治本规则（L1+L2，2026-07-02）
-
-> 详见 [AGENTS.md](../../AGENTS.md) `RULE-DEPGRAPH` 段（第三件事）。核心：
-> - **L1 依赖关系先行**：施工前MUST通过 `apply_depgraph.py --add-design-node` 登记依赖到设计态(`status=planned`)，禁止"先施工后补登记"
-> - **L2 运营态检查门闸**：`apply_depgraph.py --add-design-node` 写入 `build_status=planned` 时内置门闸，自动查询depgraph运营态(production节点)是否就绪。为空→阻断；就绪→允许写入。不调用破坏性重建(避免与裁定#207冲突)
 
 ---
 ## RULE-SIXTEEN：depgraph 程序化访问协议
@@ -1447,7 +1440,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 ```
 STEP 0.5 — Drift 健康检查（冷启动前置，P1-CLD；信息性不阻断，但 issue 须优先修复）:
-  0.5.1 python scripts/governance/audit_registration.py --full --compact
+  0.5.1 python scripts/governance/d11_compliance/audit_registration.py --full --compact
         → 若 TOTAL > 0 → 记录 issue（orphan module / zombie ref），后续 session 须优先修复
   0.5.2 git stash list | Measure-Object -Line
         → 若 stash 数 > 5 → warning（建议先清理：python scripts/governance/cleanup_stash.py --cleanup）

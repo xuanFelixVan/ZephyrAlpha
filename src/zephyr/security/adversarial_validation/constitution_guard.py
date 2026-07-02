@@ -192,7 +192,7 @@ class ConstitutionGuard:
             "error_budget_tracker.report": "src/zephyr/budget-enforcer",
             "dependency_registry.detect_cycles": "data/asset_index",
             "blueprint_registry.audit_status": "docs/03_modules",
-            "audit_registration.scan": "scripts/governance/audit_registration.py",
+            "audit_registration.scan": "scripts/governance/d11_compliance/audit_registration.py",
             "vector-memory.verify_embeddings": "src/zephyr/vector-memory",
             "task_repo.verify_schema": "src/zephyr/db",
         }

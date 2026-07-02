@@ -54,7 +54,7 @@ sections:
       fail: 文件未注册(孤儿)
     actions:
     - type: mandatory
-      step: 新建文件MUST通过scaffold.py注册(创建入口规则见TRAE-001)；任何文件变更后MUST运行python scripts/governance/audit_registration.py检查孤儿；exit 0=CLEAN，exit 1=有孤儿
+      step: 新建文件MUST通过scaffold.py注册(创建入口规则见TRAE-001)；任何文件变更后MUST运行python scripts/governance/d11_compliance/audit_registration.py检查孤儿；exit 0=CLEAN，exit 1=有孤儿
     prohibitions:
     - 创建未注册的孤儿文件
     - audit_registration.py exit≠0时关闭任务
@@ -161,7 +161,7 @@ references:
   rule_ids: []
   scripts:
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   modules: []
   blueprints: []
@@ -169,7 +169,7 @@ enforcement:
   type: code
   executors:
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
 metadata:
   change_policy: stable

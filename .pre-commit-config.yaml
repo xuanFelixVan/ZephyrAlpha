@@ -428,7 +428,7 @@ repos:
       # 行为变化：原两 hook 均 pass_filenames=false 自扫描，合并后 files 覆盖 src/scripts .py + manifest + index.md。
       - id: gate-reg-bl
         name: "GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）"
-        entry: python scripts/governance/run_gate_chain.py scripts/governance/audit_registration.py,--incremental,--baseline-aware scripts/governance/d1_structure/validate_index_reality.py,--ci
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/audit_registration.py,--incremental,--baseline-aware scripts/governance/d1_structure/validate_index_reality.py,--ci
         language: system
         pass_filenames: false
         always_run: false

@@ -236,7 +236,7 @@ references:
   - TRAE-006
   scripts:
   - scripts/scaffold.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   modules: []
   blueprints: []
   external:
@@ -250,7 +250,7 @@ references:
 enforcement:
   type: doc
   executors:
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   bypass_allowed: false
   gate_id: null

@@ -83,7 +83,7 @@ references:
   rule_ids: []
   scripts:
   - scripts/scaffold.py
-  - scripts/governance/audit_registration.py
+  - scripts/governance/d11_compliance/audit_registration.py
   modules: []
   blueprints: []
 enforcement:

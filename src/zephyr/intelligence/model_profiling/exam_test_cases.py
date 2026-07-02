@@ -2392,7 +2392,7 @@ _OLY_007_FILES = [
     "scripts/git_commit.py",
     "scripts/governance/verify_schema_health.py",
     "scripts/governance/diagnose_depgraph.py",
-    "scripts/governance/audit_registration.py",
+    "scripts/governance/d11_compliance/audit_registration.py",
 ]
 _OLY_007_NEEDLES = [
     {  # 在 task_gate.py 注入一条不存在的跨文件依赖

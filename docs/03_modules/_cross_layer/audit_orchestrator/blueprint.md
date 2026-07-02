@@ -1102,7 +1102,7 @@ STEP 3: 拆分后验证
 
 | Provider Script | Description | Priority |
 |------|------|:---:|
-| `scripts/governance/audit_registration.py` | AST __all__ 提取 | P0 |
+| `scripts/governance/d11_compliance/audit_registration.py` | AST __all__ 提取 | P0 |
 | `scripts/governance/check_registry_consistency.py` | 跨注册表一致性 | P0 |
 | `scripts/governance/d5_architecture/validators/validate_ssot.py` | SSoT 验证 | P0 |
 | `scripts/governance/d5_architecture/validators/validate_gate_yaml.py` | Gate YAML 验证 | P0 |

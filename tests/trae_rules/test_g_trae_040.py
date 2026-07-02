@@ -131,7 +131,7 @@ class TestGTrae040:
                 applicable_rules=[{"module_id": "TRAE-040", "section": "all", "reason": "gate test"}],
                 rollback_instructions="git checkout",
                 blocked_by=[],
-                post_sync_standard=["python scripts/governance/audit_registration.py"],
+                post_sync_standard=["python scripts/governance/d11_compliance/audit_registration.py"],
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
             )
