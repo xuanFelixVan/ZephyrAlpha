@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 03:03:26
+> 最后更新: 2026-07-03 03:12:29
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -66,12 +66,12 @@ graph TD
     end
     src_zephyr_frontend_dashboard_init_py -.->|config_depends| src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
-    src_zephyr_frontend_dashboard_components_init_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_components_init_py -.->|config_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
@@ -172,8 +172,8 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (5 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   app.py → fitness_functions.py                                  │
 │   app.py → gate_statistics.py                                    │
+│   app.py → fitness_functions.py                                  │
 │   app.py → olap_trend.py                                         │
 │   app.py → task_progress.py                                      │
 │   app.py → knowledge_overview.py                                 │
@@ -184,7 +184,7 @@ graph TD
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → app.py                                           │
 │   __init__.py → interface_base.py                                │
-│   __init__.py → fitness_functions.py                             │
+│   __init__.py → gate_statistics.py                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
