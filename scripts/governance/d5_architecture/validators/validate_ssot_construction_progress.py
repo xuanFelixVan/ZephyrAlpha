@@ -45,6 +45,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 from _shared.walk import iter_files
 
 __manifest__ = """
@@ -82,7 +83,7 @@ BLUEPRINT_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "blueprint_regist
 MODULE_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
 PROGRESS_RE = re.compile(r"^construction_progress:\s*(.+)$", re.MULTILINE)
-MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
+# MODULE_ID_RE 已迁移到 zephyr.governance.rule_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 
 
 def _collect_frontmatter_progress() -> dict[str, str]:

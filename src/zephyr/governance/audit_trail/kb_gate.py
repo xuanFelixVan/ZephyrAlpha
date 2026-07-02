@@ -37,18 +37,11 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zephyr.governance.security_patterns import POISONING_INDICATORS  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
+
 _logger = logging.getLogger(__name__)
 
-_POISONING_INDICATORS: list[re.Pattern[str]] = [
-    re.compile(
-        r"(ignore|disregard|override|bypass)\s+(all|previous|above|prior)\s*(instructions|rules|guidelines)",
-        re.IGNORECASE,
-    ),
-    re.compile(r"(you\s+are\s+now|act\s+as|pretend\s+to\s+be)\s+a?\s*(system|admin|root|superuser)", re.IGNORECASE),
-    re.compile(r"(delete|remove|drop|truncate)\s+(all|every|entire)\s*(file|record|entry|knowledge)", re.IGNORECASE),
-    re.compile(r"(inject|insert|plant)\s*(malicious|harmful|backdoor|payload)", re.IGNORECASE),
-    re.compile(r"(sudo|chmod|chown|exec|eval|system|subprocess)\s*[\(\[]", re.IGNORECASE),
-]
+# _POISONING_INDICATORS 已迁移到 zephyr.governance.security_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 
 
 class KBWriteCheckResult(BaseModel):
@@ -130,7 +123,7 @@ class KBAuditGate:
 
     def scan_for_poisoning(self, content: str) -> PoisoningScanResult:
         indicators: list[str] = []
-        for pattern in _POISONING_INDICATORS:
+        for pattern in POISONING_INDICATORS:
             matches = pattern.findall(content)
             if matches:
                 indicators.append(pattern.pattern[:80])

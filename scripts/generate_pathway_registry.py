@@ -40,14 +40,14 @@ _GOV_DIR = str(Path(__file__).resolve().parent / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT  # noqa: E402
+from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
 PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 REGISTRY_FILE = MODULES_DIR / "system-pathway-registry.yaml"
 BLUEPRINT_PATTERN = "**/blueprint.md"
 
-# 蓝图文件 -> module_id 映射 (从 frontmatter 提取)
-MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
+# MODULE_ID_RE 已迁移到 zephyr.governance.rule_patterns（SSoT 治本 2026-07-02, ARCH-033 Phase 7）
 # 状态提取
 STATUS_RE = re.compile(r"^status:\s*(.+)$", re.MULTILINE)
 PATH_INDEX_MARKER = "已实现代码完整路径索引"

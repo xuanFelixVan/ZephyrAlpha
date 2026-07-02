@@ -1973,6 +1973,33 @@ capabilities:
       （basename=models.py 过于泛化无法 auto 派生，故用 canonical_override 显式声明）。
       原 integration/models.py 镜像副本已删除。
 
+  # --------------------------------------------------------------------------
+  # ARCH-033 SSoT 收敛：治理规则正则 + 安全审计模式唯一真源
+  # --------------------------------------------------------------------------
+  - capability_id: rule_patterns_ssot
+    canonical_override: src/zephyr/governance/rule_patterns.py
+    aliases:
+      - rule_patterns
+      - MODULE_ID_RE
+      - _DIGIT_SUFFIX_RE
+    description: >-
+      治理规则正则唯一真源（ARCH-033 Phase 1/7）。集中定义 MODULE_ID_RE（blueprint.md
+      module_id 字段提取）+ _DIGIT_SUFFIX_RE（R5 数字后缀门禁）+ 其他治理正则。消除
+      scripts/ 与 src/ 间 4+3 处裸复制（违反 SSoT，对标 SCRIPT-QUALITY-001 D-D-04）。
+      消费者通过 import 复用，禁止重新定义。[TTL] permanent。
+  - capability_id: security_patterns_ssot
+    canonical_override: src/zephyr/governance/security_patterns.py
+    aliases:
+      - security_patterns
+      - PIICategory
+      - POISONING_INDICATORS
+      - PII_PATTERNS
+    description: >-
+      安全审计模式唯一真源（ARCH-033 Phase 7）。集中定义 PIICategory 枚举 +
+      POISONING_INDICATORS（提示注入检测）+ PII_PATTERNS（PII 检测）。消除
+      semantic_auditor/semantic_audit/audit_trail 三包间裸复制（16 处重复定义，
+      4 类模式）。消费者通过 import 复用，禁止重新定义。[TTL] permanent。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -2175,6 +2202,16 @@ creation_tokens:
     token: "auto-arch031-mig-registry-20260702"
     created_by: "session-arch031-p0-build"
     capability: "governance_root_split"
+
+  # --- ARCH-033 SSoT 收敛：治理规则正则 + 安全审计模式唯一真源 ---
+  - file: "src/zephyr/governance/rule_patterns.py"
+    token: "auto-rule-patterns-20260702"
+    created_by: "session-arch033-ssot"
+    capability: "rule_patterns_ssot"
+  - file: "src/zephyr/governance/security_patterns.py"
+    token: "auto-security-patterns-20260702"
+    created_by: "session-arch033-ssot"
+    capability: "security_patterns_ssot"
 
 # ============================================================================
 # 维护日志
