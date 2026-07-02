@@ -243,6 +243,9 @@ class FindingTaskBridge:
         upstream: list[str] = []
         if finding.source_file:
             upstream.append(finding.source_file)
+        # GOV-TASK-001 v3.2.0: files_in_scope/allowed_touch 不允许空list
+        if not upstream:
+            upstream = [finding.finding_id]
 
         tags = [
             "auto-bridged",
@@ -290,6 +293,7 @@ class FindingTaskBridge:
             tags=tags,
             created_at=now,
             updated_at=now,
+            directive=finding.finding_id,
         )
 
 
