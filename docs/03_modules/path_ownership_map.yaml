@@ -1,16 +1,16 @@
 # ============================================================================
 # ZephyrAlpha 路径归属声明 — 自动生成，禁止手写
-# 生成工具: scripts/governance/generate_path_ownership_map.py
+# 生成工具: scripts/governance/generators/generate_path_ownership_map.py
 # 用途: 每个路径归哪个蓝图管——路径冲突检测的 SSoT
 # 冲突裁决: ssot_claims 声明优先于 §0.1 清单声明
 # ============================================================================
 
 meta:
-  generated_at: '2026-06-30T18:47:57Z'
-  auto_generated_by: 'scripts/governance/generate_path_ownership_map.py'
-  total_path_claims: 740
-  total_ssot_claims: 18
-  total_conflicts: 14
+  generated_at: '2026-07-02T18:40:11Z'
+  auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
+  total_path_claims: 739
+  total_ssot_claims: 16
+  total_conflicts: 13
   conflict_resolution: 'ssot_claims_priority'
 ownership:
   - path: 'src/zephyr/governance/__init__.py'
@@ -1210,42 +1210,42 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/intelligence/model_profiling/__init__.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/__init__.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/exam_rubric.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/exam_rubric.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/exam_executor.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/exam_executor.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/exam_judge.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/exam_judge.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/case_assembler.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/case_assembler.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/provider_data.py'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/provider_data.py'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
@@ -1259,7 +1259,7 @@ ownership:
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/intelligence/model_profiling/data/brain/job_matrix.yaml'
+  - path: 'src/zephyr/infrastructure/model_capability_exam/data/brain/job_matrix.yaml'
     owner_blueprint: 'MOD-INF-036'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
@@ -1826,25 +1826,18 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/shared/health_discovery.py'
+  - path: 'src/zephyr/shared/health_discovery.py + tracing.py + cli_summary.py'
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/shared/tracing.py'
+  - path: 'src/zephyr/shared/(原shared_services/observability_02/ 已删除-stale路径)'
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
-
-  - path: 'src/zephyr/shared/cli_summary.py'
-    owner_blueprint: 'MOD-INF-016'
-    claim_type: 'section_0_1'
-    declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: '已实现'
+    existence: '已废弃'
     ownership_judgment: ''
 
   - path: 'src/zephyr/shared/quality/quality_monitor.py'
@@ -3468,7 +3461,7 @@ ownership:
     owner_blueprint: 'MOD-L10-001'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_compliance/blueprint.md'
-    existence: '已实现'
+    existence: '未实现（文件不存在）'
     ownership_judgment: '—'
 
   - path: 'src/zephyr/governance/audit_trail/__init__.py'
@@ -3688,476 +3681,476 @@ ownership:
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/__init__.py'
+  - path: 'src/zephyr/governance/code_dedup/__init__.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/cache_manager.py'
+  - path: 'src/zephyr/governance/code_dedup/cache_manager.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/diff_detector.py'
+  - path: 'src/zephyr/governance/code_dedup/diff_detector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/signature_matcher.py'
+  - path: 'src/zephyr/governance/code_dedup/signature_matcher.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/scanner.py'
+  - path: 'src/zephyr/governance/code_dedup/scanner.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/degradation.py'
+  - path: 'src/zephyr/governance/code_dedup/degradation.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/config.py'
+  - path: 'src/zephyr/governance/code_dedup/config.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/report.py'
+  - path: 'src/zephyr/governance/code_dedup/report.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/prioritizer.py'
+  - path: 'src/zephyr/governance/code_dedup/prioritizer.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/annotations.py'
+  - path: 'src/zephyr/governance/code_dedup/annotations.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/health_monitor.py'
+  - path: 'src/zephyr/governance/code_dedup/health_monitor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/behavioral_sampler.py'
+  - path: 'src/zephyr/governance/code_dedup/behavioral_sampler.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/self_scanner.py'
+  - path: 'src/zephyr/governance/code_dedup/self_scanner.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/extraction_safety.py'
+  - path: 'src/zephyr/governance/code_dedup/extraction_safety.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/stale_shared_detector.py'
+  - path: 'src/zephyr/governance/code_dedup/stale_shared_detector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/debt_projector.py'
+  - path: 'src/zephyr/governance/code_dedup/debt_projector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/doom_loop_guard.py'
+  - path: 'src/zephyr/governance/code_dedup/doom_loop_guard.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/shared_lifecycle_manager.py'
+  - path: 'src/zephyr/governance/code_dedup/shared_lifecycle_manager.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/import_surface_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/import_surface_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/monoculture_guard.py'
+  - path: 'src/zephyr/governance/code_dedup/monoculture_guard.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/atomic_fixer.py'
+  - path: 'src/zephyr/governance/code_dedup/atomic_fixer.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/grandfather_manager.py'
+  - path: 'src/zephyr/governance/code_dedup/grandfather_manager.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/false_negative_auditor.py'
+  - path: 'src/zephyr/governance/code_dedup/false_negative_auditor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/shadow_trust_validator.py'
+  - path: 'src/zephyr/governance/code_dedup/shadow_trust_validator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/temporal_drift_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/temporal_drift_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/simplicity_auditor.py'
+  - path: 'src/zephyr/governance/code_dedup/simplicity_auditor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/dead_module_detector.py'
+  - path: 'src/zephyr/governance/code_dedup/dead_module_detector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/observation_window_guard.py'
+  - path: 'src/zephyr/governance/code_dedup/observation_window_guard.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/recovery_manifest_writer.py'
+  - path: 'src/zephyr/governance/code_dedup/recovery_manifest_writer.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/thematic_clusterer.py'
+  - path: 'src/zephyr/governance/code_dedup/thematic_clusterer.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/behavioral_trust_checker.py'
+  - path: 'src/zephyr/governance/code_dedup/behavioral_trust_checker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/pre_apply_integrity_gate.py'
+  - path: 'src/zephyr/governance/code_dedup/pre_apply_integrity_gate.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/micro_clone_detector.py'
+  - path: 'src/zephyr/governance/code_dedup/micro_clone_detector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/auto_test_generator.py'
+  - path: 'src/zephyr/governance/code_dedup/auto_test_generator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/contract_consistency_checker.py'
+  - path: 'src/zephyr/governance/code_dedup/contract_consistency_checker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/cross_boundary_detector.py'
+  - path: 'src/zephyr/governance/code_dedup/cross_boundary_detector.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/decision_auditor.py'
+  - path: 'src/zephyr/governance/code_dedup/decision_auditor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/function_discovery.py'
+  - path: 'src/zephyr/governance/code_dedup/function_discovery.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/ast_comparator.py'
+  - path: 'src/zephyr/governance/code_dedup/ast_comparator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/auto_fixer.py'
+  - path: 'src/zephyr/governance/code_dedup/auto_fixer.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/blind_spot_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/blind_spot_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/canary_manager.py'
+  - path: 'src/zephyr/governance/code_dedup/canary_manager.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/canary_register.py'
+  - path: 'src/zephyr/governance/code_dedup/canary_register.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/cli.py'
+  - path: 'src/zephyr/governance/code_dedup/cli.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/code_analyzer_runner.py'
+  - path: 'src/zephyr/governance/code_dedup/code_analyzer_runner.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/code_simulator.py'
+  - path: 'src/zephyr/governance/code_dedup/code_simulator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/consequence_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/consequence_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/exit_codes.py'
+  - path: 'src/zephyr/governance/code_dedup/exit_codes.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/fifteen_dimension_auditor.py'
+  - path: 'src/zephyr/governance/code_dedup/fifteen_dimension_auditor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/file_creator.py'
+  - path: 'src/zephyr/governance/code_dedup/file_creator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/hotspot_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/hotspot_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/integration_hub.py'
+  - path: 'src/zephyr/governance/code_dedup/integration_hub.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/integrations.py'
+  - path: 'src/zephyr/governance/code_dedup/integrations.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/mock_duplicate_generator.py'
+  - path: 'src/zephyr/governance/code_dedup/mock_duplicate_generator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/path_index_validator.py'
+  - path: 'src/zephyr/governance/code_dedup/path_index_validator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/phase_executor.py'
+  - path: 'src/zephyr/governance/code_dedup/phase_executor.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/policy_tree_validator.py'
+  - path: 'src/zephyr/governance/code_dedup/policy_tree_validator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/question_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/question_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/risk_mitigation_tracker.py'
+  - path: 'src/zephyr/governance/code_dedup/risk_mitigation_tracker.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/risk_mitigator.py'
+  - path: 'src/zephyr/governance/code_dedup/risk_mitigator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/sensitivity_sweeper.py'
+  - path: 'src/zephyr/governance/code_dedup/sensitivity_sweeper.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/shadow_verifier.py'
+  - path: 'src/zephyr/governance/code_dedup/shadow_verifier.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/shared_evolver.py'
+  - path: 'src/zephyr/governance/code_dedup/shared_evolver.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/ssot_registrar.py'
+  - path: 'src/zephyr/governance/code_dedup/ssot_registrar.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/success_validator.py'
+  - path: 'src/zephyr/governance/code_dedup/success_validator.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/symbol_index.py'
+  - path: 'src/zephyr/governance/code_dedup/symbol_index.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/verifier.py'
+  - path: 'src/zephyr/governance/code_dedup/verifier.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infra_ops/code_dedup_engine/self_benchmark.py'
+  - path: 'src/zephyr/governance/code_dedup/self_benchmark.py'
     owner_blueprint: 'MOD-INF-017'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
@@ -4248,7 +4241,7 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/governance/registry_management/registry_governance.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/registry_governance.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
@@ -4276,112 +4269,112 @@ ownership:
     existence: '✅'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/governance/registry_management/__init__.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/__init__.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/auto_diagnostics.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/auto_diagnostics.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/config.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/config.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/config_validator.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/config_validator.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/contract_tester.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/contract_tester.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/cost_tracker.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/cost_tracker.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/dry_run_simulator.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/dry_run_simulator.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/event_bus_upgrade.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/event_bus_upgrade.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/event_store.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/event_store.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/finding_task_bridge.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/finding_task_bridge.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/infrastructure_base.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/infrastructure_base.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/kill_switch_sim.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/kill_switch_sim.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/local-model.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/local-model.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/pydantic_v2_migrator.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/pydantic_v2_migrator.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/registry_governance.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/registry_governance.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
     existence: '已实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/governance/registry_management/warm_hot_gate.py'
+  - path: 'src/zephyr/infrastructure/registry_governance.py/warm_hot_gate.py'
     owner_blueprint: 'MOD-INF-037'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_governance/registry_governance/blueprint.md'
@@ -5546,159 +5539,6 @@ Worker 内存上限（OOM 防护）：
     owner_blueprint: 'MOD-GOVERNANCE'
     declared_in: 'docs/03_modules/_domain_governance/blueprint.md'
 
-  - claim: '治理域容量升级架构(SLO/分片存储/GPU加速/熔断器)'
-    scope: 'layer
-  - claim:'
-    owner_blueprint: 'MOD-GOVERNANCE'
-    declared_in: 'docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md'
-
-  - claim: '治理域容量升级D-GAP-01~12设计方案真源'
-    scope: 'layer
----
-
-# Governance Domain 容量升级蓝图 — 10K脚本/1.5K模块/100AI并发
-
-> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-GOV-CAP-001`
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
-
-> **module_id**: MOD-GOV-CAP-001 | **parent**: MOD-GOVERNANCE | **version**: 0.1.0
->
-> 本蓝图从 MOD-GOVERNANCE 拆分，专注容量升级设计。未包含的章节（§3.9 脚本生命周期、§3.14 可观测性、§3.15 维度扩展等）见 MOD-GOVERNANCE 原蓝图。
-
-### §0.1 代码文件清单
-
-> 本蓝图为纯设计蓝图，无直接管辖代码文件。相关代码归属 MOD-GOVERNANCE（治理域集成蓝图）。
-
-## 1. 容量升级设计与 SLO（v0.2.0 升版核心章节）
-
-> 本章是蓝图升级的 **需求规格**，§6 是 **施工计划**。
-
-### 1.1 升级驱动
-
-| 维度 | v0.1.0 假设 | v0.2.0 目标 | 倍数 |
-|------|------------|------------|:---:|
-| 治理域模块数 | 8（MOD-INF-018~025） | 8（不变，但需适配 1,500 业务模块） | 1× |
-| 被治理的业务模块数 | ~51 | 1,500 | **29×** |
-| 治理脚本数 | 268 | 10,000（设计上限） | **37×** |
-| 并发 AI Agent 数 | 1（单 session） | 100 | **100×** |
-| 增量扫描脚本数 | 全量 268 | 15-30（日常增量） | — |
-| 全量扫描耗时 | 3.5 小时 | 全量作为周检可选，不阻塞日常 | — |
-| 执行模式 | 全量默认 | 增量默认，全量可选 | — |
-
-### 1.2 容量目标与 SLO
-
-| SLO 指标 | 目标值 | 测量窗口 | 测量方式 |
-|---------|--------|:---:|------|
-| **SLO-1: 增量扫描延迟** | p50 < 30s, p95 < 60s, p99 < 120s | 滚动 24h | `sla_metrics.jsonl` + `compute_sla_metrics.py` |
-| **SLO-2: 增量扫描吞吐** | 100 AI 并发 × 20 脚本/AI = 2,000 脚本/min 调度能力 | 峰值 5min | BulkheadExecutor pool stats |
-| **SLO-3: Phase Gate 启动延迟** | Session 冷启动检查 < 10s（含 46 gate） | 每次 session 启动 | `session_startup_check.py` |
-| **SLO-4: Audit 写入延迟** | p50 < 10ms, p99 < 100ms（单条写入） | 滚动 1h | SQLite WAL + ShardRouter 分片 |
-| **SLO-5: 全量扫描完成时间** | < 4 小时（10,000 脚本，40 workers） | 每次全量扫描 | `run_all.py --dimensions D1-D12` |
-| **SLO-6: 可用性** | 治理系统自身故障导致扫描不可用的时间 < 5min/月（99.99%） | 滚动 30d | Kill Switch 状态 + circuit breaker trip 次数 |
-| **SLO-7: Error Budget** | 月 error budget = 43,200s × (1 - 0.9999) = 259s | 日历月 | `manage_error_budget.py` |
-
-**SLO 违反的升级策略**：
-- Error budget 消耗 > 50%：自动告警 → Escalation Protocol
-- Error budget 消耗 > 80%：冻结非 P0 扫描，仅保留 Quick 维度（D1-D4）
-- Error budget 耗尽：Kill Switch 激活，停止所有自动扫描，等待 Owner 裁定
-
-### 1.3 蓝图设计缺失盘点（12 项）
-
-| # | 缺失项 | 严重级别 | 影响范围 | 新增章节/契约 |
-|---|--------|:---:|------|------|
-| **D-GAP-01** | 无容量/SLO/SLA 定义——蓝图未声明治理域自身的性能承诺 | P0 | 扩容没有验收标准 | → **§1.2**（本节已补） |
-| **D-GAP-02** | 无脚本生命周期治理模型——10,000 脚本如何 onboarding、版本化、退役？ | P0 | 脚本腐化失控，存量脚本无人维护 | → MOD-GOVERNANCE **§3.9 脚本生命周期治理** |
-| **D-GAP-03** | 无模块→脚本映射契约——业务模块和治理脚本之间没有声明式绑定 | P0 | 增量扫描只能维度级（粗粒度），无法精准到脚本级 | → **G-CT-009: Module→Script 映射契约** |
-| **D-GAP-04** | 无 tiered execution model（分层执行模型）——所有脚本同等对待 | P0 | hot-path 慢脚本阻塞 quick 维度，单脚本超时拖垮整池 | → **§2 分层执行模型** |
-| **D-GAP-05** | 无熔断器策略定义——CircuitBreaker 代码存在但何时熔断、如何恢复无规范 | P1 | 连锁故障无防护，熔断后无人知道怎么恢复 | → **§3 熔断器策略** |
-| **D-GAP-06** | 无分片存储架构——ShardRouter 代码存在但蓝图未定义分片设计 | P1 | 1500 模块共享单 SQLite → 锁竞争吃掉所有并发收益 | → **§4 分片存储架构** |
-| **D-GAP-07** | 无多 AI 协调模型——100 AI 同时运行时如何避免相互踩踏 | P0 | L0 ProcessLock 是单进程锁，100 AI 排队等锁；且去掉 L0 后需要新的文件并发写入保护方案 | → **G-CT-010: 多 Agent 协调契约 + 文件写入三层防护** |
-| **D-GAP-08** | 无 GPU/异构计算策略——3090 24GB 完全闲置 | P1 | D12 AI 幻觉检测全 CPU，浪费 10-50× 加速潜力 | → **§5 GPU 加速策略** |
-| **D-GAP-09** | 无可观测性/告警架构——指标采集了但无告警规则、无 dashboard | P1 | 系统出问题靠人肉发现 | → MOD-GOVERNANCE **§3.14 可观测性架构** |
-| **D-GAP-10** | 12 维度模型缺 D10——性能治理 0 脚本，扩容后 D13/D14 也缺失 | P1 | 容量/依赖健康度无自动化覆盖 | → MOD-GOVERNANCE **§3.15 维度模型扩展** |
-| **D-GAP-11** | 无业务模块治理适配层——蓝图只覆盖 8 个基建治理模块，不管 1,500 业务模块 | P0 | 业务模块零治理覆盖，AI 改了业务代码没人管 | → **G-CT-011: 业务模块治理适配契约** |
-| **D-GAP-12** | 无 Finding 冲突仲裁模型——100 AI 同时产出冲突 Finding 如何合并/去重/仲裁 | P1 | Finding 数量爆炸，真假难辨 | → **G-CT-012: Finding 仲裁契约** |
-
-### 1.4 新增设计章节清单
-
-| 章节编号 | 章节名称 | 对应缺陷 | 预计篇幅 | 状态 |
-|:---:|------|:---:|:---:|:---:|
-| §1 | 容量升级设计与 SLO | D-GAP-01 | ~3 页 | ✅ 本章（已写） |
-| MOD-GOVERNANCE §3.9 | 脚本生命周期治理 | D-GAP-02 | ~2 页 | ✅ 已施工 |
-| §2 | 分层执行模型（Tiered Execution） | D-GAP-04 | ~3 页 | ✅ 已施工 |
-| §3 | 熔断器策略（Circuit Breaker Policy） | D-GAP-05 | ~2 页 | ✅ 已施工 |
-| §4 | 分片存储架构（Sharded Storage） | D-GAP-06 | ~3 页 | ✅ 已施工 |
-| §5 | GPU 加速策略 | D-GAP-08 | ~1.5 页 | ✅ 已施工 |
-| MOD-GOVERNANCE §3.14 | 可观测性与告警架构 | D-GAP-09 | ~2 页 | ✅ 已施工 |
-| MOD-GOVERNANCE §3.15 | 维度模型扩展（D13 容量治理 / D14 依赖健康） | D-GAP-10 | ~1.5 页 | ✅ 已施工 |
-| §6 | 施工升级路线图 | — | ~2 页 | ✅ 已施工 |
-| §7 | 升级后测试矩阵（含容量压力测试） | — | ~1 页 | ✅ 已施工 |
-
-### 1.5 新增集成契约（G-CT-009 ~ G-CT-014）
-
-#### G-CT-009: Module → Script 映射契约
-
-```
-方向：业务模块（1,500 个）→ 治理脚本（10,000 个）
-触发时机：新模块注册 / 模块变更 / 增量扫描触发
-契约定义：
-  每个治理脚本 MUST 在其 __manifest__ 中声明 target_modules 字段：
-    - target_modules: list[str]     # 脚本覆盖的 module_id 列表
-    - target_domains: list[str]     # 脚本覆盖的功能域（infra/risk/alpha/...）
-    - target_layers: list[str]      # 脚本覆盖的架构层（L00~L12）
-    - trigger_on: list[str]         # 触发方式（file_change/git_hook/schedule/manual）
-
-  增量扫描时：
-    变更文件 → 解析归属模块 → 查 Module→Script 反向索引 → 只跑匹配的脚本
-    非增量扫描不受此契约约束。
-
-  反向索引由 generate_script_manifest.py 自动生成并缓存到 scripts/governance/module_script_index.yaml
-
-  解决 D-GAP-03：增量扫描从维度级精准到脚本级。
-  典型效果：修改 MOD-RISK-012 时，扫描从 D6 全部 10 个脚本缩减到 2-3 个相关脚本。
-```
-
-#### G-CT-010: 多 Agent 协调契约（Multi-Agent Coordination）
-
-```
-方向：100 个 AI Agent → GovernanceServer MCP → 治理脚本调度层 + 文件写入层
-触发时机：任意 AI Agent 触发治理扫描时 / 任意 AI Agent 修改代码文件写入时
-契约定义：
-
-  ═══════════════════════════════════════════════════════════
-  第一部分：治理扫描的并发调度（只读文件，不修改文件）
-  ═══════════════════════════════════════════════════════════
-
-  - 每个 AI Agent 以唯一 session_id + agent_id 发起扫描请求
-  - GovernanceServer 作为统一入口，负责：
-      a) L1 DimensionLock: 同一维度同一时刻只有一个 Agent 运行（串行化冲突维度）
-      b) L2 FileLock: 同一文件同一时刻只有一个 Agent 读写
-      c) AdmissionController: P0 扫描永远准入，P1 排队，P2 限流
-  - 不再需要 L0 ProcessLock（已降级为 Config Read Lock，仅保护 script-manifest.yaml 读取）
-  - 100 AI 并发时，通过四池 Bulkhead 隔离 + AdmissionController 优先级排队
-  - 调度策略：
-      - 同一 Agent session 内的多次扫描 → merge 为一次（debounce 2s）
-      - 不同 Agent 对同一维度的扫描 → L1 DimensionLock 排队
-      - 不同 Agent 对不同维度的扫描 → 完全并行
-
-  ═══════════════════════════════════════════════════════════
-  第二部分：文件写入的三层防护（解决并发写入编码乱码）
-  ═══════════════════════════════════════════════════════════
-
-  背景：
-    v4.0 使用 L0 ProcessLock 防止多个 AI 并发写入同一文件导致编码乱码。
-    问题是锁力度太粗——100 个 AI 改 100 个不同文件也被迫排队。
-    本契约用三层精防护取代一把粗锁。
-
-  第一层：L2 FileLock（文件级互斥）
-  ─────────────────────────────────────
-    机制：已存在于 _concurrency.py FileLock 类（第 756 行）
-
-    AI-A 要写'
-    owner_blueprint: 'MOD-GOVERNANCE'
-    declared_in: 'docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md'
-
   - claim: '重复检测结果'
     scope: 'global
   - claim:'
@@ -5895,15 +5735,4 @@ conflicts:
       blueprint: 'MOD-INF-023'
       claim_type: 'section_0_1'
       declared_in: 'docs/03_modules/_domain_governance/drift_detector/blueprint.md'
-    resolution: 'ssot_claims_priority'
-
-  - path: 'src/zephyr/intelligence/model_profiling/__init__.py'
-    claimant:
-      blueprint: 'MOD-INF-036'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
-    claimant:
-      blueprint: 'MOD-INF-034'
-      claim_type: 'section_0_1'
-      declared_in: 'docs/03_modules/_cross_layer/model_profiler/blueprint.md'
     resolution: 'ssot_claims_priority'

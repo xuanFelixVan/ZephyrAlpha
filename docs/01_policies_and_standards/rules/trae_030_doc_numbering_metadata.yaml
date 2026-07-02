@@ -245,7 +245,7 @@ sections:
     - type: mandatory
       step: 产出物:物理路径树快照→docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml(脚本scripts/governance/generate_project_path_tree.py)
     - type: mandatory
-      step: 产出物:路径归属声明→docs/03_modules/path_ownership_map.yaml(脚本scripts/governance/generate_path_ownership_map.py)
+      step: 产出物:路径归属声明→docs/03_modules/path_ownership_map.yaml(脚本scripts/governance/generators/generate_path_ownership_map.py)
     prohibitions:
     - 禁止手写project_path_tree.yaml
     - 禁止同一路径被多个蓝图声明
@@ -622,7 +622,7 @@ sections:
       details: P1修复;脚本名错误修正(generate_project_ownership_map.py→generate_path_ownership_map.py,后者为真实存在的脚本);kebab-case文件名引用修正为snake_case(project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml)
 references:
   rule_ids: [TRAE-010, TRAE-011, TRAE-012, TRAE-028, TRAE-048]
-  scripts: [scripts/governance/generate_project_path_tree.py, scripts/governance/generate_path_ownership_map.py, scripts/governance/sync_rule_registry.py]
+  scripts: [scripts/governance/generate_project_path_tree.py, scripts/governance/generators/generate_path_ownership_map.py, scripts/governance/sync_rule_registry.py]
   modules: []
   blueprints: []
 enforcement:

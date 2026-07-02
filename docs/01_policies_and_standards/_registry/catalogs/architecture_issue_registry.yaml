@@ -203,6 +203,14 @@ entries:
   status: open
   created: '2026-06-27'
   last_updated: '2026-06-27'
+- issue_id: '#ARCH-027'
+  title: 模块删除价值判定原则（零消费者≠无价值，三维度判定）
+  severity: P2中
+  adjudication: 价值判定原则——判定模块是否该删除/移动时，禁止仅凭"零消费者"判定。三维度判定（独立功能价值/治理价值/安全价值），ANY为YES→保留并接通。已由 rules/trae_017_arch_governance_order.yaml §价值判定原则 实现。AGENTS.md §8.1 引用此原则。编号说明：#ARCH-028 原误用本编号（与 trae_017 的 ARCH-027 价值判定原则冲突），2026-06-30 红蓝对抗发现后改用 #ARCH-028。
+  fix_phase: 已完成（trae_017_arch_governance_order.yaml 实现）
+  status: resolved
+  created: '2026-06-27'
+  last_updated: '2026-07-03'
 - issue_id: '#ARCH-028'
   title: 治理军备竞赛陷阱——治理工具与被治理对象同构耦合，治理体系自指膨胀
   severity: P1高

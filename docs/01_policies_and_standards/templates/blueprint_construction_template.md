@@ -874,7 +874,7 @@ class {DataModel}(BaseModel):
 | 3 | 设计 | §5 每个约束在 §9 有对应测试 | 逐约束核对 | ☐ |
 | 4 | 设计 | §0.1 每个代码文件在 §11 有对应产出物路径 | 逐文件核对 | ☐ |
 | 5 | 设计 | §10 每个依赖在 PostgreSQL depgraph.nodes 有对应条目 | `python scripts/governance/extract_depgraph.py --modules {module_id}` | ☐ |
-| 5.1 | 设计 | §0.1 每个代码文件已同步到 path-ownership-map.yaml 且无路径冲突 | `python scripts/governance/generate_path_ownership_map.py --write && --conflicts` | ☐ |
+| 5.1 | 设计 | §0.1 每个代码文件已同步到 path-ownership-map.yaml 且无路径冲突 | `python scripts/governance/generators/generate_path_ownership_map.py --write && --conflicts` | ☐ |
 | 6 | 前 | 已读取蓝图全文（概述→§0→§1-§18→术语表→自检清单） | 逐节确认 | ☐ |
 | 7 | 前 | 术语表中每个术语含义已理解 | 能回答"X和Y的区别是什么" | ☐ |
 | 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些设计可改哪些不可改 | ☐ |

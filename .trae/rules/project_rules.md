@@ -1490,7 +1490,7 @@ STEP 5   — 按需定位具体注册表 → 开工
 5. python scripts/governance/sync_rule_registry.py — 校验 RULE-* 条目登记
 6. python scripts/governance/auto_sync_all_registries.py --all --warn-only — 全注册表同步
 6.1. python scripts/governance/generate_project_path_tree.py --write — 刷新路径树快照
-6.2. python scripts/governance/generate_path_ownership_map.py --write — 刷新路径归属声明
+6.2. python scripts/governance/generators/generate_path_ownership_map.py --write — 刷新路径归属声明
 6.3. Session-level cleanup: code → `data/cache/` 清空 + 临时文件全删除（RULE-TWELVE）
 7. 零残留扫描: _temp* / _check* / _fix* / _phase_* 前缀文件 → 全部删除
 8. 根目录审计: ls 根目录 → 逐项对照 RULE-FOURTEEN 白名单 → 不在白名单 → **删**

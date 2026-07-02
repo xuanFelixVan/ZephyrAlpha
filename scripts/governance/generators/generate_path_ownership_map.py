@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
-# [MODULE] scripts.governance.generate_path_ownership_map
+# [MODULE] scripts.governance.generators.generate_path_ownership_map
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
@@ -19,10 +19,10 @@
 生成物: docs/03_modules/path_ownership_map.yaml
 
 用法:
-    python scripts/governance/generate_path_ownership_map.py            # stdout
-    python scripts/governance/generate_path_ownership_map.py --write    # 覆写
-    python scripts/governance/generate_path_ownership_map.py --check    # CI 漂移检测
-    python scripts/governance/generate_path_ownership_map.py --conflicts  # 仅输出冲突
+    python scripts/governance/generators/generate_path_ownership_map.py            # stdout
+    python scripts/governance/generators/generate_path_ownership_map.py --write    # 覆写
+    python scripts/governance/generators/generate_path_ownership_map.py --check    # CI 漂移检测
+    python scripts/governance/generators/generate_path_ownership_map.py --conflicts  # 仅输出冲突
 """
 
 from __future__ import annotations
@@ -46,6 +46,12 @@ import sys
 from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
+
+# 治本(ARCH-036 迁移遗漏): 迁移到 generators/ 子目录后需添加父目录到 sys.path
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
@@ -213,7 +219,7 @@ def generate_yaml() -> str:
     header = (
         "# ============================================================================\n"
         "# ZephyrAlpha 路径归属声明 — 自动生成，禁止手写\n"
-        "# 生成工具: scripts/governance/generate_path_ownership_map.py\n"
+        "# 生成工具: scripts/governance/generators/generate_path_ownership_map.py\n"
         "# 用途: 每个路径归哪个蓝图管——路径冲突检测的 SSoT\n"
         "# 冲突裁决: ssot_claims 声明优先于 §0.1 清单声明\n"
         "# ============================================================================\n\n"
@@ -222,7 +228,7 @@ def generate_yaml() -> str:
     meta_lines = [
         "meta:",
         f"  generated_at: '{now}'",
-        "  auto_generated_by: 'scripts/governance/generate_path_ownership_map.py'",
+        "  auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'",
         f"  total_path_claims: {len(entries)}",
         f"  total_ssot_claims: {len(ssot_claims)}",
         f"  total_conflicts: {len(conflicts)}",
@@ -285,7 +291,7 @@ def cmd_check() -> None:
     cur_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", current)
     if cur_stripped.strip() != gen_stripped.strip():
         print("[FAIL] path_ownership_map.yaml is OUT OF SYNC with blueprints.")
-        print("       Run: python scripts/governance/generate_path_ownership_map.py --write")
+        print("       Run: python scripts/governance/generators/generate_path_ownership_map.py --write")
         sys.exit(1)
     else:
         print("[OK] path_ownership_map.yaml is in sync with blueprints.")
