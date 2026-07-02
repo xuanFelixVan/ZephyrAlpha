@@ -608,7 +608,17 @@ entries:
       拆分裁定：code_dedup root=58≤60，已符合GOV-DOC-018 T_hard阈值——按职责拆detectors/analyzers/fixers/validators/risk/runtime"非阈值强制，本阶段不执行"。
       阈值仅作触发条件，达标即止；CONSUMERS补全为本阶段唯一必需交付物。
       提交：7cd0a0e1b6，merge：994b83ae46。
-    阶段3(drift_detection) 待执行：先重做CONSUMERS标注(52/66占位)；修复python_compat.py MODULE拼写；落地_*.py为正式子包(core/scanners/analysis/infrastructure)。
+    阶段3(drift_detection) DONE 2026-07-03：
+      前置：AST静态分析(5348个.py文件)重做CONSUMERS——52文件占位(drift_engine;detector_dispatcher;alert_router)替换为真实消费者；python_compat.py MODULE拼写修复(drift_detectionthon_compat→drift_detection.python_compat)。
+      裁定：drift_detection享GOV-DOC-018 T_soft=120——5簇多前缀命名约定(_core/_drift/_scanners/_infrastructure/_analysis)满足"前缀分组+可预测+覆盖全部文件"，66≤120合规。物理拆分非阈值强制，本阶段不执行（与阶段2 code_dedup root=58≤60裁定一致：阈值达标即止）。
+      形式化裁定（GOV-DOC-018多簇前缀条款首个裁定窗口）：
+        (a)GOV-DOC-018文本"前缀分组"允许多簇并存，pass示例"功能域前缀"本身隐含多域；
+        (b)fail条款"无统一前缀"针对扁平命名(test_topic.py无分组约定)，非针对多簇体系；
+        (c)后缀模式(*_scanner/*_engine)和个体名归簇(events/reconciler)认可为"前缀规则"等价形式(基于rationale的Glob可预测本质)；
+        (d)验证器validate_nested_flat_dirs.py不检测前缀，只数.py文件数(warn=60/error=120)，T_hard/T_soft区分是人工裁定。
+        (e)ARCH-034的"不建物理子目录"裁定获GOV-DOC-018 T_soft=120条款支持——104+import漂移源+__file__路径陷阱+behavioral_auditor Safety=H垫片风险不需要承担。
+      先例：rule_enforcement根46<60从未进入T_soft裁定；code_dedup根58≤60同为T_hard合规。本裁定为首例T_soft多簇前缀裁定。
+      提交：457b47978(前置CONSUMERS+MODULE修复)。
     阶段4(audit_trail) 待执行：先厘清bridges/8对同名文件归属；按层拆core/storage/integrity/trust/models/query/feedback/supply_chain/forensics/compliance。
     每阶段需独立任务卡 + import重写(复用ast_import_rewriter.py) + 防复发门禁。
   status: open
