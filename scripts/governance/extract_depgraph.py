@@ -175,7 +175,7 @@ def _build_modules_view(dep: dict) -> dict:
         for n in sub_items:
             modules[key]["items"].append(
                 {
-                    "module_id": n.get("belongs_to", n.get("blueprint_id", "")),
+                    "module_id": n.get("belongs_to") or n.get("blueprint_id", ""),
                     "name": n.get("path", "").split("/")[-1] if n.get("path") else "",
                     "path": n.get("path", ""),
                     "physical_files": [n.get("path", "")] if n.get("path") else [],
