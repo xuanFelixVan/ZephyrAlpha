@@ -280,7 +280,7 @@ class TestMaintenanceLoopTasks:
         mock_cm.get_collection.return_value = mock_col
 
         monitor = IndexHealthMonitor(mock_cm)
-        reports = monitor.check_ttl_expiry()
+        reports = monitor.collect_ttl_expiry()
 
         assert isinstance(reports, list)
         # TTL_MAP 有 3 个 collection
@@ -339,7 +339,7 @@ class TestTTLExpiryCheck:
         mock_cm.get_collection.return_value = mock_col
 
         monitor = IndexHealthMonitor(mock_cm)
-        reports = monitor.check_ttl_expiry()
+        reports = monitor.collect_ttl_expiry()
 
         # 空集合应跳过（continue），不产生报告
         for r in reports:

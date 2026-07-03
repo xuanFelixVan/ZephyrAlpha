@@ -66,14 +66,14 @@ def cmd_list() -> int:
 
 def cmd_status() -> int:
     """显示模块健康状态."""
-    ok = True
+    is_healthy = True
     try:
         from zephyr.autonomy_core.skills.skill_model import SkillStatus, SkillTier, SkillType
 
         print(f"skill_model       OK  ({len(SkillTier)} tiers, {len(SkillType)} types, {len(SkillStatus)} statuses)")
     except Exception as exc:
         print(f"skill_model       FAIL  {exc}")
-        ok = False
+        is_healthy = False
 
     try:
         from zephyr.autonomy_core.skills.skill_loader import SkillLoader
@@ -82,13 +82,13 @@ def cmd_status() -> int:
         print(f"skill_loader      OK  (path={loader.registry_path})")
     except Exception as exc:
         print(f"skill_loader      FAIL  {exc}")
-        ok = False
+        is_healthy = False
 
     try:
         print("skill_factory     OK")
     except Exception as exc:
         print(f"skill_factory     FAIL  {exc}")
-        ok = False
+        is_healthy = False
 
     try:
         reg = _load_registry()
@@ -97,10 +97,10 @@ def cmd_status() -> int:
         print(f"skill-registry    OK  ({n_domain} domain + {n_role} role = {n_domain + n_role} total)")
     except Exception as exc:
         print(f"skill-registry    FAIL  {exc}")
-        ok = False
+        is_healthy = False
 
-    print(f"\n{'ALL SYSTEMS GO' if ok else 'SOME SYSTEMS DEGRADED'}")
-    return 0 if ok else 1
+    print(f"\n{'ALL SYSTEMS GO' if is_healthy else 'SOME SYSTEMS DEGRADED'}")
+    return 0 if is_healthy else 1
 
 
 def main() -> int:

@@ -153,7 +153,7 @@ class TaskSystemIntegration:
         self._consumed: int = 0
         self._lock = threading.Lock()
 
-    def check_and_deduct_tokens(self, task_id: str, estimated_tokens: int) -> TokenResult:
+    def deduct_tokens(self, task_id: str, estimated_tokens: int) -> TokenResult:
         with self._lock:
             if self._consumed + estimated_tokens > self.daily_budget:
                 return TokenResult(
@@ -188,7 +188,7 @@ class IguanaRebalancerIntegration:
         self.capacity_threshold = capacity_threshold
         self._account_capacities: dict[str, float] = {}
 
-    def check_capital_capacity(self, account_id: str) -> CapacityCheck:
+    def evaluate_capital_capacity(self, account_id: str) -> CapacityCheck:
         remaining = self._account_capacities.get(account_id, 1.0)
 
         if remaining >= self.capacity_threshold:

@@ -201,24 +201,24 @@ class TestCheckBeforeConsume:
         self.tk = SkillTokenomics()
 
     def test_no_budget_allows(self):
-        result = self.tk.check_before_consume("no_budget_skill", 100)
+        result = self.tk.evaluate_consumption("no_budget_skill", 100)
         assert result["allowed"] is True
 
     def test_budget_allows_when_remaining(self):
         self.tk.set_budget("skill_a", 1000)
-        result = self.tk.check_before_consume("skill_a", 500)
+        result = self.tk.evaluate_consumption("skill_a", 500)
         assert result["allowed"] is True
 
     def test_budget_blocks_when_exhausted_hard_cap(self):
         self.tk.set_budget("skill_a", 100, hard_cap=True)
         self.tk.consume("skill_a", 100)
-        result = self.tk.check_before_consume("skill_a", 50)
+        result = self.tk.evaluate_consumption("skill_a", 50)
         assert result["allowed"] is False
 
     def test_budget_allows_when_exhausted_soft_cap(self):
         self.tk.set_budget("skill_a", 100, hard_cap=False)
         self.tk.consume("skill_a", 100)
-        result = self.tk.check_before_consume("skill_a", 50)
+        result = self.tk.evaluate_consumption("skill_a", 50)
         assert result["allowed"] is True
 
 

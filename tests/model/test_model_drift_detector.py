@@ -71,7 +71,7 @@ class TestEstablishBaseline:
 class TestCheckDrift:
     def test_check_drift_no_baseline(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        result = detector.check_drift([{"text": "hello"}])
+        result = detector.detect_drift([{"text": "hello"}])
         assert isinstance(result, DriftResult)
         assert result.drift_detected is False
         assert result.exit_code == 0
@@ -92,7 +92,7 @@ class TestCheckDrift:
         baseline_samples = [{"text": "alpha"}, {"text": "beta"}]
         detector.establish_baseline(baseline_samples)
         different_samples = [{"text": "gamma"}, {"text": "delta"}, {"text": "epsilon"}]
-        result = detector.check_drift(different_samples)
+        result = detector.detect_drift(different_samples)
         assert isinstance(result, DriftResult)
         assert result.divergence_score >= 0.0
         assert result.threshold == ModelDriftDetector.DIVERGENCE_THRESHOLD
@@ -101,14 +101,14 @@ class TestCheckDrift:
         detector = ModelDriftDetector(project_root=tmp_path)
         detector._baseline_path.parent.mkdir(parents=True, exist_ok=True)
         detector._baseline_path.write_text("NOT JSON{{{", encoding="utf-8")
-        result = detector.check_drift([{"text": "hello"}])
+        result = detector.detect_drift([{"text": "hello"}])
         assert result.drift_detected is False
         assert "Baseline file corrupted" in result.details
 
     def test_check_drift_empty_current_outputs(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
         detector.establish_baseline([{"text": "hello"}])
-        result = detector.check_drift([])
+        result = detector.detect_drift([])
         assert isinstance(result, DriftResult)
         assert result.divergence_score >= 0.0
 
@@ -117,7 +117,7 @@ class TestCheckDrift:
         baseline_samples = [{"text": "baseline_only"}]
         detector.establish_baseline(baseline_samples)
         completely_different = [{"text": f"unique_{i}"} for i in range(100)]
-        result = detector.check_drift(completely_different)
+        result = detector.detect_drift(completely_different)
         if result.drift_detected:
             assert result.exit_code == ModelDriftDetector.EXIT_CODE_DRIFT
 

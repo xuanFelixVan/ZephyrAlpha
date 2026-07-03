@@ -131,7 +131,7 @@ class TestCostTracker:
         db = tmp_path / "test_data/databases/governance.db"
         tracker = CostTracker(db_path=str(db), daily_budget_usd=10.0)
         tracker.record_usage(model="deepseek-chat", tokens_in=1000, tokens_out=500)
-        budget = tracker.check_budget()
+        budget = tracker.get_budget_status()
         assert "daily_budget" in budget
         assert "spent" in budget
         assert "remaining" in budget
@@ -144,7 +144,7 @@ class TestCostTracker:
         db = tmp_path / "test_data/databases/governance.db"
         tracker = CostTracker(db_path=str(db), daily_budget_usd=0.00001)
         tracker.record_usage(model="deepseek-chat", tokens_in=100000, tokens_out=50000)
-        budget = tracker.check_budget()
+        budget = tracker.get_budget_status()
         assert len(budget["alerts"]) > 0
         tracker.close()
 

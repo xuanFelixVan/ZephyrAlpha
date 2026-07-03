@@ -33,8 +33,8 @@ def _cmd_judge(args: argparse.Namespace) -> int:
         print(json.dumps({"error": f"File not found: {path}"}, indent=2))
         return 1
 
-    j = OrphanJudge(jsonl_output=args.jsonl)
-    result = j.judge(path, dry_run=args.dry_run)
+    judge = OrphanJudge(jsonl_output=args.jsonl)
+    result = judge.judge(path, dry_run=args.dry_run)
     output = {
         "path": result.path,
         "verdict": result.verdict.value,
@@ -58,12 +58,12 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     if args.limit:
         py_files = py_files[: args.limit]
 
-    j = OrphanJudge(jsonl_output=args.jsonl)
+    judge = OrphanJudge(jsonl_output=args.jsonl)
     results = []
     for fpath in py_files:
         rel_path = str(fpath).replace("\\", "/")
         try:
-            result = j.judge(rel_path, dry_run=args.dry_run)
+            result = judge.judge(rel_path, dry_run=args.dry_run)
             results.append(
                 {
                     "path": rel_path,
@@ -93,12 +93,12 @@ def _cmd_report(args: argparse.Namespace) -> int:
         return 1
 
     py_files = sorted(root.rglob("*.py"))
-    j = OrphanJudge()
+    judge = OrphanJudge()
     results = []
     for fpath in py_files:
         rel_path = str(fpath).replace("\\", "/")
         try:
-            result = j.judge(rel_path, dry_run=args.dry_run)
+            result = judge.judge(rel_path, dry_run=args.dry_run)
             results.append(
                 {
                     "path": rel_path,

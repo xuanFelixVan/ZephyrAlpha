@@ -52,20 +52,20 @@ class TestTechStackValidator:
     def test_check_pydantic_v2(self, tmp_path):
         manifest = str(tmp_path / "nonexistent.yaml")
         validator = TechStackValidator(manifest_path=manifest)
-        result = validator.check_pydantic_v2()
+        result = validator.inspect_pydantic_v2()
         assert isinstance(result, ComponentStatus)
         assert result.dd_id == "DD-1"
 
     def test_check_sqlite(self, tmp_path):
         manifest = str(tmp_path / "nonexistent.yaml")
         validator = TechStackValidator(manifest_path=manifest)
-        result = validator.check_sqlite()
+        result = validator.inspect_sqlite()
         assert result.available is True
 
     def test_check_pytest(self, tmp_path):
         manifest = str(tmp_path / "nonexistent.yaml")
         validator = TechStackValidator(manifest_path=manifest)
-        result = validator.check_pytest()
+        result = validator.inspect_pytest()
         assert result.available is True
 
     def test_report_generates_string(self, tmp_path):

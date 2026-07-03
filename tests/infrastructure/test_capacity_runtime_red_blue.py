@@ -246,7 +246,7 @@ class TestRuntimeIntegrationAdversarial:
             tokens_out=10000,
             component="test",
         )
-        budget = tracker.check_budget()
+        budget = tracker.get_budget_status()
         assert budget["pct_used"] > 100 or len(budget["alerts"]) > 0
         tracker.close()
 

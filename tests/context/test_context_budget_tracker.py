@@ -86,21 +86,21 @@ class TestCheckBudget:
         obs = _make_observer()
         tracker = ContextBudgetTracker(obs, session_limit=10000)
         tracker.count_tokens("short text", session_id="s1")
-        level = tracker.check_budget("s1")
+        level = tracker.evaluate_budget("s1")
         obs.emit.assert_not_called()
 
     def test_l1_warning_emitted(self):
         obs = _make_observer()
         tracker = ContextBudgetTracker(obs, session_limit=100)
         tracker.count_tokens("x" * 400, session_id="s1")
-        level = tracker.check_budget("s1")
+        level = tracker.evaluate_budget("s1")
         assert level == ContextBudgetLevel.L1_WARNING or obs.emit.called
 
     def test_l3_hard_stop_emitted(self):
         obs = _make_observer()
         tracker = ContextBudgetTracker(obs, session_limit=100)
         tracker.count_tokens("x" * 500, session_id="s1")
-        level = tracker.check_budget("s1")
+        level = tracker.evaluate_budget("s1")
         assert level in (ContextBudgetLevel.L2_THROTTLE, ContextBudgetLevel.L3_HARD_STOP)
 
 

@@ -54,21 +54,21 @@ class TestContextBudgetTrackerCheckBudget:
     def test_check_budget_returns_level(self):
         bus = Observer()
         tracker = ContextBudgetTracker(bus, session_limit=8000)
-        level = tracker.check_budget("default")
+        level = tracker.evaluate_budget("default")
         assert isinstance(level, ContextBudgetLevel)
 
     def test_check_budget_l1_warning(self):
         bus = Observer()
         tracker = ContextBudgetTracker(bus, session_limit=1000)
         tracker.count_tokens("a" * 3400, session_id="s4")
-        level = tracker.check_budget("s4")
+        level = tracker.evaluate_budget("s4")
         assert level in (ContextBudgetLevel.L1_WARNING, ContextBudgetLevel.L2_THROTTLE)
 
     def test_check_budget_l3_hard_stop(self):
         bus = Observer()
         tracker = ContextBudgetTracker(bus, session_limit=1000)
         tracker.count_tokens("a " * 5000, session_id="s5")
-        level = tracker.check_budget("s5")
+        level = tracker.evaluate_budget("s5")
         assert level == ContextBudgetLevel.L3_HARD_STOP
 
 

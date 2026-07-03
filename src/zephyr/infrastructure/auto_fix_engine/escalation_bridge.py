@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 
 class EscalationBridge:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
-        cfg = config or {}
-        self._enabled: bool = cfg.get("bridge_enabled", True)
-        self._auto_escalate: bool = cfg.get("auto_escalate_dead_letter", True)
-        self._max_level: str = cfg.get("max_escalation_level", "L2_HUMAN_REVIEW")
+        config = config or {}
+        self._enabled: bool = config.get("bridge_enabled", True)
+        self._auto_escalate: bool = config.get("auto_escalate_dead_letter", True)
+        self._max_level: str = config.get("max_escalation_level", "L2_HUMAN_REVIEW")
         self._escalation_history: list[dict[str, Any]] = []
 
     def escalate(self, action: FixAction, reason: str = "") -> FixAction:

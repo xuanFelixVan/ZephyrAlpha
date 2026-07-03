@@ -66,9 +66,9 @@ def run_cycle() -> dict[str, Any]:
     cm = CollectionManager()
     monitor = IndexHealthMonitor(cm)
 
-    report = monitor.check_all()
+    report = monitor.inspect_all()
     drift = monitor.detect_drift()
-    ttl = monitor.check_ttl_expiry()
+    ttl = monitor.collect_ttl_expiry()
     integrity = monitor.integrity_check()
 
     total_issues = len(report.issues)

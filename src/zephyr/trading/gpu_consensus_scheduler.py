@@ -442,8 +442,8 @@ class GPUConsensusScheduler:
                 timeout=self._api_timeout_s,
             )
             if resp.status_code == 200:
-                data = resp.json()
-                text = data.get("response", "")
+                resp_body = resp.json()
+                text = resp_body.get("response", "")
                 return self._parse_model_response(text, model_id)
             return None
         except Exception as e:
@@ -486,8 +486,8 @@ class GPUConsensusScheduler:
                 timeout=self._gpu_timeout_s,
             )
             if resp.status_code == 200:
-                data = resp.json()
-                text = data.get("response", "")
+                resp_body = resp.json()
+                text = resp_body.get("response", "")
                 return self._parse_model_response(text, self._local_model)
             return None
         except Exception as e:
@@ -543,8 +543,8 @@ class GPUConsensusScheduler:
                 timeout=5.0,
             )
             if resp.status_code == 200:
-                data = resp.json()
-                models = [m.get("name", "") for m in data.get("models", [])]
+                resp_body = resp.json()
+                models = [m.get("name", "") for m in resp_body.get("models", [])]
                 has_model = any(self._local_model in m for m in models)
                 self._gpu_status = GPUStatus(
                     available=has_model,

@@ -64,7 +64,7 @@ class ModelDriftDetector:
         self._baseline_path.write_text(json.dumps(baseline, ensure_ascii=False, indent=2), encoding="utf-8")
         return True
 
-    def check_drift(self, current_outputs: list[dict[str, Any]]) -> DriftResult:
+    def detect_drift(self, current_outputs: list[dict[str, Any]]) -> DriftResult:
         if not self._baseline_path.exists():
             return DriftResult(
                 drift_detected=False,

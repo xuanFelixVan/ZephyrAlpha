@@ -99,7 +99,7 @@ class NightShiftQueue:
         if not self._path.exists():
             return False
         lines: list[str] = []
-        found = False
+        is_found = False
         with self._lock:
             for line in self._path.open(encoding="utf-8"):
                 line_stripped = line.strip()
@@ -111,12 +111,12 @@ class NightShiftQueue:
                         data["human_decision"] = decision
                         data["human_timestamp"] = datetime.now().isoformat()
                         data["human_notes"] = notes
-                        found = True
+                        is_found = True
                     lines.append(json.dumps(data, ensure_ascii=False) + "\n")
                 except Exception:
                     lines.append(line)
             self._path.write_text("".join(lines), encoding="utf-8")
-        return found
+        return is_found
 
     def stats(self) -> dict[str, int]:
         total = 0

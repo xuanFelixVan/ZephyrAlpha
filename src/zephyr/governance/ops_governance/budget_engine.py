@@ -109,6 +109,16 @@ class BudgetEngine:
         self._closed = False
         self._init_consumption()
 
+    @property
+    def degradation_steps(self) -> list[DegradationStep]:
+        """当前生效的降级阶梯（只读视图）。"""
+        return self._degradation_steps
+
+    @property
+    def current_degradation_level(self) -> BudgetLevel:
+        """当前降级等级（只读视图）。"""
+        return self._current_degradation_level
+
     @classmethod
     def ensure_initialized(cls) -> "BudgetEngine":
         """确保 BudgetEngine 已初始化并返回实例（幂等）。"""

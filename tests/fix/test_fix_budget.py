@@ -121,7 +121,7 @@ class TestDriftBudgetLink:
         db = str(tmp_path / "budget_test.db")
         fb = FixBudget(db_path=db)
         dbl = DriftBudgetLink(fb)
-        decision = dbl.check_drift_budget()
+        decision = dbl.evaluate_drift_budget()
         assert decision.allowed is True
 
     def test_check_drift_budget_exhausted(self, tmp_path):
@@ -131,7 +131,7 @@ class TestDriftBudgetLink:
         dbl._drift_fix_limit = 2
         dbl.record_drift_fix()
         dbl.record_drift_fix()
-        decision = dbl.check_drift_budget()
+        decision = dbl.evaluate_drift_budget()
         assert decision.allowed is False
         assert "Drift fix budget exhausted" in decision.reason
 

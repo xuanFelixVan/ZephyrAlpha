@@ -101,9 +101,9 @@ def _load_patterns() -> dict[str, list[float]]:
     try:
         os.makedirs(os.path.dirname(_PATTERNS_FILE), exist_ok=True)
         with open(_PATTERNS_FILE, encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, dict):
-                return data
+            patterns = json.load(f)
+            if isinstance(patterns, dict):
+                return patterns
     except Exception as e:
         logger.warning("_load_patterns: failed to load patterns file (%s: %s)", type(e).__name__, e)
     return {}

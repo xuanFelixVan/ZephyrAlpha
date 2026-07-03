@@ -178,7 +178,7 @@ def test_e2e_cost_tracker():
     assert report.total_tokens > 0
     assert report.total_cost > 0
 
-    budget = tracker.check_budget()
+    budget = tracker.get_budget_status()
     assert budget["spent"] > 0
     assert budget["pct_used"] < 100 or "预算超出但在E2E中可接受"
 

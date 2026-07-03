@@ -150,7 +150,7 @@ class SelfEvolutionFidelityGate:
         )
 
     @classmethod
-    def check_toxicity(cls, content: str) -> tuple[float, list[dict[str, str]]]:
+    def score_toxicity(cls, content: str) -> tuple[float, list[dict[str, str]]]:
         findings: list[dict[str, str]] = []
         hit_count = 0
         for pattern, category in _DANGEROUS_PATTERNS:
@@ -162,7 +162,7 @@ class SelfEvolutionFidelityGate:
         return score, findings
 
     @classmethod
-    def check_coherence(cls, original: str, evolved: str) -> tuple[float, str]:
+    def score_coherence(cls, original: str, evolved: str) -> tuple[float, str]:
         orig_refs = set(re.findall(r"MOD-INF-(\d{3})", original))
         evo_refs = set(re.findall(r"MOD-INF-(\d{3})", evolved))
         if not orig_refs:
@@ -197,8 +197,8 @@ class SelfEvolutionFidelityGate:
         if diffs["forbidden_lost"]:
             forbidden_severity = min(1.0, len(diffs["forbidden_lost"]) * 0.3)
 
-        toxicity_score, toxicity_findings = cls.check_toxicity(evolved_content)
-        coherence_score, coherence_detail = cls.check_coherence(original_content, evolved_content)
+        toxicity_score, toxicity_findings = cls.score_toxicity(evolved_content)
+        coherence_score, coherence_detail = cls.score_coherence(original_content, evolved_content)
         similarity = cls.compute_similarity(original_content, evolved_content)
 
         fidelity_score = (

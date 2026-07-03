@@ -56,7 +56,7 @@ def main() -> None:
     cm = CollectionManager()
     monitor = IndexHealthMonitor(cm)
 
-    report = monitor.check_all()
+    report = monitor.inspect_all()
     print(f"状态:   {report.status}")
     print(f"健康:   {report.collections_healthy}")
     print(f"不健康: {report.collections_unhealthy}")
@@ -79,7 +79,7 @@ def main() -> None:
             print(f"  缺失 Collection: {drift.missing_collections}")
         print()
 
-    ttl_reports = monitor.check_ttl_expiry()
+    ttl_reports = monitor.collect_ttl_expiry()
     expired_any = False
     for ttl in ttl_reports:
         if ttl.expired_count > 0:

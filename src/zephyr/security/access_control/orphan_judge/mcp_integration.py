@@ -26,8 +26,8 @@ __all__ = ["ORPHAN_JUDGE_TOOLS", "register_tools"]
 def _judge_file(file_path: str) -> dict[str, Any]:
     from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
 
-    j = OrphanJudge()
-    result = j.judge(file_path, dry_run=True)
+    judge = OrphanJudge()
+    result = judge.judge(file_path, dry_run=True)
     return {
         "path": result.path,
         "verdict": result.verdict.value,
@@ -43,12 +43,12 @@ def _scan_directory(directory: str, limit: int = 100) -> dict[str, Any]:
     if not root.is_dir():
         return {"error": f"Not a directory: {directory}"}
     py_files = sorted(root.rglob("*.py"))[:limit]
-    j = OrphanJudge()
+    judge = OrphanJudge()
     results = []
     for fpath in py_files:
         rel_path = str(fpath).replace("\\", "/")
         try:
-            result = j.judge(rel_path, dry_run=True)
+            result = judge.judge(rel_path, dry_run=True)
             results.append(
                 {
                     "path": rel_path,

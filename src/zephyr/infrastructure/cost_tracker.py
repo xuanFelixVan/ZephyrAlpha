@@ -226,7 +226,7 @@ class CostTracker:
 
         return report
 
-    def check_budget(self) -> dict[str, Any]:
+    def get_budget_status(self) -> dict[str, Any]:
         report = self.daily_report()
         remaining = round(self._daily_budget - report.total_cost, 6)
         pct_used = round(report.total_cost / self._daily_budget * 100, 1) if self._daily_budget > 0 else 0
