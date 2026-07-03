@@ -118,7 +118,7 @@ class LocalModelScheduler:
         self._embedding_router = embedding_router
         self._ollama_chat = ollama_chat
         self._poll_interval = poll_interval_s
-        self._task_queue: queue.Queue[LocalTask] = queue.Queue()
+        self._task_queue: queue.Queue[LocalTask] = queue.Queue(maxsize=100)  # 5.16.12 修复：添加 maxsize 防止无边界积压
         self._results: dict[str, LocalTask] = {}
         self._lock = threading.Lock()
         self._thread: threading.Thread | None = None
@@ -164,11 +164,13 @@ class LocalModelScheduler:
         return None
 
     def start(self) -> None:
-        if self._running:
-            return
-        self._running = True
-        self._thread = threading.Thread(target=self._run, daemon=True, name="LocalModelScheduler")
-        self._thread.start()
+        # 5.16.12 修复：start() 加锁防止并发创建多个 worker 线程
+        with self._lock:
+            if self._running:
+                return
+            self._running = True
+            self._thread = threading.Thread(target=self._run, daemon=True, name="LocalModelScheduler")
+            self._thread.start()
         from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
 
         try:

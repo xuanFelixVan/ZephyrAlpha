@@ -112,6 +112,8 @@ class RateLimiter:
                     return True
 
                 wait_time = (1.0 - self._tokens) / self._rate
+                # 5.16.13 修复：_waited 自增移入锁内，避免并发 lost update
+                self._waited += 1
 
             if time.monotonic() + wait_time > min(deadline, time.monotonic() + self._max_wait):
                 with self._lock:
@@ -119,7 +121,6 @@ class RateLimiter:
                 return False
 
             time.sleep(min(wait_time, 0.1))
-            self._waited += 1
 
     def stats(self) -> RateLimiterStats:
         with self._lock:

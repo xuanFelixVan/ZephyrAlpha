@@ -2246,16 +2246,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因2（锁保护"部分强制"）
 - 修复：AST门禁——类含`self._lock`则所有访问`self._<mutable>`必须`with self._lock`
 
-#### 5.16.12 LocalModelScheduler队列无边界+wait_result轮询+start竞态【MEDIUM】
-- 证据：[local_model_scheduler.py:121,141-164,166-171](file:///d:/ZephyrAlpha/src/zephyr/integration/local_model/local_model_scheduler.py) `queue.Queue()` 无maxsize；`wait_result` 用`time.sleep(0.5)`轮询而非Condition；`start()` `if self._running:return;self._running=True` 无锁可创建多worker线程
-- 病根：根因5（生产者-消费者模式无规范）
-- 修复：`Queue(maxsize=N)` + `Condition.notify_all()` + `start()`加锁
-
-#### 5.16.13 rate_limiter acquire锁外sleep+_waited锁外自增【MEDIUM】
-- 证据：[rate_limiter.py:107-122](file:///d:/ZephyrAlpha/src/zephyr/integration/mcp/rate_limiter.py) `self._waited+=1`（第122行）在锁外，并发等待线程lost update；`wait_time`基于释放锁前的`_tokens`，期间其他线程获取token则本线程sleep过长
-- 病根：根因5（Token Bucket实现细节错误，无并发测试）
-- 修复：`_waited+=1`移入锁内
-
 #### 5.16.14 capability_registry register持久化在锁外+非原子write【MEDIUM】
 - 证据：[capability_registry.py:48-54,99-105](file:///d:/ZephyrAlpha/src/zephyr/trading/capability_registry.py) `with self._lock: _cards[id]=card` 加锁OK，但 `if _card_dir: self._persist_card(card)` 锁外持久化；`path.write_text(yaml.dump(...))` 非原子写，跨进程B的`load_from_dir`可读到半写YAML，`except:continue`吞异常静默丢卡
 - 病根：根因5（跨进程持久化无原子写规范，staging_area._atomic_replace已有正确实现但未复用）
