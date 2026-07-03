@@ -151,7 +151,7 @@ entries:
   title: check_rule_four_way_alignment.py 四方对齐门禁缺失（文件不存在）
   severity: P0致命
   adjudication: 补建 scripts/governance/check_rule_four_way_alignment.py——文件实际不存在，四方对齐门禁（规则YAML ↔ DB ↔ code ↔ path）完全缺失。原裁定指 line 80/94/130 过滤条件 `data.get("layer") != "L0"` 恒为假，但文件本身不存在。治本：补建脚本，过滤条件改为按 tier 或 severity 过滤（tier 来自 _index.yaml，非 frontmatter layer）；先评估是否由现有 depgraph/validate_layer_consistency 等门禁部分覆盖；注册到 GitCommitGateway（in-process gate，无法用 --no-verify 绕过）或 pre-commit 自动触发。
-  fix_phase: 已完成（check_rule_four_way_alignment.py 补建 + rule_four_way_alignment_gate GitCommitGateway in-process gate priority=76 + capability_canonical_file_registry.yaml 登记 schema_health_verification/rule_four_way_alignment_gate/rule_four_way_alignment_checker 能力；OPS-2026070402）
+  fix_phase: 已完成（check_rule_four_way_alignment.py 补建 + rule_four_way_alignment_gate GitCommitGateway in-process gate priority=76 + capability_canonical_file_registry.yaml 登记 rule_four_way_alignment_gate/rule_four_way_alignment_checker 能力；OPS-2026070402）
   status: resolved
   created: '2026-06-27'
   last_updated: '2026-07-04'

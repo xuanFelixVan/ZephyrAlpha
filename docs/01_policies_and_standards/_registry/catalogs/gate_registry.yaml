@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-02T19:21:57Z'
+generated_at: '2026-07-03T21:18:57Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml
-total_gates: 32
+total_gates: 33
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -253,28 +253,13 @@ gates:
   always_run: false
   category: unknown
   status: active
-- gate_id: GATE-SCHEMA-HEALTH
-  name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
-  entry: 'N/A (merged into GATE-C2, see redirect_to)'
-  description: '【已合并/重定向】原独立 gate-schema-health 已于 ARCH-017 治本时合并到 GATE-C2
-    run_gate_chain（与 check_contract_code_drift + check_contract_physical_path 顺序执行）。
-    本条目为重定向锚点，保留 gate_id 供历史引用可追溯。实际执行入口见 GATE-C2（L256-266）。
-    检测真源：scripts/governance/d11_compliance/verify_schema_health.py（4 校验：DDL 列一致性/
-    只读触发器/Schema 版本/PG 运行时健康）。capability：schema_health_verification。
-    注：status=deprecated 因 DB CHECK 约束仅允许 active/deprecated/disabled（depgraph_schema.py
-    _DDL_GATES L576），语义对标"已合并退役"。'
-  files_trigger: ''
-  always_run: false
-  category: schema_health
-  status: deprecated
-  redirect_to: GATE-C2
 - gate_id: GATE-C2
   name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci
     scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci
     scripts/governance/d11_compliance/verify_schema_health.py,--ci
   description: 契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录)
-    + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，manual 阶段
+    + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，commit 阶段自动触发（ARCH-017 升级）
   files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\.py)$
   always_run: false
   category: contract_drift
@@ -313,3 +298,16 @@ gates:
   always_run: false
   category: unknown
   status: active
+- gate_id: GATE-SCHEMA-HEALTH
+  name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
+  entry: N/A (merged into GATE-C2, see redirect_to)
+  description: 【已合并/重定向】原独立 gate-schema-health 已于 ARCH-017 治本时合并到 GATE-C2 run_gate_chain（与
+    check_contract_code_drift + check_contract_physical_path 顺序执行）。本条目为重定向锚点，保留 gate_id
+    供历史引用可追溯。实际执行入口见 GATE-C2。检测真源：scripts/governance/d11_compliance/verify_schema_health.py（4
+    校验：DDL 列一致性/只读触发器/Schema 版本/PG 运行时健康）。capability：schema_health_verification。注：status=deprecated
+    因 DB CHECK 约束仅允许 active/deprecated/disabled（depgraph_schema.py _DDL_GATES），语义对标'已合并退役'。
+  files_trigger: ''
+  always_run: false
+  category: schema_health
+  status: deprecated
+  redirect_to: GATE-C2

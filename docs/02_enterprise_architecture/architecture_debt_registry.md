@@ -771,6 +771,13 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **仍存在**：2簇（簇3 infrastructure↔integration/mcp 19对 + 簇6 shared/schema↔integration/shared/schema 6对 = 25对）
 > **原最大债务**：簇1（governance↔rollback 71同名）和簇2（behavioral_audit↔drift_detection 51同名）贡献114对复制，现已消除。
 
+#### 5.1.3 同步副本（3处）—— ✅ 全部FIXED（2026-07-04验证）
+
+> **[✓ FIXED: 2026-07-04]** 3处同步副本全部已消除：
+> - #1 `context_rules_v1.yaml` 已删除（仅保留 `context_rules.yaml` 真源）
+> - #2 `target_architecture/` 已于 2026-07-01 删除
+> - #3 两个 `__init___from_infra.py` 文件已删除（Glob全项目无匹配）
+
 #### 5.1.4 重复簇（6簇，1簇FIXED，3簇部分FIXED，2簇STILL_VALID）
 
 | # | 重复簇 | 定义位置数 | 真源候选 | 严重度 | 状态 |
@@ -794,6 +801,11 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 2 | `get_db_connection` deprecated别名（名称冲突，已注释说明） | [src/zephyr/governance/depgraph_schema.py:1286](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L1286) | 中 | 是 |
 
 > **[路径漂移更新: 2026-07-04]** #1 行号1170→1246；#2 行号1210→1286。
+
+#### 5.1.6 F1-F37功能清单双真源 —— ✅ 全部FIXED（2026-07-04验证）
+
+> **[✓ FIXED: 2026-07-04]** 2处双真源已消除：
+> - #1/#2 `core_function_dependency_design.md` 已归档至 `docs/_archive/`，不再是活跃真源。depgraph为唯一运行时全景真源，双真源冲突已消除。
 
 ---
 
@@ -2334,6 +2346,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（错误吞掉）
 - 修复：用精确sqlite3错误码或迁移语句保证幂等（IF NOT EXISTS）
 
+#### 5.15.14 sync_progress.save_progress临时文件异常不清理【LOW】
+- 证据：[sync_progress.py:51-54](file:///d:/ZephyrAlpha/scripts/governance/sync_progress.py) `tmp=...;with open(tmp,"w"):json.dump(...);os.replace(tmp,...)`，json.dump异常时tmp残留无try/finally
+- **[✓ FIXED: 2026-07-04]** `scripts/governance/sync_progress.py` 文件已删除，债务不复存在
+- 病根：根因5（临时文件异常路径未清理）
+- 修复：`try:...;os.replace;finally:if exists:remove`
+
 #### 5.15.15 task_repo单连接+threading.RLock仅进程内，跨进程多session抛"database is locked"【MEDIUM】
 - 证据：[task_repo.py:652-653](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `with self._lock:` (RLock进程内) + `BEGIN IMMEDIATE`；[sqlite_schema.py:440](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `PRAGMA busy_timeout=5000` 仅等5s；多AI session各自TaskRepository实例共享governance.db
 - 病根：根因5（跨进程并发无显式锁）
@@ -2511,6 +2529,18 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 审计维度：外键约束/级联规则/约束验证/迁移安全/数据类型一致性/NULL语义/时间戳一致性/唯一性保证/引用完整性/Schema版本管理
 > 审计方法：Grep + Read真实文件取证（sqlite_schema.py、depgraph_schema.py、00_sqlite_actual_schema.sql、02_create_pg_schema.sql等8个核心真源）
+
+#### 5.18.2 rule_bindings.rule_id类型不匹配的外键（TEXT→INTEGER）【HIGH】
+- 证据：[00_sqlite_actual_schema.sql:337](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (rule_id) REFERENCES nodes(node_id)`，rule_id是`TEXT NOT NULL`(L333)，nodes.node_id是`INTEGER PRIMARY KEY AUTOINCREMENT`(L279)；类型不匹配FK在SQLite宽松模式下不报错但永不生效
+- 病根：根因1（迁移不完整，DDL抄错引用目标）
+- 修复：删除该FK或新建rules表作为rule_id真源
+- [✓ FIXED: 2026-07-03 批次A收尾] 02_create_pg_schema.sql rule_bindings 表添加 5.18.2/5.18.3 债务说明注释，决策为"应用层校验"——rule_id 引用 rule_catalog_registry.yaml 真源（YAML SSoT），非 nodes.node_id，FK 应指向 rules 表（待建），当前由 apply_depgraph.py 校验
+
+#### 5.18.3 PG迁移悄悄丢失rule_bindings外键约束【HIGH】
+- 证据：[02_create_pg_schema.sql:358-366](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql) rule_bindings表定义完全无`REFERENCES`子句，而SQLite原版(00:337)有FK；迁移翻译时静默丢弃FK，PG中rule_bindings可任意引用不存在的rule_id
+- 病根：根因1（SQLite→PG迁移翻译不完整）
+- 修复：在PG schema补FK或显式声明"应用层校验"
+- [✓ FIXED: 2026-07-03 批次A收尾] 同 5.18.2，02_create_pg_schema.sql rule_bindings 表添加债务说明注释，决策为"应用层校验"（rule_id 真源是 YAML，非 DB 表），不补 FK
 
 #### 5.18.4 gate_decisions表存在3个互斥的schema定义（schema分裂）【HIGH】
 - 证据：[sqlite_schema.py:919](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) v28 migration `gate_decisions(decision_id INTEGER PK, gate_id TEXT, decision TEXT, reason TEXT, decided_at TEXT, decided_by TEXT)` 无FK；[gate_persistence.py:142](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py) `gate_decisions(id INTEGER PK, module_id TEXT, gate TEXT, decision TEXT, detail TEXT, decided_at TEXT)` 列名完全不同；`red_blue_report.json:31` 报告历史v3曾有gate_decisions→gates的FK
@@ -4895,6 +4925,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：AppConfig是frozen=True（不可变）；reload_config返回全新实例，但__init__时缓存self._config的消费者不收到新实例
 - **问题**：调用reload_config()后系统内配置不一致
 - **修复**：引入配置中心模式（ConfigHolder + 回调通知）
+
+#### 5.54.4 [MEDIUM] 配置热重载回调失败被静默吞没
+- **文件**：[config_reload_semantic.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L44) **[文件已删除: 2026-07-04]**
+- **证据**：`reloaded.append(filepath)`在回调执行之前；回调抛异常被`except Exception: pass`吞掉，文件仍被报告为"已重载"
+- **问题**：组件实际未用新配置，但报告显示已重载——运维误判
+- **修复**：回调失败时logger.warning并从reloaded列表移除
 
 #### 5.54.5 [MEDIUM] ResourceOptimizationEngine配置重载OSError被静默
 - **文件**：[resource_optimization.py](file:///D:/ZephyrAlpha/src/zephyr/trading/resource_optimization.py#L796)
@@ -8212,6 +8248,24 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - [governance/base.py](file:///D:/ZephyrAlpha/src/zephyr/governance/base.py) — factor/base.py的逐字节副本
 - 同一概念3份定义，参数列表/返回类型/方法名(validate_inputs vs validate)都不同
 - 修复：删除factor/base.py和governance/base.py，保留factor/factor_base.py为唯一SSoT
+
+#### 5.143.7-5.143.19 [MEDIUM] 13组重复ABC各自独立_registry致插件发现失败
+
+- 5.143.7: analytics_base.py 3份重复(governance/ops/reporting) — [governance/analytics_base.py:54](file:///D:/ZephyrAlpha/src/zephyr/governance/observability_governance/analytics_base.py#L54)
+- 5.143.8: default_tca_engine.py循环依赖(reporting↔governance互导) — [reporting/default_tca_engine.py:42](file:///D:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py#L42)
+- 5.143.9: backtest_base.py 2份重复(simulation/intelligence) — [simulation/backtest_base.py](file:///D:/ZephyrAlpha/src/zephyr/simulation/backtest_base.py) **[文件已删除: 2026-07-04]**
+- 5.143.10: risk_manager_base.py 2份重复(risk/risk/cross_asset) — [risk/risk_manager_base.py](file:///D:/ZephyrAlpha/src/zephyr/risk/risk_manager_base.py)
+- 5.143.11: pipeline_lock.py 2份重复(integration/infrastructure) — [integration/pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/pipeline_lock.py)
+- 5.143.12: routing_plugins.py 2份重复(integration/infrastructure) — [integration/routing_plugins.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/routing_plugins.py)
+- 5.143.13: telemetry.py 2份重复+MODULE声明冲突(ops声明zephyr.data.asset_inventory.telemetry) — [ops/telemetry.py:1-2](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/telemetry.py#L1)
+- 5.143.14: registry_adapter.py 2份重复(governance/infrastructure) — [governance/registry_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/registry_adapter.py)
+- 5.143.15: contracts.py 2份重复且都声明同一MODULE — [governance/audit_orchestrator/contracts.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/contracts.py)
+- 5.143.16: default_capital_allocator.py 2份相同__allocator_id__ — [signal_fundamental/capital/default_capital_allocator.py](file:///D:/ZephyrAlpha/src/zephyr/signal_fundamental/capital/default_capital_allocator.py)
+- 5.143.17: default_equity_strategy.py 3份重复(均含5.143.1的LSP违规) — [pf_core/strategies/default_equity_strategy.py:93](file:///D:/ZephyrAlpha/src/zephyr/pf_core/default_equity_strategy.py#L93)
+- 5.143.18: broker_interface参数名漂移(broker_order_id→order_id) — [governance/broker_interface.py:76](file:///D:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py#L76)
+- 5.143.19: LLMGateway Protocol docstring与签名矛盾 — 见5.143.2
+- 每组各自持有独立`_registry: ClassVar`，子类注册到不同registry导致"插件存在但发现不了"
+- 修复：每组选定一个SSoT，删除其余，统一导入路径
 
 #### 5.143.20-5.143.22 [LOW] 契约悬挂与注解-行为不一致
 

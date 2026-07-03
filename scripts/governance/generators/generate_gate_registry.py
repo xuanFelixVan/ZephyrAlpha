@@ -86,6 +86,32 @@ CATEGORY_MAP = {
 }
 
 
+# 已合并/退役门禁的手动覆盖条目（ARCH-018 治本，2026-07-04）
+# 这些条目不再作为活跃 hook 存在于 .pre-commit-config.yaml，但需在 registry 中保留
+# 供历史引用可追溯。生成器每次运行时将这些条目 merge 到自动生成的 gates 列表末尾。
+# 新增已合并门禁时在此追加条目即可，无需改 generate() 逻辑。
+MANUAL_GATES: list[dict] = [
+    {
+        "gate_id": "GATE-SCHEMA-HEALTH",
+        "name": "GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）",
+        "entry": "N/A (merged into GATE-C2, see redirect_to)",
+        "description": "【已合并/重定向】原独立 gate-schema-health 已于 ARCH-017 治本时合并到 GATE-C2 "
+        "run_gate_chain（与 check_contract_code_drift + check_contract_physical_path 顺序执行）。"
+        "本条目为重定向锚点，保留 gate_id 供历史引用可追溯。实际执行入口见 GATE-C2。"
+        "检测真源：scripts/governance/d11_compliance/verify_schema_health.py"
+        "（4 校验：DDL 列一致性/只读触发器/Schema 版本/PG 运行时健康）。"
+        "capability：schema_health_verification。"
+        "注：status=deprecated 因 DB CHECK 约束仅允许 active/deprecated/disabled"
+        "（depgraph_schema.py _DDL_GATES），语义对标'已合并退役'。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "schema_health",
+        "status": "deprecated",
+        "redirect_to": "GATE-C2",
+    },
+]
+
+
 def extract_gates(config: dict) -> list[dict]:
     """extract_gates implementation."""
     gates = []
@@ -125,6 +151,12 @@ def generate(entry_count: int | None = None) -> dict:
     """generate implementation."""
     pcc = load_yaml(PRE_COMMIT_PATH)
     gates = extract_gates(pcc)
+    # ARCH-018 治本：merge 手动覆盖条目（已合并/退役门禁的重定向锚点）
+    # 避免生成器覆盖手动添加的 GATE-SCHEMA-HEALTH 等重定向条目
+    auto_ids = {g["gate_id"] for g in gates}
+    for mg in MANUAL_GATES:
+        if mg["gate_id"] not in auto_ids:
+            gates.append(mg)
     if entry_count is not None:
         for g in gates:
             g["entry_count"] = entry_count
