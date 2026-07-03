@@ -97,7 +97,7 @@ references: []
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）
 
@@ -920,7 +920,7 @@ class ConstructionStage(str, Enum):
 | 文件 | 核心内容 | 必须包含 |
 |------|---------|---------|
 | architect.md | 架构师角色 Skill | ①设计审查Checklist ②蓝图编写规则 ③拆分判定标准 |
-| implementer.md | 实现者角色 Skill | ①编码铁律 ②十字段头部模板 ③测试要求 |
+| implementer.md | 实现者角色 Skill | ①编码铁律 ②十五字段头部模板 ③测试要求 |
 | governor.md | 治理者角色 Skill | ①门禁检查清单 ②审计规则 ③漂移检测 |
 
 #### 步骤 3：scaffold-2 — 5 个核心 Domain Skills
@@ -1210,7 +1210,7 @@ class ConstructionStage(str, Enum):
 | 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些可改 | ☐ |
 | 9 | 前 | 已知问题登记中未解决的问题已知晓 | 知道哪些坑 | ☐ |
 | 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
-| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 11 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ☐ |
 | 12 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
 | 13 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ☐ |
 
@@ -1317,7 +1317,7 @@ class ConstructionStage(str, Enum):
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
-| 5 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部 |
+| 5 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十五字段头部 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
 | 7 | 依赖图 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 依赖对齐 |
 | 8 | 蓝图+施工图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-construction-template.md` | 模板合规 |

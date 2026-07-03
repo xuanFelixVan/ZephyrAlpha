@@ -104,7 +104,7 @@ tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-025`
 
@@ -194,7 +194,7 @@ tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure
 | frontmatter actual_disk_path ↔ §11 业务代码路径 | 路径核对 | ☐ |
 | construction_progress ↔ 代码实际状态 | scaffold: 66 .py 文件存在 | ☐ |
 | §3 组件架构 ↔ 代码目录结构 | 三层目录对应 | ☐ |
-| 蓝图 §0 文件清单 ↔ 代码 [BLUEPRINT] 字段 | 代码文件头部十字段 | ☐ |
+| 蓝图 §0 文件清单 ↔ 代码 [BLUEPRINT] 字段 | 代码文件头部十五字段 | ☐ |
 
 ### §0.3 版本-代码映射
 

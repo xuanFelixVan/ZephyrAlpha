@@ -31,7 +31,7 @@ verifiability: hybrid
 references:
   - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\engineering\\code-construction-standards.md"
     section: §7
-    why: 代码文件十字段头部标准
+    why: 代码文件十五字段头部标准
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\04_architecture_principles_decisions\\dependency_path_panorama.md"
     section: 线3
     why: 治理闭环依赖图
@@ -673,7 +673,7 @@ class BaselineSnapshot(BaseModel):
 ## §11 产出物存放目录
 
 > 代码文件头部要求（参照 [code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)）：
-> 每个代码文件 MUST 在 docstring 首行标注十字段头部：`[BLUEPRINT]`/`[MODULE]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[CONSUMERS]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`。
+> 每个代码文件 MUST 在 docstring 首行标注十五字段头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]`。
 > 蓝图 §0 列出的文件 ↔ 代码 `[BLUEPRINT]` 字段 MUST 双向对齐。
 >
 > 四层路径对齐要求（参照 [dependency-graph-template.md §11](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/dependency-graph-template.md)）：
@@ -1050,7 +1050,7 @@ STEP 3: 拆分后验证
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 6 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部 |
+| 6 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十五字段头部 |
 | 7 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
 
 ---
@@ -1300,7 +1300,7 @@ detector_dimensions:
 | 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些可改 | ☐ |
 | 9 | 前 | 已知问题登记中未解决的问题已知晓 | 知道哪些坑 | ☐ |
 | 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
-| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 11 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ☐ |
 | 12 | 中 | 修改接口契约后检查 §18 决策记录 | 决策ID+依据已更新 | ☐ |
 | 13 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
 | 14 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ✅ |

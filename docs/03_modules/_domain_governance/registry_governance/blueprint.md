@@ -159,7 +159,7 @@ END_REQUIRED_SECTIONS
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-037`
 
@@ -738,7 +738,7 @@ class OverlapResult:
 |------|------|
 | 对应蓝图契约 | §4.1 FunctionalDomainRegistry类+RegistryConsistencyChecker类 |
 | 产出位置 | `src/zephyr/infrastructure/runtime_integration/registry_governance.py` |
-| 验收标准 | 所有公共API可调用+单元测试通过+十字段头部完整 |
+| 验收标准 | 所有公共API可调用+单元测试通过+十五字段头部完整 |
 | 验证命令 | `python -m pytest tests/infrastructure/test_registry_governance.py -v` |
 | G7 检查项 | 上游：functional-domain-registry.yaml已创建；下游：scaffold.py可import |
 | AI 自治范围 | ai_modifiable |
@@ -755,7 +755,7 @@ class OverlapResult:
 
 | 文件 | 核心内容 | 必须包含 |
 |------|---------|---------|
-| registry_governance.py | FunctionalDomainRegistry类(4方法)+RegistryConsistencyChecker类+DomainEntry/OverlapResult/CheckResult模型 | 十字段头部+原子写入+ThreadPoolExecutor(校验时) |
+| registry_governance.py | FunctionalDomainRegistry类(4方法)+RegistryConsistencyChecker类+DomainEntry/OverlapResult/CheckResult模型 | 十五字段头部+原子写入+ThreadPoolExecutor(校验时) |
 | test_registry_governance.py | 单元测试+集成测试 | load/query_domain/check_overlap/register/consistency_check各至少2用例 |
 
 #### 步骤 3：加固scaffold.py+编写校验脚本
@@ -912,7 +912,7 @@ class OverlapResult:
 | 6 | 前 | 已读取蓝图全文 | 逐节确认 | ☐ |
 | 7 | 前 | 术语表中每个术语含义已理解 | 能回答区别 | ☐ |
 | 8 | 中 | 每步施工后执行验证命令 | exit 0才进下一步 | ☐ |
-| 9 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 9 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ☐ |
 | 10 | 后 | §0 代码对齐验证已更新 | construction_progress与实际一致 | ☐ |
 
 ---

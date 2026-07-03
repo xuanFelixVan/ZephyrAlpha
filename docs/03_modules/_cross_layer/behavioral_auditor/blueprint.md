@@ -100,7 +100,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > 存在性状态受控词表：`未实现` / `已实现` / `已阻塞` / `已废弃`
 > 此列是**当前事实**（永久时态），不是施工进度追踪（临时时态）
@@ -682,7 +682,7 @@ class EvidenceChain(BaseModel):
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\behavioral-auditor\verdict_engine.py` |
 | 验收标准 | verify_operation() 输入 AuditTrailEvent→输出 Verdict |
 | 验证命令 | `python -m pytest tests/behavioral-auditor/test_verdict_engine.py -v` |
-| G7 检查项 | 十字段头部完整、接口签名与 §4.1 一致、Evidence Chain 完整 |
+| G7 检查项 | 十五字段头部完整、接口签名与 §4.1 一致、Evidence Chain 完整 |
 
 #### 步骤 3：新增 AdmissionControl + ProtectionIndex
 
@@ -692,7 +692,7 @@ class EvidenceChain(BaseModel):
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\behavioral-auditor\admission_controller.py` + `protection_index.py` |
 | 验收标准 | Token Bucket 限流 50/s、ProtectionIndex O(1) 查询 |
 | 验证命令 | `python -m pytest tests/behavioral-auditor/test_admission_control.py tests/behavioral-auditor/test_protection_index.py -v` |
-| G7 检查项 | 十字段头部完整、容量参数与 §17 一致 |
+| G7 检查项 | 十五字段头部完整、容量参数与 §17 一致 |
 
 ### 16.4 回滚方案
 
