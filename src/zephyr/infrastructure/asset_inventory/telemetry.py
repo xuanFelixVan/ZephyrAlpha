@@ -28,6 +28,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
+from zephyr.shared.security.secrets import get_secret_or_default
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +186,7 @@ class FeishuWebhook(NotificationChannel):
     """飞书 Webhook 通知通道。"""
 
     def __init__(self, webhook_url: str | None = None) -> None:
-        self._webhook_url = webhook_url or os.environ.get("ZEPHYR_FEISHU_WEBHOOK", "")
+        self._webhook_url = webhook_url or get_secret_or_default("ZEPHYR_FEISHU_WEBHOOK", "")
 
     @property
     def channel_name(self) -> str:
@@ -238,8 +239,8 @@ class SmtpEmailChannel(NotificationChannel):
     ) -> None:
         self._smtp_host = smtp_host or os.environ.get("ZEPHYR_SMTP_HOST", "")
         self._smtp_port = smtp_port
-        self._smtp_user = smtp_user or os.environ.get("ZEPHYR_SMTP_USER", "")
-        self._smtp_password = smtp_password or os.environ.get("ZEPHYR_SMTP_PASSWORD", "")
+        self._smtp_user = smtp_user or get_secret_or_default("ZEPHYR_SMTP_USER", "")
+        self._smtp_password = smtp_password or get_secret_or_default("ZEPHYR_SMTP_PASSWORD", "")
         self._from_addr = from_addr or os.environ.get("ZEPHYR_SMTP_FROM", self._smtp_user)
         self._to_addrs = (
             to_addrs
@@ -309,7 +310,7 @@ class NotificationManager:
         if console:
             self._channels.append(ConsoleChannel())
 
-        if feishu_url or os.environ.get("ZEPHYR_FEISHU_WEBHOOK"):
+        if feishu_url or get_secret_or_default("ZEPHYR_FEISHU_WEBHOOK", ""):
             self._channels.append(FeishuWebhook(feishu_url))
 
         if smtp_host or os.environ.get("ZEPHYR_SMTP_HOST"):
