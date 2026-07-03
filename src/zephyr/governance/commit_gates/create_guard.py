@@ -109,6 +109,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 
 from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.governance.rule_patterns import RULE_NAME_RE
@@ -527,7 +528,7 @@ def make_create_guard() -> GateSpec:
 
             _missing = [
                 _field for _field in _required
-                if not _re.search(rf'#\s*\[{_re.escape(_field)}\]', _head)
+                if not re.search(rf'#\s*\[{re.escape(_field)}\]', _head)
             ]
 
             if _missing:
