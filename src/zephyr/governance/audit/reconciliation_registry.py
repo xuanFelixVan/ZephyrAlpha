@@ -87,6 +87,7 @@ __all__ = [
     "make_module_id_consistency_reconciler",
     "make_index_generator_reconciler",
     "make_runtime_cleanup_reconciler",
+    "make_architecture_health_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -2952,4 +2953,80 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=50,  # 在所有 reconciler 之前执行——先清理旧文件
+    )
+
+
+# trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，architecture_debt_registry.md §六）。
+# 触发条件：任何 .py 文件变更（11 项指标覆盖代码/脚本/门禁/depgraph 维度）
+# 行为：subprocess 调用 architecture_health_dashboard.py --snapshot 保存基线快照到 data/architecture_health/
+# 非阻断：ReconcileResult(action="clean"/"warn")，第0期仅记录基线不阻断 commit
+# 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 architecture_debt_registry.md §六 第1期
+def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造架构健康度仪表盘 post-commit 基线记录 reconciler（第0期 warn-only）。
+
+    architecture_debt_registry.md §六 第0期：每次 commit 自动生成架构健康度指标快照，
+    替代手动调研。仪表盘 11 项指标（M01-M11），warn-only 模式（exit 0 不阻断 commit）。
+
+    对账链：
+    1. trigger: committed_files 含 .py 文件 → 命中
+    2. subprocess 调用 architecture_health_dashboard.py --snapshot
+    3. 快照保存到 data/architecture_health/dashboard_<ts>.json + latest.json
+    4. 返回 ReconcileResult(action="clean"/"warn")，不阻断 commit
+
+    第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见
+    architecture_debt_registry.md §六 第1期。
+
+    Args:
+        gateway: GitCommitGateway 实例（仅用其 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-ARCH-HEALTH", priority=300)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    dashboard = project_root / "scripts" / "governance" / "architecture_health_dashboard.py"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        if not dashboard.exists():
+            return ReconcileResult(action="skip", detail="dashboard script not found")
+        try:
+            result = subprocess.run(
+                [sys.executable, str(dashboard), "--snapshot"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                cwd=str(project_root),
+                timeout=120,
+            )
+            if result.returncode == 0:
+                return ReconcileResult(
+                    action="clean",
+                    detail="architecture health baseline snapshot saved (warn-only, Phase 0)",
+                )
+            else:
+                return ReconcileResult(
+                    action="warn",
+                    detail=f"dashboard exit code {result.returncode}: {result.stderr[:200]}",
+                )
+        except subprocess.TimeoutExpired:
+            return ReconcileResult(action="warn", detail="dashboard timeout after 120s")
+        except Exception as e:  # noqa: BLE001 — drift 对账非阻断
+            return ReconcileResult(action="warn", detail=f"dashboard failed: {e}")
+
+    return ReconcilerSpec(
+        gate_id="GATE-ARCH-HEALTH",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=300,  # 低优先级最后执行——基线记录非紧急
     )

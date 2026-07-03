@@ -47,7 +47,10 @@
 
 集成点：
   - 独立运行：python scripts/governance/architecture_health_dashboard.py
-  - post-commit 事件触发：commit 后自动记录基线快照到 data/architecture_health/
+  - post-commit reconciler 自动触发：GitCommitGateway commit 完成后由
+    make_architecture_health_reconciler（reconciliation_registry.py）自动调用
+    --snapshot 保存基线快照到 data/architecture_health/
+  - 备用 hook：post_commit_architecture_health.ps1（需手动安装到 .git/hooks/）
   - 非阻断：第0期不阻断 commit（第1期 AST 门禁才阻断）
 
 Usage::

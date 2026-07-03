@@ -1910,13 +1910,15 @@ def cmd_delete_domain(
             )
             return -1
 
-        # 17步DELETE: (step, table, column, use_replace_like) — 复用 rename 表清单
-        # 删除顺序与 rename 不同：先清外部引用（steps 2-17），最后删 domains（step1）
+        # 16步DELETE: (step, table, column, use_replace_like) — 域引用列清单
+        # 删除顺序与 rename 不同：先清外部引用（steps 2-16），最后删 domains（step1）
         # rule_bindings.domain_id 例外：SET NULL（规则是全局资产，不删除规则行）
+        # 注：nodes.belongs_to 不在此清单——该列存模块ID(MOD-*)非域ID(D_*)，
+        # 精确匹配 domain_id 永远为0（死代码）；LIKE 会误匹配 MOD-GOV-REPAIR 破坏模块引用。
+        # 实测确认（2026-07-03 D_GOV_REPAIR 删除）：belongs_to 无 D_* 模式值。
         steps_foreign = [
             (2, "nodes", "domain_id", False),
             (3, "nodes", "subdomain_id", False),
-            (4, "nodes", "belongs_to", False),
             (5, "domain_dependencies", "from_domain", False),
             (6, "domain_dependencies", "to_domain", False),
             (7, "domain_events", "source_domain", False),
