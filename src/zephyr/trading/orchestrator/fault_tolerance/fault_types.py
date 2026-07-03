@@ -155,16 +155,20 @@ class DataCorruptionFault(FaultHandler):
 
 
 _DEFAULT_REGISTRY: FaultTypeRegistry | None = None
+_DEFAULT_REGISTRY_LOCK = threading.Lock()
 
 
 def get_default_registry() -> FaultTypeRegistry:
     global _DEFAULT_REGISTRY
+    # 5.16.3 修复：加锁防止并发创建多实例+多次注册
     if _DEFAULT_REGISTRY is None:
-        _DEFAULT_REGISTRY = FaultTypeRegistry()
-        _DEFAULT_REGISTRY.register("latency", LatencyFault())
-        _DEFAULT_REGISTRY.register("exception", ExceptionFault())
-        _DEFAULT_REGISTRY.register("error", ExceptionFault())
-        _DEFAULT_REGISTRY.register("resource_exhaustion", ResourceExhaustionFault())
-        _DEFAULT_REGISTRY.register("network_partition", NetworkPartitionFault())
-        _DEFAULT_REGISTRY.register("data_corruption", DataCorruptionFault())
+        with _DEFAULT_REGISTRY_LOCK:
+            if _DEFAULT_REGISTRY is None:
+                _DEFAULT_REGISTRY = FaultTypeRegistry()
+                _DEFAULT_REGISTRY.register("latency", LatencyFault())
+                _DEFAULT_REGISTRY.register("exception", ExceptionFault())
+                _DEFAULT_REGISTRY.register("error", ExceptionFault())
+                _DEFAULT_REGISTRY.register("resource_exhaustion", ResourceExhaustionFault())
+                _DEFAULT_REGISTRY.register("network_partition", NetworkPartitionFault())
+                _DEFAULT_REGISTRY.register("data_corruption", DataCorruptionFault())
     return _DEFAULT_REGISTRY

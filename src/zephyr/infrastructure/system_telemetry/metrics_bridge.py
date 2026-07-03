@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import logging
 import queue
+import threading
 from enum import Enum, unique
 from typing import Any
 
@@ -160,14 +161,18 @@ class MetricsBridge:
     """指标桥接 — 批量写入 telemetry_metrics + 广播到内存队列"""
 
     _instance: MetricsBridge | None = None
+    _instance_lock: threading.Lock = threading.Lock()
 
     def __init__(self) -> None:
         _create_telemetry_metrics_table()
 
     @classmethod
     def instance(cls) -> MetricsBridge:
+        # 5.16.2 修复：double-checked locking 防止并发创建多实例导致指标分叉
         if cls._instance is None:
-            cls._instance = cls()
+            with cls._instance_lock:
+                if cls._instance is None:
+                    cls._instance = cls()
         return cls._instance
 
     def emit_metrics(self, metrics: list[MetricPoint]) -> int:

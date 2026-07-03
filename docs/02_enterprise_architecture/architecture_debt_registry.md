@@ -2247,26 +2247,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：竞态条件/锁粒度与顺序/async-sync混用/全局可变状态/跨进程锁/队列与生产者消费者
 > 审计方法：Grep + Read真实文件取证（circuit_breaker.py、metrics_bridge.py、git_commit_gateway.py、async_runtime.py等）
 
-#### 5.16.1 CircuitBreaker.record_success锁外重置failure_count【HIGH】
-- 证据：[circuit_breaker.py:135-141](file:///d:/ZephyrAlpha/src/zephyr/shared/resilience/circuit_breaker.py) `self._failure_count=0`（第141行）与 `with self._lock:` 同级缩进，实际在锁释放后执行；并发record_failure可在此间自增，断路器永远到不了threshold
-- 病根：根因5（INVARIANTS要求线程安全但缩进bug让锁形同虚设）
-- 修复：删除第141行或移入`with self._lock:`块内
-
-#### 5.16.2 MetricsBridge单例无锁（broken double-checked locking）【HIGH】
-- 证据：[metrics_bridge.py:162-171](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/metrics_bridge.py) `if cls._instance is None: cls._instance=cls()` 无锁；对比 `budget_engine.py:112-119` 用了正确DCL。并发emit_metrics可创建多实例，各自建表+持不同DB连接，指标分叉
-- 病根：根因2（单例模式无统一基类/装饰器）
-- 修复：抽取`@threadsafe_singleton`装饰器强制统一
-
-#### 5.16.3 fault_types.get_default_registry无锁单例+多次注册【HIGH】
-- 证据：[fault_types.py:157-170](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/fault_tolerance/fault_types.py) `_DEFAULT_REGISTRY=None; if is None: create+register 5个` 无锁check-then-act，并发可各自创建registry并register，返回不同实例
-- 病根：根因2（单例模式无统一规范）
-- 修复：`functools.lru_cache(maxsize=1)` 或加模块级Lock
-
-#### 5.16.4 PipelineOrchestrator._lsg_gateway懒加载竞态（3处+6处复制）【HIGH】
-- 证据：[pipeline_orchestrator.py:1745-1747,1779-1781,1837-1839](file:///d:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py) `if _lsg_gateway is None: _lsg_gateway=LSGSecurityGateway()` 类属性无锁；同模式在 `integration/llm_gateway.py:46`、`mcp/gateway_server.py:73`、`infrastructure/pipeline/llm_gateway.py:46` 等6+处重复
-- 病根：根因5（高频懒加载模式无并发规范）
-- 修复：抽取LazyGatewayHolder基类强制加锁
-
 #### 5.16.7 DeferredQueue sqlite3共享连接+check_same_thread=False【HIGH】
 - 证据：[deferred_queue.py:74-85](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/deferred_queue.py) `sqlite3.connect(db_path, check_same_thread=False)` 关闭线程检查，依赖`self._lock`但`_get_conn`的check-then-act要求所有调用方持锁，新增方法忘记`with self._lock:`即损坏；同模式在 `resilience/deferred_queue.py` 复制
 - 病根：根因2（`_get_conn`应强制锁但无门禁阻止绕过）

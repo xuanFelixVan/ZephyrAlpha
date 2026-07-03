@@ -182,6 +182,7 @@ class PipelineOrchestrator:
     """
 
     _lsg_gateway = None
+    _lsg_gateway_lock = threading.Lock()  # 5.16.4 修复：保护 _lsg_gateway 懒加载竞态
 
     def __init__(
         self,
@@ -1755,7 +1756,9 @@ class PipelineOrchestrator:
             from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway, SecurityDecision
 
             if PipelineOrchestrator._lsg_gateway is None:
-                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+                with PipelineOrchestrator._lsg_gateway_lock:
+                    if PipelineOrchestrator._lsg_gateway is None:
+                        PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
             gw = PipelineOrchestrator._lsg_gateway
             try:
                 loop = asyncio.get_running_loop()
@@ -1789,7 +1792,9 @@ class PipelineOrchestrator:
             from zephyr.shared.contracts.security import SecurityDecision
 
             if PipelineOrchestrator._lsg_gateway is None:
-                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+                with PipelineOrchestrator._lsg_gateway_lock:
+                    if PipelineOrchestrator._lsg_gateway is None:
+                        PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
             gw = PipelineOrchestrator._lsg_gateway
             for key in ("summary", "verdict", "detail", "minority_report"):
                 if key in output and isinstance(output[key], str):
@@ -1847,7 +1852,9 @@ class PipelineOrchestrator:
             from zephyr.shared.contracts.security import SecurityDecision
 
             if PipelineOrchestrator._lsg_gateway is None:
-                PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
+                with PipelineOrchestrator._lsg_gateway_lock:
+                    if PipelineOrchestrator._lsg_gateway is None:
+                        PipelineOrchestrator._lsg_gateway = LSGSecurityGateway()
             gw = PipelineOrchestrator._lsg_gateway
             text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
             try:

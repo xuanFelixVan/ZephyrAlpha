@@ -133,12 +133,12 @@ class CircuitBreaker:
         return self._state
 
     def record_success(self) -> None:
+        # 5.16.1 修复：failure_count 重置移入锁内，避免锁外竞态导致断路器永远到不了 threshold
         with self._lock:
             if self._state == CircuitState.HALF_OPEN:
                 self._state = CircuitState.CLOSED
-                self._failure_count = 0
                 self._half_open_calls = 0
-        self._failure_count = 0
+            self._failure_count = 0
 
     def record_failure(self) -> None:
         with self._lock:
