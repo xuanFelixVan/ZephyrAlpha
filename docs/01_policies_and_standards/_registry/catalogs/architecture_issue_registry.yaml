@@ -495,21 +495,26 @@ entries:
     不新建分类）、第一性原理（病根是归属错误非数量过多）、可发现性（新
     AI 按功能域直觉定位）。
   fix_phase: |
-    P0 施工待重做（曾于 2026-07-01 执行但被外部并发会话 reset 丢失，需重做）：
-    (P0-1)删除 down_migration_generator.py + 测试文件 + 清理 __init__.py
-    （import L41 + __all__ L121）+ 清理 _manifest.py（L91-95 声明）；
-    (P0-2)更新蓝图 MOD-INF-021：28行路径漂移修复（src/zephyr/rollback/
-    → src/zephyr/infrastructure/rollback/，replace_all 反斜杠+正斜杠）+
-    §5.3 状态更新（9文件"未执行"→"已完成"）+ §11 自述路径 kebab-case
-    → snake_case + §10.1 依赖路径 5处 kebab-case → snake_case +
-    _sys-master → _sys_master；
-    (P0-3)登记 ARCH-039（本条目）。
+    P0 已完成（2026-07-04 重做）：
+    (P0-1)删除 down_migration_generator.py + test_down_migration_generator.py
+    + 清理 __init__.py（import L41 + __all__ L120，已由 commit b85bbf0c9e 完成）
+    + 清理 _manifest.py（删除 down_migration_generator 条目 + 修复 code_directory
+    路径漂移 src/zephyr/rollback/→src/zephyr/infrastructure/rollback/ + total_py_files
+    18→17）；
+    (P0-2)更新蓝图 MOD-INF-021：28行路径漂移修复（正斜杠+反斜杠批量替换）+
+    §5.3 状态更新（8文件"未执行"→"已完成" + 1文件 backtest_engine.py 标记"不适用
+    （文件不存在）"）+ §11 自述路径 kebab-case→snake_case
+    （_domain_infrastructure_operations\rollback-system→_domain_autonomy_core\rollback_system）
+    + §10.1 依赖路径 5处修复（audit-trail→audit_trail, agent-rbac→agent_role_based_access_control,
+    gate_engine/shared_core 域路径修正）+ §0.1 文件清单删除 down_migration_generator
+    条目并重新编号 13-61 + down_migration_generator 描述性引用标记"已退役"；
+    (P0-3)更新 ARCH-039 fix_phase 为 P0 已完成 + last_updated 2026-07-04。
     P1/P2 后续 session：
     P1 迁移21个非回滚文件到正确域（trading 4 + infra_runtime 5 +
     governance 11）+ 同步 import/depgraph/frontmatter；
     P2 修复72个文件 frontmatter [DOMAIN] 造假（D_INFRA_RUNTIME →
     D_INFRA_RECOVERY）+ 8个文件 INVARIANTS 造假 + path_ownership_map 一致性。
-    注：P0 曾在本session执行（down_migration_generator删除+蓝图路径修复+ARCH-039登记），但被外部并发会话 git reset 丢失，需在并发结束后重做。
+    历史注：P0 曾于 2026-07-01 执行但被外部并发会话 git reset 丢失，2026-07-04 重做完成。
   status: decided
   related_rules:
   - TRAE-028
@@ -517,7 +522,7 @@ entries:
   - GOV-DOC-018
   - GOV-DOC-002
   created: '2026-07-01'
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-040'
   title: 依赖全景图运营态触发机制改造（手动→自动，分4阶段）
   severity: P1高

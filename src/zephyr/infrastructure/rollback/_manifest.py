@@ -26,7 +26,7 @@ MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。
 MANIFEST = {
     "module_id": "MOD-INF-021",
     "version": "0.10.0",
-    "code_directory": "src/zephyr/rollback/",
+    "code_directory": "src/zephyr/infrastructure/rollback/",
     "files": [
         {
             "file": "rollback_executor.py",
@@ -89,11 +89,6 @@ MANIFEST = {
             "blind_spots": ["B1", "B3", "B49"],
         },
         {
-            "file": "down_migration_generator.py",
-            "responsibility": "Down-migration 脚本生成器——pre-commit hook：每次 commit 自动生成反向脚本 .sh /.ps1",
-            "blind_spots": ["B45"],
-        },
-        {
             "file": "rollback_dashboard.py",
             "responsibility": "回滚仪表盘——生成 Markdown 零依赖仪表盘 + IM 推送",
             "blind_spots": ["B47"],
@@ -141,6 +136,6 @@ MANIFEST = {
             "blind_spots": ["B43"],
         },
     ],
-    "total_py_files": 18,
+    "total_py_files": 17,
     "total_dirs": 4,
 }
