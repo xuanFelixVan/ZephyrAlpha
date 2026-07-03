@@ -253,6 +253,19 @@ gates:
   always_run: false
   category: unknown
   status: active
+- gate_id: GATE-SCHEMA-HEALTH
+  name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
+  entry: ''
+  description: '【已合并/重定向】原独立 gate-schema-health 已于 ARCH-017 治本时合并到 GATE-C2
+    run_gate_chain（与 check_contract_code_drift + check_contract_physical_path 顺序执行）。
+    本条目为重定向锚点，保留 gate_id 供历史引用可追溯。实际执行入口见 GATE-C2（L256-266）。
+    检测真源：scripts/governance/d11_compliance/verify_schema_health.py（4 校验：DDL 列一致性/
+    只读触发器/Schema 版本/PG 运行时健康）。capability：schema_health_verification。'
+  files_trigger: ''
+  always_run: false
+  category: schema_health
+  status: merged
+  redirect_to: GATE-C2
 - gate_id: GATE-C2
   name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci
