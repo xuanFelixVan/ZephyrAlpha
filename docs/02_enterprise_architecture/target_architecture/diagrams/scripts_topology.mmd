@@ -8,13 +8,13 @@ graph LR
     end
 
     subgraph SRC["src/zephyr/ — Product code / 产品代码"]
-        L10["l10_compliance/<br/>Product-level governance<br/>产品级治理合规"]
+        D10["D_COMPLIANCE 域<br/>Product-level governance<br/>产品级治理合规"]
     end
 
     HOOKS -->|"runs on commit / 提交时运行"| GOV
     HOOKS -->|"runs on commit / 提交时运行"| AUDIT
     CI -->|"runs on push / 推送时运行"| AUDIT
-    GOV -.->|"boundary: repo-level only<br/>边界：仅仓库级"| L10
+    GOV -.->|"boundary: repo-level only<br/>边界：仅仓库级"| D10
 
     style SCRIPTS fill:#f8fafc,stroke:#94a3b8
     style SRC fill:#eff6ff,stroke:#3b82f6
@@ -22,4 +22,4 @@ graph LR
     style GOV fill:#dcfce7,stroke:#16a34a
     style AUDIT fill:#fce7f3,stroke:#db2777
     style CI fill:#e0f2fe,stroke:#0284c7
-    style L10 fill:#eff6ff,stroke:#3b82f6
+    style D10 fill:#eff6ff,stroke:#3b82f6

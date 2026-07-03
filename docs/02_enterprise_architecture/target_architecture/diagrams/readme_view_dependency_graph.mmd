@@ -26,7 +26,7 @@ graph TD
     INTEG -->|"外部接入点 → 安全域"| SEC
     INTEG -->|"集成健康状态 → 监控"| OPS
     TA --> OPS
-    AA -->|"L08 api_gateway 是前后端唯一接触点"| FE
+    AA -->|"D_INTEGRATION_GATEWAY api_gateway 是前后端唯一接触点"| FE
     INTEG -->|"API/WebSocket 契约"| FE
     FE -->|"前端也走 CDN/边缘部署"| OPS
     FE -->|"前端安全策略 (CSP/CORS/XSS)"| SEC

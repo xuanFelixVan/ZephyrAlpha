@@ -6,28 +6,28 @@
 %% 与其他视图的一致性：
 %%   - 03-AA §9.2 (Idempotency 三场景) — 本图场景 A/B 抽取对齐
 %%   - ocp-extension-points.md §5 (Broker ACL 三段 + failover) — adapter 段一致
-%%   - fault-tolerance-matrix.md §L04/§L06 (Fail-Closed + Retry 过 Guard) — 熔断铁律一致
+%%   - fault-tolerance-matrix.md §D_RISK/§D_EX_CORE (Fail-Closed + Retry 过 Guard) — 熔断铁律一致
 %%   - domain-event-catalog.md E-EX-01/07 / E-RK-04 — 事件命名一致
 %%   - ddd-aggregates.md AR-01 Order.submit() — 行为方法一致
 
 sequenceDiagram
     autonumber
 
-    participant Strategy as L05 Strategy<br/>(signal source)
-    participant OMS as L06 OMS<br/>(Order Aggregate)
-    participant Idem as L06 Idempotency<br/>Guard
+    participant Strategy as D_PF_CORE Strategy<br/>(signal source)
+    participant OMS as D_EX_CORE OMS<br/>(Order Aggregate)
+    participant Idem as D_EX_CORE Idempotency<br/>Guard
     participant Redis as Redis<br/>(hot layer)
-    participant PreTrade as L06 Pre-Trade<br/>Checker
-    participant SOR as L06 SOR
+    participant PreTrade as D_EX_CORE Pre-Trade<br/>Checker
+    participant SOR as D_EX_CORE SOR
     participant Facade as Broker Adapter<br/>Facade (ACL)
     participant Mapper as Broker Adapter<br/>Mapper (ACL)
     participant Raw as Broker Raw<br/>Client (ACL)
     participant Broker as External<br/>Broker API
     participant Audit as L2 Audit Log
-    participant Notif as L08 Notifications
+    participant Notif as D_FRONTEND Notifications
 
     Note over Strategy,Broker: === 场景 A：正常首次提交（happy path）===
-    Note right of Strategy: 🔓 CTR-004: Order<br/>L05 → L06 可变契约（状态机）
+    Note right of Strategy: 🔓 CTR-004: Order<br/>D_PF_CORE → D_EX_CORE 可变契约（状态机）
     Strategy->>OMS: submit(signal{strategy_id, signal_id, asof_ts, instrument, side, qty, price_hint})
     OMS->>Idem: compute_key(signal)
     Note right of Idem: Key = SHA-256(8 fields)<br/>→ 128-bit hex prefix<br/>= client_order_id
@@ -94,4 +94,4 @@ sequenceDiagram
     SOR-->>OMS: accepted
     OMS->>Redis: UPDATE {status:accepted, broker_id:fallback}
     OMS->>Audit: publish E-EX-02 OrderAccepted
-    OMS->>Notif: L08 notify {event:failover_triggered}
+    OMS->>Notif: D_FRONTEND notify {event:failover_triggered}
