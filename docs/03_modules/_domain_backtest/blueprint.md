@@ -10,7 +10,7 @@ doc_type: blueprint
 functional_domain: backtest
 generation: 1
 language: zh
-last_updated: '2026-07-02'
+last_updated: '2026-07-04'
 last_verified: ''
 layer: domain
 module_id: MOD-BT-001
@@ -62,6 +62,11 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 
 ### §0.1 代码文件清单
 
+> 完整版设计态拓扑已登记到depgraph（27 nodes, 43 edges, 无循环）。
+> 按Phase分阶段施工:Phase 1(MVP)→Phase 2→Phase 3→v2.0备忘。
+
+**Phase 1 (MVP) — 核心回测链路**
+
 | 文件路径 | 状态 | 说明 |
 |---------|------|------|
 | src/zephyr/backtest/__init__.py | production | D_BACKTEST域入口,导出核心类 |
@@ -69,11 +74,38 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/core/engine_base.py | production | BacktestEngineBase+BacktestResult+FactorDiscovery(冻结真源) |
 | src/zephyr/backtest/implementations/__init__.py | production | implementations子包入口 |
 | src/zephyr/backtest/implementations/vectorized_engine.py | production | DefaultBacktestEngine向量化回测 |
-| src/zephyr/backtest/implementations/event_driven_engine.py | planned | 事件驱动回测(MVP待实现) |
-| src/zephyr/backtest/core/matching_engine.py | planned | 撮合引擎(MVP待实现) |
-| src/zephyr/backtest/core/portfolio.py | planned | 持仓/现金/PnL(MVP待实现) |
-| src/zephyr/backtest/core/data_handler.py | planned | ClickHouse OHLCV按bar推送(MVP待实现) |
+| src/zephyr/backtest/core/matching_engine.py | planned | 撮合引擎(市价/限价/滑点)(MVP待实现) |
+| src/zephyr/backtest/core/portfolio.py | planned | 持仓/现金/PnL/净值曲线(MVP待实现) |
+| src/zephyr/backtest/core/data_handler.py | planned | ClickHouse OHLCV按bar推送(PIT)(MVP待实现) |
 | src/zephyr/backtest/core/metrics.py | planned | Sharpe/Sortino/MaxDD/IC/IR(MVP待实现) |
+
+**Phase 2 — 事件驱动回测**
+
+| 文件路径 | 状态 | 说明 |
+|---------|------|------|
+| src/zephyr/backtest/implementations/event_driven_engine.py | planned | 事件驱动回测(EventLoop+DataHandler+ExecutionHandler) |
+
+**Phase 3 — 过拟合检测与Walk-Forward**
+
+| 文件路径 | 状态 | 说明 |
+|---------|------|------|
+| src/zephyr/backtest/core/overfitting_detector.py | planned | 过拟合检测(三维度+三层:SIM-18/38/56) |
+| src/zephyr/backtest/core/walk_forward.py | planned | Walk-Forward优化(滚动窗口+样本外验证) |
+
+**v2.0备忘 — 辅助工具模块(登记到depgraph设计态,按需开发)**
+
+| 文件路径 | 状态 | 说明 | 来源 |
+|---------|------|------|------|
+| src/zephyr/backtest/services/scheduler.py | planned | 自动回测调度器(批量+参数网格+队列) | SIM-26 |
+| src/zephyr/backtest/services/decay_monitor.py | planned | 策略衰减监控告警器 | SIM-27 |
+| src/zephyr/backtest/services/report_generator.py | planned | 回测报告自动生成(PDF/HTML) [P2] | SIM-48 |
+| src/zephyr/backtest/services/cache_manager.py | planned | 回测缓存管理器(结果缓存与复用) [P2] | SIM-49 |
+| src/zephyr/backtest/services/param_analyzer.py | planned | 参数优化结果分析器(显著性+过拟合) | SIM-50 |
+| src/zephyr/backtest/services/data_quality_checker.py | planned | 回测数据质量检查器(缺失+异常检测) | SIM-51 |
+| src/zephyr/backtest/services/anomaly_diagnoser.py | planned | 回测异常诊断(错误诊断+修复建议) [P2] | SIM-52 |
+| src/zephyr/backtest/services/result_comparator.py | planned | 回测结果对比(多次回测差异分析) [P2] | SIM-53 |
+| src/zephyr/backtest/services/result_deployer.py | planned | 回测结果一键部署(策略部署到实盘) | SIM-54 |
+| src/zephyr/backtest/services/nan_processor.py | planned | 指标计算NaN处理器(智能填充+清洗) | SIM-55 |
 
 **已清理的碎片化位置**(2026-07-02):
 - ~~src/zephyr/research/backtest_base.py~~ → 迁移到backtest/core/engine_base.py
@@ -125,16 +157,34 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 
 ### §1.2 目标范围
 
-**MVP(v1.0.0)**:7个核心模块
+> 完整版设计态拓扑已登记到depgraph(27 nodes, 43 edges, 无循环)。按Phase分阶段施工。
+
+**Phase 1 (MVP v1.0.0) — 核心回测链路**:6个模块
 1. core/engine_base.py — BacktestEngineBase + BacktestResult + FactorDiscovery ✅已实现
 2. implementations/vectorized_engine.py — DefaultBacktestEngine向量化回测 ✅已实现
-3. implementations/event_driven_engine.py — 事件驱动回测(待实现)
-4. core/matching_engine.py — 撮合引擎(市价/限价/滑点)(待实现)
-5. core/portfolio.py — 持仓/现金/PnL/净值曲线(待实现)
-6. core/data_handler.py — 从ClickHouse读OHLCV按bar推送(PIT正确)(待实现)
-7. core/metrics.py — Sharpe/Sortino/MaxDD/胜率/IC/IR(待实现)
+3. core/matching_engine.py — 撮合引擎(市价/限价/滑点)(待实现)
+4. core/portfolio.py — 持仓/现金/PnL/净值曲线(待实现)
+5. core/data_handler.py — 从ClickHouse读OHLCV按bar推送(PIT正确)(待实现)
+6. core/metrics.py — Sharpe/Sortino/MaxDD/胜率/IC/IR(待实现)
 
-**v1.1.0**:过拟合检测(SIM-18/38/56三层)+ Walk-Forward(SIM-19/25)
+**Phase 2 (v1.1.0) — 事件驱动回测**:1个模块
+- implementations/event_driven_engine.py — 事件驱动回测(复用Phase 1的撮合/记账/数据模块)
+
+**Phase 3 (v1.2.0) — 过拟合检测与Walk-Forward**:2个模块
+- core/overfitting_detector.py — 过拟合检测(SIM-18/38/56三层)
+- core/walk_forward.py — Walk-Forward优化(SIM-19/25)
+
+**v2.0备忘 — 辅助工具模块**:10个模块(登记到depgraph设计态,按需开发)
+- services/scheduler.py(SIM-26自动回测调度器)
+- services/decay_monitor.py(SIM-27策略衰减监控)
+- services/report_generator.py(SIM-48回测报告生成)
+- services/cache_manager.py(SIM-49回测缓存管理器)
+- services/param_analyzer.py(SIM-50参数优化分析器)
+- services/data_quality_checker.py(SIM-51数据质量检查器)
+- services/anomaly_diagnoser.py(SIM-52回测异常诊断)
+- services/result_comparator.py(SIM-53回测结果对比)
+- services/result_deployer.py(SIM-54回测结果一键部署)
+- services/nan_processor.py(SIM-55指标NaN处理器)
 
 ### §1.4 运行场景约束
 
