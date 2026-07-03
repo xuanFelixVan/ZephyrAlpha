@@ -4,8 +4,6 @@
 """ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由
 A区（M1-M5）生产管线 + B区（M6-M11）审计管线。
 GOV-AI-002 v2.0.0 决策树 + 插件化路由 + Agent 桥接 + Schema 校验。
-v0.7.0: Phase C — LayerDataRouter 模型冻结与路由串联
-v0.8.0: Phase D — LayerConsumerRegistry 全层消费者回调注册
 """
 
 from zephyr.infrastructure.pipeline.backpressure_manager import (
@@ -32,23 +30,6 @@ from zephyr.infrastructure.pipeline.ct_pipe_routing import (
 )
 from zephyr.infrastructure.pipeline.dead_letter_queue import (
     DeadLetterQueue,
-)
-from zephyr.infrastructure.pipeline.layer_consumer_registry import (
-    get_registry_summary,
-    register_all_consumers,
-    register_for_layer,
-)
-from zephyr.infrastructure.pipeline.layer_router import (
-    LayerDataRouter,
-    LayerRouteMap,
-    LayerRouteResult,
-    RouteEntry,
-    get_layer_router,
-    handle_layer_data_route,
-    handle_layer_onboarding,
-    handle_layer_query,
-    load_route_map,
-    reset_layer_router,
 )
 from zephyr.infrastructure.pipeline.model_router import ModelRouter
 from zephyr.infrastructure.pipeline.models import (
@@ -262,9 +243,6 @@ __all__ = [
     "GoldenTestResult",
     "HallucinationCheckResult",
     "HealthReport",
-    "LayerDataRouter",
-    "LayerRouteMap",
-    "LayerRouteResult",
     "LockBackend",
     "LockResult",
     "LockStatus",
@@ -311,7 +289,6 @@ __all__ = [
     "PreemptionManager",
     "PreemptionRecord",
     "ROICalculator",
-    "RouteEntry",
     "RoutingContext",
     "RoutingPlugin",
     "SLOMetric",
@@ -333,13 +310,6 @@ __all__ = [
     "emit_resume",
     "emit_throttle",
     "enforce_affinity",
-    "get_layer_router",
-    "get_registry_summary",
-    "handle_layer_data_route",
-    "handle_layer_onboarding",
-    "handle_layer_query",
-    "layer_consumer_registry",
-    "layer_router",
     "llm_gateway",
     "load_benchmark_history",
     "load_route_map",
@@ -351,9 +321,6 @@ __all__ = [
     "pipeline_orchestrator",
     "pipeline_roadmap",
     "preemption_manager",
-    "register_all_consumers",
-    "register_for_layer",
-    "reset_layer_router",
     "resolve_ct_pipe_orc001",
     "role_for_module",
     "routing_plugins",

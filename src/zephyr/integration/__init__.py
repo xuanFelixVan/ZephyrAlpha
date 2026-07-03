@@ -13,8 +13,6 @@ __all__ = [
     "ct_pipe_routing",
     "dead_letter_queue",
     "get_asset_summary",
-    "layer_consumer_registry",
-    "layer_router",
     "llm_gateway",
     "model_router",
     "models",
