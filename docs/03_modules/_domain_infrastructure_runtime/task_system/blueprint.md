@@ -636,7 +636,7 @@ class TaskLifecycleManager:
 | GOV-TASK-001 | 必须 | 任务卡操作指南 | ≥3.0.0 | `docs/01_policies_and_standards/governance/task/task-card-standard.md` |
 | GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` |
 | GOV-TASK-005 | 必须 | 关闭三步法 | ≥1.1.0 | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` |
-| MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain_infrastructure_operations/script_system/blueprint.md` |
+| MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain_governance/governance_automation/blueprint.md` |
 | MOD-GATE_ENGINE | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate_engine/blueprint.md` |
 | MOD-INF-009 | 必须 | 管线调度 SSoT——任务管线 M1-M11 双管线路由 + Fast/Batch双通道 | ≥2.0.0 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
 | shared/schemas.py | 必须 | Task 31 字段 TaskCard 基座 | 现有代码 | `src/zephyr/shared/schemas.py` |
@@ -1357,7 +1357,7 @@ STEP 3: 拆分后验证
 | 1 | 元数据注册表 | PS-STD-001 | 2.0.0+ | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | §7——task_id/语义28/追踪3/Task共31/状态机 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | 2.6.0+ | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
-| 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain_infrastructure_operations/script_system/blueprint.md` | 审计消费方 |
+| 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain_governance/governance_automation/blueprint.md` | 审计消费方 |
 | 5 | 任务卡操作指南 | GOV-TASK-001 | 3.0.0+ | `docs/01_policies_and_standards/governance/task/task-card-standard.md` | 正文结构与门禁速查 |
 | 6 | 任务生命周期标准 | GOV-TASK-004 | 2.0.0+ | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` | 取消权限、优先级裁决 |
 | 7 | 任务关闭标准 | GOV-TASK-005 | 1.1.0+ | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` | 关闭三步法 |

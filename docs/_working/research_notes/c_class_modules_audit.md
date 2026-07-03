@@ -158,11 +158,70 @@
 ### 6.1 原建议 1（3 个 C 类补建 blueprint）→ 取消
 3 个模块均有蓝图归属，无需补建。
 
-### 6.2 新建议 1：修复 script_system 路径漂移（5 处）
-见 §4 修复清单。建议作为独立任务卡执行（DM-XXXXXX），因为这涉及多个蓝图文件改动，需逐个验证。
+### 6.2 新建议 1：修复 script_system 路径漂移（12 处，已修复 ✅）
+原报告为 5 处，实际 Grep 发现 12 处路径漂移（根因相同），已全部修复：
 
-### 6.3 新建议 2：infra_ops 域归属决策
-建议归并到 `_domain_infrastructure_runtime/`，但需 architecture 裁定（涉及域合并，影响 43 域方案）。
+| # | 文件 | 错误模式 | 修复数 |
+|---|------|----------|--------|
+| 1 | governance_automation/blueprint.md | `runtime_integration/script_system/` → `script_system/` | 4 处 |
+| 2 | governance_automation/blueprint.md | `src/zephyr/script_system/`（正斜杠）→ `src/zephyr/infrastructure/script_system/` | 2 处 |
+| 3 | governance_automation/blueprint.md | `src\zephyr\script_system\`（反斜杠）→ `src\zephyr\infrastructure\script_system\` | 2 处 |
+| 4 | _system_master/blueprint.md | `src/zephyr/script_system/` → `src/zephyr/infrastructure/script_system/` | 1 处 |
+| 5 | task_system/blueprint.md | `_domain_infrastructure_operations/script_system/` → `_domain_governance/governance_automation/` | 2 处 |
+| 6 | gate_engine/blueprint.md | `_cross_layer/script_system/` → `_domain_governance/governance_automation/` | 1 处 |
+
+注：governance_automation/blueprint.md（153KB）和 _system_master/blueprint.md（157KB）过大，Edit 工具未生效，改用 Python 脚本修复（临时脚本已清理）。
+
+### 6.3 新建议 2：infra_ops 域归属裁定（需 ARCH 裁定）
+
+**现状调研**：
+
+1. `_domain_infrastructure_operations/` 域：4 个子模块蓝图（agent_to_agent_protocol / asset_inventory / capacity_assurance / system_telemetry），**无域级 blueprint.md**，仅有自动生成的 index.md
+2. `_domain_infrastructure_runtime/` 域：含 runtime_integration/blueprint.md，其 frontmatter 声明 `layer: infra_ops`（与物理路径不一致）
+3. runtime_integration 蓝图"代理"了 infra_ops 域的域级职责（RI-12~RI-15 独立落地 `infra_ops/` 目录）
+
+**根因分析**：
+- `layer: infra_ops` 是**功能层声明**（infra operations 层），不是域路径声明
+- `_domain_infrastructure_runtime/` 是**物理路径**（infrastructure runtime 域）
+- 两者维度不同，但命名相似导致混淆
+
+**推荐方案 C（修正 layer + 补建域级蓝图）**：
+
+| 动作 | 理由 |
+|------|------|
+| runtime_integration/blueprint.md 的 `layer: infra_ops` → `layer: infra_runtime` | 与物理路径 `_domain_infrastructure_runtime/` 一致 |
+| 补建 `_domain_infrastructure_operations/blueprint.md` 域级蓝图 | 明确 4 个子模块的集成契约和域级职责 |
+| 保持 `_domain_infrastructure_operations/` 和 `_domain_infrastructure_runtime/` 为两个独立域 | 职责不同：operations 关注 A2A/资产/容量/遥测，runtime 关注 EventBus/生命周期/韧性 |
+
+**不推荐方案 A（归并）**：4 个子模块职责与 runtime_integration 不同，归并会导致域职责混淆。
+**不推荐方案 B（仅补建）**：不修正 layer 声明，layer=infra_ops vs 物理路径 `_domain_infrastructure_runtime/` 的不一致仍存在。
+
+### 6.6 新发现：`_domain_infrastructure_operations/` 前缀大规模误用（需独立任务卡）
+
+调研 infra_ops 域归属时发现：**大量蓝图错误引用 `_domain_infrastructure_operations/` 作为通用前缀**，指向不存在的蓝图路径。初步统计 30+ 处误用：
+
+| 错误路径前缀 | 实际所在域 | 涉及模块 |
+|--------------|-----------|----------|
+| `_domain_infrastructure_operations\database\` | `_cross_layer/database/` | database |
+| `_domain_infrastructure_operations\audit-trail\` | `_domain_governance/audit_trail/` | audit_trail |
+| `_domain_infrastructure_operations\agent-rbac\` | `_domain_autonomy_core/agent_role_based_access_control/` | agent_rbac |
+| `_domain_infrastructure_operations\knowledge_base\` | `_domain_knowledge/knowledge_base/` | knowledge_base |
+| `_domain_infrastructure_operations\context_engine\` | `_cross_layer/context_engine/` | context_engine |
+| `_domain_infrastructure_operations\vector_memory\` | `_domain_knowledge/vector_memory/` | vector_memory |
+| `_domain_infrastructure_operations\gate_engine\` | `_cross_layer/gate_engine/` | gate_engine |
+| `_domain_infrastructure_operations\feedback_loop\` | `_cross_layer/feedback_loop/` | feedback_loop |
+| `_domain_infrastructure_operations\pipeline\` | `_cross_layer/pipeline/` | pipeline |
+| `_domain_infrastructure_operations\runtime_integration\` | `_domain_infrastructure_runtime/runtime_integration/` | runtime_integration |
+| `_domain_infrastructure_operations\script-system\` | `_domain_governance/governance_automation/` | script_system |
+| `_domain_infrastructure_operations\task_system\` | `_domain_infrastructure_runtime/task_system/` | task_system |
+| `_domain_infrastructure_operations\escalation-protocol\` | `_domain_autonomy_perm/escalation_protocol/` | escalation_protocol |
+| `_domain_infrastructure_operations\asset-inventory\` | `_domain_infrastructure_operations/asset_inventory/`（连字符 vs 下划线不一致） | asset_inventory |
+| `_domain_infrastructure_operations\rbac\` | `_domain_autonomy_core/agent_role_based_access_control/` | agent_rbac |
+| `_domain_infrastructure_operations\agent-spec\` | `_domain_autonomy_core/agent_spec/` | agent_spec |
+| `_domain_infrastructure_operations\budget-enforcer\` | `_domain_autonomy_perm/budget_enforcer/` | budget_enforcer |
+
+**根因**：`_domain_infrastructure_operations/` 被误用为"所有基础设施类模块的通用前缀"，但实际各模块分散在不同域。
+**建议**：作为独立任务卡（DM-XXXXXX）处理，需全量 Grep + 批量修复 + 验证。
 
 ### 6.4 原建议 2（命名体系统一）→ 保持
 path_ownership_map.yaml 登记别名映射表的建议仍然有效。
