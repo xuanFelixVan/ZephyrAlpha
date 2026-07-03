@@ -1245,7 +1245,7 @@ enforcement:
   type: hook
   executors:
   - scripts/governance/d1_structure/validate_immutable_core.py
-  - scripts/governance/pre_delete_safety_check.py
+  - scripts/governance/d5_architecture/pre_delete_safety_check.py
   - scripts/governance/d5_architecture/validators/validate_autonomy_gate.py
   - scripts/lock_files.py
   bypass_allowed: false

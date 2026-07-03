@@ -443,11 +443,11 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
     3. generate_project_depgraph.py --max-workers 8
 ```
 
-**执行器**：[`pre_delete_safety_check.py`](file:///d:/ZephyrAlpha/scripts/governance/pre_delete_safety_check.py)（5项机械检查：.py消费者 / .yaml消费者 / 注册表登记 / 重复内容 / 高价值标记，exit 0=SAFE 允许删除 / exit 1=BLOCKED 禁止删除）
+**执行器**：[`pre_delete_safety_check.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/pre_delete_safety_check.py)（5项机械检查：.py消费者 / .yaml消费者 / 注册表登记 / 重复内容 / 高价值标记，exit 0=SAFE 允许删除 / exit 1=BLOCKED 禁止删除）
 
 ```bash
 # 删除前必须先跑执行器（--dry-run 不修改任何文件）
-python scripts/governance/pre_delete_safety_check.py <file_path> --dry-run
+python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path> --dry-run
 ```
 
 **P0模块特殊约束**（[trae_032 §MLC-003](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml)）：P0模块禁止退役——必须先完成P1+等效替代并active≥30天。
