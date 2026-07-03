@@ -46,10 +46,10 @@ entries:
   title: contracts 表 Schema 漂移（DDL 7 列 vs 写入 13 列）
   severity: P0致命
   adjudication: 修复 DDL + migration v13
-  fix_phase: schema_health 阶段1
-  status: open
+  fix_phase: 已完成（depgraph_schema.py v13 添加6列，_DDL_CONTRACTS 声明13列）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-009'
   title: gates.event_driven 写入断裂（sync 遗漏 3 列）
   severity: P1高
@@ -62,10 +62,10 @@ entries:
   title: generate_project_depgraph.py 写入已删除列
   severity: P0致命
   adjudication: 清理残留 INSERT
-  fix_phase: schema_health 阶段3
-  status: open
+  fix_phase: 已完成（generate_project_depgraph.py 无 INSERT arch_layers/arch_bottlenecks/invariants）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-011'
   title: cross_registry_rules 声明但未接线
   severity: P2中
@@ -78,42 +78,42 @@ entries:
   title: governance_audit_logs 假审计表
   severity: P1高
   adjudication: 删除表 + 移除写入
-  fix_phase: schema_health 阶段4
-  status: open
+  fix_phase: 裁定变更（depgraph_schema.py v14 决定保留——auto_runner 活跃写入者，原裁定"删除表"被推翻）
+  status: decided
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-013'
   title: arch_layers 残留表（v6 合并后冗余）
   severity: P1高
   adjudication: 删除表 + 清理读取者
-  fix_phase: schema_health 阶段4
-  status: open
+  fix_phase: 已完成（depgraph_schema.py v14 DROP TABLE arch_layers）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-014'
   title: arch_bottlenecks 空表
   severity: P2中
   adjudication: 删除表
-  fix_phase: schema_health 阶段4
-  status: open
+  fix_phase: 已完成（depgraph_schema.py v14 DROP TABLE arch_bottlenecks）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-015'
   title: invariants DB 副本漂移（255 vs YAML 20）
   severity: P1高
   adjudication: 删除 DB 表
-  fix_phase: schema_health 阶段4
-  status: open
+  fix_phase: 已完成（depgraph_schema.py v14 DROP TABLE invariants）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-016'
   title: verify_schema_health.py 门禁缺失
   severity: P0致命
   adjudication: 新建校验脚本
-  fix_phase: schema_health 阶段5
-  status: open
+  fix_phase: 已完成（scripts/governance/d11_compliance/verify_schema_health.py 已创建，279行4项校验）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-017'
   title: GATE-SCHEMA-HEALTH 未注册
   severity: P0致命
@@ -515,6 +515,24 @@ entries:
     P2 修复72个文件 frontmatter [DOMAIN] 造假（D_INFRA_RUNTIME →
     D_INFRA_RECOVERY）+ 8个文件 INVARIANTS 造假 + path_ownership_map 一致性。
     历史注：P0 曾于 2026-07-01 执行但被外部并发会话 git reset 丢失，2026-07-04 重做完成。
+    P1 已完成（2026-07-04）：基于深度调研调整执行方案——
+    (1)删除9个真副本（rollback/冗余，目标域已有SSoT）：paper_live_transition、
+    post_live_verification、startup_shutdown、startup_shutdown_cli、
+    fault_tolerance、fsm_verifier、phase_manager、phase_check_registry、
+    model_drift_detector；
+    (2)移动10个文件到正确域：llm_impact_analyzer→governance/architecture_governance、
+    autonomy_dashboard/confidence_quantifier/continuous_trust/cross_agent_conflict_detector
+    →governance/intelligence_governance、owner_absent→governance/escalation、
+    trading_kill_switch→trading/trading_contracts/risk、
+    concurrency_guard/gate_coordinator/sandbox_enforcer→infrastructure/runtime；
+    (3)保留kill_switch.py（调研发现是回滚专属KillSwitchManager，消费者全在rollback/内，
+    ARCH-039初始归类误判，实际非回滚文件=20非21）；
+    (4)同步39个文件的import路径（79处替换）+ rollback/__init__.py清理 +
+    path_ownership_map.yaml移除8个错误claim + blueprint §0.1标记8个已迁移文件；
+    (5)rollback/从73→54文件，符合T_hard=60。
+    待办：phase_check_registry.py L663/L693断裂import（from rollback.kill_switch
+    import KillSwitch，KillSwitch类不存在）是历史遗留问题，不在ARCH-039范围；
+    depgraph更新待session_worktree_merge后通过apply_depgraph.py执行。
   status: decided
   related_rules:
   - TRAE-028
