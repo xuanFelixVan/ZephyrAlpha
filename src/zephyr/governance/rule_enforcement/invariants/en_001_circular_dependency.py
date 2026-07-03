@@ -19,8 +19,8 @@
 """
 EN-001 — Circular Dependency Scanner
 
-Kahn's algorithm topological sort over the layer import DAG.
-Detects cycles across all 14 layers + shared/contracts.
+Kahn's algorithm topological sort over the module import DAG.
+Detects cycles across all module directories + shared/contracts.
 
 SSoT: cross_layer_contracts.yaml v3.0 — partition.cross-cutting-contracts
 Architecture Decision:  (LPC 双轨)
@@ -37,7 +37,7 @@ from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
-LAYER_MODULE_NAMES = [
+MODULE_NAMES = [
     "zephyr.data",
     "zephyr.data",
     "zephyr.infrastructure_runtime_integration",
@@ -61,10 +61,10 @@ LAYER_MODULE_NAMES = [
 
 SHARED_MODULE = "zephyr.shared.contracts"
 
-ALL_MODULES = [*LAYER_MODULE_NAMES, SHARED_MODULE]
+ALL_MODULES = [*MODULE_NAMES, SHARED_MODULE]
 
 MODULE_TO_DIR: dict[str, Path] = {}
-for mod in LAYER_MODULE_NAMES:
+for mod in MODULE_NAMES:
     suffix = mod.replace("zephyr.", "").replace(".", "/")
     MODULE_TO_DIR[mod] = SRC_ROOT / suffix
 MODULE_TO_DIR[SHARED_MODULE] = SRC_ROOT / "shared" / "contracts"

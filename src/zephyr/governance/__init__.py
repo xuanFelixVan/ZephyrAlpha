@@ -212,8 +212,7 @@ try:
     import zephyr.governance.behavioral_admission.post_process as post_process
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
     import zephyr.governance.drift_detector_core.regime_detector as regime_detector
-    import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
-    import zephyr.governance.architecture_governance.system_topology as system_topology
+    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（同上）
@@ -339,7 +338,6 @@ __all__ = [
     "startup_shutdown",
     "startup_shutdown_cli",
     "strategy_portfolio",
-    "system_topology",
     "vibe_coding_enforcer",
 'auto_runner', 'base', 'broker_interface', 'budget_enforcement', 'compliance_rule', 'database_manager', 'default_attribution_engine', 'default_tca_engine', 'depgraph_schema', 'evidence_pack', 'f5_boot_integration', 'f5_event_subscriber', 'f5_shutdown_manager', 'gate_repo', 'integrity', 'market_schema', 'merkle_hourly', 'performance_attribution_report', 'pipeline_base', 'strategy_base', 'strategy_registry']
 

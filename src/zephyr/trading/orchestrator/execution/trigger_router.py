@@ -613,26 +613,8 @@ def _stub_response(name: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def handle_onboarding_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
-    """``onboarding`` — 加载跨层路由表并返回拓扑序。
-
-    读取 pipeline/layer_router.py 的路由配置，为新会话注入上下文。
-    对标 Codified Context §3.1.1 Orchestration Protocols。
-    """
-    try:
-        import importlib
-
-        _mod = importlib.import_module("zephyr.infrastructure.pipeline.layer_router")
-        _router = _mod.get_layer_router()
-        layers = _router.topology_order()
-        return {
-            "handler": "onboarding",
-            "phase": "operational",
-            "layer_order": layers,
-            "session_context_loaded": True,
-        }
-    except Exception as exc:
-        _logger.warning("onboarding handler fallback to stub: %s", exc)
-        return _stub_response("onboarding", payload)
+    """``onboarding`` — 新会话上下文注入。"""
+    return _stub_response("onboarding", payload)
 
 
 def handle_drift_detected(payload: dict[str, Any], **_: Any) -> dict[str, Any]:

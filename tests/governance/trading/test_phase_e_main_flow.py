@@ -20,9 +20,7 @@ P0 数据管道：
   - P1 执行报告契约 (CTR-P1-007)
   - 错误契约传播 (CTR-ERR-004)
   - 全链路追踪 (CTR-TRACE-001)
-  - LayerDataRouter 注册与路由
   - 幂等性保证
-  - 拓扑排序正确性
 
 Phase E | Safety: MEDIUM
 """
@@ -41,12 +39,6 @@ from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
 from zephyr.governance.intelligence_governance.memory_provider import MemoryProvider
-from zephyr.infrastructure.pipeline.layer_consumer_registry import get_registry_summary, register_all_consumers
-from zephyr.infrastructure.pipeline.layer_router import (
-    get_layer_router,
-    handle_layer_onboarding,
-    reset_layer_router,
-)
 from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
@@ -535,42 +527,6 @@ class TestPhaseERiskValidation:
             limits={"max_single_position": 0.10},
         )
         assert len(violations) > 0
-
-
-class TestPhaseELayerDataRouter:
-    """LayerDataRouter 路由注册与拓扑"""
-
-    def test_router_loads_route_map(self):
-        reset_layer_router()
-        router = get_layer_router()
-        route_map = router._route_map
-        assert route_map is not None
-        assert len(route_map.routes) > 0
-
-    def test_router_topology_order_has_all_layers(self):
-        reset_layer_router()
-        router = get_layer_router()
-        topo = router.topology_order()
-        assert len(topo) >= 14
-        assert "l00" in topo
-        assert "l05" in topo
-        assert "l07" in topo
-
-    def test_register_all_consumers(self):
-        reset_layer_router()
-        router = get_layer_router()
-        results = register_all_consumers(router)
-        assert len(results) >= 13
-        assert sum(results.values()) >= 70
-
-    def test_registry_summary(self):
-        summary = get_registry_summary()
-        assert summary["total_contracts_registered"] > 0
-        assert summary["total_layers"] >= 13
-
-    def test_handle_layer_onboarding(self):
-        result = handle_layer_onboarding({}, dry_run=True)
-        assert result is not None
 
 
 class TestPhaseETraceContextPropagation:
