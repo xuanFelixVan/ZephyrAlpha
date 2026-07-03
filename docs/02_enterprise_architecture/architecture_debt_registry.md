@@ -2818,12 +2818,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改为 `assert len(log)==1000` 显式测试边界(999/1000/1001)
 
 #### 5.21.12 顺序编号测试隐含执行顺序依赖【MEDIUM】
-- 证据：[test_task_system_red_team.py:37-803](file:///d:/ZephyrAlpha/tests/adversarial/test_task_system_red_team.py) `test_00_imports`/`test_01_taskcard_minimal`/`test_02_task_repo_crud`/`test_03_pipeline_A_dispatch`...`test_08_task_name_field_rejected` 共30+个用NN_前缀编号；[test_mcp_red_team.py:34-235](file:///d:/ZephyrAlpha/tests/adversarial/test_mcp_red_team.py) 11个；`test_cross_layer_systems_red_team.py:35,61,84,108` 同模式
+- 证据：[test_task_system_red_team.py:37-803](file:///d:/ZephyrAlpha/tests/autonomy/test_task_system_red_team.py) **[路径漂移更新: 2026-07-04]** adversarial→autonomy `test_00_imports`/`test_01_taskcard_minimal`/`test_02_task_repo_crud`/`test_03_pipeline_A_dispatch`...`test_08_task_name_field_rejected` 共30+个用NN_前缀编号；[test_mcp_red_team.py:34-235](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_red_team.py) **[路径漂移更新: 2026-07-04]** adversarial→infrastructure 11个；`test_cross_layer_systems_red_team.py:35,61,84,108` 同模式
 - 病根：根因5（顺序耦合测试，数字前缀隐含setup/teardown链，`pytest -p randomly`会全部炸）
 - 修复：改用语义化命名，如需共享状态用 `@pytest.fixture(scope="module")` 显式声明
 
 #### 5.21.13 mock整个SUT协作者导致测试空转【MEDIUM】
-- 证据：[test_action_dispatcher.py:227-232,240-244](file:///d:/ZephyrAlpha/tests/action/test_action_dispatcher.py) `scheduler=MagicMock(); scheduler._lock=MagicMock(); scheduler._results={"t1":task}` 然后测试验证"MagicMock能被遍历"而非真实Scheduler行为；[test_defense_runner.py](file:///d:/ZephyrAlpha/tests/test_red_blue/test_defense_runner.py) 共49处MagicMock多数mock整个validator/engine
+- 证据：[test_action_dispatcher.py:227-232,240-244](file:///d:/ZephyrAlpha/tests/action/test_action_dispatcher.py) `scheduler=MagicMock(); scheduler._lock=MagicMock(); scheduler._results={"t1":task}` 然后测试验证"MagicMock能被遍历"而非真实Scheduler行为；[test_defense_runner.py](file:///d:/ZephyrAlpha/tests/safety/test_defense_runner.py) **[路径漂移更新: 2026-07-04]** test_red_blue→safety 共49处MagicMock多数mock整个validator/engine
 - 病根：根因5（mock空转，把协作者整体替换为MagicMock，断言退化为验证mock调用而非业务结果）
 - 修复：用tmp_path构造真实子组件仅mock外部IO，断言业务结果而非mock.call_count
 
