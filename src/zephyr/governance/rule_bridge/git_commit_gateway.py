@@ -67,6 +67,7 @@ from zephyr.governance.commit_gates.claim_required_gate import make_claim_requir
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
 from zephyr.governance.commit_gates.create_guard import make_create_guard
 from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate
+from zephyr.governance.commit_gates.ttl_gate import make_ttl_gate
 from zephyr.governance.commit_gates.dangling_reference_gate import make_dangling_reference_gate
 from zephyr.governance.commit_gates.arch_reference_gate import make_arch_reference_gate
 from zephyr.governance.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
@@ -249,6 +250,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
+        self._gate_registry.register(make_ttl_gate())  # priority=32 ttl gate
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
@@ -823,6 +825,16 @@ class GitCommitGateway:
                 "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
                 session_id, len(existing),
             )
+
+        # TTL-METADATA gate (subprocess reuse, same pattern as DCR gate)
+        ttl_spec = self._gate_registry.get("TTL-METADATA")
+        if ttl_spec is not None:
+            ttl_passed, ttl_detail = ttl_spec.check(self, existing)
+            if not ttl_passed:
+                return CommitResult(
+                    status=CommitStatus.NAMING_VIOLATION,
+                    message=f"ttl metadata violation (auto-commit): {ttl_detail}",
+                )
 
         gw_marker = f"[GW:{session_id}:auto]"
         full_message = f"{message}\n\n{gw_marker}"
