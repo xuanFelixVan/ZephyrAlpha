@@ -2338,6 +2338,29 @@ capabilities:
           匹配会误选为 canonical，故用 canonical_override 明确指定真源。
 
   # --------------------------------------------------------------------------
+  - capability_id: secret_rotation
+    canonical_override: src/zephyr/trading/feedback_loop/security/secret_rotation.py
+    aliases:
+      - SecretRotation
+      - SecretEntry
+      - auto_configure
+      - secret_rotation
+      - needs_rotation
+      - rotation_scheduler
+    description: >-
+      密钥轮换调度——SecretRotation registry 管理 secret 生命周期（register/rotate/
+      pending_rotations）。auto_configure() 在 zephyr.__init__._deferred_bootstrap
+      中自动调用（后台线程），扫描 os.environ 中密钥变量（匹配 SECRET_INDICATOR_
+      PATTERNS）注册到 registry 并注入 SecretProvider（configure_secret_rotation）。
+      注入后所有 get_secret* 读取时前置 needs_rotation 检查（warn 不阻断）。
+      新 AI 实现密钥轮换功能时 MUST 使用本模块，禁止重新创建轮换调度。
+      依赖方向：trading/ → shared/（单向，auto_configure import secrets.py）。
+      [TTL] permanent。
+    integrity_anchors:
+      - auto_configure  # 自动接入函数(删则 secret_rotation 不接入 SecretProvider)
+      - SecretRotation  # 轮换 registry 类(删则无轮换调度能力)
+
+  # --------------------------------------------------------------------------
   - capability_id: task_repository_query
     aliases:
       - TaskRepository
@@ -2542,6 +2565,11 @@ creation_tokens:
     token: "auto-bare-getenv-gate-20260703"
     created_by: "session-sess-20844-20260703190715"
     capability: "bare_getenv_gate"
+
+  - file: "src/zephyr/trading/feedback_loop/security/secret_rotation.py"
+    token: "auto-secret-rotation-20260703"
+    created_by: "session-sess-20844-20260703190715"
+    capability: "secret_rotation"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
