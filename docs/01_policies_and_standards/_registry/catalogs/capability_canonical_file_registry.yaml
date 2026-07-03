@@ -1070,6 +1070,32 @@ capabilities:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ttl_gate
+    aliases:
+      - TTL-METADATA
+      - ttl-metadata
+      - make_ttl_gate
+      - gateway_ttl_check
+      - commit_ttl_validator
+    description: >-
+      ttl 字段校验门禁（TTL-METADATA，2026-06-30 治本）。检测本次 commit 文件
+      的 frontmatter/头部 ttl 字段缺失/非法，命中则阻断（NAMING_VIOLATION）。
+      病根：GitCommitGateway 用 git commit --no-verify 绕过 pre-commit，导致
+      GATE-15（check_frontmatter_metadata.py）的 ttl 校验在 gateway 路径完全失效；
+      攻击者通过 GitCommitGateway 提交缺 ttl / ttl 非法的文件 → gateway 不检 ttl →
+      提交成功 → ttl 约束被绕过（历史教训：2026-06-29 删除的 11 个漂移 YAML 正是
+      利用 # ttl: permanent 注释锚定自欺永久）。治本：GitCommitGateway pre-commit
+      阶段注册 gate（priority=32，在 DIRECTORY-CONTRACT 30 之后、R5-DIGIT-SUFFIX 35
+      之前），通过 subprocess 调 check_frontmatter_metadata.py 复用真源（subprocess
+      真源复用模式，同 directory_contract_gate）。fail-closed：checker 缺失/执行失败
+      时阻断（ttl 是强制字段，环境异常必须阻断）。覆盖 commit() 和 _commit_auto() 路径。
+      canonical basename ttl_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "TTL/ttl 校验/gateway ttl/commit ttl" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 gateway ttl gate 脚本。
+    integrity_anchors:
+      - make_ttl_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: r5_digit_suffix_gate
     aliases:
       - R5-DIGIT-SUFFIX
