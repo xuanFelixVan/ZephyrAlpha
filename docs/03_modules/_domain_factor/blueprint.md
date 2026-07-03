@@ -474,7 +474,7 @@ class FactorMeta(BaseModel):
 | 1 | 已读取本蓝图全部内容（概述 + §0 对齐 + §1-§14 架构 + §16 施工指引） | 逐节确认 | ☐ |
 | 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 4 | business_layer_status = blocked → 确认不开工业务代码 | 检查frontmatter | ☐ |
+| 4 | business_layer_status = active → 确认可施工 | 检查frontmatter | ☑ |
 | 5 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 
 ### 16.1 施工策略
