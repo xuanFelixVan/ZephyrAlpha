@@ -70,8 +70,8 @@ sections:
       pass: B-00:Layer1先于Layer2;B-01:施工步骤禁止砍;B-02:接口契约禁止砍;B-03:架构设计禁止砍;B-04:功能描述禁止砍;B-05:错误处理禁止砍;B-06:产出物路径禁止砍;B-07:必备链接表禁止砍;B-08:安全删除协议禁止砍;B-11:蓝图铁律表禁止砍;B-12:容量估算禁止砍;B-13:MUST标注codification_level;B-14:不可因模板砍价值;B-15:反向进化原则;B-16:蓝图特有内容保留;B-17:反向进化流程;B-18:规格化前MUST建立内容价值映射;B-19:概述段禁止砍;B-20:已实现代码不在蓝图重复;B-21:临时时态执行完毕后删除;B-22:蓝图拆分判定
       fail: 违反任一蓝图铁律
     - type: constraint
-      check: 代码文件十字段标准§5
-      pass: "[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS];__init__.py豁免仅需BLUEPRINT+AI_AUTONOMY"
+      check: 代码文件十五字段标准§5
+      pass: "代码文件头部十五字段完整性(真源→trae_047 field_specs.a_full.required);__init__.py豁免规则见trae_047 init_min"
       fail: 代码文件头部缺失必填字段
     actions:
     - type: mandatory
@@ -98,7 +98,7 @@ sections:
       fail: 常规维护(无上述信号)不触发
     - type: constraint
       check: 规格化前置流程§8(强制七步)
-      pass: STEP0判受众→STEP0.5 Layer1合规(内容价值映射+章节完整性+反向进化)→STEP1搜→STEP1.5时态判定→STEP2转化(散文→二元规则)→STEP3查重→STEP3.5幻觉安全验证→STEP3.6三桶判定→STEP4标注可执行性→STEP5补充缺失→STEP5.5十字段验证→STEP6审计
+      pass: STEP0判受众→STEP0.5 Layer1合规(内容价值映射+章节完整性+反向进化)→STEP1搜→STEP1.5时态判定→STEP2转化(散文→二元规则)→STEP3查重→STEP3.5幻觉安全验证→STEP3.6三桶判定→STEP4标注可执行性→STEP5补充缺失→STEP5.5十五字段验证→STEP6审计
       fail: 跳过任何步骤
     - type: constraint
       check: Layer1先于Layer2
@@ -314,12 +314,12 @@ sections:
     original_rules:
     - DOC-011
     context:
-      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。定义可删/不可删/必须补充三类清单+蓝图铁律B-00~B-22+施工流程+安全原则。DriftDetector消费§1-§3清单;GateEngine(G7)消费§4蓝图铁律+§5十字段标准"
+      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。定义可删/不可删/必须补充三类清单+蓝图铁律B-00~B-22+施工流程+安全原则。DriftDetector消费§1-§3清单;GateEngine(G7)消费§4蓝图铁律+§5十五字段标准"
       impact_on_rules:
       - "修改§1可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
       - "修改§2不可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
       - "修改§4蓝图铁律→必须同步更新blueprint_construction_template.md铁律表"
-      - "修改§5十字段→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
+      - "修改§5十五字段→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
       - "修改§9策略→必须同步更新各对应Skill文件"
       key_decisions:
       - "规格化是双向操作(该减的减+该加的加+反向进化)"
@@ -388,7 +388,7 @@ sections:
     - DOC-014
     - DOC-015
     context:
-      summary: "GOV-DOC-011(压缩工作流)+GOV-DOC-001(编号规范)+GOV-DOC-004(路径规范)构成文档治理的编号与元数据子域。011定义规格化标准→001定义编号体系→004定义路径映射。011的§5十字段引用trae_010/011/012.yaml(GOV-ENG-001子规则) §7;001的编号前缀被GOV-DOC-003和GOV-DOC-010消费;004的路径树由脚本自动生成"
+      summary: "GOV-DOC-011(压缩工作流)+GOV-DOC-001(编号规范)+GOV-DOC-004(路径规范)构成文档治理的编号与元数据子域。011定义规格化标准→001定义编号体系→004定义路径映射。011的§5十五字段引用trae_010/011/012.yaml(GOV-ENG-001子规则) §7;001的编号前缀被GOV-DOC-003和GOV-DOC-010消费;004的路径树由脚本自动生成"
       impact_on_rules:
       - "修改GOV-DOC-011蓝图铁律→必须同步更新blueprint_construction_template.md"
       - "修改GOV-DOC-011可删/不可删清单→必须同步更新project_rules.md和onboarding_detail.md"
@@ -465,16 +465,16 @@ sections:
     original_rules:
     - DOC-011
     context:
-      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。SSoT覆盖:产出物可删/不可删清单(§1-§2)/产出物必须补充清单(§3)/蓝图规格化铁律(§4)/代码文件十字段标准(§5+trae_010/011/012.yaml(GOV-ENG-001子规则) §7)/规格化施工流程(§8-§9)。任何与本文件冲突的规格化规则以本文件为准"
+      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。SSoT覆盖:产出物可删/不可删清单(§1-§2)/产出物必须补充清单(§3)/蓝图规格化铁律(§4)/代码文件十五字段标准(§5+trae_010/011/012.yaml(GOV-ENG-001子规则) §7)/规格化施工流程(§8-§9)。任何与本文件冲突的规格化规则以本文件为准"
       impact_on_rules:
       - "修改§1可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
       - "修改§2不可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
       - "修改§4蓝图铁律增删→必须同步更新blueprint_construction_template.md(铁律表)"
-      - "修改§5十字段字段变更→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
+      - "修改§5十五字段字段变更→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
       - "修改§9策略变更→必须同步更新各对应Skill文件"
       key_decisions:
       - "负向责任:本文件不涉及蓝图+施工图模板格式(→blueprint_construction_template.md)/代码命名类型注解(→trae_010/011/012.yaml(GOV-ENG-001子规则))/文档目录结构(→trae_028_doc_structure_naming.yaml doc_002)/会话门禁检查(→trae_048_ops_vibe_coding_session.yaml(OPS-VC会话管理))"
-      - "消费者:Tier1-DriftDetector(§1-§3清单)+GateEngine G7(§4铁律+§5十字段);Tier2-AI session(§8流程)+blueprint_construction_template.md(§4铁律);Tier3-project_rules.md/onboarding_detail.md(§10.6安全清单引用)"
+      - "消费者:Tier1-DriftDetector(§1-§3清单)+GateEngine G7(§4铁律+§5十五字段);Tier2-AI session(§8流程)+blueprint_construction_template.md(§4铁律);Tier3-project_rules.md/onboarding_detail.md(§10.6安全清单引用)"
       - "漂移防护:修改§1→同步project_rules.md+onboarding_detail.md;修改§2→同步project_rules.md+onboarding_detail.md;修改§4→同步blueprint_construction_template.md;修改§5→同步trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1;修改§9→同步各Skill文件"
   gov_doc_011_normative_refs:
     title: 压缩工作流专业对标 (GOV-DOC-011 §13)

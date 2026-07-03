@@ -15,7 +15,7 @@ depends_on:
     why: "元数据规则——双真源机制"
   - target: TRAE-047
     at: "GOV-ENG-002"
-    why: "代码头部十一字段——可解析性代码侧"
+    why: "代码头部十五字段——可解析性代码侧"
   - target: TRAE-028
     at: "doc_003"
     why: "命名规范——可发现性路径侧"
@@ -76,7 +76,7 @@ sections:
     original_rules:
     - "规则内容/元数据/配置/注册表 MUST使用YAML格式"
     - "叙事/蓝图/模板/运营文档/教程 MUST使用Markdown格式（含YAML frontmatter）"
-    - "代码文件 MUST使用十一字段头部注释格式（trae_047）"
+    - "代码文件 MUST使用十五字段头部注释格式（trae_047）"
     - "数据交换/API响应 MUST使用JSON格式"
     conditions:
     - type: must
@@ -89,7 +89,7 @@ sections:
       fail: "检查下一条件"
     - type: must
       check: "内容类型属于代码文件？"
-      pass: "使用十一字段头部注释格式"
+      pass: "使用十五字段头部注释格式"
       fail: "检查下一条件"
     - type: must
       check: "内容类型属于数据交换/API响应？"
@@ -161,7 +161,7 @@ sections:
     applies_to:
     - "onboarding_detail.md §10.1 为AI消费优化 → 本原则§1的施工展开"
     - "D56裁定 YAML为规则内容唯一真源 → 本原则§2格式分工的YAML侧依据"
-    - "trae_047 代码十一字段头部标准 → 本原则§3可解析性的代码侧施工"
+    - "trae_047 代码十五字段头部标准 → 本原则§3可解析性的代码侧施工"
     - "PS-REG-012 frontmatter字段注册表 → 本原则§3可解析性的文档侧施工"
     - "onboarding_detail.md §10.3 Token预算表 → 本原则§4的量化标准"
     - "trae_028 doc_003 命名规范 → 本原则§3可发现性的路径侧施工"

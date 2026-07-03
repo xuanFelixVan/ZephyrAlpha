@@ -84,7 +84,7 @@ CATEGORY_FROM_DOC_TYPE: dict[str, str] = _load_registry_categories()
 def _parse_code_header(first_line: str) -> dict:
     """解析 trae_047 代码头格式: # [A_<type>] module_id=X | key=val | ...
 
-    该格式是项目代码文件的 canonical 头部(trae_047 §十一字段),
+    该格式是项目代码文件的 canonical 头部(trae_047 §十五字段),
     与 YAML frontmatter 并存。本函数提取 pipe-separated key=value 对。
 
     返回 dict;若首行不是代码头格式则返回空 dict。

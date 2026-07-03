@@ -97,7 +97,7 @@ sections:
     - phase_4: 蓝图创建（模板合规）
     - phase_5: 文件创建（scaffold.py+锁协议）
     - phase_6: 路径多维审查（名字+路径+上层文件夹+容量对齐）
-    - phase_7: 文件头部锚定（十一字段）
+    - phase_7: 文件头部锚定（十五字段）
     - phase_8: 启动方式设计（事件驱动+自动启动+自动结束）
     - phase_9: 多注册表同步（MRS-001~003）
     - phase_10: 三方对齐验证（蓝图↔代码↔路径树）
@@ -493,25 +493,29 @@ sections:
       rule_id: TRAE-047
       section: gov_eng_002
       alias: GOV-ENG-002
-    purpose: 防幻觉/防漂移的文件头部十一字段
+    purpose: 防幻觉/防漂移的文件头部十五字段
     applies_when: 创建.py文件（脚本/模块）
     steps:
     - order: 1
-      action: 添加A_full头部（十字段）
-      format: "A_full(.py十字段注释头部)"
+      action: 添加A_full头部（十五字段）
+      format: "A_full(.py十五字段注释头部)"
       fields:
       - BLUEPRINT: "{module_id} | {path} | §{N}"
       - MODULE: "{full.module.path}"
-      - INVARIANTS: "分号分隔"
-      - MODIFY-GUARD: "分号分隔"
-      - CONSUMERS: "分号分隔"
-      - STABILITY: "frozen/stable/evolving/volatile"
-      - SAFETY: "H/M/L"
-      - AI_AUTONOMY: "immutable_core/human_gated/ai_modifiable"
-      - ERROR_CONTRACT: "分号分隔"
-      - TESTS: "分号分隔"
       - DOMAIN: "D-XXX（仅跨域模块需填）"
-      pass: 十字段完整
+      - DEPENDENCIES: "{上游依赖模块，分号分隔}"
+      - CONSUMERS: "{依赖此文件的模块，分号分隔}"
+      - STARTUP: "{auto_start|event_driven|manual|imported}"
+      - MATURITY: "{design|prototype|production|legacy}"
+      - INVARIANTS: "{不可违反的约束，分号分隔}"
+      - MODIFY-GUARD: "{修改此文件必须同步更新的文件，分号分隔}"
+      - STABILITY: "{frozen|stable|evolving|volatile}"
+      - SAFETY: "{H|M|L}"
+      - AI_AUTONOMY: "{immutable_core|human_gated|ai_modifiable}"
+      - ERROR_CONTRACT: "{可抛异常列表，分号分隔}"
+      - TESTS: "{测试文件路径，分号分隔}"
+      - TTL: "{permanent|task_bound}"
+      pass: 十五字段完整
       fail: 缺字段 → 补充
     - order: 2
       action: 更新蓝图§0.1文件清单
