@@ -2132,6 +2132,29 @@ capabilities:
       存在但违反 governance/ 根目录9模块硬约束, 已合并至 rule_patterns.py (ARCH-033
       Phase 7 修正)。消费者通过 import 复用，禁止重新定义。[TTL] permanent。
 
+  # --------------------------------------------------------------------------
+  - capability_id: secret_provider
+    aliases:
+      - secrets
+      - SecretProvider
+      - EnvSecretProvider
+      - DotEnvSecretProvider
+      - get_secret
+      - get_secret_or_default
+      - get_required_secret
+      - sanitize_secret
+      - SecretsError
+    description: >-
+      Secrets 管理抽象——API key / token / password 统一读取唯一真源。
+      canonical = src/zephyr/shared/security/secrets.py（auto 派生：basename secrets
+      匹配 alias）。提供 SecretProvider Protocol（async）+ EnvSecretProvider /
+      DotEnvSecretProvider 两个实现 + get_secret / get_secret_or_default /
+      get_required_secret 三个同步便捷函数（脚本场景）+ sanitize_secret 日志脱敏。
+      AI 施工约定（SSoT §2.11）：任何 API key / token / password MUST 通过本模块读取，
+      禁止裸 os.getenv。未登记本 registry 时 SSOT-REDEFINITION 门禁无法检测重定义，
+      导致新 AI 可能重复造轮子（architecture_debt §5.17.10 已记录多处绕过）。
+      [TTL] permanent。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
