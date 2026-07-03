@@ -24,7 +24,7 @@
 | ② 创造必全自动 | 永久脚本事件驱动 + 自动运行 + 自动维护 + 自动关闭；禁止手工触发，禁止时间触发（cron/Timer/CircadianScheduler） | 必然被遗忘→漂移 |
 | ③ 第一性原理治本 | 先问元问题该不该存在 / 能否删除或合并；治本不治标（MTH-006） | 症状反复 |
 
-**判定流程、禁止清单、已排查 evidence（硬编码副本 / 时间触发 / 手工触发 / 可合并簇）、GATE-VOCAB 门禁、例外清单** → 全部见真源 §1-§6。本节仅入口指向，不复制内容（复制=同步=违反原则①）。
+**判定流程、禁止清单、GATE-VOCAB 门禁、例外清单** → 全部见真源 §1-§6。本节仅入口指向，不复制内容（复制=同步=违反原则①）。
 
 > 元约束：本原则同样约束规则自身的传播——规则的消费方（含本文件）必须直读 trae_060 真源，禁止摘抄片段充当第二真源。
 
@@ -37,23 +37,17 @@
 | 模块 | 4,639 | `python scripts/governance/extract_depgraph.py --summary` |
 | 脚本 | 483 | `scripts/script_manifest.yaml` |
 | 门禁 | 43 | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
-| 蓝图 | 60 | `docs/03_modules/blueprint_registry.yaml` |
-| 模板 | 13 | `docs/03_modules/template_registry.yaml` |
+| 蓝图 / 模板 | 60 / 13 | `docs/03_modules/blueprint_registry.yaml` / `template_registry.yaml` |
 | Agent Skill | 22 | `data/capability_cards/` (skill_*.yaml) |
 
 ### ⚠️ 真源文件（SSoT）— 任何 AI 进项目 MUST 先知道
 
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
-| **路径全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
-| **数据库清单（4库唯一真源）** | `D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~004 唯一真源（governance.db/ChromaDB/depgraph (PostgreSQL)/DuckDB OLAP）。包含类型/地址/健康检查/依赖/SLA/状态。**禁止在其它文档同步数据库清单**，所有引用用纯指针。market.duckdb（INFRA-DB-005）已于2026-07-01删除/废弃。详见 AGENTS.md §11.0 |
+| **路径全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16，设计态+运行态合一。**⚠️ 禁止裸连！** MUST 用 `extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 有限查询。详见 RULE-SIXTEEN |
+| **数据库清单（4库唯一真源）** | `docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~004（governance.db/ChromaDB/depgraph/DuckDB OLAP）。**禁止在其它文档同步数据库清单**。market.duckdb 已于2026-07-01废弃。详见 AGENTS.md §11.0 |
 
-**绝对禁止**：
-- ❌ 引用 `project-entity-depgraph-v3-domain-draft.yaml`（已合并入真源，保留为副本）
-- ❌ 引用 `target_path_tree.yaml` 作为真源（它是验证工具输出，非真源；path_design 在 depgraph 内）
-- ❌ 引用 `archive/` 下的任何归档 depgraph 文件作为真源
-- ❌ 把 `project-path-tree.yaml` 当作独立真源修改（已合并至路径全景图）
-- ❌ 把 `functional_domain_registry.yaml` 当作域定义唯一真源（域定义已合并至路径全景图，registry 保留为兼容副本）
+**绝对禁止**：引用 `project-entity-depgraph-v3-domain-draft.yaml`/`target_path_tree.yaml`/`archive/` 下归档文件/`project-path-tree.yaml`/`functional_domain_registry.yaml` 作为真源（均已被合并或为派生物）。
 
 > 创建任何新功能前，MUST 先搜索 483 脚本 + 4,639 模块中是否已有覆盖。不搜索 = 违规。
 
@@ -63,15 +57,14 @@
 
 | 你要做什么 | 必须先问自己 | 答案=NO时的强制命令 |
 |-----------|-------------|-------------------|
-| **进入新 session** | Phase 0 检查全部 GREEN？守护进程在跑？FLE 在跑？ | `from zephyr.governance.phase_manager import session_startup; r=session_startup(); print(r['next_action'])` + `python scripts/ide_health_service.py --status` → running=false→`python scripts/ide_health_service.py --start` |
+| **进入新 session** | Phase 0 检查全部 GREEN？守护进程在跑？ | `session_startup()` + `python scripts/ide_health_service.py --status` → running=false→`--start` |
 | **创建新文件** | 文件已在注册表中？ | `python scripts/scaffold.py module/script/gate ...` |
 | **修改已有文件** | 拿到锁了？pre_write_gate 通过？ | `python scripts/governance/pre_write_gate.py <file>` → exit 0 → `python scripts/lock_files.py acquire <file> <session_id>` |
 | **删除任何文件** | 文件每一行内容在别处还有？ | RULE-THREE 三步审判 → 全通过才能删 |
-| **任何新功能** | 已有脚本/模块覆盖？ | 搜 registry_of_registries.yaml → Grep → 复用决策 |
-| **新建/改造自动化系统** | 已通过两轨分类？ 🕐/⚡/🕐+⚡？ | RULE-FIFTEEN 施工三步 → 对照分类表 → 实现 → 验证 |
+| **任何新功能 / 自动化系统** | 已有脚本覆盖？自动化已过两轨分类？ | 搜 registry_of_registries.yaml → 复用决策；自动化走 RULE-FIFTEEN |
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
-| **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read 对应 yaml |
-| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `python scripts/governance/extract_depgraph.py --summary` 提取子集；修改用 `apply_depgraph.py --batch`。depgraph 在 PostgreSQL，连接用 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` |
+| **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read |
+| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `extract_depgraph.py --summary`（读取）/ `apply_depgraph.py --batch`（修改）。连接用 `get_depgraph_pg_connection()` |
 
 跳过任何一步 → 可能产生孤儿文件、死锁、重复轮子。
 
@@ -81,20 +74,20 @@
 
 ```
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
-2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（路径全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
-2.1 确认数据库就绪：4 库清单（INFRA-DB-001~004）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）。其中 depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` 提取子集，禁止裸连
+2. 提取 depgraph 摘要：python scripts/governance/extract_depgraph.py --summary（PostgreSQL 数据库 depgraph，禁止裸连。详见 RULE-SIXTEEN）
+2.1 确认数据库就绪：4 库清单（INFRA-DB-001~004）见 infrastructure_registry.yaml（真源，详见 AGENTS.md §11.0）
 3. 读 docs/03_modules/_system_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
-6. **创建任何代码/脚本/模块前** → MUST 读 [trae_056_module_creation_workflow.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)（TRAE-056 完整工作流程：冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证，11个阶段）
-7. **查 CapabilityLookup 确认能力是否已存在**（防重复造轮子）→ `from zephyr.governance.capability_lookup import CapabilityLookup; reg=CapabilityLookup(); reg.find("关键词")`（详见 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §9；真源：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）
+6. 创建任何代码/脚本/模块前 → MUST 读 trae_056_module_creation_workflow.yaml（11阶段完整工作流程）
+7. 查 CapabilityLookup 确认能力是否已存在（防重复造轮子）→ CapabilityLookup().find("关键词")
 ```
 
-| # | 绝对禁止 | 后果 |
-|---|---------|------|
-| ❌ | 跳过 registry_of_registries.yaml 直接开工 | 不知道已有模块/脚本 → 重复造轮子 |
-| ❌ | 创建新文件前不查 registry_of_registries.yaml | 孤儿文件 |
-| ❌ | 看到注册表中 `?` 条目不管不问 | 注册表过期——认知偏差累积 |
+| ❌ 绝对禁止 | 后果 |
+|---------|------|
+| 跳过 registry_of_registries.yaml 直接开工 | 不知道已有模块/脚本 → 重复造轮子 |
+| 创建新文件前不查 registry_of_registries.yaml | 孤儿文件 |
+| 看到注册表中 `?` 条目不管不问 | 注册表过期——认知偏差累积 |
 
 ---
 
@@ -107,80 +100,26 @@
 
 ```
 BEFORE WRITE → CHECK  → python scripts/lock_files.py check <file>
-               ↓
             FREE? → ACQUIRE → python scripts/lock_files.py acquire <file> <session_id> --task "<简述>"
-               ↓
             LOCKED? → STOP. 报告用户：文件被 <owner> 锁定。
-               ↓
 AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <session_id>
 ```
 
 ### 自动门禁（v2.0 — DM-409）
 
-**问题**：上述三步依赖AI自觉执行，DM-291事件证明AI可能跳过。
-
-**方案**：`lock_files.py` v2.0 新增 `pre_write_guard()` + `LockGuard` + `guard-write` 子命令。
-
-| 方式 | 用法 | 场景 |
-|------|------|------|
-| Python API | `pre_write_guard(file, session_id, task)` | AI工具调用链集成 |
-| Context Manager | `with LockGuard(file, session_id, task):` | Python脚本内自动acquire/release |
-| CLI | `python scripts/lock_files.py guard-write <file> <session> --task <desc>` | 命令行写前检查 |
-
-`pre_write_guard()` 在文件被锁时抛出 `FileLockedError`（而非静默通过）。`LockGuard` 在 `with` 块退出时自动释放锁。
+`pre_write_guard(file, session_id, task)` 锁定抛 `FileLockedError`；`with LockGuard(...)` 自动释放；CLI: `lock_files.py guard-write <file> <session> --task <desc>`。
 
 ### claim 前移协议（Edit 阶段覆盖治本，2026-06-30）
 
-**触发**：AI session 处理任何文件前（Edit/Write 之前）。
+**触发**：AI session 处理任何文件前（Edit/Write 之前）。强制流程：①CLAIM `git_commit.py --session <id> --files <f1,f2> --claim-only` ②CHECK `pre_write_gate.py <file> --session <id>`（overlap 检测）③EDIT ④COMMIT `git_commit.py --session <id> --files <f> --message ...`。
 
-**根因**：claim 协议原锚在 commit 阶段（Edit→claim→commit→release），Edit 阶段
-SessionRegistry 无数据，HELD-OVERLAP gate 检测不到并发覆盖。前移到 Edit 前，
-使 `other_held_files` / `find_session_by_file` 在 Edit 阶段可查。
+| 场景 | 模式 |
+|------|------|
+| 单 AI 对话 | 模式 A：直接锁 + claim（lock_files.py + git_commit.py --claim-only） |
+| ≥2 AI 并发同文件 | 模式 A'：claim 前移 + overlap 检测 MUST |
+| ≥2 AI 并发高风险 | 模式 B：StagingArea 草稿 MUST（write_draft/commit） |
 
-**强制流程**：
-```
-1. CLAIM  → python scripts/git_commit.py --session <id> --files <f1,f2> --claim-only
-2. CHECK  → python scripts/governance/pre_write_gate.py <file> --session <id>
-            （session_overlap 检测：被其他 session 持有则 BLOCK）
-3. EDIT   → AI Edit/Write 工具
-4. COMMIT → python scripts/git_commit.py --session <id> --files <f> --message ...
-            （claim 幂等 → commit → release，标准流程不变）
-```
-
-**判定标准**：
-| 场景 | 模式 | 入口 |
-|------|------|------|
-| 单 AI 对话 | 模式 A（直接锁 + claim） | lock_files.py + git_commit.py --claim-only |
-| ≥2 AI 并发同文件 | 模式 A'（claim 前移 + overlap 检测）MUST | 上方强制流程 |
-| ≥2 AI 并发高风险 | 模式 B（StagingArea 草稿）MUST | StagingArea.write_draft/commit |
-
-**与 StagingArea 关系**：claim 前移是常态软约束防线（IDE 不可 hook 的硬约束下
-理论上限），StagingArea 是高风险兜底（物理隔离 Edit 产物）。两者分层不冲突。
-
-**绝对禁止**：
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | Edit 前不 --claim-only 声明 | overlap 检测无数据，防线失效 |
-| ❌ | 跳过 pre_write_gate 直接 Edit | 软约束失效（依赖 AI 自觉，IDE 不可 hook） |
-
-### session_id 格式
-
-`session-YYYYMMDD-NNN`，从 `session_logs/` 目录找编号。
-
-### 批量操作
-
-1. 先对 N 个文件逐个 `check`
-2. 全部 FREE 后，逐个 `acquire`
-3. 全部改完后，逐个 `release`
-
-一个被锁 → 释放已抢到的，等全部可抢再开工。
-
-### 紧急情况
-
-```
-python scripts/lock_files.py cleanup    # 清理 TTL 过期的死锁
-python scripts/lock_files.py status     # 确认清理结果
-```
+claim 前移是常态软约束防线，StagingArea 是高风险兜底（物理隔离 Edit 产物），两者分层不冲突。session_id：`session-YYYYMMDD-NNN`。批量：逐个 check → 全 FREE 后逐个 acquire → 全改完后逐个 release。
 
 ### 绝对禁止
 
@@ -188,116 +127,55 @@ python scripts/lock_files.py status     # 确认清理结果
 |---|------|------|
 | ❌ | 跳过 check 直接写文件 | 编码损坏、修改丢失 |
 | ❌ | check 返回 LOCKED 后仍然写文件 | 覆盖其他对话的工作 |
-| ❌ | 用 Write 工具绕过 lock_files.py | 锁协议完全失效 |
+| ❌ | Edit 前不 --claim-only 声明 | overlap 检测无数据，防线失效 |
 | ❌ | 写完后不执行 release | 死锁——其他对话永远抢不到锁 |
-
-### 多 AI 并发提交协议（StagingArea）
-
-**触发**：≥2 个 AI session 并发工作时，文件修改 MUST 走 StagingArea 草稿模式，禁止直接 `git commit`。
-
-**根因**：多 AI 直接 `git commit` 会导致：(1) pre-commit hook 卡住 (2) git checkout/restore 互相覆盖 (3) commit 期间文件被其他 AI 覆盖。
-
-**已有实现**: src/zephyr/trading/staging_area.py — StagingArea 类
-
-**强制流程**:
-```
-1. DRAFT  → sa.write_draft(session_id, file_path, content)
-2. COMMIT → sa.commit(session_id, file_path)  # 获取锁+冲突检测+原子搬入
-3. 冲突?  → sa.try_auto_merge(session_id, file_path)
-```
-
-**判定标准**:
-| 场景 | 模式 | 入口 |
-|------|------|------|
-| 单 AI 对话 | 模式 A（直接锁） | lock_files.py acquire/release |
-| ≥2 AI 并发 | 模式 B（草稿模式）MUST | StagingArea.write_draft/commit |
-
-**绝对禁止**:
-| # | 行为 | 后果 |
-|---|------|------|
 | ❌ | 多 AI 并发时直接 git commit 绕过 StagingArea | 文件被覆盖、pre-commit 卡死 |
 | ❌ | 使用 git commit --no-verify 绕过 pre-commit | 违反 trae_029 |
 
 ---
 
-## RULE-ONE：Python 脚本并发写入安全
-**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
+## 执行环境与文件卫生（RULE-ONE + RULE-FIVE + RULE-SEVENTEEN）
+**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml（RULE-ONE/RULE-FIVE）；RULE-SEVENTEEN 无独立 YAML。
 
-**适用**：任何产出文件的 standalone Python 脚本。
-
-### 强制写入模式
-
+**RULE-ONE：Python 脚本并发写入安全** — 任何产出文件的 standalone Python 脚本 MUST 原子写入（tmp+replace）：
 ```python
-import os
 tmp_path = f"{OUTPUT_PATH}.{os.getpid()}.tmp"
-try:
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        f.write(content)
-    os.replace(tmp_path, OUTPUT_PATH)
-except PermissionError:
-    try: os.remove(tmp_path)
-    except OSError: pass
+try: open(tmp_path, "w", encoding="utf-8").write(content); os.replace(tmp_path, OUTPUT_PATH)
+except PermissionError: try: os.remove(tmp_path) except OSError: pass
 ```
+禁止 `open(fixed_path,"w")` / `Path.write_text()` 直接写最终文件——多实例运行时阻塞/崩溃。与 RULE-ZERO 互补：RULE-ZERO 防 AI 同时编辑同文件，RULE-ONE 防脚本多实例互斥卡死。
+
+**RULE-FIVE：临时文件零残留** — session 创建 `_temp*`/`_check*`/`_fix*`/`_phase_*`/`_deep*`/`_construction*`/`_rebuild*`/`_audit*` 前缀文件时，结束前 MUST 二选一处置：有持续价值→归档+注册；一次性→物理删除。每日安检：`python scripts/lock_files.py status`。
+
+**RULE-SEVENTEEN：禁止 PowerShell 语法** — RunCommand 仅允许裸命令（`python <脚本>.py`/`python scripts/git_commit.py ...`/`python -m pytest`/`python -m zephyr.<mod>`）。禁止：管道`|`、引号嵌套、`$`变量、cmdlet、`>`重定向、`;`串联、裸`git`命令（用 `git_guard.py <子命令>`，但 `commit` 子命令是裸透传会被阻断，commit 用 `git_commit.py`）。文件操作映射：读→Read、写→Write/Edit、搜索文件→Glob、搜索内容→Grep、删除→DeleteFile。复杂逻辑写 `.py` 脚本。
 
 ### 绝对禁止
 
 | # | 行为 | 后果 |
 |---|------|------|
-| ❌ | 脚本中 `open(fixed_path, "w")` 直接写最终文件 | 多实例运行时阻塞/崩溃 |
-| ❌ | `Path.write_text(fixed_path)` | 同上 |
-| ❌ | 新写脚本跳过此模式 | 被其他 AI 并发调用时卡住 |
-
-### 与 RULE-ZERO 的关系
-
-| | RULE-ZERO（锁协议） | RULE-ONE（并发写入） |
-|---|---|---|
-| 适用场景 | AI 用 IDE 工具改源文件 | Python 脚本产出文件 |
-| 触发条件 | Write/SearchReplace | `open(path, "w")` / `write_text()` |
-| 解决问题 | 防止两个 AI 同时编辑同一文件 | 防止脚本多实例互斥卡死 |
-
-两者互补，不可互相替代。新建脚本 MUST 同时遵守两条规则。
+| ❌ | 脚本中 `open(fixed_path,"w")` 直接写最终文件 | 多实例运行时阻塞/崩溃 |
+| ❌ | 在根目录创建临时 .py/.yaml/.json 脚本 | 孤儿文件 |
+| ❌ | session 关闭时根目录仍有 `_temp*` 等文件 | 磁盘垃圾累积 |
+| ❌ | RunCommand 使用 PowerShell 管道/引号嵌套/重定向 | 引号出错 + 中文乱码 + 文件损坏 |
+| ❌ | 裸 `git` 命令 | Trae 硬编码审查弹窗 |
 
 ---
 
-## RULE-TWO：反孤儿功能
-**YAML真源**: → 参见 rules/trae_002_anti_orphan_search_first.yaml
+## 创建/搜索/注册铁律（RULE-TWO + RULE-FOUR + RULE-EIGHT）
+**YAML真源**: → 参见 rules/trae_002_anti_orphan_search_first.yaml（RULE-TWO/RULE-EIGHT）、rules/trae_001_file_operation_security.yaml（RULE-FOUR）
 
-**触发**：AI 产出任何新功能时。
+**RULE-EIGHT：搜索先行** — 任何新代码创作前 MUST 三步：①关键词全局搜索（SearchCodebase+Grep）②注册表精确匹配（registry_of_registries.yaml）③复用决策（完全覆盖→直接用 / 80%→扩展 / 50%→重构+扩展 / 0%→scaffold新建）。放弃新建时 MUST 写 `[REUSE-DECISION] 放弃新建 <X>，因为已有 <Y> 覆盖了 <Z>`。
 
-### 强制五问
+**RULE-FOUR：创建即注册** — scaffold.py 是唯一创建入口。绕过它 = 孤儿。
+```
+python scripts/scaffold.py module <包名> <模块名>    # 创建模块 → 注册 __init__.py __all__
+python scripts/scaffold.py script <路径>              # 创建脚本 → 注册 script_manifest.yaml
+python scripts/scaffold.py gate <ID>                  # 创建门禁 → 注册 _registry.yaml
+python scripts/scaffold.py rule <主题_描述>           # 创建规则文件（ARCH-037，命名 trae_NNN_<主题>_<描述>.yaml）
+```
+修改已有文件不走 scaffold——走 RULE-ZERO 锁协议。**完整创建工作流程（11阶段）** 见 [TRAE-056](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)。包名约束：`scripts/` 下禁止使用与 `src/zephyr/` 同名的顶层包名（防 import 命名空间冲突）。
 
-| # | 问题 | 不满足 → 处置 |
-|---|------|-------------|
-| 1 | 谁调用它？入口在哪？ | 没有入口 → 不能关闭任务 |
-| 2 | 谁发现它？下一个 AI session 怎么知道？ | 没有发现机制 → 必须先注册 |
-| 3 | 谁维护它？放在哪个模块/目录下？ | 没有归属 → 不能落盘 |
-| 4 | 谁校验它？有 gate 检查吗？ | 没有校验 → 必须添加 gate |
-| 5 | 谁更新它？模板/清单/注册表已更新？ | 没有 → 必须更新 |
-
-### 注册判定原则
-
-**注册管理单元，不注册文件。** 需要注册 = 满足以下任一条件：
-
-| 条件 | 含义 |
-|------|------|
-| 独立生命周期 | 可被独立创建/修改/删除，不依附于其他东西 |
-| 跨域消费者 | 被不在同一目录/模块/子系统下的东西消费 |
-| 需要治理决策 | 谁能改、何时改、改了影响谁——需要显式回答 |
-| 无法自然发现 | 没有命名约定/import链/目录结构等自然机制 |
-
-**豁免**：已有可靠自然发现机制的管理单元，不需要额外注册表。
-
-| 文件类型 | 需要注册？ | 发现机制 |
-|----------|:---:|------|
-| `scripts/*.py` | ✅ | 无自然发现路径，必须靠注册表 |
-| `src/zephyr/<pkg>/*.py` | ✅ | import 链 + `__all__` |
-| `gates/*.yaml` | ✅ | GateEngine 运行时从注册表加载 |
-| 蓝图（blueprint.md） | ✅ | 定义代码应该长什么样，治理级 |
-| 策略/标准 | ✅ | 全项目引用，治理级 |
-| `tests/*.py` | ❌ | pytest 命名约定自动发现 |
-| 普通文档（非蓝图非策略） | ❌ | 目录结构 + frontmatter |
-| `config/*.yaml` | ❌ | 代码中显式路径引用 |
-| `data/*.yaml`/`*.json` | ❌ | 代码中显式路径引用 |
+**RULE-TWO：反孤儿功能** — 产出新功能时 MUST 自问五问：谁调用？谁发现？谁维护？谁校验？谁更新？注册判定原则：注册管理单元（不注册文件），满足任一条件即需注册——独立生命周期/跨域消费者/需要治理决策/无法自然发现。已有可靠自然发现机制的豁免（tests/pytest自动发现、config/代码路径引用、普通文档/目录结构）。
 
 ### 强制集成清单
 
@@ -306,48 +184,29 @@ except PermissionError:
 | 新 `.py` 脚本（`scripts/` 下） | `script_manifest.yaml` 注册 + `phase_manager` gate 引用 |
 | 新 `.py` 模块（`src/zephyr/` 下） | 对应 `__init__.py` 导出 + 至少一个 import 引用点 |
 | 新门禁/gate | `phase_manager.py` PHASE_SEQUENCE 注册 + `_registry.yaml` |
-| 新设计模式/方法论 | `project_rules.md` 或 `AGENTS.md` + `rule-registry.md` TRAE 域 |
 | 新增 RULE-* | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/sync_rule_registry.py` |
-| 新配置/数据文件 | 使用方代码中的显式路径引用 |
-| 新 CLI 工具 | `script_manifest.yaml` + 用法写入相关 blueprint |
-| 新测试文件（`tests/` 下） | 治理锚定表头（A_test 6字段简化版）+ pytest 命名约定。豁免注册表登记 |
+| 新 `.md` 文档 | frontmatter MUST 含 `ttl` 字段；过程性文档默认落 `docs/_working/`（ttl=task_bound） |
 
 ### 绝对禁止
 
 | # | 行为 | 后果 |
 |---|------|------|
+| ❌ | 用 Write/SearchReplace 直接创建新文件 | 孤儿文件——无注册 |
+| ❌ | 不搜索直接创建新脚本 | 重复造轮子 |
+| ❌ | 搜到了但不复用，坚持新建 | 两个版本分叉维护 |
 | ❌ | 创建 .py 文件但不注册到 script_manifest.yaml | 孤儿脚本 |
-| ❌ | 写了新功能但不建立任何调用入口 | 死代码 |
-| ❌ | 新增 gate 只写名字不写实现 | 假门禁 |
-| ❌ | 完成任务卡后不检查"下游有没有人用" | 孤儿功能 |
-| ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理。判定方法见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` 二元判定树 |
-| ❌ | 过程性文档直接放永久区或根目录 | 永久区污染 / 根目录孤儿。**默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/)**（ttl=task_bound）；仅永久区路径（`01_policies_and_standards/`、`02_enterprise_architecture/`、`03_modules/`、`08_knowledge/`）经用户批准方可晋升（ttl=permanent） |
+| ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理 |
 
 ---
 
-## RULE-THREE：删除前置确认
-**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
+## 删除/跨蓝图/瘦身收敛（RULE-THREE + RULE-ELEVEN + RULE-TWELVE）
+**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml（RULE-THREE）、rules/trae_052_cross_blueprint_change_cleanup.yaml（RULE-ELEVEN/RULE-TWELVE）
 
-**核心**：删之前先证明它该死。不能证明 → 不许删。
+**RULE-THREE：删除前置确认** — 删之前先证明它该死。不能证明 → 不许删。三步审判：①登记检查（manifest/registry/__init__.py 引用？git log 存在？）YES→有价值，只能 refactor/rehome ②重复检查（有完全相同文件且已注册？）双 YES→可删 ③逐行价值检查（每行内容在别处存在？删除后有无引用报错？）ALL 无价值→可删。临时文件也须过 STEP 3。**零消费者≠无价值**——看功能价值，不看消费者数量。
 
-### 三步审判
+**RULE-ELEVEN：跨蓝图变更通知** — 修改任何蓝图接口契约（Collection 名、API 签名、数据格式、依赖方向）时 MUST 三步：①Grep 全项目识别消费方 ②同步更新所有消费方蓝图 §4 + 代码常量/调用 ③端到端测试。向后兼容变更（新增 Collection/新增可选参数）不触发。
 
-```
-STEP 1 登记检查：在 manifest/registry/__init__.py 中被引用？git log 中存在？
-  YES → 有价值，不能删。只能 refactor/rehome。
-
-STEP 2 重复检查：有另一个文件与它内容完全相同？那个文件在正确位置且已注册？
-  双 YES → 真正重复，可删。
-  YES+NO → 两个都没注册！先决定保留哪个并注册。
-
-STEP 3 逐行价值检查：每行内容在其他地方存在？删除后有无代码引用此路径报错？
-  ANY 有价值 → 保留并注册。
-  ALL 无价值 → 可以删。
-```
-
-**临时文件也须过 STEP 3**：`_temp*` / `_check*` / `_phase_*` / `_audit*` 删除前必须确认内容价值。
-
-**零消费者≠无价值**——判断删除看功能价值，不看消费者数量。零消费者可能因自动化管线未接通（客观原因），非代码无意义。
+**RULE-TWELVE：项目瘦身与自动清理** — 发现候选清理物 → 先判定价值 → 有价值则接通系统（归属蓝图+对齐依赖图+对齐路径树+对齐代码表头），无价值才走 RULE-THREE 删除。禁止仅凭"零消费者"或"版本旧"判定。清理触发链：Phase COMPLETED→归档任务卡；Session CLOSED→删 `_temp*`/清 cache；新蓝图全覆盖旧版→归档旧版。清理后验证三步：`audit_registration.py`→exit 0、`generate_project_path_tree.py --write`、（架构升级期间禁止 `generate_project_depgraph.py`，用 `extract_depgraph.py --summary` 替代）。
 
 ### 绝对禁止
 
@@ -355,973 +214,121 @@ STEP 3 逐行价值检查：每行内容在其他地方存在？删除后有无�
 |---|------|------|
 | ❌ | 跳过审判三步，直接删除 | 误删有价值文件 |
 | ❌ | 看到文件名像"临时"就直接删 | 可能是唯一一份全量审计报告 |
-| ❌ | 批量删除时不对每个文件逐一审判 | 误删混入 |
-| ❌ | 删除后不检查废墟引用 | 死链接——CI 崩溃、import 失败 |
+| ❌ | 只改提供方，不改消费方 | 消费方静默降级/断路 |
+| ❌ | 仅凭"零消费者"判定删除 | 误删有价值的安全/治理组件 |
+| ❌ | 清理后不跑验证三步 | 注册表/路径树/依赖图漂移 |
 
 ---
 
-## RULE-FOUR：创建即注册
-**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
+## 任务粒度与并行化（RULE-SIX + RULE-SEVEN）
+**YAML真源**: → 参见 rules/trae_003_task_granularity_threshold.yaml（RULE-SIX）、rules/trae_004_parallel_atomic_transaction.yaml（RULE-SEVEN）
 
-> **⚠️ 完整创建工作流程**：本节是"创建即注册"的约束。创建任何代码/脚本/模块的**完整11阶段工作流程**（冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证）见 [TRAE-056](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)。创建前 MUST 先读 TRAE-056。
+**RULE-SIX：任务粒度边界** — 八指标机械门（任一 YES → 走任务系统）：①>50 行新代码 ②修改>3 文件 ③需读蓝图/设计文档 ④数据库 Schema 变更 ⑤depgraph 操作 ⑥消费者影响>50 文件 ⑦跨域操作 ⑧多步骤施工>3 步。全 NO → 直接做。**RULE-ZERO-TASK**：任务卡 MUST 通过 `TaskRepository.create(allow_direct_create=True)` 写入 SQLite，禁止手写 `.md` 建卡。建卡双触发：用户主动 OR 阈值自动。建卡来源：蓝图拆解（`BlueprintDecomposer.decompose`）/ Bug修复/架构债务/重构任务。建卡后立刻施工——不等用户确认。
 
-**核心**：scaffold.py 是唯一创建入口。绕过它创建的文件 = 孤儿。
+**粒度标准（一卡一任务）**：`deliverables`≤1、`files_in_scope`≤3、`acceptance` 独立验收点≤1、跨 Phase 禁止。任务卡=施工图+审计记录，**永久保留禁止删除**（数据库触发器 `prevent_hard_delete` 阻止 DELETE；只能软删除且限 Owner 审批）。`transition(COMPLETED)` 时如有 error/failure，MUST 有 MTH-006 `root_cause_analysis` 记录，无记录→拒绝完成。
 
-### scaffold.py 用法
-
-```
-python scripts/scaffold.py module <包名> <模块名>    # 创建模块
-python scripts/scaffold.py script <路径>              # 创建脚本
-python scripts/scaffold.py gate <ID>                  # 创建门禁
-python scripts/scaffold.py rule <主题_描述>           # 创建规则文件（ARCH-037）
-```
-
-### 注册表映射
-
-| 文件类型 | 创建命令 | 自动注册到 |
-|----------|---------|-----------|
-| `src/zephyr/<pkg>/<name>.py` | `scaffold.py module <pkg> <name>` | `<pkg>/__init__.py` `__all__` |
-| `scripts/<path>/<name>.py` | `scaffold.py script <path>` | `scripts/script_manifest.yaml` |
-| `src/zephyr/gates/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
-| `docs/.../rules/trae_NNN_<主题>_<描述>.yaml` | `scaffold.py rule <主题_描述>` | `rule_catalog_registry.yaml`（auto-sync） |
-
-**规则文件命名约定（ARCH-037, trae_028 GOV-DOC-003）**：文件名 MUST 为 `trae_NNN_<主题>_<描述>.yaml`（如 `arch_new_rule`/`behavior_xxx`/`doc_xxx`）。`scaffold.py rule` 检查1.5 强制 `<主题>_<描述>` 两段——单段 name 阻断。主题前缀从现有文件名自动派生（`_derive_rule_theme_prefixes`），新前缀仅警告不阻断。绕过 scaffold 直接 Write 规则文件 → 双层强制：① `validate_rule_frontmatter.py` DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② `create_guard.py` commit-time 强制（ARCH-037 B 选项，扩展 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 非 trae 命名 + 单段 name 硬阻断（含 rename 检测）。
-
-**scaffold 自动完成**：查重 → 创建（temp-file + atomic rename）→ 注册 → 返回路径+导入命令。
-
-**修改已有文件不走 scaffold**——走 RULE-ZERO 锁协议。
-
-**决策分叉**：新建文件 → scaffold；不新建文件（修改已有）→ RULE-ZERO 锁协议。
-
-### 孤儿检测
-
-```
-python scripts/governance/d11_compliance/audit_registration.py           # 报告孤儿
-python scripts/governance/d11_compliance/audit_registration.py --json    # JSON 输出
-python scripts/governance/d11_compliance/audit_registration.py --fix     # 交互式修复
-```
-
-返回码 `0` = CLEAN，`1` = 有孤儿。
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 用 Write/SearchReplace 直接创建新文件 | 孤儿文件——无注册 |
-| ❌ | 绕过 scaffold 创建后"事后补注册" | 窗口期 → 可能没补 → 依然是孤儿 |
-| ❌ | 创建后不验证 scaffold 输出的导入命令 | 注册可能有语法错误 |
-| ❌ | 跳过 SSoT 冲突检查直接创建 | 功能重复 → 命名混乱 |
-| ❌ | 对已有自然发现机制的文件类型强制要求注册表登记 | 注册表膨胀，维护成本 > 治理收益 |
-
-### 包名命名约束（防 governance 命名冲突 — 2026-06-26 裁定）
-
-> **`scripts/` 下禁止使用与 `src/zephyr/` 同名的顶层包名。**
-
-**根因**：`src/zephyr/governance/`（真源码包）与 `scripts/governance/`（脚本目录）同名，导致 Python import 时命名空间冲突——`test_detect_forward_reference.py` 报 `ModuleNotFoundError: No module named 'governance.d7_code'`，因为 Python 优先解析到 `scripts/governance/` 而非 `src/zephyr/governance/`。
-
-**规则**：
-- `scripts/` 下的子目录名不得与 `src/zephyr/` 下的顶层包名重复
-- 已存在的 `scripts/governance/` 为历史遗留，不改名（改造成本高），但**禁止新增同类冲突**
-- 新建脚本目录时，MUST 先检查 `src/zephyr/` 下是否已有同名包：`ls src/zephyr/ | grep <拟用名>`
-- 若冲突 → 改用功能描述性命名（如 `scripts/gov_tools/` 而非 `scripts/governance/`）
-
-**对标**：PEP 420 namespace packages 的歧义问题——同一 import 路径指向两个不同目录，Python 无法区分。
-
----
-
-## RULE-FIVE：临时文件零残留
-**YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
-
-**触发**：AI session 创建了以下前缀文件时：`_temp*` / `_check*` / `_fix*` / `_phase_*` / `_deep*` / `_construction*` / `_rebuild*` / `_audit*`
-
-### 强制二选一处置（session 结束前 MUST 完成）
-
-| 路径 | 条件 | 操作 |
-|------|------|------|
-| **归档** | 文件有持续使用价值 | 移动到标准目录 + 注册到对应注册表 |
-| **删除** | 一次性检查/临时验证/实验脚本 | 物理删除，不留残骸 |
-
-### 每日安检
-
-```
-python scripts/lock_files.py status
-```
-
-发现任何匹配 → 必须先处置再施工。
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 在根目录创建临时 .py/.yaml/.json 脚本 | 孤儿文件 |
-| ❌ | session 关闭时根目录仍有 `_temp*` 等文件 | 磁盘垃圾累积 |
-| ❌ | "这个脚本可能以后有用，先留着" | 永远不会有人回来用它 |
-| ❌ | 跳过每日安检直接开工 | 在垃圾堆上盖楼 |
-
----
-
-## RULE-SIX + RULE-ZERO-TASK：任务粒度边界
-**YAML真源**: → 参见 rules/trae_003_task_granularity_threshold.yaml
-
-### 八指标机械门
-
-```
-├─ 指标 1: 预计产生 > 50 行新代码？ → YES → 走任务系统
-├─ 指标 2: 涉及修改 > 3 个文件？ → YES → 走任务系统
-├─ 指标 3: 需要读取蓝图/设计文档？ → YES → 走任务系统
-├─ 指标 4: 是数据库 Schema 变更？ → YES → 走任务系统
-├─ 指标 5: depgraph (PostgreSQL)操作(INSERT/UPDATE/DELETE)？ → YES → 走任务系统
-├─ 指标 6: 消费者影响 > 50 个文件？ → YES → 走任务系统
-├─ 指标 7: 跨域操作？ → YES → 走任务系统
-├─ 指标 8: 多步骤施工 > 3 个步骤？ → YES → 走任务系统
-└─ 全 NO → 直接做，不走任务系统
-建卡后立刻施工——不等用户确认
-```
-
-**RULE-ZERO-TASK**：任务卡 MUST 通过 `TaskRepository.create()` 写入 SQLite，禁止手写 `.md` 建卡。建卡触发 = 用户主动 OR 八指标阈值触发。蓝图拆解是建卡来源之一，非唯一路径。
-
-**任务系统双触发机制**：
-
-| 触发方式 | 说明 | 入口 |
-|----------|------|------|
-| 用户主动触发 | 用户明确要求建卡 | `TaskRepository.create(allow_direct_create=True)` → TaskCard → SQLite |
-| 阈值自动触发 | 八指标任一YES | AI按MTH-009先裁定后确认→建议建卡→Owner确认→`TaskRepository.create(allow_direct_create=True)` |
-
-**建卡来源**（不再限于蓝图）：
-
-| 来源 | 入口 |
-|------|------|
-| 蓝图拆解 | `BlueprintDecomposer.decompose(blueprint_path)` → TaskCard → SQLite |
-| Bug修复/架构债务/代码扫描/重构任务 | `TaskRepository.create(allow_direct_create=True)` → TaskCard → SQLite |
-
-### 边界案例对照表
-
-| 场景 | 触发指标 | 建卡？ |
-|------|---------|:---:|
-| 设计新类/模块（150 行新代码） | 指标1 ✅ | ✅ |
-| 修复拼写错误 | 全不触发 | ❌ |
-| 修 CI 红了的 bug（涉及 5 个文件） | 指标2 ✅ | ✅ |
-| 给数据库加字段 | 指标4 ✅ | ✅ |
-| 批量重命名 20 个文件的变量 | 指标2 ✅ | ✅ |
-| 运行一条 SQL migration | 全不触发 | ❌ |
-| 更新蓝图版本号（1 行 1 文件） | 全不触发 | ❌ |
-| 写 100 行新脚本 | 指标1 ✅ | ✅ |
-| 清理根目录临时文件 | 全不触发 | ❌ |
-| 重构 pipeline（需读蓝图+大量新代码） | 指标1+3 ✅ | ✅ |
-| 新增 gate 门禁 | 指标1+3 ✅ | ✅ |
-| depgraph (PostgreSQL) INSERT 新域 | 指标5 ✅ | ✅ |
-| 大规模 import 更新（>50 文件） | 指标6 ✅ | ✅ |
-| 跨域模块迁移 | 指标7 ✅ | ✅ |
-
-### 粒度标准（一卡一任务）
-
-| 字段 | 上限 | 超限处置 |
-|------|:---:|------|
-| `deliverables` | ≤ 1 | MUST 拆分为多张卡 |
-| `files_in_scope` | ≤ 3 | MUST 拆分为多张卡 |
-| `acceptance` 独立验收点 | ≤ 1 | 人工判定拆分 |
-| 跨 Phase | 禁止 | MUST 拆分为多张卡 |
-
-**任务卡 = 施工图+审计记录**：施工细节写在任务卡 description 里（不限字数），不写在蓝图里。蓝图只写设计（是什么/为什么），任务卡写施工（怎么做/改哪里/改成什么）。**任务卡永久保留，禁止删除**——COMPLETED/CANCELLED 的卡是审计链、依赖链、知识沉淀的唯一真源。删除已完成卡 = 删除 git log。实现：数据库触发器 `prevent_hard_delete` 阻止任何 DELETE 操作；只能软删除（is_deleted=1，仅限 Owner 审批）。
-
-**深挖病根**: `transition(COMPLETED)` 时如有 error/failure，MUST 有 MTH-006 `root_cause_analysis` 记录。无记录 → 拒绝完成。
+**RULE-SEVEN：脚本并行化 + 创建即自测** — 机械判定（任一 YES → MUST ThreadPoolExecutor）：A.`for`+subprocess.run/Popen B.`for`+多文件独立读写 C.`for`+多URL/API请求。**只用 ThreadPoolExecutor**（I/O 密集型，GIL 无影响），不用 multiprocessing。`max_workers=8`。创建即自测：`python <脚本> --warn-only` → exit 0 才能声明完成，exit≠0 必须立即修复。
 
 ### 绝对禁止
 
 | # | 行为 | 后果 |
 |---|------|------|
 | ❌ | 八指标任一触发但不建卡 | 无法跨 session 追溯 |
-| ❌ | 全不触发但建卡 | 任务卡膨胀 |
-| ❌ | 建卡后等用户确认再开工 | 打断用户流——建卡是静默操作 |
-| ❌ | 用"感觉"判断是否建卡 | 模糊标准 → 每次结果不同 |
 | ❌ | 手写 .md 建卡（.md 仅伴读副本） | 绕过 SQLite 真源 |
-
----
-
-## RULE-SEVEN：脚本并行化 + 创建即自测
-**YAML真源**: → 参见 rules/trae_004_parallel_atomic_transaction.yaml
-
-### 并行化判断标准（机械判定）
-
-```
-├─ 指标 A: for 循环中对多个目标调用 subprocess.run/Popen？ → YES → MUST ThreadPoolExecutor
-├─ 指标 B: for 循环中对多个文件执行独立读写？ → YES → MUST ThreadPoolExecutor
-├─ 指标 C: for 循环中对多个 URL/API 发起网络请求？ → YES → MUST ThreadPoolExecutor
-└─ 全 NO？ → 可以串行
-```
-
-### 正确写法
-
-```python
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-_MAX_WORKERS = 8
-
-def run_all_tasks(items: list[Item]) -> list[Result]:
-    results: list[Result] = []
-    with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
-        futures = {executor.submit(_run_one, item): item for item in items}
-        for future in as_completed(futures):
-            results.append(future.result())
-    return results
-```
-
-### 错误写法（绝对禁止）
-
-```python
-for item in items:
-    subprocess.run(["python", "script.py", item])  # ❌ 串行 = 卡死
-```
-
-**只用 ThreadPoolExecutor**，不用 multiprocessing（I/O 密集型，GIL 无影响，线程优于进程）。
-
-### 创建即自测
-
-```
-python <脚本路径> --warn-only   # 至少跑一次
-exit 0 → 通过 → 可关闭任务
-exit ≠ 0 → 必须立即修复 → 重新自测 → 直到 exit 0
-```
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
 | ❌ | 新建脚本用 `for` 循环串行跑子进程 | 40 分钟跑不完 → 卡死 |
 | ❌ | 用 `multiprocessing` 而非 `ThreadPoolExecutor` | Windows spawn 开销大 + pickle 陷阱 |
 | ❌ | 创建脚本后不跑 `--warn-only` 自测 | 留下崩溃脚本 |
-| ❌ | 自测发现问题但不修 | 崩的脚本永远崩 |
-
----
-
-## RULE-EIGHT：搜索先行
-**YAML真源**: → 参见 rules/trae_002_anti_orphan_search_first.yaml
-
-### 强制三步（任何新代码创作前 MUST 执行）
-
-```
-STEP 1: 关键词全局搜索
-  → SearchCodebase(自然语言) + Grep（scripts/ + src/zephyr/ + tests/）
-
-STEP 2: 注册表精确匹配
-  → 读 registry_of_registries.yaml → 找相关 REG-* → 对照已有条目
-
-STEP 3: 复用决策（四选一）
-  → 完全覆盖 → 直接用
-  → 80% 覆盖 → 扩展已有
-  → 50% 覆盖 → 重构已有 + 扩展
-  → 完全不覆盖 → 走 scaffold.py 新建
-```
-
-### 复用证据记录
-
-放弃新建时 MUST 写：`[REUSE-DECISION] 放弃新建 <X>，因为已有 <Y> 覆盖了 <Z>`
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 不搜索直接创建新脚本 | 重复造轮子 |
-| ❌ | 搜到了但不复用，坚持新建 | 两个版本分叉维护 |
-| ❌ | 新建后不写 [REUSE-DECISION] | 下一个 AI 不知道你为什么新建 |
-| ❌ | "我觉得没有"替代"我搜了没有" | 直觉错误率 >> 搜索错误率 |
 
 ---
 
 ## RULE-NINE：强制资产认知
 **YAML真源**: → 参见 rules/trae_005_modification_governance.yaml
 
-进项目 MUST 先了解全盘资产规模与健康状态。
+进项目 MUST 先了解全盘资产规模与健康状态。读 `data/asset_index/unified_asset_index.yaml` → 知道总资产/健康评分/孤儿率。不知道系统有多大 = 盲目施工。
 
-```
-读 data/asset_index/unified_asset_index.yaml
-→ 知道总资产/健康评分/孤儿率
-→ 不知道系统有多大 = 盲目施工
-```
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 跳过资产盘点直接开工 | 对系统规模无认知 |
-| ❌ | 不知道资产健康状态就修改核心模块 | 可能覆盖 DEGRADED 模块 |
-| ❌ | 不知道孤儿率就开始清理 | 可能误删仍在使用的组件 |
+| ❌ 绝对禁止 | 后果 |
+|---------|------|
+| 跳过资产盘点直接开工 | 对系统规模无认知 |
+| 不知道资产健康状态就修改核心模块 | 可能覆盖 DEGRADED 模块 |
 
 ---
 
 ## RULE-TEN：治理施工流程（14步统一流程）
+→ 详细 14 步流程、轻量模式、三方对齐、治理顺序、依赖方向铁律见 [`onboarding_detail.md §RULE-TEN`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 **YAML真源**: → 参见 rules/trae_005_modification_governance.yaml
-
-**触发**：对项目做任何非平凡变更——恢复功能、新建功能、移动模块、拆分包、重构依赖、批量修改标签。
-
-### 14步统一流程
-
-```
-阶段一：分析设计（只读不改代码）
-  STEP 1   读蓝图       → 读取功能对应蓝图，理解设计意图
-  STEP 2   全量定位     → 全项目搜索所有相关文件（本包+孤儿+重复+跨蓝图）
-  STEP 3   归属裁定     → 孤儿纳入/重复去重/跨蓝图归属裁定
-  STEP 4   蓝图设计     → 在蓝图里设计依赖关系+启动方式+自动运行+自动结束
-
-阶段二：施工
-  STEP 5   位置校验     → 按蓝图设计调整文件位置/命名/注册
-  STEP 6   修复断链     → 按蓝图设计的依赖关系修复import断链
-  STEP 7   补全头部     → 补全文件头部十五字段
-  STEP 8   运行测试     → pytest运行功能测试
-  STEP 9   修复失败     → 修复失败测试直到通过
-
-阶段三：安全验证
-  STEP 10  红蓝对抗     → 罗列极限测试清单+执行+修复漏洞
-
-阶段四：收尾对齐
-  STEP 11  更新蓝图     → 将实际状态写回蓝图frontmatter(file_manifest+dependency_graph+version+construction_progress+§0.2)
-  STEP 12  三方对齐     → 全景图+蓝图+代码头部三方一致验证
-  STEP 13  更新索引     → 更新所有相关INDEX/注册表/manifest
-  STEP 14  报告         → 向统筹AI报告状态
-```
-
-**核心原则**：先分析再动手，先设计再施工。跳过任何步骤 = 违规。
-
-### 轻量模式（仅结构变更时）
-
-当变更仅涉及文件移动/重命名/依赖调整，不涉及功能恢复/新建时，可使用5步轻量模式：
-
-```
-STEP 1  依赖图推演 → 模拟变更后的依赖链，确认不会产生新循环/堵塞
-STEP 2  蓝图归属   → 确认目标包有蓝图，模块的 [BLUEPRINT] 指向正确
-STEP 3  导入路径映射 → 列出所有受影响的 import 语句（Grep 全项目）
-STEP 4  执行操作   → 按推演验证过的计划操作
-STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
-```
-
-> 轻量模式跳过的步骤：STEP 1读蓝图(已有蓝图)、STEP 2-3全量定位+归属裁定(无新文件)、STEP 4蓝图设计(无新设计)、STEP 7补全头部(无新文件)、STEP 8-9测试(无代码变更)、STEP 10红蓝对抗(无功能变更)、STEP 13更新索引(无注册变更)。
-
-### 三方对齐（STEP 12 验证内容）
-
-| 对齐维度 | 对齐什么 | 验证方法 |
-|----------|---------|---------|
-| 全景图对齐 | depgraph ↔ 磁盘实际文件 | `diagnose_depgraph.py` 文件级：depgraph里有的文件是否都存在？磁盘上的文件是否都在depgraph里？ |
-| 蓝图对齐 | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 实际代码 | 蓝图声明的模块是否都实现了？代码里的文件是否都在 file_manifest 里？ |
-| 代码头部对齐 | [BLUEPRINT]/[CONSUMERS]/[MODULE] ↔ 实际引用 | 头部声明的蓝图ID是否指向正确蓝图？[CONSUMERS]列出的消费者是否真的import了本模块？ |
-
-> 路径树不作为独立对齐维度——它是全景图的派生物，全景图对了路径树自动对。
-
-### 治理顺序铁律（从根到叶）
-
-| 顺序 | 治理项 | 前置依赖 |
-|:---:|--------|---------|
-| 1 | 跨包违规（架构重构） | — |
-| 2 | God模块分解 | #1 完成 |
-| 3 | 孤儿模块消理 | #1+#2 完成 |
-| 4 | blueprint_id 对齐 | #1 完成 |
-| 5 | 稳定性/自治修复 | #1+#4 完成 |
-| 6 | 测试覆盖补全 | #1~#5 全部完成 |
-
-❌ 禁止跳序 | ❌ 禁止按数量从大到小 | ❌ 禁止先测试后重构
-
-### 删除判定三维度（RULE-THREE 补充）
-
-| 维度 | 判定问题 | YES→ | NO→ |
-|---------|---------|------|-----|
-| 独立功能 | 代码有独立功能价值？ | 保留 | 下一维度 |
-| 客观原因 | 零消费者因管线未接通？ | 保留 | 下一维度 |
-| 重建成本 | 删除后需重新实现？ | 保留 | 可删除 |
-
-> 例：`kill_switch.py` 零消费者，但有独立功能价值 → 保留
-
-### 域归属铁律
-
-**模块归入已有域（当前 43 域，见 `extract_depgraph.py --summary`），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
-
-> 详见 [onboarding_detail.md §15](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
-
-### 依赖方向铁律（DIP例外）
-
-**YAML真源**: → 参见 rules/trae_013_arch_cross_package_dep.yaml
-
-| # | 规则 | 说明 |
-|:---:|:---|:---|
-| 1 | 单向分层依赖 | 依赖方向只能从上层→下层（L6→L5→...→L0），禁止逆向。**同层间允许单向依赖，禁止同层循环依赖**（MTH-009裁定，对标K8s/Conductor同层协作模式） |
-| 2 | 依赖倒置(DIP)例外 | 编排器(F1)可依赖下层暴露的**抽象契约**(contract类型)，不可依赖具体实现(runtime类型)。对标K8s CRI/CSI、Netflix Conductor Worker API |
-| 3 | 事件解耦 | 跨层调度通过事件总线(F22)，不建立直接依赖边。对标Citadel/Two Sigma事件驱动核心 |
-| 4 | 控制平面/数据平面分离 | 编排器(控制平面)与执行器(数据平面)逻辑分离。编排器依赖抽象接口，执行器通过标准协议对接 |
-
-**四种依赖类型**：
-
-| 类型 | 含义 | 示例 |
-|:---:|:---|:---|
-| `contract` | 依赖抽象接口/Protocol，不依赖具体实现 | F1→F3（AutoPilot依赖TaskRepository Protocol） |
-| `event` | 通过事件总线通信，无直接依赖 | F1→F14（F1发布pipeline_start事件，F14订阅） |
-| `runtime` | 直接运行时调用（同层或向下层） | F1→F21（守护进程健康检查） |
-| `data` | 数据依赖（读写共享数据） | F3→F25（任务卡持久化到数据库） |
-
-**循环依赖检查规则**：
-1. 跨层循环：禁止。依赖方向只能从上层→下层，禁止逆向
-2. 同层循环：禁止。同层间允许单向依赖，但禁止形成环（如 F2→F4→F2 禁止）
-3. DIP例外：编排器→下层contract/event依赖不计入逆向依赖——contract依赖抽象接口，event通过事件总线解耦
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 不推演直接移动模块 | 引入新循环依赖，系统堵塞 |
-| ❌ | 按数量从大到小治理 | 前面的决定可能让后面的问题消失，白做 |
-| ❌ | 用"零消费者"判定删除 | 误删有价值的安全/治理组件 |
-| ❌ | 先补测试再重构 | 重构改代码，测试白写 |
-| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 43 域），新建域必须 Owner 书面同意 |
-| ❌ | **编排器直接依赖下层具体实现(runtime)** | 违反DIP，控制平面耦合数据平面（应改为contract依赖抽象接口） |
-| ❌ | **同层循环依赖** | 同层单向允许，但禁止形成环（如 F2→F4→F2） |
-
----
-
-## RULE-ELEVEN：跨蓝图变更通知
-**YAML真源**: → 参见 rules/trae_052_cross_blueprint_change_cleanup.yaml
-
-**触发**：修改任何蓝图的接口契约（Collection 名、API 签名、数据格式、依赖方向）时。
-
-### 强制三步
-
-```
-STEP 1  识别消费方 → Grep 全项目引用该接口的所有蓝图/代码
-STEP 2  同步更新   → 所有消费方蓝图 §4 + 代码常量/调用 同步修改
-STEP 3  验证       → 端到端测试确认消费方仍能正常调用
-```
-
-### 判定标准
-
-| 变更类型 | 是否触发 | 示例 |
-|---------|:-------:|------|
-| Collection 名变更 | ✅ | `ke_entries` → `knowledge` |
-| API 签名变更 | ✅ | `search(query)` → `search(query, collections)` |
-| 数据格式变更 | ✅ | ScoredHit 新增字段 |
-| 依赖方向变更 | ✅ | 可选→必须 |
-| 新增 Collection | ❌ | 向后兼容 |
-| 新增可选参数 | ❌ | 向后兼容 |
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 只改提供方，不改消费方 | 消费方静默降级/断路 |
-| ❌ | 改了接口但不 Grep 消费方 | 遗漏消费方→生产故障 |
-| ❌ | 消费方蓝图不更新 §4 契约 | 下个 AI session 看到旧契约→幻觉 |
-
----
----
-
-## RULE-TWELVE：项目瘦身与自动清理
-**YAML真源**: → 参见 rules/trae_052_cross_blueprint_change_cleanup.yaml
-
-**核心**：发现候选清理物 → 先判定价值 → 有价值则接通系统，无价值才删除。禁止仅凭"零消费者"或"版本旧"判定。
-
-### 价值判定标准
-
-```
-发现候选清理物
-├─ 有价值？
-│   ├─ YES → 接入系统
-│   │        ├─ 归属到蓝图（更新 blueprint §4）
-│   │        ├─ 对齐依赖图（⚠️ 架构升级期间禁用 generate_project_depgraph.py，用 extract_depgraph.py）
-│   │        ├─ 对齐路径树（path-tree --write）
-│   │        └─ 对齐代码表头（[BLUEPRINT]/[MODULE] 十五字段）
-│   └─ NO  → 走 RULE-THREE 三步审判 → 确认无价值 → 删除
-│
-├─ 过时蓝图版本？→ 新版本缺失旧版本独有内容？→ 保留/合并，不删
-│               └─ 新版本完全覆盖？→ 归档
-│
-└─ 零消费者？→ 判功能价值（不看消费者数）
-              └─ 有价值 → 接入；无价值 → 删除
-```
-
-### 清理触发链
-
-| 触发条件 | 清理动作 | 验证 |
-|---------|---------|------|
-| Phase COMPLETED | 该 Phase 所有 TaskCard → 归档到 `data/archive/taskcards/`（按需创建） | `audit_registration.py` |
-| TaskCard COMPLETED | 中间 checkpoint → 删除，保留最终 | — |
-| Session CLOSED | `_temp*` / `_check*` 等前缀文件 → 删除 | RULE-FIVE |
-| Session CLOSED | `data/cache/` → 清空 | — |
-| 新蓝图发布 + 旧版全覆盖 | 旧蓝图版本 → 归档 | 内容对比 |
-| 审计发现零价值孤儿 | 删除 + 刷新注册表 | `audit_registration.py` |
-| 审计发现僵尸引用 | 清理注册表残留 | `audit_registration.py` |
-| brain 重建后 | 合并旧 embeddings | — |
-
-### 清理后验证三步
-
-```
-1. python scripts/governance/d11_compliance/audit_registration.py → exit 0
-2. python scripts/governance/generate_project_path_tree.py --write
-3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph (PostgreSQL)。用 extract_depgraph.py --summary 替代
-# python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
-```
-
-任一失败 → 回滚清理。
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 仅凭"零消费者"判定删除 | 误删有价值的安全/治理组件 |
-| ❌ | 仅凭"时间旧"删除蓝图版本 | 丢失新版本未覆盖的内容 |
-| ❌ | 清理后不跑验证三步 | 注册表/路径树/依赖图漂移 |
-| ❌ | 只做一次性清理，不建常驻机制 | 垃圾持续累积 |
+**摘要**：非平凡变更 MUST 遵循 14 步统一流程（分析设计→施工→安全验证→收尾对齐），跳步=违规。仅结构变更可用 5 步轻量模式。三方对齐（全景图+蓝图+代码头部）是 STEP 12 强制验证。治理顺序从根到叶：跨包违规→God模块→孤儿→blueprint_id→稳定性→测试。新建功能域 MUST Owner 书面审批。
 
 ---
 
 ## RULE-THIRTEEN：任务卡粒度铁律
+→ 粒度门禁、拆卡四规则、状态转换、深挖病根见 [`onboarding_detail.md §RULE-THIRTEEN`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 **YAML真源**: → 参见 rules/trae_003_task_granularity_threshold.yaml
-
-**核心**：一卡一任务，独立可验证。任务卡 = 施工图——施工细节写在 description 里（不限字数），蓝图只写设计。
-
-### 粒度门禁（create() 时自动校验）
-
-| 字段 | 上限 | 超限处置 |
-|------|:---:|------|
-| `deliverables` 数量 | ≤ 1 | 拒绝建卡，提示拆卡 |
-| `files_in_scope` 数量 | ≤ 3 | 拒绝建卡，提示拆卡 |
-| `acceptance` 独立验收点 | ≤ 1 | 人工判定 |
-| 跨 Phase | 禁止 | 拒绝建卡，提示拆卡 |
-
-### 拆卡四条机械规则（任一触发即拆）
-
-| # | 规则 | 判定 |
-|---|------|------|
-| R1 | deliverables > 1 | 数列表长度 |
-| R2 | files_in_scope > 3 | 数列表长度 |
-| R3 | acceptance 有 > 1 个独立验收点 | 验收点能否独立通过/失败 |
-| R4 | 施工步骤跨 > 1 个施工目标 | 施工目标 = 对一个文件/模块的一次原子修改 |
-| R5 | description 缺"根因/治根/施工步骤/验收标准" | 结构词缺失 = 描述不完整 |
-| R6 | description < 100字 | 信息不足 = 幻觉温床 |
-
-### 超粒度自动拆分
-
-建卡被 R1-R6 拦截时，调用 `TaskRepository.auto_split_task(task)` 或 MCP `task_manager.auto_split(task_id)` 可按违规维度自动拆分为多张合规子卡。详见 `trae_034_task_card_standard.yaml §6.5`。
-
-### 状态转换与认领
-
-| 转换 | 说明 |
-|------|------|
-| PENDING → READY | 建卡后手动/自动转就绪 |
-| READY → IN_PROGRESS | `repo.claim_next(batch_id, worker_id)` 原子认领，自动转 IN_PROGRESS |
-| IN_PROGRESS → COMPLETED | 施工完成，触发 `_auto_phase_cleanup_hook` 硬删除 |
-| COMPLETED → VERIFIED | 验证通过（终态） |
-| 任意 → CANCELLED | 取消，同样触发硬删除 |
-
-`claim_next(batch_id, worker_id)` — 按 batch 轮转原子认领，返回 TaskCard 或 None。
-
-### 深挖病根强制
-
-```
-transition(task_id, COMPLETED) 时自动校验：
-├─ 任务中有 error/failure？→ MUST 有 root_cause_analysis 记录
-│   └─ 无记录 → 拒绝完成（SyncVerificationError）
-└─ root_cause_analysis = MTH-006 根源分析（追问到底，非固定5次）
-```
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | deliverables > 3 或 files_in_scope > 5 仍建卡 | 任务边界模糊，验收困难 |
-| ❌ | 遇到 error 不写 root_cause_analysis 直接完成 | 症状修复，根因残留 |
-| ❌ | 用"修了"替代 MTH-006 根源分析 | 同类问题必然重现 |
+**摘要**：一卡一任务，独立可验证。R1-R6 任一触发即拆卡（deliverables>1/files_in_scope>3/acceptance多验收点/跨施工目标/description结构词缺失/description<100字）。超粒度可 `auto_split_task` 自动拆分。`transition(COMPLETED)` 有 error MUST 有 root_cause_analysis。
 
 ---
+
 ## RULE-FOURTEEN：根目录清爽铁律
 **YAML真源**: → 参见 rules/trae_001_file_operation_security.yaml
 
 **核心**：根目录是项目门面——只允许白名单目录/文件存在。任何不在白名单中的 = 垃圾。
 
-### 根目录白名单（物理存在于根目录的文件/目录）
+**白名单**：IDE/AI=`.editorconfig`/`.traeignore`/`.vscode/`/`.trae/`/`AGENTS.md`；版本控制/CI=`.gitignore`/`.gitattributes`/`.pre-commit-config.yaml`/`.github/`/`.importlinter`；Python=`pyproject.toml`/`requirements*.txt`/`py.ini`；运行时=`.env.example`/`config/`/`Dockerfile`/`docker-compose.yml`；文档=`README.md`/`LICENSE`/`CONTRIBUTING.md`/`SECURITY.md`；源码/文档/数据=`src/`/`scripts/`/`tests/`/`tools/`/`docs/`/`architecture_model/`/`specs/`/`data/`/`models/`/`infra/`/`demos/`/`session_logs/`；运行时自动生成=`.ailocks/`/`.aidrafts/`/`.audit_cache/`/`.mypy_cache/`/`.ruff_cache/`/`.runtime/`/`.zephyr/`/`.zephyr_secure/`/`logs/`/`reports/`/`_journals/`。
 
-| 类型 | 允许项 | 说明 |
-|------|--------|------|
-| IDE 配置 | `.editorconfig`, `.traeignore`, `.vscode/` | 编辑器通用 |
-| AI 规则 | `.trae/`, `AGENTS.md` | AI session 注入 |
-| 版本控制 | `.gitignore`, `.gitattributes` | Git |
-| CI/CD | `.pre-commit-config.yaml`, `.github/` | 门禁 |
-| 架构约束 | `.importlinter` | 层契约 |
-| Python | `pyproject.toml`, `requirements.txt`, `requirements-dev.txt`, `requirements-demo.txt`, `py.ini` | 构建+依赖 |
-| 运行时配置 | `.env.example`, `config/` | 环境变量模板 |
-| Docker | `Dockerfile`, `docker-compose.yml` | 容器 |
-| 项目文档 | `README.md`, `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md` | GitHub 页面 |
-| 源码目录 | `src/`, `scripts/`, `tests/`, `tools/` | 代码 |
-| 文档 | `docs/`, `architecture_model/`, `specs/` | 蓝图+规格 |
-| 数据 | `data/`, `models/`, `infra/`, `demos/`, `session_logs/` | 数据+模型+基础设施 |
-| 运行时（自动生成） | `.ailocks/`, `.aidrafts/`, `.audit_cache/`, `.mypy_cache/`, `.ruff_cache/`, `.runtime/`, `.zephyr/`, `.zephyr_secure/`, `logs/`, `reports/`, `_journals/` | 系统生成，自动重建 |
+**系统级禁令**：①禁止 mkdir-only（MUST 同时写入内容）②每次检查禁止生成独立报告文件（O(1)：覆盖/追加单日志/写库）③Skill 查找失败禁止持久化 `NONEXISTENT-SKILL_*.json`（失败=不落盘）④禁止自动保存 AI 会话提示词到 `_prompts/`（禁用或设 max+TTL 自动清理）。
 
-### AI 可以做和不可以做的事
-
-| # | 行为 | 判定 | 后果 |
-|---|------|:---:|------|
-| ✅ | 在根目录创建临时 `.py` 脚本，运行完后立即删除 | **允许** | — |
-| ✅ | 在根目录创建临时 `.md` / `.txt` 输出文件（测试结果/验证报告），用完后立即删除 | **允许** | — |
-| ❌ | 在根目录下创建任何**永久性** `.py` / `.md` / `.yaml` / `.json` / `.txt` 文件 | 直接判定为垃圾 | 应该放到 `scripts/` / `docs/` / `tests/` 等标准目录 |
-| ❌ | 在根目录下创建任何**子目录**（`_temp*` / `_check*` / 新名字） | 目录蔓延 | 垃圾 |
-| ❌ | Session 结束时根目录仍有临时文件残留 | 垃圾留给下一个 session | 违反零残留铁律 |
-
-### 系统绝对不能做的事（代码级禁令）
-
-| # | 行为 | 修复方向 |
-|---|------|---------|
-| ❌ | 创建空目录而不填充（`meta/`, `tasks/`, `results/`, `cache/` 等） | 禁止 mkdir-only 操作——创建目录时 MUST 同时写入内容 |
-| ❌ | 每次检查生成一个独立报告文件（如 `truth_source_cascade` 轰炸 300+ 个） | O(1) 文件：覆盖写入、追加单日志、或写数据库 |
-| ❌ | Skill 查找失败后持久化 `NONEXISTENT-SKILL_*.json` | 失败 = 不落盘 |
-| ❌ | 自动保存 AI 会话提示词到 `_prompts/` | 禁用或设 max 保留数 + TTL 自动清理 |
-
-### Session 关门时必须做
-
-```
-7.1 根目录审计: ls 根目录 → 逐项对照白名单 → 不在白名单中的 → 直接删除或归档
-```
-
-### 根源
-
-本次清理发现的 40+ 个垃圾文件/空目录，根因只有一个：**没有根目录白名单门禁——任何人/AI/系统都可以往根目录写东西，永远没人清理。**
-
-AIR-001: 每次 session 关门时强制根目录审计。
-AIR-002: 任何系统生成根目录文件必须配套 TTL/上限/轮转策略。
+Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 → 不在白名单 → **删**。
 
 ---
 
 ## RULE-FIFTEEN：自动化双轨判定
 **YAML真源**: → 参见 rules/trae_053_automation_dual_track.yaml
 
-> **⚠️ 架构裁定（2026-06-26）**：定时轨（🕐 CircadianScheduler）禁止使用，仅用事件驱动 + CI 批量兜底。
-> 以下分类表/施工步骤中关于"定时轨"的描述仅作历史参考，新建自动化系统禁止使用定时轨。
-> 原"定时轨"任务应迁移至事件驱动（boot_hooks）或 CI schedule（.github/workflows）。
+> **⚠️ 架构裁定（2026-06-26）**：定时轨（🕐 CircadianScheduler）禁止使用，仅用事件驱动 + CI 批量兜底。`CircadianScheduler` 的 register_task/start/stop/save_state 均为 no-op。原"定时轨"任务应迁移至事件驱动（boot_hooks）或 CI schedule。
 
 **核心**：任何新建/改造自动化系统，MUST 通过两轨分类 + 实现验证。单轨实现 = 未完成。
 
-### 两轨分类表
+**施工三步**：①判定归属（🕐 定时=全项目扫描/重操作/外部同步/缓存维护；⚡ 事件=状态变更响应/即时校验；🕐+⚡ 双轨=关键校验）②实现（⚡ 事件→`boot_hooks.py` 中 `hook_registry.register` 或 `event_bus.subscribe`；🕐 已禁用）③验证（`python scripts/ide_health_service.py --status` → 触发事件后 check hooks 执行）。
 
-| 任务特征 | 适合轨 | 原因 |
-|---------|:---:|------|
-| 全项目扫描（去重、孤儿、临时文件、审计保留） | 🕐 定时 | 事件驱动太贵：每次文件变更就扫全项目 |
-| 重操作（深度漂移扫描、模型画像、语义审计） | 🕐 定时 | 凌晨跑，不影响白天业务 |
-| 外部同步（定价、模型列表、上游数据） | 🕐 定时 | 没有事件源，只能定时拉 |
-| 缓存/日志维护（轮转、失效、清理） | 🕐 定时 | 日常运维，不需要实时 |
-| 状态变更响应（BLOCKED→升级、IN_PROGRESS→超时计时器） | ⚡ 事件 | 有明确 TransitionEvent 触发点 |
-| 即时校验（蓝图变更→三方对齐、LLM调用→预算检查） | ⚡ 事件 | 实时反馈，等到明天太晚 |
-| 关键校验（预算健康、三方对齐、升级路径） | 🕐+⚡ 双轨 | 事件做增量，定时做全量兜底 |
-
-### 施工强制三步
-
-```
-STEP 1: 判定归属 → 对照分类表确定 🕐 / ⚡ / 🕐+⚡
-STEP 2: 实现
-  ├─ 🕐 定时 → 在 boot_cron_jobs.py 中注册（circadian_scheduler.register_task）
-  │             守护进程已挂载 circadian_scheduler，无需额外启动
-  │             register_task 为 no-op，禁止新建定时轨
-  ├─ ⚡ 事件 → 在 boot_hooks.py 中注册 hook_registry.register 或 event_bus.subscribe
-  │             守护进程已加载 boot_hooks，无需额外启动
-  └─ 🕐+⚡ 双轨 → 两条都要【注：双轨任务仅用事件轨+CI兜底】
-STEP 3: 验证 → python scripts/ide_health_service.py --status
-  ├─ circadian.running=true + tasks_registered 正确计数 → 🕐 通过
-  │             circadian.running/tasks_registered 不适用
-  └─ 触发事件后 check 对应 hooks 执行 → ⚡ 通过
-```
-
-### 守护进程承载
-
-> **⚠️ 定时轨禁止使用**：`CircadianScheduler` 的 register_task/start/stop/save_state 均为 no-op。
-> 下表中"定时轨"行仅作历史参考，定时任务应迁移至事件驱动或 CI schedule。
-
-| 轨 | 载体 | 位置 |
-|---|------|------|
-| 🕐 定时 | `CircadianScheduler`（守护进程中，每小时整点执行）**【no-op，禁止使用】** | [ide_health_service.py](file:///d:/ZephyrAlpha/scripts/ide_health_service.py) |
-| ⚡ 事件 | `HookRegistry`（TransitionEvent 触发）+ `EventBusBackpressure`（topic 触发） | [boot_hooks.py](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py) |
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 新建自动化系统不判定两轨归属 | 盲目挂在单一轨＝要么遗漏要么浪费 |
-| ❌ | 全项目重扫描挂在事件驱动上 | 每次文件变更扫全项目＝拖死 |
-| ❌ | 实时校验只靠定时（等到凌晨才跑） | 反馈延迟十几小时 |
-| ❌ | 关键校验只有一轨无兜底 | 事件丢了没补偿＝漏报 |
-| ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑（禁止新建定时轨） |
-| ❌ | 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
+| ❌ 绝对禁止 | 后果 |
+|---------|------|
+| 新建自动化系统不判定两轨归属 | 盲目挂在单一轨 |
+| 全项目重扫描挂在事件驱动上 | 每次文件变更扫全项目＝拖死 |
+| 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
 
 ---
+
 ## RULE-SIXTEEN：depgraph 程序化访问协议
+→ 详细 Schema 变更协议、强制操作序列、变更 JSON 格式见 [`onboarding_detail.md §RULE-SIXTEEN`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 **YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
-
-**核心**：depgraph 存储在 PostgreSQL 16 数据库（localhost:5432, 数据库名 `depgraph`, 用户 `zephyr`，schema v18, 25张表）。连接入口：`from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`。禁止裸 `psql`/`sqlite3` 连接，必须通过提取/应用脚本或 `get_depgraph_pg_connection()` 操作。
-
-### Schema 变更协议（DDL-as-Code 铁律）
-
-depgraph (PostgreSQL)的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
-
-1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
-2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 PostgreSQL 报错）
-3. **跑 init_db()**：执行 `init_db()` 幂等应用 pending migrations（事务包裹，失败自动 ROLLBACK）
-4. **过门禁**：`python scripts/governance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
-
-禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改数据库绕过 migration。
-
-### 触发条件
-
-任何需要读取或修改 depgraph 的操作——包括查看模块定义、修改 physical_files、更新 blueprint_status、查看域结构等。
-
-### 强制操作序列
-
-```
-读取 depgraph 数据:
-  STEP 1: 确定需要什么数据（域摘要？指定域？指定模块？顶级元数据？路径列表？）
-  STEP 2: 运行对应提取命令
-          python scripts/governance/extract_depgraph.py --summary     # 43域+模块数
-          python scripts/governance/extract_depgraph.py --domains D_FACTOR,D_RISK
-          python scripts/governance/extract_depgraph.py --modules D-FACTOR-01
-          python scripts/governance/extract_depgraph.py --top          # 顶级元数据
-          python scripts/governance/extract_depgraph.py --paths        # 所有physical_files
-          python scripts/governance/extract_depgraph.py --stats        # 文件大小统计
-  STEP 3: AI 只读提取结果（JSON，几KB到几百KB，安全）
-
-修改 depgraph:
-  STEP 0: 前置备份（MUST，每次 apply_depgraph.py 执行前）
-          ① pg_dump 备份: pg_dump -U zephyr -d depgraph > data/databases/backups/depgraph_backup_$(date +%Y%m%d_%H%M%S).sql
-          ② 事务回滚: apply_depgraph.py 在事务内执行，失败自动 ROLLBACK（PG MVCC 保证）
-          # 回滚: psql -U zephyr -d depgraph -f data/databases/backups/depgraph_backup_XXX.sql
-  STEP 1: AI 生成变更 JSON 文件
-  STEP 2: python scripts/governance/apply_depgraph.py --batch changes.json --dry-run  # 验证
-  STEP 3: python scripts/governance/apply_depgraph.py --batch changes.json             # 执行
-  STEP 4: python scripts/governance/extract_depgraph.py --summary     # 验证变更
-```
-
-### 变更 JSON 格式
-
-```json
-[
-  {"op": "update", "module_id": "D-FACTOR-01", "field": "blueprint_status", "value": "has_blueprint"},
-  {"op": "add_physical_file", "module_id": "D-FACTOR-01", "path": "src/zephyr/factor/new_file.py"},
-  {"op": "remove_physical_file", "module_id": "D-FACTOR-01", "path": "src/zephyr/factor/old_file.py"},
-  {"op": "set_physical_files", "module_id": "D-FACTOR-01", "files": ["path1.py", "path2.py"]}
-]
-```
-
-### 为什么不能拆分 depgraph
-
-拆分 39 个域文件 → 跨域关系丢失 → AI 看到碎片化数据 → 产生大量漂移和幻觉。depgraph 保持单一数据库（SSoT），通过程序化提取访问。
-
-### 为什么不能换模型
-
-DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 55 倍。任何当前模型都无法装下。
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph (PostgreSQL) | 绕过 `get_depgraph_pg_connection()` 连接管理，连接泄漏风险 |
-| ❌ | 用 Read 工具读取 `data/databases/archive/` 下归档文件 | 数据过时，真源在 PostgreSQL |
-| ❌ | 用任何方式将 depgraph 全表内容注入 AI 上下文 | 55M tokens → 内存溢出 |
-| ❌ | 拆分 depgraph 为 39 个域文件 | 跨域关系丢失 → 漂移和幻觉 |
-| ❌ | 绕过提取脚本自己写 Python 代码直接查 depgraph | 你的 Python 代码可以查，但 AI 上下文不能装下全表 |
-
-### 例外
-
-| 场景 | 允许操作 |
-|------|---------|
-| 通过 `get_depgraph_pg_connection()` 执行有限查询（LIMIT/WHERE） | ✅ 返回结果集可控 |
-| 运行 generate_project_depgraph.py 生成/更新 depgraph（⚠️ 架构升级期间禁止） | ✅ 生成脚本内部处理 |
-| 运行 diagnose_depgraph.py 诊断 | ✅ 诊断脚本内部处理 |
-
-### Schema 结构变更门禁（GATE-SCHEMA-HEALTH）
-
-结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 声明 + 添加 migration（`_MIGRATIONS` 列表）；禁止直接改写入代码跳过 DDL。GATE-SCHEMA-HEALTH（pre-commit）自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即阻断。对标 #ARCH-016 治本。
-
----
-
-## RULE-SEVENTEEN：禁止 PowerShell 语法
-
-**核心**：PowerShell 引号转义复杂 + 默认非 UTF-8 编码 + `>` 重定向 = 引号出错 + 中文乱码 + 文件损坏。从规则层禁止 PowerShell 语法，复杂逻辑封装为 `.py` 脚本。
-
-### RunCommand 白名单（仅允许裸命令）
-
-| 允许 | 示例 |
-|------|------|
-| `python <脚本>.py <参数>` | `python scripts/lock_files.py check <file>` |
-| `python scripts/git_guard.py <git子命令>` | `python scripts/git_guard.py add <file>`（❌ 禁止裸 `git xxx`，Trae 硬编码审查会弹窗。注意：`commit` 子命令是裸透传不走 gateway，会被 GATE-COMMIT-GW 阻断） |
-| `python scripts/git_commit.py --session <id> --files <f> --message <msg>` | 唯一合法 commit 入口（经 GitCommitGateway，详见 RULE-TWENTY） |
-| `python -m pytest <path>` | `python -m pytest tests/` |
-| `python -m zephyr.<mod>` | `python -m zephyr.governance.task_repo` |
-
-### 禁止语法（黑名单）
-
-| # | 禁止 | 替代 |
-|---|------|------|
-| 1 | 管道 `\|` | 写 .py 脚本串联 |
-| 2 | 引号嵌套（`"...'...'..."`） | 写 .py 脚本 |
-| 3 | `$` 变量 | Python 变量 |
-| 4 | cmdlet（`Get-`/`Set-`/`Where-` 等） | Read/Write/Edit 工具 |
-| 5 | `>` 重定向 | Write 工具 或 Python `open(encoding='utf-8')` |
-| 6 | `;` 命令串联 | 分多次 RunCommand |
-| 7 | 裸 `git` 命令 | `python scripts/git_guard.py <git子命令>`（Trae 对 `git` 前缀硬编码审查，会弹窗打断连续工作） |
-
-### 文件操作强制映射
-
-| 操作 | 禁止 PowerShell | 必须用 |
-|------|----------------|--------|
-| 读 | `Get-Content`/`cat`/`type` | Read |
-| 写 | `Set-Content`/`>`/`Out-File` | Write 或 Python |
-| 编辑 | 字符串替换命令 | Edit |
-| 搜索文件 | `Get-ChildItem`/`dir`/`find` | Glob |
-| 搜索内容 | `Select-String`/`findstr`/`grep` | Grep |
-| 删除 | `Remove-Item`/`del` | DeleteFile |
-
-### 复杂逻辑
-
-需要管道/引号嵌套/变量 → 写 `.py` 脚本 → RunCommand 跑 `python xxx.py`。
+**摘要**：depgraph 在 PostgreSQL 16（localhost:5432, db=`depgraph`, user=`zephyr`, schema v18, 25表）。连接入口 `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`。禁止裸 `psql`/`sqlite3`。读取用 `extract_depgraph.py --summary/--domains/--modules/--top/--paths/--stats`；修改用 `apply_depgraph.py --batch`（MUST 先 pg_dump 备份，事务内执行失败自动 ROLLBACK）。Schema 变更遵循 DDL-as-Code：改 `_DDL_*` 声明→加 `_MIGRATIONS`→跑 `init_db()`→过 `verify_schema_health.py`。禁止拆分 depgraph（跨域关系丢失）或全表注入 AI 上下文（55M tokens）。
 
 ---
 
 ## RULE-EIGHTEEN：连续两次审查零问题
 **YAML真源**: → 参见 rules/trae_042_meta_rule_standard.yaml §std_011_dual_review_protocol
 
-**核心**：任何文件变更声明完成前，MUST连续两次审查零问题。防止"执行完不检查"或"只检查一次"导致的幻觉和漂移残留。
+**核心**：任何文件变更声明完成前，MUST 连续两次审查零问题。防止"执行完不检查"或"只检查一次"导致的幻觉和漂移残留。
 
-### 适用范围
+**适用范围**：任务卡 COMPLETED / 代码修改交付 / 规则文件修改 / 文档更新 / 配置变更 / Session 关门——全部触发。纯只读操作豁免。
 
-| 场景 | 触发 | 豁免 |
-|------|------|------|
-| 任务卡 COMPLETED | ✅ | — |
-| 代码修改交付 | ✅ | — |
-| 规则文件修改 | ✅ | — |
-| 文档更新 | ✅ | — |
-| 配置变更 | ✅ | — |
-| Session 关门 | ✅ | — |
-| 纯只读操作（搜索/查询/审查本身） | — | ✅ |
+**强制三步**：①第一次审查（按文件类型审查清单逐项）→ 问题数=0？YES→进② / NO→修复→重执① ②第二次审查（完整重执审查清单，非仅查修复点）→ 问题数=0？YES→进③ / NO→修复→从①开始 ③连续两次零问题→通过→可声明完成。
 
-### 强制三步
+**计数规则**：连续两次中间不能有任何问题；第二次 MUST 完整执行（禁止只查第一次的问题点）；审查 MUST 覆盖全部变更；伪造审查结果=违规。
 
-```
-STEP 1  第一次审查 → 按文件类型审查清单逐项审查 → 问题数=0？
-        ├─ YES → 进 STEP 2
-        └─ NO  → 修复 → 重新执行 STEP 1
-STEP 2  第二次审查 → 重新执行完整审查清单（非仅查修复点）→ 问题数=0？
-        ├─ YES → 进 STEP 3
-        └─ NO  → 修复 → 重新从 STEP 1 开始
-STEP 3  连续两次零问题判定 → 通过 → 可声明完成
-```
+**规则文件修改额外要求**：修改 trae_XXX.yaml 后，除连续两次审查外，MUST 额外执行 **std_010_rule_review_simulation**（模拟新AI测试）：冷启动模拟+幻觉检测+漂移检测+模拟执行+连续两次模拟零问题才通过。
 
-### 计数规则
-
-| 规则 | 说明 |
-|------|------|
-| 连续两次中间不能有任何问题 | 有问题就重新计数 |
-| 第二次审查必须完整执行 | 禁止只查第一次的问题点 |
-| 审查必须覆盖全部变更 | 禁止只查变更部分 |
-| 伪造审查结果 = 违规 | 未实际执行审查就声明零问题 |
-
-### 审查清单映射
-
-| 文件类型 | 审查清单 |
-|---------|---------|
-| 代码 | 功能完整/边界处理/错误路径/类型一致/导入完整/安全检查 |
-| 规则 | std_009_audit_checklist + std_010_rule_review_simulation |
-| 文档 | 路径准确/数字一致/引用完整/格式规范/无否定陈述 |
-| 配置 | 字段完整/值合法/引用存在/格式正确 |
-| 任务卡 | 18字段完整/R1-R6粒度/验收命令/回滚方案 |
-
-### 规则文件修改的额外要求
-
-修改规则文件（trae_XXX.yaml）后，除连续两次审查外，MUST额外执行 **std_010_rule_review_simulation**（模拟新AI测试）：
-1. 冷启动模拟——假装新AI第一次进项目，能否无歧义理解规则
-2. 幻觉检测——规则是否可能导致AI产生幻觉（路径/ID/命令是否真实存在）
-3. 漂移检测——规则是否可能导致AI偏离正确行为
-4. 模拟新AI执行——按规则执行一次典型任务，检查是否产生错误
-5. 连续两次模拟零问题才通过
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 声明完成但未执行连续两次审查 | 幻觉和漂移残留 |
-| ❌ | 仅审查一次就声明通过 | 一次审查无法发现所有问题 |
-| ❌ | 第二次审查只查第一次的问题点 | 修复可能引入新问题 |
-| ❌ | 审查发现问题但不修复就声明通过 | 问题累积 |
-| ❌ | 修改规则文件后跳过模拟新AI测试 | 规则可能产生幻觉/漂移 |
-| ❌ | 伪造审查结果 | 自欺欺人 |
+| ❌ 绝对禁止 | 后果 |
+|---------|------|
+| 声明完成但未执行连续两次审查 | 幻觉和漂移残留 |
+| 第二次审查只查第一次的问题点 | 修复可能引入新问题 |
+| 修改规则文件后跳过模拟新AI测试 | 规则可能产生幻觉/漂移 |
 
 ---
 
 ## RULE-NINETEEN：先裁定后确认（MTH-009 显化）
+→ 详细三段输出格式、MTH-007 决策质量四问、防幻觉十八条见 [`onboarding_detail.md §RULE-NINETEEN`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 **YAML真源**: → 参见 rules/trae_025_methodology_decision.yaml §mth_009
-
-**核心**：AI 遇到任何决策（方案选择/范围裁定/触发条件判定/多选项权衡）MUST 先给出专业裁定+理由，再请 Owner 确认。禁止直接问"你选哪个"把决策权推给 Owner。
-
-### 触发条件
-
-任何需要 Owner 决策的问题——包括但不限于：方案多选/备份范围裁定/触发条件判定/拆分边界决策/技术路线权衡。
-
-### 强制三段输出格式
-
-```
-1. 分析过程（基于项目文档/专业实践/量化数据给出分析）
-2. 裁定结果（明确推荐其中一个，给出理由，不是选择题）
-3. 确认请求（请 Owner 确认或否决，否决需给出理由后 AI 重新裁定）
-```
-
-### MTH-007 决策质量四问（裁定前 MUST 完成）
-
-| # | 维度 | 自问 |
-|---|------|------|
-| 1 | 埋雷检查 | 这个选择会不会给未来埋雷？纠正需重写架构吗？ |
-| 2 | 容量检查 | 会不会限制未来容量？余量多少？ |
-| 3 | 专业对标 | 专业机构/社区怎么做的？MUST 引用至少一个来源 |
-| 4 | 最终建议 | 带推理：A 在埋雷维度无风险/容量有余量/对标有先例 → 推荐 A |
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 遇到决策直接问 Owner "你选哪个/你想怎么做" | 把决策权推给 Owner，违反 MTH-009 |
-| ❌ | 只给选项不给推荐 | Owner 无法判断，决策质量下降 |
-| ❌ | 以"我不确定"为由把决策推给 Owner | MUST 基于现有信息做出最优判断 |
-| ❌ | 跳过专业对标（专业机构/社区怎么做）直接给结论 | 裁定缺乏依据 |
-| ❌ | 跳过 MTH-007 决策质量四问 | 方案可能埋雷或限制容量 |
-
----
-
-### 结构追溯（#1-#6）
-
-| # | 规则 | 不遵守会怎样 |
-|---|------|------------|
-| 1 | **源头追溯**——代码文件 MUST 标注 `[BLUEPRINT] {module_id} \| {蓝图路径}` | 无标注 = 孤儿文件 |
-| 2 | **不变量声明**——代码文件 MUST 标注 `[INVARIANTS] {不可违反的约束}` | AI 修改时破坏关键约束 |
-| 3 | **修改守卫**——代码文件 MUST 标注 `[MODIFY-GUARD] {改此文件必须同步更新的文件}` | AI 改一处忘其他，集成断裂 |
-| 4 | **依赖声明**——代码文件 MUST 标注 `[CONSUMERS] {依赖此文件的模块}` | AI 不知道修改的影响范围 |
-| 5 | **蓝图锚点**——蓝图 MUST 在头部标注蓝图+施工图模板+AI 压缩工作流标准链接 | AI 偏离蓝图模板，产出不一致 |
-| 6 | **漂移检测**——蓝图 §4 文件清单 ↔ 代码 `[BLUEPRINT]` 字段（含 §N 章节级）MUST 双向对齐 | 蓝图与代码漂移 |
-
-### 行为约束（#7-#10）
-
-| # | 规则 | 不遵守会怎样 |
-|---|------|------------|
-| 7 | **禁止占位符**——代码中禁止 `TODO`/`...`/`pass`/`NotImplementedError`。必须产出可执行代码 | 半成品伪装完成 |
-| 8 | **编辑优先**——禁止删除+重建来"修改"。必须 surgical edit | 丢失 history + 注册失效 |
-| 9 | **最小变更**——只改必须改的。禁止"顺手重构""顺便优化" | 无关变更引入 bug |
-| 10 | **假设显式化**——不确定的决策 MUST 标记 `[ASSUMPTION]` 等待确认 | AI 凭空假设 API/格式/配置 |
-
-### 输出验证（#11-#14）
-
-| # | 规则 | 不遵守会怎样 |
-|---|------|------------|
-| 11 | **步骤验证门**——每步完成 MUST 验证成功后才进下一步 | 错误累积，回溯成本指数增长 |
-| 12 | **导入验证**——使用任何 `import`/API/函数前 MUST Grep/Read 确认存在 | 引用不存在的库/API/模块 |
-| 13 | **自审闭环**——产出代码后 MUST 对照需求自审：功能完整？边界？错误路径？ | 输出与需求不匹配 |
-| 14 | **新代码必测**——新建/修改代码 → MUST 写或更新测试。无测试 = 未完成 | bug 无从发现 |
-
-### 安全防护（#15-#18）
-
-| # | 规则 | 不遵守会怎样 |
-|---|------|------------|
-| 15 | **安全最低通过**——交付前 MUST 通过：认证/注入/数据暴露三项检查 | 安全漏洞交付 |
-| 16 | **计划先行**——涉及 >3 文件或 >50 行 → MUST 先输出计划 → 确认 → 执行 | 无计划大范围修改，失控 |
-| 17 | **跨文件影响检查**——修改前 MUST 检查 `[CONSUMERS]` + Grep 所有引用 | 改一处忘其他，集成断裂 |
-| 18 | **上下文新鲜度**——对话 >30 轮或 AI 出现重复/矛盾 → 开新会话 | 上下文退化，幻觉温床 |
-
-**格式标准**: [trae_047_engineering_file_header.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml)（GOV-ENG-002 文件头部十五字段，原 code-construction-standards.md §7 已迁移）
+**摘要**：AI 遇到任何决策（方案选择/范围裁定/触发条件判定/多选项权衡）MUST 先给出专业裁定+理由（三段：分析过程→裁定结果→确认请求），再请 Owner 确认。裁定前 MUST 完成 MTH-007 四问（埋雷检查/容量检查/专业对标/最终建议）。禁止直接问"你选哪个"把决策权推给 Owner。防幻觉十八条（#1-#18）：结构追溯（[BLUEPRINT]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS] 等十五字段头部）+ 行为约束（禁止占位符/编辑优先/最小变更/假设显式化）+ 输出验证（步骤验证门/导入验证/自审闭环/新代码必测）+ 安全防护（安全最低通过/计划先行/跨文件影响检查/上下文新鲜度）。
 
 ---
 
@@ -1329,47 +336,24 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 **核心**：AI 完成文件修改后 MUST 在 session 结束前 git commit。未提交的代码 = 不存在 = 会被 git reset/checkout 冲掉。
 
-> **GATE-COMMIT-GW 门禁（OPS-2026062513 治本）**：全项目禁止裸 `git commit`。pre-commit hook [validate_commit_gateway.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_commit_gateway.py) 会阻断所有非 `--no-verify` 的 commit（hook 运行=裸 commit=阻断 exit 1）。所有 commit MUST 经 [GitCommitGateway](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py)（串行锁+stash 隔离+GW 标记），CLI 入口为 `python scripts/git_commit.py`。`git_guard.py commit` 是裸透传（不走 gateway），会被门禁阻断——勿用 `git_guard.py commit`。
-
-### 触发条件
-
-任何文件修改完成后——包括代码、配置、规则、测试文件。
+> **GATE-COMMIT-GW 门禁**：全项目禁止裸 `git commit`。pre-commit hook 会阻断所有非 `--no-verify` 的 commit。所有 commit MUST 经 GitCommitGateway（CLI 入口 `python scripts/git_commit.py`）。`git_guard.py commit` 是裸透传会被阻断——勿用。
 
 ### 强制流程
 
 | 时机 | 动作 |
 |------|------|
-| 文件修改完成 | `python scripts/git_guard.py add <具体文件>`（禁止 `python scripts/git_guard.py add -A`） |
-| commit 提交 | `python scripts/git_commit.py --session <session_id> --files <f1,f2> --message "type(scope): desc"`（全项目唯一合法 commit 入口） |
-| 任务卡 transition(COMPLETED) | 自动 `python scripts/git_commit.py --session <id> --files <files> --message <msg>`（DM-202918 实现） |
-| 释放文件锁前 | 检查 `python scripts/git_guard.py status`，有未提交修改则 WARNING（DM-202919 实现） |
-| session 结束前 | 确认 `python scripts/git_guard.py status` 干净（无未提交修改） |
+| 文件修改完成 | `python scripts/git_guard.py add <具体文件>`（禁止 `add -A`/`add .`） |
+| commit 提交 | `python scripts/git_commit.py --session <id> --files <f1,f2> --message "type(scope): desc"`（唯一合法 commit 入口） |
+| 任务卡 transition(COMPLETED) | 自动 `git_commit.py --session <id> --files <files> --message <msg>` |
+| session 结束前 | 确认 `python scripts/git_guard.py status` 干净 |
 
-### commit message 格式（裁定2：2026-06-25，2026-06-29 更新为 git_commit.py）
+`git_commit.py --message` 内部用 `git commit -F` 文件提交（绕过 PowerShell 解析）。多行/含特殊字符用 here-string 传递。
 
-`git_commit.py --message` 接受字符串参数，内部自动写入临时文件并用 `git commit -F` 提交（绕过 PowerShell 解析风险）。MUST 按以下规则选择提交方式：
-
-| 场景 | 命令 | 理由 |
-|------|------|------|
-| 单行、无特殊字符 | `python scripts/git_commit.py --session <id> --files <f> --message "type(scope): desc"` | 简单快捷 |
-| 多行、含特殊字符、含中文括号 | `$msg = @"<newline>type(scope): desc<newline><newline>Body<newline>"@; python scripts/git_commit.py --session <id> --files <f> --message $msg` | PowerShell here-string 传递多行消息，git_commit.py 内部用 `-F` 文件提交 |
-
-**流程**：`git_guard.py add <文件>` → `git_commit.py --session <id> --files <f> --message <msg>` → 确认 exit 0。
-
-**根因**：2026-06-25 排查 `git commit -m "fix: clean test domain pollution..."` 在 PowerShell 中因特殊字符解析失败。`git_commit.py` 内部用 `-F` 文件方式绕过 shell 解析，是跨平台安全方案。
-
-### 绝对禁止
-
-| # | 行为 | 后果 |
-|---|------|------|
-| ❌ | 写完代码不提交，留到"下次再说" | git 操作冲掉工作区，代码丢失 |
-| ❌ | 用 `python scripts/git_guard.py add -A` 或 `python scripts/git_guard.py add .` 批量添加 | 混入敏感文件或无关变更 |
-| ❌ | 释放文件锁前不检查 git status | 锁释放后忘记提交 |
-| ❌ | 裸 `git commit` 或 `python scripts/git_guard.py commit`（不经 GitCommitGateway） | GATE-COMMIT-GW 门禁阻断 exit 1；绕过用 `--no-verify` 会被 post-commit 审计 reconciler 标记 |
-
-### 根因
-
-2026-06-23 调查：AI session 写完代码不提交 git，另一 session 做 git reset 时工作区未提交修改丢失。6 个现有机制（文件锁/StagingArea/transition/规则/定时器/worktree）均不防 git 层丢失。2026-06-29 红蓝对抗修复：GATE-COMMIT-GW 门禁 + git_commit.py CLI 强制所有 commit 走 GitCommitGateway。
+| ❌ 绝对禁止 | 后果 |
+|---------|------|
+| 写完代码不提交 | git 操作冲掉工作区，代码丢失 |
+| `git_guard.py add -A`/`add .` 批量添加 | 混入敏感文件或无关变更 |
+| 裸 `git commit` 或 `git_guard.py commit` | GATE-COMMIT-GW 阻断 exit 1 |
 
 ---
 
@@ -1378,8 +362,8 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | # | 规则 |
 |---|------|
 | 1 | `.trae/rules/` 目录 AI 不可写入。规则是 IMMUTABLE——想改规则 → 报告 Owner，不要自己改 |
-| 2 | 禁止凭记忆判断任何 API/库/函数/模块/路径的存在性。不确定 → 先搜。搜不到 = 不存在，搜到了 = 存在。**双向搜索**——不假设存在，也不假设不存在 |
-| 3 | 幻觉检测器在监控。引用不存在的路径/ID/命令 → 会被阻断。输出的每个路径和 ID 必须能在项目中搜到 |
+| 2 | 禁止凭记忆判断任何 API/库/函数/模块/路径的存在性。不确定 → 先搜。搜不到 = 不存在，搜到了 = 存在。**双向搜索** |
+| 3 | 幻觉检测器在监控。引用不存在的路径/ID/命令 → 会被阻断 |
 
 ---
 
@@ -1387,50 +371,42 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 | # | 规则 |
 |---|------|
-| 1 | 新建脚本中任何 `for + subprocess/I/O` → **强制 ThreadPoolExecutor(max_workers=8)**。判定三指标：A.`for`+subprocess B.`for`+多文件独立读写 C.`for`+多URL请求——任一 YES → MUST 并行 |
-| 2 | Python 写文件统一用原子写入。禁止 `open(path, "w")` 直接写。模板：`tmp=f"{path}.{os.getpid()}.tmp"; open(tmp,"w",encoding="utf-8")→f.write→os.replace(tmp,path)` |
-| 3 | 写完脚本 → 立刻跑 `python <脚本> --warn-only` 自测。挂了自己修，修完再报完成 |
-| 4 | **极简产出**：能用表格不用段落，能用命令不用描述。不写"为什么"和"对标"。每句话必须有信息增量。**优化安全协议见 onboarding_detail.md §10.6** |
-| 5 | **防幻觉头部**——新建/修改代码文件 MUST 包含 `[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]` 十五字段头部。缺失 = 孤儿文件 |
-| 6 | **根因追踪（MTH-006）**——遇到 bug/失败/漂移/异常 → MUST 追问到底：连问为什么直到找到最根部原因，**不是固定5个——是问到底**。追问路上发现的每个中间问题 MUST 一并解决，不留尾巴。治根判定：修复后同类问题不再产生 + 作用于设计层面 + 可泛化为原则。禁止只修症状不治根 |
-| 7 | **搜索先行复用决策**——新建功能前 MUST 搜索已有覆盖。搜索三步：①关键词全局搜索 ②注册表精确匹配 ③复用决策。复用四选一：完全覆盖→直接用 / 80%→扩展已有 / 50%→重构+扩展 / 0%→scaffold 新建。放弃新建时 MUST 写 `[REUSE-DECISION]` |
-| 8 | **编码安全**——Python `open(path, 'w')` 禁止省略 `encoding='utf-8'`；PowerShell 写文件用 `[System.IO.File]::WriteAllText($path, $content, [System.Text.Encoding]::UTF8)`；禁止 Trae+Cursor 同时打开同一文件；扫描器大量报错 → 先检查扫描器逻辑 |
-| 9 | **修改原则**——发现事实错误 → 直接修正，禁止添加"之前为什么是错的"解释段；文档中所有数字/版本号/计数必须是当前唯一真实值；单个 real number 原则：一个事实在所有蓝图中只能有一个数字，不一致 = bug |
-| 10 | **审计前置**——任何涉及文件变更的任务完成后 MUST 执行 `python scripts/governance/run_all.py --depth quick`。不审不清，不清不继续 |
-| 11 | **资产认知（RULE-NINE）**——进项目 MUST 先了解全盘资产规模与健康状态。读 `data/asset_index/unified_asset_index.yaml` → 知道总资产/健康评分/孤儿率。不知道系统有多大 = 盲目施工 |
+| 1 | 新建脚本中任何 `for + subprocess/I/O` → **强制 ThreadPoolExecutor(max_workers=8)** |
+| 2 | Python 写文件统一用原子写入（tmp+replace）。禁止 `open(path,"w")` 直接写 |
+| 3 | 写完脚本 → 立刻跑 `python <脚本> --warn-only` 自测 |
+| 4 | **极简产出**：表格>命令>一句话>段落。不写"为什么"和"对标"。**优化安全协议见 onboarding_detail.md §10.6** |
+| 5 | **防幻觉头部**——新建/修改代码文件 MUST 包含十五字段头部（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]）。缺失 = 孤儿文件 |
+| 6 | **根因追踪（MTH-006）**——遇到 bug/失败/漂移 → MUST 追问到底（非固定5次，问到底）。治根判定：修复后同类问题不再产生 + 作用于设计层面 + 可泛化为原则 |
+| 7 | **搜索先行复用决策**——新建功能前 MUST 搜索已有覆盖。放弃新建时 MUST 写 `[REUSE-DECISION]` |
+| 8 | **编码安全**——Python `open(path,'w')` 禁止省略 `encoding='utf-8'`；禁止 Trae+Cursor 同时打开同一文件 |
+| 9 | **修改原则**——发现事实错误 → 直接修正，禁止添加"之前为什么是错的"解释段；单个 real number 原则 |
+| 10 | **审计前置**——任何涉及文件变更的任务完成后 MUST 执行 `python scripts/governance/run_all.py --depth quick` |
+| 11 | **资产认知（RULE-NINE）**——进项目 MUST 先读 `data/asset_index/unified_asset_index.yaml` |
 
 ---
 
 ## 强制集成对照表
 
-> 逐条念出来打勾——不是扫一眼就跳过。
-
 | AI 要做什么 | 必须先跑什么 | 不跑会怎样 |
 |------------|-------------|-----------|
 | **写入任何文件** | `python scripts/governance/pre_write_gate.py <文件>` | exit≠0 → 禁止写入 |
-| **创建新文件** | `python scripts/scaffold.py module/script/gate <参数>` | 绕开 scaffold → 孤儿文件 |
-| **删除任何文件** | RULE-THREE 三步审判 → 全通过才能删 | 一步不通过 → 不能删 |
+| **创建新文件** | `python scripts/scaffold.py module/script/gate <参数>` | 绕开 → 孤儿文件 |
+| **删除任何文件** | RULE-THREE 三步审判 → 全通过才能删 | 误删有价值文件 |
 | 修改 `src/zephyr/` 源码 | `python -m pytest tests/ --collect-only -q` | 语法错误 → 禁止提交 |
-| 修改 YAML 契约/配置 | `python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | 契约断裂 → 禁止合并 |
-| 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |
-| 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
+| 修改 YAML 契约/AGENTS.md/project_rules.md | `check_contract_code_drift.py` / `validate_load_path_integrity.py --check` / `sync_rule_registry.py` | 契约/LoadPath/rule-registry 断裂 → 禁止提交 |
 | 任何文件变更后 | `python scripts/governance/run_all.py --depth quick` | 有发现 → 先修再关 |
-| 修改蓝图§5.5自动化触发机制 / 修改代码实现 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint <蓝图路径>` | §5.5状态列与代码不一致 → 禁止关闭任务 |
-| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
-| **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN。depgraph 在 PostgreSQL，连接用 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` | 裸连/读 archive/ 下文件 → 数据过时 |
-| **涉及数据库连接函数**（`get_db_connection` / `get_depgraph_pg_connection`） | MUST 先读 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §11.4 数据库连接函数真源冲突治本。PG 连接用 `get_depgraph_pg_connection`（F1/F4），SQLite 连接用 `get_db_connection`（F2/F3，同名冲突遗留项）。 CapabilityLookup 查 `find("get_db_connection")` 可定位真源 | 误用 SQLite 入口连 PG → `no such table: nodes`；重复造第三个 `get_db_connection` → 违反真源唯一 |
-| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph (PostgreSQL)）。仅 depgraph (PostgreSQL)为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
-| **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
+| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定（仅事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
+| **读取/修改 depgraph** | `extract_depgraph.py --summary`（读取）/ `apply_depgraph.py --batch`（修改）→ 详见 RULE-SIXTEEN | 裸连/读 archive → 数据过时 |
+| **涉及数据库连接函数** | MUST 先读 AGENTS.md §11.4。PG 用 `get_depgraph_pg_connection`（F1/F4），SQLite 用 `get_db_connection`（F2/F3） | 误用入口 → `no such table` |
+| **三方对齐** | ①`diagnose_depgraph.py` ②蓝图 frontmatter↔代码 ③代码头部↔引用 | 任一方过时 → 禁止关闭任务 |
+| **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 禁止关闭任务 |
 | 安全敏感变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 回滚/撤销 | `python scripts/rollback.py preflight` → CLEAN → `rollback.py <cmd>` | preflight FAIL → 禁止回滚 |
-| Agent间协作/多Agent/冲突 | `from zephyr.infra_runtime.a2a_protocol.governance.governance_adapter import GovernanceAdapter; adapter.verify_pair(a, b)` + Skill 路由 a2a → SKILL-DOM-A2A-001 | 静默失败 + 死锁无防护 |
-| 高风险操作（批量/安全） | `from zephyr.governance.escalation_engine import EscalationEngine; EscalationEngine().evaluate(RuleCategory, desc)` | 可能执行本应变 blocked 的操作 |
-| 多Agent/MCP 委托 | `from zephyr.governance.delegation_engine import DelegationEngine; engine.delegate(event, strategy)` | 死锁/循环委托/深度溢出 |
-| LLM API 调用前 | `from zephyr.governance.budget_engine import BudgetEngine; engine.pre_flight_check(operation_id, tokens, cost)` | 超预算 → 降级或拒绝 |
-| 任何写入/执行/修改前 | `guard.check(identity, operation, target_path)` — PermissionGuard | BLOCKED → 禁止执行 |
-| 施工前：检查已有知识 | `kb.search("<关键词>")` | 重复造轮子 / 违反已有决策 |
-| 施工后：写入知识 | `kb.write(topic="...", content="...", provenance=build_provenance(...))` | 知识丢失 → 下个 session 不知道 |
-| **脚本运行慢/卡死** | 执行 PERF-001 十项检查清单 → `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` §9 | 凭直觉改代码 → 治标不治本 → 卡死复现 |
+| 高风险操作（批量/安全） | `EscalationEngine().evaluate(RuleCategory, desc)` | 可能执行应变 blocked 的操作 |
+| 多Agent/MCP 委托 | `DelegationEngine.delegate(event, strategy)` | 死锁/循环委托/深度溢出 |
+| LLM API 调用前 | `BudgetEngine().pre_flight_check(operation_id, tokens, cost)` | 超预算 → 降级或拒绝 |
+| 施工前/后：知识 | `kb.search("<关键词>")` / `kb.write(topic, content, provenance)` | 重复造轮子 / 知识丢失 |
+| **脚本运行慢/卡死** | PERF-001 十项检查清单 → `trae_034_task_card_standard.yaml §9` | 凭直觉改 → 治标不治本 |
 
 ---
 
@@ -1439,35 +415,16 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 进入项目后 MUST 按以下顺序执行（不可跳过、不可重排）：
 
 ```
-STEP 0.5 — Drift 健康检查（冷启动前置，P1-CLD；信息性不阻断，但 issue 须优先修复）:
-  0.5.1 python scripts/governance/d11_compliance/audit_registration.py --full --compact
-        → 若 TOTAL > 0 → 记录 issue（orphan module / zombie ref），后续 session 须优先修复
-  0.5.2 git stash list | Measure-Object -Line
-        → 若 stash 数 > 5 → warning（建议先清理：python scripts/governance/cleanup_stash.py --cleanup）
-  0.5.3 git status --porcelain | Measure-Object -Line
-        → 若 worktree 变更量 > 50 → warning（建议先 commit 或 stash，防并行 session 漂移）
-  0.5.4 python scripts/governance/cleanup_stash.py --check
-        → 若 CRITICAL → warning（stash 堆积已达危险线）
-STEP 1   — 读 docs/registry_of_registries.yaml → 了解全项目注册表
-STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，PostgreSQL 数据库，禁止裸连。详见 RULE-SIXTEEN）
-STEP 1.3 — 确认数据库就绪：4 库清单（INFRA-DB-001~004）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）
-STEP 1.5 — 读 docs/03_modules/_system_master/blueprint.md §0 → 定位子系统任务域
-STEP 2   — 读本文件（project_rules.md）→ 了解硬规则
-STEP 3   — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
-STEP 4   — Phase Manager: 当前施工阶段（46 个门控检查）
-STEP 4.5 — 资产盘点: unified_asset_index.yaml（总资产/健康评分/孤儿率）
-STEP 4.6 — Skill 发现: 查看 data/capability_cards/ 目录（22 个 skill_*.yaml）
-STEP 4.7 — KB 自检: bootstrap 扫描文档 → 填充知识库 → 施工前查已有 KE
-STEP 4.8 — Escalation Protocol 激活: 升级/委托安全网
-STEP 4.9 — Drift Detector 初始化: 全部漂移检测器 + 漂移预算检查
-STEP 4.10 — Agent RBAC 激活: 身份注册 + PermissionGuard + 全部模块完整性
-STEP 4.11 — Rollback System 激活: preflight + AutoTrigger + Kill Switch
-STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
-STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
-STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
-STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py（删除运营态节点后重建，但 build_status/module_lifecycle_state 不从文件头部解析，全用默认值 draft/inactive，导致911个节点手工维护数据丢失）。用 `python scripts/governance/extract_depgraph.py --summary` 替代
-STEP 4.16 — 三方对齐验证: ①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。exit≠0 → 漂移，禁止开工，先修复对齐
+STEP 0.5 — Drift 健康检查（信息性不阻断）: audit_registration.py --full --compact / git stash list >5 warning / git status --porcelain >50 warning
+STEP 1   — 读 docs/registry_of_registries.yaml + docs/03_modules/template_registry.yaml
+STEP 1.2 — 提取 depgraph 摘要：extract_depgraph.py --summary（PostgreSQL，禁止裸连）+ 确认 4 库就绪（infrastructure_registry.yaml）
+STEP 1.5 — 读 docs/03_modules/_system_master/blueprint.md §0
+STEP 2   — 读本文件（project_rules.md）
+STEP 3   — Session Continuity 恢复
+STEP 4   — Phase Manager（46 门控）+ 资产盘点 unified_asset_index.yaml + Skill 发现 data/capability_cards/
+STEP 4.7~4.14 — KB自检/Escalation/Drift Detector/RBAC/Rollback/Budget/Audit Trail/A2A 激活
+STEP 4.15 — DepMap: ⚠️ 禁止 generate_project_depgraph.py（丢失手工数据）。用 extract_depgraph.py --summary
+STEP 4.16 — 三方对齐验证: diagnose_depgraph.py + 蓝图 frontmatter + 代码头部
 STEP 5   — 按需定位具体注册表 → 开工
 ```
 
@@ -1477,28 +434,20 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 ## Session 开关门
 
-**进门**: 读 [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) → 读 `docs/03_modules/_system_master/blueprint.md` §0 → 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 记录 session 起点 commit（R1 防御：`python scripts/record_session_start_commit.py <session_id>`）→ **启动大脑系统**（见 onboarding_detail.md §五 STEP 0.5）
+**进门**: 读 registry_of_registries.yaml → 读 `_system_master/blueprint.md` §0 → 查看 `data/capability_cards/` → 记录 session 起点 commit（`record_session_start_commit.py <session_id>`）→ **启动大脑系统**（见 onboarding_detail.md §五 STEP 0.5）
 
 **关门**（缺一不可）:
 ```
-0. 检查活跃 session（P1-T1 并行 session 协作）:
-   python -c "from zephyr.security.access_control.session_concurrency import SessionRegistry; r=SessionRegistry(); active=r.list_active(); assert len(active)<=1, f'{len(active)} active sessions — 关门前须协调'"
-1. python scripts/lock_files.py release-all <session_id>
-2. python scripts/lock_files.py cleanup
-3. python scripts/lock_files.py status → 确认 CLEAN
-4. sc.generate_and_save(session_id=..., task_repo=...) — 保存状态给下一次 session
-5. python scripts/governance/sync_rule_registry.py — 校验 RULE-* 条目登记
-6. python scripts/governance/auto_sync_all_registries.py --all --warn-only — 全注册表同步
-6.1. python scripts/governance/generate_project_path_tree.py --write — 刷新路径树快照
-6.2. python scripts/governance/generators/generate_path_ownership_map.py --write — 刷新路径归属声明
-6.3. Session-level cleanup: code → `data/cache/` 清空 + 临时文件全删除（RULE-TWELVE）
-7. 零残留扫描: _temp* / _check* / _fix* / _phase_* 前缀文件 → 全部删除
-8. 根目录审计: ls 根目录 → 逐项对照 RULE-FOURTEEN 白名单 → 不在白名单 → **删**
-9. 确认本次 session 产生的所有 .py 文件在合法三目录中
-10. 废墟引用检查: 删过文件/目录 → 确认无其他文件引用已删路径
-11. `python scripts/governance/run_all.py --depth full` — 全量审计扫描
-11.1. POST_DOC_REVIEW 门禁: `python -m zephyr.governance.rule_enforcement.invariants.post_doc_review_check <session_id>` — R1 防御：git-backed 权威列表 + 篡改检测 + 文档内容审查（tampering_detected=true → RED 拒绝关门）
-12. IN_PROGRESS任务检查: `python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); t=r.list_by_status('IN_PROGRESS'); assert len(t)==0, f'{len(t)} IN_PROGRESS tasks remain — 关门前必须关闭或释放'"`
+0. SessionRegistry().list_active() → assert len<=1
+1-3. lock_files.py release-all <session_id> → cleanup → status 确认 CLEAN
+4. sc.generate_and_save(session_id, task_repo)
+5. sync_rule_registry.py
+6. auto_sync_all_registries.py --all --warn-only + generate_project_path_tree.py --write + generate_path_ownership_map.py --write + data/cache/ 清空
+7. 零残留扫描: _temp*/_check*/_fix*/_phase_* → 全部删除
+8. 根目录审计: 对照 RULE-FOURTEEN 白名单 → 不在 → 删
+9-10. .py 文件合法三目录检查 + 废墟引用检查（删过文件/目录 → 确认无引用）
+11. run_all.py --depth full + post_doc_review_check <session_id>（tampering_detected=true → RED 拒绝关门）
+12. TaskRepository().list_by_status('IN_PROGRESS') → assert len==0
 13. 写 Session Log（session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml）
 ```
 
@@ -1506,31 +455,22 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 ## 触发关键词 → Agent Skill 路由
 
+完整 22 个 skill 路由见 `data/capability_cards/`（skill_*.yaml）。常用入口：
+
 | 关键词 | Skill |
 |--------|-------|
 | database / sql / migration | SKILL-DOM-DBS-001 |
 | mcp / server / tool | SKILL-DOM-MCP-001 |
-| context / pipeline | SKILL-DOM-CTX-001 |
-| feedback / loop / 根因 / 追问到底 / 治根 / 诊断反转 / 慢脚本 / 卡死 / PERF-001 | SKILL-DOM-FBL-001 |
+| feedback / 根因 / 慢脚本 / 卡死 / PERF-001 | SKILL-DOM-FBL-001 |
 | gate / rule / policy | SKILL-DOM-GAT-001 |
-| permission / rbac | SKILL-DOM-AGT-001 |
 | blueprint / architecture | SKILL-DOM-BLU-001 |
-| audit / drift / governance | SKILL-DOM-DRF-001 |
-| audit system / 审计系统 / 扫描系统 / 检查问题 / run_all / 全量审计 | SKILL-DOM-AOR-001 |
-| knowledge / KE | SKILL-DOM-KNW-001 |
+| audit / drift / run_all / 全量审计 | SKILL-DOM-DRF-001 / AOR-001 |
 | rollback / undo / checkpoint | SKILL-DOM-RBK-001 |
-| security / lsg / injection / prompt_injection | SKILL-DOM-LSG-001 |
-| vector / embedding / VMS / chromadb | SKILL-DOM-VMS-001 |
-| task / taskcard / task-card | SKILL-DOM-TSK-001 |
-| telemetry / observability / metrics | SKILL-DOM-TEL-001 |
-| dedup / duplicate / monoculture | SKILL-DOM-DED-001 |
-| budget / 预算 / cost limit / token limit | SKILL-DOM-BGT-001 |
-| fix / repair / self-heal / 修复 / 故障 | SKILL-DOM-AFX-001 |
-| a2a / agent-to-agent / 冲突 | SKILL-DOM-A2A-001 |
-| behavioral / safety / 行为审计 | SKILL-DOM-BEH-001 |
+| security / lsg / injection | SKILL-DOM-LSG-001 |
+| task / taskcard | SKILL-DOM-TSK-001 |
+| fix / self-heal / 修复 | SKILL-DOM-AFX-001 |
 
-加载: Read `data/capability_cards/<skill_id>.yaml`
-Python API: 待阶段4搬家后激活（当前用 Read `data/capability_cards/<skill_id>.yaml`）
+加载: Read `data/capability_cards/<skill_id>.yaml`（其余 telemetry/dedup/budget/behavioral/vector/knowledge/permission/context/a2a 见目录）
 
 ---
 
@@ -1539,7 +479,7 @@ Python API: 待阶段4搬家后激活（当前用 Read `data/capability_cards/<s
 ```
 1. 撞门禁 → 读门禁输出 → 按输出说的做
 2. 不知道有什么 → 搜 registry_of_registries.yaml
-3. 不知道怎么做 → 查看 `data/capability_cards/` 目录 → 匹配关键词 → Read 对应 yaml
+3. 不知道怎么做 → 查看 data/capability_cards/ → 匹配关键词 → Read 对应 yaml
 4. 不知道能不能改 → 搜 docs/01_policies_and_standards/
 ```
 
@@ -1549,14 +489,11 @@ Python API: 待阶段4搬家后激活（当前用 Read `data/capability_cards/<s
 
 | 领域 | 标准 | module_id |
 |------|------|-----------|
-| 治理决策 | [trae_024_methodology_diagnosis.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) | PS-STD-011 |
-| 代码构建 | [trae_010_code_naming_organization.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml) | GOV-ENG-001 |
-| 脚本质量 | [quality_standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md) | SCRIPT-QUALITY-001 |
-| AI 压缩工作流标准 | [trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | GOV-DOC-011 |
-| Session 状态机 | [session-state-runbook.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md)（待创建） | OPS-VC-002 |
-| 会话门禁 | [gate-runbook.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-runbook.md)（待创建） | OPS-VC-005 |
-| 事故响应 | [incident-runbook.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-runbook.md)（待创建） | OPS-VC-004 |
-| Vibe Coding 入口 | [vibe_coding/index.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/index.md) | OPS-VC-001 |
-| 模板 | [template_registry.yaml](file:///d:/ZephyrAlpha/docs/03_modules/template_registry.yaml) | REG-TEMPLATE-001 |
+| 治理决策 | `rules/trae_024_methodology_diagnosis.yaml` | PS-STD-011 |
+| 代码构建 | `rules/trae_010_code_naming_organization.yaml` | GOV-ENG-001 |
+| 脚本质量 | `scripts/governance/quality_standard.md` | SCRIPT-QUALITY-001 |
+| AI 压缩工作流 | `rules/trae_030_doc_numbering_metadata.yaml` | GOV-DOC-011 |
+| Session 状态机 / 门禁 / 事故响应 / VC 入口 | `docs/.../operational/vibe_coding/`（session-state-runbook / gate-runbook / incident-runbook / index） | OPS-VC-001~005 |
+| 模板 | `docs/03_modules/template_registry.yaml` | REG-TEMPLATE-001 |
 
 > 详细规则、施工指导、方法论参考 → 见 [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
