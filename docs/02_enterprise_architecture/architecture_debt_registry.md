@@ -1795,17 +1795,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 [✓ FIXED: 2026-07-01 auto_fix_engine/ 下最危险12处全部修复（10文件19处）：9个fixer文件 `Path(os.getcwd())` → `REPO_ROOT`（SSoT真源）；shadow_workspace.py `os.getcwd()` → `str(REPO_ROOT)`（保留 project_root or 模式）。所有文件添加 `from zephyr.shared.io.paths import REPO_ROOT` 导入。py_compile 全部通过。代码库其余~15处 os.getcwd() 分散在其他模块，需后续批量处理]
 
-#### 5.12.6 stale TODO DM-201247条件已满足但未清理（HIGH）
-
-**证据**：
-- [boot_hooks.py:87-88](file:///D:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py#L87) `# TODO DM-201247: 当HealthMonitor分钟级调度就绪后接入`
-- health_monitor.py:160已实现_monitor_loop（DM-201247标注）
-- TODO条件已满足但注释未清理 + AggregateHealth接入未完成
-**病根**：根因1（stale TODO）
-**修复方向**：清理TODO + 完成接入
-
-[✓ FIXED: 2026-07-01 stale TODO DM-201247 已清理（boot_hooks.py:88）；DM-201247 条件已满足（HealthMonitor._monitor_loop 已实现分钟级调度），AggregateHealth 接入责任转移至 AutoRuntimeCore.boot()（持有 LifecycleManager），本初始化阶段不可用]
-
 #### 5.12.7 threading.local连接泄漏（HIGH）
 
 **证据**：
@@ -5272,12 +5261,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：类名为"CredentialRotationTrigger"，但 `scan_and_rotate`（L63）仅用正则扫描敏感文件中的凭据模式，`credentials_rotated` 硬编码为 `0`（L90）——从不执行任何轮换操作。整个系统不存在自动化密钥/凭据轮换机制：HMAC密钥均为静态硬编码，无轮换计划、无密钥版本管理、无key-id路由表。
 - **修复**：实现真正的轮换机制或重命名类为CredentialRotationDetector。
 
-#### 5.62.6 [MEDIUM] LLM网关裸os.getenv读取API密钥——绕过SecretProvider
-
-- **文件**：`src/zephyr/infrastructure/pipeline/llm_gateway.py:190,262`；规范声明于 `shared/security/secrets.py:38`
-- **证据**：secrets.py L38明确规定"任何API key/token/password MUST通过SecretProvider读取"。但llm_gateway.py L190 `api_key = os.getenv(config.api_key_env, "")` 和L262同模式，直接用 `os.getenv` 读取API密钥，绕过 `EnvSecretProvider` 的审计日志与脱敏机制。
-- **修复**：统一通过SecretProvider读取所有密钥。
-
 #### 5.62.7 [LOW] 无密钥派生函数——HMAC密钥为原始静态字符串
 
 - **文件**：全上述B-1/B-3/B-4硬编码密钥
@@ -5501,12 +5484,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.69 部分失败处理（5个，第15轮新增）
-
-#### 5.69.2 [MEDIUM] TaskQueue dispatch handler静默吞掉所有异常无日志
-
-- **文件**：`src/zephyr/trading/auto_runtime_core.py:267-281`
-- **证据**：`except Exception: pass` 完全无日志记录。任务分发失败（DB不可用、PipelineOrchestrator初始化失败、dispatch异常）时，调用者只收到 `False`，无法区分"任务不存在"和"分发过程崩溃"。失败任务既不记录也不进入DLQ，直接丢失。
-- **修复**：添加日志记录，失败任务进入DLQ。
 
 #### 5.69.3 [MEDIUM] WorkOrchestrator.load_dags静默跳过加载失败的DAG
 
