@@ -8,7 +8,7 @@
 ## 第一原则：AI消费优先（TRAE-057）
 
 > **所有产出物 MUST 以 AI可发现、可解析、可执行 为第一优先级。**
-> 格式分工铁律：规则/元数据=YAML，叙事/蓝图=Markdown，代码=十一字段头部。
+> 格式分工铁律：规则/元数据=YAML，叙事/蓝图=Markdown，代码=十五字段头部。
 > 真源：[trae_057_ai_consumer_first.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_057_ai_consumer_first.yaml)
 
 ---
@@ -666,7 +666,7 @@ STEP 3: 复用决策（四选一）
 阶段二：施工
   STEP 5   位置校验     → 按蓝图设计调整文件位置/命名/注册
   STEP 6   修复断链     → 按蓝图设计的依赖关系修复import断链
-  STEP 7   补全头部     → 补全文件头部十字段
+  STEP 7   补全头部     → 补全文件头部十五字段
   STEP 8   运行测试     → pytest运行功能测试
   STEP 9   修复失败     → 修复失败测试直到通过
 
@@ -823,7 +823,7 @@ STEP 3  验证       → 端到端测试确认消费方仍能正常调用
 │   │        ├─ 归属到蓝图（更新 blueprint §4）
 │   │        ├─ 对齐依赖图（⚠️ 架构升级期间禁用 generate_project_depgraph.py，用 extract_depgraph.py）
 │   │        ├─ 对齐路径树（path-tree --write）
-│   │        └─ 对齐代码表头（[BLUEPRINT]/[MODULE] 十一字段）
+│   │        └─ 对齐代码表头（[BLUEPRINT]/[MODULE] 十五字段）
 │   └─ NO  → 走 RULE-THREE 三步审判 → 确认无价值 → 删除
 │
 ├─ 过时蓝图版本？→ 新版本缺失旧版本独有内容？→ 保留/合并，不删
@@ -1321,7 +1321,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | 17 | **跨文件影响检查**——修改前 MUST 检查 `[CONSUMERS]` + Grep 所有引用 | 改一处忘其他，集成断裂 |
 | 18 | **上下文新鲜度**——对话 >30 轮或 AI 出现重复/矛盾 → 开新会话 | 上下文退化，幻觉温床 |
 
-**格式标准**: [trae_047_engineering_file_header.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml)（GOV-ENG-002 文件头部十一字段，原 code-construction-standards.md §7 已迁移）
+**格式标准**: [trae_047_engineering_file_header.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml)（GOV-ENG-002 文件头部十五字段，原 code-construction-standards.md §7 已迁移）
 
 ---
 
@@ -1391,7 +1391,7 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | 2 | Python 写文件统一用原子写入。禁止 `open(path, "w")` 直接写。模板：`tmp=f"{path}.{os.getpid()}.tmp"; open(tmp,"w",encoding="utf-8")→f.write→os.replace(tmp,path)` |
 | 3 | 写完脚本 → 立刻跑 `python <脚本> --warn-only` 自测。挂了自己修，修完再报完成 |
 | 4 | **极简产出**：能用表格不用段落，能用命令不用描述。不写"为什么"和"对标"。每句话必须有信息增量。**优化安全协议见 onboarding_detail.md §10.6** |
-| 5 | **防幻觉头部**——新建/修改代码文件 MUST 包含 `[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[CONSUMERS]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]` 十一字段头部。缺失 = 孤儿文件 |
+| 5 | **防幻觉头部**——新建/修改代码文件 MUST 包含 `[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]` 十五字段头部。缺失 = 孤儿文件 |
 | 6 | **根因追踪（MTH-006）**——遇到 bug/失败/漂移/异常 → MUST 追问到底：连问为什么直到找到最根部原因，**不是固定5个——是问到底**。追问路上发现的每个中间问题 MUST 一并解决，不留尾巴。治根判定：修复后同类问题不再产生 + 作用于设计层面 + 可泛化为原则。禁止只修症状不治根 |
 | 7 | **搜索先行复用决策**——新建功能前 MUST 搜索已有覆盖。搜索三步：①关键词全局搜索 ②注册表精确匹配 ③复用决策。复用四选一：完全覆盖→直接用 / 80%→扩展已有 / 50%→重构+扩展 / 0%→scaffold 新建。放弃新建时 MUST 写 `[REUSE-DECISION]` |
 | 8 | **编码安全**——Python `open(path, 'w')` 禁止省略 `encoding='utf-8'`；PowerShell 写文件用 `[System.IO.File]::WriteAllText($path, $content, [System.Text.Encoding]::UTF8)`；禁止 Trae+Cursor 同时打开同一文件；扫描器大量报错 → 先检查扫描器逻辑 |

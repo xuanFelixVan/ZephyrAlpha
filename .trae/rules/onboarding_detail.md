@@ -397,9 +397,9 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 多 Agent/MCP 委托 | `DelegationEngine.delegate(event, strategy)` 遵循四级约束 | 死锁/循环委托/深度溢出 |
 | LLM API 调用前 | `BudgetEngine().pre_flight_check(operation_id, tokens, cost)` | 超预算 → 降级或拒绝 |
 | 任何写入/执行/修改前 | `PermissionGuard.check(identity, operation, target_path)` | BLOCKED → 禁止；AUTO_GUARD → 先干后验 |
-| **新建/修改代码文件** | 添加防幻觉头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[CONSUMERS]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]` 十一字段 | 缺失 = 孤儿文件 → 禁止关闭任务 |
+| **新建/修改代码文件** | 添加防幻觉头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]` 十五字段 | 缺失 = 孤儿文件 → 禁止关闭任务 |
 | **规格化蓝图** | 先 Layer 1（蓝图+施工图模板 v4.0 合规）→ 后 Layer 2（规格化砍削） | Layer 1 不通过 → 禁止砍削 |
-| **规格化代码文件** | STEP 5.5：检查文件头部十一字段完整性 | 缺失 → 必须补充（规格化的"加"方向） |
+| **规格化代码文件** | STEP 5.5：检查文件头部十五字段完整性 | 缺失 → 必须补充（规格化的"加"方向） |
 | **蓝图-代码双向对齐** | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 代码 `[BLUEPRINT]` 字段互相验证 | 不对齐 → 漂移，禁止关闭任务 |
 | **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph (PostgreSQL)全景图）。仅 depgraph (PostgreSQL)为真源。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` + `python scripts/governance/generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
@@ -712,7 +712,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 ### 12.1 结构追溯层（#1-#6）
 
-已在 L0 + trae_010_code_naming_organization.yaml §7 完整定义。此处补充十一字段总览：
+已在 L0 + trae_010_code_naming_organization.yaml §7 完整定义。此处补充十五字段总览：
 
 | # | 字段 | 必填 | 枚举值/格式 | 对齐 PS-REG-012 |
 |---|------|:---:|-----------|:---:|
@@ -906,7 +906,7 @@ STEP 3: 评估修改对每个消费者的影响 → 无影响 → 继续 / 有�
 | 分析设计 | 4 | 蓝图设计 | 在蓝图里设计依赖关系+启动方式+自动运行+自动结束 |
 | 施工 | 5 | 位置校验 | 按蓝图设计调整文件位置/命名/注册 |
 | 施工 | 6 | 修复断链 | 按蓝图设计的依赖关系修复import断链 |
-| 施工 | 7 | 补全头部 | 补全文件头部十字段 |
+| 施工 | 7 | 补全头部 | 补全文件头部十五字段 |
 | 施工 | 8 | 运行测试 | pytest运行功能测试 |
 | 施工 | 9 | 修复失败 | 修复失败测试直到通过 |
 | 安全验证 | 10 | 红蓝对抗 | 罗列极限测试清单+执行+修复漏洞 |

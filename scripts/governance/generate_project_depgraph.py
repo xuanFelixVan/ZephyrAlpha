@@ -542,18 +542,18 @@ PATH_MAPPINGS = [
     },
 ]
 
-HEADER_FIELDS = [
-    "BLUEPRINT",
-    "MODULE",
-    "INVARIANTS",
-    "MODIFY-GUARD",
-    "CONSUMERS",
-    "STABILITY",
-    "SAFETY",
-    "AI_AUTONOMY",
-    "ERROR_CONTRACT",
-    "TESTS",
-]
+# 真源：trae_047_engineering_file_header.yaml field_specs（SSoT）。
+# 动态读取字段列表，禁止硬编码（消除多真源漂移，对标 create_guard.py）。
+# fail-closed：真源读取失败时 raise（不回退硬编码，否则又造双真源）。
+_TRAE_047_YAML = PROJECT_ROOT / "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
+try:
+    _rule_data = yaml.safe_load(_TRAE_047_YAML.read_text(encoding="utf-8"))
+    HEADER_FIELDS = _rule_data["sections"]["gov_eng_002"]["field_specs"]["a_full"]["required"]
+except Exception as _e:
+    raise RuntimeError(
+        f"字段头部规范真源读取失败（trae_047.yaml field_specs）: {_e}. "
+        f"修复：检查 {_TRAE_047_YAML} 是否存在且 field_specs 结构完整。"
+    ) from _e
 
 
 def _load_panorama_from_db(db_path):

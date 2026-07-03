@@ -926,10 +926,12 @@ git checkout -- scripts/governance/generate_project_path_tree.py
 
 ### 5.18 TC-PG-18：upgrade_headers_to_14fields.py迁移
 
+> **状态更新（2026-07-03）**：脚本已删除（commit 386912d873），14字段升级任务已完成，无需PG迁移。字段规范真源已归一到 trae_047.yaml field_specs，由 create_guard.py commit-time gate 强制（动态读取，--no-verify 绕不过）。
+
 | 字段 | 值 |
 |------|-----|
 | 任务卡ID | TC-PG-18 |
-| 标题 | upgrade_headers_to_14fields.py迁移 |
+| 标题 | upgrade_headers_to_14fields.py迁移（已废止-脚本已删除） |
 | 优先级 | P2 |
 | 安全级别 | M |
 | 依赖 | TC-PG-01完成 |
