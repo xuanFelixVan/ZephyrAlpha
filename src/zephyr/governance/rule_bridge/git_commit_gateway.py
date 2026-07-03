@@ -835,6 +835,12 @@ class GitCommitGateway:
                     status=CommitStatus.NAMING_VIOLATION,
                     message=f"ttl metadata violation (auto-commit): {ttl_detail}",
                 )
+        else:
+            logger.warning(
+                "_commit_auto: TTL-METADATA gate 未注册，跳过 ttl 校验"
+                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+                session_id, len(existing),
+            )
 
         gw_marker = f"[GW:{session_id}:auto]"
         full_message = f"{message}\n\n{gw_marker}"
