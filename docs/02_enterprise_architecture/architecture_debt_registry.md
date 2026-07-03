@@ -930,7 +930,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 28 | gate-dd07-shared-bypass | [.pre-commit-config.yaml:673](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L673) |
 | 29 | gate-21-manifest-drift | [.pre-commit-config.yaml:701](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L701) |
 | 30 | gate-generate-derived | [.pre-commit-config.yaml:736](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L736) |
-| 31 | gate-schema-health | [.pre-commit-config.yaml:757](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L757) |
+| 31 | gate-schema-health | [.pre-commit-config.yaml:757](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L757) <br>✅ 已合并到 GATE-C2（ARCH-017 治本，run_gate_chain 顺序执行；gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 重定向条目 status=deprecated） |
 | 32 | gate-22-load-path-integrity | [.pre-commit-config.yaml:771](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L771) |
 | 33 | gate-c1-ssot-status-enum | [.pre-commit-config.yaml:807](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L807) |
 | 34 | gate-mcp-contract-consistency | [.pre-commit-config.yaml:823](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L823) |
@@ -1005,6 +1005,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 脱管表的schema漂移无法被检测
 **病根**：根因1（静态清单未随DB演进）
 **修复方向**：`_DDL_MAP` 改为从DB元数据动态派生（`SELECT tablename FROM pg_catalog.pg_tables`）
+
+> **[✓ FIXED: ARCH-016/017/018, 2026-06-26 起施工]** schema_health 治本三联：
+> - **ARCH-016**（Schema 健康度治本）：verify_schema_health.py 4 校验实现（DDL 列一致性/只读触发器/Schema 版本/PG 运行时健康），depgraph schema 漂移检测门禁化。
+> - **ARCH-017**（GATE-C2 升级 commit 自动触发）：原独立 gate-schema-health 合并到 GATE-C2（run_gate_chain 顺序执行 check_contract_code_drift + check_contract_physical_path + verify_schema_health），stages 从 manual 升级为 commit；gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 重定向条目（status=deprecated, redirect_to=GATE-C2）。
+> - **ARCH-018**（文档同步）：6 个文档/索引同步 schema_health 门禁可发现性——capability_canonical_file_registry.yaml 新增 schema_health_verification 能力条目；gate_registry.yaml 新增重定向条目；architecture_debt_registry.md 新增本条目+更新 L933；AGENTS.md 补充门禁说明；index.md 修复断链；database/blueprint.md 补充 Schema 变更门禁说明。
+> - **检测真源**：[verify_schema_health.py](file:///D:/ZephyrAlpha/scripts/governance/d11_compliance/verify_schema_health.py)（canonical_override 声明，capability=schema_health_verification）。
+> - **门禁入口**：GATE-C2（.pre-commit-config.yaml commit 阶段，--no-verify 绕不过 GitCommitGateway in-process gate）。
 
 #### 5.4.3 depgraph_schema.py路径列死代码（MEDIUM）
 

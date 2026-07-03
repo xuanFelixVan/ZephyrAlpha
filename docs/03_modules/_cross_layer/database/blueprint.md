@@ -141,6 +141,13 @@ Schema 版本：`MARKET_SCHEMA_VERSION = "1.0.0"`（每次 DDL 变更递增，�
 
 > **P3 PostgreSQL优化方案已归档删除**（2026-06-30）：原P3的4任务中T2/T3裁定删除（伪需求/过度工程），T1 pgvector改造待VMS自然演进，T4监控告警已实现（扩展verify_schema_health.py，实现记录见AGENTS.md §11.2）。P3历史文档已删除，避免Draft状态误导AI实现已裁定的伪需求。
 
+> **depgraph Schema 变更门禁（DDL-as-Code 铁律执行入口，ARCH-016/017/018 治本）**：
+> - **DDL 真源**：[depgraph_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（`_DDL_*` 声明 + `_MIGRATIONS` 版本链，DDL-as-Code 唯一真源，禁止只靠手动建表/改表）。
+> - **门禁**：GATE-SCHEMA-HEALTH 已合并到 **GATE-C2**（run_gate_chain 顺序执行 check_contract_code_drift + check_contract_physical_path + verify_schema_health），`.pre-commit-config.yaml` commit 阶段自动触发（ARCH-017），--no-verify 绕不过 GitCommitGateway in-process gate。
+> - **检测真源**：[verify_schema_health.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/verify_schema_health.py) 4 校验（DDL 列一致性/只读触发器/Schema 版本一致性/PG 运行时健康），capability=schema_health_verification。
+> - **变更协议**：Schema 变更必须先改 `depgraph_schema.py` 的 `_DDL_*` / `_MIGRATIONS` → git commit 备份 → `apply_depgraph.py` 执行迁移 → verify_schema_health.py 校验通过。禁止直连 PG 手动 DDL。
+> - **重定向锚点**：gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 条目（status=deprecated, redirect_to=GATE-C2）供历史引用可追溯。
+
 ### 职责划分
 
 | 子蓝图 | 覆盖内容 | 物理代码 |
