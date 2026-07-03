@@ -688,128 +688,124 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 ## 五、3193个问题详细清单
 
-### 5.1 SSoT真源唯一性违规（211个）
+### 5.1 SSoT真源唯一性违规（原211个，2026-07-04验证：约83个FIXED，约128个STILL_VALID）
 
-#### 5.1.1 词表硬编码（41处 = 15 HIGH + 26 MEDIUM）
+#### 5.1.1 词表硬编码（原41处 = 15 HIGH + 26 MEDIUM，15处FIXED，剩余约22处STILL_VALID含路径漂移）
 
 ##### A. stability_vocabulary.yaml（真源4值：frozen/stable/evolving/volatile）—— 已漂移，最高危
 
 | # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
 |---|---|---|:---:|:---:|
 | 1 | frozenset硬编码STABILITY合法值 | [src/zephyr/autonomy_core/prompt_registry.py:86](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/prompt_registry.py#L86) | 高 | 否 |
-| 2 | frozenset硬编码STABILITY合法值 | [src/zephyr/autonomy_core/skill_registry.py:50](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skill_registry.py#L50) | 高 | 否 |
-| 3 | frozenset硬编码STABILITY合法值 | [src/zephyr/support/prompt_registry.py:85](file:///D:/ZephyrAlpha/src/zephyr/support/prompt_registry.py#L85) | 高 | 否 |
-| 4 | frozenset硬编码FORBIDDEN_STABILITY | [src/zephyr/governance/self_healer.py:94](file:///D:/ZephyrAlpha/src/zephyr/governance/self_healer.py#L94) | 高 | 否 |
-| 5 | frozenset硬编码FORBIDDEN_AUTONOMY | [src/zephyr/governance/self_healer.py:95](file:///D:/ZephyrAlpha/src/zephyr/governance/self_healer.py#L95) | 高 | 否 |
+| 2 | frozenset硬编码STABILITY合法值 | [src/zephyr/autonomy_core/skills/skill_registry.py:50](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skills/skill_registry.py#L50) | 高 | 否 |
 | 6 | frozenset硬编码FORBIDDEN_STABILITY（副本） | [src/zephyr/governance/semantic_audit/self_healer.py:75](file:///D:/ZephyrAlpha/src/zephyr/governance/semantic_audit/self_healer.py#L75) | 高 | 否 |
 | 7 | frozenset硬编码FORBIDDEN_AUTONOMY（副本） | [src/zephyr/governance/semantic_audit/self_healer.py:76](file:///D:/ZephyrAlpha/src/zephyr/governance/semantic_audit/self_healer.py#L76) | 高 | 否 |
 
+> **[✓ FIXED: 2026-07-04]** 原#3 `support/prompt_registry.py`、#4/#5 `governance/self_healer.py` 已删除（文件不存在）。
+> **[路径漂移更新]** 原#2 `autonomy_core/skill_registry.py` → `autonomy_core/skills/skill_registry.py`（skills/子目录迁移）。
 > **漂移详情**：代码硬编码`{experimental,beta,stable,frozen}`，词表真源为`{frozen,stable,evolving,volatile}`——值集合已不一致，AI标注`evolving`被代码拒，改`experimental`被词表拒→随机选→漂移。
 
-##### B. semantic_vocabulary.yaml（真源4值：runtime/data/build/contract）—— 词表明令禁止
+##### B. semantic_vocabulary.yaml（真源4值：runtime/data/build/contract）—— ✅ 全部FIXED
 
-| # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
-|---|---|---|:---:|:---:|
-| 8 | VALID_SEMANTIC_TYPES字面量集合 | [scripts/governance/diagnose_depgraph.py:427](file:///D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py#L427) | 高 | 否 |
-| 9 | VALID_SEMANTIC_TYPES字面量集合（副本） | [scripts/governance/generate_project_depgraph.py:323](file:///D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py#L323) | 高 | 否 |
+> **[✓ FIXED: 2026-07-04]** 2处已改为 `load_vocabulary_values("semantic_vocabulary.yaml")` 动态加载（治本2026-06-30）：
+> - 原#8 `diagnose_depgraph.py:427` → 路径漂移至 `scripts/governance/d5_architecture/diagnose_depgraph.py:443`，已动态加载
+> - 原#9 `generate_project_depgraph.py:323` → 行号漂移至329，已动态加载
 
 ##### C. layer_vocabulary.yaml（真源16值：L00/L01/L10等架构层）
 
 | # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
 |---|---|---|:---:|:---:|
-| 10 | _FOUNDATION_LAYERS frozenset硬编码 | [src/zephyr/integration/ct_pipe_routing.py:65](file:///D:/ZephyrAlpha/src/zephyr/integration/ct_pipe_routing.py#L65) | 高 | 否 |
-| 11 | _FOUNDATION_LAYERS frozenset硬编码 | [src/zephyr/integration/routing_plugins.py:65](file:///D:/ZephyrAlpha/src/zephyr/integration/routing_plugins.py#L65) | 高 | 否 |
-| 12 | _FOUNDATION_LAYERS frozenset硬编码（副本） | [src/zephyr/infrastructure/pipeline/routing_plugins.py:65](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/routing_plugins.py#L65) | 高 | 否 |
-| 13 | _FOUNDATION_LAYERS frozenset硬编码（副本） | [src/zephyr/infrastructure/pipeline/ct_pipe_routing.py:63](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/ct_pipe_routing.py#L63) | 高 | 否 |
+| 12 | _FOUNDATION_LAYERS frozenset硬编码 | [src/zephyr/infrastructure/pipeline/routing_plugins.py:65](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/routing_plugins.py#L65) | 高 | 否 |
+| 13 | _FOUNDATION_LAYERS frozenset硬编码 | [src/zephyr/infrastructure/pipeline/ct_pipe_routing.py:63](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/ct_pipe_routing.py#L63) | 高 | 否 |
 
-##### D. module_lifecycle_status_vocabulary.yaml（真源8值）—— 词表明令禁止
+> **[✓ FIXED: 2026-07-04]** 原#10 `integration/ct_pipe_routing.py`、#11 `integration/routing_plugins.py` 已删除（integration/侧副本清理）。
 
-| # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
-|---|---|---|:---:|:---:|
-| 14 | VALID_MODULE_STATUSES字面量集合 | [scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py:64](file:///D:/ZephyrAlpha/scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py#L64) | 高 | 否 |
+##### D. module_lifecycle_status_vocabulary.yaml（真源8值）—— ✅ FIXED
 
-##### E. contract_status_vocabulary.yaml（真源3值：draft/frozen/deprecated）—— 词表明令禁止
+> **[✓ FIXED: 2026-07-04]** 原#14 已改为 `load_vocabulary_values("module_lifecycle_status_vocabulary.yaml")` 动态加载（治本2026-06-30），行号漂移64→66。
 
-| # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
-|---|---|---|:---:|:---:|
-| 15 | VALID_CONTRACT_STATUSES字面量集合 | [scripts/governance/d5_architecture/validators/validate_interface_contracts.py:62](file:///D:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_interface_contracts.py#L62) | 高 | 否 |
+##### E. contract_status_vocabulary.yaml（真源3值：draft/frozen/deprecated）—— ✅ FIXED
 
-##### F. MEDIUM严重度（26处）—— 无对应SSoT词表的硬编码合法值
+> **[✓ FIXED: 2026-07-04]** 原#15 已改为 `load_vocabulary_values("contract_status_vocabulary.yaml")` 动态加载（治本2026-06-30），行号漂移62→64。
+
+##### F. MEDIUM严重度（原26处，4处FIXED，剩余22处STILL_VALID含路径漂移）—— 无对应SSoT词表的硬编码合法值
 
 | # | 违规类型 | 文件:行号 | 严重度 |
 |---|---|---|:---:|
-| 16-17 | _GATE_IDS硬编码（×2处） | gate校验脚本 | 中 |
-| 18-19 | _VALID_PLATFORMS硬编码（×2处） | 平台校验脚本 | 中 |
-| 20-21 | _VALID_PRIORITIES硬编码（×2处） | 优先级校验 | 中 |
-| 22 | _VALID_PERSISTENCE硬编码 | [src/zephyr/infrastructure/event_sink.py:61](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_sink.py#L61) | 中 |
-| 23 | _VALID_SOURCE硬编码 | [src/zephyr/infrastructure/event_sink.py:62](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_sink.py#L62) | 中 |
-| 24 | _VALID_EXPECTATION硬编码 | [src/zephyr/infrastructure/event_sink.py:63](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_sink.py#L63) | 中 |
-| 25 | _VALID_SEVERITY硬编码 | [src/zephyr/infrastructure/event_sink.py:64](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/event_sink.py#L64) | 中 |
-| 26 | _VALID_PERIODS硬编码 | [src/zephyr/infrastructure/olap_engine.py:81](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/olap_engine.py#L81) | 中 |
-| 27-28 | _PREEMPTIBLE_PRIORITIES硬编码（×2处） | 调度脚本 | 中 |
-| 29-30 | _NO_AUTO_FIX_TYPES硬编码（×2处） | auto_fix脚本 | 中 |
-| 31 | _BLOCKED_LEVELS硬编码 | [src/zephyr/infrastructure/engine_degradation.py:64](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/engine_degradation.py#L64) | 中 |
-| 32-33 | routing M1-M11硬编码（×2处） | routing脚本 | 中 |
-| 34 | _VALID_TAGS硬编码 | [scripts/governance/run_all.py:132](file:///D:/ZephyrAlpha/scripts/governance/run_all.py#L132) | 中 |
+| 16-17 | _GATE_IDS硬编码（×2处） | [src/zephyr/infrastructure/gate_engine_server.py:50](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gate_engine_server.py#L50) + [src/zephyr/integration/mcp/gate_engine_server.py:50](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gate_engine_server.py#L50) | 中 |
+| 18-19 | _VALID_PLATFORMS硬编码（×2处） | [src/zephyr/infrastructure/doc_guard_server.py:51](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/doc_guard_server.py#L51) + [src/zephyr/integration/mcp/doc_guard_server.py:51](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/doc_guard_server.py#L51) | 中 |
+| 20-21 | _VALID_PRIORITIES硬编码（×2处） | [src/zephyr/infrastructure/doc_guard_server.py:52](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/doc_guard_server.py#L52) + [src/zephyr/integration/mcp/doc_guard_server.py:52](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/doc_guard_server.py#L52) | 中 |
+| 22 | _VALID_PERSISTENCE硬编码 | [src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:61](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py#L61) | 中 |
+| 23 | _VALID_SOURCE硬编码 | [src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:62](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py#L62) | 中 |
+| 24 | _VALID_EXPECTATION硬编码 | [src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:63](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py#L63) | 中 |
+| 25 | _VALID_SEVERITY硬编码 | [src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:64](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py#L64) | 中 |
+| 26 | _VALID_PERIODS硬编码 | [src/zephyr/governance/persistence/olap_engine.py:81](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/olap_engine.py#L81) | 中 |
+| 27 | _PREEMPTIBLE_PRIORITIES硬编码 | [src/zephyr/infrastructure/pipeline/preemption_manager.py:57](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/preemption_manager.py#L57) | 中 |
+| 29 | _NO_AUTO_FIX_TYPES硬编码 | [src/zephyr/infrastructure/auto_fix_engine/engine.py:82](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/engine.py#L82) | 中 |
+| 31 | _BLOCKED_LEVELS硬编码 | [src/zephyr/security/access_control/engine_degradation.py:64](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/engine_degradation.py#L64) | 中 |
+| 32-33 | routing M1-M11硬编码（×2处） | [src/zephyr/infrastructure/pipeline/ct_pipe_routing.py:80](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/ct_pipe_routing.py#L80) + [src/zephyr/infrastructure/pipeline/routing_plugins.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/routing_plugins.py) | 中 |
+| 34 | _VALID_TAGS硬编码 | [scripts/governance/run_all.py:133](file:///D:/ZephyrAlpha/scripts/governance/run_all.py#L133) | 中 |
 | 35 | VALID_BELONGS_TO硬编码 | [scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py:81](file:///D:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L81) | 中 |
-| 36-37 | HOT/COLD_COLLECTIONS硬编码（×2处） | 集合配置 | 中 |
-| 38 | finding OPEN状态硬编码 | [src/zephyr/infrastructure/_finding_lifecycle.py:51](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/_finding_lifecycle.py#L51) | 中 |
-| 39 | finding IN_PROGRESS状态硬编码 | [src/zephyr/infrastructure/_finding_lifecycle.py:52](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/_finding_lifecycle.py#L52) | 中 |
-| 40 | finding CLOSED状态硬编码 | [src/zephyr/infrastructure/_finding_lifecycle.py:53](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/_finding_lifecycle.py#L53) | 中 |
-| 41 | finding状态硬编码（副本） | [scripts/governance/fix_broken_post_sync.py:114](file:///D:/ZephyrAlpha/scripts/governance/fix_broken_post_sync.py#L114) | 中 |
+| 36-37 | HOT/COLD_COLLECTIONS硬编码（×2处） | [src/zephyr/integration/vector_memory/collection_schemas.py:42](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_schemas.py#L42) + [src/zephyr/integration/vector_memory/collection_manager.py:55](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_manager.py#L55) | 中 |
 
-#### 5.1.2 文件复制对（159对 = 157 COPY + 2 DRIFTED）
+> **[✓ FIXED: 2026-07-04]** 原#38/#39/#40 `_finding_lifecycle.py` 文件已删除（3处）；原#41 `fix_broken_post_sync.py` 已归档至 `scripts/governance/_archive/one_off/`（不再是活跃代码）。
+> **[部分FIXED]** 原#27-28 `_PREEMPTIBLE_PRIORITIES` 第2处已删除；原#29-30 `_NO_AUTO_FIX_TYPES` 第2处已删除。
+> **[路径漂移更新]** #16-21 gate/doc_guard脚本路径更新；#22-25 event_sink.py → system_telemetry/ai_behavior/；#26 olap_engine.py → governance/persistence/；#31 engine_degradation.py → security/access_control/；#34 run_all.py 行号132→133；#36-37 集合配置路径更新。
+
+#### 5.1.2 文件复制对（原159对，5/7簇已FIXED，剩余2簇STILL_VALID）
 
 分布于7个复制簇，按规模降序：
 
-| # | 复制簇 | 同名文件数 | COPY(≥60%) | DRIFTED(35-59%) | 严重度 | 历史遗留 |
+| # | 复制簇 | 同名文件数 | COPY(≥60%) | DRIFTED(35-59%) | 严重度 | 状态 |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| 1 | `governance/` ↔ `infrastructure/rollback/` | 71 | 65 | 1（result_types.py 53.8%） | 高 | 是 |
-| 2 | `behavioral_audit/` ↔ `governance/drift_detection/` | 51 | 49 | 1（__init__.py 54.7%） | 高 | 是 |
-| 3 | `infrastructure/` ↔ `integration/mcp/` | 19 | 19 | 0 | 高 | 是 |
-| 4 | `infrastructure/pipeline/` ↔ `integration/` | 17 | 17 | 0 | 高 | 是 |
-| 5 | `autonomy_core/` ↔ `parsing/` | 3 | 3 | 0 | 高 | 是 |
-| 6 | `shared/schema/` ↔ `integration/shared/schema/` | 1 | 1 | 0 | 高 | 是 |
-| 7 | `shared/config/` ↔ `infrastructure/config/shared/config/` | 1 | 1 | 0 | 高 | ✅ ARCH-038 已解决（loader.py 退役，双真源删除） |
-| **合计** | **7簇** | **163** | **155** | **2** | | |
+| 1 | `governance/` ↔ `infrastructure/rollback/` | 71 | 65 | 1（result_types.py 53.8%） | 高 | ✅ FIXED（governance/侧副本已删除，rollback/保留54文件为真源） |
+| 2 | `behavioral_audit/` ↔ `governance/drift_detection/` | 51 | 49 | 1（__init__.py 54.7%） | 高 | ✅ FIXED（behavioral_audit/已删除，drift_detection/保留67文件） |
+| 3 | `infrastructure/` ↔ `integration/mcp/` | 19 | 19 | 0 | 高 | ⚠ STILL_VALID（双方均存在gate_engine_server.py/doc_guard_server.py等同名副本） |
+| 4 | `infrastructure/pipeline/` ↔ `integration/` | 17 | 17 | 0 | 高 | ✅ FIXED（integration/侧已清理，仅剩5个无关文件） |
+| 5 | `autonomy_core/` ↔ `parsing/` | 3 | 3 | 0 | 高 | ✅ FIXED（parsing/目录已删除） |
+| 6 | `shared/schema/` ↔ `integration/shared/schema/` | 1 | 1 | 0 | 高 | ⚠ STILL_VALID（双方均存在6个同名.py文件） |
+| 7 | `shared/config/` ↔ `infrastructure/config/shared/config/` | 1 | 1 | 0 | 高 | ✅ FIXED（ARCH-038已解决，loader.py退役） |
 
-> **说明**：159对 = 157清晰复制对（共享度84.8%-99.3%）+ 2漂移对（53.8%、54.7%）。3个DIFFERENT（<35%）已排除。
-> **最大债务**：簇1（governance↔rollback 71同名）和簇2（behavioral_audit↔drift_detection 51同名）贡献114对复制，是历史遗留的最大复制债务。
+> **验证日期**：2026-07-04
+> **已消除**：5簇（簇1/2/4/5/7），代表约114+17+3+1=135个复制对已消除
+> **仍存在**：2簇（簇3 infrastructure↔integration/mcp 19对 + 簇6 shared/schema↔integration/shared/schema 6对 = 25对）
+> **原最大债务**：簇1（governance↔rollback 71同名）和簇2（behavioral_audit↔drift_detection 51同名）贡献114对复制，现已消除。
 
-#### 5.1.3 同步副本（3处）
+#### 5.1.3 同步副本（3处）—— ✅ 全部FIXED（2026-07-04验证）
 
-| # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
-|---|---|---|:---:|:---:|
-| 1 | context rules双版本真源（6规则 vs 15规则，同module_id=MOD-INF-002, doc_type=register） | [config/context_rules.yaml](file:///D:/ZephyrAlpha/config/context_rules.yaml#L1) ↔ [config/context_rules_v1.yaml](file:///D:/ZephyrAlpha/config/context_rules_v1.yaml#L1) | 高 | 是 |
-| 2 | architecture_model同步副本树（已消除：2026-07-01删除target_architecture/） | — | — | 是 |
-| 3 | 三下划线命名的冗余__init__副本 ×2 | [src/zephyr/infrastructure/__init___from_infra.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/__init___from_infra.py#L1) + [src/zephyr/infrastructure/observability/__init___from_infra.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/observability/__init___from_infra.py#L1) | 高 | 是 |
+> **[✓ FIXED: 2026-07-04]** 3处同步副本全部已消除：
+> - #1 `context_rules_v1.yaml` 已删除（仅保留 `context_rules.yaml` 真源）
+> - #2 `target_architecture/` 已于 2026-07-01 删除
+> - #3 两个 `__init___from_infra.py` 文件已删除（Glob全项目无匹配）
 
-#### 5.1.4 重复簇（6簇）
+#### 5.1.4 重复簇（6簇，1簇FIXED，3簇部分FIXED，2簇STILL_VALID）
 
-| # | 重复簇 | 定义位置数 | 真源候选 | 严重度 | 历史遗留 |
+| # | 重复簇 | 定义位置数 | 真源候选 | 严重度 | 状态 |
 |---|---|:---:|---|:---:|:---:|
-| 1 | `atomic_write` | 6处 | [shared/io/file_utils.py:69](file:///D:/ZephyrAlpha/src/zephyr/shared/io/file_utils.py#L69)（真源）+ 5副本 | 中 | 是 |
-| 2 | `load_yaml` | 7处 | [scripts/governance/_shared/yaml_utils.py:53](file:///D:/ZephyrAlpha/scripts/governance/_shared/yaml_utils.py#L53)（真源）+ 6副本 | 中 | 是 |
-| 3 | `load_yaml_config` | ~~2处~~ → 0处 | ~~[shared/config/loader.py:68](file:///D:/ZephyrAlpha/src/zephyr/shared/config/loader.py#L68) + [infrastructure/config/shared/config/loader.py:119](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/shared/config/loader.py#L119)~~ | 中 | ✅ ARCH-038 已解决（loader.py 退役删除，双真源清除） |
-| 4 | `parse_frontmatter` | 4处 | [shared/io/frontmatter_utils.py:38](file:///D:/ZephyrAlpha/src/zephyr/shared/io/frontmatter_utils.py#L38)（真源）+ 3副本——签名已分叉（scripts侧返回`(dict, body)`，src侧返回`dict|None`） | 中 | 是 |
-| 5 | `Priority` Enum | 6处 | asset_inventory/models.py:60 + audit_orchestrator/models.py:48 + audit_trail/models.py:48 + shared/schema/severity_types.py:41 + integration/shared/schema/severity_types.py:46 + governance/models.py:62 | 中 | 是 |
-| 6 | `IntentDomain` Enum | 2处 | [autonomy_core/intent_keyword_mapper.py:299](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/intent_keyword_mapper.py#L299) + [parsing/intent_keyword_mapper.py:297](file:///D:/ZephyrAlpha/src/zephyr/parsing/intent_keyword_mapper.py#L297) | 中 | 是 |
+| 1 | `atomic_write` | 6处 | [shared/io/file_utils.py:83](file:///D:/ZephyrAlpha/src/zephyr/shared/io/file_utils.py#L83)（真源）+ 副本(rollback/forensic.py:363, auto_fix_engine/fix_safety.py:109, scripts/fix_orphan_all.py:144, governance/_shared/file_utils.py:48) | 中 | ⚠ STILL_VALID |
+| 2 | `load_yaml` | ~~7处~~ → 3处活跃 | [scripts/governance/_shared/yaml_utils.py:54](file:///D:/ZephyrAlpha/scripts/governance/_shared/yaml_utils.py#L54)（真源）+ 2活跃副本(arch_guard/_arch_ssot.py:48, d8_doc_sync/sync_yaml_to_depgraph.py:87) | 中 | ⚠ 部分FIXED（4处已归档至_archive/） |
+| 3 | `load_yaml_config` | ~~2处~~ → 0处 | — | 中 | ✅ FIXED（ARCH-038已解决，loader.py退役删除） |
+| 4 | `parse_frontmatter` | 4处 | [shared/io/frontmatter_utils.py:38](file:///D:/ZephyrAlpha/src/zephyr/shared/io/frontmatter_utils.py#L38)（真源）+ 3副本——签名已分叉（scripts侧返回`(dict, body)`，src侧返回`dict|None`） | 中 | ⚠ STILL_VALID |
+| 5 | `Priority` Enum | ~~6处~~ → 4处 | asset_inventory/models.py:60 + audit_trail/models.py:48 + shared/schema/severity_types.py:41 + integration/shared/schema/severity_types.py:44 | 中 | ⚠ 部分FIXED（audit_orchestrator/models.py + governance/models.py已删除） |
+| 6 | `IntentDomain` Enum | ~~2处~~ → 1处 | [governance/persistence/intent_keyword_mapper.py:299](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/intent_keyword_mapper.py#L299)（路径漂移） | 中 | ⚠ 部分FIXED（parsing/侧已删除） |
 
-#### 5.1.5 DB连接函数真源冲突（2处）
+> **[✓ FIXED: 2026-07-04]** 簇3 `load_yaml_config` ARCH-038已解决。
+> **[部分FIXED]** 簇2 `load_yaml` 4处归档；簇5 `Priority` Enum 2处删除；簇6 `IntentDomain` 1处删除+1处路径漂移(autonomy_core/ → governance/persistence/)。
+> **[路径漂移更新]** 簇1 真源行号69→83；簇2 真源行号53→54；簇6 路径漂移。
+
+#### 5.1.5 DB连接函数真源冲突（2处，行号漂移，违规仍存在）
 
 | # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
 |---|---|---|:---:|:---:|
-| 1 | `get_depgraph_pg_connection`同名wrapper委托（真源+wrapper并存） | 真源[src/zephyr/governance/depgraph_schema.py:1170](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L1170) + wrapper[scripts/governance/_shared/constants.py:104](file:///D:/ZephyrAlpha/scripts/governance/_shared/constants.py#L104) | 中 | 否 |
-| 2 | `get_db_connection` deprecated别名（名称冲突，已注释说明） | [src/zephyr/governance/depgraph_schema.py:1210](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L1210) | 中 | 是 |
+| 1 | `get_depgraph_pg_connection`同名wrapper委托（真源+wrapper并存） | 真源[src/zephyr/governance/depgraph_schema.py:1246](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L1246) + wrapper[scripts/governance/_shared/constants.py:104](file:///D:/ZephyrAlpha/scripts/governance/_shared/constants.py#L104) | 中 | 否 |
+| 2 | `get_db_connection` deprecated别名（名称冲突，已注释说明） | [src/zephyr/governance/depgraph_schema.py:1286](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L1286) | 中 | 是 |
 
-#### 5.1.6 F1-F37功能清单双真源
+> **[路径漂移更新: 2026-07-04]** #1 行号1170→1246；#2 行号1210→1286。
 
-| # | 违规类型 | 文件:行号 | 严重度 |
-|---|---|---|:---:|
-| 1 | 37个功能F1-F37硬编码清单（设计与运行时双真源） | [core_function_dependency_design.md:69-96](file:///D:/ZephyrAlpha/docs/_archive/core_function_dependency_design.md#L69)（已移至`_archive/`） | 高 |
-| 2 | 启动波次硬编码F-ID列表 | [core_function_dependency_design.md:556-572](file:///D:/ZephyrAlpha/docs/_archive/core_function_dependency_design.md#L556)（已移至`_archive/`） | 高 |
+#### 5.1.6 F1-F37功能清单双真源 —— ✅ 全部FIXED（2026-07-04验证）
 
-> **说明**：文档自述"设计真源"，depgraph是"运行时全景"——但文中L0-L6分层、F22/F25/F26等硬编码列表与depgraph形成双真源。任何depgraph域迁移都需手工同步本文档，已记录"规划差异"漂移。
+> **[✓ FIXED: 2026-07-04]** 2处双真源已消除：
+> - #1/#2 `core_function_dependency_design.md` 已归档至 `docs/_archive/`，不再是活跃真源。depgraph为唯一运行时全景真源，双真源冲突已消除。
 
 ---
 
