@@ -23,7 +23,11 @@ G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.anomaly import AnomalyResult as AnomalyEvent
+from typing import TYPE_CHECKING
+
+# lazy import to avoid L0→L2 circular dependency (Phase 2 P2 import cycle fix)
+if TYPE_CHECKING:
+    from zephyr.governance.audit_trail.anomaly import AnomalyResult as AnomalyEvent
 
 
 class RollbackHandler:

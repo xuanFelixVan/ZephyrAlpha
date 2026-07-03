@@ -23,8 +23,6 @@ G-CT-004 契约：Rollback → Audit 记录回滚操作.
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.contracts import AuditWriter
-
 
 class RollbackAuditor:
     """回滚后自动记录审计."""
@@ -36,6 +34,9 @@ class RollbackAuditor:
         rollback_target: str,
         session_id: str = "",
     ) -> dict:
+        # lazy import to avoid L0→L2 circular dependency (Phase 2 P2 import cycle fix)
+        from zephyr.governance.audit_trail.contracts import AuditWriter
+
         return AuditWriter.write(
             agent_id=agent_id,
             permission="rollback",

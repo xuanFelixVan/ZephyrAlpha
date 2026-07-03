@@ -31,7 +31,12 @@ try:
     from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType
 
     _HAS_AUDIT_ENTRY = True
-except ImportError:
+except ImportError as e:
+    logger.warning(
+        "verdict_engine: audit_trail import failed, audit features disabled (%s: %s)",
+        type(e).__name__,
+        e,
+    )
     _HAS_AUDIT_ENTRY = False
     AuditEntryV1 = None
     AuditEventType = None
