@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2037 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2107 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-rule_patterns | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] tests.governance.test_rule_patterns
 # [STABILITY] evolving

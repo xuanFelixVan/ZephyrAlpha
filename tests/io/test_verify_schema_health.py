@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1750 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2138 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/verify_schema_health.py | §test
 # [MODULE] tests.test_verify_schema_health
 # [DOMAIN] D_GOVERNANCE

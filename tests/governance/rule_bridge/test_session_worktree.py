@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2040 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2108 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] tests.governance.rule_bridge.test_session_worktree
 # [STABILITY] evolving
