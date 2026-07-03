@@ -2491,11 +2491,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（默认开放+权限自动生成无人工复核）
 - 修复：write:src仅授owner_approved=true且maturity≥L2，auto_generated需人工sign-off
 
-#### 5.17.10 多处裸os.getenv读API key绕过SecretProvider【MEDIUM】 [✓ FIXED: 2026-07-03 5处LLM API key(deepseek_v4_chat/deepseek_chat/llm_gateway×2) + 5处其他密钥(Feishu webhook/SMTP user+password/Database URL/CapabilityPassport key)全部迁移至get_secret_or_default；FILE-COPY去重删除pipeline_routing/deepseek_v4_chat.py停滞副本；§5.34.8 depgraph_schema _load_pg_config()改用get_secret_from_file；补遗新增NO-BARE-GETENV门禁(priority=81)防止债务复发]
-- 证据：[secrets.py:38](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py) 明令"MUST通过SecretProvider读取禁止裸os.getenv"；但 `deepseek_chat.py:123`、`deseek_v4_chat.py:178`、`integration/llm_gateway.py:144-145`、`autonomy_core/llm_gateway.py [⚠ 已删除]:144-145`、`infrastructure/pipeline/llm_gateway.py:152-153` 等6+处直接`os.getenv("DEEPSEEK_API_KEY","")`
-- 病根：根因5（密钥管理SSoT未落地，有规范无执行）
-- 修复：所有LLM gateway改用`await SecretProvider.get_secret(...)`
-
 #### 5.17.11 依赖无上界钉版+无hash校验+requirements与pyproject分裂【MEDIUM】
 - 证据：[requirements.txt:1-9](file:///d:/ZephyrAlpha/requirements.txt) 全`>=`无上界无hash；[pyproject.toml:13-26](file:///d:/ZephyrAlpha/pyproject.toml) 同全`>=`且比requirements多3依赖（duckdb/structlog/pyarrow），SSoT分裂；无`pip --require-hashes`无SBOM锁文件
 - 病根：根因5（依赖治理缺位）
@@ -2510,11 +2505,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 证据：[pyproject.toml:138](file:///d:/ZephyrAlpha/pyproject.toml) `"F821",  # undefined name (TraceContext等系统性问题，需批量修复，后续建卡处理)`；注释自承认存在未定义符号但项目级关闭检查；若安全函数（sanitize_secret/verify_chain）拼错或未导入，运行时静默NameError
 - 病根：根因5（门禁覆盖盲区，lint主动放行已知问题）
 - 修复：修复TraceContext等未定义符号后移除F821 ignore，至少`src/zephyr/security/**`和`governance/**`子目录re-enable
-
-#### 5.17.14 secret_rotation模块存在但未接入SecretProvider【LOW】 [✓ FIXED: 2026-07-03 secrets.py新增configure_secret_rotation注入函数+_check_rotation前置检查，6个读取函数(EnvSecretProvider/DotEnvSecretProvider/get_secret/get_secret_or_default/get_required_secret/get_secret_from_file)均接入轮换告警（warn不阻断）；路径漂移修正ops/→trading/feedback_loop/security/]
-- 证据：[secret_rotation.py:37-47](file:///d:/ZephyrAlpha/src/zephyr/trading/feedback_loop/security/secret_rotation.py) 定义`SecretRotationRecord(rotation_interval_days=90,needs_rotation)`；但[secrets.py](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py)的`EnvSecretProvider`/`DotEnvSecretProvider`无任何轮换集成——get_secret不检查last_rotated不触发轮换不告警过期；`secret_rotation.py:15`标`stability=evolving, safety=L`孤立模块
-- 病根：根因5（安全机制名实分离，有轮换模块不轮换）
-- 修复：SecretProvider.get_secret前置needs_rotation检查
 
 #### 5.17.15 小计
 
@@ -2531,11 +2521,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 审计维度：外键约束/级联规则/约束验证/迁移安全/数据类型一致性/NULL语义/时间戳一致性/唯一性保证/引用完整性/Schema版本管理
 > 审计方法：Grep + Read真实文件取证（sqlite_schema.py、depgraph_schema.py、00_sqlite_actual_schema.sql、02_create_pg_schema.sql等8个核心真源）
-
-#### 5.18.1 PRAGMA foreign_keys在事务内执行无效（no-op）【HIGH】 [✓ FIXED: 2026-07-01 sqlite_schema.py init_db在BEGIN前执行PRAGMA foreign_keys=OFF，迁移后finally恢复ON，使v15/v19/v26/v27的破坏性迁移正确禁用FK]
-- 证据：[sqlite_schema.py:1070](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `conn.execute("BEGIN")` 在事务里执行全部迁移；v15(L641)/v19(L754)/v26(L847)/v27(L893)含`"PRAGMA foreign_keys=OFF"...PRAGMA foreign_keys=ON"`；SQLite硬限制：PRAGMA foreign_keys在事务内是no-op（[SQLite文档](https://sqlite.org/pragma.html#pragma_foreign_keys)）
-- 病根：根因5（规则丰富但执行断层）
-- 修复：在init_db的BEGIN之前执行PRAGMA或改连接级开关
 
 #### 5.18.2 rule_bindings.rule_id类型不匹配的外键（TEXT→INTEGER）【HIGH】
 - 证据：[00_sqlite_actual_schema.sql:337](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (rule_id) REFERENCES nodes(node_id)`，rule_id是`TEXT NOT NULL`(L333)，nodes.node_id是`INTEGER PRIMARY KEY AUTOINCREMENT`(L279)；类型不匹配FK在SQLite宽松模式下不报错但永不生效
@@ -2559,55 +2544,25 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因1（9库→3库合并未完成，跨库引用遗留）
 - 修复：tasks.domain_id列删除，或domains表迁入governance.db，或改PG跨schema FK
 
-#### 5.18.6 task_events v2重建丢失UNIQUE约束和CHECK约束【HIGH】 [✓ FIXED: 2026-07-02 sqlite_schema.py _DDL_TASK_EVENTS_V2 补回 CHECK(14种event_type)+UNIQUE(event_type,task_id,timestamp)；v31 migration 用"建新表→复制→DROP→RENAME"重建模式为已有库补约束（过滤脏 event_type 防止 INSERT 失败），复制后重建 4 索引+1 部分唯一索引]
-- 证据：[sqlite_schema.py:721-735](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) v18 `event_type TEXT NOT NULL CHECK(event_type IN (...14种...))` + `UNIQUE(event_type,task_id,created_at)`；[sqlite_schema.py:257-266](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) v19 `_DDL_TASK_EVENTS_V2` `event_type TEXT NOT NULL`（无CHECK）+ 无任何UNIQUE；v19重建后14种事件类型枚举约束和唯一性约束全部消失
-- 病根：根因1（迁移重建时只搬数据不搬约束）
-- 修复：在v19后补migration加CHECK约束+部分唯一索引
-
-#### 5.18.7 PRAGMA writable_schema直接改sqlite_master（极危险hack）【HIGH】 [✓ FIXED: 2026-07-02 v23/v25/v27 三处 writable_schema hack 已移除（替换为注释说明）。分析发现 _DDL_TASKS 在 v1 创建时已含正确 CHECK 约束（'KBG' namespace + files_in_scope/deliverables LIKE '[%'），LIKE 模式不匹配使原 hack 在全新库上是 no-op。生产库已通过 hack 修改，版本号已登记不会重跑。约束由 _DDL_TASKS 保证。v27 保留 events 表 dangling task_id 清理（安全的数据维护操作，非 hack）]
-- 证据：[sqlite_schema.py:813-815](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py)（v23）、`:834-839`（v25）、`:895-906`（v27）三处用`PRAGMA writable_schema=ON` + `UPDATE sqlite_master SET sql=replace(...)`直接修改表定义字符串；SQLite官方明确警告可导致数据库损坏且不更新内部schema缓存；v25的LIKE模式`'...OPS''))%'`极脆弱
-- 病根：根因5（用hack绕过SQLite不支持ALTER CONSTRAINT的限制）
-- 修复：改用"建新表→复制数据→DROP旧表→RENAME"重建模式
-
-#### 5.18.8 edges表FK无ON DELETE CASCADE靠trigger补救但trigger在replica模式失效【HIGH】 [✓ FIXED: 2026-07-01 PG edges FK 改 ON DELETE CASCADE + 删除 trigger trg_nodes_delete_cleanup_edges。02_create_pg_schema.sql 真源同步更新。replica 模式下孤儿边问题消除]
-- 证据：[00_sqlite_actual_schema.sql:210-211](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `FOREIGN KEY (from_node_id) REFERENCES "nodes"(node_id)` 无CASCADE；`:724-729` 用`trg_nodes_delete_cleanup_edges` trigger补救；但[depgraph_schema.py:1199-1201](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) `get_depgraph_pg_connection(replica=True)` 会`SET session_replication_role='replica'`禁用所有trigger——此时删nodes留孤儿edges；`dependency_path_panorama.md:2041`已承认148条孤儿边
-- 病根：根因1（用trigger模拟CASCADE是反模式，replica模式下失效）
-- 修复：PG中改`REFERENCES nodes(node_id) ON DELETE CASCADE`，删除trigger
-
-#### 5.18.9 nodes/arch_directory_tree/domain_mapping的domain_id无FK到domains【MEDIUM】 [✓ FIXED: 2026-07-01 部分修复：nodes.domain_id + domain_mapping.domain_id 已补 FK 到 domains（PG DDL 执行，0 孤儿）。2026-07-02 补完：arch_directory_tree.domain_id FK 已在 02_create_pg_schema.sql + depgraph_schema.py _DDL_ARCH_DIRECTORY_TREE 中定义（REFERENCES domains(domain_id)）；cleanup_arch_dir_orphans.py 清理脚本已创建（D_GOV_SCRIPTS-META/ARCH→D_GOV_SCRIPTS，空串→NULL），待执行后 FK 即生效]
+#### 5.18.9 nodes/arch_directory_tree/domain_mapping的domain_id无FK到domains【MEDIUM】 [⚠ 部分修复: 2026-07-04 验证声明不实——nodes/domain_mapping已补FK，但02_create_pg_schema.sql:53的arch_directory_tree.domain_id仍无REFERENCES，仅depgraph_schema.py:395补了FK，两真源不一致]
 - 证据：[00_sqlite_actual_schema.sql:278-309](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) nodes表domain_id TEXT无FK；`:57-68` arch_directory_tree.domain_id TEXT无FK；`:161-170` domain_mapping.domain_id TEXT无FK；对比`:71-80` arch_path_mappings有FK(L79)；[02_create_pg_schema.sql:285](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql) arch_path_mappings在PG有FK但nodes(L224-262)仍无FK到domains
 - 病根：根因1（FK定义遗漏，是949孤儿的DDL层根因之一）
 - 修复：为nodes.domain_id、arch_directory_tree.domain_id、domain_mapping.domain_id补FK
 
-#### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】 [✓ FIXED: 2026-07-01 sqlite_schema.py _DDL_TASK_REVIEWS的FK已加ON DELETE CASCADE，与task_files一致]
+#### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:353 FK无ON DELETE CASCADE，原修复声明未落地]
 - 证据：[sqlite_schema.py:342](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `FOREIGN KEY (task_id) REFERENCES tasks(task_id)` 无级联；对比[sqlite_schema.py:202](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) task_files `task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE`；删除task后task_files自动清理但task_reviews留孤儿；v29(L933)才补建task_reviews仍未加CASCADE
 - 病根：根因5（约束应用不一致，同级FK级联规则不统一）
 - 修复：统一所有引用tasks(task_id)的FK加`ON DELETE CASCADE`
 
-#### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】 [✓ FIXED: 2026-07-01 sqlite_schema.py _DDL_FLE_DISPATCH_LOG的event_id FK已加ON DELETE CASCADE]
+#### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:328 event_id FK无ON DELETE CASCADE，原修复声明未落地]
 - 证据：[sqlite_schema.py:317](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `event_id TEXT NOT NULL REFERENCES fle_alerts(event_id)` 无级联；删除fle_alerts记录时被FK阻断（RESTRICT默认）或留孤儿（若PRAGMA foreign_keys=OFF）
 - 病根：根因5（FK级联规则未规范化）
 - 修复：加`ON DELETE CASCADE`，dispatch_log是alert从属记录
-
-#### 5.18.12 depgraph无Python迁移框架（init_db只验证不迁移）【MEDIUM】 [✓ FIXED: 2026-07-02 depgraph_schema.py 新增 apply_pg_schema(version, description) 函数，从 02_create_pg_schema.sql 执行 DDL（幂等 CREATE IF NOT EXISTS），配合 _schema_version 表记录版本。轻量级方案（不依赖 alembic），满足 PG schema 版本化迁移需求]
-- 证据：[depgraph_schema.py:1124-1162](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) `init_db()` 只`SELECT table_name FROM information_schema.tables` 验证存在不执行DDL；`:1085-1121` `_run_migration` 注释"P2迁移后：保留作为参考，init_db中不再调用"；`_MIGRATIONS`列表(L639-1053)有18条历史迁移全部不执行；PG schema变更靠手动跑`02_create_pg_schema.sql`无版本化迁移
-- 病根：根因1（P2迁移后迁移框架被废弃）
-- 修复：引入alembic或恢复`_MIGRATIONS`执行，配合`_schema_version`表
-
-#### 5.18.13 所有迁移forward-only无downgrade/rollback脚本【MEDIUM】 [✓ FIXED: 2026-07-02 depgraph_schema.py 新增 backup_before_migration(backup_path) + restore_from_backup(backup_path) 函数，提供 PG migration 的 downgrade 能力。backup 用 pg_dump（.dump 格式），restore 用 pg_restore。迁移前备份，失败时从备份恢复，替代逐条 downgrade 脚本的复杂方案]
-- 证据：全项目Grep `def downgrade|def rollback_migration|downgrade_migration|backward.*migration|revert_migration` 仅命中3处均与DB schema无关；[sqlite_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `_MIGRATIONS`列表29条全部只有forward DDL无对应downgrade；v19(L755)用`_task_events_v18_backup`临时表是手动backup非系统化rollback
-- 病根：根因5（迁移框架设计不完整，生产事故无法快速回滚）
-- 修复：为每个migration补downgrade脚本或引入alembic up/down双向迁移
 
 #### 5.18.14 gates表在两个DB中结构完全不同（同名异构）【MEDIUM】
 - 证据：depgraph [00_sqlite_actual_schema.sql:225-236](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `gates(gate_id TEXT PK, name, entry, description, files_trigger, always_run, category, status, source, event_driven, auto_start)` 11列只读表（YAML真源）；governance.db [sqlite_schema.py:163-174](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `gates(gate_run_id TEXT PK, gate_id TEXT, passed INTEGER, details, artifact_path, session_id, task_id, created_at)` 7列运行记录；两表同名但列名/语义/PK完全不同，跨库JOIN出错
 - 病根：根因2（同名表多定义）
 - 修复：governance.db的gates改名`gate_runs` [✓ 2026-07-03 治本补全：v15 改名漏改 3 生产文件（gate_engine.py INSERT INTO gates、system_snapshot.py FROM gates、olap_engine.py _table("gates")+gates_fallback）+ 8 测试文件，已全部对齐 gate_runs；auto_runner.py 引用 depgraph gates 表（PG 仍存在）不改；test_f18_redblue.py 引用 depgraph gates（全部 skip）不改]
-
-#### 5.18.15 schema层时间戳DEFAULT不一致（三套格式混用）【LOW】 [✓ FIXED: 2026-07-02 sqlite_schema.py 4处 datetime('now') 统一为 strftime('%Y-%m-%dT%H:%M:%SZ','now')（ISO 8601 UTC）：circuit_breaker_state.created_at/updated_at、fle_metrics.collected_at、fle_alerts.created_at、fle_dispatch_log.dispatched_at]
-- 证据：[sqlite_schema.py:190-191](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) circuit_breaker_state `created_at TEXT NOT NULL DEFAULT (datetime('now'))` SQLite内置UTC无时区；`:112-113` tasks `created_at TEXT NOT NULL` 无DEFAULT应用层填；`:978` migration记录 `datetime.now(UTC).isoformat()` Python UTC带时区；[apply_depgraph.py:1416](file:///d:/ZephyrAlpha/scripts/governance/apply_depgraph.py) domains `datetime.datetime.now().isoformat()` 本地时间无时区（naive）；三种格式混用导致ORDER BY排序错乱、`>`比较失效
-- 病根：根因5（时间戳真源未规范化，5.12.3已记录now_iso()函数漂移但未覆盖schema DEFAULT层）
-- 修复：全DB统一`DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))`，应用层禁止传naive datetime
 
 #### 5.18.16 小计
 
@@ -2938,12 +2893,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 证据：Grep `circular import|avoid.*circular|break.*circular` 命中15行：`intelligence/model_evaluation/__init__.py:23` "Lazy imports to avoid triggering circular import chains"；`trading/resource_optimization.py:26` "circular imports (shared.io / shared.infra depend on models)"；`integration/shared/schema/schemas.py:261` "Deferred import of governance types to break circular dependency deadlock"；`governance/audit_trail/__init__.py:42,44` 两处"lazy import to break circular import with..."；`shared/alert_escalation.py:16,40` "re-homed to eliminate shared->infrastructure circular import"；`shared/io/paths.py:65-66` "DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence" 等
 - 病根：根因1（接口倒置失效+用懒加载贴膏药而非重构依赖方向）
 - 修复：把所有"re-homed"类型集中到shared.contracts子层，arch_guard检测函数级import
-
-#### 5.22.12 跨包同名模块失控（5个auditor.py+4个llm_gateway*.py，含governance/governance/嵌套重复目录）【MEDIUM】 [✓ MOSTLY-FIXED: 2026-07-03 DRY清理：auditor.py 5→2（非重复，功能不同）；llm_gateway 4→1实现+1协议；supply_chain.py 2→1；supply_chain_security.py 2→1；model_discovery.py 2→1；ollama_chat.py 2→1]
-- 证据：Glob `src/zephyr/**/auditor.py` 返回5个：`infrastructure/a2a_protocol/governance/auditor.py`、`governance/governance/auditor.py`（注意governance/governance/嵌套！）、`governance/auditor.py`、`infrastructure/rollback/auditor.py`、`infrastructure/rollback/governance/auditor.py`；Glob `src/zephyr/**/llm_gateway*.py` 返回4个：`shared/contracts/llm_gateway_protocol.py`、`integration/llm_gateway.py`、`autonomy_core/llm_gateway.py [⚠ 已删除]`、`infrastructure/pipeline/llm_gateway.py`；`governance/governance/`包内同名嵌套子包是严重结构异味
-- 病根：根因1（SSoT失效+模块命名空间未规划）
-- 修复：审查governance/governance/是否应合并到governance/，同名模块加领域前缀
-- **修复状态（2026-07-03）**：auditor.py 5→2（infrastructure/rollback/auditor.py=RollbackAuditor, infrastructure/a2a_protocol/governance/auditor.py=AuditWriter，功能不同非重复）；llm_gateway 3实现→1（infrastructure/pipeline/llm_gateway.py，integration/+autonomy_core/已删除）；supply_chain.py 2→1（audit_trail/为规范源，semantic_audit/已删除）；supply_chain_security.py 2→1（audit_trail/为规范源，security_governance/已删除）；model_discovery.py 2→1（model_profiling/为规范源，pipeline_routing/已删除）；ollama_chat.py 2→1（local_model/为规范源，vector_memory/re-export壳已删除）
 
 #### 5.22.13 小计
 
@@ -3298,7 +3247,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：错误处理逻辑错误。
 - **修复**：统一异常类型与消息语义。
 
-#### 5.27.7 [MEDIUM] 文档引用的模块数与实际不符 [✓ FIXED: 文档中硬编码数字已移除]
+#### 5.27.7 [MEDIUM] 文档引用的模块数与实际不符 [⚠ STILL_VALID: 2026-07-04 验证声明不实——.trae/rules/project_rules.md:52和onboarding_detail.md:133仍硬编码"4,639模块"，data/rule_optimization/key_facts.yaml:50,56标注为过时数字]
 
 - **文件**：多处文档
 - **证据**：文档声称"3073模块"，但depgraph查询结果与文档其他处声称的数字不一致
@@ -3865,13 +3814,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：governance.db文件锁竞争导致写入失败；灾备需同时备份PG+SQLite
 - **修复**：governance.db也迁移到PG（作为governance schema）
 
-#### 5.34.8 [MEDIUM] SecretProvider抽象存在但DB密码绕过它直接读文件 [✓ FIXED: 2026-07-03 _load_pg_config()改用get_secret_from_file（新增文件级secret读取函数），支持config/.env.postgres非默认位置密钥文件，优先级os.environ>指定文件>抛异常]
-- **文件**：[secrets.py](file:///D:/ZephyrAlpha/src/zephyr/shared/security/secrets.py#L95) + [depgraph_schema.py](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L92)
-- **证据**：secrets.py定义SecretProvider Protocol、EnvSecretProvider、DotEnvSecretProvider；但depgraph_schema.py直接open(_PG_ENV_PATH)手动解析，未用SecretProvider
-- **问题**：架构层有SecretProvider抽象，但实际DB连接代码绕过它
-- **影响**：AI跟随depgraph_schema.py模式直接读文件，SecretProvider抽象失效
-- **修复**：_load_pg_config()改用await DotEnvSecretProvider().get_secret()
-
 #### 5.34.9 [MEDIUM] .env.example未文档化PG配置
 - **文件**：[.env.example](file:///D:/ZephyrAlpha/.env.example#L30)
 - **证据**：仅注释SQLite路径（已废弃）；无POSTGRES_HOST/PORT/DB/USER/PASSWORD说明；无config/.env.postgres文件位置说明
@@ -4173,63 +4115,63 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **维度定义**：Feature flag系统的实现一致性、默认值策略、生命周期管理。
 > **病根归属**：根因5（特性开关规则存在但未接入）。
 
-#### 5.38.1 [HIGH] 4套特性开关系统碎片化 [✓ FIXED: 2026-07-01 收敛为foundation/flags.py单一实现，删除trading/orchestrator/feature_flag.py死代码副本；audit_orchestration/feature_flag.py已不存在；SkillFeatureFlags为skill级专用保留]
+#### 5.38.1 [HIGH] 4套特性开关系统碎片化 [⚠ STILL_VALID: 2026-07-04 验证声明不实——实际路径为shared/foundation/flags.py(非foundation/flags.py);trading/orchestrator/governance/feature_flag.py和audit_orchestration/feature_flag.py两份重复仍存在，未删除]
 - **文件**：[config/flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml)、[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py)、[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py)、[audit_orchestration/feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py)
 - **证据**：4个独立实现，3种不同API（FlagState枚举/pydantic bool/YAML布尔树），2种FeatureFlag类定义（dataclass vs BaseModel）
 - **问题**：无统一开关真源，行为不一致
 - **影响**：新增开关不知该用哪套；运维需检查4处
 - **修复**：收敛为foundation/flags.py单一实现
 
-#### 5.38.2 [HIGH] global_flag_registry在生产代码中从未使用 [✓ FIXED: 2026-07-01 foundation/flags.py启动时自动load_flags_from_yaml()加载config/flags.yaml到global_flag_registry；已接入auto_bootstrap守护点（zephyr/__init__.py）]
+#### 5.38.2 [HIGH] global_flag_registry在生产代码中从未使用 [⚠ STILL_VALID: 2026-07-04 验证声明不实——load_flags_from_yaml函数在src/zephyr/代码中零命中，__init__.py无global_flag_registry引用，原修复声明未落地]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L168)
 - **证据**：Grep global_flag_registry在src/下仅命中flags.py自身定义和api_index.py注释（非实际import）。生产代码无global_flag_registry.is_enabled()调用
 - **问题**：整个特性开关系统是死代码，定义了但从未接入任何功能路径
 - **影响**：声称有开关系统实际无效；新AI可能误以为可用而依赖它
 - **修复**：要么接入关键功能路径，要么删除避免误导
 
-#### 5.38.3 [HIGH] FeatureFlagManager默认ON违反安全默认原则 [✓ FIXED: 2026-07-01 删除默认ON的FeatureFlagManager（orchestrator版）；foundation/flags.py的FlagRegistry.is_enabled未注册flag返回False（默认OFF）]
+#### 5.38.3 [HIGH] FeatureFlagManager默认ON违反安全默认原则 [⚠ STILL_VALID: 2026-07-04 验证声明不实——FeatureFlagManager未删除(仍存在于两份feature_flag.py)，is_enabled默认return True;FlagRegistry.is_enabled未注册时抛FlagNotFoundError非返回False]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L40)
 - **证据**：def is_enabled(self, contract_id): flag = self._flags.get(contract_id); return flag.enabled if flag else True——未注册的flag默认返回True
 - **问题**：两套系统默认行为相反（foundation/flags.py声明"默认OFF"）；未注册功能默认开启
 - **影响**：新功能无需显式启用即生效，违反灰度发布原则
 - **修复**：统一默认为False（OFF），未注册flag不允许通过
 
-#### 5.38.4 [MEDIUM] config/flags.yaml从未被代码加载 [✓ FIXED: 2026-07-01 新增load_flags_from_yaml()，启动时自动解析config/flags.yaml并注册到global_flag_registry，enabled映射为ALWAYS_ON/ALWAYS_OFF]
+#### 5.38.4 [MEDIUM] config/flags.yaml从未被代码加载 [⚠ STILL_VALID: 2026-07-04 验证声明不实——load_flags_from_yaml函数不存在，flags.yaml从未被代码引用，原修复声明未落地]
 - **文件**：[flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml) + [telemetry_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/telemetry_server.py#L186)
 - **证据**：Grep flags.yaml仅在telemetry_server.py第186行_exists(_CONFIG_DIR / "flags.yaml")命中——仅检查文件是否存在，不解析内容
 - **问题**：flags.yaml是死配置文件，其中所有开关值对运行时无影响
 - **影响**：修改flags.yaml不生效；运维误以为可远程控制遥测开关
 - **修复**：在启动时yaml.safe_load解析flags.yaml并驱动FlagRegistry
 
-#### 5.38.5 [MEDIUM] 灰度发布rollout_pct逻辑有缺陷且未使用 [✓ FIXED: 2026-07-01 修复rollout_pct逻辑——未传module_id时改用random.randint(0,99)随机分桶（原逻辑全量放行）]
+#### 5.38.5 [MEDIUM] 灰度发布rollout_pct逻辑有缺陷且未使用 [⚠ STILL_VALID: 2026-07-04 验证声明不实——shared/foundation/flags.py:108-112仍用md5哈希分桶，未改为random.randint(0,99)]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L108)
 - **证据**：第108行if self.rollout_pct > 0 and module_id:——仅当传入module_id才做百分比分桶；第114行return self.state == FlagState.CONDITIONAL——若rollout_pct>0但未传module_id，直接返回True
 - **问题**：灰度分桶逻辑仅在传module_id时生效，未传时全量放行
 - **影响**：声称支持灰度实际不支持
 - **修复**：修正逻辑（未传module_id时按rollout_pct随机分桶）
 
-#### 5.38.6 [MEDIUM] FeatureFlagManager._audit无持久化 [✓ FIXED: 2026-07-01 FlagRegistry._audit()将register/unregister/set_state变更记录持久化到data/feature_flag_audit.jsonl]
+#### 5.38.6 [MEDIUM] FeatureFlagManager._audit无持久化 [⚠ STILL_VALID: 2026-07-04 验证声明不实——FlagRegistry无_audit方法，FeatureFlagManager._audit仅内存list未写JSONL]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L32)
 - **证据**：self._audit: list[dict] = []——内存列表；set()时append但不持久化
 - **问题**：开关变更审计记录在内存，重启丢失
 - **影响**：无法追溯谁在何时改了开关
 - **修复**：将变更记录写入持久化审计日志
 
-#### 5.38.7 [MEDIUM] 两个FeatureFlag类名冲突定义不同 [✓ FIXED: 2026-07-01 删除orchestrator版FeatureFlag(BaseModel)，仅保留foundation/flags.py的FeatureFlag(dataclass)单一定义]
+#### 5.38.7 [MEDIUM] 两个FeatureFlag类名冲突定义不同 [⚠ STILL_VALID: 2026-07-04 验证声明不实——Grep 'class FeatureFlag' 命中4处定义(trading/orchestrator/governance/feature_flag.py:23、shared/foundation/flags.py:81、audit_orchestration/feature_flag.py:25等)，未收敛]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80) vs [feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/feature_flag.py#L23)
 - **证据**：foundation版：@dataclass(frozen=True) class FeatureFlag: key: str; state: FlagState。orchestrator版：class FeatureFlag(BaseModel): contract_id: str; enabled: bool
 - **问题**：同名FeatureFlag类，不同基类、不同字段、不同语义
 - **影响**：import歧义；类型检查失效
 - **修复**：统一为单一FeatureFlag定义
 
-#### 5.38.8 [MEDIUM] 功能未用flag守护也无if/else硬编码 [✓ FIXED: 2026-07-01 为高风险特性auto_bootstrap monkey-patch添加global_flag_registry.is_enabled("auto_bootstrap")守护点（zephyr/__init__.py），开关关闭即跳过；registry已可用作其他守护点模板]
+#### 5.38.8 [MEDIUM] 功能未用flag守护也无if/else硬编码 [⚠ STILL_VALID: 2026-07-04 验证声明不实——__init__.py:108-136的_deferred_bootstrap无flag守护，直接调用_auto_bootstrap，Grep global_flag_registry在__init__.py零命中]
 - **文件**：全项目
 - **证据**：Grep if ENABLED_|if USE_NEW_|if FEATURE_无匹配；Grep global_flag_registry.is_enabled在src/生产代码无调用
 - **问题**：所有功能默认全开，无任何开关控制点
 - **影响**：实验性功能无法紧急关闭；新功能无法灰度；故障功能无法快速降级
 - **修复**：为高风险/实验性功能增加flag守护点
 
-#### 5.38.9 [LOW] 无flag过期清理机制 [✓ FIXED: 2026-07-01 FeatureFlag增加created_at/expires_at/owner生命周期字段，新增is_expired()方法判断过期]
+#### 5.38.9 [LOW] 无flag过期清理机制 [⚠ STILL_VALID: 2026-07-04 验证声明不实——shared/foundation/flags.py:80-87的FeatureFlag无created_at/expires_at/owner字段，无is_expired方法]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80)
 - **证据**：FeatureFlag dataclass字段：key/state/description/allowed_modules/allowed_agents/rollout_pct。无expires_at/created_at/owner字段
 - **问题**：flag无生命周期管理，永久残留
