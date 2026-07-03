@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SEC_behavioral_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 from __future__ import annotations
 
 # ============================================================================
