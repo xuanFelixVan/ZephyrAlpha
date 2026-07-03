@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.1
 # [MODULE] zephyr.shared.contracts.runtime_types
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.base_config
 # [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -22,7 +22,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.base_config import BASE_CONFIG
 from zephyr.shared.io.paths import REPO_ROOT
 
 DATA_DIR = REPO_ROOT / "data"
