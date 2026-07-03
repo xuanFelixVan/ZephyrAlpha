@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.contracts
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.governance.audit_trail.anomaly
 # [CONSUMERS] rollback包内所有模块
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 定义所有回滚异常类型和接口契约
+# [INVARIANTS] G-CT-002 Rollback 消费端接口契约
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
 G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.
 

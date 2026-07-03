@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.auditor
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.governance.audit_trail.contracts
 # [CONSUMERS] rollback_executor;rollback_verifier;auto_rollback_trigger
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 审计记录不可篡改
+# [INVARIANTS] none
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
 G-CT-004 契约：Rollback → Audit 记录回滚操作.
 

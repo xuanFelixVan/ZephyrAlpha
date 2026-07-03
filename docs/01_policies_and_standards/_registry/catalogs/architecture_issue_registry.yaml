@@ -533,7 +533,21 @@ entries:
     待办：phase_check_registry.py L663/L693断裂import（from rollback.kill_switch
     import KillSwitch，KillSwitch类不存在）是历史遗留问题，不在ARCH-039范围；
     depgraph更新待session_worktree_merge后通过apply_depgraph.py执行。
-  status: decided
+    P1 depgraph 更新已完成（2026-07-04）：19旧节点软废弃（build_status=deprecated）+
+    10新节点创建（node_id 311205-311214，正确domain_id）。
+    P2 已完成（2026-07-04）：
+    (1)修复53个文件 [DOMAIN] frontmatter 造假（51个 D_INFRA_RUNTIME→D_INFRA_RECOVERY +
+    2个空值→D_INFRA_RECOVERY，rollback_scheduler.py + rollback_boot_integration.py）；
+    (2)修复4个文件 [BLUEPRINT] kebab-case 路径漂移（budget_tracker/auditor/contracts/drift_fix，
+    _domain-autonomy_core/rollback-system → _domain_autonomy_core/rollback_system）；
+    (3)修正3个文件 [INVARIANTS] 与代码 stub 状态不匹配（budget_tracker/auditor → none，
+    contracts → G-CT-002 Rollback 消费端接口契约）；
+    (4)path_ownership_map.yaml 一致性修复：continuous_trust.py existence 已实现→已迁移 +
+    删除 result_types.py 幽灵条目（文件不存在）+ 补充 rollback_scheduler.py 和
+    rollback_boot_integration.py 条目；
+    (5)8个 INVARIANTS 复制粘贴造假文件由 P1 通过删除 rollback/ 副本解决
+    （governance/ SSoT 版本 [DOMAIN] D_GOVERNANCE 正确，INVARIANTS none 正确）。
+  status: resolved
   related_rules:
   - TRAE-028
   - TRAE-060

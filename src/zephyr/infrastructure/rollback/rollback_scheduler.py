@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7 Phase 5.3
 # [MODULE] zephyr.infrastructure.rollback.rollback_scheduler
-# [DOMAIN]
+# [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.rollback.startup_shutdown; zephyr.trading.boot_hooks
 # [STARTUP] imported

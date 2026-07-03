@@ -2439,8 +2439,8 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/intelligence_governance'
 
   - path: 'src/zephyr/infrastructure/rollback/contract.py'
     owner_blueprint: 'MOD-INF-021'
@@ -2596,7 +2596,14 @@ ownership:
     existence: '已实现'
     ownership_judgment: ''
 
-  - path: 'src/zephyr/infrastructure/rollback/result_types.py'
+  - path: 'src/zephyr/infrastructure/rollback/rollback_scheduler.py'
+    owner_blueprint: 'MOD-INF-021'
+    claim_type: 'section_0_1'
+    declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
+    existence: '已实现'
+    ownership_judgment: ''
+
+  - path: 'src/zephyr/infrastructure/rollback/rollback_boot_integration.py'
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
