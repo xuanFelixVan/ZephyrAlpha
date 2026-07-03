@@ -5,7 +5,7 @@
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；pre-merge gate 检查（治本 merge 前 gate 漂移，2026-07-04）：session_worktree_merge 在 _pre_merge_auto_clean 后执行 _pre_merge_gate_check，用 git reset --soft merge-base 模拟 staged 状态运行 7 个 worktree-compatible gate（捕获 commit 后到 merge 前主分支更新的 gate 规则），gate 阻断则 return merged=False，gate 异常降级为 warn 不阻断，HEAD 用 git reset --soft orig_head 恢复；reconcile_verify 默认 True（2026-07-04）：merge 后自动触发 17 个 reconciler（_run_reconcilers_after_merge），补齐 post-merge 漂移修复（manifest/path_tree/path_ownership/depgraph_ops 等 auto_commit + warn-only）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -843,10 +843,120 @@ def _run_reconcilers_after_merge(
         return [{"action": "warn", "detail": str(e)}]
 
 
+def _pre_merge_gate_check(
+    root: Path, session_id: str, wt_path: Path
+) -> tuple[bool, list[dict]]:
+    """pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）。
+
+    在 worktree 中用 git reset --soft merge-base 模拟 staged 状态，运行 7 个
+    worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED），检查 session
+    分支相对 merge-base 的变更。检查完毕后恢复 HEAD（git reset --soft orig_head）。
+
+    价值：session_worktree_commit 的 gate 检查在 commit 时执行，但 merge 前主分支
+    可能有新 commit（并发 session）更新了 gate 规则（如新 capability 登记）。pre-merge
+    gate 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移。
+
+    降级策略：gate 基础设施异常降级为 warn（不阻断）——session_worktree 不应因 gate
+    框架自身 bug 卡死业务流程；gate 检出违规则阻断 merge。
+
+    Returns:
+        (passed, violations) —— passed=True 放行 merge，passed=False 阻断。
+    """
+    try:
+        from zephyr.governance.rule_bridge.git_commit_gateway import (
+            GitCommitGateway, _GATEWAY_ENV,
+        )
+        _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
+
+        # 获取 session 分支变更文件列表
+        branch = f"session/{session_id}"
+        mb_r = subprocess.run(
+            ["git", "merge-base", "HEAD", branch],
+            cwd=str(root), capture_output=True, text=True, timeout=10,
+        )
+        if mb_r.returncode != 0:
+            return True, []  # 无法获取 merge-base，降级放行
+        merge_base = mb_r.stdout.strip()
+
+        diff_r = subprocess.run(
+            ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
+            cwd=str(root), capture_output=True, text=True, timeout=10,
+        )
+        if diff_r.returncode != 0 or not diff_r.stdout.strip():
+            return True, []  # 无变更，放行
+
+        rel_files = [f.strip() for f in diff_r.stdout.strip().split("\n") if f.strip()]
+
+        # 保存当前 HEAD（用于恢复）
+        head_r = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(wt_path), capture_output=True, text=True, timeout=10,
+        )
+        if head_r.returncode != 0:
+            return True, []  # 无法获取 HEAD，降级放行
+        orig_head = head_r.stdout.strip()
+
+        # git reset --soft merge-base：模拟 staged 状态（HEAD 移到 merge-base，index 保留 session commit 内容）
+        reset_r = subprocess.run(
+            ["git", "reset", "--soft", merge_base],
+            cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+        )
+        if reset_r.returncode != 0:
+            return True, []  # reset 失败，降级放行
+
+        try:
+            _gw = GitCommitGateway(project_root=root)
+            # monkeypatch _run_git 重定向 cwd 到 worktree（使 git diff --cached 查 worktree index）
+            _orig_run_git = _gw._run_git
+
+            def _wt_run_git(cmd, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+                _env = os.environ.copy()
+                _env[_env_var] = "1"
+                # 阻断 git commit（gate 检查不应触发 commit）
+                if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
+                        and not getattr(_gw, "_in_commit_flow", False)):
+                    return subprocess.CompletedProcess(
+                        cmd, 1, "", "git commit blocked in pre-merge gate check"
+                    )
+                return subprocess.run(
+                    cmd, cwd=_wt, capture_output=True, text=True,
+                    encoding="utf-8", errors="replace", timeout=60, env=_env,
+                )
+
+            _gw._run_git = _wt_run_git
+            try:
+                _changed_abs = [str((root / rf).resolve()) for rf in rel_files]
+                _gate_results = _gw._gate_registry.check_all(
+                    _gw, _changed_abs, session_id=session_id
+                )
+            finally:
+                _gw._run_git = _orig_run_git
+
+            _blocking = [
+                gr for gr in _gate_results
+                if not gr.passed and gr.gate_id not in _WORKTREE_SKIP_GATES
+            ]
+            if _blocking:
+                return False, [
+                    {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
+                ]
+            return True, []
+        finally:
+            # 恢复 HEAD（git reset --soft orig_head：HEAD 移回原 commit，index 不变=干净状态）
+            subprocess.run(
+                ["git", "reset", "--soft", orig_head],
+                cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+            )
+    except Exception as _e:
+        # gate 基础设施异常降级为 warn（不阻断）
+        logger.warning("pre-merge gate 检查异常降级（不阻断）: %s", _e)
+        return True, []
+
+
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
-    reconcile_verify: bool = False,
+    reconcile_verify: bool = True,
 ) -> dict:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
@@ -873,6 +983,23 @@ def session_worktree_merge(
     # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
     # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
     auto_cleaned, skipped_files = _pre_merge_auto_clean(root, session_id)
+
+    # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
+    # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
+    wt_path = manager._wt_path(session_id)
+    gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path)
+    if not gate_passed:
+        _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
+        return {
+            "session_id": session_id,
+            "merged": False,
+            "message": f"pre-merge gate 阻断: {_details}",
+            "cleaned": False,
+            "unregistered": False,
+            "gate_violation": True,
+            "gate_results": gate_violations,
+            "reconcile_results": [],
+        }
 
     merged = False
     cleaned = False
