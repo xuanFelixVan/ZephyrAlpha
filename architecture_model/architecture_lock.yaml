@@ -18,7 +18,7 @@ locked_items:
     category: database_schema
     scope: "SQLite 元数据层 Schema（tasks/events/knowledge/gates/task_files 表结构）"
     locked_files:
-      - "src/zephyr/db/sqlite_schema.py"
+      - "src/zephyr/governance/persistence/sqlite_schema.py"
       - "architecture_model/layers/b_db.yaml"
     locked_decisions:
       - "SQLite WAL 模式 + 单写者架构"

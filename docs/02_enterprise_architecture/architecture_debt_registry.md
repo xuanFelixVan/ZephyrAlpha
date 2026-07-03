@@ -3562,13 +3562,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：灾后恢复时无法判断哪些数据变更需重放
 - **修复**：apply_depgraph.py每次变更写入_data_changes_log表
 
-#### 5.32.9 [MEDIUM] architecture_lock.yaml ARCH-LOCK-001锁定的SQLite schema路径不存在
-- **文件**：[architecture_lock.yaml](file:///D:/ZephyrAlpha/architecture_model/architecture_lock.yaml#L17)
-- **证据**：locked_files: "src/zephyr/db/sqlite_schema.py"——路径不存在；实际文件在src/zephyr/governance/persistence/sqlite_schema.py
-- **问题**：架构锁引用幻影路径；锁定范围仍写"SQLite元数据层"但P2后depgraph已迁PG
-- **影响**：AI试图修改锁定文件时找不到真源；架构锁失效
-- **修复**：修正路径为src/zephyr/governance/persistence/sqlite_schema.py
-
 #### 5.32.10 [LOW] migrate_data.py混淆数据种子与数据迁移，无独立seed脚本
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L42)
 - **证据**：MIGRATION_ORDER列表混合了种子数据（domains/registries等YAML真源只读表）与运营数据
@@ -3591,15 +3584,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **维度定义**：数据库备份、灾难恢复、RTO/RPO定义、单点故障消除。
 > **病根归属**：根因1（静态快照——P2迁移后备份机制未更新）。
-
-#### 5.33.1 [HIGH] depgraph (PostgreSQL)无任何备份脚本（无pg_dump、无cron）
-- **文件**：全项目Grep pg_dump|postgres.*backup返回0匹配
-- **证据**：phase_a_backup.py仅_backup_sqlite_vacuum；backup_runtime_state.py仅备份YAML/JSONL；apply_depgraph.py注释"PG用MVCC事务rollback提供原子性，无需文件备份"
-- **问题**：P2迁移后depgraph（依赖图真源，含3000+节点、5000+边、35个域）无任何备份
-- **影响**：RPO=∞（无备份点）；RTO=∞（无恢复路径）；违反"备份先行"硬约束
-- **修复**：新增scripts/governance/backup_pg_depgraph.sh：pg_dump --format=custom；配置每日执行
-- **ARCH-041 立项决定（2026-07-02）**：采用"inward收拢"原则——重写现有 backup_runtime_state.py 为 PG 版本（新增 `backup_pg_depgraph()` 函数），而非新建独立脚本。触发机制待定（方案A: apply_depgraph.py 成功后事件触发 pg_dump；方案B: 每日 cron 时间触发——备份场景豁免"禁止时间触发"约束，该约束仅针对 reconciler）。与 §5.33.2 合并处理——重写完成后两节同时关闭。
-- **✅ 已解决（2026-07-03）**：`backup_pg_depgraph()` 函数已实现于 [backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L145)。采用方案 A（事件触发）——[apply_depgraph.py](file:///D:/ZephyrAlpha/scripts/governance/apply_depgraph.py#L3452) `if __name__` 块 try/finally 中，检测到写入命令（非 --dry-run）时自动调用。实现细节：psycopg2 查询导出 nodes+edges 表为 JSON（pg_dump 不可用时的 fallback），输出到 `tmp/pg_backups/depgraph_<timestamp>.json`，自动清理旧备份（保留最近 10 个）。测试通过：nodes=5049, edges=5843。治本原则：永久系统全自动（事件触发/自动运行/自动清理），符合 project_memory "禁止时间触发/手动触发" 约束。
 
 #### 5.33.2 [HIGH] backup_runtime_state.py完全过时——仍按SQLite设计，PG迁移后未更新
 - **文件**：[backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L16)
@@ -5284,7 +5268,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.62.5 [HIGH] CredentialRotationTrigger仅检测不轮换——无实际轮换机制
 
-- **文件**：`src/zephyr/governance/credential_rotation_trigger.py:63-94,96-103`
+- **文件**：`src/zephyr/infrastructure/rollback/credential_rotation_trigger.py:63-94,96-103`
 - **证据**：类名为"CredentialRotationTrigger"，但 `scan_and_rotate`（L63）仅用正则扫描敏感文件中的凭据模式，`credentials_rotated` 硬编码为 `0`（L90）——从不执行任何轮换操作。整个系统不存在自动化密钥/凭据轮换机制：HMAC密钥均为静态硬编码，无轮换计划、无密钥版本管理、无key-id路由表。
 - **修复**：实现真正的轮换机制或重命名类为CredentialRotationDetector。
 
@@ -5517,12 +5501,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.69 部分失败处理（5个，第15轮新增）
-
-#### 5.69.1 [HIGH] 治理gate执行异常被静默视为"通过"（fail-open反模式）
-
-- **文件**：`src/zephyr/governance/auto_runner.py:149-159`
-- **证据**：`_execute_gate` 的 `except Exception: return True` — 当gate抛出任何异常（不存在、运行时错误、依赖缺失）时，返回True视为通过。这导致 `_run_gates` 中 `passed_gates += 1`，`failed_gates` 保持为0，最终 `result.success` 返回True。治理门禁完全失效且无任何告警。这是fail-open反模式在安全治理链路中的最严重体现。
-- **修复**：gate异常时返回False或重新抛出。
 
 #### 5.69.2 [MEDIUM] TaskQueue dispatch handler静默吞掉所有异常无日志
 
@@ -8488,7 +8466,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 #### LOW（7个：风格问题）
 
 15. **[LOW]** `src/zephyr/signal_fundamental/pipeline.py:128` — `self._BUILTINS_GUARD_ENABLED: bool = True` 实例属性使用UPPER_CASE常量命名；同时布尔属性缺少`is_`前缀
-16. **[LOW]** `src/zephyr/governance/auto_runner.py:60` — `@property def success(self) -> bool:` 布尔属性缺少`is_`前缀
+16. **[LOW]** `src/zephyr/governance/ops_governance/auto_runner.py:60` — `@property def success(self) -> bool:` 布尔属性缺少`is_`前缀
 17. **[LOW]** `src/zephyr/governance/api_lifecycle.py:48` — `@property def expired(self) -> bool:` 布尔属性缺少`is_`前缀
 18. **[LOW]** `src/zephyr/integration/vector_memory/in_process_vector_memory.py:105` — `@property def started(self) -> bool:` 布尔属性缺少`is_`前缀
 19. **[LOW]** `src/zephyr/trading/verdict_engine.py:51,101,142` — `gate_passed: bool = False` 布尔字段缺少`is_`前缀；同文件第48-49行`is_human`/`is_cross_module`已正确使用前缀，同文件内不一致

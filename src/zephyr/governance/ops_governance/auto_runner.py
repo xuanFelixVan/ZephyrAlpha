@@ -147,16 +147,17 @@ class GovernanceAutoRunner:
         self._result.skipped_gates = self._result.total_gates - executed
 
     def _execute_gate(self, gate_name: str) -> bool:
-        """执行单个 gate check。"""
+        """执行单个 gate check。fail-closed: gate 异常时返回 False（不视为通过）。"""
         try:
             from zephyr.governance.ops_governance.phase_check_registry import run_check
             from zephyr.governance.ops_governance.phase_manager import GateResult
 
             result = run_check(gate_name)
             return result == GateResult.GREEN
-        except Exception:
-            # 如果 gate 不存在或执行失败，视为通过（不阻断自动运行）
-            return True
+        except Exception as e:
+            # fail-closed: gate 不存在或执行失败时，视为未通过（不静默放行）
+            logger.warning("Gate %s execution failed: %s", gate_name, e)
+            return False
 
     def _auto_close(self) -> None:
         """自动关闭: 资源释放 + 临时文件清理 + 审计日志。"""
