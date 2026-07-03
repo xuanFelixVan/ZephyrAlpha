@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.2.0"
 layer: frontend
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,12 +14,12 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/frontend/"
-last_updated: "2026-05-15"
+last_updated: "2026-07-04"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: interface
-summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现。默认实现待施工。"
-tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval]
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现(v2.1.0)；v2.2.0规划5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。"
+tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, backtest-visualization, real-trading-panel]
 priority: P1
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -35,10 +35,28 @@ depends_on:
   - target: MOD-DATABASE
     at: "§10"
     why: "TaskRepository"
+  - target: "MOD-BT-001"
+    at: "§4.1"
+    why: "v2.2.0新增: backtest_results/tick_replay组件消费D_BACKTEST回测结果与Tick回放数据(BacktestResult/CTR-P1-016)"
+  - target: "MOD-L06-001"
+    at: "§4.1"
+    why: "v2.2.0新增: trade_panel/position_monitor组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id='miniqmt')触发实盘下单, MiniQmtBroker.get_positions()展示实盘持仓"
+  - target: "MOD-L00-001"
+    at: "§16.7.1"
+    why: "v2.2.0新增: order_book组件调用D_DATA MiniQmtProvider.get_order_book()展示5档盘口"
 references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l08_human_ai_interface.yaml"
     section: ""
     why: "架构层YAML真源"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_backtest\\blueprint.md"
+    section: "§4.1 / §16.7"
+    why: "BacktestResult(CTR-P1-016) + tick_replay规格, backtest_results/tick_replay组件数据源"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_execution_core\\blueprint.md"
+    section: "§4.1 / §16.7.1"
+    why: "ExecutionEngine.execute_order + MiniQmtBroker.get_positions, trade_panel/position_monitor组件调用接口"
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\blueprint.md"
+    section: "§16.7.1"
+    why: "MiniQmtProvider.get_order_book(5档盘口), order_book组件数据源"
 codification_level: L1
 codification_at: "2026-05-15"
 ---
@@ -48,8 +66,9 @@ codification_at: "2026-05-15"
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 2.1.0 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 2.2.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
+> v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
@@ -58,6 +77,15 @@ codification_at: "2026-05-15"
 ## 概述
 
 本蓝图描述 ZephyrAlpha 人机交互层——它解决了系统与用户之间的标准化交互问题。核心职责包括：监控面板(DashboardBase)、通知分发(NotificationManagerBase)、人工审批(ApprovalGatewayBase)三个 OCP 扩展点，以及 Streamlit Dashboard 5 页面组件。当前规模 3 个 Base 类 + 5 个 Dashboard 组件已实现，DefaultNotificationManager 和 DefaultApprovalGateway 待施工。上游依赖 FLE Fitness Functions 和 TaskRepository，下游被 L04 Risk Management 和 L07 Post-Trade Analytics 消费。
+
+**v2.2.0 新增决策(2026-07-04)**：扩展现有 Streamlit Dashboard，新增 5 个交易/回测组件，支持 joinquant/Qbot 风格仪表盘 + 实盘交易面板：
+1. **backtest_results.py**: 回测结果可视化——净值曲线/回撤/Sharpe/Sortino/MaxDD/IC/IR 图表 + 3阶段决策门控(IS→WFA→OOS)状态展示
+2. **tick_replay.py**: Tick回放可视化——按时间戳逐Tick回放(支持real_time/fast_forward/max_speed)+5档盘口快照+做T场景(30秒/5秒冲高回落)标记
+3. **order_book.py**: 5档盘口实时展示——askPrice[5档]/bidPrice[5档]/askVol[5档]/bidVol[5档]实时刷新+盘口压力可视化
+4. **position_monitor.py**: 实盘持仓监控——实时持仓(可用/冻结/当日买入)+未实现盈亏+T+1锁定提示+账户资金
+5. **trade_panel.py**: 实盘交易面板——下单表单(代码/方向/数量/价格/算法)+订单列表(状态机实时更新)+撤单按钮+风控提示
+
+> **设计原则**: 5个新组件复用 DashboardBase OCP 扩展点, 不引入新的 Base 类, 保持架构一致性。组件采用 fetch+render 分离模式, 数据源(D_BACKTEST/D_EX_CORE/D_DATA)通过依赖注入传入, 不直接 import 业务层模块。
 
 ---
 
@@ -88,6 +116,11 @@ codification_at: "2026-05-15"
 | 5 | dashboard/components/knowledge_overview.py | §3.1 | 知识库概览组件 | 已实现 |
 | 6 | dashboard/components/olap_trend.py | §3.1 | OLAP 趋势组件 | 已实现 |
 | 7 | dashboard/components/task_progress.py | §3.1 | 任务进度组件 | 已实现 |
+| 8 | dashboard/components/backtest_results.py | §16.7.1 | **v2.2.0新增** 回测结果可视化(净值曲线/回撤/Sharpe/IC/IR/3阶段门控) | 待施工 |
+| 9 | dashboard/components/tick_replay.py | §16.7.2 | **v2.2.0新增** Tick回放可视化(逐Tick回放/5档盘口快照/做T场景标记) | 待施工 |
+| 10 | dashboard/components/order_book.py | §16.7.3 | **v2.2.0新增** 5档盘口实时展示(askPrice/bidPrice/askVol/bidVol) | 待施工 |
+| 11 | dashboard/components/position_monitor.py | §16.7.4 | **v2.2.0新增** 实盘持仓监控(可用/冻结/当日买入/未实现盈亏) | 待施工 |
+| 12 | dashboard/components/trade_panel.py | §16.7.5 | **v2.2.0新增** 实盘交易面板(下单表单/订单列表/撤单/风控提示) | 待施工 |
 
 ### §0.2 对齐验证矩阵
 
@@ -105,6 +138,7 @@ codification_at: "2026-05-15"
 | v1.0.0 (基线) | DashboardBase, NotificationManagerBase, ApprovalGatewayBase, DashboardApp, 5 个组件 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.0.0 (模板重构) | 同 v1.0.0 + 结构重组 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.1.0 (回填+禁止施工) | 同 v2.0.0 + 接口契约与代码对齐 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
+| v2.2.0 (交易/回测组件规划) | 同 v2.1.0 | DefaultNotificationManager, DefaultApprovalGateway, 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | 规划5个新组件规格(§16.7.1~§16.7.5), 对接D_BACKTEST/D_EX_CORE/D_DATA, 待施工 |
 
 ---
 
@@ -123,9 +157,16 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 3 | ✅ 包含 | 人工审批标准化 | ApprovalGatewayBase OCP 扩展点可用 |
 | 4 | ✅ 包含 | Streamlit Dashboard | 5 页面可渲染 |
 | 5 | ✅ 包含 | Fitness Functions 展示 | EXT-DASHBOARD-FLE-001 消费 FLE Facade |
-| 6 | ❌ 排除 | 风险计算 | L04 Risk Management |
-| 7 | ❌ 排除 | 归因分析 | L07 Post-Trade Analytics |
-| 8 | ❌ 排除 | 数据采集 | L00 Data Source |
+| 6 | ✅ 包含 | **v2.2.0新增** 回测结果可视化 | backtest_results组件消费D_BACKTEST BacktestResult(CTR-P1-016), 净值曲线/回撤/Sharpe/IC/IR |
+| 7 | ✅ 包含 | **v2.2.0新增** Tick回放可视化 | tick_replay组件消费D_BACKTEST tick_replay引擎, 逐Tick回放+5档盘口快照 |
+| 8 | ✅ 包含 | **v2.2.0新增** 5档盘口实时展示 | order_book组件消费D_DATA MiniQmtProvider.get_order_book() |
+| 9 | ✅ 包含 | **v2.2.0新增** 实盘持仓监控 | position_monitor组件消费D_EX_CORE MiniQmtBroker.get_positions() |
+| 10 | ✅ 包含 | **v2.2.0新增** 实盘交易面板 | trade_panel组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id="miniqmt") |
+| 11 | ❌ 排除 | 风险计算 | L04 Risk Management |
+| 12 | ❌ 排除 | 归因分析 | L07 Post-Trade Analytics |
+| 13 | ❌ 排除 | 数据采集 | L00 Data Source |
+| 14 | ❌ 排除 | 回测执行 | D_BACKTEST 职责, backtest_results仅展示结果 |
+| 15 | ❌ 排除 | 实盘撮合 | D_EX_CORE MiniQmtBroker 职责, trade_panel仅触发下单 |
 
 ### 1.4 运行场景约束
 
@@ -135,6 +176,10 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | Dashboard 组件独立可渲染 | 每个组件 fetch+render 分离 |
 | OLAPEngine 可能不可用 | 门禁统计/OLAP 趋势组件返回空 dataclass |
 | C轨已解除 | 业务代码可施工 |
+| **v2.2.0新增**: 5个新组件依赖D_BACKTEST/D_EX_CORE/D_DATA未施工 | 数据源未就绪时组件返回空dataclass, 待上游施工后填充 |
+| **v2.2.0新增**: 实盘交易面板需风控确认 | trade_panel下单前MUST显示风控提示, human_gated(实盘交易需Owner审批) |
+| **v2.2.0新增**: Tick回放大数据量 | 单标的1年Tick数据可能>1GB, tick_replay组件MUST支持分页加载+虚拟滚动 |
+| **v2.2.0新增**: 5档盘口实时刷新 | order_book组件MUST支持100ms级刷新, 避免Streamlit重渲染卡顿(rerun策略) |
 
 ### 1.5 利益相关者映射
 
@@ -151,6 +196,11 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 通知渠道 | 0 实现 | 3 渠道 | 无 DefaultNotificationManager | P1 |
 | 审批流程 | 0 实现 | 5 流程 | 无 DefaultApprovalGateway | P1 |
 | C轨集成 | active | active | B轨容量升级未完成（C轨占位已解除[ARCH-045 P0]） | P0 |
+| **v2.2.0**: 回测可视化 | 0 | backtest_results组件 | 缺组件, **规格已就绪(§16.7.1), 待施工** | P1 |
+| **v2.2.0**: Tick回放可视化 | 0 | tick_replay组件 | 缺组件, **规格已就绪(§16.7.2), 待施工** | P1 |
+| **v2.2.0**: 5档盘口 | 0 | order_book组件 | 缺组件, **规格已就绪(§16.7.3), 待施工** | P1 |
+| **v2.2.0**: 实盘持仓监控 | 0 | position_monitor组件 | 缺组件, **规格已就绪(§16.7.4), 待施工** | P1 |
+| **v2.2.0**: 实盘交易面板 | 0 | trade_panel组件 | 缺组件, **规格已就绪(§16.7.5), 待施工** | P1 |
 
 ### 1.7 典型场景
 
@@ -159,6 +209,11 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | Dashboard 查看任务进度 | 用户打开 Dashboard | DashboardApp.get_task_progress() → fetch_task_progress(task_repo) → render | TaskProgressData |
 | 风控硬限审批 | L05/L06 触达风控硬限 | ApprovalGatewayBase.submit(request) → 人工查看 → decide(approve/reject) | 审批结果写回 |
 | 告警通知 | 系统异常/SLI越界 | NotificationManagerBase.send(notification, channels) → 多渠道分发 | 通知送达确认 |
+| **v2.2.0**: 查看回测结果 | 用户选择回测任务 | backtest_results.fetch(backtest_result) → render(净值曲线+回撤+Sharpe+3阶段门控) | BacktestResultVisualization |
+| **v2.2.0**: Tick回放分析 | 用户选择历史时段+标的 | tick_replay.fetch(tick_data) → render(逐Tick回放+5档盘口快照+做T标记) | TickReplayVisualization |
+| **v2.2.0**: 查看5档盘口 | 用户输入标的代码 | order_book.fetch(miniqmt_provider.get_order_book) → render(askPrice/bidPrice/askVol/bidVol) | OrderBookVisualization |
+| **v2.2.0**: 查看实盘持仓 | 用户打开持仓页 | position_monitor.fetch(miniqmt_broker.get_positions) → render(持仓+盈亏+T+1提示) | PositionSnapshot |
+| **v2.2.0**: 实盘下单 | 用户填写下单表单+确认 | trade_panel.submit(order) → ExecutionEngine.execute_order(broker_id="miniqmt") → render(订单状态) | Order + Fill |
 
 ---
 
@@ -192,9 +247,14 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 2 | NotificationManagerBase | 通知 OCP 扩展点（send/channels） | — | 同步调用 |
 | 3 | ApprovalGatewayBase | 审批 OCP 扩展点（submit/decide/pending） | — | 同步调用 |
 | 4 | DashboardApp | Streamlit 主应用 | DashboardBase | 组合 |
-| 5 | Dashboard 组件(5 个) | 独立可渲染面板 | DashboardApp | 组合 |
+| 5 | Dashboard 组件(5 个, v2.1.0) | 独立可渲染面板 | DashboardApp | 组合 |
 | 6 | Notification | 通知消息 dataclass | — | 数据传递 |
 | 7 | ApprovalRequest | 审批请求 dataclass | — | 数据传递 |
+| 8 | **backtest_results** (v2.2.0) | 回测结果可视化组件 | D_BACKTEST BacktestResult | fetch+render |
+| 9 | **tick_replay** (v2.2.0) | Tick回放可视化组件 | D_BACKTEST tick_replay引擎 | fetch+render |
+| 10 | **order_book** (v2.2.0) | 5档盘口实时展示组件 | D_DATA MiniQmtProvider | fetch+render |
+| 11 | **position_monitor** (v2.2.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
+| 12 | **trade_panel** (v2.2.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
 
 ### 3.2 数据流
 
@@ -206,6 +266,11 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 4 | OLAPEngine | fetch → render | 用户 | GateStatisticsData / OLAPTrendData |
 | 5 | L04 Risk Management | CTR-P1-008 消费 | Dashboard | RiskDashboardSnapshot |
 | 6 | L07 Post-Trade Analytics | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
+| 7 | **D_BACKTEST BacktestResult** (v2.2.0) | fetch → render | 用户 | BacktestResultVisualization(净值/回撤/Sharpe/IC/IR/3阶段门控) |
+| 8 | **D_BACKTEST tick_replay** (v2.2.0) | fetch → render | 用户 | TickReplayVisualization(逐Tick+5档盘口快照+做T标记) |
+| 9 | **D_DATA MiniQmtProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
+| 10 | **D_EX_CORE MiniQmtBroker** (v2.2.0) | fetch → render | 用户 | PositionSnapshot(持仓/盈亏/T+1提示) |
+| 11 | **D_EX_CORE ExecutionEngine** (v2.2.0) | submit → render | 用户 | Order+Fill(下单+订单状态实时更新) |
 
 ### 3.3 状态生命周期
 
@@ -413,6 +478,9 @@ class FitnessDashboardData(BaseModel):
 | MOD-INF-035 系统大脑 | 可选 | 运维可视化 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
 | MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
+| **MOD-BT-001** (v2.2.0) | 必须 | BacktestResult(CTR-P1-016) + tick_replay引擎 | v1.1.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_backtest\blueprint.md` |
+| **MOD-L06-001** (v2.2.0) | 必须 | ExecutionEngine.execute_order + MiniQmtBroker.get_positions | v2.2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
+| **MOD-L00-001** (v2.2.0) | 必须 | MiniQmtProvider.get_order_book(5档盘口) | v4.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -466,6 +534,9 @@ class FitnessDashboardData(BaseModel):
 | MOD-INF-035 系统大脑 | 运维可视化 | Dashboard 嵌入系统大脑 | Dashboard 可渲染 |
 | MOD-INF-015 系统遥测 | 告警通道 | 通知推送 | 通知可达 |
 | MOD-GATE_ENGINE 门禁引擎 | 人机协同 | CLI 命令交互 | CLI 可执行 |
+| **D_BACKTEST** (v2.2.0) | 数据消费 | backtest_results+tick_replay组件展示回测结果与Tick回放 | 组件可渲染(待上游施工) |
+| **D_EX_CORE** (v2.2.0) | 接口调用 | trade_panel+position_monitor组件调用ExecutionEngine+MiniQmtBroker | 组件可渲染+下单链路通(待上游施工) |
+| **D_DATA** (v2.2.0) | 数据消费 | order_book组件展示5档盘口 | 组件可渲染(待上游施工) |
 
 ### 12.1 域契约锚点
 
@@ -580,6 +651,76 @@ class FitnessDashboardData(BaseModel):
 | AI 自治范围 | ai_modifiable |
 | 检查点 | Dashboard 6 页面可渲染 |
 
+#### 步骤 4：实现 backtest_results 回测结果可视化组件（v2.2.0新增）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §16.7.1 backtest_results规格 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\components\backtest_results.py` |
+| 验收标准 | (a) fetch(backtest_result) 返回 BacktestResultData; (b) render 展示净值曲线/回撤/Sharpe/Sortino/MaxDD/IC/IR; (c) 3阶段门控(IS→WFA→OOS)状态展示; (d) 不直接import D_BACKTEST, 通过依赖注入 |
+| 验证命令 | `python -m pytest tests/frontend/test_backtest_results.py -v` |
+| G7 检查项 | (1) fetch+render分离? (2) 不直接import业务层? (3) BacktestResult字段全填充(CTR-P1-016)? |
+| AI 自治范围 | ai_modifiable |
+| 检查点 | backtest_results.py 存在且非空 + Mock BacktestResult测试通过 |
+
+**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.1）
+
+#### 步骤 5：实现 tick_replay Tick回放可视化组件（v2.2.0新增）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §16.7.2 tick_replay规格 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\components\tick_replay.py` |
+| 验收标准 | (a) fetch(tick_data) 返回 TickReplayData; (b) render 支持real_time/fast_forward/max_speed三种回放速度; (c) 5档盘口快照展示; (d) 做T场景(30秒/5秒冲高回落)标记; (e) 分页加载+虚拟滚动(避免大数据卡顿) |
+| 验证命令 | `python -m pytest tests/frontend/test_tick_replay.py -v` |
+| G7 检查项 | (1) 大数据量分页? (2) 5档盘口正确展示? (3) 回放速度可控? (4) 做T标记准确? |
+| AI 自治范围 | ai_modifiable |
+| 检查点 | tick_replay.py 存在且非空 + Mock Tick数据测试通过 |
+
+**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.2）
+
+#### 步骤 6：实现 order_book 5档盘口展示组件（v2.2.0新增）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §16.7.3 order_book规格 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\components\order_book.py` |
+| 验收标准 | (a) fetch(miniqmt_provider) 返回 OrderBookData; (b) render 展示askPrice[5档]/bidPrice[5档]/askVol[5档]/bidVol[5档]; (c) 100ms级刷新(rerun策略优化); (d) 盘口压力可视化(买卖力量对比) |
+| 验证命令 | `python -m pytest tests/frontend/test_order_book.py -v` |
+| G7 检查项 | (1) 刷新无卡顿? (2) 5档数据完整? (3) 盘口压力可视化正确? |
+| AI 自治范围 | ai_modifiable |
+| 检查点 | order_book.py 存在且非空 + Mock 5档数据测试通过 |
+
+**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.3）
+
+#### 步骤 7：实现 position_monitor 实盘持仓监控组件（v2.2.0新增）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §16.7.4 position_monitor规格 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\components\position_monitor.py` |
+| 验收标准 | (a) fetch(miniqmt_broker) 返回 PositionMonitorData; (b) render 展示持仓(可用/冻结/当日买入)+未实现盈亏+T+1锁定提示+账户资金; (c) T+1当日买入股票标记不可卖 |
+| 验证命令 | `python -m pytest tests/frontend/test_position_monitor.py -v` |
+| G7 检查项 | (1) T+1标记正确? (2) 盈亏计算正确? (3) 持仓数据完整? |
+| AI 自治范围 | ai_modifiable |
+| 检查点 | position_monitor.py 存在且非空 + Mock PositionSnapshot测试通过 |
+
+**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.4）
+
+#### 步骤 8：实现 trade_panel 实盘交易面板组件（v2.2.0新增）
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §16.7.5 trade_panel规格 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\components\trade_panel.py` |
+| 验收标准 | (a) 下单表单(代码/方向/数量/价格/算法TWAP/VWAP/MARKET); (b) 提交前显示风控提示+二次确认; (c) 订单列表实时更新状态机(PENDING→SUBMITTED→ACCEPTED→FILLED); (d) 撤单按钮(cancel_order); (e) 调用ExecutionEngine.execute_order(broker_id="miniqmt") |
+| 验证命令 | `python -m pytest tests/frontend/test_trade_panel.py -v` |
+| G7 检查项 | (1) 风控提示强制显示? (2) 二次确认? (3) 订单状态实时更新? (4) 撤单链路通? (5) human_gated(实盘交易需Owner审批)? |
+| AI 自治范围 | human_gated——实盘交易面板接入需Owner审批 |
+| 检查点 | trade_panel.py 存在且非空 + Mock ExecutionEngine测试通过 + 小资金实盘验证(100股) |
+
+**状态**：待施工（v2.2.0规划，规格已就绪于§16.7.5）
+
 ### 16.4 回滚方案
 
 | 步骤 | 如果出问题 | 回滚操作 |
@@ -587,6 +728,11 @@ class FitnessDashboardData(BaseModel):
 | 1 | DefaultNotificationManager 实现失败 | 还原 implementations/ |
 | 2 | DefaultApprovalGateway 实现失败 | 还原 implementations/ |
 | 3 | Dashboard 页面接入失败 | 还原 dashboard/app.py |
+| 4 (v2.2.0) | backtest_results 组件实现失败 | 删除 backtest_results.py, 还原 app.py 路由 |
+| 5 (v2.2.0) | tick_replay 组件实现失败(大数据卡顿) | 删除 tick_replay.py, 还原 app.py 路由 |
+| 6 (v2.2.0) | order_book 组件实现失败(刷新卡顿) | 删除 order_book.py, 还原 app.py 路由 |
+| 7 (v2.2.0) | position_monitor 组件实现失败 | 删除 position_monitor.py, 还原 app.py 路由 |
+| 8 (v2.2.0) | trade_panel 组件实现失败(实盘风险) | 删除 trade_panel.py, 还原 app.py 路由, 立即停止实盘交易 |
 
 ### 16.5 施工完成与生产就绪标准
 
@@ -612,6 +758,326 @@ class FitnessDashboardData(BaseModel):
 | # | 规格名称 | 类型 | 规格内容 | 对应代码 |
 |---|---------|------|---------|---------|
 | 1 | DashboardApp 页面路由 | 算法 | page_name → fetch_{page}() → render_{page}() | dashboard/app.py |
+| 2 | **backtest_results规格** (v2.2.0) | 协议 | fetch(BacktestResult)→BacktestResultData; render: 净值曲线+回撤+Sharpe+Sortino+MaxDD+IC+IR+3阶段门控(IS→WFA→OOS) — 见§16.7.1 | backtest_results.py(待施工) |
+| 3 | **tick_replay规格** (v2.2.0) | 协议 | fetch(TickData)→TickReplayData; render: 逐Tick回放(real_time/fast_forward/max_speed)+5档盘口快照+做T标记 — 见§16.7.2 | tick_replay.py(待施工) |
+| 4 | **order_book规格** (v2.2.0) | 协议 | fetch(MiniQmtProvider.get_order_book)→OrderBookData; render: 5档askPrice/bidPrice/askVol/bidVol+盘口压力 — 见§16.7.3 | order_book.py(待施工) |
+| 5 | **position_monitor规格** (v2.2.0) | 协议 | fetch(MiniQmtBroker.get_positions)→PositionMonitorData; render: 持仓+盈亏+T+1提示+账户资金 — 见§16.7.4 | position_monitor.py(待施工) |
+| 6 | **trade_panel规格** (v2.2.0) | 协议 | submit(Order)→ExecutionEngine.execute_order(broker_id="miniqmt"); render: 下单表单+订单状态机+撤单+风控提示 — 见§16.7.5 | trade_panel.py(待施工) |
+
+### §16.7.1 backtest_results 回测结果可视化组件规格（v2.2.0新增）
+
+> **真源声明**：本规格是 backtest_results 组件的唯一真源。
+
+#### A. 组件元数据
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| 组件名 | backtest_results | Streamlit 页面组件 |
+| 数据源 | D_BACKTEST BacktestResult(CTR-P1-016) | 通过依赖注入传入, 禁止直接import D_BACKTEST |
+| 页面路由 | /backtest-results | DashboardApp 路由 |
+| 渲染依赖 | plotly(图表) + streamlit | 净值曲线/回撤用plotly, 表格用streamlit |
+
+#### B. BacktestResultData 数据模型
+
+```python
+class BacktestResultData(BaseModel):
+    """回测结果可视化数据模型"""
+    backtest_id: str = Field(..., description="回测任务ID")
+    net_value_curve: list[float] = Field(..., description="净值曲线序列")
+    drawdown_curve: list[float] = Field(..., description="回撤曲线序列(负数)")
+    timestamps: list[str] = Field(..., description="时间戳序列")
+    metrics: BacktestMetrics = Field(..., description="绩效指标")
+    gate_status: GateStatus = Field(..., description="3阶段门控状态")
+
+class BacktestMetrics(BaseModel):
+    sharpe: float = Field(..., description="Sharpe比率(已修正)")
+    sortino: float = Field(..., description="Sortino比率")
+    max_drawdown: float = Field(..., description="最大回撤")
+    ic: float = Field(..., description="信息系数")
+    ir: float = Field(..., description="信息比率")
+    win_rate: float = Field(..., description="胜率")
+    annual_return: float = Field(..., description="年化收益率")
+
+class GateStatus(BaseModel):
+    is_passed: bool = Field(..., description="IS(样本内)阶段是否通过")
+    wfa_passed: bool = Field(..., description="WFA(Walk-Forward)阶段是否通过")
+    oos_passed: bool = Field(..., description="OOS(样本外)阶段是否通过")
+```
+
+#### C. fetch + render 接口
+
+```python
+def fetch_backtest_results(backtest_result: BacktestResult) -> BacktestResultData:
+    """从D_BACKTEST BacktestResult提取可视化数据. 
+    输入: BacktestResult(CTR-P1-016, 11个必填字段全填充)
+    输出: BacktestResultData(净值/回撤/指标/门控状态)
+    """
+    ...
+
+def render_backtest_results(data: BacktestResultData) -> None:
+    """Streamlit渲染. 
+    布局: 
+      - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
+      - 中部: 净值曲线+回撤曲线(plotly双轴图)
+      - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
+    """
+    ...
+```
+
+### §16.7.2 tick_replay Tick回放可视化组件规格（v2.2.0新增）
+
+> **真源声明**：本规格是 tick_replay 组件的唯一真源。
+
+#### A. 组件元数据
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| 组件名 | tick_replay | Streamlit 页面组件 |
+| 数据源 | D_BACKTEST tick_replay引擎 | TickReplayEngine.replay() 产出的Tick序列 |
+| 页面路由 | /tick-replay | DashboardApp 路由 |
+| 渲染依赖 | plotly + streamlit | Tick图+5档盘口+做T标记 |
+
+#### B. TickReplayData 数据模型
+
+```python
+class TickReplayData(BaseModel):
+    """Tick回放可视化数据模型"""
+    symbol: str = Field(..., description="标的代码")
+    ticks: list[TickSnapshot] = Field(..., description="Tick序列(分页加载)")
+    replay_speed: ReplaySpeed = Field(..., description="回放速度")
+    t_scenario_marks: list[TScenarioMark] = Field(default=[], description="做T场景标记")
+
+class TickSnapshot(BaseModel):
+    timestamp: str
+    last_price: float
+    ask_price: list[float] = Field(..., description="5档卖价")
+    bid_price: list[float] = Field(..., description="5档买价")
+    ask_vol: list[int] = Field(..., description="5档卖量")
+    bid_vol: list[int] = Field(..., description="5档买量")
+    volume: int
+    amount: float
+
+class ReplaySpeed(str, Enum):
+    REAL_TIME = "real_time"       # 实时(1x)
+    FAST_FORWARD = "fast_forward" # 快进(10x)
+    MAX_SPEED = "max_speed"       # 最大(无延迟)
+
+class TScenarioMark(BaseModel):
+    """做T场景标记(30秒冲高回落/5秒级)"""
+    timestamp: str
+    scenario_type: str  # "30s_spike_drop" / "5s_spike"
+    description: str
+```
+
+#### C. fetch + render 接口
+
+```python
+def fetch_tick_replay(tick_data: list, symbol: str, 
+                     page: int = 1, page_size: int = 1000) -> TickReplayData:
+    """从D_BACKTEST tick_replay引擎获取Tick数据. 
+    分页加载: 单页1000 Tick, 避免大数据卡顿.
+    做T场景识别: 自动标记30秒冲高回落/5秒级快照.
+    """
+    ...
+
+def render_tick_replay(data: TickReplayData) -> None:
+    """Streamlit渲染. 
+    布局:
+      - 顶部: 控制栏(回放速度选择/上一页/下一页/跳转时间)
+      - 中部: Tick价格图+成交量(plotly, 支持zoom)
+      - 中下: 5档盘口快照(实时更新, ask红/bid绿)
+      - 底部: 做T场景标记(垂直线+标注)
+    虚拟滚动: 仅渲染可见区域Tick, 避免万级Tick卡顿.
+    """
+    ...
+```
+
+### §16.7.3 order_book 5档盘口展示组件规格（v2.2.0新增）
+
+> **真源声明**：本规格是 order_book 组件的唯一真源。
+
+#### A. 组件元数据
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| 组件名 | order_book | Streamlit 页面组件 |
+| 数据源 | D_DATA MiniQmtProvider.get_order_book() | 5档盘口实时数据 |
+| 页面路由 | /order-book | DashboardApp 路由 |
+| 刷新策略 | 100ms rerun | streamlit.rerun() + fragment优化 |
+
+#### B. OrderBookData 数据模型
+
+```python
+class OrderBookData(BaseModel):
+    """5档盘口数据模型"""
+    symbol: str
+    timestamp: str
+    ask_price: list[float] = Field(..., description="5档卖价[ask1~ask5]")
+    bid_price: list[float] = Field(..., description="5档买价[bid1~bid5]")
+    ask_vol: list[int] = Field(..., description="5档卖量[askVol1~askVol5]")
+    bid_vol: list[int] = Field(..., description="5档买量[bidVol1~bidVol5]")
+    pressure_ratio: float = Field(..., description="盘口压力比=bid_vol_total/ask_vol_total")
+```
+
+#### C. fetch + render 接口
+
+```python
+def fetch_order_book(miniqmt_provider, symbol: str) -> OrderBookData:
+    """从D_DATA MiniQmtProvider获取5档盘口. 
+    输入: MiniQmtProvider实例(依赖注入), 标的代码
+    输出: OrderBookData(5档ask/bid price/vol + 压力比)
+    """
+    ...
+
+def render_order_book(data: OrderBookData) -> None:
+    """Streamlit渲染. 
+    布局:
+      - 左侧: 5档卖盘(红色, 价格降序ask5→ask1)
+      - 中间: 最新价+压力比仪表盘
+      - 右侧: 5档买盘(绿色, 价格降序bid1→bid5)
+    刷新: streamlit.fragment + 100ms rerun, 避免全页重渲染.
+    """
+    ...
+```
+
+### §16.7.4 position_monitor 实盘持仓监控组件规格（v2.2.0新增）
+
+> **真源声明**：本规格是 position_monitor 组件的唯一真源。
+
+#### A. 组件元数据
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| 组件名 | position_monitor | Streamlit 页面组件 |
+| 数据源 | D_EX_CORE MiniQmtBroker.get_positions() | 实盘持仓快照 |
+| 页面路由 | /position-monitor | DashboardApp 路由 |
+| 刷新策略 | 1s rerun | 持仓1秒刷新一次 |
+
+#### B. PositionMonitorData 数据模型
+
+```python
+class PositionMonitorData(BaseModel):
+    """实盘持仓监控数据模型"""
+    account_id: str
+    total_asset: float = Field(..., description="总资产")
+    available_cash: float = Field(..., description="可用资金")
+    positions: list[PositionItem] = Field(..., description="持仓列表")
+
+class PositionItem(BaseModel):
+    symbol: str
+    name: str = Field(..., description="证券名称")
+    quantity: int = Field(..., description="总持仓")
+    available_quantity: int = Field(..., description="可用数量(扣除冻结)")
+    frozen_quantity: int = Field(..., description="冻结数量")
+    today_bought: int = Field(..., description="当日买入(T+1锁定)")
+    cost_price: float = Field(..., description="成本价")
+    last_price: float = Field(..., description="最新价")
+    unrealized_pnl: float = Field(..., description="未实现盈亏")
+    unrealized_pnl_pct: float = Field(..., description="未实现盈亏百分比")
+    is_t_plus_1_locked: bool = Field(..., description="T+1锁定(当日买入不可卖)")
+```
+
+#### C. fetch + render 接口
+
+```python
+def fetch_position_monitor(miniqmt_broker) -> PositionMonitorData:
+    """从D_EX_CORE MiniQmtBroker获取持仓. 
+    输入: MiniQmtBroker实例(依赖注入)
+    输出: PositionMonitorData(持仓+盈亏+T+1标记)
+    T+1标记: today_bought > 0 → is_t_plus_1_locked=True
+    """
+    ...
+
+def render_position_monitor(data: PositionMonitorData) -> None:
+    """Streamlit渲染. 
+    布局:
+      - 顶部: 账户资金卡片(总资产/可用资金/当日盈亏)
+      - 中部: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
+      - T+1锁定行: 红色背景标记, 鼠标悬停提示"当日买入, 次日可卖"
+    刷新: 1s rerun, 持仓实时更新.
+    """
+    ...
+```
+
+### §16.7.5 trade_panel 实盘交易面板组件规格（v2.2.0新增）
+
+> **真源声明**：本规格是 trade_panel 组件的唯一真源。**human_gated**: 实盘交易面板接入需 Owner 审批。
+
+#### A. 组件元数据
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| 组件名 | trade_panel | Streamlit 页面组件 |
+| 数据源 | D_EX_CORE ExecutionEngine.execute_order() | 实盘下单接口 |
+| 页面路由 | /trade-panel | DashboardApp 路由 |
+| 风控 | human_gated + 二次确认 | 下单前MUST显示风控提示+二次确认弹窗 |
+
+#### B. TradePanelData 数据模型
+
+```python
+class TradePanelData(BaseModel):
+    """实盘交易面板数据模型"""
+    orders: list[OrderItem] = Field(..., description="订单列表(实时状态更新)")
+    account_summary: AccountSummary = Field(..., description="账户摘要(资金/持仓)")
+
+class OrderItem(BaseModel):
+    order_id: str
+    symbol: str
+    side: str  # "buy" / "sell"
+    quantity: int
+    price: float
+    order_type: str  # "market" / "limit" / "twap" / "vwap"
+    status: str  # PENDING/SUBMITTED/ACCEPTED/PARTIALLY_FILLED/FILLED/CANCELLED/REJECTED/EXPIRED
+    filled_quantity: int = Field(default=0, description="已成交数量")
+    avg_fill_price: float = Field(default=0.0, description="平均成交价")
+    timestamp: str
+    error_message: str = Field(default="", description="错误信息(REJECTED时)")
+
+class OrderSubmission(BaseModel):
+    """下单表单数据"""
+    symbol: str
+    side: str  # "buy" / "sell"
+    quantity: int = Field(..., ge=100, description="数量(≥100, A股1手起)")
+    price: float = Field(..., gt=0, description="价格")
+    order_type: str  # "market" / "limit" / "twap" / "vwap"
+    broker_id: str = Field(default="miniqmt", description="券商ID(默认MiniQMT)")
+```
+
+#### C. submit + render 接口
+
+```python
+def submit_order(execution_engine, order_submission: OrderSubmission) -> str:
+    """提交订单到D_EX_CORE ExecutionEngine. 
+    输入: ExecutionEngine实例(依赖注入), OrderSubmission
+    前置校验: 
+      (1) 显示风控提示(预估金额/持仓影响)
+      (2) 二次确认弹窗(streamlit.dialog)
+      (3) 调用ExecutionEngine.execute_order(order, broker_id="miniqmt")
+    输出: order_id
+    """
+    ...
+
+def render_trade_panel(data: TradePanelData) -> None:
+    """Streamlit渲染. 
+    布局:
+      - 顶部: 下单表单(代码/方向/数量/价格/算法TWAP/VWAP/MARKET)
+      - 中部: 风控提示+二次确认按钮(预估金额/持仓影响/T+1提示)
+      - 底部: 订单列表(实时状态更新, 支持撤单按钮)
+    状态机: PENDING→SUBMITTED→ACCEPTED→FILLED 实时更新, 状态用颜色标记.
+    撤单: 每个非终态订单行显示"撤单"按钮, 调用cancel_order.
+    """
+    ...
+```
+
+#### D. 安全约束
+
+| 约束 | 说明 |
+|------|------|
+| human_gated | 实盘交易面板接入需Owner审批 |
+| 二次确认 | 下单前MUST弹窗确认(避免误操作) |
+| 风控提示 | 下单前MUST显示预估金额/持仓影响/T+1提示 |
+| 小资金灰度 | 首次部署MUST用1万元做100股测试, 验证成交回报/持仓更新/T+1校验正确后再放量 |
+| 紧急停止 | trade_panel顶部MUST有"紧急停止"按钮, 点击后立即停止所有新订单+撤单所有未完成订单 |
 
 ### 16.8 施工参考卡
 
@@ -650,6 +1116,11 @@ class FitnessDashboardData(BaseModel):
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L08-001 | 无通知渠道实现 | 实现 DefaultNotificationManager | P1 | 通知需求>0 | v2.1.0 | 待施工 |
 | GAP-L08-002 | 无审批流程实现 | 实现 DefaultApprovalGateway | P1 | 审批需求>0 | v2.1.0 | 待施工 |
+| **GAP-L08-003** (v2.2.0) | 无回测可视化 | 实现 backtest_results组件 | P1 | 回测引擎v1.1.0+就绪 | v2.2.0 | 待施工(规格已就绪) |
+| **GAP-L08-004** (v2.2.0) | 无Tick回放可视化 | 实现 tick_replay组件 | P1 | Tick回放引擎就绪 | v2.2.0 | 待施工(规格已就绪) |
+| **GAP-L08-005** (v2.2.0) | 无5档盘口展示 | 实现 order_book组件 | P1 | MiniQmtProvider就绪 | v2.2.0 | 待施工(规格已就绪) |
+| **GAP-L08-006** (v2.2.0) | 无实盘持仓监控 | 实现 position_monitor组件 | P1 | MiniQmtBroker就绪 | v2.2.0 | 待施工(规格已就绪) |
+| **GAP-L08-007** (v2.2.0) | 无实盘交易面板 | 实现 trade_panel组件 | P1 | MiniQmtBroker就绪+Owner审批 | v2.2.0 | 待施工(规格已就绪) |
 
 ### §17.3 升级版本矩阵
 
@@ -658,6 +1129,7 @@ class FitnessDashboardData(BaseModel):
 | v1.0.0 | 1 | 基线 | DashboardBase+NotificationManagerBase+ApprovalGatewayBase+5 组件 | ⚠️ |
 | v2.0.0 | 2 | 模板重构 | 章节重排+新增概述+frontmatter 补全 | ⚠️ |
 | v2.1.0 | 2 | 回填+禁止施工 | 接口契约与代码对齐+模板回填+禁止施工标注 | ⚠️ |
+| v2.2.0 | 2 | 交易/回测组件规划 | 新增5个交易/回测组件规格(§16.7.1~§16.7.5)+对接D_BACKTEST/D_EX_CORE/D_DATA | ⚠️(规格已就绪, 代码待施工) |
 
 ### 升级组件清单
 
@@ -665,6 +1137,11 @@ class FitnessDashboardData(BaseModel):
 |--------|---------|---------|----------|:---:|
 | DefaultNotificationManager | GAP-L08-001 | default_notification_manager.py | Phase 1 | 待施工 |
 | DefaultApprovalGateway | GAP-L08-002 | default_approval_gateway.py | Phase 2 | 待施工 |
+| **backtest_results** | GAP-L08-003 | backtest_results.py | Phase 1.5 | 待施工(规格已就绪) |
+| **tick_replay** | GAP-L08-004 | tick_replay.py | Phase 1.5 | 待施工(规格已就绪) |
+| **order_book** | GAP-L08-005 | order_book.py | Phase 1.5 | 待施工(规格已就绪) |
+| **position_monitor** | GAP-L08-006 | position_monitor.py | Phase 1.5 | 待施工(规格已就绪) |
+| **trade_panel** | GAP-L08-007 | trade_panel.py | Phase 1.5 | 待施工(规格已就绪) |
 
 ---
 
@@ -677,6 +1154,10 @@ class FitnessDashboardData(BaseModel):
 | 3 | D-L08-03 | OCP 扩展点设计 | A: 具体实现 / B: 抽象基类+注册表 | B | 开闭原则+多渠道扩展 | 2026-05-05 |
 | 4 | D-L08-04 | Notification/Approval 使用 dataclass | A: Pydantic BaseModel / B: dataclass(frozen=True) | B | 历史遗留；新模型MUST用Pydantic(KBG-0040) | 2026-05-05 |
 | 5 | D-L08-05 | 模板v4.1升级 | A: 保持v3.3 / B: 按v4.1升级 | B | v4.1模板合规 | 2026-05-15 |
+| 6 | D-L08-06 | v2.2.0仪表盘方案 | A:新建D_FRONTEND域 / B:扩展现有D_FRONTEND | B | 复用DashboardBase OCP扩展点, 不引入新Base类, 架构一致 | 2026-07-04 |
+| 7 | D-L08-07 | v2.2.0交易/回测组件数 | A:3个(仅交易) / B:5个(交易+回测+盘口) | B | joinquant/Qbot风格仪表盘+实盘交易面板+Tick回放全场景覆盖 | 2026-07-04 |
+| 8 | D-L08-08 | v2.2.0组件数据源接入 | A:直接import业务层 / B:依赖注入传入 | B | 分层约束+Streamlit可选依赖, 组件不直接import业务层模块 | 2026-07-04 |
+| 9 | D-L08-09 | v2.2.0实盘交易面板风控 | A:无风控直接下单 / B:human_gated+二次确认+紧急停止 | B | 实盘交易安全, 避免误操作, Owner审批+小资金灰度 | 2026-07-04 |
 
 ---
 
@@ -738,7 +1219,8 @@ class FitnessDashboardData(BaseModel):
 | v1.0.0 | Base类+5组件实现 | v0.1.0 | 已完成 |
 | v2.0.0 | 模板重构+压缩 | v1.0.0 | 已完成 |
 | v2.1.0 | 回填+禁止施工标注+接口对齐 | v2.0.0 | 已完成 |
-| v2.2.0 | DefaultNotificationManager+DefaultApprovalGateway | v2.1.0 | 待施工(C轨开放后) |
+| v2.2.0 | 5个交易/回测组件规格(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | v2.1.0 | 待施工(规格已就绪, 对接D_BACKTEST/D_EX_CORE/D_DATA) |
+| v2.3.0 | DefaultNotificationManager+DefaultApprovalGateway | v2.2.0 | 待施工(C轨开放后) |
 
 ---
 

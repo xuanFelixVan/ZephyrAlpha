@@ -106,6 +106,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 | 3 | implementations/akshare_provider.py | §3.1 | AkShare数据源实现 | 已实现 |
 | 4 | implementations/default_quality_gate.py | §3.1 | 默认质量校验实现(5项规则) | 已实现 |
 | 5 | implementations/memory_provider.py | §3.1 | 内存合成数据源(测试/离线) | 已实现 |
+| 6 | implementations/miniqmt_provider.py | §16.7.1 | MiniQMT实盘行情(Tick+5档盘口) | 待施工 |
 
 ### §0.2 对齐验证矩阵
 
@@ -176,7 +177,7 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 
 | 维度 | 当前态 | 目标态 | 差距 | 优先级 |
 |------|--------|--------|------|:------:|
-| 数据源数量 | 1 (AkShare已重建) | 5 (AkShare/miniQMT/iFind/tushare/爬虫) | 缺4个数据源 | P1 |
+| 数据源数量 | 1 (AkShare已重建) | 5 (AkShare/miniQMT/iFind/tushare/爬虫) | 缺4个数据源，**miniQMT Provider规格已就绪(§16.7.1)，待施工** | P1 |
 | 品类覆盖 | OHLCV行情(CTR-001) | 69品类(CTR-001~003+) | 缺基本面/另类/宏观/新闻等 | P0 |
 | calc_mode 标注 | 无 | replay/preload/hybrid | 待实现(母蓝图§7.5) | P1 |
 | 品类注册表对接 | 无 | enabled 二元开关 | 待实现(母蓝图§6/§8.2) | P1 |
@@ -664,6 +665,166 @@ class QualityReport:
 | 2 | DefaultQualityGate 5项规则 | 算法 | close≤0→0分; stale>300s→-0.3; future timestamp→-0.5; high<low→-0.5; volume=0→-0.4 | default_quality_gate.py |
 | 3 | AkShare列名映射 | 协议 | 日期→date/开盘→open/收盘→close/最高→high/最低→low/成交量→volume/成交额→amount | akshare_provider.py |
 | 4 | calc_mode 取值集合 | 协议 | replay(回测实时重算) / preload(预计算值) / hybrid(预计算+微调) — 对接母蓝图§7.5 | provider_base.py(步骤3) |
+| 5 | MiniQMT Provider Tick字段映射 | 协议 | xtdata Tick 18字段→标准化DataFrame(含5档盘口) — 见§16.7.1 | miniqmt_provider.py(待施工) |
+
+### 16.7.1 MiniQMT Provider 详细规格（Tick+5档盘口）
+
+> 来源：tmp/test_download_tick.py 实测验证（2026-07-04），国金证券MiniQMT终端
+> 状态：✅ 数据源API已验证可用，⬜ Provider实现待施工
+
+**数据源特性**:
+- 数据源类型：本地终端（miniQMT）+ Python SDK（xtquant）
+- 数据通道：xtdata（行情）+ xttrader（交易，由D_EX_CORE实现）
+- 部署形态：Windows本地运行，需先启动 XtMiniQmt.exe 终端
+- 资质门槛：券商10万资产门槛（国金证券已满足，Level-2免费赠送）
+- API限制：xtdata 模块无需登录即可使用（行情免费），xttrader 需开通A股实盘权限
+
+**Provider 元数据**:
+```python
+class MiniQmtProvider(DataSourceBase):
+    provider_id = "miniqmt"
+    provider_name = "MiniQMT 实盘行情"
+    asset_classes = ["stock", "etf", "convertible_bond", "futures", "options"]
+    markets = ["SH", "SZ"]
+    supports_realtime = True       # ✅ 支持5档盘口实时订阅
+    supports_historical = True     # ✅ 支持历史Tick/K线下载
+    supports_local = True          # ✅ 本地终端
+    rate_limit_per_min = 999999    # 本地终端无限流
+    category_id = "market_tick_l1" # 品类:Level-1 Tick(含5档盘口)
+    calc_mode = "replay"           # 回测调度:Tick回放模式
+    enabled = True                 # 已开通
+```
+
+**Tick 数据字段映射**（xtdata → DataFrame 标准化）:
+
+| xtdata原始字段 | DataFrame列名 | 类型 | 说明 |
+|----------------|----------------|------|------|
+| time | timestamp | datetime | 时间戳(毫秒级) |
+| lastPrice | last_price | Decimal | 最新价 |
+| open | open | Decimal | 开盘价 |
+| high | high | Decimal | 最高价 |
+| low | low | Decimal | 最低价 |
+| lastClose | prev_close | Decimal | 昨收价 |
+| amount | amount | Decimal | 成交额 |
+| volume | volume | Decimal | 成交量 |
+| pvolume | pvolume | Decimal | 内外盘成交量 |
+| stockStatus | stock_status | int | 股票状态(停牌/ST等) |
+| openInt | open_interest | int | 持仓量(期货) |
+| lastSettlementPrice | last_settlement | Decimal | 昨结算价(期货) |
+| **askPrice[0..4]** | **ask_price_1..5** | **Decimal[5]** | **5档卖价** |
+| **bidPrice[0..4]** | **bid_price_1..5** | **Decimal[5]** | **5档买价** |
+| **askVol[0..4]** | **ask_vol_1..5** | **Decimal[5]** | **5档卖量** |
+| **bidVol[0..4]** | **bid_vol_1..5** | **Decimal[5]** | **5档买量** |
+| settlementPrice | settlement_price | Decimal | 结算价 |
+| transactionNum | transaction_num | int | 成交笔数 |
+
+**核心API规格**:
+
+```python
+class MiniQmtProvider(DataSourceBase):
+    """MiniQMT 实盘行情Provider——对接xtdata，提供Tick+5档盘口"""
+
+    def __init__(self, path: str = "", session_id: str = "zephyr_session"):
+        """
+        初始化MiniQMT连接
+
+        Args:
+            path: miniQMT安装路径(默认自动检测)
+            session_id: 会话ID(用于xttrader,行情无需)
+        """
+        # xtdata 模块导入(本地终端已安装)
+        from xtquant import xtdata
+        self._xtdata = xtdata
+
+    def fetch_historical(
+        self,
+        symbol: str,
+        start: datetime,
+        end: datetime,
+        interval: str = "tick"  # tick/1m/5m/15m/30m/60m/1d
+    ) -> pd.DataFrame:
+        """
+        获取历史数据(支持Tick级)
+
+        Args:
+            symbol: 证券代码(格式: 600000.SH / 000001.SZ)
+            start/end: 时间范围
+            interval: 周期(tick=逐笔,1m=1分钟,1d=日线)
+
+        Returns:
+            pd.DataFrame: 标准化字段(见上表),Tick数据含5档盘口
+        """
+        # 1. 下载历史数据到本地缓存
+        self._xtdata.download_history_data(symbol, interval, start_str, end_str)
+        # 2. 获取数据
+        data = self._xtdata.get_market_data_ex(
+            stock_list=[symbol], period=interval,
+            start_time=start_str, end_time=end_str
+        )
+        # 3. 标准化为DataFrame(18字段→CTR-001扩展)
+        return self._normalize_tick_data(data[symbol])
+
+    def subscribe_realtime(
+        self,
+        symbols: list[str],
+        callback: Callable[[pd.DataFrame], None]
+    ) -> None:
+        """
+        订阅实时Tick行情(含5档盘口)
+
+        Args:
+            symbols: 证券代码列表
+            callback: Tick回调函数(每Tick触发)
+        """
+        for symbol in symbols:
+            self._xtdata.subscribe_quote(symbol, period="tick", callback=callback)
+
+    def get_order_book(self, symbol: str) -> dict:
+        """
+        获取当前5档盘口快照
+
+        Returns:
+            dict: {
+                "ask_price": [Decimal×5],
+                "bid_price": [Decimal×5],
+                "ask_vol": [Decimal×5],
+                "bid_vol": [Decimal×5],
+                "last_price": Decimal,
+                "timestamp": datetime
+            }
+        """
+        tick = self._xtdata.get_full_tick([symbol])[symbol]
+        return self._parse_order_book(tick)
+```
+
+**质量校验扩展**（MiniQMT专属规则）:
+
+| 规则 | 阈值 | 失败原因 |
+|------|------|---------|
+| 5档盘口完整性 | askPrice/bidPrice 数组长度=5 | ORDER_BOOK_INCOMPLETE |
+| 盘口价格单调性 | ask_price[i] > ask_price[i-1] > last_price > bid_price[i-1] > bid_price[i] | ORDER_BOOK_CROSSED |
+| Tick时间连续性 | 相邻Tick间隔 < 5秒(交易时段) | TICK_GAP_TOO_LARGE |
+| 盘口量为正 | ask_vol[i] > 0 且 bid_vol[i] > 0 | ORDER_BOOK_ZERO_VOL |
+
+**与 D_BACKTEST/D_EX_CORE/D_FRONTEND 的协同**:
+
+| 消费方 | 用途 | 接口 |
+|--------|------|------|
+| D_BACKTEST (data_handler.py) | Tick回放回测 | fetch_historical(interval="tick") |
+| D_EX_CORE (miniqmt_broker.py) | 实盘下单参考价 | get_order_book() |
+| D_FRONTEND (order_book.py) | 5档盘口实时展示 | subscribe_realtime() + get_order_book() |
+| D_FRONTEND (tick_replay.py) | 秒级做T盘口回放 | fetch_historical(interval="tick") |
+
+**部署约束**:
+- 必须先启动 XtMiniQmt.exe 终端(独立交易模式)
+- xtquant 库需从 QMT 安装目录 `bin.x64/Lib/site-packages/xtquant` 拷贝到Python环境
+- Python 版本：3.6/3.7/3.8（QMT内置3.6，自定义环境用3.8最稳）
+- 操作系统：仅 Windows（miniQMT终端为Windows应用）
+
+**已知限制**:
+- ❌ 不支持 Tick 级回测（xtdata本身是数据接口，回测由D_BACKTEST实现）
+- ❌ Level-2 十档盘口需额外开通（当前Level-1五档足够用）
+- ⚠️ 实时订阅需 miniQMT 终端保持运行（断线自动重连）
 
 ### 16.8 施工参考卡
 
