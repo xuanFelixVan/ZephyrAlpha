@@ -31,6 +31,7 @@ DatabaseService: 统一管理两个数据库的连接池、生命周期、健康
 """
 
 import sqlite3
+import threading
 from typing import Any
 
 import psycopg2
@@ -49,12 +50,16 @@ class DatabaseService:
 
         self._governance_conn: sqlite3.Connection | None = None
         self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
+        # Phase 2 P2 修复（并发安全 HIGH）：lazy 连接初始化加双重检查锁，防多线程首次调用创建多个连接
+        self._lock = threading.Lock()
 
     def get_governance_conn(self) -> sqlite3.Connection:
         """获取 governance.db 连接（保持 SQLite）"""
         if self._governance_conn is None:
-            self._governance_conn = sqlite3.connect(self.governance_db)
-            self._governance_conn.row_factory = sqlite3.Row
+            with self._lock:
+                if self._governance_conn is None:
+                    self._governance_conn = sqlite3.connect(self.governance_db)
+                    self._governance_conn.row_factory = sqlite3.Row
         return self._governance_conn
 
     def get_depgraph_conn(self) -> Any:
@@ -63,8 +68,10 @@ class DatabaseService:
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
         """
         if self._depgraph_conn is None:
-            self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
-            self._depgraph_conn.cursor_factory = RealDictCursor
+            with self._lock:
+                if self._depgraph_conn is None:
+                    self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
+                    self._depgraph_conn.cursor_factory = RealDictCursor
         return self._depgraph_conn
 
     def health_check(self) -> dict[str, bool]:
