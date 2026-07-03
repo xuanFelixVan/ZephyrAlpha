@@ -79,11 +79,14 @@ import argparse
 import contextlib
 import datetime
 import json
+import logging
 import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 import psycopg2
 
@@ -401,6 +404,16 @@ def _handle_rename_domain(change: dict, dry_run: bool, conn=None) -> bool:
     return count >= 0
 
 
+def _handle_delete_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_delete_domain(
+        domain_id=change.get("domain_id", ""),
+        dry_run=dry_run,
+        conn=conn,
+        force=change.get("force", False),
+    )
+    return count >= 0
+
+
 # op 注册表——op 清单真源唯一（从此处 keys() 自动派生，禁止手工同步到 docstring/AGENTS.md）
 # 节点级 op（经 dep dict + _atomic_write，不直接写 DB）
 _NODE_OPS: set[str] = {"update", "add_physical_file", "remove_physical_file", "set_physical_files"}
@@ -415,6 +428,7 @@ _DOMAIN_OPS: dict[str, object] = {
     "migrate_nodes": _handle_migrate_nodes,
     "update_domain_ssot_path": _handle_update_domain_ssot_path,
     "rename_domain": _handle_rename_domain,
+    "delete_domain": _handle_delete_domain,
 }
 
 
@@ -1430,8 +1444,9 @@ def _validate_domain_naming(
         cur = conn.execute("SELECT domain_id FROM domains")
         existing_ids = {r["domain_id"] for r in cur.fetchall()}
         conn.close()
-    except psycopg2.Error:
+    except psycopg2.Error as e:
         # domain_naming_rules 表不存在——跳过校验（向后兼容）
+        logger.debug("validate_domain_naming_rules: domains 表查询失败(%s)，跳过命名校验", e)
         return errors, warnings
 
     # NR-001: 无父子前缀——第一段匹配已存在域
@@ -1857,6 +1872,147 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
         conn.close()
 
 
+def cmd_delete_domain(
+    domain_id: str,
+    dry_run: bool = False,
+    db_path: str = None,
+    conn=None,
+    force: bool = False,
+) -> int:
+    """删除域——17步DELETE覆盖11表（DM-100255 配套工具就绪）。
+
+    安全门：检查 nodes 表引用，>0 且未 --force 时阻断（nodes 需先 --migrate-nodes 迁移）。
+    删除顺序：先清外部引用（steps 2-17），最后删 domains 行（step1）避免 FK 违规。
+    单值列：DELETE WHERE col=domain_id（rule_bindings 例外 SET NULL，规则是全局资产）。
+    多值列：REPLACE 移除 domain_id 子串，再 DELETE 空值/精确匹配行。
+
+    dry_run 只读预览，不触发写锁/物理备份。返回受影响总行数，-1=失败。
+    完成后自动触发 _post_rename_residual_check 后置残留校验（事件驱动，复用现成扫描）。
+    """
+    own_conn = conn is None
+
+    def _run(c) -> int:
+        # 0. 校验 domain 存在
+        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (domain_id,)).fetchone():
+            print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+            return -1
+
+        # 安全门：检查 nodes 引用（force=True 可跳过）
+        node_cnt = c.execute(
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE domain_id=%s", (domain_id,)
+        ).fetchone()["cnt"]
+        if node_cnt > 0 and not force:
+            print(
+                f"ERROR: nodes 表有 {node_cnt} 行引用 domain_id='{domain_id}'\n"
+                f"  安全门阻断：nodes 需先通过 --migrate-nodes 迁移到其他域\n"
+                f"  确认要强制删除（含 nodes 级联删除）请加 --force",
+                file=sys.stderr,
+            )
+            return -1
+
+        # 17步DELETE: (step, table, column, use_replace_like) — 复用 rename 表清单
+        # 删除顺序与 rename 不同：先清外部引用（steps 2-17），最后删 domains（step1）
+        # rule_bindings.domain_id 例外：SET NULL（规则是全局资产，不删除规则行）
+        steps_foreign = [
+            (2, "nodes", "domain_id", False),
+            (3, "nodes", "subdomain_id", False),
+            (4, "nodes", "belongs_to", False),
+            (5, "domain_dependencies", "from_domain", False),
+            (6, "domain_dependencies", "to_domain", False),
+            (7, "domain_events", "source_domain", False),
+            (8, "domain_events", "target_domains", True),
+            (9, "contracts", "provider_domain", False),
+            (10, "contracts", "consumer_domain", False),
+            (11, "arch_constraints", "from_domain", False),
+            (12, "arch_constraints", "to_domain", False),
+            (13, "arch_directory_tree", "domain_id", False),
+            (14, "arch_path_mappings", "domain_id", False),
+            (15, "domain_mapping", "domain_id", False),
+            (16, "domain_mapping", "subdomain_id", True),
+        ]
+        total = 0
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        for step, tbl, col, use_like in steps_foreign:
+            if use_like:
+                # 多值列：REPLACE 移除 domain_id，再 DELETE 空值/精确匹配行
+                cnt = c.execute(
+                    f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s",
+                    (f"%{domain_id}%",),
+                ).fetchone()["cnt"]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE '{domain_id}'->'': {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
+                            (domain_id, "", f"%{domain_id}%"),
+                        )
+                        # 清理替换后变空或仅剩 domain_id 的行
+                        c.execute(
+                            f"DELETE FROM {tbl} WHERE {col}=%s OR {col}=''",
+                            (domain_id,),
+                        )
+                total += cnt
+            else:
+                cnt = c.execute(
+                    f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col}=%s",
+                    (domain_id,),
+                ).fetchone()["cnt"]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col}='{domain_id}': DELETE {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"DELETE FROM {tbl} WHERE {col}=%s",
+                            (domain_id,),
+                        )
+                total += cnt
+
+        # step17 rule_bindings.domain_id: SET NULL（规则是全局资产，不删除规则行）
+        cnt = c.execute(
+            "SELECT COUNT(*) AS cnt FROM rule_bindings WHERE domain_id=%s",
+            (domain_id,),
+        ).fetchone()["cnt"]
+        if cnt > 0:
+            print(f"  {mode} step17 rule_bindings.domain_id='{domain_id}': SET NULL {cnt} rows", file=sys.stderr)
+            if not dry_run:
+                c.execute(
+                    "UPDATE rule_bindings SET domain_id=NULL WHERE domain_id=%s",
+                    (domain_id,),
+                )
+        total += cnt
+
+        # step1 最后：DELETE FROM domains（FK 约束要求外部引用先清完）
+        print(f"  {mode} step 1 domains.domain_id='{domain_id}': DELETE 1 row", file=sys.stderr)
+        if not dry_run:
+            c.execute("DELETE FROM domains WHERE domain_id=%s", (domain_id,))
+        total += 1
+
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_delete_domain({domain_id}): total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task=f"delete_domain_{domain_id}", db_path=db_path):
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_delete_domain失败: {e}", file=sys.stderr)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_fix_rename_residual(
     rename_map: dict[str, str],
     dry_run: bool = False,
@@ -1964,8 +2120,9 @@ def cmd_propagate_rename(
                         (f"MOD-{old_frag}%",),
                     ).fetchall()
                     old_bp_ids.update(r[col] for r in rows if r[col])
-                except psycopg2.Error:
-                    pass
+                except psycopg2.Error as e:
+                    # Phase 2 P2 修复（异常处理 HIGH）：查询失败静默跳过=blueprint_id 传播丢失
+                    logger.warning("propagate_blueprint_id: 查询 %s.%s 失败(%s)，该域 blueprint_id 传播被跳过", tbl, col, e)
 
             for old_bp_id in sorted(old_bp_ids):
                 # 精确值映射：MOD-{old_frag} -> MOD-{new_frag}（只替换域片段，保留序号）
@@ -3034,6 +3191,20 @@ def main() -> None:
         metavar=("OLD_DOMAIN_ID", "NEW_DOMAIN_ID"),
         help="重命名域ID（裁定#204）：18步UPDATE覆盖11表。完成后自动触发 scan_residual 后置校验（事件驱动，无需手工跑 audit_rename_completeness）。注意 D-SIGNAL 必须最后替换（含其他旧域名前缀避免误伤）",
     )
+    # DM-100255 配套：4 空壳域删除——17步DELETE覆盖11表
+    parser.add_argument(
+        "--delete-domain",
+        type=str,
+        metavar="DOMAIN_ID",
+        help="删除域（DM-100255 配套）：17步DELETE覆盖11表。安全门检查 nodes 引用（>0 需 --force）。"
+        "先清外部引用（arch_path_mappings/domain_events 等），最后删 domains 行避免 FK 违规。"
+        "rule_bindings.domain_id SET NULL（规则是全局资产）。完成后自动触发残留校验。",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="强制删除（跳过 nodes 安全门，级联删除 nodes 引用）。仅与 --delete-domain 配合使用。",
+    )
     parser.add_argument(
         "--update-domain-name",
         type=str,
@@ -3353,6 +3524,18 @@ def main() -> None:
         # 失败不 sys.exit（改名已成功），仅 WARNING 提示人工复核
         if not args.dry_run:
             _post_rename_residual_check(old_id, None)
+        return
+
+    # DM-100255 配套：4 空壳域删除——dispatch
+    if args.delete_domain:
+        domain_id = args.delete_domain
+        n = cmd_delete_domain(domain_id, dry_run=args.dry_run, force=args.force)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        # 后置残留校验（复用改名后置检查，事件驱动）
+        if not args.dry_run:
+            _post_rename_residual_check(domain_id, None)
         return
 
     if args.update_domain_name:
