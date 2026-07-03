@@ -1280,6 +1280,88 @@ capabilities:
       - make_module_id_consistency_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: perm_trigger_gate
+    canonical_override: src/zephyr/governance/commit_gates/perm_trigger_gate.py
+    aliases:
+      - PERM-TRIGGER
+      - perm-trigger
+      - make_perm_trigger_gate
+      - permanent_time_trigger_blocker
+    description: >-
+      PERM-TRIGGER in-process 永久系统时间触发无事件订阅阻断门禁（Phase 1 AST 门禁扩展，DM-202953，2026-07-03）。
+      治本"永久系统必须全自动（事件触发）"铁律：检测 staged 新增 .py 文件 [TTL] permanent
+      头标脚本使用 while True/time.sleep/schedule./APScheduler 时间触发但无 .subscribe()/
+      @subscriber/@event_handler/event_bus. 事件订阅。in-process AST 分析（无 subprocess），priority=82。
+      fail-open on AST/IO error，fail-closed on violations。
+      canonical basename perm_trigger_gate 匹配 capability_id，canonical 在 src/zephyr/ 下需 canonical_override 显式声明。
+    integrity_anchors:
+      - make_perm_trigger_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: empty_handler_gate
+    canonical_override: src/zephyr/governance/commit_gates/empty_handler_gate.py
+    aliases:
+      - EMPTY-HANDLER
+      - empty-handler
+      - make_empty_handler_gate
+      - empty_event_handler_blocker
+    description: >-
+      EMPTY-HANDLER in-process 空 handler 函数体阻断门禁（Phase 1 AST 门禁扩展，DM-202953，2026-07-03）。
+      检测 staged 新增 .py 文件中事件订阅 handler 函数体仅含 logger.info/pass/return/docstring
+      （空壳 handler 无实际逻辑）。AST 分析装饰器（@subscriber/@event_handler）或函数名前缀
+      （handle_/on_）识别 handler，priority=84。in-process 检测，fail-open on error。
+    integrity_anchors:
+      - make_empty_handler_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: orphan_module_gate
+    canonical_override: src/zephyr/governance/commit_gates/orphan_module_gate.py
+    aliases:
+      - ORPHAN-MODULE
+      - orphan-module
+      - make_orphan_module_gate
+      - dead_code_no_import_blocker
+    description: >-
+      ORPHAN-MODULE in-process 孤儿模块死代码阻断门禁（Phase 1 AST 门禁扩展，DM-202953，2026-07-03）。
+      检测 staged 新增 .py 模块在代码库中无任何 import 引用（死代码，违反新AI可发现性原则）。
+      入口文件豁免（__main__.py/__init__.py/main.py/conftest.py/scripts//含 if __name__=="__main__"）。
+      subprocess 调 git grep 扫描 src/**/*.py 查 import 引用，priority=86。fail-open on subprocess error。
+    integrity_anchors:
+      - make_orphan_module_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: doc_ref_broken_gate
+    canonical_override: src/zephyr/governance/commit_gates/doc_ref_broken_gate.py
+    aliases:
+      - DOC-REF-BROKEN
+      - doc-ref-broken
+      - make_doc_ref_broken_gate
+      - broken_doc_link_blocker
+    description: >-
+      DOC-REF-BROKEN in-process 文档引用断裂阻断门禁（Phase 1 AST 门禁扩展，DM-202953，2026-07-03）。
+      检测 staged 新增 .md 文件中 markdown 链接 [text](path) 的相对路径指向不存在文件。
+      URL/http/https/mailto/#锚点 豁免。正则提取链接→相对 .md 目录解析→os.path.exists 校验。
+      priority=88。in-process 检测，fail-open on error。
+    integrity_anchors:
+      - make_doc_ref_broken_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: function_dup_gate
+    canonical_override: src/zephyr/governance/commit_gates/function_dup_gate.py
+    aliases:
+      - FUNCTION-DUP
+      - function-dup
+      - make_function_dup_gate
+      - duplicate_function_blocker
+    description: >-
+      FUNCTION-DUP in-process 重复函数阻断门禁（Phase 1 AST 门禁扩展，DM-202953，2026-07-03）。
+      检测 staged 新增 .py 文件顶层函数在同目录其他文件已存在相同 name + body hash 实现（重复造轮子）。
+      AST 提取函数→ast.unparse 归一化（排除 docstring）→sha256 hash→同目录比对。
+      scope 限同目录（性能考量），只比顶层函数（方法可能有意重载）。priority=90。
+    integrity_anchors:
+      - make_function_dup_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -2347,6 +2429,32 @@ creation_tokens:
     token: "auto-module-id-consistency-gate-20260703"
     created_by: "session-sess-29412-20260703185648"
     capability: "module_id_consistency_gate"
+
+  # --- Phase 1 AST 门禁扩展（DM-202953，session-sess-31148） ---
+  - file: "src/zephyr/governance/commit_gates/perm_trigger_gate.py"
+    token: "auto-perm-trigger-gate-20260703"
+    created_by: "session-sess-31148-20260703185158"
+    capability: "perm_trigger_gate"
+
+  - file: "src/zephyr/governance/commit_gates/empty_handler_gate.py"
+    token: "auto-empty-handler-gate-20260703"
+    created_by: "session-sess-31148-20260703185158"
+    capability: "empty_handler_gate"
+
+  - file: "src/zephyr/governance/commit_gates/orphan_module_gate.py"
+    token: "auto-orphan-module-gate-20260703"
+    created_by: "session-sess-31148-20260703185158"
+    capability: "orphan_module_gate"
+
+  - file: "src/zephyr/governance/commit_gates/doc_ref_broken_gate.py"
+    token: "auto-doc-ref-broken-gate-20260703"
+    created_by: "session-sess-31148-20260703185158"
+    capability: "doc_ref_broken_gate"
+
+  - file: "src/zephyr/governance/commit_gates/function_dup_gate.py"
+    token: "auto-function-dup-gate-20260703"
+    created_by: "session-sess-31148-20260703185158"
+    capability: "function_dup_gate"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
