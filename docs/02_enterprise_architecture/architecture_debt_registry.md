@@ -4507,20 +4507,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 维度说明：文件/DB连接/进程句柄未正确关闭，异常路径资源泄漏。
 
-#### 5.49.1 [HIGH] subprocess.Popen未保存引用，进程成为孤儿
-- **文件**：[auto_runtime_core.py](file:///D:/ZephyrAlpha/src/zephyr/trading/auto_runtime_core.py#L222)
-- **证据**：第222行`subprocess.Popen(["ollama", "serve"], **kwargs)`——Popen对象未赋值给变量，无wait/communicate/terminate
-- **问题**：ollama进程成为孤儿进程，无法被程序管理或关闭
-- **影响**：孤儿进程持续占用资源；shutdown时无法终止
-- **修复**：保存Popen引用到self._ollama_proc，shutdown路径中terminate()+wait()
-
-#### 5.49.2 [MEDIUM] sqlite3.connect未用try/finally，异常时连接泄漏（系统性，8+文件）
-- **文件**：[trend_analyzer.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/trend_analyzer.py#L98), [gate_persistence.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py#L61), [drift_engine.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/drift_engine.py#L507), [fix_reliability.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py#L53), [fix_pattern_miner.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_pattern_miner.py#L38), [compliance_auditor.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/compliance_auditor.py#L39), [fix_budget.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/fix_budget.py#L58)
-- **证据**：典型模式`conn = sqlite3.connect(...); conn.execute(...); conn.close()`——execute抛异常时close不执行，且被`except Exception: pass`吞掉
-- **问题**：异常路径sqlite连接泄漏
-- **影响**：长期运行导致FD耗尽或WAL膨胀
-- **修复**：统一改用`with sqlite3.connect(...) as conn:`或try/finally
-
 #### 5.49.3 [MEDIUM] tamper_proof_audit.py三函数异常分支未关闭连接
 - **文件**：[tamper_proof_audit.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/tamper_proof_audit.py#L130)
 - **证据**：snapshot_event_hash/count_states/setup_append_only三个函数均`try: conn=sqlite3.connect(); ...; conn.close(); except: return ""`——异常时conn未关闭
@@ -4535,20 +4521,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：批量扫描时连接累积泄漏
 - **修复**：try/finally包裹conn.close()
 
-#### 5.49.5 [MEDIUM] session_lifecycle.py长生命周期连接无close方法
-- **文件**：[session_lifecycle.py](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/session_lifecycle.py#L486)
-- **证据**：第486行`self._db_conn = sqlite3.connect(...)`长期持有，但全文搜索`def close`/`def shutdown`/`__del__`/`_db_conn.close`均无匹配
-- **问题**：对象销毁时连接依赖GC释放，WAL不被checkpoint
-- **影响**：数据可能丢失
-- **修复**：添加close()方法并实现__enter__/__exit__或atexit注册
-
 #### 5.49.6 严重度汇总
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 1 | 5.49.1 |
-| MEDIUM | 4 | 5.49.2/5.49.3/5.49.4/5.49.5 |
-| **合计** | **5** | |
+| MEDIUM | 2 | 5.49.3/5.49.4 |
+| **合计** | **2** | |
 
 ---
 
