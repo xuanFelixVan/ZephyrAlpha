@@ -3,7 +3,7 @@ module_id: VIEW-05-DATA-ARCH
 title: Target Architecture — Data Architecture / 目标架构：数据架构
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -60,7 +60,7 @@ The Data Architecture view answers questions about the **business data objects**
 
 > 本节列出系统终态全部**核心数据实体**（Core Data Entities），共 19 条。每条给出：实体名（保留英文）、所属域、生命周期状态机、PIT 敏感度、典型存储介质（仅作 hint，真源在 04-TA），与上下游主要关系。
 >
-> **粒度原则**：DA 只列 entity 与关键字段族，不列字段级 schema（字段级 schema 真源在 `09_data_platform/schemas-and-contracts/`，由 09 域注册）。
+> **粒度原则**：DA 只列 entity 与关键字段族，不列字段级 schema（字段级 schema 真源在 [`03_modules/_domain_data/`](../../03_modules/_domain_data/)，由 D_DATA_ENG 域注册）。
 
 ### 2.1 Market Data 域（行情数据）
 
@@ -200,10 +200,10 @@ Tick / OrderBookSnapshot → (聚合) → Bar
 
 1. **bitemporal 表** —— OLTP 主数据用 valid_time + transaction_time 双时间戳建模
 2. **append-only event log** —— 事件实体（Tick/Fill/Signal）天然 PIT，永不修改
-3. **PIT-safe view layer** —— 因子计算前必须经过统一的 `pit_view(entity, asof=T)` 函数封装（具体实现归 09_data_platform）
+3. **PIT-safe view layer** —— 因子计算前必须经过统一的 `pit_view(entity, asof=T)` 函数封装（具体实现归 D_DATA_ENG 域）
 4. **CI fitness function** —— `test_no_lookahead_bias.py` 在 PR 阶段扫描所有因子代码，禁止任何 `df.loc[df.date <= today]` 之外的时间过滤模式
 
-> **DA 视图只定义"原则与契约"**，具体 SQL/代码归 03-AA L00/L02、09_data_platform、scripts/fitness_functions/。
+> **DA 视图只定义"原则与契约"**，具体 SQL/代码归 D_DATA_ENG / D_FACTOR 域、`scripts/fitness_functions/`。
 
 ---
 
@@ -256,7 +256,7 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 
 | 层级 | 内容 | 真源 |
 |------|------|------|
-| **Schema lineage** | 字段级映射：`PnL.realized` ← `Fill.price * Fill.qty` ← ... | `09_data_platform/schemas-and-contracts/` |
+| **Schema lineage** | 字段级映射：`PnL.realized` ← `Fill.price * Fill.qty` ← ... | [`03_modules/_domain_data/`](../../03_modules/_domain_data/)（D_DATA_ENG 域）|
 | **Pipeline lineage** | 任务级 DAG：`compute_factor_X` 依赖 `load_bar_eod`、`load_corporate_action` | 调度器元数据（Airflow / Dagster）→ OpenLineage |
 | **Instance lineage** | 实例级：`FactorValue(factor=mom_20, symbol=600519, asof=2025-01-15)` 追溯到 `Bar(...)` 实例集合 | 每个派生实体的 `lineage_root` 字段 |
 
@@ -288,7 +288,7 @@ TargetPosition → Order → Fill → Position → PnL
 |----------------|----------------|
 | **OpenLineage** | 血缘事件交换格式（DA 推荐采纳的接口标准） |
 | **Marquez / DataHub** | 血缘存储与可视化（具体选型归 04-TA） |
-| **MLflow** | 模型训练血缘（归 11_model_and_ml_platform） |
+| **MLflow** | 模型训练血缘（归 D_ML_TRAIN 域）|
 
 > **DA 视图责任**：定义"必须有 lineage_root"、"必须实现 OpenLineage 接口"；**不**做工具选型（归 04-TA）。
 
@@ -359,7 +359,7 @@ TargetPosition → Order → Fill → Position → PnL
 
 ### 8.4 与 03-AA / scripts/ 的边界
 
-DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitness_functions/`、`src/zephyr/data/quality_gate/`（对应旧体系 L00-M6）。
+DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitness_functions/`、`src/zephyr/data/quality_gate/`。
 
 ---
 
@@ -387,7 +387,7 @@ DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitn
 
 ### 9.3 监管驱动的保留要求（占位）
 
-具体监管条款映射归 `16_compliance_and_legal/record-retention/`。本视图只声明"Order/Fill 必须保留 7 年（中国/美国证监会通用要求）"，具体条款引用待 16 域激活。
+具体监管条款映射归 D_COMPLIANCE 域。本视图只声明"Order/Fill 必须保留 7 年（中国/美国证监会通用要求）"，具体条款引用待合规域激活。
 
 ---
 
@@ -399,11 +399,11 @@ DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitn
 
 | 视图 | 关心 | 不关心 | 与 DA 的接口 |
 |------|------|-------|-------------|
-| **02-IA** Information Architecture | `docs/` 21 抽屉、文档生命周期、frontmatter schema | 业务数据对象 | **零重叠**——IA 是"文档抽屉"，DA 是"业务实体"，两者完全正交 |
-| **03-AA** Application Architecture | 14 层 src/、模块边界、ACL、扩展点 | 数据实体的字段定义 | DA 的实体被 AA 的层处理：L00 落 Tick/Bar、L02 算 FactorValue、L06 产 Order/Fill、L07 算 PnL/RiskMetric |
+| **02-IA** Information Architecture | `docs/` 6 顶级目录、文档生命周期、frontmatter schema | 业务数据对象 | **零重叠**——IA 是"文档抽屉"，DA 是"业务实体"，两者完全正交 |
+| **03-AA** Application Architecture | 53 域 src/、模块边界、ACL、扩展点 | 数据实体的字段定义 | DA 的实体被 AA 的域处理：D_MKT_DATA 落 Tick/Bar、D_FACTOR 算 FactorValue、D_EX_CORE 产 Order/Fill、D_TRADING 算 PnL/RiskMetric |
 | **04-TA** Technology Architecture | 时序库选型、对象存储选型、调度器选型 | 数据实体本身有什么字段 | DA 给出"温度 × 节奏"分类，TA 据此选具体技术栈（DA 不指定 PostgreSQL 还是 ClickHouse） |
-| **06-Security**（待建） | 字段级访问控制、PII 脱敏 | 数据怎么计算 | DA 给出 `classification` 标签，Security 据此设权限 |
-| **09_data_platform/** 下属域 | 字段级 schema、SQL DDL、具体调度脚本 | 跨域数据原则 | DA 是"原则与契约"，09 是"schema 真源与执行" |
+| **D_SECURITY** 安全域 | 字段级访问控制、PII 脱敏 | 数据怎么计算 | DA 给出 `classification` 标签，Security 据此设权限 |
+| **D_DATA_ENG** 数据工程域 | 字段级 schema、SQL DDL、具体调度脚本 | 跨域数据原则 | DA 是"原则与契约"，D_DATA_ENG 是"schema 真源与执行" |
 
 ### 10.2 一句话区分 DA vs IA（防止读者混淆）
 
@@ -417,12 +417,12 @@ DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitn
 
 | DA 不做的事 | 归属视图 |
 |------------|---------|
-| 字段级 schema DDL | 09_data_platform |
+| 字段级 schema DDL | D_DATA_ENG 域 |
 | 选具体存储产品（TimescaleDB vs ClickHouse vs DuckDB） | 04-TA |
-| 因子计算的具体算法 | 10_research_and_factor_lab |
-| 监管条款映射 | 16_compliance_and_legal |
-| 加密 / 脱敏算法 | 06-Security |
-| AI 自治的数据血缘自动发现 | 08_ai_engineering（未来） |
+| 因子计算的具体算法 | D_FACTOR / D_RESEARCH 域 |
+| 监管条款映射 | D_COMPLIANCE 域 |
+| 加密 / 脱敏算法 | D_SECURITY 域 |
+| AI 自治的数据血缘自动发现 | D_AUTONOMY_CORE 域（未来） |
 
 > **📊 数据流时序图**：
 > - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 跨域核心数据流（L00→L02→L03→L05→L06→L07 主链路）
@@ -430,8 +430,6 @@ DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitn
 
 ---
 
-## 11. Revision history / 修订记录
+## 11. 修订记录
 
-| Date / 日期 | Description / 说明 |
-|------------|-------------------|
-| 2026-04-19 | v1.0.0：新建。基于串行执行计划阶段 2 子任务 2.1（G1）。**关键事实**：经查 02-IA v1.1.0 全文不含业务数据对象（IA 纯讲 docs/ 抽屉与文档生命周期），DA 此前一直缺位。本版本为新建而非迁移，0 字内容自 02-IA 搬走。设计要点：19 条核心数据实体清单 + 三维分类 + PIT 三字段铁律 + 反幸存者偏差查询契约 + 三层血缘模型 + MDM 三件套 + 数据质量五类断言 + 保留归档矩阵 + 与其他视图严格边界。详见 R36。 |
+> 已删除（git log 是真源）。v1.0.0 于 2026-04-19 新建，详见 git log。
