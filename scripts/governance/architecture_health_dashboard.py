@@ -605,6 +605,7 @@ def metric_11_pg_domain_consistency() -> dict:
               ON c.table_name = t.table_name AND t.table_schema = 'public'
             WHERE t.table_type = 'BASE TABLE'
               AND c.column_name IN ('domain_id', 'from_domain', 'to_domain', 'source_domain')
+              AND t.table_name NOT LIKE '%%_backup_%%'
             ORDER BY t.table_name, c.column_name
             """
         )
