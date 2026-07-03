@@ -264,6 +264,7 @@ class DatabaseManager:
             raise DatabaseManagerError("DatabaseManager is closed")
 
         checked_at = datetime.now(UTC).isoformat()
+        conn = None
         try:
             conn = get_db_connection(self._db_path)
 
@@ -302,6 +303,7 @@ class DatabaseManager:
             tables = conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'").fetchone()[0]
 
             conn.close()
+            conn = None
 
             healthy = integrity_ok
             status = DatabaseHealthStatus(
@@ -341,6 +343,13 @@ class DatabaseManager:
             self._last_health = status
             logger.error("db_health_check_exception", error=str(exc))
             return status
+        finally:
+            # 5.61.4 修复：异常路径确保连接归还
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
     @property
     def last_health(self) -> DatabaseHealthStatus | None:
@@ -452,11 +461,13 @@ class DatabaseManager:
 
     def _wal_checkpoint(self, mode: str = "PASSIVE") -> None:
         """执行 WAL checkpoint（PASSIVE / FULL / RESTART / TRUNCATE）。"""
+        conn = None
         try:
             conn = get_db_connection(self._db_path)
             cursor = conn.execute(f"PRAGMA wal_checkpoint({mode})")
             row = cursor.fetchone()
             conn.close()
+            conn = None
             if row:
                 logger.debug(
                     "wal_checkpoint",
@@ -467,6 +478,13 @@ class DatabaseManager:
                 )
         except sqlite3.Error as exc:
             logger.warning("wal_checkpoint_failed: mode=%s error=%s", mode, exc)
+        finally:
+            # 5.61.4 修复：异常路径确保连接归还
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
     def wal_checkpoint_truncate(self) -> None:
         """强制 checkpoint 并截断 WAL 文件（shutdown 时调用）。"""
@@ -493,13 +511,22 @@ class DatabaseManager:
         result["pre_health"] = health.to_dict()
 
         if health.healthy:
+            conn = None
             try:
                 conn = get_db_connection(self._db_path)
                 conn.execute("VACUUM")
                 conn.close()
+                conn = None
                 result["vacuum"] = True
             except sqlite3.Error as exc:
                 logger.error("vacuum_failed", error=str(exc))
+            finally:
+                # 5.61.4 修复：异常路径确保连接归还
+                if conn is not None:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
 
             self._wal_checkpoint("TRUNCATE")
             result["wal_truncated"] = True

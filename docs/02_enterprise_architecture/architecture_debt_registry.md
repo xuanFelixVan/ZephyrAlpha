@@ -5193,12 +5193,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：L653 `BEGIN IMMEDIATE`，L661 `COMMIT`，异常时L665 `ROLLBACK`。但失败路径中L670-673的 retry_count 递增 UPDATE 发生在 ROLLBACK 之后、无新 BEGIN 包裹，L674的 COMMIT 实际是空操作。进程在 UPDATE 与下一轮 BEGIN 之间崩溃时，retry_count 与事件处理状态不一致。
 - **修复**：将 retry_count 更新纳入独立事务。
 
-#### 5.61.4 [MEDIUM] DatabaseManager多处连接获取后无try/finally——异常路径连接泄漏
-
-- **文件**：`src/zephyr/governance/persistence/database_manager.py:265-301,450-466,494-496`
-- **证据**：`health_check`（L265获取/L301关闭）关闭在try块内但无finally。`schema_version()`（L288）或 `_db_path.stat()`（L292）抛非sqlite3.Error异常时，控制流跳到L327 `except Exception`，该分支不关闭conn→泄漏。`_wal_checkpoint`和`maintenance`同样无try/finally。
-- **修复**：所有连接获取后使用 `with` 或 try/finally 确保归还。
-
 #### 5.61.5 [MEDIUM] 连接池get_connection/return_connection无锁保护——并发竞态
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:197-243`
