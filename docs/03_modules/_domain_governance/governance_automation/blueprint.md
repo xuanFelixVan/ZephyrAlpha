@@ -50,7 +50,7 @@ codification_at: "2026-05-13"
 references: []
 ---
 
-> actual_disk_path: src/zephyr/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)
+> actual_disk_path: src/zephyr/infrastructure/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图模板 v3.5：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
@@ -83,8 +83,8 @@ references: []
 
 | # | 文件路径 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|---------|------------|------|:-----:|-------------------|
-| 1 | `src/zephyr/infrastructure/runtime_integration/script_system/__init__.py` | §4 接口契约 | 包初始化 | 已实现 | — |
-| 2 | `src/zephyr/infrastructure/runtime_integration/script_system/finding.py` | §4 接口契约 | Finding Schema 数据模型 | 已实现 | — |
+| 1 | `src/zephyr/infrastructure/script_system/__init__.py` | §4 接口契约 | 包初始化 | 已实现 | — |
+| 2 | `src/zephyr/infrastructure/script_system/finding.py` | §4 接口契约 | Finding Schema 数据模型 | 已实现 | — |
 | 3 | `scripts/governance/run_all.py` | §5 调度规范 | 统一调度入口 | 已实现 | — |
 | 4 | `scripts/governance/generators/generate_script_manifest.py` | §4 入库流程 | manifest 生成器 | 已实现 | — |
 | 5 | `scripts/governance/meta/manage_kill_switch.py` | §16 Kill Switch | 全局冻结+单脚本禁用 | 已实现 | — |
@@ -101,8 +101,8 @@ references: []
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/script_system/` + `ls scripts/governance/` | ☐ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/infrastructure/runtime_integration/script_system/finding.py` | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/infrastructure/script_system/` + `ls scripts/governance/` | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/infrastructure/script_system/finding.py` | ☐ |
 | script-manifest.yaml 与蓝图 §3 维度分类一致 | `python scripts/governance/run_all.py --list` | ☐ |
 | pre-commit hook 配置与蓝图 §5 一致 | `cat .pre-commit-config.yaml` | ☐ |
 
@@ -124,7 +124,7 @@ references: []
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 脚本系统代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 修改 | 蓝图描述的核心代码 |
+| 1 | 脚本系统代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\script_system\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 治理脚本目录 | `D:\ZephyrAlpha\scripts\governance\` | 修改 | 审计脚本存放目录 |
 | 3 | 脚本清单 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 修改 | 脚本注册表 |
 | 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\governance-automation\blueprint.md` | 修改 | 本文件 |
@@ -1415,7 +1415,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/runtime_integration/script_system/finding.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/script_system/finding.py` | ✅ 已实现 | |
 
 ### 14.4 治理脚本
 
@@ -1841,7 +1841,7 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\governance-automation\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 脚本系统核心 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\script_system\` | 脚本系统核心 |
 | 治理脚本 | `D:\ZephyrAlpha\scripts\governance\` | 80+ 治理脚本 |
 | 脚本注册表 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 脚本登记 SSoT（REG-SCRIPT-001 主清单 + REG-SCRIPT-002 Governance 子集） |
 

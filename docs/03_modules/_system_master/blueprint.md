@@ -653,7 +653,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 |------|------|:--:|------|------|:------:|
 | Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 | `src/zephyr/capacity_assurance/` | 已实现 |
 | Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 | `src/zephyr/runtime/` | 已实现 |
-| Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/script_system/` | 已实现 |
+| Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/infrastructure/script_system/` | 已实现 |
 | Task System | MOD-TASK_SYSTEM | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
 | Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
 | Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context_engine/` | 已实现 |
