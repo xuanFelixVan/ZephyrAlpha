@@ -2,7 +2,9 @@
 
 > 调研对象：`docs/03_modules/_manifests/` 下 42 个 `*_manifest.md` 中 27 个"名称匹配不到 blueprint"的根因诊断
 > 日期：2026-06-30
-> 注意：本文件为 STEP 2 诊断记录。最终裁定（删除 manifest）见 [manifests_cure_plan.md](manifests_cure_plan.md)
+> 注意：本文件为 STEP 2 诊断记录（历史快照，分类为 25B+2C）。最终裁定（删除 manifest）见 [manifests_cure_plan.md](manifests_cure_plan.md)
+>
+> **⚠️ 最终结论指针（2026-07-04 二次复核）**：本文件中的"2 个 C 类（hooks/script_system）"经源码头部声明核实后**全部为误判**，3 个 C 类（含 infra_ops）应全部修正为 B 类，最终分类为 **A=13 / B=29 / C=0 / D=0**。详见 [c_class_modules_audit.md](c_class_modules_audit.md) 与 [manifests_cure_plan.md](manifests_cure_plan.md) §7.5。原根因 5"部分模块无蓝图"已取消。
 
 ## 0. 27 个 missing 的分类总览
 
