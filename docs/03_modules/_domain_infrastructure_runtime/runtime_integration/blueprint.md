@@ -5,7 +5,7 @@ title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时�
 doc_type: blueprint
 status: Active
 version: 6.1.1
-layer: infra_ops
+layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
 owner: ZephyrAlpha-Owner

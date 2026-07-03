@@ -5,7 +5,7 @@ title: "P2 PostgreSQL迁移详细施工方案 — depgraph从SQLite迁移到Post
 doc_type: blueprint
 status: Active
 version: "1.0.0"
-layer: cross_layer
+layer: L1_foundation
 blueprint_level: sub_module
 owner: ZephyrAlpha-Owner
 classification: confidential

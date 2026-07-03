@@ -5,7 +5,7 @@ title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一�
 doc_type: blueprint
 status: Active
 version: "0.12.1"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

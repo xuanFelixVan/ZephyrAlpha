@@ -24,10 +24,10 @@ entry_conditions:
   - id: G6-C01
     name: no_self_defined_market_data
     description: "Data domain modules must not define their own MarketData/Tick types; must import NormalizedMarketData from shared/contracts/market_data.py"
-    check: "for files under data/, no class named MarketData/Tick/Bar/TradeData/Candle exists; NormalizedMarketData is imported from zephyr.shared.contracts.market_data"
+    check: "for files under data_eng/ and market_data/, no class named MarketData/Tick/Bar/TradeData/Candle exists; NormalizedMarketData is imported from zephyr.shared.contracts.market_data"
     severity: error
     on_failure: reject
-    applies_to: [data]
+    applies_to: [data_eng, market_data]
     verifiable: true
     verification_method: "AST scan for class definitions matching data contract names"
     rule_ids:
@@ -102,10 +102,10 @@ entry_conditions:
   - id: G6-C07
     name: no_float_in_money_fields
     description: "All data through reporting domain code must not use float for monetary values (price, amount, quantity, commission); must use Decimal"
-    check: "for files under data through reporting domains, no field typed as float with names containing price/amount/cost/fee/commission/quantity/volume/value"
+    check: "for files under L2_domain modules, no field typed as float with names containing price/amount/cost/fee/commission/quantity/volume/value"
     severity: error
     on_failure: reject
-    applies_to: [data, infra_ops, infra_runtime, factor, signal, risk, pf_core, pf_alloc, ex_core, reporting]
+    applies_to: [L2_domain]
     verifiable: true
     verification_method: "AST scan for float annotations on money-related fields"
     rule_ids:
@@ -115,10 +115,10 @@ entry_conditions:
   - id: G6-C08
     name: cross_layer_import_valid
     description: "Cross-layer data imports must come from shared/contracts/ or shared/__init__.py, not from other layer directories"
-    check: "for files under any domain directory, imports of data types used across layers come from zephyr.shared.contracts or zephyr.shared"
+    check: "for files under any L2_domain directory, imports of data types used across layers come from zephyr.shared.contracts or zephyr.shared"
     severity: warning
     on_failure: flag
-    applies_to: [data, factor, signal, risk, pf_core, pf_alloc, ex_core, reporting]
+    applies_to: [L2_domain]
     verifiable: true
     verification_method: "AST scan for cross-layer imports from non-shared paths"
     rule_ids:

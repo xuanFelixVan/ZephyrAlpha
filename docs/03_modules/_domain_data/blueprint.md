@@ -5,7 +5,7 @@ title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
 version: "4.0.0"
-layer: data
+layer: L2_domain
 layer_name: data_source
 functional_domain: data
 owner: ZephyrAlpha-Owner

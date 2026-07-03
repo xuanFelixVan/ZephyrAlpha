@@ -5,7 +5,7 @@ title: "Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3�
 doc_type: blueprint
 status: Active
 version: "1.3.1"
-layer: cross_layer
+layer: L1_foundation
 layer_name: cross_layer
 blueprint_level: domain
 owner: ZephyrAlpha-Owner

@@ -4,7 +4,7 @@ title: B 轨接口规范 — 目录索引
 doc_type: index
 status: Active
 version: "2.3.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh

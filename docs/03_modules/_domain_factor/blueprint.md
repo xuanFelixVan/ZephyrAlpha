@@ -5,7 +5,7 @@ title: "Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点"
 doc_type: blueprint
 status: Active
 version: "3.0.0"
-layer: factor
+layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
 owner: ZephyrAlpha-Owner

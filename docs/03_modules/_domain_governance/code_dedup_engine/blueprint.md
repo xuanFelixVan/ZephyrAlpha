@@ -6,7 +6,7 @@ title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修
 doc_type: blueprint
 status: Active
 version: 0.15.0
-layer: infra_ops
+layer: L0_infrastructure
 layer_note: "跨层模块——代码在L01，但与L05治理层交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
 functional_domain: governance

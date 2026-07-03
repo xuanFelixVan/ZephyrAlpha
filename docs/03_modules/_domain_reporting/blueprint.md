@@ -5,7 +5,7 @@ title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: reporting
+layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

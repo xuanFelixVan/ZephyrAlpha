@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 version: "2.2.0"
 generation: 17
-layer: cross_layer
+layer: L1_foundation
 layer_name: 跨层基础设施
 functional_domain: governance
 owner: ZephyrAlpha-Owner

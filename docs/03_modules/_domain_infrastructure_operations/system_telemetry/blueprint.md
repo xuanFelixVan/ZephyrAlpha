@@ -5,7 +5,7 @@ title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
 doc_type: blueprint
 status: Active
 version: "2.0.2"
-layer: infra_ops
+layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

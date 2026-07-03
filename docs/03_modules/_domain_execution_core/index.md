@@ -3,7 +3,7 @@ module_id: MOD-L06-001
 title: D_EX_CORE 域索引
 doc_type: index
 status: Active
-layer: domain
+layer: L2_domain
 date: "2026-06-22"
 version: "2.0.0"
 ttl: permanent

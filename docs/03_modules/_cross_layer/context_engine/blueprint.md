@@ -6,7 +6,7 @@ doc_type: blueprint
 template_for: blueprint
 status: Active
 version: 1.1.0
-layer: cross_layer
+layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
 classification: confidential

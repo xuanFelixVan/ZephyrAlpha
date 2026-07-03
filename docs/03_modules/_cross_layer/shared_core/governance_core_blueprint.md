@@ -4,7 +4,7 @@ title: "Governance Core 蓝图 — 治理核心模块"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

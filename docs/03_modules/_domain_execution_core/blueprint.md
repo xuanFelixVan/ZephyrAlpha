@@ -5,7 +5,7 @@ title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
 version: "2.2.0"
-layer: ex_core
+layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
 owner: ZephyrAlpha-Owner

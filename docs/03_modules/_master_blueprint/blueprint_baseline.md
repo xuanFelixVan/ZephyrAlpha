@@ -4,7 +4,7 @@ title: "Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12�
 doc_type: blueprint
 status: Active
 version: "0.9.2"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

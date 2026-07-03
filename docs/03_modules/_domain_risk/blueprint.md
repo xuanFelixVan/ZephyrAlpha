@@ -5,7 +5,7 @@ title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
 version: "2.2.0"
-layer: risk
+layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
 owner: ZephyrAlpha-Owner

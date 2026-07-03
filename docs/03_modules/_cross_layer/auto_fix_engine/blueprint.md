@@ -5,7 +5,7 @@ title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
 doc_type: blueprint
 status: Active
 version: "5.1.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

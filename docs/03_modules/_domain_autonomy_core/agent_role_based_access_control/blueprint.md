@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
 version: "1.1.0"
-layer: infra_ops
+layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
 classification: confidential

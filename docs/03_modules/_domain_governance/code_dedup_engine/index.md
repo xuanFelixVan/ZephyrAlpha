@@ -4,7 +4,7 @@ title: "代码去重引擎 — 目录索引"
 doc_type: index
 status: Draft
 version: "0.3.0"
-layer: L01
+layer: L1_foundation
 layer_name: infrastructure
 functional_domain: infra
 owner: ZephyrAlpha-Owner

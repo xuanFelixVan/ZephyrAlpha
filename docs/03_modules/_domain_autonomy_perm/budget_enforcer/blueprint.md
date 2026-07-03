@@ -5,7 +5,7 @@ title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生�
 doc_type: blueprint
 status: Active
 version: 0.7.0
-layer: infra_ops
+layer: L0_infrastructure
 functional_domain: budget_enforcement
 owner: ZephyrAlpha-Owner
 classification: confidential

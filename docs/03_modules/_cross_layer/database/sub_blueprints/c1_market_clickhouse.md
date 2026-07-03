@@ -5,7 +5,7 @@ title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
 version: "1.0.0"
-layer: data
+layer: L2_domain
 layer_name: market_warehouse
 functional_domain: data
 owner: ZephyrAlpha-Owner

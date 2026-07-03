@@ -5,7 +5,7 @@ title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持
 doc_type: blueprint
 status: Active
 version: 9.0.0
-layer: infra_ops
+layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
 owner: ZephyrAlpha-Owner

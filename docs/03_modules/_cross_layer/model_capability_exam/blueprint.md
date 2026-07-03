@@ -5,7 +5,7 @@ title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评�
 doc_type: blueprint
 status: Active
 version: "2.3.2"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

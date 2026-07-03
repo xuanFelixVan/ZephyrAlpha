@@ -5,7 +5,7 @@ title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
 version: "6.1.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 owner: ZephyrAlpha-Owner

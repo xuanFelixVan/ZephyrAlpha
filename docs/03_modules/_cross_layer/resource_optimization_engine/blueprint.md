@@ -4,7 +4,7 @@ title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
 version: "5.4.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

@@ -5,7 +5,7 @@ title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
 version: 5.5.0
-layer: infra_ops
+layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
 owner: ZephyrAlpha-Owner

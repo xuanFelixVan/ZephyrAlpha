@@ -6,7 +6,7 @@ doc_type: blueprint
 template_for: blueprint
 status: Draft
 version: "0.8.2"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

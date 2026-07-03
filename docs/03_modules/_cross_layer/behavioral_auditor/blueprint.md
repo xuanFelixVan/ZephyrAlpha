@@ -6,7 +6,7 @@ title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
 version: "3.3.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

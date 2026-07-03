@@ -5,7 +5,7 @@ title: "知识库系统蓝图"
 doc_type: blueprint
 status: Active
 version: "0.12.1"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -881,8 +881,7 @@ title: "ruff 选 pylint：快 10-100x + pyproject.toml 原生集成"
 
 category: "tool_configuration"
 domain: "infra"
-layer: "L01"
-
+layer: L1_foundation
 source_type: "session_log"
 source_path: "docs/_working/session_logs/session-047.md"
 
@@ -1339,8 +1338,7 @@ title: "ruff 比 pylint 快 50x 的实测数据"
 
 category: "tool_configuration"
 domain: "infra"
-layer: "L01"
-
+layer: L1_foundation
 source_type: "session_log"
 source_path: "docs/_working/session_logs/session-047.md"
 
@@ -1411,8 +1409,7 @@ title: "Python Linter 必须是 ruff"
 
 category: "tool_configuration"
 domain: "infra"
-layer: "L01"
-
+layer: L1_foundation
 status: "ACTIVE"
 priority: "P0"
 

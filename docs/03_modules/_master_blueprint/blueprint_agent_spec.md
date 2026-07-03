@@ -4,7 +4,7 @@ title: "Agent Spec 蓝图 — CBAC能力矩阵·Skill路由"
 doc_type: blueprint
 status: Active
 version: "1.3.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: cross_layer
 blueprint_level: domain
 owner: ZephyrAlpha-Owner

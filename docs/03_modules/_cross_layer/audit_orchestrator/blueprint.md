@@ -6,7 +6,7 @@ title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint
 status: Active
 version: "6.1.0"
-layer: cross_layer
+layer: L1_foundation
 architecture_layer: "L2_编排调度"
 layer_name: cross_layer
 functional_domain: governance

@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 activation_phase: current
 version: "0.17.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: system
 blueprint_level: system
 owner: ZephyrAlpha-Owner

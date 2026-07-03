@@ -86,16 +86,9 @@ def _is_blueprint(filepath: Path) -> bool:
     return filepath.suffix == ".md" and filepath.name == "blueprint.md"
 
 
-_LAYER_DIR_PREFIX_MAP: dict[str, str] = {
-    str(v.get("value")): str(v.get("dir_prefix", ""))
-    for v in _LAYER_DATA.get("values", [])
-    if isinstance(v, dict) and v.get("value")
-}
-
-
-def _layer_to_dir_prefix(layer: str) -> str:
-    """语义 layer 值 → 物理目录前缀映射（裁定#206-D/#ARCH-011已落地：从 layer_vocabulary.yaml dir_prefix 字段动态读取）。"""
-    return _LAYER_DIR_PREFIX_MAP.get(layer, "")
+# 已废弃（2026-07-04 阶段4）：dir_prefix 体系随14层概念清除。
+# layer_vocabulary.yaml v2.0.0 已移除 dir_prefix 字段，新4值体系按域平铺无层编号前缀。
+# _LAYER_DIR_PREFIX_MAP 和 _layer_to_dir_prefix 已删除，P0-3 检查块改为跳过。
 
 
 # 非域目录：_cross_layer 为横切合规位（判据(b) 合规位置），_restructuring 为临时迁移位
@@ -178,29 +171,10 @@ def main() -> int:
                     f"[P0-2] cross_layer 蓝图 {module_id} 不在 _cross_layer/ 下 → 当前: {rel}"
                 )
 
-    # ── P0-3: 非cross_layer蓝图 layer 语义值与物理路径 dir_prefix 不匹配 ──
-    # 放宽判据(c)（裁定 R3/#206）：域归属组件（functional_domain 非空且路径在域目录树下）
-    # 豁免 dir_prefix 检查——域内聚优先于层前缀机械对齐。
-    for module_id, (filepath, fm) in sorted(blueprints.items()):
-        layer = fm.get("layer", "")
-        if layer in VALID_LAYERS:
-            # 检查完整路径中是否包含 dir_prefix 前缀（适配嵌套结构）
-            prefix = _layer_to_dir_prefix(layer)
-            if not prefix:
-                continue
-            rel = filepath.relative_to(REPO_ROOT)
-            path_parts = rel.parts
-            # 检查路径中任一部分是否以 dir_prefix 开头
-            matched = any(p.startswith(prefix) for p in path_parts)
-            if not matched:
-                doc_type = fm.get("doc_type", "")
-                if not doc_type:
-                    continue  # 跳过无 doc_type 的文件
-                if _is_domain_owned(fm, path_parts):
-                    continue  # 判据(c) 域归属豁免
-                violations_p0.append(
-                    f"[P0-3] 蓝图 {module_id} layer={layer} 但路径中找不到 '{prefix}' 前缀 → {rel}"
-                )
+    # ── P0-3: 已废弃（2026-07-04 阶段4）──
+    # dir_prefix 体系随14层概念清除，layer_vocabulary.yaml v2.0.0 已移除 dir_prefix 字段。
+    # 新4值体系（L0_infrastructure/L1_foundation/L2_domain/L3_application）按域平铺，无层编号前缀。
+    # 原 dir_prefix 检查已无意义，跳过。
 
     # ── P0-5: layer 为废弃 L{NN} 格式（裁定 R6/#ARCH-011，填补 P0-3 漏洞） ──
     # 原P0-3 仅检查 layer in VALID_LAYERS，废弃 L 值不在 VALID_LAYERS 中被跳过，

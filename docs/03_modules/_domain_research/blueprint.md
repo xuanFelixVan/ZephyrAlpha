@@ -5,7 +5,7 @@ title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: research
+layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

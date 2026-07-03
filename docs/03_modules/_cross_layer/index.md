@@ -5,7 +5,7 @@ doc_type: index
 status: Active
 version: "1.4.0"
 date: "2026-06-22"
-layer: cross_layer
+layer: L1_foundation
 summary: >
   cross_layer 模块物理真源位于 _cross_layer/（早期架构升级迁移完成）。
   行为审计（MOD-INF-033 BehavioralAuditor）等模块已纳入索引。

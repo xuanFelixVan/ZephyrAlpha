@@ -5,7 +5,7 @@ title: "业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实�
 doc_type: blueprint
 status: Active
 version: "1.0.0"
-layer: cross_layer
+layer: L1_foundation
 blueprint_level: architecture
 owner: ZephyrAlpha-Owner
 classification: confidential

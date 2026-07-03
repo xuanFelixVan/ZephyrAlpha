@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
 version: 3.1.0
-layer: infra_ops
+layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
 owner: ZephyrAlpha-Owner

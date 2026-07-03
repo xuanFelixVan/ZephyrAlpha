@@ -4,7 +4,7 @@ title: Vector Memory Service Interface / 向量记忆服务接口规范
 doc_type: architecture_view
 status: Active
 version: "1.2.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh

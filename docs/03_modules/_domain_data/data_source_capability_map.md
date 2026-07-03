@@ -5,7 +5,7 @@ title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/Tic
 doc_type: blueprint
 status: Active
 version: "1.8.1"
-layer: data
+layer: L2_domain
 layer_name: data_source
 functional_domain: data
 owner: ZephyrAlpha-Owner

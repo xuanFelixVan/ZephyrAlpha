@@ -4,7 +4,7 @@ title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
 version: "0.13.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
 owner: ZephyrAlpha-Owner

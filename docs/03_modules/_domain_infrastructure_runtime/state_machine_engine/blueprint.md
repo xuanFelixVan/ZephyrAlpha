@@ -6,7 +6,7 @@ title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态�
 doc_type: blueprint
 status: Draft
 version: "0.1.0"
-layer: infra_ops
+layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh

@@ -69,7 +69,7 @@ entry_conditions:
   - id: G2-C04
     name: layer_assignment_valid
     description: "Document must be assigned to a valid architecture layer"
-    check: "doc.layer in VALID_LAYERS or doc.layer == 'cross_layer'"
+    check: "doc.layer in VALID_LAYERS"
     severity: warning
     on_failure: flag
     verifiable: true
@@ -123,19 +123,7 @@ approved_labels:
   - ENCODING_BROKEN
 
 valid_layers:
-  - data
-  - infra_ops
-  - factor
-  - signal
-  - risk
-  - pf_core
-  - ex_core
-  - reporting
-  - frontend
-  - research
-  - compliance
-  - ml_train
-  - system-telemetry
-  - simulation
-  - shared
-  - cross_layer
+  - L0_infrastructure
+  - L1_foundation
+  - L2_domain
+  - L3_application

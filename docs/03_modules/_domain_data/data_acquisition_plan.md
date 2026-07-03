@@ -5,7 +5,7 @@ title: "数据获取需求清单与数据库现状对照"
 doc_type: blueprint
 status: Active
 version: "1.5.0"
-layer: data
+layer: L2_domain
 layer_name: data_source
 functional_domain: data
 owner: ZephyrAlpha-Owner

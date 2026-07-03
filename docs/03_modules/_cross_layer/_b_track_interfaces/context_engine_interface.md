@@ -4,7 +4,7 @@ title: Context Engine Interface / 上下文引擎接口规范
 doc_type: architecture_view
 status: Active
 version: "1.0.2"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh

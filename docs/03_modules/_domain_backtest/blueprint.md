@@ -12,7 +12,7 @@ generation: 1
 language: zh
 last_updated: '2026-07-04'
 last_verified: ''
-layer: domain
+layer: L2_domain
 module_id: MOD-BT-001
 owner: ZephyrAlpha-Owner
 parent_module: ''

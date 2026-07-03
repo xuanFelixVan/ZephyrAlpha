@@ -5,7 +5,7 @@ title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: pf_core
+layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
 owner: ZephyrAlpha-Owner

@@ -5,7 +5,7 @@ title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed �
 doc_type: blueprint
 status: Active
 version: "2.0.1"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

@@ -5,7 +5,7 @@ title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 owner: ZephyrAlpha-Owner

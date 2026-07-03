@@ -4,7 +4,7 @@ title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移
 doc_type: blueprint
 status: Active
 version: "3.1.0"
-layer: cross_layer
+layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
 owner: ZephyrAlpha-Owner

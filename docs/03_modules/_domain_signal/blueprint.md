@@ -5,7 +5,7 @@ title: "Signal Generation Core 蓝图+施工图 — 信号生成层"
 doc_type: blueprint
 status: Active
 version: "2.2.0"
-layer: signal
+layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
 owner: ZephyrAlpha-Owner

@@ -5,7 +5,7 @@ title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三�
 doc_type: blueprint
 status: Active
 version: "4.3.0"
-layer: cross_layer
+layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
 classification: confidential
