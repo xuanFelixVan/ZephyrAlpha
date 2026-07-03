@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-198 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.portfolio.contracts.money
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.governance.financial_governance.instrument
+# [DEPENDENCIES] zephyr.trading.trading_contracts.market.instrument
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -46,7 +46,7 @@ ZephyrAlpha — shared/contracts/money.py
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
 
-from zephyr.governance.financial_governance.instrument import CurrencyCode
+from zephyr.trading.trading_contracts.market.instrument import CurrencyCode
 
 # 全局 Decimal 精度（28 位有效数字，足够金融计算，含复利/开方等）
 getcontext().prec = 28

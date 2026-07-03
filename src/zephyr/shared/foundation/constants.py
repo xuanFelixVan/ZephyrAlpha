@@ -42,7 +42,6 @@ Version: 0.1.0
 
 import importlib
 
-from zephyr.governance.escalation.escalation_models import EscalationLevel
 from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
@@ -83,10 +82,17 @@ _TRADING_SYMBOLS = {
     "OrderType": "zephyr.trading.trading_contracts.execution.order",
 }
 
+# Lazy imports for governance-domain symbols (upward dependency from L0 shared → L2 governance)
+_GOVERNANCE_SYMBOLS = {
+    "EscalationLevel": "zephyr.governance.escalation.escalation_models",
+}
+
+_LAZY_SYMBOLS = {**_TRADING_SYMBOLS, **_GOVERNANCE_SYMBOLS}
+
 
 def __getattr__(name):
-    if name in _TRADING_SYMBOLS:
-        mod = importlib.import_module(_TRADING_SYMBOLS[name])
+    if name in _LAZY_SYMBOLS:
+        mod = importlib.import_module(_LAZY_SYMBOLS[name])
         return getattr(mod, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
