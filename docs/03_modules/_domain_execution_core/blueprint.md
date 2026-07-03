@@ -29,7 +29,7 @@ scope: module
 stability: evolving
 verifiability: manual
 ssot_yaml: "docs/03_modules/_domain_execution_core/blueprint.md"
-summary: "L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行 + MiniQMT实盘Broker(v2.2.0)。Phase 1 部分实现：执行引擎+订单管理+模拟券商；v2.2.0规划MiniQMT Broker适配器对接xttrader，与D_BACKTEST matching_engine共用撮合逻辑(回测=实盘一致性)。"
+summary: "D_EXECUTION_CORE 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行 + MiniQMT实盘Broker(v2.2.0)。Phase 1 部分实现：执行引擎+订单管理+模拟券商；v2.2.0规划MiniQMT Broker适配器对接xttrader，与D_BACKTEST matching_engine共用撮合逻辑(回测=实盘一致性)。"
 tags: [trade-execution, l06, phase-1-partial, execution-engine, order-management, sor-routing, miniqmt, real-trading]
 priority: P0
 runtime_plane: hot
@@ -65,7 +65,7 @@ references:
 > actual_disk_path: src/zephyr/ex_core/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: MiniQMT实盘Broker适配器(对接xttrader), 与D_BACKTEST matching_engine共用撮合逻辑(回测=实盘一致性)
 
-> ✅ **业务层已开放，可施工**：L06 属于 C 轨业务层，当前阶段基础设施尚未就绪。可以此蓝图为依据生成交易执行业务代码。开工触发条件：(a) MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
+> ✅ **业务层已开放，可施工**：D_EXECUTION_CORE 属于 C 轨业务层，当前阶段基础设施尚未就绪。可以此蓝图为依据生成交易执行业务代码。开工触发条件：(a) MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
 
 # Trade Execution Core 蓝图+施工图 — 交易执行引擎
 
@@ -73,7 +73,7 @@ references:
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 交易执行层——它解决了订单从生成到成交的全生命周期管理问题。核心职责包括：多券商路由（SOR）、算法执行（TWAP/VWAP/冰山单）、订单状态机管理、成交回报处理与持仓快照维护。当前规模 1 个券商适配器（SimulationBroker）+ 3 种算法策略，目标容量 3+ 券商适配器 + 5+ 算法策略 + 100+ 并发订单。上游依赖 L05 组合构建层（CTR-004 Order）和 L04 风控层（CTR-ERR-004），下游被 L07 分析层和 L11 ML 平台消费。
+本蓝图描述 ZephyrAlpha 交易执行层——它解决了订单从生成到成交的全生命周期管理问题。核心职责包括：多券商路由（SOR）、算法执行（TWAP/VWAP/冰山单）、订单状态机管理、成交回报处理与持仓快照维护。当前规模 1 个券商适配器（SimulationBroker）+ 3 种算法策略，目标容量 3+ 券商适配器 + 5+ 算法策略 + 100+ 并发订单。上游依赖 D_PORTFOLIO_CORE 组合构建层（CTR-004 Order）和 D_RISK 风控层（CTR-ERR-004），下游被 D_REPORTING 分析层和 D_ML_TRAIN ML 平台消费。
 
 **v2.2.0 新增决策(2026-07-04)**：
 1. **MiniQMT实盘Broker**: 新增 `adapters/miniqmt_broker.py`，对接国金证券MiniQMT的xttrader API，支持A股实盘交易(股票/ETF/可转债)
@@ -138,7 +138,7 @@ references:
 
 ### 1.1 背景
 
-ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产出的 Order 转化为实际成交（Fill），同时维护持仓快照供 L04/L07/L11 消费。当前仅有 SimulationBroker 用于回测，真实券商接入需 OCP-003 扩展点支持。
+ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组合构建层产出的 Order 转化为实际成交（Fill），同时维护持仓快照供 D_RISK/D_REPORTING/D_ML_TRAIN 消费。当前仅有 SimulationBroker 用于回测，真实券商接入需 OCP-003 扩展点支持。
 
 ### 1.2 目标范围
 
@@ -148,18 +148,18 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 2 | ✅ 包含 | 订单生命周期：创建 → 风控校验 → 路由 → 状态跟踪 | VALID_TRANSITIONS 严格约束，非法转换 MUST 抛异常 |
 | 3 | ✅ 包含 | 算法执行：TWAP / VWAP / 冰山单 | ExecutionEngine 支持 3 种算法策略 |
 | 4 | ✅ 包含 | SOR 智能路由：基于成交质量评分选择最优经纪商 | 评分机制已实现，多券商路由待扩展 |
-| 5 | ✅ 包含 | 持仓快照：CTR-006 PositionSnapshot → L04/L07/L11 | PositionSnapshot 数据模型产出 |
+| 5 | ✅ 包含 | 持仓快照：CTR-006 PositionSnapshot → D_RISK/D_REPORTING/D_ML_TRAIN | PositionSnapshot 数据模型产出 |
 | 6 | ✅ 包含 | **v2.2.0新增** MiniQMT实盘Broker：对接xttrader API | 国金证券MiniQMT A股实盘交易(股票/ETF/可转债), 5档盘口撮合, 与D_BACKTEST matching_engine共用撮合逻辑 |
-| 7 | ❌ 排除 | 订单生成 | L05 组合构建层职责 |
-| 8 | ❌ 排除 | 风控校验逻辑 | L04 风控层职责 |
-| 9 | ❌ 排除 | 信号生成 | L03 信号层职责 |
+| 7 | ❌ 排除 | 订单生成 | D_PORTFOLIO_CORE 组合构建层职责 |
+| 8 | ❌ 排除 | 风控校验逻辑 | D_RISK 风控层职责 |
+| 9 | ❌ 排除 | 信号生成 | D_SIGNAL 信号层职责 |
 | 10 | ❌ 排除 | 行情订阅 | D_DATA MiniQmtProvider(xtdata) 职责, MiniQmtBroker 仅负责交易(xttrader) |
 
 ### 1.4 运行场景约束
 
 | 约束 | 影响 |
 |------|------|
-| L06 属于 C 轨 hot plane | 交易时段内必须低延迟响应 |
+| D_EXECUTION_CORE 属于 C 轨 hot plane | 交易时段内必须低延迟响应 |
 | 当前单线程模型 | 多线程场景需加锁，当前未实现 |
 | SimulationBroker 成交即时无延迟 | 真实券商有延迟，集成测试需模拟 |
 | BrokerInterface 是外部系统边界 | 适配器质量直接影响交易安全 |
@@ -174,9 +174,9 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 + 券商接入审批 | 设计+施工 | 审批权限 |
-| L05 组合构建 | Order 产出正确性 | 集成 | CTR-004 契约 |
-| L04 风控 | 风控阻断可靠性 | 集成 | CTR-ERR-004 契约 |
-| L07 分析 | Fill/ExecutionReport 数据完整性 | 集成 | CTR-005/CTR-P1-007 契约 |
+| D_PORTFOLIO_CORE 组合构建 | Order 产出正确性 | 集成 | CTR-004 契约 |
+| D_RISK 风控 | 风控阻断可靠性 | 集成 | CTR-ERR-004 契约 |
+| D_REPORTING 分析 | Fill/ExecutionReport 数据完整性 | 集成 | CTR-005/CTR-P1-007 契约 |
 
 ### 1.6 当前态/目标态差距
 
@@ -193,11 +193,11 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 正常下单 | L05 产出 CTR-004 Order | OrderManager 创建订单 → ExecutionEngine 风控校验 → SOR 路由 → BrokerInterface 下单 → Fill 回调 | CTR-005 Fill + CTR-006 PositionSnapshot |
-| 风控阻断 | L04 风控校验失败 | ExecutionEngine 捕获 RiskLimitViolationError → 订单状态 REJECTED | CTR-ERR-005 ExecutionRejectionError |
+| 正常下单 | D_PORTFOLIO_CORE 产出 CTR-004 Order | OrderManager 创建订单 → ExecutionEngine 风控校验 → SOR 路由 → BrokerInterface 下单 → Fill 回调 | CTR-005 Fill + CTR-006 PositionSnapshot |
+| 风控阻断 | D_RISK 风控校验失败 | ExecutionEngine 捕获 RiskLimitViolationError → 订单状态 REJECTED | CTR-ERR-005 ExecutionRejectionError |
 | 算法拆单 | 大额订单需 TWAP 执行 | ExecutionEngine 按时间窗口拆分 → 逐笔提交 → 汇总 Fill | CTR-P1-007 ExecutionReport |
 | 券商不可用 | BrokerInterface 连接超时 | 重试 3 次 → 标记 EXPIRED → 降级到 SimulationBroker | CTR-ERR-005 + 告警 |
-| **v2.2.0新增**: MiniQMT实盘下单 | L05产出Order + broker_id="miniqmt" | OrderManager创建订单 → ExecutionEngine风控校验 → MiniQmtBroker.submit_order → xttrader.order_stock → 成交回调 → Fill | CTR-005 Fill + CTR-006 PositionSnapshot |
+| **v2.2.0新增**: MiniQMT实盘下单 | D_PORTFOLIO_CORE产出Order + broker_id="miniqmt" | OrderManager创建订单 → ExecutionEngine风控校验 → MiniQmtBroker.submit_order → xttrader.order_stock → 成交回调 → Fill | CTR-005 Fill + CTR-006 PositionSnapshot |
 | **v2.2.0新增**: A股T+1锁定拦截 | 卖出当日买入股票 | MiniQmtBroker._check_t_plus_1 → 查询持仓available_quantity → 不足 → 抛出TPlusOneViolationError | CTR-ERR-005 ExecutionRejectionError |
 | **v2.2.0新增**: 涨跌停拒绝 | 涨停板买入/跌停板卖出 | MiniQmtBroker.submit_order → xttrader返回错误码 → 转换为OrderRejectedError | CTR-ERR-005 + 订单状态REJECTED |
 | **v2.2.0新增**: 断线重连 | xttrader连接断开 | MiniQmtBroker._reconnect → 重新connect() → 同步订单状态 → 恢复交易 | 日志告警 + 自动恢复 |
@@ -210,14 +210,14 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | # | 类型 | 职责 | 详情 | 负责方 |
 |---|:----:|------|------|--------|
-| 1 | ✅ 包含 | 订单执行与路由 | 接收 L05 Order → 风控校验 → SOR 路由 → 券商下发 | 本模块 |
+| 1 | ✅ 包含 | 订单执行与路由 | 接收 D_PORTFOLIO_CORE Order → 风控校验 → SOR 路由 → 券商下发 | 本模块 |
 | 2 | ✅ 包含 | 算法单（TWAP/VWAP） | ExecutionEngine 实现算法拆单策略 | 本模块 |
 | 3 | ✅ 包含 | 成交回报处理 | 接收 Fill → 更新持仓 → 产出 PositionSnapshot | 本模块 |
-| 4 | ✅ 包含 | 持仓快照维护 | CTR-006 PositionSnapshot → L04/L07/L11 | 本模块 |
+| 4 | ✅ 包含 | 持仓快照维护 | CTR-006 PositionSnapshot → D_RISK/D_REPORTING/D_ML_TRAIN | 本模块 |
 | 5 | ✅ 包含 | SOR 经纪商选择 | 基于成交质量评分选择最优经纪商 | 本模块 |
-| 6 | ❌ 排除 | 订单生成 | L05 组合构建层职责 | L05 |
-| 7 | ❌ 排除 | 风控校验逻辑 | L04 风控层职责 | L04 |
-| 8 | ❌ 排除 | 信号生成 | L03 信号层职责 | L03 |
+| 6 | ❌ 排除 | 订单生成 | D_PORTFOLIO_CORE 组合构建层职责 | D_PORTFOLIO_CORE |
+| 7 | ❌ 排除 | 风控校验逻辑 | D_RISK 风控层职责 | D_RISK |
+| 8 | ❌ 排除 | 信号生成 | D_SIGNAL 信号层职责 | D_SIGNAL |
 
 ---
 
@@ -238,9 +238,9 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L05 (CTR-004 Order) | OrderManager 创建订单 → ExecutionEngine 风控校验 + SOR 路由 → BrokerInterface 下单 | L07 (CTR-005 Fill) | Pydantic BaseModel |
-| 2 | BrokerInterface 成交回调 | ExecutionEngine 处理 Fill → 更新持仓 | L04/L07/L11 (CTR-006 PositionSnapshot) | Pydantic BaseModel |
-| 3 | L04 (CTR-ERR-004 RiskLimitViolationError) | ExecutionEngine 捕获风控硬错误 → 阻断订单 | L05/L07 (CTR-ERR-005 ExecutionRejectionError) | Exception |
+| 1 | D_PORTFOLIO_CORE (CTR-004 Order) | OrderManager 创建订单 → ExecutionEngine 风控校验 + SOR 路由 → BrokerInterface 下单 | D_REPORTING (CTR-005 Fill) | Pydantic BaseModel |
+| 2 | BrokerInterface 成交回调 | ExecutionEngine 处理 Fill → 更新持仓 | D_RISK/D_REPORTING/D_ML_TRAIN (CTR-006 PositionSnapshot) | Pydantic BaseModel |
+| 3 | D_RISK (CTR-ERR-004 RiskLimitViolationError) | ExecutionEngine 捕获风控硬错误 → 阻断订单 | D_PORTFOLIO_CORE/D_REPORTING (CTR-ERR-005 ExecutionRejectionError) | Exception |
 
 ### 3.3 状态生命周期
 
@@ -287,17 +287,17 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 契约 ID | 模型名 | 核心字段 | 来源/目标 |
 |---------|--------|---------|----------|
-| CTR-004 | Order | order_id, symbol, side, quantity, price, order_type | 消费：L05 |
-| CTR-005 | Fill | fill_id, order_id, symbol, side, quantity, price, timestamp | 产出：L07 |
-| CTR-006 | PositionSnapshot | symbol, quantity, avg_price, unrealized_pnl, timestamp | 产出：L04/L07/L11 |
-| CTR-ERR-005 | ExecutionRejectionError | order_id, reason, timestamp | 产出：L05/L07 |
-| CTR-P1-007 | ExecutionReport | order_id, status, fills, total_quantity, avg_price | 产出：L07 |
+| CTR-004 | Order | order_id, symbol, side, quantity, price, order_type | 消费：D_PORTFOLIO_CORE |
+| CTR-005 | Fill | fill_id, order_id, symbol, side, quantity, price, timestamp | 产出：D_REPORTING |
+| CTR-006 | PositionSnapshot | symbol, quantity, avg_price, unrealized_pnl, timestamp | 产出：D_RISK/D_REPORTING/D_ML_TRAIN |
+| CTR-ERR-005 | ExecutionRejectionError | order_id, reason, timestamp | 产出：D_PORTFOLIO_CORE/D_REPORTING |
+| CTR-P1-007 | ExecutionReport | order_id, status, fills, total_quantity, avg_price | 产出：D_REPORTING |
 
 ### 4.3 输入契约
 
 | 接口 | 输入字段 | 必填 | 约束 |
 |------|---------|:---:|------|
-| `execute_order()` | Order (CTR-004) | ✅ | 必须通过 L05 产出，含 idempotency_key |
+| `execute_order()` | Order (CTR-004) | ✅ | 必须通过 D_PORTFOLIO_CORE 产出，含 idempotency_key |
 | `execute_order()` | RiskValidator | ✅ | MUST 通过构造函数注入，禁止硬编码依赖 |
 | `register_broker()` | name | ✅ | 非空字符串，唯一标识券商 |
 | `register_broker()` | broker | ✅ | MUST 继承 BrokerInterface |
@@ -377,7 +377,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 1 | 编码模式 | 绕开 BrokerInterface 直接调用券商 API | 继承 BrokerInterface + register_broker() | OCP-003 扩展点约束 |
 | 2 | 编码模式 | 硬编码 RiskValidator 实现 | 构造函数注入 RiskValidator ABC | 解耦约束 |
 | 3 | 编码模式 | 非法订单状态转换 | VALID_TRANSITIONS 严格校验 | 状态机完整性 |
-| 4 | 导入源 | `from zephyr.risk.implementations.*` | `from zephyr.risk.contracts.*` | 分层约束——L06 不依赖 L04 实现 |
+| 4 | 导入源 | `from zephyr.risk.implementations.*` | `from zephyr.risk.contracts.*` | 分层约束——D_EXECUTION_CORE 不依赖 D_RISK 实现 |
 
 ---
 
@@ -386,10 +386,10 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
 | 1 | 订单状态非法转换 | VALID_TRANSITIONS 校验 | 抛出 InvalidStateTransitionError，订单保持原状态 | 当前订单 |
-| 2 | 风控阻断（RiskLimitViolationError） | L04 风控校验 | 订单状态 → REJECTED，产出 CTR-ERR-005 | L05/L07 |
+| 2 | 风控阻断（RiskLimitViolationError） | D_RISK 风控校验 | 订单状态 → REJECTED，产出 CTR-ERR-005 | D_PORTFOLIO_CORE/D_REPORTING |
 | 3 | 成交回调异常（FillCallback） | try/except 包裹 | 记录日志，不阻断主流程 | 当前成交处理 |
 | 4 | 券商连接超时 | 超时阈值检测 | 重试 3 次 → 标记 EXPIRED | 当前订单 |
-| 5 | 券商返回拒绝 | BrokerInterface 返回 | 订单状态 → REJECTED，产出 CTR-ERR-005 | L05/L07 |
+| 5 | 券商返回拒绝 | BrokerInterface 返回 | 订单状态 → REJECTED，产出 CTR-ERR-005 | D_PORTFOLIO_CORE/D_REPORTING |
 
 ### 6.1 可观测性规格
 
@@ -429,7 +429,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 1 | 单元测试 | OrderManager 状态机 | 所有 VALID_TRANSITIONS 路径 + 非法转换拒绝 | 覆盖率 ≥ 90% |
 | 2 | 单元测试 | ExecutionEngine 算法执行 | TWAP/VWAP/冰山单拆单逻辑 | 算法输出与预期一致 |
 | 3 | 单元测试 | SimulationBroker 成交处理 | 滑点 + 佣金计算 + 持仓更新 | 数值精度 ±0.01 |
-| 4 | 集成测试 | L04/L05/L07 交互 | Order → 风控校验 → 执行 → Fill 产出 | 端到端通过 |
+| 4 | 集成测试 | D_RISK/D_PORTFOLIO_CORE/D_REPORTING 交互 | Order → 风控校验 → 执行 → Fill 产出 | 端到端通过 |
 | 5 | 集成测试 | RiskValidator 解耦 | ABC 注入后风控校验正常 | 替换实现不影响执行 |
 
 ---
@@ -453,7 +453,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 对齐项 | 对齐状态 | 说明 |
 |--------|:---:|------|
-| §10.1 依赖声明 ↔ dependency_path_panorama.md §3.9 | 已对齐 | L06 5子模块+仿真模式+风控/合规阻断点+契约均匹配 |
+| §10.1 依赖声明 ↔ dependency_path_panorama.md §3.9 | 已对齐 | D_EXECUTION_CORE 5子模块+仿真模式+风控/合规阻断点+契约均匹配 |
 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 未对齐 | 待验证 |
 | §10.1 依赖声明 ↔ 各依赖蓝图 §4 契约 | 未对齐 | 待验证 |
 
@@ -498,10 +498,10 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 | 状态 |
 |------------|---------|--------|---------|:---:|
-| L05 组合构建 | 消费接口 | ExecutionEngine.execute_order() 接收 CTR-004 Order | 端到端 Order→Fill 测试 | 部分集成 |
-| L04 风控 | 依赖注入 | ExecutionEngine 构造函数注入 RiskValidator ABC | 替换实现不影响执行 | 部分集成（待解耦） |
-| L07 分析 | 产出接口 | CTR-005 Fill / CTR-P1-007 ExecutionReport | L07 消费 Fill 数据 | 待集成 |
-| L11 ML 平台 | 产出接口 | CTR-006 PositionSnapshot | L11 消费 PositionSnapshot 数据 | 待集成 |
+| D_PORTFOLIO_CORE 组合构建 | 消费接口 | ExecutionEngine.execute_order() 接收 CTR-004 Order | 端到端 Order→Fill 测试 | 部分集成 |
+| D_RISK 风控 | 依赖注入 | ExecutionEngine 构造函数注入 RiskValidator ABC | 替换实现不影响执行 | 部分集成（待解耦） |
+| D_REPORTING 分析 | 产出接口 | CTR-005 Fill / CTR-P1-007 ExecutionReport | D_REPORTING 消费 Fill 数据 | 待集成 |
+| D_ML_TRAIN ML 平台 | 产出接口 | CTR-006 PositionSnapshot | D_ML_TRAIN 消费 PositionSnapshot 数据 | 待集成 |
 | SimulationBroker | 适配器注册 | register_broker("simulation", SimulationBroker) | 模拟成交 + 滑点 + 佣金 + 持仓维护 | ✅ 完成 |
 | SOR 智能路由 | 内部逻辑 | ExecutionEngine SOR 评分机制 | 评分机制已实现，多券商路由待扩展 | 骨架就位 |
 | **MiniQmtBroker** (v2.2.0) | 适配器注册 | register_broker("miniqmt", MiniQmtBroker) | 实盘小资金(1万元)100股测试: T+1/涨跌停/幂等/断线重连 | 待施工(规格已就绪) |
@@ -528,7 +528,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 2 | YAML 文件路径与磁盘不一致 | 高 | 低 | 以磁盘为准，YAML 待同步 | 风险 |
 | 3 | SimulationBroker 成交即时无延迟 | 中 | 中 | 真实券商有延迟，需在集成测试中模拟 | 风险 |
 | 4 | 订单状态机并发安全 | 中 | 高 | 当前单线程，多线程需加锁 | 风险 |
-| 5 | L07/L04/L11 依赖本层产出（CTR-005/CTR-006） | — | 中 | 契约版本管理 + 变更通知 | 负面后果 |
+| 5 | D_REPORTING/D_RISK/D_ML_TRAIN 依赖本层产出（CTR-005/CTR-006） | — | 中 | 契约版本管理 + 变更通知 | 负面后果 |
 | 6 | BrokerInterface 适配器质量影响交易安全 | — | 高 | 适配器沙箱测试 + ABC 接口约束 | 负面后果 |
 
 ---
@@ -559,8 +559,8 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | L05 CTR-004 Order 契约已定义 | hard | ✅ | ✅ |
-| 2 | L04 CTR-ERR-004 RiskLimitViolationError 契约已定义 | hard | ✅ | ✅ |
+| 1 | D_PORTFOLIO_CORE CTR-004 Order 契约已定义 | hard | ✅ | ✅ |
+| 2 | D_RISK CTR-ERR-004 RiskLimitViolationError 契约已定义 | hard | ✅ | ✅ |
 | 3 | BrokerInterface (OCP-003) 已实现 | hard | ✅ | ✅ |
 | 4 | OrderManager 状态机已实现 | hard | ✅ | ✅ |
 
@@ -574,7 +574,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\broker_interface.py` |
 | 验收标准 | BrokerInterface ABC 定义完整，submit_order/cancel_order 抽象方法 |
 | 验证命令 | `python -m pytest tests/ -k broker_interface -v` |
-| G7 检查项 | 上游 L05 Order 引用正确？下游 L07 Fill 产出路径精确？ |
+| G7 检查项 | 上游 D_PORTFOLIO_CORE Order 引用正确？下游 D_REPORTING Fill 产出路径精确？ |
 | AI 自治范围 | human_gated——BrokerInterface 是 OCP-003 扩展点，修改需 Owner 审批 |
 | 检查点 | broker_interface.py 存在且非空 |
 

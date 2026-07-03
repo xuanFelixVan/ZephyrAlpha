@@ -22,16 +22,16 @@
 # created: "2026-05-05"
 # ---
 
-"""L06 — Execution Engine
+"""D_EXECUTION_CORE — Execution Engine
 
 交易执行引擎。负责订单执行、算法单（TWAP/VWAP）、经纪商智能路由（SOR）。
 
 CTR 契约：
-  消费者 — CTR-004 (Order) ← L05
-  生产者 — CTR-005 (Fill) → L07
-  生产者 — CTR-006 (PositionSnapshot) → L04, L07, L11
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → L05, L07
-  生产者 — CTR-P1-007 (ExecutionReport，定义见 shared.contracts) → L07
+  消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
+  生产者 — CTR-005 (Fill) → D_REPORTING
+  生产者 — CTR-006 (PositionSnapshot) → D_RISK, D_REPORTING, D_ML_TRAIN
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
+  生产者 — CTR-P1-007 (ExecutionReport，定义见 shared.contracts) → D_REPORTING
 
 说明：本模块内 ``ExecutionEngineRunRecord`` 为引擎内部聚合快照，非 CTR-P1-007；
 跨层传输的 ExecutionReport 须使用 ``zephyr.shared.contracts.execution_report``。

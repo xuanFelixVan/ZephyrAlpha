@@ -56,15 +56,19 @@ class FixBudget:
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = sqlite3.connect(self._db_path)
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS fix_budget_consumption "
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, operation_id TEXT, level TEXT, "
-            "cost INTEGER DEFAULT 1, tokens INTEGER DEFAULT 0, timestamp TEXT, session_id TEXT)"
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS fix_budget_consumption "
+                "(id INTEGER PRIMARY KEY AUTOINCREMENT, operation_id TEXT, level TEXT, "
+                "cost INTEGER DEFAULT 1, tokens INTEGER DEFAULT 0, timestamp TEXT, session_id TEXT)"
+            )
+            conn.commit()
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            conn.close()
 
     def _load_from_db(self) -> None:
+        conn = None
         try:
             today = datetime.now(UTC).strftime("%Y-%m-%d")
             this_month = datetime.now(UTC).strftime("%Y-%m")
@@ -84,9 +88,12 @@ class FixBudget:
                 (this_month + "%",),
             ).fetchone()
             self._llm_tokens_consumed = row[0] if row else 0
-            conn.close()
         except Exception:
             pass
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
 
     def _check_reset(self) -> None:
         today = datetime.now(UTC).strftime("%Y-%m-%d")
@@ -143,6 +150,7 @@ class FixBudget:
             self._monthly_consumed += cost
             if tokens > 0 and level in (FixLevel.L2_LLM, FixLevel.L3_AGENT):
                 self._llm_tokens_consumed += tokens
+            conn = None
             try:
                 conn = sqlite3.connect(self._db_path)
                 conn.execute(
@@ -150,9 +158,12 @@ class FixBudget:
                     (operation_id, level.value, cost, tokens, datetime.now(UTC).isoformat(), ""),
                 )
                 conn.commit()
-                conn.close()
             except Exception as exc:
                 logger.warning("Failed to persist budget consumption: %s", exc)
+            # 5.49.2 修复：异常路径确保连接归还
+            finally:
+                if conn is not None:
+                    conn.close()
 
     def get_info(self) -> BudgetInfo:
         with self._lock:

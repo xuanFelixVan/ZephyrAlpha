@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Stop-Loss & Kill Switch Engine
+"""D_RISK — Stop-Loss & Kill Switch Engine
 
 止损规则与自动触发逻辑。对齐 CTR-ERR-004 (RiskLimitViolationError)。
 
@@ -32,7 +32,7 @@
   - 止损价格持久化（用于次日恢复）
 
 CTR 契约：
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → L05, L06
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
 INV-001: Kill Switch 延迟 < 1ms
 INV-004: 每日亏损硬限

@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-L13 — Experimentation Pipeline Layer
+实验 — Experimentation Pipeline Layer
 
 实验管线层。负责实验设计、参数搜索、A/B 测试和结果分析。
 
@@ -25,13 +25,13 @@ L13 — Experimentation Pipeline Layer
   - Scout Agent 自动化实验（外部资讯 + repo diff → 对照实验 → 结论沉淀到 KMS）
   - 参数网格搜索与贝叶斯优化
   - 实验结果统计验证（p-value / effect size / power analysis）
-  - 胜出策略自动提升至 L05 / L09
+  - 胜出策略自动提升至 D_PORTFOLIO_CORE / D_RESEARCH
 
 扩展点：
-  - ExperimentPipelineBase : OCP L13-EXP — 实验配置 → 实验指标
-  - ScoutAgentBase         : OCP L13-SCT — 自动化实验编排（CTR-P1-014 生产者）
+  - ExperimentPipelineBase : OCP 实验-EXP — 实验配置 → 实验指标
+  - ScoutAgentBase         : OCP 实验-SCT — 自动化实验编排（CTR-P1-014 生产者）
 
-依赖方向：L09 → L13 → L05 / L03（实验结果提升至生产管线）
+依赖方向：D_RESEARCH → 实验 → D_PORTFOLIO_CORE / D_SIGNAL（实验结果提升至生产管线）
 """
 
 from __future__ import annotations
@@ -74,7 +74,7 @@ class ExperimentMetric:
 
 class ExperimentPipelineBase(abc.ABC):
     """
-    实验管线基类（OCP 扩展点 L13-EXP）
+    实验管线基类（OCP 扩展点 实验-EXP）
 
     实现者要求：
       - run(): 接收实验配置，返回统计指标结果列表
@@ -99,15 +99,15 @@ class ExperimentPipelineBase(abc.ABC):
 
 class ScoutAgentBase(abc.ABC):
     """
-    Scout Agent 自动化实验编排器（OCP 扩展点 L13-SCT）
+    Scout Agent 自动化实验编排器（OCP 扩展点 实验-SCT）
 
-    契约对齐：CTR-P1-014（ExperimentResult 出站）→ L09, L11
+    契约对齐：CTR-P1-014（ExperimentResult 出站）→ D_RESEARCH, D_ML_TRAIN
 
     实现者要求：
       - scout(): 自动抓取外部资讯 + 内部 repo diff，设计并执行对照实验
       - 每个实验周期结束后产出 ExperimentResult
       - conclusion 状态：supported | rejected | inconclusive
-      - confidence < 0.7 的结论不应发布（L09/L11 消费端应忽略）
+      - confidence < 0.7 的结论不应发布（D_RESEARCH/D_ML_TRAIN 消费端应忽略）
       - 已确认结论 archived_to_kms = True，写入 KMS 知识管道
     """
 

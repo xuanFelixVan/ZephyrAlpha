@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L10 Compliance — Re-export wrapper (DM-291)
+"""D_COMPLIANCE Compliance — Re-export wrapper (DM-291)
 
 All modules have been migrated to zephyr.governance.
 This package re-exports for backward compatibility.

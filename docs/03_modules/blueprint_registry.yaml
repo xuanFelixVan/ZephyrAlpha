@@ -683,7 +683,7 @@ blueprints:
 - module_id: MOD-L04-001
   name: _domain_risk
   title: Risk Management Core 蓝图+施工图 — 风险管理引擎
-  summary: L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。
+  summary: D_RISK 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。
   layer: risk
   functional_domain: risk
   blueprint_status: Active
@@ -697,7 +697,7 @@ blueprints:
 - module_id: MOD-L05-001
   name: _domain_portfolio_core
   title: Portfolio Construction Core 蓝图+施工图 — 组合构建层
-  summary: L05 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
+  summary: D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
     + 默认股票多头策略 + 注册表。
   layer: pf_core
   functional_domain: portfolio
@@ -712,7 +712,7 @@ blueprints:
 - module_id: MOD-L06-001
   name: _domain_execution_core
   title: Trade Execution Core 蓝图+施工图 — 交易执行引擎
-  summary: L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1
+  summary: D_EXECUTION_CORE 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1
     部分实现：执行引擎+订单管理+模拟券商。业务层已开放，可施工。
   layer: ex_core
   functional_domain: execution

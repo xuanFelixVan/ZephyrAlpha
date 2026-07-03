@@ -156,7 +156,7 @@ def scan_blueprints() -> list[dict]:
             {
                 "module_id": mod_id,
                 "name": name,
-                "layer": "L01" if "infrastructure_runtime_integration" in parts else "cross_layer",
+                "layer": "L0_infrastructure" if "infrastructure_runtime_integration" in parts else "L1_foundation",
                 "blueprint": str(Path("docs/03_modules") / relative),
                 "source_dir": source_dir,
                 "test_dir": test_dir,

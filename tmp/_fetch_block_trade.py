@@ -19,7 +19,7 @@ import argparse
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
 from _ds_common import (
     setup_logging, load_env, ch_insert_tsv,
-    load_progress, save_progress, tsv_escape, year_months_backward,
+    load_progress, save_progress, tsv_escape, year_months_backward, iwencai_to_df,
 )
 
 log = setup_logging("fetch_block_trade")
@@ -40,7 +40,7 @@ def fetch_month(year: int, month: int):
     from iFinDPy import THS_iwencai
     query = f"{year}年{month}月 大宗交易个股"
     try:
-        return THS_iwencai(query, "stock")
+        return iwencai_to_df(THS_iwencai(query, "stock"))
     except Exception as e:
         log.warning(f"  {query} 失败: {e}")
         return None

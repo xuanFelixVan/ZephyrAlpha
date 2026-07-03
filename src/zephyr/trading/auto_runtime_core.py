@@ -111,6 +111,7 @@ class AutoRuntimeCore:
         self._fle_scheduler: FeedbackLoopScheduler | None = None
         self._embedding_router: EmbeddingRouter | None = None
         self._ollama_chat: OllamaChat | None = None
+        self._ollama_proc: object | None = None  # 5.49.1 修复：保存 Popen 引用避免孤儿进程
         self._task_learner: ModelTaskMatrix | None = None
         self._model_router: ModelRouter | None = None
         self._vms: InProcessVectorMemory | None = None
@@ -221,7 +222,8 @@ class AutoRuntimeCore:
             }
             if os.name == "nt":
                 kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
-            subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
+            # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
+            self._ollama_proc = subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
         except FileNotFoundError as e:
             logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
             return False
@@ -494,6 +496,15 @@ class AutoRuntimeCore:
 
     def shutdown(self) -> ShutdownReport:
         self._shutdown_rbac()
+        # 5.49.1 修复：shutdown 时终止 ollama 进程，避免孤儿进程
+        if self._ollama_proc is not None:
+            try:
+                self._ollama_proc.terminate()
+                self._ollama_proc.wait(timeout=5)
+            except Exception:
+                logger.exception("ollama_proc.terminate() failed during shutdown")
+            finally:
+                self._ollama_proc = None
         if self._local_scheduler is not None:
             try:
                 self._local_scheduler.stop()

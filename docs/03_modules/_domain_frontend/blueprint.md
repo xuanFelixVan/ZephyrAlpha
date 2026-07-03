@@ -76,7 +76,7 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 人机交互层——它解决了系统与用户之间的标准化交互问题。核心职责包括：监控面板(DashboardBase)、通知分发(NotificationManagerBase)、人工审批(ApprovalGatewayBase)三个 OCP 扩展点，以及 Streamlit Dashboard 5 页面组件。当前规模 3 个 Base 类 + 5 个 Dashboard 组件已实现，DefaultNotificationManager 和 DefaultApprovalGateway 待施工。上游依赖 FLE Fitness Functions 和 TaskRepository，下游被 L04 Risk Management 和 L07 Post-Trade Analytics 消费。
+本蓝图描述 ZephyrAlpha 人机交互层——它解决了系统与用户之间的标准化交互问题。核心职责包括：监控面板(DashboardBase)、通知分发(NotificationManagerBase)、人工审批(ApprovalGatewayBase)三个 OCP 扩展点，以及 Streamlit Dashboard 5 页面组件。当前规模 3 个 Base 类 + 5 个 Dashboard 组件已实现，DefaultNotificationManager 和 DefaultApprovalGateway 待施工。上游依赖 FLE Fitness Functions 和 TaskRepository，下游被 D_RISK 和 D_REPORTING 消费。
 
 **v2.2.0 新增决策(2026-07-04)**：扩展现有 Streamlit Dashboard，新增 5 个交易/回测组件，支持 joinquant/Qbot 风格仪表盘 + 实盘交易面板：
 1. **backtest_results.py**: 回测结果可视化——净值曲线/回撤/Sharpe/Sortino/MaxDD/IC/IR 图表 + 3阶段决策门控(IS→WFA→OOS)状态展示
@@ -162,9 +162,9 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 8 | ✅ 包含 | **v2.2.0新增** 5档盘口实时展示 | order_book组件消费D_DATA MiniQmtProvider.get_order_book() |
 | 9 | ✅ 包含 | **v2.2.0新增** 实盘持仓监控 | position_monitor组件消费D_EX_CORE MiniQmtBroker.get_positions() |
 | 10 | ✅ 包含 | **v2.2.0新增** 实盘交易面板 | trade_panel组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id="miniqmt") |
-| 11 | ❌ 排除 | 风险计算 | L04 Risk Management |
-| 12 | ❌ 排除 | 归因分析 | L07 Post-Trade Analytics |
-| 13 | ❌ 排除 | 数据采集 | L00 Data Source |
+| 11 | ❌ 排除 | 风险计算 | D_RISK |
+| 12 | ❌ 排除 | 归因分析 | D_REPORTING |
+| 13 | ❌ 排除 | 数据采集 | D_DATA |
 | 14 | ❌ 排除 | 回测执行 | D_BACKTEST 职责, backtest_results仅展示结果 |
 | 15 | ❌ 排除 | 实盘撮合 | D_EX_CORE MiniQmtBroker 职责, trade_panel仅触发下单 |
 
@@ -186,8 +186,8 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策+施工审批 | 设计+施工 | C轨开放审批权 |
-| L04 Risk Management | 风险仪表盘数据消费 | 集成 | CTR-P1-008 |
-| L07 Post-Trade Analytics | 归因报告数据消费 | 集成 | CTR-P1-009 |
+| D_RISK | 风险仪表盘数据消费 | 集成 | CTR-P1-008 |
+| D_REPORTING | 归因报告数据消费 | 集成 | CTR-P1-009 |
 
 ### 1.6 当前态/目标态差距
 
@@ -207,7 +207,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
 | Dashboard 查看任务进度 | 用户打开 Dashboard | DashboardApp.get_task_progress() → fetch_task_progress(task_repo) → render | TaskProgressData |
-| 风控硬限审批 | L05/L06 触达风控硬限 | ApprovalGatewayBase.submit(request) → 人工查看 → decide(approve/reject) | 审批结果写回 |
+| 风控硬限审批 | D_PORTFOLIO_CORE/D_EXECUTION_CORE 触达风控硬限 | ApprovalGatewayBase.submit(request) → 人工查看 → decide(approve/reject) | 审批结果写回 |
 | 告警通知 | 系统异常/SLI越界 | NotificationManagerBase.send(notification, channels) → 多渠道分发 | 通知送达确认 |
 | **v2.2.0**: 查看回测结果 | 用户选择回测任务 | backtest_results.fetch(backtest_result) → render(净值曲线+回撤+Sharpe+3阶段门控) | BacktestResultVisualization |
 | **v2.2.0**: Tick回放分析 | 用户选择历史时段+标的 | tick_replay.fetch(tick_data) → render(逐Tick回放+5档盘口快照+做T标记) | TickReplayVisualization |
@@ -231,8 +231,8 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 6 | ✅ 包含 | 门禁统计 | GateStatisticsData + fetch_gate_statistics | 本模块 |
 | 7 | ✅ 包含 | Fitness Functions 仪表盘 | FitnessDashboardData + fetch_fitness_data | 本模块 |
 | 8 | ✅ 包含 | OLAP 趋势 | OLAPTrendData + fetch_olap_trends | 本模块 |
-| 9 | ❌ 排除 | 风险计算 | L04 Risk Management | L04 |
-| 10 | ❌ 排除 | 绩效归因 | L07 Post-Trade Analytics | L07 |
+| 9 | ❌ 排除 | 风险计算 | D_RISK | D_RISK |
+| 10 | ❌ 排除 | 绩效归因 | D_REPORTING | D_REPORTING |
 | 11 | ❌ 排除 | Fitness Functions 计算 | feedback_loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
 
 ---
@@ -264,8 +264,8 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 2 | TaskRepository | fetch → render | 用户 | TaskProgressData |
 | 3 | KbRepo | fetch → render | 用户 | KnowledgeOverviewData |
 | 4 | OLAPEngine | fetch → render | 用户 | GateStatisticsData / OLAPTrendData |
-| 5 | L04 Risk Management | CTR-P1-008 消费 | Dashboard | RiskDashboardSnapshot |
-| 6 | L07 Post-Trade Analytics | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
+| 5 | D_RISK | CTR-P1-008 消费 | Dashboard | RiskDashboardSnapshot |
+| 6 | D_REPORTING | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
 | 7 | **D_BACKTEST BacktestResult** (v2.2.0) | fetch → render | 用户 | BacktestResultVisualization(净值/回撤/Sharpe/IC/IR/3阶段门控) |
 | 8 | **D_BACKTEST tick_replay** (v2.2.0) | fetch → render | 用户 | TickReplayVisualization(逐Tick+5档盘口快照+做T标记) |
 | 9 | **D_DATA MiniQmtProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
@@ -486,7 +486,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 对齐项 | 对齐状态 | 说明 |
 |---|--------|:---:|------|
-| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.7 | 已对齐 | L08 3子模块+Manifest额外资产+消费契约一致 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.7 | 已对齐 | D_FRONTEND 3子模块+Manifest额外资产+消费契约一致 |
 | 2 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 未对齐 | C轨DEP待注册(ARB-15) |
 | 3 | §10.1 依赖声明 ↔ 各依赖蓝图 §4 契约 | 未对齐 | CTR-P1-008/009待验证 |
 
@@ -530,7 +530,7 @@ class FitnessDashboardData(BaseModel):
 | TaskRepository | 直接查询 | 任务进度看板可渲染 | 看板可渲染 |
 | KbRepo | 直接查询 | 知识库概览可渲染 | 概览可渲染 |
 | OLAPEngine | 直接查询 | 门禁统计+OLAP 趋势可渲染 | 统计可渲染 |
-| L04 Risk Management | CTR-P1-008 消费 | 风险仪表盘可展示 | 风险面板可渲染 |
+| D_RISK | CTR-P1-008 消费 | 风险仪表盘可展示 | 风险面板可渲染 |
 | MOD-INF-035 系统大脑 | 运维可视化 | Dashboard 嵌入系统大脑 | Dashboard 可渲染 |
 | MOD-INF-015 系统遥测 | 告警通道 | 通知推送 | 通知可达 |
 | MOD-GATE_ENGINE 门禁引擎 | 人机协同 | CLI 命令交互 | CLI 可执行 |
@@ -645,9 +645,9 @@ class FitnessDashboardData(BaseModel):
 |------|------|
 | 对应蓝图契约 | §4.1 DashboardBase |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\frontend\dashboard\app.py` |
-| 验收标准 | 新增风险/归因 Dashboard 页面，L04/L07 数据可展示 |
+| 验收标准 | 新增风险/归因 Dashboard 页面，D_RISK/D_REPORTING 数据可展示 |
 | 验证命令 | `python -m pytest tests/frontend/ -k dashboard` |
-| G7 检查项 | 下游 L04/L07 数据可消费 |
+| G7 检查项 | 下游 D_RISK/D_REPORTING 数据可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | Dashboard 6 页面可渲染 |
 
@@ -1266,9 +1266,9 @@ def render_trade_panel(data: TradePanelData) -> None:
 
 | 场景 | 职责相同？ | 独立依赖链？ | 各自自包含？ | 判定 |
 |------|:---:|:---:|:---:|------|
-| L08 新增通知渠道实现 | ✅ 相同 | — | — | 原地升级 |
-| L08 新增数据采集模块 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图 |
-| L08 新增风控计算逻辑 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图(L04已覆盖) |
+| D_FRONTEND 新增通知渠道实现 | ✅ 相同 | — | — | 原地升级 |
+| D_FRONTEND 新增数据采集模块 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图 |
+| D_FRONTEND 新增风控计算逻辑 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图(D_RISK已覆盖) |
 
 ---
 
@@ -1328,8 +1328,8 @@ def render_trade_panel(data: TradePanelData) -> None:
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | FLE Fitness Functions | §4 接口契约、§10 依赖关系 |
-| Tier 2 | L04 Risk Management | CTR-P1-008 RiskDashboardSnapshot |
-| Tier 2 | L07 Post-Trade Analytics | CTR-P1-009 PerformanceAttributionReport |
+| Tier 2 | D_RISK | CTR-P1-008 RiskDashboardSnapshot |
+| Tier 2 | D_REPORTING | CTR-P1-009 PerformanceAttributionReport |
 | Tier 2 | MOD-INF-035 系统大脑 | 运维可视化 |
 | Tier 2 | MOD-INF-015 系统遥测 | 告警通道 |
 | Tier 2 | MOD-GATE_ENGINE 门禁引擎 | 人机协同 |

@@ -22,7 +22,7 @@
 # created: "2026-05-04"
 # ---
 """
-ZephyrAlpha — L02 Alpha Factor Layer
+ZephyrAlpha — D_FACTOR Alpha Factor Layer
 OCP Extension Point: FactorBase + FactorRegistry
 
 锁定文件（🔒）：任何修改必须先建 KB 决策记录。

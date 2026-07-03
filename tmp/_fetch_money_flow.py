@@ -22,7 +22,7 @@ import argparse
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
 from _ds_common import (
     setup_logging, load_env, ch_query, ch_execute, ch_insert_tsv,
-    load_progress, save_progress, tsv_escape,
+    load_progress, save_progress, tsv_escape, iwencai_to_df,
 )
 
 log = setup_logging("fetch_money_flow")
@@ -71,8 +71,7 @@ def fetch_day(ifind, date: str):
     # 查询语法（需实测调整；备选: "<date> 主力资金流向个股", "<date> 全部股票主力资金流向"）
     query = f"{date.replace('-', '年')}日 主力资金流向"
     try:
-        df = THS_iwencai(query, "stock")
-        return df
+        return iwencai_to_df(THS_iwencai(query, "stock"))
     except Exception as e:
         log.warning(f"  {date} 查询失败: {e}")
         return None

@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-L08 — Human-AI Interface Layer Skeleton
+D_FRONTEND — Human-AI Interface Layer Skeleton
 
 人机交互层抽象基类。定义仪表盘、通知分发、人工审批与交互协议的核心接口。
 
@@ -25,7 +25,7 @@ OCP 扩展点：
   - NotificationManagerBase   — 通知/告警分发
   - ApprovalGatewayBase       — 人工审批闸门
 
-消费契约：CTR-P1-008(RiskDashboardSnapshot) ← L04, CTR-P1-009(PerformanceAttributionReport) ← L07
+消费契约：CTR-P1-008(RiskDashboardSnapshot) ← D_RISK, CTR-P1-009(PerformanceAttributionReport) ← D_REPORTING
 """
 
 from __future__ import annotations
@@ -130,9 +130,9 @@ class ApprovalGatewayBase(abc.ABC):
       - pending(): 返回待审批列表
 
     典型流程：
-      1. L05/L06 触达风控硬限 → submit 审批请求
-      2. 人工通过 L08 Dashboard 查看 → decide approve/reject
-      3. 审批结果写回 → L05/L06 继续或中止
+      1. D_PORTFOLIO_CORE/D_EXECUTION_CORE 触达风控硬限 → submit 审批请求
+      2. 人工通过 D_FRONTEND Dashboard 查看 → decide approve/reject
+      3. 审批结果写回 → D_PORTFOLIO_CORE/D_EXECUTION_CORE 继续或中止
     """
 
     _registry: ClassVar[dict[str, type[ApprovalGatewayBase]]] = {}

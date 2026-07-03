@@ -40,14 +40,17 @@ class FixPatternMiner:
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = sqlite3.connect(self._db_path)
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS fix_patterns "
-            "(pattern_id TEXT PRIMARY KEY, action_type TEXT NOT NULL, dimension TEXT NOT NULL, "
-            "frequency INTEGER NOT NULL DEFAULT 1, success_rate REAL NOT NULL DEFAULT 0.0, "
-            "last_seen TEXT NOT NULL, pattern_data TEXT DEFAULT '{}')"
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS fix_patterns "
+                "(pattern_id TEXT PRIMARY KEY, action_type TEXT NOT NULL, dimension TEXT NOT NULL, "
+                "frequency INTEGER NOT NULL DEFAULT 1, success_rate REAL NOT NULL DEFAULT 0.0, "
+                "last_seen TEXT NOT NULL, pattern_data TEXT DEFAULT '{}')"
+            )
+            conn.commit()
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            conn.close()
 
     def mine(self, actions: list[FixAction]) -> list[dict[str, Any]]:
         new_patterns: list[dict[str, Any]] = []
@@ -79,6 +82,7 @@ class FixPatternMiner:
         return new_patterns
 
     def get_patterns(self, dimension: str = "", min_frequency: int = 1) -> list[dict[str, Any]]:
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             if dimension:
@@ -93,7 +97,6 @@ class FixPatternMiner:
                     "FROM fix_patterns WHERE frequency>=? ORDER BY frequency DESC",
                     (min_frequency,),
                 ).fetchall()
-            conn.close()
             patterns = []
             for row in rows:
                 patterns.append(
@@ -110,6 +113,10 @@ class FixPatternMiner:
             return patterns
         except Exception:
             return []
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
 
     def predict_fix_type(self, target: str, dimension: str = "") -> str | None:
         patterns = self.get_patterns(dimension=dimension, min_frequency=2)
@@ -122,6 +129,7 @@ class FixPatternMiner:
         return None
 
     def _upsert_pattern(self, pattern: dict[str, Any]) -> None:
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             existing = conn.execute(
@@ -156,6 +164,9 @@ class FixPatternMiner:
                     ),
                 )
             conn.commit()
-            conn.close()
         except Exception as exc:
             logger.error("Failed to upsert pattern: %s", exc)
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()

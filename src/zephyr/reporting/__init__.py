@@ -10,10 +10,10 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L07 Post-Trade Analytics
+"""D_REPORTING Post-Trade Analytics
 =====================================
 
-14 层量化架构 · L07 盘后分析层
+14 层量化架构 · D_REPORTING 盘后分析层
 
 职责
 ----
@@ -26,17 +26,17 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-005  Fill                      ← L06
-  - CTR-006  PositionSnapshot          ← L06
-  - CTR-ERR-005  ExecutionRejectionError ← L06
-  - CTR-P1-001  FactorMonitorReport    ← L02
-  - CTR-P1-006  StrategyLifecycleEvent ← L05
-  - CTR-P1-007  ExecutionReport        ← L06
-  - CTR-P1-011  RiskMetricsReport      ← L04
-  - CTR-P1-013  TelemetryEmitter       ← L12
+  - CTR-005  Fill                      ← D_EXECUTION_CORE
+  - CTR-006  PositionSnapshot          ← D_EXECUTION_CORE
+  - CTR-ERR-005  ExecutionRejectionError ← D_EXECUTION_CORE
+  - CTR-P1-001  FactorMonitorReport    ← D_FACTOR
+  - CTR-P1-006  StrategyLifecycleEvent ← D_PORTFOLIO_CORE
+  - CTR-P1-007  ExecutionReport        ← D_EXECUTION_CORE
+  - CTR-P1-011  RiskMetricsReport      ← D_RISK
+  - CTR-P1-013  TelemetryEmitter       ← 遥测
 
 作为生产者（Producer）：
-  - CTR-P1-009  PerformanceAttributionReport → L08, L10
+  - CTR-P1-009  PerformanceAttributionReport → D_FRONTEND, D_COMPLIANCE
 
 SSoT: cross_layer_contracts.yaml v3.0
 

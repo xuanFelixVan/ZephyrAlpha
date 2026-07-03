@@ -515,9 +515,10 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
     conn = sqlite3.connect(db_path)
 
-    conn.execute("PRAGMA journal_mode=WAL")
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
 
-    conn.executescript("""
+        conn.executescript("""
 
 
         CREATE TABLE IF NOT EXISTS drift_events (
@@ -586,39 +587,40 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
         CREATE INDEX IF NOT EXISTS idx_drift_timestamp ON drift_events(timestamp);
 
 
-    """)
+        """)
 
-    written = 0
+        written = 0
 
-    for event in events:
-        try:
-            conn.execute(
-                "INSERT OR REPLACE INTO drift_events (event_id, detector_id, module_id, severity, state, "
-                "description, timestamp, auto_fixable, resolution_detail, created_at, updated_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    str(event.event_id),
-                    event.detector_id,
-                    event.module_id,
-                    "MEDIUM",
-                    event.state.value,
-                    event.drift_dimension,
-                    event.created_at.isoformat(),
-                    1 if event.auto_fixed else 0,
-                    event.resolution_detail,
-                    event.created_at.isoformat(),
-                    event.updated_at.isoformat(),
-                ),
-            )
+        for event in events:
+            try:
+                conn.execute(
+                    "INSERT OR REPLACE INTO drift_events (event_id, detector_id, module_id, severity, state, "
+                    "description, timestamp, auto_fixable, resolution_detail, created_at, updated_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        str(event.event_id),
+                        event.detector_id,
+                        event.module_id,
+                        "MEDIUM",
+                        event.state.value,
+                        event.drift_dimension,
+                        event.created_at.isoformat(),
+                        1 if event.auto_fixed else 0,
+                        event.resolution_detail,
+                        event.created_at.isoformat(),
+                        event.updated_at.isoformat(),
+                    ),
+                )
 
-            written += 1
+                written += 1
 
-        except Exception:
-            pass
+            except Exception:
+                pass
 
-    conn.commit()
-
-    conn.close()
+        conn.commit()
+    # 5.49.2 修复：异常路径确保连接归还
+    finally:
+        conn.close()
 
     return written
 

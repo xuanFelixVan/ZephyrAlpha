@@ -168,7 +168,7 @@ class Money:
 
     **为什么不内嵌换汇？**
       - 汇率是时变的、有来源的、需要回溯的（"2026-04-18 00:00:00 的 USDCNY 汇率"）
-      - 汇率提供器是独立服务（FXRateProvider），由 L00 数据源或 L01 基础设施提供
+      - 汇率提供器是独立服务（FXRateProvider），由 D_DATA 数据源或 基础设施提供
       - Money 值对象只负责"带币种的金额"，不负责汇率查询
       - 换汇统一走：`converted = fx_provider.convert(money, target_ccy, as_of_date)`
     """

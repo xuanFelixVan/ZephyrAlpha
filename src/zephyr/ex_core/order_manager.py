@@ -22,14 +22,14 @@
 # created: "2026-05-05"
 # ---
 
-"""L06 — Order Manager
+"""D_EXECUTION_CORE — Order Manager
 
 订单管理器。管理订单全生命周期：创建→风控校验→路由→状态跟踪。
 
 CTR 契约：
-  消费者 — CTR-004 (Order) ← L05
-  生产者 — CTR-005 (Fill) → L07
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → L05, L07
+  消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
+  生产者 — CTR-005 (Fill) → D_REPORTING
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
 
 SSoT: cross_layer_contracts.yaml → CTR-004 + CTR-005
 """

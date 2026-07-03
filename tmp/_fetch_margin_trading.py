@@ -3,7 +3,9 @@
 策略：
 - 倒序遍历月份（2026-07 → 2010-03，融资融券启动于2010-03-31）
 - 每月查 i问财获取融资融券余额个股
-- i问财查询语法: "<YYYY年M月> 融资融券个股"（实测 2025年6月 返回 10 行，需调整查询获取全量）
+- i问财查询语法（2026-07-04 实测验证）: "<YYYY年M月> 融资融券余额个股"
+  返回 5534 行，列: 股票代码/股票简称/融资融券余额[YYYYMMDD]
+- 融资融券启动于 2010-03-31，更早月份无数据
 
 用法:
     python _fetch_margin_trading.py
@@ -12,15 +14,17 @@
 
 表结构: margin_trading(trade_date, symbol, margin_balance, margin_buy, margin_repay,
                       short_balance)
+注意: i问财仅返回"融资融券余额"总额，margin_buy/margin_repay/short_balance 填 NULL。
 """
 import sys
 import time
 import argparse
+import calendar
 
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
 from _ds_common import (
     setup_logging, load_env, ch_query, ch_insert_tsv,
-    load_progress, save_progress, tsv_escape, year_months_backward,
+    load_progress, save_progress, tsv_escape, num_or_null, year_months_backward, iwencai_to_df,
 )
 
 log = setup_logging("fetch_margin_trading")
@@ -38,40 +42,58 @@ def to_symbol(code):
 
 
 def fetch_month(year: int, month: int):
-    """查 i问财获取某月融资融券个股。"""
+    """查 i问财获取某月融资融券余额个股。
+
+    实测查询语法（2026-07-04）: "<YYYY年M月> 融资融券余额个股"
+    返回列: 股票代码/股票简称/融资融券余额[YYYYMMDD]
+    """
     from iFinDPy import THS_iwencai
-    query = f"{year}年{month}月 融资融券个股"
+    query = f"{year}年{month}月 融资融券余额个股"
     try:
-        return THS_iwencai(query, "stock")
+        return iwencai_to_df(THS_iwencai(query, "stock"))
     except Exception as e:
         log.warning(f"  {query} 失败: {e}")
         return None
 
 
 def df_to_tsv(df, year, month):
-    """DataFrame → TSV。trade_date 用月末日期。"""
-    import calendar
+    """DataFrame → TSV。trade_date 用月末日期。
+
+    i问财返回列名含日期后缀: 融资融券余额[YYYYMMDD]
+    需动态匹配以"融资融券余额"开头的列。
+    margin_buy/margin_repay/short_balance 填 NULL（i问财不提供）。
+    """
     last_day = calendar.monthrange(year, month)[1]
     trade_date = f"{year:04d}-{month:02d}-{last_day:02d}"
     cols = list(df.columns)
+
+    # 动态查找"融资融券余额"列（列名带 [YYYYMMDD] 后缀）
+    balance_col = None
+    for c in cols:
+        if "融资融券余额" in str(c) or ("余额" in str(c) and "融资" in str(c)):
+            balance_col = c
+            break
+    # 备选：查找任何带"余额"的列
+    if balance_col is None:
+        for c in cols:
+            if "余额" in str(c):
+                balance_col = c
+                break
+
     lines = []
     for _, row in df.iterrows():
         code = row.get("股票代码") or row.get("code") or row.get("thscode")
         sym = to_symbol(code)
         if not sym:
             continue
-        def g(*names):
-            for n in names:
-                if n in cols:
-                    v = row.get(n)
-                    return "" if v is None else v
-            return ""
+        # 融资融券余额
+        balance = row.get(balance_col) if balance_col else None
         line = "\t".join([
             trade_date, sym,
-            tsv_escape(g("margin_balance", "融资融券余额", "融资余额")),
-            tsv_escape(g("margin_buy", "融资买入额", "融资买入")),
-            tsv_escape(g("margin_repay", "融资偿还额", "融资偿还")),
-            tsv_escape(g("short_balance", "融券余额", "融券余量")),
+            num_or_null(balance),        # margin_balance
+            "\\N",                        # margin_buy (i问财不提供)
+            "\\N",                        # margin_repay (i问财不提供)
+            "\\N",                        # short_balance (i问财不提供)
         ])
         lines.append(line)
     return lines

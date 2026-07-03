@@ -16,17 +16,17 @@
 """C-track 端到端演示 —— 全流水线一次性运行
 
 演示路径：
-  L00 (AkshareProvider → QualityGate)
-  → L02 (FactorRegistry → MomentumFactor)
-  → L03 (SignalAggregator → CapitalAllocator)
-  → L04 (RiskValidator → StopLoss)
-  → L05 (EquityStrategy → 生成 Orders)
-  → L06 (SimulationBroker → OrderManager → ExecutionEngine → TWAP)
-  → L07 (TCAEngine → 成交成本分析)
-  → L09 (BacktestEngine → 回测产出)
-  → L10 (SecurityGateway → 合规校验)
-  → L11 (InferenceEngine → 模型推理)
-  → L13 (ExperimentPipeline → A/B 实验)
+  D_DATA (AkshareProvider → QualityGate)
+  → D_FACTOR (FactorRegistry → MomentumFactor)
+  → D_SIGNAL (SignalAggregator → CapitalAllocator)
+  → D_RISK (RiskValidator → StopLoss)
+  → D_PORTFOLIO_CORE (EquityStrategy → 生成 Orders)
+  → D_EXECUTION_CORE (SimulationBroker → OrderManager → ExecutionEngine → TWAP)
+  → D_REPORTING (TCAEngine → 成交成本分析)
+  → D_RESEARCH (BacktestEngine → 回测产出)
+  → D_COMPLIANCE (SecurityGateway → 合规校验)
+  → D_ML_TRAIN (InferenceEngine → 模型推理)
+  → 实验 (ExperimentPipeline → A/B 实验)
 
 Phase E | Safety: LOW（只读演示）| 运行前需安装可选依赖：``pip install -r requirements-demo.txt``
   或 ``pip install -e ".[demo]"``（见 pyproject optional-dependencies demo）
@@ -75,12 +75,12 @@ def verdict(step: str, ok: bool, note: str = "") -> str:
 
 
 # ═══════════════════════════════════════════════════════════
-#  L00: Data Source — 真实行情获取 + Quality Gate
+#  D_DATA: Data Source — 真实行情获取 + Quality Gate
 # ═══════════════════════════════════════════════════════════
 
 
 def run_data() -> dict[str, Any]:
-    banner("L00: DataSource — 真实行情获取 + Quality Gate")
+    banner("D_DATA: DataSource — 真实行情获取 + Quality Gate")
 
     from zephyr.data.akshare_provider import (
         AkshareProvider,
@@ -104,7 +104,7 @@ def run_data() -> dict[str, Any]:
     for sym in SYMBOLS:
         df = provider.fetch_historical(sym, start=start, end=end)
         ok = len(df) >= 30
-        status = verdict(f"L00 fetch {sym}", ok, f"{len(df)} rows")
+        status = verdict(f"D_DATA fetch {sym}", ok, f"{len(df)} rows")
         if not ok:
             continue
         symbols_ok.append(sym)
@@ -124,17 +124,17 @@ def run_data() -> dict[str, Any]:
         market_data[sym] = df
         print(f"    {sym}: close={last['close']:.2f}  quality={report.quality_score:.2f}  passed={report.passed}")
 
-    verdict("L00 整体", len(symbols_ok) >= 3, f"{len(symbols_ok)}/{len(SYMBOLS)} stocks OK")
+    verdict("D_DATA 整体", len(symbols_ok) >= 3, f"{len(symbols_ok)}/{len(SYMBOLS)} stocks OK")
     return {"symbols": symbols_ok, "market_data": market_data, "qa": qa_results}
 
 
 # ═══════════════════════════════════════════════════════════
-#  L02: Alpha Factor — 动量因子计算
+#  D_FACTOR: Alpha Factor — 动量因子计算
 # ═══════════════════════════════════════════════════════════
 
 
 def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
-    banner("L02: Alpha Factor — 因子计算 + 注册")
+    banner("D_FACTOR: Alpha Factor — 因子计算 + 注册")
 
     from zephyr.governance.factor.factor_base import (
         FactorRegistry,
@@ -160,17 +160,17 @@ def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
         print(f"    {sym}: mom_20d={mom_20:+.3%}  mom_60d={mom_60:+.3%}")
 
     ok = len(factor_scores) >= 3
-    verdict("L02 整体", ok, f"{len(factor_scores)} symbols with factor scores")
+    verdict("D_FACTOR 整体", ok, f"{len(factor_scores)} symbols with factor scores")
     return {"factor_scores": factor_scores, "registry_size": len(FactorRegistry._registry)}
 
 
 # ═══════════════════════════════════════════════════════════
-#  L03: Signal Generation — 信号合成 + 资金分配
+#  D_SIGNAL: Signal Generation — 信号合成 + 资金分配
 # ═══════════════════════════════════════════════════════════
 
 
 def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
-    banner("L03: Signal Generation — 信号合成 + 资金分配")
+    banner("D_SIGNAL: Signal Generation — 信号合成 + 资金分配")
 
     from datetime import datetime
 
@@ -210,7 +210,7 @@ def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
         )
 
     ok_sigs = len(all_signals) >= 3
-    verdict("L03 signals", ok_sigs, f"{len(all_signals)} signals")
+    verdict("D_SIGNAL signals", ok_sigs, f"{len(all_signals)} signals")
 
     alloc = allocator.allocate(all_signals, str(uuid.uuid4()))
     print(
@@ -218,17 +218,17 @@ def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
     )
 
     ok_alloc = len(alloc.strategy_allocations) >= 3
-    verdict("L03 allocation", ok_alloc, f"{len(alloc.strategy_allocations)} allocations")
+    verdict("D_SIGNAL allocation", ok_alloc, f"{len(alloc.strategy_allocations)} allocations")
     return {"signals": all_signals, "allocation": alloc}
 
 
 # ═══════════════════════════════════════════════════════════
-#  L04: Risk Management — 风控校验 + 止损
+#  D_RISK: Risk Management — 风控校验 + 止损
 # ═══════════════════════════════════════════════════════════
 
 
 def run_risk(symbols: list[str]) -> dict[str, Any]:
-    banner("L04: Risk Management — 风控校验 + 止损")
+    banner("D_RISK: Risk Management — 风控校验 + 止损")
 
     from zephyr.risk.default_risk_validator import (
         DefaultRiskValidator,
@@ -257,7 +257,7 @@ def run_risk(symbols: list[str]) -> dict[str, Any]:
         limits=limits,
     )
     v_ok = len(violations) == 0
-    verdict("L04 portfolio check", v_ok, f"{len(violations)} violations")
+    verdict("D_RISK portfolio check", v_ok, f"{len(violations)} violations")
 
     stop_entries = 0
     stop_triggers = 0
@@ -279,17 +279,17 @@ def run_risk(symbols: list[str]) -> dict[str, Any]:
         if triggered:
             stop_triggers += 1
 
-    verdict("L04 stop-loss", stop_triggers == 0, f"{stop_entries} checked, {stop_triggers} triggered")
+    verdict("D_RISK stop-loss", stop_triggers == 0, f"{stop_entries} checked, {stop_triggers} triggered")
     return {"violations": len(violations), "stop_loss_checks": stop_entries}
 
 
 # ═══════════════════════════════════════════════════════════
-#  L05+L06: Portfolio → Execution — 策略→订单→执行
+#  D_PORTFOLIO_CORE+D_EXECUTION_CORE: Portfolio → Execution — 策略→订单→执行
 # ═══════════════════════════════════════════════════════════
 
 
 def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
-    banner("L05+L06: Strategy → Broker → ExecutionEngine")
+    banner("D_PORTFOLIO_CORE+D_EXECUTION_CORE: Strategy → Broker → ExecutionEngine")
 
     from zephyr.ex_core.src.zephyr.execution_engine import (
         AlgoType,
@@ -316,7 +316,7 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
     for o in orders:
         print(f"      {o.order_id}  {o.symbol}  qty={o.quantity}  side={o.side}")
 
-    verdict("L05 strategy", len(orders) >= len(symbols), f"{len(orders)} orders")
+    verdict("D_PORTFOLIO_CORE strategy", len(orders) >= len(symbols), f"{len(orders)} orders")
 
     broker = SimulationBroker(initial_cash=Decimal("1000000"))
     broker.connect()
@@ -329,11 +329,11 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
 
     fills = broker.get_fills()
     print(f"    broker produced {len(fills)} fills")
-    verdict("L06 broker fills", len(fills) >= 1, f"{len(fills)} fills")
+    verdict("D_EXECUTION_CORE broker fills", len(fills) >= 1, f"{len(fills)} fills")
 
     positions = broker.get_positions()
     print(f"    positions: {len(positions.holdings)} holdings, total_mv={positions.total_market_value}")
-    verdict("L06 positions", len(positions.holdings) >= 1)
+    verdict("D_EXECUTION_CORE positions", len(positions.holdings) >= 1)
 
     engine = ExecutionEngine(order_mgr, ExecutionConfig(twap_slices=1))
 
@@ -349,9 +349,9 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
         try:
             boid = engine.execute_order(twap_order, algo=AlgoType.TWAP, broker_id="simulation")
             print(f"    TWAP order submitted: {boid}")
-            verdict("L06 TWAP", bool(boid), f"broker_order_id={boid}")
+            verdict("D_EXECUTION_CORE TWAP", bool(boid), f"broker_order_id={boid}")
         except Exception:
-            verdict("L06 TWAP", True, "NOTE: broker order_id returned (type issue in _simulate_fill)")
+            verdict("D_EXECUTION_CORE TWAP", True, "NOTE: broker order_id returned (type issue in _simulate_fill)")
 
     return {
         "orders": len(orders),
@@ -361,12 +361,12 @@ def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
 
 
 # ═══════════════════════════════════════════════════════════
-#  L07: Post-Trade Analytics — TCA
+#  D_REPORTING: Post-Trade Analytics — TCA
 # ═══════════════════════════════════════════════════════════
 
 
 def run_pf_core(fills: int) -> None:
-    banner("L07: Post-Trade Analytics — TCA")
+    banner("D_REPORTING: Post-Trade Analytics — TCA")
 
     from zephyr.governance.core.default_tca_engine import (
         DefaultTCAEngine,
@@ -402,16 +402,16 @@ def run_pf_core(fills: int) -> None:
     )
     report = engine.analyze(test_fill, test_order, str(uuid.uuid4()))
     print(f"    slippage: {report.slippage_bps:.1f} bps  commission: {report.commission}")
-    verdict("L07 TCA", report.slippage_bps != 0, f"slippage={report.slippage_bps:.1f}bps")
+    verdict("D_REPORTING TCA", report.slippage_bps != 0, f"slippage={report.slippage_bps:.1f}bps")
 
 
 # ═══════════════════════════════════════════════════════════
-#  L09: Research & Innovation — Backtest
+#  D_RESEARCH: Research & Innovation — Backtest
 # ═══════════════════════════════════════════════════════════
 
 
 def run_research(symbols: list[str]) -> None:
-    banner("L09: Research & Innovation — Backtest")
+    banner("D_RESEARCH: Research & Innovation — Backtest")
 
     from zephyr.simulation.simulation.default_backtest_engine import (
         DefaultBacktestEngine,
@@ -441,16 +441,16 @@ def run_research(symbols: list[str]) -> None:
     print(
         f"    total_return={result.total_return:+.2%}  sharpe={result.sharpe_ratio:.2f}  max_dd={result.max_drawdown:+.2%}  trades={result.trades_count}"
     )
-    verdict("L09 backtest", result.trades_count >= 0, f"sharpe={result.sharpe_ratio:.2f}")
+    verdict("D_RESEARCH backtest", result.trades_count >= 0, f"sharpe={result.sharpe_ratio:.2f}")
 
 
 # ═══════════════════════════════════════════════════════════
-#  L10: Compliance — 安全网关
+#  D_COMPLIANCE: Compliance — 安全网关
 # ═══════════════════════════════════════════════════════════
 
 
 def run_compliance() -> None:
-    banner("L10: Compliance — Security Gateway")
+    banner("D_COMPLIANCE: Compliance — Security Gateway")
 
     from zephyr.security.llm_defense.llm_security.default_security_gateway import (
         DefaultSecurityGateway,
@@ -464,23 +464,23 @@ def run_compliance() -> None:
     risks = gateway.security_scan(safe_content)
     decision = gateway.decide(risks, {"source": "trade_agent"})
     print(f"    safe: pre_filter={passed}  risks={risks}  action={decision.action.value}")
-    verdict("L10 safe code", decision.action == AuditAction.ALLOW, f"action={decision.action.value}")
+    verdict("D_COMPLIANCE safe code", decision.action == AuditAction.ALLOW, f"action={decision.action.value}")
 
     malicious = "os.system('rm -rf /production/data')"
     passed = gateway.pre_filter(malicious, "attacker")
     risks = gateway.security_scan(malicious)
     decision = gateway.decide(risks, {"source": "attacker"})
     print(f"    malicious: pre_filter={passed}  risks={risks}  action={decision.action.value}")
-    verdict("L10 block malicious", decision.action == AuditAction.BLOCK, f"blocked risks={risks}")
+    verdict("D_COMPLIANCE block malicious", decision.action == AuditAction.BLOCK, f"blocked risks={risks}")
 
 
 # ═══════════════════════════════════════════════════════════
-#  L11: ML Platform — Inference
+#  D_ML_TRAIN: ML Platform — Inference
 # ═══════════════════════════════════════════════════════════
 
 
 def run_ml_inference() -> None:
-    banner("L11: ML Platform — Inference")
+    banner("D_ML_TRAIN: ML Platform — Inference")
 
     from zephyr.integration.contracts.model_serving_request import ModelServingRequest
 
@@ -498,16 +498,16 @@ def run_ml_inference() -> None:
     )
     result = engine.predict(request)
     print(f"    prediction: {result.prediction}  confidence={result.confidence:.2f}")
-    verdict("L11 inference", result.confidence >= 0)
+    verdict("D_ML_TRAIN inference", result.confidence >= 0)
 
 
 # ═══════════════════════════════════════════════════════════
-#  L13: Experimentation — A/B Pipeline
+#  实验: Experimentation — A/B Pipeline
 # ═══════════════════════════════════════════════════════════
 
 
 def run_experiment() -> None:
-    banner("L13: Experimentation — A/B Pipeline")
+    banner("实验: Experimentation — A/B Pipeline")
 
     from zephyr.integration.zephyr.default_experiment_pipeline import (
         DefaultExperimentPipeline,
@@ -531,7 +531,7 @@ def run_experiment() -> None:
             f"    {m.metric_name}: control={m.control_value:.2f}  treatment={m.treatment_value:.2f}  effect={m.effect_size:+.3f}  p={m.p_value:.3f}  sig={m.is_significant}"
         )
     verdict(
-        "L13 experiment",
+        "实验 experiment",
         len(metrics) == len(config.metrics) and significant >= 1,
         f"{len(metrics)} metrics, {significant} significant",
     )
@@ -548,38 +548,38 @@ def main() -> int:
     print(f"  {datetime.now(UTC).isoformat()}")
     print("=" * 60)
 
-    # L00
+    # D_DATA
     l00 = run_data()
     symbols = l00["symbols"]
     if len(symbols) < 3:
         print("\n[ABORT] 不足 3 只股票有足够数据，终止演示")
         return 1
 
-    # L02
+    # D_FACTOR
     l02 = run_factor(l00["market_data"])
 
-    # L03
+    # D_SIGNAL
     l03 = run_signal(l02["factor_scores"])
 
-    # L04
+    # D_RISK
     run_risk(symbols)
 
-    # L05+L06
+    # D_PORTFOLIO_CORE+D_EXECUTION_CORE
     l56 = run_pf_core06_execution(symbols)
 
-    # L07
+    # D_REPORTING
     run_pf_core(l56["fills"])
 
-    # L09
+    # D_RESEARCH
     run_research(symbols)
 
-    # L10
+    # D_COMPLIANCE
     run_compliance()
 
-    # L11
+    # D_ML_TRAIN
     run_ml_inference()
 
-    # L13
+    # 实验
     run_experiment()
 
     # Final verdict

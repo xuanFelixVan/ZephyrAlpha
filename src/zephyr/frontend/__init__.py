@@ -13,10 +13,10 @@ from __future__ import annotations
 # [TESTS]
 # [TTL] task_bound
 
-"""L08 Human-AI Interface
+"""D_FRONTEND Human-AI Interface
 =====================================
 
-14 层量化架构 · L08 人机交互层
+域量化架构 · D_FRONTEND 人机交互层
 
 职责
 ----
@@ -33,14 +33,14 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-P1-008  RiskDashboardSnapshot      ← L04
-  - CTR-P1-009  PerformanceAttributionReport ← L07
+  - CTR-P1-008  RiskDashboardSnapshot      ← D_RISK
+  - CTR-P1-009  PerformanceAttributionReport ← D_REPORTING
 
 外部系统边界：
   - EXT-004  Feishu / 飞书通知接口（输出：Webhook 通知）
 
 作为全局配置消费者（Consumer）：
-  - CTR-P1-010  SystemConfiguration    ← L01
+  - CTR-P1-010  SystemConfiguration    ← 基础设施
 
 架构归属
 --------

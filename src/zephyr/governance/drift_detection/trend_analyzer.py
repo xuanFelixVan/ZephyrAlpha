@@ -97,73 +97,75 @@ class TrendAnalyzer:
     def compute_metrics(self, module_id: str) -> TrendMetrics:
         conn = sqlite3.connect(self._db_path)
 
-        now = datetime.now(UTC)
+        try:
+            now = datetime.now(UTC)
 
-        week_ago = (now - timedelta(days=7)).isoformat()
+            week_ago = (now - timedelta(days=7)).isoformat()
 
-        month_ago = (now - timedelta(days=30)).isoformat()
+            month_ago = (now - timedelta(days=30)).isoformat()
 
-        velocity = conn.execute(
-            "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND created_at>? AND state!='FALSE_POSITIVE'",
-            (module_id, week_ago),
-        ).fetchone()[0]
+            velocity = conn.execute(
+                "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND created_at>? AND state!='FALSE_POSITIVE'",
+                (module_id, week_ago),
+            ).fetchone()[0]
 
-        total = conn.execute(
-            "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND created_at>?",
-            (module_id, month_ago),
-        ).fetchone()[0]
+            total = conn.execute(
+                "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND created_at>?",
+                (module_id, month_ago),
+            ).fetchone()[0]
 
-        resolved = conn.execute(
-            "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND state='VERIFIED' AND updated_at>?",
-            (module_id, month_ago),
-        ).fetchone()[0]
+            resolved = conn.execute(
+                "SELECT COUNT(*) FROM drift_events WHERE module_id=? AND state='VERIFIED' AND updated_at>?",
+                (module_id, month_ago),
+            ).fetchone()[0]
 
-        res_rate = resolved / total if total > 0 else 1.0
+            res_rate = resolved / total if total > 0 else 1.0
 
-        mttr_hours = 0.0
+            mttr_hours = 0.0
 
-        rows = conn.execute(
-            "SELECT created_at, updated_at FROM drift_events WHERE module_id=? AND state='VERIFIED' AND created_at>?",
-            (module_id, month_ago),
-        ).fetchall()
+            rows = conn.execute(
+                "SELECT created_at, updated_at FROM drift_events WHERE module_id=? AND state='VERIFIED' AND created_at>?",
+                (module_id, month_ago),
+            ).fetchall()
 
-        if rows:
-            total_h = 0.0
+            if rows:
+                total_h = 0.0
 
-            for created, updated in rows:
-                try:
-                    c = datetime.fromisoformat(created)
+                for created, updated in rows:
+                    try:
+                        c = datetime.fromisoformat(created)
 
-                    u = datetime.fromisoformat(updated)
+                        u = datetime.fromisoformat(updated)
 
-                    total_h += (u - c).total_seconds() / 3600
+                        total_h += (u - c).total_seconds() / 3600
 
-                except (ValueError, TypeError):
-                    pass
+                    except (ValueError, TypeError):
+                        pass
 
-            mttr_hours = total_h / len(rows)
+                mttr_hours = total_h / len(rows)
 
-        fp_ratios: dict[str, float] = {}
+            fp_ratios: dict[str, float] = {}
 
-        rows = conn.execute(
-            "SELECT detector_id, COUNT(*) as total, SUM(CASE WHEN state='FALSE_POSITIVE' THEN 1 ELSE 0 END) as fp "
-            "FROM drift_events WHERE module_id=? AND created_at>? GROUP BY detector_id",
-            (module_id, month_ago),
-        ).fetchall()
+            rows = conn.execute(
+                "SELECT detector_id, COUNT(*) as total, SUM(CASE WHEN state='FALSE_POSITIVE' THEN 1 ELSE 0 END) as fp "
+                "FROM drift_events WHERE module_id=? AND created_at>? GROUP BY detector_id",
+                (module_id, month_ago),
+            ).fetchall()
 
-        for det_id, t, fp in rows:
-            fp_ratios[det_id] = fp / t if t > 0 else 0.0
+            for det_id, t, fp in rows:
+                fp_ratios[det_id] = fp / t if t > 0 else 0.0
 
-        conn.close()
-
-        return TrendMetrics(
-            module_id=module_id,
-            drift_velocity=float(velocity),
-            resolution_rate=res_rate,
-            mean_time_to_resolve_hours=mttr_hours,
-            detector_fp_ratio=fp_ratios,
-            computed_at=datetime.now(UTC).isoformat(),
-        )
+            return TrendMetrics(
+                module_id=module_id,
+                drift_velocity=float(velocity),
+                resolution_rate=res_rate,
+                mean_time_to_resolve_hours=mttr_hours,
+                detector_fp_ratio=fp_ratios,
+                computed_at=datetime.now(UTC).isoformat(),
+            )
+        finally:
+            # 5.49.2 修复：异常路径确保连接归还
+            conn.close()
 
     def check_trend_alerts(self, module_id: str) -> list[TrendAlert]:
         metrics = self.compute_metrics(module_id)

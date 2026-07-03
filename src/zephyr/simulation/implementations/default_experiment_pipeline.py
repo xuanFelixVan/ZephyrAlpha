@@ -15,13 +15,13 @@
 # [A_module] module_id=MOD-UNK_default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L13 — Default Experiment Pipeline
+"""实验 — Default Experiment Pipeline
 
-实验管线具体实现。实现 ExperimentPipelineBase (OCP L13-EXP)。
+实验管线具体实现。实现 ExperimentPipelineBase (OCP 实验-EXP)。
 
 CTR 契约：
-  消费者 — CTR-P1-014 (BacktestResult) ← L09
-  生产者 — ExperimentResult → L09, L11
+  消费者 — CTR-P1-014 (BacktestResult) ← D_RESEARCH
+  生产者 — ExperimentResult → D_RESEARCH, D_ML_TRAIN
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-014
 """

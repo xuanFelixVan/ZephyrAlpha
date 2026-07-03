@@ -54,7 +54,7 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 盘后分析层——它解决了交易成本量化与绩效归因标准化的问题。核心职责包括：TCA 交易成本分析、绩效归因（Brinson 三因子分解）、执行报告/归因报告产出。当前规模 2 个 EngineBase + 2 个 Default 实现（骨架），目标容量 5 个 TCA 策略 + 3 个归因模型。上游依赖 MOD-L06-001（Fill/Order）和 MOD-L05-001（PositionSnapshot），下游被 L08 Dashboard 和 L10 Compliance 消费。
+本蓝图描述 ZephyrAlpha 盘后分析层——它解决了交易成本量化与绩效归因标准化的问题。核心职责包括：TCA 交易成本分析、绩效归因（Brinson 三因子分解）、执行报告/归因报告产出。当前规模 2 个 EngineBase + 2 个 Default 实现（骨架），目标容量 5 个 TCA 策略 + 3 个归因模型。上游依赖 MOD-L06-001（Fill/Order）和 MOD-L05-001（PositionSnapshot），下游被 D_FRONTEND Dashboard 和 D_COMPLIANCE Compliance 消费。
 
 ---
 
@@ -114,17 +114,17 @@ codification_at: "2026-05-15"
 | 2 | ✅ 包含 | 绩效归因标准化 | AttributionEngineBase OCP 扩展点可用 |
 | 3 | ✅ 包含 | 执行报告产出 | CTR-P1-007 ExecutionReport 可产出 |
 | 4 | ✅ 包含 | 归因报告产出 | CTR-P1-009 PerformanceAttributionReport 可产出 |
-| 5 | ❌ 排除 | 交易执行 | L06 Trade Execution |
-| 6 | ❌ 排除 | 风险评估 | L04 Risk Management |
-| 7 | ❌ 排除 | 合规审查 | L10 Compliance |
+| 5 | ❌ 排除 | 交易执行 | D_EXECUTION_CORE Trade Execution |
+| 6 | ❌ 排除 | 风险评估 | D_RISK Risk Management |
+| 7 | ❌ 排除 | 合规审查 | D_COMPLIANCE Compliance |
 
 ### 1.4 运行场景约束
 
 | 约束 | 影响 |
 |------|------|
 | 价格字段必须使用 Decimal 类型 | 金融精度要求，禁止 float |
-| TCA 计算依赖 L06 Fill 数据 | Fill 不可用时 TCA 无法执行 |
-| 归因计算依赖 L06 PositionSnapshot | PositionSnapshot 不可用时归因返回 0 |
+| TCA 计算依赖 D_EXECUTION_CORE Fill 数据 | Fill 不可用时 TCA 无法执行 |
+| 归因计算依赖 D_EXECUTION_CORE PositionSnapshot | PositionSnapshot 不可用时归因返回 0 |
 | C轨已解除 | 骨架代码可 import，但业务逻辑未填充 |
 
 ### 1.5 利益相关者映射
@@ -132,8 +132,8 @@ codification_at: "2026-05-15"
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
-| L08 Dashboard | 归因报告展示 | 集成 | CTR-P1-009 消费 |
-| L10 Compliance | 合规审查 | 集成 | CTR-P1-009 消费 |
+| D_FRONTEND Dashboard | 归因报告展示 | 集成 | CTR-P1-009 消费 |
+| D_COMPLIANCE Compliance | 合规审查 | 集成 | CTR-P1-009 消费 |
 
 ### 1.6 当前态/目标态差距
 
@@ -147,7 +147,7 @@ codification_at: "2026-05-15"
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 日终 TCA 分析 | L06 Fill 到达 | DefaultTCAEngine.analyze(fill, order) → ExecutionReport | CTR-P1-007 |
+| 日终 TCA 分析 | D_EXECUTION_CORE Fill 到达 | DefaultTCAEngine.analyze(fill, order) → ExecutionReport | CTR-P1-007 |
 | 日终归因分析 | 收盘后触发 | DefaultAttributionEngine.attribute() → PerformanceAttributionReport | CTR-P1-009 |
 
 ---
@@ -162,9 +162,9 @@ codification_at: "2026-05-15"
 | 2 | ✅ 包含 | 绩效归因 | AttributionEngineBase + DefaultAttributionEngine | 本模块 |
 | 3 | ✅ 包含 | 执行报告生成 | Fill + Order → ExecutionReport | 本模块 |
 | 4 | ✅ 包含 | 归因报告生成 | PositionSnapshot → PerformanceAttributionReport | 本模块 |
-| 5 | ❌ 排除 | 订单执行 | L06 Trade Execution 负责 | L06 |
-| 6 | ❌ 排除 | 组合构建 | L05 Portfolio Construction 负责 | L05 |
-| 7 | ❌ 排除 | 风险度量 | L04 Risk Management 负责 | L04 |
+| 5 | ❌ 排除 | 订单执行 | D_EXECUTION_CORE Trade Execution 负责 | D_EXECUTION_CORE |
+| 6 | ❌ 排除 | 组合构建 | D_PORTFOLIO_CORE Portfolio Construction 负责 | D_PORTFOLIO_CORE |
+| 7 | ❌ 排除 | 风险度量 | D_RISK Risk Management 负责 | D_RISK |
 
 ---
 
@@ -183,8 +183,8 @@ codification_at: "2026-05-15"
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L06 Fill + Order | 滑点计算 → ExecutionReport | L08, L10 | ExecutionReport |
-| 2 | L06 PositionSnapshot | Brinson 分解 → PerformanceAttributionReport | L08, L10 | PerformanceAttributionReport |
+| 1 | D_EXECUTION_CORE Fill + Order | 滑点计算 → ExecutionReport | D_FRONTEND, D_COMPLIANCE | ExecutionReport |
+| 2 | D_EXECUTION_CORE PositionSnapshot | Brinson 分解 → PerformanceAttributionReport | D_FRONTEND, D_COMPLIANCE | PerformanceAttributionReport |
 
 ### 3.3 状态生命周期
 
@@ -367,7 +367,7 @@ class PerformanceAttributionReport:
 | 1 | 单元测试 | TCAEngineBase/DefaultTCAEngine | slippage_bps 计算正确 | 覆盖率 > 80% |
 | 2 | 单元测试 | AttributionEngineBase/DefaultAttributionEngine | Brinson 分解正确 | 覆盖率 > 80% |
 | 3 | 单元测试 | 边界条件 | intended_price=0 守卫 | ZeroDivisionError 不抛出 |
-| 4 | 集成测试 | L06→L07 数据流 | Fill+Order→ExecutionReport | 端到端通过 |
+| 4 | 集成测试 | D_EXECUTION_CORE→D_REPORTING 数据流 | Fill+Order→ExecutionReport | 端到端通过 |
 
 > ⚠️ 测试目录 `tests/reporting/` 尚未创建，C轨开放后 MUST 创建。
 
@@ -429,9 +429,9 @@ class PerformanceAttributionReport:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L06 Trade Execution | CTR-005/004 消费 | TCA 可接收 Fill+Order | TCA 分析可执行 |
-| L08 Dashboard | CTR-P1-009 产出 | Dashboard 可展示归因报告 | Dashboard 可渲染 |
-| L10 Compliance | CTR-P1-009 产出 | 合规可审查归因结果 | 合规可消费 |
+| D_EXECUTION_CORE Trade Execution | CTR-005/004 消费 | TCA 可接收 Fill+Order | TCA 分析可执行 |
+| D_FRONTEND Dashboard | CTR-P1-009 产出 | Dashboard 可展示归因报告 | Dashboard 可渲染 |
+| D_COMPLIANCE Compliance | CTR-P1-009 产出 | 合规可审查归因结果 | 合规可消费 |
 
 ---
 
@@ -498,7 +498,7 @@ class PerformanceAttributionReport:
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\default_tca_engine.py` |
 | 验收标准 | import 成功，slippage_bps 计算使用 Decimal |
 | 验证命令 | `python -c "from zephyr.reporting.implementations.default_tca_engine import DefaultTCAEngine"` |
-| G7 检查项 | 上游 analytics_base.py 存在，下游 L08/L10 可消费 |
+| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_COMPLIANCE 可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultTCAEngine 可实例化且 analyze() 可调用 |
 
@@ -522,7 +522,7 @@ class PerformanceAttributionReport:
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\default_attribution_engine.py` |
 | 验收标准 | import 成功，Brinson 三因子分解正确 |
 | 验证命令 | `python -c "from zephyr.reporting.implementations.default_attribution_engine import DefaultAttributionEngine"` |
-| G7 检查项 | 上游 analytics_base.py 存在，下游 L08/L10 可消费 |
+| G7 检查项 | 上游 analytics_base.py 存在，下游 D_FRONTEND/D_COMPLIANCE 可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultAttributionEngine.attribute() 返回非零 allocation/selection/interaction |
 
@@ -544,9 +544,9 @@ class PerformanceAttributionReport:
 |------|------|
 | 对应蓝图契约 | §4.1 + §9 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\` + `D:\ZephyrAlpha\tests\reporting\` |
-| 验收标准 | PerformanceAttributionReport 可被 L08/L10 消费，测试通过 |
+| 验收标准 | PerformanceAttributionReport 可被 D_FRONTEND/D_COMPLIANCE 消费，测试通过 |
 | 验证命令 | `python -m pytest tests/reporting/ -k attribution -v` |
-| G7 检查项 | 下游 L08/L10 可消费，测试覆盖率 > 80% |
+| G7 检查项 | 下游 D_FRONTEND/D_COMPLIANCE 可消费，测试覆盖率 > 80% |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | pytest exit 0 |
 
@@ -597,8 +597,8 @@ class PerformanceAttributionReport:
 | # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
 |---|:----:|------|---------|----------|----------|----------|
 | 1 | 施工 | import 失败 | 模块路径错误 | 检查 __init__.py | 修正路径 | `python -c "import ..."` |
-| 2 | 运行 | TCA 分析异常 | Fill 数据为空 | 检查 L06 数据流 | 返回空报告列表 | 日志确认 |
-| 3 | 运行 | 归因全零 | PositionSnapshot 缺失 | 检查 L06 数据流 | 返回零值报告 | 日志确认 |
+| 2 | 运行 | TCA 分析异常 | Fill 数据为空 | 检查 D_EXECUTION_CORE 数据流 | 返回空报告列表 | 日志确认 |
+| 3 | 运行 | 归因全零 | PositionSnapshot 缺失 | 检查 D_EXECUTION_CORE 数据流 | 返回零值报告 | 日志确认 |
 
 ### 16.12 并发操作模型
 
@@ -813,9 +813,9 @@ class PerformanceAttributionReport:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | L08 Dashboard | §4 接口契约、§10 依赖关系 |
-| Tier 1 | L10 Compliance | §4 接口契约 |
-| Tier 2 | L09 Research | CTR-P1-007 ExecutionReport |
+| Tier 1 | D_FRONTEND Dashboard | §4 接口契约、§10 依赖关系 |
+| Tier 1 | D_COMPLIANCE Compliance | §4 接口契约 |
+| Tier 2 | D_RESEARCH Research | CTR-P1-007 ExecutionReport |
 
 ### 变更审批与同步规则
 

@@ -52,9 +52,9 @@ depends_on:
     why: "权限联动"
 ---
 
-> ⚠️ **业务层已开放，可施工** — L10 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
+> ⚠️ **业务层已开放，可施工** — D_COMPLIANCE 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
 
-> module_id: MOD-L10-001 | version: 2.1.0 | status: Active | layer: L10
+> module_id: MOD-L10-001 | version: 2.1.0 | status: Active | layer: L1_foundation
 > actual_disk_path: src/zephyr/compliance/ | generation: 2 | construction_progress: partially_implemented
 
 # Compliance Core 蓝图+施工图 — 合规引擎
@@ -63,7 +63,7 @@ depends_on:
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 合规引擎——它解决了 AI 指令执行的安全拦截与合规规则可扩展性问题。核心职责包括：SecurityGateway OCP 扩展点（L1/L2/L3 三层防御）、ComplianceEngine OCP 扩展点（合规规则管理）、AISG Sandbox（模式匹配测试器）、ArtifactScanner（S-01~S-06 多类别安全扫描）。当前规模 4 个核心组件 + 1 个实现类，目标容量支持安全网关 QPS 100/s、Artifact 扫描 500 文件/次。上游依赖 INF-012 Database（规则存储）、INF-020 Audit Trail（审计写入）、INF-018 Agent RBAC（权限联动），下游被 L04 Risk Management、L06 Trade Execution 消费。
+本蓝图描述 ZephyrAlpha 合规引擎——它解决了 AI 指令执行的安全拦截与合规规则可扩展性问题。核心职责包括：SecurityGateway OCP 扩展点（L1/L2/L3 三层防御）、ComplianceEngine OCP 扩展点（合规规则管理）、AISG Sandbox（模式匹配测试器）、ArtifactScanner（S-01~S-06 多类别安全扫描）。当前规模 4 个核心组件 + 1 个实现类，目标容量支持安全网关 QPS 100/s、Artifact 扫描 500 文件/次。上游依赖 INF-012 Database（规则存储）、INF-020 Audit Trail（审计写入）、INF-018 Agent RBAC（权限联动），下游被 D_RISK Risk Management、D_EXECUTION_CORE Trade Execution 消费。
 
 ---
 
@@ -118,7 +118,7 @@ depends_on:
 
 ### 1.1 背景
 
-AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实现安全检查，导致：①安全策略不一致 ②新增安全规则需修改多个模块 ③审计追踪不完整。合规层（L10）作为系统权限判定链第④步（dependency_path_panorama §3.16），负责在 AI 指令执行前进行合规检查（CTR-P1-012），拦截不合规指令并生成审计决策。
+AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实现安全检查，导致：①安全策略不一致 ②新增安全规则需修改多个模块 ③审计追踪不完整。合规层（D_COMPLIANCE）作为系统权限判定链第④步（dependency_path_panorama §3.16），负责在 AI 指令执行前进行合规检查（CTR-P1-012），拦截不合规指令并生成审计决策。
 
 ### 1.2 目标范围
 
@@ -128,7 +128,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 2 | ✅ 包含 | 合规规则引擎 | ComplianceEngine OCP扩展点可用 |
 | 3 | ✅ 包含 | AISG沙箱测试 | AISGSandbox模式匹配可运行 |
 | 4 | ✅ 包含 | Artifact安全扫描 | ArtifactScanner S-01~S-06检测类别可用 |
-| 5 | ❌ 排除 | 数据存储引擎 | L01 INF-012 Database 负责 |
+| 5 | ❌ 排除 | 数据存储引擎 | 基础设施 INF-012 Database 负责 |
 | 6 | ❌ 排除 | 审计日志存储 | INF-020 Audit Trail 负责 |
 | 7 | ❌ 排除 | 权限判定 | INF-018 Agent RBAC 负责 |
 
@@ -139,16 +139,16 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | SecurityGateway 在 AI 指令执行路径上同步调用 | 拦截延迟直接影响指令执行延迟，必须 <100ms |
 | ArtifactScanner 在 CI/CD Pipeline 中异步调用 | 扫描时间不影响构建流水线主路径 |
 | AISG 模式匹配基于正则表达式 | 复杂模式可能导致误报，需可配置白名单 |
-| ComplianceRule 数据类来自 shared/contracts/risk | 接口变更需同步 L04/L06 |
-| L10 属于 C 轨线7 T2 | C轨占位已解除[ARCH-045 P0]，可施工 |
+| ComplianceRule 数据类来自 shared/contracts/risk | 接口变更需同步 D_RISK/D_EXECUTION_CORE |
+| D_COMPLIANCE 属于 C 轨线7 T2 | C轨占位已解除[ARCH-045 P0]，可施工 |
 
 ### 1.5 利益相关者映射
 
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策、破坏性变更审批 | 设计+施工 | 审批权限 |
-| L04 Risk Management | CTR-P1-012 ComplianceRule 消费 | 集成 | 接口兼容 |
-| L06 Trade Execution | CTR-P1-012 ComplianceRule 消费 | 集成 | 接口兼容 |
+| D_RISK Risk Management | CTR-P1-012 ComplianceRule 消费 | 集成 | 接口兼容 |
+| D_EXECUTION_CORE Trade Execution | CTR-P1-012 ComplianceRule 消费 | 集成 | 接口兼容 |
 | INF-020 Audit Trail | AuditDecision 写入 | 集成 | 审计格式兼容 |
 | CI/CD Pipeline | ArtifactScanner 调用 | 运行 | 门禁配置 |
 
@@ -158,7 +158,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 |------|--------|--------|------|:------:|
 | 安全网关 | DefaultSecurityGateway 两套实现 | 统一到 implementations/ | 根目录版本需废弃 | P1 |
 | YAML SSoT | artifact_scanner.py 未注册 | 全部代码文件注册 | 孤儿文件 | P1 |
-| 合规规则 | ComplianceManagerBase 骨架 | CTR-P1-012 可被 L04/L06 消费 | 规则评估逻辑未完善 | P2 |
+| 合规规则 | ComplianceManagerBase 骨架 | CTR-P1-012 可被 D_RISK/D_EXECUTION_CORE 消费 | 规则评估逻辑未完善 | P2 |
 | 可观测性 | 无监控指标 | §6.1 指标已埋点 | 未实现 | P2 |
 
 ### 1.7 典型场景
@@ -167,7 +167,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 |------|------|---------|------|
 | AI指令安全拦截 | AI指令执行请求 | SecurityGateway.pre_filter → security-scan → decide | AuditDecision(allow/deny/flag) |
 | Artifact安全扫描 | CI/CD Pipeline触发 | ArtifactScanner.scan → S-01~S-06检测 | ScanReport |
-| 合规规则评估 | L04/L06请求合规检查 | ComplianceManagerBase.evaluate | ComplianceResult |
+| 合规规则评估 | D_RISK/D_EXECUTION_CORE请求合规检查 | ComplianceManagerBase.evaluate | ComplianceResult |
 
 ---
 
@@ -177,10 +177,10 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | # | 类型 | 职责 | 具体内容 | 负责方 |
 |---|:----:|------|---------|--------|
-| 1 | ✅ | AI安全网关 | SecurityGateway抽象 + DefaultSecurityGateway实现（L1 Prompt Injection + L2 危险代码 + L3 审计追踪） | L10 |
-| 2 | ✅ | 合规规则引擎 | ComplianceEngine抽象 + ComplianceManagerBase + ComplianceRule | L10 |
-| 3 | ✅ | AISG沙箱 | AISGSandbox模式匹配测试器 | L10 |
-| 4 | ✅ | Artifact扫描 | ArtifactScanner（S-01~S-06多类别安全扫描） | L10 |
+| 1 | ✅ | AI安全网关 | SecurityGateway抽象 + DefaultSecurityGateway实现（L1 Prompt Injection + L2 危险代码 + L3 审计追踪） | D_COMPLIANCE |
+| 2 | ✅ | 合规规则引擎 | ComplianceEngine抽象 + ComplianceManagerBase + ComplianceRule | D_COMPLIANCE |
+| 3 | ✅ | AISG沙箱 | AISGSandbox模式匹配测试器 | D_COMPLIANCE |
+| 4 | ✅ | Artifact扫描 | ArtifactScanner（S-01~S-06多类别安全扫描） | D_COMPLIANCE |
 | 5 | ❌ | 数据持久化 | — | INF-012 Database |
 | 6 | ❌ | 权限控制 | — | INF-018 Agent RBAC |
 | 7 | ❌ | 审计日志写入 | — | INF-020 Audit Trail |
@@ -205,7 +205,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
 | 1 | AI指令输入 | SecurityGateway三层拦截 | 指令执行器 / 拦截拒绝 | AuditDecision |
-| 2 | ComplianceRule定义 | ComplianceManagerBase规则管理 | L04/L06消费 | ComplianceRule |
+| 2 | ComplianceRule定义 | ComplianceManagerBase规则管理 | D_RISK/D_EXECUTION_CORE消费 | ComplianceRule |
 | 3 | AI指令输入 | AISGSandbox模式匹配 | SecurityGateway | bool + 拦截原因 |
 | 4 | Artifact文件 | ArtifactScanner多类别扫描 | ScanReport | ScanReport |
 
@@ -274,7 +274,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 |---------|:---:|------|
 | 新增检测类别（S-07+） | ✅ 向后兼容 | 不影响已有消费者 |
 | 新增SecurityGateway实现 | ✅ 向后兼容 | OCP扩展点 |
-| 删除/重命名ComplianceRule字段 | ❌ 破坏性 | 需Owner审批 + 通知L04/L06 |
+| 删除/重命名ComplianceRule字段 | ❌ 破坏性 | 需Owner审批 + 通知D_RISK/D_EXECUTION_CORE |
 | 修改AuditDecision结构 | ❌ 破坏性 | 需Owner审批 |
 
 **变更通知**：破坏性变更→Owner审批+蓝图minor+1。兼容性变更→AI自主+patch+1。
@@ -379,8 +379,8 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 2 | 单元测试 | ComplianceManagerBase + ComplianceRule | 规则评估、规则注册、规则查询 | 覆盖率≥80% |
 | 3 | 单元测试 | AISGSandbox | 模式匹配命中、模式匹配未命中、白名单 | 覆盖率≥80% |
 | 4 | 单元测试 | ArtifactScanner | S-01~S-06各类别扫描、空文件、大文件 | 覆盖率≥80% |
-| 5 | 集成测试 | L04 Risk Management ← CTR-P1-012 | ComplianceRule可被L04消费 | 端到端通过 |
-| 6 | 集成测试 | L06 Trade Execution ← CTR-P1-012 | ComplianceRule可被L06消费 | 端到端通过 |
+| 5 | 集成测试 | D_RISK Risk Management ← CTR-P1-012 | ComplianceRule可被D_RISK消费 | 端到端通过 |
+| 6 | 集成测试 | D_EXECUTION_CORE Trade Execution ← CTR-P1-012 | ComplianceRule可被D_EXECUTION_CORE消费 | 端到端通过 |
 | 7 | 集成测试 | INF-020 Audit Trail ← AuditDecision | 审计决策可追溯 | 端到端通过 |
 
 ---
@@ -452,8 +452,8 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L04 Risk Management | 新增接口 | CTR-P1-012 ComplianceRule | 风险管理可消费合规规则 |
-| L06 Trade Execution | 新增接口 | CTR-P1-012 ComplianceRule | 交易执行可消费合规规则 |
+| D_RISK Risk Management | 新增接口 | CTR-P1-012 ComplianceRule | 风险管理可消费合规规则 |
+| D_EXECUTION_CORE Trade Execution | 新增接口 | CTR-P1-012 ComplianceRule | 交易执行可消费合规规则 |
 | INF-020 Audit Trail | 修改现有接口 | AuditDecision写入 | 审计决策可追溯 |
 | CI/CD Pipeline | 配置注入 | ArtifactScanner | 代码审查门禁可扫描artifact |
 | 权限判定链（dependency_path_panorama §3.16） | ④ 合规检查 | CTR-P1-012 | 指令执行前合规拦截 |
@@ -769,8 +769,8 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | Tier | 消费者 | 依赖内容 |
 |------|--------|---------|
-| 1 | L04 Risk Management | CTR-P1-012 ComplianceRule |
-| 1 | L06 Trade Execution | CTR-P1-012 ComplianceRule |
+| 1 | D_RISK Risk Management | CTR-P1-012 ComplianceRule |
+| 1 | D_EXECUTION_CORE Trade Execution | CTR-P1-012 ComplianceRule |
 | 2 | INF-020 Audit Trail | AuditDecision |
 | 2 | CI/CD Pipeline | ArtifactScanner |
 

@@ -8,6 +8,20 @@
 - AKShare 限速 <1次/秒 → sleep(1)
 - symbol 参数为 6 位数字（不带后缀）
 
+实测 AKShare 返回结构（2026-07-04，akshare 1.18.64）：
+  columns = ['年度', '预测机构数', '最小值', '均值', '最大值', '行业平均数']
+  示例: {'年度': '2026', '预测机构数': 13, '最小值': 1.41,
+         '均值': 1.52, '最大值': 1.67, '行业平均数': 1.88}
+
+字段映射：
+  report_date   ← 下载日期（当日，AKShare 不返回历史日期）
+  symbol        ← 股票代码
+  forecast_year ← '年度'
+  forecast_eps  ← '均值'（一致预期 EPS 均值）
+  forecast_pe   ← NULL（AKShare 不返回 PE）
+  rating        ← NULL（AKShare 不返回评级）
+  analyst_count ← '预测机构数'
+
 用法:
     python _fetch_analyst_forecast.py
     python _fetch_analyst_forecast.py --restart
@@ -19,15 +33,19 @@
 import sys
 import time
 import argparse
+import datetime
 
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
 from _ds_common import (
-    setup_logging, ch_insert_tsv, tsv_escape,
+    setup_logging, ch_insert_tsv, tsv_escape, num_or_null,
     get_stock_list, load_progress, save_progress,
 )
 
 log = setup_logging("fetch_analyst_forecast")
 SLEEP_BETWEEN = 1.2  # AKShare 限速
+
+# 下载日期（所有行的 report_date 用此值）
+DOWNLOAD_DATE = datetime.date.today().isoformat()
 
 
 def fetch_forecast(symbol: str):
@@ -41,7 +59,11 @@ def fetch_forecast(symbol: str):
 
 
 def df_to_tsv(df, symbol):
-    """DataFrame → TSV。"""
+    """DataFrame → TSV。
+
+    AKShare 返回列: 年度/预测机构数/最小值/均值/最大值/行业平均数
+    映射: forecast_year←年度, forecast_eps←均值, analyst_count←预测机构数
+    """
     lines = []
     cols = list(df.columns)
     for _, row in df.iterrows():
@@ -51,18 +73,18 @@ def df_to_tsv(df, symbol):
                     v = row.get(n)
                     return "" if v is None else v
             return ""
-        # report_date: 通常为统计日期或报告期
-        report_date = g("统计日期", "日期", "date", "报告期")
-        if not report_date:
+        forecast_year = g("年度", "forecast_year", "预测年度")
+        if not forecast_year:
             continue
-        rd = str(report_date)[:10]
+        forecast_eps = g("均值", "一致预期EPS", "forecast_eps", "预测每股收益", "每股收益")
+        analyst_count = g("预测机构数", "机构家数", "analyst_count", "研究员人数")
         line = "\t".join([
-            rd, symbol,
-            tsv_escape(g("forecast_year", "预测年度", "年度")),
-            tsv_escape(g("forecast_eps", "预测每股收益", "一致预期EPS", "每股收益")),
-            tsv_escape(g("forecast_pe", "预测市盈率", "一致预期PE")),
-            tsv_escape(g("rating", "评级", "投资评级")),
-            tsv_escape(g("analyst_count", "分析师家数", "机构家数", "研究员人数")),
+            DOWNLOAD_DATE, symbol,
+            tsv_escape(forecast_year),
+            num_or_null(forecast_eps),    # forecast_eps (Decimal)
+            "\\N",                          # forecast_pe (AKShare 不提供)
+            "\\N",                          # rating (AKShare 不提供)
+            num_or_null(analyst_count) if analyst_count else "\\N",  # analyst_count
         ])
         lines.append(line)
     return lines

@@ -38,16 +38,19 @@ class ComplianceAuditor:
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = sqlite3.connect(self._db_path)
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS fix_compliance "
-            "(compliance_id INTEGER PRIMARY KEY AUTOINCREMENT, fix_id TEXT, action_type TEXT, "
-            "target TEXT, before_hash TEXT DEFAULT '', after_hash TEXT DEFAULT '', "
-            "timestamp TEXT, actor TEXT DEFAULT 'auto-fix-engine', confidence TEXT DEFAULT '', "
-            "rbac_decision TEXT DEFAULT '', validation_result TEXT DEFAULT '', "
-            "audit_trail_id TEXT DEFAULT '', tamper_proof_hash TEXT NOT NULL)"
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS fix_compliance "
+                "(compliance_id INTEGER PRIMARY KEY AUTOINCREMENT, fix_id TEXT, action_type TEXT, "
+                "target TEXT, before_hash TEXT DEFAULT '', after_hash TEXT DEFAULT '', "
+                "timestamp TEXT, actor TEXT DEFAULT 'auto-fix-engine', confidence TEXT DEFAULT '', "
+                "rbac_decision TEXT DEFAULT '', validation_result TEXT DEFAULT '', "
+                "audit_trail_id TEXT DEFAULT '', tamper_proof_hash TEXT NOT NULL)"
+            )
+            conn.commit()
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            conn.close()
 
     def audit_fix(self, action: FixAction, rbac_decision: str = "", validation_result: str = "") -> ComplianceEvidence:
         before_hash = hashlib.sha256(action.before.encode()).hexdigest()[:32] if action.before else ""
@@ -76,6 +79,7 @@ class ComplianceAuditor:
         return evidence.tamper_proof_hash == expected_hash
 
     def get_evidence(self, fix_id: str) -> ComplianceEvidence | None:
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             row = conn.execute(
@@ -84,7 +88,6 @@ class ComplianceAuditor:
                 "audit_trail_id, tamper_proof_hash FROM fix_compliance WHERE fix_id=?",
                 (fix_id,),
             ).fetchone()
-            conn.close()
             if row:
                 return ComplianceEvidence(
                     fix_id=row[0],
@@ -102,21 +105,30 @@ class ComplianceAuditor:
                 )
         except Exception as e:
             logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e)
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
         return None
 
     def cleanup_expired(self) -> int:
         cutoff = (datetime.now(UTC) - __import__("datetime").timedelta(days=self._retention_days)).isoformat()
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             cursor = conn.execute("DELETE FROM fix_compliance WHERE timestamp < ?", (cutoff,))
             conn.commit()
             deleted = cursor.rowcount
-            conn.close()
             return deleted
         except Exception:
             return 0
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
 
     def _persist(self, evidence: ComplianceEvidence) -> None:
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             conn.execute(
@@ -139,6 +151,9 @@ class ComplianceAuditor:
                 ),
             )
             conn.commit()
-            conn.close()
         except Exception as exc:
             logger.error("Failed to persist compliance evidence: %s", exc)
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()

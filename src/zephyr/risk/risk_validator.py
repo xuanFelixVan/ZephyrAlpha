@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Risk Validator
+"""D_RISK — Risk Validator
 
 风险校验引擎。在交易执行前校验订单和持仓是否符合风险限额。
 
@@ -33,12 +33,12 @@
   - 产出 RiskLimitViolationError（CTR-ERR-004）
 
 CTR 契约：
-  消费者 — CTR-003 (RiskLimits) ← L04（本层产出，内部消费）
-  消费者 — CTR-002 (FactorSignal) ← L02
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → L05, L06
+  消费者 — CTR-003 (RiskLimits) ← D_RISK（本层产出，内部消费）
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
-依赖方向：L02 + L06 → L04 → L05/L06
+依赖方向：D_FACTOR + D_EXECUTION_CORE → D_RISK → D_PORTFOLIO_CORE/D_EXECUTION_CORE
 """
 
 from __future__ import annotations

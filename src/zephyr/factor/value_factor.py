@@ -22,13 +22,13 @@
 # created: "2026-05-05"
 # ---
 
-"""L02 — Value Factor
+"""D_FACTOR — Value Factor
 
 估值因子。使用简易 PE proxy（价格/年化盈利估算）。
 
 CTR 契约：
-  消费者 — CTR-001 (NormalizedMarketData) ← L00
-  生产者 — CTR-002 (FactorSignal) → L03, L04, L05
+  消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
+  生产者 — CTR-002 (FactorSignal) → D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations

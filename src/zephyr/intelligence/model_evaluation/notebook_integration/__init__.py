@@ -10,10 +10,10 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L09 Research & Innovation
+"""D_RESEARCH Research & Innovation
 =====================================
 
-14 层量化架构 · L09 研究创新层
+域量化架构 · D_RESEARCH 研究创新层
 
 职责
 ----
@@ -26,10 +26,10 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-001  NormalizedMarketData      ← L00
+  - CTR-001  NormalizedMarketData      ← D_DATA
 
 作为全局配置消费者（Consumer）：
-  - CTR-P1-010  SystemConfiguration    ← L01
+  - CTR-P1-010  SystemConfiguration    ← 基础设施
 
 SSoT: cross_layer_contracts.yaml v3.0
 

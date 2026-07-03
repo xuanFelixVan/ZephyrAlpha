@@ -50,13 +50,16 @@ class IdempotencyGuard:
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = sqlite3.connect(self._db_path)
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS fix_idempotency "
-            "(fingerprint TEXT PRIMARY KEY, action_type TEXT, target TEXT, "
-            "result_status TEXT, created_at TEXT, expires_at TEXT)"
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS fix_idempotency "
+                "(fingerprint TEXT PRIMARY KEY, action_type TEXT, target TEXT, "
+                "result_status TEXT, created_at TEXT, expires_at TEXT)"
+            )
+            conn.commit()
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            conn.close()
 
     def check(self, action: FixAction) -> tuple[bool, str]:
         fp = action.fingerprint
@@ -65,25 +68,30 @@ class IdempotencyGuard:
             status, ts = self._cache[fp]
             if now - ts < self._ttl.total_seconds():
                 return False, f"Duplicate fix: {fp} already processed as {status}"
+        conn = None
         try:
             conn = sqlite3.connect(self._db_path)
             row = conn.execute(
                 "SELECT result_status, expires_at FROM fix_idempotency WHERE fingerprint=?",
                 (fp,),
             ).fetchone()
-            conn.close()
             if row:
                 expires = datetime.fromisoformat(row[1])
                 if datetime.now(UTC) < expires:
                     return False, f"Duplicate fix: {fp} already processed as {row[0]}"
         except Exception:
             pass
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
         return True, ""
 
     def record(self, action: FixAction, status: str) -> None:
         fp = action.fingerprint
         now = time.time()
         self._cache[fp] = (status, now)
+        conn = None
         try:
             expires = (datetime.now(UTC) + self._ttl).isoformat()
             conn = sqlite3.connect(self._db_path)
@@ -93,9 +101,12 @@ class IdempotencyGuard:
                 (fp, action.action_type, action.target, status, datetime.now(UTC).isoformat(), expires),
             )
             conn.commit()
-            conn.close()
         except Exception as exc:
             logger.warning("Failed to record idempotency: %s", exc)
+        # 5.49.2 修复：异常路径确保连接归还
+        finally:
+            if conn is not None:
+                conn.close()
 
 
 class ConflictResolver:

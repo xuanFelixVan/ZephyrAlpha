@@ -69,15 +69,97 @@ def ch_execute(sql: str, timeout: int = 120) -> bool:
     return True
 
 
-def ch_insert_tsv(table: str, tsv_bytes: bytes, timeout: int = 300) -> bool:
-    """通过 stdin TSV 批量插入。table 可含库名前缀。"""
+_COL_CACHE = {}
+
+
+def _get_insert_columns(table: str) -> str:
+    """查询表结构，返回不含 DEFAULT/MATERIALIZED/ALIAS 表达式的列名列表。
+
+    格式: "(col1, col2, ...)"，用于 INSERT INTO ... (cols) FORMAT TSV。
+    避免 TSV 缺 DEFAULT 列导致解析失败。
+    """
     full = table if "." in table else f"{CH_DB}.{table}"
-    r = subprocess.run(WSL + ["--query", f"INSERT INTO {full} FORMAT TSV"],
-                       input=tsv_bytes, capture_output=True, timeout=timeout)
+    if full in _COL_CACHE:
+        return _COL_CACHE[full]
+    out = ch_query(f"DESCRIBE TABLE {full}")
+    cols = []
+    for line in out.strip().split("\n"):
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        if len(parts) < 3:
+            continue
+        name = parts[0]
+        default_type = parts[2]
+        if default_type and default_type.upper() in ("DEFAULT", "MATERIALIZED", "ALIAS"):
+            continue
+        cols.append(name)
+    col_list = "(" + ", ".join(cols) + ")"
+    _COL_CACHE[full] = col_list
+    return col_list
+
+
+def ch_insert_tsv(table: str, tsv_bytes: bytes, timeout: int = 300) -> bool:
+    """通过 stdin TSV 批量插入。table 可含库名前缀。
+
+    自动排除 DEFAULT/MATERIALIZED/ALIAS 列（查询 DESCRIBE 获取列清单）。
+    自动加 --max_partitions_per_insert_block=0 避免"Too many partitions"错误。
+    """
+    full = table if "." in table else f"{CH_DB}.{table}"
+    cols = _get_insert_columns(full)
+    r = subprocess.run(
+        WSL + ["--query", f"INSERT INTO {full} {cols} FORMAT TSV",
+                "--max_partitions_per_insert_block", "0"],
+        input=tsv_bytes, capture_output=True, timeout=timeout,
+    )
     if r.returncode != 0:
         sys.stderr.write(f"CH insert failed ({full}): {r.stderr.decode('utf-8', errors='replace')[:300]}\n")
         return False
     return True
+
+
+def iwencai_to_df(result):
+    """将 iFind i问财 THS_iwencai 返回的 OrderedDict 转为 pandas DataFrame。
+
+    i问财返回结构: OrderedDict([('errorcode', 0), ('tables', [OrderedDict([('table',
+        OrderedDict([('股票代码', [...]), ...]))])])])
+    """
+    import pandas as pd
+    if result is None:
+        return pd.DataFrame()
+    if hasattr(result, "columns"):
+        return result
+    if not hasattr(result, "get"):
+        return pd.DataFrame()
+    errcode = result.get("errorcode", -1)
+    if errcode != 0:
+        return pd.DataFrame()
+    tables = result.get("tables", [])
+    if not tables:
+        return pd.DataFrame()
+    table = tables[0].get("table", {})
+    return pd.DataFrame(table)
+
+
+def num_or_null(v) -> str:
+    """数值或 NULL。None/空/NaN -> \\N（CH TSV 的 NULL），否则 str(v)。"""
+    if v is None or v == "" or (isinstance(v, float) and v != v):
+        return "\\N"
+    return str(v)
+
+
+def to_int_str(v) -> str:
+    """浮点/字符串 -> 整数字符串。如 179012.0 -> '179012'，None -> '0'。
+
+    用于 UInt64/Int64 列：QMT 返回 float 带 .0 后缀，CH 解析 UInt64 时
+    遇到 .0 会报 'expected tab before .0' 错误。
+    """
+    if v is None or v == "" or (isinstance(v, float) and v != v):
+        return "0"
+    try:
+        return str(int(float(v)))
+    except (ValueError, TypeError):
+        return "0"
 
 
 def ch_count(table: str, where: str = "") -> int:
@@ -123,7 +205,7 @@ def save_progress(name: str, state: dict):
 
 
 def tsv_escape(v) -> str:
-    """TSV 字段转义：None→空，tab/换行替换为空格。"""
+    """TSV 字段转义：None->空，tab/换行替换为空格。"""
     if v is None:
         return ""
     s = str(v)

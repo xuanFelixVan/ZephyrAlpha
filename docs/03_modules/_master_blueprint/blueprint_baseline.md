@@ -697,7 +697,7 @@ routing:
       if priority == P0 → M3 (Opus 4.5 复审, audit sandbox)
       else → M4 (Claude 4.5 Sonnet, audit sandbox)
     if task_type ∈ {DOC_WRITE, REFACTOR}:
-      if target_layer ∈ {L00,L01,L10} → M5 (GPT-5.2, full sandbox)
+      if target_layer ∈ {D_DATA,基础设施,D_COMPLIANCE} → M5 (GPT-5.2, full sandbox)
       else → M6 (Claude 4.5 Sonnet, standard sandbox)
 
 pipeline_output:
@@ -3450,7 +3450,7 @@ telemetry:
 ### 37.7 F. 金融业务特有盲点（4个）
 
 > **对标**：SEC Market Access Rule + Two Sigma Model Risk Management + Marcos Lopez de Prado 量化方法论。
-> **现状**：C-Track 14层中9层为skeleton。L03信号生成/L04风控虽有代码但缺乏模型治理和实盘保护。
+> **现状**：C-Track 14层中9层为skeleton。D_SIGNAL/D_RISK虽有代码但缺乏模型治理和实盘保护。
 
 | # | 盲点ID | 盲点描述 | S | O | D | RPN | 触发场景 |
 |:--|:--|------|:--:|:--:|:--:|:--:|------|

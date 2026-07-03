@@ -23,7 +23,7 @@
 # ---
 
 """
-L04 — Risk Management Layer Skeleton
+D_RISK — Risk Management Layer Skeleton
 
 风险管理层抽象基类。定义事前/事后风控、限额检查、止损与熔断的核心接口。
 
@@ -33,8 +33,8 @@ OCP 扩展点：
   - PositionLimitCheckerBase   — 仓位限额检查
 
 依赖方向：
-  消费者：CTR-002(FactorSignal) ← L02, CTR-003(RiskLimits), CTR-004(Order), CTR-006(PositionSnapshot)
-  生产者：CTR-003(RiskLimits) → L05, RiskDashboard → L08
+  消费者：CTR-002(FactorSignal) ← D_FACTOR, CTR-003(RiskLimits), CTR-004(Order), CTR-006(PositionSnapshot)
+  生产者：CTR-003(RiskLimits) → D_PORTFOLIO_CORE, RiskDashboard → D_FRONTEND
 
 INV-001: Kill Switch 延迟 < 1ms
 INV-004: 每日亏损硬限

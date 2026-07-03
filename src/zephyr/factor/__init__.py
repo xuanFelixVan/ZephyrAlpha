@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""ZephyrAlpha — L02 Alpha Factor Layer
+"""ZephyrAlpha — D_FACTOR Alpha Factor Layer
 
 SSoT: cross_layer_contracts.yaml v3.0
 
@@ -26,13 +26,13 @@ CTR 契约依赖声明（承重墙标记）
 本层是以下跨层数据契约的来源或目标。任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-001  NormalizedMarketData    ← L00
-  - CTR-ERR-001  DataQualityError    ← L00
+  - CTR-001  NormalizedMarketData    ← D_DATA
+  - CTR-ERR-001  DataQualityError    ← D_DATA
 
 作为生产者（Producer）：
-  - CTR-002  FactorSignal            → L03, L04, L05
-  - CTR-BP-001~003  Backpressure     → L00（背压信号——暂停/降速/恢复数据推送）
-  - CTR-ERR-002  FactorComputationError → L03
+  - CTR-002  FactorSignal            → D_SIGNAL, D_RISK, D_PORTFOLIO_CORE
+  - CTR-BP-001~003  Backpressure     → D_DATA（背压信号——暂停/降速/恢复数据推送）
+  - CTR-ERR-002  FactorComputationError → D_SIGNAL
 
 """
 

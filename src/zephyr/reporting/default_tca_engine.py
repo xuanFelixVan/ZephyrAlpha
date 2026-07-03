@@ -22,14 +22,14 @@
 # created: "2026-05-05"
 # ---
 
-"""L07 — Default TCA Engine
+"""D_REPORTING — Default TCA Engine
 
 交易成本分析引擎具体实现。成交回报 → 执行分析报告。
 
 CTR 契约：
-  消费者 — CTR-005 (Fill) ← L06
-  消费者 — CTR-004 (Order) ← L05（关联委托）
-  生产者 — CTR-P1-007 (ExecutionReport) → L08, L10
+  消费者 — CTR-005 (Fill) ← D_EXECUTION_CORE
+  消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE（关联委托）
+  生产者 — CTR-P1-007 (ExecutionReport) → D_FRONTEND, D_COMPLIANCE
 
 SSoT: cross_layer_contracts.yaml → CTR-005 + CTR-P1-007
 """

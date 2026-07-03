@@ -39,13 +39,13 @@ registry:
   auto_generated_by: "scripts/generate_pathway_registry.py"
   last_updated: "2026-05-07"
   total_modules: 32
-  note: "Phase B 全层路径补全——覆盖全部 C 轨（L00-L13）和 B 轨核心模块"
+  note: "Phase B 全层路径补全——覆盖全部 C 轨（域体系）和 B 轨核心模块"
 
 pathways:
   # ──── C-Track: 业务脊柱 ────
   - module_id: "MOD-L00-001"
     name: "datasource_core"
-    layer: "L00"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_data/blueprint.md"
     source_dir: "src/zephyr/data/"
     interface_file: "src/zephyr/data/provider_base.py"
@@ -56,7 +56,7 @@ pathways:
 
   - module_id: "MOD-L01-001"
     name: "infrastructure"
-    layer: "L01"
+    layer: "L0_infrastructure"
     blueprint: "docs/03_modules/_master_blueprint/blueprint.md"
     source_dir: "src/zephyr/infra_ops/"
     test_dir: "tests/"
@@ -66,7 +66,7 @@ pathways:
 
   - module_id: "MOD-L02-001"
     name: "alpha_factor_core"
-    layer: "L02"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_factor/blueprint.md"
     source_dir: "src/zephyr/factor/"
     interface_file: "src/zephyr/factor/factor_base.py"
@@ -77,7 +77,7 @@ pathways:
 
   - module_id: "MOD-L03-001"
     name: "signal-generation"
-    layer: "L03"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_signal/blueprint.md"
     source_dir: "src/zephyr/signal/"
     interface_file: "src/zephyr/signal/aggregator_base.py"
@@ -88,7 +88,7 @@ pathways:
 
   - module_id: "MOD-L04-001"
     name: "risk-management"
-    layer: "L04"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_risk/blueprint.md"
     source_dir: "src/zephyr/risk/"
     interface_file: "src/zephyr/risk/stop_loss.py"
@@ -99,7 +99,7 @@ pathways:
 
   - module_id: "MOD-L05-001"
     name: "portfolio_core"
-    layer: "L05"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_portfolio_core/portfolio-core/blueprint.md"
     source_dir: "src/zephyr/pf_core/"
     interface_file: "src/zephyr/pf_core/strategy_base.py"
@@ -110,7 +110,7 @@ pathways:
 
   - module_id: "MOD-L06-001"
     name: "trade-execution"
-    layer: "L06"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_execution_core/blueprint.md"
     source_dir: "src/zephyr/ex_core/"
     interface_file: "src/zephyr/ex_core/broker_interface.py"
@@ -121,7 +121,7 @@ pathways:
 
   - module_id: "MOD-L07-001"
     name: "analytics_core"
-    layer: "L07"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_reporting/blueprint.md"
     source_dir: "src/zephyr/reporting/"
     interface_file: "src/zephyr/reporting/analytics_base.py"
@@ -132,7 +132,7 @@ pathways:
 
   - module_id: "MOD-L08-001"
     name: "hmi_core"
-    layer: "L08"
+    layer: "L3_application"
     blueprint: "docs/03_modules/_domain_frontend/blueprint.md"
     source_dir: "src/zephyr/frontend/"
     interface_file: "src/zephyr/frontend/dashboard/app.py"
@@ -143,7 +143,7 @@ pathways:
 
   - module_id: "MOD-L09-001"
     name: "research-innovation"
-    layer: "L09"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_research/blueprint.md"
     source_dir: "src/zephyr/research/"
     interface_file: "src/zephyr/research/backtest_base.py"
@@ -154,7 +154,7 @@ pathways:
 
   - module_id: "MOD-L10-001"
     name: "compliance"
-    layer: "L10"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_compliance/blueprint.md"
     source_dir: "src/zephyr/compliance/"
     interface_file: "src/zephyr/compliance/security_gateway_base.py"
@@ -165,7 +165,7 @@ pathways:
 
   - module_id: "MOD-L11-001"
     name: "ml-platform"
-    layer: "L11"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_machine_learning_train/blueprint.md"
     source_dir: "src/zephyr/ml_train/"
     interface_file: "src/zephyr/ml_train/inference_base.py"
@@ -176,7 +176,7 @@ pathways:
 
   - module_id: "MOD-L12-001"
     name: "system_telemetry"
-    layer: "L12"
+    layer: "L0_infrastructure"
     blueprint: "docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md"
     source_dir: "src/zephyr/system_telemetry/"
     test_dir: "tests/"
@@ -186,7 +186,7 @@ pathways:
 
   - module_id: "MOD-L13-001"
     name: "experimentation"
-    layer: "L13"
+    layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_simulation/blueprint.md"
     source_dir: "src/zephyr/simulation/"
     interface_file: "src/zephyr/simulation/pipeline_base.py"

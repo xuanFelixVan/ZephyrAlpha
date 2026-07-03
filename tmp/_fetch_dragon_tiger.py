@@ -18,7 +18,7 @@ import argparse
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
 from _ds_common import (
     setup_logging, load_env, ch_query, ch_insert_tsv,
-    load_progress, save_progress, tsv_escape,
+    load_progress, save_progress, tsv_escape, iwencai_to_df,
 )
 
 log = setup_logging("fetch_dragon_tiger")
@@ -50,7 +50,7 @@ def fetch_day(date_compact: str):
     y, m, d = date_compact[:4], int(date_compact[4:6]), int(date_compact[6:8])
     query = f"{y}年{m}月{d}日 龙虎榜个股"
     try:
-        return THS_iwencai(query, "stock")
+        return iwencai_to_df(THS_iwencai(query, "stock"))
     except Exception as e:
         log.warning(f"  {query} 失败: {e}")
         return None

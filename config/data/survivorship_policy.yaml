@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # INV-014 — Survivorship Bias 声明级门禁（数据集具备完整退市/停牌历史前保持为 policy gate）
 module_id: mod_inf_016
@@ -14,5 +15,5 @@ require_delisted_symbols_in_backtest: true
 require_suspend_flags_in_universe: true
 
 notes: >
-  当 L00 数据管道可证明回测 universe 含退市/停牌样本时，在 CI 或数据 manifest 中登记证据路径；
+  当 D_DATA 数据管道可证明回测 universe 含退市/停牌样本时，在 CI 或数据 manifest 中登记证据路径；
   此前 arch_guard 仅校验本策略开关为 true。

@@ -77,7 +77,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 - **对接母蓝图§6插拔机制**：品类注册表 enabled 二元开关（硬边界品类 enabled=false 预留）
 - **对接母蓝图§7回测调度**：calc_mode 标注（replay/preload/hybrid）
 
-支持多数据源标准化接入：AkShare(免费行情+基本面)、miniQMT(实盘行情)、iFind(付费基本面+另类)、tushare(新闻+基本面)、爬虫(舆情)。支持原料/成品/事务三层分类（原料=tick/新闻原文接入即存，成品=K线/指标可预计算）。上游依赖各类外部 API，下游为 C1~C4 仓库层及 L02/L03/L09 层提供标准化原料数据。
+支持多数据源标准化接入：AkShare(免费行情+基本面)、miniQMT(实盘行情)、iFind(付费基本面+另类)、tushare(新闻+基本面)、爬虫(舆情)。支持原料/成品/事务三层分类（原料=tick/新闻原文接入即存，成品=K线/指标可预计算）。上游依赖各类外部 API，下游为 C1~C4 仓库层及 D_FACTOR/D_SIGNAL/D_RESEARCH 层提供标准化原料数据。
 
 ---
 
@@ -147,8 +147,8 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 | 6 | ✅ 包含 | 品类注册表 enabled 二元开关 | 硬边界品类 enabled=false 预留接口(母蓝图§8.2) |
 | 7 | ✅ 包含 | 原料/成品/事务三层分类 | 原料=tick/新闻原文接入即存，成品=K线/指标可预计算 |
 | 8 | ❌ 排除 | 数据存储(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 |
-| 9 | ❌ 排除 | 因子计算 | L02 Alpha Factor 负责 |
-| 10 | ❌ 排除 | 信号生成 | L03 Signal Generation 负责 |
+| 9 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor 负责 |
+| 10 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation 负责 |
 | 11 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 |
 
 ### 1.4 运行场景约束
@@ -169,8 +169,8 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
 | 母蓝图 ARCH-BIZDB-001 | 品类全景/插拔机制/调度策略上游对齐 | 设计 | 数据源接入层为其上游 |
-| L02 Alpha Factor | CTR-001数据格式 | 消费 | 接口兼容性 |
-| L03 Signal Generation | CTR-001数据格式 | 消费 | 接口兼容性 |
+| D_FACTOR Alpha Factor | CTR-001数据格式 | 消费 | 接口兼容性 |
+| D_SIGNAL Signal Generation | CTR-001数据格式 | 消费 | 接口兼容性 |
 | C1~C4 仓库层 | 原料数据摄取 | 消费 | 品类→库映射(母蓝图§5.2) |
 
 ### 1.6 当前态/目标态差距
@@ -211,8 +211,8 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 | 5 | ✅ 包含 | calc_mode 标注 | replay/preload/hybrid(母蓝图§7.5) | 本模块 |
 | 6 | ✅ 包含 | 原料/成品/事务三层分类 | 原料接入即存，成品可预计算(母蓝图§5) | 本模块 |
 | 7 | ❌ 排除 | 数据持久化(C1~C4仓库) | 母蓝图 ARCH-BIZDB-001 负责 | 母蓝图 |
-| 8 | ❌ 排除 | 因子计算 | L02 Alpha Factor 负责 | L02 |
-| 9 | ❌ 排除 | 信号生成 | L03 Signal Generation 负责 | L03 |
+| 8 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor 负责 | D_FACTOR |
+| 9 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation 负责 | D_SIGNAL |
 | 10 | ❌ 排除 | DDL-as-Code 建表 | 母蓝图§6.2 第2层负责 | 母蓝图 |
 
 ---
@@ -242,10 +242,10 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | AkShare API | fetch_historical → _normalize_columns → validate_schema | C1仓库/L02/L03/L09 | pd.DataFrame (OHLCV, CTR-001) |
+| 1 | AkShare API | fetch_historical → _normalize_columns → validate_schema | C1仓库/D_FACTOR/D_SIGNAL/D_RESEARCH | pd.DataFrame (OHLCV, CTR-001) |
 | 2 | tushare/爬虫 | fetch → 标准化 → QualityGate.check | C3仓库 | 新闻原文 (CTR-002) |
 | 3 | iFind API | fetch → 标准化 → QualityGate.check | C3仓库 | 宏观指标 (CTR-003) |
-| 4 | MemoryProvider | 合成数据生成 → validate_schema | 测试/L02 | pd.DataFrame (OHLCV) |
+| 4 | MemoryProvider | 合成数据生成 → validate_schema | 测试/D_FACTOR | pd.DataFrame (OHLCV) |
 | 5 | 任意Provider | fetch → DataQualityGate.check | 仓库层 | QualityReport |
 
 > 数据流方向：外部API → DataSourceBase.fetch(多品类) → 标准化 → QualityGate.check → CTR契约输出 → C1~C4仓库层。
@@ -503,7 +503,7 @@ class QualityReport:
 |--------|--------|---------|---------|
 | AkShareProvider | DefaultQualityGate | OHLCV DataFrame | 函数调用 |
 | MemoryProvider | DefaultQualityGate | OHLCV DataFrame | 函数调用 |
-| DefaultQualityGate | L02/L03 | QualityReport | 函数调用 |
+| DefaultQualityGate | D_FACTOR/D_SIGNAL | QualityReport | 函数调用 |
 
 ### 10.4 自动化规格
 
@@ -532,8 +532,8 @@ class QualityReport:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L02 Alpha Factor | CTR-001产出 | NormalizedMarketData (OHLCV DataFrame) | 因子引擎可消费行情数据 |
-| L03 Signal Generation | CTR-001产出 | NormalizedMarketData (OHLCV DataFrame) | 信号合成可消费行情数据 |
+| D_FACTOR Alpha Factor | CTR-001产出 | NormalizedMarketData (OHLCV DataFrame) | 因子引擎可消费行情数据 |
+| D_SIGNAL Signal Generation | CTR-001产出 | NormalizedMarketData (OHLCV DataFrame) | 信号合成可消费行情数据 |
 | INF-015 Telemetry | instrumentation | 数据摄取指标 | 指标可观测 |
 | INF-035 AutoRuntime | CapabilityCard注册 | 数据接入注册 | ModuleOnboardingScanner发现 |
 
@@ -869,7 +869,7 @@ class MiniQmtProvider(DataSourceBase):
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L00-001 | API限流60次/分钟 | 本地缓存+批量预取 | P1 | 限流触发率>10% | v1.1.0 | 待施工 |
 | GAP-L00-002 | 缺connectors/normalizers/storage/cache子模块 | 按架构层YAML创建 | P0 | v4.0.0重建时 | v4.0.0 | 待施工 |
-| GAP-L00-003 | DataFrame→Pydantic迁移 | 按KBG-0040迁移 | P2 | L02消费端要求 | v2.0.0 | 待施工 |
+| GAP-L00-003 | DataFrame→Pydantic迁移 | 按KBG-0040迁移 | P2 | D_FACTOR消费端要求 | v2.0.0 | 待施工 |
 
 ### §17.3 升级版本矩阵
 
@@ -913,7 +913,7 @@ class MiniQmtProvider(DataSourceBase):
 |------|---------|-----------|------|
 | DataSourceBase | 数据源抽象基类，OCP扩展点 | ProviderBase(旧名) | 代码实际类名为DataSourceBase |
 | DataQualityGate | 数据质量门禁抽象基类 | QualityGate(旧名) | 代码实际类名为DataQualityGate |
-| CTR-001 | NormalizedMarketData跨层契约 | — | 本层为Producer，L02/L03/L09为Consumer |
+| CTR-001 | NormalizedMarketData跨层契约 | — | 本层为Producer，D_FACTOR/D_SIGNAL/D_RESEARCH为Consumer |
 | OHLCV | Open/High/Low/Close/Volume标准行情格式 | — | 本模块的标准化输出格式(CTR-001) |
 | QUALITY_THRESHOLD | 质量门禁阈值0.7 | — | 低于此值的数据标记为不合格 |
 | 母蓝图 | 业务数据库顶层架构设计书(ARCH-BIZDB-001) | — | 本数据源接入层的上游设计真源 |
@@ -1007,7 +1007,7 @@ class MiniQmtProvider(DataSourceBase):
 | 判定示例 | 职责域数量 | 消费者独立？ | 演进独立？ | 结论 |
 |---------|:---:|:---:|:---:|------|
 | 数据接入层（本蓝图） | 1 | 否 | 否 | 不拆分 |
-| 假设：数据接入+数据缓存 | 2 | 是 | 是 | 拆分为 L00-DataSource + L01-Cache |
+| 假设：数据接入+数据缓存 | 2 | 是 | 是 | 拆分为 D_DATA-DataSource + 基础设施-Cache |
 
 ---
 
@@ -1073,9 +1073,9 @@ class MiniQmtProvider(DataSourceBase):
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | L02 Alpha Factor | §4 接口契约、§10 依赖关系 |
-| Tier 1 | L03 Signal Generation | §4 接口契约 |
-| Tier 2 | L09 Research | CTR-001 历史数据回测 |
+| Tier 1 | D_FACTOR Alpha Factor | §4 接口契约、§10 依赖关系 |
+| Tier 1 | D_SIGNAL Signal Generation | §4 接口契约 |
+| Tier 2 | D_RESEARCH Research | CTR-001 历史数据回测 |
 | Tier 3 | INF-015 Telemetry | 数据摄取指标 |
 | Tier 3 | INF-035 AutoRuntime | 数据接入注册 |
 

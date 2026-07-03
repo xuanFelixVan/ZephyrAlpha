@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L13 — Experimentation Concrete Implementations
+"""实验 — Experimentation Concrete Implementations
 
 Phase C 具体实现包。
 

@@ -32,7 +32,7 @@ ZephyrAlpha — base.py
 
 OCP-001: FactorBase + FactorRegistry / 因子扩展点
 
-L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
+D_FACTOR 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
 
 SSoT: cross_layer_contracts.yaml → OCP-001
 Version: 1.0
@@ -41,7 +41,7 @@ Status: AUTO-GENERATED — DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
+    D_FACTOR 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
 """
 
 
@@ -57,7 +57,7 @@ class FactorMeta:
 
 
 class FactorBase(abc.ABC):
-    """L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"""
+    """D_FACTOR 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"""
 
     meta: ClassVar[FactorMeta]
 

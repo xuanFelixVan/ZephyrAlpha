@@ -61,7 +61,7 @@ runtime_plane: hot
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 信号生成层——它解决了 Alpha 因子到交易信号的标准化转换问题。核心职责包括：信号聚合（SignalAggregatorBase）、资金分配（CapitalAllocatorBase）、降级监控（DegradationMonitorBase）、信号合成（SignalSynthesizerBase），均为 OCP 扩展点。当前规模 4 个 Base 类 + 2 个 Default 实现，Phase B 骨架已就位。上游依赖 L00 Data Source（CTR-001）和 L02 Alpha Factor（因子结果），下游被 L04 Portfolio Construction 和 L05 Risk Management 消费。
+本蓝图描述 ZephyrAlpha 信号生成层——它解决了 Alpha 因子到交易信号的标准化转换问题。核心职责包括：信号聚合（SignalAggregatorBase）、资金分配（CapitalAllocatorBase）、降级监控（DegradationMonitorBase）、信号合成（SignalSynthesizerBase），均为 OCP 扩展点。当前规模 4 个 Base 类 + 2 个 Default 实现，Phase B 骨架已就位。上游依赖 D_DATA Data Source（CTR-001）和 D_FACTOR Alpha Factor（因子结果），下游被 D_PORTFOLIO_CORE Portfolio Construction 和 D_RISK Risk Management 消费。
 
 ---
 
@@ -114,7 +114,7 @@ runtime_plane: hot
 
 ### 1.1 背景
 
-L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资金分配和降级监控机制，将多因子信号转化为可执行的交易信号。当前痛点：无统一信号聚合框架、无资金分配标准化、无信号退化检测。
+D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资金分配和降级监控机制，将多因子信号转化为可执行的交易信号。当前痛点：无统一信号聚合框架、无资金分配标准化、无信号退化检测。
 
 ### 1.2 目标范围
 
@@ -125,16 +125,16 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 3 | ✅ 包含 | 降级监控 | DegradationMonitorBase 可检测信号退化 |
 | 4 | ✅ 包含 | 信号合成 | SignalSynthesizerBase 可合成多源信号 |
 | 5 | ✅ 包含 | 信号质量度量 | CTR-008 SignalQualityMetrics 可产出 |
-| 6 | ❌ 排除 | 因子计算 | → L02 Alpha Factor (MOD-L02-001) |
-| 7 | ❌ 排除 | 组合构建 | → L04 Portfolio Construction |
-| 8 | ❌ 排除 | 风险评估 | → L05 Risk Management |
+| 6 | ❌ 排除 | 因子计算 | → D_FACTOR Alpha Factor (MOD-L02-001) |
+| 7 | ❌ 排除 | 组合构建 | → D_PORTFOLIO_CORE Portfolio Construction |
+| 8 | ❌ 排除 | 风险评估 | → D_RISK Risk Management |
 
 ### 1.4 运行场景约束
 
 | 约束 | 影响 |
 |------|------|
 | 可施工 | AI 不可自主修改本层代码，需 Owner 审批 |
-| 信号输出必须标准化 | 下游 L04/L05 依赖统一格式 |
+| 信号输出必须标准化 | 下游 D_PORTFOLIO_CORE/D_RISK 依赖统一格式 |
 | OCP 扩展点接口不可变 | 新策略只加不改，Base 类接口冻结 |
 | 交易时段运行 | 信号生成延迟<50ms |
 
@@ -143,8 +143,8 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策+C轨占位解除 | 设计+施工 | 审批权限 |
-| L04 Portfolio | 合成信号格式 | 消费 | CTR-P1-015 契约 |
-| L05 Risk | 分配结果+降级警告 | 消费 | CTR-P1-003/CTR-ERR-003 契约 |
+| D_PORTFOLIO_CORE Portfolio | 合成信号格式 | 消费 | CTR-P1-015 契约 |
+| D_RISK Risk | 分配结果+降级警告 | 消费 | CTR-P1-003/CTR-ERR-003 契约 |
 
 ### 1.6 当前态/目标态差距
 
@@ -158,7 +158,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 因子聚合 | L02 产出 FactorSignal | aggregate()→加权组合→normalize→SynthesizedSignal | CTR-P1-015 |
+| 因子聚合 | D_FACTOR 产出 FactorSignal | aggregate()→加权组合→normalize→SynthesizedSignal | CTR-P1-015 |
 | 资金分配 | 多策略 SynthesizedSignal 就绪 | allocate()→权重计算→CapitalAllocationResult | CTR-P1-003 |
 | 退化检测 | 合成信号置信度下降 | evaluate()→退化判定→SignalDegradationWarning | CTR-ERR-003 |
 | 空信号兜底 | 因子信号为空 | _empty_signal()→is_degraded=True | 空信号+退化标记 |
@@ -176,9 +176,9 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 3 | ✅ 包含 | 降级监控 | DegradationMonitorBase（在 aggregator_base.py） | 本模块 |
 | 4 | ✅ 包含 | 信号合成 | SignalSynthesizerBase（在 signal_synthesizer.py） | 本模块 |
 | 5 | ✅ 包含 | 信号质量度量 | CTR-008 SignalQualityMetrics（规划） | 本模块 |
-| 6 | ❌ 排除 | 因子计算 | → L02 Alpha Factor | MOD-L02-001 |
-| 7 | ❌ 排除 | 组合优化 | → L04 Portfolio Construction | MOD-L04-001 |
-| 8 | ❌ 排除 | 风险控制 | → L05 Risk Management | MOD-L05-001 |
+| 6 | ❌ 排除 | 因子计算 | → D_FACTOR Alpha Factor | MOD-L02-001 |
+| 7 | ❌ 排除 | 组合优化 | → D_PORTFOLIO_CORE Portfolio Construction | MOD-L04-001 |
+| 8 | ❌ 排除 | 风险控制 | → D_RISK Risk Management | MOD-L05-001 |
 
 ---
 
@@ -199,10 +199,10 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L02 FactorSignal | SignalAggregatorBase.aggregate() → 加权组合 | SignalSynthesizerBase | FactorSignal → SynthesizedSignal |
-| 2 | SynthesizedSignal | CapitalAllocatorBase.allocate() → 资金分配 | L05 Risk Management | CapitalAllocationResult (CTR-P1-003) |
-| 3 | SynthesizedSignal | DegradationMonitorBase.evaluate() → 退化检测 | L04, L05 | SignalDegradationWarning (CTR-ERR-003) |
-| 4 | L02 FactorSignal | SignalSynthesizerBase.synthesize() → 合成+归一化 | L04 Portfolio Construction | SynthesizedSignal (CTR-P1-015) |
+| 1 | D_FACTOR FactorSignal | SignalAggregatorBase.aggregate() → 加权组合 | SignalSynthesizerBase | FactorSignal → SynthesizedSignal |
+| 2 | SynthesizedSignal | CapitalAllocatorBase.allocate() → 资金分配 | D_RISK Risk Management | CapitalAllocationResult (CTR-P1-003) |
+| 3 | SynthesizedSignal | DegradationMonitorBase.evaluate() → 退化检测 | D_PORTFOLIO_CORE, D_RISK | SignalDegradationWarning (CTR-ERR-003) |
+| 4 | D_FACTOR FactorSignal | SignalSynthesizerBase.synthesize() → 合成+归一化 | D_PORTFOLIO_CORE Portfolio Construction | SynthesizedSignal (CTR-P1-015) |
 
 ### 3.3 状态生命周期
 
@@ -271,7 +271,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | Base 类 ABC 方法签名 | ❌ 破坏性 | 需 Owner 审批 + 迁移方案 |
 | 新增 Default 实现类 | ✅ 向后兼容 | 不影响已有消费者 |
 | 新增 AllocationMethod 枚举值 | ✅ 向后兼容 | 不破坏已有逻辑 |
-| CTR-P1-015/CTR-P1-003/CTR-ERR-003 字段 | ❌ 破坏性 | 需 Owner 审批 + 通知 L04/L05 |
+| CTR-P1-015/CTR-P1-003/CTR-ERR-003 字段 | ❌ 破坏性 | 需 Owner 审批 + 通知 D_PORTFOLIO_CORE/D_RISK |
 
 **变更通知**：破坏性变更→Owner审批+蓝图minor+1。兼容性变更→AI自主+patch+1。
 
@@ -320,7 +320,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |---|:----:|--------|-----------|------|
 | 1 | 编码模式 | Base 类方法签名变更 | 新增 Default 实现类 | OCP 扩展点接口冻结 |
 | 2 | 编码模式 | look-ahead bias | 仅使用 as_of_timestamp 前数据 | 门禁约束 GATE-F |
-| 3 | 编码模式 | 因子权重动态调整为负值 | 做空在 L05 组合层面处理 | 门禁约束 GATE-F |
+| 3 | 编码模式 | 因子权重动态调整为负值 | 做空在 D_PORTFOLIO_CORE 组合层面处理 | 门禁约束 GATE-F |
 | 4 | 导入源 | zephyr.risk.* / zephyr.pf_core.* | 仅消费 CTR 契约类型 | 分层约束，signal 不依赖 risk/pf_core |
 
 ---
@@ -329,11 +329,11 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
-| 1 | 因子信号为空列表 | aggregate() 入口校验 | 返回 _empty_signal() 兜底 | L04 收到空信号 |
-| 2 | 合成信号置信度过低 | DegradationMonitorBase.evaluate() | 发出 SignalDegradationWarning (CTR-ERR-003) | L04/L05 收到退化警告 |
-| 3 | 资金分配输入为空 | allocate() 入口校验 | 返回 _empty_allocation() 兜底 | L05 收到空分配 |
+| 1 | 因子信号为空列表 | aggregate() 入口校验 | 返回 _empty_signal() 兜底 | D_PORTFOLIO_CORE 收到空信号 |
+| 2 | 合成信号置信度过低 | DegradationMonitorBase.evaluate() | 发出 SignalDegradationWarning (CTR-ERR-003) | D_PORTFOLIO_CORE/D_RISK 收到退化警告 |
+| 3 | 资金分配输入为空 | allocate() 入口校验 | 返回 _empty_allocation() 兜底 | D_RISK 收到空分配 |
 | 4 | 多信号冲突导致合成不稳定 | 仲裁机制 + 权重可配置 | 降级为等权聚合 | 信号质量下降 |
-| 5 | 有效因子数不足 | min_factors_required 校验 | 返回 _empty_signal() + warning | L04 收到空信号 |
+| 5 | 有效因子数不足 | min_factors_required 校验 | 返回 _empty_signal() + warning | D_PORTFOLIO_CORE 收到空信号 |
 
 ### 6.1 可观测性规格
 
@@ -370,7 +370,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
 | 1 | 单元测试 | 4 个 Base 类 + 2 个 Default 实现 | aggregate/allocate/evaluate/synthesize 核心路径 | 覆盖率≥80% |
-| 2 | 集成测试 | L02→L03→L04 数据流 | 因子输入→信号合成→组合构建 端到端 | 端到端通过 |
+| 2 | 集成测试 | D_FACTOR→D_SIGNAL→D_PORTFOLIO_CORE 数据流 | 因子输入→信号合成→组合构建 端到端 | 端到端通过 |
 | 3 | 契约测试 | CTR-P1-015/CTR-P1-003/CTR-ERR-003 | Schema 变更不破坏下游 | 0 契约破坏 |
 | 4 | 边界测试 | 空输入/零值/None | _empty_signal/_empty_allocation 兜底 | 兜底逻辑正确 |
 
@@ -391,7 +391,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 对齐项 | 对齐方式 | 对齐状态 | 说明 |
 |--------|---------|:-------:|------|
-| §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | L03 依赖 L02+L00 | ⚠️ 部分对齐 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015，待对齐 |
+| §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | D_SIGNAL 依赖 D_FACTOR+D_DATA | ⚠️ 部分对齐 | dep-map §17 标注 D_SIGNAL 输出 CTR-008，蓝图实际输出 CTR-P1-015，待对齐 |
 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 逐条核对 | 未对齐 | 待验证 |
 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 待验证 |
 
@@ -413,7 +413,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | # | 自动化项 | 是否需要 | 理由 | 实现方式 | 现有工具 | 缺口 | 触发方式 | 触发条件 |
 |---|---------|:-------:|------|---------|---------|------|---------|---------|
 | 1 | 依赖图自动生成 | 否 |  | — | — | — | — | — |
-| 2 | 依赖对齐自动验证 | 是 | 防止蓝图与dep-map漂移 | CI门禁 | validate_path_alignment.py | 需L03条目 | CI | PR提交时 |
+| 2 | 依赖对齐自动验证 | 是 | 防止蓝图与dep-map漂移 | CI门禁 | validate_path_alignment.py | 需D_SIGNAL条目 | CI | PR提交时 |
 | 3 | 临时时态内容自动清理 | 否 | 无临时内容 | — | — | — | — | — |
 | 4 | 施工步骤完成度自动检测 | 是 | C轨解除后需验证 | pytest+mypy+ruff | — | 需测试文件 | CI pipeline | 代码提交时 |
 
@@ -438,9 +438,9 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L02 Alpha Factor | 因子消费 | SignalAggregatorBase.aggregate() 消费 FactorSignal | 信号聚合可消费因子结果 |
-| L04 Portfolio Construction | 契约输出 | CTR-P1-015 SynthesizedSignal | 组合构建可消费合成信号 |
-| L05 Risk Management | 契约输出 | CTR-P1-003 + CTR-ERR-003 | 风险管理可消费分配结果和降级警告 |
+| D_FACTOR Alpha Factor | 因子消费 | SignalAggregatorBase.aggregate() 消费 FactorSignal | 信号聚合可消费因子结果 |
+| D_PORTFOLIO_CORE Portfolio Construction | 契约输出 | CTR-P1-015 SynthesizedSignal | 组合构建可消费合成信号 |
+| D_RISK Risk Management | 契约输出 | CTR-P1-003 + CTR-ERR-003 | 风险管理可消费分配结果和降级警告 |
 | MOD-ALPHA_SIGNAL_DOMAIN | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
 
 ---
@@ -451,7 +451,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress + version 更新 | 蓝图升级 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本号更新 | 蓝图升级 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | L03 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | D_SIGNAL 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
 | 4 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\signal\*.py` | [BLUEPRINT] 字段指向 MOD-L03-001 | 当前指向 alpha_signal_domain-001 |
 
 ---
@@ -460,10 +460,10 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
-| 1 | 信号退化检测延迟 | 中 | 错误信号进入 L04 | DegradationMonitorBase 实时监控 | 风险 |
+| 1 | 信号退化检测延迟 | 中 | 错误信号进入 D_PORTFOLIO_CORE | DegradationMonitorBase 实时监控 | 风险 |
 | 2 | 多信号冲突 | 中 | 合成信号不稳定 | 仲裁机制 + 权重可配置 | 风险 |
-| 3 | CTR-008 质量度量缺失 | 低 | L08 无法评估信号质量 | Phase C 优先实现 | 风险 |
-| 4 | Base 类接口变更影响下游 | 低 | L04/L05 编译错误 | Base 类接口冻结，破坏性变更需 Owner 审批 | 风险 |
+| 3 | CTR-008 质量度量缺失 | 低 | D_FRONTEND 无法评估信号质量 | Phase C 优先实现 | 风险 |
+| 4 | Base 类接口变更影响下游 | 低 | D_PORTFOLIO_CORE/D_RISK 编译错误 | Base 类接口冻结，破坏性变更需 Owner 审批 | 风险 |
 | 5 | 代码头部 [BLUEPRINT] 指向域蓝图而非模块蓝图 | 中 | AI 施工时找不到正确蓝图 | §13 #4 修正 | 风险 |
 | 6 | dep-map 契约ID不一致 | 中 | 依赖图与蓝图漂移 | §13 #3 对齐 | 风险 |
 | 7 | 新策略需实现对应Base类 | — | 中 | OCP扩展点设计，新策略继承即可 | 负面后果 |
@@ -501,7 +501,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 1 | SignalAggregatorBase 定义 | 必须 | ✅ | ✅ |
 | 2 | CapitalAllocatorBase 定义 | 必须 | ✅ | ✅ |
 | 3 | SignalSynthesizerBase 定义 | 必须 | ✅ | ✅ |
-| 4 | L02 因子产出 | 必须 | 部分实现 | ⚠️ |
+| 4 | D_FACTOR 因子产出 | 必须 | 部分实现 | ⚠️ |
 | 5 | Owner 已解除 C轨占位 | 必须 | ✅ | ✅ |
 
 ### 16.3 实施步骤
@@ -536,9 +536,9 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |------|------|
 | 对应蓝图契约 | §4.1 SignalQualityMetrics（规划） |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\signal\signal_quality_metrics.py` |
-| 验收标准 | L04/L08 可消费 |
+| 验收标准 | D_PORTFOLIO_CORE/D_FRONTEND 可消费 |
 | 验证命令 | `python -m pytest tests/signal/test_signal_quality_metrics.py -v` |
-| G7 检查项 | CTR-008 契约定义完成；L04/L08 集成测试通过 |
+| G7 检查项 | CTR-008 契约定义完成；D_PORTFOLIO_CORE/D_FRONTEND 集成测试通过 |
 | AI 自治范围 | human_gated |
 | 检查点 | SignalQualityMetrics 可产出信号质量度量 |
 
@@ -620,7 +620,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
-| GAP-001 | CTR-008 SignalQualityMetrics 缺失 | 新增 signal_quality_metrics.py | P1 | L08 需要信号质量评估时 | v2.2.0 | 待施工 |
+| GAP-001 | CTR-008 SignalQualityMetrics 缺失 | 新增 signal_quality_metrics.py | P1 | D_FRONTEND 需要信号质量评估时 | v2.2.0 | 待施工 |
 | GAP-002 | 无 ML 驱动信号合成 | SignalSynthesizerBase 扩展 ML 实现 | P2 | 因子数 > 50 时 | v3.0.0 | 规划 |
 | GAP-003 | 无 DefaultDegradationMonitor | 新增 default_degradation_monitor.py | P1 | C轨解除占位后 | v2.2.0 | 待施工 |
 
@@ -648,7 +648,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 1 | D-L03001-01 | 信号聚合架构 | 单一聚合器 / OCP 扩展点 | OCP 扩展点 | 新策略只加不改 | 2026-05-05 |
 | 2 | D-L03001-02 | CapitalAllocatorBase 归属 | 独立文件 / 与 SignalAggregatorBase 同文件 | 同文件（aggregator_base.py） | 3 个 Base 类职责紧密 | 2026-05-05 |
 | 3 | D-L03001-03 | capital_allocator.py 定位 | 完整实现 / re-export | re-export only | 真源在 aggregator_base.py，避免重复定义 | 2026-05-05 |
-| 4 | D-L03001-04 | CTR-008 实现时机 | 立即 / Phase C | Phase C | 优先级低于 L04/L05 | 2026-05-05 |
+| 4 | D-L03001-04 | CTR-008 实现时机 | 立即 / Phase C | Phase C | 优先级低于 D_PORTFOLIO_CORE/D_RISK | 2026-05-05 |
 | 5 | D-L03001-05 | 契约类型选择 | Pydantic BaseModel / frozen dataclass | frozen dataclass（codegen） | CTR 契约由 codegen 生成，统一为 dataclass | 2026-05-05 |
 | 6 | D-L03001-06 | 模板v4.1回填 | 保持压缩版/按模板回填 | 按模板回填 | 模板 REQUIRED_SECTIONS 缺失=不合规 | 2026-05-15 |
 
@@ -671,9 +671,9 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
 | 1 | 代码头部 [BLUEPRINT] 指向 alpha_signal_domain-001 而非 MOD-L03-001 | 中 | 初始创建时使用域蓝图ID | 修正 [BLUEPRINT] 字段 | §5.1 #1 | 待解决 |
-| 2 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015 | 中 | dep-map 使用旧契约ID | 对齐 dep-map 契约ID | §10.2 | 待解决 |
+| 2 | dep-map §17 标注 D_SIGNAL 输出 CTR-008，蓝图实际输出 CTR-P1-015 | 中 | dep-map 使用旧契约ID | 对齐 dep-map 契约ID | §10.2 | 待解决 |
 | 3 | 无测试文件（tests/signal/ 不存在） | 高 | 待创建测试 | 优先创建 | §9 | 待解决 |
-| 4 | IC加权聚合为占位实现（直接调用等权） | 低 | IC数据不可用 | L02 IC数据就绪后实现 | §16.7 #2 | 待解决 |
+| 4 | IC加权聚合为占位实现（直接调用等权） | 低 | IC数据不可用 | D_FACTOR IC数据就绪后实现 | §16.7 #2 | 待解决 |
 | 5 | SyntaxWarning: invalid escape sequence '\Z' | 低 | 代码头部路径含反斜杠 | 使用原始字符串 r"" | — | 待解决 |
 
 ---
@@ -758,7 +758,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 判定示例 | 职责域数量 | 消费者独立？ | 演进独立？ | 结论 |
 |---------|:---:|:---:|:---:|------|
 | 信号生成层（本蓝图） | 1 | 否 | 否 | 不拆分 |
-| 假设：信号聚合+资金分配 | 2 | 是 | 是 | 拆分为 L03-SignalAggregation + L03-CapitalAllocation |
+| 假设：信号聚合+资金分配 | 2 | 是 | 是 | 拆分为 D_SIGNAL-SignalAggregation + D_SIGNAL-CapitalAllocation |
 | 假设：信号聚合+降级监控 | 2 | 否 | 否 | 不拆分（职责紧密） |
 
 ---
@@ -789,7 +789,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | L02 Alpha Factor | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` | 因子信号产出 | L02 是因子计算层，L03 是信号聚合层，职责不同 |
+| 1 | D_FACTOR Alpha Factor | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` | 因子信号产出 | D_FACTOR 是因子计算层，D_SIGNAL 是信号聚合层，职责不同 |
 
 ---
 

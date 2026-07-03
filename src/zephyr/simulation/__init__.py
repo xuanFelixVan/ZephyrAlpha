@@ -10,10 +10,10 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L13 Experimentation
+"""实验 Experimentation
 =====================================
 
-14 层量化架构 · L13 自动化实验层
+域量化架构 · 实验 自动化实验层
 
 职责
 ----
@@ -22,23 +22,23 @@ AI 时代的"自动化实验"层：Scout Agent 自动抓取外部资讯 + 内部
 
 架构真源
 --------
-architecture_model/index.yaml（53域清单，layer_id 属性枚举 L00-L13）
+architecture_model/index.yaml（53域清单，layer_id 属性枚举 D_DATA-实验）
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------
 作为生产者（Producer）：
-  - CTR-P1-014 (ExperimentResult) — 实验结论，发布至 L09/L11
+  - CTR-P1-014 (ExperimentResult) — 实验结论，发布至 D_RESEARCH/D_ML_TRAIN
 
 作为消费者（Consumer）：
   - CTR-001 (NormalizedMarketData) — 实验需要市场数据上下文
-  - CTR-P1-004/005 (ModelServing) — Scout Agent 调用 L11 模型推断
-  - CTR-P1-013 (TelemetryEmitter) — 实验运行数据上报 L12
+  - CTR-P1-004/005 (ModelServing) — Scout Agent 调用 D_ML_TRAIN 模型推断
+  - CTR-P1-013 (TelemetryEmitter) — 实验运行数据上报 遥测
 
-与 L11/L12 的关系
+与 D_ML_TRAIN/遥测 的关系
 -----------------
-L11 ml_platform       : ML 生命周期（训练/推理/模型注册）
-L12 system-telemetry  : 系统可观测性
-L13 experimentation   : 自动化实验（Scout + A/B + 结论沉淀）
+D_ML_TRAIN ml_platform       : ML 生命周期（训练/推理/模型注册）
+遥测 system-telemetry  : 系统可观测性
+实验 experimentation   : 自动化实验（Scout + A/B + 结论沉淀）
 
 架构归属
 --------

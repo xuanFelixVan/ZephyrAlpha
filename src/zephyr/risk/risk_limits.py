@@ -22,9 +22,9 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Risk Limits Calculator
+"""D_RISK — Risk Limits Calculator
 
-风险限额计算引擎。根据持仓和信号计算风险约束集，输出给 L05 组合优化器强制执行。
+风险限额计算引擎。根据持仓和信号计算风险约束集，输出给 D_PORTFOLIO_CORE 组合优化器强制执行。
 
 核心职责：
   - 单标的仓位上限/下限计算
@@ -35,11 +35,11 @@
   - 产出 RiskLimits（CTR-003）
 
 CTR 契约：
-  消费者 — CTR-002 (FactorSignal) ← L02
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-003 (RiskLimits) → L05
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-003 (RiskLimits) → D_PORTFOLIO_CORE
 
-依赖方向：L02 + L06 → L04 → L05
+依赖方向：D_FACTOR + D_EXECUTION_CORE → D_RISK → D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations

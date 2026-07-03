@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-L11 — ML Training Base
+D_ML_TRAIN — ML Training Base
 
 模型训练核心抽象。包含模型元数据、训练器基类和模型注册表。
 """

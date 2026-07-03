@@ -32,7 +32,7 @@ sys.path.append(QMT_LIB)  # 要素1: append 不是 insert（避免覆盖系统 n
 os.chdir(QMT_HOME)        # 要素2: chdir 让 ../userdata_mini/datadir 正确解析
 
 sys.path.insert(0, r"d:\ZephyrAlpha\tmp")
-from _ds_common import setup_logging, ch_insert_tsv, tsv_escape, load_progress, save_progress
+from _ds_common import setup_logging, ch_insert_tsv, tsv_escape, load_progress, save_progress, to_int_str
 
 from xtquant import xtdata
 
@@ -78,22 +78,47 @@ def download_and_get(symbol, start, end, period="1d"):
         return None
 
 
-def df_to_tsv(df, symbol, period="1d"):
-    """DataFrame → TSV 行列表。"""
+def parse_qmt_index(ts):
+    """解析 QMT DataFrame index 为 (trade_date, timestamp) 字符串。
+
+    QMT index 可能是:
+    - YYYYMMDD 整数 (如 20250102) ← 期货/港股日K线
+    - 毫秒时间戳 (如 1609459200000)
+    - 微秒时间戳 (如 1609459200000000)
+    - 字符串日期 (如 "2025-01-02")
+    """
     import pandas as pd
+    s = str(ts)
+    # 字符串日期
+    if "-" in s and len(s) >= 10:
+        return s[:10], s[:10] + " 00:00:00"
+    try:
+        v = int(ts)
+    except (ValueError, TypeError):
+        return s[:10], s
+    # YYYYMMDD 格式 (19900101 ~ 20991231)
+    if 19900101 <= v <= 20991231:
+        td = f"{v // 10000:04d}-{(v // 100) % 100:02d}-{v % 100:02d}"
+        return td, td + " 00:00:00"
+    # Unix 时间戳
+    if v > 1e14:
+        dt = pd.Timestamp(v, unit="us")
+    elif v > 1e11:
+        dt = pd.Timestamp(v, unit="ms")
+    else:
+        dt = pd.Timestamp(v, unit="s")
+    return dt.strftime("%Y-%m-%d"), dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def df_to_tsv(df, symbol, period="1d"):
+    """DataFrame -> TSV 行列表。
+
+    volume/open_interest 是 UInt64 列，QMT 返回 float (如 179012.0)，
+    必须用 to_int_str 转为整数字符串，否则 CH 解析报 'expected tab before .0'。
+    """
     lines = []
     for ts, row in df.iterrows():
-        # ts 为时间戳（秒或字符串）
-        try:
-            if isinstance(ts, (int, float)):
-                dt = pd.Timestamp(ts, unit="s") if ts > 1e11 else pd.Timestamp(ts, unit="ms")
-            else:
-                dt = pd.Timestamp(ts)
-            trade_date = dt.strftime("%Y-%m-%d")
-            timestamp = dt.strftime("%Y-%m-%d %H:%M:%S")
-        except Exception:
-            trade_date = str(ts)[:10]
-            timestamp = str(ts)
+        trade_date, timestamp = parse_qmt_index(ts)
         o = row.get("open", 0)
         h = row.get("high", 0)
         l = row.get("low", 0)
@@ -104,7 +129,7 @@ def df_to_tsv(df, symbol, period="1d"):
         line = "\t".join([
             trade_date, timestamp, symbol,
             tsv_escape(o), tsv_escape(h), tsv_escape(l), tsv_escape(c),
-            tsv_escape(v), tsv_escape(a), tsv_escape(oi),
+            to_int_str(v), tsv_escape(a), to_int_str(oi),
             period,
         ])
         lines.append(line)

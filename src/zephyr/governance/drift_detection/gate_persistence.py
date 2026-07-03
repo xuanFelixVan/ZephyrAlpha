@@ -60,114 +60,116 @@ class GatePersistence:
     def _init_db(self) -> None:
         conn = sqlite3.connect(self._db_path)
 
-        conn.execute("""
+        try:
+            conn.execute("""
 
 
-            CREATE TABLE IF NOT EXISTS drift_events (
+                CREATE TABLE IF NOT EXISTS drift_events (
 
 
-                event_id TEXT PRIMARY KEY,
+                    event_id TEXT PRIMARY KEY,
 
 
-                module_id TEXT,
+                    module_id TEXT,
 
 
-                detector_id TEXT,
+                    detector_id TEXT,
 
 
-                drift_dimension TEXT,
+                    drift_dimension TEXT,
 
 
-                baseline_version TEXT,
+                    baseline_version TEXT,
 
 
-                state TEXT,
+                    state TEXT,
 
 
-                created_at TEXT,
+                    created_at TEXT,
 
 
-                updated_at TEXT,
+                    updated_at TEXT,
 
 
-                resolved_by TEXT,
+                    resolved_by TEXT,
 
 
-                resolution_detail TEXT,
+                    resolution_detail TEXT,
 
 
-                auto_fixed INTEGER,
+                    auto_fixed INTEGER,
 
 
-                rollback_verified INTEGER
+                    rollback_verified INTEGER
 
 
-            )
+                )
 
 
-        """)
+            """)
 
-        conn.execute("""
+            conn.execute("""
 
 
-            CREATE TABLE IF NOT EXISTS scan_results (
+                CREATE TABLE IF NOT EXISTS scan_results (
 
 
-                scan_id TEXT PRIMARY KEY,
+                    scan_id TEXT PRIMARY KEY,
 
 
-                detectors_run INTEGER,
+                    detectors_run INTEGER,
 
 
-                total_drift_events INTEGER,
+                    total_drift_events INTEGER,
 
 
-                storm_mode_triggered INTEGER,
+                    storm_mode_triggered INTEGER,
 
 
-                committed_at TEXT,
+                    committed_at TEXT,
 
 
-                sha256 TEXT
+                    sha256 TEXT
 
 
-            )
+                )
 
 
-        """)
+            """)
 
-        conn.execute("""
+            conn.execute("""
 
 
-            CREATE TABLE IF NOT EXISTS gate_decisions (
+                CREATE TABLE IF NOT EXISTS gate_decisions (
 
 
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
 
-                module_id TEXT,
+                    module_id TEXT,
 
 
-                gate TEXT,
+                    gate TEXT,
 
 
-                decision TEXT,
+                    decision TEXT,
 
 
-                detail TEXT,
+                    detail TEXT,
 
 
-                decided_at TEXT
+                    decided_at TEXT
 
 
-            )
+                )
 
 
-        """)
+            """)
 
-        conn.commit()
-
-        conn.close()
+            conn.commit()
+        finally:
+            # 5.49.2 修复：异常路径确保连接归还
+            conn.close()
 
     def persist_scan_result(self, scan_id: uuid.UUID, body: dict[str, object]) -> str:
         body["persisted_at"] = datetime.now(UTC).isoformat()
@@ -195,35 +197,39 @@ class GatePersistence:
 
         conn = sqlite3.connect(self._db_path)
 
-        conn.execute(
-            "INSERT OR REPLACE INTO scan_results(scan_id, detectors_run, total_drift_events, storm_mode_triggered, committed_at, sha256) VALUES(?,?,?,?,?,?)",
-            (
-                str(scan_id),
-                body.get("detectors_run", 0),
-                body.get("total_drift_events", 0),
-                int(body.get("storm_mode_triggered", False)),
-                body.get("persisted_at", ""),
-                sha,
-            ),
-        )
+        try:
+            conn.execute(
+                "INSERT OR REPLACE INTO scan_results(scan_id, detectors_run, total_drift_events, storm_mode_triggered, committed_at, sha256) VALUES(?,?,?,?,?,?)",
+                (
+                    str(scan_id),
+                    body.get("detectors_run", 0),
+                    body.get("total_drift_events", 0),
+                    int(body.get("storm_mode_triggered", False)),
+                    body.get("persisted_at", ""),
+                    sha,
+                ),
+            )
 
-        conn.commit()
-
-        conn.close()
+            conn.commit()
+        finally:
+            # 5.49.2 修复：异常路径确保连接归还
+            conn.close()
 
         return sha
 
     def persist_gate_decision(self, module_id: str, gate: str, decision: str, detail: str = "") -> None:
         conn = sqlite3.connect(self._db_path)
 
-        conn.execute(
-            "INSERT INTO gate_decisions(module_id, gate, decision, detail, decided_at) VALUES(?,?,?,?,?)",
-            (module_id, gate, decision, detail, datetime.now(UTC).isoformat()),
-        )
+        try:
+            conn.execute(
+                "INSERT INTO gate_decisions(module_id, gate, decision, detail, decided_at) VALUES(?,?,?,?,?)",
+                (module_id, gate, decision, detail, datetime.now(UTC).isoformat()),
+            )
 
-        conn.commit()
-
-        conn.close()
+            conn.commit()
+        finally:
+            # 5.49.2 修复：异常路径确保连接归还
+            conn.close()
 
     def verify_integrity(self, scan_id: uuid.UUID) -> bool:
         filepath = os.path.join(self._audit_dir, f"{scan_id}_result.json")

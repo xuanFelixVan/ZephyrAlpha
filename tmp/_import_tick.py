@@ -138,15 +138,18 @@ def bdpan_ls_months(bdpan_dir: str) -> List[str]:
 
 
 def bdpan_ls_day_zips(bdpan_month_dir: str) -> List[str]:
-    """列出某月份目录下的所有日zip文件名（不含路径）"""
+    """列出某月份目录下的所有日zip文件名（不含路径）。
+
+    文件名格式为 YYYYMMDD.zip（如 20260702.zip，无短横线）。
+    """
     r = subprocess.run(["wsl", "-d", "Ubuntu", "-e", "bash", "-c",
                         f'{BDPAN} ls "{bdpan_month_dir}"'],
                        capture_output=True, timeout=120)
     if r.returncode != 0:
         return []
     out = r.stdout.decode("utf-8", errors="replace")
-    # 文件名形如 2026-07-01.zip
-    return sorted(set(re.findall(r"(\d{4}-\d{2}-\d{2}\.zip)", out)))
+    # 文件名形如 20260702.zip
+    return sorted(set(re.findall(r"(\d{8}\.zip)", out)))
 
 
 def bdpan_download(remote_path: str, local_path: str, timeout: int = 1800) -> bool:
@@ -158,18 +161,91 @@ def bdpan_download(remote_path: str, local_path: str, timeout: int = 1800) -> bo
 
 
 # ===== TSV 转换 =====
+# 9类市场分3种格式（实测2026-07-04）：
+#   A股股票(stock/stock_bj): 时间,成交价,手数,买卖方向  → 手数×100=volume，时间用-
+#   基金/转债(etf/lof/cb):   时间,成交价,成交量,买卖方向 → 成交量已是股数，时间用/
+#   港股(hk):                时间,价格,现量,买卖方向     → 现量已是股数，时间用/且无秒
+#   指数/板块(index/sector/mkt_index): 时间,价位,成交额  → volume=0, amount=成交额, 无方向
+
+
+def normalize_timestamp(ts: str) -> str:
+    """时间标准化：'/' → '-'；无秒补 ':00。
+
+    输入可能格式：
+      2000-06-09 09:30:00 (标准)
+      2005/02/23 09:30:00 (斜杠)
+      2025/01/02 09:20    (无秒)
+    """
+    ts = ts.strip().replace("/", "-")
+    # 长度16 = YYYY-MM-DD HH:MM，补秒
+    if len(ts) == 16:
+        ts += ":00"
+    return ts
+
+
+def parse_row_by_header(row: list, header_field3: str, market_type: str, symbol: str) -> Optional[str]:
+    """根据表头第3字段名解析行，返回TSV行字符串（含换行符）或None。
+
+    TSV输出列: trade_date timestamp symbol market_type price volume amount direction data_source
+    """
+    if len(row) < 3:
+        return None
+    ts = normalize_timestamp(row[0])
+    if len(ts) < 19:
+        return None
+    trade_date = ts[:10]
+
+    price_s = row[1].strip()
+    field3_val = row[2].strip()
+    if not price_s or not field3_val:
+        return None
+    try:
+        price = float(price_s)
+    except ValueError:
+        return None
+
+    # 去BOM
+    f3 = header_field3.strip().lstrip("\ufeff")
+
+    if f3 == "手数":
+        # A股股票：手数×100
+        try:
+            hands = float(field3_val)
+        except ValueError:
+            return None
+        volume = int(hands * 100)
+        amount = round(price * volume, 2)
+        direction = row[3].strip() if len(row) >= 4 else ""
+    elif f3 in ("成交量", "现量"):
+        # 基金/港股：已是股数
+        try:
+            volume = int(float(field3_val))
+        except ValueError:
+            return None
+        amount = round(price * volume, 2)
+        direction = row[3].strip() if len(row) >= 4 else ""
+    elif f3 == "成交额":
+        # 指数/板块：第3字段=成交额，无volume/方向
+        try:
+            amount = float(field3_val)
+        except ValueError:
+            return None
+        volume = 0
+        direction = ""
+    else:
+        return None
+
+    if not direction:
+        direction = "中性盘"
+
+    return (f"{trade_date}\t{ts}\t{symbol}\t{market_type}\t"
+            f"{price:.4f}\t{volume}\t{amount:.2f}\t{direction}\tbdpan\n")
+
+
 def zip_to_tsv_append(zip_path: str, tsv_path: str, market_type: str) -> int:
     """解压日zip → 追加到月份TSV，返回行数。
 
-    CSV格式: 时间,成交价,手数,买卖方向
-    TSV输出列: trade_date timestamp symbol market_type price volume amount direction data_source
-    字段映射：
-      时间(2026-07-01 09:15:00) → trade_date + timestamp
-      成交价(10.05)             → price
-      手数(5)                   → volume (×100)
-      (计算)                    → amount (= price × volume)
-      买卖方向                  → direction (空值填"中性盘")
-      文件名(000001.csv)        → symbol (去.csv)
+    自动识别表头第3字段（手数/成交量/现量/成交额）选择对应转换逻辑。
     """
     rows = 0
     with zipfile.ZipFile(zip_path, "r") as zf:
@@ -187,35 +263,16 @@ def zip_to_tsv_append(zip_path: str, tsv_path: str, market_type: str) -> int:
                     continue
                 reader = csv.reader(io.TextIOWrapper(io.BytesIO(content), encoding="utf-8"))
                 try:
-                    next(reader)  # 跳过表头
+                    header = next(reader)
                 except StopIteration:
                     continue
+                # 表头第3字段名决定转换逻辑
+                field3 = header[2] if len(header) >= 3 else ""
                 for row in reader:
-                    if not row or len(row) < 3:
-                        continue
-                    try:
-                        ts = row[0].strip()  # 2026-07-01 09:15:00
-                        if len(ts) < 10:
-                            continue
-                        trade_date = ts[:10]  # 2026-07-01
-                        price_s = row[1].strip()
-                        hands_s = row[2].strip()
-                        if not price_s or not hands_s:
-                            continue
-                        price = float(price_s)
-                        hands = float(hands_s)
-                        volume = int(hands * 100)  # 手数 × 100
-                        amount = round(price * volume, 2)  # 成交价 × 手数 × 100
-                        direction = row[3].strip() if len(row) >= 4 else ""
-                        if not direction:
-                            direction = "中性盘"
-                        out.write(
-                            f"{trade_date}\t{ts}\t{symbol}\t{market_type}\t"
-                            f"{price:.4f}\t{volume}\t{amount:.2f}\t{direction}\tbdpan\n"
-                        )
+                    tsv_line = parse_row_by_header(row, field3, market_type, symbol)
+                    if tsv_line:
+                        out.write(tsv_line)
                         rows += 1
-                    except (ValueError, IndexError):
-                        continue
     return rows
 
 

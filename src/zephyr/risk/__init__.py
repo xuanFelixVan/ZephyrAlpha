@@ -10,15 +10,15 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L04 Risk Management
+"""D_RISK Risk Management
 =====================================
 
-14 层量化架构 · L04 风险管理层
+域量化架构 · D_RISK 风险管理层
 
 职责
 ----
 实时风控与止损执行：止损计算、头寸校验与风险敞口监控。
-上位层 L05（组合构建）的约束提供者。
+上位层 D_PORTFOLIO_CORE（组合构建）的约束提供者。
 
 子模块
 ------
@@ -32,19 +32,19 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-002  FactorSignal              ← L02
-  - CTR-006  PositionSnapshot          ← L06
-  - CTR-ERR-003  SignalDegradationWarning ← L03
-  - CTR-ERR-005  ExecutionRejectionError  ← L06/L07
-  - CTR-P1-011  RiskMetricsReport      ← L05
-  - CTR-P1-012  ComplianceRule         ← L10
-  - CTR-P1-013  TelemetryEmitter       ← L12
-  - CTR-P1-015  SynthesizedSignal      ← L03
+  - CTR-002  FactorSignal              ← D_FACTOR
+  - CTR-006  PositionSnapshot          ← D_EXECUTION_CORE
+  - CTR-ERR-003  SignalDegradationWarning ← D_SIGNAL
+  - CTR-ERR-005  ExecutionRejectionError  ← D_EXECUTION_CORE/D_REPORTING
+  - CTR-P1-011  RiskMetricsReport      ← D_PORTFOLIO_CORE
+  - CTR-P1-012  ComplianceRule         ← D_COMPLIANCE
+  - CTR-P1-013  TelemetryEmitter       ← 遥测
+  - CTR-P1-015  SynthesizedSignal      ← D_SIGNAL
 
 作为生产者（Producer）：
-  - CTR-003  RiskLimits                  → L05
-  - CTR-ERR-004  RiskLimitViolationError → L05, L06
-  - CTR-P1-008  RiskDashboardSnapshot    → L08
+  - CTR-003  RiskLimits                  → D_PORTFOLIO_CORE
+  - CTR-ERR-004  RiskLimitViolationError → D_PORTFOLIO_CORE, D_EXECUTION_CORE
+  - CTR-P1-008  RiskDashboardSnapshot    → D_FRONTEND
 
 架构归属
 --------

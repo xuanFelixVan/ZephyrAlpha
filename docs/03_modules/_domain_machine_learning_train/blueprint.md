@@ -35,7 +35,7 @@ depends_on:
 references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\04_architecture_principles_decisions\\dependency_path_panorama.md"
     section: §3.13
-    why: L11 ML平台子模块级依赖图
+    why: D_ML_TRAIN ML平台子模块级依赖图
 tags: [ml-platform, l11, c-track, placeholder]
 priority: P1
 runtime_plane: warm
@@ -51,7 +51,7 @@ ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 机器学习平台核心层——它解决了模型推理标准化和模型注册管理问题。核心职责包括：模型推理(InferenceEngineBase OCP扩展点)、模型注册(ModelRegistry版本生命周期管理)、模型训练(ModelTrainerBase OCP扩展点)、模型元数据(ModelMetadata数据类)。当前规模 4 个核心类 + 1 个默认实现，目标容量为完整 ML 生命周期管理（6子模块：training/validation/serving-default/serving-hot/evaluation/scout）。上游依赖 L02 Alpha Factor(特征输入)和 MOD-INF-016 Shared Core(契约基座)，下游被 L03 Signal Generation 和 L05 Portfolio Construction 消费。
+本蓝图描述 ZephyrAlpha 机器学习平台核心层——它解决了模型推理标准化和模型注册管理问题。核心职责包括：模型推理(InferenceEngineBase OCP扩展点)、模型注册(ModelRegistry版本生命周期管理)、模型训练(ModelTrainerBase OCP扩展点)、模型元数据(ModelMetadata数据类)。当前规模 4 个核心类 + 1 个默认实现，目标容量为完整 ML 生命周期管理（6子模块：training/validation/serving-default/serving-hot/evaluation/scout）。上游依赖 D_FACTOR Alpha Factor(特征输入)和 MOD-INF-016 Shared Core(契约基座)，下游被 D_SIGNAL Signal Generation 和 D_PORTFOLIO_CORE Portfolio Construction 消费。
 
 ---
 
@@ -112,9 +112,9 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 | 2 | ✅ 包含 | 模型注册管理 | ModelRegistry版本生命周期管理可用 |
 | 3 | ✅ 包含 | 模型训练管线 | ModelTrainerBase OCP扩展点可用 |
 | 4 | ✅ 包含 | 推理请求/响应 | CTR-P1-004/CTR-P1-005契约可产出 |
-| 5 | ❌ 排除 | 实验编排 | L13 Experimentation |
+| 5 | ❌ 排除 | 实验编排 | 实验 Experimentation |
 | 6 | ❌ 排除 | 系统可观测性 | MOD-INF-015 System Telemetry |
-| 7 | ❌ 排除 | 数据摄取 | L00 Data Source |
+| 7 | ❌ 排除 | 数据摄取 | D_DATA Data Source |
 
 ### 1.4 运行场景约束
 
@@ -129,8 +129,8 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 | 设计+施工 | 审批权限 |
-| L03/L05 下游 | 推理接口兼容性 | 集成 | 接口变更需通知 |
-| L13 实验层 | 模型调用方式 | 集成 | 契约消费 |
+| D_SIGNAL/D_PORTFOLIO_CORE 下游 | 推理接口兼容性 | 集成 | 接口变更需通知 |
+| 实验层 | 模型调用方式 | 集成 | 契约消费 |
 
 ### 1.6 当前态/目标态差距
 
@@ -161,9 +161,9 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 | 2 | ✅ 包含 | 模型注册 | ModelRegistry（版本生命周期管理） | 本模块 |
 | 3 | ✅ 包含 | 模型训练 | ModelTrainerBase抽象 | 本模块 |
 | 4 | ✅ 包含 | 模型元数据 | ModelMetadata数据类 | 本模块 |
-| 5 | ❌ 排除 | 实验设计 | L13 Experimentation负责 | L13 |
+| 5 | ❌ 排除 | 实验设计 | 实验 Experimentation负责 | 实验 |
 | 6 | ❌ 排除 | 遥测采集 | MOD-INF-015负责 | MOD-INF-015 |
-| 7 | ❌ 排除 | 因子计算 | L02 Alpha Factor负责 | L02 |
+| 7 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor负责 | D_FACTOR |
 
 ---
 
@@ -186,9 +186,9 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L02 Alpha Factor | 特征输入 → InferenceEngineBase.predict() | L03/L05 | ModelServingRequest → ModelServingResponse |
+| 1 | D_FACTOR Alpha Factor | 特征输入 → InferenceEngineBase.predict() | D_SIGNAL/D_PORTFOLIO_CORE | ModelServingRequest → ModelServingResponse |
 | 2 | ModelTrainerBase | train() → validate() → ModelRegistry.register() | ModelRegistry | dict[str, float] 指标 |
-| 3 | L06 PositionSnapshot(CTR-006) | 持仓数据消费 | 模型监控 | CTR-006 |
+| 3 | D_EXECUTION_CORE PositionSnapshot(CTR-006) | 持仓数据消费 | 模型监控 | CTR-006 |
 | 4 | 模型性能指标 | 推理延迟/置信度/漂移 | MOD-INF-015(CTR-P1-013) | CTR-P1-013 Telemetry |
 
 ### 3.3 状态生命周期
@@ -365,9 +365,9 @@ class ModelMetadata:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 Shared Core | 必须 | ModelServingRequest/Response契约基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
-| L02 Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
+| D_FACTOR Alpha Factor | 可选 | 特征输入(CTR-001) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
 | MOD-INF-015 System Telemetry | 可选 | 模型监控(CTR-P1-013) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
-| L06 Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
+| D_EXECUTION_CORE Trade Execution | 可选 | 持仓数据(CTR-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -416,17 +416,17 @@ class ModelMetadata:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L03 Signal Generation | 契约消费 | CTR-P1-004 ModelServingRequest | 信号层可消费推理请求 |
-| L05 Portfolio Construction | 契约消费 | CTR-P1-004/005 | 组合构建可消费推理结果 |
-| L13 Experimentation | 契约消费 | CTR-P1-004/005 | 实验层可调用模型推断 |
+| D_SIGNAL Signal Generation | 契约消费 | CTR-P1-004 ModelServingRequest | 信号层可消费推理请求 |
+| D_PORTFOLIO_CORE Portfolio Construction | 契约消费 | CTR-P1-004/005 | 组合构建可消费推理结果 |
+| 实验 Experimentation | 契约消费 | CTR-P1-004/005 | 实验层可调用模型推断 |
 | MOD-INF-015 System Telemetry | instrumentation | CTR-P1-013 Telemetry | 模型性能指标可观测 |
-| L06 Trade Execution | 契约消费 | CTR-006 PositionSnapshot | 持仓数据消费 |
+| D_EXECUTION_CORE Trade Execution | 契约消费 | CTR-006 PositionSnapshot | 持仓数据消费 |
 
 ### 12.1 域契约锚点
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| ml_experiment_domain-001 | ML实验域 | L11→L13模型产出→实验 | MOD-L13-001 | 修改L11推理接口必须同步更新L13蓝图 |
+| ml_experiment_domain-001 | ML实验域 | D_ML_TRAIN→实验模型产出→实验 | MOD-L13-001 | 修改D_ML_TRAIN推理接口必须同步更新实验蓝图 |
 
 ---
 
@@ -623,7 +623,7 @@ class ModelMetadata:
 | OCP扩展点 | 开闭原则——对扩展开放，对修改关闭的抽象基类 | 插件 | OCP扩展点是蓝图级契约，插件是运行时加载 |
 | ModelRegistry | 模型版本生命周期管理单例，管理registered→active→deprecated | 模型仓库 | Registry是内存注册表，仓库是持久化存储 |
 | InferenceEngineBase | 推理引擎抽象基类，定义predict()契约 | 推理服务 | Base是OCP扩展点，服务是完整运行时 |
-| CTR-P1-004 | ModelServingRequest契约——L11→L03/L05的推理请求格式 | CTR-P1-005 | 004是请求，005是响应 |
+| CTR-P1-004 | ModelServingRequest契约——D_ML_TRAIN→D_SIGNAL/D_PORTFOLIO_CORE的推理请求格式 | CTR-P1-005 | 004是请求，005是响应 |
 
 ---
 
@@ -784,9 +784,9 @@ class ModelMetadata:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | L03 Signal Generation 蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 1 | L05 Portfolio Construction 蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 2 | L13 Experimentation 集成点 | §12 集成点 |
+| Tier 1 | D_SIGNAL Signal Generation 蓝图 | §4 接口契约、§10 依赖关系 |
+| Tier 1 | D_PORTFOLIO_CORE Portfolio Construction 蓝图 | §4 接口契约、§10 依赖关系 |
+| Tier 2 | 实验 Experimentation 集成点 | §12 集成点 |
 | Tier 2 | MOD-INF-015 System Telemetry | §6.1 可观测性指标 |
 | Tier 3 | `inference_base.py` / `default_inference_engine.py` | §4 数据模型、§11 产出物路径 |
 
