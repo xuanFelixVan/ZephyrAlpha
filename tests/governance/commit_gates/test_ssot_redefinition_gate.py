@@ -163,7 +163,7 @@ class TestIsSsotSymbol:
 
 class TestRedefinitionBlocked:
     def test_class_definition_blocked(self, setup_registry):
-        red_file = "src/zephyr/governance/semantic_auditor/privacy.py"
+        red_file = "src/zephyr/governance/semantic_audit/privacy.py"
         gw = _make_mock_gateway(
             [red_file],
             {red_file: ["class PIICategory(str):", "    EMAIL = 'email'"]},
