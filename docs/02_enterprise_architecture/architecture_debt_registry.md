@@ -930,7 +930,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 28 | gate-dd07-shared-bypass | [.pre-commit-config.yaml:673](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L673) |
 | 29 | gate-21-manifest-drift | [.pre-commit-config.yaml:701](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L701) |
 | 30 | gate-generate-derived | [.pre-commit-config.yaml:736](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L736) |
-| 31 | gate-schema-health | [.pre-commit-config.yaml:757](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L757) |
+| 31 | gate-schema-health | [.pre-commit-config.yaml:757](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L757) <br>✅ 已合并到 GATE-C2（ARCH-017 治本，run_gate_chain 顺序执行；gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 重定向条目 status=deprecated） |
 | 32 | gate-22-load-path-integrity | [.pre-commit-config.yaml:771](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L771) |
 | 33 | gate-c1-ssot-status-enum | [.pre-commit-config.yaml:807](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L807) |
 | 34 | gate-mcp-contract-consistency | [.pre-commit-config.yaml:823](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L823) |
@@ -1005,6 +1005,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 脱管表的schema漂移无法被检测
 **病根**：根因1（静态清单未随DB演进）
 **修复方向**：`_DDL_MAP` 改为从DB元数据动态派生（`SELECT tablename FROM pg_catalog.pg_tables`）
+
+> **[✓ FIXED: ARCH-016/017/018, 2026-06-26 起施工]** schema_health 治本三联：
+> - **ARCH-016**（Schema 健康度治本）：verify_schema_health.py 4 校验实现（DDL 列一致性/只读触发器/Schema 版本/PG 运行时健康），depgraph schema 漂移检测门禁化。
+> - **ARCH-017**（GATE-C2 升级 commit 自动触发）：原独立 gate-schema-health 合并到 GATE-C2（run_gate_chain 顺序执行 check_contract_code_drift + check_contract_physical_path + verify_schema_health），stages 从 manual 升级为 commit；gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 重定向条目（status=deprecated, redirect_to=GATE-C2）。
+> - **ARCH-018**（文档同步）：6 个文档/索引同步 schema_health 门禁可发现性——capability_canonical_file_registry.yaml 新增 schema_health_verification 能力条目；gate_registry.yaml 新增重定向条目；architecture_debt_registry.md 新增本条目+更新 L933；AGENTS.md 补充门禁说明；index.md 修复断链；database/blueprint.md 补充 Schema 变更门禁说明。
+> - **检测真源**：[verify_schema_health.py](file:///D:/ZephyrAlpha/scripts/governance/d11_compliance/verify_schema_health.py)（canonical_override 声明，capability=schema_health_verification）。
+> - **门禁入口**：GATE-C2（.pre-commit-config.yaml commit 阶段，--no-verify 绕不过 GitCommitGateway in-process gate）。
 
 #### 5.4.3 depgraph_schema.py路径列死代码（MEDIUM）
 
@@ -4920,7 +4927,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：引入配置中心模式（ConfigHolder + 回调通知）
 
 #### 5.54.4 [MEDIUM] 配置热重载回调失败被静默吞没
-- **文件**：[config_reload_semantic.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L44)
+- **文件**：[config_reload_semantic.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L44) **[文件已删除: 2026-07-04]**
 - **证据**：`reloaded.append(filepath)`在回调执行之前；回调抛异常被`except Exception: pass`吞掉，文件仍被报告为"已重载"
 - **问题**：组件实际未用新配置，但报告显示已重载——运维误判
 - **修复**：回调失败时logger.warning并从reloaded列表移除
@@ -8246,7 +8253,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 - 5.143.7: analytics_base.py 3份重复(governance/ops/reporting) — [governance/analytics_base.py:54](file:///D:/ZephyrAlpha/src/zephyr/governance/observability_governance/analytics_base.py#L54)
 - 5.143.8: default_tca_engine.py循环依赖(reporting↔governance互导) — [reporting/default_tca_engine.py:42](file:///D:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py#L42)
-- 5.143.9: backtest_base.py 2份重复(simulation/intelligence) — [simulation/backtest_base.py](file:///D:/ZephyrAlpha/src/zephyr/simulation/backtest_base.py)
+- 5.143.9: backtest_base.py 2份重复(simulation/intelligence) — [simulation/backtest_base.py](file:///D:/ZephyrAlpha/src/zephyr/simulation/backtest_base.py) **[文件已删除: 2026-07-04]**
 - 5.143.10: risk_manager_base.py 2份重复(risk/risk/cross_asset) — [risk/risk_manager_base.py](file:///D:/ZephyrAlpha/src/zephyr/risk/risk_manager_base.py)
 - 5.143.11: pipeline_lock.py 2份重复(integration/infrastructure) — [integration/pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/pipeline_lock.py)
 - 5.143.12: routing_plugins.py 2份重复(integration/infrastructure) — [integration/routing_plugins.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/routing_plugins.py)
@@ -8565,9 +8572,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 5.149.5 [HIGH]: [autonomy_core/skill_prompt_cache.py:37,49-64,67-70,73-77](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skills/skill_prompt_cache.py#L37) — 类级_cache被所有实例/线程共享，所有classmethod均无锁(get中del与并发set竞态+set中len后purge_expired是check-then-act)
 - 5.149.6 [HIGH]: [integration/pipeline_orchestrator.py:1622,1635-1637,1650](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L1622) — `_metrics`的get+1非原子读-改-写+_latency_samples的check-then-act+_failure_log同类问题(行851/862/1088/1091/1248/1249)
 - 5.149.7 [HIGH]: [trading/orchestrator/agent_quality.py:22-28](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/agent_quality.py#L22) — AgentQualityTracker无任何锁，record的check-then-act在并发下可能创建两个空list覆盖
-- 5.149.8 [HIGH]: [infrastructure/capacity_assurance/modules/graceful_shutdown.py:40,55-62](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/graceful_shutdown.py#L40) — register_handler在主线程append，run_handlers在信号处理线程迭代，无锁
+- 5.149.8 [HIGH]: [infrastructure/capacity_assurance/modules/graceful_shutdown.py:40,55-62](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/graceful_shutdown.py#L40) — register_handler在主线程append，run_handlers在信号处理线程迭代，无锁 **[文件已删除: 2026-07-04]**
 - 5.149.9 [HIGH]: [infrastructure/pipeline/backpressure_manager.py:215-221,223-229](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/backpressure_manager.py#L215) — 锁使用不一致：handle_pause/clear在锁内操作_on_pause_handlers，但register_on_pause在锁外append
-- 5.149.10 [HIGH]: [infrastructure/capacity_assurance/modules/config_reload_semantic.py:35-56](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L35) — watch修改_watched/_callbacks，check_and_reload迭代两者，均无锁
+- 5.149.10 [HIGH]: [infrastructure/capacity_assurance/modules/config_reload_semantic.py:35-56](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/modules/config_reload_semantic.py#L35) — watch修改_watched/_callbacks，check_and_reload迭代两者，均无锁 **[文件已删除: 2026-07-04]**
 - 5.149.11 [HIGH]: [shared/events/hook_dispatcher.py:63-77,95-105](file:///D:/ZephyrAlpha/src/zephyr/shared/events/hook_dispatcher.py#L63) — register_hook与_on_event并发执行时append与迭代竞态+_executions的append无锁
 - 5.149.12 [HIGH]: [infrastructure/system_telemetry/metrics_bridge.py:162-171](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/metrics_bridge.py#L162) — 无锁单例(对比同项目resource_optimization.py/ops/scheduler.py/database_manager.py均使用双重检查锁定，此处遗漏)
 
@@ -8583,7 +8590,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 5.149.20 [MEDIUM]: [governance/rule_enforcement/circuit_breaker.py:501,535,547](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/circuit_breaker.py#L501) — 模块级_L08_REGISTRY在运行时通过register_compliance写入，get_compliance读取，均无锁
 - 5.149.21 [MEDIUM]: [integration/vector_memory/bm25_index.py:56-59](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/bm25_index.py#L56) + hybrid_retriever.py:117-120 — BM25索引_term_freqs/_doc_freqs在add/index方法中读-改-写无锁(两文件同名实现，问题重复)
 - 5.149.22 [MEDIUM]: [integration/vector_memory/retrieval_feedback.py:91](file:///D:/ZephyrAlpha/src/zephyr/integration/vector_memory/retrieval_feedback.py#L91) — `_long_tail`计数器无锁读-改-写(并发track同一query丢失计数)
-- 5.149.23 [MEDIUM]: [integration/layer_router.py:246,261](file:///D:/ZephyrAlpha/src/zephyr/integration/layer_router.py#L246) — LayerDataRouter的_consumers在register_consumer中setdefault+append，在route中迭代调用，无锁+_route_history的append无锁
+- 5.149.23 [MEDIUM]: [integration/layer_router.py:246,261](file:///D:/ZephyrAlpha/src/zephyr/integration/layer_router.py#L246) — LayerDataRouter的_consumers在register_consumer中setdefault+append，在route中迭代调用，无锁+_route_history的append无锁 **[文件已删除: 2026-07-04]**
 
 #### 5.149.24-5.149.25 [LOW] 整体替换引用致update_load操作过期快照+PatternRegistry潜在竞态
 
