@@ -1,19 +1,19 @@
 ---
 doc_type: architecture_view
-title: D_INFRA_OPS 基础设施运维架构文档
+title: D_INFRA_OPS asset-inventory架构文档
 version: "1.0"
 status: active
-date: 2026-07-03
+date: 2026-07-04
 owner: auto-generator
 ttl: permanent
 ---
 
-# 02_d_infra_ops / 基础设施运维
+# 02_d_infra_ops / asset-inventory
 
-> **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 asset-inventory（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 16:32:55
+> 最后更新: 2026-07-04 02:03:37
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 02 | Number | 02 |
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
-| 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
+| 域名称 | asset-inventory | Domain Name | asset-inventory |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 9 | Prototype Modules | 9 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 资源优化引擎 | Description | 资源优化引擎 |
+| 描述 | 资产扫描器(scanner) | Description | 资产扫描器(scanner) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
+    subgraph D_INFRA_OPS["D_INFRA_OPS asset-inventory"]
         src_zephyr_infra_ops["基础设施运维域 design"]
         src_zephyr_infra_ops_init_py["src/zephyr/infra_ops/__init__.py prototype"]
         src_zephyr_infra_ops_extensions_init_py["src/zephyr/infra_ops/_extensions/__init__.py prototype"]
@@ -77,7 +77,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 10 个模块 / 10 modules。
+> 按 architecture_layer 分层显示 asset-inventory（D_INFRA_OPS）的模块分布。共 10 个模块 / 10 modules。
 
 ```
 
