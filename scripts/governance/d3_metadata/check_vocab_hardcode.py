@@ -677,13 +677,13 @@ def main() -> int:
         action="store_true",
         help="CI 模式，有违规则 exit 1（未来硬阻断用）",
     )
+    parser.add_argument(
+        "--files",
+        nargs="+",
+        default=None,
+        help="只扫描指定文件（绝对路径），不扫描 scan_dirs。供 vocab_hardcode_gate subprocess 调用。",
+    )
     args = parser.parse_args()
-
-    # 扫描 src/zephyr/ 和 scripts/
-    scan_dirs = [
-        REPO_ROOT / "src" / "zephyr",
-        REPO_ROOT / "scripts",
-    ]
 
     # 词表 YAML 真源目录（用于校验 load_vocabulary_values 引用存在性）
     vocab_dir = (
@@ -708,26 +708,37 @@ def main() -> int:
     all_noqa: list[tuple[Path, int, str]] = []
     checked = 0
 
-    for scan_dir in scan_dirs:
-        if not scan_dir.exists():
-            continue
-        py_files = iter_files(
-            scan_dir,
-            extensions=frozenset({".py"}),
-            exclude_dirs=exclude,
-        )
-        for filepath in py_files:
-            checked += 1
-            issues = _check_file(filepath, vocab_dir, startup_values, vocab_values)
-            for lineno, issue in issues:
-                all_issues.append((filepath, lineno, issue))
-            # noqa 审计：收集本文件的豁免行
-            try:
-                src = filepath.read_text(encoding="utf-8")
-                for lineno, reason in _collect_noqa_exemptions(src):
-                    all_noqa.append((filepath, lineno, reason))
-            except (OSError, UnicodeDecodeError):
-                pass
+    if args.files:
+        # --files 模式：只扫描指定文件（供 gate subprocess 调用）
+        py_files = [Path(f) for f in args.files if f.endswith(".py")]
+    else:
+        # 默认模式：扫描 src/zephyr/ 和 scripts/
+        scan_dirs = [
+            REPO_ROOT / "src" / "zephyr",
+            REPO_ROOT / "scripts",
+        ]
+        py_files = []
+        for scan_dir in scan_dirs:
+            if not scan_dir.exists():
+                continue
+            py_files.extend(iter_files(
+                scan_dir,
+                extensions=frozenset({".py"}),
+                exclude_dirs=exclude,
+            ))
+
+    for filepath in py_files:
+        checked += 1
+        issues = _check_file(filepath, vocab_dir, startup_values, vocab_values)
+        for lineno, issue in issues:
+            all_issues.append((filepath, lineno, issue))
+        # noqa 审计：收集本文件的豁免行
+        try:
+            src = filepath.read_text(encoding="utf-8")
+            for lineno, reason in _collect_noqa_exemptions(src):
+                all_noqa.append((filepath, lineno, reason))
+        except (OSError, UnicodeDecodeError):
+            pass
 
     # 输出违规
     if all_issues:
