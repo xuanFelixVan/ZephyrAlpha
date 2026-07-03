@@ -300,7 +300,8 @@ def metric_04_gate_unregistered_capability() -> dict:
     """GATE 未登记 capability 数——commit_gates/ 文件 vs capability 注册表。
 
     病根：新 AI 可发现性 55 中的 40 个 GATE 无反查。
-    检测：commit_gates/ 下 .py 文件 basename(无 .py) 若不在 capability 注册表
+    检测：commit_gates/ 下真实 gate .py 文件（含 gate_id= 或 GateSpec( 标记，
+    排除 gate_repo.py 等 DAO）basename(无 .py) 若不在 capability 注册表
     的 capability_id/aliases 中，则未登记反查。
     """
     # 加载 capability 注册表
@@ -323,6 +324,14 @@ def metric_04_gate_unregistered_capability() -> dict:
     for fp in gate_files:
         if fp.name == "__init__.py":
             continue
+        # 排除非 gate 文件（如 gate_repo.py 是 DAO，不是 gate）
+        # 真实 gate 文件有 make_*() 工厂函数 return GateSpec(...)；DAO/工具文件无此模式
+        try:
+            content = fp.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if "return GateSpec(" not in content:
+            continue  # 非 gate 文件，跳过
         stem = fp.stem  # basename 无 .py
         # 标准化：去 _gate 后缀
         normalized = re.sub(r"_gate$", "", stem)
