@@ -43498,36 +43498,6 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "scripts/governance/d5_architecture/check_blueprint_code_alignment.py"
-    asset_type: "script"
-    layer: "L01"
-    status: "active"
-    priority: "P3"
-    size_bytes: 11176
-    mtime_utc: "2026-07-02T09:54:44.517912Z"
-    sha256: "6a574a0693c7d6745104d64de16f95d1c77db6a0119d5b6d34e57e8a67e9b68d"
-    registered_in:
-    classification_confidence: 0.85
-    tags:
-    custom_metadata:
-
-    tags_last_updated: None
-  -
-    relative_path: "scripts/governance/d5_architecture/check_pg_domain_consistency.py"
-    asset_type: "script"
-    layer: "L01"
-    status: "active"
-    priority: "P3"
-    size_bytes: 13201
-    mtime_utc: "2026-07-03T09:24:00.060947Z"
-    sha256: "07cd81d927d00871308b23feadafed7e01498934b84b0222bbc629f126c2ef15"
-    registered_in:
-    classification_confidence: 0.85
-    tags:
-    custom_metadata:
-
-    tags_last_updated: None
-  -
     relative_path: "scripts/governance/d5_architecture/detectors/detect_deprecated_adr_references.py"
     asset_type: "script"
     layer: "L01"

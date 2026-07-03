@@ -1263,18 +1263,6 @@ scripts:
   tags:
   - Critical
   - Periodic
-- name: d5_architecture/check_blueprint_code_alignment.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: '[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
-    | S10.2'
-  tags:
-  - Critical
 - name: d5_architecture/check_budget_health.py
   owner: governance:d5_architecture
   dimensions:
