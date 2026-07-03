@@ -35,11 +35,11 @@ tags:
 - two-sigma
 - i1-j1
 summary: v1.1.0：§3映射矩阵基于SSoT runtime_planes.yaml domain字段重写为53域版本（原14层矩阵废弃）+ YAML注释L0X清理。ZephyrAlpha 2.0 **第一个正交视图（Orthogonal View）**，与 TOGAF 10 视图体系平级但切片维度不同。本视图按**运行时延迟
-  / 技术栈 / 可中断性 / 部署拓扑**四维把 14 层业务代码（L00-L13 + shared）与前端、治理层重新切分为三个**运行平面（Runtime
+  / 技术栈 / 可中断性 / 部署拓扑**四维把 53 域业务代码（L00-L13 + shared）与前端、治理层重新切分为三个**运行平面（Runtime
   Planes）**：Hot Path（<10ms，kernel-bypass + C++/Rust）/ Warm Path（10ms-1s，Python async）/
   Cold Path（>1s batch，Spark/Dask）。对标 Citadel Securities / Jane Street / Two Sigma
   / Jump Trading / Renaissance 五家顶级机构在**控制面 vs 执行面物理切分**上的一致做法——业务分层（What 做什么）与运行平面（How
-  何时以什么延迟执行）是两把正交尺子，**不能混为一层**（否则 14 层业务本体被延迟特征污染，ACL/OCP/因子注册表契约全部断裂）。本视图与 09-GOV
+  何时以什么延迟执行）是两把正交尺子，**不能混为一层**（否则 53 域业务本体被延迟特征污染，ACL/OCP/因子注册表契约全部断裂）。本视图与 09-GOV
   Policy/Factory/Runtime 三层**边界互补不重叠**：09-GOV 治"谁管什么规矩"（治理维），本视图治"什么代码何时跑在什么硬件上"（执行维）。当前
   ZephyrAlpha 处于 Warm Path only 阶段（Hot Path / Cold Path 均为未激活），本视图定义终局拓扑 + 三档激活触发器
   + 跨面通信协议 + `shared/contracts/runtime_plane_tag.py` 契约预留，为 Sim-to-Real Gap 问题和未来低延迟交易铺路，当前零代码影响。
