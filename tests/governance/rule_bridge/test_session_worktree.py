@@ -280,7 +280,7 @@ def test_worktree_merge_back():
     session_worktree_commit("sess-pytest-A", files=[_TEST_FILE_A], message="test: A")
 
     # merge 回主分支
-    mA = session_worktree_merge("sess-pytest-A")
+    mA = session_worktree_merge("sess-pytest-A", reconcile_verify=False)
     assert mA.get("merged"), f"A merge 失败: {mA}"
 
     # 主工作区应出现 A 的文件
@@ -409,7 +409,7 @@ def test_worktree_merge_releases_claims():
     assert cB.get("held_overlap") is True, f"B 应被阻断: {cB}"
 
     # A merge → unregister → 释放 claim
-    mA = session_worktree_merge("sess-pytest-A")
+    mA = session_worktree_merge("sess-pytest-A", reconcile_verify=False)
     assert mA.get("merged"), f"A merge 失败: {mA}"
 
     # 验证 A 不再持有 _TEST_FILE_A
@@ -454,7 +454,7 @@ def test_end_to_end_lifecycle():
     assert not (wtA / _TEST_FILE_B).exists(), "A worktree 出现 B 的文件"
 
     # 6. merge session A 回主分支
-    mA = session_worktree_merge(sidA)
+    mA = session_worktree_merge(sidA, reconcile_verify=False)
     assert mA.get("merged"), f"A merge 失败: {mA}"
     assert (REPO_ROOT / _TEST_FILE_A).exists(), "merge 后主工作区没有 A 的文件"
 

@@ -91,6 +91,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
+# HELD-OVERLAP/CLAIM-REQUIRED）。session_worktree_commit 和 _pre_merge_gate_check 共用。
+_WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
+
 
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
     """获取 WorktreeManager 实例。"""
@@ -572,7 +576,6 @@ def session_worktree_commit(
         from zephyr.governance.rule_bridge.git_commit_gateway import (
             GitCommitGateway, _GATEWAY_ENV,
         )
-        _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
         _gw = GitCommitGateway(project_root=root)
         # 临时让 git 命令在 worktree 内执行（查 worktree index 的 staged 状态）
         _orig_run_git = _gw._run_git
@@ -866,7 +869,6 @@ def _pre_merge_gate_check(
         from zephyr.governance.rule_bridge.git_commit_gateway import (
             GitCommitGateway, _GATEWAY_ENV,
         )
-        _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
 
         # 获取 session 分支变更文件列表
         branch = f"session/{session_id}"
