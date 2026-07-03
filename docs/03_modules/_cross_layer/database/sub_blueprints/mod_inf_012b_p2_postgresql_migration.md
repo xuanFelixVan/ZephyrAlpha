@@ -166,7 +166,7 @@ references:
 
 **C. scripts/ 下散布的 depgraph 路径定义（约 28 处）**
 
-`scripts/governance/` 与 `scripts/ops/` 下多个脚本各自定义 depgraph 路径（如 `apply_depgraph.py`、`audit_domain_nodes.py`、`check_rule_four_way_alignment.py`、`generate_project_depgraph.py`、`upgrade_headers_to_14fields.py` 等），部分硬编码 `D:/ZephyrAlpha/...`。完整清单见受影响文件索引（并发审查文档），迁移时需统一改为从 `depgraph_schema.py` 导入 PG 连接配置，消除散布与硬编码。
+`scripts/governance/` 与 `scripts/ops/` 下多个脚本各自定义 depgraph 路径（如 `apply_depgraph.py`、`audit_domain_nodes.py`、`check_rule_four_way_alignment.py`、`generate_project_depgraph.py` 等），部分硬编码 `D:/ZephyrAlpha/...`。完整清单见受影响文件索引（并发审查文档），迁移时需统一改为从 `depgraph_schema.py` 导入 PG 连接配置，消除散布与硬编码。
 
 > **治理原则**：迁移后 depgraph 的 PG 连接配置应收敛到 `depgraph_schema.py` 单一真源，其他文件通过 `from zephyr.governance.depgraph_schema import get_db_connection` 复用，禁止重复定义。
 

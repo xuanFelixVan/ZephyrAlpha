@@ -324,10 +324,10 @@ sections:
       command: LOCKED文件无AI修改记录
       expected_exit: 0
       on_fail: LOCKED文件被AI修改——违规
-    - step: CI集成检查
-      command: pre-commit hook检查表头完整性
+    - step: commit-time门禁检查
+      command: GitCommitGateway的CREATE-GUARD检查新建.py文件表头完整性（field_specs动态读取，--no-verify绕不过）
       expected_exit: 0
-      on_fail: CI阻断——必须修复表头
+      on_fail: commit阻断——必须修复表头
   gov_eng_002_yaml_design_decision:
     title: B_yaml设计决策
     section_type: context
