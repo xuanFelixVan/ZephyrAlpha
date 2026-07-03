@@ -81,6 +81,7 @@ from zephyr.governance.commit_gates.empty_handler_gate import make_empty_handler
 from zephyr.governance.commit_gates.orphan_module_gate import make_orphan_module_gate
 from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
 from zephyr.governance.commit_gates.function_dup_gate import make_function_dup_gate
+from zephyr.governance.commit_gates.bare_getenv_gate import make_bare_getenv_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -265,6 +266,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_orphan_module_gate())  # priority=86 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）
         self._gate_registry.register(make_doc_ref_broken_gate())  # priority=88 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）
         self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
+        self._gate_registry.register(make_bare_getenv_gate())  # priority=81 治本裸os.getenv读密钥绕过SecretProvider（§5.17.10防复发，AST检测SECRET_INDICATOR_PATTERNS）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 

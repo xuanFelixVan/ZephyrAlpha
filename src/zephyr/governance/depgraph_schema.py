@@ -83,16 +83,27 @@ from typing import Any
 import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.security.secrets import SecretsError, get_secret_from_file  # §5.34.8 修复：DB密码走SecretProvider真源
 
 
 # PostgreSQL 连接配置文件路径（P2迁移真源：MOD-DB_DEPGRAPH_PG）
 _PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
 
+# 必需字段（§5.34.8 修复：统一走 get_secret_from_file，优先级 os.environ > 指定文件）
+_PG_REQUIRED_KEYS: tuple[str, ...] = (
+    "POSTGRES_HOST",
+    "POSTGRES_PORT",
+    "POSTGRES_DB",
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+)
+
 
 def _load_pg_config() -> dict[str, str]:
     """从 config/.env.postgres 加载 PostgreSQL 连接参数。
 
-    文件格式：KEY=VALUE，行首 # 为注释。
+    §5.34.8 修复：改用 get_secret_from_file（SecretProvider 真源），
+    优先级 os.environ > 指定文件 > 抛异常。
     必需字段：POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
     """
     if not _PG_ENV_PATH.exists():
@@ -101,14 +112,15 @@ def _load_pg_config() -> dict[str, str]:
             "请参考 P2迁移方案 §四 创建该文件（含 5 个必需字段）"
         )
     config: dict[str, str] = {}
-    with _PG_ENV_PATH.open(encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                config[k.strip()] = v.strip()
-    required = ["POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD"]
-    missing = [k for k in required if k not in config]
+    missing: list[str] = []
+    for key in _PG_REQUIRED_KEYS:
+        try:
+            config[key] = get_secret_from_file(key, _PG_ENV_PATH)
+        except SecretsError as e:
+            if "not found in" in str(e):
+                missing.append(key)
+            else:
+                raise
     if missing:
         raise ValueError(f"PG 连接配置缺少必需字段: {missing} (文件: {_PG_ENV_PATH})")
     return config

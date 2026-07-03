@@ -1362,6 +1362,24 @@ capabilities:
       - make_function_dup_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: bare_getenv_gate
+    canonical_override: src/zephyr/governance/commit_gates/bare_getenv_gate.py
+    aliases:
+      - NO-BARE-GETENV
+      - no-bare-getenv
+      - make_bare_getenv_gate
+      - bare_getenv_blocker
+      - secret_getenv_blocker
+    description: >-
+      NO-BARE-GETENV in-process 裸 os.getenv 读密钥阻断门禁（§5.17.10 治本防复发，2026-07-03）。
+      检测 staged 新增 .py 文件中 os.getenv("KEY")/os.environ.get("KEY")/os.environ["KEY"]
+      读取密钥类变量（匹配 SECRET_INDICATOR_PATTERNS: KEY/TOKEN/SECRET/PASSWORD/PASSWD/PWD/CREDENTIAL）。
+      检测模式真源=SECRET_INDICATOR_PATTERNS（从 zephyr.shared.security.secrets import，不硬编码）。
+      只检测字符串字面量参数（变量参数不检测，因 SSoT 实现用变量参数）。priority=81。
+    integrity_anchors:
+      - make_bare_getenv_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -2519,6 +2537,11 @@ creation_tokens:
     token: "auto-function-dup-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "function_dup_gate"
+
+  - file: "src/zephyr/governance/commit_gates/bare_getenv_gate.py"
+    token: "auto-bare-getenv-gate-20260703"
+    created_by: "session-sess-20844-20260703190715"
+    capability: "bare_getenv_gate"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
