@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/rule_enforcement/ + src/zephyr/trading/feedback_loop/gates/"
+actual_disk_path: "src/zephyr/governance/rule_enforcement/ + src/zephyr/trading/feedback_loop/gates/ + src/zephyr/governance/commit_gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
 last_updated: "2026-05-18"
@@ -165,7 +165,30 @@ ssot_claims:
 | `sys_master_compliance.py` | § — | — | 已实现 | | 本模块 |
 | `task_types.py` | § — | — | 已实现 | | 本模块 |
 | `triple_alignment.py` | § — | — | 已实现 | | 本模块 |
-| `truth_source_validator.py` | § — | — | 已实现 | | 本模块 |
+| **commit_gates/** | | | | | |
+| `commit_gates/ttl_gate.py` | §0.1 | ttl字段校验门禁（TTL-METADATA） | 已实现 | | 本模块 |
+| `commit_gates/directory_contract_gate.py` | §0.1 | 目录契约门禁（DIRECTORY-CONTRACT） | 已实现 | | 本模块 |
+| `commit_gates/r5_digit_suffix_gate.py` | §0.1 | R5数字后缀目录禁止门禁 | 已实现 | | 本模块 |
+| `commit_gates/ssot_redefinition_gate.py` | §0.1 | SSoT符号重复定义门禁 | 已实现 | | 本模块 |
+| `commit_gates/vocab_hardcode_gate.py` | §0.1 | 词表硬编码门禁 | 已实现 | | 本模块 |
+| `commit_gates/file_copy_gate.py` | §0.1 | 文件复制检测门禁 | 已实现 | | 本模块 |
+| `commit_gates/id_uniqueness_gate.py` | §0.1 | pre-commit hook id唯一性门禁 | 已实现 | | 本模块 |
+| `commit_gates/exempt_zone_frontmatter_gate.py` | §0.1 | 豁免区frontmatter门禁 | 已实现 | | 本模块 |
+| `commit_gates/module_id_consistency_gate.py` | §0.1 | module_id三轨一致性门禁 | 已实现 | | 本模块 |
+| `commit_gates/perm_trigger_gate.py` | §0.1 | 永久系统时间触发门禁 | 已实现 | | 本模块 |
+| `commit_gates/empty_handler_gate.py` | §0.1 | 空handler门禁 | 已实现 | | 本模块 |
+| `commit_gates/orphan_module_gate.py` | §0.1 | 孤儿模块门禁 | 已实现 | | 本模块 |
+| `commit_gates/doc_ref_broken_gate.py` | §0.1 | 文档引用断裂门禁 | 已实现 | | 本模块 |
+| `commit_gates/function_dup_gate.py` | §0.1 | 重复函数门禁 | 已实现 | | 本模块 |
+| `commit_gates/bare_getenv_gate.py` | §0.1 | 裸getenv门禁 | 已实现 | | 本模块 |
+| `commit_gates/held_overlap_gate.py` | §0.1 | held_files冲突门禁 | 已实现 | | 本模块 |
+| `commit_gates/claim_required_gate.py` | §0.1 | claim_files前置检查门禁 | 已实现 | | 本模块 |
+| `commit_gates/capability_overlap_gate.py` | §0.1 | capability重叠门禁 | 已实现 | | 本模块 |
+| `commit_gates/create_guard.py` | §0.1 | 新建文件守卫门禁 | 已实现 | | 本模块 |
+| `commit_gates/dangling_reference_gate.py` | §0.1 | 悬空引用门禁 | 已实现 | | 本模块 |
+| `commit_gates/arch_reference_gate.py` | §0.1 | ARCH-NNN引用门禁 | 已实现 | | 本模块 |
+| `commit_gates/session_required_gate.py` | §0.1 | session要求门禁 | 已实现 | | 本模块 |
+| `commit_gates/gate_repo.py` | §0.1 | gate仓库（已正确指向MOD-GATE_ENGINE） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

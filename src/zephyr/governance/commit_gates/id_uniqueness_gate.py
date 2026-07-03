@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-id_uniqueness_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.id_uniqueness_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)

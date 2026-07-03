@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-directory_contract_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.directory_contract_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), scripts/governance/d1_structure/check_directory_contract.py

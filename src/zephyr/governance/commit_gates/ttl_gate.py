@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-ttl_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.commit_gates.ttl_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec), scripts/governance/d3_metadata/check_frontmatter_metadata.py
