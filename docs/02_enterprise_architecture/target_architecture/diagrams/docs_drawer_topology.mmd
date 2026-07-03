@@ -1,0 +1,51 @@
+%%{init: {'theme': 'default'}}%%
+graph TB
+    subgraph GOV["Governance layer / 治理层"]
+        G00["00_governance"]
+        G01["01_policies_and_standards"]
+        G16["16_compliance_and_legal"]
+        G17["17_risk_and_controls"]
+        G18["18_audit_and_evidence"]
+    end
+
+    subgraph ARCH["Architecture layer / 架构层"]
+        A02["02_enterprise_architecture"]
+        A03["03_domain_architecture"]
+        A04["03_blueprints"]
+        A05["05_delivery_and_construction"]
+    end
+
+    subgraph BIZ["Business value chain / 业务价值链"]
+        B09["09_data_platform"]
+        B10["10_research_and_factor_lab"]
+        B11["11_model_and_ml_platform"]
+        B12["12_strategy_and_portfolio"]
+        B13["13_execution_and_order_lifecycle"]
+        B14["14_reporting_and_distribution"]
+    end
+
+    subgraph PLAT["Platform capability / 平台能力层"]
+        P06["06_security_and_identity"]
+        P07["07_sre_and_platform_ops"]
+        P08["_b_track_interfaces"]
+    end
+
+    KB["08_knowledge<br/>Knowledge / 知识层"]
+    WS["docs/_working/<br/>In-progress / 过程区"]
+    AR["99_archive<br/>Historical / 历史区"]
+
+    GOV -->|"policies / standards / risk controls<br/>政策 / 标准 / 风控"| ARCH
+    ARCH -->|"blueprints / construction plans<br/>蓝图 / 施工图"| BIZ
+    BIZ -->|"runtime support / 运行时支撑"| PLAT
+    PLAT -->|"accumulate / 沉淀"| KB
+    WS -->|"promote / 升格"| ARCH
+    WS -->|"promote / 升格"| BIZ
+    ARCH -->|"retire / 退役"| AR
+
+    style GOV fill:#fef2f2,stroke:#ef4444
+    style ARCH fill:#eff6ff,stroke:#3b82f6
+    style BIZ fill:#f0fdf4,stroke:#22c55e
+    style PLAT fill:#fefce8,stroke:#eab308
+    style KB fill:#fdf4ff,stroke:#a855f7
+    style WS fill:#f8fafc,stroke:#94a3b8
+    style AR fill:#f1f5f9,stroke:#cbd5e1
