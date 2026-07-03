@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.shared.lifecycle.task_lifecycle_manager import (
+from zephyr.infrastructure.lifecycle.task_lifecycle_manager import (
     GateID,
     GateResult,
     LifecycleState,

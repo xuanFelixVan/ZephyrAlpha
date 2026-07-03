@@ -39,4 +39,6 @@ __all__ = [
     "resource_optimization_engine",
     "resource_optimization_models",
     "resource_optimization_models_from_infra",
-'scope_guard', 'task_lifecycle_manager']
+]
+# proxy shells removed (ARCH-DEBT 5.174 #6): scope_guard, task_lifecycle_manager
+# import from zephyr.infrastructure.lifecycle.* directly

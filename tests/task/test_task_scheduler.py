@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 
-from zephyr.shared.queue.task_scheduler import (
+from zephyr.infrastructure.queue.task_scheduler import (
     ScheduledTask,
     ScheduleStatus,
     TaskScheduler,
