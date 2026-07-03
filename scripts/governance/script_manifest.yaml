@@ -865,17 +865,6 @@ scripts:
   description: 相对路径引用检测（DOC-004 — 应使用绝对路径）
   tags:
   - Quick
-- name: d2_links/validate_depends_on_format.py
-  owner: governance:d2_links
-  dimensions:
-  - D2
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: Module docstring — see module-level docstring for details.
-  tags:
-  - Quick
 - name: d3_metadata/auto_generate_index.py
   owner: governance:d3_metadata
   dimensions:

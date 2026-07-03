@@ -7,4 +7,4 @@
 - 跨文件链接有效性（无 404、无断链）
 """
 
-__all__ = ["audit_broken_links", "detect_relative_references", "validate_depends_on_format"]
+__all__ = ["audit_broken_links", "detect_relative_references"]
