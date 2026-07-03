@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
+description: 'G1: 从 {DB_DISPLAY_NAME} arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
   目录树(中英文)输出到 generated/'
 dimensions:
 - D5

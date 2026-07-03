@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
+description: 'G4: 从 {DB_DISPLAY_NAME} edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
 dimensions:
 - D5
 priority: P2

@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档'
+description: 'G7: 从 {DB_DISPLAY_NAME} domains 表生成域容量报告MD文档'
 dimensions:
 - D5
 priority: P2

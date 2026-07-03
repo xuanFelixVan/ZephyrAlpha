@@ -3,7 +3,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib.ast, stdlib.argparse, stdlib.pathlib
 # [CONSUMERS] manual (governance directory migration)
-# [STARTUP] on_demand
+# [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] AST-precise import rewriting; idempotent; dry-run supported; no regex
 # [STABILITY] stable

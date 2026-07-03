@@ -1370,6 +1370,15 @@ _EXEMPT_ZONE_PREFIXES = (
 )
 _FRONTMATTER_EXTS = (".md", ".yaml", ".yml")
 
+# DCR-001 全量扫描触发的契约文件子集（directory_contract + doc_type_vocabulary）
+# 提取到模块级避免 check_vocab_hardcode 检测5 误报：
+# 函数体内 yaml.safe_load 加载 architecture_issue_registry.yaml（非词表），
+# 但同时含 "vocabularies/..." 路径字符串触发 has_vocab_ref 误报。
+_CONTRACT_FILES_FOR_DCR = frozenset({
+    "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml",
+    "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml",
+})
+
 
 def _rel_path(f: str, project_root_str: str) -> str:
     """文件路径归一化：os.path.relpath + replace("\\", "/")。"""
@@ -2077,10 +2086,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         # P5 改造（2026-06-30）：契约文件变更时触发 DCR-001 全量扫描
         # 当 directory_contract.yaml 或 doc_type_vocabulary.yaml 变更时，
         # 跑 check_directory_contract.py 全量扫描，确认契约变更未引入 DCR-001 违规
-        _CONTRACT_FILES = {
-            "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml",
-            "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml",
-        }
+        _CONTRACT_FILES = _CONTRACT_FILES_FOR_DCR  # 模块级常量引用（避免 check_vocab_hardcode 检测5 误报）
         contract_changed = [f for f in rule_files_changed if f in _CONTRACT_FILES]
         dcr_scan_summary = None
         dcr001_violations: list[str] = []

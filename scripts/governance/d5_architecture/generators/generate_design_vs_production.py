@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档'
+description: 'G8: 从 {DB_DISPLAY_NAME} nodes 表生成设计态vs运营态统计报告MD文档'
 dimensions:
 - D5
 priority: P2
