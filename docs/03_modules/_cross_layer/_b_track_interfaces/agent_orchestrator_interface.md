@@ -1,10 +1,10 @@
-﻿---
+---
 module_id: GOV-AI-ENG-ORC-001
 title: Agent Orchestrator Interface / Agent 编排器接口规范
 doc_type: architecture_view
 status: Active
 version: "1.0.0"
-layer: cross_layer
+layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh
