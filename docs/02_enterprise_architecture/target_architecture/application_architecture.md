@@ -3,7 +3,7 @@ module_id: VIEW-03-APPLICATION-ARCH
 title: Target Architecture — Application Architecture / 目标架构：应用架构
 doc_type: architecture_view
 status: Active
-version: 3.0.1
+version: 3.0.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -146,7 +146,7 @@ The Application Architecture answers:
 
 ### 4A.2 与域架构的关系
 
-6 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph `domains`表。
+5 大核心服务属于`layer_id=L1_platform`的跨层支撑域，为业务域提供 AI 基础设施能力。具体域归属见depgraph `domains`表。
 
 ---
 

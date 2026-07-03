@@ -3,7 +3,7 @@ module_id: VIEW-04-TECHNOLOGY-ARCH
 title: Target Architecture — Technology Architecture / 目标架构：技术架构
 doc_type: architecture_view
 status: Active
-version: 2.1.1
+version: 2.1.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -70,7 +70,7 @@ This view is **driven by** the Application Architecture (application characteris
 
 | 维度 | `vibe_coding_infrastructure_tech_stack.yaml`（AI 基础设施聚焦）| `technology_landscape.yaml`（全技术栈雷达）|
 |------|----------------------------------------------------|---------------------------------------------------------|
-| 覆盖范围 | 6 大核心服务的 17 项 AI 基础设施选型 | 全技术栈 43 项（含业务层数据库、调度器等）|
+| 覆盖范围 | 5 大核心服务的 17 项 AI 基础设施选型 | 全技术栈 43 项（含业务层数据库、调度器等）|
 | 分类方式 | 按服务分组 + 升级阈值看板 + KB 决策记录 对应 | ThoughtWorks Radar 四象限（adopt/trial/assess/hold）|
 | 约束强度 | **强约束**（experimental 必须使用首选方案）| 推荐性（部分项目仍 pending）|
 | 消费方 | KBG-0015 ~ KBG-0020 + 6 份接口规范 | 整体架构规划 + CI 审计 |
