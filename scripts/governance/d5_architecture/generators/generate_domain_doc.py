@@ -41,6 +41,17 @@
 
 from __future__ import annotations
 
+# 治本（2026-07-04）：DB_DISPLAY_NAME 前移到 __manifest__ 之前，避免 f-string 求值时 NameError。
+import sys
+from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _common import cleanup_stale_files, DB_DISPLAY_NAME  # noqa: E402
+
 __manifest__ = f"""
 args: []
 description: G2+G10 合并：从 {DB_DISPLAY_NAME} nodes+edges 表生成指定域的 MD 文档
@@ -55,19 +66,11 @@ warn_only: false
 import argparse
 import os
 import re
-import sys
 from datetime import datetime
-from pathlib import Path
-
-_THIS_FILE = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
-from _common import cleanup_stale_files, DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"

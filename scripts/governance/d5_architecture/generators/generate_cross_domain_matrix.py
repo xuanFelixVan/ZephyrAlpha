@@ -30,6 +30,10 @@
 
 from __future__ import annotations
 
+# 治本（2026-07-04）：DB_DISPLAY_NAME 前移到 __manifest__ 之前，避免 f-string 求值时 NameError。
+# _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
+from _common import DB_DISPLAY_NAME  # noqa: E402
+
 __manifest__ = f"""
 args: []
 description: 'G6: 从 {DB_DISPLAY_NAME} edges 表生成域间依赖矩阵MD文档'
@@ -51,7 +55,6 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
-from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
