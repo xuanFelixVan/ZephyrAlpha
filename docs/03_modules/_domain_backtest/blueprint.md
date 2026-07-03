@@ -136,6 +136,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | 版本 | 代码状态 | 说明 |
 |------|---------|------|
 | v1.0.0 | engine_base.py + vectorized_engine.py已实现 | MVP基线,双模式中的向量化模式已就绪 |
+| v1.1.0 (Tick回放+多源) | 同 v1.0.0 | matching_engine/portfolio/data_handler/metrics/tick_replay/event_driven_engine(6模块待施工) + §16.7 Tick级5档撮合规格 + data_handler多源(MiniQMT Provider+ClickHouse) | v1.1.0规划: Tick回放引擎(秒级做T)+event_driven_engine提升到Phase 1+回测=实盘一致性(MatchingLogic共享) |
 
 ### §0.4 SSoT与责任唯一性
 
