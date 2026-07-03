@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 10 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件
+# [INVARIANTS] 11 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 10 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 11 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -26,7 +26,7 @@
   - DB 全景图深度（17）：949 真孤儿未监控 + 死代码
   - 文档引用断裂（26）：136 处引用断裂 + 三方对齐 9 个
 
-10 项指标（目标值均为 0，当前总值 3193 手动调研基线）：
+11 项指标（目标值均为 0，当前总值 3193 手动调研基线）：
   1. 词表硬编码违规数      — 复用 check_vocab_hardcode.py
   2. manual-only 永久脚本数 — [STARTUP] manual + [TTL] permanent 组合违规
   3. 重复簇函数数          — AST 函数体哈希聚类（>1 成员的簇）
@@ -37,6 +37,7 @@
   8. 路径漂移数            — 复用 check_contract_physical_path.py
   9. 三方对齐违规数        — 复用 validate_three_way_consistency.py
   10. 时间触发残留数       — 永久脚本扫描 time-trigger 模式
+  11. PG域引用一致性违规数 — 连 PG 查幽灵域/空字符串脏数据/FK违规
 
 设计原则：
   - 复用优先：现有检测脚本通过 subprocess 调用，解析 stdout 计数
@@ -68,7 +69,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（10 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -570,9 +571,93 @@ def metric_10_time_trigger_residuals() -> dict:
     return _make_metric("M10", "时间触发残留数", len(violations), violations, "inline")
 
 
+# ── 指标 11：PG 域引用一致性违规数 ─────────────────────────────────────────
+
+def metric_11_pg_domain_consistency() -> dict:
+    """PG depgraph 域引用一致性违规数——直接连 PG 查询。
+
+    病根：DB 全景图深度 17 中的域引用一致性——9 张含 domain_id 列的表
+    可能存在幽灵域（引用 domains 表中不存在的域）、空字符串脏数据、FK 违规。
+    检测：动态发现含 domain_id/from_domain/to_domain/source_domain 列的表，
+    统计幽灵域 + 空字符串脏数据 + arch_directory_tree FK 违规。
+    PG 连接失败时降级为 error 不中断其余指标。
+    """
+    try:
+        from _shared.constants import get_depgraph_pg_connection
+    except ImportError as e:
+        return _make_metric("M11", "PG域引用一致性违规数", 0, error=f"import failed: {e}", source="pg_depgraph")
+
+    conn = None
+    cur = None
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+        cur = conn.cursor()
+        violations: list[str] = []
+        ghost_count = 0
+        empty_str_count = 0
+
+        # 1. 动态发现含域引用列的表
+        cur.execute(
+            """
+            SELECT t.table_name, c.column_name
+            FROM information_schema.columns c
+            JOIN information_schema.tables t
+              ON c.table_name = t.table_name AND t.table_schema = 'public'
+            WHERE t.table_type = 'BASE TABLE'
+              AND c.column_name IN ('domain_id', 'from_domain', 'to_domain', 'source_domain')
+            ORDER BY t.table_name, c.column_name
+            """
+        )
+        tables: dict[str, list[str]] = {}
+        for r in cur.fetchall():
+            tables.setdefault(r["table_name"], []).append(r["column_name"])
+
+        # 2. 逐表逐列检查幽灵域 + 空字符串脏数据
+        for tbl, cols in tables.items():
+            for col in cols:
+                if col == "target_domains":
+                    continue
+                # 幽灵域（排除 NULL 和空字符串）
+                cur.execute(
+                    f"""SELECT DISTINCT {col} AS d FROM {tbl}
+                    WHERE {col} IS NOT NULL AND {col} != ''
+                      AND {col} NOT IN (SELECT domain_id FROM domains)"""
+                )
+                ghosts = [row["d"] for row in cur.fetchall()]
+                if ghosts:
+                    ghost_count += len(ghosts)
+                    violations.extend(f"{tbl}.{col} 幽灵域: {g}" for g in ghosts[:5])
+                # 空字符串脏数据
+                cur.execute(f"SELECT COUNT(*) AS n FROM {tbl} WHERE {col} = ''")
+                n_empty = cur.fetchone()["n"]
+                if n_empty > 0:
+                    empty_str_count += n_empty
+                    violations.append(f"{tbl}.{col} 空字符串脏数据: {n_empty}条")
+
+        # 3. arch_directory_tree FK 违规（有 FK 约束，验证无违规）
+        cur.execute(
+            """SELECT COUNT(*) AS n FROM arch_directory_tree
+            WHERE domain_id IS NOT NULL
+              AND domain_id NOT IN (SELECT domain_id FROM domains)"""
+        )
+        fk_violations = cur.fetchone()["n"]
+        if fk_violations > 0:
+            violations.append(f"arch_directory_tree FK违规: {fk_violations}条")
+
+        total = ghost_count + empty_str_count + fk_violations
+        return _make_metric("M11", "PG域引用一致性违规数", total, violations, "pg_depgraph")
+    except Exception as e:  # noqa: BLE001 — PG 连接失败降级不中断
+        return _make_metric("M11", "PG域引用一致性违规数", 0, error=f"pg query failed: {e}", source="pg_depgraph")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 10 项指标注册表（id → 检测函数）
+# 11 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -584,6 +669,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M08", "路径漂移数", metric_08_path_drift),
     ("M09", "三方对齐违规数", metric_09_three_way_alignment),
     ("M10", "时间触发残留数", metric_10_time_trigger_residuals),
+    ("M11", "PG域引用一致性违规数", metric_11_pg_domain_consistency),
 ]
 
 
@@ -659,7 +745,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（10 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")

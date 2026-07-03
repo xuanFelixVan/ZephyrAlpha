@@ -2421,12 +2421,6 @@ creation_tokens:
     created_by: "session-secrets-20260703"
     capability: "data_source_verification"
 
-  # --- PG depgraph 域级表间一致性核对（DM-100254 验收配套） ---
-  - file: "scripts/governance/d5_architecture/check_pg_domain_consistency.py"
-    token: "auto-pg-domain-consistency-20260703"
-    created_by: "session-sess-15976-20260703165610"
-    capability: "pg_domain_consistency_checker"
-
 # ============================================================================
 # 维护日志
 # ============================================================================
