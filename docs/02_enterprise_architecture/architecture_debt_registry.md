@@ -2978,13 +2978,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **维度定义**：配置文件、环境变量、密钥管理的真源一致性、安全性与可用性。
 > **病根归属**：根因1（静态快照未动态更新）+ 根因5（规则膨胀执行断层）。
 
-#### 5.23.1 [HIGH] 真实API密钥硬编码为getenv默认值
+#### 5.23.1 [HIGH] 真实API密钥硬编码为getenv默认值 [✓ FIXED: 代码侧已修复 commit 14bc6120]
 
-- **文件**：[diagnose_breadth_failed.py](file:///D:/ZephyrAlpha/scripts/diagnose_breadth_failed.py#L31)
-- **证据**：`os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c2bb2a")`
+- **文件**：[diagnose_breadth_failed.py](file:///D:/ZephyrAlpha/scripts/diagnose_breadth_failed.py#L31) / [run_deepseek_v4_exam.py](file:///D:/ZephyrAlpha/scripts/run_deepseek_v4_exam.py#L60)
+- **原证据**：`os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c2bb2a")`
 - **问题**：将真实付费API密钥作为环境变量getenv的fallback默认值写入源码。git历史已永久泄漏，sk-前缀密钥即使轮换也可通过git log找回。
 - **影响**：密钥泄漏→账户盗用→账单失控。100%AI开发场景下，AI会复制此模式到其他脚本。
 - **修复**：删除默认值改为`os.getenv("DEEPSEEK_API_KEY")`或`None`+缺失即raise；立即在DeepSeek控制台吊销该密钥；用`gitleaks`加入pre-commit。
+- **修复状态（2026-07-03 P0-1）**：代码侧已完成——两个活跃源码文件均改为 `os.getenv("DEEPSEEK_API_KEY")` 无默认值 + 缺失即 FATAL 退出守卫（commit 14bc6120）；scripts/ 目录 Grep 确认零密钥明文残留。剩余人工动作：①DeepSeek 控制台吊销 `sk-e88e8757b0974da9bed7def543c2bb2a`（AI 无法执行）；②15 个 `data/security_baselines/secret_baseline_*.json` 历史快照保留作为审计证据，不修改。
 
 #### 5.23.2 [HIGH] YAML配置文件零schema校验
 
@@ -5826,7 +5827,7 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 **关键发现**：
 - **5.21全部13个仍有效**（但所有文件路径漂移：tests/根目录→tests/<子目录>/）
 - **5.22.9已修复**：三个孤儿__init___from_*.py文件已删除 [✓ FIXED: 三个孤儿文件已删除]
-- **5.23.1确认真API密钥硬编码**：diagnose_breadth_failed.py:31仍含`sk-e88e8757b0974da9bed7def543c2bb2a`，需立即吊销
+- **5.23.1已修复（代码侧）**：diagnose_breadth_failed.py + run_deepseek_v4_exam.py 均移除硬编码默认值改用 `os.getenv("DEEPSEEK_API_KEY")` + FATAL 守卫（commit 14bc6120，2026-07-03 P0-1）[✓ FIXED: 代码侧已修复，待人工控制台吊销密钥]
 - **5.25.2比描述更严重**：AutoRuntimeCore实际42个方法（注册表写36个）
 
 #### 5.26-5.30（第4批，37个问题）
