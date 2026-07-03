@@ -1,51 +1,36 @@
 %%{init: {'theme': 'default'}}%%
+%% v2.0.0: 同步对齐 information_architecture.md §4 的6顶级目录结构（原20+抽屉已简化）
 graph TB
-    subgraph GOV["Governance layer / 治理层"]
-        G00["00_governance"]
-        G01["01_policies_and_standards"]
-        G16["16_compliance_and_legal"]
-        G17["17_risk_and_controls"]
-        G18["18_audit_and_evidence"]
+    subgraph GOV["治理层 / Governance"]
+        G01["01_policies_and_standards<br/>规则 / 标准 / 模板 / 注册表"]
     end
 
-    subgraph ARCH["Architecture layer / 架构层"]
-        A02["02_enterprise_architecture"]
-        A03["03_domain_architecture"]
-        A04["03_blueprints"]
-        A05["05_delivery_and_construction"]
+    subgraph ARCH["架构层 / Architecture"]
+        A02["02_enterprise_architecture<br/>target_architecture/ + generated/<br/>03_governance_reports/<br/>04_architecture_principles_decisions/"]
     end
 
-    subgraph BIZ["Business value chain / 业务价值链"]
-        B09["09_data_platform"]
-        B10["10_research_and_factor_lab"]
-        B11["11_model_and_ml_platform"]
-        B12["12_strategy_and_portfolio"]
-        B13["13_execution_and_order_lifecycle"]
-        B14["14_reporting_and_distribution"]
+    subgraph MOD["模块蓝图层 / Module Blueprints"]
+        M03["03_modules<br/>_domain_* 53域 + _cross_layer<br/>+ _master_blueprint + _system_master"]
     end
 
-    subgraph PLAT["Platform capability / 平台能力层"]
-        P06["06_security_and_identity"]
-        P07["07_sre_and_platform_ops"]
-        P08["_b_track_interfaces"]
+    subgraph KB["知识层 / Knowledge"]
+        K08["08_knowledge<br/>研究 / 决策 / 未来能力"]
     end
 
-    KB["08_knowledge<br/>Knowledge / 知识层"]
-    WS["docs/_working/<br/>In-progress / 过程区"]
-    AR["99_archive<br/>Historical / 历史区"]
+    WS["docs/_working/<br/>过程区（task_bound）"]
+    AR["docs/_archive/<br/>历史区（retired）"]
 
-    GOV -->|"policies / standards / risk controls<br/>政策 / 标准 / 风控"| ARCH
-    ARCH -->|"blueprints / construction plans<br/>蓝图 / 施工图"| BIZ
-    BIZ -->|"runtime support / 运行时支撑"| PLAT
-    PLAT -->|"accumulate / 沉淀"| KB
+    GOV -->|"政策 / 标准 / 风控"| ARCH
+    ARCH -->|"蓝图 / 施工图"| MOD
+    MOD -->|"沉淀 / 反馈"| KB
     WS -->|"promote / 升格"| ARCH
-    WS -->|"promote / 升格"| BIZ
+    WS -->|"promote / 升格"| MOD
     ARCH -->|"retire / 退役"| AR
+    MOD -->|"retire / 退役"| AR
 
     style GOV fill:#fef2f2,stroke:#ef4444
     style ARCH fill:#eff6ff,stroke:#3b82f6
-    style BIZ fill:#f0fdf4,stroke:#22c55e
-    style PLAT fill:#fefce8,stroke:#eab308
+    style MOD fill:#f0fdf4,stroke:#22c55e
     style KB fill:#fdf4ff,stroke:#a855f7
     style WS fill:#f8fafc,stroke:#94a3b8
     style AR fill:#f1f5f9,stroke:#cbd5e1

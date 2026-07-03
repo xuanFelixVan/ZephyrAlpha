@@ -173,7 +173,7 @@ This view is **driven by** the Business Architecture (what capabilities determin
               (task_bound)               (retired)
 ```
 
-> **📊 文档拓扑图**：见 [`diagrams/docs_drawer_topology.mmd`](diagrams/docs_drawer_topology.mmd) — docs/ 抽屉分类拓扑（注：该图源待同步对齐 6 目录结构）
+> **📊 文档拓扑图**：见 [`diagrams/docs_drawer_topology.mmd`](diagrams/docs_drawer_topology.mmd) — docs/ 抽屉分类拓扑（v2.0.0 已同步对齐 6 目录结构）
 
 ---
 

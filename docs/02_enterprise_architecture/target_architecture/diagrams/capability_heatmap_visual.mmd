@@ -1,16 +1,16 @@
 %% 重写时间: 2026-06-26 (DM-200913 Phase4-B)
-%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
+%% 基于§2.1裁定: 14层降级为域属性，53域为唯一物理分类体系
 %% 数据源: depgraph
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
 %% Source: capability_heatmap.md §3
 %%{init: {'theme': 'default'}}%%
-%% v2.0.0: 14层×7能力域 → 52域×10能力域矩阵
+%% v2.0.0: 14层×7能力域 → 53域×10能力域矩阵
 %% 成熟度数据由depgraph派生
 
 graph LR
-    subgraph Heatmap["52域×10能力域热力图（2026-06-26快照）"]
+    subgraph Heatmap["53域×10能力域热力图（2026-06-26快照）"]
         subgraph 数据接入["数据接入"]
         D_MKT_DATA["D-MKT_DATA<br/>行情数据(接入+存储)<br/>L3+ (9节点)"]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据<br/>L3+ (8节点)"]

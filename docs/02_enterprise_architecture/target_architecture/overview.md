@@ -104,6 +104,8 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 ## 2. TOGAF four layers / TOGAF 四层结构
 
+> **📊 TOGAF 四层堆叠图**：见 [`diagrams/togaf_layer_stack.mmd`](diagrams/togaf_layer_stack.mmd)
+
 ```
 ┌────────────────────────────────────────────────────────────┐
 │  01. Business Architecture (BA) / 业务架构                  │

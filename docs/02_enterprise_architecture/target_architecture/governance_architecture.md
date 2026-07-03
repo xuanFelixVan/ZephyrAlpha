@@ -268,15 +268,15 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 
 **D-02 Scout 全三层展开**：Policy（`scout_agent_whitelist.md`）→ Factory（`compile_scraper.py`）→ Runtime（`ml_train/scout/` + `kms/daily_digest/` + **强制走 AISG**）。
 
-### 4.6 分层汇总（39→45）
+### 4.6 分层汇总（39→46）
 
 | 层 | 主归属系统数 | 占比 |
 |---|---|---|
-| **Policy 层** | 16 | 36% |
-| **Factory 层** | 7 | 16% |
-| **Runtime 层** | 20 | 44% |
+| **Policy 层** | 16 | 35% |
+| **Factory 层** | 7 | 15% |
+| **Runtime 层** | 21 | 46% |
 | **全三层**（B-01 + D-01） | 2 | 4% |
-| **总计** | **45** | 100% |
+| **总计** | **46** | 100% |
 
 ### 4.7 激活时间轴分布
 

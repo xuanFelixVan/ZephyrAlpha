@@ -125,6 +125,7 @@ MarketDataTick (raw)
 > - [`diagrams/seq_fill_received.mmd`](diagrams/seq_fill_received.mmd) — 成交回报处理时序
 > - [`diagrams/seq_rebalance.mmd`](diagrams/seq_rebalance.mmd) — 组合再平衡时序
 > - [`diagrams/seq_risk_trigger.mmd`](diagrams/seq_risk_trigger.mmd) — 风控触发与止损时序
+> - [`diagrams/seq_exception_handling.mmd`](diagrams/seq_exception_handling.mmd) — 异常处置三场景时序（Vendor故障/Broker断连/策略异常）
 
 ---
 
