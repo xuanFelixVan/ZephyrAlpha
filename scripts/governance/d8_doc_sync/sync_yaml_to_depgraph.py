@@ -445,7 +445,7 @@ def sync_gate_registry(cur):
 
 
 def normalize_domain_id(domain_id: str) -> str:
-    """归一化域ID: 保留 D- 前缀,将其余连字符替换为下划线。
+    """归一化域ID: D-XXX → D_XXX (裁定#204 命名规范使用 D_ 下划线前缀)
 
     D-AUTONOMY-CORE → D_AUTONOMY_CORE
     D-INFRA-OPS    → D_INFRA_OPS
@@ -453,7 +453,7 @@ def normalize_domain_id(domain_id: str) -> str:
     """
     if not domain_id.startswith("D-"):
         return domain_id
-    return "D-" + domain_id[2:].replace("-", "_")
+    return "D_" + domain_id[2:].replace("-", "_")
 
 
 def validate_domain_id_consistency(cur, entries):
@@ -504,6 +504,8 @@ def sync_functional_domain_registry(cur):
     conflict_set = {yaml_id for yaml_id, _ in conflict_domains}
 
     synced = 0
+    deduped = 0
+    seen_domains = set()
     from datetime import datetime
 
     now = datetime.now(UTC).isoformat()
@@ -517,24 +519,29 @@ def sync_functional_domain_registry(cur):
             )
             skipped += 1
             continue
-        # DM-100252: 跳过小写类别域（非 D-XXX 格式），防止 UPSERT 折叠产生脏数据
-        # YAML 将在 DM-100256 重构为 D-XXX 子域描述表
-        if not domain_id.startswith("D-"):
+        # DM-100252: 跳过非规范域ID（既非 D_ 也非 D-），防止脏数据写入 domains 表
+        # 裁定#204: 域命名规范为 D_XXX（下划线前缀）；历史 D-XXX 由 normalize_domain_id 归一化
+        if not (domain_id.startswith("D_") or domain_id.startswith("D-")):
             print(
-                f"  SKIP: 跳过小写类别域 '{domain_id}' (subdomain={d.get('subdomain', '')})——待 DM-100256 重构为 D-XXX 格式"
+                f"  SKIP: 跳过非规范域ID '{domain_id}' (subdomain={d.get('subdomain', '')})——非 D_XXX 格式"
             )
             skipped += 1
             continue
-        ai_autonomy = d.get("ai_autonomy", "ai_modifiable")
-        covers = d.get("covers", [])
-        description = covers[0] if covers else ""
-        # domain_group NOT NULL：YAML 无此字段，用 tier 或 'governance' 作为默认值
-        domain_group = d.get("tier", "governance")
-        if isinstance(domain_group, str) and domain_group.startswith("tier_"):
-            domain_group = domain_group.replace("tier_", "").replace("_governance", "").replace("_", "")
+        # DM-100252: domains 表去重——YAML 同一 domain_id 有多 subdomain entry，
+        # domains 表以 domain_id 为主键，重复 INSERT 会 ON CONFLICT 覆盖（折叠为最后一条）。
+        # 每个 domain_id 只 INSERT 首次出现的 entry；arch_path_mappings 仍同步所有 entry 的 ssot_path。
+        if domain_id not in seen_domains:
+            seen_domains.add(domain_id)
+            ai_autonomy = d.get("ai_autonomy", "ai_modifiable")
+            covers = d.get("covers", [])
+            description = covers[0] if covers else ""
+            # domain_group NOT NULL：YAML 无此字段，用 tier 或 'governance' 作为默认值
+            domain_group = d.get("tier", "governance")
+            if isinstance(domain_group, str) and domain_group.startswith("tier_"):
+                domain_group = domain_group.replace("tier_", "").replace("_governance", "").replace("_", "")
 
-        cur.execute(
-            """
+            cur.execute(
+                """
         INSERT INTO domains (domain_id, domain_name, domain_group, description,
                              modification_permission, build_status, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, 'planned', %s, %s)
@@ -544,9 +551,11 @@ def sync_functional_domain_registry(cur):
             modification_permission=excluded.modification_permission,
             updated_at=excluded.updated_at
         """,
-            (domain_id, d.get("subdomain", ""), domain_group, description, ai_autonomy, now, now),
-        )
-        synced += 1
+                (domain_id, d.get("subdomain", ""), domain_group, description, ai_autonomy, now, now),
+            )
+            synced += 1
+        else:
+            deduped += 1
 
         ssot_path = d.get("ssot_path", "")
         if ssot_path:
@@ -561,7 +570,7 @@ def sync_functional_domain_registry(cur):
                 (ssot_path, domain_id),
             )
 
-    print(f"  同步 {synced} 个功能域（含 modification_permission 字段映射），跳过 {skipped} 个小写类别域")
+    print(f"  同步 {synced} 个功能域（含 modification_permission 字段映射），跳过 {skipped} 个非规范域ID，去重 {deduped} 个重复域")
 
 
 def sync_vocabularies(cur):
