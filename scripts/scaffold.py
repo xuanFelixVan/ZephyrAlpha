@@ -33,7 +33,7 @@
     python scripts/scaffold.py script governance/audit_registration --desc "孤儿注册检测"
     python scripts/scaffold.py gate g6_my_gate --title "My Gate" --category kms
     python scripts/scaffold.py yaml docs/01_policies/my-policy --desc "策略文档"
-    python scripts/scaffold.py rule arch-new-rule --title "架构新规则" --scope arch_new_rule --layer L1
+    python scripts/scaffold.py rule arch-new-rule --title "架构新规则" --scope arch_new_rule --layer compliance
     python scripts/scaffold.py json data/config/my-config --desc "配置文件"
     python scripts/scaffold.py md docs/guides/my-guide --desc "用户指南"
 
@@ -76,6 +76,22 @@ SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
 CAPABILITY_REGISTRY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
+LAYER_VOCABULARY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+
+
+def _load_valid_layers() -> frozenset[str]:
+    """从 layer_vocabulary.yaml 动态加载合法架构层名（SSoT）。
+
+    layer_vocabulary.yaml 是 layer 字段的唯一真源（16 个架构层名），
+    禁止在代码中硬编码 valid_layers 集合（ARCH-021）。
+    """
+    try:
+        raw = yaml.safe_load(LAYER_VOCABULARY.read_text(encoding="utf-8")) or {}
+        values = raw.get("values", []) or []
+        return frozenset(str(v.get("value")) for v in values if v.get("value"))
+    except (OSError, yaml.YAMLError):
+        # 容错：词表不可读时返回空集，由调用方 layer 校验阻断非法值
+        return frozenset()
 
 # ---------------------------------------------------------------------------
 # 规则主题前缀（ARCH-037，按文件名定位的命名约定）
@@ -470,7 +486,7 @@ class ScaffoldEngine:
         name: str,
         title: str,
         scope: str,
-        layer: str = "L1",
+        layer: str = "compliance",
         severity: str = "error",
         stability: str = "evolving",
         safety_level: str = "L",
@@ -506,10 +522,15 @@ class ScaffoldEngine:
                 file=sys.stderr,
             )
 
-        # ── 检查 2: layer 合法性 ──
-        valid_layers = {"L0", "L1", "L2", "L3"}
+        # ── 检查 2: layer 合法性（从 layer_vocabulary.yaml 动态加载，ARCH-021）──
+        valid_layers = _load_valid_layers()
+        if not valid_layers:
+            raise ScaffoldError(
+                f"无法从 layer_vocabulary.yaml 加载合法层名（文件不可读或为空），"
+                f"请检查 {LAYER_VOCABULARY}"
+            )
         if layer not in valid_layers:
-            raise ScaffoldError(f"layer 必须是 {valid_layers} 之一，得到: {layer}")
+            raise ScaffoldError(f"layer 必须是 {sorted(valid_layers)} 之一，得到: {layer}")
 
         # ── 检查 3: stability/safety_level/ai_autonomy 合法性 ──
         if stability not in {"frozen", "stable", "evolving", "volatile"}:
@@ -1311,7 +1332,7 @@ def main() -> None:
     p_rule.add_argument("name", help="规则文件名标识（snake_case，e.g. arch_new_rule）")
     p_rule.add_argument("--title", required=True, help="规则标题")
     p_rule.add_argument("--scope", required=True, help="规则作用域 (e.g. arch_new_rule)")
-    p_rule.add_argument("--layer", default="L1", help="层级 L0/L1/L2/L3 (默认 L1)")
+    p_rule.add_argument("--layer", default="compliance", help="架构层名(见layer_vocabulary.yaml,默认compliance)")
     p_rule.add_argument("--severity", default="error", help="严重度 critical/error/warning (默认 error)")
     p_rule.add_argument("--stability", default="evolving", help="frozen/stable/evolving/volatile (默认 evolving)")
     p_rule.add_argument("--safety-level", default="L", help="H/M/L (默认 L)")
