@@ -57,7 +57,8 @@ logging.basicConfig(
 )
 _log = logging.getLogger("deepseek_v4_exam")
 
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c2bb2a")
+# 安全: 移除硬编码密钥默认值，必须通过环境变量 DEEPSEEK_API_KEY 提供
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
 
 def run_exam(model: str, thinking: bool) -> dict[str, Any]:
@@ -207,8 +208,9 @@ def main():
     parser.add_argument("--thinking-only", action="store_true", help="仅测试思考模式")
     args = parser.parse_args()
 
-    if not DEEPSEEK_API_KEY or DEEPSEEK_API_KEY == "sk-e88e8757b0974da9bed7def543c2bb2a":
-        pass
+    if not DEEPSEEK_API_KEY:
+        _log.error("环境变量 DEEPSEEK_API_KEY 未设置，禁止使用硬编码密钥")
+        return 2
 
     models = [args.model] if args.model else ["deepseek-v4-flash", "deepseek-v4-pro"]
     thinking_modes: list[bool] = []

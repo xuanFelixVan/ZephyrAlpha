@@ -28,7 +28,8 @@ from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
 )
 
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c2bb2a")
+# 安全: 移除硬编码密钥默认值，必须通过环境变量 DEEPSEEK_API_KEY 提供
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
 
 def diagnose_capability(cap_name: str) -> bool:
@@ -68,6 +69,10 @@ def diagnose_capability(cap_name: str) -> bool:
 
 
 def main() -> int:
+    if not DEEPSEEK_API_KEY:
+        print("[FATAL] 环境变量 DEEPSEEK_API_KEY 未设置，禁止使用硬编码密钥", file=sys.stderr)
+        return 2
+
     caps = sys.argv[1:] if len(sys.argv) > 1 else [
         "parallel_planning",
         "dependency_trace",
