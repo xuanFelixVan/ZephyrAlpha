@@ -1854,7 +1854,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **证据**：
 - 40+处`asyncio.run()`从同步代码调用协程
 - 若在已有事件循环上下文中调用会抛RuntimeError
-- 代表：[autonomy_core/context_injector.py:261](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context/context_injector.py#L261)、[autonomy_core/llm_gateway.py [ 已删除]:69,96](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [ 已删除]#L69)
+- 代表：[autonomy_core/context_injector.py:261](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context/context_injector.py#L261)、[autonomy_core/llm_gateway.py [⚠ 已删除]:69,96](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [⚠ 已删除]#L69)
 **病根**：根因4（async/sync混用陷阱）
 **修复方向**：统一async/sync边界
 
@@ -2410,7 +2410,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：用`asyncio.Lock`保护或`start()`时一次性创建executor
 
 #### 5.16.9 跨6+文件重复的asyncio.run+get_event_loop反模式【HIGH】
-- 证据：`context_injector.py:261`、`gateway_server.py:95-110`、`integration/llm_gateway.py:69-77`、`autonomy_core/llm_gateway.py [ 已删除]:69-77`、`default_security_gateway.py:273-281`、`delegation_engine.py:246`、`brain_integration.py:211-228`（new_event_loop不close）均 `asyncio.get_event_loop()`（3.12+弃用）+ `run_until_complete` fallback `asyncio.run`（已有循环时再抛RuntimeError）
+- 证据：`context_injector.py:261`、`gateway_server.py:95-110`、`integration/llm_gateway.py:69-77`、`autonomy_core/llm_gateway.py [⚠ 已删除]:69-77`、`default_security_gateway.py:273-281`、`delegation_engine.py:246`、`brain_integration.py:211-228`（new_event_loop不close）均 `asyncio.get_event_loop()`（3.12+弃用）+ `run_until_complete` fallback `asyncio.run`（已有循环时再抛RuntimeError）
 - 病根：根因2+5（async/sync桥接无共享封装，错误处理靠复制）
 - 修复：抽取`run_async_safely(coro)`到async_runtime.py统一
 
@@ -2506,7 +2506,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：write:src仅授owner_approved=true且maturity≥L2，auto_generated需人工sign-off
 
 #### 5.17.10 多处裸os.getenv读API key绕过SecretProvider【MEDIUM】 [✓ FIXED: 2026-07-03 5处LLM API key(deepseek_v4_chat/deepseek_chat/llm_gateway×2) + 5处其他密钥(Feishu webhook/SMTP user+password/Database URL/CapabilityPassport key)全部迁移至get_secret_or_default；FILE-COPY去重删除pipeline_routing/deepseek_v4_chat.py停滞副本；§5.34.8 depgraph_schema _load_pg_config()改用get_secret_from_file；补遗新增NO-BARE-GETENV门禁(priority=81)防止债务复发]
-- 证据：[secrets.py:38](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py) 明令"MUST通过SecretProvider读取禁止裸os.getenv"；但 `deepseek_chat.py:123`、`deseek_v4_chat.py:178`、`integration/llm_gateway.py:144-145`、`autonomy_core/llm_gateway.py [ 已删除]:144-145`、`infrastructure/pipeline/llm_gateway.py:152-153` 等6+处直接`os.getenv("DEEPSEEK_API_KEY","")`
+- 证据：[secrets.py:38](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py) 明令"MUST通过SecretProvider读取禁止裸os.getenv"；但 `deepseek_chat.py:123`、`deseek_v4_chat.py:178`、`integration/llm_gateway.py:144-145`、`autonomy_core/llm_gateway.py [⚠ 已删除]:144-145`、`infrastructure/pipeline/llm_gateway.py:152-153` 等6+处直接`os.getenv("DEEPSEEK_API_KEY","")`
 - 病根：根因5（密钥管理SSoT未落地，有规范无执行）
 - 修复：所有LLM gateway改用`await SecretProvider.get_secret(...)`
 
@@ -2751,7 +2751,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：删除shared/observability_02/，structlog调用统一替换为get_logger(__name__)
 
 #### 5.20.2 100+文件违反"禁止裸logging.getLogger()"约定【HIGH】
-- 证据：[ops/observability/logging.py:37](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) 明确"禁止裸logging.getLogger()"；Grep `logging\.getLogger` 在src/命中100个文件101处；典型：`trading/boot_hooks.py`、`infrastructure/audit_logger.py:66`、`ex_core/order_manager.py:51`、`autonomy_core/llm_gateway.py [ 已删除]:40`
+- 证据：[ops/observability/logging.py:37](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) 明确"禁止裸logging.getLogger()"；Grep `logging\.getLogger` 在src/命中100个文件101处；典型：`trading/boot_hooks.py`、`infrastructure/audit_logger.py:66`、`ex_core/order_manager.py:51`、`autonomy_core/llm_gateway.py [⚠ 已删除]:40`
 - 病根：根因5（约定-执行缺口，规范只在docstring无arch_guard强制）
 - 修复：arch_guard增加 `forbid_logging_getLogger` 规则，100个文件分批迁移
 
@@ -2932,10 +2932,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因1（漂移累积+星号导入失控，`# noqa: F403`压制了所有linter告警）
 - 修复：删除0逻辑垫片文件全局批量替换import路径，`# noqa: F403`进入pyproject.toml黑名单
 
-#### 5.22.7 llm_security与llm_security_01整套包重复【MEDIUM】
-- 证据：Glob同时返回 `src/zephyr/security/llm_defense/llm_security/` 与 `src/zephyr/security/llm_defense/llm_security_01/` 两个完整包；`llm_security_01/__init__.py:3` 注释"Re-export from authoritative location"，L4-8用5个 `from zephyr.security.llm_defense.llm_security.X import *` 转发；包内每个同名文件（self_protection/red_team_scanner.py:17、l7_validation.py:17、isolation.py:17等）都是空壳转发
+#### 5.22.7 llm_security与llm_security_01整套包重复【MEDIUM】 ✅ ARCH-033 已解决
+- 证据：~~Glob同时返回 `src/zephyr/security/llm_defense/llm_security/` 与 `src/zephyr/security/llm_defense/llm_security_01/` 两个完整包~~；`llm_security_01/__init__.py:3` 注释"Re-export from authoritative location"，L4-8用5个 `from zephyr.security.llm_defense.llm_security.X import *` 转发；包内每个同名文件（self_protection/red_team_scanner.py:17、l7_validation.py:17、isolation.py:17等）都是空壳转发
 - 病根：根因1（重命名留旧壳双倍维护面+懒加载路径又指向不存在的单文件）
 - 修复：删除llm_security_01/整个目录，为llm_security/__init__.py补明确__all__
+- 状态：✅ 已解决（commit e887e95490 删除25文件含context_scanner.py；llm_security/__init__.py已补__all__ 29符号；0活跃import引用，仅_archive归档脚本残留）
 
 #### 5.22.8 cache.py/lock.py三处重复+shared/infra与shared/infra_06几乎完全重复【MEDIUM】
 - 证据：Glob `src/zephyr/**/cache.py` 返回3个：`shared/cache.py`、`shared/infra/cache.py`、`infrastructure/infra_06/cache.py`；Glob `src/zephyr/**/lock.py` 返回3个：`shared/lock.py`、`shared/infra/lock.py`、`shared/infra_06/lock.py`；`shared/infra/`与`shared/infra_06/`两目录都含 `idempotency.py/limiter.py/lock.py/observer.py/outbox.py` 5个同名文件；`infra_06/__init__.py` 仅一句初始化无任何说明为何并行存在两份
@@ -2958,7 +2959,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：把所有"re-homed"类型集中到shared.contracts子层，arch_guard检测函数级import
 
 #### 5.22.12 跨包同名模块失控（5个auditor.py+4个llm_gateway*.py，含governance/governance/嵌套重复目录）【MEDIUM】 [✓ MOSTLY-FIXED: 2026-07-03 DRY清理：auditor.py 5→2（非重复，功能不同）；llm_gateway 4→1实现+1协议；supply_chain.py 2→1；supply_chain_security.py 2→1；model_discovery.py 2→1；ollama_chat.py 2→1]
-- 证据：Glob `src/zephyr/**/auditor.py` 返回5个：`infrastructure/a2a_protocol/governance/auditor.py`、`governance/governance/auditor.py`（注意governance/governance/嵌套！）、`governance/auditor.py`、`infrastructure/rollback/auditor.py`、`infrastructure/rollback/governance/auditor.py`；Glob `src/zephyr/**/llm_gateway*.py` 返回4个：`shared/contracts/llm_gateway_protocol.py`、`integration/llm_gateway.py`、`autonomy_core/llm_gateway.py [ 已删除]`、`infrastructure/pipeline/llm_gateway.py`；`governance/governance/`包内同名嵌套子包是严重结构异味
+- 证据：Glob `src/zephyr/**/auditor.py` 返回5个：`infrastructure/a2a_protocol/governance/auditor.py`、`governance/governance/auditor.py`（注意governance/governance/嵌套！）、`governance/auditor.py`、`infrastructure/rollback/auditor.py`、`infrastructure/rollback/governance/auditor.py`；Glob `src/zephyr/**/llm_gateway*.py` 返回4个：`shared/contracts/llm_gateway_protocol.py`、`integration/llm_gateway.py`、`autonomy_core/llm_gateway.py [⚠ 已删除]`、`infrastructure/pipeline/llm_gateway.py`；`governance/governance/`包内同名嵌套子包是严重结构异味
 - 病根：根因1（SSoT失效+模块命名空间未规划）
 - 修复：审查governance/governance/是否应合并到governance/，同名模块加领域前缀
 - **修复状态（2026-07-03）**：auditor.py 5→2（infrastructure/rollback/auditor.py=RollbackAuditor, infrastructure/a2a_protocol/governance/auditor.py=AuditWriter，功能不同非重复）；llm_gateway 3实现→1（infrastructure/pipeline/llm_gateway.py，integration/+autonomy_core/已删除）；supply_chain.py 2→1（audit_trail/为规范源，semantic_audit/已删除）；supply_chain_security.py 2→1（audit_trail/为规范源，security_governance/已删除）；model_discovery.py 2→1（model_profiling/为规范源，pipeline_routing/已删除）；ollama_chat.py 2→1（local_model/为规范源，vector_memory/re-export壳已删除）
@@ -4944,7 +4945,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 维度说明：async函数中阻塞IO、asyncio.run在已有loop中调用、同步/异步桥接策略等。
 
 #### 5.52.1 [HIGH] asyncio.run+get_event_loop回退反模式，安全扫描被静默绕过（5处）
-- **文件**：[default_security_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/implementations/default_security_gateway.py#L71), [llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [ 已删除]#L69), [governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/governance_adapter.py#L57), [legacy_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/legacy_governance_adapter.py#L70), [a2a_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py#L61)
+- **文件**：[default_security_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/implementations/default_security_gateway.py#L71), [llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [⚠ 已删除]#L69), [governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/governance_adapter.py#L57), [legacy_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/legacy_governance_adapter.py#L70), [a2a_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py#L61)
 - **证据**：典型模式`try: asyncio.run(gw.scan_input(...)) except RuntimeError: loop = asyncio.get_event_loop(); if loop.is_running(): return None; except Exception: pass`——async上下文中asyncio.run抛RuntimeError，回退到get_event_loop（3.10+已废弃），若loop.is_running()则return None跳过安全扫描
 - **问题**：从async上下文调用时安全网关完全失效，恶意内容绕过LSG检测
 - **影响**：安全漏洞——恶意内容可绕过安全扫描
@@ -4992,7 +4993,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：改为logger.warning或logger.error
 
 #### 5.53.2 [MEDIUM] 用INFO记录LLM Provider失败（3处副本）
-- **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/integration/llm_gateway.py#L393), [pipeline/llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L406), [autonomy_core/llm_gateway.py [ 已删除]](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [ 已删除]#L398)
+- **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/integration/llm_gateway.py#L393), [pipeline/llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L406), [autonomy_core/llm_gateway.py [⚠ 已删除]](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/llm_gateway.py [⚠ 已删除]#L398)
 - **证据**：`logger.info("LLMGateway provider=%s failed, trying next in chain", prov)`——Provider降级是异常路径
 - **问题**：排障时难以从海量INFO定位哪一跳失败
 - **修复**：改为logger.warning
@@ -5939,7 +5940,7 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 | 5.55 健康探针 | 6 | 1 | 0 | 5 | 0 |
 
 **关键发现**：
-- **5.52路径漂移最严重**：7个DRIFTED中6个是文件迁移（autonomy_core/llm_gateway.py [ 已删除]已删除、ops/→trading/feedback_loop/、governance/escalation_engine.py→governance/escalation/），但问题代码在新位置仍存在
+- **5.52路径漂移最严重**：7个DRIFTED中6个是文件迁移（autonomy_core/llm_gateway.py [⚠ 已删除]已删除、ops/→trading/feedback_loop/、governance/escalation_engine.py→governance/escalation/），但问题代码在新位置仍存在
 - **5.52.4中chaos_injector.py:292 [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码] [⚠ 引用失效：该文件无asyncio代码]引用完全失效**：该文件无任何asyncio代码，引用是误报应剔除
 - **5.53全部7个仍有效**：INFO记录FAILED事件、ERROR后不采取行动
 - **5.55.2-5.55.6正文已丢失**：注册表标题声称6个但仅5.55.1有正文，5条无法验证
@@ -6001,7 +6002,7 @@ work_dags和capability_cards已清理
 | `src/zephyr/ops/` | `src/zephyr/trading/feedback_loop/` | 5.20/5.39/5.52/5.54 | ~12 |
 | `tests/`（根目录） | `tests/<子目录>/`（e/rule/f_lifecycle/infrastructure等） | 5.21 | 13 |
 | `src/zephyr/shared/` | `src/zephyr/shared/observability_02/` | 5.20/5.39 | ~4 |
-| `src/zephyr/autonomy_core/llm_gateway.py [ 已删除]` | 已删除（仅剩integration/和infrastructure/pipeline/两副本） | 5.17/5.52/5.53 | ~3 |
+| `src/zephyr/autonomy_core/llm_gateway.py [⚠ 已删除]` | 已删除（仅剩integration/和infrastructure/pipeline/两副本） | 5.17/5.52/5.53 | ~3 |
 | `src/zephyr/autonomy_core/context/context_injector.py` | `src/zephyr/autonomy_core/context/context_injector.py` | 5.52 | 1 |
 | `src/zephyr/governance/circuit_breaker.py` | `src/zephyr/governance/circuit_breaker.py` | 5.50 | 1 |
 | `src/zephyr/governance/escalation/escalation_engine.py` | `src/zephyr/governance/escalation/escalation_engine.py` | 5.52 | 1 |
