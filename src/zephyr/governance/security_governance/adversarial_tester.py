@@ -243,9 +243,9 @@ class AdversarialTester:
         from .budget_models import BudgetLevel
 
         engine = BudgetEngine()
-        initial_level = engine._current_degradation_level
+        initial_level = engine.current_degradation_level
         levels = [initial_level]
-        max_steps = len(engine._degradation_steps) - 1
+        max_steps = len(engine.degradation_steps) - 1
 
         for i in range(max_steps):
             ok = engine.advance_degradation()
@@ -254,7 +254,7 @@ class AdversarialTester:
                 passed = False
                 detail = f"FAIL: advance_degradation returned False at step {i+1} (expected True)"
                 return AdversarialResult(test=test, detected=detected, confidence=0.1, passed=passed, detail=detail)
-            levels.append(engine._current_degradation_level)
+            levels.append(engine.current_degradation_level)
 
         # 验证单调递增
         for i in range(len(levels) - 1):

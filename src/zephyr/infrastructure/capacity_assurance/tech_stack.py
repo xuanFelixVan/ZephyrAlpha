@@ -113,7 +113,7 @@ class TechStackValidator:
             details=f"终选: {final_choice}",
         )
 
-    def check_pydantic_v2(self) -> ComponentStatus:
+    def inspect_pydantic_v2(self) -> ComponentStatus:
         try:
             import pydantic
 
@@ -138,7 +138,7 @@ class TechStackValidator:
                 suggestion="pip install 'pydantic>=2.0'",
             )
 
-    def check_sqlite(self) -> ComponentStatus:
+    def inspect_sqlite(self) -> ComponentStatus:
         try:
             conn = sqlite3.connect(":memory:")
             conn.execute("SELECT 1")
@@ -155,7 +155,7 @@ class TechStackValidator:
                 suggestion="检查 Python sqlite3 模块是否编译进你的 Python",
             )
 
-    def check_otel_sdk(self) -> ComponentStatus:
+    def inspect_otel_sdk(self) -> ComponentStatus:
         try:
             import opentelemetry
 
@@ -179,7 +179,7 @@ class TechStackValidator:
                 suggestion="pip install opentelemetry-api opentelemetry-sdk",
             )
 
-    def check_pytest(self) -> ComponentStatus:
+    def inspect_pytest(self) -> ComponentStatus:
         try:
             import pytest
 
@@ -195,7 +195,7 @@ class TechStackValidator:
                 suggestion="pip install pytest pytest-cov",
             )
 
-    def check_chromadb(self) -> ComponentStatus:
+    def inspect_chromadb(self) -> ComponentStatus:
         try:
             import chromadb
 
@@ -210,7 +210,7 @@ class TechStackValidator:
                 suggestion="pip install chromadb",
             )
 
-    def check_psutil(self) -> ComponentStatus:
+    def inspect_psutil(self) -> ComponentStatus:
         try:
             import psutil
 
@@ -227,22 +227,22 @@ class TechStackValidator:
             )
 
     def _check_dd_1(self) -> ComponentStatus:
-        return self.check_pydantic_v2()
+        return self.inspect_pydantic_v2()
 
     def _check_dd_2(self) -> ComponentStatus:
-        return self.check_sqlite()
+        return self.inspect_sqlite()
 
     def _check_dd_3(self) -> ComponentStatus:
-        return self.check_otel_sdk()
+        return self.inspect_otel_sdk()
 
     def _check_dd_7(self) -> ComponentStatus:
-        return self.check_pytest()
+        return self.inspect_pytest()
 
     def _check_dd_16(self) -> ComponentStatus:
-        return self.check_chromadb()
+        return self.inspect_chromadb()
 
     def _check_dd_5(self) -> ComponentStatus:
-        return self.check_psutil()
+        return self.inspect_psutil()
 
     def report(self) -> str:
         if not self.results:

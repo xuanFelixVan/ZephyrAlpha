@@ -516,7 +516,7 @@ class HallucinationDetector:
         if not claim or not claim.strip():
             raise ValueError("claim 不得为空")
         rl = risk_level if isinstance(risk_level, RiskLevel) else RiskLevel(str(risk_level).upper())
-        ctx = context or {}
+        context = context or {}
         started_at = time.perf_counter()
         self._budget.reset_if_window_changed(self._now())
 
@@ -531,7 +531,7 @@ class HallucinationDetector:
 
         try:
             if primary_ok and verifier_ok:
-                result = self._run_cove(claim, ctx, rl, handoff_approved, started_at)
+                result = self._run_cove(claim, context, rl, handoff_approved, started_at)
             elif primary_ok ^ verifier_ok:
                 result = self._run_single_model_lite(claim, rl, handoff_approved, started_at)
             else:

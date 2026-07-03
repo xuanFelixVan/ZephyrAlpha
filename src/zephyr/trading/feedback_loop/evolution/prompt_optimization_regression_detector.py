@@ -74,15 +74,15 @@ class PromptOptimizationRegressionDetector:
         if se < 1e-10:
             return 0.0, 1.0
 
-        t = (mean1 - mean2) / se
+        t_stat = (mean1 - mean2) / se
 
         df_num = (var1 / n1 + var2 / n2) ** 2
         df_den = (var1 / n1) ** 2 / (n1 - 1) + (var2 / n2) ** 2 / (n2 - 1) if n1 > 1 and n2 > 1 else 1
-        df = df_num / df_den if df_den > 0 else 1
+        degrees_of_freedom = df_num / df_den if df_den > 0 else 1
 
-        x = df / (df + t * t + 1e-10)
+        effect_size = degrees_of_freedom / (degrees_of_freedom + t_stat * t_stat + 1e-10)
         import math as m
 
-        p_value = 2.0 * (1.0 - 0.5 * (1.0 + m.erf(abs(t) / m.sqrt(2.0))))
+        p_value = 2.0 * (1.0 - 0.5 * (1.0 + m.erf(abs(t_stat) / m.sqrt(2.0))))
 
-        return t, min(p_value, 1.0)
+        return t_stat, min(p_value, 1.0)

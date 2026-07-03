@@ -135,6 +135,26 @@ class ToolDefinition:
 # ---------------------------------------------------------------------------
 
 
+# 工具元数据注册表：替代直接在 handler 上打 _mcp_tool_meta 私有标签，
+# 由 register_tool_decorator 写入、_install_decorated_tools 读取。
+_TOOL_META_REGISTRY: dict[Callable[..., Any], dict[str, Any]] = {}
+
+
+def _resolve_tool_func(handler: Callable[..., Any]) -> Callable[..., Any]:
+    """解析 bound method 到底层函数，便于在注册表中按函数身份查找。"""
+    return getattr(handler, "__func__", handler)
+
+
+def _set_tool_meta(handler: Callable[..., Any], meta: dict[str, Any]) -> None:
+    """记录工具元数据到模块级注册表。"""
+    _TOOL_META_REGISTRY[_resolve_tool_func(handler)] = meta
+
+
+def _get_tool_meta(handler: Callable[..., Any]) -> dict[str, Any] | None:
+    """读取工具元数据；不存在返回 None。"""
+    return _TOOL_META_REGISTRY.get(_resolve_tool_func(handler))
+
+
 class BaseMCPServer:
     """JSON-RPC 2.0 over stdio MCP Server 基类。
 
@@ -276,11 +296,11 @@ class BaseMCPServer:
         """
 
         def decorator(handler: Callable[..., Any]) -> Callable[..., Any]:
-            handler._mcp_tool_meta = {
+            _set_tool_meta(handler, {
                 "name": name,
                 "description": description,
                 "input_schema": input_schema,
-            }
+            })
             return handler
 
         return decorator
@@ -289,14 +309,17 @@ class BaseMCPServer:
         """扫描自身方法，自动注册被 ``@register_tool_decorator`` 装饰的工具。"""
         for attr_name in dir(self):
             attr = getattr(self, attr_name, None)
-            if callable(attr) and hasattr(attr, "_mcp_tool_meta"):
-                meta = attr._mcp_tool_meta
-                self.register_tool(
-                    name=meta["name"],
-                    description=meta["description"],
-                    input_schema=meta["input_schema"],
-                    handler=attr,
-                )
+            if not callable(attr):
+                continue
+            meta = _get_tool_meta(attr)
+            if meta is None:
+                continue
+            self.register_tool(
+                name=meta["name"],
+                description=meta["description"],
+                input_schema=meta["input_schema"],
+                handler=attr,
+            )
 
     # ------------------------------------------------------------------
     # JSON-RPC 响应构造

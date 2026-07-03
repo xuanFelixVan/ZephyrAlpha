@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-0478 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-356 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_bus_factor_defense
-# [INVARIANTS] check_bus_factor sets risk based on owner count; onboarding_complete requires all 3 flags
+# [INVARIANTS] evaluate_bus_factor sets risk based on owner count; onboarding_complete requires all 3 flags
 # [MODIFY-GUARD] Changes must sync with bus_factor_defense.py
 # [CONSUMERS] CI pipeline
 # [STABILITY] evolving
@@ -18,7 +18,7 @@ from zephyr.factor.bus_factor_defense import (
     DecisionLog,
     ModuleOwnership,
     OpsRunbook,
-    check_bus_factor,
+    evaluate_bus_factor,
     create_decision_log,
     generate_runbook,
 )
@@ -77,25 +77,25 @@ class TestModuleOwnership:
 class TestCheckBusFactor:
     def test_zero_owners_danger(self):
         m = ModuleOwnership(module_id="MOD-001")
-        result = check_bus_factor(m)
+        result = evaluate_bus_factor(m)
         assert result.risk == BusFactorRisk.DANGER
         assert result.bus_factor == 0
 
     def test_one_owner_at_risk(self):
         m = ModuleOwnership(module_id="MOD-001", owners=["alice"])
-        result = check_bus_factor(m)
+        result = evaluate_bus_factor(m)
         assert result.risk == BusFactorRisk.AT_RISK
         assert result.bus_factor == 1
 
     def test_two_owners_safe(self):
         m = ModuleOwnership(module_id="MOD-001", owners=["alice", "bob"])
-        result = check_bus_factor(m)
+        result = evaluate_bus_factor(m)
         assert result.risk == BusFactorRisk.SAFE
         assert result.bus_factor == 2
 
     def test_many_owners_safe(self):
         m = ModuleOwnership(module_id="MOD-001", owners=["a", "b", "c", "d"])
-        result = check_bus_factor(m)
+        result = evaluate_bus_factor(m)
         assert result.risk == BusFactorRisk.SAFE
         assert result.bus_factor == 4
 

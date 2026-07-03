@@ -36,13 +36,13 @@ _DB_PATH = DB_PATH
 
 class FixBudget:
     def __init__(self, config: dict[str, Any] | None = None, db_path: str | None = None) -> None:
-        cfg = config or {}
-        self._daily_limit: int = cfg.get("daily_limit", 50)
-        self._monthly_limit: int = cfg.get("monthly_limit", 500)
-        self._llm_token_limit: int = cfg.get("llm_token_limit", 500000)
-        self._l1_cost: int = cfg.get("l1_cost_per_fix", 1)
-        self._l2_cost: int = cfg.get("l2_cost_per_fix", 5)
-        self._l3_cost: int = cfg.get("l3_cost_per_fix", 10)
+        config = config or {}
+        self._daily_limit: int = config.get("daily_limit", 50)
+        self._monthly_limit: int = config.get("monthly_limit", 500)
+        self._llm_token_limit: int = config.get("llm_token_limit", 500000)
+        self._l1_cost: int = config.get("l1_cost_per_fix", 1)
+        self._l2_cost: int = config.get("l2_cost_per_fix", 5)
+        self._l3_cost: int = config.get("l3_cost_per_fix", 10)
         self._db_path = db_path or str(_DB_PATH)
         self._lock = threading.Lock()
         self._daily_consumed: int = 0
@@ -175,7 +175,7 @@ class DriftBudgetLink:
         self._drift_fix_count: int = 0
         self._drift_fix_limit: int = 20
 
-    def check_drift_budget(self) -> BudgetDecision:
+    def evaluate_drift_budget(self) -> BudgetDecision:
         if self._drift_fix_count >= self._drift_fix_limit:
             return BudgetDecision(
                 allowed=False, reason=f"Drift fix budget exhausted: {self._drift_fix_count}/{self._drift_fix_limit}"

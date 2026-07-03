@@ -129,7 +129,7 @@ class SessionManager:
             raise SessionError(f"Session {session_id} not found")
         return s
 
-    def check_timeout(self, session_id: str) -> None:
+    def enforce_timeout(self, session_id: str) -> None:
         session = self.get_session(session_id)
         if session.state.value not in _TIMEOUT_RULES:
             return

@@ -119,12 +119,12 @@ class ContextBudgetTracker:
         bus = Observer()
         tracker = ContextBudgetTracker(bus)  # 默认会话上限 DEFAULT_CONTEXT_TOKEN_BUDGET（8000）
         tracker.count_tokens("some text", session_id="s1")
-        tracker.check_budget("s1")
+        tracker.evaluate_budget("s1")
 
     T-V2-006 DocCompressor 集成（experimental）
     ----------------------------------------
     M1 build() 结束时调用 register_doc_compressor(compressor)，
-    之后 check_budget() 在 L2_THROTTLE 触发时在事件 payload 中追加
+    之后 evaluate_budget() 在 L2_THROTTLE 触发时在事件 payload 中追加
     compression_suggested=True，供 M3 触发器调度 DocCompressor。
     """
 
@@ -173,7 +173,7 @@ class ContextBudgetTracker:
             session["token_count"] += count
         return count
 
-    def check_budget(self, session_id: str = "default") -> ContextBudgetLevel:
+    def evaluate_budget(self, session_id: str = "default") -> ContextBudgetLevel:
         with self._lock:
             session = self._get_session(session_id)
             usage = session["token_count"]

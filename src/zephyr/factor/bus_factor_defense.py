@@ -67,7 +67,7 @@ class OpsRunbook(BaseModel):
     last_update: str | None = None
 
 
-def check_bus_factor(ownership: ModuleOwnership) -> ModuleOwnership:
+def evaluate_bus_factor(ownership: ModuleOwnership) -> ModuleOwnership:
     ownership.bus_factor = len(ownership.owners)
     if ownership.bus_factor >= 2:
         ownership.risk = BusFactorRisk.SAFE

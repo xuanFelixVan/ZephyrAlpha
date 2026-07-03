@@ -451,7 +451,7 @@ class TestBudgetTrackerDocCompressorIntegration:
             "triggered_levels": set(),
             "created_at": 0.0,
         }
-        tracker.check_budget("s1")
+        tracker.evaluate_budget("s1")
 
         l2_payloads = [p for p in captured_payloads if p.get("budget_level") == BudgetLevel.L2_THROTTLE.value]
         assert len(l2_payloads) == 1

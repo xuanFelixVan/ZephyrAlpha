@@ -191,7 +191,7 @@ class SkillTokenomics:
             "budget_warning": budget.is_warning,
         }
 
-    def check_before_consume(self, skill_id: str, estimated_tokens: int) -> dict[str, Any]:
+    def evaluate_consumption(self, skill_id: str, estimated_tokens: int) -> dict[str, Any]:
         budget = self._budgets.get(skill_id)
         if budget is None:
             return {"allowed": True, "reason": "No budget — allow all"}

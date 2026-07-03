@@ -34,12 +34,12 @@ logger = logging.getLogger(__name__)
 
 class ShadowWorkspace:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
-        cfg = config or {}
-        self._base_dir: str = cfg.get("base_dir", os.path.join(tempfile.gettempdir(), "auto_fix_shadow"))
-        self._run_pytest: bool = cfg.get("run_pytest", True)
-        self._run_mypy: bool = cfg.get("run_mypy", True)
-        self._run_ruff: bool = cfg.get("run_ruff", True)
-        self._pytest_timeout: int = cfg.get("pytest_timeout", 120)
+        config = config or {}
+        self._base_dir: str = config.get("base_dir", os.path.join(tempfile.gettempdir(), "auto_fix_shadow"))
+        self._run_pytest: bool = config.get("run_pytest", True)
+        self._run_mypy: bool = config.get("run_mypy", True)
+        self._run_ruff: bool = config.get("run_ruff", True)
+        self._pytest_timeout: int = config.get("pytest_timeout", 120)
 
     def preflight(self, action: FixAction, project_root: str | None = None) -> ShadowResult:
         shadow_dir = os.path.join(self._base_dir, action.action_id)

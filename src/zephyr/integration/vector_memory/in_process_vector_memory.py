@@ -161,7 +161,7 @@ class InProcessVectorMemory:
         )
 
         try:
-            baseline = self._index_health_monitor.check_all()
+            baseline = self._index_health_monitor.inspect_all()
             _logger.info(
                 "VMS: 启动后健康基线: %s/%s healthy, drift=%s",
                 baseline.collections_healthy,
@@ -350,7 +350,7 @@ class InProcessVectorMemory:
         }
         if self._index_health_monitor is not None:
             try:
-                report = self._index_health_monitor.check_all()
+                report = self._index_health_monitor.inspect_all()
                 result["index_health"] = {
                     "status": report.status,
                     "collections_healthy": report.collections_healthy,
@@ -386,7 +386,7 @@ class InProcessVectorMemory:
                 break
 
             try:
-                report = self._index_health_monitor.check_all()
+                report = self._index_health_monitor.inspect_all()
                 if report.collections_unhealthy > 0:
                     for cn in self._collection_manager.list_collections():
                         ci = cn.name if hasattr(cn, "name") else str(cn)

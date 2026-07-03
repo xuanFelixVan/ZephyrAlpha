@@ -52,10 +52,10 @@ _SECRET_PATTERNS = [
 
 class SafetyGate:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
-        cfg = config or {}
-        self._protected_paths: list[str] = cfg.get("protected_paths", [])
-        self._protected_patterns: list[str] = cfg.get("protected_patterns", [])
-        self._enabled = cfg.get("safety_gate_enabled", True)
+        config = config or {}
+        self._protected_paths: list[str] = config.get("protected_paths", [])
+        self._protected_patterns: list[str] = config.get("protected_patterns", [])
+        self._enabled = config.get("safety_gate_enabled", True)
 
     def check(self, action: FixAction) -> SafetyDecision:
         if not self._enabled:
@@ -207,13 +207,13 @@ class FixValidator:
 
 class CascadeBreaker:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
-        cfg = config or {}
-        self._module_threshold: int = cfg.get("module_threshold", 10)
-        self._module_window: int = cfg.get("module_window_sec", 300)
-        self._global_threshold: int = cfg.get("global_threshold", 150)
-        self._global_window: int = cfg.get("global_window_sec", 60)
-        self._module_cooldown: int = cfg.get("module_cooldown_sec", 900)
-        self._global_cooldown: int = cfg.get("global_cooldown_sec", 900)
+        config = config or {}
+        self._module_threshold: int = config.get("module_threshold", 10)
+        self._module_window: int = config.get("module_window_sec", 300)
+        self._global_threshold: int = config.get("global_threshold", 150)
+        self._global_window: int = config.get("global_window_sec", 60)
+        self._module_cooldown: int = config.get("module_cooldown_sec", 900)
+        self._global_cooldown: int = config.get("global_cooldown_sec", 900)
         self._module_events: dict[str, list[float]] = defaultdict(list)
         self._global_events: list[float] = []
         self._module_frozen: dict[str, float] = {}

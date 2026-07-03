@@ -22,10 +22,10 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 
 功能
 ----
-- check_all() → HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
+- inspect_all() → HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
 - auto_repair(collection): 自动修复索引损坏
 - detect_drift(): 比对蓝图 §2 与磁盘实际 Collection · mitigates R0
-- check_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
+- collect_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
 """
 
 from __future__ import annotations
@@ -74,7 +74,7 @@ class IndexHealthMonitor:
     def __init__(self, collection_manager: Any) -> None:
         self._collection_manager = collection_manager
 
-    def check_all(self) -> HealthReport:
+    def inspect_all(self) -> HealthReport:
         issues: list[str] = []
         healthy = 0
         unhealthy = 0
@@ -97,7 +97,7 @@ class IndexHealthMonitor:
             issues.append("蓝图漂移检测到不一致")
 
         # mitigates R8: 每日检查 TTL 过期
-        ttl_issues = self.check_ttl_expiry()
+        ttl_issues = self.collect_ttl_expiry()
         for ttl in ttl_issues:
             if ttl.expired_count > 0:
                 issues.append(f"TTL: {ttl.collection} 过期 {ttl.expired_count}/{ttl.total_count} 条")
@@ -130,7 +130,7 @@ class IndexHealthMonitor:
         )
 
     # mitigates R5/R8
-    def check_ttl_expiry(self) -> list[TTLExpiryReport]:
+    def collect_ttl_expiry(self) -> list[TTLExpiryReport]:
         from zephyr.integration.vector_memory.collection_manager import TTL_MAP
 
         reports: list[TTLExpiryReport] = []

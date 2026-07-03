@@ -863,7 +863,7 @@ class GovernanceServer(BaseMCPServer):
             return {
                 "policies": result,
                 "consumption": consumption,
-                "degradation_level": engine._current_degradation_level.value,
+                "degradation_level": engine.current_degradation_level.value,
             }
         except ImportError as e:
             return {"error": f"Budget Enforcer import failed: {e}"}

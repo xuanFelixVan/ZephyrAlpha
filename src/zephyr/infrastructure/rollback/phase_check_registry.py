@@ -278,7 +278,7 @@ def check_vms_health() -> GateResult:
 
         cm = CollectionManager()
         monitor = IndexHealthMonitor(cm)
-        report = monitor.check_all()
+        report = monitor.inspect_all()
 
         if report.status == "healthy":
             return GateResult.GREEN
