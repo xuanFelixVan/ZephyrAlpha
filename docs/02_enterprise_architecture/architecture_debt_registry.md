@@ -1543,13 +1543,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（头部注释stale）
 **修复方向**：修正头部
 
-#### 5.10.13 ai_autonomy_authority_registry depends_on含TODO占位符（MEDIUM）
-
-**证据**：
-- [ai_autonomy_authority_registry.yaml:23-24](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml#L23) `at: "$TODO", why: "TODO -- auto-converted"`
-**病根**：根因1（未完成转换）
-**修复方向**：补完转换
-
 #### 5.10.14 3个catalog漏登记到registry_master_index（HIGH，1聚合 = 3个）
 
 **证据**：
@@ -5390,12 +5383,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.66 模板注入与字符串格式化安全（6个，第15轮新增）
 
-#### 5.66.1 [HIGH] DatabaseService用f-string拼接INSERT列名（SQL注入）
-
-- **文件**：`src/zephyr/governance/persistence/database_service.py:170-172,313-315`
-- **证据**：`create_task`/`create_order` 直接将 `task_data.keys()` 拼入SQL列名位置。值用 `?` 参数化，但列名未校验。若调用方传入含注入载荷的键（如 `status) VALUES (1); DROP TABLE tasks; --`），即可注入。
-- **修复**：列名白名单校验，或使用ORM。
-
 #### 5.66.2 [MEDIUM] capacity_assurance schema用f-string插入cutoff值（非参数化）
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/schema.py:264-265,276-281`
@@ -5484,12 +5471,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.69 部分失败处理（5个，第15轮新增）
-
-#### 5.69.3 [MEDIUM] WorkOrchestrator.load_dags静默跳过加载失败的DAG
-
-- **文件**：`src/zephyr/trading/work_orchestrator.py:68-80`
-- **证据**：`except Exception: continue` 无日志、无失败计数。调用者只得到成功加载的DAG数量，无法知道哪些DAG文件解析失败、失败原因是什么。批量加载中部分失败的信息完全丢失。
-- **修复**：记录失败DAG路径和异常信息，返回失败计数。
 
 #### 5.69.4 [MEDIUM] boot_sequence步骤失败后继续执行后续依赖步骤（无fail-fast）
 
@@ -5708,12 +5689,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：未检查 `r.returncode`。若git不可用/非git仓库，`r.stdout` 为空，metrics静默报0，drift健康监测误判为"无变更/无stash"，可能错过真实漂移告警。对比 `gpu_monitor.py:47` 正确检查 `result.returncode != 0`。
 - **修复**：检查returncode，非零时记录warning并标记metrics为不可用。
 
-#### 5.75.4 [MEDIUM] ide_health_daemon cleanup_stash子进程未检查返回码
-
-- **文件**：`src/zephyr/trading/ide_health_daemon.py:412-416`
-- **证据**：未用 `check=True`，未检查返回码。`except Exception`（L417）仅捕获 `TimeoutExpired` 等异常，子脚本非零退出被静默忽略。stash清理失败时无任何告警，stash持续堆积。
-- **修复**：检查returncode，失败时记录warning。
-
 #### 5.75 严重度汇总
 
 | 严重度 | 数量 | 编号 |
@@ -5762,18 +5737,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/__init__.py:125-127,142-144`
 - **证据**：`import zephyr` 即创建并启动2个 `threading.Timer`（daemon=True）。`_deferred_bootstrap` 调用 `auto_bootstrap()` 进行全局monkey-patch；由于 `daemon=True`，若主进程在0.05s内退出，bootstrap可能被中途杀死，留下半完成的patch状态。无任何join/cleanup机制。（交叉参考5.79 导入副作用维度）
 - **修复**：将bootstrap延迟到显式调用，或添加atexit cleanup。
-
-#### 5.77.2 [MEDIUM] TaskQueue.stop_polling()不join守护线程，最长残留300s
-
-- **文件**：`src/zephyr/infrastructure/queue/task_queue.py:106-115`
-- **证据**：`stop_polling()` 仅置 `_running=False`，未调用 `self._thread.join()`。`_poll_loop` 在 `time.sleep(self._config.poll_interval_s)`（默认300s）中阻塞，stop后线程最长存活5分钟。若dispatch handler中途执行则可能继续修改 `_items` 状态。daemon=True时进程退出可被强杀，留下 `item.status=RUNNING` 的半成品任务。
-- **修复**：stop_polling后join(timeout=合理值)。
-
-#### 5.77.3 [MEDIUM] MCPProcessPool.stop_zombie_scanner()不join守护线程
-
-- **文件**：`src/zephyr/shared/infra/process_pool.py:197-209`
-- **证据**：与5.77.2同模式。`_zombie_scan_loop` 内 `time.sleep(self._zombie_check_interval)`（默认60s），stop后线程仍可能执行一次 `_reap_zombies()` 调用 `_remove_entry()` 修改共享 `_pool` 字典，与外部的并发使用产生竞态。
-- **修复**：stop后join(timeout)。
 
 #### 5.77.4 [MEDIUM] guard_loop()内部注册atexit，重复调用累积handler
 
@@ -7599,15 +7562,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 - **文件**：`src/zephyr/governance/drift_detection/baseline_manager.py:119`
 - **问题**：函数签名标注`-> str | None`，但实际始终返回`str`（`hashlib.sha256(...).hexdigest()`）。若文件打开失败会抛异常而非返回None。注解错误，应为`str`。对比：`detector_dispatcher.py:44`的`_compute_file_hash`注解正确为`-> str`。
-
-#### 5.134.2 [LOW] auto_kill_on_errors使用未导入的Optional
-
-- **文件**：`src/zephyr/autonomy_core/skills/skill_kill_switch.py:70`
-- **问题**：返回类型注解`Optional[dict[str, Any]]`，但文件仅`from typing import Any`未导入`Optional`。因有`from __future__ import annotations`注解延迟求值，运行时不报错；但`typing.get_type_hints()`求值会触发`NameError`。
-
-**严重度汇总**：HIGH=0, MEDIUM=1, LOW=1, 合计=2
-
----
 
 ### 5.135 异常粒度过粗（697个，第24轮新增）
 
