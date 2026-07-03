@@ -58,6 +58,9 @@ __all__ = [
     "EnvSecretProvider",
     "SecretProvider",
     "SecretsError",
+    "get_required_secret",
+    "get_secret",
+    "get_secret_or_default",
     "sanitize_secret",
 ]
 
@@ -223,3 +226,75 @@ class DotEnvSecretProvider:
         except SecretsError:
             logger.debug("secret '%s' not found, using default", key)
             return default
+
+
+# ============ 同步便捷函数（脚本场景用） ============
+# 痛点：SecretProvider 是 async 接口，对同步脚本（diagnose_*.py / 测试脚本）
+# 包 asyncio.run() 太重。提供同步入口，直接读 os.environ——
+# .env 文件已由 zephyr/__init__.py._load_dotenv() 在包导入时自动加载到
+# os.environ，因此所有同步代码直接调用本节函数即可，无需重复解析 .env。
+#
+# AI 施工约定（同 SSoT §2.11）：脚本中读取 API key / token / password
+# MUST 调用本节函数——禁止裸 os.getenv。
+
+
+def get_secret(key: str) -> str:
+    """同步读取 secret（从 os.environ）。
+
+    .env 文件已由 zephyr 包导入时自动加载到 os.environ，
+    因此同步代码直接调用本函数即可。
+
+    Args:
+        key: 环境变量名（如 "DEEPSEEK_API_KEY"）。
+
+    Returns:
+        Secret 值（明文）。
+
+    Raises:
+        SecretsError: 如果 key 未设置。
+    """
+    value = os.environ.get(key)
+    if value is None:
+        raise SecretsError(
+            f"secret '{key}' not found in environment variables",
+            details={"key": key, "hint": f"请在 .env 文件或环境变量中设置 {key}"},
+        )
+    return value
+
+
+def get_secret_or_default(key: str, default: str = "") -> str:
+    """同步读取 secret，缺失时返回默认值（不抛异常）。
+
+    Args:
+        key: 环境变量名。
+        default: 默认值。
+
+    Returns:
+        Secret 值或默认值。
+    """
+    return os.environ.get(key, default)
+
+
+def get_required_secret(key: str) -> str:
+    """同步读取必需的 secret，缺失或空即 fail-fast。
+
+    语义化便捷函数——用于脚本启动时校验必需的 API key。
+    与 get_secret 的区别：空字符串同样视为缺失（业务语义，
+    空 key 无法用于 API 调用）。
+
+    Args:
+        key: 环境变量名。
+
+    Returns:
+        Secret 值（明文，且非空）。
+
+    Raises:
+        SecretsError: 如果 key 未设置或为空字符串。
+    """
+    value = os.environ.get(key)
+    if not value:
+        raise SecretsError(
+            f"required secret '{key}' is not set",
+            details={"key": key, "hint": f"请在 .env 文件中添加: {key}=你的密钥"},
+        )
+    return value

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "数据源能力地图 — iFind + miniQMT + 免费开源源(Baostock/TickFlow/AKShare/财经RSS) 可获取数据完整清单与获取方法(实测验证+VPN对比)"
 doc_type: blueprint
 status: Active
-version: "1.8.0"
+version: "1.8.1"
 layer: data
 layer_name: data_source
 functional_domain: data
@@ -103,7 +103,7 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 
 | 数据源 | 环境 | 验证状态 | 实测日期 |
 |--------|------|---------|---------|
-| iFind | 试用账号 werty017 | ✅ 12类API逐个验证 | 2026-07-03 |
+| iFind | 试用账号（IFIND_USERNAME） | ✅ 12类API逐个验证 | 2026-07-03 |
 | miniQMT | XtMiniQmt.exe 运行中 | ✅ 15类API逐个验证 | 2026-07-03 |
 | Baostock | baostock 0.9.2 / py -3.11 | ✅ 实测 10/10 通过（含 VPN 对比） | 2026-07-03 |
 | TickFlow | tickflow 0.1.24 / py -3.11 | ✅ 实测 12/12 通过（含 VPN 对比） | 2026-07-03 |
@@ -122,7 +122,7 @@ summary: "数据源能力地图——iFind(70个API) + miniQMT(87个API) + 免�
 | SDK来源 | `D:\同花顺Ifind金融终端api\THSDataInterface_Windows_20260227\` |
 | API数量 | 70个函数，8大接口类别 |
 | 数据库规模 | EDB 77,909指标 + FDB 9,875指标 + CodeTables 130万+证券 |
-| 当前账号 | 试用账号 werty017（有限制，见 §2.4） |
+| 当前账号 | 试用账号（IFIND_USERNAME，有限制，见 §2.4） |
 | Python版本 | 3.x（无版本限制） |
 
 ### 1.2 miniQMT（国金证券QMT xtquant）
@@ -204,9 +204,10 @@ D:\同花顺Ifind金融终端api\THSDataInterface_Windows_20260227\THSDataInterf
 
 ```python
 from iFinDPy import *
+from zephyr.shared.security.secrets import get_secret_or_default
 
-# 登录（0=成功, -201=已登录）
-r = THS_iFinDLogin('werty017', 'R16w864M')
+# 登录（0=成功, -201=已登录）；凭据从 .env 读取（IFIND_USERNAME/IFIND_PASSWORD）
+r = THS_iFinDLogin(get_secret_or_default("IFIND_USERNAME"), get_secret_or_default("IFIND_PASSWORD"))
 if not (r == 0 or r == -201):
     print(f"登录失败: errorcode={r}")
     raise Exception("iFind登录失败")
@@ -280,7 +281,8 @@ if not (r == 0 or r == -201):
 
 ```python
 from iFinDPy import *
-r = THS_iFinDLogin('werty017', 'R16w864M')
+from zephyr.shared.security.secrets import get_secret_or_default
+r = THS_iFinDLogin(get_secret_or_default("IFIND_USERNAME"), get_secret_or_default("IFIND_PASSWORD"))
 # 0=成功, -201=已登录
 ```
 
@@ -885,7 +887,8 @@ fd = xtdata.get_financial_data(['600000.SH'], [], '20240101', '20250630', 'repor
 **执行模板**：
 ```python
 from iFinDPy import *
-THS_iFinDLogin('werty017', 'R16w864M')
+from zephyr.shared.security.secrets import get_secret_or_default
+THS_iFinDLogin(get_secret_or_default("IFIND_USERNAME"), get_secret_or_default("IFIND_PASSWORD"))
 
 # 批量估值数据（注意参数格式坑，见 §2.5.3）
 stocks = ['600000.SH', '000001.SZ', ...]  # 1800只
@@ -956,9 +959,23 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 | P2 | 研究报告 | THS_iResearch | 解除-5100账号类型限制 |
 | P2 | CFFEX期货 | 中金所期货行情 | 解除-4216权限拒绝 |
 
-### §5.6 C1 行情仓库 8 张表填充状态
+### §5.6 C1 行情仓库填充状态（v1.8.1 更新）
 
-> C1行情仓库8张表（tick_data/daily_kline/auction_snapshot/index_quote/option_iv_surface/futures_position/futures_term_structure/convertible_bond_iv）的填充状态、数据来源、验证结果，详见 [数据获取需求清单 §2.1 c1_market 行情库](data_acquisition_plan.md)（19张表完整对照，含8张空表填充状态）。
+> C1行情仓库填充状态、数据来源、验证结果，详见 [数据获取需求清单 §2.1 c1_market 行情库](data_acquisition_plan.md)（20张表完整对照）。
+
+**v1.8.1 填充进度（2026-07-03）**：
+
+| 表名 | 状态 | 行数 | 数据源 | 说明 |
+|------|------|------|--------|------|
+| daily_kline | ✅ 已增量更新 | 17,781,671 | local_qfq(15.87M)+baostock(625K)+ifind(164K) | 增量至2026-07-02；北交所469只待补 |
+| us_daily_kline | ✅ 已建表+导入 | 167,175 | TickFlow | 34只美股，2006-08-15~2026-07-01 |
+| tick_data | ⏳ 空表 | 0 | QMT(实时) | 待实盘开发 |
+| auction_snapshot | ⏳ 空表 | 0 | QMT(实时) | 待实盘开发 |
+| index_quote | ⏳ 空表 | 0 | QMT(实时) | 待实盘开发 |
+| option_iv_surface | ⏳ 空表 | 0 | iFind/QMT | 需计算IV |
+| futures_position | ⏳ 空表 | 0 | QMT/iFind | 待填充 |
+| futures_term_structure | ⏳ 空表 | 0 | QMT/iFind | 需计算基差 |
+| convertible_bond_iv | ⏳ 空表 | 0 | iFind/QMT | 需计算IV |
 
 ---
 
@@ -1065,7 +1082,8 @@ xtdata.get_trading_dates('SH', '20250601', '20250701')  # 21天
 **iFind 验证**：
 ```python
 from iFinDPy import *
-r = THS_iFinDLogin('werty017', 'R16w864M')
+from zephyr.shared.security.secrets import get_secret_or_default
+r = THS_iFinDLogin(get_secret_or_default("IFIND_USERNAME"), get_secret_or_default("IFIND_PASSWORD"))
 assert r == 0 or r == -201, f"iFind登录失败: {r}"
 # 测试查询
 data = THS_HistoryQuotes('600000.SH', 'open,high,low,close', 'Interval:D', '2025-06-01', '2025-06-30')
@@ -1104,7 +1122,7 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 ### §7.1 概述与定位
 
-本章节记录 iFind 试用账号盲区的**免费开源替代源**（免费无Key）+ **需免费注册API Key的源**。iFind 试用账号（werty017）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)月度配额限制。本章节的源完全覆盖这些盲区。
+本章节记录 iFind 试用账号盲区的**免费开源替代源**（免费无Key）+ **需免费注册API Key的源**。iFind 试用账号（IFIND_USERNAME）有 4 类数据不可用：美股(-4210)、港股(-4210)、新闻事件(-5100)、研究报告(-5100)，另有 EDB 宏观(-4318)月度配额限制。本章节的源完全覆盖这些盲区。
 
 **核心定位**：
 - 免费源是**补充**，不是替代。iFind/QMT 能获取的数据优先用 iFind/QMT（已付费、稳定、有 SLA）。
@@ -1135,16 +1153,16 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 
 #### §7.1.1 API Key 清单（需免费注册源，用户已注册，2026-07-03）
 
-> **安全说明**：以下Key记录在项目confidential文档中，仅供项目内部使用。iFind试用账号(werty017/R16w864M)已在 §2.1 记录。QMT/Baostock/TickFlow/AKShare/财经RSS 不需要账号密码。
+> **安全说明**：所有 API key/账号密码通过环境变量读取（见 `.env.example`），禁止在文档中记录明文。QMT/Baostock/TickFlow/AKShare/财经RSS 不需要账号密码。
 
-| 数据源 | API Key | 注册邮箱 | 免费额度 | 实测状态 | 实测日期 |
+| 数据源 | 环境变量 | 注册邮箱 | 免费额度 | 实测状态 | 实测日期 |
 |--------|---------|---------|---------|:--------:|:--------:|
-| **NewsAPI.org** | `5f54c041aa2a4781a66f8cc6194e1272` | — | 100请求/天 | ✅ 2/2通过 | 2026-07-03 |
-| **Tiingo** | `67daaf30a656486e0108a94c98267fe7ccbdb5f1` | — | 免费tier(日K线✅/News❌需付费) | ⚠️ 1/2通过 | 2026-07-03 |
-| **Finnhub** | `d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg` | 434419932@qq.com | 免费tier | ✅ 3/3通过 | 2026-07-03 |
-| **Newsdata.io** | `pub_b0314d331fa44f30a649189362c9d5e7` | — | 200请求/天 | ✅ 2/2通过 | 2026-07-03 |
-| **Alpha Vantage** | `1RASLEIEKE35Q9KB` | — | 5次/min | ✅ 2/2通过 | 2026-07-03 |
-| iFind(试用) | 账号`werty017` / 密码`R16w864M` | — | 试用账号(有限制) | ✅ 已验证 | 2026-07-03 |
+| **NewsAPI.org** | `NEWSAPI_KEY` | — | 100请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Tiingo** | `TIINGO_API_KEY` | — | 免费tier(日K线✅/News❌需付费) | ⚠️ 1/2通过 | 2026-07-03 |
+| **Finnhub** | `FINNHUB_API_KEY` | 434419932@qq.com | 免费tier | ✅ 3/3通过 | 2026-07-03 |
+| **Newsdata.io** | `NEWSDATA_API_KEY` | — | 200请求/天 | ✅ 2/2通过 | 2026-07-03 |
+| **Alpha Vantage** | `ALPHAVANTAGE_API_KEY` | — | 5次/min | ✅ 2/2通过 | 2026-07-03 |
+| iFind(试用) | `IFIND_USERNAME` / `IFIND_PASSWORD` | — | 试用账号(有限制) | ✅ 已验证 | 2026-07-03 |
 
 > **Tiingo认证方式**：用Header `Authorization: Token <key>`，不是URL `apiKey=`参数。News API返回403"You do not have permission"（免费tier不含），日K线API `tiingo/daily/<symbol>/prices` 可用。
 > **Alpha Vantage限流**：5次/min，请求间隔需≥12秒。
@@ -1244,7 +1262,7 @@ print(f"QMT OK: {len(data['600000.SH'])}行")
 | 数据源 | 能力 | 是否可用 | 说明 |
 |--------|------|:--------:|------|
 | **天眼查** | 完整股权穿透 API（get_shareholder_info / get_actual_controller / get_beneficial_owners / get_equity_tree / get_subsidiary_info） | ❌ 商业付费 | 需会员套餐，按调用次数/包年计费 |
-| **同花顺 iFind** | 有完整产业图谱+股东信息+实控人 | ⚠️ 需正式账号 | 试用账号 werty017 受限，需购买正式账号 |
+| **同花顺 iFind** | 有完整产业图谱+股东信息+实控人 | ⚠️ 需正式账号 | 试用账号（IFIND_USERNAME）受限，需购买正式账号 |
 | **Tushare** | stock_top10_holders / stock_hold_control | ⚠️ 需积分 | 免费2000积分不够，需5000分以上（充值或贡献获取） |
 | **巨潮资讯网** | 上市公司公告 PDF（含实控人/控股关系/股东大会决议） | ✅ 已验证可用 | 需 BeautifulSoup + PDF 解析（PDF URL 在 adjunctUrl 字段） |
 | **GitHub 开源** | 中文"股权穿透 股东 python" + 英文"company ownership equity python" | ❌ 0 结果 | 全球开源社区无股权穿透项目 |
@@ -1998,12 +2016,13 @@ print(f"\n总计: {len(df)}条新闻 from {len(rss_sources)}个源")
 #### §7.9.7 需Key新闻/行情源API调用（用户已注册，实测验证）
 
 ```python
-# 需Key源API调用示例（Key见 §7.1.1）
+# 需Key源API调用示例（Key从环境变量读取，见 §7.1.1）
 import requests
 import time
+from zephyr.shared.security.secrets import get_secret_or_default
 
 # 1. NewsAPI.org — 全球新闻(16822条), 100请求/天
-NEWSAPI_KEY = "5f54c041aa2a4781a66f8cc6194e1272"
+NEWSAPI_KEY = get_secret_or_default("NEWSAPI_KEY")
 url = f"https://newsapi.org/v2/everything?q=stock market&apiKey={NEWSAPI_KEY}&pageSize=100&language=en"
 r = requests.get(url, timeout=15)
 articles = r.json().get("articles", [])
@@ -2012,7 +2031,7 @@ print(f"NewsAPI: {len(articles)}条 | 样本={articles[0]['title'][:80]}")
 time.sleep(1)
 
 # 2. Alpha Vantage — 新闻+情感分析(50条)+日K线, 5次/min
-ALPHAVANT_KEY = "1RASLEIEKE35Q9KB"
+ALPHAVANT_KEY = get_secret_or_default("ALPHAVANTAGE_API_KEY")
 url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey={ALPHAVANT_KEY}&limit=50"
 r = requests.get(url, timeout=15)
 feed = r.json().get("feed", [])
@@ -2022,7 +2041,7 @@ print(f"AlphaVantage News: {len(feed)}条 | 情感={feed[0].get('overall_sentime
 time.sleep(13)  # 5次/min = 12秒间隔
 
 # 3. Finnhub — 市场新闻(100条)+实时报价, 免费tier
-FINNHUB_KEY = "d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg"
+FINNHUB_KEY = get_secret_or_default("FINNHUB_API_KEY")
 url = f"https://finnhub.io/api/v1/news?category=general&token={FINNHUB_KEY}"
 r = requests.get(url, timeout=15)
 news = r.json()
@@ -2039,7 +2058,7 @@ print(f"AAPL报价: current={quote.get('c')} high={quote.get('h')} low={quote.ge
 time.sleep(1)
 
 # 5. Newsdata.io — 财经新闻, 200请求/天
-NEWSDATA_KEY = "pub_b0314d331fa44f30a649189362c9d5e7"
+NEWSDATA_KEY = get_secret_or_default("NEWSDATA_API_KEY")
 url = f"https://newsdata.io/api/1/news?apikey={NEWSDATA_KEY}&category=business&language=en&size=50"
 r = requests.get(url, timeout=15)
 articles = r.json().get("results", [])
@@ -2048,7 +2067,7 @@ print(f"Newsdata: {len(articles)}条")
 time.sleep(1)
 
 # 6. Tiingo — 日K线(TickFlow backup), Header认证
-TIINGO_KEY = "67daaf30a656486e0108a94c98267fe7ccbdb5f1"
+TIINGO_KEY = get_secret_or_default("TIINGO_API_KEY")
 url = "https://api.tiingo.com/tiingo/daily/AAPL/prices?startDate=2025-06-01&endDate=2025-07-01"
 headers = {"Authorization": f"Token {TIINGO_KEY}"}
 r = requests.get(url, headers=headers, timeout=15)

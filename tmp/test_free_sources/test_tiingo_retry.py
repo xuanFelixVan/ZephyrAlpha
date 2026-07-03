@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 """Tiingo 重测 — 用正确的认证方式(Header token 或 URL token=)"""
+import sys
 import requests
 import time
+from pathlib import Path
 
-TIINGO_KEY = "67daaf30a656486e0108a94c98267fe7ccbdb5f1"
+# 通过 SSoT secret loader 读取 API key（.env 由 zephyr/__init__.py 自动加载）
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from zephyr.shared.security.secrets import get_secret_or_default
+
+TIINGO_KEY = get_secret_or_default("TIINGO_API_KEY")
 
 print("=== Tiingo 重测（3种认证方式）===")
 

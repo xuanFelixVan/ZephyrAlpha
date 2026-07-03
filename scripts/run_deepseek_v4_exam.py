@@ -50,6 +50,8 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
+from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -57,8 +59,8 @@ logging.basicConfig(
 )
 _log = logging.getLogger("deepseek_v4_exam")
 
-# 安全: 移除硬编码密钥默认值，必须通过环境变量 DEEPSEEK_API_KEY 提供
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+# 通过 SSoT secret loader 读取（.env 由 zephyr/__init__.py 自动加载）；main() 校验非空
+DEEPSEEK_API_KEY = get_secret_or_default("DEEPSEEK_API_KEY")
 
 
 def run_exam(model: str, thinking: bool) -> dict[str, Any]:
@@ -209,7 +211,10 @@ def main():
     args = parser.parse_args()
 
     if not DEEPSEEK_API_KEY:
-        _log.error("环境变量 DEEPSEEK_API_KEY 未设置，禁止使用硬编码密钥")
+        try:
+            get_required_secret("DEEPSEEK_API_KEY")
+        except Exception as e:
+            _log.error(str(e))
         return 2
 
     models = [args.model] if args.model else ["deepseek-v4-flash", "deepseek-v4-pro"]

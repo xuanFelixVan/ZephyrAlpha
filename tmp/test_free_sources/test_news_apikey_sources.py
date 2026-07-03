@@ -1,22 +1,28 @@
 # -*- coding: utf-8 -*-
-"""需Key新闻源实测脚本（5个源，用户已注册）
-1. NewsAPI.org   - Key: 5f54c041aa2a4781a66f8cc6194e1272
-2. Tiingo        - Key: 67daaf30a656486e0108a94c98267fe7ccbdb5f1
-3. Finnhub       - Key: d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg
-4. Newsdata.io   - Key: pub_b0314d331fa44f30a649189362c9d5e7
-5. Alpha Vantage - Key: 1RASLEIEKE35Q9KB
+"""需Key新闻源实测脚本（5个源，key 从环境变量读取）
+1. NewsAPI.org   - NEWSAPI_KEY
+2. Tiingo        - TIINGO_API_KEY
+3. Finnhub       - FINNHUB_API_KEY
+4. Newsdata.io   - NEWSDATA_API_KEY
+5. Alpha Vantage - ALPHAVANTAGE_API_KEY
 """
+import sys
 import requests
 import time
 import warnings
+from pathlib import Path
 warnings.filterwarnings("ignore")
 
-# ============ API Keys (用户注册) ============
-NEWSAPI_KEY    = "5f54c041aa2a4781a66f8cc6194e1272"
-TIINGO_KEY     = "67daaf30a656486e0108a94c98267fe7ccbdb5f1"
-FINNHUB_KEY    = "d74lr19r01qg1eo5vib0d74lr19r01qg1eo5vibg"
-NEWSDATA_KEY   = "pub_b0314d331fa44f30a649189362c9d5e7"
-ALPHAVANT_KEY  = "1RASLEIEKE35Q9KB"
+# 通过 SSoT secret loader 读取 API key（.env 由 zephyr/__init__.py 自动加载）
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from zephyr.shared.security.secrets import get_secret_or_default
+
+# ============ API Keys (从环境变量读取) ============
+NEWSAPI_KEY    = get_secret_or_default("NEWSAPI_KEY")
+TIINGO_KEY     = get_secret_or_default("TIINGO_API_KEY")
+FINNHUB_KEY    = get_secret_or_default("FINNHUB_API_KEY")
+NEWSDATA_KEY   = get_secret_or_default("NEWSDATA_API_KEY")
+ALPHAVANT_KEY  = get_secret_or_default("ALPHAVANTAGE_API_KEY")
 
 def _ok(name, n, sample=""):
     print(f"  ✅ {name}: {n}条{(' | 样本=' + sample[:100]) if sample else ''}")
