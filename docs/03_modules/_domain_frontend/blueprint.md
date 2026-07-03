@@ -46,10 +46,10 @@ codification_at: "2026-05-15"
 > ✅ **C轨业务层已开放，可施工**
 >
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
-> 当前 construction_progress = not_started，可开始业务代码实现。
+> 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
 > module_id: MOD-L08-001 | version: 2.1.0 | status: active | domain: frontend
-> actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: not_started
+> actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
@@ -93,7 +93,7 @@ codification_at: "2026-05-15"
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = not_started → 代码目录存在但业务实现不完整 | `ls src/zephyr/frontend/` | ☐ |
+| construction_progress = partially_implemented → 部分组件已实现，业务逻辑待填充 | `ls src/zephyr/frontend/` | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 | §0.1 已实现文件全部存在 | 逐文件 `ls` | ☐ |
 | §0.1 未实现文件确实不存在 | 逐文件 `ls` | ☐ |
@@ -477,7 +477,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 not_started | C轨已解除 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 partially_implemented | C轨已解除 |
 | 2 | 架构层 YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l08_human_ai_interface.yaml` | module id 统一为 hmi_core (ARB-21) | 命名统一 |
 
 ---
@@ -603,7 +603,7 @@ class FitnessDashboardData(BaseModel):
 
 | 字段 | 值 | 填写者 |
 |------|-----|-------|
-| construction_status | not_started | 施工者 |
+| construction_status | partially_implemented | 施工者 |
 | verification_status | unverified | 审计者 |
 | code_alignment_verified | no | 审计者 |
 
