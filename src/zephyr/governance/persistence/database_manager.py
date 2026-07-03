@@ -190,9 +190,10 @@ class DatabaseManager:
 
     def _fill_pool(self) -> None:
         """填充连接池至 pool_size。"""
-        while len(self._conn_pool) < self._pool_size:
-            conn = get_db_connection(self._db_path)
-            self._conn_pool.append(conn)
+        with self._lock:
+            while len(self._conn_pool) < self._pool_size:
+                conn = get_db_connection(self._db_path)
+                self._conn_pool.append(conn)
 
     def get_connection(self) -> sqlite3.Connection:
         """
@@ -208,9 +209,11 @@ class DatabaseManager:
         """
         if self._closed:
             raise DatabaseManagerError("DatabaseManager is closed")
-        if self._conn_pool:
-            return self._conn_pool.pop()
-        # 池耗尽时创建临时连接
+        # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.pop() 加锁，原代码声明 self._lock 但从未使用
+        with self._lock:
+            if self._conn_pool:
+                return self._conn_pool.pop()
+        # 池耗尽时创建临时连接（在锁外创建，避免长时间持锁）
         conn = get_db_connection(self._db_path)
         logger.debug("pool_exhausted_created_temp_connection")
         return conn
@@ -227,20 +230,20 @@ class DatabaseManager:
             except Exception:
                 pass
             return
-        if len(self._conn_pool) < self._pool_size:
-            try:
-                conn.execute("SELECT 1")
-                self._conn_pool.append(conn)
-            except sqlite3.Error:
+        # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.append() 加锁，与 get_connection() 配对
+        with self._lock:
+            if len(self._conn_pool) < self._pool_size:
                 try:
-                    conn.close()
-                except Exception:
-                    pass
-        else:
-            try:
-                conn.close()
-            except Exception:
-                pass
+                    conn.execute("SELECT 1")
+                    self._conn_pool.append(conn)
+                    return
+                except sqlite3.Error:
+                    pass  # 连接不健康，fall through 到关闭
+        # 池满或连接不健康时关闭（在锁外关闭）
+        try:
+            conn.close()
+        except Exception:
+            pass
 
     # ------------------------------------------------------------------
     # 健康检查
