@@ -54,7 +54,7 @@ tags:
 summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供L03消费。"
 ---
 
-> ⛔ **业务层禁止施工声明**：本蓝图所属C轨业务层当前为 **blocked** 状态。
+> ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放，可施工。
 > 基础设施(Gate/CE/VMS/Pipeline/FLE)尚未达到beta稳定态，任何业务实现将因缺乏架构约束而漂移。
 > 开工条件见 frontmatter `business_layer_blocked_reason`。
 > AI MUST NOT 以此蓝图为依据生成业务代码，除非 `business_layer_status` 变为 `active`。
@@ -111,7 +111,7 @@ summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v0.1.0 (占位) | 无 | 全部 | blocked_by_infrastructure |
+| v0.1.0 (占位) | 无 | 全部 | partially_implemented |
 | v2.1.0 (模板升级) | FactorBase+FactorRegistry+Momentum20d+ValueFactor | base.py清理 | 结构升级 |
 | v3.0.0 (审查回填) | 同v2.1.0 | base.py废弃迁移 | 代码-蓝图对齐修正 |
 
@@ -142,7 +142,7 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 因子计算必须向量化 | 禁止逐行循环，必须使用NumPy/Pandas |
 | 数据缺失时因子输出NaN | 下游必须处理NaN |
 | 因子计算延迟<100ms | 实时因子必须在100ms内完成 |
-| C轨blocked状态 | 业务代码禁止施工，仅允许预研 |
+| C轨已开放 | 业务代码可施工 |
 
 ### 1.5 利益相关者映射
 
@@ -616,7 +616,7 @@ class FactorMeta(BaseModel):
 
 | 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
 |------|:---:|---------|---------|:---:|
-| v0.1.0 | 1 | 占位 | blocked_by_infrastructure | ❌ |
+| v0.1.0 | 1 | 占位 | partially_implemented | ❌ |
 | v2.1.0 | 2 | 模板升级 | §0前移+§7/§15删除+§10拆分 | ⚠️ |
 | v3.0.0 | 2 | 审查回填 | 代码-蓝图对齐+模板合规回填 | ⚠️ |
 

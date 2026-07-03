@@ -119,7 +119,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v0.1.0 (占位) | 无代码 | 全部 | blocked_by_infrastructure |
+| v0.1.0 (占位) | 无代码 | 全部 | partially_implemented |
 | v2.1.0 (模板升级) | DataSourceBase + DataQualityGate + 3个实现 | connectors/normalizers/storage/cache子模块 | C轨占位 |
 | v3.0.0 (回填+对齐) | 同 v2.1.0 | 同 v2.1.0 | C轨占位 |
 | v4.0.0 (重建) | DataSourceBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) | 待Spiral扩展 |

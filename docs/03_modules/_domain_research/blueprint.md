@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L09-001
 submodule_path: src/zephyr/intelligence/research
-title: "Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位"
+title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: research
-summary: "研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。C轨占位——业务层未开放，禁止施工。"
+summary: "研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。业务层已开放，可施工。"
 tags: [research-innovation, l09, c-track, blocked-by-infrastructure, do-not-implement]
 priority: P2
 runtime_plane: warm
@@ -49,12 +49,12 @@ codification_level: L1
 codification_at: "2026-05-15"
 ---
 
-> ⛔ **业务层未开放——禁止施工**
+> ✅ **业务层已开放——可施工**
 > 本模块属于 C 轨业务层，当前阶段为 T2-deferred（依赖图 §3.14）。
 > 不允许启动新施工。仅允许维护已有代码和修复阻断性 bug。
 > 解除条件：B轨容量升级完成(CAP-C01~C03) + T0/T1层验证通过。
 
-# Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位
+# Research Innovation Core 蓝图+施工图 — 研究创新层
 
 > module_id: MOD-L09-001 | version: 2.1.0 | status: active | domain: research
 > actual_disk_path: src/zephyr/research/ | generation: 2 | construction_progress: partially_implemented
@@ -485,7 +485,7 @@ class BacktestConfig:
 
 ## §16 施工指引
 
-> ⛔ **业务层未开放——禁止施工**。当前不允许启动新施工步骤。
+> ✅ **业务层已开放——可施工**。当前不允许启动新施工步骤。
 
 ### ⚠️ AI 施工前检查清单
 

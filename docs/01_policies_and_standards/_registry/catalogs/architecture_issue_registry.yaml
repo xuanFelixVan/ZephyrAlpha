@@ -796,3 +796,71 @@ entries:
   - TRAE-060
   created: '2026-07-04'
   last_updated: '2026-07-04'
+- issue_id: '#ARCH-045'
+  title: signal 层域映射根因治本——D_SIGLEGACY 幽灵域残留清理 + C 轨占位禁令解除
+  severity: P1高
+  adjudication: |
+    ARCH-045 裁定：signal 层 domain 映射根因治本方案 + C 轨占位禁令全面解除。
+
+    【病根（5-Why 根因分析）】
+    Why1: 为什么 sync_contract_mapping_table 失败？因为 _LAYER_NAME_TO_DOMAIN["signal"]="D_SIGLEGACY"，但 D_SIGLEGACY 已从 domains 表删除。
+    Why2: 为什么 D_SIGLEGACY 被删除？因为 DM-100255 将其判定为空壳域（0 production_nodes）。
+    Why3: 为什么 D_SIGLEGACY 有 0 production_nodes？因为裁定#201 将其保留为"设计态占位域"，实际代码分散到 3 个子域。
+    Why4: 为什么 sync 脚本仍然硬编码 D_SIGLEGACY？因为删除域时只清理了 DB 层，未同步清理 YAML 真源和 sync 脚本硬编码。
+    Why5: 为什么删除操作没有原子性传播？因为 cmd_delete_domain 只清理 DB 引用，不清理 YAML 真源/脚本硬编码/契约文件。
+    根因：删除操作缺乏跨真源的原子性保证——"真源分裂"系统性问题。
+
+    【第一性原理：layer 与 domain 是正交概念】
+    layer = 逻辑分层（signal/factor/risk/...）——有 dir_prefix，描述数据流方向
+    domain = 功能域（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC/...）——平级无父子，描述代码归属
+    _LAYER_NAME_TO_DOMAIN 映射表的根本错误：假设每个 layer 必须对应一个 domain。
+    但 signal 层实际包含 3 个平级子域，无法用单一 domain 代表。
+
+    【三选项评估】
+    A: 映射到 D_ASHARE_SIGNAL —— ❌ D_ASHARE_SIGNAL 是子域之一，不能代表整个 signal 层，违反"域平级无父子"铁律
+    B: 返回 None/跳过 —— ✅ signal 层 C 轨占位已解除，但 4 个契约仍为 Draft，跳过不影响实际开发
+    C: 新建 D_SIGNAL 域 —— ❌ 0 production_nodes → 又成空壳域 → 循环删除/新建
+
+    【治本方案（分阶段）】
+    P0（已完成 2026-07-04）：
+    (a) 清理 functional_domain_registry.yaml 的 D_SIGLEGACY deprecated 条目（防幽灵域复活）
+    (b) sync_yaml_to_depgraph.py 移除 3 处 D_SIGLEGACY 硬编码（LAYER_NAME_TO_DOMAIN/DOMAIN_CONTRACT_CONSUMER/CTR_CONSUMER_FALLBACK）
+        设为 None，sync_contract_mapping_table 在 domain=None 时跳过契约写入
+    (c) 解除 C 轨占位禁令——25 个文件 87 处标记替换 + _domain_simulation T2-deferred 解除
+        涉及 13 个业务域蓝图（signal/simulation/risk/research/reporting/portfolio_core/
+        machine_learning_train/factor/frontend/execution_core/data/compliance）
+    (d) 创建 ARCH-045 裁定文档（本条目）
+
+    P1（短期后续，独立任务卡）：
+    cross_layer_contracts.yaml 中 D_SIGLEGACY 引用重新分配到 3 个子域：
+      - CTR-P1-015（SynthesizedSignal）→ source_domain: D_FUNDAMENTAL_SIGNAL
+      - CTR-P1-003（CapitalAllocationResult）→ source_domain: D_FUNDAMENTAL_SIGNAL
+      - CTR-ERR-003（SignalDegradationWarning）→ source_domain: D_SIGQC
+      - CTR-008（SignalQualityMetrics）→ source_domain: D_SIGQC
+      - 8 个 consumer 契约逐个审查实际消费方，分配到具体子域
+
+    P2（中期后续，独立任务卡）：
+    (a) 为 contracts 表添加 FK 到 domains（schema 脚本与实际 DB 不一致，DB 有 FK 但 schema 未定义）
+    (b) 补建 DOMAIN-DELETE reconciler——域删除时自动清理 YAML 真源/脚本硬编码/契约文件引用
+        保证删除操作的跨真源原子性（治本，防止类似问题再次发生）
+
+    【关联】
+    - ARCH-044（蓝图间路径引用系统性漂移）——同类病根（真源分裂），ARCH-045 是域层面的延展
+    - DM-100255（4 空壳域删除）——ARCH-045 是 DM-100255 的遗留问题治本
+    - 裁定#201（D_SIGLEGACY 拆分补裁定）——ARCH-045 推翻了"保留 D_SIGLEGACY 为占位域"的决定
+    - 裁定#204（D-SIGNAL* 改名）——ARCH-045 是改名后的遗留清理
+  fix_phase: |
+    P0 DONE 2026-07-04：
+    (a) 清理 functional_domain_registry.yaml 的 D_SIGLEGACY 条目
+    (b) sync_yaml_to_depgraph.py 移除 3 处 D_SIGLEGACY 硬编码 + 增加 None 跳过逻辑
+    (c) 解除 C 轨占位禁令（25 文件 87 处替换 + _domain_simulation T2-deferred 解除）
+    (d) 创建 ARCH-045 裁定文档
+    P1 TODO：cross_layer_contracts.yaml 中 D_SIGLEGACY 引用重新分配到 3 个子域
+    P2 TODO：contracts 表 FK 补齐 + DOMAIN-DELETE reconciler 补建
+  status: decided
+  related_rules:
+  - GOV-DOC-018
+  - NR-001
+  - DM-100255
+  created: '2026-07-04'
+  last_updated: '2026-07-04'

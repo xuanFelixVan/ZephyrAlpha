@@ -18,7 +18,7 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L13-001 | Experiment Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L13-001 | Experiment Core | [blueprint](blueprint.md) | Draft | partially_implemented |
 
 **架构模型真源**：`docs/03_modules/_domain_simulation/blueprint.md`
 

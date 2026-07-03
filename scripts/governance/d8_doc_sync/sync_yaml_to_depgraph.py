@@ -101,7 +101,9 @@ def load_yaml(rel_path: str) -> dict:
 # contract_mapping_table.yaml layer_contracts 的 layer 字段 → domain_id
 _LAYER_NAME_TO_DOMAIN = {
     "data": "D_MKT_DATA",
-    "signal": "D_SIGLEGACY",
+    # ARCH-045: signal 层不映射到单一 domain（signal 层包含 3 个平级子域）
+    # 设为 None 后 sync_contract_mapping_table 跳过 signal 层契约写入
+    "signal": None,
     "pf_core": "D_PF_CORE",
     "ex_core": "D_EX_CORE",
     "reporting": "D_REPORTING",
@@ -120,7 +122,8 @@ _DOMAIN_KEY_TO_DOMAIN_ID = {
 # AS-CT-*/ME-CT-* 域契约的 consumer_domain 映射（基于 direction 字段语义）
 _DOMAIN_CONTRACT_CONSUMER = {
     "AS-CT-DATA-001": "D_FACTOR",
-    "AS-CT-FACTOR-001": "D_SIGLEGACY",
+    # ARCH-045: AS-CT-FACTOR-001 的 consumer 原 D_SIGLEGACY 已删除，设为 None 跳过
+    "AS-CT-FACTOR-001": None,
     "AS-CT-FACTOR-002": "D_FACTOR",
     "AS-CT-SIGNAL-001": "D_RISK",
     "AS-CT-VMS-001": "D_KNOWLEDGE",
@@ -139,7 +142,8 @@ _CTR_CONSUMER_FALLBACK = {
     "CTR-008": "D_RISK", "CTR-009": "D_INTELLIGENCE", "CTR-010": "D_INTELLIGENCE",
     "CTR-011": "D_ML_TRAIN", "CTR-012": "D_SHARED",
     "CTR-ERR-003": "D_RISK",
-    "CTR-P1-003": "D_PF_CORE", "CTR-P1-004": "D_SIGLEGACY", "CTR-P1-005": "D_SIGLEGACY",
+    # ARCH-045: CTR-P1-004/005 的 consumer 原 D_SIGLEGACY 已删除，设为 None 跳过
+    "CTR-P1-003": "D_PF_CORE", "CTR-P1-004": None, "CTR-P1-005": None,
     "CTR-P1-006": "D_TRADING", "CTR-P1-009": "D_FRONTEND", "CTR-P1-012": "D_RISK",
     "CTR-P1-014": "D_SIMULATION", "CTR-P1-015": "D_RISK",
     "EXT-DASHBOARD-FLE-001": "D_SHARED",
@@ -346,6 +350,9 @@ def sync_contract_mapping_table(cur):
             raw_consumer = contract.get("domain_mapping", contract.get("direction", ""))
             provider_domain = _normalize_provider(contract_id, domain_key)
             consumer_domain = _normalize_consumer(contract_id, raw_consumer)
+            # ARCH-045: domain 为 None 时跳过（signal 层契约待重新分配到子域）
+            if provider_domain is None or consumer_domain is None:
+                continue
             cur.execute(
                 """
             INSERT INTO contracts
@@ -378,6 +385,9 @@ def sync_contract_mapping_table(cur):
         raw_mapping = contract.get("domain_mapping", "") or ""
         provider_domain = _normalize_provider(contract_id, raw_layer)
         consumer_domain = _normalize_consumer(contract_id, raw_mapping)
+        # ARCH-045: domain 为 None 时跳过（signal 层契约待重新分配到子域）
+        if provider_domain is None or consumer_domain is None:
+            continue
         cur.execute(
             """
         INSERT INTO contracts

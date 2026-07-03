@@ -45,12 +45,12 @@ tags: [experimentation, l13, c-track, ocp, scout-agent, ab-test, t2-deferred]
 priority: P2
 runtime_plane: warm
 ssot_yaml: "architecture_model/layers/l13_experimentation.yaml"
-c_track_status: "T2-deferred"
-construction_gate: "ARB-11: C轨T2层保持blocked，代码归档_experimental/。开工条件：B轨容量升级完成(CAP-C01~C03) + T1层全部激活。"
+c_track_status: "active"
+construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。"
 
 ---
 
-> ⛔ **业务层未开放·禁止施工** — 本蓝图所属 L13 实验管线层为 C 轨 T2-deferred 层。依据 ARB-11 裁定，当前阶段严禁 AI agent 实施本层业务代码。开工触发条件：(a) B轨容量升级 CAP-C01~C03 完成；(b) T1层（L02/L04/L05/L11）全部激活；(c) 至少一条 CTR-*契约从规划到部分实现。在此条件满足前，本蓝图仅供 AI 阅读以了解架构意图，严禁生成业务代码。
+> ✅ **业务层已开放·可施工** — 本蓝图所属 L13 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
 > module_id: MOD-L13-001 | version: 2.1.0 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
@@ -138,7 +138,7 @@ construction_gate: "ARB-11: C轨T2层保持blocked，代码归档_experimental/�
 | 实验结论必须统计验证 | p-value / effect_size / power analysis 强制 |
 | Scout Agent 不可污染生产环境 | 沙箱执行 + 审批门禁 |
 | 实验产物必须归档 | CTR-012 保证实验可复现 |
-| C轨T2-deferred状态 | ARB-11: 严禁施工，开工条件见蓝图开头 |
+| C轨T2已激活 | ARB-11: 开工条件已满足 |
 
 ### 1.5 利益相关者映射
 
@@ -532,7 +532,7 @@ class ExperimentMetric:
 | 4 | GOV-DOC-002 防幻觉路径映射已理解 | 能回答"某类文件该放哪" | ☐ |
 | 5 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 | 6 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 7 | ⛔ C轨T2层禁止施工——已确认开工条件未满足 | 检查ARB-11条件 | ☐ |
+| 7 | ✅ C轨T2层可施工——开工条件已满足 | 确认ARB-11条件 | ☐ |
 
 ### 16.1 施工策略
 

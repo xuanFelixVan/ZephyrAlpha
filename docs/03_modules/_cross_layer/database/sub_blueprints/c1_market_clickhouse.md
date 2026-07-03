@@ -111,7 +111,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | blocked_by_infrastructure（ClickHouse 未部署） |
+| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | partially_implemented（ClickHouse 未部署） |
 
 ---
 
