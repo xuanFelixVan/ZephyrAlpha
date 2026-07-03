@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import pytest
 
+from zephyr.infrastructure.auto_fix_engine import dep_version_fixer as dep_mod
 from zephyr.infrastructure.auto_fix_engine.dep_version_fixer import DepVersionFixer
 from zephyr.infrastructure.auto_fix_engine.models import FixStatus, ValidationResult
 
@@ -57,19 +58,19 @@ class TestDepVersionFixerInstantiation:
 
 class TestScan:
     def test_scan_returns_list(self, fixer, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dep_mod, "REPO_ROOT", tmp_path)
         result = fixer.scan()
         assert isinstance(result, list)
 
     def test_scan_finds_conflicts(self, tmp_path, monkeypatch, fixer):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dep_mod, "REPO_ROOT", tmp_path)
         req = tmp_path / "requirements.txt"
         req.write_text("requests==2.28.0\nrequests==2.31.0\n", encoding="utf-8")
         result = fixer.scan()
         assert any(f["type"] == "version_conflict" for f in result)
 
     def test_scan_no_conflicts(self, tmp_path, monkeypatch, fixer):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dep_mod, "REPO_ROOT", tmp_path)
         req = tmp_path / "requirements.txt"
         req.write_text("requests==2.31.0\nflask>=1.0.0\n", encoding="utf-8")
         result = fixer.scan()

@@ -88,6 +88,7 @@ from zephyr.infrastructure.pipeline.ct_pipe_routing import (
 from zephyr.infrastructure.pipeline.dead_letter_queue import DeadLetterQueue
 from zephyr.infrastructure.pipeline.model_router import ModelRouter
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.async_utils import run_sync  # DM-100252/LSG-fix: 实际 import（原 L53 在 docstring 内非真实 import）
 from zephyr.infrastructure.pipeline.models import (
     M_MODULE_SPECS,
     M_MODULES,

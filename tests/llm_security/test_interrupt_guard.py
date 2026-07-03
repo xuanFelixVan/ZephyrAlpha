@@ -31,8 +31,9 @@ class TestInterruptGuardInstantiation:
         assert guard._wal_dir == Path("/tmp/custom_wal")
 
     def test_default_db_path(self):
+        from zephyr.shared.io.paths import DB_PATH
         guard = InterruptGuard()
-        assert guard._db_path == "data/auto_fix/auto_fix.db"
+        assert guard._db_path == DB_PATH
 
     def test_active_fixes_starts_empty(self):
         guard = InterruptGuard()

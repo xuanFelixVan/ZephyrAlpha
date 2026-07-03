@@ -19,6 +19,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from zephyr.infrastructure.auto_fix_engine.models import FixLevel, FixStatus
+from zephyr.infrastructure.auto_fix_engine import scaffold_registrar as scaffold_mod
 from zephyr.infrastructure.auto_fix_engine.scaffold_registrar import ScaffoldRegistrar
 
 
@@ -56,18 +57,15 @@ class TestScaffoldRegistrarScan:
             script_file.write_text("print('hello')\n", encoding="utf-8")
             manifest_path = scripts_dir / "script-manifest.yaml"
             manifest_path.write_text("scripts: []\n", encoding="utf-8")
-            with patch.object(Path, "rglob") as mock_rglob:
+            with patch.object(scaffold_mod, "REPO_ROOT", Path(tmpdir)):
+                with patch.object(Path, "rglob") as mock_rglob:
 
-                def rglob_side_effect(pattern):
-                    if pattern == "*.py":
-                        return [script_file]
-                    return []
+                    def rglob_side_effect(pattern):
+                        if pattern == "*.py":
+                            return [script_file]
+                        return []
 
-                mock_rglob.side_effect = rglob_side_effect
-                with patch(
-                    "zephyr.infrastructure.auto_fix_engine.scaffold_registrar.os.getcwd",
-                    return_value=tmpdir,
-                ):
+                    mock_rglob.side_effect = rglob_side_effect
                     findings = reg.scan()
             assert any(f["type"] == "unregistered_script" for f in findings)
 
