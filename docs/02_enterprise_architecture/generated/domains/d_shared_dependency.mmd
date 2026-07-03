@@ -1,7 +1,7 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-04 02:48:43
+%% 生成时间: 2026-07-04 03:06:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 227, 依赖边数: 738
+%% 模块数: 227, 依赖边数: 735
 
 graph TD
 
@@ -333,11 +333,8 @@ graph TD
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_io_paths_py
-    %% D_INFRA_RECOVERY -> D_SHARED (8 条)
+    %% D_INFRA_RECOVERY -> D_SHARED (5 条)
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_file_utils_py
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_async_utils_py
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_security_secrets_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_async_utils_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
@@ -522,5 +519,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 169 条
-    %% 跨域入边: 560 条
+    %% 跨域入边: 557 条
     %% 跨域出边: 9 条

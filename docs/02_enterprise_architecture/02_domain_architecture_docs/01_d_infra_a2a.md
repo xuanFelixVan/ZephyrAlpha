@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 a2a_communication（D_INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 02:48:41
+> 最后更新: 2026-07-04 03:06:30
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -249,14 +249,14 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
     D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py -->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
-    src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py -->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py -.->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py
     D_GOVERNANCE -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py

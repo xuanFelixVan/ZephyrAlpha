@@ -1,7 +1,7 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-04 02:48:43
+%% 生成时间: 2026-07-04 03:06:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 471, 依赖边数: 1269
+%% 模块数: 471, 依赖边数: 1268
 
 graph TD
 
@@ -358,8 +358,7 @@ graph TD
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_TRADING -> D_INFRA_A2A (1 条)
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
-    %% D_TRADING -> D_INFRA_RECOVERY (2 条)
-    src_zephyr_trading_boot_hooks_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    %% D_TRADING -> D_INFRA_RECOVERY (1 条)
     src_zephyr_trading_feedback_loop_scheduler_act_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_TRADING -> D_INFRA_RUNTIME (17 条)
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -468,4 +467,4 @@ graph TD
     %% 统计
     %% 域内依赖: 440 条
     %% 跨域入边: 666 条
-    %% 跨域出边: 163 条
+    %% 跨域出边: 162 条

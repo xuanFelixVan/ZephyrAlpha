@@ -1,7 +1,7 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-04 02:48:43
+%% 生成时间: 2026-07-04 03:06:31
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 1655, 依赖边数: 2127
+%% 模块数: 1655, 依赖边数: 2105
 
 graph TD
 
@@ -248,19 +248,13 @@ graph TD
     tests_infrastructure_test_message_router_py -->|test_depends| D_INFRA_A2A[D_INFRA_A2A]
     tests_infrastructure_test_push_notifier_py -->|test_depends| D_INFRA_A2A[D_INFRA_A2A]
     tests_infrastructure_test_supervisor_py -->|test_depends| D_INFRA_A2A[D_INFRA_A2A]
-    %% D_AUDITTEST -> D_INFRA_RECOVERY (75 条)
+    %% D_AUDITTEST -> D_INFRA_RECOVERY (53 条)
     tests_agent_test_agent_cooldown_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_automation_test_auto_fix_phase_manager_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_automation_test_auto_fix_phase_manager_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_automation_test_auto_rollback_trigger_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_autonomy_test_autonomy_dashboard_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_ce_test_ce_kill_switch_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_cross_test_cross_agent_conflict_detector_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_cross_test_cross_platform_shell_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_drift_test_drift_fix_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_external_test_external_merkle_proof_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_f_lifecycle_test_f18_automation_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_f_lifecycle_test_f18_redblue_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_git_test_git_infra_snapshot_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_access_contro___dential_rotation_trigger_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_access_contro___st_secret_rotation_aware_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
@@ -268,17 +262,23 @@ graph TD
     tests_governance_audit_test_auditor_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_audit_test_governance_auditor_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_audit_test_forensic_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_governance_code_quality_test_fsm_verifier_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_governance_compliance_test_owner_absent_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_compliance_test_right_to_be_forgotten_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_data_layer_test_sqlite_dumper_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_data_layer_test_s3_snapshot_lifecycle_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_governance_delegation_test_continuous_trust_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_governance_misc_test_backtest_engine_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_integration_test_contract_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_integration_test_submodule_sync_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_lifecycle_test_checkpoint_gc_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_governance_lifecycle_test_startup_shutdown_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_lifecycle_test_venv_sync_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_ops_test_env_watcher_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_ops_test_runbook_generator_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_resilience_test_knowngoodstate_ledger_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_resilience_test_warm_standby_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_security_test_vulnerability_rescanner_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_infrastructure_test_commit_quality_gate_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_infrastructure_test_forward_fix_runner_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_infrastructure_test_topology_change_log_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_intent_test_intent_archiver_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_AUDITTEST -> D_INFRA_RUNTIME (128 条)
     tests_audit_test_state_machine_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_automation_test_auto_diagnostics_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -515,4 +515,4 @@ graph TD
     %% 统计
     %% 域内依赖: 1 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 2126 条
+    %% 跨域出边: 2104 条

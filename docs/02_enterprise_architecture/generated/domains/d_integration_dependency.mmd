@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-04 02:48:43
+%% 生成时间: 2026-07-04 03:06:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 72, 依赖边数: 270
+%% 模块数: 72, 依赖边数: 268
 
 graph TD
 
@@ -224,9 +224,6 @@ graph TD
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
-    %% D_INFRA_RECOVERY -> D_INTEGRATION (2 条)
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     %% D_INFRA_RUNTIME -> D_INTEGRATION (7 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
@@ -342,5 +339,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 70 条
-    %% 跨域入边: 141 条
+    %% 跨域入边: 139 条
     %% 跨域出边: 59 条

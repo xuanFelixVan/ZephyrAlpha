@@ -1,7 +1,7 @@
 %% D_SECURITY 域全景依赖图
-%% 生成时间: 2026-07-04 02:48:43
+%% 生成时间: 2026-07-04 03:06:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 147, 依赖边数: 347
+%% 模块数: 147, 依赖边数: 346
 
 graph TD
 
@@ -253,8 +253,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     %% D_GOV_SCRIPTS -> D_SECURITY (1 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
-    %% D_INFRA_RECOVERY -> D_SECURITY (1 条)
-    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     %% D_INTEGRATION_GATEWAY -> D_SECURITY (1 条)
     D_INTEGRATION_GATEWAY[D_INTEGRATION_GATEWAY] -->|import_depends| src_zephyr_security_access_con____guards_permission_guard_py
     %% D_TRADING -> D_SECURITY (6 条)
@@ -301,5 +299,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 123 条
-    %% 跨域入边: 200 条
+    %% 跨域入边: 199 条
     %% 跨域出边: 24 条
