@@ -23,11 +23,14 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
 """
 
 import importlib
+import logging
 import sys
 import threading
 import types
 from pathlib import Path
 from typing import Any, Optional
+
+_log = logging.getLogger(__name__)
 
 
 def _load_dotenv() -> None:
@@ -118,7 +121,8 @@ def _deferred_bootstrap():
         from zephyr.infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
 
         _auto_bootstrap_result = _auto_bootstrap()
-    except Exception:
+    except Exception as exc:
+        _log.warning("auto_bootstrap failed: %s", exc, exc_info=True)
         _auto_bootstrap_result = None
     # §5.17.14 治本：自动接入 secret_rotation 到 SecretProvider
     # 扫描 os.environ 中的密钥变量（KEY/TOKEN/SECRET/PASSWORD等）注册轮换调度，
@@ -127,8 +131,8 @@ def _deferred_bootstrap():
         from zephyr.trading.feedback_loop.security.secret_rotation import auto_configure
 
         auto_configure()
-    except Exception:
-        pass
+    except Exception as exc:
+        _log.warning("secret_rotation auto_configure failed: %s", exc, exc_info=True)
 
 
 _bootstrap_timer = threading.Timer(0.05, _deferred_bootstrap)
@@ -144,8 +148,8 @@ def _deferred_service_registration():
         from zephyr.governance.ops_governance.service_registration import register_services
 
         register_services()
-    except Exception:
-        pass
+    except Exception as exc:
+        _log.warning("service_registration failed: %s", exc, exc_info=True)
 
 
 _registration_timer = threading.Timer(0.1, _deferred_service_registration)

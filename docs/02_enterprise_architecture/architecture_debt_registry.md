@@ -7630,16 +7630,16 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.138 循环引用风险（15个，第24轮新增）
 
-#### 5.138.1 [HIGH] 显式确认的循环import（7处）
+#### 5.138.1 [LOW] 循环import workaround（7处，5.138.1修复：Timer hack静默吞错已修复）
 
 - **文件**（7处）：
-  - `src/zephyr/__init__.py:115-127,133-144` — 两处`threading.Timer`延迟import规避循环（`auto_bootstrap`和`_service_registration`），注释明确写"避免循环导入"，用`except Exception: pass`静默吞错
+  - `src/zephyr/__init__.py:115-127,133-144` — 两处`threading.Timer`延迟import规避循环（`auto_bootstrap`和`_service_registration`），**5.138.1修复：`except Exception: pass`已替换为`_log.warning`带exc_info日志，不再静默吞错**
   - `trading/resource_optimization.py:25-26` — 模型拆分规避`shared.io/shared.infra → models → shared.io/shared.infra`间接循环
   - `behavioral_audit/drift_result_types.py:1354-1356` — 函数内延迟import规避`drift_result_types ↔ drift_engine`包内循环
   - `infrastructure/a2a_protocol/__init__.py:61-63` — PEP 562 `__getattr__`规避循环
   - `infrastructure/a2a_protocol/layer2_communication/__init__.py:40-57` — PEP 562 `_LAZY_IMPORTS`规避循环
   - `autonomy_core/context_budget_tracker.py:142`（及management副本）— `TYPE_CHECKING`规避`DocCompressor`循环
-- **问题**：7处循环import已确认存在，当前靠Timer线程/PEP 562/TYPE_CHECKING等workaround规避。`zephyr/__init__.py`的Timer hack最脆弱——注册失败被`except Exception: pass`完全静默。
+- **问题**：7处循环import已确认存在，当前靠Timer线程/PEP 562/TYPE_CHECKING等workaround规避。~~`zephyr/__init__.py`的Timer hack最脆弱——注册失败被`except Exception: pass`完全静默。~~ **已修复：Timer hack的except块现记录warning日志+exc_info，不再静默。** 剩余6处使用PEP 562/TYPE_CHECKING/deferred import等标准Python模式规避循环import，属可接受的设计模式。
 
 #### 5.138.2 [MEDIUM] 延迟import暗示循环风险/容错吞错（6处）
 
