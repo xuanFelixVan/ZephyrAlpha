@@ -2340,6 +2340,23 @@ capabilities:
       /list_tasks 亦委托本模块。治本（L3 SSoT 铁律，2026-07-03）：AI 绕过
       TaskRepository 读 MD 做决策=幻觉/漂移根源。
 
+  - capability_id: blueprint_decomposition
+    aliases:
+      - BlueprintDecomposer
+      - decompose_blueprint
+      - decompose_blueprints_batch
+      - blueprint_decomposer
+    canonical_override: src/zephyr/shared/blueprint_tools/blueprint_decomposer.py
+    description: >-
+      蓝图拆解真源（MOD-INF_blueprint_decomposer）。BlueprintDecomposer 是治理文档→
+      TaskCard 的唯一拆解入口，提供 decompose_blueprint（单蓝图拆解）、
+      decompose_blueprints_batch（批量拆解）接口。输入：治理文档（KB决策记录/TD/CS/CP等
+      blueprint.yaml）+ 可选 task_repo；输出：双向存储——SQLite（task_repo.create）+
+      docs/_working/decomposition/tasks/{task_id}.md（human companion，自带 ssot_warning
+      水印，L3 SSoT 铁律）。AI 拆解蓝图/生成任务卡 MUST 通过本模块，禁止手写 TaskCard MD
+      或绕过 task_repo 直接写 DB。解决发现性：新 AI 搜 "蓝图拆解/任务卡生成/decompose"
+      可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI 重新造拆解器。
+
   - capability_id: architecture_health_dashboard
     canonical_override: scripts/governance/architecture_health_dashboard.py
     aliases:
