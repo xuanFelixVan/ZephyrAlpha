@@ -3,7 +3,7 @@ module_id: VIEW-05-DATA-ARCH
 title: Target Architecture — Data Architecture / 目标架构：数据架构
 doc_type: architecture_view
 status: Active
-version: 1.0.1
+version: 1.0.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -27,7 +27,7 @@ summary: TOGAF Data Architecture 视图（DA View）。回答系统中"业务数
   Bias）、如何追踪因子血缘、如何治理证券主数据 / 交易日历 / Corporate Action、如何在 CI 中执行数据质量门禁、如何归档"。本视图独立于
   02-IA（IA 讲 docs/ 抽屉的"信息资产组织"，DA 讲业务"数据对象"），与 03-AA / 04-TA 通过明确边界关系图衔接。v1.0.0 为新建版本（非从
   IA 迁移而来——经查 02-IA v1.1.0 全文不含业务数据对象，DA 此前一直缺位，详见 R36）。
-date: '2026-04-22'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -166,8 +166,8 @@ Tick / OrderBookSnapshot → (聚合) → Bar
 
 | 分类组合 | 必备能力 | 落到哪个视图 |
 |---------|---------|-------------|
-| 热 × 流 × 内/外 | 低延迟 ingest、背压控制、at-least-once | 03-AA L00 / 04-TA 流处理选型 |
-| 温 × 批 × 派生 | 幂等重算、checkpoint、版本号 | 03-AA L02/L03、04-TA 调度器 |
+| 热 × 流 × 内/外 | 低延迟 ingest、背压控制、at-least-once | 03-AA D_MKT_DATA / 04-TA 流处理选型 |
+| 温 × 批 × 派生 | 幂等重算、checkpoint、版本号 | 03-AA D_FACTOR/D_ASHARE_SIGNAL、04-TA 调度器 |
 | 冷 × 批 × * | 列存归档、按需重载、生命周期策略 | §9 + 04-TA 对象存储 |
 
 ---
@@ -317,7 +317,7 @@ TargetPosition → Order → Fill → Position → PnL
 
 | 禁止 | 必须 |
 |------|------|
-| 禁止任何业务模块**绕过 MDM 直接读 vendor** | 必须经过 L00 `connectors/`（ACL）+ MDM 服务 |
+| 禁止任何业务模块**绕过 MDM 直接读 vendor** | 必须经过 D_MKT_DATA `connectors/`（ACL）+ MDM 服务 |
 | 禁止 `UPDATE security SET delisting_date=...`（破坏 bitemporal） | 必须 INSERT 新版本 + 旧版本标记 superseded |
 | 禁止前端/AI 直接发起主数据修改 | 必须走"修改提案 → Steward 复核 → 双人签字 → 落库"流程（暂时仅限单人 + 双 AI 评审） |
 
@@ -425,7 +425,7 @@ DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitn
 | AI 自治的数据血缘自动发现 | D_AUTONOMY_CORE 域（未来） |
 
 > **📊 数据流时序图**：
-> - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 跨域核心数据流（L00→L02→L03→L05→L06→L07 主链路）
+> - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 跨域核心数据流（D_MKT_DATA→D_FACTOR→D_ASHARE_SIGNAL→D_PF_CORE→D_EX_CORE→D_REPORTING 主链路）
 > - [`diagrams/dataflow_terminal.mmd`](diagrams/dataflow_terminal.mmd) — 终端数据流详细时序
 
 ---

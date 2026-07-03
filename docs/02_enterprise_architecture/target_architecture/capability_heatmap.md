@@ -3,7 +3,7 @@ module_id: VIEW-04TER-CAPABILITY-HEATMAP
 title: Target Architecture — Capability Maturity Heatmap (Orthogonal View) / 目标架构：能力成熟度热力图正交视图
 doc_type: architecture_view
 status: Active
-version: 2.0.1
+version: 2.0.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -205,7 +205,7 @@ ttl: permanent
 | 里程碑 | 目标 | 触发条件 |
 |--------|------|---------|
 | **T1** | 真实资金接入 | 模拟盘稳定运行3个月 |
-| **T3** | AI自治升格 | 6大核心服务全部L4 |
+| **T3** | AI自治升格 | 5大核心服务全部L4 |
 | **T-ENDGAME** | 顶级机构对标 | 全域能力L4+，30%域L5 |
 
 ### 4.2 当前差距（基于§3.2快照）
@@ -248,7 +248,7 @@ ttl: permanent
 
 > 详见各能力域蓝图。本节仅摘要。
 
-- T1→T3：预计需6大核心服务全部升L4，约24人月
+- T1→T3：预计需5大核心服务全部升L4，约24人月
 - T3→T-ENDGAME：预计需全域L4+，约60人月
 
 ---
