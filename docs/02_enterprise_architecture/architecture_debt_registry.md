@@ -2231,11 +2231,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因2（`_get_conn`应强制锁但无门禁阻止绕过）
 - 修复：改`threading.local()`每线程独立连接或`_get_conn`内`assert self._lock._is_owned()`
 
-#### 5.16.8 AsyncRuntime run_in_executor executor创建竞态【HIGH】
-- 证据：[async_runtime.py:194-206,228-232](file:///d:/ZephyrAlpha/src/zephyr/trading/runtime/async_runtime.py) `if self._executor is None: self._executor=ThreadPoolExecutor(...)` 无锁；模块INVARIANTS（第8行）"不持有threading.Lock避免asyncio死锁"导致executor创建无法加锁——设计自相矛盾
-- 病根：根因5（INVARIANTS规则本身有缺陷）
-- 修复：用`asyncio.Lock`保护或`start()`时一次性创建executor
-
 #### 5.16.9 跨6+文件重复的asyncio.run+get_event_loop反模式【HIGH】
 - 证据：`context_injector.py:261`、`gateway_server.py:95-110`、`integration/llm_gateway.py:69-77`、`autonomy_core/llm_gateway.py [⚠ 已删除]:69-77`、`default_security_gateway.py:273-281`、`delegation_engine.py:246`、`brain_integration.py:211-228`（new_event_loop不close）均 `asyncio.get_event_loop()`（3.12+弃用）+ `run_until_complete` fallback `asyncio.run`（已有循环时再抛RuntimeError）
 - 病根：根因2+5（async/sync桥接无共享封装，错误处理靠复制）

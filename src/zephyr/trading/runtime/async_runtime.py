@@ -73,7 +73,13 @@ class AsyncRuntime:
         self._max_workers = max_workers
         self._loop_timeout = loop_timeout
         self._loop: asyncio.AbstractEventLoop | None = None
-        self._executor: concurrent.futures.ThreadPoolExecutor | None = None
+        # 5.16.8 修复：executor 在 __init__ 时一次性创建，消除 run_in_executor 竞态
+        self._executor: concurrent.futures.ThreadPoolExecutor | None = (
+            concurrent.futures.ThreadPoolExecutor(
+                max_workers=max_workers,
+                thread_name_prefix="AsyncRuntime",
+            )
+        )
         self._owns_loop = False
 
     @property
@@ -197,6 +203,7 @@ class AsyncRuntime:
         except RuntimeError:
             return bound()
 
+        # 5.16.8 修复：executor 已在 __init__ 创建，消除竞态
         if self._executor is None:
             self._executor = concurrent.futures.ThreadPoolExecutor(
                 max_workers=self._max_workers,
@@ -226,6 +233,7 @@ class AsyncRuntime:
         """
         bound = functools.partial(func, *args, **kwargs)
 
+        # 5.16.8 修复：executor 已在 __init__ 创建，消除竞态（fallback 仅用于 stop() 后调用）
         if self._executor is None:
             self._executor = concurrent.futures.ThreadPoolExecutor(
                 max_workers=self._max_workers,
