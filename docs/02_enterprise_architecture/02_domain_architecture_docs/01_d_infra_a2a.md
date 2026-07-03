@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A2A通信（D_INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 15:27:29
+> 最后更新: 2026-07-03 16:32:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -81,30 +81,30 @@ graph TD
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... prototype"]
     end
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
+    src_zephyr_infrastructure_a2a_protocol_governance_auditor_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
+    src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_governance_audit_logger_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_init_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py
     src_zephyr_infrastructure_a2a_protocol_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py
     src_zephyr_infrastructure_a2a_protocol_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py
-    src_zephyr_infrastructure_a2a_protocol_governance_auditor_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
-    src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_governance_policy_engine_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
+    src_zephyr_infrastructure_a2a_protocol_governance_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_governance_base_server_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
-    src_zephyr_infrastructure_a2a_protocol_governance_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py
     src_zephyr_infrastructure_a2a_protocol_governance_session_manager_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
-    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
+    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_trigger_monitor_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_init_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py
@@ -114,12 +114,12 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_governance_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| D_SHARED
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py -.->|import_depends| D_SHARED
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py
     D_AUDITTEST -.->|test_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
@@ -182,18 +182,18 @@ graph TD
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_negotiation_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
     end
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_anomaly_detector_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_economics_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_forgetting_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_economics_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idle_guard_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idempotency_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_behavior_fingerprint_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_causal_trace_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_collusion_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_causal_trace_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_cross_agent_semantic_flow_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_knowledge_distill_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_latent_comm_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_knowledge_distill_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py -.->|import_depends| D_SHARED
@@ -472,51 +472,51 @@ graph TD
 │   __init__.py → governance_adapter.py                            │
 │   __init__.py → __init__.py                                      │
 │   __init__.py → __init__.py                                      │
-│   a2a_registry.py → agent_card.py                                │
 │   __init__.py → phase_hold.py                                    │
-│   __init__.py → a2a_registry.py                                  │
+│   a2a_registry.py → agent_card.py                                │
 │   __init__.py → agent_card.py                                    │
+│   __init__.py → a2a_registry.py                                  │
 │   __init__.py → identity_verifier.py                             │
-│   __init__.py → handoff_manager.py                               │
-│   __init__.py → a2a_state.py                                     │
-│   __init__.py → context_package.py                               │
+│   message_router.py → a2a_schemas.py                             │
 │   __init__.py → a2a_schemas.py                                   │
-│   __init__.py → push_notifier.py                                 │
+│   __init__.py → context_package.py                               │
+│   __init__.py → handoff_manager.py                               │
 │   __init__.py → message_router.py                                │
+│   __init__.py → a2a_state.py                                     │
 │   __init__.py → trigger_monitor.py                               │
 │   __init__.py → streaming.py                                     │
-│   message_router.py → a2a_schemas.py                             │
-│   a2a_red_team.py → a2a_registry.py                              │
+│   __init__.py → push_notifier.py                                 │
 │   a2a_red_team.py → agent_card.py                                │
+│   a2a_red_team.py → a2a_registry.py                              │
 │   a2a_red_team.py → identity_verifier.py                         │
 │   a2a_red_team.py → a2a_state.py                                 │
 │   a2a_red_team.py → a2a_delegation_chain.py                      │
 │   a2a_red_team.py → a2a_security.py                              │
 │   a2a_red_team.py → session_smuggling_defense.py                 │
 │   a2a_red_team.py → supervisor.py                                │
-│   _core_coordination.py → cascade_guard.py                       │
-│   _core_coordination.py → conflict_detector.py                   │
+│   _security_and_economics.py → a2a_anomaly_detector.py           │
+│   _security_and_economics.py → a2a_forgetting.py                 │
+│   _security_and_economics.py → a2a_delegation_chain.py           │
+│   _security_and_economics.py → a2a_economics.py                  │
+│   _security_and_economics.py → a2a_idle_guard.py                 │
+│   _security_and_economics.py → a2a_idempotency.py                │
+│   _security_and_economics.py → a2a_temporal_admission.py         │
+│   _security_and_economics.py → a2a_red_team.py                   │
+│   _security_and_economics.py → a2a_security.py                   │
+│   _security_and_economics.py → session_smuggling_defense.py      │
 │   _core_coordination.py → arbitrator.py                          │
+│   _core_coordination.py → cascade_guard.py                       │
 │   _core_coordination.py → deadlock_guard.py                      │
-│   _core_coordination.py → livelock_detector.py                   │
+│   _core_coordination.py → conflict_detector.py                   │
 │   _core_coordination.py → construction_verifier.py               │
-│   _core_coordination.py → supervisor.py                          │
 │   _core_coordination.py → semantic_diff.py                       │
+│   _core_coordination.py → livelock_detector.py                   │
+│   _core_coordination.py → supervisor.py                          │
 │   _consensus.py → a2a_debate.py                                  │
 │   _consensus.py → a2a_negotiation.py                             │
 │   _consensus.py → a2a_saga.py                                    │
-│   _consensus.py → a2a_voting.py                                  │
 │   _consensus.py → a2a_work_steal.py                              │
-│   supervisor.py → a2a_state.py                                   │
-│   _security_and_economics.py → a2a_anomaly_detector.py           │
-│   _security_and_economics.py → a2a_economics.py                  │
-│   _security_and_economics.py → a2a_forgetting.py                 │
-│   _security_and_economics.py → a2a_delegation_chain.py           │
-│   _security_and_economics.py → a2a_idle_guard.py                 │
-│   _security_and_economics.py → a2a_idempotency.py                │
-│   _security_and_economics.py → a2a_red_team.py                   │
-│   _security_and_economics.py → a2a_temporal_admission.py         │
-│   _security_and_economics.py → a2a_security.py                   │
+│   _consensus.py → a2a_voting.py                                  │
 │   ...还有 20 条 / 20 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
