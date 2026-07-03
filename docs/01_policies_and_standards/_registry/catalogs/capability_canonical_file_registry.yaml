@@ -1096,6 +1096,33 @@ capabilities:
       canonical 在 scripts/ 下，用 canonical_override 显式声明。
 
   # --------------------------------------------------------------------------
+  - capability_id: schema_health_verification
+    canonical_override: scripts/governance/d11_compliance/verify_schema_health.py
+    aliases:
+      - verify_schema_health
+      - schema_health
+      - GATE-SCHEMA-HEALTH
+      - schema-health
+      - verify-schema-health
+      - schema_health_verifier
+      - depgraph_schema_health
+    description: >-
+      depgraph (PostgreSQL) Schema 健康度校验门禁（ARCH-016/017/018 治本，
+      2026-06-26 起施工）。检测逻辑 SSoT 真源在 scripts/ 下，用 canonical_override
+      显式声明。4 项校验：(1) DDL 列一致性 DB 实际列 vs _DDL_* 声明列；
+      (2) 只读触发器存在性 READONLY_TABLES 9 表 × 3 触发器；(3) Schema 版本一致性
+      MAX(_schema_version) == len(_MIGRATIONS)；(4) PG 运行时健康 死锁/连接饱和/
+      长事务（P3-T4 改造，事件驱动替代常驻 monitor_pg.py）。退出码：0=健康/1=漂移/
+      2=脚本错误。模式：--ci 硬阻断（默认）/--warn-only 软警告/--skip-runtime 跳过校验4。
+      门禁路由：GATE-SCHEMA-HEALTH 已合并到 GATE-C2（run_gate_chain 顺序执行
+      check_contract_code_drift + check_contract_physical_path + verify_schema_health，
+      见 gate_registry.yaml L256-266）；.pre-commit-config.yaml 的原 gate-schema-health
+      条目已并入 GATE-C2 commit 阶段（ARCH-017）。canonical basename verify_schema_health
+      匹配 alias，可 auto 派生。解决发现性：新 AI 搜 "schema_health/GATE-SCHEMA-HEALTH/
+      verify_schema_health/depgraph schema 漂移" 可定位真源。解决防重建：
+      check_file_canonical() 反查阻止重建同类 schema 健康度校验脚本。
+
+  # --------------------------------------------------------------------------
   - capability_id: ttl_gate
     aliases:
       - TTL-METADATA
