@@ -2340,6 +2340,53 @@ capabilities:
       /list_tasks 亦委托本模块。治本（L3 SSoT 铁律，2026-07-03）：AI 绕过
       TaskRepository 读 MD 做决策=幻觉/漂移根源。
 
+  - capability_id: architecture_health_dashboard
+    canonical_override: scripts/governance/architecture_health_dashboard.py
+    aliases:
+      - architecture_health
+      - M11
+      - metric_11
+      - architecture_health_dashboard
+    description: >-
+      架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）。
+      11 项指标覆盖 5 个病根：SSoT 真源唯一性/永久系统触发/新 AI 可发现性/DB 全景图深度/
+      文档引用断裂。每项指标独立函数，复用现有检测脚本（subprocess 调用）。warn-only 起步
+      （第0期仅记录基线 exit 0，第1期转 hard block exit 1 阻断）。解决发现性：新 AI 搜
+      "架构健康/仪表盘/M11/ghost domain" 可定位真源。解决防重建：check_file_canonical()
+      反查阻止新 AI 重新造检测脚本。
+
+  - capability_id: architecture_health_reconciler
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
+    aliases:
+      - make_architecture_health_reconciler
+      - GATE-ARCH-HEALTH
+      - post_commit_architecture_health
+    description: >-
+      架构健康度 post-commit 基线记录 reconciler（第0期 warn-only，architecture_debt_registry.md
+      §六）。GitCommitGateway commit 完成后自动触发（GATE-ARCH-HEALTH, priority=300），任何 .py
+      文件变更后调用 architecture_health_dashboard.py --snapshot 保存基线快照到
+      data/architecture_health/。非阻断（ReconcileResult action=clean/warn）。第1期升级路径：
+      转为 pre-commit commit gate（exit 1 阻断）。全自动：事件触发（commit）+ 自动运行
+      （subprocess）+ 自动维护（快照覆盖）+ 自动关闭（subprocess 返回）。替代手工安装的
+      post_commit_architecture_health.ps1（已退役）。解决发现性：新 AI 搜 "post-commit 基线/
+      架构健康 reconciler" 可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI
+      重新创建 post-commit hook 脚本。
+
+  - capability_id: domain_deletion
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - cmd_delete_domain
+      - delete_domain
+      - --delete-domain
+    description: >-
+      域删除功能（apply_depgraph.py cmd_delete_domain，RULE-SIXTEEN 强制配套）。16 步 DELETE
+      覆盖 11 表（先清外部引用 steps 2-16，最后删 domains step1），安全门检查 nodes 引用
+      （>0 需 --force），支持 --dry-run 验证。rule_bindings.domain_id SET NULL（规则是全局
+      资产）。多值列（domain_events.target_domains/domain_mapping.subdomain_id）用 REPLACE
+      清理。注：nodes.belongs_to 不在清理清单——该列存模块ID(MOD-*)非域ID(D_*)。解决发现性：
+      新 AI 搜 "删除域/delete domain/空壳域清理" 可定位真源。解决防重建：check_file_canonical()
+      反查阻止新 AI 写 SQL 直接 DELETE（违反 depgraph 硬约束）。对标 DM-100255 4 空壳域处置。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
