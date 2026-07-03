@@ -2525,6 +2525,29 @@ capabilities:
       解决发现性：新AI搜 "写入前门禁/pre write gate/mojibake检测/根目录污染" 可定位真源。
       解决防重建：阻止新AI重复造写入前检查脚本（对标 held_overlap_gate 的 overlap 检测在 commit 时自动保障）。
 
+  # --------------------------------------------------------------------------
+  - capability_id: backtest_engine_core
+    aliases:
+      - backtest_engine
+      - BacktestEngineBase
+      - DefaultBacktestEngine
+      - BacktestConfig
+      - D_BACKTEST
+      - MOD-BT-001
+      - backtest_engine_core
+    description: >-
+      回测引擎核心能力（D_BACKTEST域，MOD-BT-001）。canonical = src/zephyr/backtest/
+      core/engine_base.py（BacktestEngineBase ABC + BacktestResult + FactorDiscovery，
+      冻结真源 L_BACKTEST）。MVP 5模块: engine_base(冻结) + data_handler(按bar推送OHLCV PIT) +
+      portfolio(持仓/现金/PnL/净值曲线,BacktestFill改名ARCH-034) + matching_engine(撮合/滑点/
+      手续费/A股约束) + metrics(Sharpe修正/Sortino/MaxDD/IC/IR) + vectorized_engine(集成4模块
+      的向量化回测)。BacktestResult注册为CTR-P1-016契约(source=D_BACKTEST,target=[D_PF_CORE,
+      D_RISK, D_OPS])。E-BT-01/02/03事件系列(BacktestCompleted/BacktestPassed/OverfittingDetected)。
+      解决发现性: 新AI搜 "回测引擎/BacktestEngine/Sharpe计算/撮合引擎" 可定位真源。
+      解决防重建: check_file_canonical() 反查阻止新AI重建回测引擎（已删5处碎片化副本:
+      research/backtest_base.py, research/default_backtest_engine.py, intelligence/×2,
+      infrastructure/rollback/backtest_engine.py）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -2810,6 +2833,25 @@ creation_tokens:
   # 能力真源已沉淀至 docs/03_modules/_domain_data/data_source_capability_map.md（§7.9 完整代码示例）
   # 原 13 个 tmp/ 脚本（8 个 tmp/ iFind + 5 个 tmp/test_free_sources/）TTL=task_bound 退役，
   # capability_canonical_file_registry 悬挂引用同步清理（消除真源漂移）。
+
+  # --- D_BACKTEST MVP 5模块施工（2026-07-04）---
+  # 4个新模块+1个重构(vectorized_engine已有token,此次为修改不是新增)
+  - file: "src/zephyr/backtest/core/data_handler.py"
+    token: "auto-backtest-data-handler-20260704"
+    created_by: "session-backtest-mvp"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/portfolio.py"
+    token: "auto-backtest-portfolio-20260704"
+    created_by: "session-backtest-mvp"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/matching_engine.py"
+    token: "auto-backtest-matching-engine-20260704"
+    created_by: "session-backtest-mvp"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/metrics.py"
+    token: "auto-backtest-metrics-20260704"
+    created_by: "session-backtest-mvp"
+    capability: "backtest_engine_core"
 
 # ============================================================================
 # 维护日志
