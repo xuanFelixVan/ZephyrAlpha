@@ -1662,7 +1662,7 @@ class LamportClockV2:
 
 ## 变更记录
 
-> 变更历史见 `git log -- docs/03_modules/_domain_infrastructure_operations/audit-trail/blueprint.md`
+> 变更历史见 `git log -- docs/03_modules/_domain_governance/audit_trail/blueprint.md`
 
 ## 术语表
 

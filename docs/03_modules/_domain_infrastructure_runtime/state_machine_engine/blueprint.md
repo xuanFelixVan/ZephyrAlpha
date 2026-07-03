@@ -38,7 +38,7 @@ depends_on:
     at: §10
     why: 数据库层提供持久化支持
 references:
-  - path: docs/03_modules/_domain_infrastructure_operations/task_system/blueprint.md
+  - path: docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
     section: §3.3
     why: 任务系统状态机(10状态/19转换)是最大消费者
   - path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md

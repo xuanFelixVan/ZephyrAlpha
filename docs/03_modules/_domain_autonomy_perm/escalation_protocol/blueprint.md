@@ -1352,10 +1352,10 @@ STEP 3: 拆分后验证
 | 脚本质量标准 | [quality-standard.md](file:///D:/ZephyrAlpha/scripts/governance/quality-standard.md) |
 | 治理方法论 | [governance_methodology_standard.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) |
 | Session 状态机 | [session-state-runbook.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md) |
-| RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/rbac/blueprint.md) |
-| Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/pipeline/blueprint.md) |
-| A2A Protocol | [MOD-INF-025](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/a2a-protocol/blueprint.md) |
-| Budget Enforcer | [MOD-INF-024](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/budget-enforcer/blueprint.md) |
+| RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/pipeline/blueprint.md) |
+| A2A Protocol | [MOD-INF-025](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md) |
+| Budget Enforcer | [MOD-INF-024](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
 | 注册表总索引 | [registry_of_registries.yaml](file:///D:/ZephyrAlpha/docs/registry_of_registries.yaml) |
 
 ---

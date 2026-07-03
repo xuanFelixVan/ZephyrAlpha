@@ -639,7 +639,7 @@ if vms_result.degraded:
     # 降级到 filesystem_fallback.py
     fs_hits = await rg_search(
         pattern=derive_regex(request.tags + request.target_files),
-        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain_infrastructure_operations/task_system/changes"],
+        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain_infrastructure_runtime/task_system/changes"],
         max_results_per_slot=20,
     )
     bundle.degraded = True

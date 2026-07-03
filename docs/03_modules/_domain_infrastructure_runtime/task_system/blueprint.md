@@ -721,7 +721,7 @@ class TaskLifecycleManager:
 
 | 产出物类型 | 存放完整路径（相对优先） | consumer_min | 说明 |
 |----------|---------------|:---:|------|
-| 蓝图文件 | `docs/03_modules/_domain_infrastructure_operations/task_system/blueprint.md` | 0 | 本文件 |
+| 蓝图文件 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 0 | 本文件 |
 | 业务代码 | `src/zephyr/governance/task_repo.py` | 1 | TaskSystem 包 |
 | 业务代码 | `src/zephyr/trading/orchestrator/` | 1 | 管线调度器 |
 | 业务代码 | `src/zephyr/shared/shared_services/models.py` | 1 | TaskCard 模型 |
@@ -1332,8 +1332,8 @@ STEP 3: 拆分后验证
 
 | # | 待删除/废弃文件 | 完整路径（相对优先） | 删除类型 | 接收文件 | 安全删除方案 |
 |---|---------------|------------|---------|---------|------------|
-| 1 | MOD-INF-003 任务卡KMS蓝图 | `docs/03_modules/_domain_infrastructure_operations/task-card-kms/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
-| 2 | MOD-INF-004 双管线蓝图 | `docs/03_modules/_domain_infrastructure_operations/vibe-coding-pipelines/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
+| 1 | MOD-INF-003 任务卡KMS蓝图 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
+| 2 | MOD-INF-004 双管线蓝图 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
 | 3 | v0.2.0 TaskCard 模型 | `src/zephyr/shared/shared_services/models.py` | 覆盖型 | v0.3.0 TaskCard | 重写对齐新契约 |
 
 ### 删除铁律
@@ -1377,8 +1377,8 @@ STEP 3: 拆分后验证
 
 | # | 已有模块/文件 | 完整路径（相对优先） | 功能重叠点 | 为什么不能复用 |
 |---|-------------|------------|----------|-------------|
-| 1 | MOD-INF-003（旧蓝图层） | `docs/03_modules/_domain_infrastructure_operations/task-card-kms/blueprint.md` | 任务卡制度+KMS体系 | deprecated——已被本蓝图合并 |
-| 2 | MOD-INF-004（旧双管线） | `docs/03_modules/_domain_infrastructure_operations/vibe-coding-pipelines/blueprint.md` | 双管线流程+M模块 | deprecated——已被本蓝图合并 |
+| 1 | MOD-INF-003（旧蓝图层） | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 任务卡制度+KMS体系 | deprecated——已被本蓝图合并 |
+| 2 | MOD-INF-004（旧双管线） | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 双管线流程+M模块 | deprecated——已被本蓝图合并 |
 | 3 | Task 模型（shared/schemas.py） | `src/zephyr/shared/schemas.py` | 语义28+追踪3=31 字段 | ✅ 可复用——本蓝图 TaskCard 继承此模型 |
 | 4 | task_repo.py（SQLite CRUD） | `src/zephyr/governance/task_repo.py` | 创建/查询/更新/删除/状态转换 | ✅ 可复用——本蓝图数据层使用此代码 |
 
@@ -1390,8 +1390,8 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整路径（相对优先） | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 本蓝图 | `docs/03_modules/_domain_infrastructure_operations/task_system/blueprint.md` | 真源 | 重写 v0.9.4 |
-| 2 | Change Folder | `docs/03_modules/_domain_infrastructure_operations/task_system/changes/` | 新建 | 存放任务卡 .md 文件 |
+| 1 | 本蓝图 | `docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md` | 真源 | 重写 v0.9.4 |
+| 2 | Change Folder | `docs/03_modules/_domain_infrastructure_runtime/task_system/changes/` | 新建 | 存放任务卡 .md 文件 |
 | 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-TASK_SYSTEM 条目 |
 | 4 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 依赖 | TaskCard 继承其 Task 类 |
 | 5 | task_repo.py | `src/zephyr/governance/task_repo.py` | 依赖 | 数据层真源 |
