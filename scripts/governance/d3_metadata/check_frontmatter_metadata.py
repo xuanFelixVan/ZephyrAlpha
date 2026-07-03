@@ -2,11 +2,12 @@
 # [MODULE] governance.d3_metadata.check_frontmatter_metadata
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
-# [CONSUMERS] pre-commit GATE-15（唯一拦截点，见下方说明）; manual validation
-# 说明（2026-06-30 修正）：原 [CONSUMERS] 引用 `GitCommitGateway._check_frontmatter_ttl` 为死引用——
-# 该方法已在 AD-GOV-001 阶段3瘦身中删除（11 个 _check_* 方法迁移到 commit_gates/ 注册制 gate），
-# 且未被注册制 gate 替代——GitCommitGateway 当前不内置 ttl 校验 gate（用 --no-verify 绕过 pre-commit
-# 时 ttl 校验失效，已知架构缺口）。当前 ttl 校验真源唯一在 pre-commit hook GATE-15（本脚本）。
+# [CONSUMERS] pre-commit GATE-15（裸 git commit 路径拦截）; GitCommitGateway TTL-METADATA gate（gateway 路径拦截，subprocess 复用本脚本，见 commit_gates/ttl_gate.py）; manual validation
+# 说明（2026-06-30 修正→2026-06-30 实施）：原 [CONSUMERS] 引用 `GitCommitGateway._check_frontmatter_ttl`
+# 为死引用——该方法在 AD-GOV-001 阶段3瘦身中删除后未以注册制 gate 替代，gateway 路径 ttl 校验失效。
+# 该缺口已于 2026-06-30 通过新建 commit_gates/ttl_gate.py（gate_id="TTL-METADATA", priority=32）
+# 治本——subprocess 复用本脚本，覆盖 commit() 和 _commit_auto() 路径。当前 ttl 校验真源唯一在本脚本，
+# pre-commit GATE-15 和 gateway TTL-METADATA gate 均通过 subprocess 复用本脚本（无第二检测实现）。
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
