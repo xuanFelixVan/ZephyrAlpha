@@ -1001,15 +1001,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > - **检测真源**：[verify_schema_health.py](file:///D:/ZephyrAlpha/scripts/governance/d11_compliance/verify_schema_health.py)（canonical_override 声明，capability=schema_health_verification）。
 > - **门禁入口**：GATE-C2（.pre-commit-config.yaml commit 阶段，--no-verify 绕不过 GitCommitGateway in-process gate）。
 
-#### 5.4.3 depgraph_schema.py路径列死代码（MEDIUM）
-
-**违反**：trae_060 §2 prohibitions第5条"迁移/重构替换使用点后遗留定义点死代码"
-**证据**：
-- [depgraph_schema.py:840](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L840) path列注释"to be cleaned up before UNIQUE upgrade"
-- 注释标注的清理任务从未执行，UNIQUE约束未加，path列仍可重复
-**病根**：根因1（静态快照——TODO注释遗留未追踪）
-**修复方向**：清理path列重复值 + 加UNIQUE约束 + 删TODO注释
-
 #### 5.4.4 diagnose_depgraph.py硬编码词表（MEDIUM）
 
 **违反**：trae_060 §2 唯一真源直接消费（禁止硬编码词表合法值）

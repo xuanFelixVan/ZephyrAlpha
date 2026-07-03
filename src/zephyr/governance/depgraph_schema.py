@@ -910,7 +910,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "DROP TABLE nodes",
             # 7. 重命名新表为nodes（SQLite会自动更新edges/arch_directory_tree的FK引用）
             "ALTER TABLE nodes_new RENAME TO nodes",
-            # 8. 重建索引（path使用非UNIQUE索引，因当前数据存在重复path值，待后续清理后再升级为UNIQUE）
+            # 8. 重建索引（path使用非UNIQUE索引，v19 migration会清理重复值并升级为UNIQUE）
             *[
                 stmt.replace("CREATE UNIQUE INDEX", "CREATE INDEX") if "idx_nodes_path" in stmt else stmt
                 for stmt in _DDL_INDEXES
@@ -1124,6 +1124,32 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             BEGIN
                 SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/SYS-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
             END""",
+        ],
+    ),
+    (
+        19,
+        "v19: 清理 nodes.path 重复值 + 升级 idx_nodes_path 为 UNIQUE（5.4.3 修复）",
+        [
+            # 1. 创建临时映射表: old_node_id -> canonical_node_id (MIN per path)
+            """CREATE TEMP TABLE IF NOT EXISTS _node_dedup_map AS
+            SELECT n1.node_id AS old_id, MIN(n2.node_id) AS new_id
+            FROM nodes n1
+            JOIN nodes n2 ON n1.path = n2.path
+            WHERE n1.node_id > n2.node_id
+            GROUP BY n1.node_id""",
+            # 2. 更新 edges.from_node_id 指向 canonical node
+            """UPDATE edges SET from_node_id = (SELECT new_id FROM _node_dedup_map WHERE old_id = edges.from_node_id)
+            WHERE from_node_id IN (SELECT old_id FROM _node_dedup_map)""",
+            # 3. 更新 edges.to_node_id 指向 canonical node
+            """UPDATE edges SET to_node_id = (SELECT new_id FROM _node_dedup_map WHERE old_id = edges.to_node_id)
+            WHERE to_node_id IN (SELECT old_id FROM _node_dedup_map)""",
+            # 4. 删除重复 nodes（保留每个 path 的 MIN node_id）
+            "DELETE FROM nodes WHERE node_id NOT IN (SELECT MIN(node_id) FROM nodes GROUP BY path)",
+            # 5. 清理临时表
+            "DROP TABLE IF EXISTS _node_dedup_map",
+            # 6. 删除旧的非UNIQUE索引，创建UNIQUE索引
+            "DROP INDEX IF EXISTS idx_nodes_path",
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path ON nodes(path)",
         ],
     ),
 ]
