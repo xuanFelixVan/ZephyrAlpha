@@ -9753,9 +9753,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### MEDIUM（14个）
 
-1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\infra\lock.py:117-118` — `MemoryLock.acquire` 在 `_locks` dict 上 check-then-act：`if lock_name not in self._locks: self._locks[lock_name] = asyncio.Lock()`。`acquire` 内部存在 await 点，特定时序下可能竞态。
+1. ~~**[MEDIUM]** `lock.py:117-118`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** asyncio单线程无await间隙原子执行。
 
-2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\infra\outbox.py:134-152` — `MemoryOutboxStore` 的 `append` 方法使用 `asyncio.Lock`，但 `fetch_pending`/`mark_published`/`mark_failed`/`count_pending` 均未加锁。形成"半保护"，`fetch_pending` 迭代列表时 `append` 并发修改可触发 `RuntimeError`。
+2. ~~**[MEDIUM]** `outbox.py:134-152`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** asyncio单线程无await间隙原子执行。
 
 3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\audit_trail\cold_start.py:35-42`（重复：`d:\ZephyrAlpha\src\zephyr\governance\audit_orchestrator\cold_start.py:34-41`）— `BootstrapCache.__new__` 使用 check-then-act 无锁。模块标注 `[MATURITY] production`，`[INVARIANTS] 100 Session冷启动共享单例缓存`。production + 100 Session 共享场景下，两个线程同时首次调用可创建两个实例。
 
@@ -9775,25 +9775,25 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 11. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:1308-1326`（ScriptRegistry.load）— `load` check-then-act on `self._loaded` 无锁。并发调用可重复加载脚本。
 
-12. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\observability\gate_cache.py:43,68,72,81,83` — `GateCache._stats` 使用 `+=` 自增无锁。`+=` 在 Python 中是"读-改-写"三步操作，GIL 不保证原子性。并发下计数丢失。
+12. **[MEDIUM]** `d:\ZephyrAlpha\scripts\governance\observability\gate_cache.py:74,78,87,89` — `GateCache._stats` 使用 `+=` 自增无锁。`+=` 在 Python 中是"读-改-写"三步操作，GIL 不保证原子性。并发下计数丢失。 **[行号漂移更新: 2026-07-04]** 原行号43,68,72,81,83→74,78,87,89。
 
-13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:171,199,347` — `_last_result` 在 `inject` 锁外设置，但 `cleanup` 在 `with self._lock` 内清除。`_lock` 存在但使用不一致。锁使用不一致比无锁更危险——给读者虚假安全感。
+13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\chaos_engine.py:171,199,347` — `_last_result` 在 `inject` 锁外设置，`cleanup` 在锁之前执行。`_lock` 存在但使用不一致。锁使用不一致比无锁更危险——给读者虚假安全感。 **[描述漂移更新: 2026-07-04]** 原描述"cleanup在锁内"有误，实际cleanup在锁之前。
 
 14. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\health_monitor.py:316-322` — `start()` 无 `if self._running` 守卫。并发 `start()` 时两个线程都可能通过 `is_alive()` 检查，各启动一个 monitor 线程。
 
-#### LOW（6个）
+#### LOW（原6个，4个NOT_NEEDED，2个STILL_VALID）
 
-1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\registry.py:87-89` — `ServiceRegistry.is_registered()` 读 `self._factories` 无锁。dict `in` 操作在 CPython 下原子，影响低。
+1. ~~**[LOW]** `registry.py:87-89`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** CPython dict `in` 操作原子。
 
-2. **[LOW]** `d:\ZephyrAlpha\src\zephyr\shared\infra\cache.py` — `MemoryCache` 的 async 方法无 `asyncio.Lock`，但方法体内无 `await` 间隙，纯内存 dict 操作。当前用法未触发。
+2. ~~**[LOW]** `cache.py`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** asyncio无await安全。
 
 3. **[LOW]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:552-558`（ScanCache.get_or_compute）— get-then-set 不持锁。并发未命中时重复计算（浪费 CPU），但不破坏缓存一致性。
 
 4. **[LOW]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:560-563`（ScanCache.hit_rate）— 读 `self._hits`/`self._misses` 无锁。仅统计值瞬时不准。
 
-5. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:237-242` — `_get_worktree_manager` lazy init 无锁。但 commit 流程已被 `_GlobalCommitLock` 串行化，实际不会并发触发。
+5. ~~**[LOW]** `git_commit_gateway.py:237-242`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 调用方已串行化。
 
-6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\annotations.py:24-26` — 模块级 `SHARED_FUNCTIONS`/`KNOWN_DUPLICATES` 在 import 时被修改，无锁。import 阶段单线程，理论竞态但实际触发概率极低。
+6. ~~**[LOW]** `annotations.py:24-26`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** import单线程。
 
 **核心模式总结**：(1)**契约违反型**：`database_manager.py` docstring承诺线程安全但`_lock`从未使用；(2)**连接池lazy初始化无锁**：`database_manager`/`database_service`/`_lsg_gateway_instance`/`finding_ingest._writer`；(3)**单例缺双重检查锁**：`EventBus`/`BootstrapCache`/`TraceCollector`/`GenesisBootstrap`；(4)**类内lock使用不一致**：`chaos_engine._lock`/`BulkheadExecutor`计数器；(5)**asyncio.Lock仅保护部分方法**：`MemoryOutboxStore`；(6)**`+=`自增无锁**：`GateCache._stats`；(7)**`start()`无`_running`守卫**：`health_monitor`/`ops.scheduler`。
 
@@ -9817,15 +9817,15 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 6. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\pipeline\pipeline_roadmap.py:601,606,611,616,621,626,631,636,641`（9处）— `CROSS_MODULE_SYNC` 列表中每个 `CrossModuleSyncEntry` 的 `file_path` 字段硬编码 `"D:\\ZephyrAlpha\\config\\blueprint_routing.yaml"` 等。**严重度理由**：作为运行时数据结构的字段值硬编码绝对路径，跨平台/跨环境失效。
 
-7. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\migrate_domain_id_hyphen_to_underscore.py:297` — `pg_dump = r"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe"`。**严重度理由**：硬编码PostgreSQL客户端工具的Windows安装路径，假定PostgreSQL 16默认安装位置。
+7. ~~**[HIGH]** `migrate_domain_id_hyphen_to_underscore.py:297`~~ — **[✓ FIXED: 2026-07-04]** 文件已归档至 `scripts/governance/_archive/one_off/`（归档豁免）。
 
-8. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\fix_broken_post_sync.py:74,75,106` — 字符串字面量硬编码 `r"python D:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py"` 和 `postgresql://localhost:5432/depgraph` 数据库连接串。**严重度理由**：命令比对字典key硬编码绝对路径命令串+数据库连接串。
+8. ~~**[HIGH]** `fix_broken_post_sync.py:74,75,106`~~ — **[✓ FIXED: 2026-07-04]** 文件已归档至 `scripts/governance/_archive/one_off/`（归档豁免）。
 
 9. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\ops_governance\environment_manager.py:48,57,65,73,81` — `db_conn="sqlite:///dev.db"`、`db_conn="postgresql://stage"` 等5套环境连接串字面量。**严重度理由**：环境配置字典硬编码数据库连接串字面量，违反"硬编码数据库连接串"明确禁令。
 
 10. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\d11_compliance\validate_commit_message.py:31,128` — 文档字符串与stderr输出中硬编码邮箱 `Co-Authored-By: Trae AI <trae@example.com>`。**严重度理由**：commit message校验器把示例邮箱写死，作为模板会污染所有AI commit。
 
-11. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\repair\concurrent_commit_test.py:104,106,109,119` — 硬编码 `env["GIT_AUTHOR_EMAIL"] = "rb@test.com"` 等多个邮箱字面量。**严重度理由**：测试脚本硬编码多个邮箱字面量作为git提交身份，重复散落4处。
+11. ~~**[HIGH]** `concurrent_commit_test.py:104,106,109,119`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 合成git身份（测试脚本专用）。
 
 #### MEDIUM（9个）
 
@@ -9853,21 +9853,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 2. **[LOW]** 注释/文档字符串中的 `localhost:5432/depgraph`（5处）：`d:\ZephyrAlpha\src\zephyr\governance\depgraph_schema.py:8,22,71` / `d:\ZephyrAlpha\scripts\governance\create_alignment_tasks.py:41,754,771,802,810` / `d:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py:1039` / `d:\ZephyrAlpha\scripts\governance\d5_architecture\syncers\sync_blueprint_code_index.py:535` / `d:\ZephyrAlpha\scripts\governance\d5_architecture\validators\validate_static_manifest_drift.py:112`。**严重度理由**：注释/打印信息中的路径字面量，不影响运行时，但对AI模仿有误导风险。
 
-3. **[LOW]** `d:\ZephyrAlpha\src\zephyr\trading\auto_runtime_core.py:342` — 注释字符串 `"ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"`。**严重度理由**：错误提示中的官方下载链接，非运行时endpoint。
+3. ~~**[LOW]** `auto_runtime_core.py:342`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 官方下载链接（错误提示）。
 
-4. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d5_architecture\checkers\check_precommit_id_uniqueness.py:79` — 注释 `# repo 声明行: "  - repo: local" 或 "  - repo: https://github.com/..."`。**严重度理由**：注释中的示例URL。
+4. ~~**[LOW]** `check_precommit_id_uniqueness.py:79`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 注释中的格式示例URL。
 
-5. **[LOW]** docstring/usage示例中的URL（5处）：`d:\ZephyrAlpha\src\zephyr\shared\api\api_client.py:149,350` / `d:\ZephyrAlpha\src\zephyr\trading\trading_contracts\portfolio\contracts\money.py:42` 与 `d:\ZephyrAlpha\src\zephyr\shared\contracts\portfolio\money.py:45` / `d:\ZephyrAlpha\src\zephyr\shared\contracts\core\timestamp.py:45` / `d:\ZephyrAlpha\src\zephyr\autonomy_core\context_assembler.py:155` 与 `d:\ZephyrAlpha\src\zephyr\autonomy_core\assembly\context_assembler.py:145`。**严重度理由**：均为docstring中的示例URL/路径。
+5. ~~**[LOW]** docstring/usage示例中的URL（5处）~~ — **[⊘ NOT_NEEDED: 2026-07-04]** docstring中的官方文档链接。
 
-6. **[LOW]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py:589,602` — 测试用例字符串中含有 `test@test.com`、`localhost:5432` 等。**严重度理由**：模型评测用例中的合成代码字符串，作为LLM评测输入数据。
+6. ~~**[LOW]** `exam_test_cases.py:589,602`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 评测数据（合成代码字符串）。
 
-7. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\architecture_governance\path_resolver.py:263,285-289` — `if __name__ == "__main__":` 自测块中 `resolver = PathResolver(r"D:\ZephyrAlpha")`。**严重度理由**：`__main__`自测块仅用于本地调试。
+7. ~~**[LOW]** `path_resolver.py:263,285-289`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** `__main__`自测块（仅本地调试）。
 
-8. **[LOW]** 安全检测器中的功能性硬编码模式（5处）：`d:\ZephyrAlpha\src\zephyr\ops\detectors\self_diagnosis_data_leak_detector.py:38` / `d:\ZephyrAlpha\src\zephyr\infrastructure\dry_run_simulator.py:112,113` / `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\layer3_coordination\a2a_security.py:106` / `d:\ZephyrAlpha\src\zephyr\security\llm_defense\llm_security\patterns\secrets.py:158,179` / `d:\ZephyrAlpha\src\zephyr\security\access_control\path_guard.py:43` / `d:\ZephyrAlpha\scripts\governance\d7_code\detect_absolute_path_hardcoding.py:54,59`。**严重度理由**：检测器/安全工具的功能性正则与敏感路径列表，必须硬编码才能识别威胁模式。
+8. ~~**[LOW]** 安全检测器功能性硬编码（5处）~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 检测器功能性正则与敏感路径列表（必须硬编码才能识别威胁）。
 
-9. **[LOW]** `d:\ZephyrAlpha\scripts\_archive\` 归档目录中的硬编码（6文件）：`d:\ZephyrAlpha\scripts\_archive\ops\fill_blueprint_ids.py:9` / `d:\ZephyrAlpha\scripts\_archive\migration\migrate_security_split.py:19` / `d:\ZephyrAlpha\scripts\_archive\governance\repair\list_source_md_files.py:6,7,10,11` / `d:\ZephyrAlpha\scripts\_archive\governance\repair\ensure_dep_cycles_view.py:9` / `d:\ZephyrAlpha\scripts\_archive\governance\dm101_blueprint_domain_mapping.py:14` / `d:\ZephyrAlpha\scripts\_archive\governance\compare_ba_copies.py:8`。**严重度理由**：已归档至`_archive/`，按项目memory豁免规则不参与活跃治理。
+9. ~~**[LOW]** `scripts/_archive/` 归档目录硬编码（6文件）~~ — **[⊘ NOT_NEEDED: 2026-07-04]** 已归档至`_archive/`，按项目memory豁免。
 
-10. **[LOW]** `d:\ZephyrAlpha\scripts\governance\meta\detect_hallucinated_packages.py:333` — `url = f"https://pypi.org/pypi/{pkg_name}/json"`。**严重度理由**：PyPI官方API端点用于包真实性校验，属外部公共API。
+10. ~~**[LOW]** `detect_hallucinated_packages.py:333`~~ — **[⊘ NOT_NEEDED: 2026-07-04]** PyPI公共API端点（包真实性校验）。
 
 **核心模式总结**：(1)**路径污染治理盲区**：Phase 2 SSoT路径治理仅覆盖 `Path(__file__).parents[N]`/`REPO_ROOT`/`DB_PATH` 三类，未覆盖字符串字面量中的绝对路径、subprocess命令串中的路径、数据字段中的路径；(2)**LLM gateway已知问题量化**：Ollama URL散落7处0处env兜底，DeepSeek base URL散落3处且`/v1`后缀不一致，llm_gateway.py自身3副本DRY违规；(3)**OTLP endpoint散落6处**，4处纯字面量；(4)**重复副本污染**：gpu_consensus_scheduler×2、deepseek_v4_chat×2、model_discovery×2、llm_gateway×3、secret_rotation_aware×2、supply_chain×4、tracing×2；(5)**环境配置字典反模式**：`environment_manager.py`用Python字典硬编码5套环境连接串；(6)**检测器自身豁免合理**：安全检测器中的硬编码属功能性模式。
 
@@ -10139,31 +10139,17 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 
 15. **[LOW]** `d:\ZephyrAlpha\src\zephyr\infrastructure\capacity_assurance\risk_mitigation.py:50` — `perform_wal_checkpoint(db_path, mode: str = "PASSIVE")`中`conn.execute(f"PRAGMA wal_checkpoint({mode})")`，与#14相同模式。**严重度理由**：同#14，`mode`形参无白名单。
 
-##### 类别4：常量/DB元数据插值（12个）
+##### 类别4：常量/DB元数据插值（原12个，全部NOT_NEEDED）
 
-16. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\base_repo.py:370`（及:392同一`cols`常量两分支） — `f"""SELECT t.{cols}, ..."""`，`cols = "task_id, title, status, priority, phase"`（:358硬编码常量）。**严重度理由**：插值为代码内常量列名，非用户输入，风险低，但常量插值仍属不规范实践。
-
-17. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py:1236` — `f"UPDATE tasks SET {set_clause} WHERE task_id = ?"`，`set_clause = ", ".join(f"{col} = ?" for col, _ in updates)`，`col`来自函数内硬编码字符串字面量。**严重度理由**：列名为硬编码常量，值已参数化，风险低。
-
-18. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\task_repo.py:3378`（及:3391同一`cols`常量两分支） — `f"""SELECT t.{cols}, ..."""`，`cols = "task_id, title, status, priority, phase"`（:3371硬编码常量）。**严重度理由**：同#16，常量列名插值。
-
-19. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\f5_shutdown_manager.py:355` — `conn.execute(f"DELETE FROM {self.STATE_TABLE}")`，`STATE_TABLE = "f5_state"`（:79类常量）。**严重度理由**：表名为类常量，非用户输入，风险低。
-
-20. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\f5_shutdown_manager.py:359` — `f"INSERT INTO {self.STATE_TABLE} (key, value, updated_at) VALUES (?, ?, ?)"`，同#19常量表名。
-
-21. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\f5_shutdown_manager.py:435` — `f"SELECT key, value FROM {self.STATE_TABLE}"`，同#19常量表名。
-
-22. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\persistence\olap_engine.py:575` — `f"SELECT * FROM {events_tbl} WHERE created_at <= ? ORDER BY created_at ASC"`，`events_tbl = "sqlite_db.events"`（:573硬编码常量）。**严重度理由**：表名为硬编码常量，值已参数化，风险低。
-
-23. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_verifier.py:196` — `conn_before.execute(f"SELECT COUNT(*) as cnt FROM {table}")`，`table`迭代自硬编码常量元组`("tasks", "gates", "events")`（:195）。**严重度理由**：表名为硬编码常量元组，非用户输入，风险低。
-
-24. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_verifier.py:197` — `conn_after.execute(f"SELECT COUNT(*) as cnt FROM {table}")`，同#23，对另一DB连接执行。
-
-25. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\database_manager.py:605` — `conn.execute(f"SELECT COUNT(*) FROM [{t['name']}]")`，`t['name']`来自`SELECT name FROM sqlite_master`（:602）查询结果回插。**严重度理由**：DB元数据（sqlite_master）回插SQL，非用户输入，风险低，但仍是不规范实践。
-
-26. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\drift_result_types.py:462` — `cursor.execute(f"PRAGMA table_info({tbl})")`，`tbl`来自`SELECT name FROM sqlite_master`（:457）查询结果回插。**严重度理由**：DB元数据回插PRAGMA，非用户输入，风险低。
-
-27. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\drift_result_types.py:490` — `cursor.execute(f"PRAGMA index_list({tbl})")`，`tbl`同#26来自sqlite_master回插。**严重度理由**：同#26，DB元数据回插PRAGMA。
+> **[⊘ NOT_NEEDED: 2026-07-04]** 原#16-#27均为硬编码常量列名/表名或sqlite_master元数据回插，非用户输入可控，修复纯为代码风格统一。涉及文件：
+> - #16 `base_repo.py:370`（常量列名 `cols`）
+> - #17 `task_repo.py:1236`（硬编码常量列名）
+> - #18 `task_repo.py:3378`（常量列名插值）
+> - #19-21 `f5_shutdown_manager.py:355,359,435`（类常量 `STATE_TABLE`）
+> - #22 `olap_engine.py:575`（硬编码常量表名）
+> - #23-24 `rollback_verifier.py:196,197`（硬编码常量元组）
+> - #25 `database_manager.py:605`（sqlite_master元数据回插）
+> - #26-27 `drift_result_types.py:462,490`（sqlite_master元数据回插PRAGMA）
 
 **核心模式总结**：(a)**dict键/构造参数作为列名/表名拼接**：database_service.py 2处INSERT列名来自dict键，registry_adapter.py 2处表名来自构造参数，均无白名单；(b)**sqlite_dumper快照路径表名+列名无校验**：双副本各4处，恢复路径（#8/#9/#12/#13）表名来自外部JSONL文件，可被篡改，风险最高；(c)**PRAGMA参数无白名单**：2处wal_checkpoint的mode参数无枚举校验；(d)**常量/DB元数据回插**：12处LOW，虽非用户输入可控但属不规范实践。
 
