@@ -1070,6 +1070,32 @@ capabilities:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: rule_four_way_alignment_gate
+    aliases:
+      - RULE-FOUR-WAY-ALIGN
+      - rule-four-way-align
+      - make_rule_four_way_alignment_gate
+      - four_way_rule_alignment_blocker
+    description: >-
+      规则四方对齐门禁 in-process gate（RULE-FOUR-WAY-ALIGN，ARCH-020 补建，2026-07-04 治本）。
+      GitCommitGateway pre-commit 阶段注册 gate（priority=76，紧跟 ARCH-REFERENCE(75) 之后）。
+      subprocess 调 check_rule_four_way_alignment.py --ci（检测逻辑 SSoT 在 checker）。
+      fail-open（脚本异常/超时放行）；fail-closed on violations（exit 1 阻断）。
+    integrity_anchors:
+      - make_rule_four_way_alignment_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: rule_four_way_alignment_checker
+    canonical_override: scripts/governance/d5_architecture/checkers/check_rule_four_way_alignment.py
+    aliases:
+      - check_rule_four_way_alignment
+      - rule_4way_alignment_checker
+      - rule_four_way_detector
+    description: >-
+      规则四方对齐检测器（ARCH-020 补建，2026-07-04 治本）。检测逻辑 SSoT 真源。
+      canonical 在 scripts/ 下，用 canonical_override 显式声明。
+
+  # --------------------------------------------------------------------------
   - capability_id: ttl_gate
     aliases:
       - TTL-METADATA
@@ -2712,6 +2738,16 @@ creation_tokens:
     token: "auto-bare-getenv-gate-20260703"
     created_by: "session-sess-20844-20260703190715"
     capability: "bare_getenv_gate"
+
+  - file: "src/zephyr/governance/commit_gates/rule_four_way_alignment_gate.py"
+    token: "auto-rule-four-way-align-gate-20260704"
+    created_by: "session-sess-11632-20260704044247"
+    capability: "rule_four_way_alignment_gate"
+
+  - file: "scripts/governance/d5_architecture/checkers/check_rule_four_way_alignment.py"
+    token: "auto-check-rule-four-way-align-20260704"
+    created_by: "session-sess-11632-20260704044247"
+    capability: "rule_four_way_alignment_checker"
 
   - file: "src/zephyr/trading/feedback_loop/security/secret_rotation.py"
     token: "auto-secret-rotation-20260703"
