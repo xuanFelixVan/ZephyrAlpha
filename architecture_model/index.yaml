@@ -1,6 +1,6 @@
 # v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
-# c_track（旧14层 l00-l13）已废弃：§2.1 裁定降级为域属性，layer_id 现为4值（L0_infrastructure/L1_foundation/L2_domain/L3_application），物理分类由 depgraph domains 表定义。
+# c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
 # 本文件由 dm200916_write_direct.py 从 depgraph (PostgreSQL) 派生，禁止手工编辑 domains 列表
 module_id: MOD-GOVERNANCE
 schema_version: '3.0.2'
@@ -19,7 +19,7 @@ governance:
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 49域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+# 49域是唯一物理分类体系（depgraph domains表），14层（L00-L13）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
@@ -30,7 +30,7 @@ partitions:
   description: >
     49域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
-    4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+    14层（L00-L13）是域的layer_id属性枚举。
 
 # === 横切关注点分区（非业务分类）===
 - id: shared
@@ -290,7 +290,7 @@ global_stats:
   b_track_implemented: 11
   b_track_skeleton: 1
   notes: >
-    49域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
+    49域唯一物理分类体系，14层是域的layer_id属性枚举。
     b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
