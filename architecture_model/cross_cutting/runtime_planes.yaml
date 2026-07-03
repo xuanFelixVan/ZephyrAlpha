@@ -18,7 +18,7 @@ partition:
   activation_note: >
     当前（2026-04-21）处于 Warm-only 阶段（T0）。
     Hot Path 未激活（T1 真实资金接入后首激活）。
-    Cold Path 部分激活（L02 回测 / L07 归因 / L11 训练）。
+    Cold Path 部分激活（D_FACTOR 因子批量回算 / D_REPORTING 归因 / D_ML_TRAIN 训练）。
 
 planes:
   hot:
@@ -404,7 +404,7 @@ cross_plane_rules:
   - rule: WARM_COLD_ASYNC_ONLY
     statement: Warm → Cold 通过 Parquet / Redis Streams 异步推送，永远非阻塞
   - rule: COLD_TO_WARM_SHADOW_REQUIRED
-    statement: Cold → Warm 模型/参数更新必须过影子验证（Champion-Challenger，L13 子模块负责）
+    statement: Cold → Warm 模型/参数更新必须过影子验证（Champion-Challenger，D_SIMULATION 子模块负责）
   - rule: NO_COLD_TO_HOT_DIRECT
     statement: 禁止 Cold → Hot 直接通信。所有 Cold 输出必须先落 Warm 再经 Warm 验证后进 Hot
   - rule: NO_HOT_SYNC_PYTHON

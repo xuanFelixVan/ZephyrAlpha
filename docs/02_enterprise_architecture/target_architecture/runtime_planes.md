@@ -3,7 +3,7 @@ module_id: VIEW-04BIS-RUNTIME-PLANES
 title: Target Architecture — Runtime Planes (Orthogonal View) / 目标架构：运行平面正交视图
 doc_type: architecture_view
 status: Active
-version: 1.0.1
+version: 1.1.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -34,7 +34,7 @@ tags:
 - jane-street
 - two-sigma
 - i1-j1
-summary: ZephyrAlpha 2.0 **第一个正交视图（Orthogonal View）**，与 TOGAF 10 视图体系平级但切片维度不同。本视图按**运行时延迟
+summary: v1.1.0：§3映射矩阵基于SSoT runtime_planes.yaml domain字段重写为53域版本（原14层矩阵废弃）+ YAML注释L0X清理。ZephyrAlpha 2.0 **第一个正交视图（Orthogonal View）**，与 TOGAF 10 视图体系平级但切片维度不同。本视图按**运行时延迟
   / 技术栈 / 可中断性 / 部署拓扑**四维把 14 层业务代码（L00-L13 + shared）与前端、治理层重新切分为三个**运行平面（Runtime
   Planes）**：Hot Path（<10ms，kernel-bypass + C++/Rust）/ Warm Path（10ms-1s，Python async）/
   Cold Path（>1s batch，Spark/Dask）。对标 Citadel Securities / Jane Street / Two Sigma
@@ -43,7 +43,7 @@ summary: ZephyrAlpha 2.0 **第一个正交视图（Orthogonal View）**，与 TO
   Policy/Factory/Runtime 三层**边界互补不重叠**：09-GOV 治"谁管什么规矩"（治理维），本视图治"什么代码何时跑在什么硬件上"（执行维）。当前
   ZephyrAlpha 处于 Warm Path only 阶段（Hot Path / Cold Path 均为未激活），本视图定义终局拓扑 + 三档激活触发器
   + 跨面通信协议 + `shared/contracts/runtime_plane_tag.py` 契约预留，为 Sim-to-Real Gap 问题和未来低延迟交易铺路，当前零代码影响。
-date: '2026-04-22'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -128,7 +128,7 @@ ttl: permanent
 **关键跨平面规则**：
 1. **Hot ⇄ Warm**：必须过 `shared/contracts/runtime_plane_tag.py` 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），**禁止直接函数调用**
 2. **Warm → Cold**：Parquet / Redis Streams 异步推送，**永远非阻塞**
-3. **Cold → Warm**：模型 / 参数更新必须过**影子验证**（Champion-Challenger，L13 子模块负责）
+3. **Cold → Warm**：模型 / 参数更新必须过**影子验证**（Champion-Challenger，D_SIMULATION 子模块负责）
 4. **禁止 Cold → Hot 直接通信**：所有 Cold 输出必须先落 Warm 再经 Warm 验证后进 Hot
 
 ### 2.4 为什么是三平面而不是两平面或四平面
@@ -143,97 +143,97 @@ ttl: permanent
 
 ---
 
-## 3. 14 层业务 × 三平面完整映射矩阵
+## 3. 53 域 × 三平面完整映射矩阵
 
-> **注（v1.0.1）**：项目已升级为 53 域架构，14 层（L00-L13）降级为域的 `layer_id` 属性。本节映射矩阵保留 14 层维度（因 SSoT `runtime_planes.yaml` 仍按 14 层组织），待 YAML 更新为 53 域后本节同步重写。
+> **v1.1.0 重写**：项目已升级为 53 域架构，14 层（L00-L13）降级为域的 `layer_id` 属性。本节映射矩阵已基于 SSoT `runtime_planes.yaml` 的 `domain` 字段重写为 53 域版本（原 14 层矩阵废弃）。
 
-### 3.1 总览表（按业务层维度）
+### 3.1 总览表（按域维度）
 
-> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture_model/cross_cutting/runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 39 模块 / Cold 24 模块 + 6 条跨面通信规则）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
+> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture_model/cross_cutting/runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 41 模块 / Cold 26 模块 + 6 条跨面通信规则，每个模块含 `domain` 字段）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
 
-| 业务层 | 子模块 | Hot 🔥 | Warm 🌡️ | Cold ❄️ | 备注 |
+| 域 | 子模块 | Hot 🔥 | Warm 🌡️ | Cold ❄️ | 备注 |
 |--------|--------|:------:|:-------:|:------:|------|
-| **shared** | `contracts/runtime_plane_tag.py` | ✅ | — | — | 枚举定义，所有平面共用契约 |
-| **shared** | `contracts/*.py`（其余） | — | ✅ | — | 跨层公共契约 |
-| **L00 Data Source** | `connectors/*.py`（默认） | — | ✅ | — | 当前默认数据接入 |
+| **D_SHARED** | `contracts/runtime_plane_tag.py` | ✅ | — | — | 枚举定义，所有平面共用契约 |
+| | `contracts/*.py`（其余） | — | ✅ | — | 跨层公共契约 |
+| **D_MKT_DATA** | `connectors/*.py`（默认） | — | ✅ | — | 当前默认数据接入 |
 | | `connectors/*_hot.py` | ⏳T3 | — | — | T3 激活后低延迟行情 |
 | | `normalizers/` | — | ✅ | — | 数据标准化 |
 | | `cache/` | — | ✅ | — | 数据缓存 |
 | | `storage/` | — | — | ✅ | 数据持久化落盘 |
 | | `quality/` | — | — | ✅ | 批量数据质量校验 |
-| **L01 Infrastructure** | `config/` | — | ✅ | — | 配置管理（跨平面共享，自身属 Warm） |
+| **D_INFRA_OPS** | `config/` | — | ✅ | — | 配置管理（跨平面共享，自身属 Warm） |
 | | `logging/` | — | ✅ | — | 日志基础设施 |
 | | `exceptions/` | — | ✅ | — | 异常框架 |
 | | `runtime/` | — | ✅ | — | 基础运行时 |
-| **L02 Alpha Factor** | `factors/`（在线增量） | — | ✅ | — | 因子在线增量计算 |
+| **D_FACTOR** | `factors/`（在线增量） | — | ✅ | — | 因子在线增量计算 |
 | | `factors/`（批量回算） | — | — | ✅ | 因子批量回算 |
 | | `evaluation/`（实时 IC） | — | ✅ | — | 实时信息系数 |
 | | `pipeline/`（全量计算） | — | — | ✅ | 因子批量全量计算 |
 | | `registry/` | — | — | ✅ | 因子注册表持久化 |
-| **L03 Signal Generation** | `signals/`（默认） | — | ✅ | — | 默认信号输出 |
+| **D_SIGLEGACY** | `signals/`（默认） | — | ✅ | — | 默认信号输出 |
 | | `signals/*_hot.py` | ⏳T3 | — | — | T3 激活后低延迟信号 |
 | | `sentiment/` | — | ✅ | — | 情绪分析（实时） |
 | | `sentiment/`（历史批量） | — | — | ✅ | 情绪历史批量分析 |
 | | `predictions/` | — | ✅ | — | AI 推理信号 |
-| **L04 Risk Management** | `limits/` | ✅T1 | — | — | pre-trade hard check（T1 激活） |
+| **D_RISK** | `limits/` | ✅T1 | — | — | pre-trade hard check（T1 激活） |
 | | `stop_loss/` | ✅T1 | — | — | 毫秒级 kill switch（T1 激活） |
 | | `monitor/` | ✅T1 | ✅ | — | Hot: real-time hard monitor / Warm: 默认监控 |
 | | `metrics/` | — | ✅ | ✅ | Warm: VaR/CVaR 计算 / Cold: 日终+月度回测 |
-| **L05 Portfolio Construction** | `optimization/` | — | ✅ | — | 组合优化 |
+| **D_PF_CORE** | `optimization/` | — | ✅ | — | 组合优化 |
 | | `rebalancing/` | — | ✅ | — | 再平衡 |
 | | `meta_router/` | — | ✅ | — | 策略元路由 |
 | | `strategic/`（决策） | — | ✅ | — | 战略决策 |
 | | `strategic/`（历史回溯） | — | — | ✅ | 战略历史分析 |
 | | `backtest/` | — | — | ✅ | 策略回测 |
 | | `performance/` | — | — | ✅ | 绩效分析 |
-| **L06 Trade Execution** | `sor/` | ✅T1 | — | — | Smart Order Routing（T1 激活） |
+| **D_EX_CORE** | `sor/` | ✅T1 | — | — | Smart Order Routing（T1 激活） |
 | | `adapters/*_hot.py` | ✅T1 | — | — | 券商直连（T1 激活） |
 | | `oms/` | — | ✅ | — | 订单状态机 |
 | | `pre_trade/` | — | ✅ | — | 交易前检查 |
 | | `adapters/`（默认） | — | ✅ | — | 默认券商适配器 |
-| **L07 Post-Trade Analytics** | `review/`（实时 TCA） | — | ✅ | — | 实时交易成本分析 |
+| **D_TRADING** | `review/`（实时 TCA） | — | ✅ | — | 实时交易成本分析 |
 | | `attribution/` | — | — | ✅ | 日终绩效归因 |
 | | `reports/` | — | — | ✅ | 月度报表生成 |
-| **L08 Human-AI Interface** | `cli/` | — | ✅ | — | 命令行接口 |
+| **D_FRONTEND** | `cli/` | — | ✅ | — | 命令行接口 |
 | | `orchestration/` | — | ✅ | — | AI 编排 |
 | | `notifications/` | — | ✅ | — | 消息通知 |
-| **L09 Research & Innovation** | `notebooks/` | — | ✅ | — | 研究笔记本（交互式） |
+| **D_SIMULATION** | `notebooks/` | — | ✅ | — | 研究笔记本（交互式） |
 | | `prototypes/` | — | ✅ | — | 原型实验 |
 | | `experiments/` | — | — | ✅ | 批量实验沙盒 |
-| **L10 Governance & Compliance** | `ai_security/security_gateway` | ✅ | — | — | AISG security_gateway（Hot-adjacent，< 50ms） |
+| **D_COMPLIANCE** | `ai_security/security_gateway` | ✅ | — | — | AISG security_gateway（Hot-adjacent，< 50ms） |
 | | `ai_security/`（其余 5 模块） | — | ✅ | — | AISG 其余模块 |
 | | `validators/` | — | ✅ | — | 合规校验器 |
 | | `rules/` | — | ✅ | — | 规则引擎 |
 | | `policy_engine/` | — | ✅ | — | 策略执行引擎 |
 | | `audit_trail/` | — | — | ✅ | 审计追踪归档 |
 | | `policies/`（SBOM 扫描） | — | — | ✅ | 供应链 SBOM 扫描 |
-| **L11 ML Platform** | `serving/`（默认 Python） | — | ✅ | — | 模型推理默认（Warm） |
+| **D_ML_TRAIN** | `serving/`（默认 Python） | — | ✅ | — | 模型推理默认（Warm） |
 | | `serving/*_hot.py` | ⏳T3 | — | — | T3 激活后低延迟推理 |
 | | `model_registry/`（读） | — | ✅ | — | 模型注册表只读 |
 | | `model_registry/`（写） | — | — | ✅ | 模型注册表写入 |
 | | `training/` | — | — | ✅ | 模型训练 |
 | | `evaluation/` | — | — | ✅ | 模型评估 |
 | | `scout/` | — | — | ✅ | Scout Agent 批量任务 |
-| **L12 System Telemetry** | `metrics/`（标准采集） | — | ✅ | — | 指标采集 |
+| **D_OPS** | `metrics/`（标准采集） | — | ✅ | — | 指标采集 |
 | | `metrics/*_hot.py` | ⏳T3 | — | — | T3 激活后低延迟指标 |
 | | `logs/` | — | ✅ | — | 日志管道 |
 | | `traces/` | — | ✅ | — | 分布式追踪 |
 | | `traces/`（长期归档） | — | — | ✅ | 追踪数据归档 |
 | | `ai_behavior/` | — | ✅ | — | AI 行为监控 |
 | | `ai_behavior/`（回溯分析） | — | — | ✅ | AI 行为历史回溯 |
-| **L13 Experiment Pipeline** | `shadow/` | — | ✅ | — | 影子交易运行时 |
+| **D_INTELLIGENCE** | `shadow/` | — | ✅ | — | 影子交易运行时 |
 | | `champion_challenger/` | — | ✅ | — | 冠军挑战者评分 |
 | | `promotion_gate/` | — | ✅ | — | 晋级门禁 |
 | | `ab_testing/` | — | — | ✅ | A/B 测试结果聚合 |
-| **Governance（09-GOV）** | `scripts/governance/`（Factory） | — | — | ✅ | 治理 Factory 层（构建期批调度） |
+| **D_GOVERNANCE** | `scripts/governance/`（Factory） | — | — | ✅ | 治理 Factory 层（构建期批调度） |
 | | Scout Agent（D-02 cron） | — | — | ✅ | D-02 Scout Agent 每日抓取 |
-| **Frontend（10-FE）** | `apps/reports-center/`（SSR） | — | — | ✅ | 前端 SSR 报表 |
+| **D_FRONTEND**（续） | `apps/reports-center/`（SSR） | — | — | ✅ | 前端 SSR 报表 |
 | | `tools/codegen/` | — | — | ✅ | 构建期代码生成 |
 | | 其余前端子层 | — | ✅ | — | 默认 Warm（React SPA + WebSocket） |
 
 > **图例**：✅ = 当前归属 | ✅T1 = T1 触发器激活后归属 | ⏳T3 = T3 触发器激活后新增 | — = 不归属此平面
 
-**统计**：Hot Path 7 模块（+ T3 扩展 4 模块）| Warm Path 39 模块 | Cold Path 24 模块 = **共 70 个子模块归属条目**，覆盖全部 14 层 + shared + Governance + Frontend。
+**统计**：Hot Path 7 模块（+ T3 扩展 4 模块）| Warm Path 41 模块 | Cold Path 26 模块 = **共 74 个子模块归属条目**，覆盖 16 个域（D_SHARED / D_MKT_DATA / D_INFRA_OPS / D_FACTOR / D_SIGLEGACY / D_RISK / D_PF_CORE / D_EX_CORE / D_TRADING / D_FRONTEND / D_SIMULATION / D_COMPLIANCE / D_ML_TRAIN / D_OPS / D_INTELLIGENCE / D_GOVERNANCE）。
 
 ### 3.2 总览表（按运行平面维度 — 反查视图）
 
@@ -241,25 +241,25 @@ ttl: permanent
 
 **🔥 Hot Path（7 模块，当前未激活，T1 首次激活）**
 
-| 层 | 子模块 | 激活时机 | 说明 |
+| 域 | 子模块 | 激活时机 | 说明 |
 |----|--------|---------|------|
-| shared | `contracts/runtime_plane_tag.py` | 当前 | 枚举定义，所有平面共用 |
-| L04 | `limits/` | T1 | pre-trade hard check |
-| L04 | `stop_loss/` | T1 | 毫秒级 kill switch |
-| L04 | `monitor/` | T1 | real-time hard monitor |
-| L06 | `sor/` | T1 | Smart Order Routing |
-| L06 | `adapters/*_hot.py` | T1 | 券商直连 |
-| L10 | `ai_security/security_gateway` | T1 | AISG 安全网关（Hot-adjacent，< 50ms） |
+| D_SHARED | `contracts/runtime_plane_tag.py` | 当前 | 枚举定义，所有平面共用 |
+| D_RISK | `limits/` | T1 | pre-trade hard check |
+| D_RISK | `stop_loss/` | T1 | 毫秒级 kill switch |
+| D_RISK | `monitor/` | T1 | real-time hard monitor |
+| D_EX_CORE | `sor/` | T1 | Smart Order Routing |
+| D_EX_CORE | `adapters/*_hot.py` | T1 | 券商直连 |
+| D_COMPLIANCE | `ai_security/security_gateway` | T1 | AISG 安全网关（Hot-adjacent，< 50ms） |
 
-T3 扩展（Hot Path 扩展触发后新增）：`l00-connectors-hot` / `l03-signals-hot` / `l11-serving-hot` / `l12-metrics-hot`
+T3 扩展（Hot Path 扩展触发后新增）：`l00-connectors-hot` / `l03-signals-hot` / `l11-serving-hot` / `l12-metrics-hot`（注：id 保留 L0X 前缀为 YAML 标识符，对应域 D_MKT_DATA / D_SIGLEGACY / D_ML_TRAIN / D_OPS）
 
-**🌡️ Warm Path（39 模块，当前全量激活）**
+**🌡️ Warm Path（41 模块，当前全量激活）**
 
-覆盖层：L00（3）/ L01（4）/ L02（2）/ L03（3）/ L04（2）/ L05（4）/ L06（3）/ L07（1）/ L08（3）/ L09（2）/ L10（4）/ L11（2）/ L12（4）/ L13（3）/ shared（1）+ Frontend 默认
+覆盖域：D_SHARED（1）/ D_MKT_DATA（3）/ D_INFRA_OPS（4）/ D_FACTOR（2）/ D_SIGLEGACY（3）/ D_RISK（2）/ D_PF_CORE（4）/ D_EX_CORE（3）/ D_TRADING（1）/ D_FRONTEND（3）/ D_SIMULATION（2）/ D_COMPLIANCE（4）/ D_ML_TRAIN（2）/ D_OPS（4）/ D_INTELLIGENCE（3）
 
-**❄️ Cold Path（24 模块，当前部分激活）**
+**❄️ Cold Path（26 模块，当前部分激活）**
 
-覆盖层：L00（2）/ L02（3）/ L03（1）/ L04（1）/ L05（3）/ L07（2）/ L09（1）/ L10（2）/ L11（4）/ L12（2）/ L13（1）/ Governance（2）/ Frontend（2）
+覆盖域：D_MKT_DATA（2）/ D_FACTOR（3）/ D_SIGLEGACY（1）/ D_RISK（1）/ D_PF_CORE（3）/ D_TRADING（2）/ D_SIMULATION（1）/ D_COMPLIANCE（2）/ D_ML_TRAIN（4）/ D_OPS（2）/ D_INTELLIGENCE（1）/ D_GOVERNANCE（2）/ D_FRONTEND（2）
 
 ### 3.3 三平面归属判定流程（AI / 开发者自助）
 
@@ -307,7 +307,7 @@ T3 扩展（Hot Path 扩展触发后新增）：`l00-connectors-hot` / `l03-sign
 | **Hot ⇄ Warm** | Aeron IPC / ZeroMQ PUB-SUB / Shared Memory + polling | < 500 µs | At-least-once + idempotent consumer | Aeron + Python agrona binding |
 | **Warm ⇄ Warm** | Redis Streams / Kafka / FastAPI HTTP + WebSocket | 10-100 ms | At-least-once + dedup | Redis Streams / Kafka + aiokafka |
 | **Warm ⇄ Cold** | Parquet columnar files on object storage / Redis Streams with long TTL | 秒级（异步）| At-least-once + re-read | S3 / MinIO + pyarrow |
-| **Cold → Warm**（模型 / 参数更新回灌）| Model Registry pull + Champion-Challenger shadow validation | 小时级 | Exactly-once（version-pinned）| MLflow / model_registry/ + L13 shadow |
+| **Cold → Warm**（模型 / 参数更新回灌）| Model Registry pull + Champion-Challenger shadow validation | 小时级 | Exactly-once（version-pinned）| MLflow / model_registry/ + D_SIMULATION shadow |
 | **Cold ⇄ Cold** | Parquet + Airflow DAG | 分钟-小时 | Checkpointed retries | Airflow / Prefect |
 
 ### 4.2 禁止的跨平面通信
@@ -389,7 +389,7 @@ class RuntimePlane(Enum):
 
 ### 5.3 与 04-TA 技术架构的关系
 
-04-TA § 定义**全局技术基线**（Python >=3.11，见 `pyproject.toml` / Redis / PostgreSQL / Parquet 等），本视图 §5 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：L04 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**4bis 不替代 04-TA，是补充正交切面**。
+04-TA § 定义**全局技术基线**（Python >=3.11，见 `pyproject.toml` / Redis / PostgreSQL / Parquet 等），本视图 §5 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：D_RISK 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**4bis 不替代 04-TA，是补充正交切面**。
 
 ### 5.4 预留：Ultra-Hot 子档（未激活）
 
@@ -404,18 +404,18 @@ class RuntimePlane(Enum):
 ### 6.1 当前基线状态
 
 **ZephyrAlpha 当前阶段（2026-04-19）**：
-- 🟢 **Warm Path 100% 激活**（所有 14 层业务代码默认跑在 Warm）
+- 🟢 **Warm Path 100% 激活**（所有 53 域业务代码默认跑在 Warm）
 - 🔴 **Hot Path 未激活**（无真实行情 / 无真实委托）
-- 🔴 **Cold Path 部分激活**（L02 回测 / L07 归因 / L11 训练，当前 Sprint 9 前小规模）
+- 🔴 **Cold Path 部分激活**（D_FACTOR 因子批量回算 / D_TRADING 归因 / D_ML_TRAIN 训练，当前 Sprint 9 前小规模）
 
 ### 6.2 激活触发器全表
 
 | 触发器 | 档位 | 激活平面 | 激活的子模块 | 激活代价 |
 |---|---|---|---|---|
-| **T0 当前** | P0 | Warm only | 14 层业务 default + 部分 Cold (L02/L07/L11) | **已激活** |
-| **T1 真实资金接入** | P1 | Hot 首次激活 | L04 `limits/stop_loss/monitor` + L06 `sor/adapters_hot` + L10 `ai_security/security_gateway` | 物理机 × 2 + Aeron cluster + C++/Rust 团队 |
-| **T2 Cold Path 全量激活** | P2 | Cold 扩展 | L02 `pipeline` 全量 + L05 `backtest` 长周期 + L11 `training` GPU | Spark cluster 或 Dask cluster |
-| **T3 Hot Path 扩展** | P2 | Hot 扩展 | + L00 `connectors_hot` + L03 `signals_hot` + L11 `serving_hot` | 增加物理机 + 低延迟行情订阅 |
+| **T0 当前** | P0 | Warm only | 53 域业务 default + 部分 Cold (D_FACTOR/D_TRADING/D_ML_TRAIN) | **已激活** |
+| **T1 真实资金接入** | P1 | Hot 首次激活 | D_RISK `limits/stop_loss/monitor` + D_EX_CORE `sor/adapters_hot` + D_COMPLIANCE `ai_security/security_gateway` | 物理机 × 2 + Aeron cluster + C++/Rust 团队 |
+| **T2 Cold Path 全量激活** | P2 | Cold 扩展 | D_FACTOR `pipeline` 全量 + D_PF_CORE `backtest` 长周期 + D_ML_TRAIN `training` GPU | Spark cluster 或 Dask cluster |
+| **T3 Hot Path 扩展** | P2 | Hot 扩展 | + D_MKT_DATA `connectors_hot` + D_SIGLEGACY `signals_hot` + D_ML_TRAIN `serving_hot` | 增加物理机 + 低延迟行情订阅 |
 | **T4 Ultra-Hot 激活** | P3 | Ultra-Hot | FPGA 做市策略专用子模块 | FPGA 硬件 + 专职工程师 |
 
 ### 6.3 激活的"只做不做"清单
@@ -458,8 +458,8 @@ class RuntimePlane(Enum):
 当需要联合描述"某代码的治理层 + 运行平面"时，使用**双标签语法**：
 
 ```
-L04.limits.hard_cut.py  →  [GOV:Runtime] × [Plane:Hot]
-L02.pipeline.batch.py   →  [GOV:Runtime] × [Plane:Cold]
+d_risk.limits.hard_cut.py  →  [GOV:Runtime] × [Plane:Hot]
+d_factor.pipeline.batch.py   →  [GOV:Runtime] × [Plane:Cold]
 scripts/governance/aisg/compile_desensitize_rules.py  →  [GOV:Factory] × [Plane:Cold]
 docs/01_policies_and_standards/ai-security-gateway-policy.md  →  [GOV:Policy] × [Plane:—]
 ```
@@ -506,7 +506,7 @@ docs/01_policies_and_standards/ai-security-gateway-policy.md  →  [GOV:Policy] 
 
 **机制二：Champion-Challenger Shadow Validation**
 
-L13 `experiment_pipeline/shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Trading**（Warm Path 并行运行新旧模型，无真实资金）≥ N 天后再晋级到 Hot Path。
+D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Trading**（Warm Path 并行运行新旧模型，无真实资金）≥ N 天后再晋级到 Hot Path。
 
 **机制三：三平面共享 `risk/`**
 
@@ -514,7 +514,7 @@ L13 `experiment_pipeline/shadow/` 强制所有 Cold → Warm 模型更新先跑 
 
 ### 8.3 当前缺口（延后处理）
 
-- 📋 **撮合模型 sim-to-real 对账器**（对比 L05 `backtest/` 撮合与 L06 `sor/` 实际成交）——Sprint 12+
+- 📋 **撮合模型 sim-to-real 对账器**（对比 D_PF_CORE `backtest/` 撮合与 D_EX_CORE `sor/` 实际成交）——Sprint 12+
 - 📋 **延迟注入器**（Cold 回测时注入 P95 50ms 延迟模拟 Warm 实盘）——Sprint 12+
 - 📋 **Adversarial selection 模型**（回测撮合模型引入 queue position）——T1 后 Sprint 14+
 
