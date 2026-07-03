@@ -2939,6 +2939,10 @@ creation_tokens:
     capability: "backtest_engine_core"
 
   # --- MiniQMT实盘+Tick回测+5组件仪表盘 施工（2026-07-04，session-sess-17516）---
+<<<<<<< HEAD
+=======
+  # 11个新模块 + 4个已有模块的新增token（matching_logic/tick_replay/event_driven_engine/miniqmt_broker/5前端组件/miniqmt_provider）
+>>>>>>> session/sess-17516-20260704044314
   - file: "src/zephyr/backtest/core/matching_logic.py"
     token: "auto-matching-logic-20260704"
     created_by: "session-sess-17516-20260704044314"
@@ -2979,6 +2983,10 @@ creation_tokens:
     token: "auto-frontend-trade-panel-20260704"
     created_by: "session-sess-17516-20260704044314"
     capability: "dashboard_frontend"
+<<<<<<< HEAD
+=======
+  # 5个测试脚本（test_exempt_checker capability，对标 capability_overlap_gate 设计）
+>>>>>>> session/sess-17516-20260704044314
   - file: "scripts/tests/test_matching_engine_v1_1_0.py"
     token: "auto-test-matching-engine-20260704"
     created_by: "session-sess-17516-20260704044314"
