@@ -20,7 +20,7 @@ generation: 2
 functional_domain: analytics
 parent_module: ""
 summary: "盘后分析层。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase C实现。"
-tags: [post-trade-analytics, l07, c-track, blocked-by-infrastructure, do-not-implement]
+tags: [post-trade-analytics, l07, c-track]
 priority: P1
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -46,14 +46,11 @@ codification_at: "2026-05-15"
 > module_id: MOD-L07-001 | version: 2.1.0 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: not_started
 
-# ⛔ Post Trade Analytics Core 蓝图 — 盘后分析层
+# ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
 
-> **⛔ 业务层已开放，可施工**
-> C轨业务层当前处于 `not_started` 状态。开工触发条件（同 MOD-MASTER_BLUEPRINT §0）：
-> (a) MOD-MASTER_BLUEPRINT 的 construction_progress >= implementation_phase；
-> (b) Gate Engine 覆盖了本层相关的业务检查类型；
-> (c) 至少一个 CT-* 契约从规划到部分实现，打通了本层的集成通路。
-> 在此条件满足前，本蓝图仅供 AI 阅读以了解架构意图，**严禁生成业务代码或执行施工步骤**。
+> **✅ 业务层已开放，可施工**
+> C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
+> 当前 construction_progress = not_started，可开始业务代码实现。
 
 ## 概述
 
@@ -128,7 +125,7 @@ codification_at: "2026-05-15"
 | 价格字段必须使用 Decimal 类型 | 金融精度要求，禁止 float |
 | TCA 计算依赖 L06 Fill 数据 | Fill 不可用时 TCA 无法执行 |
 | 归因计算依赖 L06 PositionSnapshot | PositionSnapshot 不可用时归因返回 0 |
-| C轨 not_started | 骨架代码可 import，但业务逻辑未填充 |
+| C轨已解除 | 骨架代码可 import，但业务逻辑未填充 |
 
 ### 1.5 利益相关者映射
 
@@ -461,7 +458,7 @@ class PerformanceAttributionReport:
 
 ## §16 施工指引
 
-> ⛔ **C轨 not_started——以下施工步骤在 C轨开放前禁止执行。**
+> ✅ **C轨已解除——以下施工步骤可执行。**
 
 ### ⚠️ AI 施工前检查清单
 
@@ -470,7 +467,7 @@ class PerformanceAttributionReport:
 | 1 | 已读取本蓝图全部内容（概述 + §1-§10 架构 + §0 对齐 + §16 施工指引） | 逐节确认 | ☐ |
 | 2 | 已读取必备链接中所有真源文件 | 逐个确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 4 | C轨 blocked 状态已解除 | MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase | ☐ |
+| 4 | C轨已解除 | MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase | ☐ |
 
 ### 16.1 施工策略
 
@@ -489,7 +486,7 @@ class PerformanceAttributionReport:
 | 2 | AttributionEngineBase 定义 | hard | 已实现 | ☐ |
 | 3 | CTR-005 Fill 契约 | hard | 部分实现 | ☐ |
 | 4 | CTR-006 PositionSnapshot 契约 | hard | 部分实现 | ☐ |
-| 5 | C轨 blocked 状态解除 | hard | 未满足 | ☐ |
+| 5 | C轨已解除解除 | hard | 未满足 | ☐ |
 
 ### 16.3 实施步骤
 
@@ -670,7 +667,7 @@ class PerformanceAttributionReport:
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
 | 1 | DefaultAttributionEngine 三因子全返回 0 | 高 | Brinson 算法未实现 | Phase C 实现 | §5.1 #5 | 待解决 |
-| 2 | 测试目录不存在 | 高 | C轨 blocked | C轨开放后创建 | §9 | 待解决 |
+| 2 | 测试目录不存在 | 高 | C轨已解除 | 可创建 | §9 | 待解决 |
 | 3 | analyze() 接口与蓝图 v2.0.0 描述不一致 | 中 | v2.0.0 写 list 参数，代码用单参数 | v2.1.0 已修正蓝图与代码对齐 | §4.1 | 已解决 |
 | 4 | §4.2 数据模型与代码实际不一致 | 高 | v2.0.0 用 Pydantic BaseModel 且字段不匹配 | v2.1.0 已修正为 @dataclass(frozen=True) + 与代码字段对齐 | §4.2 | 已解决 |
 

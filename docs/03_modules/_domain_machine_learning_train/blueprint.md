@@ -42,7 +42,7 @@ runtime_plane: warm
 ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
 ---
 
-> ⛔ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，不得启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
+> ✅ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，可启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
 
 > module_id: MOD-L11-001 | version: 2.1.0 | status: active | domain: ml_train
 > actual_disk_path: src/zephyr/ml_train/ | generation: 2 | construction_progress: partially_implemented
@@ -120,7 +120,7 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 
 | 约束 | 影响 |
 |------|------|
-| 可施工 | 不得启动新施工，仅维护现有骨架 |
+| 可施工 | 可启动新施工 |
 | Windows 单机部署 | 无分布式协调需求 |
 | Python 3.12+ | asyncio + Pydantic V2 |
 
@@ -398,7 +398,7 @@ class ModelMetadata:
 | 1 | 依赖图自动生成 | 否 | C轨占位，子模块未实现 | — | — | — | — | — |
 | 2 | 依赖对齐自动验证 | 是 | 防漂移 | CI门禁 | validate_path_alignment.py | 无 | CI门禁 | PR提交时 |
 | 3 | 临时时态内容自动清理 | 不适用 | 无临时时态内容 | — | — | — | — | — |
-| 4 | 施工步骤完成度自动检测 | 否 | C轨占位，禁止施工 | — | — | — | — | — |
+| 4 | 施工步骤完成度自动检测 | 否 | C轨已解除，可施工 | — | — | — | — | — |
 
 ---
 
@@ -454,14 +454,14 @@ class ModelMetadata:
 
 ## §16 施工指引
 
-> ⛔ **业务层已开放，可施工**。以下施工指引仅为未来施工准备，当前不得执行。
+> ✅ **业务层已开放，可施工**。以下施工指引可执行。
 
 ### ⚠️ AI 施工前检查清单
 
 | # | 检查项 | 确认方式 | 状态 |
 |---|--------|---------|:----:|
 | 1 | 已读取本蓝图全部内容 | 逐节确认 | ☐ |
-| 2 | 已确认C轨占位状态——当前禁止施工 | 检查概述段标注 | ☐ |
+| 2 | C轨占位已解除 | 确认✅标记 | ☐ |
 | 3 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
 | 4 | PS-STD-001 编号规则已理解 | 能回答"GOV-SEC-001是什么" | ☐ |
 | 5 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
@@ -486,7 +486,7 @@ class ModelMetadata:
 
 ### 16.3 实施步骤
 
-> ⛔ 以下步骤在 C轨占位解除后方可执行。
+> ✅ 以下步骤可执行（C轨占位已解除）。
 
 #### 步骤 1：完善DefaultInferenceEngine
 
@@ -552,7 +552,7 @@ class ModelMetadata:
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
 | 1 | 命令 | `python -m pytest tests/` | 单元测试 | — | 9 passed |
-| 2 | 配置 | `l11_ml_platform.yaml` → `status` | 模块状态 | implemented/blocked | C轨占位=blocked |
+| 2 | 配置 | `l11_ml_platform.yaml` → `status` | 模块状态 | implemented/active | C轨已解除[ARCH-045 P0]，可施工 |
 
 ### 16.10 故障与操作手册
 

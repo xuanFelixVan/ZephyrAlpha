@@ -551,7 +551,7 @@ class ExperimentMetric:
 | 2 | ScoutAgentBase 定义 | 必须 | ✅ 已实现 | ✅ |
 | 3 | L11 InferenceEngineBase | 必须 | ⚠️ 部分实现 | ☐ |
 | 4 | INF-012 Database | 可选 | ⚠️ 部分实现 | ☐ |
-| 5 | ⛔ ARB-11 开工条件 | 必须 | ❌ T2 blocked | ❌ |
+| 5 | ✅ ARB-11 开工条件 | 必须 | ✅ 已解除 | ✅ |
 
 ### 16.3 实施步骤
 

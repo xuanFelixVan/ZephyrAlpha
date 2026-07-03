@@ -19,7 +19,7 @@ last_verified: "2026-05-15"
 generation: 2
 functional_domain: interface
 summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现。默认实现待施工。"
-tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, blocked-by-infrastructure, do-not-implement]
+tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval]
 priority: P1
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -41,17 +41,12 @@ references:
     why: "架构层YAML真源"
 codification_level: L1
 codification_at: "2026-05-15"
-ai_read_only_hint: DO_NOT_IMPLEMENT
 ---
 
-> ⛔ **C轨业务层已开放，可施工**
+> ✅ **C轨业务层已开放，可施工**
 >
-> 本蓝图所属的C轨业务层当前处于 `not_started` 状态。
-> 开工触发条件（同 MOD-MASTER_BLUEPRINT §零）：
-> (a) MOD-MASTER_BLUEPRINT 的 construction_progress >= implementation_phase；
-> (b) Gate Engine 覆盖了本层相关的业务检查类型；
-> (c) 至少一个 CT-* 契约从规划到部分实现，打通了本层的集成通路。
-> 在此条件满足前，本蓝图仅供 AI 阅读以了解架构意图，**严禁生成业务代码或执行施工步骤**。
+> C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
+> 当前 construction_progress = not_started，可开始业务代码实现。
 
 > module_id: MOD-L08-001 | version: 2.1.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: not_started
@@ -139,7 +134,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | Streamlit 为可选依赖 | import 失败时降级为 CLI 输出 |
 | Dashboard 组件独立可渲染 | 每个组件 fetch+render 分离 |
 | OLAPEngine 可能不可用 | 门禁统计/OLAP 趋势组件返回空 dataclass |
-| C轨 not_started | 业务代码禁止施工，仅B轨集成代码可运行 |
+| C轨已解除 | 业务代码可施工 |
 
 ### 1.5 利益相关者映射
 
@@ -155,7 +150,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 |------|--------|--------|------|:------:|
 | 通知渠道 | 0 实现 | 3 渠道 | 无 DefaultNotificationManager | P1 |
 | 审批流程 | 0 实现 | 5 流程 | 无 DefaultApprovalGateway | P1 |
-| C轨集成 | blocked | active | B轨容量升级未完成 | P0 |
+| C轨集成 | active | active | B轨容量升级未完成（C轨占位已解除[ARCH-045 P0]） | P0 |
 
 ### 1.7 典型场景
 
@@ -325,7 +320,7 @@ class FitnessDashboardData(BaseModel):
 | 3 | ApprovalGatewayBase 为 OCP 扩展点 | 新审批流程只加不改 |
 | 4 | Dashboard 组件独立可渲染 | fetch+render 分离 |
 | 5 | Streamlit 为可选依赖 | import 失败时降级为 CLI |
-| 6 | C轨 not_started | 禁止施工，仅可阅读 |
+| 6 | C轨已解除 | 可施工 |
 
 ### 5.2 容量估算
 
@@ -445,7 +440,7 @@ class FitnessDashboardData(BaseModel):
 | 1 | 依赖图自动生成 | 否 | 模块简单 | — | — | — | — | — |
 | 2 | 依赖对齐自动验证 | 是 | C轨DEP注册盲区 | CI门禁 | validate_path_alignment.py | C轨未注册 | CI门禁 | PR提交时 |
 | 3 | 临时时态内容自动清理 | 不适用 | — | — | — | — | — | — |
-| 4 | 施工步骤完成度自动检测 | 是 | C轨开放后需验证 | pytest+ruff | pytest | C轨blocked | CI pipeline | 代码提交时 |
+| 4 | 施工步骤完成度自动检测 | 是 | C轨开放后需验证 | pytest+ruff | pytest | C轨已解除 | CI pipeline | 代码提交时 |
 
 ---
 
@@ -482,7 +477,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 not_started | C轨禁止施工 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 not_started | C轨已解除 |
 | 2 | 架构层 YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l08_human_ai_interface.yaml` | module id 统一为 hmi_core (ARB-21) | 命名统一 |
 
 ---
@@ -495,7 +490,7 @@ class FitnessDashboardData(BaseModel):
 | 2 | YAML module id 不一致 | 低 | 发现困难 | ARB-21 统一为 hmi_core | 风险 |
 | 3 | OLAPEngine 不可用 | 中 | 门禁统计/OLAP 趋势为空 | 组件返回空 dataclass | 风险 |
 | 4 | KbRepo 不可用 | 中 | 知识库概览为空 | 组件返回空 dataclass | 风险 |
-| 5 | C轨未开放导致蓝图与代码不同步 | 中 | 蓝图标注blocked但代码已存在 | 蓝图明确标注已实现代码范围 | 风险 |
+| 5 | C轨已开放[ARCH-045 P0]，蓝图与代码可同步 | 低 | 历史遗留蓝图标注与代码不同步 | 蓝图明确标注已实现代码范围 | 风险 |
 | 6 | 新渠道需实现对应 Base 类 | — | 中 | OCP 扩展点文档 + 示例 | 负面后果 |
 | 7 | 依赖 Streamlit 运行时 | — | 中 | 可选依赖 + CLI 降级 | 负面后果 |
 
@@ -503,8 +498,8 @@ class FitnessDashboardData(BaseModel):
 
 ## §16 施工指引
 
-> ⛔ **C轨业务层禁止施工**——以下施工步骤仅在 C轨开放后可执行。
-> 开工触发条件见蓝图开头禁止施工声明。
+> ✅ **C轨业务层可施工**——以下施工步骤仅在 C轨开放后可执行。
+> 开工条件已满足，可施工。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -534,7 +529,7 @@ class FitnessDashboardData(BaseModel):
 | 3 | ApprovalGatewayBase 定义 | hard | 已实现 | ✅ |
 | 4 | TaskRepository | hard | 已实现 | ✅ |
 | 5 | FitnessFunctionFramework | hard | 已实现 | ✅ |
-| 6 | C轨开放施工 | hard | blocked | ❌ |
+| 6 | C轨开放施工 | hard | ✅ active | ✅ |
 
 ### 16.3 实施步骤
 
@@ -678,7 +673,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-L08-01 | C轨占位策略 | A: 完整蓝图 / B: 占位蓝图 | B | ARB-11裁定C轨blocked | 2026-05-05 |
+| 1 | D-L08-01 | C轨占位策略 | A: 完整蓝图 / B: 占位蓝图 | B | ARB-11裁定C轨已解除 | 2026-05-05 |
 | 2 | D-L08-02 | Streamlit 可选依赖 | A: 必选 / B: 可选+CLI降级 | B | 1人运维约束(ARB-3) | 2026-05-05 |
 | 3 | D-L08-03 | OCP 扩展点设计 | A: 具体实现 / B: 抽象基类+注册表 | B | 开闭原则+多渠道扩展 | 2026-05-05 |
 | 4 | D-L08-04 | Notification/Approval 使用 dataclass | A: Pydantic BaseModel / B: dataclass(frozen=True) | B | 历史遗留；新模型MUST用Pydantic(KBG-0040) | 2026-05-05 |
@@ -692,7 +687,7 @@ class FitnessDashboardData(BaseModel):
 |------|---------|-----------|------|
 | OCP 扩展点 | 开闭原则扩展点——Base 抽象类，新类型继承扩展，不修改已有代码 | 插件 | 插件可独立加载；OCP扩展点需继承Base |
 | C轨 | C-Track，业务价值线（L00-L13） | B轨 | B轨=基础设施治理线；C轨=业务交易线 |
-| partially_implemented | 因基础设施未就绪而禁止施工的状态 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
+| partially_implemented | 因基础设施未就绪而可施工的状态 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
 
 ---
 
@@ -732,7 +727,7 @@ class FitnessDashboardData(BaseModel):
 | 核心架构 | stable | 高 | C轨开放+Default实现完成 | OCP扩展点设计稳定 |
 | 接口契约 | stable | 高 | Default实现验证通过 | Base类接口与代码对齐 |
 | 数据模型 | evolving | 中 | 迁移dataclass→Pydantic | 历史遗留dataclass |
-| 施工步骤 | evolving | 中 | C轨开放 | blocked状态 |
+| 施工步骤 | evolving | 中 | C轨开放 | active状态（C轨占位已解除[ARCH-045 P0]） |
 
 ---
 

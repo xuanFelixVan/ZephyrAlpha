@@ -492,7 +492,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
   │     ├── MOD-INF-001~028 基础设施系统 (29个,详见§1.3)
   │     ├── MOD-INF-013 (MCP Servers, 8 Server + Gateway, stdio协议)
   │     └── MOD-KB-001 知识库 (95%完整)
-  └── L00-L13 业务层 (14层, 12蓝图已创建+4实现+12blocked)
+  └── L00-L13 业务层 (14层, 12蓝图已创建+4实现，C轨占位已解除[ARCH-045 P0]，可施工)
 ```
 
 ### 0.2 AI Agent 分派表 (88域)
@@ -632,20 +632,20 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 层 | 名称 | 蓝图ID | 代码状态 | 说明 |
 |:--|------|------|:--:|------|
-| L00 | Data Source | MOD-L00-001 | skeleton | 外部数据摄取 — 蓝图已创建,blocked |
+| L00 | Data Source | MOD-L00-001 | skeleton | 外部数据摄取 — 蓝图已创建,可施工 |
 | L01 | Infrastructure | — | implemented | B轨基础设施层 — 已合并到B-Track |
-| L02 | Alpha Factor | MOD-L02-001 | implemented | 因子计算引擎 — 蓝图已创建,blocked |
-| L03 | Signal Generation | MOD-L03-001 | skeleton | 信号融合打分 — 蓝图已创建,blocked |
-| L04 | Risk Management | MOD-L04-001 | implemented | 风控止损 — 蓝图已创建,blocked |
-| L05 | Portfolio Construction | MOD-L05-001 | skeleton | 仓位分配 — 蓝图已创建,blocked |
-| L06 | Trade Execution | MOD-L06-001 | skeleton | 订单路由 — 蓝图已创建,blocked |
-| L07 | Post-Trade Analytics | MOD-L07-001 | skeleton | PnL归因 — 蓝图已创建,blocked |
-| L08 | Human-AI Interface | MOD-L08-001 | implemented | Dashboard — 蓝图已创建,blocked |
-| L09 | Research & Innovation | MOD-L09-001 | skeleton | 研究创新 — 蓝图已创建,blocked（回测已于 2026-07-02 独立为 D_BACKTEST/MOD-BT-001） |
-| L10 | Compliance | MOD-L10-001 | skeleton | 合规校验 — 蓝图已创建,blocked |
-| L11 | ML Platform | MOD-L11-001 | skeleton | ML生命周期 — 蓝图已创建,blocked |
+| L02 | Alpha Factor | MOD-L02-001 | implemented | 因子计算引擎 — 蓝图已创建,可施工 |
+| L03 | Signal Generation | MOD-L03-001 | skeleton | 信号融合打分 — 蓝图已创建,可施工 |
+| L04 | Risk Management | MOD-L04-001 | implemented | 风控止损 — 蓝图已创建,可施工 |
+| L05 | Portfolio Construction | MOD-L05-001 | skeleton | 仓位分配 — 蓝图已创建,可施工 |
+| L06 | Trade Execution | MOD-L06-001 | skeleton | 订单路由 — 蓝图已创建,可施工 |
+| L07 | Post-Trade Analytics | MOD-L07-001 | skeleton | PnL归因 — 蓝图已创建,可施工 |
+| L08 | Human-AI Interface | MOD-L08-001 | implemented | Dashboard — 蓝图已创建,可施工 |
+| L09 | Research & Innovation | MOD-L09-001 | skeleton | 研究创新 — 蓝图已创建,可施工（回测已于 2026-07-02 独立为 D_BACKTEST/MOD-BT-001） |
+| L10 | Compliance | MOD-L10-001 | skeleton | 合规校验 — 蓝图已创建,可施工 |
+| L11 | ML Platform | MOD-L11-001 | skeleton | ML生命周期 — 蓝图已创建,可施工 |
 | L12 | System Telemetry | — | implemented | 全系统遥测 — 已合并到B-Track |
-| L13 | Experimentation | MOD-L13-001 | skeleton | A/B实验 — 蓝图已创建,blocked |
+| L13 | Experimentation | MOD-L13-001 | skeleton | A/B实验 — 蓝图已创建,可施工 |
 
 ### 1.3 B-Track 基础设施层
 
@@ -855,7 +855,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 三级金字塔全部就位 | SYS-MASTER-001 已创建，44模块完整登记 | beta ✓ |
 | 蓝图完整度 ≥80% | 当前 **84.2%** (44模块均值) — **已达标** ✓ | beta ✓ |
 | G6 硬合规 REJECT <10% | 当前 33.3% | beta-stable |
-| C-Track 业务蓝图 (L00-L13) | 12/14 已创建 (L01/L12合并到B-Track，全blocked) | stable+ |
+| C-Track 业务蓝图 (L00-L13) | 12/14 已创建 (L01/L12合并到B-Track，C轨占位已解除[ARCH-045 P0]，可施工) | stable+ |
 | Domain Expert Agent | Gate/Context/Pipeline 3个 | beta |
 
 ---

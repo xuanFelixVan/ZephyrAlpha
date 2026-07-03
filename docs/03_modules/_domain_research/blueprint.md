@@ -19,7 +19,7 @@ last_verified: "2026-05-15"
 generation: 2
 functional_domain: research
 summary: "研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。业务层已开放，可施工。"
-tags: [research-innovation, l09, c-track, blocked-by-infrastructure, do-not-implement]
+tags: [research-innovation, l09, c-track]
 priority: P2
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -143,7 +143,7 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
-| Owner | 架构决策+施工审批 | 设计+施工 | 禁止施工期间不审批新施工 |
+| Owner | 架构决策+施工审批 | 设计+施工 | 可施工期间审批新施工 |
 | L13 消费者 | BacktestResult接口兼容 | 集成 | 需CTR-P1-014注册 |
 | L02 消费者 | FactorDiscovery提升流程 | 集成 | 因子验证通过后提升 |
 
@@ -435,7 +435,7 @@ class BacktestConfig:
 | 1 | 依赖图自动生成 | 否 | 模块简单，手动维护 | — | — | — | — | — |
 | 2 | 依赖对齐自动验证 | 否 | T2层暂不需要 | — | — | — | — | — |
 | 3 | 临时时态内容自动清理 | 否 | 无临时内容 | — | — | — | — | — |
-| 4 | 施工步骤完成度自动检测 | 否 | 禁止施工 | — | — | — | — | — |
+| 4 | 施工步骤完成度自动检测 | 否 | 可施工 | — | — | — | — | — |
 
 ---
 
@@ -494,13 +494,13 @@ class BacktestConfig:
 | 1 | 已读取本蓝图全部内容（概述 + §1-§10 架构 + §0 对齐 + §16 施工指引） | 逐节确认 | ☐ |
 | 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 4 | 已确认C轨占位状态——禁止新施工 | 读取⛔标记 | ☐ |
+| 4 | C轨占位已解除 | 确认✅标记 | ☐ |
 
 ### 16.1 施工策略
 
 | 项目 | 内容 |
 |------|------|
-| 施工阶段数 | 3 个 Phase（禁止施工期间不执行） |
+| 施工阶段数 | 3 个 Phase（可施工期间执行） |
 | 施工模式 | 扩展 |
 | 核心风险 | 回测计算正确性 |
 | 目标 generation | 2 — 本次从 generation 1 升级到 generation 2（模板重构+回填） |
@@ -651,7 +651,7 @@ class BacktestConfig:
 | 1 | D-L09-01 | BacktestResult用frozen dataclass而非Pydantic BaseModel | dataclass/BaseModel | dataclass | 量化模块数据类无需验证中间态，frozen保证不可变 | 2026-05-05 |
 | 2 | D-L09-02 | BacktestEngineBase用ABC+注册表模式 | ABC+Registry/Protocol | ABC+Registry | OCP扩展点需要运行时发现机制 | 2026-05-05 |
 | 3 | D-L09-03 | DefaultBacktestEngine用pandas向量化 | pandas向量化/numpy循环/numba | pandas向量化 | 日频回测pandas生态最成熟 | 2026-05-05 |
-| 4 | D-L09-04 | FactorDiscovery状态机暂不实现 | 立即实现/暂不实现 | 暂不实现 | C轨占位禁止施工，状态机为Phase C内容 | 2026-05-05 |
+| 4 | D-L09-04 | FactorDiscovery状态机暂不实现 | 立即实现/暂不实现 | 暂不实现 | C轨已解除，可施工，状态机为Phase C内容 | 2026-05-05 |
 | 5 | D-L09-05 | 模板v3.5升级 | 保持v3.3/按v3.5升级 | 按v3.5升级 | §0前移+§7/§15删除+§10拆分+铁律扩展 | 2026-05-15 |
 | 6 | D-L09-06 | priority从P1修正为P2 | P1/P2 | P2 | 对齐dependency_path_panorama.md T2-deferred分类 | 2026-05-15 |
 
@@ -673,7 +673,7 @@ class BacktestConfig:
 | # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
 |---|------|:------:|------|---------|---------|:----:|
 | 1 | BacktestResult无producer契约 | 中 | CTR-P1-014未注册 | Phase C注册 | §5.1 #3 | 待解决 |
-| 2 | FactorDiscovery状态机未实现 | 中 | C轨占位禁止施工 | Phase C实现 | §3.3 | 待解决 |
+| 2 | FactorDiscovery状态机未实现 | 中 | C轨已解除，可施工 | Phase C实现 | §3.3 | 待解决 |
 | 3 | YAML子模块(experiments/notebooks/prototypes)与代码不匹配 | 高 | ARB-23双重现实 | GOV-FSTR-001统一 | §0.1 | 待解决 |
 | 4 | DefaultBacktestEngine._rebalance简化(固定100股) | 低 | MVP实现 | Phase C完善 | §4.1 | 待解决 |
 
@@ -706,7 +706,7 @@ class BacktestConfig:
 | 核心架构 | evolving | 中 | FactorDiscovery状态机实现 | 回测引擎OCP已验证，因子发现待实现 |
 | 接口契约 | evolving | 中 | CTR-P1-014注册 | 接口签名已稳定，跨层契约未注册 |
 | 数据模型 | stable | 高 | — | BacktestResult frozen已验证 |
-| 施工步骤 | evolving | 低 | T2层开工 | 禁止施工期间步骤为规划态 |
+| 施工步骤 | evolving | 低 | T2层开工 | 可施工期间步骤为实施态 |
 
 ---
 

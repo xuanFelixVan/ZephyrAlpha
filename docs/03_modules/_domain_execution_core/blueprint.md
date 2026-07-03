@@ -30,7 +30,7 @@ stability: evolving
 verifiability: manual
 ssot_yaml: "docs/03_modules/_domain_execution_core/blueprint.md"
 summary: "L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1 部分实现：执行引擎+订单管理+模拟券商。业务层已开放，可施工。"
-tags: [trade-execution, l06, phase-1-partial, execution-engine, order-management, sor-routing, business-layer-blocked]
+tags: [trade-execution, l06, phase-1-partial, execution-engine, order-management, sor-routing]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -52,7 +52,7 @@ references:
 > module_id: MOD-L06-001 | version: 2.1.0 | status: Active | layer: l06
 > actual_disk_path: src/zephyr/ex_core/ | generation: 2 | construction_progress: partially_implemented
 
-> ⛔ **业务层已开放，可施工**：L06 属于 C 轨业务层，当前阶段基础设施尚未就绪。禁止以此蓝图为依据生成任何交易执行业务代码。开工触发条件：(a) MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
+> ✅ **业务层已开放，可施工**：L06 属于 C 轨业务层，当前阶段基础设施尚未就绪。可以此蓝图为依据生成交易执行业务代码。开工触发条件：(a) MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
 
 # Trade Execution Core 蓝图+施工图 — 交易执行引擎
 
