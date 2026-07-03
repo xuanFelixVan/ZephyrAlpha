@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档'
+description: 'G9: 从 {DB_DISPLAY_NAME} arch_constraints 表生成架构约束违规报告MD文档'
 dimensions:
 - D5
 priority: P2

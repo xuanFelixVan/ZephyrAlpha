@@ -30,9 +30,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: 'G11: 从 depgraph (PostgreSQL) 生成能力热力图'
+description: 'G11: 从 {DB_DISPLAY_NAME} 生成能力热力图'
 dimensions:
 - D5
 priority: P2

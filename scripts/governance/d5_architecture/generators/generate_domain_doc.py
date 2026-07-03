@@ -41,9 +41,9 @@
 
 from __future__ import annotations
 
-__manifest__ = """
+__manifest__ = f"""
 args: []
-description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
+description: G2+G10 合并：从 {DB_DISPLAY_NAME} nodes+edges 表生成指定域的 MD 文档
 dimensions:
 - D5
 priority: P2
