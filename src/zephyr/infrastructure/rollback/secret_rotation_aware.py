@@ -26,6 +26,7 @@ SecretRotationAware — 密钥轮替感知器。
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -58,10 +59,10 @@ SECRET_PATTERNS: dict[str, str] = {
 }
 
 ROTATION_URLS: dict[str, str] = {
-    "ZEPHYR_API_KEY": "http://localhost:8999/api/keys/rotate",
-    "GITHUB_TOKEN": "https://github.com/settings/tokens",
-    "OPENAI_API_KEY": "https://platform.openai.com/api-keys",
-    "JWT_SECRET": "http://localhost:8999/api/auth/rotate-jwt",
+    "ZEPHYR_API_KEY": os.getenv("ZEPHYR_API_KEY_ROTATION_URL", "http://localhost:8999/api/keys/rotate"),
+    "GITHUB_TOKEN": os.getenv("GITHUB_TOKEN_ROTATION_URL", "https://github.com/settings/tokens"),
+    "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY_ROTATION_URL", "https://platform.openai.com/api-keys"),
+    "JWT_SECRET": os.getenv("JWT_SECRET_ROTATION_URL", "http://localhost:8999/api/auth/rotate-jwt"),
 }
 
 

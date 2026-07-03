@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import os
 import subprocess
 from datetime import UTC, datetime
 from typing import Any
@@ -99,8 +100,8 @@ class IntegrityVerifyResult(BaseModel):
 
 
 _UNTRUSTED_SOURCES: set[str] = {
-    "http://pypi.org",
-    "http://registry.npmjs.org",
+    os.getenv("UNTRUSTED_PYPI_URL", "http://pypi.org"),
+    os.getenv("UNTRUSTED_NPM_REGISTRY_URL", "http://registry.npmjs.org"),
     "unknown",
     "",
 }
@@ -122,9 +123,9 @@ class SupplyChainAuditor:
         verify_hashes: bool = True,
     ) -> None:
         self._trusted_sources = trusted_sources or {
-            "https://pypi.org",
-            "https://files.pythonhosted.org",
-            "https://registry.npmjs.org",
+            os.getenv("PYPI_API_URL", "https://pypi.org"),
+            os.getenv("PYTHONHOSTED_URL", "https://files.pythonhosted.org"),
+            os.getenv("NPM_REGISTRY_URL", "https://registry.npmjs.org"),
         }
 
         self._verify_hashes = verify_hashes

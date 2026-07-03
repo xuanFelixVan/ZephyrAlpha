@@ -294,7 +294,7 @@ def backup_database():
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
                 pg_config[k.strip()] = v.strip()
-    pg_dump = r"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe"
+    pg_dump = os.getenv("PG_DUMP_PATH", "pg_dump")
     cmd = [
         pg_dump,
         "-h", pg_config["POSTGRES_HOST"],

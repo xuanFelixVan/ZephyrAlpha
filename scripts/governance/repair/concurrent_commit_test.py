@@ -74,6 +74,10 @@ from zephyr.governance.rule_bridge.git_commit_gateway import (  # noqa: E402
 _REPORT_DIR = _PROJECT_ROOT / "data" / "red_blue" / "reports"
 _REPORT_FILE = _REPORT_DIR / "rb_ghost_commit_test_report.md"
 
+# 测试用 git author email（可经环境变量覆盖；保留两个不同身份以维持并发测试语义）
+_TEST_AUTHOR_EMAIL = os.getenv("CONCURRENT_TEST_AUTHOR_EMAIL", "rb@test.com")
+_TEST_AUTHOR_EMAIL_ALT = os.getenv("CONCURRENT_TEST_AUTHOR_EMAIL_ALT", "t@t.com")
+
 
 @dataclass
 class ScenarioResult:
@@ -112,12 +116,12 @@ def _init_repo(repo_dir: Path) -> None:
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["GIT_AUTHOR_NAME"] = "RB-Test"
-    env["GIT_AUTHOR_EMAIL"] = "rb@test.com"
+    env["GIT_AUTHOR_EMAIL"] = _TEST_AUTHOR_EMAIL
     env["GIT_COMMITTER_NAME"] = "RB-Test"
-    env["GIT_COMMITTER_EMAIL"] = "rb@test.com"
+    env["GIT_COMMITTER_EMAIL"] = _TEST_AUTHOR_EMAIL
     subprocess.run(["git", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(["git", "config", "user.name", "RB-Test"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
-    subprocess.run(["git", "config", "user.email", "rb@test.com"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(["git", "config", "user.email", _TEST_AUTHOR_EMAIL], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
     subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
@@ -127,7 +131,7 @@ def _commit_init(repo_dir: Path, rel: str, content: str) -> None:
     f = repo_dir / rel
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
-    env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com"}
+    env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": _TEST_AUTHOR_EMAIL_ALT}
     subprocess.run(["git", "add", rel], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(["git", "commit", "-m", f"init {rel}", "--no-verify"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
 

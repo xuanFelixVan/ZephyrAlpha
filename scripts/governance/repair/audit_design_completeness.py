@@ -40,7 +40,7 @@ MIG-4: 完整性审计（v2.0 全面提取版）
   * B-XXX         行为边界ID（如 B-001）
   * L-XXX         法规映射ID（如 L-001）
 - 按path精确匹配 + 按功能名模糊匹配对照depgraph设计态节点
-- 输出差距报告到 D:\临时工作区\design_migration_gap_report.md
+- 输出差距报告到 data/reports/design_migration_gap_report.md（可经 DESIGN_MIGRATION_REPORT_PATH 覆盖）
 """
 
 __manifest__ = """
@@ -65,19 +65,24 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 
 DST_DB = "depgraph (PostgreSQL)"
-REPORT_PATH = r"D:\临时工作区\design_migration_gap_report.md"
+REPORT_PATH = os.getenv(
+    "DESIGN_MIGRATION_REPORT_PATH",
+    str(REPO_ROOT / "data" / "reports" / "design_migration_gap_report.md"),
+)
 
 # 源MD文件目录/文件
-SOURCE_DIRS = [
-    r"D:\临时工作区\依赖图",
-    r"D:\临时工作区\架构图",
+_default_source_dirs = [
+    str(REPO_ROOT / "data" / "design_migration" / "依赖图"),
+    str(REPO_ROOT / "data" / "design_migration" / "架构图"),
 ]
+_env_source_dirs = os.getenv("DESIGN_MIGRATION_SOURCE_DIRS")
+SOURCE_DIRS = _env_source_dirs.split(os.pathsep) if _env_source_dirs else _default_source_dirs
 SOURCE_FILES = [
-    r"D:\临时工作区\ZephyrAlpha全系统模块清单.md",
-    r"D:\临时工作区\能力定位书.md",
+    str(REPO_ROOT / "data" / "design_migration" / "ZephyrAlpha全系统模块清单.md"),
+    str(REPO_ROOT / "data" / "design_migration" / "能力定位书.md"),
 ]
 
 # === 所有ID格式的正则表达式 ===

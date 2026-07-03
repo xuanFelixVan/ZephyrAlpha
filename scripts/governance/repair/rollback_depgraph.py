@@ -48,9 +48,19 @@ warn_only: false
 import os
 import shutil
 import sys
+from pathlib import Path
 
-DST = r"D:\ZephyrAlpha\data\databases\depgraph"
-PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.backup.pre_rollback"
+# Bootstrap: 基于 .git marker 定位仓库根（文件移动不 break，替代 parents[N] 硬编码）
+_PROJECT_ROOT = Path(__file__).resolve()
+while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.parent:
+    _PROJECT_ROOT = _PROJECT_ROOT.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
+
+DST = str(REPO_ROOT / "data" / "databases" / "depgraph")
+PRE_ROLLBACK_BACKUP = str(REPO_ROOT / "data" / "databases" / "depgraph.backup.pre_rollback")
 
 
 def main():

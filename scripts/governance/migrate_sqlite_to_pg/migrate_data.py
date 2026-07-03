@@ -39,12 +39,22 @@ warn_only: false
 import os
 import sys
 import sqlite3
+from pathlib import Path
 import psycopg2
 from psycopg2.extras import execute_values
 
+# Bootstrap: 基于 .git marker 定位仓库根（文件移动不 break，替代 parents[N] 硬编码）
+_PROJECT_ROOT = Path(__file__).resolve()
+while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.parent:
+    _PROJECT_ROOT = _PROJECT_ROOT.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
+
 # === 路径常量 ===
-SQLITE_PATH = r'D:\ZephyrAlpha\data\databases\depgraph.db'
-ENV_PATH = r'D:\ZephyrAlpha\config\.env.postgres'
+SQLITE_PATH = str(REPO_ROOT / "data" / "databases" / "depgraph.db")
+ENV_PATH = str(REPO_ROOT / "config" / ".env.postgres")
 
 # === 迁移顺序（按外键依赖拓扑排序） ===
 # 1. 无 FK 依赖的表先迁移

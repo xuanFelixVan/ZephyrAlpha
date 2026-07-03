@@ -77,7 +77,7 @@ def _patch_win32_ver() -> None:
     _win32_ver_patched = True
 
 
-DEFAULT_BASE_URL = "https://api.deepseek.com"
+DEFAULT_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 
 SYSTEM_PROMPTS: dict[str, str] = {
     "task_classification": (

@@ -37,6 +37,7 @@ DM-210625 #205-D 裁定执行脚本：
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -48,7 +49,7 @@ _SRC_DIR = str(_SCRIPT_DIR.parents[2] / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from _shared.constants import DB_PATH
+from _shared.constants import DB_PATH, REPO_ROOT
 
 from zephyr.governance.persistence.task_repo import PostSyncValidationError, TaskRepository
 
@@ -71,8 +72,8 @@ REPAIR_MAP: dict[str, list[str]] = {
     "python scripts/governance/sync_rule_registry.py --sync-yaml": [
         "python scripts/governance/sync_rule_registry.py",
     ],
-    r"python D:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py --warn-only": [
-        r"python D:\ZephyrAlpha\scripts\governance\sync_yaml_to_depgraph.py",
+    f"python {REPO_ROOT / 'scripts' / 'governance' / 'sync_yaml_to_depgraph.py'} --warn-only": [
+        f"python {REPO_ROOT / 'scripts' / 'governance' / 'sync_yaml_to_depgraph.py'}",
     ],
     "python scripts/governance/audit_registration.py --warn-only": [
         "python scripts/governance/audit_registration.py",
@@ -103,7 +104,7 @@ REPAIR_MAP: dict[str, list[str]] = {
     "python -m pytest tests/test_rule_system_red_blue.py -v": [],
     "python -m pytest tests/unit/test_dm400_stale_task_fix.py -v": [],
     "python D:/ZephyrAlpha/_yaml_to_md.py --all": [],
-    'python scripts/governance/check_cycle.py --db postgresql://localhost:5432/depgraph --max-depth 15 --warn-only 2>&1 | findstr /C:"cycle" /C:"TOTAL"': [],
+    f'python scripts/governance/check_cycle.py --db {os.getenv("DEPGRAPH_DB_CONN", "postgresql://localhost:5432/depgraph")} --max-depth 15 --warn-only 2>&1 | findstr /C:"cycle" /C:"TOTAL"': [],
     "python scripts/governance/d5_architecture/validators/validate_gate_discipline.py": [],
     "python scripts/governance/generate_rule_artifacts.py --l0": [],
     "python scripts/migration/verify_batch.py": [],

@@ -64,12 +64,12 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 import psycopg2  # noqa: E402
 
 # 治本（2026-06-27）：删除 DB_PATH = str(DEPGRAPH_DB_PATH)（路径污染源）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
-RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"
+RULES_DIR = str(REPO_ROOT / "docs" / "01_policies_and_standards")
 
 # V5.1 裁定（2026-07-02）：8 张表保护。blueprint_links 移除——它是 nodes 派生物化视图，非 YAML 真源，apply_depgraph.py 可直接写入。
 READONLY_TABLES = [

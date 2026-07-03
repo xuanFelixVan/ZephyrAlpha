@@ -52,6 +52,7 @@ warn_only: false
 
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -71,6 +72,10 @@ PATTERN = re.compile(
 
 # AI 归因 trailer 模式（git trailer convention: Key: Value）
 AI_TRAILER_PATTERN = re.compile(r"^(Co-Authored-By|AI-Generated-By|Generated-By):\s*.+", re.MULTILINE)
+
+# AI 归因 trailer 建议：邮箱可经环境变量覆盖（默认 ai 归因地址）
+_COAUTHOR_EMAIL = os.getenv("TRAE_AI_EMAIL", "trae-ai@local")
+_COAUTHOR_TEMPLATE = f"Co-Authored-By: Trae AI <{_COAUTHOR_EMAIL}>"
 
 
 def check_ai_attribution(full_msg: str) -> bool:
@@ -125,7 +130,7 @@ def main() -> None:
     if not check_ai_attribution(full_msg):
         print("[COMMIT-MSG] ⚠ 缺少 AI 归因 trailer", file=sys.stderr)
         print("  建议在 commit message 末尾添加:", file=sys.stderr)
-        print("    Co-Authored-By: Trae AI <trae@example.com>", file=sys.stderr)
+        print(f"    {_COAUTHOR_TEMPLATE}", file=sys.stderr)
         print("  目的: 100% AI 开发项目的 commit 可追溯性\n", file=sys.stderr)
 
     sys.exit(EXIT_PASS)
