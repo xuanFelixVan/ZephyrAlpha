@@ -2505,7 +2505,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（默认开放+权限自动生成无人工复核）
 - 修复：write:src仅授owner_approved=true且maturity≥L2，auto_generated需人工sign-off
 
-#### 5.17.10 多处裸os.getenv读API key绕过SecretProvider【MEDIUM】
+#### 5.17.10 多处裸os.getenv读API key绕过SecretProvider【MEDIUM】 [✓ FIXED: 2026-07-03 5处LLM API key(deepseek_v4_chat/deepseek_chat/llm_gateway×2) + 5处其他密钥(Feishu webhook/SMTP user+password/Database URL/CapabilityPassport key)全部迁移至get_secret_or_default；FILE-COPY去重删除pipeline_routing/deepseek_v4_chat.py停滞副本]
 - 证据：[secrets.py:38](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py) 明令"MUST通过SecretProvider读取禁止裸os.getenv"；但 `deepseek_chat.py:123`、`deseek_v4_chat.py:178`、`integration/llm_gateway.py:144-145`、`autonomy_core/llm_gateway.py [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本] [⚠ 已删除，仅剩integration/和infrastructure/pipeline/副本]:144-145`、`infrastructure/pipeline/llm_gateway.py:152-153` 等6+处直接`os.getenv("DEEPSEEK_API_KEY","")`
 - 病根：根因5（密钥管理SSoT未落地，有规范无执行）
 - 修复：所有LLM gateway改用`await SecretProvider.get_secret(...)`
@@ -2525,8 +2525,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（门禁覆盖盲区，lint主动放行已知问题）
 - 修复：修复TraceContext等未定义符号后移除F821 ignore，至少`src/zephyr/security/**`和`governance/**`子目录re-enable
 
-#### 5.17.14 secret_rotation模块存在但未接入SecretProvider【LOW】
-- 证据：[secret_rotation.py:37-47](file:///d:/ZephyrAlpha/src/zephyr/ops/security/secret_rotation.py) 定义`SecretRotationRecord(rotation_interval_days=90,needs_rotation)`；但[secrets.py](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py)的`EnvSecretProvider`/`DotEnvSecretProvider`无任何轮换集成——get_secret不检查last_rotated不触发轮换不告警过期；`secret_rotation.py:15`标`stability=evolving, safety=L`孤立模块
+#### 5.17.14 secret_rotation模块存在但未接入SecretProvider【LOW】 [✓ FIXED: 2026-07-03 secrets.py新增configure_secret_rotation注入函数+_check_rotation前置检查，6个读取函数(EnvSecretProvider/DotEnvSecretProvider/get_secret/get_secret_or_default/get_required_secret/get_secret_from_file)均接入轮换告警（warn不阻断）；路径漂移修正ops/→trading/feedback_loop/security/]
+- 证据：[secret_rotation.py:37-47](file:///d:/ZephyrAlpha/src/zephyr/trading/feedback_loop/security/secret_rotation.py) 定义`SecretRotationRecord(rotation_interval_days=90,needs_rotation)`；但[secrets.py](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py)的`EnvSecretProvider`/`DotEnvSecretProvider`无任何轮换集成——get_secret不检查last_rotated不触发轮换不告警过期；`secret_rotation.py:15`标`stability=evolving, safety=L`孤立模块
 - 病根：根因5（安全机制名实分离，有轮换模块不轮换）
 - 修复：SecretProvider.get_secret前置needs_rotation检查
 
@@ -2535,9 +2535,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 严重度 | 数量 |
 |---|:---:|
 | CRITICAL/HIGH | 6（5.17.1~5.17.4+5.17.6+5.17.7+5.17.8） |
-| MEDIUM | 7（5.17.5+5.17.9~5.17.12） |
-| LOW | 2（5.17.13+5.17.14） |
-| **合计** | **15** |
+| MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
+| LOW | 1（5.17.13；5.17.14已FIXED） |
+| **合计** | **13** |
 
 ---
 
@@ -3914,7 +3914,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：governance.db文件锁竞争导致写入失败；灾备需同时备份PG+SQLite
 - **修复**：governance.db也迁移到PG（作为governance schema）
 
-#### 5.34.8 [MEDIUM] SecretProvider抽象存在但DB密码绕过它直接读文件
+#### 5.34.8 [MEDIUM] SecretProvider抽象存在但DB密码绕过它直接读文件 [✓ FIXED: 2026-07-03 _load_pg_config()改用get_secret_from_file（新增文件级secret读取函数），支持config/.env.postgres非默认位置密钥文件，优先级os.environ>指定文件>抛异常]
 - **文件**：[secrets.py](file:///D:/ZephyrAlpha/src/zephyr/shared/security/secrets.py#L95) + [depgraph_schema.py](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L92)
 - **证据**：secrets.py定义SecretProvider Protocol、EnvSecretProvider、DotEnvSecretProvider；但depgraph_schema.py直接open(_PG_ENV_PATH)手动解析，未用SecretProvider
 - **问题**：架构层有SecretProvider抽象，但实际DB连接代码绕过它

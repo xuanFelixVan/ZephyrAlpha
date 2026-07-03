@@ -48,7 +48,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -58,13 +58,65 @@ __all__ = [
     "EnvSecretProvider",
     "SecretProvider",
     "SecretsError",
+    "configure_secret_rotation",
     "get_required_secret",
     "get_secret",
     "get_secret_or_default",
+    "get_secret_from_file",
+    "get_secret_from_file_or_default",
     "sanitize_secret",
 ]
 
 logger = logging.getLogger(__name__)
+
+
+# ============ Secret Rotation 集成（Phase 4 新增 | §5.17.14 修复） ============
+# 痛点：secret_rotation 模块（trading/feedback_loop/security/）独立维护轮换
+# 调度，但 SecretProvider 读取密钥时无感知——已过期密钥仍被正常读取，
+# 轮换告警形同虚设。现通过 configure_secret_rotation() 注入 registry，
+# 读取时前置 needs_rotation 检查（warn 不阻断）。
+#
+# 设计：避免循环依赖——shared/ 不 import trading/，registry 通过鸭子类型注入，
+# TYPE_CHECKING 仅用于类型提示。
+
+if TYPE_CHECKING:
+    from zephyr.trading.feedback_loop.security.secret_rotation import SecretRotation
+
+_rotation_registry: "SecretRotation | None" = None
+
+
+def configure_secret_rotation(registry: "SecretRotation | None") -> None:
+    """注入 SecretRotation registry（§5.17.14 修复）。
+
+    注入后，所有 get_secret* 读取密钥时会前置检查 needs_rotation，
+    过期则记录 WARNING 日志（不阻断读取）。
+
+    Args:
+        registry: SecretRotation 实例，或 None（关闭检查）。
+    """
+    global _rotation_registry
+    _rotation_registry = registry
+    if registry is not None:
+        logger.info("SecretRotation registry injected: %d secrets tracked", len(registry.secrets))
+
+
+def _check_rotation(key: str) -> None:
+    """检查密钥是否需要轮换（warn 不阻断，§5.17.14）。
+
+    Args:
+        key: 密钥名。
+    """
+    if _rotation_registry is None:
+        return
+    entry = _rotation_registry.secrets.get(key)
+    if entry is not None and entry.needs_rotation:
+        logger.warning(
+            "secret '%s' (service=%s) needs rotation: %.1f days since last rotation (interval=%d days)",
+            key,
+            entry.service_name,
+            entry.days_since_rotation,
+            entry.rotation_interval_days,
+        )
 
 
 class SecretsError(ZephyrBaseError):
@@ -145,6 +197,7 @@ class EnvSecretProvider:
     """
 
     async def get_secret(self, key: str) -> str:
+        _check_rotation(key)
         value = os.environ.get(key)
         if value is None:
             raise SecretsError(
@@ -204,6 +257,7 @@ class DotEnvSecretProvider:
         logger.info("loaded %d secrets from '%s'", len(self._values), self._env_file)
 
     async def get_secret(self, key: str) -> str:
+        _check_rotation(key)
         self._load_env_file()
 
         env_value = os.environ.get(key)
@@ -253,6 +307,7 @@ def get_secret(key: str) -> str:
     Raises:
         SecretsError: 如果 key 未设置。
     """
+    _check_rotation(key)
     value = os.environ.get(key)
     if value is None:
         raise SecretsError(
@@ -272,6 +327,7 @@ def get_secret_or_default(key: str, default: str = "") -> str:
     Returns:
         Secret 值或默认值。
     """
+    _check_rotation(key)
     return os.environ.get(key, default)
 
 
@@ -291,6 +347,7 @@ def get_required_secret(key: str) -> str:
     Raises:
         SecretsError: 如果 key 未设置或为空字符串。
     """
+    _check_rotation(key)
     value = os.environ.get(key)
     if not value:
         raise SecretsError(
@@ -298,3 +355,62 @@ def get_required_secret(key: str) -> str:
             details={"key": key, "hint": f"请在 .env 文件中添加: {key}=你的密钥"},
         )
     return value
+
+
+# ============ 文件级 secret 读取（Phase 3 新增 | §5.34.8 修复） ============
+# 痛点：config/.env.postgres 等非默认位置的密钥文件无法通过 get_secret() 读取
+# （get_secret 仅读 os.environ，而 .env.postgres 不在包导入时自动加载范围）。
+# 提供文件级读取入口，优先级：os.environ > 指定文件 > 抛异常。
+
+
+def get_secret_from_file(key: str, env_file: str | Path) -> str:
+    """同步从指定 .env 文件读取 secret（不依赖 os.environ 默认加载）。
+
+    用于读取非默认位置的密钥文件（如 config/.env.postgres）。
+    优先级：os.environ（最高） > 指定文件 > 抛异常。
+
+    Args:
+        key: 环境变量名。
+        env_file: .env 文件路径。
+
+    Returns:
+        Secret 值（明文）。
+
+    Raises:
+        SecretsError: 如果 key 不存在或文件不可达。
+    """
+    # 1. 先查 os.environ（允许环境变量覆盖文件）
+    _check_rotation(key)
+    value = os.environ.get(key)
+    if value is not None:
+        return value
+    # 2. 解析指定文件
+    env_path = Path(env_file)
+    if not env_path.is_file():
+        raise SecretsError(
+            f"env file not found: {env_path}",
+            details={"key": key, "env_file": str(env_path)},
+        )
+    with open(env_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, _, v = line.partition("=")
+            if k.strip() == key:
+                v = v.strip()
+                if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+                    v = v[1:-1]
+                return v
+    raise SecretsError(
+        f"secret '{key}' not found in {env_path}",
+        details={"key": key, "env_file": str(env_path)},
+    )
+
+
+def get_secret_from_file_or_default(key: str, env_file: str | Path, default: str = "") -> str:
+    """同步从指定文件读取 secret，缺失返回默认值（不抛异常）。"""
+    try:
+        return get_secret_from_file(key, env_file)
+    except SecretsError:
+        return default

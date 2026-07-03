@@ -41,6 +41,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ def _get_signing_key() -> bytes:
 
     优先从环境变量 CAPABILITY_PASSPORT_KEY 读取；未设置时使用默认开发密钥。
     """
-    env_key = os.environ.get("CAPABILITY_PASSPORT_KEY")
+    env_key = get_secret_or_default("CAPABILITY_PASSPORT_KEY", "")
     if env_key:
         return env_key.encode("utf-8")
     return _DEFAULT_SIGNING_KEY

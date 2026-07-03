@@ -42,6 +42,8 @@ import re
 import sys
 from typing import Any
 
+from zephyr.shared.security.secrets import get_secret_or_default
+
 _log = logging.getLogger(__name__)
 
 _win32_ver_patched = False
@@ -305,7 +307,7 @@ class DeepSeekV4Chat:
         timeout_s: float = 120.0,
     ) -> None:
         self._model = model
-        self._api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")
+        self._api_key = api_key or get_secret_or_default("DEEPSEEK_API_KEY", "")
         self._base_url = base_url.rstrip("/")
         self._thinking = thinking
         self._temperature = temperature

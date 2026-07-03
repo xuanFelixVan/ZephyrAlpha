@@ -47,6 +47,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.rollback.contract import ExitCode
+from zephyr.shared.security.secrets import get_secret_or_default
 
 PROMPT_INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|above)\s+(instructions?|prompts?)", re.IGNORECASE),
@@ -416,7 +417,7 @@ class RollbackIntegration:
 
     def connection_pool_health_check(self, db_url: str = "", max_retries: int = 3) -> tuple[bool, str, int]:
         if not db_url:
-            db_url = os.environ.get("DATABASE_URL", "")
+            db_url = get_secret_or_default("DATABASE_URL", "")
 
         if not db_url:
             return True, "No database URL configured — skipping pool check", 0

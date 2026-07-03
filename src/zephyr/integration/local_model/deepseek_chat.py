@@ -41,6 +41,7 @@ import re
 from pathlib import Path
 from typing import Any
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)
 
@@ -120,7 +121,7 @@ class DeepSeekChat:
     ) -> None:
         _load_env()
         self._model = model
-        self._api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")
+        self._api_key = api_key or get_secret_or_default("DEEPSEEK_API_KEY", "")
         self._base_url = (base_url or os.getenv("DEEPSEEK_BASE_URL", DEFAULT_BASE_URL)).rstrip("/")
         self._temperature = temperature
         self._max_tokens = max_tokens

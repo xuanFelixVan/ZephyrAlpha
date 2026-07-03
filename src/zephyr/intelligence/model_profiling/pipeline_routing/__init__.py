@@ -55,7 +55,6 @@ __all__ = [
     "benchmark_suite",
     "capability_passport",
     "cli",
-    "deepseek_v4_chat",
     "exam_orchestrator",
     "exam_test_cases",
     "model_discovery",
