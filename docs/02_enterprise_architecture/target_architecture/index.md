@@ -66,13 +66,12 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | runtime_planes.md | 运行时平面正交视图 | ⚠️ 断链待修复 |
 | capability_heatmap.md | 能力热力图正交视图 | ⚠️ 断链待修复 |
 | data_architecture.md | DA 数据架构视图 | 待审核 |
-| security_architecture.md | SEC 安全架构视图 | ⚠️ 断链待修复 |
-| integration_architecture.md | INTEG 集成架构视图 | 待审核 |
-| operations_architecture.md | OPS 运维架构视图 | 待审核 |
-| governance_architecture.md | GOV 治理架构视图 | 待审核 |
-| frontend_architecture.md | FE 前端架构视图 | ⚠️ 断链待修复 |
+| security_architecture.md | SEC 安全架构视图 | ✅ v1.0.1 已审核（断链已修） |
+| integration_architecture.md | INTEG 集成架构视图 | ✅ v1.1.1 已审核 |
+| operations_architecture.md | OPS 运维架构视图 | ✅ v0.2.1 已审核 |
+| governance_architecture.md | GOV 治理架构视图 | ✅ v2.2.1 已审核 |
+| frontend_architecture.md | FE 前端架构视图 | ✅ v1.1.1 已审核（断链已修） |
 | architecture_principles.md | 架构原则 SSoT（R1-R4 安全红线 + BvB + 准入铁律）| 已迁移至 04_architecture_principles_decisions/ |
-| architecture_endgame_locked.md | 架构终局锁定声明（Draft 占位）| 待审核 |
 | dimension_audit_matrix.md | 12维架构质量评分矩阵 | 已迁移至 04_architecture_principles_decisions/ |
 | session_carryover_schema.md | AI会话接续Schema | 已迁移至 _cross_layer/context_engine/ |
 | revision_history.md | 完整修订历史归档 | 待审核（git log 可能是真源）|
