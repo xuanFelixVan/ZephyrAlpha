@@ -1585,6 +1585,47 @@ def _compose_reconcilers(
     )
 
 
+def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "tuple":
+    """ghost auto-clean 前的逻辑备份（nodes + edges 表 CSV）。
+
+    治本（2026-07-04）：符合"备份先行：改 depgraph 前必须备份"硬约束（trae_054 STEP0）。
+    函数内 import psycopg2 + get_depgraph_pg_connection（F1 裸 connection，支持 copy_expert），
+    不破坏本模块顶层"纯 stdlib"约束（reconciliation_registry 用于 mutation testing，
+    顶层须纯 stdlib；函数内 import 是允许的，与既有 _reconcile_ghost 内 import 一致）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root）。
+        session_id: 触发 auto-clean 的 session_id（用于备份目录命名追溯）。
+
+    Returns:
+        (backup_dir_path, "") 成功 | (None, error_msg) 失败（fail-closed 不清理）。
+    """
+    import time
+    from pathlib import Path
+
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+    except Exception as e:
+        return None, f"import depgraph_schema failed: {e}"
+
+    ts = int(time.time())
+    backup_dir = Path(project_root) / "data" / "databases" / "backups" / f"ghost_autoclean_{ts}"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+
+    conn = get_depgraph_pg_connection(autocommit=True)
+    try:
+        with conn.cursor() as cur:
+            for table in ("nodes", "edges"):
+                csv_path = backup_dir / f"{table}.csv"
+                with open(csv_path, "w", encoding="utf-8") as f:
+                    cur.copy_expert(f"COPY {table} TO STDOUT WITH CSV HEADER", f)
+        return backup_dir, ""
+    except Exception as e:
+        return None, str(e)
+    finally:
+        conn.close()
+
+
 def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-DELETE-AUDIT post-commit 对账 reconciler（AD-GOV-001 合并）。
 
@@ -1616,9 +1657,27 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         return any(not os.path.isfile(f) for f in committed_files)
 
     def _reconcile_ghost(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # P0 修复（2026-07-04）：动态查找 diagnose_depgraph.py 路径
+        # 原写死 scripts/governance/diagnose_depgraph.py，gov-split 批次4b（commit 170cba56e0）
+        # 将文件迁移到 scripts/governance/d5_architecture/ 后路径失效，导致检测机制完全失效
+        # （所有报告 exit=2 ghost=-1 "can't open file"）。改为 glob 动态查找，兼容未来迁移。
+        import glob as _glob
+        diag_candidates = [
+            os.path.join(str(project_root), "scripts", "governance", "diagnose_depgraph.py"),
+        ]
+        diag_candidates += _glob.glob(
+            os.path.join(str(project_root), "scripts", "governance", "**", "diagnose_depgraph.py"),
+            recursive=True,
+        )
+        diag_path = next((p for p in diag_candidates if os.path.isfile(p)), None)
+        if diag_path is None:
+            return ReconcileResult(
+                action="warn",
+                detail="ghost diagnose skipped: diagnose_depgraph.py not found under scripts/governance/",
+            )
         # 1. 跑 diagnose_depgraph.py（无 --output，捕获 stdout 解析 ghost_count）
         diag_result = subprocess.run(
-            [sys.executable, "scripts/governance/diagnose_depgraph.py"],
+            [sys.executable, diag_path],
             cwd=str(project_root),
             capture_output=True,
             text=True,
@@ -1647,12 +1706,56 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="warn",
                 detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {write_err}",
             )
-        # 4. 判定（ghost_count==0 = clean；>0 = warn；-1 = 解析失败 = warn）
+        # 4. 判定（ghost_count==0 = clean；>0 在阈值内 = auto_clean；>阈值/-1 = warn）
         if diag_result.returncode == 0 and ghost_count == 0:
             return ReconcileResult(
                 action="clean",
                 detail=f"ghost diagnose clean (ghost_count=0), report={report_path.name}",
             )
+        # P1 auto_clean（2026-07-04）：ghost_count > 0 且 ≤ 阈值 → 自动清理
+        # 治本：消除"检测自动/清理人工"gap（root_cause: 检测坏 + 无自动闭环导致 ghost 无声狂累积）。
+        # 备份先行（符合 trae_054 STEP0 硬约束），备份失败则 fail-closed 不清理。
+        # 与"永久系统必须全自动（自动触发/运行/维护/关闭）禁止需手工干预"硬约束对齐。
+        _GHOST_AUTO_CLEAN_THRESHOLD = 50  # ghost ≤ 50 自动清理，> 50 warn（防批量误删）
+        if (
+            diag_result.returncode == 0
+            and 0 < ghost_count <= _GHOST_AUTO_CLEAN_THRESHOLD
+        ):
+            backup_dir, backup_err = _backup_depgraph_for_autoclean(project_root, session_id)
+            if backup_err:
+                return ReconcileResult(
+                    action="warn",
+                    detail=f"ghost count={ghost_count} but backup failed: {backup_err}, skip auto-clean for safety",
+                )
+            # 调 apply_depgraph.py --cleanup-orphan-nodes（清理已在 backup 之后）
+            clean_nodes = subprocess.run(
+                [sys.executable, "scripts/governance/apply_depgraph.py", "--cleanup-orphan-nodes"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=300,
+            )
+            # 再调 --cleanup-orphan-edges（清理孤儿边）
+            clean_edges = subprocess.run(
+                [sys.executable, "scripts/governance/apply_depgraph.py", "--cleanup-orphan-edges"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=300,
+            )
+            return ReconcileResult(
+                action="auto_committed",
+                detail=(
+                    f"auto-cleaned {ghost_count} ghost nodes "
+                    f"(nodes_exit={clean_nodes.returncode}, edges_exit={clean_edges.returncode}), "
+                    f"backup={backup_dir.name}, report={report_path.name}"
+                ),
+            )
+        # ghost_count > 阈值 或 解析失败（-1）→ warn（防批量误删/检测失败）
         return ReconcileResult(
             action="warn",
             detail=f"ghost diagnose: ghost_count={ghost_count} (exit={diag_result.returncode}), report={report_path.name}",
