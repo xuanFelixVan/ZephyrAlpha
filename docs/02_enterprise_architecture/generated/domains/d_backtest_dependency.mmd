@@ -1,5 +1,5 @@
 %% D_BACKTEST 域全景依赖图
-%% 生成时间: 2026-07-03 15:25:25
+%% 生成时间: 2026-07-03 15:27:30
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 9
 
@@ -22,15 +22,15 @@ graph TD
     %% 域内依赖（最多显示 80 条）
     src_zephyr_backtest___init___py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest___init___py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_core___init___py -->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations___init___py -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|import_depends| src_zephyr_backtest_core_engine_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_INTELLIGENCE -> D_BACKTEST (3 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_core_engine_base_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_BACKTEST -> D_SHARED (1 条)

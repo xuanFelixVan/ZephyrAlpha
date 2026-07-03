@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-03 15:25:23
+> 最后更新: 2026-07-03 15:27:29
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -77,15 +77,15 @@ graph TD
     D_SECURITY["D_SECURITY production"]
     src_zephyr_compliance_compliance_manager_py -.->|import_depends| D_SECURITY
     D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_compliance_artifact_scanner_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_aisg_sandbox_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_evidence_pack_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_integrity_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_artifact_scanner_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_default_security_gateway_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_merkle_hourly_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_evidence_pack_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_integrity_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_orchestrator_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_security_gateway_base_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_audit_trail_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
