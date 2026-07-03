@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.schema.schemas
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model; zephyr.governance.rule_enforcement.task_types
+# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
 # [CONSUMERS] gates; context-engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
 # [STARTUP] imported
 # [MATURITY] production
@@ -23,7 +23,6 @@ from typing import Annotated, Any, Self
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from zephyr.governance.rule_enforcement.task_types import TaskNamespace
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.execution_model import (
     ExecutionModel,
@@ -64,8 +63,24 @@ __all__ = [
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(__all__)
 
+# Lazy-load governance task types to break circular dependency:
+# integration.shared.schema.schemas → governance.rule_enforcement.task_types → integration.shared.schema.*
+# These symbols are re-export only (zero business usage in this module).
+_GOVERNANCE_TASK_TYPES = {
+    "Task": "zephyr.governance.rule_enforcement.task_types",
+    "TaskNamespace": "zephyr.governance.rule_enforcement.task_types",
+    "TaskStatus": "zephyr.governance.rule_enforcement.task_types",
+}
+
 
 def __getattr__(name: str):
+    if name in _GOVERNANCE_TASK_TYPES:
+        import importlib
+
+        _mod = importlib.import_module(_GOVERNANCE_TASK_TYPES[name])
+        _val = getattr(_mod, name)
+        globals()[name] = _val
+        return _val
     if name in _FROZEN_PUBLIC_API:
         import logging
 
@@ -256,13 +271,3 @@ class HandoffPackage(BaseModel):
             if isinstance(val, datetime):
                 data[key] = val.isoformat()
         return data
-
-
-# Deferred import of governance types to break circular dependency deadlock:
-# shared→governance→integration→governance cycle.
-# These are imported AFTER all local definitions to ensure the module is
-# fully initialized before triggering the governance import chain.
-from zephyr.governance.rule_enforcement.task_types import (
-    Task,
-    TaskStatus,
-)
