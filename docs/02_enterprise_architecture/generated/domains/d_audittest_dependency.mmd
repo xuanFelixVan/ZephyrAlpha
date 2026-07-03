@@ -1,7 +1,7 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-04 04:24:24
+%% 生成时间: 2026-07-04 05:24:36
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 1655, 依赖边数: 2105
+%% 模块数: 1653, 依赖边数: 2103
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         tests_agent_rbac_test_kill_switch_agent_rbac_py["...t_rbac/test_kill_switch_agent_rbac.py [prototype]"]
         tests_agent_rbac_test_novel_attack_py["tests/agent_rbac/test_novel_attack.py [prototype]"]
         tests_agent_rbac_test_observability_agent_rbac_py["...rbac/test_observability_agent_rbac.py [prototype]"]
-        %% ... 还有 1555 个模块未显示
+        %% ... 还有 1553 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -279,7 +279,7 @@ graph TD
     tests_infrastructure_test_forward_fix_runner_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_infrastructure_test_topology_change_log_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_intent_test_intent_archiver_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    %% D_AUDITTEST -> D_INFRA_RUNTIME (128 条)
+    %% D_AUDITTEST -> D_INFRA_RUNTIME (126 条)
     tests_audit_test_state_machine_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_automation_test_auto_diagnostics_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_automation_test_auto_fix_phase_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -515,4 +515,4 @@ graph TD
     %% 统计
     %% 域内依赖: 1 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 2104 条
+    %% 跨域出边: 2102 条
