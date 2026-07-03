@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-02T18:46:11Z'
+  generated_at: '2026-07-03T17:44:13Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 739
+  total_path_claims: 738
   total_ssot_claims: 16
   total_conflicts: 13
   conflict_resolution: 'ssot_claims_priority'
@@ -2287,13 +2287,6 @@ ownership:
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
     existence: '已实现'
     ownership_judgment: ''
-
-  - path: 'src/zephyr/infrastructure/rollback/down_migration_generator.py'
-    owner_blueprint: 'MOD-INF-021'
-    claim_type: 'section_0_1'
-    declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已删除'
-    ownership_judgment: 'ARCH-039 P0-1 退役删除'
 
   - path: 'src/zephyr/infrastructure/rollback/rollback_dashboard.py'
     owner_blueprint: 'MOD-INF-021'
