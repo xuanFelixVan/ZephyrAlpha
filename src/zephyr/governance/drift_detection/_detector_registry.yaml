@@ -10,126 +10,126 @@ module_id: MOD-INF-011
 detectors:
   existing:
     - id: "blueprint_code_sync"
-      script: "d5_architecture/validate_blueprint_code_sync.py"
+      script: "d5_architecture/validators/blueprint/validate_blueprint_code_sync.py"
       drift_dimension: "D5_blueprint_code_sync"
       check_dims: ["D5", "D8"]
       severity: HIGH
       category: architecture
 
     - id: "code_yaml_alignment"
-      script: "d5_architecture/validate_code_yaml_alignment.py"
+      script: "d5_architecture/validators/validate_code_yaml_alignment.py"
       drift_dimension: "D5_yaml_disk_sync"
       check_dims: ["D5"]
       severity: MEDIUM
       category: consistency
 
     - id: "static_manifest_drift"
-      script: "d5_architecture/validate_static_manifest_drift.py"
+      script: "d5_architecture/validators/validate_static_manifest_drift.py"
       drift_dimension: "D5_static_manifest"
       check_dims: ["D5"]
       severity: HIGH
       category: generators
 
     - id: "md_yaml_number_drift"
-      script: "d5_architecture/validate_md_yaml_number_drift.py"
+      script: "d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py"
       drift_dimension: "D3_D5_number_drift"
       check_dims: ["D3", "D5"]
       severity: HIGH
       category: consistency
 
     - id: "blueprint_implementation_docs"
-      script: "d5_architecture/validate_blueprint_implementation_docs.py"
+      script: "d5_architecture/validators/blueprint/validate_blueprint_implementation_docs.py"
       drift_dimension: "D5_implementation_docs"
       check_dims: ["D5"]
       severity: HIGH
       category: documentation
 
     - id: "three_way_consistency"
-      script: "d5_architecture/validate_three_way_consistency.py"
+      script: "d5_architecture/validators/validate_three_way_consistency.py"
       drift_dimension: "D5_three_way"
       check_dims: ["D5"]
       severity: HIGH
       category: consistency
 
     - id: "ssot"
-      script: "d5_architecture/validate_ssot.py"
+      script: "d5_architecture/validators/validate_ssot.py"
       drift_dimension: "D5_ssot"
       check_dims: ["D5"]
       severity: HIGH
       category: authority
 
     - id: "module_lifecycle"
-      script: "d5_architecture/validate_module_lifecycle.py"
+      script: "d5_architecture/validators/lifecycle/validate_module_lifecycle.py"
       drift_dimension: "D5_lifecycle"
       check_dims: ["D5"]
       severity: MEDIUM
       category: lifecycle
 
     - id: "layer_deps"
-      script: "d5_architecture/validate_layer_deps.py"
+      script: "d5_architecture/validators/validate_layer_deps.py"
       drift_dimension: "D4_layer_deps"
       check_dims: ["D4"]
       severity: HIGH
       category: architecture
 
     - id: "cross_references"
-      script: "d5_architecture/validate_cross_references.py"
+      script: "d5_architecture/validators/validate_cross_references.py"
       drift_dimension: "D5_cross_refs"
       check_dims: ["D5"]
       severity: MEDIUM
       category: consistency
 
     - id: "depends_on_format"
-      script: "d5_architecture/validate_depends_on_format.py"
+      script: "d5_architecture/validators/validate_depends_on_format.py"
       drift_dimension: "D5_depends_on"
       check_dims: ["D5"]
       severity: MEDIUM
       category: consistency
 
     - id: "interface_contracts"
-      script: "d5_architecture/validate_interface_contracts.py"
+      script: "d5_architecture/validators/validate_interface_contracts.py"
       drift_dimension: "D5_contracts"
       check_dims: ["D5"]
       severity: HIGH
       category: contracts
 
     - id: "directory_structure"
-      script: "d5_architecture/validate_directory_structure.py"
+      script: "d5_architecture/validators/validate_directory_structure.py"
       drift_dimension: "D5_directory"
       check_dims: ["D5"]
       severity: MEDIUM
       category: structure
 
     - id: "deprecated_dependents"
-      script: "d5_architecture/validate_deprecated_dependents.py"
+      script: "d5_architecture/validators/validate_deprecated_dependents.py"
       drift_dimension: "D5_deprecated"
       check_dims: ["D5"]
       severity: HIGH
       category: lifecycle
 
     - id: "gate_yaml"
-      script: "d5_architecture/validate_gate_yaml.py"
+      script: "d5_architecture/validators/validate_gate_yaml.py"
       drift_dimension: "D5_gate_yaml"
       check_dims: ["D5"]
       severity: HIGH
       category: gates
 
     - id: "p0_module_contracts"
-      script: "d5_architecture/validate_p0_module_contracts.py"
+      script: "d5_architecture/validators/validate_p0_module_contracts.py"
       drift_dimension: "D5_p0_contracts"
       check_dims: ["D5"]
       severity: HIGH
       category: contracts
 
     - id: "architecture_contract_internal"
-      script: "d5_architecture/validate_architecture_contract_internal.py"
+      script: "d5_architecture/validators/validate_architecture_contract_internal.py"
       drift_dimension: "D5_arch_contracts"
       check_dims: ["D5"]
       severity: HIGH
       category: contracts
 
     - id: "handoff_package"
-      script: "d5_architecture/validate_handoff_package.py"
+      script: "d5_architecture/validators/validate_handoff_package.py"
       drift_dimension: "D5_handoff"
       check_dims: ["D5"]
       severity: MEDIUM
