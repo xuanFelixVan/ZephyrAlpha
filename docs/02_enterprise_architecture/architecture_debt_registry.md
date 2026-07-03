@@ -2385,16 +2385,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（高频懒加载模式无并发规范）
 - 修复：抽取LazyGatewayHolder基类强制加锁
 
-#### 5.16.5 GitCommitGateway _GlobalCommitLock TOCTOU僵尸锁清理竞态【HIGH】 [✓ FIXED: 已用原子os.open(O_CREAT|O_EXCL)消除TOCTOU]
-- 证据：[git_commit_gateway.py:268-287](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py) `if not is_pid_alive(holder_pid): os.remove(lock_file)` check与act非原子；两Trae进程同时发现PID死亡：A remove→A create→B remove(A的)→B create，两进程同时持"全局串行锁"；同问题在 [staging_area.py:_CrossProcessLock](file:///d:/ZephyrAlpha/src/zephyr/trading/staging_area.py) 第90-161行
-- 病根：根因5（TOCTOU窗口未识别）
-- 修复：用`os.open(O_CREAT|O_EXCL)`单次原子创建或`msvcrt.locking`/`fcntl.flock`内核级锁
-
-#### 5.16.6 GitCommitGateway stash→commit→pop跨子进程非原子+stash堆积【HIGH】 [✓ FIXED: 已由worktree物理隔离替代]
-- 证据：[git_commit_gateway.py:1977-2117](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py) `_stash_other_files→git add→git commit→_restore_stash` 跨4+次subprocess；commit后pop前崩溃→stash永久残留；文件注释（2047-2057行）承认"7+个stash无法pop"实测事故
-- 病根：根因5（INVARIANTS写"commit原子"但跨子进程非原子）
-- 修复：改用`git commit -- <pathspec>`精确提交或worktree隔离
-
 #### 5.16.7 DeferredQueue sqlite3共享连接+check_same_thread=False【HIGH】
 - 证据：[deferred_queue.py:74-85](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/deferred_queue.py) `sqlite3.connect(db_path, check_same_thread=False)` 关闭线程检查，依赖`self._lock`但`_get_conn`的check-then-act要求所有调用方持锁，新增方法忘记`with self._lock:`即损坏；同模式在 `resilience/deferred_queue.py` 复制
 - 病根：根因2（`_get_conn`应强制锁但无门禁阻止绕过）
@@ -2939,11 +2929,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因1（漂移累积+命名空间数字化`_06`后缀无文档化理由）
 - 修复：删除shared/infra_06/与infrastructure/infra_06/合并回shared/infra/
 
-#### 5.22.9 三个孤儿__init___from_*.py（三下划线怪名）【MEDIUM】 [✓ FIXED: 三个孤儿文件已删除]
-- 证据：`src/zephyr/infrastructure/__init___from_infra.py`（文件名三下划线）L2自称 `zephyr.infrastructure.__init___from_infra`；`src/zephyr/simulation/__init___from_resear.py` L2自称 `zephyr.simulation.__init___from_resear`；`src/zephyr/ops/__init___from_obs.py` L2自称 `zephyr.observability`（与所在包zephyr.ops不一致！）；Python不会自动import它们等于死代码，且包名声明与目录路径矛盾误导工具链
-- 病根：根因1（重构遗留未清理+文件名拼写错误被linter忽略）
-- 修复：直接删除这三个文件
-
 #### 5.22.10 governance_server.py静默吞掉13处ImportError【HIGH】
 - 证据：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 共13个 `except ImportError as e:` 块（行88,592,615,629,662,687,707,726,816,836,867,882,903）；每块包裹一个 `from zephyr.governance.X import Y`，失败时 `return {"error":f"... import failed: {e}"}`；MCP Server启动不报错但每个工具调用返回错误dict，用户无从知晓是依赖缺失还是逻辑错误；无日志无告警无metrics
 - 病根：根因5（静默降级+守护契约未覆盖运行时import）
@@ -2975,15 +2960,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **维度定义**：配置文件、环境变量、密钥管理的真源一致性、安全性与可用性。
 > **病根归属**：根因1（静态快照未动态更新）+ 根因5（规则膨胀执行断层）。
-
-#### 5.23.1 [HIGH] 真实API密钥硬编码为getenv默认值 [✓ FIXED: 代码侧已修复 commit 14bc6120]
-
-- **文件**：[diagnose_breadth_failed.py](file:///D:/ZephyrAlpha/scripts/diagnose_breadth_failed.py#L31) / [run_deepseek_v4_exam.py](file:///D:/ZephyrAlpha/scripts/run_deepseek_v4_exam.py#L60)
-- **原证据**：`os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c2bb2a")`
-- **问题**：将真实付费API密钥作为环境变量getenv的fallback默认值写入源码。git历史已永久泄漏，sk-前缀密钥即使轮换也可通过git log找回。
-- **影响**：密钥泄漏→账户盗用→账单失控。100%AI开发场景下，AI会复制此模式到其他脚本。
-- **修复**：删除默认值改为`os.getenv("DEEPSEEK_API_KEY")`或`None`+缺失即raise；立即在DeepSeek控制台吊销该密钥；用`gitleaks`加入pre-commit。
-- **修复状态（2026-07-03 P0-1）**：代码侧已完成——两个活跃源码文件均改为 `os.getenv("DEEPSEEK_API_KEY")` 无默认值 + 缺失即 FATAL 退出守卫（commit 14bc6120）；scripts/ 目录 Grep 确认零密钥明文残留。剩余人工动作：①DeepSeek 控制台吊销 `sk-e88e8757b0974da9bed7def543c2bb2a`（AI 无法执行）；②15 个 `data/security_baselines/secret_baseline_*.json` 历史快照保留作为审计证据，不修改。
 
 #### 5.23.2 [HIGH] YAML配置文件零schema校验
 
@@ -3354,14 +3330,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：信息安全风险+错误消息过长难读。
 - **修复**：错误消息只含操作名+参数摘要，SQL只记日志不进消息。
 
-#### 5.28.2 [MEDIUM] 错误消息无actionable信息 [✓ FIXED: 错误消息已含字段名约束]
-
-- **文件**：多处
-- **证据**：`raise ValueError("Invalid input")` 不说明哪个字段、什么约束
-- **问题**：错误消息只说"无效"不说"为什么无效、如何修复"。
-- **影响**：AI/开发者无法从错误消息定位问题。
-- **修复**：错误消息含字段名+约束+建议值。
-
 #### 5.28.3 [MEDIUM] MCP错误码双轨制
 
 - **文件**：MCP相关
@@ -3393,14 +3361,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：错误消息语言不一致，影响日志聚合与grep。
 - **影响**：日志分析困难。
 - **修复**：统一为英文（错误消息业界惯例）。
-
-#### 5.28.7 [LOW] 部分错误消息含拼写错误 [✓ FIXED: faield/succesful拼写错误已消除]
-
-- **文件**：多处
-- **证据**：如`"faield"`/`"succesful"`
-- **问题**：拼写错误导致grep匹配失败。
-- **影响**：日志检索遗漏。
-- **修复**：加spell-check lint。
 
 #### 5.28.8 [LOW] 错误消息无error_code字段
 
@@ -3712,13 +3672,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：迁移操作门槛高；AI无法从目录结构推断正确顺序
 - **修复**：新增README.md文档化执行顺序、前置条件、回滚步骤
 
-#### 5.32.6 [MEDIUM] depgraph_schema.py 18条SQLite迁移记录成为孤儿代码（400+行死代码）
-- **文件**：[depgraph_schema.py](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L639)
-- **证据**：_MIGRATIONS含v1-v18共18条迁移，全部使用SQLite方言；init_db注释"P2迁移后本函数不再执行DDL/migration"
-- **问题**：400+行迁移代码永远不执行；新AI可能向_MIGRATIONS追加新迁移误以为会运行
-- **影响**：维护负担；AI误判迁移框架仍活跃
-- **修复**：将_MIGRATIONS移到_archive/sqlite_migrations.py
-
 #### 5.32.7 [MEDIUM] 02_create_pg_schema.sql无对应downgrade/rollback SQL
 - **文件**：[02_create_pg_schema.sql](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql)
 - **证据**：文件仅含CREATE TABLE/INDEX/TRIGGER/VIEW语句；无DROP TABLE、无down.sql
@@ -3982,13 +3935,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：API版本契约模型已定义但从未被任何代码import使用
 - **影响**：废弃API版本不会被检测/阻断
 - **修复**：将此模型集成到MCP gateway的工具调用链路，或删除死代码
-
-#### 5.35.5 [MEDIUM] 无breaking change检测机制 [✓ FIXED: 已建立BreakingChangeDetector等多处检测机制]
-- **文件**：全项目
-- **证据**：Grep breaking.change|breaking_change无匹配；ToolDefinition无schema版本比对；无OpenAPI diff工具
-- **问题**：工具参数schema变更（增删必填参数、改类型）无自动化检测
-- **影响**：开发者/AI修改工具签名后，消费方无任何告警
-- **修复**：在GitCommitGateway增加tool schema diff gate
 
 #### 5.35.6 [MEDIUM] MCP工具无deprecation策略
 - **文件**：[integration/mcp/](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/)
@@ -4347,13 +4293,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：SLO合规性无监控；错误预算无追踪；SLO违反无告警
 - **修复**：在boot()中实例化SLOManager并接入metric采集
 
-#### 5.39.7 [MEDIUM] 无OTLP exporter配置 [✓ FIXED: tracing.py已配置完整OTLP gRPC exporter]
-- **文件**：全项目（Grep `OTLPSpanExporter|otlp_exporter`无匹配）
-- **证据**：system_telemetry.traces.span_stub仅生成stub span，无OTLP exporter导出到Jaeger/Tempo
-- **问题**：trace数据生成但不导出，无法可视化
-- **影响**：分布式追踪能力形同虚设
-- **修复**：配置OTLP exporter指向可观测性后端
-
 #### 5.39.8 [MEDIUM] RED方法论Error counter从未递增
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py)
 - **证据**：Grep `error_counter|errors_total|red_error`在health_monitor仅定义未increment；成功/失败均不更新error计数
@@ -4396,13 +4335,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：回调重试导致下游重复处理
 - **影响**：下游幂等性压力；重复通知
 - **修复**：回调头携带Idempotency-Key（基于task_id+attempt_no）
-
-#### 5.40.3 [MEDIUM] retry_count自赋值bug [✓ FIXED: 自赋值bug已消除，改为6处正确的+=1]
-- **文件**：全项目（Grep发现）
-- **证据**：存在`retry_count = retry_count`自赋值语句，实际未递增
-- **问题**：重试计数永远不变，可能无限重试
-- **影响**：重试风暴；资源耗尽
-- **修复**：改为`retry_count += 1`
 
 #### 5.40.4 [HIGH] DLQRetryPolicy为stub，BACKOFF_SCHEDULE死代码
 - **文件**：[dlq_retry_policy.py](file:///D:/ZephyrAlpha/src/zephyr/governance/dlq_retry_policy.py#L27)
@@ -4551,13 +4483,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：维护成本高；违反trae_060新AI可发现性原则
 - **修复**：为核心治理函数补充docstring（含Args/Returns/Raises）
 
-#### 5.42.2 [MEDIUM] docstring标"deprecated"但方法被活跃调用 [⊘ NOT_NEEDED: 未发现矛盾实例，存在规范deprecation框架]
-- **文件**：全项目
-- **证据**：存在方法docstring写"Deprecated: use X instead"但Grep显示生产代码仍活跃调用该方法
-- **问题**：文档与代码行为矛盾
-- **影响**：开发者困惑；误用已弃用API
-- **修复**：若真弃用则移除调用方改用新API；若仍需用则移除deprecated标记
-
 #### 5.42.3 [LOW] evaluate_batch存在死变量
 - **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L325)
 - **证据**：第325-355行`evaluate_batch`中存在赋值后从未读取的局部变量
@@ -4601,19 +4526,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：OOM Killer可能杀关键进程
 - **修复**：在启动脚本设置RLIMIT_AS或用cgroups
 
-#### 5.43.3 [MEDIUM] SQLite无连接池 [✓ FIXED: 已用threading.local连接池复用]
-- **文件**：全项目（SQLite连接管理）
-- **证据**：每次操作`sqlite3.connect(db_path)`新建连接，无连接池复用
-- **问题**：频繁连接创建开销；连接数无上限
-- **影响**：性能下降；文件锁竞争
-- **修复**：使用连接池或单连接复用（SQLite单写者模型）
-
-#### 5.43.4 [MEDIUM] asyncio.gather无Semaphore限制并发 [✓ FIXED: 已加Semaphore限流]
+#### 5.43.4 [MEDIUM] asyncio.gather无Semaphore限制并发 [部分修复: 2026-07-04 验证10处gather仅drift_detection 2处配套Semaphore,5处仍需补]
 - **文件**：全项目（Grep `asyncio.gather`多处）
 - **证据**：多处`asyncio.gather(*tasks)`无Semaphore限制并发数；tasks可能数百个
 - **问题**：无并发上限，可能同时发起数百IO请求
 - **影响**：下游限流/连接耗尽/自身内存压力
 - **修复**：用`asyncio.Semaphore(N)`限制并发
+- **验证状态（2026-07-04）**：10处gather调用中仅 drift_engine.py:270 + detector_dispatcher.py:110 配套Semaphore；5处仍可批量并发未限流（verdict_engine×2/health/submit_batch×2）；3处语义可豁免（dual_api固定2任务×2/shutdown路径×1）
 
 #### 5.43.5 [LOW] 磁盘使用已采集但未纳入压力分类
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py)
