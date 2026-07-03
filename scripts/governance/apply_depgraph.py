@@ -1265,8 +1265,12 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
+            # 治本(2026-07-04): 跳过 design_maturity='design' 的设计态节点
+            # 设计态节点是"计划中"的节点，path在磁盘上不存在是正常的（尚未施工），
+            # 不应被当作ghost清理。否则reconciler的ghost auto_clean会误删所有设计态节点。
             all_nodes = conn.execute(
-                "SELECT node_id, path FROM nodes WHERE path IS NOT NULL AND path != ''"
+                "SELECT node_id, path FROM nodes WHERE path IS NOT NULL AND path != '' "
+                "AND (design_maturity != 'design' OR design_maturity IS NULL)"
             ).fetchall()
 
             ghost_node_ids: list[tuple[str, str]] = []
