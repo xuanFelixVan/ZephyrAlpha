@@ -1115,6 +1115,49 @@ capabilities:
       - make_ssot_redefinition_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: create_guard
+    aliases:
+      - CREATE-GUARD
+      - create-guard
+      - make_create_guard
+      - creation_token_blocker
+      - second_source_py_blocker
+    description: >-
+      新建 .py/.yaml 文件 creation_token 硬阻断门禁（CREATE-GUARD，2026-06-30 治本）。
+      检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在 creation_tokens 字段登记。
+      无 token 的 .py/.yaml 文件 → 硬阻断，提示"无 creation_token，禁止造第二真源
+      （trae_060 §2）"。有 token → 放行。扩展检测：reconciliation_registry.py 新增
+      make_*_reconciler 需 trae_060 §4 审查标记；rules/ 下 .yaml 命名违规（非 trae_NNN_
+      前缀/单段 name）；新建 .py 文件头部 14 字段标注；governance/ 根禁止新增 .py
+      （ARCH-031 防复发）；codegen 文件豁免。priority=60。fail-closed（YAML/git diff
+      不可达阻断）。canonical basename create_guard 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "creation_token/造第二真源/CREATE-GUARD/新建文件阻断" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 creation_token 检测脚本。
+    integrity_anchors:
+      - make_create_guard  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: session_required_gate
+    aliases:
+      - SESSION-REQUIRED
+      - session-required
+      - make_session_required_gate
+      - unregistered_session_blocker
+      - session_id_enforcer
+    description: >-
+      session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）。
+      检测 commit 调用方是否注册了有效 session。session_id 为空/"unknown"/"none"/"null"
+      或未注册时阻断（SESSION_REQUIRED_VIOLATION）——防止 AI 绕过 session_claim_start
+      直接调 commit 导致 ClaimRequiredGate 因 session 未注册而安全降级放行。
+      priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)。allow_overlap=True
+      放行。get_session 异常→安全降级放行（registry 故障不应卡死 commit 工作流）。
+      canonical basename session_required_gate 匹配 capability_id，可 auto 派生。
+      解决发现性：新 AI 搜 "session 注册/未注册 commit/SESSION-REQUIRED" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 session 注册强制脚本。
+    integrity_anchors:
+      - make_session_required_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
