@@ -3,7 +3,7 @@ module_id: VIEW-07-INTEGRATION-ARCH
 title: Target Architecture — Integration Architecture / 目标架构：集成架构
 doc_type: architecture_view
 status: Active
-version: 1.1.0
+version: 1.1.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -24,7 +24,7 @@ tags:
 - anti-corruption-layer
 summary: TOGAF Integration Architecture 完整集成视图。描述 ZephyrAlpha 2.0 内外部系统之间的集成风格、集成拓扑、外部集成点清单（EI
   系列）、接口契约治理与 Anti-Corruption Layer 策略。本视图同时承载集成点枚举数据（v1.1.0 合并自原 integration-catalog.md）。
-date: '2026-04-22'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -70,7 +70,7 @@ Integration Architecture（集成架构视图）回答以下问题：
 | Request-Reply | ✅ 活跃使用 | LLM API（EI-003）；Feishu API（EI-004）；Broker REST（EI-001，planned）|
 | Event-Driven | 🔶 内部约定，未用 MQ | 层间通过 Python 函数调用 + `shared/contracts/` 传递事件对象（轻量事件驱动）|
 | File-based | ✅ 主力存储中间层 | Parquet / HDF5 存历史行情；CSV 存回测结果 |
-| Shared-DB | ⚠️ 极限约束使用 | 本地 SQLite（L07 结算分析）；禁止跨层直接写 |
+| Shared-DB | ⚠️ 极限约束使用 | 本地 SQLite（D_TRADING/D_REPORTING 结算分析）；禁止跨层直接写 |
 
 **当前阶段策略**：以 **Batch + File-based** 为主体（适合单人开发、量化研究阶段），Request-Reply 用于外部服务，Event-Driven 以**轻量内部协议**（Python dataclass + 函数调用）代替消息队列（MQ）——MQ 引入时机见 §6。
 
@@ -98,17 +98,17 @@ Integration Architecture（集成架构视图）回答以下问题：
 
 ```
 MarketDataTick (raw)
-    → [L00 connectors/ ACL 规范化]
+    → [D_MKT_DATA/D_DATA_ENG connectors/ ACL 规范化]
     → CTR-001: NormalizedMarketData 🔒
-    → [L02 Alpha Factor 计算]
+    → [D_FACTOR Alpha Factor 计算]
     → CTR-002: FactorSignal 🔒
-    → [L04 Risk Management 检查]  [L05 Portfolio Construction 优化]
+    → [D_RISK 检查]  [D_PF_CORE/D_PF_ALLOC 优化]
     → CTR-003: RiskLimits 🔒 + CTR-004: Order 🔓
-    → [L06 Trade Execution]
+    → [D_EX_CORE Trade Execution]
     → CTR-005: Fill 🔒 + CTR-006: PositionSnapshot 🔒
-    → [L07 Post-Trade Analytics]
+    → [D_TRADING/D_REPORTING Post-Trade Analytics]
     → PnL Report / Risk Metrics
-    → [L12 System Telemetry 监控]
+    → [D_INFRA_TELEMETRY 监控]
 ```
 
 **图例**：🔒 = frozen（不可变契约） | 🔓 = mutable（可变契约，含状态机）
@@ -116,7 +116,7 @@ MarketDataTick (raw)
 所有层间数据对象均在 `src/zephyr/shared/contracts/` 定义（frozen dataclass），见 `architecture_model/contracts/cross_layer_contracts.yaml` 完整规格。
 
 > **📊 跨层契约可视化图表**：
-> - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 核心数据流全景图（14 层体系 + CTR 标注）
+> - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 核心数据流全景图（53 域体系 + CTR 标注）
 > - [`diagrams/integration_topology.mmd`](diagrams/integration_topology.mmd) — 集成拓扑图（含 CTR 标注）
 > - [`diagrams/c4_l2_containers.mmd`](diagrams/c4_l2_containers.mmd) — C4-L2 容器图（含 CTR 标注）
 
@@ -178,7 +178,7 @@ MarketDataTick (raw)
 | `ex_core/adapters/` | 券商 API（Broker REST / FIX）| 内部 `Order` / `Fill` 协议 |
 | `frontend/` | LLM Provider（OpenAI-compatible REST）| 内部 LLM 调用抽象 |
 
-详细设计见 `application_architecture.md §4.1 L00 connectors/` — 已确立 ACL 的三项职责（格式隔离 / Connector 协议统一 / 格式转换在边界处）。
+详细设计见 `application_architecture.md §4.1`（D_MKT_DATA 域 connectors/ ACL） — 已确立 ACL 的三项职责（格式隔离 / Connector 协议统一 / 格式转换在边界处）。
 
 ### 5.2 ACL 选型理由（为何不用 Adapter/Facade）
 
@@ -186,15 +186,13 @@ MarketDataTick (raw)
 - **Facade Pattern**：简化调用复杂度，但不防止外部 Vendor 的领域模型污染内部
 - **ACL（Anti-Corruption Layer）**：在边界处将外部语义完整翻译为内部 canonical schema，内部任何层绝对不接触 Vendor 原始格式 → **防止领域污染**
 
-### 5.3 未来 ACL 扩展计划（H8 阶段）
+### 5.3 未来 ACL 扩展计划
 
-`application_architecture.md §4.1` 预留了 H8 阶段的 ACL 增强计划：
+`application_architecture.md §4.1` 预留了未来的 ACL 增强计划：
 
 - Vendor Registry 统一管理（支持 Stock / ETF / Future / Option / Bond 命名空间）
 - 多 Vendor 合并与去重（当同一品种有多个 Vendor 来源时）
-- 数据质量断言前置（在 ACL 层完成格式检查，不让脏数据进入 L00 存储）
-
-> **关联任务**：`architecture-finalization-taskbook.md` H8 阶段 / `open-questions-register.md` OQ-043
+- 数据质量断言前置（在 ACL 层完成格式检查，不让脏数据进入 D_MKT_DATA 存储）
 
 ---
 
@@ -241,12 +239,3 @@ MarketDataTick (raw)
 - **本视图上游**：BA（业务流驱动）/ AA（模块边界）/ DA（数据载荷）/ TA（技术协议）
 - **本视图下游**：SEC（安全域需知道所有外部接入点） / OPS（运维需监控所有集成健康状态）
 - **本视图不覆盖**：具体物理部署（→ TA §6）/ 安全认证机制（→ 06-SEC）/ 运维告警（→ 08-OPS）
-
----
-
-## Revision History / 修订记录
-
-| Date / 日期 | Description / 说明 |
-|------------|-------------------|
-| 2026-04-19 | v1.0.0：初版建立（S14-G3，批次 A）。6 种集成风格分析 + 内外部集成拓扑（Mermaid）+ 接口契约版本管理 + Breaking Change 流程 + 废弃政策 + ACL 策略（引用 03-AA J5 已落盘设计）+ Event Backbone 占位 + Catalog 关联 + 视图关系图。R37 登记理由。 |
-| 2026-04-21 | v1.1.0：beta 合并 catalogs/integration-catalog.md 的 EI 系列外部集成点枚举数据至 §3.2，新增 ACL 落盘位置列；更新 summary 为"完整集成视图"；§3.2 原内部层间数据流重编号为 §3.3。 |
