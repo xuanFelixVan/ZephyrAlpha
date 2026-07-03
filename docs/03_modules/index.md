@@ -39,14 +39,14 @@ depends_on:
 ## 二、架构分类体系（43域方案）
 
 > **裁定**：D19/D21 — 14层降级为域属性，43域为唯一分类体系。
-> **状态**：阶段4搬家基本完成；D-DATA/D_SIGLEGACY/D_SIMULATION 各拆4域（D44-D46）待阶段5-8执行。
+> **状态**：阶段4搬家基本完成；D-DATA/D_SIMULATION 各拆4域待阶段5-8执行（D_SIGLEGACY 已删除，signal 层已拆分为 D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC 3子域）。
 
 ### 2.1 业务域（27域，含3个待拆分域）
 
 | 域目录 | 域 ID | 责任 | 状态 |
 |--------|------|------|------|
 | [_domain_data/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_data/index.md) | D-DATA | 数据源（待拆分: D_MKT_DATA/D_DATA_ENG/D_DATA_GOV/D_DATA_SEC） | 待拆分 |
-| [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | D_SIGLEGACY | 信号生成（待拆分: 4域） | 待拆分 |
+| [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | signal 层（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC） | 信号生成（3子域） | 活跃 |
 | [_domain_simulation/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_simulation/index.md) | D_SIMULATION | 实验仿真（待拆分: 4域） | 待拆分 |
 | [_domain_factor/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_factor/index.md) | D_FACTOR | Alpha 因子 | 活跃 |
 | [_domain_portfolio_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_portfolio_core/index.md) | D_PF_CORE | 组合核心 | 活跃 |
@@ -79,7 +79,7 @@ depends_on:
 
 | 目录 | 说明 | 处置 |
 |------|------|------|
-| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 D_SIGLEGACY 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
+| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 signal 层 3 子域取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
 | [_ml_experiment_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_ml_experiment_domain/blueprint.md) | 旧 ML Experiment 域（已被 D_SIMULATION 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
 
 ---
@@ -116,7 +116,7 @@ depends_on:
 | 阶段 4 | 物理搬家（连字符→下划线） | ✅ 基本完成 |
 | 阶段 5-8 | 业务层建设（R3-R6） | ⏳ 未开始 |
 
-> **本索引为过渡版本**：阶段 5-8 完成后，D-DATA/D_SIGLEGACY/D_SIMULATION 拆分落地，本索引需同步更新。
+> **本索引为过渡版本**：阶段 5-8 完成后，D-DATA/D_SIMULATION 拆分落地（D_SIGLEGACY 已删除），本索引需同步更新。
 
 ---
 

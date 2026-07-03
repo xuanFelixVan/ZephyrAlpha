@@ -28,8 +28,8 @@ rule_form: structural
 scope: module
 stability: evolving
 verifiability: hybrid
-business_layer_status: blocked
-business_layer_blocked_reason: "C轨业务层未开放。基础设施(Gate/CE/VMS/Pipeline/FLE)尚未达到beta稳定态，业务实现将因缺乏架构约束而漂移。开工条件：(a)MOD-MASTER_BLUEPRINT construction_progress>=implementation_phase;(b)Gate Engine覆盖L02业务检查类型;(c)至少一个CT-*契约从规划→部分实现，打通因子→信号集成通路。"
+business_layer_status: active
+business_layer_blocked_reason: "C轨业务层已开放[ARCH-045 P0]。可施工。"
 references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l02_alpha_factor.yaml"
     section: ""
@@ -50,14 +50,11 @@ tags:
   - alpha-factor
   - l02
   - c-track
-  - blocked-by-infrastructure
 summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供L03消费。"
 ---
 
-> ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放，可施工。
-> 基础设施(Gate/CE/VMS/Pipeline/FLE)尚未达到beta稳定态，任何业务实现将因缺乏架构约束而漂移。
-> 开工条件见 frontmatter `business_layer_blocked_reason`。
-> AI MUST NOT 以此蓝图为依据生成业务代码，除非 `business_layer_status` 变为 `active`。
+> ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。
+> AI 可自主施工。
 
 > actual_disk_path: src/zephyr/factor/ (6 .py files)
 
@@ -495,7 +492,7 @@ class FactorMeta(BaseModel):
 |---|--------|---------|:---:|:---:|
 | 1 | FactorBase定义 | hard | ✅ | ✅ |
 | 2 | CTR-001 NormalizedMarketData | hard | ⚠️ L00部分实现 | ☐ |
-| 3 | business_layer_status=active | hard | ❌ blocked | ☐ |
+| 3 | business_layer_status=active | hard | ✅ active | ☑ |
 
 ### 16.3 实施步骤
 

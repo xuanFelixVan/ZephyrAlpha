@@ -44,7 +44,7 @@ references:
     why: "本蓝图即SSoT"
 summary: "信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。"
 ssot_yaml: "docs/03_modules/_domain_signal/blueprint.md"
-tags: [signal-generation, l03, c-track, ocp-extension-point, blocked]
+tags: [signal-generation, l03, c-track, ocp-extension-point]
 priority: P0
 runtime_plane: hot
 ---
@@ -483,7 +483,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
 | 3 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 | 4 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 5 | **Owner 已解除 C轨占位禁令** | Owner 明确授权 | ☐ |
+| 5 | **Owner 已解除 C轨占位禁令** | Owner 明确授权 | ✅ |
 
 ### 16.1 施工策略
 
@@ -502,7 +502,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 2 | CapitalAllocatorBase 定义 | 必须 | ✅ | ✅ |
 | 3 | SignalSynthesizerBase 定义 | 必须 | ✅ | ✅ |
 | 4 | L02 因子产出 | 必须 | 部分实现 | ⚠️ |
-| 5 | Owner 解除 C轨占位 | 必须 | ❌ | ❌ |
+| 5 | Owner 已解除 C轨占位 | 必须 | ✅ | ✅ |
 
 ### 16.3 实施步骤
 
@@ -836,5 +836,5 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 施工步骤微调（命令、路径修正） | AI 可自主修改 | 下游更新产出物引用 | 更新配置文件 |
 | 非关键补充（风险缓解、后果描述） | AI 可自主修改 | — | — |
 | 容量升级方案新增（§17） | 需 Owner 审批 | 下游评估影响 | 更新容量预算 |
-| Base 类接口变更 | 需 Owner 审批（C轨占位+OCP冻结） | 下游检查兼容性 | 更新集成代码 |
+| Base 类接口变更 | 需 Owner 审批（OCP冻结） | 下游检查兼容性 | 更新集成代码 |
 | Default 实现类变更 | AI 可自主修改 | — | — |

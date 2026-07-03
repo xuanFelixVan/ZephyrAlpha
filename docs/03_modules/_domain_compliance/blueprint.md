@@ -140,7 +140,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | ArtifactScanner 在 CI/CD Pipeline 中异步调用 | 扫描时间不影响构建流水线主路径 |
 | AISG 模式匹配基于正则表达式 | 复杂模式可能导致误报，需可配置白名单 |
 | ComplianceRule 数据类来自 shared/contracts/risk | 接口变更需同步 L04/L06 |
-| L10 属于 C 轨线7 T2-deferred | 业务层未开放，仅设计审查和代码验证 |
+| L10 属于 C 轨线7 T2 | C轨占位已解除[ARCH-045 P0]，可施工 |
 
 ### 1.5 利益相关者映射
 

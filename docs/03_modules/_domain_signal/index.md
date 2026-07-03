@@ -1,6 +1,6 @@
 ---
 module_id: MOD-L03-001
-title: D_SIGLEGACY 域索引
+title: signal 层域索引
 doc_type: index
 status: Active
 layer: domain
@@ -9,9 +9,9 @@ version: "2.0.0"
 ttl: permanent
 ---
 
-# D_SIGLEGACY — 信号生成域索引
+# Signal 层 — 信号生成域索引
 
-> **架构裁定**：D19/D21 — 14层降级为域属性，D_SIGLEGACY 为唯一分类。
+> **架构裁定**：D19/D21 — 14层降级为域属性。Signal 层包含3个平级子域：D_ASHARE_SIGNAL / D_FUNDAMENTAL_SIGNAL / D_SIGQC。
 > **命名规范**：统一下划线（snake_case）。
 
 ## 模块清单

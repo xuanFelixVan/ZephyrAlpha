@@ -30,7 +30,7 @@ verifiability: manual
 summary: "L05 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
 priority: P0
 runtime_plane: hot
-tags: [portfolio-construction, l05, c-track, phase-1-partial, blocked-by-infrastructure]
+tags: [portfolio-construction, l05, c-track, phase-1-partial]
 depends_on:
   - target: MOD-L03-001
     at: CTR-P1-015
@@ -44,7 +44,7 @@ references:
     why: "YAML SSoT"
 ---
 
-> ⛔ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，不得以此蓝图为依据新增任何组合构建业务代码。
+> ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
 > module_id: MOD-L05-001 | version: 2.1.0 | status: Active | layer: L05
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
@@ -500,7 +500,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 4 | GOV-DOC-002 防幻觉路径映射已理解 | 能回答"某类文件该放哪" | ☐ |
 | 5 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 | 6 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 7 | ⛔ C轨当前 partially_implemented，禁止新增业务代码 | 确认 blocked 状态 | ☐ |
+| 7 | ✅ C轨已解除，可施工 | 确认 active 状态 | ☑ |
 
 ### 16.1 施工策略
 
@@ -508,7 +508,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 |------|------|
 | 施工阶段数 | 2 个 Phase |
 | 施工模式 | 扩展 |
-| 核心风险 | CTR-004 → CTR-007 重构影响 L06；C轨 blocked 状态 |
+| 核心风险 | CTR-004 → CTR-007 重构影响 L06；C轨已解除 |
 | 目标 generation | 2 — 本次从 generation 1 升级到 generation 2（模板v4.1回填） |
 
 ### 16.2 前置条件
@@ -519,7 +519,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 2 | MOD-L04-001 RiskLimits 契约可用 | hard | ✓ | ✅ |
 | 3 | CTR-004 Order 契约定义存在 | hard | ✓ | ✅ |
 | 4 | CTR-P1-006 StrategyLifecycleEvent 契约定义 | soft | 待定义 | ☐ |
-| 5 | C轨 blocked 状态解除 | hard | blocked | ❌ |
+| 5 | C轨已解除 | hard | 已解除 | ✅ |
 
 ### 16.3 实施步骤
 
@@ -569,7 +569,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 验证命令 | `python -m pytest D:\ZephyrAlpha\tests\unit\pf_core\ -k test_min_variance -v` |
 | G7 检查项 | 新策略注册无冲突；权重计算数学正确性；风控约束应用 |
 
-**状态**：⛔ C轨 blocked，待解除后施工
+**状态**：✅ C轨已解除，可施工
 
 #### 步骤 5：CTR-P1-006 StrategyLifecycleEvent 产出
 
@@ -581,7 +581,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 验证命令 | `python -m pytest D:\ZephyrAlpha\tests\unit\pf_core\ -k test_lifecycle_event -v` |
 | G7 检查项 | 事件结构符合 CTR-P1-006；L07/L10 可消费；幂等键包含 |
 
-**状态**：⛔ C轨 blocked，待解除后施工
+**状态**：✅ C轨已解除，可施工
 
 #### 步骤 6：CTR-004 → CTR-007 重构（ARB-20）
 
@@ -593,7 +593,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 验证命令 | `python -m pytest D:\ZephyrAlpha\tests\unit\pf_core\ -k test_target_portfolio -v` |
 | G7 检查项 | CTR-007 结构定义；L06 同步更新；向后兼容方案 |
 
-**状态**：⛔ C轨 blocked，待解除后施工
+**状态**：✅ C轨已解除，可施工
 
 #### 步骤 7：与 ex_core 集成测试
 
@@ -605,7 +605,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 验证命令 | `python -m pytest D:\ZephyrAlpha\tests\unit\pf_core\test_ex_core_integration.py -v` |
 | G7 检查项 | CTR-004 Order 格式与 ex_core 消费方一致；幂等键传递；风控约束传递 |
 
-**状态**：⛔ C轨 blocked，待解除后施工
+**状态**：✅ C轨已解除，可施工
 
 #### 步骤 8：YAML 命名统一 + source_layer 修正
 
@@ -697,9 +697,9 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
-| GAP-L05-001 | 仅 1 种策略（等权/信号加权） | 新增最小方差/风险平价策略 | P1 | 策略需求 ≥ 3 | v3.0.0 | ⛔ blocked |
-| GAP-L05-002 | 无 StrategyLifecycleEvent 产出 | 实现 CTR-P1-006 事件产出 | P1 | L07/L10 集成需求 | v3.0.0 | ⛔ blocked |
-| GAP-L05-003 | CTR-004 → CTR-007 重构 | 按 ARB-20 重构输出格式 | P0 | L06 集成 | v3.0.0 | ⛔ blocked |
+| GAP-L05-001 | 仅 1 种策略（等权/信号加权） | 新增最小方差/风险平价策略 | P1 | 策略需求 ≥ 3 | v3.0.0 | ✅ 可施工 |
+| GAP-L05-002 | 无 StrategyLifecycleEvent 产出 | 实现 CTR-P1-006 事件产出 | P1 | L07/L10 集成需求 | v3.0.0 | ✅ 可施工 |
+| GAP-L05-003 | CTR-004 → CTR-007 重构 | 按 ARB-20 重构输出格式 | P0 | L06 集成 | v3.0.0 | ✅ 可施工 |
 
 ### §17.3 升级版本矩阵
 
@@ -714,10 +714,10 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | 组件名 | 对应缺口 | 代码文件 | 施工Phase | 状态 |
 |--------|---------|---------|----------|:---:|
-| MinVarianceStrategy | GAP-L05-001 | strategies/min_variance_strategy.py | Phase 2 | ⛔ blocked |
-| RiskParityStrategy | GAP-L05-001 | strategies/risk_parity_strategy.py | Phase 2 | ⛔ blocked |
-| StrategyLifecycleEvent | GAP-L05-002 | shared/contracts/portfolio/strategy_lifecycle.py | Phase 2 | ⛔ blocked |
-| TargetPortfolio (CTR-007) | GAP-L05-003 | strategy_base.py 重构 | Phase 2 | ⛔ blocked |
+| MinVarianceStrategy | GAP-L05-001 | strategies/min_variance_strategy.py | Phase 2 | ✅ 可施工 |
+| RiskParityStrategy | GAP-L05-001 | strategies/risk_parity_strategy.py | Phase 2 | ✅ 可施工 |
+| StrategyLifecycleEvent | GAP-L05-002 | shared/contracts/portfolio/strategy_lifecycle.py | Phase 2 | ✅ 可施工 |
+| TargetPortfolio (CTR-007) | GAP-L05-003 | strategy_base.py 重构 | Phase 2 | ✅ 可施工 |
 
 ---
 
@@ -783,7 +783,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 核心架构 | evolving | 中 | C轨激活+6子模块实现 | 当前仅 Phase 1 预研 |
 | 接口契约 | evolving | 中 | CTR-007 重构完成 | 当前 CTR-004，待 ARB-20 重构 |
 | 数据模型 | volatile | 低 | StrategyMeta 迁移 Pydantic | 当前 @dataclass |
-| 施工步骤 | evolving | 中 | C轨 blocked 解除 | 步骤 4-7 被 blocked |
+| 施工步骤 | evolving | 中 | C轨已解除 | 步骤 4-7 可施工 |
 
 ---
 
@@ -794,7 +794,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | v1.0.0 | StrategyBase + StrategyRegistry + DefaultEquityStrategy | — | 已完成 |
 | v2.0.0 | 模板v3.3重构 | v1.0.0 | 已完成 |
 | v2.1.0 | 模板v4.1回填+ARB-20对齐 | v2.0.0 | 已完成 |
-| v3.0.0 | CTR-007重构+多策略+生命周期事件+6子模块 | v2.1.0 | ⛔ blocked |
+| v3.0.0 | CTR-007重构+多策略+生命周期事件+6子模块 | v2.1.0 | ✅ 可施工 |
 
 ---
 
