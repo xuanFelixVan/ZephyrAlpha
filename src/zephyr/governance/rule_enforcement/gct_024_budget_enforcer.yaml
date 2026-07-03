@@ -60,7 +60,7 @@ checks:
     severity: info
     rule_ids:
       - TRAE-019
-    runner: "python scripts/governance/d5_architecture/check_blueprint_code_alignment.py --warn-only"
+    runner: "python scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py --warn-only"
 
   - check_id: "gct024_health_check"
     description: "Budget Enforcer 8项健康检查全部通过"
@@ -74,4 +74,4 @@ checks:
     severity: soft
     rule_ids:
       - TRAE-019
-    runner: "python scripts/governance/d5_architecture/check_blueprint_code_alignment.py --warn-only"
+    runner: "python scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py --warn-only"
