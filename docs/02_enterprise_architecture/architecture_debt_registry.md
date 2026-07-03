@@ -705,12 +705,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **[路径漂移更新]** 原#2 `autonomy_core/skill_registry.py` → `autonomy_core/skills/skill_registry.py`（skills/子目录迁移）。
 > **漂移详情**：代码硬编码`{experimental,beta,stable,frozen}`，词表真源为`{frozen,stable,evolving,volatile}`——值集合已不一致，AI标注`evolving`被代码拒，改`experimental`被词表拒→随机选→漂移。
 
-##### B. semantic_vocabulary.yaml（真源4值：runtime/data/build/contract）—— ✅ 全部FIXED
-
-> **[✓ FIXED: 2026-07-04]** 2处已改为 `load_vocabulary_values("semantic_vocabulary.yaml")` 动态加载（治本2026-06-30）：
-> - 原#8 `diagnose_depgraph.py:427` → 路径漂移至 `scripts/governance/d5_architecture/diagnose_depgraph.py:443`，已动态加载
-> - 原#9 `generate_project_depgraph.py:323` → 行号漂移至329，已动态加载
-
 ##### C. layer_vocabulary.yaml（真源4值：L0_infrastructure/L1_foundation/L2_domain/L3_application）
 
 | # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
@@ -719,14 +713,6 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | 13 | _FOUNDATION_LAYERS frozenset硬编码 | [src/zephyr/infrastructure/pipeline/ct_pipe_routing.py:63](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/ct_pipe_routing.py#L63) | 高 | 否 |
 
 > **[✓ FIXED: 2026-07-04]** 原#10 `integration/ct_pipe_routing.py`、#11 `integration/routing_plugins.py` 已删除（integration/侧副本清理）。
-
-##### D. module_lifecycle_status_vocabulary.yaml（真源8值）—— ✅ FIXED
-
-> **[✓ FIXED: 2026-07-04]** 原#14 已改为 `load_vocabulary_values("module_lifecycle_status_vocabulary.yaml")` 动态加载（治本2026-06-30），行号漂移64→66。
-
-##### E. contract_status_vocabulary.yaml（真源3值：draft/frozen/deprecated）—— ✅ FIXED
-
-> **[✓ FIXED: 2026-07-04]** 原#15 已改为 `load_vocabulary_values("contract_status_vocabulary.yaml")` 动态加载（治本2026-06-30），行号漂移62→64。
 
 ##### F. MEDIUM严重度（原26处，4处FIXED，剩余22处STILL_VALID含路径漂移）—— 无对应SSoT词表的硬编码合法值
 
@@ -1127,16 +1113,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **病根**：根因1（文档版本未同步）
 **修复方向**：统一为PostgreSQL
 
-#### 5.5.6 AGENTS.md声明make_ttl_reconciler"已删"但代码存在（HIGH）✅ 已修复（2026-06-30）
-
-**违反**：trae_060 §1 唯一真源（宪法级声明与代码不符）
-**证据**：
-- [AGENTS.md:187](file:///D:/ZephyrAlpha/AGENTS.md#L187) §11 声明`make_ttl_reconciler`已删除
-- [reconciliation_registry.py:418](file:///D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py#L418) 函数仍完整存在
-**病根**：根因1（文档与代码脱节）
-**修复方向**：删除函数或更新AGENTS.md声明
-**修复记录**（2026-06-30）：已删除 `make_ttl_reconciler` 函数体（原 :418-509）+ `__all__` 移除 + git_commit_gateway.py import/register 删除。代码现在与 AGENTS.md §187 声明完全一致。reconciliation_registry.py 中 4 处注释引用已更新（说明"已删除但模式沿用"）。
-
 #### 5.5.7 check_blueprint_code_alignment.py三方矛盾（HIGH）
 
 **违反**：trae_060 §1 唯一真源（对齐检查器自身不对齐）
@@ -1205,12 +1181,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **说明**：与5.5.7同源，此处归入"三方对齐"维度（跨维度计数=同一问题在2个维度均计入）
 **证据**：见5.5.7
-
-#### 5.6.2 make_ttl_reconciler宪法级不符（HIGH）✅ 已修复（2026-06-30）
-
-**说明**：与5.5.6同源，此处归入"三方对齐"维度
-**证据**：见5.5.6
-**修复记录**：见5.5.6 修复记录（2026-06-30 已删除函数体 + import + register）
 
 #### 5.6.3 3个无效module_id不在blueprint_registry（HIGH × 3）
 
@@ -1660,15 +1630,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 对比trae_060格式规范（全为TRAE-XXX）
 **病根**：根因1（格式约定违反/元规则不一致）
 **修复方向**：统一为rule_id格式
-
-#### 5.11.5 doc_type operational_rule指向真空目录（MEDIUM）✅ RESOLVED（P7-T1, 2026-06-30）
-
-**证据**：
-- [doc_type_vocabulary.yaml:65-74](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml#L65) operational_rule的allowed_directories声明`docs/01_policies_and_standards/operational/`
-- 该目录不存在（LS验证）
-**病根**：根因1（DCR-002校验基础错误）
-**修复方向**：创建目录或修正allowed_directories
-**解决**：v3.1.0 operational_rule 合并入 policy（P7-T1 commit 848cd19be），doc_type_vocabulary.yaml 不再声明 operational_rule，debt 自动消除
 
 #### 5.11.6 script_manifest domain/description字段为垃圾值（LOW，1聚合 = 多条）
 
@@ -2752,11 +2713,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：循环导入/未使用导入/缺失__init__导出/幻影导入/导入路径不一致/依赖方向违反/可选依赖处理/重复模块
 > 审计方法：Grep + Read真实文件取证（src/zephyr/__init__.py、shared/、.importlinter等）
 
-#### 5.22.1 src/zephyr/__init__.py __all__声明9个幻影子包【HIGH】
-- 证据：[__init__.py:163-194](file:///d:/ZephyrAlpha/src/zephyr/__init__.py) `__all__` 列出 `execution`/`observability`/`orchestration`/`portfolio`/`research`/`resilience`/`semantic_auditor`/`signal`/`testing`；Glob `src/zephyr/{execution,observability,orchestration,...}/__init__.py` 返回No file found——这些顶层包根本不存在，外部 `from zephyr import execution` 触发__getattr__回退到懒加载注册表也找不到最终AttributeError
-- 病根：根因1（包索引与实际目录脱节，SSoT失效）
-- 修复：__all__由generate_manifest.py从实际目录自动生成禁止手编
-
 #### 5.22.2 register_lazy注册4+幻影模块路径（含governance_governance拼写错误）【HIGH】
 - 证据：[__init__.py:147-162](file:///d:/ZephyrAlpha/src/zephyr/__init__.py) L148 `register_lazy("vector-memory","zephyr.data_governance_governance.knowledge_management.vector_memory")` — `governance_governance` 重复词根拼写错误且路径不存在；L150 `register_lazy("llm-security","zephyr.security.llm_defense.llm_security")` — 只有llm_security/目录无llm_security.py单文件；L155/L160 `register_lazy(...,"zephyr.integration.runtime_core...")` — runtime_core不存在
 - 病根：根因1（漂移累积+重构遗留，路径改名后未同步注册表）
@@ -2772,26 +2728,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（守护契约本身不完整+import-linter未在CI强制执行）
 - 修复：把governance/trading/ml_train/simulation加入forbidden_modules，pre-commit跑lint-imports
 
-#### 5.22.5 _TRADING_SYMBOLS懒加载表全部指向幻影路径zephyr.execution.trading.*【HIGH】
-- 证据：[shared/foundation/constants.py:67-84](file:///d:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py) 注释"Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)"，_TRADING_SYMBOLS字典把12个符号映射到 `zephyr.execution.trading.trading_contracts.market.instrument`，OrderSide/OrderStatus/OrderType映射到 `zephyr.execution.trading.trading_contracts.execution.order`；Glob `src/zephyr/execution/**/*.py` 返回No file found——`zephyr.execution`顶层包根本不存在，真实路径是 `zephyr.trading.trading_contracts.*`
-- 病根：根因1（重构改名execution→trading后懒加载表未同步；用懒加载掩盖了"shared不应依赖trading"的违规，结果掩盖本身也写错了）
-- 修复：删除该懒加载表，这些枚举本就该属于shared.contracts(SSoT)
-
 #### 5.22.6 ex_core+autonomy_perm 10+个import *垫片文件【MEDIUM】
 - 证据：[ex_core/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) `from zephyr.governance.broker_interface import *  # noqa: F403`；[ex_core/adapters/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/broker_interface.py) 同；[ex_core/adapters/simulation_broker.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/simulation_broker.py) `from zephyr.governance.adapters.simulation_broker import *`；[autonomy_perm/red_blue_validator/](file:///d:/ZephyrAlpha/src/zephyr/autonomy_perm/red_blue_validator/) 下6个文件每个L18 `from zephyr.security.adversarial_validation.X import *`；更糟 [ex_core/broker_interface.py:16](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) docstring写"migrated to zephyr.execution.core.broker_interface"但真实import是 `zephyr.governance.broker_interface` —— docstring/import/目录名三方不一致
 - 病根：根因1（漂移累积+星号导入失控，`# noqa: F403`压制了所有linter告警）
 - 修复：删除0逻辑垫片文件全局批量替换import路径，`# noqa: F403`进入pyproject.toml黑名单
-
-#### 5.22.7 llm_security与llm_security_01整套包重复【MEDIUM】 ✅ ARCH-033 已解决
-- 证据：~~Glob同时返回 `src/zephyr/security/llm_defense/llm_security/` 与 `src/zephyr/security/llm_defense/llm_security_01/` 两个完整包~~；`llm_security_01/__init__.py:3` 注释"Re-export from authoritative location"，L4-8用5个 `from zephyr.security.llm_defense.llm_security.X import *` 转发；包内每个同名文件（self_protection/red_team_scanner.py:17、l7_validation.py:17、isolation.py:17等）都是空壳转发
-- 病根：根因1（重命名留旧壳双倍维护面+懒加载路径又指向不存在的单文件）
-- 修复：删除llm_security_01/整个目录，为llm_security/__init__.py补明确__all__
-- 状态：✅ 已解决（commit e887e95490 删除25文件含context_scanner.py；llm_security/__init__.py已补__all__ 29符号；0活跃import引用，仅_archive归档脚本残留）
-
-#### 5.22.8 cache.py/lock.py三处重复+shared/infra与shared/infra_06几乎完全重复【MEDIUM】
-- 证据：Glob `src/zephyr/**/cache.py` 返回3个：`shared/cache.py`、`shared/infra/cache.py`、`infrastructure/infra_06/cache.py`；Glob `src/zephyr/**/lock.py` 返回3个：`shared/lock.py`、`shared/infra/lock.py`、`shared/infra_06/lock.py`；`shared/infra/`与`shared/infra_06/`两目录都含 `idempotency.py/limiter.py/lock.py/observer.py/outbox.py` 5个同名文件；`infra_06/__init__.py` 仅一句初始化无任何说明为何并行存在两份
-- 病根：根因1（漂移累积+命名空间数字化`_06`后缀无文档化理由）
-- 修复：删除shared/infra_06/与infrastructure/infra_06/合并回shared/infra/
 
 #### 5.22.10 governance_server.py静默吞掉13处ImportError【HIGH】
 - 证据：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 共13个 `except ImportError as e:` 块（行88,592,615,629,662,687,707,726,816,836,867,882,903）；每块包裹一个 `from zephyr.governance.X import Y`，失败时 `return {"error":f"... import failed: {e}"}`；MCP Server启动不报错但每个工具调用返回错误dict，用户无从知晓是依赖缺失还是逻辑错误；无日志无告警无metrics
@@ -9328,26 +9268,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.174 导入循环/模块耦合（17个，第30轮新增）
-
-#### HIGH（9个） [✓ FIXED: 2026-07-03 #1/#3/#4/#5/#8/#9 修复（懒加载/规范源重定向/延迟import），#6/#7 代理壳移除（前session），#2 假阳性（debt registry路径错误，实际文件不导入ops.observability）]
-
-1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\foundation\constants.py:45` — `from zephyr.governance.escalation_models import EscalationLevel`。**严重度理由**：foundation比§5.60.4的protocols.py/metrics.py更靠底层，逆向依赖半径最大。 [✓ FIXED: constants.py __getattr__懒加载EscalationLevel，commit a2f3f5e9b]
-
-2. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\zephyr_logger.py:16` / `d:\ZephyrAlpha\src\zephyr\shared\tracing.py:25` — L0 shared顶层模块导入L1 ops.observability。**严重度理由**：§5.60.4未覆盖的新实例。 [✓ FALSE-POSITIVE: debt registry路径错误，实际文件为shared/utils/zephyr_logger.py和shared/observability/tracing.py，均不导入ops.observability]
-
-3. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\shared\schema\schemas.py:26` 与 `:265` — integration层schema模块同时从L2 `governance.rule_enforcement.task_types`导入`TaskNamespace`（L26顶层）和`Task/TaskStatus`（L265延迟导入）。**严重度理由**：循环被代码注释自证，§5.60未识别的4层循环依赖。 [✓ FIXED: schemas.py __getattr__懒加载Task/TaskNamespace/TaskStatus，commit 8caa07c69]
-
-4. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\contracts\runtime_types.py:24` — `from zephyr.integration.shared.schema.schemas import BASE_CONFIG`。**严重度理由**：BASE_CONFIG是pydantic模型配置基类，影响面渗入shared契约层。 [✓ FIXED: runtime_types.py改从shared.schema.base_config规范源导入，commit 8caa07c69]
-
-5. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\shared\blueprint_decomposer.py:45` 与 `:46` — `from zephyr.integration.shared.schema.execution_model import ExecutionModel` 和 `from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel`。**严重度理由**：blueprint_decomposer是蓝图分解核心，被governance/trading多处引用，逆向依赖向上传播。 [✓ FIXED: blueprint_decomposer.py改从shared.schema.task_types/severity_types规范源+门面导入，commit 8caa07c69]
-
-6. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\lifecycle\task_lifecycle_manager.py:17` / `d:\ZephyrAlpha\src\zephyr\shared\lifecycle\scope_guard.py:17` — 两文件首行注释均写明"代理模块：将zephyr.shared.lifecycle.*重定向到zephyr.infrastructure.lifecycle.*"，随后 `from zephyr.infrastructure.lifecycle.* import (...)`。**严重度理由**：把infrastructure的具体实现混入shared抽象层，违反DIP。 [✓ FIXED: 代理壳移除，前session]
-
-7. **[HIGH]** 2处：`d:\ZephyrAlpha\src\zephyr\shared\queue\task_scheduler.py:17` / `d:\ZephyrAlpha\src\zephyr\shared\reliability\context_guard.py:17` — 同#6的"代理模块"模式，`from zephyr.infrastructure.{queue,reliability}.* import (...)`。**严重度理由**：与#6合计4处代理壳，表明shared层系统性退化为infrastructure别名。 [✓ FIXED: 代理壳移除，前session]
-
-8. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\finding_bridge.py:39` — 顶层 `from zephyr.governance.task_repo import TaskRepository`。**严重度理由**：§5.60.1之外的另一条trading→governance顶层依赖边，trading.orchestrator无法脱离governance独立复用。 [✓ FIXED: finding_bridge.py延迟import到report_findings()函数体，commit 8caa07c69]
-
-9. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\trading_contracts\portfolio\contracts\money.py:49` — `from zephyr.governance.instrument import CurrencyCode`。**严重度理由**：trading_contracts自称"纯数据契约包"，却导入governance的领域枚举；money.py是金融Decimal计算基础类型，CurrencyCode逆向依赖使money.py无法独立测试。 [✓ FIXED: money.py改从sibling包trading_contracts.market.instrument导入，commit a2f3f5e9b]
 
 #### MEDIUM（6个）
 
