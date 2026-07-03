@@ -51,13 +51,13 @@ class TestDedupExtractorInstantiation:
 
 class TestDedupExtractorScan:
     def test_scan_returns_list(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dedup_mod, "REPO_ROOT", tmp_path)
         ext = DedupExtractor()
         result = ext.scan()
         assert isinstance(result, list)
 
     def test_scan_finding_structure(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dedup_mod, "REPO_ROOT", tmp_path)
         code = "def foo():\n    x = 1\n    y = 2\n    z = 3\n    w = 4\n    return x + y + z + w\n"
         for i in range(4):
             (tmp_path / f"mod_{i}.py").write_text(code, encoding="utf-8")
@@ -71,13 +71,13 @@ class TestDedupExtractorScan:
             assert finding["type"] == "code_duplication"
 
     def test_scan_respects_min_occurrences(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dedup_mod, "REPO_ROOT", tmp_path)
         ext = DedupExtractor(min_occurrences=999)
         result = ext.scan()
         assert len(result) == 0
 
     def test_scan_empty_dir(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(dedup_mod, "REPO_ROOT", tmp_path)
         ext = DedupExtractor()
         result = ext.scan()
         assert result == []

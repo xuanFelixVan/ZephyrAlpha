@@ -166,4 +166,4 @@ class TestConstants:
         assert ".md" in WATCHED_EXTENSIONS
 
     def test_registry_rel_path(self):
-        assert "document-metadata-index-registry.yaml" in REGISTRY_REL_PATH
+        assert "rule_catalog_registry.yaml" in REGISTRY_REL_PATH

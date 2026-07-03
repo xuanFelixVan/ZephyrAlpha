@@ -17,7 +17,7 @@ from unittest.mock import patch
 import pytest
 
 protocol_mod = pytest.importorskip(
-    "zephyr.infrastructure.a2a_protocol.governance.protocol", reason="llm-security.protocol not available"
+    "zephyr.security.llm_defense.llm_security.protocol", reason="llm-security.protocol not available"
 )
 SecurityContext = protocol_mod.SecurityContext
 SecurityResult = protocol_mod.SecurityResult

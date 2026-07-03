@@ -33,10 +33,10 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
-from _shared.constants import REPO_ROOT
     BareLLMCallError,
     _ctx_allowance,
     _is_guarded,
@@ -387,10 +387,17 @@ class TestSitecustomizeAutoLoad:
     def _run_subprocess(code: str, env_override: dict | None = None) -> subprocess.CompletedProcess:
         env = os.environ.copy()
         src = str(_REPO_ROOT / "src")
-        env["PYTHONPATH"] = src + os.pathsep + env.get("PYTHONPATH", "")
+        # Python 3.12: `python -c` 模式下 sys.path[0]='' 是在 site 模块加载之后才加回的，
+        # execsitecustomize 被调用时 sys.path 不含 cwd → sitecustomize.py 找不到。
+        # 修复：把 repo_root 加到 PYTHONPATH，确保 sitecustomize.py 在 execsitecustomize
+        # 被调用时能在 sys.path 上被找到。
+        env["PYTHONPATH"] = (
+            str(_REPO_ROOT) + os.pathsep
+            + src + os.pathsep
+            + env.get("PYTHONPATH", "")
+        )
         if env_override:
             env.update(env_override)
-        # python -c → sys.path[0]='' = cwd = repo_root → sitecustomize 自动加载
         return subprocess.run(
             [sys.executable, "-c", code],
             cwd=str(_REPO_ROOT),
