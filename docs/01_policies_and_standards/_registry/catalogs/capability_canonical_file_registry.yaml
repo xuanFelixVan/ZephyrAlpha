@@ -2566,6 +2566,32 @@ capabilities:
       research/backtest_base.py, research/default_backtest_engine.py, intelligence/×2,
       infrastructure/rollback/backtest_engine.py）。
 
+  # --------------------------------------------------------------------------
+  - capability_id: breaking_change_concurrency_blocker
+    aliases:
+      - breaking_change
+      - BREAKING_CHANGE_CONCURRENCY_BLOCKED
+      - BREAKING_CHANGE_AVOIDANCE_BLOCKED
+      - find_breaking_change_session
+      - is_breaking_change
+      - allow_concurrent
+      - 治本变更并发阻断
+    description: >-
+      治本变更并发阻断能力（§9.7 治本，2026-07-04）。codify AGENTS.md L391
+      "治本变更未提交前禁止并发 AI 对话"——原为君子协定（靠 AI 自觉不并发），
+      AI 不遵守就并发导致搭便车提交/工作区回退。本能力在 session_worktree_start
+      入口技术强制：breaking_change=True 时检查是否有其他活跃 session → 有则阻断
+      （BREAKING_CHANGE_CONCURRENCY_BLOCKED）；breaking_change=False 时检查是否有
+      其他活跃 session 声明了 breaking_change → 有则阻断（BREAKING_CHANGE_AVOIDANCE_BLOCKED）。
+      双向阻断确保治本变更 session 独占工作区。逃生通道 allow_concurrent=True 跳过
+      阻断（对标 allow_overlap）。fail-open：并发检测异常不阻断 start（对标
+      held_overlap_gate fail-open）。实现跨两个文件：session_concurrency.py
+      （SessionInfo.is_breaking_change 字段 + find_breaking_change_session 方法）+
+      session_worktree.py（session_worktree_start 双向阻断逻辑）。canonical 两个文件
+      均为真源（字段定义在 session_concurrency.py，阻断逻辑在 session_worktree.py）。
+      解决发现性：新 AI 搜 "breaking_change/治本变更并发/§9.7" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建并发阻断逻辑。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

@@ -162,6 +162,7 @@ class SessionInfo:
     start_time: float
     held_files: list[str] = field(default_factory=list)
     last_heartbeat: float = 0.0
+    is_breaking_change: bool = False
 
     def to_dict(self) -> dict:
         return {
@@ -170,6 +171,7 @@ class SessionInfo:
             "start_time": self.start_time,
             "held_files": self.held_files,
             "last_heartbeat": self.last_heartbeat,
+            "is_breaking_change": self.is_breaking_change,
         }
 
     @classmethod
@@ -180,6 +182,7 @@ class SessionInfo:
             start_time=d.get("start_time", 0.0),
             held_files=d.get("held_files", []),
             last_heartbeat=d.get("last_heartbeat", 0.0),
+            is_breaking_change=d.get("is_breaking_change", False),
         )
 
 
@@ -208,6 +211,7 @@ class SessionRegistry:
         session_id: str,
         pid: int | None = None,
         held_files: list[str] | None = None,
+        is_breaking_change: bool = False,
     ) -> SessionInfo:
         """注册一个活跃 session。"""
         with self._lock:
@@ -217,12 +221,39 @@ class SessionRegistry:
                 start_time=time.time(),
                 held_files=held_files or [],
                 last_heartbeat=time.time(),
+                is_breaking_change=is_breaking_change,
             )
             data = self._load()
             data[session_id] = info.to_dict()
             self._save(data)
-            logger.info("SessionRegistry: registered session=%s pid=%d", session_id, info.pid)
+            logger.info(
+                "SessionRegistry: registered session=%s pid=%d breaking_change=%s",
+                session_id, info.pid, is_breaking_change,
+            )
             return info
+
+    def find_breaking_change_session(self, exclude_session_id: str = "") -> SessionInfo | None:
+        """查找是否有活跃 session 声明了 breaking_change（治本变更并发阻断，§9.7 治本 2026-07-04）。
+
+        - 排除 exclude_session_id 自身
+        - 过期 session 忽略（不查不删，只读）
+        - 返回第一个匹配的 SessionInfo，无则 None
+
+        供 session_worktree_start 双向阻断逻辑调用：
+        - breaking_change=True 的新 session 启动时：检查是否有任何其他活跃 session
+        - breaking_change=False 的新 session 启动时：检查是否有其他活跃 session 声明了 breaking_change
+        """
+        data = self._load()
+        now = time.time()
+        for sid, d in data.items():
+            if sid == exclude_session_id:
+                continue
+            info = SessionInfo.from_dict(d)
+            if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+                continue  # 过期 session，忽略
+            if info.is_breaking_change:
+                return info
+        return None
 
     def unregister(self, session_id: str) -> bool:
         """注销一个 session。"""

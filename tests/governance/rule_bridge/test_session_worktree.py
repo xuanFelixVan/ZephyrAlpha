@@ -541,3 +541,56 @@ def test_sweep_skips_recent_dirs():
     finally:
         if fresh.exists():
             _force_rmtree(fresh)
+
+
+# ---------------------------------------------------------------------------
+# 治本变更并发阻断测试（§9.7 治本，2026-07-04）
+# 验证双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
+# ---------------------------------------------------------------------------
+def test_worktree_start_breaking_change_blocks_new_session():
+    """breaking_change 双向阻断：A (breaking_change=True) 启动后，B (普通) 启动被阻断。"""
+    # Session A 启动 with breaking_change=True
+    rA = session_worktree_start("sess-pytest-A", breaking_change=True)
+    assert rA["registered"], f"A 注册失败: {rA}"
+    assert rA["created"], f"A worktree 创建失败: {rA}"
+
+    # Session B 启动 (breaking_change=False, 默认) → 应被阻断（避让治本变更）
+    rB = session_worktree_start("sess-pytest-B")
+    assert not rB["registered"], f"B 不应注册成功: {rB}"
+    assert "BREAKING_CHANGE_AVOIDANCE_BLOCKED" in rB.get("error", ""), f"B 应被阻断: {rB}"
+    assert rB.get("blocked_by") == ["sess-pytest-A"], f"blocked_by 应为 A: {rB}"
+
+    # cleanup: A abort
+    session_worktree_abort("sess-pytest-A")
+
+
+def test_worktree_start_breaking_change_blocks_concurrent_breaking():
+    """breaking_change 双向阻断：A (breaking_change=True) 启动后，B (breaking_change=True) 也被阻断。"""
+    # Session A 启动 with breaking_change=True
+    rA = session_worktree_start("sess-pytest-A", breaking_change=True)
+    assert rA["registered"], f"A 注册失败: {rA}"
+
+    # Session B 启动 with breaking_change=True → 应被阻断（治本变更期间禁止任何并发）
+    rB = session_worktree_start("sess-pytest-B", breaking_change=True)
+    assert not rB["registered"], f"B 不应注册成功: {rB}"
+    assert "BREAKING_CHANGE_CONCURRENCY_BLOCKED" in rB.get("error", ""), f"B 应被阻断: {rB}"
+    assert "sess-pytest-A" in rB.get("blocked_by", []), f"blocked_by 应含 A: {rB}"
+
+    # cleanup: A abort
+    session_worktree_abort("sess-pytest-A")
+
+
+def test_worktree_start_breaking_change_allow_concurrent_escape():
+    """allow_concurrent=True 逃生通道：A (breaking_change=True) 启动后，B (allow_concurrent=True) 放行。"""
+    # Session A 启动 with breaking_change=True
+    rA = session_worktree_start("sess-pytest-A", breaking_change=True)
+    assert rA["registered"], f"A 注册失败: {rA}"
+
+    # Session B 启动 with allow_concurrent=True（逃生通道）→ 应放行
+    rB = session_worktree_start("sess-pytest-B", allow_concurrent=True)
+    assert rB["registered"], f"B 应注册成功（逃生通道）: {rB}"
+    assert rB["created"], f"B worktree 应创建: {rB}"
+
+    # cleanup: A + B abort
+    session_worktree_abort("sess-pytest-A")
+    session_worktree_abort("sess-pytest-B")

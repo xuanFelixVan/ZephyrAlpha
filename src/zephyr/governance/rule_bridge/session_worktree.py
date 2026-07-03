@@ -228,15 +228,24 @@ def _sweep_stale_worktrees(
 def session_worktree_start(
     session_id: str | None = None,
     project_root: str | Path | None = None,
+    breaking_change: bool = False,
+    allow_concurrent: bool = False,
 ) -> dict:
     """AI 对话启动第一步：注册 session + 创建独立 worktree。
 
     原子操作：先注册 session（SessionRegistry），再创建 worktree（WorktreeManager）。
     幂等：若 worktree 已存在，直接复用并返回其路径。
 
+    治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断逻辑：
+    - ``breaking_change=True``：检查是否有其他活跃 session → 有则阻断（治本变更期间禁止并发）
+    - ``breaking_change=False``：检查是否有其他活跃 session 声明了 ``breaking_change=True`` → 有则阻断（避让治本变更）
+    - ``allow_concurrent=True``：逃生通道，跳过阻断（对标 ``allow_overlap``）
+
     Args:
         session_id: session 标识。为 None 时自动用 generate_session_id() 生成。
         project_root: 项目根目录（默认 REPO_ROOT）。
+        breaking_change: 本次会话是否为治本变更（refactor/fix 涉及多文件）。True 时阻断其他并发 session。
+        allow_concurrent: 逃生通道，True 时跳过并发阻断（对标 allow_overlap）。
 
     Returns:
         {
@@ -246,17 +255,62 @@ def session_worktree_start(
             "registered": bool,        # session 是否注册成功
             "created": bool,           # worktree 是否新建（False=已存在复用）
         }
-        失败时附加 "error" 字段。
+        失败时附加 "error" 字段 + "blocked_by" 字段（阻断方 session_id）。
     """
     sid = session_id or generate_session_id()
     root = Path(project_root) if project_root else REPO_ROOT
+
+    # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
+    #    双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
+    #    逃生通道：allow_concurrent=True 跳过阻断（对标 allow_overlap）
+    if not allow_concurrent:
+        registry_pre = _get_registry(root)
+        try:
+            if breaking_change:
+                # breaking_change=True：检查是否有任何其他活跃 session
+                others = [s for s in registry_pre.list_active() if s.session_id != sid]
+                if others:
+                    other_ids = [s.session_id for s in others]
+                    return {
+                        "session_id": sid,
+                        "worktree_path": "",
+                        "branch": f"session/{sid}",
+                        "registered": False,
+                        "created": False,
+                        "error": (
+                            f"BREAKING_CHANGE_CONCURRENCY_BLOCKED: 治本变更期间禁止并发 AI 对话"
+                            f"（AGENTS.md L391/L394）。当前活跃 session: {other_ids}。"
+                            f"逃生通道：allow_concurrent=True。"
+                        ),
+                        "blocked_by": other_ids,
+                    }
+            else:
+                # breaking_change=False：检查是否有其他活跃 session 声明了 breaking_change
+                blocker = registry_pre.find_breaking_change_session(exclude_session_id=sid)
+                if blocker is not None:
+                    return {
+                        "session_id": sid,
+                        "worktree_path": "",
+                        "branch": f"session/{sid}",
+                        "registered": False,
+                        "created": False,
+                        "error": (
+                            f"BREAKING_CHANGE_AVOIDANCE_BLOCKED: 活跃 session '{blocker.session_id}'"
+                            f" 声明了 breaking_change（治本变更进行中，AGENTS.md L391/L394）。"
+                            f"逃生通道：allow_concurrent=True。"
+                        ),
+                        "blocked_by": [blocker.session_id],
+                    }
+        except Exception as e:
+            # fail-open：并发检测异常不阻断 start（对标 held_overlap_gate fail-open）
+            logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e)
 
     # 1. 注册 session（held_files 留空——worktree 模式下文件隔离由 worktree 物理保证，
     #    不依赖 held_files claim 机制）
     registry = _get_registry(root)
     registered = False
     try:
-        registry.register(sid, pid=os.getpid(), held_files=[])
+        registry.register(sid, pid=os.getpid(), held_files=[], is_breaking_change=breaking_change)
         registered = True
     except Exception as e:
         return {
