@@ -203,7 +203,7 @@ class SelfHealth:
         try:
             import importlib
 
-            importlib.import_module("zephyr.security.semantic_auditor")
+            importlib.import_module("zephyr.governance.semantic_audit")
             return SLIResult("no_circular_import", True, 1.0, 1.0)
         except ImportError as exc:
             if "circular" in str(exc).lower():
@@ -248,7 +248,7 @@ class SelfHealth:
         try:
             import importlib
 
-            importlib.import_module("zephyr.security.semantic_auditor")
+            importlib.import_module("zephyr.governance.semantic_audit")
             elapsed = time.time() - start
             if elapsed > 2.0:
                 return SLIResult("capacity_import_slow", False, elapsed, 2.0, f"导入耗时 {elapsed:.2f}s")
