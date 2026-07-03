@@ -987,17 +987,6 @@ entries:
   - 信号-质量
   stability: planned
   ai_autonomy: ai_modifiable
-- domain: D_SIGLEGACY
-  subdomain: siglegacy
-  ssot_module: MOD-INF-038
-  ssot_path: ''
-  covers:
-  - 信号遗留设计态节点（原 D-SIGNAL 拆分后遗留的设计态占位域）
-  aliases:
-  - signal legacy
-  - 信号遗留
-  stability: deprecated
-  ai_autonomy: human_gated
 - domain: D_GOV_RULE
   subdomain: rule_governance
   ssot_module: MOD-INF-041

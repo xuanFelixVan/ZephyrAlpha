@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L03-001
 submodule_path: src/zephyr/signal
-title: "Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位"
+title: "Signal Generation Core 蓝图+施工图 — 信号生成层"
 doc_type: blueprint
 status: Active
 version: "2.2.0"
@@ -42,22 +42,22 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\blueprint.md"
     section: "§1"
     why: "本蓝图即SSoT"
-summary: "信号生成层C轨占位。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层未开放，禁止施工。"
+summary: "信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。"
 ssot_yaml: "docs/03_modules/_domain_signal/blueprint.md"
 tags: [signal-generation, l03, c-track, ocp-extension-point, blocked]
 priority: P0
 runtime_plane: hot
 ---
 
-> ⛔ **业务层未开放——禁止施工**
-> 本蓝图属于 C 轨占位模块，业务层尚未开放。当前阶段 AI 不可自主施工。
-> 开工条件：Owner 明确解除 C 轨占位禁令 + 基础设施就绪（MOD-MASTER_BLUEPRINT §零）。
+> ✅ **业务层已开放——可施工**
+> 本蓝图所属 C 轨业务层已开放，AI 可自主施工。
+> 开工条件已满足：Owner 已解除 C 轨占位禁令，基础设施已就绪。
 > 任何修改需 Owner 审批。
 
 > module_id: MOD-L03-001 | version: 2.2.0 | status: active | domain: signal
 > actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 2 | construction_progress: partially_implemented
 
-# Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位
+# Signal Generation Core 蓝图+施工图 — 信号生成层
 
 ## 概述
 
@@ -106,7 +106,7 @@ runtime_plane: hot
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v2.2.0 (模板v4.1回填) | 4 Base + 2 Default + 1 re-export | CTR-008 SignalQualityMetrics; DegradationMonitor 实现 | C轨占位，待 Owner 解除 |
+| v2.2.0 (模板v4.1回填) | 4 Base + 2 Default + 1 re-export | CTR-008 SignalQualityMetrics; DegradationMonitor 实现 | 已解除 |
 
 ---
 
@@ -133,7 +133,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 约束 | 影响 |
 |------|------|
-| C轨占位——禁止施工 | AI 不可自主修改本层代码，需 Owner 审批 |
+| 可施工 | AI 不可自主修改本层代码，需 Owner 审批 |
 | 信号输出必须标准化 | 下游 L04/L05 依赖统一格式 |
 | OCP 扩展点接口不可变 | 新策略只加不改，Base 类接口冻结 |
 | 交易时段运行 | 信号生成延迟<50ms |
@@ -412,7 +412,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | # | 自动化项 | 是否需要 | 理由 | 实现方式 | 现有工具 | 缺口 | 触发方式 | 触发条件 |
 |---|---------|:-------:|------|---------|---------|------|---------|---------|
-| 1 | 依赖图自动生成 | 否 | C轨占位，代码量小 | — | — | — | — | — |
+| 1 | 依赖图自动生成 | 否 |  | — | — | — | — | — |
 | 2 | 依赖对齐自动验证 | 是 | 防止蓝图与dep-map漂移 | CI门禁 | validate_path_alignment.py | 需L03条目 | CI | PR提交时 |
 | 3 | 临时时态内容自动清理 | 否 | 无临时内容 | — | — | — | — | — |
 | 4 | 施工步骤完成度自动检测 | 是 | C轨解除后需验证 | pytest+mypy+ruff | — | 需测试文件 | CI pipeline | 代码提交时 |
@@ -467,13 +467,13 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 5 | 代码头部 [BLUEPRINT] 指向域蓝图而非模块蓝图 | 中 | AI 施工时找不到正确蓝图 | §13 #4 修正 | 风险 |
 | 6 | dep-map 契约ID不一致 | 中 | 依赖图与蓝图漂移 | §13 #3 对齐 | 风险 |
 | 7 | 新策略需实现对应Base类 | — | 中 | OCP扩展点设计，新策略继承即可 | 负面后果 |
-| 8 | C轨占位限制施工进度 | — | 中 | 待Owner解除占位 | 负面后果 |
+| 8 | C轨占位已解除 | — | 中 | 已解除 | 负面后果 |
 
 ---
 
 ## §16 施工指引
 
-> ⚠️ **C轨占位——禁止施工**。以下施工指引为未来施工准备，当前阶段 AI 不可自主执行。
+> ⚠️ **可施工**。以下施工指引为未来施工准备，当前阶段 AI 不可自主执行。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -648,7 +648,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 1 | D-L03001-01 | 信号聚合架构 | 单一聚合器 / OCP 扩展点 | OCP 扩展点 | 新策略只加不改 | 2026-05-05 |
 | 2 | D-L03001-02 | CapitalAllocatorBase 归属 | 独立文件 / 与 SignalAggregatorBase 同文件 | 同文件（aggregator_base.py） | 3 个 Base 类职责紧密 | 2026-05-05 |
 | 3 | D-L03001-03 | capital_allocator.py 定位 | 完整实现 / re-export | re-export only | 真源在 aggregator_base.py，避免重复定义 | 2026-05-05 |
-| 4 | D-L03001-04 | CTR-008 实现时机 | 立即 / Phase C | Phase C | C轨占位，优先级低于 L04/L05 | 2026-05-05 |
+| 4 | D-L03001-04 | CTR-008 实现时机 | 立即 / Phase C | Phase C | 优先级低于 L04/L05 | 2026-05-05 |
 | 5 | D-L03001-05 | 契约类型选择 | Pydantic BaseModel / frozen dataclass | frozen dataclass（codegen） | CTR 契约由 codegen 生成，统一为 dataclass | 2026-05-05 |
 | 6 | D-L03001-06 | 模板v4.1回填 | 保持压缩版/按模板回填 | 按模板回填 | 模板 REQUIRED_SECTIONS 缺失=不合规 | 2026-05-15 |
 
@@ -672,7 +672,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 |---|------|:------:|------|---------|---------|:----:|
 | 1 | 代码头部 [BLUEPRINT] 指向 alpha_signal_domain-001 而非 MOD-L03-001 | 中 | 初始创建时使用域蓝图ID | 修正 [BLUEPRINT] 字段 | §5.1 #1 | 待解决 |
 | 2 | dep-map §17 标注 L03 输出 CTR-008，蓝图实际输出 CTR-P1-015 | 中 | dep-map 使用旧契约ID | 对齐 dep-map 契约ID | §10.2 | 待解决 |
-| 3 | 无测试文件（tests/signal/ 不存在） | 高 | C轨占位未创建测试 | C轨解除后优先创建 | §9 | 待解决 |
+| 3 | 无测试文件（tests/signal/ 不存在） | 高 | 待创建测试 | 优先创建 | §9 | 待解决 |
 | 4 | IC加权聚合为占位实现（直接调用等权） | 低 | IC数据不可用 | L02 IC数据就绪后实现 | §16.7 #2 | 待解决 |
 | 5 | SyntaxWarning: invalid escape sequence '\Z' | 低 | 代码头部路径含反斜杠 | 使用原始字符串 r"" | — | 待解决 |
 
@@ -714,7 +714,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 
 | 版本 | 核心变更 | 前置版本 | 施工状态 |
 |------|---------|---------|:-------:|
-| v0.1.0 | C轨占位蓝图 | — | 已完成 |
+| v0.1.0 | 蓝图 | — | 已完成 |
 | v2.0.0 | 4 Base + 2 Default 实现 | v0.1.0 | 已完成 |
 | v2.2.0 | 模板v4.1回填+压缩+对齐 | v2.1.0 | 已完成 |
 | v2.3.0 | DefaultDegradationMonitor + 测试 | v2.2.0 | 待施工 |

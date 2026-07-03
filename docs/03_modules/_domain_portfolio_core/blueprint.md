@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L05-001
 submodule_path: src/zephyr/pf_core
-title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位"
+title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
@@ -27,7 +27,7 @@ rule_form: structural
 scope: module
 stability: evolving
 verifiability: manual
-summary: "L05 组合构建层C轨占位——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
+summary: "L05 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
 priority: P0
 runtime_plane: hot
 tags: [portfolio-construction, l05, c-track, phase-1-partial, blocked-by-infrastructure]
@@ -44,12 +44,12 @@ references:
     why: "YAML SSoT"
 ---
 
-> ⛔ **业务层未开放，禁止施工** — C轨（业务价值线·线7）当前状态为 blocked_by_infrastructure。本蓝图仅供架构参考和预研代码维护，不得以此蓝图为依据新增任何组合构建业务代码。
+> ⛔ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，不得以此蓝图为依据新增任何组合构建业务代码。
 
 > module_id: MOD-L05-001 | version: 2.1.0 | status: Active | layer: L05
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
-# Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位
+# Portfolio Construction Core 蓝图+施工图 — 组合构建层
 
 ## 概述
 
@@ -137,7 +137,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 风控约束从 L04 实时获取 | 策略 MUST 在每次调用时读取最新 RiskLimits，禁止缓存 |
 | 策略注册在启动时完成 | 运行时不可动态注册新策略，避免交易中状态变更 |
 | 幂等键（INV-007） | 所有跨层调用携带 idempotency_key，支持重试安全 |
-| C轨 blocked_by_infrastructure | 业务代码仅预研级别，不得用于生产 |
+| C轨 partially_implemented | 业务代码仅预研级别，不得用于生产 |
 
 ### 1.5 利益相关者映射
 
@@ -500,7 +500,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 4 | GOV-DOC-002 防幻觉路径映射已理解 | 能回答"某类文件该放哪" | ☐ |
 | 5 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 | 6 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 7 | ⛔ C轨当前 blocked_by_infrastructure，禁止新增业务代码 | 确认 blocked 状态 | ☐ |
+| 7 | ⛔ C轨当前 partially_implemented，禁止新增业务代码 | 确认 blocked 状态 | ☐ |
 
 ### 16.1 施工策略
 

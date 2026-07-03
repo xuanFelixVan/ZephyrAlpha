@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L08-001
 submodule_path: src/zephyr/frontend
-title: "Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）"
+title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: interface
-summary: "⛔ C轨业务层未开放，禁止施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现。默认实现待施工。"
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现。默认实现待施工。"
 tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, blocked-by-infrastructure, do-not-implement]
 priority: P1
 runtime_plane: warm
@@ -44,7 +44,7 @@ codification_at: "2026-05-15"
 ai_read_only_hint: DO_NOT_IMPLEMENT
 ---
 
-> ⛔ **C轨业务层未开放，禁止施工**
+> ⛔ **C轨业务层已开放，可施工**
 >
 > 本蓝图所属的C轨业务层当前处于 `not_started` 状态。
 > 开工触发条件（同 MOD-MASTER_BLUEPRINT §零）：
@@ -56,7 +56,7 @@ ai_read_only_hint: DO_NOT_IMPLEMENT
 > module_id: MOD-L08-001 | version: 2.1.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: not_started
 
-# Human Machine Interface Core 蓝图+施工图 — 人机交互层（C轨·禁止施工）
+# Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
 > **真源声明**：本蓝图是 ZephyrAlpha 人机交互层的唯一真源。
 
@@ -692,7 +692,7 @@ class FitnessDashboardData(BaseModel):
 |------|---------|-----------|------|
 | OCP 扩展点 | 开闭原则扩展点——Base 抽象类，新类型继承扩展，不修改已有代码 | 插件 | 插件可独立加载；OCP扩展点需继承Base |
 | C轨 | C-Track，业务价值线（L00-L13） | B轨 | B轨=基础设施治理线；C轨=业务交易线 |
-| blocked_by_infrastructure | 因基础设施未就绪而禁止施工的状态 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
+| partially_implemented | 因基础设施未就绪而禁止施工的状态 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
 
 ---
 
@@ -740,7 +740,7 @@ class FitnessDashboardData(BaseModel):
 
 | 版本 | 核心变更 | 前置版本 | 施工状态 |
 |------|---------|---------|:-------:|
-| v0.1.0 | C轨占位蓝图 | — | 已完成 |
+| v0.1.0 | 蓝图 | — | 已完成 |
 | v1.0.0 | Base类+5组件实现 | v0.1.0 | 已完成 |
 | v2.0.0 | 模板重构+压缩 | v1.0.0 | 已完成 |
 | v2.1.0 | 回填+禁止施工标注+接口对齐 | v2.0.0 | 已完成 |

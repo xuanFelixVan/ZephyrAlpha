@@ -56,7 +56,7 @@ _schema:
   - completed
   construction_progress_description: '受控词表 (v4.0.0). not_started=蓝图存在但未开工; design_only=仅有设计文档无代码;
     scaffold=脚手架已创建(scaffold.py); partially_implemented=部分实现; completed=全部施工完成. 废弃值:
-    phase_1_partial/phase_1_complete/phase_2_complete/blocked_by_infrastructure/phase_27_planned,
+    phase_1_partial/phase_1_complete/phase_2_complete/partially_implemented/phase_27_planned,
     phase_2_blueprint_audit_357_blind_spots_closed 等非标准写法 统一为上述受控词表中最近似项. 所有蓝图必须在
     2026-05-15 前完成归一化 (Phase 3 截止).
 
@@ -668,8 +668,8 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L03-001
   name: _domain_signal
-  title: Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位
-  summary: 信号生成层C轨占位。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层未开放，禁止施工。
+  title: Signal Generation Core 蓝图+施工图 — 信号生成层
+  summary: 信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。
   layer: signal
   functional_domain: research
   blueprint_status: Active
@@ -696,8 +696,8 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L05-001
   name: _domain_portfolio_core
-  title: Portfolio Construction Core 蓝图+施工图 — 组合构建层·C轨占位
-  summary: L05 组合构建层C轨占位——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
+  title: Portfolio Construction Core 蓝图+施工图 — 组合构建层
+  summary: L05 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
     + 默认股票多头策略 + 注册表。
   layer: pf_core
   functional_domain: portfolio
@@ -713,7 +713,7 @@ blueprints:
   name: _domain_execution_core
   title: Trade Execution Core 蓝图+施工图 — 交易执行引擎
   summary: L06 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1
-    部分实现：执行引擎+订单管理+模拟券商。业务层未开放，禁止施工。
+    部分实现：执行引擎+订单管理+模拟券商。业务层已开放，可施工。
   layer: ex_core
   functional_domain: execution
   blueprint_status: Active
@@ -726,8 +726,8 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
   name: _domain_reporting
-  title: Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位
-  summary: 盘后分析层C轨占位。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase
+  title: Post Trade Analytics Core 蓝图 — 盘后分析层
+  summary: 盘后分析层。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase
     C实现。
   layer: reporting
   functional_domain: analytics
@@ -741,8 +741,8 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L08-001
   name: _domain_frontend
-  title: Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止施工）
-  summary: ⛔ C轨业务层未开放，禁止施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
+  title: Human Machine Interface Core 蓝图 — 人机交互层
+  summary: 业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
     Dashboard 5页面已实现。默认实现待施工。
   layer: frontend
   functional_domain: interface
@@ -756,8 +756,8 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: _domain_research
-  title: Research Innovation Core 蓝图+施工图 — 研究创新层·C轨占位
-  summary: 研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。C轨占位——业务层未开放，禁止施工。
+  title: Research Innovation Core 蓝图+施工图 — 研究创新层
+  summary: 研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。业务层已开放，可施工。
   layer: research
   functional_domain: research
   blueprint_status: Active
@@ -785,9 +785,9 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L11-001
   name: _domain_machine_learning_train
-  title: ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位
-  summary: ML平台层C轨占位。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase
-    B骨架已就位。C轨占位——禁止施工。
+  title: ML Platform Core 蓝图+施工图 — 机器学习平台
+  summary: ML平台层。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase
+    B骨架已就位。业务层已开放，可施工。
   layer: ml_train
   functional_domain: research
   blueprint_status: Active

@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L11-001
 submodule_path: src/zephyr/ml_train
-title: "ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位"
+title: "ML Platform Core 蓝图+施工图 — 机器学习平台"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
@@ -23,7 +23,7 @@ belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
-summary: "ML平台层C轨占位。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase B骨架已就位。C轨占位——禁止施工。"
+summary: "ML平台层。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase B骨架已就位。业务层已开放，可施工。"
 rule_form: structural
 scope: module
 stability: evolving
@@ -42,12 +42,12 @@ runtime_plane: warm
 ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
 ---
 
-> ⛔ **业务层未开放，禁止施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，不得启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
+> ⛔ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，不得启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
 
 > module_id: MOD-L11-001 | version: 2.1.0 | status: active | domain: ml_train
 > actual_disk_path: src/zephyr/ml_train/ | generation: 2 | construction_progress: partially_implemented
 
-# ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位
+# ML Platform Core 蓝图+施工图 — 机器学习平台
 
 ## 概述
 
@@ -120,7 +120,7 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 
 | 约束 | 影响 |
 |------|------|
-| C轨占位——禁止施工 | 不得启动新施工，仅维护现有骨架 |
+| 可施工 | 不得启动新施工，仅维护现有骨架 |
 | Windows 单机部署 | 无分布式协调需求 |
 | Python 3.12+ | asyncio + Pydantic V2 |
 
@@ -454,7 +454,7 @@ class ModelMetadata:
 
 ## §16 施工指引
 
-> ⛔ **业务层未开放，禁止施工**。以下施工指引仅为未来施工准备，当前不得执行。
+> ⛔ **业务层已开放，可施工**。以下施工指引仅为未来施工准备，当前不得执行。
 
 ### ⚠️ AI 施工前检查清单
 

@@ -18,7 +18,7 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L00-001 | Datasource Core | [blueprint](blueprint.md) | Draft | blocked_by_infrastructure |
+| MOD-L00-001 | Datasource Core | [blueprint](blueprint.md) | Draft | partially_implemented |
 | MOD-L00-002 | 数据源能力地图 | [data_source_capability_map](data_source_capability_map.md) | Active | verified |
 | MOD-L00-003 | 数据获取需求清单 | [data_acquisition_plan](data_acquisition_plan.md) | Active | verified |
 

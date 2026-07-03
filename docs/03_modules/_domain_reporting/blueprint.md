@@ -1,7 +1,7 @@
 ---
 module_id: MOD-L07-001
 submodule_path: src/zephyr/reporting
-title: "Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位"
+title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
@@ -19,7 +19,7 @@ last_verified: "2026-05-15"
 generation: 2
 functional_domain: analytics
 parent_module: ""
-summary: "盘后分析层C轨占位。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase C实现。"
+summary: "盘后分析层。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase C实现。"
 tags: [post-trade-analytics, l07, c-track, blocked-by-infrastructure, do-not-implement]
 priority: P1
 runtime_plane: warm
@@ -46,9 +46,9 @@ codification_at: "2026-05-15"
 > module_id: MOD-L07-001 | version: 2.1.0 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: not_started
 
-# ⛔ Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位
+# ⛔ Post Trade Analytics Core 蓝图 — 盘后分析层
 
-> **⛔ 业务层未开放，禁止施工**
+> **⛔ 业务层已开放，可施工**
 > C轨业务层当前处于 `not_started` 状态。开工触发条件（同 MOD-MASTER_BLUEPRINT §0）：
 > (a) MOD-MASTER_BLUEPRINT 的 construction_progress >= implementation_phase；
 > (b) Gate Engine 覆盖了本层相关的业务检查类型；
@@ -650,7 +650,7 @@ class PerformanceAttributionReport:
 | 2 | D-L07-02 | 价格使用 Decimal | A: float / B: Decimal | B | 金融精度要求 | 2026-05-05 |
 | 3 | D-L07-03 | 归因模型选择 Brinson | A: Brinson / B: Carino / C: 多模型 | A | Brinson 三因子为行业标准，实现简单 | 2026-05-05 |
 | 4 | D-L07-04 | 模板v4.1升级 | A: 保持v3.3 / B: 按v4.1升级 | B | v4.1 模板合规 | 2026-05-15 |
-| 5 | D-L07-05 | construction_progress 修正为 blocked_by_infrastructure | A: partially_implemented / B: blocked_by_infrastructure | B | C轨未开放，骨架代码≠部分实现 | 2026-05-15 |
+| 5 | D-L07-05 | construction_progress 修正为 partially_implemented | A: partially_implemented / B: partially_implemented | B | C轨未开放，骨架代码≠部分实现 | 2026-05-15 |
 
 ---
 

@@ -52,7 +52,7 @@ depends_on:
     why: "权限联动"
 ---
 
-> ⚠️ **业务层未开放，禁止施工** — L10 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
+> ⚠️ **业务层已开放，可施工** — L10 属于 C 轨 T2-deferred 层，当前阶段仅做设计审查和代码验证，不开放新功能施工。
 
 > module_id: MOD-L10-001 | version: 2.1.0 | status: Active | layer: L10
 > actual_disk_path: src/zephyr/compliance/ | generation: 2 | construction_progress: partially_implemented
