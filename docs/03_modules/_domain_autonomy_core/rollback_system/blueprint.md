@@ -763,15 +763,15 @@ class RollbackResult(BaseModel):
 
 | # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 | 执行状态 |
 |---|-------------|---------|---------|---------|------------|:-------:|
-| 1 | startup_shutdown.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 2 | startup_shutdown_cli.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown_cli.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown_cli.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 3 | phase_manager.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_manager.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 4 | phase_check_registry.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_check_registry.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 5 | paper_live_transition.py | `D:\ZephyrAlpha\src\zephyr\governance\paper_live_transition.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\paper_live_transition.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 6 | post_live_verification.py | `D:\ZephyrAlpha\src\zephyr\governance\post_live_verification.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\post_live_verification.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 7 | fault_tolerance.py | `D:\ZephyrAlpha\src\zephyr\governance\fault_tolerance.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fault_tolerance.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 8 | fsm_verifier.py | `D:\ZephyrAlpha\src\zephyr\governance\fsm_verifier.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fsm_verifier.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 9 | backtest_engine.py | `D:\ZephyrAlpha\src\zephyr\governance\backtest_engine.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\backtest_engine.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 1 | startup_shutdown.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 2 | startup_shutdown_cli.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown_cli.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown_cli.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 3 | phase_manager.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_manager.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 4 | phase_check_registry.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_check_registry.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 5 | paper_live_transition.py | `D:\ZephyrAlpha\src\zephyr\governance\paper_live_transition.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\paper_live_transition.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 6 | post_live_verification.py | `D:\ZephyrAlpha\src\zephyr\governance\post_live_verification.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\post_live_verification.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 7 | fault_tolerance.py | `D:\ZephyrAlpha\src\zephyr\governance\fault_tolerance.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fault_tolerance.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 8 | fsm_verifier.py | `D:\ZephyrAlpha\src\zephyr\governance\fsm_verifier.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fsm_verifier.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 已完成 |
+| 9 | backtest_engine.py | `D:\ZephyrAlpha\src\zephyr\governance\backtest_engine.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\backtest_engine.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 不适用（文件不存在） |
 
 ### 5.4 非功能需求与服务水平
 
@@ -973,12 +973,12 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
-| MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
-| MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
+| MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_governance\audit_trail\blueprint.md` |
+| MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_autonomy_core\agent_role_based_access_control\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | MOD-MASTER_BLUEPRINT | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
-| MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md` |
-| MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md` |
+| MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
+| MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared_core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1032,7 +1032,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 |---|---------|:-------:|------|
 | 1 | 依赖图自动生成 | 是 | 62 代码文件+388 治理脚本，手动维护不可靠 |
 | 2 | 依赖对齐自动验证 | 是 | 有 5 个外部依赖模块，需自动验证对齐 |
-| 3 | 临时时态内容自动清理 | 是 | §5.3 有 9 项迁移方案待执行 |
+| 3 | 临时时态内容自动清理 | 是 | §5.3 有 8 项已完成 + 1 项不适用（backtest_engine.py 文件不存在） |
 | 4 | 施工步骤完成度自动检测 | 否 | construction_progress=completed |
 
 #### 如何自动化
