@@ -498,8 +498,7 @@ class FitnessDashboardData(BaseModel):
 
 ## §16 施工指引
 
-> ✅ **C轨业务层可施工**——以下施工步骤仅在 C轨开放后可执行。
-> 开工条件已满足，可施工。
+> ✅ **C轨业务层可施工**——开工条件已满足[ARCH-045 P0]。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -673,7 +672,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-L08-01 | C轨占位策略 | A: 完整蓝图 / B: 占位蓝图 | B | ARB-11裁定C轨已解除 | 2026-05-05 |
+| 1 | D-L08-01 | C轨占位策略 | A: 完整蓝图 / B: 占位蓝图 | B | ARB-11裁定C轨blocked（已解除，见ARCH-045 P0） | 2026-05-05 |
 | 2 | D-L08-02 | Streamlit 可选依赖 | A: 必选 / B: 可选+CLI降级 | B | 1人运维约束(ARB-3) | 2026-05-05 |
 | 3 | D-L08-03 | OCP 扩展点设计 | A: 具体实现 / B: 抽象基类+注册表 | B | 开闭原则+多渠道扩展 | 2026-05-05 |
 | 4 | D-L08-04 | Notification/Approval 使用 dataclass | A: Pydantic BaseModel / B: dataclass(frozen=True) | B | 历史遗留；新模型MUST用Pydantic(KBG-0040) | 2026-05-05 |
@@ -687,7 +686,7 @@ class FitnessDashboardData(BaseModel):
 |------|---------|-----------|------|
 | OCP 扩展点 | 开闭原则扩展点——Base 抽象类，新类型继承扩展，不修改已有代码 | 插件 | 插件可独立加载；OCP扩展点需继承Base |
 | C轨 | C-Track，业务价值线（L00-L13） | B轨 | B轨=基础设施治理线；C轨=业务交易线 |
-| partially_implemented | 因基础设施未就绪而可施工的状态 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
+| partially_implemented | 部分实现——代码骨架已就位，业务逻辑待填充 | design_only | design_only=仅设计未施工；blocked=有设计但被外部条件阻断 |
 
 ---
 
