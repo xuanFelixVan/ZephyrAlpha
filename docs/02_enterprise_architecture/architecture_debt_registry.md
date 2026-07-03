@@ -9166,21 +9166,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **LLM Gateway SDK 异常含部分 API key（8个）**
 
-1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:244` — logger.warning 记录 LLM SDK 异常 %s, exc，可能含部分 API key 明文（仅日志，低危）
-2. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:251` — _call_openai_compatible 将 OpenAI SDK 异常存入 `LLMResponse.error=str(exc)`，401错误消息格式为 "Invalid API key: sk-...XXXX" 含部分 API key 明文
-3. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:328` — 同上，_call_anthropic 异常日志
-4. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\integration\llm_gateway.py:335` — _call_anthropic 将 Anthropic SDK 异常存入 LLMResponse.error=str(exc)
-5. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:244` — 重复实现，logger.warning 记录含 API key 的异常
-6. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:251` — 重复实现，LLMResponse.error=str(exc) 存储可能含部分 API key
-7. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:328` — 重复实现
-8. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\autonomy_core\llm_gateway.py:335` — 重复实现
+1. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:244` — logger.warning 记录 LLM SDK 异常 %s, exc，可能含部分 API key 明文（仅日志，低危）
+2. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:251` — _call_openai_compatible 将 OpenAI SDK 异常存入 `LLMResponse.error=str(exc)`，401错误消息格式为 "Invalid API key: sk-...XXXX" 含部分 API key 明文
+3. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:328` — 同上，_call_anthropic 异常日志
+4. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:335` — _call_anthropic 将 Anthropic SDK 异常存入 LLMResponse.error=str(exc)
+5. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:244` — 重复实现，logger.warning 记录含 API key 的异常
+6. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:251` — 重复实现，LLMResponse.error=str(exc) 存储可能含部分 API key
+7. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:328` — 重复实现
+8. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py:335` — 重复实现
 
 **brain_integration traceback.format_exc() 存入结果对象（8个）**
 
-9. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:312` — _l0_startup_probe 将 traceback.format_exc()[-500:] 存入 result.errors，全量 traceback 含代码路径/内部模块结构
-10. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:386` — _l1_readiness_probe 同上 traceback 存储
-11. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:452` — _l2_liveness_probe 同上
-12. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\brain_integration.py:516` — _l3_reconcile 同上
+9. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/brain_integration.py:312` — _l0_startup_probe 将 traceback.format_exc()[-500:] 存入 result.errors，全量 traceback 含代码路径/内部模块结构
+10. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/brain_integration.py:386` — _l1_readiness_probe 同上 traceback 存储
+11. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/brain_integration.py:452` — _l2_liveness_probe 同上
+12. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/brain_integration.py:516` — _l3_reconcile 同上
 13. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:229` — 重复实现，traceback.format_exc() 存入 result.errors
 14. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:285` — 同上
 15. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\brain_integration.py:338` — 同上
@@ -9191,38 +9191,38 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 17. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:806` — 全量回滚异常 str(e) 存入 errors 列表和 _write_in_flight 审计记录，RollbackResult.errors 通过 MCP _execute_rollback 传播给客户端
 18. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:812` — details={"error": str(e)} 写入 _write_op_audit 审计记录，含文件路径/DB错误
 19. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py:832` — stash_pop 异常 str(e) 写入 in_flight 记录
-20. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_executor.py:840` — 重复实现，details={"error": str(e)} 传播到 MCP 客户端
+20. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_executor.py:840` — 重复实现，details={"error": str(e)} 传播到 MCP 客户端
 
 **healthcheck/health_monitor 异常消息含路径（5个）**
 
 21. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\health_monitor.py:210` — probe() 返回 ProbeResult(error=str(e))，健康探针异常消息可能含文件路径/模块结构
-22. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:96` — check_dependencies 返回 HealthStatus(message=f"Import failed: {e}")，ImportError 含内部模块路径
-23. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:122` — _check_git 返回 HealthStatus(message=str(e))，subprocess 异常含项目路径
-24. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\shared\healthcheck_service.py:167` — _check_disk 返回 HealthStatus(message=str(e))，OSError 含文件系统绝对路径
+22. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/shared/lifecycle/healthcheck_service.py:96` — check_dependencies 返回 HealthStatus(message=f"Import failed: {e}")，ImportError 含内部模块路径
+23. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/shared/lifecycle/healthcheck_service.py:122` — _check_git 返回 HealthStatus(message=str(e))，subprocess 异常含项目路径
+24. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/shared/lifecycle/healthcheck_service.py:167` — _check_disk 返回 HealthStatus(message=str(e))，OSError 含文件系统绝对路径
 25. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\capacity_assurance\tech_stack.py:154` — ComponentStatus(details=str(e)) 含 sqlite3 异常消息
 
 **bootstrap_superadmin 安全模块异常（3个）**
 
-26. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:133` — bootstrap() 返回 `{"error": f"import failed: {e}"}`，安全模块 ImportError 含内部路径
-27. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:139` — bootstrap() 返回 `{"error": f"bootstrap exception: {e}"}`，superadmin 创建异常可能含安全模块内部信息
-28. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\security\access_control\governance_bridges\bootstrap_superadmin.py:167` — verify() 返回 `{"error": str(e)}`，安全模块验证异常
+26. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/security/access_control/bootstrap_superadmin.py:133` — bootstrap() 返回 `{"error": f"import failed: {e}"}`，安全模块 ImportError 含内部路径
+27. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/security/access_control/bootstrap_superadmin.py:139` — bootstrap() 返回 `{"error": f"bootstrap exception: {e}"}`，superadmin 创建异常可能含安全模块内部信息
+28. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/security/access_control/bootstrap_superadmin.py:167` — verify() 返回 `{"error": str(e)}`，安全模块验证异常
 
 **rollback_verifier/warm_standby/forward_fix_runner DBHealReport/details（6个）**
 
 29. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_verifier.py:182` — DBHealReport(details=[str(e)]) 含 DB 恢复错误/SQL 语句
-30. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rollback_verifier.py:182` — 重复实现，同上
+30. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_verifier.py:182` — 重复实现，同上
 31. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\warm_standby.py:130` — details=[str(e)] 含热备切换异常
-32. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\warm_standby.py:130` — 重复实现，同上
+32. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/warm_standby.py:130` — 重复实现，同上
 33. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\rollback\forward_fix_runner.py:84` — details=[str(e)] 含前向修复异常
-34. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\forward_fix_runner.py:84` — 重复实现，同上
+34. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/forward_fix_runner.py:84` — 重复实现，同上
 
 **a2a_saga/git_commit_gateway/reconciliation_registry 异常消息（5个）**
 
 35. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\infrastructure\a2a_protocol\layer3_coordination\a2a_saga.py:118` — result.error_message = str(e) 含 saga 事务异常，可能跨 A2A 协议传播
-36. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:356` — CommitResult(message=str(e)) 含 git lock 异常
-37. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\git_commit_gateway.py:741` — 重复实现，同上
-38. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\reconciliation_registry.py:215` — return None, str(e) 含归档异常
-39. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\reconciliation_registry.py:561` — details[doc.name]["archive_error"] = str(e) 含文件归档异常
+36. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py:356` — CommitResult(message=str(e)) 含 git lock 异常
+37. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/rule_bridge/git_commit_gateway.py:741` — 重复实现，同上
+38. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py:215` — return None, str(e) 含归档异常
+39. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py:561` — details[doc.name]["archive_error"] = str(e) 含文件归档异常
 
 **kb/verify 与 kb/self_test 异常（9个）**
 
@@ -9238,19 +9238,19 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **其他 governance/trading 异常（4个）**
 
-49. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\degradation.py:146` — logger.warning 记录 traceback.format_exc()[:500]，全量 traceback 含代码路径（仅日志）
+49. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/code_dedup/degradation.py:146` — logger.warning 记录 traceback.format_exc()[:500]，全量 traceback 含代码路径（仅日志）
 50. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\rule_enforcement\sys_master_compliance.py:412` — 返回 detail=str(e) 含合规检查异常
-51. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\memory_writer.py:53` — ArchiveResult(error=str(e)) 含归档异常
+51. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/trading/orchestrator/execution/memory_writer.py:53` — ArchiveResult(error=str(e)) 含归档异常
 52. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\integration_registry.py:75` — report.details.append({"error": str(e)}) 含集成测试异常
 
 **self_test_verifier 异常 detail=str(e)[:100]（12个）**
 
-53. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:130` — 返回 `{"detail": str(e)[:100]}` 含自检异常
-54. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:174` — 同上
-55. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:224` — 同上
-56. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:323` — 同上
-57. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:370` — 同上
-58. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:402` — 同上
+53. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:130` — 返回 `{"detail": str(e)[:100]}` 含自检异常
+54. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:174` — 同上
+55. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:224` — 同上
+56. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:323` — 同上
+57. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:370` — 同上
+58. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/drift_detection/self_test_verifier.py:402` — 同上
 59. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:91` — 重复实现
 60. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:124` — 同上
 61. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:161` — 同上
@@ -9260,8 +9260,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **integration_test_runner 异常（2个）**
 
-65. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\integration_test_runner.py:103` — 返回 `{"detail": str(e)}` 含 pip check 异常
-66. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\integration_test_runner.py:78` — 重复实现，同上
+65. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/integration_test_runner.py:103` — 返回 `{"detail": str(e)}` 含 pip check 异常
+66. **[MEDIUM]** `D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/integration_test_runner.py:78` — 重复实现，同上
 
 #### LOW（37个）
 
@@ -9304,13 +9304,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **其他 scripts/ CLI 脚本（10个）**
 
 28. **[LOW]** `d:\ZephyrAlpha\scripts\governance\status.py:163` — return {"error": str(e)[:200]} 含脚本崩溃异常
-29. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:538` — UpgradeResult(detail=str(e)) 含文件读写异常
-30. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:630` — 同上
+29. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:538` — UpgradeResult(detail=str(e)) 含文件读写异常 **[文件已删除: 2026-07-04]**
+30. **[LOW]** `d:\ZephyrAlpha\scripts\ops\upgrade_headers_to_14fields.py:630` — 同上 **[文件已删除: 2026-07-04]**
 31. **[LOW]** `d:\ZephyrAlpha\scripts\fix_orphan_all.py:201` — return False, str(e) 含孤儿扫描异常
-32. **[LOW]** `d:\ZephyrAlpha\scripts\governance\iterative_cleanup_imports.py:68` — return False, str(e) 含导入清理异常
+32. **[LOW]** `d:\ZephyrAlpha\scripts\governance\iterative_cleanup_imports.py:68` — return False, str(e) 含导入清理异常 **[文件已删除: 2026-07-04]**
 33. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d1_structure\run_script_smoke_test.py:96` — return (False, str(e)) 含脚本冒烟测试异常
 34. **[LOW]** `d:\ZephyrAlpha\scripts\governance\d7_code\detect_forward_reference.py:138` — return [], False, str(e) 含前向引用检测异常
-35. **[LOW]** `d:\ZephyrAlpha\scripts\governance\env_check.py:135` — return (False, str(e)) 含环境检查异常
+35. **[LOW]** `D:/ZephyrAlpha/scripts/governance/meta/env_check.py:135` — return (False, str(e)) 含环境检查异常
 36. **[LOW]** `d:\ZephyrAlpha\scripts\quick_profile.py:137` — profile.notes.append(f"job_match_failed: {e}") 含作业匹配异常
 37. **[LOW]** `d:\ZephyrAlpha\scripts\dm90971_add_test_headers.py:260` — return (rel_path, False, str(e)) 含文件写入异常
 
