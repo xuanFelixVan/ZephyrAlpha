@@ -571,7 +571,16 @@ def session_worktree_commit(
         src = root / rel_file
         dst = wt_path / rel_file
         if src.exists() and src.is_file():
-            # 文件存在——同步最新内容到 worktree
+            if dst.exists() and dst.is_file():
+                # 两者都存在——比较 mtime 判断哪个是新版本
+                # 修复：Trae IDE 的 Edit 可直接编辑 worktree 内文件，此时 dst 比 src 新
+                # 若 dst 更新则跳过覆盖，避免用主仓库旧版本回滚 worktree 新版本
+                try:
+                    if dst.stat().st_mtime > src.stat().st_mtime:
+                        continue  # worktree 内文件已被直接编辑，保留新版本
+                except OSError:
+                    pass  # stat 失败则走默认 copy2（安全降级）
+            # dst 不存在 或 src 比 dst 新——同步最新内容到 worktree（正常情况：AI 写项目根）
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(src), str(dst))
         elif not src.exists() and dst.exists() and rel_file in tracked_files:
