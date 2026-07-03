@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.7.2
+version: 1.7.5
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -1183,7 +1183,7 @@ sections:
       check: 临时沙箱目录前缀跳过(tests/ + docs/通用)
       pass: _tmp_开头子目录(如 tests/_tmp_redblue_f2/)不纳入N-16检查(目录名前缀匹配,os.walk剪枝);用于并发红蓝对抗临时沙箱,其清理晚于commit
       fail: 临时沙箱内文件与正式文件撞名误触发N-16硬阻断,卡死并发commit窗口
-      rationale: 2026-06-26 commit 7f27ab25被 tests/_tmp_redblue_f2/test_gate11_naming_convention_unit.py(与 tests/unit/ 同名)撞名硬阻断;沙箱由已自删的 scripts/_tmp_redblue_final.py 探针建在仓库内,正式红蓝测试 tests/test_f18_redblue.py 用 pytest tmp_path 无此问题
+      rationale: 2026-06-26 tests/_tmp_redblue_f2/test_gate11_naming_convention_unit.py(与 tests/unit/ 同名)撞名硬阻断;沙箱由已自删的 scripts/_tmp_redblue_final.py 探针建在仓库内,正式红蓝测试 tests/test_f18_redblue.py 用 pytest tmp_path 无此问题
     - type: constraint
       check: 硬阻断特性
       pass: N-16不受GATE-11的--warn-only过渡期影响,直接硬阻断commit
@@ -1259,13 +1259,9 @@ sections:
       - kb   # 行业通用,Knowledge Base
       note: 历史自创缩写目录(如ce/)不享受grandfathered豁免,MUST在refactor时修正
     progressive_convergence:
-      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C-5完成,2026-07-01更新)
+      description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C-6完成,全部收敛,2026-07-04更新)
       strategy: 历史违规目录不批量改名(避免过度工程),在下次refactor时顺带修正;多真源问题优先处理
-      pending_directories:
-      - path: src/zephyr/security/llm_defense/llm_security_01/
-        violation: R5数字后缀
-        action: 多真源处理(与llm_security/共存;context_scanner.py仅在_01中)
-        note: 需迁移context_scanner到llm_security/后删除_01;context_bridge.py:105引用_01
+      pending_directories: []
       resolved_directories:
       - path: src/zephyr/security/access_control/auto_fix_engine_03/
         violation: R5数字后缀
@@ -1276,27 +1272,32 @@ sections:
         violation: R5数字后缀
         action: 已删除(多真源,真源在shared/api/)
         status: resolved
-        note: "ARCH-033阶段C-3完成(commit 70e345bcc6);2处测试import更新;34测试通过"
+        note: "ARCH-033阶段C-3完成;2处测试import更新;34测试通过"
       - path: src/zephyr/shared/infra_06/
         violation: R5数字后缀
         action: 已删除(合并到shared/infra/)
         status: resolved
-        note: "ARCH-033阶段C-4完成(commit 9981dd19db);13文件import更新(7源码+6测试);91测试通过"
+        note: "ARCH-033阶段C-4完成;13文件import更新(7源码+6测试);91测试通过"
       - path: src/zephyr/infrastructure/infra_06/
         violation: R5数字后缀
         action: 已删除(死代码,真源在shared/infra/)
         status: resolved
-        note: "ARCH-033阶段C-1完成(commit 905aaa828c);0外部引用"
+        note: "ARCH-033阶段C-1完成;0外部引用"
       - path: src/zephyr/infrastructure/observability_02/
         violation: R5数字后缀
         action: 已删除(死代码,__init__.py已损坏)
         status: resolved
-        note: "ARCH-033阶段C-2完成(commit 905aaa828c);0外部引用"
+        note: "ARCH-033阶段C-2完成;0外部引用"
       - path: src/zephyr/shared/observability_02/
         violation: R5数字后缀
         action: 已删除(6实现文件上提至shared/根目录,覆盖4个wrapper)
         status: resolved
         note: "ARCH-033阶段C-5完成;6文件迁移(health/logging/metrics/tracing/health_discovery/cli_summary)+15消费者import更新(9源码+6测试);observability_02/目录已删除"
+      - path: src/zephyr/security/llm_defense/llm_security_01/
+        violation: R5数字后缀
+        action: 已删除(寄生包25文件,context_scanner.py为死代码直接删除未迁移)
+        status: resolved
+        note: "ARCH-033阶段C-6完成;目录已物理删除(P2-1);context_scanner.py为死代码(唯一消费者context_bridge.py:105调用API不匹配已被except吞掉)直接删除未迁移;14处悬挂引用清理(context_bridge.py删断裂导入+死方法_filter_context、verify_key_imports.py+detect_direct_llm_calls.py+11个CONSUMERS头);0活跃import引用(仅_archive归档脚本残留)"
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1398,9 +1399,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.7.4"
-  last_modified: "2026-07-02"
+  version: "1.7.5"
+  last_modified: "2026-07-04"
   change_history:
+  - version: "1.7.5"
+    date: "2026-07-04"
+    author: "AI-Assistant"
+    change: "ARCH-033阶段C-6完成——llm_security_01/ R5数字后缀违规消除;llm_security_01/已物理删除(P2-1),context_scanner.py为死代码(唯一消费者context_bridge.py:105调用API不匹配:scanner.scan vs scan_context/.get('flagged') vs SecurityCheckResponse,已被bare except吞掉)直接删除未迁移;14处悬挂引用清理(context_bridge.py删断裂导入+死方法_filter_context、verify_key_imports.py改指真源llm_security.gateway、detect_direct_llm_calls.py删死模式、11个CONSUMERS头清漂移);当前状态:0待处理+7已解决,progressive_convergence全部收敛完成"
   - version: "1.7.4"
     date: "2026-07-02"
     author: "AI-Assistant"
