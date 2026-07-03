@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.rollback_integration
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] imported

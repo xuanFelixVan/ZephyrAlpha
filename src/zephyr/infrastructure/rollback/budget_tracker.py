@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.budget_tracker
-# [DOMAIN] D_INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES]
 # [CONSUMERS] rollback_executor;auto_rollback_trigger
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 预算追踪不可禁用
+# [INVARIANTS] none
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] stable
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_budget_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
 G-CT-009 契约：Rollback → Budget 回滚成本计入预算.
 
