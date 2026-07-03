@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-03T08:33:04Z
+# 自动生成于 2026-07-03T17:31:31Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-03T08:33:04Z'
+generated_at: '2026-07-03T17:31:31Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 323
-with_manifest: 319
-missing_manifest: 4
+total_scripts: 322
+with_manifest: 308
+missing_manifest: 14
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 3
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 95
+  governance:d5_architecture: 94
   governance:d6_security: 14
   governance:d7_code: 31
   governance:d8_doc_sync: 9
@@ -1627,40 +1627,34 @@ scripts:
   - Critical
 - name: d5_architecture/generators/generate_capability_heatmap.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G11: 从 depgraph (PostgreSQL) 生成能力热力图'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_capacity_report.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_constraint_violations.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_contracts.py
   owner: governance:d5_architecture
   dimensions:
@@ -1675,76 +1669,64 @@ scripts:
   - Disruptive
 - name: d5_architecture/generators/generate_cross_domain_matrix.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_design_vs_production.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_domain_dependency_diagram.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G3: 从 depgraph (PostgreSQL) edges 表生成指定域的全景依赖图(.mmd Mermaid格式)'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_domain_doc.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_domain_index.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_integration_topology.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_navigation_index.py
   owner: governance:d5_architecture
   dimensions:
@@ -1759,17 +1741,14 @@ scripts:
   - Disruptive
 - name: d5_architecture/generators/generate_path_tree.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
+  dimensions: []
   priority: P2
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/
-    目录树(中英文)输出到 generated/'
-  tags:
-  - Critical
-  - Disruptive
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/pre_delete_safety_check.py
   owner: governance:d5_architecture
   dimensions:
