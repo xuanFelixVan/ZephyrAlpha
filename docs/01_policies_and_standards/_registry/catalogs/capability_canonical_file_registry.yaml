@@ -1176,7 +1176,7 @@ capabilities:
     description: >-
       session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）。
       检测 commit 调用方是否注册了有效 session。session_id 为空/"unknown"/"none"/"null"
-      或未注册时阻断（SESSION_REQUIRED_VIOLATION）——防止 AI 绕过 session_claim_start
+      或未注册时阻断（SESSION_REQUIRED_VIOLATION）——防止 AI 绕过 session_worktree_start
       直接调 commit 导致 ClaimRequiredGate 因 session 未注册而安全降级放行。
       priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)。allow_overlap=True
       放行。get_session 异常→安全降级放行（registry 故障不应卡死 commit 工作流）。

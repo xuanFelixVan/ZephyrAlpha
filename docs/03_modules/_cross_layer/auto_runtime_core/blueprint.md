@@ -1270,7 +1270,7 @@ STEP 3: 拆分后验证
 | 职责 | 对改契约文件/大范围重构等高风险任务，AI 可选择 `WorktreeManager.create_session_worktree()` 创建 worktree，在 worktree 内操作后 merge 回主目录 |
 | 使用场景 | ① 修改 GitCommitGateway/WorktreeManager 等契约文件本身；② 大范围重构（>10 文件）；③ 实验性改动（不确定是否保留） |
 | 非强制原因 | Trae 模式下 AI 默认在主目录用 Trae 工具操作，强制 worktree 会破坏 IDE 工作流；worktree 内 AI 需手动用完整路径，增加认知负担 |
-| 与件1/件2关系 | worktree 内 AI 仍须 session_claim_start（worktree 隔离文件系统，不隔离 claim 语义）；worktree commit 时 GitCommitGateway 仍校验 claim |
+| 与件1/件2关系 | ~~worktree 内 AI 仍须 session_claim_start~~（**已废弃 2026-07-04**：session_claim_start 零调用方，claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断替代）；worktree commit 时 GitCommitGateway 仍校验 claim |
 | 验收 | `WorktreeManager.create_session_worktree()` 返回 worktree 路径；AI 在 worktree 内 commit 通过；merge 回主目录成功 |
 
 #### FP-ISO.4C 治本方案：worktree 物理隔离（当前采用）
