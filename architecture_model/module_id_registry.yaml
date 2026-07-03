@@ -35,7 +35,7 @@
 module_id: MOD-GOVERNANCE
 registry_version: "2.4.0"
 last_updated: "2026-06-30"
-total_registered: 74  # P8-FIX-S0（2026-06-30）：从 141 修正为实际条目数（74 个文档规则模块）。原值 141 包含 66 个代码模块但 registered_modules 为空。S0-4 reconciler 将实现自动派生。
+total_registered: 73  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。
 
 # ID 分配规则
 allocation_rules:

@@ -1,0 +1,133 @@
+# [BLUEPRINT] MOD-GOV-module_id_consistency_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
+# [MODULE] zephyr.governance.commit_gates.module_id_consistency_gate
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.rule_bridge.commit_gate_registry (GateSpec)
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] fail-closed——三轨不一致或 count 不匹配阻断
+# [MODIFY-GUARD] gate_id="MODULE-ID-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；三轨正则 + count 派生正则
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] (True, msg)=通过；False=阻断（三轨不一致或 count_mismatch）；OSError 跳过单文件不阻断
+# [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
+# [TTL] permanent
+"""module_id_consistency_gate.py — module_id 三轨一致性 + count 派生门禁（Phase 3 reconciler→gate 收敛）
+
+从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
+
+两维校验：
+1. 三轨一致性（P8-FIX-S0）：单文件中 CFG-*/MOD-*/PS-* 三轨 module_id 声明是否一致
+2. count 派生（P8-FIX-S1）：注册表声明的 total_registered/total_templates/total_dependencies
+   与实际列表条目数是否匹配
+
+治本动机：原 reconciler 是 post-commit 非阻断 warn，不一致已入 git 历史仅告警。
+本 gate 在 commit() 内嵌等效校验，阻断新引入的不一致。
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import re
+
+from zephyr.governance.rule_bridge.commit_gate_registry import GateSpec
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["make_module_id_consistency_gate"]
+
+_REGISTRY_REL = "architecture_model/module_id_registry.yaml"
+_TEMPLATE_REGISTRY_REL = "docs/03_modules/template_registry.yaml"
+_DEP_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
+_CONTRACTS_DIR = "docs/01_policies_and_standards/_registry/contracts/"
+
+# 三轨正则
+_RE_HEADER_CFG = re.compile(r"^#\s*\[A_config\]\s*module_id=(CFG-\S+)", re.MULTILINE)
+_RE_ANCHOR_MOD = re.compile(r"^#\s*module_id:\s*(MOD-\S+)", re.MULTILINE)
+_RE_BODY_RULE = re.compile(r"^module_id:\s*([A-Z]+(?:-[A-Z]+)*-\w+)\s*$", re.MULTILINE)
+
+# count 派生校验正则
+_RE_MODULE_ID_ENTRY = re.compile(r"^  - module_id:\s*\S+", re.MULTILINE)
+_RE_TEMPLATE_ENTRY = re.compile(r"^  - template_id:", re.MULTILINE)
+_RE_DEP_ENTRY = re.compile(r"^- dep_id:\s*DEP-", re.MULTILINE)
+_RE_TOTAL_REGISTERED = re.compile(r"^total_registered:\s*(\d+)", re.MULTILINE)
+_RE_TOTAL_TEMPLATES = re.compile(r"^\s*total_templates:\s*(\d+)", re.MULTILINE)
+_RE_TOTAL_DEPS = re.compile(r"^\s*total_dependencies:\s*(\d+)", re.MULTILINE)
+
+
+def make_module_id_consistency_gate() -> GateSpec:
+    """构造 module_id 一致性门禁 GateSpec（fail-closed 阻断型）。
+
+    Returns:
+        GateSpec(gate_id="MODULE-ID-CONSISTENCY", priority=88)。
+        priority=88——在 EXEMPT-ZONE-FM(87) 之后。
+    """
+
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        from pathlib import Path
+
+        project_root = gateway.project_root
+        violations: list[str] = []
+
+        for f in files:
+            if not os.path.isfile(f):
+                continue
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if (rel != _REGISTRY_REL and rel != _TEMPLATE_REGISTRY_REL
+                    and rel != _DEP_REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR)):
+                continue
+
+            try:
+                content = Path(f).read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+
+            # === 三轨一致性校验 ===
+            cfg_match = _RE_HEADER_CFG.search(content)
+            mod_match = _RE_ANCHOR_MOD.search(content)
+            rule_match = _RE_BODY_RULE.search(content)
+
+            cfg_id = cfg_match.group(1) if cfg_match else None
+            mod_id = mod_match.group(1) if mod_match else None
+            rule_id = rule_match.group(1) if rule_match else None
+
+            tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
+            if tracks_found < 2 and cfg_id:
+                violations.append(
+                    f"{rel}: incomplete_tracks (cfg={cfg_id}, mod={mod_id}, rule={rule_id}) — "
+                    f"header CFG but only {tracks_found}/3 tracks"
+                )
+
+            # === count 派生校验 ===
+            if rel == _REGISTRY_REL:
+                actual = len(_RE_MODULE_ID_ENTRY.findall(content))
+                declared = _RE_TOTAL_REGISTERED.search(content)
+                if declared and int(declared.group(1)) != actual:
+                    violations.append(
+                        f"{rel}: count_mismatch total_registered={declared.group(1)} but actual={actual}"
+                    )
+            elif rel == _TEMPLATE_REGISTRY_REL:
+                actual = len(_RE_TEMPLATE_ENTRY.findall(content))
+                declared = _RE_TOTAL_TEMPLATES.search(content)
+                if declared and int(declared.group(1)) != actual:
+                    violations.append(
+                        f"{rel}: count_mismatch total_templates={declared.group(1)} but actual={actual}"
+                    )
+            elif rel == _DEP_REGISTRY_REL:
+                actual = len(_RE_DEP_ENTRY.findall(content))
+                declared = _RE_TOTAL_DEPS.search(content)
+                if declared and int(declared.group(1)) != actual:
+                    violations.append(
+                        f"{rel}: count_mismatch total_dependencies={declared.group(1)} but actual={actual}"
+                    )
+
+        if violations:
+            return False, (
+                f"MODULE-ID-CONSISTENCY: {len(violations)} violation(s):\n"
+                + "\n".join(f"  - {v}" for v in violations)
+            )
+        return True, "module_id consistency check passed"
+
+    return GateSpec(gate_id="MODULE-ID-CONSISTENCY", check=_check, priority=88)
