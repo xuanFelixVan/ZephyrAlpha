@@ -4908,14 +4908,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **[✓ FIXED: 2026-07-01]** liveness() 现返回 `os.getpid()` 真实 PID。注：status="alive" 对于进程内探针是正确的（探针能执行即证明进程存活）。
 
-#### 5.55.6 [MEDIUM] BlueprintHealthChecker是空壳，永远返回healthy
-- **文件**：~~`src/zephyr/trading/orchestrator/blueprint_health.py`~~（已退役）+ ~~`src/zephyr/governance/audit_orchestration/blueprint_health.py`~~（已退役）
-- **证据**：`def check_consistency(self, blueprint_file): return {"status": "healthy", "errors": []}`——空壳不做任何检查
-- **问题**：蓝图字段缺失或引用断裂时不会被发现
-- **修复**：~~实现真实检查逻辑~~ → 退役（治本裁定）
-
-> **[✓ FIXED: 2026-07-01]** 治本裁定：BlueprintHealthChecker 有 0 消费者（无人调用 `check_consistency()`），且蓝图头校验已由 `check_blueprint_code_alignment.py` + `verify_header_completeness` + `generate_project_depgraph.py:parse_blueprint_header()` 三处门禁脚本覆盖。空壳修复无意义——造了真实逻辑也没人用（违反责任唯一 + 向内收原则）。两份副本（trading/orchestrator + governance/audit_orchestration）+ 测试文件 `tests/blueprint/test_blueprint_health.py` 全部退役删除。`__init__.py` __all__ 引用已清理。`decision_engine.py` 的 `"blueprint_health"` 字符串是 metric_name 默认值（数据标签，非代码依赖），保留不动。
-
 #### 5.55.7 严重度汇总
 
 | 严重度 | 数量 | 编号 |
@@ -5231,19 +5223,19 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.61.3 [MEDIUM] retry_dlq重试计数更新在事务外执行——非原子
 
-- **文件**：`src/zephyr/governance/database_manager.py:642-677`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:642-677`
 - **证据**：L653 `BEGIN IMMEDIATE`，L661 `COMMIT`，异常时L665 `ROLLBACK`。但失败路径中L670-673的 retry_count 递增 UPDATE 发生在 ROLLBACK 之后、无新 BEGIN 包裹，L674的 COMMIT 实际是空操作。进程在 UPDATE 与下一轮 BEGIN 之间崩溃时，retry_count 与事件处理状态不一致。
 - **修复**：将 retry_count 更新纳入独立事务。
 
 #### 5.61.4 [MEDIUM] DatabaseManager多处连接获取后无try/finally——异常路径连接泄漏
 
-- **文件**：`src/zephyr/governance/database_manager.py:265-301,450-466,494-496`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:265-301,450-466,494-496`
 - **证据**：`health_check`（L265获取/L301关闭）关闭在try块内但无finally。`schema_version()`（L288）或 `_db_path.stat()`（L292）抛非sqlite3.Error异常时，控制流跳到L327 `except Exception`，该分支不关闭conn→泄漏。`_wal_checkpoint`和`maintenance`同样无try/finally。
 - **修复**：所有连接获取后使用 `with` 或 try/finally 确保归还。
 
 #### 5.61.5 [MEDIUM] 连接池get_connection/return_connection无锁保护——并发竞态
 
-- **文件**：`src/zephyr/governance/database_manager.py:197-243`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:197-243`
 - **证据**：`_conn_pool` 为共享list，`get_connection`（L211-216）的 `if self._conn_pool:` + `self._conn_pool.pop()` 非原子，未获取 `self._lock`。两线程可同时通过if判断、同时pop()，导致 IndexError 或获取到同一连接。池耗尽时L214无限创建临时连接且不追踪。
 - **修复**：用锁保护连接池的获取/归还操作，设置max_overflow上限。
 
@@ -5371,13 +5363,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.64.3 [MEDIUM] SQLite连接池无连接健康回收——pool_recycle缺失
 
-- **文件**：`src/zephyr/governance/database_manager.py:169,218-243`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:169,218-243`
 - **证据**：`_conn_pool`为简单list，`return_connection`（L218）仅在归还时做 `SELECT 1` 健康检查，但无 `pool_recycle` 机制——连接即使空闲数小时也不会被回收重建。`connection_leak_detector`（L703）仅检查 `_last_used_at` 属性，但 `get_db_connection`/`get_connection` 从未设置该属性，泄漏检测器实际永远返回空列表——检测功能失效。
 - **修复**：添加pool_recycle机制，在get_connection时设置_last_used_at。
 
 #### 5.64.4 [MEDIUM] 连接池耗尽时无限创建临时连接——无上限保护
 
-- **文件**：`src/zephyr/governance/database_manager.py:211-216`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:211-216`
 - **证据**：`get_connection`当 `_conn_pool` 为空时（L213）直接 `conn = get_db_connection(...)` 创建临时连接（L214），无 `max_overflow` 上限。注释说"不超过pool_size"但代码未实现该约束。若多个线程同时遇到池空，会并发创建大量连接，违反"单Writer"设计假设，导致SQLite `database is locked` 错误。
 - **修复**：实现max_overflow上限，池满时阻塞等待或抛异常。
 
@@ -5511,7 +5503,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.66.6 [MEDIUM] database_manager/f5_shutdown_manager表名f-string拼接
 
-- **文件**：`src/zephyr/governance/database_manager.py:605`；`src/zephyr/governance/resilience_governance/f5_shutdown_manager.py:355,435`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:605`；`src/zephyr/governance/resilience_governance/f5_shutdown_manager.py:355,435`
 - **证据**：`database_manager` 用 `f"SELECT COUNT(*) FROM [{t['name']}]"`（方括号仅SQL Server语法，SQLite下无效防御）；`f5_shutdown_manager` 用 `f"DELETE FROM {self.STATE_TABLE}"` 与 `f"SELECT key, value FROM {self.STATE_TABLE}"`，表名为类属性但未做白名单。
 - **修复**：表名白名单校验。
 
@@ -5770,13 +5762,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.73.3 [MEDIUM] SkillFileLock.acquire的finally中os.close(fd)可抛异常导致锁文件永不清理
 
-- **文件**：`src/zephyr/autonomy_core/skill_locking.py:122-127`
+- **文件**：`src/zephyr/autonomy_core/skills/skill_locking.py:122-127`
 - **证据**：`os.close(fd)` 未被try/except包裹。若 `os.close` 抛出 `OSError`（如fd已失效），后续 `path.unlink` 不会执行，留下僵尸锁文件，导致后续所有同名锁获取超时失败。`unlink` 有保护但 `close` 没有，防护不对称。
 - **修复**：`os.close(fd)` 也用try/except包裹。
 
 #### 5.73.4 [MEDIUM] DatabaseManager.__exit__路径中wal_checkpoint_truncate()未做异常隔离
 
-- **文件**：`src/zephyr/governance/database_manager.py:757-758,574`
+- **文件**：`src/zephyr/governance/persistence/database_manager.py:757-758,574`
 - **证据**：`close()` 内部（L572-581）`wal_checkpoint_truncate()`（L574）未被try/except包裹（对比 `conn.close()` 有保护）。若WAL checkpoint抛异常（磁盘满/DB损坏），会掩盖with块原始异常并中断连接池清理流程，导致连接泄漏。
 - **修复**：`wal_checkpoint_truncate()` 用try/except包裹。
 
@@ -6204,7 +6196,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.86.2 [MEDIUM] runbook_generator文件名净化漏\和null byte
 
-- **文件**：`src/zephyr/behavioral_audit/runbook_generator.py:347`
+- **文件**：`src/zephyr/infrastructure/rollback/runbook_generator.py:347`
 - **证据**：文件名净化仅替换 `:` 和 `/`，遗漏 `\` 和 `\x00`（null byte）。null byte在Python 3中会导致 `ValueError: embedded null byte`，在C扩展中可能被截断为空字符串（C字符串以null终止）。Windows下 `\` 是路径分隔符，可造成路径穿越。
 - **修复**：增加 `.replace("\\", "_").replace("\x00", "")`，或用白名单方式只允许字母数字和 `-_.`。
 
@@ -6280,7 +6272,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.88.3 [HIGH] transition.py 1处assert检查post-write fetch非None
 
-- **文件**：`src/zephyr/governance/transition.py:246`
+- **文件**：`src/zephyr/governance/lifecycle_governance/transition.py:246`
 - **证据**：与5.88.2相同的模式——状态转换后fetch并assert非空。
 - **修复**：同5.88.2。
 
@@ -6356,11 +6348,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 - **文件**：`src/zephyr/reporting/analytics_base.py:66,89`
 - **证据**：同5.89.4模式。
-
-#### 5.89.7 [LOW] backtest_base.py _registry ClassVar dict（2副本）
-
-- **文件**：`src/zephyr/simulation/backtest_base.py:80` + `simulation/backtest_base_from_resear.py:80`
-- **证据**：同5.89.4模式，2份副本。
 
 #### 5.89.8 [LOW] signal_synthesizer.py + factor_base.py _registry ClassVar dict
 
@@ -6925,22 +6912,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.104 ABC抽象方法完整性（33个，第20轮新增）
 
-#### 5.104.1 ABC签名与实现不匹配（13个HIGH）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.104.1 | `pf_core/default_equity_strategy.py:93` | `generate_target_weights(self) -> list[Order]` 与ABC `strategy_base.py:73` 的`generate_target_weights(self, universe, signals, constraints) -> dict[str, float]`完全不同 | HIGH | 对齐ABC签名或拆为两个独立扩展点 |
-| 5.104.2 | `pf_core/strategies/default_equity_strategy.py:93` | 同上（重复文件） | HIGH | 先合并3份重复实现 |
-| 5.104.3 | `governance/strategies/default_equity_strategy.py:93` | 同上（重复文件） | HIGH | 同上 |
-| 5.104.4 | `simulation/default_backtest_engine.py:68` | `run(self, data, signals, initial_capital, **kwargs)` 与ABC `backtest_base.py:82` 的`run(self, signals, prices)` 参数名/类型/数量均不符 | HIGH | 修订ABC使反映真实实现契约 |
-| 5.104.5 | `intelligence/model_evaluation/implementations/default_backtest_engine.py:68` | 同上（重复文件） | HIGH | 删除重复实现，改为重导出 |
-| 5.104.6 | `governance/default_security_gateway.py:166` | `pre_filter(self, content, metadata) -> str` 与ABC `security_gateway_base.py:82` 的`pre_filter(self, content, source) -> bool` 参数名+返回类型均不符 | HIGH | 对齐ABC |
-| 5.104.7 | `governance/default_security_gateway.py:202` | `security_scan(self, content, metadata) -> list[ScanFinding]` 与ABC的`security_scan(self, content) -> list[str]`不符 | HIGH | 对齐ABC或升级ABC |
-| 5.104.8 | `governance/default_security_gateway.py:233` | `decide(self, content, metadata) -> AuditDecision` 与ABC的`decide(self, risks, context) -> AuditDecision`参数完全不同 | HIGH | 对齐ABC |
-| 5.104.9-5.104.11 | `governance/compliance_gate_a6/default_security_gateway.py:166,202,233` | 上述3个问题的重复副本 | HIGH | 删除重复文件，改为重导出 |
-| 5.104.12 | `governance/adapters/simulation_broker.py:117` | `cancel_order(self, order_id: str)` 参数名`order_id`应为ABC定义的`broker_order_id`，关键字调用会TypeError | HIGH | 改参数名为`broker_order_id` |
-| 5.104.13 | `governance/adapters/simulation_broker.py:125` | `query_order(self, order_id: str)` 同上参数名不匹配 | HIGH | 同上 |
-
 #### 5.104.2 ABC定义但实现类不继承（6个MEDIUM）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -7100,7 +7071,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - `src/zephyr/infrastructure/script_system/finding.py:262-263` — `Finding.__repr__`混用缩写键（`D=`/`SEV=`）与裸字符串
 - `src/zephyr/ops/protocols.py:41-42` — `AgentCapability.__repr__`返回`f"AgentCapability({self.name}, level={self.level})"`
 - `src/zephyr/security/adversarial_validation/constitution_guard.py:60-61` — `ConstitutionArticle.__repr__`冒号分隔非Python表达式
-- `src/zephyr/governance/database_manager.py:123-125` — `DatabaseHealthStatus.__repr__`返回人类可读状态摘要，语义应为`__str__`
+- `src/zephyr/governance/persistence/database_manager.py:123-125` — `DatabaseHealthStatus.__repr__`返回人类可读状态摘要，语义应为`__str__`
 - **问题**：`__repr__`返回值不是合法Python表达式，违反PEP 257"应返回可重建对象表达式"约定。
 - **修复**：统一为`f"ClassName(field={self.field!r}, ...)"`格式。
 
@@ -7241,7 +7212,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
   - `src/zephyr/risk/risk_limits.py:73`
   - `src/zephyr/governance/quality_gate.py:99`
   - `src/zephyr/governance/provider_base.py:91`
-  - `src/zephyr/governance/alt_data_connector/provider_base.py:91`
+  - `src/zephyr/governance/intelligence_governance/provider_base.py:91`
 - **问题**：守卫`abc.ABC not in cls.__bases__`只检查直接基类是否含`abc.ABC`，无法可靠识别中间抽象类。若中间抽象类不带显式`abc.ABC`但定义了标记属性，会被错误注册到`_registry`，实例化时抛`TypeError: Can't instantiate abstract class`。
 - **修复**：改用`inspect.isabstract(cls)`判断类是否仍为抽象类。
 - **注**：与5.116.3（`hasattr`沿MRO）是同一`if`语句中两个不同条件的不同问题。
@@ -7266,7 +7237,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
   - `src/zephyr/risk/risk_validator.py:89-92`
   - `src/zephyr/risk/risk_limits.py:71-74`
   - `src/zephyr/governance/quality_gate.py:97-100`
-  - `src/zephyr/governance/alt_data_connector/provider_base.py:89-94`（+`governance/provider_base.py:89-94`重复副本）
+  - `src/zephyr/governance/intelligence_governance/provider_base.py:89-94`（+`governance/provider_base.py:89-94`重复副本）
 - **问题**：`__init_subclass__`在子类定义（import时）触发注册写入`_registry`，但全代码库**无任何消费方读取这些注册表**（无`get`/`list` classmethod，无`_registry[id]`查找）。对比`factor/factor_base.py`的`register`/`get`/`list_all` API被实际消费，当前5个注册表是半成品——注册了但无人用，import时的注册副作用纯属开销。
 - **修复**：补充`@classmethod get/list_all`访问器并接入消费方，或移除注册逻辑与`_registry`字段。
 
@@ -7278,7 +7249,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.116.4 [LOW] 文档引用不存在的DataSourceRegistry类
 
-- **文件**：`src/zephyr/governance/alt_data_connector/provider_base.py:82`（+`governance/provider_base.py:82`重复副本）
+- **文件**：`src/zephyr/governance/intelligence_governance/provider_base.py:82`（+`governance/provider_base.py:82`重复副本）
 - **问题**：`DataSourceBase`类文档字符串指引开发者使用`@DataSourceRegistry.register`装饰器注册，但`DataSourceRegistry`类在代码库中**不存在**。实际注册由`__init_subclass__`自动完成。文档与代码矛盾，会误导新增数据源的实现者。
 - **修复**：将文档改为"设置类属性`__meta__ = DataSourceMeta(...)`即自动注册"。
 
@@ -7415,13 +7386,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.121.2 [LOW] vector_bridge._parse_raw_results可使用singledispatch
 
-- **文件**：`src/zephyr/integration/vector_bridge.py`（_parse_raw_results方法）
+- **文件**：`src/zephyr/autonomy_core/context/vector_bridge.py`（_parse_raw_results方法）
 - **问题**：`_parse_raw_results`根据输入类型（list/dict/np.ndarray等）分派到不同解析逻辑，可用`@singledispatch`替代if-elif链。
 - **修复**：同5.121.1，重构为`@singledispatch`。
 
 #### 5.121.3 [LOW] feedback_self_audit._normalize_nodes三处重复可使用singledispatch
 
-- **文件**：`src/zephyr/behavioral_audit/feedback_self_audit.py`（_normalize_nodes方法）
+- **文件**：`src/zephyr/governance/audit_trail/feedback_self_audit.py`（_normalize_nodes方法）
 - **问题**：`_normalize_nodes`方法对3种输入类型（dict/list/对象）有3份几乎相同的normalize逻辑，可用`@singledispatch`消除重复。当前重复逻辑违反DRY。
 - **修复**：重构为`@singledispatch`，每种类型注册独立normalize函数。
 
@@ -7473,7 +7444,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.124.1 [LOW] GatePipeline在非容器上定义__len__缺__bool__致隐式bool歧义
 
-- **文件**：`src/zephyr/governance/rule_enforcement/gate_pipeline.py:150`
+- **文件**：`src/zephyr/governance/rule_enforcement/gate_engine/gate_pipeline.py:150`
 - **问题**：`GatePipeline`类定义了`__len__`（返回gate数量）但**未定义`__bool__`**。Python在`if pipeline:`等布尔上下文中会回退到`__len__`——当pipeline没有任何gate时`__len__`返回0，`if pipeline:`为`False`。这可能导致"空pipeline"被误判为"假值"而跳过处理，与"pipeline对象本身是否存在"的语义混淆。`GatePipeline`不是容器，`__len__`语义是"gate数量"而非"容器大小"，在非容器上定义`__len__`本身就是反模式。
 - **修复**：要么删除`__len__`改用`gate_count`属性，要么显式定义`def __bool__(self): return True`消除歧义。
 
@@ -7575,15 +7546,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：
   - `src/zephyr/infrastructure/rollback/rollback_lock.py:124,168`
   - `src/zephyr/infrastructure/rollback/rollback_lock.py:124,168`（重复实现）
-  - `src/zephyr/autonomy_core/skill_locking.py:113`
+  - `src/zephyr/autonomy_core/skills/skill_locking.py:113`
 - **问题**：`os.open()`返回fd后，`os.write(fd, ...)`若抛`OSError`（磁盘满/配额超限），`os.close(fd)`不会执行，`except`直接return，fd泄漏。`skill_locking.py`的`os.close(fd)`位于`yield`的finally块，但`os.write`异常时永远到达不了try/finally块。
 - **修复**：将`os.write`/`os.close`包入`try/finally`。两份`rollback_lock.py`为重复实现，应统一。
-
-#### 5.128.4 [LOW] safe_open返回裸句柄设计缺陷
-
-- **文件**：`src/zephyr/infrastructure/capacity_assurance/modules/winfs_defense.py:51`
-- **问题**：`safe_open()`返回裸`open()`句柄，调用方必须自行`close()`。当前零调用方，属潜在脚枪。
-- **修复**：改为`@contextmanager`或标记deprecated。
 
 **严重度汇总**：HIGH=3, MEDIUM=8, LOW=1, 合计=12
 
@@ -7627,7 +7592,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.130.1 [HIGH] cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥
 
-- **文件**：`src/zephyr/security/access_control/cross_session_detector.py:34`
+- **文件**：`src/zephyr/security/access_control/detectors/cross_session_detector.py:34`
 - **问题**：模块级`_DEFAULT_SECRET = "zeph***"`硬编码默认密钥，在`__init__`中作为`secret_key`缺省回退值直接用于agent session token的HMAC-SHA256签名与验签。文件标注`[MATURITY] production`、`[DOMAIN] D_SECURITY`，属生产路径代码。若部署时未显式注入`secret_key`（默认调用路径），所有签名使用此公开可知的固定值，攻击者可伪造合法session token签名，绕过跨session盗用检测。
 - **修复**：移除默认值，强制从环境变量/密钥管理服务注入；缺省时抛出显式配置错误。
 
@@ -7813,12 +7778,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.134.1 [MEDIUM] _hash_file类型注解与实际返回不匹配
 
-- **文件**：`src/zephyr/behavioral_audit/baseline_manager.py:119`
+- **文件**：`src/zephyr/governance/drift_detection/baseline_manager.py:119`
 - **问题**：函数签名标注`-> str | None`，但实际始终返回`str`（`hashlib.sha256(...).hexdigest()`）。若文件打开失败会抛异常而非返回None。注解错误，应为`str`。对比：`detector_dispatcher.py:44`的`_compute_file_hash`注解正确为`-> str`。
 
 #### 5.134.2 [LOW] auto_kill_on_errors使用未导入的Optional
 
-- **文件**：`src/zephyr/autonomy_core/skill_kill_switch.py:70`
+- **文件**：`src/zephyr/autonomy_core/skills/skill_kill_switch.py:70`
 - **问题**：返回类型注解`Optional[dict[str, Any]]`，但文件仅`from typing import Any`未导入`Optional`。因有`from __future__ import annotations`注解延迟求值，运行时不报错；但`typing.get_type_hints()`求值会触发`NameError`。
 
 **严重度汇总**：HIGH=0, MEDIUM=1, LOW=1, 合计=2
