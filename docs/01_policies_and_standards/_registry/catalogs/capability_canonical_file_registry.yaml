@@ -2144,16 +2144,25 @@ capabilities:
       - get_required_secret
       - sanitize_secret
       - SecretsError
+    canonical_override: src/zephyr/shared/security/secrets.py
     description: >-
       Secrets 管理抽象——API key / token / password 统一读取唯一真源。
-      canonical = src/zephyr/shared/security/secrets.py（auto 派生：basename secrets
-      匹配 alias）。提供 SecretProvider Protocol（async）+ EnvSecretProvider /
+      canonical = src/zephyr/shared/security/secrets.py（canonical_override 明确指定：
+      磁盘上存在两个 basename=secrets.py 的文件，auto 派生会误选 llm_defense 下的
+      正则库）。提供 SecretProvider Protocol（async）+ EnvSecretProvider /
       DotEnvSecretProvider 两个实现 + get_secret / get_secret_or_default /
       get_required_secret 三个同步便捷函数（脚本场景）+ sanitize_secret 日志脱敏。
       AI 施工约定（SSoT §2.11）：任何 API key / token / password MUST 通过本模块读取，
       禁止裸 os.getenv。未登记本 registry 时 SSOT-REDEFINITION 门禁无法检测重定义，
       导致新 AI 可能重复造轮子（architecture_debt §5.17.10 已记录多处绕过）。
       [TTL] permanent。
+    duplicates_manual:
+      - path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
+        relation: sibling
+        note: >-
+          LLM 安全检测的密钥模式匹配正则库（SECRET_INDICATOR_PATTERNS 等），
+          与密钥读取功能无关——basename 相同但语义不同。auto 派生按 basename
+          匹配会误选为 canonical，故用 canonical_override 明确指定真源。
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
