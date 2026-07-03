@@ -5662,20 +5662,26 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 
 **目标**：建立自动化检测基线，每次commit自动生成架构健康度指标，替代手动调研。
 
+**设计决策——warn-only 模式**：第0期仅记录基线不阻断 commit（exit 0，post-commit 触发，仅记录快照）。指标违规不阻断代码提交，避免在基线建立阶段阻断正常开发流程。
+
 **交付物**：
-- 架构健康度仪表盘脚本（每次commit自动运行）
-- 指标清单：词表硬编码违规数、manual-only永久脚本数、重复簇函数数、GATE未登记capability数、文件复制对数、reconciler健康度、死代码数、路径漂移数、三方对齐违规数、时间触发残留数、PG域引用一致性违规数
+- 架构健康度仪表盘脚本（每次commit自动运行）—— 已实现：`scripts/governance/architecture_health_dashboard.py`
+- 指标清单（11项，M01-M11）：词表硬编码违规数、manual-only永久脚本数、重复簇函数数、GATE未登记capability数、文件复制对数、reconciler健康度、死代码数、路径漂移数、三方对齐违规数、时间触发残留数、PG域引用一致性违规数
 - 所有指标目标值为0，当前值为3193（手动调研基线）
+- M11（PG域引用一致性）已验证归零——73条空字符串脏数据已清理（2026-07-03）
 
 ### 第1期：AST强制消费链门禁
 
-**目标**：将"建议性规则"转化为"强制性阻断"，AI无法绕过。
+**目标**：将"建议性规则"转化为"强制性阻断"，AI无法绕过。第0期 warn-only 转 hard block。
+
+**设计决策——hard block 模式**：第1期将仪表盘指标转为 pre-commit commit gate（exit 1 阻断 commit），替代当前 post-commit reconciler 补偿模式。
 
 **交付物**：
 - 扩展GATE-VOCAB至全34词表的强制消费链
 - 52个GATE的capability反查强制注册
 - pre-commit hook阻断违规（替代当前post-commit reconciler补偿模式）
 - 文件复制对检测器（AST共享行百分比>70%即阻断）
+- M11 等 11 项指标转 pre-commit commit gate（hard block）
 
 ### 第2期：批量修复
 
