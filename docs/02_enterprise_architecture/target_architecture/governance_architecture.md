@@ -3,7 +3,7 @@ module_id: VIEW-09-GOVERNANCE-ARCH
 title: Target Architecture — Governance Architecture / 目标架构：治理架构
 doc_type: architecture_view
 status: Active
-version: 2.2.0
+version: 2.2.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ tags:
 summary: TOGAF 第 9 视图——治理架构。三层治理边界（Policy/Factory/Runtime）横切整个系统， 承载 D1-D4 + OQ-026
   拍板。46 治理系统分层归属（A21+B1+C17+VB1+D6）。 v2.0.0 重组织：物理位置树 → 合并表引用 scripts_model.yaml；接口描述
   → 表格化。
-date: '2026-04-22'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -79,7 +79,7 @@ ttl: permanent
 | scripts/ 治理代码拓扑 | `application_architecture.md §5` | §2 Factory 层引用 |
 | 数据层治理（PIT / Survivorship / Lineage）| `data_architecture.md §8` | §4 A-07 F 函数引用 |
 | 集成契约治理 | `integration_architecture.md §6` | §4 A-15 OCP 引用 |
-| 安全威胁治理（IAM / KMS / Audit）| `security_architecture.md`（skeleton）| §4 A-10 引用 |
+| 安全威胁治理（IAM / KMS / Audit）| `security_architecture.md`（active）| §4 A-10 引用 |
 | 运维治理（监控 / Runbook / DR）| `operations_architecture.md`（skeleton）| §6 T1-T6 联动 |
 | 前端治理（ESLint / TypeScript strict / A11y）| `frontend_architecture.md` | §4 A-05 扩展 |
 | **运行平面切分（Hot/Warm/Cold）** | **`runtime_planes.md`** | **§1.2bis 铁律** |
@@ -102,11 +102,11 @@ ttl: permanent
 
 ### 1.3 本视图的三层治理**管什么？**
 
-**核心澄清**：治理三层**横切整个系统的所有域**——业务层（src/ 52 域）、文档层（docs/ 21 抽屉）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
+**核心澄清**：治理三层**横切整个系统的所有域**——业务层（src/ 53 域）、文档层（docs/ 6 顶级目录）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
 
 | 被管对象 | 管的规矩 | 涉及治理层 |
 |---|---|---|
-| `src/zephyr/*/*.py` 业务代码（按 52 域组织） | ruff/mypy/bandit/PIT/fitness functions | Policy→Factory→Runtime |
+| `src/zephyr/*/*.py` 业务代码（按 53 域组织） | ruff/mypy/bandit/PIT/fitness functions | Policy→Factory→Runtime |
 | `docs/**/*.md` 文档 | frontmatter schema/INDEX/孤儿检查 | Policy→Factory→Runtime |
 | `frontend/**/*.tsx` 前端代码 | ESLint/TypeScript strict/A11y | Policy→Factory→Runtime |
 | KB:decisions namespace 架构决策 | append-only/14 天实现 Gate | Policy→Factory→Runtime |
@@ -127,7 +127,7 @@ ttl: permanent
 
 ### 2.2 三层物理位置速查
 
-> **详细路径清单** → 查询 depgraph: `SELECT path FROM nodes WHERE domain_id IN ('D_GOVERNANCE','D_GOV_AUDIT','D_GOV_RULE')`（governance/arch_guard/quality 三域）
+> **详细路径清单** → 查询 depgraph: `SELECT path FROM nodes WHERE domain_id IN ('D_GOVERNANCE','D_GOV_AUDIT','D_GOV_RULE')`（D_GOVERNANCE/D_GOV_AUDIT/D_GOV_RULE 三域）
 
 | 层 | 关键物理位置 | 代表产物 |
 |---|---|---|
@@ -372,7 +372,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **T4 外部审计合规** | L7 SBOM + 06-SEC/08-OPS 实质化 |
 | **T5 F 函数 ≥25 条** | 25 条 F 函数进 CI Gate + 数据层 OQ-075 3 条合并 |
 | **T6 用户主动激活** | 按需激活对应子系统 |
-| **T7 6 大核心服务 D6 ≥ 5.5/10**（experimental 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作 |
+| **T7 5 大核心服务 D6 ≥ 5.5/10**（experimental 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作 |
 
 ### 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）
 
@@ -394,11 +394,11 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 - [ ] 所有文件在 `directory-keep-whitelist.yaml` 或有明确 owner
 - [ ] `reference-remap-table.yaml` 审计日志完整（本次重组的 10+ 条 change_log）
 - [ ] 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph 定义）
-- [ ] 6 大核心服务接口规范已全部在 `docs/03_modules/_b_track_interfaces/` 就位
+- [ ] 5 大核心服务接口规范已全部在 `docs/03_modules/_cross_layer/_b_track_interfaces/` 就位
 
-### 6.5 6 大核心服务的治理归属
+### 6.5 5 大核心服务的治理归属
 
-> 新增于 v2.1.0（2026-04-24）。6 大核心服务（LSG/CE/VMS/Orc/FLE/KB）在三层治理边界中的归属：
+> 新增于 v2.1.0（2026-04-24）。5 大核心服务（LSG/CE/VMS/Orc/FLE）在三层治理边界中的归属：
 
 | 服务 | Policy 层治理 | Factory 层治理 | Runtime 层治理 |
 |------|--------------|--------------|---------------|
@@ -408,13 +408,13 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Orc** | 任务状态机 + Agent 白名单 | `OrchestratorProtocol` + Sandbox ACL 模板 | `agent_actions` + `sandbox_violations` 表 + 幻觉检测月报 |
 | **FLE** | 异常阈值策略 + 动作分派规则 | `FeedbackLoopProtocol` + EMA 参数 | FLE 自监控 anomaly_ledger + 阈值触发审计 |
 
-**治理一致性约束**：6 大核心服务的 Policy 文档必须在 experimental 末全部就位，否则 T7 门禁不通过。
+**治理一致性约束**：5 大核心服务的 Policy 文档必须在 experimental 末全部就位，否则 T7 门禁不通过。
 
 ### 6.6 边界声明
 
-**本视图只做**：定义三层分层边界 + 承载 D1-D4 拍板 + 关闭 OQ-026 + 预留 AI 口子 + 锁定激活时间表 + 作为 KBG-0010 + KBG-0021 同源视图 + 定义 6 大核心服务治理归属。
+**本视图只做**：定义三层分层边界 + 承载 D1-D4 拍板 + 关闭 OQ-026 + 预留 AI 口子 + 锁定激活时间表 + 作为 KBG-0010 + KBG-0021 同源视图 + 定义 5 大核心服务治理归属。
 
-**本视图不做**：不新建目录、不写脚本、不激活检查器、不实施 D3-B 口子、不动 39 系统内部结构、不动 src/ 52 域、不动 KBG-0001~0009。
+**本视图不做**：不新建目录、不写脚本、不激活检查器、不实施 D3-B 口子、不动 39 系统内部结构、不动 src/ 53 域、不动 KBG-0001~0009。
 
 ### 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录
 
@@ -436,16 +436,5 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 **experimental 约束**：仅扫描 R-86 起，warn-only 模式（exit code = 0），不阻塞流程。
 
 ---
-
-## 7. Revision history / 修订记录
-
-| Date | Version | Description |
-|---|---|---|
-| 2026-04-27 | **v2.2.0** | CL-023 V-15 TruthSourceCascadeValidator 启动记录（§6.7）：R82 兜底缺口已实施，experimental warn-only 模式。T-V2-012 Step 8 GLM-5.1 文档。 |
-| 2026-04-24 | **v2.1.0** | B-d-6 — 新增 T0 "scaffold 基础奠基"强制门禁（KBG-0021 SSoT Validator）+ T7 "6 大核心服务 D6 ≥ 5.5"（experimental 出口）。新增 §6.4 SSoT Validator 三层归属与 scaffold 出口检查清单（7 项）+ §6.5 6 大核心服务治理归属表（每个服务的 Policy/Factory/Runtime 三层产物）。激活条件从 6 条扩至 8 条（T0-T7）。|
-| 2026-04-21 | **v2.0.0** | Architecture-as-Code 重组织：物理位置树→合并表引用 scripts_model.yaml；接口描述→表格化；frontmatter 精简。615→~490 行。 |
-| 2026-04-19 | v1.2.0 | J1 批次 R69/KBG-0011：§1.2bis Runtime Plane 正交标注。 |
-| 2026-04-19 | v1.1.0 | J0-sync：§4.5 D 家族 6 个 AI 治理基建。39→45 系统。 |
-| 2026-04-19 | v1.0.0 | 首次发布：D1-D4 + OQ-026 拍板。三层边界 + 45 系统 + AI 预留 + 激活路径。 |
 
 > 完整修订历史：`git log --oneline -- governance_architecture.md`
