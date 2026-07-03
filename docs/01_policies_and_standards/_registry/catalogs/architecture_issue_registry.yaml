@@ -69,11 +69,11 @@ entries:
 - issue_id: '#ARCH-011'
   title: cross_registry_rules 声明但未接线
   severity: P2中
-  adjudication: 标注 deprecated
-  fix_phase: schema_health 阶段4
-  status: open
+  adjudication: 裁定变更（v14 migration 决定保留为健康 sync 缓存，已接入 sync_yaml_to_depgraph 写入 + check_registry_consistency 读取，原裁定"标注 deprecated"被推翻）
+  fix_phase: 已完成（表已实际接线，sync_yaml_to_depgraph.py L766-805 INSERT + check_registry_consistency.py L266 读取）
+  status: resolved
   created: '2026-06-25'
-  last_updated: '2026-06-26'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-012'
   title: governance_audit_logs 假审计表
   severity: P1高
