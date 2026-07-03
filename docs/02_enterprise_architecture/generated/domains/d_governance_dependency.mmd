@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-04 05:54:57
+%% 生成时间: 2026-07-04 07:36:57
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 874, 依赖边数: 1564
+%% 模块数: 875, 依赖边数: 1569
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         docs_01_policies_and_standards___ain_policy_data_factor_yaml["...ae_050_domain_policy_data_factor.yaml [production]"]
         docs_01_policies_and_standards___n_policy_risk_backtest_yaml["..._051_domain_policy_risk_backtest.yaml [production]"]
         docs_01_policies_and_standards___ueprint_change_cleanup_yaml["...2_cross_blueprint_change_cleanup.yaml [production]"]
-        %% ... 还有 774 个模块未显示
+        %% ... 还有 775 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -230,6 +230,9 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_kb_bootstrap_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    %% D_BACKTEST -> D_GOVERNANCE (2 条)
+    D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
+    D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     %% D_COMPLIANCE -> D_GOVERNANCE (19 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_intellig____governance_aisg_sandbox_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_evidence_pack_py
@@ -250,7 +253,7 @@ graph TD
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail___init___py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_behavioral_admission___init___py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub___init___py
-    %% D_EX_CORE -> D_GOVERNANCE (9 条)
+    %% D_EX_CORE -> D_GOVERNANCE (10 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
@@ -260,9 +263,12 @@ graph TD
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_trading_contracts_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    %% D_FRONTEND -> D_GOVERNANCE (2 条)
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
+    %% D_FRONTEND -> D_GOVERNANCE (4 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
+    D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     %% D_GOV_AUDIT -> D_GOVERNANCE (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_red_blue_validator_blueprint_md
     %% D_GOV_DRIFT -> D_GOVERNANCE (4 条)
@@ -625,5 +631,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 609 条
-    %% 跨域入边: 680 条
+    %% 跨域入边: 685 条
     %% 跨域出边: 275 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 05:54:55
+> 最后更新: 2026-07-04 07:36:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
 | 域名称 | 执行核心 | Domain Name | 执行核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 13 | Module Count | 13 |
+| 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 14 | Cross-domain Outgoing | 14 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 5 | Production Modules | 5 |
 | 容量 | 5/150 (正常) | Capacity | 5/150 (正常) |
@@ -51,6 +51,7 @@ graph TD
         src_zephyr_ex_core_extensions_init_py["src/zephyr/ex_core/_extensions/__init__.py prototype"]
         src_zephyr_ex_core_adapters_init_py["src/zephyr/ex_core/adapters/__init__.py prototype"]
         src_zephyr_ex_core_adapters_broker_interface_py["src/zephyr/ex_core/adapters/broker_interface.py production"]
+        src_zephyr_ex_core_adapters_miniqmt_broker_py["src/zephyr/ex_core/adapters/miniqmt_broker.py/ design"]
         src_zephyr_ex_core_adapters_risk_validation_bridge_py["src/zephyr/ex_core/adapters/risk_validation_bri... prototype"]
         src_zephyr_ex_core_adapters_simulation_broker_py["src/zephyr/ex_core/adapters/simulation_broker.py production"]
         src_zephyr_ex_core_api_init_py["src/zephyr/ex_core/api/__init__.py prototype"]
@@ -65,7 +66,10 @@ graph TD
     D_TRADING["D_TRADING production"]
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    D_BACKTEST["D_BACKTEST design"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_BACKTEST
+    D_GOVERNANCE["D_GOVERNANCE design"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_TRADING
@@ -78,15 +82,18 @@ graph TD
     src_zephyr_ex_core_adapters_simulation_broker_py -.->|import_depends| D_GOVERNANCE
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_ex_core_init_py
+    D_FRONTEND["D_FRONTEND design"]
+    D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    D_FRONTEND -.->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_ex_core_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py production
-    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_services_init_py design
+    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_services_init_py design
     class D_TRADING external_prod
-    class D_GOVERNANCE,D_AUDITTEST external_design
+    class D_BACKTEST,D_GOVERNANCE,D_AUDITTEST,D_FRONTEND external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -109,7 +116,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 执行核心（D_EX_CORE）的模块分布。共 13 个模块 / 13 modules。
+> 按 architecture_layer 分层显示 执行核心（D_EX_CORE）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 
@@ -130,12 +137,19 @@ graph TD
 │   src/zephyr/ex_core/order_manager.py  [production]              │
 │   src/zephyr/ex_core/services/__init__.py  [prototype]           │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (1 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/ex_core/adapters/miniqmt_broker.py/  [design]       │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 13 个模块 / 13 modules）。
+> 按 architecture_layer 分组的模块清单（共 14 个模块 / 14 modules）。
 
 ### L2 领域层 / Domain Layer (13 modules)
 
@@ -154,6 +168,12 @@ graph TD
 | 11 | src/zephyr/ex_core/infrastructure/__init__.py | src/zephyr/ex_core/infrastructure/__i... | prototype | generated |
 | 12 | src/zephyr/ex_core/order_manager.py | src/zephyr/ex_core/order_manager.py | production | generated |
 | 13 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py | prototype | generated |
+
+### 未分类 / Unclassified (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/ex_core/adapters/miniqmt_broker.py/ | src/zephyr/ex_core/adapters/miniqmt_b... | design | stable |
 
 ## 依赖关系图 / Dependency Graph
 

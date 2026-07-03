@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 05:54:55
+> 最后更新: 2026-07-04 07:36:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D_FRONTEND | Domain ID | D_FRONTEND |
 | 域名称 | 前端 | Domain Name | 前端 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 16 | Module Count | 16 |
+| 模块数 | 21 | Module Count | 21 |
 | 域内依赖 | 8 | Internal Dependencies | 8 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 9 | Cross-domain Outgoing | 9 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 5 | Design Modules | 5 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
@@ -54,11 +54,16 @@ graph TD
         src_zephyr_frontend_dashboard_init_py["src/zephyr/frontend/dashboard/__init__.py prototype"]
         src_zephyr_frontend_dashboard_app_py["src/zephyr/frontend/dashboard/app.py production"]
         src_zephyr_frontend_dashboard_components_init_py["src/zephyr/frontend/dashboard/components/__init... prototype"]
+        src_zephyr_frontend_dashboard_components_backtest_results_py["src/zephyr/frontend/dashboard/components/backte... design"]
         src_zephyr_frontend_dashboard_components_fitness_functions_py["src/zephyr/frontend/dashboard/components/fitnes... production"]
         src_zephyr_frontend_dashboard_components_gate_statistics_py["src/zephyr/frontend/dashboard/components/gate_s... production"]
         src_zephyr_frontend_dashboard_components_knowledge_overview_py["src/zephyr/frontend/dashboard/components/knowle... production"]
         src_zephyr_frontend_dashboard_components_olap_trend_py["src/zephyr/frontend/dashboard/components/olap_t... production"]
+        src_zephyr_frontend_dashboard_components_order_book_py["src/zephyr/frontend/dashboard/components/order_... design"]
+        src_zephyr_frontend_dashboard_components_position_monitor_py["src/zephyr/frontend/dashboard/components/positi... design"]
         src_zephyr_frontend_dashboard_components_task_progress_py["src/zephyr/frontend/dashboard/components/task_p... production"]
+        src_zephyr_frontend_dashboard_components_tick_replay_py["src/zephyr/frontend/dashboard/components/tick_r... design"]
+        src_zephyr_frontend_dashboard_components_trade_panel_py["src/zephyr/frontend/dashboard/components/trade_... design"]
         src_zephyr_frontend_infrastructure_init_py["src/zephyr/frontend/infrastructure/__init__.py prototype"]
         src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py production"]
         src_zephyr_frontend_models_init_py["src/zephyr/frontend/models/__init__.py prototype"]
@@ -75,6 +80,14 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE
+    D_BACKTEST["D_BACKTEST prototype"]
+    src_zephyr_frontend_dashboard_components_backtest_results_py -.->|import_depends| D_BACKTEST
+    src_zephyr_frontend_dashboard_components_tick_replay_py -.->|import_depends| D_BACKTEST
+    src_zephyr_frontend_dashboard_components_tick_replay_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_frontend_dashboard_components_order_book_py -.->|import_depends| D_GOVERNANCE
+    D_EX_CORE["D_EX_CORE design"]
+    src_zephyr_frontend_dashboard_components_position_monitor_py -.->|import_depends| D_EX_CORE
+    src_zephyr_frontend_dashboard_components_trade_panel_py -.->|import_depends| D_EX_CORE
     D_TRADING["D_TRADING production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -82,8 +95,9 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_interface_base_py production
-    class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
+    class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_backtest_results_py,src_zephyr_frontend_dashboard_components_order_book_py,src_zephyr_frontend_dashboard_components_position_monitor_py,src_zephyr_frontend_dashboard_components_tick_replay_py,src_zephyr_frontend_dashboard_components_trade_panel_py,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
     class D_GOVERNANCE,D_TRADING external_prod
+    class D_BACKTEST,D_EX_CORE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -103,7 +117,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 前端（D_FRONTEND）的模块分布。共 16 个模块 / 16 modules。
+> 按 architecture_layer 分层显示 前端（D_FRONTEND）的模块分布。共 21 个模块 / 21 modules。
 
 ```
 
@@ -127,12 +141,23 @@ graph TD
 │   src/zephyr/frontend/models/__init__.py  [prototype]            │
 │   src/zephyr/frontend/services/__init__.py  [prototype]          │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (5 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/frontend/dashboard/components/backtest_results.p... │
+│   src/zephyr/frontend/dashboard/components/order_book.py/  [d... │
+│   src/zephyr/frontend/dashboard/components/position_monitor.p... │
+│   src/zephyr/frontend/dashboard/components/tick_replay.py/  [... │
+│   src/zephyr/frontend/dashboard/components/trade_panel.py/  [... │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 16 个模块 / 16 modules）。
+> 按 architecture_layer 分组的模块清单（共 21 个模块 / 21 modules）。
 
 ### L1 基础层 / Foundation Layer (16 modules)
 
@@ -154,6 +179,16 @@ graph TD
 | 14 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | production | generated |
 | 15 | src/zephyr/frontend/models/__init__.py | src/zephyr/frontend/models/__init__.py | prototype | generated |
 | 16 | src/zephyr/frontend/services/__init__.py | src/zephyr/frontend/services/__init__.py | prototype | generated |
+
+### 未分类 / Unclassified (5 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/frontend/dashboard/components/backtest_results... | src/zephyr/frontend/dashboard/compone... | design | stable |
+| 2 | src/zephyr/frontend/dashboard/components/order_book.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
+| 3 | src/zephyr/frontend/dashboard/components/position_monitor... | src/zephyr/frontend/dashboard/compone... | design | stable |
+| 4 | src/zephyr/frontend/dashboard/components/tick_replay.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
+| 5 | src/zephyr/frontend/dashboard/components/trade_panel.py/ | src/zephyr/frontend/dashboard/compone... | design | stable |
 
 ## 依赖关系图 / Dependency Graph
 
