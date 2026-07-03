@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-04'
-total_scripts: 550
+total_scripts: 551
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1593,6 +1593,14 @@ scripts:
 - name: governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
   path: governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
   description: check_precommit_id_uniqueness.py — GATE-ID-UNIQ
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/checkers/check_rule_four_way_alignment.py
+  path: governance/d5_architecture/checkers/check_rule_four_way_alignment.py
+  description: 对标：ARCH-020 — check_rule_four_way_alignment.py 文件不存在，四方对齐门禁缺失
   domain: governance
   execution_plane: warm-path
   status: registered
