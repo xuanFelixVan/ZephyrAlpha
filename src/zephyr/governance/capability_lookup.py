@@ -283,8 +283,12 @@ class CapabilityLookup:
         self._loaded = False
         # git 派生缓存（惰性）：[(path, commit_hash), ...]，None=未加载
         self._git_deletions: list[tuple[str, str]] | None = None
+        # git show 头部缓存："{commit}:{path}" → HeaderInfo | None，避免多能力匹配同一删除文件时重复 subprocess
+        self._git_show_cache: dict[str, HeaderInfo | None] = {}
         # import 数缓存（tiebreaker）：module_path → importer count
         self._import_count_cache: dict[str, int] = {}
+        # removed_duplicates 惰性派生标志：__init__ 不派生，首次查询（_entry_to_dict）时触发
+        self._removed_derived: bool = False
         # git 派生仅在 scan=True 时有意义（scan=False 不派生任何派生字段）
         self._derive_removed = derive_removed and scan
         # YAML 真源必须加载（与 scan 解耦——scan=False 只跳过磁盘扫描+派生，不跳过 YAML）
@@ -302,6 +306,8 @@ class CapabilityLookup:
         self._capabilities = self._load_yaml()
         self._disk_headers = self._scan_disk_headers()
         self._git_deletions = None
+        self._git_show_cache.clear()
+        self._removed_derived = False
         self._import_count_cache.clear()
         self._derive_all()
         self._reconcile()
@@ -436,13 +442,23 @@ class CapabilityLookup:
         return tokens
 
     def _derive_all(self) -> None:
-        """对每个能力派生 canonical / duplicates / removed_duplicates。"""
+        """对每个能力派生 canonical / duplicates / removed_duplicates（manual）。
+
+        git 派生 removed_duplicates 不在初始化时执行——改为惰性（_ensure_removed_derived），
+        避免初始化时全量 git show 子进程调用导致超时（112 caps × 1305 deletions → 73 次
+        git show ≈ 8s+）。
+        """
         for cap in self._capabilities:
             self._derive_canonical_and_duplicates(cap)
-            # manual 条目是真源数据，必须始终合并（不依赖 derive_removed 标志）
             cap.removed_duplicates = list(cap.removed_duplicates_manual)
-            if self._derive_removed:
-                self._derive_removed_duplicates(cap)
+
+    def _ensure_removed_derived(self) -> None:
+        """惰性派生 removed_duplicates：首次查询时触发，仅派生一次。"""
+        if self._removed_derived or not self._derive_removed:
+            return
+        for cap in self._capabilities:
+            self._derive_removed_duplicates(cap)
+        self._removed_derived = True
 
     def _derive_canonical_and_duplicates(self, cap: CapabilityEntry) -> None:
         """派生 canonical_file + duplicates（basename 启发式 + 成熟度排序）。"""
@@ -694,7 +710,13 @@ class CapabilityLookup:
             })
 
     def _git_show_header(self, commit: str, path: str) -> HeaderInfo | None:
-        """git show {commit}^:{path} 读取已删文件，解析头部。失败返回 None。"""
+        """git show {commit}^:{path} 读取已删文件，解析头部。失败返回 None。
+
+        带缓存：同一 (commit,path) 仅 subprocess 一次，避免多能力匹配同一删除文件时重复调用。
+        """
+        cache_key = f"{commit}:{path}"
+        if cache_key in self._git_show_cache:
+            return self._git_show_cache[cache_key]
         try:
             result = subprocess.run(
                 ["git", "show", f"{commit}^:{path}"],
@@ -706,9 +728,13 @@ class CapabilityLookup:
                 errors="replace",
             )
             if result.returncode != 0:
+                self._git_show_cache[cache_key] = None
                 return None
-            return self._parse_header_from_text(result.stdout, path)
+            header = self._parse_header_from_text(result.stdout, path)
+            self._git_show_cache[cache_key] = header
+            return header
         except (subprocess.SubprocessError, OSError):
+            self._git_show_cache[cache_key] = None
             return None
 
     @staticmethod
@@ -1295,8 +1321,9 @@ class CapabilityLookup:
             "scan_roots": [str(r) for r in self._scan_roots],
         }
 
-    @staticmethod
-    def _entry_to_dict(cap: CapabilityEntry) -> dict:
+    def _entry_to_dict(self, cap: CapabilityEntry) -> dict:
+        """转为 dict 前触发 removed_duplicates 惰性派生（首次查询时 git log + git show）。"""
+        self._ensure_removed_derived()
         return {
             "capability_id": cap.capability_id,
             "name": cap.capability_id,  # name 已弃用，输出 capability_id 保持向后兼容
