@@ -422,13 +422,16 @@ def sync_gate_registry(cur):
         return
 
     gates = data.get("gates", [])
+    # 顶层 source 字段（默认 .pre-commit-config.yaml，ARCH-009）
+    registry_source = data.get("source", ".pre-commit-config.yaml")
     synced = 0
     for gate in gates:
         cur.execute(
             """
         INSERT INTO gates
-        (gate_id, name, entry, description, files_trigger, always_run, category, status)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        (gate_id, name, entry, description, files_trigger, always_run, category, status,
+         source, event_driven, auto_start)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT(gate_id) DO UPDATE SET
             name=excluded.name,
             entry=excluded.entry,
@@ -436,7 +439,10 @@ def sync_gate_registry(cur):
             files_trigger=excluded.files_trigger,
             always_run=excluded.always_run,
             category=excluded.category,
-            status=excluded.status
+            status=excluded.status,
+            source=excluded.source,
+            event_driven=excluded.event_driven,
+            auto_start=excluded.auto_start
         """,
             (
                 gate.get("gate_id", ""),
@@ -447,6 +453,9 @@ def sync_gate_registry(cur):
                 1 if gate.get("always_run", False) else 0,
                 gate.get("category", ""),
                 gate.get("status", "active"),
+                gate.get("source", registry_source),
+                gate.get("event_driven", ""),
+                1 if gate.get("auto_start", True) else 0,
             ),
         )
         synced += 1
