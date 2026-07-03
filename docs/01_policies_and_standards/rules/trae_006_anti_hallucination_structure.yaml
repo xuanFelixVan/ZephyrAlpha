@@ -33,7 +33,7 @@ sections:
     - ANTI-HALL-01
     conditions:
     - type: pre_condition
-      check: 代码文件头部十字段完整性检查
+      check: 代码文件头部十五字段完整性检查
       pass: 所有必填字段已标注
       fail: 缺失字段=孤儿文件
     actions:
@@ -101,21 +101,21 @@ sections:
     original_rules:
     - GOV-ENG-001
     summary: 本规则适用于全14层(L00-L15)，按§3分层定级。写Python代码前MUST加载本标准。
-    impact_on_rules: 所有代码文件的头部十字段必须完整，缺失=孤儿文件
+    impact_on_rules: 所有代码文件的头部十五字段必须完整，缺失=孤儿文件
     key_decisions:
-    - 十字段表头是代码文件的治理锚定，不是可选注释
+    - 十五字段表头是代码文件的治理锚定，不是可选注释
     - 枚举值SSoT在PS-REG-012，本标准仅引用
   gov_eng_001_field_template:
-    title: A_full十字段模板
+    title: A_full十五字段模板
     section_type: examples
     original_rules:
     - GOV-ENG-001
     - GOV-ENG-002
     items:
-    - description: A_full十字段注释头部格式
-      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [INVARIANTS] {不可违反的约束，分号分隔} / [MODIFY-GUARD] {修改此文件必须同步更新的文件，分号分隔} / [CONSUMERS] {依赖此文件的模块，分号分隔} / [STABILITY] {frozen|stable|evolving|volatile} / [SAFETY] {H|M|L} / [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / [ERROR_CONTRACT] {可抛异常列表，分号分隔} / [TESTS] {测试文件路径，分号分隔}"
-    - description: A_test六字段简化版格式
-      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [STABILITY] evolving / [SAFETY] L / [AI_AUTONOMY] ai_modifiable / [TESTS] —"
+    - description: A_full十五字段注释头部格式
+      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [DOMAIN] {D-XXX（仅跨域模块需填）} / [DEPENDENCIES] {上游依赖模块，分号分隔} / [CONSUMERS] {依赖此文件的模块，分号分隔} / [STARTUP] {auto_start|event_driven|manual|imported} / [MATURITY] {design|prototype|production|legacy} / [INVARIANTS] {不可违反的约束，分号分隔} / [MODIFY-GUARD] {修改此文件必须同步更新的文件，分号分隔} / [STABILITY] {frozen|stable|evolving|volatile} / [SAFETY] {H|M|L} / [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / [ERROR_CONTRACT] {可抛异常列表，分号分隔} / [TESTS] {测试文件路径，分号分隔} / [TTL] {permanent|task_bound}"
+    - description: A_test七字段简化版格式
+      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [STABILITY] evolving / [SAFETY] L / [AI_AUTONOMY] ai_modifiable / [TESTS] — / [TTL] task_bound"
   gov_eng_001_enum_ref:
     title: 枚举值SSoT引用
     section_type: principles
@@ -178,7 +178,7 @@ sections:
     - GOV-ENG-001
     - GOV-ENG-002
     items:
-    - step: 检查代码文件头部十字段完整性
+    - step: 检查代码文件头部十五字段完整性
       command: "python scripts/governance/add_file_headers.py"
       expected_exit: 0
       on_fail: "缺失字段=孤儿文件，MUST补充后重新验证"
@@ -212,7 +212,7 @@ sections:
     original_rules:
     - GOV-ENG-001
     summary: GOV-ENG-001 v1.4.0 §7简化为引用GOV-ENG-002（文件头部标准独立文件）
-    impact_on_rules: §7从完整定义变为引用，不影响十字段要求
+    impact_on_rules: §7从完整定义变为引用，不影响十五字段要求
     key_decisions:
     - v1.4.0将文件头部标准独立为GOV-ENG-002，§7仅保留速查表
     items:

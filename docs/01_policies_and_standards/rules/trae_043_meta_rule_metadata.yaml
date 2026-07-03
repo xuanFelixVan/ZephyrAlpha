@@ -37,7 +37,7 @@ sections:
       fail: 域归属错误或字段不匹配
     actions:
     - type: mandatory
-      step: 域A(文档frontmatter,40字段)全局适用；域B(任务卡,18字段)仅plan/roadmap；域C(AI治理)AI决策日志+员工档案；域D(代码文件头部,10字段)src/zephyr/下.py文件；YAML文件分document_yaml和registry_yaml两类契约
+      step: 域A(文档frontmatter,40字段)全局适用；域B(任务卡,18字段)仅plan/roadmap；域C(AI治理)AI决策日志+员工档案；域D(代码文件头部,15字段)src/zephyr/下.py文件；YAML文件分document_yaml和registry_yaml两类契约
     prohibitions: []
   ps_std_001_dual_source:
     title: 双真源声明
@@ -618,7 +618,7 @@ sections:
       ai_decision_log: 28+2字段(JSONL)
       ai_employee_profile: 30+字段(YAML)
     provenance_clarification: frontmatter provenance=文档溯源(复杂对象)代码WriteTrace=运行时写入溯源(简单对象writer_id/timestamp/operation/target)
-    domain_d_code_header: 10字段([BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS])3枚举与域A对齐
+    domain_d_code_header: 15字段(真源→trae_047 field_specs.a_full.required；3枚举[STABILITY]/[SAFETY]/[AI_AUTONOMY]与域A对齐)
     prohibitions:
     - 混淆provenance(文档溯源)与WriteTrace(运行时写入溯源)
     - 域D代码头部[STABILITY]/[SAFETY]/[AI_AUTONOMY]与域A frontmatter值不一致(META-V22违规)

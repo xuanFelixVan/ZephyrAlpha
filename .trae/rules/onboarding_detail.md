@@ -397,7 +397,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 多 Agent/MCP 委托 | `DelegationEngine.delegate(event, strategy)` 遵循四级约束 | 死锁/循环委托/深度溢出 |
 | LLM API 调用前 | `BudgetEngine().pre_flight_check(operation_id, tokens, cost)` | 超预算 → 降级或拒绝 |
 | 任何写入/执行/修改前 | `PermissionGuard.check(identity, operation, target_path)` | BLOCKED → 禁止；AUTO_GUARD → 先干后验 |
-| **新建/修改代码文件** | 添加防幻觉头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]` 十五字段 | 缺失 = 孤儿文件 → 禁止关闭任务 |
+| **新建/修改代码文件** | 添加防幻觉头部（十五字段，真源→trae_047 field_specs.a_full.required） | 缺失 = 孤儿文件 → 禁止关闭任务 |
 | **规格化蓝图** | 先 Layer 1（蓝图+施工图模板 v4.0 合规）→ 后 Layer 2（规格化砍削） | Layer 1 不通过 → 禁止砍削 |
 | **规格化代码文件** | STEP 5.5：检查文件头部十五字段完整性 | 缺失 → 必须补充（规格化的"加"方向） |
 | **蓝图-代码双向对齐** | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 代码 `[BLUEPRINT]` 字段互相验证 | 不对齐 → 漂移，禁止关闭任务 |

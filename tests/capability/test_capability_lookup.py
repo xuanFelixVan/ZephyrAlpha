@@ -56,7 +56,7 @@ def _make_py_file(
     maturity: str = "",
     docstring: str = "Docstring first line.",
 ) -> None:
-    """生成带十一字段头部的 .py 测试文件。"""
+    """生成带十五字段头部的 .py 测试文件。"""
     header_lines = [f"# [MODULE] {module_path}"]
     if blueprint:
         header_lines.append(f"# [BLUEPRINT] {blueprint} | docs/x.md")

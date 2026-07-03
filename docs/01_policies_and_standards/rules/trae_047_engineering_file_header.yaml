@@ -394,7 +394,7 @@ sections:
     - order: 4
       action: 添加[BLUEPRINT]头
       pre_condition: 包已创建
-      expected_result: 每个新.py填入十字段(GOV-ENG-002§4)
+      expected_result: 每个新.py填入十五字段(GOV-ENG-002§4)
       on_failure: 缺表头=孤儿文件
     - order: 5
       action: 注册到blueprint_registry.yaml

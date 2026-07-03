@@ -598,7 +598,7 @@ class {DataModel}(BaseModel):
 
 ## §11 产出物存放目录
 
-> 代码文件 MUST 标注十字段头部（[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]）。
+> 代码文件 MUST 标注十五字段头部（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]；真源→trae_047 field_specs.a_full.required）。
 > §11 产出物路径 MUST 与依赖图 §19 path_mappings 一致。验证：`python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint {module_id}`
 
 | 产出物类型 | 存放完整路径（相对优先） | 职责 | consumer_min | 注册位置 |
@@ -880,7 +880,7 @@ class {DataModel}(BaseModel):
 | 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些设计可改哪些不可改 | ☐ |
 | 9 | 前 | 已知问题登记中未解决的问题已知晓 | 知道哪些坑不能踩 | ☐ |
 | 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
-| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 11 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ☐ |
 | 12 | 中 | 修改接口契约后检查 §18 决策记录 | 决策ID+依据已更新 | ☐ |
 | 13 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
 | 14 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ☐ |
