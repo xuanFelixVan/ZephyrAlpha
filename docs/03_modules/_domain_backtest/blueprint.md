@@ -20,28 +20,31 @@ priority: P1
 references:
   - architecture_model/contracts/cross_layer_contracts.yaml#CTR-P1-016
   - architecture_model/events/domain_events.yaml#E-BT-01
+  - docs/03_modules/_domain_data/blueprint.md#§16.7.1
 rule_form: structural
 scope: domain
 ssot_claims:
   - backtest_engine_core
   - backtest_result_contract
   - backtest_event_lifecycle
+  - tick_replay_engine
 stability: evolving
 status: Active
-summary: 'D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动),统一归口回测引擎,消除research/intelligence/rollback多处置放。MVP 7个核心模块。'
-tags: [backtest, D_BACKTEST, simulation]
+summary: 'D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动)+Tick回放(秒级做T),data_handler对接D_DATA的MiniQMT Provider(Tick+5档盘口),统一归口回测引擎。MVP 8个核心模块。'
+tags: [backtest, D_BACKTEST, simulation, tick_replay, miniqmt]
 template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.0.0
+version: 1.1.0
 ---
 
-# Backtest Engine 蓝图+施工图 — D_BACKTEST回测引擎域,双模式架构统一归口
+# Backtest Engine 蓝图+施工图 — D_BACKTEST回测引擎域,双模式架构+Tick回放统一归口
 
-> module_id: MOD-BT-001 | version: 1.0.0 | status: Active | layer: domain
+> module_id: MOD-BT-001 | version: 1.1.0 | status: Active | layer: domain
 > actual_disk_path: src/zephyr/backtest/ | generation: 1 | construction_progress: partially_implemented
 > 解除ARB-11 T2-deferred限制(2026-07-02),允许施工
+> v1.1.0新增: Tick回放引擎(秒级做T)+ data_handler对接D_DATA MiniQMT Provider(5档盘口)
 
 <!-- temporal_type: permanent -->
 
@@ -57,6 +60,13 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 5. BacktestResult注册为CTR-P1-016契约(source=D_BACKTEST, target=[D_PF_CORE, D_RISK, D_OPS])
 6. 新增E-BT-01/02/03事件系列(BacktestCompleted/BacktestPassed/OverfittingDetected)
 
+**v1.1.0新增决策(2026-07-04)**:
+7. **Tick回放引擎**: 新增 `core/tick_replay.py`，支持秒级做T场景(30秒/5秒冲高回落)
+8. **data_handler多源化**: 从单一ClickHouse改为 D_DATA MiniQMT Provider(Tick+5档盘口) + ClickHouse(历史日线批量) 双源
+9. **event_driven_engine优先级提升**: 从Phase 2提升到Phase 1（做T核心,与Tick回放协同）
+10. **matching_engine Tick级撮合**: 新增基于5档盘口的Tick级撮合模式（实盘一致性）
+11. **回测=实盘一致性**: matching_engine撮合规则与D_EX_CORE的MiniQMT Broker保持一致
+
 <!-- temporal_type: construction_temporary -->
 ## §0 代码对齐验证
 
@@ -65,7 +75,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 > 完整版设计态拓扑已登记到depgraph（27 nodes, 43 edges, 无循环）。
 > 按Phase分阶段施工:Phase 1(MVP)→Phase 2→Phase 3→v2.0备忘。
 
-**Phase 1 (MVP) — 核心回测链路**
+**Phase 1 (MVP v1.1.0) — 核心回测链路+Tick回放**
 
 | 文件路径 | 状态 | 说明 |
 |---------|------|------|
@@ -74,18 +84,14 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/core/engine_base.py | production | BacktestEngineBase+BacktestResult+FactorDiscovery(冻结真源) |
 | src/zephyr/backtest/implementations/__init__.py | production | implementations子包入口 |
 | src/zephyr/backtest/implementations/vectorized_engine.py | production | DefaultBacktestEngine向量化回测 |
-| src/zephyr/backtest/core/matching_engine.py | planned | 撮合引擎(市价/限价/滑点)(MVP待实现) |
+| src/zephyr/backtest/core/matching_engine.py | planned | 撮合引擎(市价/限价/滑点/Tick级5档撮合)(MVP待实现) |
 | src/zephyr/backtest/core/portfolio.py | planned | 持仓/现金/PnL/净值曲线(MVP待实现) |
-| src/zephyr/backtest/core/data_handler.py | planned | ClickHouse OHLCV按bar推送(PIT)(MVP待实现) |
+| src/zephyr/backtest/core/data_handler.py | planned | 多源数据: D_DATA MiniQMT Provider(Tick+5档) + ClickHouse(日线批量)(MVP待实现) |
 | src/zephyr/backtest/core/metrics.py | planned | Sharpe/Sortino/MaxDD/IC/IR(MVP待实现) |
+| src/zephyr/backtest/core/tick_replay.py | planned | **v1.1.0新增** Tick回放引擎(秒级做T,30秒/5秒级)(MVP待实现) |
+| src/zephyr/backtest/implementations/event_driven_engine.py | planned | **v1.1.0提升** 事件驱动回测(Tick级,与tick_replay协同)(MVP待实现) |
 
-**Phase 2 — 事件驱动回测**
-
-| 文件路径 | 状态 | 说明 |
-|---------|------|------|
-| src/zephyr/backtest/implementations/event_driven_engine.py | planned | 事件驱动回测(EventLoop+DataHandler+ExecutionHandler) |
-
-**Phase 3 — 过拟合检测与Walk-Forward**
+**Phase 2 — 过拟合检测与Walk-Forward**
 
 | 文件路径 | 状态 | 说明 |
 |---------|------|------|
@@ -159,18 +165,17 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 
 > 完整版设计态拓扑已登记到depgraph(27 nodes, 43 edges, 无循环)。按Phase分阶段施工。
 
-**Phase 1 (MVP v1.0.0) — 核心回测链路**:6个模块
+**Phase 1 (MVP v1.1.0) — 核心回测链路+Tick回放**:8个模块
 1. core/engine_base.py — BacktestEngineBase + BacktestResult + FactorDiscovery ✅已实现
 2. implementations/vectorized_engine.py — DefaultBacktestEngine向量化回测 ✅已实现
-3. core/matching_engine.py — 撮合引擎(市价/限价/滑点)(待实现)
+3. core/matching_engine.py — 撮合引擎(市价/限价/滑点/Tick级5档撮合)(待实现)
 4. core/portfolio.py — 持仓/现金/PnL/净值曲线(待实现)
-5. core/data_handler.py — 从ClickHouse读OHLCV按bar推送(PIT正确)(待实现)
+5. core/data_handler.py — 多源数据:D_DATA MiniQMT Provider(Tick+5档盘口) + ClickHouse(日线批量)(待实现)
 6. core/metrics.py — Sharpe/Sortino/MaxDD/胜率/IC/IR(待实现)
+7. **core/tick_replay.py — Tick回放引擎(秒级做T,30秒/5秒级)(v1.1.0新增,待实现)**
+8. **implementations/event_driven_engine.py — 事件驱动回测(Tick级,与tick_replay协同)(v1.1.0提升,待实现)**
 
-**Phase 2 (v1.1.0) — 事件驱动回测**:1个模块
-- implementations/event_driven_engine.py — 事件驱动回测(复用Phase 1的撮合/记账/数据模块)
-
-**Phase 3 (v1.2.0) — 过拟合检测与Walk-Forward**:2个模块
+**Phase 2 (v1.2.0) — 过拟合检测与Walk-Forward**:2个模块
 - core/overfitting_detector.py — 过拟合检测(SIM-18/38/56三层)
 - core/walk_forward.py — Walk-Forward优化(SIM-19/25)
 
@@ -189,9 +194,12 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 ### §1.4 运行场景约束
 
 - 回测为离线批量运行,非实时(单进程同步调用)
-- 数据来源:ClickHouse(c1_market)通过DatabaseService访问,禁止裸clickhouse_driver.connect
+- **数据来源(v1.1.0多源化)**:
+  - Tick+5档盘口: D_DATA MiniQMT Provider(`MiniQmtProvider.fetch_historical(interval="tick")`)
+  - 历史日线批量: ClickHouse(c1_market)通过DatabaseService访问,禁止裸clickhouse_driver.connect
 - PIT(Point-in-Time)正确性:回测必须使用时间戳截面对齐,禁止未来函数
 - A股特有约束:T+1锁定、涨跌停限制、停牌跳过、ST特别处理
+- **Tick回放约束(v1.1.0)**: Tick级回测必须按时间戳严格排序,禁止跨Tick跳跃;5档盘口撮合需考虑流动性(单档成交量上限)
 
 ### §1.5 利益相关者
 
@@ -548,20 +556,19 @@ class MyEngine(BacktestEngineBase):
 
 ### §16.7 参考实现规格
 
-**Phase 1(MVP核心,已部分完成)**:
+**Phase 1(MVP v1.1.0 核心+Tick回放,部分完成)**:
 1. ✅ core/engine_base.py — BacktestEngineBase+BacktestResult
 2. ✅ implementations/vectorized_engine.py — DefaultBacktestEngine
-3. ⬜ core/matching_engine.py — 撮合引擎(市价/限价/滑点模型)
+3. ⬜ core/matching_engine.py — 撮合引擎(市价/限价/滑点/Tick级5档撮合)
 4. ⬜ core/portfolio.py — 持仓/现金/PnL/净值曲线
-5. ⬜ core/data_handler.py — 数据处理器(详见下方规格)
+5. ⬜ core/data_handler.py — 多源数据处理器(详见下方规格)
 6. ⬜ core/metrics.py — 指标计算(详见下方规格)
+7. ⬜ **core/tick_replay.py — Tick回放引擎(v1.1.0新增,详见下方规格)**
+8. ⬜ **implementations/event_driven_engine.py — 事件驱动回测(v1.1.0提升,详见下方规格)**
 
-**Phase 2(事件驱动)**:
-7. ⬜ implementations/event_driven_engine.py — EventLoop+DataHandler+ExecutionHandler
-
-**Phase 3(过拟合检测)**:
-8. ⬜ core/overfitting_detector.py — 过拟合检测(详见下方规格)
-9. ⬜ core/walk_forward.py — Walk-Forward优化
+**Phase 2(过拟合检测)**:
+9. ⬜ core/overfitting_detector.py — 过拟合检测(详见下方规格)
+10. ⬜ core/walk_forward.py — Walk-Forward优化
 
 **metrics.py 详细规格**(P0,来源:D-SIMULATION-23/24/45):
 - **Sharpe计算修正**:
@@ -597,12 +604,46 @@ class MyEngine(BacktestEngineBase):
 - **bar推送**:按timestamp逐根K线推送,禁止未来数据泄漏
 - **Look-Ahead Bias Detector(P1-27)**:幸存者偏差检测+重述数据检测,CI/CD自动扫描(来源:14-D-ALT-DATA/安全架构)
 - **FeatureStore PIT AS OF JOIN + PITManager(P1-30)**:强制AS OF时间点查询+PITManager管理版本对齐(来源:15-D-DATA-ENG/02-D-DATA)
+- **v1.1.0多源化**: 新增 `MultiSourceDataHandler` 支持双源切换:
+  - **Tick源**: `MiniQmtProvider.fetch_historical(interval="tick")` 提供18字段Tick+5档盘口(秒级做T)
+  - **批量源**: ClickHouse(c1_market) 通过DatabaseService访问(日线/分钟线批量回测)
+  - **源选择策略**: 由 `BacktestConfig.data_source` 决定(tick/batch/auto)
+  - **统一接口**: `next_bar()` / `next_tick()` 双模式,EventDrivenEngine按场景调用
+
+**tick_replay.py 详细规格**(P0 v1.1.0新增,来源:秒级做T需求):
+- **Tick回放引擎核心**: 按timestamp严格排序逐Tick推送,禁止跨Tick跳跃
+- **5档盘口快照**: 每Tick携带 askPrice/bidPrice/askVol/bidVol 5档数据
+- **回放速度控制**:
+  - `real_time`: 1x实时(每Tick间隔=原始时间戳间隔)
+  - `fast_forward`: Nx倍速(可配,默认10x)
+  - `max_speed`: 最快(无延迟,仅受CPU限制)
+- **回放时间窗口**: 支持指定时间段回放(如开盘5分钟 09:30-09:35)
+- **多标的同步**: 支持多标的按时间戳对齐回放(组合做T场景)
+- **回放事件类型**: `TickArrived(timestamp, symbol, tick_data)` 推送给 EventDrivenEngine
+- **做T场景适配**:
+  - 30秒冲高回落: 精确捕捉30秒内 last_price 变化路径
+  - 5秒级快照: 支持5秒级 K线聚合(从Tick流合成)
+  - 盘口挂单监控: 实时推送 askVol/bidVol 变化,识别大单挂单
+- **接口**:
+  ```python
+  class TickReplayEngine:
+      def __init__(self, provider: MiniQmtProvider, symbols: list[str],
+                   start: datetime, end: datetime,
+                   speed: str = "max_speed", time_window: tuple | None = None): ...
+      def run(self, callback: Callable[[TickEvent], None]) -> None: ...
+      def get_statistics(self) -> dict: ...  # 回放统计(Tick总数/耗时/平均速率)
+  ```
 
 **matching_engine.py 详细规格**(P1,来源:D-SIMULATION-34/41/42/08-D-EX-CORE/09-D-EX-SOR):
 - **撮合引擎详细设计(P1-9)**:真实市场模拟+撮合规则(市价/限价/条件单)+市场微观结构(订单簿/集合竞价)(来源:D-SIMULATION-34)
 - **滑点模型(P1-10)**:实盘环境模拟(下单延迟+成交确认+市场冲击)+流动性模型+交易成本(来源:D-SIMULATION-41/42)
 - **3级滑点模型(P1-22)**:Level 1固定滑点→Level 2平方根冲击模型→Level 3订单簿模拟,按精度需求选择(来源:08-D-EX-CORE/09-D-EX-SOR)
 - **Almgren-Chriss市场冲击模型(P1-23)**:线性冲击+永久冲击+时间衰减,大单拆分优化(来源:09-D-EX-SOR/R-118)
+- **v1.1.0 Tick级5档撮合**(回测=实盘一致性核心):
+  - **Level 4撮合模式**: 基于5档盘口的Tick级撮合(做T专用)
+  - **撮合规则**: 市价单→逐档消化(ask1→ask2→...→ask5); 限价单→盘口挂单等待
+  - **流动性约束**: 单档成交量上限=该档 askVol/bidVol,超限部分滑到下一档
+  - **与实盘一致性**: 撮合规则与 D_EX_CORE 的 `MiniQmtBroker` 保持一致(同一份撮合逻辑,回测和实盘共用)
 
 **walk_forward.py 详细规格**(P1,来源:D-SIMULATION-19/25/学习系统架构§8.1):
 - **Walk-Forward分析器(P1-11)**:滚动窗口+样本外验证+参数稳定性+WF审计(来源:D-SIMULATION-19/25)
