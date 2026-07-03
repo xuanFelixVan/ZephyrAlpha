@@ -169,7 +169,7 @@ def session_claim_add(
             "claimed": False,
             "conflict": False,
             "not_found": True,
-            "error": f"session '{session_id}' 未注册，先调 session_claim_start",
+            "error": f"session '{session_id}' 未注册，先调 session_worktree_start（session_claim_start 已废弃）",
         }
 
     try:
