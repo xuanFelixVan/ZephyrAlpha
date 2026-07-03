@@ -375,19 +375,23 @@ api_client:
   anti_patterns:
   - ?aiohttp.ClientSession——用 ApiClient 获得重试/熔断/超时/指标一体化
 secrets:
-  file: src/zephyr/shared/secrets.py
-  entry_point: from zephyr.shared.security.secrets import get_secret, sanitize_secret
+  file: src/zephyr/shared/security/secrets.py
+  entry_point: from zephyr.shared.security.secrets import get_secret, get_secret_or_default, get_required_secret, sanitize_secret
   key_exports:
   - symbol: SecretProvider
-    note: 密钥提供?Protocol——get_secret/load_all
+    note: 密钥提供 Protocol——async get_secret/get_secret_or_default
   - symbol: EnvSecretProvider
-    note: os.environ 实现
+    note: os.environ 实现（默认）
   - symbol: DotEnvSecretProvider
-    note: .env 文件 + os.environ 实现
+    note: .env 文件 + os.environ 实现（本地开发）
   - symbol: get_secret(key)
-    note: 统一入口——获取密钥并确保非空
-  - symbol: sanitize_secret(value)
-    note: 日志安全脱敏(show first 4 and last 4)
+    note: 同步入口——获取密钥并确保非空（缺失抛 SecretsError）
+  - symbol: get_secret_or_default(key, default)
+    note: 同步入口——缺失返回默认值（不抛异常）
+  - symbol: get_required_secret(key)
+    note: 同步入口——必需密钥校验（空字符串也视为缺失，fail-fast）
+  - symbol: sanitize_secret(name, value)
+    note: 日志安全脱敏——返回 ***REDACTED*** (len=N)，绝不暴露原始值
   anti_patterns:
   - os.getenv() 直接读取密钥——用 get_secret() 确保非空+脱敏
 cache:
