@@ -37,11 +37,14 @@ SSoT: MOD-INF-016 §12 盲点 B32 + GOV-AI-007 Session Log Schema
 from __future__ import annotations
 
 import json
+import logging
 import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -326,19 +329,26 @@ class SessionAuditTrail:
             f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
         try:
             from zephyr.governance.audit_trail.writer import get_audit_writer
-
-            get_audit_writer().write(
-                {
-                    "event_type": "session_record",
-                    "action_type": "session_record",
-                    "agent_id": record_dict.get("session_id", "unknown"),
-                    "session_id": record_dict.get("session_id", ""),
-                    "target_path": str(filepath),
-                    "operation": "append_record",
-                }
+        except ImportError as e:
+            logger.warning(
+                "session_audit: audit_trail.writer import failed, skipping audit (%s: %s)",
+                type(e).__name__,
+                e,
             )
-        except Exception:
-            pass
+        else:
+            try:
+                get_audit_writer().write(
+                    {
+                        "event_type": "session_record",
+                        "action_type": "session_record",
+                        "agent_id": record_dict.get("session_id", "unknown"),
+                        "session_id": record_dict.get("session_id", ""),
+                        "target_path": str(filepath),
+                        "operation": "append_record",
+                    }
+                )
+            except Exception:
+                pass
         return filepath
 
     def query(self, session_id: str) -> list[dict[str, Any]]:

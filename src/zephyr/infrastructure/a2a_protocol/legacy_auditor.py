@@ -23,8 +23,6 @@ G-CT-008 契约：A2A → Audit 审计 Agent 间通信.
 
 from __future__ import annotations
 
-from zephyr.governance.audit_trail.contracts import AuditWriter
-
 
 class A2AAuditor:
     """Agent-to-Agent 通信审计."""
@@ -36,6 +34,9 @@ class A2AAuditor:
         message_type: str,
         session_id: str = "",
     ) -> dict:
+        # lazy import to avoid L0→L2 circular dependency (Phase 2 P2 import cycle fix)
+        from zephyr.governance.audit_trail.contracts import AuditWriter
+
         return AuditWriter.write(
             agent_id=from_agent,
             permission="a2a_message",
