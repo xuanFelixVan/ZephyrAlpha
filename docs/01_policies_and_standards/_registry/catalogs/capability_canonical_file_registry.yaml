@@ -2525,6 +2525,24 @@ capabilities:
       解决发现性：新AI搜 "写入前门禁/pre write gate/mojibake检测/根目录污染" 可定位真源。
       解决防重建：阻止新AI重复造写入前检查脚本（对标 held_overlap_gate 的 overlap 检测在 commit 时自动保障）。
 
+  - capability_id: pre_delete_safety_check
+    canonical_override: scripts/governance/d5_architecture/pre_delete_safety_check.py
+    aliases:
+      - pre-delete-safety-check
+      - delete_safety_check
+      - rule_three_enforcer
+      - high_value_marker_check
+      - delete_safety_gate
+    description: >-
+      安全删除门禁脚本（pre_delete_safety_check.py）——RULE-THREE 强制执行器。
+      删除任何文件前 MUST 通过5项检查：CHECK-1 .py消费者Grep + CHECK-2 .yaml消费者Grep +
+      CHECK-3 注册表检查（manifest/registry/__init__.py）+ CHECK-4 重复内容检查（git ls-tree）+
+      CHECK-5 功能价值标记检查（[SAFETY]/[AI_AUTONOMY]，独有能力）。
+      手动工具（非自动触发），exit 0=SAFE(允许删除), exit 1=BLOCKED(禁止删除)。
+      CLI入口：python scripts/governance/d5_architecture/pre_delete_safety_check.py <file> [--dry-run/--json/--warn-only]。
+      解决发现性：新AI搜 "删除门禁/safety check/RULE-THREE/高价值标记" 可定位真源。
+      解决防重建：阻止新AI重复造删除前检查脚本（对标 pre_write_gate 的写入前检查）。
+
   # --------------------------------------------------------------------------
   - capability_id: backtest_engine_core
     aliases:
