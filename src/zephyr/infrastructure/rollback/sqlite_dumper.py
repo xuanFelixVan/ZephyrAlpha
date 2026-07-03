@@ -47,6 +47,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -64,6 +65,16 @@ __all__ = [
 
 JSONL_HEADER_PREFIX = "# ZephyrAlpha SQLite Dump"
 HMAC_KEY_DEFAULT = b"ZephyrAlpha-Rollback-Integrity-v1"
+
+# P0 安全修复（Phase 2）：表名白名单校验——表名无法参数化，用正则白名单防 SQL 注入
+_TABLE_NAME_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+
+def _validate_table_name(table: str) -> str:
+    """校验表名仅含字母/数字/下划线（防 SQL 注入——表名无法参数化，用白名单替代）。"""
+    if not isinstance(table, str) or not _TABLE_NAME_RE.match(table):
+        raise ValueError(f"非法表名: {table!r}（仅允许字母/数字/下划线，防 SQL 注入）")
+    return table
 
 
 @dataclass
@@ -129,6 +140,7 @@ class SqliteDumper:
         return {"table": table, "columns": columns}
 
     def _get_table_data(self, conn: sqlite3.Connection, table: str) -> list[dict[str, Any]]:
+        _validate_table_name(table)
         rows = conn.execute(f"SELECT * FROM '{table}'").fetchall()
         results: list[dict[str, Any]] = []
         for row in rows:
@@ -301,7 +313,7 @@ class SqliteDumper:
                 if "table" not in obj:
                     continue
 
-                table = obj["table"]
+                table = _validate_table_name(obj["table"])
                 columns_info = obj.get("schema", {}).get("columns", [])
                 data_rows = obj.get("data", [])
 
