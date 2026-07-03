@@ -1336,7 +1336,7 @@ STEP 3: 拆分后验证
 | 1 | 登记检查——文件是否在 manifest/registry/__init__.py 中被引用？ |
 | 2 | 重复检查——有另一个文件与它内容完全相同吗？ |
 | 3 | 逐行价值检查——删除后有没有代码会引用这个路径而报错？ |
-| 4 | 通过三步审判→`python scripts/governance/pre_write_gate.py <文件> --delete` |
+| 4 | 通过三步审判→`python scripts/governance/d5_architecture/pre_write_gate.py <文件> --delete` |
 
 ---
 

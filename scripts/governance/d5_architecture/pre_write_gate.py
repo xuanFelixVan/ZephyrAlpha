@@ -1,5 +1,5 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/pre_write_gate.py | §
-# [MODULE] scripts.governance.pre_write_gate
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/pre_write_gate.py | §
+# [MODULE] scripts.governance.d5_architecture.pre_write_gate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.__init__
 # [CONSUMERS]
@@ -12,14 +12,14 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证
 
 RULE-ZERO 硬执行器——AI 在调用 Write/SearchReplace 之前 MUST 先通过此门禁。
 exit 0 = CLEAN（允许写入）, exit 1 = BLOCKED（拒绝写入）。
 
 用法:
-    python scripts/governance/pre_write_gate.py <file_path> [--create]
+    python scripts/governance/d5_architecture/pre_write_gate.py <file_path> [--create]
 
 设计原则:
     - 零副作用: 只读检查，不修改任何文件

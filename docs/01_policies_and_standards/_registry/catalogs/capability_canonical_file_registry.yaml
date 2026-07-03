@@ -2508,6 +2508,23 @@ capabilities:
       直接 DELETE FROM arch_constraints（违反 depgraph 硬约束）。对标 DM-100255 D_GOV_RULE
       constraint 残留 CONSTRAINT_D-GOV-RULE_ENFORCEMENT 清理（PG 备份 depgraph_20260703_120655.json）。
 
+  - capability_id: pre_write_gate
+    canonical_override: scripts/governance/d5_architecture/pre_write_gate.py
+    aliases:
+      - pre-write-gate
+      - write_gate
+      - encoding_safety_check
+      - mojibake_detection
+      - root_pollution_check
+    description: >-
+      AI写入前手动诊断门禁（pre_write_gate.py）。检查项：phase_health +
+      lock_protocol + root_pollution + registration + encoding_safety（mojibake检测，独有能力）+
+      session_overlap（对标held_overlap_gate，commit时自动保障，此处为write前手动补充）。
+      手动工具（非自动触发），overlap检测在commit时由held_overlap_gate自动保障。
+      CLI入口：python scripts/governance/d5_architecture/pre_write_gate.py <file> [--create]。
+      解决发现性：新AI搜 "写入前门禁/pre write gate/mojibake检测/根目录污染" 可定位真源。
+      解决防重建：阻止新AI重复造写入前检查脚本（对标 held_overlap_gate 的 overlap 检测在 commit 时自动保障）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

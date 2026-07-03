@@ -1325,7 +1325,7 @@ STEP 3: 拆分后验证
 | 1 | 检查文件是否在 `_registry.yaml` / `__init__.py` / `script-manifest.yaml` 中被引用 |
 | 2 | 检查是否有其他文件与它内容完全相同且已注册 |
 | 3 | 逐行检查内容是否在其他地方存在——有唯一价值 → 重新安置并注册 |
-| 4 | 全部冗余 → `python scripts/governance/pre_write_gate.py <文件> --delete` |
+| 4 | 全部冗余 → `python scripts/governance/d5_architecture/pre_write_gate.py <文件> --delete` |
 
 ---
 

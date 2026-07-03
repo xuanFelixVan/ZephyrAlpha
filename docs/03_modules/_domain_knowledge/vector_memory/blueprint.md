@@ -1393,7 +1393,7 @@ class FeedbackEntry(BaseModel):
 | # | 铁律 | 原因 |
 |---|------|------|
 | 1 | 删除 Collection 前 MUST 确认无消费者（Grep 全项目引用） | 引用断裂 |
-| 2 | 删除代码文件前 MUST 运行 `python scripts/governance/pre_write_gate.py <文件> --delete` | 不可逆 |
+| 2 | 删除代码文件前 MUST 运行 `python scripts/governance/d5_architecture/pre_write_gate.py <文件> --delete` | 不可逆 |
 | 3 | 删除蓝图章节前 MUST 确认无其他章节引用该章节编号 | 信息丢失 |
 | 4 | 任何删除 MUST 在 §18 决策记录中登记 | 无追溯 |
 | 5 | 物理删除只能在对 stable 阶段执行，deprecated 至少保持1个Phase | 缓冲期 |
