@@ -22,7 +22,7 @@ parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
 last_verified: "2026-05-15"
-last_updated: "2026-07-01"
+last_updated: "2026-07-04"
 generation: 4
 rule_form: structural
 scope: module
@@ -123,7 +123,7 @@ summary: "数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，
 | v0.1.0 (占位) | 无代码 | 全部 | partially_implemented |
 | v2.1.0 (模板升级) | DataSourceBase + DataQualityGate + 3个实现 | connectors/normalizers/storage/cache子模块 | C轨占位 |
 | v3.0.0 (回填+对齐) | 同 v2.1.0 | 同 v2.1.0 | C轨占位 |
-| v4.0.0 (重建) | DataSourceBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) | 待Spiral扩展 |
+| v4.0.0 (重建) | DataSourceBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) + §16.7.1 MiniQMT Provider规格(待施工) | 待Spiral扩展 |
 
 ---
 
@@ -667,7 +667,7 @@ class QualityReport:
 | 4 | calc_mode 取值集合 | 协议 | replay(回测实时重算) / preload(预计算值) / hybrid(预计算+微调) — 对接母蓝图§7.5 | provider_base.py(步骤3) |
 | 5 | MiniQMT Provider Tick字段映射 | 协议 | xtdata Tick 18字段→标准化DataFrame(含5档盘口) — 见§16.7.1 | miniqmt_provider.py(待施工) |
 
-### 16.7.1 MiniQMT Provider 详细规格（Tick+5档盘口）
+### §16.7.1 MiniQMT Provider 详细规格（Tick+5档盘口）
 
 > 来源：tmp/test_download_tick.py 实测验证（2026-07-04），国金证券MiniQMT终端
 > 状态：✅ 数据源API已验证可用，⬜ Provider实现待施工
