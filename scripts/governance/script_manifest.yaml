@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-03T20:24:29Z
+# 自动生成于 2026-07-03T21:24:44Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-03T20:24:29Z'
+generated_at: '2026-07-03T21:24:44Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 321
-with_manifest: 307
+total_scripts: 322
+with_manifest: 308
 missing_manifest: 14
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
-  governance:d5_architecture: 94
+  governance:d5_architecture: 95
   governance:d6_security: 14
   governance:d7_code: 31
   governance:d8_doc_sync: 9
@@ -1441,6 +1441,19 @@ scripts:
   - --warn-only
   warn_only: false
   description: GATE-ID-UNIQ - 检测 .pre-commit-config.yaml 内 hook id 唯一性,重复即阻断
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_rule_four_way_alignment.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --ci
+  - --with-code-refs
+  warn_only: false
+  description: 规则四方对齐门禁（YAML↔Catalog↔Disk↔Code），按tier过滤（ARCH-020补建）
   tags:
   - Critical
 - name: d5_architecture/checkers/check_src_no_data.py
