@@ -2164,6 +2164,27 @@ capabilities:
           与密钥读取功能无关——basename 相同但语义不同。auto 派生按 basename
           匹配会误选为 canonical，故用 canonical_override 明确指定真源。
 
+  # --------------------------------------------------------------------------
+  - capability_id: task_repository_query
+    aliases:
+      - TaskRepository
+      - task_repo
+      - get_task
+      - get_or_raise
+      - list_by_status
+      - query_tasks
+      - list_by_namespace
+    canonical_override: src/zephyr/governance/persistence/task_repo.py
+    description: >-
+      任务系统查询真源（MOD-TASK_SYSTEM）。TaskRepository 是任务卡 SQLite DB 的唯一
+      访问入口，提供 get/get_or_raise/list_by_status/list_by_phase/list_by_session/
+      query_tasks/list_by_namespace/list_active/list_by_dependency 等查询接口。
+      AI 查询任务状态/依赖/blocked_by MUST 通过本模块，禁止直接读
+      docs/_working/decomposition/tasks/*.md（MD 是 BlueprintDecomposer 写的
+      human companion 同步产物，可能与 DB 不一致）。MCP 接口 task_manager.get_task
+      /list_tasks 亦委托本模块。治本（L3 SSoT 铁律，2026-07-03）：AI 绕过
+      TaskRepository 读 MD 做决策=幻觉/漂移根源。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

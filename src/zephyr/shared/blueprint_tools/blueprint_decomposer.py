@@ -520,10 +520,16 @@ class BlueprintDecomposer:
             "source_blueprint": task.source_blueprint,
             "source_section": task.source_section,
             "phase": task.phase,
+            "ssot_warning": "本文件是 TaskRepository 的 human companion，真源为 SQLite DB，禁止以此文件内容为准做决策，查询请用 TaskRepository.get(task_id)",
         }
         header = yaml.safe_dump(fm, allow_unicode=True, sort_keys=False)
+        warning_banner = (
+            "> ⚠ **SSoT 警告**：本文件是 TaskRepository 的 human companion（同步产物），"
+            "真源为 SQLite DB。禁止以本文件内容为准做决策（status/blocked_by 等可能过期）。"
+            "查询任务真源请用 `TaskRepository.get(task_id)` 或 MCP `task_manager.get_task`。\n\n"
+        )
         body = f"\n## Description\n\n{task.description}\n"
-        path.write_text(f"---\n{header}---\n{body}", encoding="utf-8")
+        path.write_text(f"---\n{header}---\n\n{warning_banner}{body}", encoding="utf-8")
 
     def check_gate(self, gate_id: GateLevel, task: TaskCard) -> bool:
         if gate_id == GateLevel.G0:
