@@ -50,18 +50,16 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_path_ownership_reconciler,
     make_depgraph_ops_reconciler,
     make_yaml_sync_reconciler,
-    make_precommit_id_uniqueness_reconciler,
     make_vocab_change_reconciler,
     make_deprecated_directory_reconciler,
-    make_exempt_zone_frontmatter_reconciler,
     make_delete_audit_reconciler,
     make_regenerate_reconciler,
     make_rule_audit_reconciler,
     make_registry_sync_reconciler,
     make_integrity_audit_reconciler,
-    make_module_id_consistency_reconciler,
     make_index_generator_reconciler,
     make_runtime_cleanup_reconciler,
+    make_architecture_health_reconciler,
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -75,6 +73,14 @@ from zephyr.governance.commit_gates.r5_digit_suffix_gate import make_r5_digit_su
 from zephyr.governance.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
 from zephyr.governance.commit_gates.vocab_hardcode_gate import make_vocab_hardcode_gate
 from zephyr.governance.commit_gates.file_copy_gate import make_file_copy_gate
+from zephyr.governance.commit_gates.id_uniqueness_gate import make_id_uniqueness_gate
+from zephyr.governance.commit_gates.exempt_zone_frontmatter_gate import make_exempt_zone_frontmatter_gate
+from zephyr.governance.commit_gates.module_id_consistency_gate import make_module_id_consistency_gate
+from zephyr.governance.commit_gates.perm_trigger_gate import make_perm_trigger_gate
+from zephyr.governance.commit_gates.empty_handler_gate import make_empty_handler_gate
+from zephyr.governance.commit_gates.orphan_module_gate import make_orphan_module_gate
+from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
+from zephyr.governance.commit_gates.function_dup_gate import make_function_dup_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -249,6 +255,16 @@ class GitCommitGateway:
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
+        # Phase 3 reconciler→gate 收敛（2026-07-03）：3 个 B 类纯校验 reconciler 升级为 pre-commit 阻断 gate
+        self._gate_registry.register(make_id_uniqueness_gate())  # priority=86 治本 same-repo 重复 pre-commit hook id（原 post-commit warn reconciler）
+        self._gate_registry.register(make_exempt_zone_frontmatter_gate())  # priority=87 治本豁免区 frontmatter doc_type 误放（原 post-commit warn reconciler）
+        self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三轨一致性 + count 派生（原 post-commit warn reconciler）
+        # Phase 1 AST 门禁扩展（DM-202953，2026-07-03）：5 个新 in-process gate 治本 5 病根
+        self._gate_registry.register(make_perm_trigger_gate())  # priority=82 治本永久系统时间触发模式无事件订阅（病根：永久系统触发32）
+        self._gate_registry.register(make_empty_handler_gate())  # priority=84 治本空 handler 函数体仅 logger/pass/return（病根：事件订阅空壳）
+        self._gate_registry.register(make_orphan_module_gate())  # priority=86 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）
+        self._gate_registry.register(make_doc_ref_broken_gate())  # priority=88 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）
+        self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 
@@ -288,18 +304,19 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_path_ownership_reconciler(self))  # path_ownership_map.yaml 自动同步
         self._reconciliation_registry.register(make_depgraph_ops_reconciler(self))  # 裁定#209 阶段1
         self._reconciliation_registry.register(make_yaml_sync_reconciler(self))
-        self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
+        # Phase 3 收敛：以下 3 个纯校验 reconciler 已升级为 pre-commit gate（见上方 _gate_registry）
+        # make_precommit_id_uniqueness_reconciler / make_exempt_zone_frontmatter_reconciler /
+        # make_module_id_consistency_reconciler 不再 post-commit 注册（warn→阻断前移）
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
-        self._reconciliation_registry.register(make_exempt_zone_frontmatter_reconciler(self))
         self._reconciliation_registry.register(make_delete_audit_reconciler(self))
         self._reconciliation_registry.register(make_regenerate_reconciler(self))
         self._reconciliation_registry.register(make_rule_audit_reconciler(self))
         self._reconciliation_registry.register(make_registry_sync_reconciler(self))
         self._reconciliation_registry.register(make_integrity_audit_reconciler(self))
-        self._reconciliation_registry.register(make_module_id_consistency_reconciler(self))  # P8-FIX-S0
         self._reconciliation_registry.register(make_index_generator_reconciler(self))  # P3 生成器触发接入
         self._reconciliation_registry.register(make_runtime_cleanup_reconciler(self))  # .runtime/ TTL 自动清理
+        self._reconciliation_registry.register(make_architecture_health_reconciler(self))  # 架构健康度基线记录（第0期 warn-only）
 
     # ------------------------------------------------------------------
     # 公开 API

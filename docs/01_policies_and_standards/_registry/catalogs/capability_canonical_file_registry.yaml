@@ -1213,6 +1213,73 @@ capabilities:
       - make_file_copy_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: id_uniqueness_gate
+    canonical_override: src/zephyr/governance/commit_gates/id_uniqueness_gate.py
+    aliases:
+      - ID-UNIQUENESS
+      - id-uniqueness
+      - make_id_uniqueness_gate
+      - precommit_hook_id_dedup_blocker
+    description: >-
+      ID-UNIQUENESS in-process pre-commit hook ID 唯一性门禁（Phase 3 reconciler→gate 收敛，2026-07-03）。
+      从 make_precommit_id_uniqueness_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
+      治本 same-repo 重复 pre-commit hook id：原 reconciler 是 post-commit 非阻断兜底（--no-verify
+      绕过 pre-commit hook），违规已入 git 历史仅告警。本 gate 在 commit() 内嵌等效校验，subprocess
+      调用 check_precommit_id_uniqueness.py --ci（SSoT 检测逻辑真源在 detector），priority=86。
+      fail-open on script error(exit 2)，fail-closed on violations(exit 1)。
+      与 detector 分离：detector=检测逻辑真源，gate=门禁包装（thin wrapper subprocess 调用）。
+      canonical basename id_uniqueness_gate 匹配 capability_id，canonical 在 src/zephyr/
+      下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "ID-UNIQUENESS/hook id 重复/pre-commit id 唯一性" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process hook id 唯一性门禁。
+    integrity_anchors:
+      - make_id_uniqueness_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: exempt_zone_frontmatter_gate
+    canonical_override: src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py
+    aliases:
+      - EXEMPT-ZONE-FM
+      - exempt-zone-fm
+      - make_exempt_zone_frontmatter_gate
+      - exempt_zone_frontmatter_blocker
+    description: >-
+      EXEMPT-ZONE-FM in-process 豁免区 frontmatter 门禁（Phase 3 reconciler→gate 收敛，2026-07-03）。
+      从 make_exempt_zone_frontmatter_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
+      豁免区（docs/_working/ / docs/_archive/ / .runtime/ / .trae/ / templates/）文件若带
+      frontmatter + 非空 doc_type，说明本应放正式目录却被塞进豁免区——commit 前即阻断。
+      历史违规豁免（progressive_convergence）：git ls-tree HEAD 判断文件已存在则跳过。
+      priority=87。inline 检测（无 subprocess，逻辑极简）。
+      canonical basename exempt_zone_frontmatter_gate 匹配 capability_id，canonical 在 src/zephyr/
+      下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "EXEMPT-ZONE-FM/豁免区 frontmatter/误放 doc_type" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process 豁免区 frontmatter 门禁。
+    integrity_anchors:
+      - make_exempt_zone_frontmatter_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: module_id_consistency_gate
+    canonical_override: src/zephyr/governance/commit_gates/module_id_consistency_gate.py
+    aliases:
+      - MODULE-ID-CONSISTENCY
+      - module-id-consistency
+      - make_module_id_consistency_gate
+      - module_id_three_track_consistency_blocker
+    description: >-
+      MODULE-ID-CONSISTENCY in-process module_id 三轨一致性 + count 派生门禁
+      （Phase 3 reconciler→gate 收敛，2026-07-03）。
+      从 make_module_id_consistency_reconciler（post-commit warn）升级为 pre-commit 阻断 gate。
+      两维校验：1. 三轨一致性（P8-FIX-S0）单文件 CFG-*/MOD-*/PS-* module_id 声明是否一致；
+      2. count 派生（P8-FIX-S1）注册表 total_registered/total_templates/total_dependencies
+      与实际列表条目数是否匹配。priority=88。inline 检测（正则匹配，无 subprocess）。
+      canonical basename module_id_consistency_gate 匹配 capability_id，canonical 在 src/zephyr/
+      下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "MODULE-ID-CONSISTENCY/三轨不一致/count 派生" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process module_id 一致性门禁。
+    integrity_anchors:
+      - make_module_id_consistency_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -2258,6 +2325,22 @@ creation_tokens:
     token: "auto-file-copy-gate-20260703"
     created_by: "session-phase1-ast-gate"
     capability: "file_copy_gate"
+
+  # --- Phase 3 reconciler→gate 收敛（2026-07-03，session-sess-29412） ---
+  - file: "src/zephyr/governance/commit_gates/id_uniqueness_gate.py"
+    token: "auto-id-uniqueness-gate-20260703"
+    created_by: "session-sess-29412-20260703185648"
+    capability: "id_uniqueness_gate"
+
+  - file: "src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py"
+    token: "auto-exempt-zone-fm-gate-20260703"
+    created_by: "session-sess-29412-20260703185648"
+    capability: "exempt_zone_frontmatter_gate"
+
+  - file: "src/zephyr/governance/commit_gates/module_id_consistency_gate.py"
+    token: "auto-module-id-consistency-gate-20260703"
+    created_by: "session-sess-29412-20260703185648"
+    capability: "module_id_consistency_gate"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
