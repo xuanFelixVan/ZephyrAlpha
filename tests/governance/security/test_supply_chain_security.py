@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.governance.security_governance.supply_chain_security import (
+from zephyr.governance.audit_trail.supply_chain_security import (
     SupplyChainReport,
     VendorRisk,
     check_vendor_lockin,

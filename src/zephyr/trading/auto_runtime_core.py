@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from zephyr.governance.intelligence_governance.model_router import ModelRouter
     from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
-    from zephyr.integration.vector_memory.ollama_chat import OllamaChat
+    from zephyr.integration.local_model.ollama_chat import OllamaChat
     from zephyr.integration.local_model.embedding_router import EmbeddingRouter
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
@@ -364,7 +364,7 @@ class AutoRuntimeCore:
         except Exception as e:
             logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e)
             try:
-                from zephyr.integration.vector_memory.ollama_chat import OllamaChat
+                from zephyr.integration.local_model.ollama_chat import OllamaChat
 
                 self._ollama_chat = OllamaChat()
                 if self._ollama_chat.available:
