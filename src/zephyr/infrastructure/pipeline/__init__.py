@@ -312,7 +312,6 @@ __all__ = [
     "enforce_affinity",
     "llm_gateway",
     "load_benchmark_history",
-    "load_route_map",
     "model_router",
     "models",
     "modules_slice_from_node",

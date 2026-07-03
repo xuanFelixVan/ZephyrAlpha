@@ -8,7 +8,7 @@
 # [TTL] task_bound
 """Phase G — Performance Benchmarks & SLA Validation
 
-性能基准与 SLA 验证。测量 14 层全链路延迟、吞吐量与内存占用，
+性能基准与 SLA 验证。测量全链路延迟、吞吐量与内存占用，
 对照 cross_layer_contracts.yaml 中声明的 p99_latency_ms 阈值进行合规检查。
 
 SLA 阈值（来自 SSoT）：

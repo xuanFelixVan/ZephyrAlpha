@@ -19,7 +19,7 @@ from __future__ import annotations
 #     含: drift_engine, drift_models, events, state_machine, detector_dispatcher,
 #         architecture_contracts, architecture_principles, brain_integration,
 #         dependency_manager, integration_test_runner, ml_engineering,
-#         model_drift_monitor, performance_baseline, regime_detector, system_topology
+#         model_drift_monitor, performance_baseline, regime_detector
 #
 #   _drift.py       — 漂移检测器簇（契约/DB/版本/文档/语义/安全等漂移类型）
 #     含: contract_drift_detector, drift_hotfix_bypass, drift_infrastructure,

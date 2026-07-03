@@ -132,7 +132,7 @@ frontmatter_schema:
 
     - name: layer
       allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 layer_vocabulary.yaml 动态加载
-      description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
+      description: "架构层归属——4 值（L0_infrastructure/L1_foundation/L2_domain/L3_application, canonical SSoT: layer_vocabulary.yaml）"
       derived_from: "_registry/vocabularies/layer_vocabulary.yaml"
       stage: active
 

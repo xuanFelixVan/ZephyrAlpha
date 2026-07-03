@@ -124,7 +124,7 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: all
-    note: "14 层架构的核心依赖方向约束�? import-linter �?CI 中检测所�?Python import 路径�?"
+    note: "域架构的核心依赖方向约束�? import-linter �?CI 中检测所�?Python import 路径�?"
   - id: INV-009
     category: capital_safety
     statement: "OCP 契约冻结：shared/contracts/ 中的接口一�?release，不得修改签名（只能扩展�?"

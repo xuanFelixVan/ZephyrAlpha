@@ -643,7 +643,7 @@ sections:
       values: 6值(architect/implementer/reviewer/governor/researcher/operator)
       code_source: agent_orchestrator.py
     - name: layer
-      values: "dynamic_from_ssot"  # 禁止内联复制——16值从 layer_vocabulary.yaml 动态加载
+      values: "dynamic_from_ssot"  # 禁止内联复制——4值从 layer_vocabulary.yaml 动态加载
       canonical_sso_t: _registry/vocabularies/layer_vocabulary.yaml
     - name: source_type
       values: 7值(知识来源类型)

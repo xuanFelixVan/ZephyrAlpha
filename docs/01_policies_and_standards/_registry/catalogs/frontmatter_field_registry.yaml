@@ -99,7 +99,7 @@ fields:
   stage: null
   enum_values: dynamic_from_ssot
   applicable_docs: []
-  description: '架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）'
+  description: '架构层归属——4 值（L0_infrastructure/L1_foundation/L2_domain/L3_application, canonical SSoT: layer_vocabulary.yaml）'
   source: layer_vocabulary.yaml + architecture_model/layers/
   derived_from: _registry/vocabularies/layer_vocabulary.yaml
   note: ''

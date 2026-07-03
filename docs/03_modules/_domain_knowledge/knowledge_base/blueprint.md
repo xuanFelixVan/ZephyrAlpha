@@ -783,7 +783,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | `body` | str | ✅ | 知识正文（Markdown 格式） |
 | `category` | enum | ✅ | 知识分类：15 类双轨体系（§3.8）。**beta 迁移**（KB-INF-0022）：当前仍沿用旧 10 类枚举→逐步迁移至 Track A（8类）+ Track B（7类） |
 | `domain` | enum | ✅ | 业务域：10域枚举（对齐 PS-STD-004 §5） |
-| `layer` | enum | ✅ | 架构层：14层枚举（对齐 `triage.py` VALID_LAYERS） |
+| `layer` | enum | ✅ | 架构层：4值（L0_infrastructure/L1_foundation/L2_domain/L3_application，对齐 `layer_vocabulary.yaml`） |
 | `source_type` | enum | ✅ | 来源类型：`adr` / `blueprint` / `session_log` / `candidate_pool` / `external_paper` / `github_repo` |
 | `source_path` | str | ✅ | 来源文件绝对路径 |
 | `status` | enum | ✅ | KE 状态：10状态机（§3.3） |
@@ -844,7 +844,7 @@ KE Schema 的 31 个字段同样需要稳定性承诺——beta/3 代码会依�
 | `body` | **body** | 知识正文——Markdown 正文区，结构化段落 |
 | `category` | frontmatter | 15 类双轨分类（§3.8） |
 | `domain` | frontmatter | 业务域（对齐 PS-STD-004 §5） |
-| `layer` | frontmatter | 架构层（对齐 `triage.py` VALID_LAYERS） |
+| `layer` | frontmatter | 架构层（对齐 `layer_vocabulary.yaml` 4值） |
 | `source_type` | frontmatter | 来源类型——可追溯 |
 | `source_path` | frontmatter | 来源文件绝对路径——可审计 |
 | `status` | frontmatter | 10 状态机当前状态（§3.3） |
@@ -1744,7 +1744,7 @@ src/zephyr/db/chroma/
 |--------|------|------|
 | 知识分类 | 六分类枚举：`blueprint_decision` / `best_practice` / `factor` / `failure_pattern` / `guardrail` / `architecture_decision` | `category` |
 | domain分配 | 10域枚举（对齐 PS-STD-004 §5） | `domain` |
-| layer分配 | 14层枚举（对齐 `VALID_LAYERS`：L00~L13） | `layer` |
+| layer分配 | 4值（对齐 `layer_vocabulary.yaml`：L0_infrastructure/L1_foundation/L2_domain/L3_application） | `layer` |
 | 优先级分配 | P0~P3 四级 | `priority` |
 | 质量评分 | 0.0~1.0（基于来源权威性+内容完整性+时效性加权） | `quality_score` |
 | 标签生成 | 5轴标签：fn/ly/md/st/mo（对齐 MOD-TASK_SYSTEM） | `tags` |

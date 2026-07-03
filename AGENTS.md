@@ -192,7 +192,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 - **为什么不在 YAML 声明所有子目录文件**：维护成本高（governance/ 子目录有 200+ 文件）且无必要——Grep 已能可靠发现符号，CapabilityLookup 重复实现符号发现会破坏职责边界（向内收原则①：能现成不创造）。
 - **何时声明新 capability**：当某个功能有明确能力边界、可被复用、且新 AI 可能不知道已存在时（如 `agent_signer`、`self_healer`），才在 YAML 声明 capability 条目。
-- **pipeline 模块 canonical 声明**（2026-07-02，消除 `integration/` 与 `infrastructure/pipeline/` dual source 镜像副本）：管线核心15模块（`model_router`/`cost_tracker`/`layer_router`/`ct_pipe_routing`/`preemption_manager`/`pipeline_agent_bridge`/`llm_gateway`/`routing_plugins`/`pipeline_lock`/`layer_consumer_registry`/`dead_letter_queue`/`circuit_breaker_manager`/`backpressure_types`/`backpressure_manager`/`pipeline_models`）已登记 capability，canonical = [`src/zephyr/infrastructure/pipeline/`](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/)（production/D_INFRA_RUNTIME）。原 `src/zephyr/integration/` 顶层镜像副本（prototype/D_INTEGRATION）已删除。新 AI 想做"管线模型路由/成本追踪/背压管理/断路器"等前，CapabilityLookup 会反查到 canonical 在 `infrastructure/pipeline/`，勿在 `integration/` 重建。编排器 `PipelineOrchestrator` 例外，仍在 `integration/pipeline_orchestrator.py`（跨域集成入口，组合 infra.pipeline 组件）。
+- **pipeline 模块 canonical 声明**（2026-07-02，消除 `integration/` 与 `infrastructure/pipeline/` dual source 镜像副本）：管线核心13模块（`model_router`/`cost_tracker`/`ct_pipe_routing`/`preemption_manager`/`pipeline_agent_bridge`/`llm_gateway`/`routing_plugins`/`pipeline_lock`/`dead_letter_queue`/`circuit_breaker_manager`/`backpressure_types`/`backpressure_manager`/`pipeline_models`）已登记 capability，canonical = [`src/zephyr/infrastructure/pipeline/`](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/)（production/D_INFRA_RUNTIME）。原 `src/zephyr/integration/` 顶层镜像副本（prototype/D_INTEGRATION）已删除。`layer_router`/`layer_consumer_registry` 已于阶段1清除（14层概念废弃）。新 AI 想做"管线模型路由/成本追踪/背压管理/断路器"等前，CapabilityLookup 会反查到 canonical 在 `infrastructure/pipeline/`，勿在 `integration/` 重建。编排器 `PipelineOrchestrator` 例外，仍在 `integration/pipeline_orchestrator.py`（跨域集成入口，组合 infra.pipeline 组件）。
 
 ### 4.5 根目录 vs 子目录同名文件门禁（ARCH-031 局限1 调研结论，2026-07-01）
 
@@ -255,7 +255,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - `data/audit_logs/`: AI 行为审计日志
 - `data/capability_cards/`: 能力卡片定义
 - `data/work_dags/`: 工作 DAG 定义（待创建）
-- `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——53域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；53域是唯一物理分类（depgraph），14层（L00-L13）是域的 `layer_id` 属性枚举
+- `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——53域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；53域是唯一物理分类（depgraph），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的 `layer_id` 属性枚举（真源：`depgraph_schema.py` DB trigger）
 
 ## 7. 代码规范
 
