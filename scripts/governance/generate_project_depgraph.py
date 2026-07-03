@@ -3668,13 +3668,25 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
     # added/removed 不阻断 skip（稳定态）：
     # - added: INSERT 失败的节点（如 domain_id FK 违反）每次都在 scan 中但不在 DB 中
     # - removed: 幽灵节点（文件已删除但 DB 保留记录），全量重建也无法清理
-    # 只有 changed（文件内容变化）+ stale（DB hash 为空）才表示需要重建的变更
+    #   职责分离（2026-07-04 治本）：removed 由 GATE-DELETE-AUDIT reconciler（post-commit
+    #   自动触发，_backup_depgraph_for_autoclean + apply_depgraph.py --cleanup-orphan-nodes）
+    #   负责清理；本函数只负责"是否需要重建"，不负责清理。removed 超 WARNING 阈值时告警提示。
+    _GHOST_WARNING_THRESHOLD = 50  # 与 reconciliation_registry.py _GHOST_AUTO_CLEAN_THRESHOLD 对齐
     if not changed and not stale:
         print("[DEPGRAPH][INCREMENTAL] 无阻断性变更（content_hash 全部匹配），跳过 DB 重建")
         if added:
             print(f"  [INFO] {len(added)} 个 scan 文件不在 DB 中（不阻断）")
         if removed:
-            print(f"  [INFO] {len(removed)} 个 DB 节点文件已删除（不阻断，幽灵节点）")
+            level = "WARNING" if len(removed) > _GHOST_WARNING_THRESHOLD else "INFO"
+            print(
+                f"  [{level}] {len(removed)} 个 DB 节点文件已删除（不阻断，幽灵节点；"
+                f"由 GATE-DELETE-AUDIT reconciler 自动清理）"
+            )
+            if len(removed) > _GHOST_WARNING_THRESHOLD:
+                print(
+                    f"    [HINT] ghost 数超阈值（{_GHOST_WARNING_THRESHOLD}），"
+                    f"可手动运行: python scripts/governance/apply_depgraph.py --cleanup-orphan-nodes"
+                )
         return True
 
     print(
