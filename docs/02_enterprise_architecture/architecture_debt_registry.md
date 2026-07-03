@@ -6880,17 +6880,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.112 asyncio取消传播（3个，第21轮新增）
 
-#### 5.112.1 [HIGH] CancelledError路径子进程未kill（4文件无finally块）
-
-- **文件**：
-  - `src/zephyr/behavioral_audit/drift_engine.py:401-441`
-  - `src/zephyr/governance/drift_detection/drift_engine.py:298-322`
-  - `src/zephyr/behavioral_audit/detector_dispatcher.py:191-255`
-  - `src/zephyr/governance/drift_detection/detector_dispatcher.py:155-210`
-- **问题**：四处采用`try/except TimeoutError/except Exception`结构，**无`finally`块**。`CancelledError`继承`BaseException`不被`except Exception`捕获，正确向上传播，但`proc`（asyncio子进程）从未被`kill()`，成为孤儿进程持续占用CPU/内存。
-- **与5.68.1/5.68.2的区别**：5.68仅覆盖TimeoutError路径（"TimeoutError被捕获仅返回事件，但proc从未kill"）；本条覆盖CancelledError路径+2个新文件（detector_dispatcher）。5.68建议的"except块中kill"**无法修复CancelledError路径**——CancelledError绕过所有except块，需`finally`块才能覆盖。
-- **修复**：增加`finally`块（`proc`初始化为`None`），`finally`中`if proc is not None and proc.returncode is None: proc.kill(); await proc.wait()`。
-
 #### 5.112.2 [MEDIUM] gather(return_exceptions=True) + isinstance(r, Exception)吞没CancelledError（2文件）
 
 - **文件**：

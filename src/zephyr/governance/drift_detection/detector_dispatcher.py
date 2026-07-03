@@ -188,6 +188,7 @@ class DetectorDispatcher:
                     elapsed_ms=elapsed,
                 )
 
+            proc = None
             try:
                 proc = await asyncio.create_subprocess_exec(
                     "python",
@@ -253,6 +254,14 @@ class DetectorDispatcher:
                     error=str(exc),
                     elapsed_ms=elapsed,
                 )
+            finally:
+                # 5.112.1 修复：CancelledError/TimeoutError路径确保子进程被kill，防止孤儿进程
+                try:
+                    if proc is not None and proc.returncode is None:
+                        proc.kill()
+                        await proc.wait()
+                except Exception:
+                    pass
 
 
 def get_max_parallel_for_level(level: ScanLevel) -> int:

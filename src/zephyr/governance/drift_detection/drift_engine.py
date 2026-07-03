@@ -398,6 +398,7 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
         if not os.path.exists(script_path):
             return {"detector_id": detector.id, "events": []}
 
+        proc = None
         try:
             proc = await asyncio.create_subprocess_exec(
                 "python",
@@ -439,6 +440,14 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
                 "detector_id": detector.id,
                 "events": [_event_to_dict(_create_drift_event(detector, f"Detector exception: {exc}"))],
             }
+        finally:
+            # 5.112.1 修复：CancelledError/TimeoutError路径确保子进程被kill，防止孤儿进程
+            try:
+                if proc is not None and proc.returncode is None:
+                    proc.kill()
+                    await proc.wait()
+            except Exception:
+                pass
 
 
 def _create_drift_event(detector: Detector, detail: str) -> DriftEvent:
