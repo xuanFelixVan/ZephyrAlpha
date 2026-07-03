@@ -38,7 +38,7 @@ sections:
       fail: 分类缺失或不合规
     actions:
     - type: mandatory
-      step: 每条规则必须按5个维度分类：Domain(9值)/Layer(L1/L2/L3/cross_layer)/Scope(global/domain/module/session)/Stability(frozen/stable/evolving)/Executor(immutable_core/human_gated/ai_modifiable)；每条规则必须且只能属于一个domain和scope
+      step: 每条规则必须按5个维度分类：Domain(9值)/Authority Tier(L1/L2/L3/cross_layer)/Scope(global/domain/module/session)/Stability(frozen/stable/evolving)/Executor(immutable_core/human_gated/ai_modifiable)；每条规则必须且只能属于一个domain和scope
     prohibitions: []
   ps_std_004_vibe_coding_retrieval:
     title: Vibe Coding AI检索策略映射
@@ -57,7 +57,7 @@ sections:
       retrieval_path: executor=ai_modifiable → stability不为frozen → layer可写
       explanation: AI自治权限=可修改范围→Executor维度直接筛选
     - query_intent: 当前项目所有规则文件有哪些
-      retrieval_path: layer=cross_layer → L1 → L2 → L3 → domain分组
+      retrieval_path: authority_tier=cross_layer → L1 → L2 → L3 → domain分组
       explanation: 层级影响范围大头优先——全局规则→领域规则→会话规则→模块规则
     - query_intent: 这条规则和哪条有冲突
       retrieval_path: scope相同 → stability是否矛盾 → §9冲突裁决推导链
@@ -65,7 +65,7 @@ sections:
     key_decisions:
     - SSoT优先——如果有SSoT文件声明了该领域(如PS-STD-003声明行为边界)，先读SSoT再查领域规则
     - 稳定性过滤——frozen文件优先于stable优先于evolving，冻结内容的权威性最高
-    - 层级收敛——cross_layer → L1 → L2 → L3，范围大的先读，在理解全局约束后再看局部
+    - 权威层级收敛——cross_layer → L1 → L2 → L3，范围大的先读，在理解全局约束后再看局部
     - 领域隔离——不同domain的规则互不冲突，冲突仅在同domain且scope重叠时发生
   ps_std_004_domain_vocabulary:
     title: 领域(Domain)受控词表
@@ -110,12 +110,12 @@ sections:
       meaning: 编码——代码风格、安全编码
       directory: 待建立
       examples: encoding-safety-standard.md
-  ps_std_004_layer_vocabulary:
-    title: 层级(Layer)受控词表
+  ps_std_004_authority_tier_vocabulary:
+    title: 权威层级(Authority Tier)受控词表
     section_type: context
     original_rules:
     - PS-STD-004 §4.1
-    summary: 层级维度的4个受控词表条目——含义/规范性语言/对应doc_type/章节
+    summary: 权威层级维度的4个受控词表条目——含义/规范性语言/对应doc_type/章节
     items:
     - value: L1
       meaning: 治理层——最高权威，可使用MUST
@@ -234,11 +234,11 @@ sections:
       fail: 无法推导或AI自行裁决
     actions:
     - type: mandatory
-      step: 按stability→layer→scope→Owner四步链式推导：frozen>stable>evolving；cross_layer>L1>L2>L3；global>domain>module；三步后仍冲突→停止操作上报Owner(MTH-003目标优先裁决)
+      step: 按stability→authority_tier→scope→Owner四步链式推导：frozen>stable>evolving；cross_layer>L1>L2>L3；global>domain>module；三步后仍冲突→停止操作上报Owner(MTH-003目标优先裁决)
     prohibitions:
     - AI自行裁决无法推导的冲突(必须上报Owner)
     - AI选择对自己更方便的规则
-    - AI忽略高stability或高layer的规则
+    - AI忽略高stability或高authority_tier的规则
     - AI绕过推导链直接声称"这条规则优先"
   ps_std_004_new_domain:
     title: 新增领域流程
@@ -259,7 +259,7 @@ sections:
     section_type: context
     original_rules:
     - PS-STD-004 §1
-    summary: "ZephyrAlpha项目规则分类体系与规则冲突裁决机制的唯一真源。上半卷（§2-§8）定义五维分类体系（Domain/Layer/Scope/Stability/Executor），下半卷（§9-§11）定义冲突裁决推导链（stability→layer→scope→Owner）。"
+    summary: "ZephyrAlpha项目规则分类体系与规则冲突裁决机制的唯一真源。上半卷（§2-§8）定义五维分类体系（Domain/Authority Tier/Scope/Stability/Executor），下半卷（§9-§11）定义冲突裁决推导链（stability→authority_tier→scope→Owner）。"
     applies_to:
     - "01_policies_and_standards/下所有规则文档"
     - "规则冲突裁决场景"
@@ -267,7 +267,7 @@ sections:
     - "新增scope和stability两个frontmatter字段，由本标准定义受控词表和分类规则"
     - "推导链为规则冲突提供机械裁决机制，三步推导后仍冲突则上报Owner"
     key_decisions:
-    - "五维分类体系：domain(9值)/layer(4值)/scope(4值)/stability(3值)/executor(3值)"
+    - "五维分类体系：domain(9值)/authority_tier(4值)/scope(4值)/stability(3值)/executor(3值)"
     - "推导链优先级：frozen>stable>evolving → cross_layer>L1>L2>L3 → global>domain>module"
     - "v2.0.0合并原PS-STD-008（rule_priority_hierarchy.md），分类与裁决是供需关系"
   ps_std_004_normative_refs:
@@ -282,7 +282,7 @@ sections:
       why: "layer/ai_autonomy字段定义——本标准引用其字段定义不重复定义"
     - target: PS-STD-002
       at: "§3"
-      why: "L1/L2/L3层级定义——Layer维度引用其层级定义"
+      why: "L1/L2/L3层级定义——Authority Tier维度引用其层级定义"
     - target: PS-STD-011
       at: "MTH-003"
       why: "目标优先裁决原则——推导链失效时的终极仲裁"
@@ -450,14 +450,14 @@ sections:
       rule_a: PS-STD-003 §3 禁止删除审计日志 (stability=frozen)
       rule_b: 某domain规则日志可压缩 (stability=evolving)
       verdict: A优先 (frozen > evolving)
-    - case: 同stability不同layer
+    - case: 同stability不同authority_tier
       rule_a: GOV-DOC-009 引用必须用绝对路径 (cross_layer stable)
       rule_b: 某模块规则模块内可用相对路径 (L3 stable)
       verdict: A优先 (cross_layer > L3)
     - case: 无法推导
       rule_a: PS-STD-003 ABS-14 不知道文件位置就不操作 (cross_layer frozen)
       rule_b: PS-STD-003 ABS-52 先读当前版本再改 (cross_layer frozen)
-      verdict: 无法推导 (同stability同layer) → 上报Owner
+      verdict: 无法推导 (同stability同authority_tier) → 上报Owner
   ps_std_004_ssot:
     title: SSoT声明
     section_type: context
@@ -509,7 +509,7 @@ sections:
       why: layer ai_autonomy字段定义——本标准引用其字段定义不重复定义
     - target: PS-STD-002
       at: normative
-      why: L1/L2/L3层级定义——Layer维度引用其层级定义
+      why: L1/L2/L3层级定义——Authority Tier维度引用其层级定义
     - target: PS-STD-011 MTH-003
       at: normative
       why: 目标优先裁决原则——推导链失效时的终极仲裁
@@ -593,7 +593,7 @@ sections:
     - item: 领域受控词表合规
       verifiability: A
       method: check_frontmatter_metadata.py校验
-    - item: Layer与doc_type一致性
+    - item: Authority Tier与doc_type一致性
       verifiability: A
       method: check_frontmatter_metadata.py校验
     - item: Scope受控词表合规
@@ -608,7 +608,7 @@ sections:
     - item: 规则画像与实际一致
       verifiability: M
       method: 人工审查
-    - item: 推导链一致性(stability→layer→scope→Owner)
+    - item: 推导链一致性(stability→authority_tier→scope→Owner)
       verifiability: A
       method: check_frontmatter_metadata.py校验
   ps_std_004_completeness_checklist:
@@ -621,7 +621,7 @@ sections:
     - §1 目的与范围——目的+责任范围+责任边界+适用范围+术语
     - §2 五维分类体系总览+Vibe Coding检索策略
     - §3 领域维度——受控词表+分类规则+新增流程
-    - §4 层级维度——受控词表+分类规则
+    - §4 权威层级维度——受控词表+分类规则
     - §5 作用范围维度——受控词表+分类规则+新字段定义
     - §6 稳定性维度——受控词表+分类规则+新字段定义
     - §7 执行者维度——受控词表+分类规则
