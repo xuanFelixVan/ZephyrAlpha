@@ -71,10 +71,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | operations_architecture.md | OPS 运维架构视图 | ✅ v0.2.1 已审核 |
 | governance_architecture.md | GOV 治理架构视图 | ✅ v2.2.1 已审核 |
 | frontend_architecture.md | FE 前端架构视图 | ✅ v1.1.1 已审核（断链已修） |
-| architecture_principles.md | 架构原则 SSoT（R1-R4 安全红线 + BvB + 准入铁律）| 已迁移至 04_architecture_principles_decisions/ |
-| dimension_audit_matrix.md | 12维架构质量评分矩阵 | 已迁移至 04_architecture_principles_decisions/ |
-| session_carryover_schema.md | AI会话接续Schema | 已迁移至 _cross_layer/context_engine/ |
-| revision_history.md | 完整修订历史归档 | 待审核（git log 可能是真源）|
 | diagrams/ | Mermaid 图源文件（28个 .mmd + index.md）| 待审核 |
 
 ---
