@@ -1186,6 +1186,33 @@ capabilities:
       - make_vocab_hardcode_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: file_copy_gate
+    canonical_override: src/zephyr/governance/commit_gates/file_copy_gate.py
+    aliases:
+      - FILE-COPY
+      - file-copy
+      - make_file_copy_gate
+      - file_duplication_blocker
+      - ast_copy_detector_gate
+    description: >-
+      FILE-COPY in-process 文件复制阻断门禁（Phase 1 sub-task 3，2026-07-03 治本）。
+      治本文件复制检测无 commit-time 强制：check_code_duplication.py 是手动脚本，
+      --no-verify 绕过 pre-commit → 文件复制检测沦为君子协定。本 gate 注册到
+      GitCommitGateway（in-process，--no-verify 绕不过），priority=85。subprocess
+      调用 check_code_duplication.py --files --ast --threshold 0.7（SSoT 检测逻辑
+      真源在 detector），只检测 staged 新增 .py 文件（diff-filter=A），同名文件比对。
+      AST 归一化（parse→unparse→SequenceMatcher）剥离注释/格式差异，>70%相似度→硬阻断。
+      路径解析用 gateway.project_root（主仓库根），因 detector 扫描主仓库已有文件做比对。
+      fail-open on script error(exit 2)，fail-closed on violations(exit 1)。
+      与 detector 分离：detector=检测逻辑真源(check_code_duplication.py)，gate=门禁包装。
+      canonical basename file_copy_gate 匹配 capability_id，canonical 在 src/zephyr/
+      下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "FILE-COPY/文件复制门禁/AST相似度阻断" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process 文件复制门禁。
+    integrity_anchors:
+      - make_file_copy_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -2173,6 +2200,11 @@ creation_tokens:
     token: "auto-vocab-hardcode-gate-20260703"
     created_by: "session-phase1-ast-gate"
     capability: "vocab_hardcode_gate"
+
+  - file: "src/zephyr/governance/commit_gates/file_copy_gate.py"
+    token: "auto-file-copy-gate-20260703"
+    created_by: "session-phase1-ast-gate"
+    capability: "file_copy_gate"
 
   # --- governance/ 核心文件（示例条目） ---
   - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"

@@ -74,6 +74,7 @@ from zephyr.governance.commit_gates.arch_reference_gate import make_arch_referen
 from zephyr.governance.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
 from zephyr.governance.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
 from zephyr.governance.commit_gates.vocab_hardcode_gate import make_vocab_hardcode_gate
+from zephyr.governance.commit_gates.file_copy_gate import make_file_copy_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -247,6 +248,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
+        self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
 
