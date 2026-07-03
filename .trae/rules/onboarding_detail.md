@@ -1018,3 +1018,358 @@ python scripts/governance/verify_key_imports.py
 | ❌ | 先补测试再重构 | 重构改代码，测试白写 |
 | ❌ | **编排器直接依赖下层具体实现(runtime)** | 违反DIP，控制平面耦合数据平面（应改为contract依赖抽象接口） |
 | ❌ | **同层循环依赖** | 同层单向允许，但禁止形成环（如 F2→F4→F2） |
+
+---
+
+## 从 project_rules.md 外部化（Phase 3 治理收敛，2026-07-03）
+
+### RULE-TEN：治理施工流程（14步统一流程）
+**YAML真源**: → 参见 rules/trae_005_modification_governance.yaml
+
+**触发**：对项目做任何非平凡变更——恢复功能、新建功能、移动模块、拆分包、重构依赖、批量修改标签。
+
+### 14步统一流程
+
+```
+阶段一：分析设计（只读不改代码）
+  STEP 1   读蓝图       → 读取功能对应蓝图，理解设计意图
+  STEP 2   全量定位     → 全项目搜索所有相关文件（本包+孤儿+重复+跨蓝图）
+  STEP 3   归属裁定     → 孤儿纳入/重复去重/跨蓝图归属裁定
+  STEP 4   蓝图设计     → 在蓝图里设计依赖关系+启动方式+自动运行+自动结束
+
+阶段二：施工
+  STEP 5   位置校验     → 按蓝图设计调整文件位置/命名/注册
+  STEP 6   修复断链     → 按蓝图设计的依赖关系修复import断链
+  STEP 7   补全头部     → 补全文件头部十五字段
+  STEP 8   运行测试     → pytest运行功能测试
+  STEP 9   修复失败     → 修复失败测试直到通过
+
+阶段三：安全验证
+  STEP 10  红蓝对抗     → 罗列极限测试清单+执行+修复漏洞
+
+阶段四：收尾对齐
+  STEP 11  更新蓝图     → 将实际状态写回蓝图frontmatter(file_manifest+dependency_graph+version+construction_progress+§0.2)
+  STEP 12  三方对齐     → 全景图+蓝图+代码头部三方一致验证
+  STEP 13  更新索引     → 更新所有相关INDEX/注册表/manifest
+  STEP 14  报告         → 向统筹AI报告状态
+```
+
+**核心原则**：先分析再动手，先设计再施工。跳过任何步骤 = 违规。
+
+### 轻量模式（仅结构变更时）
+
+当变更仅涉及文件移动/重命名/依赖调整，不涉及功能恢复/新建时，可使用5步轻量模式：
+
+```
+STEP 1  依赖图推演 → 模拟变更后的依赖链，确认不会产生新循环/堵塞
+STEP 2  蓝图归属   → 确认目标包有蓝图，模块的 [BLUEPRINT] 指向正确
+STEP 3  导入路径映射 → 列出所有受影响的 import 语句（Grep 全项目）
+STEP 4  执行操作   → 按推演验证过的计划操作
+STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
+```
+
+> 轻量模式跳过的步骤：STEP 1读蓝图(已有蓝图)、STEP 2-3全量定位+归属裁定(无新文件)、STEP 4蓝图设计(无新设计)、STEP 7补全头部(无新文件)、STEP 8-9测试(无代码变更)、STEP 10红蓝对抗(无功能变更)、STEP 13更新索引(无注册变更)。
+
+### 三方对齐（STEP 12 验证内容）
+
+| 对齐维度 | 对齐什么 | 验证方法 |
+|----------|---------|---------|
+| 全景图对齐 | depgraph ↔ 磁盘实际文件 | `diagnose_depgraph.py` 文件级：depgraph里有的文件是否都存在？磁盘上的文件是否都在depgraph里？ |
+| 蓝图对齐 | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 实际代码 | 蓝图声明的模块是否都实现了？代码里的文件是否都在 file_manifest 里？ |
+| 代码头部对齐 | [BLUEPRINT]/[CONSUMERS]/[MODULE] ↔ 实际引用 | 头部声明的蓝图ID是否指向正确蓝图？[CONSUMERS]列出的消费者是否真的import了本模块？ |
+
+> 路径树不作为独立对齐维度——它是全景图的派生物，全景图对了路径树自动对。
+
+### 治理顺序铁律（从根到叶）
+
+| 顺序 | 治理项 | 前置依赖 |
+|:---:|--------|---------|
+| 1 | 跨包违规（架构重构） | — |
+| 2 | God模块分解 | #1 完成 |
+| 3 | 孤儿模块消理 | #1+#2 完成 |
+| 4 | blueprint_id 对齐 | #1 完成 |
+| 5 | 稳定性/自治修复 | #1+#4 完成 |
+| 6 | 测试覆盖补全 | #1~#5 全部完成 |
+
+❌ 禁止跳序 | ❌ 禁止按数量从大到小 | ❌ 禁止先测试后重构
+
+### 删除判定三维度（RULE-THREE 补充）
+
+| 维度 | 判定问题 | YES→ | NO→ |
+|---------|---------|------|-----|
+| 独立功能 | 代码有独立功能价值？ | 保留 | 下一维度 |
+| 客观原因 | 零消费者因管线未接通？ | 保留 | 下一维度 |
+| 重建成本 | 删除后需重新实现？ | 保留 | 可删除 |
+
+> 例：`kill_switch.py` 零消费者，但有独立功能价值 → 保留
+
+### 域归属铁律
+
+**模块归入已有域（当前 43 域，见 `extract_depgraph.py --summary`），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
+
+> 详见 [onboarding_detail.md §15](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
+
+### 依赖方向铁律（DIP例外）
+
+**YAML真源**: → 参见 rules/trae_013_arch_cross_package_dep.yaml
+
+| # | 规则 | 说明 |
+|:---:|:---|:---|
+| 1 | 单向分层依赖 | 依赖方向只能从上层→下层（L6→L5→...→L0），禁止逆向。**同层间允许单向依赖，禁止同层循环依赖**（MTH-009裁定，对标K8s/Conductor同层协作模式） |
+| 2 | 依赖倒置(DIP)例外 | 编排器(F1)可依赖下层暴露的**抽象契约**(contract类型)，不可依赖具体实现(runtime类型)。对标K8s CRI/CSI、Netflix Conductor Worker API |
+| 3 | 事件解耦 | 跨层调度通过事件总线(F22)，不建立直接依赖边。对标Citadel/Two Sigma事件驱动核心 |
+| 4 | 控制平面/数据平面分离 | 编排器(控制平面)与执行器(数据平面)逻辑分离。编排器依赖抽象接口，执行器通过标准协议对接 |
+
+**四种依赖类型**：
+
+| 类型 | 含义 | 示例 |
+|:---:|:---|:---|
+| `contract` | 依赖抽象接口/Protocol，不依赖具体实现 | F1→F3（AutoPilot依赖TaskRepository Protocol） |
+| `event` | 通过事件总线通信，无直接依赖 | F1→F14（F1发布pipeline_start事件，F14订阅） |
+| `runtime` | 直接运行时调用（同层或向下层） | F1→F21（守护进程健康检查） |
+| `data` | 数据依赖（读写共享数据） | F3→F25（任务卡持久化到数据库） |
+
+**循环依赖检查规则**：
+1. 跨层循环：禁止。依赖方向只能从上层→下层，禁止逆向
+2. 同层循环：禁止。同层间允许单向依赖，但禁止形成环（如 F2→F4→F2 禁止）
+3. DIP例外：编排器→下层contract/event依赖不计入逆向依赖——contract依赖抽象接口，event通过事件总线解耦
+
+### 绝对禁止
+
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | 不推演直接移动模块 | 引入新循环依赖，系统堵塞 |
+| ❌ | 按数量从大到小治理 | 前面的决定可能让后面的问题消失，白做 |
+| ❌ | 用"零消费者"判定删除 | 误删有价值的安全/治理组件 |
+| ❌ | 先补测试再重构 | 重构改代码，测试白写 |
+| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 43 域），新建域必须 Owner 书面同意 |
+| ❌ | **编排器直接依赖下层具体实现(runtime)** | 违反DIP，控制平面耦合数据平面（应改为contract依赖抽象接口） |
+| ❌ | **同层循环依赖** | 同层单向允许，但禁止形成环（如 F2→F4→F2） |
+
+---
+
+### RULE-SIXTEEN：depgraph 程序化访问协议
+**YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
+
+**核心**：depgraph 存储在 PostgreSQL 16 数据库（localhost:5432, 数据库名 `depgraph`, 用户 `zephyr`，schema v18, 25张表）。连接入口：`from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`。禁止裸 `psql`/`sqlite3` 连接，必须通过提取/应用脚本或 `get_depgraph_pg_connection()` 操作。
+
+### Schema 变更协议（DDL-as-Code 铁律）
+
+depgraph (PostgreSQL)的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
+
+1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
+2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 PostgreSQL 报错）
+3. **跑 init_db()**：执行 `init_db()` 幂等应用 pending migrations（事务包裹，失败自动 ROLLBACK）
+4. **过门禁**：`python scripts/governance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
+
+禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改数据库绕过 migration。
+
+### 触发条件
+
+任何需要读取或修改 depgraph 的操作——包括查看模块定义、修改 physical_files、更新 blueprint_status、查看域结构等。
+
+### 强制操作序列
+
+```
+读取 depgraph 数据:
+  STEP 1: 确定需要什么数据（域摘要？指定域？指定模块？顶级元数据？路径列表？）
+  STEP 2: 运行对应提取命令
+          python scripts/governance/extract_depgraph.py --summary     # 43域+模块数
+          python scripts/governance/extract_depgraph.py --domains D_FACTOR,D_RISK
+          python scripts/governance/extract_depgraph.py --modules D-FACTOR-01
+          python scripts/governance/extract_depgraph.py --top          # 顶级元数据
+          python scripts/governance/extract_depgraph.py --paths        # 所有physical_files
+          python scripts/governance/extract_depgraph.py --stats        # 文件大小统计
+  STEP 3: AI 只读提取结果（JSON，几KB到几百KB，安全）
+
+修改 depgraph:
+  STEP 0: 前置备份（MUST，每次 apply_depgraph.py 执行前）
+          ① pg_dump 备份: pg_dump -U zephyr -d depgraph > data/databases/backups/depgraph_backup_$(date +%Y%m%d_%H%M%S).sql
+          ② 事务回滚: apply_depgraph.py 在事务内执行，失败自动 ROLLBACK（PG MVCC 保证）
+          # 回滚: psql -U zephyr -d depgraph -f data/databases/backups/depgraph_backup_XXX.sql
+  STEP 1: AI 生成变更 JSON 文件
+  STEP 2: python scripts/governance/apply_depgraph.py --batch changes.json --dry-run  # 验证
+  STEP 3: python scripts/governance/apply_depgraph.py --batch changes.json             # 执行
+  STEP 4: python scripts/governance/extract_depgraph.py --summary     # 验证变更
+```
+
+### 变更 JSON 格式
+
+```json
+[
+  {"op": "update", "module_id": "D-FACTOR-01", "field": "blueprint_status", "value": "has_blueprint"},
+  {"op": "add_physical_file", "module_id": "D-FACTOR-01", "path": "src/zephyr/factor/new_file.py"},
+  {"op": "remove_physical_file", "module_id": "D-FACTOR-01", "path": "src/zephyr/factor/old_file.py"},
+  {"op": "set_physical_files", "module_id": "D-FACTOR-01", "files": ["path1.py", "path2.py"]}
+]
+```
+
+### 为什么不能拆分 depgraph
+
+拆分 39 个域文件 → 跨域关系丢失 → AI 看到碎片化数据 → 产生大量漂移和幻觉。depgraph 保持单一数据库（SSoT），通过程序化提取访问。
+
+### 为什么不能换模型
+
+DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 55 倍。任何当前模型都无法装下。
+
+### 绝对禁止
+
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph (PostgreSQL) | 绕过 `get_depgraph_pg_connection()` 连接管理，连接泄漏风险 |
+| ❌ | 用 Read 工具读取 `data/databases/archive/` 下归档文件 | 数据过时，真源在 PostgreSQL |
+| ❌ | 用任何方式将 depgraph 全表内容注入 AI 上下文 | 55M tokens → 内存溢出 |
+| ❌ | 拆分 depgraph 为 39 个域文件 | 跨域关系丢失 → 漂移和幻觉 |
+| ❌ | 绕过提取脚本自己写 Python 代码直接查 depgraph | 你的 Python 代码可以查，但 AI 上下文不能装下全表 |
+
+### 例外
+
+| 场景 | 允许操作 |
+|------|---------|
+| 通过 `get_depgraph_pg_connection()` 执行有限查询（LIMIT/WHERE） | ✅ 返回结果集可控 |
+| 运行 generate_project_depgraph.py 生成/更新 depgraph（⚠️ 架构升级期间禁止） | ✅ 生成脚本内部处理 |
+| 运行 diagnose_depgraph.py 诊断 | ✅ 诊断脚本内部处理 |
+
+### Schema 结构变更门禁（GATE-SCHEMA-HEALTH）
+
+结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 声明 + 添加 migration（`_MIGRATIONS` 列表）；禁止直接改写入代码跳过 DDL。GATE-SCHEMA-HEALTH（pre-commit）自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即阻断。对标 #ARCH-016 治本。
+
+---
+
+### RULE-THIRTEEN：任务卡粒度铁律
+**YAML真源**: → 参见 rules/trae_003_task_granularity_threshold.yaml
+
+**核心**：一卡一任务，独立可验证。任务卡 = 施工图——施工细节写在 description 里（不限字数），蓝图只写设计。
+
+### 粒度门禁（create() 时自动校验）
+
+| 字段 | 上限 | 超限处置 |
+|------|:---:|------|
+| `deliverables` 数量 | ≤ 1 | 拒绝建卡，提示拆卡 |
+| `files_in_scope` 数量 | ≤ 3 | 拒绝建卡，提示拆卡 |
+| `acceptance` 独立验收点 | ≤ 1 | 人工判定 |
+| 跨 Phase | 禁止 | 拒绝建卡，提示拆卡 |
+
+### 拆卡四条机械规则（任一触发即拆）
+
+| # | 规则 | 判定 |
+|---|------|------|
+| R1 | deliverables > 1 | 数列表长度 |
+| R2 | files_in_scope > 3 | 数列表长度 |
+| R3 | acceptance 有 > 1 个独立验收点 | 验收点能否独立通过/失败 |
+| R4 | 施工步骤跨 > 1 个施工目标 | 施工目标 = 对一个文件/模块的一次原子修改 |
+| R5 | description 缺"根因/治根/施工步骤/验收标准" | 结构词缺失 = 描述不完整 |
+| R6 | description < 100字 | 信息不足 = 幻觉温床 |
+
+### 超粒度自动拆分
+
+建卡被 R1-R6 拦截时，调用 `TaskRepository.auto_split_task(task)` 或 MCP `task_manager.auto_split(task_id)` 可按违规维度自动拆分为多张合规子卡。详见 `trae_034_task_card_standard.yaml §6.5`。
+
+### 状态转换与认领
+
+| 转换 | 说明 |
+|------|------|
+| PENDING → READY | 建卡后手动/自动转就绪 |
+| READY → IN_PROGRESS | `repo.claim_next(batch_id, worker_id)` 原子认领，自动转 IN_PROGRESS |
+| IN_PROGRESS → COMPLETED | 施工完成，触发 `_auto_phase_cleanup_hook` 硬删除 |
+| COMPLETED → VERIFIED | 验证通过（终态） |
+| 任意 → CANCELLED | 取消，同样触发硬删除 |
+
+`claim_next(batch_id, worker_id)` — 按 batch 轮转原子认领，返回 TaskCard 或 None。
+
+### 深挖病根强制
+
+```
+transition(task_id, COMPLETED) 时自动校验：
+├─ 任务中有 error/failure？→ MUST 有 root_cause_analysis 记录
+│   └─ 无记录 → 拒绝完成（SyncVerificationError）
+└─ root_cause_analysis = MTH-006 根源分析（追问到底，非固定5次）
+```
+
+### 绝对禁止
+
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | deliverables > 3 或 files_in_scope > 5 仍建卡 | 任务边界模糊，验收困难 |
+| ❌ | 遇到 error 不写 root_cause_analysis 直接完成 | 症状修复，根因残留 |
+| ❌ | 用"修了"替代 MTH-006 根源分析 | 同类问题必然重现 |
+
+---
+
+### RULE-NINETEEN：先裁定后确认（MTH-009 显化）
+**YAML真源**: → 参见 rules/trae_025_methodology_decision.yaml §mth_009
+
+**核心**：AI 遇到任何决策（方案选择/范围裁定/触发条件判定/多选项权衡）MUST 先给出专业裁定+理由，再请 Owner 确认。禁止直接问"你选哪个"把决策权推给 Owner。
+
+### 触发条件
+
+任何需要 Owner 决策的问题——包括但不限于：方案多选/备份范围裁定/触发条件判定/拆分边界决策/技术路线权衡。
+
+### 强制三段输出格式
+
+```
+1. 分析过程（基于项目文档/专业实践/量化数据给出分析）
+2. 裁定结果（明确推荐其中一个，给出理由，不是选择题）
+3. 确认请求（请 Owner 确认或否决，否决需给出理由后 AI 重新裁定）
+```
+
+### MTH-007 决策质量四问（裁定前 MUST 完成）
+
+| # | 维度 | 自问 |
+|---|------|------|
+| 1 | 埋雷检查 | 这个选择会不会给未来埋雷？纠正需重写架构吗？ |
+| 2 | 容量检查 | 会不会限制未来容量？余量多少？ |
+| 3 | 专业对标 | 专业机构/社区怎么做的？MUST 引用至少一个来源 |
+| 4 | 最终建议 | 带推理：A 在埋雷维度无风险/容量有余量/对标有先例 → 推荐 A |
+
+### 绝对禁止
+
+| # | 行为 | 后果 |
+|---|------|------|
+| ❌ | 遇到决策直接问 Owner "你选哪个/你想怎么做" | 把决策权推给 Owner，违反 MTH-009 |
+| ❌ | 只给选项不给推荐 | Owner 无法判断，决策质量下降 |
+| ❌ | 以"我不确定"为由把决策推给 Owner | MUST 基于现有信息做出最优判断 |
+| ❌ | 跳过专业对标（专业机构/社区怎么做）直接给结论 | 裁定缺乏依据 |
+| ❌ | 跳过 MTH-007 决策质量四问 | 方案可能埋雷或限制容量 |
+
+---
+
+### 结构追溯（#1-#6）
+
+| # | 规则 | 不遵守会怎样 |
+|---|------|------------|
+| 1 | **源头追溯**——代码文件 MUST 标注 `[BLUEPRINT] {module_id} \| {蓝图路径}` | 无标注 = 孤儿文件 |
+| 2 | **不变量声明**——代码文件 MUST 标注 `[INVARIANTS] {不可违反的约束}` | AI 修改时破坏关键约束 |
+| 3 | **修改守卫**——代码文件 MUST 标注 `[MODIFY-GUARD] {改此文件必须同步更新的文件}` | AI 改一处忘其他，集成断裂 |
+| 4 | **依赖声明**——代码文件 MUST 标注 `[CONSUMERS] {依赖此文件的模块}` | AI 不知道修改的影响范围 |
+| 5 | **蓝图锚点**——蓝图 MUST 在头部标注蓝图+施工图模板+AI 压缩工作流标准链接 | AI 偏离蓝图模板，产出不一致 |
+| 6 | **漂移检测**——蓝图 §4 文件清单 ↔ 代码 `[BLUEPRINT]` 字段（含 §N 章节级）MUST 双向对齐 | 蓝图与代码漂移 |
+
+### 行为约束（#7-#10）
+
+| # | 规则 | 不遵守会怎样 |
+|---|------|------------|
+| 7 | **禁止占位符**——代码中禁止 `TODO`/`...`/`pass`/`NotImplementedError`。必须产出可执行代码 | 半成品伪装完成 |
+| 8 | **编辑优先**——禁止删除+重建来"修改"。必须 surgical edit | 丢失 history + 注册失效 |
+| 9 | **最小变更**——只改必须改的。禁止"顺手重构""顺便优化" | 无关变更引入 bug |
+| 10 | **假设显式化**——不确定的决策 MUST 标记 `[ASSUMPTION]` 等待确认 | AI 凭空假设 API/格式/配置 |
+
+### 输出验证（#11-#14）
+
+| # | 规则 | 不遵守会怎样 |
+|---|------|------------|
+| 11 | **步骤验证门**——每步完成 MUST 验证成功后才进下一步 | 错误累积，回溯成本指数增长 |
+| 12 | **导入验证**——使用任何 `import`/API/函数前 MUST Grep/Read 确认存在 | 引用不存在的库/API/模块 |
+| 13 | **自审闭环**——产出代码后 MUST 对照需求自审：功能完整？边界？错误路径？ | 输出与需求不匹配 |
+| 14 | **新代码必测**——新建/修改代码 → MUST 写或更新测试。无测试 = 未完成 | bug 无从发现 |
+
+### 安全防护（#15-#18）
+
+| # | 规则 | 不遵守会怎样 |
+|---|------|------------|
+| 15 | **安全最低通过**——交付前 MUST 通过：认证/注入/数据暴露三项检查 | 安全漏洞交付 |
+| 16 | **计划先行**——涉及 >3 文件或 >50 行 → MUST 先输出计划 → 确认 → 执行 | 无计划大范围修改，失控 |
+| 17 | **跨文件影响检查**——修改前 MUST 检查 `[CONSUMERS]` + Grep 所有引用 | 改一处忘其他，集成断裂 |
+| 18 | **上下文新鲜度**——对话 >30 轮或 AI 出现重复/矛盾 → 开新会话 | 上下文退化，幻觉温床 |
+
+**格式标准**: [trae_047_engineering_file_header.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml)（GOV-ENG-002 文件头部十五字段，原 code-construction-standards.md §7 已迁移）
