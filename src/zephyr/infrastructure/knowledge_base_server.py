@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib
+import logging
 import re
 import threading
 from datetime import UTC, datetime
@@ -47,6 +48,8 @@ if TYPE_CHECKING:
 
 from zephyr.infrastructure._base_server import BaseMCPServer, MCPError
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 治本 2026-06-30 SSoT 词表加载
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["KnowledgeBaseServer", "create_server"]
 
@@ -216,8 +219,8 @@ class KnowledgeBaseServer(BaseMCPServer):
             _mod = importlib.import_module("zephyr.intelligence.model_evaluation.unified_memory_api")
             get_unified_memory_api = _mod.get_unified_memory_api
             self._kb_api = get_unified_memory_api(enforce_capability=False)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("KnowledgeBaseServer._init_backends: UnifiedMemoryAPI initialization failed (%s: %s)", type(e).__name__, e)
 
     # ------------------------------------------------------------------
     # Tool handlers
@@ -338,8 +341,8 @@ class KnowledgeBaseServer(BaseMCPServer):
                     content=content[:4000],
                     provenance=prov,
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("KnowledgeBaseServer._upsert_ke: kb_api write failed (%s: %s)", type(e).__name__, e)
 
         return {
             "ke_id": ke_id,
@@ -408,14 +411,14 @@ class KnowledgeBaseServer(BaseMCPServer):
 
             if ServiceRegistry.is_registered("vector-memory"):
                 vms_status = "available"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("KnowledgeBaseServer._health_check: VMS ServiceRegistry check failed (%s: %s)", type(e).__name__, e)
 
         if self._kb_api is not None:
             try:
                 kb_api_count = self._kb_api.count()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("KnowledgeBaseServer._health_check: kb_api count failed (%s: %s)", type(e).__name__, e)
 
         overall = "healthy" if (sqlite_ok or chromadb_ok) else "degraded"
 

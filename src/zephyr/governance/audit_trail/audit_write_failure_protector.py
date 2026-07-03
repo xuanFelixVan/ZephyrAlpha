@@ -25,7 +25,11 @@ AuditWriter.write() 内部已实现连续5次失败后自动进入 readonly 模�
 
 from __future__ import annotations
 
+import logging
+
 from zephyr.governance.audit_trail.writer import AuditWriter
+
+logger = logging.getLogger(__name__)
 
 
 class AuditWriteProtector:
@@ -38,8 +42,8 @@ class AuditWriteProtector:
         if self._writer is None:
             try:
                 self._writer = AuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("AuditWriteProtector._ensure_writer: AuditWriter initialization failed (%s: %s)", type(e).__name__, e)
         return self._writer
 
     def record_failure(self) -> None:

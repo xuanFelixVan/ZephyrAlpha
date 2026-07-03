@@ -23,10 +23,13 @@ ModuleOnboardingScanner — 模块接入扫描器
 """
 
 import ast
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from zephyr.trading.capability_registry import CapabilityRegistry
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -110,7 +113,8 @@ class ModuleOnboardingScanner:
         try:
             source = path.read_text(encoding="utf-8")
             tree = ast.parse(source)
-        except Exception:
+        except Exception as e:
+            logger.warning("_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e)
             return None
 
         rel = path.relative_to(self._src_root)

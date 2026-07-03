@@ -62,6 +62,7 @@ warn_only: false
 
 
 import argparse
+import logging
 import re
 import sys
 from pathlib import Path
@@ -73,6 +74,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -163,8 +166,8 @@ def scan_residual(
                                 "samples": samples,
                             }
                         )
-                except Exception:
-                    pass  # 列不存在或查询错误，跳过
+                except Exception as e:
+                    logger.warning("scan_residual: residual query failed for %s.%s (%s: %s)", tbl, col, type(e).__name__, e)
 
     return residuals
 

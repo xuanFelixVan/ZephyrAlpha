@@ -49,6 +49,7 @@ __all__ = [
 ]
 
 import hashlib
+import logging
 import os
 import random
 import threading
@@ -58,6 +59,8 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 _COMMIT_LOCK = threading.Lock()  # 5.12.11 修复：仅进程内线程安全辅助锁；跨进程互斥由 _CrossProcessLock(os.open O_CREAT|O_EXCL) 负责
 
@@ -156,8 +159,8 @@ class _CrossProcessLock:
         if self._acquired:
             try:
                 os.remove(self._lock_file)
-            except OSError:
-                pass
+            except OSError as e:
+                logger.warning("_CrossProcessLock.__exit__: failed to remove lock file %s (%s: %s)", self._lock_file, type(e).__name__, e)
             self._acquired = False
         return False
 

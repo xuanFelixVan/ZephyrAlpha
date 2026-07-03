@@ -69,6 +69,7 @@ Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十�
 from __future__ import annotations
 
 import json
+import logging
 import statistics
 import time
 import uuid
@@ -92,6 +93,8 @@ from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",
@@ -888,7 +891,8 @@ class AgentOrchestrator:
                 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
                 AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
-            except Exception:
+            except Exception as e:
+                logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e)
                 return None
         gw = AgentOrchestrator._lsg_gateway_instance
         try:

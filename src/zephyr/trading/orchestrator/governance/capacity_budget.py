@@ -29,10 +29,14 @@
 
 from __future__ import annotations
 
+import logging
+
 from datetime import UTC, datetime
 from enum import Enum
 
 from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
 
 
 class SystemPool(str, Enum):
@@ -148,7 +152,8 @@ class CapacityBudgetController:
     def _try_parse_system(system: str) -> SystemPool | None:
         try:
             return SystemPool(system)
-        except ValueError:
+        except ValueError as e:
+            logger.warning("_try_parse_system: failed to parse system pool %r (%s: %s)", system, type(e).__name__, e)
             return None
 
     def get_pool_quota(self, system: str) -> int:

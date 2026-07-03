@@ -259,7 +259,8 @@ def _force_kill_pid(pid: int) -> bool:
 
             psutil.Process(pid).terminate()
             return True
-        except Exception:
+        except Exception as e:
+            logger.warning("_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e)
             return False
 
 
