@@ -3,7 +3,7 @@ module_id: VIEW-04-TECHNOLOGY-ARCH
 title: Target Architecture — Technology Architecture / 目标架构：技术架构
 doc_type: architecture_view
 status: Active
-version: 2.1.0
+version: 2.1.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -31,8 +31,8 @@ tags:
 - vibe-coding-2.0
 - ai-infrastructure-stack
 - 17-core-selections
-summary: TOGAF Technology Architecture 视图（v2.0.0 重组织版）。技术栈决策、运行时拓扑、 第三方集成、部署运维、DR/BCP、环境矩阵、可观测性、容量模型与成本架构。
-date: '2026-04-22'
+summary: TOGAF Technology Architecture 视图（v2.1.1 轻度瘦身版）。v2.1.1：删除§13修订记录、§6.3失效抽屉引用改为53域、§4/§11标注时点快照。技术栈决策、运行时拓扑、第三方集成、部署运维、DR/BCP、环境矩阵、可观测性、容量模型与成本架构。
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -145,6 +145,8 @@ This view is **driven by** the Application Architecture (application characteris
 
 ## 4. Cross-domain core data flow / 跨域核心数据流
 
+> **注**：以下为示意性核心链路，完整跨域依赖数据见 [`../01_global_architecture_diagram/cross_domain_matrix.md`](../01_global_architecture_diagram/cross_domain_matrix.md)（depgraph 派生）。
+
 ```
 D_MKT_DATA 行情数据 → D_FACTOR 因子 → D_SIGLEGACY 信号 → D_RISK 风控 → D_PF_CORE 组合构建 → D_EX_CORE 执行核心 → D_TRADING 交易运营
 ```
@@ -189,12 +191,15 @@ D_MKT_DATA 行情数据 → D_FACTOR 因子 → D_SIGLEGACY 信号 → D_RISK �
 | 调度 | 手动 / 简单 cron | Airflow / Prefect（Q5-2） |
 | CI/CD | GitHub Actions（lint/audit） | 完整 CI/CD Pipeline + 回滚 |
 
-### 6.3 Security & ops 抽屉状态
+### 6.3 Security & ops 域状态
 
-| 抽屉 | 状态 | 激活条件 |
+> **v2.1.1 修正**：原"06_security_and_identity / 07_sre_and_platform_ops 抽屉"已不存在（docs/ 重组后并入53域）。改为域引用。
+
+| 域 | 状态 | 激活条件 |
 |------|------|---------|
-| `06_security_and_identity` | deferred | 接入真实资金或多用户后激活 |
-| `07_sre_and_platform_ops` | **planned** | 接入真实券商 API / 月可用性 >99.9% / 多 Agent >3 |
+| `D_SECURITY` 对抗验证 | deferred | 接入真实资金或多用户后激活 |
+| `D_OPS` 反馈循环 | **planned** | 接入真实券商 API / 月可用性 >99.9% / 多 Agent >3 |
+| `D_SECURITY_LLM` LLM防御 | deferred | LLM 调用量月均 > 1000 次后激活 |
 
 ---
 
@@ -331,7 +336,7 @@ D_MKT_DATA 行情数据 → D_FACTOR 因子 → D_SIGLEGACY 信号 → D_RISK �
 
 ### 11.1 按域资源预算（experimental 单机）
 
-> 域分类唯一（§2.1 裁定），14 层降级为域属性。容量按域统计，数据源 depgraph。
+> **注**：以下数字为 2026-04 时点估算，会随代码施工进展漂移。域分类唯一（§2.1 裁定），14 层降级为域属性。容量按域统计，数据源 depgraph。
 
 | 域 | CPU (core·h/日) | Memory 峰值 (GB) | Storage 年增 (GB) | IOPS 峰值 |
 |----|:-----:|:------:|:------:|:----:|
@@ -420,20 +425,7 @@ D_MKT_DATA 行情数据 → D_FACTOR 因子 → D_SIGLEGACY 信号 → D_RISK �
 
 ---
 
-## 13. Revision history / 修订记录
-
-| Date | Description |
-|------|-------------|
-| 2026-04-24 | **v2.1.0**：B-d-3 — 追加 §2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）。引用 `architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml` 作为 AI 基础设施的**强约束选型**真源；说明与 `architecture_model/technology/technology_landscape.yaml`（43 项雷达）的"聚焦子集"关系。对应 KBG-0015~0020。 |
-| 2026-04-21 | **v2.0.0**：Architecture-as-Code 重组织——代码示例/配置模板/Post-Activation Mermaid 图精简，视图从 1070 行压缩至 ≤600 行。 |
-| 2026-04-19 | v1.3.0-v1.4.0：批次 C/D 深加工（Deployment + Environment Matrix + Observability + DR/BCP + Capacity + Cost + Runway）。 |
-| 2026-04-18 | v1.1.0：填充 §3 运行时拓扑 + §5 第三方集成。 |
-
-> 完整修订历史：`git log --oneline -- technology_architecture.md`
-
----
-
-## 14. Architecture Runway / 架构预留通道
+## 13. Architecture Runway / 架构预留通道
 
 > 7 条基础设施/技术栈类 P3 预留（分布式计算、云原生迁移、边缘计算、多云部署、区块链审计、SSO、跨机构合规）。
 > 完整条目索引 → `docs/08_knowledge/04_future_capabilities/p3-blueprint-index.md` [待创建]
