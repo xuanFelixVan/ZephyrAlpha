@@ -148,13 +148,13 @@ entries:
 # 真源：本轮审查对话摘要 + 本注册表条目（避免信息漂移）
 
 - issue_id: '#ARCH-020'
-  title: check_rule_four_way_alignment.py 四方对齐门禁静默失效
+  title: check_rule_four_way_alignment.py 四方对齐门禁缺失（文件不存在）
   severity: P0致命
-  adjudication: 修复 scripts/governance/check_rule_four_way_alignment.py line 80/94/130 的过滤条件 `data.get("layer") != "L0"`——该条件读取规则文件 frontmatter 的 layer 字段（值为架构层名如 compliance），永不等于 "L0"，导致过滤条件恒为假、零规则被检查、四方对齐门禁静默失效。治本：改为按 tier 或 severity 过滤（tier 来自 _index.yaml，非 frontmatter layer）。
+  adjudication: 补建 scripts/governance/check_rule_four_way_alignment.py——文件实际不存在，四方对齐门禁（规则YAML ↔ DB ↔ code ↔ path）完全缺失。原裁定指 line 80/94/130 过滤条件 `data.get("layer") != "L0"` 恒为假，但文件本身不存在。治本：补建脚本，过滤条件改为按 tier 或 severity 过滤（tier 来自 _index.yaml，非 frontmatter layer）；先评估是否由现有 depgraph/validate_layer_consistency 等门禁部分覆盖；注册到 GitCommitGateway（in-process gate，无法用 --no-verify 绕过）或 pre-commit 自动触发。
   fix_phase: 待立项（超范围：scripts/governance/）
   status: open
   created: '2026-06-27'
-  last_updated: '2026-06-27'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-021'
   title: scaffold.py layer 默认值违反 SSoT 并持续生成非合规规则文件
   severity: P1高
@@ -190,11 +190,11 @@ entries:
 - issue_id: '#ARCH-025'
   title: d2_links/validate_depends_on_format.py 死代码
   severity: P3低
-  adjudication: 删除 scripts/governance/d2_links/validate_depends_on_format.py（72行脚本，零实际调用方）+ 清理 _detector_registry.yaml 中对该文件的引用（若 ARCH-022 修复后仍引用）。属于技术债清理，非紧急。
+  adjudication: 删除 scripts/governance/d2_links/validate_depends_on_format.py（83行脚本，零实际调用方）+ 清理 _detector_registry.yaml 中对该文件的引用（若 ARCH-022 修复后仍引用）。属于技术债清理，非紧急。
   fix_phase: 待立项（超范围：scripts/governance/d2_links/）
   status: open
   created: '2026-06-27'
-  last_updated: '2026-06-27'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-026'
   title: trae_041 §4.1 PS-STD-004 "Layer" 分类维度与架构层语义碰撞
   severity: P2中
