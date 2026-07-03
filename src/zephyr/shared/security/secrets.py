@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.security.secrets
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS]
+# [CONSUMERS] intelligence.model_profiling.deepseek_v4_chat, intelligence.model_profiling.capability_passport, infrastructure.pipeline.llm_gateway, infrastructure.asset_inventory.telemetry, integration.local_model.deepseek_chat, infrastructure.rollback.rollback_integration, governance.depgraph_schema, trading.feedback_loop.security.secret_rotation, security.llm_defense.llm_security.patterns.secrets(re-export)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -147,6 +147,29 @@ def sanitize_secret(name: str, value: str) -> str:
     return f"***REDACTED*** (len={len(value)})"
 
 
+def _parse_env_file(path: Path) -> dict[str, str]:
+    """解析 .env 文件，返回 KEY=VALUE 字典（去引号，跳注释/空行）。
+
+    .env 文件解析唯一真源——DotEnvSecretProvider._load_env_file 和
+    get_secret_from_file 共用，避免解析逻辑重复（§5.17.10 真源统一）。
+    """
+    values: dict[str, str] = {}
+    if not path.is_file():
+        return values
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip()
+            if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+                value = value[1:-1]
+            values[key] = value
+    return values
+
+
 @runtime_checkable
 class SecretProvider(Protocol):
     """Secret 读取接口——async + 无依赖。
@@ -239,19 +262,7 @@ class DotEnvSecretProvider:
             self._loaded = True
             return
 
-        with open(self._env_file, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                if "=" not in line:
-                    continue
-                key, _, value = line.partition("=")
-                key = key.strip()
-                value = value.strip()
-                if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
-                    value = value[1:-1]
-                self._values[key] = value
+        self._values = _parse_env_file(self._env_file)
 
         self._loaded = True
         logger.info("loaded %d secrets from '%s'", len(self._values), self._env_file)
@@ -391,21 +402,13 @@ def get_secret_from_file(key: str, env_file: str | Path) -> str:
             f"env file not found: {env_path}",
             details={"key": key, "env_file": str(env_path)},
         )
-    with open(env_path, encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            k, _, v = line.partition("=")
-            if k.strip() == key:
-                v = v.strip()
-                if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
-                    v = v[1:-1]
-                return v
-    raise SecretsError(
-        f"secret '{key}' not found in {env_path}",
-        details={"key": key, "env_file": str(env_path)},
-    )
+    values = _parse_env_file(env_path)
+    if key not in values:
+        raise SecretsError(
+            f"secret '{key}' not found in {env_path}",
+            details={"key": key, "env_file": str(env_path)},
+        )
+    return values[key]
 
 
 def get_secret_from_file_or_default(key: str, env_file: str | Path, default: str = "") -> str:

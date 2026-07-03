@@ -120,6 +120,15 @@ def _deferred_bootstrap():
         _auto_bootstrap_result = _auto_bootstrap()
     except Exception:
         _auto_bootstrap_result = None
+    # §5.17.14 治本：自动接入 secret_rotation 到 SecretProvider
+    # 扫描 os.environ 中的密钥变量（KEY/TOKEN/SECRET/PASSWORD等）注册轮换调度，
+    # 注入后所有 get_secret* 读取时前置 needs_rotation 检查（warn 不阻断）。
+    try:
+        from zephyr.trading.feedback_loop.security.secret_rotation import auto_configure
+
+        auto_configure()
+    except Exception:
+        pass
 
 
 _bootstrap_timer = threading.Timer(0.05, _deferred_bootstrap)

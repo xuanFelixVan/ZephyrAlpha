@@ -72,3 +72,42 @@ class SecretRotation:
 
     def pending_rotations(self) -> list[str]:
         return [sid for sid, e in self.secrets.items() if e.needs_rotation]
+
+
+# ============ 自动接入 SecretProvider（§5.17.14 治本） ============
+# 痛点：configure_secret_rotation 定义了但无调用者，_rotation_registry 永远 None，
+# 轮换检查空转。本函数在应用启动时自动扫描 os.environ 中的密钥变量并注册，
+# 然后注入到 SecretProvider——全自动，无需手工维护密钥列表。
+#
+# 设计：
+#   - 扫描规则复用 SECRET_INDICATOR_PATTERNS（secrets.py 已有真源），不硬编码密钥列表
+#   - 依赖方向正确：trading/ → shared/（单向）
+#   - 放在此模块（trading/）而非 secrets.py（shared/），避免 shared→trading 循环依赖
+
+
+def auto_configure(interval_days: int = 90) -> int:
+    """自动扫描 os.environ 中的密钥变量，注册到 SecretRotation 并注入 SecretProvider。
+
+    扫描规则：变量名（大写）包含 SECRET_INDICATOR_PATTERNS 中的任意模式
+    （KEY/TOKEN/SECRET/PASSWORD/PASSWD/PWD/CREDENTIAL）即视为密钥变量。
+
+    在 zephyr/__init__.py 的 _deferred_bootstrap 中自动调用（后台线程，不阻塞冷启动）。
+    .env 文件已在 _load_dotenv() 中加载到 os.environ，故扫描覆盖全部已配置密钥。
+
+    Args:
+        interval_days: 默认轮换间隔天数（90天）。
+
+    Returns:
+        注册的密钥数量。
+    """
+    import os
+
+    from zephyr.shared.security.secrets import SECRET_INDICATOR_PATTERNS, configure_secret_rotation
+
+    registry = SecretRotation()
+    for key in os.environ:
+        key_upper = key.upper()
+        if any(pattern in key_upper for pattern in SECRET_INDICATOR_PATTERNS):
+            registry.register(key, service_name=key, interval_days=interval_days)
+    configure_secret_rotation(registry)
+    return len(registry.secrets)
