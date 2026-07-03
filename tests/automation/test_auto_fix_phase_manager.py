@@ -16,12 +16,12 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.infrastructure.rollback.phase_manager import (
+from zephyr.governance.ops_governance.phase_manager import (
     ConstructionPhase,
     PHASE_SEQUENCE,
     get_phase,
 )
-from zephyr.infrastructure.rollback.phase_check_registry import (
+from zephyr.governance.ops_governance.phase_check_registry import (
     GateResult,
     PhaseCheckRegistry,
     check_auto_fix_start,

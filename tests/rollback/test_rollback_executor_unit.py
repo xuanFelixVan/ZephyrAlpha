@@ -300,7 +300,7 @@ class TestDiscardConcurrencyGuard:
 
     def test_discard_blocked_by_other_session_lock(self):
         """文件被其他 session 锁定 → BLOCKED_BY_OWNER"""
-        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+        from zephyr.infrastructure.runtime.concurrency_guard import ConflictResult
 
         exec = RollbackExecutor()
         conflict = ConflictResult(
@@ -320,7 +320,7 @@ class TestDiscardConcurrencyGuard:
 
     def test_discard_no_lock_conflict_proceeds(self):
         """无锁冲突 → 正常进入 discard 流程"""
-        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+        from zephyr.infrastructure.runtime.concurrency_guard import ConflictResult
 
         exec = RollbackExecutor()
         conflict = ConflictResult(has_conflict=False, blocked_files=[])
@@ -342,7 +342,7 @@ class TestExecuteConcurrencyGuard:
 
     def test_execute_blocked_by_concurrency_conflict(self):
         """回滚文件被其他 session 锁定 → 返回失败"""
-        from zephyr.infrastructure.rollback.concurrency_guard import ConflictResult
+        from zephyr.infrastructure.runtime.concurrency_guard import ConflictResult
 
         exec = RollbackExecutor()
         conflict = ConflictResult(
@@ -368,7 +368,7 @@ class TestExecuteConcurrencyGuard:
     def test_execute_stash_blocked_other_session_files(self):
         """stash 前发现其他 session 未提交文件 → 阻断"""
         from zephyr.infrastructure.rollback.rollback_executor import PreflightResult
-        from zephyr.infrastructure.rollback.concurrency_guard import StashPlan
+        from zephyr.infrastructure.runtime.concurrency_guard import StashPlan
 
         exec = RollbackExecutor()
         preflight = PreflightResult(

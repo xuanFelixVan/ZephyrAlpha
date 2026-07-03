@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.infrastructure.rollback.fsm_verifier import (
+from zephyr.governance.financial_governance.fsm_verifier import (
     FSM_INITIAL,
     FSM_INVARIANTS,
     FSM_TERMINAL,

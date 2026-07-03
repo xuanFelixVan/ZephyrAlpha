@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.infrastructure.rollback.confidence_quantifier import (
+from zephyr.governance.intelligence_governance.confidence_quantifier import (
     ConfidenceQuantifier,
     ConfidenceResult,
 )

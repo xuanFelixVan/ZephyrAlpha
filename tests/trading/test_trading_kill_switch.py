@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.infrastructure.rollback.trading_kill_switch import (
+from zephyr.trading.trading_contracts.risk.trading_kill_switch import (
     KILL_SWITCHES,
     KillSwitch,
     KillSwitchLevel,

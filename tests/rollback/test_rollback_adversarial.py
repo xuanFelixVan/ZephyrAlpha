@@ -35,7 +35,7 @@ class TestAdversarialB121_SandboxEscape:
     """B121: Agent sandbox enforcement — enforce / status"""
 
     def test_sandbox_enforce_not_in_sandbox_blocked(self):
-        from zephyr.infrastructure.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.infrastructure.runtime.sandbox_enforcer import SandboxEnforcer, SandboxMode
 
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         result = enforcer.enforce()
@@ -43,7 +43,7 @@ class TestAdversarialB121_SandboxEscape:
         assert result.exit_code == 39
 
     def test_sandbox_activated_ok(self):
-        from zephyr.infrastructure.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.infrastructure.runtime.sandbox_enforcer import SandboxEnforcer, SandboxMode
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -54,7 +54,7 @@ class TestAdversarialB121_SandboxEscape:
             assert not result.breached
 
     def test_sandbox_mode_none_disables(self):
-        from zephyr.infrastructure.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.infrastructure.runtime.sandbox_enforcer import SandboxEnforcer, SandboxMode
 
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.NONE)
         result = enforcer.enforce()
@@ -62,7 +62,7 @@ class TestAdversarialB121_SandboxEscape:
         assert "disabled" in result.reason.lower()
 
     def test_sandbox_status(self):
-        from zephyr.infrastructure.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.infrastructure.runtime.sandbox_enforcer import SandboxEnforcer, SandboxMode
 
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         status = enforcer.status()
@@ -74,7 +74,7 @@ class TestAdversarialB122_SecuritySabotage:
     """B122: validate_file_access for security-sensitive files"""
 
     def test_sandbox_blocks_sensitive_file_access(self):
-        from zephyr.infrastructure.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.infrastructure.runtime.sandbox_enforcer import SandboxEnforcer, SandboxMode
 
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         result = enforcer.validate_file_access(Path(".env.local"))
@@ -179,7 +179,7 @@ class TestAdversarialB126_CrossAgentConflict:
     """B126: CrossAgentConflictDetector — detect_conflicts"""
 
     def test_conflict_detector_no_uncommitted(self):
-        from zephyr.infrastructure.rollback.cross_agent_conflict_detector import CrossAgentConflictDetector
+        from zephyr.governance.intelligence_governance.cross_agent_conflict_detector import CrossAgentConflictDetector
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

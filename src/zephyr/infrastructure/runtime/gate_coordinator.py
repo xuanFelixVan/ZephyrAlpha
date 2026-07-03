@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
-# [MODULE] zephyr.infrastructure.rollback.gate_coordinator
+# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_INFRA_RUNTIME)
+# [MODULE] zephyr.infrastructure.runtime.gate_coordinator
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__
+# [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
 # [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production

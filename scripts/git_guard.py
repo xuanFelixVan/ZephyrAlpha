@@ -60,7 +60,7 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.infrastructure.rollback.concurrency_guard import (
+from zephyr.infrastructure.runtime.concurrency_guard import (
     ConcurrencyConflictError,
     check_rollback_conflict,
     scan_active_locks,

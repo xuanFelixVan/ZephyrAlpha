@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.infrastructure.rollback.startup_shutdown import (
+from zephyr.infrastructure.runtime.startup_shutdown import (
     SHUTDOWN_SEQUENCE,
     STARTUP_DAG,
     PhaseState,

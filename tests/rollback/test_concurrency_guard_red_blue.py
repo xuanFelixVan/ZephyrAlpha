@@ -56,7 +56,7 @@ for _p in [str(_SRC), str(_PROJECT_ROOT)]:
 
 # 导入 git_guard（scripts 包）
 from scripts.git_guard import _EXTRACTORS, DANGEROUS_SUBCOMMANDS, check_and_execute
-from zephyr.infrastructure.rollback.concurrency_guard import (
+from zephyr.infrastructure.runtime.concurrency_guard import (
     DEFAULT_TTL_S,
     scan_active_locks,
 )
@@ -559,7 +559,7 @@ class TestDefenseSummary:
 
     def test_session_id_isolation(self, temp_git_repo, other_session_lock):
         """验证 session_id 隔离：其他 session 的锁对本 session 是冲突"""
-        from zephyr.infrastructure.rollback.concurrency_guard import check_rollback_conflict
+        from zephyr.infrastructure.runtime.concurrency_guard import check_rollback_conflict
 
         # 本 session 检查 → 冲突
         result = check_rollback_conflict(["src/important.py"], "session-me", temp_git_repo)

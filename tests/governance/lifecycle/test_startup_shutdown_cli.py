@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pytest
 
-from zephyr.infrastructure.rollback.startup_shutdown_cli import (
+from zephyr.governance.ops_governance.startup_shutdown_cli import (
     build_argparser,
     main,
     parse_phase_range,

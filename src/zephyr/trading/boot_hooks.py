@@ -392,7 +392,7 @@ def register_boot_hooks() -> None:
                 to_status = getattr(event, "to_status", "")
                 if to_status.upper() != "ROLLBACK":
                     return
-                from zephyr.infrastructure.rollback.gate_coordinator import freeze_all_gates
+                from zephyr.infrastructure.runtime.gate_coordinator import freeze_all_gates
 
                 result = freeze_all_gates()
                 logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)

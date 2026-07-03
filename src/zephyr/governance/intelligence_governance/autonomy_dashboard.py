@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
-# [MODULE] zephyr.infrastructure.rollback.autonomy_dashboard
-# [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES]
+# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
+# [MODULE] zephyr.governance.intelligence_governance.autonomy_dashboard
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

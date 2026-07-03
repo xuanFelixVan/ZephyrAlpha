@@ -51,7 +51,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from zephyr.infrastructure.rollback.concurrency_guard import (
+from zephyr.infrastructure.runtime.concurrency_guard import (
     check_rollback_conflict,
     classify_uncommitted_files,
 )

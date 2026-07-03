@@ -238,7 +238,7 @@ class TestArchive:
 
 class TestPhaseCheckIntegration:
     def test_gate_observability_baseline_green(self):
-        from zephyr.infrastructure.rollback.phase_check_registry import GateResult, check_observability_baseline
+        from zephyr.governance.ops_governance.phase_check_registry import GateResult, check_observability_baseline
 
         result = check_observability_baseline()
         assert result == GateResult.GREEN, f"Expected GREEN, got {result}"

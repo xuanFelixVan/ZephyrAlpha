@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.infrastructure.rollback.phase_manager import (
+from zephyr.governance.ops_governance.phase_manager import (
     PHASE_SEQUENCE,
     ConstructionPhase,
     GateResult,

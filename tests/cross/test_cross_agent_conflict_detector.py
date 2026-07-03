@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.infrastructure.rollback.cross_agent_conflict_detector import (
+from zephyr.governance.intelligence_governance.cross_agent_conflict_detector import (
     ConflictReport,
     CrossAgentConflictDetector,
 )
