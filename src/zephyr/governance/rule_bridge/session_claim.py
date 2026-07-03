@@ -2,19 +2,26 @@
 # [MODULE] zephyr.governance.rule_bridge.session_claim
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry)
-# [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_claim_cli.py
+# [CONSUMERS] 已废弃（superseded by session_worktree_start，FP-ISO.4C，2026-07-04）；generate_session_id 仍被 zephyr.governance.rule_bridge.session_worktree 调用
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] session_claim_start 原子注册+claim（register 后逐个 claim_file，冲突文件跳过并记录）；session_claim_add 返回 conflict=True 时 AI MUST 等待或换文件（软约束）；session_claim_end 释放所有 held_files 并 unregister；session_id 格式 sess-{PID}-{yyyyMMddHHmmss}（Trae 对话无内置 session_id，由 AI 自生成）；所有函数 project_root 默认 REPO_ROOT
+# [MATURITY] deprecated
+# [INVARIANTS] 已废弃（superseded by session_worktree_start + HELD-OVERLAP gate，FP-ISO.4C，2026-07-04）：session_claim_start/add/check/heartbeat/end 零实际调用方（死代码），claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断完全替代且更强（编辑前软预警 → commit 时硬阻断）；generate_session_id 保留（纯函数，被 session_worktree.py 调用）；session_claim_start 原子注册+claim（register 后逐个 claim_file，冲突文件跳过并记录）；session_claim_add 返回 conflict=True 时 AI MUST 等待或换文件（软约束）；session_claim_end 释放所有 held_files 并 unregister；session_id 格式 sess-{PID}-{yyyyMMddHHmmss}（Trae 对话无内置 session_id，由 AI 自生成）；所有函数 project_root 默认 REPO_ROOT
 # [MODIFY-GUARD] session_id 生成规则；claim 冲突语义（conflict=True 不抛异常）；TTL 续期策略
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有函数返回 dict（不抛异常）；registry 异常时 conflict=True + error 字段；session 不存在时返回 not_found=True
-# [TESTS] tests/governance/rule_enforcement/test_session_claim.py
+# [TESTS] —（已废弃，无测试；generate_session_id 由 tests/governance/rule_bridge/test_session_worktree.py 间接覆盖）
 # [A_module] module_id=MOD-GOV-session_claim | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
+
+.. deprecated:: 2026-07-04
+    ``session_claim_start``/``add``/``check``/``heartbeat``/``end`` 已废弃，
+    被 ``session_worktree_start``（FP-ISO.4C worktree 物理隔离）+ ``HELD-OVERLAP`` gate
+    完全替代且更强（编辑前软预警 → commit 时硬阻断）。零实际调用方（死代码）。
+    AI 对话启动请改用 ``zephyr.governance.rule_bridge.session_worktree.session_worktree_start``。
+    ``generate_session_id`` 保留（纯函数，被 ``session_worktree.py`` 调用）。
 
 提供 AI 对话启动时的 session 注册 + 文件 claim + 冲突检测 + 心跳续期 + 结束
 释放一体化接口。适配 Trae IDE「共享工作目录 + 多 AI 对话并发」模式——编辑期
