@@ -26,6 +26,7 @@ Trace Decorator — 可观测性追踪 @trace 装饰器。
 
 import functools
 import json
+import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -47,22 +48,29 @@ class TraceSpan:
 
 class TraceCollector:
     _instance: TraceCollector | None = None
+    _lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：单例创建线程安全
 
     def __init__(self) -> None:
         self._spans: list[TraceSpan] = []
         self._output_dir = Path("data/traces")
+        self._spans_lock = threading.Lock()  # Phase 2 P2 修复：共享 _spans list 线程安全
 
     @classmethod
     def get_instance(cls) -> TraceCollector:
         if cls._instance is None:
-            cls._instance = cls()
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = cls()
         return cls._instance
 
     def add_span(self, span: TraceSpan) -> None:
-        self._spans.append(span)
+        with self._spans_lock:
+            self._spans.append(span)
 
     def flush(self) -> list[TraceSpan]:
-        spans = list(self._spans)
+        with self._spans_lock:
+            spans = list(self._spans)
+            self._spans.clear()
         self._output_dir.mkdir(parents=True, exist_ok=True)
         output_path = self._output_dir / f"trace-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}.jsonl"
         with open(output_path, "a", encoding="utf-8") as f:
@@ -82,7 +90,6 @@ class TraceCollector:
                     )
                     + "\n"
                 )
-        self._spans.clear()
         return spans
 
 
