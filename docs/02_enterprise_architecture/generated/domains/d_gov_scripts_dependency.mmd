@@ -1,7 +1,7 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-07-04 03:06:32
+%% 生成时间: 2026-07-04 03:47:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 427, 依赖边数: 401
+%% 模块数: 426, 依赖边数: 400
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_governance_d12_ai_hall___idate_session_gate_check_py["...nation/validate_session_gate_check.py [prototype]"]
         scripts_governance_d1_structure___init___py["...s/governance/d1_structure/__init__.py [prototype]"]
         scripts_governance_d1_structure_archive_drafts_zone_py["...e/d1_structure/archive_drafts_zone.py [production]"]
-        %% ... 还有 327 个模块未显示
+        %% ... 还有 326 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -159,7 +159,6 @@ graph TD
     scripts_governance_d1_structure_validate_immutable_core_py -->|config_depends| scripts_governance_d1_structure___init___py
     scripts_governance_d2_links_audit_broken_links_py -->|config_depends| scripts_governance_d2_links___init___py
     scripts_governance_d1_structure_validate_index_reality_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d2_links_validate_depends_on_format_py -->|config_depends| scripts_governance_d2_links___init___py
     scripts_governance_d2_links_detect_relative_references_py -->|config_depends| scripts_governance_d2_links___init___py
     scripts_governance_d3_metadata_auto_generate_index_py -->|config_depends| scripts_governance_d3_metadata___init___py
     scripts_governance_d3_metadata_backfill_doctype_metadata_py -->|config_depends| scripts_governance_d3_metadata___init___py
@@ -191,7 +190,8 @@ graph TD
     scripts_governance_d5_architec____analyze_contract_impact_py -->|config_depends| scripts_governance_d5_architecture_analyzers___init___py
     scripts_governance_d5_architec___rint_template_compliance_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
     scripts_governance_d5_architec___s_check_code_duplication_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
-    %% ... 还有 228 条域内依赖未显示
+    scripts_governance_d5_architec___k_contract_physical_path_py -->|config_depends| scripts_governance_d5_architecture_checkers___init___py
+    %% ... 还有 227 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_GOV_SCRIPTS (2 条)
@@ -296,6 +296,6 @@ graph TD
     scripts_governance_repair_concurrent_write_test_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 308 条
+    %% 域内依赖: 307 条
     %% 跨域入边: 8 条
     %% 跨域出边: 85 条

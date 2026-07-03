@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 rollback_recovery（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 03:06:30
+> 最后更新: 2026-07-04 03:47:14
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 54 | Module Count | 54 |
 | 域内依赖 | 52 | Internal Dependencies | 52 |
-| 跨域入边 | 94 | Cross-domain Incoming | 94 |
-| 跨域出边 | 26 | Cross-domain Outgoing | 26 |
+| 跨域入边 | 63 | Cross-domain Incoming | 63 |
+| 跨域出边 | 13 | Cross-domain Outgoing | 13 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 5 | Prototype Modules | 5 |
 | 生产态模块 | 49 | Production Modules | 49 |
@@ -213,23 +213,20 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_GOVERNANCE | 15 | import_depends |
-| D_SHARED | 8 | import_depends |
-| D_INTEGRATION | 2 | import_depends |
-| D_SECURITY | 1 | import_depends |
+| D_GOVERNANCE | 8 | import_depends |
+| D_SHARED | 5 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 75 | test_depends |
-| D_GOVERNANCE | 10 | import_depends |
+| D_AUDITTEST | 53 | test_depends |
+| D_GOVERNANCE | 3 | import_depends |
 | D_GOV_ENFORCEMENT | 3 | import_depends |
-| D_TRADING | 2 | import_depends |
-| D_INFRA_TELEMETRY | 1 | import_depends |
+| D_INFRA_RUNTIME | 1 | import_depends |
 | D_INTEGRATION | 1 | import_depends |
 | D_INTEGRATION_GATEWAY | 1 | import_depends |
-| D_INFRA_RUNTIME | 1 | import_depends |
+| D_TRADING | 1 | import_depends |
 
 ## 架构分层视图 / Architecture Overview
 

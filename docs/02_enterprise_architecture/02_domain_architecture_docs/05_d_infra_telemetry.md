@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 observability_profiling（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 03:06:30
+> 最后更新: 2026-07-04 03:47:14
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 36 | Internal Dependencies | 36 |
 | 跨域入边 | 9 | Cross-domain Incoming | 9 |
-| 跨域出边 | 8 | Cross-domain Outgoing | 8 |
+| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 12 | Prototype Modules | 12 |
 | 生产态模块 | 13 | Production Modules | 13 |
@@ -150,7 +150,6 @@ graph TD
 |--------|:---:|---------|
 | D_SHARED | 6 | import_depends |
 | D_GOVERNANCE | 1 | import_depends |
-| D_INFRA_RECOVERY | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

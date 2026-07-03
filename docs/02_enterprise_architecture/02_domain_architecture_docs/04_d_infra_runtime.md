@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 runtime_core（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 03:06:30
+> 最后更新: 2026-07-04 03:47:14
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_INFRA_RUNTIME | Domain ID | D_INFRA_RUNTIME |
 | 域名称 | runtime_core | Domain Name | runtime_core |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 147 | Module Count | 147 |
+| 模块数 | 150 | Module Count | 150 |
 | 域内依赖 | 144 | Internal Dependencies | 144 |
 | 跨域入边 | 190 | Cross-domain Incoming | 190 |
 | 跨域出边 | 87 | Cross-domain Outgoing | 87 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 51 | Prototype Modules | 51 |
-| 生产态模块 | 96 | Production Modules | 96 |
+| 生产态模块 | 99 | Production Modules | 99 |
 | 容量 | 96/150 (正常) | Capacity | 96/150 (正常) |
 | 描述 | 三层运行时编排(L1 Trae/L2 Local/L3 API) | Description | 三层运行时编排(L1 Trae/L2 Local/L3 API) |
 
@@ -452,6 +452,9 @@ graph TD
         src_zephyr_infrastructure_registry_governance_py["src/zephyr/infrastructure/registry_governance.py production"]
         src_zephyr_infrastructure_resource_provider_py["src/zephyr/infrastructure/resource_provider.py prototype"]
         src_zephyr_infrastructure_runtime_init_py["src/zephyr/infrastructure/runtime/__init__.py prototype"]
+        src_zephyr_infrastructure_runtime_concurrency_guard_py["src/zephyr/infrastructure/runtime/concurrency_g... production"]
+        src_zephyr_infrastructure_runtime_gate_coordinator_py["src/zephyr/infrastructure/runtime/gate_coordina... production"]
+        src_zephyr_infrastructure_runtime_sandbox_enforcer_py["src/zephyr/infrastructure/runtime/sandbox_enfor... production"]
         src_zephyr_infrastructure_sandbox_server_py["src/zephyr/infrastructure/sandbox_server.py prototype"]
         src_zephyr_infrastructure_script_system_init_py["src/zephyr/infrastructure/script_system/__init_... prototype"]
         src_zephyr_infrastructure_script_system_finding_py["src/zephyr/infrastructure/script_system/finding.py production"]
@@ -514,7 +517,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_registry_governance_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py production
+    class src_zephyr_infrastructure_registry_governance_py,src_zephyr_infrastructure_runtime_concurrency_guard_py,src_zephyr_infrastructure_runtime_gate_coordinator_py,src_zephyr_infrastructure_runtime_sandbox_enforcer_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py production
     class src_zephyr_infrastructure_resource_provider_py,src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_services_init_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_state_machine_py design
     class D_INTEGRATION,D_SHARED,D_TRADING external_prod
     class D_GOVERNANCE,D_AUDITTEST,D_GOV_SCRIPTS external_design
@@ -549,7 +552,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 runtime_core（D_INFRA_RUNTIME）的模块分布。共 147 个模块 / 147 modules。
+> 按 architecture_layer 分层显示 runtime_core（D_INFRA_RUNTIME）的模块分布。共 150 个模块 / 150 modules。
 
 ```
 
@@ -576,12 +579,21 @@ graph TD
 │   src/zephyr/infrastructure/asset_inventory/scanner.py  [prod... │
 │   ...还有 129 个模块 / 129 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (3 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/infrastructure/runtime/concurrency_guard.py  [pr... │
+│   src/zephyr/infrastructure/runtime/gate_coordinator.py  [pro... │
+│   src/zephyr/infrastructure/runtime/sandbox_enforcer.py  [pro... │
+└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 147 个模块 / 147 modules）。
+> 按 architecture_layer 分组的模块清单（共 150 个模块 / 150 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (147 modules)
 
@@ -734,6 +746,14 @@ graph TD
 | 145 | src/zephyr/shared/lifecycle/state_machine.py | src/zephyr/shared/lifecycle/state_mac... | prototype | generated |
 | 146 | src/zephyr/shared/lifecycle/task_heartbeat.py | src/zephyr/shared/lifecycle/task_hear... | production | generated |
 | 147 | src/zephyr/shared/lifecycle/ttl_cleanup_engine.py | src/zephyr/shared/lifecycle/ttl_clean... | production | generated |
+
+### 未分类 / Unclassified (3 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/infrastructure/runtime/concurrency_guard.py | src/zephyr/infrastructure/runtime/con... | production | generated |
+| 2 | src/zephyr/infrastructure/runtime/gate_coordinator.py | src/zephyr/infrastructure/runtime/gat... | production | generated |
+| 3 | src/zephyr/infrastructure/runtime/sandbox_enforcer.py | src/zephyr/infrastructure/runtime/san... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
