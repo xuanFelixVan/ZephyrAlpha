@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import logging
 import os
+import random
 import threading
 import time
 from collections.abc import Callable
@@ -840,6 +841,10 @@ class ResourceOptimizationEngine:
                 retries,
                 self._self_healing_max_retries,
             )
+            # 5.72.4 修复：exponential backoff + jitter 避免重试风暴
+            if retries < self._self_healing_max_retries:
+                _delay = (2 ** retries) + random.uniform(0, 1)
+                time.sleep(min(_delay, 30.0))
 
         logger.warning("ResourceOptimizationEngine: self-heal failed after %d retries", retries)
         return None

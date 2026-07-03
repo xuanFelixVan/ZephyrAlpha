@@ -5563,30 +5563,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.72 重试风暴预防（6个，第15轮新增）
 
-#### 5.72.1 [HIGH] DeepSeekChat._ask_with_retry无backoff无jitter（立即重试）
-
-- **文件**：`src/zephyr/integration/local_model/deepseek_chat.py:213-241`
-- **证据**：重试循环中无任何 `time.sleep()`，失败后立即重试。当DeepSeek API限流或临时不可用时，立即重试会加剧负载，多客户端并发时产生请求风暴。无circuit breaker保护。
-- **修复**：添加指数退避+jitter。
-
-#### 5.72.2 [HIGH] OllamaChat._ask_with_retry无backoff无jitter且不捕获异常
-
-- **文件**：`src/zephyr/integration/local_model/ollama_chat.py:348-366`
-- **证据**：双重缺陷：(1) 无 `try/except`，`self.ask()` 抛异常时重试逻辑完全不生效，直接传播；(2) 空响应重试无 `time.sleep()`，立即重试。重试机制形同虚设且无退避。
-- **修复**：添加try/except + 指数退避。
-
-#### 5.72.3 [MEDIUM] DeepSeekV4Chat._ask_with_retry固定延迟无exponential backoff无jitter
-
-- **文件**：`src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py:514-556`；副本 `pipeline_routing/deepseek_v4_chat.py:376-417`
-- **证据**：使用固定 `_time.sleep(1.0)`（空响应）和 `_time.sleep(2.0)`（异常），无指数退避，无jitter。多实例并发重试时会产生同步重试（惊群效应），无法分散负载。两个文件存在相同缺陷（代码重复且缺陷复制）。
-- **修复**：改为指数退避+jitter。
-
-#### 5.72.4 [MEDIUM] ResourceOptimizationEngine._self_heal_cycle重试无backoff
-
-- **文件**：`src/zephyr/trading/resource_optimization.py:814-845`
-- **证据**：自愈循环失败后 `retries += 1` 立即重试（失败路径无 `time.sleep()`）。在资源压力场景下，立即重试 `optimize()` 可能加剧资源争用，形成"压力→自愈→重试→更大压力"的恶性循环。仅有总超时限制，无退避。
-- **修复**：失败路径添加退避延迟。
-
 #### 5.72.5 [LOW] DeadlockDetector.retry_with_backoff有backoff但无jitter
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:76-86`

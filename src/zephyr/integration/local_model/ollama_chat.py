@@ -33,7 +33,9 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 import re
+import time
 from typing import Any
 
 _log = logging.getLogger(__name__)
@@ -356,13 +358,25 @@ class OllamaChat:
         max_retries: int = 2,
     ) -> str:
         for attempt in range(max_retries):
-            raw = self.ask(prompt, system=system, temperature=temperature)
-            if raw and len(raw.strip()) > 0:
-                return raw
+            try:
+                raw = self.ask(prompt, system=system, temperature=temperature)
+                if raw and len(raw.strip()) > 0:
+                    return raw
+                if attempt < max_retries - 1:
+                    _log.warning(
+                        "OllamaChat: %s empty response attempt %d/%d, retrying...", work_type, attempt + 1, max_retries
+                    )
+            except Exception as exc:
+                if attempt < max_retries - 1:
+                    _log.warning(
+                        "OllamaChat: %s error attempt %d/%d: %s, retrying...", work_type, attempt + 1, max_retries, exc
+                    )
+                else:
+                    raise
+            # 5.72.2 修复：exponential backoff + jitter；添加 try/except 捕获异常
             if attempt < max_retries - 1:
-                _log.warning(
-                    "OllamaChat: %s empty response attempt %d/%d, retrying...", work_type, attempt + 1, max_retries
-                )
+                delay = (2 ** attempt) + random.uniform(0, 1)
+                time.sleep(delay)
         _log.warning("OllamaChat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"
 

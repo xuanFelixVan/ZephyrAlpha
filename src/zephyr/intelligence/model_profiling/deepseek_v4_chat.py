@@ -38,8 +38,10 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random as _random
 import re
 import sys
+import time as _time
 from typing import Any
 
 from zephyr.shared.security.secrets import get_secret_or_default
@@ -522,8 +524,6 @@ class DeepSeekV4Chat:
         temperature: float = 0.0,
         max_retries: int = 3,
     ) -> str:
-        import time as _time
-
         for attempt in range(max_retries):
             try:
                 raw = self.ask(prompt, system=system, temperature=temperature)
@@ -536,7 +536,9 @@ class DeepSeekV4Chat:
                         attempt + 1,
                         max_retries,
                     )
-                    _time.sleep(1.0)
+                    # 5.72.3 修复：exponential backoff + jitter 替代固定延迟
+                    _delay = (2 ** attempt) + _random.uniform(0, 1)
+                    _time.sleep(_delay)
             except Exception as exc:
                 if attempt < max_retries - 1:
                     _log.warning(
@@ -546,7 +548,9 @@ class DeepSeekV4Chat:
                         max_retries,
                         exc,
                     )
-                    _time.sleep(2.0)
+                    # 5.72.3 修复：exponential backoff + jitter 替代固定延迟
+                    _delay = (2 ** attempt) + _random.uniform(0, 1)
+                    _time.sleep(_delay)
                 else:
                     _log.error(
                         "DeepSeekV4Chat: %s all %d attempts failed: %s",

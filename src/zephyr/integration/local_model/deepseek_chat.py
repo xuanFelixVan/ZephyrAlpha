@@ -37,7 +37,9 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 import re
+import time
 from pathlib import Path
 from typing import Any
 from zephyr.shared.io.paths import REPO_ROOT
@@ -238,6 +240,10 @@ class DeepSeekChat:
                     )
                 else:
                     raise
+            # 5.72.1 修复：exponential backoff + jitter 避免请求风暴
+            if attempt < max_retries - 1:
+                delay = (2 ** attempt) + random.uniform(0, 1)
+                time.sleep(delay)
         _log.warning("DeepSeekChat: %s all %d attempts returned empty", work_type, max_retries)
         return "{}"
 
