@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.security.secret_rotation
 # [DOMAIN] D_OPS
-# [DEPENDENCIES]
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.shared.security.secrets (SECRET_INDICATOR_PATTERNS, configure_secret_rotation)
+# [CONSUMERS] zephyr.__init__._deferred_bootstrap (auto_configure)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
