@@ -3,7 +3,7 @@ module_id: VIEW-09-GOVERNANCE-ARCH
 title: Target Architecture — Governance Architecture / 目标架构：治理架构
 doc_type: architecture_view
 status: Active
-version: 2.2.1
+version: 2.2.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ tags:
 - runtime-planes-boundary
 - ssot-validator
 - -gate
-- 6-core-services-governance
+- 5-core-services-governance
 summary: TOGAF 第 9 视图——治理架构。三层治理边界（Policy/Factory/Runtime）横切整个系统， 承载 D1-D4 + OQ-026
   拍板。46 治理系统分层归属（A21+B1+C17+VB1+D6）。 v2.0.0 重组织：物理位置树 → 合并表引用 scripts_model.yaml；接口描述
   → 表格化。
