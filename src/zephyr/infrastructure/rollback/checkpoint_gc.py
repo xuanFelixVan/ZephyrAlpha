@@ -31,9 +31,12 @@ CheckpointGC — Checkpoint 垃圾回收。
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -85,8 +88,8 @@ class CheckpointGC:
             try:
                 sp.unlink()
                 deleted.append(sp.name)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("CheckpointGC.collect: snapshot unlink failed for %s (%s: %s)", sp.name, type(e).__name__, e)
 
         total_after = total_before - len(deleted)
         return GCResult(

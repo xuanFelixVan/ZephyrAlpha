@@ -205,7 +205,8 @@ class AutoRuntimeCore:
                 timeout=timeout_s,
             )
             return resp.status_code == 200
-        except Exception:
+        except Exception as e:
+            logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e)
             return False
 
     def _ensure_ollama_running(self) -> bool:
@@ -221,7 +222,8 @@ class AutoRuntimeCore:
             if os.name == "nt":
                 kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
             subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
             return False
 
         for _ in range(10):

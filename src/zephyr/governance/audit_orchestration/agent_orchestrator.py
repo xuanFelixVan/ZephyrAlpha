@@ -70,6 +70,7 @@ from __future__ import annotations
 
 import importlib
 import json
+import logging
 import statistics
 import threading
 import time
@@ -92,6 +93,8 @@ from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEX
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",
@@ -930,10 +933,10 @@ class AgentOrchestrator:
 
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_agent_scan"
-            except Exception:
-                pass
-        except Exception:
-            pass
+            except Exception as e:
+                logger.warning("AgentOrchestrator._lsg_scan_agent_action: fallback loop scan failed (%s: %s)", type(e).__name__, e)
+        except Exception as e:
+            logger.warning("AgentOrchestrator._lsg_scan_agent_action: scan_agent_action failed (%s: %s)", type(e).__name__, e)
         return None
 
 

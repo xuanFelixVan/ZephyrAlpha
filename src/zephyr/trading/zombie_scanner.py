@@ -104,8 +104,8 @@ def _load_patterns() -> dict[str, list[float]]:
             data = json.load(f)
             if isinstance(data, dict):
                 return data
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("_load_patterns: failed to load patterns file (%s: %s)", type(e).__name__, e)
     return {}
 
 
@@ -273,10 +273,11 @@ def _kill_process(pid: int) -> bool:
                 time.sleep(2.0)
                 if psutil.pid_exists(pid):
                     psutil.Process(pid).kill()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e)
         return True
-    except OSError:
+    except OSError as e:
+        logger.warning("_kill_process: failed to kill process %s (%s: %s)", pid, type(e).__name__, e)
         return False
 
 

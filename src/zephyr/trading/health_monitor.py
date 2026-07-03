@@ -284,7 +284,8 @@ class HealthMonitor:
             return False
         try:
             return fn()
-        except Exception:
+        except Exception as e:
+            logger.warning("_auto_restart: restart failed for capability %s (%s: %s)", capability_id, type(e).__name__, e)
             return False
 
     def pressure_level(self) -> PressureLevel:

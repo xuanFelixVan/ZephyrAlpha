@@ -102,8 +102,8 @@ class DepVersionFixer(BaseFixer):
                                         "type": "pyproject_conflict",
                                     }
                                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("DepVersionFixer.scan: pyproject.toml parse failed (%s: %s)", type(e).__name__, e)
         return findings
 
     def fix(self, target: str, dry_run: bool = False) -> FixAction:

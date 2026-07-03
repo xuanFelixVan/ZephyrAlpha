@@ -43,7 +43,7 @@ def on_budget_alert(alert: BudgetAlert) -> dict[str, Any]:
         result["should_block"] = decision.should_block
     except ImportError:
         _logger.debug("escalation adapter not available for budget alert")
-    except Exception:
-        pass
+    except Exception as e:
+        _logger.warning("on_budget_alert: escalation adapter failed (%s: %s)", type(e).__name__, e)
 
     return result

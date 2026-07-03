@@ -100,8 +100,8 @@ class ComplianceAuditor:
                     audit_trail_id=row[10],
                     tamper_proof_hash=row[11],
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e)
         return None
 
     def cleanup_expired(self) -> int:

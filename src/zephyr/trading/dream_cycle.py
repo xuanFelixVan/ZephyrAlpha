@@ -24,6 +24,7 @@ DreamCycle — 知识固化引擎
 """
 
 import json
+import logging
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +33,8 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+
+logger = logging.getLogger(__name__)
 
 
 class DreamReport(BaseModel):
@@ -106,7 +109,8 @@ class DreamCycle:
             return []
         try:
             data = json.loads(index_file.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("query_semantic: failed to load semantic index (%s: %s)", type(e).__name__, e)
             return []
         tag_set = set(t.lower() for t in tags)
         return [e for e in data if tag_set & set(t.lower() for t in e.get("tags", []))]

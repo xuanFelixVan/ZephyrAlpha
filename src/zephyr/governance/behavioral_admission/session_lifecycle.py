@@ -375,7 +375,8 @@ class SessionLifecycle:
                 self._sessions[session_id] = updated
                 self._persist_record(updated)
                 return True
-            except ValueError:
+            except ValueError as e:
+                logger.warning("close_session: failed to close session %s (%s: %s)", session_id, type(e).__name__, e)
                 return False
 
     def run_gc(self) -> int:

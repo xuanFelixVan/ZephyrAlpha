@@ -233,8 +233,8 @@ def auto_subscribe_eventbus() -> None:
                     description=description,
                     owner_id=task_id,
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                _logger.warning("auto_subscribe_eventbus._on_event: event handling failed (%s: %s)", type(e).__name__, e)
 
         for et in (EventType.GATE_FAILED, EventType.SCOPE_DRIFT, EventType.TASK_FAILED):
             bus.subscribe(et, _on_event)

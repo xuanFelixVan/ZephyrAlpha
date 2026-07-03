@@ -25,6 +25,7 @@ Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §
 from __future__ import annotations
 
 import hashlib
+import logging
 import threading
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -40,6 +41,8 @@ from .budget_models import (
     GateResult,
     ModelTier,
 )
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_DEGRADATION_STEPS: list[DegradationStep] = [
     DegradationStep(
@@ -145,8 +148,8 @@ class BudgetEngine:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(snapshot, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, persist_path)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e)
 
         with self._lock:
             self._ipi_defense = None
@@ -183,8 +186,8 @@ class BudgetEngine:
             step_idx = snapshot.get("active_step_idx", 0)
             for _ in range(step_idx):
                 engine.advance_degradation()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e)
         return engine
 
     def _init_consumption(self) -> None:

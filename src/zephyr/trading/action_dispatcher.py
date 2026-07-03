@@ -67,7 +67,8 @@ _MAX_BACKUPS_PER_FILE = 10
 def _read_text(filepath: Path) -> str | None:
     try:
         return filepath.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
+    except (OSError, UnicodeDecodeError) as e:
+        _log.warning("_read_text: failed to read file %s (%s: %s)", filepath, type(e).__name__, e)
         return None
 
 
@@ -81,9 +82,9 @@ def _git_commit_hash(project_root: Path) -> str | None:
             timeout=3,
         )
         if result.returncode == 0:
-            return result.stdout.strip()
-    except Exception:
-        pass
+                return result.stdout.strip()
+    except Exception as e:
+        _log.warning("_git_commit_hash: failed to get git commit hash (%s: %s)", type(e).__name__, e)
     return None
 
 

@@ -328,8 +328,8 @@ def _auto_fix_orphans(orphans: list) -> int:
                         cwd=str(REPO_ROOT),
                     )
                     fixed += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning("_auto_fix_orphans: scaffold module register failed for %s (%s: %s)", rel, type(e).__name__, e)
         elif rel.startswith("scripts/"):
             script_rel = rel.replace("scripts/", "").replace(".py", "")
             try:
@@ -340,8 +340,8 @@ def _auto_fix_orphans(orphans: list) -> int:
                     cwd=str(REPO_ROOT),
                 )
                 fixed += 1
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("_auto_fix_orphans: scaffold script register failed for %s (%s: %s)", rel, type(e).__name__, e)
 
     return fixed
 
