@@ -5683,6 +5683,18 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 - 文件复制对检测器（AST共享行百分比>70%即阻断）
 - M11 等 11 项指标转 pre-commit commit gate（hard block）
 
+**完成状态（2026-07-03，DM-202953）**：
+- ✅ GATE-VOCAB扩展（vocab_hardcode_gate.py，priority=80）
+- ✅ 文件复制对检测器（file_copy_gate.py，priority=85）
+- ✅ 5个新AST门禁已创建并注册到GitCommitGateway（in-process，--no-verify绕不过）：
+  - PERM-TRIGGER(p=82)：永久系统时间触发无事件订阅（M02/M09）
+  - EMPTY-HANDLER(p=84)：空handler函数体仅logger/pass/return
+  - ORPHAN-MODULE(p=86)：孤儿模块死代码无import引用（M07）
+  - DOC-REF-BROKEN(p=88)：文档引用断裂.md相对路径不存在
+  - FUNCTION-DUP(p=90)：重复函数同目录同名同body hash（M03）
+- ✅ M11（PG域引用一致性）已归零——73条空字符串脏数据已清理（DM-202952）
+- ⬜ 剩余指标未转gate：reconciler健康度(M06)、路径漂移数(M08)、三方对齐已有GATE-TRIPLE-ALIGN(pre-commit)
+
 ### 第2期：批量修复
 
 **目标**：基于第0期仪表盘和第1期门禁，批量修复已有3193个违规点。
