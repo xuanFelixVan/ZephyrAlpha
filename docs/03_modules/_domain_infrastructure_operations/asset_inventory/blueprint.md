@@ -2680,7 +2680,7 @@ hooks:
  活跃资产:     580  (94.8%)
  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  命令:
-   详见: docs/03_modules/_domain_infrastructure_operations/asset-inventory/blueprint.md
+   详见: docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
    Gate:  Phase 1 > gate_asset_inventory (16/16 checks)
    MCP:   mcp://asset-inventory/ (Phase 2)
 ```
@@ -3249,7 +3249,7 @@ scaffold.py 扩展支持 docs 类型（RULE-FOUR §14.5 #7 优化点）
   ↓ scaffold 内部调用 AssetInventory.on_asset_created()
   ↓
 AssetInventory.register(
-  path="docs/03_modules/_domain_infrastructure_operations/asset-inventory/blueprint.md",
+  path="docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md",
   asset_type="doc",
   layer="L01",
   priority="P0",         # 蓝图是 P0——项目最关键的文档之一
@@ -3257,7 +3257,7 @@ AssetInventory.register(
 )
   ↓
 unified-asset-index.yaml 中:
-  - relative_path: "docs/03_modules/_domain_infrastructure_operations/asset-inventory/blueprint.md"
+  - relative_path: "docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md"
     asset_type: doc
     layer: L01
     status: active

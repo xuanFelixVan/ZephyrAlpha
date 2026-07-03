@@ -442,7 +442,7 @@ immutable_core:
       reason: "仓库状态——不可逆破坏"
     - path: "src/zephyr/agent-rbac/**"
       reason: "权限系统自身——不能被 AI 修改自己的护栏"
-    - path: "docs/03_modules/_domain_infrastructure_operations/agent-rbac/blueprint.md"
+    - path: "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md"
       reason: "权限蓝图——唯一真源"
     - path: "AGENTS.md"
       reason: "核心原则——AI 行为宪法"
@@ -1943,7 +1943,7 @@ auto_maintenance:
       - "Kill Switch 触发历史（含原因和恢复时间）"
       - "Maturity 升级/降级事件"
       - "推荐的规则清理列表"
-    delivery: "写入 docs/03_modules/_domain_infrastructure_operations/agent-rbac/reports/weekly-{date}.md"
+    delivery: "写入 docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/reports/weekly-{date}.md"
 
   # ─── Owner 健康仪表盘 ───
   owner_dashboard:
@@ -5964,7 +5964,7 @@ class PermissionHooks:
 
 ### §9.2 对抗性测试报告
 
-> 完整报告见 [adversarial_test_report.yaml](file:///d:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/agent-rbac/adversarial_test_report.yaml)
+> 完整报告见 [adversarial_test_report.yaml](file:///d:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/adversarial_test_report.yaml)
 
 ---
 
