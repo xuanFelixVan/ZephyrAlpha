@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.shared.lifecycle.scope_guard import (
+from zephyr.infrastructure.lifecycle.scope_guard import (
     ScopeDrift,
     ScopeGuard,
     ScopeGuardConfig,

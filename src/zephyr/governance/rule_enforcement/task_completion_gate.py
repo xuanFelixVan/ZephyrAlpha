@@ -283,7 +283,7 @@ def g7_check_delegate(task_card: dict) -> G7CheckResult:
     TASK-INF-0131: 确保两个 G7 实现路径一致且互补。
     """
     try:
-        from zephyr.shared.lifecycle.task_lifecycle_manager import TaskLifecycleManager
+        from zephyr.infrastructure.lifecycle.task_lifecycle_manager import TaskLifecycleManager
 
         manager = TaskLifecycleManager()
         result = manager.gate_g7_output(task_card)

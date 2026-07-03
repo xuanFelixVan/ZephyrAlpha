@@ -1,4 +1,3 @@
 # shared.queue package
-from zephyr.shared.queue.task_scheduler import TaskScheduler
-
-__all__ = ["TaskScheduler"]
+# proxy shell removed (ARCH-DEBT 5.174 #7): import from zephyr.infrastructure.queue.task_scheduler directly
+__all__: list[str] = []

@@ -3,4 +3,6 @@
 __all__ = [
     "diff_planner",
     "retry_handler",
-'context_guard']
+]
+# proxy shell removed (ARCH-DEBT 5.174 #7): context_guard
+# import from zephyr.infrastructure.reliability.context_guard directly

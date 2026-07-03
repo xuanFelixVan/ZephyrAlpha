@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.shared.reliability.context_guard import (
+from zephyr.infrastructure.reliability.context_guard import (
     AccessCheck,
     ContextGuard,
     ContextGuardResult,
