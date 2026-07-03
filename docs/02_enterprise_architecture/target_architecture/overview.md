@@ -3,7 +3,7 @@ module_id: VIEW-00-OVERVIEW
 title: Target Architecture — Overview / 目标架构总览
 doc_type: architecture_view
 status: Active
-version: 2.1.0
+version: 2.1.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -22,10 +22,10 @@ tags:
 - architecture-philosophy
 - adr-summary
 - vibe-coding-2.0
-- 6-core-services
+- 5-core-services
 - domain-driven
 - depgraph-derived
-summary: 架构文档组的总览视图。v2.1.0：瘦身后保留方法论导航与关键决策记录，派生机制/惯例/修订记录/6大服务定位移交 SSoT 真源。v2.0.0：基于§2.1裁定，14层降级为域属性，53域成为唯一物理分类体系。结构化数据由depgraph全景图派生。
+summary: 架构文档组的总览视图。v2.1.0：瘦身后保留方法论导航与关键决策记录，派生机制/惯例/修订记录/5大服务定位移交 SSoT 真源。v2.0.0：基于§2.1裁定，14层降级为域属性，53域成为唯一物理分类体系。结构化数据由depgraph全景图派生。
 date: '2026-07-04'
 ttl: permanent
 ---
@@ -95,7 +95,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 | 维度 | 状态 | 说明 |
 |------|------|------|
 | **53域物理分类** | ✅ **已定义** | depgraph `domains` 表为SSoT |
-| **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | — | 接口规范真源：[`_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/) |
+| **5 大核心服务（VMS/CE/Orc/FLE/LSG）** | — | 接口规范真源：[`_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/) |
 | **17 项技术选型** | ✅ **已定稿** | 见 [`technology_landscape.yaml`](../../../architecture_model/technology/technology_landscape.yaml)（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
 | **设计态→运营态迁移** | 🔧 **进行中** | design_maturity: design(89) / prototype(5008) / production(1404) |
@@ -162,15 +162,15 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | KBG-0001 | `docs/` is the single canonical source of truth | 所有文档归属 |
 | KBG-0002 | Single frontmatter schema + phased required fields | 所有文档 frontmatter |
 | KBG-0003 | Dual/multi AI collaboration workflow | 文档生产方式 |
-| KBG-0015 | Context Engine：NetworkX + JSON + 本地 LLM 压缩 | 6 大核心服务之一 |
-| KBG-0016 | Vector Memory：ChromaDB 0.6 + BGE-M3 ONNX + 递归分块 | 6 大核心服务之一 |
-| KBG-0017 | Agent Orchestrator：SQLite + asyncio.Queue 起步 | 6 大核心服务之一 |
+| KBG-0015 | Context Engine：NetworkX + JSON + 本地 LLM 压缩 | 5 大核心服务之一 |
+| KBG-0016 | Vector Memory：ChromaDB 0.6 + BGE-M3 ONNX + 递归分块 | 5 大核心服务之一 |
+| KBG-0017 | Agent Orchestrator：SQLite + asyncio.Queue 起步 | 5 大核心服务之一 |
 | KBG-0018 | Agent Sandbox：Windows ACL + 只读挂载 | Orchestrator 配套 |
-| KBG-0019 | Feedback Loop Engine：SQLite 时间序列 + EMA 异常检测 | 6 大核心服务之一 |
-| KBG-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed | 6 大核心服务之一 |
+| KBG-0019 | Feedback Loop Engine：SQLite 时间序列 + EMA 异常检测 | 5 大核心服务之一 |
+| KBG-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed | 5 大核心服务之一 |
 | KBG-0021 | SSoT Validator：scaffold 唯一任务，阻塞下游 | scaffold 门禁 |
 
-> **注（v2.1.0）**：6 大核心服务的详细架构图 / 服务间依赖 DAG / 降级协调矩阵真源在 [`application_architecture.md §4A`](./application_architecture.md) 及各服务接口规范文档。
+> **注（v2.1.0）**：5 大核心服务的详细架构图 / 服务间依赖 DAG / 降级协调矩阵真源在 [`application_architecture.md §4A`](./application_architecture.md) 及各服务接口规范文档。
 
 ---
 
