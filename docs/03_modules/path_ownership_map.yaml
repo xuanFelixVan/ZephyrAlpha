@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-03T18:37:48Z'
+  generated_at: '2026-07-03T18:59:33Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 738
   total_ssot_claims: 16
@@ -2467,22 +2467,22 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/architecture_governance'
 
   - path: 'src/zephyr/infrastructure/rollback/model_drift_detector.py'
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→intelligence（删除冗余副本）'
 
   - path: 'src/zephyr/infrastructure/rollback/owner_absent.py'
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/escalation'
 
   - path: 'src/zephyr/infrastructure/rollback/complexity_budget.py'
     owner_blueprint: 'MOD-INF-021'
@@ -2495,8 +2495,8 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/intelligence_governance'
 
   - path: 'src/zephyr/infrastructure/rollback/commit_quality_gate.py'
     owner_blueprint: 'MOD-INF-021'
@@ -2551,8 +2551,8 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/intelligence_governance'
 
   - path: 'src/zephyr/infrastructure/rollback/intent_archiver.py'
     owner_blueprint: 'MOD-INF-021'
@@ -2572,15 +2572,15 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→infrastructure/runtime'
 
   - path: 'src/zephyr/infrastructure/rollback/autonomy_dashboard.py'
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已迁移'
+    ownership_judgment: 'ARCH-039 P1→governance/intelligence_governance'
 
   - path: 'src/zephyr/infrastructure/rollback/budget_tracker.py'
     owner_blueprint: 'MOD-INF-021'
