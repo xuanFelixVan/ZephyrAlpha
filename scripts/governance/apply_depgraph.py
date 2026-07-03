@@ -194,7 +194,7 @@ def _load_depgraph() -> dict:
     try:
         return _load_depgraph_from_db()
     except Exception as e:
-        print(f"ERROR: Failed to load depgraph from PostgreSQL: {e}", file=sys.stderr)
+        logger.error("Failed to load depgraph from PostgreSQL: %s", e)
         sys.exit(2)
 
 
@@ -231,7 +231,7 @@ def _atomic_write(dep: dict, conn=None) -> None:
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: DB write failed: {e}", file=sys.stderr)
+            logger.error("DB write failed: %s", e)
             sys.exit(4)
         finally:
             if own_conn:
@@ -529,7 +529,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
             print(f"Applied {len(changes)} changes to depgraph (domain_ops={domain_op_count})", file=sys.stderr)
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: batch failed, all changes rolled back: {e}", file=sys.stderr)
+            logger.error("batch failed, all changes rolled back: %s", e)
             sys.exit(4)
         finally:
             conn.close()
@@ -607,7 +607,7 @@ def add_design_node(
             return node_id
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: add_design_node失败: {e}", file=sys.stderr)
+            logger.error("add_design_node失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -672,7 +672,7 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = N
             return node_id
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: add_file_node失败: {e}", file=sys.stderr)
+            logger.error("add_file_node失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -768,7 +768,7 @@ def add_design_edge(
             return edge_id
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: add_design_edge失败: {e}", file=sys.stderr)
+            logger.error("add_design_edge失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -904,7 +904,7 @@ def add_edge(
             return edge_id
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: add_edge失败: {e}", file=sys.stderr)
+            logger.error("add_edge失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -947,7 +947,7 @@ def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: transition_build_status失败: {e}", file=sys.stderr)
+            logger.error("transition_build_status失败: %s", e)
             return False
         finally:
             conn.close()
@@ -996,7 +996,7 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: remove_design_node失败: {e}", file=sys.stderr)
+            logger.error("remove_design_node失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1074,7 +1074,7 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: deprecate_node失败: {e}", file=sys.stderr)
+            logger.error("deprecate_node失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1113,7 +1113,7 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) 
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: mark_blueprint_invalid失败: {e}", file=sys.stderr)
+            logger.error("mark_blueprint_invalid失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1151,7 +1151,7 @@ def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: delete_design_edge失败: {e}", file=sys.stderr)
+            logger.error("delete_design_edge失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1183,7 +1183,7 @@ def delete_edge(edge_id: int, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: delete_edge失败: {e}", file=sys.stderr)
+            logger.error("delete_edge失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1211,7 +1211,7 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: delete_blueprint_link失败: {e}", file=sys.stderr)
+            logger.error("delete_blueprint_link失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1245,7 +1245,7 @@ def delete_constraint(constraint_id: str, db_path: str = None) -> bool:
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: delete_constraint失败: {e}", file=sys.stderr)
+            logger.error("delete_constraint失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1303,7 +1303,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
             return len(ghost_node_ids)
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: cleanup_orphan_nodes失败: {e}", file=sys.stderr)
+            logger.error("cleanup_orphan_nodes失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -1352,7 +1352,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
             return orphan_count
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: cleanup_orphan_edges失败: {e}", file=sys.stderr)
+            logger.error("cleanup_orphan_edges失败: %s", e)
             return -1
         finally:
             conn.close()
@@ -1405,7 +1405,7 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bo
             return True
         except Exception as e:
             conn.rollback()
-            print(f"ERROR: update_edge_type失败: {e}", file=sys.stderr)
+            logger.error("update_edge_type失败: %s", e)
             return False
         finally:
             conn.close()
@@ -1540,7 +1540,7 @@ def cmd_insert_domain(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_insert_domain失败: {e}", file=sys.stderr)
+            logger.error("cmd_insert_domain失败: %s", e)
             return False
         finally:
             if own_conn:
@@ -1605,7 +1605,7 @@ def cmd_update_domain_id(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_update_domain_id失败: {e}", file=sys.stderr)
+            logger.error("cmd_update_domain_id失败: %s", e)
             return -1
         finally:
             if own_conn:
@@ -1816,7 +1816,7 @@ def cmd_rename_domain(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_rename_domain失败: {e}", file=sys.stderr)
+                logger.error("cmd_rename_domain失败: %s", e)
                 return -1
             finally:
                 if own_conn:
@@ -2008,7 +2008,7 @@ def cmd_delete_domain(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_delete_domain失败: {e}", file=sys.stderr)
+                logger.error("cmd_delete_domain失败: %s", e)
                 return -1
             finally:
                 if own_conn:
@@ -2068,7 +2068,7 @@ def cmd_fix_rename_residual(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_fix_rename_residual失败: {e}", file=sys.stderr)
+                logger.error("cmd_fix_rename_residual失败: %s", e)
                 return -1
             finally:
                 if own_conn:
@@ -2198,7 +2198,7 @@ def _with_bp_rename_tx(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: {task}失败: {e}", file=sys.stderr)
+                logger.error("%s失败: %s", task, e)
                 # 异常时也恢复只读触发器（保持门禁激活）
                 try:
                     _restore_blueprint_links_readonly_trigger(c)
@@ -2427,7 +2427,7 @@ def cmd_rename_blueprint_id(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_rename_blueprint_id失败: {e}", file=sys.stderr)
+                logger.error("cmd_rename_blueprint_id失败: %s", e)
                 # 异常时也恢复只读触发器（保持门禁激活）
                 try:
                     _restore_blueprint_links_readonly_trigger(c)
@@ -2549,7 +2549,7 @@ def cmd_propagate_node_paths(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_propagate_node_paths失败: {e}", file=sys.stderr)
+                logger.error("cmd_propagate_node_paths失败: %s", e)
                 # 异常时也恢复只读触发器（保持门禁激活）
                 try:
                     if bl_mapping:
@@ -2603,7 +2603,7 @@ def cmd_update_domain_name(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_update_domain_name失败: {e}", file=sys.stderr)
+                logger.error("cmd_update_domain_name失败: %s", e)
                 return -1
             finally:
                 if own_conn:
@@ -2653,7 +2653,7 @@ def cmd_migrate_nodes(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_migrate_nodes失败: {e}", file=sys.stderr)
+            logger.error("cmd_migrate_nodes失败: %s", e)
             return -1
         finally:
             if own_conn:
@@ -2697,7 +2697,7 @@ def cmd_update_path(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_update_path失败: {e}", file=sys.stderr)
+            logger.error("cmd_update_path失败: %s", e)
             return -1
         finally:
             if own_conn:
@@ -2793,7 +2793,7 @@ def cmd_migrate_dependencies(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_migrate_dependencies失败: {e}", file=sys.stderr)
+            logger.error("cmd_migrate_dependencies失败: %s", e)
             return -1
         finally:
             if own_conn:
@@ -2849,7 +2849,7 @@ def cmd_update_domain_capacity(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_update_domain_capacity失败: {e}", file=sys.stderr)
+            logger.error("cmd_update_domain_capacity失败: %s", e)
             return False
         finally:
             if own_conn:
@@ -2903,7 +2903,7 @@ def cmd_update_domain_layer(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_update_domain_layer失败: {e}", file=sys.stderr)
+            logger.error("cmd_update_domain_layer失败: %s", e)
             return False
         finally:
             if own_conn:
@@ -2945,7 +2945,7 @@ def cmd_update_domain_ssot_path(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_update_domain_ssot_path失败: {e}", file=sys.stderr)
+            logger.error("cmd_update_domain_ssot_path失败: %s", e)
             return False
         finally:
             if own_conn:
@@ -3027,7 +3027,7 @@ def cmd_insert_domain_mapping(
         except Exception as e:
             if own_conn:
                 conn.rollback()
-            print(f"ERROR: cmd_insert_domain_mapping失败: {e}", file=sys.stderr)
+            logger.error("cmd_insert_domain_mapping失败: %s", e)
             return False
         finally:
             if own_conn:
