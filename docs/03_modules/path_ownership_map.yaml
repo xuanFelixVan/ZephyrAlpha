@@ -2292,8 +2292,8 @@ ownership:
     owner_blueprint: 'MOD-INF-021'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: ''
+    existence: '已删除'
+    ownership_judgment: 'ARCH-039 P0-1 退役删除'
 
   - path: 'src/zephyr/infrastructure/rollback/rollback_dashboard.py'
     owner_blueprint: 'MOD-INF-021'

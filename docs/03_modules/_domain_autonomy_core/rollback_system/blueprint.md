@@ -73,7 +73,7 @@ summary: >
 ---
 
 > module_id: MOD-INF-021 | version: 9.0.0 | status: Active | layer: L01_infrastructure
-> actual_disk_path: src/zephyr/rollback/ (62 .py files) | generation: 9 | construction_progress: completed
+> actual_disk_path: src/zephyr/infrastructure/rollback/ (61 .py files) | generation: 9 | construction_progress: completed
 
 # Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性
 
@@ -117,56 +117,55 @@ summary: >
 | 10 | rollback_lock.py | §3.1 | 全局锁 + 队列管理 | 已实现 | |
 | 11 | kill_switch.py | §3.1 | 三级 Kill Switch | 已实现 | |
 | 12 | sqlite_dumper.py | §3.1 | SQLite dump/restore + Merkle 签名 | 已实现 | |
-| 13 | down_migration_generator.py | §3.1 | 反向脚本自动生成 | 已实现 | |
-| 14 | rollback_dashboard.py | §3.1 | Markdown 零依赖仪表盘 | 已实现 | |
-| 15 | rollback_context_restorer.py | §3.1 | AI 会话恢复 prompt | 已实现 | |
-| 16 | rollback_budget.py | §3.1 | 并发限制/日配额 | 已实现 | |
-| 17 | checkpoint_gc.py | §3.1 | 快照保留策略 + 定期清理 | 已实现 | |
-| 18 | rollback_bootstrap.py | §3.1 | 零依赖最小化回滚 | 已实现 | |
-| 19 | hallucination_guard.py | §3.1 | 回滚后 state_verification_round | 已实现 | |
-| 20 | semantic_similar_detector.py | §3.1 | AST 语义特征比较 | 已实现 | |
-| 21 | vulnerability_rescanner.py | §3.1 | 回滚后 vulnerability_rescan | 已实现 | |
-| 22 | warm_standby.py | §3.1 | parallel git worktree | 已实现 | |
-| 23 | semantic_rollback_tag.py | §3.1 | TASK 边界 tag | 已实现 | |
-| 24 | topology_change_log.py | §3.1 | reflog 分支恢复 | 已实现 | |
-| 25 | git_infra_snapshot.py | §3.1 | inotify hooks/config 监控 | 已实现 | |
-| 26 | secret_rotation_aware.py | §3.1 | stale_secret_scan | 已实现 | |
-| 27 | cross_platform_shell.py | §3.1 | 双份 .sh + .ps1 | 已实现 | |
-| 28 | venv_sync.py | §3.1 | 回滚后依赖同步 | 已实现 | |
-| 29 | env_watcher.py | §3.1 | 环境变量定时扫描 | 已实现 | |
-| 30 | temporal_context_adapter.py | §3.1 | 时间上下文修复 | 已实现 | |
-| 31 | s3_snapshot_lifecycle.py | §3.1 | S3 快照防过期 | 已实现 | |
-| 32 | external_merkle_proof.py | §3.1 | 外部可验证证明 | 已实现 | |
-| 33 | submodule_sync.py | §3.1 | Submodule 同步回滚 | 已实现 | |
-| 34 | forensic.py | §3.1 | 取证副本隔离 | 已实现 | |
-| 35 | continuous_trust.py | §3.1 | 持续完整性证明链 | 已实现 | |
-| 36 | contract.py | §3.1 | rollback_policy_engine | 已实现 | |
-| 37 | contracts.py | §3.1 | CT-RBK-GATE-001 契约 | 已实现 | |
-| 38 | right_to_be_forgotten.py | §3.1 | GDPR 遗忘权检查 | 已实现 | |
-| 39 | llm_impact_analyzer.py | §3.1 | LLM 版本兼容性 | 已实现 | |
-| 40 | model_drift_detector.py | §3.1 | AI 输出质量漂移检测 | 已实现 | |
-| 41 | owner_absent.py | §3.1 | Owner 心跳+死手开关 | 已实现 | |
-| 42 | complexity_budget.py | §3.1 | 系统自复杂度分析 | 已实现 | |
-| 43 | confidence_quantifier.py | §3.1 | AI 置信度量化 | 已实现 | |
-| 44 | commit_quality_gate.py | §3.1 | commit message 质量审计 | 已实现 | |
-| 45 | rollback_audit_nexus.py | §3.1 | 审计 Sidecar | 已实现 | |
-| 46 | rollback_wal.py | §3.1 | 回滚预写日志 | 已实现 | |
-| 47 | knowngoodstate_ledger.py | §3.1 | 已验证状态收据 | 已实现 | |
-| 48 | runbook_generator.py | §3.1 | SRE Runbook 自动生成 | 已实现 | |
-| 49 | rollback_target_staleness.py | §3.1 | 回滚目标陈旧度评估 | 已实现 | |
-| 50 | credential_rotation_trigger.py | §3.1 | 凭据自动轮替 | 已实现 | |
-| 51 | cross_agent_conflict_detector.py | §3.1 | 多 Agent 文件冲突检测 | 已实现 | |
-| 52 | intent_archiver.py | §3.1 | 操作意图存档 | 已实现 | |
-| 53 | rollback_abuse_detector.py | §3.1 | 回滚武器化滥用检测 | 已实现 | |
-| 54 | sandbox_enforcer.py | §3.1 | 沙盒基础设施集成 | 已实现 | |
-| 55 | autonomy_dashboard.py | §3.1 | 自治级别仪表盘 | 已实现 | |
-| 56 | budget_tracker.py | §3.1 | Token/Cost/Time 预算追踪 | 已实现 | |
-| 57 | drift_fix.py | §3.1 | 漂移修复执行器 | 已实现 | |
-| 58 | result_types.py | §3.1 | 回滚结果类型定义 | 已实现 | |
-| 59 | auditor.py | §3.2 | 回滚审计事件处理 | 已实现 | |
-| 60 | rollback_integration.py | §3.2 | 回滚集成协调 | 已实现 | |
-| 61 | _manifest_.py | — | 模块清单 | 已实现 | |
-| 62 | __init__.py | — | 包初始化 | 已实现 | |
+| 13 | rollback_dashboard.py | §3.1 | Markdown 零依赖仪表盘 | 已实现 | |
+| 14 | rollback_context_restorer.py | §3.1 | AI 会话恢复 prompt | 已实现 | |
+| 15 | rollback_budget.py | §3.1 | 并发限制/日配额 | 已实现 | |
+| 16 | checkpoint_gc.py | §3.1 | 快照保留策略 + 定期清理 | 已实现 | |
+| 17 | rollback_bootstrap.py | §3.1 | 零依赖最小化回滚 | 已实现 | |
+| 18 | hallucination_guard.py | §3.1 | 回滚后 state_verification_round | 已实现 | |
+| 19 | semantic_similar_detector.py | §3.1 | AST 语义特征比较 | 已实现 | |
+| 20 | vulnerability_rescanner.py | §3.1 | 回滚后 vulnerability_rescan | 已实现 | |
+| 21 | warm_standby.py | §3.1 | parallel git worktree | 已实现 | |
+| 22 | semantic_rollback_tag.py | §3.1 | TASK 边界 tag | 已实现 | |
+| 23 | topology_change_log.py | §3.1 | reflog 分支恢复 | 已实现 | |
+| 24 | git_infra_snapshot.py | §3.1 | inotify hooks/config 监控 | 已实现 | |
+| 25 | secret_rotation_aware.py | §3.1 | stale_secret_scan | 已实现 | |
+| 26 | cross_platform_shell.py | §3.1 | 双份 .sh + .ps1 | 已实现 | |
+| 27 | venv_sync.py | §3.1 | 回滚后依赖同步 | 已实现 | |
+| 28 | env_watcher.py | §3.1 | 环境变量定时扫描 | 已实现 | |
+| 29 | temporal_context_adapter.py | §3.1 | 时间上下文修复 | 已实现 | |
+| 30 | s3_snapshot_lifecycle.py | §3.1 | S3 快照防过期 | 已实现 | |
+| 31 | external_merkle_proof.py | §3.1 | 外部可验证证明 | 已实现 | |
+| 32 | submodule_sync.py | §3.1 | Submodule 同步回滚 | 已实现 | |
+| 33 | forensic.py | §3.1 | 取证副本隔离 | 已实现 | |
+| 34 | continuous_trust.py | §3.1 | 持续完整性证明链 | 已实现 | |
+| 35 | contract.py | §3.1 | rollback_policy_engine | 已实现 | |
+| 36 | contracts.py | §3.1 | CT-RBK-GATE-001 契约 | 已实现 | |
+| 37 | right_to_be_forgotten.py | §3.1 | GDPR 遗忘权检查 | 已实现 | |
+| 38 | llm_impact_analyzer.py | §3.1 | LLM 版本兼容性 | 已实现 | |
+| 39 | model_drift_detector.py | §3.1 | AI 输出质量漂移检测 | 已实现 | |
+| 40 | owner_absent.py | §3.1 | Owner 心跳+死手开关 | 已实现 | |
+| 41 | complexity_budget.py | §3.1 | 系统自复杂度分析 | 已实现 | |
+| 42 | confidence_quantifier.py | §3.1 | AI 置信度量化 | 已实现 | |
+| 43 | commit_quality_gate.py | §3.1 | commit message 质量审计 | 已实现 | |
+| 44 | rollback_audit_nexus.py | §3.1 | 审计 Sidecar | 已实现 | |
+| 45 | rollback_wal.py | §3.1 | 回滚预写日志 | 已实现 | |
+| 46 | knowngoodstate_ledger.py | §3.1 | 已验证状态收据 | 已实现 | |
+| 47 | runbook_generator.py | §3.1 | SRE Runbook 自动生成 | 已实现 | |
+| 48 | rollback_target_staleness.py | §3.1 | 回滚目标陈旧度评估 | 已实现 | |
+| 49 | credential_rotation_trigger.py | §3.1 | 凭据自动轮替 | 已实现 | |
+| 50 | cross_agent_conflict_detector.py | §3.1 | 多 Agent 文件冲突检测 | 已实现 | |
+| 51 | intent_archiver.py | §3.1 | 操作意图存档 | 已实现 | |
+| 52 | rollback_abuse_detector.py | §3.1 | 回滚武器化滥用检测 | 已实现 | |
+| 53 | sandbox_enforcer.py | §3.1 | 沙盒基础设施集成 | 已实现 | |
+| 54 | autonomy_dashboard.py | §3.1 | 自治级别仪表盘 | 已实现 | |
+| 55 | budget_tracker.py | §3.1 | Token/Cost/Time 预算追踪 | 已实现 | |
+| 56 | drift_fix.py | §3.1 | 漂移修复执行器 | 已实现 | |
+| 57 | result_types.py | §3.1 | 回滚结果类型定义 | 已实现 | |
+| 58 | auditor.py | §3.2 | 回滚审计事件处理 | 已实现 | |
+| 59 | rollback_integration.py | §3.2 | 回滚集成协调 | 已实现 | |
+| 60 | _manifest_.py | — | 模块清单 | 已实现 | |
+| 61 | __init__.py | — | 包初始化 | 已实现 | |
 | `backtest_engine.py` | § — | — | 已实现 | | 本模块 |
 | `fault_tolerance.py` | § — | — | 已实现 | | 本模块 |
 | `fsm_verifier.py` | § — | — | 已实现 | | 本模块 |
@@ -182,22 +181,22 @@ summary: >
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls D:\ZephyrAlpha\src\zephyr\rollback\` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` 逐文件核对 | ☐ |
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | construction_progress = scaffold → __init__.py 存在且非空 | `cat __init__.py` | ☐ |
-| construction_progress = design_only → 代码目录不存在或为空 | `ls D:\ZephyrAlpha\src\zephyr\rollback\` | ☐ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" D:\ZephyrAlpha\src\zephyr\rollback\*.py` | ☐ |
-| actual_disk_path = src/zephyr/rollback/ 与 §11 一致 | 交叉比对 | ☐ |
-| 代码文件 [BLUEPRINT] 字段指向 MOD-INF-021 | `grep "\[BLUEPRINT\]" D:\ZephyrAlpha\src\zephyr\rollback\*.py` | ☐ |
+| construction_progress = design_only → 代码目录不存在或为空 | `ls D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\*.py` | ☐ |
+| actual_disk_path = src/zephyr/infrastructure/rollback/ 与 §11 一致 | 交叉比对 | ☐ |
+| 代码文件 [BLUEPRINT] 字段指向 MOD-INF-021 | `grep "\[BLUEPRINT\]" D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\*.py` | ☐ |
 
 ### §0.3 版本-代码映射
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v0.10.0 (基线) | 62 .py 文件全部实现 | — | — |
+| v0.10.0 (基线) | 61 .py 文件全部实现 | — | — |
 | v0.11.0 (容量升级设计) | 设计完成，代码待施工 | ShardedRollbackLock/SQLite sharding/AdaptiveThrottle 等 25 个新文件 | 容量升级 Phase 待施工 |
-| v6.0.0 (规格化升级) | 62 .py 文件全部实现 | 容量升级组件同 v0.11.0 | 容量升级 Phase 待施工 |
-| v7.0.0 (模板v3.5/v3.6升级) | 62 .py 文件全部实现 | 容量升级组件同 v0.11.0 | 容量升级 Phase 待施工 |
+| v6.0.0 (规格化升级) | 61 .py 文件全部实现 | 容量升级组件同 v0.11.0 | 容量升级 Phase 待施工 |
+| v7.0.0 (模板v3.5/v3.6升级) | 61 .py 文件全部实现 | 容量升级组件同 v0.11.0 | 容量升级 Phase 待施工 |
 
 ### §0.4 SSoT 声明
 
@@ -214,7 +213,7 @@ summary: >
 
 | 声明 | 值 |
 |------|-----|
-| 唯一实现目录 | `src/zephyr/rollback/`（62 .py 文件）|
+| 唯一实现目录 | `src/zephyr/infrastructure/rollback/`（61 .py 文件）|
 | CLI 入口 | `scripts/rollback.py`（thin wrapper，调用 RollbackExecutor）|
 | MCP 入口 | `src/zephyr/integration/mcp/governance_server.py:_execute_rollback()`（调用 RollbackExecutor）|
 | 已降级遗留 | `src/zephyr/orchestration/runtime_core/orchestrator/rollback_manager.py`（仅调试场景手动 DB 快照）|
@@ -232,7 +231,7 @@ summary: >
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-INF-021 |
-| 代码落位 | `D:\ZephyrAlpha\src\zephyr\rollback\` |
+| 代码落位 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` |
 | 运行时平面 | Hot memory（回滚操作 < 1s） |
 | 核心职责 | auto_guard 后验失败时自动回滚到上一个 git commit |
 
@@ -259,7 +258,7 @@ summary: >
 | # | 明确排除 | 原因 |
 |---|---------|------|
 | 1 | 跨项目回滚 | 本项目仅管理 ZephyrAlpha 仓库 |
-| 2 | 数据库 Schema 迁移回滚 | 由 down_migration_generator 提供 |
+| 2 | 数据库 Schema 迁移回滚 | 已退役（down_migration_generator 已删除，ARCH-039 P0-1） |
 | 3 | 分布式一致性回滚 | 单仓库架构，无需分布式事务 |
 | 4 | auto_guard 前验逻辑 | → zephyr.agent_rbac |
 | 5 | 漂移检测 | → zephyr.behavioral_auditor |
@@ -487,7 +486,7 @@ auto_rollback_flow:
 | L-3 | 运维治理 | operator_heartbeat / error_budget_autonomy_gate / model_drift_detector / confidence_quantifier / complexity_budget / commit_quality_gate |
 | L-4 | 取证审计 | rollback_audit_nexus / git_integrity_checker / ntp_attestation / rollback_wal / knowngoodstate_ledger / continuous_trust / forensic |
 | L-5 | 弹性基础设施 | rollback_state_machine / rollback_drill / rollback_simulator / warm_standby / checkpoint_gc / rollback_budget |
-| L-6 | 自愈自主 | forward_fix_runner / rollback_context_restorer / down_migration_generator / dependency_aware_rollback |
+| L-6 | 自愈自主 | forward_fix_runner / rollback_context_restorer / dependency_aware_rollback |
 | L-7 | 元认知 | contract(rollback_policy_engine) / right_to_be_forgotten / notification_throttle / graduated_rollback / git_bisect_protection |
 | L-8 | 安全 | hallucination_guard / semantic_similar_detector / vulnerability_rescanner / prompt_injection_filter |
 | L-9 | 基础 | rollback_executor / rollback_verifier / auto_rollback_trigger / rollback_lock / kill_switch / sqlite_dumper |
@@ -537,7 +536,7 @@ auto_rollback_flow:
 | B15 | 失败信号无分类 | 所有 FAIL 一视同仁 | hard/soft/transient 三分类 |
 | B42 | 回滚状态机缺失 | 部分失败无法恢复 | rollback_state_machine 步骤级追踪 |
 | B44 | AI 对话上下文断裂 | 回滚后 AI 不知道发生了什么 | rollback_context_restorer 注入恢复 prompt |
-| B45 | 无 down-migration | Schema 变更无法回滚 | down_migration_generator pre-commit hook |
+| B45 | 无 down-migration | Schema 变更无法回滚 | 已退役（down_migration_generator 已删除，ARCH-039 P0-1；Schema 变更回滚功能取消） |
 | B46 | Kill Switch 缺失 | 无紧急制动 | 三级 Kill Switch L1/L2/L3 |
 | B47 | 无回滚仪表盘 | Owner 不知道回滚状态 | rollback_dashboard.md 零依赖 |
 | B48 | 依赖断裂 | 回滚模块 A 导致模块 B 不一致 | dependency_impact_analysis + 广播通知 |
@@ -764,15 +763,15 @@ class RollbackResult(BaseModel):
 
 | # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 | 执行状态 |
 |---|-------------|---------|---------|---------|------------|:-------:|
-| 1 | startup_shutdown.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown.py` | `D:\ZephyrAlpha\src\zephyr\rollback\startup_shutdown.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 2 | startup_shutdown_cli.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown_cli.py` | `D:\ZephyrAlpha\src\zephyr\rollback\startup_shutdown_cli.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 3 | phase_manager.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | `D:\ZephyrAlpha\src\zephyr\rollback\phase_manager.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 4 | phase_check_registry.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | `D:\ZephyrAlpha\src\zephyr\rollback\phase_check_registry.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 5 | paper_live_transition.py | `D:\ZephyrAlpha\src\zephyr\governance\paper_live_transition.py` | `D:\ZephyrAlpha\src\zephyr\rollback\paper_live_transition.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 6 | post_live_verification.py | `D:\ZephyrAlpha\src\zephyr\governance\post_live_verification.py` | `D:\ZephyrAlpha\src\zephyr\rollback\post_live_verification.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 7 | fault_tolerance.py | `D:\ZephyrAlpha\src\zephyr\governance\fault_tolerance.py` | `D:\ZephyrAlpha\src\zephyr\rollback\fault_tolerance.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 8 | fsm_verifier.py | `D:\ZephyrAlpha\src\zephyr\governance\fsm_verifier.py` | `D:\ZephyrAlpha\src\zephyr\rollback\fsm_verifier.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
-| 9 | backtest_engine.py | `D:\ZephyrAlpha\src\zephyr\governance\backtest_engine.py` | `D:\ZephyrAlpha\src\zephyr\rollback\backtest_engine.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 1 | startup_shutdown.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 2 | startup_shutdown_cli.py | `D:\ZephyrAlpha\src\zephyr\governance\startup_shutdown_cli.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\startup_shutdown_cli.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 3 | phase_manager.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_manager.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 4 | phase_check_registry.py | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\phase_check_registry.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 5 | paper_live_transition.py | `D:\ZephyrAlpha\src\zephyr\governance\paper_live_transition.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\paper_live_transition.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 6 | post_live_verification.py | `D:\ZephyrAlpha\src\zephyr\governance\post_live_verification.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\post_live_verification.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 7 | fault_tolerance.py | `D:\ZephyrAlpha\src\zephyr\governance\fault_tolerance.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fault_tolerance.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 8 | fsm_verifier.py | `D:\ZephyrAlpha\src\zephyr\governance\fsm_verifier.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\fsm_verifier.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
+| 9 | backtest_engine.py | `D:\ZephyrAlpha\src\zephyr\governance\backtest_engine.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\backtest_engine.py` | 迁移+重导出 | 搜索全项目 import 并更新 | 未执行 |
 
 ### 5.4 非功能需求与服务水平
 
@@ -1073,8 +1072,8 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\rollback\` | Python 源码（62 .py files）|
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_autonomy_core\rollback_system\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` | Python 源码（61 .py files）|
 | 测试代码 | `D:\ZephyrAlpha\tests\rollback\` | 测试用例 |
 | SQLite 快照 | `D:\ZephyrAlpha\data\rollback\db_snapshots\` | {commit_sha}.jsonl |
 | Down-migration | `D:\ZephyrAlpha\data\rollback\down\` | {commit_sha}.sh/.ps1 |
@@ -1194,7 +1193,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 RollbackExecutor |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\rollback\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` |
 | 验收标准 | rollback_executor.py + rollback_verifier.py + auto_rollback_trigger.py 可 import 且无语法错误 |
 | 验证命令 | `python -c "from zephyr.rollback.rollback_executor import RollbackExecutor"` |
 | G7 检查项 | 上游文件全部列出？下游产出物路径精确？回滚方案可执行？ |
@@ -1203,11 +1202,11 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | module_id | 文件名 | doc_type | 完整绝对路径 |
 |-----------|--------|----------|------------|
-| MOD-INF-021 | rollback_executor.py | code | `D:\ZephyrAlpha\src\zephyr\rollback\rollback_executor.py` |
-| MOD-INF-021 | rollback_verifier.py | code | `D:\ZephyrAlpha\src\zephyr\rollback\rollback_verifier.py` |
-| MOD-INF-021 | auto_rollback_trigger.py | code | `D:\ZephyrAlpha\src\zephyr\rollback\auto_rollback_trigger.py` |
-| MOD-INF-021 | sqlite_dumper.py | code | `D:\ZephyrAlpha\src\zephyr\rollback\sqlite_dumper.py` |
-| MOD-INF-021 | rollback_lock.py | code | `D:\ZephyrAlpha\src\zephyr\rollback\rollback_lock.py` |
+| MOD-INF-021 | rollback_executor.py | code | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py` |
+| MOD-INF-021 | rollback_verifier.py | code | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_verifier.py` |
+| MOD-INF-021 | auto_rollback_trigger.py | code | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\auto_rollback_trigger.py` |
+| MOD-INF-021 | sqlite_dumper.py | code | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\sqlite_dumper.py` |
+| MOD-INF-021 | rollback_lock.py | code | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_lock.py` |
 
 #### 步骤 2-8：experimental→forensic Phase
 
@@ -1226,7 +1225,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | 62 .py 文件 | `D:\ZephyrAlpha\src\zephyr\rollback\` | ✅ | ✅ | ✅ |
+| 1 | 61 .py 文件 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` | ✅ | ✅ | ✅ |
 | 2 | 测试文件 | `D:\ZephyrAlpha\tests\rollback\` | ☐ | ☐ | ☐ |
 
 ### 16.6 施工状态
@@ -1367,7 +1366,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 | DB 恢复失败 exit=8 | `zephyr rollback verify-audit {id}` | JSONL 快照损坏 | 尝试上一个有效快照 |
 | Agent 反复回滚 | `zephyr rollback stats --agent-quality` | Loop Detector 触发 | 暂停 agent→DEFER_TO_HUMAN |
 | 审计日志不一致 | `zephyr rollback verify-audit {id}` | Sidecar 崩溃 | 重启 audit_sidecar_daemon |
-| 回滚系统自毁 exit=40 | `sha256sum src/zephyr/rollback/*.py` | 核心文件被篡改 | rollback_bootstrap 零依赖恢复→S3 自愈 |
+| 回滚系统自毁 exit=40 | `sha256sum src/zephyr/infrastructure/rollback/*.py` | 核心文件被篡改 | rollback_bootstrap 零依赖恢复→S3 自愈 |
 
 ### 16.12 并发操作模型
 
@@ -1565,7 +1564,7 @@ STEP 3: 拆分后验证
 
 | # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 接收文件 | 安全删除方案 |
 |---|---------------|------------|---------|---------|------------|
-| 1 | rollback_manager.py（降级） | `D:\ZephyrAlpha\src\zephyr\orchestrator\rollback_manager.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\rollback\rollback_executor.py` | 降级为仅调试场景手动 DB 快照→标记 deprecated→Phase 4 物理删除 |
+| 1 | rollback_manager.py（降级） | `D:\ZephyrAlpha\src\zephyr\orchestrator\rollback_manager.py` | 废弃型 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\rollback_executor.py` | 降级为仅调试场景手动 DB 快照→标记 deprecated→Phase 4 物理删除 |
 
 ### 删除铁律
 
@@ -1613,9 +1612,9 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | rollback/ 目录 | `D:\ZephyrAlpha\src\zephyr\rollback\` | 业务代码 | 修改 |
+| 1 | rollback/ 目录 | `D:\ZephyrAlpha\src\zephyr\infrastructure\rollback\` | 业务代码 | 修改 |
 | 2 | tests/rollback/ | `D:\ZephyrAlpha\tests\rollback\` | 测试代码 | 修改 |
-| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` | 蓝图 | 修改 |
+| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_autonomy_core\rollback_system\blueprint.md` | 蓝图 | 修改 |
 | 4 | db_snapshots/ | `D:\ZephyrAlpha\data\rollback\db_snapshots\` | 快照存储 | 读取 |
 | 5 | rollback_metrics.db | `D:\ZephyrAlpha\data\rollback\rollback_metrics.db` | 指标存储 | 读取 |
 
@@ -1701,7 +1700,7 @@ STEP 3: 拆分后验证
 |------|:---:|------|
 | 架构稳定性 | stable | 8 层防御架构+容量升级设计完成 |
 | 接口稳定性 | stable | §4 接口契约+CT-RBK-GATE-001 exit codes 定义完整 |
-| 代码覆盖率 | evolving | 62 .py 文件已实现，测试覆盖率待提升 |
+| 代码覆盖率 | evolving | 61 .py 文件已实现，测试覆盖率待提升 |
 | 文档完整性 | stable | 蓝图+施工图模板 v3.6 合规 |
 | 运维就绪度 | evolving | CLI 命令完整，但 DiRT drill 未定期执行 |
 | **整体** | **stable** | 对齐 dependency_path_panorama.md——核心架构+接口已冻结 |
