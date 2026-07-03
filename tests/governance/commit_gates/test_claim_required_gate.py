@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2031 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2103 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-claim_required_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §claim-required-gate
 # [MODULE] tests.test_claim_required_gate
 # [STABILITY] evolving

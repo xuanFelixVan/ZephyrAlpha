@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1590 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-2136 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §3.1
 # [MODULE] tests.test_trading_session_lifecycle
 # [CONSUMERS] zephyr.trading.session_lifecycle
