@@ -5,7 +5,7 @@
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -555,9 +555,75 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
+    # ── pre-commit gate 检查（治本 --no-verify 绕过，对标 GitCommitGateway）──
+    # session_worktree 用 --no-verify 绕过 git pre-commit hook，且绕过 GitCommitGateway。
+    # 但文件内容/路径类 gate 不能绕过——在 commit 前执行 7 个 worktree-compatible gate。
+    # 跳过 HELD-OVERLAP/CLAIM-REQUIRED（session_worktree 有自己的 held_files 机制，见 L332-337）。
+    #
+    # 关键适配：gate 的 git 命令（git diff --cached 等）默认在主仓库 root 执行，但
+    # worktree 模式下文件 staged 在 worktree index——主仓库 git diff --cached 返回空，
+    # gate 误判无新文件。修复：临时 monkeypatch _run_git 重定向 cwd 到 worktree，
+    # 使 git 命令查 worktree index；文件路径操作仍用 gateway.project_root（主仓库路径）。
+    #
+    # 降级策略：gate 基础设施异常降级为 warn（不卡死 commit）；gate 检出违规则阻断。
+    # 治本第1期前置依赖（architecture_debt_registry.md §六 第1期）：确保新 AST 门禁
+    # 注册到 commit_gate_registry 后，worktree 路径也生效，不被 --no-verify 绕过。
+    try:
+        from zephyr.governance.rule_bridge.git_commit_gateway import (
+            GitCommitGateway, _GATEWAY_ENV,
+        )
+        _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED"})
+        _gw = GitCommitGateway(project_root=root)
+        # 临时让 git 命令在 worktree 内执行（查 worktree index 的 staged 状态）
+        _orig_run_git = _gw._run_git
+
+        def _wt_run_git(cmd, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+            _env = os.environ.copy()
+            _env[_env_var] = "1"
+            # 阻断 git commit（同 _run_git 守卫，gate 检查不应触发 commit）
+            if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
+                    and not getattr(_gw, "_in_commit_flow", False)):
+                return subprocess.CompletedProcess(
+                    cmd, 1, "", "git commit blocked in worktree gate check"
+                )
+            return subprocess.run(
+                cmd, cwd=_wt, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=60, env=_env,
+            )
+
+        _gw._run_git = _wt_run_git
+        try:
+            _staged_abs = [str((root / rf).resolve()) for rf in rel_files]
+            _gate_results = _gw._gate_registry.check_all(
+                _gw, _staged_abs, session_id=session_id
+            )
+        finally:
+            _gw._run_git = _orig_run_git
+        _blocking = [
+            gr for gr in _gate_results
+            if not gr.passed and gr.gate_id not in _WORKTREE_SKIP_GATES
+        ]
+        if _blocking:
+            _details = "; ".join(f"{gr.gate_id}: {gr.detail}" for gr in _blocking)
+            return {
+                "session_id": session_id,
+                "status": "GATE_VIOLATION",
+                "message": (
+                    f"pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）: {_details}"
+                ),
+                "commit_hash": "",
+                "gate_violation": True,
+                "gate_results": [
+                    {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
+                ],
+            }
+    except Exception as _e:
+        # gate 基础设施异常降级为 warn（不阻断）——session_worktree 不应因 gate 框架
+        # 自身 bug 卡死业务流程；gate 检出违规则由上方 return 阻断。
+        logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e)
+
     # git commit（用 -F 从临时文件读 message，避免 PowerShell 特殊字符问题，对标 RULE-TWENTY 裁定2）
-    # --no-verify: 绕过 pre-commit hooks（与 GitCommitGateway 一致）。
-    # worktree 有独立 index 无共享冲突，gate 检查在 merge 回主分支时生效。
+    # --no-verify: 绕过 git pre-commit hooks（hook 已由上方 commit_gate_registry 检查替代）。
     import tempfile
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".msg", delete=False, encoding="utf-8"
