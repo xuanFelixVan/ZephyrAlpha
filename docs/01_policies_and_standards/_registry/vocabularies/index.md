@@ -35,7 +35,7 @@ generated: '2026-06-26'
 | governance_family_vocabulary.yaml | governance_family 受控词表（4 值） |
 | header_format_vocabulary.yaml | header_format 受控词表（7 值） |
 | language_vocabulary.yaml | language 受控词表（3 值） |
-| layer_vocabulary.yaml | layer 受控词表（16 值） |
+| layer_vocabulary.yaml | layer 受控词表（4 值） |
 | maturity_vocabulary.yaml | maturity 受控词表（4 值） |
 | module_lifecycle_status_vocabulary.yaml | module_lifecycle_status 受控词表（8 值） |
 | provenance_audit_chain_verdict_vocabulary.yaml | provenance.audit_chain.verdict 受控词表（3 值） |

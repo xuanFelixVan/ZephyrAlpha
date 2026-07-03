@@ -711,7 +711,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > - 原#8 `diagnose_depgraph.py:427` → 路径漂移至 `scripts/governance/d5_architecture/diagnose_depgraph.py:443`，已动态加载
 > - 原#9 `generate_project_depgraph.py:323` → 行号漂移至329，已动态加载
 
-##### C. layer_vocabulary.yaml（真源16值：L00/L01/L10等架构层）
+##### C. layer_vocabulary.yaml（真源4值：L0_infrastructure/L1_foundation/L2_domain/L3_application）
 
 | # | 违规类型 | 文件:行号 | 严重度 | 历史遗留 |
 |---|---|---|:---:|:---:|
@@ -1983,11 +1983,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 **证据**：
 - [AGENTS.md:145](file:///D:/ZephyrAlpha/AGENTS.md#L145) "14层（L00-L13）是域的layer_id属性枚举"
-- 实际domains表layer_id只用3值：L0_infrastructure/L1_foundation/L2_domain
-- layer_vocabulary.yaml定义16值
-- 三套命名方案互不匹配
+- 实际 domains 表 layer_id DB trigger 允许 4 值：L0_infrastructure/L1_foundation/L2_domain/L3_application
+- layer_vocabulary.yaml v2.0.0 已重写为 4 值（2026-07-04 阶段2 清除14层概念）
+- AGENTS.md 仍声明 14 层（L00-L13）—— 待阶段3 文档清理
 **病根**：根因1（架构声明与实现脱节）
-**修复方向**：统一层命名方案
+**修复方向**：阶段3 清理 AGENTS.md "14层" 声明，统一为 4 值命名方案
 
 #### 5.13.11 blueprint_registry.yaml内部数字矛盾（MEDIUM）
 
