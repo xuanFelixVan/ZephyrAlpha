@@ -90,9 +90,13 @@ class CapabilityRegistry:
     def __init__(self) -> None:
         if self._initialized:
             return
-        self._capabilities: list[Capability] = []
-        self._load_from_yaml()
-        self._initialized = True
+        # Phase 2 P2 修复（并发安全 MEDIUM）：__init__ 双重检查锁——__new__ 已加锁但 __init__ 未加锁，并发首次调用可重复 _load_from_yaml
+        with type(self)._lock:
+            if self._initialized:
+                return
+            self._capabilities: list[Capability] = []
+            self._load_from_yaml()
+            self._initialized = True
 
     def _load_from_yaml(self) -> None:
         if not CAPABILITIES_YAML_PATH.exists():

@@ -67,7 +67,7 @@ class DeadlockDetector:
         self.timeout = timeout
         self.max_retries = max_retries
         self.base_delay = base_delay
-        self._lock = threading.Lock()
+        # Phase 2 P2 修复（并发安全 MEDIUM）：移除未使用的 self._lock——本类操作传入的 lock 参数，自身无需持锁
 
     def acquire_with_timeout(self, lock: threading.Lock, timeout: float | None = None) -> bool:
         timeout = timeout or self.timeout

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -31,14 +32,17 @@ CACHE_FILE = "bootstrap_cache.json"
 
 class BootstrapCache:
     _instance: BootstrapCache | None = None
+    _lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：单例创建线程安全
 
     def __new__(cls) -> BootstrapCache:
         if cls._instance is None:
-            instance = super().__new__(cls)
-            instance._cache: dict[str, Any] = {}
-            instance._loaded = False
-            instance._cache_path = CACHE_DIR / CACHE_FILE
-            cls._instance = instance
+            with cls._lock:
+                if cls._instance is None:
+                    instance = super().__new__(cls)
+                    instance._cache: dict[str, Any] = {}
+                    instance._loaded = False
+                    instance._cache_path = CACHE_DIR / CACHE_FILE
+                    cls._instance = instance
         return cls._instance
 
     def load(self) -> dict[str, Any]:

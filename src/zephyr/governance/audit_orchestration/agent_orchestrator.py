@@ -71,6 +71,7 @@ from __future__ import annotations
 import importlib
 import json
 import statistics
+import threading
 import time
 import uuid
 from collections import deque
@@ -883,15 +884,18 @@ class AgentOrchestrator:
             )
 
     _lsg_gateway_instance = None
+    _lsg_lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：_lsg_gateway_instance lazy init 线程安全
 
     def _lsg_scan_agent_action(self, tool_name: str, tool_params: dict[str, Any]) -> str | None:
         if AgentOrchestrator._lsg_gateway_instance is None:
-            try:
-                _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
-                LSGSecurityGateway = _mod.LSGSecurityGateway
-                AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
-            except Exception:
-                return None
+            with AgentOrchestrator._lsg_lock:
+                if AgentOrchestrator._lsg_gateway_instance is None:
+                    try:
+                        _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
+                        LSGSecurityGateway = _mod.LSGSecurityGateway
+                        AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
+                    except Exception:
+                        return None
         gw = AgentOrchestrator._lsg_gateway_instance
         try:
             import asyncio

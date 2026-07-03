@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -49,18 +50,22 @@ class FindingIngest:
         self._audit_dir = audit_dir
         self._writer: AuditWriter | None = None
         self._writer_initialized = False
+        self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：_get_writer lazy init 线程安全
 
     def _get_writer(self) -> Any:
         if self._writer_initialized:
             return self._writer
-        self._writer_initialized = True
-        try:
-            from zephyr.governance.audit_trail.writer import get_audit_writer
+        with self._lock:
+            if self._writer_initialized:
+                return self._writer
+            self._writer_initialized = True
+            try:
+                from zephyr.governance.audit_trail.writer import get_audit_writer
 
-            self._writer = get_audit_writer()
-        except Exception:
-            _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback")
-            self._writer = None
+                self._writer = get_audit_writer()
+            except Exception:
+                _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback")
+                self._writer = None
         return self._writer
 
     def ingest_file(self, jsonl_path: str) -> IngestResult:
