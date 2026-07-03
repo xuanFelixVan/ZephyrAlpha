@@ -2170,11 +2170,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（缺saga补偿模式）
 - 修复：Outbox模式——COMPLETED+pending_git_commit事件异步重试
 
-#### 5.15.3 dlq_retry_policy.retry_pending()查不存在的表【HIGH】
-- 证据：[dlq_retry_policy.py:44](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/dlq_retry_policy.py) `SELECT COUNT(*) FROM dlq_messages`；[sqlite_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) 无此表；`:49` `except:warning→return RetryResult(status="degraded")`；`BACKOFF_SCHEDULE`（`:27`）死代码
-- 病根：根因1（blueprint声明表/schema未建/代码查询必然失败）
-- 修复：补建dlq_messages表或改查orchestrator/dlq_manager
-
 #### 5.15.4 batch_review 7维度跨7独立事务部分失败【MEDIUM】
 - 证据：[task_repo.py:1885-1895](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `for dim in _BATCH_REVIEW_DIMENSIONS:` 循环内每次单独事务INSERT，第3维度异常前2已commit，consecutive_zero错乱
 - 病根：根因5（批量无原子边界）
@@ -2199,22 +2194,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 证据：[retry_handler.py:108](file:///d:/ZephyrAlpha/src/zephyr/shared/reliability/retry_handler.py) `return RetryResult(success=False,...,final_error=e)` 不抛异常，原始堆栈丢失
 - 病根：根因5（错误传播断裂，返回值替代异常）
 - 修复：重试耗尽应 `raise RetryExhaustedError(...) from final_error`
-
-#### 5.15.9 reconciler.reconcile()引用未导入的AssetType【MEDIUM】
-- 证据：[reconciler.py:105,146](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/reconciler.py) `AssetType.UNKNOWN`，但import块（`:31-43`）无AssetType，cls为None时NameError崩溃
-- 病根：根因5（未导入符号+默认值回退路径未测试）
-- 修复：补import或用字符串字面量
-
-#### 5.15.10 zombie_scanner._load_patterns吞JSON损坏，历史静默清零【MEDIUM】
-- 证据：[zombie_scanner.py:107-109](file:///d:/ZephyrAlpha/src/zephyr/trading/zombie_scanner.py) `except:pass;return {}`，patterns文件损坏时静默返回空，repeated_offenders历史丢失
-- 病根：根因5（silent degrade）
-- 修复：损坏时logger.warning再返回空
-
-#### 5.15.11 audit_domain_nodes.run_4class_check autocommit=True做写操作【MEDIUM】
-- 证据：[audit_domain_nodes.py:192](file:///d:/ZephyrAlpha/scripts/governance/_archive/prototype/audit_domain_nodes.py) `get_depgraph_pg_connection(autocommit=True)` 执行DELETE+write_violations，每语句独立提交
-- 病根：根因5（事务边界缺失）
-- 修复：写检测统一autocommit=False+try/except/rollback
-- [已归档] audit_domain_nodes.py 已移至 _archive/prototype/，此债务项随归档关闭
 
 #### 5.15.12 30+脚本conn裸赋值异常路径连接泄漏【MEDIUM】
 - 证据：`audit_rename_completeness.py:244/273/370/397`、`generate_project_path_tree.py:71`、`diagnose_depgraph.py:62`、`extract_depgraph.py:87/322` 等 `conn=get_depgraph_pg_connection(autocommit=True)` 裸赋值，部分无try/finally
