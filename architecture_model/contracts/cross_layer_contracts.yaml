@@ -59,10 +59,10 @@ versioning_strategy:
         text: "同 MAJOR 版本 MUST 前后兼容。生产者可以发送新字段，消费者 MUST 忽略未知可选字段。"
       - rule_id: VER-R2
         name: "MAJOR 不匹配拒绝"
-        text: "MAJOR 版本不匹配时，消费者 MUST 拒绝处理并触发 ContractViolationError（CTR-ERR-006），上报至 L12 Telemetry。"
+        text: "MAJOR 版本不匹配时，消费者 MUST 拒绝处理并触发 ContractViolationError（CTR-ERR-006），上报至 Telemetry。"
       - rule_id: VER-R3
         name: "升级预通知"
-        text: "生产者 MUST 在新 MAJOR 版本发布前提前 30 天通知所有注册消费者。通知通过 L12 Telemetry 的 contract_version_change 事件发布。"
+        text: "生产者 MUST 在新 MAJOR 版本发布前提前 30 天通知所有注册消费者。通知通过 Telemetry 的 contract_version_change 事件发布。"
       - rule_id: VER-R4
         name: "双版本过渡期"
         text: "消费者在升级过渡窗口内 MUST 同时支持新旧两个 MAJOR 版本。过渡窗口 = MIN（30天，生产者指定的 migration_window_ms）。"
@@ -81,23 +81,23 @@ contracts:
     frozen: true
     source_domain: D_MKT_DATA
     target_domains: [D_FACTOR, D_SIGLEGACY, D_SIMULATION, D_BACKTEST]
-    flow: "L00 Data Source → L02 Alpha Factor"
+    flow: "Data Source → Alpha Factor"
     physical_path: src/zephyr/shared/contracts/market_data.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L00 → L02 核心数据契约。质量门禁通过后的标准化行情数据。"
+    description: "Data Source → Factor 核心数据契约。质量门禁通过后的标准化行情数据。"
     ai_prompt: >
-      当你需要在 L02 中使用来自 L00 的行情数据时，MUST 使用 NormalizedMarketData 类型。
-      该类型的 symbol 字段已由 L00 标准化为 "600519.SH" 格式（证券代码.交易所），你不需要再做格式转换。
+      当你需要在 Factor 中使用来自 Data Source 的行情数据时，MUST 使用 NormalizedMarketData 类型。
+      该类型的 symbol 字段已由 Data Source 标准化为 "600519.SH" 格式（证券代码.交易所），你不需要再做格式转换。
       所有价格字段（open/high/low/close）和成交量（volume）使用 Decimal 类型——禁止用 float 做任何算术运算。
       如果 quality_score < 0.7，该数据可能不可靠，请标记为低置信度。
       如果 is_suspended = True，不要基于该数据生成任何信号，跳过该标的。
       ingested_at 为数据入库时间，不一定等于 timestamp（数据时间戳），请使用 timestamp 做截面对齐。
     sla:
       p99_latency_ms: 10
-      sla_scope: "L00:WS recv → L02:on_market_data 接收（含 parse + quality_gate）"
+      sla_scope: "Data Source:WS recv → Factor:on_market_data 接收（含 parse + quality_gate）"
       timeout_action: DROP_AND_ALERT
-      measurement: "L00 emit_timestamp → L02 receive_timestamp，通过 TraceContext（CTR-TRACE-001）的 span_id 关联"
+      measurement: "Data Source emit_timestamp → Factor receive_timestamp，通过 TraceContext（CTR-TRACE-001）的 span_id 关联"
     fields:
       - {name: symbol, type: str, required: true, description: "标准化证券代码（如 600519.SH）"}
       - {name: data_source, type: str, required: true, description: "数据源标识（如 akshare, wind）"}
@@ -129,24 +129,24 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_SIGLEGACY, D_RISK, D_PF_CORE, D_BACKTEST]
-    flow: "L02 Alpha Factor → L03/L04/L05"
+    flow: "Alpha Factor → Signal/Risk/Portfolio"
     physical_path: src/zephyr/shared/contracts/factor_signal.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L02 → L03/L04/L05 核心数据契约。单个因子在单个时间截面对单个标的的信号值。"
+    description: "Factor → Signal/Risk/Portfolio 核心数据契约。单个因子在单个时间截面对单个标的的信号值。"
     ai_prompt: >
-      当你需要在 L02 中生成因子信号时，MUST 使用 FactorSignal 类型。
+      当你需要在 Factor 中生成因子信号时，MUST 使用 FactorSignal 类型。
       不要自行定义因子信号的数据结构。factor_id 必须对应 FactorRegistry 中已注册的因子 key。
       raw_value 是因子原始计算结果，normalized_value 是截面标准化后的 z-score，rank_pct 是 0-1 分位数排名。
       如果因子计算失败，不要产出 FactorSignal——应该抛出 FactorComputationError（CTR-ERR-002）。
-      如果 confidence < 0.5，该信号可能不可靠，下游（L03/L04/L05）可以忽略。
+      如果 confidence < 0.5，该信号可能不可靠，下游（Signal/Risk/Portfolio）可以忽略。
       is_valid = False 时下游 MUST 跳过该信号。
       extra 字段用于放非标准化的扩展数据，不要滥用——能用标准字段就用标准字段。
     sla:
       p99_latency_ms: 50
-      sla_scope: "L02 单个因子的 compute() 调用（从接收 NormalizedMarketData 到产出 FactorSignal）"
+      sla_scope: "Factor 单个因子的 compute() 调用（从接收 NormalizedMarketData 到产出 FactorSignal）"
       timeout_action: SKIP_FACTOR_AND_DEGRADE
-      measurement: "L02 receive_timestamp → L02 emit_timestamp，通过 TraceContext 的 span_id 关联"
+      measurement: "Factor receive_timestamp → Factor emit_timestamp，通过 TraceContext 的 span_id 关联"
     fields:
       - {name: factor_id, type: str, required: true, description: "因子唯一 ID（对应 FactorRegistry 的 key）"}
       - {name: symbol, type: str, required: true, description: "标的代码"}
@@ -173,23 +173,23 @@ contracts:
     frozen: true
     source_domain: D_RISK
     target_domains: [D_PF_CORE]
-    flow: "L04 Risk Management → L05 Portfolio Construction"
+    flow: "Risk Management → Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/risk_limits.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L04 → L05 核心数据契约。风险限额约束集合，由 L05 组合优化器强制执行。"
+    description: "Risk → Portfolio 核心数据契约。风险限额约束集合，由 Portfolio 组合优化器强制执行。"
     ai_prompt: >
-      当你需要在 L04 中定义风险限额或在 L05 中使用风险限额时，MUST 使用 RiskLimits 类型。
-      max_single_position 是单标的权重上限（如 0.10 = 10%），L05 组合优化器 MUST 确保不超此值。
+      当你需要在 Risk 中定义风险限额或在 Portfolio 中使用风险限额时，MUST 使用 RiskLimits 类型。
+      max_single_position 是单标的权重上限（如 0.10 = 10%），Portfolio 组合优化器 MUST 确保不超此值。
       max_gross_leverage 是总杠杆上限，默认为 1.0（满仓不加杠杆）。
       symbol_overrides 用于个股特殊限制，key 为 symbol，value 为 max_weight。
-      如果 L05 组合优化器检测到任何约束被突破，MUST 抛出 RiskLimitViolationError（CTR-ERR-004），阻止订单生成。
+      如果 Portfolio 组合优化器检测到任何约束被突破，MUST 抛出 RiskLimitViolationError（CTR-ERR-004），阻止订单生成。
       max_drawdown_limit 触发时，系统应进入风控熔断状态。
     sla:
       p99_latency_ms: 5
-      sla_scope: "L04 风控检查（从接收 FactorSignal 到产出 RiskLimits）"
+      sla_scope: "Risk 风控检查（从接收 FactorSignal 到产出 RiskLimits）"
       timeout_action: USE_CACHED_LIMITS
-      measurement: "L04 receive_timestamp → L04 emit_timestamp"
+      measurement: "Risk receive_timestamp → Risk emit_timestamp"
     fields:
       - {name: as_of_date, type: datetime, required: true, description: "限额生效日期"}
       - {name: max_single_position, type: float, required: false, default: 0.10, description: "单标的最大权重（如 0.10 = 10%）"}
@@ -210,24 +210,24 @@ contracts:
     frozen: false
     source_domain: D_PF_CORE
     target_domains: [D_EX_CORE]
-    flow: "L05 Portfolio Construction → L06 Trade Execution"
+    flow: "Portfolio Construction → Trade Execution"
     physical_path: src/zephyr/shared/contracts/order.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L05 → L06 核心数据契约。单笔委托指令（可变对象，随生命周期更新状态）。"
+    description: "Portfolio → Execution 核心数据契约。单笔委托指令（可变对象，随生命周期更新状态）。"
     ai_prompt: >
-      当你需要在 L05 中生成订单或在 L06 中处理订单时，MUST 使用 Order 类型。
+      当你需要在 Portfolio 中生成订单或在 Execution 中处理订单时，MUST 使用 Order 类型。
       Order 是可变对象（frozen=false），状态通过 OrderStatus 状态机驱动。
       状态转移路径为：PENDING → SUBMITTED → PARTIAL → FILLED / CANCELLED / REJECTED。
       不允许从 FILLED/CANCELLED/REJECTED 回到 SUBMITTED（单向不可逆）。
       quantity 和 limit_price 使用 Decimal 类型，禁止 float。
-      L05 生成订单时 status 默认为 PENDING，L06 在执行过程中更新状态。
+      Portfolio 生成订单时 status 默认为 PENDING，Execution 在执行过程中更新状态。
       订单被券商拒绝时，status MUST 变为 REJECTED，并抛出 ExecutionRejectionError（CTR-ERR-005）。
     sla:
       p99_latency_ms: 5
-      sla_scope: "L05 组合优化器生成订单列表（所有标的的 Order 生成完毕）"
+      sla_scope: "Portfolio 组合优化器生成订单列表（所有标的的 Order 生成完毕）"
       timeout_action: SKIP_REBALANCE_CYCLE
-      measurement: "L05 receive_timestamp → L05 emit_timestamp"
+      measurement: "Portfolio receive_timestamp → Portfolio emit_timestamp"
     fields:
       - {name: order_id, type: str, required: true, description: "全局唯一 ID（UUID）"}
       - {name: symbol, type: str, required: true, description: "标的代码"}
@@ -253,13 +253,13 @@ contracts:
     frozen: true
     source_domain: D_EX_CORE
     target_domains: [D_TRADING]
-    flow: "L06 Trade Execution → L07 Post-Trade Analytics"
+    flow: "Trade Execution → Post-Trade Analytics"
     physical_path: src/zephyr/shared/contracts/fill.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L06 → L07 核心数据契约。单次成交回报（不可变）。"
+    description: "Execution → Analytics 核心数据契约。单次成交回报（不可变）。"
     ai_prompt: >
-      当你需要在 L06 中记录成交或在 L07 中分析成交时，MUST 使用 Fill 类型。
+      当你需要在 Execution 中记录成交或在 Analytics 中分析成交时，MUST 使用 Fill 类型。
       Fill 是不可变对象（frozen=true），一旦创建不得修改。
       fill_id 是全局唯一 ID，order_id 关联 CTR-004 Order。
       fill_price 和 filled_quantity 使用 Decimal 类型，禁止 float。
@@ -268,9 +268,9 @@ contracts:
       每个 Order 可能对应多个 Fill（部分成交场景）。
     sla:
       p99_latency_ms: 100
-      sla_scope: "L06 券商成交推送 → L07 接收 Fill（含异步补传窗口）"
+      sla_scope: "Execution 券商成交推送 → Analytics 接收 Fill（含异步补传窗口）"
       timeout_action: ASYNC_RETRY
-      measurement: "L06 receive_timestamp → L07 emit_timestamp"
+      measurement: "Execution receive_timestamp → Analytics emit_timestamp"
     fields:
       - {name: fill_id, type: str, required: true, description: "全局唯一成交 ID"}
       - {name: order_id, type: str, required: true, description: "关联委托 ID"}
@@ -293,7 +293,7 @@ contracts:
     frozen: true
     source_domain: D_EX_CORE
     target_domains: [D_RISK, D_TRADING, D_ML_TRAIN]
-    flow: "L06 OMS / L07 Analytics → L04 Risk Monitor / L11 Strategic Decision"
+    flow: "OMS / Analytics → Risk Monitor / Strategic Decision"
     physical_path: src/zephyr/shared/contracts/position.py
     stability: locked-5yr
     schema_version: "1.0"
@@ -304,14 +304,14 @@ contracts:
       holdings 是 {symbol: quantity} 的映射，quantity 使用 Decimal 类型。
       market_values 是 {symbol: market_value} 的映射，market_value 使用 Decimal 类型。
       total_market_value + cash = 组合总资产。
-      gross_leverage 用于风控监控和 L11 策略决策。
-      快照由 L06 OMS 或 L07 Analytics 产生，由 L04 Risk Monitor 和 L11 Strategic Decision 消费。
+      gross_leverage 用于风控监控和 ML Platform 策略决策。
+      快照由 OMS 或 Analytics 产生，由 Risk Monitor 和 Strategic Decision 消费。
       注意：holdings 和 market_values 虽然是 Dict，但持有的是引用——跨层传递时建议做 deep copy 防护。
     sla:
       p99_latency_ms: 50
-      sla_scope: "L06/L07 持仓快照生成（含券商查询 + 计算）"
+      sla_scope: "Execution/Analytics 持仓快照生成（含券商查询 + 计算）"
       timeout_action: USE_LAST_SNAPSHOT
-      measurement: "L06/L07 query_timestamp → emit_timestamp"
+      measurement: "Execution/Analytics query_timestamp → emit_timestamp"
     fields:
       - {name: as_of_timestamp, type: datetime, required: true, description: "快照时间"}
       - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
@@ -335,22 +335,22 @@ contracts:
     frozen: true
     source_domain: D_MKT_DATA
     target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_ML_TRAIN]
-    flow: "L00 → L02 → L03 → L05 → L06 → L07（贯穿全链路）"
+    flow: "Data Source → Factor → Signal → Portfolio → Execution → Analytics（贯穿全链路）"
     physical_path: src/zephyr/shared/contracts/trace_context.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "跨所有数据层的全链路追踪上下文。L00 在首次产生数据时生成，后续每层追加 span。支持反向追溯：'这笔订单是因为哪个因子的哪个信号在哪个时刻产生的'。"
+    description: "跨所有数据层的全链路追踪上下文。Data Source 在首次产生数据时生成，后续每层追加 span。支持反向追溯：'这笔订单是因为哪个因子的哪个信号在哪个时刻产生的'。"
     ai_prompt: >
       所有跨层传递的数据对象中都嵌入了一个可选的 trace_context 字段。
-      如果你是 L00（数据入口），你 MUST 在首次产生 NormalizedMarketData 时创建新的 TraceContext，生成 UUID 作为 trace_id。
-      如果你是 L02/L03/L05/L06/L07（中间层），你在处理数据时 MUST：
+      如果你是 Data Source（数据入口），你 MUST 在首次产生 NormalizedMarketData 时创建新的 TraceContext，生成 UUID 作为 trace_id。
+      如果你是 Factor/Signal/Portfolio/Execution/Analytics（中间层），你在处理数据时 MUST：
       1. 从上游数据中取出 trace_context；
       2. 为本层创建一个新的 span（span_id 用 UUID，记录 parent_span_id 指向上游）；
       3. 设置 root_cause_layer 为本层的标识（如 "factor"）；
       4. 将更新后的 trace_context 嵌入到本层产出的数据对象中。
       不要丢掉 trace_context——没有它，排障等于瞎猜。
     fields:
-      - {name: trace_id, type: str, required: true, description: "全局唯一追踪 ID（UUID），L00 生成，永不改变"}
+      - {name: trace_id, type: str, required: true, description: "全局唯一追踪 ID（UUID），Data Source 生成，永不改变"}
       - {name: span_id, type: str, required: true, description: "本层 span ID（UUID），每层重新生成"}
       - {name: service_name, type: str, required: true, description: "本层标识：data / factor / signal / ..."}
       - {name: created_at, type: datetime, required: true, description: "本 span 创建时间（UTC 纳秒精度）"}
@@ -369,15 +369,15 @@ contracts:
     frozen: true
     source_domain: D_MKT_DATA
     target_domains: [D_FACTOR]
-    flow: "L00 Data Source → L02 Alpha Factor（错误路径）"
+    flow: "Data Source → Alpha Factor（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/data_quality_error.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L00 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。"
+    description: "Data Source 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。"
     ai_prompt: >
-      当 L00 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。
+      当 Data Source 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。
       每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。
-      禁止静默丢弃——必须显式抛出，让 L02 和 L12 Telemetry 感知。
+      禁止静默丢弃——必须显式抛出，让 Factor 和 Telemetry 感知。
     fields:
       - {name: error_id, type: str, required: true, description: "错误唯一 ID（UUID）"}
       - {name: symbol, type: str, required: true, description: "出问题的标的代码"}
@@ -397,13 +397,13 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_SIGLEGACY]
-    flow: "L02 Alpha Factor → L03 Signal Generation（错误路径）"
+    flow: "Alpha Factor → Signal Generation（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/factor_computation_error.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L02 因子计算过程中遇到无法处理的异常时抛出的错误。"
+    description: "Factor 因子计算过程中遇到无法处理的异常时抛出的错误。"
     ai_prompt: >
-      当 L02 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。
+      当 Factor 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。
       常见 failure_reason：input_missing（缺少所需行情）、division_by_zero（除零）、window_insufficient（历史窗口不足）、
       memory_exceeded（内存超限）、invalid_parameter（参数非法）。
       不要吞掉错误返回一个 is_valid=False 的 FactorSignal——后者用于逻辑判断（如低置信度），前者用于系统级故障。
@@ -425,17 +425,17 @@ contracts:
     frozen: true
     source_domain: D_SIGLEGACY
     target_domains: [D_RISK, D_PF_CORE]
-    flow: "L03 Signal Generation → L04/L05（降级通知）"
+    flow: "Signal Generation → Risk/Portfolio（降级通知）"
     physical_path: src/zephyr/shared/contracts/errors/signal_degradation_warning.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L03 检测到信号质量显著下降时发出的警告。非致命，但 L04/L05 应据此调低仓位或暂停交易。"
+    description: "Signal 检测到信号质量显著下降时发出的警告。非致命，但 Risk/Portfolio 应据此调低仓位或暂停交易。"
     ai_prompt: >
-      当 L03 信号合成引擎检测到以下情况时，MUST 发布 SignalDegradationWarning：
+      当 Signal 信号合成引擎检测到以下情况时，MUST 发布 SignalDegradationWarning：
       - confidence_below_threshold：合成后的信号置信度低于阈值
       - regime_change_detected：检测到市场状态切换（如趋势→震荡）
       - factor_decay_triggered：某个依赖的因子 ICIR 大幅下降
-      这不是错误——信号仍然产出，但 L04/L05 应对此做降级处理（如减半仓位）。
+      这不是错误——信号仍然产出，但 Risk/Portfolio 应对此做降级处理（如减半仓位）。
     fields:
       - {name: warning_id, type: str, required: true, description: "警告唯一 ID"}
       - {name: reason, type: str, required: true, description: "confidence_below_threshold | regime_change_detected | factor_decay_triggered | signal_conflict | throughput_drop"}
@@ -453,14 +453,14 @@ contracts:
     frozen: true
     source_domain: D_RISK
     target_domains: [D_PF_CORE, D_EX_CORE]
-    flow: "L04 Risk Management → L05/L06（拒绝交易）"
+    flow: "Risk Management → Portfolio/Execution（拒绝交易）"
     physical_path: src/zephyr/shared/contracts/errors/risk_limit_violation_error.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L04 检测到当前或计划操作将突破风险限额时抛出的硬错误。L05/L06 MUST 据此阻止订单生成和执行。"
+    description: "Risk 检测到当前或计划操作将突破风险限额时抛出的硬错误。Portfolio/Execution MUST 据此阻止订单生成和执行。"
     ai_prompt: >
-      当 L04 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。
-      这是一个 HALT 级别的错误——下游（L05/L06）MUST 拒绝继续处理并停止当前调仓周期。
+      当 Risk 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。
+      这是一个 HALT 级别的错误——下游（Portfolio/Execution）MUST 拒绝继续处理并停止当前调仓周期。
       violated_constraint 精确指出是哪条规则被突破（position_limit / leverage_limit / var_breach / drawdown_trigger / sector_concentration）。
       不要降级为 WARNING——如果这是代码逻辑导致的，降级等于资金安全风险。
     fields:
@@ -482,15 +482,15 @@ contracts:
     frozen: true
     source_domain: D_EX_CORE
     target_domains: [D_PF_CORE, D_TRADING]
-    flow: "L06 Trade Execution → L05/L07（执行失败反馈）"
+    flow: "Trade Execution → Portfolio/Analytics（执行失败反馈）"
     physical_path: src/zephyr/shared/contracts/errors/execution_rejection_error.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "L06 订单执行过程中被券商或市场拒绝时抛出的错误。"
+    description: "Execution 订单执行过程中被券商或市场拒绝时抛出的错误。"
     ai_prompt: >
-      当 L06 的订单被券商/交易所拒绝时，MUST 抛出 ExecutionRejectionError。
+      当 Execution 的订单被券商/交易所拒绝时，MUST 抛出 ExecutionRejectionError。
       拒绝原因通过 rejection_source（BROKER / EXCHANGE / CIRCUIT_BREAKER / INTERNAL）和 rejection_reason 字段精确标识。
-      L05 可以根据此错误决定是否重新生成订单（如降低数量、改用 LIMIT 单）。
+      Portfolio 可以根据此错误决定是否重新生成订单（如降低数量、改用 LIMIT 单）。
       如果 rejection_reason 为 market_circuit_breaker，不要重试——等待下一周期。
     fields:
       - {name: error_id, type: str, required: true, description: "错误唯一 ID"}
@@ -543,11 +543,11 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
-    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    flow: "Factor/Signal 下游 → Data Source 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/pause.py
     stability: locked-5yr
     schema_version: "1.0"
-    description: "下游（L02/L03）处理能力不足时，向上游（L00）发出暂停信号。L00 暂停该标的的数据下发。"
+    description: "下游（Factor/Signal）处理能力不足时，向上游（Data Source）发出暂停信号。Data Source 暂停该标的的数据下发。"
     ai_prompt: >
       如果下游处理速度跟不上上游产生速度，你可以通过 emit PAUSE 背压信号来告诉上游暂停。
       PAUSE 会暂停指定标的的数据下发 duration_ms 毫秒，到期后自动恢复。
@@ -569,7 +569,7 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
-    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    flow: "Factor/Signal 下游 → Data Source 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/throttle.py
     stability: locked-5yr
     schema_version: "1.0"
@@ -594,7 +594,7 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
-    flow: "L02/L03 下游 → L00 上游（背压逆向）"
+    flow: "Factor/Signal 下游 → Data Source 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/resume.py
     stability: locked-5yr
     schema_version: "1.0"
@@ -618,12 +618,12 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_TRADING]
-    flow: "L02 Alpha Factor → L07 Post-trade Analytics"
+    flow: "Alpha Factor → Post-trade Analytics"
     physical_path: src/zephyr/shared/contracts/factor_monitor_report.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L02 → L07 因子有效性监控报告。定期评估已注册因子的预测有效性。"
-    source_blueprint: "L02_ALPHA_FACTOR/factor-effectiveness-monitoring-blueprint.md"
+    description: "Factor → Analytics 因子有效性监控报告。定期评估已注册因子的预测有效性。"
+    source_blueprint: "factor-effectiveness-monitoring-blueprint.md"
     fields:
       - {name: factor_id, type: str, required: true, description: "因子 ID"}
       - {name: evaluation_date, type: str, required: true, description: "评估日期 YYYY-MM-DD"}
@@ -644,12 +644,12 @@ contracts:
     frozen: true
     source_domain: D_FACTOR
     target_domains: [D_SIGLEGACY, D_PF_CORE]
-    flow: "L02（宏观因子计算）→ L03/L05"
+    flow: "Factor（宏观因子计算）→ Signal/Portfolio"
     physical_path: src/zephyr/shared/contracts/macro_factor_signal.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L02 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。"
-    source_blueprint: "L02_ALPHA_FACTOR/macro-factor-blueprint.md"
+    description: "Factor 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。"
+    source_blueprint: "macro-factor-blueprint.md"
     fields:
       - {name: factor_id, type: str, required: true, description: "宏观因子 ID（如 macro.pmi.cn.v1）"}
       - {name: as_of_date, type: str, required: true, description: "信号日期"}
@@ -667,12 +667,12 @@ contracts:
     frozen: true
     source_domain: D_SIGLEGACY
     target_domains: [D_PF_CORE]
-    flow: "L03 Signal Generation → L05 Portfolio Construction"
+    flow: "Signal Generation → Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/capital_allocation_result.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L03 → L05 资本配置结果契约。多策略资本分配的中间产物。"
-    source_blueprint: "L03_SIGNAL_GENERATION/capital-allocation-blueprint.md"
+    description: "Signal → Portfolio 资本配置结果契约。多策略资本分配的中间产物。"
+    source_blueprint: "capital-allocation-blueprint.md"
     fields:
       - {name: allocation_date, type: str, required: true, description: "配置日期"}
       - {name: strategy_allocations, type: "Dict[str, float]", required: true, description: "{strategy_id: capital_weight}"}
@@ -688,12 +688,12 @@ contracts:
     frozen: true
     source_domain: D_ML_TRAIN
     target_domains: [D_SIGLEGACY, D_PF_CORE]
-    flow: "L11 ML Platform → L03/L05"
+    flow: "ML Platform → Signal/Portfolio"
     physical_path: src/zephyr/shared/contracts/model_serving_request.py
     stability: upgradable
     schema_version: "1.0"
-    description: "跨层模型推理请求契约。L11 ML Platform 提供推理服务，L03/L05 消费。"
-    source_blueprint: "L11_ML_PLATFORM/model-serving-blueprint.md"
+    description: "跨层模型推理请求契约。ML Platform 提供推理服务，Signal/Portfolio 消费。"
+    source_blueprint: "model-serving-blueprint.md"
     fields:
       - {name: model_id, type: str, required: true, description: "已注册模型 ID"}
       - {name: model_version, type: str, required: true, description: "模型版本"}
@@ -707,12 +707,12 @@ contracts:
     frozen: true
     source_domain: D_ML_TRAIN
     target_domains: [D_SIGLEGACY, D_PF_CORE]
-    flow: "L11 ML Platform → L03/L05"
+    flow: "ML Platform → Signal/Portfolio"
     physical_path: src/zephyr/shared/contracts/model_serving_response.py
     stability: upgradable
     schema_version: "1.0"
-    description: "跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。"
-    source_blueprint: "L11_ML_PLATFORM/model-serving-blueprint.md"
+    description: "跨层模型推理响应契约。ML Platform 返回推理结果给 Signal/Portfolio。"
+    source_blueprint: "model-serving-blueprint.md"
     fields:
       - {name: request_id, type: str, required: true, description: "请求 ID"}
       - {name: model_id, type: str, required: true, description: "模型 ID"}
@@ -729,12 +729,12 @@ contracts:
     frozen: true
     source_domain: D_PF_CORE
     target_domains: [D_TRADING, D_COMPLIANCE]
-    flow: "L05 Portfolio Construction → L07/L10"
+    flow: "Portfolio Construction → Analytics/Compliance"
     physical_path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L05 → L07/L10 策略生命周期事件契约。"
-    source_blueprint: "L05_PORTFOLIO_CONSTRUCTION/strategy-lifecycle-management-blueprint.md"
+    description: "Portfolio → Analytics/Compliance 策略生命周期事件契约。"
+    source_blueprint: "strategy-lifecycle-management-blueprint.md"
     fields:
       - {name: strategy_id, type: str, required: true, description: "策略 ID"}
       - {name: event_type, type: str, required: true, description: "created | activated | paused | deprecated | retired"}
@@ -753,12 +753,12 @@ contracts:
     frozen: true
     source_domain: D_EX_CORE
     target_domains: [D_TRADING]
-    flow: "L06 Trade Execution → L07 Post-trade Analytics"
+    flow: "Trade Execution → Post-trade Analytics"
     physical_path: src/zephyr/shared/contracts/execution_report.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L06 → L07 执行分析报告契约（TCA 输入）。"
-    source_blueprint: "L06_TRADE_EXECUTION/execution-management-system-blueprint.md"
+    description: "Execution → Analytics 执行分析报告契约（TCA 输入）。"
+    source_blueprint: "execution-management-system-blueprint.md"
     fields:
       - {name: order_id, type: str, required: true, description: "委托 ID"}
       - {name: symbol, type: str, required: true, description: "标的代码"}
@@ -782,12 +782,12 @@ contracts:
     frozen: true
     source_domain: D_RISK
     target_domains: [D_FRONTEND]
-    flow: "L04 Risk Management → L08 Human-AI Interface"
+    flow: "Risk Management → Human-AI Interface"
     physical_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L04 → L08 风险仪表板实时快照契约。"
-    source_blueprint: "L04_RISK_MANAGEMENT/risk-dashboard-blueprint.md"
+    description: "Risk → Frontend 风险仪表板实时快照契约。"
+    source_blueprint: "risk-dashboard-blueprint.md"
     fields:
       - {name: snapshot_time, type: str, required: true, description: "快照时间 ISO 8601 UTC"}
       - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
@@ -807,12 +807,12 @@ contracts:
     frozen: true
     source_domain: D_TRADING
     target_domains: [D_FRONTEND, D_COMPLIANCE]
-    flow: "L07 Post-trade Analytics → L08/L10"
+    flow: "Post-trade Analytics → Frontend/Compliance"
     physical_path: src/zephyr/shared/contracts/performance_attribution_report.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L07 → L08/L10 绩效归因报告契约。"
-    source_blueprint: "L07_POST_TRADE/performance-attribution-blueprint.md"
+    description: "Analytics → Frontend/Compliance 绩效归因报告契约。"
+    source_blueprint: "performance-attribution-blueprint.md"
     fields:
       - {name: portfolio_id, type: str, required: true, description: "组合 ID"}
       - {name: period_start, type: str, required: true, description: "YYYY-MM-DD"}
@@ -833,11 +833,11 @@ contracts:
     frozen: true
     source_domain: D_INFRA_OPS
     target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_FRONTEND, D_SIMULATION, D_COMPLIANCE, D_ML_TRAIN, D_OPS]
-    flow: "L01 Configuration Management → 全系统"
+    flow: "Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L01 → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。"
+    description: "Config → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。"
     fields:
       - {name: config_id, type: str, required: true, description: "配置唯一ID"}
       - {name: config_type, type: str, required: true, description: "配置类型：risk | trading | data | system"}
@@ -861,11 +861,11 @@ contracts:
     frozen: true
     source_domain: D_RISK
     target_domains: [D_PF_CORE, D_TRADING, D_FRONTEND, D_COMPLIANCE]
-    flow: "L04 Risk Metrics → L05/L07/L08/L10"
+    flow: "Risk Metrics → Portfolio/Analytics/Frontend/Compliance"
     physical_path: src/zephyr/shared/contracts/risk_metrics.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L04 → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。"
+    description: "Risk → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。"
     fields:
       - {name: portfolio_id, type: str, required: true, description: "组合ID"}
       - {name: as_of_date, type: datetime, required: true, description: "计算日期"}
@@ -897,11 +897,11 @@ contracts:
     frozen: true
     source_domain: D_COMPLIANCE
     target_domains: [D_RISK, D_EX_CORE, D_COMPLIANCE]
-    flow: "L10 Compliance Rule Definitions → L04/L06/L10"
+    flow: "Compliance Rule Definitions → Risk/Execution/Compliance"
     physical_path: src/zephyr/shared/contracts/compliance_rule.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L10 → 合规规则定义契约。包含规则注册、评估接口和规则元数据。"
+    description: "Compliance → 合规规则定义契约。包含规则注册、评估接口和规则元数据。"
     fields:
       - {name: rule_id, type: str, required: true, description: "规则唯一ID"}
       - {name: rule_name, type: str, required: true, description: "规则名称"}
@@ -926,7 +926,7 @@ contracts:
     physical_path: src/zephyr/pf_core/strategy_base.py
     registry_path: src/zephyr/pf_core/strategy_registry.py
     related_kb_ref: KBG-0004
-    description: "L05 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
+    description: "Portfolio 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
       - {name: generate_target_weights, type: method, returns: "List[Order]", description: "生成目标权重并转换为委托指令列表"}
@@ -950,7 +950,7 @@ contracts:
     autodiscover: null
     physical_path: src/zephyr/ex_core/broker_interface.py
     related_kb_ref: KBG-0004
-    description: "L06 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
+    description: "Execution 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: broker_id, type: property, returns: str, description: "券商唯一标识（如 ib, futu, longport, simulation）"}
       - {name: connect, type: method, returns: bool, description: "建立连接"}
@@ -969,11 +969,11 @@ contracts:
     frozen: true
     source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D_RISK, D_EX_CORE, D_TRADING, D_COMPLIANCE, D_OPS]
-    flow: "L12 Metrics → 全系统"
+    flow: "Telemetry Metrics → 全系统"
     physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L12 → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。"
+    description: "Telemetry → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。"
     fields:
       - {name: emitter_id, type: str, required: true, description: "发射器唯一ID"}
       - {name: emitter_type, type: str, required: true, description: "发射器类型：metrics | logs | traces"}
@@ -999,16 +999,16 @@ contracts:
     frozen: true
     source_domain: D_INTELLIGENCE
     target_domains: [D_SIMULATION, D_ML_TRAIN]
-    flow: "L13 Experimentation → L09 Research / L11 ML Platform"
+    flow: "Experimentation → Research / ML Platform"
     physical_path: src/zephyr/shared/contracts/experiment_result.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L13 → L09/L11 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。"
+    description: "Experimentation → Research/ML Platform 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。"
     ai_prompt: >
-      当 L13 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。
+      当 Experimentation 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。
       每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。
       confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。
-      L09 研究创新层读取历史实验结论指导研究方向。L11 ML Platform 读取实验结论调整模型策略。
+      Research 研究创新层读取历史实验结论指导研究方向。ML Platform 读取实验结论调整模型策略。
     fields:
       - {name: experiment_id, type: str, required: true, description: "全局唯一实验 ID（UUID）"}
       - {name: experiment_name, type: str, required: true, description: "人类可读实验名称"}
@@ -1039,17 +1039,17 @@ contracts:
     frozen: true
     source_domain: D_SIGLEGACY
     target_domains: [D_RISK, D_PF_CORE]
-    flow: "L03 Signal Generation → L04 Risk Management / L05 Portfolio Construction"
+    flow: "Signal Generation → Risk Management / Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/synthesized_signal.py
     stability: upgradable
     schema_version: "1.0"
-    description: "L03 → L04/L05 合成交易信号契约。L03 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。"
+    description: "Signal → Risk/Portfolio 合成交易信号契约。Signal 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。"
     ai_prompt: >
-      当 L03 信号合成引擎完成因子信号聚合后，MUST 产出 SynthesizedSignal。
+      当 Signal 信号合成引擎完成因子信号聚合后，MUST 产出 SynthesizedSignal。
       每个 SynthesizedSignal 代表一个标的在一个时间截面上的综合交易判断。
       signal_value 是标准化后的合成信号值（-3 到 3），正值为做多信号，负值为做空信号。
       contributing_factors 记录参与合成的因子 ID 及其权重——用于归因分析。
-      L04 风控层使用此信号做 pre-trade risk check。L05 组合构建层使用此信号做组合优化输入。
+      Risk 风控层使用此信号做 pre-trade risk check。Portfolio 组合构建层使用此信号做组合优化输入。
       generation_latency_ms 记录信号合成耗时，用于 SLO 监控。
     fields:
       - {name: signal_id, type: str, required: true, description: "全局唯一信号 ID（UUID）"}
@@ -1074,18 +1074,18 @@ contracts:
     frozen: true
     source_domain: D_BACKTEST
     target_domains: [D_PF_CORE, D_RISK, D_OPS]
-    flow: "L_BACKTEST → L05 Portfolio / L04 Risk / L12 Ops"
+    flow: "L_BACKTEST → Portfolio Portfolio / Risk Risk / Telemetry Ops"
     physical_path: src/zephyr/backtest/core/engine_base.py
     stability: upgradable
     schema_version: "1.0"
-    description: "D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游L05组合构建层用于策略遴选,L04风控层用于风险预算校准,L12运维层用于回测任务监控。"
+    description: "D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游Portfolio组合构建层用于策略遴选,Risk风控层用于风险预算校准,Telemetry运维层用于回测任务监控。"
     ai_prompt: >
       当回测引擎完成一次运行后,MUST 产出 BacktestResult。
       strategy_id 必须对应策略注册表中已注册的策略 key。
       所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。
       trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。
-      L05 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。
-      L04 风控层使用 max_drawdown 做风险预算校准。
+      Portfolio 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。
+      Risk 风控层使用 max_drawdown 做风险预算校准。
       若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
     fields:
       - {name: strategy_id, type: str, required: true, description: "策略唯一标识"}
@@ -1111,11 +1111,11 @@ contracts:
     frozen: false
     source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D_EX_CORE]
-    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    flow: "Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization"
     physical_path: null  # CT-TEL-001: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/contract_metrics.py (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
-    description: "L12 → L01/L06 遥测指标采集契约。Telemetry facade 提供指标采集接口，消费方通过 gauge/counter/histogram/summary 记录指标。SLA: 指标采集延迟<1s。"
+    description: "Telemetry → Config/Execution 遥测指标采集契约。Telemetry facade 提供指标采集接口，消费方通过 gauge/counter/histogram/summary 记录指标。SLA: 指标采集延迟<1s。"
     arb_ref: ARB-14
     fields:
       - {name: module_id, type: str, required: true, description: "来源模块ID"}
@@ -1133,11 +1133,11 @@ contracts:
     frozen: false
     source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D_EX_CORE]
-    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    flow: "Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization"
     physical_path: null  # CT-TEL-002: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/logs/ (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
-    description: "L12 → L01/L06 遥测日志持久化契约。结构化日志通过 JSONL 持久化，支持 trace_id 关联。SLA: 持久化延迟<5s。"
+    description: "Telemetry → Config/Execution 遥测日志持久化契约。结构化日志通过 JSONL 持久化，支持 trace_id 关联。SLA: 持久化延迟<5s。"
     arb_ref: ARB-14
     fields:
       - {name: module_id, type: str, required: true, description: "来源模块ID"}
@@ -1156,11 +1156,11 @@ contracts:
     frozen: false
     source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D_EX_CORE]
-    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    flow: "Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization"
     physical_path: null  # CT-TEL-003: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/traces/ (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
-    description: "L12 → L01/L06 遥测链路追踪契约。W3C TraceContext 传播，采样率可配置。提供 span 创建/属性设置/上下文管理接口。"
+    description: "Telemetry → Config/Execution 遥测链路追踪契约。W3C TraceContext 传播，采样率可配置。提供 span 创建/属性设置/上下文管理接口。"
     arb_ref: ARB-14
     fields:
       - {name: trace_id, type: str, required: true, description: "W3C Trace ID"}
@@ -1179,11 +1179,11 @@ contracts:
     frozen: false
     source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D_EX_CORE]
-    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    flow: "Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization"
     physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health_probes.py (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
-    description: "L12 → L01/L06 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。"
+    description: "Telemetry → Config/Execution 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。"
     arb_ref: ARB-14
     fields:
       - {name: module_id, type: str, required: true, description: "探针所属模块ID"}
@@ -1217,7 +1217,7 @@ external_contracts:
     interface_type: "AI 推理"
     direction: outbound
     protocol: "REST (OpenAI-compatible)"
-    description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，L02-L07 禁止直接调用 (INV-007: events crossing this boundary must carry idempotency_key)"
+    description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，Factor-Analytics 禁止直接调用 (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_003.py
   - id: EXT-004
     name: "Feishu / 飞书通知接口"
@@ -1240,7 +1240,7 @@ ocp_extension_points:
     registry_path: src/zephyr/factor/registry.py
     loader_path: src/zephyr/factor/loader.py
     related_kb_ref: KBG-0004
-    description: "L02 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
+    description: "Factor 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}
       - {name: compute, type: method, returns: "List[FactorSignal]", description: "计算因子信号（禁止 look-ahead bias）"}
