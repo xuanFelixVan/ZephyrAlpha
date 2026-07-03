@@ -45,7 +45,15 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from _shared.constants import REPO_ROOT
+
+# Bootstrap：CLI 直接运行时 sys.path[0]=本文件所在目录，找不到上级 _shared。
+# 沿用 generate_path_tree.py L53-56 的 _GOV_DIR 模式（治本批次4b迁移遗留 import 断裂）。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 _PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"

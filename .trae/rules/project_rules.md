@@ -59,7 +59,7 @@
 |-----------|-------------|-------------------|
 | **进入新 session** | Phase 0 检查全部 GREEN？守护进程在跑？ | `session_startup()` + `python scripts/ide_health_service.py --status` → running=false→`--start` |
 | **创建新文件** | 文件已在注册表中？ | `python scripts/scaffold.py module/script/gate ...` |
-| **修改已有文件** | 拿到锁了？pre_write_gate 通过？ | `python scripts/governance/pre_write_gate.py <file>` → exit 0 → `python scripts/lock_files.py acquire <file> <session_id>` |
+| **修改已有文件** | 拿到锁了？pre_write_gate 通过？ | `python scripts/governance/d5_architecture/pre_write_gate.py <file>` → exit 0 → `python scripts/lock_files.py acquire <file> <session_id>` |
 | **删除任何文件** | 文件每一行内容在别处还有？ | RULE-THREE 三步审判 → 全通过才能删 |
 | **任何新功能 / 自动化系统** | 已有脚本覆盖？自动化已过两轨分类？ | 搜 registry_of_registries.yaml → 复用决策；自动化走 RULE-FIFTEEN |
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
@@ -111,7 +111,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 ### claim 前移协议（Edit 阶段覆盖治本，2026-06-30）
 
-**触发**：AI session 处理任何文件前（Edit/Write 之前）。强制流程：①CLAIM `git_commit.py --session <id> --files <f1,f2> --claim-only` ②CHECK `pre_write_gate.py <file> --session <id>`（overlap 检测）③EDIT ④COMMIT `git_commit.py --session <id> --files <f> --message ...`。
+**触发**：AI session 处理任何文件前（Edit/Write 之前）。强制流程：①CLAIM `git_commit.py --session <id> --files <f1,f2> --claim-only` ②CHECK `python scripts/governance/d5_architecture/pre_write_gate.py <file> --session <id>`（overlap 检测）③EDIT ④COMMIT `git_commit.py --session <id> --files <f> --message ...`。
 
 | 场景 | 模式 |
 |------|------|
@@ -389,7 +389,7 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 
 | AI 要做什么 | 必须先跑什么 | 不跑会怎样 |
 |------------|-------------|-----------|
-| **写入任何文件** | `python scripts/governance/pre_write_gate.py <文件>` | exit≠0 → 禁止写入 |
+| **写入任何文件** | `python scripts/governance/d5_architecture/pre_write_gate.py <文件>` | exit≠0 → 禁止写入 |
 | **创建新文件** | `python scripts/scaffold.py module/script/gate <参数>` | 绕开 → 孤儿文件 |
 | **删除任何文件** | RULE-THREE 三步审判 → 全通过才能删 | 误删有价值文件 |
 | 修改 `src/zephyr/` 源码 | `python -m pytest tests/ --collect-only -q` | 语法错误 → 禁止提交 |
