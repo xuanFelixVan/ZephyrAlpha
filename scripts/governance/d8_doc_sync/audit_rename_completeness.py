@@ -224,7 +224,8 @@ def scan_files_residual(
             continue
         try:
             content = p.read_text(encoding='utf-8', errors='ignore')
-        except OSError:
+        except OSError as exc:
+            logger.warning("OSError reading %s: %s", fpath, exc)
             continue
         for m in pattern.finditer(content):
             start = m.start()

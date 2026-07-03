@@ -58,6 +58,7 @@ compress() 在写文件时调用 capability_check("write", target_path)，
 
 from __future__ import annotations
 
+import logging
 import re
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -68,6 +69,8 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from zephyr.shared.security.capability import capability_check
+
+_log = logging.getLogger(__name__)
 
 __all__ = [
     "DEFAULT_POLICY",
@@ -211,13 +214,8 @@ def load_policy_from_yaml(
             )
         policy_dict = data.get("policy", {})
         return CompressionPolicy(**policy_dict)
-    except Exception:
-        import warnings
-
-        warnings.warn(
-            f"CompressionPolicy YAML parse failed: {resolved} — using DEFAULT_POLICY",
-            stacklevel=2,
-        )
+    except Exception as exc:
+        _log.warning("CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc)
         return DEFAULT_POLICY
 
 

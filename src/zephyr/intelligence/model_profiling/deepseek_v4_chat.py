@@ -72,8 +72,8 @@ def _patch_win32_ver() -> None:
 
         _safe_win32_ver._patched = True  # type: ignore[attr-defined]
         _plat.win32_ver = _safe_win32_ver
-    except Exception:
-        pass
+    except Exception as exc:
+        _log.debug("win32_ver patch failed: %s", exc)
     _win32_ver_patched = True
 
 
@@ -579,6 +579,7 @@ class DeepSeekV4Chat:
                         if missing:
                             _log.debug("JSON parse missing keys: %s", missing)
                     return result
+                _log.warning("JSON parse result is not a dict (type=%s), returning empty dict", type(result).__name__)
                 return {}
             except json.JSONDecodeError:
                 if attempt == 0:
