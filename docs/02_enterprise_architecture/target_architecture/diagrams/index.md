@@ -21,9 +21,9 @@ ttl: permanent
 |------|------|
 | c4_l1_system_context.mmd | C4 Level 1 系统上下文图（ZephyrAlpha + 外部系统）|
 | c4_l2_containers.mmd | C4 Level 2 容器图（四大运行时容器）|
-| c4_l3_l00_data_source.mmd | C4 Level 3 L00 数据源组件图 |
-| c4_l3_l11_ml_platform.mmd | C4 Level 3 L11 ML 平台组件图 |
-| c4_l3_l06_trade_execution.mmd | C4 Level 3 L06 交易执行组件图 |
+| c4_l3_l00_data_source.mmd | C4 Level 3 数据源组件图（D_MKT_DATA）|
+| c4_l3_l11_ml_platform.mmd | C4 Level 3 ML 平台组件图（D_ML_TRAIN）|
+| c4_l3_l06_trade_execution.mmd | C4 Level 3 交易执行组件图（D_EX_CORE）|
 
 ### 拓扑图
 
@@ -34,7 +34,7 @@ ttl: permanent
 | scripts_topology.mmd | scripts/ 治理代码拓扑图 |
 | frontend_mfe_topology.mmd | 前端微前端拓扑（Module Federation Host + 4 Apps）|
 | integration_topology.mmd | 集成拓扑图（外部系统 + 内部层 + EI 契约编号）|
-| runtime_topology.mmd | 运行时拓扑（主进程内 L00-L13 数据流 + 外部系统）|
+| runtime_topology.mmd | 运行时拓扑（主进程内全域数据流 + 外部系统）|
 | runtime_planes_topology.mmd | Runtime Planes 三平面物理拓扑（Hot / Warm / Cold）|
 | view_dependencies.mmd | 视图间依赖关系图（BA/IA/AA/TA/DA/INTEG/SEC/OPS）|
 | readme_view_dependency_graph.mmd | README 视图依赖图（10视图 + 2正交视图节点关系）|
@@ -45,7 +45,7 @@ ttl: permanent
 |------|------|
 | business_value_stream.mmd | 业务价值流图（市场假设→研究→信号→组合→执行→监控闭环）|
 | data_flow.mmd | 跨域核心数据流图 |
-| dataflow_terminal.mmd | 终端数据流全景图（外部系统→L00→L02-L13→外部系统）|
+| dataflow_terminal.mmd | 终端数据流全景图（外部系统→D_MKT_DATA→各业务域→外部系统）|
 | deployment_experimental.mmd | experimental 部署拓扑（开发机单进程 + 本地存储）|
 | frontend_build_pipeline.mmd | 前端构建流水线（changeset→CI→lint→test→build→publish）|
 

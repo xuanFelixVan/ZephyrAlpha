@@ -54,24 +54,24 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 3. 文件清单
 
-> **注（v3.1.0）**：本清单待全部文件审核完后同步回填。标记 ⚠️ 的文件有断链待修复。
+> **注（v3.2.0）**：本清单已全部审核完成（2026-07-04）。A/B/C 判定逻辑：A 污染源清除、B depgraph派生、C 必须写死。已删除 architecture_endgame_locked.md + 3个迁移残留死副本。.mmd 图源内14层引用清理为后续任务。
 
 | 文件 | 说明 | 状态 |
 |------|------|------|
-| overview.md | 架构总览（v2.1.0：瘦身后保留方法论导航+决策记录）| ✅ 已瘦身 |
-| business_architecture.md | BA 业务架构视图 | 待审核 |
-| information_architecture.md | IA 信息架构视图 | 待审核 |
-| application_architecture.md | AA 应用架构视图 | ⚠️ 断链待修复 |
-| technology_architecture.md | TA 技术架构视图 | 待审核 |
-| runtime_planes.md | 运行时平面正交视图 | ⚠️ 断链待修复 |
-| capability_heatmap.md | 能力热力图正交视图 | ⚠️ 断链待修复 |
-| data_architecture.md | DA 数据架构视图 | 待审核 |
+| overview.md | 架构总览（方法论导航+决策记录）| ✅ v2.1.1 已审核 |
+| business_architecture.md | BA 业务架构视图 | ✅ v2.0.0 已审核（干净）|
+| information_architecture.md | IA 信息架构视图 | ✅ 已审核（干净）|
+| application_architecture.md | AA 应用架构视图 | ✅ v3.0.2 已审核 |
+| technology_architecture.md | TA 技术架构视图 | ✅ v2.1.2 已审核 |
+| runtime_planes.md | 运行时平面正交视图 | ✅ v1.0.1 已审核（过渡态保留，待YAML更新）|
+| capability_heatmap.md | 能力热力图正交视图 | ✅ v2.0.2 已审核 |
+| data_architecture.md | DA 数据架构视图 | ✅ v1.0.2 已审核 |
 | security_architecture.md | SEC 安全架构视图 | ✅ v1.0.1 已审核（断链已修） |
 | integration_architecture.md | INTEG 集成架构视图 | ✅ v1.1.1 已审核 |
 | operations_architecture.md | OPS 运维架构视图 | ✅ v0.2.1 已审核 |
-| governance_architecture.md | GOV 治理架构视图 | ✅ v2.2.1 已审核 |
+| governance_architecture.md | GOV 治理架构视图 | ✅ v2.2.2 已审核 |
 | frontend_architecture.md | FE 前端架构视图 | ✅ v1.1.1 已审核（断链已修） |
-| diagrams/ | Mermaid 图源文件（28个 .mmd + index.md）| 待审核 |
+| diagrams/ | Mermaid 图源文件（28个 .mmd + index.md）| ✅ index.md 已更新（.mmd 内14层引用后续任务）|
 
 ---
 
