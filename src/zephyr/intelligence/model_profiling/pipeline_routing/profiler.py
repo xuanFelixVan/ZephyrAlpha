@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing.profiler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite; zephyr.intelligence.model_profiling.pipeline_routing.model_discovery
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite; zephyr.intelligence.model_profiling.model_discovery
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -48,7 +48,7 @@ from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import
     CATEGORY_MAP,
     BenchmarkCase,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.model_discovery import (
+from zephyr.intelligence.model_profiling.model_discovery import (
     DEFAULT_OLLAMA_URL,
     DiscoveredModel,
     ModelDiscovery,

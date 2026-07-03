@@ -17,7 +17,7 @@ from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import
     CATEGORY_MAP,
     BenchmarkCase,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.model_discovery import (
+from zephyr.intelligence.model_profiling.model_discovery import (
     DEFAULT_OLLAMA_URL,
     DiscoveredModel,
     ModelDiscovery,
