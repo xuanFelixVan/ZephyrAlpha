@@ -215,7 +215,6 @@ class TestNoRedefinitionInPackage:
     @pytest.mark.parametrize(
         "module_path",
         [
-            "zephyr.governance.semantic_auditor.kb_gate",
             "zephyr.governance.semantic_audit.kb_gate",
             "zephyr.governance.audit_trail.kb_gate",
         ],
@@ -231,7 +230,6 @@ class TestNoRedefinitionInPackage:
     @pytest.mark.parametrize(
         "module_path",
         [
-            "zephyr.governance.semantic_auditor.privacy",
             "zephyr.governance.semantic_audit.privacy",
             "zephyr.governance.audit_trail.privacy",
         ],
