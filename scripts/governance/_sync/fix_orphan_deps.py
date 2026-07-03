@@ -23,9 +23,12 @@ fix_orphan_deps.py — 一次性修复孤儿依赖引用
 """
 
 import json
+import logging
 import re
 import sqlite3
 from datetime import UTC, datetime
+
+logger = logging.getLogger(__name__)
 
 __manifest__ = """
 args: []
@@ -62,7 +65,9 @@ for r in rows:
     status = r[2]
     try:
         deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
-    except:
+    except (json.JSONDecodeError, TypeError, ValueError) as e:
+        # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿检测全部失真
+        logger.warning("fix_orphan_deps: task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
         deps = []
 
     new_deps = []
@@ -128,7 +133,9 @@ remaining = 0
 for r in rows2:
     try:
         deps = json.loads(r[1]) if isinstance(r[1], str) else r[1]
-    except:
+    except (json.JSONDecodeError, TypeError, ValueError) as e:
+        # Phase 2 P2 修复（异常处理 HIGH）：bare except 吞噬 JSON 解析异常=孤儿统计失真
+        logger.warning("fix_orphan_deps: verify task %s depends_on 解析失败(%s: %s)，按空依赖处理", r[0], type(e).__name__, e)
         deps = []
     for dep in deps:
         if dep not in all_ids2:

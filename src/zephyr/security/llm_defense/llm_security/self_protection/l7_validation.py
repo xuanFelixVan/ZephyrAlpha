@@ -13,8 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
+import logging
 from enum import Enum
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class ValidationLayer:

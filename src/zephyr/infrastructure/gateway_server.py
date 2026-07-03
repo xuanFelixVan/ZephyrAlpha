@@ -40,6 +40,9 @@ import logging
 import threading
 import time
 from typing import Any
+
+logger = logging.getLogger(__name__)
+
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 from zephyr.infrastructure._base_server import (
@@ -120,10 +123,12 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
 
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
-        except Exception:
-            pass
-    except Exception:
-        pass
+        except Exception as e:
+            # Phase 2 P2 修复（异常处理 HIGH）：安全扫描失败静默=安全绕过（返回None=无威胁）
+            logger.warning("lsg_agent_scan: 异步安全扫描失败(%s: %s)，返回None=放行（安全降级）", type(e).__name__, e)
+    except Exception as e:
+        # Phase 2 P2 修复（异常处理 HIGH）：安全扫描同步路径失败静默=安全绕过
+        logger.warning("lsg_agent_scan: 同步安全扫描失败(%s: %s)，返回None=放行（安全降级）", type(e).__name__, e)
     return None
 
 
