@@ -529,7 +529,8 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         raw = d.get(field, "{}")
         if isinstance(raw, str):
             try:
-                d[field] = json.loads(raw)
+                parsed = json.loads(raw)
+                d[field] = parsed if isinstance(parsed, dict) else {}
             except (json.JSONDecodeError, TypeError):
                 d[field] = {}
         elif not isinstance(raw, dict):
@@ -539,7 +540,7 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     for field in _list_of_dict_fields:
         val = d.get(field, [])
         if isinstance(val, list):
-            d[field] = [item if isinstance(item, dict) else {"value": str(item)} for item in val]
+            d[field] = [item for item in val if isinstance(item, dict)]  # 丢弃非dict脏数据（旧数据字符串元素不包伪dict，避免pydantic校验失败）
 
     d["idempotent"] = bool(d.get("idempotent", 0))
     if "name" in d and "title" not in d:
@@ -582,10 +583,16 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         try:
             return TaskCard.model_validate(d)
         except Exception:
-            d["task_id"] = "DM-999999"
-            return TaskCard.model_validate(d)
+            return TaskCard.model_construct(**d)
 
-    return TaskCard.model_validate(d)
+    try:
+        return TaskCard.model_validate(d)
+    except Exception as e:
+        # 旧脏数据 schema 不兼容（phase/enum 等字段值不符合当前 model）时用 model_construct 跳过校验
+        # 脏数据清洗应通过专门数据治理任务处理，此处仅保证查询不阻断
+        import warnings
+        warnings.warn(f"TaskCard {tid!r} schema 不兼容，model_construct 跳过: {e}", UserWarning, stacklevel=2)
+        return TaskCard.model_construct(**d)
 
 
 # ---------------------------------------------------------------------------
