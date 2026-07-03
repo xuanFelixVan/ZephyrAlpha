@@ -26,12 +26,13 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import logging
 import secrets
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-_DEFAULT_SECRET = "zephyr-cross-session-default-secret"
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -62,7 +63,13 @@ class CrossSessionDetector:
     """跨 session 检测器."""
 
     def __init__(self, secret_key: str | None = None) -> None:
-        self._secret: str = secret_key or _DEFAULT_SECRET
+        if secret_key:
+            self._secret: str = secret_key
+        else:
+            # P0 安全修复（Phase 2）：禁止硬编码默认密钥（原 _DEFAULT_SECRET 已知值可伪造 token）
+            # 随机回退密钥——进程内有效但跨进程/重启不可验证（调用方应显式传 secret_key）
+            self._secret = secrets.token_hex(32)
+            logger.warning("CrossSessionDetector: 未提供 secret_key，使用随机回退密钥（跨进程 token 验证不可用）")
         self._active_sessions: dict[str, SignedToken] = {}
         self._violations: list[dict] = []
 
