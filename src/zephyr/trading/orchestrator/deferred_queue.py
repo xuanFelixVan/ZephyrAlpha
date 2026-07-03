@@ -73,12 +73,16 @@ class DeferredQueue:
         self._db_path = db_path
         self._lock = RLock()
         self._conn: sqlite3.Connection | None = None
-        self._init_db()
+        # 5.16.7 修复：_init_db 在锁内调用，确保 _get_conn 的 check-then-act 受锁保护
+        with self._lock:
+            self._init_db()
 
         for et in EventType:
             self._observer.subscribe(et, self._on_event)
 
     def _get_conn(self) -> sqlite3.Connection:
+        # 5.16.7 修复：强制调用方持锁，防止新增方法忘记 with self._lock 导致竞态
+        assert self._lock._is_owned(), "_get_conn must be called with self._lock held"
         if self._conn is None:
             self._conn = sqlite3.connect(self._db_path, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row

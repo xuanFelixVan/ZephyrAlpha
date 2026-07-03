@@ -2226,10 +2226,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：竞态条件/锁粒度与顺序/async-sync混用/全局可变状态/跨进程锁/队列与生产者消费者
 > 审计方法：Grep + Read真实文件取证（circuit_breaker.py、metrics_bridge.py、git_commit_gateway.py、async_runtime.py等）
 
-#### 5.16.7 DeferredQueue sqlite3共享连接+check_same_thread=False【HIGH】
-- 证据：[deferred_queue.py:74-85](file:///d:/ZephyrAlpha/src/zephyr/trading/orchestrator/deferred_queue.py) `sqlite3.connect(db_path, check_same_thread=False)` 关闭线程检查，依赖`self._lock`但`_get_conn`的check-then-act要求所有调用方持锁，新增方法忘记`with self._lock:`即损坏；同模式在 `resilience/deferred_queue.py` 复制
-- 病根：根因2（`_get_conn`应强制锁但无门禁阻止绕过）
-- 修复：改`threading.local()`每线程独立连接或`_get_conn`内`assert self._lock._is_owned()`
 
 #### 5.16.9 跨6+文件重复的asyncio.run+get_event_loop反模式【HIGH】
 - 证据：`context_injector.py:261`、`gateway_server.py:95-110`、`integration/llm_gateway.py:69-77`、`autonomy_core/llm_gateway.py [⚠ 已删除]:69-77`、`default_security_gateway.py:273-281`、`delegation_engine.py:246`、`brain_integration.py:211-228`（new_event_loop不close）均 `asyncio.get_event_loop()`（3.12+弃用）+ `run_until_complete` fallback `asyncio.run`（已有循环时再抛RuntimeError）
