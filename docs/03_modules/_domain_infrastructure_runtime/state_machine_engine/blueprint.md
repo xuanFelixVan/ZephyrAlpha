@@ -43,7 +43,7 @@ references:
     why: 任务系统状态机(10状态/19转换)是最大消费者
   - path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
     section: §7
-    why: 十字段防幻觉头部规范
+    why: 十五字段防幻觉头部规范
 ssot_claims:
   - claim: "全项目状态机实例的唯一注册中心"
     scope: global
@@ -60,7 +60,7 @@ MOD-INF-038 提供通用状态机引擎，解决全项目 11+ 个独立状态机
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-038`
 

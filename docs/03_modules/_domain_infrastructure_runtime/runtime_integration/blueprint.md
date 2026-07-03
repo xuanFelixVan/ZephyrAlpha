@@ -93,7 +93,7 @@ summary: >
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > 路径约定：相对于 `src/zephyr/`。标注"Shared Core 承载"的文件归属 MOD-INF-016，[BLUEPRINT] 应标注 MOD-INF-016。
 > 顶层 re-export wrapper（如 `shared/observer.py`→`shared/infra/observer.py`）不在本表逐一列出，见下方"Re-export Wrapper 清单"。
@@ -1889,7 +1889,7 @@ STEP 3: 拆分后验证
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 | 9 | 蓝图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图结构合规 |
-| 10 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部标准 |
+| 10 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十五字段头部标准 |
 | 11 | Shared Core 蓝图 | MOD-INF-016 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md` | DI容器+共享模块 |
 | 12 | 容量保障蓝图 | MOD-INF-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\capacity_assurance\blueprint.md` | 容量规则 |
 

@@ -77,7 +77,7 @@ references:
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-L05-001`
 
@@ -769,7 +769,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些可改 | ☐ |
 | 9 | 前 | 已知问题登记中未解决的问题已知晓 | 知道哪些坑 | ✅ |
 | 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
-| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ✅ |
+| 11 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ✅ |
 | 12 | 中 | 修改接口契约后检查 §18 决策记录 | 决策ID+依据已更新 | ☐ |
 | 13 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
 | 14 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ☐ |

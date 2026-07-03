@@ -73,7 +73,7 @@ references:
     why: "蓝图规格化铁律"
   - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md"
     section: "§7"
-    why: "代码十字段头部标准"
+    why: "代码十五字段头部标准"
 summary: "代码去重引擎——全生命周期七维模型+46模块+Monoculture免疫(BRS)+原子修复(WAL)+决策审计链+主动函数发现+漏报盲审+微克隆检测+契约验证+跨边界感知。去重最大化悖论：找到'去重收益vs Monoculture风险vs碎片化风险vs引擎维护成本'的四体最优边界。"
 tags:
   - code-dedup
@@ -130,7 +130,7 @@ tags:
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
 > 68 个 .py 全部已实现。
 
@@ -1571,7 +1571,7 @@ fix 参数:
 | 8  |  前  | 成熟度声明中volatile/evolving已标记                  | 知道哪些可改哪些不可改                 |  ☐  |
 | 9  |  前  | 已知问题中未解决的问题已知晓                              | 知道哪些坑不能踩                    |  ☐  |
 | 10 |  中  | 每步施工后执行验证命令                                 | exit 0才进下一步                 |  ☐  |
-| 11 |  中  | 新代码文件头部十字段完整                                | 逐文件核对                       |  ☐  |
+| 11 |  中  | 新代码文件头部十五字段完整                                | 逐文件核对                       |  ☐  |
 | 12 |  中  | 修改接口契约后检查§18决策记录                            | 决策ID+依据已更新                  |  ☐  |
 | 13 |  后  | §0代码对齐验证已更新                                 | construction\_progress与实际一致 |  ☐  |
 | 14 |  后  | 临时时态内容已清理                                   | 迁移方案已执行→删除                  |  ☐  |

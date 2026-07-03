@@ -2192,7 +2192,7 @@ Step 4: 稳定后清理flag branching code
 | L1 上下文 | Same AGENTS.md + §0.1 词语表 + §15.2 指令词典 |
 
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
-> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 | L2 依赖 | random.seed(42) + numpy.seed(42) + pip-lock + tree-sitter |
 | L3 验证 | CSCV 每10 session自动运行→写入Handover |
 
@@ -3875,7 +3875,7 @@ Point-in-Time Universe:
 | 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 产出物规格化 |
 | 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 8 | 集成总蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint.md` | 12系统集成契约 |
-| 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十字段标准 |
+| 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十五字段标准 |
 
 ---
 
