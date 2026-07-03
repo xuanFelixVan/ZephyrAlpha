@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import threading
 import time
 import uuid
@@ -156,7 +157,7 @@ class _PriorityQueue:
 class GPUConsensusScheduler:
     def __init__(
         self,
-        ollama_url: str = "http://localhost:11434",
+        ollama_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         local_model: str = "qwen3:8b",
         api_primary: str = "deepseek-v4-pro",
         api_secondary: str = "claude-sonnet-4",

@@ -32,13 +32,14 @@ OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 import numpy as np
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL = "http://localhost:11434"
+DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 
 class OllamaEmbedder:

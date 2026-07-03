@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from pydantic import BaseModel, Field
@@ -66,7 +67,7 @@ class RuntimeConfig(BaseModel):
         description="终极目标——写入大脑配置，所有 AI 可读取",
     )
 
-    ollama_base_url: str = Field(default="http://localhost:11434", description="Ollama API 地址")
+    ollama_base_url: str = Field(default=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"), description="Ollama API 地址")
     ollama_embed_model: str = Field(default="bge-m3", description="Ollama 嵌入模型")
     ollama_chat_model: str = Field(default="qwen3:8b", description="Ollama 推理模型")
 

@@ -45,7 +45,7 @@ from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_BASE_URL = "https://api.deepseek.com/v1"
+DEFAULT_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 DEFAULT_MODEL = "deepseek-v4-flash"
 INFERENCE_TEMPERATURE = 0.1
 INFERENCE_MAX_TOKENS = 1024

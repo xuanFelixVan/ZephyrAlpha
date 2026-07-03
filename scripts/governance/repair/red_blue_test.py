@@ -43,6 +43,16 @@ import os
 import sqlite3
 import subprocess
 import sys
+from pathlib import Path
+
+# Bootstrap: 基于 .git marker 定位仓库根（文件移动不 break，替代 parents[N] 硬编码）
+_PROJECT_ROOT = Path(__file__).resolve()
+while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.parent:
+    _PROJECT_ROOT = _PROJECT_ROOT.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
 
 DST_DB = "depgraph (PostgreSQL)"
 
@@ -154,7 +164,7 @@ def run_script_tests():
 
     try:
         result = subprocess.run(
-            ["python", r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py", "--help"],
+            ["python", str(REPO_ROOT / "scripts" / "governance" / "apply_depgraph.py"), "--help"],
             capture_output=True,
             text=True,
             timeout=30,
@@ -175,7 +185,7 @@ def run_script_tests():
 
     # #3 audit_domain_nodes.py 4类检测
     # 注意：audit_domain_nodes.py 已归档到 scripts/governance/_archive/prototype/，4类检测职责待恢复
-    audit_script = r"D:\ZephyrAlpha\scripts\governance\_archive\prototype\audit_domain_nodes.py"
+    audit_script = str(REPO_ROOT / "scripts" / "governance" / "_archive" / "prototype" / "audit_domain_nodes.py")
     if os.path.exists(audit_script):
         try:
             result = subprocess.run(["python", audit_script, "--check"], capture_output=True, text=True, timeout=60)
@@ -186,15 +196,15 @@ def run_script_tests():
         test(3, "audit_domain_nodes 4类检测", False, "脚本已归档到 _archive/prototype/，4类检测职责待恢复")
 
     # #6 生成器+apply+audit端到端（验证3个脚本都可执行--help）
-    gen_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py")
-    apply_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py")
-    audit_exists = os.path.exists(r"D:\ZephyrAlpha\scripts\governance\_archive\prototype\audit_domain_nodes.py")
+    gen_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"))
+    apply_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "apply_depgraph.py"))
+    audit_exists = os.path.exists(str(REPO_ROOT / "scripts" / "governance" / "_archive" / "prototype" / "audit_domain_nodes.py"))
     # 验证apply_depgraph可执行（--help）
     apply_runnable = False
     if apply_exists:
         try:
             r = subprocess.run(
-                ["python", r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py", "--help"],
+                ["python", str(REPO_ROOT / "scripts" / "governance" / "apply_depgraph.py"), "--help"],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -214,7 +224,7 @@ def run_script_tests():
     if gen_exists:
         try:
             r = subprocess.run(
-                ["python", r"D:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py", "--help"],
+                ["python", str(REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"), "--help"],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -225,7 +235,7 @@ def run_script_tests():
     test(10, "生成器可执行", gen_runnable, f"生成器--help可执行={gen_runnable}")
 
     # #17 消费者: audit_registration exit 0（严格exit 0，不接受exit 1）
-    audit_reg_script = r"D:\ZephyrAlpha\scripts\governance\audit_registration.py"
+    audit_reg_script = str(REPO_ROOT / "scripts" / "governance" / "audit_registration.py")
     if os.path.exists(audit_reg_script):
         try:
             result = subprocess.run(["python", audit_reg_script], capture_output=True, text=True, timeout=60)
@@ -243,7 +253,7 @@ def run_special_tests():
 
     # #8 并发: 两个apply_depgraph.py并发写 锁机制生效
     # 实际测试：两个session并发acquire同一文件，应一成功一失败
-    lock_script = r"D:\ZephyrAlpha\scripts\lock_files.py"
+    lock_script = str(REPO_ROOT / "scripts" / "lock_files.py")
     test_file = r"scripts\governance\repair\_rb_test_concurrent.tmp"
     # 清理可能残留的锁
     import subprocess as _sp
@@ -252,20 +262,20 @@ def run_special_tests():
         ["python", lock_script, "release", test_file, "rb-session-a"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     _sp.run(
         ["python", lock_script, "release", test_file, "rb-session-b"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     # session-a acquire
     r_a = _sp.run(
         ["python", lock_script, "acquire", test_file, "rb-session-a", "--task", "concurrent-test-a"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     a_acquired = r_a.returncode == 0
     # session-b 并发acquire（应失败）
@@ -273,7 +283,7 @@ def run_special_tests():
         ["python", lock_script, "acquire", test_file, "rb-session-b", "--task", "concurrent-test-b"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     b_rejected = r_b.returncode != 0
     # 清理
@@ -281,7 +291,7 @@ def run_special_tests():
         ["python", lock_script, "release", test_file, "rb-session-a"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     test(8, "并发锁机制", a_acquired and b_rejected, f"a获取={a_acquired}, b被拒={b_rejected}")
 
@@ -293,14 +303,14 @@ def run_special_tests():
         ["python", lock_script, "release", mutex_file, "rb-session-mutex"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     # 首次acquire成功
     r1 = _sp.run(
         ["python", lock_script, "acquire", mutex_file, "rb-session-mutex", "--task", "mutex-test"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     first_ok = r1.returncode == 0
     # 同session再次acquire（应被拒，互斥）
@@ -308,7 +318,7 @@ def run_special_tests():
         ["python", lock_script, "acquire", mutex_file, "rb-session-other", "--task", "mutex-test-2"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     second_rejected = r2.returncode != 0
     # release后再次acquire应成功
@@ -316,13 +326,13 @@ def run_special_tests():
         ["python", lock_script, "release", mutex_file, "rb-session-mutex"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     r3 = _sp.run(
         ["python", lock_script, "acquire", mutex_file, "rb-session-mutex", "--task", "mutex-test-3"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     reaquire_ok = r3.returncode == 0
     # 清理
@@ -330,7 +340,7 @@ def run_special_tests():
         ["python", lock_script, "release", mutex_file, "rb-session-mutex"],
         capture_output=True,
         text=True,
-        cwd=r"D:\ZephyrAlpha",
+        cwd=str(REPO_ROOT),
     )
     test(
         9,
@@ -356,8 +366,8 @@ def run_special_tests():
 
     # #15 回滚: 某卡失败→回滚→数据恢复
     # 实际测试：备份目录存在 + 有实际.db备份文件（回滚资源可用）
-    rollback_script = r"D:\ZephyrAlpha\scripts\rollback.py"
-    backup_dir = r"D:\ZephyrAlpha\data\databases"
+    rollback_script = str(REPO_ROOT / "scripts" / "rollback.py")
+    backup_dir = str(REPO_ROOT / "data" / "databases")
     backup_exists = os.path.exists(backup_dir) and os.path.exists(rollback_script)
     has_backups = False
     if backup_exists:
@@ -375,7 +385,7 @@ def run_special_tests():
 
     # #16 冷启动: 新AI能否发现并使用本系统
     # 实际测试：registry_of_registries.yaml存在且包含关键注册表条目
-    registry = r"D:\ZephyrAlpha\docs\registry_of_registries.yaml"
+    registry = str(REPO_ROOT / "docs" / "registry_of_registries.yaml")
     registry_ok = False
     if os.path.exists(registry):
         try:
@@ -385,8 +395,8 @@ def run_special_tests():
             required_keys = ["registries", "gates", "scripts"]
             has_all = all(k in content for k in required_keys)
             # 冷启动序列所需文件存在
-            project_rules = os.path.exists(r"D:\ZephyrAlpha\.trae\rules\project_rules.md")
-            onboarding = os.path.exists(r"D:\ZephyrAlpha\.trae\rules\onboarding_detail.md")
+            project_rules = os.path.exists(str(REPO_ROOT / ".trae" / "rules" / "project_rules.md"))
+            onboarding = os.path.exists(str(REPO_ROOT / ".trae" / "rules" / "onboarding_detail.md"))
             registry_ok = has_all and project_rules and onboarding
         except Exception:
             registry_ok = False
@@ -394,7 +404,7 @@ def run_special_tests():
 
     # #20 状态机: transition_build_status状态机规则（实际测试合法/非法转换）
     # 放在run_special_tests中，避免run_db_tests的conn导致database is locked
-    apply_script = r"D:\ZephyrAlpha\scripts\governance\apply_depgraph.py"
+    apply_script = str(REPO_ROOT / "scripts" / "governance" / "apply_depgraph.py")
     sm_ok = False
     test_node_path = "_rb_test_state_machine/"
     try:
@@ -404,7 +414,7 @@ def run_special_tests():
             capture_output=True,
             text=True,
             timeout=30,
-            cwd=r"D:\ZephyrAlpha",
+            cwd=str(REPO_ROOT),
         )
         if r_add.returncode == 0 and "node_id=" in r_add.stdout:
             node_id_str = r_add.stdout.strip().split("node_id=")[-1].strip()
@@ -414,7 +424,7 @@ def run_special_tests():
                 capture_output=True,
                 text=True,
                 timeout=30,
-                cwd=r"D:\ZephyrAlpha",
+                cwd=str(REPO_ROOT),
             )
             illegal_rejected = r_illegal.returncode == 4
             # 3. 测试合法转换: unbuilt → testing（应exit 0）
@@ -423,7 +433,7 @@ def run_special_tests():
                 capture_output=True,
                 text=True,
                 timeout=30,
-                cwd=r"D:\ZephyrAlpha",
+                cwd=str(REPO_ROOT),
             )
             legal_ok = r_legal.returncode == 0
             sm_ok = illegal_rejected and legal_ok

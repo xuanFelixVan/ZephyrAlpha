@@ -32,12 +32,13 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from typing import Any
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_OLLAMA_URL = "http://localhost:11434"
+DEFAULT_OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 INFERENCE_MODEL = "qwen3:8b"
 INFERENCE_TEMPERATURE = 0.1

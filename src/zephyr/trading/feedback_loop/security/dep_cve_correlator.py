@@ -25,6 +25,7 @@ Mitigation: NVD API 2.0 integration with CVE correlation and auto-fix prioritiza
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -50,7 +51,7 @@ class CVEAlert:
 
 @dataclass
 class DepCVECorrelator:
-    nvd_api_url: str = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    nvd_api_url: str = os.getenv("NVD_API_URL", "https://services.nvd.nist.gov/rest/json/cves/2.0")
     alerts: list[CVEAlert] = field(default_factory=list)
     dependencies: list[tuple[str, str]] = field(default_factory=list)
 
