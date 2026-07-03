@@ -64,7 +64,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 14 层 + B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER_BLUEPRINT（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
+本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 53 域（4值 layer_id：L0_infrastructure/L1_foundation/L2_domain/L3_application）+ B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER_BLUEPRINT（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
 
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -492,7 +492,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
   │     ├── MOD-INF-001~028 基础设施系统 (29个,详见§1.3)
   │     ├── MOD-INF-013 (MCP Servers, 8 Server + Gateway, stdio协议)
   │     └── MOD-KB-001 知识库 (95%完整)
-  └── L00-L13 业务层 (14层, 12蓝图已创建+4实现，C轨占位已解除[ARCH-045 P0]，可施工)
+  └── 业务域层 (53域, 4值layer_id, 蓝图已创建, C轨占位已解除[ARCH-045 P0]，可施工)
 ```
 
 ### 0.2 AI Agent 分派表 (88域)
@@ -625,10 +625,12 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 轨 | 计数 | 状态 | 职责 |
 |:--|:--:|------|------|
-| **C-Track** (业务层) | 14层 | 4实现/9骨架/1占位 | 量化交易业务——因子、信号、风控、执行 |
+| **C-Track** (业务层) | 53域 | 4值layer_id | 量化交易业务——因子、信号、风控、执行 |
 | **B-Track** (基础设施) | 12系统 | 12实现 | AI开发骨架——门禁、上下文、管线、反馈 |
 
-### 1.2 C-Track 业务层（14层: 12蓝图已创建/9骨架/4实现/1占位）
+### 1.2 C-Track 业务层（53域: 4值layer_id，蓝图已创建，旧L00-L13分类已废弃）
+
+> **废弃声明**（2026-07-04 阶段3）：下方 L00-L13 层级表格为历史分类视图，已被 53域（4值 layer_id）体系替代。新 AI 请按域查找模块，勿按 L00-L13 编号。表格保留仅作历史参考。
 
 | 层 | 名称 | 蓝图ID | 代码状态 | 说明 |
 |:--|------|------|:--:|------|
@@ -855,7 +857,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 三级金字塔全部就位 | SYS-MASTER-001 已创建，44模块完整登记 | beta ✓ |
 | 蓝图完整度 ≥80% | 当前 **84.2%** (44模块均值) — **已达标** ✓ | beta ✓ |
 | G6 硬合规 REJECT <10% | 当前 33.3% | beta-stable |
-| C-Track 业务蓝图 (L00-L13) | 12/14 已创建 (L01/L12合并到B-Track，C轨占位已解除[ARCH-045 P0]，可施工) | stable+ |
+| C-Track 业务蓝图 (53域) | 蓝图已创建 (旧L00-L13分类已废弃，C轨占位已解除[ARCH-045 P0]，可施工) | stable+ |
 | Domain Expert Agent | Gate/Context/Pipeline 3个 | beta |
 
 ---

@@ -71,71 +71,23 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "layer": {
-      "description": "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）",
+      "description": "架构层归属——4 值（L0_infrastructure/L1_foundation/L2_domain/L3_application, canonical SSoT: layer_vocabulary.yaml）",
       "oneOf": [
         {
-          "const": "data",
-          "description": "L00 数据源层——外部数据接入和连接器管理"
+          "const": "L0_infrastructure",
+          "description": "L0 基础设施层——平台基础设施、共享服务、数据接入等底层支撑"
         },
         {
-          "const": "infra_ops",
-          "description": "L01 基础设施层——平台基础设施和共享服务"
+          "const": "L1_foundation",
+          "description": "L1 基础能力层——横切关注点、治理框架、契约定义等中层基础"
         },
         {
-          "const": "factor",
-          "description": "L02 Alpha 因子层——因子研究和信号生成"
+          "const": "L2_domain",
+          "description": "L2 业务域层——具体业务域实现（数据/因子/信号/风控/组合/执行/报告等）"
         },
         {
-          "const": "signal",
-          "description": "L03 信号生成层——交易信号产生和组合"
-        },
-        {
-          "const": "risk",
-          "description": "L04 风险管理层——风险监控和止损"
-        },
-        {
-          "const": "pf_core",
-          "description": "L05 组合构建层——投资组合优化和再平衡"
-        },
-        {
-          "const": "ex_core",
-          "description": "L06 交易执行层——订单路由和执行"
-        },
-        {
-          "const": "reporting",
-          "description": "L07 盘后分析层——绩效归因和报告"
-        },
-        {
-          "const": "frontend",
-          "description": "L08 人机交互层——人机协作界面和审批流"
-        },
-        {
-          "const": "research",
-          "description": "L09 研究创新层——策略研究和实验"
-        },
-        {
-          "const": "compliance",
-          "description": "L10 治理合规层——监管合规和审计"
-        },
-        {
-          "const": "ml_train",
-          "description": "L11 机器学习平台层——模型训练和推理"
-        },
-        {
-          "const": "system-telemetry",
-          "description": "L12 系统遥测层——监控和可观测性"
-        },
-        {
-          "const": "simulation",
-          "description": "L13 实验管道层——A/B 测试和实验管理"
-        },
-        {
-          "const": "shared",
-          "description": "跨层共享——不属于单一层的共享组件"
-        },
-        {
-          "const": "cross_layer",
-          "description": "跨层治理——横切关注点（如安全、合规、治理策略）"
+          "const": "L3_application",
+          "description": "L3 应用层——应用入口、用户界面、端到端集成等顶层应用"
         }
       ]
     },

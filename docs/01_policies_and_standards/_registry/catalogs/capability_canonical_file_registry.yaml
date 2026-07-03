@@ -2082,15 +2082,6 @@ capabilities:
       4，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIORAL_AUDIT。 成熟度
       : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "s
       ymlink_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
-  - capability_id: drift_detection_system_topology
-    canonical_override: src/zephyr/governance/drift_detection/system_topology.py
-    aliases:
-      - system_topology
-    description: >-
-      模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_BEHAVIOR
-      AL_AUDIT。 成熟度: production。 消费者: MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新
-      AI 搜 "system_topology" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本
-      模块。
   - capability_id: drift_detection_tamper_proof_audit
     canonical_override: src/zephyr/governance/drift_detection/tamper_proof_audit.py
     aliases:
@@ -2274,13 +2265,6 @@ capabilities:
     description: >-
       管线成本追踪器。canonical = src/zephyr/infrastructure/pipeline/cost_tracker.py
       （auto 派生：basename 匹配）。原 integration/cost_tracker.py 镜像副本已删除。
-  - capability_id: layer_router
-    aliases:
-      - LayerRouter
-      - get_layer_order
-    description: >-
-      管线层级路由器。canonical = src/zephyr/infrastructure/pipeline/layer_router.py
-      （auto 派生：basename 匹配）。原 integration/layer_router.py 镜像副本已删除。
   - capability_id: ct_pipe_routing
     aliases:
       - PipelineRouteDecision
@@ -2317,12 +2301,6 @@ capabilities:
     description: >-
       管线锁。canonical = src/zephyr/infrastructure/pipeline/pipeline_lock.py
       （auto 派生：basename 匹配）。原 integration/pipeline_lock.py 镜像副本已删除。
-  - capability_id: layer_consumer_registry
-    aliases:
-      - LayerConsumerRegistry
-    description: >-
-      层级消费者注册表。canonical = src/zephyr/infrastructure/pipeline/layer_consumer_registry.py
-      （auto 派生：basename 匹配）。原 integration/layer_consumer_registry.py 镜像副本已删除。
   - capability_id: dead_letter_queue
     aliases:
       - DeadLetterQueue

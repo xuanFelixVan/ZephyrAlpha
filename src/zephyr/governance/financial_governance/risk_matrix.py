@@ -109,7 +109,7 @@ RISK_MATRIX: dict[RiskCategory, RiskItem] = {
         risk_level=_compute_risk_level(3, 3),
         description="系统孤岛/依赖孤岛/知识孤岛——类比微服务架构反模式",
         mitigation="统一蓝图+全局拓扑图+跨域dispatch",
-        mitigator="system_topology.py + agent_dispatch.py",
+        mitigator="depgraph（拓扑真源）+ agent_dispatch.py",
         trigger_flags=["module_orphan", "dep_silo", "ctx_gap", "knowledge_silo"],
         related_risks=["OPERATIONAL"],
     ),

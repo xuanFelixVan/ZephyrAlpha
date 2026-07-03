@@ -266,7 +266,6 @@ entries:
   ssot_path: src/zephyr/integration/
   covers:
   - M1-M11双管线路由
-  - 层路由器(layer_router)
   - 背压管理(backpressure_manager)
   - 死信队列(dead_letter_queue)
   - 成本追踪(cost_tracker)

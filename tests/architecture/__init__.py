@@ -12,7 +12,7 @@ tests/architecture/ — 架构适应度函数（Architectural Fitness Functions�
 
 不变式清单
 ----------
-- test_layer_isolation           — L00~L13 只从合法来源导入，依赖方向正确
+- test_layer_isolation           — 域只从合法来源导入，依赖方向正确
 - test_no_upward_dependencies    — 低层不依赖高层（架构方向不变式）
 - test_cross_layer_via_contracts — 跨层数据交换必须走 shared/contracts/
 - test_no_import_cycles          — 模块间不存在循环依赖
