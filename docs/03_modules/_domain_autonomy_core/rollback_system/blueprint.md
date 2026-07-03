@@ -142,11 +142,11 @@ summary: >
 | 35 | contract.py | §3.1 | rollback_policy_engine | 已实现 | |
 | 36 | contracts.py | §3.1 | CT-RBK-GATE-001 契约 | 已实现 | |
 | 37 | right_to_be_forgotten.py | §3.1 | GDPR 遗忘权检查 | 已实现 | |
-| 38 | llm_impact_analyzer.py | §3.1 | LLM 版本兼容性 | 已实现 | |
-| 39 | model_drift_detector.py | §3.1 | AI 输出质量漂移检测 | 已实现 | |
-| 40 | owner_absent.py | §3.1 | Owner 心跳+死手开关 | 已实现 | |
+| 38 | llm_impact_analyzer.py | §3.1 | LLM 版本兼容性 | 已迁移 | ARCH-039 P1→governance/architecture_governance |
+| 39 | model_drift_detector.py | §3.1 | AI 输出质量漂移检测 | 已迁移 | ARCH-039 P1→intelligence（删除冗余副本） |
+| 40 | owner_absent.py | §3.1 | Owner 心跳+死手开关 | 已迁移 | ARCH-039 P1→governance/escalation |
 | 41 | complexity_budget.py | §3.1 | 系统自复杂度分析 | 已实现 | |
-| 42 | confidence_quantifier.py | §3.1 | AI 置信度量化 | 已实现 | |
+| 42 | confidence_quantifier.py | §3.1 | AI 置信度量化 | 已迁移 | ARCH-039 P1→governance/intelligence_governance |
 | 43 | commit_quality_gate.py | §3.1 | commit message 质量审计 | 已实现 | |
 | 44 | rollback_audit_nexus.py | §3.1 | 审计 Sidecar | 已实现 | |
 | 45 | rollback_wal.py | §3.1 | 回滚预写日志 | 已实现 | |
@@ -154,11 +154,11 @@ summary: >
 | 47 | runbook_generator.py | §3.1 | SRE Runbook 自动生成 | 已实现 | |
 | 48 | rollback_target_staleness.py | §3.1 | 回滚目标陈旧度评估 | 已实现 | |
 | 49 | credential_rotation_trigger.py | §3.1 | 凭据自动轮替 | 已实现 | |
-| 50 | cross_agent_conflict_detector.py | §3.1 | 多 Agent 文件冲突检测 | 已实现 | |
+| 50 | cross_agent_conflict_detector.py | §3.1 | 多 Agent 文件冲突检测 | 已迁移 | ARCH-039 P1→governance/intelligence_governance |
 | 51 | intent_archiver.py | §3.1 | 操作意图存档 | 已实现 | |
 | 52 | rollback_abuse_detector.py | §3.1 | 回滚武器化滥用检测 | 已实现 | |
-| 53 | sandbox_enforcer.py | §3.1 | 沙盒基础设施集成 | 已实现 | |
-| 54 | autonomy_dashboard.py | §3.1 | 自治级别仪表盘 | 已实现 | |
+| 53 | sandbox_enforcer.py | §3.1 | 沙盒基础设施集成 | 已迁移 | ARCH-039 P1→infrastructure/runtime |
+| 54 | autonomy_dashboard.py | §3.1 | 自治级别仪表盘 | 已迁移 | ARCH-039 P1→governance/intelligence_governance |
 | 55 | budget_tracker.py | §3.1 | Token/Cost/Time 预算追踪 | 已实现 | |
 | 56 | drift_fix.py | §3.1 | 漂移修复执行器 | 已实现 | |
 | 57 | result_types.py | §3.1 | 回滚结果类型定义 | 已实现 | |
@@ -166,16 +166,12 @@ summary: >
 | 59 | rollback_integration.py | §3.2 | 回滚集成协调 | 已实现 | |
 | 60 | _manifest_.py | — | 模块清单 | 已实现 | |
 | 61 | __init__.py | — | 包初始化 | 已实现 | |
-| `backtest_engine.py` | § — | — | 已实现 | | 本模块 |
-| `fault_tolerance.py` | § — | — | 已实现 | | 本模块 |
-| `fsm_verifier.py` | § — | — | 已实现 | | 本模块 |
-| `paper_live_transition.py` | § — | — | 已实现 | | 本模块 |
-| `phase_check_registry.py` | § — | — | 已实现 | | 本模块 |
-| `phase_manager.py` | § — | — | 已实现 | | 本模块 |
-| `post_live_verification.py` | § — | — | 已实现 | | 本模块 |
-| `startup_shutdown.py` | § — | — | 已实现 | | 本模块 |
-| `startup_shutdown_cli.py` | § — | — | 已实现 | | 本模块 |
-| `trading_kill_switch.py` | § — | — | 已实现 | | 本模块 |
+
+> **ARCH-039 P1 迁移注**（2026-07-04）：以下 19 个非回滚文件已迁移到正确功能域，不再属于 MOD-INF-021：
+> - 删除 9 个真副本（目标域已有 SSoT）：paper_live_transition, post_live_verification, startup_shutdown, startup_shutdown_cli, fault_tolerance, fsm_verifier, phase_manager, phase_check_registry, model_drift_detector
+> - 移动 10 个文件到正确域：llm_impact_analyzer→governance/architecture_governance, autonomy_dashboard→governance/intelligence_governance, confidence_quantifier→governance/intelligence_governance, continuous_trust→governance/intelligence_governance, cross_agent_conflict_detector→governance/intelligence_governance, owner_absent→governance/escalation, trading_kill_switch→trading/trading_contracts/risk, concurrency_guard→infrastructure/runtime, gate_coordinator→infrastructure/runtime, sandbox_enforcer→infrastructure/runtime
+> - 保留 kill_switch.py（KillSwitchManager 是回滚专属，消费者全在 rollback/ 内）
+> - rollback/ 从 73→54 文件，符合 T_hard=60
 
 ### §0.2 对齐验证矩阵
 

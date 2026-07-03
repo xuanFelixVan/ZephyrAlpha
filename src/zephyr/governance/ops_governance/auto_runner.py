@@ -107,7 +107,7 @@ class GovernanceAutoRunner:
 
     def _run_gates(self) -> None:
         """按阶段顺序执行 gate_checks。"""
-        from zephyr.infrastructure.rollback.phase_manager import (
+        from zephyr.governance.ops_governance.phase_manager import (
             PHASE_SEQUENCE,
             ConstructionPhase,
         )
@@ -149,8 +149,8 @@ class GovernanceAutoRunner:
     def _execute_gate(self, gate_name: str) -> bool:
         """执行单个 gate check。"""
         try:
-            from zephyr.infrastructure.rollback.phase_check_registry import run_check
-            from zephyr.infrastructure.rollback.phase_manager import GateResult
+            from zephyr.governance.ops_governance.phase_check_registry import run_check
+            from zephyr.governance.ops_governance.phase_manager import GateResult
 
             result = run_check(gate_name)
             return result == GateResult.GREEN

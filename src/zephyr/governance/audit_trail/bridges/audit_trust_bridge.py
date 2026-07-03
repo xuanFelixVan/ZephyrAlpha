@@ -50,7 +50,7 @@ class AuditTrustBridge:
             信任分数 (0.0~1.0)，或 None 如果引擎不可用
         """
         try:
-            from zephyr.infrastructure.rollback.continuous_trust import ContinuousTrust
+            from zephyr.governance.intelligence_governance.continuous_trust import ContinuousTrust
 
             engine = ContinuousTrust()
             score_obj = engine.get_score()

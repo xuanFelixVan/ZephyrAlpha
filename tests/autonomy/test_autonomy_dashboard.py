@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from zephyr.infrastructure.rollback.autonomy_dashboard import (
+from zephyr.governance.intelligence_governance.autonomy_dashboard import (
     EXIT_AUTONOMY_DOWNGRADED,
     AutonomyDashboard,
     AutonomyMetrics,

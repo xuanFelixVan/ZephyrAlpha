@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
-# [MODULE] zephyr.infrastructure.rollback.llm_impact_analyzer
-# [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.rollback.__init__
+# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
+# [MODULE] zephyr.governance.architecture_governance.llm_impact_analyzer
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] zephyr.governance.architecture_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF_llm_impact_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_llm_impact_analyzer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """
@@ -23,6 +23,11 @@ LLMImpactAnalyzer — LLM-based commit 语义影响分析器。
 commit diff → LLM API → 语义级风险评估:
     输出: RISK score (0.0~1.0) + 类别 (P0/P1/P2/P3) + 受影响模块 + 推荐操作
     离线模式: 基于关键词规则回退（不含 LLM API 调用）
+
+注意：与 src/zephyr/infrastructure/impact/llm_impact_analyzer.py 命名碰撞
+（后者依据 MOD-TASK_SYSTEM 是 task impact analyzer，本文件是 commit impact analyzer）。
+类名撞车是历史遗留问题，不在 ARCH-039 P1 范围内。
+module_id 已重新分配为 MOD-GOV_llm_impact_analyzer 避免撞车。
 """
 
 from __future__ import annotations

@@ -356,7 +356,7 @@ class TestRegisterToPhaseManager:
 
     def test_phase_manager_import_success(self):
         """验证 phase_manager 模块可正常导入。"""
-        from zephyr.infrastructure.rollback.phase_manager import (
+        from zephyr.governance.ops_governance.phase_manager import (
             ConstructionPhase,
             GateResult,
             PhaseGate,
@@ -369,7 +369,7 @@ class TestRegisterToPhaseManager:
 
     def test_phase_2_e2e_exists(self):
         """验证 PHASE_2_E2E 阶段存在。"""
-        from zephyr.infrastructure.rollback.phase_manager import ConstructionPhase, PHASE_SEQUENCE
+        from zephyr.governance.ops_governance.phase_manager import ConstructionPhase, PHASE_SEQUENCE
         assert ConstructionPhase.PHASE_2_E2E in PHASE_SEQUENCE
         phase_gate = PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E]
         assert phase_gate is not None

@@ -642,7 +642,7 @@ class GitCommitGateway:
             # P4-T2: session shutdown handoff（crash recovery）
             if result.status == CommitStatus.OK:
                 try:
-                    from zephyr.infrastructure.rollback.phase_manager import session_shutdown
+                    from zephyr.governance.ops_governance.phase_manager import session_shutdown
                     session_shutdown(session_id, summary=full_message)
                 except Exception as e:
                     logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e)

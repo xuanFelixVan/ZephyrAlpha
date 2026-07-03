@@ -125,7 +125,7 @@ def _patch_session_continuity() -> bool:
 def _patch_phase_manager() -> bool:
     """Monkey-patch PhaseGate.run_checks → 每次 gate check 自动发送遥测"""
     try:
-        from zephyr.infrastructure.rollback.phase_manager import PhaseGate
+        from zephyr.governance.ops_governance.phase_manager import PhaseGate
 
         _orig_run_checks = PhaseGate.run_checks
 

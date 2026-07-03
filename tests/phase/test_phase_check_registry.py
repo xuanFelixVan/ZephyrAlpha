@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from zephyr.infrastructure.rollback.phase_check_registry import (
+from zephyr.governance.ops_governance.phase_check_registry import (
     _CHECK_MAP,
     GateResult,
     PhaseCheckRegistry,

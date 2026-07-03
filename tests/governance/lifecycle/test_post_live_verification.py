@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.infrastructure.rollback.post_live_verification import (
+from zephyr.governance.lifecycle_governance.post_live_verification import (
     PLV_CHECK_COUNT,
     PLV_CHECKS,
     PLVCheck,

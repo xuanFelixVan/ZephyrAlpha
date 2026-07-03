@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
-# [MODULE] zephyr.infrastructure.rollback.concurrency_guard
+# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_INFRA_RUNTIME)
+# [MODULE] zephyr.infrastructure.runtime.concurrency_guard
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
 # [CONSUMERS] RollbackExecutor._execute; RollbackExecutor.discard_changes
 # [STARTUP] imported
 # [MATURITY] production

@@ -21,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.infrastructure.rollback.concurrency_guard import (
+from zephyr.infrastructure.runtime.concurrency_guard import (
     ConcurrencyConflictError,
     ConflictResult,
     LockInfo,

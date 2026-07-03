@@ -236,7 +236,7 @@ class ChangeImpactAnalyzer:
         result["commit"] = commit_hash
         result["source"] = "commit_analysis"
         try:
-            from zephyr.infrastructure.rollback.llm_impact_analyzer import LLMImpactAnalyzer
+            from zephyr.governance.architecture_governance.llm_impact_analyzer import LLMImpactAnalyzer
 
             analyzer = LLMImpactAnalyzer(project_root=self._repo_root)
             llm_result = analyzer.analyze(commit_hash)

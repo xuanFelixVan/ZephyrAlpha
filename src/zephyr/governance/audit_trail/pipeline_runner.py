@@ -1033,7 +1033,7 @@ class PipelineRunner:
     def scan_phase_gates(self) -> list[AuditFinding]:
         findings: list[AuditFinding] = []
         try:
-            from zephyr.infrastructure.rollback.phase_check_registry import _CHECK_MAP, GateResult
+            from zephyr.governance.ops_governance.phase_check_registry import _CHECK_MAP, GateResult
 
             for check_name, check_fn in _CHECK_MAP.items():
                 if not callable(check_fn):

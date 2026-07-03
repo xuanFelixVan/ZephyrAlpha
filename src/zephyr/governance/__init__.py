@@ -125,7 +125,7 @@ try:
     from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.governance.audit_trail.kb_gate import KBWriteCheckResult
     from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
-    from zephyr.infrastructure.rollback.llm_impact_analyzer import RiskLevel
+    from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
     from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
     from zephyr.infrastructure.asset_inventory.models import AssetType
     from zephyr.governance.code_dedup.phase_executor import PhaseStatus
@@ -167,20 +167,20 @@ try:
     import zephyr.governance.data_governance.data_quality as data_quality
     import zephyr.governance.resilience_governance.decision_fatigue as decision_fatigue
     import zephyr.governance.resilience_governance.decision_fatigue_cli as decision_fatigue_cli
-    import zephyr.infrastructure.rollback.fault_tolerance as fault_tolerance
+    import zephyr.governance.resilience_governance.fault_tolerance as fault_tolerance
     import zephyr.governance.financial_governance.financial_compliance as financial_compliance
-    import zephyr.infrastructure.rollback.fsm_verifier as fsm_verifier
+    import zephyr.governance.financial_governance.fsm_verifier as fsm_verifier
     import zephyr.governance.escalation.incident_response as incident_response
     import zephyr.governance.kb.knowledge_engine as knowledge_engine
     import zephyr.governance.ops_governance.ops_foundation as ops_foundation
-    import zephyr.infrastructure.rollback.paper_live_transition as paper_live_transition
-    import zephyr.infrastructure.rollback.phase_check_registry as phase_check_registry
-    import zephyr.infrastructure.rollback.phase_manager as phase_manager
-    import zephyr.infrastructure.rollback.post_live_verification as post_live_verification
+    import zephyr.governance.lifecycle_governance.paper_live_transition as paper_live_transition
+    import zephyr.governance.ops_governance.phase_check_registry as phase_check_registry
+    import zephyr.governance.ops_governance.phase_manager as phase_manager
+    import zephyr.governance.lifecycle_governance.post_live_verification as post_live_verification
     import zephyr.governance.data_governance.realtime_streaming as realtime_streaming
     import zephyr.governance.escalation.spof_checker as spof_checker
-    import zephyr.infrastructure.rollback.startup_shutdown as startup_shutdown
-    import zephyr.infrastructure.rollback.startup_shutdown_cli as startup_shutdown_cli
+    import zephyr.infrastructure.runtime.startup_shutdown as startup_shutdown
+    import zephyr.governance.ops_governance.startup_shutdown_cli as startup_shutdown_cli
     # 子目录模块（33个）
     import zephyr.governance.behavioral_admission.admission_response as admission_response
     import zephyr.governance.intelligence_governance.agent_debate as agent_debate
