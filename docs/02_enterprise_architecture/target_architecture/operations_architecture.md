@@ -3,7 +3,7 @@ module_id: VIEW-08-OPERATIONS-ARCH
 title: Target Architecture — Operations Architecture
 doc_type: architecture_view
 status: Draft
-version: 0.2.0
+version: 0.2.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -33,7 +33,7 @@ tags:
 summary: TOGAF Operations Architecture 视图（骨架版）。描述系统运维全景（8 个运维域的生命周期、流程与角色），与 04-TA
   §6 的边界为：04-TA §6 = 部署图（物理节点 how），本视图 = 运维全景（生命周期+流程+角色 what）。Runbook Catalog 占位清单见
   §9，§10 列出激活触发条件。
-date: '2026-04-22'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -114,8 +114,8 @@ Operations Architecture（运维架构视图）回答：
 
 ### 4.1 架构定位
 
-- `infra_ops/` 层是传统可观测性代码归属（OpenTelemetry 导出）
-- **Feedback Loop Engine (FLE)** 是 6 大核心服务的"自动化运维大脑"，所有服务指标→FLE→异常检测→动作分派
+- `D_INFRA_OPS` 域是传统可观测性代码归属（OpenTelemetry 导出）
+- **Feedback Loop Engine (FLE)** 是 5 大核心服务的"自动化运维大脑"，所有服务指标→FLE→异常检测→动作分派
 - 两者关系：OpenTelemetry 面向"人工看板 + 外部工具"；FLE 面向"系统内部自调节"
 
 ### 4.2 experimental SLI/SLO 基线（P0 必采）
@@ -158,7 +158,7 @@ Operations Architecture（运维架构视图）回答：
 
 **导出通道**：
 
-- `infra_ops/` 定期从 FLE 导出到本地文件（JSON Lines）
+- `D_INFRA_OPS` 定期从 FLE 导出到本地文件（JSON Lines）
 - beta 启用 OpenTelemetry Collector → Prometheus/Grafana 标准栈
 
 > 🚧 **beta 扩展**：Grafana Dashboard 模板、On-Call 流程、Alertmanager 规则集待 beta 补齐（本文档届时升级为 v1.0.0 active）。
@@ -219,9 +219,9 @@ Operations Architecture（运维架构视图）回答：
 
 ---
 
-## §8A 6 Core Services — Runtime Operations / 6 大核心服务运维治理
+## §8A 5 Core Services — Runtime Operations / 5 大核心服务运维治理
 
-> 新增于 v0.2.0（2026-04-24）。本节专项描述 6 大核心服务（LSG/CE/Orc/VMS/FLE/KB）的 experimental 运维流程，是 §3-§8 的 8 大运维域在"AI 基础设施"上的具化。
+> 新增于 v0.2.0（2026-04-24）。本节专项描述 5 大核心服务（LSG/CE/Orc/VMS/FLE）的 experimental 运维流程，是 §3-§8 的 8 大运维域在"AI 基础设施"上的具化。
 
 ### 8A.1 服务生命周期（experimental 单机单进程）
 
@@ -314,11 +314,11 @@ class ServiceHealthProtocol(Protocol):
 | RB-D6-01 | 事件 | Post-Mortem 模板 | 每次 P0/P1 事件后 | 🔲 待建 |
 | RB-D7-01 | 容量 | 资源用量月度报告 | 每月容量复盘 | 🔲 待建 |
 | RB-D8-01 | 成本 | LLM Token 费用报告 | 每月成本复盘 | 🔲 待建 |
-| RB-SVC-01 | 6大核心服务 | 冷启动 Runbook（依赖 DAG 序）| 系统重启 | 🔲 experimental P0 |
-| RB-SVC-02 | 6大核心服务 | VMS ChromaDB 重建 Runbook | 持久化损坏 | 🔲 experimental P0 |
-| RB-SVC-03 | 6大核心服务 | LSG 策略表更新 Runbook | 红队发现新攻击模式 | 🔲 experimental P0 |
-| RB-SVC-04 | 6大核心服务 | FLE SQLite 归档 Runbook | 数据量 > 100MB | 🔲 experimental P1 |
-| RB-SVC-05 | 6大核心服务 | Agent Sandbox 逃逸响应 | 沙箱违规告警 | 🔲 experimental P0（→ IR-SEC-002）|
+| RB-SVC-01 | 5大核心服务 | 冷启动 Runbook（依赖 DAG 序）| 系统重启 | 🔲 experimental P0 |
+| RB-SVC-02 | 5大核心服务 | VMS ChromaDB 重建 Runbook | 持久化损坏 | 🔲 experimental P0 |
+| RB-SVC-03 | 5大核心服务 | LSG 策略表更新 Runbook | 红队发现新攻击模式 | 🔲 experimental P0 |
+| RB-SVC-04 | 5大核心服务 | FLE SQLite 归档 Runbook | 数据量 > 100MB | 🔲 experimental P1 |
+| RB-SVC-05 | 5大核心服务 | Agent Sandbox 逃逸响应 | 沙箱违规告警 | 🔲 experimental P0（→ IR-SEC-002）|
 
 ---
 
@@ -334,12 +334,3 @@ class ServiceHealthProtocol(Protocol):
 6. **LLM/数据订阅月费超过 ¥5,000**（D8 触发）：成本管理从"感性控制"进入"定量监控"，需要成本告警与预算机制
 7. **监管合规审查**（D5/D6 全触发）：变更管理与事件响应记录是合规审查的必查项，Runbook 必须存在且可查阅
 8. **因子回测投入生产使用（非研究）**（D2/D3 触发）：生产级因子数据的可靠性依赖监控与备份，研究阶段的手动管理不再适用
-
----
-
-## Revision History / 修订记录
-
-| Date / 日期 | Description / 说明 |
-|------------|-------------------|
-| 2026-04-19 | v0.1.0：初版骨架建立（S14-G4，批次 A）。§1 Purpose + 与 04-TA §6 边界说明；§2 八运维域总表；§3-§8 六域占位（3-5 行现状 + 占位标记）；§9 Runbook Catalog 11 条占位清单；§10 Activation Triggers 8 条触发条件。R39 登记理由。 |
-| 2026-04-24 | v0.2.0：B-d-5 增量加固。§4 D2 Monitoring 实质化：experimental SLI/SLO 基线 9 项（含 SLO 阈值+告警动作）+ 指标采集拓扑（FLE 为中枢）；新增 §8A "6 大核心服务运维治理"（生命周期 DAG 序 + health check 合约 + 降级矩阵 + 日常巡检清单）；§9 Runbook Catalog 新增 5 条服务类 Runbook（RB-SVC-01~05）；§8 D6 补充与 06-security §11 对齐链接。文档保留 skeleton 身份，待 beta 升级为 active。 |
