@@ -83,6 +83,9 @@ from zephyr.governance.commit_gates.orphan_module_gate import make_orphan_module
 from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
 from zephyr.governance.commit_gates.function_dup_gate import make_function_dup_gate
 from zephyr.governance.commit_gates.bare_getenv_gate import make_bare_getenv_gate
+from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (
+    make_rule_four_way_alignment_gate,
+)
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -254,6 +257,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
+        self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
