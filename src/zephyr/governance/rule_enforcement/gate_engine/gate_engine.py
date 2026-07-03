@@ -103,7 +103,7 @@ __all__ = [
 # 常量
 # ---------------------------------------------------------------------------
 
-GATES_DIR = Path(__file__).parent
+GATES_DIR = Path(__file__).parent.parent  # rule_enforcement/（门禁yaml真源根：task/ invariants/ admission/ 子目录）
 
 _DEPRECATED_PATHS_YAML = (
     REPO_ROOT / "scripts" / "governance" / "_shared" / "deprecated_paths.yaml"
