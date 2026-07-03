@@ -19,16 +19,16 @@ governance:
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# 53域是唯一物理分类体系（depgraph domains表），14层（L00-L13）是域的layer_id属性枚举。
+# 49域是唯一物理分类体系（depgraph domains表），14层（L00-L13）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
 partitions:
-# === 53域索引（物理分类唯一真源：depgraph domains表）===
+# === 49域索引（物理分类唯一真源：depgraph domains表）===
 - id: domains
   path: depgraph (PostgreSQL)
   description: >
-    53域物理分类唯一真源。
+    49域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
     14层（L00-L13）是域的layer_id属性枚举。
 
@@ -133,29 +133,26 @@ partitions:
     status: skeleton
     description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
 
-# === 53域清单（从depgraph派生，禁止手工编辑）===
+# === 49域清单（从depgraph派生，禁止手工编辑）===
 domains:
 - id: D_ALT_DATA
   name: 另类数据
   layer_id: L1_foundation
 - id: D_ASHARE_SIGNAL
-  name: A股特色信号
+  name: ashare_signal
   layer_id: L2_domain
 - id: D_AUDITTEST
-  name: 审计测试套件
+  name: audit_test_suite
   layer_id: L2_domain
 - id: D_AUTONOMY_CORE
-  name: 自治核心
+  name: agent_lifecycle
   layer_id: L1_foundation
 - id: D_AUTONOMY_PERM
-  name: 自治保护
+  name: budget_enforcement
   layer_id: L2_domain
 - id: D_BACKTEST
   name: 回测
   layer_id: L2_domain
-- id: D_BEHAVIORAL_AUDIT
-  name: 行为审计
-  layer_id: L1_foundation
 - id: D_COMPLIANCE
   name: 合规
   layer_id: L2_domain
@@ -190,58 +187,52 @@ domains:
   name: 前端
   layer_id: L1_foundation
 - id: D_FUNDAMENTAL_SIGNAL
-  name: 基本面信号
+  name: fundamental_signal
   layer_id: L2_domain
 - id: D_GOVERNANCE
-  name: 生命周期管理
+  name: registry_management
   layer_id: L2_domain
 - id: D_GOV_AUDIT
-  name: 审计追踪
+  name: audit_orchestration
   layer_id: L2_domain
 - id: D_GOV_DOCS
-  name: 架构文档治理
+  name: architecture_docs
   layer_id: L2_domain
 - id: D_GOV_DRIFT
-  name: 漂移检测
+  name: drift_detection
   layer_id: L2_domain
 - id: D_GOV_ENFORCEMENT
-  name: 规则执行
-  layer_id: L2_domain
-- id: D_GOV_REPAIR
-  name: 治理修复
-  layer_id:
-- id: D_GOV_RULE
-  name: 规则治理
+  name: rule_enforcement
   layer_id: L2_domain
 - id: D_GOV_SCRIPTS
-  name: 脚本治理
+  name: script_governance
   layer_id: L2_domain
 - id: D_INFRA_A2A
-  name: A2A通信
+  name: a2a_communication
   layer_id: L0_infrastructure
 - id: D_INFRA_OPS
-  name: 基础设施运维
+  name: asset-inventory
   layer_id: L0_infrastructure
 - id: D_INFRA_RECOVERY
-  name: 回滚恢复
+  name: rollback_recovery
   layer_id: L0_infrastructure
 - id: D_INFRA_RUNTIME
-  name: 运行时集成
+  name: runtime_core
   layer_id: L0_infrastructure
 - id: D_INFRA_TELEMETRY
-  name: 可观测性
+  name: observability_profiling
   layer_id: L0_infrastructure
 - id: D_INTEGRATION
-  name: 管线路由
+  name: pipeline_routing
   layer_id: L1_foundation
 - id: D_INTEGRATION_GATEWAY
-  name: 集成网关
+  name: mcp_servers
   layer_id: L1_foundation
 - id: D_INTELLIGENCE
-  name: 上下文管理
+  name: context_management
   layer_id: L2_domain
 - id: D_KNOWLEDGE
-  name: 知识管理
+  name: vector_storage
   layer_id: L2_domain
 - id: D_MKT_DATA
   name: 行情数据
@@ -250,10 +241,10 @@ domains:
   name: 推理
   layer_id: L2_domain
 - id: D_ML_TRAIN
-  name: 训练
+  name: model_evaluation
   layer_id: L2_domain
 - id: D_OPS
-  name: 反馈循环
+  name: telemetry
   layer_id: L1_foundation
 - id: D_PF_ALLOC
   name: 组合分配
@@ -271,22 +262,19 @@ domains:
   name: 风控
   layer_id: L2_domain
 - id: D_SECURITY
-  name: 对抗验证
+  name: orphan_judge
   layer_id: L1_foundation
 - id: D_SECURITY_LLM
-  name: LLM防御
+  name: llm_defense
   layer_id: L1_foundation
 - id: D_SELL_DECISION
   name: 卖出决策
   layer_id: L2_domain
 - id: D_SHARED
-  name: 共享服务
+  name: shared_services
   layer_id: L1_foundation
-- id: D_SIGLEGACY
-  name: 信号遗留设计态
-  layer_id: L2_domain
 - id: D_SIGQC
-  name: 信号质量控制
+  name: signal_quality
   layer_id: L2_domain
 - id: D_SIMULATION
   name: 仿真
@@ -296,20 +284,20 @@ domains:
   layer_id: L2_domain
 
 global_stats:
-  total_domains: 53
+  total_domains: 49
   total_partitions: 12
   b_track_modules: 12
   b_track_implemented: 11
   b_track_skeleton: 1
   notes: >
-    53域唯一物理分类体系，14层是域的layer_id属性枚举。
+    49域唯一物理分类体系，14层是域的layer_id属性枚举。
     b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
     结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-30'
 
 query_hints:
 - question: 系统有哪些域？
-  answer: 53域，见domains列表，真源为depgraph domains表
+  answer: 49域，见domains列表，真源为depgraph domains表
 - question: 某域有哪些模块？
   answer: "查询depgraph: python scripts/governance/extract_depgraph.py --domains <域ID>"
 - question: 模块间的依赖关系？
@@ -321,7 +309,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（53域×10能力域矩阵）
+  answer: 读cross_cutting/capability_heatmap.yaml（49域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
