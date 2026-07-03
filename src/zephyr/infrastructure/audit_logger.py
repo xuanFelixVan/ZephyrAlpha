@@ -47,6 +47,8 @@ except ImportError:
 
 __all__ = ["AUDIT_JSONL_PATH", "AUDIT_LOG_DIR", "AuditLogger", "create_audit_logger"]
 
+logger = logging.getLogger(__name__)
+
 AUDIT_LOG_DIR = REPO_ROOT / "logs" / "mcp_audit"
 AUDIT_JSONL_PATH = AUDIT_LOG_DIR / "tools_call.jsonl"
 
@@ -90,8 +92,9 @@ class AuditLogger:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception:
-                pass
+            except Exception as e:
+                # Phase 2 P2 修复（异常处理 HIGH）：审计路径吞异常=审计完整性无法保证
+                logger.warning("AuditLogger: _CoreAuditWriter 初始化失败(%s: %s)，核心审计链不可用", type(e).__name__, e)
 
     def hash_args(self, arguments: dict[str, Any]) -> str:
         raw = json.dumps(arguments, sort_keys=True, ensure_ascii=False)
