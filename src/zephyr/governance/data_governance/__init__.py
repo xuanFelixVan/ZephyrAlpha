@@ -1,5 +1,12 @@
 # [A_module] module_id=MOD-GOV_data_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
+
+# v2.2.0 新增 MiniQMT 实盘行情 Provider（ORPHAN-MODULE gate：需在 src/**/*.py 有 import 引用）
+try:
+    from zephyr.governance.data_governance import miniqmt_provider
+except ImportError:
+    miniqmt_provider = None  # type: ignore[assignment]
+
 __all__ = [
     "DQDimension",
     "DQSpec",

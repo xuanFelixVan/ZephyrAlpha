@@ -13,4 +13,31 @@ from __future__ import annotations
 # [TESTS]
 # [TTL] task_bound
 
-__all__ = ["fitness_functions", "gate_statistics", "knowledge_overview", "olap_trend", "task_progress"]
+# v2.2.0 新增5个组件（MiniQMT实盘+Tick回测仪表盘）
+# 用多行单 import 语句（ORPHAN-MODULE gate 的 git grep pattern: from .* import {short_name}）
+try:
+    from zephyr.frontend.dashboard.components import backtest_results
+    from zephyr.frontend.dashboard.components import order_book
+    from zephyr.frontend.dashboard.components import position_monitor
+    from zephyr.frontend.dashboard.components import tick_replay
+    from zephyr.frontend.dashboard.components import trade_panel
+except ImportError:
+    backtest_results = None  # type: ignore[assignment]
+    order_book = None  # type: ignore[assignment]
+    position_monitor = None  # type: ignore[assignment]
+    tick_replay = None  # type: ignore[assignment]
+    trade_panel = None  # type: ignore[assignment]
+
+__all__ = [
+    "fitness_functions",
+    "gate_statistics",
+    "knowledge_overview",
+    "olap_trend",
+    "task_progress",
+    # v2.2.0 新增
+    "backtest_results",
+    "order_book",
+    "position_monitor",
+    "tick_replay",
+    "trade_panel",
+]

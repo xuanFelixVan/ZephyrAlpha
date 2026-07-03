@@ -4,5 +4,12 @@ from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
+from zephyr.backtest.implementations.event_driven_engine import EventDrivenEngine
 
-__all__ = ["BacktestConfig", "DefaultBacktestEngine", "vectorized_engine"]
+__all__ = [
+    "BacktestConfig",
+    "DefaultBacktestEngine",
+    "EventDrivenEngine",
+    "vectorized_engine",
+    "event_driven_engine",
+]
