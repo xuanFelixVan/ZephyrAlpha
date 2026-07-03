@@ -16,9 +16,9 @@ doc_type: index
 
 | # | 文档 | 标题 |
 |---|------|------|
-| 1 | [schema_health_root_cure_plan.md](schema_health_root_cure_plan.md) | Schema 健康度治本方案：depgraph.db 漂移修复与死表清理 |
-| 2 | [schema_health_revised_execution_plan.md](schema_health_revised_execution_plan.md) | Schema 健康度治本方案：修订执行计划（v2） |
-| 3 | [schema_health_continuation_plan.md](schema_health_continuation_plan.md) | Schema 健康度治本：延续执行计划（v2 续作） |
+| 1 | ~~schema_health_root_cure_plan.md~~ | Schema 健康度治本方案：depgraph.db 漂移修复与死表清理（已归档，治本已完成见 ARCH-016/017/018，详见 architecture_debt_registry.md §5.4.2） |
+| 2 | ~~schema_health_revised_execution_plan.md~~ | Schema 健康度治本方案：修订执行计划 v2（已归档，治本已完成见 ARCH-016/017/018） |
+| 3 | ~~schema_health_continuation_plan.md~~ | Schema 健康度治本：延续执行计划 v2 续作（已归档，治本已完成见 ARCH-016/017/018） |
 
 ## 二、D-SIGNAL 改名系列
 
