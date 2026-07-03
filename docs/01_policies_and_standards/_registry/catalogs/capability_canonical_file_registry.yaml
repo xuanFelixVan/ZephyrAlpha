@@ -2445,6 +2445,39 @@ capabilities:
       新 AI 搜 "删除域/delete domain/空壳域清理" 可定位真源。解决防重建：check_file_canonical()
       反查阻止新 AI 写 SQL 直接 DELETE（违反 depgraph 硬约束）。对标 DM-100255 4 空壳域处置。
 
+  - capability_id: content_column_residual_cleanup
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - cmd_fix_rename_residual
+      - fix_rename_residual
+      - fix-residual
+      - --fix-residual
+    description: >-
+      内容列残留清理（apply_depgraph.py cmd_fix_rename_residual，裁定#207 R1 B5）。扫描所有表
+      所有 TEXT 列，按 rename_map 顺序（先长后短，避免子串误匹配）REPLACE 旧标识符→新标识符。
+      不检查 domains 表（存量残留的 old_id 已改名）。排除 _RENAME_SCAN_EXCLUDE_TABLES（规则示例
+      有意保留）。cmd_delete_domain 只清域引用列（domain_id/from_domain 等），内容列
+      （schema_definition/name/owner 等）需用本函数清理。支持自定义 rename_map 参数（不限于
+      _RENAME_MAP_204 硬编码）+ --dry-run 验证。CLI --fix-residual 硬编码用 _RENAME_MAP_204，
+      自定义映射需通过 python 直接调用函数。解决发现性：新 AI 搜 "内容列残留/改名残留/fix residual"
+      可定位真源。解决防重建：阻止新 AI 写 SQL 直接 UPDATE（违反 depgraph 硬约束）。对标
+      DM-100255 D_SIGLEGACY 7 行内容列残留清理（3步映射：D-SIGLEGACY, →空 / , D-SIGLEGACY→空 /
+      D-SIGLEGACY→空）。
+
+  - capability_id: constraint_deletion
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - delete_constraint
+      - delete-constraint
+      - --delete-constraint
+    description: >-
+      约束删除（apply_depgraph.py delete_constraint）。删除 arch_constraints 表单条约束记录，
+      自动触发 PG 备份（backup_pg_depgraph）。用于清理过时约束（如域删除后遗留的 constraint_id，
+      或旧格式连字符命名的过时约束）。CLI 入口 --delete-constraint <CONSTRAINT_ID>。解决发现性：
+      新 AI 搜 "删除约束/delete constraint/约束残留" 可定位真源。解决防重建：阻止新 AI 写 SQL
+      直接 DELETE FROM arch_constraints（违反 depgraph 硬约束）。对标 DM-100255 D_GOV_RULE
+      constraint 残留 CONSTRAINT_D-GOV-RULE_ENFORCEMENT 清理（PG 备份 depgraph_20260703_120655.json）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
