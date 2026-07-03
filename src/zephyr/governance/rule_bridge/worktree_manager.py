@@ -443,6 +443,10 @@ class WorktreeManager:
         cmd.append(str(wt_path))
         r = self._run_git(cmd)
         if r.returncode != 0:
+            # Windows 文件句柄延迟释放可能导致 remove 失败，sleep 后重试一次
+            time.sleep(0.5)
+            r = self._run_git(cmd)
+        if r.returncode != 0:
             logger.warning(
                 "WorktreeManager: git worktree remove 失败 (session=%s): %s",
                 session_id, r.stderr.strip(),
