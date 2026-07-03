@@ -447,8 +447,11 @@ class WorktreeManager:
             time.sleep(0.5)
             r = self._run_git(cmd)
         if r.returncode != 0:
-            logger.warning(
-                "WorktreeManager: git worktree remove 失败 (session=%s): %s",
+            # git worktree remove 在 Windows 上偶发失败(Invalid argument)，
+            # 根因是 Windows/git 底层问题非时序问题，兜底逻辑(prune+rmtree+prune)已处理，
+            # 降级为 info 避免噪音；真正的删除失败在下方 _worktree_exists 检查处记 warning
+            logger.info(
+                "WorktreeManager: git worktree remove 失败，走兜底 (session=%s): %s",
                 session_id, r.stderr.strip(),
             )
             # 尝试 prune + 物理删除兜底
