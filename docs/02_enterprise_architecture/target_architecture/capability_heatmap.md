@@ -30,7 +30,7 @@ tags:
 - domain-driven
 - depgraph-derived
 summary: ZephyrAlpha 2.0 能力成熟度热力图正交视图（v2.0.0）。基于§2.1裁定，热力图改为53域×10能力域二维矩阵。原14层×7能力域矩阵废弃。成熟度数据由depgraph派生。
-date: '2026-06-26'
+date: '2026-07-04'
 ttl: permanent
 ---
 
@@ -118,6 +118,8 @@ ttl: permanent
 
 
 ### 3.2 域成熟度快照（53域）
+
+> **📊 能力热力图可视化**：见 [`diagrams/capability_heatmap_visual.mmd`](diagrams/capability_heatmap_visual.mmd) — 53域×10能力域热力图（L0-L3+ 成熟度着色）
 
 > **注**：以下为 2026-06-26 时点快照，会随 depgraph 更新而漂移。最新数据以 [`../01_global_architecture_diagram/global_capability_heatmap.md`](../01_global_architecture_diagram/global_capability_heatmap.md)（自动生成）为准。
 >

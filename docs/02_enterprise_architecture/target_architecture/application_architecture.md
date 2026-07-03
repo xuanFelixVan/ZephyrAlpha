@@ -92,6 +92,15 @@ The Application Architecture answers:
 
 ---
 
+## 3.1 C4-L3: Component / C4-L3 组件图（按域分解）
+
+> **📊 C4-L3 组件图**（按域分解，depgraph 派生）：
+> - [`diagrams/c4_l3_d_mkt_data.mmd`](diagrams/c4_l3_d_mkt_data.mmd) — D_MKT_DATA 行情数据域组件
+> - [`diagrams/c4_l3_d_ex_core.mmd`](diagrams/c4_l3_d_ex_core.mmd) — D_EX_CORE 执行核心域组件
+> - [`diagrams/c4_l3_d_ml_train.mmd`](diagrams/c4_l3_d_ml_train.mmd) — D_ML_TRAIN 训练域组件
+
+---
+
 ## 4. 域架构（53域，数据源：depgraph）
 
 > 本节为v3.0.0重写。模块清单由`generated/domains/*.md`派生，禁止在本文硬编码。

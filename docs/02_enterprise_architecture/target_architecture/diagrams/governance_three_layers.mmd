@@ -1,7 +1,7 @@
-﻿%% Source: governance_architecture.md §2.3
+%% Source: governance_architecture.md §2.3
 graph TB
     subgraph 被治理者[被治理者：业务层 + 文档层 + 前端层 + 治理层自己]
-        BIZ["src/zephyr/ 15 层业务代码"]
+        BIZ["src/zephyr/ 53 域业务代码"]
         DOC["docs/ 21 抽屉文档"]
         FE["frontend/ 4 子层"]
         CONTRACT["shared/contracts/ 契约基类"]
@@ -11,7 +11,7 @@ graph TB
     subgraph 治理三层[治理三层：横切正交]
         P["Policy 层<br/>定规则 / 存 / 版本化<br/>docs/01_policies_and_standards/<br/>docs/02_enterprise_architecture/adr/<br/>.cursor/rules/ + .trae/rules/"]
         F["Factory 层<br/>造工具 / 编译规则<br/>scripts/arch_guard/<br/>scripts/governance/<br/>scripts/quality/"]
-        R["Runtime 层<br/>执行 / 审计 / 反馈<br/>.pre-commit / CI<br/>l10_compliance/<br/>scripts/audit_log/ + opa/"]
+        R["Runtime 层<br/>执行 / 审计 / 反馈<br/>.pre-commit / CI<br/>d_compliance/<br/>scripts/audit_log/ + opa/"]
     end
 
     BIZ --> P

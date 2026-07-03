@@ -8,7 +8,7 @@ merged_from: README.md + index.md
 module_id: ARCH-006
 status: Active
 title: Target Architecture — Navigation Guide / 目标架构导航
-version: 3.1.0
+version: 3.2.0
 depends_on:
   - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target_architecture 为其子目录"}
 tags:
@@ -16,7 +16,7 @@ tags:
 - navigation
 - domain-driven
 - depgraph-derived
-summary: v3.1.0：瘦身后保留导航职能，硬编码域索引移交 generated/ 真源，修订记录移交 git log。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
+summary: v3.2.0：修复过时声明（runtime_planes已v1.1.0+.mmd 14层清理已完成+死清单删除+断链修复）。v3.1.0：瘦身后保留导航职能，硬编码域索引移交 generated/ 真源，修订记录移交 git log。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
 ttl: permanent
 ---
 
@@ -54,7 +54,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 3. 文件清单
 
-> **注（v3.2.0）**：本清单已全部审核完成（2026-07-04）。A/B/C 判定逻辑：A 污染源清除、B depgraph派生、C 必须写死。已删除 architecture_endgame_locked.md + 3个迁移残留死副本。.mmd 图源内14层引用清理为后续任务。
+> **注（v3.2.0）**：本清单已全部审核完成（2026-07-04）。A/B/C 判定逻辑：A 污染源清除、B depgraph派生、C 必须写死。已删除 architecture_endgame_locked.md + 3个迁移残留死副本。.mmd 图源内14层引用清理已完成（2026-07-04）。
 
 | 文件 | 说明 | 状态 |
 |------|------|------|
@@ -63,7 +63,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | information_architecture.md | IA 信息架构视图 | ✅ 已审核（干净）|
 | application_architecture.md | AA 应用架构视图 | ✅ v3.0.2 已审核 |
 | technology_architecture.md | TA 技术架构视图 | ✅ v2.1.2 已审核 |
-| runtime_planes.md | 运行时平面正交视图 | ✅ v1.0.1 已审核（过渡态保留，待YAML更新）|
+| runtime_planes.md | 运行时平面正交视图 | ✅ v1.1.0 已审核（§3矩阵已重写为53域）|
 | capability_heatmap.md | 能力热力图正交视图 | ✅ v2.0.2 已审核 |
 | data_architecture.md | DA 数据架构视图 | ✅ v1.0.2 已审核 |
 | security_architecture.md | SEC 安全架构视图 | ✅ v1.0.1 已审核（断链已修） |
@@ -71,7 +71,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | operations_architecture.md | OPS 运维架构视图 | ✅ v0.2.1 已审核 |
 | governance_architecture.md | GOV 治理架构视图 | ✅ v2.2.2 已审核 |
 | frontend_architecture.md | FE 前端架构视图 | ✅ v1.1.1 已审核（断链已修） |
-| diagrams/ | Mermaid 图源文件（28个 .mmd + index.md）| ✅ index.md 已更新（.mmd 内14层引用后续任务）|
+| diagrams/ | Mermaid 图源文件（28个 .mmd + index.md）| ✅ 14层引用清理已完成（2026-07-04）|
 
 ---
 
@@ -107,8 +107,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
 | `governance_architecture.md` | GOV | 治理体系三层边界？ | 架构师、合规 | active |
 | `frontend_architecture.md` | FE | 前端层分层？ | 前端开发者、架构师 | active |
-| `dimension_audit_matrix.md` | Cross-layer | 12维架构质量评分 | 架构师、审计 | 已迁移 |
-| `session_carryover_schema.md` | Cross-layer | AI会话接续Schema | AI 协作者、架构师 | 已迁移 |
 | `diagrams/` | All | Mermaid 图源文件 | 所有人 | active |
 
 ---

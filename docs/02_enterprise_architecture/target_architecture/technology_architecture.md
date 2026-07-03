@@ -123,7 +123,7 @@ This view is **driven by** the Application Architecture (application characteris
 
 | 进程 | 运行环境 | 职责 | 启动方式 |
 |------|---------|------|---------|
-| **ZephyrAlpha Main Process** | Windows / Linux (Python) | 运行 52 域全链路主业务逻辑（域分类唯一，14 层降级为域属性，见 §2.1 裁定） | `python -m src.zephyr.main` |
+| **ZephyrAlpha Main Process** | Windows / Linux (Python) | 运行 53 域全链路主业务逻辑（域分类唯一，14 层降级为域属性，见 §2.1 裁定） | `python -m src.zephyr.main` |
 | **Pre-commit Guard** | Git hook（本地） | 文件治理检查（编码 / frontmatter / 命名） | `git commit` 触发 |
 | **CI Audit Process** | GitHub Actions / CI | 全仓库审计扫描 | push / PR 触发 |
 

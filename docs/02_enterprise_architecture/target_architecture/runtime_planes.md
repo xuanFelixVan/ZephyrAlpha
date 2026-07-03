@@ -54,21 +54,21 @@ ttl: permanent
 | 问题 | 答案所在 |
 |---|---|
 | 控制面（研究 / 决策 / 报表）和执行面（下单 / 成交 / 撮合反馈）在物理上如何分离？| §2 三平面定义 |
-| 14 层业务代码每一层 / 每个子模块属哪个运行平面？| §3 14 层 × 三平面映射矩阵 |
+| 53 域业务代码每个域 / 每个子模块属哪个运行平面？| §3 53 域 × 三平面映射矩阵 |
 | Hot Path / Warm Path / Cold Path 何时激活？激活条件是什么？| §6 激活触发器（P0-P3）|
 | 三个平面之间如何通信？契约是什么？| §4 跨面协议（Ring Buffer / Redis Streams / Parquet）|
 | Hot Path 用什么技术栈？Warm Path 用什么？Cold Path 用什么？| §5 技术选型矩阵 |
 | 与 09-GOV Policy/Factory/Runtime 三层是什么关系？| §7 与 09-GOV 边界澄清 |
 | Sim-to-Real Gap 如何通过运行平面统一契约来消解？| §8 Sim-to-Real 保障 |
 
-### 1.2 为什么要做成"正交视图"而不是 14 层业务之外再加一层
+### 1.2 为什么要做成"正交视图"而不是 53 域业务之外再加一层
 
 **核心判断**：业务分层（What）和运行平面（How/When）是**两把正交的尺子**，用哪把尺子切代码取决于你想回答什么问题。强行把"延迟特征"塞进"业务本体"会造成双重漂移：
 
 | 混为一层的后果（反例）| 正交切分的收益（本视图采纳）|
 |---|---|
-| 例如把 `l14_hot_path/` 建成独立业务层 → L06 `trade_execution/` 订单管理和 L14 Hot Path 下单**同一业务概念被两层承担** → ACL 失效 / OCP 契约断裂 / 因子注册表跨层 | L06 仍完整承担"交易执行"业务本体，其中 `oms/` 子模块被打 `@RuntimePlane.WARM_PATH` 标签、`sor/` 打 `@RuntimePlane.HOT_PATH` 标签 → 业务语义保持 + 运行特征独立标注 |
-| 未来新增"Cold Path Backfill 专用层"时必须再加一层 → 层数无上限膨胀 | 新增平面仅在本视图 §5 技术选型 + §3 映射矩阵打补丁，14 层业务不动 |
+| 例如把 `hot_path/` 建成独立业务域 → D_EX_CORE `trade_execution/` 订单管理和 Hot Path 下单**同一业务概念被两域承担** → ACL 失效 / OCP 契约断裂 / 因子注册表跨域 | D_EX_CORE 仍完整承担"交易执行"业务本体，其中 `oms/` 子模块被打 `@RuntimePlane.WARM_PATH` 标签、`sor/` 打 `@RuntimePlane.HOT_PATH` 标签 → 业务语义保持 + 运行特征独立标注 |
+| 未来新增"Cold Path Backfill 专用域"时必须再加一域 → 域数无上限膨胀 | 新增平面仅在本视图 §5 技术选型 + §3 映射矩阵打补丁，53 域业务不动 |
 | AI 协作者找代码时必须同时记住"业务归属 + 延迟归属"两个维度在同一路径里 → 目录歧义 | AI 协作者按业务找代码（`src/zephyr/ex_core/sor/`）+ 按装饰器 / frontmatter 查运行平面，两把尺子各自清晰 |
 
 **业界证据**：
@@ -87,7 +87,7 @@ ttl: permanent
 
 | 其他视图 | 本视图与其关系 |
 |---|---|
-| `application_architecture.md` | 03-AA 定义"14 层业务 What"；本视图定义"每个子模块的运行平面 How/When"；本视图 v1.0.0 在 03-AA §4.1 子模块表中**新增 `runtime_plane` 列**（J1 批次 C 任务同步） |
+| `application_architecture.md` | 03-AA 定义"53 域业务 What"；本视图定义"每个子模块的运行平面 How/When"；本视图 v1.0.0 在 03-AA §4.1 子模块表中**新增 `runtime_plane` 列**（J1 批次 C 任务同步） |
 | `technology_architecture.md` | 04-TA 定义"全局技术选型"；本视图定义"按平面差异化技术选型"；§5 技术矩阵是 04-TA §3 的下钻 |
 | `governance_architecture.md` | 09-GOV 治理三层 Policy/Factory/Runtime 是**治理维度**（谁管什么规矩）；本视图三平面是**执行维度**（代码何时以什么延迟跑在什么硬件）。二者**名字都叫 "Runtime" 但意义完全不同**——§7 专门澄清。|
 | `frontend_architecture.md` | 10-FE 定义前端独立平台；本视图 §3.4 给前端子层打运行平面标签（React SPA Warm / WebSocket stream Hot-adjacent / SSR 报表 Cold）|
@@ -95,7 +95,7 @@ ttl: permanent
 
 ### 1.4 决策溯源
 
-- **KBG-0009 v1.1.0** src/ 14 层业务分层 accepted（R31/R32/OQ-073）——业务本体锚点
+- **KBG-0009 v1.1.0** src/ 业务分层 accepted（R31/R32/OQ-073）——业务本体锚点（§2.1 裁定后：14层降级为域属性，53域为唯一物理分类）
 - **KBG-0011** Runtime Planes Orthogonal View v1.0.0 accepted（本视图同源）
 - **R69** 正交视图 vs 分层方法论决策（2026-04-19 J1 批次，见 `architecture-rationale-log.md`）
 - **OQ-083** closed（2026-04-19 J1 批次一次性拍板——采纳方案 B 正交视图）
@@ -329,7 +329,7 @@ from enum import Enum
 
 class RuntimePlane(Enum):
     """
-    运行平面标签 — 正交于 14 层业务分层的执行维度标签。
+    运行平面标签 — 正交于 53 域业务分层的执行维度标签。
 
     用法 1（模块级装饰器）：
         @runtime_plane(RuntimePlane.HOT_PATH)

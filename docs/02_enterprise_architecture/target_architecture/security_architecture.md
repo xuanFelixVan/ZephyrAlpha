@@ -84,7 +84,7 @@ Security Architecture 视图回答：
 
 **驱动关系**：本视图受应用架构（`application_architecture.md` §4A 5 大核心服务）驱动，并**反向约束**应用架构（拒绝不满足安全门禁的服务上线）。
 
-**基线评分**：2 维架构审计（`dimension_audit_matrix.md`）中 D6 Security 当前得分 **2.2/10（P0 红线）**。本文档升格（skeleton→active）是消除该红线的**前置条件**。experimental 末目标：D6 达 5.5/10。
+**基线评分**：2 维架构审计（[`dimension_audit_matrix.md`](../04_architecture_principles_decisions/dimension_audit_matrix.md)）中 D6 Security 当前得分 **2.2/10（P0 红线）**。本文档升格（skeleton→active）是消除该红线的**前置条件**。experimental 末目标：D6 达 5.5/10。
 
 ---
 
@@ -457,7 +457,7 @@ L1: .env + .gitignore   →   L2: git-secrets    →         L3: LSG Output Scan
 ├── table: llm_calls                   │  ├── session-<uuid>.jsonl
 ├── table: agent_actions               │  └── ...
 ├── table: secret_scan_findings        └── carryover-<uuid>.json
-└── table: sandbox_violations              （见 session_carryover_schema.md）
+└── table: sandbox_violations              （见 [session_carryover_schema.md](../../03_modules/_cross_layer/context_engine/session_carryover_schema.md)）
 ```
 
 ### 9.2 关键字段（experimental 必采集）
