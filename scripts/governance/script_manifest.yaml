@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-03T19:06:37Z
+# 自动生成于 2026-07-03T19:47:20Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-03T19:06:37Z'
+generated_at: '2026-07-03T19:47:20Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 322
-with_manifest: 308
+total_scripts: 321
+with_manifest: 307
 missing_manifest: 14
 categories:
   governance:_sync: 4
@@ -16,7 +16,7 @@ categories:
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
-  governance:d2_links: 3
+  governance:d2_links: 2
   governance:d3_metadata: 22
   governance:d4_paths: 4
   governance:d5_architecture: 94
