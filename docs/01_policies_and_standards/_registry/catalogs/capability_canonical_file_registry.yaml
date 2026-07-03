@@ -653,6 +653,20 @@ capabilities:
       GATE-COMMIT-GW 规则约束。
 
   # --------------------------------------------------------------------------
+  - capability_id: header_completeness_verification
+    aliases:
+      - verify_header_completeness
+      - verify_headers
+      - header_completeness
+      - TRAE-047_verification
+    description: >-
+      文件头部字段完整性验证工具。扫描全项目 .py 文件，检查是否包含 TRAE-047
+      规范要求的必填字段（A_full 格式）。canonical = scripts/ops/verify_header_completeness.py。
+      被 trae_047_engineering_file_header.yaml 的 enforcement.executors 引用。
+      新 AI 想做"检查文件头部是否合规/验证字段完整性"前，CapabilityLookup
+      会反查到本文件，提示"扩展现有工具，勿新建验证脚本"。
+
+  # --------------------------------------------------------------------------
   # 以下 5 条为 2026-06-28 SSoT 三重冗余治本新增（CT-TEL-001~004 codegen 死代码修复）
   # 病根：system-telemetry/ 连字符目录 codegen 死代码 + physical_path 可被恢复
   # 治本：4 条 system_telemetry 真源能力反查 + 1 条 physical_path 门禁能力反查

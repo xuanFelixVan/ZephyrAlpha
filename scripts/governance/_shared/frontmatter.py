@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance._shared.frontmatter
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
-# [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; scripts.ops.verify_header_completeness; scripts.governance.d3_metadata.check_frontmatter_metadata; scripts.governance.d3_metadata.backfill_ttl_metadata; scripts.ops.upgrade_headers_to_14fields; scripts.ops.align_header_ten_fields
+# [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; scripts.ops.verify_header_completeness; scripts.governance.d3_metadata.check_frontmatter_metadata; scripts.governance.d3_metadata.backfill_ttl_metadata
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 本文件是所有文件头部格式解析的唯一真源（SSoT）；6 格式：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta；PY_HEADER_PATTERN 正则也在此定义；新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器

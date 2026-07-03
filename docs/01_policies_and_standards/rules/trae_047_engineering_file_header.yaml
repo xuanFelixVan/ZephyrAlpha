@@ -27,6 +27,13 @@ sections:
     section_type: rule
     original_rules:
     - GOV-ENG-002
+    # 机器可读字段规范（SSoT——门禁/校验工具从此读取，禁止在代码中硬编码字段列表）
+    field_specs:
+      a_full:
+        required: [BLUEPRINT, MODULE, DOMAIN, DEPENDENCIES, CONSUMERS, STARTUP, MATURITY, INVARIANTS, MODIFY-GUARD, STABILITY, SAFETY, AI_AUTONOMY, ERROR_CONTRACT, TESTS, TTL]
+      a_test:
+        required: [BLUEPRINT, MODULE, STABILITY, SAFETY, AI_AUTONOMY, TESTS, TTL]
+      init_min: [BLUEPRINT, MODULE, DOMAIN]
     conditions:
     - type: constraint
       check: 文件是否包含治理锚定表头

@@ -480,23 +480,31 @@ def make_create_guard() -> GateSpec:
                 f"created_by: \"session-xxx\"  capability: \"xxx\""
             )
 
-        # === ARCH-031 治本（2026-07-01）：14 字段头部完整性检测 ===
-        # 病根：code_dedup/__init__.py 原仅 3 字段（BLUEPRINT/MODULE/DOMAIN），违反 14 字段规范。
+        # === ARCH-031 治本（2026-07-01）：字段头部完整性检测 ===
+        # 病根：code_dedup/__init__.py 原仅 3 字段（BLUEPRINT/MODULE/DOMAIN），违反字段规范。
         # 新 AI 创建 .py 文件时可能漏写字段头部，导致 CapabilityLookup 派生失败 + AI 可发现性断裂。
         # 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 line 23-32 先例）。
         # 顺序：放在 token 检测之后——token 是更基本的"声明意图"要求，应先检测；
-        #   14 字段是"内容合规"要求，token 通过后再检测（不破坏现有 token 测试的断言优先级）。
-        # 检测：新建 .py 文件头部 30 行内 MUST 含 14 字段标注（# [FIELD] value）。
+        #   字段是"内容合规"要求，token 通过后再检测（不破坏现有 token 测试的断言优先级）。
+        # 检测：新建 .py 文件头部 30 行内 MUST 含字段标注（# [FIELD] value）。
         # 豁免：
         #   1. codegen 文件（含 BEGIN CODEGEN / BEGIN CODGEN 标记）——自动生成，字段由模板注入
         #   2. __init__.py 最低要求 3 字段（BLUEPRINT/MODULE/DOMAIN）——包标记，CONSUMERS 等可省
-        # 真源：14 字段规范定义在 AGENTS.md + governance/__init__.py docstring，本 gate 是技术强制层。
-        _REQUIRED_14FIELDS = [
-            "BLUEPRINT", "MODULE", "DOMAIN", "DEPENDENCIES", "CONSUMERS",
-            "STARTUP", "MATURITY", "INVARIANTS", "MODIFY-GUARD",
-            "STABILITY", "SAFETY", "AI_AUTONOMY", "ERROR_CONTRACT", "TESTS",
-        ]
-        _INIT_MIN_FIELDS = ["BLUEPRINT", "MODULE", "DOMAIN"]
+        # 真源：trae_047_engineering_file_header.yaml field_specs（SSoT）。
+        #   本 gate 从真源动态读取字段列表，禁止在代码中硬编码（消除多真源漂移）。
+        #   fail-closed：真源读取失败时阻断（不回退硬编码，否则又造双真源）。
+        _TRAE_047_YAML = gateway.project_root / "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
+        try:
+            import yaml as _yaml
+            _rule_data = _yaml.safe_load(_TRAE_047_YAML.read_text(encoding="utf-8"))
+            _field_specs = _rule_data["sections"]["gov_eng_002"]["field_specs"]
+            _REQUIRED_FIELDS = _field_specs["a_full"]["required"]
+            _INIT_MIN_FIELDS = _field_specs["init_min"]
+        except Exception as _e:
+            return False, (
+                f"字段头部规范真源读取失败（trae_047.yaml field_specs）: {_e}. "
+                f"修复：检查 {_TRAE_047_YAML} 是否存在且 field_specs 结构完整。"
+            )
 
         for _py_file in new_py_files:
             _abs_path = gateway.project_root / _py_file
@@ -515,7 +523,7 @@ def make_create_guard() -> GateSpec:
 
             # __init__.py 只要求 3 字段（包标记，CONSUMERS 等可省）
             _is_init = _py_file.endswith("__init__.py")
-            _required = _INIT_MIN_FIELDS if _is_init else _REQUIRED_14FIELDS
+            _required = _INIT_MIN_FIELDS if _is_init else _REQUIRED_FIELDS
 
             _missing = [
                 _field for _field in _required
@@ -524,10 +532,9 @@ def make_create_guard() -> GateSpec:
 
             if _missing:
                 return False, (
-                    f"14字段头部不完整（ARCH-031）: {_py_file} 缺失字段: {_missing}. "
-                    f"修复：在文件头部添加 '# [FIELD] value' 标注（共14字段: "
-                    f"BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/"
-                    f"INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS）。"
+                    f"字段头部不完整（ARCH-031）: {_py_file} 缺失字段: {_missing}. "
+                    f"修复：在文件头部添加 '# [FIELD] value' 标注（共{len(_required)}字段: "
+                    f"{'/'.join(_required)}）。"
                     + (f" __init__.py 最低要求: {'/'.join(_INIT_MIN_FIELDS)}" if _is_init else "")
                 )
 
