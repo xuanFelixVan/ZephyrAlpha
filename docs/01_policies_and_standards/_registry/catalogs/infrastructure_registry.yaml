@@ -33,7 +33,7 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.8"
+version: "1.0.9"
 status: active
 created: "2026-05-02"
 last_updated: "2026-07-04"
@@ -139,9 +139,9 @@ infrastructure:
       - "MOD-TASK_SYSTEM"
       - "MOD-INF-005"
     sla: "persisted, ACID, < 30ms read p50"
-    status: planned
-    provisioned_at: null
-    note: "Schema 源：task-system/blueprint.md §2.1；迁移路径见 task-card-meta-registry.md"
+    status: connected
+    provisioned_at: "2026-05-02"
+    note: "Schema 源：task-system/blueprint.md §2.1；迁移路径见 task-card-meta-registry.md。ARCH-046 铁律2：governance.db 实际存在并使用（TaskRepository 已运营），按「存在=运营态」逻辑 status: planned→connected（2026-07-04 修正）"
 
   # --- 向量数据库（ChromaDB，VMS 双后端过渡期）---
   - infra_id: "INFRA-DB-002"
@@ -301,9 +301,9 @@ infrastructure:
       - "MOD-TASK_SYSTEM"
       - "MOD-FEEDBACK_LOOP"
     sla: "内存模式，无持久化SLA；查询延迟 < 200ms p95"
-    status: planned
-    provisioned_at: null
-    note: "olap_engine.py L131 默认 :memory: 模式，ATTACH governance.db 只读分析；不迁移，P2后保持不变"
+    status: connected
+    provisioned_at: "2026-06-15"
+    note: "olap_engine.py L131 默认 :memory: 模式，ATTACH governance.db 只读分析；不迁移，P2后保持不变。ARCH-046 铁律2：OLAPEngine 实际在用（dashboard 3 文件消费：app.py/gate_statistics.py/olap_trend.py），按「存在=运营态」逻辑 status: planned→connected（2026-07-04 修正）"
 
   # --- 业务行情仓库（ClickHouse，2026-07-04 补登，c1_market）---
   - infra_id: "INFRA-DB-006"
@@ -343,9 +343,9 @@ summary:
     warm: 4
     cold: 4
   by_status:
-    planned: 10
+    planned: 8
     provisioned: 1
-    connected: 3
+    connected: 5
     deleted: 0
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
@@ -377,6 +377,11 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.9"
+    date: "2026-07-04"
+    author: "AI-GLM-5.2"
+    changes:
+      - "ARCH-046 铁律2治本：修正 INFRA-DB-001 governance.db 和 INFRA-DB-004 DuckDB OLAP 的 status 漂移（planned→connected）。理由：两者实际已存在并使用（TaskRepository 已运营；OLAPEngine 被 dashboard 3 文件消费），按「存在=运营态」逻辑应为 connected。同步更新 summary.by_status：planned 10→8，connected 3→5"
   - version: "1.0.8"
     date: "2026-07-04"
     author: "AI-GLM-5.2"
