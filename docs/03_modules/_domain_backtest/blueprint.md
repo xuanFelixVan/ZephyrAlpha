@@ -30,13 +30,13 @@ ssot_claims:
   - tick_replay_engine
 stability: evolving
 status: Active
-summary: 'D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动)+Tick回放(秒级做T),data_handler对接D_DATA的MiniQMT Provider(Tick+5档盘口),统一归口回测引擎。MVP 8个核心模块。'
-tags: [backtest, D_BACKTEST, simulation, tick_replay, miniqmt]
+summary: 'D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动)+Tick回放(秒级做T),data_handler对接D_DATA的MiniQMT Provider(Tick+5档盘口),统一归口回测引擎。MVP 10个核心模块(含PIT+决策门控)。'
+tags: [backtest, D_BACKTEST, simulation, tick_replay, miniqmt, pit, decision_gate]
 template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.1.0
+version: 1.2.0
 ---
 
 # Backtest Engine 蓝图+施工图 — D_BACKTEST回测引擎域,双模式架构+Tick回放统一归口
@@ -90,13 +90,15 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/core/metrics.py | planned | Sharpe/Sortino/MaxDD/IC/IR(MVP待实现) |
 | src/zephyr/backtest/core/tick_replay.py | planned | **v1.1.0新增** Tick回放引擎(秒级做T,30秒/5秒级)(MVP待实现) |
 | src/zephyr/backtest/implementations/event_driven_engine.py | planned | **v1.1.0提升** 事件驱动回测(Tick级,与tick_replay协同)(MVP待实现) |
+| src/zephyr/backtest/core/pit_manager.py | production | **PIT铁律管理器**(P1-30,PIT三公理+AS OF JOIN+Embargo期+pit_consistency_test) |
+| src/zephyr/backtest/core/decision_gate.py | production | **3阶段决策门控**(P0-14,IS→WFA→OOS不可跳级+参数稳定性区域+回测-实盘偏差监控) |
 
 **Phase 2 — 过拟合检测与Walk-Forward**
 
 | 文件路径 | 状态 | 说明 |
 |---------|------|------|
-| src/zephyr/backtest/core/overfitting_detector.py | planned | 过拟合检测(三维度+三层:SIM-18/38/56) |
-| src/zephyr/backtest/core/walk_forward.py | planned | Walk-Forward优化(滚动窗口+样本外验证) |
+| src/zephyr/backtest/core/overfitting_detector.py | production | 过拟合检测(三维度+三层:SIM-18/38/56) |
+| src/zephyr/backtest/core/walk_forward.py | production | Walk-Forward优化(滚动窗口+样本外验证) |
 
 **v2.0备忘 — 辅助工具模块(登记到depgraph设计态,按需开发)**
 
@@ -137,6 +139,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 |------|---------|------|
 | v1.0.0 | engine_base.py + vectorized_engine.py已实现 | MVP基线,双模式中的向量化模式已就绪 |
 | v1.1.0 (Tick回放+多源) | 同 v1.0.0 | matching_engine/portfolio/data_handler/metrics/tick_replay/event_driven_engine(6模块待施工) + §16.7 Tick级5档撮合规格 + data_handler多源(MiniQMT Provider+ClickHouse) | v1.1.0规划: Tick回放引擎(秒级做T)+event_driven_engine提升到Phase 1+回测=实盘一致性(MatchingLogic共享) |
+| v1.2.0 (PIT+过拟合+WF+决策门控) | pit_manager/overfitting_detector/walk_forward/decision_gate已实现 | PIT铁律管理器(P1-30)+过拟合检测(SIM-18/38/56)+Walk-Forward(P1-29)+3阶段决策门控(P0-14) | v1.2.0已落地: 4模块production,接入vectorized/event_driven双引擎 |
 
 ### §0.4 SSoT与责任唯一性
 
@@ -166,7 +169,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 
 > 完整版设计态拓扑已登记到depgraph(27 nodes, 43 edges, 无循环)。按Phase分阶段施工。
 
-**Phase 1 (MVP v1.1.0) — 核心回测链路+Tick回放**:8个模块
+**Phase 1 (MVP v1.1.0) — 核心回测链路+Tick回放**:10个模块
 1. core/engine_base.py — BacktestEngineBase + BacktestResult + FactorDiscovery ✅已实现
 2. implementations/vectorized_engine.py — DefaultBacktestEngine向量化回测 ✅已实现
 3. core/matching_engine.py — 撮合引擎(市价/限价/滑点/Tick级5档撮合)(待实现)
@@ -175,10 +178,12 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 6. core/metrics.py — Sharpe/Sortino/MaxDD/胜率/IC/IR(待实现)
 7. **core/tick_replay.py — Tick回放引擎(秒级做T,30秒/5秒级)(v1.1.0新增,待实现)**
 8. **implementations/event_driven_engine.py — 事件驱动回测(Tick级,与tick_replay协同)(v1.1.0提升,待实现)**
+9. core/pit_manager.py — **PIT铁律管理器**(P1-30,PIT三公理+AS OF JOIN+Embargo期) ✅已实现
+10. core/decision_gate.py — **3阶段决策门控**(P0-14,IS→WFA→OOS+参数稳定性区域) ✅已实现
 
 **Phase 2 (v1.2.0) — 过拟合检测与Walk-Forward**:2个模块
-- core/overfitting_detector.py — 过拟合检测(SIM-18/38/56三层)
-- core/walk_forward.py — Walk-Forward优化(SIM-19/25)
+- core/overfitting_detector.py — 过拟合检测(SIM-18/38/56三层) ✅已实现
+- core/walk_forward.py — Walk-Forward优化(SIM-19/25) ✅已实现
 
 **v2.0备忘 — 辅助工具模块**:10个模块(登记到depgraph设计态,按需开发)
 - services/scheduler.py(SIM-26自动回测调度器)
@@ -568,8 +573,8 @@ class MyEngine(BacktestEngineBase):
 8. ⬜ **implementations/event_driven_engine.py — 事件驱动回测(v1.1.0提升,详见下方规格)**
 
 **Phase 2(过拟合检测)**:
-9. ⬜ core/overfitting_detector.py — 过拟合检测(详见下方规格)
-10. ⬜ core/walk_forward.py — Walk-Forward优化
+9. ✅ core/overfitting_detector.py — 过拟合检测(详见下方规格)
+10. ✅ core/walk_forward.py — Walk-Forward优化
 
 **metrics.py 详细规格**(P0,来源:D-SIMULATION-23/24/45):
 - **Sharpe计算修正**:
