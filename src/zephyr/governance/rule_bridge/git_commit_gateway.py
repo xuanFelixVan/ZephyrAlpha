@@ -68,6 +68,7 @@ from zephyr.governance.commit_gates.capability_overlap_gate import make_capabili
 from zephyr.governance.commit_gates.create_guard import make_create_guard
 from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate
 from zephyr.governance.commit_gates.ttl_gate import make_ttl_gate
+from zephyr.governance.commit_gates.file_placement_ttl_gate import make_file_placement_ttl_gate
 from zephyr.governance.commit_gates.dangling_reference_gate import make_dangling_reference_gate
 from zephyr.governance.commit_gates.arch_reference_gate import make_arch_reference_gate
 from zephyr.governance.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
@@ -254,6 +255,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
         self._gate_registry.register(make_ttl_gate())  # priority=32 ttl gate
+        self._gate_registry.register(make_file_placement_ttl_gate())  # priority=33 文件放置与TTL一致性（ARCH-049，落地 ttl_vocabulary §146-152 永久区准入机制）
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
@@ -380,7 +382,8 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
         gate_results = self._gate_registry.check_all(
-            self, existing, session_id=session_id, allow_overlap=allow_overlap
+            self, existing, session_id=session_id, allow_overlap=allow_overlap,
+            allow_promote=allow_promote,
         )
         for gr in gate_results:
             if not gr.passed:
@@ -388,6 +391,8 @@ class GitCommitGateway:
                     return CommitResult(status=CommitStatus.HELD_OVERLAP_VIOLATION, message=gr.detail)
                 if gr.gate_id == "CLAIM-REQUIRED":
                     return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
+                if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
+                    return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
                 return CommitResult(
                     status=CommitStatus.COMMIT_FAILED,
                     message=f"门禁 {gr.gate_id} 阻断: {gr.detail}",

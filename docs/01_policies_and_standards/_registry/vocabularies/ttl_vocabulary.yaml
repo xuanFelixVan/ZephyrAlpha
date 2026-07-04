@@ -143,12 +143,14 @@ decision_tree:
       yes: permanent
       no: task_bound  # 默认落 docs/_working/ 临时区
 
-# ── 永久区准入机制（后续实现）──
+# ── 永久区准入机制（已实现，ARCH-049，2026-07-05）──
 # 永久区新文件必须经用户同意才能进入：
-#   1. GitCommitGateway 检测新增永久区 .md 文件
-#   2. 未带 --allow-promote → 阻断
-#   3. 用户在终端带 --allow-promote → 交互确认后放行
-#   4. AI 自动化调用无法绕过（无法触发终端交互）
+#   1. GitCommitGateway 检测新增永久区文件（FILE-PLACEMENT-TTL gate，priority=33）
+#   2. 未带 allow_promote=True → 阻断（PROMOTION_BLOCKED）
+#   3. 用户/AI 带 allow_promote=True → 放行
+#   4. exempt_subdirs 生成器输出豁免（directory_contract.yaml directory_zones.permanent.exempt_subdirs）
+# 实现：src/zephyr/governance/commit_gates/file_placement_ttl_gate.py
+# 三重校验：永久区准入 + TTL↔zone 一致性 + 根目录子目录准入（防乱建子目录）
 # 不使用 frontmatter promoted_by 字段（审批人永远是用户，字段冗余且无法防伪造）
 
 deprecated_values:
