@@ -220,7 +220,6 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\db\` | 单元测试 |
 | 数据文件 | `D:\ZephyrAlpha\data/databases/governance.db` | 012A SQLite 主数据库（任务卡库，保持 SQLite 不迁移） |
 | 数据文件 | `localhost:5432/depgraph`（PostgreSQL 16，连接配置 `config/.env.postgres`） | 012B 迁移目标库（SQLite→PostgreSQL，depgraph 全景图，28 表） |
-| ~~数据文件~~ | ~~`D:\ZephyrAlpha\data/databases/market.duckdb`~~ | ~~INFRA-DB-005 业务时序库（8表，read_only=True强制，安全约束真源在代码层）~~——已于2026-07-01删除/废弃 |
 | 备份目录 | `D:\ZephyrAlpha\data\backups\` | 自动备份文件（7天日备份 + 4周末备份） |
 | 冷数据归档 | `D:\ZephyrAlpha\data\warehouse\` | Parquet 冷数据（events_YYYYMMDD.parquet） |
 
