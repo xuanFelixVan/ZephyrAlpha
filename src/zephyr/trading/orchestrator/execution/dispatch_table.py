@@ -31,10 +31,6 @@ AI Agent 冷启动分派表（Dispatch Table）
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
 
 
 @dataclass(frozen=True)

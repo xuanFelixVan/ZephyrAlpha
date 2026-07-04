@@ -103,7 +103,7 @@ def tier_from(path: Path) -> str:
 
 
 class MigrationRecord:
-    def __init__(self, record_id="", source_tier="", target_tier="", entry_id="", timestamp=None, status="pending"):
+    def __init__(self, record_id: str = "", source_tier: str = "", target_tier: str = "", entry_id: str = "", timestamp: str | None = None, status: str = "pending") -> None:
         self.record_id = record_id
         self.source_tier = source_tier
         self.target_tier = target_tier
@@ -120,7 +120,7 @@ class StorageTier:
 
 
 class TierConfig:
-    def __init__(self, tier="", max_age_days=365, max_size_mb=1024, compression=False):
+    def __init__(self, tier: str = "", max_age_days: int = 365, max_size_mb: int = 1024, compression: bool = False) -> None:
         self.tier = tier
         self.max_age_days = max_age_days
         self.max_size_mb = max_size_mb
@@ -128,11 +128,11 @@ class TierConfig:
 
 
 class TieredStorageManager:
-    def __init__(self, config=None):
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         self.config = config or {}
 
-    def migrate(self, entry, target_tier):
+    def migrate(self, entry: Any, target_tier: str) -> MigrationRecord:
         return MigrationRecord(target_tier=target_tier, entry_id=getattr(entry, "entry_id", ""))
 
-    def get_tier(self, entry_id):
+    def get_tier(self, entry_id: str) -> str:
         return StorageTier.HOT

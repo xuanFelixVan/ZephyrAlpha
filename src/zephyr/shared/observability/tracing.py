@@ -123,12 +123,12 @@ def start_span(
             raise
 
 
-def traced(name: str | None = None, kind: str = "INTERNAL"):
-    def deco(func: Callable):
+def traced(name: str | None = None, kind: str = "INTERNAL") -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def deco(func: Callable[..., Any]) -> Callable[..., Any]:
         span_name = name or func.__qualname__
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             with start_span(span_name, kind=kind):
                 return func(*args, **kwargs)
 

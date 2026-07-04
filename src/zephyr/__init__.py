@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-UNK_zephyr | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
@@ -28,7 +28,7 @@ import sys
 import threading
 import types
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 _log = logging.getLogger(__name__)
 
@@ -89,18 +89,18 @@ except Exception:  # 包未安装（开发模式/直接 import）回退到 pypro
         __version__ = "0.0.0+unknown"
 
 
-def register_lazy(name: str, module_path: str):
+def register_lazy(name: str, module_path: str) -> None:
     _lazy_registry[name] = module_path
 
 
 class _LazyModule:
     """延迟加载代理——首次访问时才加载实际模块 (M-04)"""
 
-    def __init__(self, module_path: str):
+    def __init__(self, module_path: str) -> None:
         self._module_path = module_path
         self._module: types.ModuleType | None = None
 
-    def _load(self):
+    def _load(self) -> None:
         if self._module is None:
             self._module = importlib.import_module(self._module_path)
 
@@ -108,7 +108,7 @@ class _LazyModule:
         self._load()
         return getattr(self._module, name)
 
-    def __dir__(self):
+    def __dir__(self) -> list[str]:
         self._load()
         return dir(self._module)
 
@@ -123,7 +123,7 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
-def __dir__():
+def __dir__() -> list[str]:
     return sorted(set(dir(type(__name__))) | set(_lazy_registry.keys()))
 
 
