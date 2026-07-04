@@ -1722,9 +1722,12 @@ def _scan_replace_all_text_columns(
             and r["column_name"] not in _exclude
         ]
         for col in text_cols:
+            # 转义LIKE通配符（_ 和 %），避免 D_COMPLIANCE 匹配 D-COMPLIANCE（_是LIKE通配符）
+            # REPLACE函数是字面匹配（不解释通配符），所以REPLACE参数仍用原始old_id
+            escaped_old_id = old_id.replace("\\", "\\\\").replace("_", "\\_").replace("%", "\\%")
             cnt = c.execute(
-                f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s",
-                (f"%{old_id}%",),
+                f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s ESCAPE '\\'",
+                (f"%{escaped_old_id}%",),
             ).fetchone()["cnt"]
             if cnt > 0:
                 print(
@@ -1733,8 +1736,8 @@ def _scan_replace_all_text_columns(
                 )
                 if not dry_run:
                     c.execute(
-                        f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
-                        (old_id, new_id, f"%{old_id}%"),
+                        f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s ESCAPE '\\'",
+                        (old_id, new_id, f"%{escaped_old_id}%"),
                     )
                 total += cnt
     return total
@@ -2302,6 +2305,134 @@ def cmd_fix_rename_residual(
             finally:
                 if own_conn:
                     c.close()
+
+
+def cmd_replace_text_domain(
+    old_id: str,
+    new_id: str,
+    dry_run: bool = False,
+    db_path: str = None,
+    conn=None,
+) -> int:
+    """全表TEXT列值替换（裁定#ARCH-target_layer_v1.0.0：清理旧格式domain_id引用）。
+
+    与 --merge-domain 的区别：
+    - --merge-domain: 17步UPDATE + DELETE old_id（old_id须是现存domain）
+    - --replace-text-domain: 仅全表TEXT列REPLACE（不修改domain记录，old_id可以是任意字符串）
+
+    用途：清理描述性文本中的旧格式domain_id引用（如 D-COMPLIANCE → D-GOV_ENFORCEMENT）。
+    复用 _scan_replace_all_text_columns（已修复LIKE通配符陷阱，裁定#ARCH-target_layer_v1.0.0）。
+
+    返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+    # 校验 new_id 格式（必须是合法domain_id，复用 DOMAIN_ID_RE）
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "d3_metadata"))
+    from validate_module_id_naming import is_valid_domain_id
+    ok, reason = is_valid_domain_id(new_id)
+    if not ok:
+        print(f"ERROR: new_id '{new_id}' 格式不合法: {reason}", file=sys.stderr)
+        return -1
+
+    def _run(c) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        print(f"  {mode} 全表文本替换: '{old_id}' -> '{new_id}'", file=sys.stderr)
+        total = _scan_replace_all_text_columns(
+            c, old_id, new_id, dry_run=dry_run, mode=mode,
+        )
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_replace_text_domain: total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="replace_text_domain", db_path=db_path):
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                logger.error("cmd_replace_text_domain失败: %s", e)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
+def cmd_apply_domain_id_check(
+    dry_run: bool = False,
+    conn=None,
+) -> int:
+    """应用 domains.domain_id CHECK 约束到现有数据库（裁定#ARCH-target_layer_v1.0.0）。
+
+    幂等：检查约束是否存在，已存在则跳过，不存在则 ALTER TABLE ADD CONSTRAINT。
+    预检：添加约束前验证所有 domain_id 值符合 CHECK 正则，避免 ALTER 失败。
+
+    CHECK 约束正则：^D_[A-Z][A-Z0-9_]*$（与 DOMAIN_ID_RE 语义一致，允许数字如 D_INFRA_A2A）。
+    约束名：domains_domain_id_format_check。
+
+    背景：_MIGRATIONS P2后不再执行（depgraph_schema.py L1199），现有DB需通过此命令补丁式应用CHECK约束。
+    02_create_pg_schema.sql 已包含CHECK约束（新部署生效），此命令用于存量DB补丁。
+
+    返回 0=成功/已存在，-1=失败。
+    """
+    own_conn = conn is None
+    _CHECK_NAME = "domains_domain_id_format_check"
+    _CHECK_REGEX = "^D_[A-Z][A-Z0-9_]*$"
+
+    def _run(c) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        # 1. 检查约束是否已存在（幂等性）
+        row = c.execute(
+            "SELECT COUNT(*) AS cnt FROM pg_constraint WHERE conname = %s",
+            (_CHECK_NAME,),
+        ).fetchone()
+        if row["cnt"] > 0:
+            print(f"  {mode} CHECK 约束 '{_CHECK_NAME}' 已存在，跳过", file=sys.stderr)
+            return 0
+        # 2. 预检所有 domain_id 值（避免 ALTER 失败）
+        invalid_rows = c.execute(
+            "SELECT domain_id FROM domains WHERE NOT (domain_id ~ %s)",
+            (_CHECK_REGEX,),
+        ).fetchall()
+        if invalid_rows:
+            print(
+                f"  ERROR: {len(invalid_rows)} 行 domain_id 不符合 CHECK 正则 '{_CHECK_REGEX}':",
+                file=sys.stderr,
+            )
+            for r in invalid_rows:
+                print(f"    {r['domain_id']}", file=sys.stderr)
+            return -1
+        # 3. ALTER TABLE ADD CONSTRAINT
+        print(
+            f"  {mode} ALTER TABLE domains ADD CONSTRAINT {_CHECK_NAME} "
+            f"CHECK (domain_id ~ '{_CHECK_REGEX}')",
+            file=sys.stderr,
+        )
+        if not dry_run:
+            c.execute(
+                f"ALTER TABLE domains ADD CONSTRAINT {_CHECK_NAME} "
+                f"CHECK (domain_id ~ '{_CHECK_REGEX}')"
+            )
+            if own_conn:
+                c.commit()
+        print(f"{mode} cmd_apply_domain_id_check: CHECK 约束已应用", file=sys.stderr)
+        return 0
+
+    c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+    try:
+        return _run(c)
+    finally:
+        if own_conn:
+            c.close()
 
 
 def _restore_blueprint_links_readonly_trigger(c) -> None:
@@ -3453,6 +3584,24 @@ def main() -> None:
         "然后删除 old_id。与 --rename-domain 的区别：rename 要求 new_id 不存在，merge 要求 new_id 已存在。"
         "domain_dependencies 复合 PK 冲突预检（冲突阻断）。完成后自动触发残留校验。",
     )
+    # 裁定#ARCH-target_layer_v1.0.0：清理旧格式domain_id描述性文本引用
+    parser.add_argument(
+        "--replace-text-domain",
+        type=str,
+        nargs=2,
+        metavar=("OLD_TEXT", "NEW_DOMAIN_ID"),
+        help="全表TEXT列值替换（裁定#ARCH-target_layer_v1.0.0）：扫描所有表所有TEXT列，"
+        "REPLACE OLD_TEXT→NEW_DOMAIN_ID。与 --merge-domain 区别：不修改domain记录，仅清理描述性文本中的旧格式引用。"
+        "用途：清理 D-COMPLIANCE（连字符）等旧格式残留。复用 _scan_replace_all_text_columns（已修复LIKE通配符陷阱）。",
+    )
+    parser.add_argument(
+        "--apply-domain-id-check",
+        action="store_true",
+        help="应用 domains.domain_id CHECK 约束到现有数据库（裁定#ARCH-target_layer_v1.0.0）："
+        "幂等 ALTER TABLE ADD CONSTRAINT domains_domain_id_format_check "
+        "CHECK (domain_id ~ '^D_[A-Z][A-Z0-9_]*$')。预检所有 domain_id 值合规后再应用。"
+        "背景：_MIGRATIONS P2后不再执行，现有DB需通过此命令补丁式应用CHECK约束。",
+    )
     parser.add_argument(
         "--update-domain-name",
         type=str,
@@ -3812,6 +3961,23 @@ def main() -> None:
             _post_rename_residual_check(old_id, None)
         return
 
+    # 裁定#ARCH-target_layer_v1.0.0：清理旧格式domain_id描述性文本引用——dispatch
+    if args.replace_text_domain:
+        old_text, new_id = args.replace_text_domain
+        n = cmd_replace_text_domain(old_text, new_id, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 裁定#ARCH-target_layer_v1.0.0：应用 domain_id CHECK 约束到现有DB——dispatch
+    if args.apply_domain_id_check:
+        rc = cmd_apply_domain_id_check(dry_run=args.dry_run)
+        if rc < 0:
+            sys.exit(4)
+        print(f"rc={rc}")
+        return
+
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
@@ -3929,7 +4095,7 @@ if __name__ == "__main__":
             "--rename-domain", "--update-domain-name", "--fix-residual",
             "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
             "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
-            "--batch", "--merge-domain",
+            "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check",
         }
         is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
         has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
