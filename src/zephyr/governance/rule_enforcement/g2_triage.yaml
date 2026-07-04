@@ -122,6 +122,7 @@ approved_labels:
   - ORPHAN_SHELL
   - ENCODING_BROKEN
 
+# SSoT: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
 valid_layers:
   - L0_infrastructure
   - L1_foundation

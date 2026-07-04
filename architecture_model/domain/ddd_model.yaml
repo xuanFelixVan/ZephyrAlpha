@@ -8,7 +8,13 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-GOVERNANCE
-schema_version: "2.0"
+schema_version: "2.1"
+implementation_status: design_only
+implementation_note: >
+  本文件是 DDD 设计模型（design model），描述目标领域结构。
+  physical_path / code_package_mapping 字段为目标 DDD 包结构，代码尚未按此组织。
+  实际代码位置见各模块 blueprint.md frontmatter.file_manifest。
+  2026-07-05 审计 AI-02 标记：避免将 physical_path 误读为实际代码路径。
 
 partition:
   id: cross-cutting-ddd

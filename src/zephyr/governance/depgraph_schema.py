@@ -299,8 +299,9 @@ CREATE TABLE IF NOT EXISTS domains (
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     modification_permission TEXT,
     layer_id         TEXT
-        CHECK (layer_id IS NULL OR layer_id IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')),
-    target_modules   INTEGER,
+        -- SSoT: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml (documentation SSoT)
+        -- Runtime SSoT: 本 DB trigger（SQL 静态约束，不能动态读 YAML）
+        CHECK (layer_id IS NULL OR layer_id IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')), target_modules   INTEGER,
     production_nodes INTEGER DEFAULT 0
 )
 """
@@ -993,6 +994,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                 SELECT RAISE(ABORT, 'domains.build_status illegal value (legal: planned/generated/testing/stable/deprecated)');
             END""",
             # 6. domains layer_id校验 (INSERT，允许NULL)
+            # SSoT: layer_vocabulary.yaml — 4值需与词表保持一致
             """CREATE TRIGGER IF NOT EXISTS chk_domains_layer_id_insert
             BEFORE INSERT ON domains
             WHEN NEW.layer_id IS NOT NULL AND NEW.layer_id NOT IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')

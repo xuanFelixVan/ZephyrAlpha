@@ -5,7 +5,7 @@
 #
 # 五层强制集成架构 — Layer 5（最后防线）:
 #   所有 pre-commit GATE 遗漏的违规 → CI 全量回归扫描拦截
-#   对标: AGENTS.md §5.2.2 十维审计清单 + RULE-SEVEN Enforcement Matrix
+#   对标: RULE-SEVEN Enforcement Matrix（五层强制集成架构）
 #
 # 与 pre-commit 的关系:
 #   pre-commit: 客户端侧，只检查用户本次变更的文件（快，~5s）
@@ -169,6 +169,41 @@ jobs:
       - name: Contract Impact Analysis
         run: python scripts/governance/d5_architecture/analyzers/analyze_contract_impact.py --all
         continue-on-error: true
+
+      - name: Vocabulary Hardcode Detection (VOCAB-HARDCODE)
+        run: python scripts/governance/d3_metadata/check_vocab_hardcode.py --ci
+        continue-on-error: false
+
+      - name: ARCH-REFERENCE Full-Repo Validation
+        run: |
+          python -c "
+          import os, yaml
+          from pathlib import Path
+          from zephyr.governance.commit_gates.arch_reference_gate import _extract_refs, _extract_registered_nums
+          root = Path('.')
+          reg_path = root / 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml'
+          reg = yaml.safe_load(reg_path.read_text(encoding='utf-8'))
+          registered = _extract_registered_nums(reg)
+          violations = []
+          for dirpath, dirs, files in os.walk('src/zephyr'):
+              dirs[:] = [d for d in dirs if d != '__pycache__']
+              for f in files:
+                  if not f.endswith('.py'):
+                      continue
+                  path = os.path.join(dirpath, f)
+                  content = open(path, encoding='utf-8', errors='replace').read()
+                  refs = _extract_refs(content)
+                  unregistered = refs - registered
+                  if unregistered:
+                      violations.append(path + ': unregistered #ARCH-{' + ','.join(sorted(unregistered)) + '}')
+          if violations:
+              print('ARCH-REFERENCE CI violations (full-repo scan):')
+              for v in violations:
+                  print('  ' + v)
+              exit(1)
+          print('ARCH-REFERENCE: all refs registered (' + str(len(registered)) + ' registered)')
+          "
+        continue-on-error: false
 
       # ============================================================
       # Tier 4: 安全层 — D6 全量安全红线扫描（硬阻断）

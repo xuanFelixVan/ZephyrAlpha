@@ -52,10 +52,10 @@ locked_items:
     category: vector_db_backend
     scope: "VMS 向量数据库后端选型"
     locked_files:
-      - "src/zephyr/vector_memory/faiss_collection_manager.py"
-      - "src/zephyr/vector_memory/sqlite_metadata_store.py"
-      - "src/zephyr/vector_memory/hybrid_retriever.py"
-      - "docs/03_modules/l01-infrastructure/vector_memory/blueprint.md"
+      - "src/zephyr/integration/vector_memory/faiss_collection_manager.py"
+      - "src/zephyr/integration/vector_memory/sqlite_metadata_store.py"
+      - "src/zephyr/integration/vector_memory/hybrid_retriever.py"
+      - "docs/03_modules/_domain_knowledge/vector_memory/blueprint.md"
     locked_decisions:
       - "FAISS HNSW + SQLite WAL 双引擎架构"
       - "8 Collection Schema（decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces）"
@@ -72,7 +72,7 @@ locked_items:
     category: embedding_model
     scope: "嵌入模型选型与维度映射"
     locked_files:
-      - "src/zephyr/vector_memory/embedding_router.py"
+      - "src/zephyr/integration/vector_memory/embedding_router.py"
     locked_decisions:
       - "BGE-M3 (1024d) —— 大型 Collection 主嵌入模型"
       - "bge-small-zh-v1.5 (512d) —— 轻量 Collection 嵌入模型"
@@ -88,7 +88,7 @@ locked_items:
     scope: "数据库升级触发条件"
     locked_files:
       - "docs/03_modules/_cross_layer/database/blueprint.md"
-      - "docs/03_modules/l01-infrastructure/vector_memory/blueprint.md"
+      - "docs/03_modules/_domain_knowledge/vector_memory/blueprint.md"
     locked_decisions:
       - "SQLite→PostgreSQL 8 个触发条件（U1-U8）"
       - "FAISS→分布式向量库 5 个触发条件（VU1-VU5）"
@@ -101,7 +101,7 @@ locked_items:
     category: whitelist_philosophy
     scope: "白名单设计哲学——规则服务内容，不限制内容"
     locked_files:
-      - "src/zephyr/vector_memory/collection_manager.py"
+      - "src/zephyr/integration/vector_memory/collection_manager.py"
     locked_decisions:
       - "ALLOWED_DIMENSIONS: {128, 256, 384, 512, 768, 1024, 1536}"
       - "validate_ttl: warning-only（不阻断）"
@@ -115,7 +115,7 @@ locked_items:
     category: transaction_model
     scope: "ATM 事务模型"
     locked_files:
-      - "src/zephyr/db/atomic_transaction_manager.py"
+      - "src/zephyr/governance/financial_governance/atomic_transaction_manager.py"
     locked_decisions:
       - "两阶段提交（BEGIN IMMEDIATE + write_file + commit/rollback）"
       - "tx_idempotency 幂等去重"
