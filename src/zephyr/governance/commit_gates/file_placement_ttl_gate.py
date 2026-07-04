@@ -37,6 +37,12 @@ AI 创建临时文件（ttl=task_bound）时无路径约束，乱放根目录或
 3. 根目录子目录准入：第一级目录不在 directory_zones 所有 paths → 阻断
    （防止 audit_assignment/ 这类乱建子目录，临时文件应落 docs/_working/）
 
+规则边界说明：
+- 规则3 仅覆盖含 "/" 的路径（子目录文件），**不覆盖根目录平铺文件**（如 `audit_assignment.py`）。
+  根目录平铺文件的扩展名/格式治理属 DIRECTORY-CONTRACT gate（DCR-001~007）职责。
+  本 gate 规则3 聚焦"乱建子目录"场景，与 DCR 职责互补不重叠。
+- TTL 合法值（permanent/task_bound）从 ttl_vocabulary.yaml values 动态加载，不硬编码。
+
 真源动态加载（不硬编码）：
 - 永久区/临时区/中性区路径：directory_contract.yaml directory_zones.*.paths
 - 生成器豁免：directory_contract.yaml directory_zones.permanent.exempt_subdirs
@@ -115,7 +121,7 @@ def _load_placement_ssot(project_root):
 
     Returns:
         (permanent_paths, temporary_paths, neutral_paths, exempt_subdirs,
-         process_subdir_segments, allowed_root_subdirs)
+         process_subdir_segments, allowed_root_subdirs, ttl_legal_values)
     """
     dc_path = project_root / _DC_PATH
     if not dc_path.is_file():
@@ -129,9 +135,10 @@ def _load_placement_ssot(project_root):
     neutral_paths = zones.get("neutral", {}).get("paths", [])
     exempt_subdirs = zones.get("permanent", {}).get("exempt_subdirs", [])
 
-    # 从 ttl_vocabulary.yaml 加载 Q1 过程性子目录（contains 判定）
+    # 从 ttl_vocabulary.yaml 加载 Q1 过程性子目录（contains 判定）+ TTL 合法值
     tv_path = project_root / _TTL_VOCAB_PATH
     process_subdir_segments: list[str] = []
+    ttl_legal_values: list[str] = []
     if tv_path.is_file():
         with open(tv_path, encoding="utf-8") as f:
             tv = yaml.safe_load(f)
@@ -141,6 +148,11 @@ def _load_placement_ssot(project_root):
         for c in q1_criteria:
             if c.get("signal") == "path" and c.get("operator") == "contains":
                 process_subdir_segments.append(c["value"])  # 如 "/changes/"
+        # 动态加载 TTL 合法值（治本词表硬编码，ARCH-049 审查问题6）
+        for v in tv.get("values", []):
+            val = v.get("value")
+            if val:
+                ttl_legal_values.append(val)
 
     # 提取允许的根目录第一级子目录（从所有 zone paths）
     allowed_root_subdirs: set[str] = set()
@@ -157,6 +169,7 @@ def _load_placement_ssot(project_root):
         exempt_subdirs,
         process_subdir_segments,
         allowed_root_subdirs,
+        ttl_legal_values,
     )
 
 
@@ -182,9 +195,18 @@ def make_file_placement_ttl_gate() -> GateSpec:
                 exempt_subdirs,
                 process_subdir_segments,
                 allowed_root_subdirs,
+                ttl_legal_values,
             ) = _load_placement_ssot(project_root)
         except (FileNotFoundError, OSError, yaml.YAMLError) as e:
             return False, f"FILE-PLACEMENT-TTL 真源加载失败（fail-closed）: {e}"
+
+        # TTL 合法值校验（动态加载，治本词表硬编码 ARCH-049 审查问题6）
+        # ttl_legal_values 从 ttl_vocabulary.yaml values 派生；fail-closed：必需值缺失则阻断
+        if "permanent" not in ttl_legal_values or "task_bound" not in ttl_legal_values:
+            return False, (
+                f"FILE-PLACEMENT-TTL: ttl_vocabulary.yaml values 缺少必需值"
+                f" permanent/task_bound（fail-closed，got={ttl_legal_values}）"
+            )
 
         # 2. 逐文件校验
         violations: list[str] = []
@@ -219,7 +241,7 @@ def make_file_placement_ttl_gate() -> GateSpec:
                         f"（或落入 exempt_subdirs 生成器豁免）"
                     )
 
-            # 规则2：TTL↔zone 一致性（对所有文件）
+            # 规则2：TTL↔zone 一致性（对所有文件，TTL 合法值已通过 fail-closed 校验）
             if ttl == "permanent" and in_temporary:
                 violations.append(
                     f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=permanent 但在临时区，"

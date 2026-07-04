@@ -851,6 +851,25 @@ class GitCommitGateway:
                 session_id, len(existing),
             )
 
+        # FILE-PLACEMENT-TTL gate（ARCH-049，与 TTL-METADATA 同模式覆盖 _commit_auto 路径）
+        # reconciler auto-commit 传 allow_promote=True（reconciler 是受信任自动流程，exempt_subdirs 生成器输出豁免）
+        fpt_spec = self._gate_registry.get("FILE-PLACEMENT-TTL")
+        if fpt_spec is not None:
+            fpt_passed, fpt_detail = fpt_spec.check(
+                self, existing, allow_promote=True,
+            )
+            if not fpt_passed:
+                return CommitResult(
+                    status=CommitStatus.NAMING_VIOLATION,
+                    message=f"file placement ttl violation (auto-commit): {fpt_detail}",
+                )
+        else:
+            logger.warning(
+                "_commit_auto: FILE-PLACEMENT-TTL gate 未注册，跳过文件放置校验"
+                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+                session_id, len(existing),
+            )
+
         gw_marker = f"[GW:{session_id}:auto]"
         full_message = f"{message}\n\n{gw_marker}"
 
