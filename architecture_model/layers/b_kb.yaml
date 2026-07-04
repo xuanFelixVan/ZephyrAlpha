@@ -11,12 +11,12 @@ modules:
   - id: kb-lifecycle
     module_id: MOD-KB-001
     name: Knowledge Lifecycle Manager
-    submodule_path: src/zephyr/kb/
+    submodule_path: src/zephyr/governance/kb/
     status: implemented
     priority: P1
     runtime_plane: warm
     description: 知识全生命周期管理——G1(摄取)→G2(分拣)→G3(分析)→G4(激?→G5(提取) 五门?+ 10状态KE状态机 + RI-02统一内存API。蓝图：knowledge_base/blueprint.md §5
-    blueprint_ref: "D:/ZephyrAlpha/docs/03_modules/l01-infrastructure/knowledge_base/blueprint.md"
+    blueprint_ref: "docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md"
     files:
       - activate.py
       - analyze.py

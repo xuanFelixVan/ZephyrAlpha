@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Sandbox 沙箱隔离策略配置
 # 真源：蓝图 mod_inf_001 §5.1 DD-13
@@ -41,7 +42,10 @@ policies:
 
 kill_switch_drill:
   enabled: true
-  schedule: "monthly"
+  # schedule: "monthly"  # DEPRECATED (2026-07-05 审计 AI-02): 违反 RULE-FIFTEEN 禁止时间触发
+  trigger: "event_driven"
+  trigger_event: "kill_switch_state_changed"
+  ci_fallback: "ci schedule job (governance.yml)"
   test_file: ".audit_cache/kill_switch_test"
   auto_recovery_seconds: 60
 

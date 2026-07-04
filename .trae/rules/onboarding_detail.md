@@ -721,7 +721,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 3 | `[INVARIANTS]` | ✅ | 分号分隔 | — |
 | 4 | `[MODIFY-GUARD]` | ✅ | 分号分隔 | — |
 | 5 | `[CONSUMERS]` | ⚠️ | 分号分隔 | — |
-| 6 | `[STABILITY]` | ✅ | `frozen/stable/evolving/volatile` | ✅ 复用 stability |
+| 6 | `[STABILITY]` | ✅ | `frozen/stable/evolving/volatile`（SSoT: trae_047 §stability枚举） | ✅ 复用 stability |
 | 7 | `[SAFETY]` | ✅ | `H/M/L` | ✅ 复用 safety_level |
 | 8 | `[AI_AUTONOMY]` | ✅ | `immutable_core/human_gated/ai_modifiable` | ✅ 复用 ai_autonomy |
 | 9 | `[ERROR_CONTRACT]` | ⚠️ | 分号分隔 | — |

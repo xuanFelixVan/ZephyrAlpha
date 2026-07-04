@@ -14,7 +14,8 @@ modules:
   - id: db-persistence
     module_id: MOD-INF-012
     name: Metadata Persistence Layer
-    submodule_path: src/zephyr/db/
+    submodule_path: src/zephyr/governance/
+    submodule_path_note: "文件分布在 governance/persistence/ + governance/financial_governance/，见各 file 实际路径"
     status: implemented
     priority: P0
     runtime_plane: warm

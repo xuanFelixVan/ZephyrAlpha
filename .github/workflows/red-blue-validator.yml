@@ -68,11 +68,13 @@ jobs:
           path: data/red_blue/ci_report.json
           retention-days: 30
 
-  game-day-daily:
-    name: Game Day Daily Sweep
+  game-day:
+    name: Game Day Sweep (manual trigger)
     runs-on: windows-latest
     timeout-minutes: 45
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # 原 schedule 触发已移除（违反 RULE-FIFTEEN 禁止时间触发）
+    # 现仅支持 workflow_dispatch 手动触发 + CI 批量兜底
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v4

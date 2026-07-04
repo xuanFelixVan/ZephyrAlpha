@@ -8,11 +8,16 @@ action_type: drift_fixer
 targets: []
 
 # 调度配置(供crontab参考,脚本本身不解析)
+# DEPRECATED (2026-07-05 审计 AI-02): 本文件的 schedule 字段违反 RULE-FIFTEEN
+#   （禁止时间触发，仅用事件驱动 + CI 批量兜底）。
+#   迁移方向：drift_detected 事件订阅（boot_hooks）或 CI schedule job 兜底。
 schedule:
   # 每30分钟执行一次
   interval_minutes: 30
   # 每日最大执行次数(由FixBudget强制)
   max_daily_runs: 5
+  status: deprecated
+  migration_target: "drift_detected event subscription (boot_hooks) or CI schedule job"
 
 # 日志配置
 logging:

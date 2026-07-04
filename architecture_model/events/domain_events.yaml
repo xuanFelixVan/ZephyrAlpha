@@ -9,14 +9,19 @@
 # --- 治理锚定结束 ---
 module_id: MOD-GOVERNANCE
 schema_version: "2.0"
-payload_contract_note: "8/25 事件 payload_contract 为 null（设计缺口，experimental 填充时补齐）"
+implementation_status: declared_only
+implementation_note: >
+  本文件是领域事件设计清单（declared model），描述目标事件结构。
+  8/25 事件 payload_contract 为 null（设计缺口，experimental 填充时补齐）。
+  当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
+  2026-07-05 审计 AI-02 标记：避免将本文件误读为已全部实现的事件清单。
 
 partition:
   id: cross-cutting-events
   name: "Domain Events / 领域事件清单"
   type: cross-cutting
   description: >
-    领域事件 SSoT。25 条核心事件，分 7 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
+    领域事件 SSoT（设计清单）。25 条核心事件，分 7 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
     Execution 7 / Risk 4 / Ops 3）+ 2 条量化红线补充事件。
     当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
     来源：domain-event-catalog.md v1.0.0 迁移。

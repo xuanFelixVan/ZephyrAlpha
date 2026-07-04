@@ -181,6 +181,7 @@ class BlueprintDecomposer:
     }
 
     # 架构层 → 域标识符映射（仅 L0 有明确1:1映射，其他层不映射）
+    # SSoT: layer_vocabulary.yaml — layer 合法值参考词表
     _LAYER_TO_TARGET_LAYER: dict[str, str] = {
         "L0_infrastructure": "D_INFRA_OPS",
     }

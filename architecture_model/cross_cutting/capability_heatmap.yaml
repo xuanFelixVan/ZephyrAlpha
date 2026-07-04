@@ -7,7 +7,7 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# v3.0.1: 53域×10能力域矩阵（depgraph派生）
+# v3.0.1: 50域×10能力域矩阵（depgraph派生）
 module_id: MOD-GOVERNANCE
 schema_version: '3.0'
 partition:
@@ -15,7 +15,7 @@ partition:
   name: Capability Maturity Heatmap
   data_source: depgraph_db
   description: >
-    能力成熟度热力图（53域×10能力域矩阵）。
+    能力成熟度热力图（50域×10能力域矩阵）。
     五档成熟度：L0 Missing / L1 Designed / L2 Drafted / L3 Usable / L4 Production / L5 Leading。
     结构化数据从depgraph派生（PostgreSQL INFRA-DB-003）。
   source_view: capability_heatmap.md
@@ -26,7 +26,7 @@ partition:
   overall_maturity_score: 1.12
   overall_maturity_level: L1
   score_calculation_method: >
-    加权平均法：53域×10能力域（C1~C7业务域 + CC1~CC3横切域）。
+    加权平均法：50域×10能力域（C1~C7业务域 + CC1~CC3横切域）。
     每域成熟度由depgraph派生。
   overall_assessment: >
     架构蓝图已95%锁定，代码施工刚起步。
@@ -430,4 +430,4 @@ summary:
   - date: '2026-06-23'
     version: v3.0.0
     reviewer: session-20260623-001
-    note: v3.0.1 基线对齐 depgraph（53域×10能力域矩阵）
+    note: v3.0.1 基线对齐 depgraph（50域×10能力域矩阵）
