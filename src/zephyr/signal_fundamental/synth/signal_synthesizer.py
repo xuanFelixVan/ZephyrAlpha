@@ -71,7 +71,7 @@ class SignalSynthesizerBase(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not inspect.isabstract(cls) and hasattr(cls, "__synthesizer_id__"):
+        if not inspect.isabstract(cls) and "__synthesizer_id__" in cls.__dict__:
             SignalSynthesizerBase._registry[cls.__synthesizer_id__] = cls
 
     @abc.abstractmethod

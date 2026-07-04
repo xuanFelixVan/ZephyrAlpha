@@ -98,12 +98,17 @@ class RestoreResult:
 
 @dataclass
 class VerifyResult:
-    passed: bool
+    # 5.96.1 修复: 移除冗余 passed 字段,改为 @property 从其他4个 match 字段派生
     merkle_match: bool
     hmac_match: bool
     table_count_match: bool
     row_count_match: bool
     details: list[str] = field(default_factory=list)
+
+    @property
+    def passed(self) -> bool:
+        """5.96.1 修复: passed 从其他4个 match 字段派生,消除冗余布尔字段。"""
+        return self.merkle_match and self.hmac_match and self.table_count_match and self.row_count_match
 
 
 class SqliteDumper:
@@ -370,7 +375,6 @@ class SqliteDumper:
 
         if not source_path.exists():
             return VerifyResult(
-                passed=False,
                 merkle_match=False,
                 hmac_match=False,
                 table_count_match=False,
@@ -394,7 +398,6 @@ class SqliteDumper:
                     except json.JSONDecodeError as e:
                         details.append(f"JSON parse error: {e}")
                         return VerifyResult(
-                            passed=False,
                             merkle_match=False,
                             hmac_match=False,
                             table_count_match=False,
@@ -439,10 +442,8 @@ class SqliteDumper:
             merkle_match = False
             details.append("No merkle_root found in dump")
 
-        passed = merkle_match and hmac_match and table_count_match and row_count_match
-
+        # 5.96.1 修复: passed 由 @property 派生,无需局部变量
         return VerifyResult(
-            passed=passed,
             merkle_match=merkle_match,
             hmac_match=hmac_match,
             table_count_match=table_count_match,

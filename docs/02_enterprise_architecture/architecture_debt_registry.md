@@ -6303,7 +6303,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.96 布尔参数蔓延（5个，第19轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(布尔参数→枚举重构涉及调用方全量更新)
+> **第36轮验证状态（2026-07-05）**：FIXED=2(5.96.1 VerifyResult.passed→@property + 5.96.5 删除RulesFileIntegrityResult死字段), 0 DRIFTED, STILL_VALID=3(5.96.2 TriggerDecision布尔字段与action冗余需枚举重构+5.96.3 _calculate_trust 3布尔参数+5.96.4 determine_exit_code 2布尔参数——重构收益低保留)
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
@@ -6897,7 +6897,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.116 __init_subclass__副作用（5个，第21轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(__init_subclass__副作用需重构为显式注册)
+> **第36轮验证状态（2026-07-05）**：FIXED=3(5.116.1 删除interface_base.py 3个死_registry字段 + 5.116.3 5文件hasattr沿MRO改为`in cls.__dict__` + 5.116.4 provider_base.py文档修正DataSourceRegistry→__init_subclass__自动注册), DRIFTED=1(5.116.5 _base_server.py:273文档已合理,误报), STILL_VALID=1(5.116.2 5文件_registry只写不读需评估扩展点机制)
 
 #### 5.116.1 [MEDIUM] interface_base.py 3个_registry死注册表——既无__init_subclass__也无register装饰器
 
@@ -7176,7 +7176,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.126 可变默认参数（5个，第23轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(task_manager_server可变默认参数=[]/重复副本需统一重构)
+> **第36轮验证状态（2026-07-05）**：FIXED=0, DRIFTED=2(5.126.1/5.126.2 均已被5.51.1修复——=[]改为None哨兵模式,infrastructure/+integration/mcp/两副本均已修复), STILL_VALID=0
 
 #### 5.126.1 [HIGH] task_manager_server.create_task的files_in_scope/deliverables/allowed_touch用=[]默认值致跨调用状态泄漏
 

@@ -80,7 +80,7 @@ class DataSourceBase(abc.ABC):
     新增数据源：
       1. 继承 DataSourceBase
       2. 实现 fetch_historical / subscribe_realtime
-      3. 用 @DataSourceRegistry.register 注册
+      3. 设置 __meta__ = DataSourceMeta(...) 类属性（__init_subclass__ 自动注册到 _registry）
 
     禁止直接修改本文件中的抽象接口。
     """
@@ -89,7 +89,7 @@ class DataSourceBase(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not inspect.isabstract(cls) and hasattr(cls, "__meta__"):
+        if not inspect.isabstract(cls) and "__meta__" in cls.__dict__:
             meta = cls.__meta__
             if isinstance(meta, DataSourceMeta):
                 DataSourceBase._registry[meta.provider_id] = cls
