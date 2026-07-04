@@ -998,7 +998,8 @@ entries:
   severity: P1高
   adjudication: |
     ARCH-047 裁定：前端可视化技术栈从 Streamlit 第一性原理重构为 Panel+HoloViz+Plotly+plotly_resampler
-    +TradingView Lightweight Charts v5.2。治本"Streamlit 三大架构硬伤导致回测可视化能力不足"的病根。
+    +TradingView Lightweight Charts v5.2（HTML Pane+原生JS，不依赖Python封装包）。
+    治本"Streamlit 三大架构硬伤导致回测可视化能力不足"的病根。
 
     【病根（5-Why 根因分析）】
     症状：回测交付页面+仪表盘方案调研发现 Streamlit 无法满足百万级 tick 渲染、实时盘口推送、
@@ -1017,11 +1018,11 @@ entries:
 
     【第一性原理推理】
     好的可视化系统应该是什么样子？
-    1. 百万级数据渲染——Datashader 原生集成（0.5-1秒渲染百万 tick）
+    1. 百万级数据渲染——Datashader 原生集成（0.5-1秒渲染百万 tick，仅阈值触发>50万点）
     2. 实时推送——Bokeh server WebSocket 原生推送（100ms 级盘口刷新）
     3. crossfiltering 联动——HoloViews 原生支持多图表联动
     4. 长期可扩展——Panel 支持 React 组件嵌入，未来可迁移到 G1 React 前端
-    5. 金融图表——TradingView Lightweight Charts v5.2 专业 K 线/订单流
+    5. 金融图表——TradingView Lightweight Charts v5.2 专业 K 线/订单流（HTML Pane+原生JS）
 
     【四方案对比】
     方案A（Streamlit）：rerun 模型/无 WebSocket/无 crossfiltering——三硬伤不可治本
@@ -1030,6 +1031,17 @@ entries:
     方案D（Panel+HoloViz）：Datashader 原生/WebSocket 原生/crossfiltering 原生——三硬伤全治本
 
     决定：采用方案D（Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts），插入 G0.5 Python 过渡层。
+
+    【外部评审采纳的改进（Grok/GPT/Claude 三方建议）】
+    1. Panel callback 仅编排，业务逻辑独立为纯函数（fetch→ChartFactory.make_xxx()→callback），
+       G1 升级时 fetch 可直接包装为 FastAPI 路由，零重写
+    2. TradingView 不依赖 Python 封装包，直接用 pn.pane.HTML+lightweight-charts.js 原生渲染，
+       避免供应链风险，G2 React 迁移时 JS 可直接复用
+    3. Datashader 不默认进入 MVP，仅在数据量>50万点时阈值触发；MVP 全用 Plotly+plotly_resampler
+       （10万级降采样足够），避免过早优化
+    4. 新增 ChartFactory 统一工厂（make_equity/make_drawdown/make_heatmap/make_tick/make_kline），
+       G2 React 迁移时可直接对应 React 组件
+    5. 补充 v3.1.0 现有 Streamlit 页面迁移计划（5页面+10组件）
 
     【治本方案】
     P0 DONE 2026-07-04：
@@ -1044,6 +1056,11 @@ entries:
     (i) blueprint_registry.yaml v2.7.7 同步
     (j) 258 个 Python 源文件 [BLUEPRINT] 头部路径漂移修复（kebab→snake）
     (k) depgraph 设计态：2 节点 + 3 边登记
+
+    P0 SUPPLEMENT DONE 2026-07-04（外部评审采纳）：
+    (l) §3.1 组件架构表新增 ChartFactory 组件
+    (m) §16.7.1-§16.7.5 组件规格全面更新：Panel callback仅编排+TradingView HTML Pane+Datashader阈值触发
+    (n) §17.3 升级版本矩阵新增 v3.0.0/v3.1.0 行
 
     P1 TODO：5 个交易/回测组件施工（backtest_results/tick_replay/order_book/position_monitor/trade_panel）
     P2 OPTIONAL：G1 React 前端迁移时，Panel 组件嵌入 React（保留 HoloViz 渲染层）
@@ -1063,9 +1080,35 @@ entries:
     - CTR-P1-016/017——跨层契约，回测结果+产物格式
   fix_phase: |
     P0 DONE 2026-07-04：技术栈切换全套治理（蓝图+契约+依赖+路径漂移修复+depgraph登记）
+    P0 SUPPLEMENT DONE 2026-07-04：外部评审采纳改进（ChartFactory+callback约束+HTML Pane+Datashader阈值+v3.1.0迁移计划）
     P1 TODO：5 个交易/回测组件施工
     P2 OPTIONAL：G1 React 迁移时 Panel 组件嵌入
   status: decided
+  tech_stack:
+    - name: panel
+      version: ">=1.5.0,<2.0.0"
+      purpose: "Python原生可视化Web应用框架（G0.5过渡层核心）"
+      governance_layer: GOV-P1
+    - name: holoviews
+      version: ">=1.19.0,<2.0.0"
+      purpose: "声明式可视化（净值曲线/crossfiltering联动）"
+      governance_layer: GOV-P1
+    - name: datashader
+      version: ">=0.16.0,<1.0.0"
+      purpose: "百万级tick渲染（仅阈值触发>50万点，MVP不默认启用）"
+      governance_layer: GOV-P2
+    - name: hvplot
+      version: ">=0.10.0,<1.0.0"
+      purpose: "pandas-like API图表（AI友好度提升）"
+      governance_layer: GOV-P2
+    - name: plotly_resampler
+      version: ">=0.9.0,<1.0.0"
+      purpose: "Plotly大数据降采样（MVP默认渲染策略，10万级）"
+      governance_layer: GOV-P1
+    - name: lightweight-charts
+      version: "v5.2（JS原生，不引入Python封装包）"
+      purpose: "TradingView专业K线/订单流（pn.pane.HTML+原生JS集成）"
+      governance_layer: GOV-P1
   related_rules:
   - VIEW-10-FRONTEND-ARCH
   - GOV-028
