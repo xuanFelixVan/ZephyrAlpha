@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] permanent
+# [TTL] task_bound
 """
 DatabaseService: 统一管理数据库的连接池、生命周期、健康检查
 
@@ -25,14 +25,14 @@ DatabaseService: 统一管理数据库的连接池、生命周期、健康检查
 [STABILITY] stable
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] ConnectionError; TimeoutError; NotImplementedError(ClickHouse/Redis 预留)
+[ERROR_CONTRACT] ConnectionError; TimeoutError; NotImplementedError(Redis 预留，ClickHouse 已实现)
 [TESTS] tests/db/test_db_auto_ops.py::test_database_service_init
 
-提供 governance.db / depgraph (PostgreSQL) 的统一连接管理。
-业务数据库（ClickHouse C1/C2/C3 + Redis H1 热缓存）为 Spiral 2 预留接口，
-当前抛 NotImplementedError，待业务数据库子蓝图施工时实现。
+提供 governance.db / depgraph (PostgreSQL) / ClickHouse (c1_market) 的统一连接管理。
+ClickHouse C1 行情仓库已于 2026-07-01 部署（INFRA-DB-006），get_clickhouse_conn() 已实现。
+Redis H1 热缓存为预留接口（抛 NotImplementedError），待 P2 实盘需求触发施工（#ARCH-048 已裁决）。
 
-注：market.duckdb（DuckDB 业务时序库）已于 Spiral 1 删除，按母蓝图改用 ClickHouse。
+注：market.duckdb（旧 DuckDB 业务时序库）已于 2026-07-05 删除（524KB 残留文件，无有价值数据）。业务行情数据已迁移至 ClickHouse c1_market。
 """
 
 import sqlite3

@@ -47,7 +47,7 @@ references:
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.2.0 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -67,7 +67,7 @@ references:
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
 
-## 二库职责划分（2026-06-30 决策：原3库中 market.duckdb 已于2026-07-01删除/废弃）
+## 二库职责划分（2026-06-30 决策：原3库中 market.duckdb 已于2026-07-05删除）
 
 > **决策依据**：单人开发+无实盘阶段。2个关系数据库各有硬需求，引擎选择需求驱动，合并代价远大于收益。统一入口 `DatabaseService` 封装引擎差异，AI只需记住一个类。
 > **数据库清单真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（INFRA-DB条目，含非关系库）
