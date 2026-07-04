@@ -359,3 +359,28 @@ def session_startup(quick: bool = True) -> dict:
         "checks": results,
         "next_action": next_action,
     }
+
+
+def session_shutdown(session_id: str, summary: str = "") -> dict:
+    """AI Session 关闭 handoff — commit 成功后写 handoff package 供下一 session 恢复.
+
+    对标: session_startup 的逆操作 — 启动时读 handoff, 关闭时写 handoff.
+    对标: K8s Pod preStop hook — 终止前写状态供恢复.
+
+    P4-T2 crash recovery: GitCommitGateway.commit() 成功后调用本函数,
+    将 commit summary 写入 .runtime/handoffs/handoff_<session_id>.json,
+    供下一 session 的 session_startup() 通过 read_latest_handoff() 恢复上下文.
+
+    Args:
+        session_id: session 标识
+        summary: commit summary (message + GW marker)
+
+    Returns:
+        dict: {"written": bool, "path": str}
+    """
+    from zephyr.security.access_control.session_concurrency import SessionHandoff
+
+    handoff = SessionHandoff()
+    path = handoff.write_handoff(session_id, summary=summary)
+    logger.info("session_shutdown: wrote handoff for session=%s path=%s", session_id, path)
+    return {"written": path.exists(), "path": str(path)}
