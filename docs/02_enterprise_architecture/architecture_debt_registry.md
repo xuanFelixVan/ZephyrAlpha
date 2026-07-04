@@ -9497,6 +9497,16 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.175 异常处理反模式（100个，第31轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=100(bare except/except Exception吞噬异常需全量重构为细粒度处理)
+> **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=96, STILL_VALID=9, 合计=105（条目编号1-105，与合计100存在5个代表性取样统计口径偏差）。HIGH 25个全部DRIFTED（前期已将except Exception: pass替换为logger.warning/exception，含路径漂移19处）；MEDIUM类别4 return哨兵值46个全部DRIFTED（apply_depgraph.py 25个print ERROR已转logger.error且return -1作为CLI脚本约定保留+fix_orphan_deps.py 2个bare except已改具体异常+logger.warning+src/zephyr/trading/ 19个已加logger.warning）；MEDIUM类别5 print替代logging 29个中20个DRIFTED（apply_depgraph.py print ERROR已转logger.error+governance/__main__.py路径漂移）+9个STILL_VALID（fix_orphan_deps.py汇总输出2+audit_rename_completeness.py [FAIL]输出2+autonomy_core/__main__.py 1+asset_inventory/__main__.py 1+drift_detection/__main__.py 1+capability_lookup.py 1+governance/__main__.py 1）；LOW 5个中4个DRIFTED+1个STILL_VALID（deepseek_v4_chat.py:73-74 _safe_win32_ver except Exception无日志）。
+
+> **5.175 修复明细（2026-07-04）**：
+> - 本轮无代码修改（FIXED=0），全部为前期修复后的DRIFTED标记更新
+> - HIGH 25个: 类别1 bare except/except Exception: pass无日志19处→logger.warning/exception（含fix_orphan_deps.py/audit_logger.py/knowledge_base_server.py/asset_inventory/__main__.py/dep_version_fixer.py/compliance_auditor.py/budget_handler.py/checkpoint_gc.py/budget_engine.py/audit_write_failure_protector.py/adapter.py路径漂移）；类别2 嵌套except吞噬恢复5处（apply_depgraph.py 3处+gateway_server.py+agent_orchestrator.py）已加日志；类别3 l7_validation.py安全路径已加日志
+> - MEDIUM 类别4 src/zephyr/trading/ 19处（gpu_consensus_scheduler.py 3+dream_cycle.py 1+auto_runtime_core.py 3+zombie_scanner.py 3+action_dispatcher.py 2+ide_health_daemon.py 1+health_monitor.py 1+capacity_budget.py路径漂移1+agent_orchestrator.py 1+module_onboarding_scanner.py 1+staging_area.py 1+session_lifecycle.py路径漂移1）全部已加logger.warning
+> - MEDIUM 类别4 apply_depgraph.py 25处: except路径print ERROR已转logger.error（37处logger使用），return -1/False作为CLI脚本对外约定保留
+> - MEDIUM 类别4 fix_orphan_deps.py 2处: bare except已改具体异常(json.JSONDecodeError/TypeError/ValueError)+logger.warning
+> - LOW 4处DRIFTED: deepseek_v4_chat.py:580/555-556已加_log.warning/error；doc_compressor.py路径漂移至shared/io/且已用_log.warning；audit_rename_completeness.py路径漂移至d8_doc_sync/且已加logger.warning
+> - 保留STILL_VALID 9处: 均为脚本/CLI工具的print汇总输出或环境兼容性补丁的except无日志，影响有限
 
 审计范围：`d:\ZephyrAlpha\src\zephyr\` 及 `d:\ZephyrAlpha\scripts\governance\`。所有except块体均已通过Read/Grep逐条验证。
 
