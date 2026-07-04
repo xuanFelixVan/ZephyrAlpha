@@ -3866,6 +3866,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：POST/PUT重试可能导致重复副作用（重复下单/重复扣款）
 - **影响**：资金安全风险；数据重复
 - **修复**：为每个逻辑请求生成稳定Idempotency-Key（基于业务幂等键），重试时复用
+- **状态**：STILL_VALID（保留）— 需生成稳定 Idempotency-Key（基于业务幂等键），涉及 API 契约设计与服务端幂等性配合，超出本轮快速修复范围
 
 #### 5.40.2 [HIGH] MCP回调POST无Idempotency-Key
 - **文件**：[mcp_result_push.py](file:///D:/ZephyrAlpha/src/zephyr/governance/behavioral_admission/mcp_result_push.py#L202)
@@ -3873,6 +3874,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：回调重试导致下游重复处理
 - **影响**：下游幂等性压力；重复通知
 - **修复**：回调头携带Idempotency-Key（基于task_id+attempt_no）
+- **状态**：STILL_VALID（保留）— 需回调头携带 Idempotency-Key（基于 task_id+attempt_no），涉及下游幂等性配合，超出本轮快速修复范围
 
 #### 5.40.4 [HIGH] DLQRetryPolicy为stub，BACKOFF_SCHEDULE死代码
 - **文件**：[dlq_retry_policy.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/dlq_retry_policy.py#L27)
@@ -3880,6 +3882,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：DLQ名为"重试策略"实为"计数器"
 - **影响**：死信消息永不重试；故障消息永久丢失
 - **修复**：实现真实重试逻辑：按BACKOFF_SCHEDULE取出消息→重新投递→成功则删除/失败则递增attempt
+- **状态**：STILL_VALID（保留）— DLQRetryPolicy.retry_pending() 仍仅 SELECT COUNT(*) 统计行数（status="degraded"），不实际重试；BACKOFF_SCHEDULE 死代码已在 5.15.3 修复中删除，但真实重试逻辑未实现，需对接 dead_letter_queue 投递接口
 
 #### 5.40.5 [HIGH] HookDispatcher._call_webhook为空pass
 - **文件**：[hook_dispatcher.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/hook_dispatcher.py#L79)
@@ -3887,6 +3890,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：事件钩子系统声明支持webhook但实际为空实现
 - **影响**：外部集成无法接收事件；依赖webhook的功能静默失效
 - **修复**：实现HTTP POST调用，含超时/重试/签名校验
+- **状态**：STILL_VALID（保留）— _call_webhook 方法体仍为 `pass`（hook_dispatcher.py L123-124），需实现 HTTP POST 调用+超时/重试/签名校验，涉及外部 HTTP 客户端选型与安全配置
 
 #### 5.40.6 [MEDIUM] hook_dispatcher用env={}替换整个环境
 - **文件**：[hook_dispatcher.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/hook_dispatcher.py)
@@ -3894,6 +3898,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：子进程无PATH/HOME/PYTHONPATH，必然立即失败
 - **影响**：所有脚本钩子执行失败
 - **修复**：`env={**os.environ, **custom_env}`合并而非替换
+- **状态**：FIXED — 已改为 `env={**os.environ, "ZEPHYR_TASK_ID": ..., "ZEPHYR_EVENT_TYPE": ...}` 合并 os.environ，保留继承的 PATH/HOME/PYTHONPATH（hook_dispatcher.py L85-101）
 
 #### 5.40.7 [HIGH] IdempotencyStore仅内存实现且_build_idempotency_key从未调用
 - **文件**：[idempotency.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/idempotency.py#L86)
@@ -3901,6 +3906,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：幂等存储存在但从未接入；且为内存实现重启即失效
 - **影响**：幂等性保证形同虚设；重启后重复请求可穿透
 - **修复**：接入Redis/PG持久化；在API入口层调用_build_idempotency_key
+- **状态**：STILL_VALID（保留）— IdempotencyStore 仍用 dict 内存存储（idempotency.py L106 `_records: dict[str, IdempotencyRecord] = {}`），`_build_idempotency_key` 仍无生产调用（Grep 仅定义文件命中）；需接入 Redis/PG 持久化+在 API 入口层调用
 
 #### 5.40.8 [MEDIUM] TaskQueue状态转换无回滚
 - **文件**：[task_queue.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/queue/task_queue.py#L86)
@@ -3908,6 +3914,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：转换失败后任务状态不确定
 - **影响**：任务卡死；需人工干预恢复
 - **修复**：try/except中回滚到前一状态并记录审计
+- **状态**：STILL_VALID（保留）— TaskQueue._poll_loop 中 `_dispatch_handler(item)` 抛异常时 item 状态卡在 RUNNING（task_queue.py L122-124 无 try/except 回滚）；需加 try/except 回滚到 ENQUEUED 并记录审计
 
 #### 5.40.9 [MEDIUM] MemoryLock接受ttl_seconds但从不强制过期
 - **文件**：全项目（MemoryLock实现）
@@ -3915,6 +3922,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：TTL声明但不执行，锁永不自动释放
 - **影响**：持锁进程崩溃后锁永久占用；死锁
 - **修复**：实现TTL过期检查（后台线程或获取时惰性检查）
+- **状态**：STILL_VALID（保留）— MemoryLock.acquire(ttl_seconds=...) 参数接受但内部仅用 asyncio.Lock，无 TTL 过期检查（lock.py L110-140）；需实现 TTL 过期检查（后台线程或获取时惰性检查）
 
 #### 5.40.10 严重度汇总
 
