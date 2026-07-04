@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-04T19:08:52Z
+# 自动生成于 2026-07-04T19:13:43Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-04T19:08:52Z'
+generated_at: '2026-07-04T19:13:43Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 323
@@ -2218,7 +2218,7 @@ scripts:
   - --jsonl
   warn_only: false
   description: parse AGENTS.md §8.2 task menu (SKIP until §8.2 authored), verify referenced
-    files exist. Anchored to §6.18
+    files exist. Anchored to AI加载路径不可漂移铁律
   tags:
   - Critical
 - name: d5_architecture/validators/validate_module_schema.py
