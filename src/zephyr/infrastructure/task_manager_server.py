@@ -153,6 +153,8 @@ class TaskManagerMCP:
             execution_model: str = "deepseek",
             safety_level: str = "L",
             downstream_outputs: list = [],
+            pipeline_task_type: str = "",
+            target_layer: str = "",
         ) -> dict:
             """创建 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 1（idempotent）"""
             import hashlib
@@ -232,6 +234,8 @@ class TaskManagerMCP:
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
+                pipeline_task_type=pipeline_task_type or None,
+                target_layer=target_layer or None,
                 created_at=now,
                 updated_at=now,
             )
@@ -780,6 +784,8 @@ def _parse_yaml_frontmatter_to_taskcard(fm: dict) -> TaskCard:
         blocked_by=blocked_by,
         artifact_paths=_normalize_str_list(fm.get("artifact_paths", [])),
         ai_autonomy_level=str(fm.get("ai_autonomy_level", "supervised")),
+        pipeline_task_type=fm.get("pipeline_task_type"),
+        target_layer=fm.get("target_layer"),
         created_at=created_at,
         updated_at=updated_at,
     )
@@ -1069,6 +1075,8 @@ context_assembly_manifest:{_yaml_context_list(tc.context_assembly_manifest)}
 assigned_model: "{tc.execution_model.value if hasattr(tc.execution_model, "value") else tc.execution_model}"
 assigned_pipeline: "{tc.assigned_pipeline}"
 pipeline_modules:{_yaml_list(tc.pipeline_modules)}
+pipeline_task_type: "{tc.pipeline_task_type or ''}"
+target_layer: "{tc.target_layer or ''}"
 estimated_tokens: {tc.estimated_tokens}
 timeout_minutes: {tc.timeout_minutes}
 acceptance_criteria:{_yaml_list(tc.acceptance)}
