@@ -104,7 +104,7 @@ class HealthSummary:
         }
 
 
-def _derive_summary(health_map: dict[str, ModuleHealth]) -> Self:
+def _derive_summary(health_map: dict[str, ModuleHealth]) -> HealthSummary:
     healthy_count = 0
     unhealthy_count = 0
     degraded_count = 0
@@ -175,7 +175,7 @@ class AggregateHealth:
         *,
         module_names: list[str] | None = None,
         timeout: float = 5.0,
-    ) -> Self:
+    ) -> HealthSummary:
         """执行聚合健康检查。
 
         Args:
@@ -229,7 +229,7 @@ class AggregateHealth:
         self,
         *,
         timeout: float = 2.0,
-    ) -> Self:
+    ) -> HealthSummary:
         """快速聚合检查——更短超时。
 
         Args:
@@ -245,7 +245,7 @@ async def collect_health(
     modules: list[LifecycleAware],
     *,
     timeout: float = 5.0,
-) -> Self:
+) -> HealthSummary:
     """便利函数——从模块列表直接收集聚合健康状态。
 
     Args:

@@ -241,7 +241,7 @@ class ContractRegistry:
                 module_name,
             )
 
-    def announce_major_upgrade(self, contract_id: str, new_version: str) -> Self:
+    def announce_major_upgrade(self, contract_id: str, new_version: str) -> VersionTransition:
         """VER-R3: 发布 MAJOR 版本升级公告。
 
         自动通知所有注册消费者。过渡窗口默认 30 天。
@@ -368,7 +368,7 @@ from collections import defaultdict
 _registry: ContractRegistry | None = None
 
 
-def get_registry(repo_root: Path | None = None) -> Self:
+def get_registry(repo_root: Path | None = None) -> ContractRegistry:
     global _registry
     if _registry is None:
         _registry = ContractRegistry(repo_root=repo_root)

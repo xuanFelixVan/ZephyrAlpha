@@ -131,7 +131,7 @@ class AnalyzeGate:
         self._analyzed_dir.mkdir(parents=True, exist_ok=True)
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
 
-    def analyze(self, source_path: Path) -> Self:
+    def analyze(self, source_path: Path) -> AnalyzeResult:
         violations: list[str] = []
 
         if not source_path.exists():

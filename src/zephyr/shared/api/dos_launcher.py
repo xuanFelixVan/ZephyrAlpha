@@ -187,7 +187,7 @@ class DOSLauncher:
 
         return None
 
-    def load_chain(self, chain: str) -> Self:
+    def load_chain(self, chain: str) -> DOSResult:
         directive_ids = [d.strip() for d in chain.split(_CHAIN_SEPARATOR) if d.strip()]
 
         if not directive_ids:

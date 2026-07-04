@@ -206,15 +206,15 @@ class Money:
                 f"币种不匹配：{self.currency} vs {other.currency}。 请先用 FXRateProvider 换算到相同货币后再运算。"
             )
 
-    def __add__(self, other: Money) -> Self:
+    def __add__(self, other: Money) -> Money:
         self._check_same_currency(other)
         return Money(self.amount + other.amount, self.currency)
 
-    def __sub__(self, other: Money) -> Self:
+    def __sub__(self, other: Money) -> Money:
         self._check_same_currency(other)
         return Money(self.amount - other.amount, self.currency)
 
-    def __mul__(self, multiplier: int | Decimal) -> Self:
+    def __mul__(self, multiplier: int | Decimal) -> Money:
         if isinstance(multiplier, float):
             raise MoneyPrecisionError(f"Money 乘法禁止使用 float（{multiplier}），请用 int 或 Decimal。")
         if not isinstance(multiplier, Decimal):
@@ -223,7 +223,7 @@ class Money:
 
     __rmul__ = __mul__
 
-    def __truediv__(self, divisor: int | Decimal) -> Self:
+    def __truediv__(self, divisor: int | Decimal) -> Money:
         if isinstance(divisor, float):
             raise MoneyPrecisionError(f"Money 除法禁止使用 float（{divisor}），请用 int 或 Decimal。")
         if not isinstance(divisor, Decimal):
@@ -232,10 +232,10 @@ class Money:
             raise ZeroDivisionError("Money 除以零")
         return Money(self.amount / divisor, self.currency)
 
-    def __neg__(self) -> Self:
+    def __neg__(self) -> Money:
         return Money(-self.amount, self.currency)
 
-    def __abs__(self) -> Self:
+    def __abs__(self) -> Money:
         return Money(abs(self.amount), self.currency)
 
     # --- 比较 ---

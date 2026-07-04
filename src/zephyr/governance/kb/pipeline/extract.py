@@ -107,7 +107,7 @@ class ExtractGate:
         self._gate_engine = gate_engine or GateEngine(gate_dir=GATES_DIR)
         self._adr_dir = adr_dir
 
-    def extract(self, source_path: Path) -> Self:
+    def extract(self, source_path: Path) -> ExtractResult:
         violations: list[str] = []
 
         if not source_path.exists():

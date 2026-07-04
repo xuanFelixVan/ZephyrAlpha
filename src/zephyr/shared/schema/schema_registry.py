@@ -118,7 +118,7 @@ class SchemaRegistry:
 
         self._schemas[name][entry.version] = entry
 
-    def get(self, schema_name: str, version: str) -> Self:
+    def get(self, schema_name: str, version: str) -> SchemaEntry:
         versions = self._schemas.get(schema_name)
         if versions is None:
             raise SchemaRegistryError(
@@ -193,7 +193,7 @@ class SchemaRegistry:
 _global_schema_registry: SchemaRegistry | None = None
 
 
-def get_schema_registry() -> Self:
+def get_schema_registry() -> SchemaRegistry:
     global _global_schema_registry
     if _global_schema_registry is None:
         _global_schema_registry = SchemaRegistry()

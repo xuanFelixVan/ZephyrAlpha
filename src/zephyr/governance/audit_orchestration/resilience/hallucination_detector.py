@@ -180,7 +180,7 @@ class ModelCaller(Protocol):
     设计成 Protocol 是为了解耦：本模块**不**依赖任何具体 SDK。
     """
 
-    def __call__(self, prompt: str, *, purpose: str) -> Self:  # pragma: no cover - Protocol 签名
+    def __call__(self, prompt: str, *, purpose: str) -> ModelCallResult:  # pragma: no cover - Protocol 签名
         ...
 
 
@@ -438,7 +438,7 @@ class HallucinationDetector:
     # ------------------------------------------------------------------ public
 
     @property
-    def budget_state(self) -> Self:
+    def budget_state(self) -> BudgetState:
         """用于测试 / 观测当前预算状态。"""
         return self._budget
 
@@ -455,7 +455,7 @@ class HallucinationDetector:
         historical_recurrence: bool = False,
         pure_codegen: bool = False,
         meta_info: bool = False,
-    ) -> Self:
+    ) -> TriggerLevel:
         """
         判定触发级别（ADR-0039 §4.1）。
 
@@ -492,7 +492,7 @@ class HallucinationDetector:
         *,
         handoff_approved: bool = False,
         trigger_level: TriggerLevel = TriggerLevel.L1_WHITELIST,
-    ) -> Self:
+    ) -> HallucinationResult:
         """
         执行一次幻觉检测（CoVe 四步 + 降级级联 + 预算门禁）。
 
@@ -553,7 +553,7 @@ class HallucinationDetector:
         risk_level: RiskLevel,
         handoff_approved: bool,
         started_at: float,
-    ) -> Self:
+    ) -> HallucinationResult:
         assert self._primary is not None and self._verifier is not None
 
         total_cost = 0.0
@@ -732,7 +732,7 @@ class HallucinationDetector:
         risk_level: RiskLevel,
         handoff_approved: bool,
         started_at: float,
-    ) -> Self:
+    ) -> HallucinationResult:
         """单模型降级（仅一方可达）：keyword 规则 + 固定 confidence=0.5。"""
         kw_evidence = self._collect_keyword_evidence(claim, handoff_approved)
         inconsistency = 0.55 if kw_evidence else 0.30
@@ -764,7 +764,7 @@ class HallucinationDetector:
         risk_level: RiskLevel,
         handoff_approved: bool,
         started_at: float,
-    ) -> Self:
+    ) -> HallucinationResult:
         """keyword 规则兜底（两模型都不可达）。"""
         kw_evidence = self._collect_keyword_evidence(claim, handoff_approved)
         is_hallu = bool(kw_evidence)
@@ -798,7 +798,7 @@ class HallucinationDetector:
         *,
         reason: str,
         started_at: float,
-    ) -> Self:
+    ) -> HallucinationResult:
         """L3 黑名单 / 预算跳过时返回的占位结果。"""
         latency_ms = int((time.perf_counter() - started_at) * 1000)
         return HallucinationResult(
@@ -882,7 +882,7 @@ def build_detector_with_defaults(
     primary_caller: ModelCaller | None = None,
     verifier_caller: ModelCaller | None = None,
     repo_root: Path | None = None,
-) -> Self:
+) -> HallucinationDetector:
     """
     便捷构造：使用默认预算 / 模型名，主要用于 beta 联调阶段。
     单元测试应直接使用 ``HallucinationDetector(...)`` 以便显式注入参数。

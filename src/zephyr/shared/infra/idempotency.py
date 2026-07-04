@@ -130,7 +130,7 @@ class IdempotencyStore:
                 return None
         return record
 
-    def start(self, key: str) -> Self:
+    def start(self, key: str) -> IdempotencyRecord:
         self._cleanup_expired()
 
         existing = self._records.get(key)
@@ -146,7 +146,7 @@ class IdempotencyStore:
         self._records[key] = record
         return record
 
-    def complete(self, key: str, result: Any) -> Self:
+    def complete(self, key: str, result: Any) -> IdempotencyRecord:
         record = self._records.get(key)
         if record is None:
             raise IdempotencyError(
@@ -158,7 +158,7 @@ class IdempotencyStore:
         record.completed_at = time.monotonic()
         return record
 
-    def fail(self, key: str) -> Self:
+    def fail(self, key: str) -> IdempotencyRecord:
         record = self._records.get(key)
         if record is None:
             raise IdempotencyError(

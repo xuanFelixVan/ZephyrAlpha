@@ -126,7 +126,7 @@ class HttpProvider(Protocol):
         headers: dict[str, str] | None = None,
         body: dict[str, Any] | None = None,
         timeout_seconds: float = 30.0,
-    ) -> Self: ...
+    ) -> ApiResponse: ...
 
 
 @dataclass
@@ -218,7 +218,7 @@ class ApiClient:
         headers: dict[str, str] | None = None,
         body: dict[str, Any] | None = None,
         timeout_seconds: float | None = None,
-    ) -> Self:
+    ) -> ApiResponse:
         if not self._active:
             raise ApiCallError(
                 "ApiClient not active—use 'async with client:' context manager",
@@ -238,7 +238,7 @@ class ApiClient:
         retry_cfg = self._build_retry()
 
         @async_retry(config=retry_cfg)
-        async def _execute(_attempt: int = 1) -> Self:
+        async def _execute(_attempt: int = 1) -> ApiResponse:
             t0 = time.monotonic()
             try:
                 resp = await self._provider.request(
@@ -302,7 +302,7 @@ class ApiClient:
 
     async def get(
         self, path: str, *, headers: dict[str, str] | None = None, timeout_seconds: float | None = None
-    ) -> Self:
+    ) -> ApiResponse:
         return await self.request(HttpMethod.GET, path, headers=headers, timeout_seconds=timeout_seconds)
 
     async def post(
@@ -312,7 +312,7 @@ class ApiClient:
         body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
         timeout_seconds: float | None = None,
-    ) -> Self:
+    ) -> ApiResponse:
         return await self.request(HttpMethod.POST, path, headers=headers, body=body, timeout_seconds=timeout_seconds)
 
     async def put(
@@ -322,7 +322,7 @@ class ApiClient:
         body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
         timeout_seconds: float | None = None,
-    ) -> Self:
+    ) -> ApiResponse:
         return await self.request(HttpMethod.PUT, path, headers=headers, body=body, timeout_seconds=timeout_seconds)
 
     async def patch(
@@ -332,12 +332,12 @@ class ApiClient:
         body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
         timeout_seconds: float | None = None,
-    ) -> Self:
+    ) -> ApiResponse:
         return await self.request(HttpMethod.PATCH, path, headers=headers, body=body, timeout_seconds=timeout_seconds)
 
     async def delete(
         self, path: str, *, headers: dict[str, str] | None = None, timeout_seconds: float | None = None
-    ) -> Self:
+    ) -> ApiResponse:
         return await self.request(HttpMethod.DELETE, path, headers=headers, timeout_seconds=timeout_seconds)
 
 
@@ -358,7 +358,7 @@ class AioHttpProvider:
         headers: dict[str, str] | None = None,
         body: dict[str, Any] | None = None,
         timeout_seconds: float = 30.0,
-    ) -> Self:
+    ) -> ApiResponse:
         import aiohttp
 
         timeout = aiohttp.ClientTimeout(total=timeout_seconds)

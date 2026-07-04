@@ -371,7 +371,7 @@ class AgentRouter:
         *,
         strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCH,
         required_role: AgentRole | None = None,
-    ) -> Self:
+    ) -> RouteDecision:
         """按策略返回路由决策。
 
         Parameters
@@ -403,7 +403,7 @@ class AgentRouter:
 
     # ---- strategies ---------------------------------------------------
 
-    def _capability_match(self, domain: str) -> Self:
+    def _capability_match(self, domain: str) -> RouteDecision:
         ranked = self._ranked_roles(domain)
         primary_role, primary_score = ranked[0]
         agent_id = self._pick_agent(primary_role)
@@ -417,7 +417,7 @@ class AgentRouter:
             rationale=f"capability_match: {primary_role.value}={primary_score:.2f}",
         )
 
-    def _load_balance(self, domain: str) -> Self:
+    def _load_balance(self, domain: str) -> RouteDecision:
         """加权：score × (1 - utilization)；取最大。"""
         ranked = self._ranked_roles(domain)
         best_role = ranked[0][0]
@@ -450,7 +450,7 @@ class AgentRouter:
             ),
         )
 
-    def _specialist_first(self, domain: str, required_role: AgentRole) -> Self:
+    def _specialist_first(self, domain: str, required_role: AgentRole) -> RouteDecision:
         """强制指定角色，失败再回退到 capability_match 的 top-2。"""
         score = self.score(required_role, domain)
         ranked = self._ranked_roles(domain)
@@ -466,7 +466,7 @@ class AgentRouter:
             rationale=f"specialist_first: forced {required_role.value} (score={score:.2f})",
         )
 
-    def _fallback_chain(self, domain: str) -> Self:
+    def _fallback_chain(self, domain: str) -> RouteDecision:
         """按 capability 降序产生一条完整链，首位是 primary。"""
         ranked = self._ranked_roles(domain)
         primary_role, primary_score = ranked[0]
@@ -559,7 +559,7 @@ class HealthMonitor:
             self._ctx_util.append(0.0)
         self._completions.append(self._now())
 
-    def snapshot(self) -> Self:
+    def snapshot(self) -> SLOSnapshot:
         """生成当前窗口的 SLO 快照。"""
         latency_p99 = self._percentile(list(self._latencies), 99) if self._latencies else 0.0
         error_rate = (sum(self._errors) / len(self._errors)) if self._errors else 0.0
@@ -708,11 +708,11 @@ class AgentOrchestrator:
     # ---- accessors ---------------------------------------------------
 
     @property
-    def router(self) -> Self:
+    def router(self) -> AgentRouter:
         return self._router
 
     @property
-    def monitor(self) -> Self:
+    def monitor(self) -> HealthMonitor:
         return self._monitor
 
     # ---- main orchestration ------------------------------------------
@@ -729,7 +729,7 @@ class AgentOrchestrator:
         token_used: int = 0,
         token_budget: int | None = None,
         task_id: str | None = None,
-    ) -> Self:
+    ) -> OrchestrationResult:
         """对一个 directive 链执行 MCP 工具编排 + CoVe post-hook。
 
         Parameters
@@ -836,7 +836,7 @@ class AgentOrchestrator:
 
     # ---- internal -----------------------------------------------------
 
-    def _invoke_tool(self, directive: str, tool_name: str, arguments: dict[str, Any]) -> Self:
+    def _invoke_tool(self, directive: str, tool_name: str, arguments: dict[str, Any]) -> ToolCallRecord:
         """调用一次 MCP 工具；invoker=None 或抛错都返回失败记录。"""
         started = time.perf_counter()
         if self._invoker is None:

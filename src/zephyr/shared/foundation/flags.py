@@ -139,7 +139,7 @@ class FlagRegistry:
     def unregister(self, key: str) -> None:
         self._flags.pop(key, None)
 
-    def get(self, key: str) -> Self:
+    def get(self, key: str) -> FeatureFlag:
         flag = self._flags.get(key)
         if flag is None:
             raise FlagNotFoundError(

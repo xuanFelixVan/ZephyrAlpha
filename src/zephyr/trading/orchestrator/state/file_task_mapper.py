@@ -208,7 +208,7 @@ class FileTaskMapper:
         finally:
             conn.close()
 
-    def register_from_triage(self, yaml_path: Path) -> Self:
+    def register_from_triage(self, yaml_path: Path) -> RegisterReport:
         """从 triage-result.yaml 批量写入 tasks + task_files 表。"""
         report = RegisterReport()
 
@@ -267,7 +267,7 @@ class FileTaskMapper:
 
         return report
 
-    def sync_file_state(self, task_id: str | None = None) -> Self:
+    def sync_file_state(self, task_id: str | None = None) -> SyncReport:
         """
         全量或单任务三态校验（磁盘/frontmatter/tasks）。
 
