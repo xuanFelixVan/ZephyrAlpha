@@ -191,7 +191,9 @@ def generate_audit_log(
 
     src_root = Path(project_root) / "src"
 
-    for pf in list(src_root.rglob("*.py"))[:30]:
+    # 5.37.10 修复：原 [:30] 仅哈希前30个 .py 文件，项目有数千个 .py 文件，
+    # 第31个及之后的文件篡改完全不可检测。移除 [:30] 切片，哈希全部 .py 文件。
+    for pf in list(src_root.rglob("*.py")):
         try:
             content = pf.read_text(encoding="utf-8")
 
@@ -231,7 +233,9 @@ def generate_audit_log(
             f.write("file_hashes:\n")
 
             for fp, fh in src_files.items():
-                f.write(f"  {fp}: {fh[:16]}\n")
+                # 5.37.10 修复：原 fh[:16] 将 sha256 截断为16个十六进制字符（64位），
+                # 降低碰撞阻力。保留完整 sha256（64个十六进制字符=256位）。
+                f.write(f"  {fp}: {fh}\n")
 
         os.replace(tmp_path, str(audit_path))
 

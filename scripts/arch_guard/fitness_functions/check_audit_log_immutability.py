@@ -22,12 +22,13 @@ INV-016: policy_decision_ledger.jsonl 仅允许 append-only 写入，禁止删�
   - 定位 policy_decision_ledger.jsonl 文件
   - 检查文件最近是否被非追加式修改：
     1. git log 检查是否有完整的文件替换（非追加）
-    2. 如果文件不存在，跳过（此不变量在文件创建后激活）
+    2. 如果文件不存在，视为篡改风险（fail-closed）
 
-注意：当前 experimental 阶段 ledger 文件可能未创建——本脚本检查文件存在性。
-      文件不存在时视为 pass（不变量尚未触发），但给出信息提示。
+注意：5.37.7 修复——原实现文件不存在时返回0（pass），攻击者删除ledger文件即可
+      绕过不可篡改检查。改为 fail-closed：文件不存在返回1（fail），强制运维创建
+      ledger 文件以通过检查。
 
-exit: 0=pass (文件不存在或不可篡改), 1=篡改风险发现
+exit: 0=pass (文件存在且不可篡改), 1=篡改风险发现（含文件不存在）, 2=读取错误
 """
 
 from __future__ import annotations
@@ -49,10 +50,13 @@ LEDGER_RELATIVE = "data/ledger/policy_decision_ledger.jsonl"
 def main() -> int:
     ledger_path = REPO_ROOT / LEDGER_RELATIVE
 
+    # 5.37.7 修复：fail-closed。原实现文件不存在返回0（pass），攻击者删除 ledger
+    # 文件即可绕过不可篡改检查。改为返回1（fail），强制运维创建 ledger 文件。
     if not ledger_path.exists():
-        print(f"⚠ INV-016 审计日志检查 —— {LEDGER_RELATIVE} 文件尚未创建。")
-        print("   不变量 INV-016 将在文件首次创建后激活。当前视为通过。")
-        return 0
+        print(f"❌ INV-016 审计日志检查 —— {LEDGER_RELATIVE} 文件不存在。")
+        print("   fail-closed：文件缺失视为篡改风险（可能被删除以绕过检查）。")
+        print("   修复：创建 ledger 文件并写入首条记录以通过检查。")
+        return 1
 
     try:
         stat = ledger_path.stat()
@@ -64,8 +68,11 @@ def main() -> int:
 
     print(f"✅ INV-016 审计日志 —— {LEDGER_RELATIVE} 存在")
     print(f"   大小: {file_size} bytes | 最后修改: {file_mtime}")
-    print("   append-only 属性通过 JSONL 格式保证（每行一条独立记录）。")
-    print("   完整篡改检测需集成 Git hook / CI pipeline 哈希校验。")
+    # 5.37.11 修复：原描述"append-only 属性通过 JSONL 格式保证"是错误的——
+    # JSONL 格式不提供任何 append-only 保证，文件可被任意编辑/删除行。
+    # 改为明确警告：append-only 需依赖 hash chain + HMAC 签名验证，而非 JSONL 格式本身。
+    print("   ⚠ JSONL 格式本身不保证 append-only（文件可被编辑/删除行）。")
+    print("   完整篡改检测需依赖 hash chain + HMAC 签名验证 + Git hook / CI 哈希校验。")
     return 0
 
 if __name__ == "__main__":

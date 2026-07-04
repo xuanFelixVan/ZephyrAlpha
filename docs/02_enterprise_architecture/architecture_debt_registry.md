@@ -3573,6 +3573,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：所有通过write_to_core写入"核心审计链"的事件实际被丢弃
 - **影响**：声称的"不可变审计链"不存在；安全审计事件丢失
 - **修复**：实现真正的写入逻辑（写入events.jsonl + hash chain）
+- **状态**：STILL_VALID（保留）— 需实现真正写入逻辑（events.jsonl + hash chain），涉及审计链持久化架构设计，超出本轮快速修复范围
 
 #### 5.37.2 [HIGH] AuditChain.verify()永远返回True
 - **文件**：[models.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py#L116)
@@ -3580,6 +3581,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：审计链验证是stub，永远返回通过
 - **影响**：审计链被篡改也无法检测
 - **修复**：实现真正的hash chain验证
+- **状态**：STILL_VALID（保留）— AuditChain 是旧 stub 类，新实现为 AuditChainVerifier（已实现 hash chain）；需确认 AuditChain 是否仍有调用方，废弃或迁移，超出本轮快速修复范围
 
 #### 5.37.3 [HIGH] HourlyMerkleAggregator.aggregate返回空root_hash
 - **文件**：[merkle_hourly.py](file:///D:/ZephyrAlpha/src/zephyr/governance/merkle_hourly.py#L75)
@@ -3587,6 +3589,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：Merkle聚合是stub，不构建任何Merkle树
 - **影响**：基于Merkle root的完整性验证无意义
 - **修复**：调用MerkleAggregator.build()计算真实root_hash
+- **状态**：DRIFTED — audit_trail/merkle_hourly.py L94 已实现 `merkle_root = MerkleAggregator.build(entry_hashes)`，AggregationResult 含真实 merkle_root；债务描述基于旧代码，问题已不存在
 
 #### 5.37.4 [HIGH] MerkleHourlyBridge.verify存在AttributeError
 - **文件**：[merkle_hourly.py](file:///D:/ZephyrAlpha/src/zephyr/governance/merkle_hourly.py#L51)
@@ -3594,6 +3597,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：verify调用必抛AttributeError，被except Exception吞掉返回False
 - **影响**：所有Merkle验证永远返回False
 - **修复**：统一字段名为root_hash或merkle_root
+- **状态**：DRIFTED — AggregationResult 字段名已统一为 `merkle_root`（audit_trail/merkle_hourly.py L64），bridge verify L58 `result.merkle_root` 正确访问，问题已不存在
 
 #### 5.37.5 [HIGH] MCP审计日志缺actor/action/target字段
 - **文件**：[audit_logger.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py#L53)
@@ -3601,6 +3605,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：审计日志记录的是"某session调了某工具"，但不知道"谁对哪个实体做了什么操作"
 - **影响**：安全事件追溯时无法回答"谁删除了这条记录"，合规审计不达标
 - **修复**：增加actor_id/action/target_entity字段
+- **状态**：STILL_VALID（保留）— 需扩展 AUDIT_FIELDS 和 log_call 签名，涉及多调用方契约变更与历史日志兼容性，超出本轮快速修复范围
 
 #### 5.37.6 [HIGH] tamper_proof_audit裸调git commit绕过GitCommitGateway
 - **文件**：[tamper_proof_audit.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/tamper_proof_audit.py#L245)
@@ -3608,6 +3613,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：违反项目硬约束"所有git commit操作必须通过GitCommitGateway工具执行，禁止裸git commit"
 - **影响**：审计日志提交绕过五重门禁校验
 - **修复**：改用GitCommitGateway提交
+- **状态**：STILL_VALID（保留）— 需改用 GitCommitGateway，但 tamper_proof_audit 作为 drift_detection 子模块的自动提交逻辑，涉及运行时上下文（无 session_worktree）与 GitCommitGateway 集成设计，超出本轮快速修复范围
 
 #### 5.37.7 [HIGH] check_audit_log_immutability fail-open
 - **文件**：[check_audit_log_immutability.py](file:///D:/ZephyrAlpha/scripts/arch_guard/fitness_functions/check_audit_log_immutability.py#L52)
@@ -3615,6 +3621,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：审计日志被删除后检查反而通过
 - **影响**：攻击者删除ledger文件即可绕过不可篡改检查
 - **修复**：文件不存在时返回1（fail）
+- **状态**：FIXED — 已改为 fail-closed：文件不存在返回1（fail），强制运维创建 ledger 文件以通过检查
 
 #### 5.37.8 [MEDIUM] AuditChainVerifier链仅在内存，不持久化
 - **文件**：[audit_chain_verifier.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py#L66)
@@ -3622,6 +3629,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：进程重启后审计链丢失，无法做事后验证
 - **影响**：重启后链断裂，历史审计事件不可重放验证
 - **修复**：将chain持久化到events.jsonl（append-only + hash chain）
+- **状态**：STILL_VALID（保留）— append() 已通过 _core_writer 写入 AuditWriter（L97-111），但 _chain 本身仍内存；完整持久化需 events.jsonl append-only + hash chain 设计，超出本轮快速修复范围
 
 #### 5.37.9 [MEDIUM] AuditChainVerifier.clear()可绕过防篡改
 - **文件**：[audit_chain_verifier.py](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py#L165)
@@ -3629,6 +3637,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：篡改者只需调clear()即可销毁全部审计历史
 - **影响**：审计链可被轻易抹除，防篡改承诺失效
 - **修复**：移除clear()或增加权限校验
+- **状态**：STILL_VALID（保留）— 5.17.4 已加审计留痕（clear 前写 chain_cleared 事件），但 clear() 本身仍可调用；需增加权限校验或废弃 clear()，涉及调用方迁移，超出本轮快速修复范围
 
 #### 5.37.10 [MEDIUM] tamper_proof_audit仅哈希前30个文件且哈希截断
 - **文件**：[tamper_proof_audit.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/tamper_proof_audit.py#L194)
@@ -3636,6 +3645,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：项目有数千个.py文件，仅30个被哈希；哈希截断降低碰撞阻力
 - **影响**：第31个及之后的文件篡改完全不可检测
 - **修复**：哈希全部文件；保留完整sha256
+- **状态**：FIXED — 已移除 [:30] 切片哈希全部 .py 文件；fh[:16] 截断改为保留完整 sha256（64个十六进制字符=256位）
 
 #### 5.37.11 [MEDIUM] check_audit_log_immutability谎称JSONL=append-only
 - **文件**：[check_audit_log_immutability.py](file:///D:/ZephyrAlpha/scripts/arch_guard/fitness_functions/check_audit_log_immutability.py#L67)
@@ -3643,6 +3653,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：JSONL格式不提供任何append-only保证，文件可被任意编辑/删除行
 - **影响**：运维误以为不可篡改已保证
 - **修复**：实现真正的hash chain + HMAC签名验证
+- **状态**：FIXED — 已修正 print 描述为明确警告"JSONL 格式本身不保证 append-only"，并指明完整篡改检测需依赖 hash chain + HMAC 签名验证 + Git hook / CI 哈希校验
 
 #### 5.37.12 [MEDIUM] MCP审计日志不受retention/rotation覆盖
 - **文件**：[retention.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/retention.py#L38) + [log_rotation.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/log_rotation.py#L40)
@@ -3650,6 +3661,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：MCP审计日志无保留期策略，无轮转
 - **影响**：文件无限增长→磁盘耗尽
 - **修复**：将logs/mcp_audit/纳入retention策略；log_rotation支持.jsonl格式
+- **状态**：STILL_VALID（保留）— 需扩展 retention.py 路径覆盖与 log_rotation.py 的 glob 模式（*.json → *.jsonl），涉及 retention 策略设计与历史日志兼容性，超出本轮快速修复范围
 
 #### 5.37.13 [MEDIUM] integrity.py默认空HMAC key且verify_single哈希不一致
 - **文件**：[integrity.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/integrity.py#L102)
@@ -3657,6 +3669,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：默认无HMAC验证；两种验证方法哈希算法不一致
 - **影响**：默认部署无签名验证；verify_single与verify_chain结果矛盾
 - **修复**：默认从环境变量加载HMAC key；统一哈希逻辑
+- **状态**：FIXED — HMAC key 已改为优先传入参数，其次从环境变量 AUDIT_HMAC_KEY 加载；verify_single 哈希逻辑已统一为排除 entry_hash 和 hmac_signature，与 verify_chain 一致
 
 #### 5.37.14 严重度汇总
 

@@ -102,6 +102,11 @@ class IntegrityVerifier:
         hmac_key: str = "",
     ) -> None:
         self._event_log_path = Path(event_log_path)
+        # 5.37.13 修复：原默认空 HMAC key，默认部署无签名验证。
+        # 改为优先使用传入参数，其次从环境变量 AUDIT_HMAC_KEY 加载，最后回退空。
+        if not hmac_key:
+            import os
+            hmac_key = os.environ.get("AUDIT_HMAC_KEY", "")
         self._hmac_key = hmac_key.encode("utf-8") if hmac_key else b""
 
     def verify_chain(self) -> dict[str, Any]:
@@ -163,8 +168,11 @@ class IntegrityVerifier:
             for i, line in enumerate(f):
                 if i == event_index - 1:
                     event = json.loads(line.strip())
+                    # 5.37.13 修复：统一哈希逻辑——排除 entry_hash 和 hmac_signature，
+                    # 与 verify_chain() 保持一致，避免两种验证方法结果矛盾。
+                    verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
                     calc_hash = hashlib.sha256(
-                        json.dumps(event, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+                        json.dumps(verify_event, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
                     ).hexdigest()
                     result: dict[str, Any] = {
                         "status": "found",
@@ -175,7 +183,10 @@ class IntegrityVerifier:
                     if self._hmac_key:
                         stored_hmac = event.get("hmac_signature", "")
                         if stored_hmac:
-                            event_str = json.dumps(event, ensure_ascii=False, sort_keys=True, default=str)
+                            # 5.37.13 修复：HMAC 验证也排除 hmac_signature 和 entry_hash，
+                            # 与 verify_chain() 保持一致。
+                            hmac_event = {k: v for k, v in event.items() if k not in ("hmac_signature", "entry_hash")}
+                            event_str = json.dumps(hmac_event, ensure_ascii=False, sort_keys=True, default=str)
                             expected_hmac = hmac.new(
                                 self._hmac_key,
                                 event_str.encode("utf-8"),
