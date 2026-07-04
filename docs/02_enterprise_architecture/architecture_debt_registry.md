@@ -2976,6 +2976,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：容器启动即ModuleNotFoundError；HEALTHCHECK同样失败
 - **影响**：Docker镜像构建成功但无法运行；docker-compose up后zephyr-core容器立即退出
 - **修复**：改为存在的入口（如python -m zephyr.governance），或新建src/zephyr/__main__.py
+- **状态**：FIXED（2026-07-04）— CMD 改为 `zephyr.trading`（已存在的入口，含 SIGTERM 处理），HEALTHCHECK 改为 `python -c "import zephyr"`
 
 #### 5.31.2 [HIGH] docker-compose.yml healthcheck同样指向不存在的模块
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml#L29)
@@ -2983,6 +2984,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：与5.31.1同根因；compose的healthcheck永远unhealthy
 - **影响**：由于restart: unless-stopped，容器会反复重启-失败循环
 - **修复**：与5.31.1一并修正
+- **状态**：FIXED（2026-07-04）— healthcheck test 改为 `["CMD", "python", "-c", "import zephyr; print('ok')"]`
 
 #### 5.31.3 [HIGH] 无.dockerignore，构建上下文泄露全仓库
 - **文件**：缺失（Glob `**/.dockerignore`返回No file found）
@@ -2990,6 +2992,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：docker build发送整个项目目录作为上下文，包括.git/、data/vector_db/、.env（含密钥）
 - **影响**：构建缓慢；.env密钥可能被COPY进镜像层；镜像层缓存失效频繁
 - **修复**：新增.dockerignore，至少包含.git/、data/、tests/、docs/、.runtime/、.trae/、.env
+- **状态**：FIXED（2026-07-04）— 新建 .dockerignore，覆盖 VCS/构建产物/虚拟环境/测试文档/数据缓存/密钥/AI草稿/模型文件等
 
 #### 5.31.4 [HIGH] 版本号三重真源，值不一致（2.0.0 vs 4.6.0）
 - **文件**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml#L10)（version="2.0.0"）、[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L67)（_version_="4.6.0"）、[atomic_transaction_manager.py](file:///D:/ZephyrAlpha/src/zephyr/governance/financial_governance/atomic_transaction_manager.py#L577)（__version__="2.0.0"）
@@ -2997,6 +3000,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：版本对账失效；用户报告"我用的4.6.0"但pip说"2.0.0"
 - **影响**：排障混乱；自动化changelog/语义化版本工具无法确定真源
 - **修复**：pyproject.toml为唯一SSoT，__init__.py用importlib.metadata.version()动态读取
+- **状态**：FIXED（2026-07-04）— __init__.py 改用 importlib.metadata.version('zephyralpha') 动态读取（含 pyproject 回退），删除 atomic_transaction_manager.py L577 `__version__ = "2.0.0"`，统一为 pyproject.toml 2.0.0 单一真源
 
 #### 5.31.5 [MEDIUM] Dockerfile非多阶段构建，gcc与构建工具残留
 - **文件**：[Dockerfile](file:///D:/ZephyrAlpha/Dockerfile#L4)
@@ -3004,6 +3008,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：无builder stage编译C扩展后复制到slim runtime
 - **影响**：镜像比必要大约100MB+；生产镜像含编译器增加攻击面
 - **修复**：改为FROM python:3.12-slim AS builder + FROM python:3.12-slim双阶段
+- **状态**：STILL_VALID（保留）— 多阶段构建需分离 C 扩展编译逻辑与 runtime stage，影响 Dockerfile 结构性重构
 
 #### 5.31.6 [MEDIUM] 生产镜像用pip install -e .（可编辑模式）
 - **文件**：[Dockerfile](file:///D:/ZephyrAlpha/Dockerfile#L21)
@@ -3011,6 +3016,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：-e（editable）是为开发设计的模式，生产应pip install .
 - **影响**：镜像内src/目录必须保留且可写；pip show路径异常
 - **修复**：改为pip install --no-cache-dir .
+- **状态**：FIXED（2026-07-04）— Dockerfile L21 `pip install -e .` → `pip install --no-cache-dir .`
 
 #### 5.31.7 [MEDIUM] pyproject.toml无[project.scripts]/console_scripts
 - **文件**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml)
@@ -3018,6 +3024,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：包安装后无CLI命令；pip install zephyralpha后无法直接zephyralpha启动
 - **影响**：用户体验差；Dockerfile不得不硬编码python -m ...
 - **修复**：新增[project.scripts]段，如`zephyr = "zephyr.governance:main"`
+- **状态**：FIXED（2026-07-04）— 新增 `[project.scripts]` 段 `zephyr = "zephyr.trading.__main__:main"`
 
 #### 5.31.8 [MEDIUM] 无MANIFEST.in，sdist/wheel缺非Python文件
 - **文件**：缺失（Glob `**/MANIFEST.in`返回No file found）；pyproject.toml无[tool.setuptools.package-data]段
@@ -3025,6 +3032,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：setuptools默认仅打包.py文件；无MANIFEST.in → wheel/sdist不含.yaml/.sql
 - **影响**：pip install zephyralpha后包不可用（缺数据文件）；当前仅因pip install -e .掩盖
 - **修复**：新增MANIFEST.in或pyproject.toml [tool.setuptools.package-data]声明*.yaml/*.sql
+- **状态**：FIXED（2026-07-04）— 新建 MANIFEST.in，recursive-include config/src *.yaml *.yml *.json *.toml *.sql 等
 
 #### 5.31.9 [MEDIUM] CI无wheel/sdist构建测试
 - **文件**：[governance.yml](file:///D:/ZephyrAlpha/.github/workflows/governance.yml)
@@ -3032,6 +3040,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：5.31.8（缺MANIFEST.in）与5.31.7（无console_scripts）的问题不会被CI捕获
 - **影响**：发布时才发现wheel缺文件/无入口
 - **修复**：新增CI job `python -m build && pip install dist/*.whl && python -c "import zephyr"`
+- **状态**：STILL_VALID（保留）— 需新增 CI job，涉及 workflow 完整 job 矩阵设计
 
 #### 5.31.10 [MEDIUM] CI无Docker构建测试
 - **文件**：[governance.yml](file:///D:/ZephyrAlpha/.github/workflows/governance.yml)
@@ -3039,6 +3048,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：Dockerfile存在致命问题（5.31.1 CMD指向不存在的模块）但CI不触发构建
 - **影响**：Dockerfile损坏持续存在
 - **修复**：新增CI job `docker build -t zephyr-test . && docker run --rm zephyr-test python -c "import zephyr"`
+- **状态**：STILL_VALID（保留）— 需新增 CI job + Docker registry 凭据配置
 
 #### 5.31.11 [MEDIUM] _version_非标准命名（应为__version__）
 - **文件**：[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L67)
@@ -3046,6 +3056,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：import zephyr; zephyr.__version__抛AttributeError；setuptools的dynamic=["version"]默认找__version__
 - **影响**：标准工具无法获取运行时版本
 - **修复**：改为__version__或彻底删除改用importlib.metadata.version()
+- **状态**：FIXED（2026-07-04）— 与 5.31.4 一并修复，_version_ 改为 __version__ 并动态读取 importlib.metadata
 
 #### 5.31.12 [MEDIUM] requires-python与ruff target-version不一致
 - **文件**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml#L12)
@@ -3053,6 +3064,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：ruff target py312允许Python 3.12专有语法，但requires-python声明支持3.11
 - **影响**：若代码使用3.12语法，3.11用户安装后运行时SyntaxError
 - **修复**：统一为requires-python = ">=3.12"且ruff target-version = "py312"
+- **状态**：FIXED（2026-07-04）— requires-python 改为 >=3.12，mypy python_version 改为 3.12，与 ruff target-version py312 一致
 
 #### 5.31.13 [MEDIUM] docker-compose.yml挂载不存在的infra/目录
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml#L41)
@@ -3060,6 +3072,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：Prometheus与Grafana的配置通过volume挂载，但源路径不存在
 - **影响**：docker-compose up后Prometheus与Grafana容器无法正常工作
 - **修复**：创建infra/prometheus/prometheus.yml等，或从docker-compose.yml移除相关服务
+- **状态**：STILL_VALID（保留）— 需创建完整 prometheus.yml / grafana dashboards / datasources 配置，跨多个配置文件
 
 #### 5.31.14 [MEDIUM] docker-compose.yml env_file: .env但.env被忽略
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml#L16)
@@ -3067,6 +3080,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：新克隆者无.env，docker-compose up报env file .env not found直接退出
 - **影响**：首次运行体验断裂
 - **修复**：compose改为env_file: - .env.example作为默认，或用${VAR:-default}模式
+- **状态**：FIXED（2026-07-04）— env_file 改为 .env.example（仓库内已包含）
 
 #### 5.31.15 [LOW] docker-compose.yml使用已废弃的version字段
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml#L4)
@@ -3074,6 +3088,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：过时字段
 - **影响**：日志噪音；误导新开发者
 - **修复**：删除version: "3.9"行
+- **状态**：FIXED（2026-07-04）— 删除 docker-compose.yml L4 `version: "3.9"`
 
 #### 5.31.16 [LOW] CI path filter路径与实际文件位置不匹配
 - **文件**：[governance.yml](file:///D:/ZephyrAlpha/.github/workflows/governance.yml#L37)
@@ -3081,6 +3096,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：path filter仅匹配根目录，修改demo pipeline不会触发CI
 - **影响**：demo相关变更绕过CI验证
 - **修复**：改为`**/demo_e2e_pipeline.py`
+- **状态**：FIXED（2026-07-04）— governance.yml push/PR paths 两处均改为 `**/demo_e2e_pipeline.py`
 
 #### 5.31.17 [LOW] pyproject.toml元数据不完整（无authors/license/readme）
 - **文件**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml#L8)
@@ -3088,6 +3104,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：PEP 621推荐字段缺失
 - **影响**：pip show不显示作者/主页/许可证；企业合规扫描无法确定许可
 - **修复**：补充authors/license/readme/classifiers
+- **状态**：FIXED（2026-07-04）— 补 readme/LICENSE 引用/authors/keywords/classifiers（含 Python 3.12/3.13、MIT、金融行业分类）
 
 #### 5.31.18 严重度汇总
 
@@ -3097,6 +3114,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | MEDIUM | 10 | 5.31.5~5.31.14 |
 | LOW | 3 | 5.31.15/5.31.16/5.31.17 |
 | **合计** | **17** | |
+
+**第11轮清理结果（2026-07-04）**：
+- FIXED：13 条（5.31.1/5.31.2/5.31.3/5.31.4/5.31.6/5.31.7/5.31.8/5.31.11/5.31.12/5.31.14/5.31.15/5.31.16/5.31.17）
+- STILL_VALID 保留：4 条（5.31.5 多阶段构建 / 5.31.9 CI wheel 测试 / 5.31.10 CI Docker 测试 / 5.31.13 infra/ 目录配置）— 需跨文件结构性变更或 CI job 矩阵设计
 
 ---
 

@@ -1,0 +1,126 @@
+# ZephyrAlpha .dockerignore
+# 5.31.3 修复：原无 .dockerignore，构建上下文泄露全仓库（含 .git/、data/、.env 密钥）
+# 治本：仅允许构建所需文件进入上下文，加速构建 + 防止密钥泄露
+
+# === VCS ===
+.git/
+.gitignore
+.gitattributes
+
+# === Python 构建产物 ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg_info/
+build/
+dist/
+wheels/
+*.egg
+
+# === 虚拟环境 ===
+.venv/
+venv/
+env/
+ENV/
+
+# === 测试与文档（生产镜像无需） ===
+tests/
+docs/
+*.md
+!README.md
+
+# === 数据与缓存（运行时挂载，不入镜像） ===
+data/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# === 运行时状态 ===
+.runtime/
+.trae/
+.ailocks/
+.audit_cache/
+.zephyr/
+.zephyr_secure/
+logs/
+*.log
+*.log.*
+
+# === 临时与备份 ===
+tmp/
+temp/
+*.bak
+*.bak.*
+*.tmp
+*.temp
+*.baseline
+*.baseline_content
+_*.py
+_temp*.py
+_temp*.yaml
+_fix_*.py
+_debug_*.py
+_final_*.py
+_tmp_*.py
+
+# === IDE / 编辑器 ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === 密钥与机密（关键：禁止入镜像层） ===
+.env
+.env.local
+.env.*.local
+.env.qmt
+.secrets/
+*.key
+*.pem
+*.cert
+config/.env.postgres
+
+# === AI 草稿与工作目录 ===
+.aidrafts/
+临时工作区/
+模块候选池/
+_备份_/
+_backup_/
+_migration_conflict_backup/
+
+# === Docker 自身 ===
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# === 模型文件（4GB+，按需通过 volume 挂载） ===
+models/
+
+# === 数据库二进制 ===
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+data/databases/postgres/
+
+# === OS 文件 ===
+.DS_Store
+Thumbs.db
+
+# === 项目特定大文件 ===
+data/vector_db/
+data/vector_db_e2e_test/
+data/semantic_test/
+data/e2e_test/
+data/red_blue/
+data/cache/
+data/code_dedup_benchmark_history.json
+memory_graph.json
