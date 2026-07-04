@@ -162,7 +162,19 @@ class AuditChainVerifier:
     def length(self) -> int:
         return len(self._chain)
 
-    def clear(self) -> None:
+    def clear(self, reason: str = "") -> None:
+        # 5.17.4 修复：clear() 前写入审计事件，留痕可追溯（防止无审计抹除链）
+        if self._core_writer is not None:
+            try:
+                self._core_writer.write({
+                    "event_type": "chain_cleared",
+                    "agent_id": "audit_chain_verifier",
+                    "reason": reason or "unspecified",
+                    "chain_length": len(self._chain),
+                    "last_hash": self._last_hash,
+                })
+            except Exception:
+                pass
         self._chain.clear()
         self._last_hash = "0" * 64
 
