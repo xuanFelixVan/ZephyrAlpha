@@ -3787,6 +3787,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：健康指标采集后立即丢弃，历史趋势不可查
 - **影响**：健康度仪表盘无数据源；故障回溯无metric证据
 - **修复**：注入单例MetricsRegistry或模块级共享实例
+- **状态**：FIXED — 已改为模块级共享 _shared_metrics_registry 实例，首次调用初始化后复用，保留历史指标数据
 
 #### 5.39.2 [HIGH] cost_budget调用不存在的registry.counter()方法
 - **文件**：[cost_budget.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/cost_budget.py#L190)
@@ -3794,6 +3795,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：成本计量调用幻影方法，异常被静默
 - **影响**：成本预算告警完全失效；超支无感知
 - **修复**：实现counter()或改用现有increment() API；移除bare except
+- **状态**：DRIFTED — 实际代码 L193 已改用 `registry.inc(COUNT_LLM_CALLS, ...)` 和 `registry.observe("zephyr_llm_cost_usd", ...)`，不再调用 counter()；债务描述基于旧代码，问题已不存在
 
 #### 5.39.3 [MEDIUM] capability_id烘焙进metric名违反Prometheus基数最佳实践
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L188)
@@ -3801,6 +3803,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：每个capability_id生成新metric名，违反Prometheus"低基数名+高基数label"原则
 - **影响**：metric爆炸（数百capability × 多指标）；查询困难；存储膨胀
 - **修复**：改为`health_alive{capability_id="..."}`格式，capability_id作为label
+- **状态**：STILL_VALID（保留）— 需重构 metric 命名规范（capability_id 从 metric 名移到 label），涉及 Prometheus 查询/Grafana 仪表板/告警规则同步更新，超出本轮快速修复范围
 
 #### 5.39.4 [HIGH] api_client每请求生成新trace_id断链
 - **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/shared/api/api_client.py#L188)
@@ -3808,6 +3811,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：分布式追踪上下文不传播，同一逻辑链路的多次API调用trace_id不同
 - **影响**：链路追踪断裂；故障定位需手动关联；无法构建调用树
 - **修复**：从contextvar/线程本地继承trace_id；支持W3C Trace Context透传
+- **状态**：STILL_VALID（保留）— 需从 contextvar 继承 trace_id 并支持 W3C Trace Context 透传，涉及 trace context 架构设计（依赖5.39.5统一），超出本轮快速修复范围
 
 #### 5.39.5 [MEDIUM] 两套TraceContext实现互不互通
 - **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L66) vs [span_stub.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/traces/span_stub.py#L40)
@@ -3815,6 +3819,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：两套独立的trace上下文存储，互不可见
 - **影响**：跨模块trace_id丢失；async任务切换时上下文不一致
 - **修复**：统一为单一contextvars实现（参考trae_060 §5簇4已识别canonical_source）
+- **状态**：STILL_VALID（保留）— 需统一两套 TraceContext 实现（contextvars vs threading.local），涉及跨模块 trace 上下文架构收敛，超出本轮快速修复范围
 
 #### 5.39.6 [HIGH] SLOManager从未实例化，14条SLO定义为死代码
 - **文件**：[slo_manager.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/slo_manager.py#L39)
@@ -3822,6 +3827,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：SLO定义存在但无运行时消费
 - **影响**：SLO合规性无监控；错误预算无追踪；SLO违反无告警
 - **修复**：在boot()中实例化SLOManager并接入metric采集
+- **状态**：STILL_VALID（保留）— 需在 boot() 中实例化 SLOManager 并接入 metric 采集，涉及启动流程改造与 metric 数据源对接，超出本轮快速修复范围
 
 #### 5.39.8 [MEDIUM] RED方法论Error counter从未递增
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py)
@@ -3829,6 +3835,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：RED（Rate/Error/Duration）中Error维度为空
 - **影响**：错误率SLO无法计算；错误趋势不可视
 - **修复**：在健康检查失败路径increment error counter
+- **状态**：FIXED — 已在 _collect_metrics 中当 result.alive=False 时 increment `health.{cid}.errors` counter，补齐 RED Error 维度
 
 #### 5.39.9 [LOW] cardinality_limit声明但未强制执行
 - **文件**：[metrics_collector.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/metrics_collector.py)
@@ -3836,6 +3843,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：声明了基数上限但不强制
 - **影响**：高基数label可能导致存储爆炸（理论风险）
 - **修复**：在record()时检查label组合数，超限拒绝并告警
+- **状态**：DRIFTED — Grep `CARDINALITY_LIMIT` 在 src/zephyr 下无匹配，metrics_collector.py 无此常量定义；债务描述基于旧代码，问题已不存在
 
 #### 5.39.10 严重度汇总
 
