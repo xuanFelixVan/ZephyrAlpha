@@ -112,17 +112,19 @@ codification_at: "2026-05-15"
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
 | 1 | interface_base.py | §3.1 | DashboardBase + NotificationManagerBase + ApprovalGatewayBase + Notification + ApprovalRequest + NotificationLevel + ApprovalAction | 已实现 |
-| 2 | dashboard/app.py | §3.1 | Streamlit Dashboard 主应用 (DashboardApp + create_app + main) | 已实现 |
+| 2 | dashboard/app.py | §3.1 | 旧 Streamlit 入口（v3.1.0已弃用，见 app_panel.py；DashboardApp+create_app 保留供测试） | 已实现 |
 | 3 | dashboard/components/fitness_functions.py | §3.1 | Fitness Functions 组件 | 已实现 |
 | 4 | dashboard/components/gate_statistics.py | §3.1 | 门禁统计组件 | 已实现 |
 | 5 | dashboard/components/knowledge_overview.py | §3.1 | 知识库概览组件 | 已实现 |
 | 6 | dashboard/components/olap_trend.py | §3.1 | OLAP 趋势组件 | 已实现 |
 | 7 | dashboard/components/task_progress.py | §3.1 | 任务进度组件 | 已实现 |
-| 8 | dashboard/components/backtest_results.py | §16.7.1 | **v2.2.0新增** 回测结果可视化(净值曲线/回撤/Sharpe/IC/IR/3阶段门控) | 待施工 |
-| 9 | dashboard/components/tick_replay.py | §16.7.2 | **v2.2.0新增** Tick回放可视化(逐Tick回放/5档盘口快照/做T场景标记) | 待施工 |
-| 10 | dashboard/components/order_book.py | §16.7.3 | **v2.2.0新增** 5档盘口实时展示(askPrice/bidPrice/askVol/bidVol) | 待施工 |
-| 11 | dashboard/components/position_monitor.py | §16.7.4 | **v2.2.0新增** 实盘持仓监控(可用/冻结/当日买入/未实现盈亏) | 待施工 |
-| 12 | dashboard/components/trade_panel.py | §16.7.5 | **v2.2.0新增** 实盘交易面板(下单表单/订单列表/撤单/风控提示) | 待施工 |
+| 8 | dashboard/components/backtest_results.py | §16.7.1 | **v3.0.0迁移** 回测结果可视化(净值曲线/回撤/Sharpe/IC/IR/3阶段门控) | 已实现 |
+| 9 | dashboard/components/tick_replay.py | §16.7.2 | **v3.0.0迁移** Tick回放可视化(逐Tick回放/5档盘口快照/做T场景标记) | 已实现 |
+| 10 | dashboard/components/order_book.py | §16.7.3 | **v3.0.0迁移** 5档盘口实时展示(askPrice/bidPrice/askVol/bidVol) | 已实现 |
+| 11 | dashboard/components/position_monitor.py | §16.7.4 | **v3.0.0迁移** 实盘持仓监控(可用/冻结/当日买入/未实现盈亏) | 已实现 |
+| 12 | dashboard/components/trade_panel.py | §16.7.5 | **v3.0.0迁移** 实盘交易面板(下单表单/订单列表/撤单/风控提示) | 已实现 |
+| 13 | dashboard/components/chart_factory.py | §3.1 | **v3.0.0新增** 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow + v3.1.0 make_gate_chart/make_trend_line) | 已实现 |
+| 14 | dashboard/app_panel.py | §3.1 | **v3.1.0新增** Panel 主应用入口(pn.Tabs组装10 Tab, pn.serve+.servable) | 已实现 |
 
 ### §0.2 对齐验证矩阵
 
@@ -141,6 +143,8 @@ codification_at: "2026-05-15"
 | v2.0.0 (模板重构) | 同 v1.0.0 + 结构重组 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.1.0 (回填+禁止施工) | 同 v2.0.0 + 接口契约与代码对齐 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.2.0 (交易/回测组件规划) | 同 v2.1.0 | DefaultNotificationManager, DefaultApprovalGateway, 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | 规划5个新组件规格(§16.7.1~§16.7.5), 对接D_BACKTEST/D_EX_CORE/D_DATA, 待施工 |
+| v3.0.0 (Panel技术栈切换) | 同 v2.1.0 + 5个交易/回测组件迁移 + ChartFactory | DefaultNotificationManager, DefaultApprovalGateway | #ARCH-047: Streamlit→Panel+HoloViz+Plotly+plotly_resampler; 5组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)迁移; 新增ChartFactory(8工厂方法) |
+| v3.1.0 (仪表盘可运行化) | 同 v3.0.0 + 5旧页面迁移 + app_panel主入口 | DefaultNotificationManager, DefaultApprovalGateway | #ARCH-047: 5旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主入口(pn.Tabs 10 Tab); ChartFactory新增make_gate_chart/make_trend_line |
 
 ---
 
@@ -248,7 +252,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 1 | DashboardBase | 面板 OCP 扩展点（render/refresh） | — | 同步调用 |
 | 2 | NotificationManagerBase | 通知 OCP 扩展点（send/channels） | — | 同步调用 |
 | 3 | ApprovalGatewayBase | 审批 OCP 扩展点（submit/decide/pending） | — | 同步调用 |
-| 4 | DashboardApp | Panel 主应用 (v3.0.0从Streamlit迁移, #ARCH-047) | DashboardBase | 组合 |
+| 4 | DashboardPanelApp | Panel 主应用入口 (v3.1.0新建, #ARCH-047; 旧 DashboardApp 在 app.py 已弃用) | 10组件+ChartFactory | 组合 |
 | 5 | Dashboard 组件(5 个, v2.1.0) | 独立可渲染面板 | DashboardApp | 组合 |
 | 6 | Notification | 通知消息 dataclass | — | 数据传递 |
 | 7 | ApprovalRequest | 审批请求 dataclass | — | 数据传递 |
