@@ -17,6 +17,17 @@ from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
+# v1.3.0 新增 io/ 子包（#ARCH-047, 配合前端 Streamlit→Panel+HoloViz 重构）
+from zephyr.backtest.io import (
+    ArtifactNotFoundError,
+    BacktestSinkData,
+    BacktestRunArtifact,
+    build_artifact_from_data,
+    get_artifact,
+    list_artifacts,
+    save_artifact,
+    sink_backtest_result,
+)
 
 __all__ = [
     "BacktestEngineBase",
@@ -28,4 +39,14 @@ __all__ = [
     "engine_base",
     "implementations",
     "vectorized_engine",
+    # v1.3.0 新增（#ARCH-047）
+    "io",
+    "BacktestSinkData",
+    "BacktestRunArtifact",
+    "ArtifactNotFoundError",
+    "sink_backtest_result",
+    "save_artifact",
+    "get_artifact",
+    "list_artifacts",
+    "build_artifact_from_data",
 ]

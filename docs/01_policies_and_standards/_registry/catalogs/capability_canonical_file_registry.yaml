@@ -1292,6 +1292,36 @@ capabilities:
       - make_file_copy_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: file_placement_ttl_gate
+    canonical_override: src/zephyr/governance/commit_gates/file_placement_ttl_gate.py
+    aliases:
+      - FILE-PLACEMENT-TTL
+      - file-placement-ttl
+      - make_file_placement_ttl_gate
+      - file_placement_blocker
+      - permanent_zone_admission_gate
+      - ttl_path_consistency_gate
+      - 临时文件乱放阻断
+      - 永久区准入门禁
+    description: >-
+      FILE-PLACEMENT-TTL in-process 文件放置与TTL一致性门禁（ARCH-049，2026-07-05 治本）。
+      治本临时文件乱放根目录（幻觉/漂移物理证据）：ttl_vocabulary.yaml §146-152 设计了
+      永久区准入机制但标注"后续实现"未施工，GitCommitGateway 预留 allow_promote 参数但
+      无检查逻辑。本 gate 注册到 GitCommitGateway（priority=33，在 TTL-METADATA(32) 之后
+      R5-DIGIT-SUFFIX(35) 之前），三重校验：
+      ①永久区准入（PROMOTION_BLOCKED）：permanent.paths 新文件需 allow_promote=True
+      （exempt_subdirs 生成器豁免）；
+      ②TTL↔zone 一致性：frontmatter.ttl 与路径 zone 冲突→阻断；
+      ③根目录子目录准入：第一级目录不在 directory_zones paths→阻断（防 audit_assignment/ 乱建子目录）。
+      真源动态加载：directory_contract.yaml directory_zones + ttl_vocabulary.yaml Q1 criteria。
+      fail-closed：YAML 真源缺失/解析失败阻断 commit。
+      落地 ttl_vocabulary.yaml §146-152 + directory_contract.yaml gate=allow_promote_required。
+      解决发现性：新 AI 搜 "FILE-PLACEMENT-TTL/永久区准入/临时文件乱放阻断" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 in-process 路径TTL门禁。
+    integrity_anchors:
+      - make_file_placement_ttl_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: id_uniqueness_gate
     canonical_override: src/zephyr/governance/commit_gates/id_uniqueness_gate.py
     aliases:
@@ -2772,6 +2802,11 @@ creation_tokens:
     created_by: "session-phase1-ast-gate"
     capability: "file_copy_gate"
 
+  - file: "src/zephyr/governance/commit_gates/file_placement_ttl_gate.py"
+    token: "auto-file-placement-ttl-gate-20260705"
+    created_by: "session-sess-25000-20260705004324"
+    capability: "file_placement_ttl_gate"
+
   # --- Phase 3 reconciler→gate 收敛（2026-07-03，session-sess-29412） ---
   - file: "src/zephyr/governance/commit_gates/id_uniqueness_gate.py"
     token: "auto-id-uniqueness-gate-20260703"
@@ -3111,6 +3146,20 @@ creation_tokens:
     token: "auto-chart-factory-20260704"
     created_by: "session-sess-31524-20260704235603"
     capability: "dashboard_frontend"
+
+  # --- ARCH-047 D_BACKTEST io/ 子包（2026-07-05，session-sess-4172）---
+  - file: "src/zephyr/backtest/io/__init__.py"
+    token: "auto-backtest-io-init-20260705"
+    created_by: "session-sess-4172-20260705004316"
+    capability: "backtest_result_sink"
+  - file: "src/zephyr/backtest/io/backtest_result_sink.py"
+    token: "auto-backtest-result-sink-20260705"
+    created_by: "session-sess-4172-20260705004316"
+    capability: "backtest_result_sink"
+  - file: "src/zephyr/backtest/io/result_repository.py"
+    token: "auto-backtest-result-repository-20260705"
+    created_by: "session-sess-4172-20260705004316"
+    capability: "backtest_result_repository"
 
 # ============================================================================
 # 维护日志

@@ -100,7 +100,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/core/pit_manager.py | production | **PIT铁律管理器**(P1-30,PIT三公理+AS OF JOIN+Embargo期+pit_consistency_test) |
 | src/zephyr/backtest/core/decision_gate.py | production | **3阶段决策门控**(P0-14,IS→WFA→OOS不可跳级+参数稳定性区域+回测-实盘偏差监控) |
 | src/zephyr/backtest/io/__init__.py | planned | **v1.3.0新增** io子包入口(#ARCH-047) |
-| src/zephyr/backtest/io/backtest_result_sink.py | planned | **v1.3.0新增** 回测结果数据落地模块,从 BacktestResult 提取可视化数据(CTR-P1-016→BacktestResultData)(#ARCH-047) |
+| src/zephyr/backtest/io/backtest_result_sink.py | planned | **v1.3.0新增** 回测结果数据落地模块,从 BacktestResult 提取可视化数据(CTR-P1-016→BacktestSinkData)(#ARCH-047) |
 | src/zephyr/backtest/io/result_repository.py | planned | **v1.3.0新增** 回测产物持久化/检索模块,供 D_FRONTEND 消费(CTR-P1-017 BacktestRunArtifact)(#ARCH-047) |
 
 **Phase 2 — 过拟合检测与Walk-Forward**
@@ -212,7 +212,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 - services/nan_processor.py(SIM-55指标NaN处理器)
 
 **v1.3.0新增 — io/子目录(可视化产物落地)**:2个模块(配合 #ARCH-047 前端 Streamlit→Panel+HoloViz 重构)
-- io/backtest_result_sink.py — 从 BacktestResult(CTR-P1-016)提取可视化数据,转化为 BacktestResultData(depgraph 节点 475126,planned)
+- io/backtest_result_sink.py — 从 BacktestResult(CTR-P1-016)提取可视化数据,转化为 BacktestSinkData(depgraph 节点 475126,planned)
 - io/result_repository.py — 持久化/检索 BacktestRunArtifact(CTR-P1-017),供 D_FRONTEND backtest_results/tick_replay 组件消费(depgraph 节点 475127,planned)
 
 ### §1.4 运行场景约束
@@ -295,7 +295,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 │                                                                │
 │  ┌─────────────────── io/ ────────────────────┐               │
 │  │  backtest_result_sink.py  BacktestResult    │  v1.3.0新增    │
-│  │     → BacktestResultData(可视化数据模型)    │  (#ARCH-047)   │
+│  │     → BacktestSinkData(可视化数据模型)    │  (#ARCH-047)   │
 │  │  result_repository.py  持久化/检索           │               │
 │  │     BacktestRunArtifact(CTR-P1-017)         │               │
 │  └─────────────────────────────────────────────┘              │
@@ -696,28 +696,28 @@ class MyEngine(BacktestEngineBase):
 - **R-117/R-118/R-119模拟器(P1-24)**:R-117沙盒模拟器(隔离测试)/R-118滑点模拟器(实盘级精度)/R-119撮合模拟器(订单簿重放),Phase 2事件驱动引擎集成(来源:学习系统架构)
 
 **io/backtest_result_sink.py 详细规格**(P1 v1.3.0新增,来源:#ARCH-047 前端可视化技术栈从 Streamlit 到 Panel+HoloViz 第一性原理重构):
-- **职责**: 从 `engine_base.py` 的 `BacktestResult` dataclass(CTR-P1-016)提取回测结果,转化为前端可视化数据模型 `BacktestResultData`(净值曲线/绩效指标/交易明细等),供 D_FRONTEND backtest_results 组件渲染
+- **职责**: 从 `engine_base.py` 的 `BacktestResult` dataclass(CTR-P1-016)提取回测结果,转化为前端可视化数据模型 `BacktestSinkData`(净值曲线/绩效指标/交易明细等),供 D_FRONTEND backtest_results 组件渲染
 - **依赖**:
   - `from zephyr.backtest.core.engine_base import BacktestResult` (CTR-P1-016)
   - 上游 depgraph 边: sink(475126) → engine_base(470295)
 - **接口**:
   ```python
-  def sink_backtest_result(result: BacktestResult) -> BacktestResultData:
-      """从 BacktestResult 提取并转化为可视化数据模型 BacktestResultData。
+  def sink_backtest_result(result: BacktestResult) -> BacktestSinkData:
+      """从 BacktestResult 提取并转化为可视化数据模型 BacktestSinkData。
       - 输入: CTR-P1-016 BacktestResult dataclass 实例
-      - 输出: BacktestResultData(含净值序列/绩效汇总/交易明细等可视化字段)
+      - 输出: BacktestSinkData(含净值序列/绩效汇总/交易明细等可视化字段)
       - 副作用: 无(纯转换,不持久化)
       """
   ```
 - **约束**:
   - 仅做数据提取与转换,不持久化(持久化由 result_repository.py 负责)
   - BacktestResult 字段映射必须与 CTR-P1-016 契约冻结字段对齐(15字段)
-  - 转换幂等: 相同 BacktestResult 必须产生相同 BacktestResultData
+  - 转换幂等: 相同 BacktestResult 必须产生相同 BacktestSinkData
 
 **io/result_repository.py 详细规格**(P1 v1.3.0新增,来源:#ARCH-047 + CTR-P1-017 BacktestRunArtifact):
 - **职责**: 持久化 `BacktestRunArtifact`(CTR-P1-017),提供检索接口供 D_FRONTEND backtest_results/tick_replay 组件消费;封装存储细节(文件系统/对象存储/数据库),对前端透明
 - **依赖**:
-  - `from zephyr.backtest.io.backtest_result_sink import sink_backtest_result, BacktestResultData` (上游 sink)
+  - `from zephyr.backtest.io.backtest_result_sink import sink_backtest_result, BacktestSinkData` (上游 sink)
   - 上游 depgraph 边: repo(475127) → sink(475126)
 - **消费者**:
   - D_FRONTEND backtest_results 组件(回测结果可视化)
@@ -727,7 +727,7 @@ class MyEngine(BacktestEngineBase):
   ```python
   def save_artifact(artifact: BacktestRunArtifact) -> str:
       """持久化 BacktestRunArtifact, 返回 run_id。
-      - 输入: CTR-P1-017 BacktestRunArtifact(含 BacktestResultData + 元数据 + 时间戳)
+      - 输入: CTR-P1-017 BacktestRunArtifact(含 BacktestSinkData + 元数据 + 时间戳)
       - 输出: run_id(全局唯一,用于后续检索)
       - 副作用: 写入存储后端(具体后端由实现决定)
       """
