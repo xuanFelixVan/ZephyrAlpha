@@ -8278,6 +8278,17 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.152 依赖方向违规（39个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=39(依赖方向违规需重构模块层次)
+> **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=25, STILL_VALID=14。HIGH 5个中4个DRIFTED(protocols.py已改TYPE_CHECKING消除闭环+constants.py已改为shared内部依赖+blueprint_decomposer.py已下沉到shared.schema+runtime_types.py已改为shared.schema.base_config)+1个STILL_VALID(order.py仍从trading导入OrderSide/OrderStatus/OrderType,但属codegen生成需调整cross_layer_contracts.yaml);MEDIUM 25个中12个DRIFTED(budget_enforcement.py/context_budget.py/default_tca_engine.py/analytics_base.py等文件路径漂移或已删除,ops/observability目录已删除)+13个STILL_VALID(strategy_engine仍governance→pf_core+auditor.py仍infrastructure→governance.audit_trail+llm_bridge.py仍integration→governance.semantic_audit等跨层依赖需架构级重构);LOW 9个全部DRIFTED(ops/observability目录已删除导致5个shared→ops shim失效+shared/lifecycle/task_lifecycle_manager.py等4个代理文件已删除)。
+
+> **5.152 修复明细（2026-07-04）**：
+> - 本轮无代码修改（FIXED=0），全部为前期修复后的DRIFTED标记更新
+> - HIGH #2 protocols.py:35: 已用`if TYPE_CHECKING:`包裹`from zephyr.governance.rule_enforcement.gate_types import GateResult`，注释"5.22.3 修复：消除 shared → governance 顶层 import 闭环"，运行时无导入
+> - HIGH #3 constants.py:45: 已改为`from zephyr.shared.contracts.core.runtime_plane_tag import (...)`，下沉到shared内部
+> - HIGH #4 blueprint_decomposer.py:45-46: 已改为`from zephyr.shared.schema.task_types import ExecutionModel` + `from zephyr.shared.schema.severity_types import Priority, SafetyLevel`，下沉到shared.schema
+> - HIGH #5 runtime_types.py:25: 已改为`from zephyr.shared.schema.base_config import BASE_CONFIG`，下沉到shared.schema
+> - LOW #31-35: ops/observability/目录已整体删除，5个shared→ops re-export shim失效
+> - LOW #36-39: shared/lifecycle/task_lifecycle_manager.py、shared/queue/task_scheduler.py等代理文件已删除
+> - 保留STILL_VALID 14处: HIGH #1 order.py(codegen生成需调整YAML)+MEDIUM 13处跨层依赖(auditor.py/llm_bridge.py/strategy_engine等需架构级重构下沉类型真源)
 
 #### HIGH（5个：底层依赖高层/循环依赖）
 
