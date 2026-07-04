@@ -48,5 +48,8 @@ forbidden_modules =
     zephyr.data_eng
     zephyr.data_governance
     zephyr.data_security
+    zephyr.governance
+    zephyr.infrastructure
+    zephyr.integration
 ignore_imports =
     zephyr.shared.contract_bus
