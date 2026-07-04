@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.position_monitor
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.ex_core.adapters.miniqmt_broker
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.ex_core.adapters.miniqmt_broker
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,29 +14,36 @@
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-position_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""position_monitor · 实盘持仓监控组件（v2.2.0新增）
+"""position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.4
 数据源: D_EX_CORE MiniQmtBroker.get_positions() 实盘持仓快照
-渲染依赖: streamlit（持仓表格）
+渲染依赖: Panel(布局) + ChartFactory.make_position(表格)
+
+v3.0.0 变更 (#ARCH-047):
+  - Streamlit → Panel (布局)
+  - Markdown 表格 → ChartFactory.make_position (callback仅编排)
+  - 1s Bokeh WebSocket 推送(原生WebSocket, 无rerun开销)
 
 布局:
-  - 顶部: 账户资金卡片(总资产/可用资金/当日盈亏)
-  - 中部: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
-  - T+1锁定行: 红色背景标记，鼠标悬停提示"当日买入, 次日可卖"
-刷新策略: 1s rerun
+  - 顶部: 账户资金卡片(总资产/可用资金/持仓市值/当日盈亏)
+  - 中部: 持仓表格(ChartFactory.make_position)
+  - T+1锁定行: 红色背景标记
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
-from decimal import Decimal
 from typing import Any, Optional
 
 try:
-    import streamlit as st
-except ImportError:
-    st = None
+    import panel as pn
+except ImportError:  # 测试环境无 panel
+    pn = None
+
+from zephyr.frontend.dashboard.components.chart_factory import (
+    ChartFactoryError,
+    make_position,
+)
 
 
 @dataclass
@@ -69,7 +76,7 @@ class PositionMonitorData:
     total_asset: float = 0.0          # 总资产 = cash + 持仓市值
     available_cash: float = 0.0       # 可用资金
     market_value_total: float = 0.0   # 持仓总市值
-    today_pnl: float = 0.0            # 当日盈亏（占位，需 D_EX_CORE 提供）
+    today_pnl: float = 0.0            # 当日盈亏
     positions: list[PositionItem] = field(default_factory=list)
     timestamp: str = ""
 
@@ -99,18 +106,12 @@ def fetch_position_monitor(
     cost_prices: Optional[dict[str, float]] = None,
     symbol_names: Optional[dict[str, str]] = None,
 ) -> PositionMonitorData:
-    """从 D_EX_CORE MiniQmtBroker 获取持仓
+    """从 D_EX_CORE MiniQmtBroker 获取持仓（纯函数，无副作用）
 
     蓝图 §16.7.4:
       - 输入: MiniQmtBroker 实例（依赖注入）
       - 输出: PositionMonitorData（持仓+盈亏+T+1标记）
       - T+1标记: today_bought > 0 → is_t_plus_1_locked=True
-
-    MiniQmtBroker.get_positions() 返回 PositionSnapshot:
-      cash / holdings(dict[symbol, Decimal]) / market_values(dict[symbol, Decimal])
-      / total_market_value / as_of_timestamp / portfolio_id
-
-    Backtest 兼容: 也支持 Portfolio 对象（cash/holdings/total_nav）。
     """
     if miniqmt_broker is None:
         return PositionMonitorData()
@@ -123,7 +124,6 @@ def fetch_position_monitor(
     if snapshot is None:
         return PositionMonitorData()
 
-    # 兼容 PositionSnapshot 和 Portfolio
     cash = _to_float(getattr(snapshot, "cash", 0.0))
     holdings = getattr(snapshot, "holdings", {}) or {}
     market_values = getattr(snapshot, "market_values", {}) or {}
@@ -149,7 +149,6 @@ def fetch_position_monitor(
         cost_price = _to_float(cost_prices.get(symbol), last_price)
         today_bought = _to_int(today_bought_map.get(symbol, 0))
 
-        # 可用 = 总持仓 - 今日买入（T+1锁定）- 冻结
         available = max(0, qty - today_bought)
         frozen = qty - available
 
@@ -184,15 +183,15 @@ def fetch_position_monitor(
 
 
 def render_position_monitor(data: PositionMonitorData) -> dict[str, Any]:
-    """Streamlit 渲染持仓监控
+    """Panel+HoloViz 渲染持仓监控（v3.0.0, #ARCH-047）
 
     布局:
-      - 顶部: 账户资金卡片(总资产/可用资金/当日盈亏)
-      - 中部: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
+      - 顶部: 账户资金卡片(总资产/可用资金/持仓市值/当日盈亏)
+      - 中部: 持仓表格(ChartFactory.make_position)
       - T+1锁定行: 红色背景标记
 
-    刷新: 1s rerun
-    测试环境(无 streamlit)仅返回 dict.
+    callback仅编排: 图表生成委托 ChartFactory.make_position.
+    测试环境(无 panel)仅返回 dict payload.
     """
     payload: dict[str, Any] = {
         "account_id": data.account_id,
@@ -218,49 +217,87 @@ def render_position_monitor(data: PositionMonitorData) -> dict[str, Any]:
             }
             for p in data.positions
         ],
+        "renderer": "panel" if pn is not None else "dict",
     }
 
-    if st is None:
+    if pn is None:
         return payload
 
-    st.subheader("实盘持仓监控")
+    # ===== 顶部：账户资金卡片 =====
+    pnl_color = "#28a745" if data.today_pnl >= 0 else "#dc3545"
+    pnl_prefix = "+" if data.today_pnl >= 0 else ""
+    metric_cards = [
+        pn.pane.Markdown(
+            f"**总资产**\n\n## {data.total_asset:,.2f}",
+            styles={"text-align": "center", "padding": "8px",
+                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+        ),
+        pn.pane.Markdown(
+            f"**可用资金**\n\n## {data.available_cash:,.2f}",
+            styles={"text-align": "center", "padding": "8px",
+                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+        ),
+        pn.pane.Markdown(
+            f"**持仓市值**\n\n## {data.market_value_total:,.2f}",
+            styles={"text-align": "center", "padding": "8px",
+                    "border": "1px solid #e0e0e0", "border-radius": "4px"},
+        ),
+        pn.pane.Markdown(
+            f"**当日盈亏**\n\n## {pnl_prefix}{data.today_pnl:,.2f}",
+            styles={"text-align": "center", "padding": "8px", "color": pnl_color,
+                    "border": f"1px solid {pnl_color}", "border-radius": "4px"},
+        ),
+    ]
+    metrics_row = pn.Row(*metric_cards, sizing_mode="stretch_width")
+
+    layout_items: list[Any] = [
+        pn.pane.Markdown("## 实盘持仓监控"),
+    ]
     if data.timestamp:
-        st.caption(f"快照时间: {data.timestamp}")
+        layout_items.append(pn.pane.Markdown(f"*快照时间: {data.timestamp}*"))
+    layout_items.append(metrics_row)
 
-    # 顶部：账户资金卡片
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("总资产", f"{data.total_asset:,.2f}")
-    col2.metric("可用资金", f"{data.available_cash:,.2f}")
-    col3.metric("持仓市值", f"{data.market_value_total:,.2f}")
-    pnl_color_prefix = "+" if data.today_pnl >= 0 else ""
-    col4.metric("当日盈亏", f"{pnl_color_prefix}{data.today_pnl:,.2f}")
-
-    # 中部：持仓表格
+    # ===== 中部：持仓表格 =====
     if not data.positions:
-        st.info("当前无持仓")
-        return payload
+        layout_items.append(pn.pane.Alert("当前无持仓", alert_type="info"))
+    else:
+        # 转换为 dict 列表给 ChartFactory.make_position
+        pos_dicts = [
+            {
+                "symbol": p.symbol,
+                "name": p.name,
+                "quantity": p.quantity,
+                "available": p.available_quantity,
+                "frozen": p.frozen_quantity,
+                "today_bought": p.today_bought,
+                "cost_price": p.cost_price,
+                "last_price": p.last_price,
+                "unrealized_pnl": p.unrealized_pnl,
+                "unrealized_pnl_pct": p.unrealized_pnl_pct,
+                "is_t_plus_1_locked": p.is_t_plus_1_locked,
+            }
+            for p in data.positions
+        ]
+        try:
+            pos_fig = make_position(
+                positions=pos_dicts,
+                title="持仓明细",
+            )
+            layout_items.append(pos_fig)
+        except ChartFactoryError:
+            pass
 
-    st.markdown("### 持仓明细")
-    header = "| Symbol | 名称 | 持仓 | 可用 | 冻结 | 当日买入 | 成本价 | 最新价 | 盈亏 | 盈亏% | T+1 |\n"
-    header += "|--------|------|------|------|------|---------|--------|--------|------|-------|-----|\n"
-    rows = ""
-    for p in data.positions:
-        pnl_str = f"{p.unrealized_pnl:+.2f}"
-        pnl_pct_str = f"{p.unrealized_pnl_pct:+.2%}"
-        t1_str = "🔴锁定" if p.is_t_plus_1_locked else "—"
-        rows += f"| {p.symbol} | {p.name} | {p.quantity} | {p.available_quantity} | {p.frozen_quantity} | {p.today_bought} | {p.cost_price:.3f} | {p.last_price:.3f} | {pnl_str} | {pnl_pct_str} | {t1_str} |\n"
-    st.markdown(header + rows)
+        # T+1 锁定警告
+        locked = [p for p in data.positions if p.is_t_plus_1_locked]
+        if locked:
+            layout_items.append(pn.pane.Alert(
+                f"⚠ **T+1 锁定**：以下 {len(locked)} 个标的存在当日买入，次日才能卖出 — "
+                + ", ".join(p.symbol for p in locked),
+                alert_type="warning",
+            ))
 
-    # T+1 锁定行额外提示
-    locked_positions = [p for p in data.positions if p.is_t_plus_1_locked]
-    if locked_positions:
-        st.warning(
-            f"⚠ **T+1 锁定**：以下 {len(locked_positions)} 个标的存在当日买入，次日才能卖出 — "
-            + ", ".join(p.symbol for p in locked_positions)
-        )
-
-    st.caption("刷新策略: 1s rerun")
-
+    layout = pn.Column(*layout_items, sizing_mode="stretch_width")
+    payload["_layout"] = layout
     return payload
 
 

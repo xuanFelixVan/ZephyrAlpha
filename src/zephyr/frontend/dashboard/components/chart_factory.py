@@ -379,6 +379,266 @@ def make_heatmap(
     return fig
 
 
+def make_orderbook(
+    ask_price: list[float],
+    bid_price: list[float],
+    ask_vol: list[int],
+    bid_vol: list[int],
+    last_price: float = 0.0,
+    pressure_ratio: float = 0.0,
+    title: str = "Order Book",
+    width: int = 800,
+    height: int = 400,
+) -> Any:
+    """生成5档盘口可视化（Plotly 水平条形图）
+
+    蓝图 §16.7.3: 5档盘口展示, ask红/bid绿, 压力比仪表盘
+    ARCH-047: callback仅编排, 图表生成委托此工厂方法
+
+    Args:
+        ask_price: 5档卖价 [ask1~ask5]
+        bid_price: 5档买价 [bid1~bid5]
+        ask_vol: 5档卖量
+        bid_vol: 5档买量
+        last_price: 最新价
+        pressure_ratio: 盘口压力比 = bid_vol_total / ask_vol_total
+        title: 图表标题
+        width: 图表宽度
+        height: 图表高度
+
+    Returns:
+        plotly Figure | dict payload（无 plotly 时）
+    """
+    if not ask_price and not bid_price:
+        raise ChartFactoryError("ask_price/bid_price 不能同时为空")
+
+    if go is None:
+        return {
+            "type": "orderbook",
+            "ask_levels": len(ask_price),
+            "bid_levels": len(bid_price),
+            "last_price": last_price,
+            "pressure_ratio": pressure_ratio,
+            "title": title,
+        }
+
+    # 构建5档标签 (ask5→ask1 降序显示, bid1→bid5 降序显示)
+    n_ask = len(ask_price)
+    n_bid = len(bid_price)
+    ask_labels = [f"ask{n_ask - i}" for i in range(n_ask)]  # ask5, ask4, ..., ask1
+    bid_labels = [f"bid{i + 1}" for i in range(n_bid)]  # bid1, bid2, ..., bid5
+
+    # 卖盘条形图 (红色, 从上到下 ask5→ask1)
+    ask_bar = go.Bar(
+        x=[-v for v in ask_vol],  # 负值让 ask 朝左
+        y=ask_labels,
+        orientation="h",
+        name="Ask",
+        marker_color="#dc3545",
+        text=[f"{p:.3f} × {v}" for p, v in zip(ask_price, ask_vol)],
+        textposition="auto",
+        hovertemplate="Ask %{y}: %{text}<extra></extra>",
+    )
+
+    # 买盘条形图 (绿色, 从上到下 bid1→bid5)
+    bid_bar = go.Bar(
+        x=bid_vol,
+        y=bid_labels,
+        orientation="h",
+        name="Bid",
+        marker_color="#28a745",
+        text=[f"{p:.3f} × {v}" for p, v in zip(bid_price, bid_vol)],
+        textposition="auto",
+        hovertemplate="Bid %{y}: %{text}<extra></extra>",
+    )
+
+    fig = go.Figure(data=[ask_bar, bid_bar])
+    fig.update_layout(
+        title=f"{title} | Last={last_price:.3f} | Pressure={pressure_ratio:.2f}",
+        xaxis_title="Volume (ask ← / bid →)",
+        barmode="overlay",
+        template="plotly_white",
+        height=height,
+        width=width,
+        showlegend=True,
+        xaxis=dict(zeroline=True, zerolinewidth=2, zerolinecolor="#333"),
+    )
+    return fig
+
+
+def make_position(
+    positions: list[dict],
+    title: str = "Position Monitor",
+    width: int = 1000,
+    height: int = 400,
+) -> Any:
+    """生成持仓表格（Plotly Table）
+
+    蓝图 §16.7.4: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
+    ARCH-047: callback仅编排, 图表生成委托此工厂方法
+
+    Args:
+        positions: 持仓列表, 每项格式:
+            {symbol, name, quantity, available, frozen, today_bought,
+             cost_price, last_price, unrealized_pnl, unrealized_pnl_pct,
+             is_t_plus_1_locked}
+        title: 表格标题
+        width: 表格宽度
+        height: 表格高度
+
+    Returns:
+        plotly Figure(go.Table) | dict payload（无 plotly 时）
+    """
+    if not positions:
+        raise ChartFactoryError("positions 不能为空")
+
+    if go is None:
+        return {
+            "type": "position",
+            "rows": len(positions),
+            "title": title,
+        }
+
+    # 提取各列
+    symbols = [p.get("symbol", "") for p in positions]
+    names = [p.get("name", "") for p in positions]
+    quantities = [p.get("quantity", 0) for p in positions]
+    availables = [p.get("available", 0) for p in positions]
+    frozens = [p.get("frozen", 0) for p in positions]
+    today_boughts = [p.get("today_bought", 0) for p in positions]
+    cost_prices = [f"{p.get('cost_price', 0):.3f}" for p in positions]
+    last_prices = [f"{p.get('last_price', 0):.3f}" for p in positions]
+    pnls = [p.get("unrealized_pnl", 0) for p in positions]
+    pnl_pcts = [p.get("unrealized_pnl_pct", 0) for p in positions]
+    t1_flags = ["T+1" if p.get("is_t_plus_1_locked") else "—" for p in positions]
+
+    # 盈亏颜色编码
+    pnl_colors = ["#dc3545" if v < 0 else "#28a745" for v in pnls]
+    pnl_text = [f"{v:+.2f}" for v in pnls]
+    pnl_pct_text = [f"{v:+.2%}" for v in pnl_pcts]
+
+    # T+1 锁定行红色背景
+    row_colors = ["#ffe6e6" if p.get("is_t_plus_1_locked") else "white" for p in positions]
+
+    fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=["Symbol", "名称", "持仓", "可用", "冻结", "当日买入",
+                    "成本价", "最新价", "盈亏", "盈亏%", "T+1"],
+            fill_color="#f0f0f0",
+            align="center",
+            font=dict(size=12, color="#333"),
+        ),
+        cells=dict(
+            values=[symbols, names, quantities, availables, frozens, today_boughts,
+                    cost_prices, last_prices, pnl_text, pnl_pct_text, t1_flags],
+            fill_color=[row_colors],
+            align="center",
+            font=dict(size=11),
+        ),
+    )])
+
+    fig.update_layout(
+        title=title,
+        height=height,
+        width=width,
+    )
+    return fig
+
+
+def make_orderflow(
+    orders: list[dict],
+    title: str = "Order Flow",
+    width: int = 1000,
+    height: int = 400,
+) -> Any:
+    """生成订单流可视化（Plotly Table + 状态颜色编码）
+
+    蓝图 §16.7.5: 订单列表(实时状态更新, 支持撤单按钮, Lightweight Charts订单流HTML Pane)
+    ARCH-047: callback仅编排, 图表生成委托此工厂方法
+
+    Args:
+        orders: 订单列表, 每项格式:
+            {order_id, broker_order_id, symbol, side, quantity, price,
+             order_type, status, filled_quantity, avg_fill_price,
+             timestamp, error_message}
+        title: 表格标题
+        width: 表格宽度
+        height: 表格高度
+
+    Returns:
+        plotly Figure(go.Table) | dict payload（无 plotly 时）
+    """
+    if not orders:
+        raise ChartFactoryError("orders 不能为空")
+
+    if go is None:
+        return {
+            "type": "orderflow",
+            "rows": len(orders),
+            "title": title,
+        }
+
+    # 状态颜色映射
+    status_colors = {
+        "FILLED": "#28a745",       # 绿色
+        "CANCELLED": "#6c757d",    # 灰色
+        "REJECTED": "#dc3545",     # 红色
+        "EXPIRED": "#343a40",      # 黑色
+        "PENDING": "#ffc107",      # 黄色
+        "SUBMITTED": "#17a2b8",    # 青色
+        "ACCEPTED": "#007bff",     # 蓝色
+        "PARTIALLY_FILLED": "#fd7e14",  # 橙色
+    }
+
+    # 提取各列
+    order_ids = [o.get("broker_order_id") or o.get("order_id", "") for o in orders]
+    symbols = [o.get("symbol", "") for o in orders]
+    sides = [o.get("side", "").upper() for o in orders]
+    quantities = [o.get("quantity", 0) for o in orders]
+    prices = [f"{o.get('price', 0):.3f}" for o in orders]
+    order_types = [o.get("order_type", "").upper() for o in orders]
+    statuses = [o.get("status", "") for o in orders]
+    filled_qtys = [o.get("filled_quantity", 0) for o in orders]
+    avg_prices = [f"{o.get('avg_fill_price', 0):.3f}" for o in orders]
+    timestamps = [o.get("timestamp", "") for o in orders]
+
+    # 状态行颜色
+    row_colors = [status_colors.get(s, "white") for s in statuses]
+    # 使用浅色背景
+    light_colors = []
+    for s in statuses:
+        c = status_colors.get(s, "#ffffff")
+        # 转换为浅色版本
+        if c.startswith("#"):
+            light_colors.append(c + "33")  # 添加 alpha
+        else:
+            light_colors.append("white")
+
+    fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=["Order ID", "Symbol", "Side", "Qty", "Price",
+                    "Type", "Status", "Filled", "Avg Price", "Timestamp"],
+            fill_color="#f0f0f0",
+            align="center",
+            font=dict(size=12, color="#333"),
+        ),
+        cells=dict(
+            values=[order_ids, symbols, sides, quantities, prices,
+                    order_types, statuses, filled_qtys, avg_prices, timestamps],
+            fill_color=[light_colors],
+            align="center",
+            font=dict(size=11),
+        ),
+    )])
+
+    fig.update_layout(
+        title=title,
+        height=height,
+        width=width,
+    )
+    return fig
+
+
 __all__ = [
     "ChartFactoryError",
     "DATASHADER_THRESHOLD",
@@ -387,4 +647,7 @@ __all__ = [
     "make_kline",
     "make_tick",
     "make_heatmap",
+    "make_orderbook",
+    "make_position",
+    "make_orderflow",
 ]
