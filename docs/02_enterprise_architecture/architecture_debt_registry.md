@@ -2384,80 +2384,43 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 审计维度：断言质量/mock滥用/测试DB隔离/skip滥用/参数化覆盖/测试命名/测试依赖顺序/覆盖率盲区/fixture泄漏
 > 审计方法：Grep + Read真实文件取证（tests/目录全量扫描）
+>
+> **[✓ FIXED: 2026-07-04]** 10条已修复并删除（原5.21.1~5.21.8/5.21.10/5.21.11）：
+> - 原5.21.1 删除占位测试文件test_e_contracts.py
+> - 原5.21.2 assert True替换为RED检测断言（test_rule_red_blue.py 5处 + test_f21_event_driven.py 3处）
+> - 原5.21.3 永真式断言替换为有信息量断言（4文件8处）
+> - 原5.21.4 test_schema_version_consistency补充assert
+> - 原5.21.5 生产库governance.db改为tmp_path（+skip因schema不匹配待重写）
+> - 原5.21.6 生产PG测试标记skip
+> - 原5.21.7 硬编码D:\ZephyrAlpha改用全局conftest fixture
+> - 原5.21.8 硬编码d:/tmp/改为tempfile.gettempdir()
+> - 原5.21.10 _STANDIN_CACHE全局变量改为@pytest.fixture(scope="session")+tmp_path_factory（4个MCP测试文件）
+> - 原5.21.11 弱边界断言<=1100改为精确等值==1000
 
-#### 5.21.1 占位测试文件无任何断言验证（assert True）【MEDIUM】
-- 证据：[test_e_contracts.py:7-9](file:///d:/ZephyrAlpha/tests/e/test_e_contracts.py) `def test_e_contracts_placeholder(): """占位测试——确保可被pytest收集。""" assert True`；整个文件仅一个assert True，docstring自承"占位/待实现"
-- 病根：根因5（占位即债务，凑齐测试文件计数而非验证行为）
-- 修复：删除或写入真实契约断言，禁止assert True占位通过CI
-
-#### 5.21.2 复杂逻辑后以assert True收尾——测试恒通过【HIGH】
-- 证据：[test_rule_red_blue.py:142,168,212,291,361](file:///d:/ZephyrAlpha/tests/rule/test_rule_red_blue.py) 每个测试在if/elif/else中调用 `_record(...,"RED",...)` 标记违规，但末行均为 `assert True`；[test_f21_event_driven.py:60,66,189](file:///d:/ZephyrAlpha/tests/f_lifecycle/test_f21_event_driven.py) 同模式；pytest永远PASS
-- 病根：根因5（副作用即结论，把验证结果写进_record而非assert）
-- 修复：将 `_record(...,"RED",...)` 改为 `pytest.fail(...)` 或 `assert False,...`
-
-#### 5.21.3 永真式断言（tautology）【HIGH】
-- 证据：[test_sequence_guard_agent_rbac.py:91](file:///d:/ZephyrAlpha/tests/agent_rbac/test_sequence_guard_agent_rbac.py) `assert result is not None or result is None`（A or ¬A恒真）；[test_pipeline_skill_injection.py:223](file:///d:/ZephyrAlpha/tests/autonomy/test_pipeline_skill_injection.py) `assert len(l3)>=0`；[test_adversarial_mutator.py:78,116,117](file:///d:/ZephyrAlpha/tests/llm_security/test_adversarial_mutator.py) `assert len(results)>=0`/`assert report.total_mutations>=0`/`assert report.block_rate_pct>=0.0`；[test_phase_g_perf.py:945,946,969](file:///d:/ZephyrAlpha/tests/trading/test_phase_g_perf.py) `assert stats["active_drift_alerts"]>=0` 等
-- 病根：根因5（凑数式断言，用数学恒真式伪装覆盖率）
-- 修复：替换为有信息量的边界，ruff规则禁掉 `>=0`/`is not None or...is None`
-
-#### 5.21.4 测试函数零assert仅print+return False【HIGH】
-- 证据：[test_db_integration.py:28-63,66-94,98-151,154-205](file:///d:/ZephyrAlpha/tests/db/test_db_integration.py) 四个 `def test_...()` 函数全部使用 `print("  ✗ FAIL:...")` + `return False/True`，无任何assert语句；pytest即使数据全部损坏也判PASS
-- 病根：根因5（脚本化测试伪装为pytest）
-- 修复：函数末尾加 `assert passed,"..."` 或迁移pytest --assert-rewrite
-
-#### 5.21.5 test_all()直接INSERT/DELETE生产governance.db【HIGH】
-- 证据：[test_governance_db.py:12,16,35-38,248-256](file:///d:/ZephyrAlpha/tests/governance/shared/test_governance_db.py) `DB_PATH=str(REPO_ROOT/"data"/"databases"/"governance.db")`；`def test_all():` (pytest收集) 内 `c.execute("INSERT INTO tasks...VALUES(?,?)",("TEST-001",...))` 写入生产库；末尾 `c.execute("DELETE FROM tasks WHERE task_id='TEST-001'")` 清理但INSERT与DELETE间异常会污染生产
-- 病根：根因5（生产库即测试库，违反project_memory强制约束"测试脚本必须严格隔离生产库"）
-- 修复：改为 `tmp_path/"governance.db"` + `init_db()`，CI加 `--deny-paths=data/databases`
-
-#### 5.21.6 生产PostgreSQL被写入测试节点（node_id 900001/2/3）【HIGH】
-- 证据：[test_depgraph_generator_design_protection.py:14,24,33-43,118-130,155-157](file:///d:/ZephyrAlpha/tests/governance/depgraph/test_depgraph_generator_design_protection.py) `DB_PATH=REPO_ROOT/"data"/"databases"/"depgraph"`；`conn=get_depgraph_pg_connection()` 连生产PG；`cursor.execute("INSERT INTO nodes...OVERRIDING SYSTEM VALUES VALUES(900001,...)")`；pytest入口 `def test_depgraph_generator_design_protection(): assert main()==0` 调用main()→red_team_tests()写入生产
-- 病根：根因5（红队测试用生产库，"测试极端场景"凌驾隔离原则）
-- 修复：启动testcontainers PG或使用mock注入，禁止测试cursor直连生产PG
-
-#### 5.21.7 fixture硬编码生产仓库根D:\ZephyrAlpha【MEDIUM】
-- 证据：[test_input_sanitizer_llm_security.py:20-22](file:///d:/ZephyrAlpha/tests/llm_security/test_input_sanitizer_llm_security.py) `@pytest.fixture def sanitizer(): return InputSanitizer(root="D:\\ZephyrAlpha")` 直接用生产仓库根，所有path验证测试针对真实仓库结构
-- 病根：根因5（硬编码绝对路径无tmp_path隔离）
-- 修复：改用 `sanitizer(tmp_project_dir)` 复用全局conftest fixture
-
-#### 5.21.8 硬编码d:/tmp/...路径而非tmp_path【MEDIUM】
-- 证据：[test_f3_auto_integration.py:71,74](file:///d:/ZephyrAlpha/tests/infrastructure/test_f3_auto_integration.py) `files_in_scope=[f"d:/tmp/integration_test/{task_id}.dummy"]` `allowed_touch=[f"d:/tmp/integration_test/{task_id}.dummy"]`；[test_f3_extreme.py:83,86](file:///d:/ZephyrAlpha/tests/infrastructure/test_f3_extreme.py) 同模式
-- 病根：根因5（固定路径污染，多次运行/并发冲突不清理）
-- 修复：改为 `tmp_path/f"{task_id}.dummy"` 通过fixture注入
-
-#### 5.21.9 单文件内10+ skip同因——整类测试死亡【MEDIUM】
+#### 5.21.1 单文件内10+ skip同因——整类测试死亡【MEDIUM】
 - 证据：[test_f18_redblue.py:131,368,400,499,569,610,738,750,763,795](file:///d:/ZephyrAlpha/tests/f_lifecycle/test_f18_redblue.py) 10处 `@pytest.mark.skip(reason="P2迁移：patch(_DEPGRAPH_DB)已失效...")`；[test_verify_schema_health.py:218,276,327,373](file:///d:/ZephyrAlpha/tests/io/test_verify_schema_health.py) 4处类级skip同因；全仓119处skip/xfail，38个文件
 - 病根：根因5（迁移未闭环，P2迁移后SQLite测试未重写为PG长期skip形成"测试幽灵"）
 - 修复：为P2迁移建立issue tracker限期30天重写，CI加skip数量阈值
 
-#### 5.21.10 模块级_STANDIN_CACHE全局变量+tempfile.mktemp永不清理【MEDIUM】
-- 证据：[test_mcp_signal_shutdown.py:48,57-63,96-98](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_signal_shutdown.py)；[test_mcp_idle_timeout.py:45,50-55](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_idle_timeout.py)；[test_mcp_health_check_recovery.py:44,52-57](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_health_check_recovery.py)；[test_mcp_boot_hooks_integration.py:466](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_boot_hooks_integration.py) 四文件各自维护 `_STANDIN_CACHE:Path|None=None`，`_get_standin_script()` 用已弃用的 `tempfile.mktemp(suffix=".py")` 创建文件写入 `import time;time.sleep(60)`，注释"不删除缓存文件，模块级复用"——多次pytest运行间累积不清理
-- 病根：根因5（模块级缓存泄漏，用global替代fixture scope且用弃用mktemp）
-- 修复：改用 `@pytest.fixture(scope="session")` + `tmp_path_factory`
-
-#### 5.21.11 弱边界断言——回归容忍度过高【MEDIUM】
-- 证据：[test_f21_event_driven.py:191-204](file:///d:/ZephyrAlpha/tests/f_lifecycle/test_f21_event_driven.py) 注释"代码中限制为1000"，发送1100个事件后 `assert len(log)<=1100`（应为 `==1000`）；若回归把cap改成2000或删除，本测试仍PASS
-- 病根：根因5（软断言，用宽松上界代替精确等值）
-- 修复：改为 `assert len(log)==1000` 显式测试边界(999/1000/1001)
-
-#### 5.21.12 顺序编号测试隐含执行顺序依赖【MEDIUM】
+#### 5.21.2 顺序编号测试隐含执行顺序依赖【MEDIUM】
 - 证据：[test_task_system_red_team.py:37-803](file:///d:/ZephyrAlpha/tests/autonomy/test_task_system_red_team.py) **[路径漂移更新: 2026-07-04]** adversarial→autonomy `test_00_imports`/`test_01_taskcard_minimal`/`test_02_task_repo_crud`/`test_03_pipeline_A_dispatch`...`test_08_task_name_field_rejected` 共30+个用NN_前缀编号；[test_mcp_red_team.py:34-235](file:///d:/ZephyrAlpha/tests/infrastructure/test_mcp_red_team.py) **[路径漂移更新: 2026-07-04]** adversarial→infrastructure 11个；`test_cross_layer_systems_red_team.py:35,61,84,108` 同模式
 - 病根：根因5（顺序耦合测试，数字前缀隐含setup/teardown链，`pytest -p randomly`会全部炸）
 - 修复：改用语义化命名，如需共享状态用 `@pytest.fixture(scope="module")` 显式声明
 
-#### 5.21.13 mock整个SUT协作者导致测试空转【MEDIUM】
+#### 5.21.3 mock整个SUT协作者导致测试空转【MEDIUM】
 - 证据：[test_action_dispatcher.py:227-232,240-244](file:///d:/ZephyrAlpha/tests/action/test_action_dispatcher.py) `scheduler=MagicMock(); scheduler._lock=MagicMock(); scheduler._results={"t1":task}` 然后测试验证"MagicMock能被遍历"而非真实Scheduler行为；[test_defense_runner.py](file:///d:/ZephyrAlpha/tests/safety/test_defense_runner.py) **[路径漂移更新: 2026-07-04]** test_red_blue→safety 共49处MagicMock多数mock整个validator/engine
 - 病根：根因5（mock空转，把协作者整体替换为MagicMock，断言退化为验证mock调用而非业务结果）
 - 修复：用tmp_path构造真实子组件仅mock外部IO，断言业务结果而非mock.call_count
 
-#### 5.21.14 小计
+#### 5.21.4 小计
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 5（5.21.2~5.21.6） |
-| MEDIUM | 8（5.21.1+5.21.7~5.21.13） |
+| CRITICAL/HIGH | 0 |
+| MEDIUM | 3（5.21.1~5.21.3，大规模重构保留） |
 | LOW | 0 |
-| **合计** | **13** |
+| 已修复 | 10（原5.21.1~5.21.8/5.21.10/5.21.11） |
+| **合计** | **3**（剩余待处理） |
 
 ---
 
@@ -2465,34 +2428,36 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 审计维度：循环导入/未使用导入/缺失__init__导出/幻影导入/导入路径不一致/依赖方向违反/可选依赖处理/重复模块
 > 审计方法：Grep + Read真实文件取证（src/zephyr/__init__.py、shared/、.importlinter等）
-
-#### 5.22.2 register_lazy注册4+幻影模块路径（含governance_governance拼写错误）【HIGH】
-- 证据：[__init__.py:147-162](file:///d:/ZephyrAlpha/src/zephyr/__init__.py) L148 `register_lazy("vector-memory","zephyr.data_governance_governance.knowledge_management.vector_memory")` — `governance_governance` 重复词根拼写错误且路径不存在；L150 `register_lazy("llm-security","zephyr.security.llm_defense.llm_security")` — 只有llm_security/目录无llm_security.py单文件；L155/L160 `register_lazy(...,"zephyr.integration.runtime_core...")` — runtime_core不存在
-- 病根：根因1（漂移累积+重构遗留，路径改名后未同步注册表）
-- 修复：注册表加单元测试启动时find_spec()校验所有路径找不到即fail-fast
+>
+> **[✓ FIXED: 2026-07-04]** 5.22.2 已修复：4个幻影register_lazy路径修正为真实模块路径
+> - vector-memory: `zephyr.data_governance_governance.knowledge_management.vector_memory` → `zephyr.infrastructure.vector_memory_server`
+> - _cross_layer: `zephyr.cross_asset.cross_market_data_adapter` → `zephyr.risk.cross_asset.cross_market_data_adapter`
+> - contract_registry: `zephyr.integration.runtime_core.orchestrator.contract_registry` → `zephyr.trading.orchestrator.contracts.contract_registry`
+> - autopilot: `zephyr.integration.runtime_core.autopilot` → `zephyr.trading.autopilot`
+> - signal: 删除该register_lazy条目（D-SIGNAL域已拆分为3个平级兄弟域 signal_ashare/signal_fundamental/signal_quality，无单一 zephyr.signal 包）
 
 #### 5.22.3 循环依赖shared.contracts.protocols ↔ governance.rule_enforcement（docstring自打脸）【HIGH】
 - 证据：[protocols.py:31](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `from zephyr.governance.rule_enforcement.gate_types import GateResult`（顶层import）；同文件L18-22 docstring宣称"These @runtime_checkable Protocols **break bidirectional dependencies**"；[spec_auditor.py:23](file:///d:/ZephyrAlpha/src/zephyr/governance/bridges/spec_auditor.py) `from zephyr.shared.contracts.protocols import AgentCapability`；shared→governance→shared闭环
 - 病根：根因1（接口倒置失效，DIP未落地，Protocol反向依赖了它要解耦的模块的具体类型GateResult）
 - 修复：GateResult下沉为shared.contracts中的Protocol/dataclass，或改用TYPE_CHECKING+字符串注解
 
-#### 5.22.4 shared层顶层import业务层直接违反.importlinter契约【HIGH】
-- 证据：[.importlinter:18-31](file:///d:/ZephyrAlpha/.importlinter) 契约"共享层不能导入业务模块"禁止shared导入market_data/risk_engine/order_execution等；但 [shared/foundation/constants.py:45](file:///d:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py) `from zephyr.governance.escalation_models import EscalationLevel`；[shared/contracts/order.py:8-10](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/order.py) `from zephyr.trading.trading_contracts.execution.order import OrderSide,OrderStatus,OrderType`；契约forbidden_modules列表甚至没列governance/trading等于纵容违规
+#### 5.22.4 [DRIFTED: 2026-07-04] shared层顶层import业务层（原"违反.importlinter契约"已不成立）
+- 证据：[constants.py:45](file:///d:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py) 原直接import已修复为懒加载（L86-97 `_GOVERNANCE_SYMBOLS`字典+`__getattr__`），路径漂移到 `zephyr.governance.escalation.escalation_models`；[order.py:24-26](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/order.py) `from zephyr.trading.trading_contracts.execution.order import OrderSide,OrderStatus,OrderType` 直接import仍在；.importlinter契约 forbidden_modules 已不再列出 governance/trading（契约漂移使"违反契约"不成立）
 - 病根：根因5（守护契约本身不完整+import-linter未在CI强制执行）
-- 修复：把governance/trading/ml_train/simulation加入forbidden_modules，pre-commit跑lint-imports
+- 修复：order.py L24-26 改为TYPE_CHECKING+字符串注解，或下沉OrderSide/OrderStatus/OrderType到shared.contracts
 
 #### 5.22.6 ex_core+autonomy_perm 10+个import *垫片文件【MEDIUM】
-- 证据：[ex_core/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) `from zephyr.governance.broker_interface import *  # noqa: F403`；[ex_core/adapters/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/broker_interface.py) 同；[ex_core/adapters/simulation_broker.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/simulation_broker.py) `from zephyr.governance.adapters.simulation_broker import *`；[autonomy_perm/red_blue_validator/](file:///d:/ZephyrAlpha/src/zephyr/autonomy_perm/red_blue_validator/) 下6个文件每个L18 `from zephyr.security.adversarial_validation.X import *`；更糟 [ex_core/broker_interface.py:16](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) docstring写"migrated to zephyr.execution.core.broker_interface"但真实import是 `zephyr.governance.broker_interface` —— docstring/import/目录名三方不一致
+- 证据：[ex_core/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) `from zephyr.governance.trading_contracts.broker_interface import *  # noqa: F403`（路径漂移：原`zephyr.governance.broker_interface`）；[ex_core/adapters/broker_interface.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/broker_interface.py) 同；[ex_core/adapters/simulation_broker.py:18](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/simulation_broker.py) `from zephyr.governance.adapters.simulation_broker import *`；[autonomy_perm/red_blue_validator/](file:///d:/ZephyrAlpha/src/zephyr/autonomy_perm/red_blue_validator/) 下6个文件每个L18 `from zephyr.security.adversarial_validation.X import *`；更糟 [ex_core/broker_interface.py:16](file:///d:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py) docstring写"migrated to zephyr.execution.core.broker_interface"但真实import是 `zephyr.governance.trading_contracts.broker_interface` —— docstring/import/目录名/头部元数据四方不一致
 - 病根：根因1（漂移累积+星号导入失控，`# noqa: F403`压制了所有linter告警）
 - 修复：删除0逻辑垫片文件全局批量替换import路径，`# noqa: F403`进入pyproject.toml黑名单
 
 #### 5.22.10 governance_server.py静默吞掉13处ImportError【HIGH】
-- 证据：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 共13个 `except ImportError as e:` 块（行88,592,615,629,662,687,707,726,816,836,867,882,903）；每块包裹一个 `from zephyr.governance.X import Y`，失败时 `return {"error":f"... import failed: {e}"}`；MCP Server启动不报错但每个工具调用返回错误dict，用户无从知晓是依赖缺失还是逻辑错误；无日志无告警无metrics
+- 证据：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 共13个 `except ImportError as e:` 块（行89,593,616,630,663,688,708,727,817,837,868,883,904，原行号+1偏移）；每块包裹一个 `from zephyr.governance.X import Y`，失败时 `return {"error":f"... import failed: {e}"}`；MCP Server启动不报错但每个工具调用返回错误dict，用户无从知晓是依赖缺失还是逻辑错误；无日志无告警无metrics（搜索 `logger\.|logging\.|metrics\.` 返回 No matches found）
 - 病根：根因5（静默降级+守护契约未覆盖运行时import）
 - 修复：改启动时一次性_import_check()所有依赖缺失则Server拒绝启动，运行时降级必须logger.warning+metrics
 
 #### 5.22.11 14+处代码注释明确承认循环依赖被懒加载/搬迁绕过【HIGH】
-- 证据：Grep `circular import|avoid.*circular|break.*circular` 命中15行：`intelligence/model_evaluation/__init__.py:23` "Lazy imports to avoid triggering circular import chains"；`trading/resource_optimization.py:26` "circular imports (shared.io / shared.infra depend on models)"；`integration/shared/schema/schemas.py:261` "Deferred import of governance types to break circular dependency deadlock"；`governance/audit_trail/__init__.py:42,44` 两处"lazy import to break circular import with..."；`shared/alert_escalation.py:16,40` "re-homed to eliminate shared->infrastructure circular import"；`shared/io/paths.py:65-66` "DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence" 等
+- 证据：Grep `circular import|avoid.*circular|break.*circular` 当前命中25行（原15行，问题不减反增），分布于20个文件：`intelligence/model_evaluation/__init__.py:23` "Lazy imports to avoid triggering circular import chains"；`trading/resource_optimization.py:26` "circular imports (shared.io / shared.infra depend on models)"；`integration/shared/schema/schemas.py:66` "Lazy-load governance task types to break circular dependency:"（原L261漂移）；`governance/audit_trail/pipeline_runner.py:30` "lazy import to break circular import with audit-orchestrator.__init__"（原audit_trail/__init__.py:42,44迁移）；`shared/alerts/alert_escalation.py:16,40` "re-homed to eliminate shared->infrastructure circular import"（原shared/alert_escalation.py路径加alerts/目录）；`shared/io/paths.py:65-66` "DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence"；新增 `shared/contracts/backpressure/{pause,throttle,resume,_types}.py`、`shared/security/sandbox_executor.py:16`、`infrastructure/a2a_protocol/legacy_auditor.py:37` 等
 - 病根：根因1（接口倒置失效+用懒加载贴膏药而非重构依赖方向）
 - 修复：把所有"re-homed"类型集中到shared.contracts子层，arch_guard检测函数级import
 
@@ -2500,10 +2465,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 7（5.22.1~5.22.5+5.22.10+5.22.11） |
-| MEDIUM | 5（5.22.6~5.22.9+5.22.12） |
+| CRITICAL/HIGH | 4（5.22.3/5.22.10/5.22.11 + 原5.22.1~5.22.5部分） |
+| MEDIUM | 1（5.22.6，大规模重构保留） |
 | LOW | 0 |
-| **合计** | **12** |
+| 已修复 | 1（5.22.2 register_lazy幻影路径） |
+| DRIFTED | 1（5.22.4 契约已不禁止governance/trading，constants.py已修复懒加载） |
+| **合计** | **5**（剩余待处理，不含未列出的5.22.1/5/7/8/9/12） |
 
 ---
 
@@ -9516,14 +9483,14 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 
 | 维度 | 总数 | STILL_VALID | FIXED | DRIFTED | NOT_NEEDED |
 |---|:---:|:---:|:---:|:---:|:---:|
-| 5.21 测试质量 | 13 | 13 | 0 | 0 | 0 |
-| 5.22 幻影子包 | 12 | 9 | 1 | 2 | 0 |
+| 5.21 测试质量 | 13 | 3 | 10 | 0 | 0 |
+| 5.22 幻影子包 | 12 | 4 | 2 | 1 | 0 |
 | 5.23 配置管理 | 8 | 7 | 0 | 1 | 0 |
 | 5.24 性能反模式 | 6 | 5 | 0 | 1 | 0 |
 | 5.25 代码质量 | 5 | 4 | 0 | 1 | 0 |
 
 **关键发现**：
-- **5.21全部13个仍有效**（但所有文件路径漂移：tests/根目录→tests/<子目录>/）
+- **5.21已修复10条**（2026-07-04）：原5.21.1~5.21.8/5.21.10/5.21.11 全部修复，剩余3条大规模重构保留（原5.21.9/5.21.12/5.21.13 重新编号为5.21.1~5.21.3）
 - **5.22.9已修复**：三个孤儿__init___from_*.py文件已删除 [✓ FIXED: 三个孤儿文件已删除]
 - **5.23.1已修复（代码侧）**：diagnose_breadth_failed.py + run_deepseek_v4_exam.py 均移除硬编码默认值改用 `os.getenv("DEEPSEEK_API_KEY")` + FATAL 守卫（commit 14bc6120，2026-07-03 P0-1）[✓ FIXED: 代码侧已修复，待人工控制台吊销密钥]
 - **5.25.2比描述更严重**：AutoRuntimeCore实际42个方法（注册表写36个）
