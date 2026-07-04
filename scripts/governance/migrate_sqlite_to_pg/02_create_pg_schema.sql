@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS arch_directory_tree (
     path                    TEXT PRIMARY KEY,
     parent_path             TEXT,
     path_type               TEXT NOT NULL,
-    domain_id               TEXT,
+    domain_id               TEXT REFERENCES domains(domain_id),
     blueprint_id            TEXT,
     change_policy           TEXT,
     modification_permission TEXT,

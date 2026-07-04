@@ -325,7 +325,7 @@ CREATE TABLE IF NOT EXISTS fle_alerts (
 _DDL_FLE_DISPATCH_LOG = """
 CREATE TABLE IF NOT EXISTS fle_dispatch_log (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_id        TEXT    NOT NULL REFERENCES fle_alerts(event_id),
+    event_id        TEXT    NOT NULL REFERENCES fle_alerts(event_id) ON DELETE CASCADE,
     target_system   TEXT    NOT NULL,
     result          TEXT    NOT NULL,
     task_id         TEXT,
@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS task_reviews (
     reviewer        TEXT    NOT NULL DEFAULT 'ai_session',
     session_id      TEXT,
     reviewed_at     TEXT    NOT NULL,
-    FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+    FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE
 )
 """
 

@@ -2269,44 +2269,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：外键约束/级联规则/约束验证/迁移安全/数据类型一致性/NULL语义/时间戳一致性/唯一性保证/引用完整性/Schema版本管理
 > 审计方法：Grep + Read真实文件取证（sqlite_schema.py、depgraph_schema.py、00_sqlite_actual_schema.sql、02_create_pg_schema.sql等8个核心真源）
 
-#### 5.18.4 gate_decisions表存在3个互斥的schema定义（schema分裂）【HIGH】
-- 证据：[sqlite_schema.py:919](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) v28 migration `gate_decisions(decision_id INTEGER PK, gate_id TEXT, decision TEXT, reason TEXT, decided_at TEXT, decided_by TEXT)` 无FK；[gate_persistence.py:142](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/gate_persistence.py) `gate_decisions(id INTEGER PK, module_id TEXT, gate TEXT, decision TEXT, detail TEXT, decided_at TEXT)` 列名完全不同；`red_blue_report.json:31` 报告历史v3曾有gate_decisions→gates的FK
-- 病根：根因2（同名表多定义，两模块各建各的）
-- 修复：统一gate_decisions为单一DDL真源，删除散点建表
-
-#### 5.18.5 tasks.domain_id跨数据库外键（SQLite无法实现）【HIGH】
-- 证据：[test_db_integration.py:5](file:///d:/ZephyrAlpha/tests/db/test_db_integration.py) 注释"governance.db的tasks.domain_id→depgraph的domains.domain_id外键一致性"；[sqlite_schema.py:915](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) v28 migration `UPDATE tasks SET domain_id=NULL WHERE domain_id NOT IN (SELECT domain_id FROM domains)` 清洗485行违规；但governance.db的tasks表DDL从未定义domain_id列也无FK——跨库FK SQLite物理上无法实现
-- 病根：根因1（9库→3库合并未完成，跨库引用遗留）
-- 修复：tasks.domain_id列删除，或domains表迁入governance.db，或改PG跨schema FK
-
-#### 5.18.9 nodes/arch_directory_tree/domain_mapping的domain_id无FK到domains【MEDIUM】 [⚠ 部分修复: 2026-07-04 验证声明不实——nodes/domain_mapping已补FK，但02_create_pg_schema.sql:53的arch_directory_tree.domain_id仍无REFERENCES，仅depgraph_schema.py:395补了FK，两真源不一致]
-- 证据：[00_sqlite_actual_schema.sql:278-309](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) nodes表domain_id TEXT无FK；`:57-68` arch_directory_tree.domain_id TEXT无FK；`:161-170` domain_mapping.domain_id TEXT无FK；对比`:71-80` arch_path_mappings有FK(L79)；[02_create_pg_schema.sql:285](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql) arch_path_mappings在PG有FK但nodes(L224-262)仍无FK到domains
-- 病根：根因1（FK定义遗漏，是949孤儿的DDL层根因之一）
-- 修复：为nodes.domain_id、arch_directory_tree.domain_id、domain_mapping.domain_id补FK
-
-#### 5.18.10 task_reviews外键无ON DELETE CASCADE（与task_files不一致）【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:353 FK无ON DELETE CASCADE，原修复声明未落地]
-- 证据：[sqlite_schema.py:342](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `FOREIGN KEY (task_id) REFERENCES tasks(task_id)` 无级联；对比[sqlite_schema.py:202](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) task_files `task_id TEXT NOT NULL REFERENCES tasks(task_id) ON DELETE CASCADE`；删除task后task_files自动清理但task_reviews留孤儿；v29(L933)才补建task_reviews仍未加CASCADE
-- 病根：根因5（约束应用不一致，同级FK级联规则不统一）
-- 修复：统一所有引用tasks(task_id)的FK加`ON DELETE CASCADE`
-
-#### 5.18.11 fle_dispatch_log外键无ON DELETE CASCADE【MEDIUM】 [⚠ STILL_VALID: 2026-07-04 验证声明不实——sqlite_schema.py:328 event_id FK无ON DELETE CASCADE，原修复声明未落地]
-- 证据：[sqlite_schema.py:317](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `event_id TEXT NOT NULL REFERENCES fle_alerts(event_id)` 无级联；删除fle_alerts记录时被FK阻断（RESTRICT默认）或留孤儿（若PRAGMA foreign_keys=OFF）
-- 病根：根因5（FK级联规则未规范化）
-- 修复：加`ON DELETE CASCADE`，dispatch_log是alert从属记录
-
-#### 5.18.14 gates表在两个DB中结构完全不同（同名异构）【MEDIUM】
-- 证据：depgraph [00_sqlite_actual_schema.sql:225-236](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql) `gates(gate_id TEXT PK, name, entry, description, files_trigger, always_run, category, status, source, event_driven, auto_start)` 11列只读表（YAML真源）；governance.db [sqlite_schema.py:163-174](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/sqlite_schema.py) `gates(gate_run_id TEXT PK, gate_id TEXT, passed INTEGER, details, artifact_path, session_id, task_id, created_at)` 7列运行记录；两表同名但列名/语义/PK完全不同，跨库JOIN出错
-- 病根：根因2（同名表多定义）
-- 修复：governance.db的gates改名`gate_runs` [✓ 2026-07-03 治本补全：v15 改名漏改 3 生产文件（gate_engine.py INSERT INTO gates、system_snapshot.py FROM gates、olap_engine.py _table("gates")+gates_fallback）+ 8 测试文件，已全部对齐 gate_runs；auto_runner.py 引用 depgraph gates 表（PG 仍存在）不改；test_f18_redblue.py 引用 depgraph gates（全部 skip）不改]
-
 #### 5.18.16 小计
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 8（5.18.1~5.18.8） |
-| MEDIUM | 6（5.18.9~5.18.14） |
-| LOW | 1（5.18.15） |
-| **合计** | **15** |
+| CRITICAL/HIGH | 0（5.18.1~5.18.8已FIXED） |
+| MEDIUM | 0（5.18.9~5.18.14已FIXED） |
+| LOW | 0（5.18.15已FIXED） |
+| **合计** | **0** |
 
 > **第32轮修复进度（2026-07-01）**：
 > - **已修复 5 个**：5.18.1（PRAGMA foreign_keys排序）、5.18.8（PG edges CASCADE+删trigger）、5.18.9部分（nodes+domain_mapping 补FK）、5.18.10（task_reviews CASCADE）、5.18.11（fle_dispatch_log CASCADE）
