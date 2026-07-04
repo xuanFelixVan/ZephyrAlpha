@@ -44,6 +44,7 @@ Backend  : zephyr.governance.* 八件套治理模块
 from __future__ import annotations
 
 import importlib
+import logging
 import subprocess
 import sys
 from pathlib import Path
@@ -52,6 +53,11 @@ from typing import Any
 from zephyr.infrastructure._base_server import BaseMCPServer
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
+
+# 5.22.10 修复：原13处 except ImportError 静默吞掉（无日志无告警无metrics），
+# 用户调用 MCP 工具收到 error dict 无从知晓是依赖缺失还是逻辑错误。
+# 现统一通过 logger.warning 记录依赖缺失，便于排查。
+logger = logging.getLogger(__name__)
 
 __all__ = ["GovernanceServer", "create_server"]
 
@@ -591,6 +597,7 @@ class GovernanceServer(BaseMCPServer):
                 ],
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"behavioral-auditor import failed: {e}", "events": []}
         except Exception as e:
             return {"error": f"scan failed: {e}", "events": []}
@@ -614,6 +621,7 @@ class GovernanceServer(BaseMCPServer):
                 "auto_fixable_count": sum(1 for d in detectors if d.auto_fixable),
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"import failed: {e}"}
         except Exception as e:
             return {"error": f"report failed: {e}"}
@@ -628,6 +636,7 @@ class GovernanceServer(BaseMCPServer):
                 **result,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"import failed: {e}", "module_id": module_id, "allowed": False}
         except Exception as e:
             return {"error": f"budget check failed: {e}", "module_id": module_id, "allowed": False}
@@ -661,6 +670,7 @@ class GovernanceServer(BaseMCPServer):
                 "timing_ns": result.timing_ns,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"RBAC import failed: {e}", "decision": "ERROR"}
         except Exception as e:
             return {"error": f"RBAC check failed: {e}", "decision": "ERROR"}
@@ -686,6 +696,7 @@ class GovernanceServer(BaseMCPServer):
                 ],
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Agent Spec import failed: {e}", "total_skills": 0, "skills": []}
         except Exception as e:
             return {"error": f"list_skills failed: {e}", "total_skills": 0, "skills": []}
@@ -706,6 +717,7 @@ class GovernanceServer(BaseMCPServer):
                 "context_size": len(str(getattr(skill, "context", ""))),
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"skill_id": skill_id, "loaded": False, "error": f"Agent Spec import failed: {e}"}
         except Exception as e:
             return {"skill_id": skill_id, "loaded": False, "error": f"load failed: {e}"}
@@ -725,6 +737,7 @@ class GovernanceServer(BaseMCPServer):
             )
             return {"entry_id": entry_id, "written": True, "event_type": event_type}
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"written": False, "error": f"Audit Trail import failed: {e}"}
         except Exception as e:
             return {"written": False, "error": f"write_audit failed: {e}"}
@@ -815,6 +828,7 @@ class GovernanceServer(BaseMCPServer):
                 "checkpoint_id": checkpoint_id,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Rollback import failed: {e}", "success": False}
         except Exception as e:
             return {"error": f"rollback failed: {e}", "success": False}
@@ -835,6 +849,7 @@ class GovernanceServer(BaseMCPServer):
                 "description": description,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Escalation import failed: {e}", "level": "UNKNOWN"}
         except Exception as e:
             return {"error": f"escalate failed: {e}", "level": "UNKNOWN"}
@@ -866,6 +881,7 @@ class GovernanceServer(BaseMCPServer):
                 "degradation_level": engine.current_degradation_level.value,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Budget Enforcer import failed: {e}"}
         except Exception as e:
             return {"error": f"check_budget failed: {e}"}
@@ -881,6 +897,7 @@ class GovernanceServer(BaseMCPServer):
                 "active_count": engine.get_active_count(),
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Escalation import failed: {e}"}
         except Exception as e:
             return {"error": f"escalation_status failed: {e}"}
@@ -902,6 +919,7 @@ class GovernanceServer(BaseMCPServer):
                 "resolved": True,
             }
         except ImportError as e:
+            logger.warning("ImportError in handler: %s", e, exc_info=True)
             return {"error": f"Escalation import failed: {e}", "resolved": False}
         except Exception as e:
             return {"error": f"escalation_resolve failed: {e}", "resolved": False}

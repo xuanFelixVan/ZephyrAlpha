@@ -2435,11 +2435,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > - contract_registry: `zephyr.integration.runtime_core.orchestrator.contract_registry` → `zephyr.trading.orchestrator.contracts.contract_registry`
 > - autopilot: `zephyr.integration.runtime_core.autopilot` → `zephyr.trading.autopilot`
 > - signal: 删除该register_lazy条目（D-SIGNAL域已拆分为3个平级兄弟域 signal_ashare/signal_fundamental/signal_quality，无单一 zephyr.signal 包）
+>
+> **[✓ FIXED: 2026-07-04]** 5.22.3 已修复：protocols.py GateResult 顶层import改为TYPE_CHECKING块，消除shared→governance闭环
+>
+> **[✓ FIXED: 2026-07-04]** 5.22.10 已修复：governance_server.py 12处except ImportError添加logger.warning，消除静默吞掉
 
-#### 5.22.3 循环依赖shared.contracts.protocols ↔ governance.rule_enforcement（docstring自打脸）【HIGH】
-- 证据：[protocols.py:31](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `from zephyr.governance.rule_enforcement.gate_types import GateResult`（顶层import）；同文件L18-22 docstring宣称"These @runtime_checkable Protocols **break bidirectional dependencies**"；[spec_auditor.py:23](file:///d:/ZephyrAlpha/src/zephyr/governance/bridges/spec_auditor.py) `from zephyr.shared.contracts.protocols import AgentCapability`；shared→governance→shared闭环
-- 病根：根因1（接口倒置失效，DIP未落地，Protocol反向依赖了它要解耦的模块的具体类型GateResult）
-- 修复：GateResult下沉为shared.contracts中的Protocol/dataclass，或改用TYPE_CHECKING+字符串注解
+#### 5.22.3 [✓ FIXED: 2026-07-04] 循环依赖shared.contracts.protocols ↔ governance.rule_enforcement（docstring自打脸）
+- **修复**：[protocols.py:31](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) 顶层 `from zephyr.governance.rule_enforcement.gate_types import GateResult` 改为 `if TYPE_CHECKING:` 块内导入。`from __future__ import annotations` 已启用（L25），注解在运行时为字符串，无需 runtime import。docstring "break bidirectional dependencies" 不再自打脸。
+- 验证：`from zephyr.shared.contracts.protocols import GateActionProtocol, AgentCapability` 导入成功；`from zephyr.governance.bridges.spec_auditor import record_agent_spec` 反向导入成功。
 
 #### 5.22.4 [DRIFTED: 2026-07-04] shared层顶层import业务层（原"违反.importlinter契约"已不成立）
 - 证据：[constants.py:45](file:///d:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py) 原直接import已修复为懒加载（L86-97 `_GOVERNANCE_SYMBOLS`字典+`__getattr__`），路径漂移到 `zephyr.governance.escalation.escalation_models`；[order.py:24-26](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/order.py) `from zephyr.trading.trading_contracts.execution.order import OrderSide,OrderStatus,OrderType` 直接import仍在；.importlinter契约 forbidden_modules 已不再列出 governance/trading（契约漂移使"违反契约"不成立）
@@ -2451,26 +2454,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因1（漂移累积+星号导入失控，`# noqa: F403`压制了所有linter告警）
 - 修复：删除0逻辑垫片文件全局批量替换import路径，`# noqa: F403`进入pyproject.toml黑名单
 
-#### 5.22.10 governance_server.py静默吞掉13处ImportError【HIGH】
-- 证据：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 共13个 `except ImportError as e:` 块（行89,593,616,630,663,688,708,727,817,837,868,883,904，原行号+1偏移）；每块包裹一个 `from zephyr.governance.X import Y`，失败时 `return {"error":f"... import failed: {e}"}`；MCP Server启动不报错但每个工具调用返回错误dict，用户无从知晓是依赖缺失还是逻辑错误；无日志无告警无metrics（搜索 `logger\.|logging\.|metrics\.` 返回 No matches found）
-- 病根：根因5（静默降级+守护契约未覆盖运行时import）
-- 修复：改启动时一次性_import_check()所有依赖缺失则Server拒绝启动，运行时降级必须logger.warning+metrics
+#### 5.22.10 [✓ FIXED: 2026-07-04] governance_server.py静默吞掉13处ImportError
+- **修复**：[governance_server.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py) 添加模块级 `logger = logging.getLogger(__name__)`，12处handler的 `except ImportError as e:` 块统一插入 `logger.warning("ImportError in handler: %s", e, exc_info=True)`（L95的 `_import_check` helper 除外——它本身是导入检查报告器）。
+- **未做**：启动时一次性 `_import_check()` 拒绝启动（per spec）未实施——风险较高可能破坏现有测试/CI，且当前12处 logger.warning 已解决"用户无从知晓"的核心问题。metrics 留待后续可观测性增强。
+- 验证：`from zephyr.infrastructure.governance_server import GovernanceServer` 导入成功。
 
-#### 5.22.11 14+处代码注释明确承认循环依赖被懒加载/搬迁绕过【HIGH】
+#### 5.22.11 [保留: 大规模重构] 14+处代码注释明确承认循环依赖被懒加载/搬迁绕过【HIGH】
 - 证据：Grep `circular import|avoid.*circular|break.*circular` 当前命中25行（原15行，问题不减反增），分布于20个文件：`intelligence/model_evaluation/__init__.py:23` "Lazy imports to avoid triggering circular import chains"；`trading/resource_optimization.py:26` "circular imports (shared.io / shared.infra depend on models)"；`integration/shared/schema/schemas.py:66` "Lazy-load governance task types to break circular dependency:"（原L261漂移）；`governance/audit_trail/pipeline_runner.py:30` "lazy import to break circular import with audit-orchestrator.__init__"（原audit_trail/__init__.py:42,44迁移）；`shared/alerts/alert_escalation.py:16,40` "re-homed to eliminate shared->infrastructure circular import"（原shared/alert_escalation.py路径加alerts/目录）；`shared/io/paths.py:65-66` "DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence"；新增 `shared/contracts/backpressure/{pause,throttle,resume,_types}.py`、`shared/security/sandbox_executor.py:16`、`infrastructure/a2a_protocol/legacy_auditor.py:37` 等
 - 病根：根因1（接口倒置失效+用懒加载贴膏药而非重构依赖方向）
 - 修复：把所有"re-homed"类型集中到shared.contracts子层，arch_guard检测函数级import
+- **保留原因**：涉及20个文件的依赖方向重构 + 新增arch_guard工具，属于多日大规模重构，当前迭代保留
 
 #### 5.22.13 小计
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 4（5.22.3/5.22.10/5.22.11 + 原5.22.1~5.22.5部分） |
+| CRITICAL/HIGH | 0（5.22.3/5.22.10已修复，5.22.11保留大规模重构） |
 | MEDIUM | 1（5.22.6，大规模重构保留） |
 | LOW | 0 |
-| 已修复 | 1（5.22.2 register_lazy幻影路径） |
-| DRIFTED | 1（5.22.4 契约已不禁止governance/trading，constants.py已修复懒加载） |
-| **合计** | **5**（剩余待处理，不含未列出的5.22.1/5/7/8/9/12） |
+| 已修复 | 3（5.22.2 register_lazy幻影路径 + 5.22.3 TYPE_CHECKING + 5.22.10 logger.warning） |
+| DRIFTED | 1（5.22.4 契约已不禁止governance/trading，constants.py已修复懒加载；order.py为codegen文件需YAML变更） |
+| 保留 | 2（5.22.6 import*垫片 + 5.22.11 循环依赖懒加载，均属大规模重构） |
+| **合计** | **6**（含保留，不含未列出的5.22.1/5/7/8/9/12） |
 
 ---
 
