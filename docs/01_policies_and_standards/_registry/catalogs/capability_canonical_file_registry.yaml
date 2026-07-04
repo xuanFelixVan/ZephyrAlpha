@@ -2539,6 +2539,24 @@ capabilities:
       直接 DELETE FROM arch_constraints（违反 depgraph 硬约束）。对标 DM-100255 D_GOV_RULE
       constraint 残留 CONSTRAINT_D-GOV-RULE_ENFORCEMENT 清理（PG 备份 depgraph_20260703_120655.json）。
 
+  - capability_id: depgraph_scope_gate
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - GATE-DEPGRAPH-SCOPE
+      - ARCH-035
+      - _check_scan_scope
+      - --force-add-file-node
+      - depgraph_scope_check
+    description: >-
+      ARCH-035 门禁：阻止手动 add-file-node 登记生成器扫描范围内的文件。根因：生成器
+      (generate_project_depgraph.py --force) 是运营态唯一真源，手动 add-file-node 添加的
+      节点/边会干扰 --force 重建（design edge 保护冲突导致 DELETE 失败）。门禁逻辑：读取
+      depgraph_scan_exclusions.yaml 的 scan_dirs，检查 path 是否在扫描范围内，命中则硬阻断
+      (exit 4)并提示运行生成器。逃生通道：--force-add-file-node（仅在生成器故障时使用）。
+      解决发现性：新 AI 搜 "depgraph 手动登记/add-file-node 被拒/ARCH-035" 可定位真源。
+      解决防重建：阻止新 AI 用 apply_depgraph.py --add-file-node 登记已有代码文件（应让生成器
+      自动扫描）。对标 sess-17516 event_driven_engine.py 误登记事件（2026-07-04）。
+
   - capability_id: pre_write_gate
     canonical_override: scripts/governance/d5_architecture/pre_write_gate.py
     aliases:
