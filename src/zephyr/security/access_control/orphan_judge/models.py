@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.security.access_control.orphan_judge.judge import (
     Confidence,
@@ -42,7 +42,7 @@ __all__ = [
 
 
 class JudgmentRecord(BaseModel):
-    model_config = {"extra": "forbid"}
+    model_config = ConfigDict(extra="forbid")
 
     path: str = Field(description="文件路径")
     verdict: str = Field(description="判决结果(KEEP/DELETE/DEPRECATE/EXTRACT_AND_MERGE/ESCALATE)")
@@ -54,7 +54,7 @@ class JudgmentRecord(BaseModel):
 
 
 class ScanSummary(BaseModel):
-    model_config = {"extra": "forbid"}
+    model_config = ConfigDict(extra="forbid")
 
     total: int = Field(default=0, description="扫描文件总数")
     keep: int = Field(default=0)
@@ -68,7 +68,7 @@ class ScanSummary(BaseModel):
 
 
 class OrphanJudgeConfig(BaseModel):
-    model_config = {"extra": "forbid"}
+    model_config = ConfigDict(extra="forbid")
 
     min_unique_nodes: int = Field(default=5, ge=1, description="L3最小独特节点数阈值")
     max_scan_files: int = Field(default=50, ge=1, description="扫描文件上限")

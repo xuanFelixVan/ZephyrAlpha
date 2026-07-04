@@ -3,5 +3,3 @@
 """Re-export wrapper: implementations has migrated to zephyr.governance.implementations"""
 
 from zephyr.governance.implementations import *  # noqa: F403
-
-__all__ = ["*"]

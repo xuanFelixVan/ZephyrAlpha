@@ -3,5 +3,3 @@
 """Re-export wrapper: behavioral-admission has migrated to zephyr.governance.behavioral_admission"""
 
 from zephyr.governance.behavioral_admission import *  # noqa: F403
-
-__all__ = ["*"]

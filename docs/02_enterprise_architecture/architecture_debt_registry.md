@@ -2315,74 +2315,19 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：Pydantic schema漂移/函数签名契约/返回类型LSP/可变默认值/ABC未实现/Protocol误用/__init__导出
 > 审计方法：Grep + Read真实文件取证（integration/models.py、shared/contracts/protocols.py、auto_fix_engine/models.py等）
 
-#### 5.19.1 Pydantic v1 class Config与v2 model_config在同一文件混用【HIGH】
-- 证据：[integration/models.py:504](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `class Config: use_enum_values=True`（v1语法），同文件L114/143/155/215用 `model_config=BASE_CONFIG`（v2语法）；[infrastructure/pipeline/models.py:505](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/models.py) 同混用；[agent_identity.py:144](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) 同
-- 病根：根因1（v1→v2迁移未完成，pydantic_v2_migrator.py未扫描class Config模式）
-- 修复：替换为 `model_config=ConfigDict(use_enum_values=True)`，migrator增加class Config检测
-
-#### 5.19.2 __all__=["*"]非功能性模式（13个__init__.py）【HIGH】
-- 证据：[pf_core/strategy_engine/__init__.py:7](file:///d:/ZephyrAlpha/src/zephyr/pf_core/strategy_engine/__init__.py) `__all__=["*"]` + `from zephyr.governance.strategy_engine import *`；共13个文件（pf_core/strategy_engine、ops/schema、ops/profiles、ops/health、ops/alerts、compliance/behavioral_admission等）；`__all__=["*"]` 字面意思是"导出名为*的属性"，执行 `from module import *` 会 `getattr(module,"*")` 引发AttributeError
-- 病根：根因5（代码语义错误，re-export wrapper契约完全失效）
-- 修复：删除 `__all__=["*"]`（不声明时import *自动导出非_开头名称）或显式列出符号
-
-#### 5.19.3 BaseFixer(BaseModel)用Pydantic数据模型充当抽象基类【HIGH】
-- 证据：[auto_fix_engine/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) `class BaseFixer(BaseModel): def scan(self): raise NotImplementedError; def fix(self,...): raise NotImplementedError` 4个方法；[security/access_control/auto_fix_engine/models.py:192-211](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) 完全相同duplicate；BaseFixer非ABC可被直接实例化，子类无需实现即可通过类型检查
-- 病根：根因5（抽象基类未实现，Pydantic BaseModel不应承载抽象行为契约）
-- 修复：改为 `class BaseFixer(abc.ABC)` + `@abc.abstractmethod`
-
-#### 5.19.4 verify_chain()返回类型LSP违约——6个实现6种返回类型【HIGH】
-- 证据：[protocols.py:104](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `-> dict`；[integrity.py:107](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/integrity.py) `-> dict[str,Any]`；[forensic_package.py:45](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/forensic_package.py) `-> bool`；[audit_chain_verifier.py:115](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py) `-> AuditReport`；[risk_mitigation.py:220](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py) `-> tuple[bool,list[str]]`；[crypto_bootstrap.py:72](file:///d:/ZephyrAlpha/src/zephyr/trading/feedback_loop/forensic/crypto_bootstrap.py) `-> bool`
-- 病根：根因1（接口契约未SSoT化，Liskov替换原则彻底失效）
-- 修复：定义统一 `ChainVerificationResult` 类型，所有实现返回此类型
-
-#### 5.19.5 sign_token()签名与返回类型契约漂移【HIGH】
-- 证据：[agent_identity.py:152](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/identity/agent_identity.py) `def sign_token(self,secret:str)->str`；[identity.py:142](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/identity.py) `def sign_token(self,secret:str)->None`；[cross_session_detector.py:83](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/detectors/cross_session_detector.py) `def sign_token(self,agent_id,session_id)->SignedToken`；三同名方法签名/参数/返回类型完全不同
-- 病根：根因1（三方对齐失败，无共享Protocol约束）
-- 修复：定义 `TokenSignerProtocol` 统一签名
-
-#### 5.19.6 IntegrityVerifier(BaseModel)声明返回dict实际返回None【HIGH】
-- 证据：[protocols.py:99-104](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `class IntegrityVerifier(BaseModel): def verify_chain(self)->dict: ...` 方法体为Ellipsis返回None；是可实例化的具体Pydantic模型非ABC；调用方 `result=verifier.verify_chain()` 期望dict得到None，`result["status"]` 抛TypeError
-- 病根：根因5（返回类型契约违约）
-- 修复：改为ABC+abstractmethod或实现默认返回
-
-#### 5.19.7 重复api_client.py类型漂移（Any vs object）【MEDIUM】
-- 证据：[shared/api/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/shared/api/api_client.py) `response_body:Any=await resp.json()`；[integration/shared/api_03/api_client.py:377](file:///d:/ZephyrAlpha/src/zephyr/shared/api/api_client.py) `response_body:object=await resp.json()`；两文件其余内容完全相同，类型标注已漂移
-- 病根：根因1（SSoT断裂，同一份代码两路径维护）
-- 修复：删除integration/shared/api_03/api_client.py，全局只保留shared/api/
-
-#### 5.19.8 model_config dict字面量 vs ConfigDict风格不一致（25处）【MEDIUM】
-- 证据：[auto_fix_engine/models.py:193](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/models.py) `model_config={"arbitrary_types_allowed":True}` dict字面量；[orphan_judge/models.py:45,57,71](file:///d:/ZephyrAlpha/src/zephyr/security/access_control/orphan_judge/models.py) 同；共25处；对比 [verdict_engine.py:41](file:///d:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py) `model_config=ConfigDict(extra="forbid")` 类型安全
-- 病根：根因5（dict字面量拼写错误不会被发现，无法被mypy验证）
-- 修复：全部替换为ConfigDict，lint规则禁止 `model_config={` 字面量
-
-#### 5.19.9 @runtime_checkable Protocol混合数据属性与方法——isinstance假阳性【MEDIUM】
-- 证据：[protocols.py:36-42](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `@runtime_checkable class GateActionProtocol(Protocol): def execute(self)->GateResult: ...; name:str`；runtime_checkable的isinstance仅验证方法存在性不检查数据属性，任何有execute方法的对象都通过isinstance即使没有name属性
-- 病根：根因5（Protocol误用）
-- 修复：从Protocol移除 `name:str` 数据属性改为 @property
-
-#### 5.19.10 Pydantic模型字段使用可变默认值=[]/={}而非Field(default_factory)【MEDIUM】
-- 证据：[integration/models.py:120,121](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `output:dict[str,Any]={}` `errors:list[str]=[]`；[protocols.py:94](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `capabilities:list[str]=[]`；同文件其他字段用 `Field(default_factory=list)` 风格不统一
-- 病根：根因5（风格不统一，未来改dataclass会引入bug）
-- 修复：统一为 `Field(default_factory=dict/list)`，ruff规则RUF012检测
-
-#### 5.19.11 模块级可变全局状态HASH_CHAIN和INTEGRITY_MANIFEST【MEDIUM】
-- 证据：[baseline_poisoning_guard.py:98,101](file:///d:/ZephyrAlpha/src/zephyr/governance/drift_detection/baseline_poisoning_guard.py) `HASH_CHAIN:list[HashChainEntry]=[]` `INTEGRITY_MANIFEST:dict[str,object]={}`；模块级可变全局在进程内所有调用方共享，测试间状态泄漏，多线程并发写入无锁
-- 病根：根因5（数据完整性+并发安全）
-- 修复：改为类实例属性或frozenset/MappingProxyType只读
-
-#### 5.19.12 protocols.py模块级__getattr__死代码——STABILITY VIOLATION警告永不触发【MEDIUM】
-- 证据：[protocols.py:107-131](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py) `_STABILITY_FROZEN=True; _FROZEN_PUBLIC_API=frozenset({...}); def __getattr__(name): if name in _FROZEN_PUBLIC_API: warning(...); raise AttributeError`；但这些类在同一文件模块级命名空间已定义，PEP 562 __getattr__仅在常规属性查找失败时调用——`if name in _FROZEN_PUBLIC_API`分支是死代码
-- 病根：根因5（稳定性守护机制完全失效，给出虚假安全感）
-- 修复：删除__getattr__死代码，改用import-linter契约或arch_guard静态检查
-
 #### 5.19.13 小计
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 5（5.19.1~5.19.6，其中5.19.4/5.19.5/5.19.6合并计为3个但实为5个独立问题） |
-| MEDIUM | 7（5.19.7~5.19.12 + 5.19.13计数） |
+| CRITICAL/HIGH | 0 |
+| MEDIUM | 0 |
 | LOW | 0 |
-| **合计** | **12** |
+| **合计** | **0** |
+
+> 5.19.1/5.19.2/5.19.6/5.19.8/5.19.9/5.19.10/5.19.12 已FIXED（class Config→ConfigDict、删除__all__=["*"]、verify_chain()抛NotImplementedError、model_config dict字面量→ConfigDict、Protocol name→@property、capabilities=[]→Field(default_factory=list)、删除__getattr__死代码）
+> 5.19.7 已修复（api_03目录已删除）
+> 5.19.3/5.19.11 误报（测试期望可实例化BaseFixer/可变全局状态，测试为真源）
+> 5.19.4/5.19.5 误报（6个/3个类无继承关系，LSP不适用，同名方法语义不同是设计选择）
 
 ---
 

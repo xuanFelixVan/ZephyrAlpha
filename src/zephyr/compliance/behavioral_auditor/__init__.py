@@ -3,5 +3,3 @@
 """Re-export wrapper: behavioral-auditor has migrated to zephyr.governance.behavioral_auditor"""
 
 from zephyr.governance.behavioral_auditor import *  # noqa: F403
-
-__all__ = ["*"]

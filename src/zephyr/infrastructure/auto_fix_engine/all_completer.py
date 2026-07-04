@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 
 class AllCompleter(BaseFixer):
-    model_config = {"arbitrary_types_allowed": True}
 
     def __init__(self) -> None:
         super().__init__(
@@ -134,7 +133,8 @@ class AllCompleter(BaseFixer):
                     replacement = f"__all__ = [{existing}, {new_entries}]" if existing else f"__all__ = [{new_entries}]"
                     content = content.replace(all_match.group(0), replacement)
             else:
-                all_line = f"__all__ = [{', '.join(f'"{s}"' for s in public_symbols)}]"
+                quoted = [f'"{s}"' for s in public_symbols]
+                all_line = f"__all__ = [{', '.join(quoted)}]"
                 lines = content.split("\n")
                 insert_idx = 0
                 for i, line in enumerate(lines):

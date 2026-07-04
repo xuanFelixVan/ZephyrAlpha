@@ -23,7 +23,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class FixLevel(str, Enum):
@@ -190,7 +190,7 @@ class ComplianceEvidence(BaseModel):
 
 
 class BaseFixer(BaseModel):
-    model_config = {"arbitrary_types_allowed": True}
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     fixer_id: str
     action_type: str

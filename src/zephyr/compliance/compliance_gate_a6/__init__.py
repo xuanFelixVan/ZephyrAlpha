@@ -3,5 +3,3 @@
 """Re-export wrapper: compliance_gate_a6 has migrated to zephyr.governance.compliance_gate_a6"""
 
 from zephyr.governance.compliance_gate_a6 import *  # noqa: F403
-
-__all__ = ["*"]

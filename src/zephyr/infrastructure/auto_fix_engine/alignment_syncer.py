@@ -38,7 +38,6 @@ logger = logging.getLogger(__name__)
 
 
 class AlignmentSyncer(BaseFixer):
-    model_config = {"arbitrary_types_allowed": True}
 
     def __init__(self) -> None:
         super().__init__(

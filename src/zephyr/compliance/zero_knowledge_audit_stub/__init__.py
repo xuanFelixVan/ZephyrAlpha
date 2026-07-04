@@ -3,5 +3,3 @@
 """Re-export wrapper: zero_knowledge_audit_stub has migrated to zephyr.governance.zero_knowledge_audit_stub"""
 
 from zephyr.governance.zero_knowledge_audit_stub import *  # noqa: F403
-
-__all__ = ["*"]

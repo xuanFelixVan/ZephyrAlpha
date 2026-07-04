@@ -3,5 +3,3 @@
 """Re-export wrapper: audit-orchestrator has migrated to zephyr.governance.audit_trail"""
 
 from zephyr.governance.audit_trail import *  # noqa: F403
-
-__all__ = ["*"]

@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 
 class LLMFixAdapter(BaseFixer):
-    model_config = {"arbitrary_types_allowed": True}
 
     def __init__(self) -> None:
         super().__init__(

@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol, runtime_checkable
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 
@@ -39,7 +39,8 @@ class GateActionProtocol(Protocol):
 
     def execute(self) -> GateResult: ...
 
-    name: str
+    @property
+    def name(self) -> str: ...
 
 
 @runtime_checkable
@@ -117,7 +118,7 @@ class AgentCapability(BaseModel):
     """Agent capability contract — shared across agent-spec / governance / audit."""
 
     agent_id: str
-    capabilities: list[str] = []
+    capabilities: list[str] = Field(default_factory=list)
     version: str = "1.0.0"
     spec_hash: str = ""
 
@@ -127,7 +128,8 @@ class IntegrityVerifier(BaseModel):
 
     spec_hash: str = ""
 
-    def verify_chain(self) -> dict: ...
+    def verify_chain(self) -> dict:
+        raise NotImplementedError
 
 
 _STABILITY_FROZEN = True
@@ -146,14 +148,3 @@ _FROZEN_PUBLIC_API = frozenset(
         "IntegrityVerifier",
     }
 )
-
-
-def __getattr__(name: str):
-    if name in _FROZEN_PUBLIC_API:
-        import logging
-
-        logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.shared.contracts.protocols",
-            name,
-        )
-    raise AttributeError(f"module 'zephyr.shared.contracts.protocols' has no attribute {name!r}")

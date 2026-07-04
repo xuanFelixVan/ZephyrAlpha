@@ -40,7 +40,6 @@ logger = logging.getLogger(__name__)
 
 
 class DedupExtractor(BaseFixer):
-    model_config = {"arbitrary_types_allowed": True}
 
     def __init__(self, min_occurrences: int = 3) -> None:
         super().__init__(

@@ -20,7 +20,7 @@ import hmac
 import time
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MaturityLevel(str, Enum):
@@ -141,8 +141,7 @@ class AgentIdentity(BaseModel):
     created_at: float = Field(default_factory=time.time)
     last_active: float = Field(default_factory=time.time)
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
     def _maturity_value(self) -> str:
         if isinstance(self.maturity, MaturityLevel):

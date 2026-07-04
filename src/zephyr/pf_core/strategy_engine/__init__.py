@@ -3,5 +3,3 @@
 """Re-export wrapper: strategy_engine has migrated to zephyr.portfolio_core.core.strategy_engine"""
 
 from zephyr.governance.strategy_engine import *  # noqa: F403
-
-__all__ = ["*"]

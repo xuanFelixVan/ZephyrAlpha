@@ -28,7 +28,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
 
@@ -503,8 +503,7 @@ class PipelineStage(BaseModel):
         description="同一 parallel_group 的 stage 可以并行执行。",
     )
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class PipelineDAG(BaseModel):
