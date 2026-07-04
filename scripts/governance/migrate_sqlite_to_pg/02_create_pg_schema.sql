@@ -18,7 +18,8 @@
 -- 1.1 无外键依赖的表（先创建）
 -- domains: 功能域真源表
 CREATE TABLE IF NOT EXISTS domains (
-    domain_id              TEXT PRIMARY KEY,
+    domain_id              TEXT PRIMARY KEY
+        CHECK (domain_id ~ '^D_[A-Z_]+$'),
     domain_name            TEXT NOT NULL,
     domain_group           TEXT NOT NULL,
     description            TEXT,

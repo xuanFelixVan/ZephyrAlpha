@@ -41,6 +41,9 @@ v6变更: arch_domain_capacity + arch_domain_layers 已合并入 domains 表
 v9变更: domains 表新增 production_nodes 字段（ARCH-CAP-001 口径修复）
 v10变更: domains 表清理7个无区分度装饰字段（can_build/gate_reason/hard_boundary_ref/growth_pattern/feasibility/bottleneck_description/last_capacity_check）
 v14变更: 删除3张死表/漂移表（arch_bottlenecks/arch_layers/invariants）— fix #ARCH-013~015
+v15变更: domains 表 domain_id 添加 CHECK 约束（裁定#ARCH-target_layer_v1.0.0）
+        CHECK (domain_id ~ '^D_[A-Z_]+$') — 格式校验，阻止连字符(D-DATA)/中文(基础设施)等废弃格式
+        nodes.domain_id 已有 FK REFERENCES domains(domain_id)（02_create_pg_schema.sql L53）
         保留 cross_registry_rules（健康sync缓存）与 governance_audit_logs（auto_runner活跃写入）
 
 PRAGMA 基线（P2迁移后已废弃）
@@ -276,7 +279,8 @@ CREATE TABLE IF NOT EXISTS edges_metadata (
 
 _DDL_DOMAINS = """
 CREATE TABLE IF NOT EXISTS domains (
-    domain_id        TEXT    PRIMARY KEY,
+    domain_id        TEXT    PRIMARY KEY
+        CHECK (domain_id ~ '^D_[A-Z_]+$'),
     domain_name      TEXT    NOT NULL,
     domain_group     TEXT    NOT NULL,
     description      TEXT,

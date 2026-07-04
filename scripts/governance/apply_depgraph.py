@@ -2064,6 +2064,182 @@ def cmd_delete_domain(
                     c.close()
 
 
+def cmd_merge_domain(
+    old_id: str,
+    new_id: str,
+    dry_run: bool = False,
+    db_path: str = None,
+    conn=None,
+) -> int:
+    """合并域——将 old_id 的所有引用迁移到已存在的 new_id，然后删除 old_id（裁定#ARCH-target_layer_v1.0.0）。
+
+    与 cmd_rename_domain 的区别：rename 要求 new_id 不存在（PK UPDATE），merge 要求
+    new_id 已存在（语义合并场景）。典型用途：废弃域归并到已登记域（如 D_COMPLIANCE →
+    D_GOV_ENFORCEMENT）。
+
+    流程（与 rename 步骤对齐，step1 改为 DELETE）：
+      step1  DELETE FROM domains WHERE domain_id=old_id（new_id 行已存在，仅删旧行）
+      step2-17  UPDATE 11表引用列 old_id → new_id（与 rename step2-17 完全一致）
+      B1     全表 TEXT 列值扫描兜底（与 rename 一致，复用 _scan_replace_all_text_columns）
+
+    domain_dependencies 复合 PK (from_domain, to_domain) 冲突预检：
+      若 (old_id, X) 和 (new_id, X) 同时存在，UPDATE 会产生 PK 冲突。
+      预检发现冲突 → 阻断（-1），提示人工合并 edge_count 后删除旧行再重试。
+
+    dry_run 只读预览，不触发写锁/物理备份。返回受影响总行数，-1=失败。
+    完成后自动触发 _post_rename_residual_check 后置残留校验（事件驱动，复用现成扫描）。
+    """
+    own_conn = conn is None
+
+    # 格式校验（与 cmd_rename_domain 对称）
+    ok, reason = _validate_domain_id_format(new_id)
+    if not ok:
+        print(
+            f"ERROR: new_id '{new_id}' 格式不合规：{reason}\n"
+            f"domain_id 必须为 D_{{DOMAIN}} 格式（如 D_GOVERNANCE），DOMAIN 为大写+下划线，无序号",
+            file=sys.stderr,
+        )
+        return -1
+    ok, reason = _validate_domain_id_format(old_id)
+    if not ok:
+        print(
+            f"ERROR: old_id '{old_id}' 格式不合规：{reason}",
+            file=sys.stderr,
+        )
+        return -1
+    if old_id == new_id:
+        print(f"ERROR: old_id 与 new_id 相同（'{old_id}'），无需合并", file=sys.stderr)
+        return -1
+
+    def _run(c) -> int:
+        # 0. 校验 old 存在、new 存在（merge：两者必须都在 domains 表中）
+        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (old_id,)).fetchone():
+            print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
+            return -1
+        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (new_id,)).fetchone():
+            print(f"ERROR: new_id '{new_id}' 不在 domains 表中（merge 要求目标域已存在；若要重命名请用 --rename-domain）", file=sys.stderr)
+            return -1
+
+        # domain_dependencies 复合 PK 冲突预检
+        # 场景1：(old_id, X) 与 (new_id, X) 同时存在 → from_domain UPDATE 会冲突
+        from_conflicts = c.execute(
+            """
+            SELECT COUNT(*) AS cnt FROM domain_dependencies a
+            JOIN domain_dependencies b
+              ON a.to_domain = b.to_domain
+             AND a.from_domain = %s
+             AND b.from_domain = %s
+            """,
+            (old_id, new_id),
+        ).fetchone()["cnt"]
+        # 场景2：(X, old_id) 与 (X, new_id) 同时存在 → to_domain UPDATE 会冲突
+        to_conflicts = c.execute(
+            """
+            SELECT COUNT(*) AS cnt FROM domain_dependencies a
+            JOIN domain_dependencies b
+              ON a.from_domain = b.from_domain
+             AND a.to_domain = %s
+             AND b.to_domain = %s
+            """,
+            (old_id, new_id),
+        ).fetchone()["cnt"]
+        if from_conflicts > 0 or to_conflicts > 0:
+            print(
+                f"ERROR: domain_dependencies 复合 PK 冲突（from={from_conflicts}, to={to_conflicts}）\n"
+                f"  (old_id, X) 与 (new_id, X) 同时存在，UPDATE 会违反 PRIMARY KEY (from_domain, to_domain)\n"
+                f"  请手工合并 edge_count 到 new_id 行后 DELETE old_id 行，再重试 --merge-domain",
+                file=sys.stderr,
+            )
+            return -1
+
+        # step2-17 UPDATE: (step, table, column, use_replace_like) — 与 rename step2-17 一致
+        # step1 在最后执行 DELETE（domains 表），不在此 UPDATE 清单中
+        steps = [
+            (2, "nodes", "domain_id", False),
+            (3, "nodes", "subdomain_id", False),
+            (4, "nodes", "belongs_to", False),
+            (5, "domain_dependencies", "from_domain", False),
+            (6, "domain_dependencies", "to_domain", False),
+            (7, "domain_events", "source_domain", False),
+            (8, "domain_events", "target_domains", True),
+            (9, "contracts", "provider_domain", False),
+            (10, "contracts", "consumer_domain", False),
+            (11, "arch_constraints", "from_domain", False),
+            (12, "arch_constraints", "to_domain", False),
+            (13, "arch_directory_tree", "domain_id", False),
+            (14, "arch_path_mappings", "domain_id", False),
+            (15, "domain_mapping", "domain_id", False),
+            (16, "domain_mapping", "subdomain_id", True),
+            (17, "rule_bindings", "domain_id", False),
+        ]
+        total = 0
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        for step, tbl, col, use_like in steps:
+            if use_like:
+                cnt = c.execute(
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s",
+                    (f"%{old_id}%",),
+                ).fetchone()["count"]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE+LIKE '%{old_id}%': {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
+                            (old_id, new_id, f"%{old_id}%"),
+                        )
+            else:
+                cnt = c.execute(
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=%s",
+                    (old_id,),
+                ).fetchone()["count"]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col}='{old_id}': {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"UPDATE {tbl} SET {col}=%s WHERE {col}=%s",
+                            (new_id, old_id),
+                        )
+            total += cnt
+        # B1 值扫描兜底（与 rename 一致）：step2-17 枚举列之外的全表 TEXT 列残留替换
+        total += _scan_replace_all_text_columns(
+            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
+        )
+
+        # step1 最后：DELETE FROM domains WHERE domain_id=old_id（new_id 行保留）
+        # FK 约束要求外部引用先清完（step2-17 已执行），最后删 domains 行
+        print(f"  {mode} step 1 domains.domain_id='{old_id}': DELETE 1 row", file=sys.stderr)
+        if not dry_run:
+            c.execute("DELETE FROM domains WHERE domain_id=%s", (old_id,))
+        total += 1
+
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_merge_domain({old_id} -> {new_id}): total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task=f"merge_domain_{old_id}", db_path=db_path):
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                logger.error("cmd_merge_domain失败: %s", e)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_fix_rename_residual(
     rename_map: dict[str, str],
     dry_run: bool = False,
@@ -3263,6 +3439,16 @@ def main() -> None:
         action="store_true",
         help="强制删除（跳过 nodes 安全门，级联删除 nodes 引用）。仅与 --delete-domain 配合使用。",
     )
+    # 裁定#ARCH-target_layer_v1.0.0：废弃域归并——将 old_id 引用迁移到已存在的 new_id
+    parser.add_argument(
+        "--merge-domain",
+        type=str,
+        nargs=2,
+        metavar=("OLD_DOMAIN_ID", "NEW_DOMAIN_ID"),
+        help="合并域（裁定#ARCH-target_layer_v1.0.0）：将 old_id 的所有引用迁移到已存在的 new_id，"
+        "然后删除 old_id。与 --rename-domain 的区别：rename 要求 new_id 不存在，merge 要求 new_id 已存在。"
+        "domain_dependencies 复合 PK 冲突预检（冲突阻断）。完成后自动触发残留校验。",
+    )
     parser.add_argument(
         "--update-domain-name",
         type=str,
@@ -3610,6 +3796,18 @@ def main() -> None:
             _post_rename_residual_check(domain_id, None)
         return
 
+    # 裁定#ARCH-target_layer_v1.0.0：废弃域归并——dispatch
+    if args.merge_domain:
+        old_id, new_id = args.merge_domain
+        n = cmd_merge_domain(old_id, new_id, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        # 后置残留校验（复用改名后置检查，事件驱动）
+        if not args.dry_run:
+            _post_rename_residual_check(old_id, None)
+        return
+
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
@@ -3727,7 +3925,7 @@ if __name__ == "__main__":
             "--rename-domain", "--update-domain-name", "--fix-residual",
             "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
             "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
-            "--batch",
+            "--batch", "--merge-domain",
         }
         is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
         has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
