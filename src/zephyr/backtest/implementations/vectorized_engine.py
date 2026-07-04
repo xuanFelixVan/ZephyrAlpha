@@ -342,8 +342,8 @@ class DefaultBacktestEngine(BacktestEngineBase):
         self,
         data: pd.DataFrame,
         config: WalkForwardConfig | None = None,
-    ) -> list[list[pd.DataFrame]]:
-        """运行 Walk-Forward 分析，返回训练/测试窗口列表。
+    ) -> list[tuple[list, list]]:
+        """运行 Walk-Forward 分析，返回训练/测试日期窗口列表。
 
         接入 zephyr.backtest.core.walk_forward.WalkForwardAnalyzer。
         蓝图 §16.7 P1-29 Walk-Forward 三模式（rolling/anchored/expanding）。
@@ -353,10 +353,11 @@ class DefaultBacktestEngine(BacktestEngineBase):
             config: Walk-Forward 配置；None 用默认（rolling, train=252, test=63）
 
         Returns:
-            list[list[DataFrame]]：每个窗口 [train_df, test_df]
+            list[tuple[list, list]]：每个窗口 (train_dates, test_dates)
         """
         analyzer = WalkForwardAnalyzer(config)
-        return analyzer.split(data)
+        dates = self._get_sorted_dates(data)
+        return analyzer.split(dates)
 
     def detect_overfitting(
         self,
