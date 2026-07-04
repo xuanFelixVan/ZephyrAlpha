@@ -75,12 +75,12 @@ from zephyr.intelligence.model_evaluation.inference_base import (
     ModelTrainerBase,
 )
 from zephyr.pf_core.compliance_rule import ComplianceRule
-from zephyr.research.backtest_base import (
+from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,
 )
-from zephyr.research.default_backtest_engine import (
+from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
@@ -164,14 +164,16 @@ class TestPhaseFL09:
     def test_backtest_result_resource(self):
         result = BacktestResult(
             strategy_id="test-strat",
-            start_date="2025-01-01",
-            end_date="2025-06-30",
+            start_date=datetime(2025, 1, 1, tzinfo=UTC),
+            end_date=datetime(2025, 6, 30, tzinfo=UTC),
             total_return=0.15,
             annual_return=0.30,
             sharpe_ratio=1.2,
             max_drawdown=0.12,
             win_rate=0.55,
             trades_count=120,
+            idempotency_key="test-key-001",
+            timestamp=datetime.now(UTC),
         )
         assert result.strategy_id == "test-strat"
         assert result.sharpe_ratio == 1.2

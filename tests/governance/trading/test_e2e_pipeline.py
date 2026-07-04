@@ -73,7 +73,7 @@ from zephyr.signal_fundamental.strategy.implementations.default_capital_allocato
     AllocationMethod,
     DefaultCapitalAllocator,
 )
-from zephyr.research.default_backtest_engine import (
+from zephyr.backtest.implementations.vectorized_engine import (
     DefaultBacktestEngine,
 )
 from zephyr.simulation.implementations.default_experiment_pipeline import (

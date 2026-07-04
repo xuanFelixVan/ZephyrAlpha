@@ -49,7 +49,7 @@ from zephyr.backtest.core.engine_base import (
     BacktestResult,
 )
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
-from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_metrics
+from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
 from zephyr.backtest.core.portfolio import Portfolio
 
 _logger = logging.getLogger(__name__)
@@ -168,7 +168,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         # 计算绩效指标
         risk_free_rate = kwargs.get("risk_free_rate", self._config.risk_free_rate)
-        metrics = calculate_metrics(
+        metrics = calculate_full_metrics(
             nav_series=portfolio.nav_series,
             trades_count=portfolio.trades_count,
             risk_free_rate=risk_free_rate,
@@ -191,7 +191,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
             timestamp=datetime.now(timezone.utc),
             idempotency_key=result_id,
             benchmark_symbol=self._config.benchmark_symbol,
-            overfitting_flag=False,
+            overfitting_flag=metrics["is_overfitting"],
         )
 
         self._results.append(result)

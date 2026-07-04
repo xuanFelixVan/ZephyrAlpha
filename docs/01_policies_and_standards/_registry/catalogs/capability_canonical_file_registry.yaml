@@ -3020,6 +3020,25 @@ creation_tokens:
     created_by: "session-sess-17516-20260704044314"
     capability: "test_exempt_checker"
 
+  # --- D_BACKTEST 回测就绪性6项施工（2026-07-04，session-sess-25020）---
+  # 4个新模块: PIT铁律 + 过拟合检测 + Walk-Forward + 3阶段决策门控
+  - file: "src/zephyr/backtest/core/pit_manager.py"
+    token: "auto-pit-manager-20260704"
+    created_by: "session-sess-25020-20260704152728"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/overfitting_detector.py"
+    token: "auto-overfitting-detector-20260704"
+    created_by: "session-sess-25020-20260704152728"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/walk_forward.py"
+    token: "auto-walk-forward-20260704"
+    created_by: "session-sess-25020-20260704152728"
+    capability: "backtest_engine_core"
+  - file: "src/zephyr/backtest/core/decision_gate.py"
+    token: "auto-decision-gate-20260704"
+    created_by: "session-sess-25020-20260704152728"
+    capability: "backtest_engine_core"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
