@@ -973,7 +973,10 @@ def _pre_merge_gate_check(
             return True, []  # reset 失败，降级放行
 
         try:
-            _gw = GitCommitGateway(project_root=root)
+            # 用 worktree 路径作为 project_root（修复 gate 相对路径计算 bug）
+            # 原实现用 root（主工作区路径），gate 用 project_root 计算 rel 时
+            # worktree 文件路径（.aidrafts/...）被误判为新文件，触发 module_id_collision
+            _gw = GitCommitGateway(project_root=wt_path)
             # monkeypatch _run_git 重定向 cwd 到 worktree（使 git diff --cached 查 worktree index）
             _orig_run_git = _gw._run_git
 
