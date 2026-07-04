@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 15:59:56
+> 最后更新: 2026-07-04 16:04:21
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -72,7 +72,7 @@ graph TD
         src_zephyr_compliance_services_init_py["src/zephyr/compliance/services/__init__.py prototype"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["src/zephyr/compliance/zero_knowledge_audit_stub... prototype"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_artifact_scanner_py
+    src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_aisg_sandbox_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_aisg_sandbox_py -.->|import_depends| D_GOVERNANCE
@@ -86,10 +86,10 @@ graph TD
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_audit_orchestrator_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_merkle_hourly_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_compliance_compliance_gate_a6_init_py -.->|import_depends| D_SECURITY
-    src_zephyr_compliance_behavioral_admission_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_security_gateway_base_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_integrity_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_compliance_audit_trail_init_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -192,7 +192,7 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [config_depends] (1 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   __init__.py → artifact_scanner.py                              │
+│   __init__.py → aisg_sandbox.py                                  │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
