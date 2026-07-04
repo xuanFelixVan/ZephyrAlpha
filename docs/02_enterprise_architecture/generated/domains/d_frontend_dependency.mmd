@@ -1,7 +1,7 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-04 23:30:44
+%% 生成时间: 2026-07-05 03:08:43
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 26, 依赖边数: 21
+%% 模块数: 28, 依赖边数: 33
 
 graph TD
 
@@ -16,6 +16,8 @@ graph TD
         src_zephyr_frontend_dashboard_components___init___py["...tend/dashboard/components/__init__.py [prototype]"]
         src_zephyr_frontend_dashboard_components_backtest_results_py["...hboard/components/backtest_results.py [prototype]"]
         src_zephyr_frontend_dashboard____onents_backtest_results_py_["...board/components/backtest_results.py/ [design]"]
+        src_zephyr_frontend_dashboard_components_chart_factory_py["...dashboard/components/chart_factory.py [prototype]"]
+        src_zephyr_frontend_dashboard_components_chart_factory_py_["...ashboard/components/chart_factory.py/ [design]"]
         src_zephyr_frontend_dashboard____onents_fitness_functions_py["...board/components/fitness_functions.py [production]"]
         src_zephyr_frontend_dashboard_components_gate_statistics_py["...shboard/components/gate_statistics.py [production]"]
         src_zephyr_frontend_dashboard____nents_knowledge_overview_py["...oard/components/knowledge_overview.py [production]"]
@@ -36,11 +38,22 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_frontend_dashboard____onents_backtest_results_py_ -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_
+    src_zephyr_frontend_dashboard_components_tick_replay_py_ -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_
+    src_zephyr_frontend_dashboard_components_order_book_py_ -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_
+    src_zephyr_frontend_dashboard____onents_position_monitor_py_ -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_
+    src_zephyr_frontend_dashboard_components_trade_panel_py_ -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py_
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    src_zephyr_frontend_dashboard_components_backtest_results_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_gate_statistics_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_order_book_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_position_monitor_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard___init___py
     src_zephyr_frontend___init___py -->|config_depends| src_zephyr_frontend_interface_base_py
 
@@ -53,8 +66,9 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_FRONTEND -> D_BACKTEST (1 条)
+    %% D_FRONTEND -> D_BACKTEST (2 条)
     src_zephyr_frontend_dashboard_components_tick_replay_py_ -->|import_depends| D_BACKTEST[D_BACKTEST]
+    src_zephyr_frontend_dashboard____onents_backtest_results_py_ -->|import| D_BACKTEST[D_BACKTEST]
     %% D_FRONTEND -> D_EX_CORE (2 条)
     src_zephyr_frontend_dashboard____onents_position_monitor_py_ -->|import_depends| D_EX_CORE[D_EX_CORE]
     src_zephyr_frontend_dashboard_components_trade_panel_py_ -->|import_depends| D_EX_CORE[D_EX_CORE]
@@ -68,6 +82,6 @@ graph TD
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 7 条
+    %% 域内依赖: 18 条
     %% 跨域入边: 5 条
-    %% 跨域出边: 9 条
+    %% 跨域出边: 10 条
