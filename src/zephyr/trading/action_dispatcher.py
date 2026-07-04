@@ -325,7 +325,11 @@ class ActionDispatcher:
         if failed:
             detail += f" ({failed} failed)"
 
-        _log.info("BrainHands: %s SearchReplace applied=%d failed=%d", py_file.name, applied, failed)
+        # 5.53.5 修复：原 failed>0 时仍用 INFO，代码修改部分失败被静默。failed>0 时用 WARNING。
+        if failed > 0:
+            _log.warning("BrainHands: %s SearchReplace applied=%d failed=%d", py_file.name, applied, failed)
+        else:
+            _log.info("BrainHands: %s SearchReplace applied=%d failed=%d", py_file.name, applied, failed)
         return ActionReport(py_file.name, "search_replace", "search_replaced", detail)
 
     # ── 创建新文件 ──────────────────────────────────────

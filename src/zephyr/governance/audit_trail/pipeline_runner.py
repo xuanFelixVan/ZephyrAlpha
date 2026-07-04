@@ -643,7 +643,9 @@ class PipelineRunner:
         except ImportError:
             return None
         with open(str(dep_path), encoding="utf-8") as f:
-            data = yaml.load(f, Loader=yaml.FullLoader)
+            # 5.48.1 修复：FullLoader 可构造 Python 对象（!!python/object），
+            # depgraph 文件被篡改时可实例化任意对象。统一改用 safe_load（与 L669 _load_manifest 一致）。
+            data = yaml.safe_load(f)
         elapsed = time.perf_counter() - t_start
         print(f"[DONE] Loaded depgraph in {elapsed:.1f}s", file=sys.stderr)
         PipelineRunner._depgraph_cache = (current_mtime, data)

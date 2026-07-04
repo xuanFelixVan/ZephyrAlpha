@@ -107,7 +107,11 @@ class TaskQueue:
         if self._thread is not None:
             self._thread.join(timeout=timeout)
             self._thread = None
-        logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", self._stats["dispatched"], self._stats["errors"])
+        # 5.53.3 修复：原无条件 INFO，累计大量 errors 时信息被埋在 INFO 中。errors>0 时用 WARNING。
+        if self._stats["errors"] > 0:
+            logger.warning("TaskQueue stopped (dispatched=%d, errors=%d)", self._stats["dispatched"], self._stats["errors"])
+        else:
+            logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", self._stats["dispatched"], self._stats["errors"])
 
     @property
     def is_running(self) -> bool:

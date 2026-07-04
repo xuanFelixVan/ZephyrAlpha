@@ -143,11 +143,15 @@ class TaskManagerMCP:
             phase: int = 1,
             execution_model: str = "deepseek",
             safety_level: str = "L",
-            downstream_outputs: list = [],
+            downstream_outputs: list | None = None,
             pipeline_task_type: str = "",
             target_layer: str = "",
         ) -> dict:
             """创建 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 1（idempotent）"""
+            # 5.51.1 修复：原可变默认参数 = [] 共享同一 list 对象，跨调用污染。改为 None + 函数内初始化。
+            if downstream_outputs is None:
+                downstream_outputs = []
+
             import hashlib
 
             mgr._rbac_guard("create_task")

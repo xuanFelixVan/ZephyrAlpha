@@ -123,7 +123,9 @@ class PricingSync:
                 continue
             input_price = info.get("input_cost_per_token", 0.0)
             output_price = info.get("output_cost_per_token", 0.0)
-            if input_price == 0.0 and output_price == 0.0:
+            # 5.50.1 修复：原 == 0.0 浮点精确比较，与同文件 L134 的 abs()>1e-8 风格不一致。
+            # 改用容差比较，避免浮点残差导致哨兵值检测失败。
+            if abs(input_price) < 1e-12 and abs(output_price) < 1e-12:
                 continue
             input_per_1k = input_price * 1000
             output_per_1k = output_price * 1000

@@ -122,7 +122,8 @@ class Conductor:
     def mark_failed(self, task_id: str, note: str) -> None:
         """标记任务 FAILED。note 必须包含根因分析。"""
         self.repo.transition(task_id, "FAILED", session_id=self.session_id, note=note)
-        logger.info("Conductor: %s → FAILED", task_id)
+        # 5.53.1 修复：任务失败是负向事件，原用 INFO 在海量日志中被淹没。改为 WARNING。
+        logger.warning("Conductor: %s → FAILED (note=%s)", task_id, note)
 
     def is_done(self) -> bool:
         """检查是否还有可做的任务（READY 或 IN_PROGRESS）。"""

@@ -814,8 +814,10 @@ class ResourceOptimizationEngine:
             current_mtime = os.path.getmtime(self._config_path)
             if current_mtime != self._config_mtime:
                 self._apply_config(self._config_path)
-        except OSError:
-            pass
+        except OSError as e:
+            # 5.54.5 修复：原 except OSError: pass 静默停止热重载，配置文件误删后引擎无感知。
+            # 改为 warning 级别日志记录。
+            logger.warning("ResourceOptimizationEngine: config hot-reload failed (%s: %s)", type(e).__name__, e)
 
     def _self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
         if not self._self_healing_enabled:

@@ -337,7 +337,11 @@ class ResultPushManager:
                 task["error_message"] = f"retry {task['retry_count']} failed with status {status.value}"
             self._save(state)
 
-        _log.info("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
+        # 5.53.4 修复：重试失败是负向事件，原用 INFO 记录被当正常信息。status≠PUSHED 时用 WARNING。
+        if status != PushStatus.PUSHED:
+            _log.warning("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
+        else:
+            _log.info("retry_failed %s → %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
         return status
 
     def subscribe_event(self, callback: Any) -> None:

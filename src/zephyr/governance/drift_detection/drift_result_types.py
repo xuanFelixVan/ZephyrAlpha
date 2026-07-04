@@ -449,6 +449,9 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
             continue
 
     for db_file in db_files:
+        # 5.49.4 修复：原 try/except 中 conn 仅在成功路径关闭，异常分支泄漏。
+        # 改用 try/finally 保证连接在所有路径下关闭。
+        conn = None
         try:
             conn = sqlite3.connect(str(db_file))
 
@@ -495,10 +498,14 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
                     if field_name == tbl:
                         pass
 
-            conn.close()
-
         except Exception:
             continue
+        finally:
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
     for mdir in migration_dirs:
         try:

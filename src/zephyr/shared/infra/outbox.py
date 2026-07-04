@@ -92,7 +92,9 @@ class OutboxEntry:
 class OutboxStore(Protocol):
     """Outbox 存储后端接口。"""
 
-    async def append(self, event_type: str, payload: dict[str, Any], *, idempotency_key: str = "") -> Self: ...
+    # 5.56.5 修复：原注解 -> Self 但 Self 未导入且语义错误（方法返回 OutboxEntry 不是 Self）。
+    # 改为 -> OutboxEntry。
+    async def append(self, event_type: str, payload: dict[str, Any], *, idempotency_key: str = "") -> OutboxEntry: ...
     async def fetch_pending(self, limit: int = 100) -> list[OutboxEntry]: ...
     async def mark_published(self, entry_id: str) -> None: ...
     async def mark_failed(self, entry_id: str) -> None: ...
@@ -110,7 +112,7 @@ class MemoryOutboxStore:
         self._max_entries = max_entries
         self._lock = asyncio.Lock()
 
-    async def append(self, event_type: str, payload: dict[str, Any], *, idempotency_key: str = "") -> Self:
+    async def append(self, event_type: str, payload: dict[str, Any], *, idempotency_key: str = "") -> OutboxEntry:
         async with self._lock:
             if len(self._entries) >= self._max_entries:
                 stale = sorted(

@@ -381,7 +381,9 @@ class LLMGateway:
                     )
                 resp.content = safe_content
                 return resp
-            logger.info("LLMGateway provider=%s failed, trying next in chain", prov)
+            # 5.53.2 修复：Provider 降级是异常路径，原用 INFO 难以从海量日志定位失败。
+            # 改为 WARNING。
+            logger.warning("LLMGateway provider=%s failed, trying next in chain", prov)
         return LLMResponse(
             content="",
             model=model or "unknown",
