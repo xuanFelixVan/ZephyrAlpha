@@ -205,7 +205,8 @@ class AutoRuntimeCore:
                 f"{self._config.ollama_base_url}/api/tags",
                 timeout=timeout_s,
             )
-            return resp.status_code == 200
+            # 5.56.1 修复：原仅接受 200，改为 2xx 范围判定（与 gpu_consensus_scheduler.py 一致）。
+            return 200 <= resp.status_code < 300
         except Exception as e:
             logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e)
             return False

@@ -4233,7 +4233,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：time.time()受NTP/手动调时/夏令时影响可能回退，时钟回退时TTL永不过期/stale lock永不清理
 - **影响**：缓存泄漏返回stale数据；跨进程锁死锁；健康检查age为负值
 - **修复**：改用time.monotonic()记录和计算TTL
-- **状态**：部分修复 — semantic_cache.py 已改为 time.monotonic()（L54/L69）；staging_area.py + resource_optimization.py 仍用 time.time()，需后续修复
+- **状态**：FIXED — semantic_cache.py 已改为 time.monotonic()（L54/L69）。staging_area.py 的 time.time() 经核验为正确用法（跨进程锁文件需 wall-clock 时间，monotonic 跨进程无意义）；resource_optimization.py 的 snapshot.timestamp 通过事件总线对外暴露为 wall-clock，不能用 monotonic。原债务描述的"三处均应用monotonic"为过度泛化，实际仅 semantic_cache 适用。
 
 #### 5.46.2 [MEDIUM] naive datetime与aware datetime混用（100+处）
 - **文件**：[work_orchestrator.py](file:///D:/ZephyrAlpha/src/zephyr/trading/work_orchestrator.py#L86)等100+处
@@ -4272,6 +4272,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：若数据源更新后调用方忘记set_version，所有客户端持续读stale cache
 - **影响**：缓存与真源不一致；基于过期数据做决策（风险限额/预算阈值）
 - **修复**：接入事件总线自动set_version；持久化到SQLite/Redis；提供bump_version_on_write装饰器
+- **状态**：STILL_VALID（保留）— cache_invalidation.py L33-46 仍为手动 set_version + 内存 dict 存储，需接入事件总线 + 持久化，中等规模重构
 
 #### 5.47.2 [MEDIUM] SemanticCache无锁重建——缓存击穿风险
 - **文件**：[semantic_cache.py](file:///D:/ZephyrAlpha/src/zephyr/governance/semantic_audit/semantic_cache.py#L46)
@@ -4279,6 +4280,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：热门prompt缓存击穿（thundering herd）
 - **影响**：LLM API配额瞬时耗尽；高延迟
 - **修复**：get miss时加asyncio.Lock/threading.Lock，仅持锁者重建
+- **状态**：STILL_VALID（保留）— semantic_cache.py 仍无 single-flight 锁，需新增 asyncio.Lock/threading.Lock + 重建协调逻辑
 
 #### 5.47.3 [MEDIUM] CacheManager序列化版本无迁移逻辑
 - **文件**：[cache_manager.py](file:///D:/ZephyrAlpha/src/zephyr/governance/code_dedup/cache_manager.py#L60)
@@ -4286,6 +4288,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：schema升级后缓存全量丢失，无迁移逻辑
 - **影响**：冷启动延迟激增
 - **修复**：load()中检查version，不匹配则调用迁移函数
+- **状态**：STILL_VALID（保留）— cache_manager.py L86-106 load() 仍直接 FunctionCache(**data) 不检查 version，需设计迁移函数注册机制
 
 #### 5.47.4 严重度汇总
 
@@ -4307,6 +4310,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：depgraph文件被篡改时可实例化任意Python对象
 - **影响**：DoS或绕过预期类型
 - **修复**：统一改用yaml.safe_load(f)
+- **状态**：FIXED — pipeline_runner.py L646 已改为 yaml.safe_load(f)，与 L669 _load_manifest 一致
 
 #### 5.48.2 [MEDIUM] json.loads反序列化外部数据无schema校验
 - **文件**：[base_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/persistence/base_repo.py#L227), [ai_audit_logger.py](file:///D:/ZephyrAlpha/src/zephyr/trading/ai_audit_logger.py#L207), [conductor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/conductor.py#L156)
@@ -4314,6 +4318,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：被篡改/损坏的JSON结构导致运行时异常或静默错误
 - **影响**：任务调度逻辑出错
 - **修复**：用Pydantic模型定义schema，json.loads后用Model(**data)校验
+- **状态**：STILL_VALID（保留）— 需为 base_repo/ai_audit_logger/conductor 三处分别设计 Pydantic schema，中等规模重构
 
 #### 5.48.3 [MEDIUM] SerializationContract有版本号但from_json不校验
 - **文件**：[serialization.py](file:///D:/ZephyrAlpha/src/zephyr/shared/io/serialization.py#L270)
@@ -4321,6 +4326,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：序列化规则变更后旧数据反序列化静默使用错误格式
 - **影响**：datetime解析错误或得到错误时间，无告警
 - **修复**：from_json检查raw.get("_format_version")，不匹配则抛SerializationError
+- **状态**：STILL_VALID（保留）— serialization.py from_json 仍不检查版本，需新增版本校验 + SerializationError 异常类
 
 #### 5.48.4 严重度汇总
 
@@ -4342,6 +4348,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：同5.49.2，异常路径泄漏
 - **影响**：审计模块连接泄漏
 - **修复**：try/finally中conn.close()
+- **状态**：FIXED — setup_append_only/snapshot_event_hash/count_states 三函数均改为 try/finally + conn=None 初始化，保证异常分支也关闭连接
 
 #### 5.49.4 [MEDIUM] drift_result_types.py遍历DB文件异常时连接泄漏
 - **文件**：[drift_result_types.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/drift_result_types.py#L453)
@@ -4349,6 +4356,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：遍历多文件时任意异常即泄漏连接
 - **影响**：批量扫描时连接累积泄漏
 - **修复**：try/finally包裹conn.close()
+- **状态**：FIXED — db_files 遍历循环改为 try/finally + conn=None 初始化，保证异常分支也关闭连接
 
 #### 5.49.6 严重度汇总
 
@@ -4369,6 +4377,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：浮点经多次运算产生1e-17残差时==0.0误判
 - **影响**：当前场景风险低，但违反最佳实践
 - **修复**：哨兵值改用is None；价格比较统一用容差
+- **状态**：部分修复 — pricing_sync.py L126 已改为 abs()<1e-12 容差比较；circuit_breaker.py L104 DRIFTED（Grep 未找到 ==0.0 模式，可能已修复或行号漂移）；deployment_suppression.py L65 仍用 stable_since==0.0 哨兵值，改为 is None 需变更字段类型（float→float|None），中等规模重构，保留 STILL_VALID
 
 #### 5.50.2 [LOW] conversation_tax_detector浮点==0比较可能产生inf
 - **文件**：[conversation_tax_detector.py](file:///D:/ZephyrAlpha/src/zephyr/governance/context_governance/conversation_tax_detector.py#L105)
@@ -4376,6 +4385,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：浮点残差导致除以极小值
 - **影响**：回复长度含浮点权重时产生inf decay值
 - **修复**：改用`if abs(older_avg) < 1e-9:`
+- **状态**：FIXED — conversation_tax_detector.py L105 已改为 abs(older_avg) < 1e-9
 
 #### 5.50.3 严重度汇总
 
@@ -4398,6 +4408,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：若函数体内对列表做原地修改（append/extend），修改跨调用持久化
 - **影响**：前一次调用的files_in_scope等列表"污染"后一次调用，任务范围错误扩大——数据完整性风险
 - **修复**：统一改为`files_in_scope: list[str] | None = None`，函数内`if files_in_scope is None: files_in_scope = []`
+- **状态**：FIXED — infrastructure/task_manager_server.py 和 integration/mcp/task_manager_server.py 两处 create_task 均改为 `list[str] | None = None` + 函数内 `if X is None: X = []` 初始化模式
 
 #### 5.51.2 严重度汇总
 
@@ -4418,6 +4429,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：从async上下文调用时安全网关完全失效，恶意内容绕过LSG检测
 - **影响**：安全漏洞——恶意内容可绕过安全扫描
 - **修复**：重构为全async调用链，或用run_coroutine_threadsafe+线程池桥接，禁止return None静默跳过
+- **状态**：STILL_VALID（保留）— 5处 asyncio.run+get_event_loop 回退模式仍存在，需统一重构为 async 调用链或 run_coroutine_threadsafe 桥接，架构级重构
 
 #### 5.52.2 [HIGH] asyncio.run无回退，异常时安全扫描返回False（放行）
 - **文件**：[context_injector.py](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/context/context_injector.py#L261)
@@ -4425,6 +4437,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：async环境中调用inject()时安全扫描始终返回False（放行）
 - **影响**：安全网关完全失效
 - **修复**：检测asyncio.get_running_loop()，有运行中loop则用run_in_executor桥接
+- **状态**：STILL_VALID（保留）— context_injector.py L261 仍用 asyncio.run 无回退，需新增 get_running_loop 检测 + run_in_executor 桥接
 
 #### 5.52.3 [MEDIUM] run_coroutine_threadsafe在同线程调用可能死锁
 - **文件**：[pipeline_orchestrator.py](file:///D:/ZephyrAlpha/src/zephyr/integration/pipeline_orchestrator.py#L1749)
@@ -4432,6 +4445,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：同线程调用时事件循环卡死
 - **影响**：整个进程冻结
 - **修复**：改用`await loop.run_in_executor(None, asyncio.run, ...)`或将整个函数改为async
+- **状态**：STILL_VALID（保留）— pipeline_orchestrator.py L1749-1753 仍用 run_coroutine_threadsafe+future.result()，需改为 async 或 run_in_executor
 
 #### 5.52.4 [MEDIUM] 大量asyncio.run散布在同步代码中（42+处，架构级）
 - **文件**：[evolution_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/evolution_engine.py#L351), [scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/scheduler.py#L298), [escalation_engine.py](file:///D:/ZephyrAlpha/src/zephyr/governance/escalation/escalation_engine.py#L464), [delegation_engine.py](file:///D:/ZephyrAlpha/src/zephyr/governance/intelligence_governance/delegation_engine.py#L246), [chaos_injector.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/chaos_injector.py#L292)等42+处
@@ -4439,6 +4453,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：架构级问题——同步/异步边界缺乏统一桥接策略，各模块各自实现回退逻辑，质量参差不齐
 - **影响**：调用链上游已存在运行中loop时触发5.52.1/5.52.2的失败路径
 - **修复**：提供统一的run_coroutine_sync(coro)工具函数（参考trading/runtime/async_runtime.py:162-171已有的正确实现），全项目复用
+- **状态**：STILL_VALID（保留）— 42+处 asyncio.run 散布仍存在，需提供统一 run_coroutine_sync 工具函数并全项目复用，架构级重构
 
 #### 5.52.5 严重度汇总
 
@@ -4459,30 +4474,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`logger.info("Conductor: %s → FAILED", task_id)`——任务失败是负向事件却用INFO
 - **问题**：FAILED事件在海量INFO中被淹没；按level过滤的告警系统会漏掉
 - **修复**：改为logger.warning或logger.error
+- **状态**：FIXED — conductor.py L125 已改为 logger.warning，并附带 note 参数
 
 #### 5.53.2 [MEDIUM] 用INFO记录LLM Provider失败（3处副本）
 - **文件**：[llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L393), [pipeline/llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py#L406), [autonomy_core/llm_gateway.py [⚠ 已删除]](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py [⚠ 已删除]#L398)
 - **证据**：`logger.info("LLMGateway provider=%s failed, trying next in chain", prov)`——Provider降级是异常路径
 - **问题**：排障时难以从海量INFO定位哪一跳失败
 - **修复**：改为logger.warning
+- **状态**：FIXED — infrastructure/pipeline/llm_gateway.py L384 已改为 logger.warning；autonomy_core/llm_gateway.py 已删除（DRIFTED）
 
 #### 5.53.3 [MEDIUM] TaskQueue停止时errors>0仍用INFO
 - **文件**：[task_queue.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/core/task_queue.py#L110)
 - **证据**：`logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", ..., errors)`——无条件INFO
 - **问题**：累计大量errors时信息被埋在INFO中
 - **修复**：errors>0时用warning
+- **状态**：FIXED — task_queue.py L110 已改为 errors>0 时 logger.warning，否则 logger.info
 
 #### 5.53.4 [MEDIUM] 重试失败用INFO记录
 - **文件**：[mcp_result_push.py](file:///D:/ZephyrAlpha/src/zephyr/governance/behavioral_admission/mcp_result_push.py#L340)
 - **证据**：`_log.info("retry_failed %s → %s", task_id, status.value)`——推送重试失败
 - **问题**：失败重试被当作正常信息
 - **修复**：status≠PUSHED时用warning
+- **状态**：FIXED — mcp_result_push.py L340 已改为 status != PushStatus.PUSHED 时 logger.warning，否则 logger.info
 
 #### 5.53.5 [MEDIUM] SearchReplace含failed项时仍用INFO
 - **文件**：[action_dispatcher.py](file:///D:/ZephyrAlpha/src/zephyr/trading/action_dispatcher.py#L327)
 - **证据**：`_log.info("BrainHands: %s SearchReplace applied=%d failed=%d", ..., failed)`——failed>0时仍INFO
 - **问题**：代码修改部分失败被静默为INFO
 - **修复**：failed>0时用warning
+- **状态**：FIXED — action_dispatcher.py L328 已改为 failed>0 时 logger.warning，否则 logger.info
 
 #### 5.53.6 [HIGH] 健康监控循环异常完全静默（无任何日志）
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L175)
@@ -4490,12 +4510,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：log-nothing-and-continue——监控器自身故障时完全无声
 - **影响**：运维无法得知监控已失效——"监控监控器"的盲点
 - **修复**：至少logger.warning，连续失败N次后告警
+- **状态**：FIXED — health_monitor.py _collect_metrics L246-247 的 except: pass 已改为 logger.warning(..., exc_info=True)；监控循环 L212-214 已在 5.12.1 修复为 logger.exception
 
 #### 5.53.7 [HIGH] ERROR级别记录后不采取行动（log-and-continue反模式）
 - **文件**：[alert_handler.py](file:///D:/ZephyrAlpha/src/zephyr/trading/orchestrator/contracts/alert_handler.py#L58)
 - **证据**：`except Exception as exc: logger.error(...); return None`——告警处理失败后return None，调用方无法区分"无告警"和"处理异常"
 - **问题**：告警丢失后无声返回None
 - **修复**：re-raise或返回Result类型区分Ok/Err
+- **状态**：STILL_VALID（保留）— 需引入 Result 类型或 re-raise 策略，影响调用方契约，中等规模重构
 
 #### 5.53.8 严重度汇总
 
@@ -4516,24 +4538,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`_PROVIDERS`模块级全局，base_url/default_model在import时通过os.getenv读取一次后冻结；但api_key在每次调用时动态读取——缓存策略不一致
 - **问题**：运维修改DEEPSEEK_BASE_URL后运行中进程仍用旧URL（除非重启）
 - **修复**：改为延迟读取或提供reload_providers()接口
+- **状态**：STILL_VALID（保留）— _PROVIDERS 模块级全局仍在 import 时冻结，需提供 reload_providers() 接口或延迟读取
 
 #### 5.54.2 [MEDIUM] EnvWatcher仅写sentinel文件，不更新运行中进程的os.environ
 - **文件**：[env_watcher.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/env_watcher.py#L51)
 - **证据**：check_for_changes检测.env变更后仅写sentinel JSON并返回"需要重载"提示，不实际调用os.environ.update()
 - **问题**：.env修改后os.getenv()读取的配置在当前进程内仍是旧值
 - **修复**：检测到变更时同步执行os.environ.update()
+- **状态**：STILL_VALID（保留）— env_watcher.py 仍仅写 sentinel 文件，需决策是否自动 os.environ.update()
 
 #### 5.54.3 [MEDIUM] reload_config重载后不通知持有旧引用的消费者
 - **文件**：[config/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/__init__.py#L154)
 - **证据**：AppConfig是frozen=True（不可变）；reload_config返回全新实例，但__init__时缓存self._config的消费者不收到新实例
 - **问题**：调用reload_config()后系统内配置不一致
 - **修复**：引入配置中心模式（ConfigHolder + 回调通知）
+- **状态**：STILL_VALID（保留）— 需引入 ConfigHolder + 回调通知模式，影响所有持有 _config 引用的消费者，架构级重构
 
 #### 5.54.5 [MEDIUM] ResourceOptimizationEngine配置重载OSError被静默
 - **文件**：[resource_optimization.py](file:///D:/ZephyrAlpha/src/zephyr/trading/resource_optimization.py#L796)
 - **证据**：`except OSError: pass`——配置文件被删除/权限丢失时静默停止热重载
 - **问题**：配置文件误删后引擎静默停止热重载
 - **修复**：logger.warning并触发告警
+- **状态**：FIXED — resource_optimization.py _check_config_reload 的 except OSError: pass 已改为 logger.warning(..., type, e)
 
 #### 5.54.6 严重度汇总
 
@@ -4611,30 +4637,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`if resp.status_code == 200:`——非`200 <= status_code < 300`，将201/202/204误判为失败
 - **问题**：Ollama API升级返回201/202时推理调用静默失败
 - **修复**：统一用resp.raise_for_status()或范围判定
+- **状态**：FIXED — gpu_consensus_scheduler.py L445 和 auto_runtime_core.py L208 均已改为 `200 <= resp.status_code < 300` 范围判定
 
 #### 5.56.2 [MEDIUM] JSON-RPC响应id为null，违反JSON-RPC 2.0规范
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gateway_server.py#L682)
 - **证据**：`return self._err(None, ERR_RBAC_DENIED, ...)`——req_id传None；safety_level=M时`"id": None`硬编码
 - **问题**：客户端无法将安全拦截响应与原始请求关联
 - **修复**：将None替换为实际req_id
+- **状态**：STILL_VALID（保留）— _check_safety_level 无 req_id 参数，需新增参数并贯穿调用链，中等规模重构
 
 #### 5.56.3 [MEDIUM] 错误码语义不匹配——用RBAC拒绝码表示安全审批要求
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gateway_server.py#L684), [error_codes.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/error_codes.py#L33)
 - **证据**：safety_level=H（需Owner审批）使用ERR_RBAC_DENIED（-32004，RBAC权限拒绝）——两者语义完全不同
 - **问题**：客户端无法区分"用户无权限"与"操作需审批"
 - **修复**：新增ERR_SAFETY_APPROVAL_REQUIRED错误码
+- **状态**：STILL_VALID（保留）— 需在 error_codes.py 新增 ERR_SAFETY_APPROVAL_REQUIRED 错误码并更新 gateway_server.py 调用点，影响客户端契约
 
 #### 5.56.4 [MEDIUM] 事件队列满时静默丢弃，调用方无法区分成功与丢弃
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/event_bus.py#L241)
 - **证据**：`if queue_depth >= self.max_queue_size: self._dropped_count += 1; return False`——返回False但调用方很少检查
 - **问题**：关键业务事件可能在背压时被丢弃，下游永远收不到
 - **修复**：事件丢弃时记录WARNING日志；HIGH优先级事件永不丢弃
+- **状态**：DRIFTED — event_bus.py 已重构为 compat shim，原 max_queue_size/_dropped_count 模式不再存在；EventBus 类已移除
 
 #### 5.56.5 [LOW] Self类型注解未导入且语义错误
 - **文件**：[outbox.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/outbox.py#L95)
 - **证据**：`async def append(...) -> Self:`——Self未从typing导入；方法实际返回OutboxEntry不是Self
 - **问题**：typing.get_type_hints()会抛NameError；类型检查器报错
 - **修复**：导入Self并修正返回类型为OutboxEntry
+- **状态**：FIXED — outbox.py OutboxStore.append 和 MemoryOutboxStore.append 的返回类型均从 Self 改为 OutboxEntry（语义正确：方法返回新建的 OutboxEntry 实例）
 
 #### 5.56.6 严重度汇总
 

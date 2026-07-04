@@ -143,20 +143,31 @@ class TaskManagerMCP:
             source_blueprint: str,
             source_section: str,
             description: str,
-            files_in_scope: list[str] = [],
-            deliverables: list[str] = [],
-            allowed_touch: list[str] = [],
+            files_in_scope: list[str] | None = None,
+            deliverables: list[str] | None = None,
+            allowed_touch: list[str] | None = None,
             task_id: str = "",
             namespace: str = "CP",
             priority: str = "P2",
             phase: int = 1,
             execution_model: str = "deepseek",
             safety_level: str = "L",
-            downstream_outputs: list = [],
+            downstream_outputs: list | None = None,
             pipeline_task_type: str = "",
             target_layer: str = "",
         ) -> dict:
             """创建 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 1（idempotent）"""
+            # 5.51.1 修复：原可变默认参数 = [] 在函数定义时创建一次，所有调用共享同一 list 对象，
+            # 若函数体内对列表做原地修改会跨调用污染。改为 None + 函数内初始化。
+            if files_in_scope is None:
+                files_in_scope = []
+            if deliverables is None:
+                deliverables = []
+            if allowed_touch is None:
+                allowed_touch = []
+            if downstream_outputs is None:
+                downstream_outputs = []
+
             import hashlib
 
             _mod = importlib.import_module("zephyr.governance.rule_enforcement.task_types")

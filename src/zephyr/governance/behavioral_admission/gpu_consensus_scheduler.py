@@ -442,7 +442,9 @@ class GPUConsensusScheduler:
                 },
                 timeout=self._api_timeout_s,
             )
-            if resp.status_code == 200:
+            # 5.56.1 修复：原仅接受 200，将 201/202/204 等 2xx 成功响应误判为失败。
+            # 改为范围判定，与 HTTP 语义一致。
+            if 200 <= resp.status_code < 300:
                 data = resp.json()
                 text = data.get("response", "")
                 return self._parse_model_response(text, model_id)

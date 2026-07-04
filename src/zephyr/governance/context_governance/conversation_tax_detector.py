@@ -102,7 +102,9 @@ class ConversationTaxDetector:
             return 0.0
         recent_avg = sum(recent) / len(recent)
         older_avg = sum(older) / len(older)
-        if older_avg == 0:
+        # 5.50.2 修复：原 == 0 浮点精确比较，older 含浮点求和产生 1e-17 残差时 == 0 失败，
+        # 后续 recent_avg / older_avg 除以极小值产生 inf。改用容差比较。
+        if abs(older_avg) < 1e-9:
             return 0.0
         decay = 1.0 - (recent_avg / older_avg)
         return max(0.0, decay)

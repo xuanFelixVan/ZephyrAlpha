@@ -244,7 +244,9 @@ class HealthMonitor:
                         labels={"capability_id": cid},
                     )
         except Exception:
-            pass
+            # 5.53.6 修复：原 except: pass 静默吞没所有异常，metrics 采集失效时运维无感知。
+            # 改为 warning 级别日志记录。
+            logger.warning("health_monitor: _collect_metrics failed", exc_info=True)
 
     def probe(self, capability_id: str) -> ProbeResult:
         fn = self._probe_fns.get(capability_id)

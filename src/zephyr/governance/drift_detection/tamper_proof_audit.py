@@ -127,54 +127,61 @@ def _sha256(data: str) -> str:
 
 
 def setup_append_only(db_path: str) -> bool:
+    # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭，导致连接泄漏。改用 try/finally 保证关闭。
+    conn = None
     try:
         conn = sqlite3.connect(db_path)
         conn.executescript(APPEND_ONLY_TRIGGERS)
         conn.commit()
-        conn.close()
         return True
     except Exception:
         return False
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 def snapshot_event_hash(db_path: str) -> str:
+    # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭。改用 try/finally 保证关闭。
+    conn = None
     try:
         conn = sqlite3.connect(db_path)
-
         cursor = conn.cursor()
-
         cursor.execute("SELECT event_id, detector_id, severity, state FROM drift_events ORDER BY timestamp DESC")
-
         rows = cursor.fetchall()
-
-        conn.close()
-
         data = json.dumps([list(r) for r in rows], default=str)
-
         return _sha256(data)
-
     except Exception:
         return ""
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 def count_states(db_path: str) -> dict[str, int]:
     counts: dict[str, int] = {}
-
+    # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭。改用 try/finally 保证关闭。
+    conn = None
     try:
         conn = sqlite3.connect(db_path)
-
         cursor = conn.cursor()
-
         cursor.execute("SELECT state, COUNT(*) FROM drift_events GROUP BY state")
-
         for row in cursor.fetchall():
             counts[str(row[0])] = int(row[1])
-
-        conn.close()
-
     except Exception:
         pass
-
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
     return counts
 
 
