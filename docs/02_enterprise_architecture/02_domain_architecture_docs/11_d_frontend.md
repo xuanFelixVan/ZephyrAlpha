@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 17:02:07
+> 最后更新: 2026-07-04 17:26:08
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -76,8 +76,8 @@ graph TD
     end
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_init_py -.->|import_depends| src_zephyr_frontend_dashboard_init_py
@@ -212,8 +212,8 @@ graph TD
 │                 [import_depends] (6 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   app.py → fitness_functions.py                                  │
-│   app.py → gate_statistics.py                                    │
 │   app.py → knowledge_overview.py                                 │
+│   app.py → gate_statistics.py                                    │
 │   app.py → olap_trend.py                                         │
 │   app.py → task_progress.py                                      │
 │   __init__.py → __init__.py                                      │
