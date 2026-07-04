@@ -135,13 +135,13 @@ class MemoryOutboxStore:
 
     async def fetch_pending(self, limit: int = 100) -> list[OutboxEntry]:
         # 5.57.7 修复：原 fetch_pending 无锁，与 append 并发时 "RuntimeError: dictionary changed size during iteration"。
+        # mark_published/mark_failed/count_pending 同样无锁。所有读写 self._entries 的方法都加锁。
         async with self._lock:
             pending = [e for e in self._entries.values() if e.status == OutboxStatus.PENDING]
             pending.sort(key=lambda e: e.created_at)
             return pending[:limit]
 
     async def mark_published(self, entry_id: str) -> None:
-        # 5.57.7 修复：原 mark_published 无锁，与 append 并发时 "RuntimeError: dictionary changed size during iteration"。
         async with self._lock:
             entry = self._entries.get(entry_id)
             if entry is not None:
@@ -149,7 +149,6 @@ class MemoryOutboxStore:
                 entry.published_at = time.monotonic()
 
     async def mark_failed(self, entry_id: str) -> None:
-        # 5.57.7 修复：原 mark_failed 无锁，与 append 并发时 "RuntimeError: dictionary changed size during iteration"。
         async with self._lock:
             entry = self._entries.get(entry_id)
             if entry is not None:
@@ -157,7 +156,6 @@ class MemoryOutboxStore:
                 entry.retry_count += 1
 
     async def count_pending(self) -> int:
-        # 5.57.7 修复：原 count_pending 无锁，与 append 并发时 "RuntimeError: dictionary changed size during iteration"。
         async with self._lock:
             return sum(1 for e in self._entries.values() if e.status == OutboxStatus.PENDING)
 

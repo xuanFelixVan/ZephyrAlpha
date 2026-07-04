@@ -145,7 +145,6 @@ class MemoryLock:
             return False
         if not lock.locked():
             return False
-
         # 5.58.10 修复：原 release 不验证 owner_id，任何拿到 LockHandle 引用的代码都能释放他人的锁。
         # 增加持有者一致性校验。
         if self._owners.get(handle.lock_name) != handle.owner_id:

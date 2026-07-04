@@ -4687,42 +4687,49 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`event_id=f"EV-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"`——秒级精度，同task同秒碰撞
 - **问题**：event_id不唯一；消费者用event_id做幂等去重时第二个事件被误判为重复
 - **修复**：使用uuid4或追加单调递增序号
+- **状态**：DRIFTED（2026-07-04）— event_bus.py已重构为compat shim（SRC-0036），仅re-export，EV-{task_id}秒级时间戳模式不存在
 
 #### 5.57.2 [MEDIUM] 无单调序列号，消费者无法检测乱序
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/event_bus.py#L108), [event_store.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/event_store.py#L162)
 - **证据**：所有事件存储按timestamp排序，无单调递增整数sequence；多线程并发写入时时间戳可能相同或倒序
 - **问题**：事件回放时因果顺序可能错误
 - **修复**：增加seq INTEGER AUTOINCREMENT列，ORDER BY seq ASC
+- **状态**：STILL_VALID（保留）— 需要DB schema增加seq列，属SchemaManager大规模重构
 
 #### 5.57.3 [HIGH] 事件处理异常被静默吞没，因果链断裂
 - **文件**：[event_bus.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/event_bus.py#L119), [observer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/observer.py#L92)
 - **证据**：`for handler in handlers: try: handler(event) except Exception: pass`——所有异常被pass吞没
 - **问题**：handler失败后事件被认为"已处理"但副作用未生效，下游事件依赖的修改不存在
 - **修复**：handler异常应记录日志并写入DLQ
+- **状态**：FIXED（2026-07-04）— observer.py添加logger.warning(..., exc_info=True)记录handler异常，不再静默吞没
 
 #### 5.57.4 [HIGH] DLQ的attach()方法是空操作，不实际捕获失败事件
 - **文件**：[dlq.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/dlq.py#L145)
 - **证据**：`_failure_handler`抛RuntimeError后立即自己catch并pass，等于永远成功；不会捕获其他handler的失败
 - **问题**：误用attach()的用户以为有DLQ保护，实际没有任何失败捕获
 - **修复**：删除attach()或委托给attach_dlq_to_observer()
+- **状态**：FIXED（2026-07-04）— dlq.py attach()重构为包装observer.emit，在emit内捕获每个handler异常并写入DLQ；新增detach()方法
 
 #### 5.57.5 [MEDIUM] DLQ重试无幂等性保证，可能导致副作用重复
 - **文件**：[dlq.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/dlq.py#L210)
 - **证据**：DeadLetter数据结构无idempotency_key字段；pop_retryable取出死信后重新emit，无去重机制
 - **问题**：非幂等handler处理同一死信两次会产生重复副作用（重复创建订单等）
 - **修复**：DeadLetter增加idempotency_key字段
+- **状态**：STILL_VALID（保留）— 需要DeadLetter dataclass增加idempotency_key字段，影响数据结构+持久化层
 
 #### 5.57.6 [HIGH] 事件完整性校验链是空操作——永远通过
 - **文件**：[event_store.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/event_store.py#L215)
 - **证据**：verify_integrity比较prev_hash（前一条事件hash）与expected_prev（重新计算的前一条事件hash）——同一份数据的同一hash，结构上不可能失败
 - **问题**：篡改payload、删除事件、重排序都无法被检测到
 - **修复**：append_event时将前一条hash存入当前事件记录，校验时比较存储的prev_hash
+- **状态**：STILL_VALID（保留）— 需要task_events表增加prev_hash列，属schema migration大规模重构
 
 #### 5.57.7 [MEDIUM] Outbox的fetch_pending无锁保护，与append竞态
 - **文件**：[outbox.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/outbox.py#L134)
 - **证据**：append有`async with self._lock`但fetch_pending/mark_published/mark_failed无锁
 - **问题**：并发时`RuntimeError: dictionary changed size during iteration`
 - **修复**：所有读写self._entries的方法都加锁
+- **状态**：FIXED（2026-07-04）— outbox.py fetch_pending/mark_published/mark_failed/count_pending 均加 async with self._lock 保护
 
 #### 5.57.8 严重度汇总
 
@@ -4743,60 +4750,70 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`__exit__`中`os.remove(self._lock_file)`只检查self._acquired，不检查锁文件内容是否仍属于当前进程
 - **问题**：锁TTL过期后被另一进程抢占，当前进程__exit__会删除新持有者的锁文件
 - **修复**：释放前读取锁文件验证pid/owner_id一致
+- **状态**：STILL_VALID（保留）— 需要_CrossProcessLock释放前读取锁文件验证pid/owner_id一致，影响4处锁实现
 
 #### 5.58.2 [HIGH] 所有跨进程锁均无fencing token（4处）
 - **文件**：[staging_area.py](file:///D:/ZephyrAlpha/src/zephyr/trading/staging_area.py#L120), [pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/pipeline_lock.py#L227), [rollback_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_lock.py#L129), [scan_mutex.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/scan_mutex.py#L183)
 - **证据**：所有4个锁实现锁文件中只存储pid/timestamp/task_id，无单调递增fencing token
 - **问题**：TTL过期后"僵尸"进程继续修改共享资源，与新锁持有者并发写入
 - **修复**：锁文件存储单调递增fencing_token，受保护操作执行前验证
+- **状态**：STILL_VALID（保留）— 需要fencing token设计，影响4处跨进程锁实现+受保护操作执行点
 
 #### 5.58.3 [HIGH] 所有锁均无自动续期，长时间操作会丢失锁（4处）
 - **文件**：[staging_area.py](file:///D:/ZephyrAlpha/src/zephyr/trading/staging_area.py#L103) (TTL=1800s), [pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/pipeline_lock.py#L203) (TTL=300s), [rollback_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_lock.py#L90) (TTL=60s), [scan_mutex.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/scan_mutex.py#L57) (TTL=120s)
 - **证据**：4个锁都有TTL但无watchdog/自动续期机制；shared/infra/lock.py docstring声称"TTL+自动续期"但未实现
 - **问题**：大文件提交/深度扫描/多步回滚超过TTL后锁被抢占
 - **修复**：实现watchdog协程定期刷新锁文件acquired_at
+- **状态**：STILL_VALID（保留）— 需要实现watchdog协程定期刷新锁文件，影响4处锁实现
 
 #### 5.58.4 [HIGH] ScanMutex的_write_lock用os.replace覆盖其他进程的锁
 - **文件**：[scan_mutex.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/scan_mutex.py#L195)
 - **证据**：`os.replace(tmp_path, self._lock_path)`——无条件覆盖目标文件，不检查存在性；对比staging_area用O_CREAT|O_EXCL原子创建
 - **问题**：进程A检查is_locked()=False → 进程B创建锁 → 进程A的os.replace覆盖B的锁——两个进程都认为自己持有锁
 - **修复**：改为os.open(O_CREAT|O_EXCL)原子创建
+- **状态**：STILL_VALID（保留）— 需要ScanMutex._write_lock改为os.open(O_CREAT|O_EXCL)原子创建
 
 #### 5.58.5 [HIGH] ScanMutex强制释放DEEP扫描的锁——LIGHT扫描抢占
 - **文件**：[scan_mutex.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/scan_mutex.py#L172)
 - **证据**：`elif level == ScanLevel.LIGHT and lock.scan_level == ScanLevel.DEEP: self.force_release()`——LIGHT扫描碰撞DEEP扫描时直接删除DEEP锁
 - **问题**：DEEP扫描持有者不知锁被释放，仍在执行；LIGHT扫描获取锁后并发执行
 - **修复**：LIGHT扫描应排队等待DEEP完成
+- **状态**：STILL_VALID（保留）— 需要LIGHT扫描排队等待DEEP完成，影响调度逻辑
 
 #### 5.58.6 [HIGH] RollbackLock的TOCTOU竞态——os.remove后os.open之间可被抢占
 - **文件**：[rollback_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_lock.py#L167)
 - **证据**：`os.remove(str(self._lock_path)); fd = os.open(..., O_CREAT|O_EXCL, ...)`——两步非原子
 - **问题**：remove后open前被其他进程抢占
 - **修复**：直接os.open(O_CREAT|O_EXCL)尝试，失败再检查stale
+- **状态**：STILL_VALID（保留）— 需要RollbackLock改为直接os.open(O_CREAT|O_EXCL)尝试，失败再检查stale
 
 #### 5.58.7 [HIGH] RollbackLock的release()空lock_id释放任意锁
 - **文件**：[rollback_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_lock.py#L205)
 - **证据**：`def release(self, lock_id: str = "")`——lock_id默认空字符串，空时跳过持有者验证直接删除锁文件
 - **问题**：任何调用release()不传参的代码都会释放当前锁
 - **修复**：lock_id应为必填参数
+- **状态**：FIXED（2026-07-04）— rollback_lock.py release() lock_id改为必填参数，强制持有者验证
 
 #### 5.58.8 [MEDIUM] RollbackLock的_dequeue_request未实际移除指定条目
 - **文件**：[rollback_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_lock.py#L336)
 - **证据**：`def _dequeue_request(self, lock_id): self._cleanup_stale_queue_entries()`——只清理过期条目，不使用lock_id参数
 - **问题**：队列文件不断增长；基于队列长度的调度决策误判系统负载
 - **修复**：实现真正的dequeue——过滤掉指定lock_id的条目
+- **状态**：FIXED（2026-07-04）— rollback_lock.py _dequeue_request 实现真正的dequeue（过滤指定lock_id + 清理过期 + 原子写入）
 
 #### 5.58.9 [MEDIUM] FileLockBackend多文件锁定非原子，部分失败导致锁泄漏
 - **文件**：[pipeline_lock.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/pipeline_lock.py#L296)
 - **证据**：遍历all_targets逐个创建锁目录，第3个冲突时前2个锁不回滚；返回CONFLICT但不释放已获取的锁
 - **问题**：孤儿锁阻止其他任务获取这些文件的锁直到TTL过期
 - **修复**：冲突时回滚已获取的锁（两阶段锁定）
+- **状态**：STILL_VALID（保留）— 需要FileLockBackend冲突时回滚已获取的锁（两阶段锁定），影响多文件锁定逻辑
 
 #### 5.58.10 [MEDIUM] MemoryLock的release不验证owner_id
 - **文件**：[lock.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/lock.py#L142)
 - **证据**：`async def release(self, handle)`——只检查lock存在且被持有，不验证handle.owner_id是否匹配self._owners中记录的持有者
 - **问题**：任何拿到LockHandle引用的代码都能释放他人的锁
 - **修复**：增加`if self._owners.get(handle.lock_name) != handle.owner_id: return False`
+- **状态**：FIXED（2026-07-04）— lock.py MemoryLock.release() 增加 owner_id 一致性校验
 
 #### 5.58.11 严重度汇总
 
@@ -4817,30 +4834,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：`raw = file_path.read_text(encoding="utf-8")`——utf-8不剥离BOM；若CSV由Excel生成带BOM，csv.DictReader把首列名读成`\ufeffpath`而非`path`
 - **问题**：row.get("path", "")对所有行返回空字符串，所有资产条目被静默丢弃
 - **修复**：改为encoding="utf-8-sig"
+- **状态**：FIXED（2026-07-04）— registry_adapter.py encoding="utf-8" → "utf-8-sig"（自动剥离BOM）
 
 #### 5.59.2 [HIGH] 多编码回退链（utf-8→gbk→latin-1）静默误判文件编码
 - **文件**：[skill_discovery.py](file:///D:/ZephyrAlpha/src/zephyr/autonomy_core/skills/skill_discovery.py#L109)
 - **证据**：三层try/except回退：utf-8→gbk→latin-1；latin-1永不抛UnicodeDecodeError，等于"无论文件是什么都强行解码"
 - **问题**：二进制文件或错误编码文件被解码成乱码，继续做模块名提取产生幻觉数据
 - **修复**：统一用utf-8+strict，非UTF-8文件应记录错误并跳过
+- **状态**：FIXED（2026-07-04）— skill_discovery.py 移除gbk/latin-1回退链，统一utf-8+strict
 
 #### 5.59.3 [MEDIUM] errors="ignore"静默丢弃字节，行数统计失真
 - **文件**：[metadata.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/metadata.py#L178), [capability_lookup.py](file:///D:/ZephyrAlpha/src/zephyr/governance/capability_lookup.py#L514)
 - **证据**：`full.read_text(encoding="utf-8", errors="ignore")`——非法字节被直接丢弃
 - **问题**：行数统计和import计数失真，影响架构决策数据
 - **修复**：改用errors="replace"或二进制模式按b"\n"计数
+- **状态**：FIXED（2026-07-04）— metadata.py 改用二进制模式按b"\n"计数；capability_lookup.py errors="ignore" → "replace"
 
 #### 5.59.4 [MEDIUM] errors="replace"用于路径提取，可能产生幻觉路径
 - **文件**：[reconciliation_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py#L1017)
 - **证据**：`content = doc.read_text(encoding="utf-8", errors="replace")`——替换字符\ufffd可能出现在路径中间
 - **问题**：产生形如`docs/\ufffd03_modules/foo.md`的幻觉路径，污染对账结果
 - **修复**：先校验文件是否合法UTF-8，校验失败则记录并跳过
+- **状态**：FIXED（2026-07-04）— reconciliation_registry.py 改为先read_bytes()+decode("utf-8")校验，校验失败则跳过
 
 #### 5.59.5 [LOW] subprocess输出解码策略不一致
 - **文件**：[reconciliation_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py#L263)
 - **证据**：此处用errors="replace"，其他多数subprocess调用未指定errors（默认strict）——策略不一致
 - **问题**：部分调用遇非UTF-8输出崩溃，另一部分静默替换
 - **修复**：封装统一的run_subprocess()工具函数
+- **状态**：STILL_VALID（保留）— 需要封装统一run_subprocess()工具函数，影响多处subprocess调用
 
 #### 5.59.6 严重度汇总
 
