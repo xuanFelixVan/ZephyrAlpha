@@ -891,7 +891,7 @@ priority: "P1"
 
 tags:
   - "fn:tool-chain"
-  - "ly:L01"
+  - "ly:L0_infrastructure"
   - "md:design"
   - "st:build-ready"
   - "mo:active"
@@ -991,7 +991,7 @@ KE 支持三种检索方式：
 | 检索方式 | 存储层 | 适用场景 |
 |---------|--------|---------|
 | **向量语义检索**（主） | ChromaDB `ke_entries` Collection | "找一个关于任务分解最佳实践的知识" |
-| **标签精确匹配** | SQLite `knowledge_entries.tags` JSON | "所有 domain=infra AND layer=L01 的知识" |
+| **标签精确匹配** | SQLite `knowledge_entries.tags` JSON | "所有 domain=infra AND layer=L0_infrastructure 的知识" |
 | **全文关键词搜索** | SQLite FTS5 全文索引 | "正文中包含 'ChromaDB' 的知识" |
 
 检索优先级：向量语义（Top-K） → 标签过滤（缩小范围） → 全文搜索（兜底）
@@ -1081,7 +1081,7 @@ KE 支持三种检索方式：
 | # | `category` | 含义 | 优先级 | `halflife_h` | 典型来源 | 示例 |
 |:--:|-----------|------|:---:|:---:|---------|------|
 | A1 | `coding_convention` | 编码约定 | HIGH | 2160h(90d) | AGENTS.md / pre-commit 规则 | "ruff 不用 pylint：快 10-100x + pyproject.toml 原生集成" |
-| A2 | `architecture_decision` | 架构决策 | HIGH | 4320h(180d) | KB 决策记录 / 蓝图 | "L01 层选 SQLite 而非 PostgreSQL：< 10万 KE 规模时 SQLite 足够，零运维成本" |
+| A2 | `architecture_decision` | 架构决策 | HIGH | 4320h(180d) | KB 决策记录 / 蓝图 | "基础设施层选 SQLite 而非 PostgreSQL：< 10万 KE 规模时 SQLite 足够，零运维成本" |
 | A3 | `governance_rule` | 治理规则 | HIGH | 2160h(90d) | AGENTS.md / PS 标准 | "新 .py 文件必须在 scripts/governance/ 注册（§6.5 入库强制约定）" |
 | A4 | `failure_pattern` | 失败模式 | HIGH | ∞(permanent) | Session Log 教训 / 门禁阻断 | "KE-001: 3587 个误报源于一个多余的反斜杠——扫描器先自检" |
 | A5 | `tool_configuration` | 工具配置 | MID | 4320h(180d) | justfile / pyproject.toml / CI 配置 | "pytest 必须用 --strict-markers：所有 @pytest.mark.* 装饰器必须注册到 pyproject.toml" |

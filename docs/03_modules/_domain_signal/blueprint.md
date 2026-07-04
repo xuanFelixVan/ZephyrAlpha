@@ -188,10 +188,10 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | # | 组件 | 职责 | 依赖 | 交互方式 |
 |---|------|------|------|---------|
-| 1 | SignalAggregatorBase | 因子信号聚合抽象基类（OCP扩展点L03-AGG） | CTR-002 FactorSignal | 同步调用 |
-| 2 | CapitalAllocatorBase | 资金分配抽象基类（OCP扩展点L03-ALC） | CTR-P1-015 SynthesizedSignal | 同步调用 |
-| 3 | DegradationMonitorBase | 信号退化检测抽象基类（OCP扩展点L03-DEG） | CTR-P1-015 SynthesizedSignal | 同步调用 |
-| 4 | SignalSynthesizerBase | 多源信号合成抽象基类（OCP扩展点L03-SYN） | CTR-002 FactorSignal | 同步调用 |
+| 1 | SignalAggregatorBase | 因子信号聚合抽象基类（OCP扩展点D_SIGNAL-AGG） | CTR-002 FactorSignal | 同步调用 |
+| 2 | CapitalAllocatorBase | 资金分配抽象基类（OCP扩展点D_SIGNAL-ALC） | CTR-P1-015 SynthesizedSignal | 同步调用 |
+| 3 | DegradationMonitorBase | 信号退化检测抽象基类（OCP扩展点D_SIGNAL-DEG） | CTR-P1-015 SynthesizedSignal | 同步调用 |
+| 4 | SignalSynthesizerBase | 多源信号合成抽象基类（OCP扩展点D_SIGNAL-SYN） | CTR-002 FactorSignal | 同步调用 |
 | 5 | DefaultSignalAggregator | 等权/置信度/IC加权聚合 | SignalAggregatorBase | 继承 |
 | 6 | DefaultCapitalAllocator | 等权/信号/Sharpe/RiskParity分配 | CapitalAllocatorBase | 继承 |
 
@@ -585,7 +585,7 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/signal/ -v` | 运行全部L03测试 | — | 0 failed |
+| 1 | 命令 | `python -m pytest tests/signal/ -v` | 运行全部D_SIGNAL测试 | — | 0 failed |
 | 2 | 配置 | `aggregation_method` | 聚合方法选择 | `equal_weight`/`confidence_weight`/`ic_weight` | 默认 `equal_weight` |
 | 3 | 配置 | `AllocationMethod` | 资金分配方法 | `EQUAL`/`SIGNAL`/`SHARPE`/`RISK_PARITY` | 默认 `EQUAL` |
 | 4 | 配置 | `min_factors_required` | 最少有效因子数 | int, 默认 2 | 因子数不足→空信号 |

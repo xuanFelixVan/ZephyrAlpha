@@ -18,9 +18,9 @@
 """
 ZephyrAlpha — system-telemetry/contract_metrics.py
 
-跨层契约 SLA 测量管道 + 契约漂移检测框架 —— L12 预留接口。
+跨层契约 SLA 测量管道 + 契约漂移检测框架 —— 遥测 预留接口。
 
-当前状态: 框架定义（Framework-Ready）。实际测量在层实现（L00~L07 落盘后）启动。
+当前状态: 框架定义（Framework-Ready）。实际测量在层实现（D_DATA~D_REPORTING 落盘后）启动。
 
 提供
 ----

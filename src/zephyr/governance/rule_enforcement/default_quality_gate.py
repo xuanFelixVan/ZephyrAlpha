@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L00 — Default Data Quality Gate
+"""D_DATA — Default Data Quality Gate
 
 数据质量门禁具体实现。对齐 DataQualityGate (OCP 扩展点) + CTR-ERR-001 (DataQualityError)。
 
@@ -32,7 +32,7 @@
   - 质量问题分级告警
 
 CTR 契约：
-  生产者 — CTR-ERR-001 (DataQualityError) → L02
+  生产者 — CTR-ERR-001 (DataQualityError) → D_FACTOR
 
 SSoT: cross_layer_contracts.yaml → CTR-ERR-001
 """

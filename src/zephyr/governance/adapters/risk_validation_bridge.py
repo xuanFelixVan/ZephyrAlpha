@@ -22,9 +22,9 @@
 # created: "2026-05-23"
 # ---
 
-"""L06 — Risk Validation Bridge (DW-239)
+"""D_EXECUTION_CORE — Risk Validation Bridge (DW-239)
 
-Cross-layer bridge that decouples L06 (trade execution) from L04 (risk management)
+Cross-layer bridge that decouples D_EXECUTION_CORE (trade execution) from D_RISK (risk management)
 contract namespace. ExecutionEngine depends on this bridge instead of importing
 RiskValidatorProtocol from trading-contracts.risk directly.
 
@@ -67,7 +67,7 @@ class RiskValidationPort(Protocol):
 
 
 class RiskValidationBridge:
-    """Adapter bridging trading-contracts.risk.RiskValidatorProtocol to L06's local RiskValidationPort.
+    """Adapter bridging trading-contracts.risk.RiskValidatorProtocol to D_EXECUTION_CORE's local RiskValidationPort.
 
     Usage:
         from zephyr.governance.adapters.risk_validation_bridge import RiskValidationBridge

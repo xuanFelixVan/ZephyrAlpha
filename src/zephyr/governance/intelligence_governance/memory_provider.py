@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L00 — Memory Provider
+"""D_DATA — Memory Provider
 
 内存模拟数据源。实现 DataSourceBase (OCP 扩展点)，用于测试和离线环境。
 生成符合真实统计特征的合成 OHLCV 数据，无需外部网络依赖。
@@ -33,8 +33,8 @@
   - 标准化为 NormalizedMarketData (CTR-001)
 
 CTR 契约：
-  生产者 — CTR-001 (NormalizedMarketData) → L02, L03, L09
-  生产者 — CTR-TRACE-001 (TraceContext) → L02~L07, L11
+  生产者 — CTR-001 (NormalizedMarketData) → D_FACTOR, D_SIGNAL, D_RESEARCH
+  生产者 — CTR-TRACE-001 (TraceContext) → D_FACTOR~D_REPORTING, D_ML_TRAIN
 
 SSoT: cross_layer_contracts.yaml → CTR-001
 """

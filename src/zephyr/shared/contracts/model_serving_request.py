@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/model_serving_request.py
 
 CTR-P1-004: ModelServingRequest / 模型推理请求
 
-跨层模型推理请求契约。L11 ML Platform 提供推理服务，L03/L05 消费。
+跨层模型推理请求契约。D_ML_TRAIN ML Platform 提供推理服务，D_SIGNAL/D_PORTFOLIO_CORE 消费。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-004
 Version: 1.0

@@ -198,7 +198,7 @@ ttl: permanent
 | A-07 | Fitness Functions 25 条 | Factory | (Runtime CI) | Sprint 9（L4，OQ-027）|
 | A-08 | Pre-commit hooks | Runtime | — | Sprint 9 |
 | A-09 | CI workflows | Runtime | — | Sprint 9 |
-| A-10 | Audit log（append-only）| Runtime | — | Sprint 10（L10）|
+| A-10 | Audit log（append-only）| Runtime | — | Sprint 10（D_COMPLIANCE）|
 | A-11 | Decision provenance | Runtime | — | Sprint 10（F25）|
 | A-12 | Policy-as-Code（OPA）| Runtime | (Factory Rego 编译) | Sprint 11（L6）|
 | A-13 | SBOM（供应链）| Factory | (Runtime 扫描) | **T4 触发**（L7）|

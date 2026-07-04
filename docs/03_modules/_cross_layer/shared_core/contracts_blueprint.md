@@ -36,7 +36,7 @@ depends_on:
 > actual_disk_path: src/zephyr/shared/contracts/ | generation: 1 | construction_progress: partially_implemented
 > parent: MOD-INF-016 (拆分自 Shared+Core 蓝图，AD-002 触发条件达成)
 
-**核心职责**: 定义跨层传递的 Pydantic V2 数据模型，作为所有 L01-L13 模块的契约 SSoT。
+**核心职责**: 定义跨层传递的 Pydantic V2 数据模型，作为所有 基础设施-实验 模块的契约 SSoT。
 
 **负向责任**: 不涉及业务逻辑 / 数据库操作 / 基础设施实现。
 

@@ -15,13 +15,13 @@
 # [A_module] module_id=MOD-GOV_default_security_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L10 — Default Security Gateway
+"""D_COMPLIANCE — Default Security Gateway
 
-AI 安全网关具体实现。实现 SecurityGateway (OCP L10-AISG)。
+AI 安全网关具体实现。实现 SecurityGateway (OCP D_COMPLIANCE-AISG)。
 
 CTR 契约：
-  消费者 — CTR-P1-006 (StrategyLifecycleEvent) ← L05
-  生产者 — CTR-P1-012 (ComplianceRule) → L04, L06
+  消费者 — CTR-P1-006 (StrategyLifecycleEvent) ← D_PORTFOLIO_CORE
+  生产者 — CTR-P1-012 (ComplianceRule) → D_RISK, D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-012
 """
@@ -56,7 +56,7 @@ def _get_lsg():
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
-        _logger.debug("LSG not available for L10 implementations gateway")
+        _logger.debug("LSG not available for D_COMPLIANCE implementations gateway")
         return None
 
 

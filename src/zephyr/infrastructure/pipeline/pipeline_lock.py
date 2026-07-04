@@ -441,7 +441,7 @@ class PipelineLock:
         poll_interval_s : float
             重试间隔。
         layer_locks : list[str] | None
-            层级锁——如 ["L00/signals"]。锁定整个层级目录。
+            层级锁——如 ["D_DATA/signals"]。锁定整个层级目录。
         """
         deadline = time.monotonic() + timeout_s
         waited_ms = 0

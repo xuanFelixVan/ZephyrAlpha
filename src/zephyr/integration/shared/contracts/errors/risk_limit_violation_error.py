@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/risk_limit_violation_error.py
 
 CTR-ERR-004: RiskLimitViolationError / 风险限额突破错误
 
-L04 检测到当前或计划操作将突破风险限额时抛出的硬错误。L05/L06 MUST 据此阻止订单生成和执行。
+D_RISK 检测到当前或计划操作将突破风险限额时抛出的硬错误。D_PORTFOLIO_CORE/D_EXECUTION_CORE MUST 据此阻止订单生成和执行。
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-004
 Version: 1.0
@@ -39,7 +39,7 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    当 L04 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。 这是一个 HALT 级别的错误——下游（L05/L06）MUST 拒绝继续处理并停止当前调仓周期。 violated_constraint 精确指出是哪条规则被突破（position_limit / leverage_limit / var_breach / drawdown_trigger / sector_concentration）。 不要降级为 WARNING——如果这是代码逻辑导致的，降级等于资金安全风险。
+    当 D_RISK 风控系统检测到任何风险约束被突破时，MUST 抛出 RiskLimitViolationError。 这是一个 HALT 级别的错误——下游（D_PORTFOLIO_CORE/D_EXECUTION_CORE）MUST 拒绝继续处理并停止当前调仓周期。 violated_constraint 精确指出是哪条规则被突破（position_limit / leverage_limit / var_breach / drawdown_trigger / sector_concentration）。 不要降级为 WARNING——如果这是代码逻辑导致的，降级等于资金安全风险。
 """
 
 

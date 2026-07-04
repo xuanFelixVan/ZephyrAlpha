@@ -684,7 +684,7 @@ capabilities:
       - telemetry_metrics
       - CT-TEL-001
     description: >-
-      L12 遥测指标采集契约（CT-TEL-001）唯一手工实现真源（MOD-INF-015）。
+      遥测指标采集契约（CT-TEL-001）唯一手工实现真源（MOD-INF-015）。
       cross_layer_contracts.yaml 中 CT-TEL-001 的 physical_path 为 null（停止 codegen），
       本文件是唯一真源。含 ContractMetricsCollector / SlaRecord / DriftAlert 三个类。
       被 tests/integration/ + tests/contracts/ + __init__.py 等 5+ 处 import。
@@ -701,7 +701,7 @@ capabilities:
       - jsonl_sink
       - CT-TEL-002
     description: >-
-      L12 遥测日志持久化契约（CT-TEL-002）唯一手工实现真源（MOD-INF-015）。
+      遥测日志持久化契约（CT-TEL-002）唯一手工实现真源（MOD-INF-015）。
       cross_layer_contracts.yaml 中 CT-TEL-002 的 physical_path 为 null（停止 codegen），
       本文件是唯一真源。结构化日志通过 JSONL 持久化，支持 trace_id 关联。
       新 AI 想做"遥测日志持久化/结构化日志 sink/JSONL 日志写入"前，CapabilityLookup
@@ -716,7 +716,7 @@ capabilities:
       - trace_span
       - CT-TEL-003
     description: >-
-      L12 遥测链路追踪契约（CT-TEL-003）唯一手工实现真源（MOD-INF-015）。
+      遥测链路追踪契约（CT-TEL-003）唯一手工实现真源（MOD-INF-015）。
       cross_layer_contracts.yaml 中 CT-TEL-003 的 physical_path 为 null（停止 codegen），
       本文件是唯一真源。W3C TraceContext 传播，采样率可配置，提供 span 创建/属性设置/
       上下文管理接口。新 AI 想做"链路追踪/span 创建/trace context 传播"前，CapabilityLookup
@@ -732,7 +732,7 @@ capabilities:
       - readiness_probe
       - CT-TEL-004
     description: >-
-      L12 遥测健康检查契约（CT-TEL-004）唯一手工实现真源（MOD-INF-015）。
+      遥测健康检查契约（CT-TEL-004）唯一手工实现真源（MOD-INF-015）。
       cross_layer_contracts.yaml 中 CT-TEL-004 的 physical_path 为 null（停止 codegen），
       本文件是唯一真源。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。
       新 AI 想做"健康检查/存活探针/就绪探针"前，CapabilityLookup 会反查到本文件，

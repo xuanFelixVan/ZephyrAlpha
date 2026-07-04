@@ -27,7 +27,7 @@ ZephyrAlpha — shared/contracts/macro_factor_signal.py
 
 CTR-P1-002: MacroFactorSignal / 宏观因子信号
 
-L02 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。
+D_FACTOR 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-002
 Version: 1.0

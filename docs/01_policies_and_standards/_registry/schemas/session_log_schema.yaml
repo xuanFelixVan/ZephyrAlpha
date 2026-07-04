@@ -181,7 +181,7 @@ optional_fields:
       index.yaml 的 by_module/by_contract/by_date 由脚本从 session log 自动派生。
     example:
       - blind_spot_id: "BLIND-L04-DUPLICATE-RISKLIMITS"
-        description: "L04 存在两套 RiskLimits 定义"
+        description: "D_RISK 存在两套 RiskLimits 定义"
         severity: high
         scope: ["risk"]
         status: open

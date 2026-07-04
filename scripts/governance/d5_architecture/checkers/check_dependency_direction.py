@@ -19,7 +19,7 @@
 
 检测内容：
 - --module: 检查指定模块的 depends_on 是否可解析（目标文件存在）
-- --check-cross-layer: 检查跨层依赖方向是否符合 L00→L02→L03 单向数据流
+- --check-cross-layer: 检查跨层依赖方向是否符合 D_DATA→D_FACTOR→D_SIGNAL 单向数据流
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -155,7 +155,7 @@ def check_cross_layer_direction(module_id: str) -> list[str]:
         if source_order < 999 and dep_order < 999 and source_order < dep_order:
             if dep_layer not in ("cross_layer", "L1", "L2", "L3"):
                 findings.append(
-                    f"INJ-008 FAIL: module '{module_id}' (layer={source_layer}) depends_on '{dep}' (layer={dep_layer}) — violates L00→L02→L03 data flow direction"
+                    f"INJ-008 FAIL: module '{module_id}' (layer={source_layer}) depends_on '{dep}' (layer={dep_layer}) — violates D_DATA→D_FACTOR→D_SIGNAL data flow direction"
                 )
     return findings
 

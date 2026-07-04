@@ -14,7 +14,7 @@ category: "trading"
 auto: true
 scope: "trading"
 description: >
-  AI 生成的策略配置（L05/L06 产出）必须尊重 RiskLimits 中定义的
+  AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION_CORE 产出）必须尊重 RiskLimits 中定义的
   持仓比例上限。对标 SEC Reg T + FINRA 日内交易限制。
 
 on_failure: "reject"

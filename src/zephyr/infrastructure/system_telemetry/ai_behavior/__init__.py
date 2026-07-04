@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] FeatureFlag关闭→跳过写入;写入失败→日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] task_bound
-"""L12 · ai_behavior — AI 行为遥测（7维度 + Error Taxonomy）"""
+"""遥测 · ai_behavior — AI 行为遥测（7维度 + Error Taxonomy）"""
 
 from zephyr.infrastructure.system_telemetry.ai_behavior.event_sink import (
     AIBehaviorEvent,

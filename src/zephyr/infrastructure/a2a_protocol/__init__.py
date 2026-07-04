@@ -11,7 +11,7 @@
 # [TESTS]
 # [TTL] task_bound
 """
-L01 Infrastructure — A2A Protocol 模块 (MOD-INF-025)
+基础设施 Infrastructure — A2A Protocol 模块 (MOD-INF-025)
 
 三层五协议总架构:
   Layer 1 (发现+身份): Agent Card, AGENTS.md 注册, JWT 身份

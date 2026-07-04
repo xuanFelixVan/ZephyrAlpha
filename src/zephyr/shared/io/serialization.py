@@ -20,7 +20,7 @@ serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新�
 
 痛点修复：Pydantic 的 .model_dump() 能干活，但跨模块序列化契约未统一——
   1. Decimal → str 还是 float？datetime → ISO 8601 还是 POSIX timestamp？
-  2. 每个消费者自己决定序列化格式 → L00→L02→L09 管道中可能产生不同格式
+  2. 每个消费者自己决定序列化格式 → D_DATA→D_FACTOR→D_RESEARCH 管道中可能产生不同格式
   3. cross_layer_contracts.yaml 定了类型但没定序列化规则 → 契约半成品
 
 设计对标：

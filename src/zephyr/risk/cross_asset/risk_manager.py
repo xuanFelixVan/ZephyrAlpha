@@ -22,16 +22,16 @@
 # created: "2026-05-05"
 # ---
 """
-ZephyrAlpha — L04 Risk Management Layer — 风控管理器接口
+ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器接口
 
 Phase B 骨架——定义风控层的公共接口。
 跨层数据结构 MUST 仅来自 ``zephyr.shared.contracts``（SSoT）。
 
 跨层契约：
-  CTR-003  RiskLimits                  → L05（生产者——风险限额约束）
-  CTR-ERR-004  RiskLimitViolationError  → L05, L06（硬错误——阻止交易）
-  CTR-P1-008  RiskDashboardSnapshot     → L08（生产者——风险仪表板快照）
-  CTR-P1-011  RiskMetricsReport         → L05, L07, L08, L10（生产者——风险指标）
+  CTR-003  RiskLimits                  → D_PORTFOLIO_CORE（生产者——风险限额约束）
+  CTR-ERR-004  RiskLimitViolationError  → D_PORTFOLIO_CORE, D_EXECUTION_CORE（硬错误——阻止交易）
+  CTR-P1-008  RiskDashboardSnapshot     → D_FRONTEND（生产者——风险仪表板快照）
+  CTR-P1-011  RiskMetricsReport         → D_PORTFOLIO_CORE, D_REPORTING, D_FRONTEND, D_COMPLIANCE（生产者——风险指标）
 
 SSoT: cross_layer_contracts.yaml v3.0
 """
@@ -54,9 +54,9 @@ class RiskManagerBase(abc.ABC):
 
     职责：
       - 从上游信号/持仓计算当前风险敞口
-      - 产出 RiskLimits 供给 L05 组合优化器
-      - 产出 RiskDashboardSnapshot 供给 L08 监控面板
-      - 产出 RiskMetricsReport 供给 L05/L07/L08/L10
+      - 产出 RiskLimits 供给 D_PORTFOLIO_CORE 组合优化器
+      - 产出 RiskDashboardSnapshot 供给 D_FRONTEND 监控面板
+      - 产出 RiskMetricsReport 供给 D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE
 
     实现者要求：
       - validate_position(): 检查单仓位是否突破限额（返回 True = 合规）

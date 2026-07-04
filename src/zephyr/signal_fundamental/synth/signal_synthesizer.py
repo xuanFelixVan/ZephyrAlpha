@@ -22,9 +22,9 @@
 # created: "2026-05-05"
 # ---
 
-"""L03 — Signal Synthesizer
+"""D_SIGNAL — Signal Synthesizer
 
-信号合成引擎。将 L02 产出的多因子信号 (FactorSignal) 聚合为统一的合成交易信号。
+信号合成引擎。将 D_FACTOR 产出的多因子信号 (FactorSignal) 聚合为统一的合成交易信号。
 
 核心职责：
   - 多因子加权聚合 → SynthesizedSignal（CTR-P1-015）
@@ -33,11 +33,11 @@
   - 信号降级检测 → SignalDegradationWarning（CTR-ERR-003）
 
 CTR 契约：
-  消费者 — CTR-002 (FactorSignal) ← L02
-  生产者 — CTR-P1-015 (SynthesizedSignal) → L04, L05
-  生产者 — CTR-ERR-003 (SignalDegradationWarning) → L04, L05
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
+  生产者 — CTR-P1-015 (SynthesizedSignal) → D_RISK, D_PORTFOLIO_CORE
+  生产者 — CTR-ERR-003 (SignalDegradationWarning) → D_RISK, D_PORTFOLIO_CORE
 
-依赖方向：L02 → L03 → L04/L05
+依赖方向：D_FACTOR → D_SIGNAL → D_RISK/D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ class SignalSynthesizerBase(abc.ABC):
 
     门禁约束（GATE-F）：
       - 不得在合成过程中引入 look-ahead bias
-      - 因子权重不得动态调整为负值（禁止做空因子——那在 L05 做组合层面处理）
+      - 因子权重不得动态调整为负值（禁止做空因子——那在 D_PORTFOLIO_CORE 做组合层面处理）
     """
 
     _registry: ClassVar[dict[str, type[SignalSynthesizerBase]]] = {}

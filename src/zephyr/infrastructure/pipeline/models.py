@@ -23,6 +23,7 @@ Pipeline 数据模型
 
 from __future__ import annotations
 
+import ast
 from datetime import datetime
 from enum import Enum
 from typing import Any
@@ -597,9 +598,23 @@ class StageContext(BaseModel):
     aborted: bool = False
 
     def evaluate_skip(self, condition: str) -> bool:
+        # 5.17.6 修复：eval() 可经 ctx.__class__.__mro__ 逃逸 __builtins__ 限制→RCE
+        # 改为 AST 预校验拒绝 dunder 访问，再安全 eval
+        if not condition or not condition.strip():
+            return False
+        try:
+            tree = ast.parse(condition, mode="eval")
+        except SyntaxError:
+            return False
+        # 拒绝任何 dunder 属性/名称访问（阻断 __class__/__mro__/__subclasses__/__globals__ 逃逸链）
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Attribute) and node.attr.startswith("__"):
+                return False
+            if isinstance(node, ast.Name) and node.id.startswith("__"):
+                return False
         namespace = {"ctx": self, "all": all, "any": any}
         try:
-            return bool(eval(condition, {"__builtins__": {}}, namespace))
+            return bool(eval(compile(tree, "<skip_condition>", "eval"), {"__builtins__": {}}, namespace))
         except Exception:
             return False
 

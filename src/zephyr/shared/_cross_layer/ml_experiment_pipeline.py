@@ -15,11 +15,11 @@
 # [A_module] module_id=MOD-SHR_ml_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""MLExperimentPipeline L11→L13跨层集成管道
+"""MLExperimentPipeline D_ML_TRAIN→实验跨层集成管道
 ============================================
 Domain   : _ml-experiment-domain (ML-EXPERIMENT-DOMAIN-001)
 Contracts: ME-CT-001~006
-Layers   : L11 (MLPlatform/Inference) → L13 (Experimentation/Pipeline)
+Layers   : D_ML_TRAIN (MLPlatform/Inference) → 实验 (Experimentation/Pipeline)
 Status   : Phase B — 骨架管道已就绪，底层C轨模块 blocked_by_infrastructure
 
 管线阶段
@@ -108,9 +108,9 @@ class ExperimentResult:
 
 
 class MLExperimentPipeline:
-    """L11→L13 ML Experiment 跨层集成管道。
+    """D_ML_TRAIN→实验 ML Experiment 跨层集成管道。
 
-    将 L11 ML平台层的模型推理结果输入 L13 实验管线，
+    将 D_ML_TRAIN ML平台层的模型推理结果输入 实验 实验管线，
     执行实验设计、统计验证和胜出模型提升。
     """
 
@@ -198,7 +198,7 @@ class MLExperimentPipeline:
             result.errors.append(
                 {
                     "stage": "preflight",
-                    "message": "L11/L13 contracts unavailable — running in degraded mode",
+                    "message": "D_ML_TRAIN/实验 contracts unavailable — running in degraded mode",
                 }
             )
 

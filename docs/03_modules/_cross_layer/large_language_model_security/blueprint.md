@@ -2126,8 +2126,8 @@ L8 Multi-Agent Security
 │   │   ├── OPEN → HALF_OPEN: 30s冷却后尝试单次探测
 │   │   └── HALF_OPEN → CLOSED: 探测成功 / → OPEN: 探测失败
 │   ├── 全局故障隔离域：按功能域划分隔离区
-│   │   ├── 交易执行域（L06） Level: HIGH_SECURITY
-│   │   ├── 研究创新域（L09） Level: MEDIUM_SECURITY
+│   │   ├── 交易执行域（D_EXECUTION_CORE） Level: HIGH_SECURITY
+│   │   ├── 研究创新域（D_RESEARCH） Level: MEDIUM_SECURITY
 │   │   └── 文档管理域（Docs） Level: LOW_SECURITY
 │   └── 故障域之间不可跨域传播
 │

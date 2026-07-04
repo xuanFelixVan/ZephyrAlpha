@@ -15,10 +15,10 @@
 # [TTL] task_bound
 """check_idempotency.py — 幂等性缺失检查（HC-9）
 
-对标：GOV-AI-009 HC-9（幂等性缺失——L06 执行层代码缺少幂等 Key）
+对标：GOV-AI-009 HC-9（幂等性缺失——D_EXECUTION_CORE 执行层代码缺少幂等 Key）
 
 检测内容：
-- L06 执行层模块的公共方法是否声明了幂等 Key（idempotency_key 参数或装饰器）
+- D_EXECUTION_CORE 执行层模块的公共方法是否声明了幂等 Key（idempotency_key 参数或装饰器）
 - 检查 @idempotent 装饰器或 idempotency_key 参数的存在性
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -29,9 +29,9 @@ from __future__ import annotations
 __manifest__ = """
 args:
 - {flag: --module, type: str, description: "检查指定模块路径的幂等性"}
-- {flag: --scan-all, action: store_true, description: "扫描所有 L06 执行层代码"}
+- {flag: --scan-all, action: store_true, description: "扫描所有 D_EXECUTION_CORE 执行层代码"}
 description: >
-  幂等性缺失检查（HC-9）——L06 执行层代码缺少幂等 Key 检测。
+  幂等性缺失检查（HC-9）——D_EXECUTION_CORE 执行层代码缺少幂等 Key 检测。
   对标 GOV-AI-009 ai-hallucination-detection-rules.md。
 dimensions:
 - D7
@@ -91,7 +91,7 @@ def check_file_idempotency(filepath: Path) -> list[str]:
                 has_idempotency = True
         if not has_idempotency:
             rel = filepath.relative_to(REPO_ROOT)
-            findings.append(f"HC-9 WARNING: {rel}::{node.name}() — L06 execution layer method missing idempotency_key")
+            findings.append(f"HC-9 WARNING: {rel}::{node.name}() — D_EXECUTION_CORE execution layer method missing idempotency_key")
     return findings
 
 
@@ -113,7 +113,7 @@ def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Idempotency check (HC-9)")
     parser.add_argument("--module", type=str, help="Check specific module path")
-    parser.add_argument("--scan-all", action="store_true", help="Scan all L06 execution layer code")
+    parser.add_argument("--scan-all", action="store_true", help="Scan all D_EXECUTION_CORE execution layer code")
     parser.add_argument("--warn-only", action="store_true", default=True, help="Only warn (default)")
     args = parser.parse_args()
 

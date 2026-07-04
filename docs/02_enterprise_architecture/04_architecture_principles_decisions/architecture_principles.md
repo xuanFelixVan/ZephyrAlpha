@@ -57,7 +57,7 @@ ttl: permanent
 |---|------|--------|----------|
 | **R1** | **键盘不录 key** | API 密钥、数据库密码等秘密信息只能通过环境变量/密钥管理器注入，绝不手动键入 | pre-commit 检测 `key=` / `password=` / `secret=` 字面量 |
 | **R2** | **日志不写 secret** | 任何日志系统（structlog/logging/print）的输出中不得包含密钥、token、私钥 | CI 门禁正则扫描 log 输出 |
-| **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | L04 风控层 hard check before L06 执行 |
+| **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | D_RISK 风控层 hard check before D_EXECUTION_CORE 执行 |
 | **R4** | **PRD 永远不改** | 生产数据库（PRD）永远不做 DDL 变更/手动 UPDATE/DELETE；所有变更走迁移脚本 + 审计日志 | DB 权限只读连接 + 迁移脚本强制记录 |
 
 ### §1bis 门禁追溯（CI / 本地工件）
@@ -66,7 +66,7 @@ ttl: permanent
 |---|----------|------|
 | **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | 防私钥误提交；密钥字面量与轮换另见 `secret-management-policy.md` |
 | **R2** | **目标态**：运行时日志不得写出 secret、token、私钥。**当前**以 Code Review + `security_architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job | 若落地自动化，应在 `scripts/arch_guard/` 或专项 workflow 登记并回链本表 |
-| **R3** | 设计侧：`cross_layer_contracts.yaml` + `invariants.yaml`（L04 ↔ L06）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | T1 实盘后须满足 hard-check 与适应度函数阈值 |
+| **R3** | 设计侧：`cross_layer_contracts.yaml` + `invariants.yaml`（D_RISK ↔ D_EXECUTION_CORE）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | T1 实盘后须满足 hard-check 与适应度函数阈值 |
 | **R4** | 数据治理策略（`data-retention-policy.md` 等）+ 迁移与审计流程；非单一脚本名 | 以权限与流程为主 |
 
 **红线优先级**：高于所有其他架构原则。在其他原则（如 §1 "开源优先"）与红线冲突时，**红线无条件优先**。
@@ -149,7 +149,7 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 
 #### 原则 3：License-as-Code / 许可证即代码
 
-> 所有依赖项的许可证必须通过 SBOM 自动扫描（L10 文件治理）。GPL/AGPL 项目进入代码库前必须经过 ARB 特批。
+> 所有依赖项的许可证必须通过 SBOM 自动扫描（D_COMPLIANCE 文件治理）。GPL/AGPL 项目进入代码库前必须经过 ARB 特批。
 
 **许可证分类标准**：
 

@@ -62,7 +62,7 @@ references: []
 
 脚本系统是 ZephyrAlpha 的自动化治理基础设施——12维度审计扫描、统一调度入口（run_all.py）、pre-commit门禁阻断、Finding全生命周期管理。横切两条生产线做系统级审计，不依附于任何一条线。当前177+治理脚本覆盖D1-D12全部维度，支持增量/全量/单维度扫描模式。
 
-> **module_id**: MOD-INF-005 | **status**: Active | **layer**: L01 infrastructure
+> **module_id**: MOD-INF-005 | **status**: Active | **layer**: L0_infrastructure
 
 ---
 
@@ -138,7 +138,7 @@ references: []
 | 属性 | 值 |
 |------|-----|
 | module_id | MOD-INF-005 |
-| 层级 | L01 infrastructure（基础设施层） |
+| 层级 | L0_infrastructure（基础设施层） |
 | 功能域 | 脚本治理基础设施 |
 | 优先级 | P0（阻断级——脚本系统故障 = 所有门禁失效） |
 

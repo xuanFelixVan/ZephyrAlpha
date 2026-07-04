@@ -19,7 +19,7 @@ actual_disk_path: "src/zephyr/trading/orchestrator/"
 belongs_to: "MOD-INF-035"
 generation: 1
 functional_domain: operations
-summary: "Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。L12跨层支撑层·Vibe Coding 2.0 五大核心服务之一。"
+summary: "Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding 2.0 五大核心服务之一。"
 last_updated: "2026-05-19"
 last_verified: "2026-05-19"
 parent_module: "MOD-INF-035"

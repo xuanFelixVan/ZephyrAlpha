@@ -17,7 +17,7 @@ from zephyr.trading.orchestrator.execution.script_runner import ScriptRunner
 """Agent Orchestrator (Orc)
 =====================================
 
-Vibe Coding 2.0 基础设施 · L12 跨层支撑层 · 5 大核心服务之一
+Vibe Coding 2.0 基础设施 · 遥测 跨层支撑层 · 5 大核心服务之一
 
 职责
 ----

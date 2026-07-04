@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # mod_inf_001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
 # 对齐: docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md §13 示例
@@ -74,7 +75,7 @@ slo_registry:
   - id: CAP-009-kill-switch-trigger-latency
     description: "Kill Switch 触发延迟（INV-001 / KBG-0009）"
     target_ms: 1
-    measurement: "L04 stop-loss → 熔断信号（T1 实测；当前为声明 + arch_guard）"
+    measurement: "D_RISK stop-loss → 熔断信号（T1 实测；当前为声明 + arch_guard）"
     golden_signal: latency
     relates_invariant: INV-001
     instrumentation: { hook_point: "risk kill_switch signal", sampling_sample_rate: "T1 only" }
@@ -82,10 +83,10 @@ slo_registry:
   - id: CAP-010-aisg-intercept-latency
     description: "AISG security_gateway 拦截路径（INV-015 Hot-adjacent）"
     target_ms: 50
-    measurement: "L10 gateway latency"
+    measurement: "D_COMPLIANCE gateway latency"
     golden_signal: latency
     relates_invariant: INV-015
-    instrumentation: { hook_point: "l10 security_gateway", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "compliance security_gateway", sampling_sample_rate: "TBD" }
 
   - id: CAP-011-disk-io-saturation
     description: "磁盘 I/O 饱和度"

@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L05 — StrategyBase + StrategyMeta + StrategyRegistry
+"""D_PORTFOLIO_CORE — StrategyBase + StrategyMeta + StrategyRegistry
 
 Hand-maintained OCP extension point. DO NOT overwrite via codegen.
 

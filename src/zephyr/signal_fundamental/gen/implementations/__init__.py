@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L03 — Signal Generation Concrete Implementations"""
+"""D_SIGNAL — Signal Generation Concrete Implementations"""
 
 from __future__ import annotations
 

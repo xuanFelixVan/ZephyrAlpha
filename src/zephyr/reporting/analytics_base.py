@@ -34,8 +34,8 @@ D_REPORTING — Post-Trade Analytics Layer
   - 日终报告生成 → D_FRONTEND Dashboard / D_COMPLIANCE Compliance
 
 扩展点：
-  - TCAEngineBase        : OCP L07-TCA — Fill + Order → ExecutionReport
-  - AttributionEngineBase : OCP L07-ATTR — PositionSnapshot → PerformanceAttributionReport
+  - TCAEngineBase        : OCP D_REPORTING-TCA — Fill + Order → ExecutionReport
+  - AttributionEngineBase : OCP D_REPORTING-ATTR — PositionSnapshot → PerformanceAttributionReport
 
 依赖方向：D_EXECUTION_CORE → D_REPORTING → D_FRONTEND / D_RESEARCH / D_COMPLIANCE
 """
@@ -53,7 +53,7 @@ from zephyr.trading.trading_contracts.execution.order import Order
 
 class TCAEngineBase(abc.ABC):
     """
-    交易成本分析引擎（OCP 扩展点 L07-TCA）
+    交易成本分析引擎（OCP 扩展点 D_REPORTING-TCA）
 
     契约对齐：CTR-005（Fill 入站）+ CTR-004（Order 入站）→ CTR-P1-007（ExecutionReport 出站）
 
@@ -77,7 +77,7 @@ class TCAEngineBase(abc.ABC):
 
 class AttributionEngineBase(abc.ABC):
     """
-    绩效归因引擎（OCP 扩展点 L07-ATTR）
+    绩效归因引擎（OCP 扩展点 D_REPORTING-ATTR）
 
     契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）→ D_FRONTEND, D_COMPLIANCE
 

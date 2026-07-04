@@ -48,19 +48,19 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_risk\\blueprint.md"
     section: "全篇"
     why: "本蓝图即SSoT"
-summary: "L04 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。"
+summary: "D_RISK 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。"
 tags: [risk-management, l04, phase-1-partial, stop-loss, kill-switch]
 priority: P0
 runtime_plane: hot
 ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 ---
 
-> ⚠️ **业务层已开放，可施工** — L04 属于 C 轨业务层，当前业务层处于冻结状态。
+> ⚠️ **业务层已开放，可施工** — D_RISK 属于 C 轨业务层，当前业务层处于冻结状态。
 > 任何新增施工、功能扩展、接口变更均需 Owner 明确批准后方可执行。
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.0 | status: Active | layer: L04
+> module_id: MOD-L04-001 | version: 2.2.0 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -69,7 +69,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。核心职责：风险限额计算、Pre/Post-trade 风控校验、4 种止损模式评估与触发、Kill Switch 熔断与人工恢复。当前规模 10 个代码文件（5 ABC 基类 + 5 默认实现），目标容量 20+ 风控策略 × 100/s 并发校验。上游消费 L02 FactorSignal、L03 SynthesizedSignal、L06 PositionSnapshot，下游被 L05 组合构建、L06 交易执行、L08 人机界面消费。
+本蓝图描述 ZephyrAlpha 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。核心职责：风险限额计算、Pre/Post-trade 风控校验、4 种止损模式评估与触发、Kill Switch 熔断与人工恢复。当前规模 10 个代码文件（5 ABC 基类 + 5 默认实现），目标容量 20+ 风控策略 × 100/s 并发校验。上游消费 D_FACTOR FactorSignal、D_SIGNAL SynthesizedSignal、D_EXECUTION_CORE PositionSnapshot，下游被 D_PORTFOLIO_CORE 组合构建、D_EXECUTION_CORE 交易执行、D_FRONTEND 人机界面消费。
 
 ---
 
@@ -119,7 +119,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v2.2.0 (模板v4.1合规回填) | 5 ABC + 5 默认实现 + 4 种止损模式 | RiskDashboardSnapshot 产出、L05/L06 集成测试、INV-001 性能验证、测试目录 | Phase 2 待施工 |
+| v2.2.0 (模板v4.1合规回填) | 5 ABC + 5 默认实现 + 4 种止损模式 | RiskDashboardSnapshot 产出、D_PORTFOLIO_CORE/D_EXECUTION_CORE 集成测试、INV-001 性能验证、测试目录 | Phase 2 待施工 |
 
 ---
 
@@ -127,7 +127,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 ### 1.1 背景
 
-量化交易系统缺乏统一风控层——止损靠人工判断，限额无硬约束，Kill Switch 无自动化触发。L04 风险管理层填补此空白，提供实时风控与止损执行能力，作为 L05 组合构建的约束提供者。
+量化交易系统缺乏统一风控层——止损靠人工判断，限额无硬约束，Kill Switch 无自动化触发。D_RISK 风险管理层填补此空白，提供实时风控与止损执行能力，作为 D_PORTFOLIO_CORE 组合构建的约束提供者。
 
 ### 1.2 目标范围
 
@@ -138,9 +138,9 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 | 3 | ✅ 包含 | 止损执行：固定比例/移动/时间/波动率止损 | 4 种止损模式全部实现 |
 | 4 | ✅ 包含 | Kill Switch：熔断触发延迟 < 1ms（INV-001） | 延迟测试通过 |
 | 5 | ✅ 包含 | Kill Switch 人工确认后方可恢复 | 恢复流程需人工确认 |
-| 6 | ❌ 排除 | 信号生成 | L03 职责 |
-| 7 | ❌ 排除 | 订单生成 | L05 职责 |
-| 8 | ❌ 排除 | 订单执行 | L06 职责 |
+| 6 | ❌ 排除 | 信号生成 | D_SIGNAL 职责 |
+| 7 | ❌ 排除 | 订单生成 | D_PORTFOLIO_CORE 职责 |
+| 8 | ❌ 排除 | 订单执行 | D_EXECUTION_CORE 职责 |
 
 ### 1.4 运行场景约束
 
@@ -154,10 +154,10 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
-| Owner | 架构决策+风控参数审批 | 设计+施工 | L04 为 Immutable Core（GOV-AI-001），变更需 Owner+KB 决策记录 |
-| L05 组合构建 | RiskLimits 产出 | 集成 | CTR-003 消费方 |
-| L06 交易执行 | 风控阻断+持仓数据 | 集成 | CTR-ERR-004 消费方 |
-| L08 人机界面 | 风控仪表板数据 | 集成 | CTR-P1-008 消费方 |
+| Owner | 架构决策+风控参数审批 | 设计+施工 | D_RISK 为 Immutable Core（GOV-AI-001），变更需 Owner+KB 决策记录 |
+| D_PORTFOLIO_CORE 组合构建 | RiskLimits 产出 | 集成 | CTR-003 消费方 |
+| D_EXECUTION_CORE 交易执行 | 风控阻断+持仓数据 | 集成 | CTR-ERR-004 消费方 |
+| D_FRONTEND 人机界面 | 风控仪表板数据 | 集成 | CTR-P1-008 消费方 |
 
 ### 1.6 当前态/目标态差距
 
@@ -165,7 +165,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 |------|--------|--------|------|:------:|
 | 风控校验 | 5 ABC + 5 默认实现 | 20+ 风控策略 | 策略数量不足 | P1 |
 | 止损模式 | 4 种模式已实现 | 4 种模式 + 性能验证 | INV-001 延迟未验证 | P0 |
-| 集成 | 无集成测试 | L05/L06/L08 端到端集成 | 集成测试缺失 | P1 |
+| 集成 | 无集成测试 | D_PORTFOLIO_CORE/D_EXECUTION_CORE/D_FRONTEND 端到端集成 | 集成测试缺失 | P1 |
 | 监控 | 无可观测性指标 | 全量指标+告警 | §6.1 未实现 | P1 |
 | 测试 | 测试目录不存在 | 覆盖率 > 90% | 测试完全缺失 | P0 |
 
@@ -173,7 +173,7 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| Pre-trade 校验 | L05 下单请求 | validate_order→检查限额→pass/reject | RiskCheckResult |
+| Pre-trade 校验 | D_PORTFOLIO_CORE 下单请求 | validate_order→检查限额→pass/reject | RiskCheckResult |
 | 止损触发 | 价格跌破止损线 | evaluate_stop_loss→trigger_kill_switch→阻断所有订单 | StopLossResult + Kill Switch 激活 |
 | Kill Switch 恢复 | 人工确认 | reset_kill_switch→验证确认信息→恢复交易 | 交易恢复 |
 | 日终亏损超限 | daily_pnl_check 失败 | daily_pnl_check→触发 kill_switch→阻断 | RiskReport + Kill Switch 激活 |
@@ -191,9 +191,9 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 | 3 | ✅ 包含 | Kill Switch 激活/重置 | 熔断触发 + 人工确认恢复 | 本模块 |
 | 4 | ✅ 包含 | Pre-trade 风控校验 | 订单发出前校验限额 | 本模块 |
 | 5 | ✅ 包含 | Post-trade 风控校验 | 成交后检查风险敞口 | 本模块 |
-| 6 | ❌ 排除 | 信号生成 | L03 职责 | L03 |
-| 7 | ❌ 排除 | 订单生成 | L05 职责 | L05 |
-| 8 | ❌ 排除 | 订单执行 | L06 职责 | L06 |
+| 6 | ❌ 排除 | 信号生成 | D_SIGNAL 职责 | D_SIGNAL |
+| 7 | ❌ 排除 | 订单生成 | D_PORTFOLIO_CORE 职责 | D_PORTFOLIO_CORE |
+| 8 | ❌ 排除 | 订单执行 | D_EXECUTION_CORE 职责 | D_EXECUTION_CORE |
 
 ---
 
@@ -214,11 +214,11 @@ ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L02 FactorSignal | 限额计算 → RiskLimits | L05 组合构建 | Pydantic Model |
-| 2 | L03 SynthesizedSignal | 参数调整 → RiskValidator | L05 组合构建 | Pydantic Model |
-| 3 | L05 Order | Pre-trade 校验 → pass/reject | L06 交易执行 | Pydantic Model |
-| 4 | L06 PositionSnapshot | Post-trade 校验 → RiskDashboardSnapshot | L08 人机界面 | Pydantic Model |
-| 5 | Kill Switch 触发 | 熔断 → 阻断所有订单 | L05/L06 | 状态信号 |
+| 1 | D_FACTOR FactorSignal | 限额计算 → RiskLimits | D_PORTFOLIO_CORE 组合构建 | Pydantic Model |
+| 2 | D_SIGNAL SynthesizedSignal | 参数调整 → RiskValidator | D_PORTFOLIO_CORE 组合构建 | Pydantic Model |
+| 3 | D_PORTFOLIO_CORE Order | Pre-trade 校验 → pass/reject | D_EXECUTION_CORE 交易执行 | Pydantic Model |
+| 4 | D_EXECUTION_CORE PositionSnapshot | Post-trade 校验 → RiskDashboardSnapshot | D_FRONTEND 人机界面 | Pydantic Model |
+| 5 | Kill Switch 触发 | 熔断 → 阻断所有订单 | D_PORTFOLIO_CORE/D_EXECUTION_CORE | 状态信号 |
 
 ### 3.3 状态生命周期
 
@@ -375,12 +375,12 @@ class ViolationDetail(BaseModel):
 
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
-| 1 | Kill Switch 延迟超标（>1ms） | INV-001 监控 | 告警 + 人工介入 | L05/L06 订单无法阻断 |
+| 1 | Kill Switch 延迟超标（>1ms） | INV-001 监控 | 告警 + 人工介入 | D_PORTFOLIO_CORE/D_EXECUTION_CORE 订单无法阻断 |
 | 2 | HALT 级别违规被降级为 WARNING | 安全约束硬编码检查 | 代码层禁止降级 | 资金安全风险 |
 | 3 | 多策略并发风控检查竞争 | 幂等键冲突检测 | INV-007 幂等键重试 | 风控校验结果不一致 |
 | 4 | Kill Switch 触发后订单仍通过 | 订单阻断监控 | 熔断重试 + 告警 | 资金安全风险 |
 | 5 | 每日亏损超限未触发 kill_switch | INV-004 日终检查 | 人工确认 + 紧急熔断 | 资金安全风险 |
-| 6 | RiskDashboardSnapshot 产出失败 | 产出监控 | 降级为空快照 + 告警 | L08 仪表板数据缺失 |
+| 6 | RiskDashboardSnapshot 产出失败 | 产出监控 | 降级为空快照 + 告警 | D_FRONTEND 仪表板数据缺失 |
 
 ### 6.1 可观测性规格
 
@@ -421,7 +421,7 @@ class ViolationDetail(BaseModel):
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
 | 1 | 单元测试 | RiskValidator, RiskLimitsCalculator, StopLossEngine, PositionLimitChecker | 限额校验通过/拒绝、4种止损模式触发、Kill Switch 触发/重置、HALT 降级防护 | 覆盖率 > 90% |
-| 2 | 集成测试 | L04↔L05, L04↔L06 | CTR-003 RiskLimits 产出→L05 消费、CTR-ERR-004 阻断→L06 | 端到端通过 |
+| 2 | 集成测试 | D_RISK↔D_PORTFOLIO_CORE, D_RISK↔D_EXECUTION_CORE | CTR-003 RiskLimits 产出→D_PORTFOLIO_CORE 消费、CTR-ERR-004 阻断→D_EXECUTION_CORE | 端到端通过 |
 | 3 | 性能测试 | Kill Switch 延迟 | INV-001 延迟 < 1ms | 延迟测试通过 |
 | 4 | 安全测试 | HALT 降级防护 | HALT 违规无法降级为 WARNING | 降级测试失败=通过 |
 
@@ -499,18 +499,18 @@ class ViolationDetail(BaseModel):
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L05 组合构建 | 产出接口 | CTR-003 RiskLimits → L05 消费 | L05 风控约束生效 |
-| L06 交易执行 | 产出接口 + 错误阻断 | CTR-ERR-004 阻断订单 + CTR-006 消费持仓 | 违规订单被阻断 |
-| L08 人机界面 | 产出接口 | CTR-P1-008 RiskDashboardSnapshot | 仪表板显示风控数据 |
-| Kill Switch 全链路 | 状态信号 | 触发逻辑 → L05/L06 阻断 | 全链路熔断测试 |
+| D_PORTFOLIO_CORE 组合构建 | 产出接口 | CTR-003 RiskLimits → D_PORTFOLIO_CORE 消费 | D_PORTFOLIO_CORE 风控约束生效 |
+| D_EXECUTION_CORE 交易执行 | 产出接口 + 错误阻断 | CTR-ERR-004 阻断订单 + CTR-006 消费持仓 | 违规订单被阻断 |
+| D_FRONTEND 人机界面 | 产出接口 | CTR-P1-008 RiskDashboardSnapshot | 仪表板显示风控数据 |
+| Kill Switch 全链路 | 状态信号 | 触发逻辑 → D_PORTFOLIO_CORE/D_EXECUTION_CORE 阻断 | 全链路熔断测试 |
 
 ### 集成状态
 
 | 目标 | 状态 | 说明 |
 |------|------|------|
-| L05 组合构建 | 部分集成 | CTR-003 RiskLimits 产出，L05 消费 |
-| L06 交易执行 | 部分集成 | CTR-ERR-004 阻断订单，CTR-006 消费持仓 |
-| L08 人机界面 | 待集成 | CTR-P1-008 RiskDashboardSnapshot |
+| D_PORTFOLIO_CORE 组合构建 | 部分集成 | CTR-003 RiskLimits 产出，D_PORTFOLIO_CORE 消费 |
+| D_EXECUTION_CORE 交易执行 | 部分集成 | CTR-ERR-004 阻断订单，CTR-006 消费持仓 |
+| D_FRONTEND 人机界面 | 待集成 | CTR-P1-008 RiskDashboardSnapshot |
 | Kill Switch 全链路 | 骨架就位 | 触发逻辑已实现，人工恢复流程待完善 |
 
 ---
@@ -534,9 +534,9 @@ class ViolationDetail(BaseModel):
 | 2 | Kill Switch 延迟超标 | 低 | 高 | INV-001 持续监控 + 纯内存操作 | 风险 |
 | 3 | 多策略并发风控检查竞争 | 中 | 中 | INV-007 幂等键 + idempotency_key | 风险 |
 | 4 | YAML 与磁盘文件路径不一致 | 高 | 低 | 以磁盘为准，YAML 待同步 | 风险 |
-| 5 | L05/L06依赖本层产出，未产出则风控/阻断失效 | — | 高 | Phase 2 优先实现产出 | 负面后果 |
+| 5 | D_PORTFOLIO_CORE/D_EXECUTION_CORE依赖本层产出，未产出则风控/阻断失效 | — | 高 | Phase 2 优先实现产出 | 负面后果 |
 | 6 | Kill Switch失效则资金安全无保障 | — | 高 | INV-001 持续监控 + 纯内存操作 | 负面后果 |
-| 7 | 代码 [AI_AUTONOMY]=ai_modifiable 与 GOV-AI-001 声明 L04=Immutable Core 不一致 | 高 | 高 | 代码头部需修正为 human_gated，变更需 Owner+KB 决策记录 | 风险 |
+| 7 | 代码 [AI_AUTONOMY]=ai_modifiable 与 GOV-AI-001 声明 D_RISK=Immutable Core 不一致 | 高 | 高 | 代码头部需修正为 human_gated，变更需 Owner+KB 决策记录 | 风险 |
 
 ---
 
@@ -550,7 +550,7 @@ class ViolationDetail(BaseModel):
 | 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
 | 3 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
 | 4 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 5 | L04 为 Immutable Core（GOV-AI-001），变更需 Owner+KB 决策记录 | 确认审批链 | ☐ |
+| 5 | D_RISK 为 Immutable Core（GOV-AI-001），变更需 Owner+KB 决策记录 | 确认审批链 | ☐ |
 
 ### 16.1 施工策略
 
@@ -565,10 +565,10 @@ class ViolationDetail(BaseModel):
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | L02 FactorSignal 契约已定义 | hard | ✅ | ✅ |
-| 2 | L03 SynthesizedSignal 契约已定义 | hard | ✅ | ✅ |
-| 3 | L05 Order 契约已定义 | hard | ✅ | ✅ |
-| 4 | L06 PositionSnapshot 契约已定义 | hard | ✅ | ✅ |
+| 1 | D_FACTOR FactorSignal 契约已定义 | hard | ✅ | ✅ |
+| 2 | D_SIGNAL SynthesizedSignal 契约已定义 | hard | ✅ | ✅ |
+| 3 | D_PORTFOLIO_CORE Order 契约已定义 | hard | ✅ | ✅ |
+| 4 | D_EXECUTION_CORE PositionSnapshot 契约已定义 | hard | ✅ | ✅ |
 
 ### 16.3 实施步骤
 
@@ -592,7 +592,7 @@ class ViolationDetail(BaseModel):
 |------|------|
 | 对应蓝图契约 | §4.2, §4.4 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\risk\` |
-| 验收标准 | CTR-P1-008 产出 + L05/L06 集成测试通过 + INV-001 延迟 < 1ms |
+| 验收标准 | CTR-P1-008 产出 + D_PORTFOLIO_CORE/D_EXECUTION_CORE 集成测试通过 + INV-001 延迟 < 1ms |
 | 验证命令 | `python -m pytest tests/risk/ -k "test_integration or test_performance" -v` |
 | G7 检查项 | 上游文件全部列出？下游产出物路径精确？回滚方案可执行？ |
 | AI 自治范围 | human_gated（Immutable Core）——需 Owner 审批 |
@@ -657,7 +657,7 @@ class ViolationDetail(BaseModel):
 | 2 | 运行 | Kill Switch 误触发 | 参数配置错误 | 检查 RiskLimits 参数 + kill_switch_active 状态 | reset_kill_switch(confirmation) | 人工确认后恢复 |
 | 3 | 运行 | Kill Switch 未触发 | INV-001/INV-004 监控告警 | 检查 daily_pnl + violations 列表 | 手动 trigger_kill_switch | 人工确认 |
 | 4 | 运行 | 紧急冻结 | 安全事件 | trigger_kill_switch(reason, scope="all") | 所有交易暂停 | 威胁解除后人工恢复 |
-| 5 | 运行 | 紧急旁路 | L04 阻塞 CI | 跳过 L04 + 降级为无风控模式 | — | L04 恢复后取消旁路 |
+| 5 | 运行 | 紧急旁路 | D_RISK 阻塞 CI | 跳过 D_RISK + 降级为无风控模式 | — | D_RISK 恢复后取消旁路 |
 
 ### 16.12 并发操作模型
 
@@ -685,7 +685,7 @@ class ViolationDetail(BaseModel):
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L04-001 | RiskDashboardSnapshot 未实现 | 实现 CTR-P1-008 产出 | P1 | Phase 2 启动 | v2.2.0 | 待施工 |
-| GAP-L04-002 | L05/L06 集成测试缺失 | 编写集成测试 | P1 | Phase 2 启动 | v2.2.0 | 待施工 |
+| GAP-L04-002 | D_PORTFOLIO_CORE/D_EXECUTION_CORE 集成测试缺失 | 编写集成测试 | P1 | Phase 2 启动 | v2.2.0 | 待施工 |
 | GAP-L04-003 | INV-001 性能未验证 | 延迟基准测试 | P0 | Phase 2 启动 | v2.2.0 | 待施工 |
 | GAP-L04-004 | 测试目录不存在 | 创建 tests/risk/ | P0 | 立即 | v2.2.0 | 待施工 |
 | GAP-L04-005 | 代码 AI_AUTONOMY 与 GOV-AI-001 不一致 | 修正代码头部为 human_gated | P1 | 立即 | v2.2.0 | 待施工 |
@@ -703,7 +703,7 @@ class ViolationDetail(BaseModel):
 | 组件名 | 对应缺口 | 代码文件 | 施工Phase | 状态 |
 |--------|---------|---------|----------|:---:|
 | RiskDashboardSnapshot | GAP-L04-001 | `risk_dashboard.py` | Phase 2 | 待施工 |
-| L05/L06 集成测试 | GAP-L04-002 | `tests/risk/test_integration.py` | Phase 2 | 待施工 |
+| D_PORTFOLIO_CORE/D_EXECUTION_CORE 集成测试 | GAP-L04-002 | `tests/risk/test_integration.py` | Phase 2 | 待施工 |
 | INV-001 延迟基准测试 | GAP-L04-003 | `tests/risk/test_performance.py` | Phase 2 | 待施工 |
 | 单元测试 | GAP-L04-004 | `tests/risk/test_*.py` | Phase 2 | 待施工 |
 
@@ -774,7 +774,7 @@ class ViolationDetail(BaseModel):
 | 设计维度 | 成熟度 | 信心 | 升级标准 | 说明 |
 |---------|:------:|:---:|---------|------|
 | 核心架构 | evolving | 中 | Phase 2 完成后 → stable | OCP 扩展点设计已验证，但集成未完成 |
-| 接口契约 | evolving | 中 | L05/L06 集成通过后 → stable | ABC 接口已定义，实际消费方未验证 |
+| 接口契约 | evolving | 中 | D_PORTFOLIO_CORE/D_EXECUTION_CORE 集成通过后 → stable | ABC 接口已定义，实际消费方未验证 |
 | 数据模型 | volatile | 低 | Pydantic 迁移完成后 → evolving | @dataclass 需迁移为 Pydantic BaseModel |
 | 施工步骤 | evolving | 中 | Phase 2 完成后 → stable | Phase 1 已完成，Phase 2 待施工 |
 | Kill Switch | stable | 高 | INV-001 验证通过后 → frozen | 核心安全机制，设计稳定 |
@@ -829,7 +829,7 @@ class ViolationDetail(BaseModel):
 | 判定示例 | 职责域数量 | 消费者独立？ | 演进独立？ | 结论 |
 |---------|:---:|:---:|:---:|------|
 | 风险管理引擎（本蓝图） | 1 | 否 | 否 | 不拆分 |
-| 假设：风控校验+止损引擎 | 2 | 是 | 是 | 拆分为 L04-RiskValidation + L04-StopLoss |
+| 假设：风控校验+止损引擎 | 2 | 是 | 是 | 拆分为 D_RISK-RiskValidation + D_RISK-StopLoss |
 | 假设：风控校验+Kill Switch | 2 | 否 | 否 | 不拆分（职责紧密） |
 
 ---
@@ -851,14 +851,14 @@ class ViolationDetail(BaseModel):
 | 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
-| 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限——L04=Immutable Core |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限——D_RISK=Immutable Core |
 | 9 | 本蓝图 | — | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\blueprint.md` | 本蓝图即SSoT |
 
 ---
 
 ## 项目中已有类似功能
 
-无。L04 风险管理层是项目中唯一的风控执行层，无重复功能。
+无。D_RISK 风险管理层是项目中唯一的风控执行层，无重复功能。
 
 ---
 
@@ -882,9 +882,9 @@ class ViolationDetail(BaseModel):
 
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
-| L04 核心架构设计 | **本文档 §1-§10** | 旧蓝图 |
-| L04 施工步骤 | **本文档 §16** | 旧施工图 |
-| L04 接口契约 | **本文档 §4** | — |
+| D_RISK 核心架构设计 | **本文档 §1-§10** | 旧蓝图 |
+| D_RISK 施工步骤 | **本文档 §16** | 旧施工图 |
+| D_RISK 接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 

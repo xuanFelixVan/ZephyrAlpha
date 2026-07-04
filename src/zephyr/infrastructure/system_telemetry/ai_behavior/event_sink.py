@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L12 · ai_behavior/event_sink — AI 行为遥测事件管道。
+"""遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。
 
 蓝图 §7: 7 大监测维度 + B37 Error Taxonomy + OTel GenAI Semantic Conventions 对齐。
 """

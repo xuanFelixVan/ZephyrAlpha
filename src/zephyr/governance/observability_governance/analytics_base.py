@@ -23,7 +23,7 @@
 # ---
 
 """
-L07 — Post-Trade Analytics Layer
+D_REPORTING — Post-Trade Analytics Layer
 
 盘后分析层。负责交易执行后的绩效评估与归因分析。
 
@@ -31,13 +31,13 @@ L07 — Post-Trade Analytics Layer
   - TCA（Transaction Cost Analysis）：成交回报 Fill → 执行分析报告 ExecutionReport
   - 绩效归因（Brinson）：持仓快照 + 因子暴露 → 归因报告 PerformanceAttributionReport
   - P&L 分解（方向性 vs 波动性收益）
-  - 日终报告生成 → L08 Dashboard / L10 Compliance
+  - 日终报告生成 → D_FRONTEND Dashboard / D_COMPLIANCE Compliance
 
 扩展点：
-  - TCAEngineBase        : OCP L07-TCA — Fill + Order → ExecutionReport
-  - AttributionEngineBase : OCP L07-ATTR — PositionSnapshot → PerformanceAttributionReport
+  - TCAEngineBase        : OCP D_REPORTING-TCA — Fill + Order → ExecutionReport
+  - AttributionEngineBase : OCP D_REPORTING-ATTR — PositionSnapshot → PerformanceAttributionReport
 
-依赖方向：L06 → L07 → L08 / L09 / L10
+依赖方向：D_EXECUTION_CORE → D_REPORTING → D_FRONTEND / D_RESEARCH / D_COMPLIANCE
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ from zephyr.trading.trading_contracts.execution.order import Order
 
 class TCAEngineBase(abc.ABC):
     """
-    交易成本分析引擎（OCP 扩展点 L07-TCA）
+    交易成本分析引擎（OCP 扩展点 D_REPORTING-TCA）
 
     契约对齐：CTR-005（Fill 入站）+ CTR-004（Order 入站）→ CTR-P1-007（ExecutionReport 出站）
 
@@ -77,9 +77,9 @@ class TCAEngineBase(abc.ABC):
 
 class AttributionEngineBase(abc.ABC):
     """
-    绩效归因引擎（OCP 扩展点 L07-ATTR）
+    绩效归因引擎（OCP 扩展点 D_REPORTING-ATTR）
 
-    契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）→ L08, L10
+    契约对齐：CTR-P1-009（PerformanceAttributionReport 出站）→ D_FRONTEND, D_COMPLIANCE
 
     实现者要求：
       - attribute(): 给定持仓和因子暴露，按 Brinson 模型拆解收益

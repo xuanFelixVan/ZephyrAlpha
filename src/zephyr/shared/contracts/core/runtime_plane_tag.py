@@ -27,7 +27,7 @@ Runtime Plane 契约预留（Orthogonal View Runtime Plane Tag Contract）。
 ═══════════════════════════════════════════════════════════════════════
 【用途】
 ═══════════════════════════════════════════════════════════════════════
-1. 为每个 L00-L13 + shared + frontend + scripts 模块声明所属 **Runtime Plane**
+1. 为每个 D_DATA~实验 + shared + frontend + scripts 模块声明所属 **Runtime Plane**
    （Hot / Warm / Cold），作为 `runtime_planes.md` 正交视图的机器可读元数据。
 2. 未来 Hot Path 激活时（T1 真实资金或 T-ENDGAME 顶级对标触发），本契约升级为
    **运行时强制校验**（PR lint + CI gate + 架构一致性扫描脚本消费）。
@@ -67,7 +67,7 @@ Runtime Plane 契约预留（Orthogonal View Runtime Plane Tag Contract）。
 
     __runtime_plane__ = RuntimePlane.WARM
     __runtime_plane_rationale__ = (
-        "factor computation in L02 factor_engine runs in async pipeline, "
+        "factor computation in D_FACTOR factor_engine runs in async pipeline, "
         "latency budget 100ms per factor, Python async + numpy vectorization"
     )
 
@@ -85,7 +85,7 @@ Runtime Plane 契约预留（Orthogonal View Runtime Plane Tag Contract）。
 ═══════════════════════════════════════════════════════════════════════
 **Hot-adjacent**（热邻接）不是独立平面，而是 WARM 平面下的一类特殊子类——模块本身
 运行在 Warm Path，但 **对接** Hot Path 的下游数据（例如前端 WebSocket 订阅行情、
-L08 api_gateway 的订单提交端点）。Hot-adjacent 模块在 Warm Path 标注的基础上，
+D_FRONTEND api_gateway 的订单提交端点）。Hot-adjacent 模块在 Warm Path 标注的基础上，
 应通过 `__runtime_plane_adjacency__ = ("HOT",)` 附加声明。
 
 ═══════════════════════════════════════════════════════════════════════

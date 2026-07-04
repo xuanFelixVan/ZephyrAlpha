@@ -11,7 +11,7 @@
 # [TESTS]
 # [TTL] task_bound
 """
-ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · L01 Infrastructure.
+ZephyrAlpha 容量保障体系 (Capacity Assurance) — MOD-INF-001 · 基础设施 Infrastructure.
 
 六大核心能力 (Six Core Capabilities):
   1. SSoT Validation        — 单一事实源校验，蓝图与实现一致性守护

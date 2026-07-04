@@ -375,7 +375,7 @@ sections:
     - description: "Mermaid架构图节点ID"
       details: "功能域用D-XXX_YYY(大写D+域英文大写缩写+下划线分隔子域);特殊分区用SH(FE);节点标签D-XXX {English Name};禁止使用docs目录编号"
     - description: "KB决策记录引用"
-      details: "引用架构层时使用L04 Risk Management格式;禁止使用17_risk_and_controls目录格式"
+      details: "引用架构层时使用D_RISK Risk Management格式;禁止使用17_risk_and_controls目录格式"
     - description: "施工图命名(历史保留)"
       details: "construction_plan_{domain}_{snake_case_description}.md;施工指引已合并入蓝图"
     - description: "模块ID格式"

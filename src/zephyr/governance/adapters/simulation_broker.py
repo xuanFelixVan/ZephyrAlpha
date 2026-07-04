@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L06 — Simulation Broker Adapter
+"""D_EXECUTION_CORE — Simulation Broker Adapter
 
 模拟券商适配器。实现 BrokerInterface (OCP-003)，用于回测和模拟交易。
 
@@ -33,10 +33,10 @@
   - 成交回调通知
 
 CTR 契约：
-  消费者 — CTR-004 (Order) ← L05
-  生产者 — CTR-005 (Fill) → L07
-  生产者 — CTR-006 (PositionSnapshot) → L04, L07, L11
-  生产者 — CTR-ERR-005 (ExecutionRejectionError) → L05, L07
+  消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
+  生产者 — CTR-005 (Fill) → D_REPORTING
+  生产者 — CTR-006 (PositionSnapshot) → D_RISK, D_REPORTING, D_ML_TRAIN
+  生产者 — CTR-ERR-005 (ExecutionRejectionError) → D_PORTFOLIO_CORE, D_REPORTING
 
 SSoT: cross_layer_contracts.yaml → OCP-003 + CTR-004 + CTR-005 + CTR-006
 """

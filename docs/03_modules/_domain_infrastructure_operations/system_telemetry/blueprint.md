@@ -57,7 +57,7 @@ verifiability: hybrid
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
-> module_id: MOD-INF-015 | version: 2.0.2 | status: Active | layer: L01
+> module_id: MOD-INF-015 | version: 2.0.2 | status: Active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
@@ -710,7 +710,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | Escalation Protocol (MOD-INF-022) | 告警升级通知 | alert_router→escalation_handler | P0 告警触达人工 |
 | LLM Security (MOD-LLM_SECURITY) | AI 行为安全事件 | ai_behavior→lsg_security_gateway | 异常 prompt/幻觉触发拦截 |
 | AI Agent Session（MCP） | 运行时遥测反馈 | Telemetry MCP Server→AI Agent tools | AI 调用 get_alerts() 返回有效数据 |
-| 所有 L00-L13 模块 | metrics/logs/traces 采集 | 各模块→telemetry_exporter | 全系统可观测 |
+| 所有 D_DATA-实验 模块 | metrics/logs/traces 采集 | 各模块→telemetry_exporter | 全系统可观测 |
 
 ---
 

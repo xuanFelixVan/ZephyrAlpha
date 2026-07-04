@@ -59,21 +59,10 @@ from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
 LAYER_NUMBERS = {
-    "L00": 0,
-    "L01": 1,
-    "L02": 2,
-    "L03": 3,
-    "L04": 4,
-    "L05": 5,
-    "L06": 6,
-    "L07": 7,
-    "L08": 8,
-    "L09": 9,
-    "L10": 10,
-    "L11": 11,
-    "L12": 12,
-    "L13": 13,
-    "L14": 14,
+    "L0_infrastructure": 0,
+    "L1_foundation": 1,
+    "L2_domain": 2,
+    "L3_application": 3,
     "cross_layer": -1,
 }
 

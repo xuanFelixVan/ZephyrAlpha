@@ -141,7 +141,7 @@ sections:
       applies_to: 文档拆分首选策略
     - id: SPLIT-002
       statement: 按架构层拆分——层级清晰的系统
-      rationale: L01基础设施 / L02 Alpha / L03信号等层级清晰
+      rationale: 基础设施 / D_FACTOR Alpha / D_SIGNAL信号等层级清晰
       applies_to: 文档拆分次选策略
     - id: SPLIT-003
       statement: 按依赖深度拆分——扁平依赖结构

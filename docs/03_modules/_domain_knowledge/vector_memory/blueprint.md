@@ -124,7 +124,7 @@ END_REQUIRED_SECTIONS
 
 VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）产出的需要语义检索的内容最终都写入 VMS。核心架构：ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d 主路径 + bge-small-zh-v1.5 512d 轻量路径）+ 8 大 Collection + 混合检索（Vector+BM25+RRF）。设计哲学：可审计（WriteTrace provenance 强制）、可自愈（IndexHealthMonitor 自动修复）、可持续（TTL+compaction+检索质量闭环）。Phase 0-3 已完成，Phase 4 运维自动化待施工。上游依赖 CE（主要消费方）和 KB（整合目标），下游被 Orc、FLE、Governance 消费。
 
-**线2（AI认知线）流水线位置**：上下文需求 → MOD-CONTEXT_ENGINE(CE) → MOD-KB-001(KB) → **MOD-INF-011(VMS)** → MOD-LLM_SECURITY(LLM安全网关) → MOD-INF-034(模型检测器) → MOD-INF-036(AI入职考试) → LLM响应+路由决策。VMS 向线3审计追踪链输出嵌入结果。C轨域：VMS → L02(Alpha因子层) 因子语义检索 + VMS → L11(ML平台层) 模型语义检索。
+**线2（AI认知线）流水线位置**：上下文需求 → MOD-CONTEXT_ENGINE(CE) → MOD-KB-001(KB) → **MOD-INF-011(VMS)** → MOD-LLM_SECURITY(LLM安全网关) → MOD-INF-034(模型检测器) → MOD-INF-036(AI入职考试) → LLM响应+路由决策。VMS 向线3审计追踪链输出嵌入结果。C轨域：VMS → D_FACTOR(Alpha因子层) 因子语义检索 + VMS → D_ML_TRAIN(ML平台层) 模型语义检索。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
@@ -847,8 +847,8 @@ class FeedbackEntry(BaseModel):
 | MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` |
 | MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback_loop\blueprint.md` |
-| L02-Alpha因子层 | 可选 | C轨域：因子语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\l02_factor\blueprint.md` |
-| L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
+| D_FACTOR-Alpha因子层 | 可选 | C轨域：因子语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\l02_factor\blueprint.md` |
+| D_ML_TRAIN-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
 | KBG-0016 | 必须 | VMS生产级嵌入与分块契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` |
 | KBG-0031 | 必须 | Phase 2 ChromaDB基线选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
 | MOD-INF-039 | 必须 | 嵌入服务——EmbeddingRouter/CacheLayer/OllamaEmbedding已迁移至local_model | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
@@ -882,8 +882,8 @@ class FeedbackEntry(BaseModel):
 | RetrievalFeedback | HybridRetriever | 检索质量信号 | 函数调用 |
 | VectorBridge | Context Engine | 检索结果 ScoredHit | 函数调用 |
 | VectorBridge | Audit Trail (线3) | 嵌入结果 | 函数调用 |
-| VectorBridge | Alpha因子层 (L02) | 因子语义检索结果 | 函数调用 |
-| VectorBridge | ML平台层 (L11) | 模型语义检索结果 | 函数调用 |
+| VectorBridge | Alpha因子层 (D_FACTOR) | 因子语义检索结果 | 函数调用 |
+| VectorBridge | ML平台层 (D_ML_TRAIN) | 模型语义检索结果 | 函数调用 |
 
 ### 10.4 自动化规格
 
@@ -939,8 +939,8 @@ class FeedbackEntry(BaseModel):
 | Orchestrator (MOD-TASK_SYSTEM) | Orc→VMS 写入 | 任务决策写入 `decisions` | Orc 完成 task 后 VMS 可检索决策 |
 | SessionManager | Session→VMS 写入 | session 结束时压缩摘要写入 `session_snapshots` | 新 session 冷启动检索到上一 session |
 | Audit Trail (MOD-INF-020) | VMS→线3审计追踪链 | 嵌入结果输出到审计追踪链 + 每次 VMS 读写写入审计日志 | 审计日志包含 VMS 操作记录 + WriteTrace + 嵌入结果 |
-| Alpha因子层 (L02) | VMS→L02 因子语义检索 | 因子IC/衰减/退役等语义检索 | 因子检索结果可被Alpha策略消费 |
-| ML平台层 (L11) | VMS→L11 模型语义检索 | 模型性能/回测结果等语义检索 | 模型检索结果可被ML实验平台消费 |
+| Alpha因子层 (D_FACTOR) | VMS→D_FACTOR 因子语义检索 | 因子IC/衰减/退役等语义检索 | 因子检索结果可被Alpha策略消费 |
+| ML平台层 (D_ML_TRAIN) | VMS→D_ML_TRAIN 模型语义检索 | 模型性能/回测结果等语义检索 | 模型检索结果可被ML实验平台消费 |
 
 ---
 

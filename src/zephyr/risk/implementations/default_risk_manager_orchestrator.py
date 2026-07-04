@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Default Risk Manager Orchestrator
+"""D_RISK — Default Risk Manager Orchestrator
 
 风险总管具体实现。编排事前/事后风控检查、日终盈亏校验、综合风控报告。
 
@@ -30,14 +30,14 @@
   pre_trade_check → post_trade_check → daily_pnl_check → aggregate_report
 
 CTR 契约：
-  消费者 — CTR-002 (FactorSignal) ← L02
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
   消费者 — CTR-003 (RiskLimits) ← 本层
-  消费者 — CTR-004 (Order) ← L05
-  消费者 — CTR-005 (Fill) ← L06
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-003 (RiskLimits) → L05
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → L05, L06
-  生产者 — CTR-P1-008 (RiskDashboardSnapshot) → L08
+  消费者 — CTR-004 (Order) ← D_PORTFOLIO_CORE
+  消费者 — CTR-005 (Fill) ← D_EXECUTION_CORE
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-003 (RiskLimits) → D_PORTFOLIO_CORE
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
+  生产者 — CTR-P1-008 (RiskDashboardSnapshot) → D_FRONTEND
 
 SSoT: cross_layer_contracts.yaml → CTR-003 + CTR-ERR-004 + CTR-P1-008
 """

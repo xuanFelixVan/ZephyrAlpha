@@ -22,15 +22,15 @@
 # created: "2026-05-05"
 # ---
 
-"""L05 — Default Equity Long-Only Strategy
+"""D_PORTFOLIO_CORE — Default Equity Long-Only Strategy
 
 默认股票多头策略。实现 StrategyBase (OCP-002)，等权或信号加权配置。
 
 CTR 契约：
-  消费者 — CTR-002 (FactorSignal) ← L02
-  消费者 — CTR-003 (RiskLimits) ← L04
-  消费者 — CTR-P1-015 (SynthesizedSignal) ← L03
-  生产者 — CTR-004 (Order) → L06
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
+  消费者 — CTR-003 (RiskLimits) ← D_RISK
+  消费者 — CTR-P1-015 (SynthesizedSignal) ← D_SIGNAL
+  生产者 — CTR-004 (Order) → D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml → OCP-002 + CTR-004
 """
@@ -107,7 +107,7 @@ class DefaultEquityStrategy(StrategyBase):
         return orders
 
     def update_signals(self, signals: dict[str, float]) -> None:
-        """更新信号得分（供 L03 输入的 SynthesizedSignal）"""
+        """更新信号得分（供 D_SIGNAL 输入的 SynthesizedSignal）"""
         self._signal_scores.update(signals)
 
     def update_holdings(self, holdings: dict[str, Decimal]) -> None:

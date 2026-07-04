@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L04 — Risk Management Concrete Implementations
+"""D_RISK — Risk Management Concrete Implementations
 
 Phase C 具体实现包。包含所有抽象基类的默认生产级实现。
 

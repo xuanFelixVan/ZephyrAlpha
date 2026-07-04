@@ -235,10 +235,10 @@ sections:
     - level: Level 1
       name: DOMAIN
       examples:
-      - MOD-MASTER_BLUEPRINT(L01基础设施层集成蓝图)
-      - MOD-DOMAIN-SIG-001(L02因子+L03信号域)
-      - MOD-DOMAIN-RISK-001(L04-L07执行域)
-      - MOD-DOMAIN-ML-001(L11-L13 ML域)
+      - MOD-MASTER_BLUEPRINT(基础设施层集成蓝图)
+      - MOD-DOMAIN-SIG-001(D_FACTOR因子+D_SIGNAL信号域)
+      - MOD-DOMAIN-RISK-001(D_RISK-D_REPORTING执行域)
+      - MOD-DOMAIN-ML-001(D_ML_TRAIN-实验 ML域)
     - level: Level 2
       name: MODULE
       count: 19份模块蓝图
@@ -473,7 +473,7 @@ sections:
     compatibility_table:
     - existing_id: MOD-MASTER_BLUEPRINT
       new_level: Level 1当前→Level 0 beta升级后
-      note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
+      note: 当前承担基础设施域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
     - existing_id: MOD-INF-001~017
       new_level: Level 2 MODULE
       note: 不涉及不兼容
@@ -506,10 +506,10 @@ sections:
     - condition: 1期创建的模块蓝图
       value: MOD-MASTER_BLUEPRINT
       reason: 当前只有这个域蓝图
-    - condition: beta+创建的L02因子蓝图
+    - condition: beta+创建的D_FACTOR因子蓝图
       value: MOD-DOMAIN-SIG-001
       reason: 信号域集成蓝图待创建
-    - condition: beta+创建的L06执行蓝图
+    - condition: beta+创建的D_EXECUTION_CORE执行蓝图
       value: MOD-DOMAIN-RISK-001
       reason: 执行域集成蓝图待创建
     - condition: 跨层基础设施模块
@@ -747,7 +747,7 @@ sections:
       title: Code Dedup Engine
       belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001即L01基础设施域集成蓝图beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
+    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001即基础设施域集成蓝图beta+时D_FACTOR+的模块蓝图将归属到新建的对应Level 1域蓝图
   s10_prohibitions:
     title: 禁止行为
     section_type: rule

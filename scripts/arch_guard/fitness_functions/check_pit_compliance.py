@@ -19,7 +19,7 @@ check_pit_compliance.py — PIT（Point-in-Time）铁律强制执行 (INV-004)
 INV-004: 回测数据禁止未来信息泄露（Look-ahead Bias 零容忍）。
 
 检测方式：
-  - 扫描 L02 Alpha Factor 相关 Python 代码
+  - 扫描 D_FACTOR Alpha Factor 相关 Python 代码
   - 搜索常见的 look-ahead bias 模式：
     1. 使用未来日期的数据引用（如 shifting with +N 而非 -N）
     2. 在时间序列上使用正向 shift / forward-fill from future
@@ -88,7 +88,7 @@ def check_file(file_path: Path) -> list[str]:
 
 def main() -> int:
     if not L02_DIR.exists():
-        print(f"⚠ L02 目录不存在: {L02_DIR} — 跳过 PIT 检查")
+        print(f"⚠ D_FACTOR 目录不存在: {L02_DIR} — 跳过 PIT 检查")
         return 0
 
     all_warnings: list[str] = []

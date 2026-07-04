@@ -22,14 +22,14 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Default Risk Validator
+"""D_RISK — Default Risk Validator
 
 风险校验器具体实现。Pre-trade 订单校验 + 全组合风控状态校验。
 
 CTR 契约：
   消费者 — CTR-003 (RiskLimits) ← 本层
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-ERR-004 (RiskLimitViolationError) → L05, L06
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-ERR-004 (RiskLimitViolationError) → D_PORTFOLIO_CORE, D_EXECUTION_CORE
 
 SSoT: cross_layer_contracts.yaml → CTR-ERR-004 + CTR-003
 """

@@ -31,7 +31,7 @@ ZephyrAlpha — shared/contracts/model_serving_response.py
 
 CTR-P1-005: ModelServingResponse / 模型推理响应
 
-跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。
+跨层模型推理响应契约。D_ML_TRAIN ML Platform 返回推理结果给 D_SIGNAL/D_PORTFOLIO_CORE。
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-005
 Version: 1.0

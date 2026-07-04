@@ -591,7 +591,7 @@ blueprints:
 - module_id: MOD-INF-039
   name: agent_orchestrator
   title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
-  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。L12跨层支撑层·Vibe
+  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe
     Coding 2.0 五大核心服务之一。
   layer: cross_layer
   functional_domain: operations
@@ -655,7 +655,7 @@ blueprints:
 - module_id: MOD-L02-001
   name: _domain_factor
   title: Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
-  summary: Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供L03消费。
+  summary: Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供D_SIGNAL消费。
   layer: factor
   functional_domain: intelligence
   blueprint_status: Active

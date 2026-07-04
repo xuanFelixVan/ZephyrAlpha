@@ -50,7 +50,7 @@ tags:
   - alpha-factor
   - l02
   - c-track
-summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供L03消费。"
+summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供D_SIGNAL消费。"
 ---
 
 > ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。
@@ -65,7 +65,7 @@ summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha Alpha因子计算引擎——它解决了因子计算逻辑分散、接口不统一的问题。核心职责包括：因子OCP扩展点(FactorBase)、因子注册表(FactorRegistry)、因子自动发现(autodiscover_factors)、具体因子实现(Momentum20d/ValueFactor)。当前规模 2 个因子，目标容量支持无限扩展。上游依赖 L00 Data Source 的 NormalizedMarketData，下游被 L03 Signal Generation 和 L04 Risk Management 消费。
+本蓝图描述 ZephyrAlpha Alpha因子计算引擎——它解决了因子计算逻辑分散、接口不统一的问题。核心职责包括：因子OCP扩展点(FactorBase)、因子注册表(FactorRegistry)、因子自动发现(autodiscover_factors)、具体因子实现(Momentum20d/ValueFactor)。当前规模 2 个因子，目标容量支持无限扩展。上游依赖 D_DATA Data Source 的 NormalizedMarketData，下游被 D_SIGNAL Signal Generation 和 D_RISK Risk Management 消费。
 
 ---
 
@@ -127,10 +127,10 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 1 | ✅ 包含 | FactorBase OCP扩展点 | 新因子只加不改 |
 | 2 | ✅ 包含 | FactorRegistry因子注册表 | 因子自动发现+按域查询 |
 | 3 | ✅ 包含 | 动量/价值因子实现 | Momentum20d+ValueFactor可计算 |
-| 4 | ✅ 包含 | 因子输出标准化 | CTR-002 FactorSignal供L03消费 |
-| 5 | ❌ 排除 | 数据摄取 | L00 Data Source |
-| 6 | ❌ 排除 | 信号生成 | L03 Signal Generation |
-| 7 | ❌ 排除 | 组合构建 | L05 Portfolio Construction |
+| 4 | ✅ 包含 | 因子输出标准化 | CTR-002 FactorSignal供D_SIGNAL消费 |
+| 5 | ❌ 排除 | 数据摄取 | D_DATA Data Source |
+| 6 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation |
+| 7 | ❌ 排除 | 组合构建 | D_PORTFOLIO_CORE Portfolio Construction |
 
 ### 1.4 运行场景约束
 
@@ -146,8 +146,8 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 因子架构决策 | 设计+施工 | 审批FactorBase接口变更 |
-| L03 Signal | 因子输出格式 | 集成 | 消费CTR-002 |
-| L04 Risk | 因子值准确性 | 集成 | 因子用于风控指标 |
+| D_SIGNAL Signal | 因子输出格式 | 集成 | 消费CTR-002 |
+| D_RISK Risk | 因子值准确性 | 集成 | 因子用于风控指标 |
 
 ### 1.6 当前态/目标态差距
 
@@ -163,8 +163,8 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
 | 新增因子 | 研究员提出新因子 | 继承FactorBase→实现compute→@FactorRegistry.register→autodiscover自动加载 | 因子可计算 |
-| 因子计算 | L00推送行情数据 | data传入compute()→向量化计算→返回pd.Series | CTR-002 FactorSignal |
-| 因子查询 | L03需要某域因子 | FactorRegistry.list_by_domain()→获取因子类→调用compute | 因子值列表 |
+| 因子计算 | D_DATA推送行情数据 | data传入compute()→向量化计算→返回pd.Series | CTR-002 FactorSignal |
+| 因子查询 | D_SIGNAL需要某域因子 | FactorRegistry.list_by_domain()→获取因子类→调用compute | 因子值列表 |
 
 ---
 
@@ -177,9 +177,9 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 1 | ✅ 包含 | 因子抽象基类 | FactorBase OCP扩展点+FactorMeta元数据 | 本模块 |
 | 2 | ✅ 包含 | 因子注册表 | FactorRegistry单例+autodiscover自动发现 | 本模块 |
 | 3 | ✅ 包含 | 具体因子实现 | Momentum20d+ValueFactor | 本模块 |
-| 4 | ❌ 排除 | 行情数据获取 | L00 Data Source负责 | L00 |
-| 5 | ❌ 排除 | 信号合成 | L03 Signal Generation负责 | L03 |
-| 6 | ❌ 排除 | 风险评估 | L04 Risk Management负责 | L04 |
+| 4 | ❌ 排除 | 行情数据获取 | D_DATA Data Source负责 | D_DATA |
+| 5 | ❌ 排除 | 信号合成 | D_SIGNAL Signal Generation负责 | D_SIGNAL |
+| 6 | ❌ 排除 | 风险评估 | D_RISK Risk Management负责 | D_RISK |
 
 ---
 
@@ -200,7 +200,7 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L00 NormalizedMarketData(pd.DataFrame) | FactorBase.compute()→向量化计算 | L03/L04 | pd.Series(CTR-002 FactorSignal) |
+| 1 | D_DATA NormalizedMarketData(pd.DataFrame) | FactorBase.compute()→向量化计算 | D_SIGNAL/D_RISK | pd.Series(CTR-002 FactorSignal) |
 
 ### 3.3 状态生命周期
 
@@ -289,7 +289,7 @@ class FactorMeta(BaseModel):
 | # | 约束 | 值 |
 |---|------|-----|
 | 1 | FactorBase为OCP扩展点 | 新因子只加不改 |
-| 2 | 因子输入必须为pd.DataFrame | L00标准化输出 |
+| 2 | 因子输入必须为pd.DataFrame | D_DATA标准化输出 |
 | 3 | 因子计算必须向量化 | NumPy/Pandas，禁止逐行循环 |
 | 4 | FactorRegistry为单例 | 进程级唯一 |
 | 5 | 因子必须通过@FactorRegistry.register注册 | autodiscover自动发现 |
@@ -323,7 +323,7 @@ class FactorMeta(BaseModel):
 |---|:----:|--------|-----------|------|
 | 1 | 编码模式 | 逐行循环计算因子 | NumPy/Pandas向量化 | 性能瓶颈 |
 | 2 | 编码模式 | look-ahead bias | 仅使用历史数据 | 因子失效 |
-| 3 | 导入源 | zephyr.signal.* | zephyr.factor.* | 分层约束：L02不依赖L03 |
+| 3 | 导入源 | zephyr.signal.* | zephyr.factor.* | 分层约束：D_FACTOR不依赖D_SIGNAL |
 | 4 | 编码模式 | 直接实例化因子类 | @FactorRegistry.register装饰器 | 注册表完整性 |
 
 ---
@@ -352,7 +352,7 @@ class FactorMeta(BaseModel):
 |------|-------------|-----------|---------|---------|
 | FactorRegistry | 无 | 所有因子计算 | 进程重启+autodiscover | 注册表重建 |
 | 单个因子 | 其他因子可用 | 该因子输出NaN | 下游跳过NaN | 因子修复 |
-| L00数据源 | 缓存数据可用 | 实时因子 | 使用最近缓存值 | L00恢复 |
+| D_DATA数据源 | 缓存数据可用 | 实时因子 | 使用最近缓存值 | D_DATA恢复 |
 
 ---
 
@@ -435,9 +435,9 @@ class FactorMeta(BaseModel):
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L00 Data Source | CTR-001消费 | NormalizedMarketData(pd.DataFrame) | 因子可读取行情数据 |
-| L03 Signal Generation | 因子产出 | CTR-002 FactorSignal(pd.Series) | 信号合成可消费因子结果 |
-| L04 Risk Management | 因子值消费 | CTR-002 FactorSignal | 风控指标可使用因子值 |
+| D_DATA Data Source | CTR-001消费 | NormalizedMarketData(pd.DataFrame) | 因子可读取行情数据 |
+| D_SIGNAL Signal Generation | 因子产出 | CTR-002 FactorSignal(pd.Series) | 信号合成可消费因子结果 |
+| D_RISK Risk Management | 因子值消费 | CTR-002 FactorSignal | 风控指标可使用因子值 |
 | INF-015 Telemetry | instrumentation | 因子计算指标 | 指标可观测 |
 
 ---
@@ -459,7 +459,7 @@ class FactorMeta(BaseModel):
 | 1 | 因子计算性能瓶颈 | 中 | 实时性不足 | 向量化计算+缓存 | 风险 |
 | 2 | 数据缺失导致因子失效 | 中 | 因子输出NaN | 缺失值处理+下游NaN容忍 | 风险 |
 | 3 | 新因子需实现FactorBase | — | 中 | OCP扩展点设计，新因子继承即可 | 负面后果 |
-| 4 | 因子计算依赖L00数据质量 | — | 中 | QualityGate前置校验 | 负面后果 |
+| 4 | 因子计算依赖D_DATA数据质量 | — | 中 | QualityGate前置校验 | 负面后果 |
 | 5 | base.py与factor_base.py双FactorBase共存 | 高 | 导入混乱 | 废弃base.py | 风险 |
 | 6 | FactorMeta使用@dataclass而非Pydantic BaseModel | 中 | 违反KBG-0040 | 迁移至Pydantic | 风险 |
 
@@ -491,7 +491,7 @@ class FactorMeta(BaseModel):
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | FactorBase定义 | hard | ✅ | ✅ |
-| 2 | CTR-001 NormalizedMarketData | hard | ⚠️ L00部分实现 | ☐ |
+| 2 | CTR-001 NormalizedMarketData | hard | ⚠️ D_DATA部分实现 | ☐ |
 | 3 | business_layer_status=active | hard | ✅ active | ☑ |
 
 ### 16.3 实施步骤
@@ -580,7 +580,7 @@ class FactorMeta(BaseModel):
 | # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
 |---|:----:|------|---------|----------|----------|----------|
 | 1 | 施工 | 因子注册失败 | @register抛ValueError | 检查factor_id是否重复 | 修改factor_id | 重新注册 |
-| 2 | 运行 | 因子计算全NaN | 数据缺失 | 检查L00数据源 | 恢复数据源 | 因子值恢复 |
+| 2 | 运行 | 因子计算全NaN | 数据缺失 | 检查D_DATA数据源 | 恢复数据源 | 因子值恢复 |
 | 3 | 运行 | autodiscover加载失败 | 因子模块语法错误 | 检查warnings输出 | 修复语法 | 重新autodiscover |
 
 ### 16.12 并发操作模型
@@ -635,7 +635,7 @@ class FactorMeta(BaseModel):
 | 2 | D-L02-02 | 因子输出格式为pd.Series | dict/Pydantic/dataclass | pd.Series | 向量化计算需要 | 2026-05-05 |
 | 3 | D-L02-03 | FactorRegistry使用装饰器注册 | 手动注册/装饰器/配置文件 | 装饰器 | autodiscover自动发现 | 2026-05-05 |
 | 4 | D-L02-04 | FactorMeta使用@dataclass(待迁移Pydantic) | @dataclass/Pydantic | @dataclass→Pydantic | KBG-0040强制Pydantic V2 | 2026-05-05 |
-| 5 | D-L02-05 | compute()输入为pd.DataFrame | NormalizedMarketData/pd.DataFrame | pd.DataFrame | L00产出为DataFrame | 2026-05-05 |
+| 5 | D-L02-05 | compute()输入为pd.DataFrame | NormalizedMarketData/pd.DataFrame | pd.DataFrame | D_DATA产出为DataFrame | 2026-05-05 |
 
 ---
 
@@ -646,7 +646,7 @@ class FactorMeta(BaseModel):
 | FactorBase | 因子抽象基类，OCP扩展点 | base.py中的旧FactorBase | factor_base.py为新版，base.py待废弃 |
 | FactorRegistry | 因子全局注册表(单例) | — | 唯一注册入口 |
 | FactorMeta | 因子元数据定义 | — | 每个因子类必须有meta类属性 |
-| CTR-002 | 因子信号契约(FactorSignal) | CTR-001(NormalizedMarketData) | CTR-002是L02产出，CTR-001是L00产出 |
+| CTR-002 | 因子信号契约(FactorSignal) | CTR-001(NormalizedMarketData) | CTR-002是D_FACTOR产出，CTR-001是D_DATA产出 |
 | OCP | 开闭原则(Open-Closed Principle) | — | 新因子只加不改 |
 
 ---
@@ -739,7 +739,7 @@ class FactorMeta(BaseModel):
 | 判定示例 | 职责域数量 | 消费者独立？ | 演进独立？ | 结论 |
 |---------|:---:|:---:|:---:|------|
 | 因子计算层（本蓝图） | 1 | 否 | 否 | 不拆分 |
-| 假设：因子计算+因子存储 | 2 | 是 | 是 | 拆分为 L02-FactorCompute + L02-FactorStore |
+| 假设：因子计算+因子存储 | 2 | 是 | 是 | 拆分为 D_FACTOR-FactorCompute + D_FACTOR-FactorStore |
 | 假设：因子计算+因子回测 | 2 | 否 | 否 | 不拆分（职责紧密） |
 
 ---
@@ -814,9 +814,9 @@ class FactorMeta(BaseModel):
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | L03 Signal Generation | §4 接口契约、§10 依赖关系 |
-| Tier 1 | L04 Risk Management | CTR-002 FactorSignal |
-| Tier 2 | L09 Research | 因子回测 |
+| Tier 1 | D_SIGNAL Signal Generation | §4 接口契约、§10 依赖关系 |
+| Tier 1 | D_RISK Risk Management | CTR-002 FactorSignal |
+| Tier 2 | D_RESEARCH Research | 因子回测 |
 | Tier 3 | INF-015 Telemetry | 因子计算指标 |
 
 ### 变更审批与同步规则

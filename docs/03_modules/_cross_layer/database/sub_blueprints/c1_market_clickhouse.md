@@ -32,7 +32,7 @@ references:
     why: "业务数据库母蓝图——C1的上游设计真源"
   - path: "d:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\blueprint.md"
     section: "§4 接口契约"
-    why: "数据源接入层——C1的数据来源（L00）"
+    why: "数据源接入层——C1的数据来源（D_DATA）"
 depends_on:
   - target: ARCH-BIZDB-001
     at: "§5.2/§6/§7/§8"
@@ -131,7 +131,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 |---|:----:|------|----------|
 | 1 | ✅ 包含 | 8 张表字段级 DDL | 母蓝图 §5.2 表级定义细化到字段级 |
 | 2 | ✅ 包含 | ClickHouse 引擎/分区/排序键/TTL 策略 | 回测性能 + 分区裁剪 + 数据生命周期 |
-| 3 | ✅ 包含 | 写入接口 C1MarketWriter | 对接 L00 数据源接入层（CTR-001~008） |
+| 3 | ✅ 包含 | 写入接口 C1MarketWriter | 对接 D_DATA 数据源接入层（CTR-001~008） |
 | 4 | ✅ 包含 | 查询接口 C1MarketReader | 实盘实时行情查询 |
 | 5 | ✅ 包含 | 回测加载接口 C1BacktestLoader | 对接母蓝图 §7 回测调度（热层/温层分层加载） |
 | 6 | ✅ 包含 | calc_mode 标注 | 8 张表标注 replay/preload（母蓝图 §7.5） |
@@ -161,7 +161,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | 约束 | 影响 |
 |------|------|
 | ClickHouse 尚未部署（需新建 INFRA-DB-006） | C1 施工前置阻塞，DDL 先设计后执行 |
-| 当前数据源(L00)只支持 OHLCV（daily_kline 表） | 其他 7 张表需 L00 步骤3 多品类扩展 |
+| 当前数据源(D_DATA)只支持 OHLCV（daily_kline 表） | 其他 7 张表需 D_DATA 步骤3 多品类扩展 |
 | 回测内存预算 64G（母蓝图 §7.1） | tick_data 必须分层加载，不能全量载入 |
 | 8 张表 calc_mode 必须标注（母蓝图 §7.5） | 回测引擎按 calc_mode 决定处理方式 |
 | 硬边界品类(港股/美股/期货多市场) market_type 预留但不摄取 | 字段设计预留，enabled=false |
@@ -184,7 +184,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 |------|--------|--------|------|:------:|
 | ClickHouse 部署 | 未部署（INFRA-DB-005 已删除 market.duckdb） | INFRA-DB-006 ClickHouse 部署 | 需新建基础设施 | P0 |
 | 8 张表 DDL | 无 | 8 个 schemas/categories/market_*.py | 待编写 DDL-as-Code | P0 |
-| 数据源覆盖 | OHLCV（daily_kline 1张） | 8张表全覆盖 | 需 L00 步骤3 多品类扩展 | P0 |
+| 数据源覆盖 | OHLCV（daily_kline 1张） | 8张表全覆盖 | 需 D_DATA 步骤3 多品类扩展 | P0 |
 | 写入接口 | 无 | C1MarketWriter | 待实现 | P1 |
 | 回测加载接口 | 无 | C1BacktestLoader（热层/温层） | 待实现 | P1 |
 | 品类注册表 | 无 | 8 条品类注册记录 | 待注册（母蓝图 §6 第1层） | P1 |
@@ -196,7 +196,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | 日线行情回测 | 回测引擎启动 | C1BacktestLoader.load_warm_layer → daily_kline 预加载到内存 | DataFrame dict |
 | Tick 回测 | 回测引擎启动 | C1BacktestLoader.load_hot_layer → tick_data 常驻内存逐笔回放 | DataFrame dict |
 | 实盘行情查询 | 实盘引擎请求 | C1MarketReader.query_latest → ClickHouse 实时查询 | DataFrame |
-| 日线写入 | L00 摄取完成 | C1MarketWriter.upsert_daily_kline → ClickHouse 批量写入 | 写入行数 |
+| 日线写入 | D_DATA 摄取完成 | C1MarketWriter.upsert_daily_kline → ClickHouse 批量写入 | 写入行数 |
 | 范围查询 | 分析模块请求 | C1MarketReader.query_range → 分区裁剪查询 | DataFrame |
 | 硬边界品类预留 | 港股/美股注册 | market_type 字段预留，enabled=false | 预留接口（不摄取） |
 
@@ -209,13 +209,13 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | # | 类型 | 职责 | 详情 | 负责方 |
 |---|:----:|------|------|--------|
 | 1 | ✅ 包含 | 8 张表 DDL 设计 | 字段级 Schema + 引擎/分区/排序键/TTL（母蓝图 §6 第2层） | 本模块 |
-| 2 | ✅ 包含 | 行情数据写入 | C1MarketWriter 对接 L00 CTR-001~008 契约 | 本模块 |
+| 2 | ✅ 包含 | 行情数据写入 | C1MarketWriter 对接 D_DATA CTR-001~008 契约 | 本模块 |
 | 3 | ✅ 包含 | 行情数据查询 | C1MarketReader 范围查询/最新查询（分区裁剪） | 本模块 |
 | 4 | ✅ 包含 | 回测数据加载 | C1BacktestLoader 热层/温层分层加载（母蓝图 §7.1） | 本模块 |
 | 5 | ✅ 包含 | calc_mode 标注 | 8 张表标注 replay/preload（母蓝图 §7.5） | 本模块 |
 | 6 | ✅ 包含 | category_id 注册 | 8 个品类注册到品类注册表（母蓝图 §6 第1层） | 本模块 |
 | 7 | ✅ 包含 | market_type 硬边界预留 | 港股/美股/期货字段预留 enabled=false（母蓝图 §8.2） | 本模块 |
-| 8 | ❌ 排除 | 数据源摄取 | L00 数据源接入层负责 | MOD-L00-001 |
+| 8 | ❌ 排除 | 数据源摄取 | D_DATA 数据源接入层负责 | MOD-L00-001 |
 | 9 | ❌ 排除 | 因子计算 | C2 indicator_clickhouse 负责 | C2 |
 | 10 | ❌ 排除 | ClickHouse 部署运维 | 基础设施层负责 | MOD-INF-012A |
 | 11 | ❌ 排除 | 回测引擎调度 | 回测引擎模块负责（C1 仅提供 load 接口） | 回测引擎 |
@@ -225,7 +225,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | # | 排除项 | 原因 | 归属模块 |
 |---|--------|------|---------|
-| 1 | 数据源 API 调用 | 数据摄取是 L00 职责 | MOD-L00-001 |
+| 1 | 数据源 API 调用 | 数据摄取是 D_DATA 职责 | MOD-L00-001 |
 | 2 | 因子值存储 | 因子属指标仓库 | C2-INDICATOR-CH |
 | 3 | 回测结果存储 | 回测产出属回测结果仓库 | C4-BACKTEST-CH |
 | 4 | 交易事务 | 事务层 | L4-TRADING-SQLITE |
@@ -249,7 +249,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 ### §3.2 数据流
 
 ```
-数据源(L00) → C1MarketWriter.batch_insert → ClickHouse C1表(8张)
+数据源(D_DATA) → C1MarketWriter.batch_insert → ClickHouse C1表(8张)
                                                     ↓
 回测引擎 ← C1BacktestLoader.load_to_memory ← 分区裁剪查询
 实盘引擎 ← C1MarketReader.query_latest ← 实时查询
@@ -259,7 +259,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 流向 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |------|--------|--------|---------|---------|
-| 写入 | L00 DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
+| 写入 | D_DATA DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
 | 存储 | C1MarketWriter | ClickHouse C1 表(8张) | 行情记录 | 批量 INSERT |
 | 回测加载 | C1BacktestLoader | 回测引擎内存工作台 | 范围查询结果 | 分层批量加载 |
 | 实盘查询 | C1MarketReader | 实盘引擎 | 最新行情 | 实时查询 |
@@ -272,7 +272,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 |------|---------|---------|
 | 第1层 品类注册表 | business_data_categories.yaml 注册 8 条品类 | category_id: market_tick / market_daily_kline / market_auction / market_index / market_option_iv / market_futures_position / market_futures_term / market_cb_iv |
 | 第2层 DDL-as-Code | 8 张表 Schema Python 类 | schemas/categories/market_*.py（本蓝图 §4 定义） |
-| 第3层 数据契约 | CTR-001~008 每张表一个契约 | 对接 L00 CTR 契约体系 |
+| 第3层 数据契约 | CTR-001~008 每张表一个契约 | 对接 D_DATA CTR 契约体系 |
 | 第4层 品类发现 | CategoryManager 按 category_id 路由到 C1 | DatabaseService 按 engine=clickhouse 路由 |
 
 #### 对接母蓝图 §7 回测调度策略
@@ -299,7 +299,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 策略项 | 设计 | 理由 |
 |--------|------|------|
-| 引擎 | 全部 MergeTree | 数据源唯一（L00），不需要 ReplacingMergeTree 去重 |
+| 引擎 | 全部 MergeTree | 数据源唯一（D_DATA），不需要 ReplacingMergeTree 去重 |
 | 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪和 TTL |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp)（高频）/ ORDER BY (symbol, trade_date)（日频） | 回测主要查单只股票历史数据，symbol 前缀 |
 | TTL | tick_data/index_quote 保留 90 天后归档 Parquet | 高频数据体积大，超期归档 |
@@ -400,7 +400,7 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 | TTL | 无（日线永久保留） |
 | calc_mode | **preload**（回测时预加载到内存） |
 | category_id | **market_daily_kline** |
-| 说明 | 对接 L00 DataSourceBase.fetch_historical 输出 CTR-001 |
+| 说明 | 对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001 |
 
 ### §4.3 auction_snapshot（集合竞价快照 — preload模式）
 
@@ -651,11 +651,11 @@ COMMENT '可转债隐含波动率(成品算,preload)'
 
 ### §4.9 写入接口
 
-> 对接 L00 数据源接入层（MOD-L00-001 §4 接口契约）的 CTR-001~008 输出。
+> 对接 D_DATA 数据源接入层（MOD-L00-001 §4 接口契约）的 CTR-001~008 输出。
 
 ```python
 class C1MarketWriter:
-    """C1 行情仓库写入接口——对接 L00 数据源接入层 CTR-001~008 契约"""
+    """C1 行情仓库写入接口——对接 D_DATA 数据源接入层 CTR-001~008 契约"""
 
     def __init__(self, clickhouse_client):
         """
@@ -684,7 +684,7 @@ class C1MarketWriter:
 
     def upsert_daily_kline(self, df: pd.DataFrame) -> int:
         """
-        日线 OHLCV 写入（对接 L00 DataSourceBase.fetch_historical 输出 CTR-001）
+        日线 OHLCV 写入（对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001）
 
         Args:
             df: OHLCV DataFrame（trade_date/symbol/open/high/low/close/volume/amount/adj_factor）
@@ -806,14 +806,14 @@ class C1BacktestLoader:
 
 | 契约ID | 对应表 | Producer | Consumer | 版本 | 状态 |
 |--------|--------|----------|----------|------|:----:|
-| CTR-001 | daily_kline | L00 DataSourceBase | C1MarketWriter | 1.0.0 | 待实现 |
-| CTR-002 | tick_data | L00 (miniQMT) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-003 | auction_snapshot | L00 (miniQMT) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-004 | index_quote | L00 (miniQMT) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-005 | option_iv_surface | L00 (iFind/AkShare) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-006 | futures_position | L00 (CZCE/DCE) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-007 | futures_term_structure | L00 (交易所) | C1MarketWriter | 1.0.0 | 待L00扩展 |
-| CTR-008 | convertible_bond_iv | L00 (iFind) | C1MarketWriter | 1.0.0 | 待L00扩展 |
+| CTR-001 | daily_kline | D_DATA DataSourceBase | C1MarketWriter | 1.0.0 | 待实现 |
+| CTR-002 | tick_data | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-003 | auction_snapshot | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-004 | index_quote | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-005 | option_iv_surface | D_DATA (iFind/AkShare) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-006 | futures_position | D_DATA (CZCE/DCE) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-007 | futures_term_structure | D_DATA (交易所) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-008 | convertible_bond_iv | D_DATA (iFind) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 
 ---
 
@@ -854,7 +854,7 @@ class C1BacktestLoader:
 | # | 迁移项 | 来源 | 目标 | 状态 |
 |---|--------|------|------|:----:|
 | 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已删除) | C1 market_clickhouse | 待迁移（duckdb已删除，数据需重新摄取） |
-| 2 | DDL 迁移 | market_schema.py (L00) | schemas/categories/market_*.py | 待编写 |
+| 2 | DDL 迁移 | market_schema.py (D_DATA) | schemas/categories/market_*.py | 待编写 |
 
 ---
 
@@ -915,7 +915,7 @@ class C1BacktestLoader:
 | 单元测试 | 写入接口 | C1MarketWriter.batch_insert / upsert_daily_kline | pytest | 待实现 |
 | 单元测试 | 查询接口 | C1MarketReader.query_range / query_latest | pytest | 待实现 |
 | 集成测试 | 回测加载 | C1BacktestLoader 热层/温层加载 | pytest + testcontainers | 待实现 |
-| 集成测试 | L00 对接 | CTR-001~008 写入 C1 全链路 | pytest | 待实现 |
+| 集成测试 | D_DATA 对接 | CTR-001~008 写入 C1 全链路 | pytest | 待实现 |
 | 性能测试 | 分区裁剪 | 范围查询分区裁剪效果 | benchmark | 待实现 |
 | 性能测试 | 回测加载延迟 | 100标的1年数据加载时间 | benchmark | 待实现 |
 
@@ -962,7 +962,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |--------|--------|---------|---------|
-| L00 DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
+| D_DATA DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
 | C1MarketWriter | ClickHouse C1 表(8张) | 行情记录 | 批量 INSERT |
 | ClickHouse C1 表 | C1MarketReader | 查询结果 | SQL 查询 |
 | ClickHouse C1 表 | C1BacktestLoader | 范围数据 | 分层批量加载 |
@@ -1000,7 +1000,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 |------------|---------|--------|---------|
 | 回测引擎 | C1BacktestLoader 接口 | load_to_memory / load_hot_layer / load_warm_layer | 回测引擎可加载行情数据 |
 | 实盘引擎 | C1MarketReader 接口 | query_latest | 实盘引擎可查询最新行情 |
-| L00 数据源接入层 | C1MarketWriter 接口 | batch_insert / upsert_daily_kline | L00 CTR-001~008 可写入 C1 |
+| D_DATA 数据源接入层 | C1MarketWriter 接口 | batch_insert / upsert_daily_kline | D_DATA CTR-001~008 可写入 C1 |
 | 母蓝图 §6 品类注册表 | business_data_categories.yaml | 8条品类注册记录 | CategoryManager 可发现 C1 品类 |
 | 母蓝图 §6 CategoryManager | engine=clickhouse 路由 | DatabaseService 路由 | 按 category_id 路由到 C1 |
 | MOD-INF-012A 基础设施 | ClickHouse 部署 | INFRA-DB-006 | ClickHouse 可连接 |
@@ -1103,7 +1103,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
 | 1 | ClickHouse 未部署阻塞 C1 施工 | 高 | 全部代码待建 | 先编写 DDL-as-Code 设计，部署后一键建表 | 风险 |
-| 2 | L00 仅支持 OHLCV，7张表无数据源 | 高 | 7张表空置 | 待 L00 步骤3 多品类扩展 | 风险 |
+| 2 | D_DATA 仅支持 OHLCV，7张表无数据源 | 高 | 7张表空置 | 待 D_DATA 步骤3 多品类扩展 | 风险 |
 | 3 | tick_data 内存占用过大（100标的48GB） | 中 | 回测内存溢出 | 热层分层加载 + 限制标的数量 | 风险 |
 | 4 | ClickHouse 无 AS OF JOIN | 中 | 多频率时间对齐困难 | 内存工作台完成对齐（母蓝图 §7.3） | 风险 |
 | 5 | MergeTree 不支持 UPSERT | — | 中 | daily_kline 先删后插模式 | 负面后果 |
@@ -1152,7 +1152,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 |------|------|
 | 施工阶段数 | 5 个步骤 |
 | 施工模式 | 设计先行 + 基础设施就绪后实施 |
-| 核心风险 | ClickHouse 未部署 + L00 仅支持 OHLCV |
+| 核心风险 | ClickHouse 未部署 + D_DATA 仅支持 OHLCV |
 | 目标 generation | 1 |
 | Spiral 归属 | Spiral 2：仓库层建设（ClickHouse 部署后） |
 
@@ -1161,9 +1161,9 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | ClickHouse 部署（INFRA-DB-006） | hard | 未部署 | ❌ |
-| 2 | L00 数据源接入层（OHLCV） | hard | 已实现（CTR-001） | ✅（部分） |
+| 2 | D_DATA 数据源接入层（OHLCV） | hard | 已实现（CTR-001） | ✅（部分） |
 | 3 | 母蓝图品类注册表设计 | soft | 设计完成 | ✅ |
-| 4 | L00 多品类扩展（7张表数据源） | soft | 待施工 | ❌ |
+| 4 | D_DATA 多品类扩展（7张表数据源） | soft | 待施工 | ❌ |
 
 ### §16.3 实施步骤
 
@@ -1209,11 +1209,11 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 验收标准 | batch_insert / upsert_daily_kline 可用 |
 | 验证命令 | `python -c "from data.databases.c1_market_clickhouse.c1_market_writer import C1MarketWriter"` |
 | 状态 | ❌ 待步骤2完成 |
-| G7 检查项 | 上游 L00 CTR-001 可对接，下游 ClickHouse 可写入 |
+| G7 检查项 | 上游 D_DATA CTR-001 可对接，下游 ClickHouse 可写入 |
 
 ```
-→ 先实现 daily_kline 表的写入（对接 L00 OHLCV 输出 CTR-001）
-→ 其他 7 张表写入接口待 L00 步骤3 多品类扩展
+→ 先实现 daily_kline 表的写入（对接 D_DATA OHLCV 输出 CTR-001）
+→ 其他 7 张表写入接口待 D_DATA 步骤3 多品类扩展
 ```
 
 #### 步骤 4：实现回测加载接口（C1BacktestLoader）
@@ -1229,7 +1229,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 ```
 → 先实现 preload 模式（daily_kline 预加载到温层）
-→ replay 模式（tick_data 逐笔回放）待 L00 多品类扩展
+→ replay 模式（tick_data 逐笔回放）待 D_DATA 多品类扩展
 ```
 
 #### 步骤 5：品类注册表注册（母蓝图 §6 第1层）
@@ -1274,7 +1274,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-C1-001 | ClickHouse 未部署 | Docker 部署 INFRA-DB-006 | P0 | C1施工前置 | v1.0.0 | 待施工 |
-| GAP-C1-002 | L00 仅支持 OHLCV | L00 步骤3 多品类扩展 | P0 | 7张表无数据源 | v1.1.0 | 待施工 |
+| GAP-C1-002 | D_DATA 仅支持 OHLCV | D_DATA 步骤3 多品类扩展 | P0 | 7张表无数据源 | v1.1.0 | 待施工 |
 | GAP-C1-003 | tick_data 内存占用大 | 热层分层加载 + 标的数量限制 | P1 | 100标的48GB | v1.0.0 | 设计完成 |
 | GAP-C1-004 | TTL 归档无存储 | 对象存储(Parquet归档) | P2 | 90天数据到期 | v1.1.0 | 待施工 |
 
@@ -1295,7 +1295,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | C1MarketWriter | GAP-C1-001 | c1_market_writer.py | Phase 3 | 待施工 |
 | C1MarketReader | GAP-C1-001 | c1_market_reader.py | Phase 3 | 待施工 |
 | C1BacktestLoader | GAP-C1-001 | c1_backtest_loader.py | Phase 4 | 待施工 |
-| 7张表数据源 | GAP-C1-002 | L00 多品类扩展 | Phase 5 | 待施工 |
+| 7张表数据源 | GAP-C1-002 | D_DATA 多品类扩展 | Phase 5 | 待施工 |
 
 ---
 
@@ -1303,7 +1303,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-C1-01 | 全部表使用 MergeTree 引擎 | MergeTree/ReplacingMergeTree | MergeTree | 数据源唯一(L00)，不需要去重 | 2026-07-01 |
+| 1 | D-C1-01 | 全部表使用 MergeTree 引擎 | MergeTree/ReplacingMergeTree | MergeTree | 数据源唯一(D_DATA)，不需要去重 | 2026-07-01 |
 | 2 | D-C1-02 | 高频表按天分区/日频表按月分区 | 统一按天/混合 | 混合 | 高频表分区裁剪+日频表减少分区数 | 2026-07-01 |
 | 3 | D-C1-03 | 排序键 symbol 前缀 | symbol前缀/时间前缀 | symbol前缀 | 回测主要查单只股票历史数据 | 2026-07-01 |
 | 4 | D-C1-04 | tick_data/index_quote TTL 90天 | 永久保留/TTL归档 | TTL 90天 | 高频数据体积大，超期归档Parquet | 2026-07-01 |

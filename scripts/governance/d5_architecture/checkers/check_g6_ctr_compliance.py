@@ -18,7 +18,7 @@
 
 
 Checks:
-- Whether layers self-create data types conflicting with CTR (e.g. L00 creates own MarketData)
+- Whether layers self-create data types conflicting with CTR (e.g. D_DATA creates own MarketData)
 - Whether monetary fields incorrectly use float (should use Decimal)
 - Whether cross-layer imports go through shared/contracts/ rather than direct layer imports
 

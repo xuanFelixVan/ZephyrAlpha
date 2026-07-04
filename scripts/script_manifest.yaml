@@ -1624,7 +1624,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/checkers/check_trace_context_propagation.py
   path: governance/d5_architecture/checkers/check_trace_context_propagation.py
-  description: 扫描 L00~L07 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
+  description: 扫描 D_DATA~D_REPORTING 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2352,7 +2352,7 @@ scripts:
   dimensions: []
 - name: governance/d7_code/check_idempotency.py
   path: governance/d7_code/check_idempotency.py
-  description: 对标：GOV-AI-009 HC-9（幂等性缺失——L06 执行层代码缺少幂等 Key）
+  description: 对标：GOV-AI-009 HC-9（幂等性缺失——D_EXECUTION_CORE 执行层代码缺少幂等 Key）
   domain: governance
   execution_plane: warm-path
   status: registered

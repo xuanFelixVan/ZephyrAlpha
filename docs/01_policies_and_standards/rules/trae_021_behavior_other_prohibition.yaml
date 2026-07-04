@@ -777,12 +777,12 @@ sections:
     - COND-30
     - COND-31
     - COND-32
-    summary: L02-L07直接调用LLM/业务数据写入治理SQLite/contracts目录放业务逻辑的条件禁止
+    summary: D_FACTOR-D_REPORTING直接调用LLM/业务数据写入治理SQLite/contracts目录放业务逻辑的条件禁止
     conditions:
     - type: trigger
-      check: L08 层代码调用 LLM API 时
-      pass: 必须通过 L08 LSG 代理
-      fail: L02-L07 直接调用 LLM Providers
+      check: D_FRONTEND 层代码调用 LLM API 时
+      pass: 必须通过 D_FRONTEND LSG 代理
+      fail: D_FACTOR-D_REPORTING 直接调用 LLM Providers
     - type: trigger
       check: 向治理 SQLite 写入数据时
       pass: 治理 SQLite 只存治理数据，OHLCV/因子等业务数据走专用存储
@@ -792,7 +792,7 @@ sections:
       pass: 只放数据结构定义（dataclass/Protocol/Enum/Literal/TypedDict）
       fail: 在 contracts 目录放业务逻辑
     prohibitions:
-    - L02-L07 直接调用 LLM Providers
+    - D_FACTOR-D_REPORTING 直接调用 LLM Providers
     - 业务数据写入治理 SQLite
     - 在 contracts 目录放业务逻辑
   ps_std_003_cond_gate_validation:

@@ -58,7 +58,7 @@ runtime_plane: hot
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
-> module_id: MOD-TASK_SYSTEM | version: 0.9.5 | status: active | layer: L01
+> module_id: MOD-TASK_SYSTEM | version: 0.9.5 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述

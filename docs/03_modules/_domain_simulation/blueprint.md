@@ -50,7 +50,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 
 ---
 
-> ✅ **业务层已开放·可施工** — 本蓝图所属 L13 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
+> ✅ **业务层已开放·可施工** — 本蓝图所属 实验 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
 > module_id: MOD-L13-001 | version: 2.1.0 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
@@ -61,7 +61,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 实验管理层——它解决了策略和因子验证缺乏标准化管线的问题。核心职责包括：实验管线抽象（ExperimentPipelineBase OCP 扩展点）、Scout Agent 自动化实验编排（ScoutAgentBase OCP 扩展点）、实验配置下发（ExperimentConfig）、实验指标统计验证（ExperimentMetric，含 Cohen's d / p-value / effect_size）。当前规模 2 个 OCP 扩展点 + 1 个默认实现（DefaultExperimentPipeline），目标覆盖 A/B 测试、因子消融、策略变种三类实验。上游依赖 L11 ML Platform（模型推断 + 检查点）和 L00 Data Source（市场数据），下游被 L09 Research（实验结论消费）和 INF-012 Database（产物归档）消费。
+本蓝图描述 ZephyrAlpha 实验管理层——它解决了策略和因子验证缺乏标准化管线的问题。核心职责包括：实验管线抽象（ExperimentPipelineBase OCP 扩展点）、Scout Agent 自动化实验编排（ScoutAgentBase OCP 扩展点）、实验配置下发（ExperimentConfig）、实验指标统计验证（ExperimentMetric，含 Cohen's d / p-value / effect_size）。当前规模 2 个 OCP 扩展点 + 1 个默认实现（DefaultExperimentPipeline），目标覆盖 A/B 测试、因子消融、策略变种三类实验。上游依赖 D_ML_TRAIN ML Platform（模型推断 + 检查点）和 D_DATA Data Source（市场数据），下游被 D_RESEARCH Research（实验结论消费）和 INF-012 Database（产物归档）消费。
 
 ---
 
@@ -114,7 +114,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 
 ### 1.1 背景
 
-策略和因子验证缺乏标准化管线——每次验证需手动搭建实验框架，无法复用、无法对比、无法归档。L13 实验层提供统一的实验管线抽象和自动化编排能力，使验证过程可复现、可对比、可归档。
+策略和因子验证缺乏标准化管线——每次验证需手动搭建实验框架，无法复用、无法对比、无法归档。实验 实验层提供统一的实验管线抽象和自动化编排能力，使验证过程可复现、可对比、可归档。
 
 ### 1.2 目标范围
 
@@ -122,13 +122,13 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 |---|:----:|------|----------|
 | 1 | ✅ 包含 | 实验管线标准化 | ExperimentPipelineBase OCP 扩展点可用，新策略只加不改 |
 | 2 | ✅ 包含 | Scout Agent 自动化 | ScoutAgentBase 可编排自动化实验，产出 ExperimentResult |
-| 3 | ✅ 包含 | 实验配置下发 | CTR-009 ExperimentConfig 可产出至 L11 |
-| 4 | ✅ 包含 | 实验指标上报 | CTR-010 ExperimentMetric 可产出至 L09 |
-| 5 | ✅ 包含 | 模型检查点导入 | CTR-011 ModelCheckpoint 可从 L11 消费 |
+| 3 | ✅ 包含 | 实验配置下发 | CTR-009 ExperimentConfig 可产出至 D_ML_TRAIN |
+| 4 | ✅ 包含 | 实验指标上报 | CTR-010 ExperimentMetric 可产出至 D_RESEARCH |
+| 5 | ✅ 包含 | 模型检查点导入 | CTR-011 ModelCheckpoint 可从 D_ML_TRAIN 消费 |
 | 6 | ✅ 包含 | 实验产物归档 | CTR-012 ExperimentArtifact 可归档至 INF-012 |
-| 7 | ❌ 排除 | 模型推理 | L11 ML Platform 负责 |
+| 7 | ❌ 排除 | 模型推理 | D_ML_TRAIN ML Platform 负责 |
 | 8 | ❌ 排除 | 系统可观测性 | MOD-INF-015 系统遥测负责 |
-| 9 | ❌ 排除 | 数据摄取 | L00 Data Source 负责 |
+| 9 | ❌ 排除 | 数据摄取 | D_DATA Data Source 负责 |
 
 ### 1.4 运行场景约束
 
@@ -145,8 +145,8 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策 + CTR契约审批 | 设计+施工 | 审批权限 |
-| L11 ML Platform | 模型推断结果消费 + 检查点提供 | 集成 | CTR-009/011 契约对齐 |
-| L09 Research | 实验结论消费 | 集成 | CTR-010/P1-014 契约对齐 |
+| D_ML_TRAIN ML Platform | 模型推断结果消费 + 检查点提供 | 集成 | CTR-009/011 契约对齐 |
+| D_RESEARCH Research | 实验结论消费 | 集成 | CTR-010/P1-014 契约对齐 |
 | INF-012 Database | 实验产物归档 | 集成 | CTR-012 契约对齐 |
 
 ### 1.6 当前态/目标态差距
@@ -165,7 +165,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 | A/B策略对比 | 新策略假设提出 | 创建ExperimentConfig→DefaultExperimentPipeline.run()→统计验证→ExperimentResult | supported/rejected/inconclusive |
 | Scout自动实验 | 外部资讯变化 | ScoutAgentBase.scout()→设计实验→执行→归档 | ExperimentResult + archived_to_kms=True |
 | 因子消融 | 因子重要性验证 | 配置control/treatment_params→run()→逐指标effect_size | ExperimentMetric列表 |
-| 冠军模型提升 | 实验结论显著 | L13→L11(模型部署) + L13→L09(结论归档) | CTR-012归档 + CTR-P1-014通知 |
+| 冠军模型提升 | 实验结论显著 | 实验→D_ML_TRAIN(模型部署) + 实验→D_RESEARCH(结论归档) | CTR-012归档 + CTR-P1-014通知 |
 
 ---
 
@@ -180,7 +180,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 | 3 | ✅ 包含 | 实验配置 | ExperimentConfig 数据类 | 本模块 |
 | 4 | ✅ 包含 | 实验指标 | ExperimentMetric 数据类 | 本模块 |
 | 5 | ✅ 包含 | 实验产物归档 | CTR-012 ExperimentArtifact 归档至数据库 | 本模块 |
-| 6 | ❌ 排除 | 模型训练/推理 | L11 ML Platform 负责 | L11 |
+| 6 | ❌ 排除 | 模型训练/推理 | D_ML_TRAIN ML Platform 负责 | D_ML_TRAIN |
 | 7 | ❌ 排除 | 遥测采集 | MOD-INF-015 系统遥测负责 | INF-015 |
 | 8 | ❌ 排除 | 数据存储 | INF-012 Database 负责 | INF-012 |
 
@@ -202,10 +202,10 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L00 NormalizedMarketData | ExperimentPipelineBase.run(config) → A/B 分组 → 统计验证 | ExperimentMetric 列表 | ExperimentMetric dataclass |
-| 2 | ExperimentMetric 列表 | ScoutAgentBase.scout(context) → 汇总结论 | L09 Research | ExperimentResult (CTR-P1-014) |
+| 1 | D_DATA NormalizedMarketData | ExperimentPipelineBase.run(config) → A/B 分组 → 统计验证 | ExperimentMetric 列表 | ExperimentMetric dataclass |
+| 2 | ExperimentMetric 列表 | ScoutAgentBase.scout(context) → 汇总结论 | D_RESEARCH Research | ExperimentResult (CTR-P1-014) |
 | 3 | ScoutAgentBase 结论 | archive_to_kms(result) → 归档 | KMS 知识管道 | ExperimentResult |
-| 4 | L11 ModelCheckpoint | ScoutAgent 消费模型推断结果 | 实验分析 | ModelServingResponse |
+| 4 | D_ML_TRAIN ModelCheckpoint | ScoutAgent 消费模型推断结果 | 实验分析 | ModelServingResponse |
 
 ### 3.3 状态生命周期
 
@@ -227,7 +227,7 @@ construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。
 
 ```python
 class ExperimentPipelineBase(abc.ABC):
-    """实验管线基类（OCP 扩展点 L13-EXP）"""
+    """实验管线基类（OCP 扩展点 实验-EXP）"""
     _registry: ClassVar[dict[str, type["ExperimentPipelineBase"]]] = {}
 
     @abc.abstractmethod
@@ -242,7 +242,7 @@ class ExperimentPipelineBase(abc.ABC):
 
 
 class ScoutAgentBase(abc.ABC):
-    """Scout Agent 自动化实验编排器（OCP 扩展点 L13-SCT）"""
+    """Scout Agent 自动化实验编排器（OCP 扩展点 实验-SCT）"""
     _registry: ClassVar[dict[str, type["ScoutAgentBase"]]] = {}
 
     @abc.abstractmethod
@@ -321,7 +321,7 @@ class ExperimentMetric:
 | ExperimentMetric 新增字段 | ✅ 向后兼容 | 同上 |
 | ExperimentPipelineBase 新增抽象方法 | ❌ 破坏性 | 需 Owner 审批 + 所有子类更新 |
 | ScoutAgentBase 新增抽象方法 | ❌ 破坏性 | 需 Owner 审批 + 所有子类更新 |
-| CTR-P1-014 ExperimentResult 变更 | ❌ 破坏性 | 需通知 L09/L11 |
+| CTR-P1-014 ExperimentResult 变更 | ❌ 破坏性 | 需通知 D_RESEARCH/D_ML_TRAIN |
 
 **变更通知**：破坏性变更→Owner审批+蓝图minor+1。兼容性变更→AI自主+patch+1。
 
@@ -337,7 +337,7 @@ class ExperimentMetric:
 | 2 | ScoutAgentBase 为 OCP 扩展点 | 新 Scout 策略只加不改 |
 | 3 | 实验结论必须统计验证 | p-value / effect_size / power analysis |
 | 4 | 实验产物必须归档 | CTR-012 保证实验可复现 |
-| 5 | confidence < 0.7 的结论不应发布 | L09/L11 消费端应忽略低置信度结论 |
+| 5 | confidence < 0.7 的结论不应发布 | D_RESEARCH/D_ML_TRAIN 消费端应忽略低置信度结论 |
 
 ### 5.2 容量估算
 
@@ -381,7 +381,7 @@ class ExperimentMetric:
 | 2 | Scout Agent 误操作 | 沙箱执行异常 | 审批门禁 + 回滚实验 | 生产环境被污染 |
 | 3 | pooled_std=0 导致 effect_size 不可计算 | compute_effect_size 守卫 | 返回 0.0 + 日志告警 | 指标失真 |
 | 4 | ExperimentConfig 参数缺失 | dataclass 字段校验 | 拒绝执行 + ValueError | 实验无法启动 |
-| 5 | CTR-009~012 契约未实现 | 集成测试失败 | Phase B 优先实现 | L11/L09/INF-012 集成断裂 |
+| 5 | CTR-009~012 契约未实现 | 集成测试失败 | Phase B 优先实现 | D_ML_TRAIN/D_RESEARCH/INF-012 集成断裂 |
 
 ### 6.1 可观测性规格
 
@@ -410,7 +410,7 @@ class ExperimentMetric:
 |---|------|------|---------|---------|
 | 1 | Scout Agent 污染生产环境 | 高 | 沙箱执行 + 审批门禁 | 写操作 100% 可预演 |
 | 2 | 实验配置篡改 | 中 | ExperimentConfig frozen + 版本化 | 配置不可变 |
-| 3 | 低置信度结论误用 | 中 | confidence < 0.7 不发布 | L09/L11 消费端校验 |
+| 3 | 低置信度结论误用 | 中 | confidence < 0.7 不发布 | D_RESEARCH/D_ML_TRAIN 消费端校验 |
 | 4 | 实验数据泄露 | 低 | CTR-012 归档加密 | 归档数据访问审计 |
 
 ---
@@ -422,7 +422,7 @@ class ExperimentMetric:
 | 1 | 单元测试 | ExperimentPipelineBase + ScoutAgentBase | compute_effect_size 计算；p-value 估计；幂等性验证 | 覆盖率≥80% |
 | 2 | 集成测试 | DefaultExperimentPipeline 端到端 | config→run→metrics 完整流程 | 端到端通过 |
 | 3 | 统计验证测试 | Cohen's d / p-value | 已知数据集的 effect_size 和 p-value 正确性 | 误差 < 1% |
-| 4 | 契约测试 | CTR-P1-014 / CTR-009~012 | ExperimentResult 格式兼容 L09/L11 | 0 契约破坏 |
+| 4 | 契约测试 | CTR-P1-014 / CTR-009~012 | ExperimentResult 格式兼容 D_RESEARCH/D_ML_TRAIN | 0 契约破坏 |
 
 ---
 
@@ -434,7 +434,7 @@ class ExperimentMetric:
 |---------|---------|---------|---------|---------|
 | MOD-L11-001 ML Platform | 必须 | CTR-011 ModelCheckpoint + CTR-P1-004/005 ModelServing | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
 | MOD-L09-001 Research | 可选 | CTR-010 ExperimentMetric 上报 + CTR-P1-014 ExperimentResult 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_research\blueprint.md` |
-| L00 Data Source | 可选 | CTR-001 NormalizedMarketData | — | — |
+| D_DATA Data Source | 可选 | CTR-001 NormalizedMarketData | — | — |
 | INF-012 Database | 必须 | CTR-012 ExperimentArtifact 归档 | — | — |
 | shared/contracts/experiment | 必须 | ExperimentResult 数据类 | — | `D:\ZephyrAlpha\src\zephyr\shared\contracts\experiment\experiment_result.py` |
 
@@ -442,7 +442,7 @@ class ExperimentMetric:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.19 | L13→L11(模型产出) + L13→L09(实验结论) + L09→L13(研究假设) 一致 | 已对齐 | 人工核对 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §3.19 | 实验→D_ML_TRAIN(模型产出) + 实验→D_RESEARCH(实验结论) + D_RESEARCH→实验(研究假设) 一致 | 已对齐 | 人工核对 |
 | 2 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-L13-001` |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | l13_experimentation.yaml 已注册 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -465,7 +465,7 @@ class ExperimentMetric:
 | # | 自动化项 | 是否需要 | 理由 | 实现方式 | 现有工具 | 缺口 | 触发方式 | 触发条件 |
 |---|---------|:-------:|------|---------|---------|------|---------|---------|
 | 1 | 依赖图自动生成 | 否 | 模块简单，手动维护可行 | — | — | — | — | — |
-| 2 | 依赖对齐自动验证 | 是 | 防止契约漂移 | CI门禁 | validate_path_alignment.py | 需补L13条目 | CI门禁 | PR提交时 |
+| 2 | 依赖对齐自动验证 | 是 | 防止契约漂移 | CI门禁 | validate_path_alignment.py | 需补实验条目 | CI门禁 | PR提交时 |
 | 3 | 临时时态内容自动清理 | 否 | 当前无临时时态内容 | — | — | — | — | — |
 | 4 | 施工步骤完成度自动检测 | 是 | 防止虚假进度 | pytest+ruff | — | 测试代码缺失 | CI pipeline | 代码提交时 |
 
@@ -488,8 +488,8 @@ class ExperimentMetric:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L11 ML Platform | 契约消费/生产 | CTR-009 ExperimentConfig + CTR-011 ModelCheckpoint | 实验配置可下发至 ML 平台 |
-| L09 Research | 契约生产 | CTR-P1-014 ExperimentResult + CTR-010 ExperimentMetric | 研究层可消费实验结论和指标 |
+| D_ML_TRAIN ML Platform | 契约消费/生产 | CTR-009 ExperimentConfig + CTR-011 ModelCheckpoint | 实验配置可下发至 ML 平台 |
+| D_RESEARCH Research | 契约生产 | CTR-P1-014 ExperimentResult + CTR-010 ExperimentMetric | 研究层可消费实验结论和指标 |
 | INF-012 Database | 契约生产 | CTR-012 ExperimentArtifact | 实验产物可归档 |
 | MOD-INF-015 系统遥测 | 契约消费 | CTR-P1-013 TelemetryEmitter | 实验运行数据可观测 |
 
@@ -549,7 +549,7 @@ class ExperimentMetric:
 |---|--------|---------|:---:|:---:|
 | 1 | ExperimentPipelineBase 定义 | 必须 | ✅ 已实现 | ✅ |
 | 2 | ScoutAgentBase 定义 | 必须 | ✅ 已实现 | ✅ |
-| 3 | L11 InferenceEngineBase | 必须 | ⚠️ 部分实现 | ☐ |
+| 3 | D_ML_TRAIN InferenceEngineBase | 必须 | ⚠️ 部分实现 | ☐ |
 | 4 | INF-012 Database | 可选 | ⚠️ 部分实现 | ☐ |
 | 5 | ✅ ARB-11 开工条件 | 必须 | ✅ 已解除 | ✅ |
 
@@ -575,7 +575,7 @@ class ExperimentMetric:
 |------|------|
 | 对应蓝图契约 | §4.3 CTR-009 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\simulation\pipeline_base.py` 扩展 |
-| 验收标准 | L11 可消费 ExperimentConfig |
+| 验收标准 | D_ML_TRAIN 可消费 ExperimentConfig |
 | 验证命令 | `python -m pytest tests/simulation/ -k test_ctr009 -v` |
 | G7 检查项 | CTR-009 契约格式与 cross_layer_contracts.yaml 一致 |
 | AI 自治范围 | ai_modifiable |
@@ -587,7 +587,7 @@ class ExperimentMetric:
 |------|------|
 | 对应蓝图契约 | §4.3 CTR-010 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\simulation\pipeline_base.py` 扩展 |
-| 验收标准 | L09 可消费 ExperimentMetric |
+| 验收标准 | D_RESEARCH 可消费 ExperimentMetric |
 | 验证命令 | `python -m pytest tests/simulation/ -k test_ctr010 -v` |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | ExperimentMetric 可序列化为 CTR-010 格式 |
@@ -598,7 +598,7 @@ class ExperimentMetric:
 |------|------|
 | 对应蓝图契约 | §4.3 CTR-011 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\simulation\pipeline_base.py` 扩展 |
-| 验收标准 | L11 检查点可导入 |
+| 验收标准 | D_ML_TRAIN 检查点可导入 |
 | 验证命令 | `python -m pytest tests/simulation/ -k test_ctr011 -v` |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | ModelCheckpoint 可反序列化并用于实验 |
@@ -614,7 +614,7 @@ class ExperimentMetric:
 | AI 自治范围 | ai_modifiable |
 | 检查点 | ExperimentArtifact 可写入 INF-012 |
 
-#### 步骤 6：L11/L09/INF-012 集成测试
+#### 步骤 6：D_ML_TRAIN/D_RESEARCH/INF-012 集成测试
 
 | 项目 | 内容 |
 |------|------|
@@ -668,7 +668,7 @@ class ExperimentMetric:
 |---|:----:|------|----------|----------|----------|
 | 1 | 命令 | `python -m pytest tests/simulation/` | 运行测试 | `-k`: 过滤用例 | exit 0=通过 |
 | 2 | 配置 | `l13_experimentation.yaml` → `status` | 层级状态 | implemented/blocked | — |
-| 3 | 契约 | `CTR-P1-014` → `ExperimentResult` | 实验结论出站 | frozen dataclass | L09/L11消费 |
+| 3 | 契约 | `CTR-P1-014` → `ExperimentResult` | 实验结论出站 | frozen dataclass | D_RESEARCH/D_ML_TRAIN消费 |
 
 ### 16.10 故障与操作手册
 
@@ -705,7 +705,7 @@ class ExperimentMetric:
 | GAP-001 | p-value 估计为简化版 | 引入 scipy.stats 精确计算 | P1 | 需要精确统计时 | v2.1.0 | 待施工 |
 | GAP-002 | 无实验队列调度 | 实验队列 + 优先级调度 | P2 | 并发实验 > 10 | v3.0.0 | 待施工 |
 | GAP-003 | dataclass 非 Pydantic | 迁移至 Pydantic V2 BaseModel | P2 | KBG-0040 强制时 | v3.0.0 | 待施工 |
-| GAP-004 | CTR-009~012 未实现 | Phase B 优先施工 | P1 | L11/L09 集成需求 | v2.1.0 | 待施工 |
+| GAP-004 | CTR-009~012 未实现 | Phase B 优先施工 | P1 | D_ML_TRAIN/D_RESEARCH 集成需求 | v2.1.0 | 待施工 |
 
 ### §17.3 升级版本矩阵
 
@@ -759,7 +759,7 @@ class ExperimentMetric:
 | 2 | p-value估计精度不足 | 中 | 骨架阶段简化实现 | GAP-001引入scipy.stats | §5.1 #3 | 待解决 |
 | 3 | dataclass不符合KBG-0040 | 低 | 骨架阶段快速实现 | GAP-003迁移Pydantic V2 | §5.7 #3 | 待解决 |
 | 4 | CTR-009~012契约未实现 | 高 | T2 blocked | GAP-004 Phase B施工 | §4.3 | 待解决 |
-| 5 | cross-module-dependency-registry.yaml缺L13条目 | 中 | 注册遗漏 | §10.2 #2 补注册 | §10.2 | 待解决 |
+| 5 | cross-module-dependency-registry.yaml缺实验条目 | 中 | 注册遗漏 | §10.2 #2 补注册 | §10.2 | 待解决 |
 
 ---
 
@@ -873,7 +873,7 @@ class ExperimentMetric:
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | shared/contracts/experiment/experiment_result.py | `D:\ZephyrAlpha\src\zephyr\shared\contracts\experiment\experiment_result.py` | ExperimentResult 数据类 | 共享契约——L13 消费/生产，非功能重叠 |
+| 1 | shared/contracts/experiment/experiment_result.py | `D:\ZephyrAlpha\src\zephyr\shared\contracts\experiment\experiment_result.py` | ExperimentResult 数据类 | 共享契约——实验 消费/生产，非功能重叠 |
 
 ---
 

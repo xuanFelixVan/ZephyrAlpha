@@ -71,7 +71,7 @@ summary: >
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 运行时集成体系——它解决了 14 层模块的跨层协同问题。核心职责包括：异步事件分发(EventBus)、模块生命周期管理、韧性保障(熔断/限流/降级)、安全审计、可观测性、可溯源性与模拟。当前规模 15 个 RI 模块，目标容量 1,500 模块 × 14 层。上游依赖 MOD-INF-016 Shared Core 承载层，下游被所有 L02-L13 层模块消费。
+本蓝图描述 ZephyrAlpha 运行时集成体系——它解决了 14 层模块的跨层协同问题。核心职责包括：异步事件分发(EventBus)、模块生命周期管理、韧性保障(熔断/限流/降级)、安全审计、可观测性、可溯源性与模拟。当前规模 15 个 RI 模块，目标容量 1,500 模块 × 14 层。上游依赖 MOD-INF-016 Shared Core 承载层，下游被所有 D_FACTOR-实验 层模块消费。
 
 ---
 
@@ -270,7 +270,7 @@ summary: >
 |---|---------|------|
 | 1 | AI 审计守卫实现 | → MOD-INF-001 |
 | 2 | 安全网关实现 | → MOD-LLM_SECURITY |
-| 3 | 因子计算逻辑 | → L02-L03 业务层 |
+| 3 | 因子计算逻辑 | → D_FACTOR-D_SIGNAL 业务层 |
 | 4 | 审计追踪链存储 | → MOD-INF-020 |
 | 5 | 回滚执行 | → MOD-INF-021 |
 | 6 | 任务门禁 | → MOD-GATE_ENGINE |
@@ -307,7 +307,7 @@ summary: >
 |---|--------|---------|
 | 1 | AI 审计守卫 | MOD-INF-001（capacity_assurance） |
 | 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm_security） |
-| 3 | 因子计算逻辑 | L02-L03 业务层 |
+| 3 | 因子计算逻辑 | D_FACTOR-D_SIGNAL 业务层 |
 | 4 | 审计追踪链存储 | MOD-INF-020（audit-trail），RI-13 EventStore 提供事件级溯源 |
 | 5 | 回滚执行 | MOD-INF-021（rollback-system），RI-13 事件重放可配合回滚 |
 | 6 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate_engine） |
@@ -341,7 +341,7 @@ summary: >
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L02-L13 业务模块 | EventBus publish → PriorityQueue → consumer group dispatch | RI 消费者 | Pydantic Event |
+| 1 | D_FACTOR-实验 业务模块 | EventBus publish → PriorityQueue → consumer group dispatch | RI 消费者 | Pydantic Event |
 | 2 | EventBus DLQ | 失败事件 → SQLite持久化 → 指数退避重试 | 原消费者 | DLQEntry |
 | 3 | HealthCheck 探针 | async check → SLI阈值比对 → 三级状态判定 | AutoDiagnostics / Owner | HealthStatus |
 | 4 | ConfigCenter 变更 | YAML reload → Pydantic校验 → FeatureFlag评估 → 事件通知 | 所有订阅模块 | ConfigEvent |
@@ -698,7 +698,7 @@ class TradingKillSwitch:
         results.append(await self._cancel_all_pending_orders())
         results.append(await EventBus.purge_events(
             event_types=["TradeEvent", "OrderEvent"]))
-        results.append(await ModuleLifecycle.set_mode("L05", "READ_ONLY"))
+        results.append(await ModuleLifecycle.set_mode("D_PORTFOLIO_CORE", "READ_ONLY"))
         audit.record_severe(f"KILL_SWITCH: reason={reason} by={confirmed_by}")
         return KillSwitchResult(mode=self._mode, actions=results)
 
@@ -706,7 +706,7 @@ class TradingKillSwitch:
         if confirmed_by != "Owner":
             raise PermissionError("Kill Switch 只能由 Owner 手动解除")
         self._mode = "NORMAL"
-        await ModuleLifecycle.set_mode("L05", "NORMAL")
+        await ModuleLifecycle.set_mode("D_PORTFOLIO_CORE", "NORMAL")
         return KillSwitchResult(mode=self._mode)
 ```
 
@@ -828,7 +828,7 @@ class ModelFallbackChain:
 Phase 1-2: 传统状态存储（SQLite CRUD）
            ↓ 触发条件：模块数 > 100 或 首次合规/审计要求
 Phase 3:   RI-13 EventStore ← 关键数据流切 ES，非关键保持 CRUD
-           └── 仅对 L04(风控)、L06(仓位)、L05(交易执行) 三层的写操作做 Event Sourcing
+           └── 仅对 D_RISK(风控)、D_EXECUTION_CORE(仓位)、D_PORTFOLIO_CORE(交易执行) 三层的写操作做 Event Sourcing
            └── CQRS 读模型：物化视图(账户余额)、聚合视图(因子分数)
            └── 快照策略：每 1000 事件自动快照 → 重放上限 1000 事件 → 恢复延迟 < 500ms
            └── Crypto-Shredding 可选启用（有 GDPR/合规需求时）
@@ -882,7 +882,7 @@ Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动�
 | RL-040 W3C Trace | traceparent header | 2a | OTel生态完全兼容 |
 | RL-041 负载脱落 | LoadShedder优先级丢弃 | 2a | CRITICAL事件从不被丢 |
 | RL-042 Schema兼容 | FULL_BACKWARD / FORWARD_TRANSITIVE | 1b | Schema变更零爆炸 |
-| RL-043 容量预留 | L04/L06预分配X% | 2a | 关键模块0被挤占 |
+| RL-043 容量预留 | D_RISK/D_EXECUTION_CORE预分配X% | 2a | 关键模块0被挤占 |
 | RL-044 预热期 | warmup→预热→内部HC→READY | 1a+2a | 启动0假熔断 |
 | RL-045 Crypto-Shred | per-stream密钥→删除密钥=不可读 | 3 | GDPR就绪 |
 | RL-046 Flag交互矩阵 | pairwise组合测试 | 2a | Flag组合0未知bug |
@@ -1041,7 +1041,7 @@ Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动�
 | B5-L02 | Scatter-Gather Pattern——一请求广播N个模块→收集响应→聚合 | 因子计算——多数据源请求→投票/加表 |
 | B5-L03 | Pipeline / Chain Pattern——事件→A处理→B→C→最终结果 | ETL管道/数据清洗/信号生成→过滤→排序→执行 |
 | B5-L04 | Competing Consumers——多消费者竞争同一事件，先到先处理 | 同质任务队列——多worker消费 |
-| B5-L05 | Content-Based Router——根据消息内容路由到不同消费者 | TradeEvent→L05，RiskEvent→L04 |
+| B5-L05 | Content-Based Router——根据消息内容路由到不同消费者 | TradeEvent→D_PORTFOLIO_CORE，RiskEvent→D_RISK |
 | B5-L06 | Message Filtering / Enrichment——EventBus中间件截获+修改/增强/过滤事件 | 添加追踪信息/删除敏感字段 |
 | B5-L07 | Aggregation / Batching Strategy——按时间窗/数量窗聚合为批处理事件 | 批量行情→归一化→一次性消费 |
 | B5-L08 | Return Address / Callback Pattern——事件带return_address→完成后响应 | 异步请求-响应模式 |
@@ -1085,7 +1085,7 @@ Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动�
 
 #### 交易模式切换（Trading Mode）
 
-TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层的行为：
+TradingMode 是整个系统的"全局运行模式"，决定 D_RISK/D_PORTFOLIO_CORE/D_EXECUTION_CORE 三层的行为：
 
 | 模式 | 说明 |
 |------|------|
@@ -1110,7 +1110,7 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 | Paper模式72h稳定→AI申请升实盘 | RI-09 HealthCheck: 72h稳定(错误率<1%+订单完成率>95%)→自动生成升级建议 | 🟡 WARNING："已满足实盘条件——审批后可升级" |
 | 单模块亏损>日限额 | RI-15 CostTracker 追踪模块PnL→亏损>$X→自动切换该模块为READ_ONLY+通知 | 💀 CRITICAL："今日亏损已达硬限额→已自动切换READ_ONLY" |
 | KillSwitch触发 | B5-K01 TradingKillSwitch.activate()→5步停止序列 | 💀 CRITICAL：飞书+"语音呼叫如果10min内未确认" |
-| 交易所熔断（标的暂停） | B5-K10 检测交易所公告→自动暂停该标的+L05标记READ_ONLY | 🟡 WARNING："标的已暂停交易——系统已冻结" |
+| 交易所熔断（标的暂停） | B5-K10 检测交易所公告→自动暂停该标的+D_PORTFOLIO_CORE标记READ_ONLY | 🟡 WARNING："标的已暂停交易——系统已冻结" |
 | 交易对账失败 | B5-K07 三方对账→diff>0→自动暂停该broker连接 | 💀 CRITICAL："系统记录与broker回执不一致——已暂停" |
 | 日终处理（EOD） | B5-K09 自动结算→PnL计算→保证金监控→归档→生成日报 | 🟢 每日：EOD报告 |
 
@@ -1638,7 +1638,7 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 | 步骤 | 任务 | 产出物 | 承载 |
 |:--:|------|--------|------|
 | 20 | **RI-13 EventStore**——append-only event_log + 快照 + CQRS读模型 + replay_to写隔离 + Crypto-Shredding | `event_store.py` | MOD-INF-002 独立 |
-| 21 | L04(风控)/L05(交易)/L06(仓位) 三层写操作切 Event Sourcing | 迁移脚本 + 验证 | — |
+| 21 | D_RISK(风控)/D_PORTFOLIO_CORE(交易)/D_EXECUTION_CORE(仓位) 三层写操作切 Event Sourcing | 迁移脚本 + 验证 | — |
 | 22 | 事件重放验证 + 审计报告导出 + Crypto-Shredding GDPR验证 | 审计报告 + Shred验证 | — |
 
 #### Phase 4: 补偿增强（触发式）

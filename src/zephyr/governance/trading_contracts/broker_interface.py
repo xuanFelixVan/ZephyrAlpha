@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L06 — BrokerInterface
+"""D_EXECUTION_CORE — BrokerInterface
 
 Hand-maintained OCP extension point. DO NOT overwrite via codegen.
 

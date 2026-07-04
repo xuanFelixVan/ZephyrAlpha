@@ -27,7 +27,7 @@
 # created: "2026-05-04"
 # ---
 """
-ZephyrAlpha — L01 Infrastructure Layer — Configuration Management
+ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management
 模块: Configuration Management | ID: l01-config | Priority: P0
 职责: 配置加载与环境管理；跨平面共享配置（risk_params.yaml 等），自身属 Warm
 接口契约: CTR-P1-010 (producer)

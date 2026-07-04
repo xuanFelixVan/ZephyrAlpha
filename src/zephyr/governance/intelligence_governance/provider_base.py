@@ -23,7 +23,7 @@
 # ---
 
 """
-L00 — Data Source Layer
+D_DATA — Data Source Layer
 
 数据源接入层。负责原始市场数据的获取、标准化和时间对齐。
 是整个 C 轨的链头——trace_id 在此层创建，贯穿全链路。
@@ -40,10 +40,10 @@ L00 — Data Source Layer
   - DataQualityGate（数据质量门禁）
 
 跨层契约：
-  CTR-001  NormalizedMarketData   → L02, L03, L09（生产者——输出标准化行情）
-  CTR-TRACE-001  TraceContext     → L02~L07, L11（链头——trace_id 由本层创建）
-  CTR-ERR-001  DataQualityError   → L02（质量门禁不通过时抛出）
-  CTR-BP-001~003  Backpressure    ← L02（消费者——暂停/降速/恢复数据推送）
+  CTR-001  NormalizedMarketData   → D_FACTOR, D_SIGNAL, D_RESEARCH（生产者——输出标准化行情）
+  CTR-TRACE-001  TraceContext     → D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
+  CTR-ERR-001  DataQualityError   → D_FACTOR（质量门禁不通过时抛出）
+  CTR-BP-001~003  Backpressure    ← D_FACTOR（消费者——暂停/降速/恢复数据推送）
 
 SSoT: cross_layer_contracts.yaml v3.0
 """

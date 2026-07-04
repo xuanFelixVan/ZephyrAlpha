@@ -34,54 +34,54 @@ sections:
     - CTR-INJ-007
     conditions:
     - type: trigger
-      check: AI Agent被分配到L00 Data Source层任务
+      check: AI Agent被分配到D_DATA Data Source层任务
       pass: 注入CTR-INJ-001规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L02 Alpha Factor层任务
+      check: AI Agent被分配到D_FACTOR Alpha Factor层任务
       pass: 注入CTR-INJ-002规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L03 Signal Generation层任务
+      check: AI Agent被分配到D_SIGNAL Signal Generation层任务
       pass: 注入CTR-INJ-003规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L04 Risk Management层任务
+      check: AI Agent被分配到D_RISK Risk Management层任务
       pass: 注入CTR-INJ-004规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L05 Portfolio Construction层任务
+      check: AI Agent被分配到D_PORTFOLIO_CORE Portfolio Construction层任务
       pass: 注入CTR-INJ-005规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L06 Trade Execution层任务
+      check: AI Agent被分配到D_EXECUTION_CORE Trade Execution层任务
       pass: 注入CTR-INJ-006规则集
       fail: N/A
     - type: trigger
-      check: AI Agent被分配到L07 Post-Trade Analytics层任务
+      check: AI Agent被分配到D_REPORTING Post-Trade Analytics层任务
       pass: 注入CTR-INJ-007规则集
       fail: N/A
     actions:
     - type: mandatory
-      step: L00层产出MUST是NormalizedMarketData(CTR-001)，价格MUST使用Decimal禁止float，时间MUST使用Timestamp(纳秒精度UTC)禁止datetime.datetime裸用，标的MUST使用Instrument或其子类禁止裸str（CTR-INJ-001）
+      step: D_DATA层产出MUST是NormalizedMarketData(CTR-001)，价格MUST使用Decimal禁止float，时间MUST使用Timestamp(纳秒精度UTC)禁止datetime.datetime裸用，标的MUST使用Instrument或其子类禁止裸str（CTR-INJ-001）
     - type: mandatory
-      step: L02层消费NormalizedMarketData产出FactorSignal(CTR-002)，每个因子必须有唯一factor_id对应FactorRegistry注册条目，因子版本变更时必须递增factor_version并同步FactorRegistry（CTR-INJ-002）
+      step: D_FACTOR层消费NormalizedMarketData产出FactorSignal(CTR-002)，每个因子必须有唯一factor_id对应FactorRegistry注册条目，因子版本变更时必须递增factor_version并同步FactorRegistry（CTR-INJ-002）
     - type: mandatory
-      step: L03层消费FactorSignal产出Order(CTR-004)，信号合成时必须处理is_valid=False的因子（跳过或降权），信号方向必须有明确置信度阈值（CTR-INJ-003）
+      step: D_SIGNAL层消费FactorSignal产出Order(CTR-004)，信号合成时必须处理is_valid=False的因子（跳过或降权），信号方向必须有明确置信度阈值（CTR-INJ-003）
     - type: mandatory
-      step: L04层消费FactorSignal产出RiskLimits(CTR-003)，风控触发时必须有明确的熔断/降级策略（CTR-INJ-004）
+      step: D_RISK层消费FactorSignal产出RiskLimits(CTR-003)，风控触发时必须有明确的熔断/降级策略（CTR-INJ-004）
     - type: mandatory
-      step: L05层消费FactorSignal+RiskLimits产出Order(CTR-004)，quantity使用Decimal禁止float，limit_price仅LIMIT单必填MARKET单为None（CTR-INJ-005）
+      step: D_PORTFOLIO_CORE层消费FactorSignal+RiskLimits产出Order(CTR-004)，quantity使用Decimal禁止float，limit_price仅LIMIT单必填MARKET单为None（CTR-INJ-005）
     - type: mandatory
-      step: L06层消费Order产出Fill(CTR-005)+PositionSnapshot(CTR-006)，Fill是不可变对象(frozen=True)，Order.filled_quantity=ΣFill.filled_quantity（不变量约束），commission默认0在TCA分析时必须包含真实佣金（CTR-INJ-006）
+      step: D_EXECUTION_CORE层消费Order产出Fill(CTR-005)+PositionSnapshot(CTR-006)，Fill是不可变对象(frozen=True)，Order.filled_quantity=ΣFill.filled_quantity（不变量约束），commission默认0在TCA分析时必须包含真实佣金（CTR-INJ-006）
     - type: mandatory
-      step: L07层消费Fill+PositionSnapshot，PnL归因必须区分alpha收益和beta收益，TCA分析维度含滑点/佣金/时机成本（CTR-INJ-007）
+      step: D_REPORTING层消费Fill+PositionSnapshot，PnL归因必须区分alpha收益和beta收益，TCA分析维度含滑点/佣金/时机成本（CTR-INJ-007）
     prohibitions:
-    - L00层禁止自定义MarketData等价类型，必须使用NormalizedMarketData
-    - L00层价格字段禁止使用float，必须使用Decimal
-    - L00层时间字段禁止datetime.datetime裸用，必须使用Timestamp
-    - L00层标的字段禁止裸str，必须使用Instrument或其子类
-    - L05层quantity禁止使用float，必须使用Decimal
+    - D_DATA层禁止自定义MarketData等价类型，必须使用NormalizedMarketData
+    - D_DATA层价格字段禁止使用float，必须使用Decimal
+    - D_DATA层时间字段禁止datetime.datetime裸用，必须使用Timestamp
+    - D_DATA层标的字段禁止裸str，必须使用Instrument或其子类
+    - D_PORTFOLIO_CORE层quantity禁止使用float，必须使用Decimal
   ctr_trigger_keywords:
     title: CTR触发关键词注入流程
     section_type: procedure
@@ -100,40 +100,40 @@ sections:
       expected_result: 匹配到至少一个trigger_keyword
       on_failure: 不注入CTR上下文，Agent自行负责契约合规
     - order: 2
-      action: L00层关键词匹配（data source/数据接入/WebSocket/market data/行情/akshare/数据源/NormalizedMarketData）
-      pre_condition: 任务涉及L00 Data Source层
+      action: D_DATA层关键词匹配（data source/数据接入/WebSocket/market data/行情/akshare/数据源/NormalizedMarketData）
+      pre_condition: 任务涉及D_DATA Data Source层
       expected_result: 触发CTR-INJ-001注入
-      on_failure: 跳过L00注入
+      on_failure: 跳过D_DATA注入
     - order: 3
-      action: L02层关键词匹配（factor/因子/alpha/因子计算/feature/特征/indicator/指标计算）
-      pre_condition: 任务涉及L02 Alpha Factor层
+      action: D_FACTOR层关键词匹配（factor/因子/alpha/因子计算/feature/特征/indicator/指标计算）
+      pre_condition: 任务涉及D_FACTOR Alpha Factor层
       expected_result: 触发CTR-INJ-002注入
-      on_failure: 跳过L02注入
+      on_failure: 跳过D_FACTOR注入
     - order: 4
-      action: L03层关键词匹配（signal/信号/signal generation/信号合成/ensemble）
-      pre_condition: 任务涉及L03 Signal Generation层
+      action: D_SIGNAL层关键词匹配（signal/信号/signal generation/信号合成/ensemble）
+      pre_condition: 任务涉及D_SIGNAL Signal Generation层
       expected_result: 触发CTR-INJ-003注入
-      on_failure: 跳过L03注入
+      on_failure: 跳过D_SIGNAL注入
     - order: 5
-      action: L04层关键词匹配（risk/风控/风险管理/止损/stop loss/circuit breaker/熔断/position limit/仓位）
-      pre_condition: 任务涉及L04 Risk Management层
+      action: D_RISK层关键词匹配（risk/风控/风险管理/止损/stop loss/circuit breaker/熔断/position limit/仓位）
+      pre_condition: 任务涉及D_RISK Risk Management层
       expected_result: 触发CTR-INJ-004注入
-      on_failure: 跳过L04注入
+      on_failure: 跳过D_RISK注入
     - order: 6
-      action: L05层关键词匹配（portfolio/组合构建/组合优化/optimization/optimizer/allocation/仓位分配/rebalance/调仓）
-      pre_condition: 任务涉及L05 Portfolio Construction层
+      action: D_PORTFOLIO_CORE层关键词匹配（portfolio/组合构建/组合优化/optimization/optimizer/allocation/仓位分配/rebalance/调仓）
+      pre_condition: 任务涉及D_PORTFOLIO_CORE Portfolio Construction层
       expected_result: 触发CTR-INJ-005注入
-      on_failure: 跳过L05注入
+      on_failure: 跳过D_PORTFOLIO_CORE注入
     - order: 7
-      action: L06层关键词匹配（execution/交易执行/order/订单/trade/成交/broker/brokerage）
-      pre_condition: 任务涉及L06 Trade Execution层
+      action: D_EXECUTION_CORE层关键词匹配（execution/交易执行/order/订单/trade/成交/broker/brokerage）
+      pre_condition: 任务涉及D_EXECUTION_CORE Trade Execution层
       expected_result: 触发CTR-INJ-006注入
-      on_failure: 跳过L06注入
+      on_failure: 跳过D_EXECUTION_CORE注入
     - order: 8
-      action: L07层关键词匹配（post-trade/analytics/分析/TCA/transaction cost/PnL/attribution/归因/performance/sharpe）
-      pre_condition: 任务涉及L07 Post-Trade Analytics层
+      action: D_REPORTING层关键词匹配（post-trade/analytics/分析/TCA/transaction cost/PnL/attribution/归因/performance/sharpe）
+      pre_condition: 任务涉及D_REPORTING Post-Trade Analytics层
       expected_result: 触发CTR-INJ-007注入
-      on_failure: 跳过L07注入
+      on_failure: 跳过D_REPORTING注入
   ctr_inject_files:
     title: CTR注入文件清单
     section_type: procedure
@@ -147,37 +147,37 @@ sections:
     - CTR-INJ-007
     steps:
     - order: 1
-      action: 注入L00契约文件（market_data.py/timestamp.py/instrument.py/money.py）
+      action: 注入D_DATA契约文件（market_data.py/timestamp.py/instrument.py/money.py）
       pre_condition: CTR-INJ-001触发
       expected_result: Agent上下文包含4个契约文件
       on_failure: Agent无法感知NormalizedMarketData契约
     - order: 2
-      action: 注入L02契约文件（market_data.py/factor_signal.py/timestamp.py）
+      action: 注入D_FACTOR契约文件（market_data.py/factor_signal.py/timestamp.py）
       pre_condition: CTR-INJ-002触发
       expected_result: Agent上下文包含3个契约文件
       on_failure: Agent无法感知FactorSignal契约
     - order: 3
-      action: 注入L03契约文件（factor_signal.py/order.py）
+      action: 注入D_SIGNAL契约文件（factor_signal.py/order.py）
       pre_condition: CTR-INJ-003触发
       expected_result: Agent上下文包含2个契约文件
       on_failure: Agent无法感知Order契约
     - order: 4
-      action: 注入L04契约文件（factor_signal.py/risk_limits.py/position.py/money.py）
+      action: 注入D_RISK契约文件（factor_signal.py/risk_limits.py/position.py/money.py）
       pre_condition: CTR-INJ-004触发
       expected_result: Agent上下文包含4个契约文件
       on_failure: Agent无法感知RiskLimits契约
     - order: 5
-      action: 注入L05契约文件（factor_signal.py/risk_limits.py/order.py/money.py）
+      action: 注入D_PORTFOLIO_CORE契约文件（factor_signal.py/risk_limits.py/order.py/money.py）
       pre_condition: CTR-INJ-005触发
       expected_result: Agent上下文包含4个契约文件
       on_failure: Agent无法感知Order+RiskLimits契约
     - order: 6
-      action: 注入L06契约文件（order.py/fill.py/position.py/money.py/timestamp.py）
+      action: 注入D_EXECUTION_CORE契约文件（order.py/fill.py/position.py/money.py/timestamp.py）
       pre_condition: CTR-INJ-006触发
       expected_result: Agent上下文包含5个契约文件
       on_failure: Agent无法感知Fill+PositionSnapshot契约
     - order: 7
-      action: 注入L07契约文件（fill.py/position.py/money.py/timestamp.py）
+      action: 注入D_REPORTING契约文件（fill.py/position.py/money.py/timestamp.py）
       pre_condition: CTR-INJ-007触发
       expected_result: Agent上下文包含4个契约文件
       on_failure: Agent无法感知TCA分析所需契约
@@ -194,16 +194,16 @@ sections:
     - CTR-INJ-007
     summary: CTR注入优先级决定token budget紧张时哪些规则优先保留
     impact_on_rules:
-    - priority=1的规则（L00/L02/L04/L05/L06）在token budget紧张时优先保留
-    - priority=2的规则（L03/L07）在token budget紧张时可降级
+    - priority=1的规则（D_DATA/D_FACTOR/D_RISK/D_PORTFOLIO_CORE/D_EXECUTION_CORE）在token budget紧张时优先保留
+    - priority=2的规则（D_SIGNAL/D_REPORTING）在token budget紧张时可降级
     key_decisions:
-    - L00数据源层priority=1，因为所有下游层依赖其产出
-    - L02因子层priority=1，因为因子是信号生成的基础
-    - L04风控层priority=1，因为风控是安全底线
-    - L05组合层priority=1，因为组合构建直接影响交易
-    - L06执行层priority=1，因为执行层产出是不可变Fill
-    - L03信号层priority=2，因为信号合成可降级处理
-    - L07分析层priority=2，因为分析是事后处理非实时路径
+    - D_DATA数据源层priority=1，因为所有下游层依赖其产出
+    - D_FACTOR因子层priority=1，因为因子是信号生成的基础
+    - D_RISK风控层priority=1，因为风控是安全底线
+    - D_PORTFOLIO_CORE组合层priority=1，因为组合构建直接影响交易
+    - D_EXECUTION_CORE执行层priority=1，因为执行层产出是不可变Fill
+    - D_SIGNAL信号层priority=2，因为信号合成可降级处理
+    - D_REPORTING分析层priority=2，因为分析是事后处理非实时路径
   ctr_quality_gate:
     title: CTR质量门禁流程
     section_type: procedure
@@ -211,28 +211,28 @@ sections:
     - CTR-INJ-001
     steps:
     - order: 1
-      action: 检查L00产出是否通过质量门禁（quality_score >= threshold）
-      pre_condition: L00层产出NormalizedMarketData
+      action: 检查D_DATA产出是否通过质量门禁（quality_score >= threshold）
+      pre_condition: D_DATA层产出NormalizedMarketData
       expected_result: quality_score达标，is_suspended=True的标的标记停牌
       on_failure: 拒绝产出，要求修正数据质量
     - order: 2
-      action: 检查L02因子是否有factor_id且在FactorRegistry注册
-      pre_condition: L02层产出FactorSignal
+      action: 检查D_FACTOR因子是否有factor_id且在FactorRegistry注册
+      pre_condition: D_FACTOR层产出FactorSignal
       expected_result: factor_id存在且factor_version正确
       on_failure: 拒绝产出，要求注册因子
     - order: 3
-      action: 检查L03信号合成是否处理is_valid=False的因子
-      pre_condition: L03层消费FactorSignal
+      action: 检查D_SIGNAL信号合成是否处理is_valid=False的因子
+      pre_condition: D_SIGNAL层消费FactorSignal
       expected_result: 跳过或降权无效因子
       on_failure: 信号合成包含无效因子，结果不可靠
     - order: 4
-      action: 检查L04风控触发时是否有明确熔断/降级策略
-      pre_condition: L04层产出RiskLimits
+      action: 检查D_RISK风控触发时是否有明确熔断/降级策略
+      pre_condition: D_RISK层产出RiskLimits
       expected_result: circuit_breaker.py联动正常
       on_failure: 风控无降级策略，系统裸奔
     - order: 5
-      action: 检查L06 Fill不可变性和Order不变量
-      pre_condition: L06层产出Fill
+      action: 检查D_EXECUTION_CORE Fill不可变性和Order不变量
+      pre_condition: D_EXECUTION_CORE层产出Fill
       expected_result: Fill.frozen=True且Order.filled_quantity=ΣFill.filled_quantity
       on_failure: 成交记录被篡改或不变量违反
   ctr_semantic_rules:
@@ -248,39 +248,39 @@ sections:
     - CTR-INJ-007
     steps:
     - order: 1
-      action: 注入L00语义规则（MUST NormalizedMarketData/MUST Decimal禁止float/MUST Timestamp禁止datetime.datetime裸用/MUST Instrument禁止裸str）
+      action: 注入D_DATA语义规则（MUST NormalizedMarketData/MUST Decimal禁止float/MUST Timestamp禁止datetime.datetime裸用/MUST Instrument禁止裸str）
       pre_condition: CTR-INJ-001触发
-      expected_result: Agent产出符合L00数据契约
+      expected_result: Agent产出符合D_DATA数据契约
       on_failure: Agent可能自定义等价类型或使用禁止类型
     - order: 2
-      action: 注入L02语义规则（消费NormalizedMarketData产出FactorSignal/factor_id唯一/raw_value原始值normalized_value截面z-score/confidence缺漏降级非is_valid=False/factor_version递增）
+      action: 注入D_FACTOR语义规则（消费NormalizedMarketData产出FactorSignal/factor_id唯一/raw_value原始值normalized_value截面z-score/confidence缺漏降级非is_valid=False/factor_version递增）
       pre_condition: CTR-INJ-002触发
-      expected_result: Agent产出符合L02因子契约
+      expected_result: Agent产出符合D_FACTOR因子契约
       on_failure: Agent可能跳过因子注册或版本管理
     - order: 3
-      action: 注入L03语义规则（消费FactorSignal产出Order/处理is_valid=False因子/信号方向有置信度阈值）
+      action: 注入D_SIGNAL语义规则（消费FactorSignal产出Order/处理is_valid=False因子/信号方向有置信度阈值）
       pre_condition: CTR-INJ-003触发
-      expected_result: Agent产出符合L03信号契约
+      expected_result: Agent产出符合D_SIGNAL信号契约
       on_failure: Agent可能忽略无效因子或缺少置信度阈值
     - order: 4
-      action: 注入L04语义规则（消费FactorSignal产出RiskLimits/可消费PositionSnapshot/百分比字段用float/symbol_overrides覆盖个股限制/熔断降级策略）
+      action: 注入D_RISK语义规则（消费FactorSignal产出RiskLimits/可消费PositionSnapshot/百分比字段用float/symbol_overrides覆盖个股限制/熔断降级策略）
       pre_condition: CTR-INJ-004触发
-      expected_result: Agent产出符合L04风控契约
+      expected_result: Agent产出符合D_RISK风控契约
       on_failure: Agent可能缺少熔断策略或类型使用错误
     - order: 5
-      action: 注入L05语义规则（消费FactorSignal+RiskLimits产出Order/Order可变frozen=False/状态机PENDING→SUBMITTED→PARTIAL→FILLED/CANCELLED/REJECTED/limit_price仅LIMIT单必填/quantity用Decimal禁止float）
+      action: 注入D_PORTFOLIO_CORE语义规则（消费FactorSignal+RiskLimits产出Order/Order可变frozen=False/状态机PENDING→SUBMITTED→PARTIAL→FILLED/CANCELLED/REJECTED/limit_price仅LIMIT单必填/quantity用Decimal禁止float）
       pre_condition: CTR-INJ-005触发
-      expected_result: Agent产出符合L05组合契约
+      expected_result: Agent产出符合D_PORTFOLIO_CORE组合契约
       on_failure: Agent可能用float或缺少状态机
     - order: 6
-      action: 注入L06语义规则（消费Order产出Fill+PositionSnapshot/Fill不可变frozen=True/Order.filled_quantity=ΣFill.filled_quantity/avg_fill_price加权均价/commission默认0 TCA时含真实佣金/slippage正值为不利滑点）
+      action: 注入D_EXECUTION_CORE语义规则（消费Order产出Fill+PositionSnapshot/Fill不可变frozen=True/Order.filled_quantity=ΣFill.filled_quantity/avg_fill_price加权均价/commission默认0 TCA时含真实佣金/slippage正值为不利滑点）
       pre_condition: CTR-INJ-006触发
-      expected_result: Agent产出符合L06执行契约
+      expected_result: Agent产出符合D_EXECUTION_CORE执行契约
       on_failure: Agent可能修改Fill或违反不变量
     - order: 7
-      action: 注入L07语义规则（消费Fill+PositionSnapshot/TCA维度含滑点佣金时机成本/PnL归因区分alpha和beta收益/as_of_timestamp时序对齐）
+      action: 注入D_REPORTING语义规则（消费Fill+PositionSnapshot/TCA维度含滑点佣金时机成本/PnL归因区分alpha和beta收益/as_of_timestamp时序对齐）
       pre_condition: CTR-INJ-007触发
-      expected_result: Agent产出符合L07分析契约
+      expected_result: Agent产出符合D_REPORTING分析契约
       on_failure: Agent可能混淆alpha/beta收益或缺少TCA维度
   ctr_change_history:
     title: CTR注入规则修订记录
@@ -289,7 +289,7 @@ sections:
     - GOV-ARC-CTR-001
     items:
     - description: v1.0.0 2026-05-01
-      details: 初始版本。定义L00-L07层CTR注入规则、触发关键词、注入文件清单、优先级体系、质量门禁、语义规则。
+      details: 初始版本。定义D_DATA-D_REPORTING层CTR注入规则、触发关键词、注入文件清单、优先级体系、质量门禁、语义规则。
     - description: v1.1.0 2026-06-19
       details: RQ审查修复——修复provenance路径分隔符(反斜杠→正斜杠)+添加迁移状态(RQ-04/RQ-09)、enforcement类型code→doc(无代码执行器)、补充change_history(RQ-14)。
 references:

@@ -18,7 +18,7 @@ domain_contracts:
     blueprint: docs/03_modules/_alpha-signal-domain/blueprint.md
     contracts:
       - domain_contract_id: AS-CT-DATA-001
-        direction: "L00→L02"
+        direction: "D_DATA→D_FACTOR"
         description: "市场数据→因子引擎（OHLCV/orderbook/tick）"
         layer_contracts:
           - CTR-001
@@ -32,14 +32,14 @@ domain_contracts:
         status: Draft
 
       - domain_contract_id: AS-CT-FACTOR-002
-        direction: "L02 internal"
+        direction: "D_FACTOR internal"
         description: "Code-Dedup-Engine→去重后的因子值（唯一source_key）"
         layer_contracts:
           - MOD-INF-005
         status: Draft
 
       - domain_contract_id: AS-CT-SIGNAL-001
-        direction: "L03→L04"
+        direction: "D_SIGNAL→D_RISK"
         description: "信号数据帧→风控引擎"
         layer_contracts:
           - CTR-P1-015
@@ -47,7 +47,7 @@ domain_contracts:
         status: Draft
 
       - domain_contract_id: AS-CT-VMS-001
-        direction: "L02+L03→VMS"
+        direction: "D_FACTOR+D_SIGNAL→VMS"
         description: "因子嵌入向量存储（8 collections: signal-embeddings）"
         layer_contracts:
           - MOD-INF-011
@@ -58,14 +58,14 @@ domain_contracts:
     blueprint: docs/03_modules/_ml_experiment_domain/blueprint.md
     contracts:
       - domain_contract_id: ME-CT-FEATURE-001
-        direction: "VMS/KB→L11"
+        direction: "VMS/KB→D_ML_TRAIN"
         description: "特征向量读取（ChromaDB collections: factor-signals, model-features）"
         layer_contracts:
           - MOD-INF-011
         status: Draft
 
       - domain_contract_id: ME-CT-TRAIN-001
-        direction: "L11 internal"
+        direction: "D_ML_TRAIN internal"
         description: "训练Pipeline Gate：数据→训练→验证→Sanity→发布"
         layer_contracts:
           - CTR-P1-004
@@ -73,21 +73,21 @@ domain_contracts:
         status: Draft
 
       - domain_contract_id: ME-CT-CHECKPOINT-001
-        direction: "L11→L13"
+        direction: "D_ML_TRAIN→实验"
         description: "检查点导入（MODEL_CHECKPOINTS→AB/Backtest Experiment）"
         layer_contracts:
           - CTR-011
         status: Draft
 
       - domain_contract_id: ME-CT-AB-001
-        direction: "L13 internal"
+        direction: "实验 internal"
         description: "AB实验全流程：config→traffic_split→gate[eval]→analyst→deploy/rollback"
         layer_contracts:
           - CTR-009
         status: Draft
 
       - domain_contract_id: ME-CT-BACKTEST-001
-        direction: "L13 internal"
+        direction: "实验 internal"
         description: "回测实验：ckpt→historical→PnL→Attribution→Report"
         layer_contracts:
           - CTR-010
@@ -95,7 +95,7 @@ domain_contracts:
         status: Draft
 
       - domain_contract_id: ME-CT-SHADOW-001
-        direction: "L13"
+        direction: "实验"
         description: "Shadow Mode：旁路预测→threshold→divergence alert→正式切流"
         layer_contracts:
           - CTR-009
@@ -105,7 +105,7 @@ layer_contracts:
   - contract_id: CTR-001
     layer: data
     role: producer
-    description: "NormalizedMarketData → L02, L03, L09"
+    description: "NormalizedMarketData → D_FACTOR, D_SIGNAL, D_RESEARCH"
     domain_mapping: AS-CT-DATA-001
 
   - contract_id: CTR-TRACE-001
@@ -117,43 +117,43 @@ layer_contracts:
   - contract_id: CTR-004
     layer: pf_core
     role: producer
-    description: "Order → L06"
+    description: "Order → D_EXECUTION_CORE"
     domain_mapping: null
 
   - contract_id: CTR-005
     layer: ex_core
     role: producer
-    description: "Fill → L07"
+    description: "Fill → D_REPORTING"
     domain_mapping: null
 
   - contract_id: CTR-006
     layer: ex_core
     role: producer
-    description: "PositionSnapshot → L04, L07, L11"
+    description: "PositionSnapshot → D_RISK, D_REPORTING, D_ML_TRAIN"
     domain_mapping: null
 
   - contract_id: CTR-008
     layer: signal
     role: producer
-    description: "SignalQualityMetrics → L04, L08"
+    description: "SignalQualityMetrics → D_RISK, D_FRONTEND"
     domain_mapping: AS-CT-SIGNAL-001
 
   - contract_id: CTR-009
     layer: simulation
     role: producer
-    description: "ExperimentConfig → L11 ML Platform"
+    description: "ExperimentConfig → D_ML_TRAIN ML Platform"
     domain_mapping: ME-CT-AB-001
 
   - contract_id: CTR-010
     layer: simulation
     role: producer
-    description: "ExperimentMetric → L09 Research"
+    description: "ExperimentMetric → D_RESEARCH Research"
     domain_mapping: ME-CT-BACKTEST-001
 
   - contract_id: CTR-011
     layer: simulation
     role: consumer
-    description: "ModelCheckpoint ← L11 ML Platform"
+    description: "ModelCheckpoint ← D_ML_TRAIN ML Platform"
     domain_mapping: ME-CT-CHECKPOINT-001
 
   - contract_id: CTR-012
@@ -165,13 +165,13 @@ layer_contracts:
   - contract_id: CTR-P1-003
     layer: signal
     role: producer
-    description: "CapitalAllocationResult → L05"
+    description: "CapitalAllocationResult → D_PORTFOLIO_CORE"
     domain_mapping: null
 
   - contract_id: CTR-P1-004
     layer: ml_train
     role: producer
-    description: "ModelServingRequest → L03, L05"
+    description: "ModelServingRequest → D_SIGNAL, D_PORTFOLIO_CORE"
     domain_mapping: ME-CT-TRAIN-001
 
   - contract_id: CTR-P1-005
@@ -183,37 +183,37 @@ layer_contracts:
   - contract_id: CTR-P1-006
     layer: pf_core
     role: producer
-    description: "StrategyLifecycleEvent → L07, L10"
+    description: "StrategyLifecycleEvent → D_REPORTING, D_COMPLIANCE"
     domain_mapping: null
 
   - contract_id: CTR-P1-009
     layer: reporting
     role: producer
-    description: "PerformanceAttributionReport → L08, L10"
+    description: "PerformanceAttributionReport → D_FRONTEND, D_COMPLIANCE"
     domain_mapping: null
 
   - contract_id: CTR-P1-012
     layer: compliance
     role: both
-    description: "ComplianceRule → L04, L06, L10"
+    description: "ComplianceRule → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE"
     domain_mapping: null
 
   - contract_id: CTR-P1-014
     layer: simulation
     role: producer
-    description: "ExperimentResult → L09, L11"
+    description: "ExperimentResult → D_RESEARCH, D_ML_TRAIN"
     domain_mapping: ME-CT-BACKTEST-001
 
   - contract_id: CTR-P1-015
     layer: signal
     role: producer
-    description: "SynthesizedSignal → L04, L05"
+    description: "SynthesizedSignal → D_RISK, D_PORTFOLIO_CORE"
     domain_mapping: AS-CT-FACTOR-001
 
   - contract_id: CTR-ERR-003
     layer: signal
     role: producer
-    description: "SignalDegradationWarning → L04, L05"
+    description: "SignalDegradationWarning → D_RISK, D_PORTFOLIO_CORE"
     domain_mapping: null
 
   - contract_id: EXT-DASHBOARD-FLE-001

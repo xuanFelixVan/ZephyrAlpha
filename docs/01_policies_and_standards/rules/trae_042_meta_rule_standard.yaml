@@ -1559,13 +1559,13 @@ sections:
     - level: Level 0
       trigger: 系统≥3个功能域且出现跨域数据契约需求
       pre_gate: 无(Level 0有且仅有一份无重叠风险)
-      example: L02因子开始产出→L04风控消费需要CTR合同
-      current: 仅有MOD-MASTER-001(L01域级)缺真正的全系统总蓝图
+      example: D_FACTOR因子开始产出→D_RISK风控消费需要CTR合同
+      current: 仅有MOD-MASTER-001(基础设施域级)缺真正的全系统总蓝图
     - level: Level 1
       trigger: 某一域内模块≥5且出现≥3组跨模块交互
       pre_gate: 域蓝图声明的responsibility_domain必须不与任何已有域蓝图重叠
-      example: L02/L03域内模块超过5个后因子和信号的集成需要独立域蓝图
-      current: 仅有L01域级(MOD-MASTER_BLUEPRINT)缺L02-L03/L04-L07/L11-L13域蓝图
+      example: D_FACTOR/D_SIGNAL域内模块超过5个后因子和信号的集成需要独立域蓝图
+      current: 仅有基础设施域级(MOD-MASTER_BLUEPRINT)缺D_FACTOR-D_SIGNAL/D_RISK-D_REPORTING/D_ML_TRAIN-实验域蓝图
     - level: Level 2
       trigger: 每创建一个新的功能模块
       pre_gate: 'GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查通过——新模块责任不被任何已有蓝图覆盖'
@@ -1578,7 +1578,7 @@ sections:
       fail: 跳过创建条件判定或前置闸门
     actions:
     - type: mandatory
-      step: '当前阶段只创建Level 0 MOD-MASTER_BLUEPRINT+已有的19个Level 2模块蓝图；SYS-MASTER-001(真正的全系统总蓝图)留待beta创建——触发条件为任一L02+模块蓝图开始创建时；Level 2创建前MUST通过GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查'
+      step: '当前阶段只创建Level 0 MOD-MASTER_BLUEPRINT+已有的19个Level 2模块蓝图；SYS-MASTER-001(真正的全系统总蓝图)留待beta创建——触发条件为任一D_FACTOR+模块蓝图开始创建时；Level 2创建前MUST通过GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查'
     prohibitions:
     - 跳过功能域重叠检查创建平行蓝图
     - 为已被覆盖的功能域创建同级新蓝图(应升级原蓝图而非创建新蓝图)
@@ -1660,7 +1660,7 @@ sections:
     existing_id_compatibility:
     - id: MOD-MASTER_BLUEPRINT
       level: Level 1(当前)→Level 0(beta升级后)
-      note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
+      note: 当前承担基础设施域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
     - id: MOD-INF-001~017
       level: Level 2 MODULE
       note: 不涉及不兼容
@@ -1792,7 +1792,7 @@ sections:
       title: Code Dedup Engine
       belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001(即L01基础设施域集成蓝图)；beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
+    note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001(即基础设施域集成蓝图)；beta+时D_FACTOR+的模块蓝图将归属到新建的对应Level 1域蓝图
     conditions:
     - type: trigger
       check: 维护既存蓝图归属时

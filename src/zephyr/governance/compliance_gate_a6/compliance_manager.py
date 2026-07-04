@@ -22,15 +22,15 @@
 # created: "2026-05-05"
 # ---
 """
-ZephyrAlpha — L10 Compliance Layer — 合规规则管理器接口
+ZephyrAlpha — D_COMPLIANCE Compliance Layer — 合规规则管理器接口
 
 Phase B 骨架——定义合规层的公共接口。
 ComplianceRule（CTR-P1-012）SSoT：``zephyr.shared.contracts.compliance_rule``。
 
 跨层契约：
-  CTR-P1-012  ComplianceRule         → L04, L06, L10（生产者——合规规则定义）
-  CTR-P1-006  StrategyLifecycleEvent  ← L05（消费者——策略生命周期事件）
-  CTR-P1-009  PerformanceAttributionReport ← L07（消费者——绩效归因报告）
+  CTR-P1-012  ComplianceRule         → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE（生产者——合规规则定义）
+  CTR-P1-006  StrategyLifecycleEvent  ← D_PORTFOLIO_CORE（消费者——策略生命周期事件）
+  CTR-P1-009  PerformanceAttributionReport ← D_REPORTING（消费者——绩效归因报告）
 
 SSoT: cross_layer_contracts.yaml v3.0
 """
@@ -50,7 +50,7 @@ class ComplianceManagerBase(abc.ABC):
     职责：
       - 管理合规规则生命周期（注册/激活/废弃）
       - 评估策略/订单是否满足监管与内部合规要求
-      - 产出 ComplianceRule 实例供 L04 风控和 L06 执行消费
+      - 产出 ComplianceRule 实例供 D_RISK 风控和 D_EXECUTION_CORE 执行消费
 
     实现者要求：
       - register_rule(): 注册合规规则

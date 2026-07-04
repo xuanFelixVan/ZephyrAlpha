@@ -418,7 +418,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "pnl-attribution": DomainDispatch(
         domain="PnL归因/TCA",
         pre_read="SYS-MASTER-001 §六十一",
-        re_read="§五十 + L07",
+        re_read="§五十 + D_REPORTING",
         token_budget=500,
         blueprint_section="§六十一",
     ),
@@ -621,7 +621,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "ab-experiment": DomainDispatch(
         domain="A/B实验框架",
         pre_read="SYS-MASTER-001 §九十",
-        re_read="§四十八 + L13 + §五十三",
+        re_read="§四十八 + 实验 + §五十三",
         token_budget=400,
         blueprint_section="§九十",
     ),

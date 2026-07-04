@@ -98,7 +98,7 @@ def make_risk_dashboard_snapshot(
     overall_risk_score: float = 0.0,
     idempotency_key: str = "",
 ):
-    """创建 RiskDashboardSnapshot——用于 L04→L08 监控面板推送。"""
+    """创建 RiskDashboardSnapshot——用于 D_RISK→D_FRONTEND 监控面板推送。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot")
     _RiskDashboardSnapshot = _mod.RiskDashboardSnapshot
     return _RiskDashboardSnapshot(
@@ -139,7 +139,7 @@ def make_risk_metrics_report(
     idempotency_key: str = "",
     as_of_date: datetime | None = None,
 ):
-    """创建 RiskMetricsReport——用于 L04→L05/L07/L08/L10 风险指标推送。"""
+    """创建 RiskMetricsReport——用于 D_RISK→D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指标推送。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_metrics")
     _RiskMetricsReport = _mod.RiskMetricsReport
     return _RiskMetricsReport(
@@ -212,7 +212,7 @@ def make_synthesized_signal(
     idempotency_key: str = "",
     as_of_timestamp: datetime | None = None,
 ):
-    """创建 SynthesizedSignal 实例——L03 合成信号标准化入口。"""
+    """创建 SynthesizedSignal 实例——D_SIGNAL 合成信号标准化入口。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.market.synthesized_signal")
     _SynthesizedSignal = _mod.SynthesizedSignal
     return _SynthesizedSignal(
@@ -246,7 +246,7 @@ def make_order(
     limit_price: Decimal | None = None,
     idempotency_key: str = "",
 ):
-    """创建 Order 实例——L05 委托指令标准化入口。"""
+    """创建 Order 实例——D_PORTFOLIO_CORE 委托指令标准化入口。"""
     _mod = importlib.import_module("zephyr.trading.trading_contracts.execution.order")
     _Order = _mod.Order
     return _Order(

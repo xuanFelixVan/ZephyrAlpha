@@ -644,7 +644,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\execution_report.py` |
 | 验收标准 | ExecutionReport 数据模型定义 + ExecutionEngine 产出逻辑 |
 | 验证命令 | `python -m pytest tests/ -k execution_report -v` |
-| G7 检查项 | 数据模型字段完整？L07 消费路径正确？ |
+| G7 检查项 | 数据模型字段完整？D_REPORTING 消费路径正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | execution_report.py 存在且非空 |
 
@@ -680,15 +680,15 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 
 > **回测=实盘一致性约束**: MiniQmtBroker的撮合逻辑MUST从`backtest/core/matching_engine.py`抽取的共享MatchingLogic模块调用, 禁止在MiniQmtBroker内重新实现撮合规则。这保证回测与实盘的撮合行为完全一致(回测-实盘偏差监控>30%告警/>50%退役的基线)。
 
-#### 步骤 8：与 L04/L07 集成测试
+#### 步骤 8：与 D_RISK/D_REPORTING 集成测试
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §12 集成目标 |
 | 产出位置 | `D:\ZephyrAlpha\tests\unit\ex_core\` |
-| 验收标准 | L04 风控 + L07 分析端到端测试通过 |
+| 验收标准 | D_RISK 风控 + D_REPORTING 分析端到端测试通过 |
 | 验证命令 | `python -m pytest tests/ -k integration -v` |
-| G7 检查项 | L04 风控阻断正确？L07 Fill 消费正确？ |
+| G7 检查项 | D_RISK 风控阻断正确？D_REPORTING Fill 消费正确？ |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | 集成测试通过 |
 
@@ -886,7 +886,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/ -v` | 运行 L06 全部测试 | — | exit 0 = 通过 |
+| 1 | 命令 | `python -m pytest tests/ -v` | 运行 D_EXECUTION_CORE 全部测试 | — | exit 0 = 通过 |
 | 2 | 配置 | `ExecutionConfig` → `default_algo` | 默认算法策略 | `AlgoType`: TWAP/VWAP/MARKET | 默认 TWAP |
 | 3 | 配置 | `ExecutionConfig` → `twap_window_minutes` | TWAP 时间窗口 | `int`: 分钟 | 默认 30 |
 
@@ -896,7 +896,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 |---|:----:|------|---------|----------|----------|----------|
 | 1 | 施工 | RiskValidator 解耦失败 | 解耦后测试不通过 | 逐用例排查差异 | 恢复硬编码 | pytest exit 0 |
 | 2 | 运行 | 券商连接超时 | BrokerInterface 超时 | 检查网络+重试3次 | 标记EXPIRED | 降级到SimulationBroker |
-| 3 | 运行 | 风控阻断异常 | RiskLimitViolationError | 检查L04风控规则 | 订单REJECTED | 人工review |
+| 3 | 运行 | 风控阻断异常 | RiskLimitViolationError | 检查D_RISK风控规则 | 订单REJECTED | 人工review |
 | 4 | 运行 | 紧急冻结 | 安全事件 | 冻结写入+只读 | — | 威胁解除 |
 | 5 | 运行 | 紧急旁路 | 模块阻塞 | 降级到SimulationBroker | — | 模块恢复 |
 
@@ -929,7 +929,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L06-001 | 单线程订单处理 | 多线程 + 锁 + ThreadPoolExecutor | P1 | 并发订单 > 10 | v2.1.0 | 待施工 |
 | GAP-L06-002 | 仅 SimulationBroker | 新增MiniQMT/富途/IB 适配器 | P1 | 需要实盘交易 | v2.2.0 | **MiniQMT规格已就绪(§16.7.1), 待施工** |
-| GAP-L06-003 | 无 ExecutionReport | 新增 CTR-P1-007 产出 | P0 | L07 需要执行报告 | v2.0.1 | 待施工 |
+| GAP-L06-003 | 无 ExecutionReport | 新增 CTR-P1-007 产出 | P0 | D_REPORTING 需要执行报告 | v2.0.1 | 待施工 |
 | **GAP-L06-004** (v2.2.0) | 回测≠实盘(撮合逻辑各实现一套) | 抽取MatchingLogic共享模块 | P0 | 回测-实盘偏差>30% | v2.2.0 | 待施工 |
 | **GAP-L06-005** (v2.2.0) | 无A股T+1/涨跌停校验 | MiniQmtBroker内置校验 | P0 | 实盘接入 | v2.2.0 | 待施工 |
 
@@ -974,7 +974,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | SOR | Smart Order Router——基于成交质量评分选择最优经纪商 | 路由 | SOR 特指券商选择路由，非网络路由 |
 | OCP-003 | BrokerInterface 扩展点——新券商通过继承+注册接入 | 适配器 | OCP-003 是扩展点定义，适配器是实现 |
 | Fill | 成交回报——订单被券商执行后的确认记录 | Order | Order 是委托指令，Fill 是执行结果 |
-| PositionSnapshot | 持仓快照——某时刻的持仓状态 | Portfolio | PositionSnapshot 是 L06 产出，Portfolio 是 L05 管理 |
+| PositionSnapshot | 持仓快照——某时刻的持仓状态 | Portfolio | PositionSnapshot 是 D_EXECUTION_CORE 产出，Portfolio 是 D_PORTFOLIO_CORE 管理 |
 | TWAP | Time-Weighted Average Price——按时间均分下单 | VWAP | TWAP 按时间均分，VWAP 按成交量加权 |
 
 ---
@@ -1076,9 +1076,9 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | 场景 | 职责相同？ | 独立依赖链？ | 各自自包含？ | 判定 |
 |------|:---:|:---:|:---:|------|
-| L06 新增 TWAP 算法策略 | ✅ 相同 | — | — | 原地升级（同属交易执行） |
-| L06 新增回测引擎 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图（回测≠执行） |
-| L06 新增风控计算逻辑 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图（L04 已覆盖） |
+| D_EXECUTION_CORE 新增 TWAP 算法策略 | ✅ 相同 | — | — | 原地升级（同属交易执行） |
+| D_EXECUTION_CORE 新增回测引擎 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图（回测≠执行） |
+| D_EXECUTION_CORE 新增风控计算逻辑 | ❌ 不同 | ✅ 有 | ✅ 是 | 拆分独立蓝图（D_RISK 已覆盖） |
 
 ---
 
@@ -1121,7 +1121,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|-------------|------------|----------|-------------|
-| — | 无 | — | — | L06 是唯一交易执行层，无重叠模块 |
+| — | 无 | — | — | D_EXECUTION_CORE 是唯一交易执行层，无重叠模块 |
 
 ---
 
@@ -1145,9 +1145,9 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
-| L06 架构设计 | **本文档 §1-§10** | 旧版占位蓝图 |
-| L06 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
-| L06 接口契约 | **本文档 §4** | — |
+| D_EXECUTION_CORE 架构设计 | **本文档 §1-§10** | 旧版占位蓝图 |
+| D_EXECUTION_CORE 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
+| D_EXECUTION_CORE 接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 

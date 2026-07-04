@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L03 — Capital Allocator（兼容导出）
+"""D_SIGNAL — Capital Allocator（兼容导出）
 
 ``CapitalAllocatorBase`` 真源在 ``aggregator_base.py``（与 ``SignalAggregatorBase`` / ``DegradationMonitorBase`` 同文件）。
 ``CapitalAllocationResult`` 真源在 ``zephyr.shared.contracts.capital_allocation_result``（CTR-P1-003）。

@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-L10 — Governance & Compliance Layer
+D_COMPLIANCE — Governance & Compliance Layer
 
 治理与合规层。负责架构守卫、权限控制、AI 安全网关与审计追溯。
 
@@ -29,10 +29,10 @@ L10 — Governance & Compliance Layer
   - Policy Decision Ledger（策略决策账本）：审计不可篡改链
 
 扩展点：
-  - SecurityGateway    : OCP L10-AISG — AI 安全网关
-  - ComplianceEngine   : OCP L10-CPL — 合规规则引擎
+  - SecurityGateway    : OCP D_COMPLIANCE-AISG — AI 安全网关
+  - ComplianceEngine   : OCP D_COMPLIANCE-CPL — 合规规则引擎
 
-依赖方向：全层监控 → 无上游依赖（L10 是横向 Johari 基础设施）
+依赖方向：全层监控 → 无上游依赖（D_COMPLIANCE 是横向 Johari 基础设施）
 """
 
 from __future__ import annotations
@@ -97,9 +97,9 @@ class SecurityGateway(abc.ABC):
 
 class ComplianceEngine(abc.ABC):
     """
-    合规规则引擎（OCP 扩展点 L10-CPL）
+    合规规则引擎（OCP 扩展点 D_COMPLIANCE-CPL）
 
-    契约对齐：CTR-P1-012（ComplianceRule 出站）→ L04, L06, L10
+    契约对齐：CTR-P1-012（ComplianceRule 出站）→ D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
 
     实现者要求：
       - evaluate(): 接收交易/持仓/事件上下文，返回参与评估的合规规则列表

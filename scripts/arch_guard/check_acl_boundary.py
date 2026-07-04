@@ -126,7 +126,7 @@ def main() -> int:
             print(v)
         print()
         print(f"只有 {ADAPTERS_DIR.relative_to(REPO_ROOT)}/ 下的代码允许调用 Broker API。")
-        print("其他层必须通过 L06 adapters/ 间接访问。")
+        print("其他层必须通过 D_EXECUTION_CORE adapters/ 间接访问。")
         return 1
 
     print("[OK] INV-005 Broker ACL 边界 —— 无违反")

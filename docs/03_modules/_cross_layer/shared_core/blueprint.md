@@ -565,7 +565,7 @@ depends_on:
 | MOD-INF-019 | Agent Spec | `schemas.py`, `frontmatter_utils.py` | — | Skill 加载器依赖蓝图 frontmatter 解析 |
 | — | shared/contracts/ 扩展文件 | `schemas.py`, `paths.py`, `time_utils.py`, `portfolio/money.py`, `market/instrument.py` | 20+ 文件 | backpressure/errors/enforcer/registry 等 20+ 契约文件全部 import shared 基础设施 |
 
-> **AI 安全规则**：修改 `schemas.py` 的 Task 类 → 影响 **至少 10 个消费者模块**（全部 L01 基础设施）。
+> **AI 安全规则**：修改 `schemas.py` 的 Task 类 → 影响 **至少 10 个消费者模块**（全部 基础设施层）。
 > 修改 `paths.py` 的路径常量 → 影响 **所有 src/zephyr/ 下代码**。
 > 修改 `errors.py` 的异常层次 → 影响 **所有模块的异常处理链**（新增子类安全，修改已有子类谨慎）。
 > 修改 `event_schemas.py` 的 Schema → 影响 **所有 observer.emit() 调用点的 payload 结构**。
@@ -1198,7 +1198,7 @@ STEP 3: 拆分后验证
 
 | 场景 | 判定 | 理由 |
 |------|------|------|
-| 本蓝图已达 1100+ 行，Shared + Core 均为跨层基础设施 | **原地** | 服务对象相同（所有L01-L13模块）+ 变更频率同步 + 依赖关系完全重叠 |
+| 本蓝图已达 1100+ 行，Shared + Core 均为跨层基础设施 | **原地** | 服务对象相同（所有基础设施-实验模块）+ 变更频率同步 + 依赖关系完全重叠 |
 
 ---
 

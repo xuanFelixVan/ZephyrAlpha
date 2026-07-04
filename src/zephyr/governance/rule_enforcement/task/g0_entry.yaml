@@ -52,7 +52,7 @@ rules:
       - TRAE-005
     check: >
       if task_type in ["implementation", "fix", "refactor"]:
-          assert target_layer in REGISTERED_LAYERS  # L00-L13
+          assert target_layer in REGISTERED_LAYERS  # D_DATA~实验
 
   - rule_id: G0-R3
     name: dependency_check

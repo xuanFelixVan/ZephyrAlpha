@@ -23,22 +23,22 @@
 # ---
 
 """
-L03 — Signal Generation Layer
+D_SIGNAL — Signal Generation Layer
 
-信号生成层。负责将 L02 的因子信号（FactorSignal）合成为可交易的合成信号（SynthesizedSignal）。
+信号生成层。负责将 D_FACTOR 的因子信号（FactorSignal）合成为可交易的合成信号（SynthesizedSignal）。
 
 核心职责：
   - 多因子信号聚合（Alpha / Macro / Sentiment / Flow 多域信号融合）
-  - 信号合成（→ SynthesizedSignal）传递给 L04/L05
-  - 资本配置（→ CapitalAllocationResult）传递给 L05
-  - 信号质量降级检测（→ SignalDegradationWarning）通知 L04/L05
+  - 信号合成（→ SynthesizedSignal）传递给 D_RISK/D_PORTFOLIO_CORE
+  - 资本配置（→ CapitalAllocationResult）传递给 D_PORTFOLIO_CORE
+  - 信号质量降级检测（→ SignalDegradationWarning）通知 D_RISK/D_PORTFOLIO_CORE
 
 扩展点：
-  - SignalAggregatorBase : OCP L03-AGG — 因子信号 → 合成信号
-  - CapitalAllocatorBase  : OCP L03-ALC — 合成信号 → 资本配置
-  - DegradationMonitorBase: OCP L03-DEG — 信号质量降级检测
+  - SignalAggregatorBase : OCP D_SIGNAL-AGG — 因子信号 → 合成信号
+  - CapitalAllocatorBase  : OCP D_SIGNAL-ALC — 合成信号 → 资本配置
+  - DegradationMonitorBase: OCP D_SIGNAL-DEG — 信号质量降级检测
 
-依赖方向：L02 → L03 → L04/L05
+依赖方向：D_FACTOR → D_SIGNAL → D_RISK/D_PORTFOLIO_CORE
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ from zephyr.trading.trading_contracts.market.synthesized_signal import Synthesiz
 
 class SignalAggregatorBase(abc.ABC):
     """
-    信号聚合器抽象基类（OCP 扩展点 L03-AGG）
+    信号聚合器抽象基类（OCP 扩展点 D_SIGNAL-AGG）
 
     契约对齐：CTR-002（FactorSignal 入站）→ CTR-P1-015（SynthesizedSignal 出站）
 
@@ -79,9 +79,9 @@ class SignalAggregatorBase(abc.ABC):
 
 class CapitalAllocatorBase(abc.ABC):
     """
-    资本配置器抽象基类（OCP 扩展点 L03-ALC）
+    资本配置器抽象基类（OCP 扩展点 D_SIGNAL-ALC）
 
-    契约对齐：CTR-P1-003（CapitalAllocationResult 出站）→ L05
+    契约对齐：CTR-P1-003（CapitalAllocationResult 出站）→ D_PORTFOLIO_CORE
 
     实现者要求：
       - allocate(): 接收多策略合成信号，产出各策略的资本权重
@@ -99,9 +99,9 @@ class CapitalAllocatorBase(abc.ABC):
 
 class DegradationMonitorBase(abc.ABC):
     """
-    信号质量降级监视器（OCP 扩展点 L03-DEG）
+    信号质量降级监视器（OCP 扩展点 D_SIGNAL-DEG）
 
-    契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）→ L04, L05
+    契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）→ D_RISK, D_PORTFOLIO_CORE
 
     当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
     """

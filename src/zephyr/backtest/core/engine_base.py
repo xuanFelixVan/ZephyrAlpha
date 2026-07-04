@@ -23,12 +23,12 @@ L_BACKTEST — Backtest Engine Layer
   - 因子挖掘与验证（IC / IR / t-stat）
   - 策略回测引擎（walk-forward / cross-validation）
   - 实验管理（实验注册、结果追踪、A/B 对比）
-  - 知识库沉淀（将验证通过的因子提升至 L02/L03 管线）
+  - 知识库沉淀（将验证通过的因子提升至 D_FACTOR/D_SIGNAL 管线）
 
 跨层契约：
-  CTR-001  NormalizedMarketData           ← L00（消费者——行情数据上下文）
-  CTR-P1-014  ExperimentResult             ← L13（消费者——实验结论指导研究方向）
-  CTR-P1-010  SystemConfiguration          ← L01（全局配置消费者）
+  CTR-001  NormalizedMarketData           ← D_DATA（消费者——行情数据上下文）
+  CTR-P1-014  ExperimentResult             ← 实验（消费者——实验结论指导研究方向）
+  CTR-P1-010  SystemConfiguration          ← 基础设施（全局配置消费者）
 
 SSoT: cross_layer_contracts.yaml v3.0
 """
@@ -73,7 +73,7 @@ ZephyrAlpha — shared/contracts/engine_base.py
 
 CTR-P1-016: BacktestResult / 回测结果
 
-D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游L05组合构建层用于策略遴选,L04风控层用于风险预算校准,L12运维层用于回测任务监控。
+D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游D_PORTFOLIO_CORE组合构建层用于策略遴选,D_RISK风控层用于风险预算校准,遥测运维层用于回测任务监控。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-016
 Version: 1.0
@@ -82,7 +82,7 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    当回测引擎完成一次运行后,MUST 产出 BacktestResult。 strategy_id 必须对应策略注册表中已注册的策略 key。 所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。 trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。 L05 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。 L04 风控层使用 max_drawdown 做风险预算校准。 若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
+    当回测引擎完成一次运行后,MUST 产出 BacktestResult。 strategy_id 必须对应策略注册表中已注册的策略 key。 所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。 trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。 D_PORTFOLIO_CORE 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。 D_RISK 风控层使用 max_drawdown 做风险预算校准。 若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
 """
 
 @dataclass(frozen=True)

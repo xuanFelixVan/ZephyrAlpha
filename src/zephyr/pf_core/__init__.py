@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L05 Portfolio Construction — Package root"""
+"""D_PORTFOLIO_CORE Portfolio Construction — Package root"""
 
 from __future__ import annotations
 

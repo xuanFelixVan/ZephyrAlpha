@@ -28,7 +28,7 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
 - SSoT-backed: 启动时从 cross_layer_contracts.yaml 加载契约元数据
 - 版本协商: 实现 VER-R1~R5 的运行时行为
 - 消费者追踪: 记录哪些模块依赖哪些契约，用于影响分析
-- 升级通知: 发布 contract_version_change 事件到 L12 Telemetry
+- 升级通知: 发布 contract_version_change 事件到 遥测 Telemetry
 - 双版本支持: 过渡期内同时提供新旧版本适配器
 
 用法
@@ -198,7 +198,7 @@ class ContractRegistry:
         """VER-R1+R2: 检查入站数据的版本兼容性。
 
         返回 True 表示兼容（同 MAJOR），False 表示不兼容（MAJOR 不同）。
-        不兼容时，调用者 MUST 拒绝处理并上报 L12 Telemetry。
+        不兼容时，调用者 MUST 拒绝处理并上报 遥测 Telemetry。
         """
         active = self.get_active_version(contract_id)
         if active is None:

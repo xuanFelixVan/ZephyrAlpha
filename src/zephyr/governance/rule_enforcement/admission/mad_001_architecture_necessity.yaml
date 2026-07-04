@@ -51,7 +51,7 @@ rules:
 
   - rule_id: MAD-001-R3
     name: layer_assignment_valid
-    description: "模块 MUST 归入已定义的架构层（L00-L13）或证明需要新层"
+    description: "模块 MUST 归入已定义的架构层（D_DATA~实验）或证明需要新层"
     enforcement: REJECT
     rule_ids:
       - TRAE-013

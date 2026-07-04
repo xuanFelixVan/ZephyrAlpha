@@ -17,18 +17,18 @@
 
 
 
-扫描 L00~L07 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
+扫描 D_DATA~D_REPORTING 各域代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
 
 检测内容:
-    - 生产者层（L00/L02/L03/L05/L06）产出数据时是否嵌入 trace_context
-    - 消费者层从上游数据中是否提取 trace_context
-    - 修改者层是否更新 span_id 和 service_name
+    - 生产者域（D_DATA/D_FACTOR/D_SIGNAL/D_PORTFOLIO_CORE/D_EXECUTION_CORE）产出数据时是否嵌入 trace_context
+    - 消费者域从上游数据中是否提取 trace_context
+    - 修改者域是否更新 span_id 和 service_name
     - 是否存在 trace_context 丢失路径（吞掉但不传递）
 
 规则:
-    - L00 (生产者): MUST 创建新的 TraceContext（trace_id 用 UUID），生成 span
-    - L02~L06 (中间层): MUST 从入站数据提取 trace_context，更新 span，嵌入出站数据
-    - L07 (终端): SHOULD 记录 trace_context 用于排障
+    - D_DATA (生产者): MUST 创建新的 TraceContext（trace_id 用 UUID），生成 span
+    - D_FACTOR~D_EXECUTION_CORE (中间域): MUST 从入站数据提取 trace_context，更新 span，嵌入出站数据
+    - D_REPORTING (终端): SHOULD 记录 trace_context 用于排障
 
 exit codes: 0=pass, 1=findings, 2=error
 

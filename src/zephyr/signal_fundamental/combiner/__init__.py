@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L03 Signal Combiner
+"""D_SIGNAL Signal Combiner
 
 信号合成组合器。聚合信号生成、策略、合成为统一入口。
 """

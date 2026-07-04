@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Default Risk Limits Calculator
+"""D_RISK — Default Risk Limits Calculator
 
 风险限额计算引擎具体实现。输入持仓快照 + 因子信号，输出 RiskLimits (CTR-003)。
 
@@ -33,9 +33,9 @@
   - IV 调整：当合成信号 unstable 时自动收紧限额
 
 CTR 契约：
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  消费者 — CTR-P1-015 (SynthesizedSignal) ← L03（IV 调整输入）
-  生产者 — CTR-003 (RiskLimits) → L05
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  消费者 — CTR-P1-015 (SynthesizedSignal) ← D_SIGNAL（IV 调整输入）
+  生产者 — CTR-003 (RiskLimits) → D_PORTFOLIO_CORE
 
 SSoT: cross_layer_contracts.yaml → CTR-003
 """

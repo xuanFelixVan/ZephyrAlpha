@@ -145,7 +145,7 @@ ML平台层是 C 轨业务价值线（线7）的 T1 核心层，负责模型训�
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 模型推理 | L02因子特征到达 | ModelServingRequest→InferenceEngineBase.predict()→ModelServingResponse | 推理结果+置信度 |
+| 模型推理 | D_FACTOR因子特征到达 | ModelServingRequest→InferenceEngineBase.predict()→ModelServingResponse | 推理结果+置信度 |
 | 模型注册 | 训练完成 | ModelTrainerBase.train()→validate()→ModelRegistry.register() | 注册的trainer_cls |
 | 模型升级 | 新模型验证通过 | register→activate→旧模型deprecate | 活跃模型切换 |
 
@@ -280,7 +280,7 @@ class ModelMetadata:
 |---|------|-----|
 | 1 | InferenceEngineBase为OCP扩展点 | 新推理策略只加不改 |
 | 2 | ModelTrainerBase为OCP扩展点 | 新训练策略只加不改 |
-| 3 | 推理输出必须标准化 | 下游L03/L05依赖统一格式 |
+| 3 | 推理输出必须标准化 | 下游D_SIGNAL/D_PORTFOLIO_CORE依赖统一格式 |
 | 4 | ModelRegistry为单例 | 模型版本全局唯一 |
 | 5 | Python 3.12+ | Pydantic V2 + dataclass |
 
@@ -317,7 +317,7 @@ class ModelMetadata:
 
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
-| 1 | 模型未加载时调用predict | model is None 检查 | 返回confidence=0.0的空响应 | 下游L03/L05收到零值预测 |
+| 1 | 模型未加载时调用predict | model is None 检查 | 返回confidence=0.0的空响应 | 下游D_SIGNAL/D_PORTFOLIO_CORE收到零值预测 |
 | 2 | 模型ID重复注册 | ModelRegistry.register() 检查 | 抛出ValueError | 注册流程中断 |
 | 3 | 推理执行异常 | try/except 捕获 | 返回confidence=0.0的空响应+日志 | 下游收到零值预测 |
 | 4 | 训练器缺少__model_id__ | hasattr检查 | 抛出AttributeError | 注册流程中断 |
@@ -611,7 +611,7 @@ class ModelMetadata:
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
 | 1 | D-L11001-01 | ModelMetadata用dataclass而非Pydantic | A:dataclass / B:Pydantic | A | frozen不可变需求+快速原型；C轨激活时迁移为B | 2026-05-05 |
-| 2 | D-L11001-02 | 推理兜底返回零值而非抛异常 | A:零值 / B:异常 | A | 下游L03/L05需要连续信号流，异常会中断管线 | 2026-05-05 |
+| 2 | D-L11001-02 | 推理兜底返回零值而非抛异常 | A:零值 / B:异常 | A | 下游D_SIGNAL/D_PORTFOLIO_CORE需要连续信号流，异常会中断管线 | 2026-05-05 |
 | 3 | D-L11001-03 | 模板v4.1升级+依赖图对齐 | 保持v2.0.0/按v4.1回填 | 按v4.1回填 | §0前移+缺失章节补全+依赖图对齐 | 2026-05-15 |
 
 ---

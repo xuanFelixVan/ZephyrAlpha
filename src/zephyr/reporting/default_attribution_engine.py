@@ -22,13 +22,13 @@
 # created: "2026-05-05"
 # ---
 
-"""L07 — Default Attribution Engine
+"""D_REPORTING — Default Attribution Engine
 
 绩效归因引擎具体实现。Brinson 模型 3 因子分解。
 
 CTR 契约：
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-P1-009 (PerformanceAttributionReport) → L08, L10
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-P1-009 (PerformanceAttributionReport) → D_FRONTEND, D_COMPLIANCE
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-009
 """

@@ -15,14 +15,14 @@
 # [A_module] module_id=MOD-UNK_default_inference_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L11 — Default Inference Engine
+"""D_ML_TRAIN — Default Inference Engine
 
 ML 推理引擎具体实现。实现 InferenceEngineBase。
 
 CTR 契约：
-  消费者 — CTR-006 (PositionSnapshot) ← L06
-  生产者 — CTR-P1-004 (ModelServingRequest) → L03/L05
-  生产者 — CTR-P1-005 (ModelServingResponse) → L03/L05
+  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
+  生产者 — CTR-P1-004 (ModelServingRequest) → D_SIGNAL/D_PORTFOLIO_CORE
+  生产者 — CTR-P1-005 (ModelServingResponse) → D_SIGNAL/D_PORTFOLIO_CORE
 
 SSoT: cross_layer_contracts.yaml → CTR-P1-004 + CTR-P1-005
 """

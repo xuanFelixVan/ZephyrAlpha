@@ -26,9 +26,9 @@
   - core.metrics: 绩效指标计算(Sharpe修正/Sortino/MaxDD)
 
 CTR 契约:
-  消费者 — CTR-001 (NormalizedMarketData) ← L00
-  消费者 — CTR-002 (FactorSignal) ← L02
-  生产者 — CTR-P1-016 (BacktestResult) → L13
+  消费者 — CTR-001 (NormalizedMarketData) ← D_DATA
+  消费者 — CTR-002 (FactorSignal) ← D_FACTOR
+  生产者 — CTR-P1-016 (BacktestResult) → 实验
 
 SSoT: cross_layer_contracts.yaml → CTR-001 + CTR-P1-016
 """

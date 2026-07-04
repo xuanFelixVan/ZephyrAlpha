@@ -102,7 +102,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "01_policies_and_standards/domains": (
-        "层域特定规则（L00/L02/L04/L07）— 每个层域下有 governance/ + operational/",
+        "层域特定规则（D_DATA/D_FACTOR/D_RISK/D_REPORTING）— 每个层域下有 governance/ + operational/",
         [
             ("全局规则（影响所有层）", "01_policies_and_standards/governance/ 或 operational/"),
         ],
@@ -215,27 +215,27 @@ RESPONSIBILITY_MAP = {
 
 # DOMAIN LAYER RESPONSIBILITIES
 DOMAIN_LAYER_MAP = {
-    "L00_data_source": "L00 数据接入层 — 数据源连接/清洗规则/Connector 治理与操作",
-    "L02_alpha_factor": "L02 因子层 — 因子质量门禁/因子上线流程",
-    "L04_risk_management": "L04 风控层 — 风险限额策略/止损配置",
-    "L07_post_trade_analytics": "L07 归因分析层 — 盘后报告策略/分析流水线",
+    "L00_data_source": "D_DATA 数据接入域 — 数据源连接/清洗规则/Connector 治理与操作",
+    "L02_alpha_factor": "D_FACTOR 因子域 — 因子质量门禁/因子上线流程",
+    "L04_risk_management": "D_RISK 风控域 — 风险限额策略/止损配置",
+    "L07_post_trade_analytics": "D_REPORTING 归因分析域 — 盘后报告策略/分析流水线",
 }
 
 MODULE_LAYER_MAP = {
-    "data": "L00 数据接入层 — 数据源连接器 / 行情 / 基本面 / 另类数据",
-    "infrastructure_runtime_integration": "L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
-    "factor": "L02 因子层 — 多频段因子计算 / 衍生因子",
-    "signal": "L03 信号生成层 — 因子融合 / 信号聚合 / Alpha 组合优化",
-    "risk": "L04 风控层 — 头寸限额 / 组合风控 / 实时止损",
-    "pf_core": "L05 组合构建层 — 优化器 / 权重再平衡 / 交易指令生成",
-    "ex_core": "L06 交易执行层 — 算法交易 / Order Management / EMS 连接",
-    "pf_core": "L07 归因分析层 — 绩效归因 / 交易成本分析 / 盘后报表",
-    "frontend": "L08 人机界面层 — Dashboard / 可视化 / 告警通知 / 决策控制台",
-    "research": "L09 研究创新层 — 策略回测 / 因子研究 / 研究管理",
-    "compliance": "L10 合规层 — 交易前合规 / 持仓合规 / 监管报送",
-    "ml_train": "L11 ML 平台层 — 模型训练 / 推理服务 / 特征存储 / 模型注册",
-    "observability": "L12 系统可观测层 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
-    "integration": "L13 实验管线层 — A/B 测试 / 实验管理 / 参数优化",
+    "data": "D_DATA 数据接入域 — 数据源连接器 / 行情 / 基本面 / 另类数据",
+    "infrastructure_runtime_integration": "基础设施域 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
+    "factor": "D_FACTOR 因子域 — 多频段因子计算 / 衍生因子",
+    "signal": "D_SIGNAL 信号生成域 — 因子融合 / 信号聚合 / Alpha 组合优化",
+    "risk": "D_RISK 风控域 — 头寸限额 / 组合风控 / 实时止损",
+    "pf_core": "D_PORTFOLIO_CORE 组合构建域 — 优化器 / 权重再平衡 / 交易指令生成",
+    "ex_core": "D_EXECUTION_CORE 交易执行域 — 算法交易 / Order Management / EMS 连接",
+    "pf_core": "D_REPORTING 归因分析域 — 绩效归因 / 交易成本分析 / 盘后报表",
+    "frontend": "D_FRONTEND 人机界面域 — Dashboard / 可视化 / 告警通知 / 决策控制台",
+    "research": "D_RESEARCH 研究创新域 — 策略回测 / 因子研究 / 研究管理",
+    "compliance": "D_COMPLIANCE 合规域 — 交易前合规 / 持仓合规 / 监管报送",
+    "ml_train": "D_ML_TRAIN ML 平台域 — 模型训练 / 推理服务 / 特征存储 / 模型注册",
+    "observability": "遥测域 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
+    "integration": "实验管线域 — A/B 测试 / 实验管理 / 参数优化",
 }
 
 BOOTSTRAP_LAYER_MAP = {

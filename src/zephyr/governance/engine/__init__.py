@@ -10,9 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L02 — Factors Package
+"""D_FACTOR — Factors Package
 
-L02 因子实现包。每个因子独立一个模块，@FactorRegistry.register 自动注册。
+D_FACTOR 因子实现包。每个因子独立一个模块，@FactorRegistry.register 自动注册。
 
 Phase E 因子清单：
   - momentum_factor.py : 20 日动量因子

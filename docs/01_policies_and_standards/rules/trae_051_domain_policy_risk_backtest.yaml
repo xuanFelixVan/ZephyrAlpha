@@ -898,4 +898,4 @@ change_history:
   change: 初始创建——placeholder sections（dom_l04_001/dom_l07_001）
 - version: 0.2.0
   date: '2026-06-19'
-  change: RQ审查修复——从trae_050合并L04(风控)+L07(盘后)完整sections（852行）；references补充TRAE-049/050；provenance重建只保留L04+L07源文件并标记deprecated(D56裁定SSoT)；新增change_history
+  change: RQ审查修复——从trae_050合并D_RISK(风控)+D_REPORTING(盘后)完整sections（852行）；references补充TRAE-049/050；provenance重建只保留D_RISK+D_REPORTING源文件并标记deprecated(D56裁定SSoT)；新增change_history

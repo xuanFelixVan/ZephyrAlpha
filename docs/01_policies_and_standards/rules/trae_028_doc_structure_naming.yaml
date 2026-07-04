@@ -328,33 +328,33 @@ sections:
     original_rules:
     - DOC-001
     items:
-    - description: L00 Data Source - 数据接入、标准化、落库、缓存与质量门禁
+    - description: D_DATA - 数据接入、标准化、落库、缓存与质量门禁
       details: src/zephyr/data/;已创建
-    - description: L01 Infrastructure - 配置、日志、异常与基础运行能力
+    - description: 基础设施 - 配置、日志、异常与基础运行能力
       details: src/zephyr/infra_ops/;已创建
-    - description: L02 Alpha Factor - Alpha因子计算引擎、PIT合规与因子库管理
+    - description: D_FACTOR - Alpha因子计算引擎、PIT合规与因子库管理
       details: src/zephyr/factor/;已创建
-    - description: L03 Signal Generation - 交易信号生成、策略调度与信号合成
+    - description: D_SIGNAL - 交易信号生成、策略调度与信号合成
       details: src/zephyr/signal/;已创建
-    - description: L04 Risk Management - 实时风控、Kill Switch、压力测试与合规检查
+    - description: D_RISK - 实时风控、Kill Switch、压力测试与合规检查
       details: src/zephyr/risk/;已创建
-    - description: L05 Portfolio Construction - 组合构建、权重优化与再平衡决策
+    - description: D_PORTFOLIO_CORE - 组合构建、权重优化与再平衡决策
       details: src/zephyr/pf_core/;已创建
-    - description: L06 Trade Execution - 订单路由、执行引擎、Broker ACL边界与成交管理
+    - description: D_EXECUTION_CORE - 订单路由、执行引擎、Broker ACL边界与成交管理
       details: src/zephyr/ex_core/;已创建
-    - description: L07 Post-Trade Analytics - 交易后分析、绩效归因与报告生成
+    - description: D_REPORTING - 交易后分析、绩效归因与报告生成
       details: src/zephyr/reporting/;已创建
-    - description: L08 Human-AI Interface - 人机交互、API网关、监控面板与告警通知
+    - description: D_FRONTEND - 人机交互、API网关、监控面板与告警通知
       details: src/zephyr/frontend/;已创建
-    - description: L09 Research Innovation - 研究工作台、回测框架与策略实验室
+    - description: D_RESEARCH - 研究工作台、回测框架与策略实验室
       details: src/zephyr/research/;已创建
-    - description: L10 Governance Compliance - 合规治理、审计追踪与监管报告
+    - description: D_COMPLIANCE - 合规治理、审计追踪与监管报告
       details: src/zephyr/compliance/;已创建
-    - description: L11 ML Platform - ML平台、Scout Agent、战略决策与AI引擎
+    - description: D_ML_TRAIN - ML平台、Scout Agent、战略决策与AI引擎
       details: src/zephyr/ml_train/;已创建
-    - description: L12 System Telemetry - 系统遥测、可观测性、健康检查与SLA监控
+    - description: 遥测 - 系统遥测、可观测性、健康检查与SLA监控
       details: src/zephyr/infra_ops/;已规划
-    - description: L13 Experiment Pipeline - 实验管线与A/B测试框架
+    - description: 实验 - 实验管线与A/B测试框架
       details: src/zephyr/simulation/;已规划
   gov_doc_001_numbering_space:
     title: 编号空间预留与前端编号 (GOV-DOC-001 §2.3+§4)
@@ -371,7 +371,7 @@ sections:
       rationale: 前端作为独立平台，与后端14层体系分离
       applies_to: 前端模块编号
     - id: NS-003
-      statement: 前端FE-L3通过L08 Human-AI Interface层与后端交互，架构图中交互边必须标注L08为边界层
+      statement: 前端FE-L3通过D_FRONTEND人机交互层与后端交互，架构图中交互边必须标注D_FRONTEND为边界层
       rationale: 前后端交互必须经过明确的边界层
       applies_to: 前后端交互
     - id: NS-004

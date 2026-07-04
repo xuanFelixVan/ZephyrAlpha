@@ -778,7 +778,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
+  description: 运行时配置完整性十一层纵深审计（基础设施-D_ML_TRAIN）+ 自动修复（D_REPORTING）
   tags:
   - AI-Generated
   - Critical
@@ -2587,9 +2587,9 @@ scripts:
     description: 检查指定模块路径的幂等性
   - flag: --scan-all
     action: store_true
-    description: 扫描所有 L06 执行层代码
+    description: 扫描所有 D_EXECUTION_CORE 执行层代码
   warn_only: true
-  description: '幂等性缺失检查（HC-9）——L06 执行层代码缺少幂等 Key 检测。 对标 GOV-AI-009 ai-hallucination-detection-rules.md。
+  description: '幂等性缺失检查（HC-9）——D_EXECUTION_CORE 执行层代码缺少幂等 Key 检测。 对标 GOV-AI-009 ai-hallucination-detection-rules.md。
 
     '
   tags:

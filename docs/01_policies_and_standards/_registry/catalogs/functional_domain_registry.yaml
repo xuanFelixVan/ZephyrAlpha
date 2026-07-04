@@ -747,12 +747,12 @@ entries:
   ssot_path: src/zephyr/infra_runtime/
   covers:
   - 运行时集成层
-  - L01基础设施配置
+  - 基础设施配置
   - 模块间集成桥接
   aliases:
   - runtime integration
   - 运行时集成
-  - L01
+  - 基础设施
   - infrastructure layer
   stability: stable
   ai_autonomy: ai_modifiable

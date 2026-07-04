@@ -74,7 +74,7 @@ class PatternEntry(BaseModel):
     title: str = Field(min_length=1, max_length=300)
     pattern_type: PatternType = Field(description="模式类型")
     domain: str = Field(min_length=1, max_length=50, description="所属域 D0-D9")
-    layer: str = Field(min_length=1, max_length=20, description="所属层 L00-L11")
+    layer: str = Field(min_length=1, max_length=20, description="所属层 D_DATA~D_ML_TRAIN")
     description: str = Field(min_length=1, max_length=2000)
     context: str = Field(default="", max_length=2000, description="适用上下文")
     solution: str = Field(default="", max_length=2000, description="解决方案（success）/ 避免方式（anti）")

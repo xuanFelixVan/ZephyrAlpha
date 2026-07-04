@@ -105,14 +105,14 @@ sections:
     - COND-32
     conditions:
     - type: trigger
-      check: L08层代码调用LLM API/向治理SQLite写入数据/在shared/contracts/添加代码时
+      check: D_FRONTEND层代码调用LLM API/向治理SQLite写入数据/在shared/contracts/添加代码时
       pass: 通过LSG代理/治理SQLite只存治理数据/contracts只放数据结构定义
       fail: 违反架构分层约束
     actions:
     - type: mandatory
-      step: 必须通过L08 LSG代理调用LLM；治理SQLite只存治理数据；contracts目录只放dataclass/Protocol/Enum/Literal/TypedDict
+      step: 必须通过D_FRONTEND LSG代理调用LLM；治理SQLite只存治理数据；contracts目录只放dataclass/Protocol/Enum/Literal/TypedDict
     prohibitions:
-    - L02-L07直接调用LLM Providers
+    - D_FACTOR-D_REPORTING直接调用LLM Providers
     - 业务数据写入治理SQLite
     - 在contracts目录放业务逻辑
   cond_33_37:

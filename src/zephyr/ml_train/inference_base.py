@@ -16,7 +16,7 @@
 # [TTL] task_bound
 
 """
-L11 — ML Inference Base
+D_ML_TRAIN — ML Inference Base
 
 模型推理引擎抽象基类。
 """
@@ -32,7 +32,7 @@ from zephyr.trading.trading_contracts.execution.model_serving_request import Mod
 
 class InferenceEngineBase(abc.ABC):
     """
-    推理引擎抽象基类（OCP 扩展点 L11-INF）
+    推理引擎抽象基类（OCP 扩展点 D_ML_TRAIN-INF）
 
     契约对齐：CTR-P1-004（ModelServingRequest 入站）→ CTR-P1-005（ModelServingResponse 出站）
 

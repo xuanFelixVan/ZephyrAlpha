@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L04 — Default Position Limit Checker
+"""D_RISK — Default Position Limit Checker
 
 仓位限额检查器具体实现。对齐 CTR-003 (RiskLimits)，输出 CTR-ERR-004 (RiskLimitViolationError)。
 

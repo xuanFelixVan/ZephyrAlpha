@@ -564,9 +564,9 @@ sections:
     - title: v0.2.0
       code: 'date: 2026-06-19
 
-        change: RQ审查修复——L04(风控)+L07(盘后)sections迁移至trae_051；references移除自引用TRAE-050；provenance源文件标记deprecated(D56裁定SSoT)'
+        change: RQ审查修复——D_RISK(风控)+D_REPORTING(盘后)sections迁移至trae_051；references移除自引用TRAE-050；provenance源文件标记deprecated(D56裁定SSoT)'
       language: yaml
-      note: L04+L07内容迁移至trae_051
+      note: D_RISK+D_REPORTING内容迁移至trae_051
   dom_l02_001:
     section_type: rule
     title: 因子质量门控

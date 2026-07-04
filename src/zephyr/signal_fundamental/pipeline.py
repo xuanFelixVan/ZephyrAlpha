@@ -15,11 +15,11 @@
 # [A_module] module_id=MOD-UNK_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""AlphaSignalPipeline L02→L03跨层集成管道
+"""AlphaSignalPipeline D_FACTOR→D_SIGNAL跨层集成管道
 ============================================
 Domain   : _alpha-signal-domain (ALPHA-SIGNAL-DOMAIN-001)
 Contracts: AS-CT-001~005
-Layers   : L02 (AlphaFactor) → L03 (SignalGeneration)
+Layers   : D_FACTOR (AlphaFactor) → D_SIGNAL (SignalGeneration)
 Status   : Phase B — 骨架管道已就绪，底层C轨模块 blocked_by_infrastructure
 
 管线阶段
@@ -101,9 +101,9 @@ class PipelineResult:
 
 
 class AlphaSignalPipeline:
-    """L02→L03 Alpha-Signal 跨层集成管道。
+    """D_FACTOR→D_SIGNAL Alpha-Signal 跨层集成管道。
 
-    将 L02 因子层的原始因子信号通过 L03 信号合成引擎
+    将 D_FACTOR 因子层的原始因子信号通过 D_SIGNAL 信号合成引擎
     转化为统一的合成交易信号，并执行信号质量校验和降级路由。
     """
 
@@ -189,7 +189,7 @@ class AlphaSignalPipeline:
             result.errors.append(
                 {
                     "stage": "preflight",
-                    "message": "L02/L03 contracts unavailable — running in degraded mode",
+                    "message": "D_FACTOR/D_SIGNAL contracts unavailable — running in degraded mode",
                 }
             )
             result.degraded = True

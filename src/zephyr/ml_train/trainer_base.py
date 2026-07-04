@@ -46,7 +46,7 @@ class ModelMetadata:
 
 class ModelTrainerBase(abc.ABC):
     """
-    模型训练器抽象基类（OCP 扩展点 L11-TRN）
+    模型训练器抽象基类（OCP 扩展点 D_ML_TRAIN-TRN）
 
     实现者要求：
       - train(): 接收训练数据，产出训练指标
@@ -73,7 +73,7 @@ class ModelTrainerBase(abc.ABC):
 
 class ModelRegistry:
     """
-    模型注册表（OCP 扩展点 L11-REG）
+    模型注册表（OCP 扩展点 D_ML_TRAIN-REG）
 
     管理模型版本生命周期：
       - 注册（register）→ 激活（activate）→ 废弃（deprecate）

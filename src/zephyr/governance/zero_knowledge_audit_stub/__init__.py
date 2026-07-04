@@ -10,10 +10,10 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""L10 Compliance
+"""D_COMPLIANCE Compliance
 =====================================
 
-14 层量化架构 · L10 合规层
+域量化架构 · D_COMPLIANCE 合规层
 
 职责
 ----
@@ -31,16 +31,16 @@ CTR 契约依赖声明（承重墙标记）
 任何修改本层接口的行为 MUST 先通过 ContractImpactAnalyzer 评估影响范围。
 
 作为消费者（Consumer）：
-  - CTR-P1-006  StrategyLifecycleEvent ← L05
-  - CTR-P1-009  PerformanceAttributionReport ← L07
-  - CTR-P1-012  ComplianceRule         ← L10（规则由本层定义，反馈闭环）
+  - CTR-P1-006  StrategyLifecycleEvent ← D_PORTFOLIO_CORE
+  - CTR-P1-009  PerformanceAttributionReport ← D_REPORTING
+  - CTR-P1-012  ComplianceRule         ← D_COMPLIANCE（规则由本层定义，反馈闭环）
 
 作为生产者（Producer）：
-  - CTR-P1-012  ComplianceRule         → L04, L06, L10
+  - CTR-P1-012  ComplianceRule         → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE
 
 作为全局配置消费者（Consumer）：
-  - CTR-P1-010  SystemConfiguration    ← L01
-  - CTR-P1-013  TelemetryEmitter       ← L12
+  - CTR-P1-010  SystemConfiguration    ← 基础设施
+  - CTR-P1-013  TelemetryEmitter       ← 遥测
 
 SSoT: cross_layer_contracts.yaml v3.0
 

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L12 · archive/cold_stub — 冷存储归档管道。
+"""遥测 · archive/cold_stub — 冷存储归档管道。
 
 蓝图 §8: 分级 TTL + gzip 压缩 + SQLite backup + 成本感知降级 + 灾备 RTO/RPO。
 """

@@ -80,10 +80,10 @@ CheckFn = Callable[[str, Path], tuple[bool, str]]
 
 
 def check_var_cvar(_repo: Path) -> tuple[bool, str]:
-    """BLIND-L04-VAR-CVAR-MISSING: L04 是否已有 VaR/CVaR 实现"""
+    """BLIND-L04-VAR-CVAR-MISSING: D_RISK 是否已有 VaR/CVaR 实现"""
     risk_dir = _repo / "src" / "zephyr" / "risk"
     if not risk_dir.exists():
-        return False, "L04 目录不存在"
+        return False, "D_RISK 目录不存在"
 
     evidence: list[str] = []
     for py_file in risk_dir.rglob("*.py"):
@@ -102,10 +102,10 @@ def check_var_cvar(_repo: Path) -> tuple[bool, str]:
 
 
 def check_channel_fallback(_repo: Path) -> tuple[bool, str]:
-    """BLIND-L08-CHANNEL-FALLBACK: L08 是否有多渠道 fallback"""
+    """BLIND-L08-CHANNEL-FALLBACK: D_FRONTEND 是否有多渠道 fallback"""
     frontend = _repo / "src" / "zephyr" / "frontend"
     if not frontend.exists():
-        return False, "L08 目录不存在"
+        return False, "D_FRONTEND 目录不存在"
 
     fallback_names = ["fallback", "failover", "retry", "channel_chain", "escalation"]
     evidence: list[str] = []
@@ -121,14 +121,14 @@ def check_channel_fallback(_repo: Path) -> tuple[bool, str]:
 
     if evidence:
         return True, f"多渠道 fallback 代码已存在: {', '.join(sorted(set(e.split(': ')[0] for e in evidence)))}"
-    return False, "L08 中未发现 fallback/failover/retry/channel_chain 相关代码"
+    return False, "D_FRONTEND 中未发现 fallback/failover/retry/channel_chain 相关代码"
 
 
 def check_historical_backfill(_repo: Path) -> tuple[bool, str]:
-    """BLIND-L09-HISTORICAL-BACKFILL: L09 是否有历史回填逻辑"""
+    """BLIND-L09-HISTORICAL-BACKFILL: D_RESEARCH 是否有历史回填逻辑"""
     research = _repo / "src" / "zephyr" / "research"
     if not research.exists():
-        return False, "L09 目录不存在"
+        return False, "D_RESEARCH 目录不存在"
 
     backfill_names = ["backfill", "historical", "replay", "historical_data"]
     for py_file in research.rglob("*.py"):
@@ -139,7 +139,7 @@ def check_historical_backfill(_repo: Path) -> tuple[bool, str]:
         for keyword in backfill_names:
             if keyword in content.lower():
                 return True, f"历史回填代码已存在于 {py_file.relative_to(_repo)}"
-    return False, "L09 中未发现 backfill/historical/replay 相关代码"
+    return False, "D_RESEARCH 中未发现 backfill/historical/replay 相关代码"
 
 
 def check_base_event_in_all(_repo: Path) -> tuple[bool, str]:
@@ -188,7 +188,7 @@ def check_codegen_snapshot(_repo: Path) -> tuple[bool, str]:
 
 
 def check_b_shadow(_repo: Path) -> tuple[bool, str]:
-    """B-SHADOW: L05/L06 skeleton base 文件是否被 codegen 覆盖"""
+    """B-SHADOW: D_PORTFOLIO_CORE/D_EXECUTION_CORE skeleton base 文件是否被 codegen 覆盖"""
     files_to_check = [
         "src/zephyr/pf_core/strategy_base.py",
         "src/zephyr/ex_core/broker_interface.py",
@@ -204,7 +204,7 @@ def check_b_shadow(_repo: Path) -> tuple[bool, str]:
             continue
     if missing:
         return False, f"缺失文件: {', '.join(missing)}"
-    return True, "L05 strategy_base.py 和 L06 broker_interface.py 均存在"
+    return True, "D_PORTFOLIO_CORE strategy_base.py 和 D_EXECUTION_CORE broker_interface.py 均存在"
 
 
 # -- Blind Spot ID -> Check Function Mapping ---------------------------

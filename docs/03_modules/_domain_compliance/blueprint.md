@@ -334,7 +334,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 |---|---------|---------|---------|---------|
 | 1 | SecurityGateway拦截异常 | try/except捕获SecurityGatewayError | 降级为deny+审计记录 | AI指令执行中断 |
 | 2 | ArtifactScanner扫描文件不存在 | FileNotFoundError | 返回空ScanReport+警告日志 | CI/CD门禁跳过该文件 |
-| 3 | ComplianceRule执行异常 | try/except捕获ComplianceEvaluationError | 降级为不合规+审计记录 | 下游L04/L06收到不合规结果 |
+| 3 | ComplianceRule执行异常 | try/except捕获ComplianceEvaluationError | 降级为不合规+审计记录 | 下游D_RISK/D_EXECUTION_CORE收到不合规结果 |
 | 4 | AISG模式匹配超时 | 正则执行超时检测 | 降级为deny+审计记录 | AI指令被拦截 |
 | 5 | 审计日志写入失败 | INF-020 Audit Trail返回错误 | 本地缓存+重试 | 审计记录延迟 |
 
@@ -540,7 +540,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 |------|------|
 | 对应蓝图契约 | §4.1 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\compliance\compliance_manager.py` |
-| 验收标准 | CTR-P1-012可被L04/L06消费 |
+| 验收标准 | CTR-P1-012可被D_RISK/D_EXECUTION_CORE消费 |
 | 验证命令 | `python -m pytest tests/compliance/test_compliance_manager.py -v` |
 | G7 检查项 | compliance_manager.py已读取；产出物路径精确；回滚方案可执行 |
 
@@ -562,7 +562,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 - [ ] DefaultSecurityGateway import成功
 - [ ] ArtifactScanner S-01~S-06检测类别可运行
-- [ ] CTR-P1-012 ComplianceRule可被L04/L06消费
+- [ ] CTR-P1-012 ComplianceRule可被D_RISK/D_EXECUTION_CORE消费
 - [ ] artifact_scanner.py注册到YAML SSoT
 - [ ] audit_registration.py exit 0
 
@@ -585,7 +585,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m pytest tests/compliance/` | 运行L10全部测试 | `-v`: 详细输出; `-k`: 过滤 | exit 0=通过 |
+| 1 | 命令 | `python -m pytest tests/compliance/` | 运行D_COMPLIANCE全部测试 | `-v`: 详细输出; `-k`: 过滤 | exit 0=通过 |
 | 2 | 命令 | `python scripts/governance/d11_compliance/audit_registration.py` | 检查孤儿文件 | — | exit 0=CLEAN |
 | 3 | 配置 | `l10_compliance.yaml` → `components` | YAML SSoT组件注册 | 类型/路径 | 必须与§0.1一致 |
 
@@ -596,7 +596,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 1 | 施工 | DefaultSecurityGateway导入失败 | import报错 | 检查security_gateway_base.py路径 | 修正import | pytest验证 |
 | 2 | 运行 | SecurityGateway拦截异常 | deny-all降级 | 检查审计日志中异常记录 | 异常解除后自动恢复 | 检查l10_security_gateway_blocked_total |
 | 3 | 运行 | ArtifactScanner扫描失败 | 文件不存在 | 检查artifact_path有效性 | 返回空ScanReport | 修正路径后重扫 |
-| 4 | 运行 | 紧急旁路 | L10阻塞CI | 跳过+降级为deny-all | — | L10恢复后取消旁路 |
+| 4 | 运行 | 紧急旁路 | D_COMPLIANCE阻塞CI | 跳过+降级为deny-all | — | D_COMPLIANCE恢复后取消旁路 |
 
 ### 16.12 并发操作模型
 
@@ -849,7 +849,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 设计维度 | 成熟度 | 信心 | 升级标准 | 说明 |
 |---------|:------:|:---:|---------|------|
 | 核心架构 | stable | 高 | 三层防御架构经集成测试验证 | OCP-004+INV-015已定义 |
-| 接口契约 | evolving | 中 | CTR-P1-012被L04/L06实际消费 | 当前仅骨架实现 |
+| 接口契约 | evolving | 中 | CTR-P1-012被D_RISK/D_EXECUTION_CORE实际消费 | 当前仅骨架实现 |
 | 数据模型 | evolving | 中 | AuditDecision/ComplianceRule字段稳定 | 两套DefaultSecurityGateway接口不一致 |
 | 施工步骤 | evolving | 中 | 业务层开放后验证 | T2-deferred，步骤待验证 |
 

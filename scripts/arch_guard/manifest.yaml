@@ -42,7 +42,7 @@ fitness_functions:
     status: active
     priority: P0
     runtime_plane: cold
-    note: "静态扫描 L02 look-ahead 模式"
+    note: "静态扫描 D_FACTOR look-ahead 模式"
 
   - id: FF-005
     invariant_id: INV-005

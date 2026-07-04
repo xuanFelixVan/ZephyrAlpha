@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] task_bound
-"""L12 · archive — 冷存储归档管道（TTL + gzip + backup + 成本降级）"""
+"""遥测 · archive — 冷存储归档管道（TTL + gzip + backup + 成本降级）"""
 
 from zephyr.infrastructure.system_telemetry.archive.cold_stub import (
     RetentionPolicy,

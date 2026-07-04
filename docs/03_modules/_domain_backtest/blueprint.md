@@ -208,9 +208,9 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 |------|--------|
 | 因子研究员 | 向量化回测快速验证IC/IR |
 | 策略开发者 | 事件驱动回测精确验证PnL |
-| 组合管理(L05) | BacktestResult做策略遴选 |
-| 风控(L04) | max_drawdown做风险预算校准 |
-| 运维(L12) | 回测任务监控 |
+| 组合管理(D_PORTFOLIO_CORE) | BacktestResult做策略遴选 |
+| 风控(D_RISK) | max_drawdown做风险预算校准 |
+| 运维(遥测) | 回测任务监控 |
 
 ### §1.6 差距
 
@@ -293,9 +293,9 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
                                ──→ D_OPS(任务监控)
 
 事件:
-  E-BT-01 BacktestCompleted ──→ L05/L04/L07/L08(P1-15,E-RS-02对齐,来源:01-跨域/20-D-RESEARCH)
-  E-BT-02 BacktestPassed    ──→ L05/L08(触发E-PF-01)
-  E-BT-03 OverfittingDetected ──→ L02(因子衰减)/L08
+  E-BT-01 BacktestCompleted ──→ D_PORTFOLIO_CORE/D_RISK/D_REPORTING/D_FRONTEND(P1-15,E-RS-02对齐,来源:01-跨域/20-D-RESEARCH)
+  E-BT-02 BacktestPassed    ──→ D_PORTFOLIO_CORE/D_FRONTEND(触发E-PF-01)
+  E-BT-03 OverfittingDetected ──→ D_FACTOR(因子衰减)/D_FRONTEND
 ```
 
 ### §3.3 状态生命周期
@@ -523,9 +523,9 @@ class MyEngine(BacktestEngineBase):
 | 产出物 | 契约 | consumer_min | 说明 |
 |--------|------|-------------|------|
 | BacktestResult | CTR-P1-016 | D_PF_CORE | 回测结果,策略遴选输入 |
-| E-BT-01事件 | domain_events | L05/L04/L07 | 回测完成通知 |
-| E-BT-02事件 | domain_events | L05/L08 | 回测通过门禁 |
-| E-BT-03事件 | domain_events | L02/L08 | 过拟合检测告警 |
+| E-BT-01事件 | domain_events | D_PORTFOLIO_CORE/D_RISK/D_REPORTING | 回测完成通知 |
+| E-BT-02事件 | domain_events | D_PORTFOLIO_CORE/D_FRONTEND | 回测通过门禁 |
+| E-BT-03事件 | domain_events | D_FACTOR/D_FRONTEND | 过拟合检测告警 |
 
 ## §12 集成目标
 

@@ -51,7 +51,7 @@ ZephyrAlpha — shared/contracts/pause.py
 
 CTR-BP-001: BackpressurePause / 背压暂停信号
 
-下游（L02/L03）处理能力不足时，向上游（L00）发出暂停信号。L00 暂停该标的的数据下发。
+下游（D_FACTOR/D_SIGNAL）处理能力不足时，向上游（D_DATA）发出暂停信号。D_DATA 暂停该标的的数据下发。
 
 SSoT: cross_layer_contracts.yaml -> CTR-BP-001
 Version: 1.0

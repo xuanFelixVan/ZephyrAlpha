@@ -397,7 +397,7 @@ class InProcessVectorMemory:  # implements VectorMemoryProtocol
     ) -> MultiSearchResult:
         """
         跨 Collection 联合检索。遗漏 #3 补充。
-        典型场景：AI 编写 L02 因子代码时需要 decisions(KB 决策记录) + code_context(接口) + lessons(教训)
+        典型场景：AI 编写 D_FACTOR 因子代码时需要 decisions(KB 决策记录) + code_context(接口) + lessons(教训)
 
         merge_strategy（experimental 默认 rrf）：
           - "rrf"（推荐）：倒数排名融合 score = Σ 1/(k + rank_i)，k=60。

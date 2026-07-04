@@ -47,7 +47,7 @@ def main() -> int:
         print("FAIL: require_suspend_flags_in_universe 必须为 true")
         return 1
 
-    print("OK: survivorship 策略开关已启用（数据集证据由 L00 manifest 后续补强）")
+    print("OK: survivorship 策略开关已启用（数据集证据由 D_DATA manifest 后续补强）")
     return 0
 
 

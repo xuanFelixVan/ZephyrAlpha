@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] JSONL写入失败→日志warning
 # [TESTS] tests/infrastructure/
 # [TTL] task_bound
-"""L12 · metrics — SLI/SLO 与业务指标流"""
+"""遥测 · metrics — SLI/SLO 与业务指标流"""
 
 __all__ = ["blueprint_metrics"]
 

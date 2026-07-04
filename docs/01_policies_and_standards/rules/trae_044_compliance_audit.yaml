@@ -355,7 +355,7 @@ sections:
     - order: 7
       action: D7代码质量——审计缺失encoding、FLE import合规、测试覆盖率、未使用导入、直接LLM调用
       pre_condition: src/zephyr/**/*.py+tests/**/*.py
-      expected_result: 测试覆盖率≥70%；零未使用导入；零缺失encoding；公共API有docstring+类型注解；L02-L07零直接LLM SDK调用
+      expected_result: 测试覆盖率≥70%；零未使用导入；零缺失encoding；公共API有docstring+类型注解；D_FACTOR-D_REPORTING零直接LLM SDK调用
       on_failure: GATE-18测试收集门禁阻断
     - order: 8
       action: D8文档同步——审计TTL过期、文档生命周期、带日期快照、AI产物位置

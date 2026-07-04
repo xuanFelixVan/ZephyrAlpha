@@ -22,9 +22,9 @@
 # created: "2026-05-05"
 # ---
 
-"""L00 — Data Quality Gate
+"""D_DATA — Data Quality Gate
 
-数据质量门禁。对 L00 接入的原始市场数据进行质量校验，不合格数据拒绝下发。
+数据质量门禁。对 D_DATA 接入的原始市场数据进行质量校验，不合格数据拒绝下发。
 
 核心职责：
   - 行情质量评分（缺失检测、异常值检测、时间戳校验）
@@ -32,9 +32,9 @@
   - 质量问题分级告警：DataQualityError（CTR-ERR-001）
 
 CTR 契约：
-  生产者 — CTR-ERR-001 (DataQualityError) → L02
+  生产者 — CTR-ERR-001 (DataQualityError) → D_FACTOR
 
-依赖方向：L00 内部——provider → quality_gate → 下游 L02/L03/L09
+依赖方向：D_DATA 内部——provider → quality_gate → 下游 D_FACTOR/D_SIGNAL/D_RESEARCH
 """
 
 from __future__ import annotations

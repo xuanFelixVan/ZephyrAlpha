@@ -56,7 +56,7 @@ def main() -> int:
         fe_files.append(p)
 
     if not fe_files:
-        print("OK: 仓库内无前端源树 — INV-006 基线通过（待 L08 FE 落地后自动收紧）")
+        print("OK: 仓库内无前端源树 — INV-006 基线通过（待 D_FRONTEND FE 落地后自动收紧）")
         return 0
 
     bad: list[str] = []
@@ -69,7 +69,7 @@ def main() -> int:
             bad.append(str(f.relative_to(REPO_ROOT)))
 
     if bad:
-        print("FAIL: 前端疑似直连内网端口（应经 L08 api_gateway）:")
+        print("FAIL: 前端疑似直连内网端口（应经 D_FRONTEND api_gateway）:")
         for b in bad:
             print(f"  - {b}")
         return 1

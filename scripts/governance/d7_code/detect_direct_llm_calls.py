@@ -17,7 +17,7 @@
 detect_direct_llm_calls.py — 裸调 LLM API 检测门禁（GATE-20）
 
 对标：
-  - COND-30 — L02-L07 禁止直接 import LLM SDK（存量检测）
+  - COND-30 — D_FACTOR-D_REPORTING 禁止直接 import LLM SDK（存量检测）
   - RULE-LSG-001 — 所有 LLM 调用必须经过 LSGSecurityGateway（强制门禁）
 
 检测内容：
@@ -25,7 +25,7 @@ detect_direct_llm_calls.py — 裸调 LLM API 检测门禁（GATE-20）
   - 裸调 LLM 客户端创建（openai.OpenAI / anthropic.Anthropic / ChatOpenAI / ChatAnthropic）
   - exec/eval/compile 字符串参数包裹的裸调 LLM API
   - 字符串常量中含裸调 LLM API（疑似变量赋值后 exec）
-  - 传统 COND-30 检测：L02-L07 层直接 import LLM SDK
+  - 传统 COND-30 检测：D_FACTOR-D_REPORTING 层直接 import LLM SDK
 
 豁免规则：
   - 已导入 LSGSecurityGateway / llm_security 的文件（已受保护）

@@ -61,7 +61,7 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图描述研究创新层（L09）——它解决了策略回测标准化和因子发现生命周期管理问题。核心职责包括：BacktestEngineBase OCP扩展点（新策略只加不改）、BacktestResult 不可变数据类、FactorDiscovery 因子生命周期管理、DefaultBacktestEngine 向量化日频回测。当前规模 1 个回测策略 + 0 个因子发现，目标容量 5 策略 + 50 因子。上游依赖 L00 NormalizedMarketData + L02 因子信号 + L07 盘后分析，下游被 L13 Experiment Pipeline 消费。
+本蓝图描述研究创新层（D_RESEARCH）——它解决了策略回测标准化和因子发现生命周期管理问题。核心职责包括：BacktestEngineBase OCP扩展点（新策略只加不改）、BacktestResult 不可变数据类、FactorDiscovery 因子生命周期管理、DefaultBacktestEngine 向量化日频回测。当前规模 1 个回测策略 + 0 个因子发现，目标容量 5 策略 + 50 因子。上游依赖 D_DATA NormalizedMarketData + D_FACTOR 因子信号 + D_REPORTING 盘后分析，下游被 实验 Experiment Pipeline 消费。
 
 ---
 
@@ -114,7 +114,7 @@ codification_at: "2026-05-15"
 
 ### 1.1 背景
 
-L09 研究创新层是量化策略研究的核心工作台。当前痛点：回测缺乏标准化框架、因子发现无生命周期管理、研究结果无法跨层传递。
+D_RESEARCH 研究创新层是量化策略研究的核心工作台。当前痛点：回测缺乏标准化框架、因子发现无生命周期管理、研究结果无法跨层传递。
 
 ### 1.2 目标范围
 
@@ -124,9 +124,9 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 | 2 | ✅ 包含 | 回测结果标准化 | BacktestResult frozen dataclass可产出 |
 | 3 | ✅ 包含 | 因子发现标准化 | FactorDiscovery dataclass可产出 |
 | 4 | ✅ 包含 | 向量化回测 | DefaultBacktestEngine可执行日频回测 |
-| 5 | ❌ 排除 | 因子计算 | L02 Alpha Factor |
-| 6 | ❌ 排除 | 信号生成 | L03 Signal Generation |
-| 7 | ❌ 排除 | 实验管理 | L13 Experiment Pipeline |
+| 5 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor |
+| 6 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation |
+| 7 | ❌ 排除 | 实验管理 | 实验 Experiment Pipeline |
 | 8 | ❌ 排除 | 知识沉淀 | MOD-KB-001 Knowledge Base |
 
 ### 1.4 运行场景约束
@@ -144,8 +144,8 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 | 角色 | 关注点 | 参与阶段 | 约束 |
 |------|--------|---------|------|
 | Owner | 架构决策+施工审批 | 设计+施工 | 可施工期间审批新施工 |
-| L13 消费者 | BacktestResult接口兼容 | 集成 | 需CTR-P1-014注册 |
-| L02 消费者 | FactorDiscovery提升流程 | 集成 | 因子验证通过后提升 |
+| 实验 消费者 | BacktestResult接口兼容 | 集成 | 需CTR-P1-014注册 |
+| D_FACTOR 消费者 | FactorDiscovery提升流程 | 集成 | 因子验证通过后提升 |
 
 ### 1.6 当前态/目标态差距
 
@@ -162,7 +162,7 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 |------|------|---------|------|
 | 日频回测 | 研究员提交信号+行情 | DefaultBacktestEngine.run(data, signals) → 指标计算 | BacktestResult |
 | 因子验证 | 因子IC/IR达标 | FactorDiscovery(candidate→validated) | validated因子 |
-| 因子提升 | Owner审批 | FactorDiscovery(validated→promoted) → 通知L02 | promoted因子 |
+| 因子提升 | Owner审批 | FactorDiscovery(validated→promoted) → 通知D_FACTOR | promoted因子 |
 
 ---
 
@@ -176,9 +176,9 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 | 2 | ✅ 包含 | 回测结果 | BacktestResult (frozen dataclass) | 本模块 |
 | 3 | ✅ 包含 | 因子发现 | FactorDiscovery (frozen dataclass) | 本模块 |
 | 4 | ✅ 包含 | 向量化日频回测 | DefaultBacktestEngine: data + signals → BacktestResult | 本模块 |
-| 5 | ❌ 排除 | 因子计算 | L02 Alpha Factor | L02 |
-| 6 | ❌ 排除 | 信号合成 | L03 Signal Generation | L03 |
-| 7 | ❌ 排除 | 实验注册与追踪 | L13 Experiment Pipeline | L13 |
+| 5 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor | D_FACTOR |
+| 6 | ❌ 排除 | 信号合成 | D_SIGNAL Signal Generation | D_SIGNAL |
+| 7 | ❌ 排除 | 实验注册与追踪 | 实验 Experiment Pipeline | 实验 |
 | 8 | ❌ 排除 | 知识沉淀 | MOD-KB-001 Knowledge Base | KB |
 
 ---
@@ -199,9 +199,9 @@ L09 研究创新层是量化策略研究的核心工作台。当前痛点：回�
 
 | # | 上游 | 处理逻辑 | 下游 | 数据格式 |
 |---|--------|---------|---------|---------|
-| 1 | L00 NormalizedMarketData + L02因子信号 | 向量化回测 → 指标计算 | L13 / L02反馈 | BacktestResult |
-| 2 | L07盘后分析 | 研究假设输入 | L11 ML / L13 | 研究方向 |
-| 3 | 因子信号 | 验证 → 生命周期管理 | L02反馈 | FactorDiscovery |
+| 1 | D_DATA NormalizedMarketData + D_FACTOR因子信号 | 向量化回测 → 指标计算 | 实验 / D_FACTOR反馈 | BacktestResult |
+| 2 | D_REPORTING盘后分析 | 研究假设输入 | D_ML_TRAIN ML / 实验 | 研究方向 |
+| 3 | 因子信号 | 验证 → 生命周期管理 | D_FACTOR反馈 | FactorDiscovery |
 
 ### 3.3 状态生命周期
 
@@ -407,7 +407,7 @@ class BacktestConfig:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | L09依赖与依赖图模块归属表一致 | 已对齐 | 逐项核对 |
+| 1 | §10.1 依赖声明 ↔ dependency_path_panorama.md §5 | D_RESEARCH依赖与依赖图模块归属表一致 | 已对齐 | 逐项核对 |
 | 2 | §10.1 依赖声明 ↔ l09_research_innovation.yaml | YAML接口声明与蓝图依赖一致 | 已对齐 | 逐项核对 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `ls src/zephyr/research/` |
 
@@ -425,8 +425,8 @@ class BacktestConfig:
 
 | 数据生产者 | 数据消费者 | 数据格式 |
 |-----------|-----------|---------|
-| DefaultBacktestEngine | L13 Experiment Pipeline | BacktestResult |
-| FactorDiscovery(validated) | L02 Alpha Factor | 因子提升信号 |
+| DefaultBacktestEngine | 实验 Experiment Pipeline | BacktestResult |
+| FactorDiscovery(validated) | D_FACTOR Alpha Factor | 因子提升信号 |
 
 ### 10.4 自动化规格
 
@@ -453,10 +453,10 @@ class BacktestConfig:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| L00 Data Source | CTR-001消费 | 回测可接收行情数据 | 回测可执行 |
-| L02 Alpha Factor | CTR-002消费+因子提升反馈 | 回测可消费因子信号 | 因子回测可运行 |
-| L07 Post-Trade Analytics | 盘后数据输入 | 研究方向可由盘后分析驱动 | 数据可消费 |
-| L13 Experiment Pipeline | CTR-P1-014消费 | 实验结论可指导研究方向 | 实验可消费 |
+| D_DATA Data Source | CTR-001消费 | 回测可接收行情数据 | 回测可执行 |
+| D_FACTOR Alpha Factor | CTR-002消费+因子提升反馈 | 回测可消费因子信号 | 因子回测可运行 |
+| D_REPORTING Post-Trade Analytics | 盘后数据输入 | 研究方向可由盘后分析驱动 | 数据可消费 |
+| 实验 Experiment Pipeline | CTR-P1-014消费 | 实验结论可指导研究方向 | 实验可消费 |
 
 ---
 
@@ -466,7 +466,7 @@ class BacktestConfig:
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress+priority更新 | 进度+优先级变更 |
 | 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l09_research_innovation.yaml` | 确认files列表与磁盘一致 | ARB-23双重现实 |
-| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 确认L09条目与蓝图一致 | 依赖对齐 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 确认D_RESEARCH条目与蓝图一致 | 依赖对齐 |
 
 ---
 
@@ -525,7 +525,7 @@ class BacktestConfig:
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\research\implementations\default_backtest_engine.py` |
 | 验收标准 | import成功，run返回BacktestResult |
 | 验证命令 | `python -c "from zephyr.research.implementations.default_backtest_engine import DefaultBacktestEngine"` |
-| G7 检查项 | 上游backtest_base.py存在，下游L13可消费 |
+| G7 检查项 | 上游backtest_base.py存在，下游实验可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultBacktestEngine可实例化 |
 
@@ -547,9 +547,9 @@ class BacktestConfig:
 |------|------|
 | 对应蓝图契约 | §4 |
 | 产出位置 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\cross_layer_contracts.yaml` |
-| 验收标准 | BacktestResult注册为producer契约，L13可消费 |
+| 验收标准 | BacktestResult注册为producer契约，实验可消费 |
 | 验证命令 | `grep "CTR-P1-014" cross_layer_contracts.yaml` |
-| G7 检查项 | 下游L13可消费 |
+| G7 检查项 | 下游实验可消费 |
 | AI 自治范围 | human_gated |
 | 检查点 | 契约注册完成 |
 
@@ -760,7 +760,7 @@ class BacktestConfig:
 
 | 场景 | 职责不同？ | 独立依赖？ | 判定 |
 |------|:---:|:---:|------|
-| 回测引擎 + 因子发现 | 否（同属研究创新） | 否（共享L00/L02） | 原地升级 |
+| 回测引擎 + 因子发现 | 否（同属研究创新） | 否（共享D_DATA/D_FACTOR） | 原地升级 |
 | 回测引擎 + 合规引擎 | 是 | 是 | 拆分独立蓝图 |
 
 ---
@@ -828,9 +828,9 @@ class BacktestConfig:
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | L13 Experiment Pipeline | §4 接口契约、§10 依赖关系 |
-| Tier 2 | L02 Alpha Factor | 因子验证反馈（规划） |
-| Tier 2 | L07 Post-Trade Analytics | 研究方向输入（规划） |
+| Tier 1 | 实验 Experiment Pipeline | §4 接口契约、§10 依赖关系 |
+| Tier 2 | D_FACTOR Alpha Factor | 因子验证反馈（规划） |
+| Tier 2 | D_REPORTING Post-Trade Analytics | 研究方向输入（规划） |
 
 ### 变更审批与同步规则
 

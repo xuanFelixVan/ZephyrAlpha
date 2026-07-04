@@ -97,7 +97,7 @@ governance:
     改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
-# {domain_count}域是唯一物理分类体系（depgraph domains表），14层（L00-L13）是域的layer_id属性枚举。
+# {domain_count}域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
 # b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
 
@@ -108,7 +108,7 @@ partitions:
   description: >
     {domain_count}域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
-    14层（L00-L13）是域的layer_id属性枚举。
+    4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 
 # === 横切关注点分区（非业务分类）===
 - id: shared

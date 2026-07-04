@@ -28,7 +28,7 @@ description: >
   任何新模块 MUST 证明与当前开发阶段（Phase A/B/C/D/E）的战略相关性。
   Phase A (当前): 承重墙锁死 + 契约 SSoT 就位
   Phase B: 层骨架生成 + 模块准入
-  Phase C: 第一支柱 MVP (L00-L07)
+  Phase C: 第一支柱 MVP (D_DATA~D_REPORTING)
   超前于当前阶段的模块提案即使合理也标记为 deferred。
 
 rules:

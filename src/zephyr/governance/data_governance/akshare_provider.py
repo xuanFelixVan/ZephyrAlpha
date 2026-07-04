@@ -22,7 +22,7 @@
 # created: "2026-05-05"
 # ---
 
-"""L00 — Akshare Data Provider
+"""D_DATA — Akshare Data Provider
 
 Akshare 数据源适配器。实现 DataSourceBase (OCP 扩展点)，接入 Akshare 金融数据库。
 
@@ -33,8 +33,8 @@ Akshare 数据源适配器。实现 DataSourceBase (OCP 扩展点)，接入 Aksh
   - 数据标准化为 NormalizedMarketData (CTR-001)
 
 CTR 契约：
-  生产者 — CTR-001 (NormalizedMarketData) → L02, L03, L09
-  生产者 — CTR-TRACE-001 (TraceContext) → L02~L07, L11（链头——trace_id 由本层创建）
+  生产者 — CTR-001 (NormalizedMarketData) → D_FACTOR, D_SIGNAL, D_RESEARCH
+  生产者 — CTR-TRACE-001 (TraceContext) → D_FACTOR~D_REPORTING, D_ML_TRAIN（链头——trace_id 由本层创建）
 
 技术约束：
   - Akshare 是同步 HTTP 客户端，fetch_historical 为阻塞调用

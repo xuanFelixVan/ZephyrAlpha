@@ -40,55 +40,55 @@ values:
     definition: "数据——数据源/清洗/存储/管道"
     ai_consumption: "数据领域条目须关联数据源连接器和数据质量指标。"
     ai_keywords: ["数据", "数据源", "清洗", "存储", "ETL"]
-    layer_mapping: L00
+    layer_mapping: L2_domain
 
   - value: feature
     definition: "特征——特征工程/因子计算"
     ai_consumption: "特征领域条目须标注因子类型（技术/基本面/另类）和计算频率。"
     ai_keywords: ["特征", "因子", "特征工程", "计算"]
-    layer_mapping: L02
+    layer_mapping: L2_domain
 
   - value: model
     definition: "模型——ML 训练/推理/部署"
     ai_consumption: "模型领域条目须包含模型版本、训练数据集和性能指标。"
     ai_keywords: ["模型", "ML", "训练", "推理", "部署"]
-    layer_mapping: L11
+    layer_mapping: L2_domain
 
   - value: signal
     definition: "信号——信号生成/合成/分发"
     ai_consumption: "信号领域条目须标注信号频率、置信度和衰减周期。"
     ai_keywords: ["信号", "生成", "合成", "分发", "alpha"]
-    layer_mapping: L03
+    layer_mapping: L2_domain
 
   - value: execution
     definition: "执行——订单/交易/成交"
     ai_consumption: "执行领域条目须包含订单类型、路由策略和滑点模型。"
     ai_keywords: ["执行", "订单", "交易", "成交", "滑点"]
-    layer_mapping: L06
+    layer_mapping: L2_domain
 
   - value: risk
     definition: "风险——风控/限额/熔断"
     ai_consumption: "风险领域条目须标注风险类型（市场/信用/操作/流动性）和限额阈值。"
     ai_keywords: ["风险", "风控", "限额", "熔断", "VaR"]
-    layer_mapping: L04
+    layer_mapping: L2_domain
 
   - value: portfolio
     definition: "组合——持仓/优化/再平衡"
     ai_consumption: "组合领域条目须包含优化目标、约束条件和再平衡频率。"
     ai_keywords: ["组合", "持仓", "优化", "再平衡", "权重"]
-    layer_mapping: L05
+    layer_mapping: L2_domain
 
   - value: reporting
     definition: "报告——绩效/归因/监管报告"
     ai_consumption: "报告领域条目须标注报告频率、受众和合规要求。"
     ai_keywords: ["报告", "绩效", "归因", "监管报告", "P&L"]
-    layer_mapping: L07
+    layer_mapping: L2_domain
 
   - value: infrastructure
     definition: "基础设施——服务器/网络/存储"
     ai_consumption: "基础设施领域条目须包含容量规划、SLI/SLO 和故障恢复策略。"
     ai_keywords: ["基础设施", "服务器", "网络", "存储", "SRE"]
-    layer_mapping: L01
+    layer_mapping: L0_infrastructure
 
   - value: other
     definition: "其他——不属于上述任何领域"

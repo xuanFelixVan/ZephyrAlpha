@@ -19,9 +19,9 @@
      与物理目录名交叉比对，检测不一致并报告。
 
 检测逻辑：
-- 物理路径包含 `infrastructure_runtime_integration/` → 期望 layer=L01
-- 物理路径包含 `data/`   → 期望 layer=L00
-- 物理路径包含 `factor/`  → 期望 layer=L02
+- 物理路径包含 `infrastructure_runtime_integration/` → 期望 layer=L0_infrastructure
+- 物理路径包含 `data/`   → 期望 layer=L2_domain
+- 物理路径包含 `factor/`  → 期望 layer=L2_domain
 - ...
 - 物理路径包含 `_cross_layer/`      → 期望 layer=cross_layer
 - 物理路径包含 `_master-blueprint/` → 期望 layer=cross_layer（Level 1 域总蓝图）
@@ -63,20 +63,20 @@ ensure_utf8_stdout()
 import argparse
 
 LAYER_DIR_MAP = {
-    "data": "L00",
-    "infrastructure_runtime_integration": "L01",
-    "factor": "L02",
-    "signal": "L03",
-    "risk": "L04",
-    "pf_core": "L05",
-    "ex_core": "L06",
-    "pf_core": "L07",
-    "frontend": "L08",
-    "research": "L09",
-    "compliance": "L10",
-    "ml_train": "L11",
-    "observability": "L12",
-    "integration": "L13",
+    "data": "L2_domain",
+    "infrastructure_runtime_integration": "L0_infrastructure",
+    "factor": "L2_domain",
+    "signal": "L2_domain",
+    "risk": "L2_domain",
+    "pf_core": "L2_domain",
+    "ex_core": "L2_domain",
+    "pf_core": "L2_domain",
+    "frontend": "L3_application",
+    "research": "L2_domain",
+    "compliance": "L2_domain",
+    "ml_train": "L2_domain",
+    "observability": "L0_infrastructure",
+    "integration": "L2_domain",
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",
     "_domain-governance": "cross_layer",

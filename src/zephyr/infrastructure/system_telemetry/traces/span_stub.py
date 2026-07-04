@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF_span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""L12 · traces/span_stub — W3C TraceContext 分布式追踪管道。
+"""遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。
 
 蓝图 §6: Span 数据结构 + W3C TraceContext 传播 + span/log 关联 + 采样。
 """

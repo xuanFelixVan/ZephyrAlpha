@@ -23,7 +23,7 @@
 # ---
 
 """
-L01 — Infrastructure Layer Skeleton
+基础设施 — Infrastructure Layer Skeleton
 
 基础设施层抽象基类。定义系统初始化、配置管理、熔断控制的核心接口。
 
@@ -32,7 +32,7 @@ OCP 扩展点：
   - ConfigManagerBase           — 配置来源/验证/热重载
   - KillSwitchManagerBase       — 熔断控制策略
 
-依赖方向：L01 → L00(data) / L02~L13(all via CTR-P1-010)
+依赖方向：基础设施 → D_DATA(data) / D_FACTOR~实验(all via CTR-P1-010)
 """
 
 from __future__ import annotations

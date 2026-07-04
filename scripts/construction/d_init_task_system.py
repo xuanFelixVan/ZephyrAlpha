@@ -202,9 +202,9 @@ specs = [
         "execution_model": "deepseek",
         "safety_level": "L",
         "source_blueprint": "MOD-TASK_SYSTEM",
-        "source_section": "盲点#28 / L08融合",
+        "source_section": "盲点#28 / D_FRONTEND融合",
         "description": (
-            "L08 dashboard 的 task_progress.py 是桩实现。"
+            "D_FRONTEND dashboard 的 task_progress.py 是桩实现。"
             "OPS-001 补齐 repo 后，本任务接入真数据："
             "1. 确认 list_by_phase() 可用 2. 填充真数据 3. 输出 Phase 进度条"
         ),

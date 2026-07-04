@@ -781,7 +781,7 @@ routing_decision_tree:
       route: "M1 (DeepSeek V4 Pro + full sandbox + full_g0_g7)"
     - condition: "task_type == AUDIT AND priority == P0"
       route: "M3 (DeepSeek V4 Pro 复审 + audit sandbox + full_g0_g7)"
-    - condition: "task_type ∈ {DOC_WRITE, REFACTOR} AND target_layer ∈ {L00,L01,L10}"
+    - condition: "task_type ∈ {DOC_WRITE, REFACTOR} AND target_layer ∈ {D_DATA,基础设施,D_COMPLIANCE}"
       route: "M5 (GLM-5.1 + standard sandbox + post_exec_only)"
 ```
 

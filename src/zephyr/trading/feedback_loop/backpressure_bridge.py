@@ -18,7 +18,7 @@
 """FLE → Pipeline 背压桥接（CTR-BP-001~003）
 
 AUDIT-08：在 EvolutionEngine 产出含 CRITICAL 提案时，对 BackpressureManager
-发出 THROTTLE，便于 L00→L02 数据扇区与「系统 stress」协同降速。
+发出 THROTTLE，便于 D_DATA→D_FACTOR 数据扇区与「系统 stress」协同降速。
 
 设计
 ----

@@ -188,7 +188,7 @@ ZephyrAlpha 业务数据库母蓝图(ARCH-BIZDB-001 §5)定义了 **69 个数据
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 日线行情摄取 | L02请求行情 | AkshareProvider.fetch_historical → _normalize_columns → DataFrame | OHLCV DataFrame (CTR-001) |
+| 日线行情摄取 | D_FACTOR请求行情 | AkshareProvider.fetch_historical → _normalize_columns → DataFrame | OHLCV DataFrame (CTR-001) |
 | 新闻原文摄取(成品原料) | C3仓库请求新闻 | tushare/爬虫Provider.fetch → 标准化 → QualityGate.check | 新闻原文 (CTR-002) |
 | 宏观数据摄取 | C3仓库请求宏观 | iFindProvider.fetch → 标准化 → QualityGate.check | 宏观指标 (CTR-003) |
 | 数据质量校验 | 数据接入后 | DefaultQualityGate.check → QualityReport | QualityReport(passed=True/False) |
@@ -602,7 +602,7 @@ class QualityReport:
 | 验收标准 | DataSourceBase 可继承注册，DataQualityGate 可继承注册 |
 | 验证命令 | `python -c "from zephyr.data.provider_base import DataSourceBase"` |
 | 状态 | ✅ 已重建 |
-| G7 检查项 | 上游无依赖，下游L02可消费 |
+| G7 检查项 | 上游无依赖，下游D_FACTOR可消费 |
 
 #### 步骤 2：重建实现层（已重建）
 
@@ -613,7 +613,7 @@ class QualityReport:
 | 验收标准 | AkshareProvider/DefaultQualityGate/MemoryProvider 可导入并实例化 |
 | 验证命令 | `python -c "from zephyr.data.implementations.akshare_provider import AkshareProvider"` |
 | 状态 | ✅ 已重建 |
-| G7 检查项 | 上游抽象层存在，下游L02可消费 |
+| G7 检查项 | 上游抽象层存在，下游D_FACTOR可消费 |
 
 #### 步骤 3：扩展多品类支持（待施工）
 
