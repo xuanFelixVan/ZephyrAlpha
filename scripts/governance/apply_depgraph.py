@@ -613,7 +613,37 @@ def add_design_node(
             conn.close()
 
 
-def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = None) -> int:
+def _check_scan_scope(path: str) -> tuple[bool, list[str]]:
+    """检查 path 是否在 depgraph 生成器扫描范围内（ARCH-035 门禁）。
+
+    读取 depgraph_scan_exclusions.yaml 的 scan_dirs 配置。
+    返回: (in_scope, scan_dirs) — in_scope=True 表示在扫描范围内（不应手动添加节点）
+    """
+    scan_config_path = (
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
+        / "catalogs" / "depgraph_scan_exclusions.yaml"
+    )
+    if not scan_config_path.exists():
+        return False, []
+    try:
+        import yaml
+        with open(scan_config_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        scan_dirs = config.get("depgraph", {}).get("scan_dirs", [])
+        path_norm = path.lstrip("./").rstrip("/")
+        for scan_dir in scan_dirs:
+            scan_dir_norm = scan_dir.rstrip("/")
+            if path_norm == scan_dir_norm or path_norm.startswith(scan_dir_norm + "/"):
+                return True, scan_dirs
+        return False, scan_dirs
+    except Exception:
+        return False, []
+
+
+def add_file_node(
+    path: str, blueprint_id: str, domain_id: str,
+    db_path: str = None, force: bool = False,
+) -> int:
     """
     新增文件级 production 节点（补注册孤儿文件）。
     返回：新分配的 node_id
@@ -621,6 +651,7 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = N
     - path 必须不以 / 结尾（文件路径）
     - 文件必须存在于磁盘
     - domain_id 必须在 domains 表中存在
+    - ARCH-035 门禁：path 在生成器扫描范围内时硬阻断（force=True 可逃生）
     写入字段：design_maturity='production', granularity='file', build_status='generated'
     """
     if path.endswith("/"):
@@ -632,6 +663,20 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = N
     if not full_path.exists():
         print(f"ERROR: 文件不存在: {full_path}", file=sys.stderr)
         return -1
+
+    # ARCH-035 门禁：扫描范围内的文件由生成器自动登记，禁止手动 add-file-node
+    if not force:
+        in_scope, scan_dirs = _check_scan_scope(path)
+        if in_scope:
+            print(
+                f"ERROR [GATE-DEPGRAPH-SCOPE / ARCH-035]: path '{path}' 在 depgraph 生成器扫描范围内。\n"
+                f"  生成器会自动扫描登记该文件，手动 add-file-node 是多余且有害的\n"
+                f"  （干扰生成器 --force 重建，导致 design edge 保护冲突）。\n"
+                f"  正确做法：python scripts/governance/generate_project_depgraph.py --output-db depgraph --force\n"
+                f"  逃生通道：--force-add-file-node（仅在生成器故障且需紧急补登记时使用）",
+                file=sys.stderr,
+            )
+            return -1
 
     with _db_write_lock(db_path=db_path, task="add_file_node"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
@@ -3136,6 +3181,13 @@ def main() -> None:
         metavar="ARG",
         help="新增文件级production节点（补注册孤儿文件）: PATH BLUEPRINT_ID DOMAIN_ID",
     )
+    parser.add_argument(
+        "--force-add-file-node",
+        type=str,
+        nargs="+",
+        metavar="ARG",
+        help="ARCH-035 逃生通道：强制添加扫描范围内的文件节点（仅在生成器故障时使用）: PATH BLUEPRINT_ID DOMAIN_ID",
+    )
     # F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005）
     parser.add_argument(
         "--insert-domain",
@@ -3380,6 +3432,20 @@ def main() -> None:
         blueprint_id = parts[1]
         domain_id = parts[2]
         node_id = add_file_node(path, blueprint_id, domain_id)
+        if node_id < 0:
+            sys.exit(4)
+        print(f"node_id={node_id}")
+        return
+
+    if args.force_add_file_node:
+        parts = args.force_add_file_node
+        if len(parts) < 3:
+            print("ERROR: --force-add-file-node 需要 PATH BLUEPRINT_ID DOMAIN_ID", file=sys.stderr)
+            sys.exit(3)
+        path = parts[0]
+        blueprint_id = parts[1]
+        domain_id = parts[2]
+        node_id = add_file_node(path, blueprint_id, domain_id, force=True)
         if node_id < 0:
             sys.exit(4)
         print(f"node_id={node_id}")

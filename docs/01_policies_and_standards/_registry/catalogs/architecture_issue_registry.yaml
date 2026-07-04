@@ -470,7 +470,39 @@ entries:
   related_rules:
   - TRAE-060
   created: '2026-06-30'
-  last_updated: '2026-07-01'
+- issue_id: '#ARCH-035'
+  title: depgraph 手动 add-file-node 登记生成器扫描范围内的文件——门禁缺失导致 AI 误操作
+  severity: P1中
+  adjudication: |
+    2026-07-04 sess-17516 施工事件触发。AI 发现 event_driven_engine.py 在 depgraph 中
+    无节点，用 apply_depgraph.py --add-file-node 手动添加节点 311224 + 2 条边。后果：
+    手动添加的边被标记为 dep_maturity=active，生成器 --force 重建时 DELETE 操作被
+    PostgreSQL 触发器 protect_apply_depgraph_edges() 阻止，导致生成器无法运行。
+    5-Why 根因分析：
+    (1) 为什么 event_driven_engine.py 无节点？→ merge commit 用 --no-verify 绕过
+    GitCommitGateway，post-commit reconciler（make_depgraph_ops_reconciler）不触发
+    (2) 为什么 AI 手动登记？→ AI 不知道生成器会自动扫描该文件
+    (3) 为什么手动登记有害？→ 手动添加的边干扰生成器 --force 重建
+    (4) 为什么没有门禁阻止？→ apply_depgraph.py --add-file-node 无扫描范围检查
+    (5) 为什么 AI 不知道生成器会自动扫描？→ 无门禁提示，AI 凭直觉手动登记
+    治本方案：在 apply_depgraph.py add_file_node() 函数添加 GATE-DEPGRAPH-SCOPE 门禁，
+    检查 path 是否在 depgraph_scan_exclusions.yaml 的 scan_dirs 范围内，命中则硬阻断
+    (exit 4)并提示运行生成器。逃生通道：--force-add-file-node（仅在生成器故障时使用）。
+    符合向内收原则：生成器是运营态唯一真源，手动登记是多余且有害的操作。
+  fix_phase: |
+    P0 已完成（2026-07-04）：
+    (1) apply_depgraph.py 添加 _check_scan_scope() 函数 + add_file_node() 门禁检查
+    (2) 新增 --force-add-file-node 逃生通道参数
+    (3) capability_canonical_file_registry.yaml 登记 depgraph_scope_gate capability
+    (4) architecture_issue_registry.yaml 登记 ARCH-035
+    P1 无（门禁已治本）
+    P2 可选：在 generate_project_depgraph.py --force 失败时自动提示检查 design edge
+  status: resolved
+  related_rules:
+  - L1铁律（依赖关系先行）
+  - L2铁律（设计态基于最新运营态）
+  created: '2026-07-04'
+  last_updated: '2026-07-04'
 - issue_id: '#ARCH-039'
   title: rollback/ 目录归属错误治本（21非回滚文件混入+72 frontmatter [DOMAIN]造假+蓝图路径漂移）
   severity: P1高
