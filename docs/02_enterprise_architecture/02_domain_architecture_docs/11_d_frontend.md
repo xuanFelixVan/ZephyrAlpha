@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 17:58:10
+> 最后更新: 2026-07-04 23:30:43
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 26 | Module Count | 26 |
 | 域内依赖 | 7 | Internal Dependencies | 7 |
 | 跨域入边 | 6 | Cross-domain Incoming | 6 |
-| 跨域出边 | 9 | Cross-domain Outgoing | 9 |
+| 跨域出边 | 10 | Cross-domain Outgoing | 10 |
 | 设计态模块 | 5 | Design Modules | 5 |
 | 原型态模块 | 14 | Prototype Modules | 14 |
 | 生产态模块 | 7 | Production Modules | 7 |
@@ -76,9 +76,9 @@ graph TD
     end
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_init_py -.->|import_depends| src_zephyr_frontend_dashboard_init_py
     D_BACKTEST["D_BACKTEST design"]
@@ -116,9 +116,9 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_GOVERNANCE | 4 | import_depends |
+| D_BACKTEST | 2 | import,import_depends |
 | D_EX_CORE | 2 | import_depends |
 | D_TRADING | 2 | import_depends |
-| D_BACKTEST | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -212,9 +212,9 @@ graph TD
 │                 [import_depends] (6 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
 │   app.py → gate_statistics.py                                    │
-│   app.py → fitness_functions.py                                  │
-│   app.py → olap_trend.py                                         │
 │   app.py → knowledge_overview.py                                 │
+│   app.py → olap_trend.py                                         │
+│   app.py → fitness_functions.py                                  │
 │   app.py → task_progress.py                                      │
 │   __init__.py → __init__.py                                      │
 └──────────────────────────────────────────────────────────────────┘
