@@ -3944,6 +3944,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：任意状态可转任意状态（如COMPLETED→RUNNING）
 - **影响**：状态机约束失效；非法转换导致数据不一致
 - **修复**：定义VALID_TRANSITIONS字典，转换前校验合法性
+- **状态**：STILL_VALID（保留）— TaskScheduler.start/complete/fail/cancel 直接赋值 task.status，无 VALID_TRANSITIONS 校验（task_scheduler.py L83-112）；需定义转换表+校验逻辑
 
 #### 5.41.2 [HIGH] TaskQueue后台线程无锁修改状态
 - **文件**：[task_queue.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/queue/task_queue.py#L86)
@@ -3951,6 +3952,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：并发读写竞态；状态可能读到半更新值
 - **影响**：状态不一致；难以复现的bug
 - **修复**：所有状态读写加锁，或用queue.Queue通信
+- **状态**：STILL_VALID（保留）— TaskQueue._poll_loop 后台线程修改 item.status 无 threading.Lock（task_queue.py L122-124），主线程 get_stats 同时读取；需加锁或用 queue.Queue 通信
 
 #### 5.41.3 [HIGH] FixStateMachine.force_state()绕过终态保护
 - **文件**：[state_machine.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/auto_fix_engine/state_machine.py#L112)
@@ -3958,6 +3960,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：任何调用方可绕过终态保护（如从TERMINATED强制转回RUNNING）
 - **影响**：终态语义失效；安全审计无追溯
 - **修复**：force_state需记录审计日志+调用方权限校验+限制可强制转换的状态集
+- **状态**：STILL_VALID（保留）— FixStateMachine.force_state() 直接赋值 _current，无权限校验（state_machine.py L112-118），history 仅记 {"forced": True} 非审计日志；需加调用方权限校验+审计日志+限制可强制转换状态集
 
 #### 5.41.4 [HIGH] to_dead_letter()绕过转换表
 - **文件**：[task_queue.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/queue/task_queue.py)
@@ -3965,6 +3968,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：从任何状态（包括COMPLETED）可直接转DEAD_LETTER
 - **影响**：已完成任务被错误标记为死信
 - **修复**：to_dead_letter()应调用transition()并校验源状态
+- **状态**：DRIFTED — task_queue.py 中无 to_dead_letter() 方法（Grep 无命中）；FixStateMachine.to_dead_letter()（state_machine.py L120-126）确实绕过 transition() 直接设 DEAD_LETTER，可从终态 CLOSED 调用，但文件引用错误，债务描述指向 task_queue.py
 
 #### 5.41.5 [HIGH] SessionManager force=True绕过所有校验
 - **文件**：全项目（SessionManager实现）
@@ -3972,6 +3976,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：force参数成为绕过所有安全检查的逃生通道
 - **影响**：恶意/误操作可强制修改会话状态
 - **修复**：移除force参数或限制为特定恢复场景+审计
+- **状态**：STILL_VALID（保留）— audit_orchestration SessionManager.transition(force: bool = False)（session_manager.py L153-164），force=True 时 _validate_transition 跳过校验（L215）；需移除 force 或限制为特定恢复场景+审计
 
 #### 5.41.6 [MEDIUM] DriftStateMachine为假实现（can_transition永返True）
 - **文件**：全项目（DriftStateMachine实现）
@@ -3979,6 +3984,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：状态机名为"状态机"实为"无约束赋值器"
 - **影响**：漂移状态可任意转换；约束失效
 - **修复**：实现真实转换表校验
+- **状态**：STILL_VALID（保留）— DriftStateMachine.can_transition() 永返 True（state_machine.py L153-154），transition() 直接赋值无校验（L149-151）；需定义漂移事件状态转换表+校验逻辑
 
 #### 5.41.7 [HIGH] RollbackStateMachine无终态校验/无锁/无审计
 - **文件**：[rollback_state_machine.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_state_machine.py#L100)
@@ -3986,6 +3992,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：回滚状态机三重缺失：终态可被修改+并发不安全+无追溯
 - **影响**：回滚过程状态被篡改无感知；并发回滚冲突
 - **修复**：加终态校验+threading.Lock+审计日志写入
+- **状态**：STILL_VALID（保留）— RollbackStateMachine.mark_current() 直接赋值 step.status（rollback_state_machine.py L100-116），无 threading.Lock、无审计日志；需加锁+终态校验+审计
 
 #### 5.41.8 [MEDIUM] TaskLifecycleManager FAILED非终态
 - **文件**：全项目（TaskLifecycleManager实现）
@@ -3993,6 +4000,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：FAILED语义模糊（是终态还是中间态？）
 - **影响**：失败任务可无限重试；状态机语义不清
 - **修复**：明确FAILED为中间态+max_retries限制，或设为终态+新建RETRYING状态
+- **状态**：STILL_VALID（保留）— TaskLifecycleManager.VALID_TRANSITIONS[FAILED] = [CREATED]（task_lifecycle_manager.py L88），FAILED 可转回 CREATED 重试，无 max_retries 上限；需明确 FAILED 语义+加重试上限
 
 #### 5.41.9 [MEDIUM] TaskLifecycleManager.transition无并发锁
 - **文件**：全项目（TaskLifecycleManager.transition实现）
@@ -4000,6 +4008,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：并发转换竞态
 - **影响**：状态不一致
 - **修复**：加threading.Lock或asyncio.Lock
+- **状态**：STILL_VALID（保留）— TaskLifecycleManager.transition() 读写 state.status 无锁（task_lifecycle_manager.py L109-123），多 worker 并发调用会竞态；需加 threading.Lock
 
 #### 5.41.10 [MEDIUM] RollbackStateMachine未复用shared.StateMachine基类
 - **文件**：[rollback_state_machine.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rollback/rollback_state_machine.py) vs shared.StateMachine
@@ -4007,6 +4016,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：状态机逻辑重复实现，违反SSoT
 - **影响**：修复需改多处；行为可能不一致
 - **修复**：继承shared.StateMachine，复用转换校验逻辑
+- **状态**：STILL_VALID（保留）— RollbackStateMachine 独立实现 mark_current/retry_current 逻辑（rollback_state_machine.py L100-126），未继承 shared.lifecycle.state_machine.StateMachine；需重构为继承基类复用转换校验
 
 #### 5.41.11 严重度汇总
 
