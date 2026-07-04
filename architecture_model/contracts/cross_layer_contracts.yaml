@@ -728,7 +728,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_PF_CORE
-    target_domains: [D_TRADING, D_COMPLIANCE]
+    target_domains: [D_TRADING, D_GOV_ENFORCEMENT]
     flow: "Portfolio Construction → Analytics/Compliance"
     physical_path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
     stability: upgradable
@@ -806,7 +806,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_TRADING
-    target_domains: [D_FRONTEND, D_COMPLIANCE]
+    target_domains: [D_FRONTEND, D_GOV_ENFORCEMENT]
     flow: "Post-trade Analytics → Frontend/Compliance"
     physical_path: src/zephyr/shared/contracts/performance_attribution_report.py
     stability: upgradable
@@ -832,7 +832,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_INFRA_OPS
-    target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_FRONTEND, D_SIMULATION, D_COMPLIANCE, D_ML_TRAIN, D_OPS]
+    target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_FRONTEND, D_SIMULATION, D_GOV_ENFORCEMENT, D_ML_TRAIN, D_OPS]
     flow: "Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
     stability: upgradable
@@ -860,7 +860,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_RISK
-    target_domains: [D_PF_CORE, D_TRADING, D_FRONTEND, D_COMPLIANCE]
+    target_domains: [D_PF_CORE, D_TRADING, D_FRONTEND, D_GOV_ENFORCEMENT]
     flow: "Risk Metrics → Portfolio/Analytics/Frontend/Compliance"
     physical_path: src/zephyr/shared/contracts/risk_metrics.py
     stability: upgradable
@@ -895,8 +895,8 @@ contracts:
     name: "ComplianceRule / 合规规则"
     priority: P1
     frozen: true
-    source_domain: D_COMPLIANCE
-    target_domains: [D_RISK, D_EX_CORE, D_COMPLIANCE]
+    source_domain: D_GOV_ENFORCEMENT
+    target_domains: [D_RISK, D_EX_CORE, D_GOV_ENFORCEMENT]
     flow: "Compliance Rule Definitions → Risk/Execution/Compliance"
     physical_path: src/zephyr/shared/contracts/compliance_rule.py
     stability: upgradable
@@ -968,7 +968,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D_RISK, D_EX_CORE, D_TRADING, D_COMPLIANCE, D_OPS]
+    target_domains: [D_INFRA_OPS, D_RISK, D_EX_CORE, D_TRADING, D_GOV_ENFORCEMENT, D_OPS]
     flow: "Telemetry Metrics → 全系统"
     physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
     stability: upgradable

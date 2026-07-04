@@ -89,7 +89,7 @@ registries:
     title: "模块登记表"
     path: "docs/03_modules/module-registry.yaml"
     version: "3.1.0"
-    description: "14 层全部模块的生命周期登记（蓝图→施工→交付三阶段）"
+    description: "全部域的模块生命周期登记（蓝图→施工→交付三阶段）"
     ssoT_for:
       - "module_id"
       - "name"

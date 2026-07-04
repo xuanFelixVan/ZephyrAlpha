@@ -46,6 +46,9 @@ v15变更: domains 表 domain_id 添加 CHECK 约束（裁定#ARCH-target_layer_
         阻止连字符(D-DATA)/中文(基础设施)等废弃格式
         nodes.domain_id 已有 FK REFERENCES domains(domain_id)（02_create_pg_schema.sql L53）
         保留 cross_registry_rules（健康sync缓存）与 governance_audit_logs（auto_runner活跃写入）
+v16变更: domains 表 build_status DEFAULT 'unbuilt' → 'planned'（修复预存bug：
+        'unbuilt' 不在 CHECK 允许值中，INSERT 不提供 build_status 时失败）
+        _DDL_DOMAINS 补齐 lifecycle/build_status/layer_id 的 CHECK 约束（与 02_create_pg_schema.sql 对齐）
 
 PRAGMA 基线（P2迁移后已废弃）
 -----------------------------------
@@ -288,12 +291,15 @@ CREATE TABLE IF NOT EXISTS domains (
     ssot_path        TEXT,
     current_modules  INTEGER DEFAULT 0,
     max_modules      INTEGER,
-    lifecycle        TEXT    DEFAULT 'design_only',
+    lifecycle        TEXT    DEFAULT 'design_only'
+        CHECK (lifecycle IN ('operational', 'design_only', 'prototype', 'deprecated')),
     created_at       TEXT    NOT NULL,
     updated_at       TEXT    NOT NULL,
-    build_status     TEXT    DEFAULT 'unbuilt',
+    build_status     TEXT    DEFAULT 'planned'
+        CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     modification_permission TEXT,
-    layer_id         TEXT,
+    layer_id         TEXT
+        CHECK (layer_id IS NULL OR layer_id IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')),
     target_modules   INTEGER,
     production_nodes INTEGER DEFAULT 0
 )

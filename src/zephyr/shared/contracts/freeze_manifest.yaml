@@ -110,7 +110,7 @@ cross_cutting_contracts:
 
   - contract_id: "CTR-ERR-004"
     name: "ConfigDriftWarning"
-    desc: "配置漂移告警 D_COMPLIANCE 生产, 基础设施/D_FRONTEND 消费"
+    desc: "配置漂移告警 D_GOV_ENFORCEMENT 生产, 基础设施/D_FRONTEND 消费"
     physical_path: "src/zephyr/shared/contracts/errors/config_drift_warning.py"
     status: "frozen"
 
@@ -122,7 +122,7 @@ cross_cutting_contracts:
 
   - contract_id: "CTR-ERR-006"
     name: "BudgetExhaustedWarning"
-    desc: "预算耗尽告警 D_COMPLIANCE 生产, 基础设施/D_FRONTEND/遥测 消费"
+    desc: "预算耗尽告警 D_GOV_ENFORCEMENT 生产, 基础设施/D_FRONTEND/遥测 消费"
     physical_path: "src/zephyr/shared/contracts/errors/budget_exhausted_warning.py"
     status: "frozen"
 
@@ -177,7 +177,7 @@ p1_blueprint_contracts:
 
   - contract_id: "CTR-P1-006"
     name: "StrategyLifecycleEvent"
-    desc: "策略生命周期事件 D_PORTFOLIO_CORE→D_REPORTING/D_COMPLIANCE"
+    desc: "策略生命周期事件 D_PORTFOLIO_CORE→D_REPORTING/D_GOV_ENFORCEMENT"
     physical_path: "src/zephyr/shared/contracts/strategy_lifecycle_event.py"
     status: "frozen"
 
@@ -195,7 +195,7 @@ p1_blueprint_contracts:
 
   - contract_id: "CTR-P1-009"
     name: "PerformanceAttributionReport"
-    desc: "绩效归因报告 D_REPORTING→D_FRONTEND/D_COMPLIANCE"
+    desc: "绩效归因报告 D_REPORTING→D_FRONTEND/D_GOV_ENFORCEMENT"
     physical_path: "src/zephyr/shared/contracts/performance_attribution_report.py"
     status: "frozen"
 
@@ -207,13 +207,13 @@ p1_blueprint_contracts:
 
   - contract_id: "CTR-P1-011"
     name: "RiskMetricsReport"
-    desc: "风险指标报告 D_RISK→D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE"
+    desc: "风险指标报告 D_RISK→D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_GOV_ENFORCEMENT"
     physical_path: "src/zephyr/shared/contracts/risk_metrics.py"
     status: "frozen"
 
   - contract_id: "CTR-P1-012"
     name: "ComplianceRule"
-    desc: "合规规则 D_COMPLIANCE→D_RISK/D_EXECUTION_CORE/D_COMPLIANCE"
+    desc: "合规规则 D_GOV_ENFORCEMENT→D_RISK/D_EXECUTION_CORE/D_GOV_ENFORCEMENT"
     physical_path: "src/zephyr/shared/contracts/compliance_rule.py"
     status: "frozen"
 
@@ -320,7 +320,7 @@ frozen_layer_interfaces:
     version: "1.0"
     status: "skeleton_frozen"
 
-  D_COMPLIANCE:
+  D_GOV_ENFORCEMENT:
     file: "src/zephyr/compliance/security_gateway_base.py"
     classes: ["SecurityGateway", "ComplianceEngine"]
     version: "1.0"

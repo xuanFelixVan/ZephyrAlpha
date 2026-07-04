@@ -205,8 +205,8 @@ invariants:
     category: boundary_integrity
     statement: "AISG 拦截门禁：所�?AI 生成的代�?/ 指令必须�?L10 AISG security_gateway 拦截验证后才能执�?"
 
-    owner: D_COMPLIANCE
-    sub_owner: D_COMPLIANCE
+    owner: D_GOV_ENFORCEMENT
+    sub_owner: D_GOV_ENFORCEMENT
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_aisg_gateway.py
     kb_ref: KBG-0010
@@ -217,7 +217,7 @@ invariants:
   - id: INV-016
     category: boundary_integrity
     statement: "审计日志不可篡改：policy_decision_ledger.jsonl 仅允�?append-only 写入，禁止删�?修改历史记录"
-    owner: D_COMPLIANCE
+    owner: D_GOV_ENFORCEMENT
     sub_owner: scripts / audit_log / decision_provenance.py
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_audit_log_immutability.py

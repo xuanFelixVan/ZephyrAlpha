@@ -183,19 +183,19 @@ layer_contracts:
   - contract_id: CTR-P1-006
     layer: pf_core
     role: producer
-    description: "StrategyLifecycleEvent → D_REPORTING, D_COMPLIANCE"
+    description: "StrategyLifecycleEvent → D_REPORTING, D_GOV_ENFORCEMENT"
     domain_mapping: null
 
   - contract_id: CTR-P1-009
     layer: reporting
     role: producer
-    description: "PerformanceAttributionReport → D_FRONTEND, D_COMPLIANCE"
+    description: "PerformanceAttributionReport → D_FRONTEND, D_GOV_ENFORCEMENT"
     domain_mapping: null
 
   - contract_id: CTR-P1-012
     layer: compliance
     role: both
-    description: "ComplianceRule → D_RISK, D_EXECUTION_CORE, D_COMPLIANCE"
+    description: "ComplianceRule → D_RISK, D_EXECUTION_CORE, D_GOV_ENFORCEMENT"
     domain_mapping: null
 
   - contract_id: CTR-P1-014
