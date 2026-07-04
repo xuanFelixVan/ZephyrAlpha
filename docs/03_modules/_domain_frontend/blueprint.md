@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "3.0.0"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,12 +14,12 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/frontend/"
-last_updated: "2026-07-04"
+last_updated: "2026-07-05"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: interface
-summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现(v2.1.0)；v2.2.0规划5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。"
-tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, backtest-visualization, real-trading-panel]
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排); 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz; 待迁移: app.py主应用+5个旧Streamlit页面(v3.1.0)。"
+tags: [human-ai-interface, l08, dashboard, panel, holoviz, plotly, notification, approval, backtest-visualization, real-trading-panel]
 priority: P1
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -255,7 +255,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 10 | **order_book** (v3.0.0) | 5档盘口实时展示组件 | D_DATA MiniQmtProvider | fetch+render |
 | 11 | **position_monitor** (v3.0.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
 | 12 | **trade_panel** (v3.0.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
-| 13 | **ChartFactory** (v3.0.0) | 图表统一工厂(make_equity/make_drawdown/make_heatmap/make_kline) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
+| 13 | **ChartFactory** (v3.0.0) | 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
 
 ### 3.2 数据流
 
@@ -1142,7 +1142,7 @@ def render_trade_panel(data: TradePanelData) -> None:
 | v2.0.0 | 2 | 模板重构 | 章节重排+新增概述+frontmatter 补全 | ⚠️ |
 | v2.1.0 | 2 | 回填+禁止施工 | 接口契约与代码对齐+模板回填+禁止施工标注 | ⚠️ |
 | v2.2.0 | 2 | 交易/回测组件规划 | 新增5个交易/回测组件规格(§16.7.1~§16.7.5)+对接D_BACKTEST/D_EX_CORE/D_DATA | ⚠️(规格已就绪, 代码待施工) |
-| v3.0.0 | 3 | 技术栈切换(#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts(HTML Pane+原生JS); 新增ChartFactory; callback仅编排约束; Datashader阈值触发(>50万点) | ⚠️(规格已更新, 代码待施工) |
+| v3.0.0 | 3 | 技术栈切换(#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts(HTML Pane+原生JS); 新增ChartFactory(make_equity/drawdown/kline/tick/heatmap/orderbook/position/orderflow); callback仅编排约束; Datashader阈值触发(>50万点); 5组件迁移完成(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | ✅(代码已施工, 2026-07-05) |
 | v3.1.0 | 3 | 现有Streamlit页面迁移 | 现有5个页面(任务进度/知识库/门禁/Fitness/OLAP)+10个组件从Streamlit迁移到Panel; app.py主应用重写 | ⚠️(迁移计划, 代码待施工) |
 
 ### 升级组件清单
@@ -1151,11 +1151,11 @@ def render_trade_panel(data: TradePanelData) -> None:
 |--------|---------|---------|----------|:---:|
 | DefaultNotificationManager | GAP-L08-001 | default_notification_manager.py | Phase 1 | 待施工 |
 | DefaultApprovalGateway | GAP-L08-002 | default_approval_gateway.py | Phase 2 | 待施工 |
-| **backtest_results** | GAP-L08-003 | backtest_results.py | Phase 1.5 | 待施工(规格已就绪) |
-| **tick_replay** | GAP-L08-004 | tick_replay.py | Phase 1.5 | 待施工(规格已就绪) |
-| **order_book** | GAP-L08-005 | order_book.py | Phase 1.5 | 待施工(规格已就绪) |
-| **position_monitor** | GAP-L08-006 | position_monitor.py | Phase 1.5 | 待施工(规格已就绪) |
-| **trade_panel** | GAP-L08-007 | trade_panel.py | Phase 1.5 | 待施工(规格已就绪) |
+| **backtest_results** | GAP-L08-003 | backtest_results.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
+| **tick_replay** | GAP-L08-004 | tick_replay.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
+| **order_book** | GAP-L08-005 | order_book.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
+| **position_monitor** | GAP-L08-006 | position_monitor.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
+| **trade_panel** | GAP-L08-007 | trade_panel.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
 
 ---
 

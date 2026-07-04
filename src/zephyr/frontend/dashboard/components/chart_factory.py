@@ -31,6 +31,9 @@ ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生
   - make_kline: K线图(Lightweight Charts v5.2, pn.pane.HTML+原生JS), backtest_results 调用
   - make_tick: Tick回放图(Plotly+plotly_resampler), tick_replay 调用
   - make_heatmap: 热力图(Plotly), 通用
+  - make_orderbook: 5档盘口(Plotly 水平条形图, ask红/bid绿), order_book 调用
+  - make_position: 持仓表格(Plotly Table, T+1锁定行红色背景), position_monitor 调用
+  - make_orderflow: 订单流(Plotly Table+状态颜色编码), trade_panel 调用
 
 技术栈版本(ARCH-047 tech_stack):
   - holoviews >=1.19.0,<2.0.0 (GOV-P1)
