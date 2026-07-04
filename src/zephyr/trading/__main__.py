@@ -58,6 +58,9 @@ def main() -> None:
         shutdown_requested = True
 
     signal.signal(signal.SIGINT, _signal_handler)
+    # 5.26.5 修复：添加 SIGTERM 处理，与 SIGINT 共用 handler
+    # Docker/K8s 发送 SIGTERM 优雅停止，原仅处理 SIGINT 导致容器停止时被 SIGKILL 强制终止
+    signal.signal(signal.SIGTERM, _signal_handler)
 
     if args.once:
         report = core.reconcile()
