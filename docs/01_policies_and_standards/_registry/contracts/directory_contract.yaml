@@ -135,7 +135,7 @@ directory_zones:
     #   - 代码/脚本文件 ttl 由文件头部显式声明（A_full/A_test/E_shell 格式含 [TTL] 字段，
     #     见 trae_047 v1.2.0 L469-470），值合法性由 GATE-15（check_frontmatter_metadata.py）校验
     #   - DCR-003/004 不校验 neutral zone（无 default_ttl 可比对），与"是否有 ttl 字段"无关
-    description: "中性区——代码/脚本/配置/测试/数据/日志/工具，default_ttl=null 表示 zone 不提供默认 ttl 兜底（文件 ttl 由头部显式声明，GATE-15 校验值合法性）"
+    description: "中性区——代码/脚本/配置/测试/数据/日志/工具/临时运行时，default_ttl=null 表示 zone 不提供默认 ttl 兜底（文件 ttl 由头部显式声明，GATE-15 校验值合法性）"
     paths:
       - "src/"
       - "scripts/"
@@ -143,7 +143,11 @@ directory_zones:
       - "config/"
       - "data/"
       - "session_logs/"
+      - "session-logs/"
       - "tools/"
+      - "tmp/"
+      - "logs/"
+      - "_journals/"
       - ".runtime/"
       - ".trae/"
     default_ttl: null

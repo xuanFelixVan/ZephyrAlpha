@@ -1114,3 +1114,75 @@ entries:
   - GOV-028
   created: '2026-07-04'
   last_updated: '2026-07-04'
+
+# --- #ARCH-048: 数据库边界裁定（采纳母蓝图硬性边界二元判定，Redis/EventStore降为P2，ClickHouse门禁解除） ---
+- issue_id: '#ARCH-048'
+  title: 数据库边界裁定——采纳ARCH-BIZDB-001硬性边界二元判定，Redis/EventStore优先级降为P2，ClickHouse门禁解除
+  severity: P1高
+  adjudication: |
+    ARCH-048 裁定：母蓝图（database/blueprint.md）的"硬性边界二元判定"优先于子蓝图（SH-DB-001 §3）的门禁逻辑。
+    (1) 采纳母蓝图硬性边界二元判定：业务数据库边界 = 显式 DatabaseService 访问 + read_only=True 安全约束
+    (2) Redis/EventStore 优先级降为 P2（非核心，按需引入）
+    (3) SH-DB-001 §3 门禁逻辑标注废弃（禁止裸 duckdb.connect 等约束仍有效，但 ClickHouse 直连门禁解除）
+    (4) ClickHouse 已实际部署，门禁状态从"未部署"更正为"已部署"
+    治本"母蓝图推翻子蓝图未登记 ARCH"的病根——之前母蓝图与子蓝图对 ClickHouse/Redis 的约束矛盾。
+  fix_phase: |
+    P0 DONE 2026-07-05：
+    (a) ARCH-048 条目登记（本条目）
+    (b) c1_market_clickhouse.md 蓝图状态更新（ClickHouse 已部署）
+    (c) market.duckdb 文件删除（已于 2026-07-05 删除）
+    (d) database_service.py docstring 修正
+    (e) 品类模板 database 字段统一
+    (f) SLA 命名统一为 P0/P1/P2 并分级
+  status: decided
+  created: '2026-07-05'
+  last_updated: '2026-07-05'
+
+# --- #ARCH-049: 临时文件乱放根目录治本（FILE-PLACEMENT-TTL gate 落地永久区准入机制） ---
+- issue_id: '#ARCH-049'
+  title: 临时文件乱放根目录治本——FILE-PLACEMENT-TTL gate 落地 ttl_vocabulary §146-152 永久区准入机制
+  severity: P1高
+  adjudication: |
+    ARCH-049 裁定：新建 in-process gate FILE-PLACEMENT-TTL（priority=33），治本"AI 创建临时文件乱放根目录或永久区"的病根。
+
+    【病根（5-Why 根因分析）】
+    症状：2026-07-05 audit_assignment/ 临时文件夹放项目根目录（应在 docs/_working/）。
+
+    Why-1：为什么临时文件放根目录？因为 AI 创建文件时无路径约束门禁。
+    Why-2：为什么无路径约束门禁？因为 ttl_vocabulary.yaml §146-152 设计了永久区准入机制但标注"后续实现"未施工。
+    Why-3：为什么标注"后续实现"未施工？因为 GitCommitGateway 预留了 allow_promote 参数 + PROMOTION_BLOCKED 常量但无检查逻辑。
+    Why-4：为什么有预留无实现？因为永久区准入需要动态加载 directory_contract.yaml，原硬编码 _PERMANENT_ZONE_DIRS 是第四份真源。
+    Why-5（根因）：路径约束与 TTL 约束分离设计——TTL 门禁只校验 ttl 字段合法性，不校验 ttl↔路径一致性；
+    目录门禁只校验扩展名，不校验新文件准入。两个门禁各管一摊，"临时文件乱放"的空隙无人覆盖。
+
+    【治本方案】
+    新建 FILE-PLACEMENT-TTL gate（priority=33，在 TTL-METADATA(32) 之后、R5-DIGIT-SUFFIX(35) 之前），
+    三重校验：
+    1. 永久区准入（PROMOTION_BLOCKED）：permanent.paths 新文件需 allow_promote=True（exempt_subdirs 生成器输出豁免）
+       ——只对新增文件检查（修改文件不触发）
+    2. TTL↔zone 一致性：frontmatter.ttl=permanent 但在临时区 → 阻断；frontmatter.ttl=task_bound 但在永久区 → 阻断
+       ——对所有文件检查（持续约束）
+    3. 根目录子目录准入：第一级目录不在 directory_zones 所有 paths → 阻断（防止 audit_assignment/ 这类乱建子目录）
+       ——只对新增文件检查（修改文件不触发）；以 . 开头的隐藏目录豁免
+
+    【防复发三重防御】
+    1. 门禁阻断：FILE-PLACEMENT-TTL gate 在 pre-commit 阶段阻断违规文件
+    2. 真源动态加载：从 directory_contract.yaml + ttl_vocabulary.yaml 动态加载路径，禁止硬编码
+    3. capability 登记：file_placement_ttl_gate capability 登记 + creation_token，新 AI 可发现
+
+    【关联】
+    - ttl_vocabulary.yaml §146-152——永久区准入机制设计（原"后续实现"，本 ARCH 落地）
+    - directory_contract.yaml directory_zones——三区路径定义（permanent/temporary/neutral）
+    - GitCommitGateway allow_promote 参数——PROMOTION_BLOCKED 状态接线
+  fix_phase: |
+    P0 DONE 2026-07-05：
+    (a) ARCH-049 条目登记（本条目）
+    (b) file_placement_ttl_gate.py 新建（in-process gate，priority=33，三重校验）
+    (c) git_commit_gateway.py 注册 gate + allow_promote 透传 + PROMOTION_BLOCKED 状态映射
+    (d) ttl_vocabulary.yaml §146-152 从"后续实现"改为"已实现，ARCH-049，2026-07-05"
+    (e) directory_contract.yaml neutral zone 补充 session-logs/tmp/logs/_journals 路径
+    (f) capability_canonical_file_registry.yaml 登记 file_placement_ttl_gate capability
+    P1 TODO：测试用例补全（tests/governance/commit_gates/test_file_placement_ttl_gate.py）
+  status: decided
+  created: '2026-07-05'
+  last_updated: '2026-07-05'
