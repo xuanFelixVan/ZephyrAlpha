@@ -38,6 +38,7 @@ from __future__ import annotations
 import logging
 import uuid
 from dataclasses import dataclass
+from datetime import date as _date_class
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Optional
@@ -316,6 +317,8 @@ class DefaultBacktestEngine(BacktestEngineBase):
         """将日期转换为datetime对象"""
         if isinstance(date, datetime):
             return date
+        elif isinstance(date, _date_class):  # datetime.date (非 datetime.datetime)
+            return datetime(date.year, date.month, date.day)
         elif isinstance(date, str):
             try:
                 return datetime.fromisoformat(date)
