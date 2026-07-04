@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 09:43:40
+> 最后更新: 2026-07-04 14:34:03
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_BACKTEST | Domain ID | D_BACKTEST |
 | 域名称 | 回测 | Domain Name | 回测 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 16 | Module Count | 16 |
-| 域内依赖 | 16 | Internal Dependencies | 16 |
+| 模块数 | 17 | Module Count | 17 |
+| 域内依赖 | 18 | Internal Dependencies | 18 |
 | 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 6 | Design Modules | 6 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
-| 生产态模块 | 0 | Production Modules | 0 |
+| 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 | Description | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
 
@@ -59,6 +59,7 @@ graph TD
         src_zephyr_backtest_core_portfolio_py["src/zephyr/backtest/core/portfolio.py/ design"]
         src_zephyr_backtest_core_tick_replay_py["src/zephyr/backtest/core/tick_replay.py/ design"]
         src_zephyr_backtest_implementations_init_py["src/zephyr/backtest/implementations/__init__.py prototype"]
+        src_zephyr_backtest_implementations_event_driven_engine_py["src/zephyr/backtest/implementations/event_drive... production"]
         src_zephyr_backtest_implementations_vectorized_engine_py["src/zephyr/backtest/implementations/vectorized_... prototype"]
         src_zephyr_backtest_infrastructure_init_py["src/zephyr/backtest/infrastructure/__init__.py prototype"]
         src_zephyr_backtest_models_init_py["src/zephyr/backtest/models/__init__.py prototype"]
@@ -80,6 +81,8 @@ graph TD
     src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_matching_engine_py -.->|import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|import_depends| src_zephyr_backtest_core_tick_replay_py
     D_GOVERNANCE["D_GOVERNANCE design"]
     src_zephyr_backtest_core_tick_replay_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_backtest_core_data_handler_py -.->|import_depends| D_GOVERNANCE
@@ -98,6 +101,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_backtest_implementations_event_driven_engine_py production
     class src_zephyr_backtest_init_py,src_zephyr_backtest_extensions_init_py,src_zephyr_backtest_api_init_py,src_zephyr_backtest_core_init_py,src_zephyr_backtest_core_data_handler_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_core_matching_engine_py,src_zephyr_backtest_core_matching_logic_py,src_zephyr_backtest_core_metrics_py,src_zephyr_backtest_core_portfolio_py,src_zephyr_backtest_core_tick_replay_py,src_zephyr_backtest_implementations_init_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_infrastructure_init_py,src_zephyr_backtest_models_init_py,src_zephyr_backtest_services_init_py design
     class D_SHARED external_prod
     class D_GOVERNANCE,D_EX_CORE,D_FRONTEND,D_INTELLIGENCE external_design
@@ -122,7 +126,7 @@ graph TD
 
 ## 架构分层视图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 回测（D_BACKTEST）的模块分布。共 16 个模块 / 16 modules。
+> 按 architecture_layer 分层显示 回测（D_BACKTEST）的模块分布。共 17 个模块 / 17 modules。
 
 ```
 
@@ -143,7 +147,7 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (6 modules)                 │
+│                未分类 / Unclassified (7 modules)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/backtest/core/data_handler.py/  [design]            │
 │   src/zephyr/backtest/core/matching_engine.py/  [design]         │
@@ -151,13 +155,14 @@ graph TD
 │   src/zephyr/backtest/core/metrics.py/  [design]                 │
 │   src/zephyr/backtest/core/portfolio.py/  [design]               │
 │   src/zephyr/backtest/core/tick_replay.py/  [design]             │
+│   src/zephyr/backtest/implementations/event_driven_engine.py ... │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 16 个模块 / 16 modules）。
+> 按 architecture_layer 分组的模块清单（共 17 个模块 / 17 modules）。
 
 ### L2 领域层 / Domain Layer (10 modules)
 
@@ -174,7 +179,7 @@ graph TD
 | 9 | src/zephyr/backtest/models/__init__.py | src/zephyr/backtest/models/__init__.py | prototype | generated |
 | 10 | src/zephyr/backtest/services/__init__.py | src/zephyr/backtest/services/__init__.py | prototype | generated |
 
-### 未分类 / Unclassified (6 modules)
+### 未分类 / Unclassified (7 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -184,22 +189,23 @@ graph TD
 | 4 | src/zephyr/backtest/core/metrics.py/ | src/zephyr/backtest/core/metrics.py/ | design | generated |
 | 5 | src/zephyr/backtest/core/portfolio.py/ | src/zephyr/backtest/core/portfolio.py/ | design | generated |
 | 6 | src/zephyr/backtest/core/tick_replay.py/ | src/zephyr/backtest/core/tick_replay.py/ | design | stable |
+| 7 | src/zephyr/backtest/implementations/event_driven_engine.py | src/zephyr/backtest/implementations/e... | production | stable |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 16 条 / 16 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 18 条 / 18 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│       依赖关系图 / Dependency Graph (共 16 条 / 16 edges)        │
+│       依赖关系图 / Dependency Graph (共 18 条 / 18 edges)        │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 1                               │
-│   [import_depends]: 16 条 / edges                                │
+│   [import_depends]: 18 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (16 条 / edges)                 │
+│                 [import_depends] (18 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   __init__.py → engine_base.py                                   │
 │   __init__.py → vectorized_engine.py                             │
@@ -217,6 +223,8 @@ graph TD
 │    → engine_base.py                                              │
 │    →                                                             │
 │    →                                                             │
+│   event_driven_engine.py → engine_base.py                        │
+│   event_driven_engine.py →                                       │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
