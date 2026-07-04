@@ -31,7 +31,6 @@ import inspect
 import os
 import subprocess
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -40,20 +39,6 @@ import pytest
 from zephyr.shared.io.paths import REPO_ROOT
 sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT))
-
-# 模块级缓存：替身脚本路径
-_STANDIN_CACHE: Path | None = None
-
-
-def _get_standin_script() -> Path:
-    """返回替身脚本路径（模块级缓存）。"""
-    global _STANDIN_CACHE
-    if _STANDIN_CACHE is not None:
-        return _STANDIN_CACHE
-    tmp = Path(tempfile.mktemp(suffix=".py"))
-    tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
-    _STANDIN_CACHE = tmp
-    return tmp
 
 
 @pytest.fixture(scope="module")
@@ -66,10 +51,15 @@ def launcher_module():
     return mod
 
 
-@pytest.fixture
-def standin_script():
-    """返回替身脚本路径。"""
-    return _get_standin_script()
+# 5.21.10 修复：_STANDIN_CACHE 全局变量 + tempfile.mktemp 永不清理 →
+# session 级 fixture + tmp_path_factory（pytest 管理生命周期，session 结束自动清理）
+@pytest.fixture(scope="session")
+def standin_script(tmp_path_factory):
+    """返回替身脚本路径（session 级共享，session 结束自动清理）。"""
+    standin_dir = tmp_path_factory.mktemp("standin")
+    script = standin_dir / "standin.py"
+    script.write_text("import time; time.sleep(60)", encoding="utf-8")
+    return script
 
 
 @pytest.fixture

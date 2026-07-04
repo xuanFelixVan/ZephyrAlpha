@@ -32,7 +32,6 @@ import os
 import signal
 import subprocess
 import sys
-import tempfile
 import textwrap
 import time
 from pathlib import Path
@@ -43,24 +42,6 @@ import pytest
 from zephyr.shared.io.paths import REPO_ROOT
 sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT))
-
-# 模块级缓存：替身脚本路径（避免每个测试重复创建）
-_STANDIN_CACHE: Path | None = None
-
-
-def _get_standin_script() -> Path:
-    """返回替身脚本路径（模块级缓存）。
-
-    替身脚本用 time.sleep(60) 模拟长期运行的 MCP Server，
-    避免依赖缺失导致测试不稳定。
-    """
-    global _STANDIN_CACHE
-    if _STANDIN_CACHE is not None:
-        return _STANDIN_CACHE
-    tmp = Path(tempfile.mktemp(suffix=".py"))
-    tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
-    _STANDIN_CACHE = tmp
-    return tmp
 
 
 @pytest.fixture(scope="module")
@@ -90,12 +71,19 @@ def gateway():
         pass
 
 
-@pytest.fixture
-def standin_script():
-    """返回替身脚本路径，测试结束后清理。"""
-    script = _get_standin_script()
-    yield script
-    # 不删除缓存文件，模块级复用
+# 5.21.10 修复：_STANDIN_CACHE 全局变量 + tempfile.mktemp 永不清理 →
+# session 级 fixture + tmp_path_factory（pytest 管理生命周期，session 结束自动清理）
+@pytest.fixture(scope="session")
+def standin_script(tmp_path_factory):
+    """返回替身脚本路径（session 级共享，session 结束自动清理）。
+
+    替身脚本用 time.sleep(60) 模拟长期运行的 MCP Server，
+    避免依赖缺失导致测试不稳定。
+    """
+    standin_dir = tmp_path_factory.mktemp("standin")
+    script = standin_dir / "standin.py"
+    script.write_text("import time; time.sleep(60)", encoding="utf-8")
+    return script
 
 
 # ---------------------------------------------------------------------------
@@ -318,7 +306,7 @@ class TestSubprocessSignalHandling:
     Unix: 直接使用 SIGINT/SIGTERM。
     """
 
-    def _create_signal_test_script(self) -> Path:
+    def _create_signal_test_script(self, tmp_path: Path) -> Path:
         """创建模拟 launcher 信号处理的子进程脚本。
 
         脚本行为：
@@ -327,8 +315,11 @@ class TestSubprocessSignalHandling:
         3. 进入 while True 循环
         4. 收到信号时调用 terminate_all + shutdown + exit(0)
         5. 输出子进程 PID 供测试验证
+
+        5.21.10 修复：tempfile.mktemp（已废弃 + race condition）→
+        tmp_path（pytest 管理，测试结束自动清理）。
         """
-        script = Path(tempfile.mktemp(suffix=".py"))
+        script = tmp_path / "signal_test_script.py"
         script.write_text(
             textwrap.dedent(
                 """
@@ -436,9 +427,9 @@ class TestSubprocessSignalHandling:
         except Exception:
             pass
 
-    def test_subprocess_sigint_clean_exit(self):
+    def test_subprocess_sigint_clean_exit(self, tmp_path):
         """验证子进程收到 SIGINT/SIGBREAK 后干净退出。"""
-        script = self._create_signal_test_script()
+        script = self._create_signal_test_script(tmp_path)
         proc = None
         try:
             proc = self._start_subprocess(script)
@@ -470,12 +461,12 @@ class TestSubprocessSignalHandling:
                 except Exception:
                     pass
 
-    def test_subprocess_sigterm_clean_exit(self):
+    def test_subprocess_sigterm_clean_exit(self, tmp_path):
         """验证子进程收到 SIGTERM/SIGBREAK 后干净退出。
 
         Windows 上 SIGTERM 不可拦截（TerminateProcess），使用 SIGBREAK 替代。
         """
-        script = self._create_signal_test_script()
+        script = self._create_signal_test_script(tmp_path)
         proc = None
         try:
             proc = self._start_subprocess(script)
@@ -507,9 +498,9 @@ class TestSubprocessSignalHandling:
                 except Exception:
                     pass
 
-    def test_subprocess_child_processes_terminated_after_signal(self):
+    def test_subprocess_child_processes_terminated_after_signal(self, tmp_path):
         """验证信号发送后所有子进程被清理（验收标准）。"""
-        script = self._create_signal_test_script()
+        script = self._create_signal_test_script(tmp_path)
         proc = None
         try:
             proc = self._start_subprocess(script)
