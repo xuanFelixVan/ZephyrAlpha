@@ -32,6 +32,7 @@ import hashlib
 import json
 import logging
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -114,7 +115,7 @@ class AuditLogger:
         byte_out: int = 0,
     ) -> dict[str, Any]:
         entry: dict[str, Any] = {
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "timestamp": datetime.now(UTC).isoformat(),
             "client_session_id": client_session_id,
             "tool_name": tool_name,
             "arguments_hash": arguments_hash or "",

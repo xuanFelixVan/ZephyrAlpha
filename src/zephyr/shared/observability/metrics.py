@@ -45,11 +45,14 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import logging
 import threading
 import time
 from dataclasses import dataclass
 from enum import Enum, unique
 from typing import Any
+
+_logger = logging.getLogger(__name__)
 
 __all__ = [
     "COUNT_API_ERRORS",
@@ -126,13 +129,6 @@ class MetricsRegistry:
             key = self._label_key(labels or {})
             self._counters[name][key] = self._counters[name].get(key, 0.0) + 1.0
 
-    def dec(self, name: str, labels: dict[str, str] | None = None) -> None:
-        with self._lock:
-            if name not in self._counters:
-                self._counters[name] = {}
-            key = self._label_key(labels or {})
-            self._counters[name][key] = self._counters[name].get(key, 0.0) - 1.0
-
     def set_gauge(self, name: str, value: float) -> None:
         with self._lock:
             self._gauges[name] = value
@@ -147,6 +143,12 @@ class MetricsRegistry:
             self._histograms[name][key].append(value)
             if len(self._histograms[name][key]) > 10000:
                 self._histograms[name][key] = self._histograms[name][key][-5000:]
+                _logger.warning(
+                    "Metrics histogram '%s' truncated to 5000 samples (labels=%s) — "
+                    "p99/p50 may be biased toward recent observations",
+                    name,
+                    dict(key),
+                )
 
     def measure(self, name: str, labels: dict[str, str] | None = None) -> _TimingContext:
         return _TimingContext(self, name, labels)
@@ -262,7 +264,7 @@ class _TimingContext:
 _global_registry: MetricsRegistry | None = None
 
 
-def get_registry() -> Self:
+def get_registry() -> MetricsRegistry:
     global _global_registry
     if _global_registry is None:
         _global_registry = MetricsRegistry()

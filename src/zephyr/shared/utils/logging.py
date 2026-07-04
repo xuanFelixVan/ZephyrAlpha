@@ -59,6 +59,7 @@ __all__ = [
     "configure_root_logger",
     "get_logger",
     "module_id_var",
+    "request_id_var",
     "session_id_var",
     "trace_id_var",
 ]
@@ -66,6 +67,7 @@ __all__ = [
 trace_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("trace_id", default="")
 session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("session_id", default="")
 module_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("module_id", default="")
+request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="")
 
 
 class LogLevel:
@@ -88,6 +90,7 @@ class _StructuredFormatter(logging.Formatter):
             "module_id": getattr(record, "z_module_id", "") or module_id_var.get(),
             "session_id": getattr(record, "z_session_id", "") or session_id_var.get(),
             "trace_id": getattr(record, "z_trace_id", "") or trace_id_var.get(),
+            "request_id": getattr(record, "z_request_id", "") or request_id_var.get(),
         }
 
         if record.exc_info and record.exc_info[1] is not None:
@@ -160,12 +163,14 @@ class ZephyrLogger:
         trace_id = trace_id_var.get()
         session_id = session_id_var.get()
         module_id = module_id_var.get()
+        request_id = request_id_var.get()
 
         kwargs: dict[str, Any] = {
             "extra": {
                 "z_trace_id": trace_id,
                 "z_session_id": session_id,
                 "z_module_id": module_id,
+                "z_request_id": request_id,
                 "z_extra": extra,
             }
         }
@@ -255,7 +260,7 @@ def get_logger(
     *,
     session_id: str | None = None,
     module_id: str | None = None,
-) -> Self:
+) -> ZephyrLogger:
     """获取或创建 ZephyrLogger 实例。
 
     首次调用时，自动将 session_id / module_id 注入 contextvars，
@@ -287,10 +292,11 @@ def TraceContext(
     *,
     session_id: str | None = None,
     module_id: str | None = None,
+    request_id: str | None = None,
 ):
     """trace_id 传播上下文管理器。
 
-    在 with 块内，所有日志调用自动携带指定的 trace_id / session_id / module_id。
+    在 with 块内，所有日志调用自动携带指定的 trace_id / session_id / module_id / request_id。
     嵌套 TraceContext 时，内层恢复外层 token。
 
     用法:
@@ -300,7 +306,7 @@ def TraceContext(
             with TraceContext() as tc2:
                 log.info("sub-trace")
 
-        with TraceContext(session_id="sess-001", module_id="MOD-INF-016"):
+        with TraceContext(session_id="sess-001", module_id="MOD-INF-016", request_id="req-abc"):
             log.info("scoped log")
     """
     if trace_id is None:
@@ -309,6 +315,7 @@ def TraceContext(
     token_trace = trace_id_var.set(trace_id)
     token_session = session_id_var.set(session_id or trace_id_var.get())
     token_module = module_id_var.set(module_id or module_id_var.get())
+    token_request = request_id_var.set(request_id or request_id_var.get())
 
     try:
         yield trace_id
@@ -316,6 +323,7 @@ def TraceContext(
         trace_id_var.reset(token_trace)
         session_id_var.reset(token_session)
         module_id_var.reset(token_module)
+        request_id_var.reset(token_request)
 
 
 _root_configured = False

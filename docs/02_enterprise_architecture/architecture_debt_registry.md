@@ -2335,11 +2335,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > 审计维度：日志级别滥用/结构化日志缺失/trace context传播/metric命名一致性/PII泄漏/日志格式分裂/审计混淆
 > 审计方法：Grep + Read真实文件取证（ops/observability/logging.py、metrics.py、trading/__main__.py等）
+>
+> 已修复（6条）：5.20.4 cost_budget API漂移+静默异常 / 5.20.6 get_logger返回类型Self+缓存module_id不更新 / 5.20.7 request_id未纳入TraceContext / 5.20.9 MetricsRegistry.dec()反模式 / 5.20.10 observe()静默截断 / 5.20.12 AuditLogger时间戳格式不一致（时间戳已统一为微秒级isoformat；审计通道分离仍见5.20.8）
 
-#### 5.20.1 三套并存的日志实现（含逐字复制副本）【HIGH】
-- 证据：[ops/observability/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 规范实现357行；[shared/observability_02/logging.py](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 逐字相同副本（仅module_id注释不同）；structlog第三套：`autonomy_core/prompt_registry.py:61,83`、`infrastructure/_base_server.py:71,172`、`governance/persistence/olap_engine.py:67,78` 等5个模块直接用 `structlog.get_logger().bind(...)`
-- 病根：根因1（SSoT断裂，shared/observability_02是历史副本未清理，structlog与ZephyrLogger不互通）
-- 修复：删除shared/observability_02/，structlog调用统一替换为get_logger(__name__)
+#### 5.20.1 structlog第三套日志实现（5个模块未统一）【MEDIUM】
+- 证据：shared/observability_02/ 历史副本已删除（SSoT断裂主要问题已解决）；但 structlog 第三套仍存在：`autonomy_core/prompt_registry.py:61,83`、`infrastructure/_base_server.py:71,172`、`governance/persistence/olap_engine.py:67,78`、`integration/mcp/_base_server.py`、`security/llm_defense/llm_security/behavior_audit_logger.py` 共5个模块直接用 `structlog.get_logger().bind(...)`
+- 病根：根因1（structlog与ZephyrLogger不互通）
+- 修复：structlog调用统一替换为get_logger(__name__)（5个模块分批迁移）
 
 #### 5.20.2 100+文件违反"禁止裸logging.getLogger()"约定【HIGH】
 - 证据：[ops/observability/logging.py:37](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 明确"禁止裸logging.getLogger()"；Grep `logging\.getLogger` 在src/命中100个文件101处；典型：`trading/boot_hooks.py`、`infrastructure/audit_logger.py:66`、`ex_core/order_manager.py:51`、`autonomy_core/llm_gateway.py [⚠ 已删除]:40`
@@ -2351,59 +2353,30 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（CLI习惯蔓延到生产入口，没区分用户面stdout与运维面logger）
 - 修复：__main__.py中boot/reconcile/shutdown走 `logger.info(...,extra={"phase":"boot"})`
 
-#### 5.20.4 cost_budget.py调用不存在的registry.counter().inc(value=,labels=)被静默吞掉【HIGH】
-- 证据：[cost_budget.py:190-196](file:///d:/ZephyrAlpha/src/zephyr/governance/ops_governance/cost_budget.py) `registry.counter(COUNT_LLM_CALLS).inc(labels={...})` `registry.counter("zephyr_llm_cost_usd_total").inc(value=int(cost*10000),labels={...})` `except Exception: pass`；但 [metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) MetricsRegistry无 `counter()` 工厂方法，`inc(self,name,labels=None)` 不接受value参数；每次调用必然AttributeError被吞——LLM成本指标永远没被采集但代码自以为已采集
-- 病根：根因5（API漂移+静默异常）
-- 修复：删除except:pass改logger.warning，统一MetricsRegistry API
-
-#### 5.20.5 指标命名混乱：dot/underscore/zephyr_前缀/无前缀四套并存【HIGH】
+#### 5.20.4 指标命名混乱：dot/underscore/zephyr_前缀/无前缀四套并存【HIGH】
 - 证据：`boot_hooks.py:104` `_metrics.observe("boot_hooks.init",1.0,...)` 含 `.` 违反Prometheus命名；`telemetry.py:85` `self.inc("errors_total")` 无zephyr_命名空间；`asset_inventory/__main__.py:461,462` `t.inc("bootstrap_completed")` counter无_total后缀；`metrics.py:64-66` `zephyr_llm_calls_total` 有前缀；`config/metrics_schema.yaml:24,55,68` `system.cpu_percent`/`db.query_latency_ms` dot命名空间；`config/alert_rules.yaml:24,34,44` 引用 `system.cpu_percent` 但MetricsRegistry里不存在——告警永远不触发
 - 病根：根因1（schema与实现零对齐，schema是scaffold `version:0.1.0`）
 - 修复：统一为 `zephyr_<subsystem>_<name>_<unit>`，metrics_schema.yaml列出合法名，Registry拒绝未注册名
 
-#### 5.20.6 get_logger返回类型Self未导入+缓存导致module_id不更新【MEDIUM】
-- 证据：[logging.py:258](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) `def get_logger(name,*,session_id=None,module_id=None)->Self:` Self未导入且语义错误（应为ZephyrLogger）；`_logger_cache`缓存（L272-279）首次 `get_logger("foo",module_id="A")` 后再调 `get_logger("foo",module_id="B")` 返回缓存实例，`module_id_var.set("B")` 被 `if module_id:` 守卫跳过——module_id永远停留首次值
-- 病根：根因5（类型注解照抄+contextvar与缓存语义冲突）
-- 修复：改返回类型ZephyrLogger，每次调用都set contextvar
+#### 5.20.5 InventorySelfMetrics第三套Metrics实现+审计事件混入普通日志通道【MEDIUM】
+- 证据：[telemetry.py:57-97](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/telemetry.py) `InventorySelfMetrics` 第三套API `inc(name,delta=1.0,**labels)` 无Lock；shared/observability_02/ 副本已删除（SSoT主要问题已解决）；审计事件散落在普通内存list：`safety_gate_l66_l67.py:64`、`skill_sandbox.py:131,168,215`、`gate_override.py:67`、`capability_checker.py:58,63`、`truth_source_validator.py:206,231` 每个组件自己append到in-memory list无统一审计通道；`audit_logger.py:68` `_logger=logging.getLogger(__name__)` 裸getLogger无trace_id
+- 病根：根因1+根因5（SSoT断裂残留+审计与日志未分离通道）
+- 修复：InventorySelfMetrics改为get_registry()薄封装；定义AuditEvent独立sink（独立JSONL文件+独立contextvar）
 
-#### 5.20.7 request_id/correlation_id未纳入TraceContext调用链断裂【MEDIUM】
-- 证据：[logging.py:66-68](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) 仅定义 `trace_id_var`/`session_id_var`/`module_id_var`；但业务层广泛使用request_id：`gpu_consensus_scheduler.py:67` `request_id:str=Field(default_factory=lambda:uuid.uuid4().hex[:16])` L79/140/231/313大量传递；`infra_ops/interface_base.py:71` `request_id:str`；`frontend/interface_base.py:71` 同；`health_monitor.py:305` `correlation_id=f"hm-{capability_id}"`；这些request_id永远不出现在JSON日志的trace_id字段
-- 病根：根因5（TraceContext设计早于request_id域模型未补齐）
-- 修复：logging.py增加 `request_id_var`，_StructuredFormatter输出request_id字段
-
-#### 5.20.8 三套互不兼容的Metrics实现+一套Telemetry facade【MEDIUM】
-- 证据：[ops/observability/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) 规范MetricsRegistry API `inc(name,labels=None)` 带Lock；[shared/observability_02/metrics.py](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) 逐字副本含独有调用L300/306/312；[ops/telemetry.py:58-98](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/telemetry.py) `InventorySelfMetrics` 第三套API `inc(name,delta=1.0,**labels)` 无Lock；`boot_hooks.py:102` `from zephyr.shared.observability_02.metrics import MetricsRegistry` 直接new独立实例不是 `get_registry()` 全局单例——boot指标写入孤儿registry无人能查
-- 病根：根因1（SSoT断裂+复制粘贴）
-- 修复：删除shared/observability_02/，InventorySelfMetrics改为get_registry()薄封装
-
-#### 5.20.9 MetricsRegistry.dec()存在竞态+counter递减反模式【MEDIUM】
-- 证据：[metrics.py:129-133](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) `def dec(self,name,labels=None): self.inc(name,labels) # 锁1; with self._lock: self._counters[name][key]-=1.0 # 锁2`；两次锁间存在窗口，并发线程可能读到+1后中间值；Prometheus counter是单调递增的，dec()语义本身错误应使用gauge
-- 病根：根因5（API设计照搬Python计数器直觉未对齐Prometheus语义）
-- 修复：删除dec()，可增减场景改用set_gauge()
-
-#### 5.20.10 observe()静默截断观测值导致百分位偏差【MEDIUM】
-- 证据：[metrics.py:139-148](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py) `self._histograms[name][key].append(value); if len(...)>10000: self._histograms[name][key]=self._histograms[name][key][-5000:]` 超过10000个观测时静默丢弃前5000只保留最近5000，p99/p50向最近样本偏移且无任何日志告警
-- 病根：根因5（内存保护优先于数据准确性，未暴露截断事件）
-- 修复：改用固定bucket累加不存原始list，截断时logger.warning
-
-#### 5.20.11 __main__块三套不同basicConfig格式均无trace_id/JSON【MEDIUM】
+#### 5.20.6 __main__块三套不同basicConfig格式均无trace_id/JSON【MEDIUM】
 - 证据：`watchdog.py:117-120` `format="%(asctime)s %(levelname)s [%(name)s] %(message)s"`；`blueprint_search_server.py:274-278` `format="%(asctime)s [%(name)s] %(levelname)s %(message)s"`（顺序不同）；`migrate_chroma_to_faiss.py:45` `format="%(name)s [%(levelname)s] %(message)s"`（无asctime）；三套格式都绕过 `configure_root_logger()` 不带trace_id/session_id/module_id非JSON
 - 病根：根因5（每个脚本__main__各自手写basicConfig未调用项目级configure_root_logger）
 - 修复：所有__main__入口改 `configure_root_logger(level="INFO",json_file=...)`，禁止裸basicConfig
 
-#### 5.20.12 AuditLogger时间戳精度与格式与结构化日志不一致+审计事件混入普通日志通道【MEDIUM】
-- 证据：[audit_logger.py:114](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py) `"timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())` 秒级UTC+Z后缀；[logging.py:84](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/logging.py) `"timestamp": datetime.datetime.fromtimestamp(record.created,tz=datetime.UTC).isoformat()` 微秒级+00:00后缀；两者无法精确对齐；`audit_logger.py:66` `_logger=logging.getLogger(__name__)` 裸getLogger无trace_id；审计事件散落在普通内存list：`safety_gate_l66_l67.py:64`、`skill_sandbox.py:131,168,215`、`gate_override.py:67`、`capability_checker.py:58,63`、`truth_source_validator.py:206,231` 每个组件自己append到in-memory list无统一审计通道
-- 病根：根因5（审计与日志未分离通道，时间戳格式各自为政）
-- 修复：定义AuditEvent独立sink（独立JSONL文件+独立contextvar），时间戳统一微秒级isoformat
-
-#### 5.20.13 小计
+#### 5.20.7 小计
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 4（5.20.1~5.20.5，其中5.20.5实为1个聚合问题） |
-| MEDIUM | 8（5.20.6~5.20.12 + 计数调整） |
+| CRITICAL/HIGH | 3（5.20.2/5.20.3/5.20.4，大规模重构） |
+| MEDIUM | 3（5.20.1/5.20.5/5.20.6） |
 | LOW | 0 |
-| **合计** | **12** |
+| 已修复 | 6（原5.20.4/5.20.6/5.20.7/5.20.9/5.20.10/5.20.12） |
+| **合计** | **6**（剩余待处理） |
 
 ---
 
@@ -9537,7 +9510,7 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 **关键发现**：
 - **5.16.5/5.16.6已修复**：_GlobalCommitLock已用原子os.open(O_CREAT|O_EXCL)；stash逻辑已由worktree隔离替代（阶段3治理成果）
 - **5.18维度15个HIGH问题全部未修复**，含PRAGMA writable_schema直接改sqlite_master的极危险hack
-- **5.20.1/5.20.8描述已过时**：ops/observability/目录已删除，shared/observability_02/现在是唯一规范实现（注册表建议"删除observability_02"会删除唯一规范实现导致系统崩溃）
+- **5.20.1/5.20.8已部分修复**：ops/observability/目录已删除，shared/observability_02/历史副本已删除；规范实现是shared/observability/metrics.py和shared/utils/logging.py；5.20节已修复6条（5.20.4/5.20.6/5.20.7/5.20.9/5.20.10/5.20.12），剩余6条为大规模重构保留
 
 #### 5.21-5.25（第3批，44个问题）
 

@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.infrastructure.system_telemetry.metrics import (
+from zephyr.shared.observability.metrics import (
     MetricsRegistry,
     MetricType,
     get_registry,
@@ -67,13 +67,6 @@ class TestMetricsRegistryCounter:
         post_snap = [s for s in snap if s.name == "req" and s.labels.get("method") == "POST"]
         assert len(get_snap) == 1
         assert len(post_snap) == 1
-
-    def test_dec_decrements(self):
-        reg = MetricsRegistry()
-        reg.inc("active")
-        reg.dec("active")
-        snap = reg.snapshot()
-        assert any(s.name == "active" and s.value == 0.0 for s in snap)
 
 
 class TestMetricsRegistryGauge:

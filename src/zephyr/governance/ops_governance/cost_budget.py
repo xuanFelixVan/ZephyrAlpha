@@ -35,11 +35,14 @@ SSoT: MOD-INF-024 §12 盲点 B26
 
 from __future__ import annotations
 
+import logging
 import threading
 from dataclasses import dataclass, field
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.observability.metrics import COUNT_LLM_CALLS, get_registry
+
+_logger = logging.getLogger(__name__)
 
 
 class CostBudgetExceededError(ZephyrBaseError):
@@ -187,13 +190,15 @@ class CostBudget:
         """向 metrics 注册表发送成本指标。"""
         try:
             registry = get_registry()
-            registry.counter(COUNT_LLM_CALLS).inc(labels={"provider": provider, "model": model})
+            registry.inc(COUNT_LLM_CALLS, labels={"provider": provider, "model": model})
             if cost > 0:
-                registry.counter("zephyr_llm_cost_usd_total").inc(
-                    value=int(cost * 10000), labels={"provider": provider, "model": model}
+                registry.observe(
+                    "zephyr_llm_cost_usd",
+                    cost,
+                    labels={"provider": provider, "model": model},
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            _logger.warning("Failed to emit LLM cost metrics: %s", e)
 
     @property
     def remaining(self) -> float:
