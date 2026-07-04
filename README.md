@@ -34,7 +34,7 @@ pip install -r requirements-demo.txt
 端到端演示（依赖网络与 Akshare）：
 
 ```bash
-python demo_e2e_pipeline.py
+python scripts/demos/demo_e2e_pipeline.py
 ```
 
 ## 核心文档
