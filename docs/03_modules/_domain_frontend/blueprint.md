@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.0.0"
+version: "3.1.0"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -15,10 +15,10 @@ ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/frontend/"
 last_updated: "2026-07-05"
-last_verified: "2026-05-15"
+last_verified: "2026-07-05"
 generation: 2
 functional_domain: interface
-summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排); 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz; 待迁移: app.py主应用+5个旧Streamlit页面(v3.1.0)。"
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排); 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz。v3.1.0(#ARCH-047): 5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主应用入口(pn.Tabs组装10个Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行(panel serve --show)。"
 tags: [human-ai-interface, l08, dashboard, panel, holoviz, plotly, notification, approval, backtest-visualization, real-trading-panel]
 priority: P1
 runtime_plane: warm
@@ -66,10 +66,11 @@ codification_at: "2026-05-15"
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 3.0.0 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.1.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
-> v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移; 待迁移: app.py+5旧页面(v3.1.0)
+> v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移
+> v3.1.0(#ARCH-047): 5旧页面迁移至Panel; 新建app_panel.py主入口(pn.Tabs 10 Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
@@ -256,7 +257,8 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 10 | **order_book** (v3.0.0) | 5档盘口实时展示组件 | D_DATA MiniQmtProvider | fetch+render |
 | 11 | **position_monitor** (v3.0.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
 | 12 | **trade_panel** (v3.0.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
-| 13 | **ChartFactory** (v3.0.0) | 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
+| 13 | **ChartFactory** (v3.0.0, v3.1.0扩展) | 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow + v3.1.0新增 make_gate_chart/make_trend_line) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
+| 14 | **app_panel** (v3.1.0) | Panel主应用入口(pn.Tabs组装10 Tab, pn.serve+.servable) | 10组件+ChartFactory | 组合 |
 
 ### 3.2 数据流
 
@@ -1144,7 +1146,7 @@ def render_trade_panel(data: TradePanelData) -> None:
 | v2.1.0 | 2 | 回填+禁止施工 | 接口契约与代码对齐+模板回填+禁止施工标注 | ⚠️ |
 | v2.2.0 | 2 | 交易/回测组件规划 | 新增5个交易/回测组件规格(§16.7.1~§16.7.5)+对接D_BACKTEST/D_EX_CORE/D_DATA | ⚠️(规格已就绪, 代码待施工) |
 | v3.0.0 | 3 | 技术栈切换(#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts(HTML Pane+原生JS); 新增ChartFactory(make_equity/drawdown/kline/tick/heatmap/orderbook/position/orderflow); callback仅编排约束; Datashader阈值触发(>50万点); 5组件迁移完成(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | ✅(代码已施工, 2026-07-05) |
-| v3.1.0 | 3 | 现有Streamlit页面迁移 | 现有5个页面(任务进度/知识库/门禁/Fitness/OLAP)+10个组件从Streamlit迁移到Panel; app.py主应用重写 | ⚠️(迁移计划, 代码待施工) |
+| v3.1.0 | 3 | 仪表盘可运行化(#ARCH-047) | 5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel; 新建app_panel.py主应用入口(pn.Tabs组装10 Tab); ChartFactory新增make_gate_chart/make_trend_line; 仪表盘可运行(panel serve --show) | ✅(代码已施工, 2026-07-05) |
 
 ### 升级组件清单
 
@@ -1157,6 +1159,12 @@ def render_trade_panel(data: TradePanelData) -> None:
 | **order_book** | GAP-L08-005 | order_book.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
 | **position_monitor** | GAP-L08-006 | position_monitor.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
 | **trade_panel** | GAP-L08-007 | trade_panel.py | Phase 1.5 | ✅v3.0.0已迁移(Panel+HoloViz) |
+| **fitness_functions** (v3.1.0) | — | fitness_functions.py | Phase 2.5 | ✅v3.1.0已迁移(Panel) |
+| **gate_statistics** (v3.1.0) | — | gate_statistics.py | Phase 2.5 | ✅v3.1.0已迁移(Panel+ChartFactory.make_gate_chart) |
+| **knowledge_overview** (v3.1.0) | — | knowledge_overview.py | Phase 2.5 | ✅v3.1.0已迁移(Panel) |
+| **olap_trend** (v3.1.0) | — | olap_trend.py | Phase 2.5 | ✅v3.1.0已迁移(Panel+ChartFactory.make_trend_line) |
+| **task_progress** (v3.1.0) | — | task_progress.py | Phase 2.5 | ✅v3.1.0已迁移(Panel) |
+| **app_panel** (v3.1.0) | — | app_panel.py | Phase 2.5 | ✅v3.1.0已迁移(Panel主入口, pn.Tabs 10 Tab) |
 
 ---
 

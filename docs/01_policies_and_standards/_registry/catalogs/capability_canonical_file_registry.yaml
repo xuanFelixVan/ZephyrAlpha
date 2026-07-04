@@ -3147,6 +3147,33 @@ creation_tokens:
     created_by: "session-sess-31524-20260704235603"
     capability: "dashboard_frontend"
 
+  # --- ARCH-047 v3.1.0 仪表盘可运行化（2026-07-05，session-sess-36896）---
+  # 5个旧Streamlit页面迁移至Panel + app_panel主入口
+  - file: "src/zephyr/frontend/dashboard/app_panel.py"
+    token: "auto-app-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/fitness_functions.py"
+    token: "auto-fitness-functions-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/gate_statistics.py"
+    token: "auto-gate-statistics-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/knowledge_overview.py"
+    token: "auto-knowledge-overview-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/olap_trend.py"
+    token: "auto-olap-trend-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+  - file: "src/zephyr/frontend/dashboard/components/task_progress.py"
+    token: "auto-task-progress-panel-20260705"
+    created_by: "session-sess-36896-20260705025848"
+    capability: "dashboard_frontend"
+
   # --- ARCH-047 D_BACKTEST io/ 子包（2026-07-05，session-sess-4172）---
   - file: "src/zephyr/backtest/io/__init__.py"
     token: "auto-backtest-io-init-20260705"

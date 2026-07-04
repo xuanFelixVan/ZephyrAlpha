@@ -34,6 +34,8 @@ ARCH-047: Streamlit→Panel+HoloViz技术栈切换, ChartFactory 作为图表生
   - make_orderbook: 5档盘口(Plotly 水平条形图, ask红/bid绿), order_book 调用
   - make_position: 持仓表格(Plotly Table, T+1锁定行红色背景), position_monitor 调用
   - make_orderflow: 订单流(Plotly Table+状态颜色编码), trade_panel 调用
+  - make_gate_chart: 门禁统计堆叠条形图(Plotly Bar, pass绿/block红), gate_statistics 调用 (v3.1.0新增)
+  - make_trend_line: 趋势折线图(Plotly Line, 大数据量自动 plotly_resampler), olap_trend 调用 (v3.1.0新增)
 
 技术栈版本(ARCH-047 tech_stack):
   - holoviews >=1.19.0,<2.0.0 (GOV-P1)
@@ -642,6 +644,122 @@ def make_orderflow(
     return fig
 
 
+def make_gate_chart(
+    gate_stats: list[dict],
+    title: str = "Gate Statistics",
+    width: int = 800,
+    height: int = 400,
+) -> Any:
+    """生成门禁统计条形图（Plotly 堆叠条形图, pass绿/block红）
+
+    蓝图 §3.1: make_gate_chart（v3.1.0新增, 旧Streamlit页面迁移Panel用）
+    ARCH-047: callback仅编排, 图表生成委托此工厂方法
+
+    Args:
+        gate_stats: 各门禁统计列表, 每项格式:
+            {gate_id, total_runs, passed_runs, failed_runs, pass_rate, block_rate}
+        title: 图表标题
+        width: 图表宽度
+        height: 图表高度
+
+    Returns:
+        plotly Figure | dict payload（无 plotly 时）
+    """
+    if not gate_stats:
+        raise ChartFactoryError("gate_stats 不能为空")
+
+    if go is None:
+        return {
+            "type": "gate_chart",
+            "gates": len(gate_stats),
+            "title": title,
+        }
+
+    gate_ids = [g.get("gate_id", f"gate{i}") for i, g in enumerate(gate_stats)]
+    pass_rates = [float(g.get("pass_rate", 0.0)) for g in gate_stats]
+    block_rates = [float(g.get("block_rate", 0.0)) for g in gate_stats]
+
+    fig = go.Figure(data=[
+        go.Bar(name="Pass Rate", x=gate_ids, y=pass_rates, marker_color="#28a745"),
+        go.Bar(name="Block Rate", x=gate_ids, y=block_rates, marker_color="#dc3545"),
+    ])
+    fig.update_layout(
+        title=title,
+        barmode="stack",
+        template="plotly_white",
+        yaxis_title="Rate",
+        yaxis=dict(range=[0, 1], tickformat=".0%"),
+        height=height,
+        width=width,
+        showlegend=True,
+    )
+    return fig
+
+
+def make_trend_line(
+    y_values: list[float],
+    x_labels: Optional[list[str]] = None,
+    title: str = "Trend",
+    color: str = "#1f77b4",
+    width: int = 800,
+    height: int = 400,
+    y_title: str = "Value",
+) -> Any:
+    """生成趋势折线图（Plotly Line, 大数据量自动 plotly_resampler 降采样）
+
+    蓝图 §3.1: make_trend_line（v3.1.0新增, OLAP趋势页迁移Panel用）
+    ARCH-047: callback仅编排, 图表生成委托此工厂方法
+
+    Args:
+        y_values: Y 轴数值序列
+        x_labels: X 轴标签序列（可选, 如时间/周期）
+        title: 图表标题
+        color: 曲线颜色
+        width: 图表宽度
+        height: 图表高度
+        y_title: Y 轴标题
+
+    Returns:
+        plotly_resampler FigureResampler | plotly Figure | dict payload（无 plotly 时）
+    """
+    if not y_values:
+        raise ChartFactoryError("y_values 不能为空")
+
+    if go is None:
+        return {
+            "type": "trend_line",
+            "points": len(y_values),
+            "title": title,
+            "color": color,
+        }
+
+    x = _ensure_x(x_labels, len(y_values))
+
+    if FigureResampler is not None and len(y_values) > 10_000:
+        fig = FigureResampler(default_n_ticks=10_000)
+    else:
+        fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y_values,
+            name=title,
+            line=dict(color=color),
+            mode="lines",
+        )
+    )
+    fig.update_layout(
+        title=title,
+        xaxis_title="Time",
+        yaxis_title=y_title,
+        template="plotly_white",
+        height=height,
+        width=width,
+    )
+    return fig
+
+
 __all__ = [
     "ChartFactoryError",
     "DATASHADER_THRESHOLD",
@@ -653,4 +771,6 @@ __all__ = [
     "make_orderbook",
     "make_position",
     "make_orderflow",
+    "make_gate_chart",
+    "make_trend_line",
 ]
