@@ -17,6 +17,8 @@
 
 from __future__ import annotations
 
+from http import HTTPStatus
+
 import asyncio
 import logging
 import os
@@ -442,7 +444,7 @@ class GPUConsensusScheduler:
                 },
                 timeout=self._api_timeout_s,
             )
-            if resp.status_code == 200:
+            if resp.status_code == HTTPStatus.OK:
                 resp_body = resp.json()
                 text = resp_body.get("response", "")
                 return self._parse_model_response(text, model_id)
@@ -486,7 +488,7 @@ class GPUConsensusScheduler:
                 },
                 timeout=self._gpu_timeout_s,
             )
-            if resp.status_code == 200:
+            if resp.status_code == HTTPStatus.OK:
                 resp_body = resp.json()
                 text = resp_body.get("response", "")
                 return self._parse_model_response(text, self._local_model)
@@ -543,7 +545,7 @@ class GPUConsensusScheduler:
                 f"{self._ollama_url}/api/tags",
                 timeout=5.0,
             )
-            if resp.status_code == 200:
+            if resp.status_code == HTTPStatus.OK:
                 resp_body = resp.json()
                 models = [m.get("name", "") for m in resp_body.get("models", [])]
                 has_model = any(self._local_model in m for m in models)

@@ -30,6 +30,8 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
 
 from __future__ import annotations
 
+from http import HTTPStatus
+
 import json
 import logging
 import os
@@ -487,7 +489,7 @@ class OllamaChat:
             import requests
 
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
-            return resp.status_code == 200
+            return resp.status_code == HTTPStatus.OK
         except Exception:
             return False
 

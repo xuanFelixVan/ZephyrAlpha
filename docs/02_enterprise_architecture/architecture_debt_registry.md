@@ -8580,6 +8580,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.160 魔法数字/字符串（27个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(魔法数字/字符串需提取常量)
+> **第34轮修复状态（2026-07-04）**：FIXED=8(LOW 24 HTTP 200→HTTPStatus.OK 7处4文件 + HIGH 5 secret_rotation_aware已用os.getenv外部化), DRIFTED=7(HIGH 1 task_repo.py不存在 + HIGH 4 behavioral_audit/目录已删 + MEDIUM 7/8 llm_gateway.py 2份副本已删 + MEDIUM 22 header_field正则无匹配 + MEDIUM 23 hallucination_pattern正则无匹配), STILL_VALID=12(需大规模重构:SQL散落/正则重复/timeout/PRAGMA/max_workers等散落N+文件)
 
 #### HIGH（6个）
 
@@ -8620,6 +8621,23 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **核心模式总结**：(1)6处HIGH中4处为"裸SQL散落"（task_repo/apply_depgraph/file_task_mapper×4/behavioral_audit 7文件），SQL未集中到常量模块是规模化现象；(2)3类安全扫描器正则阈值不一致（{20,} vs {32,}）是安全检测一致性问题；(3)17处MEDIUM多为"配置值散落N+文件"（Ollama URL/OTLP/timeout/PRAGMA/max_workers等），应抽取到统一配置；(4)4处正则重复（SEMVER/frontmatter/header_field/hallucination_pattern）应集中到共享正则模块
 
 **严重度汇总**：HIGH=6, MEDIUM=17, LOW=4, 合计=27
+
+**第34轮修复明细（2026-07-04）**：
+- **FIXED**：
+  - HIGH 5: `secret_rotation_aware.py` 已用 `os.getenv("ENV_VAR", "default")` 外部化4个endpoint URL（副本已删除，仅剩 `infrastructure/rollback/` 1份）
+  - LOW 24: HTTP 200 字面量 → `HTTPStatus.OK`，7处4文件（`governance/behavioral_admission/gpu_consensus_scheduler.py` 2处 + `trading/gpu_consensus_scheduler.py` 3处 + `integration/local_model/ollama_embedding.py` 1处 + `integration/local_model/ollama_chat.py` 1处），均添加 `from http import HTTPStatus`
+- **DRIFTED**：
+  - HIGH 1: `src/zephyr/governance/task_repo.py` 文件不存在（已迁移到 `governance/persistence/task_repo.py`）
+  - HIGH 4: `src/zephyr/behavioral_audit/` 目录已删除（7文件 drift_events SQL 散落问题随目录消失）
+  - MEDIUM 7/8: `llm_gateway.py` 3份副本中 `integration/` 和 `autonomy_core/` 2份已删除，仅剩 `infrastructure/pipeline/` 1份，deepseek cost 不一致问题不存在
+  - MEDIUM 22: `header_field` 正则重复定义 — 全代码库无匹配，已修复或已删除
+  - MEDIUM 23: `hallucination_pattern` 正则重复定义 — 全代码库无匹配，已修复或已删除
+- **STILL_VALID**（需大规模重构）：
+  - HIGH 2: `apply_depgraph.py` 40+条裸SQL散落业务逻辑
+  - HIGH 3: `file_task_mapper.py` 3份副本（原4份，1份已删）各含13条SQL字面量 — 需先去重再SQL常量化
+  - HIGH 6: 3类安全扫描器（`fix_safety.py`/`scan_secret_leak.py`/`check_log_secret_leak.py`）正则阈值不一致 — by-design不同场景不同敏感度，统一需评估
+  - MEDIUM 9-21: Ollama URL(11文件)/OTLP endpoint(1文件)/TaskStatus字符串(30+处)/timeout(80+处)/PRAGMA(15+文件)/max_workers=8(18处13文件)/time.sleep(28+处)/max_retries=3(4处)/benchmark max_tokens(22文件)/audit路径/session_lifecycle路径/SEMVER正则(20文件)/frontmatter正则(1处) — 均为"配置值散落N+文件"型大规模重构
+  - LOW 25-27: 错误消息模板重复/退避参数散落/单次硬编码值 — 大规模重构或不值得修复
 
 ---
 
