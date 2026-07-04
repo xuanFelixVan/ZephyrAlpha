@@ -45,5 +45,8 @@ class WitnessIsolator:
     def disagree_count(self) -> int:
         from collections import Counter
 
+        # 5.106.1 修复: _witnesses 为空时 max(counts.values()) 抛 ValueError,与 winner() 的空集保护对齐
+        if not self._witnesses:
+            return 0
         counts = Counter(self._witnesses.values())
         return len(self._witnesses) - max(counts.values())

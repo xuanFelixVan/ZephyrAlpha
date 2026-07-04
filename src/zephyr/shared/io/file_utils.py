@@ -266,6 +266,8 @@ def backup_and_rollback(
 
     try:
         yield target
-    except Exception:
+    except BaseException:
+        # 5.163.3 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+        # 也执行 restore_backup,避免文件停留在半修改状态。
         restore_backup(target, backup_index=0)
         raise

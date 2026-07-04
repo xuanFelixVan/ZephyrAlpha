@@ -258,6 +258,15 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - `data/work_dags/`: 工作 DAG 定义（待创建）
 - `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——53域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；53域是唯一物理分类（depgraph），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的 `layer_id` 属性枚举（真源：`depgraph_schema.py` DB trigger）
 
+### 6.1 目录生命周期（AI-03 审计 P10，2026-07-05）
+
+临时+日志+工具区目录生命周期规则（`.gitignore` 已对齐）：
+
+- **`tmp/`**：task_bound 一次性脚本退役区，运行时产物不入库（`.gitignore` 第 228 行 `tmp/*`，仅保留 `tmp/.gitkeep`）。新 AI 在 `tmp/` 创建脚本完成使命后**禁止清理 git rm**（`.gitignore` 已自动忽略）；历史已跟踪脚本通过批量 `git rm --cached` 退役（commit `6846813fac` 退役 21 脚本，2026-07-05 AI-03 审计再次退役 90+ 脚本）。
+- **`logs/`**：运行时日志，`.gitignore` 第 187 行整目录忽略，禁止入库。
+- **`session_logs/`**：Session Log 真源目录（snake_case），与 `session-logs/`（kebab-case，2026-07-05 AI-03 审计已删除）真源唯一；新 session yaml 落盘格式 `session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml`。
+- **`_journals/`**：AI 行为日志（`skill_telemetry.jsonl` / `skill_transitions.jsonl`），`.gitignore` 第 190 行整目录忽略，运行时写入不入库。
+
 ## 7. 代码规范
 
 - Python >=3.12, ruff lint, pydantic v2

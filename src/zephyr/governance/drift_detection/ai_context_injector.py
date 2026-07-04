@@ -108,7 +108,9 @@ def build_top_drifts(
     scored: list[TopDriftItem] = []
 
     for evt in active_events:
-        roi = float(evt.get("roi_score", 0.0))
+        # 5.106.3 修复: evt.get("roi_score", 0.0) 仅在 key 缺失时返回 default,
+        # key 存在但值为 None 时 float(None) 抛 TypeError。改为 `or 0.0` 兼容 None。
+        roi = float(evt.get("roi_score") or 0.0)
 
         scored.append(
             TopDriftItem(
@@ -193,7 +195,8 @@ def inject_full(
         all_events,
         key=lambda e: (
             severity_order.get(str(e.get("severity", "INFO")), 99),
-            -float(e.get("roi_score", 0.0)),
+            # 5.106.4 修复: e.get("roi_score", 0.0) 在值为 None 时 float(None) 抛 TypeError,改为 `or 0.0`
+            -float(e.get("roi_score") or 0.0),
         ),
     )
 

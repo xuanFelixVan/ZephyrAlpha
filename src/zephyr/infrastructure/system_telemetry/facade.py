@@ -279,16 +279,22 @@ class _RealSpanBridge:
     def __exit__(self, *args: Any) -> bool | None:
         # 5.73.1 修复：原 __exit__ 调用底层 self._ctx.__exit__(*args) 但未 return 其返回值。
         # 若底层上下文管理器返回True以抑制异常，该语义被丢失。
+        # 5.163.4 修复: __exit__ 后置 _ctx=None,防止 end() 再次调用 _ctx.__exit__ 重复退出。
         if self._ctx is not None:
-            return self._ctx.__exit__(*args)
+            ctx = self._ctx
+            self._ctx = None
+            return ctx.__exit__(*args)
         return None
 
     def set_attribute(self, key: str, value: Any) -> None:
         self._attributes[key] = value
 
     def end(self) -> dict:
+        # 5.163.4 修复: 检查 _ctx 是否已 None(__exit__ 已调用),避免重复退出。
         if self._ctx is not None:
-            self._ctx.__exit__(None, None, None)
+            ctx = self._ctx
+            self._ctx = None
+            ctx.__exit__(None, None, None)
         return {"operation": self._name, "attributes": dict(self._attributes)}
 
 

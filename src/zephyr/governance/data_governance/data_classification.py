@@ -99,4 +99,8 @@ def classify(self_level: DataLevel, target_level: DataLevel) -> bool:
 
 def max_level_from_list(levels: list[DataLevel]) -> DataLevel:
     """从列表中返回最高安全级别。"""
+    # 5.106.7 修复: 空列表时 max() 抛 ValueError。公开函数需空集保护,
+    # 默认返回 PUBLIC(最低安全级别,失败开放语义)。
+    if not levels:
+        return DataLevel.PUBLIC
     return max(levels, key=lambda l: LEVEL_ORDER.get(l, 0))

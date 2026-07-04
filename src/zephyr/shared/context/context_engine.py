@@ -86,7 +86,9 @@ class ContextEngine:
         total_tokens = 0
         available = self._budget.max_tokens - self._budget.reserve_tokens
 
-        sorted_manifest = sorted(manifest, key=lambda x: x.get("reason", ""))
+        # 5.106.5 修复: x.get("reason", "") 仅在 key 缺失时返回 default,
+        # key 存在但值为 None 时 None 与 str 比较抛 TypeError。改为 `or ""` 兼容 None。
+        sorted_manifest = sorted(manifest, key=lambda x: x.get("reason") or "")
 
         for entry in sorted_manifest:
             file_path = entry.get("file_path", "")

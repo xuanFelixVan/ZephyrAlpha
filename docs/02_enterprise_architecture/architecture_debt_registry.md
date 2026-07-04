@@ -6665,6 +6665,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(.get(key,default)误用需逐处改为显式None检查)
 
+> **第39轮修复状态（2026-07-05）**：FIXED=4(5.106.1 witness_isolation.disagree_count空集保护+5.106.2 anomaly_detector空集保护+5.106.3/4 ai_context_injector roi_score改`or 0.0`兼容None+5.106.5 context_engine改`or ""`+5.106.7 data_classification.max_level_from_list空集保护), DRIFTED=3(5.106.2路径变更为trading/feedback_loop/detectors/anomaly/anomaly_detector.py/5.106.5路径变更为shared/context/context_engine.py/5.106.6 behavioral_audit/data_classification.py不存在), 0 STILL_VALID。本维度全部清零。
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.106.1 | `governance/witness_isolation.py:49` | `max(counts.values())` 当`_witnesses`为空时抛`ValueError: max() arg is an empty sequence`。同类方法`winner()`有空集保护但此方法缺失 | MEDIUM | 添加`if not self._witnesses: return 0` |
@@ -8756,6 +8758,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.163 上下文管理器正确性（7个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(上下文管理器正确性需补全__enter__/__exit__)
+
+> **第39轮修复状态（2026-07-05）**：FIXED=4(5.163.2 task_repo._write_tx except Exception→BaseException确保Ctrl+C时ROLLBACK释放SQLite写锁+5.163.3 file_utils.backup_and_rollback except Exception→BaseException确保Ctrl+C时restore_backup+5.163.4 facade._RealSpanBridge __exit__后置_ctx=None+end()检查None避免重复退出+5.163.5 span_stub.noop_span except Exception→BaseException确保Ctrl+C时span finish("ERROR")), DRIFTED=3(5.163.1 scripts/governance/_concurrency.py不存在/5.163.6 ops/observability/tracing.py在废弃ops目录/5.163.7 shared/observability_02/tracing.py不存在), 0 STILL_VALID。本维度全部清零。
 
 #### HIGH（1个）
 

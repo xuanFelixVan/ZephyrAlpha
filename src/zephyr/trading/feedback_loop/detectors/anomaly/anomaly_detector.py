@@ -44,6 +44,10 @@ class AnomalyDetector:
         if not result["anomaly_triggered"]:
             return None
         triggered_metrics = {k: v for k, v in result["z_scores"].items() if abs(v) > self.z_threshold}
+        # 5.106.2 修复: z_threshold 与类常量 Z_THRESHOLD 分叉时 triggered_metrics 可能为空,
+        # max() 抛 ValueError。公开方法需空集保护。
+        if not triggered_metrics:
+            return None
         max_z_metric = max(triggered_metrics, key=lambda k: abs(triggered_metrics[k]))
         severity = min(int(abs(triggered_metrics[max_z_metric]) * 2), 10)
         anomaly_id = str(uuid.uuid4())[:8]

@@ -1,8 +1,8 @@
-# session-logs/index.yaml — Session Log 总索引
+# session_logs/index.yaml — Session Log 总索引
 #
 # 知识库绑定说明
 # ==============
-# 本索引是 session-logs/ 与架构知识库之间的桥梁：
+# 本索引是 session_logs/ 与架构知识库之间的桥梁：
 #   1. PS-REG-011 (ai-session-registry.md) — 在 _registry/catalogs/ 中统一登记
 #   2. GOV-AI-007 (session-log-schema.yaml) — 定义每条 log 的字段结构
 #   3. scripts/context/generate_architecture_context.py — 扫描最近 session 注入 AI 上下文
@@ -25,6 +25,11 @@
 index_version: '1.4'
 created: '2026-05-04'
 last_updated: '2026-05-30'
+# 派生失效警告（AI-03 审计 P3，2026-07-05）：
+# 下方 by_date/by_module/by_contract 派生数据截至 2026-05-08，此后未更新。
+# 派生脚本（generate_session_index 或等价物）未持续运行，导致索引过期。
+# 新 AI 不应依赖这些派生数据做决策——真源为 session_logs/2026/*/session-*.yaml 文件本身。
+# 待修复：补建 session_logs/index 派生 reconciler（事件触发：新 session yaml 落盘 → 自动更新 index）。
 total_sessions: 30
 stats:
   total_files_created: 104
@@ -255,6 +260,6 @@ by_date:
   - session-20260508-001
 
 # 盲点发现时间线
-# → 已迁移至 session-logs/_auto/blind_spot_timeline.yaml（自动生成，由 session log YAML 派生）
+# → 已迁移至 session_logs/_auto/blind_spot_timeline.yaml（自动生成，由 session log YAML 派生）
 # 请勿在此处手动编写 blind_spot 条目。
 # 要记录盲点发现 → 写在对应 session log 的 blind_spots_discovered 字段中 → 脚本自动汇总

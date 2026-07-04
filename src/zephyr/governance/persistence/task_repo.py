@@ -666,7 +666,9 @@ class TaskRepository:
             try:
                 yield self._conn
                 self._conn.execute("COMMIT")
-            except Exception:
+            except BaseException:
+                # 5.163.2 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+                # 也执行 ROLLBACK 释放 SQLite BEGIN IMMEDIATE 写锁,避免写锁泄漏。
                 self._conn.execute("ROLLBACK")
                 raise
 

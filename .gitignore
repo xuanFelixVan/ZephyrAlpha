@@ -221,6 +221,13 @@ scripts/governance/meta/gate_engine_hashes.json
 # ARCH-041: backup_runtime_state.py 默认输出路径（治标，git history 是真源）
 tmp/runtime_backups/
 
+# tmp/ 全目录忽略（治本 2026-07-05，AI-03 审计 P13）
+# tmp/ 是 task_bound 一次性脚本退役区，运行时产物不入库。
+# 历史教训：commit 6846813fac 曾退役 21 脚本但未补 .gitignore，导致后续 90+ 脚本再次入库。
+# 保留 tmp/.gitkeep 维持目录结构；新增永久文件需 --skip-gitignore 或显式 !tmp/<file> 例外。
+tmp/*
+!tmp/.gitkeep
+
 # Script warn-only results
 *_warn_result.json
 

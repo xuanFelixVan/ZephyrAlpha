@@ -215,7 +215,9 @@ def noop_span(
     try:
         yield span
         span.finish("OK")
-    except Exception:
+    except BaseException:
+        # 5.163.5 修复: except Exception → BaseException,确保 Ctrl+C/SystemExit 时
+        # span 也调用 finish("ERROR"),避免 span 状态停留在 UNSET。
         span.finish("ERROR")
         raise
     finally:
