@@ -117,9 +117,11 @@ def bulk_record_via_db_contract(
     conn = get_db_connection(Path(db_path))
     try:
         _ensure_table(conn)
-        count = 0
+        # 5.44.3 修复：原 for rec in records: conn.execute(...) 为 N+1 往返，
+        # 改为 executemany 批量插入，单次往返提交全部记录。
+        timestamp = datetime.now(UTC).isoformat()
+        batch: list[tuple] = []
         for rec in records:
-            timestamp = datetime.now(UTC).isoformat()
             tags_json = _build_tags_json(
                 rec.get("tags"),
                 rec.get("session_id", ""),
@@ -127,10 +129,7 @@ def bulk_record_via_db_contract(
                 rec.get("cost_usd", 0.0),
                 rec.get("token_count", 0),
             )
-            conn.execute(
-                "INSERT INTO fle_metrics (timestamp, source_system, metric_name, "
-                "value, unit, tags_json) "
-                "VALUES (?, ?, ?, ?, ?, ?)",
+            batch.append(
                 (
                     timestamp,
                     rec.get("metric_type", "unknown"),
@@ -138,11 +137,16 @@ def bulk_record_via_db_contract(
                     rec.get("metric_value", 0.0),
                     "count",
                     tags_json,
-                ),
+                )
             )
-            count += 1
+        conn.executemany(
+            "INSERT INTO fle_metrics (timestamp, source_system, metric_name, "
+            "value, unit, tags_json) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            batch,
+        )
         conn.commit()
-        return count
+        return len(batch)
     except Exception as exc:
         _logger.warning("bulk_record_via_db_contract failed: %s", exc)
         conn.rollback()

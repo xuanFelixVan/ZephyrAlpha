@@ -4077,6 +4077,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：任一容器可耗尽宿主机资源
 - **影响**：单个失控容器拖垮全栈； noisy neighbor问题
 - **修复**：为每个service设置CPU/内存上限
+- **状态**：STILL_VALID（保留）— docker-compose.yml 无 deploy.resources.limits/mem_limit/cpus（Grep 无命中），需为每个 service 设置 CPU/内存上限，涉及运维配置
 
 #### 5.43.2 [MEDIUM] Python进程无OS级内存限制（无RLIMIT）
 - **文件**：全项目（Grep `resource.setrlimit|RLIMIT_AS|RLIMIT_DATA`无匹配）
@@ -4084,6 +4085,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：内存泄漏进程可耗尽系统内存
 - **影响**：OOM Killer可能杀关键进程
 - **修复**：在启动脚本设置RLIMIT_AS或用cgroups
+- **状态**：STILL_VALID（保留）— Grep `resource.setrlimit|RLIMIT_AS|RLIMIT_DATA` 在 src/ 无命中，无进程级内存限制；需在启动脚本设置 RLIMIT_AS 或用 cgroups
 
 #### 5.43.4 [MEDIUM] asyncio.gather无Semaphore限制并发 [部分修复: 2026-07-04 验证10处gather仅drift_detection 2处配套Semaphore,5处仍需补]
 - **文件**：全项目（Grep `asyncio.gather`多处）
@@ -4099,6 +4101,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：磁盘满不会触发健康检查告警
 - **影响**：磁盘耗尽导致写入失败无预警
 - **修复**：将disk_usage纳入压力分类阈值
+- **状态**：STILL_VALID（保留）— health_monitor.py pressure_level() 仅检查 psutil.virtual_memory().percent（L322-333），未将 disk_usage 纳入压力分类；需补充磁盘压力阈值
 
 #### 5.43.6 严重度汇总
 
@@ -4121,6 +4124,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：传入10000条则同步处理全部，可能阻塞数分钟
 - **影响**：单次大批次导致超时/内存压力
 - **修复**：限制max_batch_size（如100）+ 整体timeout
+- **状态**：STILL_VALID（保留）— evaluate_batch 无 max_batch_size 校验+无整体超时（verdict_engine.py L330-360），需加批次大小限制+整体 timeout
 
 #### 5.44.2 [HIGH] submit_batch return_exceptions=False致单失败丢弃全部成功
 - **文件**：[gpu_consensus_scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/trading/gpu_consensus_scheduler.py#L221)
@@ -4128,6 +4132,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：一批中单个失败导致全部重做
 - **影响**：浪费计算资源；延迟增加
 - **修复**：设`return_exceptions=True`，单独处理失败项
+- **状态**：STILL_VALID（保留）— submit_batch 仍用 return_exceptions=False（gpu_consensus_scheduler.py L224），改为 True 需变更返回类型 list[ConsensusResult | Exception] 并更新所有调用方
 
 #### 5.44.3 [MEDIUM] bulk_record_via_db_contract逐行execute而非executemany
 - **文件**：[db_bridge.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/db_bridge.py#L111)
@@ -4135,6 +4140,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：N+1 DB往返，性能差
 - **影响**：大批量写入慢；DB连接占用久
 - **修复**：改用`cursor.executemany(sql, records)`
+- **状态**：FIXED — 已改为 executemany 批量插入（db_bridge.py L142-147），原 for 循环逐行 execute 改为构建 batch 列表后单次 executemany
 
 #### 5.44.4 [MEDIUM] BatchIngestor无批次限制/无超时
 - **文件**：全项目（BatchIngestor实现）
@@ -4142,6 +4148,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：无界批次可能导致内存溢出
 - **影响**：大写入导致OOM
 - **修复**：增加批次大小限制+超时
+- **状态**：STILL_VALID（保留）— BatchIngestor.ingest_from_yaml/ingest_from_list 无 max_batch_size/timeout 参数（kb/batch_ingest.py L106/L145），需加批次限制+超时
 
 #### 5.44.5 [MEDIUM] EventStore.record_batch无max_batch_size
 - **文件**：全项目（EventStore.record_batch实现）
@@ -4149,6 +4156,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：大批次写入可能超DB单事务限制
 - **影响**：事务失败回滚全部
 - **修复**：分片写入，每片≤1000条
+- **状态**：STILL_VALID（保留）— EventStore.record_batch 用 executemany 但无 max_batch_size 校验（event_store.py L168-181），大批次可能超 SQLite 单事务限制；需分片写入
 
 #### 5.44.6 严重度汇总
 
