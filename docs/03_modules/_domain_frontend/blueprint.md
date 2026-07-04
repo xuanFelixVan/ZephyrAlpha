@@ -66,9 +66,10 @@ codification_at: "2026-05-15"
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
 
-> module_id: MOD-L08-001 | version: 2.2.0 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 3.0.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
 > v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
+> v3.0.0(#ARCH-047): Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; 新增ChartFactory(callback仅编排); 5组件已迁移; 待迁移: app.py+5旧页面(v3.1.0)
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
