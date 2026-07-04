@@ -96,6 +96,7 @@ class DatabaseService:
                     self._clickhouse_conn = Client(
                         host='localhost', port=9000, user='default', password='',
                         database='c1_market',
+                        settings={'readonly': 1},
                     )
         return self._clickhouse_conn
 
