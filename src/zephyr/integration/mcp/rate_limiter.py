@@ -141,7 +141,12 @@ class RateLimitExceeded(Exception):
 class PerToolRateLimiter:
     """按 tool_name 粒度管理多个 TokenBucket。
 
-    默认 10QPS per client；可在 config/mcp.json 覆盖。
+    5.36.9 修复：原 docstring 误写为 "默认 10QPS per client"，但 try_acquire(tool_name)
+    实际按 tool_name 分桶（key = tool_name），无 client 维度。修正为 per-tool 描述，
+    避免安全审计/容量规划基于错误假设。若需 per-client 限流需引入 client_id 维度
+    （参见 5.36.2，待后续重构）。
+
+    默认 10QPS per tool；可在 config/mcp.json 覆盖。
     """
 
     def __init__(self, default_qps: float = DEFAULT_QPS, default_burst: float = DEFAULT_BURST) -> None:
