@@ -143,6 +143,10 @@ def create_app(
 
 
 def main() -> None:
+    import sys
+    print("[DEPRECATED v3.1.0] app.py (Streamlit) 已弃用，请使用 Panel 主入口:", file=sys.stderr)
+    print("  panel serve src/zephyr/frontend/dashboard/app_panel.py --show --port 5006", file=sys.stderr)
+    print("  或: python src/zephyr/frontend/dashboard/app_panel.py", file=sys.stderr)
     if st is None:
         print("Streamlit is not installed. Install with: pip install streamlit")
         return
