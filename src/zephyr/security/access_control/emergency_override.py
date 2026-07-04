@@ -150,7 +150,10 @@ class EmergencyOverride:
         if token is None:
             return {"revoked": False, "reason": "token_not_found"}
         token.revoked = True
-        logger.info("EmergencyOverride: token '%s' revoked", token_id)
+        # 5.63.1 修复：token_id在info级别持久化到日志，若日志被聚合到外部系统可被关联追踪。
+        # 降为debug级别 + 脱敏为 tok_***1234 格式。
+        masked = f"tok_***{token_id[-4:]}" if len(token_id) > 4 else "tok_***"
+        logger.debug("EmergencyOverride: token '%s' revoked", masked)
         return {"revoked": True, "token_id": token_id}
 
 

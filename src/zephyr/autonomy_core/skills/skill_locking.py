@@ -120,7 +120,11 @@ class SkillFileLock:
         try:
             yield
         finally:
-            os.close(fd)
+            # 5.73.3 修复：原 os.close(fd) 未被 try/except 包裹。若 os.close 抛出 OSError，后续 path.unlink 不会执行，留下僵尸锁文件。
+            try:
+                os.close(fd)
+            except OSError:
+                pass
             try:
                 path.unlink(missing_ok=True)
             except OSError:

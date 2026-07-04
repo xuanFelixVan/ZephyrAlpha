@@ -31,7 +31,8 @@ __all__: list[str] = ["InjectionEngine"]
 
 _CRASH_SAFETY_CHECK: str = "INJECTION_CRASH_CONFIRMED"
 
-os.makedirs("data/red_blue", exist_ok=True)
+# 5.79.1 修复：原模块级 os.makedirs 在 import 时执行，在只读文件系统/受限沙箱中 import 直接抛 PermissionError。
+# 延迟到 InjectionEngine.__init__ 中创建。
 
 
 class InjectionEngine:
@@ -39,6 +40,8 @@ class InjectionEngine:
         self._blast_radius: BlastRadiusLevel = blast_radius
         self._injected: list[InjectionResult] = []
         self._backup_dir: Path = Path("data/red_blue/backups")
+        # 5.79.1 修复：延迟到 __init__ 创建目录，避免 import 时副作用。
+        os.makedirs("data/red_blue", exist_ok=True)
 
     @property
     def blast_radius(self) -> BlastRadiusLevel:

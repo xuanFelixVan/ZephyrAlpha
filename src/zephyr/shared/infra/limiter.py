@@ -47,6 +47,7 @@ Version: 0.1.0
 
 
 import asyncio
+import functools
 import logging
 import time
 from dataclasses import dataclass
@@ -184,13 +185,13 @@ def async_limited(
     )
 
     def decorator(func):
+        # 5.78.1 修复：原手动设置 __name__/__qualname__/__doc__，但未设置 __wrapped__、__module__、__annotations__、__dict__。
+        # 改为 @functools.wraps(func) 自动设置所有属性。
+        @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             async with limiter:
                 return await func(*args, **kwargs)
 
-        wrapper.__name__ = func.__name__
-        wrapper.__qualname__ = func.__qualname__
-        wrapper.__doc__ = func.__doc__
         wrapper._limiter = limiter
         return wrapper
 

@@ -159,6 +159,10 @@ class MemoryLock:
         lock.release()
         if handle.lock_name in self._owners:
             del self._owners[handle.lock_name]
+        # 5.65.4 修复：原 release 只删 _owners，不删 _locks。每个唯一锁名留下一个永久 asyncio.Lock 对象。
+        # release时若_owners为空则删除_locks中的条目。
+        if handle.lock_name not in self._owners and handle.lock_name in self._locks:
+            del self._locks[handle.lock_name]
         logger.debug("lock '%s' released by '%s'", handle.lock_name, handle.owner_id)
         return True
 

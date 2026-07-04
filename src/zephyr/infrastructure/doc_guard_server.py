@@ -262,11 +262,13 @@ class DocGuardServer(BaseMCPServer):
             raise MCPError(-32404, "ZA-HF-0003: carryover not found")
 
         if session_id is None:
-            return self._carryovers[-1]
+            # 5.85.3 修复：原返回 self._carryovers[-1]（内部dict引用），调用方可修改返回值，篡改server内部carryover状态。
+            return dict(self._carryovers[-1])
 
         for co in reversed(self._carryovers):
             if co.get("session_id") == session_id:
-                return co
+                # 5.85.3 修复：原返回 co（内部dict引用），调用方可修改返回值，篡改server内部carryover状态。
+                return dict(co)
 
         raise MCPError(-32404, f"ZA-HF-0003: carryover not found for session {session_id!r}")
 

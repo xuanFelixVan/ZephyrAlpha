@@ -96,6 +96,11 @@ class TriggerResult:
             return self.action == other.action
         return False
 
+    # 5.83.1 修复：原定义了 __eq__ 但未定义 __hash__，Python 3 中定义 __eq__ 会自动将 __hash__ 设为 None，使实例变为 unhashable。
+    # __hash__ 基于 __eq__ 比较的 action 字段，保持两者一致性。
+    def __hash__(self) -> int:
+        return hash(self.action)
+
     def __repr__(self) -> str:
         return f"TriggerResult(action={self.action!r}, agent_id={self.agent_id!r})"
 

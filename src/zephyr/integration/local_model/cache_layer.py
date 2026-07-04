@@ -68,7 +68,10 @@ class CacheLayer:
     def get_embedding(self, text: str, model_version: str = "", collection: str = "") -> np.ndarray | None:
         key = self._cache_key(self._hash_text(text), model_version, collection)
         with self._lock:
-            return self._embedding_cache.get(key)
+            # 5.85.1 修复：原 get 返回 self._embedding_cache[key]（直接引用），put 存储 vec.copy()。读写不对称。
+            # 调用方拿到 get 返回的对象后修改它，直接篡改了cache内部状态。
+            val = self._embedding_cache.get(key)
+            return val.copy() if val is not None else None
 
     def put_embedding(self, text: str, vec: np.ndarray, model_version: str = "", collection: str = "") -> None:
         key = self._cache_key(self._hash_text(text), model_version, collection)
