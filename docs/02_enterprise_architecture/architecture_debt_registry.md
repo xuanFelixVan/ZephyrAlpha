@@ -7372,7 +7372,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.133 依赖注入硬编码（85个，第23轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=85(依赖注入硬编码，方法内硬编码实例化外部依赖需全量DI重构)
+> **第34轮修复状态（2026-07-04）**：FIXED=2(5.133.6 mkdtemp→get_tmp_dir+开放storage_path DI参数,2个现存feedback_bridge.py), DRIFTED=19(路径漂移:behavioral_audit/→drift_detection/迁移8处+session_continuity/system_snapshot/support删除3处+observability_02|ops/observability删除2处+重复文件删除4处[governance/rollback_integration.py/infrastructure/rollback/phase_check_registry.py/trading/orchestrator/finding_bridge.py/governance/audit_orchestrator/feedback_bridge.py]+skill_router路径变更1处+adversarial_tester删除1处), NOT_NEEDED=6(5.133.9合法组合根/单例工厂模式:capability_check/finalizer/autopilot/conductor/app.py/pipeline_orchestrator), STILL_VALID=58(DI重构需专项工程:5.133.1 AutoRuntimeCore全量DI+5.133.2 BudgetEngine跨层DI+5.133.3 TaskRepository DI+5.133.4 psycopg2健康检查ping语义不宜用depgraph工厂+5.133.5 LLM/嵌入/VMS DI+5.133.7 sqlite工厂真源建立+5.133.8 EmbeddingRouter DI)
 
 > **审计结论**：本维度是第23轮发现量最大的维度（85个），揭示了一个此前未审计的重大架构维度。核心问题：大量生产服务方法内部硬编码实例化外部依赖（DB连接、LLM客户端、治理引擎），而非通过构造函数注入，导致测试不可mock、耦合度高、违反"真源唯一"原则。
 
