@@ -4,7 +4,7 @@ submodule_path: src/zephyr/frontend
 title: "Human Machine Interface Core 蓝图 — 人机交互层"
 doc_type: blueprint
 status: Active
-version: "3.0.0"
+version: "2.2.0"
 layer: L3_application
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -18,8 +18,8 @@ last_updated: "2026-07-04"
 last_verified: "2026-05-15"
 generation: 2
 functional_domain: interface
-summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Panel Dashboard 5页面已实现(v2.1.0, v3.0.0从Streamlit迁移)；v3.0.0技术栈切换为Panel+HoloViz(HoloViews+Datashader+hvPlot+Bokeh)+Plotly+plotly_resampler+TradingView Lightweight Charts v5.2(#ARCH-047第一性原理重构)。5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST io/(backtest_result_sink+result_repository)/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。G0.5 Python原生可视化过渡层已激活(frontend_architecture.md)。"
-tags: [human-ai-interface, l08, dashboard, panel, holoviz, notification, approval, backtest-visualization, real-trading-panel, plotly-resampler, lightweight-charts, g0.5-python-transition]
+summary: "业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit Dashboard 5页面已实现(v2.1.0)；v2.2.0规划5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。"
+tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, backtest-visualization, real-trading-panel]
 priority: P1
 runtime_plane: warm
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -37,7 +37,7 @@ depends_on:
     why: "TaskRepository"
   - target: "MOD-BT-001"
     at: "§4.1"
-    why: "v3.0.0更新: backtest_results/tick_replay组件通过D_BACKTEST io/(backtest_result_sink+result_repository)消费回测结果(BacktestResult/CTR-P1-016)与回测产物(BacktestRunArtifact/CTR-P1-017), #ARCH-047"
+    why: "v2.2.0新增: backtest_results/tick_replay组件消费D_BACKTEST回测结果与Tick回放数据(BacktestResult/CTR-P1-016)"
   - target: "MOD-L06-001"
     at: "§4.1"
     why: "v2.2.0新增: trade_panel/position_monitor组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id='miniqmt')触发实盘下单, MiniQmtBroker.get_positions()展示实盘持仓"
@@ -65,11 +65,10 @@ codification_at: "2026-05-15"
 >
 > C轨业务层已解除占位禁令[ARCH-045 P0]。AI 可自主施工。
 > 当前 construction_progress = partially_implemented，可继续业务代码实现。
-> v3.0.0技术栈切换: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts (#ARCH-047)
 
-> module_id: MOD-L08-001 | version: 3.0.0 | status: active | domain: frontend
+> module_id: MOD-L08-001 | version: 2.2.0 | status: active | domain: frontend
 > actual_disk_path: src/zephyr/frontend/ | generation: 2 | construction_progress: partially_implemented
-> v3.0.0: 技术栈切换Panel+HoloViz(#ARCH-047), 5个交易/回测组件对接D_BACKTEST io/(sink+repo)/D_EX_CORE/D_DATA, G0.5 Python过渡层已激活
+> v2.2.0新增: 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel), 对接D_BACKTEST/D_EX_CORE/D_DATA, 支持joinquant/Qbot风格仪表盘+实盘交易面板
 
 # Human Machine Interface Core 蓝图+施工图 — 人机交互层
 
@@ -77,11 +76,9 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 人机交互层——它解决了系统与用户之间的标准化交互问题。核心职责包括：监控面板(DashboardBase)、通知分发(NotificationManagerBase)、人工审批(ApprovalGatewayBase)三个 OCP 扩展点，以及 Panel Dashboard 5 页面组件（v3.0.0 从 Streamlit 迁移，#ARCH-047）。当前规模 3 个 Base 类 + 5 个 Dashboard 组件已实现，DefaultNotificationManager 和 DefaultApprovalGateway 待施工。上游依赖 FLE Fitness Functions 和 TaskRepository，下游被 D_RISK 和 D_REPORTING 消费。
+本蓝图描述 ZephyrAlpha 人机交互层——它解决了系统与用户之间的标准化交互问题。核心职责包括：监控面板(DashboardBase)、通知分发(NotificationManagerBase)、人工审批(ApprovalGatewayBase)三个 OCP 扩展点，以及 Streamlit Dashboard 5 页面组件。当前规模 3 个 Base 类 + 5 个 Dashboard 组件已实现，DefaultNotificationManager 和 DefaultApprovalGateway 待施工。上游依赖 FLE Fitness Functions 和 TaskRepository，下游被 D_RISK 和 D_REPORTING 消费。
 
-**v2.2.0 新增决策(2026-07-04)**：扩展现有 Dashboard，新增 5 个交易/回测组件，支持 joinquant/Qbot 风格仪表盘 + 实盘交易面板。
-
-**v3.0.0 技术栈切换决策(2026-07-04, #ARCH-047)**：第一性原理重构，Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts。原因：Streamlit 三硬伤（rerun 模型/无原生 WebSocket/无 crossfiltering），Panel+HoloViz 原生支持百万级 tick 渲染（Datashader）+ Bokeh WebSocket 推送 + crossfiltering。G0.5 Python 过渡层已激活。
+**v2.2.0 新增决策(2026-07-04)**：扩展现有 Streamlit Dashboard，新增 5 个交易/回测组件，支持 joinquant/Qbot 风格仪表盘 + 实盘交易面板：
 1. **backtest_results.py**: 回测结果可视化——净值曲线/回撤/Sharpe/Sortino/MaxDD/IC/IR 图表 + 3阶段决策门控(IS→WFA→OOS)状态展示
 2. **tick_replay.py**: Tick回放可视化——按时间戳逐Tick回放(支持real_time/fast_forward/max_speed)+5档盘口快照+做T场景(30秒/5秒冲高回落)标记
 3. **order_book.py**: 5档盘口实时展示——askPrice[5档]/bidPrice[5档]/askVol[5档]/bidVol[5档]实时刷新+盘口压力可视化
@@ -113,17 +110,17 @@ codification_at: "2026-05-15"
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
 | 1 | interface_base.py | §3.1 | DashboardBase + NotificationManagerBase + ApprovalGatewayBase + Notification + ApprovalRequest + NotificationLevel + ApprovalAction | 已实现 |
-| 2 | dashboard/app.py | §3.1 | Panel Dashboard 主应用 (DashboardApp + create_app + main, v3.0.0从Streamlit迁移) | 已实现 |
+| 2 | dashboard/app.py | §3.1 | Streamlit Dashboard 主应用 (DashboardApp + create_app + main) | 已实现 |
 | 3 | dashboard/components/fitness_functions.py | §3.1 | Fitness Functions 组件 | 已实现 |
 | 4 | dashboard/components/gate_statistics.py | §3.1 | 门禁统计组件 | 已实现 |
 | 5 | dashboard/components/knowledge_overview.py | §3.1 | 知识库概览组件 | 已实现 |
 | 6 | dashboard/components/olap_trend.py | §3.1 | OLAP 趋势组件 | 已实现 |
 | 7 | dashboard/components/task_progress.py | §3.1 | 任务进度组件 | 已实现 |
-| 8 | dashboard/components/backtest_results.py | §16.7.1 | **v3.0.0技术栈切换** 回测结果可视化(HoloViews净值曲线/plotly_resampler回撤/Lightweight Charts K线/3阶段门控) | 待施工 |
-| 9 | dashboard/components/tick_replay.py | §16.7.2 | **v3.0.0技术栈切换** Tick回放可视化(Datashader百万级tick渲染/HoloViews逐Tick回放/5档盘口快照) | 待施工 |
-| 10 | dashboard/components/order_book.py | §16.7.3 | **v3.0.0技术栈切换** 5档盘口实时展示(HoloViews动态图/Bokeh WebSocket推送) | 待施工 |
-| 11 | dashboard/components/position_monitor.py | §16.7.4 | **v3.0.0技术栈切换** 实盘持仓监控(Panel+Bokeh WebSocket实时刷新) | 待施工 |
-| 12 | dashboard/components/trade_panel.py | §16.7.5 | **v3.0.0技术栈切换** 实盘交易面板(Panel表单+Lightweight Charts订单流) | 待施工 |
+| 8 | dashboard/components/backtest_results.py | §16.7.1 | **v2.2.0新增** 回测结果可视化(净值曲线/回撤/Sharpe/IC/IR/3阶段门控) | 待施工 |
+| 9 | dashboard/components/tick_replay.py | §16.7.2 | **v2.2.0新增** Tick回放可视化(逐Tick回放/5档盘口快照/做T场景标记) | 待施工 |
+| 10 | dashboard/components/order_book.py | §16.7.3 | **v2.2.0新增** 5档盘口实时展示(askPrice/bidPrice/askVol/bidVol) | 待施工 |
+| 11 | dashboard/components/position_monitor.py | §16.7.4 | **v2.2.0新增** 实盘持仓监控(可用/冻结/当日买入/未实现盈亏) | 待施工 |
+| 12 | dashboard/components/trade_panel.py | §16.7.5 | **v2.2.0新增** 实盘交易面板(下单表单/订单列表/撤单/风控提示) | 待施工 |
 
 ### §0.2 对齐验证矩阵
 
@@ -142,7 +139,6 @@ codification_at: "2026-05-15"
 | v2.0.0 (模板重构) | 同 v1.0.0 + 结构重组 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.1.0 (回填+禁止施工) | 同 v2.0.0 + 接口契约与代码对齐 | DefaultNotificationManager, DefaultApprovalGateway | C轨禁止施工 |
 | v2.2.0 (交易/回测组件规划) | 同 v2.1.0 | DefaultNotificationManager, DefaultApprovalGateway, 5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel) | 规划5个新组件规格(§16.7.1~§16.7.5), 对接D_BACKTEST/D_EX_CORE/D_DATA, 待施工 |
-| v3.0.0 (技术栈切换 #ARCH-047) | 同 v2.2.0 | DefaultNotificationManager, DefaultApprovalGateway, 5个组件(Panel重写) | 第一性原理重构: Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts, 对接D_BACKTEST io/(sink+repo), G0.5 Python过渡层激活 |
 
 ---
 
@@ -159,7 +155,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 1 | ✅ 包含 | 监控面板标准化 | DashboardBase OCP 扩展点可用 |
 | 2 | ✅ 包含 | 通知分发标准化 | NotificationManagerBase OCP 扩展点可用 |
 | 3 | ✅ 包含 | 人工审批标准化 | ApprovalGatewayBase OCP 扩展点可用 |
-| 4 | ✅ 包含 | Panel Dashboard (v3.0.0从Streamlit迁移, #ARCH-047) | 5 页面可渲染 |
+| 4 | ✅ 包含 | Streamlit Dashboard | 5 页面可渲染 |
 | 5 | ✅ 包含 | Fitness Functions 展示 | EXT-DASHBOARD-FLE-001 消费 FLE Facade |
 | 6 | ✅ 包含 | **v2.2.0新增** 回测结果可视化 | backtest_results组件消费D_BACKTEST BacktestResult(CTR-P1-016), 净值曲线/回撤/Sharpe/IC/IR |
 | 7 | ✅ 包含 | **v2.2.0新增** Tick回放可视化 | tick_replay组件消费D_BACKTEST tick_replay引擎, 逐Tick回放+5档盘口快照 |
@@ -176,14 +172,14 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 
 | 约束 | 影响 |
 |------|------|
-| Panel+HoloViz 为可选依赖 (#ARCH-047) | import 失败时降级为 CLI 输出 |
+| Streamlit 为可选依赖 | import 失败时降级为 CLI 输出 |
 | Dashboard 组件独立可渲染 | 每个组件 fetch+render 分离 |
 | OLAPEngine 可能不可用 | 门禁统计/OLAP 趋势组件返回空 dataclass |
 | C轨已解除 | 业务代码可施工 |
 | **v2.2.0新增**: 5个新组件依赖D_BACKTEST/D_EX_CORE/D_DATA未施工 | 数据源未就绪时组件返回空dataclass, 待上游施工后填充 |
 | **v2.2.0新增**: 实盘交易面板需风控确认 | trade_panel下单前MUST显示风控提示, human_gated(实盘交易需Owner审批) |
 | **v2.2.0新增**: Tick回放大数据量 | 单标的1年Tick数据可能>1GB, tick_replay组件MUST支持分页加载+虚拟滚动 |
-| **v3.0.0更新**: 5档盘口实时刷新 | order_book组件MUST支持100ms级刷新, Bokeh WebSocket原生推送(无rerun开销) |
+| **v2.2.0新增**: 5档盘口实时刷新 | order_book组件MUST支持100ms级刷新, 避免Streamlit重渲染卡顿(rerun策略) |
 
 ### 1.5 利益相关者映射
 
@@ -227,7 +223,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 
 | # | 类型 | 职责 | 详情 | 负责方 |
 |---|:----:|------|------|--------|
-| 1 | ✅ 包含 | 监控面板 | DashboardBase + DashboardApp (Panel, v3.0.0) | 本模块 |
+| 1 | ✅ 包含 | 监控面板 | DashboardBase + DashboardApp (Streamlit) | 本模块 |
 | 2 | ✅ 包含 | 通知分发 | NotificationManagerBase | 本模块 |
 | 3 | ✅ 包含 | 人工审批 | ApprovalGatewayBase | 本模块 |
 | 4 | ✅ 包含 | 任务进度看板 | TaskProgressData + fetch_task_progress | 本模块 |
@@ -250,15 +246,16 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 1 | DashboardBase | 面板 OCP 扩展点（render/refresh） | — | 同步调用 |
 | 2 | NotificationManagerBase | 通知 OCP 扩展点（send/channels） | — | 同步调用 |
 | 3 | ApprovalGatewayBase | 审批 OCP 扩展点（submit/decide/pending） | — | 同步调用 |
-| 4 | DashboardApp | Panel 主应用 (v3.0.0从Streamlit迁移) | DashboardBase | 组合 |
+| 4 | DashboardApp | Panel 主应用 (v3.0.0从Streamlit迁移, #ARCH-047) | DashboardBase | 组合 |
 | 5 | Dashboard 组件(5 个, v2.1.0) | 独立可渲染面板 | DashboardApp | 组合 |
 | 6 | Notification | 通知消息 dataclass | — | 数据传递 |
 | 7 | ApprovalRequest | 审批请求 dataclass | — | 数据传递 |
-| 8 | **backtest_results** (v3.0.0) | 回测结果可视化组件 | D_BACKTEST io/ result_repository | fetch+render |
-| 9 | **tick_replay** (v3.0.0) | Tick回放可视化组件 | D_BACKTEST io/ result_repository | fetch+render |
+| 8 | **backtest_results** (v3.0.0) | 回测结果可视化组件 | D_BACKTEST BacktestResult | fetch+render |
+| 9 | **tick_replay** (v3.0.0) | Tick回放可视化组件 | D_BACKTEST tick_replay引擎 | fetch+render |
 | 10 | **order_book** (v3.0.0) | 5档盘口实时展示组件 | D_DATA MiniQmtProvider | fetch+render |
 | 11 | **position_monitor** (v3.0.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
 | 12 | **trade_panel** (v3.0.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
+| 13 | **ChartFactory** (v3.0.0) | 图表统一工厂(make_equity/make_drawdown/make_heatmap/make_kline) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
 
 ### 3.2 数据流
 
@@ -388,9 +385,8 @@ class FitnessDashboardData(BaseModel):
 | 2 | NotificationManagerBase 为 OCP 扩展点 | 新通知渠道只加不改 |
 | 3 | ApprovalGatewayBase 为 OCP 扩展点 | 新审批流程只加不改 |
 | 4 | Dashboard 组件独立可渲染 | fetch+render 分离 |
-| 5 | Panel+HoloViz 为可视化技术栈 (#ARCH-047) | Streamlit→Panel+HoloViz(HoloViews+Datashader+hvPlot+Bokeh)+Plotly+plotly_resampler+Lightweight Charts v5.2 |
+| 5 | Streamlit 为可选依赖 | import 失败时降级为 CLI |
 | 6 | C轨已解除 | 可施工 |
-| 7 | G0.5 Python过渡层已激活 | frontend_architecture.md G0.5档位, Panel serve可作G1 React BFF |
 
 ### 5.2 容量估算
 
@@ -415,10 +411,9 @@ class FitnessDashboardData(BaseModel):
 
 | # | 类型 | 禁止项 | 替代/允许项 | 原因 |
 |---|:----:|--------|-----------|------|
-| 1 | 编码模式 | 直接 import panel/holoviews 在 interface_base.py | dashboard/app.py 内部 import | Panel+HoloViz 为可视化层依赖, interface_base.py 保持纯抽象 |
+| 1 | 编码模式 | 直接 import streamlit 在 interface_base.py | dashboard/app.py 内部 import | Streamlit 为可选依赖 |
 | 2 | 导入源 | from zephyr.l04_* 直接调用 | 通过 CTR-P1-008 契约消费 | 分层约束 |
 | 3 | 编码模式 | 在 Base 类中写业务逻辑 | Base 类只定义抽象接口 | OCP 扩展点约束 |
-| 4 | 编码模式 | 直接 import streamlit (#ARCH-047已废弃) | 使用 Panel+HoloViz 替代 | v3.0.0技术栈切换, Streamlit已废弃 |
 
 ---
 
@@ -426,7 +421,7 @@ class FitnessDashboardData(BaseModel):
 
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
-| 1 | Panel 未安装 | ImportError | 降级为 CLI 输出 | Dashboard 不可用 |
+| 1 | Streamlit 未安装 | ImportError | 降级为 CLI 输出 | Dashboard 不可用 |
 | 2 | OLAPEngine 不可用 | 连接异常 | 组件返回空 dataclass | 门禁统计/OLAP 趋势为空 |
 | 3 | KbRepo 不可用 | 连接异常 | 组件返回空 dataclass | 知识库概览为空 |
 | 4 | FLE Facade 不可用 | 连接异常 | Fitness 组件显示错误状态 | Fitness 仪表盘不可用 |
@@ -443,7 +438,7 @@ class FitnessDashboardData(BaseModel):
 
 | 组件 | 失败后可用功能 | 不可用功能 | 降级策略 | 恢复条件 |
 |------|-------------|-----------|---------|---------|
-| Panel+HoloViz | CLI 输出 | Dashboard 渲染 | 降级为 CLI | Panel+HoloViz 安装 |
+| Streamlit | CLI 输出 | Dashboard 渲染 | 降级为 CLI | Streamlit 安装 |
 | OLAPEngine | 其他4页面 | 门禁统计/OLAP趋势 | 返回空 dataclass | OLAPEngine 恢复 |
 | KbRepo | 其他4页面 | 知识库概览 | 返回空 dataclass | KbRepo 恢复 |
 
@@ -563,13 +558,13 @@ class FitnessDashboardData(BaseModel):
 
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
-| 1 | Panel 未安装 | 中 | Dashboard 无法渲染 | import 降级为 CLI 输出 | 风险 |
+| 1 | Streamlit 未安装 | 中 | Dashboard 无法渲染 | import 降级为 CLI 输出 | 风险 |
 | 2 | YAML module id 不一致 | 低 | 发现困难 | ARB-21 统一为 hmi_core | 风险 |
 | 3 | OLAPEngine 不可用 | 中 | 门禁统计/OLAP 趋势为空 | 组件返回空 dataclass | 风险 |
 | 4 | KbRepo 不可用 | 中 | 知识库概览为空 | 组件返回空 dataclass | 风险 |
 | 5 | C轨已开放[ARCH-045 P0]，蓝图与代码可同步 | 低 | 历史遗留蓝图标注与代码不同步 | 蓝图明确标注已实现代码范围 | 风险 |
 | 6 | 新渠道需实现对应 Base 类 | — | 中 | OCP 扩展点文档 + 示例 | 负面后果 |
-| 7 | 依赖 Panel+HoloViz 运行时 | — | 中 | 可选依赖 + CLI 降级 | 负面后果 |
+| 7 | 依赖 Streamlit 运行时 | — | 中 | 可选依赖 + CLI 降级 | 负面后果 |
 
 ---
 
@@ -770,7 +765,7 @@ class FitnessDashboardData(BaseModel):
 | 5 | **position_monitor规格** (v2.2.0) | 协议 | fetch(MiniQmtBroker.get_positions)→PositionMonitorData; render: 持仓+盈亏+T+1提示+账户资金 — 见§16.7.4 | position_monitor.py(待施工) |
 | 6 | **trade_panel规格** (v2.2.0) | 协议 | submit(Order)→ExecutionEngine.execute_order(broker_id="miniqmt"); render: 下单表单+订单状态机+撤单+风控提示 — 见§16.7.5 | trade_panel.py(待施工) |
 
-### §16.7.1 backtest_results 回测结果可视化组件规格（v3.0.0技术栈切换）
+### §16.7.1 backtest_results 回测结果可视化组件规格（v2.2.0新增）
 
 > **真源声明**：本规格是 backtest_results 组件的唯一真源。
 
@@ -778,10 +773,11 @@ class FitnessDashboardData(BaseModel):
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| 组件名 | backtest_results | Panel 页面组件 (v3.0.0从Streamlit迁移, #ARCH-047) |
-| 数据源 | D_BACKTEST io/ result_repository → BacktestRunArtifact(CTR-P1-017) + BacktestResult(CTR-P1-016) | 通过依赖注入传入, 禁止直接import D_BACKTEST |
+| 组件名 | backtest_results | Panel 页面组件 (v3.0.0技术栈切换) |
+| 数据源 | D_BACKTEST BacktestResult(CTR-P1-016) | 通过依赖注入传入, 禁止直接import D_BACKTEST |
 | 页面路由 | /backtest-results | DashboardApp 路由 |
-| 渲染依赖 | HoloViews(净值曲线) + plotly_resampler(回撤降采样) + Lightweight Charts v5.2(K线) + Panel(布局) | 百万级tick用Datashader, 大数据用plotly_resampler降采样 |
+| 渲染依赖 | HoloViews(净值曲线)+plotly_resampler(回撤)+Lightweight Charts(K线, HTML Pane+原生JS) | 不依赖Python封装包, 直接用pn.pane.HTML+lightweight-charts.js |
+| callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | fetch→ChartFactory.make_xxx()→callback, G1升级时fetch可直接包装为FastAPI路由 |
 
 #### B. BacktestResultData 数据模型
 
@@ -821,17 +817,18 @@ def fetch_backtest_results(backtest_result: BacktestResult) -> BacktestResultDat
     ...
 
 def render_backtest_results(data: BacktestResultData) -> None:
-    """Panel+HoloViz渲染 (v3.0.0从Streamlit迁移, #ARCH-047).
-    布局:
-      - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化) — Panel Row
-      - 中部: 净值曲线+回撤曲线 — HoloViews双轴图, plotly_resampler降采样
-      - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过) — Panel布局
-    大数据量场景: equity_curve > 10万点时自动切换 Datashader 渲染
+    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047). 
+    布局: 
+      - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
+      - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler双轴图)
+      - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
+    K线图: 用pn.pane.HTML+lightweight-charts.js原生渲染, 不依赖Python封装包.
+    callback: Panel callback仅编排, 图表生成委托ChartFactory.make_equity/make_drawdown.
     """
     ...
 ```
 
-### §16.7.2 tick_replay Tick回放可视化组件规格（v3.0.0技术栈切换）
+### §16.7.2 tick_replay Tick回放可视化组件规格（v2.2.0新增）
 
 > **真源声明**：本规格是 tick_replay 组件的唯一真源。
 
@@ -839,10 +836,11 @@ def render_backtest_results(data: BacktestResultData) -> None:
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| 组件名 | tick_replay | Panel 页面组件 (v3.0.0从Streamlit迁移, #ARCH-047) |
-| 数据源 | D_BACKTEST io/ result_repository → BacktestRunArtifact(CTR-P1-017) | tick_replay_data时序数据 |
+| 组件名 | tick_replay | Panel 页面组件 (v3.0.0技术栈切换) |
+| 数据源 | D_BACKTEST tick_replay引擎 | TickReplayEngine.replay() 产出的Tick序列 |
 | 页面路由 | /tick-replay | DashboardApp 路由 |
-| 渲染依赖 | Datashader(百万级tick渲染) + HoloViews(逐Tick回放) + Lightweight Charts(K线) | 百万级tick 0.5-1秒渲染 |
+| 渲染依赖 | Plotly+plotly_resampler默认 / Datashader阈值触发(>50万点) | MVP全用Plotly, 真实数据量超阈值时自动切换Datashader |
+| callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | fetch→ChartFactory.make_tick()→callback |
 
 #### B. TickReplayData 数据模型
 
@@ -888,18 +886,19 @@ def fetch_tick_replay(tick_data: list, symbol: str,
     ...
 
 def render_tick_replay(data: TickReplayData) -> None:
-    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047).
+    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047). 
     布局:
       - 顶部: 控制栏(回放速度选择/上一页/下一页/跳转时间)
-      - 中部: Tick价格图+成交量(plotly, 支持zoom)
-      - 中下: 5档盘口快照(实时更新, ask红/bid绿)
+      - 中部: Tick价格图+成交量(Plotly+plotly_resampler, 支持zoom; 数据量>50万点自动切换Datashader)
+      - 中下: 5档盘口快照(Bokeh WebSocket实时推送, ask红/bid绿)
       - 底部: 做T场景标记(垂直线+标注)
-    虚拟滚动: 仅渲染可见区域Tick, 避免万级Tick卡顿.
+    渲染策略: MVP全用Plotly+plotly_resampler(10万级降采样), Datashader仅阈值触发(>50万点百万级渲染).
+    callback: Panel callback仅编排, 图表生成委托ChartFactory.make_tick().
     """
     ...
 ```
 
-### §16.7.3 order_book 5档盘口展示组件规格（v3.0.0技术栈切换）
+### §16.7.3 order_book 5档盘口展示组件规格（v2.2.0新增）
 
 > **真源声明**：本规格是 order_book 组件的唯一真源。
 
@@ -907,10 +906,11 @@ def render_tick_replay(data: TickReplayData) -> None:
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| 组件名 | order_book | Panel 页面组件 (v3.0.0从Streamlit迁移, #ARCH-047) |
+| 组件名 | order_book | Panel 页面组件 (v3.0.0技术栈切换) |
 | 数据源 | D_DATA MiniQmtProvider.get_order_book() | 5档盘口实时数据 |
 | 页面路由 | /order-book | DashboardApp 路由 |
-| 刷新策略 | Bokeh WebSocket推送 | 原生WebSocket, 无rerun开销 |
+| 刷新策略 | 100ms Bokeh WebSocket推送 | 原生WebSocket, 无rerun开销 |
+| callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | fetch→ChartFactory.make_orderbook()→callback |
 
 #### B. OrderBookData 数据模型
 
@@ -937,17 +937,18 @@ def fetch_order_book(miniqmt_provider, symbol: str) -> OrderBookData:
     ...
 
 def render_order_book(data: OrderBookData) -> None:
-    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047).
+    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047). 
     布局:
       - 左侧: 5档卖盘(红色, 价格降序ask5→ask1)
       - 中间: 最新价+压力比仪表盘
       - 右侧: 5档买盘(绿色, 价格降序bid1→bid5)
-    刷新: Bokeh WebSocket 100ms推送, 无rerun开销.
+    刷新: Bokeh WebSocket 100ms推送, 仅更新盘口数据, 无全页重渲染.
+    callback: Panel callback仅编排, 图表生成委托ChartFactory.make_orderbook().
     """
     ...
 ```
 
-### §16.7.4 position_monitor 实盘持仓监控组件规格（v3.0.0技术栈切换）
+### §16.7.4 position_monitor 实盘持仓监控组件规格（v2.2.0新增）
 
 > **真源声明**：本规格是 position_monitor 组件的唯一真源。
 
@@ -955,10 +956,11 @@ def render_order_book(data: OrderBookData) -> None:
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| 组件名 | position_monitor | Panel 页面组件 (v3.0.0从Streamlit迁移, #ARCH-047) |
+| 组件名 | position_monitor | Panel 页面组件 (v3.0.0技术栈切换) |
 | 数据源 | D_EX_CORE MiniQmtBroker.get_positions() | 实盘持仓快照 |
 | 页面路由 | /position-monitor | DashboardApp 路由 |
-| 刷新策略 | Bokeh WebSocket推送 | 原生WebSocket, 1秒刷新 |
+| 刷新策略 | 1s Bokeh WebSocket推送 | 持仓1秒刷新一次 |
+| callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | fetch→ChartFactory.make_position()→callback |
 
 #### B. PositionMonitorData 数据模型
 
@@ -996,17 +998,18 @@ def fetch_position_monitor(miniqmt_broker) -> PositionMonitorData:
     ...
 
 def render_position_monitor(data: PositionMonitorData) -> None:
-    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047).
+    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047). 
     布局:
       - 顶部: 账户资金卡片(总资产/可用资金/当日盈亏)
       - 中部: 持仓表格(symbol/名称/持仓/可用/冻结/成本/最新价/盈亏/盈亏%/T+1标记)
       - T+1锁定行: 红色背景标记, 鼠标悬停提示"当日买入, 次日可卖"
     刷新: Bokeh WebSocket 1s推送, 持仓实时更新.
+    callback: Panel callback仅编排, 图表生成委托ChartFactory.make_position().
     """
     ...
 ```
 
-### §16.7.5 trade_panel 实盘交易面板组件规格（v3.0.0技术栈切换）
+### §16.7.5 trade_panel 实盘交易面板组件规格（v2.2.0新增）
 
 > **真源声明**：本规格是 trade_panel 组件的唯一真源。**human_gated**: 实盘交易面板接入需 Owner 审批。
 
@@ -1014,10 +1017,11 @@ def render_position_monitor(data: PositionMonitorData) -> None:
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| 组件名 | trade_panel | Panel 页面组件 (v3.0.0从Streamlit迁移, #ARCH-047) |
+| 组件名 | trade_panel | Panel 页面组件 (v3.0.0技术栈切换) |
 | 数据源 | D_EX_CORE ExecutionEngine.execute_order() | 实盘下单接口 |
 | 页面路由 | /trade-panel | DashboardApp 路由 |
-| 风控 | human_gated + 二次确认 | 下单前MUST显示风控提示+二次确认弹窗 |
+| 风控 | human_gated + 二次确认 | 下单前MUST显示风控提示+二次确认弹窗(Panel modal) |
+| callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | submit→ChartFactory.make_orderflow()→callback |
 
 #### B. TradePanelData 数据模型
 
@@ -1058,20 +1062,21 @@ def submit_order(execution_engine, order_submission: OrderSubmission) -> str:
     输入: ExecutionEngine实例(依赖注入), OrderSubmission
     前置校验: 
       (1) 显示风控提示(预估金额/持仓影响)
-      (2) 二次确认弹窗(Panel modal)
+      (2) 二次确认弹窗(Panel modal, pn.widgets.Button+pn.Modal)
       (3) 调用ExecutionEngine.execute_order(order, broker_id="miniqmt")
     输出: order_id
     """
     ...
 
 def render_trade_panel(data: TradePanelData) -> None:
-    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047).
+    """Panel+HoloViz渲染 (v3.0.0, #ARCH-047). 
     布局:
-      - 顶部: 下单表单(代码/方向/数量/价格/算法TWAP/VWAP/MARKET)
-      - 中部: 风控提示+二次确认按钮(预估金额/持仓影响/T+1提示)
-      - 底部: 订单列表(实时状态更新, 支持撤单按钮)
+      - 顶部: 下单表单(代码/方向/数量/价格/算法TWAP/VWAP/MARKET, pn.widgets.Form)
+      - 中部: 风控提示+二次确认按钮(预估金额/持仓影响/T+1提示, Panel modal)
+      - 底部: 订单列表(实时状态更新, 支持撤单按钮, Lightweight Charts订单流HTML Pane)
     状态机: PENDING→SUBMITTED→ACCEPTED→FILLED 实时更新, 状态用颜色标记.
     撤单: 每个非终态订单行显示"撤单"按钮, 调用cancel_order.
+    callback: Panel callback仅编排, 图表生成委托ChartFactory.make_orderflow().
     """
     ...
 ```
@@ -1090,14 +1095,14 @@ def render_trade_panel(data: TradePanelData) -> None:
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `panel serve src/zephyr/frontend/dashboard/app.py --show` | 启动 Dashboard | — | Panel Web UI (v3.0.0) |
+| 1 | 命令 | `streamlit run src/zephyr/frontend/dashboard/app.py` | 启动 Dashboard | — | Streamlit Web UI |
 | 2 | 命令 | `python -m pytest tests/frontend/` | 运行测试 | `-k {pattern}` | pytest 输出 |
 
 ### 16.10 故障与操作手册
 
 | # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
 |---|:----:|------|---------|----------|----------|----------|
-| 1 | 运行 | Panel 启动失败 | ImportError | `pip install panel holoviews` | Dashboard 可用 | 重新启动 |
+| 1 | 运行 | Streamlit 启动失败 | ImportError | `pip install streamlit` | Dashboard 可用 | 重新启动 |
 | 2 | 运行 | 数据源不可用 | 连接异常 | 检查 SQLite/DuckDB 路径 | 组件返回空 dataclass | 数据源恢复 |
 | 3 | 运行 | 紧急冻结 | 安全事件 | 冻结写入+只读 | — | 威胁解除 |
 
@@ -1137,7 +1142,8 @@ def render_trade_panel(data: TradePanelData) -> None:
 | v2.0.0 | 2 | 模板重构 | 章节重排+新增概述+frontmatter 补全 | ⚠️ |
 | v2.1.0 | 2 | 回填+禁止施工 | 接口契约与代码对齐+模板回填+禁止施工标注 | ⚠️ |
 | v2.2.0 | 2 | 交易/回测组件规划 | 新增5个交易/回测组件规格(§16.7.1~§16.7.5)+对接D_BACKTEST/D_EX_CORE/D_DATA | ⚠️(规格已就绪, 代码待施工) |
-| v3.0.0 | 2 | 技术栈切换 (#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts, 对接D_BACKTEST io/(sink+repo), G0.5 Python过渡层激活 | ⚠️(规格已更新, 代码待施工) |
+| v3.0.0 | 3 | 技术栈切换(#ARCH-047) | Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts(HTML Pane+原生JS); 新增ChartFactory; callback仅编排约束; Datashader阈值触发(>50万点) | ⚠️(规格已更新, 代码待施工) |
+| v3.1.0 | 3 | 现有Streamlit页面迁移 | 现有5个页面(任务进度/知识库/门禁/Fitness/OLAP)+10个组件从Streamlit迁移到Panel; app.py主应用重写 | ⚠️(迁移计划, 代码待施工) |
 
 ### 升级组件清单
 
@@ -1166,7 +1172,6 @@ def render_trade_panel(data: TradePanelData) -> None:
 | 7 | D-L08-07 | v2.2.0交易/回测组件数 | A:3个(仅交易) / B:5个(交易+回测+盘口) | B | joinquant/Qbot风格仪表盘+实盘交易面板+Tick回放全场景覆盖 | 2026-07-04 |
 | 8 | D-L08-08 | v2.2.0组件数据源接入 | A:直接import业务层 / B:依赖注入传入 | B | 分层约束+Streamlit可选依赖, 组件不直接import业务层模块 | 2026-07-04 |
 | 9 | D-L08-09 | v2.2.0实盘交易面板风控 | A:无风控直接下单 / B:human_gated+二次确认+紧急停止 | B | 实盘交易安全, 避免误操作, Owner审批+小资金灰度 | 2026-07-04 |
-| 10 | D-L08-10 | v3.0.0可视化技术栈切换 | A:保持Streamlit / B:Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts | B | 第一性原理重构(#ARCH-047): Streamlit三硬伤(rerun/无WebSocket/无crossfiltering), Panel+HoloViz百万级tick渲染+原生WebSocket+crossfiltering, 1人运维+G0.5→G1渐进升级 | 2026-07-04 |
 
 ---
 
