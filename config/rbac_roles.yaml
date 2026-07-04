@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-INF-002
 agents:
@@ -38,8 +39,8 @@ agents:
     - audit:full
   agent_writer:
     auto_guard_eligible: true
-    maturity: L0_INTERN
-    owner_approved: false
+    maturity: L2_PRACTITIONER
+    owner_approved: true
     permissions:
     - read:docs
     - read:src

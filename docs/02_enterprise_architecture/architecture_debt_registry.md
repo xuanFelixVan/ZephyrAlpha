@@ -2253,25 +2253,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：审计日志完整性/密钥管理/输入验证/权限边界/依赖安全/代码执行风险/网络边界/文件权限
 > 审计方法：Grep + Read真实文件取证（audit_trail/writer.py、ai_audit_logger.py、tamper_evident_log.py、rbac_roles.yaml等）
 
-#### 5.17.5 TamperEvidentLog hash链无HMAC/trusted anchor可整体重写【MEDIUM】
-- 证据：[tamper_evident_log.py:67-98](file:///d:/ZephyrAlpha/src/zephyr/governance/security_governance/tamper_evident_log.py) `hashlib.sha256(f"{counter}:{action}:{data}:{now}:{prev_hash}")` 纯明文无密钥；`:84` `open(self._log_path,"a")` 创建文件未设权限（默认0o644世界可读可写）；攻击者获文件写权限可从首条重算整链，`verify()`无法察觉
-- 病根：根因5（tamper-evident实为tamper-forgable）
-- 修复：改HMAC-SHA256，定期tail_hash外部锚定（git/远程签名）
-
-#### 5.17.9 agent_writer（L0_INTERN、owner_approved:false）被授予write:src【MEDIUM】
-- 证据：[rbac_roles.yaml:39-50](file:///d:/ZephyrAlpha/config/rbac_roles.yaml) `agent_writer: maturity:L0_INTERN; owner_approved:false; permissions:[write:src,write:tests,execute:scripts]; auto_generated:true` 实习级未过审批可写源码，权限越授
-- 病根：根因5（默认开放+权限自动生成无人工复核）
-- 修复：write:src仅授owner_approved=true且maturity≥L2，auto_generated需人工sign-off
-
 #### 5.17.11 依赖无上界钉版+无hash校验+requirements与pyproject分裂【MEDIUM】
 - 证据：[requirements.txt:1-9](file:///d:/ZephyrAlpha/requirements.txt) 全`>=`无上界无hash；[pyproject.toml:13-26](file:///d:/ZephyrAlpha/pyproject.toml) 同全`>=`且比requirements多3依赖（duckdb/structlog/pyarrow），SSoT分裂；无`pip --require-hashes`无SBOM锁文件
 - 病根：根因5（依赖治理缺位）
 - 修复：引入pip-tools生成requirements.lock（含hash），上界钉主版本
-
-#### 5.17.12 敏感/审计文件无权限收紧（0o644世界可读）【MEDIUM】
-- 证据：`rollback_lock.py:127,171` 锁文件0o644；`atomic_transaction_manager.py:243` `os.open(tmp,_flags|_binary,0o644)`；`tamper_evident_log.py:84` open默认权限；全项目grep无`0o600`/`0o700`/`os.chmod`收紧密钥或审计文件
-- 病根：根因5（纵深防御单点化，仅靠fs层默认权限）
-- 修复：审计/密钥/锁文件创建时`os.chmod(path,0o600)`，`.runtime/`目录0o700
 
 #### 5.17.13 pyproject.toml项目级禁用F821掩盖安全静默失败【LOW】
 - 证据：[pyproject.toml:138](file:///d:/ZephyrAlpha/pyproject.toml) `"F821",  # undefined name (TraceContext等系统性问题，需批量修复，后续建卡处理)`；注释自承认存在未定义符号但项目级关闭检查；若安全函数（sanitize_secret/verify_chain）拼错或未导入，运行时静默NameError
@@ -2283,9 +2268,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 严重度 | 数量 |
 |---|:---:|
 | CRITICAL/HIGH | 0（5.17.1/5.17.2/5.17.3/5.17.4/5.17.6/5.17.7/5.17.8已FIXED） |
-| MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
+| MEDIUM | 1（5.17.11；5.17.5/5.17.9/5.17.10/5.17.12已FIXED） |
 | LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **7** |
+| **合计** | **2** |
 
 ---
 

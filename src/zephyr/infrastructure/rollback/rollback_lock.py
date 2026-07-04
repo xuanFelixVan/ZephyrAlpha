@@ -124,7 +124,7 @@ class RollbackLock:
             fd = os.open(
                 str(self._lock_path),
                 os.O_CREAT | os.O_EXCL | os.O_RDWR,
-                0o644,
+                0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
             )
             lock_data = json.dumps(
                 {
@@ -168,7 +168,7 @@ class RollbackLock:
                 fd = os.open(
                     str(self._lock_path),
                     os.O_CREAT | os.O_EXCL | os.O_RDWR,
-                    0o644,
+                    0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
                 )
                 lock_data = json.dumps(
                     {

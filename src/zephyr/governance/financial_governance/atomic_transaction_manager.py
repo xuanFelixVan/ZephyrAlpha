@@ -240,7 +240,7 @@ class TransactionScope:
 
         _flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         _binary_flag = getattr(os, "O_BINARY", 0)
-        fd = os.open(tmp_path, _flags | _binary_flag, 0o644)
+        fd = os.open(tmp_path, _flags | _binary_flag, 0o600)  # 5.17.12 修复：事务临时文件权限收紧至 0o600
         try:
             os.write(fd, data)
             os.fsync(fd)

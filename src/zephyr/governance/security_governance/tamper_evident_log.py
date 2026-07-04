@@ -15,10 +15,20 @@
 # [A_module] module_id=MOD-RES_tamper_evident_log | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import hashlib
+import hmac
 import json
+import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+
+
+def _resolve_hmac_key() -> bytes:
+    """5.17.5 修复：解析 HMAC 密钥（env > 兜底默认）。"""
+    key = os.environ.get("ZEPHYR_TAMPER_HMAC_SECRET", "")
+    if key:
+        return key.encode("utf-8")
+    return b"zephyr-tamper-evident-default-key"
 
 
 @dataclass
@@ -29,16 +39,31 @@ class LogEntry:
     prev_hash: str
     timestamp: float = field(default_factory=time.time)
     hash: str = ""
+    hmac_signature: str = ""
 
 
 class TamperEvidentLog:
     def __init__(self, log_path: str = "logs/tamper_evident.jsonl"):
         self._log_path = Path(log_path)
         self._log_path.parent.mkdir(parents=True, exist_ok=True)
+        self._ensure_secure_perms()
+        self._hmac_key: bytes = _resolve_hmac_key()
         self._chain: list[LogEntry] = []
         self._last_hash: str = "0" * 64
         self._counter: int = 0
         self._load_chain()
+
+    def _ensure_secure_perms(self) -> None:
+        if os.name == "nt":
+            return
+        try:
+            if self._log_path.exists():
+                os.chmod(str(self._log_path), 0o600)
+        except OSError:
+            pass
+
+    def _compute_hmac(self, hash_value: str) -> str:
+        return hmac.new(self._hmac_key, hash_value.encode("utf-8"), hashlib.sha256).hexdigest()
 
     def _load_chain(self) -> None:
         if not self._log_path.exists():
@@ -57,6 +82,7 @@ class TamperEvidentLog:
                         prev_hash=data.get("prev_hash", ""),
                         timestamp=data.get("timestamp", 0.0),
                         hash=data.get("hash", ""),
+                        hmac_signature=data.get("hmac_signature", ""),
                     )
                     self._chain.append(entry)
                     self._last_hash = entry.hash
@@ -69,6 +95,7 @@ class TamperEvidentLog:
         now = time.time()
         raw = f"{self._counter}:{action}:{data}:{now}:{self._last_hash}"
         h = hashlib.sha256(raw.encode()).hexdigest()
+        sig = self._compute_hmac(h)
 
         entry = LogEntry(
             entry_id=f"tel-{self._counter:06d}",
@@ -77,10 +104,12 @@ class TamperEvidentLog:
             prev_hash=self._last_hash,
             timestamp=now,
             hash=h,
+            hmac_signature=sig,
         )
         self._chain.append(entry)
         self._last_hash = h
 
+        new_file_created = not self._log_path.exists()
         with open(self._log_path, "a", encoding="utf-8") as f:
             f.write(
                 json.dumps(
@@ -91,11 +120,14 @@ class TamperEvidentLog:
                         "prev_hash": entry.prev_hash,
                         "timestamp": entry.timestamp,
                         "hash": entry.hash,
+                        "hmac_signature": entry.hmac_signature,
                     },
                     ensure_ascii=False,
                 )
                 + "\n"
             )
+        if new_file_created:
+            os.chmod(str(self._log_path), 0o600)
 
         try:
             from zephyr.governance.audit_trail.writer import get_audit_writer
@@ -121,6 +153,11 @@ class TamperEvidentLog:
             expected = hashlib.sha256(raw.encode()).hexdigest()
             if expected != entry.hash:
                 return False, i
+            # 5.17.5 修复：HMAC 校验（旧条目无签名则跳过，向后兼容）
+            if entry.hmac_signature:
+                expected_sig = self._compute_hmac(entry.hash)
+                if expected_sig != entry.hmac_signature:
+                    return False, i
             prev = entry.hash
         return True, len(self._chain)
 
