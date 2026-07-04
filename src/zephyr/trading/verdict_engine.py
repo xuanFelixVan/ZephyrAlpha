@@ -332,7 +332,6 @@ class VerdictEngine:
             return []
 
         loop = asyncio.get_running_loop()
-        results: list[Verdict] = []
 
         async def _eval_one(evt: Any) -> Verdict:
             try:

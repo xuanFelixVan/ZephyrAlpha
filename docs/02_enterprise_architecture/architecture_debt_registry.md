@@ -4038,6 +4038,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：核心治理函数无文档，新AI难以理解意图
 - **影响**：维护成本高；违反trae_060新AI可发现性原则
 - **修复**：为核心治理函数补充docstring（含Args/Returns/Raises）
+- **状态**：STILL_VALID（保留）— 核心治理函数约 40% 无 docstring（git_commit_gateway.py 等多处），需逐个补充含 Args/Returns/Raises 的 docstring，工作量大
 
 #### 5.42.3 [LOW] evaluate_batch存在死变量
 - **文件**：[verdict_engine.py](file:///D:/ZephyrAlpha/src/zephyr/trading/verdict_engine.py#L325)
@@ -4045,6 +4046,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：死代码增加阅读负担
 - **影响**：可维护性下降
 - **修复**：删除死变量
+- **状态**：FIXED — 已删除 `results: list[Verdict] = []` 死变量初始化（verdict_engine.py evaluate_batch L335），该变量在 L359 被 `results = await asyncio.gather(*tasks)` 覆盖前从未读取
 
 #### 5.42.4 [HIGH] baseline_manager.py方法错误嵌套在模块级函数内（结构性bug）
 - **文件**：[baseline_manager.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/baseline_manager.py#L132)
@@ -4052,6 +4054,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：结构性bug——方法定义在错误的作用域，类实际不含这些方法
 - **影响**：调用这些方法会AttributeError；功能静默缺失
 - **修复**：修正缩进，将方法定义移回类作用域
+- **状态**：STILL_VALID（保留）— baseline_manager.py L140+ 的 snapshot_interface/snapshot_import_graph/snapshot_config/capture 方法错误嵌套在模块级函数 _read_config_file 内；文件标记 SAFETY=H + AI_AUTONOMY=human_gated，AI 不可自动修复，需人工重构缩进
 
 #### 5.42.5 严重度汇总
 
