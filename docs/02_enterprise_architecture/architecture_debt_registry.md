@@ -3700,6 +3700,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：无统一开关真源，行为不一致
 - **影响**：新增开关不知该用哪套；运维需检查4处
 - **修复**：收敛为foundation/flags.py单一实现
+- **状态**：STILL_VALID（保留）— 4套特性开关系统碎片化需统一收敛，涉及多调用方迁移与API统一，超出本轮快速修复范围（2026-07-04 复核确认路径为 shared/foundation/flags.py，重复文件仍存在）
 
 #### 5.38.2 [HIGH] global_flag_registry在生产代码中从未使用 [⚠ STILL_VALID: 2026-07-04 验证声明不实——load_flags_from_yaml函数在src/zephyr/代码中零命中，__init__.py无global_flag_registry引用，原修复声明未落地]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L168)
@@ -3707,6 +3708,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：整个特性开关系统是死代码，定义了但从未接入任何功能路径
 - **影响**：声称有开关系统实际无效；新AI可能误以为可用而依赖它
 - **修复**：要么接入关键功能路径，要么删除避免误导
+- **状态**：STILL_VALID（保留）— 整个特性开关系统是死代码，需决策接入或删除，涉及功能路径改造，超出本轮快速修复范围
 
 #### 5.38.3 [HIGH] FeatureFlagManager默认ON违反安全默认原则 [⚠ STILL_VALID: 2026-07-04 验证声明不实——FeatureFlagManager未删除(仍存在于两份feature_flag.py)，is_enabled默认return True;FlagRegistry.is_enabled未注册时抛FlagNotFoundError非返回False]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py#L40)
@@ -3714,6 +3716,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：两套系统默认行为相反（foundation/flags.py声明"默认OFF"）；未注册功能默认开启
 - **影响**：新功能无需显式启用即生效，违反灰度发布原则
 - **修复**：统一默认为False（OFF），未注册flag不允许通过
+- **状态**：STILL_VALID（保留）— 两套系统默认行为相反，需统一默认值策略并迁移调用方，涉及特性开关系统收敛（依赖5.38.1），超出本轮快速修复范围
 
 #### 5.38.4 [MEDIUM] config/flags.yaml从未被代码加载 [⚠ STILL_VALID: 2026-07-04 验证声明不实——load_flags_from_yaml函数不存在，flags.yaml从未被代码引用，原修复声明未落地]
 - **文件**：[flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml) + [telemetry_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/telemetry_server.py#L186)
@@ -3721,6 +3724,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：flags.yaml是死配置文件，其中所有开关值对运行时无影响
 - **影响**：修改flags.yaml不生效；运维误以为可远程控制遥测开关
 - **修复**：在启动时yaml.safe_load解析flags.yaml并驱动FlagRegistry
+- **状态**：STILL_VALID（保留）— flags.yaml 从未被代码加载，需实现 load_flags_from_yaml 并接入启动流程，涉及特性开关系统激活（依赖5.38.2），超出本轮快速修复范围
 
 #### 5.38.5 [MEDIUM] 灰度发布rollout_pct逻辑有缺陷且未使用 [⚠ STILL_VALID: 2026-07-04 验证声明不实——shared/foundation/flags.py:108-112仍用md5哈希分桶，未改为random.randint(0,99)]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L108)
@@ -3728,6 +3732,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：灰度分桶逻辑仅在传module_id时生效，未传时全量放行
 - **影响**：声称支持灰度实际不支持
 - **修复**：修正逻辑（未传module_id时按rollout_pct随机分桶）
+- **状态**：STILL_VALID（保留）— 灰度分桶逻辑缺陷，但修复涉及灰度发布语义设计（random 导致每次调用结果不稳定），且整个系统是死代码（5.38.2），超出本轮快速修复范围
 
 #### 5.38.6 [MEDIUM] FeatureFlagManager._audit无持久化 [⚠ STILL_VALID: 2026-07-04 验证声明不实——FlagRegistry无_audit方法，FeatureFlagManager._audit仅内存list未写JSONL]
 - **文件**：[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py#L32)
@@ -3735,6 +3740,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：开关变更审计记录在内存，重启丢失
 - **影响**：无法追溯谁在何时改了开关
 - **修复**：将变更记录写入持久化审计日志
+- **状态**：STILL_VALID（保留）— FeatureFlagManager._audit 仅内存 list，需接入持久化审计日志（依赖特性开关系统收敛5.38.1），超出本轮快速修复范围
 
 #### 5.38.7 [MEDIUM] 两个FeatureFlag类名冲突定义不同 [⚠ STILL_VALID: 2026-07-04 验证声明不实——Grep 'class FeatureFlag' 命中4处定义(trading/orchestrator/governance/feature_flag.py:23、shared/foundation/flags.py:81、audit_orchestration/feature_flag.py:25等)，未收敛]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80) vs [feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py#L23)
@@ -3742,6 +3748,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：同名FeatureFlag类，不同基类、不同字段、不同语义
 - **影响**：import歧义；类型检查失效
 - **修复**：统一为单一FeatureFlag定义
+- **状态**：STILL_VALID（保留）— 4处 FeatureFlag 类名冲突定义不同，需统一为单一定义并迁移所有调用方（依赖5.38.1收敛），超出本轮快速修复范围
 
 #### 5.38.8 [MEDIUM] 功能未用flag守护也无if/else硬编码 [⚠ STILL_VALID: 2026-07-04 验证声明不实——__init__.py:108-136的_deferred_bootstrap无flag守护，直接调用_auto_bootstrap，Grep global_flag_registry在__init__.py零命中]
 - **文件**：全项目
@@ -3749,6 +3756,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：所有功能默认全开，无任何开关控制点
 - **影响**：实验性功能无法紧急关闭；新功能无法灰度；故障功能无法快速降级
 - **修复**：为高风险/实验性功能增加flag守护点
+- **状态**：STILL_VALID（保留）— 所有功能默认全开无 flag 守护，需为高风险/实验性功能增加守护点（依赖特性开关系统激活5.38.2），超出本轮快速修复范围
 
 #### 5.38.9 [LOW] 无flag过期清理机制 [⚠ STILL_VALID: 2026-07-04 验证声明不实——shared/foundation/flags.py:80-87的FeatureFlag无created_at/expires_at/owner字段，无is_expired方法]
 - **文件**：[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py#L80)
@@ -3756,6 +3764,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：flag无生命周期管理，永久残留
 - **影响**：开关膨胀，废弃flag永不清理
 - **修复**：增加expires_at字段，过期flag自动转ALWAYS_ON并告警清理
+- **状态**：STILL_VALID（保留）— FeatureFlag 无生命周期管理字段，需增加 expires_at/created_at/owner 与 is_expired 方法（依赖特性开关系统收敛5.38.1），超出本轮快速修复范围
 
 #### 5.38.10 严重度汇总
 
