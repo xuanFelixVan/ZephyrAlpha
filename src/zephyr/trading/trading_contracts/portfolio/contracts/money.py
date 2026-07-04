@@ -188,7 +188,7 @@ class Money:
             try:
                 object.__setattr__(self, "amount", Decimal(str(self.amount)))
             except Exception as exc:
-                raise MoneyPrecisionError(f"Money.amount 无法转换为 Decimal: {self.amount!r}（{exc}）")
+                raise MoneyPrecisionError(f"Money.amount 无法转换为 Decimal: {self.amount!r}（{exc}）") from exc
 
         # 按货币精度 quantize（银行家舍入）
         precision = get_currency_precision(self.currency)

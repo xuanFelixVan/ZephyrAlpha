@@ -196,7 +196,7 @@ class InputSanitizer:
         try:
             parts = shlex.split(command)
         except ValueError as e:
-            raise CommandInjectionError(f"Unparseable command: {command} ({e})")
+            raise CommandInjectionError(f"Unparseable command: {command} ({e})") from e
 
         if not parts:
             raise CommandInjectionError("Empty command")

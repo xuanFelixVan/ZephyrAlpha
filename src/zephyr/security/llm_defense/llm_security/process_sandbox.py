@@ -260,9 +260,9 @@ class L2aSandbox:
                 text=True,
                 shell=False,
             )
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as exc:
             elapsed = time.monotonic() - t0
-            raise SandboxTimeout(cmd, effective_timeout) from None
+            raise SandboxTimeout(cmd, effective_timeout) from exc
         elapsed = time.monotonic() - t0
 
         return SandboxResult(

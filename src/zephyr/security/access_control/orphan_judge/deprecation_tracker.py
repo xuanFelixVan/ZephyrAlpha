@@ -136,7 +136,7 @@ class DeprecationTracker:
                 os.remove(tmp_path)
             except OSError:
                 pass
-            raise DeprecationTrackerError(f"I/O error writing deprecation record for {record.path}: {exc}")
+            raise DeprecationTrackerError(f"I/O error writing deprecation record for {record.path}: {exc}") from exc
 
     def _read_all_records(self) -> list[DeprecationRecord]:
         if not self._deprecations_dir.exists():
