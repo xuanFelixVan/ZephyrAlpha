@@ -283,21 +283,23 @@ class AiAuditLogger:
     def query(self, filters: dict[str, Any]) -> list[dict[str, Any]]:
         results: list[dict[str, Any]] = []
         for f in sorted(self._log_dir.glob("ai_audit_*.jsonl")):
-            for line in f.open(encoding="utf-8"):
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    entry = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-                match = True
-                for k, v in filters.items():
-                    if entry.get(k) != v:
-                        detail = entry.get("detail", {})
-                        if detail.get(k) != v:
-                            match = False
-                            break
-                if match:
-                    results.append(entry)
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with f.open(encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        entry = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    match = True
+                    for k, v in filters.items():
+                        if entry.get(k) != v:
+                            detail = entry.get("detail", {})
+                            if detail.get(k) != v:
+                                match = False
+                                break
+                    if match:
+                        results.append(entry)
         return results

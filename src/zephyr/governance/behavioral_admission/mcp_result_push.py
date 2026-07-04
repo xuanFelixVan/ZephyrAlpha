@@ -217,11 +217,12 @@ class ResultPushManager:
         )
 
         try:
-            resp = urllib.request.urlopen(req, timeout=self._callback_timeout)
-            if 200 <= resp.status < 300:
-                return PushStatus.PUSHED
-            _log.warning("callback returned %d for task %s", resp.status, task["task_id"])
-            return PushStatus.CALLBACK_ERROR
+            # 5.169 修复：用 context manager 确保 HTTP 响应关闭，防止连接泄漏
+            with urllib.request.urlopen(req, timeout=self._callback_timeout) as resp:
+                if 200 <= resp.status < 300:
+                    return PushStatus.PUSHED
+                _log.warning("callback returned %d for task %s", resp.status, task["task_id"])
+                return PushStatus.CALLBACK_ERROR
         except urllib.error.URLError as exc:
             _log.error("callback connection error for task %s: %s", task["task_id"], exc)
             return PushStatus.CALLBACK_ERROR

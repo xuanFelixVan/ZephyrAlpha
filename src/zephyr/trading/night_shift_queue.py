@@ -74,7 +74,9 @@ class NightShiftQueue:
             entry.id = self._next_id()
         with self._lock:
             line = entry.model_dump_json() + "\n"
-            self._path.open("a", encoding="utf-8").write(line)
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with self._path.open("a", encoding="utf-8") as f:
+                f.write(line)
         return entry.id
 
     def pending(self) -> list[NightShiftEntry]:
@@ -82,17 +84,19 @@ class NightShiftQueue:
         if not self._path.exists():
             return results
         with self._lock:
-            for line in self._path.open(encoding="utf-8"):
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
-                    entry = NightShiftEntry(**data)
-                    if entry.human_decision is None:
-                        results.append(entry)
-                except Exception:
-                    continue
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with self._path.open(encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        data = json.loads(line)
+                        entry = NightShiftEntry(**data)
+                        if entry.human_decision is None:
+                            results.append(entry)
+                    except Exception:
+                        continue
         return results
 
     def resolve(self, entry_id: str, decision: str, notes: str = "") -> bool:
@@ -101,20 +105,22 @@ class NightShiftQueue:
         lines: list[str] = []
         is_found = False
         with self._lock:
-            for line in self._path.open(encoding="utf-8"):
-                line_stripped = line.strip()
-                if not line_stripped:
-                    continue
-                try:
-                    data = json.loads(line_stripped)
-                    if data.get("id") == entry_id:
-                        data["human_decision"] = decision
-                        data["human_timestamp"] = datetime.now().isoformat()
-                        data["human_notes"] = notes
-                        is_found = True
-                    lines.append(json.dumps(data, ensure_ascii=False) + "\n")
-                except Exception:
-                    lines.append(line)
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with self._path.open(encoding="utf-8") as f:
+                for line in f:
+                    line_stripped = line.strip()
+                    if not line_stripped:
+                        continue
+                    try:
+                        data = json.loads(line_stripped)
+                        if data.get("id") == entry_id:
+                            data["human_decision"] = decision
+                            data["human_timestamp"] = datetime.now().isoformat()
+                            data["human_notes"] = notes
+                            is_found = True
+                        lines.append(json.dumps(data, ensure_ascii=False) + "\n")
+                    except Exception:
+                        lines.append(line)
             self._path.write_text("".join(lines), encoding="utf-8")
         return is_found
 
@@ -124,17 +130,19 @@ class NightShiftQueue:
         if not self._path.exists():
             return {"total": 0, "pending": 0, "resolved": 0}
         with self._lock:
-            for line in self._path.open(encoding="utf-8"):
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
-                    total += 1
-                    if data.get("human_decision") is not None:
-                        resolved += 1
-                except Exception:
-                    continue
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with self._path.open(encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        data = json.loads(line)
+                        total += 1
+                        if data.get("human_decision") is not None:
+                            resolved += 1
+                    except Exception:
+                        continue
         return {"total": total, "pending": total - resolved, "resolved": resolved}
 
     def has_unresolved(self) -> bool:
