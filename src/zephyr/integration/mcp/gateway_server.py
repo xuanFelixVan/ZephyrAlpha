@@ -545,10 +545,10 @@ class MCPGateway(BaseMCPServer):
                         tool_name=tool_name,
                         result_status="error",
                         error_code=ERR_INTERNAL_ERROR,
-                        error_message=str(exc),
+                        error_message="internal error",
                         duration_ms=int((time.perf_counter() - t0) * 1000),
                     )
-                    return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))
+                    return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
         try:
             final_params = dict(params)
@@ -614,12 +614,12 @@ class MCPGateway(BaseMCPServer):
                 tool_name=tool_name,
                 result_status="error",
                 error_code=ERR_INTERNAL_ERROR,
-                error_message=str(exc),
+                error_message="internal error",
                 duration_ms=duration_ms,
             )
             if cb:
                 cb.failure()
-            return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))
+            return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
     def _route_tool_name(self, tool_name: str) -> str | None:
         lower = tool_name.lower()

@@ -33,12 +33,16 @@ Backend  : InProcessVectorMemory (11子模块 + 8 Collection + HybridRetriever)
 
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     pass
 
 from zephyr.infrastructure._base_server import BaseMCPServer
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["VectorMemoryServer", "create_server"]
 
@@ -190,7 +194,8 @@ class VectorMemoryServer(BaseMCPServer):
             result_id = self._vms.write(collection_name, content, metadata=metadata, doc_id=doc_id)
             return {"doc_id": result_id, "collection": collection_name, "written": True}
         except Exception as e:
-            return {"error": str(e), "written": False}
+            logger.exception("vms write failed")
+            return {"error": "write failed", "written": False}
 
     def _recall(self, collection_name: str, k: int = 5) -> dict[str, Any]:
         if self._vms is None:

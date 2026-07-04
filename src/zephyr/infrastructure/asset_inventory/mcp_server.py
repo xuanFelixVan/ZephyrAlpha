@@ -221,7 +221,7 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
         return func()
     except Exception as exc:
         logger.exception("MCP tool '%s' failed", name)
-        return json.dumps({"error": str(exc)})
+        return json.dumps({"error": "internal error"})
 
 
 def list_tools() -> list[dict[str, str]]:

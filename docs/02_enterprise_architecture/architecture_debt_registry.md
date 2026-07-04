@@ -8865,6 +8865,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.168 异常信息泄露（142个，第28轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=142(MCP Server str(exc)直接返回客户端需全量脱敏重构)
+> **第34轮修复状态（2026-07-04）**：FIXED=39(HIGH全量：_base_server/gateway_server/mcp_server 通用处理器 str(exc)→"internal error" + governance_server 26处handler 去掉{e}+添加logger.exception + vector_memory_server str(e)→"write failed"), DRIFTED=3(LOW 29/30 upgrade_headers_to_14fields.py已删除 + LOW 32 iterative_cleanup_imports.py已删除), STILL_VALID=100(MEDIUM 66内部Result对象error字段需系统性追溯消费链路 + LOW 34 CLI脚本需详细异常供运维调试)
 
 #### HIGH（39个）
 
@@ -8907,6 +8908,24 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 37. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp\gateway_server.py:565` — MCPGateway 审计日志 `error_message=str(exc)` 记录原始异常（含敏感信息风险，且审计日志可能被其他模块消费）
 38. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\infrastructure\gateway_server.py:567` — 重复实现，同上
 39. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\integration\mcp_server.py:236` — AssetInventory dispatch_tool 通过 EventBusBackpressure.emit 发送 `error_detail=str(exc)` 到事件总线，异常消息可能传播到事件订阅者
+
+**第34轮修复明细（2026-07-04）**：
+- **FIXED**（39处 HIGH 全量）：
+  - HIGH 1-2: `integration/mcp/_base_server.py:477` + `infrastructure/_base_server.py:426` — `return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))` → `"internal error"`（log 行保留 str(exc) 记录详细异常）
+  - HIGH 3-4: `integration/mcp/gateway_server.py:551/622` + `infrastructure/gateway_server.py:557/628` — 同上 `str(exc)` → `"internal error"`（4处 return）
+  - HIGH 5-6: `integration/mcp_server.py:241` + `infrastructure/asset_inventory/mcp_server.py:224` — `return json.dumps({"error": str(exc)})` → `{"error": "internal error"}`
+  - HIGH 7-8: `governance_server.py` _import_check — `{"error": str(e)}` / `{"error": f"{type(e).__name__}: {e}"}` → `logger.exception("import failed"); {"error": "import failed"}`（2份 × 2分支 = 4处）
+  - HIGH 9-34: `governance_server.py` 13个handler × 2分支 × 2份 = 52处 — `{"error": f"... failed: {e}"}` → `logger.exception("... failed"); {"error": "... failed"}`（去掉 {e}，添加 logger.exception 记录详细异常）
+  - HIGH 35-36: `vector_memory_server.py:193` × 2份 — `{"error": str(e), "written": False}` → `logger.exception("vms write failed"); {"error": "write failed", "written": False}`
+  - HIGH 37-38: `gateway_server.py` 审计日志 `error_message=str(exc)` → `error_message="internal error"`（2份 × 2处 = 4处）
+  - HIGH 39: `mcp_server.py:236` EventBusBackpressure.emit `"error_detail": str(exc)` → `"error_detail": "internal error"`
+  - 文件级变更：`governance_server.py` × 2份 添加 `import logging` + `logger = logging.getLogger(__name__)`；`vector_memory_server.py` × 2份 同上
+- **DRIFTED**（3处 LOW）：
+  - LOW 29/30: `scripts/ops/upgrade_headers_to_14fields.py` 文件已删除
+  - LOW 32: `scripts/governance/iterative_cleanup_imports.py` 文件已删除
+- **STILL_VALID**（100处）：
+  - MEDIUM 66: 内部 Result 对象 error 字段（LLMResponse/ProbeResult/HealthStatus/DBHealReport/FactResult/CheckResult/RollbackResult.errors 等）需系统性追溯消费链路才能安全脱敏，涉及跨模块数据流重构
+  - LOW 34: scripts/ CLI 脚本返回 str(e) 供运维人员调试，属合理设计
 
 #### MEDIUM（66个）
 

@@ -93,9 +93,11 @@ def _import_check(module_path: str) -> dict[str, Any]:
         mod = importlib.import_module(module_path)
         return {"importable": True, "has_all": bool(getattr(mod, "__all__", None)), "module": module_path}
     except ImportError as e:
-        return {"importable": False, "error": str(e), "module": module_path}
+        logger.exception("import failed")
+        return {"importable": False, "error": "import failed", "module": module_path}
     except Exception as e:
-        return {"importable": False, "error": f"{type(e).__name__}: {e}", "module": module_path}
+        logger.exception("import failed")
+        return {"importable": False, "error": "import failed", "module": module_path}
 
 
 class GovernanceServer(BaseMCPServer):
@@ -598,9 +600,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"behavioral-auditor import failed: {e}", "events": []}
+            logger.exception("behavioral-auditor import failed failed")
+
+            return {"error": "behavioral-auditor import failed failed", "events": []}
         except Exception as e:
-            return {"error": f"scan failed: {e}", "events": []}
+            logger.exception("scan failed failed")
+
+            return {"error": "scan failed failed", "events": []}
 
     def _drift_report(self) -> dict[str, Any]:
         try:
@@ -622,9 +628,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"import failed: {e}"}
+            logger.exception("import failed failed")
+
+            return {"error": "import failed failed"}
         except Exception as e:
-            return {"error": f"report failed: {e}"}
+            logger.exception("report failed failed")
+
+            return {"error": "report failed failed"}
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
@@ -637,9 +647,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"import failed: {e}", "module_id": module_id, "allowed": False}
+            logger.exception("import failed failed")
+
+            return {"error": "import failed failed", "module_id": module_id, "allowed": False}
         except Exception as e:
-            return {"error": f"budget check failed: {e}", "module_id": module_id, "allowed": False}
+            logger.exception("budget check failed failed")
+
+            return {"error": "budget check failed failed", "module_id": module_id, "allowed": False}
 
     def _rbac_check(
         self, session_id: str, operation: str, maturity: str = "L2_REGULAR", role: str = "executor"
@@ -671,9 +685,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"RBAC import failed: {e}", "decision": "ERROR"}
+            logger.exception("RBAC import failed failed")
+
+            return {"error": "RBAC import failed failed", "decision": "ERROR"}
         except Exception as e:
-            return {"error": f"RBAC check failed: {e}", "decision": "ERROR"}
+            logger.exception("RBAC check failed failed")
+
+            return {"error": "RBAC check failed failed", "decision": "ERROR"}
 
     def _list_skills(self, keyword: str | None = None) -> dict[str, Any]:
         try:
@@ -697,9 +715,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Agent Spec import failed: {e}", "total_skills": 0, "skills": []}
+            logger.exception("Agent Spec import failed failed")
+
+            return {"error": "Agent Spec import failed failed", "total_skills": 0, "skills": []}
         except Exception as e:
-            return {"error": f"list_skills failed: {e}", "total_skills": 0, "skills": []}
+            logger.exception("list_skills failed failed")
+
+            return {"error": "list_skills failed failed", "total_skills": 0, "skills": []}
 
     def _load_skill(self, skill_id: str) -> dict[str, Any]:
         try:
@@ -718,9 +740,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"skill_id": skill_id, "loaded": False, "error": f"Agent Spec import failed: {e}"}
+            logger.exception("Agent Spec import failed")
+
+            return {"skill_id": skill_id, "loaded": False, "error": "Agent Spec import failed"}
         except Exception as e:
-            return {"skill_id": skill_id, "loaded": False, "error": f"load failed: {e}"}
+            logger.exception("load failed")
+
+            return {"skill_id": skill_id, "loaded": False, "error": "load failed"}
 
     def _write_audit(
         self, event_type: str, description: str, agent_id: str | None = None, target_path: str | None = None
@@ -738,9 +764,13 @@ class GovernanceServer(BaseMCPServer):
             return {"entry_id": entry_id, "written": True, "event_type": event_type}
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"written": False, "error": f"Audit Trail import failed: {e}"}
+            logger.exception("Audit Trail import failed")
+
+            return {"written": False, "error": "Audit Trail import failed"}
         except Exception as e:
-            return {"written": False, "error": f"write_audit failed: {e}"}
+            logger.exception("write_audit failed")
+
+            return {"written": False, "error": "write_audit failed"}
 
     def _execute_rollback(
         self,
@@ -829,9 +859,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Rollback import failed: {e}", "success": False}
+            logger.exception("Rollback import failed failed")
+
+            return {"error": "Rollback import failed failed", "success": False}
         except Exception as e:
-            return {"error": f"rollback failed: {e}", "success": False}
+            logger.exception("rollback failed failed")
+
+            return {"error": "rollback failed failed", "success": False}
 
     def _escalate(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
@@ -850,9 +884,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Escalation import failed: {e}", "level": "UNKNOWN"}
+            logger.exception("Escalation import failed failed")
+
+            return {"error": "Escalation import failed failed", "level": "UNKNOWN"}
         except Exception as e:
-            return {"error": f"escalate failed: {e}", "level": "UNKNOWN"}
+            logger.exception("escalate failed failed")
+
+            return {"error": "escalate failed failed", "level": "UNKNOWN"}
 
     def _check_budget(self, dimension: str = "ALL") -> dict[str, Any]:
         try:
@@ -882,9 +920,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Budget Enforcer import failed: {e}"}
+            logger.exception("Budget Enforcer import failed failed")
+
+            return {"error": "Budget Enforcer import failed failed"}
         except Exception as e:
-            return {"error": f"check_budget failed: {e}"}
+            logger.exception("check_budget failed failed")
+
+            return {"error": "check_budget failed failed"}
 
     def _escalation_status(self) -> dict[str, Any]:
         try:
@@ -898,9 +940,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Escalation import failed: {e}"}
+            logger.exception("Escalation import failed failed")
+
+            return {"error": "Escalation import failed failed"}
         except Exception as e:
-            return {"error": f"escalation_status failed: {e}"}
+            logger.exception("escalation_status failed failed")
+
+            return {"error": "escalation_status failed failed"}
 
     def _escalation_resolve(self, category: str, description: str, owner_id: str | None = None) -> dict[str, Any]:
         try:
@@ -920,9 +966,13 @@ class GovernanceServer(BaseMCPServer):
             }
         except ImportError as e:
             logger.warning("ImportError in handler: %s", e, exc_info=True)
-            return {"error": f"Escalation import failed: {e}", "resolved": False}
+            logger.exception("Escalation import failed failed")
+
+            return {"error": "Escalation import failed failed", "resolved": False}
         except Exception as e:
-            return {"error": f"escalation_resolve failed: {e}", "resolved": False}
+            logger.exception("escalation_resolve failed failed")
+
+            return {"error": "escalation_resolve failed failed", "resolved": False}
 
 
 def create_server() -> GovernanceServer:

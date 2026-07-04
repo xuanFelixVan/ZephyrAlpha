@@ -233,12 +233,12 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
                     "timestamp": datetime.now(UTC).isoformat(),
                     "mcp_server": name,
                     "error_type": type(exc).__name__,
-                    "error_detail": str(exc),
+                    "error_detail": "internal error",
                 },
             )
         except Exception:
             pass
-        return json.dumps({"error": str(exc)})
+        return json.dumps({"error": "internal error"})
 
 
 def list_tools() -> list[dict[str, str]]:

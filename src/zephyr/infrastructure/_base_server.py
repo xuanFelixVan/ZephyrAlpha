@@ -423,7 +423,7 @@ class BaseMCPServer:
             return self._err(req_id, exc.code, exc.message, exc.data)
         except Exception as exc:
             self._log.error("tool_execution_error", tool=tool_name, error=str(exc))
-            return self._err(req_id, ERR_TOOL_EXECUTION, str(exc))
+            return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
     # ------------------------------------------------------------------
     # 主循环（stdio）
