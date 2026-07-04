@@ -1,7 +1,7 @@
 rule_id: TRAE-023
 title: 行为边界-条件禁止(治理与文档)
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-023
 depends_on:
 - TRAE-022

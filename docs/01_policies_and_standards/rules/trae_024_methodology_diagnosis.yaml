@@ -1,7 +1,7 @@
 rule_id: TRAE-024
 title: 方法论-诊断与根因分析
 version: 1.2.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-024
 depends_on:
 - TRAE-041

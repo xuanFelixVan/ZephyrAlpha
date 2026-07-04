@@ -1,7 +1,7 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
 version: 1.7.5
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-028
 depends_on:
 - TRAE-010

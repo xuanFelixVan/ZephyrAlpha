@@ -1,7 +1,7 @@
 rule_id: TRAE-016
 title: 架构约束-漂移检测
 version: 1.2.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-016
 depends_on:
 - TRAE-017

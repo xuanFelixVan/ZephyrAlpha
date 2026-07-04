@@ -1,7 +1,7 @@
 rule_id: TRAE-032
 title: 模块治理-准入与生命周期
 version: 1.1.2
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-032
 depends_on:
 - TRAE-034

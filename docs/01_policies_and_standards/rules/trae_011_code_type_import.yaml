@@ -1,7 +1,7 @@
 rule_id: TRAE-011
 title: 代码构建-类型与导入
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-011
 depends_on: []
 tags:

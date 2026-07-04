@@ -1,7 +1,7 @@
 rule_id: TRAE-037
 title: 架构治理-合格与版本化
 version: 0.4.2
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-037
 depends_on: []
 tags:

@@ -1,7 +1,7 @@
 rule_id: TRAE-025
 title: 方法论-决策与执行
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-025
 depends_on:
 - TRAE-024

@@ -1,7 +1,7 @@
 rule_id: TRAE-026
 title: 方法论-质量与度量
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-026
 depends_on:
 - TRAE-024

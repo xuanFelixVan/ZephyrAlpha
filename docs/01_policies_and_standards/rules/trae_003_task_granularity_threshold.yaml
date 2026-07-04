@@ -1,7 +1,7 @@
 rule_id: TRAE-003
 title: 任务粒度与完成门槛协议
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-003
 depends_on: []
 tags:

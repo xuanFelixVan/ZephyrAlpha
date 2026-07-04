@@ -1,7 +1,7 @@
 rule_id: TRAE-027
 title: 方法论-协作与演进
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-027
 depends_on:
 - TRAE-024

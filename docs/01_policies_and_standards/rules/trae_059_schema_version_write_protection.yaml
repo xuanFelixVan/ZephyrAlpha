@@ -1,7 +1,7 @@
 rule_id: TRAE-059
 title: _schema_version 写入保护规范
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-059
 depends_on:
 - TRAE-054

@@ -7,7 +7,7 @@
 rule_id: TRAE-053
 title: 铁律补充-自动化双轨判定
 version: 2.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-053
 depends_on: []
 tags:

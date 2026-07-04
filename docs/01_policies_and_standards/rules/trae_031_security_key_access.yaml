@@ -1,7 +1,7 @@
 rule_id: TRAE-031
 title: 安全治理-密钥与访问控制
 version: 0.6.1
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-031
 depends_on:
 - TRAE-019

@@ -1,7 +1,7 @@
 rule_id: TRAE-046
 title: 工程治理-代码重组安全
 version: 1.0.6
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-046
 depends_on: []
 tags:

@@ -1,7 +1,7 @@
 rule_id: TRAE-014
 title: 架构约束-蓝图对齐
 version: 1.2.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-014
 depends_on:
 - TRAE-042
