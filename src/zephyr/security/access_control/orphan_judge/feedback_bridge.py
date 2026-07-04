@@ -16,8 +16,9 @@
 # [TTL] task_bound
 import logging
 from pathlib import Path
-from tempfile import mkdtemp
 from typing import Any
+
+from zephyr.shared.io.paths import get_tmp_dir
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +26,15 @@ __all__ = ["FeedbackBridge"]
 
 
 class FeedbackBridge:
-    def __init__(self) -> None:
+    def __init__(self, storage_path: Path | None = None) -> None:
         self._loop = None
         self._available = False
         try:
             from zephyr.trading.feedback_loop import FeedbackLoop
 
-            self._loop = FeedbackLoop(Path(mkdtemp(prefix="orphan_feedback_")))
+            # 5.133.6 修复：mkdtemp 创建系统临时目录从不清理，改为项目托管临时目录；
+            # 同时开放 storage_path 参数支持依赖注入（测试可 mock）
+            self._loop = FeedbackLoop(storage_path or get_tmp_dir() / "feedback_orphan_judge")
             self._available = True
         except ImportError:
             logger.warning("FeedbackLoop not available")
