@@ -8772,6 +8772,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.165 全局状态管理（44个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=44(全局状态管理需重构为依赖注入)
+> **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=25, STILL_VALID=19。HIGH 6个中5个DRIFTED(behavioral_audit/目录已整体迁移到governance/drift_detection/导致#2 baseline_poisoning_guard.py/#3 drift_infrastructure.py/#5 file_attr_checker.py路径漂移+governance/adapter.py→governance/services/adapter.py/#4 context_ingest.py路径漂移，问题本身仍存在但原file:line引用失效)+1个STILL_VALID(#1 __init__.py:125 Timer+global仍存在);MEDIUM 28个中20个DRIFTED(observability_02/目录已删除#12+governance/adapter.py→services/adapter.py #7+behavioral_audit/→drift_detection/ #23-24/#30+多处路径漂移)+8个STILL_VALID(shared/state_machine.py/shared/schema/schema_registry.py等模块级单例无锁仍存在);LOW 10个全部STILL_VALID(scripts/ops/*.py的global计数器滥用仍存在,路径未漂移)。
+
+> **5.165 修复明细（2026-07-04）**：
+> - 本轮无代码修改（FIXED=0），全部为路径漂移DRIFTED标记+问题保留STILL_VALID
+> - 路径漂移：behavioral_audit/ → governance/drift_detection/（baseline_poisoning_guard.py/drift_infrastructure.py/file_attr_checker.py/drift_engine.py/resource_guard.py）
+> - 路径漂移：governance/adapter.py → governance/services/adapter.py
+> - 目录删除：shared/observability_02/ 整体删除（metrics.py/__init__.py等）
+> - 保留STILL_VALID 19处: #1 __init__.py Timer+global无锁 + 8处MEDIUM模块级单例无锁 + 10处LOW scripts/ops global计数器，需逐文件加锁或重构为依赖注入，因分布30+文件且涉及并发安全，需谨慎评估后批量修复
 
 #### HIGH（6个）
 
