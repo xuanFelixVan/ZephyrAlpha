@@ -94,7 +94,8 @@ class TriggerResult:
             return self.action == other
         if isinstance(other, TriggerResult):
             return self.action == other.action
-        return False
+        # 5.108.2 修复：返回 NotImplemented 而非 False，让右操作数的 __eq__ 有机会参与比较。
+        return NotImplemented
 
     # 5.83.1 修复：原定义了 __eq__ 但未定义 __hash__，Python 3 中定义 __eq__ 会自动将 __hash__ 设为 None，使实例变为 unhashable。
     # __hash__ 基于 __eq__ 比较的 action 字段，保持两者一致性。

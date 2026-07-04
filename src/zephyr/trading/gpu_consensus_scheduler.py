@@ -239,6 +239,9 @@ class GPUConsensusScheduler:
         return removed
 
     def get_metrics(self) -> SchedulerMetrics:
+        # 5.111.2 修复：原在 _lock 内访问 self._queue.depth（@property 内获取 _PriorityQueue._lock），
+        # 构成"持A锁时获取B锁"嵌套。改为先快照 queue_depth 再进入 _lock。
+        queue_depth = self._queue.depth
         with self._lock:
             avg_latency = self._total_latency_ms / max(self._total_submitted, 1)
             return SchedulerMetrics(
@@ -249,7 +252,7 @@ class GPUConsensusScheduler:
                 degraded=self._degraded,
                 cancelled=self._cancelled,
                 avg_latency_ms=round(avg_latency, 2),
-                queue_depth=self._queue.depth,
+                queue_depth=queue_depth,
                 gpu_available=self._gpu_status.available,
                 dual_api_count=self._dual_api_count,
                 single_api_count=self._single_api_count,
@@ -298,7 +301,11 @@ class GPUConsensusScheduler:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for r in results:
-            if isinstance(r, Exception):
+            # 5.112.2 修复：CancelledError 继承 BaseException 而非 Exception，
+            # isinstance(r, Exception) 对 CancelledError 返回 False，导致取消信号被吞没。
+            if isinstance(r, asyncio.CancelledError):
+                raise r  # 传播取消信号
+            if isinstance(r, BaseException):
                 responses.append({"error": str(r), "verdict": None})
             elif r is not None:
                 responses.append(r)

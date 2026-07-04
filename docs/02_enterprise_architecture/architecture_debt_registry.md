@@ -6702,6 +6702,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(__eq__返回False非NotImplemented需逐处修正)
 
+> **第34轮修复状态（2026-07-05）**：FIXED=2(5.108.1 ReboundSeverity补全__lt__/__le__/__gt__/__ge__四方法/5.108.2 TriggerResult.__eq__ return False→NotImplemented), STILL_VALID=1(5.108.3 VerifyResult __bool__与dict.__len__语义不一致,需重构为组合模式,影响API兼容性,需专项工程)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.108.1 | `governance/reward_hacking_rebound_detector.py:50` | `ReboundSeverity(str, Enum)`仅定义`__ge__`，缺失`__lt__`/`__le__`/`__gt__`/`__eq__`。由于继承`str`，未定义的比较方法回退到`str`字典序，导致严重度排序语义矛盾：`HIGH > MEDIUM`返回False（应为True），`HIGH < MEDIUM`返回True（应为False）。安全相关Enum，比较不一致可能导致门禁/升级判断错误 | HIGH | 使用`@functools.total_ordering`并定义`__eq__`与`__lt__`，或手动补全四个比较方法 |
@@ -6774,6 +6776,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(Lock可重入性误用RLock/Lock需逐处审查)
 
+> **第34轮修复状态（2026-07-05）**：FIXED=2(5.111.1 admission_controller持锁前快照global_tokens/cb_state/5.111.2 gpu_consensus_scheduler持锁前快照queue_depth), STILL_VALID=1(5.111.3 协程中threading.Lock改asyncio.Lock影响其他调用方,需专项评估)
+
 #### 5.111.1 [MEDIUM] admission_controller.py get_metrics持三锁嵌套
 
 - **文件**：`src/zephyr/trading/admission_controller.py:284-295`
@@ -6800,6 +6804,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.112 asyncio取消传播（3个，第21轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(asyncio取消传播需重构为显式取消信号)
+
+> **第34轮修复状态（2026-07-05）**：FIXED=1(5.112.2 2文件isinstance(r,Exception)→BaseException+CancelledError单独raise传播取消信号)
 
 #### 5.112.2 [MEDIUM] gather(return_exceptions=True) + isinstance(r, Exception)吞没CancelledError（2文件）
 
@@ -8764,6 +8770,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.164 装饰器误用（3个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(装饰器误用需修正)
+
+> **第34轮修复状态（2026-07-05）**：FIXED=1(5.164.1 query_metrics加@functools.wraps替代手动__name__/__doc__赋值,补全__wrapped__/__module__/__annotations__), DRIFTED=2(5.164.2 shared/infra/limiter.py已前期5.78.1修复/5.164.3 shared/infra_06/limiter.py不存在)
 
 #### LOW（3个）
 

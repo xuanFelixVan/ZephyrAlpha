@@ -44,6 +44,7 @@ Safety     : M（监控组件，不影响主流程）
 
 from __future__ import annotations
 
+import functools
 import logging
 import sqlite3
 import threading
@@ -236,6 +237,7 @@ class QueryMetrics:
         def decorator(func: F) -> F:
             tracker = self._get_tracker(operation)
 
+            @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 if not self._enabled:
                     return func(*args, **kwargs)
@@ -263,8 +265,6 @@ class QueryMetrics:
                             threshold_ms=self._slow_threshold_ms,
                         )
 
-            wrapper.__name__ = func.__name__  # type: ignore[attr-defined]
-            wrapper.__doc__ = func.__doc__  # type: ignore[attr-defined]
             return wrapper  # type: ignore[return-value]
 
         return decorator

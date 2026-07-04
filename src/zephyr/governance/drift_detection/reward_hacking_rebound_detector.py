@@ -47,6 +47,27 @@ class ReboundSeverity(str, Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
+    # 5.108.1 修复：原仅定义 __ge__，缺失 __lt__/__le__/__gt__/__eq__。
+    # 由于继承 str，未定义的比较方法回退到 str 字典序，导致严重度排序语义矛盾。
+    # 使用 @functools.total_ordering 只需定义 __eq__ 和 __lt__ 即可自动派生其余比较方法。
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, ReboundSeverity):
+            return NotImplemented
+        order = [ReboundSeverity.LOW, ReboundSeverity.MEDIUM, ReboundSeverity.HIGH, ReboundSeverity.CRITICAL]
+        return order.index(self) < order.index(other)
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, ReboundSeverity):
+            return NotImplemented
+        order = [ReboundSeverity.LOW, ReboundSeverity.MEDIUM, ReboundSeverity.HIGH, ReboundSeverity.CRITICAL]
+        return order.index(self) <= order.index(other)
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, ReboundSeverity):
+            return NotImplemented
+        order = [ReboundSeverity.LOW, ReboundSeverity.MEDIUM, ReboundSeverity.HIGH, ReboundSeverity.CRITICAL]
+        return order.index(self) > order.index(other)
+
     def __ge__(self, other: object) -> bool:
         if not isinstance(other, ReboundSeverity):
             return NotImplemented
