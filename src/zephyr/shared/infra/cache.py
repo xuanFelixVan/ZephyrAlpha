@@ -96,7 +96,7 @@ class CacheProvider(Protocol):
     async def set(self, key: str, value: Any, *, ttl_seconds: int = TTL_EXPIRED_DEFAULT_SECONDS) -> None: ...
     async def delete(self, key: str) -> bool: ...
     async def clear(self) -> None: ...
-    def stats(self) -> Self: ...
+    def stats(self) -> CacheStats: ...
 
 
 @dataclass
@@ -188,7 +188,7 @@ class MemoryCache:
         self._access_order.clear()
         self._stats.size = 0
 
-    def stats(self) -> Self:
+    def stats(self) -> CacheStats:
         self._stats.size = len(self._store)
         return self._stats
 

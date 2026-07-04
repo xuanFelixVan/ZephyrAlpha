@@ -71,7 +71,7 @@ class Env(str, Enum):
 _ENV_KEY = "ZEPHYR_ENV"
 
 
-def _detect_env() -> Self:
+def _detect_env() -> Env:
     explicit = os.environ.get(_ENV_KEY)
     if explicit:
         try:
@@ -88,7 +88,7 @@ def _detect_env() -> Self:
 _CURRENT_ENV: Env | None = None
 
 
-def current_env() -> Self:
+def current_env() -> Env:
     global _CURRENT_ENV
     if _CURRENT_ENV is None:
         _CURRENT_ENV = _detect_env()

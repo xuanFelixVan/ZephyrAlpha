@@ -93,13 +93,13 @@ class RequestContext:
     created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     extra: dict[str, Any] = field(default_factory=dict)
 
-    def replace(self, **kwargs: Any) -> Self:
+    def replace(self, **kwargs: Any) -> RequestContext:
         """创建派生上下文——保留原字段，覆盖指定字段。"""
         current = {f.name: getattr(self, f.name) for f in self.__dataclass_fields__.values()}
         current.update(kwargs)
         return RequestContext(**current)
 
-    def new_span(self, span_name: str = "") -> Self:
+    def new_span(self, span_name: str = "") -> RequestContext:
         """创建新的 span——生成新 span_id，保留 trace_id。"""
         return self.replace(
             span_id=f"{span_name}:{str(uuid.uuid4())[:8]}" if span_name else str(uuid.uuid4())[:8],

@@ -90,7 +90,7 @@ class ActivateGate:
         self,
         source_path: Path,
         force: bool = False,
-    ) -> Self:
+    ) -> ActivateResult:
         violations: list[str] = []
 
         if not source_path.exists():

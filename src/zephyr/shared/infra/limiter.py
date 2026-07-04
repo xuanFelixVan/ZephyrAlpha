@@ -154,7 +154,7 @@ class TokenBucketLimiter:
     async def __aexit__(self, *args: object) -> None:
         pass
 
-    def stats(self) -> Self:
+    def stats(self) -> RateLimiterStats:
         self._refill()
         return RateLimiterStats(
             permits_per_second=self._rate,

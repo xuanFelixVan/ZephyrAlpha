@@ -109,7 +109,7 @@ class SessionManager:
         with open(_STATE_MACHINE_YAML, encoding="utf-8") as fh:
             return yaml.safe_load(fh) or {}
 
-    def create_session(self, task_id: str | None = None) -> Self:
+    def create_session(self, task_id: str | None = None) -> Session:
         session = Session(task_id=task_id)
         session.state_log.append(
             {
@@ -123,7 +123,7 @@ class SessionManager:
         _logger.info("Session %s created (task=%s)", session.session_id, task_id)
         return session
 
-    def get_session(self, session_id: str) -> Self:
+    def get_session(self, session_id: str) -> Session:
         s = self._sessions.get(session_id)
         if s is None:
             raise SessionError(f"Session {session_id} not found")
@@ -186,7 +186,7 @@ class SessionManager:
         _logger.info("Session %s: %s → %s (reason=%s)", session_id, current.value, target.value, reason)
         return session
 
-    def handle_exception(self, session_id: str, exception_type: str) -> Self:
+    def handle_exception(self, session_id: str, exception_type: str) -> Session:
         session = self.get_session(session_id)
         session.error_info = {
             "type": exception_type,
@@ -258,7 +258,7 @@ class SessionManager:
             sessions = [s for s in sessions if s.state == state]
         return sessions
 
-    def close_session(self, session_id: str) -> Self:
+    def close_session(self, session_id: str) -> Session:
         session = self.get_session(session_id)
         if session.state not in {SessionState.COMPLETED, SessionState.ARCHIVED}:
             self.transition(session_id, SessionState.COMPLETED, reason="session_closed")

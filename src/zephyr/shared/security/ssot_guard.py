@@ -293,7 +293,7 @@ class SsotGuard:
     # 公开接口                                                             #
     # ------------------------------------------------------------------ #
 
-    def run(self) -> Self:
+    def run(self) -> GuardReport:
         """执行全量检查，返回报告。不抛出异常，所有结果封装在报告内。"""
         report = GuardReport()
         try:
@@ -337,7 +337,7 @@ class SsotGuard:
         self,
         watched_staged: dict[str, str],
         registry_staged: bool,
-    ) -> Self:
+    ) -> CheckResult:
         """C-1：新增治理文件时注册表必须同步暂存。"""
         new_files = [p for p, s in watched_staged.items() if s == "A"]
         if not new_files:
@@ -368,7 +368,7 @@ class SsotGuard:
         self,
         watched_staged: dict[str, str],
         registry_staged: bool,
-    ) -> Self:
+    ) -> CheckResult:
         """C-3：删除治理文件时注册表必须同步暂存。"""
         deleted_files = [p for p, s in watched_staged.items() if s == "D"]
         if not deleted_files:
@@ -395,7 +395,7 @@ class SsotGuard:
             details=deleted_files,
         )
 
-    def _check_c2(self) -> Self:
+    def _check_c2(self) -> CheckResult:
         """C-2：注册表已暂存时，声明路径必须真实存在（仅检查文件，不检查目录）。"""
         registry_path = self._repo_root / self._registry_rel.replace("/", "\\")
         if not registry_path.exists():
@@ -438,7 +438,7 @@ class SsotGuard:
             message=f"注册表声明的 {len(declared)} 条路径均有效",
         )
 
-    def _check_c4_format(self, registry_staged: bool) -> Self:
+    def _check_c4_format(self, registry_staged: bool) -> CheckResult:
         """C-4：注册表已暂存时，路径字段格式必须合法。"""
         if not registry_staged:
             return CheckResult(

@@ -104,7 +104,7 @@ class BatchIngestor:
         self._ingest_gate = ingest_gate
         self._repo_root = repo_root or Path.cwd()
 
-    def ingest_from_yaml(self, yaml_path: Path) -> Self:
+    def ingest_from_yaml(self, yaml_path: Path) -> BatchIngestReport:
         if not yaml_path.exists():
             return BatchIngestReport(
                 total=0,
@@ -143,7 +143,7 @@ class BatchIngestor:
         candidates = self._extract_candidates(data)
         return self._process_candidates(candidates)
 
-    def ingest_from_list(self, candidates: list[dict[str, Any]]) -> Self:
+    def ingest_from_list(self, candidates: list[dict[str, Any]]) -> BatchIngestReport:
         entries = [self._normalize_candidate(c) for c in candidates]
         return self._process_entries(entries)
 
@@ -169,7 +169,7 @@ class BatchIngestor:
 
         return []
 
-    def _normalize_candidate(self, item: dict[str, Any]) -> Self:
+    def _normalize_candidate(self, item: dict[str, Any]) -> BatchIngestEntry:
         return BatchIngestEntry(
             ke_id=str(item.get("module_id", item.get("ke_id", ""))),
             title=str(item.get("title", "")),
@@ -178,14 +178,14 @@ class BatchIngestor:
             priority=Priority(item.get("priority", Priority.P2.value)),
         )
 
-    def _process_candidates(self, candidates: list[BatchIngestEntry]) -> Self:
+    def _process_candidates(self, candidates: list[BatchIngestEntry]) -> BatchIngestReport:
         p0_p1 = [c for c in candidates if c.priority in (Priority.P0, Priority.P1)]
         if not p0_p1:
             p0_p1 = candidates
 
         return self._process_entries(p0_p1)
 
-    def _process_entries(self, entries: list[BatchIngestEntry]) -> Self:
+    def _process_entries(self, entries: list[BatchIngestEntry]) -> BatchIngestReport:
         report = BatchIngestReport(
             total=len(entries),
             started_at=datetime.now(_UTC).isoformat(),

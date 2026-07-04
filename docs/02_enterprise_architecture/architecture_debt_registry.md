@@ -6157,6 +6157,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.94 类型注解准确性（68个，第19轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=68(-> Self系统性误用28个HIGH，需全量替换为正确返回类型)
+> **第34轮修复状态（2026-07-04）**：FIXED=107(5.94.1 `-> Self`误用全部修复，含5.94.17-30 governance/audit_orchestration重复副本+子代理报告遗漏的shared/api/dos_launcher.py+api_client.py+audit_orchestration/resilience/hallucination_detector.py), 0 DRIFTED, STILL_VALID=34(5.94.2 裸泛型13个 + 5.94.3 Any滥用10个 + 5.94.4 缺失返回注解11个，均为MEDIUM，需逐文件确认类型)
 
 #### 5.94.1 `-> Self`系统性误用——方法实际返回其他类型（28个HIGH）
 
@@ -6181,6 +6182,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | 5.94.15 | `autonomy_core/assembly/context_injector.py:116` | `inject() -> Self` 返回InjectedContext | HIGH | 改为`-> InjectedContext` |
 | 5.94.16 | `autonomy_core/assembly/context_pipeline.py:93` | 模块级函数`build_pipeline() -> Self` | HIGH | 改为实际返回类型 |
 | 5.94.17-5.94.30 | `governance/audit_orchestration/`下`core/agent_orchestrator.py:562,711,715,732`、`state/session_manager.py:113,127,190,262`、`state/agent_health_monitor.py`、`state/file_task_mapper.py`、`resilience/hallucination_detector.py:441,458,495,556,735,767,801,885` | 上述trading/orchestrator所有问题的重复副本（SSoT违规），`-> Self`错误在同名文件同行全部复制存在 | HIGH | 消除governance/audit_orchestration重复代码，统一从trading/orchestrator引用 |
+
+> **5.94.1 修复状态（2026-07-04）**：
+> - **FIXED**：5.94.1-5.94.3、5.94.7-5.94.13、5.94.17-5.94.30 全部 `-> Self` 误用替换为实际返回类型（共107处，含 trading/orchestrator 主副本 + governance/audit_orchestration 重复副本 + 子代理报告遗漏的 shared/api/dos_launcher.py、shared/api/api_client.py、governance/audit_orchestration/resilience/hallucination_detector.py）
+> - **DRIFTED**：5.94.4 `ops/circuit_breaker_repo.py` 文件不存在（ops 为废弃目录）；5.94.5 `ops/observability/metrics.py` 迁移至 `shared/observability/metrics.py` 且无 `-> Self`；5.94.6 `ops/observability/health.py` 迁移至 `shared/lifecycle/health.py` 已修复；5.94.14 `autonomy_core/management/context_budget_tracker.py` 迁移至 `autonomy_core/context/` 且无 `-> Self`；5.94.15 `autonomy_core/assembly/context_injector.py` 同上；5.94.16 `autonomy_core/assembly/context_pipeline.py` 同上
+> - **保留 CORRECT_SELF**：14处（`__new__`/`__aenter__` 返回 self + Pydantic `@model_validator(mode="after")` 返回 self），符合 PEP 673 规范，无需修改
 
 #### 5.94.2 裸泛型类型（13个MEDIUM）
 

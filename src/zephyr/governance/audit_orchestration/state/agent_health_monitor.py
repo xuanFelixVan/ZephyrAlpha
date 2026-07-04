@@ -164,7 +164,7 @@ class AgentHealthMonitor:
             self._ctx_util.append(0.0)
         self._completions.append(self._now())
 
-    def evaluate(self) -> Self:
+    def evaluate(self) -> AgentHealthStatus:
         latency_p99 = self._percentile(list(self._latencies), 99) if self._latencies else 0.0
         error_rate = (sum(self._errors) / len(self._errors)) if self._errors else 0.0
         hallu_rate = (sum(self._hallu) / len(self._hallu)) if self._hallu else 0.0

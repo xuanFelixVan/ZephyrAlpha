@@ -379,7 +379,7 @@ class TriggerRouter:
         *,
         session_id: str | None = None,
         **context: Any,
-    ) -> Self:
+    ) -> RouterDispatchResult:
         """根据 trigger_type 分派到处理器。
 
         Parameters
@@ -493,7 +493,7 @@ class TriggerRouter:
         error: str | None,
         handler_result: Any,
         started: datetime,
-    ) -> Self:
+    ) -> RouterDispatchResult:
         ended = datetime.now(_UTC)
         latency_ms = max(0, int((ended - started).total_seconds() * 1000))
         return RouterDispatchResult(
@@ -569,7 +569,7 @@ def get_trigger_router(
     audit_logger: Any | None = None,
     session_id: str = "",
     reset: bool = False,
-) -> Self:
+) -> TriggerRouter:
     """返回 TriggerRouter 模块级单例（线程安全）。
 
     生产入口：``router = get_trigger_router()``，构造时一次性加载 YAML。
