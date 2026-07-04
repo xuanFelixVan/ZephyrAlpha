@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -91,19 +92,27 @@ class GenesisBootstrap:
     """
 
     _instance: GenesisBootstrap | None = None
+    _init_lock = threading.Lock()  # 5.98.2 修复: 双重检查锁定
 
     def __new__(cls) -> GenesisBootstrap:
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._initialized = False
+            with cls._init_lock:
+                if cls._instance is None:
+                    instance = super().__new__(cls)
+                    instance._initialized = False
+                    cls._instance = instance
         return cls._instance
 
     def __init__(self) -> None:
         if getattr(self, "_initialized", False):
             return
-        self._state = GenesisState()
-        self._verified = False
-        self._initialized = True
+        # 5.98.2 修复: __init__守卫也加锁,防并发首次调用重复初始化
+        with type(self)._init_lock:
+            if getattr(self, "_initialized", False):
+                return
+            self._state = GenesisState()
+            self._verified = False
+            self._initialized = True
 
     @property
     def state(self) -> GenesisState:

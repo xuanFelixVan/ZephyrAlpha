@@ -30,6 +30,7 @@ from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 a
 
 import asyncio
 import concurrent.futures
+import contextvars
 import functools
 import logging
 from collections.abc import Awaitable, Callable
@@ -210,7 +211,7 @@ class AsyncRuntime:
                 thread_name_prefix="AsyncRuntime",
             )
 
-        future = loop.run_in_executor(self._executor, bound)
+        future = loop.run_in_executor(self._executor, self._wrap_ctx(bound))
         return asyncio.ensure_future(future).result()  # type: ignore[no-any-return]
 
     async def run_in_executor_async(
@@ -241,7 +242,17 @@ class AsyncRuntime:
             )
 
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(self._executor, bound)
+        return await loop.run_in_executor(self._executor, self._wrap_ctx(bound))
+
+    @staticmethod
+    def _wrap_ctx(func: Callable[..., T]) -> Callable[..., T]:
+        """5.119.1/5.119.2 修复: 包装函数使其在executor线程中继承当前contextvars上下文。
+
+        run_in_executor 默认不传播 contextvars,导致 _ctx_allowance/trace_id/session_id
+        在线程池中丢失。用 copy_context() + ctx.run() 显式传播。
+        """
+        ctx = contextvars.copy_context()
+        return lambda: ctx.run(func)
 
     def __enter__(self) -> AsyncRuntime:
         self.start()

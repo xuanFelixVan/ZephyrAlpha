@@ -17,6 +17,7 @@
 
 """Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14 风险与缓解 + 多轮盲点审计）."""
 
+import contextvars
 import hashlib
 import logging
 import os
@@ -125,7 +126,10 @@ class AlertLinkIsolator:
                 # 5.69.5 修复：原 except: pass 无日志记录，告警发送失败时无追踪，结合 fire-and-forget 设计，失败告警永久丢失。
                 logger.warning("AlertLinkIsolator: alert send failed", exc_info=True)
 
-        self.executor.submit(_runner)
+        # 5.119.4 修复: fire_and_forget经ThreadPoolExecutor.submit不传播contextvars,
+        # 用 copy_context() + ctx.run() 显式传播 trace_id/session_id
+        ctx = contextvars.copy_context()
+        self.executor.submit(lambda: ctx.run(_runner))
         return True
 
     def shutdown(self, wait: bool = True):

@@ -247,40 +247,44 @@ class ResourceOptimizationEngine:
     def __init__(self) -> None:
         if self._initialized:
             return
-        self._thresholds = _PressureThresholds()
-        self._hysteresis = _HysteresisConfig()
-        self._pressure_sm = _PressureStateMachine(self._hysteresis)
-        self._circuit_breakers: dict[str, CircuitBreaker] = {}
-        self._optimization_history: list[OptimizationRecord] = []
-        self._max_history = 10000
-        self._pressure_callbacks: list[Callable[[PressureLevel, ResourceSnapshot], None]] = []
-        self._monitor_thread: threading.Thread | None = None
-        self._monitor_running = False
-        self._last_snapshot: ResourceSnapshot | None = None
-        self._monitor_interval = 30.0
-        self._started_at: float | None = None
-        self._degradation_matrix = DegradationMatrix(
-            normal={"scheduler": "30s", "cache": "warm", "process_pool": "active"},
-            warning={"scheduler": "60s", "cache": "warm", "process_pool": "active"},
-            critical={"scheduler": "120s", "cache": "cold", "process_pool": "frozen"},
-            emergency={"scheduler": "paused", "cache": "evicted", "process_pool": "stopped"},
-        )
-        self._file_cache = FileCache(max_entries=1000, ttl_seconds=300.0)
-        self._process_pool = MCPProcessPool(max_processes=30)
-        self._lazy_loader = LazyModuleRegistry()
-        self._config_path: str | None = None
-        self._config_mtime: float = 0.0
-        self._self_healing_enabled = True
-        self._self_healing_max_recovery_s = 60.0
-        self._self_healing_verification_delay_s = 5.0
-        self._self_healing_max_retries = 3
-        self._audit_enabled = True
-        self._eventbus_enabled = True
-        self._eventbus_topic = "resource.pressure.changed"
-        self._last_pressure_level = PressureLevel.NORMAL
-        self._initialized = True
-        self._load_config()
-        logger.info("ResourceOptimizationEngine: initialized (singleton)")
+        # 5.98.3 修复: __init__守卫加锁,防并发首次调用重复初始化
+        with self._init_lock:
+            if self._initialized:
+                return
+            self._thresholds = _PressureThresholds()
+            self._hysteresis = _HysteresisConfig()
+            self._pressure_sm = _PressureStateMachine(self._hysteresis)
+            self._circuit_breakers: dict[str, CircuitBreaker] = {}
+            self._optimization_history: list[OptimizationRecord] = []
+            self._max_history = 10000
+            self._pressure_callbacks: list[Callable[[PressureLevel, ResourceSnapshot], None]] = []
+            self._monitor_thread: threading.Thread | None = None
+            self._monitor_running = False
+            self._last_snapshot: ResourceSnapshot | None = None
+            self._monitor_interval = 30.0
+            self._started_at: float | None = None
+            self._degradation_matrix = DegradationMatrix(
+                normal={"scheduler": "30s", "cache": "warm", "process_pool": "active"},
+                warning={"scheduler": "60s", "cache": "warm", "process_pool": "active"},
+                critical={"scheduler": "120s", "cache": "cold", "process_pool": "frozen"},
+                emergency={"scheduler": "paused", "cache": "evicted", "process_pool": "stopped"},
+            )
+            self._file_cache = FileCache(max_entries=1000, ttl_seconds=300.0)
+            self._process_pool = MCPProcessPool(max_processes=30)
+            self._lazy_loader = LazyModuleRegistry()
+            self._config_path: str | None = None
+            self._config_mtime: float = 0.0
+            self._self_healing_enabled = True
+            self._self_healing_max_recovery_s = 60.0
+            self._self_healing_verification_delay_s = 5.0
+            self._self_healing_max_retries = 3
+            self._audit_enabled = True
+            self._eventbus_enabled = True
+            self._eventbus_topic = "resource.pressure.changed"
+            self._last_pressure_level = PressureLevel.NORMAL
+            self._initialized = True
+            self._load_config()
+            logger.info("ResourceOptimizationEngine: initialized (singleton)")
 
     def snapshot(self) -> ResourceSnapshot:
         snap = ResourceSnapshot(timestamp=time.time())

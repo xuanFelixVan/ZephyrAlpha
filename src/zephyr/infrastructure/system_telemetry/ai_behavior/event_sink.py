@@ -195,17 +195,6 @@ class AIBehaviorEvent:
         }
 
 
-_LOCAL: threading.local = threading.local()
-
-
-def _event_stack() -> list[AIBehaviorEvent]:
-    stack: list[AIBehaviorEvent] | None = getattr(_LOCAL, "_ai_event_stack", None)
-    if stack is None:
-        stack = []
-        _LOCAL._ai_event_stack = stack
-    return stack
-
-
 def emit_ai_behavior_event(
     model_name: str = "unknown",
     task_type: str = "unknown",
