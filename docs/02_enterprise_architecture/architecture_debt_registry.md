@@ -5825,6 +5825,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.86 字符串与路径边界情况（4个，第17轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=1(5.86.1 路径净化补\), DRIFTED=1(5.86.2 runbook_generator.py已无replace调用), STILL_VALID=2(5.86.3 staging_area路径重构/5.86.4 MAX_PATH)
+
 > 维度AB：路径净化遗漏反斜杠、null byte、Windows MAX_PATH限制
 
 #### 5.86.1 [HIGH] capability_passport路径净化漏\，Windows路径穿越
@@ -5864,6 +5866,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.87 错误链与traceback保全（3个，第18轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=3(5.87.1-5.87.3 raise补from exc), 0 DRIFTED, 0 STILL_VALID
+
 > 维度AC：raise新异常时不带from exc，丢失显式异常链
 
 #### 5.87.1 [MEDIUM] money.py raise MoneyPrecisionError无from exc（trading_contracts副本）
@@ -5894,6 +5898,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.88 生产代码assert误用（6个，第18轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(assert→if/raise跨36处11文件，5.88.4/5.88.5涉及4副本/2副本消除重复=大规模重构)
 
 > 维度AD：生产代码中用assert做校验，python -O时校验被完全移除。共36处assert语句跨11个文件。
 
@@ -5951,6 +5957,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.89 类级可变状态（8个，第18轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(ClassVar可变状态改造需强制单例或实例属性重构)
+
 > 维度AE：类定义中直接使用可变对象作为类属性，所有实例共享
 
 #### 5.89.1 [MEDIUM] daemon_registry._entries ClassVar dict共享
@@ -6005,6 +6013,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.90 魔术方法一致性（1个，第18轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(@classmethod __len__需明确语义意图后修复)
+
 > 维度AG：魔术方法定义不符合Python协议。注：TriggerResult __eq__无__hash__已在5.83.1覆盖，此处不重复计数。
 
 #### 5.90.1 [HIGH] factor_base.py @classmethod __len__失效
@@ -6023,6 +6033,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.91 Property副作用（4个，第18轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(Property getter副作用需重构为显式方法)
 
 > 维度AH：@property getter在读取时修改对象状态，违反最小惊讶原则
 
@@ -6055,6 +6067,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.92 Enum正确性（2个，第18轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(Enum == vs is / __str__缺失需统一)
+
 > 维度AI：Enum成员比较方式、缺少__str__导致日志不一致
 
 #### 5.92.1 [LOW] 30+处Enum成员比较用==而非is
@@ -6084,6 +6098,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.93 __init__.py污染（8个，第18轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(__init__.py重型import/无效__all__清理需逐文件评估)
 
 > 维度AJ：__init__.py中的重型import、无效__all__、命名空间污染
 
@@ -6139,6 +6155,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 | **合计** | **8** | |
 
 ### 5.94 类型注解准确性（68个，第19轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=68(-> Self系统性误用28个HIGH，需全量替换为正确返回类型)
 
 #### 5.94.1 `-> Self`系统性误用——方法实际返回其他类型（28个HIGH）
 
@@ -6216,6 +6234,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.95 未使用参数与死代码（21个，第19轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(死代码文件/未使用import清理需逐文件确认无引用后删除)
+
 #### 5.95.1 死代码文件（1个HIGH + 1个MEDIUM）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6275,6 +6295,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.96 布尔参数蔓延（5个，第19轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(布尔参数→枚举重构涉及调用方全量更新)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.96.1 | `governance/sqlite_dumper.py:89-95` + `infrastructure/rollback/sqlite_dumper.py:89-95`（重复副本） | `VerifyResult`数据类含5个布尔字段：`passed`/`merkle_match`/`hmac_match`/`table_count_match`/`row_count_match`。构造调用传递5个布尔字面量。`passed`字段冗余（line 424计算为其他4个的and） | HIGH | 移除冗余`passed`改为@property；4个`*_match`重构为`dict[str, bool] checks`或`list[CheckResult]` |
@@ -6296,6 +6318,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.97 深层嵌套与圈复杂度（18个，第19轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=18(深层嵌套/圈复杂度需拆分长函数=大规模重构)
 
 #### 5.97.1 MEDIUM级（11个）
 
@@ -6338,6 +6362,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.98 元类与描述符误用（4个，第19轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(单例__new__/__init__竞态需双重检查锁重构)
+
 **总体评价**：该项目在元类与描述符层面相当干净——无`metaclass=`、无描述符协议、无`__getattribute__`/`__setattr__`重写、无`__del__`、`__slots__`使用规范、`__init_subclass__`模式一致。主要风险集中在单例`__new__`/`__init__`协调缺陷。
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6359,6 +6385,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.99 错误消息一致性（22个，第19轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(错误消息中英文混用/异常类型不一致需统一规范)
 
 #### 5.99.1 HIGH级（1个）
 
@@ -6410,6 +6438,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.100 异步资源生命周期（18个，第19轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=18(异步资源生命周期/锁释放后重获取/asyncio.run误用需逐处重构)
+
 #### 5.100.1 HIGH级（7个）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6455,6 +6485,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.101 变量遮蔽与命名冲突（56个，第19轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=56(变量遮蔽内置名需全量重命名，涉及调用方)
 
 **关键结论**：无HIGH级问题。所有遮蔽均未在作用域内调用被遮蔽的内置函数。MEDIUM级仅1处，LOW级55处集中在数据类/Pydantic字段使用内置名（Python生态中极常见的模式）。
 
@@ -6512,6 +6544,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.102 可变默认参数（7个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(可变默认参数=[/={}，task_manager_server 5处+模板2处，含重复副本需统一)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.102.1 | `infrastructure/task_manager_server.py:146` | `files_in_scope: list[str] = []` 可变列表默认参数。函数未直接修改但有间接共享引用隐患（传入TaskCard构造器） | MEDIUM | 改为`files_in_scope: list[str] \| None = None` + 函数体内`files_in_scope = files_in_scope or []` |
@@ -6528,6 +6562,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.103 闭包延迟绑定（0个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：N/A（0个条目，未发现问题）
+
 **未发现问题。** 项目在闭包延迟绑定维度表现优秀：
 
 1. **事件订阅全部使用方法引用**：所有`bus.subscribe(...)`调用使用`self._method`或模块级函数引用，未使用内联lambda
@@ -6538,6 +6574,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.104 ABC抽象方法完整性（33个，第20轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=33(ABC定义但实现类不继承/抽象方法不完整需补全或重新设计继承层次)
 
 #### 5.104.2 ABC定义但实现类不继承（6个MEDIUM）
 
@@ -6577,6 +6615,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.105 类型强制转换安全（13个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=13(Decimal/float精度问题需逐处审查强制转换安全)
+
 #### 5.105.1 HIGH级（2个）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6613,6 +6653,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.106 排序与比较正确性（7个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(.get(key,default)误用需逐处改为显式None检查)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.106.1 | `governance/witness_isolation.py:49` | `max(counts.values())` 当`_witnesses`为空时抛`ValueError: max() arg is an empty sequence`。同类方法`winner()`有空集保护但此方法缺失 | MEDIUM | 添加`if not self._witnesses: return 0` |
@@ -6631,6 +6673,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.107 数据类设计正确性（6个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(Pydantic V1风格Config需迁移到V2 model_config)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.107.1 | `infrastructure/pipeline/models.py:505` | Pydantic V1风格`class Config: use_enum_values = True`在V2代码库中已废弃，产生`PydanticDeprecatedSince20`警告 | MEDIUM | 替换为`model_config = ConfigDict(use_enum_values=True)` |
@@ -6648,6 +6692,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.108 比较运算符完整性（3个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(__eq__返回False非NotImplemented需逐处修正)
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.108.1 | `governance/reward_hacking_rebound_detector.py:50` | `ReboundSeverity(str, Enum)`仅定义`__ge__`，缺失`__lt__`/`__le__`/`__gt__`/`__eq__`。由于继承`str`，未定义的比较方法回退到`str`字典序，导致严重度排序语义矛盾：`HIGH > MEDIUM`返回False（应为True），`HIGH < MEDIUM`返回True（应为False）。安全相关Enum，比较不一致可能导致门禁/升级判断错误 | HIGH | 使用`@functools.total_ordering`并定义`__eq__`与`__lt__`，或手动补全四个比较方法 |
@@ -6662,6 +6708,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.109 迭代器协议完整性（1个，第20轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(迭代器协议不完整需补__iter__/__next__)
+
 **总体评价**：`src/zephyr/`在迭代器协议完整性方面表现良好。代码库几乎不使用自定义迭代器类（仅1个可迭代对象`FindingCollection`，且实现正确），避免了大部分协议陷阱。
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6675,6 +6723,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.110 __repr__/__str__泄露与一致性（9个，第21轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(__repr__/__str__泄露敏感信息/不一致需逐处脱敏)
 
 #### 5.110.1 [MEDIUM] Capability(BaseModel) auto-__repr__暴露auth_token字段
 
@@ -6714,6 +6764,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.111 Lock可重入性（3个，第21轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(Lock可重入性误用RLock/Lock需逐处审查)
+
 #### 5.111.1 [MEDIUM] admission_controller.py get_metrics持三锁嵌套
 
 - **文件**：`src/zephyr/trading/admission_controller.py:284-295`
@@ -6739,6 +6791,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.112 asyncio取消传播（3个，第21轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(asyncio取消传播需重构为显式取消信号)
+
 #### 5.112.2 [MEDIUM] gather(return_exceptions=True) + isinstance(r, Exception)吞没CancelledError（2文件）
 
 - **文件**：
@@ -6748,6 +6802,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **修复**：改用`isinstance(r, BaseException)`，`CancelledError`单独`raise`传播取消信号。
 
 ### 5.113 __slots__一致性（1个，第21轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(__slots__一致性需补全子类)
 
 #### 5.113.1 [MEDIUM] RiskLimitViolationError(Exception)声明__slots__但Exception自带__dict__致优化失效
 
@@ -6760,6 +6816,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.114 Final/@final强制（7个，第21轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(375处常量未标注Final需全量标注)
 
 #### 5.114.1-5.114.4 [HIGH] governance/config.py 4个可变dict常量未标注Final
 
@@ -6798,6 +6856,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.115 ABC注册模式（2个，第21轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(ABC注册模式需重构为显式注册)
+
 #### 5.115.1 [MEDIUM] DefaultRiskLimitsCalculator从错误源导入ABC致__init_subclass__注册静默失败
 
 - **文件**：`src/zephyr/risk/implementations/default_risk_limits_calculator.py:49,54,57`
@@ -6822,6 +6882,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.116 __init_subclass__副作用（5个，第21轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(__init_subclass__副作用需重构为显式注册)
 
 #### 5.116.1 [MEDIUM] interface_base.py 3个_registry死注册表——既无__init_subclass__也无register装饰器
 
@@ -6865,6 +6927,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.117 pickle/__reduce__安全（1个，第21轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(joblib.load RCE风险需改用allow_pickle=False)
+
 #### 5.117.1 [HIGH] joblib.load(pickle变体)反序列化模型文件无校验（2文件）
 
 - **文件**：
@@ -6880,6 +6944,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.118 __exit__异常抑制（0个，第22轮新增）
+
+> **第33轮验证状态（2026-07-04）**：N/A（0个条目，未发现问题）
 
 > **审计结论**：本维度**未发现违规**。全项目所有`__exit__`/`__aexit__`方法均正确返回`False`或`None`（表示不抑制异常，让异常正常传播）；无`contextlib.suppress`误用；所有`@contextmanager`装饰的生成器函数均在`yield`后正确重新抛出异常。这是Python上下文管理协议的正确实现，无需修复。
 
@@ -6898,6 +6964,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.119 contextvars传播（4个，第22轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(contextvars在run_in_executor不传播需显式传递)
 
 #### 5.119.1 [HIGH] run_in_executor不传播_ctx_allowance致LLM调用在线程池中被阻塞
 
@@ -6954,6 +7022,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.120 cached_property/lru_cache（0个，第22轮新增）
 
+> **第33轮验证状态（2026-07-04）**：N/A（0个条目，未发现问题）
+
 > **审计结论**：本维度**未发现违规**。全项目**未使用**`@cached_property`或`@functools.lru_cache`装饰器。虽然这意味着不存在缓存失效/缓存泄漏问题，但也意味着存在大量可优化的重复计算（如5.21节已记录的词表重复加载、配置重复解析等），属性能债务而非正确性债务。本维度6个检查点均N/A：
 > 1. `@cached_property`缓存失效问题 — N/A（未使用）
 > 2. `@lru_cache`无`maxsize`导致无界缓存 — N/A（未使用）
@@ -6967,6 +7037,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.121 singledispatch（3个，第22轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(singledispatch使用不当需重构)
 
 #### 5.121.1 [LOW] verdict_engine.evaluate的if-elif链可重构为singledispatchmethod
 
@@ -7002,6 +7074,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.122 描述符协议（0个，第22轮新增）
 
+> **第33轮验证状态（2026-07-04）**：N/A（0个条目，未发现问题）
+
 > **审计结论**：本维度**未发现违规**。全项目**无自定义描述符**（即未实现`__get__`/`__set__`/`__delete__`协议的类）。所有属性访问均通过普通实例属性或`@property`装饰器（`@property`是描述符的特例，但由Python内置实现，无自定义风险）。本维度7个检查点均N/A：
 > 1. `__set__`未抛`AttributeError`致`@property.setter`只读失效 — N/A
 > 2. `__get__`返回`self`而非`instance.__dict__`值 — N/A
@@ -7016,6 +7090,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.123 __contains__/__iter__（2个，第22轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(__contains__/__iter__协议不完整)
 
 #### 5.123.1 [LOW] FindingCollection缺__contains__致`in`回退O(n)线性扫描
 
@@ -7042,6 +7118,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.124 __bool__/__len__冲突（2个，第22轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(__bool__/__len__冲突需明确语义)
+
 #### 5.124.1 [LOW] GatePipeline在非容器上定义__len__缺__bool__致隐式bool歧义
 
 - **文件**：`src/zephyr/governance/rule_enforcement/gate_engine/gate_pipeline.py:150`
@@ -7060,6 +7138,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.125 WeakRef兼容性（1个，第22轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(WeakRef兼容性需审查)
+
 #### 5.125.1 [LOW] __slots__类未包含__weakref__致未来weakref使用将抛TypeError
 
 - **文件**：全项目所有声明`__slots__`的类（如`risk_limit_violation_error.py:21`的`RiskLimitViolationError`等）
@@ -7077,6 +7157,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.126 可变默认参数（5个，第23轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=5(task_manager_server可变默认参数=[]/重复副本需统一重构)
 
 #### 5.126.1 [HIGH] task_manager_server.create_task的files_in_scope/deliverables/allowed_touch用=[]默认值致跨调用状态泄漏
 
@@ -7100,6 +7182,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.127 异常链丢失（6个，第23轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=2(5.127.1 raise补from exc+5.127.2 from None→from exc), 0 DRIFTED, 0 STILL_VALID
+
 #### 5.127.1 [HIGH] except块内raise新异常未用from e致原始traceback丢失（5处）
 
 - **文件**：
@@ -7122,6 +7206,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.128 文件句柄泄漏（12个，第23轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(Path.open()未用with需逐处改为context manager)
 
 #### 5.128.1 [HIGH] Path.open()未用with致循环/glob遍历中句柄耗尽（3处）
 
@@ -7155,6 +7241,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.129 模块级副作用（7个，第23轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(__init__.py import即启动线程需重构为lazy init)
 
 #### 5.129.1 [HIGH] 根__init__.py import即启动2个后台线程
 
@@ -7190,6 +7278,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.130 硬编码凭据（3个，第23轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(HMAC密钥硬编码需外部化到环境变量/密钥管理)
+
 #### 5.130.1 [HIGH] cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥
 
 - **文件**：`src/zephyr/security/access_control/detectors/cross_session_detector.py:34`
@@ -7209,6 +7299,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.131 日志敏感信息泄露（25个，第23轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(session_id记录到日志需脱敏过滤)
 
 #### 5.131.1 [MEDIUM] token_id记录到日志（1处）
 
@@ -7242,6 +7334,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.132 线程局部存储泄漏（4个，第23轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(_tls.allowance跨请求泄漏需reset钩子)
+
 #### 5.132.1 [HIGH] runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏
 
 - **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:95`
@@ -7271,6 +7365,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.133 依赖注入硬编码（85个，第23轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=85(依赖注入硬编码，方法内硬编码实例化外部依赖需全量DI重构)
 
 > **审计结论**：本维度是第23轮发现量最大的维度（85个），揭示了一个此前未审计的重大架构维度。核心问题：大量生产服务方法内部硬编码实例化外部依赖（DB连接、LLM客户端、治理引擎），而非通过构造函数注入，导致测试不可mock、耦合度高、违反"真源唯一"原则。
 
@@ -7376,12 +7472,16 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.134 返回值不一致（2个，第24轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(返回值不一致需统一返回类型)
+
 #### 5.134.1 [MEDIUM] _hash_file类型注解与实际返回不匹配
 
 - **文件**：`src/zephyr/governance/drift_detection/baseline_manager.py:119`
 - **问题**：函数签名标注`-> str | None`，但实际始终返回`str`（`hashlib.sha256(...).hexdigest()`）。若文件打开失败会抛异常而非返回None。注解错误，应为`str`。对比：`detector_dispatcher.py:44`的`_compute_file_hash`注解正确为`-> str`。
 
 ### 5.135 异常粒度过粗（697个，第24轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=697(except Exception吞没异常5种模式，全量重构为细粒度异常处理=超大规模)
 
 > **审计结论**：本维度是第24轮发现量最大的维度（697个），揭示了一个系统性架构债务。全项目存在697处`except Exception`吞没异常的违规，分布在5种模式中。项目无`except BaseException`或裸`except:`吞没异常（HIGH=0），但MEDIUM级违规大量存在。
 
@@ -7429,6 +7529,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.136 死代码检测（11个，第24轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(死代码检测需逐文件确认无引用后删除)
+
 #### 5.136.1 [MEDIUM] MIGRATED注释代码块+__all__引用幽灵符号（7处）
 
 - **文件**：
@@ -7462,6 +7564,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.137 魔数检测（20个，第24轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=20(魔数检测需提取为命名常量)
 
 #### 5.137.1 [HIGH] 安全/超时/重试/容量限制魔数（10处）
 
@@ -7498,6 +7602,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.138 循环引用风险（15个，第24轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=15(循环引用风险需重构模块边界)
+
 #### 5.138.1 [LOW] 循环import workaround（7处，5.138.1修复：Timer hack静默吞错已修复）
 
 - **文件**（7处）：
@@ -7531,6 +7637,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.139 TODO/FIXME技术债务标记（1个，第24轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=1(TODO/FIXME需处理或转为issue)
+
 > **审计结论**：本维度**仅发现1处真实技术债务标记**，代码库在该维度极为清洁。全量搜索TODO/FIXME/HACK/XXX/WORKAROUND/TEMP共63处匹配，但62处为误报（混沌注入器的"伪TODO地雷"、检测器检测模式、配置模板占位符、领域术语P-Hacking等）。项目对技术债务标记有主动检测与拦截机制。
 
 #### 5.139.1 [LOW] boot_hooks.py的TODO待办（已关联工单）
@@ -7544,6 +7652,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.140 函数复杂度过高（15个，第24轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=15(函数复杂度过高需拆分)
 
 #### 5.140.1 [HIGH] pipeline_orchestrator.dispatch 461行/7层嵌套/30+分支
 
@@ -7578,6 +7688,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.141 配置硬编码vs外部化（20个，第24轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=20(配置硬编码vs外部化需迁移到配置文件)
 
 #### 5.141.1 [HIGH] 硬编码URL/端点/模型名（14处代表性问题）
 
@@ -7616,6 +7728,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.142 并发原语正确性（8个，第25轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(并发原语正确性需逐处审查)
 
 审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
 
@@ -7675,6 +7789,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.143 API契约一致性（22个，第25轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(API契约一致性需统一接口定义)
+
 审查接口定义与实现不匹配、抽象方法未实现、Protocol未遵守、参数签名漂移、返回值契约违反、LSP违规、SSoT重复与注册表分裂等问题。
 
 #### 5.143.1 [HIGH] generate_target_weights基类与子类签名完全脱钩（LSP违规）
@@ -7731,6 +7847,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.144 资源清理顺序（12个，第25轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(资源清理顺序需重构为确定性析构)
 
 审查资源释放顺序错误、try/finally清理顺序、上下文管理器嵌套错误、连接关闭顺序等问题。
 
@@ -7794,6 +7912,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.145 类型注解完整性（30个，第25轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=30(类型注解完整性需补全缺失注解)
+
 审查公共API缺失类型注解、Any滥用、Optional误用、Union滥用、泛型参数缺失、裸dict/list/Callable等问题。
 
 #### 5.145.1-5.145.12 [HIGH] 公共类/方法完全无类型注解+Any滥用最严重文件
@@ -7845,6 +7965,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.146 字符串处理安全（6个，第25轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(字符串处理安全需逐处审查编码/转义)
+
 审查SQL注入、路径遍历、命令注入、格式化字符串注入、ReDoS等字符串安全漏洞。
 
 #### 5.146.1 [MEDIUM] post_sync_standard命令经shell=True执行且校验存在元字符盲区
@@ -7890,6 +8012,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.147 序列化/反序列化安全（11个，第25轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(序列化/反序列化安全需审查pickle/json风险)
 
 审查json/yaml/toml/pickle/joblib/marshal等序列化格式的安全问题、版本兼容性、循环引用序列化失败等。
 
@@ -7966,6 +8090,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.148 日志级别使用不当（27个，第25轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(日志级别使用不当需统一级别标准)
+
 审查日志级别误用、关键错误未日志、正常流程用ERROR级别、敏感信息日志、日志格式不一致等问题。
 
 #### 5.148.1-5.148.13 [HIGH] 关键失败路径静默吞没(except:pass)或严重降级日志(DEBUG)
@@ -8011,6 +8137,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.149 线程安全集合使用（25个，第25轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(线程安全集合使用需改用concurrent.futures.Queue等)
 
 审查dict/list/set在多线程环境下的非原子操作、check-then-act竞态、Queue使用错误、collections误用等问题。
 
@@ -8058,6 +8186,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.150 设计模式误用（17个，第26轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=17(设计模式误用需重构为正确模式)
+
 #### HIGH（5个）
 
 1. **[HIGH]** `src/zephyr/trading/resource_optimization.py:260` — **God Class**：`ResourceOptimizationEngine` 单例含约39个方法、880+行，承担7+职责（压力状态机/熔断器/缓存管理/进程池/监控循环/自愈策略/配置加载/审计），`_execute_*`系列8个方法+`get_*`系列7个方法混在一类
@@ -8092,6 +8222,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.151 错误处理策略一致性（11个，第26轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(错误处理策略一致性需统一)
+
 #### HIGH（3个）
 
 1. **[HIGH]** `src/zephyr/behavioral_audit/git_bisector.py:117` — `finally:`块直接执行`subprocess.run(["git","checkout","-"], ...)` 而无try/except包裹。若subprocess抛`TimeoutExpired`/`FileNotFoundError`，将**掩盖try块中正在传播的异常**，并使仓库停留在bisect的分离HEAD状态
@@ -8119,6 +8251,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.152 依赖方向违规（39个，第26轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=39(依赖方向违规需重构模块层次)
 
 #### HIGH（5个：底层依赖高层/循环依赖）
 
@@ -8192,6 +8326,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.153 命名一致性（21个，第26轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(命名一致性需统一命名规范)
+
 #### HIGH（4个：误导性命名）
 
 1. **[HIGH]** `scripts/governance/dm105_depgraph_triage.py:102` — `def load_depgraph(db_path)` 参数`db_path`完全未使用，函数体直接调用`get_depgraph_pg_connection(autocommit=True)`(PostgreSQL)。参数名暗示SQLite路径连接但实际使用PG，违反depgraph必须为PostgreSQL的硬约束
@@ -8230,6 +8366,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.154 接口边界清晰度（14个，第26轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=14(接口边界清晰度需拆分/合并接口)
+
 #### HIGH（6个：私有成员被外部调用）
 
 1. **[HIGH]** `scripts/ide_health_service.py:125,132` — `from zephyr.trading.ide_health_daemon import _daemon_instance` 直接导入私有单例`_daemon_instance`（未列入`__all__`）；第132行进一步读取`_daemon_instance._running`（私有实例属性）。双重私有边界破坏
@@ -8260,6 +8398,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.155 配置验证完整性（21个，第26轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(配置验证完整性需补全校验规则)
 
 #### HIGH（4个：安全/启动失败）
 
@@ -8299,6 +8439,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.156 测试覆盖率盲区（12个，第26轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(测试覆盖率盲区需补测试)
+
 #### HIGH（4个：关键路径无测试）
 
 1. **[HIGH]** `tests/test_l06_trade_execution.py:22` — `pytest.importorskip("zephyr.l06_trade_execution")` 引用的模块在`src/zephyr/`下不存在，导致整个测试文件被静默skip。文件内`TestOrderManager`的3个用例+`TestSimulationBroker`全部12个用例从不运行。且第24行`from zephyr.ex_core.src.zephyr.execution_engine import ...`路径错误（正确为`zephyr.ex_core.execution_engine`），即便importorskip不跳过也会ImportError
@@ -8327,6 +8469,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.157 文档与代码同步深度（25个，第26轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(文档与代码同步深度需自动化同步机制)
 
 #### HIGH（9个：误导严重）
 
@@ -8370,6 +8514,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.158 循环复杂度（12个，第27轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(循环复杂度需拆分长函数)
+
 #### HIGH（1个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py:510` — `_compute_metrics_generic` 复杂度30+，221行，5个for循环段+4层嵌套
@@ -8399,6 +8545,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.159 死代码（9个，第27轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(死代码需删除)
+
 #### HIGH（5个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\governance\*.py` — 7个死重复文件（内层错位包：auditor/budget_tracker/drift_fix/approval/contracts/a2a_failure/budget_handler），全项目grep 0引用
@@ -8424,6 +8572,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.160 魔法数字/字符串（27个，第27轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(魔法数字/字符串需提取常量)
 
 #### HIGH（6个）
 
@@ -8469,6 +8619,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.161 重复代码块（4个，第27轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(重复代码块需提取公共函数)
+
 #### HIGH（1个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\state_synchronizer.py:252-317` ↔ `d:\ZephyrAlpha\src\zephyr\trading\orchestrator\file_task_mapper.py:350-400` ×4副本 — `_check_and_fix`/`_check_consistency` 一致性检查逻辑~40行重复（6个if分支完全一致）
@@ -8489,6 +8641,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.162 异步代码正确性（34个，第27轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=34(异步代码正确性需逐处审查async/await)
 
 #### HIGH（8个）
 
@@ -8521,6 +8675,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.163 上下文管理器正确性（7个，第27轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=7(上下文管理器正确性需补全__enter__/__exit__)
+
 #### HIGH（1个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\scripts\governance\_concurrency.py:313` — `ProcessLock.__enter__` 调用 `self.acquire()` 但忽略其返回值（`LockAcquireResult.acquired` 可为 False），锁未获取仍返回 self，with 块在无锁保护下执行
@@ -8545,6 +8701,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.164 装饰器误用（3个，第27轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(装饰器误用需修正)
+
 #### LOW（3个）
 
 1. **[LOW]** `d:\ZephyrAlpha\src\zephyr\governance\query_metrics.py:234` — `QueryMetrics.track` 装饰器的 `wrapper` 未使用 `@functools.wraps(func)`，改在 261-262 行手动赋值 `__name__`/`__doc__`，丢失 `__qualname__`/`__module__`/`__wrapped__`/`__annotations__`（inspect.signature 无法穿透）
@@ -8558,6 +8716,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.165 全局状态管理（44个，第27轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=44(全局状态管理需重构为依赖注入)
 
 #### HIGH（6个）
 
@@ -8620,6 +8780,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.166 可变默认参数（0个，第28轮新增）
 
+> **第33轮验证状态（2026-07-04）**：N/A（0个条目，未发现问题）
+
 **审计结论**：对 `d:\ZephyrAlpha\src\zephyr\**\*.py` 和 `d:\ZephyrAlpha\scripts\**\*.py`（已排除 tests/、_archive/、_working/、.runtime/、build/、dist/、__pycache__/）执行全量扫描，**未发现任何可变默认参数反模式**。
 
 **验证方法**：
@@ -8636,6 +8798,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.167 比较运算正确性（22个，第28轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(比较运算正确性需逐处审查__eq__/__lt__)
 
 #### HIGH（1个）
 
@@ -8675,6 +8839,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.168 异常信息泄露（142个，第28轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=142(MCP Server str(exc)直接返回客户端需全量脱敏重构)
 
 #### HIGH（39个）
 
@@ -8878,6 +9044,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.169 文件句柄/资源泄漏（46个，第29轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=46(文件句柄/资源泄漏需全量改为context manager)
+
 #### HIGH（5个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\behavioral_admission\mcp_result_push.py:220` — urllib.request.urlopen() 未用 with/try-finally，resp 从未 close()；仅 try/except 捕获 URLError，回调路径每任务调用一次，HTTP 连接泄漏
@@ -8952,6 +9120,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.170 日志级别误用（14个，第29轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=14(日志级别误用需统一)
+
 #### MEDIUM（2个）
 
 1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\governance\auto_runner.py:204` — except分支 logger.warning 记录审计日志 PG 连接失败（当前 warning，应为 error；审计数据静默丢失，_write_audit_log 方法直接 return 不写入审计日志）
@@ -8979,6 +9149,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.171 类型注解缺失或不一致（66个，第29轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=66(类型注解缺失需全量补全)
 
 #### HIGH（10个）
 
@@ -9063,6 +9235,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.172 并发安全（23个，第30轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=23(并发安全需逐处审查锁/原子性)
+
 #### HIGH（3个）
 
 1. **[HIGH]** `d:\ZephyrAlpha\src\zephyr\governance\database_manager.py:143-243` — `DatabaseManager` docstring明确声称"所有公共方法线程安全"，但 `__init__`（162行）定义的 `self._lock = threading.Lock()` 在公共方法中从未使用。`_fill_pool`（191-195）、`get_connection`（197-216，211行 `self._conn_pool.pop()`）、`return_connection`（218-243，230行 `self._conn_pool.append(conn)`）均无锁保护共享 `_conn_pool: list[sqlite3.Connection]`。连接池 `pop`/`append` 在多线程下可导致：(1) `pop()` 空列表引发 IndexError；(2) 连接被多线程同时获取导致 SQLite 并发写入损坏；(3) 连接泄漏。**严重度理由**：明确违反自身契约（docstring 承诺线程安全但代码未实现）。
@@ -9122,6 +9296,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.173 硬编码路径/URL/端点（30个，第30轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=30(硬编码路径/URL/端点需外部化)
 
 #### HIGH（11个）
 
@@ -9197,6 +9373,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.174 导入循环/模块耦合（17个，第30轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=17(导入循环/模块耦合需重构模块边界)
+
 #### MEDIUM（6个）
 
 1. **[MEDIUM]** `d:\ZephyrAlpha\src\zephyr\trading\verdict_engine.py:31` — 顶层 `try: from zephyr.governance.audit_trail.models import AuditEntryV1, AuditEventType; ... except ImportError: _HAS_AUDIT_ENTRY = False`。**严重度理由**：try/except ImportError反模式——既掩盖了真实的循环依赖，又使审计功能在import失败时静默降级（无日志、无告警）。
@@ -9222,6 +9400,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **严重度汇总**：HIGH=9, MEDIUM=6, LOW=2, 合计=17
 
 ### 5.175 异常处理反模式（100个，第31轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=100(bare except/except Exception吞噬异常需全量重构为细粒度处理)
 
 审计范围：`d:\ZephyrAlpha\src\zephyr\` 及 `d:\ZephyrAlpha\scripts\governance\`。所有except块体均已通过Read/Grep逐条验证。
 
@@ -9396,6 +9576,8 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 
 ### 5.176 SQL注入风险（27个，第31轮新增）
 
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(SQL注入风险需全量改用参数化查询)
+
 审计范围：`d:\ZephyrAlpha\src\zephyr\`。静态扫描f-string拼接的SQL语句，区分表名/列名/PRAGMA参数拼接（值已参数化`?`占位符的不计）。全项目未发现`.format()`或`%`拼接SQL的情况。
 
 > **关键结论**：未发现HIGH级SQL注入（无用户输入直接到达SQL拼接点）。13处MEDIUM集中在两个风险面：(a)database_service.py/registry_adapter.py中dict键/构造参数作为列名/表名拼接；(b)sqlite_dumper.py（双副本）快照导出/恢复路径表名与列名无白名单。14处LOW均为常量或DB元数据回插，非用户输入可控。
@@ -9456,6 +9638,8 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 **严重度汇总**：HIGH=0, MEDIUM=13, LOW=14, 合计=27
 
 ### 5.177 命名规范违反（24个，第31轮新增）
+
+> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=24(命名规范违反需全量重命名)
 
 审计范围：`d:\ZephyrAlpha\src\zephyr\`。基于模式的类别（布尔变量、私有访问、data变量）在全仓范围内远不止所列样本，下文选取代表性实例以满足目标准确计数。
 

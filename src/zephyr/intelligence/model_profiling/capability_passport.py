@@ -253,7 +253,7 @@ class CapabilityPassport:
 
     def save(self) -> Path:
         PASSPORTS_DIR.mkdir(parents=True, exist_ok=True)
-        safe_id = self.model_id.replace(":", "_").replace("/", "_")
+        safe_id = self.model_id.replace(":", "_").replace("/", "_").replace("\\", "_")
         path = PASSPORTS_DIR / f"{safe_id}.json"
         data = self.to_dict()
         data["signature"] = _compute_signature(data)

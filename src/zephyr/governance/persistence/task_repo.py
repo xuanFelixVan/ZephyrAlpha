@@ -798,7 +798,7 @@ class TaskRepository:
         for cmd in (task.post_sync_specific or []):
             reason = validate_post_sync_specific(cmd, REPO_ROOT)
             if reason is not None:
-                raise PostSyncValidationError(task.task_id, cmd, reason)
+                raise PostSyncValidationError(task.task_id, cmd, reason) from exc
         reason = validate_rollback_instructions(task.rollback_instructions or "", REPO_ROOT)
         if reason is not None:
             raise PostSyncValidationError(
