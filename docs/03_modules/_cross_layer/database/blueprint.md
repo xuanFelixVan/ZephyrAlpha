@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.0"
+version: "4.3.1"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -25,7 +25,7 @@ actual_disk_path: "src/zephyr/governance/persistence/"
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-01删除/废弃。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
+summary: "Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-05删除。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature Store/Event Store为P2未来蓝图(#ARCH-048门禁逻辑已废弃)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。"
 tags: [database, db, sqlite, duckdb, atm, atomic-transaction, task-repo, olap, infrastructure, migration, self-healing, operational-excellence, dual-db-router, write-batcher, integration-blueprint]
 priority: P1
 runtime_plane: hot
@@ -82,24 +82,26 @@ references:
 - 真源唯一：2库职责不重叠（治理运行时/架构静态），无同步需求
 - 责任唯一：`DatabaseService`统一入口，引擎差异封装
 
-### market.duckdb 已删除（见 ARCH-046 + ClickHouse 母蓝图）
+### market.duckdb 已删除（见 ARCH-046 + ARCH-048 + ClickHouse 母蓝图）
 
-> **market.duckdb（原 INFRA-DB-005）已于 2026-07-01 彻底删除**（墓碑清理，见 ARCH-046 铁律3"删除即彻底删除"）。原 market_schema.py 同步删除（死代码）。原 8 表（tick_data/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades/kline_3s）业务迁移至 ClickHouse c1_market，详见 [c1_market_clickhouse.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md)。
+> **market.duckdb（原 INFRA-DB-005）已于 2026-07-01 废弃，2026-07-05 删除**（见 ARCH-046 铁律3"删除即彻底删除"）。原 market_schema.py 同步删除（死代码）。原 8 表（tick_data/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades/kline_3s）业务迁移至 ClickHouse c1_market，详见 [c1_market_clickhouse.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md)。
 >
 > **当前业务行情数据库真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) INFRA-DB-006（ClickHouse c1_market，status=connected）。统一入口：`DatabaseService.get_clickhouse_conn()`（readonly=1）。
 
-## 三层冷热架构定位（当前:仅DuckDB单引擎 | 未来蓝图:Redis/FeatureStore/CQRS门禁触发）
+## 三层冷热架构定位（当前:ClickHouse+DuckDB双引擎 | 未来蓝图:Redis/FeatureStore/CQRS——门禁逻辑已废弃，见 #ARCH-048）
 
-> **裁定依据**：设计文档(数据架构.md v6.0)自身有门禁分级。当前单人+无实盘，Hot层(Redis)的<5ms推理需求(DD-11-01)不存在。降级为未来蓝图使当前规范与实现一致，AI不混淆，且不阻塞未来。
+> ⚠️ **门禁逻辑已废弃（#ARCH-048, 2026-07-05）**：本节原"需求门禁触发演进"逻辑已被母蓝图 ARCH-BIZDB-001 §3.1 废弃，改为"硬性边界二元判定：能造现在就造"。Redis/EventStore 施工优先级降为 P2（待实盘需求触发）。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），不再受"AUM>200万"门禁约束。以下门禁表保留作为历史参考，**不作为当前施工依据**。
+
+> **裁定依据**（已废弃，见 #ARCH-048）：设计文档(数据架构.md v6.0)自身有门禁分级。当前单人+无实盘，Hot层(Redis)的<5ms推理需求(DD-11-01)不存在。降级为未来蓝图使当前规范与实现一致，AI不混淆，且不阻塞未来。
 
 | 架构组件 | 蓝图定位 | 门禁触发条件 | 理由 |
 |---------|:-------:|------------|------|
-| **Warm层(DuckDB+Parquet)** | **当前规范** | — | DuckDB OLAP 内存模式（INFRA-DB-004）只读挂载 governance.db，回测/因子研究够用，DuckDB~100ms满足15秒延迟预算（原 market.duckdb 已于2026-07-01删除/废弃） |
+| **Warm层(DuckDB+Parquet)** | **当前规范** | — | DuckDB OLAP 内存模式（INFRA-DB-004）只读挂载 governance.db，回测/因子研究够用，DuckDB~100ms满足15秒延迟预算（原 market.duckdb 已于2026-07-01废弃，2026-07-05删除） |
 | **Cold层(E盘Parquet归档)** | **当前规范(架构预留)** | 交易≥7年合规(证监会) | 法律硬要求；当前无实盘数据但架构需预留，DuckDB直接ATTACH E盘Parquet，单引擎管理 |
-| **Hot层(Redis)** | **未来蓝图** | **实盘交易触发** | 无实盘=无<5ms推理需求；Redis的<5ms需求来自盘中5000只×200因子推理(DD-11-01)，非Tick存储 |
-| **Feature Store三件套** | **未来蓝图** | 因子>500触发 | 当前因子少，DuckDB表+视图替代；DD-11-01训练-推理双存储需求暂缓 |
-| **Event Store CQRS** | **未来蓝图** | 吸纳外部资金触发 | 单人阶段DuckDB INSERT ONLY表替代；DD-12-01事件溯源暂缓 |
-| **ClickHouse升级** | **未来蓝图** | AUM>200万触发 | DuckDB→ClickHouse平滑升级，Parquet数据层不动 |
+| **Hot层(Redis)** | **P2未来蓝图**（#ARCH-048降级） | **实盘交易触发** | 无实盘=无<5ms推理需求；Redis的<5ms需求来自盘中5000只×200因子推理(DD-11-01)，非Tick存储 |
+| **Feature Store三件套** | **P2未来蓝图** | 因子>500触发 | 当前因子少，DuckDB表+视图替代；DD-11-01训练-推理双存储需求暂缓 |
+| **Event Store CQRS** | **P2未来蓝图**（#ARCH-048降级） | 吸纳外部资金触发 | 单人阶段DuckDB INSERT ONLY表替代；DD-12-01事件溯源暂缓 |
+| **ClickHouse升级** | **✅已部署（2026-07-01）** | ~~AUM>200万触发~~ 已解除 | DuckDB→ClickHouse已升级（INFRA-DB-006, c1_market数据库+daily_kline表已建），不再受门禁约束 |
 
 **门禁触发后的升级路径**：
 1. **实盘交易触发** → 启用Hot Redis层（盘中因子截面<5ms推理）
