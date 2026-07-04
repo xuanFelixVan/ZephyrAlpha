@@ -2200,18 +2200,22 @@ def cmd_merge_domain(
                             (new_id, old_id),
                         )
             total += cnt
-        # B1 值扫描兜底（与 rename 一致）：step2-17 枚举列之外的全表 TEXT 列残留替换
-        total += _scan_replace_all_text_columns(
-            c, old_id, new_id, dry_run=dry_run, mode=mode,
-            exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
-        )
 
-        # step1 最后：DELETE FROM domains WHERE domain_id=old_id（new_id 行保留）
-        # FK 约束要求外部引用先清完（step2-17 已执行），最后删 domains 行
+        # step1 DELETE（在 B1 兜底扫描之前执行）：
+        # merge 场景 domains 表已有 new_id 行，兜底扫描会尝试 UPDATE domains.domain_id
+        # 导致 PK 违规。先 DELETE old_id 行，兜底扫描就找不到 domains.domain_id=old_id 了。
+        # FK 约束要求外部引用先清完（step2-17 已执行），此时 DELETE 安全。
         print(f"  {mode} step 1 domains.domain_id='{old_id}': DELETE 1 row", file=sys.stderr)
         if not dry_run:
             c.execute("DELETE FROM domains WHERE domain_id=%s", (old_id,))
         total += 1
+
+        # B1 值扫描兜底（与 rename 一致）：step2-17 枚举列之外的全表 TEXT 列残留替换
+        # 注：domains.domain_id=old_id 行已 DELETE，兜底扫描不会触发 PK 违规
+        total += _scan_replace_all_text_columns(
+            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
+        )
 
         if not dry_run and own_conn:
             c.commit()
