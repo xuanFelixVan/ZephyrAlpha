@@ -282,6 +282,11 @@ class AdmissionController:
         return [self.admit(evt) for evt in events]
 
     def get_metrics(self) -> AdmissionMetrics:
+        # 5.111.1 修复：原在 _metrics_lock 内访问 _global_bucket.tokens 和 _circuit_breaker.state，
+        # 两个 @property 各自获取独立 threading.Lock，构成"持A锁时获取B锁、C锁"嵌套。
+        # 改为持锁前先快照子对象状态，然后在 _metrics_lock 块内仅组装返回值。
+        global_tokens = self._global_bucket.tokens
+        cb_state = self._circuit_breaker.state
         with self._metrics_lock:
             return AdmissionMetrics(
                 total_requests=self._total_requests,
@@ -289,8 +294,8 @@ class AdmissionController:
                 rate_limited=self._rate_limited,
                 circuit_open=self._circuit_open,
                 rejected=self._rejected,
-                global_tokens_remaining=self._global_bucket.tokens,
-                circuit_breaker_state=self._circuit_breaker.state,
+                global_tokens_remaining=global_tokens,
+                circuit_breaker_state=cb_state,
                 last_admit_time=self._last_admit_time,
             )
 

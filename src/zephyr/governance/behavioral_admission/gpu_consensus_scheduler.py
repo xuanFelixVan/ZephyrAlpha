@@ -298,7 +298,11 @@ class GPUConsensusScheduler:
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         for r in results:
-            if isinstance(r, Exception):
+            # 5.112.2 修复：CancelledError 继承 BaseException 而非 Exception，
+            # isinstance(r, Exception) 对 CancelledError 返回 False，导致取消信号被吞没。
+            if isinstance(r, asyncio.CancelledError):
+                raise r  # 传播取消信号
+            if isinstance(r, BaseException):
                 responses.append({"error": str(r), "verdict": None})
             elif r is not None:
                 responses.append(r)

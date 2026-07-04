@@ -29,7 +29,7 @@ DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
     - thinking=False: 直接输出答案，不输出思维链
 
 用法:
-    chat = DeepSeekV4Chat(model="deepseek-v4-pro", api_key="sk-...", thinking=True)
+    chat = DeepSeekV4Chat(model="deepseek-v4-pro", api_key=os.environ["DEEPSEEK_API_KEY"], thinking=True)
     result = chat.inference("task_classification", "这段代码有什么问题?")
 """
 
