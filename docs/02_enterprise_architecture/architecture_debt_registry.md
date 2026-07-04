@@ -2253,16 +2253,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：审计日志完整性/密钥管理/输入验证/权限边界/依赖安全/代码执行风险/网络边界/文件权限
 > 审计方法：Grep + Read真实文件取证（audit_trail/writer.py、ai_audit_logger.py、tamper_evident_log.py、rbac_roles.yaml等）
 
-#### 5.17.3 AiAuditLogger谎称"不可变"但无任何篡改检测【HIGH】
-- 证据：[ai_audit_logger.py:18-23](file:///d:/ZephyrAlpha/src/zephyr/trading/ai_audit_logger.py) 文档声明"不可变、追加式"；`:63-68` `_write` 仅 `open("a")` 写明文JSON，无hash/签名/prev_hash链；`:199-218` `query()` 直接`json.loads`读取零完整性校验
-- 病根：根因5（安全机制名实分离）
-- 修复：写入附hash链（prev_hash+HMAC），query强制verify
-
-#### 5.17.4 AuditChainVerifier hash链仅存内存且可clear()抹除【HIGH】
-- 证据：[audit_chain_verifier.py:68](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/audit_chain_verifier.py) `self._chain:list=[]` 进程内列表重启即失；`:165-167` `def clear(self): self._chain.clear(); self._last_hash="0"*64` 无审计无留痕清空；结合5.17.1（core_writer no-op）链既不落盘又可随意清除
-- 病根：根因5（纵深防御单点化）
-- 修复：链状态持久化append-only存储，禁止clear()或需二次授权留痕
-
 #### 5.17.5 TamperEvidentLog hash链无HMAC/trusted anchor可整体重写【MEDIUM】
 - 证据：[tamper_evident_log.py:67-98](file:///d:/ZephyrAlpha/src/zephyr/governance/security_governance/tamper_evident_log.py) `hashlib.sha256(f"{counter}:{action}:{data}:{now}:{prev_hash}")` 纯明文无密钥；`:84` `open(self._log_path,"a")` 创建文件未设权限（默认0o644世界可读可写）；攻击者获文件写权限可从首条重算整链，`verify()`无法察觉
 - 病根：根因5（tamper-evident实为tamper-forgable）
@@ -2292,10 +2282,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 2（5.17.3+5.17.4；5.17.1/5.17.2/5.17.6/5.17.7/5.17.8已FIXED） |
+| CRITICAL/HIGH | 0（5.17.1/5.17.2/5.17.3/5.17.4/5.17.6/5.17.7/5.17.8已FIXED） |
 | MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
 | LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **9** |
+| **合计** | **7** |
 
 ---
 
