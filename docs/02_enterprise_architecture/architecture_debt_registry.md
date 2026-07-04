@@ -6036,7 +6036,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.91 Property副作用（4个，第18轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(Property getter副作用需重构为显式方法)
+> **第35轮修复状态（2026-07-05）**：FIXED=3(5.91.1 tokens getter去_refill/5.91.2 state getter去转换/5.91.3 state getter提取_try_recover), NOT_NEEDED=1(5.91.4无独立描述,严重度表计数误差)
 
 > 维度AH：@property getter在读取时修改对象状态，违反最小惊讶原则
 
@@ -6370,7 +6370,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.98 元类与描述符误用（4个，第19轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(单例__new__/__init__竞态需双重检查锁重构)
+> **第35轮修复状态（2026-07-05）**：FIXED=3(5.98.2 GenesisBootstrap加双重检查锁+__init__加锁/5.98.3 resource_optimization.py+resource_optimization_engine.py __init__加锁), DRIFTED=2(5.98.1 audit_trail/cold_start.py已加锁/audit_orchestrator副本不存在; 5.98.3 capability.py已加锁), STILL_VALID=1(5.98.4 _LazyModule递归需定位具体__init__.py)
 
 **总体评价**：该项目在元类与描述符层面相当干净——无`metaclass=`、无描述符协议、无`__getattribute__`/`__setattr__`重写、无`__del__`、`__slots__`使用规范、`__init_subclass__`模式一致。主要风险集中在单例`__new__`/`__init__`协调缺陷。
 
@@ -6979,7 +6979,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.119 contextvars传播（4个，第22轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(contextvars在run_in_executor不传播需显式传递)
+> **第35轮修复状态（2026-07-05）**：FIXED=3(5.119.1/5.119.2 async_runtime用_wrap_ctx+copy_context()传播contextvars/5.119.4 risk_mitigation用ctx.run()包装fire_and_forget), STILL_VALID=1(5.119.3 outbox.py后台轮询trace_id冻结需每轮重置)
 
 #### 5.119.1 [HIGH] run_in_executor不传播_ctx_allowance致LLM调用在线程池中被阻塞
 
@@ -7352,7 +7352,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.132 线程局部存储泄漏（4个，第23轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(_tls.allowance跨请求泄漏需reset钩子)
+> **第35轮修复状态（2026-07-05）**：FIXED=1(5.132.4 event_sink死代码thread-local已删除), STILL_VALID=3(5.132.1 runtime_interceptor _tls.allowance需请求边界reset/5.132.2 sqlite_metadata_store close()需遍历所有线程连接/5.132.3 span_stub _span_stack需改contextvars)
 
 #### 5.132.1 [HIGH] runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏
 
@@ -8687,7 +8687,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.161 重复代码块（4个，第27轮新增）
 
-> **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=4(重复代码块需提取公共函数)
+> **第35轮修复状态（2026-07-05）**：DRIFTED=4(5.161.1 state_synchronizer.py不存在/5.161.2同上/5.161.3 behavioral_audit/self_check.py已迁移到drift_detection非重复/5.161.4 now_iso已委托真源shared/utils/time_utils)
 
 #### HIGH（1个）
 

@@ -113,9 +113,11 @@ class _TokenBucket:
 
     @property
     def tokens(self) -> float:
+        # 5.91.1 修复: getter不调用_refill()修改状态,返回近似值(不推进_last_refill)
         with self._lock:
-            self._refill()
-            return self._tokens
+            now = time.monotonic()
+            elapsed = now - self._last_refill
+            return min(self._burst, self._tokens + elapsed * self._rate)
 
     def update_rate(self, new_rate: float, new_burst: float | None = None) -> None:
         with self._lock:
@@ -167,11 +169,9 @@ class _CircuitBreaker:
 
     @property
     def state(self) -> str:
+        # 5.91.2 修复: getter仅返回当前状态,不触发OPEN→HALF_OPEN转换
+        # 转换逻辑已由_should_block()在行为方法中执行
         with self._lock:
-            if self._state == self._STATE_OPEN:
-                elapsed = time.monotonic() - self._last_failure_time
-                if elapsed >= self._recovery_timeout_s:
-                    self._state = self._STATE_HALF_OPEN
             return self._state
 
     def reset(self) -> None:
