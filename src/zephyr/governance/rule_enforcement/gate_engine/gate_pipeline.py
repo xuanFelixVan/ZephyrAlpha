@@ -150,6 +150,13 @@ class GatePipeline:
     def __len__(self) -> int:
         return len(self._steps)
 
+    def __bool__(self) -> bool:
+        """5.124.1 修复：GatePipeline 不是容器，__len__ 语义为"gate数量"而非"容器大小"。
+
+        显式 __bool__ 消除 `if pipeline:` 歧义——空 pipeline 不应被误判为 False。
+        """
+        return True
+
 
 __all__ = ["Combinator", "GatePipeline", "GateStep"]
 

@@ -113,7 +113,7 @@ class AsyncMonitor:
             self._stop_event.wait(self._poll_interval_s)
 
     def _check_circuit_breaker(self) -> None:
-        if self._circuit_breaker.state == CircuitState.OPEN:
+        if self._circuit_breaker.state is CircuitState.OPEN:
             self._alerts.append(
                 MonitorAlert("circuit_breaker", "HIGH", "Circuit breaker OPEN - adversarial testing paused")
             )

@@ -275,12 +275,38 @@ class StagingArea:
         self._root = Path(project_root).resolve()
         self._drafts_root = self._root / self.DRAFTS_DIR
 
+    def _validate_path(self, file_path: str) -> str:
+        """5.86.3 修复：净化 file_path 防止路径穿越。
+
+        - 禁止空路径、绝对路径、null byte
+        - 禁止 `..` 路径穿越（resolve 后必须在项目根下）
+        - 净化反斜杠/正斜杠开头的路径
+        """
+        if not file_path or not file_path.strip():
+            raise StagingError("file_path must not be empty")
+        if "\x00" in file_path:
+            raise StagingError("file_path must not contain null byte")
+        # 禁止绝对路径（Windows 与 POSIX）
+        if Path(file_path).is_absolute():
+            raise StagingError(f"file_path must be relative, got: {file_path}")
+        # 解析后必须位于项目根下
+        resolved = (self._root / file_path).resolve()
+        try:
+            resolved.relative_to(self._root)
+        except ValueError as exc:
+            raise StagingError(
+                f"file_path escapes project root: {file_path} -> {resolved}"
+            ) from exc
+        return file_path
+
     def _draft_path(self, session_id: str, file_path: str) -> Path:
         safe_session = session_id.replace("/", "_").replace("\\", "_")
-        return self._drafts_root / safe_session / file_path
+        validated = self._validate_path(file_path)
+        return self._drafts_root / safe_session / validated
 
     def _target_path(self, file_path: str) -> Path:
-        return self._root / file_path
+        validated = self._validate_path(file_path)
+        return self._root / validated
 
     def write_draft(self, session_id: str, file_path: str, content: str, baseline_content: str | None = None) -> Path:
         """将内容写到草稿区 .aidrafts/{session_id}/{file_path}。

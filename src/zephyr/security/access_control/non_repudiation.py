@@ -35,7 +35,9 @@ class VerifyResult(dict):
     """验证结果 — 支持 result["verified"] 下标访问，同时支持 bool 上下文."""
 
     def __bool__(self) -> bool:
-        return self.get("verified", False)
+        # 5.124.2 修复：显式 bool() 包装，确保 __bool__ 协议返回 True/False。
+        # self.get("verified", False) 的值可能是字符串或其他类型，直接返回违反协议。
+        return bool(self.get("verified", False))
 
 
 @dataclass

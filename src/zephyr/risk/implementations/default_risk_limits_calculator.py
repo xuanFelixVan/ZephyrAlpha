@@ -45,8 +45,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from decimal import Decimal
 
+from zephyr.risk.risk_limits import RiskLimitsCalculator
 from zephyr.risk.risk_manager import RiskLimits
-from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimitsCalculator
 
 __calculator_id__ = "default-risk-limits-calculator"
 

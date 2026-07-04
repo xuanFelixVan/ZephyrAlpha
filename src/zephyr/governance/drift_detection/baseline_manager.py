@@ -116,7 +116,9 @@ class BaselineManager:
         return hashes
 
     @staticmethod
-    def _hash_file(fp: str) -> str | None:
+    def _hash_file(fp: str) -> str:
+        # 5.134.1 修复：函数实际始终返回 str（hashlib.hexdigest()），
+        # 若文件打开失败会抛 OSError 而非返回 None。原注解 `-> str | None` 错误。
         with open(fp, "rb") as fh:
             return hashlib.sha256(fh.read()).hexdigest()
 
