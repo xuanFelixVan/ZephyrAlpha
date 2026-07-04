@@ -7304,6 +7304,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(HMAC密钥硬编码需外部化到环境变量/密钥管理)
 
+> **第37轮验证状态（2026-07-05）**：DRIFTED=2——5.130.1 _DEFAULT_SECRET已移除,改随机回退密钥+warning日志(P0安全修复Phase 2);5.130.2 deepseek_v4_chat.py已改`api_key=os.environ["DEEPSEEK_API_KEY"]`,pipeline_routing副本不存在。本维度全部清零。
+
 #### 5.130.1 [HIGH] cross_session_detector的_DEFAULT_SECRET硬编码HMAC签名密钥
 
 - **文件**：`src/zephyr/security/access_control/detectors/cross_session_detector.py:34`
