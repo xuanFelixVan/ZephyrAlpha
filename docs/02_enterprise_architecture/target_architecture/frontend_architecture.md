@@ -3,7 +3,7 @@ module_id: VIEW-10-FRONTEND-ARCH
 title: Target Architecture — Frontend Architecture / 目标架构：前端架构
 doc_type: architecture_view
 status: Active
-version: 1.2.0
+version: 1.1.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -34,15 +34,12 @@ tags:
 - runtime-planes
 - orthogonal-view
 - j1
-- g0.5-python-transition
-- panel
-- holoviz
 summary: ZephyrAlpha 2.0 TOGAF 第 10 个架构视图——前端架构。承载 KBG-0007 拍板的方案 D（前端独立 `frontend/`
   顶级目录，与 `src/zephyr/` 53 域 Python 后端完全异构），对标 Bloomberg Terminal / Refinitiv Workspace
   Platform / QuantConnect Lean+Cloud / Interactive Brokers TWS 四家机构共性。9 章节：与 03-AA
   边界 / 7 条前端架构原则 / Application-Container-Component-Tools 四层 / Module Federation 与
   MFE 策略 / State 管理 / Design System 与组件库 / 构建部署运行时拓扑 / Activation Triggers（7 档升级条件）。当前前端 `frontend/` 目录**尚未物理建立**，本视图仅定义"未来前端平台架构终局"；激活时机由
-  §9 Activation Triggers 定义。**v1.2.0 更新**：G0.5 Python 原生可视化过渡层已激活（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2），作为 G0→G1 之间的过渡态；详见 §9.1 档位表与 #ARCH-047 裁定。
+  §9 Activation Triggers 定义。
 date: '2026-07-04'
 ttl: permanent
 ---
@@ -408,39 +405,19 @@ frontend/packages/*    ──┘
 
 ## 9. Activation Triggers（升级触发条件）
 
-**本视图遵循 FE-P7 渐进激活原则**。当前前端 `frontend/` 目录**尚未物理建立**；CLI + IDE + Feishu Bot 承担 Day-1 UI 职责（参见 04-TA §11.3 LLM 用户界面假设）。本章节定义 7 档激活升级条件，并在 G0 与 G1 之间增设 **G0.5 Python 原生可视化过渡层**作为过渡态。
-
-> **🔗 裁定引用**：G0.5 的引入与 G0→G1 激活路径细化由 `#ARCH-047`（前端可视化技术栈第一性原理重构）裁定，已登记在 `architecture_issue_registry.yaml`。G0.5 的存在不推翻 FE-P1 异构隔离铁律——它属于 Python 侧的可视化交付物，与未来 `frontend/` React 平台**并行共存**而非侵入（见 §9.1 共存策略）。
+**本视图遵循 FE-P7 渐进激活原则**。当前前端 `frontend/` 目录**尚未物理建立**；CLI + IDE + Feishu Bot 承担 Day-1 UI 职责（参见 04-TA §11.3 LLM 用户界面假设）。本章节定义 7 档激活升级条件。
 
 ### 9.1 激活档位表
 
 | 档位 | 名称 | 触发条件（任一即可）| 激活动作 | 预计工作量 |
 |------|------|-------------------|---------|-----------|
 | **G0** | 当前态（未激活）| — | 无前端代码；CLI + Cursor + Feishu bot 满足所有交互 | 0 |
-| **G0.5** | Python 原生可视化过渡层（**当前已激活**，#ARCH-047）| (a) 回测可视化需求已出现（多策略对比 / 净值曲线 / 回撤分析）& (b) 实盘仪表盘需求已出现（持仓 / 成交 / 风险指标监控）| 启用 Python 原生可视化技术栈：**Panel + HoloViz（HoloViews + Datashader + hvPlot + Bokeh）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2**；以 `panel serve` 提供 Bokeh/Web 应用，零前端构建链 | 2-4 天 |
 | **G1** | 最小 dashboard | 外部干系人（非本人 Owner）看报表/监控的需求 ≥ 2 周/次 | 搭 `frontend/` 骨架 + 1 个 App（risk-dashboard 或 monitoring-center）+ 最小 packages（ui-kit / data-client）+ tools | 5-8 天 |
 | **G2** | 2-3 App 平台 | (a) G1 已运行且稳定 ≥ 1 个月 & (b) 第 2 个 App 的业务需求成熟 | 启动 Module Federation（方案 B：Vite-native MF）+ platform/ 骨架 + 第 2/3 App | 8-12 天 |
 | **G3** | 团队级平台 | (a) App ≥ 3 & (b) 出现第 2 个前端开发者（人或 AI Operator）| 切换到 Webpack MF（方案 A）+ 私有 NPM + CI gate + Design System v2 | 10-15 天 |
 | **G4** | AI Operator 集成 | OQ-063 F-1/F-2/F-3 AI Operator 启用到 frontend 域 | 新建 `frontend/apps/ai-cockpit` + `packages/kbar-actions` AI 指令协议 + 自动化测试增强 | 8-12 天 |
 | **G5** | 外部租户 | 多账户 / 多机构需求浮出 | 主题 Token 多租户化 + Auth 升级到企业 OIDC + 权限 RBAC/ABAC 细粒度化 | 12-20 天 |
 | **G6** | 移动原生端 | (a) 盯盘 / 风控告警移动端需求 & (b) PWA 不满足 | React Native 新分支（不进 web monorepo）or Capacitor PWA | 视需求定 |
-
-#### 9.1.1 G0.5 退出条件与 G1 共存策略（#ARCH-047）
-
-**退出条件**（G0.5 → G1 激活，需 **3 信号同时**满足）：
-
-| # | 信号 | 阈值 / 判据 |
-|---|------|------------|
-| 1 | **MatchingLogic 偏差** | 回测匹配逻辑与实盘成交偏差 > 5%（说明可视化层与执行层耦合需要 React 侧独立调试）|
-| 2 | **策略迭代瓶颈** | Python 侧 Panel 应用无法承载策略迭代所需的多视图联动 / 命令面板 / 复杂表单 |
-| 3 | **模拟实盘需求** | 出现非本人 Owner 的外部干系人看盘需求，或需要 OIDC / 多用户会话隔离 |
-
-**G0.5 与 G1 共存策略**（G1 激活后 G0.5 不立即退役）：
-
-1. **Panel serve 作为 G1 React 前端的 BFF（Backend-for-Frontend）**：G1 React 应用通过 HTTP/WebSocket 调用 Panel serve 暴露的 Bokeh Server 端点，由 Panel 聚合后端 53 域数据并按视图裁剪——这样 React 侧不必直接对接 D_INTEGRATION_GATEWAY 的全量 OpenAPI，降低 G1 启动复杂度。
-2. **Python 可视化组件渐进式迁移到 React**：HoloViews / Plotly 图表按"高频使用 + 低交互复杂度"优先级逐步用 Recharts / D3 / Lightweight Charts 重写；低频或一次性图表可长期保留在 Panel 侧（由 React 通过 iframe 或组件桥接嵌入）。
-3. **TradingView Lightweight Charts 组件零成本迁移**：Lightweight Charts 是 JS 库，G0.5 侧通过 Panel 的 `HTML` / `IPyWidget` 桥使用，G1 侧由 `packages/chart-engine` 直接封装——**同一 JS 库通用**，迁移仅是宿主切换，无渲染逻辑重写成本。
-4. **退役判据**：当 G1 React 应用已承载 ≥ 80% 日常可视化流量且 Panel serve 仅作为 BFF 残留时，启动 G0.5 退役评估；在此之前 G0.5 与 G1 长期并行，不强制收敛。
 
 ### 9.2 不应激活的反信号
 
@@ -450,7 +427,6 @@ frontend/packages/*    ──┘
 | "Cursor / Copilot 生成了一个页面要不要留" | 代码先于架构 | 先让它过 §1-§7 原则审核；不过则舍弃，不做"临时方案" |
 | "交易信号页面嵌到 D_PF_CORE 里" | 违反 KBG-0007 + FE-P1/FE-P2 | 强制踢回 G0 或 G1，不允许临时破例 |
 | "搭个后台管理页改数据库" | 违反 FE-P2 + 安全原则 | 改用后端 admin CLI 或 Feishu Bot 工具，不要为此开 G1 |
-| "G0.5 还没稳定就要直接跳 G1"（G0.5 反信号）| G0.5 的 3 退出信号未同时满足就强行激活 G1，会导致 React 前端重复造 Python 侧已有的可视化轮子 | 继续停留 G0.5，把待办可视化先用 Panel/HoloViz 落地；待 MatchingLogic 偏差 > 5% + 策略迭代瓶颈 + 模拟实盘需求三信号齐备再开 G1（#ARCH-047）|
 
 ### 9.3 每档激活的必做 KB 决策记录 / 视图更新
 
