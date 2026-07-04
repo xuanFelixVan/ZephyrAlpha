@@ -126,20 +126,23 @@ class RollbackLock:
                 os.O_CREAT | os.O_EXCL | os.O_RDWR,
                 0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
             )
-            lock_data = json.dumps(
-                {
-                    "lock_id": request.lock_id,
-                    "owner": owner,
-                    "priority": priority.value,
-                    "task": task,
-                    "acquired_at": datetime.now(UTC).isoformat(),
-                    "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-                },
-                ensure_ascii=False,
-            )
+            # 5.169 修复：try/finally 确保 fd 关闭，os.write 抛异常时不泄漏
+            try:
+                lock_data = json.dumps(
+                    {
+                        "lock_id": request.lock_id,
+                        "owner": owner,
+                        "priority": priority.value,
+                        "task": task,
+                        "acquired_at": datetime.now(UTC).isoformat(),
+                        "ttl_seconds": self.DEFAULT_TTL_SECONDS,
+                    },
+                    ensure_ascii=False,
+                )
 
-            os.write(fd, lock_data.encode("utf-8"))
-            os.close(fd)
+                os.write(fd, lock_data.encode("utf-8"))
+            finally:
+                os.close(fd)
 
         except FileExistsError:
             return self._handle_lock_conflict(request, start_time, timeout_ms)
@@ -170,19 +173,22 @@ class RollbackLock:
                     os.O_CREAT | os.O_EXCL | os.O_RDWR,
                     0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
                 )
-                lock_data = json.dumps(
-                    {
-                        "lock_id": request.lock_id,
-                        "owner": request.owner,
-                        "priority": request.priority.value,
-                        "task": request.task,
-                        "acquired_at": datetime.now(UTC).isoformat(),
-                        "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-                    },
-                    ensure_ascii=False,
-                )
-                os.write(fd, lock_data.encode("utf-8"))
-                os.close(fd)
+                # 5.169 修复：try/finally 确保 fd 关闭，os.write 抛异常时不泄漏
+                try:
+                    lock_data = json.dumps(
+                        {
+                            "lock_id": request.lock_id,
+                            "owner": request.owner,
+                            "priority": request.priority.value,
+                            "task": request.task,
+                            "acquired_at": datetime.now(UTC).isoformat(),
+                            "ttl_seconds": self.DEFAULT_TTL_SECONDS,
+                        },
+                        ensure_ascii=False,
+                    )
+                    os.write(fd, lock_data.encode("utf-8"))
+                finally:
+                    os.close(fd)
                 self._dequeue_request(request.lock_id)
                 return LockAcquireResult(
                     acquired=True,

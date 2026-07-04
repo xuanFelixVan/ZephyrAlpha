@@ -438,8 +438,11 @@ class RollbackIntegration:
                     import sqlite3
 
                     conn = sqlite3.connect(db_url.replace("sqlite:///", ""), timeout=5)
-                    conn.execute("SELECT 1")
-                    conn.close()
+                    # 5.169 修复：try/finally 确保 conn 关闭，execute 抛异常时不泄漏
+                    try:
+                        conn.execute("SELECT 1")
+                    finally:
+                        conn.close()
                     return True, "SQLite connection pool healthy", 0
                 except (sqlite3.Error, Exception):
                     pass

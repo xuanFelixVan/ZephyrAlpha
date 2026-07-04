@@ -9069,6 +9069,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.169 文件句柄/资源泄漏（46个，第29轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=46(文件句柄/资源泄漏需全量改为context manager)
+> **第34轮修复状态（2026-07-04）**：FIXED=12(HIGH 1-5 urlopen/Path.open改with + MEDIUM 2/4/5/7/8/9/10 sqlite3/os.open/裸open改try-finally/with), DRIFTED=4(MEDIUM 1 session_lifecycle.py不存在 + MEDIUM 3 governance/rollback_integration.py副本不存在 + MEDIUM 6 skill_locking.py不存在 + LOW 1 self_benchmark.py不存在), STILL_VALID=30(28处scripts sqlite3.connect无try/finally + start_all.py Popen + auto_runtime_core.py fire-and-forget daemon)
 
 #### HIGH（5个）
 
@@ -9139,6 +9140,27 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 **核心模式总结**：(1)night_shift_queue.py 是最严重的 fd 泄漏源，4 个方法（append/pending/resolve/stats）全部使用 `Path.open()` 后不关闭，每次调用泄漏一个文件句柄，在夜间批处理高频调用场景下会快速耗尽 fd 配额；(2)scripts/governance/ 下存在系统性 sqlite3 反模式，约 25 处 `conn = sqlite3.connect()` 后跟 `conn.close()` 但无 `try/finally`，execute 抛异常时连接泄漏，其中 `_sync/` 和 `repair/concurrent_write_test.py` 尤为密集（7 处）；(3)`for line in path.open(...)` 迭代器模式未被识别为泄漏，dream_cycle.py、ai_audit_logger.py、night_shift_queue.py 共 5 处使用此模式，迭代器持有文件对象但从不 close；(4)urlopen / HTTP 响应未关闭，mcp_result_push.py 的回调路径 `urllib.request.urlopen()` 未用 with 也未 close resp，在每次任务推送时泄漏 HTTP 连接；(5)os.open + os.write + os.close 缺乏 try/finally，rollback_lock.py 两处锁文件写入、skill_locking.py 一处锁获取，若 os.write 抛异常则 fd 泄漏，对比同项目 staging_area.py/git_commit_gateway.py/worktree_manager.py 均正确使用 try/finally，说明该模式已存在规范但未一致执行。
 
 **严重度汇总**：HIGH=5, MEDIUM=39, LOW=2, 合计=46
+
+**第34轮修复明细（2026-07-04）**：
+- **FIXED**（12处）：
+  - HIGH 1: `mcp_result_push.py:220` — `urllib.request.urlopen()` 改为 `with urlopen(...) as resp:`
+  - HIGH 2-5: `night_shift_queue.py` 4个方法（append/pending/resolve/stats）— `Path.open()` 改为 `with self._path.open(...) as f:`
+  - MEDIUM 2: `rollback_integration.py:430` — sqlite3.connect 分支加 `try/finally` 确保 `conn.close()`
+  - MEDIUM 4: `rollback_lock.py:124` (acquire) — `os.open/os.write/os.close` 加 `try/finally` 确保 `os.close(fd)`
+  - MEDIUM 5: `rollback_lock.py:168` (_handle_lock_conflict) — 同上 `try/finally` 修复
+  - MEDIUM 7: `dream_cycle.py:94` (query_episodic) — `for line in f.open(...)` 改为 `with f.open(...) as fh:`
+  - MEDIUM 8: `ai_audit_logger.py:202` (query) — 同上 `with f.open(...) as fh:` 修复
+  - MEDIUM 9: `phase_e_context_check.py:39` — `open().read()` 改为 `with open(...) as _f: content = _f.read()`
+  - MEDIUM 10: `phase_e_context_check.py:54` — `open().readlines()` 改为 `with open(...) as _f: lines = _f.readlines()`
+- **DRIFTED**（4处）：
+  - MEDIUM 1: `src/zephyr/trading/session_lifecycle.py` 文件不存在
+  - MEDIUM 3: `src/zephyr/governance/rollback_integration.py` 副本不存在（仅剩 `infrastructure/rollback/` 1份）
+  - MEDIUM 6: `src/zephyr/autonomy_core/skill_locking.py` 文件不存在
+  - LOW 1: `src/zephyr/governance/self_benchmark.py` 文件不存在
+- **STILL_VALID**（30处，需大规模重构）：
+  - MEDIUM 11-38: 28处 `scripts/governance/` 下 `sqlite3.connect` 无 `try/finally`（reset_test_task/fix_broken_post_sync/gate_engine_selfcheck/phase_a_backup/list_phase0_tasks/task_show/task_self_check/rebuild_progress/_sync/*/repair/concurrent_write_test×7/meta/*/d5_architecture/*/d11_compliance/*）— 系统性反模式需批量重构
+  - MEDIUM 39: `scripts/mcp/start_all.py:61` — subprocess.Popen 无 with/wait/terminate，7个MCP server进程无清理
+  - LOW 2: `src/zephyr/trading/auto_runtime_core.py:222` — subprocess.Popen fire-and-forget daemon 模式（by-design，但无进程跟踪）
 
 ---
 

@@ -36,7 +36,9 @@ for l in layers:
     path = f"src/zephyr/{l}_*/__init__.py"
     matches = glob.glob(path)
     if matches:
-        content = open(matches[0], encoding="utf-8").read()
+        # 5.169 修复：用 context manager 防止文件句柄泄漏
+        with open(matches[0], encoding="utf-8") as _f:
+            content = _f.read()
         has_producer = "Producer" in content
         has_consumer = "Consumer" in content
         has_ctr = "CTR-" in content
@@ -51,7 +53,9 @@ for l in layers:
 print()
 print("=== Baseline files ===")
 for f in sorted(glob.glob("scripts/governance/meta/baselines/*.jsonl")):
-    lines = open(f, encoding="utf-8").readlines()
+    # 5.169 修复：用 context manager 防止文件句柄泄漏
+    with open(f, encoding="utf-8") as _f:
+        lines = _f.readlines()
     print(f"  {f}: {len(lines)} findings")
 
 print()

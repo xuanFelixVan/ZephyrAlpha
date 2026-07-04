@@ -94,13 +94,15 @@ class DreamCycle:
             return []
         results: list[dict[str, Any]] = []
         for f in path.glob("*.jsonl"):
-            for line in f.open(encoding="utf-8"):
-                line = line.strip()
-                if line:
-                    try:
-                        results.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
+            # 5.169 修复：用 context manager 防止文件句柄泄漏
+            with f.open(encoding="utf-8") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if line:
+                        try:
+                            results.append(json.loads(line))
+                        except json.JSONDecodeError:
+                            continue
         return results
 
     def query_semantic(self, tags: list[str]) -> list[dict[str, Any]]:
