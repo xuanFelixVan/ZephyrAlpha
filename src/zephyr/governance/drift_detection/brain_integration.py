@@ -30,6 +30,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.shared.utils.async_utils import run_sync
+
 logger = logging.getLogger(__name__)
 
 
@@ -204,44 +206,8 @@ class FullProbeResult:
 
 
 def _run_async(coro):
-    try:
-        loop = asyncio.get_running_loop()
-
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-
-        try:
-            return loop.run_until_complete(coro)
-
-        finally:
-            loop.close()
-
-    else:
-        import concurrent.futures
-
-        future = concurrent.futures.Future()
-
-        def _runner():
-            new_loop = asyncio.new_event_loop()
-
-            try:
-                result = new_loop.run_until_complete(coro)
-
-                future.set_result(result)
-
-            except Exception as exc:
-                future.set_exception(exc)
-
-            finally:
-                new_loop.close()
-
-        t = threading.Thread(target=_runner, daemon=True)
-
-        t.start()
-
-        t.join(timeout=120)
-
-        return future.result()
+    # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
+    return run_sync(coro)
 
 
 def _l0_startup_probe(project_root, result):

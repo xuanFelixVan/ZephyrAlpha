@@ -274,21 +274,8 @@ class DefaultSecurityGateway(SecurityGateway):
             result = run_sync(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
-        except RuntimeError:
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    return None
-                result = loop.run_until_complete(
-                    gw.scan_input(content, source="l10-compliance", metadata=metadata or {})
-                )
-                from zephyr.shared.contracts.security.security_decision import SecurityDecision
-
-                if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                    return result.blocked_by or "lsg_input_scan"
-            except Exception:
-                pass
         except Exception:
+            # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
             pass
         return None
 

@@ -2227,11 +2227,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计方法：Grep + Read真实文件取证（circuit_breaker.py、metrics_bridge.py、git_commit_gateway.py、async_runtime.py等）
 
 
-#### 5.16.9 跨6+文件重复的asyncio.run+get_event_loop反模式【HIGH】
-- 证据：`context_injector.py:261`、`gateway_server.py:95-110`、`integration/llm_gateway.py:69-77`、`autonomy_core/llm_gateway.py [⚠ 已删除]:69-77`、`default_security_gateway.py:273-281`、`delegation_engine.py:246`、`brain_integration.py:211-228`（new_event_loop不close）均 `asyncio.get_event_loop()`（3.12+弃用）+ `run_until_complete` fallback `asyncio.run`（已有循环时再抛RuntimeError）
-- 病根：根因2+5（async/sync桥接无共享封装，错误处理靠复制）
-- 修复：抽取`run_async_safely(coro)`到async_runtime.py统一
-
 #### 5.16.10 BackpressureManager get_state/get_all_paused返回可变对象别名【MEDIUM】
 - 证据：[backpressure_manager.py:187-193](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/backpressure_manager.py) `with self._lock: return self._get_or_create(symbol)` 返回dict内对象引用，调用方可外部无锁修改`paused_until`/`max_rate_per_sec`，破坏内部不变量
 - 病根：根因5（RLock保护字典结构但未保护字典内对象字段）

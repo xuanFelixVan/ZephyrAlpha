@@ -103,26 +103,8 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
         )
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_agent_scan"
-    except RuntimeError:
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                return None
-            result = loop.run_until_complete(
-                gw.scan_agent_action(
-                    text=text,
-                    tool_name=tool_name,
-                    tool_params=tool_params,
-                    metadata={"source": "mcp_gateway"},
-                )
-            )
-            from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
-
-            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                return result.blocked_by or "lsg_agent_scan"
-        except Exception:
-            pass
     except Exception:
+        # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return None
 

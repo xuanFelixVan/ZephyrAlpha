@@ -74,20 +74,8 @@ def _lsg_scan_input_sync(text: str, metadata: dict[str, Any] | None = None) -> s
         result = run_sync(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
-    except RuntimeError:
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                return None
-            result = loop.run_until_complete(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
-            SecurityDecision = importlib.import_module(
-                "zephyr.shared.contracts.security.security_decision"
-            ).SecurityDecision
-            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                return result.blocked_by or "lsg_input_scan"
-        except Exception:
-            pass
     except Exception:
+        # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return None
 
@@ -107,20 +95,8 @@ def _lsg_scan_output_sync(text: str, metadata: dict[str, Any] | None = None) -> 
             return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
         if result.sanitized_output:
             return result.sanitized_output, None
-    except RuntimeError:
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                return text, None
-            result = loop.run_until_complete(gw.scan_output(text, source="llm_gateway", metadata=metadata or {}))
-            SecurityDecision = importlib.import_module(
-                "zephyr.shared.contracts.security.security_decision"
-            ).SecurityDecision
-            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
-        except Exception:
-            pass
     except Exception:
+        # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return text, None
 
