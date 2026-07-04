@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-03T23:37:01Z
+# 自动生成于 2026-07-04T01:06:26Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-03T23:37:01Z'
+generated_at: '2026-07-04T01:06:26Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 322
@@ -778,7 +778,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 运行时配置完整性十一层纵深审计（基础设施-D_ML_TRAIN）+ 自动修复（D_REPORTING）
+  description: 运行时配置完整性十一层纵深审计（L1-L11）+ 自动修复（L7）
   tags:
   - AI-Generated
   - Critical
