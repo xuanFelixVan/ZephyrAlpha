@@ -52,6 +52,9 @@ from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any, Protocol
 
+# 5.119.3 修复: 导入 trace_id_var 用于每轮轮询重置 trace_id
+from zephyr.shared.utils.logging import trace_id_var
+
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
@@ -215,6 +218,9 @@ class OutboxPublisher:
 
     async def _poll_loop(self) -> None:
         while self._running:
+            # 5.119.3 修复: 每轮轮询重置 trace_id,避免冻结为 start() 时刻的快照
+            # 原 create_task 时 trace_id 被冻结,后续每轮日志携带相同 trace_id 无法区分轮次
+            trace_id_var.set(f"outbox-poll-{uuid.uuid4().hex[:8]}")
             try:
                 pending = await self._store.fetch_pending(limit=self._batch_size)
                 for entry in pending:

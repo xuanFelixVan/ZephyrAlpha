@@ -6372,6 +6372,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第35轮修复状态（2026-07-05）**：FIXED=3(5.98.2 GenesisBootstrap加双重检查锁+__init__加锁/5.98.3 resource_optimization.py+resource_optimization_engine.py __init__加锁), DRIFTED=2(5.98.1 audit_trail/cold_start.py已加锁/audit_orchestrator副本不存在; 5.98.3 capability.py已加锁), STILL_VALID=1(5.98.4 _LazyModule递归需定位具体__init__.py)
 
+> **第37轮修复状态（2026-07-05）**：5.98.4 FIXED——`_LazyModule.__getattr__` 添加 `_module`/`_module_path` 防御直接 raise AttributeError,消除无限递归。本维度全部清零。
+
 **总体评价**：该项目在元类与描述符层面相当干净——无`metaclass=`、无描述符协议、无`__getattribute__`/`__setattr__`重写、无`__del__`、`__slots__`使用规范、`__init_subclass__`模式一致。主要风险集中在单例`__new__`/`__init__`协调缺陷。
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
@@ -6704,6 +6706,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第34轮修复状态（2026-07-05）**：FIXED=2(5.108.1 ReboundSeverity补全__lt__/__le__/__gt__/__ge__四方法/5.108.2 TriggerResult.__eq__ return False→NotImplemented), STILL_VALID=1(5.108.3 VerifyResult __bool__与dict.__len__语义不一致,需重构为组合模式,影响API兼容性,需专项工程)
 
+> **第37轮修复状态（2026-07-05）**：5.108.3 FIXED——VerifyResult 添加 `__len__` 方法返回 `1 if __bool__ else 0`,与 `__bool__` 语义一致。本维度全部清零。
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.108.1 | `governance/reward_hacking_rebound_detector.py:50` | `ReboundSeverity(str, Enum)`仅定义`__ge__`，缺失`__lt__`/`__le__`/`__gt__`/`__eq__`。由于继承`str`，未定义的比较方法回退到`str`字典序，导致严重度排序语义矛盾：`HIGH > MEDIUM`返回False（应为True），`HIGH < MEDIUM`返回True（应为False）。安全相关Enum，比较不一致可能导致门禁/升级判断错误 | HIGH | 使用`@functools.total_ordering`并定义`__eq__`与`__lt__`，或手动补全四个比较方法 |
@@ -6980,6 +6984,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.119 contextvars传播（4个，第22轮新增）
 
 > **第35轮修复状态（2026-07-05）**：FIXED=3(5.119.1/5.119.2 async_runtime用_wrap_ctx+copy_context()传播contextvars/5.119.4 risk_mitigation用ctx.run()包装fire_and_forget), STILL_VALID=1(5.119.3 outbox.py后台轮询trace_id冻结需每轮重置)
+
+> **第37轮修复状态（2026-07-05）**：5.119.3 FIXED——outbox.py `_poll_loop` 每轮循环开始时 `trace_id_var.set(f"outbox-poll-{uuid.hex[:8]}")` 重置 trace_id,避免冻结为 start() 时刻快照。本维度全部清零。
 
 #### 5.119.1 [HIGH] run_in_executor不传播_ctx_allowance致LLM调用在线程池中被阻塞
 
