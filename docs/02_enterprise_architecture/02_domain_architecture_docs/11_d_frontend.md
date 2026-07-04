@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 16:41:29
+> 最后更新: 2026-07-04 17:02:07
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -75,10 +75,10 @@ graph TD
         src_zephyr_frontend_services_init_py["src/zephyr/frontend/services/__init__.py prototype"]
     end
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_init_py -.->|import_depends| src_zephyr_frontend_dashboard_init_py
     D_BACKTEST["D_BACKTEST design"]
@@ -95,10 +95,10 @@ graph TD
     src_zephyr_frontend_dashboard_components_fitness_functions_py -->|import_depends| D_TRADING
     src_zephyr_frontend_dashboard_components_trade_panel_py -.->|import_depends| D_TRADING
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -211,10 +211,10 @@ graph TD
 ┌──────────────────────────────────────────────────────────────────┐
 │                 [import_depends] (6 条 / edges)                  │
 ├──────────────────────────────────────────────────────────────────┤
-│   app.py → gate_statistics.py                                    │
 │   app.py → fitness_functions.py                                  │
-│   app.py → olap_trend.py                                         │
+│   app.py → gate_statistics.py                                    │
 │   app.py → knowledge_overview.py                                 │
+│   app.py → olap_trend.py                                         │
 │   app.py → task_progress.py                                      │
 │   __init__.py → __init__.py                                      │
 └──────────────────────────────────────────────────────────────────┘

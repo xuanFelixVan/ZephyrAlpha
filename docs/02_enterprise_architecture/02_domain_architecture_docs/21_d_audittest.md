@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 audit_test_suite（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 16:41:29
+> 最后更新: 2026-07-04 17:02:07
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -136,29 +136,28 @@ graph TD
         tests_action_test_action_side_effect_cumulative_detector_py["tests/action/test_action_side_effect_cumulative... prototype"]
     end
     D_INFRA_A2A["D_INFRA_A2A production"]
-    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
-    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
-    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
     tests_a2a_test_a2a_negotiation_py -.->|test_depends| D_INFRA_A2A
-    tests_a2a_test_a2a_saga_py -.->|test_depends| D_INFRA_A2A
+    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
+    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
+    tests_a2a_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_A2A
     tests_a2a_test_a2a_schemas_py -.->|test_depends| D_INFRA_A2A
     tests_a2a_test_a2a_state_py -.->|test_depends| D_INFRA_A2A
+    tests_a2a_test_a2a_saga_py -.->|test_depends| D_INFRA_A2A
     tests_a2a_test_a2a_voting_py -.->|test_depends| D_INFRA_A2A
     tests_a2a_test_a2a_work_steal_py -.->|test_depends| D_INFRA_A2A
     D_TRADING["D_TRADING production"]
-    tests_action_test_action_dispatcher_py -.->|test_depends| D_TRADING
     tests_action_test_action_composition_health_monitor_py -.->|test_depends| D_TRADING
-    tests_action_test_action_efficacy_decay_detector_py -.->|test_depends| D_TRADING
+    tests_action_test_action_dispatcher_py -.->|test_depends| D_TRADING
     tests_action_test_action_explainability_py -.->|test_depends| D_TRADING
-    tests_action_test_action_interaction_detector_py -.->|test_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_action_test_action_history_py -.->|test_depends| D_GOVERNANCE
+    tests_action_test_action_efficacy_decay_detector_py -.->|test_depends| D_TRADING
+    tests_action_test_action_selector_py -.->|test_depends| D_TRADING
+    tests_action_test_action_selector_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_a2a_test_a2a_layer1_discovery_py,tests_a2a_test_a2a_metrics_py,tests_a2a_test_a2a_negotiation_py,tests_a2a_test_a2a_protocol_gateway_py,tests_a2a_test_a2a_protocol_security_py,tests_a2a_test_a2a_red_team_py,tests_a2a_test_a2a_saga_py,tests_a2a_test_a2a_schemas_py,tests_a2a_test_a2a_security_py,tests_a2a_test_a2a_state_py,tests_a2a_test_a2a_temporal_admission_py,tests_a2a_test_a2a_tracing_py,tests_a2a_test_a2a_vector_reputation_py,tests_a2a_test_a2a_voting_py,tests_a2a_test_a2a_work_steal_py,tests_a2a_test_construction_verifier_py,tests_a2a_test_legacy_auditor_py,tests_a2a_test_legacy_governance_adapter_py,tests_a2a_test_legacy_protocol_py,tests_a2a_test_mcp_py,tests_a2a_test_spec_sync_py,tests_action_test_action_composition_health_monitor_py,tests_action_test_action_dispatcher_py,tests_action_test_action_efficacy_decay_detector_py,tests_action_test_action_explainability_py,tests_action_test_action_history_py,tests_action_test_action_interaction_detector_py,tests_action_test_action_reversibility_py,tests_action_test_action_selector_py,tests_action_test_action_side_effect_cumulative_detector_py design
-    class D_INFRA_A2A,D_TRADING,D_GOVERNANCE external_prod
+    class D_INFRA_A2A,D_TRADING external_prod
 ```
 
 ### 第 3 页 / 共 56 页 / Page 3 of 56
@@ -204,14 +203,14 @@ graph TD
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_agent_test_agent_observability_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D_TRADING production"]
-    tests_agent_test_agent_orchestrator_root_py -.->|test_depends| D_TRADING
     tests_agent_test_agent_health_monitor_root_py -.->|test_depends| D_TRADING
     tests_agent_test_agent_health_monitor_root_py -.->|test_depends| D_TRADING
     tests_agent_test_agent_lifecycle_py -.->|test_depends| D_TRADING
+    tests_agent_test_agent_orchestrator_root_py -.->|test_depends| D_TRADING
     tests_agent_test_agent_quality_py -.->|test_depends| D_TRADING
+    tests_agent_test_agent_skill_guard_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_agent_test_agent_signer_py -.->|test_depends| D_GOVERNANCE
-    tests_agent_test_agent_skill_guard_py -.->|test_depends| D_TRADING
     tests_agent_test_agent_spec_main_py -.->|test_depends| D_AUTONOMY_CORE
     tests_agent_test_agent_spec_registry_py -.->|test_depends| D_AUTONOMY_CORE
     tests_agent_test_agent_trajectory_anomaly_detector_py -.->|test_depends| D_TRADING
@@ -264,17 +263,17 @@ graph TD
     D_SECURITY["D_SECURITY production"]
     tests_agent_rbac_test_identity_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_immutable_core_agent_rbac_py -.->|test_depends| D_SECURITY
-    tests_agent_rbac_test_integration_agent_rbac_py -.->|test_depends| D_SECURITY
-    tests_agent_rbac_test_integration_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_input_guard_agent_rbac_py -.->|test_depends| D_SECURITY
+    tests_agent_rbac_test_integration_agent_rbac_py -.->|test_depends| D_SECURITY
+    tests_agent_rbac_test_integration_agent_rbac_py -.->|test_depends| D_SECURITY
+    tests_agent_rbac_test_integration_root_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_integrity_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_intent_binder_agent_rbac_py -.->|test_depends| D_SECURITY
-    tests_agent_rbac_test_integration_root_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_kill_switch_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_novel_attack_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_novel_attack_py -.->|test_depends| D_SECURITY
-    tests_agent_rbac_test_observability_agent_rbac_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_output_guard_agent_rbac_py -.->|test_depends| D_SECURITY
+    tests_agent_rbac_test_permissions_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -325,20 +324,20 @@ graph TD
     tests_audit_test_amplification_guard_py -.->|test_depends| D_TRADING
     tests_audit_test_api_dependency_metrics_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_audit_test_audit_api_lifecycle_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_anomaly_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_audit_api_lifecycle_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_audit_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_audit_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_audit_test_audit_cli_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_bridge_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_audit_dim_d1_d4_e2e_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_contracts_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_dim_d5_d8_e2e_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_audit_dim_d1_d4_e2e_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_dim_d9_d12_e2e_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_incremental_review_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_audit_indexer_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_audit_integrity_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_audit_models_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -384,20 +383,20 @@ graph TD
         tests_audit_test_interactive_diagnosis_py["tests/audit/test_interactive_diagnosis.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_audit_test_audit_write_failure_protector_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_audit_write_failure_protector_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_backcompat_checker_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_baseline_manager_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_audit_write_failure_protector_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_audit_write_failure_protector_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_baseline_poisoning_guard_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_brain_integration_root_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_benchmark_integrity_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
-    tests_audit_test_build_reproducibility_verifier_v2_py -.->|test_depends| D_TRADING
     tests_audit_test_build_reproducibility_verifier_py -.->|test_depends| D_TRADING
-    tests_audit_test_causal_inference_engine_py -.->|test_depends| D_TRADING
     tests_audit_test_burnout_alarm_py -.->|test_depends| D_TRADING
     tests_audit_test_burn_rate_alerter_py -.->|test_depends| D_TRADING
+    tests_audit_test_build_reproducibility_verifier_v2_py -.->|test_depends| D_TRADING
+    tests_audit_test_brain_integration_root_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_cascade_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_causal_inference_engine_py -.->|test_depends| D_TRADING
     tests_audit_test_cognitive_load_budget_py -.->|test_depends| D_TRADING
     tests_audit_test_correlation_engine_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -444,29 +443,29 @@ graph TD
         tests_audit_test_tone_adapter_v2_py["tests/audit/test_tone_adapter_v2.py prototype"]
         tests_audit_test_traffic_replay_validator_py["tests/audit/test_traffic_replay_validator.py prototype"]
     end
-    D_TRADING["D_TRADING production"]
-    tests_audit_test_intermittent_failure_pattern_py -.->|test_depends| D_TRADING
-    tests_audit_test_latency_slo_py -.->|test_depends| D_TRADING
-    tests_audit_test_mtti_tracker_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_audit_test_ml_engineering_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_naming_magic_checker_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_point_in_time_reconstructor_py -.->|test_depends| D_TRADING
+    D_TRADING["D_TRADING production"]
+    tests_audit_test_mtti_tracker_py -.->|test_depends| D_TRADING
+    tests_audit_test_intermittent_failure_pattern_py -.->|test_depends| D_TRADING
     tests_audit_test_orphan_scanner_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_latency_slo_py -.->|test_depends| D_TRADING
+    tests_audit_test_naming_magic_checker_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_performance_baseline_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_python_compat_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_preventive_repair_py -.->|test_depends| D_TRADING
+    tests_audit_test_point_in_time_reconstructor_py -.->|test_depends| D_TRADING
     tests_audit_test_pre_flight_simulator_py -.->|test_depends| D_TRADING
+    tests_audit_test_python_compat_py -.->|test_depends| D_GOVERNANCE
     tests_audit_test_regime_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_audit_test_serialization_format_tracker_py -.->|test_depends| D_TRADING
-    tests_audit_test_roi_engine_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_preventive_repair_py -.->|test_depends| D_TRADING
     tests_audit_test_regime_gain_scheduling_py -.->|test_depends| D_TRADING
+    tests_audit_test_roi_engine_py -.->|test_depends| D_GOVERNANCE
+    tests_audit_test_scan_mutex_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_intermittent_failure_pattern_py,tests_audit_test_latency_slo_py,tests_audit_test_ml_engineering_py,tests_audit_test_mtti_tracker_py,tests_audit_test_naming_magic_checker_py,tests_audit_test_orphan_scanner_py,tests_audit_test_performance_baseline_py,tests_audit_test_point_in_time_reconstructor_py,tests_audit_test_pre_flight_simulator_py,tests_audit_test_preventive_repair_py,tests_audit_test_python_compat_py,tests_audit_test_regime_detector_py,tests_audit_test_regime_gain_scheduling_py,tests_audit_test_roi_engine_py,tests_audit_test_scan_mutex_py,tests_audit_test_serialization_format_tracker_py,tests_audit_test_sim2real_calibration_py,tests_audit_test_socratic_questions_py,tests_audit_test_state_machine_py,tests_audit_test_statistical_hygiene_auditor_py,tests_audit_test_sub_agent_collusion_py,tests_audit_test_suppression_learner_py,tests_audit_test_symlink_checker_py,tests_audit_test_tamper_proof_audit_py,tests_audit_test_test_fixture_checker_py,tests_audit_test_toctou_revalidation_py,tests_audit_test_toil_quantification_py,tests_audit_test_tone_adapter_py,tests_audit_test_tone_adapter_v2_py,tests_audit_test_traffic_replay_validator_py design
-    class D_TRADING,D_GOVERNANCE external_prod
+    class D_GOVERNANCE,D_TRADING external_prod
 ```
 
 ### 第 8 页 / 共 56 页 / Page 8 of 56
@@ -505,13 +504,13 @@ graph TD
         tests_autonomy_test_assembly_context_assembler_py["tests/autonomy/test_assembly_context_assembler.py prototype"]
         tests_autonomy_test_assembly_context_injector_py["tests/autonomy/test_assembly_context_injector.py prototype"]
     end
-    D_TRADING["D_TRADING production"]
-    tests_audit_test_value_added_baseline_py -.->|test_depends| D_TRADING
-    tests_audit_test_zombie_fle_detector_py -.->|test_depends| D_TRADING
-    tests_audit_test_verification_engine_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_audit_test_trend_analyzer_py -.->|test_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    tests_audit_test_value_added_baseline_py -.->|test_depends| D_TRADING
+    tests_audit_test_verification_engine_py -.->|test_depends| D_TRADING
     tests_automation_test_auto_diagnosis_py -.->|test_depends| D_TRADING
+    tests_audit_test_zombie_fle_detector_py -.->|test_depends| D_TRADING
     tests_automation_test_auto_evolution_root_py -.->|test_depends| D_TRADING
     tests_automation_test_auto_evolution_root_py -.->|test_depends| D_TRADING
     tests_automation_test_auto_fixer_py -.->|test_depends| D_GOVERNANCE
@@ -519,16 +518,16 @@ graph TD
     tests_automation_test_auto_diagnostics_py -.->|test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_fix_phase_manager_py -.->|test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_fix_phase_manager_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_automation_test_auto_integrator_py -.->|test_depends| D_TRADING
-    tests_automation_test_auto_integrator_py -.->|test_depends| D_TRADING
-    tests_automation_test_auto_integrator_py -.->|test_depends| D_TRADING
-    tests_automation_test_auto_integrator_py -.->|test_depends| D_TRADING
+    tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_automation_test_auto_fix_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_audit_test_trend_analyzer_py,tests_audit_test_value_added_baseline_py,tests_audit_test_verification_engine_py,tests_audit_test_zombie_fle_detector_py,tests_automation_test_auto_bootstrap_py,tests_automation_test_auto_diagnosis_py,tests_automation_test_auto_diagnostics_py,tests_automation_test_auto_evolution_root_py,tests_automation_test_auto_fix_autopilot_py,tests_automation_test_auto_fix_engine_py,tests_automation_test_auto_fix_phase_manager_py,tests_automation_test_auto_fix_red_blue_py,tests_automation_test_auto_fixer_py,tests_automation_test_auto_integrator_py,tests_automation_test_auto_maintenance_py,tests_automation_test_auto_reward_py,tests_automation_test_auto_rollback_py,tests_automation_test_auto_rollback_trigger_py,tests_automation_test_auto_runtime_core_py,tests_automation_test_auto_runtime_e2e_py,tests_automation_test_auto_runtime_fle_integration_py,tests_automation_test_auto_split_py,tests_automation_test_auto_task_generator_py,tests_automation_test_auto_test_generator_py,tests_autonomy_test_adversarial_robustness_py,tests_autonomy_test_alignment_scorer_py,tests_autonomy_test_all_skill_modules_py,tests_autonomy_test_architecture_context_loader_py,tests_autonomy_test_assembly_context_assembler_py,tests_autonomy_test_assembly_context_injector_py design
-    class D_TRADING,D_GOVERNANCE,D_INFRA_RUNTIME external_prod
+    class D_GOVERNANCE,D_TRADING,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 9 页 / 共 56 页 / Page 9 of 56
@@ -573,25 +572,26 @@ graph TD
     tests_autonomy_test_atomic_injector_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D_TRADING production"]
     tests_autonomy_test_autonomy_credit_py -.->|test_depends| D_TRADING
-    tests_autonomy_test_autonomy_guard_py -.->|test_depends| D_TRADING
     tests_autonomy_test_autonomy_maturity_py -.->|test_depends| D_TRADING
+    tests_autonomy_test_autonomy_guard_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_autonomy_test_autonomy_regressor_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
     tests_autonomy_test_cache_invalidation_py -.->|test_depends| D_SHARED
     tests_autonomy_test_behavioral_auditor_main_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_autonomy_test_citation_walker_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_checkpoint_manager_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_autonomy_test_citation_walker_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_complexity_budget_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_autonomy_test_curation_loop_root_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_autonomy_test_dispatch_table_root_py -.->|test_depends| D_TRADING
-    tests_autonomy_test_diff_injector_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_autonomy_test_context_pipeline_red_blue_py -.->|test_depends| D_AUTONOMY_CORE
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_autonomy_test_context_pipeline_red_blue_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_autonomy_test_context_pipeline_red_blue_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_autonomy_test_assembly_context_pipeline_py,tests_autonomy_test_atomic_injector_py,tests_autonomy_test_autonomy_credit_py,tests_autonomy_test_autonomy_dashboard_py,tests_autonomy_test_autonomy_guard_py,tests_autonomy_test_autonomy_maturity_py,tests_autonomy_test_autonomy_regressor_py,tests_autonomy_test_behavioral_auditor_main_py,tests_autonomy_test_cache_invalidation_py,tests_autonomy_test_checkpoint_manager_py,tests_autonomy_test_citation_walker_py,tests_autonomy_test_complexity_budget_py,tests_autonomy_test_context_pipeline_red_blue_py,tests_autonomy_test_contextual_fetch_api_py,tests_autonomy_test_curation_loop_root_py,tests_autonomy_test_diff_injector_py,tests_autonomy_test_dispatch_table_root_py,tests_autonomy_test_diversity_constraint_py,tests_autonomy_test_doc_compressor_root_py,tests_autonomy_test_domain_decay_config_py,tests_autonomy_test_embedding_version_lock_py,tests_autonomy_test_fallback_staleness_gate_py,tests_autonomy_test_fragmentation_index_py,tests_autonomy_test_host_resource_governor_py,tests_autonomy_test_ide_watcher_py,tests_autonomy_test_integrity_check_py,tests_autonomy_test_list_ce_files_py,tests_autonomy_test_lsg_pattern_tracker_py,tests_autonomy_test_mgmt_context_budget_tracker_py,tests_autonomy_test_mgmt_context_evictor_py design
-    class D_AUTONOMY_CORE,D_TRADING,D_GOVERNANCE,D_SHARED external_prod
+    class D_AUTONOMY_CORE,D_TRADING,D_GOVERNANCE,D_SHARED,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 10 页 / 共 56 页 / Page 10 of 56
@@ -630,31 +630,31 @@ graph TD
         tests_ba_test_ba_dependency_manager_py["tests/ba/test_ba_dependency_manager.py prototype"]
         tests_ba_test_ba_events_py["tests/ba/test_ba_events.py prototype"]
     end
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_autonomy_test_parsing_intent_keyword_mapper_py -.->|test_depends| D_GOVERNANCE
-    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
-    tests_autonomy_test_otel_instrumentation_py -.->|test_depends| D_INFRA_TELEMETRY
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_autonomy_test_mgmt_context_rot_model_py -.->|test_depends| D_AUTONOMY_CORE
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
+    tests_autonomy_test_otel_instrumentation_py -.->|test_depends| D_INFRA_TELEMETRY
     tests_autonomy_test_mode_manager_py -.->|test_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_autonomy_test_parsing_intent_keyword_mapper_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_pattern_library_root_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_parsing_intent_parser_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_parsing_intent_parser_py -.->|test_depends| D_GOVERNANCE
+    tests_autonomy_test_position_optimizer_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_autonomy_test_rational_py -.->|test_depends| D_GOVERNANCE
     tests_autonomy_test_progressive_disclosure_injector_py -.->|test_depends| D_AUTONOMY_CORE
     D_SECURITY_LLM["D_SECURITY_LLM production"]
     tests_autonomy_test_poisoning_monitor_py -.->|test_depends| D_SECURITY_LLM
-    tests_autonomy_test_registry_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_autonomy_test_rational_py -.->|test_depends| D_GOVERNANCE
-    tests_autonomy_test_position_optimizer_py -.->|test_depends| D_AUTONOMY_CORE
     tests_autonomy_test_sensitivity_classifier_py -.->|test_depends| D_SECURITY_LLM
-    tests_autonomy_test_solo_dev_safety_net_py -.->|test_depends| D_SECURITY_LLM
     tests_autonomy_test_shadow_canary_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_autonomy_test_registry_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_autonomy_test_solo_dev_safety_net_py -.->|test_depends| D_SECURITY_LLM
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_autonomy_test_mgmt_context_rot_model_py,tests_autonomy_test_mode_manager_py,tests_autonomy_test_otel_instrumentation_py,tests_autonomy_test_parsing_intent_keyword_mapper_py,tests_autonomy_test_parsing_intent_parser_py,tests_autonomy_test_pattern_library_root_py,tests_autonomy_test_poisoning_monitor_py,tests_autonomy_test_position_optimizer_py,tests_autonomy_test_progressive_disclosure_injector_py,tests_autonomy_test_rational_py,tests_autonomy_test_registry_py,tests_autonomy_test_sensitivity_classifier_py,tests_autonomy_test_shadow_canary_py,tests_autonomy_test_solo_dev_safety_net_py,tests_autonomy_test_staleness_manager_py,tests_autonomy_test_support_architecture_context_loader_py,tests_autonomy_test_support_doc_compressor_py,tests_autonomy_test_support_prompt_registry_py,tests_autonomy_test_support_system_snapshot_py,tests_autonomy_test_system_snapshot_root_py,tests_autonomy_test_token_budget_root_py,tests_autonomy_test_trigger_router_root_py,tests_autonomy_test_vector_bridge_py,tests_autonomy_test_verify_paths_py,tests_ba_test_ba_canary_controller_py,tests_ba_test_ba_chaos_injector_py,tests_ba_test_ba_dashboard_py,tests_ba_test_ba_data_lifecycle_py,tests_ba_test_ba_dependency_manager_py,tests_ba_test_ba_events_py design
-    class D_GOVERNANCE,D_INFRA_TELEMETRY,D_AUTONOMY_CORE,D_SECURITY_LLM external_prod
+    class D_AUTONOMY_CORE,D_INFRA_TELEMETRY,D_GOVERNANCE,D_SECURITY_LLM external_prod
 ```
 
 ### 第 11 页 / 共 56 页 / Page 11 of 56
@@ -693,33 +693,33 @@ graph TD
         tests_budget_test_budget_profile_manager_py["tests/budget/test_budget_profile_manager.py prototype"]
         tests_budget_test_budget_shutdown_py["tests/budget/test_budget_shutdown.py prototype"]
     end
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_ba_test_ba_handoff_manager_py -.->|test_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    tests_ba_test_ba_integration_test_runner_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_ba_test_ba_main_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_blueprint_test_blueprint_code_consistency_py -.->|test_depends| D_GOVERNANCE
-    D_TRADING["D_TRADING production"]
-    tests_blueprint_test_blueprint_code_reconciler_py -.->|test_depends| D_TRADING
-    tests_blueprint_test_blueprint_bloat_monitor_py -.->|test_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    tests_ba_test_ba_integration_test_runner_py -.->|test_depends| D_GOV_ENFORCEMENT
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_ba_test_ba_handoff_manager_py -.->|test_depends| D_GOVERNANCE
     tests_ba_test_ba_state_machine_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_ba_test_ba_state_machine_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_blueprint_test_blueprint_bloat_monitor_py -.->|test_depends| D_GOVERNANCE
+    tests_blueprint_test_blueprint_code_consistency_py -.->|test_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    tests_blueprint_test_blueprint_code_reconciler_py -.->|test_depends| D_TRADING
     D_SECURITY["D_SECURITY production"]
     tests_blueprint_test_blueprint_fidelity_py -.->|test_depends| D_SECURITY
     tests_blueprint_test_blueprint_reconciler_py -.->|test_depends| D_GOVERNANCE
-    tests_bridges_test_bridges_contracts_py -.->|test_depends| D_GOVERNANCE
     tests_blueprint_test_blueprint_scorer_py -.->|test_depends| D_TRADING
     tests_blueprint_test_blueprint_validator_py -.->|test_depends| D_TRADING
     tests_blueprint_test_gen_inherited_py -.->|test_depends| D_TRADING
     tests_bridges_test_bridges_anomaly_py -.->|test_depends| D_GOVERNANCE
+    tests_bridges_test_bridges_contracts_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_ba_test_ba_handoff_manager_py,tests_ba_test_ba_integration_test_runner_py,tests_ba_test_ba_main_py,tests_ba_test_ba_state_machine_py,tests_blueprint_test_blueprint_bloat_monitor_py,tests_blueprint_test_blueprint_code_consistency_py,tests_blueprint_test_blueprint_code_reconciler_py,tests_blueprint_test_blueprint_fidelity_py,tests_blueprint_test_blueprint_metrics_py,tests_blueprint_test_blueprint_reconciler_py,tests_blueprint_test_blueprint_scorer_py,tests_blueprint_test_blueprint_validator_py,tests_blueprint_test_gen_inherited_py,tests_bridges_test_bridges_anomaly_py,tests_bridges_test_bridges_contracts_py,tests_bridges_test_bridges_delegation_bridge_py,tests_bridges_test_bridges_drift_bridge_py,tests_bridges_test_bridges_feedback_bridge_py,tests_bridges_test_bridges_spec_auditor_py,tests_bridges_test_bridges_tiered_storage_bridge_py,tests_bridges_test_bridges_trust_bridge_py,tests_budget_test_budget_enforcer_rbac_bridge_py,tests_budget_test_budget_engine_root_py,tests_budget_test_budget_event_driven_py,tests_budget_test_budget_forecaster_py,tests_budget_test_budget_handler_py,tests_budget_test_budget_lifecycle_e2e_py,tests_budget_test_budget_models_py,tests_budget_test_budget_profile_manager_py,tests_budget_test_budget_shutdown_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_TRADING,D_INFRA_RUNTIME,D_SECURITY external_prod
+    class D_AUTONOMY_CORE,D_GOV_ENFORCEMENT,D_GOVERNANCE,D_INFRA_RUNTIME,D_TRADING,D_SECURITY external_prod
 ```
 
 ### 第 12 页 / 共 56 页 / Page 12 of 56
@@ -759,25 +759,25 @@ graph TD
         tests_ce_test_ce_vibe_shortcuts_py["tests/ce/test_ce_vibe_shortcuts.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_budget_test_budget_tracker_py -.->|test_depends| D_GOVERNANCE
+    tests_budget_test_budget_tracker_py -.->|test_depends| D_GOVERNANCE
     tests_canary_test_canary_controller_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     tests_budget_test_error_budget_py -.->|test_depends| D_TRADING
-    tests_budget_test_budget_tracker_py -.->|test_depends| D_GOVERNANCE
-    tests_budget_test_budget_tracker_py -.->|test_depends| D_GOVERNANCE
     tests_canary_test_canary_manager_py -.->|test_depends| D_TRADING
     tests_canary_test_canary_register_py -.->|test_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
     tests_canary_test_canary_rollout_manager_py -.->|test_depends| D_SECURITY
     tests_canary_test_canary_repair_py -.->|test_depends| D_TRADING
-    tests_capability_test_capability_card_py -.->|test_depends| D_TRADING
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_capability_test_capability_check_py -.->|test_depends| D_AUTONOMY_CORE
     tests_capability_test_capability_check_py -.->|test_depends| D_SECURITY
-    D_INTELLIGENCE["D_INTELLIGENCE production"]
-    tests_capability_test_capability_passport_py -.->|test_depends| D_INTELLIGENCE
+    tests_capability_test_capability_card_py -.->|test_depends| D_TRADING
     tests_capability_test_capability_overlap_gate_py -.->|test_depends| D_GOVERNANCE
     tests_capability_test_capability_overlap_gate_py -.->|test_depends| D_GOVERNANCE
     tests_capability_test_capability_lookup_py -.->|test_depends| D_GOVERNANCE
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
+    tests_capability_test_capability_passport_py -.->|test_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -823,23 +823,23 @@ graph TD
         tests_context_test_context_manager_py["tests/context/test_context_manager.py prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_chaos_test_chaos_engine_ops_py -.->|test_depends| D_TRADING
     tests_chaos_test_chaos_engine_py -.->|test_depends| D_TRADING
     tests_chaos_test_chaos_engineering_py -.->|test_depends| D_TRADING
+    tests_chaos_test_chaos_hooks_py -.->|test_depends| D_TRADING
+    tests_chaos_test_chaos_hooks_py -.->|test_depends| D_TRADING
+    tests_chaos_test_chaos_engine_ops_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_chaos_test_chaos_injector_py -.->|test_depends| D_GOVERNANCE
-    tests_chaos_test_chaos_hooks_py -.->|test_depends| D_TRADING
-    tests_chaos_test_chaos_hooks_py -.->|test_depends| D_TRADING
+    tests_cold_test_cold_start_py -.->|test_depends| D_GOVERNANCE
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_cold_test_cold_start_booster_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_cold_test_cold_start_conservative_mode_py -.->|test_depends| D_TRADING
-    tests_cold_test_cold_start_py -.->|test_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
     tests_cold_test_cold_start_lock_py -.->|test_depends| D_SECURITY
     tests_cold_test_cold_start_lock_py -.->|test_depends| D_SECURITY
-    tests_config_test_config_drift_py -.->|test_depends| D_TRADING
+    tests_cold_test_cold_start_conservative_mode_py -.->|test_depends| D_TRADING
     tests_config_test_config_consistency_py -.->|test_depends| D_GOVERNANCE
     tests_config_test_config_complexity_budget_py -.->|test_depends| D_TRADING
+    tests_config_test_config_drift_py -.->|test_depends| D_TRADING
     tests_config_test_config_governance_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -890,20 +890,20 @@ graph TD
     tests_context_test_context_outcome_tracker_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_context_test_context_package_py -.->|test_depends| D_GOVERNANCE
-    tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_pipeline_auto_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_context_test_context_pipeline_auto_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_context_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_playground_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_rot_model_root_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_context_test_context_rule_registry_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_context_test_context_switch_governor_py -.->|test_depends| D_GOVERNANCE
     tests_context_test_context_rule_registry_root_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D_TRADING production"]
     tests_context_test_context_truncation_py -.->|test_depends| D_TRADING
-    tests_context_test_context_rule_registry_unit_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_context_test_context_window_pressure_manager_py -.->|test_depends| D_TRADING
     tests_context_test_context_value_attribution_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_context_test_context_waste_detector_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -950,21 +950,21 @@ graph TD
     end
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_contracts_test_ct_circular_dependency_scan_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_circular_dependency_scan_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_contracts_test_ct_circular_dependency_scan_py -.->|test_depends| D_INTEGRATION
-    tests_contracts_test_ct_circular_dependency_scan_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_content_length_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_content_length_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_content_length_py -.->|test_depends| D_INTEGRATION
-    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_INTEGRATION
-    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_INTEGRATION
     tests_contracts_test_ct_classification_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_contracts_test_ct_classification_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_contracts_test_ct_classification_py -.->|test_depends| D_INTEGRATION
+    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_content_quality_py -.->|test_depends| D_INTEGRATION
+    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_contract_compatibility_check_py -.->|test_depends| D_INTEGRATION
+    tests_contracts_test_ct_drift_budget_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_drift_budget_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_contracts_test_ct_drift_budget_py -.->|test_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1015,23 +1015,23 @@ graph TD
     tests_contracts_test_rbac_guard_root_py -.->|test_depends| D_SECURITY
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_cross_test_cross_assistant_adapter_py -.->|test_depends| D_GOVERNANCE
-    tests_cross_test_cross_boundary_detector_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     tests_cross_test_cross_blueprint_contract_drift_py -.->|test_depends| D_TRADING
     tests_cross_test_cross_cutting_py -.->|test_depends| D_SECURITY
+    tests_cross_test_cross_boundary_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_cross_test_cross_gen_validation_py -.->|test_depends| D_TRADING
+    tests_cross_test_cross_guard_conflict_detector_py -.->|test_depends| D_TRADING
+    tests_cross_test_cross_module_integration_root_py -.->|test_depends| D_TRADING
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_cross_test_cross_layer_py -.->|test_depends| D_INTELLIGENCE
     D_SIMULATION["D_SIMULATION production"]
     tests_cross_test_cross_layer_py -.->|test_depends| D_SIMULATION
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     tests_cross_test_cross_layer_py -.->|test_depends| D_FUNDAMENTAL_SIGNAL
-    tests_cross_test_cross_guard_conflict_detector_py -.->|test_depends| D_TRADING
-    tests_cross_test_cross_gen_validation_py -.->|test_depends| D_TRADING
-    tests_cross_test_cross_module_integration_root_py -.->|test_depends| D_TRADING
-    tests_cross_test_cross_module_score_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_cross_test_cross_platform_shell_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_cross_test_cross_session_knowledge_integrity_py -.->|test_depends| D_TRADING
+    tests_cross_test_cross_module_score_py -.->|test_depends| D_GOVERNANCE
+    tests_cross_test_cross_session_consistency_validator_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1077,32 +1077,32 @@ graph TD
         tests_e_test_e_confidence_estimator_py["tests/e/test_e_confidence_estimator.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_db_test_dm400_stale_task_fix_py -.->|test_depends| D_GOVERNANCE
     tests_db_test_db_transition_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_db_test_db_transition_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_db_test_db_transition_py -.->|test_depends| D_GOVERNANCE
-    tests_decision_test_decision_auditor_py -.->|test_depends| D_GOVERNANCE
-    D_SECURITY["D_SECURITY production"]
-    tests_decision_test_decision_explainer_root_py -.->|test_depends| D_SECURITY
+    tests_db_test_dm400_stale_task_fix_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     tests_decision_test_decision_engine_py -.->|test_depends| D_TRADING
     tests_decision_test_decision_engine_py -.->|test_depends| D_TRADING
+    tests_decision_test_decision_auditor_py -.->|test_depends| D_GOVERNANCE
+    D_SECURITY["D_SECURITY production"]
+    tests_decision_test_decision_explainer_root_py -.->|test_depends| D_SECURITY
     tests_decision_test_decision_provenance_py -.->|test_depends| D_TRADING
     tests_decision_test_decision_registry_py -.->|test_depends| D_SECURITY
-    tests_dependency_test_dependency_lock_py -.->|test_depends| D_TRADING
-    tests_dependency_test_dependency_freshness_monitor_py -.->|test_depends| D_TRADING
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    tests_dependency_test_dependency_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_dependency_test_dependency_auditor_py -.->|test_depends| D_SECURITY
+    tests_dependency_test_dependency_freshness_monitor_py -.->|test_depends| D_TRADING
+    tests_dependency_test_dependency_lock_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_dependency_test_dependency_tracker_py -.->|test_depends| D_SHARED
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
+    tests_dependency_test_dependency_root_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_db_test_db_transition_py,tests_db_test_dm400_stale_task_fix_py,tests_decision_test_decision_auditor_py,tests_decision_test_decision_engine_py,tests_decision_test_decision_explainer_root_py,tests_decision_test_decision_provenance_py,tests_decision_test_decision_registry_py,tests_dependency_test_dependency_auditor_py,tests_dependency_test_dependency_freshness_monitor_py,tests_dependency_test_dependency_lock_py,tests_dependency_test_dependency_manager_py,tests_dependency_test_dependency_root_py,tests_dependency_test_dependency_tracker_py,tests_drift_test_concept_drift_py,tests_drift_test_drift_bridge_py,tests_drift_test_drift_detector_ee_py,tests_drift_test_drift_detector_gate_py,tests_drift_test_drift_engine_py,tests_drift_test_drift_fix_py,tests_drift_test_drift_fixer_py,tests_drift_test_drift_hotfix_bypass_py,tests_drift_test_drift_infrastructure_py,tests_drift_test_drift_models_py,tests_drift_test_drift_result_types_py,tests_drift_test_drift_training_py,tests_drift_test_schema_evolution_root_py,tests_drift_test_version_migrator_py,tests_e_test_e_circuit_breaker_py,tests_e_test_e_clock_guard_py,tests_e_test_e_confidence_estimator_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_SECURITY,D_TRADING,D_INFRA_RUNTIME,D_SHARED external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_TRADING,D_SECURITY,D_SHARED,D_INFRA_RUNTIME external_prod
 ```
 
 ### 第 18 页 / 共 56 页 / Page 18 of 56
@@ -1142,22 +1142,22 @@ graph TD
         tests_e_test_e_self_validator_py["tests/e/test_e_self_validator.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_e_test_e_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_consequence_manager_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_context_package_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_escalation_metrics_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_decision_fatigue_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_error_budget_burst_limiter_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_escalation_api_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_context_package_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_decision_fatigue_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_escalation_models_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_forensic_package_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_flash_crash_guard_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_escalation_metrics_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_exchange_partition_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_e_test_e_gap_analyzer_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_ghost_scan_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_gov_a2a_failure_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_forensic_package_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_gap_analyzer_py -.->|test_depends| D_GOVERNANCE
+    tests_e_test_e_flash_crash_guard_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_e_test_e_gov_approval_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_e_test_e_gov_a2a_failure_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1206,21 +1206,21 @@ graph TD
     tests_e_test_e_silence_detector_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_e_test_e_slo_contract_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_escalation_test_escalation_adapter_py -.->|test_depends| D_GOVERNANCE
     tests_e_test_e_strategy_scoper_py -.->|test_depends| D_GOVERNANCE
+    tests_escalation_test_escalation_adapter_py -.->|test_depends| D_GOVERNANCE
+    tests_escalation_test_escalation_api_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_escalation_test_escalation_bridge_py -.->|test_depends| D_INFRA_RUNTIME
     tests_escalation_test_escalation_bridge_py -.->|test_depends| D_INFRA_RUNTIME
     tests_escalation_test_escalation_contracts_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
     tests_escalation_test_escalation_contracts_py -.->|test_depends| D_SHARED
-    tests_escalation_test_escalation_api_py -.->|test_depends| D_GOVERNANCE
-    tests_escalation_test_escalation_fatigue_manager_py -.->|test_depends| D_GOVERNANCE
     tests_escalation_test_escalation_gov_approval_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_escalation_test_escalation_gov_budget_handler_py -.->|test_depends| D_GOVERNANCE
-    tests_escalation_test_escalation_gov_budget_handler_py -.->|test_depends| D_SHARED
     tests_escalation_test_escalation_gov_a2a_failure_py -.->|test_depends| D_GOVERNANCE
+    tests_escalation_test_escalation_fatigue_manager_py -.->|test_depends| D_GOVERNANCE
     tests_escalation_test_escalation_gov_contracts_py -.->|test_depends| D_GOVERNANCE
+    tests_escalation_test_escalation_gov_contracts_py -.->|test_depends| D_SHARED
+    tests_escalation_test_escalation_gov_budget_handler_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1269,21 +1269,21 @@ graph TD
     tests_external_test_external_health_py -.->|test_depends| D_TRADING
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_external_test_external_merkle_proof_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_external_test_external_validation_checkpoint_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_external_test_external_tool_audit_py -.->|test_depends| D_GOVERNANCE
     tests_federated_learning_test_fl_action_selector_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_action_selector_py -.->|test_depends| D_TRADING
-    tests_external_test_external_validation_checkpoint_py -.->|test_depends| D_TRADING
     tests_external_test_external_verifier_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_agent_lifecycle_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_action_reversibility_py -.->|test_depends| D_TRADING
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_federated_learning_test_fl_adversarial_validation_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_federated_learning_test_fl_action_reversibility_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_agent_lifecycle_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_api_version_contract_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_autonomy_maturity_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_anomaly_detector_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1329,21 +1329,21 @@ graph TD
         tests_federated_learning_test_fl_generator_py["tests/federated_learning/test_fl_generator.py prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_federated_learning_test_fl_blueprint_code_reconciler_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_backpressure_bridge_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_backpressure_bridge_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_blueprint_validator_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_blueprint_code_reconciler_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_calendar_adapter_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_backpressure_bridge_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_backpressure_bridge_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_checkpoint_manager_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_ci_cd_pre_scanner_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_concurrent_change_deconfliction_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_config_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_config_timeline_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_config_governance_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_config_complexity_budget_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_ci_cd_pre_scanner_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_config_governance_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_config_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_conflict_arbitration_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_config_timeline_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_cve_scanner_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_data_quality_gate_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_conflict_arbitration_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1389,21 +1389,21 @@ graph TD
         tests_feedback_test_automated_rca_postmortem_generator_py["tests/feedback/test_automated_rca_postmortem_ge... prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_federated_learning_test_fl_global_action_scheduler_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_incident_priority_triage_automator_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_kb_provenance_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_intent_driven_ops_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_license_compliance_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_global_action_scheduler_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_llm_cost_router_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_meta_performance_gate_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_kb_provenance_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_merkle_audit_root_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_meta_performance_gate_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_license_compliance_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_notification_personalizer_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_multi_agent_orchestrator_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_parameterized_safety_gate_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_owner_absence_escalation_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_protocols_py -.->|test_depends| D_TRADING
     tests_federated_learning_test_fl_safety_gate_l1_l27_py -.->|test_depends| D_TRADING
-    tests_federated_learning_test_fl_scheduler_act_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_parameterized_safety_gate_py -.->|test_depends| D_TRADING
+    tests_federated_learning_test_fl_scheduler_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1452,12 +1452,12 @@ graph TD
     tests_feedback_test_autoscale_remediation_py -.->|test_depends| D_TRADING
     tests_feedback_test_backpressure_bridge_root_py -.->|test_depends| D_TRADING
     tests_feedback_test_backpressure_bridge_root_py -.->|test_depends| D_TRADING
-    tests_feedback_test_cognitive_load_py -.->|test_depends| D_TRADING
-    tests_feedback_test_cascading_rollback_analyzer_py -.->|test_depends| D_TRADING
-    tests_feedback_test_boot_integrity_attestation_py -.->|test_depends| D_TRADING
     tests_feedback_test_blast_radius_budget_py -.->|test_depends| D_TRADING
     tests_feedback_test_collaborative_learning_py -.->|test_depends| D_TRADING
-    tests_feedback_test_collectors_py -.->|test_depends| D_TRADING
+    tests_feedback_test_cascading_rollback_analyzer_py -.->|test_depends| D_TRADING
+    tests_feedback_test_boot_integrity_attestation_py -.->|test_depends| D_TRADING
+    tests_feedback_test_cognitive_load_py -.->|test_depends| D_TRADING
+    tests_feedback_test_confidence_decomposer_py -.->|test_depends| D_TRADING
     tests_feedback_test_collectors_py -.->|test_depends| D_TRADING
     tests_feedback_test_collectors_py -.->|test_depends| D_TRADING
     tests_feedback_test_collectors_py -.->|test_depends| D_TRADING
@@ -1510,21 +1510,21 @@ graph TD
     end
     D_TRADING["D_TRADING production"]
     tests_feedback_test_exceptions_feedback_loop_py -.->|test_depends| D_TRADING
+    tests_feedback_test_failure_replay_py -.->|test_depends| D_TRADING
     tests_feedback_test_federated_protocol_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_feedback_test_feedback_bridge_py -.->|test_depends| D_GOVERNANCE
-    tests_feedback_test_failure_replay_py -.->|test_depends| D_TRADING
-    tests_feedback_test_feedback_delay_compensator_py -.->|test_depends| D_TRADING
+    tests_feedback_test_feedback_core_py -.->|test_depends| D_TRADING
+    tests_feedback_test_feedback_core_py -.->|test_depends| D_TRADING
     tests_feedback_test_feedback_collector_root_py -.->|test_depends| D_TRADING
-    tests_feedback_test_feedback_core_py -.->|test_depends| D_TRADING
-    tests_feedback_test_feedback_core_py -.->|test_depends| D_TRADING
+    tests_feedback_test_feedback_delay_compensator_py -.->|test_depends| D_TRADING
     tests_feedback_test_feedback_policy_py -.->|test_depends| D_GOVERNANCE
     tests_feedback_test_feedback_loop_py -.->|test_depends| D_TRADING
-    tests_feedback_test_feedback_self_audit_py -.->|test_depends| D_GOVERNANCE
     tests_feedback_test_flapping_detector_py -.->|test_depends| D_TRADING
     tests_feedback_test_gamification_py -.->|test_depends| D_TRADING
-    tests_feedback_test_golden_test_external_py -.->|test_depends| D_TRADING
+    tests_feedback_test_feedback_self_audit_py -.->|test_depends| D_GOVERNANCE
     tests_feedback_test_global_action_scheduler_py -.->|test_depends| D_TRADING
+    tests_feedback_test_gradual_poisoning_detector_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1571,20 +1571,20 @@ graph TD
     end
     D_TRADING["D_TRADING production"]
     tests_feedback_test_nonstationary_effectiveness_py -.->|test_depends| D_TRADING
-    tests_feedback_test_numerical_stability_guard_py -.->|test_depends| D_TRADING
+    tests_feedback_test_notification_feedback_py -.->|test_depends| D_TRADING
     tests_feedback_test_notification_personalizer_py -.->|test_depends| D_TRADING
+    tests_feedback_test_numerical_stability_guard_py -.->|test_depends| D_TRADING
     tests_feedback_test_no_llm_degradation_py -.->|test_depends| D_TRADING
     tests_feedback_test_online_feature_importance_py -.->|test_depends| D_TRADING
-    tests_feedback_test_notification_feedback_py -.->|test_depends| D_TRADING
     tests_feedback_test_operational_seasonality_py -.->|test_depends| D_TRADING
     tests_feedback_test_otel_adapter_py -.->|test_depends| D_TRADING
-    tests_feedback_test_oscillation_damping_py -.->|test_depends| D_TRADING
     tests_feedback_test_placebo_action_detector_py -.->|test_depends| D_TRADING
-    tests_feedback_test_protocols_py -.->|test_depends| D_TRADING
-    tests_feedback_test_recursive_diagnosis_trust_evaluator_py -.->|test_depends| D_TRADING
+    tests_feedback_test_oscillation_damping_py -.->|test_depends| D_TRADING
     tests_feedback_test_positive_feedback_defense_py -.->|test_depends| D_TRADING
-    tests_feedback_test_regulatory_audit_py -.->|test_depends| D_TRADING
+    tests_feedback_test_recursive_diagnosis_trust_evaluator_py -.->|test_depends| D_TRADING
+    tests_feedback_test_protocols_py -.->|test_depends| D_TRADING
     tests_feedback_test_recovery_time_stats_py -.->|test_depends| D_TRADING
+    tests_feedback_test_resolution_tracker_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1630,15 +1630,15 @@ graph TD
         tests_fixtures_test_staging_target_py["tests/fixtures/_test_staging_target.py prototype"]
     end
     D_TRADING["D_TRADING production"]
+    tests_feedback_test_teacher_transfer_py -.->|test_depends| D_TRADING
     tests_feedback_test_system_entropy_monitor_py -.->|test_depends| D_TRADING
     tests_feedback_test_timezone_semantic_reasoner_py -.->|test_depends| D_TRADING
-    tests_feedback_test_teacher_transfer_py -.->|test_depends| D_TRADING
     tests_feedback_test_token_finops_py -.->|test_depends| D_TRADING
-    tests_feedback_test_trend_cycle_separator_py -.->|test_depends| D_TRADING
     tests_feedback_test_training_data_gov_py -.->|test_depends| D_TRADING
     tests_feedback_test_validator_py -.->|test_depends| D_TRADING
     tests_feedback_test_validator_py -.->|test_depends| D_TRADING
     tests_feedback_test_vertical_self_assessment_py -.->|test_depends| D_TRADING
+    tests_feedback_test_trend_cycle_separator_py -.->|test_depends| D_TRADING
     tests_feedback_test_worm_write_integrity_py -.->|test_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_file_test_file_attr_checker_py -.->|test_depends| D_GOVERNANCE
@@ -1736,19 +1736,19 @@ graph TD
         tests_fle_test_fle_protocols_py["tests/fle/test_fle_protocols.py prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_chaos_engineering_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_anomaly_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_feedback_collector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_exceptions_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_config_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_dogfood_monitor_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_generator_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_feedback_collector_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_exceptions_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_metrics_collector_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_protocols_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_performance_regression_detector_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_protocols_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_metrics_collector_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1795,22 +1795,22 @@ graph TD
         tests_git_test_git_bisector_py["tests/git/test_git_bisector.py prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_fle_test_fle_regime_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_self_slo_metrics_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_template_py -.->|test_depends| D_TRADING
+    tests_fle_test_fle_regime_detector_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_upgrade_safety_validator_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_validator_py -.->|test_depends| D_TRADING
     tests_fle_test_fle_validator_py -.->|test_depends| D_TRADING
-    tests_fle_test_fle_template_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_gate_test_circuit_breaker_types_py -.->|test_depends| D_SHARED
-    tests_gate_test_ci_cd_pre_scanner_py -.->|test_depends| D_TRADING
     tests_gate_test_concurrent_change_deconfliction_py -.->|test_depends| D_TRADING
-    tests_gate_test_deployment_suppression_py -.->|test_depends| D_TRADING
-    tests_gate_test_dynamic_llm_cost_router_py -.->|test_depends| D_TRADING
+    tests_gate_test_ci_cd_pre_scanner_py -.->|test_depends| D_TRADING
     tests_gate_test_conflict_arbitration_py -.->|test_depends| D_TRADING
+    tests_gate_test_deployment_suppression_py -.->|test_depends| D_TRADING
     tests_gate_test_cve_scanner_py -.->|test_depends| D_TRADING
     tests_gate_test_emergency_takeover_py -.->|test_depends| D_TRADING
-    tests_gate_test_flag_lifecycle_manager_py -.->|test_depends| D_TRADING
+    tests_gate_test_dynamic_llm_cost_router_py -.->|test_depends| D_TRADING
+    tests_gate_test_federated_security_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1858,21 +1858,21 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_git_test_git_commit_concurrent_py -.->|test_depends| D_GOVERNANCE
     tests_git_test_git_commit_extreme_py -.->|test_depends| D_GOVERNANCE
+    tests_git_test_git_commit_gateway_py -.->|test_depends| D_GOVERNANCE
     tests_git_test_git_hook_pre_scanner_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_git_test_git_infra_snapshot_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_git_test_git_commit_gateway_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_governance_access_control_test_approval_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_access_control_test_account_isolator_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_access_control_test_credential_rotation_trigger_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_access_control_test_credential_guard_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_access_control_test_rbac_bridge_py -.->|test_depends| D_GOVERNANCE
     tests_governance_access_control_test_secret_rotation_aware_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_governance_adversarial_test_anti_automation_bias_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_access_control_test_rbac_bridge_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_access_control_test_credential_rotation_trigger_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_access_control_test_rbac_bridge_bridge_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_adversarial_test_adversarial_tester_py -.->|test_depends| D_GOVERNANCE
     tests_governance_adversarial_test_compositional_safety_tester_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_adversarial_test_adversarial_tester_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_adversarial_test_anti_automation_bias_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1922,18 +1922,18 @@ graph TD
     tests_governance_audit_test_delegation_auditor_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_compliance_map_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_compliance_map_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_dora_metrics_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_delegation_bridge_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_false_negative_auditor_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_evidence_pack_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_audit_test_dora_metrics_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_audit_test_false_negative_auditor_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_audit_test_fifteen_dimension_auditor_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_audit_test_gap_analyzer_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_governance_audit_test_forensic_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_audit_test_forensic_package_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_fifteen_dimension_auditor_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_gap_analyzer_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_glossary_matrix_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_genesis_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_governance_auditor_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_governance_audit_test_glossary_matrix_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1982,19 +1982,19 @@ graph TD
     tests_governance_audit_test_tiered_storage_bridge_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_trust_bridge_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_trust_engine_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_audit_test_verdict_engine_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     tests_governance_audit_test_verdict_engine_py -.->|test_depends| D_TRADING
+    tests_governance_audit_test_verdict_engine_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_wqa_scorer_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_burn_rate_monitor_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_burn_rate_monitor_py -.->|test_depends| D_GOVERNANCE
     tests_governance_audit_test_writer_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_adversarial_extreme_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_burn_rate_monitor_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_burn_rate_monitor_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_budget_test_conversation_tax_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_budget_test_cost_attributor_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2042,18 +2042,18 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_governance_code_quality_test_formal_verifier_py -.->|test_depends| D_GOVERNANCE
     tests_governance_code_quality_test_function_discovery_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_arch_reference_gate_py -.->|test_depends| D_GOVERNANCE
     tests_governance_code_quality_test_simplicity_auditor_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_create_guard_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_create_guard_py -.->|test_depends| D_GOVERNANCE
     tests_governance_commit_gates_test_dangling_reference_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_arch_reference_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_create_guard_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_create_guard_py -.->|test_depends| D_GOVERNANCE
     tests_governance_commit_gates_test_claim_required_gate_py -.->|test_depends| D_GOVERNANCE
     tests_governance_commit_gates_test_claim_required_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_directory_contract_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_directory_contract_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_held_overlap_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_commit_gates_test_held_overlap_gate_py -.->|test_depends| D_GOVERNANCE
     tests_governance_commit_gates_test_module_id_consistency_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_directory_contract_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_directory_contract_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_held_overlap_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_commit_gates_test_held_overlap_gate_py -.->|test_depends| D_GOVERNANCE
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2104,18 +2104,18 @@ graph TD
     tests_governance_delegation_test_delegation_engine_py -.->|test_depends| D_GOVERNANCE
     tests_governance_delegation_test_delegation_engine_py -.->|test_depends| D_GOVERNANCE
     tests_governance_delegation_test_shadow_trust_validator_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_delegation_test_trust_ring_manager_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_depgraph_test_depgraph_db_py -.->|test_depends| D_GOVERNANCE
     tests_governance_depgraph_test_depgraph_generator_design_protection_py -.->|test_depends| D_GOVERNANCE
     D_SHARED["D_SHARED production"]
     tests_governance_depgraph_test_depgraph_generator_design_protection_py -.->|test_depends| D_SHARED
-    tests_governance_delegation_test_trust_ring_manager_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_depgraph_test_depgraph_db_py -.->|test_depends| D_GOVERNANCE
     tests_governance_drift_test_dead_module_detector_py -.->|test_depends| D_GOVERNANCE
     tests_governance_drift_test_diff_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_drift_test_micro_clone_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_drift_test_stale_shared_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_drift_test_governance_drift_fix_py -.->|test_depends| D_GOVERNANCE
     tests_governance_drift_test_ghost_scan_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_escalation_test_result_types_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_drift_test_micro_clone_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_drift_test_governance_drift_fix_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_drift_test_stale_shared_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_escalation_test_alternative_path_blocker_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2163,28 +2163,28 @@ graph TD
     D_INTEGRATION["D_INTEGRATION production"]
     tests_governance_integration_test_schema_schemas_py -.->|test_depends| D_INTEGRATION
     tests_governance_integration_test_schema_schemas_py -.->|test_depends| D_INTEGRATION
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    tests_governance_integration_test_slo_contract_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_governance_integration_test_submodule_sync_py -.->|test_depends| D_INFRA_RECOVERY
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_governance_integration_test_subagent_hook_propagator_py -.->|test_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    tests_governance_integration_test_slo_contract_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_lifecycle_test_checkpoint_gc_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_lifecycle_test_bootstrapping_calibrator_py -.->|test_depends| D_GOVERNANCE
     tests_governance_lifecycle_test_coldstart_manager_py -.->|test_depends| D_GOVERNANCE
     tests_governance_lifecycle_test_maintenance_window_adapter_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_lifecycle_test_venv_sync_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_lifecycle_test_time_sync_py -.->|test_depends| D_GOVERNANCE
     tests_governance_observability_test_confidence_estimator_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_lifecycle_test_venv_sync_py -.->|test_depends| D_INFRA_RECOVERY
     tests_governance_observability_test_instruction_bloat_detector_py -.->|test_depends| D_GOVERNANCE
     tests_governance_observability_test_hotspot_tracker_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_observability_test_meta_confidence_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_observability_test_meta_observability_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_governance_integration_test_schema_schemas_py,tests_governance_integration_test_slo_contract_py,tests_governance_integration_test_subagent_hook_propagator_py,tests_governance_integration_test_submodule_sync_py,tests_governance_lifecycle_test_bootstrapping_calibrator_py,tests_governance_lifecycle_test_checkpoint_gc_py,tests_governance_lifecycle_test_coldstart_manager_py,tests_governance_lifecycle_test_maintenance_window_adapter_py,tests_governance_lifecycle_test_post_live_verification_py,tests_governance_lifecycle_test_startup_shutdown_py,tests_governance_lifecycle_test_startup_shutdown_cli_py,tests_governance_lifecycle_test_time_sync_py,tests_governance_lifecycle_test_venv_sync_py,tests_governance_observability_test_confidence_estimator_py,tests_governance_observability_test_confidence_quantifier_py,tests_governance_observability_test_hotspot_tracker_py,tests_governance_observability_test_instruction_bloat_detector_py,tests_governance_observability_test_meta_confidence_py,tests_governance_observability_test_meta_observability_py,tests_governance_observability_test_report_py,tests_governance_ops_test_clock_guard_py,tests_governance_ops_test_daily_ops_py,tests_governance_ops_test_env_watcher_py,tests_governance_ops_test_exit_codes_py,tests_governance_ops_test_health_monitor_py,tests_governance_ops_test_runbook_generator_py,tests_governance_ops_test_scheduler_act_py,tests_governance_ops_test_success_validator_py,tests_governance_ops_test_verifier_py,tests_governance_orchestrator_test_engine_sandbox_py design
-    class D_INTEGRATION,D_GOV_ENFORCEMENT,D_INFRA_RECOVERY,D_GOVERNANCE external_prod
+    class D_INTEGRATION,D_INFRA_RECOVERY,D_GOVERNANCE,D_GOV_ENFORCEMENT external_prod
 ```
 
 ### 第 36 页 / 共 56 页 / Page 36 of 56
@@ -2225,21 +2225,21 @@ graph TD
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_governance_orchestrator_test_mvep_orchestrator_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_orchestrator_test_objective_tracker_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_orchestrator_test_prioritizer_py -.->|test_depends| D_GOVERNANCE
     tests_governance_orchestrator_test_think_time_model_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_orchestrator_test_prioritizer_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_orchestrator_test_objective_tracker_py -.->|test_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_governance_persistence_test_base_repo_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
     tests_governance_resilience_test_doom_loop_guard_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_resilience_test_deadlock_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_resilience_test_fail_mode_manager_py -.->|test_depends| D_GOVERNANCE
     tests_governance_resilience_test_flash_crash_guard_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_resilience_test_fail_mode_manager_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_resilience_test_interrupt_handler_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_resilience_test_last_resort_watchdog_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_governance_resilience_test_knowngoodstate_ledger_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_governance_resilience_test_interrupt_handler_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_resilience_test_observation_window_guard_py -.->|test_depends| D_GOVERNANCE
     tests_governance_resilience_test_policy_sandbox_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2290,17 +2290,17 @@ graph TD
     tests_governance_rule_enforcement_test_adversarial_strategies_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_breaking_change_detector_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_end_to_end_walkthrough_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_governance_rule_enforcement_test_kiss_enforcer_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_integration_test_runner_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_secrets_guard_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_output_quality_gate_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_governance_rule_enforcement_test_kiss_enforcer_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_test_triple_alignment_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_governance_rule_enforcement_invariants_test_post_doc_review_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_governance_rule_enforcement_gate_engine_test_adversarial_validation_gate_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_invariants_test_en_001_circular_dependency_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_governance_rule_enforcement_gate_engine_test_adversarial_validation_gate_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_invariants_test_en_002_enforcement_validator_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_governance_rule_enforcement_invariants_test_zero_residue_check_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_governance_rule_enforcement_invariants_test_en_process_lifecycle_gateway_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_governance_rule_enforcement_invariants_test_en_003_contract_compatibility_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_governance_rule_enforcement_invariants_test_post_doc_review_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2353,23 +2353,23 @@ graph TD
     tests_governance_security_test_signature_matcher_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     tests_governance_security_test_vulnerability_rescanner_py -.->|test_depends| D_INFRA_RECOVERY
+    D_SHARED["D_SHARED production"]
+    tests_governance_shared_test_boot_hooks_unlock_py -.->|test_depends| D_SHARED
     tests_governance_shared_test_boot_hooks_unlock_py -.->|test_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_governance_shared_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
     tests_governance_shared_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
-    D_SHARED["D_SHARED production"]
-    tests_governance_shared_test_boot_hooks_unlock_py -.->|test_depends| D_SHARED
     tests_governance_shared_test_governance_db_py -.->|test_depends| D_GOVERNANCE
     tests_governance_shared_test_shared_evolver_py -.->|test_depends| D_GOVERNANCE
     tests_governance_shared_test_shared_lifecycle_manager_py -.->|test_depends| D_GOVERNANCE
     tests_governance_trading_test_arbitrage_asymmetry_detector_py -.->|test_depends| D_GOVERNANCE
-    tests_governance_trading_test_exchange_partition_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_governance_trading_test_exchange_reg_monitor_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_governance_security_test_sbom_guard_py,tests_governance_security_test_security_config_scanner_py,tests_governance_security_test_sensitivity_sweeper_py,tests_governance_security_test_signature_matcher_py,tests_governance_security_test_vulnerability_rescanner_py,tests_governance_shared_test_boot_hooks_unlock_py,tests_governance_shared_test_finding_py,tests_governance_shared_test_governance_db_py,tests_governance_shared_test_post_sync_validation_py,tests_governance_shared_test_shared_evolver_py,tests_governance_shared_test_shared_lifecycle_manager_py,tests_governance_test_ast_import_rewriter_py,tests_governance_test_rule_patterns_py,tests_governance_trading_test_arbitrage_asymmetry_detector_py,tests_governance_trading_test_exchange_partition_detector_py,tests_governance_trading_test_exchange_reg_monitor_py,tests_governance_trading_test_paper_live_transition_py,tests_governance_trading_test_pricing_sync_py,tests_governance_trading_test_strategy_scoper_py,tests_guard_test_guard_cascade_detector_py,tests_guard_test_guard_complexity_budget_py,tests_guard_test_guard_configuration_drift_monitor_py,tests_guard_test_guard_interaction_topology_mapper_py,tests_guard_test_guard_layers_root_py,tests_guard_test_guard_oscillation_detector_py,tests_guard_test_guard_self_consistency_auditor_py,tests_infrastructure_test_arbiter_py,tests_infrastructure_test_arbitrator_py,tests_infrastructure_test_audit_rename_completeness_py,tests_infrastructure_test_cascade_guard_py design
-    class D_GOVERNANCE,D_INFRA_RECOVERY,D_INTEGRATION,D_SHARED external_prod
+    class D_GOVERNANCE,D_INFRA_RECOVERY,D_SHARED,D_INTEGRATION external_prod
 ```
 
 ### 第 39 页 / 共 56 页 / Page 39 of 56
@@ -2416,18 +2416,18 @@ graph TD
     D_INFRA_A2A["D_INFRA_A2A production"]
     tests_infrastructure_test_conflict_detector_py -.->|test_depends| D_INFRA_A2A
     tests_infrastructure_test_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_infrastructure_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_infrastructure_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_deadlock_guard_py -.->|test_depends| D_INFRA_A2A
+    tests_infrastructure_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_infrastructure_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_dry_run_simulator_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED production"]
     tests_infrastructure_test_f18_governance_adversarial_py -.->|test_depends| D_SHARED
-    tests_infrastructure_test_forward_fix_runner_py -.->|test_depends| D_INFRA_RECOVERY
     tests_infrastructure_test_finding_task_bridge_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_infrastructure_test_forward_fix_runner_py -.->|test_depends| D_INFRA_RECOVERY
     D_TRADING["D_TRADING production"]
     tests_infrastructure_test_graceful_degradation_planner_py -.->|test_depends| D_TRADING
-    tests_infrastructure_test_infrastructure_base_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_infrastructure_test_infra_cache_py -.->|test_depends| D_SHARED
+    tests_infrastructure_test_index_generator_root_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_infrastructure_test_index_generator_root_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2472,12 +2472,12 @@ graph TD
         tests_io_test_mcp_launcher_py["tests/io/test_mcp_launcher.py prototype"]
         tests_io_test_mcp_task_claim_py["tests/io/test_mcp_task_claim.py prototype"]
     end
-    D_INFRA_A2A["D_INFRA_A2A production"]
-    tests_infrastructure_test_push_notifier_py -.->|test_depends| D_INFRA_A2A
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_infrastructure_test_preemption_manager_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_infrastructure_test_preemption_manager_py -.->|test_depends| D_INFRA_RUNTIME
+    D_INFRA_A2A["D_INFRA_A2A production"]
+    tests_infrastructure_test_push_notifier_py -.->|test_depends| D_INFRA_A2A
     tests_infrastructure_test_pydantic_v2_migrator_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_reconciler_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_reconciler_root_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2487,16 +2487,16 @@ graph TD
     tests_infrastructure_test_registry_governance_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_scanner_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_infrastructure_test_scanner_root_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_infrastructure_test_streaming_py -.->|test_depends| D_INFRA_A2A
     D_TRADING["D_TRADING production"]
     tests_infrastructure_test_split_brain_quorum_py -.->|test_depends| D_TRADING
-    tests_infrastructure_test_supervisor_py -.->|test_depends| D_INFRA_A2A
     tests_infrastructure_test_supervisor_py -.->|test_depends| D_INFRA_A2A
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_infrastructure_test_preemption_manager_py,tests_infrastructure_test_push_notifier_py,tests_infrastructure_test_pydantic_v2_migrator_py,tests_infrastructure_test_reconciler_root_py,tests_infrastructure_test_registry_adapter_root_py,tests_infrastructure_test_registry_governance_infrastructure_py,tests_infrastructure_test_registry_governance_root_py,tests_infrastructure_test_scanner_root_py,tests_infrastructure_test_span_stub_py,tests_infrastructure_test_split_brain_quorum_py,tests_infrastructure_test_streaming_py,tests_infrastructure_test_supervisor_py,tests_infrastructure_test_telemetry_py,tests_infrastructure_test_topology_change_log_py,tests_infrastructure_test_trigger_monitor_py,tests_infrastructure_test_trust_anchor_root_py,tests_infrastructure_test_warm_hot_gate_py,tests_intent_test_intent_archiver_py,tests_intent_test_intent_binder_root_py,tests_intent_test_intent_driven_ops_py,tests_intent_test_intent_keyword_mapper_root_py,tests_intent_test_intent_parser_root_py,tests_io_test_depgraph_schema_py,tests_io_test_io_content_fingerprint_py,tests_io_test_io_file_utils_py,tests_io_test_io_frontmatter_utils_py,tests_io_test_io_paths_py,tests_io_test_io_serialization_py,tests_io_test_mcp_launcher_py,tests_io_test_mcp_task_claim_py design
-    class D_INFRA_A2A,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_TRADING external_prod
+    class D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_INFRA_A2A,D_TRADING external_prod
 ```
 
 ### 第 41 页 / 共 56 页 / Page 41 of 56
@@ -2542,18 +2542,18 @@ graph TD
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_kb_test_kb_activate_py -.->|test_depends| D_INTELLIGENCE
     D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_kb_test_kb_embedding_migrate_py -.->|test_depends| D_GOVERNANCE
-    tests_kb_test_kb_bootstrap_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_analyze_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_analyze_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_kb_test_kb_embedding_migrate_py -.->|test_depends| D_GOVERNANCE
+    tests_kb_test_kb_bootstrap_py -.->|test_depends| D_GOVERNANCE
+    tests_kb_test_kb_freeze_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_extract_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_extract_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_kb_test_kb_freeze_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_gate_py -.->|test_depends| D_GOVERNANCE
-    tests_kb_test_kb_gate_task_py -.->|test_depends| D_GOVERNANCE
-    tests_kb_test_kb_graph_validator_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_integrity_py -.->|test_depends| D_GOVERNANCE
     tests_kb_test_kb_migration_embedding_py -.->|test_depends| D_GOVERNANCE
+    tests_kb_test_kb_migration_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_kb_test_kb_migration_gate_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2599,13 +2599,14 @@ graph TD
         tests_llm_security_test_l7_red_team_py["tests/llm_security/test_l7_red_team.py prototype"]
     end
     D_TRADING["D_TRADING production"]
-    tests_knowledge_engine_test_knowledge_injection_py -.->|test_depends| D_TRADING
     tests_knowledge_engine_test_knowledge_freshness_py -.->|test_depends| D_TRADING
-    tests_knowledge_engine_test_knowledge_injection_pre_flight_verifier_py -.->|test_depends| D_TRADING
-    tests_knowledge_engine_test_knowledge_packaging_py -.->|test_depends| D_TRADING
+    tests_knowledge_engine_test_knowledge_injection_py -.->|test_depends| D_TRADING
     tests_knowledge_engine_test_knowledge_market_py -.->|test_depends| D_TRADING
+    tests_knowledge_engine_test_knowledge_packaging_py -.->|test_depends| D_TRADING
+    tests_knowledge_engine_test_knowledge_injection_pre_flight_verifier_py -.->|test_depends| D_TRADING
     D_SECURITY_LLM["D_SECURITY_LLM production"]
     tests_llm_security_test_adversarial_mutator_py -.->|test_depends| D_SECURITY_LLM
+    tests_llm_security_test_behavior_audit_logger_py -.->|test_depends| D_SECURITY_LLM
     D_SHARED["D_SHARED production"]
     tests_llm_security_test_code_integrity_py -.->|test_depends| D_SHARED
     tests_llm_security_test_code_integrity_py -.->|test_depends| D_SECURITY_LLM
@@ -2618,7 +2619,6 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_llm_security_test_cross_module_integration_llm_security_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_A2A["D_INFRA_A2A production"]
-    tests_llm_security_test_cross_module_integration_llm_security_py -.->|test_depends| D_INFRA_A2A
     tests_llm_security_test_cross_module_integration_llm_security_py -.->|test_depends| D_INFRA_A2A
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2664,32 +2664,32 @@ graph TD
         tests_memory_test_memory_provenance_py["tests/memory/test_memory_provenance.py prototype"]
         tests_memory_test_memory_provenance_guard_py["tests/memory/test_memory_provenance_guard.py prototype"]
     end
+    D_TRADING["D_TRADING production"]
+    tests_llm_security_test_llm_cost_router_py -.->|test_depends| D_TRADING
     D_SECURITY_LLM["D_SECURITY_LLM production"]
+    tests_llm_security_test_l8_multi_agent_py -.->|test_depends| D_SECURITY_LLM
+    tests_llm_security_test_l8_multi_agent_py -.->|test_depends| D_SECURITY_LLM
+    tests_llm_security_test_llm_cost_accounting_py -.->|test_depends| D_TRADING
     tests_llm_security_test_l7_validation_py -.->|test_depends| D_SECURITY_LLM
     D_SHARED["D_SHARED production"]
     tests_llm_security_test_l7_validation_py -.->|test_depends| D_SHARED
-    tests_llm_security_test_l8_multi_agent_py -.->|test_depends| D_SECURITY_LLM
-    tests_llm_security_test_l8_multi_agent_py -.->|test_depends| D_SECURITY_LLM
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    tests_llm_security_test_llm_fix_adapter_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_llm_security_test_llm_fix_adapter_py -.->|test_depends| D_INFRA_RUNTIME
-    D_TRADING["D_TRADING production"]
-    tests_llm_security_test_llm_cost_router_py -.->|test_depends| D_TRADING
-    tests_llm_security_test_llm_cost_accounting_py -.->|test_depends| D_TRADING
     tests_llm_security_test_llm_gateway_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_llm_security_test_llm_fix_adapter_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_llm_security_test_llm_fix_adapter_py -.->|test_depends| D_INFRA_RUNTIME
     tests_llm_security_test_llm_provider_integrity_py -.->|test_depends| D_TRADING
+    tests_llm_security_test_metric_prompt_scanner_py -.->|test_depends| D_TRADING
     tests_llm_security_test_llm_quality_regression_py -.->|test_depends| D_TRADING
     D_SECURITY["D_SECURITY production"]
     tests_llm_security_test_orphan_detector_py -.->|test_depends| D_SECURITY
     tests_llm_security_test_orphan_detector_py -.->|test_depends| D_TRADING
-    tests_llm_security_test_metric_prompt_scanner_py -.->|test_depends| D_TRADING
     tests_llm_security_test_models_root_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_llm_security_test_l7_validation_py,tests_llm_security_test_l8_multi_agent_py,tests_llm_security_test_llm_cost_accounting_py,tests_llm_security_test_llm_cost_router_py,tests_llm_security_test_llm_fix_adapter_py,tests_llm_security_test_llm_gateway_py,tests_llm_security_test_llm_provider_integrity_py,tests_llm_security_test_llm_quality_regression_py,tests_llm_security_test_llm_security_py,tests_llm_security_test_metric_prompt_scanner_py,tests_llm_security_test_models_root_py,tests_llm_security_test_orphan_detector_py,tests_llm_security_test_process_sandbox_llm_security_py,tests_llm_security_test_remote_attestation_py,tests_llm_security_test_runtime_interceptor_py,tests_llm_security_test_scaffold_registrar_py,tests_llm_security_test_secret_rotation_py,tests_llm_security_test_secrets_py,tests_llm_security_test_security_py,tests_llm_security_test_security_capability_py,tests_llm_security_test_security_secrets_py,tests_llm_security_test_security_ssot_guard_py,tests_llm_security_test_shadow_workspace_py,tests_llm_security_test_wireheading_prevention_py,tests_llm_security_test_zombie_cleaner_py,tests_memory_test_memory_bank_root_py,tests_memory_test_memory_guard_py,tests_memory_test_memory_poison_guard_py,tests_memory_test_memory_provenance_py,tests_memory_test_memory_provenance_guard_py design
-    class D_SECURITY_LLM,D_SHARED,D_INFRA_RUNTIME,D_TRADING,D_SECURITY external_prod
+    class D_TRADING,D_SECURITY_LLM,D_SHARED,D_INFRA_RUNTIME,D_SECURITY external_prod
 ```
 
 ### 第 44 页 / 共 56 页 / Page 44 of 56
@@ -2732,11 +2732,6 @@ graph TD
     tests_memory_test_memory_self_check_py -.->|test_depends| D_TRADING
     D_INTEGRATION["D_INTEGRATION production"]
     tests_memory_test_vms_adversarial_hijack_py -.->|test_depends| D_INTEGRATION
-    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
-    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
-    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
-    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
-    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
     tests_memory_test_vms_adversarial_injection_py -.->|test_depends| D_INTEGRATION
     tests_memory_test_vms_adversarial_injection_py -.->|test_depends| D_INTEGRATION
     tests_memory_test_vms_adversarial_injection_py -.->|test_depends| D_INTEGRATION
@@ -2744,6 +2739,11 @@ graph TD
     tests_memory_test_vms_lifecycle_py -.->|test_depends| D_INTEGRATION
     tests_memory_test_vms_lifecycle_py -.->|test_depends| D_INTEGRATION
     tests_memory_test_vms_lifecycle_py -.->|test_depends| D_INTEGRATION
+    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
+    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
+    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
+    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
+    tests_memory_test_vms_automation_py -.->|test_depends| D_INTEGRATION
     D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_model_test_cli_py -.->|test_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -2790,22 +2790,22 @@ graph TD
         tests_phase_test_phase_executor_root_py["tests/phase/test_phase_executor_root.py prototype"]
         tests_phase_test_phase_hold_py["tests/phase/test_phase_hold.py prototype"]
     end
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_multi_test_multi_turn_intent_analyzer_py -.->|test_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     tests_multi_test_multi_signal_correlator_py -.->|test_depends| D_TRADING
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_multi_test_multi_turn_intent_analyzer_py -.->|test_depends| D_GOVERNANCE
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     tests_observability_test_observability_health_py -.->|test_depends| D_INFRA_TELEMETRY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_observability_test_observability_health_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED production"]
-    tests_observability_test_observability_logging_py -.->|test_depends| D_SHARED
+    tests_observability_test_observability_tracing_py -.->|test_depends| D_SHARED
     D_OPS["D_OPS production"]
-    tests_observability_test_observability_metrics_py -.->|test_depends| D_OPS
+    tests_observability_test_observability_tracing_py -.->|test_depends| D_OPS
+    tests_observability_test_observability_logging_py -.->|test_depends| D_SHARED
     D_SECURITY["D_SECURITY production"]
     tests_observability_test_observability_root_py -.->|test_depends| D_SECURITY
-    tests_observability_test_observability_tracing_py -.->|test_depends| D_SHARED
-    tests_observability_test_observability_tracing_py -.->|test_depends| D_OPS
+    tests_observability_test_observability_metrics_py -.->|test_depends| D_OPS
     tests_observability_test_trace_causal_bridge_py -.->|test_depends| D_TRADING
     tests_orchestrator_test_deferred_queue_py -.->|test_depends| D_SHARED
     tests_orchestrator_test_deferred_queue_py -.->|test_depends| D_TRADING
@@ -2817,7 +2817,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_multi_test_multi_signal_correlator_py,tests_multi_test_multi_turn_intent_analyzer_py,tests_observability_test_facade_py,tests_observability_test_health_aggregator_root_py,tests_observability_test_health_probes_root_py,tests_observability_test_observability_health_py,tests_observability_test_observability_logging_py,tests_observability_test_observability_metrics_py,tests_observability_test_observability_root_py,tests_observability_test_observability_tracing_py,tests_observability_test_structured_sink_py,tests_observability_test_trace_bridge_py,tests_observability_test_trace_causal_bridge_py,tests_observability_test_watchdog_py,tests_orchestrator_test_deferred_queue_py,tests_orchestrator_test_orchestrator_data_lifecycle_py,tests_orchestrator_test_orchestrator_failure_matcher_py,tests_orchestrator_test_orchestrator_hallucination_detector_py,tests_orchestrator_test_orchestrator_model_registry_py,tests_orchestrator_test_orchestrator_rollback_manager_py,tests_orchestrator_test_orchestrator_task_queue_py,tests_orchestrator_test_orchestrator_trigger_router_py,tests_orchestrator_test_orchestrator_wave_generator_py,tests_path_test_path_guard_py,tests_path_test_path_index_py,tests_path_test_path_index_validator_py,tests_path_test_path_tree_generator_design_protection_py,tests_phase_test_phase_check_registry_py,tests_phase_test_phase_executor_root_py,tests_phase_test_phase_hold_py design
-    class D_GOVERNANCE,D_TRADING,D_INFRA_TELEMETRY,D_INFRA_RUNTIME,D_SHARED,D_OPS,D_SECURITY external_prod
+    class D_TRADING,D_GOVERNANCE,D_INFRA_TELEMETRY,D_INFRA_RUNTIME,D_SHARED,D_OPS,D_SECURITY external_prod
 ```
 
 ### 第 46 页 / 共 56 页 / Page 46 of 56
@@ -2860,10 +2860,10 @@ graph TD
     tests_phase_test_phase_planner_py -.->|test_depends| D_AUTONOMY_CORE
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     tests_pipeline_test_alpha_signal_pipeline_py -.->|test_depends| D_FUNDAMENTAL_SIGNAL
-    tests_pipeline_test_pipeline_bridge_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_pipeline_test_pipeline_bridge_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D_TRADING production"]
     tests_pipeline_test_integration_test_pipeline_py -.->|test_depends| D_TRADING
+    tests_pipeline_test_pipeline_bridge_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_pipeline_test_pipeline_bridge_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_pipeline_test_pipeline_agent_bridge_py -.->|test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_agent_bridge_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2872,10 +2872,10 @@ graph TD
     tests_pipeline_test_pipeline_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_models_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_orchestrator_auto_py -.->|test_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D_INTEGRATION production"]
+    tests_pipeline_test_pipeline_orchestrator_auto_py -.->|test_depends| D_INTEGRATION
     tests_pipeline_test_pipeline_orchestrator_root_py -.->|test_depends| D_INTEGRATION
-    tests_prompt_test_prompt_factory_governance_py -.->|test_depends| D_TRADING
-    tests_pipeline_test_pipeline_roadmap_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -2925,27 +2925,27 @@ graph TD
     D_SHARED["D_SHARED production"]
     tests_risk_test_risk_ssot_py -.->|test_depends| D_SHARED
     D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_rollback_test_concurrency_guard_red_blue_py -.->|test_depends| D_GOVERNANCE
     tests_rollback_test_concurrent_mv_guard_py -.->|test_depends| D_GOVERNANCE
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
+    tests_rollback_test_rollback_abuse_detector_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_rollback_test_rollback_audit_nexus_py -.->|test_depends| D_INFRA_RECOVERY
     D_POSITION["D_POSITION production"]
     tests_rollback_test_position_reconciler_py -.->|test_depends| D_POSITION
-    tests_rollback_test_concurrency_guard_red_blue_py -.->|test_depends| D_GOVERNANCE
-    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
-    tests_rollback_test_rollback_audit_nexus_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_rollback_test_rollback_abuse_detector_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_rollback_test_rollback_bootstrap_py -.->|test_depends| D_INFRA_RECOVERY
     tests_rollback_test_rollback_bridge_py -.->|test_depends| D_GOVERNANCE
     tests_rollback_test_rollback_context_restorer_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_rollback_test_rollback_bootstrap_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_rollback_test_rollback_concurrent_extreme_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_rollback_test_rollback_concurrent_extreme_py -.->|test_depends| D_INFRA_RECOVERY
     tests_rollback_test_rollback_budget_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_rollback_test_rollback_drill_py -.->|test_depends| D_INFRA_RECOVERY
     tests_rollback_test_rollback_dashboard_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_rollback_test_rollback_concurrent_extreme_py -.->|test_depends| D_INFRA_RECOVERY
-    tests_rollback_test_rollback_concurrent_extreme_py -.->|test_depends| D_INFRA_RECOVERY
+    tests_rollback_test_rollback_drill_py -.->|test_depends| D_INFRA_RECOVERY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_risk_test_risk_ssot_py,tests_rollback_conftest_py,tests_rollback_test_concurrency_guard_py,tests_rollback_test_concurrency_guard_red_blue_py,tests_rollback_test_concurrent_mv_guard_py,tests_rollback_test_position_reconciler_py,tests_rollback_test_rollback_abuse_detector_py,tests_rollback_test_rollback_audit_nexus_py,tests_rollback_test_rollback_bootstrap_py,tests_rollback_test_rollback_bridge_py,tests_rollback_test_rollback_budget_py,tests_rollback_test_rollback_concurrent_extreme_py,tests_rollback_test_rollback_context_restorer_py,tests_rollback_test_rollback_dashboard_py,tests_rollback_test_rollback_drill_py,tests_rollback_test_rollback_executor_root_py,tests_rollback_test_rollback_integration_py,tests_rollback_test_rollback_integrity_py,tests_rollback_test_rollback_lock_py,tests_rollback_test_rollback_loop_detector_py,tests_rollback_test_rollback_partial_extreme_py,tests_rollback_test_rollback_sandbox_py,tests_rollback_test_rollback_simulator_py,tests_rollback_test_rollback_state_machine_py,tests_rollback_test_rollback_target_staleness_py,tests_rollback_test_rollback_verifier_root_py,tests_rollback_test_rollback_wal_py,tests_rule_test_rule_canary_manager_py,tests_rule_test_rule_debt_auditor_py,tests_rule_test_rule_e2e_py design
-    class D_GOV_ENFORCEMENT,D_SHARED,D_GOVERNANCE,D_POSITION,D_INFRA_RECOVERY external_prod
+    class D_GOV_ENFORCEMENT,D_SHARED,D_GOVERNANCE,D_INFRA_RECOVERY,D_POSITION external_prod
 ```
 
 ### 第 48 页 / 共 56 页 / Page 48 of 56
@@ -2984,31 +2984,31 @@ graph TD
         tests_self_check_test_self_ha_py["tests/self_check/test_self_ha.py prototype"]
         tests_self_check_test_self_heal_agent_py["tests/self_check/test_self_heal_agent.py prototype"]
     end
-    D_SECURITY["D_SECURITY production"]
-    tests_rule_test_rule_injection_guard_py -.->|test_depends| D_SECURITY
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    tests_rule_test_rule_integration_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE["D_GOVERNANCE production"]
     tests_rule_test_rule_integration_py -.->|test_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    tests_rule_test_rule_integration_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_rule_test_rule_red_blue_py -.->|test_depends| D_GOVERNANCE
+    D_SECURITY["D_SECURITY production"]
+    tests_rule_test_rule_injection_guard_py -.->|test_depends| D_SECURITY
+    tests_safety_test_async_monitor_py -.->|test_depends| D_SECURITY
     D_TRADING["D_TRADING production"]
     tests_safety_test_attack_simulator_py -.->|test_depends| D_TRADING
     tests_rule_test_rule_shadow_runner_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_rule_test_rule_red_blue_py -.->|test_depends| D_GOVERNANCE
-    tests_safety_test_async_monitor_py -.->|test_depends| D_SECURITY
     tests_safety_test_commit_trigger_py -.->|test_depends| D_SECURITY
-    tests_safety_test_constitution_engine_py -.->|test_depends| D_SECURITY
     tests_safety_test_defense_runner_py -.->|test_depends| D_SECURITY
+    tests_safety_test_constitution_engine_py -.->|test_depends| D_SECURITY
     tests_safety_test_game_day_scheduler_py -.->|test_depends| D_SECURITY
     tests_safety_test_phase_manager_integration_py -.->|test_depends| D_SECURITY
     tests_safety_test_safety_brake_py -.->|test_depends| D_GOVERNANCE
     tests_safety_test_safety_gate_l1_l27_py -.->|test_depends| D_TRADING
-    tests_self_check_test_self_audit_py -.->|test_depends| D_TRADING
+    tests_safety_test_scheduler_safety_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_rule_test_rule_injection_guard_py,tests_rule_test_rule_integration_py,tests_rule_test_rule_red_blue_py,tests_rule_test_rule_shadow_runner_py,tests_safety_test_async_monitor_py,tests_safety_test_attack_simulator_py,tests_safety_test_circuit_breaker_py,tests_safety_test_commit_trigger_py,tests_safety_test_constitution_engine_py,tests_safety_test_defense_runner_py,tests_safety_test_event_integration_py,tests_safety_test_game_day_scheduler_py,tests_safety_test_injection_engine_py,tests_safety_test_phase_manager_integration_py,tests_safety_test_red_blue_validator_py,tests_safety_test_red_blue_validator_tests_py,tests_safety_test_safety_brake_py,tests_safety_test_safety_gate_l1_l27_py,tests_safety_test_scheduler_safety_py,tests_self_check_test_self_api_throttle_defense_py,tests_self_check_test_self_audit_py,tests_self_check_test_self_benchmark_py,tests_self_check_test_self_bottleneck_detector_py,tests_self_check_test_self_budget_tracker_py,tests_self_check_test_self_check_py,tests_self_check_test_self_diagnosis_py,tests_self_check_test_self_diagnosis_data_leak_detector_py,tests_self_check_test_self_evolution_fidelity_gate_py,tests_self_check_test_self_ha_py,tests_self_check_test_self_heal_agent_py design
-    class D_SECURITY,D_GOV_ENFORCEMENT,D_GOVERNANCE,D_TRADING external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_SECURITY,D_TRADING external_prod
 ```
 
 ### 第 49 页 / 共 56 页 / Page 49 of 56
@@ -3051,20 +3051,20 @@ graph TD
     D_TRADING["D_TRADING production"]
     tests_self_check_test_self_health_monitor_py -.->|test_depends| D_TRADING
     tests_self_check_test_self_llm_observability_py -.->|test_depends| D_TRADING
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_self_check_test_self_monitor_py -.->|test_depends| D_GOVERNANCE
-    tests_self_check_test_self_modification_audit_py -.->|test_depends| D_TRADING
     tests_self_check_test_self_modification_rate_limiter_py -.->|test_depends| D_TRADING
+    tests_self_check_test_self_modification_audit_py -.->|test_depends| D_TRADING
     tests_self_check_test_self_reflection_py -.->|test_depends| D_TRADING
-    tests_self_check_test_self_test_verifier_py -.->|test_depends| D_GOVERNANCE
-    tests_self_check_test_self_scanner_py -.->|test_depends| D_GOVERNANCE
+    D_GOVERNANCE["D_GOVERNANCE production"]
     tests_self_check_test_self_test_py -.->|test_depends| D_GOVERNANCE
-    tests_semantic_auditor_test_blast_radius_py -.->|test_depends| D_GOVERNANCE
-    tests_semantic_auditor_test_blast_radius_py -.->|test_depends| D_GOVERNANCE
+    tests_self_check_test_self_monitor_py -.->|test_depends| D_GOVERNANCE
+    tests_self_check_test_self_scanner_py -.->|test_depends| D_GOVERNANCE
+    tests_self_check_test_self_test_verifier_py -.->|test_depends| D_GOVERNANCE
     tests_self_check_test_self_upgrade_canary_py -.->|test_depends| D_TRADING
-    tests_semantic_auditor_test_blast_radius_red_team_py -.->|test_depends| D_GOVERNANCE
-    tests_semantic_auditor_test_blast_radius_red_team_py -.->|test_depends| D_GOVERNANCE
+    tests_semantic_auditor_test_blast_radius_py -.->|test_depends| D_GOVERNANCE
+    tests_semantic_auditor_test_blast_radius_py -.->|test_depends| D_GOVERNANCE
     tests_self_check_test_self_validator_py -.->|test_depends| D_GOVERNANCE
+    tests_semantic_auditor_test_blast_radius_red_team_py -.->|test_depends| D_GOVERNANCE
+    tests_semantic_auditor_test_blast_radius_red_team_py -.->|test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -3110,21 +3110,21 @@ graph TD
         tests_skill_test_skill_loader_py["tests/skill/test_skill_loader.py prototype"]
     end
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
-    tests_skill_test_skill_consensus_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_cognitive_preservation_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_compliance_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_context_isolation_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_consensus_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_constructor_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_cross_model_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_context_isolation_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_contract_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_di_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_economics_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_cross_model_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_discovery_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_evaluator_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_efficacy_calibrator_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_di_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_durable_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_economics_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_efficacy_calibrator_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_evaluator_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_executor_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_factory_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_explain_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -3171,20 +3171,20 @@ graph TD
     end
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_skill_test_skill_locking_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_model_evolution_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_model_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_model_evolution_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_prompt_opt_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_prompt_cache_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_ontology_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_postmortem_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_registry_root_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_resilience_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_risk_mitigator_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_schema_registry_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_security_py -.->|test_depends| D_AUTONOMY_CORE
     tests_skill_test_skill_sandbox_py -.->|test_depends| D_AUTONOMY_CORE
-    tests_skill_test_skill_silent_failure_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_risk_mitigator_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_security_py -.->|test_depends| D_AUTONOMY_CORE
+    tests_skill_test_skill_shadow_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -3236,13 +3236,13 @@ graph TD
     tests_trading_test_admission_controller_py -.->|test_depends| D_TRADING
     tests_trading_test_admission_controller_py -.->|test_depends| D_TRADING
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
-    tests_trading_test_backpressure_types_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_trading_test_backpressure_manager_py -.->|test_depends| D_INFRA_RUNTIME
+    tests_trading_test_backpressure_manager_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_batch_orchestrator_py -.->|test_depends| D_TRADING
-    tests_trading_test_backpressure_manager_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_trading_test_backpressure_manager_py -.->|test_depends| D_INFRA_RUNTIME
-    tests_trading_test_blind_spot_closure_py -.->|test_depends| D_TRADING
+    tests_trading_test_backpressure_types_py -.->|test_depends| D_INFRA_RUNTIME
     tests_trading_test_benchmark_runner_py -.->|test_depends| D_TRADING
     tests_trading_test_boot_cron_jobs_py -.->|test_depends| D_TRADING
+    tests_trading_test_blind_spot_closure_py -.->|test_depends| D_TRADING
     tests_trading_test_boot_hooks_py -.->|test_depends| D_TRADING
     tests_trading_test_bulkhead_manager_py -.->|test_depends| D_TRADING
     tests_trading_test_circuit_breaker_manager_py -.->|test_depends| D_INFRA_RUNTIME
@@ -3292,15 +3292,15 @@ graph TD
     end
     D_TRADING["D_TRADING production"]
     tests_trading_test_housekeeping_py -.->|test_depends| D_TRADING
-    tests_trading_test_ide_health_daemon_py -.->|test_depends| D_TRADING
     tests_trading_test_incident_postmortem_py -.->|test_depends| D_TRADING
+    tests_trading_test_ide_health_daemon_py -.->|test_depends| D_TRADING
     tests_trading_test_integration_registry_py -.->|test_depends| D_TRADING
-    tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
+    tests_trading_test_lean_scanner_py -.->|test_depends| D_TRADING
+    tests_trading_test_module_onboarding_scanner_py -.->|test_depends| D_TRADING
+    tests_trading_test_module_onboarding_scanner_py -.->|test_depends| D_TRADING
+    tests_trading_test_module_onboarding_scanner_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_trading_test_lifecycle_manager_py -.->|test_depends| D_SHARED
-    tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
-    tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
-    tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
     tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
     tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
     tests_trading_test_lifecycle_manager_py -.->|test_depends| D_TRADING
@@ -3352,22 +3352,22 @@ graph TD
         tests_trae_rules_test_g_trae_037_py["tests/trae_rules/test_g_trae_037.py prototype"]
     end
     D_SHARED["D_SHARED production"]
-    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
-    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_004_py -.->|test_depends| D_SHARED
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_trae_rules_test_g_trae_004_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_004_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_003_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_006_py -.->|test_depends| D_SHARED
     tests_trae_rules_test_g_trae_006_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_006_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_011_py -.->|test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_011_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_011_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_007_py -.->|test_depends| D_SHARED
     tests_trae_rules_test_g_trae_007_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_007_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_009_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_009_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_009_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -3417,18 +3417,18 @@ graph TD
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_trae_rules_test_g_trae_038_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_038_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_039_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_039_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_039_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_039_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_039_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_040_py -.->|test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_040_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_040_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_041_py -.->|test_depends| D_SHARED
     tests_trae_rules_test_g_trae_041_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_trae_rules_test_g_trae_041_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_043_py -.->|test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_043_py -.->|test_depends| D_GOV_ENFORCEMENT
-    tests_trae_rules_test_g_trae_043_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_GOV_ENFORCEMENT
+    tests_trae_rules_test_g_trae_042_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
