@@ -2268,11 +2268,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（tamper-evident实为tamper-forgable）
 - 修复：改HMAC-SHA256，定期tail_hash外部锚定（git/远程签名）
 
-#### 5.17.8 RBAC默认关闭（_AUTO_ENABLE_RBAC默认False）【HIGH】
-- 证据：[_base_server.py:183-188](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/_base_server.py) `if not getattr(self,"_AUTO_ENABLE_RBAC",False): ...skip RBAC`；MCP server默认不启用RBAC须子类显式设True；`config/rbac_roles.yaml`定义权限但执行是opt-in非default-deny
-- 病根：根因5（默认开放而非默认拒绝）
-- 修复：翻转默认True（default-deny），未声明权限的server拒绝所有写
-
 #### 5.17.9 agent_writer（L0_INTERN、owner_approved:false）被授予write:src【MEDIUM】
 - 证据：[rbac_roles.yaml:39-50](file:///d:/ZephyrAlpha/config/rbac_roles.yaml) `agent_writer: maturity:L0_INTERN; owner_approved:false; permissions:[write:src,write:tests,execute:scripts]; auto_generated:true` 实习级未过审批可写源码，权限越授
 - 病根：根因5（默认开放+权限自动生成无人工复核）
@@ -2297,10 +2292,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 3（5.17.3+5.17.4+5.17.8；5.17.1/5.17.2/5.17.6/5.17.7已FIXED） |
+| CRITICAL/HIGH | 2（5.17.3+5.17.4；5.17.1/5.17.2/5.17.6/5.17.7/5.17.8已FIXED） |
 | MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
 | LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **10** |
+| **合计** | **9** |
 
 ---
 

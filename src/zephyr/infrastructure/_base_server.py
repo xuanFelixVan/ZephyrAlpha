@@ -181,14 +181,15 @@ class BaseMCPServer:
             self._try_auto_enable_rbac()
 
     def _try_auto_enable_rbac(self) -> None:
-        if not getattr(self, "_AUTO_ENABLE_RBAC", False):
+        # 5.17.8 修复：翻转默认为 True（default-deny），未声明权限的 server 拒绝所有写
+        if not getattr(self, "_AUTO_ENABLE_RBAC", True):
             return
         try:
             from zephyr.governance.agent_spec.rbac_bridge import EscalationRBACBridge
 
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
-        except ImportError:
+        except Exception:
             pass
 
     def enable_rbac(self, session_id: str = "") -> None:
