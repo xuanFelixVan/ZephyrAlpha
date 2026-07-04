@@ -41,17 +41,16 @@ python scripts/demos/demo_e2e_pipeline.py
 
 | 文档 | 路径 |
 |------|------|
-| 目录结构标准 | [directory_structure_standard.md](docs/01_policies_and_standards/rules/directory_structure_standard.md) |
+| 目录结构标准 | [trae_028_doc_structure_naming.yaml](docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml) |
 | 文档与规则元数据（SSoT） | [rule_catalog_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml) |
 | 登记表总索引 | [registry_of_registries.yaml](docs/registry_of_registries.yaml) |
 | 架构概览 | [navigation_index.md](docs/02_enterprise_architecture/00_overview_entry/navigation_index.md) |
-| ADR 索引 | 已迁入 KB decisions namespace（SQLite knowledge 表） |
 | 知识库 | [08_knowledge/](docs/08_knowledge/) |
 
 ## 技术栈
 
-- **语言**: Python 3.11+（与 `pyproject.toml` 一致）
-- **数据库**: SQLite, ChromaDB
+- **语言**: Python 3.12+（与 `pyproject.toml` 一致）
+- **数据库**: 见 [infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（PostgreSQL/ClickHouse/DuckDB/ChromaDB/SQLite，真源唯一）
 - **异步**: asyncio
 - **验证**: Pydantic v2
 

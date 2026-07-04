@@ -552,7 +552,7 @@ repos:
       # ── GATE-22: AI加载路径完整性（AGENTS.md §6.18 自动化执行层）──
       # 权威依据：AGENTS.md §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_load_path_integrity.py + 接入 pre-commit
-      # 模式：warn-only（骨架阶段，§8.2 部分路径需补全完整目录后转硬阻断）
+      # 模式：warn-only（骨架阶段；§8.2 待补建，当前 SKIP；§8.2 建成后转硬阻断）
       - id: gate-22-load-path-integrity
         name: "GATE-22: AI加载路径完整性（§6.18）"
         entry: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
@@ -561,7 +561,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^AGENTS\\.md$"
-        description: "解析 §8.2 任务菜单中所有路径引用，逐条验证文件存在。warn-only骨架阶段，对标 §6.18"
+        description: "解析 AGENTS.md §8.2 任务菜单路径引用（§8.2 待补建，当前 SKIP）。warn-only骨架阶段，对标 AI加载路径不可漂移铁律"
 
       # ── Handoff: 交接日志（manual stage，按需运行）──
       # 说明：不在 pre-commit 默认阶段运行，避免每次提交刷 handoff 文件。
