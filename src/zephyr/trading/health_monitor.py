@@ -41,6 +41,9 @@ from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 
 logger = logging.getLogger(__name__)
 
+# 5.39.1 修复：模块级共享 MetricsRegistry，避免每次 _collect_metrics 创建新实例导致指标被 GC
+_shared_metrics_registry = None
+
 
 class PressureLevel(str, Enum):
     NORMAL = "NORMAL"
@@ -216,7 +219,12 @@ class HealthMonitor:
         try:
             from zephyr.shared.observability.metrics import MetricsRegistry
 
-            registry = MetricsRegistry()
+            # 5.39.1 修复：原每次调用创建新 MetricsRegistry 实例，采集结束后局部变量被 GC，
+            # 历史趋势不可查。改为模块级共享实例，保留历史指标数据。
+            global _shared_metrics_registry
+            if _shared_metrics_registry is None:
+                _shared_metrics_registry = MetricsRegistry()
+            registry = _shared_metrics_registry
             results = self.probe_all()
             for cid, result in results.items():
                 registry.observe(
@@ -229,6 +237,12 @@ class HealthMonitor:
                     result.latency_ms,
                     labels={"capability_id": cid},
                 )
+                # 5.39.8 修复：RED 方法论 Error 维度——健康检查失败时 increment error counter
+                if not result.alive:
+                    registry.inc(
+                        f"health.{cid}.errors",
+                        labels={"capability_id": cid},
+                    )
         except Exception:
             pass
 
