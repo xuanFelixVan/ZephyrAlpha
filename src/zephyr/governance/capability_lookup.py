@@ -614,7 +614,7 @@ class CapabilityLookup:
         for path in self._disk_headers:
             abs_path = self._base_root / path
             try:
-                # 5.59.3 修复：原 errors="ignore" 静默丢弃非法字节，行数统计和 import 计数失真。
+                                # 5.59.3 修复：原 errors="ignore" 静默丢弃非法字节，行数统计和 import 计数失真。
                 # 改为 errors="replace" 用替换字符标记非法字节，至少保留行结构。
                 text = abs_path.read_text(encoding="utf-8", errors="replace")
             except OSError:
