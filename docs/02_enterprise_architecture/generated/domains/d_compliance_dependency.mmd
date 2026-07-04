@@ -1,5 +1,5 @@
 %% D_COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-07-04 14:34:04
+%% 生成时间: 2026-07-04 14:55:02
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 24, 依赖边数: 23
 
@@ -41,23 +41,23 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_COMPLIANCE -> D_GOVERNANCE (19 条)
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_artifact_scanner_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_integrity_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_trail___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_audit_orchestrator___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_behavioral_admission___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_compliance_audit_trail_bridges___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_compliance_zero_knowledge_audit_stub___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_COMPLIANCE -> D_SECURITY (3 条)
     src_zephyr_compliance_compliance_manager_py -->|import_depends| D_SECURITY[D_SECURITY]
