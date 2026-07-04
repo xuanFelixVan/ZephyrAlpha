@@ -531,7 +531,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 1. 想知道"项目有几个数据库/各负责什么" → 直接读 infrastructure_registry.yaml 的 `infrastructure:` 段，禁止凭记忆或其它文档推断。
 2. 准备改 DB 连接/新增 DB → 先查真源确认当前状态，再按下方 §11 depgraph 流程或对应模块蓝图施工。
 3. 写文档需要提"数据库清单" → 一律用纯指针引用真源，禁止复制条目。
-4. ~~准备操作 market.duckdb~~ → **market.duckdb（INFRA-DB-005）已于 2026-07-01 删除/废弃**，原业务时序库不再作为活动数据库。原安全约束真源在代码层（[database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) `get_market_read_conn()`），原 DDL 真源为 [market_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/market_schema.py)。**注意**：DuckDB OLAP 引擎（INFRA-DB-004，:memory: 内存模式只读挂载 governance.db）保留不变，与 market.duckdb 是两个独立实体——前者是 OLAP 分析引擎（infrastructure_registry.yaml INFRA-DB-004），后者是已废弃的业务时序持久化库。数据库清单真源见 infrastructure_registry.yaml。
+4. ~~准备操作 market.duckdb~~ → **market.duckdb（原 INFRA-DB-005）已于 2026-07-01 彻底删除**（墓碑清理，见 ARCH-046 铁律3"删除即彻底删除"）。原 market_schema.py 同步删除（死代码）。业务行情数据迁移至 ClickHouse c1_market（INFRA-DB-006，status=connected），统一入口 `DatabaseService.get_clickhouse_conn()`（readonly=1），详见 [c1_market_clickhouse.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md)。**注意**：DuckDB OLAP 引擎（INFRA-DB-004，:memory: 内存模式只读挂载 governance.db）保留不变，与 market.duckdb 是两个独立实体。
+5. **ARCH-046 数据库节点全景图登记三铁律**（2026-07-04 固化）：(1) 粒度铁律——数据库在全景图中有且仅有一个点（`infrastructure_components` 表），不展开内部表/schema；(2) 运营态/设计态语义铁律——数据库存在并使用=运营态（status=connected），不存在=设计态（status=planned），禁止 status 漂移；(3) 动态更新铁律——数据库节点随项目实况增删，不保留墓碑，生成器（generate_project_depgraph.py）MUST NOT 碰 `infrastructure_components` 表。详见 [ARCH-046](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 

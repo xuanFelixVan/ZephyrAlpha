@@ -430,7 +430,7 @@ Step4: 完成 → CategoryManager自动发现(不加载) → 未来enabled=true�
 | 机制 | 复用现有能力 | 说明 |
 |------|------------|------|
 | 品类注册表 | 扩展 capability_canonical_file_registry.yaml 机制 | 同YAML注册表模式 |
-| DDL-as-Code | 复用 market_schema.py 模式 | 已有DDL-as-Code先例 |
+| DDL-as-Code | 复用 DDL-as-Code 模式（见 c1_market 母蓝图） | 已有DDL-as-Code先例 |
 | 数据契约 | 复用 CTR-001~008 契约体系 | 数据架构.md §16已定义 |
 | 品类发现 | 复用 CapabilityLookup 类 | 已有发现机制 |
 | 门禁 | 复用 GitCommitGateway + create_guard.py | 已有门禁 |

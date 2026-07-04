@@ -325,9 +325,9 @@ git checkout -- src/zephyr/governance/depgraph_schema.py src/zephyr/governance/p
 | L304 | `sqlite_master` | `information_schema.tables` | 1处 |
 | L187,193,199,205,211 | `get_depgraph_conn()`调用链 | `sqlite3.Connection`→PG连接类型注解 | 类型注解更新（5处） |
 
-**关键约束**：database_service.py管理三库（depgraph/market/governance），仅depgraph部分迁移，governance.db和market.duckdb保持原样。
+**关键约束**：database_service.py管理两库（depgraph/governance），仅depgraph部分迁移，governance.db保持原样。
 
-> ⚠️ 更新（2026-07-01）：market.duckdb（INFRA-DB-005）已删除/废弃。当前实际为2库：depgraph（PostgreSQL）+ governance.db（SQLite）。market.duckdb 迁移至 ClickHouse 见 c1_market_clickhouse.md。
+> **更新（2026-07-04，ARCH-046）**：market.duckdb（原 INFRA-DB-005）已彻底删除（墓碑清理）。当前实际为 4 库：depgraph（PostgreSQL）+ governance.db（SQLite）+ DuckDB OLAP（:memory:）+ ClickHouse c1_market（INFRA-DB-006）。业务行情数据迁移至 ClickHouse 见 c1_market_clickhouse.md。
 
 **验收标准**：
 
