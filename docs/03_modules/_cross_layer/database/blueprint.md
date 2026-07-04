@@ -156,11 +156,9 @@ references:
 | 11 | CircuitBreakerTypes | 012A | ✅ 已实现 | 熔断器类型定义 |
 | 12 | Query | 012A | ✅ 已实现 | 查询构造器 |
 | 13 | Transition | 012A | ✅ 已实现 | 状态迁移定义 |
-| 14 | DualDBRouter | 012B | ❌ 已裁定删除 | ~~PostgreSQL（在线）+ SQLite（离线）路由~~——P2 迁移完成，过渡期前提消失；由 [`get_depgraph_pg_connection()`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（PG）+ [`get_db_connection()`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py)（SQLite）双入口覆盖 |
-| 15 | WriteBatcher | 012B | ⏸ 暂缓（待 L 级） | 批量写入缓冲——真问题但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
-| 16 | ScriptScheduler | 012B | ❌ 已裁定删除 | ~~Worker Pool + Semaphore + PriorityQueue~~——由 [BulkheadExecutorV2](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)（四池+熔断）+ MOD-INF-005 覆盖 |
-| 17 | ScriptRegistry | 012B | ✅ 已覆盖 | 脚本注册表——已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖（CT-DB-005 契约对齐） |
-| 18 | ScriptExecutionLogger | 012B | ⏸ 暂缓（待 M-1 级） | 脚本执行日志——571 脚本已达 M-1 下限 500，纯新增低风险，待启动（CT-DB-006 契约） |
+| 14 | WriteBatcher | 012B | ⏸ 暂缓（待 L 级） | 批量写入缓冲——真问题但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
+| 15 | ScriptRegistry | 012B | ✅ 已覆盖 | 脚本注册表——已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖（CT-DB-005 契约对齐） |
+| 16 | ScriptExecutionLogger | 012B | ⏸ 暂缓（待 M-1 级） | 脚本执行日志——571 脚本已达 M-1 下限 500，纯新增低风险，待启动（CT-DB-006 契约） |
 
 ### 数据流概览
 
@@ -303,13 +301,11 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | `src/zephyr/infrastructure/db/` (13 .py) | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | Core 已实现源码 | 已实现 (012A) |
-| 2 | `dual_db_router.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\dual_db_router.py` | ~~v3.0 双库路由~~ | ❌ 不新建（P2 完成，由 get_depgraph_pg_connection() + get_db_connection() 双入口覆盖） |
-| 3 | `write_batcher.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\write_batcher.py` | v3.0 批量写入 | ⏸ 暂缓（待 L 级 5000+脚本） |
-| 4 | `script_scheduler.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\script_scheduler.py` | ~~v3.0 Worker Pool~~ | ❌ 不新建（由 BulkheadExecutorV2 覆盖） |
-| 5 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
-| 6 | `depgraph (PostgreSQL)` | `localhost:5432/depgraph` | 012B 迁移结果库（SQLite→PostgreSQL，depgraph 全景图，28 表） | 运行时生成 |
-| 7 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
-| 8 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
+| 2 | `write_batcher.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\write_batcher.py` | v3.0 批量写入 | ⏸ 暂缓（待 L 级 5000+脚本） |
+| 3 | `data/databases/governance.db` | `D:\ZephyrAlpha\data/databases/governance.db` | 012A 任务卡库（保持SQLite） | 运行时生成 |
+| 4 | `depgraph (PostgreSQL)` | `localhost:5432/depgraph` | 012B 迁移结果库（SQLite→PostgreSQL，depgraph 全景图，28 表） | 运行时生成 |
+| 5 | `data/backups/` | `D:\ZephyrAlpha\data\backups\` | 备份目录 | 运行时生成 |
+| 6 | `data/warehouse/` | `D:\ZephyrAlpha\data\warehouse\` | 冷归档 | 运行时生成 |
 
 ---
 
