@@ -110,7 +110,7 @@ class OrchestratorBridge:
         }
 
 
-def _get_writer(backend=None):
+def _get_writer(backend: str | None = None) -> None:
     return None
 
 

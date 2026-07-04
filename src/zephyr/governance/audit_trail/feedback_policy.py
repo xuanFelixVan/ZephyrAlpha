@@ -163,7 +163,7 @@ class PolicyFeedbackBridge:
 
 
 class PolicyRecommendation:
-    def __init__(self, policy_id="", action="", target="", reason="", confidence=0.0):
+    def __init__(self, policy_id: str = "", action: str = "", target: str = "", reason: str = "", confidence: float = 0.0) -> None:
         self.policy_id = policy_id
         self.action = action
         self.target = target
@@ -171,5 +171,5 @@ class PolicyRecommendation:
         self.confidence = confidence
 
 
-def feedback_to_policy(feedback, policies=None):
+def feedback_to_policy(feedback: dict[str, Any], policies: list[str] | None = None) -> PolicyRecommendation:
     return PolicyRecommendation()

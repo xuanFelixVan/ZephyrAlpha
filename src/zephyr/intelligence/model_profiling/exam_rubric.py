@@ -36,6 +36,7 @@ import ast
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass
@@ -198,7 +199,7 @@ def _dt_order_correctness(result: dict) -> float:
     return correct / len(gold)
 
 
-def _extract_call_chain_funcs(result: dict, ordered: bool = False):
+def _extract_call_chain_funcs(result: dict, ordered: bool = False) -> list[str] | set[str]:
     chain = result.get("call_chain", [])
     funcs = []
     for step in chain:
@@ -292,7 +293,7 @@ def _pp_dep_respect(result: dict) -> float:
     return matches / len(gold_layers)
 
 
-def _flatten_groups_to_layers(groups):
+def _flatten_groups_to_layers(groups: list[Any]) -> list[set[str]]:
     layers = []
     for g in groups:
         layer = set()
