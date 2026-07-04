@@ -92,13 +92,13 @@ blueprints:
   name: _domain_backtest
   title: D_BACKTEST 回测引擎域蓝图
   summary: D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动)+Tick回放(秒级做T),data_handler对接D_DATA的MiniQMT
-    Provider(Tick+5档盘口),统一归口回测引擎。MVP 8个核心模块。
+    Provider(Tick+5档盘口),统一归口回测引擎。MVP 10个核心模块(含PIT+决策门控)。
   layer: L2_domain
   functional_domain: backtest
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.1.0
+  version: 1.2.0
   generation: 1
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_backtest/blueprint.md
