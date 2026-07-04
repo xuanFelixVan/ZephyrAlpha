@@ -9583,6 +9583,15 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 ### 5.176 SQL注入风险（27个，第31轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(SQL注入风险需全量改用参数化查询)
+> **第34轮修复状态（2026-07-04）**：FIXED=15(#1已由5.66.1修复+#3 EXPLAIN限制SELECT/WITH+#5 registry_adapter表名列名白名单+#10-13 sqlite_dumper表名列名白名单+#14-15 wal_checkpoint mode枚举校验), DRIFTED=12(#2 create_order不存在+#4 governance/registry_adapter.py不存在+#6-9 governance/sqlite_dumper.py迁移至infrastructure/rollback/), NOT_NEEDED=12(#16-27常量/DB元数据,非用户输入), 0 STILL_VALID
+
+> **5.176 修复明细（2026-07-04）**：
+> - infrastructure/database_service.py: 添加 _TASK_COLUMNS 白名单（#1副本）
+> - governance/observability_governance/query_metrics.py: EXPLAIN QUERY PLAN 仅允许 SELECT/WITH
+> - infrastructure/asset_inventory/registry_adapter.py: SqliteAdapter 表名/列名正则白名单
+> - infrastructure/rollback/sqlite_dumper.py: _get_table_schema 补 _validate_table_name 调用 + restore 列名白名单校验
+> - governance/persistence/database_manager.py: _wal_checkpoint mode 枚举校验（PASSIVE/FULL/RESTART/TRUNCATE）
+> - infrastructure/capacity_assurance/risk_mitigation.py: perform_wal_checkpoint mode 枚举校验
 
 审计范围：`d:\ZephyrAlpha\src\zephyr\`。静态扫描f-string拼接的SQL语句，区分表名/列名/PRAGMA参数拼接（值已参数化`?`占位符的不计）。全项目未发现`.format()`或`%`拼接SQL的情况。
 

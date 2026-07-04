@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.infrastructure.database_service
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.__init__
@@ -157,10 +157,26 @@ class DatabaseService:
         row = conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
         return dict(row) if row else None
 
+    # 5.176 修复：tasks 表列名白名单，防止 SQL 注入（f-string 拼接列名的治本）
+    _TASK_COLUMNS = frozenset({
+        "task_id", "title", "description", "status", "priority", "assignee",
+        "created_at", "updated_at", "due_date", "completed_at", "parent_id",
+        "module_id", "blueprint_id", "decomposition_id", "task_type",
+        "estimated_hours", "actual_hours", "tags", "metadata", "is_deleted",
+        "deleted_at", "depends_on", "blocks", "labels", "story_points",
+        "sprint_id", "epic_id", "assignee_ai", "source", "difficulty",
+        "verification_status", "verification_notes", "review_status",
+        "review_notes", "creation_tokens", "related_arch_issues",
+    })
+
     def create_task(self, task_data: dict[str, Any]) -> str:
         """创建任务"""
         conn = self.get_governance_conn()
         task_id = task_data["task_id"]
+        # 5.176 修复：列名白名单校验，阻断 f-string SQL 注入路径
+        invalid_cols = set(task_data.keys()) - self._TASK_COLUMNS
+        if invalid_cols:
+            raise ValueError(f"Invalid task columns: {invalid_cols}. Allowed: {sorted(self._TASK_COLUMNS)}")
         columns = ", ".join(task_data.keys())
         placeholders = ", ".join(["?" for _ in task_data])
         conn.execute(f"INSERT INTO tasks ({columns}) VALUES ({placeholders})", list(task_data.values()))

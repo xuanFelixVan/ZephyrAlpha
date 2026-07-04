@@ -461,6 +461,10 @@ class DatabaseManager:
 
     def _wal_checkpoint(self, mode: str = "PASSIVE") -> None:
         """执行 WAL checkpoint（PASSIVE / FULL / RESTART / TRUNCATE）。"""
+        # 5.176 修复：mode 枚举白名单校验，防 PRAGMA 参数注入
+        _VALID_MODES = frozenset({"PASSIVE", "FULL", "RESTART", "TRUNCATE"})
+        if mode not in _VALID_MODES:
+            raise ValueError(f"非法 wal_checkpoint mode: {mode!r}（仅允许 {sorted(_VALID_MODES)}）")
         conn = None
         try:
             conn = get_db_connection(self._db_path)

@@ -124,6 +124,8 @@ class SqliteDumper:
         return [r["name"] for r in rows]
 
     def _get_table_schema(self, conn: sqlite3.Connection, table: str) -> dict[str, Any]:
+        # 5.176 修复：表名白名单校验（_get_table_data/restore 已有，此处补齐导出路径）
+        _validate_table_name(table)
         columns: list[dict[str, str]] = []
         rows_info = conn.execute(f"PRAGMA table_info('{table}')").fetchall()
         for col in rows_info:
@@ -317,7 +319,11 @@ class SqliteDumper:
                 columns_info = obj.get("schema", {}).get("columns", [])
                 data_rows = obj.get("data", [])
 
-                column_names = [c["name"] for c in columns_info]
+                # 5.176 修复：列名白名单校验（来自外部 JSONL 文件，可被篡改，防 SQL 注入）
+                column_names = []
+                for c in columns_info:
+                    col_name = _validate_table_name(c["name"])  # 复用同一正则（字母/数字/下划线）
+                    column_names.append(col_name)
                 if not column_names:
                     continue
 
