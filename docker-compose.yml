@@ -16,7 +16,10 @@ services:
       # 改为 .env.example 作为默认（仓库内已包含），新克隆者可直接 docker-compose up
       - .env.example
     environment:
-      - ZEPHYR_ENV=development
+      # 5.34.1 修复：原 ZEPHYR_ENV=development 不在 Env 枚举（dev/staging/production/test）中
+      # _detect_env() ValueError 被吞掉静默回退 Env.DEV，导致环境隔离失效
+      # 改为 ZEPHYR_ENV=dev（与枚举值一致）
+      - ZEPHYR_ENV=dev
       - ZEPHYR_T1_KILL_SWITCH_PROBE=0
       - ZEPHYR_METRICS_DIR=/data/metrics
     volumes:
