@@ -7488,6 +7488,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.135 异常粒度过粗（697个，第24轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=697(except Exception吞没异常5种模式，全量重构为细粒度异常处理=超大规模)
+> **第34轮修复状态（2026-07-04）**：FIXED=24, DRIFTED=312, STILL_VALID=361。5.135.3 phase_check_registry.py 3份副本已合并为1份(51处DRIFTED)+17处FIXED(16处except Exception: return YELLOW + 1处pass加logger.warning，保留YELLOW语义避免阻断启动)；5.135.5 create_guard.py 2处FIXED(已改fail-closed设计,YAML不可达时阻断)+capability_overlap_gate.py 2处FIXED(升级logger.warning为logger.error,warn-only契约保留)；5.135.2 drift_result_types.py 3处FIXED(2处continue+1处pass加logger.warning+添加logging导入)；5.135.1/5.135.2/5.135.4/5.135.6 代表性文件(auto_runtime_core/pipeline_orchestrator/boot_hooks/runtime_interceptor)大部分前期已加logger.warning(转为5.135.6类别,261处DRIFTED)；5.135.6 175处保留STILL_VALID(定义就是有logger但吞没异常,全量升级为raise会破坏现有错误处理,需逐上下文评估)。
+
+> **5.135 修复明细（2026-07-04）**：
+> - drift_result_types.py: 添加`import logging`+`logger = logging.getLogger(__name__)`；3处`except Exception:` → `except Exception as e: logger.warning(...)`（2处continue+1处pass in finally conn.close）
+> - phase_check_registry.py: 16处`except Exception: return GateResult.YELLOW` → `except Exception as e: logger.warning("phase check failed (%s: %s)", ...); return GateResult.YELLOW`（保留YELLOW语义，因Phase 0检查失败不应阻断启动，改为RED会破坏正常流程）；1处`except Exception: pass` → `except Exception as e: logger.warning(...)`
+> - capability_overlap_gate.py: 2处`logger.warning(...)` → `logger.error(...)`（warn-only契约的return True保留，但日志级别升级为error以提升可见性）
+> - 保留STILL_VALID 361处: 5.135.6的175处(有logger但吞没异常,需逐上下文评估是否升级为raise)+5.135.1/5.135.2/5.135.4的186处(分布100+文件,代表性文件已DRIFTED,其余需逐文件评估)
 
 > **审计结论**：本维度是第24轮发现量最大的维度（697个），揭示了一个系统性架构债务。全项目存在697处`except Exception`吞没异常的违规，分布在5种模式中。项目无`except BaseException`或裸`except:`吞没异常（HIGH=0），但MEDIUM级违规大量存在。
 
