@@ -70,17 +70,16 @@ LAYER_DIR_MAP = {
     "risk": "L2_domain",
     "pf_core": "L2_domain",
     "ex_core": "L2_domain",
-    "pf_core": "L2_domain",
     "frontend": "L3_application",
     "research": "L2_domain",
     "compliance": "L2_domain",
     "ml_train": "L2_domain",
     "observability": "L0_infrastructure",
     "integration": "L2_domain",
-    "_cross_layer": "cross_layer",
-    "_master-blueprint": "cross_layer",
-    "_domain-governance": "cross_layer",
-    "_system_master": "cross_layer",
+    "_cross_layer": "L1_foundation",
+    "_master-blueprint": "L1_foundation",
+    "_domain-governance": "L1_foundation",
+    "_system_master": "L1_foundation",
 }
 
 
