@@ -1062,7 +1062,10 @@ entries:
     (m) §16.7.1-§16.7.5 组件规格全面更新：Panel callback仅编排+TradingView HTML Pane+Datashader阈值触发
     (n) §17.3 升级版本矩阵新增 v3.0.0/v3.1.0 行
 
-    P1 TODO：5 个交易/回测组件施工（backtest_results/tick_replay/order_book/position_monitor/trade_panel）
+    P1 DONE 2026-07-05：5 个交易/回测组件施工完成（backtest_results/tick_replay/order_book/position_monitor/trade_panel）
+      - 5 组件在 v3.0.0 已完整实现（dataclass+fetch+render+ChartFactory 集成）
+      - 36 个单元测试覆盖（test_p1_components_unit.py, 2026-07-05 补建）
+      - 已集成到 app_panel.py Tab 6-10
     P2 OPTIONAL：G1 React 前端迁移时，Panel 组件嵌入 React（保留 HoloViz 渲染层）
 
     【G0.5 Python 过渡层】
@@ -1081,7 +1084,7 @@ entries:
   fix_phase: |
     P0 DONE 2026-07-04：技术栈切换全套治理（蓝图+契约+依赖+路径漂移修复+depgraph登记）
     P0 SUPPLEMENT DONE 2026-07-04：外部评审采纳改进（ChartFactory+callback约束+HTML Pane+Datashader阈值+v3.1.0迁移计划）
-    P1 TODO：5 个交易/回测组件施工
+    P1 DONE 2026-07-05：5 个交易/回测组件施工完成（v3.0.0已实现+36单元测试覆盖）
     P2 OPTIONAL：G1 React 迁移时 Panel 组件嵌入
   status: decided
   tech_stack:
