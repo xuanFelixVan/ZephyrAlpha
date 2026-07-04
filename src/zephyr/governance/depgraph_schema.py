@@ -5,7 +5,7 @@
 # [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] depgraph is PostgreSQL (localhost:5432/depgraph); init_db must be idempotent
+# [INVARIANTS] depgraph is PostgreSQL (连接串由 get_depgraph_pg_connection() 从环境变量派生); init_db must be idempotent
 # [MODIFY-GUARD] sqlite_schema.py; database_manager.py; depgraph generators
 # [STABILITY] evolving
 # [SAFETY] M
@@ -19,7 +19,7 @@ depgraph Schema DDL + 版本化迁移框架
 ========================================
 依据：数据库合并方案（9库→3库），depgraph 作为依赖图专用数据库（PostgreSQL）
 
-物理路径：PostgreSQL localhost:5432/depgraph（P2迁移后，原 SQLite data/databases/depgraph.db 已删除归档）
+物理路径：PostgreSQL depgraph（连接串由 get_depgraph_pg_connection() 从环境变量派生；P2迁移后，原 SQLite data/databases/depgraph.db 已删除归档）
 Safety  : M（DDL 定义，init_db 幂等执行）
 
 表结构
@@ -75,7 +75,7 @@ P2 迁移后 schema 真源（重要）
 
 P2 迁移后路径真源（2026-06-27 治本）
 -----------------------------------
-  物理文件 data/databases/depgraph.db 已删除归档，逻辑库迁移至 PostgreSQL (localhost:5432/depgraph)。
+  物理文件 data/databases/depgraph.db 已删除归档，逻辑库迁移至 PostgreSQL (连接串由 get_depgraph_pg_connection() 从环境变量派生)。
   禁止定义 DB_PATH = .../depgraph.db 常量（路径污染源）。
   PG 连接入口唯一真源：get_depgraph_pg_connection()（本模块定义）。
   PG 连接配置真源：config/.env.postgres（_PG_ENV_PATH）。

@@ -9363,6 +9363,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.173 硬编码路径/URL/端点（30个，第30轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=30(硬编码路径/URL/端点需外部化)
+> **第34轮修复状态（2026-07-04）**：FIXED=5(HIGH 7,8 归档豁免 + MEDIUM 4,6 副本删除 + LOW 2 depgraph_schema.py 3处注释 localhost:5432 改为"连接串由 get_depgraph_pg_connection() 从环境变量派生"), DRIFTED=16(HIGH 1-6,9-10 = 8处：red_blue_test/rollback_depgraph/audit_design_completeness/migrate_data 已用REPO_ROOT派生 + pipeline_roadmap 已改相对路径 + environment_manager db_conn/broker_conn 已用os.getenv + validate_commit_message 邮箱已用os.getenv + sync_yaml_to_depgraph 文件不存在; MEDIUM 1,2,3,5,7,8,9 = 7处：Ollama URL 7处已用os.getenv + OTLP endpoint 4处文件不存在(ops废弃) + DeepSeek base URL 已用os.getenv+副本删除 + secret_rotation_aware ROTATION_URLS 已用os.getenv + dep_cve_correlator 文件不存在(ops废弃) + pipeline_roadmap 反斜杠已改相对路径; LOW 1 tracing.py 已用os.environ.get), NOT_NEEDED=9(HIGH 11 合成git身份 + LOW 3-10 官方链接/示例/检测器功能性), STILL_VALID=0
 
 #### HIGH（11个）
 
