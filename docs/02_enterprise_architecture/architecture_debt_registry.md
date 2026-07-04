@@ -4233,6 +4233,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：time.time()受NTP/手动调时/夏令时影响可能回退，时钟回退时TTL永不过期/stale lock永不清理
 - **影响**：缓存泄漏返回stale数据；跨进程锁死锁；健康检查age为负值
 - **修复**：改用time.monotonic()记录和计算TTL
+- **状态**：部分修复 — semantic_cache.py 已改为 time.monotonic()（L54/L69）；staging_area.py + resource_optimization.py 仍用 time.time()，需后续修复
 
 #### 5.46.2 [MEDIUM] naive datetime与aware datetime混用（100+处）
 - **文件**：[work_orchestrator.py](file:///D:/ZephyrAlpha/src/zephyr/trading/work_orchestrator.py#L86)等100+处
@@ -4240,6 +4241,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：naive与aware做减法抛TypeError；跨时区对比产生静默错误；utcnow()在3.12+已弃用
 - **影响**：跨模块时间对比异常或错误；审计日志时区歧义
 - **修复**：全局替换datetime.now()/utcnow()→now_utc()；加CI检查禁止直接使用
+- **状态**：STILL_VALID（保留）— 100+ 处 datetime.now()/utcnow() 混用，需全局替换为 now_utc() + 加 CI 检查，大规模重构
 
 #### 5.46.3 [LOW] datetime.now()与datetime.fromtimestamp()混用做age计算
 - **文件**：[tiered_storage.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_trail/tiered_storage.py#L44)
@@ -4247,6 +4249,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：进程内时区被修改（os.environ['TZ']）则出错
 - **影响**：tiered storage归档时间计算错误
 - **修复**：统一用datetime.now(timezone.utc)和fromtimestamp(ts, tz=timezone.utc)
+- **状态**：STILL_VALID（保留）— tiered_storage.py L44 仍用 naive datetime.now() - datetime.fromtimestamp()（SAFETY=H + human_gated，AI 不可自动修复）
 
 #### 5.46.4 严重度汇总
 
