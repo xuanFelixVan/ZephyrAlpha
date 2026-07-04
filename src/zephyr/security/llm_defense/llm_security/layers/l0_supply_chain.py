@@ -106,10 +106,10 @@ class MCPVerifyResult:
 class RulesFileIntegrityResult:
     """Result of rules file integrity check."""
 
-    def __init__(self, file_path: str = "", integrity_valid: bool = True, hash_mismatch: bool = False):
+    # 5.96.5 修复: 移除死字段 integrity_valid/hash_mismatch——从不被外部读取,
+    # 且二者语义矛盾(integrity_valid=True+hash_mismatch=True 无意义)
+    def __init__(self, file_path: str = ""):
         self.file_path = file_path
-        self.integrity_valid = integrity_valid
-        self.hash_mismatch = hash_mismatch
 
 
 # ============================================================================

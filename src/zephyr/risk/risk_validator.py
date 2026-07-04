@@ -89,7 +89,7 @@ class RiskValidator(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not inspect.isabstract(cls) and hasattr(cls, "__validator_id__"):
+        if not inspect.isabstract(cls) and "__validator_id__" in cls.__dict__:
             RiskValidator._registry[cls.__validator_id__] = cls
 
     @abc.abstractmethod

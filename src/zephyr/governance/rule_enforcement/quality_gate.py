@@ -97,7 +97,7 @@ class DataQualityGate(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not inspect.isabstract(cls) and hasattr(cls, "__gate_id__"):
+        if not inspect.isabstract(cls) and "__gate_id__" in cls.__dict__:
             DataQualityGate._registry[cls.__gate_id__] = cls
 
     @abc.abstractmethod

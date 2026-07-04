@@ -87,7 +87,7 @@ class DashboardBase(abc.ABC):
       - 支持多页面/多组件组合
     """
 
-    _registry: ClassVar[dict[str, type[DashboardBase]]] = {}
+    # 5.116.1 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取
 
     @abc.abstractmethod
     def render(self, data: dict[str, Any]) -> None:
@@ -108,7 +108,7 @@ class NotificationManagerBase(abc.ABC):
       - 支持多渠道：飞书 / 邮件 / 钉钉 / 企业微信 / Slack
     """
 
-    _registry: ClassVar[dict[str, type[NotificationManagerBase]]] = {}
+    # 5.116.1 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取
 
     @abc.abstractmethod
     def send(self, notification: Notification, channels: list[str] | None = None) -> bool:
@@ -135,7 +135,7 @@ class ApprovalGatewayBase(abc.ABC):
       3. 审批结果写回 → D_PORTFOLIO_CORE/D_EXECUTION_CORE 继续或中止
     """
 
-    _registry: ClassVar[dict[str, type[ApprovalGatewayBase]]] = {}
+    # 5.116.1 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取
 
     @abc.abstractmethod
     def submit(self, request: ApprovalRequest) -> str:
