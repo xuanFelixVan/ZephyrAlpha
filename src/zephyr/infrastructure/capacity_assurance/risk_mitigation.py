@@ -46,6 +46,10 @@ def enable_wal_mode(db_path: str) -> bool:
 
 def perform_wal_checkpoint(db_path: str, mode: str = "PASSIVE") -> bool:
     """R1: 定期 WAL checkpoint."""
+    # 5.176 修复：mode 枚举白名单校验，防 PRAGMA 参数注入
+    _VALID_MODES = frozenset({"PASSIVE", "FULL", "RESTART", "TRUNCATE"})
+    if mode not in _VALID_MODES:
+        raise ValueError(f"非法 wal_checkpoint mode: {mode!r}（仅允许 {sorted(_VALID_MODES)}）")
     try:
         conn = sqlite3.connect(db_path)
         conn.execute(f"PRAGMA wal_checkpoint({mode})")

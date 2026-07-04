@@ -191,8 +191,13 @@ class QueryMetrics:
 
             explain_conn = sqlite3.connect(str(schema_db_path))
             try:
-                explain_result = explain_conn.execute(f"EXPLAIN QUERY PLAN {sql}", params if params else ())
-                explain_rows = [dict(r) for r in explain_result.fetchall()]
+                # 5.176 修复：EXPLAIN QUERY PLAN 仅允许 SELECT/WITH 语句，防御纵深防注入
+                sql_stripped = sql.lstrip().upper()
+                if not (sql_stripped.startswith("SELECT") or sql_stripped.startswith("WITH")):
+                    explain_rows = [{"error": "explain_rejected_non_select"}]
+                else:
+                    explain_result = explain_conn.execute(f"EXPLAIN QUERY PLAN {sql}", params if params else ())
+                    explain_rows = [dict(r) for r in explain_result.fetchall()]
             except Exception:
                 explain_rows = [{"error": "explain_failed"}]
             finally:

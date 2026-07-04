@@ -485,7 +485,15 @@ class TomlAdapter(RegistryAdapter):
 
 
 class SqliteAdapter(RegistryAdapter):
+    # 5.176 修复：标识符白名单正则（表名/列名仅允许字母/数字/下划线）
+    _IDENT_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
     def __init__(self, registry_id: str, db_path: str, table: str, path_column: str = "relative_path") -> None:
+        # 5.176 修复：表名/列名白名单校验，防 f-string SQL 注入
+        if not isinstance(table, str) or not self._IDENT_RE.match(table):
+            raise ValueError(f"非法表名: {table!r}（仅允许字母/数字/下划线）")
+        if not isinstance(path_column, str) or not self._IDENT_RE.match(path_column):
+            raise ValueError(f"非法列名: {path_column!r}（仅允许字母/数字/下划线）")
         self._registry_id = registry_id
         self._db_path = db_path
         self._table = table
