@@ -2253,24 +2253,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：审计日志完整性/密钥管理/输入验证/权限边界/依赖安全/代码执行风险/网络边界/文件权限
 > 审计方法：Grep + Read真实文件取证（audit_trail/writer.py、ai_audit_logger.py、tamper_evident_log.py、rbac_roles.yaml等）
 
-#### 5.17.11 依赖无上界钉版+无hash校验+requirements与pyproject分裂【MEDIUM】
-- 证据：[requirements.txt:1-9](file:///d:/ZephyrAlpha/requirements.txt) 全`>=`无上界无hash；[pyproject.toml:13-26](file:///d:/ZephyrAlpha/pyproject.toml) 同全`>=`且比requirements多3依赖（duckdb/structlog/pyarrow），SSoT分裂；无`pip --require-hashes`无SBOM锁文件
-- 病根：根因5（依赖治理缺位）
-- 修复：引入pip-tools生成requirements.lock（含hash），上界钉主版本
-
-#### 5.17.13 pyproject.toml项目级禁用F821掩盖安全静默失败【LOW】
-- 证据：[pyproject.toml:138](file:///d:/ZephyrAlpha/pyproject.toml) `"F821",  # undefined name (TraceContext等系统性问题，需批量修复，后续建卡处理)`；注释自承认存在未定义符号但项目级关闭检查；若安全函数（sanitize_secret/verify_chain）拼错或未导入，运行时静默NameError
-- 病根：根因5（门禁覆盖盲区，lint主动放行已知问题）
-- 修复：修复TraceContext等未定义符号后移除F821 ignore，至少`src/zephyr/security/**`和`governance/**`子目录re-enable
-
 #### 5.17.15 小计
 
 | 严重度 | 数量 |
 |---|:---:|
 | CRITICAL/HIGH | 0（5.17.1/5.17.2/5.17.3/5.17.4/5.17.6/5.17.7/5.17.8已FIXED） |
-| MEDIUM | 1（5.17.11；5.17.5/5.17.9/5.17.10/5.17.12已FIXED） |
-| LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **2** |
+| MEDIUM | 0（5.17.5/5.17.9/5.17.10/5.17.11/5.17.12已FIXED） |
+| LOW | 0（5.17.13/5.17.14已FIXED） |
+| **合计** | **0** |
 
 ---
 
