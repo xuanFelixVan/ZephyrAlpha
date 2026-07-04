@@ -44,7 +44,7 @@ from zephyr.shared.io.paths import DB_PATH
 class DatabaseService:
     """统一数据库服务层"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 治本(2026-06-30): 消除硬编码绝对路径, 改用 SSoT 源
         self.governance_db = str(DB_PATH)
 
@@ -96,7 +96,7 @@ class DatabaseService:
 
         return result
 
-    def close_all(self):
+    def close_all(self) -> None:
         """关闭所有连接"""
         if self._governance_conn:
             self._governance_conn.close()
@@ -140,13 +140,13 @@ class DatabaseService:
         conn.commit()
         return task_id
 
-    def update_task_status(self, task_id: str, status: str):
+    def update_task_status(self, task_id: str, status: str) -> None:
         """更新任务状态"""
         conn = self.get_governance_conn()
         conn.execute("UPDATE tasks SET status=?, updated_at=datetime('now') WHERE task_id=?", (status, task_id))
         conn.commit()
 
-    def log_rule_enforcement(self, rule_id: str, operation: str, target: str, result: str, details: str = ""):
+    def log_rule_enforcement(self, rule_id: str, operation: str, target: str, result: str, details: str = "") -> None:
         """记录规则执行日志"""
         conn = self.get_governance_conn()
         conn.execute(
@@ -169,7 +169,7 @@ class DatabaseService:
             row = cur.fetchone()
         return dict(row) if row else None
 
-    def get_nodes_by_domain(self, domain_id: str) -> list:
+    def get_nodes_by_domain(self, domain_id: str) -> list[dict[str, Any]]:
         """按域获取节点"""
         conn = self.get_depgraph_conn()
         with conn.cursor() as cur:
@@ -177,7 +177,7 @@ class DatabaseService:
             rows = cur.fetchall()
         return [dict(r) for r in rows]
 
-    def get_nodes_by_type(self, node_type: str) -> list:
+    def get_nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         """按类型获取节点"""
         conn = self.get_depgraph_conn()
         with conn.cursor() as cur:
@@ -185,7 +185,7 @@ class DatabaseService:
             rows = cur.fetchall()
         return [dict(r) for r in rows]
 
-    def get_rule_bindings_by_function(self, function_name: str) -> list:
+    def get_rule_bindings_by_function(self, function_name: str) -> list[dict[str, Any]]:
         """按函数名获取规则绑定"""
         conn = self.get_depgraph_conn()
         with conn.cursor() as cur:
@@ -193,7 +193,7 @@ class DatabaseService:
             rows = cur.fetchall()
         return [dict(r) for r in rows]
 
-    def get_edges_from_node(self, from_node: str) -> list:
+    def get_edges_from_node(self, from_node: str) -> list[dict[str, Any]]:
         """获取节点的出边"""
         conn = self.get_depgraph_conn()
         with conn.cursor() as cur:

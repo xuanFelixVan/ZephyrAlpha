@@ -7919,6 +7919,18 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.145 类型注解完整性（30个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=30(类型注解完整性需补全缺失注解)
+> **第34轮修复状态（2026-07-04）**：FIXED=9(5.145.1/2/4/6/7/9/28/29/30), DRIFTED=2(5.145.5 writer.py AuditWriter已有类型/5.145.8 config.py AppConfig+load/reload_config已有类型), STILL_VALID=19(5.145.3 audit_trail/models.py 10+类大规模补全/5.145.10-12 l6_observability+trigger_router+scheduler Any滥用29+31+22处/5.145.13-27 MEDIUM Any滥用跨100文件601处需系统性重构)
+> - 5.145.1 [FIXED]: __init__.py register_lazy/_LazyModule.__init__/_load/__dir__/__dir__() 补 -> None/-> list[str] + 移除未用 Optional 导入
+> - 5.145.2 [FIXED]: database_service.py __init__/close_all/update_task_status/log_rule_enforcement 补 -> None + 4个 get_*_by_* 方法 list -> list[dict[str, Any]]
+> - 5.145.4 [FIXED]: trust_engine.py 修复 NameError bug(trust-score→trust_score) + TrustAdjustment/TrustRecord/TrustScoreEngine 3类6方法补类型注解
+> - 5.145.5 [DRIFTED]: writer.py AuditWriter 类已在前期修复中补全 __init__/write/write_with_cot 等方法类型注解
+> - 5.145.6 [FIXED]: tiered_storage.py MigrationRecord/TierConfig/TieredStorageManager 3类5方法补类型注解
+> - 5.145.7 [FIXED]: cold_start.py ColdStartResult + detect_missing_env/init_database/init_directories 补类型注解
+> - 5.145.8 [DRIFTED]: code_dedup/config.py AppConfig/load_config/reload_config 已在 5.12.2#6 修复中补全类型注解，仅 _deep_merge_lists 残留(影响小)
+> - 5.145.9 [FIXED]: metrics/__init__.py MetricSnapshot/MetricsRegistry 2类4方法 + get_registry 补类型注解
+> - 5.145.28 [FIXED]: dispatch_table.py 移除 if TYPE_CHECKING: pass 死代码及未用导入
+> - 5.145.29 [FIXED]: __init__.py Optional 导入未使用(与 5.145.1 同源，已移除)
+> - 5.145.30 [FIXED]: tracing.py traced 装饰器工厂补返回类型 Callable[[Callable[..., Any]], Callable[..., Any]]
 
 审查公共API缺失类型注解、Any滥用、Optional误用、Union滥用、泛型参数缺失、裸dict/list/Callable等问题。
 

@@ -24,7 +24,7 @@ class MetricType:
 
 
 class MetricSnapshot:
-    def __init__(self, name="", value=0.0, metric_type=None, timestamp=None, tags=None):
+    def __init__(self, name: str = "", value: float = 0.0, metric_type: str | None = None, timestamp: str | None = None, tags: dict[str, str] | None = None) -> None:
         self.name = name
         self.value = value
         self.metric_type = metric_type
@@ -33,15 +33,15 @@ class MetricSnapshot:
 
 
 class MetricsRegistry:
-    def __init__(self):
-        self._metrics = {}
+    def __init__(self) -> None:
+        self._metrics: dict[str, dict[str, str]] = {}
 
-    def register(self, name, metric_type, description=""):
+    def register(self, name: str, metric_type: str, description: str = "") -> None:
         self._metrics[name] = {"type": metric_type, "description": description}
 
-    def get(self, name):
+    def get(self, name: str) -> dict[str, str] | None:
         return self._metrics.get(name)
 
 
-def get_registry():
+def get_registry() -> MetricsRegistry:
     return MetricsRegistry()

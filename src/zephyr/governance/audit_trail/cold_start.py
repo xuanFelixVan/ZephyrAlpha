@@ -109,7 +109,7 @@ class BootstrapCache:
 
 
 class ColdStartResult:
-    def __init__(self, success=True, message="", initialized_components=None, timestamp=None):
+    def __init__(self, success: bool = True, message: str = "", initialized_components: list[str] | None = None, timestamp: str | None = None) -> None:
         self.success = success
         self.message = message
         self.initialized_components = initialized_components or []
@@ -125,13 +125,13 @@ REQUIRED_DIRS = ["data/audit", "data/audit/evidence", "data/audit/reports"]
 REQUIRED_ENV_VARS = []
 
 
-def detect_missing_env(required_vars=None):
+def detect_missing_env(required_vars: list[str] | None = None) -> list[str]:
     return []
 
 
-def init_database(db_path=None):
+def init_database(db_path: str | None = None) -> bool:
     return True
 
 
-def init_directories(base_path=None):
+def init_directories(base_path: str | None = None) -> bool:
     return True

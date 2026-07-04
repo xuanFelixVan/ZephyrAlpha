@@ -96,7 +96,7 @@ class TrustEngine:
 
 
 class TrustAdjustment:
-    def __init__(self, entity="", delta=0.0, reason="", timestamp=None):
+    def __init__(self, entity: str = "", delta: float = 0.0, reason: str = "", timestamp: str | None = None) -> None:
         self.entity = entity
         self.delta = delta
         self.reason = reason
@@ -104,19 +104,19 @@ class TrustAdjustment:
 
 
 class TrustRecord:
-    def __init__(self, entity="", trust_score=1.0, last_updated=None, history=None):
+    def __init__(self, entity: str = "", trust_score: float = 1.0, last_updated: str | None = None, history: list[dict[str, Any]] | None = None) -> None:
         self.entity = entity
-        self.trust_score = trust - score
+        self.trust_score = trust_score
         self.last_updated = last_updated
         self.history = history or []
 
 
 class TrustScoreEngine:
-    def __init__(self, config=None):
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         self.config = config or {}
 
-    def compute_score(self, entity, history=None):
+    def compute_score(self, entity: str, history: list[dict[str, Any]] | None = None) -> float:
         return 1.0
 
-    def adjust(self, entity, delta):
+    def adjust(self, entity: str, delta: float) -> TrustAdjustment:
         return TrustAdjustment(entity=entity, delta=delta)
