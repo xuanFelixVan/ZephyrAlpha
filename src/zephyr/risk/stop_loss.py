@@ -73,6 +73,11 @@ def evaluate_stop_loss(position: dict, current_price: float | Decimal, rules: di
     Returns:
         True 表示触发止损
     """
+    # 5.105.2 修复: current_price 可能是 float, stop_price 是 Decimal
+    # float 0.1 的精确值大于 Decimal('0.1'),可能导致止损该触发时未触发
+    # 函数入口统一转换为 Decimal,确保比较精度一致
+    if not isinstance(current_price, Decimal):
+        current_price = Decimal(str(current_price))
     method = rules.get("method", "fixed_pct")
     entry_price = Decimal(str(position.get("entry_price", 0)))
     position_qty = Decimal(str(position.get("qty", 0)))

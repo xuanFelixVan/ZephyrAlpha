@@ -201,7 +201,9 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             snapshot_time=datetime.now(UTC).isoformat(),
             portfolio_id=portfolio_id,
             portfolio_var_1d=var_f,
-            max_drawdown_current=float(self._active_limits.max_drawdown_limit or 0.0),
+            # 5.105.13 修复: `or 0.0` 掩盖 None(未设置限额)与 0.0(不允许回撤)的语义差异
+            # 显式判断 is not None,保留语义区分
+            max_drawdown_current=float(self._active_limits.max_drawdown_limit) if self._active_limits.max_drawdown_limit is not None else 0.0,
             gross_leverage=float(self._active_limits.max_gross_leverage),
             top_position_concentration=float(self._active_limits.max_single_position),
             sector_concentrations={},

@@ -164,7 +164,10 @@ class DefaultRiskValidator(RiskValidator):
                 total_mv_dec = Decimal(str(total_mv))
                 nav_dec = Decimal(str(total_nav)) if isinstance(total_nav, float) else total_nav
                 dd_from_peak = Decimal("1") - total_mv_dec / nav_dec
-                if dd_from_peak > drawdown_limit:
+                # 5.105.1 修复: drawdown_limit 可能是 float, Decimal > float 在 Python 3 抛 TypeError
+                # 或精度差异(float 0.2 的精确 Decimal 表示略大于 0.2)导致回撤达阈值时违规未触发
+                dd_limit_dec = Decimal(str(drawdown_limit)) if not isinstance(drawdown_limit, Decimal) else drawdown_limit
+                if dd_from_peak > dd_limit_dec:
                     violations.append(
                         ViolationDetail(
                             constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,

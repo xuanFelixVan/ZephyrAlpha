@@ -6627,6 +6627,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=13(Decimal/float精度问题需逐处审查强制转换安全)
 
+> **第39轮修复状态（2026-07-05）**：FIXED=5(5.105.1 default_risk_validator dd_from_peak>drawdown_limit 统一转Decimal比较+5.105.2 stop_loss.evaluate_stop_loss 函数入口统一current_price转Decimal+5.105.3/4 default_tca_engine int(Decimal)向零截断改to_integral_value(ROUND_HALF_EVEN)银行家舍入(2个重复文件)+5.105.13 risk_manager_orchestrator `or 0.0`掩盖None改显式is not None判断), 0 DRIFTED, STILL_VALID=8(5.105.5-12 Decimal精度问题涉及字段类型变更/跨模块影响需更深审查)。
+
 #### 5.105.1 HIGH级（2个）
 
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |

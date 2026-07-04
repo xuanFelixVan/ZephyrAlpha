@@ -37,7 +37,7 @@ SSoT: cross_layer_contracts.yaml → CTR-005 + CTR-P1-007
 from __future__ import annotations
 
 import logging
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_EVEN
 
 from zephyr.governance.observability_governance.analytics_base import TCAEngineBase
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
@@ -73,8 +73,10 @@ class DefaultTCAEngine(TCAEngineBase):
             order_id=order.order_id,
             symbol=fill.symbol,
             direction=direction,
-            intended_quantity=int(order.quantity),
-            actual_quantity=int(fill.filled_quantity),
+            # 5.105.3 修复: int(Decimal) 向零截断而非四舍五入,执行报告数量被低估
+            # 改用 to_integral_value(rounding=ROUND_HALF_EVEN) 银行家舍入
+            intended_quantity=int(order.quantity.to_integral_value(rounding=ROUND_HALF_EVEN)),
+            actual_quantity=int(fill.filled_quantity.to_integral_value(rounding=ROUND_HALF_EVEN)),
             intended_price=intended_price,
             vwap_price=fill.fill_price,
             slippage_bps=float(slippage_bps),
