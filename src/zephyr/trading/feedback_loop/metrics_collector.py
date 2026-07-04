@@ -100,8 +100,11 @@ class MetricsCollector:
         return metric_id
 
     def bulk_record(self, records: list[dict[str, Any]]) -> list[str]:
+        # 5.24.3 修复：N+1 INSERT -> executemany 批量插入
         ids = []
         conn = self._get_conn()
+        now = time.time()
+        batch: list[tuple] = []
         for r in records:
             metric_id = str(uuid.uuid4())
             mt = r["metric_type"]
@@ -109,11 +112,12 @@ class MetricsCollector:
                 mt = mt.value
             tags = r.get("tags")
             tags_json = json.dumps(tags) if tags else None
-            conn.execute(
-                "INSERT INTO metrics (metric_id, metric_type, value, tags, created_at) VALUES (?, ?, ?, ?, ?)",
-                (metric_id, mt, r["value"], tags_json, time.time()),
-            )
+            batch.append((metric_id, mt, r["value"], tags_json, now))
             ids.append(metric_id)
+        conn.executemany(
+            "INSERT INTO metrics (metric_id, metric_type, value, tags, created_at) VALUES (?, ?, ?, ?, ?)",
+            batch,
+        )
         conn.commit()
         return ids
 

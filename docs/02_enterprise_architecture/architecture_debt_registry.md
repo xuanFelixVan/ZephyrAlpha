@@ -2508,21 +2508,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：部署失败+onboarding成本增加。
 - **修复**：补全.env.example，每个key加注释说明用途。
 
-#### 5.23.6 [HIGH] __init__.py的__all__导出函数局部变量
+#### 5.23.6 [✓ FIXED: 2026-07-04] __init__.py的__all__导出函数局部变量
 
-- **文件**：[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/__init__.py#L164-L184)
-- **证据**：`__all__ = ["dsp", "env", "p", ...]` 其中`dsp`/`env`/`p`是函数内局部变量名
-- **问题**：`__all__`应导出模块级公共API。导出局部变量名导致`from config import *`实际什么也导不出（局部变量不在模块命名空间）。
-- **影响**：`from config import *`静默失败，调用方误以为导入成功。
-- **修复**：`__all__`只列模块级公开对象名。
+- **修复**：[config/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/config/__init__.py#L162-L166) `__all__` 已修正为 `["AppConfig", "load_config", "reload_config"]`，全部为模块级公开对象，不再包含 `dsp`/`env`/`p` 等函数内局部变量名。
 
-#### 5.23.7 [MEDIUM] _TRADING_SYMBOLS懒加载表指向幻影路径
+#### 5.23.7 [✓ FIXED: 2026-07-04] _TRADING_SYMBOLS懒加载表指向幻影路径
 
-- **文件**：[constants.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py#L67-L84)
-- **证据**：懒加载表映射指向`zephyr.execution.trading.*`但该路径不存在
-- **问题**：常量表声明了交易符号的懒加载源，但源路径是幻影。首次访问触发ImportError。
-- **影响**：运行时崩溃（如果该路径被触发）。
-- **修复**：修正路径指向真实模块，或删除该懒加载条目。
+- **修复**：[constants.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/constants.py#L67-L83) `_TRADING_SYMBOLS` 懒加载表路径已从幻影 `zephyr.execution.trading.*` 修正为真实路径 `zephyr.trading.trading_contracts.market.instrument` 和 `zephyr.trading.trading_contracts.execution.order`。
+- 验证：`find_spec` 全部返回 OK。
 
 #### 5.23.8 [LOW] 部分配置文件缺version字段
 
@@ -2536,10 +2529,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 4 | 5.23.1/5.23.2/5.23.6/5.23.8前述4个HIGH |
-| MEDIUM | 4 | 5.23.3/5.23.4/5.23.5/5.23.7 |
-| LOW | 1 | 5.23.8 |
-| **合计** | **9** | |
+| CRITICAL/HIGH | 1（保留） | 5.23.2（35+ YAML schema 大规模重构） |
+| MEDIUM | 2（保留） | 5.23.4/5.23.5（.env.example不匹配，count增加：13+文档化未读取，2+读取未文档化） |
+| LOW | 1（保留） | 5.23.8（version字段） |
+| 已修复 | 2 | 5.23.6/5.23.7 |
+| **合计** | **6**（含保留，不含未列出的5.23.1/5.23.3） | |
 
 ---
 
@@ -2564,46 +2558,45 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：全量审计耗时从分钟级→小时级。
 - **修复**：改为基于特征哈希的O(n)分组（按event_type/symbol分桶），桶内才做O(k²)。
 
-#### 5.24.3 [MEDIUM] bulk_record() N+1 INSERT
+#### 5.24.3 [✓ FIXED: 2026-07-04] bulk_record() N+1 INSERT
 
-- **文件**：[metrics_collector.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/metrics_collector.py#L102-L117)
-- **证据**：`bulk_record()`在for循环内逐条`INSERT`
-- **问题**：批量记录本应用`executemany()`，却用N次单条INSERT。每条INSERT一次网络往返+一次事务。
-- **影响**：批量上报1000条指标=1000次DB往返。
-- **修复**：改用`cursor.executemany(sql, batch)`。
+- **修复**：[metrics_collector.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/metrics_collector.py#L102-L122) `bulk_record()` 已改为 `conn.executemany(sql, batch)` 批量插入，先在内存构造 `batch: list[tuple]`，再一次 executemany + 单次 commit，消除 N+1 INSERT。
 
-#### 5.24.4 [MEDIUM] DFS环检测N+1查询
+#### 5.24.4 [✓ DRIFTED: 2026-07-04] DFS环检测N+1查询
 
-- **文件**：依赖图分析路径
-- **证据**：DFS每次访问节点都查一次DB获取邻居，而非预加载邻接表
-- **问题**：环检测对每个节点单独查询邻居，N个节点=N次DB查询。
-- **影响**：大图分析时DB连接池耗尽。
-- **修复**：预加载全图邻接表到内存dict，DFS在内存中遍历。
+- **状态**：问题描述不准确——全项目所有 `detect_cycles` / `_find_cycles` 实现均基于内存中的 adjacency dict / nodes dict 进行 DFS，**无 N+1 DB 查询模式**：
+  - [dependency_graph.py#L81-L116](file:///D:/ZephyrAlpha/src/zephyr/shared/dependency/dependency_graph.py#L81-L116) 使用 `self._nodes` 内存 dict
+  - [cross_cutting.py#L81-L111](file:///D:/ZephyrAlpha/src/zephyr/security/access_control/cross_cutting.py#L81-L111) 使用 `self._adjacency` 内存 dict
+  - [en_001_circular_dependency.py#L152-L177](file:///D:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/invariants/en_001_circular_dependency.py#L152-L177) 使用传入的 graph dict
+  - `wave_generator.py` 的 `SELECT task_id, depends_on FROM tasks` 是一次性预加载所有依赖，非 N+1
+- **结论**：DRIFTED（问题描述与代码实际不符），无需修复。
 
-#### 5.24.5 [MEDIUM] MemoryCache LRU实现O(n)且含死代码
+#### 5.24.5 [✓ FIXED: 2026-07-04] MemoryCache LRU实现O(n)且含死代码
 
-- **文件**：MemoryCache实现
-- **证据**：LRU淘汰逻辑用`list.remove()`+`list.pop(0)`，O(n)操作；含未使用的淘汰分支
-- **问题**：标准LRU应用`OrderedDict`（O(1) move_to_end/popitem），现用list实现O(n)。
-- **影响**：缓存项增多后性能退化。
-- **修复**：改用`collections.OrderedDict`。
+- **修复**：[cache.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/cache.py#L120-L151) `MemoryCache` 的 LRU 实现已从 `list` O(n) 改为 `collections.OrderedDict` O(1)：
+  - `self._access_order: OrderedDict[str, None] = OrderedDict()`
+  - `_touch()` 用 `move_to_end(key)` O(1)
+  - `_evict_lru()` 用 `popitem(last=False)` O(1) LRU 驱逐
+  - `_evict_expired()` / `delete()` 用 `del self._access_order[k]` O(1)
 
-#### 5.24.6 [MEDIUM] _pending_alerts无界增长
+#### 5.24.6 [✓ FIXED: 2026-07-04] _pending_alerts无界增长
 
-- **文件**：告警系统
-- **证据**：`_pending_alerts.append()`无上限，无定期flush机制
-- **问题**：如果告警发送失败，pending列表无限增长，最终OOM。
-- **影响**：长时间运行后内存泄漏。
-- **修复**：加`maxlen=1000`，超限丢弃最旧+记日志。
+- **修复**：[alerts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/alerts/__init__.py#L44-L50) `AlertSubsystem._pending_alerts` 已从 `list[dict]` 改为 `deque[dict]` with `maxlen=1000`：
+  - 新增类常量 `_MAX_PENDING_ALERTS = 1000`
+  - `fire()` / `evaluate()` 在 append/extend 前检查是否将溢出，溢出时 `logger.warning` 记录
+  - `ack()` 改为遍历删除（deque 不支持列表推导重新赋值，否则丢失 maxlen）
+  - deque 满后 append/extend 自动丢弃最旧告警，消除 OOM 风险
 
 #### 5.24.7 严重度汇总
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 2 | 5.24.1/5.24.2 |
-| MEDIUM | 4 | 5.24.3/5.24.4/5.24.5/5.24.6 |
+| CRITICAL/HIGH | 2（保留） | 5.24.1（全src/零@lru_cache——设计选择，项目用MemoryCache统一缓存抽象）/5.24.2（correlation_engine O(n²) Jaccard，需具体优化方案） |
+| MEDIUM | 0 | |
 | LOW | 0 | |
-| **合计** | **6** | |
+| 已修复 | 3 | 5.24.3/5.24.5/5.24.6 |
+| DRIFTED | 1 | 5.24.4（所有DFS均在内存中遍历，无N+1 DB查询） |
+| **合计** | **6**（含保留） | |
 
 ---
 
