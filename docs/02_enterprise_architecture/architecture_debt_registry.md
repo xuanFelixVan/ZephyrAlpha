@@ -2160,16 +2160,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：事务边界/幂等性/部分失败/状态恢复/重试正确性/优雅降级/资源泄漏/错误传播
 > 审计方法：Grep + Read真实文件取证（task_repo.py、apply_depgraph.py、sync_yaml_to_depgraph.py、retry实现、dlq_retry_policy.py等）
 
-#### 5.15.1 transition()事务内subprocess循环验收长时持锁【HIGH】
-- 证据：[task_repo.py:1566](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `with self._write_tx() as conn:` 开启BEGIN IMMEDIATE；`:1612` 事务内调 `_run_circular_acceptance`；`:1807-1835` 循环2轮×N命令，每命令 `subprocess.run(shell=True,timeout=120)`，最坏240s+持RESERVED锁
-- 病根：根因5（事务边界与IO混合）
-- 修复：循环验收移到`_write_tx`之前——先全部验收，再开短事务落盘
-
-#### 5.15.2 transition(COMPLETED) DB提交后git失败仅warning不补偿【HIGH】
-- 证据：[task_repo.py:1626-1650](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) UPDATE tasks COMMIT；`:1687-1692` `_auto_commit_on_completion` 包在 `try/except:warning`，DB已commit不回滚
-- 病根：根因5（缺saga补偿模式）
-- 修复：Outbox模式——COMPLETED+pending_git_commit事件异步重试
-
 #### 5.15.4 batch_review 7维度跨7独立事务部分失败【MEDIUM】
 - 证据：[task_repo.py:1885-1895](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `for dim in _BATCH_REVIEW_DIMENSIONS:` 循环内每次单独事务INSERT，第3维度异常前2已commit，consecutive_zero错乱
 - 病根：根因5（批量无原子边界）

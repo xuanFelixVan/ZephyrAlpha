@@ -1574,6 +1574,17 @@ class TaskRepository:
             if not note or not note.strip():
                 raise RootCauseRequiredError(task_id)
 
+        # 5.15.1 修复：循环验收移到写事务之前——先全部验收，再开短事务落盘
+        # 避免事务内 subprocess.run 持 RESERVED 锁 240s+（根因5：事务边界与IO混合）
+        if to_status == TaskStatus.COMPLETED:
+            with self._read_tx() as read_conn:
+                _pre_row = self._fetch_row(read_conn, task_id)
+            if _pre_row is not None:
+                _pre_task = _row_to_taskcard(_pre_row)
+                _pre_cmds = getattr(_pre_task, "post_sync_standard", []) or []
+                if _pre_cmds:
+                    self._run_circular_acceptance(task_id, _pre_cmds)
+
         try:
             with self._write_tx() as conn:
                 row = self._fetch_row(conn, task_id)
@@ -1616,12 +1627,7 @@ class TaskRepository:
                         f"非法转换 {from_status.value} → {to_status.value}（task_id={task_id!r}）"
                     )
 
-                # COMPLETED 转换时执行 post_sync_standard 循环验收
-                if to_status == TaskStatus.COMPLETED:
-                    task_obj = _row_to_taskcard(row)
-                    post_sync_cmds = getattr(task_obj, "post_sync_standard", []) or []
-                    if post_sync_cmds:
-                        self._run_circular_acceptance(task_id, post_sync_cmds)
+                # 5.15.1 修复：循环验收已移到写事务之前（见上方），此处不再重复执行
 
                 now = now_iso()
                 set_ready_at = to_status == TaskStatus.READY
@@ -1672,6 +1678,16 @@ class TaskRepository:
                     task_id=task_id,
                     session_id=session_id,
                 )
+                # 5.15.2 修复：COMPLETED 时记录 git_commit_pending 事件，与状态转换原子落盘
+                # 若后续 git commit 失败，该事件保留为 pending，可被 reconciler 重试（Outbox 模式）
+                if to_status == TaskStatus.COMPLETED:
+                    self._record_event(
+                        conn,
+                        "git_commit_pending",
+                        {"task_id": task_id},
+                        task_id=task_id,
+                        session_id=session_id,
+                    )
                 self._recalculate_dependent_status(conn, task_id, to_status)
                 updated_row = self._fetch_row(conn, task_id)
 
@@ -1696,12 +1712,29 @@ class TaskRepository:
         )
 
         # DM-202918: transition(COMPLETED)后自动git commit files_in_scope
+        # 5.15.2 修复：记录 git commit 结果事件；失败时 pending 事件保留可被 reconciler 重试
         if to_status == TaskStatus.COMPLETED:
             try:
                 task_obj = _row_to_taskcard(updated_row)
                 self._auto_commit_on_completion(task_id, task_obj)
+                with self._write_tx() as ev_conn:
+                    self._record_event(
+                        ev_conn,
+                        "git_commit_completed",
+                        {"task_id": task_id},
+                        task_id=task_id,
+                        session_id=session_id,
+                    )
             except Exception as exc:
                 logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc)
+                with self._write_tx() as ev_conn:
+                    self._record_event(
+                        ev_conn,
+                        "git_commit_failed",
+                        {"task_id": task_id, "error": str(exc)[:500]},
+                        task_id=task_id,
+                        session_id=session_id,
+                    )
 
         # DM-400/DM-401: transition(COMPLETED)后提醒剩余IN_PROGRESS任务
         if to_status == TaskStatus.COMPLETED:
