@@ -2629,13 +2629,13 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：AI难以追踪执行流。
 - **修复**：提取子函数（每个阶段一个`_phase_*`函数）。
 
-#### 5.25.4 [MEDIUM] register_lazy含4+幻影路径含governance_governance拼写错误
+#### 5.25.4 [✓ FIXED: 2026-07-04] register_lazy含4+幻影路径含governance_governance拼写错误
 
-- **文件**：[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L163-L194)
-- **证据**：`register_lazy`调用映射含`zephyr.governance.governance.*`（重复单词）
-- **问题**：lazy import的目标路径是幻影（路径不存在），且含拼写错误`governance_governance`。
-- **影响**：首次访问触发ImportError；拼写错误表明AI生成时未校验。
-- **修复**：修正路径或删除无效映射。
+- **修复**：[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L159-L177) `register_lazy` 调用映射已修正（commit `26a723966c`）：
+  - 4个幻影路径修正（vector-memory/llm-security/_cross_layer/contract_registry）
+  - 删除 signal 域映射（D-SIGNAL 已拆分为3个平级兄弟域）
+  - `governance_governance` 拼写错误已消除
+  - 当前所有 `register_lazy` 目标路径均有效
 
 #### 5.25.5 [MEDIUM] DaemonRegistry.stop_all零调用
 
@@ -2649,10 +2649,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 2 | 5.25.1/5.25.2 |
-| MEDIUM | 3 | 5.25.3/5.25.4/5.25.5 |
+| CRITICAL/HIGH | 2（保留） | 5.25.1（contract_registry 1044行，大规模重构）/5.25.2（AutoRuntimeCore 42方法，大规模重构） |
+| MEDIUM | 2（保留） | 5.25.3（orchestrate() 114行，复杂度重构）/5.25.5（stop_all 仅测试调用，需接入shutdown路径） |
 | LOW | 0 | |
-| **合计** | **5** | |
+| 已修复 | 1 | 5.25.4 |
+| **合计** | **5**（含保留） | |
 
 ---
 
@@ -2677,13 +2678,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：资源泄漏+依赖未释放（如DB连接在依赖它的组件前关闭）。
 - **修复**：shutdown严格按boot逆序，每个组件必须有shutdown方法。
 
-#### 5.26.3 [HIGH] health_check硬编码True
+#### 5.26.3 [✓ FIXED: 2026-07-04] health_check硬编码True
 
-- **文件**：[resource_optimization.py](file:///D:/ZephyrAlpha/src/zephyr/trading/resource_optimization.py#L630-L645)
-- **证据**：`health_check()`返回`{"cache_healthy": True, "process_pool_healthy": True}`硬编码
-- **问题**：健康检查永远返回True，不检查真实状态。监控无法发现故障。
-- **影响**：系统故障但健康检查通过→流量继续打入故障节点。
-- **修复**：真实检查cache命中率、process_pool活跃数。
+- **修复**：[resource_optimization.py](file:///D:/ZephyrAlpha/src/zephyr/trading/resource_optimization.py#L631-L659) `health_check()` 已改为真实检查：
+  - `cache_healthy`：调用 `self._file_cache.get_stats()` 获取真实 CacheStats，异常时 `logger.warning` + 返回 False
+  - `process_pool_healthy`：调用 `self._process_pool.get_stats()` 检查 `zombie_count == 0`，异常时 `logger.warning` + 返回 False
 
 #### 5.26.4 [HIGH] TeardownManager.teardown假清理
 
@@ -2693,13 +2692,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：系统看似已清理实则资源全泄漏（DB连接、文件句柄、子进程）。
 - **修复**：每个系统调用其真实`cleanup()`/`close()`/`shutdown()`方法。
 
-#### 5.26.5 [HIGH] SIGTERM未处理
+#### 5.26.5 [✓ FIXED: 2026-07-04] SIGTERM未处理
 
-- **文件**：[__main__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/__main__.py#L60)
-- **证据**：`signal.signal(signal.SIGINT, handler)`有，`SIGTERM`无
-- **问题**：Docker/K8s发送SIGTERM优雅停止，但进程只处理SIGINT。`kill <pid>`或容器停止时进程被SIGKILL强制终止，无优雅关闭。
-- **影响**：数据丢失+资源未释放。
-- **修复**：`signal.signal(signal.SIGTERM, handler)`与SIGINT共用handler。
+- **修复**：[__main__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/__main__.py#L60-L63) 已添加 `signal.signal(signal.SIGTERM, _signal_handler)`，与 SIGINT 共用 handler。Docker/K8s 发送 SIGTERM 时进程能优雅关闭。
 
 #### 5.26.6 [MEDIUM] timeout值分散硬编码
 
@@ -2725,13 +2720,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：故障恢复困难。
 - **修复**：boot()用try/except，失败时逆序调用已启动组件的shutdown。
 
-#### 5.26.9 [MEDIUM] resource_optimization.py的health_check与5.26.3重复确认
+#### 5.26.9 [✓ FIXED: 2026-07-04] resource_optimization.py的health_check与5.26.3重复确认
 
-- **文件**：同5.26.3
-- **证据**：health_check中`process_pool_healthy=True`也是硬编码
-- **问题**：process_pool健康状态同样硬编码，与cache_healthy同属一类问题。
-- **影响**：与5.26.3相同。
-- **修复**：与5.26.3合并修复。
+- **修复**：与 5.26.3 合并修复。`process_pool_healthy` 已改为真实检查 `self._process_pool.get_stats().zombie_count == 0`。
 
 #### 5.26.10 [MEDIUM] DaemonRegistry.stop_all零调用（与5.25.5交叉确认）
 
@@ -2745,10 +2736,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 5 | 5.26.1/5.26.2/5.26.3/5.26.4/5.26.5 |
-| MEDIUM | 5 | 5.26.6/5.26.7/5.26.8/5.26.9/5.26.10 |
+| CRITICAL/HIGH | 3（保留） | 5.26.1（boot() 无失败检查，大规模重构）/5.26.2（shutdown() 非逆序，大规模重构）/5.26.4（TeardownManager prototype，需跨模块定义 cleanup 接口） |
+| MEDIUM | 4（保留） | 5.26.6（timeout 跨模块整理）/5.26.7（rate_limit/circuit_breaker 需检查所有调用方）/5.26.8（与5.26.1相关）/5.26.10（同5.25.5） |
 | LOW | 0 | |
-| **合计** | **10** | |
+| 已修复 | 3 | 5.26.3/5.26.5/5.26.9 |
+| **合计** | **10**（含保留） | |
 
 ---
 

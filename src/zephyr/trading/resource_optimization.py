@@ -635,14 +635,27 @@ class ResourceOptimizationEngine:
         if self._last_snapshot is not None:
             age = time.time() - self._last_snapshot.timestamp
         status = DaemonRegistry.status()
+        # 5.26.3/5.26.9 修复：health_check 真实检查 cache 和 process_pool 状态（原硬编码 True）
+        try:
+            cache_stats = self._file_cache.get_stats()
+            cache_healthy = cache_stats.total_entries >= 0
+        except Exception as e:
+            logger.warning("health_check: cache stats failed: %s", e)
+            cache_healthy = False
+        try:
+            pool_stats = self._process_pool.get_stats()
+            process_pool_healthy = pool_stats.zombie_count == 0
+        except Exception as e:
+            logger.warning("health_check: process_pool stats failed: %s", e)
+            process_pool_healthy = False
         return HealthCheckResult(
             engine_running=running,
             monitor_loop_alive=loop_alive,
             last_snapshot_age_s=round(age, 1),
             pressure_level=self._pressure_sm.current,
             daemon_count=len(status),
-            cache_healthy=True,
-            process_pool_healthy=True,
+            cache_healthy=cache_healthy,
+            process_pool_healthy=process_pool_healthy,
         )
 
     def get_pressure_state(self) -> PressureState:
