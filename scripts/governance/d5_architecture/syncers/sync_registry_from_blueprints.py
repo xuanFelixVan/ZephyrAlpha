@@ -80,7 +80,6 @@ LAYER_DIR_MAP = {
     "risk": "L2_domain",
     "pf_core": "L2_domain",
     "ex_core": "L2_domain",
-    "pf_core": "L2_domain",
     "frontend": "L3_application",
     "research": "L2_domain",
     "compliance": "L2_domain",
