@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-04T20:12:34Z'
+generated_at: '2026-07-04T20:14:18Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 143
@@ -67,7 +67,7 @@ files:
   rule_form: ''
   scope: file_operation
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -94,7 +94,7 @@ files:
   rule_form: ''
   scope: feature_creation
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -113,7 +113,7 @@ files:
   rule_form: ''
   scope: task_management
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -132,7 +132,7 @@ files:
   rule_form: ''
   scope: script_execution
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -151,7 +151,7 @@ files:
   rule_form: ''
   scope: code_modification
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -170,7 +170,7 @@ files:
   rule_form: ''
   scope: code_structure
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -191,7 +191,7 @@ files:
   rule_form: ''
   scope: code_behavior
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -210,7 +210,7 @@ files:
   rule_form: ''
   scope: output_verification
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -229,7 +229,7 @@ files:
   rule_form: ''
   scope: security_guard
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -248,7 +248,7 @@ files:
   rule_form: ''
   scope: code_naming
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -267,7 +267,7 @@ files:
   rule_form: ''
   scope: code_type_import
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -285,7 +285,7 @@ files:
   rule_form: ''
   scope: code_test_security
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -303,7 +303,7 @@ files:
   rule_form: ''
   scope: architecture_dependency
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -324,7 +324,7 @@ files:
   rule_form: ''
   scope: architecture_blueprint
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -345,7 +345,7 @@ files:
   rule_form: ''
   scope: architecture_path_registry
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -366,7 +366,7 @@ files:
   rule_form: ''
   scope: architecture_drift
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -387,7 +387,7 @@ files:
   rule_form: ''
   scope: architecture_governance_order
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -405,7 +405,7 @@ files:
   rule_form: ''
   scope: code_operation_prohibition
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -429,7 +429,7 @@ files:
   rule_form: ''
   scope: security_prohibition
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -452,7 +452,7 @@ files:
   rule_form: ''
   scope: governance_prohibition
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -475,7 +475,7 @@ files:
   rule_form: ''
   scope: other_prohibition
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -518,7 +518,7 @@ files:
   rule_form: ''
   scope: conditional_prohibition_code_security
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -534,7 +534,7 @@ files:
   rule_form: ''
   scope: conditional_prohibition_governance_doc
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -550,7 +550,7 @@ files:
   rule_form: ''
   scope: methodology_diagnosis
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -579,7 +579,7 @@ files:
   rule_form: ''
   scope: methodology_decision
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -599,7 +599,7 @@ files:
   rule_form: ''
   scope: methodology_quality
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -617,7 +617,7 @@ files:
   rule_form: ''
   scope: methodology_collaboration
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -634,7 +634,7 @@ files:
   rule_form: ''
   scope: doc_structure_naming
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -657,7 +657,7 @@ files:
   rule_form: ''
   scope: doc_operation_safety
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -675,7 +675,7 @@ files:
   rule_form: ''
   scope: doc_numbering_metadata
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -697,7 +697,7 @@ files:
   rule_form: ''
   scope: security_access
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -727,7 +727,7 @@ files:
   rule_form: ''
   scope: module_governance
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -747,7 +747,7 @@ files:
   rule_form: ''
   scope: module_registry_sync
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -764,7 +764,7 @@ files:
   rule_form: ''
   scope: task_card_lifecycle
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -785,7 +785,7 @@ files:
   rule_form: ''
   scope: task_construction_verification
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -802,7 +802,7 @@ files:
   rule_form: ''
   scope: architecture_gate_transition
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -820,7 +820,7 @@ files:
   rule_form: ''
   scope: architecture_qualification
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -838,7 +838,7 @@ files:
   rule_form: ''
   scope: architecture_ctr_injection
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -854,7 +854,7 @@ files:
   rule_form: ''
   scope: ai_hallucination
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -871,7 +871,7 @@ files:
   rule_form: ''
   scope: ai_model_routing
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -889,7 +889,7 @@ files:
   rule_form: ''
   scope: meta_rule_classification
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -908,7 +908,7 @@ files:
   rule_form: ''
   scope: meta_standard_template
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -927,7 +927,7 @@ files:
   rule_form: ''
   scope: meta_metadata_metrics
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -946,7 +946,7 @@ files:
   rule_form: ''
   scope: compliance_audit
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -964,7 +964,7 @@ files:
   rule_form: ''
   scope: data_governance
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -982,7 +982,7 @@ files:
   rule_form: ''
   scope: engineering_code_restructure
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -998,7 +998,7 @@ files:
   rule_form: ''
   scope: engineering_header_expansion
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -1015,7 +1015,7 @@ files:
   rule_form: ''
   scope: operational_vibe_coding
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -1033,7 +1033,7 @@ files:
   rule_form: ''
   scope: operational_domain
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -1053,7 +1053,7 @@ files:
   rule_form: ''
   scope: domain_data_factor
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -1070,7 +1070,7 @@ files:
   rule_form: ''
   scope: domain_risk_analytics
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: warning
   tier: L2
@@ -1087,7 +1087,7 @@ files:
   rule_form: ''
   scope: cross_blueprint_change_cleanup
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -1104,7 +1104,7 @@ files:
   rule_form: ''
   scope: automation_dual_track
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -1120,7 +1120,7 @@ files:
   rule_form: ''
   scope: depgraph_access_protocol
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -1140,7 +1140,7 @@ files:
   rule_form: ''
   scope: arch_domain_capacity_governance
   stability: stable
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -1172,7 +1172,7 @@ files:
   rule_form: procedural
   scope: module_creation_workflow
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -1189,7 +1189,7 @@ files:
   rule_form: declarative
   scope: global
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L0
@@ -1207,7 +1207,7 @@ files:
   rule_form: ''
   scope: depgraph_scan_exclusions
   stability: evolving
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: error
   tier: L1
@@ -1226,7 +1226,7 @@ files:
   rule_form: ''
   scope: schema_version_write_protection
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
@@ -1244,7 +1244,7 @@ files:
   rule_form: declarative
   scope: global
   stability: frozen
-  layer: compliance
+  layer: L1_foundation
   superseded_by: ''
   severity: critical
   tier: L0
