@@ -993,7 +993,12 @@ def _pre_merge_gate_check(
 
             _gw._run_git = _wt_run_git
             try:
-                _changed_abs = [str((root / rf).resolve()) for rf in rel_files]
+                # 检查 worktree 文件（session 分支的内容），而非主工作区文件
+                # 修复 (2026-07-05 审计 AI-02)：原实现用 root 路径检查主工作区文件，
+                # 主工作区 HEAD 版本可能缺少 ttl 等字段（历史遗留），导致 pre-merge gate
+                # 误判 session 分支变更违规。pre-merge gate 的目的是检查 session 分支的
+                # 文件内容是否合法，应该读取 worktree 文件（session 分支的内容）。
+                _changed_abs = [str((wt_path / rf).resolve()) for rf in rel_files]
                 _gate_results = _gw._gate_registry.check_all(
                     _gw, _changed_abs, session_id=session_id
                 )
