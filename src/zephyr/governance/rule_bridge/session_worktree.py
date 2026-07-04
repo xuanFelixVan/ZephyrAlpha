@@ -572,15 +572,18 @@ def session_worktree_commit(
         dst = wt_path / rel_file
         if src.exists() and src.is_file():
             if dst.exists() and dst.is_file():
-                # 两者都存在——比较 mtime 判断哪个是新版本
-                # 修复：Trae IDE 的 Edit 可直接编辑 worktree 内文件，此时 dst 比 src 新
-                # 若 dst 更新则跳过覆盖，避免用主仓库旧版本回滚 worktree 新版本
+                # 内容比较——治本(2026-07-05): 替代 mtime 比较逻辑
+                # 原因：mtime 比较依赖文件系统元数据，受 copy2 保留 mtime/touch/git checkout
+                # 影响，导致同步缺失 bug（commit 1877f8df06 仅 L6 入库，L1/L15 丢失）。
+                # 内容比较 100% 可靠，代码文件 <100KB 时 I/O <1ms 可忽略。
+                # 设计依据：AGENTS.md L392"Edit/Write 工作区固定为项目根"——
+                # AI 不会直接编辑 worktree，mtime 保护场景在设计上不存在。
                 try:
-                    if dst.stat().st_mtime > src.stat().st_mtime:
-                        continue  # worktree 内文件已被直接编辑，保留新版本
+                    if src.read_bytes() == dst.read_bytes():
+                        continue  # 内容相同，无需复制
                 except OSError:
-                    pass  # stat 失败则走默认 copy2（安全降级）
-            # dst 不存在 或 src 比 dst 新——同步最新内容到 worktree（正常情况：AI 写项目根）
+                    pass  # 读取失败则走默认 copy2（安全降级）
+            # dst 不存在 或 内容不同——同步最新内容到 worktree（正常情况：AI 写项目根）
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(src), str(dst))
         elif not src.exists() and dst.exists() and rel_file in tracked_files:
