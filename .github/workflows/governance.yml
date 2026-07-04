@@ -5,7 +5,7 @@
 #
 # 五层强制集成架构 — Layer 5（最后防线）:
 #   所有 pre-commit GATE 遗漏的违规 → CI 全量回归扫描拦截
-#   对标: AGENTS.md §5.2.2 十维审计清单 + RULE-SEVEN Enforcement Matrix
+#   对标: RULE-SEVEN Enforcement Matrix（五层强制集成架构）
 #
 # 与 pre-commit 的关系:
 #   pre-commit: 客户端侧，只检查用户本次变更的文件（快，~5s）
