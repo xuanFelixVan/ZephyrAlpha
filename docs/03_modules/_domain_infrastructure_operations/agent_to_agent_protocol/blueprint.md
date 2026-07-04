@@ -83,7 +83,7 @@ tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha Agent 间通信协议（A2A Protocol）——它解决了多 Agent 场景下的发现、通信、协调、冲突解决与安全防护问题。核心职责包括：Agent Card 发现与身份验证、Task 状态机与消息路由、结构化协商与共识、经济护栏与资源分配、协议安全与形式化验证、宪法治理与免疫系统。当前规模 57 个代码骨架（scaffold 级），目标容量 1,500 模块 × 10,000 治理脚本 × 100 并发 Agent。上游依赖 MOD-INF-018(RBAC)/MOD-INF-022(Escalation)/MOD-INF-019(Agent Spec)，下游被所有 L02-L13 层 Agent 消费。
+本蓝图描述 ZephyrAlpha Agent 间通信协议（A2A Protocol）——它解决了多 Agent 场景下的发现、通信、协调、冲突解决与安全防护问题。核心职责包括：Agent Card 发现与身份验证、Task 状态机与消息路由、结构化协商与共识、经济护栏与资源分配、协议安全与形式化验证、宪法治理与免疫系统。当前规模 57 个代码骨架（scaffold 级），目标容量 1,500 模块 × 10,000 治理脚本 × 100 并发 Agent。上游依赖 MOD-INF-018(RBAC)/MOD-INF-022(Escalation)/MOD-INF-019(Agent Spec)，下游被所有业务域 Agent 消费。
 
 ---
 

@@ -1424,7 +1424,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     if dom_domain_fragment.startswith(("D-", "D_")):
         dom_domain_fragment = dom_domain_fragment[2:]
 
-    # token 化（按 _ 和 - 分割），过滤短 token（长度<3，避免 L06/EX 等层代码误匹配）
+    # token 化（按 _ 和 - 分割），过滤短 token（长度<3，避免短代码误匹配）
     bp_tokens = {t for t in re.split(r"[_-]", bp_domain_fragment) if len(t) >= 3}
     dom_tokens = {t for t in re.split(r"[_-]", dom_domain_fragment) if len(t) >= 3}
 

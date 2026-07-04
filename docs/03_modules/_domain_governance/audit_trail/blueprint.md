@@ -69,7 +69,7 @@ references:
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 审计追踪链——它解决了 AI 操作的不可变记录与密码学完整性保证问题。核心职责包括：JSONL 唯一真源写入、哈希链防篡改、HMAC 系统级签名、Agent 级 Ed25519 不可否认签名、CoT 推理链审计、13 种异常行为签名检测、蓝图漂移对账、三角闭环反馈驱动规则演进。当前规模 35 个代码文件（scaffold 阶段核心已实现），目标容量 100 AI 并发 × 10,000 脚本 × 峰值 120 条/秒写入。上游依赖 MOD-INF-016 Shared Core 承载层 + MOD-GATE_ENGINE Gate Engine，下游被所有 L02-L13 层模块消费审计数据。
+本蓝图描述 ZephyrAlpha 审计追踪链——它解决了 AI 操作的不可变记录与密码学完整性保证问题。核心职责包括：JSONL 唯一真源写入、哈希链防篡改、HMAC 系统级签名、Agent 级 Ed25519 不可否认签名、CoT 推理链审计、13 种异常行为签名检测、蓝图漂移对账、三角闭环反馈驱动规则演进。当前规模 35 个代码文件（scaffold 阶段核心已实现），目标容量 100 AI 并发 × 10,000 脚本 × 峰值 120 条/秒写入。上游依赖 MOD-INF-016 Shared Core 承载层 + MOD-GATE_ENGINE Gate Engine，下游被所有业务域模块消费审计数据。
 
 ---
 
@@ -837,8 +837,8 @@ class EvidencePackExporter:
 | MOD-INF-023 | 漂移事件 | 线5→线3 |
 | MOD-INF-021 | Checkpoint 触发（G-CT-002） | 线5 |
 | MOD-INF-018 | RBAC 判定事实（G-CT-001） | 线5 |
-| L06 层模块 | 执行审计 | 线7 |
-| L07 层模块 | 审计写入 | 线7 |
+| D_EXECUTION_CORE 域模块 | 执行审计 | 线7 |
+| D_REPORTING 域模块 | 审计写入 | 线7 |
 
 ### 10.2 依赖图对齐声明
 

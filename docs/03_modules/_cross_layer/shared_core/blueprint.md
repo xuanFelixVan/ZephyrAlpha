@@ -540,7 +540,7 @@ depends_on:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| 所有 L01 模块 | shared 模型引用 | `from zephyr.shared.models import ...` | 所有模块可 import shared 模型 |
+| 所有基础设施域模块 | shared 模型引用 | `from zephyr.shared.models import ...` | 所有模块可 import shared 模型 |
 | Agent RBAC (MOD-INF-018) | AgentIdentity 模型 | `shared/models.py` → `AgentIdentity` | RBAC 可使用 AgentIdentity |
 | Audit Trail (MOD-INF-020) | AuditEvent 模型 | `shared/models.py` → `AuditEvent` | Audit Trail 可使用 AuditEvent |
 | Event Bus | 事件总线 | `core/event_bus.py` | 模块间事件通信 |
@@ -839,7 +839,7 @@ depends_on:
 ### 14.3 Shared 层准入边界规则
 
 > 为防止 shared/ 膨胀为垃圾场，新增模块进入 shared/ 必须同时满足：
-> 1. 被 ≥2 个 L01 模块消费（或预期会被消费）
+> 1. 被 ≥2 个基础设施域模块消费（或预期会被消费）
 > 2. 不绑定任何特定业务域
 > 3. 接口粒度 ≤ Protocol/dataclass/Enum（不包含重量级实现）
 
@@ -902,7 +902,7 @@ depends_on:
 
 ## 17. Consumer Onboarding Guide — 新模块接入指南
 
-> **面向**: 下一个 AI session 冷启动 + 新 L01 模块接入 shared/
+> **面向**: 下一个 AI session 冷启动 + 新基础设施域模块接入 shared/
 
 ### 17.1 最小接入（3 行 import 即用）
 
@@ -941,7 +941,7 @@ logger = get_logger(__name__)
 |------|------|------|
 | PATCH (0.14.X) | 新增文件/新增导出/修复 bug——完全向后兼容 | 无需操作 |
 | MINOR (0.X.0) | 新增文件≥5 / 新增子模块——向后兼容，新增可选符号 | AI session 可选择性采用新模块 |
-| MAJOR (X.0.0) | 破坏 Task 31字段 / 删除导出 / 重命名模块 | 全部 L01 模块 MUST 同步升级——check_shared_version() 运行时阻断不兼容版本 |
+| MAJOR (X.0.0) | 破坏 Task 31字段 / 删除导出 / 重命名模块 | 全部基础设施域模块 MUST 同步升级——check_shared_version() 运行时阻断不兼容版本 |
 
 ---
 
@@ -991,7 +991,7 @@ logger = get_logger(__name__)
 
 ## 19. Shared Layer Testing Strategy — 共享层测试策略
 
-> **目标**: shared/ 作为全系统基础设施，其测试覆盖直接影响所有 L01 模块的施工信心。
+> **目标**: shared/ 作为全系统基础设施，其测试覆盖直接影响所有基础设施域模块的施工信心。
 
 ### 19.1 测试分层
 

@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 责任声明（Single Responsibility）
 
-本目录存放：**L01 infrastructure 层 / infra 功能域 — Runtime Integration 模块蓝图**。
+本目录存放：**L0_infrastructure 层 / infra 功能域 — Runtime Integration 模块蓝图**。
 代码承载分布在 `src/zephyr/shared/` + `src/zephyr/infrastructure/` + `src/zephyr/governance/lifecycle_manager/`。
 
 ## 模块概览
@@ -28,7 +28,7 @@ ttl: permanent
 | 蓝图版本 | v6.1.1 |
 | 代码承载 | `src/zephyr/shared/` + `src/zephyr/infrastructure/` + `src/zephyr/governance/lifecycle_manager/` |
 | 功能域 | infra |
-| 层级 | L01 infrastructure |
+| 层级 | L0_infrastructure |
 | 施工进度 | completed |
 | 父模块 | MOD-MASTER_BLUEPRINT |
 

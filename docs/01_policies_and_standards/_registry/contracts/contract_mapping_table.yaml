@@ -25,7 +25,7 @@ domain_contracts:
         status: Draft
 
       - domain_contract_id: AS-CT-FACTOR-001
-        direction: "L02→L03"
+        direction: "D_FACTOR→D_SIGNAL"
         description: "因子数据帧（MultiIndex DataFrame: (timestamp, asset)×factor）"
         layer_contracts:
           - CTR-P1-015

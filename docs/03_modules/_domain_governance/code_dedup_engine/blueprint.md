@@ -7,7 +7,7 @@ doc_type: blueprint
 status: Active
 version: 0.15.0
 layer: L0_infrastructure
-layer_note: "跨层模块——代码在L01，但与L05治理层交互（Gate Engine+AiAuditLogger）"
+layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
 functional_domain: governance
 owner: ZephyrAlpha-Owner
@@ -108,7 +108,7 @@ tags:
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 代码去重引擎——它解决了 Vibe Coding 场景下 AI 系统性重复生成代码的问题。核心职责包括：全生命周期七维去重模型（Prevent→Block→Audit→Fix→Register→Evolve→Self-Audit）、爆炸半径防护（BRS 爆炸半径追踪）、原子性修复（WAL 式崩溃恢复）、决策审计链（不可变追加日志）、主动函数发现（签名+语义双通道）。当前规模 46 个模块设计（66 个 .py 文件已落地），目标覆盖 342+ 函数的代码库。上游依赖 MOD-INF-005/007/008/010/012/016，下游被所有 L01-L13 层模块消费。
+本蓝图描述 ZephyrAlpha 代码去重引擎——它解决了 Vibe Coding 场景下 AI 系统性重复生成代码的问题。核心职责包括：全生命周期七维去重模型（Prevent→Block→Audit→Fix→Register→Evolve→Self-Audit）、爆炸半径防护（BRS 爆炸半径追踪）、原子性修复（WAL 式崩溃恢复）、决策审计链（不可变追加日志）、主动函数发现（签名+语义双通道）。当前规模 46 个模块设计（66 个 .py 文件已落地），目标覆盖 342+ 函数的代码库。上游依赖 MOD-INF-005/007/008/010/012/016，下游被所有域模块消费。
 
 ***
 
@@ -568,7 +568,7 @@ tags:
 | -------------------------- | ----------------------- | ----------------------- |
 | SRC\_TEST\_BRIDGE          | src vs tests 高阈值(0.9)   | 仅 WARN                  |
 | SRC\_SCRIPTS\_DIVERGENCE   | src vs scripts 中阈值(0.7) | 仅 WARN                  |
-| CROSS\_LAYER\_REDUNDANCY   | L01 vs L05 跨层           | **可 auto\_fix**——最高价值目标 |
+| CROSS\_LAYER\_REDUNDANCY   | 基础设施域 vs 治理域跨层           | **可 auto\_fix**——最高价值目标 |
 | VENDORED\_REIMPLEMENTATION | src vs vendored         | 仅检测不修复                  |
 
 ### 蓝图特有：引擎自审计（Simplicity Audit）

@@ -39,7 +39,7 @@ references: []
 codification_level: L2
 codification_at: "2026-05-13"
 ---
-> module_id: MOD-INF-026 | version: 3.1.0 | status: active | layer: L01
+> module_id: MOD-INF-026 | version: 3.1.0 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -1212,7 +1212,7 @@ class TripleTrustAnchorGate:
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │ 规则引擎自动打标签:                                      │  │
 │  │   asset_type: module/script/doc/config/test/data        │  │
-│  │   layer: L00~L13 / cross_layer                          │  │
+│  │   layer: L0_infrastructure/L1_foundation/L2_domain/L3_application / cross_layer      │  │
 │  │   status: active/orphan/drift/ghost                     │  │
 │  │   priority: P0~P3（引用频率+依赖深度）                   │  │
 │  └────────────────────────────────────────────────────────┘  │
@@ -1375,11 +1375,11 @@ class AssetType(str, Enum):
 | 根目录 | `.toml/.bat/.ps1` | `infra` |
 | 任意 | `_registry.yaml/manifest.yaml` | `registry` |
 
-#### 2.3.2 layer（层级归属——C 轨 L00~L13 + cross_layer）
+#### 2.3.2 layer（层级归属——4值 layer_id + cross_layer）
 
-- 从目录路径提取：`src/zephyr/risk/` → `L04`
+- 从目录路径提取：`src/zephyr/risk/` → `L2_domain`（D_RISK 域）
 - B 轨模块（无 C 轨目录前缀）→ `cross_layer`
-- `docs/03_modules/_domain_infrastructure_operations/` → `L01`
+- `docs/03_modules/_domain_infrastructure_operations/` → `L0_infrastructure`
 
 #### 2.3.3 status（资产状态——五态 + 三种偏移）
 
@@ -1483,7 +1483,7 @@ schema_version: "1.0.0"
 summary:
   total_assets: N; total_size_mb: N
   by_type: {module: N, script: N, doc: N, config: N, gate: N, test: N, data: N, infra: N, registry: N, unknown: 0}
-  by_layer: {cross_layer: N, L01: N, ...}
+  by_layer: {cross_layer: N, L0_infrastructure: N, L1_foundation: N, L2_domain: N, L3_application: N}
   by_status: {active: N, orphan: N, ghost: N, drift: N, archived: N}
   by_priority: {P0: N, P1: N, P2: N, P3: N}
   health_score: "A"|"B"|"C"|"D"|"F"; orphan_rate_pct: float; ghost_rate_pct: float; drift_rate_pct: float
@@ -3259,7 +3259,7 @@ AssetInventory.register(
 unified-asset-index.yaml 中:
   - relative_path: "docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md"
     asset_type: doc
-    layer: L01
+    layer: L0_infrastructure
     status: active
     priority: P0
     registered_in: [REG-MOD-ALPHA_SIGNAL_DOMAIN, REG-BLUEPRINT-001, REG-DOC-001]
@@ -3336,7 +3336,7 @@ def scaffold_doc(layer_path: str, doc_type: str) -> Path: ...
 | F2 | 单文件项目 | 只有一个 README.md | 正常扫描——1 个资产，分类为 doc | ⬜ |
 | F3 | 百万级文件超大项目 | 1500→10000+ 文件 | 增量扫描自动降级，全量扫描可能超时→退化为深度优先部分扫描+标记 truncated | ⬜ |
 | F4 | 文件名含 Unicode/emoji | `测试_🐛.py` | 正常处理——路径规范化（Path.resolve()）不崩溃 | ⬜ |
-| F5 | 两个注册表对同一文件给出矛盾的 layer | module-registry 说 L01, dir 扫描说 cross_layer | DRIFT 检测——写入 drift_list，建议"以实际目录位置为准" | ⬜ |
+| F5 | 两个注册表对同一文件给出矛盾的 layer | module-registry 说 L0_infrastructure, dir 扫描说 cross_layer | DRIFT 检测——写入 drift_list，建议"以实际目录位置为准" | ⬜ |
 | F6 | 文件在 Git 中被 rename 但注册表未更新 | `git mv old.py new.py` | Ghost（old）+ Orphan（new）→ 对账报告同时列出两者 | ⬜ |
 | F7 | Scanner 进程被 kill 中途退出 | 用户 Ctrl+C | 部分扫描结果写入 raw_scan_truncated.json + 标记 truncated=true | ⬜ |
 | F8 | SHA256 计算时文件正在被写 | IDE auto-save 同时触发扫描 | retry 3 次（§16.2 GLIDE_WINDOW）——3 次都不同 → 跳过 | ⬜ |

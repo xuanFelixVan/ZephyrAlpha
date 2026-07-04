@@ -5524,7 +5524,7 @@ tests/  (包含1个文件: .py(1))
 │   │   ├── test_integrations.py  — test_integrations脚本  
 │   │   ├── test_protocol_self_context.py  — test_protocol_self_context脚本  
 │   │   ├── test_protocol_state_store.py  — test_protocol_state_store脚本  
-│   │   ├── test_provider_base_contract.py  — L00 provider_base — DataSourceBase 最小可实例化桩与注册。  
+│   │   ├── test_provider_base_contract.py  — D_DATA provider_base — DataSourceBase 最小可实例化桩与注册。  
 │   │   ├── test_schema_schema_registry.py  — test_schema_schema_registry脚本  
 │   │   ├── test_schema_schemas.py  — test_schema_schemas脚本  
 │   │   ├── test_slo_contract.py  — test_slo_contract脚本  
@@ -5722,7 +5722,7 @@ tests/  (包含1个文件: .py(1))
 │   │   └── [文件列表已折叠] (包含115个文件: .pyc(115))  
 │   ├── __init__.py  — __init__脚本  
 │   ├── drift_red_blue_adversarial.py  — Red-Blue Adversarial Test — drift-detector v1.0.1  
-│   ├── test_analytics_base_contract.py  — L07 analytics_base — OCP 扩展点抽象方法形状。  
+│   ├── test_analytics_base_contract.py  — D_REPORTING analytics_base — OCP 扩展点抽象方法形状。  
 │   ├── test_arbiter.py  — test_arbiter脚本  
 │   ├── test_arbitrator.py  — test_arbitrator脚本  
 │   ├── test_audit_rename_completeness.py  — audit_rename_completeness.py 回归测试（红蓝对抗逻辑永久化）。  
@@ -5774,7 +5774,7 @@ tests/  (包含1个文件: .py(1))
 │   ├── test_infrastructure_base.py  — test_infrastructure_base脚本  
 │   ├── test_kb_redteam.py  — 9项红队完整测试 — KB纵深防御对抗性验证  
 │   ├── test_kill_switch_sim.py  — test_kill_switch_sim脚本  
-│   ├── test_l12_telemetry_unit.py  — L12 — System Telemetry Phase D 覆盖  
+│   ├── test_l12_telemetry_unit.py  — D_SYSTEM_TELEMETRY — System Telemetry Phase D 覆盖  
 │   ├── test_lifecycle_root.py  — test_lifecycle_root脚本  
 │   ├── test_livelock_detector.py  — test_livelock_detector脚本  
 │   ├── test_local_first_arch.py  — test_local_first_arch脚本  
@@ -5890,7 +5890,7 @@ tests/  (包含1个文件: .py(1))
 │   ├── test_kb_verify.py  — test_kb_verify脚本  
 │   ├── test_kb_vms_memory_backend.py  — test_kb_vms_memory_backend脚本  
 │   ├── test_kg_interface.py  — test_kg_interface脚本  
-│   ├── test_l08_interface.py  — L08 — Human-AI Interface Phase D 覆盖  
+│   ├── test_l08_interface.py  — D_FRONTEND — Human-AI Interface Phase D 覆盖  
 │   ├── test_triage_kb.py  — 测试套件：G2 Triage 门禁（T-2-13-B）  
 │   ├── test_unified_memory_api_kb.py  — T-V2-007 单元测试 — UnifiedMemoryAPI (RI-02)  
 │   ├── test_vector_memory_root.py  — test_vector_memory_root脚本  
@@ -6044,7 +6044,7 @@ tests/  (包含1个文件: .py(1))
 │   ├── test_facade.py  — test_facade脚本  
 │   ├── test_health_aggregator_root.py  — test_health_aggregator_root脚本  
 │   ├── test_health_probes_root.py  — test_health_probes_root脚本  
-│   ├── test_l12_telemetry.py  — L12 — System Telemetry Phase D 覆盖  
+│   ├── test_l12_telemetry.py  — D_SYSTEM_TELEMETRY — System Telemetry Phase D 覆盖  
 │   ├── test_notifier.py  — test_notifier脚本  
 │   ├── test_observability_dashboard.py  — test_observability_dashboard脚本  
 │   ├── test_observability_health.py  — test_observability_health脚本  
@@ -6435,7 +6435,7 @@ tests/  (包含1个文件: .py(1))
 │   ├── test_night_shift_queue.py  — test_night_shift_queue脚本  
 │   ├── test_ocp_extension_points_unit.py  — OCP-002 / OCP-003 / OCP-001 扩展点冒烟测试。  
 │   ├── test_phase_executor_unit.py  — Phase 执行引擎单元测试——验证 Phase 0→D 四级施工序列。  
-│   ├── test_phase_f_layers.py  — Phase F — L08–L13 非主线层集成测试 + 背压契约  
+│   ├── test_phase_f_layers.py  — Phase F — D_FRONTEND–D_EXPERIMENT 非主线层集成测试 + 背压契约  
 │   ├── test_phase_g_perf.py  — Phase G — Performance Benchmarks & SLA Validation  
 │   ├── test_pipeline_orchestrator_unit.py  — M1-M11 Pipeline Orchestrator 单元测试  
 │   ├── test_protection_index.py  — test_protection_index脚本  

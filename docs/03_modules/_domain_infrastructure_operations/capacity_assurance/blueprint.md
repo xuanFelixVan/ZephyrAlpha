@@ -1657,7 +1657,7 @@ STEP 3: 拆分后验证
 | 原子事务管理器（ATM） | `src/zephyr/data/persistence/atomic_transaction_manager.py` | `tests/test_atomic_transaction_manager.py` | — | database |
 | SQLite Schema DDL + init_db | `src/zephyr/data/persistence/sqlite_schema.py` | — | — | database |
 | MCP 工具限流（声明式 rate_limit_qps） | `src/zephyr/mcp/tool-contracts.yaml` | — | — | mcp_servers |
-| L12 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/metrics/__init__.py` | — | — | system_telemetry |
+| 遥测 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/metrics/__init__.py` | — | — | system_telemetry |
 
 ### 19.3 治理脚本（已实现）
 

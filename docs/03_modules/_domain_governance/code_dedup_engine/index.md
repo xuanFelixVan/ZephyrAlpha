@@ -15,7 +15,7 @@ summary: "code-dedup-engine/ 模块目录索引。全生命周期代码去重系
 depends_on:
   - target: 03_modules/_domain_infrastructure_operations/index.md
     at: module-list
-    why: "本模块在 L01 基础设施层中登记"
+    why: "本模块在基础设施域中登记"
 ---
 
 # code-dedup-engine — 代码去重引擎
@@ -42,4 +42,4 @@ depends_on:
 
 ## 父级目录
 
-- 父级：[L01 基础设施层](../index.md)
+- 父级：[基础设施域](../index.md)
