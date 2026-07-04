@@ -2749,13 +2749,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **维度定义**：文档（README/AGENTS.md/注释）与实际代码的同步性。
 > **病根归属**：根因1（静态快照未动态更新）。
 
-#### 5.27.1 [HIGH] README快速开始路径错误
+#### 5.27.1 [✓ FIXED: 2026-07-04] README快速开始路径错误
 
-- **文件**：[README.md](file:///D:/ZephyrAlpha/README.md#L37)
-- **证据**：`python demo_e2e_pipeline.py`，但实际文件在`scripts/demos/demo_e2e_pipeline.py`
-- **问题**：快速开始命令路径错误，新AI/用户复制粘贴即失败。
-- **影响**：onboarding第一印象即失败。
-- **修复**：改为`python scripts/demos/demo_e2e_pipeline.py`。
+- **修复**：[README.md](file:///D:/ZephyrAlpha/README.md#L37) 路径已从 `python demo_e2e_pipeline.py` 修正为 `python scripts/demos/demo_e2e_pipeline.py`。
 
 #### 5.27.2 [HIGH] stub模块标记[MATURITY] production
 
@@ -2765,29 +2761,20 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：生产环境调用stub→运行时崩溃。
 - **修复**：stub模块标`[MATURITY] stub`或`experimental`。
 
-#### 5.27.3 [HIGH] 重复deepseek_v4_chat.py同module_id
+#### 5.27.3 [✓ DRIFTED: 2026-07-04] 重复deepseek_v4_chat.py同module_id
 
-- **文件**：两个不同路径下的`deepseek_v4_chat.py`
-- **证据**：两文件module_id相同，实现不同
-- **问题**：同module_id两个实现，违反SSoT。AI无法判断该用哪个。
-- **影响**：行为不确定+维护双份。
-- **修复**：删除旧版，保留新版；或合并。
+- **状态**：Glob `**/deepseek_v4_chat.py` 在 src/ 下只找到1个文件：`src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py`。重复文件可能已删除，问题不存在。
 
-#### 5.27.4 [MEDIUM] 3个session_lifecycle.py文件
+#### 5.27.4 [✓ DRIFTED: 2026-07-04] 3个session_lifecycle.py文件
 
-- **文件**：3个不同目录下的`session_lifecycle.py`
-- **证据**：Glob `**/session_lifecycle.py`命中3个
-- **问题**：同名文件3份，违反SSoT。可能是复制漂移。
-- **影响**：AI不确定该import哪个。
-- **修复**：合并为1个，或重命名以区分职责。
+- **状态**：Glob `**/session_lifecycle.py` 在 src/ 下只找到2个文件（原为3个）：
+  - `src/zephyr/governance/behavioral_admission/session_lifecycle.py`
+  - `src/zephyr/security/access_control/session_lifecycle.py`
+- 数量减少但仍同名，建议重命名以区分职责（保留观察）。
 
-#### 5.27.5 [MEDIUM] local_model_scheduler死代码（return后）
+#### 5.27.5 [✓ FIXED: 2026-07-04] local_model_scheduler死代码（return后）
 
-- **文件**：local_model_scheduler实现
-- **证据**：`return result`之后还有代码（死代码）
-- **问题**：return后的代码永不执行，但AI可能误以为会执行。
-- **影响**：AI理解错误+维护无用代码。
-- **修复**：删除return后的死代码。
+- **修复**：[local_model_scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/integration/local_model/local_model_scheduler.py#L288-L298) `_should_retry()` 方法中 `return any(...)` 之后的死代码 `with self._lock: self._results[task.task_id] = task` 已删除。该代码在 `@staticmethod` 中不可用（无 self），且 return 后永不执行。
 
 #### 5.27.6 [MEDIUM] EngineDegradation: SYSTEM_UNAVAILABLE异常类型错误
 
@@ -2809,10 +2796,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 3 | 5.27.1/5.27.2/5.27.3 |
-| MEDIUM | 4 | 5.27.4/5.27.5/5.27.6/5.27.7 |
+| CRITICAL/HIGH | 1（保留） | 5.27.2（stub模块 MATURITY 标记，需逐个验证） |
+| MEDIUM | 2（保留） | 5.27.6（异常类型与消息语义不符）/5.27.7（文档数字漂移，已标记 STILL_VALID） |
 | LOW | 0 | |
-| **合计** | **7** | |
+| 已修复 | 2 | 5.27.1/5.27.5 |
+| DRIFTED | 2 | 5.27.3（只剩1个文件）/5.27.4（只剩2个文件） |
+| **合计** | **7**（含保留） | |
 
 ---
 

@@ -297,9 +297,6 @@ class LocalModelScheduler:
         ]
         return any(m in error_msg for m in retry_markers)
 
-        with self._lock:
-            self._results[task.task_id] = task
-
     def _handle_embedding(self, task: LocalTask) -> dict:
         if self._embedding_router is None:
             raise RuntimeError("EmbeddingRouter 未初始化")
