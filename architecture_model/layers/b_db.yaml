@@ -5,7 +5,7 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
-  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001/003（2个关系数据库清单真源，禁止同步。INFRA-DB-005 market.duckdb 已于2026-07-01删除/废弃）"
+  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001/003/006（数据库清单真源，禁止同步。ARCH-046 三铁律：粒度/运营态语义/动态更新）"
   backup_dir: data/backups/
   warehouse_dir: data/warehouse/
   blueprint_ref: docs/03_modules/_cross_layer/database/blueprint.md

@@ -2676,6 +2676,28 @@ capabilities:
       架构层校验设计。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
       可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI 重建校验脚本。
 
+  # --------------------------------------------------------------------------
+  - capability_id: yaml_to_depgraph_sync
+    canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+    aliases:
+      - sync_yaml_to_depgraph
+      - yaml_sync
+      - GATE-YAML-SYNC
+      - infrastructure_components_sync
+      - sync_infrastructure_registry
+      - yaml_to_db_sync
+    description: >-
+      YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表
+      （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/
+      business_streams/infrastructure_components/model_capabilities/contracts）。
+      禁止反向（DB→YAML），禁止手写 DB 表（readonly trigger 硬阻断，需
+      disable_readonly_triggers 临时禁用）。ARCH-046 治本加固（2026-07-04）：
+      sync_infrastructure_registry() 函数补 DELETE 逻辑——自动清理 YAML 中已删除
+      但 DB 残留的孤儿墓碑条目（防墓碑残留幻觉源）。解决发现性：新 AI 搜
+      "YAML 同步 DB/infrastructure_components 同步/墓碑清理" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建同步脚本。
+      关联规则：ARCH-046（数据库节点全景图登记三铁律）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

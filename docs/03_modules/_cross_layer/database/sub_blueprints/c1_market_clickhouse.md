@@ -854,7 +854,7 @@ class C1BacktestLoader:
 | # | 迁移项 | 来源 | 目标 | 状态 |
 |---|--------|------|------|:----:|
 | 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已删除) | C1 market_clickhouse | 待迁移（duckdb已删除，数据需重新摄取） |
-| 2 | DDL 迁移 | market_schema.py (D_DATA) | schemas/categories/market_*.py | 待编写 |
+| 2 | DDL 迁移 | c1_market_schema.py（待建，DDL-as-Code 模式） | schemas/categories/c1_market_*.py | 待编写 |
 
 ---
 
