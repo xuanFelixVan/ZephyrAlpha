@@ -4,7 +4,7 @@ submodule_path: data/databases/c1_market_clickhouse
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
-version: "1.0.0"
+version: "1.0.1"
 layer: L2_domain
 layer_name: market_warehouse
 functional_domain: data
@@ -15,12 +15,12 @@ created_by: AI-session-20260701-c1
 valid_from: "2026-07-01"
 date: "2026-07-01"
 ttl: permanent
-construction_progress: not_started
+construction_progress: partially_implemented
 actual_disk_path: "data/databases/c1_market_clickhouse/"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
-last_updated: "2026-07-01"
+last_updated: "2026-07-05"
 generation: 1
 rule_form: structural
 scope: module
@@ -69,7 +69,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 | 7 | futures_term_structure | 期货期限结构 | 原料(衍生) | preload | market_futures_term |
 | 8 | convertible_bond_iv | 可转债隐含波动率 | 成品(算) | preload | market_cb_iv |
 
-> **本蓝图是设计书**：描述目标态。DDL 是目标态设计，ClickHouse 尚未部署不影响蓝图编写。`construction_progress: not_started`。
+> **本蓝图是设计书**：描述目标态。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），c1_market 数据库及 daily_kline 表已建。`construction_progress: partially_implemented`（部分表已建，其余待 DDL-as-Code 施工）。
 
 ---
 
@@ -101,7 +101,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = not_started → §0.1 全部标记"待建" | 逐文件核对 | ☐ |
+| construction_progress = partially_implemented → §0.1 部分已建(daily_kline)/部分待建 | 逐文件核对 | ☐ |
 | 蓝图描述的表名/字段 = DDL-as-Code 文件中的表名/字段 | `grep "CREATE TABLE" schemas/categories/market_*.py` | ☐ |
 | 8 张表 calc_mode 全部标注 | `grep "calc_mode" business_data_categories.yaml` | ☐ |
 | 8 张表 category_id 全部注册 | `grep "category_id" business_data_categories.yaml` | ☐ |
@@ -111,7 +111,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | partially_implemented（ClickHouse 未部署） |
+| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | partially_implemented（ClickHouse 已部署，daily_kline 表已建，其余 7 张表待 DDL-as-Code 施工） |
 
 ---
 
@@ -160,7 +160,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 约束 | 影响 |
 |------|------|
-| ClickHouse 尚未部署（需新建 INFRA-DB-006） | C1 施工前置阻塞，DDL 先设计后执行 |
+| ClickHouse 已部署（INFRA-DB-006，2026-07-01 上线，WSL2 Ubuntu） | C1 施工前置阻塞已解除，DDL 可直接执行 |
 | 当前数据源(D_DATA)只支持 OHLCV（daily_kline 表） | 其他 7 张表需 D_DATA 步骤3 多品类扩展 |
 | 回测内存预算 64G（母蓝图 §7.1） | tick_data 必须分层加载，不能全量载入 |
 | 8 张表 calc_mode 必须标注（母蓝图 §7.5） | 回测引擎按 calc_mode 决定处理方式 |
@@ -182,7 +182,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 维度 | 当前态 | 目标态 | 差距 | 优先级 |
 |------|--------|--------|------|:------:|
-| ClickHouse 部署 | 未部署（INFRA-DB-005 已删除 market.duckdb） | INFRA-DB-006 ClickHouse 部署 | 需新建基础设施 | P0 |
+| ClickHouse 部署 | 已部署（INFRA-DB-006，2026-07-01 上线） | INFRA-DB-006 ClickHouse 部署 | 部分表已建 | P0 |
 | 8 张表 DDL | 无 | 8 个 schemas/categories/market_*.py | 待编写 DDL-as-Code | P0 |
 | 数据源覆盖 | OHLCV（daily_kline 1张） | 8张表全覆盖 | 需 D_DATA 步骤3 多品类扩展 | P0 |
 | 写入接口 | 无 | C1MarketWriter | 待实现 | P1 |
@@ -832,7 +832,7 @@ class C1BacktestLoader:
 | 7 | tick_data/index_quote TTL 90天 | 高频数据超期归档 Parquet |
 | 8 | daily_kline 永久保留 | 日线数据不 TTL |
 | 9 | DDL-as-Code 格式 | Python 类定义表结构（母蓝图 §6 第2层） |
-| 10 | ClickHouse 未部署是前置阻塞 | INFRA-DB-006 需新建 |
+| 10 | ClickHouse 已部署（2026-07-01），前置阻塞已解除 | INFRA-DB-006 已上线 |
 
 ### §5.2 容量估算
 
@@ -853,7 +853,7 @@ class C1BacktestLoader:
 
 | # | 迁移项 | 来源 | 目标 | 状态 |
 |---|--------|------|------|:----:|
-| 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已删除) | C1 market_clickhouse | 待迁移（duckdb已删除，数据需重新摄取） |
+| 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已废弃,2026-07-05删除) | C1 market_clickhouse | daily_kline 已迁移至 ClickHouse；market.duckdb 残留文件已于 2026-07-05 删除（524KB，无有价值数据） |
 | 2 | DDL 迁移 | c1_market_schema.py（待建，DDL-as-Code 模式） | schemas/categories/c1_market_*.py | 待编写 |
 
 ---
@@ -1043,7 +1043,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - category_id: market_tick
   name: "A股3秒Tick"
   engine: clickhouse
-  database: c1_market_clickhouse
+  database: c1_market
   table: tick_data
   schema_file: schemas/categories/market_tick.py
   data_type: 原料
@@ -1057,7 +1057,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - category_id: market_daily_kline
   name: "日线OHLCV"
   engine: clickhouse
-  database: c1_market_clickhouse
+  database: c1_market
   table: daily_kline
   schema_file: schemas/categories/market_daily_kline.py
   data_type: 成品
@@ -1078,7 +1078,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - category_id: market_hk_stock
   name: "港股行情"
   engine: clickhouse
-  database: c1_market_clickhouse
+  database: c1_market
   table: tick_data  # 复用 tick_data 表，market_type='HK'
   data_type: 原料
   enabled: false  # 硬边界
@@ -1088,7 +1088,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - category_id: market_us_stock
   name: "美股行情"
   engine: clickhouse
-  database: c1_market_clickhouse
+  database: c1_market
   table: tick_data  # 复用 tick_data 表，market_type='US'
   data_type: 原料
   enabled: false  # 硬边界
@@ -1102,7 +1102,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
 |---|-------------|------|------|---------|------|
-| 1 | ClickHouse 未部署阻塞 C1 施工 | 高 | 全部代码待建 | 先编写 DDL-as-Code 设计，部署后一键建表 | 风险 |
+| 1 | ClickHouse 已部署，C1 施工前置阻塞已解除 | 高 | 全部代码待建 | DDL-as-Code 设计就绪，可直接执行建表 | 风险 |
 | 2 | D_DATA 仅支持 OHLCV，7张表无数据源 | 高 | 7张表空置 | 待 D_DATA 步骤3 多品类扩展 | 风险 |
 | 3 | tick_data 内存占用过大（100标的48GB） | 中 | 回测内存溢出 | 热层分层加载 + 限制标的数量 | 风险 |
 | 4 | ClickHouse 无 AS OF JOIN | 中 | 多频率时间对齐困难 | 内存工作台完成对齐（母蓝图 §7.3） | 风险 |
@@ -1127,7 +1127,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 9 | 对接母蓝图 §7 回测调度 | 分层加载/calc_mode/回测vs实盘 | 核对 §3.3 | ☐ |
 | 10 | 对接母蓝图 §8 硬边界 | market_type 预留 | 核对 §3.3 + §13.3 | ☐ |
 | 11 | §0.1 代码清单标记"待建" | 12文件全部待建 | 核对 §0.1 | ☐ |
-| 12 | construction_progress = not_started | frontmatter | 核对文件头 | ☐ |
+| 12 | construction_progress = partially_implemented | frontmatter | 核对文件头 | ☐ |
 | 13 | 契约版本表完整 | CTR-001~008 | 核对 §4.12 | ☐ |
 | 14 | 施工指引 5步骤 | 步骤1~5 | 核对 §16 | ☐ |
 
@@ -1135,7 +1135,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 ## §16 施工指引
 
-> 🚧 C1 market_clickhouse 施工指引——对接母蓝图 ARCH-BIZDB-001。ClickHouse 未部署是前置阻塞，DDL 先设计后执行。
+> 🚧 C1 market_clickhouse 施工指引——对接母蓝图 ARCH-BIZDB-001。ClickHouse 已部署（2026-07-01），前置阻塞已解除，DDL 可直接执行。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -1144,7 +1144,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 1 | 已读取本蓝图全部内容（概述 + §0 对齐 + §1-§14 架构 + §16 施工指引） | 逐节确认 | ☐ |
 | 2 | 已读取母蓝图 §5.2/§6/§7/§8 关键章节 | 逐个打开确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且标记"待建" | 逐项核对 | ☐ |
-| 4 | 理解 ClickHouse 未部署是前置阻塞 | 确认 DDL 先设计后执行 | ☐ |
+| 4 | 理解 ClickHouse 已部署，前置阻塞已解除 | 确认 DDL 可直接执行 | ☐ |
 
 ### §16.1 施工策略
 
@@ -1152,7 +1152,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 |------|------|
 | 施工阶段数 | 5 个步骤 |
 | 施工模式 | 设计先行 + 基础设施就绪后实施 |
-| 核心风险 | ClickHouse 未部署 + D_DATA 仅支持 OHLCV |
+| 核心风险 | D_DATA 仅支持 OHLCV（ClickHouse 已部署 2026-07-01） |
 | 目标 generation | 1 |
 | Spiral 归属 | Spiral 2：仓库层建设（ClickHouse 部署后） |
 
@@ -1160,7 +1160,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | ClickHouse 部署（INFRA-DB-006） | hard | 未部署 | ❌ |
+| 1 | ClickHouse 部署（INFRA-DB-006） | hard | 已部署（2026-07-01） | ✅ |
 | 2 | D_DATA 数据源接入层（OHLCV） | hard | 已实现（CTR-001） | ✅（部分） |
 | 3 | 母蓝图品类注册表设计 | soft | 设计完成 | ✅ |
 | 4 | D_DATA 多品类扩展（7张表数据源） | soft | 待施工 | ❌ |
@@ -1175,12 +1175,12 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 产出位置 | Docker 部署 + infrastructure_registry.yaml 注册 |
 | 验收标准 | ClickHouse 可连接，c1_market 数据库可创建 |
 | 验证命令 | `clickhouse-client --query "SELECT 1"` |
-| 状态 | ❌ 未部署（前置阻塞） |
+| 状态 | ✅ 已部署（2026-07-01 上线） |
 | G7 检查项 | 基础设施就绪，下游 DDL 可执行 |
 
 ```
 → 注册 INFRA-DB-006 到 infrastructure_registry.yaml
-→ 当前状态：未部署（前置阻塞）
+→ 当前状态：已部署（2026-07-01 上线，INFRA-DB-006）
 ```
 
 #### 步骤 2：执行 DDL 建表（8张表）
@@ -1264,7 +1264,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| ClickHouse 节点数 | 0（未部署） | infrastructure_registry.yaml |
+| ClickHouse 节点数 | 1（已部署，WSL2 Ubuntu） | infrastructure_registry.yaml |
 | C1 表数量 | 0（待建） | SHOW TABLES |
 | 日写入记录 | 0 | 日志统计 |
 | 回测加载延迟 | — | benchmark |
@@ -1273,7 +1273,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
-| GAP-C1-001 | ClickHouse 未部署 | Docker 部署 INFRA-DB-006 | P0 | C1施工前置 | v1.0.0 | 待施工 |
+| GAP-C1-001 | ClickHouse 已部署，GAP 已解除 | Docker 部署 INFRA-DB-006 | P0 | C1施工前置 | v1.0.0 | 已解除 |
 | GAP-C1-002 | D_DATA 仅支持 OHLCV | D_DATA 步骤3 多品类扩展 | P0 | 7张表无数据源 | v1.1.0 | 待施工 |
 | GAP-C1-003 | tick_data 内存占用大 | 热层分层加载 + 标的数量限制 | P1 | 100标的48GB | v1.0.0 | 设计完成 |
 | GAP-C1-004 | TTL 归档无存储 | 对象存储(Parquet归档) | P2 | 90天数据到期 | v1.1.0 | 待施工 |
@@ -1313,6 +1313,15 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 8 | D-C1-08 | daily_kline 先删后插(非UPSERT) | ReplacingMergeTree/先删后插 | 先删后插 | MergeTree不支持UPSERT | 2026-07-01 |
 | 9 | D-C1-09 | 回测分层加载(热层/温层) | 全量加载/分层 | 分层 | 对接母蓝图 §7.1 内存预算64G | 2026-07-01 |
 | 10 | D-C1-10 | ClickHouse 新建 INFRA-DB-006 | 复用duckdb/新建ClickHouse | 新建ClickHouse | 母蓝图 §8.1 直接上目标引擎 | 2026-07-01 |
+
+### 变更记录
+
+### v1.0.1 (2026-07-05) 状态同步修复
+- construction_progress: not_started → partially_implemented（ClickHouse 已于 2026-07-01 部署）
+- 解除所有"ClickHouse 未部署"前置阻塞描述
+- market.duckdb 迁移描述修正：残留文件已于 2026-07-05 删除（524KB，无有价值数据）
+- §13.2 模板 database 字段修正：c1_market_clickhouse → c1_market（与 DDL 一致）
+- #ARCH-048 关联：Redis/EventStore 架构哲学切换裁决
 
 ---
 

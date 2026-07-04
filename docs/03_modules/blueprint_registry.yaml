@@ -884,16 +884,16 @@ blueprints:
 - module_id: SH-DB-001
   name: database
   title: Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位
-  summary: Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-01删除/废弃。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature
-    Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。
+  summary: Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-05删除。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature
+    Store/Event Store为P2未来蓝图(#ARCH-048门禁逻辑已废弃)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。
   layer: L1_foundation
   functional_domain: data
   blueprint_status: Active
   blueprint_level: domain
   priority: P1
-  version: 4.3.0
+  version: 4.3.1
   generation: 3
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-05'
   file_path: 03_modules/_cross_layer/database/blueprint.md
   construction_progress: completed
 - module_id: SYS-MASTER-001
