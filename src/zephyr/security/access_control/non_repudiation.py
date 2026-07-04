@@ -39,6 +39,11 @@ class VerifyResult(dict):
         # self.get("verified", False) 的值可能是字符串或其他类型，直接返回违反协议。
         return bool(self.get("verified", False))
 
+    def __len__(self) -> int:
+        # 5.108.3 修复: __len__ 与 __bool__ 语义一致,避免 bool(VerifyResult) vs len(VerifyResult) 矛盾
+        # 原 dict.__len__ 返回键数量,与 __bool__ 返回 verified 值不一致
+        return 1 if bool(self.get("verified", False)) else 0
+
 
 @dataclass
 class AuditEntry:
