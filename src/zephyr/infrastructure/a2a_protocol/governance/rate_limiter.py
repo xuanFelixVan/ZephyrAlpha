@@ -13,25 +13,54 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
+import threading
 import time
 
 
 class RateLimiter:
+    """Sliding window 速率限制器，支持 per-key 分桶。
+
+    5.36.4 修复：原 allow(key="default") 接收 key 参数但操作单一 self._requests 列表，
+    key 从未用于分桶，API 签名暗示 per-key 隔离但实际所有 key 共享一个 bucket。
+    改为 dict[str, list[float]] 按 key 分桶，每个 key 独立计数。
+
+    5.36.5 修复：原列表操作无 threading.Lock 保护，多线程并发调用 allow() 时列表
+    读写竞态。增加 threading.Lock 保护所有 _requests 操作。
+    """
+
     def __init__(self, max_requests=100, window_seconds=60):
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self._requests = []
+        # 5.36.4 修复：按 key 分桶，替代单一 _requests 列表
+        self._requests_by_key: dict[str, list[float]] = {}
+        # 5.36.5 修复：线程安全锁，保护 _requests_by_key 的读写
+        self._lock = threading.Lock()
 
     def allow(self, key="default"):
         now = time.time()
-        self._requests = [t for t in self._requests if now - t < self.window_seconds]
-        if len(self._requests) >= self.max_requests:
-            return False
-        self._requests.append(now)
-        return True
+        with self._lock:
+            bucket = self._requests_by_key.get(key)
+            if bucket is None:
+                bucket = []
+                self._requests_by_key[key] = bucket
+            # 清理过期时间戳
+            bucket[:] = [t for t in bucket if now - t < self.window_seconds]
+            if len(bucket) >= self.max_requests:
+                return False
+            bucket.append(now)
+            return True
 
-    def reset(self):
-        self._requests = []
+    def reset(self, key: str | None = None):
+        """重置限流器。
+
+        参数：
+            key: 指定 key 则仅重置该 key 的桶；None 则清空所有 key。
+        """
+        with self._lock:
+            if key is None:
+                self._requests_by_key.clear()
+            else:
+                self._requests_by_key.pop(key, None)
 
 
 def create_rate_limiter(config=None):

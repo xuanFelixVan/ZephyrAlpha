@@ -3477,6 +3477,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：限流逻辑分散在5处，算法不一致，配置不可统一管理
 - **影响**：修改限流策略需改5处；不同路径走不同算法
 - **修复**：收敛为单一canonical实现（shared/infra/limiter.py）
+- **状态**：STILL_VALID（保留）— 需大规模重构5个文件为单一canonical实现，涉及跨模块收敛与多调用方迁移，超出本轮快速修复范围
 
 #### 5.36.2 [HIGH] 无per-user/per-key配额，全部per-tool共享
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gateway_server.py#L499)
@@ -3484,6 +3485,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：一个滥用客户端可耗尽全局限流配额
 - **影响**：多租户场景下单租户DoS全系统
 - **修复**：限流key改为(client_session_id, tool_name)二元组
+- **状态**：STILL_VALID（保留）— 需修改 gateway_server.py 限流调用点并引入 client_session_id 维度，涉及管道多阶段协调，超出本轮快速修复范围
 
 #### 5.36.3 [MEDIUM] TokenBucketLimiter存在竞态条件
 - **文件**：[limiter.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/limiter.py#L137)
@@ -3491,6 +3493,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：并发场景下token计数不准
 - **影响**：限流精度下降，高并发下可能放行超出配额的请求
 - **修复**：sleep期间不释放锁，或重新获取后重新执行_refill()
+- **状态**：STILL_VALID（保留）— 需修改 shared/infra/limiter.py async 锁逻辑，async 锁语义需谨慎设计避免死锁，超出本轮快速修复范围
 
 #### 5.36.4 [MEDIUM] a2a RateLimiter.allow(key)的key参数被忽略
 - **文件**：[rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/rate_limiter.py#L25)
@@ -3498,6 +3501,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：API签名暗示支持per-key限流，实际所有key共享一个bucket
 - **影响**：调用方误以为per-key隔离已生效
 - **修复**：改为dict[str, list[float]]按key分桶，或删除误导性key参数
+- **状态**：FIXED — 已改为 dict[str, list[float]] 按 key 分桶，每个 key 独立计数；reset() 同步支持按 key 重置
 
 #### 5.36.5 [MEDIUM] a2a RateLimiter无线程安全
 - **文件**：[rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/rate_limiter.py#L23)
@@ -3505,6 +3509,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：多线程并发调用allow()时列表读写竞态
 - **影响**：高并发下限流失效或抛异常
 - **修复**：增加threading.Lock保护列表操作
+- **状态**：FIXED — 已增加 threading.Lock 保护 _requests_by_key 的所有读写操作（allow/reset）
 
 #### 5.36.6 [MEDIUM] 限流配置不可动态调整
 - **文件**：[rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/rate_limiter.py#L45)
@@ -3512,6 +3517,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：mcp.json的rate_limit配置项是死配置；调整限流需改代码重启
 - **影响**：运维无法按负载动态调参
 - **修复**：在PerToolRateLimiter初始化时从mcp.json加载配置
+- **状态**：STILL_VALID（保留）— 需新增 mcp.json 加载逻辑与运行时热更新机制，涉及配置变更通知多调用方，超出本轮快速修复范围
 
 #### 5.36.7 [MEDIUM] Retry-After头配置启用但未实现
 - **文件**：[mcp.json](file:///D:/ZephyrAlpha/config/mcp.json#L131) vs [gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gateway_server.py#L499)
@@ -3519,6 +3525,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：配置声明返回Retry-After头，实际未返回
 - **影响**：客户端无法知道何时重试，导致盲目重试加剧限流压力
 - **修复**：限流拒绝响应中增加retry_after_seconds字段
+- **状态**：STILL_VALID（保留）— 需修改 gateway_server.py 限流拒绝响应构造逻辑与错误码体系，涉及 JSON-RPC error.data 字段扩展，超出本轮快速修复范围
 
 #### 5.36.8 [MEDIUM] gateway管道阶段顺序与文档不符
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gateway_server.py#L479)
@@ -3526,6 +3533,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：文档描述的Permission阶段缺失；RateLimit在Route之后（未路由的请求不受限流保护）
 - **影响**：未知工具名请求绕过限流；权限检查缺失
 - **修复**：补充Permission阶段；将文档与实现对齐
+- **状态**：STILL_VALID（保留）— 需补充 Permission 阶段并重排管道顺序，涉及 gateway 核心路由逻辑重构与多调用方契约验证，超出本轮快速修复范围
 
 #### 5.36.9 [LOW] PerToolRateLimiter docstring与实现不符
 - **文件**：[rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/rate_limiter.py#L140)
@@ -3533,6 +3541,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：文档声称per-client，实际per-tool
 - **影响**：安全审计/容量规划基于错误假设
 - **修复**：修正docstring为"per-tool"，或实现真正的per-client限流
+- **状态**：FIXED — 已修正 docstring 为 "默认 10QPS per tool"，并标注 per-client 限流需引入 client_id 维度（参见 5.36.2 待后续重构）
 
 #### 5.36.10 [LOW] 无限流配额耗尽告警
 - **文件**：[rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/rate_limiter.py#L124)
@@ -3540,6 +3549,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：限流拒绝量激增时无告警
 - **影响**：DoS攻击或配额耗尽时运维无感知
 - **修复**：将total_rejected接入metrics，配置告警规则
+- **状态**：STILL_VALID（保留）— 需新增 metrics 导出与 alert_rules.yaml 告警规则配置，涉及监控体系集成，超出本轮快速修复范围
 
 #### 5.36.11 严重度汇总
 
