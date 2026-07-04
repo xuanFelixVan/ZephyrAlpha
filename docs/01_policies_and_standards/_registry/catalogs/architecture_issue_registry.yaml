@@ -928,3 +928,68 @@ entries:
   - DM-100255
   created: '2026-07-04'
   last_updated: '2026-07-04'
+- issue_id: '#ARCH-046'
+  title: 数据库节点全景图登记三铁律——粒度/运营态语义/动态更新治本
+  severity: P1高
+  adjudication: |
+    ARCH-046 裁定：数据库作为项目核心基础设施，在全景图（depgraph）中的登记规则治本。
+    包含三条铁律，治本"数据库节点展示粒度模糊、status 字段漂移、墓碑残留"三类问题。
+
+    【病根（5-Why 根因分析）】
+    症状1：INFRA-DB-005 market.duckdb 已删除（2026-07-01）但 infrastructure_registry.yaml 仍保留墓碑条目
+    症状2：INFRA-DB-001 governance.db 和 INFRA-DB-004 DuckDB :memory: 实际已存在并使用，但 status 长期标 planned
+    症状3：ClickHouse c1_market 在 database_service.py 已实现但未登记到 infrastructure_registry.yaml
+
+    Why-1：为什么墓碑保留？因为 sync_yaml_to_depgraph.py 的 sync_infrastructure_registry() 函数只 UPSERT 不 DELETE，YAML 删除条目后 DB 残留。
+    Why-2：为什么 status 漂移？因为 YAML 维护者未按"存在=运营态"逻辑更新 status 字段，YAML 与现实脱节。
+    Why-3：为什么 ClickHouse 未登记？因为新 AI 不知道数据库节点登记的职责归属（在 infrastructure_registry.yaml 还是别处）。
+    Why-4：为什么 AI 不知道？因为没有项目级规则文档化"数据库节点全景图登记粒度"。
+    Why-5（根因）：数据库节点的"展示粒度/运营态语义/动态更新"三条规则未文档化为项目硬约束，
+    导致每个 AI 自行推断，产生墓碑残留、status 漂移、登记遗漏三类问题。
+
+    【三条铁律（治本方案）】
+    铁律1（粒度）：数据库在全景图中有且仅有"一个点"——登记在 infrastructure_components 表，
+    不展开内部表/schema/DDL/视图。nodes 表（路径全景图）只登记代码文件节点，
+    不登记数据库内部表。理由：数据库是依赖十字路口，需要节点建立拓扑；
+    但内部表/schema 数量爆炸会是噪音源。
+
+    铁律2（运营态/设计态语义）：数据库实体存在并实际使用=运营态（status=connected/active）；
+    数据库不存在或仅设计=设计态（status=planned）。禁止"实际已存在使用但 status 仍标 planned"的漂移。
+    sync_yaml_to_depgraph.py 同步时以 YAML status 字段为真源。
+
+    铁律3（动态更新）：数据库节点随项目实际情况动态增删。新增数据库时在 infrastructure_registry.yaml
+    加 INFRA-DB-XXX 条目；删除数据库时彻底删除条目（不保留墓碑——墓碑在 100% AI 开发模式是
+    幻觉/漂移源和阅读噪音，git log 已提供历史追溯）。sync_yaml_to_depgraph.py 的
+    sync_infrastructure_registry() 函数内置 DELETE 逻辑（2026-07-04 治本加固，L903-L968），
+    自动清理 YAML 中已删除但 DB 残留的孤儿墓碑条目。生成器（generate_project_depgraph.py）
+    MUST NOT 碰 infrastructure_components 表，避免代码生成器误覆盖基础设施节点。
+
+    【治本实施记录】
+    P0 DONE 2026-07-04：
+    (a) infrastructure_registry.yaml v1.0.8：补登 INFRA-DB-006 ClickHouse c1_market
+    (b) infrastructure_registry.yaml v1.0.8：删除 INFRA-DB-005 market.duckdb 墓碑条目
+    (c) b_db.yaml：删除 db-market-duckdb 模块，新增 db-clickhouse-c1-market 模块
+    (d) src/zephyr/governance/persistence/market_schema.py：删除死代码（无 import 引用）
+    (e) sync_yaml_to_depgraph.py sync_infrastructure_registry()：补 DELETE 逻辑（治本加固）
+    (f) project_memory.md：追加 3 条硬约束（数据库节点登记铁律）
+    (g) architecture_issue_registry.yaml：本条目（ARCH-046）
+
+    P1 DONE 2026-07-04：
+    (h) infrastructure_registry.yaml v1.0.9：修正 INFRA-DB-001/004 status 漂移
+        planned→connected（按铁律2"存在=运营态"逻辑）
+
+    【关联】
+    - ARCH-035（GATE-DEPGRAPH-SCOPE）——生成器扫描范围限制，与铁律3"生成器不碰 infrastructure_components"互补
+    - 2026-07-01 03:00 裁定——首次明确"数据库实体在 infrastructure_components 表，不在 nodes 表"
+    - ARCH-046 是该裁定的规则化固化（从一次性裁定升级为项目硬约束）
+
+  fix_phase: |
+    P0 DONE 2026-07-04：墓碑清理 + ClickHouse 补登 + sync DELETE 逻辑治本 + 规则文档化
+    P1 DONE 2026-07-04：INFRA-DB-001/004 status 漂移修正
+    P2 OPTIONAL：未来若有新数据库类型（如 Redis H1 接入），按铁律3 在 infrastructure_registry.yaml 加条目
+  status: decided
+  related_rules:
+  - GOV-DOC-018
+  - TRAE-028
+  created: '2026-07-04'
+  last_updated: '2026-07-04'
