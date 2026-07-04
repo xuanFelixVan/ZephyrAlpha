@@ -45,7 +45,7 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
-.cache
+.cache/
 nosetests.xml
 coverage.xml
 *.cover
@@ -208,6 +208,8 @@ memory_graph.json
 
 # Vector DB data (runtime)
 data/vector_db/
+# 5.29.2 修复：漏忽略 e2e_test 目录（HNSW 二进制索引）
+data/vector_db_e2e_test/
 
 # FAISS semantic test vector index binaries (regenerable runtime artifacts)
 data/semantic_test/

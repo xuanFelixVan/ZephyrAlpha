@@ -2826,13 +2826,9 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：错误处理逻辑分裂。
 - **修复**：统一为MCP协议码，内部码仅用于日志。
 
-#### 5.28.4 [MEDIUM] local_model_scheduler死代码return后（与5.27.5交叉）
+#### 5.28.4 [✓ FIXED: 2026-07-04] local_model_scheduler死代码return后（与5.27.5交叉）
 
-- **文件**：同5.27.5
-- **证据**：return后的代码包含一个`raise`语句
-- **问题**：从错误消息角度，这个raise永远不会触发，但AI可能以为有此错误路径。
-- **影响**：AI误判错误处理覆盖面。
-- **修复**：删除死代码。
+- **修复**：与 5.27.5 同步修复。`_should_retry()` return 后的死代码已删除，AI 不会误判存在不存在的错误路径。
 
 #### 5.28.5 [MEDIUM] EngineDegradation异常类型与消息不符（与5.27.6交叉）
 
@@ -2862,10 +2858,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 1 | 5.28.1 |
-| MEDIUM | 5 | 5.28.2/5.28.3/5.28.4/5.28.5/5.28.6 |
-| LOW | 2 | 5.28.7/5.28.8 |
-| **合计** | **8** | |
+| CRITICAL/HIGH | 1（保留） | 5.28.1（SQL泄漏到错误消息，跨模块修复） |
+| MEDIUM | 4（保留） | 5.28.3（MCP错误码双轨制）/5.28.5（同5.27.6）/5.28.6（中英文混用）/5.28.2 |
+| LOW | 2（保留） | 5.28.7/5.28.8（error_code字段，跨模块重构） |
+| 已修复 | 1 | 5.28.4（同5.27.5） |
+| **合计** | **8**（含保留） | |
 
 ---
 
@@ -2881,12 +2878,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：任何人（含AI session）可直接push到main，绕过所有review
 - **修复**：GitHub Settings→Branches配置protection rule；新增.github/CODEOWNERS
 
-#### 5.29.2 [HIGH] .gitignore漏忽略data/vector_db_e2e_test/（HNSW二进制索引）
-- **文件**：[.gitignore](file:///D:/ZephyrAlpha/.gitignore#L197)
-- **证据**：第197行`data/vector_db/`已忽略，但`data/vector_db_e2e_test/`目录含大量.bin文件未被忽略
-- **问题**：HNSW索引二进制文件可被意外git add提交，污染仓库历史
-- **影响**：仓库膨胀（.bin通常数百KB~数MB/文件）
-- **修复**：.gitignore追加`data/vector_db_e2e_test/`或改通配`data/vector_db*/`
+#### 5.29.2 [✓ FIXED: 2026-07-04] .gitignore漏忽略data/vector_db_e2e_test/（HNSW二进制索引）
+- **修复**：[.gitignore](file:///D:/ZephyrAlpha/.gitignore#L209-L212) 已追加 `data/vector_db_e2e_test/`，HNSW 二进制索引不会被意外提交。
 
 #### 5.29.3 [MEDIUM] Conventional Commits仅本地hook，无服务端校验
 - **文件**：[.pre-commit-config.yaml](file:///D:/ZephyrAlpha/.pre-commit-config.yaml#L962)
@@ -2895,12 +2888,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：非Conventional Commits格式的消息可通过--no-verify或Web UI进入main
 - **修复**：governance.yml新增job用commitlint校验PR的commit历史
 
-#### 5.29.4 [MEDIUM] LFS覆盖的模型格式不完整
-- **文件**：[.gitattributes](file:///D:/ZephyrAlpha/.gitattributes#L58)
-- **证据**：LFS仅追踪.safetensors/.bin/.onnx/.pt/.pth五种格式，未覆盖.gguf/.ot/.msgpack/.npz/.h5/.tflite/.ckpt
-- **问题**：未来AI新增.gguf模型到data/models/local_model/时，GB级文件直接写入git对象库
-- **影响**：仓库不可逆膨胀
-- **修复**：扩展LFS规则至`*.{safetensors,bin,onnx,pt,pth,gguf,ot,msgpack,npz,h5,tflite,ckpt}`
+#### 5.29.4 [✓ FIXED: 2026-07-04] LFS覆盖的模型格式不完整
+- **修复**：[.gitattributes](file:///D:/ZephyrAlpha/.gitattributes#L58-L70) LFS 规则已从5种扩展到12种格式，新增 .gguf/.ot/.msgpack/.npz/.h5/.tflite/.ckpt。
 
 #### 5.29.5 [MEDIUM] 无CODEOWNERS，PR review责任人不明确
 - **文件**：缺失（Glob `**/{CODEOWNERS,.github/CODEOWNERS}`返回No file found）
@@ -2909,21 +2898,18 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：PR review随机分配，关键路径可能被非Owner批准合并
 - **修复**：新增.github/CODEOWNERS，按域声明路径→Owner映射
 
-#### 5.29.6 [LOW] .cache忽略模式缺尾部斜杠
-- **文件**：[.gitignore](file:///D:/ZephyrAlpha/.gitignore#L48)
-- **证据**：第48行`.cache`（无`/`），而同节`.pytest_cache/`、`.mypy_cache/`均用尾部`/`表示目录
-- **问题**：`.cache`无斜杠会同时匹配名为`.cache`的文件与目录，语义模糊
-- **影响**：低概率误忽略合法文件
-- **修复**：改为`.cache/`
+#### 5.29.6 [✓ FIXED: 2026-07-04] .cache忽略模式缺尾部斜杠
+- **修复**：[.gitignore](file:///D:/ZephyrAlpha/.gitignore#L48) 已从 `.cache` 改为 `.cache/`，语义明确为目录。
 
 #### 5.29.7 严重度汇总
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 2 | 5.29.1/5.29.2 |
-| MEDIUM | 3 | 5.29.3/5.29.4/5.29.5 |
-| LOW | 1 | 5.29.6 |
-| **合计** | **6** | |
+| CRITICAL/HIGH | 1（保留） | 5.29.1（main分支保护需GitHub Settings配置） |
+| MEDIUM | 2（保留） | 5.29.3（CI commitlint）/5.29.5（CODEOWNERS需决定Owner） |
+| LOW | 0 | |
+| 已修复 | 3 | 5.29.2/5.29.4/5.29.6 |
+| **合计** | **6**（含保留） | |
 
 ---
 
