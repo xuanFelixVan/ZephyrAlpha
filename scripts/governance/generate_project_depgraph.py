@@ -2851,6 +2851,10 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # 与 apply_depgraph.py._db_write_lock 共享 lock key 424242
         # 事务级 lock，conn.commit()/rollback() 自动释放，不会忘记释放
         cursor.execute("SELECT pg_advisory_xact_lock(424242)")
+        # ARCH-fix: 允许级联删除 design edges（DELETE nodes 时外键级联触发 edges DELETE）
+        # restore_design_data 会在 DELETE+INSERT 后恢复 design edges，无数据丢失风险
+        # 与 apply_depgraph.py 同机制（_shared/constants.py L125）
+        cursor.execute("SET app.allow_delete_apply_depgraph_edges = on")
         # R3 验证(2026-07-02)：干净工作区 reconciler 全流程验证
         # DM-012 Fix 4: Auto-cleanup old backup tables before writing
         # P2 PG 迁移：sqlite_master → information_schema.tables
