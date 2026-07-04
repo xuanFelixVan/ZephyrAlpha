@@ -3,7 +3,7 @@
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
-# [STARTUP] manual
+# [STARTUP] auto
 # [MATURITY] stable
 # [INVARIANTS]
 # [MODIFY-GUARD]
