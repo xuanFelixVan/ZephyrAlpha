@@ -1,5 +1,5 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-04 16:35:50
+%% 生成时间: 2026-07-04 16:41:31
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 26, 依赖边数: 21
 
@@ -36,12 +36,12 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard___init___py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard___init___py
     src_zephyr_frontend___init___py -->|config_depends| src_zephyr_frontend_interface_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -64,8 +64,8 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_FRONTEND -> D_TRADING (2 条)
-    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 7 条
