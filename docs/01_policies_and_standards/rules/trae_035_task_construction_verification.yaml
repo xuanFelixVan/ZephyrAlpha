@@ -1,7 +1,7 @@
 rule_id: TRAE-035
 title: 任务系统-施工与验证
 version: 1.2.3
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-035
 depends_on: []
 tags:

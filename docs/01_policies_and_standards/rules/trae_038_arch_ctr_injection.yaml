@@ -1,7 +1,7 @@
 rule_id: TRAE-038
 title: 架构治理-CTR注入规则
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-038
 depends_on: []
 tags:

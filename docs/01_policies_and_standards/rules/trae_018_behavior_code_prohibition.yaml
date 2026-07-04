@@ -1,7 +1,7 @@
 rule_id: TRAE-018
 title: 行为边界-代码操作绝对禁止
 version: 1.1.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-018
 depends_on:
 - TRAE-019

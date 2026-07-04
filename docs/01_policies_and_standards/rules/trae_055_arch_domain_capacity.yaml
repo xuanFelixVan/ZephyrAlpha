@@ -1,7 +1,7 @@
 rule_id: TRAE-055
 title: 架构容量与域治理规则
 version: 1.0.8
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-055
 depends_on: []
 tags:

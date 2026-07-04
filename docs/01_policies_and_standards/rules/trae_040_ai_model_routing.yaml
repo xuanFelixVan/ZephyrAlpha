@@ -1,7 +1,7 @@
 rule_id: TRAE-040
 title: AI治理-模型路由与协作
 version: 1.2.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-040
 depends_on: []
 tags:

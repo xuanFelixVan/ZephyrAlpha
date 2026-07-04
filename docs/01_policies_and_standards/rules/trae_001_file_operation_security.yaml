@@ -1,7 +1,7 @@
 rule_id: TRAE-001
 title: 文件操作安全协议
 version: 1.6.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-001
 depends_on: []
 tags:

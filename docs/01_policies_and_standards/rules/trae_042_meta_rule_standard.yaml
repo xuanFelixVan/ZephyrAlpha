@@ -1,7 +1,7 @@
 rule_id: TRAE-042
 title: 元规则-标准体系与模板
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-042
 depends_on:
 - TRAE-018

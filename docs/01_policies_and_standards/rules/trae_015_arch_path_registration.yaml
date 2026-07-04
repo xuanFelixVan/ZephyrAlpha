@@ -1,7 +1,7 @@
 rule_id: TRAE-015
 title: 架构约束-路径与注册
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-015
 depends_on: []
 tags:

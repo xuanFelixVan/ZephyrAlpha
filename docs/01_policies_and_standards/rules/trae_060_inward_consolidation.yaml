@@ -1,7 +1,7 @@
 rule_id: TRAE-060
 title: 向内收原则（唯一真源·事件驱动·第一性原理）
 version: 1.0.1
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-060
 depends_on:
   - target: TRAE-057

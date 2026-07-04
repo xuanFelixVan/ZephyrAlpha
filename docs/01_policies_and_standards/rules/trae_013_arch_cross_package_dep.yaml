@@ -1,7 +1,7 @@
 rule_id: TRAE-013
 title: 架构约束-跨包依赖
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-013
 depends_on: []
 tags:

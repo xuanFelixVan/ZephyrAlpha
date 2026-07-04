@@ -1,7 +1,7 @@
 rule_id: TRAE-047
 title: 工程治理-文件头部与扩展
 version: 1.2.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-047
 depends_on: []
 tags:

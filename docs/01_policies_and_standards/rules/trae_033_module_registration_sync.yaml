@@ -1,7 +1,7 @@
 rule_id: TRAE-033
 title: 模块治理-注册与同步
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-033
 depends_on: []
 tags:

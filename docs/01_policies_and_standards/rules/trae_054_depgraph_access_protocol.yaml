@@ -1,7 +1,7 @@
 rule_id: TRAE-054
 title: depgraph 程序化访问协议
 version: 1.6.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-054
 depends_on: []
 tags:

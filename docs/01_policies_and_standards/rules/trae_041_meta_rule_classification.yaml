@@ -1,7 +1,7 @@
 rule_id: TRAE-041
 title: 元规则-规则分类与裁决
 version: 1.4.1
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-041
 depends_on:
 - TRAE-018

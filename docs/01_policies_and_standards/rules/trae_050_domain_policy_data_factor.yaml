@@ -1,7 +1,7 @@
 rule_id: TRAE-050
 title: 域策略-数据源与因子层
 version: 0.2.4
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-050
 depends_on:
 - TRAE-031

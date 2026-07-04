@@ -1,7 +1,7 @@
 rule_id: TRAE-049
 title: 操作-领域操作手册
 version: 1.0.2
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-049
 depends_on:
 - TRAE-050

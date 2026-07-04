@@ -1,7 +1,7 @@
 rule_id: TRAE-051
 title: 域策略-风控与盘后层
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-051
 depends_on:
 - TRAE-049

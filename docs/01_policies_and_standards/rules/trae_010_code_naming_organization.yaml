@@ -1,7 +1,7 @@
 rule_id: TRAE-010
 title: 代码构建-命名与组织
 version: 1.0.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-010
 depends_on:
 - TRAE-028

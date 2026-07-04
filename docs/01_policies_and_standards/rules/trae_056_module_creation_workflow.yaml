@@ -1,7 +1,7 @@
 rule_id: TRAE-056
 title: 操作-模块/蓝图/代码创建完整工作流程
 version: 2.1.0
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-056
 depends_on:
   - target: TRAE-048

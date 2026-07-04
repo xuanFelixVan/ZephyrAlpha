@@ -1,7 +1,7 @@
 rule_id: TRAE-044
 title: 合规治理-审计与监管
 version: 1.4.3
-layer: compliance
+layer: L1_foundation
 module_id: TRAE-044
 depends_on: []
 tags:
