@@ -3132,6 +3132,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：迁移脚本硬编码Windows绝对路径，未使用REPO_ROOT或环境变量
 - **影响**：脚本在Linux/Mac/CI/Docker中无法运行
 - **修复**：改用`from _shared.constants import REPO_ROOT` + `SQLITE_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"`
+- **状态**：DRIFTED（2026-07-04）— 现 L56 已是 `SQLITE_PATH = str(REPO_ROOT / "data" / "databases" / "depgraph.db")`，L53 `from zephyr.shared.io.paths import REPO_ROOT`，硬编码 Windows 路径已修复
 
 #### 5.32.2 [HIGH] migrate_data.py先TRUNCATE再INSERT，迁移中途失败导致数据全损
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L140)
@@ -3139,6 +3140,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：迁移失败后PG处于"部分表已TRUNCATE、部分表已INSERT"的中间态
 - **影响**：25张表中第13张失败→前12张已写入但触发器禁用期间未校验
 - **修复**：每张表迁移用BEGIN;INSERT;VERIFY;COMMIT包裹
+- **状态**：STILL_VALID（保留）— 现状 pg_conn.autocommit=False + except 块 rollback 已提供事务保护，但仍是单大事务模式（truncate→disable→循环migrate→reset→enable）。改为每表独立事务属大规模重构
 
 #### 5.32.3 [HIGH] migrate_data.py零测试覆盖，关键迁移脚本无验证
 - **文件**：tests/整目录
@@ -3146,6 +3148,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：一次性数据迁移脚本（不可逆）零测试覆盖
 - **影响**：FK丢失、类型不匹配、序列冲突只能在生产发现
 - **修复**：新增tests/test_migrate_sqlite_to_pg.py
+- **状态**：STILL_VALID（保留）— Grep tests/ 确认仍 0 匹配；需新增完整测试套件（含 SQLite fixture + PG fixture + 行数校验）
 
 #### 5.32.4 [MEDIUM] migrate_data.py无幂等标记/无版本记录，无法判断迁移是否已应用
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L221)
@@ -3153,6 +3156,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：迁移脚本无幂等性设计；重复运行=数据全清
 - **影响**：运维误执行=数据丢失
 - **修复**：在_schema_version表插入迁移记录；运行前检查是否已存在
+- **状态**：STILL_VALID（保留）— 现 main() 流程仍无 _schema_version 写入；需新增幂等性设计
 
 #### 5.32.5 [MEDIUM] migrate_sqlite_to_pg/目录无README/manifest文档化执行顺序
 - **文件**：[migrate_sqlite_to_pg/](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/)
@@ -3160,6 +3164,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：新运维人员可能先跑migrate_data.py再跑02_create_pg_schema.sql→报错
 - **影响**：迁移操作门槛高；AI无法从目录结构推断正确顺序
 - **修复**：新增README.md文档化执行顺序、前置条件、回滚步骤
+- **状态**：STILL_VALID（保留）— Glob 确认目录下仍无 README.md，仅有 4 个文件（00/01/02 SQL + migrate_data.py）
 
 #### 5.32.7 [MEDIUM] 02_create_pg_schema.sql无对应downgrade/rollback SQL
 - **文件**：[02_create_pg_schema.sql](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql)
@@ -3167,6 +3172,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：PG schema创建后无系统化回滚路径
 - **影响**：schema变更无法快速回退
 - **修复**：新增02_create_pg_schema_down.sql含按反依赖顺序的DROP语句
+- **状态**：STILL_VALID（保留）— 需新增 downgrade SQL 文件
 
 #### 5.32.8 [MEDIUM] apply_depgraph.py数据变更与schema变更版本管理混淆
 - **文件**：[apply_depgraph.py](file:///D:/ZephyrAlpha/scripts/governance/apply_depgraph.py)
@@ -3174,6 +3180,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：数据层变更与schema层变更版本管理割裂
 - **影响**：灾后恢复时无法判断哪些数据变更需重放
 - **修复**：apply_depgraph.py每次变更写入_data_changes_log表
+- **状态**：STILL_VALID（保留）— 需新增 _data_changes_log 表 + apply_depgraph.py 变更点埋点
 
 #### 5.32.10 [LOW] migrate_data.py混淆数据种子与数据迁移，无独立seed脚本
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L42)
@@ -3181,6 +3188,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：新建空PG实例必须先有SQLite数据才能迁移；无法init_db && seed直接初始化
 - **影响**：环境搭建门槛高
 - **修复**：拆分为migrate_data.py（运营数据）+ seed_from_yaml.py（从YAML真源直接灌种子表）
+- **状态**：STILL_VALID（保留）— MIGRATION_ORDER 列表仍混合种子表（domains/registries 等）与运营数据，需拆分脚本
 
 #### 5.32.11 严重度汇总
 
@@ -3214,6 +3222,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：备份目标路径硬编码Windows+中文；Linux/Mac/CI运行报错
 - **影响**：备份脚本在Docker/CI/Linux中不可用；"异地备份"实为同盘备份
 - **修复**：改BACKUP_BASE = Path(os.environ.get("ZEPHYR_BACKUP_DIR", REPO_ROOT / "data/backups/phase-A"))
+- **状态**：DRIFTED（2026-07-04）— 脚本已归档到 `scripts/governance/_archive/one_off/phase_a_backup.py`，属一次性脚本文档，不再活跃使用；硬编码路径问题不再影响生产
 
 #### 5.33.4 [HIGH] phase_a_backup.py Tier0备份遗漏depgraph (PostgreSQL)（核心资产）
 - **文件**：[phase_a_backup.py](file:///D:/ZephyrAlpha/scripts/governance/_archive/one_off/phase_a_backup.py#L66)
@@ -3221,6 +3230,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：Tier0标称"5个核心资产"但遗漏真正的 depgraph (PostgreSQL)
 - **影响**：恢复时depgraph数据丢失；YAML副本只能恢复到上次导出时点
 - **修复**：TIER0_FILES新增pg://depgraph虚拟路径，run_tier0识别pg://前缀时调用pg_dump
+- **状态**：DRIFTED（2026-07-04）— 同 5.33.3，phase_a_backup.py 已归档；且 §5.33.8 中 backup_pg_depgraph() 已实现 PG 备份
 
 #### 5.33.5 [HIGH] 项目无RTO/RPO定义，无法评估备份策略充分性
 - **文件**：全项目Grep RTO|RPO|recovery_point|recovery_time仅命中1处注释
@@ -3228,6 +3238,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：无项目级RTO/RPO定义；无法判断"每日备份"是否足够
 - **影响**：备份频率无依据；合规审计无法回答"RPO=? RTO=?"
 - **修复**：新增dr_policy.yaml定义：depgraph RPO=24h/RTO=4h；governance.db RPO=1h/RTO=1h
+- **状态**：STILL_VALID（保留）— `docs/02_enterprise_architecture/target_architecture/technology_architecture.md` L219 已有 "RTO/RPO 核心链路分层矩阵"，但 operations_architecture.md L190 仍标 "占位：RTO/RPO 量化目标待激活后补齐"；缺独立 dr_policy.yaml 真源文件
 
 #### 5.33.6 [HIGH] PostgreSQL单机localhost，无故障切换机制（SPOF）
 - **文件**：[.env.postgres](file:///D:/ZephyrAlpha/config/.env.postgres#L1)
@@ -3235,6 +3246,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：PG是单点故障（SPOF）；无流复制副本；无Patroni/repmgr等自动故障切换
 - **影响**：PG进程崩溃=全项目停摆；磁盘故障=数据全损
 - **修复**：部署PG主从复制；配置POSTGRES_HOST_PRIMARY/STANDBY；引入pgbouncer
+- **状态**：STILL_VALID（保留）— 需部署 PG 主从复制 + pgbouncer，属基础设施层变更，超出代码修复范围
 
 #### 5.33.7 [HIGH] .runtime/状态文件（200+ handoffs、100+ reconcile_reports）无恢复路径
 - **文件**：.runtime/handoffs/（200+ JSON）、.runtime/reconcile_reports/（100+ JSON）
@@ -3242,6 +3254,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：200+ session handoff JSON + 100+ reconcile报告完全无备份
 - **影响**：AI助手无法恢复上次session上下文；reconcile审计链断裂
 - **修复**：backup_runtime_state.py新增backup_runtime_handoffs()函数
+- **状态**：STILL_VALID（保留）— backup_runtime_state.py 未新增 backup_runtime_handoffs()；.runtime/ 整目录在 .gitignore 中
 
 #### 5.33.8 [HIGH] depgraph SQLite备份机制删除后未替换为PG备份（灾备回退）
 - **文件**：[apply_depgraph.py](file:///D:/ZephyrAlpha/scripts/governance/apply_depgraph.py#L53)
@@ -3249,6 +3262,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：P2迁移前depgraph通过git commit备份；迁移后SQLite备份机制删除，但PG备份机制未建立
 - **影响**：灾备能力较P2迁移前**回退**——SQLite时代至少有git历史，PG时代无任何备份
 - **修复**：立即建立PG pg_dump备份；在apply_depgraph.py写入前调用pg_dump作为变更前快照
+- **状态**：FIXED（2026-07-04）— `backup_runtime_state.py` L145 `backup_pg_depgraph()` 已实现（psycopg2 查询导出为 JSON，pg_dump 不可用时 fallback）；`apply_depgraph.py` 通过 depgraph_schema 模块自动调用作为变更前快照
 
 #### 5.33.9 [MEDIUM] 无恢复演练/无备份验证测试
 - **文件**：tests/整目录
@@ -3256,6 +3270,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：备份存在但从未演练恢复；"备份成功但恢复失败"问题只能在真实灾难中发现
 - **影响**：灾难时发现备份格式错误、依赖缺失；RTO远超预期
 - **修复**：新增tests/dr/test_restore_from_backup.py；季度执行恢复演练
+- **状态**：STILL_VALID（保留）— tests/ 下仍无 restore drill 测试；需新增 tests/dr/test_restore_from_backup.py + 季度执行机制
 
 #### 5.33.10 [MEDIUM] config/.env.postgres单副本，无异地/加密备份
 - **文件**：[.env.postgres](file:///D:/ZephyrAlpha/config/.env.postgres) + .gitignore:244
@@ -3263,6 +3278,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：PG密码仅存于本地磁盘单副本；磁盘故障=密码丢失=即使有pg_dump也无法恢复
 - **影响**：灾后恢复阻断在"获取密码"步骤；密码泄露风险
 - **修复**：密码迁入secrets manager；.env.postgres仅保留非敏感字段
+- **状态**：STILL_VALID（保留）— 需引入 secrets manager（如 Vault / AWS Secrets Manager），属基础设施层变更
 
 #### 5.33.11 严重度汇总
 
@@ -3295,6 +3311,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：容器"以为"配置了production/staging，实际运行在DEV模式；环境检测静默回退
 - **影响**：环境隔离完全失效
 - **修复**：docker-compose.yml改ZEPHYR_ENV=dev；或env.py枚举增加development别名
+- **状态**：FIXED（2026-07-04）— docker-compose.yml L22 改为 `ZEPHYR_ENV=dev`（与 Env 枚举值一致）
 
 #### 5.34.2 [HIGH] 无Docker Compose override文件，dev/prod/staging共用单一配置
 - **文件**：项目根目录
@@ -3302,6 +3319,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：单一docker-compose.yml同时服务dev/staging/prod
 - **影响**：prod环境暴露9090/3000/9100端口（监控面板）；dev环境无独立DB容器
 - **修复**：新增docker-compose.prod.yml/staging.yml/override.yml
+- **状态**：STILL_VALID（保留）— 需新增多个 compose override 文件，涉及 dev/staging/prod 完整配置矩阵设计
 
 #### 5.34.3 [HIGH] 测试使用SQLite而生产用PostgreSQL，schema已知分歧
 - **文件**：[conftest.py](file:///D:/ZephyrAlpha/tests/conftest.py#L39)
@@ -3309,6 +3327,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：测试验证的行为基于SQLite schema，生产运行PG schema；5.18.3/5.18.4/5.18.6已记录两schema分歧
 - **影响**：FK约束、CHECK约束、触发器行为差异在测试中不可见
 - **修复**：测试fixture改用PG testcontainers或独立PG test数据库
+- **状态**：STILL_VALID（保留）— 需引入 testcontainers 或独立 PG test 数据库，涉及 tests/ 全量 fixture 重构
 
 #### 5.34.4 [HIGH] 测试直接连接生产PostgreSQL，无测试数据库隔离（与5.21交叉确认）
 - **文件**：[test_depgraph_db.py](file:///D:/ZephyrAlpha/tests/governance/depgraph/test_depgraph_db.py#L13)
@@ -3316,6 +3335,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：测试与生产共用同一PG数据库；测试INSERT/UPDATE/DELETE直接修改生产数据
 - **影响**：违反project_memory.md第10行"测试脚本必须严格隔离生产库"硬约束
 - **修复**：新增config/.env.postgres.test（POSTGRES_DB=depgraph_test）；get_depgraph_pg_connection()检测PYTEST_CURRENT_TEST自动切测试库
+- **状态**：STILL_VALID（保留）— 需新增 config/.env.postgres.test + 修改 get_depgraph_pg_connection() 检测 PYTEST_CURRENT_TEST
 
 #### 5.34.5 [HIGH] PG连接硬编码config/.env.postgres，无DATABASE_URL环境变量模式
 - **文件**：[depgraph_schema.py](file:///D:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py#L89)
@@ -3323,6 +3343,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：PG连接配置基于文件位置而非环境变量；12-Factor §III违规
 - **影响**：dev/staging/prod切换需修改文件；容器化部署需mount配置文件而非传env var
 - **修复**：_load_pg_config()优先读DATABASE_URL env var
+- **状态**：STILL_VALID（保留）— 需重构 _load_pg_config() 支持 DATABASE_URL 12-Factor 模式
 
 #### 5.34.6 [HIGH] is_dev()/is_prod()/is_staging()/is_test()在生产代码中零调用（死抽象）
 - **文件**：[env.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/env.py#L98)
@@ -3330,6 +3351,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：环境检测抽象存在但无人使用；生产代码无任何环境分支逻辑
 - **影响**：所有环境运行相同行为；无"prod禁止DROP TABLE"等安全守卫
 - **修复**：在关键路径引入环境检查，如apply_depgraph.py写入前if is_prod(): require_approval()
+- **状态**：STILL_VALID（保留）— 需在 apply_depgraph.py 等关键路径引入 is_prod() 守卫，涉及多个写入点改造
 
 #### 5.34.7 [HIGH] 生产代码硬编码SQLite governance.db路径，与 depgraph (PostgreSQL) 形成双库无隔离
 - **文件**：[dashboard.py](file:///D:/ZephyrAlpha/src/zephyr/governance/drift_detection/dashboard.py#L60)、[dlq.py](file:///D:/ZephyrAlpha/src/zephyr/shared/events/dlq.py#L30)
@@ -3337,6 +3359,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：生产同时运行两套数据库系统（SQLite governance.db + depgraph (PostgreSQL)）；两库无跨库事务一致性
 - **影响**：governance.db文件锁竞争导致写入失败；灾备需同时备份PG+SQLite
 - **修复**：governance.db也迁移到PG（作为governance schema）
+- **状态**：STILL_VALID（保留）— 需将 governance.db 迁移到 PG 作为 governance schema，属大规模数据库迁移
 
 #### 5.34.9 [MEDIUM] .env.example未文档化PG配置
 - **文件**：[.env.example](file:///D:/ZephyrAlpha/.env.example#L30)
@@ -3344,6 +3367,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：新开发者无法从.env.example推断PG配置
 - **影响**：onboarding阻塞
 - **修复**：.env.example新增PostgreSQL段落；新增config/.env.postgres.example模板
+- **状态**：FIXED（2026-07-04）— .env.example L62-72 新增 PostgreSQL 段落，文档化 POSTGRES_HOST/PORT/DB/USER/PASSWORD 及 config/.env.postgres 文件位置说明
 
 #### 5.34.10 [MEDIUM] 日志级别不按环境分级，dev/prod同为INFO
 - **文件**：[logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L324)
@@ -3351,6 +3375,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：dev/staging/prod共用INFO级别；无"dev=DEBUG/prod=WARNING"分级策略
 - **影响**：dev排障缺DEBUG信息；prod日志过详细
 - **修复**：configure_root_logger()默认level = "DEBUG" if is_dev() else "WARNING"
+- **状态**：STILL_VALID（保留）— 需重构 configure_root_logger() 接入 is_dev()/is_prod() 环境检测
 
 #### 5.34.11 严重度汇总
 
@@ -3380,6 +3405,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：代码路由表与配置文件不一致
 - **影响**：vector_memory的per-server限流和RBAC ACL对gateway路由失效
 - **修复**：统一为下划线命名，从mcp.json单向生成gateway路由表
+- **状态**：STILL_VALID（保留）— gateway_server.py L250 路由键 "vector-memory"（连字符）vs mcp.json L91 "vector_memory"（下划线）分歧仍存在；修复需统一命名 + 涉及 RBAC ACL 关联配置
 
 #### 5.35.2 [MEDIUM] MCP工具定义无版本字段
 - **文件**：[_base_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/_base_server.py#L121)
@@ -3387,6 +3413,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：MCP工具无版本标识，工具签名/行为变更后消费方无法感知版本差异
 - **影响**：工具参数变更属breaking change，但调用方无法做版本兼容判断
 - **修复**：在ToolDefinition增加version: str = "1.0.0"字段
+- **状态**：FIXED（2026-07-04）— ToolDefinition 新增 `version: str = "1.0.0"`；register_tool() 同步增加 version 参数；_handle_tools_list() 返回 version 字段
 
 #### 5.35.3 [MEDIUM] mcp.json各server缺少version字段
 - **文件**：[mcp.json](file:///D:/ZephyrAlpha/config/mcp.json#L13)
@@ -3394,6 +3421,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：server级别无版本管理，无法追踪各server的API演进
 - **影响**：server升级时无法做版本协商
 - **修复**：为每个server配置项增加version字段
+- **状态**：STILL_VALID（保留）— mcp.json 10 个 server 配置项均无 version 字段，需为每个 server 单独确定版本号
 
 #### 5.35.4 [MEDIUM] api_version_contract.py是孤立未集成的死代码
 - **文件**：[api_version_contract.py](file:///D:/ZephyrAlpha/src/zephyr/trading/feedback_loop/actors/api_version_contract.py#L1)
@@ -3401,6 +3429,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：API版本契约模型已定义但从未被任何代码import使用
 - **影响**：废弃API版本不会被检测/阻断
 - **修复**：将此模型集成到MCP gateway的工具调用链路，或删除死代码
+- **状态**：STILL_VALID（保留）— Grep 确认 APIVersionContract 仅在 tests/ 中被 import，无生产代码集成；需集成到 MCP gateway 工具调用链路或决定删除
 
 #### 5.35.6 [MEDIUM] MCP工具无deprecation策略
 - **文件**：[integration/mcp/](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/)
@@ -3408,6 +3437,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：工具可被直接删除/重命名，无废弃过渡期
 - **影响**：依赖该工具的agent/IDE在工具消失后立即失败，无迁移窗口
 - **修复**：在ToolDefinition增加deprecated: bool和sunset_date字段
+- **状态**：FIXED（2026-07-04）— ToolDefinition 新增 `deprecated: bool = False`、`sunset_date: str | None = None`、`replacement: str | None = None`；register_tool() 同步增加参数；_handle_tools_list() 返回 deprecated/sunsetDate/replacement 字段
 
 #### 5.35.7 [LOW] 无OpenAPI/Swagger响应schema
 - **文件**：全项目
@@ -3415,6 +3445,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：API响应无契约schema，调用方只能靠试错解析返回值
 - **影响**：消费者需hardcode返回值结构猜测
 - **修复**：为每个工具增加output_schema
+- **状态**：STILL_VALID（保留）— 需为每个工具定义 output_schema，涉及全量工具的响应契约梳理
 
 #### 5.35.8 [LOW] gateway版本硬编码且无版本协商
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gateway_server.py#L66)
@@ -3422,6 +3453,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：版本号硬编码在源码中；客户端无法声明所需API版本
 - **影响**：版本升级需改代码；客户端无法做版本降级兼容
 - **修复**：版本号从mcp.json加载；在JSON-RPC请求中增加api_version字段
+- **状态**：STILL_VALID（保留）— gateway_server.py L67 `_GATEWAY_VERSION = "1.0.0"` 仍硬编码；需从 mcp.json 加载 + JSON-RPC 请求增加 api_version 字段
 
 #### 5.35.9 严重度汇总
 

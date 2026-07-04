@@ -128,6 +128,13 @@ class ToolDefinition:
     input_schema: dict[str, Any]
     handler: Callable[..., Any]
     safety_level: str = "L"
+    # 5.35.2 修复：新增 version 字段，支持工具版本演进与 breaking change 检测
+    version: str = "1.0.0"
+    # 5.35.6 修复：新增 deprecation 字段，支持工具废弃过渡期策略
+    # deprecated=True 表示工具已废弃，调用方应迁移到 replacement；sunset_date 后工具将被移除
+    deprecated: bool = False
+    sunset_date: str | None = None  # ISO 8601 日期 (YYYY-MM-DD)，None 表示未定移除时间
+    replacement: str | None = None  # 推荐的替代工具名，None 表示无直接替代
 
 
 # ---------------------------------------------------------------------------
@@ -238,6 +245,10 @@ class BaseMCPServer:
         handler: Callable[..., Any],
         *,
         safety_level: str = "L",
+        version: str = "1.0.0",
+        deprecated: bool = False,
+        sunset_date: str | None = None,
+        replacement: str | None = None,
     ) -> None:
         """注册一个 MCP Tool。
 
@@ -256,6 +267,14 @@ class BaseMCPServer:
             M = Medium（返回确认提示）
             H = High（返回 Owner approval required）
             与 MOD-INF-018 RBAC 对齐。
+        version:
+            工具语义版本（5.35.2 修复，默认 "1.0.0"）。breaking change 时major+1。
+        deprecated:
+            是否已废弃（5.35.6 修复，默认 False）。True 时调用方应迁移到 replacement。
+        sunset_date:
+            废弃工具的移除日期（ISO 8601 YYYY-MM-DD），None 表示未定。
+        replacement:
+            推荐的替代工具名，None 表示无直接替代。
         """
         self._tools[name] = ToolDefinition(
             name=name,
@@ -263,6 +282,10 @@ class BaseMCPServer:
             input_schema=input_schema,
             handler=handler,
             safety_level=safety_level,
+            version=version,
+            deprecated=deprecated,
+            sunset_date=sunset_date,
+            replacement=replacement,
         )
 
     @property
@@ -383,6 +406,11 @@ class BaseMCPServer:
                 "name": t.name,
                 "description": t.description,
                 "inputSchema": t.input_schema,
+                # 5.35.2/5.35.6 修复：tools/list 返回 version 和 deprecation 元数据
+                "version": t.version,
+                "deprecated": t.deprecated,
+                "sunsetDate": t.sunset_date,
+                "replacement": t.replacement,
             }
             for t in self._tools.values()
         ]
