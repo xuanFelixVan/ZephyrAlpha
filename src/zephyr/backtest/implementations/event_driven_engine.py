@@ -51,6 +51,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from datetime import date as _date_class
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Callable, Optional
@@ -418,6 +419,8 @@ def _to_datetime(dt: Any) -> datetime:
     """将各种日期类型转换为 datetime"""
     if isinstance(dt, datetime):
         return dt
+    if isinstance(dt, _date_class):  # datetime.date (非 datetime.datetime)
+        return datetime(dt.year, dt.month, dt.day)
     if hasattr(dt, "to_pydatetime"):
         return dt.to_pydatetime()
     if isinstance(dt, str):

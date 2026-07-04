@@ -122,7 +122,8 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [float(r.get("sharpe_ratio", 0.0)) for r in walk_forward_results],
+            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+             for r in walk_forward_results],
             dtype=float,
         )
         n = len(sharpes)
@@ -179,7 +180,11 @@ class OverfittingDetector:
         Returns:
             dict: is_stable, base_sharpe, max_change, mean_change, n_perturbed, reasons
         """
-        base_sharpe = float(base_result.get("sharpe_ratio", 0.0))
+        base_sharpe = float(
+            base_result.get("sharpe_ratio")
+            if "sharpe_ratio" in base_result
+            else base_result.get("sharpe", 0.0)
+        )
         if not perturbed_results:
             return {
                 "is_stable": True,
@@ -191,7 +196,8 @@ class OverfittingDetector:
             }
 
         perturbed_sharpes = np.array(
-            [float(r.get("sharpe_ratio", 0.0)) for r in perturbed_results],
+            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+             for r in perturbed_results],
             dtype=float,
         )
         reasons: list[str] = []
@@ -246,7 +252,8 @@ class OverfittingDetector:
             }
 
         sharpes = np.array(
-            [float(r.get("sharpe_ratio", 0.0)) for r in period_results],
+            [float(r.get("sharpe_ratio") if "sharpe_ratio" in r else r.get("sharpe", 0.0))
+             for r in period_results],
             dtype=float,
         )
         n = len(sharpes)
