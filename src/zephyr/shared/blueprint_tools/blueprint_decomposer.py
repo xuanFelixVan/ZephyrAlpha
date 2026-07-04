@@ -161,6 +161,59 @@ class BlueprintDecomposer:
         self.docs_dir = Path(docs_dir) if docs_dir else None
         self._global_seq: dict[str, int] = {}
 
+    # === target_layer 自动映射（对齐 target_layer_vocabulary.yaml v1.0.0）===
+
+    # 功能域 → 域标识符映射（基于 target_layer_vocabulary.yaml）
+    _FUNC_DOMAIN_TO_TARGET_LAYER: dict[str, str] = {
+        "data": "D_MKT_DATA",
+        "factor": "D_FACTOR",
+        "signal": "D_SIGLEGACY",
+        "risk": "D_RISK",
+        "backtest": "D_BACKTEST",
+        "compliance": "D_GOV_ENFORCEMENT",
+        "governance": "D_GOVERNANCE",
+        "operations": "D_OPS",
+        "intelligence": "D_INTELLIGENCE",
+        "execution": "D_EX_CORE",
+        "capacity": "D_INFRA_OPS",
+        "infra": "D_INFRA_RUNTIME",
+        "safety_escalation": "D_AUTONOMY_PERM",
+    }
+
+    # 架构层 → 域标识符映射（仅 L0 有明确1:1映射，其他层不映射）
+    _LAYER_TO_TARGET_LAYER: dict[str, str] = {
+        "L0_infrastructure": "D_INFRA_OPS",
+    }
+
+    def _parse_frontmatter(self, blueprint_path: str) -> dict:
+        """解析蓝图文件的 YAML frontmatter。"""
+        try:
+            text = Path(blueprint_path).read_text(encoding="utf-8")
+            if not text.startswith("---"):
+                return {}
+            parts = text.split("---", 2)
+            if len(parts) < 3:
+                return {}
+            return yaml.safe_load(parts[1]) or {}
+        except Exception:
+            return {}
+
+    def _infer_target_layer(self, fm: dict) -> str | None:
+        """从 frontmatter 推断 target_layer。
+
+        优先级：functional_domain > layer（L0_infrastructure）
+        对齐 target_layer_vocabulary.yaml v1.0.0
+        """
+        func_domain = str(fm.get("functional_domain", "")).strip().lower()
+        if func_domain in self._FUNC_DOMAIN_TO_TARGET_LAYER:
+            return self._FUNC_DOMAIN_TO_TARGET_LAYER[func_domain]
+
+        layer = str(fm.get("layer", "")).strip()
+        if layer in self._LAYER_TO_TARGET_LAYER:
+            return self._LAYER_TO_TARGET_LAYER[layer]
+
+        return None
+
     def decompose_blueprint(
         self,
         blueprint_path: str,
@@ -181,7 +234,11 @@ class BlueprintDecomposer:
 
         content = path.read_text(encoding="utf-8")
 
-        tasks, unassigned, warnings = self._extract_tasks(content, blueprint_path, namespace, phase)
+        # target_layer 自动映射：从 frontmatter 推断（对齐 target_layer_vocabulary.yaml v1.0.0）
+        fm = self._parse_frontmatter(blueprint_path)
+        target_layer = self._infer_target_layer(fm)
+
+        tasks, unassigned, warnings = self._extract_tasks(content, blueprint_path, namespace, phase, target_layer)
         self._resolve_depends_on_ids(tasks)
         dep_graph = self._build_dependency_graph(tasks)
 
@@ -226,6 +283,7 @@ class BlueprintDecomposer:
         blueprint_path: str,
         namespace: str,
         phase: int,
+        target_layer: str | None = None,
     ) -> tuple[list[TaskCard], list[str], list[str]]:
         tasks: list[TaskCard] = []
         unassigned: list[str] = []
@@ -252,6 +310,7 @@ class BlueprintDecomposer:
                         namespace_label=label,
                         phase=phase,
                         depends_on=dep_ids,
+                        target_layer=target_layer,
                     )
                     if task:
                         tasks.append(task)
@@ -291,6 +350,7 @@ class BlueprintDecomposer:
         namespace_label: str,
         phase: int,
         depends_on: list[str] | None = None,
+        target_layer: str | None = None,
     ) -> TaskCard | None:
         try:
             ns = _resolve_task_namespace(namespace_label)
@@ -370,6 +430,8 @@ class BlueprintDecomposer:
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
+                pipeline_task_type="CODE_GEN",  # 蓝图拆解默认为代码生成
+                target_layer=target_layer,
                 created_at=now,
                 updated_at=now,
             )

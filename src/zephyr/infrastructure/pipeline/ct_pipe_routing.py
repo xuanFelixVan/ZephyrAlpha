@@ -60,8 +60,9 @@ __all__ = [
 _CT_PIPE_TAG_PREFIX = "ct_pipe."
 
 # 蓝图决策树隐含的低层路由（foundation domains）— 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001
-# target_layer ∈ {D_DATA, 基础设施, D_COMPLIANCE} → M5；其余域 → M6
-_FOUNDATION_LAYERS = frozenset({"D_DATA", "基础设施", "D_COMPLIANCE"})
+# + target_layer_vocabulary.yaml v1.0.0 foundation_domains
+# target_layer ∈ {D_MKT_DATA, D_INFRA_OPS, D_GOV_ENFORCEMENT} → M5；其余域 → M6
+_FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
 
 # node_id → (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
 _NODE_PROFILE: dict[str, tuple[str, str, str]] = {

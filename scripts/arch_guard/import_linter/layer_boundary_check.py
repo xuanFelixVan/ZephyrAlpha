@@ -22,8 +22,8 @@ INV-008: 跨层依赖方向——低层不得 import 高层（D_DATA 不得 impo
   - 扫描 src/zephyr/ 下所有 .py 文件的 import 语句
   - 解析 from zephyr.lNN_xxx import ... 格式的跨层引用
   - 提取层号，检查低层是否引用了高层：
-    例：D_FACTOR (alpha factor) import D_PORTFOLIO_CORE (portfolio construction) → 违规
-    D_DATA < D_FACTOR < D_SIGNAL < D_RISK < D_PORTFOLIO_CORE < D_EXECUTION_CORE < D_REPORTING < ... < 实验
+    例：D_FACTOR (alpha factor) import D_PF_CORE (portfolio construction) → 违规
+    D_MKT_DATA < D_FACTOR < D_SIGLEGACY < D_RISK < D_PF_CORE < D_EX_CORE < D_REPORTING < ... < 实验
   - 合法的跨层引用：shared/ 基础设施层（被所有层共享）
   - 排除：tests/, docs/, __pycache__/
 

@@ -4,7 +4,7 @@ title: 功能域注册表
 doc_type: register
 registry_id: REG-FUNC-DOMAIN-001
 name: 功能域注册表
-description: 模块/脚本功能域声明的唯一真源。以 D-XXX 域ID 为 domain 字段的子域描述表，创建新模块/脚本时SSoT门禁检查功能域重叠。
+description: 模块/脚本功能域声明的唯一真源（治理/基础设施/AI 域）。以 D_XXX 域ID（下划线格式）为 domain 字段的子域描述表，创建新模块/脚本时SSoT门禁检查功能域重叠。交易核心域（D_MKT_DATA/D_FACTOR/D_RISK 等）见 architecture_model/contracts/cross_layer_contracts.yaml。target_layer 字段全部合法值见 target_layer_vocabulary.yaml v1.0.0。
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active

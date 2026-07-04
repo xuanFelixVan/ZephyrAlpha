@@ -79,12 +79,12 @@ class TestPipelineOrchestrator:
 
     def test_run_returns_pipeline_result(self):
         orc = PipelineOrchestrator()
-        result = orc.run(task_type="CODE_GEN", target_layer="基础设施", session_id="test-session")
+        result = orc.run(task_type="CODE_GEN", target_layer="D_INFRA_OPS", session_id="test-session")
         assert isinstance(result, PipelineResult)
 
     def test_run_metrics_populated(self):
         orc = PipelineOrchestrator()
-        result = orc.run(task_type="CODE_GEN", target_layer="基础设施", session_id="test-session")
+        result = orc.run(task_type="CODE_GEN", target_layer="D_INFRA_OPS", session_id="test-session")
         assert result.metrics.total_ms >= 0
         assert result.metrics.build_ms >= 0
 

@@ -170,7 +170,7 @@ class TestRawContext:
 
 class TestBuildContext:
     def test_build_context_no_vms(self):
-        ctx = build_context(task_type="code_gen", target_layer="L1", vms=None)
+        ctx = build_context(task_type="code_gen", target_layer="D_INFRA_OPS", vms=None)
         assert ctx.degraded is True
         assert len(ctx.embedded_defaults) > 0
 

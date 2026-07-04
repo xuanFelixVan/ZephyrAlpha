@@ -2641,6 +2641,24 @@ capabilities:
       解决发现性：新 AI 搜 "breaking_change/治本变更并发/§9.7" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建并发阻断逻辑。
 
+  - capability_id: target_layer_validation
+    canonical_override: scripts/governance/d5_architecture/validators/validate_target_layer.py
+    aliases:
+      - TARGET-LAYER
+      - target_layer_validator
+      - target_layer_check
+      - D_MKT_DATA
+      - D_INFRA_OPS
+      - ARCH-target_layer
+    description: >-
+      target_layer 值体系校验脚本（裁定#ARCH-target_layer_v1.0.0 三层防线 Layer 2）。
+      扫描 src/ 和 tests/ 下 .py 文件中 target_layer 赋值，校验值是否在
+      target_layer_vocabulary.yaml 合法值集合（37个）或废弃值集合（9个）中。
+      发现未知值 → exit 1 阻断（CI/CD 消费）。真源：target_layer_vocabulary.yaml
+      （TaskCard.target_layer 字段唯一真源）。对标 layer_boundary_check.py 的
+      架构层校验设计。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
+      可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI 重建校验脚本。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3038,6 +3056,16 @@ creation_tokens:
     token: "auto-decision-gate-20260704"
     created_by: "session-sess-25020-20260704152728"
     capability: "backtest_engine_core"
+
+  # --- ARCH-target_layer_v1.0.0: target_layer 校验脚本（2026-07-04）---
+  - file: "scripts/governance/d5_architecture/validators/validate_target_layer.py"
+    token: "auto-validate-target-layer-20260704"
+    created_by: "session-sess-26244-20260704153058"
+    capability: "target_layer_validation"
+  - file: "docs/01_policies_and_standards/_registry/vocabularies/target_layer_vocabulary.yaml"
+    token: "auto-target-layer-vocabulary-20260704"
+    created_by: "session-sess-26244-20260704153058"
+    capability: "target_layer_validation"
 
 # ============================================================================
 # 维护日志

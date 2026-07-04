@@ -55,12 +55,12 @@ class TestCtPipeRoutingHints:
         hints = CtPipeRoutingHints(
             task_type="MODEL_BUILD",
             priority_value="P1",
-            target_layer="基础设施",
+            target_layer="D_INFRA_OPS",
             estimated_complexity="HIGH",
         )
         assert hints.task_type == "MODEL_BUILD"
         assert hints.priority_value == "P1"
-        assert hints.target_layer == "基础设施"
+        assert hints.target_layer == "D_INFRA_OPS"
         assert hints.estimated_complexity == "HIGH"
 
     def test_default_priority(self):
@@ -106,11 +106,11 @@ class TestCtPipeHintsFromTaskCard:
     def test_target_layer_from_field(self):
         task = MockTaskCard(
             pipeline_task_type="DOC_WRITE",
-            target_layer="D_DATA",
+            target_layer="D_MKT_DATA",
             priority=MockPriority("P2"),
         )
         hints = ct_pipe_hints_from_task_card(task)
-        assert hints.target_layer == "D_DATA"
+        assert hints.target_layer == "D_MKT_DATA"
 
     def test_target_layer_from_tag(self):
         task = MockTaskCard(
@@ -202,7 +202,7 @@ class TestResolveCtPipeOrc001:
         hints = CtPipeRoutingHints(
             task_type="DOC_WRITE",
             priority_value="P2",
-            target_layer="D_DATA",
+            target_layer="D_MKT_DATA",
         )
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M5"
@@ -252,7 +252,7 @@ class TestResolveCtPipeOrc001:
         hints = CtPipeRoutingHints(
             task_type="REFACTOR",
             priority_value="P2",
-            target_layer="D_COMPLIANCE",
+            target_layer="D_GOV_ENFORCEMENT",
         )
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M5"

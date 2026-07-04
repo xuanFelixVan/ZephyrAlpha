@@ -697,7 +697,7 @@ routing:
       if priority == P0 → M3 (Opus 4.5 复审, audit sandbox)
       else → M4 (Claude 4.5 Sonnet, audit sandbox)
     if task_type ∈ {DOC_WRITE, REFACTOR}:
-      if target_layer ∈ {D_DATA,基础设施,D_COMPLIANCE} → M5 (GPT-5.2, full sandbox)
+      if target_layer ∈ {D_MKT_DATA,D_INFRA_OPS,D_GOV_ENFORCEMENT} → M5 (GPT-5.2, full sandbox)
       else → M6 (Claude 4.5 Sonnet, standard sandbox)
 
 pipeline_output:

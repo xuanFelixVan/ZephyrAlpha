@@ -62,8 +62,9 @@ __all__ = [
     "TaskTypeFilter",
 ]
 
-# 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001（foundation domains → M5）
-_FOUNDATION_LAYERS = frozenset({"D_DATA", "基础设施", "D_COMPLIANCE"})
+# 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001 + target_layer_vocabulary.yaml v1.0.0
+# foundation_domains（D_MKT_DATA/D_INFRA_OPS/D_GOV_ENFORCEMENT → M5）
+_FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
 
 _NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {
     "M1": frozenset({"MODEL_BUILD"}),

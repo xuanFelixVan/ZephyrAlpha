@@ -1,0 +1,297 @@
+# [A_config] module_id=CFG-target_layer_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# target_layer 受控词表
+# ZephyrAlpha TaskCard.target_layer 字段唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-04
+# 变更历史：
+#   v1.0.0 (2026-07-04): 初版——统一 target_layer 值体系为下划线 D_XXX 格式，消除8处真源不一致。
+#                        合并 functional_domain_registry.yaml（治理/基础设施/AI 域）+
+#                        cross_layer_contracts.yaml（交易核心域）的域标识符。
+#                        原 D_DATA/基础设施/D_COMPLIANCE/D-DATA 等降级为 deprecated_values。
+#
+# SSoT 链路（自顶向下）：
+#   - 运行时真源1：src/zephyr/infrastructure/pipeline/ct_pipe_routing.py 的 _FOUNDATION_LAYERS
+#     （CT-PIPE 路由 M5/M6 判定集合）
+#   - 运行时真源2：docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
+#     （治理/基础设施/AI 域 domain_id 登记表）
+#   - 运行时真源3：architecture_model/contracts/cross_layer_contracts.yaml
+#     （交易核心域 domain_id 契约表）
+#   - 本词表：target_layer 字段人类可读视图，与上述3处运行时真源保持一致
+#   - DB 约束：src/zephyr/governance/depgraph_schema.py 的 domains 表 domain_id 字段
+#     （PRIMARY KEY，建议添加 CHECK 约束引用本词表合法值集合）
+#
+# 命名约定（裁定#ARCH-target_layer_v1.0.0）：
+#   - 统一为下划线格式：D_XXX（大写+下划线），与 functional_domain_registry.yaml 和
+#     cross_layer_contracts.yaml 一致
+#   - 废弃连字符格式：D-DATA/D-SIGNAL/D-RESEARCH（源自 inject_domain_fields.py 历史 bug）
+#   - 废弃中文值：基础设施（改为 D_INFRA_OPS，与 functional_domain_registry 对齐）
+#   - 废弃未登记域：D_COMPLIANCE（合规语义已由 D_GOV_ENFORCEMENT 覆盖）
+#   - 废弃简写域：D_DATA（改为 D_MKT_DATA，与 cross_layer_contracts 对齐）
+#
+# foundation_domains（路由到 M5 GPT-5.2 full sandbox）：
+#   - 语义：基础层域，需要高算力全沙箱能力
+#   - 来源：blueprint_baseline.md §CT-PIPE-ORC-001
+#   - 合法值：D_MKT_DATA / D_INFRA_OPS / D_GOV_ENFORCEMENT
+#   - 其余域路由到 M6（Claude 4.5 Sonnet, standard sandbox）
+#
+# 对标标准：
+#   - PS-STD-001 §9.5：target_layer 字段定义
+#   - blueprint_baseline.md §CT-PIPE-ORC-001：CT-PIPE 路由判定规则
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-006
+version: "1.0.0"
+title: "target_layer 受控词表"
+status: active
+vocabulary_name: target_layer
+total_values: 38
+depends_on:
+  - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
+    at: "_FOUNDATION_LAYERS 集合"
+    why: "CT-PIPE 路由 M5/M6 判定真源"
+  - target: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
+    at: "entries[].domain 字段"
+    why: "治理/基础设施/AI 域 domain_id 登记真源"
+  - target: architecture_model/contracts/cross_layer_contracts.yaml
+    at: "source_domain/target_domains 字段"
+    why: "交易核心域 domain_id 契约真源"
+
+# foundation_domains：路由到 M5（GPT-5.2, full sandbox）的域集合
+# 语义：基础层域——数据处理/基础设施/合规治理需要高算力全沙箱
+# 来源：blueprint_baseline.md §CT-PIPE-ORC-001
+foundation_domains:
+  - D_MKT_DATA      # 市场数据域（原 D_DATA）——数据接入/清洗/存储需要全沙箱
+  - D_INFRA_OPS     # 基础设施运维域（原 基础设施）——基础设施改动影响面大
+  - D_GOV_ENFORCEMENT  # 治理执行域（原 D_COMPLIANCE）——合规规则复杂需高算力
+
+# values：target_layer 字段全部合法值集合
+# 分类：交易核心域 / 治理域 / 基础设施域 / AI智能域 / 安全域 / 集成域 / 测试域 / 信号域 / 共享域
+values:
+  # === 交易核心域（来源：cross_layer_contracts.yaml）===
+  - value: D_MKT_DATA
+    definition: "市场数据域——行情数据接入/清洗/存储/分发"
+    is_foundation: true
+    ai_keywords: ["市场数据", "market data", "data", "数据"]
+  - value: D_FACTOR
+    definition: "因子域——因子计算/因子库/因子元数据"
+    is_foundation: false
+    ai_keywords: ["因子", "factor"]
+  - value: D_SIGLEGACY
+    definition: "信号遗留域——旧版信号模块兼容层"
+    is_foundation: false
+    ai_keywords: ["信号遗留", "signal legacy"]
+  - value: D_SIMULATION
+    definition: "模拟域——交易模拟/纸上交易"
+    is_foundation: false
+    ai_keywords: ["模拟", "simulation"]
+  - value: D_BACKTEST
+    definition: "回测域——回测引擎/回测框架/回测报告"
+    is_foundation: false
+    ai_keywords: ["回测", "backtest"]
+  - value: D_RISK
+    definition: "风险域——风控引擎/风险限额/止损"
+    is_foundation: false
+    ai_keywords: ["风险", "risk"]
+  - value: D_PF_CORE
+    definition: "组合核心域——组合构建/仓位管理/策略生命周期"
+    is_foundation: false
+    ai_keywords: ["组合", "portfolio", "pf_core"]
+    aliases: ["D_PORTFOLIO_CORE"]
+  - value: D_EX_CORE
+    definition: "执行核心域——订单执行/撮合/经纪商对接"
+    is_foundation: false
+    ai_keywords: ["执行", "execution", "ex_core"]
+    aliases: ["D_EXECUTION_CORE"]
+  - value: D_TRADING
+    definition: "交易域——交易会话/交易编排"
+    is_foundation: false
+    ai_keywords: ["交易", "trading"]
+
+  # === 治理域（来源：functional_domain_registry.yaml）===
+  - value: D_GOVERNANCE
+    definition: "治理总域——Agent治理八件套跨模块集成"
+    is_foundation: false
+    ai_keywords: ["治理", "governance"]
+  - value: D_GOV_ENFORCEMENT
+    definition: "治理执行域——门禁引擎/规则强制/合规执行"
+    is_foundation: true
+    ai_keywords: ["治理执行", "enforcement", "compliance", "合规"]
+  - value: D_GOV_SCRIPTS
+    definition: "治理脚本域——脚本系统/自动化审计"
+    is_foundation: false
+    ai_keywords: ["治理脚本", "scripts"]
+  - value: D_GOV_DRIFT
+    definition: "治理漂移域——漂移检测/漂移治理"
+    is_foundation: false
+    ai_keywords: ["漂移", "drift"]
+  - value: D_GOV_REPAIR
+    definition: "治理修复域——自动修复/回滚系统"
+    is_foundation: false
+    ai_keywords: ["修复", "repair", "rollback"]
+  - value: D_GOV_AUDIT
+    definition: "治理审计域——审计追踪/法证审计"
+    is_foundation: false
+    ai_keywords: ["审计", "audit"]
+  - value: D_GOV_DOCS
+    definition: "治理文档域——文档治理/文档索引"
+    is_foundation: false
+    ai_keywords: ["文档治理", "docs"]
+  - value: D_GOV_RULE
+    definition: "治理规则域——规则引擎/规则桥接"
+    is_foundation: false
+    ai_keywords: ["规则", "rule"]
+
+  # === 基础设施域（来源：functional_domain_registry.yaml）===
+  - value: D_INFRA_RUNTIME
+    definition: "运行时基础设施域——运行时集成/模块通信/事件总线"
+    is_foundation: false
+    ai_keywords: ["运行时", "runtime", "infrastructure"]
+  - value: D_INFRA_OPS
+    definition: "基础设施运维域——容量保障/SLI/SLO/资源优化"
+    is_foundation: true
+    ai_keywords: ["基础设施运维", "infra ops", "基础设施"]
+  - value: D_INTEGRATION_GATEWAY
+    definition: "集成网关域——API网关/协议适配"
+    is_foundation: false
+    ai_keywords: ["网关", "gateway"]
+  - value: D_INFRA_A2A
+    definition: "A2A基础设施域——Agent-to-Agent通信基础设施"
+    is_foundation: false
+    ai_keywords: ["A2A", "agent-to-agent"]
+  - value: D_INFRA_RECOVERY
+    definition: "基础设施恢复域——容灾/恢复/高可用"
+    is_foundation: false
+    ai_keywords: ["恢复", "recovery"]
+  - value: D_INFRA_TELEMETRY
+    definition: "基础设施遥测域——系统遥测/可观测性"
+    is_foundation: false
+    ai_keywords: ["遥测", "telemetry"]
+  - value: D_OPS
+    definition: "运维域——运维编排/运维自动化"
+    is_foundation: false
+    ai_keywords: ["运维", "ops"]
+
+  # === AI/智能域（来源：functional_domain_registry.yaml）===
+  - value: D_AUTONOMY_CORE
+    definition: "自主核心域——AI骨架/Agent Spec/RBAC"
+    is_foundation: false
+    ai_keywords: ["自主核心", "autonomy"]
+  - value: D_AUTONOMY_PERM
+    definition: "自主权限域——升级协议/权限委托"
+    is_foundation: false
+    ai_keywords: ["权限", "permission"]
+  - value: D_INTELLIGENCE
+    definition: "智能域——上下文引擎/反馈循环"
+    is_foundation: false
+    ai_keywords: ["智能", "intelligence"]
+  - value: D_ML_TRAIN
+    definition: "ML训练域——模型训练/推理引擎"
+    is_foundation: false
+    ai_keywords: ["ML训练", "ml train"]
+  - value: D_KNOWLEDGE
+    definition: "知识域——向量记忆/知识库"
+    is_foundation: false
+    ai_keywords: ["知识", "knowledge"]
+
+  # === 安全域（来源：functional_domain_registry.yaml）===
+  - value: D_SECURITY
+    definition: "安全域——安全防护/漏洞扫描"
+    is_foundation: false
+    ai_keywords: ["安全", "security"]
+  - value: D_SECURITY_LLM
+    definition: "LLM安全域——LLM安全防护/提示注入防御"
+    is_foundation: false
+    ai_keywords: ["LLM安全", "llm security"]
+
+  # === 集成域（来源：functional_domain_registry.yaml）===
+  - value: D_INTEGRATION
+    definition: "集成域——系统集成/数据集成"
+    is_foundation: false
+    ai_keywords: ["集成", "integration"]
+
+  # === 测试域（来源：functional_domain_registry.yaml）===
+  - value: D_AUDITTEST
+    definition: "审计测试域——审计测试/合规测试"
+    is_foundation: false
+    ai_keywords: ["审计测试", "audit test"]
+
+  # === 信号域（来源：functional_domain_registry.yaml）===
+  - value: D_ASHARE_SIGNAL
+    definition: "A股信号域——A股交易信号"
+    is_foundation: false
+    ai_keywords: ["A股信号", "ashare signal"]
+  - value: D_FUNDAMENTAL_SIGNAL
+    definition: "基本面信号域——基本面分析信号"
+    is_foundation: false
+    ai_keywords: ["基本面信号", "fundamental signal"]
+  - value: D_SIGQC
+    definition: "信号质量域——信号质量检查/信号质量管控"
+    is_foundation: false
+    ai_keywords: ["信号质量", "signal qc"]
+
+  # === 共享域（来源：functional_domain_registry.yaml + cross_layer_contracts.yaml）===
+  - value: D_SHARED
+    definition: "共享域——跨层共享模块/共享契约"
+    is_foundation: false
+    ai_keywords: ["共享", "shared"]
+
+# deprecated_values：废弃值集合（历史使用，禁止新增）
+deprecated_values:
+  - value: D_DATA
+    deprecated_in: "v1.0.0"
+    reason: "简写域名，统一为 D_MKT_DATA（与 cross_layer_contracts.yaml 对齐）"
+    replacement: "D_MKT_DATA"
+  - value: 基础设施
+    deprecated_in: "v1.0.0"
+    reason: "中文值违反全项目英文命名约定，统一为 D_INFRA_OPS"
+    replacement: "D_INFRA_OPS"
+  - value: D_COMPLIANCE
+    deprecated_in: "v1.0.0"
+    reason: "未登记幽灵域，合规语义已由 D_GOV_ENFORCEMENT 覆盖"
+    replacement: "D_GOV_ENFORCEMENT"
+  - value: D-DATA
+    deprecated_in: "v1.0.0"
+    reason: "连字符格式历史 bug（源自 inject_domain_fields.py），统一为下划线 D_MKT_DATA"
+    replacement: "D_MKT_DATA"
+  - value: D-SIGNAL
+    deprecated_in: "v1.0.0"
+    reason: "连字符格式历史 bug，统一为下划线 D_SIGLEGACY"
+    replacement: "D_SIGLEGACY"
+  - value: D-FACTOR
+    deprecated_in: "v1.0.0"
+    reason: "连字符格式历史 bug，统一为下划线 D_FACTOR"
+    replacement: "D_FACTOR"
+  - value: D-RESEARCH
+    deprecated_in: "v1.0.0"
+    reason: "连字符格式历史 bug，research 域已并入 D_INTELLIGENCE"
+    replacement: "D_INTELLIGENCE"
+  - value: D_PORTFOLIO_CORE
+    deprecated_in: "v1.0.0"
+    reason: "全称版域名，统一为缩写版 D_PF_CORE（与 cross_layer_contracts.yaml 对齐）"
+    replacement: "D_PF_CORE"
+  - value: D_EXECUTION_CORE
+    deprecated_in: "v1.0.0"
+    reason: "全称版域名，统一为缩写版 D_EX_CORE（与 cross_layer_contracts.yaml 对齐）"
+    replacement: "D_EX_CORE"
+
+# ============================================================
+# 命名约定裁定依据（裁定#ARCH-target_layer_v1.0.0）
+# ============================================================
+# 1. 下划线优先：functional_domain_registry.yaml（28域）和 cross_layer_contracts.yaml（11域）
+#    均用下划线，是活跃生产真源
+# 2. 缩写版优先：cross_layer_contracts.yaml 用 D_PF_CORE/D_EX_CORE（缩写），
+#    layer_boundary_check.py 用 D_PORTFOLIO_CORE/D_EXECUTION_CORE（全称），
+#    以契约真源为准统一为缩写版
+# 3. 中文废弃："基础设施"违反全项目英文命名约定，改为 D_INFRA_OPS
+# 4. 幽灵域废弃：D_COMPLIANCE 未在 functional_domain_registry 和 cross_layer_contracts 登记，
+#    合规语义已由 D_GOV_ENFORCEMENT（门禁引擎/rule_enforcement）覆盖
