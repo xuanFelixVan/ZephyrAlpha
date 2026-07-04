@@ -2268,11 +2268,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 病根：根因5（tamper-evident实为tamper-forgable）
 - 修复：改HMAC-SHA256，定期tail_hash外部锚定（git/远程签名）
 
-#### 5.17.6 StageContext.evaluate_skip用eval执行配置字符串【HIGH】
-- 证据：[integration/models.py:598-603](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `def evaluate_skip(self,condition): namespace={"ctx":self,"all":all,"any":any}; return bool(eval(condition,{"__builtins__":{}},namespace))`；`{"__builtins__":{}}`限制可经`ctx.__class__.__mro__`逃逸；condition来自`PipelineStage.skip_condition`配置，`ai_autonomy=ai_modifiable`普遍标注——AI改配置即RCE
-- 病根：根因5（用eval表达配置条件）
-- 修复：改受限表达式求值器（ast.literal_eval+白名单或simpleeval库）
-
 #### 5.17.8 RBAC默认关闭（_AUTO_ENABLE_RBAC默认False）【HIGH】
 - 证据：[_base_server.py:183-188](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/_base_server.py) `if not getattr(self,"_AUTO_ENABLE_RBAC",False): ...skip RBAC`；MCP server默认不启用RBAC须子类显式设True；`config/rbac_roles.yaml`定义权限但执行是opt-in非default-deny
 - 病根：根因5（默认开放而非默认拒绝）
@@ -2302,10 +2297,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 4（5.17.3+5.17.4+5.17.6+5.17.8；5.17.1/5.17.2/5.17.7已FIXED） |
+| CRITICAL/HIGH | 3（5.17.3+5.17.4+5.17.8；5.17.1/5.17.2/5.17.6/5.17.7已FIXED） |
 | MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
 | LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **11** |
+| **合计** | **10** |
 
 ---
 
