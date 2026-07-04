@@ -2435,6 +2435,60 @@ def cmd_apply_domain_id_check(
             c.close()
 
 
+def cmd_fix_domains_defaults(
+    dry_run: bool = False,
+    conn=None,
+) -> int:
+    """修复 domains 表 build_status DEFAULT 值（裁定#ARCH-target_layer_v1.0.0 v16修复）。
+
+    修复预存bug：build_status DEFAULT 'unbuilt' 不在 CHECK 允许值中，
+    INSERT 不提供 build_status 时会失败。修复为 DEFAULT 'planned'。
+
+    幂等：检查当前 DEFAULT 值，已是 'planned' 则跳过。
+
+    返回 0=成功/已修复，-1=失败。
+    """
+    own_conn = conn is None
+
+    def _run(c) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        # 1. 检查当前 DEFAULT 值
+        row = c.execute(
+            """
+            SELECT column_default
+            FROM information_schema.columns
+            WHERE table_name = 'domains' AND column_name = 'build_status'
+            """,
+        ).fetchone()
+        current_default = row["column_default"] if row else None
+        # PG 返回 'unbuilt'::text 或 'planned'::text
+        print(f"  {mode} 当前 build_status DEFAULT: {current_default}", file=sys.stderr)
+
+        if current_default and "'planned'" in current_default:
+            print(f"  {mode} DEFAULT 已是 'planned'，跳过", file=sys.stderr)
+            return 0
+
+        if current_default and "'unbuilt'" not in current_default:
+            print(f"  {mode} DEFAULT 既不是 'unbuilt' 也不是 'planned'，跳过（未知值）", file=sys.stderr)
+            return 0
+
+        # 2. ALTER TABLE ALTER COLUMN SET DEFAULT
+        print(f"  {mode} ALTER TABLE domains ALTER COLUMN build_status SET DEFAULT 'planned'", file=sys.stderr)
+        if not dry_run:
+            c.execute("ALTER TABLE domains ALTER COLUMN build_status SET DEFAULT 'planned'")
+            if own_conn:
+                c.commit()
+        print(f"{mode} cmd_fix_domains_defaults: DEFAULT 已修复为 'planned'", file=sys.stderr)
+        return 0
+
+    c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+    try:
+        return _run(c)
+    finally:
+        if own_conn:
+            c.close()
+
+
 def _restore_blueprint_links_readonly_trigger(c) -> None:
     """恢复 blueprint_links 只读触发器（裁定#207 R1 B2 通行证恢复）。
 
@@ -3603,6 +3657,13 @@ def main() -> None:
         "背景：_MIGRATIONS P2后不再执行，现有DB需通过此命令补丁式应用CHECK约束。",
     )
     parser.add_argument(
+        "--fix-domains-defaults",
+        action="store_true",
+        help="修复 domains 表 build_status DEFAULT 值（裁定#ARCH-target_layer_v1.0.0 v16修复）："
+        "幂等 ALTER TABLE ALTER COLUMN build_status SET DEFAULT 'planned'。"
+        "修复预存bug：DEFAULT 'unbuilt' 不在 CHECK 允许值中，INSERT 不提供 build_status 时失败。",
+    )
+    parser.add_argument(
         "--update-domain-name",
         type=str,
         nargs=2,
@@ -3978,6 +4039,14 @@ def main() -> None:
         print(f"rc={rc}")
         return
 
+    # 裁定#ARCH-target_layer_v1.0.0 v16：修复 domains.build_status DEFAULT——dispatch
+    if args.fix_domains_defaults:
+        rc = cmd_fix_domains_defaults(dry_run=args.dry_run)
+        if rc < 0:
+            sys.exit(4)
+        print(f"rc={rc}")
+        return
+
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
@@ -4095,7 +4164,7 @@ if __name__ == "__main__":
             "--rename-domain", "--update-domain-name", "--fix-residual",
             "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
             "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
-            "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check",
+            "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check", "--fix-domains-defaults",
         }
         is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
         has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)

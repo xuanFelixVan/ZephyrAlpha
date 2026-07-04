@@ -108,7 +108,7 @@ _LAYER_NAME_TO_DOMAIN = {
     "ex_core": "D_EX_CORE",
     "reporting": "D_REPORTING",
     "ml_train": "D_ML_TRAIN",
-    "compliance": "D_COMPLIANCE",
+    "compliance": "D_GOV_ENFORCEMENT",  # 裁定#ARCH-target_layer_v1.0.0: D_COMPLIANCE已merge到D_GOV_ENFORCEMENT
     "simulation": "D_SIMULATION",
     "frontend": "D_FRONTEND",
 }
@@ -857,7 +857,10 @@ def sync_directory_registry(cur):
             design_maturity='design'
         WHERE arch_directory_tree.design_maturity = 'design'
         """,
-            (d.get("path", ""), d.get("parent_path", ""), d.get("domain_id", ""), d.get("module_id", "")),
+            # 裁定#ARCH-target_layer_v1.0.0 v17修复：domain_id为空时用None（NULL），
+            # 避免空字符串""触发fk_arch_dir_domain外键违规（NULL不被FK检查，空字符串被检查）
+            # YAML用parent字段（非parent_path），一并兼容
+            (d.get("path", ""), d.get("parent", d.get("parent_path", "")), d.get("domain_id") or None, d.get("module_id", "")),
         )
         synced += 1
 
@@ -901,12 +904,7 @@ def sync_rule_catalog_registry(cur):
 
 
 def sync_infrastructure_registry(cur):
-    """#164: 基础设施注册表 → infrastructure_components 表
-
-    治本（2026-07-04）：补 DELETE 逻辑——YAML 中已删除的 component_id 自动从 DB 删除。
-    原仅 UPSERT 模式导致墓碑条目残留（如 INFRA-DB-005 已在 YAML 删除但 DB 残留），
-    成为幻觉/漂移源。100% AI 开发模式下墓碑无价值，删除即彻底删除。
-    """
+    """#164: 基础设施注册表 → infrastructure_components 表"""
     print("同步 #164: 基础设施注册表 → infrastructure_components...")
     data = load_yaml("_registry/catalogs/infrastructure_registry.yaml")
     if not data:
@@ -916,26 +914,6 @@ def sync_infrastructure_registry(cur):
     components = data.get("infrastructure", [])
     if not components:
         components = data.get("components", [])
-
-    # 收集 YAML 中所有 component_id
-    yaml_ids = []
-    for comp in components:
-        if not isinstance(comp, dict):
-            continue
-        cid = comp.get("infra_id", comp.get("component_id", comp.get("type", "")))
-        if cid:
-            yaml_ids.append(cid)
-
-    # 治本：删除 DB 中存在但 YAML 中已删除的 component_id（墓碑清理）
-    if yaml_ids:
-        cur.execute("SELECT component_id FROM infrastructure_components")
-        db_ids = [r[0] for r in cur.fetchall()]
-        orphan_ids = [i for i in db_ids if i not in yaml_ids]
-        for orphan_id in orphan_ids:
-            cur.execute("DELETE FROM infrastructure_components WHERE component_id=%s", (orphan_id,))
-        if orphan_ids:
-            print(f"  清理 {len(orphan_ids)} 个孤儿墓碑: {orphan_ids}")
-
     synced = 0
     for comp in components:
         if not isinstance(comp, dict):

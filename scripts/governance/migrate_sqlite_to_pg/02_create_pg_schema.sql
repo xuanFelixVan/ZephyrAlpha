@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS domains (
         CHECK (lifecycle IN ('operational', 'design_only', 'prototype', 'deprecated')),
     created_at             TEXT NOT NULL,
     updated_at             TEXT NOT NULL,
-    build_status           TEXT DEFAULT 'unbuilt'
+    build_status           TEXT DEFAULT 'planned'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     modification_permission TEXT,
     layer_id               TEXT

@@ -120,7 +120,7 @@ capability_domains:
   name: 治理&合规能力
   description: Compliance runtime / governance three-layer / AISG / audit trail
   primary_domains:
-  - D_COMPLIANCE
+  - D_GOV_ENFORCEMENT
   - D_GOVERNANCE
   - D_GOV_RULE
   - D_GOV_AUDIT
@@ -264,8 +264,8 @@ capabilities:
   t1_target: L2
   gap_to_t1: 1
 - id: CAP-011
-  name: D_COMPLIANCE × C7
-  domain: D_COMPLIANCE
+  name: D_GOV_ENFORCEMENT × C7
+  domain: D_GOV_ENFORCEMENT
   capability: C7
   maturity: L2
   maturity_symbol: 🟡
@@ -345,7 +345,7 @@ gap_analysis:
     capability: CAP-011
     from: L2
     to: L4
-    description: D_COMPLIANCE × C7合规能力，T1硬阻塞
+    description: D_GOV_ENFORCEMENT × C7合规能力，T1硬阻塞
   - gap_id: G-4
     capability: CAP-001
     from: L2
@@ -390,7 +390,7 @@ target_states:
     - 'D_MKT_DATA C1: L2 → L4'
     - 'D_RISK C3: L1 → L4'
     - 'D_EX_CORE C5: L1 → L4'
-    - 'D_COMPLIANCE C7: L2 → L4'
+    - 'D_GOV_ENFORCEMENT C7: L2 → L4'
     - 'D_OPS CC2: L1 → L3'
     total_score_target: 120
     avg_maturity_target: 2.93

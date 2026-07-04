@@ -348,7 +348,7 @@ sections:
       details: src/zephyr/frontend/;已创建
     - description: D_RESEARCH - 研究工作台、回测框架与策略实验室
       details: src/zephyr/research/;已创建
-    - description: D_COMPLIANCE - 合规治理、审计追踪与监管报告
+    - description: D_GOV_ENFORCEMENT - 合规治理、审计追踪与监管报告
       details: src/zephyr/compliance/;已创建
     - description: D_ML_TRAIN - ML平台、Scout Agent、战略决策与AI引擎
       details: src/zephyr/ml_train/;已创建

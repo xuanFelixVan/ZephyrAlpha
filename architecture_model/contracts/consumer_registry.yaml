@@ -55,14 +55,14 @@ consumers:
       - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D_TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D_COMPLIANCE, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_GOV_ENFORCEMENT, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-005
     contract_name: Fill
     registered_consumers:
       - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_GOV_ENFORCEMENT, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-006
@@ -72,7 +72,7 @@ consumers:
       - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D_FRONTEND, module: "orchestration", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_GOV_ENFORCEMENT, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   # ─── P0 全链路追踪消费者 ───
@@ -155,7 +155,7 @@ consumers:
       - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_GOV_ENFORCEMENT, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-P1-014

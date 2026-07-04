@@ -52,7 +52,7 @@ planes:
         submodule: adapters/*_hot.py
         note: 券商直连（T1 激活）
       - id: l10-security-gateway  # hot_adjacent
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: ai_security/security_gateway
         note: AISG security_gateway，< 50ms 目标（Hot-adjacent）
       - id: shared-runtime-plane-tag
@@ -199,19 +199,19 @@ planes:
         submodule: prototypes/
         note: 原型实验
       - id: l10-validators
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: validators/
         note: 合规校验器
       - id: l10-ai-security-others
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: ai_security/（security_gateway 之外的 5 模块）
         note: AISG 其余模块
       - id: l10-rules
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: rules/
         note: 规则引擎
       - id: l10-policy-engine
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: policy_engine/
         note: 策略执行引擎
       - id: l11-serving-default
@@ -332,11 +332,11 @@ planes:
         submodule: experiments/（批量实验沙盒）
         note: 实验沙盒
       - id: l10-audit-trail
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: audit-trail/（归档）
         note: 审计追踪归档
       - id: l10-policies-sbom
-        domain: D_COMPLIANCE
+        domain: D_GOV_ENFORCEMENT
         submodule: policies/（SBOM 扫描）
         note: 供应链 SBOM 扫描
       - id: l11-training

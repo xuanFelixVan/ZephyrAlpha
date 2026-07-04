@@ -143,7 +143,7 @@ permission_table:
       permission: AI-Modifiable
       reason: 实验性研究
       approval: 写 Provenance
-    - module: D_COMPLIANCE 合规
+    - module: D_GOV_ENFORCEMENT 合规
       path: src/zephyr/compliance/
       permission: Immutable Core
       reason: 合规规则刚性

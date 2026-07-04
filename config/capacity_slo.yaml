@@ -83,7 +83,7 @@ slo_registry:
   - id: CAP-010-aisg-intercept-latency
     description: "AISG security_gateway 拦截路径（INV-015 Hot-adjacent）"
     target_ms: 50
-    measurement: "D_COMPLIANCE gateway latency"
+    measurement: "D_GOV_ENFORCEMENT gateway latency"
     golden_signal: latency
     relates_invariant: INV-015
     instrumentation: { hook_point: "compliance security_gateway", sampling_sample_rate: "TBD" }
