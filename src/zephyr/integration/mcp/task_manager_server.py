@@ -144,6 +144,8 @@ class TaskManagerMCP:
             execution_model: str = "deepseek",
             safety_level: str = "L",
             downstream_outputs: list = [],
+            pipeline_task_type: str = "",
+            target_layer: str = "",
         ) -> dict:
             """创建 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 1（idempotent）"""
             import hashlib
@@ -213,6 +215,8 @@ class TaskManagerMCP:
                 autonomy_checklist=[],
                 construction_status="pending",
                 verification_status="unverified",
+                pipeline_task_type=pipeline_task_type or None,
+                target_layer=target_layer or None,
                 created_at=now,
                 updated_at=now,
             )

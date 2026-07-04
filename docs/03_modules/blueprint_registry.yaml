@@ -31,9 +31,6 @@ _schema:
   - id: L3_application
     name: application
     description: 应用层——前端展示、用户交互
-  - id: cross_layer
-    name: cross_layer
-    description: 跨层——横切多层的集成模块（受控词表见 layer_vocabulary.yaml）
   layers_ssot: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
   functional_domains:
   - id: infra
