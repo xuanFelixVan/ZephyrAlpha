@@ -55,12 +55,12 @@ class TestCtPipeRoutingHints:
         hints = CtPipeRoutingHints(
             task_type="MODEL_BUILD",
             priority_value="P1",
-            target_layer="L01",
+            target_layer="基础设施",
             estimated_complexity="HIGH",
         )
         assert hints.task_type == "MODEL_BUILD"
         assert hints.priority_value == "P1"
-        assert hints.target_layer == "L01"
+        assert hints.target_layer == "基础设施"
         assert hints.estimated_complexity == "HIGH"
 
     def test_default_priority(self):
@@ -106,20 +106,20 @@ class TestCtPipeHintsFromTaskCard:
     def test_target_layer_from_field(self):
         task = MockTaskCard(
             pipeline_task_type="DOC_WRITE",
-            target_layer="L00",
+            target_layer="D_DATA",
             priority=MockPriority("P2"),
         )
         hints = ct_pipe_hints_from_task_card(task)
-        assert hints.target_layer == "L00"
+        assert hints.target_layer == "D_DATA"
 
     def test_target_layer_from_tag(self):
         task = MockTaskCard(
             pipeline_task_type="DOC_WRITE",
-            tags=["ct_pipe.layer=L05"],
+            tags=["ct_pipe.layer=D_FACTOR"],
             priority=MockPriority("P2"),
         )
         hints = ct_pipe_hints_from_task_card(task)
-        assert hints.target_layer == "L05"
+        assert hints.target_layer == "D_FACTOR"
 
     def test_complexity_from_field(self):
         task = MockTaskCard(
@@ -198,20 +198,20 @@ class TestResolveCtPipeOrc001:
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M4"
 
-    def test_doc_write_l00_routes_to_m5(self):
+    def test_doc_write_data_routes_to_m5(self):
         hints = CtPipeRoutingHints(
             task_type="DOC_WRITE",
             priority_value="P2",
-            target_layer="L00",
+            target_layer="D_DATA",
         )
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M5"
 
-    def test_doc_write_l05_routes_to_m6(self):
+    def test_doc_write_factor_routes_to_m6(self):
         hints = CtPipeRoutingHints(
             task_type="DOC_WRITE",
             priority_value="P2",
-            target_layer="L05",
+            target_layer="D_FACTOR",
         )
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M6"
@@ -252,7 +252,7 @@ class TestResolveCtPipeOrc001:
         hints = CtPipeRoutingHints(
             task_type="REFACTOR",
             priority_value="P2",
-            target_layer="L10",
+            target_layer="D_COMPLIANCE",
         )
         decision = resolve_ct_pipe_orc001(hints)
         assert decision.node_id == "M5"

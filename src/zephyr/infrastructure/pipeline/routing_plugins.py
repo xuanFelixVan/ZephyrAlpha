@@ -62,7 +62,8 @@ __all__ = [
     "TaskTypeFilter",
 ]
 
-_FOUNDATION_LAYERS = frozenset({"L00", "L01", "L10"})
+# 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001（foundation domains → M5）
+_FOUNDATION_LAYERS = frozenset({"D_DATA", "基础设施", "D_COMPLIANCE"})
 
 _NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {
     "M1": frozenset({"MODEL_BUILD"}),

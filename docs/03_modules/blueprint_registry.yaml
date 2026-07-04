@@ -1,12 +1,12 @@
 registry:
   version: 2.7.0
   created: '2026-05-02'
-  last_updated: '2026-07-02'
+  last_updated: '2026-07-04'
   total_blueprints: 55
   scope: 03_modules/
   note: Auto-synced from 55 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-02'
+  generated_at: '2026-07-04'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -19,18 +19,22 @@ _schema:
       中保证
     uniqueness: domain_scoped
   layers:
-  - id: META
-    name: meta
-    dir: _system_master
-    description: 元层——系统级总蓝图、金字塔顶点
-  - id: DOMAIN
-    name: domain
-    dir: _domain_governance
-    description: 域层——域级集成蓝图、跨模块集成契约
-  - id: L01
+  - id: L0_infrastructure
     name: infrastructure
-    dir: infra_ops
-    description: 基础设施层——AI 开发骨架、运行时代码、任务系统、质量保障
+    description: 基础设施层——运行时基础设施、事件总线、配置中心
+  - id: L1_foundation
+    name: foundation
+    description: 基础层——AI 开发骨架、任务系统、质量保障、跨层共享模块
+  - id: L2_domain
+    name: domain
+    description: 域层——业务域（数据/因子/信号/风险/组合/执行/回测/合规等）
+  - id: L3_application
+    name: application
+    description: 应用层——前端展示、用户交互
+  - id: cross_layer
+    name: cross_layer
+    description: 跨层——横切多层的集成模块（受控词表见 layer_vocabulary.yaml）
+  layers_ssot: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
   functional_domains:
   - id: infra
     name: 基础设施
@@ -90,16 +94,16 @@ blueprints:
 - module_id: MOD-BT-001
   name: _domain_backtest
   title: D_BACKTEST 回测引擎域蓝图
-  summary: D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动),统一归口回测引擎,消除research/intelligence/rollback多处置放。MVP
-    7个核心模块。
-  layer: domain
+  summary: D_BACKTEST回测引擎域蓝图。双模式架构(向量化+事件驱动)+Tick回放(秒级做T),data_handler对接D_DATA的MiniQMT
+    Provider(Tick+5档盘口),统一归口回测引擎。MVP 8个核心模块。
+  layer: L2_domain
   functional_domain: backtest
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.0.0
+  version: 1.1.0
   generation: 1
-  last_updated: '2026-07-02'
+  last_updated: '2026-07-04'
   file_path: 03_modules/_domain_backtest/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-CONTEXT_ENGINE
@@ -107,7 +111,7 @@ blueprints:
   title: Context Engine 集成蓝图 — 上下文引擎集成索引
   summary: Context Engine 集成索引蓝图——上下文注入管道(build→compress→validate→inject)+Token预算管控。代码位于
     src/zephyr/autonomy_core/context/（22个.py文件），部分实现。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: domain
@@ -122,7 +126,7 @@ blueprints:
   title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
   summary: 自我改进闭环引擎：regime→detect→diagnose→inversion-verify→act→verify→self-heal，67+
     Detector多模态检测
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: operations
   blueprint_status: Draft
   blueprint_level: module
@@ -136,7 +140,7 @@ blueprints:
   name: gate_engine
   title: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
   summary: G0-G7任务门禁+G1-G5 KMS决策门+门禁域熔断器+容量架构(10K脚本/100AI并发)+法证审计+自指硬化
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Draft
   blueprint_level: module
@@ -150,7 +154,7 @@ blueprints:
   name: _domain_governance
   title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
   summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: domain
@@ -164,7 +168,7 @@ blueprints:
   name: capacity_assurance
   title: Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断
   summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Switch熔断+降级链+DR+容量预测
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: capacity
   blueprint_status: Active
   blueprint_level: module
@@ -180,7 +184,7 @@ blueprints:
   summary: '15核心RI模块跨层协同+48项设计约束+交易基础设施+模块通信模式+确定性复现+AI施工模式库。v6.1.0模板v3.5/v3.6升级完成。
 
     '
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: infra
   blueprint_status: Active
   blueprint_level: module
@@ -194,7 +198,7 @@ blueprints:
   name: governance_automation
   title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
   summary: 脚本系统——第三条独立生产线，12维度自动化审计与门禁，含增量扫描/缓存/去重/分布式执行架构。蓝图模板v3.5合规。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -208,7 +212,7 @@ blueprints:
   name: pipeline
   title: Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
   summary: Pipeline管线编排器——M1-M11双管线架构(A区生产+B区审计)+三层模型路由+容量升级至1500模块/10K脚本/100AI并发
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: execution
   blueprint_status: Active
   blueprint_level: module
@@ -223,7 +227,7 @@ blueprints:
   title: Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化
   summary: VMS 蓝图——ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d + bge-small-zh-v1.5 512d）本地推理。8大Collection。Phase
     0-3 完成，Phase 4 待施工。四轮80盲点全维度覆盖。v0.12.0 MOD-INF-039拆分对齐+SSoT修正+测试修复。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: data
   blueprint_status: Active
   blueprint_level: module
@@ -237,7 +241,7 @@ blueprints:
   name: model_context_protocol_servers
   title: MCP Servers 蓝图 — MCP 服务器管理与调度
   summary: MCP Servers 蓝图——11 个 MCP 服务端 + 1 Gateway 通过 stdio 协议暴露内部系统能力。357 项盲点（B1-B357）十八维闭合。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: execution
   blueprint_status: Draft
   blueprint_level: module
@@ -252,7 +256,7 @@ blueprints:
   title: System Telemetry 蓝图+施工图 — 全系统可观测性
   summary: ZephyrAlpha System Telemetry——全系统可观测性平台。9个子系统通过统一接入点 Telemetry 门面类暴露；覆盖三层信号(4
     Golden Signals + USE + Annotations) + 多环境隔离；对接已有 shared 基础设施。三层闭环：AI开发闭环+运营闭环+治理闭环。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -268,7 +272,7 @@ blueprints:
   summary: '跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现)
     + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts)
     + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)'
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -283,7 +287,7 @@ blueprints:
   title: Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复
   summary: 代码去重引擎——全生命周期七维模型+46模块+Monoculture免疫(BRS)+原子修复(WAL)+决策审计链+主动函数发现+漏报盲审+微克隆检测+契约验证+跨边界感知。去重最大化悖论：找到'去重收益vs
     Monoculture风险vs碎片化风险vs引擎维护成本'的四体最优边界。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -297,7 +301,7 @@ blueprints:
   name: agent_role_based_access_control
   title: Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
   summary: Agent RBAC——七层纵深防御+六横切面运行时权限强制执行器。209项盲点全覆盖，94项决策记录，148个组件文件。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -312,7 +316,7 @@ blueprints:
   title: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
   summary: 可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive
     Disclosure 按需加载。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
@@ -327,7 +331,7 @@ blueprints:
   title: Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
   summary: 不可变审计追踪链——JSONL SSoT + 哈希链 + HMAC + Ed25519 Agent 签名 + CoT 推理链 + 13 异常签名
     + 漂移检测 + 三角闭环 + 分片写入架构 + 99 盲点覆盖
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -341,7 +345,7 @@ blueprints:
   name: rollback_system
   title: Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性
   summary: Git-native+SQLite dump双轨回滚+auto_guard后验自动触发+四级回滚操作+130盲点覆盖+8层防御架构+容量升级至1500模块。62代码文件，completed。v7.0.0模板v3.5/v3.6升级。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: execution
   blueprint_status: Active
   blueprint_level: module
@@ -356,7 +360,7 @@ blueprints:
   title: Escalation Protocol 蓝图
   summary: AI操作安全升级与委托治理协议——五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计），30决策/104文件，量化交易特化升级，Vibe
     Coding安全防御
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: safety_escalation
   blueprint_status: Active
   blueprint_level: module
@@ -372,7 +376,7 @@ blueprints:
   summary: '39检测器漂移检测引擎+10状态漂移生命周期+基线快照+自动对账+漂移预算+告警路由+混沌注入+漂移取证+防篡改审计。54文件，4Phase全部完成，红白对抗验证通过。
 
     '
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -394,7 +398,7 @@ blueprints:
     Kill Chain (2026.3) + Okta Agent Bypass研究 (2026.5) + Microsoft Agent Governance
     Toolkit Runtime Rings + Gravitee AI Agent Security 2026。v0.3.0 20+v0.4.0 23+v0.5.0
     13+v0.6.0 12+v0.7.0 10=78项盲点全量补齐。这并不是增加更多功能——而是补上'一个AI构建的系统如何可信地约束AI'这个根本性问题。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: budget_enforcement
   blueprint_status: Active
   blueprint_level: module
@@ -408,7 +412,7 @@ blueprints:
   name: agent_to_agent_protocol
   title: A2A Protocol 蓝图 — Agent间通信协议与冲突解决
   summary: Agent间通信协议与冲突解决——九层十二协议架构，覆盖发现/通信/协商/辩论/共识/经济/路由/事务/协调九层+脚本执行基础设施层，150条盲点全覆盖，57代码骨架+14容量扩展文件。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: infra
   blueprint_status: Active
   blueprint_level: module
@@ -422,7 +426,7 @@ blueprints:
   name: asset_inventory
   title: 资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
   summary: 资产盘点系统——五层架构（发现→分类→登记→对账→生命周期），支撑 75,000 资产 / 100 AI 并发
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -436,7 +440,7 @@ blueprints:
   name: audit_orchestrator
   title: Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
   summary: '审计编排器——MAPE-K五层自治循环驱动三子系统(结构/语义/行为)四阶段闭环迭代收敛审计引擎。v6.1.0: v3.5模板对齐'
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -450,7 +454,7 @@ blueprints:
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
   summary: 语义审计引擎——2类纯语义触发(F跨文档引用+G依赖链断裂)+9阶段管道+LLM Bridge修复文本生成，从单Session审计到100 AI并发/10000脚本的规模跃迁
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -464,7 +468,7 @@ blueprints:
   name: orphan_judge
   title: Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
   summary: 孤儿判定子系统——五层分级价值判定引擎，对孤儿文件执行注册检查→引用图→功能重复→独特价值→独立价值判定，输出六种处置建议。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -479,7 +483,7 @@ blueprints:
   title: Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认
   summary: 红蓝对抗验证器——红方注入攻击→蓝方运行Gate/Check→判定是否拦住→绕过入库扩充攻击库→修复后对抗验证→收敛检测。Total Audit
     System v4.0.0 Phase 4 ENFORCE & CLOSE 收敛验证器。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -494,7 +498,7 @@ blueprints:
   title: Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行
   summary: AutoFixEngine——三通道修复管道（结构→模板化100%确定/语义→LLM Bridge 95~98%置信/行为→Block+Alert永不自动修复）+
     8状态生命周期 + WAL原子修复 + 病因修复法九阶链
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -508,7 +512,7 @@ blueprints:
   name: behavioral_auditor
   title: Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控
   summary: AI行为边界审计引擎——消费AuditTrail事件流，比对Gate Engine许可矩阵，输出VERDICT（PASS/YELLOW/RED），执行阻断+问责+回滚
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Draft
   blueprint_level: module
@@ -522,7 +526,7 @@ blueprints:
   name: model_profiler
   title: Model Profiler 蓝图 — 模型画像器·LLM能力基线测量
   summary: LLM 模型画像器——7 维评测 + 任务×模型增量学习 + 智能路由推荐
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
@@ -536,7 +540,7 @@ blueprints:
   name: auto_runtime_core
   title: AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心
   summary: ZephyrAlpha 系统大脑——三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。五层同心圆架构，24子组件，85+文件。终极目标：孤儿率→0%。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -550,7 +554,7 @@ blueprints:
   name: model_capability_exam
   title: Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估
   summary: AI模型入职考试系统——五维评测产出CapabilityPassport能力护照，驱动TaskGate任务门控。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
@@ -564,7 +568,7 @@ blueprints:
   name: registry_governance
   title: 注册表治理
   summary: 注册表体系架构+功能域注册表+SSoT门禁+一致性校验+物理路径树(REG-017)+路径归属图(REG-018)+路径树刷新门禁(G6_PT)
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: governance
   blueprint_status: Draft
   blueprint_level: module
@@ -578,7 +582,7 @@ blueprints:
   name: state_machine_engine
   title: State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理
   summary: 通用状态机VO基类+全项目11+状态机实例统一治理+命名冲突消除+DDD聚合根持有模式
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: infra
   blueprint_status: Draft
   blueprint_level: module
@@ -591,9 +595,9 @@ blueprints:
 - module_id: MOD-INF-039
   name: agent_orchestrator
   title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
-  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe
-    Coding 2.0 五大核心服务之一。
-  layer: cross_layer
+  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding
+    2.0 五大核心服务之一。
+  layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -607,7 +611,7 @@ blueprints:
   name: _domain_integration
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
   summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: infra
   blueprint_status: Active
   blueprint_level: module
@@ -628,7 +632,7 @@ blueprints:
     纵深防御(7项SOC2/ISO27001审计级保护)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机
     + 三轨19类知识分类 + KO→KE→KB三级漏斗 + KE Schema 31字段 + 字段稳定性三级分级 + Human-Gated三层权限模型 +
     KB规则执行引擎(§9.5) + 互补知识链接(§9.9.1) + 项目阶段感知温度(§9.12.2)。全自动零Owner触发(月均≤12min@≤300KE，非线性增长，LLM费用≤¥0.40)。experimental代码已实现(12模块/3600行)，beta建设进行中。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
@@ -642,21 +646,21 @@ blueprints:
   name: _domain_data
   title: Data Source Core 蓝图+施工图 — 数据接入层
   summary: 数据接入层——业务数据库母蓝图(ARCH-BIZDB-001)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。
-  layer: data
+  layer: L2_domain
   functional_domain: data
   blueprint_status: Active
   blueprint_level: module
   priority: P0
   version: 4.0.0
   generation: 4
-  last_updated: '2026-07-01'
+  last_updated: '2026-07-04'
   file_path: 03_modules/_domain_data/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: _domain_factor
   title: Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
   summary: Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供D_SIGNAL消费。
-  layer: factor
+  layer: L2_domain
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
@@ -670,7 +674,7 @@ blueprints:
   name: _domain_signal
   title: Signal Generation Core 蓝图+施工图 — 信号生成层
   summary: 信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。
-  layer: signal
+  layer: L2_domain
   functional_domain: research
   blueprint_status: Active
   blueprint_level: module
@@ -684,7 +688,7 @@ blueprints:
   name: _domain_risk
   title: Risk Management Core 蓝图+施工图 — 风险管理引擎
   summary: D_RISK 风险管理引擎——止损执行+风控校验+Kill Switch 熔断。Phase 1 部分实现：OCP 扩展点骨架+默认实现+止损引擎。
-  layer: risk
+  layer: L2_domain
   functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
@@ -697,9 +701,9 @@ blueprints:
 - module_id: MOD-L05-001
   name: _domain_portfolio_core
   title: Portfolio Construction Core 蓝图+施工图 — 组合构建层
-  summary: D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架
-    + 默认股票多头策略 + 注册表。
-  layer: pf_core
+  summary: D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase
+    1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。
+  layer: L2_domain
   functional_domain: portfolio
   blueprint_status: Active
   blueprint_level: module
@@ -712,16 +716,17 @@ blueprints:
 - module_id: MOD-L06-001
   name: _domain_execution_core
   title: Trade Execution Core 蓝图+施工图 — 交易执行引擎
-  summary: D_EXECUTION_CORE 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 + 算法执行。Phase 1
-    部分实现：执行引擎+订单管理+模拟券商。业务层已开放，可施工。
-  layer: ex_core
+  summary: D_EXECUTION_CORE 交易执行层——BrokerInterface OCP-003 扩展点 + 订单状态机 + SOR 路由 +
+    算法执行 + MiniQMT实盘Broker(v2.2.0)。Phase 1 部分实现：执行引擎+订单管理+模拟券商；v2.2.0规划MiniQMT Broker适配器对接xttrader，与D_BACKTEST
+    matching_engine共用撮合逻辑(回测=实盘一致性)。
+  layer: L2_domain
   functional_domain: execution
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.0
+  version: 2.2.0
   generation: 2
-  last_updated: '2026-05-15'
+  last_updated: '2026-07-04'
   file_path: 03_modules/_domain_execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
@@ -729,7 +734,7 @@ blueprints:
   title: Post Trade Analytics Core 蓝图 — 盘后分析层
   summary: 盘后分析层。TCAEngineBase + AttributionEngineBase OCP扩展点。Phase B骨架就位，Brinson分解待Phase
     C实现。
-  layer: reporting
+  layer: L2_domain
   functional_domain: analytics
   blueprint_status: Active
   blueprint_level: module
@@ -743,22 +748,22 @@ blueprints:
   name: _domain_frontend
   title: Human Machine Interface Core 蓝图 — 人机交互层
   summary: 业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
-    Dashboard 5页面已实现。默认实现待施工。
-  layer: frontend
+    Dashboard 5页面已实现(v2.1.0)；v2.2.0规划5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。
+  layer: L3_application
   functional_domain: interface
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.0
+  version: 2.2.0
   generation: 2
-  last_updated: '2026-05-15'
+  last_updated: '2026-07-04'
   file_path: 03_modules/_domain_frontend/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: _domain_research
   title: Research Innovation Core 蓝图+施工图 — 研究创新层
   summary: 研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/FactorDiscovery 数据类。业务层已开放，可施工。
-  layer: research
+  layer: L2_domain
   functional_domain: research
   blueprint_status: Active
   blueprint_level: module
@@ -773,7 +778,7 @@ blueprints:
   title: Compliance Core 蓝图+施工图 — 合规引擎
   summary: 合规引擎——SecurityGateway+ComplianceEngine OCP扩展点+AISG Sandbox+ArtifactScanner。Phase
     B骨架已就位，核心抽象和实现已定义。
-  layer: compliance
+  layer: L1_foundation
   functional_domain: compliance
   blueprint_status: Active
   blueprint_level: module
@@ -788,7 +793,7 @@ blueprints:
   title: ML Platform Core 蓝图+施工图 — 机器学习平台
   summary: ML平台层。InferenceEngineBase OCP扩展点+ModelMetadata/InferenceResult数据类。Phase
     B骨架已就位。业务层已开放，可施工。
-  layer: ml_train
+  layer: L2_domain
   functional_domain: research
   blueprint_status: Active
   blueprint_level: module
@@ -803,7 +808,7 @@ blueprints:
   title: Experimentation Core 蓝图+施工图 — 实验管理平台
   summary: 实验层。ExperimentPipelineBase + ScoutAgentBase OCP 扩展点 + ExperimentConfig/ExperimentMetric。Phase
     B 骨架已就位，CTR-009~012 待施工。
-  layer: simulation
+  layer: L2_domain
   functional_domain: research
   blueprint_status: Active
   blueprint_level: module
@@ -823,7 +828,7 @@ blueprints:
     jailbreak已知漏洞补偿）→ L5 资源保护（速率限制+Token预算+成本熔断+并发限制+LSG性能预算+SLA）→ L6 可观测性（安全日志+异常告警+仪表板+审计报告+LSG自监控+延迟追踪）→
     L7 持续验证（自动Red Team+安全回归测试+威胁情报+LSG自我回归测试）→ L8 多Agent安全（Agent间通信认证+跨Agent权限隔离+级联熔断+Rogue检测+Trust
     Anti-Abuse+Shadow Agent检测+NHI治理）+凭据全生命周期+数据层安全(RLS/默认安全)。fail-closed + 性能预算(SLO/SLA)贯穿全链路。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: governance
   blueprint_status: Active
   blueprint_level: module
@@ -837,7 +842,7 @@ blueprints:
   name: _master_blueprint
   title: Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
   summary: 集成闭环总蓝图索引文件。本文件仅保留索引和导航信息。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: infrastructure
   blueprint_status: Active
   blueprint_level: domain
@@ -851,7 +856,7 @@ blueprints:
   name: resource_optimization_engine
   title: 资源优化引擎蓝图
   summary: MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
@@ -866,7 +871,7 @@ blueprints:
   title: Task System 蓝图 — 全链路任务卡生命周期管理
   summary: Task System 全链路蓝图 v0.9.1。覆盖意图→草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的闭环工作流。TaskCard
     62字段（31基座+31执行层）。v0.9.1 回填OCP扩展点+施工步骤内容变更+依赖对齐+规格化压缩。
-  layer: infra_ops
+  layer: L0_infrastructure
   functional_domain: execution
   blueprint_status: Active
   blueprint_level: module
@@ -881,7 +886,7 @@ blueprints:
   title: Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位
   summary: Database 集成蓝图——2个关系数据库职责划分：(1)governance.db(SQLite,治理运行时,15+表) (2)depgraph(PostgreSQL16,架构静态真源,28表)。market.duckdb(DuckDB业务时序)已于2026-07-01删除/废弃。三层冷热架构定位：Warm(DuckDB+Parquet)+Cold(E盘归档)为当前规范，Hot(Redis)/Feature
     Store/Event Store为未来蓝图(门禁触发)。聚合 MOD-INF-012A(Core)和 MOD-INF-012B(PG迁移,P2已完成)。P3优化方案已归档删除(2026-06-30)。DW-045拆分完成，详细内容见子蓝图。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: data
   blueprint_status: Active
   blueprint_level: domain
@@ -895,7 +900,7 @@ blueprints:
   name: _system_master
   title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
   summary: 系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖+§〇容量升级方案。AI agent冷启动第一站。
-  layer: cross_layer
+  layer: L1_foundation
   functional_domain: system
   blueprint_status: Active
   blueprint_level: system
@@ -911,21 +916,10 @@ summary:
     Active: 49
     Draft: 6
   by_layer:
-    domain: 1
-    cross_layer: 26
-    infra_ops: 16
-    data: 1
-    factor: 1
-    signal: 1
-    risk: 1
-    pf_core: 1
-    ex_core: 1
-    reporting: 1
-    frontend: 1
-    research: 1
-    compliance: 1
-    ml_train: 1
-    simulation: 1
+    L2_domain: 11
+    L1_foundation: 27
+    L0_infrastructure: 16
+    L3_application: 1
   by_construction_progress:
     partially_implemented: 33
     design_only: 8
@@ -933,7 +927,7 @@ summary:
     mostly_implemented: 1
     scaffold: 2
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
-  last_recomputed: '2026-07-02'
+  last_recomputed: '2026-07-04'
 changelog:
 - version: 2.7.6
   date: '2026-07-02'

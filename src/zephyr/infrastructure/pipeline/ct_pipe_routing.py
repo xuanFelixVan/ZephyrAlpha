@@ -59,8 +59,9 @@ __all__ = [
 
 _CT_PIPE_TAG_PREFIX = "ct_pipe."
 
-# 蓝图决策树隐含的低层路由（foundation layers）
-_FOUNDATION_LAYERS = frozenset({"L00", "L01", "L10"})
+# 蓝图决策树隐含的低层路由（foundation domains）— 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001
+# target_layer ∈ {D_DATA, 基础设施, D_COMPLIANCE} → M5；其余域 → M6
+_FOUNDATION_LAYERS = frozenset({"D_DATA", "基础设施", "D_COMPLIANCE"})
 
 # node_id → (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
 _NODE_PROFILE: dict[str, tuple[str, str, str]] = {
