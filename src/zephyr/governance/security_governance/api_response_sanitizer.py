@@ -22,13 +22,31 @@ API Response Sanitizer — v0.9.0 API响应清洗器: 外部API返回内容清�
 
 from __future__ import annotations
 
+import re
+
 
 class APIResponseSanitizer:
+    # 5.45.5 修复：扩展 XSS 模式列表 + 大小写不敏感匹配。
+    # 原仅 4 个模式且 replace 大小写敏感，<SCRIPT>/<Img onerror 等变体可绕过。
+    _DANGEROUS_PATTERNS: list[str] = [
+        r"<script[^>]*>",
+        r"</script>",
+        r"javascript:",
+        r"onerror\s*=",
+        r"onclick\s*=",
+        r"onload\s*=",
+        r"onmouseover\s*=",
+        r"<iframe[^>]*>",
+        r"<object[^>]*>",
+        r"<embed[^>]*>",
+        r"data:text/html",
+        r"vbscript:",
+    ]
+
     def sanitize(self, response_text: str) -> str:
-        dangerous = ["<script", "javascript:", "onerror=", "onclick="]
         result = response_text
-        for d in dangerous:
-            result = result.replace(d, "[SANITIZED]")
+        for pattern in self._DANGEROUS_PATTERNS:
+            result = re.sub(pattern, "[SANITIZED]", result, flags=re.IGNORECASE)
         return result
 
     def is_suspicious(self, response_text: str) -> bool:
