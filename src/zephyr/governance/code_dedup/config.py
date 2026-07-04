@@ -247,5 +247,5 @@ def reload_config(app_config: AppConfig) -> AppConfig:
 DEFAULT_CONFIG_FILENAMES = ["config.yaml", "config.yml", ".code_dedup.yaml"]
 
 
-def _deep_merge_lists(base, override):
+def _deep_merge_lists(base: list[Any] | None, override: list[Any] | None) -> list[Any] | None:
     return override if override is not None else base

@@ -9228,6 +9228,23 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.171 类型注解缺失或不一致（66个，第29轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=66(类型注解缺失需全量补全)
+> **第34轮修复状态（2026-07-04）**：FIXED=9(MEDIUM.1/2/13/14/15 + LOW.18/19/22/25), DRIFTED=12(MEDIUM.3-5 runbook_generator路径漂移+函数已有类型/MEDIUM.7-8 config.py load/reload_config已在5.145.8修复/MEDIUM.9-11 cold_start.py已在5.145.7修复/MEDIUM.12 writer.py get_audit_writer已有->AuditWriter/MEDIUM.16 tracing.py traced已在5.145.30修复/LOW.20-21 writer.py _generate_entry_id/_resolve_hmac_key已有返回类型), STILL_VALID=45(HIGH.1-10 brain_integration+scheduler_act+alert_handler+verdict_engine需领域类型/MEDIUM.6+17-31 Any滥用需Protocol重构/LOW.1-17+23-24 scripts+self_test私有函数低优先级)
+> - MEDIUM.1 [FIXED]: feedback_policy.py PolicyRecommendation 5字段 + feedback_to_policy 补类型注解
+> - MEDIUM.2 [FIXED]: drift_detector.py trigger_recovery 补 (drift_event: Any, strategy: str | None) -> bool
+> - MEDIUM.13 [FIXED]: models.py audit_entry_sort_key 补 (entry: Any) -> Any
+> - MEDIUM.14 [FIXED]: exam_rubric.py _extract_call_chain_funcs 补返回类型 -> list[str] | set[str]
+> - MEDIUM.15 [FIXED]: exam_rubric.py _flatten_groups_to_layers 补 (groups: list[Any]) -> list[set[str]]
+> - MEDIUM.3-5 [DRIFTED]: runbook_generator.py 路径从 governance/ 漂移至 governance/drift_detection/，函数已有 DriftEvent 参数类型
+> - MEDIUM.7-8 [DRIFTED]: config.py load_config/reload_config 已在 5.145.8 修复中补全类型注解
+> - MEDIUM.9-11 [DRIFTED]: cold_start.py 3函数已在 5.145.7 修复中补全类型注解
+> - MEDIUM.12 [DRIFTED]: writer.py get_audit_writer 已有 -> AuditWriter 返回类型
+> - MEDIUM.16 [DRIFTED]: tracing.py traced 已在 5.145.30 修复中补全返回类型
+> - LOW.18 [FIXED]: bridge.py _get_writer 补 (backend: str | None) -> None
+> - LOW.19 [FIXED]: query.py _sanitize_for_ai_context 补 (data: Any) -> Any
+> - LOW.20 [DRIFTED]: writer.py _generate_entry_id 已有 -> str 返回类型
+> - LOW.21 [DRIFTED]: writer.py _resolve_hmac_key 已有 -> bytes 返回类型
+> - LOW.22 [FIXED]: models.py _generate_entry_id 补 -> str 返回类型
+> - LOW.25 [FIXED]: config.py _deep_merge_lists 补 (base: list[Any] | None, override: list[Any] | None) -> list[Any] | None
 
 #### HIGH（10个）
 

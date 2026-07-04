@@ -16,6 +16,7 @@
 # [TTL] task_bound
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -304,11 +305,11 @@ class TaskAuditSummary:
         self.period = period
 
 
-def _generate_entry_id():
+def _generate_entry_id() -> str:
     import uuid
 
     return str(uuid.uuid4())
 
 
-def audit_entry_sort_key(entry):
+def audit_entry_sort_key(entry: Any) -> Any:
     return getattr(entry, "timestamp", None) or 0

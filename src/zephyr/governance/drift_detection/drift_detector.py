@@ -24,6 +24,7 @@
 from __future__ import annotations
 
 import math
+from typing import Any
 
 
 class DriftDetector:
@@ -62,5 +63,5 @@ class DriftDetector:
         return drifting
 
 
-def trigger_recovery(drift_event, strategy=None):
+def trigger_recovery(drift_event: Any, strategy: str | None = None) -> bool:
     return True
