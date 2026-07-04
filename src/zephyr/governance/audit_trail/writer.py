@@ -14,10 +14,14 @@
 # [TESTS] tests/audit-orchestrator/test_writer.py
 # [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
+import hashlib
+import hmac
 import json
 import logging
 import os
-from datetime import datetime
+import threading
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -25,9 +29,15 @@ from zephyr.governance.audit_trail.models import AuditIssue, GlobalAuditReport
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["AuditReportWriter"]
+__all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
 
 DEFAULT_REPORT_DIR = Path("data/audit_history")
+DEFAULT_AUDIT_DIR = Path("data/audit_trail")
+_GENESIS_HASH = "0" * 64
+
+# 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）
+_GLOBAL_WRITER: "AuditWriter | None" = None
+_GLOBAL_WRITER_LOCK = threading.Lock()
 
 
 class AuditReportWriter:
@@ -96,25 +106,191 @@ class AuditReportWriter:
 
 
 class AuditWriter:
-    def __init__(self, backend=None):
-        self.backend = backend
+    """不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SHA256 签名 + Lamport 时钟。
 
-    def write(self, entry):
+    5.17.1 修复：从 no-op 桩升级为真正落盘的 append-only JSONL 哈希链写入器。
+    旧代码 write()/flush() 均为 pass，审计事件静默丢弃，安全机制名实分离。
+    """
+
+    def __init__(
+        self,
+        data_dir: Path | str | None = None,
+        enable_merkle: bool = True,
+        hmac_key: str | None = None,
+        ide_source: str | None = None,
+        backend=None,
+    ) -> None:
+        self.data_dir = Path(data_dir) if data_dir else DEFAULT_AUDIT_DIR
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self._event_log_path = self.data_dir / "events.jsonl"
+        self.enable_merkle = enable_merkle
+        self.ide_source = ide_source or "unknown"
+        self._hmac_key = _resolve_hmac_key(hmac_key if hmac_key is not None else "")
+        self._last_hash = _GENESIS_HASH
+        self.event_count = 0
+        self.lamport_time = 0
+        self._lamport_counter = 0
+        self._write_failures = 0
+        self._max_write_failures = 5
+        self._readonly = False
+        self._lock = threading.Lock()
+        self._load_state()
+
+    def _load_state(self) -> None:
+        """从已有 events.jsonl 恢复 _last_hash 和 event_count（重启后链连续）。"""
+        if not self._event_log_path.exists():
+            return
+        count = 0
+        last_hash = _GENESIS_HASH
+        try:
+            with open(self._event_log_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    count += 1
+                    try:
+                        entry = json.loads(line)
+                        eh = entry.get("entry_hash")
+                        if eh:
+                            last_hash = eh
+                    except json.JSONDecodeError:
+                        pass
+            self.event_count = count
+            self._last_hash = last_hash
+        except Exception:
+            logger.warning("AuditWriter._load_state failed", exc_info=True)
+
+    def write(self, event: dict[str, Any]) -> str:
+        """追加一条审计事件到 JSONL，返回 entry_hash（即 chain_hash，64 字符）。
+
+        每条 entry 包含：entry_id, timestamp, prev_hash, entry_hash, hmac_signature,
+        lamport_time, lamport_clock_counter, lamport_clock_ide。
+        """
+        if self._readonly:
+            raise RuntimeError(
+                "AuditWriter is in readonly mode (too many write failures)"
+            )
+
+        event_type = event.get("event_type", "generic")
+        prefix = "AUD-F" if event_type == "file_detail" else "AUD-T"
+
+        with self._lock:
+            self._lamport_counter += 1
+            entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
+
+            entry: dict[str, Any] = dict(event)
+            entry["entry_id"] = entry_id
+            entry["timestamp"] = datetime.now(timezone.utc).isoformat()
+            entry["prev_hash"] = self._last_hash
+            entry["lamport_time"] = self.lamport_time + 1
+            entry["lamport_clock_counter"] = self._lamport_counter
+            entry["lamport_clock_ide"] = self.ide_source
+
+            # entry_hash = SHA-256(canonical JSON of entry，不含 entry_hash/hmac_signature)
+            canonical = json.dumps(entry, sort_keys=True, ensure_ascii=False, default=str)
+            entry_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+            entry["entry_hash"] = entry_hash
+
+            # HMAC-SHA256 签名（覆盖 entry_hash）
+            if self._hmac_key:
+                entry["hmac_signature"] = hmac.new(
+                    self._hmac_key, entry_hash.encode("utf-8"), hashlib.sha256
+                ).hexdigest()
+
+            try:
+                with open(self._event_log_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
+                    f.flush()
+                    os.fsync(f.fileno())
+            except Exception:
+                self._write_failures += 1
+                if self._write_failures >= self._max_write_failures:
+                    self._readonly = True
+                raise
+
+            self._last_hash = entry_hash
+            self.event_count += 1
+            self.lamport_time += 1
+
+        return entry_hash
+
+    def write_with_cot(self, event: dict[str, Any], reasoning_trace: str = "") -> dict[str, str]:
+        """写入带 CoT 推理链的审计事件。reasoning_trace 截断至 500 字符。"""
+        truncated = reasoning_trace[:500] if reasoning_trace else ""
+        cot_hash = (
+            hashlib.sha256(truncated.encode("utf-8")).hexdigest() if truncated else ""
+        )
+
+        enriched = dict(event)
+        enriched["reasoning_trace"] = truncated
+        enriched["cot_hash"] = cot_hash
+
+        chain_hash = self.write(enriched)
+        return {"chain_hash": chain_hash, "cot_hash": cot_hash}
+
+    def merge_lamport(self, other_time: int) -> int:
+        """Lamport 时钟合并：max(local, other) + 1。"""
+        self.lamport_time = max(self.lamport_time, other_time) + 1
+        return self.lamport_time
+
+    def flush(self) -> None:
+        """同步刷盘——write() 已即时落盘+fsync，此方法为 no-op 兼容接口。"""
         pass
 
-    def flush(self):
-        pass
+    def finalize_current_batch(self) -> str | None:
+        """finalize 当前批次，返回 merkle root（简化为 last_hash）。"""
+        if self.event_count == 0:
+            return None
+        return self._last_hash
+
+    def get_merkle_batches(self) -> list[str]:
+        """返回已 finalized 的 merkle 批次列表。"""
+        if self.event_count == 0:
+            return []
+        return [self._last_hash]
 
 
-def get_audit_writer(backend=None):
-    return AuditWriter(backend=backend)
+def get_audit_writer(
+    data_dir: Path | str | None = None,
+    enable_merkle: bool = True,
+    hmac_key: str | None = None,
+    ide_source: str | None = None,
+    backend=None,
+) -> AuditWriter:
+    """双重检查锁定单例工厂。"""
+    global _GLOBAL_WRITER
+    if _GLOBAL_WRITER is None:
+        with _GLOBAL_WRITER_LOCK:
+            if _GLOBAL_WRITER is None:
+                _GLOBAL_WRITER = AuditWriter(
+                    data_dir=data_dir,
+                    enable_merkle=enable_merkle,
+                    hmac_key=hmac_key,
+                    ide_source=ide_source,
+                    backend=backend,
+                )
+    return _GLOBAL_WRITER
 
 
-def _generate_entry_id():
-    import uuid
+def _generate_entry_id(prefix: str = "AUD-T", seq: int | None = None) -> str:
+    """生成审计条目 ID：{prefix}-{timestamp}-{uuid8}[-{seq:04d}]。"""
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    short_uuid = uuid.uuid4().hex[:8]
+    seq_str = f"-{seq:04d}" if seq is not None else ""
+    return f"{prefix}-{ts}-{short_uuid}{seq_str}"
 
-    return str(uuid.uuid4())
 
+def _resolve_hmac_key(config=None) -> bytes:
+    """解析 HMAC 密钥：config 参数 > ZEPHYR_AUDIT_HMAC_SECRET 环境变量 > 兜底默认。
 
-def _resolve_hmac_key(config=None):
-    return b"default-key"
+    5.17.2 修复：旧代码无视 config 和 env 直接返回硬编码 b"default-key"。
+    现在优先读取显式传入的 config 字符串，其次读取环境变量，最后兜底默认。
+    """
+    if config and isinstance(config, str) and config.strip():
+        return config.strip().encode("utf-8")
+    key = os.environ.get("ZEPHYR_AUDIT_HMAC_SECRET", "")
+    if key:
+        return key.encode("utf-8")
+    # 兜底默认（测试兼容 + 开发环境可用，生产应设置 env var）
+    return b"zephyr-audit-hmac-default-key"

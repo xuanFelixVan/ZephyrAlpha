@@ -1847,15 +1847,17 @@ class TaskRepository:
           - exit≠0且≠2：真实工作质量问题 → CircularAcceptanceError
           - 超时：计入 failures，按循环验收判定
         """
+        import shlex
         import subprocess
 
         for round_num in range(1, CIRCULAR_ACCEPTANCE_ROUNDS + 1):
             failures: list[str] = []
             for cmd in commands:
                 try:
+                    # 5.17.7 修复：shell=True 违反 D-A-03 红线，改用 shlex.split + shell=False
                     result = subprocess.run(
-                        cmd,
-                        shell=True,
+                        shlex.split(cmd),
+                        shell=False,
                         capture_output=True,
                         text=True,
                         timeout=120,

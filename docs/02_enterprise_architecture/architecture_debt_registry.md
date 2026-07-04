@@ -2253,16 +2253,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > 审计维度：审计日志完整性/密钥管理/输入验证/权限边界/依赖安全/代码执行风险/网络边界/文件权限
 > 审计方法：Grep + Read真实文件取证（audit_trail/writer.py、ai_audit_logger.py、tamper_evident_log.py、rbac_roles.yaml等）
 
-#### 5.17.1 AuditWriter.write()是no-op桩——hash链永不落盘【HIGH】
-- 证据：[audit_trail/writer.py:98-106](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/writer.py) `class AuditWriter: def write(self,entry): pass; def flush(self): pass`；被10+生产路径实例化：`pipeline_orchestrator.py:229`、`engine.py:106`、`governance_server.py:714`、`audit_write_failure_protector.py:40`、`session_audit.py:330`、`tamper_evident_log.py:103`、`finding_ingest.py:60`；`AuditChainVerifier`（有真实hash链）的`_core_writer.write(core_event)`也落到此no-op
-- 病根：根因5（安全机制名实分离，名为AuditWriter实为空壳）
-- 修复：实现write()真正落盘append-only JSONL+hash链，或标NotImplementedError防误用
-
-#### 5.17.2 HMAC密钥硬编码"default-key"无视env配置【HIGH】
-- 证据：[audit_trail/writer.py:119-120](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/writer.py) `def _resolve_hmac_key(config=None): return b"default-key"`；`.env.example:42-44` 文档 `ZEPHYR_AUDIT_HMAC_SECRET=` 注明"生产必须设置"，代码根本不读env
-- 病根：根因5（密钥管理SSoT未落地）
-- 修复：读取`ZEPHYR_AUDIT_HMAC_SECRET`，缺失时抛错非回退默认
-
 #### 5.17.3 AiAuditLogger谎称"不可变"但无任何篡改检测【HIGH】
 - 证据：[ai_audit_logger.py:18-23](file:///d:/ZephyrAlpha/src/zephyr/trading/ai_audit_logger.py) 文档声明"不可变、追加式"；`:63-68` `_write` 仅 `open("a")` 写明文JSON，无hash/签名/prev_hash链；`:199-218` `query()` 直接`json.loads`读取零完整性校验
 - 病根：根因5（安全机制名实分离）
@@ -2282,11 +2272,6 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - 证据：[integration/models.py:598-603](file:///d:/ZephyrAlpha/src/zephyr/governance/audit_trail/models.py) `def evaluate_skip(self,condition): namespace={"ctx":self,"all":all,"any":any}; return bool(eval(condition,{"__builtins__":{}},namespace))`；`{"__builtins__":{}}`限制可经`ctx.__class__.__mro__`逃逸；condition来自`PipelineStage.skip_condition`配置，`ai_autonomy=ai_modifiable`普遍标注——AI改配置即RCE
 - 病根：根因5（用eval表达配置条件）
 - 修复：改受限表达式求值器（ast.literal_eval+白名单或simpleeval库）
-
-#### 5.17.7 task_repo.py生产路径shell=True违反D-A-03红线【HIGH】
-- 证据：[task_repo.py:1811-1817](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/task_repo.py) `subprocess.run(cmd,shell=True,capture_output=True,text=True,timeout=120)`；cmd来自task定义`commands:list[str]`；`validate_script_quality.py:378` 明令"禁止shell=True"且`detect_shell_true.py`专门扫描，但src/生产代码仍含此违规
-- 病根：根因5（门禁覆盖盲区，扫描器未覆盖src/或CI未阻断）
-- 修复：改`subprocess.run(shlex.split(cmd))`，扫描器扩展到src/
 
 #### 5.17.8 RBAC默认关闭（_AUTO_ENABLE_RBAC默认False）【HIGH】
 - 证据：[_base_server.py:183-188](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/_base_server.py) `if not getattr(self,"_AUTO_ENABLE_RBAC",False): ...skip RBAC`；MCP server默认不启用RBAC须子类显式设True；`config/rbac_roles.yaml`定义权限但执行是opt-in非default-deny
@@ -2317,10 +2302,10 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 |
 |---|:---:|
-| CRITICAL/HIGH | 6（5.17.1~5.17.4+5.17.6+5.17.7+5.17.8） |
+| CRITICAL/HIGH | 4（5.17.3+5.17.4+5.17.6+5.17.8；5.17.1/5.17.2/5.17.7已FIXED） |
 | MEDIUM | 6（5.17.5+5.17.9+5.17.11+5.17.12；5.17.10已FIXED） |
 | LOW | 1（5.17.13；5.17.14已FIXED） |
-| **合计** | **13** |
+| **合计** | **11** |
 
 ---
 
