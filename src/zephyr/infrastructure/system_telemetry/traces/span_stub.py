@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+import contextvars
 import threading
 import time
 import uuid
@@ -165,25 +166,32 @@ def get_trace_tree(trace_id: str) -> list[dict[str, Any]]:
         return [s.snapshot() for s in _SPAN_REGISTRY.values() if s.context.trace_id == trace_id]
 
 
-_THREAD_LOCAL: threading.local = threading.local()
+# 5.132.3 修复: threading.local → contextvars,消除跨请求span栈泄漏
+# 原 _THREAD_LOCAL._span_stack 在线程池复用线程时残留上个请求的span栈,
+# 新请求误将stale span作为parent,破坏trace树结构。contextvars在asyncio和
+# 经_wrap_ctx包装的线程池中正确传播且请求边界自动隔离。
+_span_stack_var: contextvars.ContextVar[list[Span]] = contextvars.ContextVar(
+    "_span_stack", default=[]
+)
 
 
 def _current_span() -> Span | None:
-    stack: list[Span] = getattr(_THREAD_LOCAL, "_span_stack", [])
+    stack = _span_stack_var.get()
     return stack[-1] if stack else None
 
 
 def _push_span(span: Span) -> None:
-    stack: list[Span] = getattr(_THREAD_LOCAL, "_span_stack", [])
-    if not stack:
-        _THREAD_LOCAL._span_stack = [span]
-    else:
-        stack.append(span)
+    # 5.132.3 修复: 创建新列表而非原地修改,遵循contextvars不可变语义最佳实践
+    stack = _span_stack_var.get()
+    _span_stack_var.set(stack + [span])
 
 
 def _pop_span() -> Span | None:
-    stack: list[Span] = getattr(_THREAD_LOCAL, "_span_stack", [])
-    return stack.pop() if stack else None
+    stack = _span_stack_var.get()
+    if not stack:
+        return None
+    _span_stack_var.set(stack[:-1])
+    return stack[-1]
 
 
 @contextmanager

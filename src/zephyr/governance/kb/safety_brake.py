@@ -35,7 +35,7 @@ from __future__ import annotations
 import logging
 import os
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -68,14 +68,9 @@ class PreFlightResult:
     cooling_period_seconds: int
     passed: bool
     devils_advocate_required: bool = False
-    blocking_issues: list[str] = None
-    warnings: list[str] = None
-
-    def __post_init__(self):
-        if self.blocking_issues is None:
-            self.blocking_issues = []
-        if self.warnings is None:
-            self.warnings = []
+    # 5.107.5/6 修复: =None 改为 field(default_factory=list),消除类型注解与默认值不一致
+    blocking_issues: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
 
 def _get_project_root() -> Path:

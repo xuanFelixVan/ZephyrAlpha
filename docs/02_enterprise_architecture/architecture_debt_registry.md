@@ -6685,6 +6685,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(Pydantic V1风格Config需迁移到V2 model_config)
 
+> **第38轮修复状态（2026-07-05）**：FIXED=3(5.107.4 l1_input.py hits=None→field(default_factory=list) + 5.107.5/6 safety_brake.py blocking_issues/warnings=None→field(default_factory=list),删除__post_init__的None→[]转换), DRIFTED=3(5.107.1/2 已迁移到model_config=ConfigDict + 5.107.3 integration/models.py不存在)。本维度全部清零。
+
 | 编号 | file_path:line | 问题描述 | 严重度 | 修复建议 |
 |---|---|---|---|---|
 | 5.107.1 | `infrastructure/pipeline/models.py:505` | Pydantic V1风格`class Config: use_enum_values = True`在V2代码库中已废弃，产生`PydanticDeprecatedSince20`警告 | MEDIUM | 替换为`model_config = ConfigDict(use_enum_values=True)` |
@@ -7361,6 +7363,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.132 线程局部存储泄漏（4个，第23轮新增）
 
 > **第35轮修复状态（2026-07-05）**：FIXED=1(5.132.4 event_sink死代码thread-local已删除), STILL_VALID=3(5.132.1 runtime_interceptor _tls.allowance需请求边界reset/5.132.2 sqlite_metadata_store close()需遍历所有线程连接/5.132.3 span_stub _span_stack需改contextvars)
+
+> **第38轮修复状态（2026-07-05）**：FIXED=1(5.132.3 span_stub _THREAD_LOCAL._span_stack → contextvars.ContextVar,消除跨请求span栈泄漏,_push/_pop改用set()不可变语义), STILL_VALID=2(5.132.1 runtime_interceptor _tls.allowance需请求边界reset + 5.132.2 sqlite_metadata_store close()需遍历所有线程连接——均需专项工程)
 
 #### 5.132.1 [HIGH] runtime_interceptor的_tls.allowance安全放行令牌跨请求泄漏
 

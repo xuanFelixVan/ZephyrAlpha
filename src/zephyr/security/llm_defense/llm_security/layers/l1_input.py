@@ -14,7 +14,7 @@
 # [TESTS]
 # [TTL] task_bound
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
@@ -41,11 +41,8 @@ class SanitizeResult:
 
     blocked: bool
     total_score: float
-    hits: list[str] = None
-
-    def __post_init__(self):
-        if self.hits is None:
-            self.hits = []
+    # 5.107.4 修复: =None 改为 field(default_factory=list),消除类型注解与默认值不一致
+    hits: list[str] = field(default_factory=list)
 
 
 # 直接注入模式
