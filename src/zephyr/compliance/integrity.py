@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.integrity
-# [DOMAIN] D_COMPLIANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.integrity
 # [CONSUMERS]
 # [STARTUP] imported

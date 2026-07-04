@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.artifact_scanner
-# [DOMAIN] D_COMPLIANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.drift_detection.artifact_scanner
 # [CONSUMERS] zephyr.compliance.__init__
 # [STARTUP] imported

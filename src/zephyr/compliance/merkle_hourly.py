@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.merkle_hourly
-# [DOMAIN] D_COMPLIANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.merkle_hourly
 # [CONSUMERS]
 # [STARTUP] imported

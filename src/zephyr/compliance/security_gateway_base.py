@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L10-001
 # [MODULE] zephyr.compliance.security_gateway_base
-# [DOMAIN] D_COMPLIANCE
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.security_governance.security_gateway_base
 # [CONSUMERS]
 # [STARTUP] imported

@@ -97,21 +97,22 @@ def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
     return False, "module_id 必须以 MOD-/SH-/D- 开头"
 
 
-# domain_id 格式正则（D-{DOMAIN} 无序号，与 blueprint_id 的 D- 轨 D-{DOMAIN}-NNN 不同）
+# domain_id 格式正则（D_{DOMAIN} 无序号，与 blueprint_id 的 D- 轨 D-{DOMAIN}-NNN 不同）
 # 真源：本常量是 domain_id 格式校验的唯一正则，被 apply_depgraph.py 复用
-#       （cmd_rename_domain + cmd_insert_domain + _validate_domain_naming NR-002 均复用本常量，消除硬编码分裂）
+#       （cmd_rename_domain + cmd_merge_domain + cmd_insert_domain + _validate_domain_naming NR-002 均复用本常量，消除硬编码分裂）
 # 与 NR-002 YAML 真源（domain_naming_rules.yaml）语义一致：全大写字母+数字+下划线
+# 项目标准（裁定#ARCH-target_layer_v1.0.0）：D_ 前缀（下划线），禁止 D- 连字符
 # 安全加固：\Z 替代 $（换行安全，P2-2）+ {0,59} 长度限制（防超长输入，P2-3）
-DOMAIN_ID_RE = re.compile(r"^D-[A-Z][A-Z0-9_]{0,59}\Z")
+DOMAIN_ID_RE = re.compile(r"^D_[A-Z][A-Z0-9_]{0,59}\Z")
 
 
 def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
-    """校验 domain_id 格式是否符合 D-{DOMAIN} 规范（无序号）。
+    """校验 domain_id 格式是否符合 D_{DOMAIN} 规范（无序号）。
 
     真源：本函数是 domain_id 格式校验的唯一责任点，被 apply_depgraph.py 复用。
 
     与 is_valid_module_id 的 D- 轨区别：
-    - domain_id: D-{DOMAIN}（无序号，如 D_GOVERNANCE）
+    - domain_id: D_{DOMAIN}（无序号，如 D_GOVERNANCE）
     - blueprint_id D- 轨: D-{DOMAIN}-NNN（有序号，如 D-GOVERNANCE-001）
 
     Args:
@@ -122,4 +123,4 @@ def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
     """
     if DOMAIN_ID_RE.match(domain_id):
         return True, ""
-    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D_GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"
+    return False, "domain_id 必须为 D_{DOMAIN} 格式（如 D_GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"
