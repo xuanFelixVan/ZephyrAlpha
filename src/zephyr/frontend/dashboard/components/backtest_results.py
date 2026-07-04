@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.backtest_results
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.backtest.core.engine_base
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.backtest.core.engine_base
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,15 +14,21 @@
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-backtest_results | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""backtest_results · 回测结果可视化组件（v2.2.0新增）
+"""backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.1
 数据源: D_BACKTEST BacktestResult(CTR-P1-016, 11必填字段)
-渲染依赖: plotly(图表) + streamlit(布局)
+渲染依赖: Panel(布局) + ChartFactory.make_equity/make_drawdown(图表)
+
+v3.0.0 变更 (#ARCH-047):
+  - Streamlit → Panel (布局)
+  - plotly 直接调用 → ChartFactory 工厂方法 (callback仅编排)
+  - 净值曲线: HoloViews (via ChartFactory.make_equity)
+  - 回撤曲线: plotly_resampler (via ChartFactory.make_drawdown)
 
 布局:
   - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
-  - 中部: 净值曲线+回撤曲线(plotly双轴图)
+  - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler)
   - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
 """
 from __future__ import annotations
@@ -31,16 +37,15 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 try:
-    import streamlit as st
-except ImportError:  # 测试环境无 streamlit
-    st = None
+    import panel as pn
+except ImportError:  # 测试环境无 panel
+    pn = None
 
-try:
-    import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
-except ImportError:  # 测试环境无 plotly
-    go = None
-    make_subplots = None
+from zephyr.frontend.dashboard.components.chart_factory import (
+    ChartFactoryError,
+    make_drawdown,
+    make_equity,
+)
 
 
 @dataclass
@@ -148,16 +153,42 @@ def fetch_backtest_results(
     )
 
 
+def _metric_card(label: str, value: str, color: str = "#333") -> Any:
+    """生成单个指标卡片（Panel Card 或 dict）"""
+    if pn is None:
+        return {"label": label, "value": value, "color": color}
+    return pn.pane.Markdown(
+        f"**{label}**\n\n## {value}",
+        styles={"color": color, "text-align": "center", "padding": "8px",
+                "border": "1px solid #e0e0e0", "border-radius": "4px"},
+    )
+
+
+def _gate_indicator(label: str, passed: bool) -> Any:
+    """生成门控状态指示器（绿色=PASS / 红色=FAIL）"""
+    status = "PASS" if passed else "FAIL"
+    color = "#28a745" if passed else "#dc3545"
+    if pn is None:
+        return {"label": label, "status": status, "color": color}
+    return pn.pane.Markdown(
+        f"**{label}**\n\n## {status}",
+        styles={"color": color, "text-align": "center", "padding": "8px",
+                "border": f"2px solid {color}", "border-radius": "4px"},
+    )
+
+
 def render_backtest_results(data: BacktestResultData) -> dict[str, Any]:
-    """Streamlit 渲染回测结果
+    """Panel+HoloViz 渲染回测结果（v3.0.0, #ARCH-047）
 
     布局:
       - 顶部: 关键指标卡片(Sharpe/Sortino/MaxDD/IC/IR/胜率/年化)
-      - 中部: 净值曲线+回撤曲线(plotly双轴图)
-      - 底部: 3阶段门控状态(IS→WFA→OOS)
+      - 中部: 净值曲线(HoloViews)+回撤曲线(plotly_resampler)
+      - 底部: 3阶段门控状态(IS→WFA→OOS, 绿色=通过/红色=未通过)
 
-    测试环境(无 streamlit/plotly)仅返回 dict，便于断言。
+    callback仅编排: 图表生成委托 ChartFactory.make_equity/make_drawdown.
+    测试环境(无 panel)仅返回 dict payload，便于断言。
     """
+    # payload 始终返回（测试断言用）
     payload: dict[str, Any] = {
         "backtest_id": data.backtest_id,
         "strategy_id": data.strategy_id,
@@ -179,63 +210,90 @@ def render_backtest_results(data: BacktestResultData) -> dict[str, Any]:
         "overfitting_flag": data.overfitting_flag,
         "net_value_points": len(data.net_value_curve),
         "drawdown_points": len(data.drawdown_curve),
+        "renderer": "panel" if pn is not None else "dict",
     }
 
-    if st is None or go is None:
+    if pn is None:
         return payload
 
-    # 顶部：关键指标卡片
-    st.subheader("关键指标 (Key Metrics)")
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Sharpe (修正)", f"{data.metrics.sharpe:.3f}")
-    col2.metric("Sortino", f"{data.metrics.sortino:.3f}")
-    col3.metric("Max Drawdown", f"{data.metrics.max_drawdown:.2%}")
-    col4.metric("Win Rate", f"{data.metrics.win_rate:.2%}")
+    # ===== 顶部：关键指标卡片 =====
+    m = data.metrics
+    metric_cards = [
+        _metric_card("Sharpe (修正)", f"{m.sharpe:.3f}"),
+        _metric_card("Sortino", f"{m.sortino:.3f}"),
+        _metric_card("Max Drawdown", f"{m.max_drawdown:.2%}", "#dc3545"),
+        _metric_card("Win Rate", f"{m.win_rate:.2%}"),
+        _metric_card("IC", f"{m.ic:.3f}"),
+        _metric_card("IR", f"{m.ir:.3f}"),
+        _metric_card("Annual Return", f"{m.annual_return:.2%}", "#28a745"),
+    ]
+    metrics_row = pn.Row(*metric_cards, sizing_mode="stretch_width")
 
-    col5, col6, col7, _ = st.columns(4)
-    col5.metric("IC", f"{data.metrics.ic:.3f}")
-    col6.metric("IR", f"{data.metrics.ir:.3f}")
-    col7.metric("Annual Return", f"{data.metrics.annual_return:.2%}")
-
+    # 过拟合警告
+    overfitting_alert = None
     if data.overfitting_flag:
-        st.error("⚠ 过拟合警告 (overfitting_flag=True)：样本外Sharpe<70%样本内，建议否决上线")
+        overfitting_alert = pn.pane.Alert(
+            "⚠ 过拟合警告 (overfitting_flag=True)：样本外Sharpe<70%样本内，建议否决上线",
+            alert_type="danger",
+        )
 
-    # 中部：净值+回撤双轴图
+    # ===== 中部：净值+回撤图表（ChartFactory 工厂方法）=====
+    charts: list[Any] = []
     if data.net_value_curve:
-        st.subheader("净值曲线 + 回撤 (NAV & Drawdown)")
-        fig = make_subplots(
-            rows=2,
-            cols=1,
-            shared_xaxes=True,
-            vertical_spacing=0.08,
-            row_heights=[0.7, 0.3],
-            subplot_titles=("Net Value", "Drawdown"),
-        )
-        x = data.timestamps if len(data.timestamps) == len(data.net_value_curve) else list(range(len(data.net_value_curve)))
-        fig.add_trace(
-            go.Scatter(x=x, y=data.net_value_curve, name="NAV", line=dict(color="#1f77b4")),
-            row=1, col=1,
-        )
-        if data.drawdown_curve:
-            dd_x = data.timestamps if len(data.timestamps) == len(data.drawdown_curve) else list(range(len(data.drawdown_curve)))
-            fig.add_trace(
-                go.Scatter(x=dd_x, y=data.drawdown_curve, name="Drawdown", fill="tozeroy", line=dict(color="#d62728")),
-                row=2, col=1,
+        try:
+            equity_fig = make_equity(
+                net_value_curve=data.net_value_curve,
+                timestamps=data.timestamps,
+                title="Net Value (NAV)",
             )
-        fig.update_layout(height=520, template="plotly_white")
-        st.plotly_chart(fig, use_container_width=True)
+            charts.append(equity_fig)
+        except ChartFactoryError:
+            pass  # 数据为空时跳过
 
-    # 底部：3阶段门控状态
-    st.subheader("3阶段决策门控 (IS → WFA → OOS)")
-    gc1, gc2, gc3 = st.columns(3)
-    gc1.metric("IS (样本内)", "PASS" if data.gate_status.is_passed else "FAIL")
-    gc2.metric("WFA (Walk-Forward)", "PASS" if data.gate_status.wfa_passed else "FAIL")
-    gc3.metric("OOS (样本外)", "PASS" if data.gate_status.oos_passed else "FAIL")
-    if data.gate_status.all_passed:
-        st.success("3阶段全通过，允许上线")
-    else:
-        st.warning("存在未通过阶段，禁止上线")
+    if data.drawdown_curve:
+        try:
+            dd_fig = make_drawdown(
+                drawdown_curve=data.drawdown_curve,
+                timestamps=data.timestamps,
+                title="Drawdown",
+            )
+            charts.append(dd_fig)
+        except ChartFactoryError:
+            pass
 
+    charts_col = pn.Column(*charts, sizing_mode="stretch_width") if charts else None
+
+    # ===== 底部：3阶段门控状态 =====
+    gs = data.gate_status
+    gate_indicators = [
+        _gate_indicator("IS (样本内)", gs.is_passed),
+        _gate_indicator("WFA (Walk-Forward)", gs.wfa_passed),
+        _gate_indicator("OOS (样本外)", gs.oos_passed),
+    ]
+    gate_row = pn.Row(*gate_indicators, sizing_mode="stretch_width")
+
+    gate_summary = pn.pane.Alert(
+        "3阶段全通过，允许上线" if gs.all_passed else "存在未通过阶段，禁止上线",
+        alert_type="success" if gs.all_passed else "warning",
+    )
+
+    # ===== 组装最终布局 =====
+    layout_items = [
+        pn.pane.Markdown(f"## 回测结果: {data.strategy_id} ({data.backtest_id})"),
+        pn.pane.Markdown("### 关键指标 (Key Metrics)"),
+        metrics_row,
+    ]
+    if overfitting_alert is not None:
+        layout_items.append(overfitting_alert)
+    if charts_col is not None:
+        layout_items.append(pn.pane.Markdown("### 净值曲线 + 回撤 (NAV & Drawdown)"))
+        layout_items.append(charts_col)
+    layout_items.append(pn.pane.Markdown("### 3阶段决策门控 (IS → WFA → OOS)"))
+    layout_items.append(gate_row)
+    layout_items.append(gate_summary)
+
+    layout = pn.Column(*layout_items, sizing_mode="stretch_width")
+    payload["_layout"] = layout
     return payload
 
 
