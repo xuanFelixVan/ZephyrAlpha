@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-024 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-024 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.behavioral_admission.vibe_coding_enforcer
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]

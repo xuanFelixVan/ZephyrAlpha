@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.execution_engine
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.governance.adapters.risk_validation_bridge; zephyr.trading.trading_contracts.execution.order

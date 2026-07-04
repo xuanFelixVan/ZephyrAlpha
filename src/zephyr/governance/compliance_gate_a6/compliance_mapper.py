@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.compliance_gate_a6.compliance_mapper
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

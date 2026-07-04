@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-055 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-055 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.agent_dispatch
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

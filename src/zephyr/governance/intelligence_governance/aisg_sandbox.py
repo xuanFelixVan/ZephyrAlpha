@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
+# [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.aisg_sandbox
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

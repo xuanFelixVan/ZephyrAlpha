@@ -1073,8 +1073,8 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_BACKTEST
-    target_domains: [D_PF_CORE, D_RISK, D_OPS]
-    flow: "L_BACKTEST → Portfolio Portfolio / Risk Risk / Telemetry Ops"
+    target_domains: [D_PF_CORE, D_RISK, D_OPS, D_FRONTEND]
+    flow: "L_BACKTEST → Portfolio Portfolio / Risk Risk / Telemetry Ops / Frontend"
     physical_path: src/zephyr/backtest/core/engine_base.py
     stability: upgradable
     schema_version: "1.0"
@@ -1103,6 +1103,42 @@ contracts:
       - {name: idempotency_key, type: str, required: true, description: "幂等键(UUID),防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CTR-P1-017: BacktestRunArtifact (D_BACKTEST域产出, 2026-07-04新增, 与CTR-P1-016互补) ---
+  - id: CTR-P1-017
+    name: "BacktestRunArtifact / 回测运行产物"
+    priority: P1
+    frozen: true
+    source_domain: D_BACKTEST
+    target_domains: [D_FRONTEND]
+    flow: "L_BACKTEST → Frontend Visualization"
+    physical_path: src/zephyr/backtest/io/result_repository.py
+    stability: upgradable
+    schema_version: "1.0.0"
+    status: Draft
+    description: "回测运行产物契约，包含回测结果时序数据（equity curve/trade log/tick replay data），用于前端可视化消费。与 CTR-P1-016 BacktestResult（汇总指标）互补——BacktestResult 是标量汇总，BacktestRunArtifact 是时序明细。"
+    ai_prompt: >
+      当回测引擎完成一次运行后,MUST 产出 BacktestRunArtifact 以支撑前端可视化。
+      strategy_id 必须对应策略注册表中已注册的策略 key。
+      run_id 必须与 BacktestResult.idempotency_key 关联,保证汇总指标与时序明细可对齐。
+      equity_curve 与 trade_log 数据 MUST 遵循 PIT 铁律(零前瞻偏差)——任何时序点不得引用其之后时刻才能获得的信息。
+      tick_replay_data 为可选项,仅当回测配置启用 tick 级回放时填充。
+      benchmark_curve 与 drawdown_curve 为可选,用于前端叠加渲染基准对比与回撤分析。
+      Frontend 通过 result_repository.py (D_BACKTEST io/) 拉取本产物,使用 Panel+HoloViz 组件渲染可视化。
+    pit_note: >
+      equity_curve/trade_log 数据 MUST 遵循 PIT 铁律(零前瞻偏差)。
+      任一时序点的字段值不得引用该时点之后才能观测到的信息——
+      违反 PIT 铁律将导致回测结果失真,下游 Frontend 可视化亦会传递错误信号。
+    fields:
+      - {name: strategy_id, type: str, required: true, description: "策略唯一标识"}
+      - {name: run_id, type: str, required: true, description: "回测运行 ID,与 BacktestResult.idempotency_key 关联"}
+      - {name: equity_curve, type: "array[{timestamp: ISO8601, equity: float}]", required: true, description: "权益曲线时序数据"}
+      - {name: trade_log, type: "array[{timestamp: ISO8601, symbol: string, side: string, price: float, quantity: int, commission: float}]", required: true, description: "交易记录"}
+      - {name: tick_replay_data, type: "array[{timestamp: ISO8601, price: float, volume: int}]", required: false, description: "tick 回放数据(可选,启用 tick 级回放时填充)"}
+      - {name: benchmark_curve, type: "array[{timestamp: ISO8601, value: float}]", required: false, description: "基准曲线(可选)"}
+      - {name: drawdown_curve, type: "array[{timestamp: ISO8601, drawdown: float}]", required: false, description: "回撤曲线(可选)"}
+      - {name: schema_version, type: str, required: true, default: "1.0.0", description: "契约版本,默认 1.0.0"}
+  # ARCH-047
 
   # --- CT-TEL-001~004: System Telemetry 契约（ARB-14 裁决，MOD-INF-015 提供）---
   - id: CT-TEL-001

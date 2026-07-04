@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-047 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-047 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.lifecycle_governance.api_lifecycle
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

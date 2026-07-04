@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-042 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-042 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.agent_debate
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

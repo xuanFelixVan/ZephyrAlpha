@@ -862,7 +862,14 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
 
     for doc in working_files:
         try:
-            content = doc.read_text(encoding="utf-8", errors="replace")
+            # 5.59.4 修复：原 errors="replace" 用于路径提取，替换字符 \ufffd 可能出现在路径中间，
+            # 产生形如 docs/\ufffd03_modules/foo.md 的幻觉路径，污染对账结果。
+            # 改为先校验文件是否合法 UTF-8，校验失败则跳过。
+            raw = doc.read_bytes()
+            try:
+                content = raw.decode("utf-8")
+            except UnicodeDecodeError:
+                continue
         except OSError:
             continue
         refs = _extract_refs(content, doc.suffix.lower())

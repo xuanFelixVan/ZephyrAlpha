@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "c8bec55a39ccd669",
+      "hash": "802b0e67f3deb8c1",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "513a768ce4fc11cf",
+      "hash": "f8324b80c4066856",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "f6433ece2f2ed048",
+      "hash": "43e12fae5a96d1db",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -196,6 +196,6 @@
       "desc": "pre-commit gate 实现（auto-glob 保护: vocab_hardcode_gate.py）"
     }
   },
-  "registered_at": "2026-07-04T01:06:33.409475+00:00",
+  "registered_at": "2026-07-04T09:58:25.124121+00:00",
   "last_check_at": "2026-07-03T17:24:28.863589+00:00"
 }

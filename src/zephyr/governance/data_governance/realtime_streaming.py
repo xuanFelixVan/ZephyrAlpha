@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-005 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-005 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.data_governance.realtime_streaming
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

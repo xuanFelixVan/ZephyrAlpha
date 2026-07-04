@@ -164,15 +164,31 @@ consumers:
       - {domain: D_SIMULATION, module: "research_innovation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D_ML_TRAIN, module: "ml_platform", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
 
+  # ─── 回测产物契约消费者（D_BACKTEST → D_FRONTEND 可视化通道）───
+  - contract_id: CTR-P1-016
+    contract_name: BacktestResult
+    registered_consumers:
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-07-02"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-07-02"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-07-02"}
+      - {domain: D_FRONTEND, module: "backtest_visualization", tier: 2, pinned_version: "1.0", registered_at: "2026-07-04", consumption_channel: "backtest_result_sink.py (D_BACKTEST io/)", rendering_stack: "Panel+HoloViz"}
+
+  - contract_id: CTR-P1-017
+    contract_name: BacktestRunArtifact
+    registered_consumers:
+      - {domain: D_FRONTEND, module: "backtest_visualization", tier: 2, pinned_version: "1.0.0", registered_at: "2026-07-04", consumption_channel: "result_repository.py (D_BACKTEST io/)", rendering_stack: "Panel+HoloViz"}
+
 summary:
-  total_contracts_registered: 18
-  total_consumer_entries: 92
+  total_contracts_registered: 20
+  total_consumer_entries: 97
   tier_distribution:
-    tier_1_critical: 35
-    tier_2_secondary: 10
+    tier_1_critical: 37
+    tier_2_secondary: 13
   note: >
     消费者注册表是 CTR-VER-001 版本协商的前置基础设施。
     任何 P0/P1 契约的 MAJOR 版本变更前，必须通过本表查询所有注册消费者并提前 30 天通知。
     Tier 1 = 阻塞式消费者（MAJOR 不兼容会导致其不可用）。
     Tier 2 = 非阻塞式消费者（可退化或延迟处理）。
     EXT/OCP 契约由外部系统版本控制 / _b_track_interfaces/ 管理，不在此注册表中。
+    2026-07-04 新增 CTR-P1-016 BacktestResult 与 CTR-P1-017 BacktestRunArtifact 的 D_FRONTEND 消费关系,
+    支撑前端 Panel+HoloViz 可视化消费 D_BACKTEST 时序明细产物。

@@ -98,7 +98,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.2.0
+  version: 1.3.0
   generation: 1
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_backtest/blueprint.md
@@ -744,14 +744,17 @@ blueprints:
 - module_id: MOD-L08-001
   name: _domain_frontend
   title: Human Machine Interface Core 蓝图 — 人机交互层
-  summary: 业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Streamlit
-    Dashboard 5页面已实现(v2.1.0)；v2.2.0规划5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。
+  summary: 业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Panel
+    Dashboard 5页面已实现(v2.1.0, v3.0.0从Streamlit迁移)；v3.0.0技术栈切换为Panel+HoloViz(HoloViews+Datashader+hvPlot+Bokeh)+Plotly+plotly_resampler+TradingView
+    Lightweight Charts v5.2(#ARCH-047第一性原理重构)。5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST
+    io/(backtest_result_sink+result_repository)/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。G0.5
+    Python原生可视化过渡层已激活(frontend_architecture.md)。
   layer: L3_application
   functional_domain: interface
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.2.0
+  version: 3.0.0
   generation: 2
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_frontend/blueprint.md
@@ -926,6 +929,13 @@ summary:
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
   last_recomputed: '2026-07-04'
 changelog:
+- version: 2.7.7
+  date: '2026-07-04'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 55 份 blueprint.md；登记项相对上一版有
+    2 条差异摘要'
+  - 'MOD-BT-001.version: [1.2.0] → [1.3.0]'
+  - 'MOD-L08-001.version: [2.2.0] → [3.0.0]'
 - version: 2.7.6
   date: '2026-07-02'
   changes:

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md
+# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.value_factor
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.governance.__init__

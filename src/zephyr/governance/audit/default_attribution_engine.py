@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md
+# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.governance.audit.default_attribution_engine
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.reporting.analytics_base; zephyr.governance.performance_attribution_report

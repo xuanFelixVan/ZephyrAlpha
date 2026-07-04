@@ -106,12 +106,12 @@ class SkillDiscovery:
         all_skills = base / "all_skill_modules.py"
         if all_skills.exists():
             try:
+                # 5.59.2 修复：原三层 try/except 回退 utf-8→gbk→return，gbk 回退会静默误判文件编码，
+                # 二进制文件或错误编码文件被解码成乱码，继续做模块名提取产生幻觉数据。
+                # 改为统一用 utf-8+strict，非 UTF-8 文件记录错误并跳过。
                 content = all_skills.read_text(encoding="utf-8")
             except (UnicodeDecodeError, OSError):
-                try:
-                    content = all_skills.read_text(encoding="gbk")
-                except (UnicodeDecodeError, OSError):
-                    return results
+                return results
             for line in content.splitlines():
                 line = line.strip()
                 if line.startswith('"') and line.endswith('",'):
@@ -150,15 +150,12 @@ class SkillDiscovery:
 
         for bp_file in docs_base.rglob("**/blueprint.md"):
             try:
+                # 5.59.2 修复：原三层 try/except 回退 utf-8→gbk→latin-1，gbk/latin-1 回退会静默误判文件编码，
+                # 二进制文件或错误编码文件被解码成乱码，继续做模块名提取产生幻觉数据。
+                # 改为统一用 utf-8+strict，非 UTF-8 文件跳过。
                 content = bp_file.read_text(encoding="utf-8")
             except (UnicodeDecodeError, OSError):
-                try:
-                    content = bp_file.read_text(encoding="gbk")
-                except (UnicodeDecodeError, OSError):
-                    try:
-                        content = bp_file.read_text(encoding="latin-1")
-                    except (UnicodeDecodeError, OSError):
-                        continue
+                continue
             module_name = SkillDiscovery._extract_module_name(content, bp_file)
             if not module_name:
                 continue

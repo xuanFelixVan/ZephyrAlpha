@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-025 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-025 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.constitutional_update.constitutional_update
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.file_utils; zephyr.shared.session_audit

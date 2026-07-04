@@ -19,8 +19,10 @@ parent_module: ''
 priority: P1
 references:
   - architecture_model/contracts/cross_layer_contracts.yaml#CTR-P1-016
+  - architecture_model/contracts/cross_layer_contracts.yaml#CTR-P1-017
   - architecture_model/events/domain_events.yaml#E-BT-01
   - docs/03_modules/_domain_data/blueprint.md#§16.7.1
+  - docs/00_meta/_system_master.md#ARCH-047
 rule_form: structural
 scope: domain
 ssot_claims:
@@ -36,7 +38,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.2.0
+version: 1.3.0
 ---
 
 # Backtest Engine 蓝图+施工图 — D_BACKTEST回测引擎域,双模式架构+Tick回放统一归口
@@ -67,6 +69,11 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 10. **matching_engine Tick级撮合**: 新增基于5档盘口的Tick级撮合模式（实盘一致性）
 11. **回测=实盘一致性**: matching_engine撮合规则与D_EX_CORE的MiniQMT Broker保持一致
 
+**v1.3.0新增决策(2026-07-04)**:
+12. **io/子目录新增(#ARCH-047)**: 配合前端可视化技术栈从 Streamlit 到 Panel+HoloViz 第一性原理重构(#ARCH-047),在 D_BACKTEST 域新增 io/ 子目录,包含 `backtest_result_sink.py`(从 BacktestResult 提取可视化数据)与 `result_repository.py`(持久化/检索 BacktestRunArtifact)
+13. **新契约 CTR-P1-017 BacktestRunArtifact**: 持久化回测运行产物(source=D_BACKTEST, target=[D_FRONTEND]),供前端 backtest_results/tick_replay 组件消费
+14. **depgraph 设计态节点登记**: node_id=475126(sink) + node_id=475127(repo),build_status=planned;3条依赖边:sink→engine_base(470295), repo→sink(475126), frontend(311219)→repo(475127)
+
 <!-- temporal_type: construction_temporary -->
 ## §0 代码对齐验证
 
@@ -92,6 +99,9 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | src/zephyr/backtest/implementations/event_driven_engine.py | planned | **v1.1.0提升** 事件驱动回测(Tick级,与tick_replay协同)(MVP待实现) |
 | src/zephyr/backtest/core/pit_manager.py | production | **PIT铁律管理器**(P1-30,PIT三公理+AS OF JOIN+Embargo期+pit_consistency_test) |
 | src/zephyr/backtest/core/decision_gate.py | production | **3阶段决策门控**(P0-14,IS→WFA→OOS不可跳级+参数稳定性区域+回测-实盘偏差监控) |
+| src/zephyr/backtest/io/__init__.py | planned | **v1.3.0新增** io子包入口(#ARCH-047) |
+| src/zephyr/backtest/io/backtest_result_sink.py | planned | **v1.3.0新增** 回测结果数据落地模块,从 BacktestResult 提取可视化数据(CTR-P1-016→BacktestResultData)(#ARCH-047) |
+| src/zephyr/backtest/io/result_repository.py | planned | **v1.3.0新增** 回测产物持久化/检索模块,供 D_FRONTEND 消费(CTR-P1-017 BacktestRunArtifact)(#ARCH-047) |
 
 **Phase 2 — 过拟合检测与Walk-Forward**
 
@@ -131,7 +141,9 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | module_id | MOD-BT-001 | 代码头一致 | ✅ |
 | 冻结真源 | backtest/core/engine_base.py | freeze_manifest已更新 | ✅ |
 | 契约注册 | CTR-P1-016 | cross_layer_contracts.yaml已注册 | ✅ |
+| 契约注册 | CTR-P1-017 | cross_layer_contracts.yaml已注册(source=D_BACKTEST, target=[D_FRONTEND]) | ✅ |
 | 事件注册 | E-BT-01/02/03 | domain_events.yaml已注册 | ✅ |
+| io/子目录 | io/backtest_result_sink.py + io/result_repository.py | depgraph 节点 475126/475127 planned(#ARCH-047) | ✅ |
 
 ### §0.3 版本-代码映射
 
@@ -140,11 +152,13 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 | v1.0.0 | engine_base.py + vectorized_engine.py已实现 | MVP基线,双模式中的向量化模式已就绪 |
 | v1.1.0 (Tick回放+多源) | 同 v1.0.0 | matching_engine/portfolio/data_handler/metrics/tick_replay/event_driven_engine(6模块待施工) + §16.7 Tick级5档撮合规格 + data_handler多源(MiniQMT Provider+ClickHouse) | v1.1.0规划: Tick回放引擎(秒级做T)+event_driven_engine提升到Phase 1+回测=实盘一致性(MatchingLogic共享) |
 | v1.2.0 (PIT+过拟合+WF+决策门控) | pit_manager/overfitting_detector/walk_forward/decision_gate已实现 | PIT铁律管理器(P1-30)+过拟合检测(SIM-18/38/56)+Walk-Forward(P1-29)+3阶段决策门控(P0-14) | v1.2.0已落地: 4模块production,接入vectorized/event_driven双引擎 |
+| v1.3.0 (io/可视化产物) | io/backtest_result_sink.py + io/result_repository.py 待施工 | 配合 #ARCH-047 前端 Streamlit→Panel+HoloViz 重构,新增 io/ 子目录(sink+repo);注册 CTR-P1-017 BacktestRunArtifact(source=D_BACKTEST, target=[D_FRONTEND]);depgraph 节点 475126/475127 planned |
 
 ### §0.4 SSoT与责任唯一性
 
 - **回测引擎真源**: 本蓝图(MOD-BT-001) + src/zephyr/backtest/core/engine_base.py(冻结代码)
 - **BacktestResult契约真源**: cross_layer_contracts.yaml#CTR-P1-016
+- **BacktestRunArtifact契约真源**: cross_layer_contracts.yaml#CTR-P1-017(source=D_BACKTEST, target=[D_FRONTEND],#ARCH-047)
 - **回测事件真源**: domain_events.yaml#E-BT-01/02/03
 - **冻结清单真源**: shared/contracts/freeze_manifest.yaml(L_BACKTEST层)
 
@@ -196,6 +210,10 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 - services/result_comparator.py(SIM-53回测结果对比)
 - services/result_deployer.py(SIM-54回测结果一键部署)
 - services/nan_processor.py(SIM-55指标NaN处理器)
+
+**v1.3.0新增 — io/子目录(可视化产物落地)**:2个模块(配合 #ARCH-047 前端 Streamlit→Panel+HoloViz 重构)
+- io/backtest_result_sink.py — 从 BacktestResult(CTR-P1-016)提取可视化数据,转化为 BacktestResultData(depgraph 节点 475126,planned)
+- io/result_repository.py — 持久化/检索 BacktestRunArtifact(CTR-P1-017),供 D_FRONTEND backtest_results/tick_replay 组件消费(depgraph 节点 475127,planned)
 
 ### §1.4 运行场景约束
 
@@ -275,9 +293,17 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 │  │  (预留:对外API入口)                         │               │
 │  └─────────────────────────────────────────────┘              │
 │                                                                │
+│  ┌─────────────────── io/ ────────────────────┐               │
+│  │  backtest_result_sink.py  BacktestResult    │  v1.3.0新增    │
+│  │     → BacktestResultData(可视化数据模型)    │  (#ARCH-047)   │
+│  │  result_repository.py  持久化/检索           │               │
+│  │     BacktestRunArtifact(CTR-P1-017)         │               │
+│  └─────────────────────────────────────────────┘              │
+│                                                                │
 └────────────────────────────────────────────────────────────────┘
         ↑ CTR-001(行情)  ↑ CTR-002(因子信号)
-        ↓ CTR-P1-016(BacktestResult)  ↓ E-BT-01/02/03(事件)
+        ↓ CTR-P1-016(BacktestResult)  ↓ CTR-P1-017(BacktestRunArtifact)
+        ↓ E-BT-01/02/03(事件)
 ```
 
 ### §3.2 数据流
@@ -385,6 +411,7 @@ class MyEngine(BacktestEngineBase):
 | 契约 | 目标 | 用途 |
 |------|------|------|
 | CTR-P1-016 BacktestResult | D_PF_CORE/D_RISK/D_OPS | 回测结果标准化传递 |
+| CTR-P1-017 BacktestRunArtifact | D_FRONTEND | 回测运行产物持久化/检索,供 backtest_results/tick_replay 组件消费(#ARCH-047) |
 
 ### §4.5 MCP 接口
 
@@ -397,6 +424,7 @@ class MyEngine(BacktestEngineBase):
 | CTR-001 | 1.0 | frozen/locked-5yr |
 | CTR-002 | 1.0 | frozen/locked-5yr |
 | CTR-P1-016 | 1.0 | frozen/upgradable |
+| CTR-P1-017 | 1.0 | planned/upgradable |
 
 ### §4.7 OCP 扩展点
 
@@ -528,6 +556,7 @@ class MyEngine(BacktestEngineBase):
 | 产出物 | 契约 | consumer_min | 说明 |
 |--------|------|-------------|------|
 | BacktestResult | CTR-P1-016 | D_PF_CORE | 回测结果,策略遴选输入 |
+| BacktestRunArtifact | CTR-P1-017 | D_FRONTEND | 回测运行产物(持久化/检索),供 backtest_results/tick_replay 组件消费(#ARCH-047) |
 | E-BT-01事件 | domain_events | D_PORTFOLIO_CORE/D_RISK/D_REPORTING | 回测完成通知 |
 | E-BT-02事件 | domain_events | D_PORTFOLIO_CORE/D_FRONTEND | 回测通过门禁 |
 | E-BT-03事件 | domain_events | D_FACTOR/D_FRONTEND | 过拟合检测告警 |
@@ -541,6 +570,7 @@ class MyEngine(BacktestEngineBase):
 | 因子衰减 | D_FACTOR | planned | E-BT-03 OverfittingDetected |
 | 任务监控 | D_OPS | planned | E-BT-01 BacktestCompleted |
 | 信号回测(P1-25) | D_SIGNAL | planned | 信号驱动回测+多重检验校正(来源:04-D-SIGNAL) |
+| 可视化产物检索(#ARCH-047) | D_FRONTEND | planned | CTR-P1-017 BacktestRunArtifact via result_repository |
 
 ## §13 需要更新
 
@@ -575,6 +605,10 @@ class MyEngine(BacktestEngineBase):
 **Phase 2(过拟合检测)**:
 9. ✅ core/overfitting_detector.py — 过拟合检测(详见下方规格)
 10. ✅ core/walk_forward.py — Walk-Forward优化
+
+**v1.3.0新增(io/子目录,#ARCH-047)**:
+11. ⬜ io/backtest_result_sink.py — 回测结果数据落地模块(详见下方规格)
+12. ⬜ io/result_repository.py — 回测产物持久化/检索模块(详见下方规格)
 
 **metrics.py 详细规格**(P0,来源:D-SIMULATION-23/24/45):
 - **Sharpe计算修正**:
@@ -661,6 +695,55 @@ class MyEngine(BacktestEngineBase):
 **event_driven_engine.py 详细规格**(P1,来源:学习系统架构):
 - **R-117/R-118/R-119模拟器(P1-24)**:R-117沙盒模拟器(隔离测试)/R-118滑点模拟器(实盘级精度)/R-119撮合模拟器(订单簿重放),Phase 2事件驱动引擎集成(来源:学习系统架构)
 
+**io/backtest_result_sink.py 详细规格**(P1 v1.3.0新增,来源:#ARCH-047 前端可视化技术栈从 Streamlit 到 Panel+HoloViz 第一性原理重构):
+- **职责**: 从 `engine_base.py` 的 `BacktestResult` dataclass(CTR-P1-016)提取回测结果,转化为前端可视化数据模型 `BacktestResultData`(净值曲线/绩效指标/交易明细等),供 D_FRONTEND backtest_results 组件渲染
+- **依赖**:
+  - `from zephyr.backtest.core.engine_base import BacktestResult` (CTR-P1-016)
+  - 上游 depgraph 边: sink(475126) → engine_base(470295)
+- **接口**:
+  ```python
+  def sink_backtest_result(result: BacktestResult) -> BacktestResultData:
+      """从 BacktestResult 提取并转化为可视化数据模型 BacktestResultData。
+      - 输入: CTR-P1-016 BacktestResult dataclass 实例
+      - 输出: BacktestResultData(含净值序列/绩效汇总/交易明细等可视化字段)
+      - 副作用: 无(纯转换,不持久化)
+      """
+  ```
+- **约束**:
+  - 仅做数据提取与转换,不持久化(持久化由 result_repository.py 负责)
+  - BacktestResult 字段映射必须与 CTR-P1-016 契约冻结字段对齐(15字段)
+  - 转换幂等: 相同 BacktestResult 必须产生相同 BacktestResultData
+
+**io/result_repository.py 详细规格**(P1 v1.3.0新增,来源:#ARCH-047 + CTR-P1-017 BacktestRunArtifact):
+- **职责**: 持久化 `BacktestRunArtifact`(CTR-P1-017),提供检索接口供 D_FRONTEND backtest_results/tick_replay 组件消费;封装存储细节(文件系统/对象存储/数据库),对前端透明
+- **依赖**:
+  - `from zephyr.backtest.io.backtest_result_sink import sink_backtest_result, BacktestResultData` (上游 sink)
+  - 上游 depgraph 边: repo(475127) → sink(475126)
+- **消费者**:
+  - D_FRONTEND backtest_results 组件(回测结果可视化)
+  - D_FRONTEND tick_replay 组件(Tick回放可视化)
+  - 下游 depgraph 边: frontend(311219) → repo(475127)
+- **接口**:
+  ```python
+  def save_artifact(artifact: BacktestRunArtifact) -> str:
+      """持久化 BacktestRunArtifact, 返回 run_id。
+      - 输入: CTR-P1-017 BacktestRunArtifact(含 BacktestResultData + 元数据 + 时间戳)
+      - 输出: run_id(全局唯一,用于后续检索)
+      - 副作用: 写入存储后端(具体后端由实现决定)
+      """
+
+  def get_artifact(run_id: str) -> BacktestRunArtifact:
+      """按 run_id 检索 BacktestRunArtifact, 供 D_FRONTEND 消费。
+      - 输入: run_id(save_artifact 返回值)
+      - 输出: BacktestRunArtifact(完整回测运行产物)
+      - 异常: run_id 不存在时抛出 ArtifactNotFoundError
+      """
+  ```
+- **约束**:
+  - 仅持久化/检索,不做可视化转换(转换由 sink 完成)
+  - run_id 必须全局唯一(建议 UUIDv4 或 strategy_id + timestamp 复合键)
+  - 检索接口对 D_FRONTEND 同步暴露,需考虑大对象(净值序列)的延迟与分页
+
 ### §16.8 施工参考卡
 
 ```bash
@@ -701,6 +784,9 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | CTR-P1-016注册 | 2026-07-02 | CTR-P1-014被ExperimentResult占用,新建编号 |
 | E-BT-*事件系列 | 2026-07-02 | E-RS-02 payload_contract=null,需专用事件 |
 | SIM-46/56→SIM-18合并(P1-16) | 2026-07-02 | 去重避免重复造轮子,统一归口SIM-18(来源:D-SIMULATION §0.1) |
+| io/子目录新增(#ARCH-047) | 2026-07-04 | 配合前端 Streamlit→Panel+HoloViz 重构,在 D_BACKTEST 域新增 io/ 子目录(sink+repo),解耦回测引擎与可视化层 |
+| CTR-P1-017 BacktestRunArtifact注册 | 2026-07-04 | 持久化回测运行产物(source=D_BACKTEST, target=[D_FRONTEND]),供 backtest_results/tick_replay 组件消费 |
+| depgraph 设计态节点登记(475126/475127) | 2026-07-04 | sink(475126)+repo(475127) build_status=planned;3条边:sink→engine_base(470295), repo→sink(475126), frontend(311219)→repo(475127) |
 
 ## 术语表
 
@@ -755,7 +841,8 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | v1.0.1 | 修复已知问题(硬编码/手续费/滑点) | 2/7 |
 | v1.1.0 | MVP完整(7模块)+事件驱动引擎 | 7/7 |
 | v1.2.0 | 过拟合检测+Walk-Forward | 9/15 |
-| v2.0.0 | 完整回测平台(含报告/缓存/可视化) | 15/15 |
+| v1.3.0 | io/子目录(sink+repo)+CTR-P1-017(#ARCH-047) | 9/17 |
+| v2.0.0 | 完整回测平台(含报告/缓存/可视化) | 17/17 |
 
 <!-- pre_1: Vibe Coding -->
 ## Vibe Coding

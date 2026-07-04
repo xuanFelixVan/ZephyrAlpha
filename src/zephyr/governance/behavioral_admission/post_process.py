@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-023 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-023 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.behavioral_admission.post_process
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]

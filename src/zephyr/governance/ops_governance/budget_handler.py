@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.budget_handler
 # [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.shared.contracts.escalation.budget_alert; zephyr.governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.delegation_engine
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.escalation.escalation_models; zephyr.security.llm_defense.llm_security.gateway
