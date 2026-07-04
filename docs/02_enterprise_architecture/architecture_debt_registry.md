@@ -5715,6 +5715,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 ### 5.82 迭代器与生成器正确性（1个，第17轮新增）
 
+> **第39轮修复状态（2026-07-05）**：FIXED=1(5.82.1 _iter_all_events生成器跨yield持有文件句柄,改为先readlines()读完所有行再yield,确保yield前文件已close,消除fd泄漏), 0 DRIFTED, 0 STILL_VALID。本维度全部清零。
+
 > 维度V：生成器跨yield持有资源、生成器耗尽后复用
 
 #### 5.82.1 [MEDIUM] behavior_audit_logger生成器跨yield持有文件句柄
@@ -5754,6 +5756,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ---
 
 ### 5.84 错误路径资源清理（2个，第17轮新增）
+
+> **第39轮修复状态（2026-07-05）**：FIXED=1(5.84.1 ordered_lock_acquisition用list.index(lock)清理改为栈结构acquired列表追踪,消除重复锁对象死锁), DRIFTED=1(5.84.2 get_market_read_conn函数不存在), 0 STILL_VALID。本维度全部清零。
 
 > 维度X：异常路径下资源（锁/连接/句柄）未正确释放
 

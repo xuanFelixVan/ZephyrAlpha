@@ -96,11 +96,16 @@ class DeadlockDetector:
 
     def ordered_lock_acquisition(self, locks: list[threading.Lock]) -> bool:
         """R2: 按模块 ID 排序获取锁——避免循环等待."""
+        acquired: list[threading.Lock] = []
+        # 5.84.1 修复: 用栈结构追踪已获取的锁,替代 list.index(lock) 查找。
+        # 原代码 locks.index(lock) 在列表有重复锁对象时返回第一个匹配位置,
+        # 后续重复锁永远不会被释放,造成死锁。
         for lock in locks:
             if not lock.acquire(timeout=self.timeout):
-                for acquired in locks[: locks.index(lock)]:
-                    acquired.release()
+                for acquired_lock in reversed(acquired):
+                    acquired_lock.release()
                 return False
+            acquired.append(lock)
         return True
 
 
