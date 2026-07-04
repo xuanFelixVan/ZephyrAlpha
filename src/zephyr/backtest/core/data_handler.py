@@ -45,6 +45,8 @@ try:
 except ImportError:
     DatabaseService = None  # type: ignore[assignment,misc]
 
+from zephyr.backtest.core.pit_manager import PITManager, PITConfig
+
 _logger = logging.getLogger(__name__)
 
 
@@ -84,6 +86,7 @@ class BacktestDataHandler:
         data: pd.DataFrame,
         date_column: str = "date",
         symbol_column: str = "symbol",
+        pit_manager: PITManager | None = None,
     ):
         """初始化数据处理器
 
@@ -92,6 +95,7 @@ class BacktestDataHandler:
                   支持MultiIndex(date, symbol)或flat DataFrame含date/symbol列
             date_column: 日期列名
             symbol_column: symbol列名
+            pit_manager: PIT管理器实例(可选,默认自动创建)
 
         Raises:
             DataHandlerError: 数据格式无效
@@ -102,6 +106,7 @@ class BacktestDataHandler:
         self._data = data.copy()
         self._date_column = date_column
         self._symbol_column = symbol_column
+        self._pit_manager = pit_manager or PITManager()
         self._dates: list[Any] = []
         self._current_idx = 0
 
@@ -208,6 +213,48 @@ class BacktestDataHandler:
         elif self._symbol_column in self._data.columns:
             return sorted(self._data[self._symbol_column].unique())
         return []
+
+    def run_pit_checks(
+        self,
+        train_data: pd.DataFrame | None = None,
+        factor_col: str | None = None,
+        all_symbols: list[str] | None = None,
+        delisted_symbols: list[str] | None = None,
+    ) -> dict:
+        """运行PIT铁律检查（一致性测试+幸存者偏差检测）
+
+        Args:
+            train_data: 训练平面数据(可选,用于一致性测试)
+            factor_col: 因子列名(一致性测试用)
+            all_symbols: 历史上所有上市过的symbol列表(幸存者偏差检测用)
+            delisted_symbols: 已退市symbol列表(幸存者偏差检测用)
+
+        Returns:
+            dict: consistency(一致性测试结果), survivorship(幸存者偏差结果)
+        """
+        result: dict[str, Any] = {}
+
+        if train_data is not None and factor_col is not None:
+            result["consistency"] = self._pit_manager.pit_consistency_test(
+                train_data=train_data,
+                backtest_data=self._data,
+                factor_col=factor_col,
+            )
+
+        if all_symbols is not None and delisted_symbols is not None:
+            bt_symbols = self.symbols
+            result["survivorship"] = self._pit_manager.check_survivorship_bias(
+                backtest_symbols=bt_symbols,
+                all_symbols=all_symbols,
+                delisted_symbols=delisted_symbols,
+            )
+
+        return result
+
+    @property
+    def pit_manager(self) -> PITManager:
+        """PIT管理器实例"""
+        return self._pit_manager
 
     @classmethod
     def from_clickhouse(
