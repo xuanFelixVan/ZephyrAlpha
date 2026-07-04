@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import deque
 from datetime import UTC, datetime
 from typing import Any
 
@@ -34,7 +35,9 @@ logger = logging.getLogger(__name__)
 
 class FixReportGenerator:
     def __init__(self) -> None:
-        self._history: list[FixReport] = []
+        # 5.65.8 修复：原 self._history: list[FixReport] = [] 无上限，长跑进程内存无界增长。
+        # 改为 deque(maxlen=1000)，自动淘汰最旧记录。
+        self._history: deque[FixReport] = deque(maxlen=1000)
 
     def generate(
         self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None

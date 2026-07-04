@@ -4884,54 +4884,63 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **证据**：governance导入trading的Fill/Order/PositionSnapshot；trading_contracts导入governance的ComplianceRule/PerformanceAttributionReport——双向循环
 - **问题**：import顺序敏感；trading_contracts不再是纯数据契约包（违反自身不变量声明）
 - **修复**：将ComplianceRule等从trading_contracts导出中移除
+- **状态**：STILL_VALID（保留）— 需将ComplianceRule等从trading_contracts导出中移除，影响双向循环依赖
 
 #### 5.60.2 [MEDIUM] 循环依赖——governance → trading.orchestrator（延迟导入）
 - **文件**：[phase_check_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/phase_check_registry.py#L329)
 - **证据**：函数内`from zephyr.trading.orchestrator.contract_registry import ContractRegistry`等——延迟导入规避import时循环但运行时耦合存在
 - **问题**：governance门禁检查依赖trading.orchestrator具体实现，无法独立测试
 - **修复**：定义抽象接口（Protocol），trading.orchestrator实现该接口
+- **状态**：STILL_VALID（保留）— 需定义抽象接口（Protocol），trading.orchestrator实现该接口
 
 #### 5.60.3 [HIGH] 跨层引用——shared(L1) → trading(L2)，违反分层架构
 - **文件**：[order.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/order.py#L8), [enforcer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/core/enforcer.py#L41)
 - **证据**：`from zephyr.trading.trading_contracts.execution.order import OrderSide`——基础层导入领域层（逆向依赖）；同目录orchestration_protocol.py注释明确写着"MUST NOT import from zephyr.trading"
 - **问题**：shared层无法独立编译/测试
 - **修复**：OrderSide等定义下沉到shared，trading层从shared导入
+- **状态**：STILL_VALID（保留）— 需OrderSide等定义下沉到shared，影响分层架构
 
 #### 5.60.4 [MEDIUM] 跨层引用——shared(L1) → governance(L2) + ops + import *
 - **文件**：[protocols.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py#L31), [metrics.py](file:///D:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py#L25), [health.py](file:///D:/ZephyrAlpha/src/zephyr/shared/lifecycle/health.py#L25), [logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L25)
 - **证据**：shared导入governance.rule_enforcement.gate_types；shared/metrics.py等用`from zephyr.ops.observability.* import *`——shared成为ops的透传层
 - **问题**：shared不再是稳定基础层；import *导致命名空间污染
 - **修复**：GateResult下沉到shared；移除import *改为显式导入
+- **状态**：STILL_VALID（保留）— 需GateResult下沉到shared+移除import *，影响多文件
 
 #### 5.60.5 [HIGH] 跨层引用——infrastructure(L0) → governance(L2)，L0依赖L2
 - **文件**：[audit_logger.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/audit_logger.py#L42), [governance_server.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/governance_server.py#L716)
 - **证据**：infrastructure层导入governance.audit_trail.writer.AuditWriter；governance_server.py有9处延迟导入governance具体类
 - **问题**：L0基础设施层依赖L2领域层是严重分层违规
 - **修复**：定义抽象接口或考虑将governance_server.py移到governance层
+- **状态**：STILL_VALID（保留）— 需定义抽象接口或移动governance_server.py，影响分层
 
 #### 5.60.6 [HIGH] 跨域直接依赖具体实现——ex_core → governance（BrokerInterface定义在错误的层）
 - **文件**：[order_manager.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py#L47)
 - **证据**：`from zephyr.governance.broker_interface import BrokerInterface`——执行核心的端口定义在治理层，违反DIP
 - **问题**：ex_core无法脱离governance独立复用
 - **修复**：BrokerInterface移到ex_core或shared.contracts
+- **状态**：STILL_VALID（保留）— 需BrokerInterface移到ex_core或shared.contracts
 
 #### 5.60.7 [MEDIUM] API三重导出——trading_contracts在三个包重复暴露
 - **文件**：[trading/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py), [governance/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/governance/trading_contracts/__init__.py), [ex_core/adapters/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/adapters/__init__.py#L5)
 - **证据**：governance/trading_contracts/__init__.py前25行与trading/trading_contracts/__init__.py完全一致（相同import/docstring/module_id）
 - **问题**：消费者不知道从哪导入；修改后副本可能不同步
 - **修复**：删除governance/trading_contracts/目录
+- **状态**：STILL_VALID（保留）— 需删除governance/trading_contracts/目录，影响消费者导入路径
 
 #### 5.60.8 [MEDIUM] compliance包整体为governance的re-export壳（15个模块import *）
 - **文件**：[compliance/](file:///D:/ZephyrAlpha/src/zephyr/compliance/) 下15个文件
 - **证据**：`from zephyr.governance.integrity import *`等15处——整个包是governance的空壳镜像；docstring承认"已迁移到governance"但同时标记[STABILITY] frozen——矛盾
 - **问题**：同一套API在两个包下暴露；消费者不知该用compliance.X还是governance.X
 - **修复**：制定deprecation计划，最终删除compliance包
+- **状态**：STILL_VALID（保留）— 需制定compliance包deprecation计划
 
 #### 5.60.9 [LOW] __all__导出过载——audit_orchestrator导出83项
 - **文件**：[audit_orchestrator/__init__.py](file:///D:/ZephyrAlpha/scripts/__init__.py#L70)
 - **证据**：__all__列表83个条目，混合类名（52项）和子模块名（31项）
 - **问题**：公开API边界完全失控；from ... import *会污染命名空间
 - **修复**：精简到核心facade类（<10项）
+- **状态**：STILL_VALID（保留）— 需精简audit_orchestrator __all__到核心facade类
 
 #### 5.60.10 严重度汇总
 
@@ -4951,36 +4960,42 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/persistence/task_repo.py:1861-1900`
 - **证据**：`batch_review` 在 `for dim in self._BATCH_REVIEW_DIMENSIONS:` 循环内，每个维度各自开启独立事务（L1891 `with self._write_tx() as conn:`），7个维度的 INSERT 各自提交。前3个维度成功后第4个维度抛异常时，已提交的3条记录无法回滚，审查结果处于"部分完成"中间态，违反ACID原子性。
 - **修复**：将整个7维度批次审查包裹在单一事务中。
+- **状态**：STILL_VALID（保留）— 需将batch_review 7维度包裹在单一事务中
 
 #### 5.61.2 [HIGH] PostgreSQL连接默认autocommit=True——多语句写操作无原子性保证
 
 - **文件**：`src/zephyr/governance/depgraph_schema.py:1186,1196-1197`；调用方 `database_service.py:88`、`depgraph_reader.py:81`
 - **证据**：`get_depgraph_pg_connection` 默认 `autocommit=True`（L1197）。`DatabaseService.get_depgraph_conn` 和 `DepgraphReader._get_conn` 均以 autocommit=True 获取连接并缓存为单一长连接。跨多条SQL的写操作每条语句独立提交，崩溃时产生不一致状态。同时未设置事务隔离级别。
 - **修复**：对多语句写操作显式 `BEGIN`/`COMMIT`，设置合适隔离级别。
+- **状态**：STILL_VALID（保留）— 需对PG多语句写操作显式BEGIN/COMMIT+设置隔离级别
 
 #### 5.61.3 [MEDIUM] retry_dlq重试计数更新在事务外执行——非原子
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:642-677`
 - **证据**：L653 `BEGIN IMMEDIATE`，L661 `COMMIT`，异常时L665 `ROLLBACK`。但失败路径中L670-673的 retry_count 递增 UPDATE 发生在 ROLLBACK 之后、无新 BEGIN 包裹，L674的 COMMIT 实际是空操作。进程在 UPDATE 与下一轮 BEGIN 之间崩溃时，retry_count 与事件处理状态不一致。
 - **修复**：将 retry_count 更新纳入独立事务。
+- **状态**：STILL_VALID（保留）— 需将retry_count更新纳入独立事务
 
 #### 5.61.5 [MEDIUM] 连接池get_connection/return_connection无锁保护——并发竞态
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:197-243`
 - **证据**：`_conn_pool` 为共享list，`get_connection`（L211-216）的 `if self._conn_pool:` + `self._conn_pool.pop()` 非原子，未获取 `self._lock`。两线程可同时通过if判断、同时pop()，导致 IndexError 或获取到同一连接。池耗尽时L214无限创建临时连接且不追踪。
 - **修复**：用锁保护连接池的获取/归还操作，设置max_overflow上限。
+- **状态**：STILL_VALID（保留）— 需用锁保护连接池获取/归还+max_overflow上限
 
 #### 5.61.6 [LOW] event_store每次操作新建连接——无连接复用且PRAGMA重复执行
 
 - **文件**：`src/zephyr/infrastructure/event_store.py:136-181`
 - **证据**：`_get_conn`（L136-140）每次调用 `sqlite3.connect` 并执行 `PRAGMA journal_mode=WAL` + `PRAGMA synchronous=NORMAL`。`record`/`record_batch`/`query`/`count` 均各自调用 `_get_conn()` 并在finally中close()。高频事件写入时每条记录都经历完整连接建立+PRAGMA开销。
 - **修复**：使用连接池或持久连接复用。
+- **状态**：STILL_VALID（保留）— 需使用连接池或持久连接复用
 
 #### 5.61.7 [MEDIUM] get_db_connection命名冲突——SQLite/PostgreSQL别名遮蔽
 
 - **文件**：`src/zephyr/governance/depgraph_schema.py:1208-1210`
 - **证据**：L1210 `get_db_connection = get_depgraph_pg_connection`（标记DEPRECATED但仍导出）。`sqlite_schema.py` 也导出同名 `get_db_connection`。两个模块的同名函数返回完全不同引擎的连接（SQLite vs PostgreSQL），任何错误导入路径会静默地用错误引擎操作数据库，事务语义完全不同。
 - **修复**：删除DEPRECATED别名，强制使用明确命名的函数。
+- **状态**：STILL_VALID（保留）— 需删除DEPRECATED别名，影响多个调用点
 
 #### 5.61 严重度汇总
 
@@ -5000,30 +5015,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/audit_trail/writer.py:119-120`
 - **证据**：`def _resolve_hmac_key(config=None): return b"default-key"` — 审计追踪链的HMAC-SHA256签名密钥解析函数返回硬编码弱密钥。任何知道此字符串的攻击者可伪造审计条目，破坏审计链不可否认性。
 - **修复**：从环境变量或SecretProvider注入密钥，禁止硬编码。
+- **状态**：STILL_VALID（保留）— 需从环境变量或SecretProvider注入HMAC密钥
 
 #### 5.62.2 [HIGH] IntegrityVerifier全部调用点未传入hmac_key——HMAC验证全局失效
 
 - **文件**：`src/zephyr/governance/audit_trail/integrity.py:102-105,134,175`；调用点：`audit_trail/cli.py:97`、`ops/scheduler.py:272`、`phase_check_registry.py:399,531`、`rollback/phase_check_registry.py:401,532`、`audit_orchestrator/cli.py:97`、`ops_governance/phase_check_registry.py:468,613`
 - **证据**：`IntegrityVerifier.__init__` 的 `hmac_key` 参数默认 `""`（L102），空时 `self._hmac_key = b""`（L105）。验证逻辑用 `if self._hmac_key:` 门控（L134/L175），空密钥时整个HMAC校验被跳过。**全部9处调用点均构造 `IntegrityVerifier()` 不传hmac_key**，系统级审计链的HMAC篡改检测在所有验证路径上均处于禁用状态。
 - **修复**：所有调用点传入从SecretProvider获取的密钥。
+- **状态**：STILL_VALID（保留）— 需所有9处调用点传入从SecretProvider获取的密钥
 
 #### 5.62.4 [HIGH] L4 Agent身份防伪HMAC密钥硬编码默认值
 
 - **文件**：`src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py:134`
 - **证据**：`self._hmac_key = hmac_key or "l4-agent-default-hmac-key"` — L4安全层用于检测agent身份冒充的HMAC不可伪造标记使用硬编码默认密钥。若调用方未传hmac_key，则所有agent身份签名使用公开可知的默认密钥，冒充检测形同虚设。
 - **修复**：强制要求传入密钥，无密钥时fail-fast而非使用默认值。
+- **状态**：STILL_VALID（保留）— 需强制要求传入密钥，无密钥时fail-fast
 
 #### 5.62.5 [HIGH] CredentialRotationTrigger仅检测不轮换——无实际轮换机制
 
 - **文件**：`src/zephyr/infrastructure/rollback/credential_rotation_trigger.py:63-94,96-103`
 - **证据**：类名为"CredentialRotationTrigger"，但 `scan_and_rotate`（L63）仅用正则扫描敏感文件中的凭据模式，`credentials_rotated` 硬编码为 `0`（L90）——从不执行任何轮换操作。整个系统不存在自动化密钥/凭据轮换机制：HMAC密钥均为静态硬编码，无轮换计划、无密钥版本管理、无key-id路由表。
 - **修复**：实现真正的轮换机制或重命名类为CredentialRotationDetector。
+- **状态**：STILL_VALID（保留）— 需实现真正的轮换机制
 
 #### 5.62.7 [LOW] 无密钥派生函数——HMAC密钥为原始静态字符串
 
 - **文件**：全上述B-1/B-3/B-4硬编码密钥
 - **证据**：全代码库未发现PBKDF2/scrypt/HKDF/argon2等密钥派生函数使用。HMAC密钥均为原始字符串字面量，未从主密钥派生子密钥，无per-context密钥隔离。
 - **修复**：引入HKDF从主密钥派生per-context子密钥。
+- **状态**：STILL_VALID（保留）— 需引入HKDF从主密钥派生per-context子密钥
 
 #### 5.62 严重度汇总
 
@@ -5043,12 +5063,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/security/access_control/emergency_override.py:153`
 - **证据**：`logger.info("EmergencyOverride: token '%s' revoked", token_id)` — token_id为UUID hex，非令牌密文本身，泄露风险有限。但紧急覆盖令牌标识符在info级别持久化到日志，若日志被聚合到外部系统，token_id可被关联追踪。
 - **修复**：降为debug或脱敏为 `tok_***1234`。
+- **状态**：FIXED（2026-07-04）— EmergencyOverride token_id降为debug级别+脱敏为tok_***1234
 
 #### 5.63.2 [MEDIUM] DLQ存储error_traceback可能含敏感局部变量
 
 - **文件**：`src/zephyr/integration/shared/events/dlq.py:68-71,189-197`
 - **证据**：死信队列表含 `error_message TEXT` 和 `error_traceback TEXT` 列。L197 `str(error)`、L196 `type(error).__name__` 连同完整traceback写入DB。若异常源自含密钥的上下文（如PG连接错误含DSN、或LLM调用异常含请求头），traceback中的局部变量字符串化后可能泄露凭据。L124还会将payload广播给观察者，无脱敏过滤。
 - **修复**：对traceback进行脱敏处理后再存储。
+- **状态**：STILL_VALID（保留）— 需对traceback进行脱敏处理后再存储，影响DLQ存储逻辑
 
 #### 5.63 严重度汇总
 
@@ -5067,30 +5089,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/depgraph_schema.py:1196`；`auto_runner.py:202,254,279`；`depgraph_schema.py:1215,1231`
 - **证据**：`get_depgraph_pg_connection`（L1196）每次调用 `psycopg2.connect(**...)` 新建连接，无 `psycopg2.pool.SimpleConnectionPool`/`ThreadedConnectionPool`。`auto_runner.py`的 `_write_audit_log`/`get_gates_by_event`/`get_all_event_types` 每次调用都connect+close。高频调用下TCP握手+PG认证开销显著，且无连接数上限，可耗尽PG `max_connections`。
 - **修复**：引入psycopg2连接池。
+- **状态**：STILL_VALID（保留）— 需引入psycopg2连接池
 
 #### 5.64.2 [HIGH] 单一PG连接跨线程共享——非线程安全
 
 - **文件**：`src/zephyr/governance/persistence/database_service.py:68,87-90`；`depgraph_reader.py:77,79-82`
 - **证据**：`DatabaseService`将PG连接缓存为实例属性 `self._depgraph_conn`（L68），`get_depgraph_conn`（L87-90）惰性创建后所有调用复用同一连接。`DepgraphReader`同样缓存单一连接。psycopg2连接对象非线程安全，多线程并发使用同一连接上的cursor会导致协议流损坏、结果错乱。无任何同步机制保护PG连接访问。
 - **修复**：使用线程安全连接池或per-thread连接。
+- **状态**：STILL_VALID（保留）— 需使用线程安全连接池或per-thread连接
 
 #### 5.64.3 [MEDIUM] SQLite连接池无连接健康回收——pool_recycle缺失
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:169,218-243`
 - **证据**：`_conn_pool`为简单list，`return_connection`（L218）仅在归还时做 `SELECT 1` 健康检查，但无 `pool_recycle` 机制——连接即使空闲数小时也不会被回收重建。`connection_leak_detector`（L703）仅检查 `_last_used_at` 属性，但 `get_db_connection`/`get_connection` 从未设置该属性，泄漏检测器实际永远返回空列表——检测功能失效。
 - **修复**：添加pool_recycle机制，在get_connection时设置_last_used_at。
+- **状态**：STILL_VALID（保留）— 需添加pool_recycle机制+设置_last_used_at
 
 #### 5.64.4 [MEDIUM] 连接池耗尽时无限创建临时连接——无上限保护
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:211-216`
 - **证据**：`get_connection`当 `_conn_pool` 为空时（L213）直接 `conn = get_db_connection(...)` 创建临时连接（L214），无 `max_overflow` 上限。注释说"不超过pool_size"但代码未实现该约束。若多个线程同时遇到池空，会并发创建大量连接，违反"单Writer"设计假设，导致SQLite `database is locked` 错误。
 - **修复**：实现max_overflow上限，池满时阻塞等待或抛异常。
+- **状态**：STILL_VALID（保留）— 需实现max_overflow上限
 
 #### 5.64.5 [LOW] DatabaseService三引擎连接无统一生命周期管理——close_all无异常隔离
 
 - **文件**：`src/zephyr/governance/persistence/database_service.py:144-156`
 - **证据**：`close_all`（L144）顺序关闭governance/depgraph/market三个连接，任一 `close()` 抛异常则后续连接不关闭（无独立try/except）。例如L147 `_governance_conn.close()` 抛异常，则 `_depgraph_conn`（L150）和 `_market_conn`（L154）泄漏。
 - **修复**：每步独立try/except。
+- **状态**：STILL_VALID（保留）— 需close_all每步独立try/except
 
 #### 5.64 严重度汇总
 
@@ -5110,30 +5137,35 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:46-47,56-58`
 - **证据**：`submit()` 每次append Future到 `_cpu_futures`/`_gpu_futures`，但任何地方都不删除已完成项。`stats()`（L74-77）遍历整个列表，随时间O(n)变慢且内存线性增长。
 - **修复**：定期清理已完成Future，或使用weakref。
+- **状态**：STILL_VALID（保留）— 需定期清理已完成Future或使用weakref
 
 #### 5.65.3 [HIGH] WorkOrchestrator _items字典无界增长（complete不删除）
 
 - **文件**：`src/zephyr/trading/work_orchestrator.py:88,157-177`
 - **证据**：`submit()` 往 `_items` 写入（L88），`complete_item()` 只改状态为COMPLETED/FAILED（L162），从不 `del`。`schedule_next()`（L126）与 `pending_count()`（L186）每次全表遍历，长跑进程内存与CPU双重劣化。
 - **修复**：complete后延迟删除或使用TTL淘汰。
+- **状态**：STILL_VALID（保留）— 需complete后延迟删除或使用TTL淘汰
 
 #### 5.65.4 [MEDIUM] MemoryLock _locks字典永不回收
 
 - **文件**：`src/zephyr/shared/infra/lock.py:107-108,117-118,142-153`
 - **证据**：`acquire()` 为每个新 `lock_name` 创建 `asyncio.Lock` 存入 `_locks`（L118），但 `release()` 只删 `_owners`（L151），从不删 `_locks`。每个唯一锁名留下一个永久 `asyncio.Lock` 对象。
 - **修复**：release时若_owners为空则删除_locks中的条目。
+- **状态**：FIXED（2026-07-04）— MemoryLock release时若_owners为空则删除_locks中的条目
 
 #### 5.65.8 [LOW] FixReportHistory _history列表无界增长
 
 - **文件**：`src/zephyr/infrastructure/auto_fix_engine/fix_report.py:56,117`
 - **证据**：`record()` append（L56），`get_history()` 只取 `[-limit:]` 视图（L117），存储本身不收缩。
 - **修复**：使用deque(maxlen=N)。
+- **状态**：FIXED（2026-07-04）— FixReportHistory _history改用deque(maxlen=N)
 
 #### 5.65.10 [LOW] BlueprintSearchServer _cache过期项不驱逐
 
 - **文件**：`src/zephyr/integration/mcp/blueprint_search_server.py:228,160-165`
 - **证据**：读路径有TTL判断（L161），但过期项仅返回miss，不从dict删除；只有手动 `_refresh_index()` 才 `clear()`。不同 `cache_key` 持续累积。
 - **修复**：读路径发现过期时删除条目，或使用TTLCache。
+- **状态**：FIXED（2026-07-04）— BlueprintSearchServer _cache读路径发现过期时删除条目
 
 #### 5.65 严重度汇总
 
@@ -5153,18 +5185,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/schema.py:264-265,276-281`
 - **证据**：`cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"` 直接拼入SELECT/DELETE。虽 `TTL_DAYS` 是int类属性（当前安全），但模式违背"值必参数化"原则。`PRAGMA table_info({table})`（L236）表名亦未校验。
 - **修复**：参数化或白名单校验表名。
+- **状态**：STILL_VALID（保留）— 需参数化或白名单校验表名
 
 #### 5.66.3 [MEDIUM] registry_adapter表名f-string拼接（两处副本）
 
 - **文件**：`src/zephyr/infrastructure/asset_inventory/registry_adapter.py:510`；副本 `infrastructure/asset_inventory/registry_adapter.py:508`
 - **证据**：`self._table` 来自构造参数，直接拼入 `SELECT * FROM {self._table}`，无白名单校验。若 `_table` 来自配置文件或外部输入可被注入。
 - **修复**：表名白名单校验。
+- **状态**：STILL_VALID（保留）— 需表名白名单校验
 
 #### 5.66.6 [MEDIUM] database_manager/f5_shutdown_manager表名f-string拼接
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:605`；`src/zephyr/governance/resilience_governance/f5_shutdown_manager.py:355,435`
 - **证据**：`database_manager` 用 `f"SELECT COUNT(*) FROM [{t['name']}]"`（方括号仅SQL Server语法，SQLite下无效防御）；`f5_shutdown_manager` 用 `f"DELETE FROM {self.STATE_TABLE}"` 与 `f"SELECT key, value FROM {self.STATE_TABLE}"`，表名为类属性但未做白名单。
 - **修复**：表名白名单校验。
+- **状态**：STILL_VALID（保留）— 需表名白名单校验
 
 #### 5.66 严重度汇总
 
@@ -5183,18 +5218,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/audit_trail/resource_aware_pool.py:42-83`
 - **证据**：(1) `submit()` 无队列长度检查，ThreadPoolExecutor默认无界队列，任务无限堆积（OOM风险）；(2) `stats()` 访问私有 `_work_queue.qsize()`（L75/L77），CPython实现细节，其他实现/版本会 `AttributeError`；(3) Future列表泄漏（见5.65.1）。
 - **修复**：添加maxsize队列限制，提交前检查队列长度。
+- **状态**：STILL_VALID（保留）— 需添加maxsize队列限制+提交前检查队列长度
 
 #### 5.67.2 [HIGH] GPUConsensusScheduler max_workers未使用+队列死代码+批量无限制
 
 - **文件**：`src/zephyr/trading/gpu_consensus_scheduler.py:166,174,194-219,221-223`
 - **证据**：(1) `max_workers: int = 1` 参数（L166）存入 `self._max_workers`（L175）但全文件从未使用——无ThreadPoolExecutor、无Semaphore限制并发；(2) `_PriorityQueue`（L117-153，含max_size=50背压）是死代码：`submit()`（L194）直接 `_execute_route`，从不入队；(3) `submit_batch`（L221）对整个requests列表 `asyncio.gather(*tasks)`，无并发上限。
 - **修复**：使用max_workers创建Semaphore限流，激活优先级队列。
+- **状态**：STILL_VALID（保留）— 需使用max_workers创建Semaphore限流+激活优先级队列
 
 #### 5.67.3 [HIGH] AsyncRuntime.run_in_executor在运行循环中.result()死锁/崩溃
 
 - **文件**：`src/zephyr/trading/runtime/async_runtime.py:194-206`
 - **证据**：当存在运行中的事件循环时（L195成功获取），调用 `loop.run_in_executor` 返回asyncio.Future，随后 `asyncio.ensure_future(future).result()`（L206）。对未完成的asyncio.Future调用 `.result()` 会抛 `InvalidStateError`；即便不抛，同步 `.result()` 阻塞事件循环线程，executor回调无法执行→死锁。文档声称"让同步代码在async环境中调用"，实则不可用。
 - **修复**：使用 `asyncio.run_coroutine_threadsafe` 或重构为async调用。
+- **状态**：STILL_VALID（保留）— 需使用asyncio.run_coroutine_threadsafe或重构为async调用
 
 #### 5.67 严重度汇总
 
@@ -5212,18 +5250,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/drift_detection/drift_engine.py:299-317`
 - **证据**：与5.68.1完全相同的模式。`proc.communicate()` 超时后（L302）捕获 `TimeoutError`（L313）返回事件，`proc` 未kill。两处为同一缺陷的双副本。
 - **修复**：同5.68.1。
+- **状态**：STILL_VALID（保留）— 需proc.communicate()超时后kill proc，与5.68.1同源
 
 #### 5.68.3 [MEDIUM] verdict_engine.evaluate_batch无并发限制
 
 - **文件**：`src/zephyr/trading/verdict_engine.py:325-355`；副本 `governance/behavioral_admission/verdict_engine.py:325-355`
 - **证据**：对整个events列表创建 `_eval_one` 协程后 `asyncio.gather(*tasks)`（L353-354），无Semaphore限流。虽每个 `_eval_one` 有 `wait_for` 超时（L334），但大批量事件会瞬时创建海量协程，可能耗尽内存或后端连接。`evaluate` 内部可能调用LLM/外部服务，无背压。
 - **修复**：添加 `asyncio.Semaphore` 限制并发数。
+- **状态**：STILL_VALID（保留）— 需添加asyncio.Semaphore限制并发数
 
 #### 5.68.4 [MEDIUM] MemoryLock超时取消后锁状态不一致风险
 
 - **文件**：`src/zephyr/shared/infra/lock.py:120-134`
 - **证据**：`wait_timeout_seconds > 0` 时用 `asyncio.wait_for(self._locks[lock_name].acquire(), timeout=...)`（L128）。超时后 `acquire()` 被取消返回 None（L134），但 `_locks` 字典在取消路径上不清理（见5.65.4），取消的锁名永久驻留。且 `release()` 不校验owner一致性——任何持有handle的代码都能释放，无fence token防误释放。
 - **修复**：取消路径清理_locks，release校验owner。
+- **状态**：STILL_VALID（保留）— owner_id校验已在5.58.10修复；取消路径清理_locks需MemoryLock重构
 
 #### 5.68 严重度汇总
 
@@ -5242,12 +5283,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/lifecycle_manager.py:103-110`
 - **证据**：当 `01_config_validate` 失败时，`02_stop_gate_init`、`04_registry_load` 等后续步骤仍在可能无效的配置状态下执行。步骤间存在隐含依赖（如health_monitor依赖registry），但失败不阻断后续步骤。与5.26.1/5.26.8不同——此处聚焦于"部分步骤失败后继续执行依赖步骤"的部分失败处理缺陷。
 - **修复**：失败步骤后break，不执行后续依赖步骤。
+- **状态**：STILL_VALID（保留）— 需失败步骤后break，不执行后续依赖步骤
 
 #### 5.69.5 [MEDIUM] AlertLinkIsolator后台runner静默吞掉告警发送异常
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:112-117`
 - **证据**：`except Exception: pass` 无日志记录。告警发送函数执行失败时无追踪，结合该模块"fire-and-forget"设计，失败告警永久丢失。运维人员无法得知告警链路中断。
 - **修复**：添加日志记录失败告警。
+- **状态**：FIXED（2026-07-04）— AlertLinkIsolator except Exception: pass → 添加logger.warning
 
 #### 5.69 严重度汇总
 
@@ -5266,18 +5309,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:139-145`
 - **证据**：`except Exception: pass` 完全无日志。ResourceOptimizationEngine启动失败时，系统继续运行但资源压力监控、自愈、降级矩阵全部失效，且无任何告警或降级标记。与 `memory_writer.py` 的显式降级（返回 `status="degraded"`）形成对比——此处是静默降级。
 - **修复**：添加日志和降级标记。
+- **状态**：FIXED（2026-07-04）— ResourceOptimizationEngine except Exception: pass → 添加logger.warning+降级标记
 
 #### 5.70.2 [LOW] EscalationProtocol初始化失败仅debug级日志
 
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:232-247`
 - **证据**：升级协议冷启动失败和EventBus订阅失败仅 `logger.debug`，生产环境默认日志级别（INFO/WARNING）下不可见。升级协议在未就绪状态下继续运行，但运维无感知。
 - **修复**：提升为warning级别。
+- **状态**：FIXED（2026-07-04）— EscalationProtocol logger.debug → logger.warning
 
 #### 5.70.4 [MEDIUM] 多处except Exception: return False/None静默降级（无显式降级标记）
 
 - **文件**：`integration/pipeline_lock.py:255-256,276-277`；`integration/local_model/ollama_chat.py:283-284`；`integration/local_model/ollama_embedding.py:72-73,126-127`；`behavioral_audit/tamper_proof_audit.py:136-137`；`behavioral_audit/self_check.py:94-95`
 - **证据**：这些模式无日志记录，调用者无法区分"真阴性"和"异常降级"。特别是 `tamper_proof_audit.verify_chain` 返回False在安全场景下可能掩盖真正的篡改检测失败。与5.52不同——此处聚焦于"返回布尔值且无日志"的普遍模式。
 - **修复**：异常路径添加日志，区分"真阴性"和"异常降级"。
+- **状态**：STILL_VALID（保留）— 需多处异常路径添加日志，影响5个文件
 
 #### 5.70 严重度汇总
 
@@ -5296,24 +5342,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:118-157`；`src/zephyr/trading/runtime_config.py:21-32`
 - **证据**：`ensure_runtime_dirs` 仅创建目录，无任何配置值验证。`boot()` 直接调用 `boot_sequence`，无pre-boot配置验证。不验证：DeepSeek API key是否非空、Ollama base URL是否可达、PG/SQLite连接是否可用、审计日志目录是否可写。缺少关键配置时系统不fail-fast，而是启动后在运行时才发现，导致部分组件启动、部分失败的混乱状态。与5.26.1不同——此处聚焦于"启动前缺少配置完整性验证"。
 - **修复**：boot()前增加 `validate_config()` 验证关键配置。
+- **状态**：STILL_VALID（保留）— 需boot()前增加validate_config()验证关键配置
 
 #### 5.71.2 [MEDIUM] IntegrationRegistry.validate_all()仅验证import可达性，不验证运行时可用性
 
 - **文件**：`src/zephyr/trading/integration_registry.py:59-76`
 - **证据**：`__import__(mod_path)` 只验证模块可导入，不验证实际连接（DB连接、API可达性、服务健康）。模块可导入但服务不可用时仍标记为CONNECTED，给出虚假的启动信心。
 - **修复**：增加运行时连接探测。
+- **状态**：STILL_VALID（保留）— 需增加运行时连接探测
 
 #### 5.71.3 [MEDIUM] boot_sequence中integration_validate失败不阻断后续步骤
 
 - **文件**：`src/zephyr/trading/lifecycle_manager.py:95,103-110`
 - **证据**：`validate_all()` 返回的 `ValidationReport`（含connected/degraded/disconnected计数）未被检查。即使所有集成点DISCONNECTED，boot仍继续，`report.success` 仍为True。集成验证沦为形式，不满足fail-fast语义。
 - **修复**：检查ValidationReport，disconnected超过阈值时fail-fast。
+- **状态**：STILL_VALID（保留）— 需检查ValidationReport，disconnected超过阈值时fail-fast
 
 #### 5.71.4 [LOW] coldstart_manager.initialize()失败不阻断且不检查ready状态
 
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:232-240`
 - **证据**：`cm.initialize()` 后不检查 `cm.ready`，即使冷启动未就绪，升级协议仍被视为已初始化。启动顺序验证缺失。
 - **修复**：检查cm.ready，未就绪时记录warning。
+- **状态**：STILL_VALID（保留）— 需检查cm.ready，未就绪时记录warning
 
 #### 5.71 严重度汇总
 
@@ -5333,12 +5383,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:76-86`
 - **证据**：有指数退避（`base_delay * 2**attempt`）但无jitter。多线程并发重试同一资源时，所有线程在同一时间点重试，产生同步重试峰值。应添加 `+ random.uniform(0, delay * 0.1)` 类型的抖动。
 - **修复**：添加jitter。
+- **状态**：FIXED（2026-07-04）— DeadlockDetector.retry_with_backoff添加random.uniform jitter
 
 #### 5.72.6 [LOW] pipeline_orchestrator重试有backoff但无jitter
 
 - **文件**：`src/zephyr/integration/pipeline_orchestrator.py:1203-1246`
 - **证据**：有指数退避（`min(2**attempt, 30)`）和上限，且有circuit breaker保护，但无jitter。多任务并发重试同一模型端点时可能产生惊群效应。这是所有重试实现中最完善的一个，但仍缺少jitter。
 - **修复**：添加jitter。
+- **状态**：FIXED（2026-07-04）— pipeline_orchestrator重试添加random.uniform jitter
 
 #### 5.72 严重度汇总
 
@@ -5358,24 +5410,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/system_telemetry/facade.py:279-281`
 - **证据**：`__exit__` 调用底层 `self._ctx.__exit__(*args)` 但未 `return` 其返回值。若底层上下文管理器返回True以抑制异常，该语义被丢失（本方法恒返回None）。若底层 `__exit__` 自身抛异常，会掩盖with块内的原始异常。
 - **修复**：`return self._ctx.__exit__(*args)`。
+- **状态**：FIXED（2026-07-04）— _RealSpanBridge.__exit__添加return self._ctx.__exit__(*args)
 
 #### 5.73.2 [MEDIUM] CapacityMetricsBuffer.__exit__调用flush()可掩盖with块原始异常
 
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/schema.py:350-351`
 - **证据**：`__exit__` 中 `self.flush()` 无try/except保护。`flush()` 执行sqlite3连接+`BEGIN IMMEDIATE`+`executemany`，内部异常会重新抛出。若with块内已发生异常，`flush()`的DB异常会掩盖原始异常。
 - **修复**：`__exit__`中对flush()做try/except并记录但不掩盖原异常。
+- **状态**：STILL_VALID（保留）— 需__exit__中对flush()做try/except，需谨慎处理异常 masking
 
 #### 5.73.3 [MEDIUM] SkillFileLock.acquire的finally中os.close(fd)可抛异常导致锁文件永不清理
 
 - **文件**：`src/zephyr/autonomy_core/skills/skill_locking.py:122-127`
 - **证据**：`os.close(fd)` 未被try/except包裹。若 `os.close` 抛出 `OSError`（如fd已失效），后续 `path.unlink` 不会执行，留下僵尸锁文件，导致后续所有同名锁获取超时失败。`unlink` 有保护但 `close` 没有，防护不对称。
 - **修复**：`os.close(fd)` 也用try/except包裹。
+- **状态**：FIXED（2026-07-04）— SkillFileLock.acquire的finally中os.close(fd)加try/except包裹
 
 #### 5.73.4 [MEDIUM] DatabaseManager.__exit__路径中wal_checkpoint_truncate()未做异常隔离
 
 - **文件**：`src/zephyr/governance/persistence/database_manager.py:757-758,574`
 - **证据**：`close()` 内部（L572-581）`wal_checkpoint_truncate()`（L574）未被try/except包裹（对比 `conn.close()` 有保护）。若WAL checkpoint抛异常（磁盘满/DB损坏），会掩盖with块原始异常并中断连接池清理流程，导致连接泄漏。
 - **修复**：`wal_checkpoint_truncate()` 用try/except包裹。
+- **状态**：FIXED（2026-07-04）— DatabaseManager.__exit__ wal_checkpoint_truncate()加try/except包裹
 
 #### 5.73 严重度汇总
 
@@ -5393,18 +5449,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/zombie_scanner.py:115-116`
 - **证据**：直接以 `"w"` 模式写目标文件，未使用tmp+os.replace原子模式。进程在 `json.dump` 中途崩溃时，patterns文件被截断为半写入状态，下次读取时解析失败返回空dict，丢失全部僵尸进程检测基线。项目已有规范 `shared/io/file_utils.py:atomic_write` 却未使用。
 - **修复**：使用 `atomic_write`（tmp+fsync+os.replace）。
+- **状态**：STILL_VALID（保留）— 需使用atomic_write（tmp+fsync+os.replace）
 
 #### 5.74.3 [MEDIUM] results_writer非原子写入benchmark JSONL结果
 
 - **文件**：`src/zephyr/intelligence/model_profiling/results_writer.py:60-64`；副本 `pipeline_routing/results_writer.py:60`
 - **证据**：直接 `"w"` 写入。中断后产生截断的JSONL文件，`load_benchmark_history` 逐行 `json.loads` 时会在损坏行抛异常。
 - **修复**：使用 `atomic_write`。
+- **状态**：STILL_VALID（保留）— 需使用atomic_write
 
 #### 5.74.4 [MEDIUM] 多处tmp+os.replace实现遗漏fsync，持久化保证不完整
 
 - **文件**：`src/zephyr/governance/drift_detection/tamper_proof_audit.py:219-236`；`governance/__main__.py:169`；`governance/audit_trail/writer.py:46`
 - **证据**：审计日志写入用tmp+os.replace（原子性好），但写完tmp后未 `f.flush()` + `os.fsync()` 即 `os.replace`。系统崩溃时tmp内容可能仍在页缓存未落盘，replace后目标文件存在但内容为空/不完整。作为"防篡改审计"日志，丢失记录破坏审计完整性。对比规范实现 `shared/io/file_utils.py:113-114` 有flush+fsync。
 - **修复**：os.replace前添加 `f.flush(); os.fsync(f.fileno())`。
+- **状态**：STILL_VALID（保留）— 需os.replace前添加f.flush()+os.fsync()，影响多处审计日志
 
 #### 5.74 严重度汇总
 
@@ -5423,12 +5482,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/governance/drift_detection/tamper_proof_audit.py:246-265`
 - **证据**：两次 `subprocess.run` 均未用 `check=True` 也未检查 `returncode`。git add/commit失败（pre-commit hook拒绝、合并冲突、签名失败）时返回非零但不抛异常，代码仍执行 `record.committed_to_git = True`（L265）。**防篡改审计日志谎报已提交git，破坏审计完整性的核心保证**。攻击者只需让git commit失败即可让审计"假装"已固化。
 - **修复**：添加 `check=True` 或检查returncode，失败时不置 `committed_to_git=True`。
+- **状态**：STILL_VALID（保留）— 需添加check=True或检查returncode，影响防篡改审计
 
 #### 5.75.3 [MEDIUM] ide_health_daemon多个git子进程未检查返回码
 
 - **文件**：`src/zephyr/trading/ide_health_daemon.py:381-393`
 - **证据**：未检查 `r.returncode`。若git不可用/非git仓库，`r.stdout` 为空，metrics静默报0，drift健康监测误判为"无变更/无stash"，可能错过真实漂移告警。对比 `gpu_monitor.py:47` 正确检查 `result.returncode != 0`。
 - **修复**：检查returncode，非零时记录warning并标记metrics为不可用。
+- **状态**：STILL_VALID（保留）— 需检查returncode，非零时记录warning
 
 #### 5.75 严重度汇总
 
@@ -5447,18 +5508,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/shared/foundation/errors.py:105`（`class PipelineError(ZephyrBaseError)`）；`src/zephyr/signal_fundamental/pipeline.py:79`（`class PipelineError(Exception)`）；`src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py:83`（`class PipelineError(Exception)`）
 - **证据**：三个 `PipelineError` 同名但继承不同基类。代码 `from zephyr.shared.foundation.errors import PipelineError` 后写 `except PipelineError`，**无法捕获** `signal_fundamental.pipeline` 抛出的 `PipelineError`（二者是不同类）。异常处理失效——捕获方以为已覆盖所有PipelineError，实则只覆盖规范基类分支。
 - **修复**：统一使用 `shared/foundation/errors.py` 的定义，删除其他副本。
+- **状态**：STILL_VALID（保留）— 需统一使用shared/foundation/errors.py的PipelineError定义，删除副本
 
 #### 5.76.2 [MEDIUM] verdict_engine用except Exception将编程bug伪装为RED判决
 
 - **文件**：`src/zephyr/trading/verdict_engine.py:345-351`
 - **证据**：`except Exception as exc:` 把 `AttributeError`/`TypeError`/`KeyError` 等编程bug一律转为RED判决。虽然reason里保留了exc信息，但bug被降级为"红色判决"而非显式失败，在交易判决引擎中可能掩盖代码缺陷导致错误的交易阻断/放行决策。
 - **修复**：区分 `TimeoutError`（预期）与编程错误（应让其传播或单独告警）。
+- **状态**：STILL_VALID（保留）— 需区分TimeoutError（预期）与编程错误
 
 #### 5.76.3 [MEDIUM] vector_memory_server用except Exception把所有异常转为error dict，掩盖编程bug
 
 - **文件**：`src/zephyr/infrastructure/vector_memory_server.py:192-193`
 - **证据**：`_vms.write` 的编程错误（`AttributeError`/`KeyError`/`TypeError`）被一律包装成 `{"error": str(e), "written": False}` 返回给调用方。调用方无法区分"预期业务错误"与"代码bug"，缺陷在生产中被静默吞没而非暴露崩溃。
 - **修复**：捕获VMS自定义异常，让编程错误传播。
+- **状态**：STILL_VALID（保留）— 需捕获VMS自定义异常，让编程错误传播
 
 #### 5.76 严重度汇总
 
@@ -5478,18 +5542,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/__init__.py:125-127,142-144`
 - **证据**：`import zephyr` 即创建并启动2个 `threading.Timer`（daemon=True）。`_deferred_bootstrap` 调用 `auto_bootstrap()` 进行全局monkey-patch；由于 `daemon=True`，若主进程在0.05s内退出，bootstrap可能被中途杀死，留下半完成的patch状态。无任何join/cleanup机制。（交叉参考5.79 导入副作用维度）
 - **修复**：将bootstrap延迟到显式调用，或添加atexit cleanup。
+- **状态**：STILL_VALID（保留）— 需将bootstrap延迟到显式调用或添加atexit cleanup
 
 #### 5.77.4 [MEDIUM] guard_loop()内部注册atexit，重复调用累积handler
 
 - **文件**：`src/zephyr/governance/drift_detection/resource_guard.py:219-233`；副本 `governance/drift_detection/resource_guard.py:160-172`
 - **证据**：`atexit.register(_cleanup)` 在 `guard_loop` 函数体内（非模块级），每次调用 `guard_loop()` 都会注册一个新的 `_cleanup` 闭包到atexit链；多次启动/停止会导致atexit handler累积，进程退出时被重复调用。
 - **修复**：改为模块级一次性注册或加 `_atexit_registered` 守卫。
+- **状态**：FIXED（2026-07-04）— guard_loop atexit注册加_atexit_registered守卫
 
 #### 5.77.5 [LOW] InterruptGuard在非主线程静默失败后无兜底
 
 - **文件**：`src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py:48-59`
 - **证据**：模块声明 `[INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态`，但在非主线程场景下 `install_handlers` 仅warning即返回，`_handlers_installed` 保持False，后续 `begin_fix` 仍会写WAL，但SIGINT到来时无handler触发rollback，违反"零半修复"不变式。无atexit兜底注册。
 - **修复**：非主线程时注册atexit作为兜底。
+- **状态**：STILL_VALID（保留）— 需非主线程时注册atexit作为兜底
 
 #### 5.77 严重度汇总
 
@@ -5509,12 +5576,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/shared/infra/limiter.py:186-195`；副本 `shared/infra_06/limiter.py:182-191`
 - **证据**：手动设置 `__name__/__qualname__/__doc__`，但未设置 `__wrapped__`、`__module__`、`__annotations__`、`__dict__`。`inspect.signature(wrapper)` 无法穿透到原函数签名（无 `__wrapped__`），类型检查器看到的签名是 `(*args, **kwargs)` 而非真实参数；pytest等工具按签名注入fixture时失败。
 - **修复**：改为 `@functools.wraps(func)`。
+- **状态**：FIXED（2026-07-04）— async_limited装饰器改用@functools.wraps(func)
 
 #### 5.78.3 [LOW] must/should装饰器mutate原函数
 
 - **文件**：`src/zephyr/governance/behavioral_admission/vibe_coding_enforcer.py:62-64,80-82`
 - **证据**：与5.78.2同模式，`func._vibe_rule` 与 `func._vibe_level` 设置在原函数上而非wrapper上。由于 `@wraps` 会把 `func.__dict__` 复制到wrapper，行为目前"恰好工作"，但原函数对象被污染，且若原函数已被其他装饰器包装，属性会写到错误的层。
 - **修复**：属性设置在wrapper上。
+- **状态**：STILL_VALID（保留）— 需属性设置在wrapper上而非原函数，影响vibe_coding_enforcer
 
 #### 5.78 严重度汇总
 
@@ -5535,24 +5604,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/security/adversarial_validation/injection_engine.py:34`
 - **证据**：模块级裸 `os.makedirs("data/red_blue", exist_ok=True)` 调用，`import injection_engine` 即在CWD下创建 `data/red_blue/` 目录。在只读文件系统/受限沙箱中import直接抛 `PermissionError`，整个模块不可用。CWD不同时目录创建位置不可预测。单元测试import该模块会污染测试工作目录。
 - **修复**：延迟到 `InjectionEngine.__init__` 或显式 `ensure_dir()` 调用。
+- **状态**：FIXED（2026-07-04）— injection_engine模块级os.makedirs延迟到InjectionEngine.__init__
 
 #### 5.79.2 [HIGH] game_day_scheduler.py模块级makedirs
 
 - **文件**：`src/zephyr/security/adversarial_validation/game_day_scheduler.py:34`
 - **证据**：与5.79.1完全相同的模式，import时强制创建目录。
 - **修复**：延迟到首次使用时创建。
+- **状态**：FIXED（2026-07-04）— game_day_scheduler模块级makedirs延迟到首次使用
 
 #### 5.79.3 [MEDIUM] find_repo_root()在模块级执行.resolve()+.exists()文件系统I/O
 
 - **文件**：`src/zephyr/shared/io/paths.py:42-61`
 - **证据**：`REPO_ROOT` 是模块级常量，`import zephyr.shared.io.paths` 即触发 `.resolve()`（解析符号链接，多syscall）+遍历parents逐个 `.exists()`（每个一次stat）。在网络挂载/慢盘上拖慢所有依赖模块的import；找不到标记文件时直接 `FileNotFoundError`，导致所有 `from zephyr... import REPO_ROOT` 的模块级导入链全部失败。
 - **修复**：使用 `functools.cache` 延迟计算，或使用环境变量优先。
+- **状态**：STILL_VALID（保留）— 需使用functools.cache延迟计算REPO_ROOT，影响全局导入链
 
 #### 5.79.4 [LOW] _DIRECTIVE_DIR模块级.resolve()执行符号链接解析I/O
 
 - **文件**：`src/zephyr/shared/api/dos_launcher.py:68-78`；副本 `integration/shared/api_03/dos_launcher.py`
 - **证据**：模块级 `.resolve()` 执行符号链接解析I/O。环境变量路径不存在时 `.resolve()` 在非strict模式下仍尝试解析，CWD/挂载异常时可能抛 `OSError`，使整个dos_launcher模块不可导入。
 - **修复**：延迟到首次使用时resolve。
+- **状态**：STILL_VALID（保留）— 需延迟到首次使用时resolve，影响dos_launcher模块
 
 #### 5.79 严重度汇总
 
@@ -5572,24 +5645,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/shared/utils/context.py:159-163`
 - **证据**：`set_context` 返回 `contextvars.Token` 但被显式丢弃。后续无 `reset(token)` 调用，ContextVar在当前上下文中永久持有该RequestContext。asyncio task复用时上一个请求的request_id泄漏到下一个请求；嵌套调用 `set_request_id` 时无法恢复外层上下文。注释"middleware生命周期覆盖整个请求"是错误假设。
 - **修复**：保存token并在请求结束时reset。
+- **状态**：STILL_VALID（保留）— 需保存token并在请求结束时reset
 
 #### 5.80.3 [HIGH] grant_allowance()用set()而非reset(token)，破坏嵌套allow_llm_call()
 
 - **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:133-163`
 - **证据**：`_ctx_allowance.set(token)` 返回的Token被丢弃，`revoke_allowance()` 用 `_ctx_allowance.set(None)` 而非 `_ctx_allowance.reset(token)`。嵌套 `with allow_llm_call():` 时，内层 `revoke` 把值设为None，外层 `with` 块内的LLM调用会被错误拦截（外层令牌被内层清理覆盖）。`allow_llm_call` 上下文管理器的 `finally: revoke_allowance()` 不是栈式恢复。
 - **修复**：保存token，revoke时用reset(token)。
+- **状态**：STILL_VALID（保留）— 需保存token，revoke时用reset(token)
 
 #### 5.80.4 [MEDIUM] SQLiteMetadataStore.close()仅关闭当前线程的连接，其他线程连接泄漏
 
 - **文件**：`src/zephyr/integration/vector_memory/sqlite_metadata_store.py:113-130,321-324`
 - **证据**：`_conn` property 在每个线程首次访问时创建该线程专属的sqlite3.Connection（因 `threading.local`），但 `close()` 只关闭调用线程的 `self._local.conn`。若该store被线程池多线程共享，其他线程的连接永不关闭，造成文件描述符泄漏与SQLite WAL文件锁残留。无 `__del__`、无atexit、无线程枚举清理机制。
 - **修复**：追踪所有线程的连接，close时全部关闭。
+- **状态**：STILL_VALID（保留）— 需追踪所有线程的连接，close时全部关闭
 
 #### 5.80.5 [MEDIUM] _tls放行令牌无线程退出清理，线程池复用泄漏令牌
 
 - **文件**：`src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py:94-109`
 - **证据**：`_tls.allowance` 由 `grant_allowance` 写入，靠 `revoke_allowance` 或 `allow_llm_call` 上下文的 `finally` 清理。但ThreadPoolExecutor中线程被复用：若某任务在 `allow_llm_call()` 块内未正常退出（如BaseException、KeyboardInterrupt跳过finally），`_tls.allowance` 残留到下一个任务，使下一个任务"继承"了上一个任务的LSG放行令牌，绕过RULE-LSG-001安全门控。TTL默认30s内的泄漏窗口真实存在。
 - **修复**：任务开始时主动清理thread-local状态。
+- **状态**：STILL_VALID（保留）— 需任务开始时主动清理thread-local状态
 
 #### 5.80 严重度汇总
 
@@ -5610,18 +5687,21 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/system_telemetry/facade.py:77-104,180,433`
 - **证据**：模块级 `_in_memory_ring`（list）和 `_ring_write_cursor`（int）被后台采集线程写入、被API请求线程读取，无任何锁保护。`_ring_write_cursor` 的 `+= 1` 非原子操作，并发写入导致游标跳跃或回退；`_in_memory_ring[_cursor] = event` 与 `list(_in_memory_ring)` 并发执行时，迭代器可能看到部分写入的元素。CPython GIL不保证复合操作的原子性。
 - **修复**：用 `threading.Lock` 保护ring buffer的读写，或改用 `collections.deque(maxlen=...)` 自带线程安全。
+- **状态**：STILL_VALID（保留）— 需用threading.Lock保护ring buffer或改用deque(maxlen=...)
 
 #### 5.81.2 [MEDIUM] metrics_bridge Singleton无双重检查锁
 
 - **文件**：`src/zephyr/infrastructure/system_telemetry/metrics_bridge.py:162,168-171`
 - **证据**：`instance()` 类方法在多线程同时首次调用时，`if cls._instance is None` 检查后无锁，两个线程可能同时通过检查并各自创建实例。创建后 `_instance` 被后创建的覆盖，先创建的实例泄漏（其内部资源如连接池/线程不会被清理）。非DCL（Double-Checked Locking）模式。
 - **修复**：加类级锁 + 双重检查：`if cls._instance is None: with cls._lock: if cls._instance is None: cls._instance = cls()`。
+- **状态**：STILL_VALID（保留）— 需加类级锁+双重检查（DCL）
 
 #### 5.81.3 [MEDIUM] context_evictor Singleton无DCL
 
 - **文件**：`src/zephyr/autonomy_core/context/context_evictor.py:89,96-99`
 - **证据**：与5.81.2相同的反模式。`ContextEvictor` 的 `instance()` 无锁保护，多线程并发首次调用时可能创建多个实例。Evictor持有内部状态（如淘汰策略配置、LRU队列），多实例导致淘汰行为不一致。
 - **修复**：同5.81.2，加DCL。
+- **状态**：STILL_VALID（保留）— 需加DCL，同5.81.2
 
 #### 5.81 严重度汇总
 
@@ -5642,6 +5722,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py:341-364`
 - **证据**：生成器函数在 `with open(path) as f:` 块内使用 `yield`，当生成器未被完全耗尽（如消费者提前break或发生异常未触发GC），文件句柄不会立即关闭，导致文件描述符泄漏。`f` 的生命周期绑定到生成器的frame，而非with块。若该生成器被传入 `list()` 或 `for` 循环中途break，句柄残留直到GC触发（CPython下可能延迟到下一次循环）。
 - **修复**：将文件读取移出生成器，先读完再yield；或使用 `contextlib.closing` + `try/finally` 确保句柄释放。
+- **状态**：STILL_VALID（保留）— 需将文件读取移出生成器或使用contextlib.closing+try/finally
 
 #### 5.82 严重度汇总
 
@@ -5661,6 +5742,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/security/access_control/kill_switch.py:80-100`
 - **证据**：`TriggerResult` dataclass定义了 `__eq__` 方法（比较trigger_id和fired_at），但未定义 `__hash__`。Python 3中定义 `__eq__` 会自动将 `__hash__` 设为 `None`，使实例变为unhashable。若 `TriggerResult` 被放入set或用作dict key（如在去重逻辑中），将抛出 `TypeError: unhashable type`。当前代码可能未触发此bug，但契约已破坏，后续使用set/dict时必定出错。
 - **修复**：定义 `__hash__`（如 `return hash((self.trigger_id, self.fired_at))`），或用 `@dataclass(frozen=True)` 自动生成。
+- **状态**：FIXED（2026-07-04）— TriggerResult定义__hash__ = hash((self.trigger_id, self.fired_at))
 
 #### 5.83 严重度汇总
 
@@ -5680,12 +5762,14 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py:88-95`
 - **证据**：`ordered_lock_acquisition` 上下文管理器在 `__exit__` 中用 `self._locks.index(lock)` 找到锁并释放。若 `_locks` 列表中有重复的锁对象（同一Lock实例被add多次），`index()` 返回第一个匹配位置，后续重复锁永远不会被释放，造成死锁。`list.index` 返回的是第一个匹配，而非"当前应该释放的那个"。
 - **修复**：用计数器或栈结构追踪获取顺序，而非用 `list.index` 查找。
+- **状态**：STILL_VALID（保留）— 需用计数器或栈结构追踪获取顺序，影响ordered_lock_acquisition
 
 #### 5.84.2 [LOW] get_market_read_conn contextmanager无try/finally
 
 - **文件**：`src/zephyr/governance/persistence/database_service.py:98-102`
 - **证据**：`@contextmanager` 装饰的 `get_market_read_conn` 在 `yield conn` 后无 `try/finally`。若消费者在 `with` 块内抛出异常，`yield` 之后的 `conn.close()` 不会执行（`@contextmanager` 在异常时不自动执行yield后的代码，除非有try/finally）。连接泄漏。但该函数可能被 `@contextmanager` 的默认行为部分保护（`@contextmanager` 会在GeneratorExit时执行finally），风险较低。
 - **修复**：包裹 `try: yield conn finally: conn.close()`。
+- **状态**：DRIFTED（2026-07-04）— get_market_read_conn函数在database_service.py中不存在，全代码库搜索仅在文档中找到。database_service.py只有get_governance_conn()和get_depgraph_conn()，均非@contextmanager装饰的函数。该函数可能已被移除或从未实现。
 
 #### 5.84 严重度汇总
 
@@ -5706,24 +5790,28 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/integration/local_model/cache_layer.py:71,84`
 - **证据**：`get(key)` 返回 `self._store[key]`（直接引用），`put(key, value)` 存储 `copy.deepcopy(value)`。读写不对称：调用方拿到get返回的对象后修改它，直接篡改了cache内部状态，而cache以为存储的是不可变副本。后续get返回被污染的数据。非对称拷贝是隐蔽的数据完整性bug。
 - **修复**：get也返回 `copy.deepcopy(self._store[key])`，或put不拷贝（调用方负责不可变）。
+- **状态**：FIXED（2026-07-04）— cache_layer get返回copy.deepcopy(self._store[key])
 
 #### 5.85.2 [HIGH] skill_context_isolation restore()返回内部namespace dict引用
 
 - **文件**：`src/zephyr/autonomy_core/skills/skill_context_isolation.py:124`
 - **证据**：`restore()` 返回 `self._namespace`（内部dict的直接引用）。调用方可修改返回的dict，直接篡改isolator的内部状态，使后续restore()返回被污染的namespace。隔离机制本身被绕过——"isolation"的语义被破坏。
 - **修复**：返回 `dict(self._namespace)` 或 `copy.deepcopy(self._namespace)`。
+- **状态**：FIXED（2026-07-04）— skill_context_isolation restore()返回dict(self._namespace)拷贝
 
 #### 5.85.3 [MEDIUM] doc_guard_server返回内部carryover dict引用
 
 - **文件**：`src/zephyr/infrastructure/doc_guard_server.py:265,269`
 - **证据**：返回 `self._carryover`（内部dict引用）。调用方可修改返回值，篡改server内部carryover状态。carryover用于跨请求传递上下文，被篡改后后续请求可能拿到错误的上下文。
 - **修复**：返回 `dict(self._carryover)` 或 `copy.deepcopy(self._carryover)`。
+- **状态**：FIXED（2026-07-04）— doc_guard_server返回dict(self._carryover)拷贝
 
 #### 5.85.4 [MEDIUM] work_orchestrator返回内部WorkItem/WorkDAG引用
 
 - **文件**：`src/zephyr/trading/work_orchestrator.py:123-130,63`
 - **证据**：`schedule_next()` 返回 `self._items` 中的WorkItem对象引用（非拷贝），`get_dag()` 返回 `self._dag`（内部WorkDAG引用）。调用方修改返回的WorkItem（如改status），直接修改了orchestrator的内部调度状态，可能导致重复调度或跳过。DAG被外部修改后，拓扑排序结果不可预测。
 - **修复**：返回拷贝或只读视图（如 `MappingProxyType`）。
+- **状态**：STILL_VALID（保留）— 需返回拷贝或只读视图，影响work_orchestrator调度状态
 
 #### 5.85 严重度汇总
 

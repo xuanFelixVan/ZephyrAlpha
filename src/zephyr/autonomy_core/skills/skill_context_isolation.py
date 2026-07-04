@@ -121,7 +121,8 @@ class ContextIsolation:
             skill_id = data.get("skill_id", "")
             ns_key = f"ns:{skill_id}"
             self._namespaces[ns_key] = copy.deepcopy(data)
-            return self._namespaces[ns_key]
+            # 5.85.2 修复：原返回 self._namespaces[ns_key]（内部dict的直接引用），调用方可修改返回的dict，直接篡改isolator的内部状态。
+            return copy.deepcopy(self._namespaces[ns_key])
         return None
 
     def check_contamination(

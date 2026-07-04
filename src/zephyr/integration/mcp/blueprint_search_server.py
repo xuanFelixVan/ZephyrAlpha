@@ -158,11 +158,15 @@ class BlueprintSearchServer(BaseMCPServer):
         cache_key = task_description[:80] + str(num_results) + str(include_retired)
         now = time.monotonic()
         cached = self._cache.get(cache_key)
-        if cached and (now - cached[0]) < self._cache_ttl:
-            result = dict(cached[1])
-            result["_cached"] = True
-            result["_cache_age_s"] = round(now - cached[0], 2)
-            return result
+        if cached:
+            if (now - cached[0]) < self._cache_ttl:
+                result = dict(cached[1])
+                result["_cached"] = True
+                result["_cache_age_s"] = round(now - cached[0], 2)
+                return result
+            # 5.65.10 修复：原过期项仅返回miss，不从dict删除；只有手动 _refresh_index() 才 clear()。
+            # 读路径发现过期时删除条目，避免过期项堆积导致内存泄漏。
+            del self._cache[cache_key]
 
         routes = self._load_routes()
         if not routes:

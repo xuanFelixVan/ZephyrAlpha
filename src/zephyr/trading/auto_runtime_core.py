@@ -143,8 +143,10 @@ class AutoRuntimeCore:
 
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
             except Exception:
-                # 5.12.1 修复：原 except: pass 静默吞资源监控启动失败（系统大脑失明）
-                logger.exception("ResourceOptimizationEngine.start_monitor failed at boot")
+                # 5.70.1 修复：原 except: pass 完全无日志。资源压力监控、自愈、降级矩阵全部失效且无告警。
+                # 添加 logger.warning + _resource_engine_degraded 降级标记，供运行时检测降级状态。
+                logger.warning("ResourceOptimizationEngine startup failed, running in degraded mode", exc_info=True)
+                self._resource_engine_degraded = True
 
             self._bootstrap_rbac()
             self._register_task_system_cron_jobs()
@@ -243,7 +245,8 @@ class AutoRuntimeCore:
             cm.initialize()
             logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
         except Exception:
-            logger.debug("Escalation coldstart skipped")
+            # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
+            logger.warning("EscalationProtocol initialization failed", exc_info=True)
 
         try:
             from zephyr.governance.services.adapter import auto_subscribe_eventbus

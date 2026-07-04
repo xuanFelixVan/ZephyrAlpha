@@ -31,7 +31,8 @@ logger = logging.getLogger(__name__)
 __all__: list[str] = ["GameDayScheduler", "ScheduleConflictError"]
 
 _STATE_PATH: Path = Path("data/red_blue/scheduler-state.yaml")
-os.makedirs("data/red_blue", exist_ok=True)
+# 5.79.2 修复：原模块级 os.makedirs 在 import 时执行，在只读文件系统/受限沙箱中 import 直接抛 PermissionError。
+# 延迟到 GameDayScheduler.__init__ 中创建。
 
 _TRIGGER_MAP: dict[str, list[GameDayFrequency]] = {
     "git_push": [GameDayFrequency.PER_COMMIT],
@@ -54,6 +55,8 @@ class ScheduleConflictError(RuntimeError):
 class GameDayScheduler:
     def __init__(self, state_path: Path | None = None) -> None:
         self._state_path: Path = state_path or _STATE_PATH
+        # 5.79.2 修复：延迟到 __init__ 创建目录，避免 import 时副作用。
+        os.makedirs("data/red_blue", exist_ok=True)
         self._runner = GameDayRunner()
         self._state: dict = self._load_state()
 

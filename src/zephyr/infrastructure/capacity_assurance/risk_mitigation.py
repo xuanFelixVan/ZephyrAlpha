@@ -20,6 +20,7 @@
 import hashlib
 import logging
 import os
+import random
 import sqlite3
 import threading
 import time
@@ -80,7 +81,10 @@ class DeadlockDetector:
                 return func(*args, **kwargs)
             except Exception as e:
                 last_exc = e
+                # 5.72.5 修复：原无jitter，多线程并发重试同一资源时产生同步重试峰值。
+                # 添加 ±10% 随机抖动，避免重试同步化。
                 delay = self.base_delay * (2**attempt)
+                delay = delay + random.uniform(0, delay * 0.1)
                 logger.warning(f"Retry {attempt + 1}/{self.max_retries} after {delay}s: {e}")
                 time.sleep(delay)
         raise last_exc or RuntimeError("Max retries exceeded")
@@ -114,7 +118,8 @@ class AlertLinkIsolator:
                 func, f_args, f_kwargs = self.queue.get_nowait()
                 func(*f_args, **f_kwargs)
             except Exception:
-                pass
+                # 5.69.5 修复：原 except: pass 无日志记录，告警发送失败时无追踪，结合 fire-and-forget 设计，失败告警永久丢失。
+                logger.warning("AlertLinkIsolator: alert send failed", exc_info=True)
 
         self.executor.submit(_runner)
         return True

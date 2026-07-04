@@ -230,7 +230,11 @@ def guard_loop(
 
         _restore_pool()
 
-    atexit.register(_cleanup)
+    # 5.77.4 修复：原 atexit.register(_cleanup) 在 guard_loop 函数体内，每次调用都注册新handler。
+    # 改为加 _atexit_registered 守卫，确保只注册一次。
+    if not getattr(guard_loop, '_atexit_registered', False):
+        atexit.register(_cleanup)
+        guard_loop._atexit_registered = True
 
     _guard_stop_event.clear()
 

@@ -601,7 +601,12 @@ class DatabaseManager:
 
             self._closed = True
 
-            self.wal_checkpoint_truncate()
+            # 5.73.4 修复：原 wal_checkpoint_truncate() 未被 try/except 包裹（对比 conn.close() 有保护）。
+            # WAL checkpoint 抛异常会掩盖with块原始异常并中断连接池清理流程。
+            try:
+                self.wal_checkpoint_truncate()
+            except Exception:
+                pass
 
             for conn in self._conn_pool:
                 try:

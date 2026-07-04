@@ -66,6 +66,7 @@ logger = logging.getLogger(__name__)
 import hashlib
 import json
 import os
+import random
 import threading
 import time
 from datetime import datetime
@@ -1252,7 +1253,11 @@ class PipelineOrchestrator:
                 if self._cfg.circuit_breaker_enabled:
                     self._cb_manager.record_result(cb_key, success=False)
                 if attempt < self._cfg.max_retries:
-                    time.sleep(min(2**attempt, 30))
+                    # 5.72.6 修复：原无jitter，多任务并发重试同一模型端点时可能产生惊群效应。
+                    # 添加 ±10% 随机抖动，避免重试同步化。
+                    delay = min(2**attempt, 30)
+                    delay = delay + random.uniform(0, delay * 0.1)
+                    time.sleep(delay)
 
         self._failure_log[module_id] = self._failure_log.get(module_id, 0) + 1
         self._failure_log["_task_" + task.task_id] = self._failure_log.get("_task_" + task.task_id, 0) + 1
