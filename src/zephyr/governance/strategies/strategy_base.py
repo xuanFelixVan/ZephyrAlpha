@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md
+# [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.governance.strategies.strategy_base
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]

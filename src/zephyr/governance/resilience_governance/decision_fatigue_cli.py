@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.resilience_governance.decision_fatigue_cli
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.decision_fatigue

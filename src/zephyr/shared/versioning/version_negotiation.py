@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-192 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-192 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.shared.versioning.version_negotiation
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]

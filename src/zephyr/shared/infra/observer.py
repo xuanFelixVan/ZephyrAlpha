@@ -27,10 +27,13 @@ ADR ref: ADR-0037 (pending Opus authoring)
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from enum import Enum, unique
 from threading import RLock
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @unique
@@ -94,7 +97,9 @@ class Observer:
                 handler(event_type, payload)
                 called += 1
             except Exception:
-                pass
+                # 5.57.3 修复：原 except: pass 静默吞没所有异常，handler 失败后事件被认为"已处理"
+                # 但副作用未生效，下游事件依赖的修改不存在，因果链断裂。改为 warning 级别日志记录。
+                logger.warning("observer: handler %r failed for %s", handler, event_type, exc_info=True)
             finally:
                 if handler in once_handlers:
                     self.unsubscribe(event_type, handler)

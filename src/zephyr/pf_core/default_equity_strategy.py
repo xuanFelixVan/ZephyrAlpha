@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md
+# [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.pf_core.default_equity_strategy
 # [DOMAIN] D_PF_ALLOC
 # [DEPENDENCIES] zephyr.governance.strategy_base; zephyr.trading.trading_contracts.execution.order

@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-UNK_reporting | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md
+# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.reporting
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

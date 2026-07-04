@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain-ml_train/ml-core/blueprint.md
+# [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] zephyr.ml_train.trainer_base
 # [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES]

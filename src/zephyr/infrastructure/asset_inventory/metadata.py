@@ -175,7 +175,9 @@ class GitMetadataExtractor:
         if not full.exists():
             return 0
         try:
-            return len(full.read_text(encoding="utf-8", errors="ignore").split("\n"))
+            # 5.59.3 修复：原 errors="ignore" 静默丢弃非法字节，行数统计和 import 计数失真，影响架构决策数据。
+            # 改用二进制模式按 b"\n" 计数，避免编码问题影响行数。
+            return len(full.read_bytes().split(b"\n"))
         except (OSError, PermissionError):
             return 0
 

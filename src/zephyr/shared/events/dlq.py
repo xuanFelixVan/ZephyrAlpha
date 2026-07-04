@@ -148,8 +148,49 @@ class DeadLetterQueue:
         Args:
             observer: 全局事件总线实例
         """
-        for event_type in EventType:
-            observer.subscribe(event_type, self._failure_handler)
+        # 5.57.4 修复：原 attach() 仅 subscribe _failure_handler，该 handler 抛异常后立即自己 catch+pass，
+        # 等于永远成功；不会捕获其他 handler 的失败。误用 attach() 的用户以为有 DLQ 保护，实际没有任何失败捕获。
+        # 改为包装 observer.emit，在 emit 内捕获每个 handler 的异常并写入 DLQ（与 attach_dlq_to_observer 一致）。
+        import traceback as tb_module
+
+        original_emit = observer.emit
+        self._original_emit = original_emit  # 保存以便 detach
+
+        def _wrapped_emit(
+            event_type: EventType,
+            payload: dict[str, Any] | None = None,
+        ) -> int:
+            payload = payload or {}
+            handlers_called = 0
+            with observer._lock:
+                handlers = list(observer._subscribers[event_type])
+                once_flags = set(observer._once_flags[event_type])
+
+            for handler in handlers:
+                try:
+                    handler(event_type, payload)
+                    handlers_called += 1
+                except Exception as exc:
+                    self.capture(
+                        event_type,
+                        payload,
+                        exc,
+                        tb_module.format_exc(),
+                    )
+                finally:
+                    if handler in once_flags:
+                        observer.unsubscribe(event_type, handler)
+
+            return handlers_called
+
+        observer.emit = _wrapped_emit  # type: ignore[method-assign]
+
+    def detach(self, observer: Observer) -> None:
+        """卸载 DLQ 包装（恢复原始 emit）。"""
+        original = getattr(self, "_original_emit", None)
+        if original is not None:
+            observer.emit = original  # type: ignore[method-assign]
+            self._original_emit = None
 
     def _failure_handler(self, event_type: EventType, payload: dict[str, Any]) -> None:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""

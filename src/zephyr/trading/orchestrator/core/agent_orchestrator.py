@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.agent_orchestrator
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget

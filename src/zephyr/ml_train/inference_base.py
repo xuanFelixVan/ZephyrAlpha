@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain-ml_train/ml-core/blueprint.md
+# [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] zephyr.ml_train.inference_base
 # [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.model_serving_request; zephyr.shared.contracts.experiment.model_serving_response; zephyr.ml_train.trainer_base

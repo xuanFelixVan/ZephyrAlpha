@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.risk.cross_asset.cross_market_data_adapter.ml_experiment_pipeline
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared._cross_layer.ml_experiment_pipeline

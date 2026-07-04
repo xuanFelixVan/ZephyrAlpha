@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain-ex_core/execution-core/blueprint.md
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.governance.trading_contracts.broker_interface
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position

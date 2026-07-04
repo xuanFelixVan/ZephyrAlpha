@@ -202,7 +202,16 @@ class RollbackLock:
             reason=f"Timeout after {wait_time}ms",
         )
 
-    def release(self, lock_id: str = "") -> LockAcquireResult:
+    def release(self, lock_id: str) -> LockAcquireResult:
+        # 5.58.7 修复：原 lock_id 默认空字符串，空时跳过持有者验证直接删除锁文件。
+        # 任何调用 release() 不传参的代码都会释放当前锁。改为必填参数，强制持有者验证。
+        if not lock_id:
+            return LockAcquireResult(
+                acquired=False,
+                lock_id=lock_id,
+                wait_time_ms=0,
+                reason="lock_id is required (5.58.7: prevent releasing others' locks)",
+            )
         if not self._lock_path.exists():
             return LockAcquireResult(
                 acquired=False,
@@ -213,7 +222,7 @@ class RollbackLock:
 
         try:
             lock_data = json.loads(self._lock_path.read_text(encoding="utf-8"))
-            if lock_id and lock_data.get("lock_id") != lock_id:
+            if lock_data.get("lock_id") != lock_id:
                 return LockAcquireResult(
                     acquired=False,
                     lock_id=lock_id,
@@ -334,7 +343,32 @@ class RollbackLock:
             pass
 
     def _dequeue_request(self, lock_id: str) -> None:
-        self._cleanup_stale_queue_entries()
+        # 5.58.8 修复：原仅调用 _cleanup_stale_queue_entries()，不使用 lock_id 参数，
+        # 不实际移除指定条目。队列文件不断增长；基于队列长度的调度决策误判系统负载。
+        # 改为过滤掉指定 lock_id 的条目（同时清理过期条目）。
+        if not self._queue_path.exists():
+            return
+        try:
+            lines = self._queue_path.read_text(encoding="utf-8").strip().split("\n")
+            now = datetime.now(UTC)
+            valid_lines: list[str] = []
+            for line in lines:
+                if not line.strip():
+                    continue
+                try:
+                    entry = json.loads(line)
+                    if entry.get("lock_id") == lock_id:
+                        continue
+                    created = datetime.fromisoformat(entry.get("created_at", ""))
+                    if (now - created).total_seconds() < self.DEFAULT_QUEUE_TTL_SECONDS:
+                        valid_lines.append(line)
+                except (json.JSONDecodeError, ValueError):
+                    pass
+            tmp_path = self._queue_path.with_suffix(".tmp")
+            tmp_path.write_text("\n".join(valid_lines) + ("\n" if valid_lines else ""), encoding="utf-8")
+            os.replace(str(tmp_path), str(self._queue_path))
+        except Exception:
+            pass
 
     def _count_queue(self) -> int:
         self._cleanup_stale_queue_entries()

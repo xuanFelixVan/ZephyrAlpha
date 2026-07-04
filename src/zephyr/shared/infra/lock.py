@@ -146,6 +146,17 @@ class MemoryLock:
         if not lock.locked():
             return False
 
+        # 5.58.10 修复：原 release 不验证 owner_id，任何拿到 LockHandle 引用的代码都能释放他人的锁。
+        # 增加持有者一致性校验。
+        if self._owners.get(handle.lock_name) != handle.owner_id:
+            logger.warning(
+                "lock '%s' release denied: owner mismatch (expected=%s, got=%s)",
+                handle.lock_name,
+                self._owners.get(handle.lock_name),
+                handle.owner_id,
+            )
+            return False
+
         lock.release()
         if handle.lock_name in self._owners:
             del self._owners[handle.lock_name]

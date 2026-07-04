@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-004 | docs/03_modules/_domain-governance/blueprint.md
+# [BLUEPRINT] SRC-004 | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.market_data.market_data_pipeline
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.governance.__init__
