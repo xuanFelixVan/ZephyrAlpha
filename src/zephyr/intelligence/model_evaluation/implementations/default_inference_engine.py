@@ -32,14 +32,20 @@ from __future__ import annotations
 import logging
 import time
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from zephyr.ml_train.inference_base import InferenceEngineBase
 from zephyr.ml_train.trainer_base import ModelMetadata
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 
 _logger = logging.getLogger(__name__)
+
+# 5.117.1 修复：joblib.load 底层使用 pickle，是已知 RCE sink。
+# 限定模型路径必须在项目 data 目录下，防止路径穿越和恶意文件加载。
+_ALLOWED_MODEL_ROOT = (REPO_ROOT / "data").resolve()
 
 __inference_id__ = "default-inference-engine"
 
@@ -68,7 +74,13 @@ class DefaultInferenceEngine(InferenceEngineBase):
         try:
             import joblib
 
-            self._models[model_id] = joblib.load(model_path)
+            # 5.117.1 修复：路径白名单校验，防止路径穿越和恶意模型文件加载
+            resolved = Path(model_path).resolve()
+            if not str(resolved).startswith(str(_ALLOWED_MODEL_ROOT)):
+                raise ValueError(
+                    f"model_path must be under {_ALLOWED_MODEL_ROOT}, got {resolved}"
+                )
+            self._models[model_id] = joblib.load(resolved)
             self._metadatas[model_id] = metadata
             _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)
             return True
