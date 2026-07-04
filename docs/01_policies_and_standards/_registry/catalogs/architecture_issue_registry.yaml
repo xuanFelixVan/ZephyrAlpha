@@ -997,97 +997,77 @@ entries:
   title: 前端可视化技术栈第一性原理重构——Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts
   severity: P1高
   adjudication: |
-    ARCH-047 裁定：前端可视化技术栈从 Streamlit 切换到 Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts，
-    并在 frontend_architecture.md G0→G6 激活档位中插入 G0.5 Python 原生可视化过渡层。
+    ARCH-047 裁定：前端可视化技术栈从 Streamlit 第一性原理重构为 Panel+HoloViz+Plotly+plotly_resampler
+    +TradingView Lightweight Charts v5.2。治本"Streamlit 三大架构硬伤导致回测可视化能力不足"的病根。
 
     【病根（5-Why 根因分析）】
-    Why1: 为什么需要可视化技术栈重构？因为 Streamlit 存在三个架构性硬伤——
-      (a) 无原生 crossfiltering（多图表联动需手写 session_state，非框架级支持）
-      (b) 无原生 WebSocket 推送（实盘行情刷新依赖轮询或自定义 hack，非框架原生）
-      (c) rerun 模型（每次交互全脚本重跑，百万级 tick 场景性能崩溃）
-    Why2: 为什么 Streamlit 的硬伤是阻断性问题？因为 A 股量化场景需要：
-      百万级 tick 渲染（Datashader 场景）、实盘 WebSocket 推送（行情/订单/持仓）、
-      多组件交叉过滤（选股→回测→持仓联动），Streamlit 三项均无法原生支持。
-    Why3: 为什么最初选了 Streamlit？因为"项目已有 Streamlit 骨架"的路径依赖，
-      技术选型基于"已有/能用"而非"第一性原理最优"。
-    Why4: 为什么路径依赖是问题？因为沉没成本谬误导致在次优方案上持续投入，
-      技术债累积——v2.2.0 的 5 个组件尚未施工（仅 1 个 backtest_results.py），
-      现在切换成本最低（1 个文件迁移 vs 5 个文件重写）。
-    Why5（根因）：技术选型缺乏第一性原理评估流程——"已有/能用"替代"最优"，
-      未从"好的是什么样子"出发评估业界最优组合。
+    症状：回测交付页面+仪表盘方案调研发现 Streamlit 无法满足百万级 tick 渲染、实时盘口推送、
+    crossfiltering 联动三大核心需求。
 
-    【第一性原理推理：好的可视化系统是什么样子】
-    第一性原理：可视化系统的本质是"高维数据→人类视觉通道"的压缩管道。
-    A 股量化的核心约束：
-      (1) 数据规模：百万级 tick（1 只股票 1 年约 100 万条 tick 记录）
-      (2) 实时性：实盘行情 WebSocket 推送，延迟 <500ms
-      (3) 交互性：crossfiltering（选股→回测→持仓联动）、brush+zoom、tooltip
-      (4) 专业性：K 线图需专业金融图表（蜡烛图+成交量+技术指标叠加）
-      (5) 长期演进：个人开发者 1 人运维，需兼顾"当前可用"与"未来可升级到 React 终局"
+    Why-1：为什么 Streamlit 无法满足？因为 Streamlit 有三个架构性硬伤：
+    (a) rerun 模型——每次交互重跑整个脚本，无法增量更新，大数据渲染慢
+    (b) 无原生 WebSocket——实时推送依赖轮询，100ms 级盘口刷新不可行
+    (c) 无 crossfiltering——多图表联动需要 st.session_state 手动管理，复杂且易错
 
-    【四方案第一性原理对比】
-    A: Streamlit —— ❌ rerun 模型+无原生 WebSocket+无 crossfiltering，三项硬伤
-    B: Dash —— ⚠️ callback 路由复杂度高（10 组件=100+ callback），无 Datashader 原生集成
-    C: Gradio —— ❌ 面向 ML demo 非 dashboard，无 crossfiltering，无百万级数据渲染
-    D: Panel + HoloViz —— ✅ Datashader 原生集成（百万 tick 0.5-1 秒）、
-       Bokeh server WebSocket 原生推送、crossfiltering 原生支持、
-       HoloViews 声明式 API 降低复杂度、与 H1 React 终局兼容（Panel serve 可作为 BFF）
+    Why-2：为什么选 Streamlit？因为初期快速原型需求选择了最简单的方案，未考虑长期部署。
+    Why-3：为什么未考虑长期部署？因为前端架构文档（VIEW-10-FRONTEND-ARCH）未定义可视化技术栈选型标准。
+    Why-4：为什么未定义选型标准？因为前端架构缺少"第一性原理"驱动的技术栈评估框架。
+    Why-5（根因）：前端可视化技术栈选择基于"快速原型"路径依赖，而非"长期部署+可扩展"第一性原理，
+    导致技术债积累到回测可视化需求爆发时才暴露。
 
-    【技术栈组合决定】
-    1. Panel：Web 应用框架（替代 Streamlit），Bokeh server 原生 WebSocket 推送
-    2. HoloViz 生态：
-       - HoloViews：声明式可视化 API（High-level abstraction）
-       - Datashader：百万级点渲染（GPU 加速 rasterization）
-       - hvPlot：pandas/duckdb DataFrame → HoloViews 一行代码桥接
-       - Bokeh：底层渲染引擎（Panel/HoloViews 的基石）
-    3. Plotly + plotly_resampler：交互式科学图表（回测指标、因子分析），
-       plotly_resampler 处理大数据量降采样
-    4. TradingView Lightweight Charts v5.2：专业 K 线图（蜡烛图+成交量+技术指标），
-       原生金融图表库，MIT 协议，React 终局可无缝迁移
+    【第一性原理推理】
+    好的可视化系统应该是什么样子？
+    1. 百万级数据渲染——Datashader 原生集成（0.5-1秒渲染百万 tick）
+    2. 实时推送——Bokeh server WebSocket 原生推送（100ms 级盘口刷新）
+    3. crossfiltering 联动——HoloViews 原生支持多图表联动
+    4. 长期可扩展——Panel 支持 React 组件嵌入，未来可迁移到 G1 React 前端
+    5. 金融图表——TradingView Lightweight Charts v5.2 专业 K 线/订单流
+
+    【四方案对比】
+    方案A（Streamlit）：rerun 模型/无 WebSocket/无 crossfiltering——三硬伤不可治本
+    方案B（Dash）：callback 模型复杂，Datashader 集成弱，社区活跃度下降
+    方案C（Gradio）：面向 ML demo，金融图表支持弱
+    方案D（Panel+HoloViz）：Datashader 原生/WebSocket 原生/crossfiltering 原生——三硬伤全治本
+
+    决定：采用方案D（Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts），插入 G0.5 Python 过渡层。
+
+    【治本方案】
+    P0 DONE 2026-07-04：
+    (a) ARCH-047 条目登记（本条目）
+    (b) VIEW-10-FRONTEND-ARCH v1.1.1→v1.2.0：G0.5 Python 过渡层插入
+    (c) MOD-L08-001 frontend 蓝图 v2.2.0→v3.0.0：技术栈切换（20+ edits）
+    (d) MOD-BT-001 backtest 蓝图 v1.2.0→v1.3.0：io/ 子目录新增（sink+repo）
+    (e) CTR-P1-017 BacktestRunArtifact 跨层契约新建
+    (f) CTR-P1-016 target_domains 追加 D_FRONTEND
+    (g) consumer_registry.yaml：D_FRONTEND 消费关系新增
+    (h) pyproject.toml + requirements.txt：5 个依赖新增
+    (i) blueprint_registry.yaml v2.7.7 同步
+    (j) 258 个 Python 源文件 [BLUEPRINT] 头部路径漂移修复（kebab→snake）
+    (k) depgraph 设计态：2 节点 + 3 边登记
+
+    P1 TODO：5 个交易/回测组件施工（backtest_results/tick_replay/order_book/position_monitor/trade_panel）
+    P2 OPTIONAL：G1 React 前端迁移时，Panel 组件嵌入 React（保留 HoloViz 渲染层）
 
     【G0.5 Python 过渡层】
-    在 frontend_architecture.md G0（无前端）→ G1（React+Vite+TS）之间插入 G0.5：
-    - G0.5 = Python 原生可视化（Panel+HoloViz+Plotly+Lightweight Charts）
-    - 激活条件：当前已激活（回测可视化+实盘仪表盘需求已出现）
-    - 退出条件：G1 激活时（3 信号：MatchingLogic 偏差>5%+策略迭代瓶颈+模拟实盘需求）
-    - G0.5 与 G1 共存策略：Panel serve 可作为 G1 React 前端的 BFF（Backend-for-Frontend），
-      Python 可视化组件渐进式迁移到 React， Lightweight Charts 组件零成本迁移（JS 库通用）
-
-    【治本方案（分阶段）】
-    P0（本次执行 2026-07-04）：
-    (a) depgraph 登记 2 个设计态节点：backtest_result_sink.py + result_repository.py（D_BACKTEST io/ 子目录）
-    (b) depgraph 登记 3 条依赖边：sink→engine_base, repo→sink, frontend→repo
-    (c) MOD-L08-001 蓝图 v2.2.0→v3.0.0：技术栈从 Streamlit 切换到 Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts
-    (d) VIEW-10-FRONTEND-ARCH v1.1.1→v1.2.0：插入 G0.5 Python 过渡层档位
-    (e) MOD-BT-001 蓝图：新增 io/ 子目录及两个模块（sink+repo）
-    (f) cross_layer_contracts.yaml：新建 CTR-P1-017 BacktestRunArtifact 契约 + CTR-P1-016 target_domains 追加 D_FRONTEND
-    (g) consumer_registry.yaml：登记 D_FRONTEND 消费关系
-    (h) requirements.txt：新增 panel/holoviews/datashader/hvplot/plotly_resampler/lightweight-charts 依赖
-    (i) 创建 ARCH-047 裁定文档（本条目）
-
-    P1（后续独立任务卡）：
-    (a) 实现 backtest_result_sink.py + result_repository.py（D_BACKTEST io/）
-    (b) 迁移 backtest_results.py 从 Streamlit 到 Panel（dataclass + fetch_* 零成本平移）
-    (c) 实现剩余 4 个组件（tick_replay/order_book/position_monitor/trade_panel）用 Panel+Lightweight Charts
-    (d) 回测交付页面 + 仪表盘集成
-
-    P2（G1 激活时）：
-    React+Vite+TS 前端建立，Panel serve 作为 BFF 渐进式迁移，Lightweight Charts 组件零成本迁移
+    在 G0（无前端）和 G1（React+Vite+TS）之间插入 G0.5 Python 原生可视化层。
+    退出条件（3 信号同时出现时升级到 G1）：
+    ① MatchingLogic 共享后偏差仍>5%且定位不到
+    ② 策略迭代速度成瓶颈
+    ③ 有模拟实盘环境需求
+    共存策略：G0.5 与 G1 可共存，Panel 组件可嵌入 React
 
     【关联】
-    - ARCH-045（C 轨占位禁令解除）——ARCH-047 是 C 轨解除后的首个技术栈重构
-    - VIEW-10-FRONTEND-ARCH（前端架构视图）——ARCH-047 插入 G0.5 档位
-    - MOD-L08-001（frontend 蓝图）——ARCH-047 驱动 v3.0.0 技术栈切换
-    - CTR-P1-016（BacktestResult 契约）——ARCH-047 追加 D_FRONTEND 为 target_domain
-    - 第一性原理方法论——ARCH-047 是"好的是什么样子"评估范式的首个实践案例
+    - VIEW-10-FRONTEND-ARCH——前端架构文档，G0.5 过渡层定义
+    - MOD-L08-001——frontend 蓝图，技术栈切换实施
+    - MOD-BT-001——backtest 蓝图，io/ 子目录新增
+    - CTR-P1-016/017——跨层契约，回测结果+产物格式
   fix_phase: |
-    P0 IN PROGRESS 2026-07-04：depgraph 登记 + 蓝图更新 + 契约扩展 + 依赖更新
-    P1 TODO：backtest_result_sink/result_repository 实现 + Panel 组件迁移
-    P2 TODO：G1 React 激活时 Panel serve 作为 BFF
+    P0 DONE 2026-07-04：技术栈切换全套治理（蓝图+契约+依赖+路径漂移修复+depgraph登记）
+    P1 TODO：5 个交易/回测组件施工
+    P2 OPTIONAL：G1 React 迁移时 Panel 组件嵌入
   status: decided
   related_rules:
-  - GOV-DOC-018
-  - TRAE-056
-  - KBG-0007
+  - VIEW-10-FRONTEND-ARCH
+  - GOV-028
   created: '2026-07-04'
   last_updated: '2026-07-04'
