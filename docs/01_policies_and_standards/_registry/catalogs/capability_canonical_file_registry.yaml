@@ -2602,6 +2602,23 @@ capabilities:
       - D_BACKTEST
       - MOD-BT-001
       - backtest_engine_core
+      - PITManager
+      - PITConfig
+      - PITError
+      - pit_manager
+      - OverfittingDetector
+      - OverfittingConfig
+      - OverfittingError
+      - overfitting_detector
+      - WalkForwardAnalyzer
+      - WalkForwardConfig
+      - WalkForwardError
+      - walk_forward
+      - DecisionGate
+      - DecisionGateConfig
+      - DecisionGateError
+      - DecisionGateResult
+      - decision_gate
     description: >-
       回测引擎核心能力（D_BACKTEST域，MOD-BT-001）。canonical = src/zephyr/backtest/
       core/engine_base.py（BacktestEngineBase ABC + BacktestResult + FactorDiscovery，

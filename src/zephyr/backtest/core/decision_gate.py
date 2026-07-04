@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.decision_gate
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.overfitting_detector; zephyr.backtest.core.walk_forward; zephyr.backtest.core.metrics
-# [CONSUMERS] zephyr.backtest.implementations.vectorized_engine
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] IS→WFA→OOS不可跳级;参数锁定;Sharpe>0.5准入

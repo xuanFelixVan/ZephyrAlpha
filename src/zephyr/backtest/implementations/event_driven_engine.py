@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.implementations.event_driven_engine
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_engine; zephyr.backtest.core.tick_replay; zephyr.backtest.core.metrics
+# [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_engine; zephyr.backtest.core.tick_replay; zephyr.backtest.core.metrics; zephyr.backtest.core.overfitting_detector; zephyr.backtest.core.walk_forward; zephyr.backtest.core.decision_gate
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -66,6 +66,9 @@ from zephyr.backtest.core.tick_replay import (
     TickReplayConfig,
     TickReplayEngine,
 )
+from zephyr.backtest.core.overfitting_detector import OverfittingDetector
+from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
+from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 
 _logger = logging.getLogger(__name__)
 
@@ -312,6 +315,96 @@ class EventDrivenEngine(BacktestEngineBase):
     def results(self) -> list[BacktestResult]:
         """历史回测结果列表"""
         return list(self._results)
+
+    # ========== 过拟合检测/决策门控接入（W3 治本：消除三模块零调用方）==========
+
+    def run_walk_forward_analysis(
+        self,
+        data: pd.DataFrame,
+        config: WalkForwardConfig | None = None,
+    ) -> list[list[pd.DataFrame]]:
+        """运行 Walk-Forward 分析，返回训练/测试窗口列表。
+
+        接入 zephyr.backtest.core.walk_forward.WalkForwardAnalyzer。
+        蓝图 §16.7 P1-29 Walk-Forward 三模式（rolling/anchored/expanding）。
+
+        Args:
+            data: OHLCV 数据
+            config: Walk-Forward 配置；None 用默认（rolling, train=252, test=63）
+
+        Returns:
+            list[list[DataFrame]]：每个窗口 [train_df, test_df]
+        """
+        analyzer = WalkForwardAnalyzer(config)
+        return analyzer.split(data)
+
+    def detect_overfitting(
+        self,
+        walk_forward_results: list[dict] | None = None,
+        perturbed_results: list[dict] | None = None,
+        period_results: list[dict] | None = None,
+        is_sharpe: float = 0.0,
+        oos_sharpe: float = 0.0,
+    ) -> dict:
+        """过拟合检测（三维度：Walk-Forward稳定性/参数敏感性/泛化能力 + 样本内外对比）。
+
+        接入 zephyr.backtest.core.overfitting_detector.OverfittingDetector。
+        蓝图 §16.7 P0-9 三维度三层 + 样本外Sharpe<70%→否决。
+
+        Args:
+            walk_forward_results: Walk-Forward 各 fold 结果（维度1），None 跳过
+            perturbed_results: 参数微调结果（维度2），None 跳过
+            period_results: 跨时段结果（维度3），None 跳过
+            is_sharpe: 样本内 Sharpe（同时作为参数敏感性基准）
+            oos_sharpe: 样本外 Sharpe
+
+        Returns:
+            dict: is_overfitting / oos_is_ratio / walk_forward_stable /
+                  parameter_stable / generalization_stable / reasons
+        """
+        detector = OverfittingDetector()
+        return detector.detect(
+            walk_forward_results=walk_forward_results,
+            perturbed_results=perturbed_results,
+            period_results=period_results,
+            is_sharpe=is_sharpe,
+            oos_sharpe=oos_sharpe,
+        )
+
+    def evaluate_decision_gate(
+        self,
+        is_sharpe: float,
+        oos_sharpe: float,
+        params: dict[str, Any],
+        walk_forward_results: list[dict],
+        param_sensitivity: dict[str, list[tuple[Any, float]]] | None = None,
+        params_locked: bool = True,
+    ) -> DecisionGateResult:
+        """3阶段决策门控评估（IS→WFA→OOS，不可跳级）。
+
+        接入 zephyr.backtest.core.decision_gate.DecisionGate。
+        蓝图 §3.3 P0-14 三阶段决策门控 + 参数稳定性区域。
+
+        Args:
+            is_sharpe: 样本内 Sharpe
+            oos_sharpe: 样本外 Sharpe
+            params: 策略参数字典
+            walk_forward_results: Walk-Forward 窗口结果列表
+            param_sensitivity: 参数敏感性扫描结果；None 跳过稳定性门控
+            params_locked: 参数是否已锁定（OOS 阶段要求锁定）
+
+        Returns:
+            DecisionGateResult: 三阶段综合判定结果
+        """
+        gate = DecisionGate()
+        return gate.evaluate(
+            is_sharpe=is_sharpe,
+            params=params,
+            param_sensitivity=param_sensitivity,
+            walk_forward_results=walk_forward_results,
+            oos_sharpe=oos_sharpe,
+            params_locked=params_locked,
+        )
 
 
 def _to_datetime(dt: Any) -> datetime:
