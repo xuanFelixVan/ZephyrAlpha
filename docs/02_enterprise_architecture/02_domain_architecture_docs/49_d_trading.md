@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 16:35:11
+> 最后更新: 2026-07-04 16:35:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 471 | Module Count | 471 |
 | 域内依赖 | 440 | Internal Dependencies | 440 |
-| 跨域入边 | 750 | Cross-domain Incoming | 750 |
-| 跨域出边 | 163 | Cross-domain Outgoing | 163 |
+| 跨域入边 | 671 | Cross-domain Incoming | 671 |
+| 跨域出边 | 162 | Cross-domain Outgoing | 162 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 205 | Prototype Modules | 205 |
 | 生产态模块 | 266 | Production Modules | 266 |
@@ -1380,7 +1380,7 @@ graph TD
 |--------|:---:|---------|
 | D_SHARED | 61 | import_depends |
 | D_INTEGRATION | 28 | import_depends |
-| D_GOVERNANCE | 26 | import_depends |
+| D_GOVERNANCE | 25 | import_depends |
 | D_INFRA_RUNTIME | 17 | import_depends |
 | D_SECURITY | 6 | import_depends |
 | D_GOV_ENFORCEMENT | 5 | import_depends |
@@ -1396,7 +1396,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 639 | test_depends |
+| D_AUDITTEST | 560 | test_depends |
 | D_GOVERNANCE | 58 | import_depends |
 | D_FUNDAMENTAL_SIGNAL | 17 | import_depends |
 | D_RISK | 10 | import_depends |

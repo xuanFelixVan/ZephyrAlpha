@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 audit_test_suite（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 16:35:10
+> 最后更新: 2026-07-04 16:35:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 1651 | Module Count | 1651 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 2191 | Cross-domain Outgoing | 2191 |
+| 跨域出边 | 2101 | Cross-domain Outgoing | 2101 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 1603 | Prototype Modules | 1603 |
 | 生产态模块 | 48 | Production Modules | 48 |
@@ -3458,7 +3458,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_TRADING | 639 | test_depends |
+| D_TRADING | 560 | test_depends |
 | D_GOVERNANCE | 504 | test_depends |
 | D_GOV_ENFORCEMENT | 221 | test_depends |
 | D_SECURITY | 168 | test_depends |
@@ -3469,18 +3469,15 @@ graph TD
 | D_INFRA_RECOVERY | 52 | test_depends |
 | D_SECURITY_LLM | 41 | test_depends |
 | D_INFRA_A2A | 36 | test_depends |
-| D_INTELLIGENCE | 31 | test_depends |
-| D_RISK | 5 | test_depends |
+| D_INTELLIGENCE | 30 | test_depends |
 | D_OPS | 4 | test_depends |
-| D_EX_CORE | 3 | test_depends |
-| D_PF_CORE | 2 | test_depends |
+| D_POSITION | 2 | test_depends |
 | D_INFRA_TELEMETRY | 2 | test_depends |
 | D_GOV_SCRIPTS | 2 | test_depends |
-| D_POSITION | 2 | test_depends |
 | D_FUNDAMENTAL_SIGNAL | 2 | test_depends |
-| D_FRONTEND | 1 | test_depends |
+| D_EX_CORE | 1 | test_depends |
 | D_SIMULATION | 1 | test_depends |
-| D_REPORTING | 1 | test_depends |
+| D_RISK | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 context_management（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 16:35:11
+> 最后更新: 2026-07-04 16:35:49
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 33 | Internal Dependencies | 33 |
-| 跨域入边 | 60 | Cross-domain Incoming | 60 |
+| 跨域入边 | 59 | Cross-domain Incoming | 59 |
 | 跨域出边 | 24 | Cross-domain Outgoing | 24 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 22 | Prototype Modules | 22 |
@@ -221,7 +221,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 31 | test_depends |
+| D_AUDITTEST | 30 | test_depends |
 | D_GOVERNANCE | 17 | import_depends |
 | D_TRADING | 5 | import_depends |
 | D_INTEGRATION | 3 | import_depends |
