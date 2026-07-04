@@ -34,7 +34,9 @@ on:
       - "requirements.txt"
       - "requirements-dev.txt"
       - "requirements-demo.txt"
-      - "demo_e2e_pipeline.py"
+      # 5.31.16 修复：原 demo_e2e_pipeline.py 仅匹配根级，实际文件在 scripts/demos/ 和 scripts/construction/
+      # 改为 **/demo_e2e_pipeline.py 匹配任意目录
+      - "**/demo_e2e_pipeline.py"
       - "docker-compose.yml"
       - "AGENTS.md"
       - "README.md"
@@ -63,7 +65,9 @@ on:
       - "requirements.txt"
       - "requirements-dev.txt"
       - "requirements-demo.txt"
-      - "demo_e2e_pipeline.py"
+      # 5.31.16 修复：原 demo_e2e_pipeline.py 仅匹配根级，实际文件在 scripts/demos/ 和 scripts/construction/
+      # 改为 **/demo_e2e_pipeline.py 匹配任意目录
+      - "**/demo_e2e_pipeline.py"
       - "docker-compose.yml"
       - "AGENTS.md"
       - "README.md"

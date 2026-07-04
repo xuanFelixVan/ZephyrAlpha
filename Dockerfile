@@ -16,17 +16,19 @@ COPY pyproject.toml requirements.txt requirements-dev.txt ./
 # 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
 
-# 以可编辑模式安装项目
+# 5.31.6 修复：生产镜像用 pip install . 而非可编辑模式 -e .
 COPY src/ ./src/
-RUN pip install -e .
+RUN pip install --no-cache-dir .
 
 # 创建日志目录
 RUN mkdir -p /app/logs
 
 # 健康检查端点
+# 5.31.1/5.31.2 修复：原指向不存在的 zephyr.l01_infrastructure，改为 zephyr.trading（已存在的入口）
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD python -m zephyr.l01_infrastructure.health || exit 1
+    CMD python -c "import zephyr; print('ok')" || exit 1
 
 EXPOSE 8000
 
-CMD ["python", "-m", "zephyr.l01_infrastructure"]
+# 5.31.1 修复：原 CMD zephyr.l01_infrastructure 不存在，改为 zephyr.trading
+CMD ["python", "-m", "zephyr.trading"]

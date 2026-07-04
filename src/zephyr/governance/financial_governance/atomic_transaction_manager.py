@@ -572,6 +572,3 @@ class AtomicTransactionManager:
             raise
         except PathTraversalError:
             raise
-
-
-__version__ = "2.0.0"

@@ -1,7 +1,6 @@
 # Docker Compose — ZephyrAlpha 开发/测试环境
 # Phase B: 加入 Prometheus + Grafana 可观测性
-
-version: "3.9"
+# 5.31.15 修复：移除已废弃的 version 字段（Docker Compose v2 忽略并输出 warning）
 
 services:
   # ── 核心应用（Phase B 启动）──
@@ -13,7 +12,9 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      # 5.31.14 修复：原 env_file: .env 但 .env 被 .gitignore 忽略，新克隆者无 .env 直接报错退出
+      # 改为 .env.example 作为默认（仓库内已包含），新克隆者可直接 docker-compose up
+      - .env.example
     environment:
       - ZEPHYR_ENV=development
       - ZEPHYR_T1_KILL_SWITCH_PROBE=0
@@ -26,7 +27,8 @@ services:
     networks:
       - zephyr-net
     healthcheck:
-      test: ["CMD", "python", "-m", "zephyr.l01_infrastructure.health"]
+      # 5.31.2 修复：原 zephyr.l01_infrastructure.health 不存在，改为简单 import 检查
+      test: ["CMD", "python", "-c", "import zephyr; print('ok')"]
       interval: 30s
       timeout: 5s
       retries: 3

@@ -67,7 +67,26 @@ _load_dotenv()
 
 _lazy_registry: dict[str, str] = {}
 
-_version_ = "4.6.0"
+# 5.31.4/5.31.11 修复：版本号真源统一到 pyproject.toml（唯一 SSoT）
+# 原硬编码 _version_ = "4.6.0"（单下划线）与 pyproject.toml 2.0.0 不一致
+# 改用 importlib.metadata 动态读取，遵循 PEP 396 / PEP 621 约定（双下划线 __version__）
+try:
+    from importlib.metadata import version as _pkg_version
+
+    __version__ = _pkg_version("zephyralpha")
+except Exception:  # 包未安装（开发模式/直接 import）回退到 pyproject 解析
+    try:
+        from pathlib import Path as _Path
+
+        _pyproject = _Path(__file__).resolve().parents[2] / "pyproject.toml"
+        if _pyproject.exists():
+            import re as _re
+
+            __version__ = _re.search(r'version\s*=\s*"([^"]+)"', _pyproject.read_text(encoding="utf-8")).group(1)
+        else:
+            __version__ = "0.0.0+unknown"
+    except Exception:
+        __version__ = "0.0.0+unknown"
 
 
 def register_lazy(name: str, module_path: str):

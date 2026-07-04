@@ -1,0 +1,39 @@
+# ZephyrAlpha MANIFEST.in
+# 5.31.8 修复：原无 MANIFEST.in，setuptools 默认仅打包 .py 文件
+# 治本：声明非 Python 数据文件（.yaml/.yml/.json/.sql 等）进 wheel/sdist
+# 真源：pyproject.toml [project]；本文件由 setuptools 自动读取
+
+# === 顶层声明文件 ===
+include README.md
+include LICENSE
+include pyproject.toml
+include requirements.txt
+include requirements-dev.txt
+include requirements-demo.txt
+
+# === 配置文件 ===
+recursive-include config *.yaml *.yml *.json *.toml *.ini *.cfg *.sql
+
+# === 源码包内数据文件 ===
+recursive-include src *.yaml *.yml *.json *.sql *.toml *.ini *.cfg
+recursive-include src *.txt *.md *.csv *.html *.css *.js
+
+# === 排除 ===
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+recursive-exclude * .pytest_cache
+recursive-exclude * .mypy_cache
+recursive-exclude * .ruff_cache
+recursive-exclude * .git
+recursive-exclude * .vscode
+recursive-exclude * .idea
+recursive-exclude * tests
+recursive-exclude * docs
+recursive-exclude * data
+recursive-exclude * tmp
+recursive-exclude * .aidrafts
+global-exclude .DS_Store
+global-exclude Thumbs.db
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.log
