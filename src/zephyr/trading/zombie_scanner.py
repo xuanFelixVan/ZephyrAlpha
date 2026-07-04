@@ -68,6 +68,10 @@ __all__ = [
 
 
 class ZombieCategory(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     NORMAL = "normal"
     SUSPICIOUS = "suspicious"
     ABNORMAL = "abnormal"

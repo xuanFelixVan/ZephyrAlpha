@@ -332,3 +332,20 @@ class FindingCollection:
 
     def __iter__(self):
         return iter(self.findings)
+
+    def __contains__(self, item: object) -> bool:
+        """5.123.1 修复：显式 __contains__ 避免 `in` 回退到 O(n) 的 __iter__ 线性扫描。
+
+        支持 Finding 实例或 finding_id 字符串查询。
+        """
+        if isinstance(item, Finding):
+            target_id = item.finding_id
+        elif isinstance(item, str):
+            target_id = item
+        else:
+            return False
+        return any(f.finding_id == target_id for f in self.findings)
+
+    def __reversed__(self):
+        """5.123.2 修复：显式 __reversed__ 避免 reversed() 抛 TypeError。"""
+        return reversed(self.findings)

@@ -5827,6 +5827,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=1(5.86.1 路径净化补\), DRIFTED=1(5.86.2 runbook_generator.py已无replace调用), STILL_VALID=2(5.86.3 staging_area路径重构/5.86.4 MAX_PATH)
 
+> **第34轮修复状态（2026-07-05）**：FIXED=1(5.86.3 staging_area加_validate_path方法,校验空路径/null byte/绝对路径/..穿越), NOT_NEEDED=1(5.86.4 实际代码用uuid/预定义路径,无超长文件名;Win10+默认启用长路径支持)
+
 > 维度AB：路径净化遗漏反斜杠、null byte、Windows MAX_PATH限制
 
 #### 5.86.1 [HIGH] capability_passport路径净化漏\，Windows路径穿越
@@ -7099,6 +7101,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(__contains__/__iter__协议不完整)
 
+> **第34轮修复状态（2026-07-05）**：FIXED=2(5.123.1 添加__contains__支持Finding实例/finding_id字符串查询/5.123.2 添加__reversed__返回reversed(self.findings))
+
 #### 5.123.1 [LOW] FindingCollection缺__contains__致`in`回退O(n)线性扫描
 
 - **文件**：`src/zephyr/infrastructure/script_system/finding.py:284-343`
@@ -7125,6 +7129,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.124 __bool__/__len__冲突（2个，第22轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(__bool__/__len__冲突需明确语义)
+
+> **第34轮修复状态（2026-07-05）**：FIXED=2(5.124.1 GatePipeline添加__bool__返回True消除空pipeline歧义/5.124.2 VerifyResult.__bool__加bool()包装确保返回bool类型)
 
 #### 5.124.1 [LOW] GatePipeline在非容器上定义__len__缺__bool__致隐式bool歧义
 
@@ -7479,6 +7485,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.134 返回值不一致（2个，第24轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=2(返回值不一致需统一返回类型)
+
+> **第34轮修复状态（2026-07-05）**：FIXED=1(5.134.1 _hash_file注解从`-> str | None`改为`-> str`,函数实际始终返回str,文件打开失败抛OSError而非返回None)
 
 #### 5.134.1 [MEDIUM] _hash_file类型注解与实际返回不匹配
 

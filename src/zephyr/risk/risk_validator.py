@@ -44,6 +44,7 @@ CTR 契约：
 from __future__ import annotations
 
 import abc
+import inspect
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import ClassVar
@@ -88,7 +89,7 @@ class RiskValidator(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if abc.ABC not in cls.__bases__ and hasattr(cls, "__validator_id__"):
+        if not inspect.isabstract(cls) and hasattr(cls, "__validator_id__"):
             RiskValidator._registry[cls.__validator_id__] = cls
 
     @abc.abstractmethod

@@ -56,7 +56,7 @@ class CircuitBreaker:
 
     def call(self, func, *args, **kwargs):
         with self._lock:
-            if self._state == CircuitState.OPEN:
+            if self._state is CircuitState.OPEN:
                 if time.time() - self._last_failure_time >= self.recovery_timeout_s:
                     self._state = CircuitState.HALF_OPEN
                     self._success_count = 0
@@ -76,12 +76,12 @@ class CircuitBreaker:
 
     def _on_success(self) -> None:
         with self._lock:
-            if self._state == CircuitState.HALF_OPEN:
+            if self._state is CircuitState.HALF_OPEN:
                 self._success_count += 1
                 if self._success_count >= self._half_open_success_threshold:
                     self._state = CircuitState.CLOSED
                     self._failure_count = 0
-            elif self._state == CircuitState.CLOSED:
+            elif self._state is CircuitState.CLOSED:
                 self._failure_count = 0
 
     def _on_failure(self) -> None:

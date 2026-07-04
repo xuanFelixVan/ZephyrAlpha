@@ -19,11 +19,19 @@ from enum import Enum
 
 
 class OrderSide(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     BUY = "BUY"
     SELL = "SELL"
 
 
 class OrderType(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     LIMIT = "LIMIT"
     MARKET = "MARKET"
     STOP = "STOP"
@@ -32,6 +40,10 @@ class OrderType(Enum):
 
 
 class OrderStatus(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     PENDING = "PENDING"
     SUBMITTED = "SUBMITTED"
     PARTIAL = "PARTIAL"

@@ -58,6 +58,10 @@ _logger = logging.getLogger(__name__)
 
 
 class AlgoType(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     MARKET = "market"
     TWAP = "twap"
     VWAP = "vwap"

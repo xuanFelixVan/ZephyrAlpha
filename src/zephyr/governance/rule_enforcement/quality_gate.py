@@ -40,6 +40,7 @@ CTR 契约：
 from __future__ import annotations
 
 import abc
+import inspect
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
@@ -96,7 +97,7 @@ class DataQualityGate(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if abc.ABC not in cls.__bases__ and hasattr(cls, "__gate_id__"):
+        if not inspect.isabstract(cls) and hasattr(cls, "__gate_id__"):
             DataQualityGate._registry[cls.__gate_id__] = cls
 
     @abc.abstractmethod

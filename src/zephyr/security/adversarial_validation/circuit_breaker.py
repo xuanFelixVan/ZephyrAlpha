@@ -57,10 +57,10 @@ class CircuitBreaker:
 
     @property
     def is_open(self) -> bool:
-        return self.state == CircuitState.OPEN
+        return self.state is CircuitState.OPEN
 
     def before_run(self) -> None:
-        if self.state == CircuitState.OPEN:
+        if self.state is CircuitState.OPEN:
             remaining = self._cool_down_ms - (time.time() * 1000 - self._opened_at)
             raise CircuitBreakerOpenError(f"Circuit breaker OPEN. Cool-down remaining: {max(0, remaining):.0f}ms")
 
@@ -74,14 +74,14 @@ class CircuitBreaker:
 
         avg_bypass_rate = sum(self._bypass_history) / len(self._bypass_history)
 
-        if self._state == CircuitState.CLOSED and avg_bypass_rate > BYPASS_RATE_OPEN_THRESHOLD:
+        if self._state is CircuitState.CLOSED and avg_bypass_rate > BYPASS_RATE_OPEN_THRESHOLD:
             self._trip()
-        elif self._state == CircuitState.HALF_OPEN:
+        elif self._state is CircuitState.HALF_OPEN:
             if avg_bypass_rate > BYPASS_RATE_OPEN_THRESHOLD:
                 self._trip()
             else:
                 self._reset()
-        elif self._state == CircuitState.CLOSED and report.circuit_breaker_open:
+        elif self._state is CircuitState.CLOSED and report.circuit_breaker_open:
             self._trip()
 
     def _trip(self) -> None:
@@ -96,7 +96,7 @@ class CircuitBreaker:
         logger.info("circuit_breaker_reset")
 
     def _maybe_transition(self) -> None:
-        if self._state == CircuitState.OPEN:
+        if self._state is CircuitState.OPEN:
             elapsed = time.time() * 1000 - self._opened_at
             if elapsed >= self._cool_down_ms:
                 self._state = CircuitState.HALF_OPEN

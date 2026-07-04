@@ -51,6 +51,7 @@ SSoT: cross_layer_contracts.yaml v3.0
 from __future__ import annotations
 
 import abc
+import inspect
 from dataclasses import dataclass
 from datetime import datetime
 from typing import ClassVar
@@ -88,7 +89,7 @@ class DataSourceBase(abc.ABC):
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if abc.ABC not in cls.__bases__ and hasattr(cls, "__meta__"):
+        if not inspect.isabstract(cls) and hasattr(cls, "__meta__"):
             meta = cls.__meta__
             if isinstance(meta, DataSourceMeta):
                 DataSourceBase._registry[meta.provider_id] = cls

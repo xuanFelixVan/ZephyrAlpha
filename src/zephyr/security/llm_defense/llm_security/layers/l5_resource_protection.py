@@ -160,7 +160,7 @@ class LLMCostCircuitBreaker:
 
     @property
     def state(self) -> CircuitState:
-        if self._state == CircuitState.OPEN:
+        if self._state is CircuitState.OPEN:
             if time.time() - self._opened_at > self._recovery_timeout:
                 self._state = CircuitState.HALF_OPEN
         return self._state

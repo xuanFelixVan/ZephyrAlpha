@@ -39,6 +39,10 @@ from enum import Enum, auto
 
 
 class DriftState(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     DETECTED = "DETECTED"
 
     TRIAGED = "TRIAGED"
@@ -61,6 +65,10 @@ class DriftState(Enum):
 
 
 class ScanLevel(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     LIGHT = auto()
 
     STANDARD = auto()
@@ -69,6 +77,10 @@ class ScanLevel(Enum):
 
 
 class Severity(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     HIGH = "HIGH"
 
     MEDIUM = "MEDIUM"
@@ -77,6 +89,10 @@ class Severity(Enum):
 
 
 class OrphanClassification(Enum):
+    def __str__(self) -> str:
+        # 5.92.2 修复：统一日志格式，返回 value 而非 ClassName.MEMBER
+        return self.value
+
     TRUE_ORPHAN = "true_orphan"
 
     UNDOCUMENTED_ASSET = "undocumented_asset"
