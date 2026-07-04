@@ -335,21 +335,18 @@ class TestBootHooksMCPIntegrationMock:
 class TestRedBlueExtremeScenarios:
     """红蓝对抗极端测试：进程崩溃/资源耗尽/并发/幂等/恢复。"""
 
-    def test_process_crash_detected_by_health_check(self, launcher_module, gateway):
+    def test_process_crash_detected_by_health_check(self, launcher_module, gateway, tmp_path):
         """进程崩溃后 check_server_health 应返回 False。"""
         # 启动一个短命进程（立即退出）
-        import tempfile
-        tmp = Path(tempfile.mktemp(suffix=".py"))
+        # 5.21.10 修复：tempfile.mktemp → tmp_path（pytest 管理生命周期）
+        tmp = tmp_path / "crash.py"
         tmp.write_text("import sys; sys.exit(0)", encoding="utf-8")
-        try:
-            fake_scripts = {"crash_test": str(tmp)}
-            with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
-                launcher_module.start_server("crash_test", gateway)
-                time.sleep(0.5)  # 等待进程退出
-                healthy = launcher_module.check_server_health("crash_test", gateway)
-                assert healthy is False, "Crashed process should be unhealthy"
-        finally:
-            tmp.unlink(missing_ok=True)
+        fake_scripts = {"crash_test": str(tmp)}
+        with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
+            launcher_module.start_server("crash_test", gateway)
+            time.sleep(0.5)  # 等待进程退出
+            healthy = launcher_module.check_server_health("crash_test", gateway)
+            assert healthy is False, "Crashed process should be unhealthy"
 
     def test_max_processes_limit_enforced(self, gateway):
         """达到 max_processes 上限时应拒绝新进程。"""
@@ -377,7 +374,7 @@ class TestRedBlueExtremeScenarios:
             small_gw.terminate_all()
             small_gw.shutdown()
 
-    def test_concurrent_start_no_conflict(self, launcher_module, gateway):
+    def test_concurrent_start_no_conflict(self, launcher_module, gateway, standin_script):
         """并发启动多个进程不应冲突。"""
         import threading
 
@@ -386,7 +383,7 @@ class TestRedBlueExtremeScenarios:
 
         def _start(sid):
             try:
-                fake_scripts = {sid: str(_get_standin_script())}
+                fake_scripts = {sid: str(standin_script)}
                 with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
                     results[sid] = launcher_module.start_server(sid, gateway)
             except Exception as e:
@@ -416,60 +413,50 @@ class TestRedBlueExtremeScenarios:
         count2 = gateway.terminate_all()
         assert count2 == 0, "Second terminate_all should return 0"
 
-    def test_restart_dead_process_recovers(self, launcher_module, gateway):
+    def test_restart_dead_process_recovers(self, launcher_module, gateway, tmp_path):
         """对已死进程调用 restart_server 应能恢复。"""
-        import tempfile
-        tmp = Path(tempfile.mktemp(suffix=".py"))
+        # 5.21.10 修复：tempfile.mktemp → tmp_path（pytest 管理生命周期）
+        tmp = tmp_path / "restart_test.py"
         # 先写一个立即退出的脚本
         tmp.write_text("import sys; sys.exit(0)", encoding="utf-8")
-        try:
-            fake_scripts = {"restart_test": str(tmp)}
-            with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
-                # 启动（会立即退出）
-                launcher_module.start_server("restart_test", gateway)
-                time.sleep(0.3)
-                assert launcher_module.check_server_health("restart_test", gateway) is False
+        fake_scripts = {"restart_test": str(tmp)}
+        with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
+            # 启动（会立即退出）
+            launcher_module.start_server("restart_test", gateway)
+            time.sleep(0.3)
+            assert launcher_module.check_server_health("restart_test", gateway) is False
 
-                # 改写脚本为保持运行
-                tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
-                # 重启
-                ok = launcher_module.restart_server("restart_test", gateway)
-                assert ok is True, "restart_server should recover dead process"
-                assert launcher_module.check_server_health("restart_test", gateway) is True
-        finally:
-            tmp.unlink(missing_ok=True)
+            # 改写脚本为保持运行
+            tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
+            # 重启
+            ok = launcher_module.restart_server("restart_test", gateway)
+            assert ok is True, "restart_server should recover dead process"
+            assert launcher_module.check_server_health("restart_test", gateway) is True
 
-    def test_gateway_shutdown_cleans_all_processes(self, launcher_module, gateway):
+    def test_gateway_shutdown_cleans_all_processes(self, launcher_module, gateway, tmp_path):
         """shutdown 后所有进程应被清理。"""
-        import tempfile
-        tmp = Path(tempfile.mktemp(suffix=".py"))
+        # 5.21.10 修复：tempfile.mktemp → tmp_path（pytest 管理生命周期）
+        tmp = tmp_path / "shutdown_test.py"
         tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
-        try:
-            fake_scripts = {sid: str(tmp) for sid in ["kb", "ge", "bs"]}
-            with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
-                for sid in ["kb", "ge", "bs"]:
-                    launcher_module.start_server(sid, gateway)
+        fake_scripts = {sid: str(tmp) for sid in ["kb", "ge", "bs"]}
+        with patch.object(launcher_module, "SERVER_SCRIPTS", fake_scripts):
+            for sid in ["kb", "ge", "bs"]:
+                launcher_module.start_server(sid, gateway)
 
-                stats = gateway.get_stats()
-                assert stats.active_processes >= 3
+            stats = gateway.get_stats()
+            assert stats.active_processes >= 3
 
-                gateway.shutdown()
-                stats = gateway.get_stats()
-                assert stats.active_processes == 0, "All processes should be cleaned after shutdown"
-        finally:
-            tmp.unlink(missing_ok=True)
+            gateway.shutdown()
+            stats = gateway.get_stats()
+            assert stats.active_processes == 0, "All processes should be cleaned after shutdown"
 
 
-def _get_standin_script():
-    """返回替身脚本路径（模块级缓存）。"""
-    import tempfile
-    global _STANDIN_CACHE
-    if _STANDIN_CACHE is not None:
-        return _STANDIN_CACHE
-    tmp = Path(tempfile.mktemp(suffix=".py"))
-    tmp.write_text("import time; time.sleep(60)", encoding="utf-8")
-    _STANDIN_CACHE = tmp
-    return tmp
-
-
-_STANDIN_CACHE = None
+# 5.21.10 修复：_STANDIN_CACHE 全局变量 + tempfile.mktemp 永不清理 →
+# session 级 fixture + tmp_path_factory（pytest 管理生命周期，session 结束自动清理）
+@pytest.fixture(scope="session")
+def standin_script(tmp_path_factory):
+    """返回替身脚本路径（session 级共享，session 结束自动清理）。"""
+    standin_dir = tmp_path_factory.mktemp("standin")
+    script = standin_dir / "standin.py"
+    script.write_text("import time; time.sleep(60)", encoding="utf-8")
+    return script
