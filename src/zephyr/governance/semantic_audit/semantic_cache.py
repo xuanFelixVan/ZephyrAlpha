@@ -49,7 +49,9 @@ class SemanticCache:
         if entry is None:
             self._misses += 1
             return None
-        if time.time() - entry.created_at > self._ttl:
+        # 5.46.1 修复：time.time() 受 NTP/手动调时影响可能回退，导致 TTL 永不过期。
+        # 改用 time.monotonic() 保证单调递增。
+        if time.monotonic() - entry.created_at > self._ttl:
             del self._cache[key]
             self._misses += 1
             return None
@@ -64,7 +66,7 @@ class SemanticCache:
         if key in self._cache:
             self._cache.move_to_end(key)
             return
-        self._cache[key] = CacheEntry(key=key, response=response, cost_saved=cost, created_at=time.time())
+        self._cache[key] = CacheEntry(key=key, response=response, cost_saved=cost, created_at=time.monotonic())
         self._cache.move_to_end(key)
         while len(self._cache) > self._max_entries:
             self._cache.popitem(last=False)
