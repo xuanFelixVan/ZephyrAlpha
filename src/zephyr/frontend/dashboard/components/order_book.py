@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.order_book
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.governance.data_governance.miniqmt_provider
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.governance.data_governance.miniqmt_provider
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,17 +14,21 @@
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-order_book | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""order_book · 5档盘口实时展示组件（v2.2.0新增）
+"""order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.3
 数据源: D_DATA MiniQmtProvider.get_order_book() 5档盘口实时数据
-渲染依赖: plotly + streamlit
+渲染依赖: Panel(布局) + ChartFactory.make_orderbook(图表)
+
+v3.0.0 变更 (#ARCH-047):
+  - Streamlit → Panel (布局)
+  - plotly 直接调用 → ChartFactory.make_orderbook (callback仅编排)
+  - 100ms Bokeh WebSocket 推送(原生WebSocket, 无rerun开销)
 
 布局:
   - 左侧: 5档卖盘(红色, 价格降序 ask5→ask1)
   - 中间: 最新价 + 压力比仪表盘
   - 右侧: 5档买盘(绿色, 价格降序 bid1→bid5)
-刷新策略: streamlit.fragment + 100ms rerun，避免全页重渲染.
 """
 from __future__ import annotations
 
@@ -32,14 +36,14 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 try:
-    import streamlit as st
-except ImportError:
-    st = None
+    import panel as pn
+except ImportError:  # 测试环境无 panel
+    pn = None
 
-try:
-    import plotly.graph_objects as go
-except ImportError:
-    go = None
+from zephyr.frontend.dashboard.components.chart_factory import (
+    ChartFactoryError,
+    make_orderbook,
+)
 
 
 @dataclass
@@ -67,22 +71,11 @@ class OrderBookData:
 
 
 def fetch_order_book(miniqmt_provider: Any, symbol: str) -> OrderBookData:
-    """从 D_DATA MiniQmtProvider 获取5档盘口
+    """从 D_DATA MiniQmtProvider 获取5档盘口（纯函数，无副作用）
 
     蓝图 §16.7.3:
       - 输入: MiniQmtProvider 实例（依赖注入），标的代码
       - 输出: OrderBookData（5档 ask/bid price/vol + 压力比）
-
-    MiniQmtProvider.get_order_book(symbol) 返回 dict:
-      {
-        "symbol": str,
-        "ask_price": list[Decimal],  # 5档卖价
-        "bid_price": list[Decimal],  # 5档买价
-        "ask_vol": list[Decimal],
-        "bid_vol": list[Decimal],
-        "last_price": Decimal,
-        "timestamp": datetime,
-      }
     """
     if miniqmt_provider is None:
         return OrderBookData(symbol=symbol)
@@ -95,7 +88,6 @@ def fetch_order_book(miniqmt_provider: Any, symbol: str) -> OrderBookData:
     if not raw:
         return OrderBookData(symbol=symbol)
 
-    # 内联转换（避免与 tick_replay.py 的 _to_float_list/_to_int_list 重复，FUNCTION-DUP gate）
     def _get_field(key: str) -> Any:
         return raw.get(key) if isinstance(raw, dict) else getattr(raw, key, [])
 
@@ -134,15 +126,15 @@ def fetch_order_book(miniqmt_provider: Any, symbol: str) -> OrderBookData:
 
 
 def render_order_book(data: OrderBookData) -> dict[str, Any]:
-    """Streamlit 渲染5档盘口
+    """Panel+HoloViz 渲染5档盘口（v3.0.0, #ARCH-047）
 
     布局:
-      - 左侧: 5档卖盘(红色, 价格降序 ask5→ask1)
-      - 中间: 最新价 + 压力比仪表盘
-      - 右侧: 5档买盘(绿色, 价格降序 bid1→bid5)
+      - 顶部: 标题+快照时间
+      - 中部: ChartFactory.make_orderbook(5档水平条形图)
+      - 底部: 压力比指示器
 
-    刷新: streamlit.fragment + 100ms rerun.
-    测试环境(无 streamlit/plotly)仅返回 dict.
+    callback仅编排: 图表生成委托 ChartFactory.make_orderbook.
+    测试环境(无 panel)仅返回 dict payload.
     """
     payload: dict[str, Any] = {
         "symbol": data.symbol,
@@ -155,60 +147,59 @@ def render_order_book(data: OrderBookData) -> dict[str, Any]:
         "ask_vol_total": data.ask_vol_total,
         "bid_vol_total": data.bid_vol_total,
         "pressure_ratio": round(data.pressure_ratio, 4),
+        "renderer": "panel" if pn is not None else "dict",
     }
 
-    if st is None:
+    if pn is None:
         return payload
 
-    st.subheader(f"5档盘口 — {data.symbol}")
+    layout_items: list[Any] = [
+        pn.pane.Markdown(f"## 5档盘口 — {data.symbol}"),
+    ]
     if data.timestamp:
-        st.caption(f"快照时间: {data.timestamp}")
+        layout_items.append(pn.pane.Markdown(f"*快照时间: {data.timestamp}*"))
 
     if not data.ask_price and not data.bid_price:
-        st.info("盘口数据为空")
+        layout_items.append(pn.pane.Alert("盘口数据为空", alert_type="info"))
+        layout = pn.Column(*layout_items, sizing_mode="stretch_width")
+        payload["_layout"] = layout
         return payload
 
-    # 中间：最新价 + 压力比
-    col_left, col_mid, col_right = st.columns([2, 1, 2])
+    # 中部：ChartFactory.make_orderbook 图表
+    try:
+        ob_fig = make_orderbook(
+            ask_price=data.ask_price,
+            bid_price=data.bid_price,
+            ask_vol=data.ask_vol,
+            bid_vol=data.bid_vol,
+            last_price=data.last_price,
+            pressure_ratio=data.pressure_ratio,
+            title=f"Order Book — {data.symbol}",
+        )
+        layout_items.append(ob_fig)
+    except ChartFactoryError:
+        pass
 
-    with col_left:
-        st.markdown("**卖盘 (ask, 红)** — 价格降序 ask5→ask1")
-        # ask5 → ask1（从高到低显示）
-        ask_rows = list(zip(data.ask_price, data.ask_vol))
-        for i, (p, v) in enumerate(reversed(ask_rows), 1):
-            # reversed 后从 ask5 显示到 ask1
-            level = len(ask_rows) - i + 1
-            st.markdown(
-                f"<div style='background:#ffe6e6;padding:4px 8px;border-radius:4px;'>"
-                f"<b>ask{level}</b>: {p:.3f} × {v}"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
+    # 底部：压力比指示器
+    if data.pressure_ratio > 1.5:
+        pressure_alert = pn.pane.Alert(
+            f"压力比 {data.pressure_ratio:.2f} > 1.5 — 买盘强势 🟢",
+            alert_type="success",
+        )
+    elif data.pressure_ratio < 0.67:
+        pressure_alert = pn.pane.Alert(
+            f"压力比 {data.pressure_ratio:.2f} < 0.67 — 卖盘强势 🔴",
+            alert_type="danger",
+        )
+    else:
+        pressure_alert = pn.pane.Alert(
+            f"压力比 {data.pressure_ratio:.2f} — 盘口均衡 ⚪",
+            alert_type="info",
+        )
+    layout_items.append(pressure_alert)
 
-    with col_mid:
-        st.metric("最新价", f"{data.last_price:.3f}")
-        st.metric("压力比 (bid/ask)", f"{data.pressure_ratio:.2f}")
-        if data.pressure_ratio > 1.5:
-            st.success("买盘强势 🟢")
-        elif data.pressure_ratio < 0.67:
-            st.error("卖盘强势 🔴")
-        else:
-            st.info("盘口均衡 ⚪")
-
-    with col_right:
-        st.markdown("**买盘 (bid, 绿)** — 价格降序 bid1→bid5")
-        bid_rows = list(zip(data.bid_price, data.bid_vol))
-        for i, (p, v) in enumerate(bid_rows, 1):
-            st.markdown(
-                f"<div style='background:#e6ffe6;padding:4px 8px;border-radius:4px;'>"
-                f"<b>bid{i}</b>: {p:.3f} × {v}"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-
-    # 100ms 刷新提示（需 app.py 配合 streamlit.fragment + st.rerun()）
-    st.caption("刷新策略: 100ms rerun (streamlit.fragment 优化)")
-
+    layout = pn.Column(*layout_items, sizing_mode="stretch_width")
+    payload["_layout"] = layout
     return payload
 
 

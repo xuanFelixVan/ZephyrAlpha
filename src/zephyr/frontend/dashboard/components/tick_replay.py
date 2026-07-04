@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.tick_replay
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] zephyr.backtest.core.tick_replay
+# [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory; zephyr.backtest.core.tick_replay
 # [CONSUMERS] zephyr.frontend.dashboard.app
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,18 +14,22 @@
 # [TESTS]
 # [A_module] module_id=MOD-L08-001-tick_replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""tick_replay · Tick 回放可视化组件（v2.2.0新增）
+"""tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.2
 数据源: D_BACKTEST tick_replay 引擎产出的 Tick 序列
-渲染依赖: plotly + streamlit
+渲染依赖: Panel(布局) + ChartFactory.make_tick(图表)
+
+v3.0.0 变更 (#ARCH-047):
+  - Streamlit → Panel (布局)
+  - plotly 直接调用 → ChartFactory.make_tick (callback仅编排)
+  - Datashader阈值触发(>50万点)由ChartFactory内置处理
 
 布局:
-  - 顶部: 控制栏(回放速度选择/上一页/下一页/跳转时间)
-  - 中部: Tick价格图+成交量(plotly, 支持zoom)
-  - 中下: 5档盘口快照(实时更新, ask红/bid绿)
+  - 顶部: 控制栏(回放速度选择/页码/总Tick)
+  - 中部: Tick价格图(ChartFactory.make_tick)+成交量
+  - 中下: 5档盘口快照(ask红/bid绿)
   - 底部: 做T场景标记(垂直线+标注)
-虚拟滚动: 仅渲染可见区域Tick, 避免万级Tick卡顿.
 """
 from __future__ import annotations
 
@@ -34,14 +38,14 @@ from enum import Enum
 from typing import Any, Optional
 
 try:
-    import streamlit as st
-except ImportError:
-    st = None
+    import panel as pn
+except ImportError:  # 测试环境无 panel
+    pn = None
 
-try:
-    import plotly.graph_objects as go
-except ImportError:
-    go = None
+from zephyr.frontend.dashboard.components.chart_factory import (
+    ChartFactoryError,
+    make_tick,
+)
 
 
 class ReplaySpeed(str, Enum):
@@ -66,10 +70,7 @@ class TickSnapshotView:
 
 @dataclass
 class TScenarioMark:
-    """做T场景标记（30秒冲高回落 / 5秒级快照）
-
-    用户做T策略：30秒冲高回落，需 Tick 级回测验证
-    """
+    """做T场景标记（30秒冲高回落 / 5秒级快照）"""
     timestamp: str = ""
     scenario_type: str = ""  # "30s_spike_drop" / "5s_spike"
     description: str = ""
@@ -101,7 +102,6 @@ def _to_int_list(values: Any) -> list[int]:
 
 def _normalize_tick(raw: Any) -> TickSnapshotView:
     """把异构 Tick 对象（dataclass / dict / DataFrame row）归一化为 TickSnapshotView"""
-    # 优先属性访问（dataclass）
     def _get(key: str, default: Any = 0) -> Any:
         if hasattr(raw, key):
             return getattr(raw, key)
@@ -130,16 +130,7 @@ def detect_t_scenarios(
     spike_drop_window: int = 30,
     spike_threshold_pct: float = 0.005,
 ) -> list[TScenarioMark]:
-    """自动识别做T场景（30秒冲高回落 / 5秒级尖峰）
-
-    Args:
-        ticks: Tick 序列（已归一化）
-        spike_drop_window: 冲高回落窗口（默认30秒，对应"30秒冲高回落"做T策略）
-        spike_threshold_pct: 价格波动阈值（0.5%）
-
-    Returns:
-        做T场景标记列表
-    """
+    """自动识别做T场景（30秒冲高回落 / 5秒级尖峰）"""
     if len(ticks) < 3:
         return []
 
@@ -150,7 +141,6 @@ def detect_t_scenarios(
 
     n = len(ticks)
     for i in range(1, n - 1):
-        # 滑动窗口找局部高点（窗口内最大值位置）
         window_start = max(0, i - spike_drop_window // 2)
         window_end = min(n, i + spike_drop_window // 2)
         window_prices = [ticks[j].last_price for j in range(window_start, window_end) if ticks[j].last_price > 0]
@@ -163,7 +153,6 @@ def detect_t_scenarios(
         if cur <= 0 or local_max <= 0:
             continue
 
-        # 30秒冲高回落：窗口内 max → min 跌幅 > threshold，且当前位置接近 max
         drop_pct = (local_max - local_min) / local_max
         if drop_pct >= spike_threshold_pct and cur >= local_max * 0.999:
             marks.append(TScenarioMark(
@@ -183,25 +172,13 @@ def fetch_tick_replay(
     replay_speed: ReplaySpeed = ReplaySpeed.MAX_SPEED,
     detect_t: bool = True,
 ) -> TickReplayData:
-    """从 D_BACKTEST tick_replay 引擎获取 Tick 数据
+    """从 D_BACKTEST tick_replay 引擎获取 Tick 数据（纯函数，无副作用）
 
     蓝图 §16.7.2:
       - 分页加载: 单页 1000 Tick，避免大数据卡顿
       - 做T场景识别: 自动标记 30秒冲高回落 / 5秒级快照
-
-    Args:
-        tick_data: Tick 序列（TickSnapshot / dict / DataFrame row 等异构对象）
-        symbol: 标的代码
-        page: 页码（1-based）
-        page_size: 单页 Tick 数（默认 1000）
-        replay_speed: 回放速度
-        detect_t: 是否自动识别做T场景
-
-    Returns:
-        TickReplayData
     """
     total = len(tick_data) if tick_data else 0
-    # 分页切片
     start_idx = max(0, (page - 1) * page_size)
     end_idx = min(total, start_idx + page_size)
     page_slice = list(tick_data[start_idx:end_idx]) if total > 0 else []
@@ -224,21 +201,24 @@ def fetch_tick_replay(
 
 
 def render_tick_replay(data: TickReplayData) -> dict[str, Any]:
-    """Streamlit 渲染 Tick 回放
+    """Panel+HoloViz 渲染 Tick 回放（v3.0.0, #ARCH-047）
 
     布局:
-      - 顶部: 控制栏(回放速度/上一页/下一页)
-      - 中部: Tick价格图+成交量
+      - 顶部: 控制栏(回放速度/页码/总Tick)
+      - 中部: Tick价格图(ChartFactory.make_tick)+成交量
       - 中下: 5档盘口快照(ask红/bid绿)
-      - 底部: 做T场景标记(垂直线+标注)
+      - 底部: 做T场景标记
 
-    虚拟滚动: 仅渲染可见区域 Tick.
-    测试环境(无 streamlit/plotly)仅返回 dict.
+    callback仅编排: 图表生成委托 ChartFactory.make_tick.
+    测试环境(无 panel)仅返回 dict payload.
     """
+    total_pages = max(1, (data.total_ticks + data.page_size - 1) // data.page_size)
+
     payload: dict[str, Any] = {
         "symbol": data.symbol,
         "page": data.page,
         "page_size": data.page_size,
+        "total_pages": total_pages,
         "total_ticks": data.total_ticks,
         "visible_ticks": len(data.ticks),
         "replay_speed": data.replay_speed.value,
@@ -247,77 +227,97 @@ def render_tick_replay(data: TickReplayData) -> dict[str, Any]:
             {"timestamp": m.timestamp, "type": m.scenario_type, "desc": m.description}
             for m in data.t_scenario_marks
         ],
+        "renderer": "panel" if pn is not None else "dict",
     }
 
-    if st is None or go is None:
+    if pn is None:
         return payload
 
-    # 顶部：控制栏
-    st.subheader(f"Tick 回放 — {data.symbol}")
-    cc1, cc2, cc3, cc4 = st.columns([1, 1, 1, 2])
-    speed = cc1.selectbox(
-        "回放速度",
-        [ReplaySpeed.MAX_SPEED.value, ReplaySpeed.FAST_FORWARD.value, ReplaySpeed.REAL_TIME.value],
-        index=0,
+    # ===== 顶部：控制栏 =====
+    speed_select = pn.widgets.Select(
+        name="回放速度",
+        options=[s.value for s in ReplaySpeed],
+        value=data.replay_speed.value,
+        width=150,
     )
-    total_pages = max(1, (data.total_ticks + data.page_size - 1) // data.page_size)
-    cc2.number_input("页码", min_value=1, max_value=total_pages, value=data.page)
-    cc3.markdown(f"**总Tick**: {data.total_ticks}  **当前页**: {data.page}/{total_pages}")
+    page_input = pn.widgets.IntInput(
+        name="页码",
+        start=1,
+        end=total_pages,
+        value=data.page,
+        width=100,
+    )
+    info_pane = pn.pane.Markdown(
+        f"**总Tick**: {data.total_ticks}  **当前页**: {data.page}/{total_pages}",
+        width=200,
+    )
+    control_row = pn.Row(speed_select, page_input, info_pane, sizing_mode="stretch_width")
 
-    # 中部：Tick价格图+成交量
+    layout_items: list[Any] = [
+        pn.pane.Markdown(f"## Tick 回放 — {data.symbol}"),
+        control_row,
+    ]
+
+    # ===== 中部：Tick价格图 + 成交量 =====
     if data.ticks:
         ts_x = [t.timestamp for t in data.ticks]
         prices = [t.last_price for t in data.ticks]
-        vols = [t.volume for t in data.ticks]
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=ts_x, y=prices, name="Last Price",
-            line=dict(color="#1f77b4", width=1.2),
-        ))
-        # 做T场景标记：垂直线
-        for mark in data.t_scenario_marks:
-            fig.add_vline(
-                x=mark.timestamp,
-                line_dash="dash", line_color="red",
-                annotation_text=mark.scenario_type,
-                annotation_position="top",
+        try:
+            tick_fig = make_tick(
+                tick_data=prices,
+                timestamps=ts_x,
+                title=f"Tick Price — {data.symbol}",
+                height=400,
             )
-        fig.update_layout(
-            height=400, template="plotly_white",
-            xaxis_rangeslider_visible=False,
-            margin=dict(l=40, r=20, t=30, b=30),
-        )
-        st.plotly_chart(fig, use_container_width=True)
+            layout_items.append(tick_fig)
+        except ChartFactoryError:
+            pass
 
-        # 成交量子图
-        fig_vol = go.Figure()
-        fig_vol.add_trace(go.Bar(x=ts_x, y=vols, name="Volume", marker_color="#9467bd"))
-        fig_vol.update_layout(height=160, template="plotly_white", margin=dict(l=40, r=20, t=10, b=30))
-        st.plotly_chart(fig_vol, use_container_width=True)
+        # 成交量简表（用 Markdown 表格替代 plotly.Bar，避免直接 plotly 调用）
+        vol_lines = []
+        for i, t in enumerate(data.ticks[:20]):  # 仅展示前20条避免过长
+            vol_lines.append(f"| {t.timestamp} | {t.volume} | {t.amount:.0f} |")
+        if vol_lines:
+            vol_md = (
+                "### 成交量(前20条)\n\n"
+                "| Timestamp | Volume | Amount |\n|---|---|---|\n"
+                + "\n".join(vol_lines)
+            )
+            layout_items.append(pn.pane.Markdown(vol_md))
 
-        # 中下：5档盘口快照（取最后一个 Tick）
+        # ===== 中下：5档盘口快照（取最后一个 Tick）=====
         last_tick = data.ticks[-1]
         if last_tick.ask_price and last_tick.bid_price:
-            st.markdown(f"**最新盘口快照** ({last_tick.timestamp}) — 最新价 `{last_tick.last_price:.3f}`")
-            ob1, ob2 = st.columns(2)
-            with ob1:
-                st.markdown("**卖盘 (ask, 红)**")
-                for i, (p, v) in enumerate(zip(last_tick.ask_price, last_tick.ask_vol), 1):
-                    st.write(f"ask{i}: {p:.3f} × {v}")
-            with ob2:
-                st.markdown("**买盘 (bid, 绿)**")
-                for i, (p, v) in enumerate(zip(last_tick.bid_price, last_tick.bid_vol), 1):
-                    st.write(f"bid{i}: {p:.3f} × {v}")
+            ask_md = "**卖盘 (ask, 红)**\n\n"
+            for i, (p, v) in enumerate(zip(last_tick.ask_price, last_tick.ask_vol), 1):
+                ask_md += f"- ask{i}: {p:.3f} × {v}\n"
+            bid_md = "**买盘 (bid, 绿)**\n\n"
+            for i, (p, v) in enumerate(zip(last_tick.bid_price, last_tick.bid_vol), 1):
+                bid_md += f"- bid{i}: {p:.3f} × {v}\n"
+            ob_row = pn.Row(
+                pn.pane.Markdown(ask_md, styles={"color": "#dc3545", "flex": "1"}),
+                pn.pane.Markdown(
+                    f"**最新价**\n\n## {last_tick.last_price:.3f}",
+                    styles={"text-align": "center", "flex": "1"},
+                ),
+                pn.pane.Markdown(bid_md, styles={"color": "#28a745", "flex": "1"}),
+                sizing_mode="stretch_width",
+            )
+            layout_items.append(pn.pane.Markdown(f"### 最新盘口快照 ({last_tick.timestamp})"))
+            layout_items.append(ob_row)
     else:
-        st.info("当前页无 Tick 数据")
+        layout_items.append(pn.pane.Alert("当前页无 Tick 数据", alert_type="info"))
 
-    # 底部：做T场景标记列表
+    # ===== 底部：做T场景标记 =====
     if data.t_scenario_marks:
-        st.subheader(f"做T场景标记 ({len(data.t_scenario_marks)})")
+        marks_md = f"### 做T场景标记 ({len(data.t_scenario_marks)})\n\n"
         for m in data.t_scenario_marks:
-            st.markdown(f"- `{m.timestamp}` **{m.scenario_type}** — {m.description}")
+            marks_md += f"- `{m.timestamp}` **{m.scenario_type}** — {m.description}\n"
+        layout_items.append(pn.pane.Markdown(marks_md))
 
+    layout = pn.Column(*layout_items, sizing_mode="stretch_width")
+    payload["_layout"] = layout
     return payload
 
 
