@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 telemetry（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-04 14:57:44
+> 最后更新: 2026-07-04 15:59:56
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 8 | Cross-domain Incoming | 8 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
@@ -53,12 +53,13 @@ graph TD
     end
     D_SHARED["D_SHARED production"]
     src_zephyr_shared_observability_tracing_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    D_GOVERNANCE -->|import_depends| src_zephyr_shared_observability_metrics_py
-    D_TRADING["D_TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
     D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
+    D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
+    D_TRADING["D_TRADING production"]
+    D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    D_GOVERNANCE -->|import_depends| src_zephyr_shared_observability_metrics_py
     D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
     D_TRADING -->|import_depends| src_zephyr_shared_observability_metrics_py
     D_AUDITTEST -.->|test_depends| src_zephyr_shared_observability_metrics_py
@@ -68,7 +69,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py production
-    class D_SHARED,D_GOVERNANCE,D_TRADING external_prod
+    class D_SHARED,D_TRADING,D_GOVERNANCE external_prod
     class D_AUDITTEST external_design
 ```
 
@@ -84,7 +85,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D_AUDITTEST | 3 | test_depends |
+| D_AUDITTEST | 4 | test_depends |
 | D_TRADING | 3 | import_depends |
 | D_GOVERNANCE | 1 | import_depends |
 

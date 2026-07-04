@@ -1,7 +1,7 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-04 14:57:46
+%% 生成时间: 2026-07-04 15:59:58
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 3, 依赖边数: 8
+%% 模块数: 3, 依赖边数: 9
 
 graph TD
 
@@ -15,7 +15,8 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUDITTEST -> D_OPS (3 条)
+    %% D_AUDITTEST -> D_OPS (4 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_metrics_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_shared_observability_tracing_py
@@ -32,5 +33,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 7 条
+    %% 跨域入边: 8 条
     %% 跨域出边: 1 条
