@@ -346,24 +346,28 @@ class AuditLogger:
     def _iter_all_events(self) -> Iterator[AuditEvent]:
         jsonl_files = sorted(self._log_dir.glob("*.jsonl"))
         for jf in jsonl_files:
+            # 5.82.1 修复: 先读取所有行再yield,避免生成器跨yield持有文件句柄。
+            # 原代码在 with open(jf) as fh: 块内 yield,消费者提前break时
+            # 文件句柄残留到GC触发,导致fd泄漏。
             with open(jf, encoding="utf-8") as fh:
-                for line in fh:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        data = json.loads(line)
-                        yield AuditEvent(
-                            timestamp=data["timestamp"],
-                            model=data["model"],
-                            action=data["action"],
-                            target=data["target"],
-                            result=data["result"],
-                            session_id=data["session_id"],
-                            extra=data.get("extra"),
-                        )
-                    except (json.JSONDecodeError, KeyError):
-                        continue
+                lines = fh.readlines()
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                    yield AuditEvent(
+                        timestamp=data["timestamp"],
+                        model=data["model"],
+                        action=data["action"],
+                        target=data["target"],
+                        result=data["result"],
+                        session_id=data["session_id"],
+                        extra=data.get("extra"),
+                    )
+                except (json.JSONDecodeError, KeyError):
+                    continue
 
     def count_events(self) -> int:
         count = 0
