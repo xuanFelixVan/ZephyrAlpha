@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Protocol, TypeVar
 
@@ -125,7 +126,8 @@ class MemoryCache:
         self._max_size = max_size
         self._default_ttl = default_ttl_seconds
         self._store: dict[str, _CacheEntry] = {}
-        self._access_order: list[str] = []
+        # 5.24.5 修复：list O(n) remove/pop(0) -> OrderedDict O(1) move_to_end/popitem
+        self._access_order: OrderedDict[str, None] = OrderedDict()
         self._stats = CacheStats(max_size=max_size)
 
     def _evict_expired(self) -> None:
@@ -133,20 +135,21 @@ class MemoryCache:
         expired_keys = [k for k, entry in self._store.items() if entry.expires_at <= now]
         for k in expired_keys:
             del self._store[k]
-            self._access_order.remove(k)
+            del self._access_order[k]  # O(1)
             self._stats.evictions += 1
 
     def _evict_lru(self) -> None:
         while len(self._store) >= self._max_size and self._access_order:
-            oldest = self._access_order.pop(0)
+            oldest, _ = self._access_order.popitem(last=False)  # O(1) LRU 驱逐
             if oldest in self._store:
                 del self._store[oldest]
                 self._stats.evictions += 1
 
     def _touch(self, key: str) -> None:
         if key in self._access_order:
-            self._access_order.remove(key)
-        self._access_order.append(key)
+            self._access_order.move_to_end(key)  # O(1)
+        else:
+            self._access_order[key] = None  # O(1)
 
     async def get(self, key: str) -> Any | None:
         self._evict_expired()
@@ -175,7 +178,7 @@ class MemoryCache:
         if key in self._store:
             del self._store[key]
             if key in self._access_order:
-                self._access_order.remove(key)
+                del self._access_order[key]  # O(1)
             self._stats.size = len(self._store)
             return True
         return False

@@ -19,12 +19,16 @@ AlertLevel: INFO < WARNING < ERROR < CRITICAL 四级严重度。
 from __future__ import annotations
 
 import enum
+import logging
 import time
 import uuid
+from collections import deque
 from pathlib import Path
 
 import yaml
 from zephyr.shared.io.paths import REPO_ROOT
+
+logger = logging.getLogger(__name__)
 
 
 class AlertLevel(enum.IntEnum):
@@ -37,10 +41,13 @@ class AlertLevel(enum.IntEnum):
 class AlertSubsystem:
     _CONFIG_PATH = REPO_ROOT / "config" / "alert_rules.yaml"
 
+    # 5.24.6 修复：list 无界增长 -> deque(maxlen=1000)，超限自动丢弃最旧告警
+    _MAX_PENDING_ALERTS = 1000
+
     def __init__(self, module_id: str = "", test_mode: bool = False):
         self._module_id = module_id
         self._test_mode = test_mode
-        self._pending_alerts: list[dict] = []
+        self._pending_alerts: deque[dict] = deque(maxlen=self._MAX_PENDING_ALERTS)
         self._rules: list[dict] = self._load_rules() if self._CONFIG_PATH.exists() else []
 
     def _load_rules(self) -> list[dict]:
@@ -60,6 +67,8 @@ class AlertSubsystem:
             "labels": labels or {},
             "fired": not self._test_mode,
         }
+        if len(self._pending_alerts) == self._MAX_PENDING_ALERTS:
+            logger.warning("pending_alerts full (maxlen=%d), dropping oldest", self._MAX_PENDING_ALERTS)
         self._pending_alerts.append(alert)
         return alert
 
@@ -92,13 +101,21 @@ class AlertSubsystem:
                             "fired": time.time(),
                         }
                     )
+        if len(self._pending_alerts) + len(triggered) > self._MAX_PENDING_ALERTS:
+            logger.warning(
+                "pending_alerts will overflow (current=%d, adding=%d, maxlen=%d), dropping oldest",
+                len(self._pending_alerts), len(triggered), self._MAX_PENDING_ALERTS,
+            )
         self._pending_alerts.extend(triggered)
         return triggered
 
     def ack(self, alert_id: str) -> bool:
-        before = len(self._pending_alerts)
-        self._pending_alerts = [a for a in self._pending_alerts if a.get("id") != alert_id]
-        return len(self._pending_alerts) < before
+        # 5.24.6 修复：deque 不支持列表推导重新赋值（会丢失 maxlen），改为遍历删除
+        for i, a in enumerate(self._pending_alerts):
+            if a.get("id") == alert_id:
+                del self._pending_alerts[i]
+                return True
+        return False
 
     @staticmethod
     def _check_condition(value: float, condition: str) -> bool:
