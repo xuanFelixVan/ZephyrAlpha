@@ -7239,6 +7239,8 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=12(Path.open()未用with需逐处改为context manager)
 
+> **第39轮修复状态（2026-07-05）**：FIXED=1(5.128.3 skill_locking.py:113 os.write异常路径fd泄漏,新增except BaseException分支在os.write失败时close fd), DRIFTED=11(5.128.1 3处+5.128.2 3处+5.128.3 rollback_lock.py 4处 全部已被5.169维度提前修复为with context manager/try-finally), 0 STILL_VALID。本维度全部清零。
+
 #### 5.128.1 [HIGH] Path.open()未用with致循环/glob遍历中句柄耗尽（3处）
 
 - **文件**：
