@@ -103,7 +103,7 @@ class OverfittingDetector:
         检查各fold的Sharpe一致性: 正Sharpe占比/变异系数/灾难fold。
 
         Args:
-            walk_forward_results: Walk-Forward各fold结果列表, 每项需含sharpe_ratio
+            walk_forward_results: Walk-Forward各fold结果列表, 每项需含 sharpe_ratio 或 sharpe
 
         Returns:
             dict: is_stable, mean_sharpe, std_sharpe, cv, positive_ratio,
@@ -174,8 +174,8 @@ class OverfittingDetector:
         相对变化 = |perturbed_sharpe - base_sharpe| / |base_sharpe|。
 
         Args:
-            base_result: 基准(原始参数)结果, 需含sharpe_ratio
-            perturbed_results: 参数微调后结果列表, 每项需含sharpe_ratio
+            base_result: 基准(原始参数)结果, 需含 sharpe_ratio 或 sharpe
+            perturbed_results: 参数微调后结果列表, 每项需含 sharpe_ratio 或 sharpe
 
         Returns:
             dict: is_stable, base_sharpe, max_change, mean_change, n_perturbed, reasons
@@ -235,7 +235,7 @@ class OverfittingDetector:
         跨时段/跨市场/跨标的Sharpe稳健性: 正Sharpe占比与变异系数。
 
         Args:
-            period_results: 各时段/市场/标的结果列表, 每项需含sharpe_ratio
+            period_results: 各时段/市场/标的结果列表, 每项需含 sharpe_ratio 或 sharpe
 
         Returns:
             dict: is_stable, mean_sharpe, std_sharpe, cv, positive_ratio, n_periods, reasons
