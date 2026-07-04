@@ -3106,6 +3106,12 @@ creation_tokens:
     created_by: "session-sess-26244-20260704153058"
     capability: "target_layer_validation"
 
+  # --- ARCH-047 ChartFactory 图表统一工厂（2026-07-04，session-sess-31524）---
+  - file: "src/zephyr/frontend/dashboard/components/chart_factory.py"
+    token: "auto-chart-factory-20260704"
+    created_by: "session-sess-31524-20260704235603"
+    capability: "dashboard_frontend"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
