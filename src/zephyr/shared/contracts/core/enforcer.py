@@ -401,7 +401,8 @@ def _check_field_type(
 
     if origin is Union or origin is types.UnionType:
         if len(args) == 2 and type(None) in args:
-            non_none = next(a for a in args if a is not type(None))
+            # 5.109.1 修复：next() 提供 default=None 防御 StopIteration（当前由上方守卫保护，但守卫若被重构将暴露缺陷）
+            non_none = next((a for a in args if a is not type(None)), None)
             if value is not None:
                 _check_field_type(field_name, value, non_none, violations)
 

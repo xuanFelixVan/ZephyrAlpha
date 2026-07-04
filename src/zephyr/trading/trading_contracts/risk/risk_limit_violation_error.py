@@ -18,18 +18,9 @@
 
 from __future__ import annotations
 class RiskLimitViolationError(Exception):
-    __slots__ = (
-        "actual_value",
-        "error_id",
-        "idempotency_key",
-        "limit_value",
-        "portfolio_id",
-        "recovery_hint",
-        "schema_version",
-        "trace_context",
-        "violated_constraint",
-        "violation_detail",
-    )
+    # 5.113.1 修复：删除 __slots__。Exception 基类未声明 __slots__，所有 Exception 子类
+    # 实例始终携带 __dict__，__slots__ 的内存优化完全失效，仅给人"已优化"的错觉。
+    # 同时解决 5.125.1 WeakRef 兼容性问题（无 __slots__ 则默认支持 __weakref__）。
 
     def __init__(
         self,

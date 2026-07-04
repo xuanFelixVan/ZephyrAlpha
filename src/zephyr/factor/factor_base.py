@@ -186,9 +186,10 @@ class FactorRegistry:
         """清空注册表（仅供测试使用）。"""
         cls._registry.clear()
 
-    @classmethod
-    def __len__(cls) -> int:
-        return len(cls._registry)
+    def __len__(self) -> int:
+        # 5.90.1 修复：@classmethod 装饰 __len__ 会导致 type(obj).__len__(obj) 调用时
+        # cls 绑定为类本身，传入的 obj 变成多余参数触发 TypeError。改为实例方法。
+        return len(self._registry)
 
 
 # ---------------------------------------------------------------------------
