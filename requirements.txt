@@ -15,3 +15,5 @@ pyarrow>=15.0.0,<20.0.0
 psycopg2-binary>=2.9.0,<3.0.0
 plotly>=6.0.0,<7.0.0
 streamlit>=1.50.0,<2.0.0
+# 5.30.4 修复：python-dotenv 被 __init__.py 引用但未声明（幽灵依赖）
+python-dotenv>=1.0.0,<2.0.0

@@ -2932,19 +2932,11 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **影响**：构建不可复现；安全审计扫描的是"当前解析结果"而非"声明基线"
 - **修复**：引入pip-compile或uv lock，提交requirements.lock
 
-#### 5.30.3 [HIGH] requirements.txt与pyproject.toml依赖声明分叉（3个依赖丢失）
-- **文件**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml#L13) vs [requirements.txt](file:///D:/ZephyrAlpha/requirements.txt#L1)
-- **证据**：pyproject.toml声明12项依赖；requirements.txt仅9项，**缺失duckdb、structlog、pyarrow**。三者均在src/中被实际import
-- **问题**：两个SSoT分叉。Dockerfile先装requirements.txt（缺3项）再pip install -e .（补齐）——顺序依赖掩盖了缺口
-- **影响**：单一安装源场景静默ImportError
-- **修复**：pyproject.toml为SSoT，requirements.txt由pip-compile自动生成
+#### 5.30.3 [✓ DRIFTED: 2026-07-04] requirements.txt与pyproject.toml依赖声明分叉（3个依赖丢失）
+- **状态**：[requirements.txt](file:///D:/ZephyrAlpha/requirements.txt#L1) L1 注释声明 "SSoT: pyproject.toml"，且已包含 duckdb/structlog/pyarrow（L12-14）。5.17.11 已修复统一 SSoT + 添加主版本上界，问题不存在。
 
-#### 5.30.4 [MEDIUM] python-dotenv被引用但未声明（幽灵依赖）
-- **文件**：[__init__.py](file:///D:/ZephyrAlpha/src/zephyr/__init__.py#L40)
-- **证据**：第40行`from dotenv import load_dotenv`包裹在try/except ImportError中；python-dotenv不在requirements.txt/pyproject.toml/requirements-dev.txt
-- **问题**：__init__.py的_load_dotenv()在包导入时执行，但因包未声明，永远走except分支的手工解析
-- **影响**：.env加载静默降级，复杂值解析不完整
-- **修复**：将python-dotenv>=1.0.0加入pyproject.toml dependencies
+#### 5.30.4 [✓ FIXED: 2026-07-04] python-dotenv被引用但未声明（幽灵依赖）
+- **修复**：[pyproject.toml](file:///D:/ZephyrAlpha/pyproject.toml#L28-L29) 和 [requirements.txt](file:///D:/ZephyrAlpha/requirements.txt#L18-L19) 已添加 `python-dotenv>=1.0.0,<2.0.0`。`__init__.py` 的 `_load_dotenv()` 不再走 except 分支的降级解析。
 
 #### 5.30.5 [MEDIUM] pip-audit仅在CI临时安装，未纳入dev依赖与本地hook
 - **文件**：[governance.yml](file:///D:/ZephyrAlpha/.github/workflows/governance.yml#L249)
@@ -2964,10 +2956,12 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 | 严重度 | 数量 | 编号 |
 |---|:---:|---|
-| CRITICAL/HIGH | 4 | 5.30.1/5.30.2/5.30.3/5.30.6 |
-| MEDIUM | 2 | 5.30.4/5.30.5 |
+| CRITICAL/HIGH | 3（保留） | 5.30.1（>=版本浮动）/5.30.2（无锁文件）/5.30.6（dev依赖注入生产镜像） |
+| MEDIUM | 1（保留） | 5.30.5（pip-audit 需纳入 dev 依赖+hook） |
 | LOW | 0 | |
-| **合计** | **6** | |
+| 已修复 | 1 | 5.30.4 |
+| DRIFTED | 1 | 5.30.3（5.17.11 已修复统一 SSoT） |
+| **合计** | **6**（含保留） | |
 
 ---
 
