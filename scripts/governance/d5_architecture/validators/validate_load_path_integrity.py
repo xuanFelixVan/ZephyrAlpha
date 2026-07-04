@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Module docstring — see module-level docstring for details."""
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ args:
 - --fix
 - --warn-only
 - --jsonl
-description: "parse AGENTS.md section 8.2 task menu, verify every referenced file exists on disk. Anchored to section 6.18"
+description: "parse AGENTS.md §8.2 task menu (SKIP until §8.2 authored), verify referenced files exist. Anchored to AI加载路径不可漂移铁律"
 dimensions:
 - D5
 priority: P0
@@ -48,12 +48,17 @@ warn_only: false
 """
 
 """
-Parses AGENTS.md section 8.2 task menu, extracts all file path
-references, and verifies each one exists on disk.
+Parses AGENTS.md §8.2 task menu (when authored), extracts all file
+path references, and verifies each one exists on disk.
 
-Authority: AGENTS.md section 6.18 -- section 8.2 task menu is the
-single entry point for AI to find rule files. Path references in
-section 8.2 must never drift from actual file locations.
+Authority: AI加载路径不可漂移铁律 (planned anchoring in AGENTS.md §6
+关键路径). §8.2 task menu is intended as the single entry point
+for AI to find rule files; path references there must never drift
+from actual file locations.
+
+Note: §8.2 is not yet authored -- when section 8.2 is absent the
+checker SKIPs (returns EXIT_PASS with no parseable paths). Once
+§8.2 is补建, this gate will enforce path integrity automatically.
 
 Usage:
     python validate_load_path_integrity.py --check

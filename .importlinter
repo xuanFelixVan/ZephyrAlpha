@@ -1,45 +1,52 @@
 [importlinter]
 root_package = zephyr
 
-[contracts]
-name = 基础设施层只能导入 infrastructure 和 shared
-type = forbidden
-source_modules =
-    zephyr.capacity_assurance
-    zephyr.capacity_assurance.modules
-forbidden_modules =
-    zephyr.market_data
-    zephyr.risk_engine
-    zephyr.order_execution
-    zephyr.ui
-    zephyr.analytics
-ignore_imports =
+# ZephyrAlpha import-linter 配置
+# 真源：src/zephyr/ 实际包结构（37 个顶层包）
+# 仅保留最核心约束：shared 层禁止 import 业务层（向下依赖原则，AGENTS.md §7 ZephyrBaseError 真源归一）
+# 分层契约的完整守护由 depgraph (PostgreSQL) 拓扑验证承担（apply_depgraph.py，AGENTS.md §11）
+# 未接入 pre-commit（warn-only 诊断用途）；如需强制请登记 GATE-IMPORT-LAYER capability
+# 治本（2026-07-05）：原配置引用 capacity_assurance/risk_engine/order_execution/ui/analytics/portfolio
+#   等不存在的包名，与实际包结构漂移，配置完全失效。现对齐实际包名，仅保留 shared 层约束。
 
 [contracts]
-name = 共享层不能导入业务模块
+name = 共享层不能导入业务模块（向下依赖原则）
 type = forbidden
 source_modules =
     zephyr.shared
 forbidden_modules =
+    zephyr.trading
+    zephyr.backtest
+    zephyr.frontend
     zephyr.market_data
-    zephyr.risk_engine
-    zephyr.order_execution
-    zephyr.portfolio
-    zephyr.capacity_assurance
-    zephyr.feedback_loop
+    zephyr.risk
+    zephyr.ex_core
+    zephyr.ex_sor
+    zephyr.pf_core
+    zephyr.pf_alloc
+    zephyr.position
+    zephyr.factor
+    zephyr.signal_ashare
+    zephyr.signal_fundamental
+    zephyr.signal_quality
+    zephyr.compliance
+    zephyr.reporting
+    zephyr.research
+    zephyr.ml_train
+    zephyr.ml_serve
+    zephyr.intelligence
+    zephyr.knowledge
+    zephyr.autonomy_core
+    zephyr.autonomy_perm
+    zephyr.security
+    zephyr.alt_data
+    zephyr.cross_asset
+    zephyr.digital_twin
+    zephyr.simulation
+    zephyr.execution_simulation
+    zephyr.sell_decision
+    zephyr.data_eng
+    zephyr.data_governance
+    zephyr.data_security
 ignore_imports =
     zephyr.shared.contract_bus
-
-[contracts]
-name = 模块只能导入同层或下层
-type = layers
-layers =
-    zephyr.shared
-    zephyr.capacity_assurance
-    zephyr.governance
-    zephyr.feedback_loop
-    zephyr.orchestrator
-    zephyr.market_data
-    zephyr.risk_engine
-ignore_imports =
-    zephyr.shared.contract_bus -> zephyr.capacity_assurance

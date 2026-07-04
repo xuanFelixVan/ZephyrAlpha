@@ -259,7 +259,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 ## 7. 代码规范
 
-- Python >=3.11, ruff lint, pydantic v2
+- Python >=3.12, ruff lint, pydantic v2
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
 - 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）

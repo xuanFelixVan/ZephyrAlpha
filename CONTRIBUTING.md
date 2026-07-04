@@ -4,7 +4,7 @@
 
 ## 代码与风格
 
-- Python **3.11+**（与 `pyproject.toml` 的 `requires-python` 一致）
+- Python **3.12+**（与 `pyproject.toml` 的 `requires-python` 一致）
 - 格式化/Lint：`ruff`（替代 `black` + `isort`）
 - 类型检查：`mypy`
 - 提交前运行 `pytest`
