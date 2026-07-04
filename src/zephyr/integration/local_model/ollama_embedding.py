@@ -31,6 +31,8 @@ OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入
 
 from __future__ import annotations
 
+from http import HTTPStatus
+
 import logging
 import os
 from typing import Any
@@ -123,7 +125,7 @@ class OllamaEmbedder:
             import requests
 
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
-            return resp.status_code == 200
+            return resp.status_code == HTTPStatus.OK
         except Exception:
             return False
 
