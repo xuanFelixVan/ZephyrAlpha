@@ -20,7 +20,7 @@ last_updated: '2026-07-05'
 # 2. 不回收：已分配编号永不回收，即使议题被废弃/superseded，编号仍保留
 # 3. superseded_by 链：议题被新议题取代时，旧议题 status=superseded + 填 superseded_by=新议题ID；新议题 entries 中 reference 旧议题
 # 4. status 四值：open(待施工) / decided(已裁定待施工) / deprecated(已废弃不施工) / superseded(已被新议题取代)
-# 5. 编号预留：#ARCH-001/003 永久保留为预留段（未使用）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
+# 5. 编号预留：#ARCH-001/003 永久保留为预留段（未立项任何议题，登记为 deprecated 条目以占位）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
 # 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
 
 unique_key:
@@ -39,7 +39,23 @@ entry_schema:
   last_updated: str          # 最后更新日期
 
 entries:
-# --- #ARCH-001/003: 永久预留段（未使用，不登记条目） ---
+# --- #ARCH-001/003: 永久预留段（登记为 deprecated 条目占位，未立项任何议题） ---
+- issue_id: '#ARCH-001'
+  title: 编号预留段（未使用）
+  severity: P3低
+  adjudication: '永久保留为预留段，未立项任何议题。登记为 deprecated 条目仅为满足铁律#6（引用必须登记）的元数据需求，不代表实际议题。'
+  fix_phase: 无需施工（永久预留）
+  status: deprecated
+  created: '2026-06-26'
+  last_updated: '2026-07-05'
+- issue_id: '#ARCH-003'
+  title: 编号预留段（未使用）
+  severity: P3低
+  adjudication: '永久保留为预留段，未立项任何议题。登记为 deprecated 条目仅为满足铁律#6（引用必须登记）的元数据需求，不代表实际议题。'
+  fix_phase: 无需施工（永久预留）
+  status: deprecated
+  created: '2026-06-26'
+  last_updated: '2026-07-05'
 # --- #ARCH-002/004/005/006/007: 回溯补录自 dependency_path_panorama.md 裁定#203（2026-07-05） ---
 - issue_id: '#ARCH-002'
   title: D_SIGLEGACY_ 前缀命名说明（保留命名）
