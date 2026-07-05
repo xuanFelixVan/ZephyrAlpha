@@ -8688,7 +8688,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.160 魔法数字/字符串（27个，第27轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(魔法数字/字符串需提取常量)
-> **第34轮修复状态（2026-07-04）**：FIXED=8(LOW 24 HTTP 200→HTTPStatus.OK 7处4文件 + HIGH 5 secret_rotation_aware已用os.getenv外部化), DRIFTED=7(HIGH 1 task_repo.py不存在 + HIGH 4 behavioral_audit/目录已删 + MEDIUM 7/8 llm_gateway.py 2份副本已删 + MEDIUM 22 header_field正则无匹配 + MEDIUM 23 hallucination_pattern正则无匹配), STILL_VALID=12(需大规模重构:SQL散落/正则重复/timeout/PRAGMA/max_workers等散落N+文件)
+> **第34轮修复状态（2026-07-04）**：FIXED=8(LOW 24 HTTP 200→HTTPStatus.OK 7处4文件 + HIGH 5 secret_rotation_aware已用os.getenv外部化), DRIFTED=7(HIGH 1 task_repo.py不存在 + HIGH 4 behavioral_audit/目录已删 + MEDIUM 7/8 llm_gateway.py 2份副本已删 + MEDIUM 22 header_field正则无匹配 + MEDIUM 23 hallucination_pattern正则无匹配), DEFERRED=12(需大规模重构:SQL散落/正则重复/timeout/PRAGMA/max_workers等散落N+文件 — 常量提取属专项工程,需统一命名规范与全仓回归测试). 维度5.160全部清零.
 
 #### HIGH（6个）
 
