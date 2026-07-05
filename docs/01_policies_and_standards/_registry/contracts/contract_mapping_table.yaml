@@ -7,15 +7,24 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-GOVERNANCE
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 created: "2026-05-12"
-last_updated: "2026-05-12"
+last_updated: "2026-07-05"
 description: "AS-CT-*/ME-CT-* 域契约 → CTR-* 层契约 映射表"
+# 变更历史:
+#   v1.0.0 (2026-05-12): 初版，含 alpha_signal_domain 聚合段
+#   v1.1.0 (2026-07-05): 拆分 alpha_signal_domain 为 factor_domain + signal_domain 两个独立段，
+#                        修复悬空路径 _alpha-signal-domain（该目录不存在，实际为 _domain_factor + _domain_signal）。
+#                        符合"域平级无父子"铁律——因子域和信号域是两个平级独立域。
 
 domain_contracts:
-  alpha_signal_domain:
-    domain_id: ALPHA-SIGNAL-DOMAIN-001
-    blueprint: docs/03_modules/_alpha-signal-domain/blueprint.md
+  # 因子域（D_FACTOR）——从数据算因子
+  # 蓝图: MOD-L02-001 | 路径: docs/03_modules/_domain_factor/blueprint.md
+  # 子模块编号: D-FACTOR-01~11+24（蓝图内部使用，不进blueprint_registry）
+  factor_domain:
+    domain_id: FACTOR-DOMAIN-001
+    blueprint: docs/03_modules/_domain_factor/blueprint.md
+    module_id: MOD-L02-001
     contracts:
       - domain_contract_id: AS-CT-DATA-001
         direction: "D_DATA→D_FACTOR"
@@ -26,8 +35,9 @@ domain_contracts:
 
       - domain_contract_id: AS-CT-FACTOR-001
         direction: "D_FACTOR→D_SIGNAL"
-        description: "因子数据帧（MultiIndex DataFrame: (timestamp, asset)×factor）"
+        description: "因子数据帧（MultiIndex DataFrame: (timestamp, asset)×factor）→信号域"
         layer_contracts:
+          - CTR-002
           - CTR-P1-015
         status: Draft
 
@@ -38,6 +48,14 @@ domain_contracts:
           - MOD-INF-005
         status: Draft
 
+  # 信号域（D_SIGNAL）——从因子生成信号
+  # 蓝图: MOD-L03-001 | 路径: docs/03_modules/_domain_signal/blueprint.md
+  # 子模块编号: D-SIGNAL-01~164（蓝图内部使用，不进blueprint_registry）
+  signal_domain:
+    domain_id: SIGNAL-DOMAIN-001
+    blueprint: docs/03_modules/_domain_signal/blueprint.md
+    module_id: MOD-L03-001
+    contracts:
       - domain_contract_id: AS-CT-SIGNAL-001
         direction: "D_SIGNAL→D_RISK"
         description: "信号数据帧→风控引擎"

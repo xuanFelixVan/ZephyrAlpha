@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L02-001
 submodule_path: src/zephyr/factor
-title: "Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点"
+title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "3.0.0"
+version: "4.0.0"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -17,13 +17,13 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/factor/"
-belongs_to: "MOD-ALPHA_SIGNAL_DOMAIN"
+belongs_to: ""
 parent_module: ""
 codification_level: L1
-codification_at: "2026-05-15"
-last_verified: "2026-05-15"
-last_updated: "2026-05-15"
-generation: 2
+codification_at: "2026-07-05"
+last_verified: "2026-07-05"
+last_updated: "2026-07-05"
+generation: 3
 rule_form: structural
 scope: module
 stability: evolving
@@ -34,6 +34,9 @@ references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l02_alpha_factor.yaml"
     section: ""
     why: "架构层YAML真源"
+  - path: "D:\\临时工作区\\依赖图\\03-D-FACTOR-因子域.md"
+    section: "§1-§3"
+    why: "因子域设计态子模块清单+域间接口（草稿区参考）"
 depends_on:
   - target: MOD-L00-001
     at: "§4"
@@ -41,31 +44,197 @@ depends_on:
   - target: MOD-INF-015
     at: "§10"
     why: "因子计算监控"
-  - target: MOD-ALPHA_SIGNAL_DOMAIN
+  - target: MOD-L03-001
     at: "§4,§3"
-    why: "因子→信号域集成"
+    why: "因子→信号域集成（CTR-002 FactorSignal）"
 priority: P0
 runtime_plane: hot
 tags:
   - alpha-factor
   - l02
   - c-track
-summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供D_SIGNAL消费。"
+  - factor-factory
+  - ocp-extension-point
+summary: "因子工厂蓝图——C-027管理角色（发现/审批/入池/退役）+ C-009执行角色（盘前全量+盘中增量计算）。FactorBase OCP扩展点+FactorRegistry注册表+DSL算子+十阶段生命周期+双存储架构。因子输出标准化供D_SIGNAL消费。"
+# ============================================================
+# 子模块清单（蓝图内部使用，不进入blueprint_registry）
+# 命名体系：D-FACTOR-XX（依赖图设计态子模块ID）
+# 蓝图module_id保持MOD-L02-001（域级单一ID，SSoT）
+# ============================================================
+submodules:
+  # ===== P0 核心骨架（FAC-CORE）=====
+  - id: D-FACTOR-01
+    name: Engine
+    description: "因子计算引擎（FactorBase ABC + DSL + 增量计算 + DAG调度）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "factor_base.py + engine/"
+  - id: D-FACTOR-02
+    name: Registry
+    description: "因子注册表（四维索引：名称/类别/状态/SLA + 因子元数据 + 版本树 + 血缘）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "factor_base.py FactorRegistry"
+  - id: D-FACTOR-03
+    name: Evaluation
+    description: "因子评估（IC/IR + 过拟合3维度 + 多重回归校验 + OOS正率）"
+    priority: P0
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/evaluation/"
+  - id: D-FACTOR-04
+    name: Pipeline
+    description: "因子管线（DAG调度 + 双模运行：盘前全量+盘中增量 + 背压）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "alpha_signal_pipeline.py"
+  # ===== P1 扩展能力 =====
+  - id: D-FACTOR-05
+    name: Factor Mining Agent
+    description: "AI因子挖掘（FactorMAD投票 + AST沙箱 + 进化式生成）"
+    priority: P1
+    construction_status: not_started
+    gates: [GATE-05-01, GATE-05-02, GATE-05-03]
+    corresponds_to: "services/mining/"
+  - id: D-FACTOR-06
+    name: Barra Risk Model
+    description: "风格因子(10大)+行业因子(28申万)+中性化"
+    priority: P1
+    construction_status: not_started
+    gates: [GATE-06-01, GATE-06-02, GATE-06-03]
+    corresponds_to: "services/barra/"
+  - id: D-FACTOR-07
+    name: Governance Engine
+    description: "因子治理引擎（准入门禁 + 运行时监控 + 废弃审批 + 漂移检测39类）"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/governance/"
+  - id: D-FACTOR-08
+    name: Decay Monitor
+    description: "IC衰减监控（CUSUM控制图 + IC-Based Replacement 末位淘汰）"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/decay/"
+  # ===== P2 分析能力 =====
+  - id: D-FACTOR-09
+    name: Correlation Analyzer
+    description: "因子相关性分析 + 语义去重"
+    priority: P2
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/correlation/"
+  - id: D-FACTOR-10
+    name: Turnover Analyzer
+    description: "换手率分析"
+    priority: P2
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/turnover/"
+  - id: D-FACTOR-11
+    name: Exposure Calculator
+    description: "因子暴露实时计算"
+    priority: P2
+    construction_status: not_started
+    gates: [GATE-11-01]
+    corresponds_to: "services/exposure/"
+  - id: D-FACTOR-24
+    name: Factor Risk Budget Allocator
+    description: "因子风险预算分配"
+    priority: P2
+    construction_status: not_started
+    gates: [GATE-24-01, GATE-24-02]
+    corresponds_to: "services/risk_budget/"
+# ============================================================
+# 因子池容量管理（ADR-FAC-006）
+# ============================================================
+factor_pool_capacity:
+  n_max: 64                    # 运行上限
+  design_capacity: 150         # 设计容量
+  active_pool_max: 60          # 活跃池上限 (n_max-4)
+  dormant_pool_max: 4          # 休眠池上限
+  core_factors_exempt: true    # 核心因子(Fama-French等)不参与末位淘汰
+# ============================================================
+# 因子生命周期十阶段状态机
+# ============================================================
+factor_lifecycle:
+  states:
+    - CREATED                  # 已创建（代码已写，未验证）
+    - VALIDATED                # 已验证（单元测试通过）
+    - REGISTERED               # 已注册（FactorRegistry登记）
+    - ONLINE                   # 在线（活跃池，参与计算）
+    - MONITORED                # 监控中（IC/IR持续追踪）
+    - DECAYING                 # 衰退中（IC低于阈值）
+    - DEPRECATED               # 已废弃（不再参与计算）
+    - DORMANT                  # 休眠（保留代码，不加载）
+    - RETIRED                  # 退役（代码标记deprecated）
+    - REACTIVATED              # 重激活（从DORMANT回到MONITORED）
+  admission_gate:
+    ic_threshold_price_volume: 0.03    # 量价因子IC入池阈值
+    ic_threshold_fundamental: 0.02     # 基本面因子IC入池阈值
+    ic_threshold_alternative: 0.025    # 另类因子IC入池阈值
+    icir_threshold: 0.5                # ICIR入池阈值
+    oos_positive_rate: 0.60            # OOS正率入池阈值
+# ============================================================
+# C-027管理角色 vs C-009执行角色 职责边界
+# ============================================================
+dual_role:
+  c027_management:
+    responsibility: "因子发现/解析/代码生成/IC回测/入池审批/退役"
+    output: "因子代码 + 因子池"
+    modules: [D-FACTOR-01, D-FACTOR-02, D-FACTOR-03, D-FACTOR-05, D-FACTOR-07]
+  c009_execution:
+    responsibility: "盘前全量计算/盘中增量修正/因子值输出"
+    output: "因子值 + 信号"
+    modules: [D-FACTOR-04]
+    downstream: "D-SIGNAL"
+  cycle_break: "C-009启动用默认因子列表快照，C-027异步注册新因子→时序分离无死锁"
+# ============================================================
+# 双存储架构（训练-服务一致性）
+# ============================================================
+dual_storage:
+  offline:
+    format: "Parquet + DuckDB"
+    pit_query: "AS OF JOIN"
+    latency: "~100ms"
+    usage: "训练/回测"
+  online:
+    format: "Redis Hash"
+    latency: "<5ms"
+    usage: "推理"
+  registry:
+    format: "SQLite"
+    content: "元数据 + 血缘 + 质量 + 版本"
+  consistency: "同一 Engine.compute() 驱动两种存储写入 → 消除15-25%偏差"
 ---
 
 > ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。
 > AI 可自主施工。
 
-> actual_disk_path: src/zephyr/factor/ (6 .py files)
+> actual_disk_path: src/zephyr/factor/ (14 .py files, 含6个占位子包__init__.py)
 
-# Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
+# Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 3.0.0 | status: active | domain: factor
-> actual_disk_path: src/zephyr/factor/ | generation: 2 | construction_progress: partially_implemented
+> module_id: MOD-L02-001 | version: 4.0.0 | status: active | domain: factor
+> actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
+> 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha Alpha因子计算引擎——它解决了因子计算逻辑分散、接口不统一的问题。核心职责包括：因子OCP扩展点(FactorBase)、因子注册表(FactorRegistry)、因子自动发现(autodiscover_factors)、具体因子实现(Momentum20d/ValueFactor)。当前规模 2 个因子，目标容量支持无限扩展。上游依赖 D_DATA Data Source 的 NormalizedMarketData，下游被 D_SIGNAL Signal Generation 和 D_RISK Risk Management 消费。
+本蓝图描述 ZephyrAlpha **因子工厂**——采用 C-027 管理角色（发现/审批/入池/退役）+ C-009 执行角色（盘前全量+盘中增量计算）双角色架构。核心职责包括：
+
+- **管理角色（C-027）**：FactorBase OCP扩展点 + FactorRegistry注册表（四维索引） + 因子评估（IC/IR） + AI因子挖掘 + 因子治理引擎（39类漂移检测）
+- **执行角色（C-009）**：因子管线（DAG调度 + 双模运行：盘前全量+盘中增量） + 因子值输出
+
+当前规模 2 个因子（Momentum20d + ValueFactor）+ 8 个占位子包，目标容量 N_max≈64（活跃池≤60 + 休眠池≤4）。上游依赖 D_DATA 的 CTR-001 NormalizedMarketData，下游被 D_SIGNAL（消费 CTR-002 FactorSignal）和 D_RISK（消费因子值）使用。
+
+**双角色循环依赖破解**：C-009 启动用默认因子列表快照，C-027 异步注册新因子 → 时序分离无死锁。
+
+**双存储架构**：离线 Parquet+DuckDB（PIT AS OF JOIN，~100ms，训练/回测）+ 在线 Redis Hash（<5ms，推理）+ SQLite 注册表（元数据+血缘+版本）。同一 Engine.compute() 驱动两种存储写入 → 消除 15-25% 偏差。
 
 ---
 
@@ -91,10 +260,20 @@ summary: "Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注
 |---|--------|------------|------|:---:|
 | 1 | factor_base.py | §3.1/§4.1 | FactorBase OCP扩展点+FactorMeta+FactorRegistry+autodiscover_factors | 已实现 |
 | 2 | base.py | §3.1 | 旧版FactorBase（已被factor_base.py取代） | 已实现(待废弃) |
-| 3 | factors/momentum_factor.py | §3.1 | Momentum20d动量因子实现 | 已实现 |
-| 4 | factors/value_factor.py | §3.1 | ValueFactor估值因子实现 | 已实现 |
-| 5 | __init__.py | — | 包入口，导出FactorBase/FactorMeta/FactorRegistry/autodiscover_factors | 已实现 |
-| 6 | factors/__init__.py | — | 因子包入口 | 已实现 |
+| 3 | momentum_factor.py | §3.1 | Momentum20d动量因子实现 | 已实现 |
+| 4 | value_factor.py | §3.1 | ValueFactor估值因子实现 | 已实现 |
+| 5 | alpha_signal_pipeline.py | §3.1/§16.3 | 因子管线（D-FACTOR-04 Pipeline骨架） | 已实现 |
+| 6 | bus_factor_defense.py | §3.1 | 防御性因子（业务扩展） | 已实现 |
+| 7 | __init__.py | — | 包入口，导出FactorBase/FactorMeta/FactorRegistry/autodiscover_factors | 已实现 |
+| 8 | engine/__init__.py | §3.1 | D-FACTOR-01 Engine子包入口（占位） | 占位 |
+| 9 | ctr_001_consumer/__init__.py | §3.1 | CTR-001消费者子包入口（占位） | 占位 |
+| 10 | _extensions/__init__.py | — | 扩展点子包入口（占位） | 占位 |
+| 11 | services/__init__.py | §3.1 | D-FACTOR-03/05/07/08/09/10/11/24 服务子包入口（占位） | 占位 |
+| 12 | infrastructure/__init__.py | — | 基础设施子包入口（占位） | 占位 |
+| 13 | core/__init__.py | — | 核心子包入口（占位） | 占位 |
+| 14 | api/__init__.py | — | API子包入口（占位） | 占位 |
+
+> **注**：factors/ 子目录在v3.0.0版本中规划但未实际创建，因子实现文件（momentum_factor.py/value_factor.py）已平铺在 src/zephyr/factor/ 根目录。后续如需重新组织可考虑迁移。
 
 ### §0.2 对齐验证矩阵
 
@@ -165,6 +344,50 @@ Alpha因子是量化投资的核心输入——因子质量直接决定信号质
 | 新增因子 | 研究员提出新因子 | 继承FactorBase→实现compute→@FactorRegistry.register→autodiscover自动加载 | 因子可计算 |
 | 因子计算 | D_DATA推送行情数据 | data传入compute()→向量化计算→返回pd.Series | CTR-002 FactorSignal |
 | 因子查询 | D_SIGNAL需要某域因子 | FactorRegistry.list_by_domain()→获取因子类→调用compute | 因子值列表 |
+| 因子入池 | 新因子IC通过阈值 | C-027提交→IC/IR评估→OOS正率校验→治理引擎审批→入活跃池 | 因子状态=ONLINE |
+| 因子退役 | IC持续低于阈值 | Decay Monitor触发CUSUM告警→治理引擎审批→DEPRECATED→DORMANT→RETIRED | 因子状态=RETIRED |
+| 盘前全量计算 | 09:00盘前 | C-009 Pipeline启动→加载活跃池→全量计算→写离线Parquet+在线Redis | 因子值双写 |
+| 盘中增量修正 | 09:30-15:00 | tick事件触发→incremental_compute()→增量更新Redis | 实时因子值 |
+
+### 1.8 子模块清单（D-FACTOR-XX 体系）
+
+> **命名体系说明**：子模块编号 D-FACTOR-XX 是**蓝图内部编号**，用于门禁挂载和契约落点，**不进入 blueprint_registry**。蓝图 module_id 保持 MOD-L02-001（域级单一ID，SSoT）。详见 frontmatter `submodules` 字段。
+
+#### 1.8.1 P0 核心骨架（FAC-CORE）
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 | 受限门禁 |
+|---------|------|------|:------:|:-------:|---------|
+| D-FACTOR-01 | Engine | 因子计算引擎（FactorBase ABC + DSL + 增量计算 + DAG调度） | P0 | partially_implemented | — |
+| D-FACTOR-02 | Registry | 因子注册表（四维索引：名称/类别/状态/SLA + 元数据 + 版本树 + 血缘） | P0 | partially_implemented | — |
+| D-FACTOR-03 | Evaluation | 因子评估（IC/IR + 过拟合3维度 + 多重回归校验 + OOS正率） | P0 | not_started | — |
+| D-FACTOR-04 | Pipeline | 因子管线（DAG调度 + 双模运行：盘前全量+盘中增量 + 背压） | P0 | partially_implemented | — |
+
+#### 1.8.2 P1 扩展能力
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 | 受限门禁 |
+|---------|------|------|:------:|:-------:|---------|
+| D-FACTOR-05 | Factor Mining Agent | AI因子挖掘（FactorMAD投票 + AST沙箱 + 进化式生成） | P1 | not_started | GATE-05-01~03 |
+| D-FACTOR-06 | Barra Risk Model | 风格因子(10大)+行业因子(28申万)+中性化 | P1 | not_started | GATE-06-01~03 |
+| D-FACTOR-07 | Governance Engine | 因子治理（准入门禁 + 运行时监控 + 废弃审批 + 漂移检测39类） | P1 | not_started | — |
+| D-FACTOR-08 | Decay Monitor | IC衰减监控（CUSUM控制图 + IC-Based Replacement 末位淘汰） | P1 | not_started | — |
+
+#### 1.8.3 P2 分析能力
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 | 受限门禁 |
+|---------|------|------|:------:|:-------:|---------|
+| D-FACTOR-09 | Correlation Analyzer | 因子相关性分析 + 语义去重 | P2 | not_started | — |
+| D-FACTOR-10 | Turnover Analyzer | 换手率分析 | P2 | not_started | — |
+| D-FACTOR-11 | Exposure Calculator | 因子暴露实时计算 | P2 | not_started | GATE-11-01（需D-FACTOR-06就绪） |
+| D-FACTOR-24 | Factor Risk Budget Allocator | 因子风险预算分配 | P2 | not_started | GATE-24-01（需06+11就绪）/ GATE-24-02（需D-RISK就绪） |
+
+#### 1.8.4 C-027 vs C-009 双角色职责边界
+
+| 维度 | C-027 因子工厂（管理角色） | C-009 生产线（执行角色） |
+|------|----------------------|---------------------|
+| 职责 | 因子发现/解析/代码生成/IC回测/入池审批/退役 | 盘前全量计算/盘中增量修正/因子值输出 |
+| 产出 | 因子代码 + 因子池 | 因子值 + 信号 |
+| 对应子模块 | D-FACTOR-01/02/03/05/07 | D-FACTOR-04 + 下游 D-SIGNAL |
+| 循环依赖破解 | C-009启动用默认因子列表快照，C-027异步注册新因子→时序分离无死锁 |
 
 ---
 
@@ -384,8 +607,11 @@ class FactorMeta(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
-| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
+| MOD-L03-001 Signal Generation | 必须 | 因子→信号域集成（CTR-002 FactorSignal） | v3.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_signal\blueprint.md` |
 | MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_machine_learning_train\blueprint.md` |
+| D-RISK Risk Management | 可选 | 因子值消费（风控指标） | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\blueprint.md` |
+
+> **注**：v3.0.0 中的 `MOD-ALPHA_SIGNAL_DOMAIN` 依赖已移除（域已拆分为 D_FACTOR + D_SIGNAL 两个平级独立域，详见 [contract_mapping_table.yaml v1.1.0](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/contract_mapping_table.yaml) 变更记录）。
 
 ### 10.2 依赖图对齐声明
 
@@ -616,6 +842,7 @@ class FactorMeta(BaseModel):
 | v0.1.0 | 1 | 占位 | partially_implemented | ❌ |
 | v2.1.0 | 2 | 模板升级 | §0前移+§7/§15删除+§10拆分 | ⚠️ |
 | v3.0.0 | 2 | 审查回填 | 代码-蓝图对齐+模板合规回填 | ⚠️ |
+| v4.0.0 | 3 | 工厂体系升级 | 子模块清单(D-FACTOR-01~11+24)+双角色架构(C-027/C-009)+十阶段生命周期+双存储+因子池容量+§0.1对齐14文件 | ⚠️ |
 
 ### 升级组件清单
 
@@ -698,8 +925,10 @@ class FactorMeta(BaseModel):
 |------|---------|---------|:-------:|
 | v0.1.0 | 占位蓝图(blocked) | — | 已完成 |
 | v2.1.0 | 模板升级+初步实现 | v0.1.0 | 已完成 |
-| v3.0.0 | 审查回填+代码-蓝图对齐 | v2.1.0 | 施工中 |
-| v3.1.0 | FactorCache+更多因子 | v3.0.0 | 待施工 |
+| v3.0.0 | 审查回填+代码-蓝图对齐 | v2.1.0 | 已完成 |
+| v4.0.0 | 工厂体系升级：子模块清单+双角色+生命周期+双存储+因子池容量 | v3.0.0 | 蓝图就绪，待施工 |
+| v4.1.0 | D-FACTOR-03 Evaluation + D-FACTOR-07 Governance 实现 | v4.0.0 | 待施工 |
+| v4.2.0 | D-FACTOR-05 Mining Agent + D-FACTOR-08 Decay Monitor 实现 | v4.1.0 | 待施工 |
 
 ---
 

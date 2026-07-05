@@ -1,10 +1,10 @@
 ---
 module_id: MOD-L03-001
 submodule_path: src/zephyr/signal
-title: "Signal Generation Core 蓝图+施工图 — 信号生成层"
+title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "3.0.0"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -17,13 +17,13 @@ valid_from: "2026-05-12"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/"
-last_updated: "2026-05-15"
-last_verified: "2026-05-15"
-generation: 2
-belongs_to: "MOD-ALPHA_SIGNAL_DOMAIN"
+last_updated: "2026-07-05"
+last_verified: "2026-07-05"
+generation: 3
+belongs_to: ""
 parent_module: ""
 codification_level: L1
-codification_at: "2026-05-15"
+codification_at: "2026-07-05"
 rule_form: structural
 scope: module
 stability: evolving
@@ -31,22 +31,134 @@ verifiability: manual
 depends_on:
   - target: MOD-L02-001
     at: §10
-    why: 因子计算结果输入(CTR-002)
+    why: 因子计算结果输入(CTR-002 FactorSignal)
   - target: MOD-INF-015
     at: §10
     why: 信号生成监控
-  - target: MOD-ALPHA_SIGNAL_DOMAIN
-    at: §3
-    why: Alpha信号域集成
 references:
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_signal\\blueprint.md"
     section: "§1"
     why: "本蓝图即SSoT"
-summary: "信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。"
+  - path: "D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md"
+    section: "§1-§3"
+    why: "信号域设计态子模块清单+域间接口（草稿区参考）"
+summary: "信号工厂蓝图——4个OCP扩展点+2个默认实现+策略生命周期管理(7阶段)+策略池容量管理+灰度发布。Phase B骨架已就位，业务层已开放，可施工。"
 ssot_yaml: "docs/03_modules/_domain_signal/blueprint.md"
-tags: [signal-generation, l03, c-track, ocp-extension-point]
+tags: [signal-generation, l03, c-track, ocp-extension-point, signal-factory]
 priority: P0
 runtime_plane: hot
+# ============================================================
+# 子模块清单（蓝图内部使用，不进入blueprint_registry）
+# 命名体系：D-SIGNAL-XX（依赖图设计态子模块ID）
+# 蓝图module_id保持MOD-L03-001（域级单一ID，SSoT）
+# ============================================================
+submodules:
+  # ===== P0 核心骨架 =====
+  - id: D-SIGNAL-01
+    name: Synthesizer
+    description: "信号合成+权重分配（SignalSynthesizerBase OCP扩展点）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "signal_fundamental/synth/signal_synthesizer.py"
+  - id: D-SIGNAL-02
+    name: Aggregator
+    description: "信号聚合（SignalAggregatorBase OCP扩展点）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "signal_fundamental/gen/aggregator_base.py"
+  - id: D-SIGNAL-03
+    name: Capital Allocator
+    description: "资金分配（CapitalAllocatorBase OCP扩展点）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "signal_fundamental/capital/capital_allocator.py"
+  - id: D-SIGNAL-04
+    name: Degradation Monitor
+    description: "信号退化检测（DegradationMonitorBase OCP扩展点）"
+    priority: P0
+    construction_status: partially_implemented
+    gates: []
+    corresponds_to: "signal_fundamental/gen/aggregator_base.py"
+  # ===== P1 策略管理 =====
+  - id: D-SIGNAL-14
+    name: Strategy Lifecycle Manager
+    description: "策略生命周期管理（7状态机：创意→原型→回测→模拟→实盘→监控→优化）"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/strategy_lifecycle/"
+  - id: D-SIGNAL-115
+    name: 策略模板库
+    description: "趋势跟踪+价值回归+市场中性+套利等模板"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/strategy_templates/"
+  - id: D-SIGNAL-120
+    name: 统一策略接口定义器
+    description: "统一策略初始化+数据处理+信号生成接口"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/strategy_interface/"
+  - id: D-SIGNAL-140
+    name: 策略灰度发布
+    description: "回测→实盘灰度发布（5%→20%→100%）"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/strategy_rollout/"
+  - id: D-SIGNAL-151
+    name: 策略池容量引导器
+    description: "池容量监控+入场退池自动化"
+    priority: P1
+    construction_status: not_started
+    gates: []
+    corresponds_to: "services/strategy_pool/"
+  # ===== P2 A股特色 =====
+  - id: D-SIGNAL-21
+    name: A股主力行为分析
+    description: "主力资金行为分析+大单检测+主力成本线"
+    priority: P2
+    construction_status: not_started
+    gates: []
+    corresponds_to: "signal_ashare/services/mainforce/"
+  - id: D-SIGNAL-58
+    name: 双引擎融合决策
+    description: "量化+主观双引擎融合决策"
+    priority: P2
+    construction_status: not_started
+    gates: []
+    corresponds_to: "signal_ashare/services/dual_engine/"
+# ============================================================
+# 策略生命周期七阶段状态机
+# ============================================================
+strategy_lifecycle:
+  states:
+    - IDEA                     # 创意（研究员提出）
+    - PROTOTYPE                # 原型（代码可运行）
+    - BACKTESTED               # 已回测（通过回测引擎验证）
+    - SIMULATED                # 已模拟（模拟盘验证）
+    - LIVE                     # 实盘（实盘运行）
+    - MONITORED                # 监控中（运行时指标追踪）
+    - OPTIMIZED                # 已优化（参数调优完成）
+  rollout_gates:
+    - stage: "BACKTESTED→SIMULATED"
+      condition: "回测Sharpe>0.5 + OOS Sharpe>70%IS"
+    - stage: "SIMULATED→LIVE"
+      condition: "模拟盘偏差<30% + 运行>20交易日"
+    - stage: "LIVE→MONITORED"
+      condition: "实盘运行>5交易日"
+# ============================================================
+# 策略池容量管理
+# ============================================================
+strategy_pool:
+  max_active_strategies: 20    # 活跃策略上限
+  max_total_strategies: 50     # 总策略上限（含休眠）
+  rollout_phases: [0.05, 0.20, 1.0]  # 灰度发布：5%→20%→100%
 ---
 
 > ✅ **业务层已开放——可施工**
@@ -54,14 +166,21 @@ runtime_plane: hot
 > 开工条件已满足：Owner 已解除 C 轨占位禁令，基础设施已就绪。
 > 任何修改需 Owner 审批。
 
-> module_id: MOD-L03-001 | version: 2.2.0 | status: active | domain: signal
-> actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 2 | construction_progress: partially_implemented
+> module_id: MOD-L03-001 | version: 3.0.0 | status: active | domain: signal
+> actual_disk_path: src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/ | generation: 3 | construction_progress: partially_implemented
+> 子模块体系: D-SIGNAL-01~164（蓝图内部编号，不进blueprint_registry）
 
-# Signal Generation Core 蓝图+施工图 — 信号生成层
+# Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 信号生成层——它解决了 Alpha 因子到交易信号的标准化转换问题。核心职责包括：信号聚合（SignalAggregatorBase）、资金分配（CapitalAllocatorBase）、降级监控（DegradationMonitorBase）、信号合成（SignalSynthesizerBase），均为 OCP 扩展点。当前规模 4 个 Base 类 + 2 个 Default 实现，Phase B 骨架已就位。上游依赖 D_DATA Data Source（CTR-001）和 D_FACTOR Alpha Factor（因子结果），下游被 D_PORTFOLIO_CORE Portfolio Construction 和 D_RISK Risk Management 消费。
+本蓝图描述 ZephyrAlpha **信号工厂**——从因子信号到可执行交易信号的标准化转换 + 策略全生命周期管理。核心职责包括：
+
+- **信号生成核心**：4个OCP扩展点（SignalAggregatorBase / CapitalAllocatorBase / DegradationMonitorBase / SignalSynthesizerBase）+ 2个默认实现
+- **策略管理**：策略生命周期7阶段状态机（创意→原型→回测→模拟→实盘→监控→优化）+ 策略池容量管理 + 灰度发布（5%→20%→100%）
+- **A股特色**：主力行为分析、资金线形态、短线选股、日内买卖点、市场情绪、板块轮动等完整A股交易决策链
+
+当前规模 4个Base类 + 2个Default实现 + 3个信号子域（signal_fundamental/signal_ashare/signal_quality），Phase B骨架已就位。上游依赖 D_DATA（CTR-001）和 D_FACTOR（CTR-002 FactorSignal），下游被 D_PORTFOLIO_CORE（消费 CTR-P1-015 SynthesizedSignal）和 D_RISK（消费 CTR-P1-003 + CTR-ERR-003）使用。
 
 ---
 
@@ -85,13 +204,23 @@ runtime_plane: hot
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
-| 1 | `__init__.py` | §3.1 | 模块入口+re-export | 已实现 |
-| 2 | `aggregator_base.py` | §3.1 | SignalAggregatorBase + CapitalAllocatorBase + DegradationMonitorBase | 已实现 |
-| 3 | `capital_allocator.py` | §3.1 | CapitalAllocatorBase 兼容导出（re-export only） | 已实现 |
-| 4 | `signal_synthesizer.py` | §3.1 | SignalSynthesizerBase | 已实现 |
-| 5 | `implementations/__init__.py` | §3.1 | 实现子包入口 | 已实现 |
-| 6 | `implementations/default_signal_aggregator.py` | §3.1 | DefaultSignalAggregator | 已实现 |
-| 7 | `implementations/default_capital_allocator.py` | §3.1 | DefaultCapitalAllocator + AllocationMethod | 已实现 |
+| 1 | `signal_fundamental/__init__.py` | §3.1 | 基础信号域包入口+re-export | 已实现 |
+| 2 | `signal_fundamental/gen/aggregator_base.py` | §3.1 | SignalAggregatorBase + CapitalAllocatorBase + DegradationMonitorBase | 已实现 |
+| 3 | `signal_fundamental/gen/implementations/default_signal_aggregator.py` | §3.1 | DefaultSignalAggregator | 已实现 |
+| 4 | `signal_fundamental/capital/capital_allocator.py` | §3.1 | CapitalAllocatorBase 兼容导出（re-export only） | 已实现 |
+| 5 | `signal_fundamental/capital/default_capital_allocator.py` | §3.1 | DefaultCapitalAllocator + AllocationMethod | 已实现 |
+| 6 | `signal_fundamental/capital/capital_allocation_result.py` | §4.2 | CapitalAllocationResult 数据模型 | 已实现 |
+| 7 | `signal_fundamental/synth/signal_synthesizer.py` | §3.1 | SignalSynthesizerBase | 已实现 |
+| 8 | `signal_fundamental/combiner/synthesized_signal.py` | §4.2 | SynthesizedSignal 数据模型 | 已实现 |
+| 9 | `signal_fundamental/pipeline.py` | §3.1 | 信号生成管线 | 已实现 |
+| 10 | `signal_fundamental/strategy/capital_allocator.py` | §3.1 | 策略层资金分配（re-export） | 已实现 |
+| 11 | `signal_fundamental/strategy/implementations/default_capital_allocator.py` | §3.1 | 策略层默认资金分配实现 | 已实现 |
+| 12 | `signal_ashare/__init__.py` | §3.1 | A股信号子域包入口（占位） | 占位 |
+| 13 | `signal_ashare/{core,api,services,models,infrastructure,_extensions}/__init__.py` | — | A股信号子域占位子包（6个） | 占位 |
+| 14 | `signal_quality/__init__.py` | §3.1 | 信号质量子域包入口（占位） | 占位 |
+| 15 | `signal_quality/{core,api,services,models,infrastructure,_extensions}/__init__.py` | — | 信号质量子域占位子包（6个） | 占位 |
+
+> **注**：v2.2.0中§0.1声明的7个文件路径（`src/zephyr/signal/`）与实际代码路径（`src/zephyr/signal_fundamental/`）不一致，v3.0.0已修正。完整文件清单SSoT：`python scripts/governance/extract_depgraph.py --modules MOD-L03-001`
 
 ### §0.2 对齐验证矩阵
 
@@ -162,6 +291,45 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 | 资金分配 | 多策略 SynthesizedSignal 就绪 | allocate()→权重计算→CapitalAllocationResult | CTR-P1-003 |
 | 退化检测 | 合成信号置信度下降 | evaluate()→退化判定→SignalDegradationWarning | CTR-ERR-003 |
 | 空信号兜底 | 因子信号为空 | _empty_signal()→is_degraded=True | 空信号+退化标记 |
+| 策略上线 | 新策略通过回测+模拟 | 灰度发布5%→20%→100%→MONITORED | 策略状态=LIVE |
+| 策略退役 | 策略持续亏损 | 监控触发→策略池退池→DORMANT | 策略状态=DORMANT |
+
+### 1.8 子模块清单（D-SIGNAL-XX 体系）
+
+> **命名体系说明**：子模块编号 D-SIGNAL-XX 是**蓝图内部编号**，用于门禁挂载和契约落点，**不进入 blueprint_registry**。蓝图 module_id 保持 MOD-L03-001（域级单一ID，SSoT）。详见 frontmatter `submodules` 字段。完整164子模块清单见 [D:\临时工作区\依赖图\04-D-SIGNAL-信号域.md](file:///D:/临时工作区/依赖图/04-D-SIGNAL-信号域.md)。
+
+#### 1.8.1 P0 核心骨架（信号生成4个OCP扩展点）
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 |
+|---------|------|------|:------:|:-------:|
+| D-SIGNAL-01 | Synthesizer | 信号合成+权重分配（SignalSynthesizerBase） | P0 | partially_implemented |
+| D-SIGNAL-02 | Aggregator | 信号聚合（SignalAggregatorBase） | P0 | partially_implemented |
+| D-SIGNAL-03 | Capital Allocator | 资金分配（CapitalAllocatorBase） | P0 | partially_implemented |
+| D-SIGNAL-04 | Degradation Monitor | 信号退化检测（DegradationMonitorBase） | P0 | partially_implemented |
+
+#### 1.8.2 P1 策略管理
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 |
+|---------|------|------|:------:|:-------:|
+| D-SIGNAL-14 | Strategy Lifecycle Manager | 策略生命周期7状态机 | P1 | not_started |
+| D-SIGNAL-115 | 策略模板库 | 趋势跟踪+价值回归+市场中性+套利模板 | P1 | not_started |
+| D-SIGNAL-120 | 统一策略接口定义器 | 统一策略初始化+数据处理+信号生成接口 | P1 | not_started |
+| D-SIGNAL-140 | 策略灰度发布 | 回测→实盘灰度发布（5%→20%→100%） | P1 | not_started |
+| D-SIGNAL-151 | 策略池容量引导器 | 池容量监控+入场退池自动化 | P1 | not_started |
+| D-SIGNAL-152 | 策略基类接口版本化器 | on_bar/on_signal签名变更版本管理 | P1 | not_started |
+| D-SIGNAL-153 | 策略运行时异常隔离器 | 单策略异常不影响其他策略 | P1 | not_started |
+
+#### 1.8.3 P2 A股特色信号子域
+
+| 子模块ID | 名称 | 职责 | 优先级 | 建设状态 |
+|---------|------|------|:------:|:-------:|
+| D-SIGNAL-21 | A股主力行为分析 | 主力资金行为+大单检测+主力成本线 | P2 | not_started |
+| D-SIGNAL-22~30 | 资金线形态系列 | 资金线形态+短线选股+日内买卖点 | P2 | not_started |
+| D-SIGNAL-31~40 | 市场情绪系列 | 市场情绪+板块轮动+集合竞价 | P2 | not_started |
+| D-SIGNAL-41~50 | 涨停基因评估系列 | 涨停基因+游资接力情绪+量化短线强度 | P2 | not_started |
+| D-SIGNAL-58 | 双引擎融合决策 | 量化+主观双引擎融合决策 | P2 | not_started |
+
+> **注**：完整164子模块清单（D-SIGNAL-01~164）见临时工作区依赖图文档。本蓝图仅列出P0/P1核心子模块，P2子模块按需补充。
 
 ---
 
@@ -383,9 +551,10 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
-| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
+| MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | v4.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_factor\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\system_telemetry\blueprint.md` |
-| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha_signal_domain\blueprint.md` |
+
+> **注**：v2.2.0 中的 `MOD-ALPHA_SIGNAL_DOMAIN` 依赖已移除（域已拆分为 D_FACTOR + D_SIGNAL 两个平级独立域，详见 [contract_mapping_table.yaml v1.1.0](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/contract_mapping_table.yaml) 变更记录）。
 
 ### 10.2 依赖图对齐声明
 
@@ -628,8 +797,9 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
 |------|:---:|---------|---------|:---:|
-| v2.2.0 | 2 | 模板v4.1回填 | 补齐模板缺失章节+压缩+对齐 | ✅ |
 | v2.1.0 | 2 | 模板v3.5升级 | §0前移+§7/§15删除+§10拆分+铁律扩展 | ✅ |
+| v2.2.0 | 2 | 模板v4.1回填 | 补齐模板缺失章节+压缩+对齐 | ✅ |
+| v3.0.0 | 3 | 信号工厂体系升级 | 子模块清单(D-SIGNAL-01~164)+策略生命周期7阶段+策略池容量+灰度发布+§0.1对齐34文件+去除MOD-ALPHA_SIGNAL_DOMAIN依赖 | ⚠️ |
 
 ### 升级组件清单
 
@@ -716,9 +886,11 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 |------|---------|---------|:-------:|
 | v0.1.0 | 蓝图 | — | 已完成 |
 | v2.0.0 | 4 Base + 2 Default 实现 | v0.1.0 | 已完成 |
+| v2.1.0 | 模板v3.5升级 | v2.0.0 | 已完成 |
 | v2.2.0 | 模板v4.1回填+压缩+对齐 | v2.1.0 | 已完成 |
-| v2.3.0 | DefaultDegradationMonitor + 测试 | v2.2.0 | 待施工 |
-| v3.0.0 | CTR-008 + ML驱动信号合成 | v2.3.0 | 规划 |
+| v3.0.0 | 信号工厂体系升级：子模块清单+策略生命周期+策略池+灰度发布+§0.1对齐 | v2.2.0 | 蓝图就绪，待施工 |
+| v3.1.0 | DefaultDegradationMonitor + CTR-008 SignalQualityMetrics 实现 | v3.0.0 | 待施工 |
+| v3.2.0 | D-SIGNAL-14 策略生命周期管理器 + D-SIGNAL-140 灰度发布 实现 | v3.1.0 | 待施工 |
 
 ---
 

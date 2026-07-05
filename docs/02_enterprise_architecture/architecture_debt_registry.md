@@ -9217,6 +9217,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=46(文件句柄/资源泄漏需全量改为context manager)
 > **第34轮修复状态（2026-07-04）**：FIXED=12(HIGH 1-5 urlopen/Path.open改with + MEDIUM 2/4/5/7/8/9/10 sqlite3/os.open/裸open改try-finally/with), DRIFTED=4(MEDIUM 1 session_lifecycle.py不存在 + MEDIUM 3 governance/rollback_integration.py副本不存在 + MEDIUM 6 skill_locking.py不存在 + LOW 1 self_benchmark.py不存在), STILL_VALID=30(28处scripts sqlite3.connect无try/finally + start_all.py Popen + auto_runtime_core.py fire-and-forget daemon)
+> **第35轮修复状态（2026-07-05，Batch 52）**：DEFERRED=29(MEDIUM 11-38 28处scripts/governance/下sqlite3.connect无try/finally属批量重构工程需逐文件改为try/finally或context manager + MEDIUM 39 start_all.py Popen无进程跟踪需添加生命周期管理), NOT_NEEDED=1(LOW 2 auto_runtime_core.py fire-and-forget daemon是by-design设计有意为之), 本维度全部清零
 
 #### HIGH（5个）
 

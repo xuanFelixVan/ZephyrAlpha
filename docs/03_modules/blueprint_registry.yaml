@@ -1,12 +1,12 @@
 registry:
   version: 2.7.0
   created: '2026-05-02'
-  last_updated: '2026-07-04'
+  last_updated: '2026-07-05'
   total_blueprints: 55
   scope: 03_modules/
   note: Auto-synced from 55 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-04'
+  generated_at: '2026-07-05'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -88,19 +88,18 @@ _schema:
 
     '
   module_id_format: '裁定#208 双轨制（R2 治本修订后，2026-07-05）——layer-master 轨 MOD-{LAYER_CODE}-{SEQ}
-    / domain-functional 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] / 跨域共享轨 SH-{ABBR}-{NNN}。
-    真源：trae_028 §gov_doc_003_naming_ssot L1044-1048 + validate_module_id_naming.py。
+    / domain-functional 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] / 跨域共享轨 SH-{ABBR}-{NNN}。 真源：trae_028
+    §gov_doc_003_naming_ssot L1044-1048 + validate_module_id_naming.py。
 
-    R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id
-    专用。本 registry 的 module_id 字段禁止使用 D-XXX-NNN 格式（GATE-11 N-06 阻断）。
+    R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用。本 registry
+    的 module_id 字段禁止使用 D-XXX-NNN 格式（GATE-11 N-06 阻断）。
 
     '
   submodule_id_format: 'R2 治本修订新增（2026-07-05）——submodule_id 格式 D-{DOMAIN}-NNN（如 D-FACTOR-01），
-    仅用于蓝图正文 §sections/§modules/§lifecycle 章节引用，不进入本 registry 的 module_id 字段，
-    不进入 depgraph.nodes.blueprint_id。真源：trae_028 §gov_doc_009_submodule_id_convention。
+    仅用于蓝图正文 §sections/§modules/§lifecycle 章节引用，不进入本 registry 的 module_id 字段， 不进入 depgraph.nodes.blueprint_id。真源：trae_028
+    §gov_doc_009_submodule_id_convention。
 
-    可选字段 submodules（list[str]）：声明本蓝图内部使用的 submodule_id 集合，供 AI 检索与
-    断链检测使用。无子模块的蓝图可不声明此字段。
+    可选字段 submodules（list[str]）：声明本蓝图内部使用的 submodule_id 集合，供 AI 检索与 断链检测使用。无子模块的蓝图可不声明此字段。
 
     '
 blueprints:
@@ -671,30 +670,30 @@ blueprints:
   construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: _domain_factor
-  title: Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点
-  summary: Alpha因子计算引擎——FactorBase OCP扩展点+FactorRegistry注册表+动量/价值因子实现。因子输出标准化供D_SIGNAL消费。
+  title: Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
+  summary: 因子工厂蓝图——C-027管理角色（发现/审批/入池/退役）+ C-009执行角色（盘前全量+盘中增量计算）。FactorBase OCP扩展点+FactorRegistry注册表+DSL算子+十阶段生命周期+双存储架构。因子输出标准化供D_SIGNAL消费。
   layer: L2_domain
   functional_domain: intelligence
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 3.0.0
-  generation: 2
-  last_updated: '2026-05-15'
+  version: 4.0.0
+  generation: 3
+  last_updated: '2026-07-05'
   file_path: 03_modules/_domain_factor/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L03-001
   name: _domain_signal
-  title: Signal Generation Core 蓝图+施工图 — 信号生成层
-  summary: 信号生成层。4个OCP扩展点+2个默认实现。Phase B骨架已就位，业务层已开放，可施工。
+  title: Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理
+  summary: 信号工厂蓝图——4个OCP扩展点+2个默认实现+策略生命周期管理(7阶段)+策略池容量管理+灰度发布。Phase B骨架已就位，业务层已开放，可施工。
   layer: L2_domain
   functional_domain: research
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.0
-  generation: 2
-  last_updated: '2026-05-15'
+  version: 3.0.0
+  generation: 3
+  last_updated: '2026-07-05'
   file_path: 03_modules/_domain_signal/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L04-001
@@ -739,7 +738,7 @@ blueprints:
   priority: P0
   version: 2.2.0
   generation: 2
-  last_updated: '2026-07-04'
+  last_updated: '2026-07-05'
   file_path: 03_modules/_domain_execution_core/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L07-001
@@ -760,19 +759,20 @@ blueprints:
 - module_id: MOD-L08-001
   name: _domain_frontend
   title: Human Machine Interface Core 蓝图 — 人机交互层
-  summary: 业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。Panel
-    Dashboard 5页面已实现(v2.1.0, v3.0.0从Streamlit迁移)；v3.0.0技术栈切换为Panel+HoloViz(HoloViews+Datashader+hvPlot+Bokeh)+Plotly+plotly_resampler+TradingView
-    Lightweight Charts v5.2(#ARCH-047第一性原理重构)。5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)对接D_BACKTEST
-    io/(backtest_result_sink+result_repository)/D_EX_CORE/D_DATA,支持joinquant/Qbot风格仪表盘+实盘交易面板。G0.5
-    Python原生可视化过渡层已激活(frontend_architecture.md)。
+  summary: '业务层已开放，可施工。人机交互层。DashboardBase+NotificationManagerBase+ApprovalGatewayBase为OCP扩展点。v3.0.0(#ARCH-047)技术栈切换:
+    Streamlit→Panel+HoloViz+Plotly+plotly_resampler+Lightweight Charts; ChartFactory图表统一工厂(callback仅编排);
+    5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz。v3.1.0(#ARCH-047):
+    5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel;
+    新建app_panel.py主应用入口(pn.Tabs组装10个Tab); ChartFactory新增make_gate_chart/make_trend_line;
+    仪表盘可运行(panel serve --show)。'
   layer: L3_application
   functional_domain: interface
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.0.0
+  version: 3.1.0
   generation: 2
-  last_updated: '2026-07-04'
+  last_updated: '2026-07-05'
   file_path: 03_modules/_domain_frontend/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-L09-001
@@ -909,7 +909,7 @@ blueprints:
   priority: P1
   version: 4.3.1
   generation: 3
-  last_updated: '2026-07-05'
+  last_updated: '2026-07-01'
   file_path: 03_modules/_cross_layer/database/blueprint.md
   construction_progress: completed
 - module_id: SYS-MASTER-001
@@ -943,7 +943,7 @@ summary:
     mostly_implemented: 1
     scaffold: 2
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
-  last_recomputed: '2026-07-04'
+  last_recomputed: '2026-07-05'
 changelog:
 - version: 2.7.7
   date: '2026-07-04'
