@@ -130,7 +130,7 @@ references:
 | v1.0.0 (基线) | BrokerInterface, ExecutionEngine, OrderManager, SimulationBroker | RiskValidator ABC 注入, ExecutionReport 产出, 真实券商适配器 | 待实现 |
 | v2.0.0 (模板v3.3重构) | 同 v1.0.0 + 章节结构重组 | 同 v1.0.0 | 结构重组，无功能变更 |
 | v2.1.0 (模板v4.1回填) | 同 v2.0.0 | 同 v1.0.0 | 模板合规回填，无功能变更 |
-| v2.2.0 (MiniQMT Broker规划) | 同 v2.1.0 | 同 v1.0.0 + adapters/miniqmt_broker.py(待施工) | 规划MiniQMT实盘Broker规格, 与D_BACKTEST/D_DATA协同, 待施工 |
+| v2.2.0 (MiniQMT Broker规划) | 同 v2.1.0 | 同 v1.0.0 + adapters/miniqmt_broker.py(P0已修) | MiniQMT实盘Broker规格, 与D_BACKTEST/D_DATA协同, P0已修(P1余项见审计清单) |
 
 ---
 
@@ -928,7 +928,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
 | GAP-L06-001 | 单线程订单处理 | 多线程 + 锁 + ThreadPoolExecutor | P1 | 并发订单 > 10 | v2.1.0 | 待施工 |
-| GAP-L06-002 | 仅 SimulationBroker | 新增MiniQMT/富途/IB 适配器 | P1 | 需要实盘交易 | v2.2.0 | **MiniQMT规格已就绪(§16.7.1), 待施工** |
+| GAP-L06-002 | 仅 SimulationBroker | 新增MiniQMT/富途/IB 适配器 | P1 | 需要实盘交易 | v2.2.0 | **MiniQMT已施工(P0已修), 富途/IB待施工** |
 | GAP-L06-003 | 无 ExecutionReport | 新增 CTR-P1-007 产出 | P0 | D_REPORTING 需要执行报告 | v2.0.1 | 待施工 |
 | **GAP-L06-004** (v2.2.0) | 回测≠实盘(撮合逻辑各实现一套) | 抽取MatchingLogic共享模块 | P0 | 回测-实盘偏差>30% | v2.2.0 | 已施工(submit_order内置pre_trade_simulate, MatchingLogic共享) |
 | **GAP-L06-005** (v2.2.0) | 无A股T+1/涨跌停校验 | MiniQmtBroker内置校验 | P0 | 实盘接入 | v2.2.0 | 已施工(T+1查持仓available_quantity, 涨跌停基于prev_close) |
