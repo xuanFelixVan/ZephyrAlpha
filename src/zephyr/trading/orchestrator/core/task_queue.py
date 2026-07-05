@@ -168,16 +168,16 @@ class ActiveTaskQueue:
         return dispatched
 
 
-_queue: TaskQueue | None = None
+_queue: ActiveTaskQueue | None = None
 
 
 def get_queue(
     repo: TaskRepository,
     orchestrator: PipelineDispatcher | None = None,
-) -> TaskQueue:
+) -> ActiveTaskQueue:
     global _queue
     if _queue is None:
-        _queue = TaskQueue(repo, orchestrator)
+        _queue = ActiveTaskQueue(repo, orchestrator)
     return _queue
 
 
@@ -206,5 +206,6 @@ class QueueItemStatus:
     CANCELLED = "CANCELLED"
 
 
-# 向后兼容别名（P9 重命名：TaskQueue → ActiveTaskQueue，保留别名供旧 import 兼容）
-TaskQueue = ActiveTaskQueue
+# TaskQueue 别名已移除（Q9 修复 2026-07-05）：core 不应提供兼容别名，
+# compat shim 在 orchestrator/task_queue.py 提供 TaskQueue = ActiveTaskQueue。
+# 旧 import 应走 compat shim 或直接使用 ActiveTaskQueue。

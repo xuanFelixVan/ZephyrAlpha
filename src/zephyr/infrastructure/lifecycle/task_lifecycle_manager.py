@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-114 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.lifecycle.task_lifecycle_manager
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.task_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

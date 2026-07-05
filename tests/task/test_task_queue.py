@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.trading.orchestrator.core.task_queue import (
+from zephyr.infrastructure.queue.task_queue import (
     QueueConfig,
     QueueItem,
     QueueItemStatus,
