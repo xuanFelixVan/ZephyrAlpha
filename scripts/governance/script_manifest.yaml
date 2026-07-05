@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-05T08:10:01Z
+# 自动生成于 2026-07-05T11:29:41Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-05T08:10:01Z'
+generated_at: '2026-07-05T11:29:41Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 323
@@ -1102,7 +1102,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: module_id / domain_id 格式校验真源（裁定#208 三轨制）
+  description: module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本修订）
   tags:
   - Quick
 - name: d3_metadata/validate_registry_master_index.py

@@ -7,15 +7,23 @@
 # [TESTS] —
 # [TTL] task_bound
 """
-GATE-11 module_id 双轨制单测（裁定#208 R1/R4）
+GATE-11 module_id 双轨制单测（裁定#208 R1/R4 + R2 治本修订）
 ================================================
 
-权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml`（版本号动态读取并拼入消息；双轨制生效性由关键词实质性校验，不硬编码版本下界）
-（L1037-1040 模块ID格式 condition — layer-master 轨 + domain-functional 派生轨 scoped 适用）
+权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml`
+（L1044-1048 模块ID格式 condition — layer-master 轨 + domain-functional 派生轨，R2 治本修订后）
+
+R2 治本修订（2026-07-05）：
+  - 废除 D-XXX-NNN 作为 module_id 派生轨的合法地位
+  - D-XXX-NNN 重定义为 submodule_id 专用（见 trae_028 gov_doc_009）
+  - module_id 仅保留双轨：layer-master 轨 + domain-functional 派生轨（均为 MOD- 前缀）
+  - validate_module_id_naming.py 新增 SUBMODULE_ID_RE + is_valid_submodule_id 函数
 
 测试组：
-- TestDualTrackRegexes：双轨正则常量逐值校验（layer-master / domain-derived / D-prefix）
+- TestDualTrackRegexes：双轨正则常量逐值校验（layer-master / domain-derived / shared）
+- TestSubmoduleIdRegexes：submodule_id 正则常量逐值校验（R2 治本修订新增）
 - TestN06DualTrackFormat：_check_n06_dual_track_format helper 端到端校验
+- TestIsValidModuleId：is_valid_module_id 函数直接校验（R2 治本修订后 D- 前缀触发 fail）
 - TestValidateSsotLinkage：_validate_ssot_linkage SSoT 机械联动校验
 """
 
@@ -25,15 +33,17 @@ import re
 import sys
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(_ROOT / "scripts" / "governance" / "d3_metadata"))
 
 from check_naming_convention import (  # noqa: E402
-    _MODULE_ID_D_PREFIX_RE,
     _MODULE_ID_DOMAIN_DERIVED_RE,
     _MODULE_ID_LAYER_MASTER_RE,
+    _MODULE_ID_SHARED_RE,
+    _SUBMODULE_ID_RE,
     _check_n06_dual_track_format,
     _validate_ssot_linkage,
+    _is_valid_module_id,
 )
 
 
@@ -47,7 +57,7 @@ def _rules(violations: list) -> set[str]:
 
 
 class TestDualTrackRegexes:
-    """裁定#208 R1/R4：双轨正则 MOD-{LAYER}-{SEQ} + MOD-{DOMAIN_FRAGMENT}[-NNN] + D-XXX-{SEQ}。"""
+    """裁定#208 R1/R4 + R2 治本修订：双轨正则 MOD-{LAYER}-{SEQ} + MOD-{DOMAIN_FRAGMENT}[-NNN] + SH-{ABBR}-{NNN}。"""
 
     # layer-master 轨 pass（序号必填）
     def test_layer_master_pass_mod_l00_001(self):
@@ -76,12 +86,48 @@ class TestDualTrackRegexes:
     def test_domain_derived_pass_single_word_data(self):
         assert _MODULE_ID_DOMAIN_DERIVED_RE.match("MOD-DATA")
 
-    # D-前缀派生轨 pass（序号必填）
-    def test_d_prefix_pass_mkt_data_001(self):
-        assert _MODULE_ID_D_PREFIX_RE.match("D-MKT_DATA-001")
+    # shared 轨 pass（序号必填）
+    def test_shared_pass_sh_db_001(self):
+        assert _MODULE_ID_SHARED_RE.match("SH-DB-001")
 
-    def test_d_prefix_fail_no_seq(self):
-        assert _MODULE_ID_D_PREFIX_RE.match("D_MKT_DATA") is None
+    def test_shared_fail_no_seq_sh_db(self):
+        assert _MODULE_ID_SHARED_RE.match("SH-DB") is None
+
+
+# ---------------------------------------------------------------------------
+# TestSubmoduleIdRegexes：submodule_id 正则常量逐值校验（R2 治本修订新增）
+# ---------------------------------------------------------------------------
+
+
+class TestSubmoduleIdRegexes:
+    """R2 治本修订（2026-07-05）：submodule_id 正则 D-{DOMAIN}-NNN。
+
+    D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用。
+    真源：trae_028 gov_doc_009_submodule_id_convention
+          validate_module_id_naming.py::SUBMODULE_ID_RE
+    """
+
+    # submodule_id pass
+    def test_submodule_pass_d_factor_01(self):
+        assert _SUBMODULE_ID_RE.match("D-FACTOR-01")
+
+    def test_submodule_pass_d_signal_12(self):
+        assert _SUBMODULE_ID_RE.match("D-SIGNAL-12")
+
+    def test_submodule_pass_d_mkt_data_03(self):
+        assert _SUBMODULE_ID_RE.match("D-MKT_DATA-03")
+
+    # submodule_id fail（无序号）
+    def test_submodule_fail_no_seq_d_factor(self):
+        assert _SUBMODULE_ID_RE.match("D-FACTOR") is None
+
+    # submodule_id fail（下划线格式——这是 domain_id 格式，不是 submodule_id）
+    def test_submodule_fail_underscore_format(self):
+        assert _SUBMODULE_ID_RE.match("D_FACTOR_01") is None
+
+    # submodule_id fail（小写）
+    def test_submodule_fail_lowercase(self):
+        assert _SUBMODULE_ID_RE.match("d-factor-01") is None
 
 
 # ---------------------------------------------------------------------------
@@ -90,7 +136,10 @@ class TestDualTrackRegexes:
 
 
 class TestN06DualTrackFormat:
-    """裁定#208 R4：scope 前缀通过后，校验 MOD-*/D-* module_id 双轨格式。"""
+    """裁定#208 R4 + R2 治本修订：scope 前缀通过后，校验 MOD-*/SH-* module_id 双轨格式。
+
+    R2 治本修订后：D-XXX-NNN 不再是合法 module_id，触发 ERROR。
+    """
 
     def test_underscore_mod_prefix_violation(self):
         """MOD_XX_001 — MOD 前缀后必须用连字符，禁止下划线。"""
@@ -120,10 +169,22 @@ class TestN06DualTrackFormat:
         vs = _check_n06_dual_track_format("fake.yaml", content)
         assert vs == []
 
-    def test_d_prefix_pass(self):
+    def test_d_prefix_now_violates_module_id(self):
+        """R2 治本修订（2026-07-05）：D-MKT_DATA-001 不再是合法 module_id，触发 ERROR。
+
+        D-XXX-NNN 重定义为 submodule_id 专用，禁止作为 module_id 使用。
+        应改用 MOD-{DOMAIN_FRAGMENT}[-NNN] 派生轨（如 MOD-MKT_DATA[-NNN]）。
+        """
         content = "module_id: D-MKT_DATA-001\n"
         vs = _check_n06_dual_track_format("fake.yaml", content)
-        assert vs == []
+        assert "N-06" in _rules(vs)
+        assert any("D-前缀已废弃" in v.message for v in vs)
+
+    def test_d_prefix_simple_now_violates_module_id(self):
+        """R2 治本修订：D-GOVERNANCE-001 不再是合法 module_id，触发 ERROR。"""
+        content = "module_id: D-GOVERNANCE-001\n"
+        vs = _check_n06_dual_track_format("fake.yaml", content)
+        assert "N-06" in _rules(vs)
 
     def test_pure_number_violation(self):
         """MOD-001 — 既非 layer-master（层码需字母开头）也非派生轨（需域片段）。"""
@@ -138,19 +199,34 @@ class TestN06DualTrackFormat:
         vs = _check_n06_dual_track_format("fake.yaml", content)
         assert vs == []
 
+    def test_shared_prefix_pass(self):
+        """SH-DB-001 — 跨域共享模块 SH-{ABBR}-{NNN} pass。"""
+        content = "module_id: SH-DB-001\n"
+        vs = _check_n06_dual_track_format("fake.yaml", content)
+        assert vs == []
+
     def test_multiple_mixed_values(self):
-        """多 module_id 同文件：违规与合规共存，仅违规被报。"""
+        """多 module_id 同文件：违规与合规共存，仅违规被报。
+
+        R2 治本修订后：
+          - MOD_XX_001 → 违规（MOD 前缀后必须用连字符）
+          - MOD-ASHARE_SIGNAL → pass
+          - MOD-L00-001 → pass
+          - D_MKT_002 → 违规（D 前缀后必须用连字符）
+          - D-MKT_DATA-003 → 违规（D-前缀已废弃为 module_id）
+        """
         content = (
             "module_id: MOD_XX_001\n"
             "module_id: MOD-ASHARE_SIGNAL\n"
             "module_id: MOD-L00-001\n"
             "module_id: D_MKT_002\n"
+            "module_id: D-MKT_DATA-003\n"
         )
         vs = _check_n06_dual_track_format("fake.yaml", content)
         rules = _rules(vs)
         assert "N-06" in rules
-        # 应有 2 个违规（MOD_XX_001 + D_MKT_002）
-        assert len(vs) == 2
+        # 应有 3 个违规（MOD_XX_001 + D_MKT_002 + D-MKT_DATA-003）
+        assert len(vs) == 3
 
     def test_code_block_skipped(self):
         """markdown 代码块内的 module_id 示例不误判。"""
@@ -166,12 +242,56 @@ class TestN06DualTrackFormat:
 
 
 # ---------------------------------------------------------------------------
+# TestIsValidModuleId：is_valid_module_id 函数直接校验（R2 治本修订后）
+# ---------------------------------------------------------------------------
+
+
+class TestIsValidModuleId:
+    """R2 治本修订后：is_valid_module_id 函数对 D- 前缀触发 fail。
+
+    真源：validate_module_id_naming.py::is_valid_module_id
+    """
+
+    def test_layer_master_pass(self):
+        ok, reason = _is_valid_module_id("MOD-L00-001")
+        assert ok is True
+        assert reason == ""
+
+    def test_domain_derived_pass(self):
+        ok, reason = _is_valid_module_id("MOD-ASHARE_SIGNAL-001")
+        assert ok is True
+        assert reason == ""
+
+    def test_shared_pass(self):
+        ok, reason = _is_valid_module_id("SH-DB-001")
+        assert ok is True
+        assert reason == ""
+
+    def test_d_prefix_now_fails_as_module_id(self):
+        """R2 治本修订：D-MKT_DATA-001 不再是合法 module_id。"""
+        ok, reason = _is_valid_module_id("D-MKT_DATA-001")
+        assert ok is False
+        assert "废弃" in reason or "已不再" in reason
+
+    def test_d_prefix_simple_now_fails_as_module_id(self):
+        """R2 治本修订：D-GOVERNANCE-001 不再是合法 module_id。"""
+        ok, reason = _is_valid_module_id("D-GOVERNANCE-001")
+        assert ok is False
+        assert "废弃" in reason or "已不再" in reason
+
+    def test_unknown_prefix_fails(self):
+        ok, reason = _is_valid_module_id("XYZ-001")
+        assert ok is False
+        assert "MOD" in reason or "SH" in reason
+
+
+# ---------------------------------------------------------------------------
 # TestValidateSsotLinkage：SSoT 机械联动校验（裁定#208 R4）
 # ---------------------------------------------------------------------------
 
 
 class TestValidateSsotLinkage:
-    """裁定#208 R4：SSoT(trae_028) 与脚本双轨正则机械联动一致。"""
+    """裁定#208 R4 + R2 治本修订：SSoT(trae_028) 与脚本双轨正则机械联动一致。"""
 
     def test_linkage_returns_true(self):
         """SSoT 双轨制 condition 已生效，联动校验应通过（版本号动态，不硬编码）。"""

@@ -85,7 +85,7 @@ sections:
     - type: mandatory
       step: 前端使用FE前缀(FE-L1~L4)，不使用D-XXX编号
     - type: mandatory
-      step: 模块ID格式为双轨制(layer-master轨MOD-{LAYER_CODE}-{SEQ}+domain-functional派生轨MOD-{DOMAIN_FRAGMENT}[-NNN]或D-XXX-{SEQ})，Shared为SH-{ABBR}-{NNN}，Frontend为FE-L{N}-{ABBR}-{NNN}
+      step: 模块ID格式为双轨制(layer-master轨MOD-{LAYER_CODE}-{SEQ}+domain-functional派生轨MOD-{DOMAIN_FRAGMENT}[-NNN])，Shared为SH-{ABBR}-{NNN}，Frontend为FE-L{N}-{ABBR}-{NNN}；D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用(见 gov_doc_009)
     prohibitions:
     - 禁止在Mermaid架构图中使用docs目录编号作为节点ID
     - 禁止在KB决策记录中用docs编号引用架构层
@@ -1042,10 +1042,10 @@ sections:
       pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules_registry.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
       fail: D-XXX_YYY形式中XXX是已存在域ID(如D-SIGNAL_ASHARE暗示ASHARE是SIGNAL子域,违反NR-001);或域ID是其他域ID加下划线后缀形式(如D-SIGNAL_QUALITY依赖D-SIGNAL上下文,违反NR-003);或domain_name与domain_id表达不同业务含义(违反NR-005)
     - type: constraint
-      check: 模块ID格式（双轨制，裁定#208 R1）
-      pass: 双轨制 scoped 适用—layer-master轨=MOD-{LAYER_CODE}-{SEQ}(如MOD-L00-001/MOD-INF-005,序号必填);domain-functional派生轨=MOD-{DOMAIN_FRAGMENT}[-NNN]或D-XXX-{SEQ}(如MOD-ASHARE_SIGNAL/MOD-ASHARE_SIGNAL-001/D-MKT_DATA-001,域片段派生自domain_id去D-前缀,序号可选);Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN};双轨判定=token共享测试(blueprint_id去MOD-/D-前缀与domain_id去D-前缀分词有交集则属派生轨)
-      fail: 其他格式(既非layer-master轨也非domain-functional派生轨)
-      rationale: 双轨制对标K8s name/UID分离(layer-master≈UID稳定不透明+派生轨≈name语义可读);调和L1038(序号必填)与派生规则(派生序号可选)的历史矛盾
+      check: 模块ID格式（双轨制，裁定#208 R1，2026-07-05 R2 治本修订）
+      pass: 双轨制 scoped 适用—layer-master轨=MOD-{LAYER_CODE}-{SEQ}(如MOD-L00-001/MOD-INF-005,序号必填);domain-functional派生轨=MOD-{DOMAIN_FRAGMENT}[-NNN](如MOD-ASHARE_SIGNAL/MOD-ASHARE_SIGNAL-001,域片段派生自domain_id去D_前缀,序号可选);Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN};双轨判定=token共享测试(blueprint_id去MOD-前缀与domain_id去D_前缀分词有交集则属派生轨);D-XXX-NNN已废弃为module_id派生轨,重定义为submodule_id专用(见gov_doc_009)
+      fail: 其他格式(既非layer-master轨也非domain-functional派生轨);或使用已废弃的D-XXX-NNN作为module_id
+      rationale: 双轨制对标K8s name/UID分离(layer-master≈UID稳定不透明+派生轨≈name语义可读);调和L1038(序号必填)与派生规则(派生序号可选)的历史矛盾;治本修订(2026-07-05):D-XXX-NNN格式与派生轨MOD-{DOMAIN_FRAGMENT}[-NNN]语义重叠导致module_id与submodule_id混淆,废除D-XXX作module_id派生轨,D-XXX-NNN重定义为submodule_id专用(蓝图内部子模块编号)
     - type: constraint
       check: 标识符编号格式（ARCH/MOD/PS-REG/GOV-DOC/D-XXX等）
       pass: 所有标识符编号一律大写（ARCH-NNN/MOD-{LAYER}-{SEQ}/PS-REG-NNN/GOV-DOC-NNN/D-XXX_YYY/SH-{ABBR}-{NNN}/FE-L{N}-{ABBR}-{NNN}）;标识符编号是YAML/DB中的ID字段值,不是文件名;大写用于与snake_case文件名/字段名视觉区分
@@ -1328,6 +1328,67 @@ sections:
     - 禁止拆分后产生真源冲突(多个文件定义相同数据)
     - 禁止拆分后丢失跨文件引用关系
     rationale: 防幻觉>Token节省;AI理解规则需要完整上下文;拆分导致跨文件引用断裂风险;1M context window的AI可处理3000行无压力
+  gov_doc_009_submodule_id_convention:
+    title: 子模块编号约定 (GOV-DOC-009)
+    section_type: rule
+    original_rules:
+    - DOC-009
+    definition: |
+      本协议定义蓝图内部子模块编号(submodule_id)的格式与作用域。
+
+      关键区分：
+        - module_id    = 蓝图文件级ID（用于blueprint_registry.yaml frontmatter的module_id字段
+                         和depgraph.nodes.blueprint_id），格式为裁定#208双轨制：
+                         layer-master轨 MOD-{LAYER_CODE}-{SEQ} 或 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN]
+        - submodule_id = 蓝图内部子模块编号（仅用于蓝图正文 §sections/§modules 引用，
+                         不进入depgraph.nodes.blueprint_id，不进入blueprint_registry.yaml的
+                         module_id字段），格式为 D-{DOMAIN}-NNN（如 D-FACTOR-01）
+
+      历史背景：
+        裁定#208 R1 原将 D-XXX-NNN 作为 module_id 派生轨的合法格式之一（与
+        MOD-{DOMAIN_FRAGMENT}[-NNN] 并列），导致：
+          1. 同一字符串 D-FACTOR-01 既合法作 module_id 也合法作 submodule_id，无法区分
+          2. depgraph.realization_detection 通过 blueprint_id 关联设计态与运营态，
+             混淆导致子模块编号可能被误识别为顶层蓝图
+          3. AI 在编写蓝图时无法判断 D-XXX-NNN 是蓝图级 ID 还是子模块编号
+
+      治本修订（2026-07-05 R2）：
+        废除 D-XXX-NNN 作为 module_id 派生轨的合法地位，重定义为 submodule_id 专用。
+        module_id 仅保留双轨：layer-master 轨 + domain-functional 派生轨（MOD- 前缀）。
+        校验真源 validate_module_id_naming.py 已删除 D- 前缀分支。
+    conditions:
+    - type: constraint
+      check: submodule_id 格式
+      pass: D-{DOMAIN}-NNN（DOMAIN=大写字母+下划线片段，NNN=01-999 序号）；如 D-FACTOR-01/D-SIGNAL-12/D-MKT_DATA-03
+      fail: 非 D- 前缀格式；或序号非数字；或 DOMAIN 含小写字母
+    - type: constraint
+      check: submodule_id 作用域
+      pass: submodule_id 仅出现于蓝图正文 §sections/§modules/§lifecycle 等章节的引用；不出现于 blueprint frontmatter 的 module_id 字段；不出现于 depgraph.nodes.blueprint_id
+      fail: submodule_id 被写入 blueprint frontmatter module_id 字段；或被写入 depgraph.nodes.blueprint_id
+    - type: constraint
+      check: submodule_id 与 module_id 视觉区分
+      pass: submodule_id 使用 D- 连字符前缀（如 D-FACTOR-01）；module_id 使用 MOD- 前缀（如 MOD-FACTOR-001）或 SH- 前缀；通过前缀字符即可区分
+      fail: submodule_id 与 module_id 前缀相同导致歧义
+    - type: constraint
+      check: submodule_id 与 domain_id 区分
+      pass: submodule_id 使用 D-{DOMAIN}-NNN（连字符+序号）；domain_id 使用 D_{DOMAIN}（下划线+无序号）；通过分隔符和序号即可区分
+      fail: submodule_id 误用下划线格式（如 D_FACTOR_01）或 domain_id 误用连字符+序号（如 D-FACTOR-01）
+    actions:
+    - type: mandatory
+      step: 蓝图内部子模块编号MUST使用D-{DOMAIN}-NNN格式；DOMAIN派生自所属domain_id去D_前缀（连字符转下划线后取业务片段）
+    - type: mandatory
+      step: submodule_id MUST仅用于蓝图正文引用；禁止写入blueprint frontmatter的module_id字段；禁止作为depgraph.nodes.blueprint_id值
+    - type: mandatory
+      step: module_id MUST使用裁定#208双轨制（MOD-或SH-前缀）；禁止使用D-XXX-NNN作为module_id
+    - type: mandatory
+      step: validate_module_id_naming.py是module_id格式校验唯一真源；新增submodule_id校验应通过专门函数（如is_valid_submodule_id），不复用module_id校验逻辑
+    prohibitions:
+    - 禁止使用D-XXX-NNN作为module_id（已废弃，2026-07-05 R2治本修订）
+    - 禁止将submodule_id写入blueprint frontmatter的module_id字段
+    - 禁止将submodule_id作为depgraph.nodes.blueprint_id值
+    - 禁止submodule_id使用下划线分隔（D_FACTOR_01错误，应为D-FACTOR-01）
+    - 禁止domain_id使用连字符+序号（D-FACTOR-01错误，应为D_FACTOR无序号）
+    rationale: 治本消除module_id与submodule_id格式重叠导致的语义混淆；D-前缀保留给子模块编号是有意识的选择——D-历史上是"design"缩写用于设计层子模块编号，重定义后语义清晰：D-=submodule（蓝图内部）、MOD-=module（蓝图级）、D_=domain（域）
   gov_doc_018_folder_capacity_threshold:
     title: 文件夹平铺容量阈值协议 (GOV-DOC-018)
     section_type: rule
