@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-05T20:39:00Z'
+generated_at: '2026-07-05T20:49:54Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 147
+total_files: 146
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1550,21 +1550,6 @@ files:
   doc_type: register
   status: active
   version: 1.0.9
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
-  module_id: MOD-GOVERNANCE
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
