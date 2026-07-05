@@ -27,6 +27,10 @@ class IdentityVerifier:
     def __init__(self, shared_secret: bytes | None = None):
         self._secret = shared_secret or b"zephyr-alpha-a2a-secret"
 
+    # 5.110.9 修复: 显式 __repr__ 排除 _secret, 防止调试/日志泄露
+    def __repr__(self) -> str:
+        return f"IdentityVerifier(secret_configured={self._secret is not None})"
+
     def sign(self, agent_id: str, payload: dict) -> str:
         message = f"{agent_id}:{payload}".encode()
         return hmac.new(self._secret, message, hashlib.sha256).hexdigest()

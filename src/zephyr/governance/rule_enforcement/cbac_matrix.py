@@ -36,6 +36,14 @@ class Capability(BaseModel):
     auth_token: str = ""
     description: str = ""
 
+    # 5.110.1 修复: 自定义 __repr__ 排除 auth_token, 防止 auto-__repr__ 泄露到日志/控制台
+    def __repr__(self) -> str:
+        return (
+            f"Capability(capability_id={self.capability_id!r}, "
+            f"caller={self.caller!r}, target={self.target!r}, "
+            f"actions={self.actions!r}, auth_token=***, description={self.description!r})"
+        )
+
 
 class CbacMatrix:
     def __init__(self):

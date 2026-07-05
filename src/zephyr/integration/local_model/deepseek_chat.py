@@ -130,6 +130,13 @@ class DeepSeekChat:
         self._timeout = timeout_s
         self._verified = False
 
+    # 5.110.2 修复: 显式 __repr__ 排除 _api_key, 防止调试/日志泄露
+    def __repr__(self) -> str:
+        return (
+            f"DeepSeekChat(model={self._model!r}, base_url={self._base_url!r}, "
+            f"verified={self._verified!r})"
+        )
+
     @property
     def model(self) -> str:
         return self._model

@@ -60,10 +60,13 @@ class WorkOrchestrator:
         self._dags[dag.dag_id] = dag
 
     def get_dag(self, dag_id: str) -> WorkDAG | None:
-        return self._dags.get(dag_id)
+        # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
+        dag = self._dags.get(dag_id)
+        return dag.model_copy(deep=True) if dag is not None else None
 
     def list_dags(self) -> list[WorkDAG]:
-        return list(self._dags.values())
+        # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
+        return [d.model_copy(deep=True) for d in self._dags.values()]
 
     def load_dags(self) -> int:
         if self._dag_dir is None or not self._dag_dir.exists():
@@ -125,7 +128,8 @@ class WorkOrchestrator:
         with self._lock:
             for item in self._items.values():
                 if item.status == "READY":
-                    ready.append(item)
+                    # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
+                    ready.append(item.model_copy(deep=True))
         ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 1))
         return ready
 

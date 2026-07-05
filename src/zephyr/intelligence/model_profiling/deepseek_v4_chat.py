@@ -323,6 +323,13 @@ class DeepSeekV4Chat:
 
         self._pricing = PRICING_RMB.get(model, PRICING_RMB["deepseek-v4-pro"])
 
+    # 5.110.2 修复: 显式 __repr__ 排除 _api_key, 防止调试/日志泄露
+    def __repr__(self) -> str:
+        return (
+            f"DeepSeekV4Chat(model={self._model!r}, thinking={self._thinking!r}, "
+            f"call_count={self.call_count!r}, cumulative_cost_rmb={self.cumulative_cost_rmb!r})"
+        )
+
     @property
     def model(self) -> str:
         return f"{self._model}{'-thinking' if self._thinking else '-non-thinking'}"

@@ -5815,7 +5815,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 - **文件**：`src/zephyr/trading/work_orchestrator.py:123-130,63`
 - **证据**：`schedule_next()` 返回 `self._items` 中的WorkItem对象引用（非拷贝），`get_dag()` 返回 `self._dag`（内部WorkDAG引用）。调用方修改返回的WorkItem（如改status），直接修改了orchestrator的内部调度状态，可能导致重复调度或跳过。DAG被外部修改后，拓扑排序结果不可预测。
 - **修复**：返回拷贝或只读视图（如 `MappingProxyType`）。
-- **状态**：STILL_VALID（保留）— 需返回拷贝或只读视图，影响work_orchestrator调度状态
+- **状态**：FIXED（第35轮，2026-07-05）— schedule_next/get_dag/list_dags 返回 model_copy(deep=True) 深拷贝
 
 #### 5.85 严重度汇总
 
@@ -6749,6 +6749,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.110 __repr__/__str__泄露与一致性（9个，第21轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(__repr__/__str__泄露敏感信息/不一致需逐处脱敏)
+> **第35轮修复状态（2026-07-05）**：FIXED=3(5.110.1 Capability自定义__repr__排除auth_token + 5.110.2 DeepSeekChat/DeepSeekV4Chat自定义__repr__排除_api_key + 5.110.9 IdentityVerifier自定义__repr__排除_secret), DRIFTED=1(5.110.2第三处pipeline_routing/deepseek_v4_chat.py已删), STILL_VALID=5(5.110.3-5.110.7 __repr__不可重建5处+5.110.2副本1处)
 
 #### 5.110.1 [MEDIUM] Capability(BaseModel) auto-__repr__暴露auth_token字段
 
@@ -8027,6 +8028,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.146 字符串处理安全（6个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=6(字符串处理安全需逐处审查编码/转义)
+> **第35轮修复状态（2026-07-05）**：FIXED=4(5.146.1 shell=True→shlex.split+shell=False已修复 + 5.146.2 yaml.load(FullLoader)→safe_load已修复 + 5.146.3 eval增加AST预校验拒绝dunder访问 + 5.146.4 INSERT列名已有_TASK_COLUMNS白名单校验), STILL_VALID=2(5.146.5 format_map改SafeFormatter + 5.146.6 re.compile改RE2,均为LOW防御纵深)
 
 审查SQL注入、路径遍历、命令注入、格式化字符串注入、ReDoS等字符串安全漏洞。
 
