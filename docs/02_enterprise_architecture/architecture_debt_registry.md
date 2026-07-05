@@ -2326,6 +2326,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.53 日志级别纪律（7个，第14轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.53全部清零.
+> **第59轮修复状态（2026-07-06）**：5.53.7 FIXED — alert_handler.py except 块 return None 改为 re-raise(调用方 AlertDispatcher.dispatch 已有 try/except 兜底), commit d9e9a72fa2. DEFERRED=0. 维度5.53全部清零.
 > 维度说明：日志级别选择正确性、log-and-continue反模式、异常静默吞没等。
 
 #### 5.53.1 [MEDIUM] 用INFO记录任务FAILED事件
@@ -2870,6 +2871,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.63 日志中PII/敏感数据泄露（3个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=1(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.63全部清零.
+> **第59轮修复状态（2026-07-06）**：5.63.2 FIXED — dlq.py 新增 _sanitize_traceback() 正则脱敏函数(DSN/Bearer/API key/password 4类模式), capture() 入库前对 error_message+traceback 脱敏, commit d9e9a72fa2. DEFERRED=0. 维度5.63全部清零.
 #### 5.63.1 [LOW] EmergencyOverride撤销时记录token标识符
 
 - **文件**：`src/zephyr/security/access_control/emergency_override.py:153`
