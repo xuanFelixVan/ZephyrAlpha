@@ -85,6 +85,8 @@ class TaskQueue:
         self._stop_event = threading.Event()
         self._running = False
         self._stats: dict[str, int] = {"dispatched": 0, "errors": 0, "cycles": 0}
+        # 5.142.8 修复: _stats 后台线程写 + 属性读无锁, 用 _stats_lock 保护读写避免半更新值
+        self._stats_lock = threading.Lock()
 
     # ── public API ──────────────────────────────────────────────────
 
@@ -107,11 +109,15 @@ class TaskQueue:
         if self._thread is not None:
             self._thread.join(timeout=timeout)
             self._thread = None
+        # 5.142.8 修复: 读取 _stats 加锁, 与后台 _loop/_tick 写入互斥
+        with self._stats_lock:
+            errors = self._stats["errors"]
+            dispatched = self._stats["dispatched"]
         # 5.53.3 修复：原无条件 INFO，累计大量 errors 时信息被埋在 INFO 中。errors>0 时用 WARNING。
-        if self._stats["errors"] > 0:
-            logger.warning("TaskQueue stopped (dispatched=%d, errors=%d)", self._stats["dispatched"], self._stats["errors"])
+        if errors > 0:
+            logger.warning("TaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
         else:
-            logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", self._stats["dispatched"], self._stats["errors"])
+            logger.info("TaskQueue stopped (dispatched=%d, errors=%d)", dispatched, errors)
 
     @property
     def is_running(self) -> bool:
@@ -119,7 +125,9 @@ class TaskQueue:
 
     @property
     def stats(self) -> dict[str, int]:
-        return dict(self._stats)
+        # 5.142.8 修复: dict(self._stats) 迭代拷贝加锁, 避免读到半更新值
+        with self._stats_lock:
+            return dict(self._stats)
 
     # ── internal ────────────────────────────────────────────────────
 
@@ -129,9 +137,13 @@ class TaskQueue:
                 n = self._tick()
             except Exception:
                 logger.exception("TaskQueue tick failed")
-                self._stats["errors"] += 1
+                # 5.142.8 修复: _stats 写入加锁
+                with self._stats_lock:
+                    self._stats["errors"] += 1
                 n = 0
-            self._stats["cycles"] += 1
+            # 5.142.8 修复: _stats 写入加锁
+            with self._stats_lock:
+                self._stats["cycles"] += 1
             wait = self._poll_interval if n == 0 else min(1.0, self._poll_interval / 2)
             self._stop_event.wait(timeout=wait)
 
@@ -144,11 +156,15 @@ class TaskQueue:
                 if self._orchestrator is not None:
                     self._orchestrator.dispatch(task_card)
                 dispatched += 1
-                self._stats["dispatched"] += 1
+                # 5.142.8 修复: _stats 写入加锁
+                with self._stats_lock:
+                    self._stats["dispatched"] += 1
                 logger.info("Queue dispatched %s", task_card.task_id)
             except Exception:
                 logger.exception("Queue failed to dispatch %s", task_card.task_id)
-                self._stats["errors"] += 1
+                # 5.142.8 修复: _stats 写入加锁
+                with self._stats_lock:
+                    self._stats["errors"] += 1
         return dispatched
 
 

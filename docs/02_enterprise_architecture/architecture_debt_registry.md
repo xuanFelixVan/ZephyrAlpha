@@ -6795,6 +6795,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=3(Lock可重入性误用RLock/Lock需逐处审查)
 
 > **第34轮修复状态（2026-07-05）**：FIXED=2(5.111.1 admission_controller持锁前快照global_tokens/cb_state/5.111.2 gpu_consensus_scheduler持锁前快照queue_depth), STILL_VALID=1(5.111.3 协程中threading.Lock改asyncio.Lock影响其他调用方,需专项评估)
+> **第38轮修复状态（2026-07-05）**：5.111.3 FIXED——gpu_consensus_scheduler新增_async_lock(asyncio.Lock), async submit()改用async with self._async_lock, 同步方法保留self._lock(threading.Lock)。本维度全部清零。
 
 #### 5.111.1 [MEDIUM] admission_controller.py get_metrics持三锁嵌套
 
@@ -7784,6 +7785,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.142 并发原语正确性（8个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(并发原语正确性需逐处审查)
+> **第38轮修复状态（2026-07-05）**：FIXED=5(5.142.1 pipeline锁双重释放+误转FAILED移入finally+标志位 / 5.142.3 WorkOrchestrator._dags加锁保护 / 5.142.4 night_shift_queue._next_id移入锁内 / 5.142.5 gpu_consensus_scheduler async改用asyncio.Lock / 5.142.8 TaskQueue._stats加_stats_lock保护), STILL_VALID=3(5.142.2已第35轮修复此处补登 / 5.142.6生命周期布尔标志TOCTOU需4+文件改threading.Event / 5.142.7 SQLite锁粒度过大需重构为线程局部连接)
 
 审查 Lock/RLock/Event/Semaphore/Condition 使用错误、潜在死锁、锁粒度过大、锁未释放、双重加锁等问题。
 

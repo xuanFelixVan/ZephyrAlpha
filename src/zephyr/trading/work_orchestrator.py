@@ -57,16 +57,23 @@ class WorkOrchestrator:
         self._lock = threading.Lock()
 
     def register_dag(self, dag: WorkDAG) -> None:
-        self._dags[dag.dag_id] = dag
+        # 5.142.3 修复: _dags 访问统一用 self._lock 保护, 避免与 list_dags/load_dags 并发抛 RuntimeError
+        with self._lock:
+            self._dags[dag.dag_id] = dag
 
     def get_dag(self, dag_id: str) -> WorkDAG | None:
         # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
-        dag = self._dags.get(dag_id)
+        # 5.142.3 修复: _dags 读访问纳入 self._lock, 取出后再 model_copy (copy 在锁外避免长持锁)
+        with self._lock:
+            dag = self._dags.get(dag_id)
         return dag.model_copy(deep=True) if dag is not None else None
 
     def list_dags(self) -> list[WorkDAG]:
         # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
-        return [d.model_copy(deep=True) for d in self._dags.values()]
+        # 5.142.3 修复: _dags 迭代纳入 self._lock, 取出快照后再 model_copy
+        with self._lock:
+            snapshot = list(self._dags.values())
+        return [d.model_copy(deep=True) for d in snapshot]
 
     def load_dags(self) -> int:
         if self._dag_dir is None or not self._dag_dir.exists():
@@ -76,7 +83,9 @@ class WorkOrchestrator:
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
                 dag = WorkDAG(**data)
-                self._dags[dag.dag_id] = dag
+                # 5.142.3 修复: 写入 _dags 必须持锁
+                with self._lock:
+                    self._dags[dag.dag_id] = dag
                 count += 1
             except Exception:
                 continue
@@ -94,7 +103,9 @@ class WorkOrchestrator:
         return work.item_id
 
     def submit_dag(self, dag_id: str, params: dict | None = None) -> str:
-        dag = self._dags.get(dag_id)
+        # 5.142.3 修复: _dags 读访问纳入 self._lock, 取出 dag 后释放锁再 submit (避免与 submit 嵌套持锁)
+        with self._lock:
+            dag = self._dags.get(dag_id)
         if dag is None:
             return ""
         params = params or {}

@@ -70,9 +70,10 @@ class NightShiftQueue:
         return f"NSL-{self._counter:04d}"
 
     def append(self, entry: NightShiftEntry) -> str:
-        if not entry.id:
-            entry.id = self._next_id()
         with self._lock:
+            # 5.142.4 修复: _next_id() 必须在锁内调用, 避免 += 1 与读取的读-写竞争产生重复 NSL-XXXX ID
+            if not entry.id:
+                entry.id = self._next_id()
             line = entry.model_dump_json() + "\n"
             # 5.169 修复：用 context manager 防止文件句柄泄漏
             with self._path.open("a", encoding="utf-8") as f:

@@ -539,6 +539,9 @@ class PipelineOrchestrator:
 
         lineage_chain = PipelineLineageChain(run_id=task_card.task_id)
 
+        # 5.142.1 修复: 用 _pipeline_lock_acquired 标志位避免双重释放; 用 _pipeline_final_status 跟踪是否已成功
+        _pipeline_lock_acquired = False
+        _pipeline_final_status: PipelineStatus | None = None
         try:
             route = self._route_model(task_card)
             execution_mode = self._resolve_execution_mode(task_card)
@@ -582,6 +585,9 @@ class PipelineOrchestrator:
                     + [f"LOCK: files={lock_result.locked_files} conflict_with={lock_result.conflict_tasks}"],
                 )
 
+            # 5.142.1 修复: 标记锁已获取, finally 块统一释放
+            _pipeline_lock_acquired = True
+
             results: list[ModuleResult] = []
             manifest = PipelineArtifactManifest(run_id=task_card.task_id)
             prev_module: str | None = None
@@ -590,7 +596,7 @@ class PipelineOrchestrator:
             g6_violation = self._check_g6_blueprint_compliance(task_card, modules)
             if g6_violation is not None:
                 self._active_dispatches.discard(task_card.task_id)
-                self._release_pipeline_lock(task_card.task_id)
+                # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
                 return PipelineResult(
                     task_id=task_card.task_id,
                     pipeline=task_card.assigned_pipeline,
@@ -738,7 +744,9 @@ class PipelineOrchestrator:
             if tw:
                 ct_warnings.append(tw)
 
-            self._release_pipeline_lock(task_card.task_id)
+            # 5.142.1 修复: 记录已成功的 status, 防止后续异常导致 except 块误转 FAILED
+            _pipeline_final_status = status
+            # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
 
             _latency_ms = (datetime.now() - _dispatch_start).total_seconds() * 1000
             self._record_telemetry_latency(task_type, _latency_ms)
@@ -828,16 +836,21 @@ class PipelineOrchestrator:
             except Exception:
                 # 5.12.1 修复：原 except: pass 静默吞 EventBus 失败事件发布失败（故障信号丢失）
                 logger.warning("EventBus pipeline_failed emit failed for task=%s", task_card.task_id, exc_info=True)
-            self._release_pipeline_lock(task_card.task_id)
+            # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
             self._active_dispatches.discard(task_card.task_id)
-            tw = self._transition(task_card.task_id, TaskStatus.FAILED)
-            if tw:
-                self._failure_log[f"dispatch_exc_{task_card.task_id}"] = (
-                    self._failure_log.get(f"dispatch_exc_{task_card.task_id}", 0) + 1
-                )
+            # 5.142.1 修复: 若 pipeline 已成功(SUCCESS/PARTIAL_FAILURE), 后续异常不应误转 FAILED
+            if _pipeline_final_status not in (PipelineStatus.SUCCESS, PipelineStatus.PARTIAL_FAILURE):
+                tw = self._transition(task_card.task_id, TaskStatus.FAILED)
+                if tw:
+                    self._failure_log[f"dispatch_exc_{task_card.task_id}"] = (
+                        self._failure_log.get(f"dispatch_exc_{task_card.task_id}", 0) + 1
+                    )
             raise
         finally:
             self._active_dispatches.discard(task_card.task_id)
+            # 5.142.1 修复: 锁释放移入 finally, 用标志位避免双重释放
+            if _pipeline_lock_acquired:
+                self._release_pipeline_lock(task_card.task_id)
 
     # ------------------------------------------------------------------
     # 状态机集成

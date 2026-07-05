@@ -177,6 +177,8 @@ class GPUConsensusScheduler:
         self._queue = _PriorityQueue(max_size=max_queue_size)
         self._max_workers = max_workers
         self._lock = threading.Lock()
+        # 5.142.5/5.111.3 修复: async submit() 改用 asyncio.Lock, 避免在协程中持 threading.Lock 违反 INVARIANTS
+        self._async_lock = asyncio.Lock()
         self._gpu_status = GPUStatus(
             available=False,
             model_name=local - model,
@@ -196,13 +198,14 @@ class GPUConsensusScheduler:
 
     async def submit(self, request: ConsensusRequest) -> ConsensusResult:
         start = time.monotonic()
-        with self._lock:
+        # 5.142.5/5.111.3 修复: async 方法改用 asyncio.Lock + async with, 避免持 threading.Lock 阻塞事件循环
+        async with self._async_lock:
             self._total_submitted += 1
 
         route = self._determine_route(request)
         result = await self._execute_route(request, route, start)
 
-        with self._lock:
+        async with self._async_lock:
             self._total_latency_ms += result.latency_ms
             if result.status == ConsensusStatus.CONSENSUS_REACHED:
                 self._consensus_reached += 1
