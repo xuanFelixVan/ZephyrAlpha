@@ -3785,6 +3785,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=22(错误消息中英文混用/异常类型不一致需统一规范)
 > **第43轮修复状态（2026-07-05）**：FIXED=5(5.99.1 depgraph_schema 移除SQL文本泄露,仅保留版本/语句编号 + 5.99.13 chaos_engine/adversarial_strategies/adversarial_validation 3文件 %格式化改f-string + 5.99.14 budget_engine "BudgetEngine已关闭"中英文加空格 + 5.99.16 finding_task_bridge Invalid severity附加合法枚举值列表 + 5.99.17 trainer_base 裸KeyError附加说明和可用列表), DRIFTED=1(5.99.12 database_service.py WRITE_LOCK_TIMEOUT不存在,内容已变), DEFERRED=16(5.99.2-11 中英混用统一/异常类型统一属专项工程批量重构 + 5.99.15/18/19/20/21/22 风格问题批量重构/错误码SSoT扩展). 维度5.99机械项已清零, STILL_VALID=0. 维度5.99全部清零.
+> **第44轮修复状态（2026-07-05）**：FIXED=6(5.99.2 hallucination_detector 8处英文消息统一中文 + 5.99.3 trigger_router 2处英文统一中文 + 5.99.5 blast_radius 1处英文统一中文 + 5.99.6 agent_health_monitor window_size英文统一中文 + 5.99.7 ct_pipe_routing 1处英文统一中文 + 5.99.10 escalation_engine LSG blocked ValueError→PermissionError统一), NOT_NEEDED=1(5.99.4 fix_prioritizer.py文件仅103行无raise语句/英文错误消息,无需修改), DEFERRED=9(5.99.8 Session not found异常类型统一[KeyError/SessionError/ValueError→SessionError需逐调用方分析except子句] + 5.99.9 Invalid transition异常类型统一[SessionTransitionError vs SessionError需逐调用方分析] + 5.99.11 MCP错误码SSoT扩展[需扩展error_codes.py为业务错误码SSoT,涉及多MCP server重构] + 5.99.15 embedding_router错误消息缺上下文值 + 5.99.18 task_manager_server错误消息暴露内部参数名 + 5.99.19 metrics_bridge错误消息暴露异常类名 + 5.99.20 depgraph_schema等错误消息暴露文件路径/tx_id + 5.99.21 业务异常缺失error_code字段[需所有自定义异常携带error_code] + 5.99.22 标点/箭头符号/克隆文件错误消息重复[需抽取到共享errors模块]), STILL_VALID=0. 维度5.99全部清零.
 
 #### 5.99.1 HIGH级（1个）
 
