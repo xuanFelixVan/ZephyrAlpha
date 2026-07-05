@@ -1,7 +1,7 @@
 %% D_MKT_DATA 域全景依赖图
-%% 生成时间: 2026-07-05 04:58:40
+%% 生成时间: 2026-07-05 16:09:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 8, 依赖边数: 2
+%% 模块数: 7, 依赖边数: 1
 
 graph TD
 
@@ -12,21 +12,19 @@ graph TD
         src_zephyr_market_data_api___init___py["src/zephyr/market_data/api/__init__.py [prototype]"]
         src_zephyr_market_data_core___init___py["src/zephyr/market_data/core/__init__.py [prototype]"]
         src_zephyr_market_data_infrastructure___init___py["...arket_data/infrastructure/__init__.py [prototype]"]
-        src_zephyr_market_data_market_data_py["src/zephyr/market_data/market_data.py [prototype]"]
         src_zephyr_market_data_models___init___py["...zephyr/market_data/models/__init__.py [prototype]"]
         src_zephyr_market_data_services___init___py["...phyr/market_data/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_market_data___init___py -->|import_depends| src_zephyr_market_data_market_data_py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_MKT_DATA -> D_SHARED (1 条)
-    src_zephyr_market_data_market_data_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_market_data___init___py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 1 条
+    %% 域内依赖: 0 条
     %% 跨域入边: 0 条
     %% 跨域出边: 1 条

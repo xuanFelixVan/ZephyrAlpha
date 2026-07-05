@@ -1,7 +1,7 @@
 %% D_INFRA_A2A 域全景依赖图
-%% 生成时间: 2026-07-05 04:58:39
+%% 生成时间: 2026-07-05 16:09:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 93, 依赖边数: 148
+%% 模块数: 92, 依赖边数: 147
 
 graph TD
 
@@ -91,7 +91,6 @@ graph TD
         src_zephyr_infrastructure_a2a____egacy_governance_adapter_py["...protocol/legacy_governance_adapter.py [production]"]
         src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py["...cture/a2a_protocol/legacy_protocol.py [prototype]"]
         src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["...ture/a2a_protocol/local_first_arch.py [production]"]
-        src_zephyr_infrastructure_a2a____col_market_data_pipeline_py[".../a2a_protocol/market_data_pipeline.py [prototype]"]
         src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["...re/a2a_protocol/migration_strategy.py [production]"]
         src_zephyr_infrastructure_a2a_protocol_multi_agent_py["...structure/a2a_protocol/multi_agent.py [production]"]
         src_zephyr_infrastructure_a2a____ol_multi_model_consensus_py["...a2a_protocol/multi_model_consensus.py [production]"]
@@ -107,11 +106,11 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ayer1_discovery___init___py
     src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| src_zephyr_infrastructure_a2a____2_communication___init___py
     src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
-    src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py -->|import_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
-    src_zephyr_infrastructure_a2a____ocol_governance___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ol_governance_phase_hold_py
     src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____covery_identity_verifier_py
+    src_zephyr_infrastructure_a2a____ocol_governance___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ol_governance_phase_hold_py
+    src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py -->|import_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a____unication_message_router_py -->|import_depends| src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py
     src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py
     src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
@@ -129,19 +128,12 @@ graph TD
     src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py -->|import_depends| src_zephyr_infrastructure_a2a____oordination_a2a_security_py
     src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_supervisor_py
     src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py -->|import_depends| src_zephyr_infrastructure_a2a____ession_smuggling_defense_py
+    src_zephyr_infrastructure_a2a_____coordination_supervisor_py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
     src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_debate_py
     src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_negotiation_py
     src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____r3_coordination_a2a_saga_py
     src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_voting_py
     src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____rdination_a2a_work_steal_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_a2a_dashboard_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a_____a2a_formal_verification_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_frame_negotiation_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_protocol_gateway_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____coordination_a2a_tracing_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____3_coordination_spec_sync_py
-    src_zephyr_infrastructure_a2a_____coordination_supervisor_py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_arbitrator_py
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_cascade_guard_py
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____nation_conflict_detector_py
@@ -150,6 +142,20 @@ graph TD
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____nation_livelock_detector_py
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_semantic_diff_py
     src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_supervisor_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_a2a_dashboard_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a_____a2a_formal_verification_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_frame_negotiation_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_protocol_gateway_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____coordination_a2a_tracing_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____3_coordination_spec_sync_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____a2a_behavior_fingerprint_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_blame_attribution_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ination_a2a_causal_trace_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_collusion_detector_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ross_agent_semantic_flow_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_knowledge_distill_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_latent_comm_py
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_anomaly_detector_py
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_a2a_economics_py
@@ -160,30 +166,23 @@ graph TD
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____oordination_a2a_security_py
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_temporal_admission_py
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ession_smuggling_defense_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____a2a_behavior_fingerprint_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_blame_attribution_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ination_a2a_causal_trace_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_collusion_detector_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ross_agent_semantic_flow_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_knowledge_distill_py
-    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_latent_comm_py
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination__consensus_py
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ation__core_coordination_py
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure_a2a______governance_integration_py
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ordination__intelligence_py
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure_a2a______security_and_economics_py
-    src_zephyr_infrastructure_a2a____col_market_data_pipeline_py -->|config_depends| src_zephyr_infrastructure_a2a_protocol___init___py
     src_zephyr_infrastructure_a2a_protocol_realtime_streaming_py -->|config_depends| src_zephyr_infrastructure_a2a_protocol___init___py
+    src_zephyr_infrastructure_a2a_____governance_audit_logger_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a_protocol_governance_auditor_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a____l_governance_error_codes_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
-    src_zephyr_infrastructure_a2a_____governance_audit_logger_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a____governance_policy_engine_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a____vernance_session_manager_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a_____governance_rate_limiter_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
     src_zephyr_infrastructure_a2a_____governance__base_server_py -->|config_depends| src_zephyr_infrastructure_a2a____ocol_governance___init___py
-    src_zephyr_infrastructure_a2a____rdination_a2a_checkpoint_py -->|config_depends| src_zephyr_infrastructure_a2a____r3_coordination___init___py
     src_zephyr_infrastructure_a2a_____coordination_a2a_carbon_py -->|config_depends| src_zephyr_infrastructure_a2a____r3_coordination___init___py
-    %% ... 还有 9 条域内依赖未显示
+    src_zephyr_infrastructure_a2a____rdination_a2a_checkpoint_py -->|config_depends| src_zephyr_infrastructure_a2a____r3_coordination___init___py
+    src_zephyr_infrastructure_a2a____coordination_a2a_consent_py -->|config_depends| src_zephyr_infrastructure_a2a____r3_coordination___init___py
+    %% ... 还有 8 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_INFRA_A2A (36 条)
@@ -197,11 +196,11 @@ graph TD
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____dination_a2a_negotiation_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____r3_coordination_a2a_saga_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
-    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_voting_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a____rdination_a2a_work_steal_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_voting_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____coordination_arbitrator_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____coordination_arbitrator_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_infrastructure_a2a_____coordination_arbitrator_py
@@ -228,9 +227,9 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_infrastructure_a2a_____coordination_arbitrator_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_INFRA_A2A -> D_SHARED (18 条)
+    src_zephyr_infrastructure_a2a____egacy_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_a2a____egacy_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____egacy_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____egacy_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____nance_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
@@ -238,16 +237,16 @@ graph TD
     src_zephyr_infrastructure_a2a____ocol_governance_protocol_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a_____communication_a2a_state_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____nication_handoff_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_a2a_____communication_a2a_state_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____nication_context_package_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_infrastructure_a2a____nication_handoff_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_infrastructure_a2a____on_construction_verifier_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 89 条
+    %% 域内依赖: 88 条
     %% 跨域入边: 39 条
     %% 跨域出边: 20 条
