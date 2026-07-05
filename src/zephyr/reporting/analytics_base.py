@@ -63,7 +63,7 @@ class TCAEngineBase(abc.ABC):
       - 所有价格字段使用 Decimal 类型
     """
 
-    _registry: ClassVar[dict[str, type[TCAEngineBase]]] = {}
+    # 5.89.6 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取
 
     @abc.abstractmethod
     def analyze(self, fill: Fill, order: Order, idempotency_key: str) -> ExecutionReport:
@@ -86,7 +86,7 @@ class AttributionEngineBase(abc.ABC):
       - total_return = allocation_effect + selection_effect + interaction_effect
     """
 
-    _registry: ClassVar[dict[str, type[AttributionEngineBase]]] = {}
+    # 5.89.6 修复: 移除死 _registry 字段——无 __init_subclass__ 写入,无外部读取
 
     @abc.abstractmethod
     def attribute(

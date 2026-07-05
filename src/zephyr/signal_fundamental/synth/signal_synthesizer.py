@@ -74,6 +74,16 @@ class SignalSynthesizerBase(abc.ABC):
         if not inspect.isabstract(cls) and "__synthesizer_id__" in cls.__dict__:
             SignalSynthesizerBase._registry[cls.__synthesizer_id__] = cls
 
+    @classmethod
+    def get_synthesizer(cls, synthesizer_id: str) -> type[SignalSynthesizerBase] | None:
+        """5.116.2 修复: 提供 _registry 读取 API,消除只写不读"""
+        return cls._registry.get(synthesizer_id)
+
+    @classmethod
+    def list_synthesizers(cls) -> list[str]:
+        """5.116.2 修复: 提供 _registry 读取 API,消除只写不读"""
+        return list(cls._registry.keys())
+
     @abc.abstractmethod
     def synthesize(
         self,

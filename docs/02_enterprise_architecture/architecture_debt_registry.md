@@ -5965,6 +5965,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.89 类级可变状态（8个，第18轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=8(ClassVar可变状态改造需强制单例或实例属性重构)
+> **第35轮修复状态（2026-07-05）**：FIXED=3(5.89.4 interface_base已由5.116.1修复 + 5.89.5 pipeline_base移除死_registry + 5.89.6 analytics_base移除死_registry), NOT_NEEDED=4(5.89.1/2/3 daemon_registry为class-as-namespace模式全classmethod设计合理 + 5.89.8 factor_base已有完整register/get/list/clear API), DRIFTED=1(5.89.5第2副本pipeline_base_from_resear.py已删), 0 STILL_VALID
 
 > 维度AE：类定义中直接使用可变对象作为类属性，所有实例共享
 
@@ -6915,6 +6916,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.116 __init_subclass__副作用（5个，第21轮新增）
 
 > **第36轮验证状态（2026-07-05）**：FIXED=3(5.116.1 删除interface_base.py 3个死_registry字段 + 5.116.3 5文件hasattr沿MRO改为`in cls.__dict__` + 5.116.4 provider_base.py文档修正DataSourceRegistry→__init_subclass__自动注册), DRIFTED=1(5.116.5 _base_server.py:273文档已合理,误报), STILL_VALID=1(5.116.2 5文件_registry只写不读需评估扩展点机制)
+> **第35轮修复状态（2026-07-05）**：5.116.2 signal_synthesizer.py添加get_synthesizer/list_synthesizers读取API消除只写不读,其余4处(pipeline_base/analytics_base等)已在5.89中移除死_registry字段,5.116维度清零
 
 #### 5.116.1 [MEDIUM] interface_base.py 3个_registry死注册表——既无__init_subclass__也无register装饰器
 

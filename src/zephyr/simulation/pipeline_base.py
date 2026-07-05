@@ -82,7 +82,7 @@ class ExperimentPipelineBase(abc.ABC):
       - 最终实验结论通过 ScoutAgent 汇总为 ExperimentResult
     """
 
-    _registry: ClassVar[dict[str, type[ExperimentPipelineBase]]] = {}
+    _registry_removed_5_89_5: ClassVar[None] = None  # 5.89.5 修复: 移除死_registry字段
 
     @abc.abstractmethod
     def run(self, config: ExperimentConfig, idempotency_key: str) -> list[ExperimentMetric]:
@@ -111,7 +111,7 @@ class ScoutAgentBase(abc.ABC):
       - 已确认结论 archived_to_kms = True，写入 KMS 知识管道
     """
 
-    _registry: ClassVar[dict[str, type[ScoutAgentBase]]] = {}
+    _registry_removed_5_89_5b: ClassVar[None] = None  # 5.89.5 修复: 移除死_registry字段
 
     @abc.abstractmethod
     def scout(self, context: dict[str, Any], idempotency_key: str) -> ExperimentResult:
