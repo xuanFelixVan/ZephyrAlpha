@@ -8183,6 +8183,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.148 日志级别使用不当（27个，第25轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=27(日志级别使用不当需统一级别标准)
+> **第34轮修复状态（2026-07-05，Batch 46）**：FIXED=0, DRIFTED=2(5.148.1 __init__.py服务注册失败已改_log.warning+exc_info + 5.148.2 __init__.py auto_bootstrap失败已改_log.warning+exc_info), DEFERRED=25(5.148.3-13 HIGH 11个关键失败路径静默/DEBUG降级需逐个审查业务严重性选择ERROR/WARNING级别 + 5.148.14-23 MEDIUM 10个print替代logger/f-string性能/traceback丢失/格式不统一需统一日志策略 + 5.148.24-27 LOW 4个聚合缺失/配置不可见/重复代码 — 日志级别修复需逐处审查业务上下文与失败影响,属需人工判断的专项工程), 机械项已清零
 
 审查日志级别误用、关键错误未日志、正常流程用ERROR级别、敏感信息日志、日志格式不一致等问题。
 
