@@ -497,7 +497,6 @@ class RollbackExecutor:
         try:
             _lsg_mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
             LSGSecurityGateway = _lsg_mod.LSGSecurityGateway
-            import asyncio
 
             gateway = LSGSecurityGateway()
             content = f"rollback:{operation} target:{target}"

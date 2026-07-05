@@ -67,26 +67,9 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
         )
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_agent_scan"
-    except RuntimeError:
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                return None
-            result = loop.run_until_complete(
-                gw.scan_agent_action(
-                    text=content,
-                    tool_name="a2a_communication",
-                    tool_params={"from_agent": from_agent, "to_agent": to_agent},
-                    metadata={"source": "a2a_governance"},
-                )
-            )
-            from zephyr.shared.contracts.security.security_decision import SecurityDecision
-
-            if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                return result.blocked_by or "lsg_agent_scan"
-        except Exception as e:
-            logger.warning("suppressed error in governance_adapter", exc_info=True)
     except Exception as e:
+        # 5.162 C1 修复: 移除 except RuntimeError + get_event_loop().is_running() fail-open 回退。
+        # run_sync 已处理所有 async/sync 场景。原 is_running() 时 return None = fail-open 漏洞。
         logger.warning("suppressed error in governance_adapter", exc_info=True)
     return None
 

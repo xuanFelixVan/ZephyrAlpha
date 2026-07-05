@@ -73,7 +73,7 @@ class TelemetryMCP:
         mc.tool(name="telemetry.system_profile", description="系统资源画像（CPU/内存/磁盘）")(self._system_profile)
         mc.tool(name="telemetry.schema_info", description="Schema 版本与兼容性信息")(self._schema_info)
 
-    async def _health(self) -> dict:
+    def _health(self) -> dict:
         t = self._telemetry
         result = {
             "module_id": t.module_id,
@@ -97,7 +97,7 @@ class TelemetryMCP:
             result["resources"] = {"error": "unavailable"}
         return result
 
-    async def _metrics_snapshot(self, count: int = 10) -> dict:
+    def _metrics_snapshot(self, count: int = 10) -> dict:
         t = self._telemetry
         points = []
         for i in range(min(count, 100)):
@@ -121,7 +121,7 @@ class TelemetryMCP:
             "schema_version": schema_version,
         }
 
-    async def _alerts_status(self) -> dict:
+    def _alerts_status(self) -> dict:
         t = self._telemetry
         try:
             alert_config = _load_yaml(_CONFIG_DIR / "alert_rules.yaml")
@@ -141,7 +141,7 @@ class TelemetryMCP:
             ],
         }
 
-    async def _system_profile(self) -> dict:
+    def _system_profile(self) -> dict:
         t = self._telemetry
         try:
             snapshot = t.profiles.snapshot()
@@ -157,7 +157,7 @@ class TelemetryMCP:
             },
         }
 
-    async def _schema_info(self) -> dict:
+    def _schema_info(self) -> dict:
         t = self._telemetry
         try:
             version = t.schema.get_version()

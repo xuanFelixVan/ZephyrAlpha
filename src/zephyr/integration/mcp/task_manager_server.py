@@ -132,7 +132,7 @@ class TaskManagerMCP:
         mcp = self.mcp
 
         @mcp.tool(name="task_manager.create_task")
-        async def create_task(
+        def create_task(
             title: str,
             source_blueprint: str,
             source_section: str,
@@ -254,7 +254,7 @@ class TaskManagerMCP:
             return resp
 
         @mcp.tool(name="task_manager.get_task")
-        async def get_task(task_id: str) -> dict:
+        def get_task(task_id: str) -> dict:
             """查询 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 2"""
             mgr._rbac_guard("get_task", task_id)
             tc = mgr._load(task_id)
@@ -263,7 +263,7 @@ class TaskManagerMCP:
             return mgr._to_response(tc)
 
         @mcp.tool(name="task_manager.list_tasks")
-        async def list_tasks(
+        def list_tasks(
             phase: int | None = None,
             status: str | None = None,
             session_id: str | None = None,
@@ -285,7 +285,7 @@ class TaskManagerMCP:
             return {"items": items, "total": len(items)}
 
         @mcp.tool(name="task_manager.update_task_status")
-        async def update_task_status(task_id: str, new_status: str) -> dict:
+        def update_task_status(task_id: str, new_status: str) -> dict:
             """更新任务状态——蓝图 MOD-TASK_SYSTEM §3.5 Tool 3（使用状态机 transition）"""
             mgr._rbac_guard("update_task_status", task_id)
             if mgr.task_repo is None:
@@ -301,7 +301,7 @@ class TaskManagerMCP:
             return mgr._to_response(updated)
 
         @mcp.tool(name="task_manager.decompose_blueprint")
-        async def decompose_blueprint(blueprint_path: str, namespace: str = "CP", phase: int = 1) -> dict:
+        def decompose_blueprint(blueprint_path: str, namespace: str = "CP", phase: int = 1) -> dict:
             """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-TASK_SYSTEM §3.5 Tool 4"""
             mgr._rbac_guard("decompose_blueprint")
             result: DecompositionResult = mgr.decomposer.decompose_blueprint(
@@ -318,7 +318,7 @@ class TaskManagerMCP:
             }
 
         @mcp.tool(name="task_manager.register_from_triage")
-        async def register_from_triage(
+        def register_from_triage(
             triage_path: str = "",
             namespace: str = "ADR",
             phase: int = 1,
