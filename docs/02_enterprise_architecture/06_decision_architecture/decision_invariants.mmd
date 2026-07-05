@@ -1,0 +1,49 @@
+%% 不变量约束图 — 6 节点类型 + 合法/非法连接 + 5 条承重墙不变量
+%% 真源: architecture_model/domain/decision_graph_model.yaml
+flowchart LR
+    %% ===== 6 种节点类型 =====
+    SIGNAL["signal 信号节点<br/>(L2A)<br/>契约: Insight<br/>━━━━━━━━<br/>禁止直连 order"]:::nodeSignal
+    SELL["sell_decision 卖出决策节点<br/>(L2A)<br/>契约: SellDecision<br/>━━━━━━━━<br/>禁止直连 order"]:::nodeSignal
+    PT["portfolio_target 组合目标节点<br/>(L3)<br/>契约: PortfolioTarget"]:::nodeNormal
+    ORDER["order 订单节点<br/>(L3)<br/>契约: Order<br/>━━━━━━━━<br/>需 risk_check approving 入边"]:::nodeOrder
+    RISK["risk_check 风控检查节点<br/>(L4)<br/>契约: RiskDecision<br/>━━━━━━━━<br/>特殊: veto 一票否决"]:::nodeRisk
+    COMPL["compliance_check 合规检查节点<br/>(L4)<br/>契约: ComplianceDecision"]:::nodeNormal
+
+    %% ===== 合法连接（实线）=====
+    SIGNAL -->|informing| PT
+    SELL -->|informing| PT
+    PT -->|triggering| ORDER
+    RISK ==>|approving DEC-INV-001| ORDER
+    COMPL -->|constraining| ORDER
+    PT -->|triggering| RISK
+
+    %% ===== 非法连接（虚线红色, 禁止）=====
+    SIGNAL -.->|✗ 禁止 DEC-INV-002| ORDER
+    SELL -.->|✗ 禁止 DEC-INV-002| ORDER
+
+    %% ===== 不变量注释节点 =====
+    INV001["DEC-INV-001 风控一票否决<br/>order 必须有 ≥1 条 approving 入边<br/>来自 risk_check<br/>约束: DB trigger"]:::invariant
+    INV002["DEC-INV-002 信号仓位分离<br/>signal/sell_decision 不能直连 order<br/>必须经 portfolio_target 中转<br/>约束: DB CHECK"]:::invariant
+    INV003["DEC-INV-003 DAG 无环<br/>图中不能有环<br/>反馈循环用螺旋结构<br/>约束: Tarjan SCC"]:::invariant
+    INV004["DEC-INV-004 时间单调性<br/>forall (u,v) in E: tau(u) <= tau(v)<br/>约束: DB CHECK"]:::invariant
+    INV005["DEC-INV-005 证据哈希必填<br/>每个节点必须有 evidence_hash<br/>约束: DB NOT NULL"]:::invariant
+
+    %% 不变量节点放置在右侧
+    INV001 -.- ORDER
+    INV002 -.- SIGNAL
+    INV003 -.- PT
+    INV004 -.- RISK
+    INV005 -.- COMPL
+
+    %% 样式
+    classDef nodeSignal fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#e65100
+    classDef nodeNormal fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b
+    classDef nodeOrder fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#bf360c
+    classDef nodeRisk fill:#ffcdd2,stroke:#c62828,stroke-width:3px,color:#b71c1c
+    classDef invariant fill:#f3e5f5,stroke:#6a1b9a,stroke-width:1px,color:#4a148c
+
+    class SIGNAL,SELL nodeSignal
+    class PT,COMPL nodeNormal
+    class ORDER nodeOrder
+    class RISK nodeRisk
+    class INV001,INV002,INV003,INV004,INV005 invariant
