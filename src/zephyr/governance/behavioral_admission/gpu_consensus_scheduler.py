@@ -169,7 +169,7 @@ class GPUConsensusScheduler:
         max_workers: int = 1,
     ) -> None:
         self._ollama_url = ollama_url.rstrip("/")
-        self._local_model = local - model
+        self._local_model = local_model
         self._api_primary = api_primary
         self._api_secondary = api_secondary
         self._gpu_timeout_s = gpu_timeout_s
@@ -179,7 +179,7 @@ class GPUConsensusScheduler:
         self._lock = threading.Lock()
         self._gpu_status = GPUStatus(
             available=False,
-            model_name=local - model,
+            model_name=local_model,
             last_check_time=0.0,
         )
         self._total_submitted: int = 0
