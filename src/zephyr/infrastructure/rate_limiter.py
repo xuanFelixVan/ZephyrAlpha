@@ -119,7 +119,9 @@ class RateLimiter:
                 return False
 
             time.sleep(min(wait_time, 0.1))
-            self._waited += 1
+            # 5.142.2 修复: _waited += 1 是 LOAD-ADD-STORE 三步非原子,移入锁内与 _acquired/_rejected 保持一致
+            with self._lock:
+                self._waited += 1
 
     def stats(self) -> RateLimiterStats:
         with self._lock:
