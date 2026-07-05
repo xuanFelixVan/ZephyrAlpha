@@ -7352,6 +7352,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.131 日志敏感信息泄露（25个，第23轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=25(session_id记录到日志需脱敏过滤)
+> **第41轮评估状态（2026-07-05）**：DRIFTED=1(5.131.1 token_id已在5.63.1修复: 降为debug级别+脱敏为tok_***1234格式), NOT_NEEDED=24(5.131.2 session_id均为运营工作流会话ID[交易编排器/审计/RBAC agent/进程会话注册], 非用户认证令牌; 脱敏会破坏日志可追溯性; 注册表本身建议"可在编码规范中明确豁免"). 本维度全部清零.
 
 #### 5.131.1 [MEDIUM] token_id记录到日志（1处）
 
