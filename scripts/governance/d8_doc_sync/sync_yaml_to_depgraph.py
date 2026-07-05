@@ -1340,7 +1340,7 @@ def sync_dataflow_registry(cur):
             j.get("run_context"), j.get("pit_relevance", "strict"),
             j.get("description"), now_iso,
         ))
-        job_id = cur.fetchone()[0]
+        job_id = cur.fetchone()["job_id"]
         job_name_to_id[job_name] = job_id
         synced_jobs += 1
 
@@ -1366,7 +1366,7 @@ def sync_dataflow_registry(cur):
             d.get("pit_policy", "strict"), d.get("format_summary"),
             d.get("valid_since"), now_iso,
         ))
-        dataset_id = cur.fetchone()[0]
+        dataset_id = cur.fetchone()["dataset_id"]
         dataset_name_to_id[entity_name] = dataset_id
         synced_datasets += 1
 
