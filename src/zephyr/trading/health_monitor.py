@@ -46,6 +46,9 @@ _MEM_PRESSURE_CRITICAL = 90
 _MEM_PRESSURE_HIGH = 80
 _MEM_PRESSURE_ELEVATED = 70
 
+# 5.43.5 修复：磁盘压力纳入分级阈值，disk_usage>90% 直接判为 CRITICAL
+_DISK_PRESSURE_CRITICAL = 90
+
 # 5.39.1 修复：模块级共享 MetricsRegistry，避免每次 _collect_metrics 创建新实例导致指标被 GC
 _shared_metrics_registry = None
 
@@ -328,7 +331,12 @@ class HealthMonitor:
             mem = psutil.virtual_memory().percent
         except ImportError:
             return PressureLevel.NORMAL
-        if mem > _MEM_PRESSURE_CRITICAL:
+        # 5.43.5 修复：disk_usage>90% 纳入压力分类阈值
+        try:
+            disk = psutil.disk_usage("/").percent
+        except Exception:
+            disk = 0.0
+        if mem > _MEM_PRESSURE_CRITICAL or disk > _DISK_PRESSURE_CRITICAL:
             return PressureLevel.CRITICAL
         if mem > _MEM_PRESSURE_HIGH:
             return PressureLevel.HIGH

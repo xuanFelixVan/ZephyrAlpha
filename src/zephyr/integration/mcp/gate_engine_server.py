@@ -36,6 +36,7 @@ Gate策略 : docs/02_enterprise_architecture/gate-strategy-standard.md
 
 from __future__ import annotations
 
+import os
 import re
 import uuid
 from datetime import date
@@ -55,6 +56,43 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # 路径白名单模式（G1 写入防护示例规则）
 _BLACKLISTED_PATH_FRAGMENTS = frozenset({"scripts/archive", "working-designs", "temp_", ".backup"})
+
+
+def _check_blacklisted_path(path: str) -> list[str]:
+    """检查路径是否命中黑名单。
+
+    5.45.4 修复：改用 os.path.realpath()+os.path.commonpath() 边界检查，
+    防止通过 ../、./、符号链接等路径注入绕过子串匹配（in 操作符）。
+    """
+    hits: list[str] = []
+    try:
+        real = os.path.realpath(path)
+    except (OSError, ValueError):
+        real = os.path.normpath(path)
+    parts = [p for p in real.replace("\\", "/").split("/") if p]
+    for fragment in _BLACKLISTED_PATH_FRAGMENTS:
+        frag = fragment.replace("\\", "/")
+        if "/" in frag:
+            # 路径型fragment（如 scripts/archive）：优先用 commonpath 边界检查
+            try:
+                frag_abs = os.path.realpath(fragment)
+                if os.path.commonpath([real, frag_abs]) == frag_abs:
+                    hits.append(fragment)
+                    continue
+            except (OSError, ValueError):
+                pass
+            # 回退：路径分量序列匹配
+            frag_parts = [p for p in frag.split("/") if p]
+            if any(
+                parts[i : i + len(frag_parts)] == frag_parts
+                for i in range(len(parts) - len(frag_parts) + 1)
+            ):
+                hits.append(fragment)
+        else:
+            # 名称型fragment（如 temp_、.backup）：按路径分量检查，非裸子串
+            if any(fragment in part for part in parts):
+                hits.append(fragment)
+    return hits
 
 
 def _make_gate_run_report(
@@ -232,9 +270,9 @@ class GateEngineServer(BaseMCPServer):
         """G1 写入防护：路径黑名单 + 内容编码检测（骨架规则）。"""
         failed: list[str] = []
 
-        for fragment in _BLACKLISTED_PATH_FRAGMENTS:
-            if fragment in target_path:
-                failed.append(f"P0:G1.1:blacklisted_path_fragment:{fragment!r}")
+        # 5.45.4 修复：路径校验改用 realpath+commonpath 边界检查
+        for fragment in _check_blacklisted_path(target_path):
+            failed.append(f"P0:G1.1:blacklisted_path_fragment:{fragment!r}")
 
         has_version_suffix = re.search(r"-v\d+\.", target_path)
         if has_version_suffix:
@@ -259,9 +297,9 @@ class GateEngineServer(BaseMCPServer):
         failed: list[str] = []
 
         for fp in files:
-            for fragment in _BLACKLISTED_PATH_FRAGMENTS:
-                if fragment in fp:
-                    failed.append(f"P0:G2.1:blacklisted_path:{fp!r}")
+            # 5.45.4 修复：路径校验改用 realpath+commonpath 边界检查
+            for fragment in _check_blacklisted_path(fp):
+                failed.append(f"P0:G2.1:blacklisted_path:{fp!r}")
             if re.search(r"(-v\d+\.|\.backup$|^temp_)", fp.split("/")[-1]):
                 failed.append(f"P0:G2.2:forbidden_filename_pattern:{fp!r}")
 

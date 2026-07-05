@@ -15,8 +15,10 @@
 # [A_module] module_id=MOD-RES_semantic_cache | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import hashlib
+import threading
 import time
 from collections import OrderedDict
+from collections.abc import Callable
 from dataclasses import dataclass
 
 
@@ -37,6 +39,9 @@ class SemanticCache:
         self._total_cost_saved: float = 0.0
         self._hits: int = 0
         self._misses: int = 0
+        # 5.47.2 修复：per-key single-flight 锁，防止 get miss 时 thundering herd
+        self._miss_locks: dict[str, threading.Lock] = {}
+        self._miss_locks_guard = threading.Lock()
 
     @staticmethod
     def _hash(prompt: str) -> str:
@@ -71,6 +76,27 @@ class SemanticCache:
         while len(self._cache) > self._max_entries:
             self._cache.popitem(last=False)
 
+    def get_or_compute(self, prompt: str, loader: Callable[[], tuple[str, float]]) -> str:
+        """5.47.2 修复：single-flight 防止 get miss 时 thundering herd。
+
+        cache miss 时只有一个请求穿透到 loader，其余请求等待后直接命中缓存。
+        loader 返回 (response, cost) 元组。
+        """
+        cached = self.get(prompt)
+        if cached is not None:
+            return cached
+        key = self._hash(prompt)
+        with self._miss_locks_guard:
+            lock = self._miss_locks.setdefault(key, threading.Lock())
+        with lock:
+            # double-check：持锁后重新检查 cache，可能已被前一个请求填充
+            cached = self.get(prompt)
+            if cached is not None:
+                return cached
+            response, cost = loader()
+            self.put(prompt, response, cost)
+            return response
+
     def hit_rate(self) -> float:
         total = self._hits + self._misses
         return self._hits / total if total else 0.0
@@ -86,3 +112,5 @@ class SemanticCache:
         self._hits = 0
         self._misses = 0
         self._total_cost_saved = 0.0
+        with self._miss_locks_guard:
+            self._miss_locks.clear()

@@ -125,44 +125,64 @@ class ProviderConfig:
     cost_per_1k_output: float = 0.0
 
 
-_PROVIDERS: dict[str, ProviderConfig] = {
-    "deepseek": ProviderConfig(
-        base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
-        default_model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
-        api_key_env="DEEPSEEK_API_KEY",
-        fallback="glm",
-        max_context_tokens=128_000,
-        cost_per_1k_input=0.001,
-        cost_per_1k_output=0.002,
-    ),
-    "glm": ProviderConfig(
-        base_url=os.getenv("GLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4"),
-        default_model=os.getenv("GLM_MODEL", "glm-4-flash"),
-        api_key_env="GLM_API_KEY",
-        fallback="deepseek",
-        max_context_tokens=128_000,
-        cost_per_1k_input=0.001,
-        cost_per_1k_output=0.001,
-    ),
-    "claude": ProviderConfig(
-        base_url=os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
-        default_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514"),
-        api_key_env="ANTHROPIC_API_KEY",
-        fallback=None,
-        max_context_tokens=200_000,
-        cost_per_1k_input=0.020,
-        cost_per_1k_output=0.080,
-    ),
-    "openai": ProviderConfig(
-        base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
-        default_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        api_key_env="OPENAI_API_KEY",
-        fallback=None,
-        max_context_tokens=128_000,
-        cost_per_1k_input=0.003,
-        cost_per_1k_output=0.015,
-    ),
-}
+_PROVIDERS: dict[str, ProviderConfig] = {}
+
+
+def _build_providers() -> dict[str, ProviderConfig]:
+    """构建 provider 配置表。
+
+    5.54.1 修复：将模块级 import 时冻结的 _PROVIDERS 提取为函数，
+    使环境变量变更后可通过 reload_providers() 重新生效。
+    """
+    return {
+        "deepseek": ProviderConfig(
+            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
+            default_model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
+            api_key_env="DEEPSEEK_API_KEY",
+            fallback="glm",
+            max_context_tokens=128_000,
+            cost_per_1k_input=0.001,
+            cost_per_1k_output=0.002,
+        ),
+        "glm": ProviderConfig(
+            base_url=os.getenv("GLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4"),
+            default_model=os.getenv("GLM_MODEL", "glm-4-flash"),
+            api_key_env="GLM_API_KEY",
+            fallback="deepseek",
+            max_context_tokens=128_000,
+            cost_per_1k_input=0.001,
+            cost_per_1k_output=0.001,
+        ),
+        "claude": ProviderConfig(
+            base_url=os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
+            default_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514"),
+            api_key_env="ANTHROPIC_API_KEY",
+            fallback=None,
+            max_context_tokens=200_000,
+            cost_per_1k_input=0.020,
+            cost_per_1k_output=0.080,
+        ),
+        "openai": ProviderConfig(
+            base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+            default_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+            api_key_env="OPENAI_API_KEY",
+            fallback=None,
+            max_context_tokens=128_000,
+            cost_per_1k_input=0.003,
+            cost_per_1k_output=0.015,
+        ),
+    }
+
+
+def reload_providers() -> dict[str, ProviderConfig]:
+    """5.54.1 修复：重新读取环境变量并刷新 _PROVIDERS，使配置变更生效。"""
+    global _PROVIDERS
+    _PROVIDERS = _build_providers()
+    return _PROVIDERS
+
+
+# 模块级初始化（import 时首次读取环境变量）
+_PROVIDERS = _build_providers()
 
 
 def _call_openai_compatible(

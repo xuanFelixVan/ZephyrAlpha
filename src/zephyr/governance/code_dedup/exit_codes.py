@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md
+# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
 # [MODULE] zephyr.governance.code_dedup.exit_codes
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
@@ -17,7 +17,7 @@
 
 """退出码定义模块——五档exit code 0-4枚举+描述+判定逻辑."""
 
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
 class ExitCode(IntEnum):
@@ -26,6 +26,14 @@ class ExitCode(IntEnum):
     ERROR = 2
     TOOL_ERROR = 3
     DEGRADED = 4
+
+
+class RunMode(Enum):
+    """运行模式枚举，替代 determine_exit_code 的 (tool_error, degraded) 双布尔参数。"""
+
+    NORMAL = "normal"
+    DEGRADED = "degraded"
+    TOOL_ERROR = "tool_error"
 
 
 EXIT_CODE_DESCRIPTIONS = {
@@ -37,13 +45,32 @@ EXIT_CODE_DESCRIPTIONS = {
 }
 
 
-def determine_exit_code(max_severity: str, tool_error: bool = False, degraded: bool = False) -> ExitCode:
-    if tool_error:
+def determine_exit_code_mode(max_severity: str, mode: RunMode = RunMode.NORMAL) -> ExitCode:
+    """根据运行模式和最大严重度判定退出码。
+
+    5.96.4 修复：用 RunMode 枚举替代 (tool_error, degraded) 双布尔参数，消除隐式优先级，提升可读性。
+    """
+    if mode is RunMode.TOOL_ERROR:
         return ExitCode.TOOL_ERROR
-    if degraded:
+    if mode is RunMode.DEGRADED:
         return ExitCode.DEGRADED
     if max_severity in ("high", "critical"):
         return ExitCode.ERROR
     if max_severity in ("low", "medium"):
         return ExitCode.WARN
     return ExitCode.PASS
+
+
+def determine_exit_code(max_severity: str, tool_error: bool = False, degraded: bool = False) -> ExitCode:
+    """根据最大严重度和运行状态判定退出码（向后兼容入口）。
+
+    5.96.4 修复：内部映射到 RunMode 枚举后委托给 determine_exit_code_mode，
+    消除双布尔参数切换返回逻辑的可读性问题。
+    """
+    if tool_error:
+        mode = RunMode.TOOL_ERROR
+    elif degraded:
+        mode = RunMode.DEGRADED
+    else:
+        mode = RunMode.NORMAL
+    return determine_exit_code_mode(max_severity, mode)

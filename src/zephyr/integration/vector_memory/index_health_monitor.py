@@ -85,7 +85,8 @@ class IndexHealthMonitor:
                     col = self._collection_manager.get_collection(info.name)
                     col.count()
                     healthy += 1
-                except Exception as e:
+                except (KeyError, ValueError) as e:
+                    _logger.warning("IndexHealthMonitor: collection %s 健康检查失败: %s", info.name, e)
                     unhealthy += 1
                     issues.append(f"{info.name}: {e}")
             else:
@@ -154,8 +155,8 @@ class IndexHealthMonitor:
                                 age = (now - wt).days
                                 if age > ttl_days:
                                     expired += 1
-                            except Exception as e:
-                                _logger.warning("suppressed error in index_health_monitor", exc_info=True)
+                            except ValueError as e:
+                                _logger.warning("IndexHealthMonitor: TTL 时间戳解析失败: %s", e)
                 reports.append(
                     TTLExpiryReport(
                         collection=col_name,
@@ -164,8 +165,8 @@ class IndexHealthMonitor:
                         ttl_days=ttl_days,
                     )
                 )
-            except Exception as e:
-                _logger.warning("suppressed error in index_health_monitor", exc_info=True)
+            except (KeyError, ValueError) as e:
+                _logger.warning("IndexHealthMonitor: TTL 检查失败 for %s: %s", col_name, e)
         return reports
 
     def auto_repair(self, collection_name: str) -> bool:
@@ -173,6 +174,6 @@ class IndexHealthMonitor:
         try:
             self._collection_manager.get_collection(collection_name)
             return True
-        except Exception as e:
-            _logger.error("IndexHealthMonitor: 修复失败: %s", e, exc_info=True)
+        except (KeyError, ValueError) as e:
+            _logger.warning("IndexHealthMonitor: 修复失败: %s", e, exc_info=True)
             return False

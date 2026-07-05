@@ -352,7 +352,7 @@ class VerdictEngine:
                     graduated_level=GraduatedLevel.L6,
                     reason="evaluate_timeout",
                 )
-            except Exception as exc:
+            except (TimeoutError, asyncio.TimeoutError, ConnectionError) as exc:
                 self._red_count += 1
                 return Verdict(
                     verdict_level=VerdictLevel.RED,

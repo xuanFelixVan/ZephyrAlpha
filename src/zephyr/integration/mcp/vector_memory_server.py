@@ -38,6 +38,7 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
+from zephyr.integration.vector_memory.vms_errors import VMSError
 
 if TYPE_CHECKING:
     from zephyr.shared.protocols.ports import VectorMemoryProtocol
@@ -167,7 +168,7 @@ class VectorMemoryServer(BaseMCPServer):
             try:
                 self._vms.init_all_collections()
                 self._vms.start()
-            except Exception:
+            except VMSError:
                 logger.warning("suppressed error in vector_memory_server", exc_info=True)
             return
         try:
@@ -176,7 +177,7 @@ class VectorMemoryServer(BaseMCPServer):
             self._vms = InProcessVectorMemory()
             self._vms.init_all_collections()
             self._vms.start()
-        except Exception:
+        except VMSError:
             self._vms = None
 
     def _search(self, collection_name: str, query: str, k: int = 5) -> dict[str, Any]:
@@ -199,7 +200,7 @@ class VectorMemoryServer(BaseMCPServer):
         try:
             result_id = self._vms.write(collection_name, content, metadata=metadata, doc_id=doc_id)
             return {"doc_id": result_id, "collection": collection_name, "written": True}
-        except Exception as e:
+        except VMSError as e:
             logger.exception("vms write failed", exc_info=True)
             return {"error": "write failed", "written": False}
 

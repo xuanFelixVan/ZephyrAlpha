@@ -74,6 +74,8 @@ _JSONL_FLUSH_INTERVAL = 16
 
 _DATA_DIR = REPO_ROOT / "data" / "telemetry"
 
+# 5.81.1 修复：模块级 ring buffer 共享可变状态, 加 threading.Lock 保护并发写入
+_ring_lock = threading.Lock()
 _in_memory_ring: list[dict] = []
 _ring_write_cursor = 0
 _jsonl_countdown = _JSONL_FLUSH_INTERVAL
@@ -91,32 +93,41 @@ def _ensure_jsonl(fp: Path) -> None:
 
 
 def _write_ring(point: dict) -> None:
+    # 5.81.1 修复：模块级 ring buffer 并发写入需持锁, 防止 cursor/列表交叉修改导致数据错位
     global _ring_write_cursor, _jsonl_countdown
-    idx = _ring_write_cursor % _RING_SIZE
-    if idx < len(_in_memory_ring):
-        _in_memory_ring[idx] = point
-    else:
-        _in_memory_ring.append(point)
-    _ring_write_cursor += 1
-    _jsonl_countdown -= 1
-    if _jsonl_countdown <= 0:
+    with _ring_lock:
+        idx = _ring_write_cursor % _RING_SIZE
+        if idx < len(_in_memory_ring):
+            _in_memory_ring[idx] = point
+        else:
+            _in_memory_ring.append(point)
+        _ring_write_cursor += 1
+        _jsonl_countdown -= 1
+        need_flush = _jsonl_countdown <= 0
+        if need_flush:
+            _jsonl_countdown = _JSONL_FLUSH_INTERVAL
+    if need_flush:
         _flush_ring_to_jsonl()
-        _jsonl_countdown = _JSONL_FLUSH_INTERVAL
 
 
 def _flush_ring_to_jsonl() -> None:
-    if not _in_memory_ring:
+    # 5.81.1 修复：在锁内取出快照, 锁外执行 I/O 避免长持锁
+    with _ring_lock:
+        if not _in_memory_ring:
+            return
+        cursor_snapshot = _ring_write_cursor
+        start = max(0, cursor_snapshot - _JSONL_FLUSH_INTERVAL)
+        lines: list[str] = []
+        for i in range(start, cursor_snapshot):
+            idx = i % _RING_SIZE
+            if idx < len(_in_memory_ring):
+                lines.append(json.dumps(_in_memory_ring[idx], default=str))
+    if not lines:
         return
     try:
         data_dir = _telemetry_data_dir()
         fp = data_dir / "metrics.jsonl"
         _ensure_jsonl(fp)
-        start = max(0, _ring_write_cursor - _JSONL_FLUSH_INTERVAL)
-        lines = []
-        for i in range(start, _ring_write_cursor):
-            idx = i % _RING_SIZE
-            if idx < len(_in_memory_ring):
-                lines.append(json.dumps(_in_memory_ring[idx], default=str))
         content = "\n".join(lines) + "\n"
         tmp_path = f"{fp}.{os.getpid()}.tmp"
         try:
@@ -137,15 +148,17 @@ def _flush_ring_to_jsonl() -> None:
 
 
 def get_recent_metrics(limit: int = 256) -> list[dict]:
-    if not _in_memory_ring:
-        return []
-    end = _ring_write_cursor
-    start = max(0, end - limit)
-    result: list[dict] = []
-    for i in range(start, end):
-        idx = i % _RING_SIZE
-        if idx < len(_in_memory_ring):
-            result.append(_in_memory_ring[idx])
+    # 5.81.1 修复：读取也持锁, 防止读到中间状态
+    with _ring_lock:
+        if not _in_memory_ring:
+            return []
+        end = _ring_write_cursor
+        start = max(0, end - limit)
+        result: list[dict] = []
+        for i in range(start, end):
+            idx = i % _RING_SIZE
+            if idx < len(_in_memory_ring):
+                result.append(_in_memory_ring[idx])
     return result
 
 

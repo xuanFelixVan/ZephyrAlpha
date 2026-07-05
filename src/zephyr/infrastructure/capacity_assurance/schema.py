@@ -45,6 +45,25 @@ import os
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
 
+# 5.66.2 修复：表名白名单，防止 f-string 拼接表名的 SQL 注入风险
+_ALLOWED_TABLES = frozenset(
+    {
+        "ai_provenance",
+        "capacity_metrics",
+        "error_budget",
+        "token_budget_usage",
+        "capacity_metrics_hourly",
+        "_capacity_schema_version",
+    }
+)
+
+
+def _validate_table_name(table: str) -> str:
+    """5.66.2 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接。"""
+    if table not in _ALLOWED_TABLES:
+        raise ValueError(f"table name not in whitelist: {table!r}")
+    return table
+
 
 class SchemaManager:
     """容量保障数据库 Schema 的完整生命周期管理器。"""
@@ -234,7 +253,9 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
         for table, expected_cols in required_tables.items():
             try:
-                cols = conn.execute(f"PRAGMA table_info({table})").fetchall()
+                # 5.66.2 修复：白名单校验表名后再用于 PRAGMA
+                safe_table = _validate_table_name(table)
+                cols = conn.execute(f"PRAGMA table_info({safe_table})").fetchall()
                 col_names = {c[1] for c in cols}
                 missing_cols = set(expected_cols) - col_names
                 if missing_cols:
@@ -262,7 +283,9 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
 
         # TTL check
         try:
-            cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"
+            # 5.66.2 修复：校验 TTL_DAYS 为整数后再拼接，防止注入
+            ttl_days = int(self.TTL_DAYS)
+            cutoff = f"datetime('now', '-{ttl_days} days')"
             count = conn.execute(f"SELECT COUNT(*) FROM capacity_metrics WHERE ts < {cutoff}").fetchone()[0]
             result["ttl_eligible_rows"] = count
         except sqlite3.OperationalError:
@@ -274,7 +297,9 @@ CREATE INDEX IF NOT EXISTS idx_cmh_slo_hour ON capacity_metrics_hourly(slo_id, h
     def ttl_cleanup(self, db_path: str | None = None) -> int:
         target = db_path or self.db_path
         conn = get_db_connection(target)
-        cutoff = f"datetime('now', '-{self.TTL_DAYS} days')"
+        # 5.66.2 修复：校验 TTL_DAYS 为整数后再拼接，防止注入
+        ttl_days = int(self.TTL_DAYS)
+        cutoff = f"datetime('now', '-{ttl_days} days')"
         total = 0
         try:
             cur = conn.execute(f"DELETE FROM capacity_metrics WHERE ts < {cutoff}")

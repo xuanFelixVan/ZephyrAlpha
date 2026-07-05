@@ -116,8 +116,13 @@ def _load_patterns() -> dict[str, list[float]]:
 def _save_patterns(patterns: dict[str, list[float]]) -> None:
     try:
         os.makedirs(os.path.dirname(_PATTERNS_FILE), exist_ok=True)
-        with open(_PATTERNS_FILE, "w", encoding="utf-8") as f:
+        # 5.74.1 修复：使用 tmp 文件 + os.replace() 原子写入，防止崩溃时文件损坏
+        tmp_path = _PATTERNS_FILE + ".tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
             json.dump(patterns, f, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, _PATTERNS_FILE)
     except Exception:
         logger.warning("zombie_scanner: failed to save patterns file", exc_info=True)
 
@@ -281,8 +286,9 @@ def _kill_process(pid: int) -> bool:
                 time.sleep(2.0)
                 if psutil.pid_exists(pid):
                     psutil.Process(pid).kill()
-        except Exception as e:
+        except (ProcessLookupError, PermissionError) as e:
             logger.warning("_kill_process: failed to clean up process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
+            return False
         return True
     except OSError as e:
         logger.warning("_kill_process: failed to kill process %s (%s: %s)", pid, type(e).__name__, e)

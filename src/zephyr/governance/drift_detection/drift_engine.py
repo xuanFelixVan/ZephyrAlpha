@@ -447,10 +447,11 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
             }
         finally:
             # 5.112.1 修复：CancelledError/TimeoutError路径确保子进程被kill，防止孤儿进程
+            # 5.68.2 修复：kill 后用 communicate() 排空管道并回收，wait() 不排空管道可能残留孤儿
             try:
                 if proc is not None and proc.returncode is None:
                     proc.kill()
-                    await proc.wait()
+                    await proc.communicate()
             except Exception as e:
                 logger.debug("suppressed error in drift_engine", exc_info=True)
 

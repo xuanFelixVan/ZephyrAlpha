@@ -26,6 +26,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Any
@@ -87,15 +88,21 @@ class ContextEvictor:
     """
 
     _instance: ContextEvictor | None = None
+    # 5.81.3 修复：Singleton 无 DCL, 并发首次调用会创建多个实例导致状态分叉
+    _instance_lock: threading.Lock = threading.Lock()
 
     @classmethod
     def reset_instance(cls) -> None:
-        cls._instance = None
+        with cls._instance_lock:
+            cls._instance = None
 
     @classmethod
     def instance(cls, **kwargs: Any) -> ContextEvictor:
+        # 5.81.3 修复：double-checked locking 防止并发创建多实例
         if cls._instance is None:
-            cls._instance = cls(**kwargs)
+            with cls._instance_lock:
+                if cls._instance is None:
+                    cls._instance = cls(**kwargs)
         return cls._instance
 
     def __init__(

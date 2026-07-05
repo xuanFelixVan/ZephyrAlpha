@@ -40,19 +40,35 @@ class PoolStats(BaseModel):
 
 
 class ResourceAwarePool:
-    def __init__(self, cpu_workers: int = 4, gpu_workers: int = 2) -> None:
+    def __init__(self, cpu_workers: int = 4, gpu_workers: int = 2, max_pending: int | None = None) -> None:
         self._cpu_pool = ThreadPoolExecutor(max_workers=cpu_workers)
         self._gpu_pool = ThreadPoolExecutor(max_workers=gpu_workers)
         self._cpu_futures: list[Future] = []
         self._gpu_futures: list[Future] = []
         self._shutdown = False
+        # 5.67.1 修复：添加 maxsize 背压，防止无限制提交导致内存耗尽
+        self._max_cpu_pending = max_pending if max_pending is not None else cpu_workers * 2
+        self._max_gpu_pending = max_pending if max_pending is not None else gpu_workers * 2
+
+    def _pending_count(self, pool: ThreadPoolExecutor) -> int:
+        q = getattr(pool, "_work_queue", None)
+        return q.qsize() if q is not None else 0
 
     def submit(self, task_type: str, func: Callable[..., Any], *args: Any) -> Future:
         if self._shutdown:
             raise RuntimeError("ResourceAwarePool is shut down")
-        pool = self._gpu_pool if self._route_task(task_type) == "gpu" else self._cpu_pool
+        is_gpu = self._route_task(task_type) == "gpu"
+        pool = self._gpu_pool if is_gpu else self._cpu_pool
+        # 5.67.1 修复：提交前检查队列是否已满，满则 raise 实现背压
+        pending = self._pending_count(pool)
+        max_pending = self._max_gpu_pending if is_gpu else self._max_cpu_pending
+        if pending >= max_pending:
+            raise RuntimeError(
+                f"ResourceAwarePool {'gpu' if is_gpu else 'cpu'} queue full "
+                f"(pending={pending}, max={max_pending})"
+            )
         future = pool.submit(func, *args)
-        if self._route_task(task_type) == "gpu":
+        if is_gpu:
             self._gpu_futures = [f for f in self._gpu_futures if not f.done()]
             self._gpu_futures.append(future)
         else:
@@ -74,9 +90,9 @@ class ResourceAwarePool:
 
     def stats(self) -> PoolStats:
         cpu_active = sum(1 for f in self._cpu_futures if not f.done())
-        cpu_pending = self._cpu_pool._work_queue.qsize() if hasattr(self._cpu_pool, "_work_queue") else 0
+        cpu_pending = self._pending_count(self._cpu_pool)
         gpu_active = sum(1 for f in self._gpu_futures if not f.done())
-        gpu_pending = self._gpu_pool._work_queue.qsize() if hasattr(self._gpu_pool, "_work_queue") else 0
+        gpu_pending = self._pending_count(self._gpu_pool)
         return PoolStats(
             cpu_active=cpu_active,
             cpu_pending=cpu_pending,
