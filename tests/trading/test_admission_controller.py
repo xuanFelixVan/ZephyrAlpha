@@ -92,7 +92,7 @@ class TestAdmissionResult:
         assert r.event_type == ""
         assert r.retry_after_ms == 0
         assert r.remaining_tokens == 0.0
-        assert r.circuit_open is False
+        assert r.is_circuit_open is False  # 5.153.4 修复: 字段重命名
 
     def test_custom(self):
         r = AdmissionResult(
@@ -112,7 +112,7 @@ class TestAdmissionMetrics:
         assert m.total_requests == 0
         assert m.admitted == 0
         assert m.rate_limited == 0
-        assert m.circuit_open == 0
+        assert m.circuit_open_count == 0  # 5.153.4 修复: 字段重命名
         assert m.rejected == 0
         assert m.global_tokens_remaining == 0.0
         assert m.circuit_breaker_state == "closed"
@@ -306,7 +306,7 @@ class TestAdmissionControllerAdmit:
         ctrl._circuit_breaker.record_failure()
         result = ctrl.admit({"event_type": "file_write"})
         assert result.decision == AdmissionDecision.CIRCUIT_OPEN
-        assert result.circuit_open is True
+        assert result.is_circuit_open is True  # 5.153.4 修复: 字段重命名
         assert result.retry_after_ms > 0
 
     def test_admit_circuit_breaker_disabled_skips_check(self):
@@ -380,7 +380,7 @@ class TestAdmissionControllerMetrics:
         ctrl._circuit_breaker.record_failure()
         ctrl.admit({"event_type": "default"})
         m = ctrl.get_metrics()
-        assert m.circuit_open == 1
+        assert m.circuit_open_count == 1  # 5.153.4 修复: 字段重命名
 
 
 class TestAdmissionControllerHealthCheck:

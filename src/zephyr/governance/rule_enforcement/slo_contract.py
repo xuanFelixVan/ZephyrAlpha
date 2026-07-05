@@ -246,7 +246,7 @@ class SLOContractEngine:
             snap = self.get_budget(sli_name)
             if (
                 worst is None
-                or BudgetTier_ordering(snap.tier) > BudgetTier_ordering(worst.tier)
+                or budget_tier_ordering(snap.tier) > budget_tier_ordering(worst.tier)
                 or (snap.tier == worst.tier and snap.error_budget_remaining_pct < worst.error_budget_remaining_pct)
             ):
                 worst = snap
@@ -397,7 +397,7 @@ class SLOContractEngine:
         )
 
 
-def BudgetTier_ordering(tier: BudgetTier) -> int:
+def budget_tier_ordering(tier: BudgetTier) -> int:  # 5.153.14 修复: PascalCase_snake_case混合改为snake_case
     _order = {
         BudgetTier.HEALTHY: 0,
         BudgetTier.WARNING: 1,

@@ -2832,12 +2832,16 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
     )
 
 
-def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None):
+def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移
 
     治本（2026-06-29）：删除文件锁调用（对齐 apply_depgraph.py / sync_yaml_to_depgraph.py）。
     P2 PG 迁移后 PG MVCC 事务（autocommit=False）提供原子性，无需文件锁。
     原 acquire_lock/release_lock no-op 桩已删除，调用点同步清除（消除误导日志）。
+
+    5.153.3 修复：移除 db_path 幽灵参数（原参数完全未使用，函数体直接调用
+    get_depgraph_pg_connection(autocommit=False) 连接 PostgreSQL，db_path 参数名暗示
+    SQLite 路径写入，违反 depgraph 必须为 PostgreSQL 的硬约束）。
     """
     from datetime import datetime
 
@@ -4044,10 +4048,10 @@ def main():
                 file=sys.stderr,
             )
             sys.exit(4)
-        db_path = args.output_db
+        db_path = args.output_db  # 5.153.3 修复: db_path不再传递给write_depgraph_to_db(该参数已移除)
         if not os.path.isabs(db_path):
             db_path = str(PROJECT_ROOT / db_path)
-        write_depgraph_to_db(depgraph, db_path, design_state=design_state)
+        write_depgraph_to_db(depgraph, design_state=design_state)
 
     sys.exit(0)
 

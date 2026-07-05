@@ -207,7 +207,7 @@ class AdmissionResponseBuilder:
         result_metadata: dict[str, Any] = {
             "event_type": result.event_type,
             "remaining_tokens": result.remaining_tokens,
-            "circuit_open": result.circuit_open,
+            "circuit_open": result.is_circuit_open,  # 5.153.4 修复: AdmissionResult字段重命名
         }
         if result.retry_after_ms > 0:
             result_metadata["retry_after_ms"] = result.retry_after_ms

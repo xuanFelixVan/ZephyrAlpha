@@ -71,7 +71,7 @@ class AdmissionResult(BaseModel):
     event_type: str = ""
     retry_after_ms: int = 0
     remaining_tokens: float = 0.0
-    circuit_open: bool = False
+    is_circuit_open: bool = False  # 5.153.4 修复: 布尔状态加is_前缀, 与AdmissionMetrics计数器区分
 
 
 class AdmissionMetrics(BaseModel):
@@ -80,7 +80,7 @@ class AdmissionMetrics(BaseModel):
     total_requests: int = 0
     admitted: int = 0
     rate_limited: int = 0
-    circuit_open: int = 0
+    circuit_open_count: int = 0  # 5.153.4 修复: 计数器加_count后缀, 与AdmissionResult布尔标志区分
     rejected: int = 0
     global_tokens_remaining: float = 0.0
     circuit_breaker_state: str = "closed"
@@ -239,7 +239,7 @@ class AdmissionController:
                 decision=AdmissionDecision.CIRCUIT_OPEN,
                 event_type=self._extract_event_type(event),
                 retry_after_ms=self._circuit_breaker.retry_after_ms,
-                circuit_open=True,
+                is_circuit_open=True,  # 5.153.4 修复: AdmissionResult字段重命名
             )
 
         event_type = self._extract_event_type(event)
@@ -287,7 +287,7 @@ class AdmissionController:
                 total_requests=self._total_requests,
                 admitted=self._admitted,
                 rate_limited=self._rate_limited,
-                circuit_open=self._circuit_open,
+                circuit_open_count=self._circuit_open,  # 5.153.4 修复: AdmissionMetrics字段重命名
                 rejected=self._rejected,
                 global_tokens_remaining=self._global_bucket.tokens,
                 circuit_breaker_state=self._circuit_breaker.state,

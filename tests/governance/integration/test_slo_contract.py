@@ -28,7 +28,7 @@ from zephyr.governance.rule_enforcement.slo_contract import (
     TRADING_OVERRIDE,
     BudgetSnapshot,
     BudgetTier,
-    BudgetTier_ordering,
+    budget_tier_ordering,
     ContractPriority,
     SLIDefinition,
     SLIName,
@@ -47,9 +47,9 @@ class TestBudgetTier:
         assert BudgetTier.EXHAUSTED.value == "exhausted"
 
     def test_ordering(self):
-        assert BudgetTier_ordering(BudgetTier.HEALTHY) < BudgetTier_ordering(BudgetTier.WARNING)
-        assert BudgetTier_ordering(BudgetTier.WARNING) < BudgetTier_ordering(BudgetTier.CRITICAL)
-        assert BudgetTier_ordering(BudgetTier.CRITICAL) < BudgetTier_ordering(BudgetTier.EXHAUSTED)
+        assert budget_tier_ordering(BudgetTier.HEALTHY) < budget_tier_ordering(BudgetTier.WARNING)
+        assert budget_tier_ordering(BudgetTier.WARNING) < budget_tier_ordering(BudgetTier.CRITICAL)
+        assert budget_tier_ordering(BudgetTier.CRITICAL) < budget_tier_ordering(BudgetTier.EXHAUSTED)
 
 
 class TestContractPriority:

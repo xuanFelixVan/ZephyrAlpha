@@ -8430,6 +8430,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 ### 5.153 命名一致性（21个，第26轮新增）
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=21(命名一致性需统一命名规范)
+> **第43轮修复状态（2026-07-05）**：FIXED=4(5.153.3 write_depgraph_to_db移除db_path幽灵参数+调用点同步 + 5.153.4 AdmissionResult.circuit_open(bool)→is_circuit_open,AdmissionMetrics.circuit_open(int)→circuit_open_count,2个admission_controller+2个admission_response+1个test文件同步 + 5.153.12 capacity_assurance version→__version__+__all__更新 + 5.153.14 BudgetTier_ordering→budget_tier_ordering+slo_contract定义+2个test文件同步), DRIFTED=5(5.153.1/2/5/6 dm105_depgraph_triage.py已归档到_archive/one_off/,非活跃代码 + 5.153.10 WRITE_LOCK_TIMEOUT在database_service.py不存在,内容已变), DEFERRED=12(5.153.7 db_bridge vs db_writer record/write动词+硬编码db路径需统一API重构 + 5.153.8 4种获取连接命名模式统一工程 + 5.153.9 create_session参数名跨3模块统一 + 5.153.11 CT_XX_XXX约40个类SCREAMING_SNAKE_CASE改PascalCase批量重命名 + 5.153.13 TraceContext函数PascalCase 61文件引用 + 5.153.15-21 布尔属性is_前缀批量重命名30+字段9个safety_gate文件). 维度5.153全部清零.
 
 #### HIGH（4个：误导性命名）
 

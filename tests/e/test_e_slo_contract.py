@@ -22,7 +22,7 @@ from zephyr.governance.rule_enforcement.slo_contract import (
     TRADING_OVERRIDE,
     BudgetSnapshot,
     BudgetTier,
-    BudgetTier_ordering,
+    budget_tier_ordering,
     ContractPriority,
     SLIDefinition,
     SLIName,
@@ -234,13 +234,13 @@ class TestTIER_POLICY:
 
 class TestBudgetTierOrdering:
     def test_healthy_returns_0(self):
-        assert BudgetTier_ordering(BudgetTier.HEALTHY) == 0
+        assert budget_tier_ordering(BudgetTier.HEALTHY) == 0
 
     def test_warning_returns_1(self):
-        assert BudgetTier_ordering(BudgetTier.WARNING) == 1
+        assert budget_tier_ordering(BudgetTier.WARNING) == 1
 
     def test_critical_returns_2(self):
-        assert BudgetTier_ordering(BudgetTier.CRITICAL) == 2
+        assert budget_tier_ordering(BudgetTier.CRITICAL) == 2
 
     def test_exhausted_returns_3(self):
         assert BudgetTier_ordering(BudgetTier.EXHAUSTED) == 3

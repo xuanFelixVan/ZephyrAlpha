@@ -33,7 +33,7 @@ Module ID: MOD-INF-001
 Source: docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
 """
 
-version = "2.6.0"
+__version__ = "2.6.0"  # 5.153.12 修复: 使用 __version__ 双下划线约定
 module_id = "MOD-INF-001"
 
 _SUBMODULES = [
@@ -64,5 +64,5 @@ __all__ = [
     "schema",
     "sli_instrumentation",
     "tech_stack",
-    "version",
+    "__version__",
 'budget_forecaster', 'host_resource_governor', 'kill_switch', 'token_budget']
