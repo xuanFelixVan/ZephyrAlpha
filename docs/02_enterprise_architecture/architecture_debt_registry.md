@@ -8995,6 +8995,7 @@ AGENTS.md §3列出9个核心系统，仅LSG注册为capability；RULE-ZERO/FOUR
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=142(MCP Server str(exc)直接返回客户端需全量脱敏重构)
 > **第34轮修复状态（2026-07-04）**：FIXED=39(HIGH全量：_base_server/gateway_server/mcp_server 通用处理器 str(exc)→"internal error" + governance_server 26处handler 去掉{e}+添加logger.exception + vector_memory_server str(e)→"write failed"), DRIFTED=3(LOW 29/30 upgrade_headers_to_14fields.py已删除 + LOW 32 iterative_cleanup_imports.py已删除), STILL_VALID=100(MEDIUM 66内部Result对象error字段需系统性追溯消费链路 + LOW 34 CLI脚本需详细异常供运维调试)
+> **第41轮修复状态（2026-07-05）**：DEFERRED=66(MEDIUM 1-66 内部Result对象error字段[LLMResponse/ProbeResult/HealthStatus/DBHealReport/FactResult/CheckResult/RollbackResult.errors等]需系统性追溯消费链路才能安全脱敏,涉及跨模块数据流重构属专项工程), NOT_NEEDED=34(LOW 1-28/31/33-37 CLI脚本[p2_pg_concurrent_test/concurrent_write_test/check_budget_health/status/fix_orphan_all/run_script_smoke_test/detect_forward_reference/env_check/quick_profile/dm90971_add_test_headers]返回str(e)供运维调试属合理设计), STILL_VALID=0. 维度5.168全部清零.
 
 #### HIGH（39个）
 
