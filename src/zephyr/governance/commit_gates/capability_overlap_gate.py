@@ -133,7 +133,8 @@ def make_capability_overlap_gate() -> GateSpec:
         except Exception as e:
             logger.warning(
                 "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，"
-                "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
+                "检测器失效，无法检测 capability 重叠。",
+                type(e).__name__, e, exc_info=True,
             )
             return True, ""  # warn-only 契约：仍 return True
 

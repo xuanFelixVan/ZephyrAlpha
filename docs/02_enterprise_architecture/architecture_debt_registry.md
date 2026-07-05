@@ -5375,3 +5375,53 @@ src/zephyr（return None/False/[]/{} 掩盖故障）：
 **核心模式总结**：(a)**except Exception: pass无日志**：19处HIGH集中在infrastructure/与governance/，审计日志/KB服务/预算引擎等核心路径静默吞异常；(b)**嵌套except吞噬恢复逻辑**：apply_depgraph.py 3处触发器恢复失败被静默，可能导致只读门禁永久失效；(c)**安全路径双层except:pass**：gateway_server.py和agent_orchestrator.py安全扫描失败被当作"无威胁"；(d)**return哨兵值掩盖故障**：40处，apply_depgraph.py单文件25处用-1/False掩盖DB异常，调用方无法区分"无变更"与"异常失败"；(e)**print替代logging**：apply_depgraph.py单文件97处ERROR/WARNING print，本报告列出30处代表性取样，全量迁移影响面最大。
 
 **严重度汇总**：HIGH=25, MEDIUM=70, LOW=5, 合计=100
+
+### 5.176 AI-11 审计遗留专项工程（4个，AI-11 审计新增）
+
+> **AI-11 审计发现（2026-07-06）**：审计治理-规则+安全韧性域时识别 4 项需大规模重构的专项工程，均非阻断级，标记 DEFERRED 待后续专项工程处理。
+> **第1轮状态（2026-07-06 AI-11）**：DEFERRED=4，STILL_VALID=0。
+
+#### 5.176.1 [MEDIUM] gate_engine.py 孤儿栈硬编码 _GATE_FILES
+
+- **文件**：`src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py` L40-180（_GATE_FILES 字典 + _run_check 960 行分发器）
+- **问题**：`gate_engine.py` 中 `_GATE_FILES` 字典硬编码 30+ gate 文件路径，与 `_registry.yaml`（声明式 gate 注册表）形成双真源；`_run_check` 函数 960 行用 if-elif 分发，违反声明式注册原则。该文件是 check_type_registry 死代码根源（每次新增 gate 需同步修改 3 处：_registry.yaml / _GATE_FILES / _run_check 分支）。
+- **修复方向**：拆分为 (1) `_GATE_FILES` 改为从 `_registry.yaml` 动态加载；(2) `_run_check` 分发器改为 `_gate_registry` 查找 + 多态 dispatch；(3) 删除 check_type_registry 死代码。
+- **专项工程计划**：3 阶段施工——阶段 1 加载器迁移 + 阶段 2 dispatch 重构 + 阶段 3 死代码清理。每阶段独立 commit + AST 验证。
+- **DEFERRED 理由**：影响面 960 行核心分发器，触及全 governance 域 gate 注册链路；非阻断且现有硬编码可工作，专项重构需独立任务。
+
+#### 5.176.2 [MEDIUM] rule_enforcement 容量治理（ARCH-CAP-002 单域 ≤150 节点）
+
+- **文件**：`src/zephyr/governance/rule_enforcement/` 整域
+- **问题**：rule_enforcement 域 production_nodes 数量接近 ARCH-CAP-002 单域 ≤150 上限，需评估是否拆分为 rule_enforcement_core + rule_enforcement_invariants + rule_enforcement_gates 等子域。当前未触发硬阻断（<150），但需前瞻性容量规划。
+- **修复方向**：(1) 运行 `generate_project_depgraph.py` 量化当前节点数；(2) 若 >120 则启动拆分评估；(3) 拆分时遵循"功能域平级，能平铺绝不嵌套"原则。
+- **专项工程计划**：先量化 → 再评估 → 最后拆分（如需）。
+- **DEFERRED 理由**：未触发硬阻断，当前容量仍在合规区间；拆分需重新设计域边界，影响 AGENTS.md / depgraph / capability registry 多处真源，属架构级变更。
+
+#### 5.176.3 [MEDIUM] check_type_registry 死代码
+
+- **文件**：`src/zephyr/governance/rule_enforcement/check_types/check_type_registry.py`（参考 P0-7 修复的 invariants 三文件后仍存在的死代码）
+- **问题**：`check_type_registry.py` 中部分 check_type 类未被任何 gate 引用（与 5.176.1 同源：gate_engine 硬编码分支绕过 registry 查找）。审计 P0-7 已修复 invariants 三文件的双真源（py 从 yaml 加载），但 check_type_registry 仍存在死代码。
+- **修复方向**：与 5.176.1 联动——gate_engine 改用 registry dispatch 后，check_type_registry 中的死代码（未被 _GATE_FILES 引用的类）可被静态分析识别并清理。
+- **专项工程计划**：跟随 5.176.1 阶段 3（死代码清理）一并处理。
+- **DEFERRED 理由**：依赖 5.176.1 完成；独立清理会因 gate_engine 仍硬编码而触发误判（被硬编码分支引用的类被识别为"活"代码）。
+
+#### 5.176.4 [LOW] commit_gates 5 处 subprocess.run 绕过 gateway._run_git
+
+- **文件**：
+  - `src/zephyr/governance/commit_gates/arch_reference_gate.py:131`（`git show`）
+  - `src/zephyr/governance/commit_gates/file_copy_gate.py:145`
+  - `src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py:110`
+  - `src/zephyr/governance/commit_gates/rule_four_way_alignment_gate.py:141`
+  - `src/zephyr/governance/commit_gates/dangling_reference_gate.py:135`
+  - `src/zephyr/governance/commit_gates/directory_contract_gate.py:119`
+  - `src/zephyr/governance/commit_gates/ttl_gate.py:118`
+  - `src/zephyr/governance/commit_gates/vocab_hardcode_gate.py:145`
+  - `src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py:116`
+  - `src/zephyr/governance/commit_gates/orphan_module_gate.py:235`
+  - `src/zephyr/governance/commit_gates/module_id_consistency_gate.py:78,177`
+- **问题**：13 处 `subprocess.run` 直接调用 git 命令（非 Python 脚本），绕过 `gateway._run_git` 包装（该包装提供 cwd、超时、编码统一处理）。一致性损失：每处重复实现 `cwd=str(project_root)` + `capture_output=True` + `timeout=N`。
+- **修复方向**：将所有 git 命令调用替换为 `gateway._run_git([...])`，统一超时与错误处理。需先扩展 `_run_git` 支持 `git show` 等查询类命令（当前可能仅支持 status/diff）。
+- **专项工程计划**：(1) 扩展 `_run_git` 支持查询类命令；(2) 批量替换 13 处 subprocess.run；(3) 测试验证。
+- **DEFERRED 理由**：非阻断，各 gate 自行处理 cwd/timeout 工作正常；批量替换需先验证 `_run_git` 兼容性，属一致性优化非正确性修复。
+
+> **AI-11 审计小结**：4 项 DEFERRED 均为大规模重构/架构级变更，符合"专项工程"定义。审计同步修复的 10 项 P0 + 多项 P1/P2/P3 已通过 commit 落地，剩余 4 项 DEFERRED 待后续专项工程处理。

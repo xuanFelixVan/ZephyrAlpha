@@ -185,17 +185,6 @@ gates:
   scope: global
   execution_plane: warm
   note: 4 core files — escalation-engine, delegation_engine, circuit_breaker, escalation_models
-- gate_id: GCT_024
-  gate_name: budget_enforcer_integration
-  title: GCT-024 Budget Enforcer — MOD-INF-024 · v0.7.0 · Token/Cost/Time 3D Seven-Level
-    Budget
-  category: governance
-  file: ''
-  status: active
-  scope: global
-  execution_plane: warm
-  note: 3 core files — budget_engine (pre_flight gate), burn_rate_monitor (4-window
-    Wasserstein), budget_models
 - gate_id: GATE_OBSERVABILITY
   gate_name: observability_baseline
   title: GATE-OBSERVABILITY Observability Baseline Gate — System Telemetry MOD-INF-015
@@ -528,6 +517,15 @@ gates:
   scope: global
   execution_plane: warm
   note: 2026-06-22 落地 — 自动生成自 TRAE-055 规则YAML（DM门禁批量创建）
+- gate_id: G_TRAE_059
+  gate_name: g_trae_059
+  title: G_TRAE_059 Gate — _schema_version 写入保护 + 版本一致性
+  category: compliance
+  file: g_trae_059.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: _schema_version 写入保护（AST scan + DB state check，TRAE-059）
 - gate_id: G_TRAE_012
   gate_name: g_trae_012
   title: G_TRAE_012 Gate — 代码构建-测试与安全

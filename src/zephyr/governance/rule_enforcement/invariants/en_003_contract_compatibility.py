@@ -37,12 +37,21 @@ from typing import Any
 import yaml
 
 from zephyr.shared.io.paths import REPO_ROOT
-CONTRACTS_PATH = (
-    REPO_ROOT
-    / "architecture_model"
-    / "contracts"
-    / "cross_layer_contracts.yaml"
-)
+
+_YAML_PATH = Path(__file__).parent / "en_003_contract_compatibility.yaml"
+
+
+def _load_contract_spec_path() -> Path:
+    """从 YAML 真源加载契约文件路径（SSoT 收敛，消除 py/yaml 路径分叉）。"""
+    with open(_YAML_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    for check in data.get("checks", []):
+        rel = check.get("params", {}).get("contract_spec_path")
+        if rel:
+            return REPO_ROOT / rel
+    return REPO_ROOT / "architecture_model" / "contracts" / "cross_layer_contracts.yaml"
+
+CONTRACTS_PATH = _load_contract_spec_path()
 
 TYPE_ALIAS_MAP: dict[str, str] = {
     "str": "str",

@@ -454,10 +454,12 @@ class TestShutdownPhase:
             conn.close()
 
     def test_shutdown_stops_idle_monitor_thread(self, manager: F5ShutdownManager):
-        thread = manager._idle_thread
-        assert thread is not None and thread.is_alive()
+        # 事件驱动模型：install 后存在活跃的 idle timer
+        timer = manager._idle_timer
+        assert timer is not None
         manager.shutdown()
-        assert not thread.is_alive()
+        # shutdown 后 timer 应已取消
+        assert manager._idle_timer is None
 
     def test_shutdown_calls_integration_on_shutdown(self, manager: F5ShutdownManager):
         integration = manager._integration

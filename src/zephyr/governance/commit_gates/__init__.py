@@ -1,3 +1,20 @@
+# [BLUEPRINT] MOD-GOV_commit_gates | docs/03_modules/_domain_governance/blueprint.md | §
+# [MODULE] zephyr.governance.commit_gates
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.governance.rule_bridge.git_commit_gateway
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_commit_gates | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+
 """commit_gates — GitCommitGateway pre-commit 门禁实现包。
 
 每个 gate 一个文件 + ``make_*_gate()`` 工厂函数，返回 ``GateSpec``。
@@ -11,6 +28,3 @@
 """
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
-
-__all__ = ['arch_reference_gate', 'capability_overlap_gate', 'claim_required_gate', 'create_guard', 'dangling_reference_gate', 'directory_contract_gate', 'held_overlap_gate', 'session_required_gate']
-

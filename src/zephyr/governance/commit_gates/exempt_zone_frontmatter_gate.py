@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] (True, msg)=通过；False=阻断（新引入豁免区 frontmatter 文件）；git ls-tree 失败不豁免继续检查
 # [TESTS] tests/governance/commit_gates/test_exempt_zone_frontmatter_gate.py
+# [A_module] module_id=MOD-GOV-exempt_zone_frontmatter_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """exempt_zone_frontmatter_gate.py — 豁免区 frontmatter 门禁（Phase 3 reconciler→gate 收敛）
 

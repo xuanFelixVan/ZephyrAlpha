@@ -34,40 +34,33 @@ from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import yaml
+
 from zephyr.shared.io.paths import REPO_ROOT
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
-MODULE_NAMES = [
-    "zephyr.data",
-    "zephyr.data",
-    "zephyr.infrastructure_runtime_integration",
-    "zephyr.factor",
-    "zephyr.signal_gen",
-    "zephyr.signal_quality",
-    "zephyr.signal_synth",
-    "zephyr.signal_strategy",
-    "zephyr.signal_ashare",
-    "zephyr.risk",
-    "zephyr.pf_core",
-    "zephyr.ex_core",
-    "zephyr.reporting",
-    "zephyr.frontend",
-    "zephyr.simulation",
-    "zephyr.governance",
-    "zephyr.ml_train",
-    "zephyr.infrastructure.system_telemetry",
-    "zephyr.intelligence.model_profiling",
-]
+_YAML_PATH = Path(__file__).parent / "en_001_circular_dependency.yaml"
 
-SHARED_MODULE = "zephyr.shared.contracts"
 
-ALL_MODULES = [*MODULE_NAMES, SHARED_MODULE]
+def _load_module_names() -> list[str]:
+    """从 YAML 真源加载扫描目标（SSoT 收敛，消除 py/yaml 双真源分叉）。"""
+    with open(_YAML_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    targets: list[str] = []
+    for check in data.get("checks", []):
+        targets.extend(check.get("params", {}).get("scan_targets", []))
+    return targets
+
+
+# MODULE_NAMES 从 YAML scan_targets 派生（含 zephyr.shared.contracts）
+MODULE_NAMES = _load_module_names()
+
+ALL_MODULES = MODULE_NAMES
 
 MODULE_TO_DIR: dict[str, Path] = {}
 for mod in MODULE_NAMES:
     suffix = mod.replace("zephyr.", "").replace(".", "/")
     MODULE_TO_DIR[mod] = SRC_ROOT / suffix
-MODULE_TO_DIR[SHARED_MODULE] = SRC_ROOT / "shared" / "contracts"
 
 
 @dataclass

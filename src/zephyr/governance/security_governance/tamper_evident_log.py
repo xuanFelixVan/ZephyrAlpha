@@ -28,11 +28,24 @@ from pathlib import Path
 
 
 def _resolve_hmac_key() -> bytes:
-    """5.17.5 修复：解析 HMAC 密钥（env > 兜底默认）。"""
+    """5.17.5 修复：解析 HMAC 密钥（env > 兜底默认）。
+
+    生产环境 MUST 设置 ZEPHYR_TAMPER_HMAC_SECRET 环境变量。
+    缺失时回退到派生密钥（仅 dev/test 用，启动时 WARN）。
+    """
     key = os.environ.get("ZEPHYR_TAMPER_HMAC_SECRET", "")
     if key:
         return key.encode("utf-8")
-    return b"zephyr-tamper-evident-default-key"
+    # 兜底：仅用于 dev/test，启动告警（禁止用于生产）
+    logger.warning(
+        "TamperEvidentLog: ZEPHYR_TAMPER_HMAC_SECRET 未设置，使用兜底派生密钥"
+        "（仅 dev/test，生产环境 MUST 配置 env var）"
+    )
+    # 派生而非硬编码字符串，避免相同密钥跨项目复用
+    import getpass
+    import socket
+    _material = f"zephyr:{getpass.getuser()}:{socket.gethostname()}".encode("utf-8")
+    return hashlib.sha256(_material).digest()
 
 
 @dataclass
@@ -47,8 +60,18 @@ class LogEntry:
 
 
 class TamperEvidentLog:
-    def __init__(self, log_path: str = "logs/tamper_evident.jsonl"):
-        self._log_path = Path(log_path)
+    def __init__(self, log_path: str | None = None):
+        """初始化 TamperEvidentLog。
+
+        Args:
+            log_path: 日志文件绝对路径。None 时使用项目根的
+                logs/tamper_evident.jsonl 绝对路径（铁律：禁相对路径）。
+        """
+        if log_path is None:
+            _project_root = Path(__file__).resolve().parents[4]
+            self._log_path = _project_root / "logs" / "tamper_evident.jsonl"
+        else:
+            self._log_path = Path(log_path)
         self._log_path.parent.mkdir(parents=True, exist_ok=True)
         self._ensure_secure_perms()
         self._hmac_key: bytes = _resolve_hmac_key()

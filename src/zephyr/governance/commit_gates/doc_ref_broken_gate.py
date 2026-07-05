@@ -68,7 +68,7 @@ __all__ = ["make_doc_ref_broken_gate"]
 _MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 # URL/锚点豁免前缀（这些链接不在本地检查）
-_URL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "ftp://", "#")
+_URL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "#")
 
 
 def _is_url_or_anchor(target: str) -> bool:

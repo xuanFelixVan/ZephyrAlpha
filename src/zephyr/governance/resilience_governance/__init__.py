@@ -1,38 +1,18 @@
-# [A_module] module_id=MOD-GOV_resilience_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_resilience_governance | docs/03_modules/_domain_governance/blueprint.md | §
+# [MODULE] zephyr.governance.resilience_governance
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+# [A_module] module_id=MOD-GOV_resilience_governance | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-__all__ = [
-    "AutonomyState",
-    "BrokerFailure",
-    "BrokerLevel",
-    "BulkheadPool",
-    "BusFactorRisk",
-    "ConsequenceDeclaration",
-    "ConsequenceSeverity",
-    "DecisionLog",
-    "DegradationLevel",
-    "FaultToleranceManager",
-    "IncidentLevel",
-    "IncidentProtocol",
-    "ModuleOwnership",
-    "OfflineMode",
-    "OpsRunbook",
-    "RetryPolicy",
-    "SPOFReport",
-    "SPOFType",
-    "TIFLevel",
-    "activate_consequence",
-    "all_mitigated",
-    "bus_factor_defense",
-    "check_bus_factor",
-    "check_spof",
-    "create_decision_log",
-    "escalate",
-    "fault_tolerance",
-    "generate_runbook",
-    "get_consequence",
-    "get_protocol",
-    "list_active",
-    "list_by_severity",
-    "offline_autonomy",
-    "offline_resilience",
-'account_isolator', 'blast_radius', 'circuit_breaker', 'deadlock_detector', 'engine_sandbox', 'fail_mode_manager', 'last_resort_watchdog', 'policy_sandbox', 'process_isolator', 'witness_isolation']
+
+__all__: list[str] = []  # 子模块各自导出，包级不 re-export

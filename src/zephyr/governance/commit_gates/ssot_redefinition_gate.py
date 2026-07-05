@@ -148,7 +148,11 @@ def make_ssot_redefinition_gate() -> GateSpec:
                 file_diff = gateway._run_git(
                     ["git", "diff", "--cached", "--unified=0", "--", py_file]
                 )
-            except Exception:
+            except Exception as e:
+                logger.warning(
+                    "SSOT-REDEFINITION gate: git diff 失败 file=%s, %s",
+                    py_file, e, exc_info=True,
+                )
                 continue
             if file_diff.returncode != 0:
                 continue
