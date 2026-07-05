@@ -469,7 +469,7 @@ class MultiSourceDataHandler:
                     _logger.info("auto 模式: 选中 Tick 源")
                     return
                 except Exception as e:
-                    _logger.warning("auto 模式: Tick 源不可用: %s, 回退批量源", e)
+                    _logger.warning("auto 模式: Tick 源不可用: %s, 回退批量源", e, exc_info=True)
             # 回退批量源
             self._active_source = "batch"
             self._init_batch_source(batch_data, database_service)

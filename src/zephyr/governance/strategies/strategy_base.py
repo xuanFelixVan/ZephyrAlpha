@@ -149,9 +149,9 @@ def autodiscover_strategies(
                     importlib.import_module(f"{package_path}.{fp.stem}")
                     found += 1
                 except Exception as exc:
-                    _logger.warning("Failed to auto-discover strategy %s: %s", fp.stem, exc)
+                    _logger.warning("Failed to auto-discover strategy %s: %s", fp.stem, exc, exc_info=True)
     except Exception as exc:
-        _logger.warning("Strategy autodiscover skipped: %s", exc)
+        _logger.warning("Strategy autodiscover skipped: %s", exc, exc_info=True)
     return found
 
 

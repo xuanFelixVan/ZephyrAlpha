@@ -102,7 +102,7 @@ def record_via_db_contract(
         conn.commit()
         return cursor.lastrowid or 0
     except Exception as exc:
-        _logger.warning("record_via_db_contract failed: %s", exc)
+        _logger.warning("record_via_db_contract failed: %s", exc, exc_info=True)
         return -1
     finally:
         conn.close()
@@ -148,7 +148,7 @@ def bulk_record_via_db_contract(
         conn.commit()
         return len(batch)
     except Exception as exc:
-        _logger.warning("bulk_record_via_db_contract failed: %s", exc)
+        _logger.warning("bulk_record_via_db_contract failed: %s", exc, exc_info=True)
         conn.rollback()
         return 0
     finally:

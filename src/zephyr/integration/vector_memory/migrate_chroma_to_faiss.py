@@ -188,7 +188,7 @@ def migrate_vms_collection(
                 migrated += 1
 
             except Exception as e:
-                _logger.error("迁移失败 %s/%s: %s", collection_name, doc_id, e)
+                _logger.error("迁移失败 %s/%s: %s", collection_name, doc_id, e, exc_info=True)
                 skipped += 1
 
         _logger.info(
@@ -304,7 +304,7 @@ def migrate_kb_collection(
             migrated += 1
 
         except Exception as e:
-            _logger.error("迁移失败 KB %s/%s: %s", kb_collection, doc_id, e)
+            _logger.error("迁移失败 KB %s/%s: %s", kb_collection, doc_id, e, exc_info=True)
             skipped += 1
 
     return {"total": total, "migrated": migrated, "skipped": skipped}

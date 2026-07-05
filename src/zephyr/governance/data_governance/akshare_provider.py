@@ -138,7 +138,7 @@ class AkshareProvider(DataSourceBase):
             return df
 
         except Exception as e:
-            _logger.error("Failed to fetch data for symbol=%s: %s", symbol, e)
+            _logger.error("Failed to fetch data for symbol=%s: %s", symbol, e, exc_info=True)
             return pd.DataFrame(columns=["open", "high", "low", "close", "volume", "amount", "date"])
 
     def subscribe_realtime(self, symbols: list[str]) -> None:
@@ -151,7 +151,7 @@ class AkshareProvider(DataSourceBase):
             df = self._akshare.stock_zh_a_spot_em()
             return df[["代码", "名称"]].rename(columns={"代码": "symbol", "名称": "name"})
         except Exception as e:
-            _logger.error("Failed to get stock list: %s", e)
+            _logger.error("Failed to get stock list: %s", e, exc_info=True)
             return pd.DataFrame(columns=["symbol", "name"])
 
     def get_index_constituents(self, index_code: str = "000300") -> pd.DataFrame:
@@ -164,7 +164,7 @@ class AkshareProvider(DataSourceBase):
             df = self._akshare.index_stock_cons_csindex(symbol=index_code)
             return df[["成分券代码", "成分券名称"]].rename(columns={"成分券代码": "symbol", "成分券名称": "name"})
         except Exception as e:
-            _logger.error("Failed to get index constituents for %s: %s", index_code, e)
+            _logger.error("Failed to get index constituents for %s: %s", index_code, e, exc_info=True)
             return pd.DataFrame(columns=["symbol", "name"])
 
     def _normalize_columns(self, df: pd.DataFrame, interval: str) -> pd.DataFrame:

@@ -85,7 +85,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
             _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)
             return True
         except Exception as e:
-            _logger.error("Failed to load model: model_id=%s error=%s", model_id, e)
+            _logger.error("Failed to load model: model_id=%s error=%s", model_id, e, exc_info=True)
 
             if model_id in self._model_registry:
                 self._models[model_id] = self._model_registry[model_id]
@@ -136,7 +136,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
                 idempotency_key=request.idempotency_key,
             )
         except Exception as e:
-            _logger.error("Prediction failed: model_id=%s error=%s", model_id, e)
+            _logger.error("Prediction failed: model_id=%s error=%s", model_id, e, exc_info=True)
             inference_ms = int((time.perf_counter() - start) * 1000)
             return ModelServingResponse(
                 request_id=request.request_id,

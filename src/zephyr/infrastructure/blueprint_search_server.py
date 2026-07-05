@@ -256,7 +256,7 @@ class BlueprintSearchServer(BaseMCPServer):
             with open(ROUTING_YAML_PATH, encoding="utf-8") as fh:
                 config = yaml.safe_load(fh)
         except Exception as exc:
-            _logger.error("Failed to load blueprint_routing.yaml: %s", exc)
+            _logger.error("Failed to load blueprint_routing.yaml: %s", exc, exc_info=True)
             return []
 
         return config.get("routes", [])

@@ -106,7 +106,7 @@ class Reranker:
                 scores = [float(scores)]
             scores = [float(s) for s in scores]
         except Exception as exc:
-            _log.warning("Reranker compute_score failed: %s, falling back", exc)
+            _log.warning("Reranker compute_score failed: %s, falling back", exc, exc_info=True)
             return _fallback_rerank(documents, metadatas, self._top_k, self._score_threshold)
 
         hits: list[RerankedHit] = []
@@ -132,7 +132,7 @@ class Reranker:
                 self._model = CrossEncoder(self._model_name, trust_remote_code=True)
                 _log.info("Reranker loaded: %s", self._model_name)
             except Exception as exc:
-                _log.warning("Reranker model load failed (%s): %s, rerank disabled", self._model_name, exc)
+                _log.warning("Reranker model load failed (%s): %s, rerank disabled", self._model_name, exc, exc_info=True)
                 self._model = None
 
 

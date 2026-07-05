@@ -80,7 +80,7 @@ def _get_lsg():
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
-        _log.debug("LSG not available for MCP Gateway")
+        _log.debug("LSG not available for MCP Gateway", exc_info=True)
         return None
 
 
@@ -286,56 +286,56 @@ class MCPGateway(BaseMCPServer):
 
             self._server_instances["knowledge_base"] = KnowledgeBaseServer()
         except Exception as exc:
-            _log.warning("kb server init failed: %s", exc)
+            _log.warning("kb server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 
             self._server_instances["gate_engine"] = GateEngineServer()
         except Exception as exc:
-            _log.warning("gate engine init failed: %s", exc)
+            _log.warning("gate engine init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 
             self._server_instances["session_handoff"] = DocGuardServer()
         except Exception as exc:
-            _log.warning("doc guard init failed: %s", exc)
+            _log.warning("doc guard init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.sentinel_server import SentinelServer
 
             self._server_instances["intent_router"] = SentinelServer()
         except Exception as exc:
-            _log.warning("sentinel init failed: %s", exc)
+            _log.warning("sentinel init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
 
             self._server_instances["blueprint_search"] = BlueprintSearchServer()
         except Exception as exc:
-            _log.warning("blueprint search init failed: %s", exc)
+            _log.warning("blueprint search init failed: %s", exc, exc_info=True)
         # task_manager via FastMCP — import only for tools/list
         try:
             from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 
             self._server_instances["task_manager"] = TaskManagerMCP()
         except Exception as exc:
-            _log.warning("task manager init failed: %s", exc)
+            _log.warning("task manager init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.governance_server import GovernanceServer
 
             self._server_instances["governance"] = GovernanceServer()
         except Exception as exc:
-            _log.warning("governance server init failed: %s", exc)
+            _log.warning("governance server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.telemetry_server import TelemetryMCP
 
             self._server_instances["telemetry"] = TelemetryMCP()
         except Exception as exc:
-            _log.warning("telemetry server init failed: %s", exc)
+            _log.warning("telemetry server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.vector_memory_server import VectorMemoryServer
 
             self._server_instances["vector-memory"] = VectorMemoryServer()
         except Exception as exc:
-            _log.warning("vector-memory server init failed: %s", exc)
+            _log.warning("vector-memory server init failed: %s", exc, exc_info=True)
 
     def _register_gateway_tools(self) -> None:
         self.register_tool(

@@ -156,7 +156,7 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
         except Exception as e:
             logger.warning(
                 "RULE-FOUR-WAY-ALIGN gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e,
+                type(e).__name__, e, exc_info=True
             )
             return True, ""
 

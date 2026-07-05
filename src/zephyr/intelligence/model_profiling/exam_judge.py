@@ -106,7 +106,7 @@ class ExamJudge:
             )
             return self._parse_judge_json(raw)
         except Exception as e:
-            _log.warning("ExamJudge: judge failed: %s", e)
+            _log.warning("ExamJudge: judge failed: %s", e, exc_info=True)
             return JudgeResult(reasoning=f"judge_error: {e}")
 
     def _build_reference(self, case: Any) -> str:

@@ -78,7 +78,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
             snapshots = registry.snapshot()
             _logger.info("Monitor flush: %d metrics snapshots flushed", len(snapshots))
         except Exception as e:
-            _logger.debug("Monitor flush failed: %s", e)
+            _logger.debug("Monitor flush failed: %s", e, exc_info=True)
 
     def _monitor_health_snapshot() -> None:
         """保存健康快照 — DM-201249."""
@@ -88,7 +88,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
             log = get_event_health_log()
             _logger.info("Monitor health snapshot: %d event log entries saved", len(log))
         except Exception as e:
-            _logger.debug("Monitor health snapshot failed: %s", e)
+            _logger.debug("Monitor health snapshot failed: %s", e, exc_info=True)
 
     finalizer.register("monitor-flush", _monitor_flush)
     finalizer.register("monitor-health-snapshot", _monitor_health_snapshot)

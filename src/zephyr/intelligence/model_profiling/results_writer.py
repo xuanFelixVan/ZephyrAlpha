@@ -86,7 +86,7 @@ def load_benchmark_history(
                 if record.get("model_name") == model_name:
                     history.append(record)
         except Exception as exc:
-            _log.debug("ResultsWriter: skip %s: %s", f.name, exc)
+            _log.debug("ResultsWriter: skip %s: %s", f.name, exc, exc_info=True)
 
     history.sort(key=lambda r: r.get("benchmark_date", ""))
     return history

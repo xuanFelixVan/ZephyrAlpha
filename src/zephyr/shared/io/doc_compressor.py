@@ -215,7 +215,7 @@ def load_policy_from_yaml(
         policy_dict = data.get("policy", {})
         return CompressionPolicy(**policy_dict)
     except Exception as exc:
-        _log.warning("CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc)
+        _log.warning("CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc, exc_info=True)
         return DEFAULT_POLICY
 
 

@@ -106,7 +106,7 @@ class VMSMemoryBackend:
             )
             return chunk_id
         except Exception as exc:
-            _logger.warning("VMSMemoryBackend.write fallback: VMS write failed: %s", exc)
+            _logger.warning("VMSMemoryBackend.write fallback: VMS write failed: %s", exc, exc_info=True)
             self._vms_available = False
             return None
 
@@ -147,7 +147,7 @@ class VMSMemoryBackend:
                 records.sort(key=lambda r: r.written_at, reverse=True)
                 return records[: max(0, k)]
             except Exception as exc:
-                _logger.warning("VMSMemoryBackend.list_by_topic fallback: %s", exc)
+                _logger.warning("VMSMemoryBackend.list_by_topic fallback: %s", exc, exc_info=True)
                 return self._fallback.list_by_topic(topic, k)
 
     def query(self, query_text: str, k: int, topic: str | None = None) -> list[MemoryRecord]:
@@ -179,7 +179,7 @@ class VMSMemoryBackend:
                     )
                 return records[: max(0, k)]
             except Exception as exc:
-                _logger.warning("VMSMemoryBackend.query fallback: %s", exc)
+                _logger.warning("VMSMemoryBackend.query fallback: %s", exc, exc_info=True)
                 return self._fallback.query(query_text, k, topic)
 
     def count(self) -> int:
@@ -224,5 +224,5 @@ def create_vms_backend(
         _logger.info("VMSMemoryBackend: VMS initialized successfully")
         return VMSMemoryBackend(vms=vms, fallback=fallback)
     except Exception as exc:
-        _logger.warning("VMSMemoryBackend: VMS init failed, using fallback: %s", exc)
+        _logger.warning("VMSMemoryBackend: VMS init failed, using fallback: %s", exc, exc_info=True)
         return VMSMemoryBackend(vms=None, fallback=fallback)

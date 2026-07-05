@@ -311,7 +311,7 @@ class ModelProfiler:
                 )
                 case_results.append(cr)
             except Exception as exc:
-                _log.warning("Case %s failed for %s: %s", case.case_id, model.name, exc)
+                _log.warning("Case %s failed for %s: %s", case.case_id, model.name, exc, exc_info=True)
                 cr = CaseResult(
                     case_id=case.case_id,
                     category=case.category,

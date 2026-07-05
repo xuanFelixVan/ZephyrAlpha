@@ -283,7 +283,7 @@ class CapabilityPassport:
         except TamperError:
             raise
         except Exception as exc:
-            _log.warning("Failed to load passport for %s: %s", model_id, exc)
+            _log.warning("Failed to load passport for %s: %s", model_id, exc, exc_info=True)
             return None
 
     @staticmethod
@@ -494,7 +494,7 @@ class QuickProfile:
             data = json.loads(path.read_text(encoding="utf-8"))
             return QuickProfile._from_dict(data)
         except Exception as exc:
-            _log.warning("Failed to load QuickProfile for %s: %s", model_id, exc)
+            _log.warning("Failed to load QuickProfile for %s: %s", model_id, exc, exc_info=True)
             return None
 
     @staticmethod

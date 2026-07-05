@@ -164,6 +164,7 @@ class OLAPEngine:
                 "sqlite_attach_failed",
                 error=str(exc),
                 note="falling back to direct CSV / parquet or mock mode",
+                exc_info=True,
             )
             # 优雅降级：若 sqlite_scanner 不可用（CI 环境），创建空表骨架
             self._setup_fallback_tables()
@@ -596,7 +597,7 @@ class OLAPEngine:
                 path=str(archive_path),
             )
         except Exception as exc:
-            _log.error("archive_events_read_failed", error=str(exc))
+            _log.error("archive_events_read_failed", error=str(exc), exc_info=True)
             raise OLAPEngineError(f"事件归档读取失败: {exc}") from exc
 
         # 步骤 2: 从 SQLite 删除已归档的 events
@@ -666,7 +667,8 @@ class OLAPEngine:
             self._conn.close()
             _log.info("olap_engine_closed")
         except Exception:
-            pass  # 关闭错误静默处理
+            # 5.135.1 修复: cleanup 上下文加 logger.debug (不破坏错误处理语义)
+            _log.debug("olap_engine close error (suppressed)", exc_info=True)
 
     def __enter__(self) -> OLAPEngine:
         return self

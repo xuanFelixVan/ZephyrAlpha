@@ -130,7 +130,7 @@ class DecisionEngine:
                     },
                 )
             except Exception as exc:
-                _logger.warning("FLE→Orc dispatch failed, queuing: %s", exc)
+                _logger.warning("FLE→Orc dispatch failed, queuing: %s", exc, exc_info=True)
                 self._pending.append(adjustment)
         else:
             self._pending.append(adjustment)

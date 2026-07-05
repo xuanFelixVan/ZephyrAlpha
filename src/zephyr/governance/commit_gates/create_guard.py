@@ -566,7 +566,7 @@ def make_create_guard() -> GateSpec:
             except Exception as _e:
                 logger.warning(
                     "CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s",
-                    _e,
+                    _e, exc_info=True
                 )
 
         return True, ""

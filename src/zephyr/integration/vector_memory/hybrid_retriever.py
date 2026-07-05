@@ -354,7 +354,7 @@ class HybridRetriever:
                 trace.hits.sort(key=lambda x: x.score, reverse=True)
                 trace.hits = trace.hits[:k]
             except Exception as e:
-                _logger.warning("HybridRetriever: rerank 失败: %s", e)
+                _logger.warning("HybridRetriever: rerank 失败: %s", e, exc_info=True)
         return trace
 
     def invalidate_bm25(self, collection_name: str) -> None:

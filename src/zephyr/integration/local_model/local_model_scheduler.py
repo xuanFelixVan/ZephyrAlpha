@@ -210,7 +210,7 @@ class LocalModelScheduler:
                 self._embedding_router.warmup()
                 _log.info("LocalModelScheduler: EmbeddingRouter 自动初始化")
             except Exception as exc:
-                _log.warning("LocalModelScheduler: EmbeddingRouter 初始化失败: %s", exc)
+                _log.warning("LocalModelScheduler: EmbeddingRouter 初始化失败: %s", exc, exc_info=True)
 
         if self._ollama_chat is None:
             try:
@@ -223,7 +223,7 @@ class LocalModelScheduler:
                     _log.warning("LocalModelScheduler: OllamaChat 不可用")
                     self._ollama_chat = None
             except Exception as exc:
-                _log.warning("LocalModelScheduler: OllamaChat 初始化失败: %s", exc)
+                _log.warning("LocalModelScheduler: OllamaChat 初始化失败: %s", exc, exc_info=True)
 
     def _run(self) -> None:
         self.ensure_models()
@@ -237,7 +237,7 @@ class LocalModelScheduler:
                 self._cleanup_expired_results()
                 continue
             except Exception as exc:
-                _log.error("LocalModelScheduler: dispatch error: %s", exc)
+                _log.error("LocalModelScheduler: dispatch error: %s", exc, exc_info=True)
 
     def _dispatch(self, task: LocalTask) -> None:
         try:
@@ -279,7 +279,7 @@ class LocalModelScheduler:
                     task.retries,
                     task.max_retries,
                     backoff_s,
-                    err_msg,
+                    err_msg, exc_info=True
                 )
                 time.sleep(backoff_s)
                 self._task_queue.put(task)

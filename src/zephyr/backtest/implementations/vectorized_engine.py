@@ -162,7 +162,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
                     try:
                         portfolio.apply_fill(fill, allow_t_plus_1=False)
                     except Exception as e:
-                        _logger.debug("Fill skipped: %s (date=%s)", e, date)
+                        _logger.debug("Fill skipped: %s (date=%s)", e, date, exc_info=True)
 
             # 更新当日市值
             portfolio.update_market_value(date, day_prices)

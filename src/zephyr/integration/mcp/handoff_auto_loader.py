@@ -52,7 +52,7 @@ class HandoffAutoLoader:
                     self._latest = json.load(fh)
                 return self._latest
         except Exception as exc:
-            _log.warning("handoff load failed: %s", exc)
+            _log.warning("handoff load failed: %s", exc, exc_info=True)
         return None
 
     def get_carryover_context(self) -> list[str]:

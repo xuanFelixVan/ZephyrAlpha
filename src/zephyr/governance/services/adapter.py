@@ -158,7 +158,7 @@ def escalate_if_needed(
         )
 
     except Exception as exc:
-        _logger.warning("escalation check failed: %s", exc)
+        _logger.warning("escalation check failed: %s", exc, exc_info=True)
         return EscalationDecision(
             operation=operation_type,
             should_block=False,
@@ -234,7 +234,7 @@ def auto_subscribe_eventbus() -> None:
                     owner_id=task_id,
                 )
             except Exception as e:
-                _logger.warning("auto_subscribe_eventbus._on_event: event handling failed (%s: %s)", type(e).__name__, e)
+                _logger.warning("auto_subscribe_eventbus._on_event: event handling failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         for et in (EventType.GATE_FAILED, EventType.SCOPE_DRIFT, EventType.TASK_FAILED):
             bus.subscribe(et, _on_event)
@@ -244,4 +244,4 @@ def auto_subscribe_eventbus() -> None:
     except ImportError:
         _logger.debug("EventBus not available — escalation auto-subscribe skipped")
     except Exception:
-        _logger.debug("EventBus auto-subscribe failed — escalation remains manual")
+        _logger.debug("EventBus auto-subscribe failed — escalation remains manual", exc_info=True)

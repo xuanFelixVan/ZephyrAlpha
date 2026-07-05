@@ -169,7 +169,7 @@ def make_function_dup_gate() -> GateSpec:
         except Exception as e:
             logger.warning(
                 "FUNCTION-DUP gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e,
+                type(e).__name__, e, exc_info=True
             )
             return True, ""
 

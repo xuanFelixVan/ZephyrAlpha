@@ -169,7 +169,7 @@ class InProcessVectorMemory:
                 baseline.drift_detected,
             )
         except Exception as exc:
-            _logger.warning("VMS: 健康基线检查失败: %s", exc)
+            _logger.warning("VMS: 健康基线检查失败: %s", exc, exc_info=True)
 
         self._stop_event.clear()
         self._maintenance_thread = threading.Thread(target=self._maintenance_loop, daemon=True, name="vms-maintenance")
@@ -276,7 +276,7 @@ class InProcessVectorMemory:
                     )
                 return hits
             except Exception:
-                _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索")
+                _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索", exc_info=True)
 
         try:
             try:
@@ -306,7 +306,7 @@ class InProcessVectorMemory:
                     hits.append(hit)
             return hits
         except Exception:
-            _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)")
+            _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)", exc_info=True)
             return self._get_in_memory_backend().search(query, k=k)
 
     def recall(

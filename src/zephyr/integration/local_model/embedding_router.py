@@ -213,7 +213,7 @@ class EmbeddingRouter:
                 else:
                     raise ValueError("输出维度异常")
             except Exception:
-                _logger.warning("EmbeddingRouter: BGE-M3 预热失败，降级")
+                _logger.warning("EmbeddingRouter: BGE-M3 预热失败，降级", exc_info=True)
                 self._bge_m3_available = False
 
         if self._bge_small_available:
@@ -227,7 +227,7 @@ class EmbeddingRouter:
                 else:
                     raise ValueError("输出维度异常")
             except Exception:
-                _logger.warning("EmbeddingRouter: bge-small 预热失败")
+                _logger.warning("EmbeddingRouter: bge-small 预热失败", exc_info=True)
                 self._bge_small_available = False
 
         if not self._bge_m3_available and not self._bge_small_available:
@@ -277,7 +277,7 @@ class EmbeddingRouter:
                 _logger.info("EmbeddingRouter: Ollama bge-small 就绪 (%s, %dd)", model_name, embedder.dim)
         except Exception as e:
             if model_key == "m3":
-                _logger.warning("EmbeddingRouter: Ollama BGE-M3 加载失败: %s", e)
+                _logger.warning("EmbeddingRouter: Ollama BGE-M3 加载失败: %s", e, exc_info=True)
                 self._bge_m3_available = False
             else:
                 _logger.warning("EmbeddingRouter: Ollama bge-small 加载失败: %s", e)
@@ -305,7 +305,7 @@ class EmbeddingRouter:
                 _logger.info("EmbeddingRouter: bge-small 本地模型加载成功 (%s)", model_path)
         except Exception as e:
             if model_key == "m3":
-                _logger.warning("EmbeddingRouter: BGE-M3 本地加载失败: %s", e)
+                _logger.warning("EmbeddingRouter: BGE-M3 本地加载失败: %s", e, exc_info=True)
                 self._bge_m3_available = False
                 if not self._bge_small_available:
                     self._fallback_mode = "bge_small_only"

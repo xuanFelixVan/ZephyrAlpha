@@ -545,7 +545,7 @@ class TriggerRouter:
                     extra=extra,
                 )
             except Exception as exc:
-                _logger.warning("TriggerRouter audit log 写入失败：%s", exc)
+                _logger.warning("TriggerRouter audit log 写入失败：%s", exc, exc_info=True)
 
         _logger.info(
             "TriggerRouter dispatch: trigger=%s outcome=%s handler=%s latency_ms=%d",
@@ -633,7 +633,7 @@ def handle_drift_detected(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "recovery_result": result,
         }
     except Exception as exc:
-        _logger.warning("drift handler fallback to stub: %s", exc)
+        _logger.warning("drift handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("drift_detected", payload)
 
 
@@ -660,7 +660,7 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "stdout_preview": result.stdout[:200] if result.stdout else "",
         }
     except Exception as exc:
-        _logger.warning("cleanup handler fallback to stub: %s", exc)
+        _logger.warning("cleanup handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("cleanup_due", payload)
 
 
@@ -680,7 +680,7 @@ def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "reflection_result": result,
         }
     except Exception as exc:
-        _logger.warning("blueprint_published handler fallback to stub: %s", exc)
+        _logger.warning("blueprint_published handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("blueprint_published", payload)
 
 
@@ -714,7 +714,7 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
             if not isinstance(routing_config, dict):
                 routing_config = {}
     except Exception as exc:
-        _logger.error("failed to load blueprint_routing.yaml: %s", exc)
+        _logger.error("failed to load blueprint_routing.yaml: %s", exc, exc_info=True)
         return {
             "matched": [],
             "source": "blueprint_routing.yaml",

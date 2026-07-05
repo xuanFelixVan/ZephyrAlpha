@@ -375,7 +375,7 @@ class OllamaChat:
                 if attempt < max_retries - 1:
                     _log.warning(
                         "OllamaChat: %s error attempt %d/%d: %s, retrying...", work_type, attempt + 1, max_retries, exc
-                    )
+, exc_info=True)
                 else:
                     raise
             # 5.72.2 修复：exponential backoff + jitter；添加 try/except 捕获异常
@@ -423,7 +423,7 @@ class OllamaChat:
             resp.raise_for_status()
             payload = resp.json()
         except Exception as exc:
-            _log.error("OllamaChat failed model=%s: %s", self._model, exc)
+            _log.error("OllamaChat failed model=%s: %s", self._model, exc, exc_info=True)
             raise
 
         content = payload.get("message", {}).get("content", "")

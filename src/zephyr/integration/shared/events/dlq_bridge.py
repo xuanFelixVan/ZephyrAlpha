@@ -49,7 +49,7 @@ def make_dlq_event_handler(dlq: DeadLetterQueue) -> Callable[[str, Any, Exceptio
                 error=error_msg,
             )
         except Exception as exc:
-            _logger.error("DLQ event handler failed: event=%s error=%s", event_name, exc)
+            _logger.error("DLQ event handler failed: event=%s error=%s", event_name, exc, exc_info=True)
 
     return _handler
 
@@ -73,7 +73,7 @@ class DLQEventBridge:
             self._attached = True
             _logger.info("DLQEventBridge attached to observer: %s events in DLQ", len(self._dlq))
         except Exception as exc:
-            _logger.error("DLQEventBridge.attach failed: %s", exc)
+            _logger.error("DLQEventBridge.attach failed: %s", exc, exc_info=True)
 
     @property
     def attached(self) -> bool:
@@ -86,7 +86,7 @@ class DLQEventBridge:
                 self._dlq.retry(entry.id)
                 count += 1
             except Exception as exc:
-                _logger.warning("DLQ replay failed for entry %d: %s", entry.id, exc)
+                _logger.warning("DLQ replay failed for entry %d: %s", entry.id, exc, exc_info=True)
         return count
 
 

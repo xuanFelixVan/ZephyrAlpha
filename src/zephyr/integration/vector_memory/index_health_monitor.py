@@ -174,5 +174,5 @@ class IndexHealthMonitor:
             self._collection_manager.get_collection(collection_name)
             return True
         except Exception as e:
-            _logger.error("IndexHealthMonitor: 修复失败: %s", e)
+            _logger.error("IndexHealthMonitor: 修复失败: %s", e, exc_info=True)
             return False

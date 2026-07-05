@@ -113,7 +113,7 @@ class ModelRouter:
                 if line.strip():
                     profiles.append(json.loads(line))
         except Exception as exc:
-            _log.warning("ModelRouter: failed to load %s: %s", newest[0], exc)
+            _log.warning("ModelRouter: failed to load %s: %s", newest[0], exc, exc_info=True)
             return 0
 
         return self.load_benchmark_profiles(profiles)

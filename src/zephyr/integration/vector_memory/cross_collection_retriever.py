@@ -59,7 +59,7 @@ class CrossCollectionRetriever:
                         }
                     )
             except Exception as e:
-                _logger.debug("CrossCollectionRetriever: %s 检索失败: %s", col_name, e)
+                _logger.debug("CrossCollectionRetriever: %s 检索失败: %s", col_name, e, exc_info=True)
 
         all_hits.sort(key=lambda x: x["score"], reverse=True)
         return all_hits[:k]

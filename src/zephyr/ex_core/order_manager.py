@@ -193,6 +193,7 @@ class OrderManager:
                     _logger.error(
                         "券商端撤单失败: order_id=%s broker_order_id=%s error=%s",
                         order_id, order.broker_order_id, e,
+                        exc_info=True,
                     )
                     return False
 
@@ -251,7 +252,7 @@ class OrderManager:
             try:
                 callback(fill)
             except Exception as e:
-                _logger.error("Fill callback error: %s", e)
+                _logger.error("Fill callback error: %s", e, exc_info=True)
 
     @property
     def order_count(self) -> int:

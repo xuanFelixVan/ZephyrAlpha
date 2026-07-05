@@ -99,7 +99,7 @@ class OllamaEmbedder:
             resp.raise_for_status()
             payload = resp.json()
         except Exception as exc:
-            _log.error("OllamaEmbedder.encode failed for model=%s: %s", self._model, exc)
+            _log.error("OllamaEmbedder.encode failed for model=%s: %s", self._model, exc, exc_info=True)
             raise
 
         embeddings_list = payload.get("embeddings", [])
@@ -141,7 +141,7 @@ class OllamaEmbedder:
                 self._verified = True
                 _log.info("OllamaEmbedder: %s verified (%dd)", self._model, self._dim)
         except Exception as exc:
-            _log.warning("OllamaEmbedder verification failed for %s: %s", self._model, exc)
+            _log.warning("OllamaEmbedder verification failed for %s: %s", self._model, exc, exc_info=True)
             raise
 
     def shutdown(self) -> None:

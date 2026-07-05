@@ -110,7 +110,7 @@ class ChaosHook:
                     "ChaosHook: pre_step inject failed step=%s fault=%s: %s",
                     context.step_name,
                     fault_type,
-                    exc,
+                    exc, exc_info=True
                 )
 
         context.fault_records = records
@@ -139,7 +139,7 @@ class ChaosHook:
                     "ChaosHook: post_step recover failed step=%s fault_id=%s: %s",
                     context.step_name,
                     record.fault_id,
-                    exc,
+                    exc, exc_info=True
                 )
 
         context.fault_records = []

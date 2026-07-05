@@ -96,6 +96,6 @@ class UnifiedVectorMemoryAdapter(VectorMemoryBase):
         try:
             rows = self._api.recall(collection, k=100_000)
         except Exception as exc:
-            _logger.warning("get_collection_stats recall failed: %s", exc)
+            _logger.warning("get_collection_stats recall failed: %s", exc, exc_info=True)
             return {"entries": -1}
         return {"entries": len(rows)}

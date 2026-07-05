@@ -481,19 +481,19 @@ def build_context(
     try:
         ctx.ke_entries = _safe_search(vms, "ke_entries", _task_type, top_k=5)
     except Exception as e:
-        _logger.warning("context_assembler: ke_entries search failed: %s", e)
+        _logger.warning("context_assembler: ke_entries search failed: %s", e, exc_info=True)
     try:
         ctx.vibe_rules = _safe_search(vms, "vibe_rules", _task_type, top_k=3)
     except Exception as e:
-        _logger.warning("context_assembler: vibe_rules search failed: %s", e)
+        _logger.warning("context_assembler: vibe_rules search failed: %s", e, exc_info=True)
     try:
         ctx.blueprints = _safe_search(vms, "blueprints", _layer, top_k=2)
     except Exception as e:
-        _logger.warning("context_assembler: blueprints search failed: %s", e)
+        _logger.warning("context_assembler: blueprints search failed: %s", e, exc_info=True)
     try:
         ctx.failure_patterns = _safe_search(vms, "failure_patterns", _task_type, top_k=3)
     except Exception as e:
-        _logger.warning("context_assembler: failure_patterns search failed: %s", e)
+        _logger.warning("context_assembler: failure_patterns search failed: %s", e, exc_info=True)
 
     if ctx.is_empty:
         ctx.degraded = True
@@ -608,7 +608,7 @@ def _build_context_from_kb(task_type: str, layer: str) -> RawContext:
             if blueprint_hits:
                 ctx.blueprints = [h.content for h in blueprint_hits[:2]]
     except Exception:
-        _logger.debug("KB search failed, using embedded defaults only")
+        _logger.debug("KB search failed, using embedded defaults only", exc_info=True)
 
     ctx.degraded = not ctx.ke_entries and not ctx.blueprints
     return ctx
@@ -639,7 +639,7 @@ def _get_or_init_kb() -> UnifiedMemoryAPI | None:
         )
         return kb
     except Exception as exc:
-        _logger.warning("KB context bridge initialization failed: %s", exc)
+        _logger.warning("KB context bridge initialization failed: %s", exc, exc_info=True)
         return None
 
 

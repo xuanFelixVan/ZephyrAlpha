@@ -160,7 +160,7 @@ class ContractRegistry:
 
             data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
         except Exception as e:
-            _logger.error("[ContractRegistry] YAML 加载失败: %s", e)
+            _logger.error("[ContractRegistry] YAML 加载失败: %s", e, exc_info=True)
             self._initialized = True
             return
 

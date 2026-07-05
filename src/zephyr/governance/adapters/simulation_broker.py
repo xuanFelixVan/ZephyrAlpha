@@ -190,7 +190,7 @@ class SimulationBroker(BrokerInterface):
             try:
                 callback(fill)
             except Exception as e:
-                _logger.error("Fill callback error: %s", e)
+                _logger.error("Fill callback error: %s", e, exc_info=True)
 
     def _update_positions(self, order: Order, fill_price: Decimal, commission: Decimal) -> None:
         symbol = order.symbol

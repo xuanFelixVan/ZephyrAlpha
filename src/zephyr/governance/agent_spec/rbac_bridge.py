@@ -120,7 +120,7 @@ class EscalationRBACBridge:
                 audit_context=guard_result.audit_context or {},
             )
         except Exception as exc:
-            _logger.warning("RBAC pre_execute_check failed: %s", exc)
+            _logger.warning("RBAC pre_execute_check failed: %s", exc, exc_info=True)
             return RBACCheckResult(
                 passed=False,
                 decision="BLOCK",

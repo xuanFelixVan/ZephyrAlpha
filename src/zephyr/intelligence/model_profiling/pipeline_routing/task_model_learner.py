@@ -280,7 +280,7 @@ class ModelTaskMatrix:
                 json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
             )
         except Exception as exc:
-            _log.debug("ModelTaskMatrix: save failed: %s", exc)
+            _log.debug("ModelTaskMatrix: save failed: %s", exc, exc_info=True)
 
     def _load(self) -> None:
         path = self._dir / "task-model-matrix.json"
@@ -302,4 +302,4 @@ class ModelTaskMatrix:
                     self._matrix.setdefault(task_type, {})[model] = entry
             _log.info("ModelTaskMatrix: loaded %d task types from disk", len(matrix_data))
         except Exception as exc:
-            _log.debug("ModelTaskMatrix: load failed: %s", exc)
+            _log.debug("ModelTaskMatrix: load failed: %s", exc, exc_info=True)

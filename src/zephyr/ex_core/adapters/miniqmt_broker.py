@@ -249,7 +249,7 @@ class MiniQmtBroker(BrokerInterface):
                 try:
                     self._xttrader.stop()
                 except Exception as e:
-                    _logger.warning("断开连接时出错: %s", e)
+                    _logger.warning("断开连接时出错: %s", e, exc_info=True)
                 self._xttrader = None
             self._connected = False
             _logger.info("MiniQMT 券商已断开")
@@ -638,7 +638,7 @@ class MiniQmtBroker(BrokerInterface):
         try:
             return func()
         except Exception as e:
-            _logger.warning("xttrader 调用失败，尝试断线重连: %s", e)
+            _logger.warning("xttrader 调用失败，尝试断线重连: %s", e, exc_info=True)
             if self._reconnect():
                 return func()
             raise
@@ -659,7 +659,7 @@ class MiniQmtBroker(BrokerInterface):
             _logger.info("断线重连成功")
             return True
         except Exception as e:
-            _logger.error("断线重连失败: %s", e)
+            _logger.error("断线重连失败: %s", e, exc_info=True)
             return False
 
     def _validate_a_share_constraints(
@@ -716,7 +716,7 @@ class MiniQmtBroker(BrokerInterface):
         try:
             positions = self._xttrader.query_stock_positions(account=self._session_id)
         except Exception as e:
-            _logger.warning("T+1校验查询持仓失败，跳过: %s", e)
+            _logger.warning("T+1校验查询持仓失败，跳过: %s", e, exc_info=True)
             return
 
         if not positions:

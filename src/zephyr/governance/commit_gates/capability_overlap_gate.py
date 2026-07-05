@@ -91,6 +91,7 @@ def make_capability_overlap_gate() -> GateSpec:
             logger.error(
                 "CAPABILITY-OVERLAP gate fail-loud: git diff 异常(%s: %s)，"
                 "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
+                exc_info=True,
             )
             return True, ""  # warn-only 契约：仍 return True
 

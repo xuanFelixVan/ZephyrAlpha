@@ -84,7 +84,7 @@ def _git_commit_hash(project_root: Path) -> str | None:
         if result.returncode == 0:
                 return result.stdout.strip()
     except Exception as e:
-        _log.warning("_git_commit_hash: failed to get git commit hash (%s: %s)", type(e).__name__, e)
+        _log.warning("_git_commit_hash: failed to get git commit hash (%s: %s)", type(e).__name__, e, exc_info=True)
     return None
 
 

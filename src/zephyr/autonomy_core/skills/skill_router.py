@@ -160,7 +160,7 @@ class SkillRouter:
             }
             _logger.info("Semantic index built: %d skills", len(names))
         except Exception as exc:
-            _logger.warning("Semantic index init failed: %s", exc)
+            _logger.warning("Semantic index init failed: %s", exc, exc_info=True)
             self._semantic_index = {}
 
     def _semantic_route(self, task_description: str) -> tuple[str, str] | None:
@@ -183,7 +183,7 @@ class SkillRouter:
             _logger.info("Semantic route: '%s' -> %s (%.3f)", task_description, best_name, best_score)
             return (best_name, best_role)
         except Exception as exc:
-            _logger.warning("Semantic route failed: %s", exc)
+            _logger.warning("Semantic route failed: %s", exc, exc_info=True)
             return None
 
     def _load_yaml_routing(self) -> list[tuple[str, str, str]]:

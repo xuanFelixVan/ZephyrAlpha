@@ -83,7 +83,7 @@ def _get_lsg():
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
-        _log.debug("LSG not available for MCP Gateway")
+        _log.debug("LSG not available for MCP Gateway", exc_info=True)
         return None
 
 

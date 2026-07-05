@@ -154,6 +154,7 @@ class AutoTaskGenerator:
                             "AutoTaskGenerator: enqueue failed for %s: %s",
                             task_id,
                             exc,
+                            exc_info=True,
                         )
                 self._stats["generated"] += len(tasks)
             except Exception:
@@ -301,7 +302,7 @@ def subscribe_eventbus() -> None:
         _subscribed = True
         _log.info("AutoTaskGenerator: subscribed to task_completed event")
     except Exception as e:
-        _log.warning("AutoTaskGenerator: subscribe_eventbus failed: %s", e)
+        _log.warning("AutoTaskGenerator: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
 def _on_task_completed(payload: object) -> None:
@@ -321,4 +322,4 @@ def _on_task_completed(payload: object) -> None:
         if submitted > 0:
             _log.info("AutoTaskGenerator: submitted %d tasks after task_completed", submitted)
     except Exception as exc:
-        _log.debug("AutoTaskGenerator: _on_task_completed failed: %s", exc)
+        _log.debug("AutoTaskGenerator: _on_task_completed failed: %s", exc, exc_info=True)

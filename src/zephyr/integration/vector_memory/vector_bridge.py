@@ -54,7 +54,7 @@ class VectorBridge:
                     r["source_collection"] = col_name
                 all_results.extend(results)
             except Exception as e:
-                _logger.warning("VectorBridge: CE 检索 %s 失败: %s", col_name, e)
+                _logger.warning("VectorBridge: CE 检索 %s 失败: %s", col_name, e, exc_info=True)
         all_results.sort(key=lambda x: x.get("distance", 1.0))
         return all_results[:k]
 

@@ -56,7 +56,7 @@ def _get_lsg():
         return _lsg_gateway
 
     except Exception:
-        _log.debug("LSG not available for A2A governance")
+        _log.debug("LSG not available for A2A governance", exc_info=True)
 
         return None
 

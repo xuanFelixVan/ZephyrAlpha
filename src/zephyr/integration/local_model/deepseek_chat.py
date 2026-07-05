@@ -109,7 +109,7 @@ def _load_env() -> None:
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k.strip(), v.strip())
     except Exception as exc:
-        _log.debug("DeepSeekChat: .env load skipped: %s", exc)
+        _log.debug("DeepSeekChat: .env load skipped: %s", exc, exc_info=True)
 
 
 class DeepSeekChat:
@@ -153,7 +153,7 @@ class DeepSeekChat:
             result = self.ask("ping", system="Reply with: pong")
             return bool(result and len(result) > 0)
         except Exception as exc:
-            _log.debug("DeepSeekChat available check failed: %s", exc)
+            _log.debug("DeepSeekChat available check failed: %s", exc, exc_info=True)
             return False
 
     @property
@@ -247,6 +247,7 @@ class DeepSeekChat:
                     _log.warning(
                         "DeepSeekChat: %s error attempt %d/%d: %s, retrying...",
                         work_type, attempt + 1, max_retries, exc,
+                        exc_info=True,
                     )
                 else:
                     raise

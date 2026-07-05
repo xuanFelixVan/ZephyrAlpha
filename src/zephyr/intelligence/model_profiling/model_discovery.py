@@ -81,7 +81,7 @@ class ModelDiscovery:
             resp.raise_for_status()
             payload = resp.json()
         except Exception as exc:
-            _log.warning("ModelDiscovery: Ollama /api/tags failed: %s", exc)
+            _log.warning("ModelDiscovery: Ollama /api/tags failed: %s", exc, exc_info=True)
             return []
 
         models: list[DiscoveredModel] = []

@@ -64,7 +64,7 @@ class FindingIngest:
 
                 self._writer = get_audit_writer()
             except Exception:
-                _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback")
+                _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback", exc_info=True)
                 self._writer = None
         return self._writer
 
@@ -97,7 +97,7 @@ class FindingIngest:
                     else:
                         errors += 1
         except Exception as exc:
-            _logger.error("FindingIngest: failed to read %s: %s", jsonl_path, exc)
+            _logger.error("FindingIngest: failed to read %s: %s", jsonl_path, exc, exc_info=True)
         return IngestResult(
             total=total,
             ingested=ingested,
@@ -205,7 +205,7 @@ class FindingIngest:
                 writer.write(event_dict)
                 return True
             except Exception as exc:
-                _logger.error("FindingIngest: writer.write failed for %s: %s", finding.finding_id, exc)
+                _logger.error("FindingIngest: writer.write failed for %s: %s", finding.finding_id, exc, exc_info=True)
         try:
             audit_path = Path(self._audit_dir)
             audit_path.mkdir(parents=True, exist_ok=True)
@@ -224,7 +224,7 @@ class FindingIngest:
             _logger.info("FindingIngest: wrote %s to fallback %s", finding.finding_id, fallback_file)
             return True
         except Exception as exc:
-            _logger.error("FindingIngest: fallback write failed for %s: %s", finding.finding_id, exc)
+            _logger.error("FindingIngest: fallback write failed for %s: %s", finding.finding_id, exc, exc_info=True)
             try:
                 os.remove(tmp_path)
             except OSError:

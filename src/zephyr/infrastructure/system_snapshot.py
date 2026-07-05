@@ -193,7 +193,7 @@ class SystemSnapshotter:
                 f"[SystemSnapshotter] 快照构建失败（非致命）：{exc}",
                 stacklevel=2,
             )
-            _logger.warning("SystemSnapshotter.capture 失败: %s", exc)
+            _logger.warning("SystemSnapshotter.capture 失败: %s", exc, exc_info=True)
             return self._empty_snapshot(), None
 
         path = self._persist(snapshot)

@@ -229,7 +229,7 @@ class EventDrivenEngine(BacktestEngineBase):
             try:
                 target_weights = strategy_callback(event)
             except Exception as e:
-                _logger.error("策略回调执行错误 tick seq=%d: %s", event.sequence, e)
+                _logger.error("策略回调执行错误 tick seq=%d: %s", event.sequence, e, exc_info=True)
                 return
 
             if not target_weights:
@@ -246,7 +246,7 @@ class EventDrivenEngine(BacktestEngineBase):
                     date=timestamp,
                 )
             except Exception as e:
-                _logger.debug("撮合失败 tick seq=%d: %s", event.sequence, e)
+                _logger.debug("撮合失败 tick seq=%d: %s", event.sequence, e, exc_info=True)
                 fills = []
 
             # 应用 fills（T+1 锁定）
@@ -255,7 +255,7 @@ class EventDrivenEngine(BacktestEngineBase):
                     portfolio.apply_fill(fill, allow_t_plus_1=False)
                     fills_applied += 1
                 except Exception as e:
-                    _logger.debug("Fill 应用失败: %s (ts=%s)", e, timestamp)
+                    _logger.debug("Fill 应用失败: %s (ts=%s)", e, timestamp, exc_info=True)
 
             # 更新市值
             portfolio.update_market_value(timestamp, last_prices)

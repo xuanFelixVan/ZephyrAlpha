@@ -208,7 +208,7 @@ class RedBlueTriggerConsumer:
             try:
                 self._drain_queue()
             except Exception as e:  # noqa: BLE001 — 消费线程永不退出
-                logger.warning("RedBlueTriggerConsumer: drain failed: %s", e)
+                logger.warning("RedBlueTriggerConsumer: drain failed: %s", e, exc_info=True)
             self._stop.wait(self.POLL_INTERVAL_S)
 
     def _drain_queue(self) -> None:
@@ -221,7 +221,7 @@ class RedBlueTriggerConsumer:
                 self._process_one(qf)
             except Exception as e:  # noqa: BLE001 — 单条失败不影响其他
                 logger.warning(
-                    "RedBlueTriggerConsumer: process %s failed: %s", qf.name, e
+                    "RedBlueTriggerConsumer: process %s failed: %s", qf.name, e, exc_info=True
                 )
 
     def _process_one(self, qf: Path) -> None:
@@ -247,7 +247,7 @@ class RedBlueTriggerConsumer:
         except Exception as e:  # CircuitBreakerOpenError
             logger.warning(
                 "RedBlueTriggerConsumer: circuit open, skip (hash=%s): %s — 留队列重试",
-                hash8, e,
+                hash8, e, exc_info=True
             )
             return  # 不删队列文件，cool-down 后重试
 
@@ -300,6 +300,6 @@ class RedBlueTriggerConsumer:
 
                 self._validator = RedBlueValidator()
             except Exception as e:  # noqa: BLE001
-                logger.warning("RedBlueTriggerConsumer: validator init failed: %s", e)
+                logger.warning("RedBlueTriggerConsumer: validator init failed: %s", e, exc_info=True)
                 return None
         return self._validator

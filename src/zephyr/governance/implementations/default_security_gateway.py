@@ -56,7 +56,7 @@ def _get_lsg():
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
     except Exception:
-        _logger.debug("LSG not available for D_COMPLIANCE implementations gateway")
+        _logger.debug("LSG not available for D_COMPLIANCE implementations gateway", exc_info=True)
         return None
 
 

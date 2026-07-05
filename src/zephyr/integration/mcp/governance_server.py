@@ -559,6 +559,8 @@ class GovernanceServer(BaseMCPServer):
         }
 
     def _drift_scan(self, module_dir: str | None = None, level: str = "STANDARD") -> dict[str, Any]:
+        import asyncio
+
         try:
             from zephyr.governance.drift_detection.cold_start import init_database, init_directories
             from zephyr.governance.drift_detection.drift_engine import ScanLevel, scan

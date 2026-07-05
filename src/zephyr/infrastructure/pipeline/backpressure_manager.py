@@ -118,7 +118,7 @@ class BackpressureManager:
                 try:
                     handler(state)
                 except Exception as e:
-                    _logger.error("pause handler error: %s", e)
+                    _logger.error("pause handler error: %s", e, exc_info=True)
 
         return state
 
@@ -150,7 +150,7 @@ class BackpressureManager:
                 try:
                     handler(state)
                 except Exception as e:
-                    _logger.error("throttle handler error: %s", e)
+                    _logger.error("throttle handler error: %s", e, exc_info=True)
 
         return state
 
@@ -184,7 +184,7 @@ class BackpressureManager:
                 try:
                     handler(state)
                 except Exception as e:
-                    _logger.error("resume handler error: %s", e)
+                    _logger.error("resume handler error: %s", e, exc_info=True)
 
         return state
 

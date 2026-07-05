@@ -227,7 +227,7 @@ class ResultPushManager:
             _log.error("callback connection error for task %s: %s", task["task_id"], exc)
             return PushStatus.CALLBACK_ERROR
         except Exception as exc:
-            _log.error("callback push failed for task %s: %s", task["task_id"], exc)
+            _log.error("callback push failed for task %s: %s", task["task_id"], exc, exc_info=True)
             return PushStatus.FAILED
 
     def _push_via_event_bus(self, task: dict[str, Any], result: dict) -> PushStatus:
@@ -243,7 +243,7 @@ class ResultPushManager:
                 subscriber(event)
                 delivered = True
             except Exception as exc:
-                _log.error("event_bus subscriber failed for task %s: %s", task["task_id"], exc)
+                _log.error("event_bus subscriber failed for task %s: %s", task["task_id"], exc, exc_info=True)
 
         if delivered:
             return PushStatus.PUSHED

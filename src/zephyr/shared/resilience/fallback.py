@@ -125,7 +125,7 @@ class FallbackChain(Generic[P, R]):
                     "fallback chain '%s': step '%s' failed: %s",
                     self._chain_name,
                     step.name,
-                    exc,
+                    exc, exc_info=True
                 )
 
         raise FallbackExhaustedError(
@@ -160,7 +160,7 @@ class FallbackChain(Generic[P, R]):
                     "fallback chain '%s': step '%s' failed: %s",
                     self._chain_name,
                     step.name,
-                    exc,
+                    exc, exc_info=True
                 )
 
         raise FallbackExhaustedError(

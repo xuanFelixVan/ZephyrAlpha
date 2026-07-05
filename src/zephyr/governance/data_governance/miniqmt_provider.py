@@ -340,9 +340,9 @@ class MiniQmtProvider(DataSourceBase):
                     try:
                         cb(df)
                     except Exception as e:
-                        _logger.error("Tick 回调执行错误 symbol=%s: %s", symbol, e)
+                        _logger.error("Tick 回调执行错误 symbol=%s: %s", symbol, e, exc_info=True)
             except Exception as e:
-                _logger.error("Tick 数据标准化失败 symbol=%s: %s", symbol, e)
+                _logger.error("Tick 数据标准化失败 symbol=%s: %s", symbol, e, exc_info=True)
 
     def _normalize_tick_data(self, raw_df: pd.DataFrame, symbol: str) -> pd.DataFrame:
         """标准化 Tick 数据（18字段映射）

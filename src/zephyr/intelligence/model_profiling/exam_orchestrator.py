@@ -857,7 +857,7 @@ class ExamOrchestrator:
                 float(info.get("price_per_1k_output", 0.0)),
             )
         except Exception:
-            _log.warning("CostBreakdown: provider_data lookup failed for %s", provider)
+            _log.warning("CostBreakdown: provider_data lookup failed for %s", provider, exc_info=True)
             return (0.0, 0.0)
 
     def _run_hallucination(self, breadth: BreadthResult) -> HallucinationResult:
@@ -964,7 +964,7 @@ class ExamOrchestrator:
                 stable=stable,
             )
         except Exception as e:
-            _log.warning("ExamOrchestrator: drift test failed: %s", e)
+            _log.warning("ExamOrchestrator: drift test failed: %s", e, exc_info=True)
             return DriftResult(tested=False)
 
     def _compute_olympiad_pass_rate(self) -> float:
@@ -1477,7 +1477,7 @@ class ExamOrchestrator:
             matcher = JobMatcher()
             profile.recommendations = matcher.match_top(profile, n=3)
         except Exception as e:
-            _log.warning("JobMatcher failed: %s", e)
+            _log.warning("JobMatcher failed: %s", e, exc_info=True)
             profile.notes.append(f"job_match_failed: {e}")
 
         _log.info(

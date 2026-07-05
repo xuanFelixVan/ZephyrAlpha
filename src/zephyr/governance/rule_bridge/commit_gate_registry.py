@@ -163,7 +163,7 @@ class CommitGateRegistry:
             except Exception as e:
                 logger.warning(
                     "CommitGateRegistry: gate %s 异常降级为 fail-closed: %s",
-                    spec.gate_id, e,
+                    spec.gate_id, e, exc_info=True
                 )
                 results.append(GateResult(
                     gate_id=spec.gate_id,

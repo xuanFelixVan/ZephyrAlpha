@@ -333,7 +333,7 @@ class AIBehaviorFacade:
                 decision,
                 model,
                 reason,
-                json.dumps(extra, default=str),
+                json.dumps(extra, default=str), exc_info=True
             )
             return {
                 "ts": datetime.now(UTC).isoformat(),
@@ -363,7 +363,7 @@ class ArchiveFacade:
             import uuid
 
             batch_id = f"{prefix}-{uuid.uuid4().hex[:12]}"
-            _logger.info("archive batch_id=%s module=%s", batch_id, self._module_id)
+            _logger.info("archive batch_id=%s module=%s", batch_id, self._module_id, exc_info=True)
             return batch_id
 
 

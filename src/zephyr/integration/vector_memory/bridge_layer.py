@@ -140,7 +140,7 @@ class BridgeLayer:
                             }
                         )
         except Exception as e:
-            _logger.debug("BridgeLayer: VMS 检索失败: %s", e)
+            _logger.debug("BridgeLayer: VMS 检索失败: %s", e, exc_info=True)
 
         kb_collection_name = None
         for kb_name, mapping in MIGRATION_MAP.items():
@@ -168,7 +168,7 @@ class BridgeLayer:
                                     }
                                 )
             except Exception as e:
-                _logger.debug("BridgeLayer: kb/ 检索失败: %s", e)
+                _logger.debug("BridgeLayer: kb/ 检索失败: %s", e, exc_info=True)
 
         merged = vms_results + kb_results
         merged.sort(key=lambda x: x.get("distance", 1.0))

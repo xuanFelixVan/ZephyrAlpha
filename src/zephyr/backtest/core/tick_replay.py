@@ -238,7 +238,7 @@ class TickReplayEngine:
             try:
                 callback(event)
             except Exception as e:
-                _logger.error("Tick 回调执行错误 seq=%d symbol=%s: %s", seq, symbol, e)
+                _logger.error("Tick 回调执行错误 seq=%d symbol=%s: %s", seq, symbol, e, exc_info=True)
 
             # 5秒级K线聚合
             if self._config.aggregate_5s:
@@ -292,7 +292,7 @@ class TickReplayEngine:
                     interval="tick",
                 )
             except Exception as e:
-                _logger.error("加载 Tick 数据失败 symbol=%s: %s", symbol, e)
+                _logger.error("加载 Tick 数据失败 symbol=%s: %s", symbol, e, exc_info=True)
                 raise TickReplayError(
                     f"加载 Tick 数据失败 symbol={symbol}: {e}"
                 ) from e
@@ -465,11 +465,11 @@ class TickReplayEngine:
                     try:
                         callback(agg_event)
                     except Exception as e:
-                        _logger.error("聚合K线回调错误 symbol=%s: %s", symbol, e)
+                        _logger.error("聚合K线回调错误 symbol=%s: %s", symbol, e, exc_info=True)
                     # 清空缓冲
                     self._agg_buffer[symbol] = []
         except Exception as e:
-            _logger.debug("5秒聚合跳过 symbol=%s: %s", symbol, e)
+            _logger.debug("5秒聚合跳过 symbol=%s: %s", symbol, e, exc_info=True)
 
     def _aggregate_to_bar(
         self, symbol: str, buffer: list[TickSnapshot]

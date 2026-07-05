@@ -168,7 +168,7 @@ def make_orphan_module_gate() -> GateSpec:
         except Exception as e:
             logger.warning(
                 "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e,
+                type(e).__name__, e, exc_info=True
             )
             return True, ""
 
@@ -250,7 +250,7 @@ def make_orphan_module_gate() -> GateSpec:
             except Exception as e:
                 logger.warning(
                     "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。",
-                    type(e).__name__, e,
+                    type(e).__name__, e, exc_info=True
                 )
                 return True, ""
 
