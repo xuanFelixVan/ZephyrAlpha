@@ -35,7 +35,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from zephyr.governance.persistence.task_repo import TaskRepository
     from zephyr.shared.foundation.models import TaskCard
+    from zephyr.trading.autopilot import AutoPilot
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +60,7 @@ class Conductor:
         self._repo = None
 
     @property
-    def autopilot(self):
+    def autopilot(self) -> AutoPilot:
         from zephyr.trading.autopilot import AutoPilot
 
         if self._autopilot is None:
@@ -66,7 +68,7 @@ class Conductor:
         return self._autopilot
 
     @property
-    def repo(self):
+    def repo(self) -> TaskRepository:
         if self._repo is None:
             from zephyr.governance.persistence.task_repo import TaskRepository
 

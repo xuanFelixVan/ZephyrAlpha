@@ -252,7 +252,7 @@ class SessionContinuity:
         cards_completed: list[str] | None = None,
         cards_failed: list[str] | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> Any:
+    ) -> Path | dict[str, Any]:
         if cards_completed is not None or cards_failed is not None:
             state = SessionState(
                 session_id=session_id,

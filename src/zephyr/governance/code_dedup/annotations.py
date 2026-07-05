@@ -19,17 +19,19 @@
 
 import functools
 from collections.abc import Callable
-from typing import Any
+from typing import Any, TypeVar
+
+F = TypeVar("F", bound=Callable[..., Any])
 
 SHARED_FUNCTIONS: dict[str, str] = {}
 KNOWN_DUPLICATES: dict[str, list[str]] = {}
 INTENTIONAL_DUPLICATES: dict[str, str] = {}
 
 
-def shared(module: str = "", version: str = "1.0.0") -> Callable:
+def shared(module: str = "", version: str = "1.0.0") -> Callable[[F], F]:
     """标记函数为共享实现."""
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: F) -> F:
         key = f"{module}::{func.__name__}" if module else func.__name__
         SHARED_FUNCTIONS[key] = version
 
@@ -38,15 +40,15 @@ def shared(module: str = "", version: str = "1.0.0") -> Callable:
             return func(*args, **kwargs)
 
         wrapper._shared_info = {"module": module, "version": version}
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return decorator
 
 
-def known_dup(group_id: str = "", confidence: float = 0.0) -> Callable:
+def known_dup(group_id: str = "", confidence: float = 0.0) -> Callable[[F], F]:
     """标记函数为已知重复."""
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: F) -> F:
         KNOWN_DUPLICATES.setdefault(group_id, []).append(func.__name__)
 
         @functools.wraps(func)
@@ -54,22 +56,22 @@ def known_dup(group_id: str = "", confidence: float = 0.0) -> Callable:
             return func(*args, **kwargs)
 
         wrapper._dup_info = {"group_id": group_id, "confidence": confidence}
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return decorator
 
 
-def intentional(reason: str = "") -> Callable:
+def intentional(reason: str = "") -> Callable[[F], F]:
     """标记函数为有意重复（设计模式等）."""
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: F) -> F:
         INTENTIONAL_DUPLICATES[func.__name__] = reason
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             return func(*args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return decorator
 

@@ -152,7 +152,7 @@ class TruthSourceValidator:
         self._conflicts.append(conflict)
         return conflict
 
-    def resolve_fact(self, fact_id: str, claims: list[TruthClaim]) -> Any:
+    def resolve_fact(self, fact_id: str, claims: list[TruthClaim]) -> object | None:
         conflict = self.resolve(claims)
         if conflict is None:
             if claims:

@@ -74,7 +74,7 @@ class ContractEnforcer:
     def __init__(self, registry: ContractRegistry):
         self.registry = registry
 
-    def enforce(self, contract_id: str, data: dict) -> dict:
+    def enforce(self, contract_id: str, data: dict[str, Any]) -> dict[str, Any]:
         definition = self.registry.get(contract_id)
         if definition is None:
             raise ContractBusError(f"Unknown contract: {contract_id}")
@@ -104,15 +104,15 @@ class ContractBus:
         self.enforcer = ContractEnforcer(self.registry)
         self._validate_on_call = True
 
-    def validate(self, contract_id: str, data: dict) -> dict:
+    def validate(self, contract_id: str, data: dict[str, Any]) -> dict[str, Any]:
         return self.enforcer.enforce(contract_id, data)
 
-    def call(self, contract_id: str, data: dict) -> Any:
+    def call(self, contract_id: str, data: dict[str, Any]) -> dict[str, Any]:
         if self._validate_on_call:
             self.enforcer.enforce(contract_id, data)
         return data
 
-    async def call_async(self, contract_id: str, data: dict) -> Any:
+    async def call_async(self, contract_id: str, data: dict[str, Any]) -> dict[str, Any]:
         if self._validate_on_call:
             self.enforcer.enforce(contract_id, data)
         return data

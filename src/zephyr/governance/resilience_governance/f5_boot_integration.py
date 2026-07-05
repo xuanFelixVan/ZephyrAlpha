@@ -276,7 +276,7 @@ class F5BootIntegration:
         return self._arbitrator
 
     @property
-    def last_periodic_result(self) -> dict:
+    def last_periodic_result(self) -> dict[str, Any]:
         return dict(self._last_periodic_result)
 
 

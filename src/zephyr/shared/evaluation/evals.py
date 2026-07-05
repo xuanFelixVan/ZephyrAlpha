@@ -38,7 +38,7 @@ class EvalCase:
     expected_output: str
     tags: list[str] = field(default_factory=list)
     threshold: float = 0.7
-    metadata: dict = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass

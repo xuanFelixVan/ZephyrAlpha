@@ -84,7 +84,7 @@ class StoredEvent:
     metadata: dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
-    def to_row(self) -> tuple:
+    def to_row(self) -> tuple[Any, ...]:
         import hashlib
 
         payload_str = json.dumps(self.payload, ensure_ascii=False)
@@ -102,7 +102,7 @@ class StoredEvent:
         )
 
     @classmethod
-    def from_row(cls, row: dict) -> StoredEvent:
+    def from_row(cls, row: dict[str, Any]) -> StoredEvent:
         return cls(
             event_id=row["event_id"],
             timestamp=row["timestamp"],
@@ -124,7 +124,7 @@ class EventStore:
     - 线程安全
     """
 
-    def __init__(self, db_path: str | Path = REPO_ROOT / "data" / "events.db", auto_init: bool = True):
+    def __init__(self, db_path: str | Path = REPO_ROOT / "data" / "events.db", auto_init: bool = True) -> None:
         self._db_path = Path(db_path)
         # 5.142.7 修复: 移除全局 self._lock (串行化抵消WAL并发收益), 改用线程局部连接
         # 依赖 SQLite timeout=10 忙等待锁 + WAL 模式处理并发 (读不阻塞写, 写不阻塞读)

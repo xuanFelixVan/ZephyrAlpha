@@ -61,7 +61,7 @@ class _PgConnExecuteWrapper:
     每次调用 execute() 创建一个新的 RealDictCursor（与原 sqlite3.Row 的 dict(row)/row['col'] 用法等价）。
     """
 
-    def __init__(self, pg_conn: psycopg2.extensions.connection):
+    def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
         self._pg_conn = pg_conn
 
     def execute(self, sql: str, params: tuple = ()) -> Any:

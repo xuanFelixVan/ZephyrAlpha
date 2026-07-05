@@ -151,7 +151,7 @@ class AuditQuery:
         finally:
             conn.close()
 
-    def query_schema_drift(self) -> dict:
+    def query_schema_drift(self) -> dict[str, Any]:
         """检查当前 schema 版本与迁移注册表是否一致。
 
         返回当前版本、是否为最新等信息，供 CI 或启动时的 drift detection。

@@ -342,7 +342,7 @@ class ContractRegistry:
                 result.append(meta)
         return result
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> dict[str, int]:
         """返回注册表统计信息。"""
         initialized = self._initialized
         return {

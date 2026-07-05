@@ -43,7 +43,9 @@ import functools
 import os
 import warnings
 from collections.abc import Callable
-from typing import Any
+from typing import Any, TypeVar
+
+F = TypeVar("F", bound=Callable[..., Any])
 
 __all__ = [
     "DeprecatedAPIError",
@@ -93,7 +95,7 @@ def deprecated(
     replacement: str | None = None,
     *,
     reason: str | None = None,
-) -> Callable[[Callable], Callable]:
+) -> Callable[[F], F]:
     """标记函数/类/方法为废弃。
 
     Args:
@@ -120,7 +122,7 @@ def deprecated(
         - "silent" 模式: 完全跳过，零开销
     """
 
-    def decorator(obj: Callable) -> Callable:
+    def decorator(obj: F) -> F:
         message_parts = [f"'{obj.__name__}' is deprecated since {since}"]
         if remove_in:
             message_parts.append(f"and will be removed in {remove_in}")
@@ -152,7 +154,7 @@ def deprecated(
         wrapper._zephyr_deprecated_remove_in = remove_in  # type: ignore[attr-defined]
         wrapper._zephyr_deprecated_replacement = replacement  # type: ignore[attr-defined]
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     # 支持无参数调用: @deprecated vs @deprecated(since="...", ...)
     if callable(since):
