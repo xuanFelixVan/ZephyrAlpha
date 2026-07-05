@@ -88,6 +88,7 @@ __all__ = [
     "make_index_generator_reconciler",
     "make_runtime_cleanup_reconciler",
     "make_architecture_health_reconciler",
+    "make_session_log_index_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -3139,4 +3140,127 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=300,  # 低优先级最后执行——基线记录非紧急
+    )
+
+
+# AI-03 审计 P3 待办落地（2026-07-05）：session_logs/index.yaml 派生 reconciler。
+# 病根：index.yaml 的 by_date/by_module/by_contract 派生数据截至 2026-05-08 未更新，
+#   派生脚本（validate_session_log_index_integrity.py --generate）无自动触发机制。
+# 治本：接入 GitCommitGateway post-commit reconciler 轨（事件触发，非时间触发/手动触发）。
+# 向内收：扩展已有 reconciliation_registry.py 框架（第18个 reconciler），不新建独立触发系统。
+# 真源：validate_session_log_index_integrity.py 是 index.yaml 派生逻辑唯一真源，本 reconciler 仅调用。
+# trae_060-reviewed: 通过元问题审查。session_logs/index.yaml 派生数据过期是真实问题（截至 2026-05-08
+# 未更新），需自动触发机制。现有 17 个 reconciler 无一处理 session_logs/ 目录，无法合并进已有。
+# 事件触发（post-commit: session_logs/**/*.yaml 落盘），非 cron/manual，满足项目约束"reconciler 必须事件触发"。
+# 派生逻辑真源唯一：validate_session_log_index_integrity.py --generate（本 reconciler 仅调用，不复制逻辑）。
+def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-SESSION-LOG-INDEX post-commit session_logs/index.yaml 派生 reconciler。
+
+    病根：session_logs/index.yaml 的 by_date/by_module/by_contract 派生数据由
+    ``validate_session_log_index_integrity.py --generate`` 从 session log YAML 派生，
+    但原设计无自动触发机制——新 session yaml 落盘后 index.yaml 不会自动更新，
+    导致索引过期（截至 2026-05-08 未更新，AI-03 审计 P3）。
+
+    治本（事件触发派生）：
+    - 接入 GitCommitGateway post-commit reconciler 轨（事件触发，非 cron/manual）
+    - trigger: committed_files 含 session_logs/**/*.yaml 且非 index.yaml 本身
+    - reconcile: 调用 validate_session_log_index_integrity.py --generate，
+      检测 index.yaml 变更，有变更→auto-commit（经 _commit_auto 统一入口，DCR gate 覆盖）
+
+    trigger 裁定（派生真源：validate_session_log_index_integrity.py L88-99）：
+    - session_logs/**/*.yaml（排除 _auto/ 子目录和 index.yaml 本身）
+
+    向内收设计：
+    - 责任唯一：派生逻辑只在 validate_session_log_index_integrity.py 一处（本 reconciler 仅调用）
+    - 真源唯一：复用 ReconciliationRegistry 框架（第18个 reconciler），不新建独立触发系统
+    - 事件触发：post-commit 自动执行，无 cron/manual
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-SESSION-LOG-INDEX", priority=175)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _INDEX_REL = "session_logs/index.yaml"
+    _VALIDATOR_REL = "scripts/governance/d5_architecture/validators/session/validate_session_log_index_integrity.py"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            # 命中 session_logs/**/*.yaml，排除 index.yaml 本身和 _auto/ 派生产物
+            if (
+                rel.startswith("session_logs/")
+                and rel.endswith(".yaml")
+                and rel != _INDEX_REL
+                and "/_auto/" not in rel
+            ):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        validator = project_root / _VALIDATOR_REL
+        if not validator.exists():
+            return ReconcileResult(
+                action="warn",
+                detail=f"validator script not found: {_VALIDATOR_REL}",
+            )
+
+        # 1. 调用 validate_session_log_index_integrity.py --generate（校验 + 汇总生成）
+        gen_result = subprocess.run(
+            [
+                sys.executable,
+                str(validator),
+                "--generate",
+            ],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,  # 扫描 session_logs/ 较快（<50 文件）
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"validator --generate failed (exit {gen_result.returncode}): "
+                       f"{gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 index.yaml 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _INDEX_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="session_logs/index.yaml up to date")
+
+        # 3. 变更 → 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
+        abs_files = [str(project_root / _INDEX_REL)]
+        auto_msg = "chore(session_logs): auto-regenerate index.yaml by GitCommitGateway post-commit"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="session_logs/index.yaml drift detected and auto-regenerated",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="session_logs/index.yaml no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"session_logs/index.yaml drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-SESSION-LOG-INDEX",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=175,  # 在 index_generator(170) 之后，runtime_cleanup 之前
     )

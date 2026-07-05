@@ -60,6 +60,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_index_generator_reconciler,
     make_runtime_cleanup_reconciler,
     make_architecture_health_reconciler,
+    make_session_log_index_reconciler,
 )
 from zephyr.governance.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -327,6 +328,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_index_generator_reconciler(self))  # P3 生成器触发接入
         self._reconciliation_registry.register(make_runtime_cleanup_reconciler(self))  # .runtime/ TTL 自动清理
         self._reconciliation_registry.register(make_architecture_health_reconciler(self))  # 架构健康度基线记录（第0期 warn-only）
+        self._reconciliation_registry.register(make_session_log_index_reconciler(self))  # session_logs/index.yaml 派生（AI-03 审计 P3）
 
     # ------------------------------------------------------------------
     # 公开 API
