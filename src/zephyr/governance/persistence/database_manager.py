@@ -392,8 +392,8 @@ class DatabaseManager:
         # 先做 WAL checkpoint 以保证备份包含所有已提交数据
         self._wal_checkpoint(mode="PASSIVE")
 
-        src = sqlite3.connect(str(self._db_path))
-        dst = sqlite3.connect(str(backup_path))
+        src = get_db_connection(str(self._db_path))
+        dst = get_db_connection(str(backup_path))
         try:
             src.backup(dst)
         finally:
@@ -637,7 +637,7 @@ class DatabaseManager:
         backup = Path(backup_path)
         if not backup.exists():
             raise DatabaseManagerError(f"备份文件不存在: {backup}")
-        conn = sqlite3.connect(str(backup))
+        conn = get_db_connection(str(backup))
         try:
             conn.execute("PRAGMA journal_mode = WAL")
             integrity = conn.execute("PRAGMA integrity_check").fetchone()

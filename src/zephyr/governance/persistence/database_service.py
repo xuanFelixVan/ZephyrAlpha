@@ -31,6 +31,7 @@ DatabaseService: 统一管理两个数据库的连接池、生命周期、健康
 """
 
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import threading
 from typing import Any
 
@@ -58,7 +59,7 @@ class DatabaseService:
         if self._governance_conn is None:
             with self._lock:
                 if self._governance_conn is None:
-                    self._governance_conn = sqlite3.connect(self.governance_db)
+                    self._governance_conn = get_db_connection(self.governance_db)
                     self._governance_conn.row_factory = sqlite3.Row
         return self._governance_conn
 

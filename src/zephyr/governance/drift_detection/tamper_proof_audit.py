@@ -49,6 +49,7 @@ import hashlib
 import json
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -137,7 +138,7 @@ def setup_append_only(db_path: str) -> bool:
     # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭，导致连接泄漏。改用 try/finally 保证关闭。
     conn = None
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         conn.executescript(APPEND_ONLY_TRIGGERS)
         conn.commit()
         return True
@@ -155,7 +156,7 @@ def snapshot_event_hash(db_path: str) -> str:
     # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭。改用 try/finally 保证关闭。
     conn = None
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         cursor = conn.cursor()
         cursor.execute("SELECT event_id, detector_id, severity, state FROM drift_events ORDER BY timestamp DESC")
         rows = cursor.fetchall()
@@ -176,7 +177,7 @@ def count_states(db_path: str) -> dict[str, int]:
     # 5.49.3 修复：原 try/except 中 conn 未在异常分支关闭。改用 try/finally 保证关闭。
     conn = None
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         cursor = conn.cursor()
         cursor.execute("SELECT state, COUNT(*) FROM drift_events GROUP BY state")
         for row in cursor.fetchall():

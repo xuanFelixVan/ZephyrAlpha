@@ -35,6 +35,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -77,7 +78,7 @@ class Dashboard:
             return {}
 
         # 5.144.8 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             rows = conn.execute(
                 "SELECT module_id, COUNT(*) as total, SUM(CASE WHEN state='VERIFIED' THEN 1 ELSE 0 END) as resolved FROM drift_events GROUP BY module_id"
@@ -101,7 +102,7 @@ class Dashboard:
             return []
 
         # 5.144.8 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             rows = conn.execute(
                 "SELECT date(created_at) as day, module_id, COUNT(*) as cnt FROM drift_events GROUP BY day, module_id ORDER BY day"

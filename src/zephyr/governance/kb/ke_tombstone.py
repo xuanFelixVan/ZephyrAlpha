@@ -50,6 +50,7 @@ import json
 import logging
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import sys
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -114,7 +115,7 @@ class TombstoneManager:
     def _get_conn(self) -> sqlite3.Connection:
         db_dir = self.db_path.parent
         db_dir.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(str(self.db_path))
+        conn = get_db_connection(str(self.db_path))
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")

@@ -487,7 +487,7 @@ class SessionLifecycle:
         db_dir = os.path.dirname(self._db_path)
         if db_dir:
             os.makedirs(db_dir, exist_ok=True)
-        self._db_conn = sqlite3.connect(self._db_path, check_same_thread=False, timeout=10.0)
+        self._db_conn = get_db_connection(self._db_path, check_same_thread=False, timeout=10.0)
         self._db_conn.execute("PRAGMA journal_mode=WAL")
         self._db_conn.execute("PRAGMA busy_timeout=5000")
         self._db_conn.execute(_CREATE_TABLE_SQL)

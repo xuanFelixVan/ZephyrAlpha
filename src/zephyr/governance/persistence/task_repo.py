@@ -3403,7 +3403,7 @@ def search(
     """
     resolved = Path(db_path)
     resolved.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(resolved))
+    conn = get_db_connection(str(resolved))
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
     try:

@@ -42,6 +42,7 @@ import os
 import re
 import logging
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -457,7 +458,7 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
         # 改用 try/finally 保证连接在所有路径下关闭。
         conn = None
         try:
-            conn = sqlite3.connect(str(db_file))
+            conn = get_db_connection(str(db_file))
 
             cursor = conn.cursor()
 

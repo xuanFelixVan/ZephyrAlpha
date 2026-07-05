@@ -36,6 +36,7 @@ import hashlib
 import json
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import uuid
 from datetime import UTC, datetime
 
@@ -58,7 +59,7 @@ class GatePersistence:
         self._init_db()
 
     def _init_db(self) -> None:
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
 
         try:
             conn.execute("""
@@ -195,7 +196,7 @@ class GatePersistence:
             except OSError:
                 pass
 
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
 
         try:
             conn.execute(
@@ -218,7 +219,7 @@ class GatePersistence:
         return sha
 
     def persist_gate_decision(self, module_id: str, gate: str, decision: str, detail: str = "") -> None:
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
 
         try:
             conn.execute(

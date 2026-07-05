@@ -47,6 +47,7 @@ import json
 import os
 import signal
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import uuid
 from datetime import UTC, datetime
 
@@ -517,7 +518,7 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection(db_path)
 
     try:
         conn.execute("PRAGMA journal_mode=WAL")

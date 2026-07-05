@@ -105,8 +105,9 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
                 "KB尚未初始化，运行 bootstrap 或等待首次KE创建后自动创建",
             )
         import sqlite3
+        from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
-        conn = sqlite3.connect(str(db_path))
+        conn = get_db_connection(str(db_path))
         cursor = conn.execute("PRAGMA integrity_check")
         result = cursor.fetchone()[0]
         conn.close()
@@ -305,8 +306,9 @@ def _check_tombstone_integrity(root: Path) -> CheckResult:
         if not db_path.exists():
             return CheckResult(10, "Tombstone Integrity", CheckStatus.SKIP, "Database not found")
         import sqlite3
+        from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
-        conn = sqlite3.connect(str(db_path))
+        conn = get_db_connection(str(db_path))
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ke_tombstones'")
         exists = cursor.fetchone()
         conn.close()

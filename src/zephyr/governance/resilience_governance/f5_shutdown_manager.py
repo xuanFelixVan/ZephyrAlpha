@@ -35,6 +35,7 @@ import logging
 import os
 import signal
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 import tempfile
 import threading
 import time
@@ -339,7 +340,7 @@ class F5ShutdownManager:
         # 原子写入: 先写到临时文件, 再 replace
         # SQLite 本身不支持原子 rename db 文件, 但我们可以用临时 db + replace
         # 这里直接用 sqlite3 连接 + INSERT, SQLite 的写入是原子的 (单条 INSERT)
-        conn = sqlite3.connect(str(self._db_path), timeout=5.0)
+        conn = get_db_connection(str(self._db_path), timeout=5.0)
         try:
             conn.execute(
                 f"""
@@ -429,7 +430,7 @@ class F5ShutdownManager:
 
     def _read_state_from_db(self) -> dict[str, Any]:
         """从 SQLite 读取状态。"""
-        conn = sqlite3.connect(str(self._db_path), timeout=5.0)
+        conn = get_db_connection(str(self._db_path), timeout=5.0)
         try:
             cursor = conn.execute(
                 f"SELECT key, value FROM {self.STATE_TABLE}"

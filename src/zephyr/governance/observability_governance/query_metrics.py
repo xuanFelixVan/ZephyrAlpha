@@ -209,7 +209,7 @@ class QueryMetrics:
 
         explain_json = _json.dumps(explain_rows, ensure_ascii=False, default=str)
         try:
-            conn = sqlite3.connect(str(self._db_path))
+            conn = get_db_connection(str(self._db_path))
             from datetime import UTC, datetime
 
             conn.execute(

@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -186,7 +187,7 @@ def init_database(project_root: str) -> bool:
     try:
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
 
         try:
             cursor = conn.cursor()

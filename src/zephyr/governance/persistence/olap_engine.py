@@ -66,7 +66,7 @@ from typing import Any
 import duckdb
 import structlog
 
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.sqlite_schema import get_db_connection, init_db
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
@@ -603,7 +603,7 @@ class OLAPEngine:
         # 步骤 2: 从 SQLite 删除已归档的 events
         deleted_count = 0
         try:
-            sqlite_conn = _sqlite3.connect(str(self._sqlite_path))
+            sqlite_conn = get_db_connection(str(self._sqlite_path))
             cursor = sqlite_conn.execute("DELETE FROM events WHERE created_at <= ?", (cutoff_iso,))
             deleted_count = cursor.rowcount
             sqlite_conn.commit()

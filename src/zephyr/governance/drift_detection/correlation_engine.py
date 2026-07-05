@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 
 
@@ -65,7 +66,7 @@ class CorrelationEngine:
             return {}
 
         # 5.144.7 修复: conn.close() 移入 finally, 防止 execute 抛异常跳过 close
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             rows = conn.execute("SELECT scan_id, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'").fetchall()
         finally:
@@ -109,7 +110,7 @@ class CorrelationEngine:
             return {}
 
         # 5.144.7 修复: conn.close() 移入 finally
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
         try:
             rows = conn.execute(
                 "SELECT drift_dimension, module_id FROM drift_events WHERE state!='FALSE_POSITIVE'"

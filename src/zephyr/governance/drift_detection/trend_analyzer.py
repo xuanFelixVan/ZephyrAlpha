@@ -35,6 +35,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
@@ -95,7 +96,7 @@ class TrendAnalyzer:
         os.makedirs(self._archive_dir, exist_ok=True)
 
     def compute_metrics(self, module_id: str) -> TrendMetrics:
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
 
         try:
             now = datetime.now(UTC)
@@ -216,7 +217,7 @@ class TrendAnalyzer:
         return alerts
 
     def archive_old_data(self) -> None:
-        conn = sqlite3.connect(self._db_path)
+        conn = get_db_connection(self._db_path)
 
         cutoff = (datetime.now(UTC) - timedelta(days=self.HOT_DATA_DAYS)).isoformat()
 
