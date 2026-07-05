@@ -4489,6 +4489,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=17(设计模式误用需重构为正确模式)
 > **第38轮修复状态（2026-07-05）**：FIXED=2(5.150.9 gpu_consensus_scheduler local-model笔误导致TypeError修正为local_model + 5.150.8 risk_limit_violation_error TraceContext类型注解补充TYPE_CHECKING导入), DEFERRED=15(5.150.1-3 God Class 3处[resource_optimization 39方法/auto_runtime_core 42方法/scheduler 26方法]需职责拆分 + 5.150.4 Refused Bequest/LSP违反需重写子类签名 + 5.150.5 Long Parameter List 16参数源于Data Class + 5.150.6 Data Class RiskMetricsReport 17字段0方法 + 5.150.7 God Class ActionDispatcher 22方法 + 5.150.10-11 Long Parameter List 9参数 + 5.150.12-15 Shotgun Surgery 4处重复实现需确定canonical删除shim + 5.150.16 Primitive Obsession需引入AgentId值对象 + 5.150.17 Dead Class需确认引用链 — 设计模式重构属专项工程,需统一重构规划与回归测试). 维度5.150全部清零.
+> **第46轮修复状态（2026-07-06）**：DRIFTED=5(5.150.12 trading/core/agent_orchestrator.py已删除 + 5.150.13 trading/resilience/hallucination_detector.py已删除 + 5.150.14 pf_core/strategy_portfolio.py已迁移到governance/financial_governance/ + 5.150.15 pf_core/default_equity_strategy.py重复副本已删除仅剩一份 + 5.150.17 Dead Class文件pf_core/strategy_portfolio.py已迁移), DEFERRED=10(5.150.1-3 God Class 3处 + 5.150.4 Refused Bequest/LSP + 5.150.5 Long Parameter List + 5.150.6 Data Class + 5.150.7 God Class ActionDispatcher + 5.150.10-11 Long Parameter List 2处 + 5.150.16 Primitive Obsession — 均需设计模式重构专项工程), STILL_VALID=0. 维度5.150全部清零.
 
 #### HIGH（5个）
 
