@@ -1,10 +1,8 @@
 # [A_module] module_id=MOD-GOV_financial_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 __all__ = [
-    "AkshareProvider",
     "AtTradeCheck",
     "ComplianceLayer",
-    "DataValidator",
     "DefenseStrategy",
     "DefenseType",
     "FSMInstance",
@@ -12,12 +10,9 @@ __all__ = [
     "FSMState",
     "FSMTransition",
     "FactorSignal",
-    "FeatureStoreSchema",
     "FidelityFactor",
-    "Interval",
     "MacroFactor",
     "MacroRegime",
-    "MarketDataPipeline",
     "OMSRiskEngine",
     "OrderState",
     "PostTradeMetrics",
@@ -29,8 +24,6 @@ __all__ = [
     "RiskLayer",
     "Safeguard",
     "StrategyMethod",
-    "ValidationReport",
-    "ValidationStatus",
     "estimate_capacity",
     "fsm_verifier",
     "generate_test_cases",

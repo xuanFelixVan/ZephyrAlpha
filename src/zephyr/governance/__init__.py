@@ -198,7 +198,6 @@ try:
     import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
     import zephyr.governance.ops_governance.environment_manager as environment_manager
     import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
-    import zephyr.governance.financial_governance.market_data_pipeline as market_data_pipeline
     import zephyr.governance.behavioral_admission.mcp_result_push as mcp_result_push
     import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
     import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
@@ -312,7 +311,6 @@ __all__ = [
     "knowledge_engine",
     "local_first_arch",
     "main",
-    "market_data_pipeline",
     "mcp_result_push",
     "microstructure_defense",
     "migration_strategy",

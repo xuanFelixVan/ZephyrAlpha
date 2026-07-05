@@ -1,3 +1,3 @@
-# mkt_data/_extensions
+# market_data/_extensions
 
 __all__: list[str] = []
