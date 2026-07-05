@@ -79,8 +79,7 @@ class AlertRouter:
 
     def classify(self, module_id: str, drift_dimension: str, severity: str) -> str:
         if severity == "HIGH":
-            parts = drift_dimension.split("_")
-
+            # 5.136.4 修复: 移除未使用的 parts = drift_dimension.split("_") 赋值
             if any(kw in drift_dimension.lower() for kw in ("contract", "security", "p0", "ssot")):
                 return "P0_CRITICAL"
 

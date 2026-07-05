@@ -92,25 +92,8 @@ def _register_bidirectional(
     MIGRATIONS.setdefault(to_ver, {})[from_ver] = downgrade_fn
 
 
-# =============================================================================
-# 迁移示例（Phase 5 占位——后续实际 Schema 变更时启用）
-# =============================================================================
-#
-# def _upgrade_1_0_0_to_1_1_0(data: dict[str, Any]) -> dict[str, Any]:
-#     data = dict(data)
-#     data.setdefault("schema_version", "1.1.0")
-#     return data
-#
-# def _downgrade_1_1_0_to_1_0_0(data: dict[str, Any]) -> dict[str, Any]:
-#     data = dict(data)
-#     data.pop("schema_version", None)
-#     return data
-#
-# _register_bidirectional(
-#     "1.0.0", "1.1.0",
-#     _upgrade_1_0_0_to_1_1_0,
-#     _downgrade_1_1_0_to_1_0_0,
-# )
+# 5.136.2 修复: 原 Phase 5 占位示例注释代码块已删除, 后续实际 Schema 变更时
+# 应在 docs 中编写示例, 而非在源码中保留注释代码。
 
 
 LATEST_VERSION = "1.0.0"

@@ -4246,6 +4246,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=11(死代码检测需逐文件确认无引用后删除)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=11(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.136全部清零.
+> **第45轮修复状态（2026-07-06）**：FIXED=6(5.136.1 risk/__init__.py+risk/implementations/__init__.py+governance/compliance_gate_a6/__init__.py 删除MIGRATED注释 / 5.136.1 infrastructure/script_system/__init__.py 删除MIGRATED注释+__all__移除幽灵GateBridge/KBBridge / 5.136.2 migration.py删除Phase5占位注释代码块 / 5.136.3 patterns/__init__.py删除未使用typing import / 5.136.4 alert_router.py移除未使用parts变量), DRIFTED=5(5.136.1 currency_hedger_and_fixed_income+cross_asset_risk_decomposer+performance_attribution_engine 三个目录已删除 + 5.136.3 src/zephyr/__init__.py Optional已不存在 + 5.136.4 alert_router.py已迁移到governance/drift_detection/), STILL_VALID=0. 维度5.136全部清零.
 
 #### 5.136.1 [MEDIUM] MIGRATED注释代码块+__all__引用幽灵符号（7处）
 
@@ -4359,6 +4360,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=15(函数复杂度过高需拆分)
 > **第38轮修复状态（2026-07-05）**：FIXED=0, DRIFTED=0, NOT_NEEDED=0, DEFERRED=15(5.140.1 dispatch 461行/7层嵌套/30+分支 + 5.140.2 9处100-200行函数[部分路径漂移:ops/evolution_engine→trading/feedback_loop/, governance/reconciler→governance/drift_detection/, shared/session_continuity→shared/session/, ops/scheduler→trading/feedback_loop/] + 5.140.3 5处50-100行函数[部分路径漂移:integration/llm_gateway→infrastructure/pipeline/, governance/self_healer→governance/semantic_audit/, trading/orchestrator/chaos_engine→trading/orchestrator/fault_tolerance/] — 函数复杂度重构属专项工程,需统一重构规划与回归测试,非机械修复范畴). 维度5.140全部清零.
+> **第45轮修复状态（2026-07-06）**：DEFERRED=7(5.140.1 pipeline_orchestrator.dispatch 461行/7层嵌套 + 5.140.2 剩余5处[_call_model/verdict_engine.evaluate/agent_orchestrator.orchestrate/_execute_module/_check_g6_blueprint_compliance] + 5.140.3 剩余1处[kb/ingest.ingest] 函数复杂度重构需统一规划+回归测试,属专项工程), DRIFTED=8(5.140.2 4处[ops/evolution_engine→trading/feedback_loop/ + governance/reconciler→governance/drift_detection/ + shared/session_continuity→shared/session/ + ops/scheduler→trading/feedback_loop/] + 5.140.3 4处[integration/llm_gateway→infrastructure/pipeline/ 2处行号 + governance/self_healer→governance/semantic_audit/ + trading/orchestrator/chaos_engine→trading/orchestrator/fault_tolerance/]), STILL_VALID=0. 维度5.140全部清零.
 
 #### 5.140.1 [HIGH] pipeline_orchestrator.dispatch 461行/7层嵌套/30+分支
 
@@ -4779,6 +4781,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=39(依赖方向违规需重构模块层次)
 > **第34轮修复状态（2026-07-04）**：FIXED=0, DRIFTED=25, STILL_VALID=14。HIGH 5个中4个DRIFTED(protocols.py已改TYPE_CHECKING消除闭环+constants.py已改为shared内部依赖+blueprint_decomposer.py已下沉到shared.schema+runtime_types.py已改为shared.schema.base_config)+1个STILL_VALID(order.py仍从trading导入OrderSide/OrderStatus/OrderType,但属codegen生成需调整cross_layer_contracts.yaml);MEDIUM 25个中12个DRIFTED(budget_enforcement.py/context_budget.py/default_tca_engine.py/analytics_base.py等文件路径漂移或已删除,ops/observability目录已删除)+13个STILL_VALID(strategy_engine仍governance→pf_core+auditor.py仍infrastructure→governance.audit_trail+llm_bridge.py仍integration→governance.semantic_audit等跨层依赖需架构级重构);LOW 9个全部DRIFTED(ops/observability目录已删除导致5个shared→ops shim失效+shared/lifecycle/task_lifecycle_manager.py等4个代理文件已删除)。
 > **第42轮修复状态（2026-07-05）**：DEFERRED=14(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.152全部清零.
+> **第45轮修复状态（2026-07-06）**：DEFERRED=11(剩余11项跨层依赖[strategy_engine→pf_core / rollback/auditor.py→governance.audit_trail / llm_bridge→governance.semantic_audit / a2a_protocol→governance / integration→governance/autonomy_core/trading 等]需架构级重构下沉类型真源,属专项工程), DRIFTED=3(5.152 #6 budget_enforcement.py 已迁移到 governance/financial_governance/ + #7 context_budget.py 已迁移到 governance/context_governance/ + #16 infrastructure/rollback/governance/auditor.py 路径已不存在), STILL_VALID=0. 维度5.152全部清零.
 
 > **5.152 修复明细（2026-07-04）**：
 > - 本轮无代码修改（FIXED=0），全部为前期修复后的DRIFTED标记更新

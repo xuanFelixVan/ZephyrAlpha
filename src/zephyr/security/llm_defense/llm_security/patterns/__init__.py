@@ -17,9 +17,6 @@ __all__ = [
     "secrets",
 ]
 
-from typing import Any, Dict, List, Optional
-
-
 class PatternMatch:
     def __init__(self, pattern_type, value, confidence=1.0):
         self.pattern_type = pattern_type

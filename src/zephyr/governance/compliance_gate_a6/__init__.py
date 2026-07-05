@@ -18,12 +18,5 @@ Phase C 具体实现包。
   - DefaultSecurityGateway : SecurityGateway 的具体实现（正则检测 + 审计决策）
 """
 
-# MIGRATED: from zephyr.governance.implementations.default_security_gateway import (  # removed by TC-7-2
-# DefaultSecurityGateway,  # removed by TC-7-2
-# )  # removed by TC-7-2
-#
-# __all__ = ['DefaultSecurityGateway', 'default_security_gateway']
-#
-
 __all__ = [
 'compliance_manager', 'compliance_mapper']

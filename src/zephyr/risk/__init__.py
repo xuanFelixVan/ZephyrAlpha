@@ -56,32 +56,6 @@ from __future__ import annotations
 
 import importlib as _importlib
 
-# MIGRATED: from zephyr.risk.risk_manager import (  # removed by TC-7-2
-# RiskDashboardSnapshot,  # removed by TC-7-2
-# RiskLimitViolationError,  # removed by TC-7-2
-# RiskLimits,  # removed by TC-7-2
-# RiskManagerBase,  # removed by TC-7-2
-# RiskMetricsReport,  # removed by TC-7-2
-# )  # removed by TC-7-2
-# from zephyr.risk.risk_limits import (
-# RiskLimitsCalculator,
-# )
-# MIGRATED: from zephyr.risk.risk_validator import (  # removed by TC-7-2
-# RiskValidator,  # removed by TC-7-2
-# ViolatedConstraint,  # removed by TC-7-2
-# ViolationDetail,  # removed by TC-7-2
-# )  # removed by TC-7-2
-# MIGRATED: from zephyr.risk.risk_manager_base import (  # removed by TC-7-2
-# PositionLimitCheckerBase,  # removed by TC-7-2
-# RiskCheckResult,  # removed by TC-7-2
-# RiskManagerOrchestratorBase,  # removed by TC-7-2
-# RiskReport,  # removed by TC-7-2
-# StopLossEngineBase,  # removed by TC-7-2
-# )  # removed by TC-7-2
-#
-# __all__ = ['PositionLimitCheckerBase', 'RiskCheckResult', 'RiskDashboardSnapshot', 'RiskLimitViolationError', 'RiskLimits', 'RiskLimitsCalculator', 'RiskManagerBase', 'RiskManagerOrchestratorBase', 'RiskMetricsReport', 'RiskReport', 'RiskValidator', 'StopLossEngineBase', 'ViolatedConstraint', 'ViolationDetail', 'risk_limits', 'risk_manager', 'risk_manager_base', 'risk_validator', 'stop_loss']
-#
-
 __all__ = [
     "cross_asset",
     "risk_limits",
